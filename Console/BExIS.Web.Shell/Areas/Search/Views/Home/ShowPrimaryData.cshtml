@@ -1,0 +1,20 @@
+﻿@model Tuple<DataTable, int,  StructuredDataStructure>
+@using System.Data;
+@using BExIS.Dlm.Entities.DataStructure;
+@{
+    ViewBag.Title = "Primary Data";
+}
+
+@Html.ActionLink("Back", "Index", new { target = "_blank", @class = "grid-t-link" })
+
+<br />
+<hr />
+
+@Html.Partial("_primaryDataResultGridView", Model)
+
+<br />
+<hr />
+@Html.ActionLink("Back", "Index", new { target = "_blank", @class = "grid-t-link" })
+
+
+

@@ -1,0 +1,44 @@
+﻿@model BExIS.Search.Model.Property
+
+<div>
+<br />
+@Model.DisplayTitle
+<br />           
+@(Html.Telerik().RangeSlider<double>()
+                .Name(Model.DataSourceKey)
+                .Min(1)//.Min(item.min)
+                .Max(200)//.Max(item.max)
+                .SmallStep(1)
+                .LargeStep(1)
+                .ClientEvents(events => events
+                       .OnChange("onChangeRangeSlider")
+                   )
+
+        )
+</div>
+ <script type="text/javascript">
+     function onChangeRangeSlider(e) {
+         var start = e.values[0];
+         var end = e.values[1];
+         var id = e.currentTarget.id;
+
+
+         $.post('@Url.Action("FilterByRangeSlider", "Home", new RouteValueDictionary { { "area", "Search" } })', { start: start, end: end, parent: id }, function (response) {
+             // alert(response);
+             $(".searchBreadcrumbNavigation").html(response);
+         });
+
+         /*$.post('@Url.Action("UpdateContent", "Home", new RouteValueDictionary { { "area", "Search" } })', {}, function (response) {
+             $("#resultContent").html(response);
+
+         })*/
+
+         $.post('@Url.Action("UpdateFacets", "Home", new RouteValueDictionary { { "area", "Search" } })', {}, function (response) {
+             $("#searchTreeView").html(response);
+         })
+        
+
+         refreshGrid();
+     }
+
+</script>

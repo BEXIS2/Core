@@ -1,0 +1,34 @@
+﻿<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Security.Entities" namespace="BExIS.Security.Entities">
+  <joined-subclass xmlns="urn:nhibernate-mapping-2.2" name="User" table="Users" extends="Subject" dynamic-update="true">
+
+    <!-- Mapping entity properties -->
+    <key column="Id" />
+
+    <property name="Email" type="String" />
+    <property name="LowerCaseEmail" type="String" />
+
+    <property name="Password" type="String" />
+    <property name="PasswordFormat" type="Int32" />
+    <property name="PasswordSalt" type="String" />
+    <property name="PasswordQuestion" type="String" />
+    <property name="PasswordAnswer" type="String" />
+    <property name="PasswordFailureCount" type="Int32" />
+
+    <property name="RegistrationDate" type="DateTime" />
+    <property name="LastActivityDate" type="DateTime" />
+    <property name="LastLoginDate" type="DateTime" />
+    <property name="LastLockOutDate" type="DateTime" />
+    <property name="LastPasswordChangeDate" type="DateTime" />
+    <property name="LastPasswordFailureDate" type="DateTime" />
+
+    <property name="IsApproved" type="Boolean" />
+    <property name="IsLockedOut" type="Boolean" />
+
+    <set name="Roles" table="Roles_Users" lazy="true">
+      <key column="UserRef"/>
+      <many-to-many column="RoleRef" class="Role"/>
+    </set>
+
+  </joined-subclass>
+
+</hibernate-mapping>

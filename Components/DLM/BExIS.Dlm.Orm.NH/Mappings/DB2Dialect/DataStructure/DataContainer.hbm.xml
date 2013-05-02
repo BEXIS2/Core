@@ -1,0 +1,111 @@
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.DataStructure">
+  <class xmlns="urn:nhibernate-mapping-2.2" name="DataContainer" table="DataContainers" dynamic-update="true">
+    <!-- Mapping BaseEntity properties -->
+    
+    <id name="Id" type="Int64">
+      <column name="Id" />
+      <generator class="native" />
+    </id>
+
+    <discriminator column="DataContainerType" type="String" length="3"/>
+    
+    <version name="VersionNo" type="Int32">
+      <column name="VersionNo" />
+    </version>
+
+    <property name="TimeStamp" type="DateTime">
+      <column name="TimeStamp" />
+    </property>
+
+    <property name="Extra" type="System.Xml.XmlDocument, System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+      <column name="Extra" not-null="false" sql-type="xml" />
+    </property>
+
+    <!-- Mapping BusinessEntity properties -->
+
+    <component name="StateInfo">
+      <property name="State" type="string">
+        <column name="State" />
+      </property>
+      <property name="Timestamp" type="DateTime">
+        <column name="StateTimestamp" />
+      </property>
+      <property name="Comment" type="string">
+        <column name="StateComment" />
+      </property>
+    </component>
+
+    <component name="AuditInfo" >
+      <property name="ActionType" type="BExIS.Core.Data.AuditActionType, BExIS.Core.Data">
+        <column name="ActionType" />
+      </property>
+      <property name="Performer" type="string">
+        <column name="Performer" />
+      </property>
+      <property name="Comment" type="string">
+        <column name="AuditComment" />
+      </property>
+      <property name="Timestamp" type="DateTime">
+        <column name="AuditTimestamp" />
+      </property>
+    </component>
+    
+    <!-- Mapping entity properties -->
+    
+    <property name="Name" type="String">
+      <column name="Name" />
+    </property>
+
+    <property name="ShortName" type="String">
+      <column name="ShortName" />
+    </property>
+
+    <property name="Description" type="String">
+      <column name="Description" />
+    </property>
+    
+    <property name="EntitySelectionPredicate" type="String">
+      <column name="EntitySelectionPredicate" />
+    </property>
+
+    <property name="IsMultiValue" type="Boolean">
+      <column name="IsMultiValue" />
+    </property>
+
+    <property name="ContainerType" type="BExIS.Dlm.Entities.DataStructure.DataContainerType, BExIS.Dlm.Entities">
+      <column name="ContainerType" />
+    </property>
+
+    <property name="MeasurementScale" type="BExIS.Dlm.Entities.DataStructure.MeasurementScale, BExIS.Dlm.Entities">
+      <column name="MeasurementScale" />
+    </property>
+
+    <many-to-one name="Methodology" class="Methodology" not-null="false" column="MethodologyRef"/>
+
+    <many-to-one name="Unit" class="Unit" not-null="false" column="UnitRef"/>
+
+    <many-to-one name="DataType" class="DataType" not-null="true" column="DataTypeRef"/>
+
+    <set name="GlobalizationInfos" cascade="all" inverse="true">
+      <key column="DataContainerRef" not-null="false"/>
+      <one-to-many class="GlobalizationInfo"/>
+    </set>
+
+    <set name="ExtendedProperties" cascade="all" inverse="true">
+      <key column="DataContainerRef" not-null="false"/>
+      <one-to-many class="ExtendedProperty"/>
+    </set>
+
+    <set name="Constraints" cascade="all" inverse="true">
+      <key column="DataContainerRef" not-null="false"/>
+      <one-to-many class="Constraint"/>
+    </set>
+    
+    <set name="AggregateFunctions" table="DataContainers_AggregateFunctions" cascade="all"  lazy="true">
+      <key column="DataContainerRef"/>
+      <many-to-many column="AggregateFunctionRef" class="AggregateFunction"/>
+    </set>
+
+  </class>
+
+</hibernate-mapping>

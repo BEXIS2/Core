@@ -1,0 +1,134 @@
+﻿@model BExIS.Search.Model.SearchResult
+@using System.Data;
+@using BExIS.Search.Model;
+
+@{
+    
+    int PageSize = Convert.ToInt16(ViewData["PageSize"]);
+    int CurrentPage =  Convert.ToInt16(ViewData["CurrentPage"]);
+    List<HeaderItem> DefaultHeaderList = (List<HeaderItem>)ViewData["DefaultHeaderList"];
+    HeaderItem Id = (HeaderItem)ViewData["Id"];
+
+    DataTable dt = Model.ConvertToDataTable();
+    
+    GridPagerStyles pagerStyles = GridPagerStyles.PageSizeDropDown;
+    pagerStyles |= GridPagerStyles.NextPreviousAndNumeric;
+    pagerStyles |= GridPagerStyles.Numeric;
+
+    
+}
+
+
+@(Html.Telerik().Grid<System.Data.DataRow>()
+            .Name("resultList")
+            .DataBinding(dataBinding => dataBinding
+                 .Ajax()
+                 .Select("_CustomBinding", "Home")
+            )
+            .EnableCustomBinding(true)
+            .HtmlAttributes(new { @class = "result-grid" })
+            
+            .Columns(columns =>
+            {
+
+                for (int i = 0; i < dt.Columns.Count; i++)
+                {
+                    DataColumn column = dt.Columns[i];
+
+                    columns.Bound(column.DataType, column.ColumnName).Hidden();
+
+                }
+
+            }
+            )
+            .RowTemplate(grid =>
+                @<text>
+                    @Html.Partial("_resultListElementView", item)
+                </text>
+            )
+
+
+           .ClientRowTemplate(grid => 
+               
+                "<div id='resultelement<#=" + @dt.Columns[Id.Name].ColumnName + "#>' class='resultelement'>" +
+                    "<div id='previe-wrapper'>" +
+                        "<h3 id='ResultTitle'> <#=" + @dt.Columns[1].ColumnName + "#></h3>" +
+                        "<div id='searchListResultContent'>" +
+                            "<p class='ResultP'> <b>"+ @dt.Columns[2].Caption + "</b> :         <#=" + @dt.Columns[2].ColumnName + "#></p>" +
+                            "<p class='ResultP'><b>" + @dt.Columns[3].Caption + "</b> :         <#=" + @dt.Columns[3].ColumnName + "#></p>" +
+                            "<p class='ResultP'><b>" + @dt.Columns[4].Caption + "</b> :         <#=" + @dt.Columns[4].ColumnName + "#></p>" +
+                            "<p class='ResultP'><b>" + @dt.Columns[Id.Name].Caption + "</b> :   <#=" + @dt.Columns[Id.Name].ColumnName + "#></p>" +
+                        "</div>" +
+                        //"<div id='options'>"+
+                   "<div id='searchListResultViewRight'>"+
+                        "<div id='pre-view<#=" + @dt.Columns[Id.Name].ColumnName + "#>' class='pre-view'   >" +
+                            "<a id='preViewButton' onclick='OnClickPreviewDS(this)' title='<#=" + @dt.Columns[Id.Name].ColumnName + "#>'>>></a>" +
+                        "</div>" +
+                        "<div id='searchListResultOptions'>" +
+                            @Html.ActionLink("Metadata", "ShowMetaData", new { datasetID = "<#=" + @dt.Columns[Id.Name].ColumnName + "#>" }).ToString() + " | " +
+                            @Html.ActionLink("Data", "ShowPrimaryData", new { datasetID = "<#=" + @dt.Columns[Id.Name].ColumnName + "#>" }).ToString() +
+                        "</div>" +
+                    "</div>"+
+            "</div>"
+                )
+
+                .ClientEvents(events => events
+                            .OnComplete("onComplete")
+                            .OnLoad("refreshGrid")
+                            .OnSubmitChanges("refreshGrid")
+                            .OnDataBound("resultList_onDataBound")
+                            
+                            )
+                .Pageable(paging =>
+                    paging
+                        .Style(pagerStyles)
+                        .PageSize(PageSize)
+                        .Position(GridPagerPosition.Both)
+                        )
+
+)
+
+<div id="showPreviewDS-resultList" class="showPreviewDS"  >
+  
+</div>
+
+<script type='text/javascript'>
+
+function OnClickPreviewDS(e) {
+
+    if ($(e).hasClass('active')) {
+
+
+        $(e).removeClass('active');
+        $("#showPreviewDS-resultList").empty();
+        
+    }
+    else {
+
+        if ($('a').hasClass('active')) {
+            $('a').removeClass('active');
+            /*$('#showPreviewDS').fadeOut('fast');*/
+            $("#showPreviewDS-resultList").empty();
+        }
+        
+        var datasetID = e.title;
+        var tr = $(e).closest("tr").get(0);
+
+        var newTop = tr.offsetTop + 30;
+
+        $(e).addClass('active')
+        $('#showPreviewDS-resultList').css("top", newTop);
+
+        $.post('@Url.Action("ShowPreviewDataStructure", "Home", new RouteValueDictionary { { "area", "Search" } })', { datasetID: datasetID }, function (response) {
+            $("#showPreviewDS-resultList").html(response);
+        })
+
+    }
+}
+
+function resultList_onDataBound(e) {
+    $("#showPreviewDS-resultList").empty();
+}
+
+
+</script>

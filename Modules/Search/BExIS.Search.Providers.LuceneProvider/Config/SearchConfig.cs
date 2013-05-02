@@ -1,0 +1,311 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Xml;
+using System.IO;
+using System.Web;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Reflection;
+using System.Diagnostics;
+
+
+using Lucene.Net.Analysis;
+using Lucene.Net.Documents;
+using Lucene.Net.Analysis.Standard;
+using Lucene.Net.Index;
+using Lucene.Net.Search;
+using Lucene.Net.QueryParsers;
+using Lucene.Net.Store;
+using Lucene.Net.Util;
+
+using BExIS.Search.Model;
+using BExIS.Search.Providers.LuceneProvider.Searcher;
+using BExIS.Search.Providers.LuceneProvider.Helpers;
+
+
+
+
+
+
+namespace BExIS.Search.Providers.LuceneProvider.Config
+{
+    public static class SearchConfig
+    {
+        static XmlDocument configXML;
+        static IndexReader _Reader = BexisIndexSearcher.getIndexReader();
+
+        private static  searchInitObjects sIO = new searchInitObjects();
+
+        private static List<Facet> AllFacetsDefault = sIO.AllFacets;
+       private static List<Property> AllPropertiesDefault = sIO.AllProperties;
+        private static List<Category> AllCategoriesDefault = sIO.AllCategories;
+
+
+
+        private static HashSet<string> numericProperties = new HashSet<string>();
+        private static Boolean isLoaded = false;
+
+
+        public static List<XmlNode> facetXmlNodeList = new List<XmlNode>();
+        public static List<XmlNode> propertyXmlNodeList = new List<XmlNode>();
+        public static List<XmlNode> categoryXmlNodeList = new List<XmlNode>();
+        public static List<XmlNode> generalXmlNodeList = new List<XmlNode>();
+        public static List<XmlNode> headerItemXmlNodeList = new List<XmlNode>();
+
+        public static void LoadConfig()
+        {
+            if (!isLoaded)
+            {
+                Load();
+                isLoaded = true;
+            }
+        }
+
+
+
+
+        private static void Load()
+        {
+            configXML = new XmlDocument();
+
+
+
+            configXML.Load(FileHelper.ConfigFilePath);
+            XmlNodeList fieldProperties = configXML.GetElementsByTagName("field");
+
+
+            Category categoryDefault = new Category();
+            categoryDefault.Name = "All";
+            categoryDefault.Value = "All";
+            categoryDefault.DisplayName = "All";
+            categoryDefault.DefaultValue = "nothing";
+            AllCategoriesDefault.Add(categoryDefault);
+
+            foreach (XmlNode fieldProperty in fieldProperties)
+            {
+
+                String headerItem = fieldProperty.Attributes.GetNamedItem("header_item").Value;
+                String storeItem = fieldProperty.Attributes.GetNamedItem("store").Value;
+
+                if (headerItem.ToLower().Equals("yes") && storeItem.ToLower().Equals("yes"))
+                {
+                    headerItemXmlNodeList.Add(fieldProperty);
+                }
+
+                String fieldType = fieldProperty.Attributes.GetNamedItem("type").Value;
+                String fieldName = fieldProperty.Attributes.GetNamedItem("lucene_name").Value;
+
+                String primitiveType = fieldProperty.Attributes.GetNamedItem("primitive_type").Value;
+                if (!primitiveType.ToLower().Equals("string"))
+                {
+                    numericProperties.Add(fieldName.ToLower());
+                }
+
+                if (fieldType.ToLower().Equals("facet_field"))
+                {
+                    facetXmlNodeList.Add(fieldProperty);
+                    Facet cDefault = new Facet();
+                    cDefault.Name = fieldName;
+                    cDefault.Text = fieldName;
+                    cDefault.Value = fieldName;
+                    cDefault.DisplayName = fieldProperty.Attributes.GetNamedItem("display_name").Value;
+                    //c.Expanded = true;
+                    //c.Enabled = true;
+
+                    cDefault.Childrens = new List<Facet>();
+                    List<Facet> lcDefault = new List<Facet>();
+
+                    Query query = new QueryParser(Lucene.Net.Util.Version.LUCENE_30, "id", new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30)).Parse("*:*");
+                    SimpleFacetedSearch sfs = new SimpleFacetedSearch(_Reader, new string[] { "facet_" + fieldName });
+                    SimpleFacetedSearch.Hits hits = sfs.Search(query);
+
+                    foreach (SimpleFacetedSearch.HitsPerFacet hpg in hits.HitsPerFacet)
+                    {
+                        Facet ccDefault = new Facet();
+                       ccDefault.Parent = cDefault;
+                        ccDefault.Name = hpg.Name.ToString();
+                        ccDefault.DisplayName = hpg.Name.ToString();
+                        ccDefault.Text = hpg.Name.ToString();
+                        ccDefault.Value = hpg.Name.ToString();
+                        ccDefault.Count = (int)hpg.HitCount;
+                        lcDefault.Add(ccDefault);
+                    }
+
+                    //SetParent(c);
+                    if (lcDefault.Count() > 0)
+                    {
+                        int childCount = 0;
+                        foreach (Facet c_child in lcDefault)
+                        {
+                            childCount += c_child.Count;
+                            //c.Items.Add(c_child);
+                            cDefault.Childrens.Add(c_child);
+
+                        }
+
+                        //c.Childs = true;
+                        //c.Text = c.CategoryName + " (" + childCount.ToString() + ")";
+                        cDefault.Text = cDefault.Name;
+                        cDefault.Count += childCount;
+                    }
+                    else { cDefault.Count = 0; }
+                    //c.Count = c.Childrens.Count();
+                    AllFacetsDefault.Add(cDefault);
+                }
+
+                else if (fieldType.ToLower().Equals("property_field"))
+                {
+                    propertyXmlNodeList.Add(fieldProperty);
+                    Property cDefault = new Property();
+                    //c.Id = x.Attributes[Property.ID].InnerText;
+                    cDefault.Name = fieldProperty.Attributes.GetNamedItem("lucene_name").Value;
+                    cDefault.DisplayName = fieldProperty.Attributes.GetNamedItem("display_name").Value;
+                    cDefault.DisplayTitle = fieldProperty.Attributes.GetNamedItem("display_name").Value; 
+                    cDefault.DataSourceKey = fieldProperty.Attributes.GetNamedItem("metadata_name").Value;
+                    cDefault.UIComponent = fieldProperty.Attributes.GetNamedItem("uiComponent").Value; ;
+                    //cDefault.DefaultValue = fieldProperty.Attributes.GetNamedItem("default_value").Value; 
+                    // cDefault.AggregationType = fieldProperty.Attributes.GetNamedItem("type").Value; ;
+                    cDefault.AggregationType = "distinct";
+                    cDefault.DefaultValue = "All";
+                    cDefault.DataType = fieldProperty.Attributes.GetNamedItem("primitive_type").Value;
+
+                    Query query = new QueryParser(Lucene.Net.Util.Version.LUCENE_30, "id", new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_29)).Parse("*:*");
+
+                    SimpleFacetedSearch sfs = new SimpleFacetedSearch(_Reader, new string[] { "property_" + fieldName });
+                    SimpleFacetedSearch.Hits hits = sfs.Search(query);
+                    List<string> laDefault = new List<string>();
+                    foreach (SimpleFacetedSearch.HitsPerFacet hpg in hits.HitsPerFacet)
+                    {
+                        String abc = hpg.Name.ToString();
+                        laDefault.Add(abc);
+                    }
+
+                    if (!cDefault.UIComponent.ToLower().Equals("range")) { laDefault.Add("All");  };
+                    laDefault.Sort();
+                    cDefault.Values = laDefault;
+                    AllPropertiesDefault.Add(cDefault);
+
+
+                }
+                else if (fieldType.ToLower().Equals("category_field"))
+                {
+                    categoryXmlNodeList.Add(fieldProperty);
+
+                    Category cDefault = new Category();
+                    cDefault.Name = fieldProperty.Attributes.GetNamedItem("lucene_name").Value;
+                    cDefault.DisplayName = fieldProperty.Attributes.GetNamedItem("display_name").Value;
+                    cDefault.Value = fieldProperty.Attributes.GetNamedItem("lucene_name").Value; ;
+                    cDefault.DefaultValue = "nothing";
+
+                    AllCategoriesDefault.Add(cDefault);
+                }
+                else if (fieldType.ToLower().Equals("general_field"))
+                {
+                    generalXmlNodeList.Add(fieldProperty);
+                }
+            }
+
+
+        }
+
+
+
+
+        public static void reloadConfig() {
+            isLoaded = false;
+            LoadConfig();
+        }
+
+        public static HashSet<string> getNumericProperties() { return numericProperties; }
+
+        public static IEnumerable<Facet> getFacets() { return AllFacetsDefault; }
+        public static IEnumerable<Property> getProperties() { return AllPropertiesDefault; }
+        public static IEnumerable<Category> getCategories() { return AllCategoriesDefault; }
+
+        public static IEnumerable<Facet> getFacetsCopy() {
+            searchInitObjects sIOCopy = DeepCopy<searchInitObjects>(sIO);
+            return sIOCopy.AllFacets; 
+        }
+        public static IEnumerable<Property> getPropertiesCopy()
+        {
+            searchInitObjects sIOCopy = DeepCopy<searchInitObjects>(sIO);
+            return sIOCopy.AllProperties;
+        }
+        public static IEnumerable<Category> getCategoriesCopy()
+        {
+            searchInitObjects sIOCopy = DeepCopy<searchInitObjects>(sIO);
+            return sIOCopy.AllCategories;
+        }
+
+
+        public static T DeepCopy<T>(T obj)
+        {
+            if (obj == null)
+                throw new ArgumentNullException("Object cannot be null");
+            return (T)Process(obj, new Dictionary<object, object>() { });
+        }
+
+        static object Process(object obj, Dictionary<object, object> circular)
+        {
+            if (obj == null)
+                return null;
+            Type type = obj.GetType();
+            if (type.IsValueType || type == typeof(string))
+            {
+                return obj;
+            }
+            if (type.IsArray)
+            {
+                if (circular.ContainsKey(obj))
+                    return circular[obj];
+                string typeNoArray = type.FullName.Replace("[]", string.Empty);
+                Type elementType = Type.GetType(typeNoArray + ", " + type.Assembly.FullName);
+                var array = obj as Array;
+                Array copied = Array.CreateInstance(elementType, array.Length);
+                circular[obj] = copied;
+                for (int i = 0; i < array.Length; i++)
+                {
+                    object element = array.GetValue(i);
+                    object copy = null;
+                    if (element != null && circular.ContainsKey(element))
+                        copy = circular[element];
+                    else
+                        copy = Process(element, circular);
+                    copied.SetValue(copy, i);
+                }
+                return Convert.ChangeType(copied, obj.GetType());
+            }
+            if (type.IsClass)
+            {
+                if (circular.ContainsKey(obj))
+                    return circular[obj];
+                object toret = Activator.CreateInstance(obj.GetType());
+                circular[obj] = toret;
+                System.Reflection.FieldInfo[] fields = GetAllFields(type).ToArray();
+                foreach (System.Reflection.FieldInfo field in fields)
+                {
+                    object fieldValue = field.GetValue(obj);
+                    if (fieldValue == null)
+                        continue;
+                    object copy = circular.ContainsKey(fieldValue) ? circular[fieldValue] : Process(fieldValue, circular);
+                    field.SetValue(toret, copy);
+                }
+                return toret;
+            }
+            else
+                throw new ArgumentException("Unknown type");
+        }
+
+
+        public static IEnumerable<System.Reflection.FieldInfo> GetAllFields(Type t)
+        {
+            if (t == null)
+                return Enumerable.Empty<System.Reflection.FieldInfo>();
+
+            BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly;
+            return t.GetFields(flags).Union(GetAllFields(t.BaseType));
+        }
+
+    }
+}

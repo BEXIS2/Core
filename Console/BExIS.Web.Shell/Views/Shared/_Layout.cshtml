@@ -1,0 +1,37 @@
+@using Microsoft.Web.Helpers;
+<!DOCTYPE html>
+<html>
+<head>
+	<title>@ViewBag.Title</title>
+	<link href="@Url.Content("~/Content/Site.css")" rel="stylesheet" type="text/css" />
+    @(Html.Telerik().StyleSheetRegistrar().DefaultGroup(group => group
+                .DefaultPath(Themes.ThemeDirectory) //  "~/Themes/" get from the AppConfig
+        .Add("telerik.common.css")
+        .Add("telerik." + Themes.CurrentTheme.ToLower() + ".css") // assemble from the AppConfig.Theme
+        // add RTL support
+        .Combined(true)
+        .Compress(true)))
+</head>
+
+<body>
+	<div class="page">
+		<header>
+			<div id="title">
+				<h1>My MVC Application</h1>
+			</div>
+
+			@(Html.Telerik().Menu()
+					.Name("menu")
+					.Items(menu => {
+						menu.Add().Text("Home").Action("Index", "Home");
+						menu.Add().Text("About").Action("About", "Home");
+					}))
+		</header>
+		<section id="main">
+			@RenderBody()
+		</section>
+		<footer>
+		</footer>
+	</div>
+@(Html.Telerik().ScriptRegistrar().DefaultGroup(group => group.Combined(true).Compress(true)))</body>
+</html>

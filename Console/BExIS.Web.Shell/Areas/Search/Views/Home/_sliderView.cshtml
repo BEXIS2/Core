@@ -1,0 +1,69 @@
+﻿@model BExIS.Search.Model.Property
+@using System.Data;   
+@using BExIS.Search.Model;   
+@using System.Globalization;     
+<div>
+<p class="PropertyHeader">@Model.DisplayName</p>
+@{
+    List<DateTime> dtList = new List<DateTime>();
+
+    DateTime ValueDateTime = new DateTime();
+    
+    foreach(var item in Model.Values)
+    {
+        // format check inside 
+        // M/d/yyyy
+        DateTime dt = DateTime.Parse(item, new CultureInfo("en-US", false)); //Convert.ToDateTime(item);
+        dtList.Add(dt);
+    }
+
+    dtList.Sort();
+    if (Model.Direction.Equals(Direction.increase)){ ValueDateTime =  dtList.First();}
+    
+    if(Model.Direction.Equals(Direction.decrease)){ ValueDateTime =  dtList.Last();}
+
+    int largeStep = dtList.Last().Year - dtList.First().Year;
+
+    
+    }
+
+           
+@(Html.Telerik().Slider<Int32>()
+                .Name(Model.DataSourceKey)
+                .Min(dtList.First().Year)//.Min(item.min)
+                .Max(dtList.Last().Year)//.Max(item.max)
+                .Value(ValueDateTime.Year)
+                .SmallStep(1)
+                .LargeStep(largeStep)        
+                .ShowButtons(true)
+                     .ClientEvents(events => events
+                           .OnChange("onChangeSlider")
+                       )
+        )
+</div>
+ <script type="text/javascript">
+     function onChangeSlider(e) {
+         var value = e.value;
+         var id = e.currentTarget.id;
+
+
+         $.post('@Url.Action("FilterBySlider", "Home", new RouteValueDictionary { { "area", "Search" } })', { value: value, parent: id }, function (response) {
+             // alert(response);
+             $(".searchBreadcrumbNavigation").html(response);
+         });
+
+//         $.post('@Url.Action("UpdateContent", "Home", new RouteValueDictionary { { "area", "Search" } })', {}, function (response) {
+//             $("#resultContent").html(response);
+
+//         })
+
+         $.post('@Url.Action("UpdateFacets", "Home", new RouteValueDictionary { { "area", "Search" } })', {}, function (response) {
+             $("#searchTreeView").html(response);
+         })
+        
+
+         refreshGrid();
+     }
+
+</script>
+ 

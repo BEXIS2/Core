@@ -1,0 +1,204 @@
+﻿@model System.Data.DataTable
+@using BExIS.Search.Model;
+@using System.Data;
+@using BExIS.Dlm.Entities.DataStructure;
+
+@{
+    
+    int PageSize = Convert.ToInt16(ViewData["PageSize"]);
+    int CurrentPage =  Convert.ToInt16(ViewData["CurrentPage"]);
+    List<HeaderItem> DefaultHeaderList = (List<HeaderItem>)ViewData["DefaultHeaderList"];
+    HeaderItem Id = (HeaderItem)ViewData["Id"];
+    
+    
+    StructuredDataStructure sds = new StructuredDataStructure();
+    Tuple<StructuredDataStructure, int> defaultModel = new Tuple<StructuredDataStructure, int>(sds, 1);
+
+
+    GridPagerStyles pagerStyles = GridPagerStyles.PageSizeDropDown;
+    pagerStyles |= GridPagerStyles.NextPreviousAndNumeric;
+    pagerStyles |= GridPagerStyles.Numeric;
+
+  
+}
+
+
+@(Html.Telerik().Grid<System.Data.DataRow>()
+        .Name("resultGrid")
+
+
+            .DataBinding(dataBinding => dataBinding
+                .Ajax()
+                .Select("_CustomBinding", "Home")
+            )
+            .EnableCustomBinding(true)
+            .HtmlAttributes(new { @class = "result-grid" })
+
+            .Columns(columns =>
+                {
+                    if (@Model.Columns.Count > 0)
+                    {
+                        columns.Bound("Functions").ClientTemplate(
+                            "<div class='searchResultFunctionDiv'>" +
+                               "<button id= <#= " + @Model.Columns[Id.Name].ColumnName + "#>  title='Metadata' class='t-button' OnClick='md_OnClick(this)'>MD" +
+                                " </button>" +
+                                "<button id= <#= " + @Model.Columns[Id.Name].ColumnName + "#>  title='Primary Data' class='t-button' OnClick='pd_OnClick(this)'> PD"+
+                               "</button>" +
+                                "<button id= <#= " + @Model.Columns[Id.Name].ColumnName + "#>  title='Datastructure' class='t-button' OnClick='ds_OnClick(this)'>DS</button>" +
+                            "</div>"
+
+                            )
+                            .Width("auto")
+                            .Groupable(false)
+                            .Sortable(false)
+                            .Filterable(false);
+
+                    }
+                    for (int i = 0; i < Model.Columns.Count; i++)
+                    {
+                        DataColumn column = Model.Columns[i];
+                        if (DefaultHeaderList.Where(p => p.Name.Equals(column.ColumnName)).Count() > 0)
+                        {
+
+                            string title;
+
+                            if (column.Caption == "")
+                            {
+                                title = column.ColumnName;
+                            }
+                            else
+                            {
+                                title = column.Caption;
+                            }
+                            
+                            columns.Bound(column.DataType, column.ColumnName)
+                                .Title(title)
+                                ;
+                        }
+                        else
+                        {
+                            columns.Bound(column.DataType, column.ColumnName).Hidden()
+                                .Title(column.Caption)
+                                ;
+                        }
+                    }
+
+                })
+
+            .ClientEvents(events => events
+                        .OnComplete("onComplete")
+                        .OnLoad("refreshGrid")
+                        .OnSubmitChanges("refreshGrid")
+                        .OnRowDataBound("resultGrid_OnRowDataBound")
+                        .OnDataBound("resultGrid_OnDataBound")
+                       )
+            .Pageable(paging =>
+                paging
+                    .Style(pagerStyles)
+                    .PageSize(PageSize)
+                    .Position(GridPagerPosition.Both)
+                    .PageTo(CurrentPage)
+                    )
+            
+            .Sortable()
+            .Filterable()
+            .ColumnContextMenu()
+            .Groupable()
+            
+)
+
+
+@(Html.Telerik().Window()
+
+    .Name("ShowDatastructureWindow")
+    .Visible(false)
+    .Title("Datastructure")
+    .Modal(false)
+    .Width(500)
+    .ClientEvents(events => events
+            .OnActivate("ShowDatastructureWindow_resizeOnRefresh")
+            .OnClose("ShowDatastructureWindow_onClose")
+    )
+    .Buttons(buttons => buttons.Close())
+    .Content(@<text>
+        <div id="showPreviewDS-resultGrid" class="showPreviewDS"  >
+             @Html.Partial("_previewDatastructure", defaultModel)
+        </div>
+    </text>
+    )
+)
+
+<script type="text/javascript">
+
+    function resultGrid_OnRowDataBound(e) {
+
+        //alert(e.item);
+        var obj = e.row.childNodes;
+
+        $.each(obj, function (i) {
+
+            obj[i].title = obj[i].textContent;
+            if (obj[i].textContent.length > 35) {
+                obj[i].textContent = jQuery.trim(obj[i].textContent).substring(0, 35).trim(this) + "...";
+            }
+        });
+    }
+
+    function resultGrid_OnDataBound(e) {
+
+    
+    }
+
+    function ds_OnClick(e) {
+
+        var detailWindow = $("#ShowDatastructureWindow").data("tWindow");
+        $.post('@Url.Action("ShowPreviewDataStructure", "Home", new RouteValueDictionary { { "area", "Search" } })', { datasetID: e.id }, function (response) {
+            $("#showPreviewDS-resultGrid").html(response);
+        })
+
+        detailWindow.center().open();
+    }
+
+    function md_OnClick(e){
+       
+       $.post('@Url.Action("ShowMetadata", "Home", new RouteValueDictionary { { "area", "Search" } })', { datasetID: e.id }, function (response) {
+
+           var win = window.open();
+           with (win.document) {
+               open();
+               write(response);
+               close();
+           }
+        })
+   }
+
+   function pd_OnClick(e) {
+
+       $.post('@Url.Action("ShowPrimaryData", "Home", new RouteValueDictionary { { "area", "Search" } })', { datasetID: e.id }, function (response) {
+
+           var win = window.open();
+           with (win.document) {
+               open();
+               write(response);
+               close();
+           }
+       })
+   }
+
+
+
+    function ShowDatastructureWindow_resizeOnRefresh() {
+        var winContent = $('#ShowDatastructureWindow .t-window-content');
+        winContent.css("height", "");
+    }
+
+    function ShowDatastructureWindow_onClose() {
+        $('.t-state-selected[title*="Datastructure"]').removeClass('t-state-selected');
+    }
+
+    function dataStructureGrid_OnLoad(e) {
+
+        $('.t-grid .t-status').hide();
+    }
+
+</script>

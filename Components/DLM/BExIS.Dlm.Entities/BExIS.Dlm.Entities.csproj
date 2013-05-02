@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{B4E7B1BF-01B4-40AF-8D19-B8F362167261}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>BExIS.Dlm.Entities</RootNamespace>
+    <AssemblyName>BExIS.Dlm.Entities</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DataStructure\AggregateFunction.cs" />
+    <Compile Include="DataStructure\Classifier.cs" />
+    <Compile Include="DataStructure\Constraint.cs" />
+    <Compile Include="DataStructure\ConversionMethod.cs" />
+    <Compile Include="DataStructure\DataType.cs" />
+    <Compile Include="DataStructure\DataView.cs" />
+    <Compile Include="DataStructure\ExtendedProperty.cs" />
+    <Compile Include="DataStructure\GlobalizationInfo.cs" />
+    <Compile Include="DataStructure\Mathodology.cs" />
+    <Compile Include="DataStructure\ObtainingMethod.cs" />
+    <Compile Include="DataStructure\Unit.cs" />
+    <Compile Include="DataStructure\UnStructuredDataStructure.cs" />
+    <Compile Include="DataStructure\StructuredDataStructure.cs" />
+    <Compile Include="DataStructure\DataContainer.cs" />
+    <Compile Include="DataStructure\DataStructure.cs" />
+    <Compile Include="DataStructure\Parameter.cs" />
+    <Compile Include="DataStructure\Usage.cs" />
+    <Compile Include="DataStructure\Variable.cs" />
+    <Compile Include="Data\Amendment.cs" />
+    <Compile Include="Data\ContentDescriptor.cs" />
+    <Compile Include="Data\DataValue.cs" />
+    <Compile Include="Data\ExtendedPropertyValue.cs" />
+    <Compile Include="Data\ParameterValue.cs" />
+    <Compile Include="Data\VariableValue.cs" />
+    <Compile Include="Data\VariableValueCollection.cs" />
+    <Compile Include="Data\Dataset.cs" />
+    <Compile Include="Data\DataTuple.cs" />
+    <Compile Include="Metadata\Metadata.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="MetadataStrcuture\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="DataStructure\DataStructure.cd" />
+    <None Include="Data\Data.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Core\BExIS.Core\BExIS.Core.csproj">
+      <Project>{B446C14F-9DF1-4C3C-A634-E3ADDD05C48A}</Project>
+      <Name>BExIS.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Core\Data\BExIS.Core.Data\BExIS.Core.Data.csproj">
+      <Project>{A60AC05F-8C9A-4EFD-9826-452E6049DA4D}</Project>
+      <Name>BExIS.Core.Data</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

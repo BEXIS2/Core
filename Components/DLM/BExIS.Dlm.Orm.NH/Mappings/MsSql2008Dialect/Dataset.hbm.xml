@@ -1,0 +1,28 @@
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.Data">
+  <class xmlns="urn:nhibernate-mapping-2.2" name="Dataset" table="Datasets">
+    <id name="Id" type="Int64">
+      <column name="Id" />
+      <generator class="native" />
+    </id>
+    <version name="Version" type="Int32">
+      <column name="Version" />
+    </version>
+    <bag cascade="all" name="Tuples" inverse="true" lazy="true" order-by="OrderNo">
+      <key>
+        <column name="DatasetRef" />
+      </key>
+      <one-to-many class="DataTuple" />
+    </bag>
+    <property name="Metadata" type="System.Xml.XmlDocument, System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+      <column name="Metadata" not-null="false" sql-type="xml" />
+    </property>
+    <property name="ExtendedPropertyValues" type="System.Xml.XmlDocument, System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+      <column name="ExtendedPropertyValues" not-null="false" sql-type="xml" />
+    </property>
+  </class>
+
+  <sql-query name="test1">
+    <return alias="dataset" class="BExIS.Dlm.Entities.Data.Dataset"/>
+    select * from Datasets where Metadata.value('(/Metadata/Ownership/LastName)[1]', 'varchar(MAX)') = :ownerName
+  </sql-query>
+</hibernate-mapping>

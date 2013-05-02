@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<entity>
+  <field id="prodName" displayName="Product Name">
+    <value>C# is nothing except garbage!!</value>
+  </field>
+  <field id="prodNo"  displayName="Product No.">
+    <value>32456240</value>
+  </field>
+  <field id="price"  displayName="Price">
+    <value>$30.00</value>
+  </field>
+</entity>

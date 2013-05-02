@@ -1,0 +1,12 @@
+﻿@using BExIS.Core.UI
+@model BExIS.Core.UI.XsltViewModel
+
+@{
+    ViewBag.Title = "Xml Edit";
+}
+
+<h2>Xml Edit</h2>
+
+<div class="xmlResult">
+    @Html.RenderXslt(Model.XsltPath, Model.XmlPath, Model.Params)
+</div>

@@ -1,0 +1,10 @@
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.DataStructure">
+  <subclass name="ValidatorConstraint" extends="Constraint" discriminator-value="VAL" dynamic-update="true">
+
+    <property name="Body" type="String">
+      <column name="Body" />
+    </property>
+
+  </subclass>
+  
+</hibernate-mapping>

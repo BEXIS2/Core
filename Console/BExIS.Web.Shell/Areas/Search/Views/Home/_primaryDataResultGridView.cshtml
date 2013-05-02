@@ -1,0 +1,107 @@
+﻿@model Tuple<DataTable, int, StructuredDataStructure>
+@using System.Data;
+@using BExIS.Dlm.Entities.DataStructure;
+
+@{
+    int id = Model.Item2;
+    StructuredDataStructure dataStructure = Model.Item3;
+
+    GridPagerStyles pagerStyles = GridPagerStyles.PageSizeDropDown;
+    pagerStyles |= GridPagerStyles.NextPreviousAndNumeric;
+    pagerStyles |= GridPagerStyles.Numeric;
+}
+
+@(Html.Telerik().Grid<System.Data.DataRow>()
+        .Name("PrimaryDataResultGrid")
+            .DataBinding(dataBinding => dataBinding
+                .Ajax()
+                .Select("_CustomPrimaryDataBinding", "Home", new RouteValueDictionary { { "area", "Search" },{"datasetID", id} })
+            )
+            .EnableCustomBinding(true)
+                .HtmlAttributes(new { @class = "primaryDataResultGrid" })
+            .ClientEvents(events => events
+                         .OnLoad("PrimaryDataResultGrid_OnLoad")
+                    )
+            .Columns(columns =>
+            {
+                for (int i = 0; i < Model.Item1.Columns.Count; i++)
+                {
+                    DataColumn column = Model.Item1.Columns[i];
+
+                    if (dataStructure.VariableUsages.Where(p => p.Variable.Name.Equals(column.Caption)) != null)
+                    {
+                        StructuredDataVariableUsage sdvu = dataStructure.VariableUsages.Where(p => p.Variable.Name.Equals(column.Caption)).FirstOrDefault();
+                        if (sdvu.Variable.ParameterUsages.Count > 0)
+                        {
+                            // Variable has parameters
+                            columns.Template(
+                                    @<text>                                                        
+                                            <table cellspacing="0" class="data-row">
+                                                <tr>
+                                                    <td>@item[column.ColumnName]</td>
+                                                    @foreach (VariableParameterUsage p in sdvu.Variable.ParameterUsages)
+                                                    {
+                                                        <td>@item[p.Parameter.Name]</td>
+                                                    }
+                                                </tr>
+                                            </table>
+                                        </text>)
+                                    .HeaderTemplate(
+                                        @<text>        
+                                            <table cellspacing="0" class="data-header">
+                                                <tr>
+                                                    <td colspan="2"><strong>@sdvu.Variable.Name</strong></td>
+                                                </tr>
+                                                <tr>
+                                                        <td>Value</td>
+                                                        @foreach (VariableParameterUsage p in sdvu.Variable.ParameterUsages)
+                                                        {
+                                                            <td>@p.Parameter.Name</td>
+                                                        }
+                                                </tr>
+                                            </table>
+                                            </text>)
+                                    .Width(200);
+
+                        }
+                        else
+                            {
+								string title;
+
+                                if (column.Caption == "")
+                                {
+                                    title = column.ColumnName;
+                                }
+                                else
+                                {
+                                    title = column.Caption;
+                                }
+
+                                columns.Bound(column.DataType, column.ColumnName)
+                                    .Title(title)
+                                    ;
+                            }  
+                        
+                  
+                    }
+                }
+
+            })
+
+            .Pageable(paging =>
+                paging.PageSize(5)
+                    .Style(pagerStyles)
+                    .Position(GridPagerPosition.Both)
+                    )
+            .Sortable()
+            .Filterable()
+            .ColumnContextMenu()
+            .Groupable()
+
+            )
+
+<script type="text/javascript">
+    function PrimaryDataResultGrid_OnLoad(e) {
+        $('.t-grid .t-status').hide();
+    }
+</script>

@@ -1,0 +1,47 @@
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.DataStructure">
+  <class xmlns="urn:nhibernate-mapping-2.2" name="Methodology" table="Methodologies" dynamic-update="true">
+    <!-- Mapping BaseEntity properties -->
+    
+    <id name="Id" type="Int64">
+      <column name="Id" />
+      <generator class="native" />
+    </id>
+
+    <version name="VersionNo" type="Int32">
+      <column name="VersionNo" />
+    </version>
+
+    <property name="TimeStamp" type="DateTime">
+      <column name="TimeStamp" />
+    </property>
+
+    <property name="Extra" type="System.Xml.XmlDocument, System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+      <column name="Extra" not-null="false" sql-type="xml" />
+    </property>
+
+    <!-- Mapping Entity properties -->
+    
+    <property name="AppliedStandards" type="String">
+      <column name="AppliedStandards" />
+    </property>
+
+    <property name="Procedure" type="String">
+      <column name="Procedure" />
+    </property>
+
+    <property name="Tolerance" type="String">
+      <column name="Tolerance" />
+    </property>
+
+    <property name="Tools" type="String">
+      <column name="Tools" />
+    </property>
+
+    <set name="DataContainers" inverse="true">
+      <key column="MthodologyRef" not-null="false"/>
+      <one-to-many class="DataContainer"/>
+    </set>
+    
+  </class>
+
+</hibernate-mapping>

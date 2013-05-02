@@ -1,0 +1,10 @@
+﻿@model string
+           
+@if(Model.Equals("A", StringComparison.InvariantCultureIgnoreCase))
+{
+    <text>The time is @DateTime.Now.ToLongTimeString() using format: @Model</text>
+}
+else
+{
+    <text>The time is @DateTime.Now.ToShortTimeString() using format: @Model</text>
+}

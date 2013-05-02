@@ -1,0 +1,82 @@
+@using Microsoft.Web.Helpers;
+@using Telerik.Web.Mvc.UI;
+<!DOCTYPE html>
+<html>
+<head>
+	<title>@ViewBag.Title</title>
+	<link href="@Url.Content("~/Content/Site.css")" rel="stylesheet" type="text/css" />
+    @*<script src="@Url.Content("~/Scripts/jquery-1.7.1.min.js")" type="text/javascript"></script>*@
+    @(Html.Telerik().StyleSheetRegistrar().DefaultGroup(group => group
+                .DefaultPath(Themes.ThemeDirectory) //  "~/Themes/" 
+                .Add("telerik.common.css")
+                .Add("~"+Themes.GetResourcePath("Styles", "telerik." + Themes.CurrentTheme.ToLower() + ".min.css")) 
+                //.Add(Themes.GetResourcePath("Styles", "mycss.css"))
+        // add RTL support when internationalization is enabled
+        .Combined(true)
+        .Compress(true)))
+</head>
+
+<body>
+    <div class="page">
+        <header>
+            <div id="title">
+                @Html.RenderAuto("Header")
+            </div>
+            <div id="logindisplay">
+                @Html.RenderAuto("LogOnStatus")
+                @Html.RenderAuto("ThemeSelector")
+            </div>
+            <nav>
+                @Html.RenderAuto("Menu")
+            </nav>
+        </header>
+     @{Html.Telerik().Splitter().Name("Splitter1")
+      .HtmlAttributes(new { style = "height: 700px;" })
+      .Orientation(SplitterOrientation.Vertical)
+      .Panes(vPanes =>
+      {
+          @*vPanes.Add()
+              .Size("100px")
+              .Collapsible(true)
+              .Content(@<p>Outer splitter : top pane</p>)
+              .Collapsed(true);*@
+    
+              vPanes.Add()
+                  .Scrollable(false)
+                  .Content(Html.Telerik().Splitter().Name("Splitter2")
+                          .HtmlAttributes(new { style = "height: 100%; width: 100%; border: 0; overflow: hidden;" })
+                          .Orientation(SplitterOrientation.Horizontal)
+                          .Panes(hPanes =>
+                          {
+                              if (IsSectionDefined("LeftPane"))
+                              {
+                                  hPanes.Add().Size("250px").Collapsible(true).MaxSize("350px")
+                                  .Content(@<section id="leftPane"> <div id="LeftPaneDiv">@RenderSection("LeftPane", false)</div> </section>);
+                              }
+                              hPanes.Add()  
+                                  .Content(@<section id="contentPane"><div id="ContentPaneDiv">@RenderBody()</div>  </section>);
+                              if (IsSectionDefined("RightPane"))
+                              {      
+                                  hPanes.Add().Size("10%").Collapsible(true).MaxSize("250px")
+                                      .Content(@<section id="rightPane"> <div id="RightPaneDiv">@RenderSection("RightPane", false)</div>  </section>);
+                              }
+                          }).ToString());
+
+            @*  vPanes.Add()
+                  .Size("25%")
+                  .Collapsible(true)
+                  .Content(@<text>  hi </text>);*@
+      })
+      .Render();
+    } 
+    @Html.RenderAuto("Footer")
+    </div>
+    
+    @(Html.Telerik().ScriptRegistrar()
+        .DefaultGroup(group => group.Combined(false).Compress(false)
+            //.DefaultPath("~/Scripts/2012.3.1018")
+            )
+        .jQuery(true)
+      )
+</body>
+</html>

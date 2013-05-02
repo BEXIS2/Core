@@ -1,0 +1,276 @@
+﻿
+/*** _windowCheckBoxList***/
+
+#search_more
+{
+    height:100%;
+        	
+    width:100%;
+    min-width:350px;
+        	
+}
+
+#search_moreCheckBox
+{
+    height:100%;
+    width:100%;       	
+}
+
+
+        
+.search_winLeft
+{
+    position:absolute;
+    float:left;
+    width:50%;
+    margin:0;
+}
+        
+.search_winRight
+{
+    position:relative;
+    width:50%;
+    left:45%;
+    margin:0;
+}
+/**************************/
+/*** _searchHeader***/
+
+.searchHeader
+{
+
+	width:100%;
+	min-width:730px;
+	height:70px;
+	border-bottom-style:inset;
+	border-bottom-width:1px;
+	
+}
+
+
+#search_Components
+{
+	display:inline;
+	position:absolute;
+	left:15%;
+	top:20px;
+	height:40px;
+}
+
+#search_Components #search_TypeDiv
+{
+	display: block;
+	position: relative;
+	left: 153px;
+}
+
+#search_Components .search_Filter
+{
+	display:inline;
+}
+
+#search_Components .search_Source
+{
+	display:inline;
+}
+
+#search_Components .search_HeaderButton
+{
+	display:inline;
+}
+
+#search_Components .search_Source .t-autocomplete
+{
+	width:280px;
+}
+
+
+/**************************/
+/*** _searchBreadCrumb***/
+
+.searchBreadcrumbNavigation
+{
+	min-width:730px;
+}
+
+#breadCrumb
+{
+	margin: 5px 0 10px 0;
+	min-height:20px;
+	border-bottom-style:inset;
+	border-bottom-width:1px;
+}
+
+#breadCrumb .breadCrumbValue
+{
+	display:inline;
+}
+
+#gridView .t-grid table
+{
+	position:relative;
+}
+
+/**************************/
+/*** _searchResultGrid***/
+
+#resultGrid
+{
+	position: absolute;
+	margin-right:10px;
+}
+
+/**************************/
+/*** _searchListView***/
+
+#previe-wrapper h3
+{
+	margin: 0;
+}
+
+.searchContent
+{
+	width:100%;
+	min-width:1000px;
+	height:100%;
+	
+}
+
+#resultContent
+{
+	
+	width:100%;
+	height:100%;
+	
+}
+
+#listView
+{
+	
+	width:800px;
+	height:100px;
+	border: 1px solid green;
+}
+
+#gridView
+{
+	
+	width:800px;
+	height:100px;
+	border: 1px solid red;
+}
+
+#resultList
+{ 
+	width:40%;
+	min-width:400px;
+	float: left;
+	position: relative;
+}
+
+#searchListResultContent
+{
+	display:inline-block;
+}
+
+#searchListResultViewRight
+{
+	display:inline-block;
+	position: absolute;
+	right: 10px;
+
+}
+
+.pre-view
+{
+	height: 100px;
+	text-align:center;
+	font-size:large;
+	/*font-weight:normal;*/
+}
+
+.pre-view a:hover
+{
+	font-weight:bold;
+	color:Black;
+}
+
+.pre-view a.active
+{
+	font-weight:bold;
+}
+
+.resultelement
+{
+	height:164px;
+	padding: 10px 0 0 0;
+}
+
+.showPreviewDS
+{
+	/*border: 1px solid black;*/
+	float: left;
+	position: relative;
+	margin-left:10px;
+	height:100%;
+}
+
+tr .searchResultFunctionDiv button.t-button
+{
+	min-width:10px;
+}
+
+/**************************/
+/*** _searchTreeView***/
+
+div.t-treeview
+{
+	white-space:normal;
+}
+
+#TreeView .t-link
+{
+	/*font-weight:bold;*/
+	max-width:90%;	
+}
+
+#TreeView .more
+{
+	width:auto;	
+}
+
+/**************************/
+/*** _searchProperties***/
+
+#searchProperties
+{
+	margin-top:10px;
+}
+
+
+
+/**************************/
+/*** _ShowPrimaryData***/
+
+.primaryDataResultGrid
+{
+	position:absolute;
+	margin-top:10px;
+}
+
+
+/**************************/
+/*** XLST Metadata***/
+
+.xsltNode
+{
+	font-weight:bold;	
+}
+
+/**************************/
+/***properties***/
+
+.PropertyHeader
+{
+	margin-bottom: 5px;
+}

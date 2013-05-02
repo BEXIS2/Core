@@ -1,0 +1,17 @@
+﻿@{
+    ViewBag.Title = "Metadata";
+}
+
+@Html.ActionLink("Back", "Index", new { target = "_blank", @class = "grid-t-link" })
+
+<br />
+<hr />
+
+@(
+new HtmlString(Session["Metadata"].ToString())
+)
+
+
+<br />
+<hr />
+@Html.ActionLink("Back", "Index", new { target = "_blank", @class = "grid-t-link" })
