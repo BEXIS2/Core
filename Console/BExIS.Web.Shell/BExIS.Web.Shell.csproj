@@ -526,12 +526,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Home\XmlShow.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Views\Home\XmlEdit.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="_AppStart.cshtml" />
   </ItemGroup>
   <ItemGroup>

@@ -165,7 +165,7 @@ namespace BExIS.Web.Shell.Controllers
 
         public ActionResult XmlEdit()
         {
-            string url = Url.Action("About", "Home", new { Area = string.Empty });
+            string url = Url.Action("XmlEditResult", "Test", new { Area = string.Empty });
             XsltViewModel model = new XsltViewModel()
             {
                 XmlPath = Server.MapPath("~/App_Data/data2.xml"),
@@ -177,6 +177,26 @@ namespace BExIS.Web.Shell.Controllers
             };
 
             return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult XmlEditResult()
+        {
+            // here the user has access to the Request.Form object, which contains all the attributes defined in the xsl file and the associated values
+            // I'd prefer to have an xml doc like the original one with new values. It is possible to find relevant fields in the xml based on the Form.Key and update its value
+            // something like XmlDocument doc = createUpdatedDoc(originalfile, Request.Form);
+            string url = Url.Action("Index", "Home", new { Area = string.Empty });
+            XsltViewModel model = new XsltViewModel()
+            {
+                XmlPath = Server.MapPath("~/App_Data/data2.xml"),
+                XsltPath = Server.MapPath("~/App_Data/edit.xsl"),
+                Params = new Dictionary<string, object>()
+                {
+                    {"postBackUrl", url},
+                }
+            };
+            //send the Request.Form object to the view too, so that it can overrides them to show the updated version
+            return View("XmlEdit", model);
         }
 
         public void Add2UnitsAnd1Conversion()
