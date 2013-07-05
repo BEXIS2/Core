@@ -7,25 +7,24 @@ using BExIS.Core.Data;
 
 namespace BExIS.Dlm.Entities.DataStructure
 {
-    public class VariableParameterUsage : BaseEntity
+    public class ParameterUsage : BaseEntity
     {
-        //it is possible to remove ID and use Parameter.Id + Variable.Id as composite key. check at mapping time
+        public virtual DataAttribute DataAttribute { get; set; }
+        public virtual VariableUsage VariableUsage { get; set; }
 
-        public virtual Parameter Parameter { get; set; }
-        public virtual Variable Variable { get; set; }
-
-        public virtual bool IsOptional { get; set; }
+        public virtual bool IsValueOptional { get; set; }
+        public virtual string Label { get; set; }
 
     }
 
-    public class StructuredDataVariableUsage : BaseEntity
+    public class VariableUsage : BaseEntity
     {
-        // it is possible to remove ID and use Parameter.Id + Variable.Id as composite key. check at mapping time
-
-        public virtual Variable Variable { get; set; }
+        public virtual DataAttribute DataAttribute { get; set; }
         public virtual StructuredDataStructure DataStructure { get; set; }
+        public virtual ICollection<ParameterUsage> ParameterUsages { get; set; } // DataAttribute is the controller of this association
 
-        public virtual bool IsOptional { get; set; }
+        public virtual bool IsValueOptional { get; set; }
+        public virtual string Label { get; set; }
 
     }
 }

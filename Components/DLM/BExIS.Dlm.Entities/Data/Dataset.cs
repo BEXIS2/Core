@@ -6,37 +6,36 @@ using BExIS.Core.Data;
 using System.Xml.Linq;
 using System.Xml;
 using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Entities.Administration;
 
 namespace BExIS.Dlm.Entities.Data
 {
-    [AutomaticMaterializationInfo("ExtendedPropertyValues", typeof(List<ExtendedPropertyValue>), "XmlExtendedPropertyValues", typeof(XmlNode))]
-    public class Dataset : BusinessEntity, IBusinessVersionedEntity
+    public enum DatasetStatus
+    {
+            CheckedOut  // dataset version is newly created or checked out for edit. during this time no other user is able to change the dataset
+        ,   CheckedIn   // the version has committed the changes. The whole version and its tuples are freezed then.
+        ,   Deleted     // dataset was committed and then logically deleted. physical delete in not managed here because it deletes the should versions, histories. but a Purge function can be available for db admins
+    }
+
+    /// <summary>
+    /// The dataset points to many versions, but those versions do not have the effective complete tuples because of the design of the database. In order to have a complete version of 
+    /// the dataset, the DatasetManager.GetDatasetLatestVersion or GetDatasetVersion should be called.
+    /// </summary>
+    public class Dataset : BusinessEntity
     {        
         #region Attributes
-
-        /// Mapping metadata and extended propertiees as component, makes them fields of Dataset table! this is good for performance (no need for joins) and 
-        /// also helps to reduce the complixity of content versioning, as there are less associations.
-        public virtual string Title { get; set; }
-        public virtual string Description { get; set; }
-        public virtual XmlDocument Metadata { get; set; } 
-        public virtual XmlDocument XmlExtendedPropertyValues { get; set; } 
+        public virtual DatasetStatus Status { get; set; }
+        public virtual DateTime LastCheckIOTimestamp { get; set; } // the time of last check-in or checkout
+        public virtual string CheckOutUser { get; set; }
 
         #endregion
 
         #region Associations
 
         public virtual DataStructure.DataStructure DataStructure { get; set; }
-        public virtual ICollection<DataTuple> Tuples { get; set; } // if (dataStructure is UnStructuredDataStructure) no tuple can be added to this property
-        // Dont Map for persistence
-        public virtual IList<ExtendedPropertyValue> ExtendedPropertyValues { get; set; }
-
-        /// <summary>
-        /// At least one for unstructured data
-        /// </summary>
-        public virtual ICollection<ContentDescriptor> ContentDescriptors { get; set; }
-
+        public virtual ICollection<DatasetVersion> Versions { get; set; }
+        public virtual ResearchPlan ResearchPlan { get; set; } // it can be null, but check how hibernate deals with nullables
         public virtual ICollection<DataView> Views { get; set; }
-        // Dataset Versions
         #endregion
 
         #region Methods
@@ -48,14 +47,10 @@ namespace BExIS.Dlm.Entities.Data
 
         public Dataset(DataStructure.DataStructure dataStructure)
         {
-            ExtendedPropertyValues = new List<ExtendedPropertyValue>();
-            Tuples = new List<DataTuple>();
-            ContentDescriptors = new List<ContentDescriptor>();
-            Metadata = null; // new XmlElement();// Metadata.Metadata();
+            Status = DatasetStatus.CheckedIn;
+            //Metadata = null; // new XmlElement();// Metadata.Metadata();
             //XmlExtendedPropertyValues = new XmlDocument();
             this.DataStructure = dataStructure;
-            if (dataStructure is UnStructuredDataStructure)
-                Tuples = null;
         }
 
         public override void Validate()
@@ -63,44 +58,6 @@ namespace BExIS.Dlm.Entities.Data
             // check whether type of data structure is unstructured? if yes, at least one ContentDescriptor must be provided
         }
 
-        public virtual void AddTuples(params DataTuple[] tuples)
-        {
-            if (this.DataStructure is UnStructuredDataStructure)
-                throw (new Exception("Unstructured datasets are not allowed to have data tuples!"));
-            foreach (var tuple in tuples)
-            {
-                if (!Tuples.Contains(tuple))
-                {
-                    if (tuple.OrderNo <= 0)
-                        tuple.OrderNo = Tuples.Count() + 1;
-                    tuple.Dataset = this;
-                    Tuples.Add(tuple);
-                }                
-            }
-        }
-
-        public override void Materialize()
-        {
-            base.Materialize();
-            this.Tuples.ToList().ForEach(p => p.Materialize());
-        }
-
-        public override void Dematerialize()
-        {
-            base.Dematerialize();
-            //this.Tuples.ForEach(p => p.Dematerialize());
-            // for test
-            foreach (var item in this.Tuples)
-            {
-                item.Dematerialize();
-            }
-
-        }
-
         #endregion
     }
-
-    //public class DataSetVersion : Dataset
-    //{
-    //}
 }

@@ -11,10 +11,6 @@
       <column name="VersionNo" />
     </version>
 
-    <property name="TimeStamp" type="DateTime">
-      <column name="TimeStamp" />
-    </property>
-
     <property name="Extra" type="System.Xml.XmlDocument, System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
       <column name="Extra" not-null="false" sql-type="xml" />
     </property>
@@ -25,12 +21,12 @@
       <column name="Name" />
     </property>
 
-    <property name="SystemType" type="String">
-      <column name="SystemType" />
-    </property>
-
     <property name="Description" type="String">
       <column name="Description" />
+    </property>
+
+    <property name="SystemType" type="String">
+      <column name="SystemType" />
     </property>
 
     <set name="ApplicableUnits" inverse="true" table="Units_DataTypes" lazy="true" cascade="save-update">
@@ -38,7 +34,7 @@
       <many-to-many column="UnitRef" class="Unit"/>
     </set>
 
-    <!-- Cascase only update. in case of delete set the FK in the data container to null-->
+    <!-- Cascade only update. in case of delete set the FK in the data container to null-->
     <set name="DataContainers" inverse="true"  cascade="save-update">
       <key column="DataTypeRef" not-null="true"/>
       <one-to-many class="DataContainer"/>

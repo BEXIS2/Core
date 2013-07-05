@@ -7,7 +7,7 @@
       <property name="dialect">NHibernate.Dialect.DB2Dialect</property>
       <property name="connection.connection_string">
         Server=localhost;
-        Database=BExIS;
+        Database=BExIS2;
         user ID=standard;
         Password=1;
       </property>

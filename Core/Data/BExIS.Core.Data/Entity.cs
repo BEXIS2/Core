@@ -23,8 +23,8 @@ namespace BExIS.Core.Data
         public virtual Int64 Id { get; set; }
 
         public virtual Int32 VersionNo { get; set; }
-        [Obsolete("Do not use this property, it is going to be deleted", false)]
-        public virtual DateTime TimeStamp { get; set; } // subject to remove
+        //[Obsolete("Do not use this property, it is going to be deleted", false)]
+        //public virtual DateTime TimeStamp { get; set; } // subject to remove
 
         //public virtual EntityVersionInfo VersionInfo { get; set; } // Map as a component // Version item does not work inside component!!!
         public virtual XmlNode Extra { get; set; }

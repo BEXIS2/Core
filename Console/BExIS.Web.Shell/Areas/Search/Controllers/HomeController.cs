@@ -285,7 +285,9 @@ namespace BExIS.Web.Shell.Areas.Search.Controllers
         {
             DatasetManager dm = new DatasetManager();
             Dataset ds = dm.GetDataset(datasetID);
-            DataTable table = SearchUIHelper.ConvertPrimaryDataToDatatable(ds);
+
+            DatasetVersion dsv = dm.GetDatasetLatestVersion(datasetID);
+            DataTable table = SearchUIHelper.ConvertPrimaryDataToDatatable(dsv);
 
             return View(new GridModel(table));
         }
@@ -318,8 +320,8 @@ namespace BExIS.Web.Shell.Areas.Search.Controllers
         public ActionResult ShowMetaData(int datasetID)
         {
             DatasetManager dm = new DatasetManager();
-            Dataset ds = dm.GetDataset(datasetID);
-            Session["Metadata"] = SearchUIHelper.ConvertXmlToHtml(ds.Metadata.InnerXml.ToString(),"UI\\HtmlShowMetadata.xsl");
+            DatasetVersion dsv = dm.GetDatasetLatestVersion(datasetID);
+            Session["Metadata"] = SearchUIHelper.ConvertXmlToHtml(dsv.Metadata.InnerXml.ToString(),"UI\\HtmlShowMetadata.xsl");
 
             return View();
         }
@@ -327,11 +329,11 @@ namespace BExIS.Web.Shell.Areas.Search.Controllers
         public ActionResult ShowPrimaryData(int datasetID)
         {
             DatasetManager dm = new DatasetManager();
-            Dataset ds = dm.GetDataset(datasetID);
-            StructuredDataStructure sds = (StructuredDataStructure)(ds.DataStructure.Self);
+            DatasetVersion dsv = dm.GetDatasetLatestVersion(datasetID);
+            StructuredDataStructure sds = (StructuredDataStructure)(dsv.Dataset.DataStructure.Self);
 
             Tuple<DataTable, int, StructuredDataStructure> m = new Tuple<DataTable, int, StructuredDataStructure>(
-               SearchUIHelper.ConvertPrimaryDataToDatatable(ds),
+               SearchUIHelper.ConvertPrimaryDataToDatatable(dsv),
                datasetID,
                sds
                );

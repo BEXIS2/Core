@@ -111,6 +111,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Administration\ResearchPlanManager.cs" />
     <Compile Include="Data\DatasetManager.cs" />
     <Compile Include="DataStructure\AggregateFunctionManager.cs" />
     <Compile Include="DataStructure\ClassifierManager.cs" />

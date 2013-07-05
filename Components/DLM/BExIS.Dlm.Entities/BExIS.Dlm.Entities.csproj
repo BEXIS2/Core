@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Administration\ResearchPlan.cs" />
     <Compile Include="DataStructure\AggregateFunction.cs" />
     <Compile Include="DataStructure\Classifier.cs" />
     <Compile Include="DataStructure\Constraint.cs" />
@@ -61,12 +62,14 @@
     <Compile Include="DataStructure\DataStructure.cs" />
     <Compile Include="DataStructure\Parameter.cs" />
     <Compile Include="DataStructure\Usage.cs" />
-    <Compile Include="DataStructure\Variable.cs" />
+    <Compile Include="DataStructure\DataAttribute.cs" />
     <Compile Include="Data\Amendment.cs" />
     <Compile Include="Data\ContentDescriptor.cs" />
+    <Compile Include="Data\DatasetVersion.cs" />
     <Compile Include="Data\DataValue.cs" />
     <Compile Include="Data\ExtendedPropertyValue.cs" />
     <Compile Include="Data\ParameterValue.cs" />
+    <Compile Include="Data\DataTupleVersion.cs" />
     <Compile Include="Data\VariableValue.cs" />
     <Compile Include="Data\VariableValueCollection.cs" />
     <Compile Include="Data\Dataset.cs" />
@@ -78,6 +81,7 @@
     <Folder Include="MetadataStrcuture\" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Administration\Administration.cd" />
     <None Include="DataStructure\DataStructure.cd" />
     <None Include="Data\Data.cd" />
   </ItemGroup>

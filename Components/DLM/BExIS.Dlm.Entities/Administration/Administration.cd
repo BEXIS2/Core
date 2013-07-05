@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="BExIS.Dlm.Entities.Administration.ResearchPlan">
+    <Position X="7.25" Y="2.25" Width="1.5" />
+    <AssociationLine Name="DataStructures" Type="BExIS.Dlm.Entities.DataStructure.DataStructure" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="8.75" Y="2.688" />
+        <Point X="10.625" Y="2.688" />
+        <Point X="10.625" Y="4.5" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAEAAAAAAAQACAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Administration\ResearchPlan.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Datasets" />
+      <Property Name="DataStructures" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.DataStructure.DataStructure">
+    <Position X="9.5" Y="4.5" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Properties" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AgAAgAAAAAAgAEAAAAABAQQAAAAAAAAAAAAAAAACAAA=</HashCode>
+      <FileName>DataStructure\DataStructure.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="ResearchPlans" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.Data.Dataset">
+    <Position X="4.75" Y="4.25" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Properties" Collapsed="true" />
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <AssociationLine Name="ResearchPlan" Type="BExIS.Dlm.Entities.Administration.ResearchPlan" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="5.812" Y="4.25" />
+        <Point X="5.812" Y="3.366" />
+        <Point X="7.25" Y="3.366" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AgQAAAAEAACgAAAAAAAAAAAAAAAAAEEAAAAACAAAAAA=</HashCode>
+      <FileName>Data\Dataset.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="ResearchPlan" />
+    </ShowAsAssociation>
+  </Class>
+  <Font Name="Tahoma" Size="8.25" />
+</ClassDiagram>

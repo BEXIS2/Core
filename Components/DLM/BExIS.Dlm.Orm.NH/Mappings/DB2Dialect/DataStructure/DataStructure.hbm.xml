@@ -14,10 +14,6 @@
       <column name="VersionNo" />
     </version>
 
-    <property name="TimeStamp" type="DateTime">
-      <column name="TimeStamp" />
-    </property>
-
     <property name="Extra" type="System.Xml.XmlDocument, System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
       <column name="Extra" not-null="false" sql-type="xml" />
     </property>
@@ -83,6 +79,11 @@
     <set name="Views" table="DataStructures_Views" lazy="true">
       <key column="DataStructureRef"/>
       <many-to-many column="ViewRef" class="DataView"/>
+    </set>
+
+    <set name="ResearchPlans" inverse="true" table="ResearchPlans_DataStructures" lazy="true" cascade="save-update">
+      <key column="DataStructureRef"/>
+      <many-to-many column="ResearchPlanRef" class="BExIS.Dlm.Entities.Administration.ResearchPlan"/>
     </set>
 
   </class>

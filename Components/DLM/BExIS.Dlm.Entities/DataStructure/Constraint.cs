@@ -27,10 +27,10 @@ namespace BExIS.Dlm.Entities.DataStructure
 
         #endregion
 
-        //public virtual DataContainer DataContainer { get; set; }
-        
         #region Associations
 
+        public virtual DataContainer DataContainer { get; set; }
+        
         #endregion
 
         #region Mathods
@@ -89,7 +89,7 @@ namespace BExIS.Dlm.Entities.DataStructure
     {
         #region Attributes
 
-        public virtual string Body { get; set; } // maybe it is possible to wiite another property of type Func<string, bool> (or Expression) on top of this, to change the string to an executable equivalent
+        public virtual string Body { get; set; } // maybe it is possible to write another property of type Func<string, bool> (or Expression) on top of this, to change the string to an executable equivalent
 
         #endregion
 
@@ -99,6 +99,11 @@ namespace BExIS.Dlm.Entities.DataStructure
 
         #region Mathods
 
+        public virtual bool Evaulate(object data)
+        {
+            // use dynamic link library, Flee or DLR to conver the Body to an executable code, pass data to it and return the result
+            return false;
+        }
         #endregion
 
     }

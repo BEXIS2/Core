@@ -15,7 +15,7 @@ namespace BExIS.Dlm.Entities.Data
         [XmlIgnore]
         public DataTuple Tuple { get; set; } // reference to the containing tuple
 
-        public Int64 VariableId { get; set; } // when variable is not loaded!
+        public Int64 VariableUsageId { get; set; } // when variable is not loaded!
 
         #endregion
 
@@ -24,19 +24,34 @@ namespace BExIS.Dlm.Entities.Data
         public IList<ParameterValue> ParameterValues { get; set; }
 
         [XmlIgnore]
-        public Variable Variable
+        public DataAttribute DataAttribute
         {
             get
             {
-                if (this.Tuple.Dataset.DataStructure.Self is StructuredDataStructure)
+                if (this.Tuple.DatasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
                 {
-                    Variable v = (this.Tuple.Dataset.DataStructure.Self as StructuredDataStructure).VariableUsages.Where(p => p.Variable.Id.Equals(this.VariableId)).Select(p=>p.Variable).FirstOrDefault();
-                    return (v);
+                    return (this.Usage.DataAttribute);
                 }
                 return (null);
             }
         }
-        
+
+        [XmlIgnore]
+        public VariableUsage Usage
+        {
+            get
+            {
+                if (this.Tuple.DatasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
+                {
+                    VariableUsage u = (this.Tuple.DatasetVersion.Dataset.DataStructure.Self as StructuredDataStructure).VariableUsages
+                        .Where(p => p.Id.Equals(this.VariableUsageId))
+                        .Select(p => p).FirstOrDefault();
+                    return (u);
+                }
+                return (null);
+            }
+        }
+
         #endregion
 
         #region Mathods

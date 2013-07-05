@@ -49,6 +49,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Mappings\DB2Dialect\Administration\ResearchPlan.hbm.xml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Mappings\DB2Dialect\BaseEntityProperties.xml" />
     <Content Include="Mappings\DB2Dialect\DataStructure\DataView.hbm.xml">
       <SubType>Designer</SubType>
@@ -58,7 +62,7 @@
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Mappings\DB2Dialect\DataStructure\StructuredDataVariableUsage.hbm.xml">
+    <Content Include="Mappings\DB2Dialect\DataStructure\VariableUsage.hbm.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Mappings\DB2Dialect\DataStructure\DataStructure.StructuredDataStructure.hbm.xml">
@@ -73,14 +77,10 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Mappings\DB2Dialect\DataStructure\VariableParameterUsage.hbm.xml">
+    <Content Include="Mappings\DB2Dialect\DataStructure\ParameterUsage.hbm.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Mappings\DB2Dialect\DataStructure\DataContainer.Parameter.hbm.xml">
-      <SubType>Designer</SubType>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Mappings\DB2Dialect\DataStructure\DataContainer.Variable.hbm.xml">
+    <Content Include="Mappings\DB2Dialect\DataStructure\DataContainer.DataAttribute.hbm.xml">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -138,10 +138,17 @@
     <EmbeddedResource Include="Mappings\MsSql2008Dialect\Dataset.hbm.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
-    <Content Include="Mappings\DB2Dialect\Data\DataTuple.hbm.xml">
+    <Content Include="Mappings\DB2Dialect\Data\DataTupleVersion.hbm.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Mappings\DB2Dialect\Data\Dataset.hbm.xml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Mappings\DB2Dialect\Data\DataTuple.hbm.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Mappings\DB2Dialect\Data\DatasetVersion.hbm.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>

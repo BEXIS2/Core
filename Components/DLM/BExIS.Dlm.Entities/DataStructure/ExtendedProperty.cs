@@ -18,7 +18,33 @@ namespace BExIS.Dlm.Entities.DataStructure
         #region Associations
 
         public virtual DataContainer DataContainer { get; set; }
-        public virtual ICollection<Constraint> Constraints { get; set; }
+
+        // Its not needed, make the database more complex, Javad/ 03.07.13
+        //public virtual ICollection<Constraint> Constraints { get; set; }
+
+        //// not to map
+        //public IList<DomainValueConstraint> DomainValues
+        //{
+        //    get
+        //    {
+        //        return (this.Constraints.Distinct()
+        //                    .Where(p => p.GetType().Equals(typeof(DomainValueConstraint)))
+        //                    .ToList() as IList<DomainValueConstraint>
+        //                );
+        //    }
+        //}
+
+        //// not to map
+        //public IList<ValidatorConstraint> Validators
+        //{
+        //    get
+        //    {
+        //        return (this.Constraints.Distinct()
+        //                    .Where(p => p.GetType().Equals(typeof(ValidatorConstraint)))
+        //                    .ToList() as IList<ValidatorConstraint>
+        //                );
+        //    }
+        //}
 
         #endregion
 
@@ -26,7 +52,7 @@ namespace BExIS.Dlm.Entities.DataStructure
 
         public ExtendedProperty()
         {
-            Constraints = new List<Constraint>();
+            //Constraints = new List<Constraint>();
         }
         
         #endregion

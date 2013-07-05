@@ -4,7 +4,7 @@
 -->
   
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.Data">
-  <class xmlns="urn:nhibernate-mapping-2.2" name="Dataset" table="Datasets">
+  <class xmlns="urn:nhibernate-mapping-2.2" name="DatasetVersion" table="DatasetVersions">
     <!-- Mapping BaseEntity properties -->
     <id name="Id" type="Int64">
       <column name="Id" />
@@ -52,42 +52,39 @@
     
     <!-- Mapping Dataset properties -->
 
-    <property name="Status" type="BExIS.Dlm.Entities.Data.DatasetStatus, BExIS.Dlm.Entities">
-      <column name="Status" />
+    <property name="ChangeDescription" type="string">
+      <column name="ChangeDescription" />
+    </property>
+
+    <property name="Timestamp" type="DateTime">
+      <column name="Timestamp" />
+    </property>
+
+    <property name="Metadata" type="System.Xml.XmlDocument, System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+      <column name="Metadata" not-null="false" sql-type="xml" />
     </property>
     
-    <property name="LastCheckIOTimestamp" type="DateTime">
-      <column name="LastCheckIOTimestamp" />
+    <property name="XmlExtendedPropertyValues" type="System.Xml.XmlDocument, System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+      <column name="XmlExtendedPropertyValues" not-null="false" sql-type="xml" />
     </property>
-    
-    <property name="CheckOutUser" type="string">
-      <column name="CheckOutUser" />
-    </property>
-    
+
     <!-- Mapping entity associations -->
-    <many-to-one name="DataStructure" class="BExIS.Dlm.Entities.DataStructure.DataStructure" not-null="true" column="DataStructureRef"/>
+    <many-to-one name="Dataset" class="BExIS.Dlm.Entities.Data.Dataset" not-null="true" column="DatasetRef"/>
     
-    <set cascade="all-delete-orphan" name="Versions" inverse="true" lazy="true" order-by="OrderNo">
+    <set cascade="all-delete-orphan" name="PriliminaryTuples" inverse="true" lazy="true" order-by="OrderNo">
       <key>
-        <column name="DatasetRef" />
+        <column name="DatasetVersionRef" />
       </key>
-      <one-to-many class="DatasetVersion" />
+      <one-to-many class="DataTuple" />
     </set>
 
-    <many-to-one name="ResearchPlan" class="BExIS.Dlm.Entities.Administration.ResearchPlan" not-null="true" column="ResearchPlanRef"/>
-
-    <set cascade="all" name="Views" inverse="true" lazy="true">
+    <set cascade="all" name="ContentDescriptors" inverse="true" lazy="true" order-by="OrderNo">
       <key>
-        <column name="DatasetRef" />
+        <column name="DatasetVersionRef" />
       </key>
-      <one-to-many class="BExIS.Dlm.Entities.DataStructure.DataView" />
+      <one-to-many class="ContentDescriptor" />
     </set>
 
   </class>
 
-  <sql-query name="test1">
-    <return alias="dataset" class="BExIS.Dlm.Entities.Data.Dataset"/>
-    select * from Datasets where xmlexists('$c/Metadata/Ownership[LastName= "Chamanara"]' passing Datasets.Metadata as "c")
-  </sql-query>
-  
 </hibernate-mapping>

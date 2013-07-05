@@ -18,26 +18,25 @@ namespace BExIS.Dlm.Entities.Data
         #region Associations
 
         [XmlIgnore]
-        public Dataset Dataset { get; set; }
+        public DatasetVersion DatasetVersion { get; set; }
 
         [XmlIgnore]
         public ExtendedProperty ExtendedProperty //{ get; set; } // it should be connected to the real extended property object
         {
             get
             {
-                if (this.Dataset.DataStructure.Self is StructuredDataStructure)
+                if (this.DatasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
                 {
-                    StructuredDataStructure sds = (this.Dataset.DataStructure.Self as StructuredDataStructure);
+                    StructuredDataStructure sds = (this.DatasetVersion.Dataset.DataStructure.Self as StructuredDataStructure);
                     ExtendedProperty ep = (from vu in sds.VariableUsages
-                                          let v = vu.Variable
-                                          from exp in v.ExtendedProperties
+                                          let da = vu.DataAttribute
+                                          from exp in da.ExtendedProperties
                                           where exp.Id == ExtendedPropertyId
                                           select exp).FirstOrDefault();
                     if(ep == null)  ep = (from vu in sds.VariableUsages
-                                           let v = vu.Variable
-                                           from pu in v.ParameterUsages
-                                           let p = pu.Parameter
-                                           from exp in p.ExtendedProperties
+                                           from pu in vu.ParameterUsages  
+                                           let da = pu.DataAttribute
+                                           from exp in da.ExtendedProperties
                                            where exp.Id == ExtendedPropertyId
                                            select exp).FirstOrDefault();
                                               

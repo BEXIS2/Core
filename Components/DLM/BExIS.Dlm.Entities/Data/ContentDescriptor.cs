@@ -18,8 +18,8 @@ namespace BExIS.Dlm.Entities.Data
         #endregion
         
         #region Associations
-        
-        public virtual Dataset Dataset { get; set; } // inverse map
+
+        public virtual DatasetVersion DatasetVersion { get; set; } // inverse map
 
         #endregion
 

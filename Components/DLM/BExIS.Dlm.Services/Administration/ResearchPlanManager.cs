@@ -1,0 +1,181 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics.Contracts;
+using System.Linq;
+using System.Text;
+using BExIS.Core.Persistence.Api;
+using BExIS.Dlm.Entities.Administration;
+using DataStructureEntity = BExIS.Dlm.Entities.DataStructure.DataStructure;
+
+namespace BExIS.Dlm.Services.Administration
+{
+    public sealed class ResearchPlanManager
+    {
+          // provide read only repos for the whole aggregate area
+        public IReadOnlyRepository<ResearchPlan> Repo { get; private set; }
+
+        public ResearchPlanManager() //: base(false, true, true)
+        {
+            IUnitOfWork uow = this.GetUnitOfWork();
+            this.Repo = uow.GetReadOnlyRepository<ResearchPlan>();
+        }
+
+        #region Data Readers
+
+
+        #endregion
+
+        #region ResearchPlan
+
+        public ResearchPlan Create(string title, string description)
+        {
+            Contract.Requires(!string.IsNullOrWhiteSpace(title));
+
+            Contract.Ensures(Contract.Result<ResearchPlan>() != null && Contract.Result<ResearchPlan>().Id >= 0);
+
+            ResearchPlan e = new ResearchPlan()
+            {
+                Title = title,
+                Description = description,
+            };
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<ResearchPlan> repo = uow.GetRepository<ResearchPlan>();
+                repo.Put(e);
+                uow.Commit();
+            }
+            return (e);            
+        }
+
+        public bool Delete(ResearchPlan entity)
+        {
+            Contract.Requires(entity != null);
+            Contract.Requires(entity.Id >= 0);
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<ResearchPlan> repo = uow.GetRepository<ResearchPlan>();
+                
+                entity = repo.Reload(entity);
+                
+                // delete all links to other entities
+                
+                // remove all associations between current unit and the conversions
+                entity.Datasets.ToList().ForEach(a => a.ResearchPlan = null);
+                //Data structures, metadata structures, execution units, etc
+
+                //delete the unit
+                repo.Delete(entity);
+
+                // commit changes
+                uow.Commit();
+            }
+            // if any problem was detected during the commit, an exception will be thrown!
+            return (true);
+        }
+
+        public bool Delete(IEnumerable<ResearchPlan> entities)
+        {
+            Contract.Requires(entities != null);
+            Contract.Requires(Contract.ForAll(entities, (ResearchPlan e) => e != null));
+            Contract.Requires(Contract.ForAll(entities, (ResearchPlan e) => e.Id >= 0));
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<ResearchPlan> repo = uow.GetRepository<ResearchPlan>();                
+
+                foreach (var entity in entities)
+                {
+                    var latest = repo.Reload(entity);
+
+                    // delete all conversions that are somehow connected to current unit
+                  
+
+                    // remove all associations between current unit and the conversions
+                    latest.Datasets.ToList().ForEach(a => a.ResearchPlan = null);
+                  
+                    //delete the unit
+                    repo.Delete(latest);
+                }
+                // commit changes
+                uow.Commit();
+            }
+            return (true);
+        }
+
+        public ResearchPlan Update(ResearchPlan entity)
+        {
+            Contract.Requires(entity != null, "provided entity can not be null");
+            Contract.Requires(entity.Id >= 0, "provided entity must have a permant ID");
+
+            Contract.Ensures(Contract.Result<ResearchPlan>() != null && Contract.Result<ResearchPlan>().Id >= 0, "No entity is persisted!");
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<ResearchPlan> repo = uow.GetRepository<ResearchPlan>();
+                repo.Put(entity); // Merge is required here!!!!
+                uow.Commit();
+            }
+            return (entity);    
+        }
+
+        #endregion
+
+        #region Associations
+
+        public bool AddDataStructure(ResearchPlan end1, DataStructureEntity end2)
+        {
+            Contract.Requires(end1 != null && end1.Id >= 0);
+            Contract.Requires(end2 != null && end2.Id >= 0);
+
+            bool result = false;
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<ResearchPlan> repo = uow.GetRepository<ResearchPlan>();
+
+                end1 = repo.Reload(end1);
+                repo.LoadIfNot(end1.DataStructures);
+                if (!end1.DataStructures.Contains(end2))
+                {
+                    end1.DataStructures.Add(end2);
+                    end2.ResearchPlans.Add(end1);
+                    uow.Commit();
+                    result = true;
+                }
+            }
+            return (result);
+        }
+
+        public bool RemoveDataStructure(ResearchPlan end1, DataStructureEntity end2)
+        {
+            Contract.Requires(end1 != null && end1.Id >= 0);
+            Contract.Requires(end2 != null && end2.Id >= 0);
+
+            bool result = false;
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<ResearchPlan> end1Repo = uow.GetRepository<ResearchPlan>();
+                IRepository<DataStructureEntity> end2Repo = uow.GetRepository<DataStructureEntity>();
+
+                end1 = end1Repo.Reload(end1);
+                end1Repo.LoadIfNot(end1.DataStructures); 
+                
+                end2 = end2Repo.Reload(end2);
+                end2Repo.LoadIfNot(end2.ResearchPlans);
+
+                if (end1.DataStructures.Contains(end2) || end2.ResearchPlans.Contains(end1))
+                {
+                    end1.DataStructures.Remove(end2);
+                    end2.ResearchPlans.Remove(end1);
+                    uow.Commit();
+                    result = true;
+                }
+            }
+            return (result);
+        }
+
+        #endregion
+
+    }
+}

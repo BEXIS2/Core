@@ -11,10 +11,6 @@
       <column name="VersionNo" />
     </version>
 
-    <property name="TimeStamp" type="DateTime">
-      <column name="TimeStamp" />
-    </property>
-
     <property name="Extra" type="System.Xml.XmlDocument, System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
       <column name="Extra" not-null="false" sql-type="xml" />
     </property>
@@ -31,10 +27,10 @@
 
     <many-to-one name="DataContainer" class="DataContainer" not-null="true" column="DataContainerRef"/>
 
-    <set name="Constraints" cascade="all" inverse="true">
+    <!--<set name="Constraints" cascade="all" inverse="true">
       <key column="ExtendedPropertyRef" not-null="false"/>
       <one-to-many class="Constraint"/>
-    </set>
+    </set>-->
 
   </class>
 

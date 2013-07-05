@@ -17,7 +17,7 @@ namespace BExIS.Dlm.Services.DataStructure
             IUnitOfWork uow = this.GetUnitOfWork();
             this.SdsRepo = uow.GetReadOnlyRepository<StructuredDataStructure>();
             this.UnSdsRepo = uow.GetReadOnlyRepository<UnStructuredDataStructure>();
-            this.UsageRepo = uow.GetReadOnlyRepository<StructuredDataVariableUsage>();
+            this.UsageRepo = uow.GetReadOnlyRepository<VariableUsage>();
         }
 
         #region Data Readers
@@ -25,13 +25,13 @@ namespace BExIS.Dlm.Services.DataStructure
         // provide read only repos for the whole aggregate area
         public IReadOnlyRepository<StructuredDataStructure> SdsRepo { get; private set; }
         public IReadOnlyRepository<UnStructuredDataStructure> UnSdsRepo { get; private set; }
-        public IReadOnlyRepository<StructuredDataVariableUsage> UsageRepo { get; private set; }
+        public IReadOnlyRepository<VariableUsage> UsageRepo { get; private set; }
 
         #endregion
 
         #region StructuredDataStructure
 
-        public StructuredDataStructure CreateStructuredDataStructure(string name, string description, string xsdFileName, string xslFileName, DataStructureCategory indexerType, Parameter indexer)
+        public StructuredDataStructure CreateStructuredDataStructure(string name, string description, string xsdFileName, string xslFileName, DataStructureCategory indexerType, VariableUsage indexer = null)
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(name));
             Contract.Requires(indexerType != DataStructureCategory.Generic ? (indexer != null) : true);            
@@ -44,7 +44,7 @@ namespace BExIS.Dlm.Services.DataStructure
                 XsdFileName = xsdFileName,
                 XslFileName = xslFileName,
                 IndexerType = indexerType,
-                Indexer = indexer,
+                // Indexer = indexer, // how its possible to have the indexer before assigning variable to the structure
             };
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
@@ -189,54 +189,104 @@ namespace BExIS.Dlm.Services.DataStructure
 
         #region Associations
 
-        public StructuredDataVariableUsage AddVariableUsage(StructuredDataStructure dataStructure, Variable variable, bool isOptional)
+        public VariableUsage AddVariableUsage(StructuredDataStructure dataStructure, DataAttribute dataAttribute, bool isValueOptional, string label)
         {
             Contract.Requires(dataStructure != null && dataStructure.Id >= 0);
-            Contract.Requires(variable != null && variable.Id >= 0);
-            Contract.Ensures(Contract.Result<StructuredDataVariableUsage>() != null && Contract.Result<StructuredDataVariableUsage>().Id >= 0);
+            Contract.Requires(dataAttribute != null && dataAttribute.Id >= 0);
+            Contract.Ensures(Contract.Result<VariableUsage>() != null && Contract.Result<VariableUsage>().Id >= 0);
 
             SdsRepo.Reload(dataStructure);
             SdsRepo.LoadIfNot(dataStructure.VariableUsages);
             int count = (   from v in dataStructure.VariableUsages
-                            where v.Variable.Id.Equals(variable.Id)
+                            where v.DataAttribute.Id.Equals(dataAttribute.Id)
                             select v
                         )
                         .Count();
 
-            if (count > 0)
-                throw new Exception(string.Format("There is a usage between data structure {0} and variable {1}", dataStructure.Id, variable.Id));
+            //if (count > 0)
+            //    throw new Exception(string.Format("Data attribute {0} is already used as a variable in data structure {0}", dataAttribute.Id, dataStructure.Id));
 
-            StructuredDataVariableUsage usage = new StructuredDataVariableUsage()
+            VariableUsage usage = new VariableUsage()
             {
                 DataStructure = dataStructure,
-                Variable = variable,
-                IsOptional = isOptional,
+                DataAttribute = dataAttribute,
+                IsValueOptional = isValueOptional,
+                // if there is no label provided, use the data attribute name and a sequence number caculated by the number of occurances of that data attribute in the current structure
+                Label = !string.IsNullOrWhiteSpace(label)? label: (count <=0 ? dataAttribute.Name: string.Format("{0} ({1})", dataAttribute.Name, count)),
             };
-            variable.StructuredDataUsages.Add(usage);
+            dataAttribute.UsagesAsVariable.Add(usage);
             dataStructure.VariableUsages.Add(usage);
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
-                IRepository<StructuredDataVariableUsage> repo = uow.GetRepository<StructuredDataVariableUsage>();
+                IRepository<VariableUsage> repo = uow.GetRepository<VariableUsage>();
                 repo.Put(usage);
                 uow.Commit();
             }
             return (usage);
         }
 
-        public void RemoveVariableUsage(StructuredDataStructure dataStructure, Variable variable)
+        public void RemoveVariableUsage(VariableUsage usage)
         {
+            Contract.Requires(usage != null && usage.Id >= 0);
+
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
-                IRepository<StructuredDataVariableUsage> repo = uow.GetRepository<StructuredDataVariableUsage>();
-                StructuredDataVariableUsage usage = repo.Get(p=> (p.Variable == variable || p.Variable.Id.Equals(variable.Id))
-                                                            && (p.DataStructure == dataStructure || p.DataStructure.Id.Equals(dataStructure.Indexer))
-                                                            ).FirstOrDefault();
-                if (usage != null)
-                {
-                    repo.Delete(usage);
-                    uow.Commit();
-                }
+                IRepository<VariableUsage> repo = uow.GetRepository<VariableUsage>();
+                IRepository<ParameterUsage> paramRepo = uow.GetRepository<ParameterUsage>();
+                repo.Delete(usage);
+                paramRepo.Delete(usage.ParameterUsages.ToList());
+                uow.Commit();
             }            
+        }
+
+        public ParameterUsage AddParameterUsage(VariableUsage variableUsage, DataAttribute dataAttribute, bool isValueOptional, string label)
+        {
+            Contract.Requires(variableUsage != null && variableUsage.DataAttribute.Id >= 0);
+            Contract.Requires(dataAttribute != null && dataAttribute.Id >= 0);
+            Contract.Ensures(Contract.Result<ParameterUsage>() != null && Contract.Result<ParameterUsage>().Id >= 0);
+
+            UsageRepo.Reload(variableUsage);
+            UsageRepo.LoadIfNot(variableUsage.ParameterUsages);
+            int count = (from pu in variableUsage.ParameterUsages
+                         where pu.DataAttribute.Id.Equals(dataAttribute.Id)
+                            select pu
+                        )
+                        .Count();
+
+            // supprot multiple use of a data attribute as a paramater ina variable context
+            //if (count > 0)
+            //    throw new Exception(string.Format("Data attribute {0} is already used as a parameter in conjunction with variable {1} in data structure {2}", dataAttribute.Id, variableUsage.DataAttribute.Id, variableUsage.DataStructure.Id));
+
+            ParameterUsage usage = new ParameterUsage()
+            {
+                DataAttribute = dataAttribute,
+                VariableUsage = variableUsage,
+                IsValueOptional = isValueOptional,
+                // if there is no label provided, use the data attribute name and a sequence number caculated by the number of occurances of that data attribute in the current usage
+                Label = !string.IsNullOrWhiteSpace(label) ? label : (count <= 0 ? dataAttribute.Name : string.Format("{0} ({1})", dataAttribute.Name, count)),
+
+            };
+            dataAttribute.UsagesAsParameter.Add(usage);
+            variableUsage.ParameterUsages.Add(usage);
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<ParameterUsage> repo = uow.GetRepository<ParameterUsage>();
+                repo.Put(usage);
+                uow.Commit();
+            }
+            return (usage);
+        }
+
+        public void RemoveParameterUsage(ParameterUsage usage)
+        {
+            Contract.Requires(usage != null && usage.Id >= 0);
+            
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<ParameterUsage> repo = uow.GetRepository<ParameterUsage>();
+                repo.Delete(usage);
+                uow.Commit();
+            }
         }
 
         public void AddDataView(BExIS.Dlm.Entities.DataStructure.StructuredDataStructure dataStructure, DataView view)

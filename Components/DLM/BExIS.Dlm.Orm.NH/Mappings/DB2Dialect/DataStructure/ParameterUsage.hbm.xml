@@ -1,5 +1,5 @@
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.DataStructure">
-  <class xmlns="urn:nhibernate-mapping-2.2" name="StructuredDataVariableUsage" table="StructuredDataVariableUsages" dynamic-update="true">
+  <class xmlns="urn:nhibernate-mapping-2.2" name="ParameterUsage" table="ParameterUsages" dynamic-update="true">
     <!-- Mapping BaseEntity properties -->
     
     <id name="Id" type="Int64">
@@ -11,23 +11,23 @@
       <column name="VersionNo" />
     </version>
 
-    <property name="TimeStamp" type="DateTime">
-      <column name="TimeStamp" />
-    </property>
-
     <property name="Extra" type="System.Xml.XmlDocument, System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
       <column name="Extra" not-null="false" sql-type="xml" />
     </property>
 
     <!-- Mapping Entity properties -->
     
-    <property name="IsOptional" type="Boolean">
-      <column name="IsOptional" />
+    <property name="IsValueOptional" type="Boolean">
+      <column name="IsValueOptional" />
     </property>
 
-    <many-to-one name="Variable" class="Variable" not-null="false" column="VariableRef"/>
+    <property name="Label" type="String">
+      <column name="Label" />
+    </property>
 
-    <many-to-one name="DataStructure" class="StructuredDataStructure" not-null="false" column="DataStructureRef"/>
+    <many-to-one name="VariableUsage" class="VariableUsage" not-null="false" column="VariableUsageRef"/>
+
+    <many-to-one name="DataAttribute" class="DataAttribute" not-null="false" column="DataAttributeRef"/>
     
   </class>
 

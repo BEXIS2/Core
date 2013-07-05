@@ -11,10 +11,6 @@
       <column name="VersionNo" />
     </version>
 
-    <property name="TimeStamp" type="DateTime">
-      <column name="TimeStamp" />
-    </property>
-
     <property name="Extra" type="System.Xml.XmlDocument, System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
       <column name="Extra" not-null="false" sql-type="xml" />
     </property>
@@ -37,7 +33,7 @@
       <column name="URI" />
     </property>
 
-    <many-to-one class="Dataset" name="Dataset" column="DatasetRef">      
+    <many-to-one class="DatasetVersion" name="DatasetVersion" column="DatasetVersionRef">      
     </many-to-one>      
     
   </class>

@@ -15,39 +15,40 @@ namespace BExIS.Dlm.Services.DataStructure
         public DataContainerManager()
         {
             IUnitOfWork uow = this.GetUnitOfWork();
-            this.VariableRepo = uow.GetReadOnlyRepository<Variable>();
-            this.ParameterRepo = uow.GetReadOnlyRepository<Parameter>();
+            this.DataAttributeRepo = uow.GetReadOnlyRepository<DataAttribute>();
             this.ExtendedPropertyRepo = uow.GetReadOnlyRepository<ExtendedProperty>();
-            this.UsageRepo = uow.GetReadOnlyRepository<VariableParameterUsage>();
+            this.UsageRepo = uow.GetReadOnlyRepository<ParameterUsage>();
         }
 
         #region Data Readers
 
         // provide read only repos for the whole aggregate area
-        public IReadOnlyRepository<Variable> VariableRepo { get; private set; }
-        public IReadOnlyRepository<Parameter> ParameterRepo { get; private set; }
+        public IReadOnlyRepository<DataAttribute> DataAttributeRepo { get; private set; }
         public IReadOnlyRepository<ExtendedProperty> ExtendedPropertyRepo { get; private set; }
-        public IReadOnlyRepository<VariableParameterUsage> UsageRepo { get; private set; }
+        public IReadOnlyRepository<ParameterUsage> UsageRepo { get; private set; }
 
         #endregion
 
-        #region Variable
+        #region DataAttribute
 
-        public Variable CreateVariable(string shortName, string name, string description, bool isMultiValue, MeasurementScale measurementScale, DataContainerType containerType, string entitySelectionPredicate,
+        public DataAttribute CreateDataAttribute(string shortName, string name, string description, bool isMultiValue, bool isBuiltIn, string owner, MeasurementScale measurementScale, DataContainerType containerType, string entitySelectionPredicate,
             DataType dataType, Unit unit, Methodology methodology, ICollection<AggregateFunction> functions, ICollection<GlobalizationInfo> globalizationInfos, ICollection<Constraint> constraints,
             ICollection<ExtendedProperty> extendedProperies
             )
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(shortName));
+            Contract.Requires(!string.IsNullOrWhiteSpace(owner));
             Contract.Requires(dataType != null && dataType.Id >= 0);
 
-            Contract.Ensures(Contract.Result<Variable>() != null && Contract.Result<Variable>().Id >= 0);
-            Variable e = new Variable()
+            Contract.Ensures(Contract.Result<DataAttribute>() != null && Contract.Result<DataAttribute>().Id >= 0);
+            DataAttribute e = new DataAttribute()
             {
                 ShortName = shortName,
                 Name = name,
                 Description = description,
                 IsMultiValue = isMultiValue,
+                IsBuiltIn = isBuiltIn,
+                Owner = owner,
                 MeasurementScale = measurementScale,
                 ContainerType = containerType,
                 EntitySelectionPredicate = entitySelectionPredicate,
@@ -62,33 +63,33 @@ namespace BExIS.Dlm.Services.DataStructure
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
-                IRepository<Variable> repo = uow.GetRepository<Variable>();
+                IRepository<DataAttribute> repo = uow.GetRepository<DataAttribute>();
                 repo.Put(e);
                 uow.Commit();
             }
             return (e);            
         }
 
-        public bool DeleteVariable(Variable entity)
+        public bool DeleteVariable(DataAttribute entity)
         {
             Contract.Requires(entity != null);
             Contract.Requires(entity.Id >= 0);
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
-                IRepository<Variable> repo = uow.GetRepository<Variable>();
+                IRepository<DataAttribute> repo = uow.GetRepository<DataAttribute>();
                 IRepository<ExtendedProperty> exRepo = uow.GetRepository<ExtendedProperty>();
-                IRepository<VariableParameterUsage> vpuRepo = uow.GetRepository<VariableParameterUsage>();
+                IRepository<ParameterUsage> vpuRepo = uow.GetRepository<ParameterUsage>();
 
                 entity = repo.Reload(entity);
                 repo.LoadIfNot(entity.ExtendedProperties);
-                repo.LoadIfNot(entity.ParameterUsages);
+                //repo.LoadIfNot(entity.ParameterUsages);
                 
                 exRepo.Delete(entity.ExtendedProperties);
                 entity.ExtendedProperties.Clear();
 
-                vpuRepo.Delete(entity.ParameterUsages);
-                entity.ParameterUsages.Clear();
+                //vpuRepo.Delete(entity.ParameterUsages);
+                //entity.ParameterUsages.Clear();
 
                 repo.Delete(entity);
 
@@ -98,29 +99,29 @@ namespace BExIS.Dlm.Services.DataStructure
             return (true);
         }
 
-        public bool DeleteVariable(IEnumerable<Variable> entities)
+        public bool DeleteVariable(IEnumerable<DataAttribute> entities)
         {
             Contract.Requires(entities != null);
-            Contract.Requires(Contract.ForAll(entities, (Variable e) => e != null));
-            Contract.Requires(Contract.ForAll(entities, (Variable e) => e.Id >= 0));
+            Contract.Requires(Contract.ForAll(entities, (DataAttribute e) => e != null));
+            Contract.Requires(Contract.ForAll(entities, (DataAttribute e) => e.Id >= 0));
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
-                IRepository<Variable> repo = uow.GetRepository<Variable>();
+                IRepository<DataAttribute> repo = uow.GetRepository<DataAttribute>();
                 IRepository<ExtendedProperty> exRepo = uow.GetRepository<ExtendedProperty>();
-                IRepository<VariableParameterUsage> vpuRepo = uow.GetRepository<VariableParameterUsage>();
+                IRepository<ParameterUsage> vpuRepo = uow.GetRepository<ParameterUsage>();
 
                 foreach (var entity in entities)
                 {
                     var latest = repo.Reload(entity);
                     repo.LoadIfNot(latest.ExtendedProperties);
-                    repo.LoadIfNot(entity.ParameterUsages);
+                    //repo.LoadIfNot(entity.ParameterUsages);
 
                     exRepo.Delete(entity.ExtendedProperties);
                     entity.ExtendedProperties.Clear();
 
-                    vpuRepo.Delete(entity.ParameterUsages);
-                    entity.ParameterUsages.Clear();
+                    //vpuRepo.Delete(entity.ParameterUsages);
+                    //entity.ParameterUsages.Clear();
 
                     repo.Delete(latest);
                 }
@@ -129,16 +130,16 @@ namespace BExIS.Dlm.Services.DataStructure
             return (true);
         }
 
-        public Variable UpdateVariable(Variable entity)
+        public DataAttribute UpdateVariable(DataAttribute entity)
         {
             Contract.Requires(entity != null, "provided entity can not be null");
             Contract.Requires(entity.Id >= 0, "provided entity must have a permant ID");
 
-            Contract.Ensures(Contract.Result<Variable>() != null && Contract.Result<Variable>().Id >= 0, "No entity is persisted!");
+            Contract.Ensures(Contract.Result<DataAttribute>() != null && Contract.Result<DataAttribute>().Id >= 0, "No entity is persisted!");
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
-                IRepository<Variable> repo = uow.GetRepository<Variable>();
+                IRepository<DataAttribute> repo = uow.GetRepository<DataAttribute>();
                 repo.Put(entity); // Merge is required here!!!!
                 uow.Commit();
             }
@@ -149,117 +150,117 @@ namespace BExIS.Dlm.Services.DataStructure
 
         #region Parameter      
 
-        public Parameter CreateParameter(string shortName, string name, string description, bool isMultiValue, MeasurementScale measurementScale, DataContainerType containerType, string entitySelectionPredicate,
-           DataType dataType, Unit unit, Methodology methodology, ICollection<AggregateFunction> functions, ICollection<GlobalizationInfo> globalizationInfos, ICollection<Constraint> constraints,
-           ICollection<ExtendedProperty> extendedProperies
-           )
-        {
-            Contract.Requires(!string.IsNullOrWhiteSpace(shortName));
-            Contract.Requires(dataType != null && dataType.Id >= 0);
+        //public Parameter CreateParameter(string shortName, string name, string description, bool isMultiValue, MeasurementScale measurementScale, DataContainerType containerType, string entitySelectionPredicate,
+        //   DataType dataType, Unit unit, Methodology methodology, ICollection<AggregateFunction> functions, ICollection<GlobalizationInfo> globalizationInfos, ICollection<Constraint> constraints,
+        //   ICollection<ExtendedProperty> extendedProperies
+        //   )
+        //{
+        //    Contract.Requires(!string.IsNullOrWhiteSpace(shortName));
+        //    Contract.Requires(dataType != null && dataType.Id >= 0);
 
-            Contract.Ensures(Contract.Result<Parameter>() != null && Contract.Result<Parameter>().Id >= 0);
-            Parameter e = new Parameter()
-            {
-                ShortName = shortName,
-                Name = name,
-                Description = description,
-                IsMultiValue = isMultiValue,
-                MeasurementScale = measurementScale,
-                ContainerType = containerType,
-                EntitySelectionPredicate = entitySelectionPredicate,
-                DataType = dataType,
-                Unit = unit,
-                Methodology = methodology,
-                AggregateFunctions = new List<AggregateFunction>(functions),
-                GlobalizationInfos = new List<GlobalizationInfo>(globalizationInfos),
-                Constraints = new List<Constraint>(constraints),
-                ExtendedProperties = new List<ExtendedProperty>(extendedProperies),
-            };
+        //    Contract.Ensures(Contract.Result<Parameter>() != null && Contract.Result<Parameter>().Id >= 0);
+        //    Parameter e = new Parameter()
+        //    {
+        //        ShortName = shortName,
+        //        Name = name,
+        //        Description = description,
+        //        IsMultiValue = isMultiValue,
+        //        MeasurementScale = measurementScale,
+        //        ContainerType = containerType,
+        //        EntitySelectionPredicate = entitySelectionPredicate,
+        //        DataType = dataType,
+        //        Unit = unit,
+        //        Methodology = methodology,
+        //        AggregateFunctions = new List<AggregateFunction>(functions),
+        //        GlobalizationInfos = new List<GlobalizationInfo>(globalizationInfos),
+        //        Constraints = new List<Constraint>(constraints),
+        //        ExtendedProperties = new List<ExtendedProperty>(extendedProperies),
+        //    };
 
-            using (IUnitOfWork uow = this.GetUnitOfWork())
-            {
-                IRepository<Parameter> repo = uow.GetRepository<Parameter>();
-                repo.Put(e);
-                uow.Commit();
-            }
-            return (e);
-        }
+        //    using (IUnitOfWork uow = this.GetUnitOfWork())
+        //    {
+        //        IRepository<Parameter> repo = uow.GetRepository<Parameter>();
+        //        repo.Put(e);
+        //        uow.Commit();
+        //    }
+        //    return (e);
+        //}
 
-        public bool DeleteParameter(Parameter entity)
-        {
-            Contract.Requires(entity != null);
-            Contract.Requires(entity.Id >= 0);
+        //public bool DeleteParameter(Parameter entity)
+        //{
+        //    Contract.Requires(entity != null);
+        //    Contract.Requires(entity.Id >= 0);
 
-            using (IUnitOfWork uow = this.GetUnitOfWork())
-            {
-                IRepository<Parameter> repo = uow.GetRepository<Parameter>();
-                IRepository<ExtendedProperty> exRepo = uow.GetRepository<ExtendedProperty>();
-                IRepository<VariableParameterUsage> vpuRepo = uow.GetRepository<VariableParameterUsage>();
+        //    using (IUnitOfWork uow = this.GetUnitOfWork())
+        //    {
+        //        IRepository<Parameter> repo = uow.GetRepository<Parameter>();
+        //        IRepository<ExtendedProperty> exRepo = uow.GetRepository<ExtendedProperty>();
+        //        IRepository<VariableParameterUsage> vpuRepo = uow.GetRepository<VariableParameterUsage>();
 
-                entity = repo.Reload(entity);
-                repo.LoadIfNot(entity.ExtendedProperties);
-                repo.LoadIfNot(entity.VariableUsages);
+        //        entity = repo.Reload(entity);
+        //        repo.LoadIfNot(entity.ExtendedProperties);
+        //        repo.LoadIfNot(entity.VariableUsages);
 
-                exRepo.Delete(entity.ExtendedProperties);
-                entity.ExtendedProperties.Clear();
+        //        exRepo.Delete(entity.ExtendedProperties);
+        //        entity.ExtendedProperties.Clear();
 
-                vpuRepo.Delete(entity.VariableUsages);
-                entity.VariableUsages.Clear();
+        //        vpuRepo.Delete(entity.VariableUsages);
+        //        entity.VariableUsages.Clear();
 
-                repo.Delete(entity);
+        //        repo.Delete(entity);
 
-                uow.Commit();
-            }
-            // if any problem was detected during the commit, an exception will be thrown!
-            return (true);
-        }
+        //        uow.Commit();
+        //    }
+        //    // if any problem was detected during the commit, an exception will be thrown!
+        //    return (true);
+        //}
 
-        public bool DeleteParameter(IEnumerable<Parameter> entities)
-        {
-            Contract.Requires(entities != null);
-            Contract.Requires(Contract.ForAll(entities, (Parameter e) => e != null));
-            Contract.Requires(Contract.ForAll(entities, (Parameter e) => e.Id >= 0));
+        //public bool DeleteParameter(IEnumerable<Parameter> entities)
+        //{
+        //    Contract.Requires(entities != null);
+        //    Contract.Requires(Contract.ForAll(entities, (Parameter e) => e != null));
+        //    Contract.Requires(Contract.ForAll(entities, (Parameter e) => e.Id >= 0));
 
-            using (IUnitOfWork uow = this.GetUnitOfWork())
-            {
-                IRepository<Parameter> repo = uow.GetRepository<Parameter>();
-                IRepository<ExtendedProperty> exRepo = uow.GetRepository<ExtendedProperty>();
-                IRepository<VariableParameterUsage> vpuRepo = uow.GetRepository<VariableParameterUsage>();
+        //    using (IUnitOfWork uow = this.GetUnitOfWork())
+        //    {
+        //        IRepository<Parameter> repo = uow.GetRepository<Parameter>();
+        //        IRepository<ExtendedProperty> exRepo = uow.GetRepository<ExtendedProperty>();
+        //        IRepository<VariableParameterUsage> vpuRepo = uow.GetRepository<VariableParameterUsage>();
 
-                foreach (var entity in entities)
-                {
-                    var latest = repo.Reload(entity);
-                    repo.LoadIfNot(latest.ExtendedProperties);
-                    repo.LoadIfNot(entity.VariableUsages);
+        //        foreach (var entity in entities)
+        //        {
+        //            var latest = repo.Reload(entity);
+        //            repo.LoadIfNot(latest.ExtendedProperties);
+        //            repo.LoadIfNot(entity.VariableUsages);
 
-                    exRepo.Delete(entity.ExtendedProperties);
-                    entity.ExtendedProperties.Clear();
+        //            exRepo.Delete(entity.ExtendedProperties);
+        //            entity.ExtendedProperties.Clear();
 
-                    vpuRepo.Delete(entity.VariableUsages);
-                    entity.VariableUsages.Clear();
+        //            vpuRepo.Delete(entity.VariableUsages);
+        //            entity.VariableUsages.Clear();
 
-                    repo.Delete(latest);
-                }
-                uow.Commit();
-            }
-            return (true);
-        }
+        //            repo.Delete(latest);
+        //        }
+        //        uow.Commit();
+        //    }
+        //    return (true);
+        //}
 
-        public Parameter UpdateParameter(Parameter entity)
-        {
-            Contract.Requires(entity != null, "provided entity can not be null");
-            Contract.Requires(entity.Id >= 0, "provided entity must have a permant ID");
+        //public Parameter UpdateParameter(Parameter entity)
+        //{
+        //    Contract.Requires(entity != null, "provided entity can not be null");
+        //    Contract.Requires(entity.Id >= 0, "provided entity must have a permant ID");
 
-            Contract.Ensures(Contract.Result<Parameter>() != null && Contract.Result<Parameter>().Id >= 0, "No entity is persisted!");
+        //    Contract.Ensures(Contract.Result<Parameter>() != null && Contract.Result<Parameter>().Id >= 0, "No entity is persisted!");
 
-            using (IUnitOfWork uow = this.GetUnitOfWork())
-            {
-                IRepository<Parameter> repo = uow.GetRepository<Parameter>();
-                repo.Put(entity); // Merge is required here!!!!
-                uow.Commit();
-            }
-            return (entity);
-        }
+        //    using (IUnitOfWork uow = this.GetUnitOfWork())
+        //    {
+        //        IRepository<Parameter> repo = uow.GetRepository<Parameter>();
+        //        repo.Put(entity); // Merge is required here!!!!
+        //        uow.Commit();
+        //    }
+        //    return (entity);
+        //}
            
         #endregion
 
@@ -277,8 +278,8 @@ namespace BExIS.Dlm.Services.DataStructure
                 Description = description,
                 DataContainer = container,
             };
-            if (constraints != null)
-                e.Constraints = new List<Constraint>(constraints);
+            //if (constraints != null)
+            //    e.Constraints = new List<Constraint>(constraints);
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
@@ -347,60 +348,7 @@ namespace BExIS.Dlm.Services.DataStructure
 
         #region Associations
 
-        public VariableParameterUsage AddParameterUsage(Variable variable, Parameter parameter, bool isOptional)
-        {
-            Contract.Requires(variable != null && variable.Id >= 0);
-            Contract.Requires(parameter != null && parameter.Id >= 0);
-            Contract.Ensures(Contract.Result<VariableParameterUsage>() != null && Contract.Result<VariableParameterUsage>().Id >= 0);
-
-            VariableRepo.Reload(variable);
-            VariableRepo.LoadIfNot(variable.ParameterUsages);
-            int count = (from p in variable.ParameterUsages
-                         where p.Parameter.Id.Equals(parameter.Id)
-                         select p
-                        )
-                        .Count();
-
-            if (count > 0)
-                throw new Exception(string.Format("There is a usage between data variable {0} and parameter {1}", variable.Id, parameter.Id));
-
-            VariableParameterUsage usage = new VariableParameterUsage()
-            {
-                Variable = variable,
-                Parameter = parameter,
-                IsOptional = isOptional,
-            };
-            variable.ParameterUsages.Add(usage);
-            parameter.VariableUsages.Add(usage);
-            using (IUnitOfWork uow = this.GetUnitOfWork())
-            {
-                IRepository<VariableParameterUsage> repo = uow.GetRepository<VariableParameterUsage>();
-                repo.Put(usage);
-                uow.Commit();
-            }
-            return (usage);
-        }
-
-        public void RemoveParameterUsage(Variable variable, Parameter parameter)
-        {
-            Contract.Requires(variable != null && variable.Id >= 0);
-            Contract.Requires(parameter != null && parameter.Id >= 0);
-
-            using (IUnitOfWork uow = this.GetUnitOfWork())
-            {
-                IRepository<VariableParameterUsage> repo = uow.GetRepository<VariableParameterUsage>();
-                VariableParameterUsage usage = repo.Get(p => (p.Variable == variable || p.Variable.Id.Equals(variable.Id))
-                                                            && (p.Parameter == parameter || p.Parameter.Id.Equals(parameter.Id))
-                                                            ).FirstOrDefault();
-                if (usage != null)
-                {
-                    repo.Delete(usage);
-                    uow.Commit();
-                }
-            }      
-        }
-
-        public Variable AddConstraint(DataContainer container, Constraint constraint)
+        public DataAttribute AddConstraint(DataContainer container, Constraint constraint)
         {
             throw new NotImplementedException();
         }
@@ -412,47 +360,47 @@ namespace BExIS.Dlm.Services.DataStructure
         /// <param name="container">A variable or a parameter</param>
         /// <param name="constraint">Any kind of constraint: DomainValue, Validator, DefaultValue</param>
         /// <returns></returns>
-        public Variable RemoveConstraint(DataContainer container, Constraint constraint)
+        public DataAttribute RemoveConstraint(DataContainer container, Constraint constraint)
         {
             throw new NotImplementedException();
         }
 
-        public Variable AddConstraint(ExtendedProperty extendedProperty, Constraint constraint)
+        public DataAttribute AddConstraint(ExtendedProperty extendedProperty, Constraint constraint)
         {
             throw new NotImplementedException();
         }
 
-        public Variable RemoveConstraint(ExtendedProperty extendedProperty, Constraint constraint)
+        public DataAttribute RemoveConstraint(ExtendedProperty extendedProperty, Constraint constraint)
         {
             throw new NotImplementedException();
         }
 
-        public Variable AddExtendedProperty(DataContainer container, ExtendedProperty extendedProperty)
+        public DataAttribute AddExtendedProperty(DataContainer container, ExtendedProperty extendedProperty)
         {
             throw new NotImplementedException();
         }
 
-        public Variable RemoveExtendedProperty(ExtendedProperty extendedProperty)
+        public DataAttribute RemoveExtendedProperty(ExtendedProperty extendedProperty)
         {
             throw new NotImplementedException();
         }
 
-        public Variable AddAggregateFunction(DataContainer container, AggregateFunction aggregateFunction)
+        public DataAttribute AddAggregateFunction(DataContainer container, AggregateFunction aggregateFunction)
         {
             throw new NotImplementedException();
         }
 
-        public Variable RemoveAggregateFunction(DataContainer container, AggregateFunction aggregateFunction)
+        public DataAttribute RemoveAggregateFunction(DataContainer container, AggregateFunction aggregateFunction)
         {
             throw new NotImplementedException();
         }
 
-        public Variable AddGlobalizationInfo(DataContainer container, GlobalizationInfo globalizationInfo)
+        public DataAttribute AddGlobalizationInfo(DataContainer container, GlobalizationInfo globalizationInfo)
         {
             throw new NotImplementedException();
         }
 
-        public Variable RemoveGlobalizationInfo(GlobalizationInfo globalizationInfo)
+        public DataAttribute RemoveGlobalizationInfo(GlobalizationInfo globalizationInfo)
         {
             throw new NotImplementedException();
         }

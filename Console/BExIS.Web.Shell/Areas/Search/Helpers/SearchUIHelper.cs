@@ -48,33 +48,34 @@ namespace BExIS.Web.Shell.Areas.Search.Helpers
         }
 
 
-        public static DataTable ConvertPrimaryDataToDatatable(Dataset ds)
+        public static DataTable ConvertPrimaryDataToDatatable(DatasetVersion dsv)
         {
             DataTable dt = new DataTable();
             dt.TableName = "Primary data table";
-            StructuredDataStructure sds = (StructuredDataStructure)(ds.DataStructure.Self);
+            StructuredDataStructure sds = (StructuredDataStructure)(dsv.Dataset.DataStructure.Self);
 
 
-            if (ds.Tuples != null && sds != null)
+            if (dsv.EffectiveTuples != null && sds != null)
             {
                 foreach (var vu in sds.VariableUsages)
                 {
-                    DataColumn col = dt.Columns.Add(vu.Variable.Name.Replace(" ","")); // or DisplayName also
-                    col.Caption = vu.Variable.Name;
+                    // use vu.Label or vu.DataAttribute.Name
+                    DataColumn col = dt.Columns.Add(vu.Label.Replace(" ","")); // or DisplayName also
+                    col.Caption = vu.Label;
                     
 
-                    if(vu.Variable.ParameterUsages.Count>0)
+                    if(vu.ParameterUsages.Count>0)
                     {
-                        foreach (var pu in vu.Variable.ParameterUsages)
+                        foreach (var pu in vu.ParameterUsages)
                         {
-                            DataColumn col2 = dt.Columns.Add(pu.Parameter.Name.Replace(" ", "")); // or DisplayName also
-                            col2.Caption = pu.Parameter.Name;
+                            DataColumn col2 = dt.Columns.Add(pu.Label.Replace(" ", "")); // or DisplayName also
+                            col2.Caption = pu.Label;
                             
                         }
                     }
                 }
 
-                foreach (var tuple in ds.Tuples)
+                foreach (var tuple in dsv.EffectiveTuples)
                 {
                      dt.Rows.Add(ConvertTupleIntoDataRow(dt,tuple));
                 }
@@ -90,15 +91,15 @@ namespace BExIS.Web.Shell.Areas.Search.Helpers
 
             foreach(var vv in t.VariableValues)
             {
-                if (vv.Variable != null)
+                if (vv.Usage != null)
                 {
-                    dr[vv.Variable.Name.Replace(" ", "")] = vv.Value;
+                    dr[vv.Usage.Label.Replace(" ", "")] = vv.Value;
 
                     if (vv.ParameterValues.Count > 0)
                     {
                         foreach (var pu in vv.ParameterValues)
                         {
-                            dr[pu.Parameter.Name.Replace(" ", "")] = pu.Value;
+                            dr[pu.Usage.Label.Replace(" ", "")] = pu.Value;
                         }
                     }
                 }
@@ -117,22 +118,22 @@ namespace BExIS.Web.Shell.Areas.Search.Helpers
             dt.Columns.Add("Unit");
             dt.Columns.Add("Description");
 
-            foreach (StructuredDataVariableUsage sdvu in sds.VariableUsages)
+            foreach (VariableUsage sdvu in sds.VariableUsages)
             {
                 DataRow dr = dt.NewRow();
-                if (sdvu.Variable.Name != null) dr["VariableName"] = sdvu.Variable.Name;
+                if (sdvu.Label != null) dr["VariableName"] = sdvu.Label;
                 else dr["VariableName"] = "n/a";
 
-                if (sdvu.Variable.ParameterUsages.Count > 0) dr["Parameters"] = "current not shown";
+                if (sdvu.ParameterUsages.Count > 0) dr["Parameters"] = "current not shown";
                 else dr["Parameters"] = "n/a";
 
-                if (sdvu.Variable.Unit != null) dr["Unit"] = sdvu.Variable.Unit.Name;
+                if (sdvu.DataAttribute.Unit != null) dr["Unit"] = sdvu.DataAttribute.Unit.Name;
                 else dr["Unit"] = "n/a";
 
-                if (sdvu.Variable.Description != null || sdvu.Variable.Description!="")
+                if (sdvu.DataAttribute.Description != null || sdvu.DataAttribute.Description != "")
                 {
 
-                    dr["Description"] = sdvu.Variable.Description;
+                    dr["Description"] = sdvu.DataAttribute.Description;
                 }
                 else dr["Description"] = "n/a";
 
@@ -142,15 +143,15 @@ namespace BExIS.Web.Shell.Areas.Search.Helpers
             return dt;
         }
 
-        private string GetParameterNamesAsString(ICollection<VariableParameterUsage> vpuList)
+        private string GetParameterNamesAsString(ICollection<ParameterUsage> vpuList)
         {
             string parameters = "";
-            foreach (VariableParameterUsage vpu in vpuList)
+            foreach (ParameterUsage vpu in vpuList)
             {
                 if (vpu.Equals(vpuList.First()))
-                    parameters = vpu.Parameter.Name;
+                    parameters = vpu.Label;
                 else
-                    parameters += ", " + vpu.Parameter.Name;
+                    parameters += ", " + vpu.Label;
             }
 
             return "";

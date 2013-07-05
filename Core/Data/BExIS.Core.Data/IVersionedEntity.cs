@@ -9,6 +9,6 @@ namespace BExIS.Core.Data
     {
         //EntityVersionInfo VersionInfo { get; set; }
         Int32 VersionNo { get; set; }
-        DateTime TimeStamp { get; set; }
+        //DateTime TimeStamp { get; set; }
     }
 }

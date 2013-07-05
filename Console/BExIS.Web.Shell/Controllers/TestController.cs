@@ -50,7 +50,7 @@ namespace BExIS.Web.Shell.Controllers
     //        StructuredDataStructure sds = sdGen.GenerateStructuredDataStructure();
     //        DataContainerManager dcm = new DataContainerManager();
     //        List<Parameter> pps = (from vari in sds.VariableUsages
-    //                                from pari in vari.Variable.ParameterUsages
+    //                                from pari in vari.DataAttribute.ParameterUsages
     //                                select pari.Parameter).ToList();
     //        if(sds.Indexer != null)
     //            pps.Add(sds.Indexer);
@@ -76,14 +76,14 @@ namespace BExIS.Web.Shell.Controllers
             try { exp = dcManager.ExtendedPropertyRepo.Get(1); }
             catch {}
             //if(exp == null)
-            //    exp = dcManager.CreateExtendedProperty("Source", "the data provider", sds.VariableUsages.First().Variable, null); // issue with session management
+            //    exp = dcManager.CreateExtendedProperty("Source", "the data provider", sds.VariableUsages.First().DataAttribute, null); // issue with session management
 
 
-            ds.ExtendedPropertyValues = new List<ExtendedPropertyValue>()
-            {
-                new ExtendedPropertyValue() {Dataset = ds, ExtendedPropertyId = exp.Id, Value="Jena Experiment"},
-                new ExtendedPropertyValue() {Dataset = ds, ExtendedPropertyId = exp.Id, Value="MPI"},
-            };
+            //ds.ExtendedPropertyValues = new List<ExtendedPropertyValue>()
+            //{
+            //    new ExtendedPropertyValue() {Dataset = ds, ExtendedPropertyId = exp.Id, Value="Jena Experiment"},
+            //    new ExtendedPropertyValue() {Dataset = ds, ExtendedPropertyId = exp.Id, Value="MPI"},
+            //};
             ds.Dematerialize();
             //dm.UpdateDataset(ds);
         }
@@ -94,7 +94,7 @@ namespace BExIS.Web.Shell.Controllers
             Dataset ds = dm.GetDataset(1);
             if (ds != null)
             {
-                var a = ds.Tuples.First().VariableValues.First().Variable.Name;
+                //var a = ds.Tuples.First().VariableValues.First().Variable.Name;
                 StructuredDataStructure sds = (StructuredDataStructure)(ds.DataStructure.Self);
             }
         }

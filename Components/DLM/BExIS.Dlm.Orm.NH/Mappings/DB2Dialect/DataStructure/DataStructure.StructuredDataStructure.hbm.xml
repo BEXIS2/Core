@@ -5,11 +5,12 @@
       <column name="IndexerType" />
     </property>
 
-    <many-to-one name="Indexer" class="Parameter" not-null="false" column="IndexerRef"/>
+    <many-to-one name="Indexer" class="VariableUsage" not-null="false" column="IndexerRef"/>
+    
 
     <set name="VariableUsages" inverse="true">
       <key column="DataStructureRef" not-null="false"/>
-      <one-to-many class="StructuredDataVariableUsage"/>
+      <one-to-many class="VariableUsage"/>
     </set>
 
   </subclass>

@@ -11,10 +11,6 @@
       <column name="VersionNo" />
     </version>
 
-    <property name="TimeStamp" type="DateTime">
-      <column name="TimeStamp" />
-    </property>
-
     <property name="Extra" type="System.Xml.XmlDocument, System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
       <column name="Extra" not-null="false" sql-type="xml" />
     </property>
@@ -47,16 +43,16 @@
     </set>
 
     <!--
-    the casecade must be ="all-delete-orphan" but currently it creates a cycle somewhere! that shoud be found. I think it is because unit has two relationships with ConversionMethod.
-    so when I try to delete a unit, it tries to delete the conversionmethod that it acts a the source, and the conversion method tries to update the unit, ...
-    one solution is to stay with curent, second: I am looking for :-( 25.06.12, Javad
+    the cascade must be ="all-delete-orphan" but currently it creates a cycle somewhere! that should be found. I think it is because unit has two relationships with ConversionMethod.
+    so when I try to delete a unit, it tries to delete the conversion method that it acts a the source, and the conversion method tries to update the unit, ...
+    one solution is to stay with current, second: I am looking for :-( 25.06.12, Javad
     -->
     <set name="ConversionsIamTheTarget" cascade="none" inverse="true" lazy="false">      
       <key column="TargetUnitRef" not-null="true"/>
       <one-to-many class="ConversionMethod"/>
     </set>
 
-    <!-- Cascase only update. in case of delete set the FK in the data container to null-->
+    <!-- Cascade only update. in case of delete set the FK in the data container to null-->
     <set name="DataContainers" inverse="true" cascade="save-update"> 
       <key column="UnitRef" not-null="false"/>
       <one-to-many class="DataContainer"/>
