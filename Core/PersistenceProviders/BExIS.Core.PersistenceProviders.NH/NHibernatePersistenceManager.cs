@@ -55,7 +55,7 @@ namespace BExIS.Core.PersistenceProviders.NH
 
         /// <summary>
         /// Any component dealing with data should have a Db folder in its workspace folder containing the Mappings folder
-        /// If the components acceses data through other compnents' APIs there is no need to provide the mapping again
+        /// If the components accesses data through other components' APIs there is no need to provide the mapping again
         /// </summary>
         /// <param name="cfg"></param>
         private void registerComponentMappings(Configuration cfg, string dialect)
@@ -76,7 +76,7 @@ namespace BExIS.Core.PersistenceProviders.NH
 
         public void ExportSchema(bool generateScript = false, bool executeAgainstTargetDB = true, bool justDrop = false)
         {
-            // think of installing a module separatedly: export that module to DB, add entires to cfg., restart cfg and session factory, etc.
+            // think of installing a module separately: export that module to DB, add entries to cfg., restart cfg and session factory, etc.
             new SchemaExport(cfg).Execute(generateScript, executeAgainstTargetDB, justDrop);
             foreach (string comDir in componentFolders)
             {

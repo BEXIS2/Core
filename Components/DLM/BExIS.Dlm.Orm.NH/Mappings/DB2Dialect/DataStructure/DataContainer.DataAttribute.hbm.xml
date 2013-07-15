@@ -5,12 +5,12 @@
     
     <set name="UsagesAsParameter" inverse="true" cascade="all-delete-orphan">
       <key column="DataAttributeRef" not-null="false"/>
-      <one-to-many class="ParameterUsage"/>
+      <one-to-many class="Parameter"/>
     </set>
 
     <set name="UsagesAsVariable" inverse="true" cascade="all-delete-orphan">
       <key column="DataAttributeRef" not-null="false"/>
-      <one-to-many class="VariableUsage"/>
+      <one-to-many class="Variable"/>
     </set>
 
   </subclass>

@@ -17,7 +17,7 @@ namespace BExIS.Dlm.Services.DataStructure
             IUnitOfWork uow = this.GetUnitOfWork();
             this.DataAttributeRepo = uow.GetReadOnlyRepository<DataAttribute>();
             this.ExtendedPropertyRepo = uow.GetReadOnlyRepository<ExtendedProperty>();
-            this.UsageRepo = uow.GetReadOnlyRepository<ParameterUsage>();
+            this.UsageRepo = uow.GetReadOnlyRepository<Parameter>();
         }
 
         #region Data Readers
@@ -25,7 +25,7 @@ namespace BExIS.Dlm.Services.DataStructure
         // provide read only repos for the whole aggregate area
         public IReadOnlyRepository<DataAttribute> DataAttributeRepo { get; private set; }
         public IReadOnlyRepository<ExtendedProperty> ExtendedPropertyRepo { get; private set; }
-        public IReadOnlyRepository<ParameterUsage> UsageRepo { get; private set; }
+        public IReadOnlyRepository<Parameter> UsageRepo { get; private set; }
 
         #endregion
 
@@ -79,7 +79,7 @@ namespace BExIS.Dlm.Services.DataStructure
             {
                 IRepository<DataAttribute> repo = uow.GetRepository<DataAttribute>();
                 IRepository<ExtendedProperty> exRepo = uow.GetRepository<ExtendedProperty>();
-                IRepository<ParameterUsage> vpuRepo = uow.GetRepository<ParameterUsage>();
+                IRepository<Parameter> vpuRepo = uow.GetRepository<Parameter>();
 
                 entity = repo.Reload(entity);
                 repo.LoadIfNot(entity.ExtendedProperties);
@@ -109,7 +109,7 @@ namespace BExIS.Dlm.Services.DataStructure
             {
                 IRepository<DataAttribute> repo = uow.GetRepository<DataAttribute>();
                 IRepository<ExtendedProperty> exRepo = uow.GetRepository<ExtendedProperty>();
-                IRepository<ParameterUsage> vpuRepo = uow.GetRepository<ParameterUsage>();
+                IRepository<Parameter> vpuRepo = uow.GetRepository<Parameter>();
 
                 foreach (var entity in entities)
                 {

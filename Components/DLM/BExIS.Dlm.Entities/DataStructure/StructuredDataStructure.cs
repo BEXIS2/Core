@@ -14,15 +14,15 @@ namespace BExIS.Dlm.Entities.DataStructure
         #region Methods
 
         public virtual DataStructureCategory IndexerType { get; set; }
-        public virtual ICollection<VariableUsage> VariableUsages { get; set; } // StructuredDataStructure is the controller of this association
+        public virtual ICollection<Variable> Variables { get; set; } // StructuredDataStructure is the controller of this association
         /*
         This relationship is used in respective to Data Structure Category.
         For time series it determines the time variable, for Coverage it determines the Location variable and for samplings it determines which variable will hold the information about the samples.
         In cases that time or space coverage is clear by other variables or parameters or is not important, it's possible to not introduce an Indexer.
          */
-        public virtual VariableUsage Indexer { get; set; } // 0..1,  the data type of the target data attribute must be compatible with indexer type, see CM Staructured Data and its associated relevent classes.
+        public virtual Variable Indexer { get; set; } // 0..1,  the data type of the target data attribute must be compatible with indexer type, see CM Structured Data and its associated relevant classes.
 
-        // relationdhip to Metadata Structure
+        // relationship to Metadata Structure
         // Relationship to View
         // Relationship to Workflow?
         #endregion
@@ -37,7 +37,7 @@ namespace BExIS.Dlm.Entities.DataStructure
         {
             //sample: VariableUsages.First().DataAttribute.ParameterUsages.First().Parameter.
             Datasets = new List<Dataset>();
-            VariableUsages = new List<VariableUsage>();
+            Variables = new List<Variable>();
             IndexerType = indexerType;
         }
 

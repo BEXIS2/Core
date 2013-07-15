@@ -9,7 +9,7 @@ namespace BExIS.Dlm.Entities.Data
 {
     public class ParameterValue: DataValue
     {
-        public Int64 ParameterUsageId { get; set; } // when Parameter is not loaded. It happens when mapping from Xml data is performed after loading object from DB
+        public Int64 ParameterId { get; set; } // when Parameter is not loaded. It happens when mapping from Xml data is performed after loading object from DB
 
         [XmlIgnore]
         public VariableValue VariableValue{ get; set; } // reference to the containing variable value
@@ -28,15 +28,15 @@ namespace BExIS.Dlm.Entities.Data
         }
 
         [XmlIgnore]
-        public ParameterUsage Usage
+        public Parameter Usage
         {
             get
             {
                 if (this.VariableValue.Tuple.DatasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
                 {
-                    var q = from vu in (this.VariableValue.Tuple.DatasetVersion.Dataset.DataStructure.Self as StructuredDataStructure).VariableUsages
-                            from pu in vu.ParameterUsages
-                            where pu.Id.Equals(this.ParameterUsageId)
+                    var q = from vu in (this.VariableValue.Tuple.DatasetVersion.Dataset.DataStructure.Self as StructuredDataStructure).Variables
+                            from pu in vu.Parameters
+                            where pu.Id.Equals(this.ParameterId)
                             select pu;
                     return (q.FirstOrDefault());
                                       

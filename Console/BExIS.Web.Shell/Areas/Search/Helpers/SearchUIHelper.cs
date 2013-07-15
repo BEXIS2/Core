@@ -57,16 +57,16 @@ namespace BExIS.Web.Shell.Areas.Search.Helpers
 
             if (dsv.EffectiveTuples != null && sds != null)
             {
-                foreach (var vu in sds.VariableUsages)
+                foreach (var vu in sds.Variables)
                 {
                     // use vu.Label or vu.DataAttribute.Name
                     DataColumn col = dt.Columns.Add(vu.Label.Replace(" ","")); // or DisplayName also
                     col.Caption = vu.Label;
                     
 
-                    if(vu.ParameterUsages.Count>0)
+                    if(vu.Parameters.Count>0)
                     {
-                        foreach (var pu in vu.ParameterUsages)
+                        foreach (var pu in vu.Parameters)
                         {
                             DataColumn col2 = dt.Columns.Add(pu.Label.Replace(" ", "")); // or DisplayName also
                             col2.Caption = pu.Label;
@@ -118,13 +118,13 @@ namespace BExIS.Web.Shell.Areas.Search.Helpers
             dt.Columns.Add("Unit");
             dt.Columns.Add("Description");
 
-            foreach (VariableUsage sdvu in sds.VariableUsages)
+            foreach (Variable sdvu in sds.Variables)
             {
                 DataRow dr = dt.NewRow();
                 if (sdvu.Label != null) dr["VariableName"] = sdvu.Label;
                 else dr["VariableName"] = "n/a";
 
-                if (sdvu.ParameterUsages.Count > 0) dr["Parameters"] = "current not shown";
+                if (sdvu.Parameters.Count > 0) dr["Parameters"] = "current not shown";
                 else dr["Parameters"] = "n/a";
 
                 if (sdvu.DataAttribute.Unit != null) dr["Unit"] = sdvu.DataAttribute.Unit.Name;
@@ -143,10 +143,10 @@ namespace BExIS.Web.Shell.Areas.Search.Helpers
             return dt;
         }
 
-        private string GetParameterNamesAsString(ICollection<ParameterUsage> vpuList)
+        private string GetParameterNamesAsString(ICollection<Parameter> vpuList)
         {
             string parameters = "";
-            foreach (ParameterUsage vpu in vpuList)
+            foreach (Parameter vpu in vpuList)
             {
                 if (vpu.Equals(vpuList.First()))
                     parameters = vpu.Label;

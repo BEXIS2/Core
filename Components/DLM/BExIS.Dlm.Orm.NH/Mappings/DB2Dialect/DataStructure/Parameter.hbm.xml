@@ -1,5 +1,5 @@
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.DataStructure">
-  <class xmlns="urn:nhibernate-mapping-2.2" name="VariableUsage" table="VariableUsages" dynamic-update="true">
+  <class xmlns="urn:nhibernate-mapping-2.2" name="Parameter" table="Parameters" dynamic-update="true">
     <!-- Mapping BaseEntity properties -->
     
     <id name="Id" type="Int64">
@@ -25,16 +25,10 @@
       <column name="Label" />
     </property>
 
+    <many-to-one name="Variable" class="Variable" not-null="false" column="VariableRef"/>
+
     <many-to-one name="DataAttribute" class="DataAttribute" not-null="false" column="DataAttributeRef"/>
-
-    <many-to-one name="DataStructure" class="StructuredDataStructure" not-null="false" column="DataStructureRef"/>
-
-    <set name="ParameterUsages" inverse="true">
-      <key column="VariableUsageRef" not-null="false"/>
-      <one-to-many class="ParameterUsage"/>
-    </set>
-
-
+    
   </class>
 
 </hibernate-mapping>

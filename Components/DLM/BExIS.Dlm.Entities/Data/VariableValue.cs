@@ -15,7 +15,7 @@ namespace BExIS.Dlm.Entities.Data
         [XmlIgnore]
         public DataTuple Tuple { get; set; } // reference to the containing tuple
 
-        public Int64 VariableUsageId { get; set; } // when variable is not loaded!
+        public Int64 VariableId { get; set; } // when variable is not loaded!
 
         #endregion
 
@@ -37,14 +37,14 @@ namespace BExIS.Dlm.Entities.Data
         }
 
         [XmlIgnore]
-        public VariableUsage Usage
+        public Variable Usage
         {
             get
             {
                 if (this.Tuple.DatasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
                 {
-                    VariableUsage u = (this.Tuple.DatasetVersion.Dataset.DataStructure.Self as StructuredDataStructure).VariableUsages
-                        .Where(p => p.Id.Equals(this.VariableUsageId))
+                    Variable u = (this.Tuple.DatasetVersion.Dataset.DataStructure.Self as StructuredDataStructure).Variables
+                        .Where(p => p.Id.Equals(this.VariableId))
                         .Select(p => p).FirstOrDefault();
                     return (u);
                 }

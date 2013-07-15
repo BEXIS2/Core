@@ -62,7 +62,7 @@
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Mappings\DB2Dialect\DataStructure\VariableUsage.hbm.xml">
+    <Content Include="Mappings\DB2Dialect\DataStructure\Variable.hbm.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Mappings\DB2Dialect\DataStructure\DataStructure.StructuredDataStructure.hbm.xml">
@@ -77,7 +77,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Mappings\DB2Dialect\DataStructure\ParameterUsage.hbm.xml">
+    <Content Include="Mappings\DB2Dialect\DataStructure\Parameter.hbm.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Mappings\DB2Dialect\DataStructure\DataContainer.DataAttribute.hbm.xml">

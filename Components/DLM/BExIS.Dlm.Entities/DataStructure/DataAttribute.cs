@@ -13,8 +13,8 @@ namespace BExIS.Dlm.Entities.DataStructure
 
         #region Associations
 
-        public virtual ICollection<VariableUsage> UsagesAsVariable { get; set; } // StructuredDataStructure is the controller of this association
-        public virtual ICollection<ParameterUsage> UsagesAsParameter { get; set; } 
+        public virtual ICollection<Variable> UsagesAsVariable { get; set; } // StructuredDataStructure is the controller of this association
+        public virtual ICollection<Parameter> UsagesAsParameter { get; set; } 
         public virtual Classifier Classification { get; set; }
 
         #endregion
@@ -23,8 +23,8 @@ namespace BExIS.Dlm.Entities.DataStructure
 
         public DataAttribute()
         {
-            UsagesAsParameter = new List<ParameterUsage>();
-            UsagesAsVariable = new List<VariableUsage>();
+            UsagesAsParameter = new List<Parameter>();
+            UsagesAsVariable = new List<Variable>();
             Classification = new Classifier();
         }
 

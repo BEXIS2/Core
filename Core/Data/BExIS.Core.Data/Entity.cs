@@ -40,7 +40,7 @@ namespace BExIS.Core.Data
         /// <summary>
         /// In some cases like DataTuple, value of some properties of the object are persisted ax xml. in this case there is an in-memory version and an in-storage version
         /// Dematerialize method, creates the Xml version of those properties and stores them in the relevant persistence properties
-        /// If you have put AutomaticMaterializationInfoAttribute attributes on your class and have not overriden this method, then it will try to transform the origianl variables into Xml counterparts 
+        /// If you have put AutomaticMaterializationInfoAttribute attributes on your class and have not overridden this method, then it will try to transform the original variables into Xml counterparts 
         /// No need to override these functions, the base one performs the task for normal cases
         /// If you have a very special case or the performance of the generic one is not good, then override the methods
         /// </summary>
@@ -50,7 +50,7 @@ namespace BExIS.Core.Data
             //XmlAmendments = (XmlDocument)transformer.ExportTo(Amendments, "Amendments", 1);
             foreach (AutomaticMaterializationInfoAttribute attr in this.GetType().GetCustomAttributes(typeof(AutomaticMaterializationInfoAttribute), true))
             {
-                IObjectTransfromer transformer = new XmlObjectTransformer(); // provide configuration based plugability
+                IObjectTransfromer transformer = new XmlObjectTransformer(); // provide configuration based plug ability
                 PropertyInfo sourceProperty = this.GetType().GetProperty(attr.SourcePropertyName);
                 object sourceVal = sourceProperty.GetValue(this, null); // this is the original object based value of the Property
 

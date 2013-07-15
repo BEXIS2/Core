@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Configuration;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace BExIS.Core.Util.Cfg
 {
@@ -48,23 +49,41 @@ namespace BExIS.Core.Util.Cfg
                 return (AppDomain.CurrentDomain.BaseDirectory);
             }
         }
+        private static string workspaceRootPath = string.Empty;
         public static string WorkspaceRootPath
         {
             get
             {
+                if (!string.IsNullOrWhiteSpace(workspaceRootPath))
+                    return (workspaceRootPath);
                 string path = string.Empty;
                 try
                 {
                     path = ConfigurationManager.AppSettings["WorkspacePath"];
                 }
                 catch { path = string.Empty; }
-                if (!string.IsNullOrWhiteSpace(path))
-                    return (path);
+                int level = 0;
+                if (string.IsNullOrWhiteSpace(path)) // its a relative path at the same level with the web.config
+                    level = 0;
+                else if (path.Contains(@"..\")) // its a relative path but upper than web.config. the number of ..\ patterns shows how many level upper
+                {
+                    level = path.Split(@"\".ToCharArray()).Length - 1;
+                }
+                else // its an absolute path, just return it
+                {
+                    workspaceRootPath = path;
+                    return (workspaceRootPath);
+                }
                 // use a default location: the same level with the app root not beneath it
                 DirectoryInfo di = new DirectoryInfo(AppRoot);
                 while (di.GetFiles("Web.config").Count() >= 1)
                     di = di.Parent;
-                return (Path.Combine(di.Parent.FullName, "Workspace"));
+                for (int i = 0; i < level; i++)
+                {
+                    di = di.Parent;
+                }
+                workspaceRootPath = Path.Combine(di.Parent.FullName, "Workspace");
+                return (workspaceRootPath);
             }
         }
 

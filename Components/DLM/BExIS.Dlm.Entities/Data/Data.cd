@@ -66,8 +66,8 @@
       <Property Name="DataStructure" />
     </ShowAsAssociation>
     <ShowAsCollectionAssociation>
-      <Property Name="Views" />
       <Property Name="Versions" />
+      <Property Name="Views" />
     </ShowAsCollectionAssociation>
   </Class>
   <Class Name="BExIS.Dlm.Entities.Data.DataTuple">
@@ -130,13 +130,12 @@
       </MemberNameLabel>
     </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAQAgAEAAAAAEAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAgAAAAAgAEAAAAAEAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Data\ParameterValue.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="VariableValue" />
       <Property Name="DataAttribute" />
-      <Property Name="Usage" />
     </ShowAsAssociation>
   </Class>
   <Class Name="BExIS.Dlm.Entities.Data.VariableValue">
@@ -160,7 +159,7 @@
       </MemberNameLabel>
     </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAAABAAAAAAAAAAgAAEgAAAEAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAABABAAAAAAAAgAAAgAAAEAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Data\VariableValue.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -228,14 +227,14 @@
       <Compartment Name="Methods" Collapsed="true" />
       <Compartment Name="Properties" Collapsed="true" />
     </Compartments>
-    <AssociationLine Name="PriliminaryTuples" Type="BExIS.Dlm.Entities.Data.DataTuple">
-      <MemberNameLabel ManuallyPlaced="true">
-        <Position X="-0.421" Y="0.331" />
-      </MemberNameLabel>
-    </AssociationLine>
     <AssociationLine Name="Dataset" Type="BExIS.Dlm.Entities.Data.Dataset">
       <MemberNameLabel ManuallyPlaced="true">
         <Position X="-0.776" Y="0.132" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <AssociationLine Name="PriliminaryTuples" Type="BExIS.Dlm.Entities.Data.DataTuple">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-0.421" Y="0.331" />
       </MemberNameLabel>
     </AssociationLine>
     <AssociationLine Name="ContentDescriptors" Type="BExIS.Dlm.Entities.Data.ContentDescriptor" FixedFromPoint="true">
@@ -275,10 +274,10 @@
       <FileName>DataStructure\Usage.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="BExIS.Dlm.Entities.DataStructure.VariableUsage" Collapsed="true">
+  <Class Name="BExIS.Dlm.Entities.DataStructure.Variable" Collapsed="true">
     <Position X="4.75" Y="4.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAEAAAAAAgAAAAAAAAEAAAAEAgAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAEAAAAAAgAAAAAAAAAAAAAEAgAIAAAAAAAAA=</HashCode>
       <FileName>DataStructure\Usage.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -290,8 +289,8 @@
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="DatasetVersion" />
-      <Property Name="OriginalTuple" />
       <Property Name="ActingDatasetVersion" />
+      <Property Name="OriginalTuple" />
     </ShowAsAssociation>
   </Class>
   <Font Name="Segoe UI" Size="9" />

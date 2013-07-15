@@ -637,10 +637,10 @@ namespace BExIS.Dlm.Services.Data
 
         #region Parameter Value
 
-        public Amendment CreateAmendment(string value, string note, DateTime samplingTime, DateTime resultTime, ObtainingMethod obtainingMethod, Int64 parameterUsageId, DataTuple tuple)
+        public Amendment CreateAmendment(string value, string note, DateTime samplingTime, DateTime resultTime, ObtainingMethod obtainingMethod, Int64 parameterId, DataTuple tuple)
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(value));
-            Contract.Requires(parameterUsageId > 0);
+            Contract.Requires(parameterId > 0);
             Contract.Requires(tuple != null);
             Contract.Ensures(Contract.Result<Amendment>() != null);
 
@@ -651,7 +651,7 @@ namespace BExIS.Dlm.Services.Data
                 SamplingTime = samplingTime,
                 ResultTime = resultTime,
                 ObtainingMethod = obtainingMethod,
-                ParameterUsageId = parameterUsageId,     
+                ParameterId = parameterId,     
                 Tuple = tuple,
             };
 
@@ -668,10 +668,10 @@ namespace BExIS.Dlm.Services.Data
 
         #region DataAttribute Value
 
-        public VariableValue CreateVariableValue(string value, string note, DateTime samplingTime, DateTime resultTime, ObtainingMethod obtainingMethod, Int64 variableUsageId, ICollection<ParameterValue> parameterValues)
+        public VariableValue CreateVariableValue(string value, string note, DateTime samplingTime, DateTime resultTime, ObtainingMethod obtainingMethod, Int64 variableId, ICollection<ParameterValue> parameterValues)
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(value));
-            Contract.Requires(variableUsageId > 0);
+            Contract.Requires(variableId > 0);
             Contract.Ensures(Contract.Result<VariableValue>() != null);
 
             VariableValue e = new VariableValue()
@@ -681,7 +681,7 @@ namespace BExIS.Dlm.Services.Data
                 SamplingTime = samplingTime,
                 ResultTime = resultTime,
                 ObtainingMethod = obtainingMethod,
-                VariableUsageId = variableUsageId,
+                VariableId = variableId,
                 ParameterValues = new List<ParameterValue>(parameterValues),
             };
 
@@ -698,10 +698,10 @@ namespace BExIS.Dlm.Services.Data
 
         #region Parameter Value
 
-        public ParameterValue CreateParameterValue(string value, string note, DateTime samplingTime, DateTime resultTime, ObtainingMethod obtainingMethod, Int64 parameterUsageId)
+        public ParameterValue CreateParameterValue(string value, string note, DateTime samplingTime, DateTime resultTime, ObtainingMethod obtainingMethod, Int64 parameterId)
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(value));
-            Contract.Requires(parameterUsageId > 0);
+            Contract.Requires(parameterId > 0);
             Contract.Ensures(Contract.Result<ParameterValue>() != null);
 
             ParameterValue e = new ParameterValue()
@@ -711,7 +711,7 @@ namespace BExIS.Dlm.Services.Data
                 SamplingTime = samplingTime,
                 ResultTime = resultTime,
                 ObtainingMethod = obtainingMethod,
-                ParameterUsageId = parameterUsageId,
+                ParameterId = parameterId,
             };
 
             //using (IUnitOfWork uow = this.GetUnitOfWork())
