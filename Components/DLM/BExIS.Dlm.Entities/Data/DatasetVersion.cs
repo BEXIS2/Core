@@ -61,7 +61,7 @@ namespace BExIS.Dlm.Entities.Data
 
         #region Methods
 
-        ///it is here for the automatic object creation by the persistance layer. Programmers SHOULD use the other constructor that takes a Dataset as a parameter
+        ///it is here for the automatic object creation by the persistence layer. Programmers SHOULD use the other constructor that takes a Dataset as a parameter
         public DatasetVersion()
         {
             ExtendedPropertyValues = new List<ExtendedPropertyValue>();

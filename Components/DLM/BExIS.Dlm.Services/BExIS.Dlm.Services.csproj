@@ -128,7 +128,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Core\Data\BExIS.Core.Data\BExIS.Core.Data.csproj">
-      <Project>{A60AC05F-8C9A-4EFD-9826-452E6049DA4D}</Project>
+      <Project>{a60ac05f-8c9a-4efd-9826-452e6049da4d}</Project>
       <Name>BExIS.Core.Data</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Core\Data\BExIS.Core.Persistence.Api\BExIS.Core.Persistence.Api.csproj">

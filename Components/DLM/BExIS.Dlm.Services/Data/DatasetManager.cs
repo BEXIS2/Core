@@ -8,6 +8,7 @@ using System.Xml;
 using System.Diagnostics.Contracts;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Entities;
+using BExIS.Dlm.Entities.Administration;
 
 namespace BExIS.Dlm.Services.Data
 {
@@ -55,6 +56,27 @@ namespace BExIS.Dlm.Services.Data
             Contract.Ensures(Contract.Result<Dataset>() != null && Contract.Result<Dataset>().Id >= 0);
 
             dataset.DataStructure.Datasets.Add(dataset);
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<Dataset> repo = uow.GetRepository<Dataset>();
+                repo.Put(dataset);
+                uow.Commit();
+            }
+            return (dataset);
+        }
+
+        /// <summary>
+        /// In case some the dataset's attributes are changed, data set is bound to a research plan and so on, use this function
+        /// </summary>
+        /// <param name="dataset"></param>
+        /// <returns></returns>
+        public Dataset UpdateDataset(Dataset dataset)
+        {
+            Contract.Requires(dataset != null);
+            Contract.Requires(dataset.Id >= 0);
+
+            Contract.Ensures(Contract.Result<Dataset>() != null && Contract.Result<Dataset>().Id >= 0);
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
@@ -635,7 +657,7 @@ namespace BExIS.Dlm.Services.Data
 
         #endregion
 
-        #region Parameter Value
+        #region Amendments
 
         public Amendment CreateAmendment(string value, string note, DateTime samplingTime, DateTime resultTime, ObtainingMethod obtainingMethod, Int64 parameterId, DataTuple tuple)
         {
@@ -666,7 +688,7 @@ namespace BExIS.Dlm.Services.Data
 
         #endregion
 
-        #region DataAttribute Value
+        #region Variable Value
 
         public VariableValue CreateVariableValue(string value, string note, DateTime samplingTime, DateTime resultTime, ObtainingMethod obtainingMethod, Int64 variableId, ICollection<ParameterValue> parameterValues)
         {
@@ -849,9 +871,23 @@ namespace BExIS.Dlm.Services.Data
             }
         }
 
-        public void BindToResearchPlan()
+        public bool DeleteDataView(DataView entity)
         {
+            Contract.Requires(entity != null);
+            Contract.Requires(entity.Id >= 0);
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<DataView> repo = uow.GetRepository<DataView>();
+
+                entity = repo.Reload(entity);
+                repo.Delete(entity);
+                uow.Commit();
+            }
+            // if any problem was detected during the commit, an exception will be thrown!
+            return (true);
         }
+
         #endregion
     }
 }

@@ -34,7 +34,7 @@
       <one-to-many class="BExIS.Dlm.Entities.Data.Dataset" />
     </set>
 
-    <set name="DataStructures" table="ResearchPlans_DataStructures" cascade="save-update"  lazy="true">
+    <set name="DataStructures" table="ResearchPlans_DataStructures" cascade="save-delete-orphan"  lazy="true">
       <key column="ResearchPlanRef"/>
       <many-to-many column="DataStructureRef" class="BExIS.Dlm.Entities.DataStructure.DataStructure"/>
     </set>

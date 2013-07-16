@@ -53,7 +53,7 @@
     <!-- Mapping Dataset properties -->
 
     <property name="Status" type="BExIS.Dlm.Entities.Data.DatasetStatus, BExIS.Dlm.Entities">
-      <column name="Status" />
+      <column name="Status"/>
     </property>
     
     <property name="LastCheckIOTimestamp" type="DateTime">
@@ -74,7 +74,7 @@
       <one-to-many class="DatasetVersion" />
     </set>
 
-    <many-to-one name="ResearchPlan" class="BExIS.Dlm.Entities.Administration.ResearchPlan" not-null="true" column="ResearchPlanRef"/>
+    <many-to-one name="ResearchPlan" class="BExIS.Dlm.Entities.Administration.ResearchPlan" not-null="false" column="ResearchPlanRef"/>
 
     <set cascade="all" name="Views" inverse="true" lazy="true">
       <key>

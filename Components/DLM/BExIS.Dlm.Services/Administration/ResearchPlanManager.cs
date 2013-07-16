@@ -11,9 +11,6 @@ namespace BExIS.Dlm.Services.Administration
 {
     public sealed class ResearchPlanManager
     {
-          // provide read only repos for the whole aggregate area
-        public IReadOnlyRepository<ResearchPlan> Repo { get; private set; }
-
         public ResearchPlanManager() //: base(false, true, true)
         {
             IUnitOfWork uow = this.GetUnitOfWork();
@@ -22,6 +19,8 @@ namespace BExIS.Dlm.Services.Administration
 
         #region Data Readers
 
+        // provide read only repos for the whole aggregate area
+        public IReadOnlyRepository<ResearchPlan> Repo { get; private set; }
 
         #endregion
 
@@ -60,12 +59,11 @@ namespace BExIS.Dlm.Services.Administration
                 entity = repo.Reload(entity);
                 
                 // delete all links to other entities
-                
-                // remove all associations between current unit and the conversions
                 entity.Datasets.ToList().ForEach(a => a.ResearchPlan = null);
+                // data structures have n-m relationship via a coupling table. deleting the research plan will delete entries in that table but not the data structures.
                 //Data structures, metadata structures, execution units, etc
 
-                //delete the unit
+                //delete the entity
                 repo.Delete(entity);
 
                 // commit changes
@@ -89,13 +87,10 @@ namespace BExIS.Dlm.Services.Administration
                 {
                     var latest = repo.Reload(entity);
 
-                    // delete all conversions that are somehow connected to current unit
-                  
-
                     // remove all associations between current unit and the conversions
                     latest.Datasets.ToList().ForEach(a => a.ResearchPlan = null);
                   
-                    //delete the unit
+                    //delete the entity
                     repo.Delete(latest);
                 }
                 // commit changes
@@ -107,7 +102,7 @@ namespace BExIS.Dlm.Services.Administration
         public ResearchPlan Update(ResearchPlan entity)
         {
             Contract.Requires(entity != null, "provided entity can not be null");
-            Contract.Requires(entity.Id >= 0, "provided entity must have a permant ID");
+            Contract.Requires(entity.Id >= 0, "provided entity must have a permanent ID");
 
             Contract.Ensures(Contract.Result<ResearchPlan>() != null && Contract.Result<ResearchPlan>().Id >= 0, "No entity is persisted!");
 
@@ -175,6 +170,20 @@ namespace BExIS.Dlm.Services.Administration
             return (result);
         }
 
+        //public bool AddMetadataStructure(ResearchPlan end1, MetadataStructure end2)
+        //{
+        //    Contract.Requires(end1 != null && end1.Id >= 0);
+        //    Contract.Requires(end2 != null && end2.Id >= 0);
+
+        //    return false;
+        //}
+
+        //public bool RemoveMetadataStructure(ResearchPlan end1, MetadataStructure end2)
+        //{
+        //    Contract.Requires(end1 != null && end1.Id >= 0);
+        //    Contract.Requires(end2 != null && end2.Id >= 0);
+        //    return false;
+        //}
         #endregion
 
     }

@@ -81,7 +81,7 @@
       <many-to-many column="ViewRef" class="DataView"/>
     </set>
 
-    <set name="ResearchPlans" inverse="true" table="ResearchPlans_DataStructures" lazy="true" cascade="save-update">
+    <set name="ResearchPlans" inverse="true" table="ResearchPlans_DataStructures" lazy="true" cascade="all-delete-orphan">
       <key column="DataStructureRef"/>
       <many-to-many column="ResearchPlanRef" class="BExIS.Dlm.Entities.Administration.ResearchPlan"/>
     </set>

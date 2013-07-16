@@ -26,7 +26,7 @@ namespace BExIS.Dlm.Entities.DataStructure
         public virtual bool IsMultiValue { get; set; }
         
         public virtual bool IsBuiltIn { get; set; } // the build in containers can not be deleted, except by their owner
-        // Owner of the conainer is the module who created it 
+        // Owner of the container is the module who created it 
         // or the RPM (Research Planning Module) if its created via the web interface
         // or DCM (Data Collection Module) if its created during data submission
         public virtual string Owner { get; set; } 
@@ -37,7 +37,7 @@ namespace BExIS.Dlm.Entities.DataStructure
         public virtual string EntitySelectionPredicate { get; set; } // only if Type == ReferenceType
 
         /// <summary>
-        /// This is a workaroung according to NHibernate's Lazy loading proxy creation!
+        /// This is a workaround according to NHibernate's Lazy loading proxy creation!
         /// It should not be mapped!
         /// </summary>
         public virtual DataContainer Self { get { return this; } }
