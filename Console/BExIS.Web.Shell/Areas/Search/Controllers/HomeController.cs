@@ -287,7 +287,8 @@ namespace BExIS.Web.Shell.Areas.Search.Controllers
             Dataset ds = dm.GetDataset(datasetID);
 
             DatasetVersion dsv = dm.GetDatasetLatestVersion(datasetID);
-            DataTable table = SearchUIHelper.ConvertPrimaryDataToDatatable(dsv);
+            List<DataTuple> dsVersionTuples = dm.GetDatasetVersionEffectiveTuples(dsv);
+            DataTable table = SearchUIHelper.ConvertPrimaryDataToDatatable(dsv, dsVersionTuples);
 
             return View(new GridModel(table));
         }
@@ -326,14 +327,16 @@ namespace BExIS.Web.Shell.Areas.Search.Controllers
             return View();
         }
 
+        //Javad: this method is called on the hover of the search results.
         public ActionResult ShowPrimaryData(int datasetID)
         {
             DatasetManager dm = new DatasetManager();
             DatasetVersion dsv = dm.GetDatasetLatestVersion(datasetID);
             StructuredDataStructure sds = (StructuredDataStructure)(dsv.Dataset.DataStructure.Self);
+            List<DataTuple> dsVersionTuples = dm.GetDatasetVersionEffectiveTuples(dsv);
 
             Tuple<DataTable, int, StructuredDataStructure> m = new Tuple<DataTable, int, StructuredDataStructure>(
-               SearchUIHelper.ConvertPrimaryDataToDatatable(dsv),
+               SearchUIHelper.ConvertPrimaryDataToDatatable(dsv, dsVersionTuples),
                datasetID,
                sds
                );

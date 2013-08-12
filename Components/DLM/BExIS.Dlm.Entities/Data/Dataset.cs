@@ -12,9 +12,9 @@ namespace BExIS.Dlm.Entities.Data
 {
     public enum DatasetStatus
     {
-            CheckedOut  // dataset version is newly created or checked out for edit. during this time no other user is able to change the dataset
-        ,   CheckedIn   // the version has committed the changes. The whole version and its tuples are freezed then.
-        ,   Deleted     // dataset was committed and then logically deleted. physical delete in not managed here because it deletes the should versions, histories. but a Purge function can be available for db admins
+            CheckedOut  = 1 // dataset version is newly created or checked out for edit. during this time no other user is able to change the dataset
+        ,   CheckedIn   = 2 // the version has committed the changes. The whole version and its tuples are freezed then.
+        ,   Deleted     = 3 // dataset was committed and then logically deleted. physical delete in not managed here because it deletes the should versions, histories. but a Purge function can be available for db admins
     }
 
     /// <summary>

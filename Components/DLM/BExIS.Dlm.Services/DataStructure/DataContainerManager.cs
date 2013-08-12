@@ -70,7 +70,7 @@ namespace BExIS.Dlm.Services.DataStructure
             return (e);            
         }
 
-        public bool DeleteVariable(DataAttribute entity)
+        public bool DeleteDataAttribute(DataAttribute entity)
         {
             Contract.Requires(entity != null);
             Contract.Requires(entity.Id >= 0);
@@ -99,7 +99,7 @@ namespace BExIS.Dlm.Services.DataStructure
             return (true);
         }
 
-        public bool DeleteVariable(IEnumerable<DataAttribute> entities)
+        public bool DeleteDataAttribute(IEnumerable<DataAttribute> entities)
         {
             Contract.Requires(entities != null);
             Contract.Requires(Contract.ForAll(entities, (DataAttribute e) => e != null));
@@ -130,10 +130,10 @@ namespace BExIS.Dlm.Services.DataStructure
             return (true);
         }
 
-        public DataAttribute UpdateVariable(DataAttribute entity)
+        public DataAttribute UpdateDataAttribute(DataAttribute entity)
         {
             Contract.Requires(entity != null, "provided entity can not be null");
-            Contract.Requires(entity.Id >= 0, "provided entity must have a permant ID");
+            Contract.Requires(entity.Id >= 0, "provided entity must have a permanent ID");
 
             Contract.Ensures(Contract.Result<DataAttribute>() != null && Contract.Result<DataAttribute>().Id >= 0, "No entity is persisted!");
 
@@ -147,123 +147,7 @@ namespace BExIS.Dlm.Services.DataStructure
         }
 
         #endregion
-
-        #region Parameter      
-
-        //public Parameter CreateParameter(string shortName, string name, string description, bool isMultiValue, MeasurementScale measurementScale, DataContainerType containerType, string entitySelectionPredicate,
-        //   DataType dataType, Unit unit, Methodology methodology, ICollection<AggregateFunction> functions, ICollection<GlobalizationInfo> globalizationInfos, ICollection<Constraint> constraints,
-        //   ICollection<ExtendedProperty> extendedProperies
-        //   )
-        //{
-        //    Contract.Requires(!string.IsNullOrWhiteSpace(shortName));
-        //    Contract.Requires(dataType != null && dataType.Id >= 0);
-
-        //    Contract.Ensures(Contract.Result<Parameter>() != null && Contract.Result<Parameter>().Id >= 0);
-        //    Parameter e = new Parameter()
-        //    {
-        //        ShortName = shortName,
-        //        Name = name,
-        //        Description = description,
-        //        IsMultiValue = isMultiValue,
-        //        MeasurementScale = measurementScale,
-        //        ContainerType = containerType,
-        //        EntitySelectionPredicate = entitySelectionPredicate,
-        //        DataType = dataType,
-        //        Unit = unit,
-        //        Methodology = methodology,
-        //        AggregateFunctions = new List<AggregateFunction>(functions),
-        //        GlobalizationInfos = new List<GlobalizationInfo>(globalizationInfos),
-        //        Constraints = new List<Constraint>(constraints),
-        //        ExtendedProperties = new List<ExtendedProperty>(extendedProperies),
-        //    };
-
-        //    using (IUnitOfWork uow = this.GetUnitOfWork())
-        //    {
-        //        IRepository<Parameter> repo = uow.GetRepository<Parameter>();
-        //        repo.Put(e);
-        //        uow.Commit();
-        //    }
-        //    return (e);
-        //}
-
-        //public bool DeleteParameter(Parameter entity)
-        //{
-        //    Contract.Requires(entity != null);
-        //    Contract.Requires(entity.Id >= 0);
-
-        //    using (IUnitOfWork uow = this.GetUnitOfWork())
-        //    {
-        //        IRepository<Parameter> repo = uow.GetRepository<Parameter>();
-        //        IRepository<ExtendedProperty> exRepo = uow.GetRepository<ExtendedProperty>();
-        //        IRepository<VariableParameterUsage> vpuRepo = uow.GetRepository<VariableParameterUsage>();
-
-        //        entity = repo.Reload(entity);
-        //        repo.LoadIfNot(entity.ExtendedProperties);
-        //        repo.LoadIfNot(entity.VariableUsages);
-
-        //        exRepo.Delete(entity.ExtendedProperties);
-        //        entity.ExtendedProperties.Clear();
-
-        //        vpuRepo.Delete(entity.VariableUsages);
-        //        entity.VariableUsages.Clear();
-
-        //        repo.Delete(entity);
-
-        //        uow.Commit();
-        //    }
-        //    // if any problem was detected during the commit, an exception will be thrown!
-        //    return (true);
-        //}
-
-        //public bool DeleteParameter(IEnumerable<Parameter> entities)
-        //{
-        //    Contract.Requires(entities != null);
-        //    Contract.Requires(Contract.ForAll(entities, (Parameter e) => e != null));
-        //    Contract.Requires(Contract.ForAll(entities, (Parameter e) => e.Id >= 0));
-
-        //    using (IUnitOfWork uow = this.GetUnitOfWork())
-        //    {
-        //        IRepository<Parameter> repo = uow.GetRepository<Parameter>();
-        //        IRepository<ExtendedProperty> exRepo = uow.GetRepository<ExtendedProperty>();
-        //        IRepository<VariableParameterUsage> vpuRepo = uow.GetRepository<VariableParameterUsage>();
-
-        //        foreach (var entity in entities)
-        //        {
-        //            var latest = repo.Reload(entity);
-        //            repo.LoadIfNot(latest.ExtendedProperties);
-        //            repo.LoadIfNot(entity.VariableUsages);
-
-        //            exRepo.Delete(entity.ExtendedProperties);
-        //            entity.ExtendedProperties.Clear();
-
-        //            vpuRepo.Delete(entity.VariableUsages);
-        //            entity.VariableUsages.Clear();
-
-        //            repo.Delete(latest);
-        //        }
-        //        uow.Commit();
-        //    }
-        //    return (true);
-        //}
-
-        //public Parameter UpdateParameter(Parameter entity)
-        //{
-        //    Contract.Requires(entity != null, "provided entity can not be null");
-        //    Contract.Requires(entity.Id >= 0, "provided entity must have a permant ID");
-
-        //    Contract.Ensures(Contract.Result<Parameter>() != null && Contract.Result<Parameter>().Id >= 0, "No entity is persisted!");
-
-        //    using (IUnitOfWork uow = this.GetUnitOfWork())
-        //    {
-        //        IRepository<Parameter> repo = uow.GetRepository<Parameter>();
-        //        repo.Put(entity); // Merge is required here!!!!
-        //        uow.Commit();
-        //    }
-        //    return (entity);
-        //}
-           
-        #endregion
-
+    
         #region Extended Property
 
         public ExtendedProperty CreateExtendedProperty(string name, string description, DataContainer container, ICollection<Constraint> constraints)

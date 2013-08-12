@@ -48,10 +48,10 @@ namespace BExIS.Dlm.Entities.Data
         public virtual ICollection<ContentDescriptor> ContentDescriptors { get; set; }
 
         /// <summary>
-        /// EffectiveTuples are those that show what is this version. They are caclulated by runnung a set of queries over different tables, and unifying the results
+        /// EffectiveTuples are those that show what is this version. They are calculated by running a set of queries over different tables, and unifying the results
         /// </summary>
-        [XmlIgnore]
-        public virtual ICollection<DataTuple> EffectiveTuples { get; set; }
+        //[XmlIgnore]
+        //public virtual ICollection<DataTuple> EffectiveTuples_del { get; set; }
 
         //public virtual ICollection<DataTuple> Tuples { get; set; } // if (dataStructure is UnStructuredDataStructure) no tuple can be added to this property
         // Don't Map for persistence

@@ -67,7 +67,7 @@
     <!-- Mapping entity associations -->
     <many-to-one name="DataStructure" class="BExIS.Dlm.Entities.DataStructure.DataStructure" not-null="true" column="DataStructureRef"/>
     
-    <set cascade="all-delete-orphan" name="Versions" inverse="true" lazy="true" order-by="OrderNo">
+    <set cascade="all-delete-orphan" name="Versions" inverse="true" lazy="true" order-by="Timestamp desc">
       <key>
         <column name="DatasetRef" />
       </key>

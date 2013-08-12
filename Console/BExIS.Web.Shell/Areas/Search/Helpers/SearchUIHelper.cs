@@ -48,14 +48,13 @@ namespace BExIS.Web.Shell.Areas.Search.Helpers
         }
 
 
-        public static DataTable ConvertPrimaryDataToDatatable(DatasetVersion dsv)
+        public static DataTable ConvertPrimaryDataToDatatable(DatasetVersion dsv, List<DataTuple> dsVersionTuples)
         {
             DataTable dt = new DataTable();
             dt.TableName = "Primary data table";
             StructuredDataStructure sds = (StructuredDataStructure)(dsv.Dataset.DataStructure.Self);
 
-
-            if (dsv.EffectiveTuples != null && sds != null)
+            if (dsVersionTuples != null && sds != null)
             {
                 foreach (var vu in sds.Variables)
                 {
@@ -75,7 +74,7 @@ namespace BExIS.Web.Shell.Areas.Search.Helpers
                     }
                 }
 
-                foreach (var tuple in dsv.EffectiveTuples)
+                foreach (var tuple in dsVersionTuples)
                 {
                      dt.Rows.Add(ConvertTupleIntoDataRow(dt,tuple));
                 }
@@ -91,15 +90,15 @@ namespace BExIS.Web.Shell.Areas.Search.Helpers
 
             foreach(var vv in t.VariableValues)
             {
-                if (vv.Usage != null)
+                if (vv.Variable != null)
                 {
-                    dr[vv.Usage.Label.Replace(" ", "")] = vv.Value;
+                    dr[vv.Variable.Label.Replace(" ", "")] = vv.Value;
 
                     if (vv.ParameterValues.Count > 0)
                     {
                         foreach (var pu in vv.ParameterValues)
                         {
-                            dr[pu.Usage.Label.Replace(" ", "")] = pu.Value;
+                            dr[pu.Parameter.Label.Replace(" ", "")] = pu.Value;
                         }
                     }
                 }

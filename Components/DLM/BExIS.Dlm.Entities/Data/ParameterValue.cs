@@ -21,14 +21,14 @@ namespace BExIS.Dlm.Entities.Data
             {
                 if (this.VariableValue.Tuple.DatasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
                 {
-                    return (this.Usage.DataAttribute);
+                    return (this.Parameter.DataAttribute);
                 }
                 return (null);
             }
         }
 
         [XmlIgnore]
-        public Parameter Usage
+        public Parameter Parameter
         {
             get
             {

@@ -39,9 +39,33 @@ namespace BExIS.Web.Shell.Controllers
             //string a = "this a book isolated";
             //bool b = a.ContainsExact("is");
             //testExtendedProperty();
-            getDataset();
+            //getDataset();
+            createDatasetVersion(3);
             //return RedirectToAction("About");
             return View();
+        }
+
+        private void createDataset()
+        {
+            DatasetManager dm = new DatasetManager();
+            //dm.CreateEmptyDataset()
+        }
+
+        private void createDatasetVersion(Int64 datasetId)
+        {
+            DatasetManager dm = new DatasetManager();
+            if (dm.IsDatasetCheckedOut(datasetId, "Javad") || dm.CheckOutDataset(datasetId, "Javad"))
+            {
+                DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(datasetId);
+
+                DataTuple changed = dm.GetDatasetVersionEffectiveTuples(workingCopy).First();
+                changed.VariableValues.First().Value = (new Random()).Next().ToString();
+
+
+                dm.EditDatasetVersion(workingCopy, null, new List<DataTuple>() { changed }, null);
+                dm.CheckInDataset(datasetId, "for testing purposes", "Javad");
+            }
+
         }
 
     //    private void createADataStructure()
@@ -91,11 +115,13 @@ namespace BExIS.Web.Shell.Controllers
         private void getDataset()
         {
             DatasetManager dm = new DatasetManager();
-            Dataset ds = dm.GetDataset(1);
+            Dataset ds = dm.GetDataset(3);
             if (ds != null)
             {
                 //var a = ds.Tuples.First().VariableValues.First().Variable.Name;
                 StructuredDataStructure sds = (StructuredDataStructure)(ds.DataStructure.Self);
+                DatasetVersion dsv = dm.GetDatasetLatestVersion(ds.Id);
+                var tuples = dm.GetDatasetVersionEffectiveTuples(dsv);
             }
         }
 
