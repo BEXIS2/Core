@@ -15,16 +15,10 @@
       <column name="Extra" not-null="false" sql-type="xml" />
     </property>
 
-    <!-- Mapping entity properties -->
+    <!-- Mapping Subject Properties -->
     <property name="Name" type="String" />
-    <property name="LowerCaseName" type="String" />
-    <property name="Description" type="String" />
+    
     <property name="Comment" type="String" />
-
-    <set name="FeatureRules" lazy="true">
-      <key column="SubjectRef"/>
-      <one-to-many class="FeatureRule"/>
-    </set>
 
   </class>
 

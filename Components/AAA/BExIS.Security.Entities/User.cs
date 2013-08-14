@@ -11,27 +11,27 @@ namespace BExIS.Security.Entities
 
         // EMAIL
         public virtual string Email { get; set; }
-        public virtual string LowerCaseEmail { get; set; }
 
         // PASSWORD
         public virtual string Password { get; set; }
-        public virtual Int32 PasswordFormat { get; set; }
-        public virtual string PasswordSalt { get; set; }
+        public virtual string Salt { get; set; }
         public virtual string PasswordQuestion { get; set; }
         public virtual string PasswordAnswer { get; set; }
         public virtual Int32 PasswordFailureCount { get; set; }
+        public virtual Int32 PasswordAnswerFailureCount { get; set; }
         public virtual DateTime LastPasswordFailureDate { get; set; }
+        public virtual DateTime LastPasswordAnswerFailureDate { get; set; }
 
         // DATES
         public virtual DateTime RegistrationDate { get; set; }
         public virtual DateTime LastActivityDate { get; set; }
-        public virtual DateTime LastLoginDate { get; set; }
         public virtual DateTime LastLockOutDate { get; set; }
+        public virtual DateTime LastLoginDate { get; set; }
         public virtual DateTime LastPasswordChangeDate { get; set; }
 
         // BOOLEANS
-        public virtual bool IsApproved { get; set; }
-        public virtual bool IsLockedOut { get; set; }
+        public virtual Boolean IsApproved { get; set; }
+        public virtual Boolean IsLockedOut { get; set; }
 
         #endregion
 
@@ -48,7 +48,6 @@ namespace BExIS.Security.Entities
         public User()
         {
             Roles = new List<Role>();
-            FeatureRules = new List<FeatureRule>();
         }
 
         #endregion

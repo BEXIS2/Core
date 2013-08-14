@@ -1,0 +1,108 @@
+﻿@using Telerik.Web.Mvc.UI
+@using BExIS.Web.Shell.Areas.Auth.Models;
+
+@{ 
+    GridPagerStyles pagerStyles = GridPagerStyles.NextPreviousAndNumeric;
+    pagerStyles |= GridPagerStyles.PageSizeDropDown;
+}
+
+@(Html.Telerik().Grid<RoleModel>()
+        .Name("Grid_Roles")
+        .EnableCustomBinding(true)
+        .DataKeys(keys => 
+        {
+            keys.Add(r => r.Id);
+        })
+        .ToolBar(commands => commands.Insert().Text("New Role").ButtonType(GridButtonType.ImageAndText))
+        .Columns(columns =>
+        {
+            columns.Command(command =>
+            {
+                command.Custom("Role_Details").Ajax(true).Action("Roles_Details", "Roles").DataRouteValues(values => values.Add(r => r.Id).RouteKey("Id")).ButtonType(GridButtonType.Image);
+                command.Edit().ButtonType(GridButtonType.Image);
+                command.Delete().ButtonType(GridButtonType.Image);
+            }).Title("Actions");
+            columns.Bound(r => r.Id).ReadOnly();
+            columns.Bound(r => r.RoleName);
+            columns.Bound(r => r.Description);
+            columns.Bound(r => r.Comment);
+        })
+        .ClientEvents(events => events.OnComplete("onComplete"))
+        .DataBinding(dataBinding => dataBinding.Ajax()
+            .OperationMode(GridOperationMode.Server)
+            .Select("Roles_Select", "Roles")
+            .Insert("Roles_Insert", "Roles")
+            .Update("Roles_Update", "Roles")
+            .Delete("Roles_Delete", "Roles"))
+        .Pageable(pageable => pageable
+            .Style(pagerStyles)
+            .Position(GridPagerPosition.Both)
+            .PageSize(12, new int[] { 12, 24, 32, 48, 64 })
+            .Total((int)ViewData["totalRoles"]))
+        .Sortable(sortable => sortable
+            .OrderBy(orderby => orderby
+                .Add(r => r.Id ).Ascending()))
+        .Editable(editable => editable
+            .Mode(GridEditMode.InLine))
+        .Filterable()
+)
+
+@(Html.Telerik().Window()
+    .Name("Details")
+    .Visible(false)
+    .Title("Role Details")
+    .Modal(true)
+    .Draggable(true)
+    .Width(600)
+    .Height(400)
+    .Content(@<text>
+                <div id="role-details">
+                    <p>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ornare diam urna, quis porta orci tempus ac. 
+                        Nunc quis interdum nisl, eu tempor nulla. Etiam id malesuada magna. Duis placerat interdum feugiat. 
+                        In eget ornare sapien, non hendrerit nulla. Quisque sed cursus dolor
+                    </p>
+
+                    <table>
+                        <tr>
+                            <td>Id:</td>
+                            <td><id></id></td>
+                        </tr>
+                        <tr>
+                            <td>Role Name:</td>
+                            <td><roleName></roleName></td>
+                        </tr>
+                        <tr>
+                            <td>Description:</td>
+                            <td><description></description></td>
+                        </tr>
+                        <tr>
+                            <td>Comment:</td>
+                            <td><comment></comment></td>
+                        </tr>
+                    </table>
+                </div>
+        </text>)
+)
+
+<script type="text/javascript">
+function onComplete(e) {
+    if (e.name == "Role_Details") {
+        var detailWindow = $("#Details").data("tWindow");       
+        var roleModel = e.response.roleModel;
+        $("#role-details")
+            .find("id")
+            .text(roleModel.Id)
+            .end()
+            .find("roleName")
+            .text(roleModel.RoleName)
+            .end()
+            .find("description")
+            .text(roleModel.Description)
+            .end()
+            .find("comment")
+            .text(roleModel.Comment);
+        detailWindow.center().open();
+   } 
+}
+</script>

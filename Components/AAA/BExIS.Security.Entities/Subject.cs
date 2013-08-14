@@ -10,10 +10,8 @@ namespace BExIS.Security.Entities
     {
         #region Attributes
 
+        // SUBJECT
         public virtual string Name { get; set; }
-        public virtual string LowerCaseName { get; set; }
-
-        public virtual string Description { get; set; }
 
         public virtual string Comment { get; set; }
 
@@ -21,8 +19,6 @@ namespace BExIS.Security.Entities
 
 
         #region Associations
-
-        public virtual ICollection<FeatureRule> FeatureRules { get; set; }
 
         #endregion
 

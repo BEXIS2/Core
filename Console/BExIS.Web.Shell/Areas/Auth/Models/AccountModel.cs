@@ -41,7 +41,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
         public bool RememberMe { get; set; }
     }
 
-    public class RegisterModel
+    public class RegistrationModel
     {
         [Required]
         [Display(Name = "User name")]
@@ -53,7 +53,6 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
         public string Email { get; set; }
 
         [Required]
-        [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
         [DataType(DataType.Password)]
         [Display(Name = "Password")]
         public string Password { get; set; }
@@ -62,5 +61,21 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
         [Display(Name = "Confirm password")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
+
+        [Required]
+        [DataType(DataType.Text)]
+        [Display(Name = "Password Question")]
+        public string PasswordQuestion { get; set; }
+
+        [Required]
+        [DataType(DataType.Password)]
+        [Display(Name = "Password Answer")]
+        public string PasswordAnswer { get; set; }
+
+        [Required]
+        [DataType(DataType.Password)]
+        [Display(Name = "Confirm Password Answer")]
+        [Compare("PasswordAnswer", ErrorMessage = "The password answer and confirmation password answer do not match.")]
+        public string ConfirmPasswordAnswer { get; set; }
     }
 }

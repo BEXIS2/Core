@@ -1,0 +1,49 @@
+﻿@using Telerik.Web.Mvc.UI
+@using BExIS.Web.Shell.Areas.Auth.Models;
+
+@{ 
+    GridPagerStyles pagerStyles = GridPagerStyles.NextPreviousAndNumeric;
+    pagerStyles |= GridPagerStyles.PageSizeDropDown;
+}
+
+@(Html.Telerik().Grid<UserModel>()
+        .Name("Grid_Users")
+        .EnableCustomBinding(true)
+        .DataKeys(keys => 
+        {
+            keys.Add(r => r.Id);
+        })
+        .Columns(columns =>
+        {
+            columns.Command(command =>
+            {
+                command.Custom("Details").ButtonType(GridButtonType.Image);
+                command.Edit().ButtonType(GridButtonType.Image);
+                command.Delete().ButtonType(GridButtonType.Image);
+            }).Title("Actions").HtmlAttributes(new { style = "text-align: center" });
+            columns.Bound(u => u.Id).ReadOnly();
+            columns.Bound(u => u.UserName).ReadOnly();
+            columns.Bound(u => u.Email);
+            columns.Bound(u => u.RegistrationDate).ReadOnly();
+            columns.Bound(u => u.LastLoginDate).ReadOnly();
+            columns.Bound(u => u.LastActivityDate).ReadOnly();
+            columns.Bound(u => u.IsApproved).ClientTemplate("<input type='checkbox' disabled='disabled' name='IsApproved' <#= IsApproved? checked='checked' : '' #> />");
+            columns.Bound(u => u.IsLockedOut).ClientTemplate("<input type='checkbox' disabled='disabled' name='IsLockedOut' <#= IsLockedOut? checked='checked' : '' #> />");
+        })
+        .DataBinding(dataBinding => dataBinding.Ajax()
+            .OperationMode(GridOperationMode.Server)
+            .Select("Users_Select", "Users")
+            .Update("Users_Update", "Users")
+            .Delete("Users_Delete", "Users"))
+        .Pageable(pageable => pageable
+            .Style(pagerStyles)
+            .Position(GridPagerPosition.Both)
+            .PageSize(12, new int[] { 12, 24, 32, 48, 64 })
+            .Total((int)ViewData["total"]))
+        .Sortable(sortable => sortable
+            .OrderBy(orderby => orderby
+                .Add(r => r.Id ).Ascending()))
+        .Editable(editable => editable
+            .Mode(GridEditMode.InLine))
+        .Filterable()
+)

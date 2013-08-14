@@ -1,4 +1,4 @@
-﻿@model BExIS.Web.Shell.Areas.Auth.Models.RegisterModel
+﻿@model BExIS.Web.Shell.Areas.Auth.Models.RegistrationModel
 
 <p>
     Please enter your user name and password. @Html.ActionLink("Log On", "LogOn") if you have an account already.
@@ -46,6 +46,27 @@
             <div class="editor-field">
                 @Html.PasswordFor(m => m.ConfirmPassword)
                 @Html.ValidationMessageFor(m => m.ConfirmPassword)
+            </div>
+            <div class="editor-label">
+                @Html.LabelFor(m => m.PasswordQuestion)
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(m => m.PasswordQuestion)
+                @Html.ValidationMessageFor(m => m.PasswordQuestion)
+            </div>
+            <div class="editor-label">
+                @Html.LabelFor(m => m.PasswordAnswer)
+            </div>
+            <div class="editor-field">
+                @Html.PasswordFor(m => m.PasswordAnswer)
+                @Html.ValidationMessageFor(m => m.PasswordAnswer)
+            </div>
+            <div class="editor-label">
+                @Html.LabelFor(m => m.ConfirmPasswordAnswer)
+            </div>
+            <div class="editor-field">
+                @Html.PasswordFor(m => m.ConfirmPasswordAnswer)
+                @Html.ValidationMessageFor(m => m.ConfirmPasswordAnswer)
             </div>
 
             <p>

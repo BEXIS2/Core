@@ -9,7 +9,7 @@ namespace BExIS.Security.Entities
     {
         #region Attributes
 
-
+        public virtual string Description { get; set; }
 
         #endregion
 
@@ -26,7 +26,6 @@ namespace BExIS.Security.Entities
         public Role()
         {
             Users = new List<User>();
-            FeatureRules = new List<FeatureRule>();
         }
 
         #endregion

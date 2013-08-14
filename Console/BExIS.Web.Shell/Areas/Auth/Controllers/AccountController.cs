@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
+using BExIS.Security.Services;
 using BExIS.Web.Shell.Areas.Auth.Models;
 
 namespace BExIS.Web.Shell.Areas.Auth.Controllers
@@ -32,7 +33,9 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (Membership.ValidateUser(model.UserName, model.Password))
+                UserManager userManager = new UserManager();
+
+                if (userManager.ValidateUser(model.UserName, model.Password, 3, 30, "qwertzuioplkjhgfdsayxcvbqwertztu"))
                 {
                     FormsAuthentication.SetAuthCookie(model.UserName, model.RememberMe);
                     if (Url.IsLocalUrl(returnUrl) && returnUrl.Length > 1 && returnUrl.StartsWith("/")
@@ -70,6 +73,10 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
 
         public ActionResult Register()
         {
+            RoleManager roleManager = new RoleManager();
+
+            roleManager.Create("test", "hallo");
+
             return View();
         }
 
@@ -77,13 +84,16 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
         // POST: /Account/Register
 
         [HttpPost]
-        public ActionResult Register(RegisterModel model)
+        public ActionResult Register(RegistrationModel model)
         {
             if (ModelState.IsValid)
             {
                 // Attempt to register the user
                 MembershipCreateStatus createStatus;
-                Membership.CreateUser(model.UserName, model.Password, model.Email, null, null, true, null, out createStatus);
+
+                UserManager userManager = new UserManager();
+
+                userManager.Create(model.UserName, model.Email, model.Password, model.PasswordQuestion, model.PasswordAnswer, true, 6, "qwertzuioplkjhgfdsayxcvbqwertztu", out createStatus);
 
                 if (createStatus == MembershipCreateStatus.Success)
                 {
