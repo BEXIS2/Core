@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using BExIS.Core.Data;
+using Vaiona.Entities.Common;
 using System.Xml.Linq;
 using System.Xml;
 using BExIS.Dlm.Entities.DataStructure;
@@ -77,10 +77,10 @@ namespace BExIS.Dlm.Entities.Data
             //}
         }
 
-        public override void Validate()
-        {            
-            // check whether type of data structure is unstructured? if yes, at least one ContentDescriptor must be provided
-        }
+        //public override void Validate()
+        //{            
+        //    // check whether type of data structure is unstructured? if yes, at least one ContentDescriptor must be provided
+        //}
        
         public override void Materialize()
         {

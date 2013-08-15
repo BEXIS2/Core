@@ -15,7 +15,7 @@
     <AssemblyName>BExIS.Web.Shell</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
-    <UseIISExpress>false</UseIISExpress>
+    <UseIISExpress>true</UseIISExpress>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <UpgradeBackupLocation>
@@ -53,6 +53,9 @@
     <Reference Include="IBM.Data.DB2.9.7.4">
       <HintPath>C:\Program Files\IBM\SQLLIB\BIN\netf40_32\specific\IBM.Data.DB2.9.7.4.dll</HintPath>
     </Reference>
+    <Reference Include="Iesi.Collections">
+      <HintPath>..\..\packages\Iesi.Collections.3.2.0.4000\lib\Net35\Iesi.Collections.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Practices.Unity, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Unity.2.1.505.2\lib\NET35\Microsoft.Practices.Unity.dll</HintPath>
@@ -60,7 +63,12 @@
     <Reference Include="Microsoft.Practices.Unity.Configuration, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Unity.2.1.505.2\lib\NET35\Microsoft.Practices.Unity.Configuration.dll</HintPath>
     </Reference>
-    <Reference Include="System.Data.Linq" />
+    <Reference Include="Microsoft.Web.Helpers">
+      <HintPath>..\..\Libraries\Microsoft.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate">
+      <HintPath>..\..\packages\NHibernate.3.3.3.4001\lib\Net35\NHibernate.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.WebPages" />
     <Reference Include="System.Web.Helpers" />
     <Reference Include="System" />
@@ -84,6 +92,35 @@
     <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="Telerik.Web.Mvc">
       <HintPath>..\..\packages\TelerikMvcExtensions.2012.3.1018\lib\net40\Telerik.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="Vaiona.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Libraries\Vaiona\Vaiona.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Vaiona.Entities, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Libraries\Vaiona\Vaiona.Entities.dll</HintPath>
+    </Reference>
+    <Reference Include="Vaiona.IoC, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Libraries\Vaiona\Vaiona.IoC.dll</HintPath>
+    </Reference>
+    <Reference Include="Vaiona.Persistence.Api, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Libraries\Vaiona\Vaiona.Persistence.Api.dll</HintPath>
+    </Reference>
+    <Reference Include="Vaiona.PersistenceProviders.NH">
+      <HintPath>..\..\Libraries\Vaiona\Vaiona.PersistenceProviders.NH.dll</HintPath>
+    </Reference>
+    <Reference Include="Vaiona.Util, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Libraries\Vaiona\Vaiona.Util.dll</HintPath>
+    </Reference>
+    <Reference Include="Vaiona.Web">
+      <HintPath>..\..\Libraries\Vaiona\Vaiona.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="Vaiona.Web.Mvc">
+      <HintPath>..\..\Libraries\Vaiona\Vaiona.Web.Mvc.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -470,45 +507,9 @@
     <Content Include="Views\Shared\EditorTemplates\Time.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Components\AAA\BExIS.Security.Orm.NH\BExIS.Security.Orm.NH.csproj">
-      <Project>{3d726430-cb41-4607-a615-cd48f510229b}</Project>
-      <Name>BExIS.Security.Orm.NH</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Components\AAA\BExIS.Security.Services\BExIS.Security.Services.csproj">
       <Project>{681c8bc4-55f0-4f43-a685-90e246a88cb1}</Project>
       <Name>BExIS.Security.Services</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Components\DLM\BExIS.Dlm.Orm.NH\BExIS.Dlm.Orm.NH.csproj">
-      <Project>{e234118c-1b89-493c-b17a-6990f6b98a9f}</Project>
-      <Name>BExIS.Dlm.Orm.NH</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Core\BExIS.Core.IoC\BExIS.Core.IoC.csproj">
-      <Project>{29A7BE0F-A17C-4AE8-8CA1-15FE4DD74129}</Project>
-      <Name>BExIS.Core.IoC</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Core\BExIS.Core.UI\BExIS.Core.UI.csproj">
-      <Project>{44AF9DCD-BEBC-4604-8709-487F915EE0C1}</Project>
-      <Name>BExIS.Core.UI</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Core\BExIS.Core.Util\BExIS.Core.Util.csproj">
-      <Project>{63FCACAA-9534-4FDD-A082-78DCC06BAF28}</Project>
-      <Name>BExIS.Core.Util</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Core\BExIS.Core\BExIS.Core.csproj">
-      <Project>{B446C14F-9DF1-4C3C-A634-E3ADDD05C48A}</Project>
-      <Name>BExIS.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Core\Data\BExIS.Core.Data\BExIS.Core.Data.csproj">
-      <Project>{A60AC05F-8C9A-4EFD-9826-452E6049DA4D}</Project>
-      <Name>BExIS.Core.Data</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Core\Data\BExIS.Core.Persistence.Api\BExIS.Core.Persistence.Api.csproj">
-      <Project>{640BF81D-354A-4BF0-85FC-F0AD587CF8A2}</Project>
-      <Name>BExIS.Core.Persistence.Api</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Core\PersistenceProviders\BExIS.Core.PersistenceProviders.NH\BExIS.Core.PersistenceProviders.NH.csproj">
-      <Project>{8C5C0209-69A3-4579-9F9B-4D5F084A3B85}</Project>
-      <Name>BExIS.Core.PersistenceProviders.NH</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Modules\Search\BExIS.Search.Api\BExIS.Search.Api.csproj">
       <Project>{8519EAC6-FBF8-48B3-813F-E0B9D3CC4A52}</Project>
@@ -711,9 +712,9 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>41886</DevelopmentServerPort>
+          <DevelopmentServerPort>6207</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost/BExIS.Web.Shell</IISUrl>
+          <IISUrl>http://localhost:4187/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

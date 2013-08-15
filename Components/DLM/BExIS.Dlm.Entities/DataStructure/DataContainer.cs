@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using BExIS.Core.Data;
+using Vaiona.Entities.Common;
 
 namespace BExIS.Dlm.Entities.DataStructure
 {
@@ -97,16 +97,16 @@ namespace BExIS.Dlm.Entities.DataStructure
             MeasurementScale = MeasurementScale.Nominal;
         }
 
-        public override void Validate()
-        {
-            // No dupplicate extended property
-            // if Type == ReferenceType, EntitySelectionpredicate can not be null
-            // must have one data type
-            //ValidateDomainValues
-            //ValidateValidatores
+        //public override void Validate()
+        //{
+        //    // No dupplicate extended property
+        //    // if Type == ReferenceType, EntitySelectionpredicate can not be null
+        //    // must have one data type
+        //    //ValidateDomainValues
+        //    //ValidateValidatores
 
-            throw new NotImplementedException();
-        }
+        //    throw new NotImplementedException();
+        //}
 
         public virtual bool ValidateDomainValues(object data)
         {

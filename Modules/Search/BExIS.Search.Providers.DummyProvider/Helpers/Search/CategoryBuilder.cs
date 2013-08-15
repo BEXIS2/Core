@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Xml;
 using BExIS.Search.Model;
-using BExIS.Core.Util.Cfg;
+using Vaiona.Util.Cfg;
 
 namespace BExIS.Search.Providers.DummyProvider.Helpers.Helpers.Search
 {

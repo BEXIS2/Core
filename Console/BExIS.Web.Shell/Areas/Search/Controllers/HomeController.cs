@@ -8,7 +8,7 @@ using Telerik.Web.Mvc;
 using BExIS.Search.Model;
 using BExIS.Web.Shell.Areas.Search.Helpers;
 using BExIS.Search.Api;
-using BExIS.Core.IoC;
+using Vaiona.IoC;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Entities.DataStructure;

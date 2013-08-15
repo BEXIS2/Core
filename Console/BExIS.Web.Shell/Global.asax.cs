@@ -4,10 +4,12 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
-using BExIS.Core.IoC;
-using BExIS.Core.Persistence.Api;
-using BExIS.Core.Util.Cfg;
+using Vaiona.IoC;
+using Vaiona.Persistence.Api;
+using Vaiona.Util.Cfg;
 using System.IO;
+using Vaiona.Web.Extensions;
+using Vaiona.Web.Mvc;
 
 namespace BExIS.Web.Shell
 {
@@ -49,7 +51,7 @@ namespace BExIS.Web.Shell
         {
             IoCFactory.StartContainer(Path.Combine(AppConfiguration.AppRoot, "IoC.config"), "DefaultContainer"); // use AppConfig to access the app root folder
             loadModules();
-            IPersistenceManager pManager = IoCFactory.Container.Resolve<IPersistenceManager>() as IPersistenceManager; // just to prepare data access environment
+            IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager(); // just to prepare data access environment
             pManager.Configure(); //, AppConfiguration.DefaultApplicationConnection.ConnectionString);
             if (AppConfiguration.CreateDatabase)
                 pManager.ExportSchema();
@@ -58,19 +60,21 @@ namespace BExIS.Web.Shell
 
         private void loadModules()
         {
-            //throw new NotImplementedException();
+            ModuleManager.LoadModules(); // it does nothing yet, implement it!
         }
 
         protected void Application_End()
         {
-            IPersistenceManager pManager = IoCFactory.Container.Resolve<IPersistenceManager>() as IPersistenceManager;
+            IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager();
             pManager.Shutdown(); // release all data access related resources!
             IoCFactory.ShutdownContainer();
         }
 
         protected void Session_Start()
         {
+            //set session culture using DefaultCulture key
             Session["SessionLevelContainer"] = IoCFactory.Container.CreateSessionLevelContainer();
+            Session.ApplyCulture(AppConfiguration.DefaultCulture);
         }
 
         protected void Session_End()

@@ -5,7 +5,7 @@ using System.Text;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Entities.Data;
 using System.Diagnostics.Contracts;
-using BExIS.Core.Persistence.Api;
+using Vaiona.Persistence.Api;
 
 namespace BExIS.Dlm.Services.DataStructure
 {

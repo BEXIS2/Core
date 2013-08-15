@@ -28,25 +28,40 @@
         <column name="State" />
       </property>
       <property name="Timestamp" type="DateTime">
-        <column name="StateTimestamp" />
+        <column name="StateTimestamp" not-null="false"/>
       </property>
       <property name="Comment" type="string">
         <column name="StateComment" />
       </property>
     </component>
 
-    <component name="AuditInfo" >
-      <property name="ActionType" type="BExIS.Core.Data.AuditActionType, BExIS.Core.Data">
-        <column name="ActionType" />
+    <component name="CreationInfo" >
+      <property name="ActionType" type="Vaiona.Entities.Common.AuditActionType, Vaiona.Entities">
+        <column name="C_ActionType" />
       </property>
       <property name="Performer" type="string">
-        <column name="Performer" />
+        <column name="C_Performer" />
       </property>
       <property name="Comment" type="string">
-        <column name="AuditComment" />
+        <column name="C_Comment" />
       </property>
       <property name="Timestamp" type="DateTime">
-        <column name="AuditTimestamp" />
+        <column name="C_Timestamp" not-null="false"/>
+      </property>
+    </component>
+
+    <component name="ModificationInfo" >
+      <property name="ActionType" type="Vaiona.Entities.Common.AuditActionType, Vaiona.Entities">
+        <column name="M_ActionType" />
+      </property>
+      <property name="Performer" type="string">
+        <column name="M_Performer" />
+      </property>
+      <property name="Comment" type="string">
+        <column name="M_Comment" />
+      </property>
+      <property name="Timestamp" type="DateTime">
+        <column name="M_Timestamp" not-null="false"/>
       </property>
     </component>
     

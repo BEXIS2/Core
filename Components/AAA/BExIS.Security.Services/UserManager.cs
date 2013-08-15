@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using BExIS.Security.Entities;
-using BExIS.Core.Persistence.Api;
+using Vaiona.Persistence.Api;
 using System.Diagnostics.Contracts;
-using System.Linq.Expressions;
 using System.Web.Security;
 using System.Security.Cryptography;
-using System.Text.RegularExpressions;
 
 namespace BExIS.Security.Services
 {
@@ -156,7 +154,7 @@ namespace BExIS.Security.Services
 
                     // User Properties
                     Email = email,
-                    
+
                     Password = EncodeSecurityProperty(password, salt),
                     Salt = EncodeSalt(salt, machineKey),
                     PasswordQuestion = passwordQuestion,
@@ -187,7 +185,7 @@ namespace BExIS.Security.Services
                 }
 
                 status = MembershipCreateStatus.Success;
-                return (user);  
+                return (user);
             }
             else
             {
@@ -563,12 +561,12 @@ namespace BExIS.Security.Services
                         }
 
                         using (IUnitOfWork uow = this.GetUnitOfWork())
-                        {
+                {
                             IRepository<User> repo = uow.GetRepository<User>();
                             repo.Put(user);
                             uow.Commit();
                         }
-                    }
+                }
                     else
                     {
                         user.LastPasswordFailureDate = DateTime.Now;
@@ -578,8 +576,8 @@ namespace BExIS.Security.Services
                         {
                             IRepository<User> repo = uow.GetRepository<User>();
                             repo.Put(user);
-                            uow.Commit();
-                        }
+                uow.Commit();
+            }
                     }
                         
                     break;
@@ -594,7 +592,7 @@ namespace BExIS.Security.Services
                         {
                             user.LastLockOutDate = DateTime.Now;
                             user.IsLockedOut = true;
-                        }
+        }
 
                         using (IUnitOfWork uow = this.GetUnitOfWork())
                         {
@@ -604,17 +602,17 @@ namespace BExIS.Security.Services
                         }
                     }
                     else
-                    {
+        {
                         user.LastActivityDate = DateTime.Now;
                         user.LastPasswordAnswerFailureDate = DateTime.Now;
                         user.PasswordAnswerFailureCount = 1;
 
                         using (IUnitOfWork uow = this.GetUnitOfWork())
-                        {
-                            IRepository<User> repo = uow.GetRepository<User>();
+            {
+                IRepository<User> repo = uow.GetRepository<User>();
                             repo.Put(user);
-                            uow.Commit();
-                        }
+                uow.Commit();
+            }
                     }
 
                     break;

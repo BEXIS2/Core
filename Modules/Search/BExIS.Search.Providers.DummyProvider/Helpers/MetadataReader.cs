@@ -5,7 +5,7 @@ using System.Linq;
 using System.Web;
 using System.IO;
 using BExIS.Search.Model;
-using BExIS.Core.Util.Cfg;
+using Vaiona.Util.Cfg;
 using BExIS.Search.Providers.DummyProvider.Helpers.Helpers.Search;
 
 

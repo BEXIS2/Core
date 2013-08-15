@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using BExIS.Core.Data;
+using Vaiona.Entities.Common;
 using System.Diagnostics.Contracts;
 using BExIS.Dlm.Entities.Data;
 
@@ -41,10 +41,10 @@ namespace BExIS.Dlm.Entities.DataStructure
             IndexerType = indexerType;
         }
 
-        public override void Validate()
-        {
-            //throw new NotImplementedException();
-        }
+        //public override void Validate()
+        //{
+        //    //throw new NotImplementedException();
+        //}
 
         #endregion
     }

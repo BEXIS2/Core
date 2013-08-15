@@ -43,6 +43,9 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="Vaiona.Util">
+      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Util.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Helpers\GlobalHelper.cs" />
@@ -58,10 +61,6 @@
     <Compile Include="SearchProvider.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Core\BExIS.Core.Util\BExIS.Core.Util.csproj">
-      <Project>{63FCACAA-9534-4FDD-A082-78DCC06BAF28}</Project>
-      <Name>BExIS.Core.Util</Name>
-    </ProjectReference>
     <ProjectReference Include="..\BExIS.Search.Api\BExIS.Search.Api.csproj">
       <Project>{8519EAC6-FBF8-48B3-813F-E0B9D3CC4A52}</Project>
       <Name>BExIS.Search.Api</Name>

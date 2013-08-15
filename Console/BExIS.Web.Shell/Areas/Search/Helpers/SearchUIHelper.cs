@@ -6,7 +6,7 @@ using System.Xml;
 using System.Xml.Xsl;
 using System.IO;
 using System.Data;
-using BExIS.Core.Util.Cfg;
+using Vaiona.Util.Cfg;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 

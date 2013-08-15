@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml;
-using BExIS.Core.Data;
+using Vaiona.Entities.Common;
 
 namespace BExIS.Dlm.Entities.Data
 {

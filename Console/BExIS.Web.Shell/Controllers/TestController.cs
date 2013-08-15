@@ -7,19 +7,20 @@ using System.Xml.Linq;
 using BExIS.Dlm.Entities.Data;
 using System.Xml;
 using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Core.Serialization;
+using Vaiona.Core.Serialization;
 using System.Xml.Serialization;
-using BExIS.Core.Persistence.Api;
-using BExIS.Core.IoC;
-using BExIS.Core.Util.Cfg;
-using BExIS.Core.UI;
+using Vaiona.Persistence.Api;
+using Vaiona.IoC;
+using Vaiona.Util.Cfg;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.Data;
 using System.IO;
+using Vaiona.Web.Models;
+using Vaiona.Web.Mvc.Models;
 
 namespace BExIS.Web.Shell.Controllers
 {
-#if DEBUG // it is designed just for testing and debuging puposes. For production versiosn, use release profile. Javad. 07.02.13
+#if DEBUG // it is designed just for testing and debugging purposes. For production versions, use release profile. Javad. 07.02.13
     public class TestController : Controller
     {
         public ActionResult Index()
@@ -40,7 +41,7 @@ namespace BExIS.Web.Shell.Controllers
             //bool b = a.ContainsExact("is");
             //testExtendedProperty();
             //getDataset();
-            createDatasetVersion(3);
+            createDatasetVersion(4);
             //return RedirectToAction("About");
             return View();
         }
@@ -60,7 +61,7 @@ namespace BExIS.Web.Shell.Controllers
 
                 DataTuple changed = dm.GetDatasetVersionEffectiveTuples(workingCopy).First();
                 changed.VariableValues.First().Value = (new Random()).Next().ToString();
-
+                
 
                 dm.EditDatasetVersion(workingCopy, null, new List<DataTuple>() { changed }, null);
                 dm.CheckInDataset(datasetId, "for testing purposes", "Javad");

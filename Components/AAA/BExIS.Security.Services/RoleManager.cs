@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using BExIS.Security.Entities;
-using BExIS.Core.Persistence.Api;
+using Vaiona.Persistence.Api;
 using System.Diagnostics.Contracts;
 
 namespace BExIS.Security.Services

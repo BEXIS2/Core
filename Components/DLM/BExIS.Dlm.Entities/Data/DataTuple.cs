@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using BExIS.Core.Data;
+using Vaiona.Entities.Common;
 using System.Xml.Linq;
 using System.Xml;
-using BExIS.Core.Serialization;
+using Vaiona.Core.Serialization;
 
 namespace BExIS.Dlm.Entities.Data
 {

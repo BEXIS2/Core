@@ -42,6 +42,12 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="Vaiona.Core">
+      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Vaiona.Entities">
+      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Entities.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Administration\ResearchPlan.cs" />
@@ -84,16 +90,6 @@
     <None Include="Administration\Administration.cd" />
     <None Include="DataStructure\DataStructure.cd" />
     <None Include="Data\Data.cd" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\Core\BExIS.Core\BExIS.Core.csproj">
-      <Project>{B446C14F-9DF1-4C3C-A634-E3ADDD05C48A}</Project>
-      <Name>BExIS.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Core\Data\BExIS.Core.Data\BExIS.Core.Data.csproj">
-      <Project>{A60AC05F-8C9A-4EFD-9826-452E6049DA4D}</Project>
-      <Name>BExIS.Core.Data</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Security;
-using BExIS.Core.Persistence.Api;
+using Vaiona.Persistence.Api;
 using BExIS.Security.Entities;
 
 namespace BExIS.Security.Services

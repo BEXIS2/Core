@@ -44,6 +44,12 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="Vaiona.Entities">
+      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Entities.dll</HintPath>
+    </Reference>
+    <Reference Include="Vaiona.Persistence.Api">
+      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Persistence.Api.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IRoleManager.cs" />
@@ -53,14 +59,6 @@
     <Compile Include="UserManager.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Core\Data\BExIS.Core.Data\BExIS.Core.Data.csproj">
-      <Project>{A60AC05F-8C9A-4EFD-9826-452E6049DA4D}</Project>
-      <Name>BExIS.Core.Data</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Core\Data\BExIS.Core.Persistence.Api\BExIS.Core.Persistence.Api.csproj">
-      <Project>{640BF81D-354A-4BF0-85FC-F0AD587CF8A2}</Project>
-      <Name>BExIS.Core.Persistence.Api</Name>
-    </ProjectReference>
     <ProjectReference Include="..\BExIS.Security.Entities\BExIS.Security.Entities.csproj">
       <Project>{C230693B-D780-438B-B26C-82257642DD5C}</Project>
       <Name>BExIS.Security.Entities</Name>

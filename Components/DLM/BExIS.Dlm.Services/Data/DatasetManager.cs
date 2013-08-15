@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using BExIS.Core.Persistence.Api;
+using Vaiona.Persistence.Api;
 using BExIS.Dlm.Entities.Data;
 using System.Xml;
 using System.Diagnostics.Contracts;
