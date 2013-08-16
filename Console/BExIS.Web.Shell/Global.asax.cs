@@ -10,6 +10,7 @@ using Vaiona.Util.Cfg;
 using System.IO;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc;
+using Vaiona.Web.Mvc.Data;
 
 namespace BExIS.Web.Shell
 {
@@ -20,6 +21,7 @@ namespace BExIS.Web.Shell
     {
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
+            filters.Add(new PersistenceContextProviderAttribute());
             filters.Add(new HandleErrorAttribute());
         }
 

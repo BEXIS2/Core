@@ -17,6 +17,7 @@ using BExIS.Dlm.Services.Data;
 using System.IO;
 using Vaiona.Web.Models;
 using Vaiona.Web.Mvc.Models;
+using Vaiona.Web.Mvc.Data;
 
 namespace BExIS.Web.Shell.Controllers
 {
@@ -44,6 +45,12 @@ namespace BExIS.Web.Shell.Controllers
             createDatasetVersion(4);
             //return RedirectToAction("About");
             return View();
+        }
+
+        [DoesNotNeedDataAccess] // tells the NH persistence manager to not create a session context for this action!
+        public ActionResult Index2()
+        {
+            return View("Index");
         }
 
         private void createDataset()
