@@ -1,0 +1,35 @@
+﻿@using Telerik.Web.Mvc.UI
+@using BExIS.Dlm.Entities.DataStructure
+@model BExIS.RPM.Model.DataStructureDesignerModel
+
+@{
+    if (Session["Window"] == null)
+    {
+        Session["Window"] = false;
+    }    
+}
+
+
+<div>
+@(Html.Telerik().Grid(Model.DataStructureTable)
+        .Name("DataStructureGrid")
+)
+</div>
+<div>
+        @Html.ActionLink("AddVariable", "ShowVariables", "Home", new {@class = "addVariable"})
+</div>
+<div style="position:absolute; left:20%; top:60px;">
+@{ Html.Telerik().Window()
+        .Name("AddVariableWindow")
+        .Visible((bool)Session["Window"])
+        .Content(@<text>
+                    @Html.Partial("_addVariable")
+                    </text>)
+        .Width(1000)
+        .Height(600)
+        .Render()
+        ;
+        
+}
+</div>
+@{Session["Window"] = false;}

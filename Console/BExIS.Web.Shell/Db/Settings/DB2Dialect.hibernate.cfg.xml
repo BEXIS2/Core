@@ -6,7 +6,7 @@
       <property name="connection.driver_class">NHibernate.Driver.DB2Driver</property>
       <property name="dialect">NHibernate.Dialect.DB2Dialect</property>
       <property name="connection.connection_string">
-        Server= bexis.inf-bb.uni-jena.de;
+        Server=bexis.inf-bb.uni-jena.de;
         Database=BExIS2;
         user ID=standard;
         Password=1ine-n2;

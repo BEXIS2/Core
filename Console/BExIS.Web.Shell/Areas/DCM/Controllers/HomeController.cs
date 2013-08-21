@@ -39,7 +39,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             if (TaskManager == null)
             {
-                string path = Path.Combine("D:\\BPP\\Tech\\ModuleBranches\\DCM\\Workspace\\Modules\\DCM", "TaskInfo.xml");
+                string path = Path.Combine("D:\\BPP\\Tech\\Dev\\Workspace\\Modules\\DCM", "TaskInfo.xml");
                 XmlDocument xmlTaskInfo = new XmlDocument();
                 xmlTaskInfo.Load(path);
 

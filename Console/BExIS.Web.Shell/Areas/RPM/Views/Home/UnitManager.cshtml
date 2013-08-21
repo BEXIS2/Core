@@ -1,0 +1,356 @@
+﻿@using Telerik.Web.Mvc.UI
+@using BExIS.Dlm.Entities.DataStructure
+@using System
+@using System.Text.RegularExpressions
+@model List<Unit>
+
+@{
+    string rgxPattern = "[ ]";
+    string rgxReplace = "_";
+    Regex rgx = new Regex(rgxPattern);
+
+    string addClass = ".um_add_unit";
+    
+    Unit unit = (Unit)Session["Unit"];
+    string windowName = "Add";
+    
+    if (unit.Name != null && unit.Name != "")
+    {
+        windowName = rgx.Replace(unit.Name, rgxReplace);
+    }
+    else
+    {
+        windowName = "Add";
+    }
+    //var MeasurementSystemList = (from u in UnitList select u.MeasurementSystem.ToString()).Distinct();
+    //var DimensionList = (from u in UnitList select u.Dimension.ToString()).Distinct();
+
+    //var temp = MeasurementSystemList.Union(DimensionList);
+    //temp = temp.Union((from u in UnitList select u.Name.ToString()).Distinct());
+    //temp = temp.Union((from u in UnitList select u.Abbreviation.ToString()).Distinct());
+    
+    //List<string> Filters = temp.ToList();
+    
+    
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>UnitManager</title>
+</head>
+@*<header>*@
+    <link href="@Url.Content("~/Areas/RPM/Stylesheets/RPM.css")" rel="stylesheet" type="text/css" />
+    <script src="@Url.Content("~/Scripts/jquery.isotope.min.js")" type="text/javascript"></script>  
+@*</header> *@
+<body>
+
+
+@*<div class="option-combo AutoComp">
+    <div class="inputfilter option-set clearfix">
+        @(Html.Telerik().AutoComplete()
+            .Name("AutoComp")
+            .BindTo(Filters)
+            .ClientEvents(events => events.OnChange("ComboBox_onChange"))
+            .Multiple(multi =>
+            {
+                multi.Separator(",")
+                   .Enabled(true);
+                     
+            })
+         )
+        <a href="#filter-AutoComplete" data-filter="*" data-filter-group="AutoComplete" class="t-icon t-search"></a>
+    </div>
+</div>
+@section LeftPane 
+{
+<section id="options" class="options clearfix combo-filters">
+    <div class="option-combo MeasurementSystem t-widget t-treeview t-reset" id="TreeView">
+    <h5>Measurement Systems</h5>
+    <ul class="filter option-set clearfix t-group t-treeview-lines" data-filter-group="measurementsystem">
+        <li class="t-item">
+            <div class="t-top">
+                <a href="#filter-measurementsystem-all" data-filter-value="" class="selected t-link t-in">show all</a>
+            </div>
+        </li> 
+        @foreach (var m in MeasurementSystemList)
+        {
+            if (m == MeasurementSystemList.ToList().Last())
+            {
+            <li class="t-item t-last">
+                <div class="t-bot"> 
+                    <a href="#filter-measurementsystem-@m.ToString()" data-filter-value=".@m.ToString()" class="t-link t-in">@m.ToString()</a>
+                </div>
+            </li>
+            }
+            else
+            {
+            <li class="t-item">
+                <div class="t-mid"> 
+                    <a href="#filter-measurementsystem-@m.ToString()" data-filter-value=".@m.ToString()" class="t-link t-in">@m.ToString()</a>
+                </div>
+            </li>
+            }
+        }
+    </ul>
+    </div>
+    <div class="option-combo dimension t-widget t-treeview t-reset" id="TreeView">
+    <h5>Dimensions</h5>
+    <ul class="filter option-set clearfix t-group t-treeview-lines" data-filter-group="dimension">
+        <li class="t-item">
+            <div class="t-top">
+                <a href="#filter-dimension-all" data-filter-value="" class="selected t-link t-in">show all</a>
+            </div>
+        </li> 
+        @foreach (var d in DimensionList)
+        {
+            if (d == DimensionList.ToList().Last())
+            {
+            <li class="t-item t-last">
+                <div class="t-bot"> 
+                    <a href="#filter-dimension-@d.ToString()" data-filter-value=".@d.ToString()" class="t-link t-in">@d.ToString()</a>
+                </div>
+            </li>
+            }
+            else
+            {
+            <li class="t-item">
+                <div class="t-mid"> 
+                    <a href="#filter-dimension-@d.ToString()" data-filter-value=".@d.ToString()" class="t-link t-in">@d.ToString()</a>
+                </div>
+            </li>
+            }
+        }
+    </ul>
+    </div>
+</section>
+}*@
+    @Html.ActionLink("Add Unit", "openUnitWindow", "Home", new { id = 0 }, new { @class = "t-button t-add" })
+    <br />
+    <br />
+    @(Html.Telerik().Grid(Model)    
+            .Name("UnitGrid")
+            .Sortable()
+            .Pageable()            
+            .Columns(columns =>
+                {
+                    columns.Template(
+                        @<text>
+                            @Html.ActionLink("Add", "openUnitWindow", "Home", new { id = 0 }, new { @class = "t-icon t-add" })
+                            @Html.ActionLink("Edit", "openUnitWindow", "Home", new { id = item.Id }, new { @class = "t-icon t-edit" })
+                            @Html.ActionLink("Delete", "deletUnit", "Home", new { id = item.Id }, new { @class = "t-icon t-delete" })
+                        </text>
+                    ).Title("Functions")
+                        .Width(50)
+                        .ClientTemplate(
+                            @Html.ActionLink("Add", "openUnitWindow", "Home", new { id = "<#= id #>" }, new { @class = "t-icon t-add" }).ToHtmlString() +
+                            @Html.ActionLink("Edit", "openUnitWindow", "Home", new { id = "<#= id #>" }, new { @class = "t-icon t-edit" }).ToHtmlString() +
+                            @Html.ActionLink("Delete", "deletUnit", "Home", new { id = "<#= id #>" }, new { @class = "t-icon t-delete" }).ToHtmlString()
+                        );
+                    columns.Bound(c => c.Name);
+                    columns.Bound(c => c.Id);
+                    columns.Bound(c => c.Description);
+                    columns.Bound(c => c.Abbreviation);
+                    columns.Bound(c => c.Dimension);
+                    columns.Bound(c => c.MeasurementSystem);
+                    //columns.Bound(c => c.AssociatedDataTypes);
+                })
+    )
+
+    <div style="position:absolute; left:20%; top:60px;">
+                    @{ Html.Telerik().Window()
+                            .Name(windowName)
+                            .Visible((bool)Session["Window"])
+                            .Draggable(true)
+                            .Content(@<text>
+                                        @Html.Partial("_editUnit", unit)
+                                        </text>)
+                            .Render()
+                            ;
+        
+                    }
+                    @{Session["Window"] = false;}
+    </div>
+    @*<div id="container" class="container" style="height:1000px">
+        <div class="unit um_add_unit">
+            <table>
+                <thead class="t-grid-header">
+                    <tr>
+                        <th class="t-header"></th>
+                   </tr>
+                </thead>
+                    <tr>
+                        <td><a href="#-win" onclick="openWindow('Add_Unit')" class="t-icon t-add"></a></td>
+                    </tr>
+            </table>
+        </div>
+        <div style="position:absolute; left:20%; top:60px;">
+                    @{ Html.Telerik().Window()
+                            .Name("Add_Unit")
+                            .Visible((bool)Session["Window"])
+                            .Draggable(true)
+                            .Content(@<text>
+                                        @Html.Partial("_editUnit", (Unit)Session["Unit"])
+                                        </text>)
+                            .Render()
+                            ;
+        
+                    }
+                    </div>
+            @foreach (Unit u in UnitList)
+            { 
+                    <div class="unit @rgx.Replace(u.Name, rgxReplace) @rgx.Replace(u.MeasurementSystem.ToString(), rgxReplace) @rgx.Replace(u.Dimension, rgxReplace) @rgx.Replace(u.Abbreviation, rgxReplace)">
+                        <table>
+                            <thead class="t-grid-header">
+                                <tr>
+                                    <th class="t-header"></th>
+                                    <th class="t-header"></th>
+                                </tr>
+                            </thead>
+                            <tr>
+                                <td>
+                                    Name:
+                                </td>
+                                <td>
+                                    @u.Name
+                                </td>
+                            </tr>
+                            <tr class="t-alt">
+                                <td>
+                                    Description:
+                                </td>
+                                <td>
+                                    @u.Description
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Abbreviation:
+                                </td>
+                                <td>
+                                    @u.Abbreviation
+                                </td>
+                            </tr>
+                            <tr class="t-alt">
+                                <td>
+                                    Dimension:
+                                </td>
+                                <td>
+                                    @u.Dimension
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Measurement System:
+                                </td>
+                                <td>
+                                    @u.MeasurementSystem
+                                </td>
+                            </tr>
+                            <tr class="t-alt">
+                                <td>
+                                    <a href="#-edit-@u.Id.ToString()" onclick="openWindow('@rgx.Replace(u.Name, rgxReplace)')" class="t-icon t-edit"></a>
+                                </td>
+                                <td>
+                                    <a href="#-del-@u.Id.ToString()" class="t-icon t-cancel"></a>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="@rgx.Replace(u.Name, rgxReplace)">
+                    @{ Html.Telerik().Window()
+                            .Name(rgx.Replace(u.Name, rgxReplace))
+                            .Visible(false)
+
+                            .Content(@<text>
+                                        @Html.Partial("_editUnit", u)
+                                        </text>)
+                            .Render()
+                            ;
+        
+                    }
+                    </div>
+            }
+    </div>*@
+    <script>
+        function openWindow(win) {
+            var window = $('#' + win).data('tWindow');
+            var winContent = $('#' + win + '.t-window-content')
+            winContent.css("height", "");
+            window.center().open();
+        }
+
+        function ComboBox_onChange() {
+            var comboBox = $(this).data('tAutoComplete');
+            var filterString = comboBox.value();
+            if (filterString != null && filterString != "") {
+                if (filterString.substr(filterString.length - 1) == ',') {
+                    filterString = filterString.substr(0, filterString.length - 1);
+                }
+                var rgx = /\W/g;
+                var temp = filterString.match(rgx);
+
+                if (temp != null && temp.length != 0) {
+                    var filterArray = jQuery.unique(temp);
+
+                    for (var i = 0; i < filterArray.length; i++) {
+                        if (filterArray[i] == ',') {
+                            filterString = filterString.replace(filterArray[i], ', .')
+                        }
+                        else {
+                            filterString = filterString.replace(filterArray[i], '_')
+                        }
+                    }
+                }
+                filterString = '.' + filterString + ', @addClass';
+            }
+            else {
+                filterString = '*';
+            }
+            $('.inputfilter a').attr('data-filter', filterString);
+            return (filterString);
+        }
+
+        $(function () {
+
+            var $container = $('.container'),
+            $selector = '.unit',
+            filters = {};
+
+            $container.isotope({
+                itemSelector: $selector,
+            });
+
+            $('.inputfilter a').click(function () {
+                var selector = $(this).attr('data-filter');
+                $container.isotope({ filter: selector });
+                $('.filter .selected').removeClass('selected');
+                return false;
+            });
+
+            $('.filter a').click(function () {
+                var $this = $(this);
+                if ($this.hasClass('selected')) {
+                    return;
+                }
+
+                var $optionSet = $this.parents('.option-set');
+                $optionSet.find('.selected').removeClass('selected');
+                $this.addClass('selected');
+
+                var group = $optionSet.attr('data-filter-group');
+                filters[group] = $this.attr('data-filter-value');
+                var isoFilters = [];
+                for (var prop in filters) {
+                    isoFilters.push(filters[prop])
+                }
+                var selector = isoFilters.join('');
+                $container.isotope({ filter: selector });
+
+                return false;
+            });
+        });
+    </script>
+</body>
+</html>

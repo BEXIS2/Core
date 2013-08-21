@@ -1,0 +1,57 @@
+﻿@using Telerik.Web.Mvc.UI
+@using BExIS.Dlm.Entities.DataStructure
+
+@{
+    ViewBag.Title = "Planing";
+    
+}
+
+<script type="text/javascript">
+function toggleDiv(element){
+ if(document.getElementById(element).style.display == 'none')
+  document.getElementById(element).style.display = 'block';
+ else
+       document.getElementById(element).style.display = 'none';
+}
+</script>
+
+<div class="planingPartialDiv" id="createVariable">
+    @using(Html.BeginForm("createVariable", "Home", new {area = "Planing"}))
+    {
+         @(Html.TextBox("parent", @HttpContext.Current.Request.RequestContext.RouteData.Values["action"].ToString(), new {@class = "hidden"})) 
+        <table>
+            <tr id="unitName">
+                <td>Unit:</td>
+                <td>@(Html.TextBox("variableUnit", "",new {@class = "t-input"}))</td>
+            </tr>
+            @*<tr>
+                <td colspan="2"><div id="createUnit" style="display:none">@Html.Partial("_createUnit")</div></td>
+                <td rowspan="2"><a href="javascript:toggleDiv('createUnit'); javascript:toggleDiv('unitName');">+</a></td>
+            </tr>*@
+            <tr id ="dataTypeName">
+                <td>Data Type:</td>
+                <td>@(Html.TextBox("variableDataType", "",new {@class = "t-input"})) <a href="javascript:toggleDiv('createDataType'); javascript:toggleDiv('dataTypeName');">+</a></td>
+            </tr>
+            <tr>
+                <td colspan="2"><div id="createDataType" style="display:none">@Html.Partial("_createDataType")</div></td>
+            </tr>
+            <tr>
+                <td>Classification:</td>
+                <td>@(Html.TextBox("variableClass", "",new {@class = "t-input"})) <a href="javascript:toggleDiv('createClassification');">+</a></td>
+            </tr>
+            <tr>
+                <td colspan="2"><div id="createClassification" style="display:none">@Html.Partial("_createClassification")</div></td>
+            </tr>
+            <tr id="name">
+                <td>Name:</td>
+                <td>@(Html.TextBox("variableName", "",new {@class = "t-input"})) </td>
+            </tr>
+            <tr>
+                <td><button name="create" value="createVariable" type="submit" class="t-button">Create Variable</button></td>
+                <td></td>
+            </tr>
+        
+        </table>
+    }
+</div>
+

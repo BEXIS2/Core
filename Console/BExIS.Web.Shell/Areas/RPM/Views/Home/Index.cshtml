@@ -1,0 +1,19 @@
+﻿@using Telerik.Web.Mvc.UI
+
+@{
+    ViewBag.Title = "Planing";
+}
+
+@*<header>*@
+    <link href="@Url.Content("../../Stylesheets/RPM.css")" rel="stylesheet" type="text/css" />  
+@*</header> *@
+
+<div>
+        @Html.ActionLink("UnitManager", "UnitManager", "Home", new {@class = "unitmanager"})
+</div>
+<div>
+        @Html.ActionLink("ClassificationManager", "ClassificationManager", "Home", new {@class = "classificationmanager"})
+</div>
+<div>
+        @Html.ActionLink("DataTypeManager", "DatatypeManager", "Home", new {@class = "datatypemanager"})
+</div>

@@ -175,6 +175,8 @@
     <Compile Include="Areas\DCM\Models\StepInfo.cs" />
     <Compile Include="Areas\DCM\Models\TaskManager.cs" />
     <Compile Include="Areas\DCM\Models\UploadWizardParameters.cs" />
+    <Compile Include="Areas\RPM\Controllers\HomeController.cs" />
+    <Compile Include="Areas\RPM\RPMAreaRegistration.cs" />
     <Compile Include="Areas\Search\Controllers\HomeController.cs" />
     <Compile Include="Areas\Search\Helpers\SearchUIHelper.cs" />
     <Compile Include="Areas\Search\SearchAreaRegistration.cs" />
@@ -201,6 +203,8 @@
     </DesignData>
     <DesignData Include="Db\Settings\MsSql2008Dialect.hibernate.cfg.xml" />
     <DesignData Include="Db\Settings\PostgreSQL82Dialect.hibernate.cfg.xml" />
+    <Content Include="Areas\RPM\Scripts\jquery-1.10.1.min.js" />
+    <Content Include="Areas\RPM\Stylesheets\RPM.css" />
     <Content Include="Scripts\2012.3.1018\jquery-1.7.1.min.js" />
     <Content Include="Scripts\2012.3.1018\jquery.validate.min.js" />
     <Content Include="Scripts\2012.3.1018\telerik.all.min.js" />
@@ -529,6 +533,10 @@
       <Project>{c8a05313-b960-406e-92ec-c1e5b3f47fcd}</Project>
       <Name>BExIS.DCM.Transform.Validation</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Modules\RPM\BExIS.RPM.Model\BExIS.RPM.Model.csproj">
+      <Project>{063b9e3f-e0dd-43fe-9910-5b1544b8b861}</Project>
+      <Name>BExIS.RPM.Model</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Modules\Search\BExIS.Search.Api\BExIS.Search.Api.csproj">
       <Project>{8519EAC6-FBF8-48B3-813F-E0B9D3CC4A52}</Project>
       <Name>BExIS.Search.Api</Name>
@@ -729,6 +737,24 @@
     <Content Include="Areas\DCM\Views\Home\_xlsFormularView.cshtml" />
     <Content Include="Areas\DCM\Views\Web.config" />
     <Content Include="Areas\DCM\Views\_ViewStart.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\RPM\Views\Home\ClassificationManager.cshtml" />
+    <Content Include="Areas\RPM\Views\Home\DataStructureDesigner.cshtml" />
+    <Content Include="Areas\RPM\Views\Home\DatatypeManager.cshtml" />
+    <Content Include="Areas\RPM\Views\Home\Index.cshtml" />
+    <Content Include="Areas\RPM\Views\Home\UnitManager.cshtml" />
+    <Content Include="Areas\RPM\Views\Home\_addVariable.cshtml" />
+    <Content Include="Areas\RPM\Views\Home\_createClassification.cshtml" />
+    <Content Include="Areas\RPM\Views\Home\_createDataType.cshtml" />
+    <Content Include="Areas\RPM\Views\Home\_createVariable.cshtml" />
+    <Content Include="Areas\RPM\Views\Home\_editClassifier.cshtml" />
+    <Content Include="Areas\RPM\Views\Home\_editDataType.cshtml" />
+    <Content Include="Areas\RPM\Views\Home\_editUnit.cshtml" />
+    <Content Include="Areas\RPM\Views\Home\_showDataStructure.cshtml" />
+    <Content Include="Areas\RPM\Views\Home\_showDataStructureInfo.cshtml" />
+    <Content Include="Areas\RPM\Views\Web.config" />
+    <Content Include="Areas\RPM\Views\_ViewStart.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

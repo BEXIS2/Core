@@ -1,0 +1,109 @@
+﻿@using Telerik.Web.Mvc.UI
+@using System
+@using BExIS.Dlm.Entities.DataStructure
+@using BExIS.Dlm.Services.DataStructure
+@model BExIS.Dlm.Entities.DataStructure.Unit
+
+@*<header>*@
+    <link href="@Url.Content("~/Areas/RPM/Stylesheets/RPM.css")" rel="stylesheet" type="text/css" />  
+@*</header> *@
+
+@{ 
+    List<string> MeasurementSystemList = new List<string>();
+    foreach (MeasurementSystem ms in Enum.GetValues(typeof(MeasurementSystem)))
+    {
+        MeasurementSystemList.Add(ms.ToString());
+    }
+    DataTypeManager UM = new DataTypeManager();
+    List<DataType> DataTypeList = UM.Repo.Get().ToList();
+
+    long[] DataTypeIds = new long[] { };        
+}
+
+<div class="planingPartialDiv" id="createUnit">
+@using(Html.BeginForm("editUnit", "Home", new {area = "RPM"}))
+{
+   @(Html.TextBox("parent", @HttpContext.Current.Request.RequestContext.RouteData.Values["action"].ToString(), new {@class = "hidden"}))
+   @(Html.TextBox("id", Model.Id, new {@class = "hidden"})) 
+    <table>
+        <tr id="name">
+            <td>
+                Name:
+            </td>
+            <td>
+                @(Html.TextBoxFor(m => Model.Name, new {@class = "t-input"}))
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Abbreviation:
+            </td>
+            <td>
+                @(Html.TextBoxFor(m => Model.Abbreviation, new {@class = "t-input"}))
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Description:
+            </td>
+            <td>
+                @(Html.TextBoxFor(m => Model.Description, new {@class = "t-input"}))
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Dimension:
+            </td>
+            <td>
+                @(Html.TextBoxFor(m => Model.Dimension, new {@class = "t-input"}))
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Measurement System:
+            </td>
+            <td>
+                @(Html.Telerik().DropDownList()
+                    .Name("measurementSystem")
+                    .DropDownHtmlAttributes(new { style = "height: 200px" })
+                    .BindTo(new SelectList(MeasurementSystemList))
+                )
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+            @(Html.Telerik().Grid(DataTypeList)    
+                .Name("UnitGrid")
+                .Sortable()            
+                .Columns(columns =>
+                    {
+                        columns.Template(
+                        @<text>
+                            <input name="checkedRecords" type="checkbox" value="@item.Id " title="checkedRecords" 
+                                @if (DataTypeIds.Contains(item.Id))
+                                {
+                                    <text>checked="checked"</text>
+                                }
+                            />
+                        </text>)
+                        .Title("").Width(36).HtmlAttributes(new { style = "text-align:center" });
+                        columns.Bound(c => c.Name);
+                        columns.Bound(c => c.Id);
+                        columns.Bound(c => c.Description);
+                        columns.Bound(c => c.SystemType);
+                   
+                    })
+            )
+            </td>
+        </tr>
+        <tr><td colspan="2"> </td></tr>
+        <tr>
+            <td>
+                <button name="create" value="GetUnitInput" type="submit" class="t-button">Save</button>
+            </td>
+            <td>
+            </td>
+        </tr>    
+    </table>    
+}
+</div>

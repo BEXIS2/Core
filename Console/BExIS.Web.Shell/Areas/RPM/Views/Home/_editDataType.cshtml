@@ -1,0 +1,61 @@
+﻿@using Telerik.Web.Mvc.UI
+@using BExIS.Dlm.Entities.DataStructure
+@using BExIS.Dlm.Services.DataStructure
+@model BExIS.Dlm.Entities.DataStructure.DataType
+
+@*<header>*@
+    <link href="@Url.Content("~/Areas/RPM/Stylesheets/RPM.css")" rel="stylesheet" type="text/css" />  
+@*</header> *@
+
+@{ 
+    List<string> SystemTypeList = new List<string>();
+    foreach (System.TypeCode tc in Enum.GetValues(typeof(System.TypeCode)))
+    {
+        SystemTypeList.Add(tc.ToString());
+    } 
+}
+<div class="planingPartialDiv" id="createUnit">
+@using (Html.BeginForm("editDataType", "Home", new { area = "RPM" }))
+{
+   @(Html.TextBox("parent", @HttpContext.Current.Request.RequestContext.RouteData.Values["action"].ToString(), new {@class = "hidden"}))
+   @(Html.TextBox("id", Model.Id, new {@class = "hidden"})) 
+    <table>
+        <tr id="name">
+            <td>
+                Name:
+            </td>
+            <td>
+                @(Html.TextBoxFor(m => Model.Name, new {@class = "t-input"}))
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Description:
+            </td>
+            <td>
+                @(Html.TextBoxFor(m => Model.Description, new {@class = "t-input"}))
+            </td>
+        </tr>
+        <tr>
+            <td>
+                SystemType:
+            </td>
+            <td>
+                @(Html.Telerik().DropDownList()
+                    .Name("SystemType")
+                    .DropDownHtmlAttributes(new { style = "height: 200px" })
+                    .BindTo(new SelectList(SystemTypeList))
+                )
+            </td>
+        </tr>
+        <tr><td colspan="2"> </td></tr>
+        <tr>
+            <td>
+                <button name="create" value="GetUnitInput" type="submit" class="t-button">Save</button>
+            </td>
+            <td>
+            </td>
+        </tr>    
+    </table>    
+}
+</div>

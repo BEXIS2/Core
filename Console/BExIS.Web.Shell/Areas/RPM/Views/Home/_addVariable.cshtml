@@ -1,0 +1,64 @@
+﻿@using System.Data
+@using Telerik.Web.Mvc.UI
+@using BExIS.Dlm.Entities.DataStructure
+
+@{
+    ViewBag.Title = "Planing";
+
+    long[] dataAttributeIds = new long[] { }; 
+}
+
+@if ((bool)Session["inUse"] == true)
+{ 
+    <p>Can't at variable Data Strucure in use</p>
+}
+else
+{
+    <script type="text/javascript">
+    function toggleDiv(element){
+    if(document.getElementById(element).style.display == 'none')
+        document.getElementById(element).style.display = 'block';
+    else
+        document.getElementById(element).style.display = 'none';
+    }
+    </script>
+
+    <div class="planingPartialDiv" id="createVariable">
+        @using (Html.BeginForm("AddVariables", "Home", new { area = "RPM" }))
+        {
+            @(Html.Telerik().Grid((List<DataAttribute>)Session["VariableList"])
+            .Name("DataStructureGrid")
+            .Columns(columns =>
+                {
+                    columns.Template(
+                        @<text>
+                            <input name="checkedRecords" type="checkbox" value="@item.Id " title="checkedRecords" 
+                                @if (dataAttributeIds.Contains(item.Id))
+                                {
+                                    <text>checked="checked"</text>
+                                }
+                            />
+                        </text>)
+                        .Title("").Width(36).HtmlAttributes(new { style = "text-align:center" });
+
+                    //columns.Command(commands => commands.Select()).Title("Select");
+                    columns.Bound(c => c.Name);
+                    columns.Bound(c => c.Id);
+                    columns.Bound(c => c.ShortName);
+                    columns.Bound(c => c.Description);
+                    columns.Bound(c => c.Classification.Name)
+                        .Title("Classification");
+                    columns.Bound(c => c.Unit.Name)
+                        .Title("Unit");
+                    columns.Bound(c => c.DataType.Name)
+                        .Title("Data Type");
+
+                })
+            )
+            <button name="addVariables" value="add" type="submit" class="t-button">Add Variables</button>
+        }
+    </div>
+    <div>
+        @Html.ActionLink("Add", "AddVariables", "Home", new { @class = "addVariable" })
+    </div>
+}

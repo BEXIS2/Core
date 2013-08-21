@@ -1,0 +1,55 @@
+﻿@using Telerik.Web.Mvc.UI
+@using BExIS.Dlm.Entities.DataStructure
+@using System.Data
+@model BExIS.RPM.Model.DataStructureDesignerModel
+
+@{
+    ViewBag.Title = "Data Structure Designer";
+}
+@section LeftPane 
+{ 
+
+@*<header>*@
+    <link href="@Url.Content("~/Areas/RPM/Stylesheets/RPM.css")" rel="stylesheet" type="text/css" />  
+@*</header> *@
+
+<div>
+        @Html.ActionLink("newDataStructure", "DataStructureDesigner", "Home", new {@class = "newDataStructure"})
+</div>
+<div>
+@(Html.Telerik().TreeView()
+    .Name("TreeView")
+    .BindTo(Model.GetDataStructureList(), mappings => 
+    {
+        mappings.For<StructuredDataStructure>(binding => binding
+                .ItemDataBound((item, DS) =>
+                {
+                    if (DS.Name == null || DS.Name == "")
+                    {
+                        item.Text = "no Name";
+                        item.Value = DS.Id.ToString();
+                    }
+                    else
+                    {
+                        item.Text = DS.Name;
+                        item.Value = DS.Id.ToString();
+                    }
+                    item.Action("showDataStructure", "Home", new RouteValueDictionary { { "area", "RPM" }, { "SelectedItem", item.Value } });
+                })
+                .Children(DS => DS.Variables));
+        mappings.For<Variable>(binding => binding
+                .ItemDataBound((item, VU) =>
+                {
+                    //item.Text = VU.D.Name;
+                    item.Text = VU.DataAttribute.Name;
+                }));
+    })
+)
+</div>
+}    
+<div>
+    @Html.Partial("_showDataStructureInfo", Model)
+</div>
+<div>
+    @Html.Partial("_showDataStructure", Model)
+</div>

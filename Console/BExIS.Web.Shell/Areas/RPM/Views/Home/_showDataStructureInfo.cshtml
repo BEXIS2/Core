@@ -1,0 +1,90 @@
+﻿@using Telerik.Web.Mvc.UI
+@using BExIS.Dlm.Entities.DataStructure
+@using BExIS.Dlm.Entities.Data
+@model BExIS.RPM.Model.DataStructureDesignerModel
+
+@{   
+  
+    List<string> CategoryList = new List<string>();
+    int categoryIndex = 0;
+    foreach (DataStructureCategory tc in Enum.GetValues(typeof(DataStructureCategory)))
+    {
+        CategoryList.Add(tc.ToString());
+    }
+
+
+    // need DataStructureCategory to create DS but can't find it in a DS
+    if (Model.DataStructure.Name == "" || Model.DataStructure.Name == null)
+    {
+        Model.DataStructure.Name = "New Data Structure";
+        categoryIndex = 0;
+    }
+    else
+    {
+        categoryIndex = 0;
+    }
+
+            
+}
+
+<h3>@Model.DataStructure.Name</h3>
+
+<div class="planingPartialDiv">   
+ @using(Html.BeginForm("saveDataStructure", "Home", new {area = "RPM"}))
+ {     
+        <div id="Description">
+                Description:          
+                @(Html.TextAreaFor(m => Model.DataStructure.Description, new {@class = "t-input"}))
+        </div>
+        <div id="info">
+            Info:
+            <table>
+                <tr>
+                    <td>
+                        Name
+                    </td>
+                    <td>
+                        @(Html.TextBoxFor(m => Model.DataStructure.Name, new {@class = "t-input"}))
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        @(Html.Telerik().DropDownList()
+                            .Name("category")
+                            .DropDownHtmlAttributes(new { style = "height: 200px" })
+                            .BindTo(new SelectList(CategoryList))
+                            .SelectedIndex(categoryIndex)
+                        )
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Number of Vareables:
+                    </td>
+                    <td>
+                        @Model.DataStructure.Variables.Count
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Data Structure ID:
+                    </td>
+                    <td>
+                        @Model.DataStructure.Id
+                        @(Html.TextBoxFor(m => Model.DataStructure.Id, new {@class = "hidden"}))
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div>
+            @foreach (Dataset ds in Model.DataStructure.Datasets)
+            { 
+                <p>@ds.Id.ToString()</p>
+            }
+        </div>       
+     <button name="create" value="SaveDataStructure" type="submit" class="t-button">Save</button>    
+     @ViewData["errorMsg"]
+ }
+</div> 
+
+
