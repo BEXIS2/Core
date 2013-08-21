@@ -1,0 +1,126 @@
+﻿@model BExIS.Web.Shell.Areas.DCM.Models.ChooseDatasetViewModel
+@using Telerik.Web.Mvc.UI;
+@using Telerik.Web.Mvc.Resources;
+
+@{
+    if (this.ViewContext.FormContext == null)
+    {
+        this.ViewContext.FormContext = new FormContext();
+    }
+    
+    
+    bool visibleCreateDatasetWindow = false;
+    
+    if(Session["createDatasetWindowVisible"]!=null)
+    {
+        visibleCreateDatasetWindow = (bool)Session["createDatasetWindowVisible"];
+    }
+        
+    }
+<div ="Step2" class="uploadWizardStep">
+<h3>@Model.StepInfo.title</h3>
+
+
+<p> Please Select or Create a Dataset.</p>
+<br />
+<button id="SelectDatasetButton" >Select a Dataset</button>
+<br />
+<button id="CreateDatasetButton" >Create a Dataset</button>
+<br />
+<br />
+<div id="selectedValue"></div>
+<div id="selectedValue2"></div>
+<br />
+<br />
+<hr />
+</div>
+
+
+
+
+@(Html.Telerik().Window()
+    .Name("DatasetWindow")
+    .Visible(false)
+    .Width(300)
+    .Height(100)
+    .Title("Select a Dataset Id")
+    .Modal(true)
+    .ClientEvents(events => events
+        .OnActivate("resizeOnRefresh")
+    )
+    .Content(@<text>
+        @Html.Partial("_selectADatasetId", Model.Datasets)
+    </text>
+    )
+  )
+
+
+@(Html.Telerik().Window()
+    .Name("CreateDatasetWindow")
+    .Visible(visibleCreateDatasetWindow)
+    .Width(300)
+    .Height(100)
+    .Title("Create a Dataset")
+    .Modal(true)
+    .ClientEvents(events => events
+        .OnActivate("resizeCreateDatasetWindowOnRefresh")
+    )
+    .Content(@<text>
+        @Html.Partial("_createDataset", Model.DatasetViewModel)
+    </text>
+    )
+  )
+
+
+
+<script type="text/javascript">
+
+    $("#SelectDatasetButton").click(function () {
+
+        var datasetwindow = $("#DatasetWindow").data("tWindow");
+        datasetwindow.center().open();
+         
+    })
+
+    $("#CreateDatasetButton").click(function () {
+
+        var datastruturewindow = $("#CreateDatasetWindow").data("tWindow");
+        datastruturewindow.center().open();
+
+    })
+
+    function closeWindow() {
+        var window = $("#DatasetWindow").data("tWindow");
+        window.close();
+
+        document.getElementById("selectedValue").innerHTML = "You have selected Dataset : " + SelectedDatasetId;
+     
+    }
+
+    function closeCreateDatasetWindow() {
+        var window = $("#CreateDatasetWindow").data("tWindow");
+        window.close();
+
+        document.getElementById("selectedValue2").innerHTML = "You have selected Datastructure: " + SelectedDataStrutureId;
+
+    }
+
+    function resizeOnRefresh() {
+        var winContent = $('#DatasetWindow .t-window-content');
+        winContent.css("height", "");
+        winContent.css("width", "");
+    }
+
+    function RefreshCreateDatasetWindow() {
+        var window = $('#CreateDatasetWindow').data('tWindow');
+        if(window!=null)window.refresh();
+    }
+
+
+    function resizeCreateDatasetWindowOnRefresh() {
+        var winContent = $('#CreateDatasetWindow .t-window-content');
+        winContent.css("height", "");
+        winContent.css("width", "");
+    }
+
+</script>

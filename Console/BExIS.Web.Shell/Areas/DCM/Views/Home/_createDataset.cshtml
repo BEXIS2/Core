@@ -1,0 +1,101 @@
+﻿@model BExIS.Web.Shell.Areas.DCM.Models.CreateDatasetViewModel
+
+@using Telerik.Web.Mvc.UI;
+
+@using (Html.BeginForm("CreateDataset", "Home", new { area = "DCM" }))
+{
+
+HtmlHelper.ClientValidationEnabled = true;
+HtmlHelper.UnobtrusiveJavaScriptEnabled = true;
+<div id="createDatasetFormular">  
+<br />
+<b>Please fill out the form in order to create a dataset.</b>
+<br />
+<br />
+<table>
+    <tr>
+        <td>@Html.LabelFor(m=>m.DataStructureId)</td>
+        <td>
+            @Html.DropDownListFor(m => m.DataStructureId, new SelectList(Model.DataStructureIds),"Select, please")
+            @Html.ValidationMessageFor(m => m.DataStructureId)
+        </td>
+    </tr>
+    <tr>
+        <td>
+            @Html.LabelFor(m=>m.Title)
+        </td>
+        <td>
+            @Html.TextBoxFor(m=>m.Title)
+            @Html.ValidationMessageFor(m => m.Title)
+        </td>
+    </tr>
+    <tr>
+        <td>
+            @Html.LabelFor(m=>m.Owner)
+        </td>
+        <td>
+            @Html.TextBoxFor(m=>m.Owner)
+            @Html.ValidationMessageFor(m => m.Owner)
+
+        </td>
+    </tr>
+    <tr>
+        <td>
+            @Html.LabelFor(m=>m.DatasetAuthor)
+        </td>
+        <td>
+            @Html.TextBoxFor(m=>m.DatasetAuthor)
+            @Html.ValidationMessageFor(m => m.DatasetAuthor)
+
+        </td>
+    </tr>
+    <tr>
+        <td>
+            @Html.LabelFor(m=>m.ProjectName)
+        </td>
+        <td>
+            @Html.TextBoxFor(m=>m.ProjectName)
+            @Html.ValidationMessageFor(m => m.ProjectName)
+
+        </td>
+    </tr>
+    <tr>
+        <td>
+            @Html.LabelFor(m=>m.ProjectInstitute)
+        </td>
+        <td>
+            @Html.TextBoxFor(m=>m.ProjectInstitute)
+            @Html.ValidationMessageFor(m => m.ProjectInstitute)
+        </td>
+    </tr>
+</table>
+<br />
+<br />
+<button type="submit" value="Save" name="submit"  class="t-button" style="border:0px;">save</button>
+</div>  
+}
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        //$("createDatasetFormular").removeData("validator");
+        //$("createDatasetFormular").removeData("unobtrusiveValidation");
+        //$.validator.unobtrusive.parse("createDatasetFormular");
+    
+    })
+
+
+
+    //$("#SubmitDataStructureId").click(function () {
+    //    var dropDownList = $('#DataStructureIds_DropDownList').data('tDropDownList');
+    //    SelectedDataStrutureId = dropDownList.value();
+    //    Parameters.push("DatastructureId:" + SelectedDataStrutureId);
+
+
+    //    closeCreateDatasetWindow();
+
+    //})
+
+</script>

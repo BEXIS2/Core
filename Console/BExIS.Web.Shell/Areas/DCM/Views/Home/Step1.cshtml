@@ -1,0 +1,85 @@
+﻿@model BExIS.Web.Shell.Areas.DCM.Models.SelectFileViewModel
+@using Telerik.Web.Mvc.UI;
+@using System;
+
+<div id ="Step1" class="uploadWizardStep">
+<h3>@Model.StepInfo.title</h3>
+
+@DateTime.Now
+
+
+@using (Html.BeginForm("SelectFileProcess", "Home", new { area = "DCM" }))
+{ 
+
+    <table>
+        <tr>
+            <td>
+               File :
+            </td>
+            <td>
+                @(Html.Telerik().Upload()
+                        .Name("SelectFileUploader")
+                        .Multiple(false)
+                        .ShowFileList(false)
+                        
+                        .ClientEvents(events => events.OnSelect("SelectFileProcess_OnSelect"))
+                        
+                )
+            </td>
+            <td>
+                <div id="fileNameDiv">
+                    @if (Model.file != null)
+                    { 
+                        <p>@Model.file.FileName</p>
+                    }
+
+                </div>
+
+            </td>
+        </tr>
+    </table>
+    <div class="errorDiv">
+    @if (Model != null)
+    { 
+        if (Model.ErrorList != null)
+        {
+            if(Model.ErrorList.Count == 0)
+            {
+            
+
+            }
+            else
+            { 
+                <br />
+                <table>
+                    @foreach (BExIS.DCM.Transform.Validation.Exceptions.Error s in @Model.ErrorList)
+                    { 
+                        <tr><td>@s.ToString()</td></tr>
+                    }
+                </table>
+
+            }
+         }
+    
+     }
+    </div>
+    <br/>
+    <br/>
+    <div id="dataTypeFomular" ></div>
+    <div style="margin: 20px 0 0 0;">
+           <input type="submit" value="Submit" name="submit" class="t-button" />
+           <input type="reset" value="Reset" class="t-button" />
+    </div>
+
+}
+</div>
+<script type="text/javascript">
+
+
+    function SelectFileProcess_OnSelect(e)
+    {
+        var file = e.files[0];
+        Parameters.push("Extention:" + file.extension);
+        $('#fileNameDiv').text("Please confim the file with a click of the submit button");
+    }
+</script>

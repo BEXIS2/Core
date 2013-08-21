@@ -42,9 +42,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{40AC90
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DCM", "DCM", "{6C18F986-A56C-4366-88A4-7046E8901929}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.DCM.Transform.Input", "Modules\Collect\BExIS.Collect.Transform.Input\BExIS.DCM.Transform.Input.csproj", "{5C4C8570-A53B-4191-A414-DE028AAAF36A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.DCM.Transform.Validation", "Modules\Collect\BExIS.Collect.Transform.Validation\BExIS.DCM.Transform.Validation.csproj", "{C8A05313-B960-406E-92EC-C1E5B3F47FCD}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 12
+		SccNumberOfProjects = 14
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = http://bexis2.vmguest.uni-jena.de:8080/tfs/bpp
 		SccLocalPath0 = .
@@ -92,6 +98,14 @@ Global
 		SccProjectTopLevelParentUniqueName11 = BExIS++.sln
 		SccProjectName11 = Modules/Search/BExIS.Search.Providers.LuceneProvider
 		SccLocalPath11 = Modules\\Search\\BExIS.Search.Providers.LuceneProvider
+		SccProjectUniqueName12 = Modules\\Collect\\BExIS.Collect.Transform.Input\\BExIS.DCM.Transform.Input.csproj
+		SccProjectTopLevelParentUniqueName12 = BExIS++.sln
+		SccProjectName12 = Modules/Collect/BExIS.Collect.Transform.Input
+		SccLocalPath12 = Modules\\Collect\\BExIS.Collect.Transform.Input
+		SccProjectUniqueName13 = Modules\\Collect\\BExIS.Collect.Transform.Validation\\BExIS.DCM.Transform.Validation.csproj
+		SccProjectTopLevelParentUniqueName13 = BExIS++.sln
+		SccProjectName13 = Modules/Collect/BExIS.Collect.Transform.Validation
+		SccLocalPath13 = Modules\\Collect\\BExIS.Collect.Transform.Validation
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -212,6 +226,26 @@ Global
 		{FBE3101A-791A-4EAB-9B8F-F6E071F8DBDC}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{FBE3101A-791A-4EAB-9B8F-F6E071F8DBDC}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{FBE3101A-791A-4EAB-9B8F-F6E071F8DBDC}.Release|x86.ActiveCfg = Release|Any CPU
+		{5C4C8570-A53B-4191-A414-DE028AAAF36A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C4C8570-A53B-4191-A414-DE028AAAF36A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C4C8570-A53B-4191-A414-DE028AAAF36A}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{5C4C8570-A53B-4191-A414-DE028AAAF36A}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{5C4C8570-A53B-4191-A414-DE028AAAF36A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5C4C8570-A53B-4191-A414-DE028AAAF36A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C4C8570-A53B-4191-A414-DE028AAAF36A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C4C8570-A53B-4191-A414-DE028AAAF36A}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{5C4C8570-A53B-4191-A414-DE028AAAF36A}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{5C4C8570-A53B-4191-A414-DE028AAAF36A}.Release|x86.ActiveCfg = Release|Any CPU
+		{C8A05313-B960-406E-92EC-C1E5B3F47FCD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8A05313-B960-406E-92EC-C1E5B3F47FCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8A05313-B960-406E-92EC-C1E5B3F47FCD}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{C8A05313-B960-406E-92EC-C1E5B3F47FCD}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{C8A05313-B960-406E-92EC-C1E5B3F47FCD}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C8A05313-B960-406E-92EC-C1E5B3F47FCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8A05313-B960-406E-92EC-C1E5B3F47FCD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8A05313-B960-406E-92EC-C1E5B3F47FCD}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{C8A05313-B960-406E-92EC-C1E5B3F47FCD}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{C8A05313-B960-406E-92EC-C1E5B3F47FCD}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -219,6 +253,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{E5128814-4541-45C8-A9E6-6C91A7E3D1E2} = {A24A6801-2ECC-4F47-8284-8C93277D3030}
 		{BE741C5B-87FD-4726-90CC-A17D462E6183} = {692AFF14-3A57-47D8-912F-093EC8F561C4}
+		{6C18F986-A56C-4366-88A4-7046E8901929} = {692AFF14-3A57-47D8-912F-093EC8F561C4}
 		{DA678167-8931-43BA-940F-B5A3C90985BB} = {A753DD30-104E-48DB-A9D8-73C0DDE973E6}
 		{946EB891-B5C8-4E03-B953-69583E886E57} = {A753DD30-104E-48DB-A9D8-73C0DDE973E6}
 		{B4E7B1BF-01B4-40AF-8D19-B8F362167261} = {DA678167-8931-43BA-940F-B5A3C90985BB}
@@ -231,6 +266,8 @@ Global
 		{AB46BEB8-C36D-412F-9B1A-646C86299A87} = {BE741C5B-87FD-4726-90CC-A17D462E6183}
 		{D89E501A-4873-4883-8741-27F0ACD03E0B} = {BE741C5B-87FD-4726-90CC-A17D462E6183}
 		{FBE3101A-791A-4EAB-9B8F-F6E071F8DBDC} = {BE741C5B-87FD-4726-90CC-A17D462E6183}
+		{5C4C8570-A53B-4191-A414-DE028AAAF36A} = {6C18F986-A56C-4366-88A4-7046E8901929}
+		{C8A05313-B960-406E-92EC-C1E5B3F47FCD} = {6C18F986-A56C-4366-88A4-7046E8901929}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		EnterpriseLibraryConfigurationToolBinariesPath = packages\Unity.2.1.505.0\lib\NET35;packages\Unity.2.1.505.2\lib\NET35

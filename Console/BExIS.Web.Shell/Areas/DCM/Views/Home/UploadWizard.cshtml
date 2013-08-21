@@ -1,0 +1,47 @@
+﻿@{
+    ViewBag.Title = "UploadWizard";
+}
+@model BExIS.Web.Shell.Areas.DCM.Models.TaskManager
+@using Telerik.Web.Mvc.UI;
+@using BExIS.Web.Shell.Areas.DCM.Models;
+
+@section LeftPane 
+{  
+    @Html.Partial("_taskListView", Model.GetStatusOfStepInfos())
+}
+
+<div id="StepView" >
+
+
+</div>
+@Html.Partial("_uploadWizardNav", Model)
+
+<script type="text/javascript">              
+      
+    var Upload;
+    var SelectedDatasetId;
+    var SelectedDataStrutureId;
+    var Parameters = new Array();
+
+    $(document).ready(function () {
+
+        var index = '@Model.GetCurrentStepInfoIndex()';
+
+        $.get('@Url.Action(@Model.Current().GetActionInfo.ActionName, @Model.Current().GetActionInfo.ControllerName, new RouteValueDictionary { { "area", @Model.Current().GetActionInfo.AreaName } })', { index: index }, function (response) {
+            $("#StepView").html(response);
+            NavigationRefresh();
+            TaskListRefresh();
+        })
+    })
+
+
+</script>
+
+<style type="text/css">
+
+    .uploadWizardStep
+    {
+        height:300px;
+    }
+
+</style>

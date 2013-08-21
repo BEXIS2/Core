@@ -1,0 +1,208 @@
+﻿@{
+    ViewBag.Title = "Upload Data";
+}
+
+
+@using Telerik.Web.Mvc.UI;
+@using BExIS.DCM.Transform.Validation.Exceptions;
+@using BExIS.Dlm.Entities.Data;
+@{
+    List<string> ids = new List<String>();
+    List<Error> errorOutput = new List<Error>();
+    List<DataTuple> listOfDataTuples = new List<DataTuple>();
+    string extension = "";
+        
+    DateTime start = new DateTime();
+    DateTime end = new DateTime();
+    System.TimeSpan diff = new System.TimeSpan(); 
+
+    if (Session["DatasetIds"] != null)
+    {
+        if (Session["DatasetIds"] is List<string>)
+        {
+
+            ids = Session["DatasetIds"] as List<string>;
+        }
+    }
+
+    if (ViewData["ErrorMessages"] != null)
+    {
+        if (ViewData["ErrorMessages"] is List<Error>)
+        {
+            errorOutput = ViewData["ErrorMessages"] as List<Error>;
+        }
+    }
+
+    
+    if (ViewData["startdate"] != null)
+    {
+        if (ViewData["startdate"] is DateTime)
+        {
+            start = (DateTime)ViewData["startdate"];
+        }
+    }
+    
+    if (ViewData["enddate"] != null)
+    {
+        if (ViewData["enddate"] is DateTime)
+        {
+            end = (DateTime)ViewData["enddate"];
+        }
+    }
+    
+    if(start != null && end!=null)
+    {
+        diff = end.Subtract(start);
+        
+    }
+
+ 
+    if(ViewData["UploadedData"]!= null)
+    {
+        if (ViewData["UploadedData"] is List<DataTuple>)
+        {
+            listOfDataTuples = (List<DataTuple>)ViewData["UploadedData"];
+        }
+    }
+
+    
+}
+
+@using (Html.BeginForm("UploadDataProcess", "Home", new { area = "DCM" }))
+{ 
+
+    <table>
+        <tr>
+            <td>
+               Dataset :
+            </td>
+            <td>
+                @(Html.Telerik().DropDownList()
+                        .Name("selectDataset")
+                        .BindTo(new SelectList(ids))
+                        .Value("20")
+
+                )
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+               Template used :
+            </td>
+            <td>
+             @Html.CheckBox("templateUsed", false, "Template used") Template used
+             </td>
+        </tr>
+ 
+        <tr>
+            <td>
+               File :
+            </td>
+            <td>
+                @(Html.Telerik().Upload()
+                        .Name("uploadData")
+                        .ClientEvents(events => events
+                            .OnSelect("UploadData_OnUpload")
+                            .OnRemove("UploadData_OnRemove")
+                        )
+                        .Multiple(false)
+                )
+            </td>
+        </tr>
+    </table>
+    
+    <br/>
+    <br/>
+    <div id="dataTypeFomular" ></div>
+    <div style="margin: 20px 0 0 0;">
+           <input type="submit" value="Upload" name="submit" class="t-button" />
+           <input type="submit" value="Validate" name="submit" class="t-button" />
+           <input type="reset" value="Reset" class="t-button" />
+    </div>
+    <div id="infos">
+        @* OUTPUT ERROR MESSAGES*@
+    
+        <br />
+        @if (errorOutput != null && errorOutput.Count>0)
+        {
+            <table>
+                @foreach (Error s in errorOutput)
+                { 
+                    <tr><td>@s.ToString()</td></tr>
+                }
+            </table>
+        }
+        else
+        {
+            <br />
+            <b>No Errors. File ready to upload</b>
+
+            if (listOfDataTuples.Count > 0)
+            {
+                <br />
+                <b>Number of Rows :   @listOfDataTuples.Count</b>
+                <br />
+                <br />
+                <hr />
+                <br />
+                /*foreach (DataTuple dt in listOfDataTuples)
+                {
+                    foreach (VariableValue v in dt.VariableValues)
+                    { 
+                        <text>@v.Value</text> 
+                    }
+                    <br />
+                }*/
+            }
+        }
+    <br />
+    <hr />
+    <b> time :</b><br />
+    <b>milliseconds :@diff.TotalMilliseconds.ToString()</b>;  <br />
+    <b> seconds :@diff.TotalSeconds.ToString()</b>;
+    </div>
+
+        }
+
+  <script type="text/javascript">
+
+      function UploadData_OnUpload(e) {
+          // Array with information about the uploaded files
+          var files = e.files;
+
+          var useTemplate = $('#templateUsed').is(':checked');
+
+          $.each(files, function () {
+              //alert(this.extension);
+              $.post('@Url.Action("GetDataFormatView", "Home", new RouteValueDictionary { { "area", "DCM" } })', { extension: this.extension, useTemplate: useTemplate }, function (response) {
+                  //alert(response.toString());
+                  $("#dataTypeFomular").html(response);
+              });
+          });
+      }
+
+
+      $('#templateUsed').click(function () {
+
+  
+          var useTemplate = $('#templateUsed').is(':checked');
+          var ext = $('#selectDataset').files;
+
+          $.post('@Url.Action("GetDataFormatViewAfterSelectTemplate", "Home", new RouteValueDictionary { { "area", "DCM" } })', {useTemplate: useTemplate }, function (response) {
+              //alert(response.toString());
+              $("#dataTypeFomular").html(response);
+          });
+      });
+
+      function UploadData_OnRemove(e) {
+
+          $("#dataTypeFomular").html("");
+          $("#infos").html("");
+          $.post('@Url.Action("ResetExtensionSession", "Home", new RouteValueDictionary { { "area", "DCM" } })', {}, function (response) {
+
+          });
+
+      }
+
+</script>

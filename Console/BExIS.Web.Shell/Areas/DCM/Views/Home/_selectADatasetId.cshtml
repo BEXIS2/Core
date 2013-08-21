@@ -1,0 +1,30 @@
+﻿@model List<long>
+
+@using Telerik.Web.Mvc.UI;
+
+<p>Please Select a Dataset id.</p>
+
+@(Html.Telerik().DropDownList()
+    .Name("DatasetIds_DropDownList") 
+    .BindTo(new SelectList(Model))
+  )  
+
+
+<button id="SubmitDatasetId"> Submit</button>
+
+<script type="text/javascript">
+
+   
+
+    $("#SubmitDatasetId").click(function()
+    {
+        var dropDownList = $('#DatasetIds_DropDownList').data('tDropDownList');
+        SelectedDatasetId = dropDownList.value();
+        Parameters.push("DatasetId:" + SelectedDatasetId);
+
+
+        closeWindow();
+    })
+
+
+</script>

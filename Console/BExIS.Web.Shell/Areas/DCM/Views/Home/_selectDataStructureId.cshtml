@@ -1,0 +1,30 @@
+﻿@model List<long>
+
+@using Telerik.Web.Mvc.UI;
+
+<p>Please Select a Datastructure id.</p>
+
+@(Html.Telerik().DropDownList()
+    .Name("DataStructureIds_DropDownList") 
+    .BindTo(new SelectList(Model))
+  )  
+
+
+<button id="SubmitDataStructureId"> Submit</button>
+
+<script type="text/javascript">
+
+   
+
+    $("#SubmitDataStructureId").click(function ()
+    {
+        var dropDownList = $('#DataStructureIds_DropDownList').data('tDropDownList');
+        SelectedDataStrutureId = dropDownList.value();
+        Parameters.push("DatastructureId:" + SelectedDataStrutureId);
+
+
+        closeCreateDatasetWindow();
+        
+    })
+
+</script>

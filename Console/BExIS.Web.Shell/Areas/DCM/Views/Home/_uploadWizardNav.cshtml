@@ -1,0 +1,127 @@
+﻿@{
+    ViewBag.Title = "UploadWizardNav";
+}
+
+@model BExIS.Web.Shell.Areas.DCM.Models.TaskManager
+@using BExIS.Web.Shell.Areas.DCM.Models;
+
+@{
+
+    int currentPage = @Model.GetCurrentStepInfoIndex() + 1;    
+}
+
+<div id="UploadWizardNavDiv">
+
+    <table id="UploadWizard_NavigationTable">
+        <tr>
+            <td id="Nav_Left">
+                @if (!Model.Prev().IsEmpty())
+                {   
+                    //@Html.ActionLink(Model.Prev().title, Model.Prev().GetActionInfo.ActionName, Model.Prev().GetActionInfo.ControllerName, new RouteValueDictionary { {"area", Model.Prev().GetActionInfo.AreaName.ToString()} })
+                    <button id="prevBt" onclick"PrevButton_OnClick()"  class="t-button" title="@Model.Prev().title" >Prev</button>
+               }
+            </td>
+            <td id="Nav_Pages">
+                 ( @currentPage  of   @Model.TaskInfos.Count )
+            </td>
+            <td id="Nav_Options">
+               @Html.ActionLink("Abort", "CloseUpload", Model.Current().PostActionInfo.ControllerName, new RouteValueDictionary { { "area", Model.Current().GetActionInfo.AreaName.ToString() } }, new { @class = "t-button" })
+            </td>
+            <td id="Nav_Right">
+                 @if (!Model.Next().IsEmpty())
+                 { 
+                    //@Html.ActionLink(Model.Next().title, Model.Current().PostActionInfo.ActionName, Model.Current().PostActionInfo.ControllerName, new RouteValueDictionary { {"area", Model.Current().GetActionInfo.AreaName.ToString()}})
+                    <button id="nextBt" onclick"NextButton_OnClick()" class="t-button" title="@Model.Next().title">Next</button>
+                 }
+
+                @if (Model.Current().Equals(Model.Finish()))
+                { 
+                    @Html.ActionLink("Finish","FinishUpload", Model.Current().PostActionInfo.ControllerName ,new RouteValueDictionary { {"area", Model.Current().GetActionInfo.AreaName.ToString()}}, new { @class="t-button" })
+                }
+
+            </td>
+        </tr>
+    </table>
+ 
+</div>
+<script type="text/javascript">              
+      
+    $("#prevBt").click(function(){
+        
+        var index = '@Model.TaskInfos.IndexOf(@Model.Prev())';
+  
+
+        if (index < 0) index = 0;
+
+        $.get('@Url.Action(@Model.Prev().GetActionInfo.ActionName, @Model.Prev().GetActionInfo.ControllerName, new RouteValueDictionary { { "area", @Model.Prev().GetActionInfo.AreaName  } })', { index: index }, function (response) {
+            $("#StepView").html(response);
+            NavigationRefresh();
+            TaskListRefresh();
+        })
+
+       
+    })
+
+    $("#nextBt").click(function () {
+       
+
+        alert(Parameters);
+        $.ajax({ 
+            type: 'POST', 
+            contentType: 'application/json; charset=utf-8', 
+            data: JSON.stringify(Parameters),
+            dataType: 'html', 
+            url: '@Url.Action(@Model.Current().PostActionInfo.ActionName, @Model.Current().PostActionInfo.ControllerName, new RouteValueDictionary { { "area", @Model.Current().PostActionInfo.AreaName }})',
+                success: function(result) { 
+                    $('#StepView').html(result); 
+                    NavigationRefresh();
+                    TaskListRefresh();
+                }
+            });
+
+
+        @*$.post('@Url.Action(@Model.Current().PostActionInfo.ActionName, @Model.Current().PostActionInfo.ControllerName, new RouteValueDictionary { { "area", @Model.Current().PostActionInfo.AreaName }})', { data: JSON.stringify(dataResponse) }, function (response) {
+            $("#StepView").html(response);
+            NavigationRefresh();
+            TaskListRefresh();
+        })*@
+    })
+
+    function NavigationRefresh()
+    {
+        $.post('@Url.Action("RefreshNavigation", "Home", new RouteValueDictionary { { "area", "DCM" } })', function (response) {
+            $("#UploadWizardNavDiv").html(response);
+        })
+    }
+</script>
+
+
+<style type="text/css">
+
+    #UploadWizard_NavigationTable tr td
+    {
+        /*border-style: none;*/
+    }
+
+    #Nav_Left
+    {
+        width:200px;
+    }
+
+    #Nav_Right
+    {
+        width:200px;        
+    }
+
+    #Nav_Options
+    {
+        width:100px;
+    }
+
+    #Nav_Pages
+    {
+        width:100px;
+        
+    }
+
+</style>

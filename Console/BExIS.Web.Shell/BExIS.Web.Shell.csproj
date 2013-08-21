@@ -166,6 +166,15 @@
     <Compile Include="Areas\Auth\Models\AccountModel.cs" />
     <Compile Include="Areas\Auth\Models\RoleModel.cs" />
     <Compile Include="Areas\Auth\Models\UserModel.cs" />
+    <Compile Include="Areas\DCM\Controllers\HomeController.cs" />
+    <Compile Include="Areas\DCM\DCMAreaRegistration.cs" />
+    <Compile Include="Areas\DCM\Models\ActionInfo.cs" />
+    <Compile Include="Areas\DCM\Models\ChooseDatasetViewModel.cs" />
+    <Compile Include="Areas\DCM\Models\CreateDatasetViewModel.cs" />
+    <Compile Include="Areas\DCM\Models\SelectFileViewModel.cs" />
+    <Compile Include="Areas\DCM\Models\StepInfo.cs" />
+    <Compile Include="Areas\DCM\Models\TaskManager.cs" />
+    <Compile Include="Areas\DCM\Models\UploadWizardParameters.cs" />
     <Compile Include="Areas\Search\Controllers\HomeController.cs" />
     <Compile Include="Areas\Search\Helpers\SearchUIHelper.cs" />
     <Compile Include="Areas\Search\SearchAreaRegistration.cs" />
@@ -465,6 +474,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Areas\Auth\Views\Shared\" />
+    <Folder Include="Areas\DCM\Views\Shared\" />
     <Folder Include="Areas\Search\Models\" />
     <Folder Include="Areas\Search\Views\Shared\" />
     <Folder Include="Areas\Site\Models\" />
@@ -510,6 +520,14 @@
     <ProjectReference Include="..\..\Components\AAA\BExIS.Security.Services\BExIS.Security.Services.csproj">
       <Project>{681c8bc4-55f0-4f43-a685-90e246a88cb1}</Project>
       <Name>BExIS.Security.Services</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Modules\Collect\BExIS.Collect.Transform.Input\BExIS.DCM.Transform.Input.csproj">
+      <Project>{5c4c8570-a53b-4191-a414-de028aaaf36a}</Project>
+      <Name>BExIS.DCM.Transform.Input</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Modules\Collect\BExIS.Collect.Transform.Validation\BExIS.DCM.Transform.Validation.csproj">
+      <Project>{c8a05313-b960-406e-92ec-c1e5b3f47fcd}</Project>
+      <Name>BExIS.DCM.Transform.Validation</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Modules\Search\BExIS.Search.Api\BExIS.Search.Api.csproj">
       <Project>{8519EAC6-FBF8-48B3-813F-E0B9D3CC4A52}</Project>
@@ -689,6 +707,28 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\Auth\Views\Users\_UsersPartial.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\DCM\Views\Home\FinishUpload.cshtml" />
+    <Content Include="Areas\DCM\Views\Home\Index.cshtml" />
+    <Content Include="Areas\DCM\Views\Home\Step1.cshtml" />
+    <Content Include="Areas\DCM\Views\Home\Step2.cshtml" />
+    <Content Include="Areas\DCM\Views\Home\Step3.cshtml" />
+    <Content Include="Areas\DCM\Views\Home\Step4.cshtml" />
+    <Content Include="Areas\DCM\Views\Home\Step5.cshtml" />
+    <Content Include="Areas\DCM\Views\Home\UploadData.cshtml" />
+    <Content Include="Areas\DCM\Views\Home\UploadWizard.cshtml" />
+    <Content Include="Areas\DCM\Views\Home\_createDataset.cshtml" />
+    <Content Include="Areas\DCM\Views\Home\_defaultDatatypFomularView.cshtml" />
+    <Content Include="Areas\DCM\Views\Home\_selectADatasetId.cshtml" />
+    <Content Include="Areas\DCM\Views\Home\_selectDataStructureId.cshtml" />
+    <Content Include="Areas\DCM\Views\Home\_taskListView.cshtml" />
+    <Content Include="Areas\DCM\Views\Home\_txtFormularView.cshtml" />
+    <Content Include="Areas\DCM\Views\Home\_uploadWizardNav.cshtml" />
+    <Content Include="Areas\DCM\Views\Home\_useTemplateView.cshtml" />
+    <Content Include="Areas\DCM\Views\Home\_xlsFormularView.cshtml" />
+    <Content Include="Areas\DCM\Views\Web.config" />
+    <Content Include="Areas\DCM\Views\_ViewStart.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="BExIS.DCM.Transform.Input.AsciiFileReaderInfo">
+    <Position X="3" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>AsciiFileReaderInfo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.DCM.Transform.Input.AsciiReader">
+    <Position X="2.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAcAAAAQAAAAAAAAAAAAAAAACAAAABAAA=</HashCode>
+      <FileName>AsciiReader.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.DCM.Transform.Input.DataReader">
+    <Position X="5.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEABgAAIggIhgAAIAAABEAAAAAAAAAREAAAAQACEg=</HashCode>
+      <FileName>DataReader.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="BExIS.DCM.Transform.Input.ExcelFileReaderInfo">
+    <Position X="0.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ExcelFileReaderInfo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.DCM.Transform.Input.ExcelReader">
+    <Position X="0.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAABiAgAUIQAAQFMAABAIAIAAAAgAAgAEAADQAA=</HashCode>
+      <FileName>ExcelReader.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.DCM.Transform.Input.DefinedNameVal" Collapsed="true">
+    <Position X="5.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAIQAAAAADAAEAAAAAAAAAAAAIAAAAAA=</HashCode>
+      <FileName>ExcelReader.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BExIS.DCM.Transform.Input.FileReaderInfo">
+    <Position X="1.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAAQAgAAAAAAAAAAAAAAAAABAAAAQAAAAAgAA=</HashCode>
+      <FileName>FileReaderInfo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="BExIS.DCM.Transform.Input.IDataReader">
+    <Position X="7.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAABAAAAgAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAEA=</HashCode>
+      <FileName>IDataReader.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="BExIS.DCM.Transform.Input.TextSeperator">
+    <Position X="7.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAACAAAAAggAAAAAAAAAAAAAAAAAAAAAAAQAAAAAA=</HashCode>
+      <FileName>AsciiFileReaderInfo.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="BExIS.DCM.Transform.Input.DecimalCharacter">
+    <Position X="11" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAA=</HashCode>
+      <FileName>FileReaderInfo.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="BExIS.DCM.Transform.Input.Orientation">
+    <Position X="9.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>FileReaderInfo.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
