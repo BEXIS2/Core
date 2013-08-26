@@ -66,6 +66,7 @@ namespace BExIS.Dlm.Entities.Data
         {
             ExtendedPropertyValues = new List<ExtendedPropertyValue>();
             ContentDescriptors = new List<ContentDescriptor>();
+            PriliminaryTuples = new List<DataTuple>();
             //XmlExtendedPropertyValues = new XmlDocument();
         }
 
@@ -85,13 +86,15 @@ namespace BExIS.Dlm.Entities.Data
         public override void Materialize()
         {
             base.Materialize();
-            this.PriliminaryTuples.ToList().ForEach(p => p.Materialize());
+            if(this.PriliminaryTuples != null)
+                this.PriliminaryTuples.ToList().ForEach(p => p.Materialize());
         }
 
         public override void Dematerialize()
         {
             base.Dematerialize();
-            this.PriliminaryTuples.ToList().ForEach(p => p.Dematerialize());            
+            if (this.PriliminaryTuples != null)
+                this.PriliminaryTuples.ToList().ForEach(p => p.Dematerialize());            
         }
 
         #endregion

@@ -11,7 +11,7 @@ namespace BExIS.Dlm.Entities.DataStructure
     public class StructuredDataStructure: DataStructure
     {
 
-        #region Methods
+        #region Attributes
 
         public virtual DataStructureCategory IndexerType { get; set; }
         public virtual ICollection<Variable> Variables { get; set; } // StructuredDataStructure is the controller of this association

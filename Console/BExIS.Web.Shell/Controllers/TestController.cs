@@ -42,7 +42,7 @@ namespace BExIS.Web.Shell.Controllers
             //bool b = a.ContainsExact("is");
             //testExtendedProperty();
             //getDataset();
-            createDatasetVersion(4);
+            createDatasetVersion(7);
             //return RedirectToAction("About");
             return View();
         }
@@ -62,16 +62,27 @@ namespace BExIS.Web.Shell.Controllers
         private void createDatasetVersion(Int64 datasetId)
         {
             DatasetManager dm = new DatasetManager();
-            if (dm.IsDatasetCheckedOut(datasetId, "Javad") || dm.CheckOutDataset(datasetId, "Javad"))
+            var dss = dm.DatasetRepo.Get(datasetId);
+
+            Dataset ds = dm.CreateEmptyDataset(dss.DataStructure.Self, dss.ResearchPlan);
+            if (dm.IsDatasetCheckedOut(ds.Id, "Javad") || dm.CheckOutDataset(ds.Id, "Javad"))
             {
-                DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(datasetId);
+                DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
 
-                DataTuple changed = dm.GetDatasetVersionEffectiveTuples(workingCopy).First();
-                changed.VariableValues.First().Value = (new Random()).Next().ToString();
-                
+                //DataTuple changed = dm.GetDatasetVersionEffectiveTuples(workingCopy).First();
+                //changed.VariableValues.First().Value = (new Random()).Next().ToString();
+                DataTuple dt = dm.DataTupleRepo.Get(40);
+                DataTuple newDt = new DataTuple();
+                newDt.XmlAmendments = dt.XmlAmendments;
+                newDt.XmlVariableValues = dt.XmlVariableValues; // in normal cases, the VariableValues are set and then Dematerialize is called
+                newDt.Materialize();
+                newDt.OrderNo = 1;
+                //newDt.TupleAction = TupleAction.Created;//not required
+                //newDt.Timestamp = DateTime.UtcNow; //required? no, its set in the Edit
+                //newDt.DatasetVersion = workingCopy;//required? no, its set in the Edit
 
-                dm.EditDatasetVersion(workingCopy, null, new List<DataTuple>() { changed }, null);
-                dm.CheckInDataset(datasetId, "for testing purposes", "Javad");
+                dm.EditDatasetVersion(workingCopy, new List<DataTuple>() { newDt }, null, null);
+                dm.CheckInDataset(ds.Id, "for testing purposes", "Javad");
             }
 
         }

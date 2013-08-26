@@ -61,16 +61,19 @@ namespace BExIS.Dlm.Services.Data
             return (ds);
         }
 
-        public Dataset CreateEmptyDataset(Dataset dataset)
+        public Dataset CreateEmptyDataset(Entities.DataStructure.DataStructure dataStructure, ResearchPlan researchPlan)
         {
-            Contract.Requires(dataset != null);
-            Contract.Requires(dataset.DataStructure != null && dataset.DataStructure.Id >= 0);
-            Contract.Requires(dataset.Status == DatasetStatus.CheckedIn);
-            Contract.Requires(dataset.CheckOutUser == null);
-
+            Contract.Requires(dataStructure != null && dataStructure.Id >= 0);
+            
             Contract.Ensures(Contract.Result<Dataset>() != null && Contract.Result<Dataset>().Id >= 0);
+            
+            Dataset dataset = new Dataset(dataStructure);
+            dataset.ResearchPlan = researchPlan;
+            dataset.Status = DatasetStatus.CheckedIn;
+            dataset.CheckOutUser = string.Empty;
 
             dataset.DataStructure.Datasets.Add(dataset);
+            researchPlan.Datasets.Add(dataset);
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
@@ -619,6 +622,7 @@ namespace BExIS.Dlm.Services.Data
             {
                 foreach (var item in createdTuples)
                 {
+                    item.Dematerialize();
                     workingCopyVersion.PriliminaryTuples.Add(item);
                     item.DatasetVersion = workingCopyVersion;
                     //item.TupleAction = TupleAction.Created;

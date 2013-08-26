@@ -43,10 +43,12 @@ namespace BExIS.Dlm.Entities.Data
         public Dataset()
             : this(new StructuredDataStructure())
         {
+            
         }
 
         public Dataset(DataStructure.DataStructure dataStructure)
         {
+            Versions = new List<DatasetVersion>(); 
             Status = DatasetStatus.CheckedIn;
             //Metadata = null; // new XmlElement();// Metadata.Metadata();
             //XmlExtendedPropertyValues = new XmlDocument();
