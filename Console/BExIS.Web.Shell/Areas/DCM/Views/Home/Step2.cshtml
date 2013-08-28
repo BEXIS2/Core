@@ -18,38 +18,71 @@
         
     }
 <div ="Step2" class="uploadWizardStep">
-<h3>@Model.StepInfo.title</h3>
+
+    <div class="uploadWizardStep_Header stepper">
+        <h3>@Model.StepInfo.title</h3>
+    </div>
+
+    <div class="uploadWizardStep_Description stepper">
+        <p>In BEXIS your data is stored and managed as part of a dataset. A dataset may contain one or more of your data files. 
+            But all data files within one dataset must be of the same data structure, i.e. the number of variables and their 
+            properties must be identical in each file. 
+        </p>
+        <p>
+            With the current BEXIS version you are able to create a new dataset for each data file. 
+            Adding data to existing datasets will be available with the next version.
+        </p>
+    </div>
+
+    <div class="uploadWizardStep_Content stepper">
+
+        <table>
+            <tr><td><button id="CreateDatasetButton" title="Create new dataset" >Create</button></td><td>Create a new dataset</td></tr>
+            <tr><td><button id="SelectDatasetButton" disabled="disabled" >Add</button></td><td> Add file to a existing dataset.</td></tr>
+        </table>
+        <div id="selectedValue"></div>
+        <div id="selectedValue2"></div>
+    </div>
+
+     <div class="uploadWizardStep_Error stepper">
+        @if (Model != null)
+        {
+            if (Model.ErrorList != null)
+            {
+                if (Model.ErrorList.Count == 0)
+                {
 
 
-<p> Please Select or Create a Dataset.</p>
-<br />
-<button id="SelectDatasetButton" >Select a Dataset</button>
-<br />
-<button id="CreateDatasetButton" >Create a Dataset</button>
-<br />
-<br />
-<div id="selectedValue"></div>
-<div id="selectedValue2"></div>
-<br />
-<br />
-<hr />
+                }
+                else
+                { 
+                    <br />
+                    <table>
+                        @foreach (BExIS.DCM.Transform.Validation.Exceptions.Error s in @Model.ErrorList)
+                        { 
+                            <tr><td>@s.ToString()</td></tr>
+                        }
+                    </table>
+
+                }
+            }
+
+        }
+    </div>   
 </div>
-
-
-
 
 @(Html.Telerik().Window()
     .Name("DatasetWindow")
     .Visible(false)
     .Width(300)
     .Height(100)
-    .Title("Select a Dataset Id")
+    .Title("Select a Dataset")
     .Modal(true)
     .ClientEvents(events => events
         .OnActivate("resizeOnRefresh")
     )
     .Content(@<text>
-        @Html.Partial("_selectADatasetId", Model.Datasets)
+        @Html.Partial("_selectADatasetId", Model.DatasetsViewList)
     </text>
     )
   )
@@ -60,10 +93,11 @@
     .Visible(visibleCreateDatasetWindow)
     .Width(300)
     .Height(100)
-    .Title("Create a Dataset")
+    .Title("Create new dataset")
     .Modal(true)
     .ClientEvents(events => events
         .OnActivate("resizeCreateDatasetWindowOnRefresh")
+        .OnClose("closeCreateDatasetWindow")
     )
     .Content(@<text>
         @Html.Partial("_createDataset", Model.DatasetViewModel)
@@ -94,14 +128,15 @@
         window.close();
 
         document.getElementById("selectedValue").innerHTML = "You have selected Dataset : " + SelectedDatasetId;
+        document.getElementById("selectedValue2").innerHTML = "You have selected Dataset : " + SelectedDatasetTitle;
      
     }
 
     function closeCreateDatasetWindow() {
-        var window = $("#CreateDatasetWindow").data("tWindow");
-        window.close();
+        //var window = $("#CreateDatasetWindow").data("tWindow");
+        //window.close();
 
-        document.getElementById("selectedValue2").innerHTML = "You have selected Datastructure: " + SelectedDataStrutureId;
+        document.getElementById("selectedValue2").innerHTML = "You have created a dataset: ";
 
     }
 

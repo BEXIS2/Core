@@ -1,6 +1,80 @@
-﻿<div ="Step3" class="uploadWizardStep">
-<h3>Step3</h3>
+﻿@model BExIS.Web.Shell.Areas.DCM.Models.ValidationModel
 
-@DateTime.Now;
 
+
+<div id="Step3" class="uploadWizardStep">
+
+    <div class="uploadWizardStep_Header stepper">
+        <h3>@Model.StepInfo.title</h3>
+    </div>
+
+    <div class="uploadWizardStep_Description stepper">
+        <p>
+            With this step the selected data file is validated against the selected data structure. 
+           Both, the structure of the data (e.g. variable properties) and whether the data values 
+           fit to the specified structure (e.g. data type, value range) is evaluated. 
+
+        </p>
+    </div>
+
+    <div class="uploadWizardStep_Content stepper">
+        <p><button id="validationButton" title="Validate selected data file against a given data structure" >Validate</button>Validate selected data file against a given data structure.</p>
+
+            @if (Model.Validated)
+            { 
+            
+             <p> Validated!! </p>
+                
+            }
+
+    </div>
+
+     <div class="uploadWizardStep_Error stepper">
+        @if (Model != null)
+        {
+            if (Model.ErrorList != null)
+            {
+                if (Model.ErrorList.Count == 0)
+                {
+
+
+                }
+                else
+                { 
+                    <br />
+                    <table>
+                        @foreach (BExIS.DCM.Transform.Validation.Exceptions.Error s in @Model.ErrorList)
+                        { 
+                            <tr><td>@s.ToString()</td></tr>
+                        }
+                    </table>
+
+                }
+            }
+
+        }
+    </div>   
 </div>
+
+<script type="text/javascript">
+
+@*    function validationButton_OnClick(e)
+    {
+        alert("click");
+        $.post('@Url.Action("ValidateFile", "Home", new RouteValueDictionary { { "area", "DCM" } })', function (response) {
+            $("#Step3").html(response);
+
+        })
+    }*@
+
+    $('#validationButton').click(function () {
+
+
+        $.post('@Url.Action("ValidateFile", "Home", new RouteValueDictionary { { "area", "DCM" } })', function (response) {
+
+            $("#Step3").html(response);
+
+        });
+    });
+
+</script>

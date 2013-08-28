@@ -10,6 +10,7 @@ using BExIS.DCM.Transform.Validation.DSValidation;
 using BExIS.DCM.Transform.Validation;
 using BExIS.DCM.Transform.Validation.Exceptions;
 using BExIS.DCM.Transform.Validation.ValueValidation;
+using BExIS.Dlm.Services.DataStructure;
 
 namespace BExIS.DCM.Transform.Input
 {
@@ -100,7 +101,7 @@ namespace BExIS.DCM.Transform.Input
                 else
                     variableId = GetVariableUsage(variableIdentifier).DataAttribute.Id;
 
-                dt.VariableValues.Add(dM.CreateVariableValue(s, "", DateTime.Now, DateTime.Now, new ObtainingMethod(), variableId, new List<ParameterValue>()));
+                dt.VariableValues.Add(dM.CreateVariableValue(s,"", DateTime.Now, DateTime.Now, new ObtainingMethod(), variableId, new List<ParameterValue>()));
             }
 
             return dt;
@@ -131,22 +132,33 @@ namespace BExIS.DCM.Transform.Input
                 int valuePosition = 0;
                 foreach (string v in row)
                 {
-                    VariableIdentifier hv = SubmitedVariableIndentifiers.ElementAt(row.IndexOf(v));
-                    Variable sdvu = GetVariableUsage(hv);
-                    DataAttribute var = sdvu.DataAttribute;
-
-                    ValueValidationManager validationManager = ValueValidationManagerDic[var.Id];
-
-                    List<Error> temp = validationManager.CheckValue(v, indexOfRow);
-
-                    if (temp.Count == 0)
+                    try
                     {
-                        temp = validationManager.ValidateValue(v, indexOfRow);
+                        VariableIdentifier hv = SubmitedVariableIndentifiers.ElementAt(row.IndexOf(v));
+                        Variable sdvu = GetVariableUsage(hv);
+
+                        ValueValidationManager validationManager = ValueValidationManagerDic[sdvu.Id];
+
+                        List<Error> temp = validationManager.CheckValue(v, indexOfRow);
+
+                        if (temp.Count == 0)
+                        {
+                            temp = validationManager.ValidateValue(v, indexOfRow);
+                        }
+
+                        if (temp != null) errors = errors.Union(temp).ToList();
+
+                        valuePosition++;
                     }
+                    catch
+                    { 
+                        //test
+                        if (true)
+                        {
 
-                    if(temp !=null) errors = errors.Union(temp).ToList();
-
-                    valuePosition++;
+                        }
+                    
+                    }
                 }
             }
             // different value lenght
@@ -220,11 +232,19 @@ namespace BExIS.DCM.Transform.Input
         {
             List<Error> errors = new List<Error>();
 
-            List<VariableIdentifier> source = GetDatastructureVariableIdentifiers();
+            try
+            {
+                
 
-            DatastructureMatchCheck dmc = new DatastructureMatchCheck();
-            errors = dmc.Execute(SubmitedVariableIndentifiers, source, this.structuredDataStructure.Name);
+                List<VariableIdentifier> source = GetDatastructureVariableIdentifiers();
 
+                DatastructureMatchCheck dmc = new DatastructureMatchCheck();
+                errors = dmc.Execute(SubmitedVariableIndentifiers, source, this.structuredDataStructure.Name);
+            }
+            catch { 
+            
+   
+            }
             if (errors == null)
             {
 
@@ -357,9 +377,9 @@ namespace BExIS.DCM.Transform.Input
         /// </summary>
         /// <param name="VariableUsageCollection"></param>
         /// <returns></returns>
-        private List<VariableIdentifier> GetDatastructureAsListOfVariableIdentifers(ICollection<Variable> VariableUsageCollection)
+        private List<VariableIdentifier> GetDatastructureAsListOfVariableIdentifers(ICollection<Variable> Variables)
         { 
-            var tempList = from v in VariableUsageCollection
+            var tempList = from v in Variables
                            select new VariableIdentifier
                            {
                                name = v.Label,

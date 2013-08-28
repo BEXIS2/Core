@@ -5,6 +5,10 @@
 @using Telerik.Web.Mvc.UI;
 @using BExIS.Web.Shell.Areas.DCM.Models;
 
+<header>
+    <link href="@Url.Content(Themes.GetResourcePath("Styles","uploadWizard.css"))" rel="stylesheet" type="text/css" />
+</header>
+
 @section LeftPane 
 {  
     @Html.Partial("_taskListView", Model.GetStatusOfStepInfos())
@@ -14,13 +18,16 @@
 
 
 </div>
+
 @Html.Partial("_uploadWizardNav", Model)
 
 <script type="text/javascript">              
       
     var Upload;
     var SelectedDatasetId;
+    var SelectedDatasetTitle;
     var SelectedDataStrutureId;
+    var SelectedDataStrutureTitle;
     var Parameters = new Array();
 
     $(document).ready(function () {

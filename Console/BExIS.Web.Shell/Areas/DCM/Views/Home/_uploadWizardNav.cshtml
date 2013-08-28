@@ -1,4 +1,4 @@
-﻿@{
+﻿ @{
     ViewBag.Title = "UploadWizardNav";
 }
 
@@ -25,18 +25,18 @@
                  ( @currentPage  of   @Model.TaskInfos.Count )
             </td>
             <td id="Nav_Options">
-               @Html.ActionLink("Abort", "CloseUpload", Model.Current().PostActionInfo.ControllerName, new RouteValueDictionary { { "area", Model.Current().GetActionInfo.AreaName.ToString() } }, new { @class = "t-button" })
+               @Html.ActionLink("Cancel", "CloseUpload", Model.Current().PostActionInfo.ControllerName, new RouteValueDictionary { { "area", Model.Current().GetActionInfo.AreaName.ToString() } }, new { @class = "t-button",  @style="float:right" })
             </td>
             <td id="Nav_Right">
                  @if (!Model.Next().IsEmpty())
                  { 
                     //@Html.ActionLink(Model.Next().title, Model.Current().PostActionInfo.ActionName, Model.Current().PostActionInfo.ControllerName, new RouteValueDictionary { {"area", Model.Current().GetActionInfo.AreaName.ToString()}})
-                    <button id="nextBt" onclick"NextButton_OnClick()" class="t-button" title="@Model.Next().title">Next</button>
+                    <button id="nextBt" onclick"NextButton_OnClick()" class="t-button" style="float:right" title="@Model.Next().title">Next</button>
                  }
 
                 @if (Model.Current().Equals(Model.Finish()))
                 { 
-                    @Html.ActionLink("Finish","FinishUpload", Model.Current().PostActionInfo.ControllerName ,new RouteValueDictionary { {"area", Model.Current().GetActionInfo.AreaName.ToString()}}, new { @class="t-button" })
+                    @Html.ActionLink("Finish","FinishUpload", Model.Current().PostActionInfo.ControllerName ,new RouteValueDictionary { {"area", Model.Current().GetActionInfo.AreaName.ToString()}}, new { @class="t-button", @style="float:right;" })
                 }
 
             </td>
@@ -64,8 +64,6 @@
 
     $("#nextBt").click(function () {
        
-
-        alert(Parameters);
         $.ajax({ 
             type: 'POST', 
             contentType: 'application/json; charset=utf-8', 
@@ -78,13 +76,6 @@
                     TaskListRefresh();
                 }
             });
-
-
-        @*$.post('@Url.Action(@Model.Current().PostActionInfo.ActionName, @Model.Current().PostActionInfo.ControllerName, new RouteValueDictionary { { "area", @Model.Current().PostActionInfo.AreaName }})', { data: JSON.stringify(dataResponse) }, function (response) {
-            $("#StepView").html(response);
-            NavigationRefresh();
-            TaskListRefresh();
-        })*@
     })
 
     function NavigationRefresh()
@@ -94,34 +85,3 @@
         })
     }
 </script>
-
-
-<style type="text/css">
-
-    #UploadWizard_NavigationTable tr td
-    {
-        /*border-style: none;*/
-    }
-
-    #Nav_Left
-    {
-        width:200px;
-    }
-
-    #Nav_Right
-    {
-        width:200px;        
-    }
-
-    #Nav_Options
-    {
-        width:100px;
-    }
-
-    #Nav_Pages
-    {
-        width:100px;
-        
-    }
-
-</style>

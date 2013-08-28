@@ -2,6 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Xml;
+using BExIS.DCM.Transform.Validation.Exceptions;
+using BExIS.Dlm.Entities.Data;
+using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Services.Data;
+using BExIS.Dlm.Services.DataStructure;
 
 
 namespace BExIS.Web.Shell.Areas.DCM.Models
@@ -14,14 +20,22 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
 
       
         public List<long> Datasets { get; set; }
-        public List<long> Datastructures { get; set; }
+        public List<ListViewItem> DatasetsViewList { get; set; }
+
+
+        public List<Error> ErrorList { get; set; }
 
         public CreateDatasetViewModel DatasetViewModel { get; set; }
 
         public ChooseDatasetViewModel()
         {
             Datasets = new List<long>();
-            Datastructures = new List<long>();
+            ErrorList = new List<Error>();
+            DatasetsViewList = new List<ListViewItem>();
         }
+
+        
+
+        
     }
 }

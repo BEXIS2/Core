@@ -62,7 +62,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BExIS.Search.Api\BExIS.Search.Api.csproj">
-      <Project>{8519EAC6-FBF8-48B3-813F-E0B9D3CC4A52}</Project>
+      <Project>{8519eac6-fbf8-48b3-813f-e0b9d3cc4a52}</Project>
       <Name>BExIS.Search.Api</Name>
     </ProjectReference>
     <ProjectReference Include="..\BExIS.Search.Model\BExIS.Search.Model.csproj">

@@ -8,16 +8,20 @@
 HtmlHelper.ClientValidationEnabled = true;
 HtmlHelper.UnobtrusiveJavaScriptEnabled = true;
 <div id="createDatasetFormular">  
-<br />
-<b>Please fill out the form in order to create a dataset.</b>
-<br />
-<br />
+<p>Please provide the following information.</p>
 <table>
     <tr>
         <td>@Html.LabelFor(m=>m.DataStructureId)</td>
         <td>
-            @Html.DropDownListFor(m => m.DataStructureId, new SelectList(Model.DataStructureIds),"Select, please")
+            @Html.DropDownListFor(m => m.DataStructureId, new SelectList(Model.DatastructuresViewList,"Id","Title"),"Select, please")
             @Html.ValidationMessageFor(m => m.DataStructureId)
+        </td>
+    </tr>
+    <tr>
+        <td>@Html.LabelFor(m=>m.ResearchPlanId)</td>
+        <td>
+            @Html.DropDownListFor(m => m.ResearchPlanId, new SelectList(Model.ResearchPlanViewList,"Id","Title"),"Select, please")
+            @Html.ValidationMessageFor(m => m.ResearchPlanId)
         </td>
     </tr>
     <tr>

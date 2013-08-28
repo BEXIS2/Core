@@ -8,8 +8,12 @@
       <property name="connection.connection_string">
         Server=bexis.inf-bb.uni-jena.de;
         Database=BExIS2;
-        user ID=standard;
-        Password=1ine-n2;
+        user ID=db2admin;
+        Password=.++.db.2;
+        <!--Server=localhost;
+        Database=BExIS3;
+        user ID=db2admin;
+        Password=vjcj8aw.;-->
       </property>
 
       <property name="default_schema">Standard</property>

@@ -14,6 +14,8 @@ using BExIS.DCM.Transform.Validation.Exceptions;
 using BExIS.Web.Shell.Areas.DCM.Models;
 using Vaiona.Util.Cfg;
 using System.Web.Routing;
+using BExIS.Dlm.Entities.Administration;
+using BExIS.Dlm.Services.Administration;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
 {
@@ -39,13 +41,21 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             if (TaskManager == null)
             {
-                string path = Path.Combine("D:\\BPP\\Tech\\Dev\\Workspace\\Modules\\DCM", "TaskInfo.xml");
+                string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "TaskInfo.xml");
                 XmlDocument xmlTaskInfo = new XmlDocument();
                 xmlTaskInfo.Load(path);
 
                 Session["TaskManager"] = TaskManager.Bind(xmlTaskInfo);
                 Session["Filestream"] = Stream;
+
+                TaskManager = (TaskManager)Session["TaskManager"];
+
+                // get Lists of Dataset and Datastructure
+                //Session["DatasetVersionViewList"] = LoadDatasetVersionViewList();
+                Session["DataStructureViewList"] = LoadDataStructureViewList();
+                Session["ResearchPlanViewList"] = LoadResearchPlanViewList();
             }
+
 
             return View((TaskManager)Session["TaskManager"]);
         }
@@ -133,7 +143,16 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                             Session["Stream"] = Stream;
 
                             //check is it template
+
+                            if (reader.IsTemplate(Stream))
+                            {
                             TaskManager.Current().SetValid(true);
+                        }
+                            else
+                            {
+                                model.ErrorList.Add(new Error(ErrorType.Other, "File is not a Template"));
+                            }
+                            
                         }
                         catch
                         {
@@ -179,16 +198,13 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             DatasetManager dm = new DatasetManager();
             IList<DatasetVersion> dv = dm.DatasetVersionRepo.Get();
             
-            model.Datasets = (from datasets in dm.DatasetVersionRepo.Get() select datasets.Id).ToList();
-            
-
-            //load datastructure ids
-            DataStructureManager dsm = new DataStructureManager();
-            model.Datastructures = (from datastructure in dsm.SdsRepo.Get() select datastructure.Id).ToList();
-
+            model.Datasets = (from datasets in dm.DatasetRepo.Get() select datasets.Id).ToList();
             model.StepInfo = TaskManager.Current();
             model.DatasetViewModel = new CreateDatasetViewModel();
-            model.DatasetViewModel.DataStructureIds = model.Datastructures;
+            if ((List<ListViewItem>)Session["DataStructureViewList"] != null) model.DatasetViewModel.DatastructuresViewList = (List<ListViewItem>)Session["DataStructureViewList"];
+           // if ((List<ListViewItem>)Session["DatasetVersionViewList"] != null) model.DatasetsViewList = (List<ListViewItem>)Session["DatasetVersionViewList"];
+            if ((List<ListViewItem>)Session["ResearchPlanViewList"] != null) model.DatasetViewModel.ResearchPlanViewList = (List<ListViewItem>)Session["ResearchPlanViewList"];
+            
 
             return PartialView(model);
 
@@ -198,14 +214,39 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         public ActionResult Step2(object[] data)
         {
             TaskManager = (TaskManager)Session["TaskManager"];
+            ChooseDatasetViewModel model = new ChooseDatasetViewModel();
+            model.StepInfo = TaskManager.Current();
 
             if (TaskManager != null)
             {
                 if (data != null) TaskManager.AddToBus(data);
 
-                
+                if (TaskManager.Bus.ContainsKey("DatasetId"))
+                {
+                    DatasetManager dm = new DatasetManager();
+                    Dataset ds = new Dataset();
+                    try
+                    {
+                        dm = new DatasetManager();
+                        ds = dm.GetDataset((long)Convert.ToInt32(TaskManager.Bus["DatasetId"]));
 
-                if (TaskManager.Current().valid == false)
+                        TaskManager.AddToBus("DataStructureId", ((StructuredDataStructure)(ds.DataStructure.Self)).Id);
+                        TaskManager.AddToBus("DataStructureTitle", ((StructuredDataStructure)(ds.DataStructure.Self)).Name);
+
+                        TaskManager.Current().SetValid(true);
+                
+                    }
+                    catch
+                    {
+                        model.ErrorList.Add(new Error(ErrorType.Dataset, "Dataset not exist."));
+                    }
+                }
+                else
+                {
+                    model.ErrorList.Add(new Error(ErrorType.Dataset, "Dataset not exist."));
+                }
+
+                if (TaskManager.Current().valid == true)
                 {
                     TaskManager.GoToNext();
                     Session["TaskManager"] = TaskManager;
@@ -215,10 +256,21 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 else
                 {
                     TaskManager.Current().SetStatus(StepStatus.error);
+
+                    //reload model
+                    DatasetManager dm = new DatasetManager();
+                    //IList<DatasetVersion> dv = dm.DatasetVersionRepo.Get();
+
+                    model.Datasets = (from datasets in dm.DatasetRepo.Get() select datasets.Id).ToList();
+                    model.StepInfo = TaskManager.Current();
+                    model.DatasetViewModel = new CreateDatasetViewModel();
+                    //load datastructure ids
+                    if ((List<ListViewItem>)Session["DataStructureViewList"] != null) model.DatasetViewModel.DatastructuresViewList = (List<ListViewItem>)Session["DataStructureViewList"];
+                    if ((List<ListViewItem>)Session["DatasetVersionViewList"] != null) model.DatasetsViewList = (List<ListViewItem>)Session["DatasetVersionViewList"];
                 }
             }
 
-            return PartialView();
+            return PartialView(model);
         }
 
         [HttpGet]
@@ -229,17 +281,42 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             if (TaskManager != null)
                 TaskManager.SetCurrent(index);
 
-            return PartialView();
+            ValidationModel model = new ValidationModel();
+            model.StepInfo = TaskManager.Current();
+
+            return PartialView(model);
         }
 
         [HttpPost]
         public ActionResult Step3(object[] data)
         {
             TaskManager = (TaskManager)Session["TaskManager"];
+            ValidationModel model = new ValidationModel();
 
             if (TaskManager != null)
             {
-                if (TaskManager.Current().valid == false)
+                if (data != null) TaskManager.AddToBus(data);
+
+                if (TaskManager.Bus.ContainsKey("Valid"))
+                {
+                    bool valid = Convert.ToBoolean(TaskManager.Bus["Valid"]);
+
+                    if (valid)
+                    {
+                        TaskManager.Current().SetValid(true);
+                    }
+                    else
+                    {
+                        model.ErrorList.Add(new Error(ErrorType.Other, "Not Valid."));
+                    }
+
+                }
+                else
+                {
+                    model.ErrorList.Add(new Error(ErrorType.Other, "Validation key not exist."));
+                }
+
+                if (TaskManager.Current().valid == true)
                 {
                     TaskManager.GoToNext();
                     Session["TaskManager"] = TaskManager;
@@ -248,7 +325,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 }
             }
 
-            return PartialView();
+            return PartialView(model);
         }
 
         [HttpGet]
@@ -259,7 +336,42 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             if (TaskManager != null)
                 TaskManager.SetCurrent(index);
 
-            return PartialView();
+            SummaryModel model = new SummaryModel();
+            model.StepInfo = TaskManager.Current();
+
+            if (TaskManager.Bus.ContainsKey("DatasetId"))
+            {
+                model.DatasetId = Convert.ToInt32(TaskManager.Bus["DatasetId"]);
+        }
+
+            if (TaskManager.Bus.ContainsKey("DatasetTitle"))
+        {
+                model.DatasetTitle = TaskManager.Bus["DatasetTitle"].ToString();
+            }
+
+            if (TaskManager.Bus.ContainsKey("DataStructureId"))
+            {
+                model.DataStructureId = Convert.ToInt32(TaskManager.Bus["DataStructureId"]);
+            }
+
+            if (TaskManager.Bus.ContainsKey("DataStructureTitle"))
+                {
+                model.DataStructureTitle = TaskManager.Bus["DataStructureTitle"].ToString();
+                }
+
+            if (TaskManager.Bus.ContainsKey("ResearchPlanId"))
+            {
+                model.ResearchPlanId = Convert.ToInt32(TaskManager.Bus["ResearchPlanId"].ToString());
+        }
+
+            if (TaskManager.Bus.ContainsKey("ResearchPlanTitle"))
+        {
+                model.ResearchPlanTitle = TaskManager.Bus["ResearchPlanTitle"].ToString();
+            }
+
+
+
+            return PartialView(model);
         }
 
         [HttpPost]
@@ -281,49 +393,70 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             return PartialView();
         }
 
-        [HttpGet]
-        public ActionResult Step5(int index)
-        {
-            TaskManager = (TaskManager)Session["TaskManager"];
-            //set current stepinfo based on index
-            if (TaskManager != null)
-                TaskManager.SetCurrent(index);
-
-            return PartialView();
-        }
-
-        [HttpPost]
-        public ActionResult Step5()
-        {
-            TaskManager = (TaskManager)Session["TaskManager"];
-
-            if (TaskManager != null)
-            {
-                if (TaskManager.Current().valid == false)
-                {
-                    TaskManager.GoToNext();
-                    Session["TaskManager"] = TaskManager;
-                    ActionInfo actionInfo = TaskManager.Current().GetActionInfo;
-                    return RedirectToAction(actionInfo.ActionName, actionInfo.ControllerName, new RouteValueDictionary { { "area", actionInfo.AreaName }, { "index", TaskManager.GetCurrentStepInfoIndex() } });
-                }
-            }
-
-            return PartialView();
-        }
-
+        
         #endregion
         
         #region Navigation options
 
         public ActionResult FinishUpload()
         {
+            TaskManager TaskManager = (TaskManager)Session["TaskManager"];
+            ValidationModel model = new ValidationModel();
+            model.StepInfo = TaskManager.Current();
+
+            if (TaskManager.Bus.ContainsKey("DatasetId") && TaskManager.Bus.ContainsKey("DataStructureId"))
+            {
+                try
+                {
+                    long id = Convert.ToInt32(TaskManager.Bus["DatasetId"]);
+                    DataStructureManager dsm = new DataStructureManager();
+                    long iddsd = Convert.ToInt32(TaskManager.Bus["DataStructureId"]);
+                    StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(iddsd);
+                    dsm.StructuredDataStructureRepo.LoadIfNot(sds.Variables);
+
+                    // open file
+                    ExcelReader reader = new ExcelReader();
+                    Stream = (FileStream)Session["Stream"];
+
+                    List<DataTuple> rows = reader.ReadFile(Stream, TaskManager.Bus["FileName"].ToString(), sds, (int)id);
+
+                    if (reader.errorMessages.Count > 0)
+                    {
+                        //model.ErrorList = reader.errorMessages;
+                    }
+                    else
+                    {
+                        //model.Validated = true;
+
+                        DatasetManager dm = new DatasetManager();
+                        Dataset ds = dm.GetDataset(id);
+
+                        if (dm.IsDatasetCheckedOutFor(ds.Id, "David") || dm.CheckOutDataset(ds.Id, "David"))
+                        {
+                            DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
+                            dm.EditDatasetVersion(workingCopy, rows, null, null);
+                            dm.CheckInDataset(ds.Id, "upload data from upload wizard", "David");
+                        }
+                    }
+                }
+                catch
+                {
+
+                    //model.ErrorList.Add(new Error(ErrorType.Other, "Can not valid."));
+                }
+            }
+            else
+            {
+                //model.ErrorList.Add(new Error(ErrorType.Dataset, "Dataset is not selected."));
+            }
+
             return View();
         }
 
         public ActionResult CloseUpload()
         {
-            TaskManager TaskManager = (TaskManager)Session["TaskManager"];
-            TaskManager.SetCurrent(TaskManager.Start());
+            Session["TaskManager"] = null;
+            TaskManager = null;
 
             return RedirectToAction("UploadWizard");
         }
@@ -346,11 +479,26 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 
                 TaskManager.AddToBus("FileName", SelectFileUploader.FileName);
                 TaskManager.AddToBus("Extention", SelectFileUploader.FileName.Split('.').Last());
-                //TaskManager.AddToBus("TempFilePath", filename);
                 Session["TaskManager"] = TaskManager;
             }
 
-            return RedirectToAction("UploadWizard");
+            //return RedirectToAction("UploadWizard");
+            return Content("");
+        }
+
+        public ActionResult Save(IEnumerable<HttpPostedFileBase> SelectFileUploader)
+        {
+            // The Name of the Upload component is "attachments" 
+            foreach (var file in SelectFileUploader)
+            {
+                // Some browsers send file names with full path. This needs to be stripped.
+
+
+                // The files are not actually saved in this demo
+                // file.SaveAs(physicalPath);
+        }
+            // Return an empty string to signify success
+            return Content("");
         }
 
         public ActionResult CreateDataset(CreateDatasetViewModel model)
@@ -359,6 +507,56 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             if (ModelState.IsValid)
             {
+                XmlDocument emptyMetadata = new XmlDocument();
+                emptyMetadata.Load(Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "emptymetadata.xml"));
+
+                emptyMetadata.GetElementsByTagName("bgc:title")[0].InnerText = model.Title;
+                emptyMetadata.GetElementsByTagName("bgc:owner")[0].InnerText = model.Owner;
+                emptyMetadata.GetElementsByTagName("bgc:author")[0].InnerText = model.DatasetAuthor;
+                emptyMetadata.GetElementsByTagName("bgc:projectName")[0].InnerText = model.ProjectName;
+                emptyMetadata.GetElementsByTagName("bgc:institute")[0].InnerText = model.ProjectInstitute;
+
+
+                DatasetManager dm = new DatasetManager();
+                DataStructureManager dsm = new DataStructureManager();
+                DataStructure dataStructure = dsm.StructuredDataStructureRepo.Get(model.DataStructureId);
+
+                ResearchPlanManager rpm = new ResearchPlanManager();
+                ResearchPlan rp = rpm.Repo.Get(model.ResearchPlanId);
+
+                Dataset ds = dm.CreateEmptyDataset(dataStructure, rp);
+
+                TaskManager.AddToBus("DatasetTitle", model.Title);
+                TaskManager.AddToBus("ResearchPlanId", model.ResearchPlanId);
+
+                if (dm.IsDatasetCheckedOutFor(ds.Id, "David") || dm.CheckOutDataset(ds.Id, "David"))
+                {
+                    emptyMetadata.GetElementsByTagName("bgc:id")[0].InnerText = ds.Id.ToString();
+
+
+                    DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
+                    workingCopy.Metadata = emptyMetadata;
+                    TaskManager.AddToBus("DatasetId",ds.Id);
+                    TaskManager.AddToBus("ResearchPlanTitle", rp.Title);
+                    //DataTuple changed = dm.GetDatasetVersionEffectiveTuples(workingCopy).First();
+                    //changed.VariableValues.First().Value = (new Random()).Next().ToString();
+                    //DataTuple dt = dm.DataTupleRepo.Get(40);
+                    //DataTuple newDt = new DataTuple();
+                    //newDt.XmlAmendments = dt.XmlAmendments;
+                    //newDt.XmlVariableValues = dt.XmlVariableValues; // in normal cases, the VariableValues are set and then Dematerialize is called
+                    //newDt.Materialize();
+                    //newDt.OrderNo = 1;
+                    //newDt.TupleAction = TupleAction.Created;//not required
+                    //newDt.Timestamp = DateTime.UtcNow; //required? no, its set in the Edit
+                    //newDt.DatasetVersion = workingCopy;//required? no, its set in the Edit
+
+                    dm.EditDatasetVersion(workingCopy, null, null, null);
+
+                    
+                    //dm.CheckInDataset(ds.Id, "created from upload wizard", "David");
+                }
+
+
                 Session["createDatasetWindowVisible"] = false;
             }
             else
@@ -375,15 +573,123 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             {
                 string ext = taskManager.Bus["Extention"].ToString();
 
-                if(ext.Equals("xls")||ext.Equals("xlsm")||ext.Equals("xlsx")) return true;
+                if(ext.Equals(".xls")||ext.Equals(".xlsm")||ext.Equals(".xlsx")) return true;
             }
 
             return false;
         }
 
+        [HttpPost]
+        public ActionResult ValidateFile()
+        {
+            TaskManager TaskManager = (TaskManager)Session["TaskManager"];
+            ValidationModel model = new ValidationModel();
+            model.StepInfo = TaskManager.Current();
+
+            if (TaskManager.Bus.ContainsKey("DatasetId") && TaskManager.Bus.ContainsKey("DataStructureId"))
+            {
+                try
+                {
+                    long id = (long)Convert.ToInt32(TaskManager.Bus["DatasetId"]);
+                    DataStructureManager dsm = new DataStructureManager();
+                    long iddsd = (long)Convert.ToInt32(TaskManager.Bus["DataStructureId"]);
+                    StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(iddsd);
+                    dsm.StructuredDataStructureRepo.LoadIfNot(sds.Variables);
+
+                    // open file
+                    ExcelReader reader = new ExcelReader();
+                    Stream = (FileStream)Session["Stream"];
+
+                    reader.ValidateFile(Stream, TaskManager.Bus["FileName"].ToString(), sds, id);
+
+                    if (reader.errorMessages.Count > 0)
+                    {
+                        model.ErrorList = reader.errorMessages;
+                        TaskManager.AddToBus("Valid", false);
+                    }
+                    else
+                    {
+                        model.Validated = true;
+                        TaskManager.AddToBus("Valid", true);
+                    }
+                }
+                catch
+                {
+                    model.ErrorList.Add(new Error(ErrorType.Other, "Can not valid."));
+                    TaskManager.AddToBus("Valid", false);
+                }
+            }
+            else
+            {
+                model.ErrorList.Add(new Error(ErrorType.Dataset, "Dataset is not selected."));
+                TaskManager.AddToBus("Valid", false);
+            }
+
+            return PartialView("Step3", model);
+        }
 
         #endregion
         
+        #region Helper functions
+
+        public List<ListViewItem> LoadDatasetVersionViewList()
+        {
+            DatasetManager dm = new DatasetManager();
+            List<ListViewItem> temp = new List<ListViewItem>();
+            List<long> datasetIdList = (from dataset in dm.DatasetRepo.Get()
+                                      select dataset.Id).ToList();
+
+            foreach (long datasetid in datasetIdList)
+            {
+                if (datasetid < 88)
+                {
+                    DatasetVersion dv = dm.GetDatasetLatestVersion(datasetid);
+                    XmlNodeList xnl = dv.Metadata.GetElementsByTagName("bgc:title");
+                    string title = "";
+
+                    if (xnl.Count > 0)
+                    {
+                        title = xnl[0].InnerText;
+                    }
+
+                    temp.Add(new ListViewItem(dv.Id, title));
+                }
+            }
+
+            return temp;
+        }
+
+        public List<ListViewItem> LoadDataStructureViewList()
+        {
+            DataStructureManager dsm = new DataStructureManager();
+            List<ListViewItem> temp = new List<ListViewItem>();
+
+            foreach (DataStructure datasStructure in dsm.StructuredDataStructureRepo.Get())
+            {
+                string title = datasStructure.Name;
+
+                temp.Add(new ListViewItem(datasStructure.Id, title));
+            }
+
+            return temp;
+        }
+
+        public List<ListViewItem> LoadResearchPlanViewList()
+        {
+            ResearchPlanManager rpm = new ResearchPlanManager();
+            List<ListViewItem> temp = new List<ListViewItem>();
+
+            foreach (ResearchPlan researchPlan in rpm.Repo.Get())
+            {
+                string title = researchPlan.Title;
+
+                temp.Add(new ListViewItem(researchPlan.Id, title));
+            }
+
+            return temp;
+        }
+
+        #endregion
 
         #endregion
 

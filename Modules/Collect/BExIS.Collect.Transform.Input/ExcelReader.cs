@@ -50,7 +50,38 @@ namespace BExIS.DCM.Transform.Input
         private char[] alphabet = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
 
         #region read file
+
+        public bool IsTemplate(Stream file)
+        { 
+            this.file = file;
+
+            // open excel file
+            spreadsheetDocument = SpreadsheetDocument.Open(this.file, false);
         
+            // get workbookpart
+            WorkbookPart workbookPart = spreadsheetDocument.WorkbookPart;
+
+            
+            try
+            {
+                // get all the defined area 
+                List<DefinedNameVal> namesTable = BuildDefinedNamesTable(workbookPart);
+
+                if (namesTable.Where(p => p.Key.Equals("Data")).FirstOrDefault() != null
+                    && namesTable.Where(p => p.Key.Equals("VariableIdentifiers")).FirstOrDefault() != null)
+                {
+                    return true;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+            
+
+            return false;
+        }
+
         // read file using template
         public List<DataTuple> ReadFile(Stream file, string fileName, StructuredDataStructure sds, long datasetId)
         {
@@ -286,8 +317,6 @@ namespace BExIS.DCM.Transform.Input
                     ValidateRows(worksheetPart, this._areaOfData.StartRow, this._areaOfData.EndRow);
                 }
             }
-           
-        
             // close fehlt
         }
 

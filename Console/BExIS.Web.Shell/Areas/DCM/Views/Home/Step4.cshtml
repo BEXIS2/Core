@@ -1,6 +1,92 @@
-﻿<div ="Step3" class="uploadWizardStep">
-<h3>Step4</h3>
+﻿@model BExIS.Web.Shell.Areas.DCM.Models.SummaryModel
 
-@DateTime.Now;
 
+<div id="Step3" class="uploadWizardStep">
+
+    <div class="uploadWizardStep_Header stepper">
+        <h3>@Model.StepInfo.title</h3>
+    </div>
+
+    <div class="uploadWizardStep_Description stepper">
+        <p> Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.</p>
+    </div>
+
+    <div class="uploadWizardStep_Content stepper">
+        <table>
+            <tr>
+                <td>
+                    @Html.LabelFor(m=>m.DatasetTitle)
+                </td>
+                <td>
+                    @Model.DatasetTitle
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.LabelFor(m=>m.DatasetId)
+                </td>
+                <td>
+                    @Model.DatasetId
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.LabelFor(m=>m.DataStructureTitle)
+
+                </td>
+                <td>
+                    @Model.DataStructureTitle
+                </td>
+            </tr>
+             <tr>
+                <td>
+                    @Html.LabelFor(m=>m.DataStructureId)
+
+                </td>
+                <td>
+                    @Model.DataStructureId
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.LabelFor(m=>m.ResearchPlanTitle)
+
+                </td>
+                <td>
+                    @Model.ResearchPlanTitle
+                </td>
+            </tr>
+             <tr>
+                <td>
+                    @Html.LabelFor(m=>m.ResearchPlanId)
+
+                </td>
+                <td>
+                    @Model.ResearchPlanId
+                </td>
+            </tr>
+             <tr>
+                <td>
+                    @Html.LabelFor(m=>m.NumOfVars)
+
+                </td>
+                <td>
+                    @Model.NumOfVars
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.LabelFor(m=>m.NumOfRows)
+
+                </td>
+                <td>
+                    @Model.NumOfRows
+                </td>
+            </tr>
+        </table>
+    </div>
+
+     <div class="uploadWizardStep_Error stepper">
+
+    </div>   
 </div>

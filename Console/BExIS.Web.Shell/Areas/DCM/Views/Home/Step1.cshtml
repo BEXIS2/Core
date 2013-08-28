@@ -3,49 +3,55 @@
 @using System;
 
 <div id ="Step1" class="uploadWizardStep">
-<h3>@Model.StepInfo.title</h3>
 
-@DateTime.Now
+<div class="uploadWizardStep_Header stepper">
 
+    <h3>@Model.StepInfo.title</h3>
+</div>
 
-@using (Html.BeginForm("SelectFileProcess", "Home", new { area = "DCM" }))
-{ 
+<div class="uploadWizardStep_Description stepper">
+    <p>Please select a data file to be uploaded to the BEXIS repository.</p>
+    <p>Supported file format: Microsoft Excel (*.xlsm)</p>
+</div>
+        
+<div class="uploadWizardStep_Content stepper">
 
-    <table>
-        <tr>
-            <td>
-               File :
-            </td>
-            <td>
-                @(Html.Telerik().Upload()
+            <table>
+                <tr>
+                    <td>
+                        @(Html.Telerik().Upload()
                         .Name("SelectFileUploader")
                         .Multiple(false)
                         .ShowFileList(false)
+                        .ClientEvents(events =>
+                            events.OnSelect("SelectFileProcess_OnSelect")
+                                    .OnRemove("SelectFileProcess_OnRemove")
+                                    .OnSuccess("SelectFileProcess_OnSuccess")
+                                    
+                        )
+                        .Async(async => async
+                            .Save("SelectFileProcess", "Home",new { area = "DCM" } )
+                            .AutoUpload(true))
                         
-                        .ClientEvents(events => events.OnSelect("SelectFileProcess_OnSelect"))
-                        
-                )
-            </td>
-            <td>
-                <div id="fileNameDiv">
-                    @if (Model.file != null)
-                    { 
-                        <p>@Model.file.FileName</p>
-                    }
+                        )
+                    </td>
+                    <td>
+                         <div id="fileNameDiv"/>
+                    </td>
+                </tr>
+            </table>
+ </div> 
 
-                </div>
 
-            </td>
-        </tr>
-    </table>
-    <div class="errorDiv">
+     
+ <div class="uploadWizardStep_Error stepper">
     @if (Model != null)
-    { 
+    {
         if (Model.ErrorList != null)
         {
-            if(Model.ErrorList.Count == 0)
+            if (Model.ErrorList.Count == 0)
             {
-            
+
 
             }
             else
@@ -54,24 +60,16 @@
                 <table>
                     @foreach (BExIS.DCM.Transform.Validation.Exceptions.Error s in @Model.ErrorList)
                     { 
-                        <tr><td>@s.ToString()</td></tr>
+                        <tr><td><p class="ErrorMessage">@s.ToString()</p></td></tr>
                     }
                 </table>
 
             }
-         }
-    
-     }
-    </div>
-    <br/>
-    <br/>
-    <div id="dataTypeFomular" ></div>
-    <div style="margin: 20px 0 0 0;">
-           <input type="submit" value="Submit" name="submit" class="t-button" />
-           <input type="reset" value="Reset" class="t-button" />
-    </div>
+        }
 
-}
+    }
+</div>   
+
 </div>
 <script type="text/javascript">
 
@@ -80,6 +78,21 @@
     {
         var file = e.files[0];
         Parameters.push("Extention:" + file.extension);
-        $('#fileNameDiv').text("Please confim the file with a click of the submit button");
+        //$('#fileNameDiv').text(file.name);
+
+        //$('#SubmitSelectedFile').trigger("click");
+
+        //$('#fileNameDiv').text("Please submit befor go next.");
+        //$('form').submit();
     }
+
+    function SelectFileProcess_OnRemove(e) {
+        //$('#fileNameDiv').text("");
+    }
+
+    function SelectFileProcess_OnSuccess(e) {
+
+        $('#fileNameDiv').text(e.files[0].name);
+    }
+
 </script>

@@ -1,4 +1,4 @@
-﻿@model List<long>
+﻿@model List<BExIS.Web.Shell.Areas.DCM.Models.ListViewItem>
 
 @using Telerik.Web.Mvc.UI;
 
@@ -6,7 +6,7 @@
 
 @(Html.Telerik().DropDownList()
     .Name("DatasetIds_DropDownList") 
-    .BindTo(new SelectList(Model))
+    .BindTo(new SelectList(Model,"Id","Title"))
   )  
 
 
@@ -20,8 +20,9 @@
     {
         var dropDownList = $('#DatasetIds_DropDownList').data('tDropDownList');
         SelectedDatasetId = dropDownList.value();
+        SelectedDatasetTitle = dropDownList.text()
         Parameters.push("DatasetId:" + SelectedDatasetId);
-
+        Parameters.push("DatasetTitle:" + SelectedDatasetTitle);
 
         closeWindow();
     })

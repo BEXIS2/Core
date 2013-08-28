@@ -29,7 +29,7 @@ namespace BExIS.RPM.Model
         public IList<StructuredDataStructure> GetDataStructureList()
         {
             DataStructureManager dataStructureManager = new DataStructureManager();
-            return (dataStructureManager.SdsRepo.Get());
+            return (dataStructureManager.StructuredDataStructureRepo.Get());
         }
 
         public bool GetDataStructureByID(long ID)

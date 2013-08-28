@@ -25,7 +25,7 @@ namespace BExIS.DCM.Transform.Validation.DSValidation
             {
                 foreach (VariableIdentifier o in checkList)
                 {
-                    var test = sourceList.Select(p => p.Equals(o)).Contains(true);
+                    var test = sourceList.Select(p => p.name.Equals(o.name)).Contains(true);
                     if (!test) errors.Add(new Error(ErrorType.Datastructure, "Variable from file not exist in datastructure", o.name));
 
                 }

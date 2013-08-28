@@ -50,10 +50,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="IBM.Data.DB2.9.7.4">
-      <HintPath>C:\Program Files\IBM\SQLLIB\BIN\netf40_32\specific\IBM.Data.DB2.9.7.4.dll</HintPath>
+    <Reference Include="DocumentFormat.OpenXml, Version=2.0.5022.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\bexispp\svn\branches\Application\BExIS.App\Labraries\DocumentFormat.OpenXml.dll</HintPath>
     </Reference>
-    <Reference Include="Iesi.Collections">
+    <Reference Include="IBM.Data.DB2, Version=9.7.4.4, Culture=neutral, PublicKeyToken=7c307b91aa13d208, processorArchitecture=AMD64" />
+    <Reference Include="Iesi.Collections, Version=1.0.1.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Iesi.Collections.3.2.0.4000\lib\Net35\Iesi.Collections.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
@@ -63,10 +66,12 @@
     <Reference Include="Microsoft.Practices.Unity.Configuration, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Unity.2.1.505.2\lib\NET35\Microsoft.Practices.Unity.Configuration.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Web.Helpers">
+    <Reference Include="Microsoft.Web.Helpers, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Libraries\Microsoft.Web.Helpers.dll</HintPath>
     </Reference>
-    <Reference Include="NHibernate">
+    <Reference Include="NHibernate, Version=3.3.1.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\NHibernate.3.3.3.4001\lib\Net35\NHibernate.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.WebPages" />
@@ -90,7 +95,8 @@
     <Reference Include="System.Web.Services" />
     <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
-    <Reference Include="Telerik.Web.Mvc">
+    <Reference Include="Telerik.Web.Mvc, Version=2012.3.1018.340, Culture=neutral, PublicKeyToken=29ac1a93ec063d92, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\TelerikMvcExtensions.2012.3.1018\lib\net40\Telerik.Web.Mvc.dll</HintPath>
     </Reference>
     <Reference Include="Vaiona.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -101,25 +107,34 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Libraries\Vaiona\Vaiona.Entities.dll</HintPath>
     </Reference>
+    <Reference Include="Vaiona.Entities.Orm.NH">
+      <HintPath>..\..\Libraries\Vaiona\Vaiona.Entities.Orm.NH.dll</HintPath>
+    </Reference>
     <Reference Include="Vaiona.IoC, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Libraries\Vaiona\Vaiona.IoC.dll</HintPath>
+    </Reference>
+    <Reference Include="Vaiona.Model">
+      <HintPath>..\..\Libraries\Vaiona\Vaiona.Model.dll</HintPath>
     </Reference>
     <Reference Include="Vaiona.Persistence.Api, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Libraries\Vaiona\Vaiona.Persistence.Api.dll</HintPath>
     </Reference>
-    <Reference Include="Vaiona.PersistenceProviders.NH">
+    <Reference Include="Vaiona.PersistenceProviders.NH, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Libraries\Vaiona\Vaiona.PersistenceProviders.NH.dll</HintPath>
     </Reference>
     <Reference Include="Vaiona.Util, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Libraries\Vaiona\Vaiona.Util.dll</HintPath>
     </Reference>
-    <Reference Include="Vaiona.Web">
+    <Reference Include="Vaiona.Web, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Libraries\Vaiona\Vaiona.Web.dll</HintPath>
     </Reference>
-    <Reference Include="Vaiona.Web.Mvc">
+    <Reference Include="Vaiona.Web.Mvc, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Libraries\Vaiona\Vaiona.Web.Mvc.dll</HintPath>
     </Reference>
   </ItemGroup>
@@ -171,10 +186,13 @@
     <Compile Include="Areas\DCM\Models\ActionInfo.cs" />
     <Compile Include="Areas\DCM\Models\ChooseDatasetViewModel.cs" />
     <Compile Include="Areas\DCM\Models\CreateDatasetViewModel.cs" />
+    <Compile Include="Areas\DCM\Models\ListViewItem.cs" />
     <Compile Include="Areas\DCM\Models\SelectFileViewModel.cs" />
     <Compile Include="Areas\DCM\Models\StepInfo.cs" />
+    <Compile Include="Areas\DCM\Models\SummaryModel.cs" />
     <Compile Include="Areas\DCM\Models\TaskManager.cs" />
     <Compile Include="Areas\DCM\Models\UploadWizardParameters.cs" />
+    <Compile Include="Areas\DCM\Models\ValidationModel.cs" />
     <Compile Include="Areas\RPM\Controllers\HomeController.cs" />
     <Compile Include="Areas\RPM\RPMAreaRegistration.cs" />
     <Compile Include="Areas\Search\Controllers\HomeController.cs" />
@@ -264,6 +282,7 @@
     <Content Include="Themes\Default\Styles\Default\treeview-nodes.png" />
     <Content Include="Themes\Default\Styles\search.css" />
     <Content Include="Themes\Default\Styles\telerik.default.min.css" />
+    <Content Include="Themes\Default\Styles\uploadWizard.css" />
     <Content Include="Themes\Forest\Styles\Forest\editor.png" />
     <Content Include="Themes\Forest\Styles\Forest\imagebrowser.png" />
     <Content Include="Themes\Forest\Styles\Forest\loading.gif" />
@@ -778,7 +797,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>6207</DevelopmentServerPort>
+          <DevelopmentServerPort>4849</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>http://localhost:4187/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
