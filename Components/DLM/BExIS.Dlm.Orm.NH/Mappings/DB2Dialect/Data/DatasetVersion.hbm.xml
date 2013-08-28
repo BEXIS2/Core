@@ -75,6 +75,10 @@
       <column name="Timestamp" />
     </property>
 
+    <property name="Status" type="BExIS.Dlm.Entities.Data.DatasetVersionStatus, BExIS.Dlm.Entities">
+      <column name="Status" />
+    </property>
+
     <property name="Metadata" type="System.Xml.XmlDocument, System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
       <column name="Metadata" not-null="false" sql-type="xml" />
     </property>

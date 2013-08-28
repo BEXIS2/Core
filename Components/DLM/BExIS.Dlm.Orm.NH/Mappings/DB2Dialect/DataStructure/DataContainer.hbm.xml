@@ -75,11 +75,11 @@
       <column name="Description" />
     </property>
     
-    <property name="IsMultiValue" type="Boolean">
+    <property name="IsMultiValue" type="yes_no">
       <column name="IsMultiValue" />
     </property>
 
-    <property name="IsBuiltIn" type="Boolean">
+    <property name="IsBuiltIn" type="yes_no">
       <column name="IsBuiltIn" />
     </property>
 

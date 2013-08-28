@@ -17,7 +17,7 @@
 
     <!-- Mapping Entity properties -->
     
-    <property name="IsValueOptional" type="Boolean">
+    <property name="IsValueOptional" type="yes_no">
       <column name="IsValueOptional" />
     </property>
 

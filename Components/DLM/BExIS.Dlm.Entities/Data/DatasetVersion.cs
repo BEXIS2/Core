@@ -10,6 +10,12 @@ using System.Xml.Serialization;
 
 namespace BExIS.Dlm.Entities.Data
 {
+    public enum DatasetVersionStatus
+    {
+        Old = 0             // a previous version that is checked in and not the latest version anymore
+        , CheckedOut = 1    // dataset is checked out for edit. this marker indicates the working copy version
+        , CheckedIn = 2     // the checked in and latest version. upon checking in the working copy, the current checked in version changes to Old.
+    }
 
     [AutomaticMaterializationInfo("ExtendedPropertyValues", typeof(List<ExtendedPropertyValue>), "XmlExtendedPropertyValues", typeof(XmlNode))]
     public class DatasetVersion : BusinessEntity, IBusinessVersionedEntity
@@ -24,7 +30,7 @@ namespace BExIS.Dlm.Entities.Data
         public virtual DateTime Timestamp { get; set; } // to find latest version, ordering the versions, etc.
         public virtual XmlDocument Metadata { get; set; }
         public virtual XmlDocument XmlExtendedPropertyValues { get; set; }
-
+        public virtual DatasetVersionStatus Status { get; set; }
 
         #endregion
 
@@ -35,7 +41,7 @@ namespace BExIS.Dlm.Entities.Data
         /// <summary>
         /// There is a need for the tuples to be managed smarter inside any version, in order to:
         /// 1: reduce the amount of tuple duplication
-        /// 2: be able to find out changes among versions e.g., deleted tupes, added tuples, changed ones
+        /// 2: be able to find out changes among versions e.g., deleted tuples, added tuples, changed ones
         /// 3: be able to find out what had changed in a specific version
         /// for these reasons, its better to not have the tuples loaded by the data access layer at first.       
         /// PriliminaryTuples are those added or edited by this version. they may change over time

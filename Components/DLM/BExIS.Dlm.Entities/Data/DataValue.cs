@@ -15,7 +15,7 @@ namespace BExIS.Dlm.Entities.Data
         public DateTime SamplingTime { get; set; }
         public DateTime ResultTime { get; set; }
         public ObtainingMethod ObtainingMethod { get; set; }
-        public string Note { get; set; } // any free note. especially in case of ObtainingMethod == Processing or Simulation, maybe the process, formula or simulation model should be descibed here
+        public string Note { get; set; } // any free note. especially in case of ObtainingMethod == Processing or Simulation, the process, formula or simulation model can be described here
 
         #endregion
 

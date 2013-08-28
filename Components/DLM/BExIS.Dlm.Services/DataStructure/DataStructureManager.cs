@@ -15,17 +15,17 @@ namespace BExIS.Dlm.Services.DataStructure
         public DataStructureManager()
         {
             IUnitOfWork uow = this.GetUnitOfWork();
-            this.SdsRepo = uow.GetReadOnlyRepository<StructuredDataStructure>();
-            this.UnSdsRepo = uow.GetReadOnlyRepository<UnStructuredDataStructure>();
-            this.UsageRepo = uow.GetReadOnlyRepository<Variable>();
+            this.StructuredDataStructureRepo = uow.GetReadOnlyRepository<StructuredDataStructure>();
+            this.UnStructuredDataStructureRepo = uow.GetReadOnlyRepository<UnStructuredDataStructure>();
+            this.VariableRepo = uow.GetReadOnlyRepository<Variable>();
         }
 
         #region Data Readers
 
         // provide read only repos for the whole aggregate area
-        public IReadOnlyRepository<StructuredDataStructure> SdsRepo { get; private set; }
-        public IReadOnlyRepository<UnStructuredDataStructure> UnSdsRepo { get; private set; }
-        public IReadOnlyRepository<Variable> UsageRepo { get; private set; }
+        public IReadOnlyRepository<StructuredDataStructure> StructuredDataStructureRepo { get; private set; }
+        public IReadOnlyRepository<UnStructuredDataStructure> UnStructuredDataStructureRepo { get; private set; }
+        public IReadOnlyRepository<Variable> VariableRepo { get; private set; }
 
         #endregion
 
@@ -195,8 +195,8 @@ namespace BExIS.Dlm.Services.DataStructure
             Contract.Requires(dataAttribute != null && dataAttribute.Id >= 0);
             Contract.Ensures(Contract.Result<Variable>() != null && Contract.Result<Variable>().Id >= 0);
 
-            SdsRepo.Reload(dataStructure);
-            SdsRepo.LoadIfNot(dataStructure.Variables);
+            StructuredDataStructureRepo.Reload(dataStructure);
+            StructuredDataStructureRepo.LoadIfNot(dataStructure.Variables);
             int count = (   from v in dataStructure.Variables
                             where v.DataAttribute.Id.Equals(dataAttribute.Id)
                             select v
@@ -245,8 +245,8 @@ namespace BExIS.Dlm.Services.DataStructure
             Contract.Requires(dataAttribute != null && dataAttribute.Id >= 0);
             Contract.Ensures(Contract.Result<Parameter>() != null && Contract.Result<Parameter>().Id >= 0);
 
-            UsageRepo.Reload(variableUsage);
-            UsageRepo.LoadIfNot(variableUsage.Parameters);
+            VariableRepo.Reload(variableUsage);
+            VariableRepo.LoadIfNot(variableUsage.Parameters);
             int count = (from pu in variableUsage.Parameters
                          where pu.DataAttribute.Id.Equals(dataAttribute.Id)
                             select pu
@@ -298,8 +298,8 @@ namespace BExIS.Dlm.Services.DataStructure
             //Contract.Ensures(Contract.Result<StructuredDataStructure>() != null && Contract.Result<StructuredDataStructure>().Id >= 0);
 
             
-            SdsRepo.Reload(dataStructure);
-            SdsRepo.LoadIfNot(dataStructure.Views);
+            StructuredDataStructureRepo.Reload(dataStructure);
+            StructuredDataStructureRepo.LoadIfNot(dataStructure.Views);
             int count = (from v in dataStructure.Views
                          where v.Id.Equals(view.Id)
                          select v
@@ -328,8 +328,8 @@ namespace BExIS.Dlm.Services.DataStructure
             //Contract.Ensures(Contract.Result<UnStructuredDataStructure>() != null && Contract.Result<UnStructuredDataStructure>().Id >= 0);
 
 
-            UnSdsRepo.Reload(dataStructure);
-            UnSdsRepo.LoadIfNot(dataStructure.Views);
+            UnStructuredDataStructureRepo.Reload(dataStructure);
+            UnStructuredDataStructureRepo.LoadIfNot(dataStructure.Views);
             int count = (from v in dataStructure.Views
                          where v.Id.Equals(view.Id)
                          select v
@@ -356,8 +356,8 @@ namespace BExIS.Dlm.Services.DataStructure
             Contract.Requires(view.Dataset == null);
             //Contract.Ensures(Contract.Result<StructuredDataStructure>() != null && Contract.Result<StructuredDataStructure>().Id >= 0);
             
-            SdsRepo.Reload(dataStructure);
-            SdsRepo.LoadIfNot(dataStructure.Views);
+            StructuredDataStructureRepo.Reload(dataStructure);
+            StructuredDataStructureRepo.LoadIfNot(dataStructure.Views);
             int count = (from v in dataStructure.Views
                          where v.Id.Equals(view.Id)
                          select v
@@ -384,8 +384,8 @@ namespace BExIS.Dlm.Services.DataStructure
             Contract.Requires(view.Dataset == null);
             //Contract.Ensures(Contract.Result<UnStructuredDataStructure>() != null && Contract.Result<UnStructuredDataStructure>().Id >= 0);
 
-            UnSdsRepo.Reload(dataStructure);
-            UnSdsRepo.LoadIfNot(dataStructure.Views);
+            UnStructuredDataStructureRepo.Reload(dataStructure);
+            UnStructuredDataStructureRepo.LoadIfNot(dataStructure.Views);
             int count = (from v in dataStructure.Views
                          where v.Id.Equals(view.Id)
                          select v

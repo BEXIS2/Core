@@ -18,12 +18,20 @@ using System.IO;
 using Vaiona.Web.Models;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Mvc.Data;
+using BExIS.Dlm.Services.Administration;
 
 namespace BExIS.Web.Shell.Controllers
 {
 #if DEBUG // it is designed just for testing and debugging purposes. For production versions, use release profile. Javad. 07.02.13
     public class TestController : Controller
     {
+        [DoesNotNeedDataAccess] // tells the persistence manager to not create an ambient session context for this action!
+        public ActionResult Index2()
+        {
+            return View("Index");
+        }
+
+
         public ActionResult Index()
         {
             //List<string> a = new List<string>() { "A", "B", "C" };
@@ -42,30 +50,66 @@ namespace BExIS.Web.Shell.Controllers
             //bool b = a.ContainsExact("is");
             //testExtendedProperty();
             //getDataset();
-            createDatasetVersion(7);
+            Int64 dsId = 0;
+            dsId = createDatasetVersion();
+            editDatasetVersion(dsId);
+            getAllDatasetVersions();
             //return RedirectToAction("About");
             return View();
         }
 
-        [DoesNotNeedDataAccess] // tells the NH persistence manager to not create a session context for this action!
-        public ActionResult Index2()
-        {
-            return View("Index");
-        }
-
-        private void createDataset()
+        private void getAllDatasetVersions()
         {
             DatasetManager dm = new DatasetManager();
-            //dm.CreateEmptyDataset()
+            List<Int64> ids = dm.DatasetRepo.Query().Select(p=>p.Id).ToList();
+            var b = dm.GetDatasetLatestVersions();
+            var a = dm.GetDatasetLatestVersions(ids);
+            var c = dm.GetDatasetLatestMetadataVersions();
         }
 
-        private void createDatasetVersion(Int64 datasetId)
+
+
+        private void editDatasetVersion(Int64 datasetId)
         {
             DatasetManager dm = new DatasetManager();
-            var dss = dm.DatasetRepo.Get(datasetId);
+            Dataset ds = dm.DatasetRepo.Get(datasetId);
+            //if (!dm.IsDatasetCheckedIn(ds.Id))
+            //    return;
+            if (dm.IsDatasetCheckedOutFor(ds.Id, "Javad") || dm.CheckOutDataset(ds.Id, "Javad"))
+            {
+                DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
 
-            Dataset ds = dm.CreateEmptyDataset(dss.DataStructure.Self, dss.ResearchPlan);
-            if (dm.IsDatasetCheckedOut(ds.Id, "Javad") || dm.CheckOutDataset(ds.Id, "Javad"))
+                DataTuple changed = dm.GetDatasetVersionEffectiveTuples(workingCopy).First();
+                changed.VariableValues.First().Value = (new Random()).Next().ToString();
+                
+                //DataTuple dt = dm.DataTupleRepo.Get(40);
+                //DataTuple newDt = new DataTuple();
+                //newDt.XmlAmendments = dt.XmlAmendments;
+                //newDt.XmlVariableValues = dt.XmlVariableValues; // in normal cases, the VariableValues are set and then Dematerialize is called
+                //newDt.Materialize();
+                //newDt.OrderNo = 1;
+                //newDt.TupleAction = TupleAction.Created;//not required
+                //newDt.Timestamp = DateTime.UtcNow; //required? no, its set in the Edit
+                //newDt.DatasetVersion = workingCopy;//required? no, its set in the Edit
+
+                dm.EditDatasetVersion(workingCopy, null, new List<DataTuple>() { changed }, null);
+                dm.CheckInDataset(ds.Id, "edited version", "Javad");
+            }
+        }
+
+        /// <summary>
+        /// create a new dataset, check it out to create the first version, add a tuple to it.
+        /// </summary>
+        /// <returns></returns>
+        private Int64 createDatasetVersion()
+        {
+            DataStructureManager dsManager = new DataStructureManager();
+            ResearchPlanManager rpManager = new ResearchPlanManager();
+            DatasetManager dm = new DatasetManager();
+
+            Dataset ds = dm.CreateEmptyDataset(dsManager.StructuredDataStructureRepo.Get(3), rpManager.Repo.Get(1));
+
+            if (dm.IsDatasetCheckedOutFor(ds.Id, "Javad") || dm.CheckOutDataset(ds.Id, "Javad"))
             {
                 DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
 
@@ -84,7 +128,7 @@ namespace BExIS.Web.Shell.Controllers
                 dm.EditDatasetVersion(workingCopy, new List<DataTuple>() { newDt }, null, null);
                 dm.CheckInDataset(ds.Id, "for testing purposes", "Javad");
             }
-
+            return (ds.Id);
         }
 
     //    private void createADataStructure()
@@ -191,7 +235,6 @@ namespace BExIS.Web.Shell.Controllers
             um.Delete(new List<Unit>() { km, m });
         }
 
-        [Authorize(Roles = "Admins")]
         public ActionResult About()
         {
             return View();

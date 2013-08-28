@@ -75,6 +75,7 @@ namespace BExIS.Dlm.Entities.Data
             //XmlAmendments = new XmlDocument();
             VariableValues = new List<VariableValue>();
             Amendments = new List<Amendment>();
+            History = new List<DataTupleVersion>();
         }
 
         public override void Materialize()
