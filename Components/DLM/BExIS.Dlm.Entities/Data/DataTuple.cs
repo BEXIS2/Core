@@ -10,22 +10,11 @@ using Vaiona.Core.Serialization;
 namespace BExIS.Dlm.Entities.Data
 {
     /// <summary>
-    /// In order to show what had happened to each tuple, a record of the action applied to them is maintained in the version they belong to.
+    /// Its to overcome an inheritance issue with NH: when TupleVersion is derived from DataTuple all queries on DataTuple return versions too.
     /// </summary>
-    public enum TupleAction
-    {
-            Created     =1   // the tuple is created explicitly in this version
-        ,   Edited      =2    // the tuple was from the previous version, but edited here and is attached to this version a new instance keeping the original tuple ID
-        ,   Deleted     =3   // the tuple from the previous version is deleted, and this version is just pointing to that tuple in the previous one to keep track of deleted tuples. it is possible to omit this action
-        ,   Untouched   =4 // the tuple is part of this version without any change. in this case the new version points to the previous one by an "Untouched"  action to prevent duplicating the tuple.
-    }
-
-    [AutomaticMaterializationInfo("VariableValues", typeof(List<VariableValue>), "XmlVariableValues", typeof(XmlDocument))]
-    [AutomaticMaterializationInfo("Amendments", typeof(List<Amendment>), "XmlAmendments", typeof(XmlDocument))]
-    public class DataTuple : BaseEntity, IBusinessVersionedEntity
+    public abstract class AbstractTuple: BaseEntity, IBusinessVersionedEntity
     {
         #region Attributes
-
         public virtual int OrderNo { get; set; } //indicates the order of the associated tuple in the version
         public virtual TupleAction TupleAction { get; set; }
         public virtual DateTime Timestamp { get; set; }
@@ -49,7 +38,27 @@ namespace BExIS.Dlm.Entities.Data
         public virtual IList<VariableValue> VariableValues { get; set; }
         // Do not map to persistence data directly. Materialize after load
         public virtual IList<Amendment> Amendments { get; set; }
+        
+        #endregion
 
+    }
+  
+    /// <summary>
+    /// In order to show what had happened to each tuple, a record of the action applied to them is maintained in the version they belong to.
+    /// </summary>
+    public enum TupleAction
+    {
+            Created     =1   // the tuple is created explicitly in this version
+        ,   Edited      =2    // the tuple was from the previous version, but edited here and is attached to this version a new instance keeping the original tuple ID
+        ,   Deleted     =3   // the tuple from the previous version is deleted, and this version is just pointing to that tuple in the previous one to keep track of deleted tuples. it is possible to omit this action
+        ,   Untouched   =4 // the tuple is part of this version without any change. in this case the new version points to the previous one by an "Untouched"  action to prevent duplicating the tuple.
+    }
+
+    [AutomaticMaterializationInfo("VariableValues", typeof(List<VariableValue>), "XmlVariableValues", typeof(XmlDocument))]
+    [AutomaticMaterializationInfo("Amendments", typeof(List<Amendment>), "XmlAmendments", typeof(XmlDocument))]
+    public class DataTuple : AbstractTuple
+    {
+        #region Attributes
         
         #endregion        
 

@@ -53,11 +53,12 @@ namespace BExIS.Web.Shell.Controllers
             Int64 dsId = 0;
             dsId = createDatasetVersion();
             editDatasetVersion(dsId);
+            deleteDataset(dsId);
             getAllDatasetVersions();
             //return RedirectToAction("About");
             return View();
         }
-
+        
         private void getAllDatasetVersions()
         {
             DatasetManager dm = new DatasetManager();
@@ -67,7 +68,11 @@ namespace BExIS.Web.Shell.Controllers
             var c = dm.GetDatasetLatestMetadataVersions();
         }
 
-
+        private void deleteDataset(long dsId)
+        {
+            DatasetManager dm = new DatasetManager();
+            dm.DeleteDataset(dsId, "Javad", false);
+        }
 
         private void editDatasetVersion(Int64 datasetId)
         {

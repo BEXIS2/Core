@@ -7,10 +7,8 @@ using Vaiona.Entities.Common;
 
 namespace BExIS.Dlm.Entities.Data
 {
-    public class DataTupleVersion : DataTuple
+    public class DataTupleVersion : AbstractTuple //DataTuple
     {
-        // datasetVersion.Id+Tuple.Id are the PK together
-
         public virtual DatasetVersion ActingDatasetVersion { get; set; }
         public virtual DataTuple OriginalTuple { get; set; }
 
