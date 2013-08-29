@@ -1,0 +1,125 @@
+﻿@model List<SearchAttributeViewModel>
+
+@using BExIS.Search.Model;
+@using BExIS.Web.Shell.Areas.Search.Models;
+
+@{
+    ViewBag.Title = "Manage Search Component";
+
+    bool windowVisible = false;
+    SearchAttributeViewModel selectedSA = new SearchAttributeViewModel();
+    
+    if(ViewData["windowVisible"]!=null)
+    {
+        windowVisible = (bool)ViewData["windowVisible"];
+    }
+
+    if (ViewData["selectedSearchAttribute"] != null)
+    {
+        selectedSA = (SearchAttributeViewModel)ViewData["selectedSearchAttribute"];
+    }
+   
+}
+
+<h2>Manage Search Component</h2>
+
+<p>With this interface you are able to customize the search component and define what fields of the 
+    metadata are searchable and how they appear in the application. Changes made through the interface will 
+    alter the Lucene configuration file on the server. For a detailed description of each parameter please 
+    refer to the Lucene User Manual provided with the BEXIS installation package.</p>
+
+@Html.ActionLink("Add Item", "Add","Home", new { @class="t-button", @title="Add Search Item" })
+<br />
+<br />
+@(Html.Telerik().Grid(Model)
+        .Name("SearchDesignerGrid")
+
+            .DataBinding(dataBinding => dataBinding
+                .Ajax()
+                .Select("_CustomSearchDesignerGridBinding", "Home")
+            )
+                
+            .Columns(columns =>
+            {
+                columns.Template(
+                         @<text>
+                            @Html.ActionLink("Edit", "Edit", "Home",new { id = item.id }, new { @class = "t-icon t-edit", @title="Open edit form" })
+                            @Html.ActionLink("Delete", "Delete", "Home", new { id = item.id }, new { @class = "t-icon t-delete", @title="Delete search item" })
+                        </text>
+                 
+                 ).Title("Functions")
+                 .Width(50)
+                  .ClientTemplate(
+                        @Html.ActionLink("Edit", "Edit", "Home", new { id = "<#= id #>" }, new { @class = "t-icon t-edit", @title = "Open edit form" }).ToString() +
+                        @Html.ActionLink("Delete", "Delete", "Home", new { id = "<#= id #>" }, new { @class = "t-icon t-delete", @title = "Delete search item" }).ToString()
+                   );
+
+                columns.Bound(o => o.displayName);
+                columns.Bound(o => o.searchType);//.ClientTemplate("<input type='text' name='Search Type' value='@Enum.GetName(typeof(SearchComponentBaseType)', Convert.ToInt32("<#= searchType #>") )' />");//.ClientTemplate(Enum.GetName(typeof(SearchComponentBaseType), Convert.ToInt32("<#= searchType #>") ));
+                columns.Bound(o => o.dataType);
+                columns.Bound(o => o.headerItem).ClientTemplate("<input type='checkbox' disabled='disabled' name='Header Item' <#= headerItem ? checked='checked' : '' #> />");
+                columns.Bound(o => o.defaultHeaderItem).ClientTemplate("<input type='checkbox' disabled='disabled' name='Default Header Item' <#= defaultHeaderItem ? checked='checked' : '' #> />");
+                columns.Bound(o => o.multiValue).ClientTemplate("<input type='checkbox' disabled='disabled' name='Multi Value' <#= multiValue ? checked='checked' : '' #> />");
+                columns.Bound(o => o.analysed).ClientTemplate("<input type='checkbox' disabled='disabled' name='Analysed' <#= analysed ? checked='checked' : '' #> />");
+                columns.Bound(o => o.metadataName);
+            })
+        
+        
+        //.Pageable(paging =>
+        //        paging.PageSize(10)
+        //            )
+        .Sortable()
+        )
+
+<br />
+<hr />
+<br />
+<div>
+    @Html.ActionLink("Save", "SaveConfig", "Home", new { @class = "t-button", @title="Save Changes and Refresh Index" })
+
+    @Html.ActionLink("Reset", "ResetConfig", "Home", new { @class = "t-button", @title="Reset to Default" })
+ </div>
+
+
+@(Html.Telerik().Window()
+
+    .Name("EditSearchAttribute")
+    .Visible(windowVisible)
+    .Title("Edit")
+    .Modal(true)
+    .Width(500)
+    .ClientEvents(events => events
+            .OnActivate("EditSearchAttribute_resizeOnRefresh")
+            .OnClose("EditSearchAttribute_onClose")
+    )
+    .Buttons(buttons => buttons.Close())
+    .Content(@<text>
+        <div id="showSearchAttribute-resultGrid" class="showSearchAttribute"  >
+             @Html.Partial("_editSearchAttribute", selectedSA)
+        </div>
+    </text>
+    )
+)
+
+<script type="text/javascript">
+
+    
+
+    function EditSearchAttribute_resizeOnRefresh() {
+        var winContent = $('#EditSearchAttribute .t-window-content');
+        winContent.css("height", "");
+
+        var detailwindow = $("#EditSearchAttribute").data("t-window");
+
+        detailwindow.center();
+    }
+
+    function EditSearchAttribute_onClose() {
+        $('.t-state-selected[title*="Edit"]').removeClass('t-state-selected');
+
+        $.post('@Url.Action("CloseWindow", "Home", new RouteValueDictionary { { "area", "Search" } })', function (response) {
+
+        })
+    }
+    
+ </script>

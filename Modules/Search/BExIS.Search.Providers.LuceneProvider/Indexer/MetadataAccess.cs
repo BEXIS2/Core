@@ -68,11 +68,12 @@ namespace BExIS.Search.Providers.LuceneProvider.Indexer
             DateTime start = DateTime.Now;
             try
             {
-                con = new DB2Connection("Database=BPP;UID=standard;PWD=ibukun;Server=localhost:50000;");
+                //con = new DB2Connection("Database=BExIS2;UID=db2admin;PWD=.++.db.2;Server=bexis.inf-bb.uni-jena.de;");
+                con = new DB2Connection("Database=BExIS4;UID=db2admin;PWD=vjcj8aw.;Server=localhost:50000;");
                 cmd = new DB2Command();
                 cmd.Connection = con;
                 Boolean a = con.IsOpen;
-                cmd.CommandText = "select A.ID, A.METADATA from STANDARD.DATASETS AS A WHERE A.ID > 2";
+                cmd.CommandText = "select A.ID, A.METADATA from STANDARD.DATASETVERSIONS AS A WHERE A.ID > 3";
                 cmd.CommandTimeout = 20;
                 con.Open();
                 Boolean b = con.IsOpen;

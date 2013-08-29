@@ -6,14 +6,14 @@
       <property name="connection.driver_class">NHibernate.Driver.DB2Driver</property>
       <property name="dialect">NHibernate.Dialect.DB2Dialect</property>
       <property name="connection.connection_string">
-        Server=bexis.inf-bb.uni-jena.de;
+        <!--Server=bexis.inf-bb.uni-jena.de;
         Database=BExIS2;
         user ID=db2admin;
-        Password=.++.db.2;
-        <!--Server=localhost;
-        Database=BExIS3;
+        Password=.++.db.2;-->
+        Server=localhost;
+        Database=BExIS4;
         user ID=db2admin;
-        Password=vjcj8aw.;-->
+        Password=vjcj8aw.;
       </property>
 
       <property name="default_schema">Standard</property>

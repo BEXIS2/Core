@@ -26,13 +26,13 @@ namespace BExIS.Search.Providers.LuceneProvider
 
         public SearchModel DefaultSearchModel { get; private set; }
         public SearchModel WorkingSearchModel { get; private set; }
- 
+
         private Query bexisSearching;
 
         public SearchProvider()
         {
 
-         //BexisIndexer asd = new BexisIndexer();    
+            //BexisIndexer asd = new BexisIndexer();    
           SearchConfig.LoadConfig();
 
                 this.DefaultSearchModel = initDefault();
@@ -41,6 +41,21 @@ namespace BExIS.Search.Providers.LuceneProvider
                 this.WorkingSearchModel = Get(this.WorkingSearchModel.CriteriaComponent);
         }
 
+        public bool RefreshIndex()
+        {
+
+            try
+            {
+                BexisIndexer asd = new BexisIndexer();
+
+            }
+            catch
+            {
+                return false;
+            }
+
+            return true;
+        }
 
         #region ISearchDataModel Member
 
@@ -188,30 +203,51 @@ namespace BExIS.Search.Providers.LuceneProvider
                         else if (sco.SearchComponent.Type.Equals(SearchComponentBaseType.Property))
                         {
                             String fieldName = "property_" + sco.SearchComponent.Name;
-                            BooleanQuery bexisSearchingProperty = new BooleanQuery();
-                            foreach (String value in sco.Values)
+                            Property pp = (Property)sco.SearchComponent;
+                            if (pp.UIComponent.ToLower().Equals("range"))
                             {
-                                if (value.ToLower().Equals("all"))
+                                fieldName = "property_numeric_" + sco.SearchComponent.Name;
+                                DateTime dd = new DateTime(Int32.Parse(sco.Values[0]), 1, 1, 1, 1, 1);
+                                if (pp.Direction == Direction.increase)
                                 {
-                                    Query query = new MatchAllDocsQuery();
-                                    bexisSearchingProperty.Add(query, Occur.SHOULD);
+                                    NumericRangeQuery<long> dateRangeQuery = NumericRangeQuery.NewLongRange(fieldName , dd.Ticks, long.MaxValue, true, true);
+                                    ((BooleanQuery)bexisSearching).Add(dateRangeQuery, Occur.MUST);
                                 }
                                 else
                                 {
-                                    if (SearchConfig.getNumericProperties().Contains(sco.SearchComponent.Name.ToLower()))
-                                    {
-
-
-                                    }
-
-                                    else
-                                    {
-                                        Query query = new TermQuery(new Term(fieldName, value));
-                                        bexisSearchingProperty.Add(query, Occur.SHOULD);
-                                    }
+                                    NumericRangeQuery<long> dateRangeQuery = NumericRangeQuery.NewLongRange(fieldName , long.MinValue, dd.Ticks, true, true);
+                                    ((BooleanQuery)bexisSearching).Add(dateRangeQuery, Occur.MUST);
                                 }
                             }
-                            ((BooleanQuery)bexisSearching).Add(bexisSearchingProperty, Occur.MUST);
+                            else
+                            {
+                                BooleanQuery bexisSearchingProperty = new BooleanQuery();
+                                foreach (String value in sco.Values)
+                                {
+                                    if (value.ToLower().Equals("all"))
+                                    {
+                                        Query query = new MatchAllDocsQuery();
+                                        bexisSearchingProperty.Add(query, Occur.SHOULD);
+                                    }
+                                    else
+                                    {
+                                        if (SearchConfig.getNumericProperties().Contains(sco.SearchComponent.Name.ToLower()))
+                                        {
+
+
+                                        }
+
+                                        else
+                                        {
+                                            Query query = new TermQuery(new Term(fieldName, value));
+                                            bexisSearchingProperty.Add(query, Occur.SHOULD);
+                                        }
+                                    }
+                                }
+                                ((BooleanQuery)bexisSearching).Add(bexisSearchingProperty, Occur.MUST);
+
+
+                            }
                         }
                     }
                     else

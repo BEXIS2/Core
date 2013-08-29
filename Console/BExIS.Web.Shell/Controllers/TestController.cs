@@ -182,15 +182,15 @@ namespace BExIS.Web.Shell.Controllers
 
         private void getDataset()
         {
-            DatasetManager dm = new DatasetManager();
-            Dataset ds = dm.GetDataset(3);
-            if (ds != null)
-            {
-                //var a = ds.Tuples.First().VariableValues.First().Variable.Name;
-                StructuredDataStructure sds = (StructuredDataStructure)(ds.DataStructure.Self);
-                DatasetVersion dsv = dm.GetDatasetLatestVersion(ds.Id);
-                var tuples = dm.GetDatasetVersionEffectiveTuples(dsv);
-            }
+            //DatasetManager dm = new DatasetManager();
+            //Dataset ds = dm.GetDataset(3);
+            //if (ds != null)
+            //{
+            //    //var a = ds.Tuples.First().VariableValues.First().Variable.Name;
+            //    StructuredDataStructure sds = (StructuredDataStructure)(ds.DataStructure.Self);
+            //    DatasetVersion dsv = dm.GetDatasetLatestVersion(ds.Id);
+            //    var tuples = dm.GetDatasetVersionEffectiveTuples(dsv);
+            //}
         }
 
         private void saveDatset()

@@ -9,10 +9,11 @@ namespace BExIS.Search.Model
 
     public enum SearchComponentBaseType
     {
-        Base,
+        //Base,
         Category, 
         Facet,       
-        Property
+        Property,
+        General
     }
 
     public class SearchComponentBase 
@@ -127,6 +128,7 @@ namespace BExIS.Search.Model
 
     public enum Direction { 
     
+        none,
         increase,
         decrease
     }

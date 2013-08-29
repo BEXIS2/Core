@@ -9,10 +9,10 @@
     int CurrentPage =  Convert.ToInt16(ViewData["CurrentPage"]);
     List<HeaderItem> DefaultHeaderList = (List<HeaderItem>)ViewData["DefaultHeaderList"];
     HeaderItem Id = (HeaderItem)ViewData["Id"];
-    
-    
+
+
     StructuredDataStructure sds = new StructuredDataStructure();
-    Tuple<StructuredDataStructure, int> defaultModel = new Tuple<StructuredDataStructure, int>(sds, 1);
+    Tuple<StructuredDataStructure, int> defaultModel = new Tuple<StructuredDataStructure, int>(sds, 4);
 
 
     GridPagerStyles pagerStyles = GridPagerStyles.PageSizeDropDown;
@@ -41,7 +41,7 @@
                         columns.Bound("Functions").ClientTemplate(
                             "<div class='searchResultFunctionDiv'>" +
                                "<button id= <#= " + @Model.Columns[Id.Name].ColumnName + "#>  title='Metadata' class='t-button' OnClick='md_OnClick(this)'>MD" +
-                                " </button>" +
+                                "</button>" +
                                 "<button id= <#= " + @Model.Columns[Id.Name].ColumnName + "#>  title='Primary Data' class='t-button' OnClick='pd_OnClick(this)'> PD"+
                                "</button>" +
                                 "<button id= <#= " + @Model.Columns[Id.Name].ColumnName + "#>  title='Datastructure' class='t-button' OnClick='ds_OnClick(this)'>DS</button>" +
@@ -151,6 +151,7 @@
 
     function ds_OnClick(e) {
 
+        
         var detailWindow = $("#ShowDatastructureWindow").data("tWindow");
         $.post('@Url.Action("ShowPreviewDataStructure", "Home", new RouteValueDictionary { { "area", "Search" } })', { datasetID: e.id }, function (response) {
             $("#showPreviewDS-resultGrid").html(response);
@@ -161,6 +162,9 @@
 
     function md_OnClick(e){
        
+        var x = '@Model'
+
+
        $.post('@Url.Action("ShowMetadata", "Home", new RouteValueDictionary { { "area", "Search" } })', { datasetID: e.id }, function (response) {
 
            var win = window.open();

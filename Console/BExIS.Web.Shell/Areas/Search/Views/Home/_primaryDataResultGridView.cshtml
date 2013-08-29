@@ -28,10 +28,10 @@
                 {
                     DataColumn column = Model.Item1.Columns[i];
 
-                    if (dataStructure.VariableUsages.Where(p => p.Variable.Name.Equals(column.Caption)) != null)
+                    if (dataStructure.Variables.Where(p => p.Label.Equals(column.Caption)) != null)
                     {
-                        StructuredDataVariableUsage sdvu = dataStructure.VariableUsages.Where(p => p.Variable.Name.Equals(column.Caption)).FirstOrDefault();
-                        if (sdvu.Variable.ParameterUsages.Count > 0)
+                        Variable sdvu = dataStructure.Variables.Where(p => p.Label.Equals(column.Caption)).FirstOrDefault();
+                        if (sdvu.Parameters.Count > 0)
                         {
                             // Variable has parameters
                             columns.Template(
@@ -39,9 +39,9 @@
                                             <table cellspacing="0" class="data-row">
                                                 <tr>
                                                     <td>@item[column.ColumnName]</td>
-                                                    @foreach (VariableParameterUsage p in sdvu.Variable.ParameterUsages)
+                                                    @foreach (Parameter p in sdvu.Parameters)
                                                     {
-                                                        <td>@item[p.Parameter.Name]</td>
+                                                        <td>@item[p.Label]</td>
                                                     }
                                                 </tr>
                                             </table>
@@ -50,13 +50,13 @@
                                         @<text>        
                                             <table cellspacing="0" class="data-header">
                                                 <tr>
-                                                    <td colspan="2"><strong>@sdvu.Variable.Name</strong></td>
+                                                    <td colspan="2"><strong>@sdvu.Label</strong></td>
                                                 </tr>
                                                 <tr>
                                                         <td>Value</td>
-                                                        @foreach (VariableParameterUsage p in sdvu.Variable.ParameterUsages)
+                                                        @foreach (Parameter p in sdvu.Parameters)
                                                         {
-                                                            <td>@p.Parameter.Name</td>
+                                                            <td>@p.Label</td>
                                                         }
                                                 </tr>
                                             </table>

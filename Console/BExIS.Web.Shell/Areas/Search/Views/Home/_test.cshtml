@@ -1,0 +1,6 @@
+﻿@model List<String>
+
+@(Html.Telerik().DropDownList()
+        .Name("Employee")
+        .BindTo(new SelectList((List<string>)ViewData["test"]))
+) 

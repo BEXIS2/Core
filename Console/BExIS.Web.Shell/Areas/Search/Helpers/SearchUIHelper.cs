@@ -9,6 +9,7 @@ using System.Data;
 using Vaiona.Util.Cfg;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Services.DataStructure;
 
 namespace BExIS.Web.Shell.Areas.Search.Helpers
 {
@@ -18,7 +19,7 @@ namespace BExIS.Web.Shell.Areas.Search.Helpers
         {
             string url = "";
             if (xslPath != ""){
-                url = AppConfiguration.GetModuleWorkspacePath("Search") + "UI\\HtmlShowMetadata.xsl";
+                url = AppConfiguration.GetModuleWorkspacePath("Search") + "\\UI\\HtmlShowMetadata.xsl";
             }
             else {
                 url = AppConfiguration.GetModuleWorkspacePath("Search") + xslPath;
@@ -52,7 +53,8 @@ namespace BExIS.Web.Shell.Areas.Search.Helpers
         {
             DataTable dt = new DataTable();
             dt.TableName = "Primary data table";
-            StructuredDataStructure sds = (StructuredDataStructure)(dsv.Dataset.DataStructure.Self);
+            DataStructureManager dsm = new DataStructureManager();
+            StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(dsv.Dataset.DataStructure.Id);
 
             if (dsVersionTuples != null && sds != null)
             {
@@ -117,28 +119,35 @@ namespace BExIS.Web.Shell.Areas.Search.Helpers
             dt.Columns.Add("Unit");
             dt.Columns.Add("Description");
 
-            foreach (Variable sdvu in sds.Variables)
+            DataStructureManager dsm = new DataStructureManager();
+            StructuredDataStructure datastructure = dsm.StructuredDataStructureRepo.Get(sds.Id);
+            if (datastructure != null)
             {
-                DataRow dr = dt.NewRow();
-                if (sdvu.Label != null) dr["VariableName"] = sdvu.Label;
-                else dr["VariableName"] = "n/a";
-
-                if (sdvu.Parameters.Count > 0) dr["Parameters"] = "current not shown";
-                else dr["Parameters"] = "n/a";
-
-                if (sdvu.DataAttribute.Unit != null) dr["Unit"] = sdvu.DataAttribute.Unit.Name;
-                else dr["Unit"] = "n/a";
-
-                if (sdvu.DataAttribute.Description != null || sdvu.DataAttribute.Description != "")
+                foreach (Variable var in datastructure.Variables)
                 {
+                    Variable sdvu = dsm.VariableRepo.Get(var.Id);
 
-                    dr["Description"] = sdvu.DataAttribute.Description;
+                    DataRow dr = dt.NewRow();
+                    if (sdvu.Label != null) dr["VariableName"] = sdvu.Label;
+                    else dr["VariableName"] = "n/a";
+
+
+                    if (sdvu.Parameters.Count > 0) dr["Parameters"] = "current not shown";
+                    else dr["Parameters"] = "n/a";
+
+                    if (sdvu.DataAttribute.Unit != null) dr["Unit"] = sdvu.DataAttribute.Unit.Name;
+                    else dr["Unit"] = "n/a";
+
+                    if (sdvu.DataAttribute.Description != null || sdvu.DataAttribute.Description != "")
+                    {
+
+                        dr["Description"] = sdvu.DataAttribute.Description;
+                    }
+                    else dr["Description"] = "n/a";
+
+                    dt.Rows.Add(dr);
                 }
-                else dr["Description"] = "n/a";
-
-                dt.Rows.Add(dr);
             }
-
             return dt;
         }
 

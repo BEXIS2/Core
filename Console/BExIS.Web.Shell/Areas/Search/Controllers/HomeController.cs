@@ -5,6 +5,8 @@ using System.Web;
 using System.Web.Mvc;
 using System.Data;
 using Telerik.Web.Mvc;
+using Telerik.Web.Mvc.Extensions;
+
 using BExIS.Search.Model;
 using BExIS.Web.Shell.Areas.Search.Helpers;
 using BExIS.Search.Api;
@@ -12,6 +14,10 @@ using Vaiona.IoC;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Search.Providers.LuceneProvider.Config;
+using BExIS.Search.Providers.LuceneProvider;
+using BExIS.Web.Shell.Areas.Search.Models;
+using BExIS.Dlm.Services.DataStructure;
 
 namespace BExIS.Web.Shell.Areas.Search.Controllers
 {
@@ -40,6 +46,7 @@ namespace BExIS.Web.Shell.Areas.Search.Controllers
         {
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
             SetSessionsToDefault();
+
             return View(provider);
         }
 
@@ -284,8 +291,6 @@ namespace BExIS.Web.Shell.Areas.Search.Controllers
         public ActionResult _CustomPrimaryDataBinding(GridCommand command, int datasetID)
         {
             DatasetManager dm = new DatasetManager();
-            Dataset ds = dm.GetDataset(datasetID);
-
             DatasetVersion dsv = dm.GetDatasetLatestVersion(datasetID);
             List<DataTuple> dsVersionTuples = dm.GetDatasetVersionEffectiveTuples(dsv);
             DataTable table = SearchUIHelper.ConvertPrimaryDataToDatatable(dsv, dsVersionTuples);
@@ -296,19 +301,29 @@ namespace BExIS.Web.Shell.Areas.Search.Controllers
         [GridAction]
         public ActionResult _CustomDataStructureBinding(GridCommand command, int datasetID)
         {
+            long id = (long)datasetID;
             DatasetManager dm = new DatasetManager();
-            Dataset ds = dm.GetDataset(datasetID);
-            StructuredDataStructure sds = (StructuredDataStructure)(ds.DataStructure.Self);
-            DataTable table = SearchUIHelper.ConvertStructuredDataStructureToDataTable(sds);
+            DatasetVersion ds = dm.GetDatasetLatestVersion(id);
+            if (ds != null)
+            {
+                DataStructureManager dsm = new DataStructureManager();
+                StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(ds.Dataset.DataStructure.Id);
+                dsm.StructuredDataStructureRepo.LoadIfNot(sds.Variables);
+                //StructuredDataStructure sds = (StructuredDataStructure)(ds.Dataset.DataStructure.Self);
+                DataTable table = SearchUIHelper.ConvertStructuredDataStructureToDataTable(sds);
 
-            return View(new GridModel(table));
+                return View(new GridModel(table));
+            }
+
+            return View(new GridModel(new DataTable()));
         }
 
         public ActionResult ShowPreviewDataStructure(int datasetID)
         {
             DatasetManager dm = new DatasetManager();
-            Dataset ds = dm.GetDataset(datasetID);
-            StructuredDataStructure sds = (StructuredDataStructure)(ds.DataStructure.Self);
+            DatasetVersion ds = dm.GetDatasetLatestVersion((long)datasetID);
+            DataStructureManager dsm = new DataStructureManager();
+            StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(ds.Dataset.DataStructure.Id);
 
             Tuple<StructuredDataStructure, int> m = new Tuple<StructuredDataStructure, int>(
                 sds,
@@ -322,7 +337,7 @@ namespace BExIS.Web.Shell.Areas.Search.Controllers
         {
             DatasetManager dm = new DatasetManager();
             DatasetVersion dsv = dm.GetDatasetLatestVersion(datasetID);
-            Session["Metadata"] = SearchUIHelper.ConvertXmlToHtml(dsv.Metadata.InnerXml.ToString(),"UI\\HtmlShowMetadata.xsl");
+            Session["Metadata"] = SearchUIHelper.ConvertXmlToHtml(dsv.Metadata.InnerXml.ToString(),"\\UI\\HtmlShowMetadata.xsl");
 
             return View();
         }
@@ -332,7 +347,8 @@ namespace BExIS.Web.Shell.Areas.Search.Controllers
         {
             DatasetManager dm = new DatasetManager();
             DatasetVersion dsv = dm.GetDatasetLatestVersion(datasetID);
-            StructuredDataStructure sds = (StructuredDataStructure)(dsv.Dataset.DataStructure.Self);
+            DataStructureManager dsm = new DataStructureManager();
+            StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(dsv.Dataset.DataStructure.Id);
             List<DataTuple> dsVersionTuples = dm.GetDatasetVersionEffectiveTuples(dsv);
 
             Tuple<DataTable, int, StructuredDataStructure> m = new Tuple<DataTable, int, StructuredDataStructure>(
@@ -533,6 +549,180 @@ namespace BExIS.Web.Shell.Areas.Search.Controllers
         private void SetSearchType(string filter)
         {
             Session["SearchType"] = filter;
+        }
+
+        #endregion
+
+        #region SearchDesigner
+
+
+        public ActionResult SearchDesigner()
+        {
+            if (Session["searchAttributeList"] == null)
+            {
+                ISearchDesigner sd = new SearchDesigner();
+     
+                Session["searchAttributeList"] = GetListOfSearchAttributeViewModels(sd.Get());
+                Session["metadatNodes"] = sd.GetMetadataNodes();
+                ViewData["windowVisible"] = false;
+            }
+
+            return View((List<SearchAttributeViewModel>)Session["searchAttributeList"]);
+        }
+
+        [GridAction]
+        public ActionResult _CustomSearchDesignerGridBinding(GridCommand command)
+        {
+            if (Session["searchAttributeList"] == null)
+            {
+                ISearchDesigner sd = new SearchDesigner();
+
+                Session["searchAttributeList"] = GetListOfSearchAttributeViewModels(sd.Get());
+                Session["metadatNodes"] = sd.GetMetadataNodes();
+                ViewData["windowVisible"] = false;
+            }
+
+            return View("SearchDesigner", new GridModel((List<SearchAttributeViewModel>)Session["searchAttributeList"]));
+            //return View("SearchDesigner", (List<SearchAttribute>)Session["searchAttributeList"]);
+        }
+    
+        public ActionResult Add()
+        {
+            List<SearchAttributeViewModel> searchAttributeList = (List<SearchAttributeViewModel>)Session["searchAttributeList"];
+
+            SearchAttributeViewModel sa = new SearchAttributeViewModel();
+            sa.id = searchAttributeList.Count;
+
+            ViewData["windowVisible"] = true;
+            ViewData["selectedSearchAttribute"] = sa;
+            return View("SearchDesigner", (List<SearchAttributeViewModel>)Session["searchAttributeList"]);
+        }
+
+        public ActionResult CloseWindow()
+        {
+
+            ViewData["windowVisible"] = false;
+
+            return Content("");
+        }
+
+        public ActionResult Edit(int id)
+        {
+            List<SearchAttributeViewModel> searchAttributeList = (List<SearchAttributeViewModel>)Session["searchAttributeList"];
+
+            ViewData["windowVisible"] = true;
+            ViewData["selectedSearchAttribute"] = searchAttributeList.Where(p => p.id.Equals(id)).First();
+            return View("SearchDesigner", (List<SearchAttributeViewModel>)Session["searchAttributeList"]);
+            //return PartialView("_editSearchAttribute", searchAttributeList.Where(p => p.id.Equals(id)).First());
+        }
+
+        public ActionResult Save(string submit, SearchAttributeViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                if (submit != null)
+                {
+                    List<SearchAttributeViewModel> searchAttributeList = (List<SearchAttributeViewModel>)Session["searchAttributeList"];
+
+                    if (searchAttributeList.Where(p => p.id.Equals(model.id)).Count()>0)
+                    {
+                        SearchAttributeViewModel temp = searchAttributeList.Where(p => p.id.Equals(model.id)).First();
+                        searchAttributeList[searchAttributeList.IndexOf(temp)] = model;
+                    }
+                    else
+                    {
+                        searchAttributeList.Add(model);
+                    }
+
+                    ISearchDesigner sd = new SearchDesigner();
+
+                    //sd.Set(searchAttributeList);
+
+                    Session["searchAttributeList"] = searchAttributeList;
+                    ViewData["windowVisible"] = false;
+                }
+            }
+            else
+            {
+                ViewData["windowVisible"] = true;
+            }
+
+
+            return View("SearchDesigner", (List<SearchAttributeViewModel>)Session["searchAttributeList"]);
+        }
+
+        public ActionResult SaveConfig()
+        {
+            if (Session["searchAttributeList"] != null)
+            {
+                List<SearchAttributeViewModel> searchAttributeList = (List<SearchAttributeViewModel>)Session["searchAttributeList"];
+                ISearchDesigner sd = new SearchDesigner();
+                sd.Set(GetListOfSearchAttributes(searchAttributeList));
+                Session["searchAttributeList"] = searchAttributeList;
+                ViewData["windowVisible"] = false;
+
+                sd.Reload();
+            }
+
+            return View("SearchDesigner", (List<SearchAttributeViewModel>)Session["searchAttributeList"]);
+        }
+
+        public ActionResult ResetConfig()
+        {
+                ISearchDesigner sd = new SearchDesigner();
+                sd.Reset();
+                Session["searchAttributeList"] = GetListOfSearchAttributeViewModels(sd.Get());
+                Session["metadatNodes"] = sd.GetMetadataNodes();
+                ViewData["windowVisible"] = false;
+
+            return View("SearchDesigner", (List<SearchAttributeViewModel>)Session["searchAttributeList"]);
+        }
+
+
+        public ActionResult ReloadConfig()
+        {
+            ISearchDesigner sd = new SearchDesigner();
+            sd.Reload();
+            //ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+
+            //((SearchProvider)provider).RefreshIndex();
+
+            return View("SearchDesigner", (List<SearchAttributeViewModel>)Session["searchAttributeList"]);
+        }
+
+
+        public ActionResult Delete(int id)
+        {
+            List<SearchAttributeViewModel> searchAttributeList = (List<SearchAttributeViewModel>)Session["searchAttributeList"];
+            searchAttributeList.Remove(searchAttributeList.Where(p => p.id.Equals(id)).First());
+            Session["searchAttributeList"] = searchAttributeList;
+            ViewData["windowVisible"] = false;
+
+            return View("SearchDesigner", (List<SearchAttributeViewModel>)Session["searchAttributeList"]);
+        }
+
+        private List<SearchAttribute> GetListOfSearchAttributes(List<SearchAttributeViewModel> listOfViewModels)
+        {
+            List<SearchAttribute> listOfSearchAttributes = new List<SearchAttribute>();
+
+            foreach (SearchAttributeViewModel savm in listOfViewModels)
+            {
+                listOfSearchAttributes.Add(SearchAttributeViewModel.GetSearchAttribute(savm));
+            }
+
+            return listOfSearchAttributes;
+        }
+
+        private List<SearchAttributeViewModel> GetListOfSearchAttributeViewModels(List<SearchAttribute> listOfSearchAttributes)
+        {
+            List<SearchAttributeViewModel> listOfSearchAttributeViewModels = new List<SearchAttributeViewModel>();
+
+            foreach (SearchAttribute sa in listOfSearchAttributes)
+            {
+                listOfSearchAttributeViewModels.Add(SearchAttributeViewModel.GetSearchAttributeViewModel(sa));
+            }
+
+            return listOfSearchAttributeViewModels;
         }
 
         #endregion

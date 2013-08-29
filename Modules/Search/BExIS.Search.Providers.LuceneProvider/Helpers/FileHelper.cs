@@ -28,5 +28,10 @@ namespace BExIS.Search.Providers.LuceneProvider.Helpers
         {
             get { return (Path.Combine(AppConfiguration.GetModuleWorkspacePath("Search"), "Lucene", "Config", "LuceneConfig.xml")); }
         }
+
+        public static string ConfigBackUpFilePath
+        {
+            get { return (Path.Combine(AppConfiguration.GetModuleWorkspacePath("Search"), "Lucene", "Config","BackUp", "LuceneConfig.xml")); }
+        }
     }
 }

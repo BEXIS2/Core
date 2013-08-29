@@ -13,46 +13,50 @@
     DataTable dt = new DataTable();
     if(Model.Item1 != null)
     {
-        dt = SearchUIHelper.ConvertStructuredDataStructureToDataTable(Model.Item1);//Model.Item1.ConvertToDataTable();
-        
+        if (Model.Item2 > 0)
+        {
+            dt = SearchUIHelper.ConvertStructuredDataStructureToDataTable(Model.Item1);//Model.Item1.ConvertToDataTable();
+        }
     }
 
 }
 
 @if (Model.Item1 != null)
 {
-    
-@(Html.Telerik().Grid<System.Data.DataRow>()
-        .Name("dataStructureGrid")
+    if (Model.Item2 > 0)
+    { 
+        @(Html.Telerik().Grid<System.Data.DataRow>()
+                .Name("dataStructureGrid")
 
-            .DataBinding(dataBinding => dataBinding
-                .Ajax()
-                .Select("_CustomDataStructureBinding", "Home", new { datasetID = id })
-            )
-            .EnableCustomBinding(true)
-            .HtmlAttributes(new { @class = "dataStructure-grid" })
-
-
-            .Columns(columns =>
-            {
-                for (int i = 0; i < dt.Columns.Count; i++)
-                {
-                    DataColumn column = dt.Columns[i];
-                    columns.Bound(column.DataType, column.ColumnName);
-                }
-
-            })
-            
-            .ClientEvents(events => events
-                 .OnRowDataBound("dataStructureGrid_OnRowDataBound")
-                 .OnLoad("dataStructureGrid_OnLoad")
-                )
-
-            .Pageable(paging =>
-                paging.PageSize(10)
+                    .DataBinding(dataBinding => dataBinding
+                        .Ajax()
+                        .Select("_CustomDataStructureBinding", "Home", new { datasetID = id })
                     )
-            .ColumnContextMenu()
-)
+                    .EnableCustomBinding(true)
+                    .HtmlAttributes(new { @class = "dataStructure-grid" })
+
+
+                    .Columns(columns =>
+                    {
+                        for (int i = 0; i < dt.Columns.Count; i++)
+                        {
+                            DataColumn column = dt.Columns[i];
+                            columns.Bound(column.DataType, column.ColumnName);
+                        }
+
+                    })
+            
+                    .ClientEvents(events => events
+                         .OnRowDataBound("dataStructureGrid_OnRowDataBound")
+                         .OnLoad("dataStructureGrid_OnLoad")
+                        )
+
+                    .Pageable(paging =>
+                        paging.PageSize(10)
+                            )
+                    .ColumnContextMenu()
+        )
+    }
 }
 else
 { 

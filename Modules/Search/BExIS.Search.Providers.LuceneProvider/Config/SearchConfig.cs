@@ -22,6 +22,7 @@ using Lucene.Net.Util;
 using BExIS.Search.Model;
 using BExIS.Search.Providers.LuceneProvider.Searcher;
 using BExIS.Search.Providers.LuceneProvider.Helpers;
+using System.Globalization;
 
 
 
@@ -123,7 +124,7 @@ namespace BExIS.Search.Providers.LuceneProvider.Config
                     foreach (SimpleFacetedSearch.HitsPerFacet hpg in hits.HitsPerFacet)
                     {
                         Facet ccDefault = new Facet();
-                       ccDefault.Parent = cDefault;
+                        ccDefault.Parent = cDefault;
                         ccDefault.Name = hpg.Name.ToString();
                         ccDefault.DisplayName = hpg.Name.ToString();
                         ccDefault.Text = hpg.Name.ToString();
@@ -161,7 +162,7 @@ namespace BExIS.Search.Providers.LuceneProvider.Config
                     //c.Id = x.Attributes[Property.ID].InnerText;
                     cDefault.Name = fieldProperty.Attributes.GetNamedItem("lucene_name").Value;
                     cDefault.DisplayName = fieldProperty.Attributes.GetNamedItem("display_name").Value;
-                    cDefault.DisplayTitle = fieldProperty.Attributes.GetNamedItem("display_name").Value; 
+                    cDefault.DisplayTitle = fieldProperty.Attributes.GetNamedItem("display_name").Value;
                     cDefault.DataSourceKey = fieldProperty.Attributes.GetNamedItem("metadata_name").Value;
                     cDefault.UIComponent = fieldProperty.Attributes.GetNamedItem("uiComponent").Value; ;
                     //cDefault.DefaultValue = fieldProperty.Attributes.GetNamedItem("default_value").Value; 
@@ -169,8 +170,26 @@ namespace BExIS.Search.Providers.LuceneProvider.Config
                     cDefault.AggregationType = "distinct";
                     cDefault.DefaultValue = "All";
                     cDefault.DataType = fieldProperty.Attributes.GetNamedItem("primitive_type").Value;
+                    if (cDefault.UIComponent.ToLower().Equals("range") && cDefault.DataType.ToLower().Equals("date"))
+                    {
+
+                        String direction = fieldProperty.Attributes.GetNamedItem("direction").Value;
+
+                        if (direction.ToLower().Equals("increase"))
+                        {
+                            cDefault.Direction = Direction.increase;
+                        }
+                        else
+                        {
+                            cDefault.Direction = Direction.decrease;
+                        }
+                    }
+
+
 
                     Query query = new QueryParser(Lucene.Net.Util.Version.LUCENE_30, "id", new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_29)).Parse("*:*");
+
+
 
                     SimpleFacetedSearch sfs = new SimpleFacetedSearch(_Reader, new string[] { "property_" + fieldName });
                     SimpleFacetedSearch.Hits hits = sfs.Search(query);
@@ -178,10 +197,15 @@ namespace BExIS.Search.Providers.LuceneProvider.Config
                     foreach (SimpleFacetedSearch.HitsPerFacet hpg in hits.HitsPerFacet)
                     {
                         String abc = hpg.Name.ToString();
-                        laDefault.Add(abc);
+
+                        if (cDefault.UIComponent.ToLower().Equals("range") && cDefault.DataType.ToLower().Equals("date"))
+                        {
+                            laDefault.Add(abc);
+                        }
+                        else { laDefault.Add(abc); }
                     }
 
-                    if (!cDefault.UIComponent.ToLower().Equals("range")) { laDefault.Add("All");  };
+                    if (!cDefault.UIComponent.ToLower().Equals("range")) { laDefault.Add("All"); };
                     laDefault.Sort();
                     cDefault.Values = laDefault;
                     AllPropertiesDefault.Add(cDefault);

@@ -45,8 +45,9 @@
     <Reference Include="Vaiona.Core">
       <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Vaiona.Entities">
-      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Entities.dll</HintPath>
+    <Reference Include="Vaiona.Entities, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\DCM\Libraries\Vaiona\Vaiona.Entities.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

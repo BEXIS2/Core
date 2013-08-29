@@ -15,7 +15,7 @@ namespace BExIS.Search.Providers.DummyProvider.Helpers
 
             // this code changes again later when the extensibility fraework is ready! all the modules and components should provide a class to introduce their manifests!!
             // Javad: 04.03.13
-            string url = AppConfiguration.GetModuleWorkspacePath("Search") + "UI\\HtmlShowMetadata.xsl";
+            string url = AppConfiguration.GetModuleWorkspacePath("Search") + "\\UI\\HtmlShowMetadata.xsl";
 
             if (m != null)
             {

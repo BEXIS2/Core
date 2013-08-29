@@ -5,41 +5,55 @@
 <div>
 <p class="PropertyHeader">@Model.DisplayName</p>
 @{
-    List<DateTime> dtList = new List<DateTime>();
+    List<int> dtList = new List<int>();
 
-    DateTime ValueDateTime = new DateTime();
-    
-    foreach(var item in Model.Values)
+    int Value = new int();
+
+    if (@Model.DataType.Equals("date"))
     {
-        // format check inside 
-        // M/d/yyyy
-        DateTime dt = DateTime.Parse(item, new CultureInfo("en-US", false)); //Convert.ToDateTime(item);
-        dtList.Add(dt);
+        foreach (var item in Model.Values)
+        {
+            // format check inside 
+            // M/d/yyyy
+            DateTime dt = DateTime.Parse(item, new CultureInfo("en-US", false)); //Convert.ToDateTime(item);
+            dtList.Add(dt.Year);
+        }
     }
 
-    dtList.Sort();
-    if (Model.Direction.Equals(Direction.increase)){ ValueDateTime =  dtList.First();}
+    int largeStep = 0;
     
-    if(Model.Direction.Equals(Direction.decrease)){ ValueDateTime =  dtList.Last();}
-
-    int largeStep = dtList.Last().Year - dtList.First().Year;
-
+    if (dtList.Count > 0)
+    { 
+        dtList.Sort();
+        if (Model.Direction.Equals(Direction.increase)){ Value =  dtList.First();}
     
+        if(Model.Direction.Equals(Direction.decrease)){ Value =  dtList.Last();}
+
+        largeStep = dtList.Last() - dtList.First();
+
     }
+}
 
-           
-@(Html.Telerik().Slider<Int32>()
+@if (dtList.Count > 0)
+{ 
+           @(Html.Telerik().Slider<Int32>()
                 .Name(Model.DataSourceKey)
-                .Min(dtList.First().Year)//.Min(item.min)
-                .Max(dtList.Last().Year)//.Max(item.max)
-                .Value(ValueDateTime.Year)
+                .Min(dtList.First())//.Min(item.min)
+                .Max(dtList.Last())//.Max(item.max)
+                .Value(Value)
                 .SmallStep(1)
-                .LargeStep(largeStep)        
+                .LargeStep(largeStep)
                 .ShowButtons(true)
                      .ClientEvents(events => events
                            .OnChange("onChangeSlider")
                        )
         )
+}
+else
+{ 
+    <b>Slider currently not work with @Model.DataType.ToString() .</b>
+}
+
 </div>
  <script type="text/javascript">
      function onChangeSlider(e) {

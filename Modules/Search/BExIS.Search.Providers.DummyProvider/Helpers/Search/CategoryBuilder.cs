@@ -23,7 +23,7 @@ namespace BExIS.Search.Providers.DummyProvider.Helpers.Helpers.Search
 
         private static void LoadXml()
         {
-            XmlReader xr = XmlReader.Create(AppConfiguration.GetModuleWorkspacePath("Search") + "DummyData/Category.xml");
+            XmlReader xr = XmlReader.Create(AppConfiguration.GetModuleWorkspacePath("Search") + "/DummyData/Category.xml");
             _source.Load(xr);
         }
 
