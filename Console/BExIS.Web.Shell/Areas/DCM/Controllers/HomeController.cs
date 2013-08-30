@@ -127,22 +127,19 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             if (TaskManager != null)
             {
                 // is path of file exist
-                if (TaskManager.Bus.ContainsKey("FileBase"))
+                if (TaskManager.Bus.ContainsKey("FilePath"))
                 {
                     if (IsSupportedExtention(TaskManager))
                     {
                         try
                         {
                             //try save file
-                            HttpPostedFileBase SelectedFile = (HttpPostedFileBase)TaskManager.Bus["FileBase"];
+                            string filePath = TaskManager.Bus["FilePath"].ToString();
 
-
-                            string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"),DateTime.Now.Millisecond.ToString()+SelectedFile.FileName);
-                            SelectedFile.SaveAs(path);
 
                             // open file
                             ExcelReader reader = new ExcelReader();
-                            Stream = reader.Open(path);
+                            Stream = reader.Open(filePath);
                             Session["Stream"] = Stream;
 
                             //check is it template
@@ -503,7 +500,10 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 //string filename = "D:\\" + DateTime.Now.Millisecond.ToString() + SelectFileUploader.FileName;
                 //SelectFileUploader.SaveAs(filename);
 
-                TaskManager.AddToBus("FileBase", SelectFileUploader);
+                string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), DateTime.Now.Millisecond.ToString() + SelectFileUploader.FileName);
+                SelectFileUploader.SaveAs(path);
+
+                TaskManager.AddToBus("FilePath", path);
                 
                 TaskManager.AddToBus("FileName", SelectFileUploader.FileName);
                 TaskManager.AddToBus("Extention", SelectFileUploader.FileName.Split('.').Last());
