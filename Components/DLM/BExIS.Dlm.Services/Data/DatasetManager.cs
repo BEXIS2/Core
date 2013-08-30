@@ -499,6 +499,7 @@ namespace BExIS.Dlm.Services.Data
             this.DatasetVersionRepo.Evict();
             this.DataTupleRepo.Evict();
             this.DataTupleVerionRepo.Evict();
+            this.DatasetRepo.UnitOfWork.ClearCache();
 
             workingCoptDatasetVersion = this.DatasetVersionRepo.Get(workingCoptDatasetVersionId);
 
@@ -578,14 +579,14 @@ namespace BExIS.Dlm.Services.Data
                 IRepository<DataTupleVersion> tupleVersionRepo = uow.GetRepository<DataTupleVersion>();
                 IRepository<DataTuple> tupleRepo = uow.GetRepository<DataTuple>();
 
-                foreach (var item in tobeAdded)
+                foreach (DataTupleVersion dtv in tobeAdded)
                 {
-                    tupleVersionRepo.Put(item);
+                    tupleVersionRepo.Put(dtv);
                 }
 
-                foreach (var item in tobeDeleted)
-                {                    
-                    tupleRepo.Delete(item);
+                foreach (DataTuple tuple in tobeDeleted)
+                {
+                    tupleRepo.Delete(tuple);
                 }
                 // check whether the changes to the latest version, which is changed in the applyTupleChanges , are committed too!
                 repo.Put(edited);

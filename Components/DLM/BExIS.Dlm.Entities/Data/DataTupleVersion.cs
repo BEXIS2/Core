@@ -12,7 +12,7 @@ namespace BExIS.Dlm.Entities.Data
         public virtual DatasetVersion ActingDatasetVersion { get; set; }
         public virtual DataTuple OriginalTuple { get; set; }
 
-        public virtual ICollection<DataTupleVersion> History { get { throw new Exception("DataTuple Version has no history, use DataTuple entity instead");} }
+        //public virtual ICollection<DataTupleVersion> History { get { throw new Exception("DataTuple Version has no history, use DataTuple entity instead");} }
 
         //public virtual DatasetVersion DatasetVersion { get; set; }
         //public virtual int OrderNo { get; set; } //indicates the order of the associated tuple in the version
