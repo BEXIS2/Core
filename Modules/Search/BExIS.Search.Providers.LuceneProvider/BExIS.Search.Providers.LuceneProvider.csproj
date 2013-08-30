@@ -121,7 +121,6 @@
     <Compile Include="Helpers\FileHelper.cs" />
     <Compile Include="Indexer\BexisAnalyzer.cs" />
     <Compile Include="Indexer\BexisIndexer.cs" />
-    <Compile Include="Indexer\MetadataAccess.cs" />
     <Compile Include="Indexer\NGramAnalyzer.cs" />
     <Compile Include="Indexer\SynonymEngine\BexisSynonymEngine.cs" />
     <Compile Include="Indexer\SynonymEngine\ISynonymEngine.cs" />

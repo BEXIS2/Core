@@ -32,7 +32,6 @@ namespace BExIS.Dlm.Entities.Data
         #region Associations        
 
         public virtual DatasetVersion DatasetVersion { get; set; } // inverse map
-        public virtual ICollection<DataTupleVersion> History { get; set; }
 
         // Map from and to XmlVariableValues. Do not map to persistence data directly
         public virtual IList<VariableValue> VariableValues { get; set; }
@@ -58,9 +57,13 @@ namespace BExIS.Dlm.Entities.Data
     [AutomaticMaterializationInfo("Amendments", typeof(List<Amendment>), "XmlAmendments", typeof(XmlDocument))]
     public class DataTuple : AbstractTuple
     {
-        #region Attributes
-        
-        #endregion        
+        #region Associations
+
+        public virtual ICollection<DataTupleVersion> History { get; set; }
+
+        #endregion
+
+      
 
         #region Methods
 

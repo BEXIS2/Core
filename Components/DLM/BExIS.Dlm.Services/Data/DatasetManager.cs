@@ -140,6 +140,12 @@ namespace BExIS.Dlm.Services.Data
         {
             Contract.Requires(datasetId >= 0);
 
+            // do not move them to editDatasetVersion function
+            this.DatasetRepo.Evict();
+            this.DatasetVersionRepo.Evict();
+            this.DataTupleRepo.Evict();
+            this.DataTupleVerionRepo.Evict();
+
             Dataset entity = this.DatasetRepo.Get(datasetId);
             if (entity.Status == DatasetStatus.Deleted)
                 return false;
@@ -185,11 +191,10 @@ namespace BExIS.Dlm.Services.Data
             // but if they are called on a single dataset in 2 different http requests, there is no problem!?
             // perhaps the NH session is not flushed completely or has some references to the objects in the caches, as the session end function is not called yet! this is why an Evict before purge is required!
 
-            this.DatasetRepo.Evict<Dataset>();
-            this.DatasetRepo.Evict<DatasetVersion>();
-            this.DatasetRepo.Evict<DataTuple>();
-            this.DatasetRepo.Evict<DataTupleVersion>();
-            this.DatasetRepo.ClearCache();
+            this.DatasetRepo.Evict();
+            this.DatasetVersionRepo.Evict();
+            this.DataTupleRepo.Evict();
+            this.DataTupleVerionRepo.Evict();
 
             Dataset entity = this.DatasetRepo.Get(datasetId);
             
@@ -383,7 +388,7 @@ namespace BExIS.Dlm.Services.Data
             //return (qu.ToList());
         }
 
-        public List<KeyValuePair<Int64, XmlDocument>> GetDatasetLatestMetadataVersions(bool includeCheckouts = false)
+        public Dictionary<Int64, XmlDocument> GetDatasetLatestMetadataVersions(bool includeCheckouts = false)
         {
             if (includeCheckouts) // the working copy versions of checked out datasets are also included
             {
@@ -391,15 +396,15 @@ namespace BExIS.Dlm.Services.Data
                         (p.Dataset.Status == DatasetStatus.CheckedIn || p.Dataset.Status == DatasetStatus.CheckedOut)
                         && (p.Status == DatasetVersionStatus.CheckedIn || p.Status == DatasetVersionStatus.CheckedOut)
                     ).Select(p => new KeyValuePair<Int64, XmlDocument>(p.Dataset.Id, p.Metadata));
-                return (q1.ToList());
+                return (q1.ToList().ToDictionary(kvp => kvp.Key, kvp => kvp.Value));
             }
             else //just latest checked in versions or checked in datasets 
             {
                 var q1 = DatasetVersionRepo.Query(p =>
-                        (p.Dataset.Status == DatasetStatus.CheckedIn)
+                        (p.Dataset.Status == DatasetStatus.CheckedIn || p.Dataset.Status == DatasetStatus.CheckedOut) // include checked in (latest) versions of currently checked out datasets
                         && (p.Status == DatasetVersionStatus.CheckedIn)
                     ).Select(p => new KeyValuePair<Int64, XmlDocument>(p.Dataset.Id, p.Metadata));
-                return (q1.ToList());
+                return (q1.ToList().ToDictionary(kvp => kvp.Key, kvp => kvp.Value));
             }
 
             //// it works using the timestamp technique
@@ -488,6 +493,15 @@ namespace BExIS.Dlm.Services.Data
             //,ICollection<ExtendedPropertyValue> extendedPropertyValues, ICollection<ContentDescriptor> contentDescriptors
             )
         {
+            var workingCoptDatasetVersionId = workingCoptDatasetVersion.Id;
+            // do not move them to editDatasetVersion function
+            this.DatasetRepo.Evict();
+            this.DatasetVersionRepo.Evict();
+            this.DataTupleRepo.Evict();
+            this.DataTupleVerionRepo.Evict();
+
+            workingCoptDatasetVersion = this.DatasetVersionRepo.Get(workingCoptDatasetVersionId);
+
             return editDatasetVersion(workingCoptDatasetVersion, createdTuples, editedTuples, deletedTuples, unchangedTuples);
         }
 
@@ -570,21 +584,8 @@ namespace BExIS.Dlm.Services.Data
                 }
 
                 foreach (var item in tobeDeleted)
-                {
-                    //try
-                    //{
-                    //    item.History.ToList().ForEach(p => p.OriginalTuple = null);
-                    //    item.History.Clear();
-                    //}
-                    //catch { }
-                    //try
-                    //{
-                    //    item.DatasetVersion.PriliminaryTuples.Remove(item);
-                    //    item.DatasetVersion = null;
-                    //}
-                    //catch { }
-                    
-                    //tupleRepo.Delete(item);
+                {                    
+                    tupleRepo.Delete(item);
                 }
                 // check whether the changes to the latest version, which is changed in the applyTupleChanges , are committed too!
                 repo.Put(edited);
@@ -868,24 +869,24 @@ namespace BExIS.Dlm.Services.Data
                             ActingDatasetVersion = workingCopyVersion,
                         };
 
-                        //latestCheckedInVersion.PriliminaryTuples.Remove(orginalTuple);
-                        //latestVersionEffectiveTuples.Remove(orginalTuple);
-                        //workingCopyVersion.PriliminaryTuples.Remove(orginalTuple);
-                        //try
-                        //{
-                        //    orginalTuple.History.ToList().ForEach(p => p.OriginalTuple = null);
-                        //    orginalTuple.History.Clear();
-                        //}
-                        //catch { }
-                        //try
-                        //{
-                        //    orginalTuple.DatasetVersion.PriliminaryTuples.Remove(orginalTuple);
-                        //    orginalTuple.DatasetVersion = null;
-                        //}
-                        //catch { }
-                        
+                        tupleVersion.OriginalTuple = null;
+
+                        latestCheckedInVersion.PriliminaryTuples.Remove(orginalTuple);
+                        latestVersionEffectiveTuples.Remove(orginalTuple);
+                        workingCopyVersion.PriliminaryTuples.Remove(orginalTuple);
+                        try
+                        {
+                            orginalTuple.History.ToList().ForEach(p => p.OriginalTuple = null);
+                        }
+                        catch { }
+                        try
+                        {
+                            orginalTuple.DatasetVersion.PriliminaryTuples.Remove(orginalTuple);
+                        }
+                        catch { }
+
+                        orginalTuple.History.Clear();
                         orginalTuple.DatasetVersion = null;
-                        //orginalTuple.History.Clear();
 
                         tuplesTobeDeleted.Add(orginalTuple);
                         tupleVersionsTobeAdded.Add(tupleVersion);
