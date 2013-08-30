@@ -25,9 +25,9 @@
       <column name="Label" />
     </property>
 
-    <many-to-one name="Variable" class="Variable" not-null="false" column="VariableRef"/>
+    <many-to-one name="Variable" class="Variable" not-null="true" column="VariableRef"/>
 
-    <many-to-one name="DataAttribute" class="DataAttribute" not-null="false" column="DataAttributeRef"/>
+    <many-to-one name="DataAttribute" class="DataAttribute" not-null="true" column="DataAttributeRef"/>
     
   </class>
 

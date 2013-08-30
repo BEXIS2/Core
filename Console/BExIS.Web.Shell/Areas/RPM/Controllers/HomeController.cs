@@ -226,10 +226,10 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
                 ExcelTemplateProvider provider = new ExcelTemplateProvider("BExISppTemplate_Clean.xlsx");
                 provider.CreateTemplate(id);
-                
+                string filename = DSDM.dataStructure.Name + ".xlsx";
+                return File(Path.Combine(AppConfiguration.GetModuleWorkspacePath("RPM"), "Template", filename), "application/xlsx", "Template_" + filename);
             }
-            string filename = DSDM.dataStructure.Name + ".xlsx";
-            return File(Path.Combine(AppConfiguration.GetModuleWorkspacePath("RPM"), "Template", filename), "application/xlsx", "Template_" + filename);
+            return View("DataStructureDesigner", DSDM);
         }
 
         #endregion

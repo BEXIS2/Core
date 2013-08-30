@@ -83,7 +83,7 @@ namespace BExIS.Dlm.Services.DataStructure
                 IRepository<DataAttribute> repo = uow.GetRepository<DataAttribute>();
                 IRepository<ExtendedProperty> exRepo = uow.GetRepository<ExtendedProperty>();
                 IRepository<Parameter> vpuRepo = uow.GetRepository<Parameter>();
-
+                
                 entity = repo.Reload(entity);
                 repo.LoadIfNot(entity.ExtendedProperties);
                 //repo.LoadIfNot(entity.ParameterUsages);

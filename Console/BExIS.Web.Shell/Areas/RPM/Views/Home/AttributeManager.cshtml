@@ -38,11 +38,11 @@
 @*</header> *@
 <body>
 
-    @Html.ActionLink("Add Data Type", "openAttributeWindow", "Home", new { id = 0 }, new { @class = "t-button t-add" })
+    @Html.ActionLink("Add DataAttribute", "openAttributeWindow", "Home", new { id = 0 }, new { @class = "t-button t-add" })
     <br />
     <br />
     @(Html.Telerik().Grid(model)    
-            .Name("UnitGrid")
+            .Name("Attribute")
             .Sortable()            
             .Columns(columns =>
                 {
@@ -60,12 +60,17 @@
                     columns.Bound(c => c.Name);
                     columns.Bound(c => c.Id);
                     columns.Bound(c => c.Description);
-                    columns.Bound(c => c.Unit.Name);
-                    columns.Bound(c => c.DataType.Name);
-                    columns.Bound(c => c.Classification.Name);
-                   
+                    columns.Bound(c => c.Unit.Name)
+                        .Title("Unit");
+                    columns.Bound(c => c.DataType.Name)
+                        .Title("DataType");                 
                 })
     )
+
+    <br />
+    <br />
+
+    @Html.ActionLink("Add DataAttribute", "openAttributeWindow", "Home", new { id = 0 }, new { @class = "t-button t-add" })
 
     <div style="position:absolute; left:20%; top:60px;">
                     @{ Html.Telerik().Window()

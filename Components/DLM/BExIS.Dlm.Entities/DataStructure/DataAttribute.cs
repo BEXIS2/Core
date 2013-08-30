@@ -21,7 +21,7 @@ namespace BExIS.Dlm.Entities.DataStructure
 
         #region Mathods
 
-        public DataAttribute()
+        public DataAttribute(): base()
         {
             UsagesAsParameter = new List<Parameter>();
             UsagesAsVariable = new List<Variable>();

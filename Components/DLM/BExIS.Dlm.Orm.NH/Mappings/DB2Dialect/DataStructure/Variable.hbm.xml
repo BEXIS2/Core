@@ -25,9 +25,9 @@
       <column name="Label" />
     </property>
 
-    <many-to-one name="DataAttribute" class="DataAttribute" not-null="false" column="DataAttributeRef"/>
+    <many-to-one name="DataAttribute" class="DataAttribute" not-null="true" column="DataAttributeRef"/>
 
-    <many-to-one name="DataStructure" class="StructuredDataStructure" not-null="false" column="DataStructureRef"/>
+    <many-to-one name="DataStructure" class="StructuredDataStructure" not-null="true" column="DataStructureRef"/>
 
     <set name="Parameters" inverse="true">
       <key column="VariableRef" not-null="false"/>
