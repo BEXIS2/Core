@@ -109,10 +109,11 @@
 
     function closePopUp(data) {
 
-        document.getElementById("selectedValue2").innerHTML = "You have selected Dataset : ";
-        var window = $("#CreateDatasetWindow").data("tWindow");
-        window.close();
-
+        if (data.success) {
+            document.getElementById("selectedValue2").innerHTML = "You have selected Dataset : ";
+            var window = $("#CreateDatasetWindow").data("tWindow");
+            window.close();
+        }
     }
 
 

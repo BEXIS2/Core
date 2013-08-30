@@ -135,7 +135,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         {
                             //try save file
                             HttpPostedFileBase SelectedFile = (HttpPostedFileBase)TaskManager.Bus["FileBase"];
-                            string path = "C:\\temp\\" + DateTime.Now.Millisecond.ToString() + SelectedFile.FileName;
+
+
+                            string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"),DateTime.Now.Millisecond.ToString()+SelectedFile.FileName);
                             SelectedFile.SaveAs(path);
 
                             // open file
