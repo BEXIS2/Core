@@ -7,6 +7,7 @@ using System.Xml;
 
 using IBM.Data.DB2;
 using IBM.Data.DB2Types;
+using BExIS.Dlm.Services.Data;
 
 namespace BExIS.Search.Providers.LuceneProvider.Indexer
 {
@@ -68,30 +69,36 @@ namespace BExIS.Search.Providers.LuceneProvider.Indexer
             DateTime start = DateTime.Now;
             try
             {
-                //con = new DB2Connection("Database=BExIS2;UID=db2admin;PWD=.++.db.2;Server=bexis.inf-bb.uni-jena.de;");
-                con = new DB2Connection("Database=BExIS4;UID=db2admin;PWD=vjcj8aw.;Server=localhost:50000;");
-                cmd = new DB2Command();
-                cmd.Connection = con;
-                Boolean a = con.IsOpen;
-                cmd.CommandText = "select A.ID, A.METADATA from STANDARD.DATASETVERSIONS AS A WHERE A.ID > 3";
-                cmd.CommandTimeout = 20;
-                con.Open();
-                Boolean b = con.IsOpen;
-                rdr = cmd.ExecuteReader();
-                start = DateTime.Now;
-                int datasetId = 0;
-                while (rdr.Read() == true)
-                {
-                    datasetId = datasetId + 1;
-                    xmlColValue = rdr.GetDB2Xml(1);
-                    xmlString = xmlColValue.GetString();
-                    hashtable[datasetId] = xmlString;
-                }
-                rdr.Close();
-                con.Close();
+                DatasetManager dm = new DatasetManager();
+                // its better for the GetDatasetLatestMetadataVersions function to return a dictionary and also for the hashtable to be changed to a dictionary in order to reduce data conversions. Javad
+                dm.GetDatasetLatestMetadataVersions().ForEach(p => hashtable.Add(p.Key, p.Value));
+
+                
+
+                //con = new DB2Connection("Database=BPP;UID=standard;PWD=ibukun;Server=localhost:50000;");
+                //cmd = new DB2Command();
+                //cmd.Connection = con;
+                //Boolean a = con.IsOpen;
+                //cmd.CommandText = "select A.ID, A.METADATA from STANDARD.DATASETS AS A WHERE A.ID > 2";
+                //cmd.CommandTimeout = 20;
+                //con.Open();
+                //Boolean b = con.IsOpen;
+                //rdr = cmd.ExecuteReader();
+                //start = DateTime.Now;
+                //int datasetId = 0;
+                //while (rdr.Read() == true)
+                //{
+                //    datasetId = datasetId + 1;
+                //    xmlColValue = rdr.GetDB2Xml(1);
+                //    xmlString = xmlColValue.GetString();
+                //    hashtable[datasetId] = xmlString;
+                //}
+                //rdr.Close();
+                //con.Close();
             }
-            catch (DB2Exception eb)
+            catch (Exception eb)
             {
+                // lets move or change this kind of writing errors to some proper ways, like throwing user friendly errors or to write to Debug.xx or to log them...
                 Console.WriteLine("\n Source: " + eb.Source + "\n Message: " + eb.Message);
             }
 
@@ -107,3 +114,4 @@ namespace BExIS.Search.Providers.LuceneProvider.Indexer
 
     }
 }
+

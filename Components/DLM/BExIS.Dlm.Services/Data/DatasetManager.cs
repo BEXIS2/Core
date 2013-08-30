@@ -131,9 +131,9 @@ namespace BExIS.Dlm.Services.Data
         /// The dataset must be in CheckedOut state and the performing user should be the check out user.
         /// </summary>
         /// <param name="datasetId"></param>
-        public void RollbackDataset(Int64 datasetId, string userName)
+        public void UndoCheckoutDataset(Int64 datasetId, string userName)
         {
-            rollbackDataset(datasetId, userName, false);
+            undoCheckout(datasetId, userName, false);
         }
 
         public bool DeleteDataset(Int64 datasetId, string userName, bool rollbackCheckout)
@@ -149,7 +149,7 @@ namespace BExIS.Dlm.Services.Data
             {
                 if (rollbackCheckout == true)
                 {
-                    this.rollbackDataset(entity.Id, userName, false);
+                    this.undoCheckout(entity.Id, userName, false);
                 }
                 else
                 {
@@ -179,9 +179,71 @@ namespace BExIS.Dlm.Services.Data
 
         public bool PurgeDataset(Int64 datasetId)
         {
+            Contract.Requires(datasetId >= 0);
+
+            // Attention: when create and purge or delete tuple are called in one run (one http request) the is a problem with removal of tuples/ version/ dataset because having some reference!!!
+            // but if they are called on a single dataset in 2 different http requests, there is no problem!?
+            // perhaps the NH session is not flushed completely or has some references to the objects in the caches, as the session end function is not called yet! this is why an Evict before purge is required!
+
+            this.DatasetRepo.Evict<Dataset>();
+            this.DatasetRepo.Evict<DatasetVersion>();
+            this.DatasetRepo.Evict<DataTuple>();
+            this.DatasetRepo.Evict<DataTupleVersion>();
+            this.DatasetRepo.ClearCache();
+
+            Dataset entity = this.DatasetRepo.Get(datasetId);
             
+            //if (entity.Status != DatasetStatus.Deleted)
+            //    return false;
+
+            List<Int64> versionIds = entity.Versions
+                           .Select(p => p.Id)
+                           .ToList();
+
+            var tupleVersions = (versionIds == null || versionIds.Count() <=0)? null: DataTupleVerionRepo.Get(p => versionIds.Contains(p.DatasetVersion.Id));
+            var tuples = (versionIds == null || versionIds.Count() <= 0) ? null : DataTupleRepo.Get(p => versionIds.Contains(p.DatasetVersion.Id));
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<Dataset> repo = uow.GetRepository<Dataset>();
+                IRepository<DataTupleVersion> repo2 = uow.GetRepository<DataTupleVersion>();
+                IRepository<DataTuple> repo3 = uow.GetRepository<DataTuple>();
+
+                if (tupleVersions != null)
+                {
+                    foreach (var item in tupleVersions)
+                    {
+                        item.OriginalTuple = null;
+                        item.DatasetVersion = null;
+                        item.ActingDatasetVersion = null;
+                        repo2.Delete(item); // this is not a good solution as it loads all the tuple versions an then deletes them!! a generic solution for bulk delete without loading is needed
+                    }
+                }
+                if (tuples != null)
+                {
+                    foreach (var tuple in tuples)
+                    {
+                        try
+                        {
+                            tuple.History.ToList().ForEach(p => p.OriginalTuple = null);
+                            tuple.History.Clear();
+                        }
+                        catch { }
+                        try
+                        {
+                            tuple.DatasetVersion.PriliminaryTuples.Remove(tuple);
+                            tuple.DatasetVersion = null;
+                        }
+                        catch { }
+                        repo3.Delete(tuple); // this is not a good solution as it loads all the tuple versions an then deletes them!! a generic solution for bulk delete without loading is needed
+                    }
+                }
+                repo.Delete(entity);
+                uow.Commit();
+            }
+            // if any problem was detected during the commit, an exception will be thrown!
             return (true);
         }
+
         #endregion
 
         #region DatasetVersion
@@ -321,14 +383,14 @@ namespace BExIS.Dlm.Services.Data
             //return (qu.ToList());
         }
 
-        public List<XmlDocument> GetDatasetLatestMetadataVersions(bool includeCheckouts = false)
+        public List<KeyValuePair<Int64, XmlDocument>> GetDatasetLatestMetadataVersions(bool includeCheckouts = false)
         {
             if (includeCheckouts) // the working copy versions of checked out datasets are also included
             {
                 var q1 = DatasetVersionRepo.Query(p =>
                         (p.Dataset.Status == DatasetStatus.CheckedIn || p.Dataset.Status == DatasetStatus.CheckedOut)
                         && (p.Status == DatasetVersionStatus.CheckedIn || p.Status == DatasetVersionStatus.CheckedOut)
-                    ).Select(p=>p.Metadata);
+                    ).Select(p => new KeyValuePair<Int64, XmlDocument>(p.Dataset.Id, p.Metadata));
                 return (q1.ToList());
             }
             else //just latest checked in versions or checked in datasets 
@@ -336,7 +398,7 @@ namespace BExIS.Dlm.Services.Data
                 var q1 = DatasetVersionRepo.Query(p =>
                         (p.Dataset.Status == DatasetStatus.CheckedIn)
                         && (p.Status == DatasetVersionStatus.CheckedIn)
-                    ).Select(p => p.Metadata);
+                    ).Select(p => new KeyValuePair<Int64, XmlDocument>(p.Dataset.Id, p.Metadata));
                 return (q1.ToList());
             }
 
@@ -492,15 +554,37 @@ namespace BExIS.Dlm.Services.Data
 
             // be sure you are working on the latest version (working copy). applyTupleChanges takes the working copy from the DB            
             List<DataTupleVersion> tobeAdded = new List<DataTupleVersion>();
-            DatasetVersion edited = applyTupleChanges(workingCoptDatasetVersion, ref tobeAdded, createdTuples, editedTuples, deletedTuples, unchangedTuples);
+            List<DataTuple> tobeDeleted = new List<DataTuple>();
+
+            DatasetVersion edited = applyTupleChanges(workingCoptDatasetVersion, ref tobeAdded, ref tobeDeleted, createdTuples, editedTuples, deletedTuples, unchangedTuples);
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<DatasetVersion> repo = uow.GetRepository<DatasetVersion>();
                 IRepository<DataTupleVersion> tupleVersionRepo = uow.GetRepository<DataTupleVersion>();
+                IRepository<DataTuple> tupleRepo = uow.GetRepository<DataTuple>();
+
                 foreach (var item in tobeAdded)
                 {
                     tupleVersionRepo.Put(item);
+                }
+
+                foreach (var item in tobeDeleted)
+                {
+                    //try
+                    //{
+                    //    item.History.ToList().ForEach(p => p.OriginalTuple = null);
+                    //    item.History.Clear();
+                    //}
+                    //catch { }
+                    //try
+                    //{
+                    //    item.DatasetVersion.PriliminaryTuples.Remove(item);
+                    //    item.DatasetVersion = null;
+                    //}
+                    //catch { }
+                    
+                    //tupleRepo.Delete(item);
                 }
                 // check whether the changes to the latest version, which is changed in the applyTupleChanges , are committed too!
                 repo.Put(edited);
@@ -536,7 +620,7 @@ namespace BExIS.Dlm.Services.Data
                                         .OrderByDescending(t=>t.Timestamp)
                                         .Select(p=>p.Id)
                                         .ToList();
-            List<DataTuple> tuples = DataTupleRepo.Get(p => versionIds.Contains(p.DatasetVersion.Id)).ToList();
+            List<DataTuple> tuples = (versionIds == null || versionIds.Count() <= 0) ? new List<DataTuple>() : DataTupleRepo.Get(p => versionIds.Contains(p.DatasetVersion.Id)).ToList();
             //Dictionary<string, object> parameters = new Dictionary<string, object>() { { "datasetVersionId", datasetVersion.Id } };
             //List<DataTuple> tuples = DataTupleRepo.Get("getLatestCheckedInTuples", parameters).ToList();
             return (tuples);
@@ -550,7 +634,7 @@ namespace BExIS.Dlm.Services.Data
                                         .OrderByDescending(t => t.Timestamp)
                                         .Select(p => p.Id)
                                         .ToList();
-            List<DataTuple> tuples = DataTupleRepo.Get(p => versionIds.Contains(((DataTuple)p).DatasetVersion.Id)).ToList();
+            List<DataTuple> tuples = (versionIds == null || versionIds.Count() <= 0 )? new List<DataTuple>(): DataTupleRepo.Get(p => versionIds.Contains(((DataTuple)p).DatasetVersion.Id)).ToList();
             return (tuples);
         }
         
@@ -665,7 +749,7 @@ namespace BExIS.Dlm.Services.Data
         /// <param name="userName"></param>
         /// <param name="adminMode"></param>
         /// <param name="commit">in some cases, rollback is called on a set of datasets. In  these cases its better to not commit at each rollback, but at the end</param>
-        private void rollbackDataset(Int64 datasetId, string userName, bool adminMode, bool commit = true)
+        private void undoCheckout(Int64 datasetId, string userName, bool adminMode, bool commit = true)
         {
             // maybe its required to pass the caller's repo in order to the rollback changes to be visible to the caller function and be able to commit them
             // bring back the historical tuples
@@ -674,7 +758,7 @@ namespace BExIS.Dlm.Services.Data
             // check for admin mode
         }
 
-        private DatasetVersion applyTupleChanges(DatasetVersion workingCopyVersion, ref List<DataTupleVersion> tupleVersionsTobeAdded,
+        private DatasetVersion applyTupleChanges(DatasetVersion workingCopyVersion, ref List<DataTupleVersion> tupleVersionsTobeAdded, ref List<DataTuple> tuplesTobeDeleted,
             ICollection<DataTuple> createdTuples, ICollection<DataTuple> editedTuples, ICollection<DataTuple> deletedTuples, ICollection<DataTuple> unchangedTuples = null)
         {
             // do nothing with unchanged for now
@@ -783,10 +867,28 @@ namespace BExIS.Dlm.Services.Data
                             DatasetVersion = latestCheckedInVersion,
                             ActingDatasetVersion = workingCopyVersion,
                         };
+
                         //latestCheckedInVersion.PriliminaryTuples.Remove(orginalTuple);
                         //latestVersionEffectiveTuples.Remove(orginalTuple);
-                        tupleVersionsTobeAdded.Add(tupleVersion);
+                        //workingCopyVersion.PriliminaryTuples.Remove(orginalTuple);
+                        //try
+                        //{
+                        //    orginalTuple.History.ToList().ForEach(p => p.OriginalTuple = null);
+                        //    orginalTuple.History.Clear();
+                        //}
+                        //catch { }
+                        //try
+                        //{
+                        //    orginalTuple.DatasetVersion.PriliminaryTuples.Remove(orginalTuple);
+                        //    orginalTuple.DatasetVersion = null;
+                        //}
+                        //catch { }
+                        
                         orginalTuple.DatasetVersion = null;
+                        //orginalTuple.History.Clear();
+
+                        tuplesTobeDeleted.Add(orginalTuple);
+                        tupleVersionsTobeAdded.Add(tupleVersion);
                     }
                 }
 

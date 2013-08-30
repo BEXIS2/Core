@@ -51,12 +51,32 @@ namespace BExIS.Web.Shell.Controllers
             //testExtendedProperty();
             //getDataset();
             Int64 dsId = 0;
+
             dsId = createDatasetVersion();
             editDatasetVersion(dsId);
+            deleteTupleFromDatasetVersion(dsId);
             deleteDataset(dsId);
+            purgeDataset(dsId);
+            purgeAll();
             getAllDatasetVersions();
             //return RedirectToAction("About");
             return View();
+        }
+
+        private void purgeAll()
+        {
+            DatasetManager dm = new DatasetManager();
+            foreach (var item in dm.DatasetRepo.Query().Select(p=>p.Id).ToList())
+            {
+                dm.PurgeDataset(item);
+            }
+            
+        }
+
+        private void purgeDataset(long dsId)
+        {
+            DatasetManager dm = new DatasetManager();
+            dm.PurgeDataset(dsId);
         }
         
         private void getAllDatasetVersions()
@@ -102,6 +122,23 @@ namespace BExIS.Web.Shell.Controllers
             }
         }
 
+        private void deleteTupleFromDatasetVersion(long datasetId)
+        {
+            DatasetManager dm = new DatasetManager();
+            Dataset ds = dm.DatasetRepo.Get(datasetId);
+            //if (!dm.IsDatasetCheckedIn(ds.Id))
+            //    return;
+            if (dm.IsDatasetCheckedOutFor(ds.Id, "Javad") || dm.CheckOutDataset(ds.Id, "Javad"))
+            {
+                DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
+
+                DataTuple deleting = dm.GetDatasetVersionEffectiveTuples(workingCopy).First();
+
+                dm.EditDatasetVersion(workingCopy, null, null, new List<DataTuple>() { deleting });
+                dm.CheckInDataset(ds.Id, "edited version", "Javad");
+            }
+        }
+
         /// <summary>
         /// create a new dataset, check it out to create the first version, add a tuple to it.
         /// </summary>
@@ -120,7 +157,7 @@ namespace BExIS.Web.Shell.Controllers
 
                 //DataTuple changed = dm.GetDatasetVersionEffectiveTuples(workingCopy).First();
                 //changed.VariableValues.First().Value = (new Random()).Next().ToString();
-                DataTuple dt = dm.DataTupleRepo.Get(40);
+                DataTuple dt = dm.DataTupleRepo.Get(214); // its sample data
                 DataTuple newDt = new DataTuple();
                 newDt.XmlAmendments = dt.XmlAmendments;
                 newDt.XmlVariableValues = dt.XmlVariableValues; // in normal cases, the VariableValues are set and then Dematerialize is called
