@@ -1,6 +1,7 @@
 ﻿@model BExIS.Web.Shell.Areas.DCM.Models.ChooseDatasetViewModel
 @using Telerik.Web.Mvc.UI;
 @using Telerik.Web.Mvc.Resources;
+@using BExIS.Web.Shell.Areas.DCM.Models;
 
 @{
     if (this.ViewContext.FormContext == null)
@@ -8,19 +9,19 @@
         this.ViewContext.FormContext = new FormContext();
     }
     
-    
     bool visibleCreateDatasetWindow = false;
     
     if(Session["createDatasetWindowVisible"]!=null)
     {
         visibleCreateDatasetWindow = (bool)Session["createDatasetWindowVisible"];
     }
+
         
-    }
+}
 <div ="Step2" class="uploadWizardStep">
 
     <div class="uploadWizardStep_Header stepper">
-        <h3>@Model.StepInfo.title</h3>
+        @*<h3>@Model.StepInfo.title</h3>*@
     </div>
 
     <div class="uploadWizardStep_Description stepper">
@@ -71,6 +72,8 @@
     </div>   
 </div>
 
+
+
 @(Html.Telerik().Window()
     .Name("DatasetWindow")
     .Visible(false)
@@ -100,7 +103,9 @@
         .OnClose("closeCreateDatasetWindow")
     )
     .Content(@<text>
-        @Html.Partial("_createDataset", Model.DatasetViewModel)
+
+            @Html.Partial("_createDataset", new CreateDatasetViewModel())
+
     </text>
     )
   )
@@ -118,8 +123,14 @@
 
     $("#CreateDatasetButton").click(function () {
 
+        $.get('@Url.Action("CreateDataset","Home")', function (data) {
+            $('#createDatasetFormular').html(data);
+        });
+
         var datastruturewindow = $("#CreateDatasetWindow").data("tWindow");
         datastruturewindow.center().open();
+
+
 
     })
 
@@ -133,8 +144,9 @@
     }
 
     function closeCreateDatasetWindow() {
-        //var window = $("#CreateDatasetWindow").data("tWindow");
-        //window.close();
+
+        var window = $("#CreateDatasetWindow").data("tWindow");
+        window.close();
 
         document.getElementById("selectedValue2").innerHTML = "You have created a dataset: ";
 

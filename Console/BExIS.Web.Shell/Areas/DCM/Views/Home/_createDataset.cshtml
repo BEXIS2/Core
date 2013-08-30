@@ -1,17 +1,30 @@
 ﻿@model BExIS.Web.Shell.Areas.DCM.Models.CreateDatasetViewModel
 
 @using Telerik.Web.Mvc.UI;
+@using BExIS.Web.Shell.Areas.DCM.Models;
 
-@using (Html.BeginForm("CreateDataset", "Home", new { area = "DCM" }))
-{
+<script src="@Url.Content("~/Scripts/jquery.unobtrusive-ajax.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
 
-HtmlHelper.ClientValidationEnabled = true;
-HtmlHelper.UnobtrusiveJavaScriptEnabled = true;
+
 <div id="createDatasetFormular">  
+
+@using (Ajax.BeginForm("CreateDataset", "Home", new { area = "DCM" },
+                    new AjaxOptions
+                    {
+                        HttpMethod = "POST",
+                        InsertionMode = InsertionMode.Replace,
+                        UpdateTargetId = "createDatasetFormular",
+                        
+                    }))
+{ 
+    
+
 <p>Please provide the following information.</p>
 <table>
     <tr>
-        <td>@Html.LabelFor(m=>m.DataStructureId)</td>
+        <td><b></b>@Html.LabelFor(m=>m.DataStructureId)</td>
         <td>
             @Html.DropDownListFor(m => m.DataStructureId, new SelectList(Model.DatastructuresViewList,"Id","Title"),"Select, please")
             @Html.ValidationMessageFor(m => m.DataStructureId)
@@ -76,9 +89,9 @@ HtmlHelper.UnobtrusiveJavaScriptEnabled = true;
 <br />
 <br />
 <button type="submit" value="Save" name="submit"  class="t-button" style="border:0px;">save</button>
-</div>  
+ 
 }
-
+</div> 
 
 <script type="text/javascript">
 
@@ -90,7 +103,14 @@ HtmlHelper.UnobtrusiveJavaScriptEnabled = true;
     
     })
 
+    function OnSuccess() {
 
+        //var window = $("#CreateDatasetWindow").data("tWindow");
+        //window.close();
+
+        //document.getElementById("selectedValue2").innerHTML = "You have created a dataset: ";
+        alert("success");
+    }
 
     //$("#SubmitDataStructureId").click(function () {
     //    var dropDownList = $('#DataStructureIds_DropDownList').data('tDropDownList');

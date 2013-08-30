@@ -17,6 +17,19 @@ tr td
     border-style: none;
 }
 
+/*Summary*/
+
+#summaryRight
+{
+    float:left;
+}
+
+#summaryLeft
+{
+    float:left;
+    width:50%;
+}
+
 
 /*Navigation*/
 

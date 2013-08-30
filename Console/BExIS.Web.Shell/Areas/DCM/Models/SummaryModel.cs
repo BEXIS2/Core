@@ -27,6 +27,18 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
         [Display(Name = "Research Plan Title")]
         public String ResearchPlanTitle { get; set; }
 
+        [Display(Name = "Dataset Owner")]
+        public String  Owner { get; set; }
+
+        [Display(Name = "Dataset Author")]
+        public String  Author { get; set; }
+
+        [Display(Name = "Project Name")]
+        public String  ProjectName { get; set; }
+
+        [Display(Name = "Organisation")]
+        public String  ProjectInstitute { get; set; }
+
         [Display(Name = "Number of Variables")]
         public int NumOfVars { get; set; }
 

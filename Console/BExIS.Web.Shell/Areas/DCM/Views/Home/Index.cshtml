@@ -1,7 +1,15 @@
 ﻿@{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Data Collection";
 }
 
 
 
-<h2>Collect Data</h2>
+<h2>Data Collection</h2>
+
+<p>This wizard will assist you in uploading data into the BEXIS repository.
+With the currently supported workflow it is assumed that your data file is based  <br />
+on an Excel template defined and downloaded earlier on from the BEXIS system. 
+    In that way it is assured that the data structure of the data file and the data structure of the repository are identical.
+</p>
+<br />
+@Html.ActionLink("Submit an offline dataset", "UploadWizard", "Home", new {area="DCM"})

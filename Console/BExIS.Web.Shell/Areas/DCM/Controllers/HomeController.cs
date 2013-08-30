@@ -200,11 +200,12 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             
             model.Datasets = (from datasets in dm.DatasetRepo.Get() select datasets.Id).ToList();
             model.StepInfo = TaskManager.Current();
+
+
             model.DatasetViewModel = new CreateDatasetViewModel();
             if ((List<ListViewItem>)Session["DataStructureViewList"] != null) model.DatasetViewModel.DatastructuresViewList = (List<ListViewItem>)Session["DataStructureViewList"];
-           // if ((List<ListViewItem>)Session["DatasetVersionViewList"] != null) model.DatasetsViewList = (List<ListViewItem>)Session["DatasetVersionViewList"];
+            // if ((List<ListViewItem>)Session["DatasetVersionViewList"] != null) model.DatasetsViewList = (List<ListViewItem>)Session["DatasetVersionViewList"];
             if ((List<ListViewItem>)Session["ResearchPlanViewList"] != null) model.DatasetViewModel.ResearchPlanViewList = (List<ListViewItem>)Session["ResearchPlanViewList"];
-            
 
             return PartialView(model);
 
@@ -369,7 +370,31 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 model.ResearchPlanTitle = TaskManager.Bus["ResearchPlanTitle"].ToString();
             }
 
+            if (TaskManager.Bus.ContainsKey("Title"))
+            {
+                model.DatasetTitle = TaskManager.Bus["Title"].ToString();
+            }
 
+
+            if (TaskManager.Bus.ContainsKey("Author"))
+            {
+                model.Author = TaskManager.Bus["Author"].ToString();
+            }
+
+            if (TaskManager.Bus.ContainsKey("Owner"))
+            {
+                model.Owner = TaskManager.Bus["Owner"].ToString();
+            }
+
+            if (TaskManager.Bus.ContainsKey("ProjectName"))
+            {
+                model.ProjectName = TaskManager.Bus["ProjectName"].ToString();
+            }
+
+            if (TaskManager.Bus.ContainsKey("Institute"))
+            {
+                model.ProjectInstitute = TaskManager.Bus["Institute"].ToString();
+            }
 
             return PartialView(model);
         }
@@ -501,8 +526,28 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             return Content("");
         }
 
+        [HttpGet]
+        public ActionResult CreateDataset()
+        {
+            CreateDatasetViewModel model = new CreateDatasetViewModel();
+            if ((List<ListViewItem>)Session["DataStructureViewList"] != null) model.DatastructuresViewList = (List<ListViewItem>)Session["DataStructureViewList"];
+            if ((List<ListViewItem>)Session["ResearchPlanViewList"] != null) model.ResearchPlanViewList = (List<ListViewItem>)Session["ResearchPlanViewList"];
+
+            return PartialView("_createDataset", model);
+        }
+
+        [HttpPost]
         public ActionResult CreateDataset(CreateDatasetViewModel model)
         {
+            if (model == null)
+            {
+                model = new CreateDatasetViewModel();
+                if ((List<ListViewItem>)Session["DataStructureViewList"] != null) model.DatastructuresViewList = (List<ListViewItem>)Session["DataStructureViewList"];
+                if ((List<ListViewItem>)Session["ResearchPlanViewList"] != null) model.ResearchPlanViewList = (List<ListViewItem>)Session["ResearchPlanViewList"];
+
+                return PartialView("_createDataset", model);
+            }
+
             TaskManager TaskManager = (TaskManager)Session["TaskManager"];
 
             if (ModelState.IsValid)
@@ -516,6 +561,12 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 emptyMetadata.GetElementsByTagName("bgc:projectName")[0].InnerText = model.ProjectName;
                 emptyMetadata.GetElementsByTagName("bgc:institute")[0].InnerText = model.ProjectInstitute;
 
+                //Add Metadata to Bus
+                TaskManager.AddToBus("Title", model.Title);
+                TaskManager.AddToBus("Owner", model.Owner);
+                TaskManager.AddToBus("Author", model.DatasetAuthor);
+                TaskManager.AddToBus("ProjectName", model.ProjectName);
+                TaskManager.AddToBus("Institute", model.ProjectInstitute);
 
                 DatasetManager dm = new DatasetManager();
                 DataStructureManager dsm = new DataStructureManager();
@@ -533,27 +584,11 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 {
                     emptyMetadata.GetElementsByTagName("bgc:id")[0].InnerText = ds.Id.ToString();
 
-
                     DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
                     workingCopy.Metadata = emptyMetadata;
                     TaskManager.AddToBus("DatasetId",ds.Id);
                     TaskManager.AddToBus("ResearchPlanTitle", rp.Title);
-                    //DataTuple changed = dm.GetDatasetVersionEffectiveTuples(workingCopy).First();
-                    //changed.VariableValues.First().Value = (new Random()).Next().ToString();
-                    //DataTuple dt = dm.DataTupleRepo.Get(40);
-                    //DataTuple newDt = new DataTuple();
-                    //newDt.XmlAmendments = dt.XmlAmendments;
-                    //newDt.XmlVariableValues = dt.XmlVariableValues; // in normal cases, the VariableValues are set and then Dematerialize is called
-                    //newDt.Materialize();
-                    //newDt.OrderNo = 1;
-                    //newDt.TupleAction = TupleAction.Created;//not required
-                    //newDt.Timestamp = DateTime.UtcNow; //required? no, its set in the Edit
-                    //newDt.DatasetVersion = workingCopy;//required? no, its set in the Edit
-
                     dm.EditDatasetVersion(workingCopy, null, null, null);
-
-                    
-                    //dm.CheckInDataset(ds.Id, "created from upload wizard", "David");
                 }
 
 
@@ -562,9 +597,16 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             else
             {
                 Session["createDatasetWindowVisible"] = true;
+
+                // put lists to model
             }
 
-            return View("UploadWizard", TaskManager);
+            if ((List<ListViewItem>)Session["DataStructureViewList"] != null) model.DatastructuresViewList = (List<ListViewItem>)Session["DataStructureViewList"];
+            if ((List<ListViewItem>)Session["ResearchPlanViewList"] != null) model.ResearchPlanViewList = (List<ListViewItem>)Session["ResearchPlanViewList"];
+
+                
+            return PartialView("_createDataset", model);
+            //return View("UploadWizard", TaskManager);
         }
 
         private bool IsSupportedExtention(TaskManager taskManager)

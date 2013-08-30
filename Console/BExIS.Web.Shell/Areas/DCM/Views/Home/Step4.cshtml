@@ -8,22 +8,15 @@
     </div>
 
     <div class="uploadWizardStep_Description stepper">
-        <p> Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.</p>
     </div>
 
     <div class="uploadWizardStep_Content stepper">
-        <table>
+
+        <div  id="summaryLeft">
+            <table>
             <tr>
                 <td>
-                    @Html.LabelFor(m=>m.DatasetTitle)
-                </td>
-                <td>
-                    @Model.DatasetTitle
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    @Html.LabelFor(m=>m.DatasetId)
+                    <b>@Html.LabelFor(m=>m.DatasetId) :</b>
                 </td>
                 <td>
                     @Model.DatasetId
@@ -31,7 +24,7 @@
             </tr>
             <tr>
                 <td>
-                    @Html.LabelFor(m=>m.DataStructureTitle)
+                    <b>@Html.LabelFor(m=>m.DataStructureTitle) :</b>
 
                 </td>
                 <td>
@@ -40,7 +33,7 @@
             </tr>
              <tr>
                 <td>
-                    @Html.LabelFor(m=>m.DataStructureId)
+                    <b>@Html.LabelFor(m=>m.DataStructureId) :</b>
 
                 </td>
                 <td>
@@ -49,7 +42,7 @@
             </tr>
             <tr>
                 <td>
-                    @Html.LabelFor(m=>m.ResearchPlanTitle)
+                    <b>@Html.LabelFor(m=>m.ResearchPlanTitle)</b>
 
                 </td>
                 <td>
@@ -58,7 +51,7 @@
             </tr>
              <tr>
                 <td>
-                    @Html.LabelFor(m=>m.ResearchPlanId)
+                    <b>@Html.LabelFor(m=>m.ResearchPlanId) :</b>
 
                 </td>
                 <td>
@@ -67,7 +60,7 @@
             </tr>
              <tr>
                 <td>
-                    @Html.LabelFor(m=>m.NumOfVars)
+                    <b>@Html.LabelFor(m=>m.NumOfVars) :</b>
 
                 </td>
                 <td>
@@ -76,7 +69,7 @@
             </tr>
             <tr>
                 <td>
-                    @Html.LabelFor(m=>m.NumOfRows)
+                   <b>@Html.LabelFor(m=>m.NumOfRows) :</b> 
 
                 </td>
                 <td>
@@ -84,6 +77,55 @@
                 </td>
             </tr>
         </table>
+        </div>
+
+        <div id="summaryRight">
+         <table>
+            <tr>
+                <td>
+                    <b>@Html.LabelFor(m=>m.DatasetTitle) :</b>
+                </td>
+                <td>
+                    @Model.DatasetTitle
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <b>@Html.LabelFor(m=>m.Owner) :</b>
+                </td>
+                <td>
+                    @Model.Owner
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <b>@Html.LabelFor(m=>m.Author) :</b>
+
+                </td>
+                <td>
+                    @Model.Author
+                </td>
+            </tr>
+             <tr>
+                <td>
+                    <b>@Html.LabelFor(m=>m.ProjectName) :</b>
+
+                </td>
+                <td>
+                    @Model.ProjectName
+                </td>
+            </tr>
+             <tr>
+                <td>
+                    <b>@Html.LabelFor(m=>m.ProjectInstitute) :</b>
+                </td>
+                <td>
+                    @Model.ProjectInstitute
+                </td>
+            </tr>
+         </table>
+
+        </div>
     </div>
 
      <div class="uploadWizardStep_Error stepper">
