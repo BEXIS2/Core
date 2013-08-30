@@ -1,21 +1,21 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Routing;
 using System.Xml;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.Dlm.Entities.DataStructure;
 using BExIS.DCM.Transform.Input;
 using BExIS.DCM.Transform.Validation.Exceptions;
+using BExIS.Dlm.Entities.Administration;
+using BExIS.Dlm.Entities.Data;
+using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Services.Administration;
+using BExIS.Dlm.Services.Data;
+using BExIS.Dlm.Services.DataStructure;
 using BExIS.Web.Shell.Areas.DCM.Models;
 using Vaiona.Util.Cfg;
-using System.Web.Routing;
-using BExIS.Dlm.Entities.Administration;
-using BExIS.Dlm.Services.Administration;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
 {
@@ -37,6 +37,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         public ActionResult UploadWizard()
         {
+
             if (TaskManager == null) TaskManager = (TaskManager)Session["TaskManager"];
 
             if (TaskManager == null)
@@ -593,6 +594,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
 
                 Session["createDatasetWindowVisible"] = false;
+                Session["TaskManager"] = TaskManager;
+
+                return Json(new { success = true });
             }
             else
             {
@@ -606,7 +610,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                 
             return PartialView("_createDataset", model);
-            //return View("UploadWizard", TaskManager);
         }
 
         private bool IsSupportedExtention(TaskManager taskManager)

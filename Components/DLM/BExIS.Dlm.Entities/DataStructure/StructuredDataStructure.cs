@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Vaiona.Entities.Common;
-using System.Diagnostics.Contracts;
+﻿using System.Collections.Generic;
 using BExIS.Dlm.Entities.Data;
 
 namespace BExIS.Dlm.Entities.DataStructure

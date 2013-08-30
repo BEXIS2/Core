@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Xml;
-using BExIS.Dlm.Entities.DataStructure;
-
+﻿
 namespace BExIS.Dlm.Entities.Data
 {
     //public class ValueCollection

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
+﻿
 namespace BExIS.Search.Providers.DummyProvider.Helpers.Helpers.Search
 {
     public class DataHelperConstClass

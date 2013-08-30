@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using BExIS.Search.Api;
 using BExIS.Search.Model;
 using BExIS.Search.Providers.DummyProvider.Helpers;

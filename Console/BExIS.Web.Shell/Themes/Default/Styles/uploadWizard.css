@@ -2,7 +2,7 @@
 .stepper
 {
 
-    width:650px;
+   
 }
 
 /*Tables*/
@@ -35,13 +35,13 @@ tr td
 
 #UploadWizardNavDiv
 {
-    width:650px;
+    width:45%;
 }
 
 #UploadWizard_NavigationTable 
 {
     border-style: none;
-    width:650px;
+    width:100%;
 }
 
 #Nav_Left
@@ -64,4 +64,23 @@ tr td
 {
     text-align:center;
         
+}
+
+
+/**Errors*/
+.uploadWizardStep_Error{
+
+    width:45%;
+    color:red;
+    top:10px;
+    right:10px;
+    position:absolute;
+}
+
+.uploadWizardStep_Main
+{
+    width:45%;
+    top:10px;
+    left:10%;
+    border: 1px , solid;
 }

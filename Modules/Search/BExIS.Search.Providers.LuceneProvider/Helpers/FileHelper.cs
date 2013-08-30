@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
+﻿using System.IO;
 using Vaiona.Util.Cfg;
 
 namespace BExIS.Search.Providers.LuceneProvider.Helpers

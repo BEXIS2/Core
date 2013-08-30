@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
+using System.Linq;
+using BExIS.DCM.Transform.Validation;
+using BExIS.DCM.Transform.Validation.DSValidation;
+using BExIS.DCM.Transform.Validation.Exceptions;
+using BExIS.DCM.Transform.Validation.ValueValidation;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
-using BExIS.DCM.Transform.Validation.DSValidation;
-using BExIS.DCM.Transform.Validation;
-using BExIS.DCM.Transform.Validation.Exceptions;
-using BExIS.DCM.Transform.Validation.ValueValidation;
-using BExIS.Dlm.Services.DataStructure;
 
 namespace BExIS.DCM.Transform.Input
 {

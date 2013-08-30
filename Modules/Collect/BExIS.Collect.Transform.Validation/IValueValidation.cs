@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Data;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.DCM.Transform.Validation.Exceptions;
+﻿using BExIS.DCM.Transform.Validation.Exceptions;
 
 namespace BExIS.DCM.Transform.Validation
 {

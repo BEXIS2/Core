@@ -31,7 +31,6 @@
     var Parameters = new Array();
 
     $(document).ready(function () {
-
         var index = '@Model.GetCurrentStepInfoIndex()';
 
         $.get('@Url.Action(@Model.Current().GetActionInfo.ActionName, @Model.Current().GetActionInfo.ControllerName, new RouteValueDictionary { { "area", @Model.Current().GetActionInfo.AreaName } })', { index: index }, function (response) {

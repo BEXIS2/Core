@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
+﻿
 namespace BExIS.Search.Providers.DummyProvider.Helpers
 {
     public static class GlobalHelper

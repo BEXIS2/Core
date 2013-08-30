@@ -3,32 +3,32 @@
 
 
 <div id="Step3" class="uploadWizardStep">
+    <div class="uploadWizardStep_Main">
+        <div class="uploadWizardStep_Header stepper">
+            <h3>@Model.StepInfo.title</h3>
+        </div>
 
-    <div class="uploadWizardStep_Header stepper">
-        <h3>@Model.StepInfo.title</h3>
-    </div>
+        <div class="uploadWizardStep_Description stepper">
+            <p>
+                With this step the selected data file is validated against the selected data structure. 
+               Both, the structure of the data (e.g. variable properties) and whether the data values 
+               fit to the specified structure (e.g. data type, value range) is evaluated. 
 
-    <div class="uploadWizardStep_Description stepper">
-        <p>
-            With this step the selected data file is validated against the selected data structure. 
-           Both, the structure of the data (e.g. variable properties) and whether the data values 
-           fit to the specified structure (e.g. data type, value range) is evaluated. 
+            </p>
+        </div>
 
-        </p>
-    </div>
+        <div class="uploadWizardStep_Content stepper">
+            <p><button id="validationButton" title="Validate selected data file against a given data structure" >Validate</button>Validate selected data file against a given data structure.</p>
 
-    <div class="uploadWizardStep_Content stepper">
-        <p><button id="validationButton" title="Validate selected data file against a given data structure" >Validate</button>Validate selected data file against a given data structure.</p>
-
-            @if (Model.Validated)
-            { 
+                @if (Model.Validated)
+                { 
             
-             <p> Validated!! </p>
+                 <p> Validated!! </p>
                 
-            }
+                }
 
+        </div>
     </div>
-
      <div class="uploadWizardStep_Error stepper">
         @if (Model != null)
         {
@@ -41,13 +41,12 @@
                 }
                 else
                 { 
-                    <br />
-                    <table>
+                   <ul>
                         @foreach (BExIS.DCM.Transform.Validation.Exceptions.Error s in @Model.ErrorList)
                         { 
-                            <tr><td>@s.ToString()</td></tr>
+                            <li>@s.ToString()</li>
                         }
-                    </table>
+                   </ul>
 
                 }
             }

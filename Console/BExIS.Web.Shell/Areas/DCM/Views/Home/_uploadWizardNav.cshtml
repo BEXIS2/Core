@@ -9,7 +9,6 @@
 
     int currentPage = @Model.GetCurrentStepInfoIndex() + 1;    
 }
-
 <div id="UploadWizardNavDiv">
 
     <table id="UploadWizard_NavigationTable">
@@ -71,7 +70,7 @@
             dataType: 'html', 
             url: '@Url.Action(@Model.Current().PostActionInfo.ActionName, @Model.Current().PostActionInfo.ControllerName, new RouteValueDictionary { { "area", @Model.Current().PostActionInfo.AreaName }})',
                 success: function(result) { 
-                    $('#StepView').html(result); 
+                    $('#StepView').html(result);
                     NavigationRefresh();
                     TaskListRefresh();
                 }
@@ -80,8 +79,10 @@
 
     function NavigationRefresh()
     {
+
         $.post('@Url.Action("RefreshNavigation", "Home", new RouteValueDictionary { { "area", "DCM" } })', function (response) {
-            $("#UploadWizardNavDiv").html(response);
+           
+            $("#UploadWizardNavDiv").replaceWith(response);
         })
     }
 </script>

@@ -1,22 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Collections.ObjectModel;
-
-using Lucene.Net.Analysis.Standard;
+using System.IO;
+using BExIS.Search.Providers.LuceneProvider.Helpers;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
-using Lucene.Net.QueryParsers;
 using Lucene.Net.Search;
-using Lucene.Net.Analysis;
 using Lucene.Net.Store;
-using WorldNet.Net;
-using System.Web;
-
-using System.Diagnostics;
-using BExIS.Search.Providers.LuceneProvider.Helpers;
-using System.IO;
 
 
 namespace Lucene.Net.SynonymEngine

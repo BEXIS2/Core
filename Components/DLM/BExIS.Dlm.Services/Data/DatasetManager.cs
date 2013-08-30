@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Vaiona.Persistence.Api;
-using BExIS.Dlm.Entities.Data;
-using System.Xml;
 using System.Diagnostics.Contracts;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Entities;
+using System.Linq;
+using System.Xml;
 using BExIS.Dlm.Entities.Administration;
+using BExIS.Dlm.Entities.Data;
+using BExIS.Dlm.Entities.DataStructure;
+using Vaiona.Persistence.Api;
 
 namespace BExIS.Dlm.Services.Data
 {

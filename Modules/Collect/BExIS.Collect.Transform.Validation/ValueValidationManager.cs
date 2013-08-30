@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using BExIS.Dlm.Entities.DataStructure;
 using BExIS.DCM.Transform.Validation.Exceptions;
 using BExIS.DCM.Transform.Validation.ValueCheck;
-using BExIS.DCM.Transform.Validation.ValueValidation;
 
 namespace BExIS.DCM.Transform.Validation
 {

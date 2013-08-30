@@ -1,24 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
-using System.Xml.Linq;
 using BExIS.Dlm.Entities.Data;
-using System.Xml;
 using BExIS.Dlm.Entities.DataStructure;
-using Vaiona.Core.Serialization;
-using System.Xml.Serialization;
-using Vaiona.Persistence.Api;
-using Vaiona.IoC;
-using Vaiona.Util.Cfg;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.Dlm.Services.Data;
-using System.IO;
-using Vaiona.Web.Models;
-using Vaiona.Web.Mvc.Models;
-using Vaiona.Web.Mvc.Data;
 using BExIS.Dlm.Services.Administration;
+using BExIS.Dlm.Services.Data;
+using BExIS.Dlm.Services.DataStructure;
+using Vaiona.Web.Mvc.Data;
+using Vaiona.Web.Mvc.Models;
 
 namespace BExIS.Web.Shell.Controllers
 {

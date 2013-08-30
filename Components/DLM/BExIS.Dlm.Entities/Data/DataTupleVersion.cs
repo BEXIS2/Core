@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Xml;
-using Vaiona.Entities.Common;
-
+﻿
 namespace BExIS.Dlm.Entities.Data
 {
     public class DataTupleVersion : AbstractTuple //DataTuple

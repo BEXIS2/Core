@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Vaiona.Entities.Common;
-using System.Xml.Linq;
-using System.Xml;
-using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Entities.Administration;
+using BExIS.Dlm.Entities.DataStructure;
+using Vaiona.Entities.Common;
 
 namespace BExIS.Dlm.Entities.Data
 {

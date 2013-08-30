@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
+using System.Web.Security;
 using BExIS.Security.Entities;
 using Vaiona.Persistence.Api;
-using System.Diagnostics.Contracts;
-using System.Web.Security;
-using System.Security.Cryptography;
 
 namespace BExIS.Security.Services
 {

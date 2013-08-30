@@ -1,23 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using BExIS.Search.Api;
 using BExIS.Search.Model;
 using BExIS.Search.Providers.LuceneProvider.Config;
-
-
+using BExIS.Search.Providers.LuceneProvider.Indexer;
+using BExIS.Search.Providers.LuceneProvider.Searcher;
 using Lucene.Net.Analysis;
-using Lucene.Net.Documents;
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Index;
-using Lucene.Net.Search;
 using Lucene.Net.QueryParsers;
-using Lucene.Net.Store;
-using Lucene.Net.Util;
-using BExIS.Search.Providers.LuceneProvider.Searcher;
-using BExIS.Search.Providers.LuceneProvider.Indexer;
-using System.Diagnostics;
+using Lucene.Net.Search;
 
 namespace BExIS.Search.Providers.LuceneProvider
 {

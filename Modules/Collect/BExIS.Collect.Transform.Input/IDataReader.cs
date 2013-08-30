@@ -1,15 +1,8 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using BExIS.Dlm.Entities;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Services;
-using BExIS.DCM.Transform.Validation.Exceptions;
-using BExIS.DCM.Transform.Validation;
 using BExIS.DCM.Transform.Validation.DSValidation;
-using BExIS.Dlm.Entities.DataStructure;
+using BExIS.DCM.Transform.Validation.Exceptions;
+using BExIS.Dlm.Entities.Data;
 
 
 namespace BExIS.DCM.Transform.Input

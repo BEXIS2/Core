@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using System.Text;
-using Vaiona.Persistence.Api;
 using BExIS.Dlm.Entities.Administration;
+using Vaiona.Persistence.Api;
 using DataStructureEntity = BExIS.Dlm.Entities.DataStructure.DataStructure;
 
 namespace BExIS.Dlm.Services.Administration

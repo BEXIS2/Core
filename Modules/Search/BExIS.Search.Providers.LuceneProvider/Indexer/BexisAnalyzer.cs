@@ -1,11 +1,7 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Analysis;
-using Lucene.Net.Analysis.De;
+using Lucene.Net.Analysis.Standard;
 using Lucene.Net.SynonymEngine;
 
 namespace BExIS.Search.Providers.LuceneProvider.Indexer

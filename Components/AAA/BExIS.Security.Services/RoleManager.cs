@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
-using System.Text;
 using BExIS.Security.Entities;
 using Vaiona.Persistence.Api;
-using System.Diagnostics.Contracts;
 
 namespace BExIS.Security.Services
 {

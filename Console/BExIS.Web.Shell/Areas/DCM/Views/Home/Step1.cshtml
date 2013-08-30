@@ -3,72 +3,71 @@
 @using System;
 
 <div id ="Step1" class="uploadWizardStep">
+    <div class="uploadWizardStep_Main">
+        <div class="uploadWizardStep_Header stepper">
 
-<div class="uploadWizardStep_Header stepper">
+            <h3>@Model.StepInfo.title</h3>
+        </div>
 
-    <h3>@Model.StepInfo.title</h3>
-</div>
-
-<div class="uploadWizardStep_Description stepper">
-    <p>Please select a data file to be uploaded to the BEXIS repository.</p>
-    <p>Supported file format: Microsoft Excel (*.xlsm)</p>
-</div>
+        <div class="uploadWizardStep_Description stepper">
+            <p>Please select a data file to be uploaded to the BEXIS repository.</p>
+            <p>Supported file format: Microsoft Excel (*.xlsm)</p>
+        </div>
         
-<div class="uploadWizardStep_Content stepper">
+        <div class="uploadWizardStep_Content stepper">
 
-            <table>
-                <tr>
-                    <td>
-                        @(Html.Telerik().Upload()
-                        .Name("SelectFileUploader")
-                        .Multiple(false)
-                        .ShowFileList(false)
-                        .ClientEvents(events =>
-                            events.OnSelect("SelectFileProcess_OnSelect")
-                                    .OnRemove("SelectFileProcess_OnRemove")
-                                    .OnSuccess("SelectFileProcess_OnSuccess")
+                    <table>
+                        <tr>
+                            <td>
+                                @(Html.Telerik().Upload()
+                                .Name("SelectFileUploader")
+                                .Multiple(false)
+                                .ShowFileList(false)
+                                .ClientEvents(events =>
+                                    events.OnSelect("SelectFileProcess_OnSelect")
+                                            .OnRemove("SelectFileProcess_OnRemove")
+                                            .OnSuccess("SelectFileProcess_OnSuccess")
                                     
-                        )
-                        .Async(async => async
-                            .Save("SelectFileProcess", "Home",new { area = "DCM" } )
-                            .AutoUpload(true))
+                                )
+                                .Async(async => async
+                                    .Save("SelectFileProcess", "Home",new { area = "DCM" } )
+                                    .AutoUpload(true))
                         
-                        )
-                    </td>
-                    <td>
-                         <div id="fileNameDiv"/>
-                    </td>
-                </tr>
-            </table>
- </div> 
-
+                                )
+                            </td>
+                            <td>
+                                 <div id="fileNameDiv"/>
+                            </td>
+                        </tr>
+                    </table>
+         </div> 
+    </div>
 
      
- <div class="uploadWizardStep_Error stepper">
-    @if (Model != null)
-    {
-        if (Model.ErrorList != null)
+     <div class="uploadWizardStep_Error stepper">
+        @if (Model != null)
         {
-            if (Model.ErrorList.Count == 0)
+            if (Model.ErrorList != null)
             {
+                if (Model.ErrorList.Count == 0)
+                {
 
 
+                }
+                else
+                { 
+                   <ul>
+                        @foreach (BExIS.DCM.Transform.Validation.Exceptions.Error s in @Model.ErrorList)
+                        { 
+                            <li>@s.ToString()</li>
+                        }
+                   </ul>
+
+                }
             }
-            else
-            { 
-                <br />
-                <table>
-                    @foreach (BExIS.DCM.Transform.Validation.Exceptions.Error s in @Model.ErrorList)
-                    { 
-                        <tr><td><p class="ErrorMessage">@s.ToString()</p></td></tr>
-                    }
-                </table>
 
-            }
         }
-
-    }
-</div>   
+    </div>     
 
 </div>
 <script type="text/javascript">

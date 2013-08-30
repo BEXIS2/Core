@@ -1,27 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Globalization;
 using System.IO;
 using System.Xml;
-using System.Web;
-
-using Lucene.Net.Analysis.Standard;
+using BExIS.Dlm.Services.Data;
+using BExIS.Search.Model;
+using BExIS.Search.Providers.LuceneProvider.Helpers;
+using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
-using Lucene.Net.QueryParsers;
-using Lucene.Net.Search;
-using Lucene.Net.Analysis;
 using Lucene.Net.Store;
-using Lucene.Net.Analysis.NGram;
-using BExIS.Search.Providers.LuceneProvider.Config;
-using BExIS.Search.Model;
-
-using BExIS.Search.Providers.LuceneProvider.Searcher;
-using System.Collections;
-using BExIS.Search.Providers.LuceneProvider.Helpers;
-using BExIS.Dlm.Services.Data;
-using System.Globalization;
 
 
 namespace BExIS.Search.Providers.LuceneProvider.Indexer

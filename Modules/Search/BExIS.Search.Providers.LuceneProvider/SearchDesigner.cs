@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Xml;
-using BExIS.Search.Providers.LuceneProvider.Helpers;
-using BExIS.Search.Providers.LuceneProvider.Indexer;
 using BExIS.Search.Api;
 using BExIS.Search.Model;
+using BExIS.Search.Providers.LuceneProvider.Helpers;
+using BExIS.Search.Providers.LuceneProvider.Indexer;
 
 namespace BExIS.Search.Providers.LuceneProvider
 {

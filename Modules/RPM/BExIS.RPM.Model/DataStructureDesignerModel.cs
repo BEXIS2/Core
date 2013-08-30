@@ -1,15 +1,9 @@
 ﻿using System;
-using System.Data;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Vaiona.Core;
-using Vaiona.Entities;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.DataStructure;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Services.Data;
 
 namespace BExIS.RPM.Model
 {

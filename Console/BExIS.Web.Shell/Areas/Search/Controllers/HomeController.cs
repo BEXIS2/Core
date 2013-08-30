@@ -1,23 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
 using System.Data;
-using Telerik.Web.Mvc;
-using Telerik.Web.Mvc.Extensions;
-
-using BExIS.Search.Model;
-using BExIS.Web.Shell.Areas.Search.Helpers;
-using BExIS.Search.Api;
-using Vaiona.IoC;
+using System.Linq;
+using System.Web.Mvc;
 using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Search.Providers.LuceneProvider.Config;
-using BExIS.Search.Providers.LuceneProvider;
-using BExIS.Web.Shell.Areas.Search.Models;
+using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
+using BExIS.Search.Api;
+using BExIS.Search.Model;
+using BExIS.Search.Providers.LuceneProvider;
+using BExIS.Web.Shell.Areas.Search.Helpers;
+using BExIS.Web.Shell.Areas.Search.Models;
+using Telerik.Web.Mvc;
+using Vaiona.IoC;
 
 namespace BExIS.Web.Shell.Areas.Search.Controllers
 {
