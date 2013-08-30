@@ -14,9 +14,9 @@
 
 
     // need DataStructureCategory to create DS but can't find it in a DS
-    if (Model.DataStructure.Name == "" || Model.DataStructure.Name == null)
+    if (Model.dataStructure.Name == "" || Model.dataStructure.Name == null)
     {
-        Model.DataStructure.Name = "New Data Structure";
+        Model.dataStructure.Name = "New Data Structure";
         categoryIndex = 0;
     }
     else
@@ -27,14 +27,14 @@
             
 }
 
-<h3>@Model.DataStructure.Name</h3>
+<h3>@Model.dataStructure.Name</h3>
 
 <div class="planingPartialDiv">   
  @using(Html.BeginForm("saveDataStructure", "Home", new {area = "RPM"}))
  {     
         <div id="Description">
                 Description:          
-                @(Html.TextAreaFor(m => Model.DataStructure.Description, new {@class = "t-input"}))
+                @(Html.TextAreaFor(m => Model.dataStructure.Description, new {@class = "t-input"}))
         </div>
         <div id="info">
             Info:
@@ -44,7 +44,7 @@
                         Name
                     </td>
                     <td>
-                        @(Html.TextBoxFor(m => Model.DataStructure.Name, new {@class = "t-input"}))
+                        @(Html.TextBoxFor(m => Model.dataStructure.Name, new {@class = "t-input"}))
                     </td>
                 </tr>
                 <tr>
@@ -62,7 +62,7 @@
                         Number of Vareables:
                     </td>
                     <td>
-                        @Model.DataStructure.Variables.Count
+                        @Model.dataStructure.Variables.Count
                     </td>
                 </tr>
                 <tr>
@@ -70,14 +70,14 @@
                         Data Structure ID:
                     </td>
                     <td>
-                        @Model.DataStructure.Id
-                        @(Html.TextBoxFor(m => Model.DataStructure.Id, new {@class = "hidden"}))
+                        @Model.dataStructure.Id
+                        @(Html.TextBoxFor(m => Model.dataStructure.Id, new {@class = "hidden"}))
                     </td>
                 </tr>
             </table>
         </div>
         <div>
-            @foreach (Dataset ds in Model.DataStructure.Datasets)
+            @foreach (Dataset ds in Model.dataStructure.Datasets)
             { 
                 <p>@ds.Id.ToString()</p>
             }
@@ -85,6 +85,7 @@
      <button name="create" value="SaveDataStructure" type="submit" class="t-button">Save</button>    
      @ViewData["errorMsg"]
  }
+@Html.ActionLink("Download", "downloadTemplate", "Home", new { id = Model.dataStructure.Id }, new { area = "RPM" })
 </div> 
 
 

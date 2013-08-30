@@ -1,6 +1,7 @@
 ﻿@using Telerik.Web.Mvc.UI
 @using BExIS.Dlm.Entities.DataStructure
 @using System.Data
+@using BExIS.RPM.Model
 @model BExIS.RPM.Model.DataStructureDesignerModel
 
 @{
@@ -40,16 +41,19 @@
         mappings.For<Variable>(binding => binding
                 .ItemDataBound((item, VU) =>
                 {
-                    //item.Text = VU.D.Name;
                     item.Text = VU.DataAttribute.Name;
                 }));
     })
 )
 </div>
-}    
+}  
+
+@{DataStructureDesignerModel model = new DataStructureDesignerModel();
+      model.GetDataStructureByID(Model.dataStructure.Id);}  
 <div>
-    @Html.Partial("_showDataStructureInfo", Model)
+    
+    @Html.Partial("_showDataStructureInfo", model)
 </div>
 <div>
-    @Html.Partial("_showDataStructure", Model)
+    @Html.Partial("_showDataStructure", model)
 </div>

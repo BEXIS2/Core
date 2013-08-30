@@ -47,7 +47,7 @@
     </Reference>
     <Reference Include="Vaiona.Entities, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\DCM\Libraries\Vaiona\Vaiona.Entities.dll</HintPath>
+      <HintPath>..\..\..\..\ModuleBranches\RPM\Libraries\Vaiona\Vaiona.Entities.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

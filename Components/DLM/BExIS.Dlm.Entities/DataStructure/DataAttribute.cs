@@ -25,7 +25,7 @@ namespace BExIS.Dlm.Entities.DataStructure
         {
             UsagesAsParameter = new List<Parameter>();
             UsagesAsVariable = new List<Variable>();
-            Classification = new Classifier();
+            //Classification = new Classifier();
         }
 
         #endregion

@@ -1,8 +1,8 @@
 ﻿@using Telerik.Web.Mvc.UI
 @using BExIS.Dlm.Entities.DataStructure
+@using BExIS.Dlm.Services.DataStructure
 @using System
 @using System.Text.RegularExpressions
-@model List<Unit>
 
 @{
     string rgxPattern = "[ ]";
@@ -30,7 +30,9 @@
     //temp = temp.Union((from u in UnitList select u.Abbreviation.ToString()).Distinct());
     
     //List<string> Filters = temp.ToList();
-    
+
+    UnitManager UM = new UnitManager();
+    List<Unit> model = UM.Repo.Get().ToList();
     
 }
 
@@ -129,7 +131,7 @@
     @Html.ActionLink("Add Unit", "openUnitWindow", "Home", new { id = 0 }, new { @class = "t-button t-add" })
     <br />
     <br />
-    @(Html.Telerik().Grid(Model)    
+    @(Html.Telerik().Grid(model)    
             .Name("UnitGrid")
             .Sortable()
             .Pageable()            
@@ -154,7 +156,7 @@
                     columns.Bound(c => c.Abbreviation);
                     columns.Bound(c => c.Dimension);
                     columns.Bound(c => c.MeasurementSystem);
-                    //columns.Bound(c => c.AssociatedDataTypes);
+                    columns.Bound(c => c.AssociatedDataTypes);
                 })
     )
 

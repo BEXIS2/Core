@@ -1,0 +1,82 @@
+﻿@using Telerik.Web.Mvc.UI
+@using BExIS.Dlm.Entities.DataStructure
+@using BExIS.Dlm.Services.DataStructure
+@model BExIS.Dlm.Entities.DataStructure.DataAttribute
+
+@*<header>*@
+    <link href="@Url.Content("~/Areas/RPM/Stylesheets/RPM.css")" rel="stylesheet" type="text/css" />  
+@*</header> *@
+
+@{ 
+    UnitManager UM = new UnitManager();
+    List<Unit> unitList = UM.Repo.Get().ToList();
+
+    DataTypeManager DTM = new DataTypeManager();
+    List<DataType> dataTypeList = DTM.Repo.Get().ToList();
+     
+}
+<div class="planingPartialDiv" id="createUnit">
+@using (Html.BeginForm("editAttribute", "Home", new { area = "RPM" }))
+{
+   @(Html.TextBox("parent", @HttpContext.Current.Request.RequestContext.RouteData.Values["action"].ToString(), new {@class = "hidden"}))
+   @(Html.TextBox("id", Model.Id, new {@class = "hidden"})) 
+    <table>
+        <tr id="name">
+            <td>
+                Name:
+            </td>
+            <td>
+                @(Html.TextBoxFor(m => Model.Name, new {@class = "t-input"}))
+            </td>
+        </tr>
+        <tr id="shortname">
+            <td>
+                ShortName:
+            </td>
+            <td>
+                @(Html.TextBoxFor(m => Model.ShortName, new {@class = "t-input"}))
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Description:
+            </td>
+            <td>
+                @(Html.TextBoxFor(m => Model.Description, new {@class = "t-input"}))
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Unit:
+            </td>
+            <td>
+                @(Html.Telerik().DropDownList()
+                    .Name("unitId")
+                    .DropDownHtmlAttributes(new { style = "height: 200px" })
+                    .BindTo(new SelectList(unitList,"Id","Name"))
+                )
+            </td>
+        </tr>
+        <tr>
+            <td>
+                DataType:
+            </td>
+            <td>
+                @(Html.Telerik().DropDownList()
+                    .Name("dataTypeId")
+                    .DropDownHtmlAttributes(new { style = "height: 200px" })
+                    .BindTo(new SelectList(dataTypeList,"Id","Name"))
+                )
+            </td>
+        </tr>
+        <tr><td colspan="2"> </td></tr>
+        <tr>
+            <td>
+                <button name="create" value="GetUnitInput" type="submit" class="t-button">Save</button>
+            </td>
+            <td>
+            </td>
+        </tr>    
+    </table>    
+}
+</div>

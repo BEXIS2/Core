@@ -16,6 +16,9 @@ using Vaiona.Persistence.Api;
 using Telerik.Web.Mvc;
 using Telerik.Web.Mvc.UI;
 using BExIS.RPM.Model;
+using BExIS.RPM.Output;
+using System.IO;
+using Vaiona.Util.Cfg;
 
 namespace BExIS.Web.Shell.Areas.RPM.Controllers
 {
@@ -37,6 +40,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
         public ActionResult DataStructureDesigner()
         {
             DataStructureDesignerModel DSDM = new DataStructureDesignerModel();
+
             
             Session["inUse"] = false;
             Session["dataStructureId"] = null;
@@ -45,12 +49,12 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
         #region Data Structure Info
 
-        public ActionResult showDataStructure(string SelectedItem)
+        public ActionResult showDataStructure(long SelectedItem)
         {
             DataStructureDesignerModel DSDM = new DataStructureDesignerModel();
 
 
-            if (SelectedItem != null && SelectedItem != "")
+            if (SelectedItem != null && SelectedItem != 0)
             {
                 DSDM.GetDataStructureByID(SelectedItem);
             }
@@ -58,7 +62,6 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             {
                 DSDM = new DataStructureDesignerModel();
             }
-
             Session["Window"] = false;
             Session["dataStructureId"] = DSDM.dataStructure.Id;
             return View("DataStructureDesigner", DSDM);
@@ -213,14 +216,36 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
         }
         #endregion
 
+        public ActionResult downloadTemplate(long id)
+        {
+            DataStructureDesignerModel DSDM = new DataStructureDesignerModel();
+            
+            if (id != 0)
+            {
+                DSDM.GetDataStructureByID(id);
+
+                ExcelTemplateProvider provider = new ExcelTemplateProvider("BExISppTemplate_Clean.xlsx");
+                provider.CreateTemplate(id);
+                
+            }
+            string filename = DSDM.dataStructure.Name + ".xlsx";
+            return File(Path.Combine(AppConfiguration.GetModuleWorkspacePath("RPM"), "Template", filename), "application/xlsx", "Template_" + filename);
+        }
+
         #endregion
 
         #region Unit Manager
 
-        private IReadOnlyRepository<Unit> GetUnitRepo()
+        private List<Unit> GetUnitRepo()
         {
             UnitManager UM = new UnitManager();
-            return(UM.Repo);
+            List<Unit> repo = UM.Repo.Get().ToList();
+            
+            foreach(Unit u in repo)
+            {
+                UM.Repo.LoadIfNot(u.AssociatedDataTypes);
+            }
+            return(repo);
         }
 
         public ActionResult UnitManager()
@@ -232,8 +257,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             if (Session["Window"] == null)
                 Session["Window"] = false;
 
-            List<Unit> UnitList = GetUnitRepo().Get().ToList();
-            return View(UnitList);
+            return View();
         }
 
         public ActionResult editUnit(Unit Model, string parent, long id, string measurementSystem, long[] checkedRecords)
@@ -242,7 +266,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             {
                 if (Model.Name != "" && Model.Name != null)
                 {
-                    IList<Unit> unitList = GetUnitRepo().Get().ToList();
+                    List<Unit> unitList = GetUnitRepo();
                     bool nameNotExist = unitList.Where(p => p.Name.Equals(Model.Name)).Count().Equals(0);
                     bool abbreviationNotExist = unitList.Where(p => p.Abbreviation.Equals(Model.Abbreviation)).Count().Equals(0);
                     if (nameNotExist && abbreviationNotExist)
@@ -257,7 +281,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                         UnitManager UM = new UnitManager();
                         UM.Create(Model.Name, Model.Abbreviation, Model.Description, Model.Dimension, Model.MeasurementSystem);
 
-                        unitList = GetUnitRepo().Get().ToList();
+                        unitList = GetUnitRepo();
                         Unit unit = unitList.Where(p => p.Name.Equals(Model.Name)).ToList().First();
                         IList<DataType> dataTypeList = GetDataTypeRepo().Get().ToList();
                         if (checkedRecords != null)
@@ -265,7 +289,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                             foreach (long dt in checkedRecords)
                             {
                                 DataType dataType = dataTypeList.Where(p => p.Id.Equals(dt)).ToList().First();
-                                //UM.AddAssociatedDataType(unit, dataType);
+                                UM.AddAssociatedDataType(unit, dataType);
                             }
                         }
                     }
@@ -276,9 +300,8 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             }
             else
             {
-                IList<Unit> unitList = GetUnitRepo().Get().ToList();
+                IList<Unit> unitList = GetUnitRepo();
                 Unit unit = unitList.Where(p => p.Id.Equals(id)).ToList().First();
-                UnitManager UM = new UnitManager();
                 unit.Name = Model.Name;
                 unit.Description = Model.Description;
                 unit.Abbreviation = Model.Abbreviation;
@@ -290,15 +313,18 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                         unit.MeasurementSystem = msCheck;
                     }
                 }
-                //UM.Update(unit);
+                UnitManager UM = new UnitManager();
+                UM.Update(unit);
 
+                unitList = GetUnitRepo();
+                unit = unitList.Where(p => p.Id.Equals(id)).ToList().First();
                 IList<DataType> dataTypeList = GetDataTypeRepo().Get().ToList();
                 if (checkedRecords != null)
                 {
                     foreach (long dt in checkedRecords)
                     {
                         DataType dataType = dataTypeList.Where(p => p.Id.Equals(dt)).ToList().First();
-                        //UM.AddAssociatedDataType(unit, dataType);
+                        UM.AddAssociatedDataType(unit, dataType);
                     }
                 }
             }
@@ -312,7 +338,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
             if (id != 0)
             {
-                IList<Unit> unitList = GetUnitRepo().Get().ToList();
+                IList<Unit> unitList = GetUnitRepo();
                 Unit unit = unitList.Where(p => p.Id.Equals(id)).ToList().First();
                 UnitManager UM = new UnitManager();
                 UM.Delete(unit);
@@ -325,7 +351,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
             if (id != 0)
             {
-                IList<Unit> unitList = GetUnitRepo().Get().ToList();
+                IList<Unit> unitList = GetUnitRepo();
                 Unit unit = unitList.Where(p=>p.Id.Equals(id)).ToList().First();
                 Session["Unit"] = unit;
                 Session["Window"] = true;
@@ -529,6 +555,97 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
         }
 
         #endregion
+
+        private List<DataAttribute> GetAttRepo()
+        {
+            DataContainerManager DAM = new DataContainerManager();
+            List<DataAttribute> repo = DAM.DataAttributeRepo.Get().ToList();
+
+            return (repo);
+        }
+
+        public ActionResult AttributeManager()
+        {
+
+            if (Session["DataAttribute"] == null)
+                Session["DataAttribute"] = new DataAttribute();
+
+            if (Session["Window"] == null)
+                Session["Window"] = false;
+
+            return View(GetAttRepo());
+        }
+
+        public ActionResult editAttribute(DataAttribute Model, long id, long unitId, long dataTypeId, string parent)
+        {
+            IList<DataAttribute> DataAttributeList = GetAttRepo();
+          
+            if (id == 0)
+            {
+                bool nameNotExist = DataAttributeList.Where(p => p.Name.Equals(Model.Name)).Count().Equals(0);
+                if (nameNotExist)
+                {
+                    UnitManager UM = new UnitManager();
+                    Unit unit =  UM.Repo.Get(unitId);
+                    DataTypeManager DTM = new DataTypeManager();
+                    DataType dataType = DTM.Repo.Get(dataTypeId);
+                    DataContainerManager DAM = new DataContainerManager();
+
+                    DataAttribute temp = new DataAttribute();
+                    DAM.CreateDataAttribute(Model.ShortName, Model.Name,Model.Description,false,false, "",MeasurementScale.Categorial,DataContainerType.ReferenceType,"",dataType,unit,null, null,null,null, null, null);
+                }
+            }
+            else
+            {
+                DataAttribute dataAttribute = DataAttributeList.Where(p => p.Id.Equals(id)).ToList().First();
+                DataContainerManager DAM = new DataContainerManager();
+                dataAttribute.Name = Model.Name;
+                dataAttribute.ShortName = Model.ShortName;
+                dataAttribute.Description = Model.Description;
+                UnitManager UM = new UnitManager();
+                dataAttribute.Unit = UM.Repo.Get(unitId);
+                DataTypeManager DTM = new DataTypeManager();
+                dataAttribute.DataType = DTM.Repo.Get(dataTypeId);
+                DAM.UpdateDataAttribute(dataAttribute);
+                
+            }
+            Session["Window"] = false;
+            Session["DataType"] = new DataType();
+            return RedirectToAction(parent);
+        }
+
+        public ActionResult openAttributeWindow(int id)
+        {
+
+            if (id != 0)
+            {
+                IList<DataAttribute> AttributeList = GetAttRepo();
+                DataAttribute dataAttribute = AttributeList.Where(p => p.Id.Equals(id)).ToList().First();
+                Session["DataAttribute"] = dataAttribute;
+                Session["Window"] = true;
+            }
+            else
+            {
+                Session["DataAttribute"] = new DataAttribute();
+                Session["Window"] = true;
+            }
+            return RedirectToAction("AttributeManager");
+        }
+
+        public ActionResult deletAttribute(long id)
+        {
+
+            if (id != 0)
+            {
+                IList<DataAttribute> AttributeList = GetAttRepo();
+                DataAttribute dataAttribute = AttributeList.Where(p => p.Id.Equals(id)).ToList().First();
+                DataContainerManager DAM = new DataContainerManager();
+                DAM.DeleteDataAttribute(dataAttribute);
+            }
+            return RedirectToAction("AttributeManager");
+        }
+
+        
 
     }
 

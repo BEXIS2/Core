@@ -499,6 +499,9 @@
   <ItemGroup>
     <Folder Include="Areas\Auth\Views\Shared\" />
     <Folder Include="Areas\DCM\Views\Shared\" />
+    <Folder Include="Areas\RPM\Models\" />
+    <Folder Include="Areas\RPM\Views\Shared\" />
+    <Folder Include="Areas\Search\Models\" />
     <Folder Include="Areas\Search\Views\Shared\" />
     <Folder Include="Areas\Site\Models\" />
     <Folder Include="Areas\Site\Views\Shared\" />
@@ -538,6 +541,56 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Shared\EditorTemplates\Time.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\BExIS.RPM.Output\BExIS.RPM.Output.csproj">
+      <Project>{abc877e0-e3de-4472-a199-1728e88fa5a1}</Project>
+      <Name>BExIS.RPM.Output</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Components\AAA\BExIS.Security.Services\BExIS.Security.Services.csproj">
+      <Project>{681c8bc4-55f0-4f43-a685-90e246a88cb1}</Project>
+      <Name>BExIS.Security.Services</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Modules\Collect\BExIS.Collect.Transform.Input\BExIS.DCM.Transform.Input.csproj">
+      <Project>{5c4c8570-a53b-4191-a414-de028aaaf36a}</Project>
+      <Name>BExIS.DCM.Transform.Input</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Modules\Collect\BExIS.Collect.Transform.Validation\BExIS.DCM.Transform.Validation.csproj">
+      <Project>{c8a05313-b960-406e-92ec-c1e5b3f47fcd}</Project>
+      <Name>BExIS.DCM.Transform.Validation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Modules\RPM\BExIS.RPM.Model\BExIS.RPM.Model.csproj">
+      <Project>{063b9e3f-e0dd-43fe-9910-5b1544b8b861}</Project>
+      <Name>BExIS.RPM.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Modules\Search\BExIS.Search.Api\BExIS.Search.Api.csproj">
+      <Project>{8519EAC6-FBF8-48B3-813F-E0B9D3CC4A52}</Project>
+      <Name>BExIS.Search.Api</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Modules\Search\BExIS.Search.Model\BExIS.Search.Model.csproj">
+      <Project>{AB46BEB8-C36D-412F-9B1A-646C86299A87}</Project>
+      <Name>BExIS.Search.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Modules\Search\BExIS.Search.Providers.DummyProvider\BExIS.Search.Providers.DummyProvider.csproj">
+      <Project>{D89E501A-4873-4883-8741-27F0ACD03E0B}</Project>
+      <Name>BExIS.Search.Providers.DummyProvider</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Modules\Search\BExIS.Search.Providers.LuceneProvider\BExIS.Search.Providers.LuceneProvider.csproj">
+      <Project>{FBE3101A-791A-4EAB-9B8F-F6E071F8DBDC}</Project>
+      <Name>BExIS.Search.Providers.LuceneProvider</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Components\DLM\BExIS.Dlm.Services\BExIS.Dlm.Services.csproj">
+      <Project>{C4CA0A99-0AF3-4372-A9B7-B9073599BD8B}</Project>
+      <Name>BExIS.Dlm.Services</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Components\DLM\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
+      <Project>{B4E7B1BF-01B4-40AF-8D19-B8F362167261}</Project>
+      <Name>BExIS.Dlm.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Components\AAA\BExIS.Security.Entities\BExIS.Security.Entities.csproj">
+      <Project>{C230693B-D780-438B-B26C-82257642DD5C}</Project>
+      <Name>BExIS.Security.Entities</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
@@ -678,6 +731,10 @@
     <Content Include="Views\Test\XmlEdit.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Areas\RPM\Views\Web.config" />
+    <Content Include="Areas\RPM\Views\_ViewStart.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
     <Content Include="Areas\Auth\Views\Roles\Roles.cshtml" />
   </ItemGroup>
   <ItemGroup>
@@ -712,6 +769,13 @@
     <Content Include="Areas\DCM\Views\_ViewStart.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Areas\RPM\Views\Web.config" />
+    <Content Include="Areas\RPM\Views\_ViewStart.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\RPM\Views\Home\AttributeManager.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
     <Content Include="Areas\RPM\Views\Home\ClassificationManager.cshtml" />
     <Content Include="Areas\RPM\Views\Home\DataStructureDesigner.cshtml" />
     <Content Include="Areas\RPM\Views\Home\DatatypeManager.cshtml" />
@@ -726,8 +790,9 @@
     <Content Include="Areas\RPM\Views\Home\_editUnit.cshtml" />
     <Content Include="Areas\RPM\Views\Home\_showDataStructure.cshtml" />
     <Content Include="Areas\RPM\Views\Home\_showDataStructureInfo.cshtml" />
-    <Content Include="Areas\RPM\Views\Web.config" />
-    <Content Include="Areas\RPM\Views\_ViewStart.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\RPM\Views\Home\_editAttribute.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Components\AAA\BExIS.Security.Entities\BExIS.Security.Entities.csproj">

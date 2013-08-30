@@ -32,13 +32,15 @@ namespace BExIS.Dlm.Services.DataStructure
         #region DataAttribute
 
         public DataAttribute CreateDataAttribute(string shortName, string name, string description, bool isMultiValue, bool isBuiltIn, string owner, MeasurementScale measurementScale, DataContainerType containerType, string entitySelectionPredicate,
-            DataType dataType, Unit unit, Methodology methodology, ICollection<AggregateFunction> functions, ICollection<GlobalizationInfo> globalizationInfos, ICollection<Constraint> constraints,
+            DataType dataType, Unit unit, Methodology methodology, Classifier classifier,
+            ICollection<AggregateFunction> functions, ICollection<GlobalizationInfo> globalizationInfos, ICollection<Constraint> constraints,
             ICollection<ExtendedProperty> extendedProperies
             )
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(shortName));
-            Contract.Requires(!string.IsNullOrWhiteSpace(owner));
             Contract.Requires(dataType != null && dataType.Id >= 0);
+            Contract.Requires(unit != null && unit.Id >= 0);
+
 
             Contract.Ensures(Contract.Result<DataAttribute>() != null && Contract.Result<DataAttribute>().Id >= 0);
             DataAttribute e = new DataAttribute()
@@ -55,12 +57,13 @@ namespace BExIS.Dlm.Services.DataStructure
                 DataType = dataType,
                 Unit = unit,
                 Methodology = methodology,
-                AggregateFunctions = new List<AggregateFunction>(functions),
-                GlobalizationInfos = new List<GlobalizationInfo>(globalizationInfos),
-                Constraints = new List<Constraint>(constraints),
-                ExtendedProperties = new List<ExtendedProperty>(extendedProperies),
+                AggregateFunctions = functions,
+                GlobalizationInfos = globalizationInfos,
+                Constraints = constraints,
+                ExtendedProperties = extendedProperies,
             };
-
+            if (classifier != null && classifier.Id > 0)
+                e.Classification = classifier;
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<DataAttribute> repo = uow.GetRepository<DataAttribute>();

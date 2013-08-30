@@ -8,7 +8,7 @@ namespace BExIS.Dlm.Entities.DataStructure
 {
     public enum MeasurementSystem
     {
-        Metric, Imperial, Unknown
+        Unknown, Metric, Imperial, Nautical, Natural
     }
 
     public class Unit : BaseEntity

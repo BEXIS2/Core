@@ -34,10 +34,11 @@ namespace BExIS.RPM.Model
 
         public bool GetDataStructureByID(long ID)
         {
-            IList<StructuredDataStructure> DataStructureList = GetDataStructureList();
-            if (DataStructureList.Where(p => p.Id.Equals(ID)).Count() > 0)
+
+            DataStructureManager dsm = new DataStructureManager();
+            this.dataStructure = dsm.StructuredDataStructureRepo.Get(ID);
+            if (this.dataStructure != null)
             {
-                this.dataStructure = DataStructureList.Where(p => p.Id.Equals(ID)).First();
                 this.BuildDataTable();
                 return (true);
             }
@@ -46,6 +47,19 @@ namespace BExIS.RPM.Model
                 this.dataStructure = new StructuredDataStructure();
                 return (false);
             }
+
+            //IList<StructuredDataStructure> DataStructureList = GetDataStructureList();
+            //if (DataStructureList.Where(p => p.Id.Equals(ID)).Count() > 0)
+            //{
+            //    this.dataStructure = DataStructureList.Where(p => p.Id.Equals(ID)).First();
+            //    this.BuildDataTable();
+            //    return (true);
+            //}
+            //else
+            //{
+            //    this.dataStructure = new StructuredDataStructure();
+            //    return (false);
+            //}
         }
 
         public bool GetDataStructureByID(string ID)
@@ -177,11 +191,11 @@ namespace BExIS.RPM.Model
 
                 this.DataStructureTable.Rows.Add(Row);      
         }
-    
+
         public void GetDataAttributeList()
         {
             DataContainerManager DataAttributeManager = new DataContainerManager();
-            this.dataAttributeList = DataAttributeManager.DataAttributeRepo.Get();
+            this.dataAttributeList = DataAttributeManager.DataAttributeRepo.Get().ToList();
         }
     }
 }
