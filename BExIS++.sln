@@ -52,7 +52,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RPM", "RPM", "{3FECE534-E02
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.RPM.Model", "Modules\RPM\BExIS.RPM.Model\BExIS.RPM.Model.csproj", "{063B9E3F-E0DD-43FE-9910-5B1544B8B861}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.RPM.Output", "BExIS.RPM.Output\BExIS.RPM.Output.csproj", "{ABC877E0-E3DE-4472-A199-1728E88FA5A1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.RPM.Output", "Modules\RPM\BExIS.RPM.Output\BExIS.RPM.Output.csproj", "{ABC877E0-E3DE-4472-A199-1728E88FA5A1}"
 EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
@@ -116,10 +116,10 @@ Global
 		SccProjectTopLevelParentUniqueName14 = BExIS++.sln
 		SccProjectName14 = Modules/RPM/BExIS.RPM.Model
 		SccLocalPath14 = Modules\\RPM\\BExIS.RPM.Model
-		SccProjectUniqueName15 = BExIS.RPM.Output\\BExIS.RPM.Output.csproj
+		SccProjectUniqueName15 = Modules\\RPM\\BExIS.RPM.Output\\BExIS.RPM.Output.csproj
 		SccProjectTopLevelParentUniqueName15 = BExIS++.sln
-		SccProjectName15 = BExIS.RPM.Output
-		SccLocalPath15 = BExIS.RPM.Output
+		SccProjectName15 = Modules/RPM/BExIS.RPM.Output
+		SccLocalPath15 = Modules\\RPM\\BExIS.RPM.Output
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

@@ -501,7 +501,6 @@
     <Folder Include="Areas\DCM\Views\Shared\" />
     <Folder Include="Areas\RPM\Models\" />
     <Folder Include="Areas\RPM\Views\Shared\" />
-    <Folder Include="Areas\Search\Models\" />
     <Folder Include="Areas\Search\Views\Shared\" />
     <Folder Include="Areas\Site\Models\" />
     <Folder Include="Areas\Site\Views\Shared\" />
@@ -543,10 +542,6 @@
     <Content Include="Views\Shared\EditorTemplates\Time.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\BExIS.RPM.Output\BExIS.RPM.Output.csproj">
-      <Project>{abc877e0-e3de-4472-a199-1728e88fa5a1}</Project>
-      <Name>BExIS.RPM.Output</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Components\AAA\BExIS.Security.Services\BExIS.Security.Services.csproj">
       <Project>{681c8bc4-55f0-4f43-a685-90e246a88cb1}</Project>
       <Name>BExIS.Security.Services</Name>
@@ -562,6 +557,10 @@
     <ProjectReference Include="..\..\Modules\RPM\BExIS.RPM.Model\BExIS.RPM.Model.csproj">
       <Project>{063b9e3f-e0dd-43fe-9910-5b1544b8b861}</Project>
       <Name>BExIS.RPM.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Modules\RPM\BExIS.RPM.Output\BExIS.RPM.Output.csproj">
+      <Project>{abc877e0-e3de-4472-a199-1728e88fa5a1}</Project>
+      <Name>BExIS.RPM.Output</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Modules\Search\BExIS.Search.Api\BExIS.Search.Api.csproj">
       <Project>{8519EAC6-FBF8-48B3-813F-E0B9D3CC4A52}</Project>
