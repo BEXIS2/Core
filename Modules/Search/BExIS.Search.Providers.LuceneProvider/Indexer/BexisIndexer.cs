@@ -21,7 +21,7 @@ using BExIS.Search.Providers.LuceneProvider.Searcher;
 using System.Collections;
 using BExIS.Search.Providers.LuceneProvider.Helpers;
 using BExIS.Dlm.Services.Data;
-
+using System.Globalization;
 
 
 namespace BExIS.Search.Providers.LuceneProvider.Indexer
@@ -180,7 +180,7 @@ namespace BExIS.Search.Providers.LuceneProvider.Indexer
                     XmlNodeList elemList = metadataDoc.GetElementsByTagName(metadataElementName);
                     for (int i = 0; i < elemList.Count; i++)
                     {
-                        dataset.Add(new Field("facet_" + lucene_name, elemList[i].InnerText, Lucene.Net.Documents.Field.Store.NO, Field.Index.NOT_ANALYZED));
+                        dataset.Add(new Field("facet_" + lucene_name, elemList[i].InnerText, Lucene.Net.Documents.Field.Store.YES, Field.Index.NOT_ANALYZED));
                         dataset.Add(new Field("ng_all", elemList[i].InnerText, Lucene.Net.Documents.Field.Store.YES, Field.Index.ANALYZED));
                         writeAutoCompleteIndex(docId, lucene_name, elemList[i].InnerText);
                         writeAutoCompleteIndex(docId, "ng_all", elemList[i].InnerText);
@@ -205,19 +205,25 @@ namespace BExIS.Search.Providers.LuceneProvider.Indexer
                     }
                     else if (primitiveType.ToLower().Equals("date"))
                     {
+                        //DateTime MyDateTime = DateTime.Now;
                         DateTime MyDateTime = new DateTime();
                         String dTFormatElementName = property.Attributes.GetNamedItem("date_format").Value;
                         XmlNodeList dtFormatElements = metadataDoc.GetElementsByTagName(dTFormatElementName);
                         String dateTimeFormat = dtFormatElements[0].InnerText;
+
+
+
                         MyDateTime = DateTime.ParseExact(elemList[0].InnerText, dateTimeFormat,
-                                     null);
+                                    CultureInfo.InvariantCulture);
+
 
                         long t = MyDateTime.Ticks;
 
                         NumericField xyz = new NumericField("property_numeric_" + lucene_name).SetLongValue(MyDateTime.Ticks);
-
+                        String dateToString = MyDateTime.Date.ToString("d", CultureInfo.CreateSpecificCulture("en-US"));
                         dataset.Add(xyz);
-                        dataset.Add(new Field("property_" + lucene_name, MyDateTime.Date.ToString(), Lucene.Net.Documents.Field.Store.NO, Field.Index.NOT_ANALYZED));
+                        dataset.Add(new Field("property_" + lucene_name, dateToString, Lucene.Net.Documents.Field.Store.NO, Field.Index.NOT_ANALYZED));
+
                         writeAutoCompleteIndex(docId, lucene_name, MyDateTime.Date.ToString());
                         writeAutoCompleteIndex(docId, "ng_all", MyDateTime.Date.ToString());
                     }
