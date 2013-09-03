@@ -555,14 +555,14 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             if (ModelState.IsValid)
             {
-                XmlDocument emptyMetadata = new XmlDocument();
-                emptyMetadata.Load(Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "emptymetadata.xml"));
+                XmlDocument metadata = new XmlDocument();
+                metadata.Load(Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "emptymetadata.xml"));
 
-                emptyMetadata.GetElementsByTagName("bgc:title")[0].InnerText = model.Title;
-                emptyMetadata.GetElementsByTagName("bgc:owner")[0].InnerText = model.Owner;
-                emptyMetadata.GetElementsByTagName("bgc:author")[0].InnerText = model.DatasetAuthor;
-                emptyMetadata.GetElementsByTagName("bgc:projectName")[0].InnerText = model.ProjectName;
-                emptyMetadata.GetElementsByTagName("bgc:institute")[0].InnerText = model.ProjectInstitute;
+                metadata.GetElementsByTagName("bgc:title")[0].InnerText = model.Title;
+                metadata.GetElementsByTagName("bgc:owner")[0].InnerText = model.Owner;
+                metadata.GetElementsByTagName("bgc:author")[0].InnerText = model.DatasetAuthor;
+                metadata.GetElementsByTagName("bgc:projectName")[0].InnerText = model.ProjectName;
+                metadata.GetElementsByTagName("bgc:institute")[0].InnerText = model.ProjectInstitute;
 
                 //Add Metadata to Bus
                 TaskManager.AddToBus("Title", model.Title);
@@ -585,10 +585,10 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                 if (dm.IsDatasetCheckedOutFor(ds.Id, "David") || dm.CheckOutDataset(ds.Id, "David"))
                 {
-                    emptyMetadata.GetElementsByTagName("bgc:id")[0].InnerText = ds.Id.ToString();
+                    metadata.GetElementsByTagName("bgc:id")[0].InnerText = ds.Id.ToString();
 
                     DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
-                    workingCopy.Metadata = emptyMetadata;
+                    workingCopy.Metadata = metadata;
                     TaskManager.AddToBus("DatasetId",ds.Id);
                     TaskManager.AddToBus("ResearchPlanTitle", rp.Title);
                     dm.EditDatasetVersion(workingCopy, null, null, null);

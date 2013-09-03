@@ -266,7 +266,10 @@ namespace BExIS.Dlm.Services.Data
        
         public List<DatasetVersion> GetDatasettVersions(Int64 datasetId)
         {
-            List<DatasetVersion> dsVersions = DatasetVersionRepo.Query(p => p.Dataset.Id == datasetId && p.Dataset.Status == DatasetStatus.CheckedIn).OrderByDescending(p => p.Timestamp).ToList();
+            List<DatasetVersion> dsVersions = DatasetVersionRepo.Query(p => 
+                p.Dataset.Id == datasetId 
+                && p.Dataset.Status == DatasetStatus.CheckedIn)
+                .OrderByDescending(p => p.Timestamp).ToList();
             if (dsVersions != null)
             {
                 //dsVersions.ForEach(p=> p.Materialize());
@@ -477,6 +480,7 @@ namespace BExIS.Dlm.Services.Data
 
         /// <summary>
         /// there is no need to pass metadata, extendedPropertyValues, contentDescriptors .. as they can be assigned to the version before sending it to this editing method
+        /// Just if they are null, they will not affect the version. deleting these items should be conducted through proper methods of the Dataset Manager
         /// The general procedure is CheckOut, Edit*, CheckIn or Rollback
         /// While the dataset is checked out, all the changes go to the latest+1 version which acts like a working copy
         /// </summary>
@@ -491,7 +495,14 @@ namespace BExIS.Dlm.Services.Data
             //,ICollection<ExtendedPropertyValue> extendedPropertyValues, ICollection<ContentDescriptor> contentDescriptors
             )
         {
+            workingCoptDatasetVersion.Dematerialize();
+            
+            //preserve metadata and XmlExtendedPropertyValues for later use
             var workingCoptDatasetVersionId = workingCoptDatasetVersion.Id;
+            var metadata = workingCoptDatasetVersion.Metadata;
+            var xmlExtendedPropertyValues = workingCoptDatasetVersion.XmlExtendedPropertyValues;
+            var contentDescriptors = workingCoptDatasetVersion.ContentDescriptors;
+
             // do not move them to editDatasetVersion function
             this.DatasetRepo.Evict();
             this.DatasetVersionRepo.Evict();
@@ -500,6 +511,12 @@ namespace BExIS.Dlm.Services.Data
             this.DatasetRepo.UnitOfWork.ClearCache();
 
             workingCoptDatasetVersion = this.DatasetVersionRepo.Get(workingCoptDatasetVersionId);
+            if (metadata != null)
+                workingCoptDatasetVersion.Metadata = metadata;
+            if (xmlExtendedPropertyValues != null)
+                workingCoptDatasetVersion.XmlExtendedPropertyValues = xmlExtendedPropertyValues;
+            if (contentDescriptors != null)
+                workingCoptDatasetVersion.ContentDescriptors = contentDescriptors;
 
             return editDatasetVersion(workingCoptDatasetVersion, createdTuples, editedTuples, deletedTuples, unchangedTuples);
         }
@@ -511,7 +528,7 @@ namespace BExIS.Dlm.Services.Data
 
         private DatasetVersion getDatasetWorkingCopy(Int64 datasetId)
         {
-            DatasetVersion dsVersion = DatasetVersionRepo.Query(p =>
+            DatasetVersion dsVersion = DatasetVersionRepo.Get(p =>
                                        p.Dataset.Id == datasetId
                                        && p.Dataset.Status == DatasetStatus.CheckedOut
                                        && p.Status == DatasetVersionStatus.CheckedOut
