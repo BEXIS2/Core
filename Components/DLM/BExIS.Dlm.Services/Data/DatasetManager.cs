@@ -510,6 +510,7 @@ namespace BExIS.Dlm.Services.Data
             this.DataTupleVerionRepo.Evict();
             this.DatasetRepo.UnitOfWork.ClearCache();
 
+            // maybe its better to use Merge function ...
             workingCoptDatasetVersion = this.DatasetVersionRepo.Get(workingCoptDatasetVersionId);
             if (metadata != null)
                 workingCoptDatasetVersion.Metadata = metadata;
