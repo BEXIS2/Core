@@ -6,7 +6,7 @@
 
     <!-- Role Entity Properties -->
     <property name="Description" type="String" />
-    
+
     <set name="Users" table="Roles_Users" lazy="true">
       <key column="RoleRef"/>
       <many-to-many column="UserRef" class="User"/>

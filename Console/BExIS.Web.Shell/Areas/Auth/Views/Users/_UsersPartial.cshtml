@@ -1,49 +1,300 @@
 ﻿@using Telerik.Web.Mvc.UI
 @using BExIS.Web.Shell.Areas.Auth.Models;
 
-@{ 
-    GridPagerStyles pagerStyles = GridPagerStyles.NextPreviousAndNumeric;
-    pagerStyles |= GridPagerStyles.PageSizeDropDown;
-}
+@model List<UserModel>
 
-@(Html.Telerik().Grid<UserModel>()
+@(Html.Telerik().Grid(Model)
         .Name("Grid_Users")
         .EnableCustomBinding(true)
-        .DataKeys(keys => 
+        .DataKeys(keys =>
         {
-            keys.Add(r => r.Id);
+            keys.Add(u => u.Id);
         })
+        .ToolBar(command =>
+            {
+                command.Custom().Name("Create").Text("New User").Ajax(true).ButtonType(GridButtonType.ImageAndText).ImageHtmlAttributes(new { @class = "t-icon t-add" });
+            })
         .Columns(columns =>
         {
             columns.Command(command =>
             {
-                command.Custom("Details").ButtonType(GridButtonType.Image);
-                command.Edit().ButtonType(GridButtonType.Image);
-                command.Delete().ButtonType(GridButtonType.Image);
-            }).Title("Actions").HtmlAttributes(new { style = "text-align: center" });
-            columns.Bound(u => u.Id).ReadOnly();
-            columns.Bound(u => u.UserName).ReadOnly();
+                command.Custom("Details").Ajax(true).ButtonType(GridButtonType.BareImage).ImageHtmlAttributes(new { @class = "t-icon t-edit" });
+                command.Custom("Delete").Ajax(true).ButtonType(GridButtonType.BareImage).ImageHtmlAttributes(new { @class = "t-icon t-delete" });
+            }).Title("Actions").Width(90).HtmlAttributes(new { style = "text-align:left" });
+            columns.Bound(u => u.Id).Width(100);
+            columns.Bound(u => u.UserName).Width(250);
             columns.Bound(u => u.Email);
-            columns.Bound(u => u.RegistrationDate).ReadOnly();
-            columns.Bound(u => u.LastLoginDate).ReadOnly();
-            columns.Bound(u => u.LastActivityDate).ReadOnly();
-            columns.Bound(u => u.IsApproved).ClientTemplate("<input type='checkbox' disabled='disabled' name='IsApproved' <#= IsApproved? checked='checked' : '' #> />");
-            columns.Bound(u => u.IsLockedOut).ClientTemplate("<input type='checkbox' disabled='disabled' name='IsLockedOut' <#= IsLockedOut? checked='checked' : '' #> />");
+            columns.Bound(u => u.Comment);
         })
+        .ClientEvents(clientEvents => clientEvents.OnCommand("onCommand"))
         .DataBinding(dataBinding => dataBinding.Ajax()
-            .OperationMode(GridOperationMode.Server)
-            .Select("Users_Select", "Users")
-            .Update("Users_Update", "Users")
-            .Delete("Users_Delete", "Users"))
-        .Pageable(pageable => pageable
-            .Style(pagerStyles)
-            .Position(GridPagerPosition.Both)
-            .PageSize(12, new int[] { 12, 24, 32, 48, 64 })
-            .Total((int)ViewData["total"]))
+            .OperationMode(GridOperationMode.Client)
+            .Select("Users_Select", "Users"))
+        .Filterable()
         .Sortable(sortable => sortable
             .OrderBy(orderby => orderby
-                .Add(r => r.Id ).Ascending()))
-        .Editable(editable => editable
-            .Mode(GridEditMode.InLine))
-        .Filterable()
+                .Add(r => r.Id).Descending()))
+        .Scrollable(scrollable => scrollable.Height(500))
 )
+
+@(Html.Telerik().Window()
+    .Name("windowCreation")
+    .Title("User Creation")
+    .Draggable(true)
+    .Modal(true)
+    .Visible(false)
+    .Scrollable(true)
+    .Content(@<text>
+        <div id="contentWindowCreation" style="overflow-y:scroll; max-height:500px"></div>
+    </text>)
+    .ClientEvents(clientEvents => clientEvents
+        .OnActivate("onActivateWindowCreation")
+        //.OnOpen("onOpenWindowCreation")
+        .OnClose("onCloseWindowCreation")
+    )
+)
+
+@(Html.Telerik().Window()
+    .Name("windowDetails")
+    .Title("User Details")
+    .Draggable(true)
+    .Modal(true)
+    .Visible(false)
+    .Content(@<text>
+        <div id="contentWindowDetails"></div>
+    </text>)
+    .ClientEvents(clientEvents => clientEvents
+        .OnActivate("onActivateWindowDetails")
+        //.OnOpen("onOpenWindowDetails")
+        .OnClose("onCloseWindowDetails")
+    )
+)
+
+@(Html.Telerik().Window()
+    .Name("windowDeletion")
+    .Title("User Deletion")
+    .Draggable(true)
+    .Modal(true)
+    .Visible(false)
+    .Content(@<text>
+        <div id="contentWindowDeletion" style="overflow-y:auto; max-height:500px"></div>
+    </text>)
+    .ClientEvents(clientEvents => clientEvents
+        .OnActivate("onActivateWindowDeletion")
+        //.OnOpen("onOpenWindowDeletion")
+        .OnClose("onCloseWindowDeletion")
+    )
+)
+
+<script type="text/javascript">
+
+    function onCommand(e) {
+
+        if (e.name == "Create") {
+            $.get('@Url.Action("Create", "Users")', function (data) {
+                $('#contentWindowCreation').html(data);
+            });
+
+            var windowCreation = $('#windowCreation').data('tWindow');
+            windowCreation.center().open();
+        }
+
+        if (e.name == "Details") {
+            var userID = e.dataItem.Id;
+
+            $.get('@Url.Action("Details", "Users")', { Id: userID }, function (data) {
+                $('#contentWindowDetails').html(data);
+            });
+
+            $.get('@Url.Action("UserInfo", "Users")', { Id: userID }, function (data) {
+                $('#contentTabstripUserInfo').html(data);
+            });
+
+            var windowDetails = $('#windowDetails').data('tWindow');
+            windowDetails.center().open();
+        }
+
+        if (e.name == "Delete") {
+            var userID = e.dataItem.Id;
+
+            $.get('@Url.Action("Delete", "Users")', { Id: userID }, function (data) {
+
+                    $('#contentWindowDeletion').html(data);                
+            });
+
+            var windowDeletion = $('#windowDeletion').data('tWindow');
+            windowDeletion.center().open();
+        }
+    }
+
+    //
+    //
+    // Create
+
+    function cancelWindowCreation() {
+        var windowCreation = $('#windowCreation').data('tWindow');
+        windowCreation.close();
+    }
+
+    function onActivateWindowCreation() {
+        var windowCreation = $('#windowCreation .t-window-content');
+
+        windowCreation.css("height", "auto");
+        windowCreation.css("width", "auto");
+    }
+
+    function onCloseWindowCreation() {
+        $('#contentWindowCreation').empty();
+    }
+
+    function onSuccessWindowCreation(e) {
+        var windowCreation = $('#windowCreation').data('tWindow');
+        windowCreation.close();
+
+        window.location.href = '@Url.Action("Users", "Users")';
+    }
+
+    //
+    //
+    // Details
+
+    function cancelUserEdit(e) {
+        $.get('@Url.Action("UserInfo", "Users")', { Id: e }, function (data) {
+            $('#contentTabstripUserInfo').html(data);
+        });
+    }
+
+    function editUserInfo(e) {
+        $.get('@Url.Action("UserEdit", "Users")', { Id: e }, function (data) {
+            $('#contentTabstripUserInfo').html(data);
+        });
+    }
+
+    function onActivateWindowDetails(e) {
+        var windowDetails = $('#windowDetails .t-window-content');
+
+        windowDetails.css("height", "auto");
+        windowDetails.css("width", "auto");
+    }
+
+    function onCloseWindowDetails(e) {
+        $('#contentWindowDetails').empty();
+
+        @*window.location.href = '@Url.Action("Users", "Users")';*@
+    }
+
+    function onSelectTabstripDetails(e, userID) {
+        var tab = $(e.item);
+
+        switch (tab.index()) {
+            case 0:
+                $.get('@Url.Action("UserInfo", "Users")', { Id: userID }, function (data) {
+                    $('#contentTabstripUserInfo').html(data);
+                });
+                $('#contentTabstripMembership').empty();
+                break;
+
+            case 1:
+                $.get('@Url.Action("Membership", "Users")', { Id: userID }, function (data) {
+                    $('#contentTabstripMembership').html(data);
+                });
+                $('#contentTabstripUserInfo').empty();
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    //
+    //
+    // Delete
+
+    function cancelWindowDeletion() {
+        var windowDeletion = $('#windowDeletion').data('tWindow');
+        windowDeletion.close();
+    }
+
+    function onCloseWindowDeletion() {
+        $('#contentWindowDeletion').empty();
+    }
+
+    function onActivateWindowDeletion(e) {
+        var windowDeletion = $('#windowDeletion .t-window-content');
+
+        windowDeletion.css("height", "auto");
+        windowDeletion.css("width", "auto");
+    }
+
+    function onSuccessWindowDeletion(e) {
+        var windowDeletion = $('#windowDeletion').data('tWindow');
+        windowDeletion.close();
+
+        window.location.href = '@Url.Action("Users", "Users")';
+    }
+
+    //
+    //
+    // Error
+
+    function confirmWindowError(e) {
+        switch (e) {
+            case "windowDelete":
+                var window = $('#windowDeletion').data('tWindow');
+                break;
+
+            case "windowDetails":
+                var window = $('#windowDetails').data('tWindow');
+                break;
+
+            default:
+                break;
+        }
+
+        window.close();
+    }
+
+    //
+    //
+    // RESET FORM JQUERY CODE!!!!!
+    (function ($) {
+
+        //re-set all client validation given a jQuery selected form or child
+        $.fn.resetValidation = function () {
+
+            var $form = this.closest('form');
+
+            //reset jQuery Validate's internals
+            $form.validate().resetForm();
+
+            //reset unobtrusive validation summary, if it exists
+            $form.find("[data-valmsg-summary=true]")
+                .removeClass("validation-summary-errors")
+                .addClass("validation-summary-valid")
+                .find("ul").empty();
+
+            //reset unobtrusive field level, if it exists
+            $form.find("[data-valmsg-replace]")
+                .removeClass("field-validation-error")
+                .addClass("field-validation-valid")
+                .empty();
+
+            return $form;
+        };
+
+        //reset a form given a jQuery selected form or a child
+        //by default validation is also reset
+        $.fn.formReset = function (resetValidation) {
+            var $form = this.closest('form');
+
+            $form[0].reset();
+
+            if (resetValidation == undefined || resetValidation) {
+                $form.resetValidation();
+            }
+
+            return $form;
+        }
+    })(jQuery);
+
+</script> 

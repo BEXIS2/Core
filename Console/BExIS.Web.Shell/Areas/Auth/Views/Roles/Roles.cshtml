@@ -1,7 +1,11 @@
-﻿@{
+﻿@using BExIS.Web.Shell.Areas.Auth.Models;
+
+@model List<RoleModel>
+
+@{
     ViewBag.Title = "Roles";
 }
 
 <h2>Roles</h2>
 
-@Html.Partial("_RolesPartial")
+@Html.Partial("_RolesPartial", Model)

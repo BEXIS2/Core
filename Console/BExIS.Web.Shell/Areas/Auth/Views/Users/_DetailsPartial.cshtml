@@ -1,0 +1,40 @@
+﻿@using Telerik.Web.Mvc.UI;
+@using BExIS.Web.Shell.Areas.Auth.Models;
+
+@model long
+
+@(Html.Telerik().TabStrip()
+    .Name("tabstripDetails")
+    .Items(items =>
+    {
+        items.Add()
+            .Text("User Info")
+            .Content(@<text>
+                <div id="contentTabstripUserInfo" style="overflow-y:auto; max-height:500px"></div>
+            </text>);
+    
+    items.Add()
+            .Text("Membership")
+            .Content(@<text>
+                <div id="contentTabstripMembership" style="overflow-y:auto; max-height:500px"></div>
+            </text>);
+    
+    items.Add()
+            .Text("Feature Permissions")
+            .Enabled(false)
+            .Content(@<text>
+                <div id="contentTabstripFeaturePermissions" style="overflow-y:auto; max-height:500px"></div>
+            </text>);
+    
+    items.Add()
+            .Text("Data Permissions")
+            .Enabled(false)
+            .Content(@<text>
+                <div id="contentTabstripDataPermissions"style="overflow-y:auto; max-height:500px"></div>
+            </text>);
+    })
+    .SelectedIndex(0)
+    .ClientEvents(clientEvents => clientEvents
+        .OnSelect("function(e) { onSelectTabstripDetails.call(this,e," + Model + "); }")
+    )
+)

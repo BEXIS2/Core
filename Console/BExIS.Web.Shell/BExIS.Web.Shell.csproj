@@ -50,6 +50,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DataAnnotationsExtensions">
+      <HintPath>..\..\packages\DataAnnotationsExtensions.1.1.0.0\lib\NETFramework40\DataAnnotationsExtensions.dll</HintPath>
+    </Reference>
+    <Reference Include="DataAnnotationsExtensions.ClientValidation">
+      <HintPath>..\..\packages\DataAnnotationsExtensions.MVC3.1.1.0.0\lib\NETFramework40\DataAnnotationsExtensions.ClientValidation.dll</HintPath>
+    </Reference>
     <Reference Include="DocumentFormat.OpenXml, Version=2.0.5022.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\bexispp\svn\branches\Application\BExIS.App\Labraries\DocumentFormat.OpenXml.dll</HintPath>
@@ -137,6 +143,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Libraries\Vaiona\Vaiona.Web.Mvc.dll</HintPath>
     </Reference>
+    <Reference Include="WebActivator">
+      <HintPath>..\..\packages\WebActivator.1.2.0.0\lib\NETFramework40\WebActivator.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_GlobalResources\EditorLocalization.de-DE.designer.cs">
@@ -174,13 +183,19 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>UploadLocalization.en-US.resx</DependentUpon>
     </Compile>
+    <Compile Include="App_Start\RegisterClientValidationExtensions.cs" />
     <Compile Include="Areas\Auth\AuthAreaRegistration.cs" />
     <Compile Include="Areas\Auth\Controllers\AccountController.cs" />
     <Compile Include="Areas\Auth\Controllers\RolesController.cs" />
     <Compile Include="Areas\Auth\Controllers\UsersController.cs" />
     <Compile Include="Areas\Auth\Models\AccountModel.cs" />
+    <Compile Include="Areas\Auth\Models\InfoModel.cs" />
+    <Compile Include="Areas\Auth\Models\RoleCreationModel.cs" />
     <Compile Include="Areas\Auth\Models\RoleModel.cs" />
+    <Compile Include="Areas\Auth\Models\RoleUserModel.cs" />
+    <Compile Include="Areas\Auth\Models\UserCreationModel.cs" />
     <Compile Include="Areas\Auth\Models\UserModel.cs" />
+    <Compile Include="Areas\Auth\Models\UserRoleModel.cs" />
     <Compile Include="Areas\DCM\Controllers\HomeController.cs" />
     <Compile Include="Areas\DCM\DCMAreaRegistration.cs" />
     <Compile Include="Areas\DCM\Models\ActionInfo.cs" />
@@ -254,6 +269,8 @@
     <Content Include="Scripts\2012.3.1018\telerik.treeview.min.js" />
     <Content Include="Scripts\2012.3.1018\telerik.upload.min.js" />
     <Content Include="Scripts\2012.3.1018\telerik.window.min.js" />
+    <Content Include="Scripts\Auth\htmlparser.js" />
+    <Content Include="Scripts\Auth\UFrame.js" />
     <Content Include="Scripts\jquery-1.7.1.min.js" />
     <Content Include="Scripts\jquery.ba-resize.min.js" />
     <Content Include="Scripts\Search\search.js" />
@@ -846,8 +863,43 @@
     <Content Include="Areas\Search\Views\Home\_editSearchAttribute.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Areas\Auth\Views\Users\_UserEditPartial.cshtml" />
+    <Content Include="Areas\Auth\Views\Users\_UserInfoPartial.cshtml" />
+    <Content Include="Areas\Auth\Views\Users\_InfoPartial.cshtml" />
     <None Include="Properties\PublishProfiles\BEXIS2 DEV.pubxml" />
     <None Include="Properties\PublishProfiles\BEXIS2.pubxml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\Auth\Views\Roles\_CreatePartial.cshtml" />
+    <Content Include="Areas\Auth\Views\Roles\_DeletePartial.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\Auth\Views\Account\ChangePassword.cshtml" />
+    <Content Include="Areas\Auth\Views\Account\_ChangePasswordPartial.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\Auth\Views\Roles\_MembershipPartial.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\Auth\Views\Users\_DeletePartial.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\Auth\Views\Users\_DetailsPartial.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\Auth\Views\Users\_CreatePartial.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\Auth\Views\Users\_MembershipPartial.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\Auth\Views\Roles\_RoleInfoPartial.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\Auth\Views\Roles\_RoleEditPartial.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\Auth\Views\Roles\_DetailsPartial.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

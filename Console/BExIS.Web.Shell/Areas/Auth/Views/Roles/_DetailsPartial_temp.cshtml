@@ -1,0 +1,82 @@
+﻿@using Telerik.Web.Mvc.UI;
+@using BExIS.Web.Shell.Areas.Auth.Models;
+
+@model RoleModel
+
+<script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+
+@using (Html.BeginForm("Edit", "Roles", FormMethod.Post))
+{
+    <div>
+        @Html.HiddenFor(m => m.Id)
+    </div>
+    
+    <table style="width:100%;">
+
+        <colgroup>
+            <col width="25%">
+            <col width="75%">
+        </colgroup>
+
+        <tr>
+            <td>
+                <b>@Html.LabelFor(m => m.Id):</b>
+            </td>
+            <td>
+                @Html.DisplayFor(m => m.Id) 
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                <b>@Html.LabelFor(m => m.RoleName):</b>
+            </td>
+            <td>
+                @Html.TextBoxFor(m => m.RoleName)
+                @Html.ValidationMessageFor(m => m.RoleName)
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                <b>@Html.LabelFor(m => m.Description):</b>
+            </td>
+            <td>
+                @Html.TextAreaFor(m => m.Description) 
+                @Html.ValidationMessageFor(m => m.Description)
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                <b>@Html.LabelFor(m => m.Comment):</b>
+            </td>
+            <td>
+                @Html.TextAreaFor(m => m.Comment)
+                @Html.ValidationMessageFor(m => m.Comment)
+            </td>
+        </tr>
+
+    </table>
+
+    <p>
+        <button type="button" onclick="submitDetails()">Save</button>
+        <button type="button" onclick="cancelDetails()">Cancel</button>
+    </p>
+}
+
+<script type="text/javascript">
+
+    function submitDetails()
+    {
+        var id = '@Model.Id';
+        var roleName = '@Model.RoleName';
+        var description = '@Model.Description';
+        var comment = '@Model.Comment';
+
+        $.post('@Url.Action("Details","Roles")', { Id: id, RoleName: roleName, Description: description, Comment: comment }, function (data) {
+            $('#contentDetails').html(data);
+        });
+    }
+</script>

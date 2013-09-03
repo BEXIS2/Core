@@ -70,10 +70,6 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
 
         public ActionResult Register()
         {
-            RoleManager roleManager = new RoleManager();
-
-            roleManager.Create("test", "hallo");
-
             return View();
         }
 
@@ -86,20 +82,20 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
             if (ModelState.IsValid)
             {
                 // Attempt to register the user
-                MembershipCreateStatus createStatus;
+                UserCreateStatus createStatus;
 
                 UserManager userManager = new UserManager();
 
-                userManager.Create(model.UserName, model.Email, model.Password, model.PasswordQuestion, model.PasswordAnswer, true, 6, "qwertzuioplkjhgfdsayxcvbqwertztu", out createStatus);
+                userManager.Create(model.UserName, model.Email, model.Password, model.SecurityQuestion, model.SecurityAnswer, null, true, 6, "qwertzuioplkjhgfdsayxcvbqwertztu", out createStatus);
 
-                if (createStatus == MembershipCreateStatus.Success)
+                if (createStatus == UserCreateStatus.Success)
                 {
                     FormsAuthentication.SetAuthCookie(model.UserName, false /* createPersistentCookie */);
                     return RedirectToAction("Index", "Home", new { area = "" });
                 }
                 else
                 {
-                    ModelState.AddModelError("", ErrorCodeToString(createStatus));
+                    ModelState.AddModelError("", "BLAA");
                 }
             }
 

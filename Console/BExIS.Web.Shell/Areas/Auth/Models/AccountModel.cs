@@ -55,23 +55,23 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
 
         [DataType(DataType.Password)]
         [Display(Name = "Confirm password")]
-        [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+        [Compare("Password", ErrorMessage = "The password and confirmation do not match.")]
         public string ConfirmPassword { get; set; }
 
         [Required]
         [DataType(DataType.Text)]
-        [Display(Name = "Password Question")]
-        public string PasswordQuestion { get; set; }
+        [Display(Name = "Security Question")]
+        public string SecurityQuestion { get; set; }
 
         [Required]
         [DataType(DataType.Password)]
-        [Display(Name = "Password Answer")]
-        public string PasswordAnswer { get; set; }
+        [Display(Name = "Security Answer")]
+        public string SecurityAnswer { get; set; }
 
         [Required]
         [DataType(DataType.Password)]
-        [Display(Name = "Confirm Password Answer")]
-        [Compare("PasswordAnswer", ErrorMessage = "The password answer and confirmation password answer do not match.")]
-        public string ConfirmPasswordAnswer { get; set; }
+        [Display(Name = "Confirm Security Answer")]
+        [Compare("SecurityAnswer", ErrorMessage = "The security answer and confirmation do not match.")]
+        public string ConfirmSecuritydAnswer { get; set; }
     }
 }

@@ -1,11 +1,14 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
+using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Text;
-using System.Web.Security;
 using BExIS.Security.Entities;
 using Vaiona.Persistence.Api;
+using System.Diagnostics.Contracts;
+using System.Linq.Expressions;
+using System.Web.Security;
+using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 
 namespace BExIS.Security.Services
 {
@@ -106,11 +109,11 @@ namespace BExIS.Security.Services
             else
             {
                 return (false);
-            }                
+            }
         }
 
         //
-        public User Create(string userName, string email, string password, string passwordQuestion, string passwordAnswer, bool uniqueEmail, int minPasswordLength, string machineKey, out MembershipCreateStatus status, string comment = "", bool isApproved = false)
+        public User Create(string userName, string email, string password, string passwordQuestion, string passwordAnswer, string comment,  bool uniqueEmail, int minPasswordLength, string machineKey, out UserCreateStatus status, bool isApproved = true)
         {
             // Requirements
             Contract.Requires(!String.IsNullOrWhiteSpace(userName));
@@ -124,17 +127,17 @@ namespace BExIS.Security.Services
             Contract.Requires(isApproved != null);
 
             // Variables
-            
+
             // Computations
             if (uniqueEmail && !String.IsNullOrWhiteSpace(GetUserNameByEmail(email)))
             {
-                status = MembershipCreateStatus.DuplicateEmail;
+                status = UserCreateStatus.DuplicateEmail;
                 return null;
             }
 
             if (password.Length < minPasswordLength)
             {
-                status = MembershipCreateStatus.InvalidPassword;
+                status = UserCreateStatus.InvalidPassword;
                 return null;
             }
 
@@ -183,12 +186,12 @@ namespace BExIS.Security.Services
                     uow.Commit();
                 }
 
-                status = MembershipCreateStatus.Success;
+                status = UserCreateStatus.Success;
                 return (user);
             }
             else
             {
-                status = MembershipCreateStatus.DuplicateUserName;
+                status = UserCreateStatus.DuplicateUserName;
                 return null;
             }
         }
@@ -316,14 +319,14 @@ namespace BExIS.Security.Services
             // Variables
             byte[] salt = new byte[32];
             new RNGCryptoServiceProvider().GetBytes(salt);
-            
+
             // Computations
             return Convert.ToBase64String(salt);
         }
 
         //
         public IQueryable<User> GetAllUsers()
-        {            
+        {
             return (Repo.Query());
         }
 
@@ -545,7 +548,7 @@ namespace BExIS.Security.Services
             user = Repo.Reload(user);
 
             // Computations
-            switch(failureType)
+            switch (failureType)
             {
                 case FailureType.Password:
                     if (DateTime.Compare(user.LastPasswordFailureDate, referenceTime) > 0)
@@ -560,12 +563,12 @@ namespace BExIS.Security.Services
                         }
 
                         using (IUnitOfWork uow = this.GetUnitOfWork())
-                {
+                        {
                             IRepository<User> repo = uow.GetRepository<User>();
                             repo.Put(user);
                             uow.Commit();
                         }
-                }
+                    }
                     else
                     {
                         user.LastPasswordFailureDate = DateTime.Now;
@@ -575,10 +578,10 @@ namespace BExIS.Security.Services
                         {
                             IRepository<User> repo = uow.GetRepository<User>();
                             repo.Put(user);
-                uow.Commit();
-            }
+                            uow.Commit();
+                        }
                     }
-                        
+
                     break;
                 case FailureType.PasswordAnswer:
                     if (DateTime.Compare(user.LastPasswordAnswerFailureDate, referenceTime) > 0)
@@ -591,7 +594,7 @@ namespace BExIS.Security.Services
                         {
                             user.LastLockOutDate = DateTime.Now;
                             user.IsLockedOut = true;
-        }
+                        }
 
                         using (IUnitOfWork uow = this.GetUnitOfWork())
                         {
@@ -601,17 +604,17 @@ namespace BExIS.Security.Services
                         }
                     }
                     else
-        {
+                    {
                         user.LastActivityDate = DateTime.Now;
                         user.LastPasswordAnswerFailureDate = DateTime.Now;
                         user.PasswordAnswerFailureCount = 1;
 
                         using (IUnitOfWork uow = this.GetUnitOfWork())
-            {
-                IRepository<User> repo = uow.GetRepository<User>();
+                        {
+                            IRepository<User> repo = uow.GetRepository<User>();
                             repo.Put(user);
-                uow.Commit();
-            }
+                            uow.Commit();
+                        }
                     }
 
                     break;
@@ -684,5 +687,15 @@ namespace BExIS.Security.Services
         }
 
         #endregion
+
+        public bool ApproveUser(string userName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetUserNameById(long id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

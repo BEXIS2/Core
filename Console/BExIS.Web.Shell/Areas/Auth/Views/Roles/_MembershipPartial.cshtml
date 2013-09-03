@@ -1,0 +1,24 @@
+﻿@using Telerik.Web.Mvc.UI;
+@using BExIS.Web.Shell.Areas.Auth.Models;
+
+@model List<RoleUserModel>
+
+@(Html.Telerik().Grid(Model)
+        .Name("Grid_RoleMembership")
+        .HtmlAttributes(new { style = "width: 450px" } )
+        .Columns(columns =>
+        {
+            columns.Bound(u => u.UserInRole)
+                   .ClientTemplate("<input type='checkbox' <#= UserInRole ? 'checked' : '' #>  />")
+                   .Title("UIR")
+                   .Width(36)
+                   .HtmlAttributes(new { style = "text-align:center" });
+            
+            columns.Bound(u => u.Id).Width(100);
+            columns.Bound(u => u.UserName).Width(200);
+            columns.Bound(u => u.Email);
+        })
+        .DataBinding(dataBinding => dataBinding.Ajax()
+                .Select("RoleMembership_Select", "Roles", (long)ViewData["RoleID"]))
+        .Scrollable(scrollable => scrollable.Height(350))
+)

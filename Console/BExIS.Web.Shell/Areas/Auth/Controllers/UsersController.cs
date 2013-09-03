@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Web.Mvc;
+using System.Web.Security;
 using BExIS.Security.Entities;
 using BExIS.Security.Services;
 using BExIS.Web.Shell.Areas.Auth.Models;
@@ -11,130 +14,46 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
 {
     public class UsersController : Controller
     {
+        #region Grid View
+
         public ActionResult Users()
         {
-            UserManager userManager = new UserManager();
-
-            // TOTAL
-            ViewData["total"] = userManager.GetAllUsers().Count();
-
             return View();
         }
 
-        [GridAction(EnableCustomBinding = true)]
-        public ActionResult Users_Select(GridCommand command)
+        // Create
+        public ActionResult Create()
         {
-            UserManager userManager = new UserManager();
+            return PartialView("_CreatePartial");
+        }
 
-            // DATA
-            IQueryable<User> data = userManager.GetAllUsers();
-
-            #region Filtering
-
-            // Filtering
-            if (command.FilterDescriptors.Any())
+        [HttpPost]
+        public ActionResult Create(UserCreationModel model)
+        {
+            if (ModelState.IsValid)
             {
-                data = data.Where(ExpressionBuilder.Expression<User>(command.FilterDescriptors));
-            }
+                UserCreateStatus createStatus;
 
-            #endregion
+                UserManager userManager = new UserManager();
 
-            #region Sorting
+                userManager.Create(model.UserName, model.Email, model.Password, model.SecurityQuestion, model.SecurityAnswer, model.Comment, true, 6, "qwertzuioplkjhgfdsayxcvbqwertztu", out createStatus);
 
-            // Sorting
-            if (command.SortDescriptors.Any())
-            {
-                foreach (SortDescriptor sortDescriptor in command.SortDescriptors)
+
+                if (createStatus == UserCreateStatus.Success)
                 {
-                    if (sortDescriptor.SortDirection == ListSortDirection.Ascending)
-                    {
-                        switch (sortDescriptor.Member)
-                        {
-                            case "Id":
-                                data = data.OrderBy(u => u.Id);
-                                break;
-                            case "Name":
-                                data = data.OrderBy(u => u.Name);
-                                break;
-                            case "Email":
-                                data = data.OrderBy(u => u.Email);
-                                break;
-                            case "RegistrationDate":
-                                data = data.OrderBy(u => u.RegistrationDate);
-                                break;
-                            case "LastLoginDate":
-                                data = data.OrderBy(u => u.LastLoginDate);
-                                break;
-                            case "LastActivityDate":
-                                data = data.OrderBy(u => u.LastActivityDate);
-                                break;
-                            case "IsApproved":
-                                data = data.OrderBy(u => u.IsApproved);
-                                break;
-                            case "IsLockedOut":
-                                data = data.OrderBy(u => u.IsLockedOut);
-                                break;
-                            case "Comment":
-                                data = data.OrderBy(u => u.Comment);
-                                break;
-                        }
-                    }
-                    else
-                    {
-                        switch (sortDescriptor.Member)
-                        {
-                            case "Id":
-                                data = data.OrderByDescending(u => u.Id);
-                                break;
-                            case "Name":
-                                data = data.OrderByDescending(u => u.Name);
-                                break;
-                            case "Email":
-                                data = data.OrderByDescending(u => u.Email);
-                                break;
-                            case "RegistrationDate":
-                                data = data.OrderByDescending(u => u.RegistrationDate);
-                                break;
-                            case "LastLoginDate":
-                                data = data.OrderByDescending(u => u.LastLoginDate);
-                                break;
-                            case "LastActivityDate":
-                                data = data.OrderByDescending(u => u.LastActivityDate);
-                                break;
-                            case "IsApproved":
-                                data = data.OrderByDescending(u => u.IsApproved);
-                                break;
-                            case "IsLockedOut":
-                                data = data.OrderByDescending(u => u.IsLockedOut);
-                                break;
-                            case "Comment":
-                                data = data.OrderByDescending(u => u.Comment);
-                                break;
-                        }
-                    }
-
+                    return PartialView("_CreatePartial", model);
+                }
+                else
+                {
+                    ModelState.AddModelError(ErrorCodeToErrorKey(createStatus), ErrorCodeToErrorMessage(createStatus));
                 }
             }
 
-            #endregion
-
-            #region Paging
-
-            int total = data.Count();
-
-            #endregion
-
-            data = data.Skip(command.PageSize * (command.Page - 1)).Take(command.PageSize);
-
-            List<UserModel> users = new List<UserModel>();
-            data.ToList().ForEach(u => users.Add(UserModel.Convert(u)));
-
-            return View(new GridModel<UserModel> { Data = users, Total = total });
+            return PartialView("_CreatePartial", model);
         }
 
-        [AcceptVerbs(HttpVerbs.Post)]
-        [GridAction(EnableCustomBinding = true)]
-        public ActionResult Users_Delete(int id, GridCommand command)
+        // Delete
+        public ActionResult Delete(long id)
         {
             UserManager userManager = new UserManager();
 
@@ -142,25 +61,236 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
 
             if (user != null)
             {
+                return PartialView("_DeletePartial", UserModel.Convert(user));         
+            }
+            else
+            {
+                return PartialView("_InfoPartial", new InfoModel("windowDelete", "The user does not exist!"));
+            }
+        }
+
+        [HttpPost]
+        public ActionResult Delete(UserModel model)
+        {
+            UserManager userManager = new UserManager();
+
+            User user = userManager.GetUserById(model.Id);
+
+            if (user != null)
+            {
                 userManager.Delete(user);
             }
 
-            return Users_Select(command);
+            return PartialView("_DeletePartial", model);
         }
 
-        [AcceptVerbs(HttpVerbs.Post)]
-        [GridAction(EnableCustomBinding = true)]
-        public ActionResult Users_Update(int id, GridCommand command)
+        // Details
+        public ActionResult Details(long id)
+        {
+            return PartialView("_DetailsPartial", id);
+        }
+
+        public ActionResult UserInfo(long id)
         {
             UserManager userManager = new UserManager();
 
             User user = userManager.GetUserById(id);
 
-            TryUpdateModel(user);
-
-            userManager.Update(user);
-
-            return Users_Select(command);
+            if (user != null)
+            {
+                return PartialView("_UserInfoPartial", UserModel.Convert(user));
+            }
+            else
+            {
+                return PartialView("_InfoPartial", new InfoModel("windowDetails", "The user does not exist!"));
+            }
         }
+
+        public ActionResult UserEdit(long id)
+        {
+            UserManager userManager = new UserManager();
+
+            User user = userManager.GetUserById(id);
+
+            if (user != null)
+            {
+                return PartialView("_UserEditPartial", UserModel.Convert(user));
+            }
+            else
+            {
+                return PartialView("_InfoPartial", new InfoModel("windowDetails", "The user does not exist!"));
+            }
+        }
+
+        [HttpPost]
+        public ActionResult UserEdit(UserModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                UserManager userManager = new UserManager();
+
+                User user = userManager.GetUserById(model.Id);
+
+                if (user != null)
+                {
+                    user.Email = model.Email;
+                    user.Comment = model.Comment;
+
+                    userManager.Update(user);
+
+                    return PartialView("_UserInfoPartial", model);
+                }
+                else
+                {
+                    return PartialView("_InfoPartial", new InfoModel("windowDetails", "The user does not exist!"));
+                }
+            }
+
+            return PartialView("_UserEditPartial", model);
+        }
+
+        // Membership
+        public ActionResult Membership(long id)
+        {
+            UserManager userManager = new UserManager();
+
+            User user = userManager.GetUserById(id);
+
+            if (user != null)
+            {
+                ViewData["UserID"] = id;
+
+                return PartialView("_MembershipPartial");
+            }
+            else
+            {
+                return PartialView("_InfoPartial", new InfoModel("windowDelete", "The user does not exist!"));
+            }
+
+            
+        }
+
+        [GridAction(EnableCustomBinding = true)]
+        public ActionResult UserMembership_Select(long id)
+        {
+            RoleManager roleManager = new RoleManager();
+            UserManager userManager = new UserManager();
+
+            // DATA
+            User user = userManager.GetUserById(id);
+
+            List<UserRoleModel> roles = new List<UserRoleModel>();
+
+            if (user != null)
+            {
+                IQueryable<Role> data = roleManager.GetAllRoles();
+
+                data.ToList().ForEach(r => roles.Add(UserRoleModel.Convert(r, roleManager.IsUserInRole(user.Name, r.Name))));
+            }
+
+            return View(new GridModel<UserRoleModel> { Data = roles });
+        }
+
+        // S
+        [GridAction(EnableCustomBinding = true)]
+        public ActionResult Users_Select()
+        {
+            UserManager userManager = new UserManager();
+
+            // DATA
+            IQueryable<User> data = userManager.GetAllUsers();
+
+            List<UserModel> users = new List<UserModel>();
+            data.ToList().ForEach(u => users.Add(UserModel.Convert(u)));
+
+            return View(new GridModel<UserModel> { Data = users });
+        }
+
+        #endregion
+
+
+        #region Validation
+
+        public JsonResult ValidateUserName(string userName, long id = 0)
+        {
+            UserManager userManager = new UserManager();
+
+            User user = userManager.GetUserByName(userName);
+
+            if (user == null)
+            {
+                return Json(true, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                if (user.Id == id)
+                {
+                    return Json(true, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    string error = String.Format(CultureInfo.InvariantCulture, "User name already exists.", userName);
+
+                    return Json(error, JsonRequestBehavior.AllowGet);
+                }
+            }              
+        }
+
+        public JsonResult ValidateEmail(string email, long id = 0)
+        {
+            UserManager userManager = new UserManager();
+
+            User user = userManager.GetUserByEmail(email);
+
+            if (user == null)
+            {
+                return Json(true, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                if (user.Id == id)
+                {
+                    return Json(true, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    string error = String.Format(CultureInfo.InvariantCulture, "Email address already exists.", email);
+
+                    return Json(error, JsonRequestBehavior.AllowGet);
+                }
+            }
+        }
+
+        private static string ErrorCodeToErrorMessage(UserCreateStatus createStatus)
+        {
+            switch (createStatus)
+            {
+                case UserCreateStatus.DuplicateUserName:
+                    return "The user name already exists.";
+
+                case UserCreateStatus.DuplicateEmail:
+                    return "The email address already exists.";
+
+                default:
+                    return "An unknown error occurred. Please verify your entry and try again. If the problem persists, please contact your system administrator.";
+            }
+        }
+
+        private static string ErrorCodeToErrorKey(UserCreateStatus createStatus)
+        {
+            switch (createStatus)
+            {
+                case UserCreateStatus.DuplicateUserName:
+                    return "UserName";
+
+                case UserCreateStatus.DuplicateEmail:
+                    return "Email";
+
+                default:
+                    return "";
+            }
+        }
+
+        #endregion
     }
 }

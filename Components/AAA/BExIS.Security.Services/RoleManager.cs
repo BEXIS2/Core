@@ -59,15 +59,14 @@ namespace BExIS.Security.Services
         }
 
         //
-        public Role Create(string roleName, string description, string comment = "")
+        public Role Create(string roleName, string description, string comment, out RoleCreateStatus status)
         {
             // Requirements
             Contract.Requires(!String.IsNullOrWhiteSpace(roleName));
             Contract.Requires(!String.IsNullOrWhiteSpace(description));
-            Contract.Requires(comment != null);
 
             // Computations
-            if (!ExistsRole(roleName))
+            if (!ExistsRoleName(roleName))
             {
                 Role role = new Role()
                 {
@@ -87,10 +86,12 @@ namespace BExIS.Security.Services
                     uow.Commit();
                 }
 
-                return (role);  
+                status = RoleCreateStatus.Success;
+                return (role);
             }
             else
             {
+                status = RoleCreateStatus.DuplicateRoleName;
                 return null;
             }
 
@@ -116,7 +117,7 @@ namespace BExIS.Security.Services
         }
 
         //
-        public bool ExistsRole(string roleName)
+        public bool ExistsRoleName(string roleName)
         {
             // Requirements
             Contract.Requires(!String.IsNullOrWhiteSpace(roleName));
@@ -302,5 +303,21 @@ namespace BExIS.Security.Services
         }
 
         #endregion
+
+
+        public IQueryable<Role> GetRolesFromUser(User user)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IQueryable<User> GetUsersFromRole(Role role)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsUserInRole(User user, Role role)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

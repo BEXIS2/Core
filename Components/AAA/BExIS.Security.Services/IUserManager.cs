@@ -16,11 +16,14 @@ namespace BExIS.Security.Services
 
         #region Methods
 
+        // A
+        bool ApproveUser(string userName);
+
         // C
         bool ChangePassword(string userName, string password, string newPassword, string machineKey, int minPasswordLength);
         bool ChangePasswordQuestionAndPasswordAnswer(string userName, string password, string newPasswordQuestion, string newPasswordAnswer, string machineKey);
 
-        User Create(string userName, string email, string password, string passwordQuestion, string passwordAnswer, bool uniqueEmail, int minPasswordLength, string machineKey, out MembershipCreateStatus status, string comment = "", bool isApproved = false);
+        User Create(string userName, string email, string password, string passwordQuestion, string passwordAnswer, string comment, bool uniqueEmail, int minPasswordLength, string machineKey, out UserCreateStatus status, bool isApproved = false);
 
         // D
         bool Delete(User user);
@@ -34,13 +37,12 @@ namespace BExIS.Security.Services
         // G
         IQueryable<User> GetAllUsers();
 
-        string GetPassword(string userName, string passwordAnswer, int maxFailureAttempts, int failureAttemptsWindow, int minPasswordLength, string machineKey);
-
         User GetUserByEmail(string email);
         User GetUserById(Int64 id, bool isOnline = false);
         User GetUserByName(string userName, bool isOnline = false);
 
         string GetUserNameByEmail(string email);
+        string GetUserNameById(long id);
 
         int GetUsersOnline();
 

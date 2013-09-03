@@ -10,13 +10,13 @@ namespace BExIS.Security.Services
         bool AddUserToRole(User user, Role role);
 
         // C
-        Role Create(string roleName, string description, string comment = "");
+        Role Create(string roleName, string description, string comment, out RoleCreateStatus status);
 
         // D
         bool Delete(Role role);
 
         // E
-        bool ExistsRole(string roleName);
+        bool ExistsRoleName(string roleName);
 
         // F
         IQueryable<User> FindUsersInRole(string roleName, string userNameToMatch);
@@ -27,12 +27,12 @@ namespace BExIS.Security.Services
         Role GetRoleByName(string roleName);
         Role GetRoleById(Int64 id);
 
-        IQueryable<Role> GetRolesFromUser(string userName);
+        IQueryable<Role> GetRolesFromUser(User user);
 
-        IQueryable<User> GetUsersFromRole(string roleName);
+        IQueryable<User> GetUsersFromRole(Role role);
 
         // I
-        bool IsUserInRole(string userName, string roleName);
+        bool IsUserInRole(User user, Role role);
 
         // R
         bool RemoveUserFromRole(User user, Role role);

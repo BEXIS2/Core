@@ -17,7 +17,7 @@
 
     <!-- Mapping Subject Properties -->
     <property name="Name" type="String" />
-    
+
     <property name="Comment" type="String" />
 
   </class>

@@ -55,7 +55,9 @@
     <Compile Include="IRoleManager.cs" />
     <Compile Include="IUserManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RoleCreateStatus.cs" />
     <Compile Include="RoleManager.cs" />
+    <Compile Include="UserCreateStatus.cs" />
     <Compile Include="UserManager.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -1,0 +1,18 @@
+﻿@using BExIS.Web.Shell.Areas.Auth.Models;
+
+@model InfoModel
+
+@using (Html.BeginForm())
+{
+    <div>
+        @Html.HiddenFor(m => m.WindowName)
+    </div>
+    
+    <div align="center">
+        @Html.DisplayFor(m => m.Message)
+    </div>
+    
+    <p align="center">
+        <button type="button" onclick="confirmWindowError('@Model.WindowName')">Ok</button>
+    </p>
+}
