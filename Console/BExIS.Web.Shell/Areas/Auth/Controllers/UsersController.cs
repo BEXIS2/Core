@@ -18,18 +18,10 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
 
         public ActionResult Users()
         {
-            RoleManager roleManager = new RoleManager();
-
-            UserManager userManager = new UserManager();
-
-            User user = userManager.GetUserById(2);
-            Role role = roleManager.GetRoleById(105);
-
-            roleManager.AddUserToRole(user, role);
-
             return View();
         }
 
+        //
         // Create
         public ActionResult Create()
         {
@@ -47,7 +39,6 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
 
                 userManager.Create(model.UserName, model.Email, model.Password, model.SecurityQuestion, model.SecurityAnswer, model.Comment, true, 6, "qwertzuioplkjhgfdsayxcvbqwertztu", out createStatus);
 
-
                 if (createStatus == UserCreateStatus.Success)
                 {
                     return PartialView("_InfoPartial", new InfoModel("windowCreation", "The user was successfully created."));
@@ -61,6 +52,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
             return PartialView("_CreatePartial", model);
         }
 
+        //
         // Delete
         public ActionResult Delete(long id)
         {
@@ -74,7 +66,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
             }
             else
             {
-                return PartialView("_InfoPartial", new InfoModel("windowDelete", "The user does not exist!"));
+                return PartialView("_InfoPartial", new InfoModel("windowDeletion", "The user does not exist!"));
             }
         }
 
@@ -88,13 +80,12 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
             if (user != null)
             {
                 userManager.Delete(user);
-
-                return PartialView("_InfoPartial", new InfoModel("windowDeletion", "The user was successfully deleted."));
             }
 
-            return PartialView("_DeletePartial", model);
+            return PartialView("_InfoPartial", new InfoModel("windowDeletion", "The user was successfully deleted."));
         }
 
+        //
         // Details
         public ActionResult Details(long id)
         {
@@ -165,69 +156,21 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
         {
             UserManager userManager = new UserManager();
 
-            User user = userManager.GetUserById(id);
-
-            RoleManager roleManager = new RoleManager();
-
-            Role role = roleManager.GetRoleById(105);
-
-            roleManager.AddUserToRole(user, role);
+            User user = userManager.GetUserById(id);;
 
             if (user != null)
             {
-                if (ViewData["UserID"] == null)
-                {
-                    ViewData["UserID"] = id;
-                }
+                ViewData["UserID"] = id;
 
                 return PartialView("_MembershipPartial");
             }
             else
             {
-                return PartialView("_InfoPartial", new InfoModel("windowDelete", "The user does not exist!"));
+                return PartialView("_InfoPartial", new InfoModel("windowMembership", "The user does not exist!"));
             }
-
-            
         }
 
-        [HttpPost]
-        public ActionResult Membership(int[] checkedRecords, int[] uncheckedRecords)
-        {
-            if (ModelState.IsValid)
-            {
-                RoleManager roleManager = new RoleManager();
-                UserManager userManager = new UserManager();
-
-                User user = userManager.GetUserById((long)ViewData["UserID"]);
-
-                if(user != null)
-                {
-                    foreach (int id in checkedRecords)
-                    {
-                        Role role = roleManager.GetRoleById(id);
-
-                        if(role != null)
-                        {
-                            roleManager.AddUserToRole(user, role);
-                        }
-                    }
-
-                    foreach(int id in uncheckedRecords)
-                    {
-                        Role role = roleManager.GetRoleById(id);
-
-                        if(role != null)
-                        {
-                            roleManager.RemoveUserFromRole(user, role);
-                        }
-                    }
-                }
-            }
-
-            return RedirectToAction("Membership", "Roles", (long)ViewData["UserID"]);
-        }
-
-        [GridAction(EnableCustomBinding = true)]
+        [GridAction]
         public ActionResult UserMembership_Select(long id)
         {
             RoleManager roleManager = new RoleManager();
@@ -242,14 +185,43 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
             {
                 IQueryable<Role> data = roleManager.GetAllRoles();
 
-                data.ToList().ForEach(r => roles.Add(UserRoleModel.Convert(r, roleManager.IsUserInRole(user.Name, r.Name))));
+                data.ToList().ForEach(r => roles.Add(UserRoleModel.Convert(user.Id, r, roleManager.IsUserInRole(user.Name, r.Name))));
             }
 
             return View(new GridModel<UserRoleModel> { Data = roles });
         }
 
+        public void AddUserToRole(long userId, long roleId)
+        {
+            RoleManager roleManager = new RoleManager();
+            UserManager userManager = new UserManager();
+
+            Role role = roleManager.GetRoleById(roleId);
+            User user = userManager.GetUserById(userId);
+
+            if (user != null && role != null)
+            {
+                roleManager.AddUserToRole(user, role);
+            }
+
+        }
+
+        public void RemoveUserFromRole(long userId, long roleId)
+        {
+            RoleManager roleManager = new RoleManager();
+            UserManager userManager = new UserManager();
+
+            Role role = roleManager.GetRoleById(roleId);
+            User user = userManager.GetUserById(userId);
+
+            if (user != null && role != null)
+            {
+                roleManager.RemoveUserFromRole(user, role);
+            }
+        }
+
         // S
-        [GridAction(EnableCustomBinding = true)]
+        [GridAction]
         public ActionResult Users_Select()
         {
             UserManager userManager = new UserManager();
