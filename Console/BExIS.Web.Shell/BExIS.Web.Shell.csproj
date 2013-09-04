@@ -268,8 +268,6 @@
     <Content Include="Scripts\2012.3.1018\telerik.treeview.min.js" />
     <Content Include="Scripts\2012.3.1018\telerik.upload.min.js" />
     <Content Include="Scripts\2012.3.1018\telerik.window.min.js" />
-    <Content Include="Scripts\Auth\htmlparser.js" />
-    <Content Include="Scripts\Auth\UFrame.js" />
     <Content Include="Scripts\jquery-1.7.1.min.js" />
     <Content Include="Scripts\jquery.ba-resize.min.js" />
     <Content Include="Scripts\Search\search.js" />
@@ -523,6 +521,7 @@
     <Folder Include="Areas\System\Models\" />
     <Folder Include="Areas\System\Views\Shared\" />
     <Folder Include="Models\" />
+    <Folder Include="Scripts\Auth\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Home\About.cshtml" />
@@ -865,6 +864,7 @@
     <Content Include="Areas\Auth\Views\Users\_UserEditPartial.cshtml" />
     <Content Include="Areas\Auth\Views\Users\_UserInfoPartial.cshtml" />
     <Content Include="Areas\Auth\Views\Users\_InfoPartial.cshtml" />
+    <Content Include="Areas\Auth\Views\Roles\_InfoPartial.cshtml" />
     <None Include="Properties\PublishProfiles\BEXIS2 DEV.pubxml" />
     <None Include="Properties\PublishProfiles\BEXIS2.pubxml" />
   </ItemGroup>
@@ -922,7 +922,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>8306</DevelopmentServerPort>
+          <DevelopmentServerPort>8072</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>http://localhost:4187/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
