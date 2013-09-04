@@ -8,29 +8,29 @@
     .Items(items =>
     {
         items.Add()
-            .Text("Role Info")
+            .Text("User Info")
             .Content(@<text>
-                <div id="contentTabstripRoleInfo" style="overflow-y:scroll; max-height:500px"></div>
+                <div id="contentTabstripRoleInfo" style="overflow-y:auto; max-height:500px"></div>
             </text>);
     
     items.Add()
             .Text("Membership")
             .Content(@<text>
-                <div id="contentTabstripMembership" style="overflow-y:scroll; max-height:500px"></div>
+                <div id="contentTabstripMembership" style="overflow-y:auto; max-height:500px"></div>
             </text>);
     
     items.Add()
             .Text("Feature Permissions")
             .Enabled(false)
             .Content(@<text>
-                <div id="contentTabstripFeaturePermissions" style="overflow-y:scroll; max-height:500px"></div>
+                <div id="contentTabstripFeaturePermissions" style="overflow-y:auto; max-height:500px"></div>
             </text>);
     
     items.Add()
             .Text("Data Permissions")
             .Enabled(false)
             .Content(@<text>
-                <div id="contentTabstripDataPermissions"style="overflow-y:scroll; max-height:500px"></div>
+                <div id="contentTabstripDataPermissions"style="overflow-y:auto; max-height:500px"></div>
             </text>);
     })
     .SelectedIndex(0)
