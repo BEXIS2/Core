@@ -8,11 +8,11 @@
         @Html.HiddenFor(m => m.WindowName)
     </div>
     
-    <div align="center">
+    <div align="center" style="margin-top:20px">
         @Html.DisplayFor(m => m.Message)
     </div>
     
     <p align="center">
-        <button type="button" onclick="confirmWindowError('@Model.WindowName')">Ok</button>
+        <button type="button" onclick="confirmWindowInfo('@Model.WindowName')">Ok</button>
     </p>
 }
