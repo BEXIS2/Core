@@ -18,6 +18,15 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
 
         public ActionResult Users()
         {
+            RoleManager roleManager = new RoleManager();
+
+            UserManager userManager = new UserManager();
+
+            User user = userManager.GetUserById(2);
+            Role role = roleManager.GetRoleById(105);
+
+            roleManager.AddUserToRole(user, role);
+
             return View();
         }
 
@@ -41,7 +50,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
 
                 if (createStatus == UserCreateStatus.Success)
                 {
-                    return PartialView("_CreatePartial", model);
+                    return PartialView("_InfoPartial", new InfoModel("windowCreation", "The user was successfully created."));
                 }
                 else
                 {
@@ -79,6 +88,8 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
             if (user != null)
             {
                 userManager.Delete(user);
+
+                return PartialView("_InfoPartial", new InfoModel("windowDeletion", "The user was successfully deleted."));
             }
 
             return PartialView("_DeletePartial", model);
