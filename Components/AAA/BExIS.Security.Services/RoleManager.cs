@@ -36,25 +36,20 @@ namespace BExIS.Security.Services
             bool result = false;
 
             // Computations
-            if (!IsUserInRole(user.Name, role.Name))
+            using (IUnitOfWork uow = this.GetUnitOfWork())
             {
-                role = RolesRepo.Reload(role);
-                RolesRepo.LoadIfNot(role.Users);
+                IRepository<Role> repo = uow.GetRepository<Role>();
 
-                role.Users.Add(user);
-                user.Roles.Add(role);
-
-                using (IUnitOfWork uow = this.GetUnitOfWork())
+                role = repo.Reload(role);
+                repo.LoadIfNot(role.Users);
+                if (!role.Users.Contains(user))
                 {
-                    IRepository<Role> repo = uow.GetRepository<Role>();
-
-                    repo.Put(role);
+                    role.Users.Add(user);
+                    user.Roles.Add(role);
                     uow.Commit();
-
                     result = true;
                 }
             }
-
             return (result);
         }
 
