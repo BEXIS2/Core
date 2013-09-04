@@ -127,12 +127,12 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
         #region add Variable
 
-        public ActionResult ShowVariables()
+        public ActionResult ShowVariables(long id)
         {
             DataStructureDesignerModel DSDM = new DataStructureDesignerModel();
             if (Session["dataStructureId"] != null)
             {
-                DSDM.GetDataStructureByID((long)Session["dataStructureId"]);
+                DSDM.GetDataStructureByID(id);
                 DSDM.GetDataAttributeList();
                 if (DSDM.dataStructure.Datasets.Count > 0)
                 {
@@ -186,7 +186,8 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             else
             {
                 Session["Window"] = false;
-            }            
+            }
+            Session["dataStructureId"] = id;
             return View("DataStructureDesigner", DSDM);
         }
 
@@ -195,10 +196,10 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
         {
             DataStructureDesignerModel DSDM = new DataStructureDesignerModel();
 
-            if (Session["dataStructureId"] != null)
+            if (Session["dataStructureId"] != null && (long)Session["dataStructureId"] != 0)
             {  
                 DSDM.GetDataStructureByID((long)Session["dataStructureId"]);
-                DSDM.dataAttributeList = (IList<DataAttribute>)Session["VariableList"];
+                DSDM.GetDataAttributeList();
                 for (int i = 0; i < checkedRecords.Length; i++)
                 {
                     DataAttribute temp = DSDM.dataAttributeList.Where(p => p.Id.Equals(Convert.ToInt32(checkedRecords[i]))).FirstOrDefault();

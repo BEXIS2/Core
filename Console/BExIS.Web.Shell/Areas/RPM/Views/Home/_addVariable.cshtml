@@ -7,7 +7,13 @@
     ViewBag.Title = "Planing";
 
     long[] dataAttributeIds = new long[] { };
-    Model.GetDataAttributeList(); 
+    Model.GetDataAttributeList();
+    
+    if(Session["dataStructureId"] != null)
+    {
+        long id = (long)Session["dataStructureId"];
+        Session["dataStructureId"] = id; 
+    }
 }
 
 @if ((bool)Session["inUse"] == true)

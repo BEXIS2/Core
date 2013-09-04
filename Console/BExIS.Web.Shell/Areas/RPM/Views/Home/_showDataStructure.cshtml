@@ -16,7 +16,7 @@
 )
 </div>
 <div>
-        @Html.ActionLink("AddVariable", "ShowVariables", "Home", new {@class = "addVariable"})
+        @Html.ActionLink("AddVariable", "ShowVariables", "Home", new { id = Model.dataStructure.Id }, new { area = "RPM" })
 </div>
 <div style="position:absolute; left:20%; top:60px;">
 @{ Html.Telerik().Window()
