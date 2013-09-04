@@ -45,7 +45,7 @@
     .Visible(false)
     .Scrollable(true)
     .Content(@<text>
-        <div id="contentWindowCreation" style="overflow-y:scroll; max-height:500px"></div>
+        <div id="contentWindowCreation"></div>
     </text>)
     .ClientEvents(clientEvents => clientEvents
         .OnActivate("onActivateWindowCreation")
@@ -75,7 +75,7 @@
     .Modal(true)
     .Visible(false)
     .Content(@<text>
-        <div id="contentWindowDeletion" style="overflow-y:auto; max-height:500px"></div>
+        <div id="contentWindowDeletion"></div>
     </text>)
     .ClientEvents(clientEvents => clientEvents
         .OnActivate("onActivateWindowDeletion")
@@ -134,21 +134,14 @@
     }
 
     function onActivateWindowCreation() {
-        var windowCreation = $('#windowCreation .t-window-content');
+        var windowCreationContent = $('#windowCreation .t-window-content');
 
-        windowCreation.css("height", "auto");
-        windowCreation.css("width", "auto");
+        windowCreationContent.css("height", "auto");
+        windowCreationContent.css("width", "auto");
     }
 
     function onCloseWindowCreation() {
         $('#contentWindowCreation').empty();
-    }
-
-    function onSuccessWindowCreation(e) {
-        var windowCreation = $('#windowCreation').data('tWindow');
-        windowCreation.close();
-
-        window.location.href = '@Url.Action("Users", "Users")';
     }
 
     //
@@ -230,7 +223,7 @@
 
     //
     //
-    // Error
+    // Info
 
     function confirmWindowError(e) {
         switch (e) {
@@ -242,6 +235,11 @@
             case "windowDetails":
                 var windowDetails = $('#windowDetails').data('tWindow');
                 windowDetails.close();
+                break;
+
+            case "windowCreation":
+                var windowCreation = $('#windowCreation').data('tWindow');
+                windowCreation.close();
                 break;
 
             default:
