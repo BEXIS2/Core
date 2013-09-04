@@ -7,7 +7,7 @@
     <!-- Role Entity Properties -->
     <property name="Description" type="String" />
 
-    <set name="Users" table="Roles_Users" cascade="all-delete-orphan" lazy="true">
+    <set name="Users" table="Roles_Users" cascade="save-update" lazy="true">
       <key column="RoleRef"/>
       <many-to-many column="UserRef" class="User"/>
     </set>
