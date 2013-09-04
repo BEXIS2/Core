@@ -25,7 +25,7 @@
     <property name="IsApproved" type="yes_no" />
     <property name="IsLockedOut" type="yes_no" />
 
-    <set name="Roles" table="Roles_Users" lazy="true">
+    <set name="Roles" table="Roles_Users" cascade="all-delete-orphan" lazy="true">
       <key column="UserRef"/>
       <many-to-many column="RoleRef" class="Role"/>
     </set>
