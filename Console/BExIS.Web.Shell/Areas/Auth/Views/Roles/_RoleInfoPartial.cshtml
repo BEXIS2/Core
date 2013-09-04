@@ -13,28 +13,29 @@
         @Html.LabelFor(m => m.Id)
     </div>
     <div class="editor-field">
-        @Html.TextBoxFor(m => m.Id, new { disabled = true })
+        @Html.DisplayFor(m => m.Id)
+        @Html.HiddenFor(m => m.Id)
     </div>
     
     <div class="editor-label">
         @Html.LabelFor(m => m.RoleName)
     </div>
     <div class="editor-field">
-        @Html.TextBoxFor(m => m.RoleName, new { disabled = true })
+        @Html.TextBoxFor(m => m.RoleName, new { @readonly = "readonly" })
     </div>
     
     <div class="editor-label">
         @Html.LabelFor(m => m.Description)
     </div>
     <div class="editor-field">
-        @Html.TextAreaFor(m => m.Description, new { disabled = true, style="width: 275px; height: 100px; resize: none" })
+        @Html.TextAreaFor(m => m.Description, new { @readonly = "readonly", style = "width: 275px; height: 100px; resize: none; wrap: hard" })
     </div>
 
     <div class="editor-label">
         @Html.LabelFor(m => m.Comment)
     </div>
     <div class="editor-field">
-        @Html.TextAreaFor(m => m.Comment, new { disabled = true, style="width: 275px; height: 100px; resize: none" })
+        @Html.TextAreaFor(m => m.Comment, new { @readonly = "readonly", style = "width: 275px; height: 100px; resize: none; wrap: hard" })
     </div>
     
     <p>

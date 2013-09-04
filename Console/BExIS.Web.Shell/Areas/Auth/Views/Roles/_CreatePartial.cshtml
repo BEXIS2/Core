@@ -9,8 +9,10 @@
 <script src="@Url.Content("~/Scripts/jquery.unobtrusive-ajax.js")" type="text/javascript"></script>
 
 
-@using (Ajax.BeginForm("Create", "Roles", new AjaxOptions { HttpMethod = "POST", UpdateTargetId="contentWindowCreation", OnSuccess="onSuccessWindowCreation" }))
+@using (Ajax.BeginForm("Create", "Roles", new AjaxOptions { HttpMethod = "POST", UpdateTargetId="contentWindowCreation" }))
 {   
+    @Html.ValidationSummary(true)
+    
     <div class="editor-label">
         @Html.LabelFor(m => m.RoleName)
     </div>

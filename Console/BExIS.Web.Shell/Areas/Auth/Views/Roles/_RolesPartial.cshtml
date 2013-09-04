@@ -5,7 +5,6 @@
 
 @(Html.Telerik().Grid(Model)
         .Name("Grid_Roles")
-        .EnableCustomBinding(true)
         .DataKeys(keys =>
         {
             keys.Add(r => r.Id);
@@ -27,9 +26,10 @@
             columns.Bound(r => r.Comment);
         })
         .ClientEvents(clientEvents => clientEvents.OnCommand("onCommand"))
-        .DataBinding(dataBinding => dataBinding.Ajax()
-            .OperationMode(GridOperationMode.Client)
-            .Select("Roles_Select", "Roles"))
+        .DataBinding(dataBinding => dataBinding
+            .Ajax()
+            .Select("Roles_Select", "Roles")
+        )
         .Filterable()
         .Sortable(sortable => sortable
             .OrderBy(orderby => orderby
@@ -39,13 +39,13 @@
 
 @(Html.Telerik().Window()
     .Name("windowCreation")
-    .Title("Role Creation")
+    .Title("User Creation")
     .Draggable(true)
     .Modal(true)
     .Visible(false)
     .Scrollable(true)
     .Content(@<text>
-        <div id="contentWindowCreation" style="overflow-y:scroll; max-height:500px"></div>
+        <div id="contentWindowCreation"></div>
     </text>)
     .ClientEvents(clientEvents => clientEvents
         .OnActivate("onActivateWindowCreation")
@@ -55,7 +55,7 @@
 
 @(Html.Telerik().Window()
     .Name("windowDetails")
-    .Title("Role Details")
+    .Title("User Details")
     .Draggable(true)
     .Modal(true)
     .Visible(false)
@@ -70,12 +70,12 @@
 
 @(Html.Telerik().Window()
     .Name("windowDeletion")
-    .Title("Role Deletion")
+    .Title("User Deletion")
     .Draggable(true)
     .Modal(true)
     .Visible(false)
     .Content(@<text>
-        <div id="contentWindowDeletion" style="overflow-y:scroll; max-height:500px"></div>
+        <div id="contentWindowDeletion"></div>
     </text>)
     .ClientEvents(clientEvents => clientEvents
         .OnActivate("onActivateWindowDeletion")
@@ -85,12 +85,19 @@
 
 <script type="text/javascript">
 
+    function setMembership(value, userid, roleid) {
+        if (value) {
+            $.post('@Url.Action("AddUserToRole", "Users")', { UserId: userid, RoleId: roleid });
+        } else {
+            $.post('@Url.Action("RemoveUserFromRole", "Users")', { UserId: userid, RoleId: roleid });
+        }
+    }
+
     function onCommand(e) {
 
         if (e.name == "Create") {
-            $.get('@Url.Action("Create", "Roles")', function (data) {
-                $('#contentWindowCreation').html(data);
-            });
+
+            $('#contentWindowCreation').load('@Url.Action("Create", "Roles")');
 
             var windowCreation = $('#windowCreation').data('tWindow');
             windowCreation.center().open();
@@ -100,10 +107,12 @@
             var roleID = e.dataItem.Id;
 
             $.get('@Url.Action("Details", "Roles")', { Id: roleID }, function (data) {
+
                 $('#contentWindowDetails').html(data);
             });
 
             $.get('@Url.Action("RoleInfo", "Roles")', { Id: roleID }, function (data) {
+
                 $('#contentTabstripRoleInfo').html(data);
             });
 
@@ -115,6 +124,7 @@
             var roleID = e.dataItem.Id;
 
             $.get('@Url.Action("Delete", "Roles")', { Id: roleID }, function (data) {
+
                 $('#contentWindowDeletion').html(data);
             });
 
@@ -126,42 +136,34 @@
     //
     //
     // Create
-
-    function cancelWindowCreation(e) {
+    function cancelWindowCreation() {
         var windowCreation = $('#windowCreation').data('tWindow');
         windowCreation.close();
     }
 
-    function onActivateWindowCreation(e) {
-        var windowCreation = $('#windowCreation .t-window-content');
+    function onActivateWindowCreation() {
+        var windowCreationContent = $('#windowCreation .t-window-content');
 
-        windowCreation.css("height", "auto");
-        windowCreation.css("width", "auto");
+        windowCreationContent.css("height", "auto");
+        windowCreationContent.css("width", "auto");
     }
 
-    function onCloseWindowCreation(e) {
+    function onCloseWindowCreation() {
         $('#contentWindowCreation').empty();
-    }
-
-    function onSuccessWindowCreation(data) {
-        var windowCreation = $('#windowCreation').data('tWindow');
-        windowCreation.close();
-
         window.location.href = '@Url.Action("Roles", "Roles")';
     }
 
     //
     //
     // Details
-
-    function cancelRoleEdit(e) {
+    function cancelUserEdit(e) {
         $.get('@Url.Action("RoleInfo", "Roles")', { Id: e }, function (data) {
-            $('#contentTabstripRoleInfo').html(data);
-        });
-    }
+                $('#contentTabstripRoleInfo').html(data);
+            });
+        }
 
-    function editRoleInfo(e) {
-        $.get('@Url.Action("RoleEdit", "Roles")', { Id: e }, function (data) {
+        function editUserInfo(e) {
+            $.get('@Url.Action("RoleEdit", "Roles")', { Id: e }, function (data) {
             $('#contentTabstripRoleInfo').html(data);
         });
     }
@@ -174,8 +176,8 @@
     }
 
     function onCloseWindowDetails(e) {
-        $('#contentTabstripRoleInfo').empty();
-        $('#contentTabstripMembership').empty();
+        $('#contentWindowDetails').empty();
+        window.location.href = '@Url.Action("Roles", "Roles")';
     }
 
     function onSelectTabstripDetails(e, roleID) {
@@ -204,10 +206,14 @@
     //
     //
     // Delete
-
-    function cancelWindowDeletion(e) {
+    function cancelWindowDeletion() {
         var windowDeletion = $('#windowDeletion').data('tWindow');
         windowDeletion.close();
+    }
+
+    function onCloseWindowDeletion() {
+        $('#contentWindowDeletion').empty();
+        window.location.href = '@Url.Action("Roles", "Roles")';
     }
 
     function onActivateWindowDeletion(e) {
@@ -217,8 +223,29 @@
         windowDeletion.css("width", "auto");
     }
 
-    function onCloseWindowDeletion(e) {
-        $('#contentWindowDeletion').empty();
+    //
+    //
+    // Info
+    function confirmWindowInfo(e) {
+        switch (e) {
+            case "windowDeletion":
+                var windowDelete = $('#windowDeletion').data('tWindow');
+                windowDelete.close();
+                break;
+
+            case "windowDetails":
+                var windowDetails = $('#windowDetails').data('tWindow');
+                windowDetails.close();
+                break;
+
+            case "windowCreation":
+                var windowCreation = $('#windowCreation').data('tWindow');
+                windowCreation.close();
+                break;
+
+            default:
+                break;
+        }
     }
 
     //
