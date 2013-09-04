@@ -156,9 +156,18 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
 
             User user = userManager.GetUserById(id);
 
+            RoleManager roleManager = new RoleManager();
+
+            Role role = roleManager.GetRoleById(105);
+
+            roleManager.AddUserToRole(user, role);
+
             if (user != null)
             {
-                ViewData["UserID"] = id;
+                if (ViewData["UserID"] == null)
+                {
+                    ViewData["UserID"] = id;
+                }
 
                 return PartialView("_MembershipPartial");
             }
@@ -168,6 +177,43 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
             }
 
             
+        }
+
+        [HttpPost]
+        public ActionResult Membership(int[] checkedRecords, int[] uncheckedRecords)
+        {
+            if (ModelState.IsValid)
+            {
+                RoleManager roleManager = new RoleManager();
+                UserManager userManager = new UserManager();
+
+                User user = userManager.GetUserById((long)ViewData["UserID"]);
+
+                if(user != null)
+                {
+                    foreach (int id in checkedRecords)
+                    {
+                        Role role = roleManager.GetRoleById(id);
+
+                        if(role != null)
+                        {
+                            roleManager.AddUserToRole(user, role);
+                        }
+                    }
+
+                    foreach(int id in uncheckedRecords)
+                    {
+                        Role role = roleManager.GetRoleById(id);
+
+                        if(role != null)
+                        {
+                            roleManager.RemoveUserFromRole(user, role);
+                        }
+                    }
+                }
+            }
+
+            return RedirectToAction("Membership", "Roles", (long)ViewData["UserID"]);
         }
 
         [GridAction(EnableCustomBinding = true)]
@@ -271,6 +317,9 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
                 case UserCreateStatus.DuplicateEmail:
                     return "The email address already exists.";
 
+                case UserCreateStatus.InvalidPassword:
+                    return "The password is invalid.";
+
                 default:
                     return "An unknown error occurred. Please verify your entry and try again. If the problem persists, please contact your system administrator.";
             }
@@ -285,6 +334,9 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
 
                 case UserCreateStatus.DuplicateEmail:
                     return "Email";
+
+                case UserCreateStatus.InvalidPassword:
+                    return "Password";
 
                 default:
                     return "";
