@@ -49,7 +49,6 @@
     </text>)
     .ClientEvents(clientEvents => clientEvents
         .OnActivate("onActivateWindowCreation")
-        //.OnOpen("onOpenWindowCreation")
         .OnClose("onCloseWindowCreation")
     )
 )
@@ -65,7 +64,6 @@
     </text>)
     .ClientEvents(clientEvents => clientEvents
         .OnActivate("onActivateWindowDetails")
-        //.OnOpen("onOpenWindowDetails")
         .OnClose("onCloseWindowDetails")
     )
 )
@@ -81,7 +79,6 @@
     </text>)
     .ClientEvents(clientEvents => clientEvents
         .OnActivate("onActivateWindowDeletion")
-        //.OnOpen("onOpenWindowDeletion")
         .OnClose("onCloseWindowDeletion")
     )
 )
@@ -179,8 +176,6 @@
 
     function onCloseWindowDetails(e) {
         $('#contentWindowDetails').empty();
-
-        @*window.location.href = '@Url.Action("Users", "Users")';*@
     }
 
     function onSelectTabstripDetails(e, userID) {
@@ -240,18 +235,20 @@
     function confirmWindowError(e) {
         switch (e) {
             case "windowDelete":
-                var window = $('#windowDeletion').data('tWindow');
+                var windowDelete = $('#windowDeletion').data('tWindow');
+                windowDelete.close();
                 break;
 
             case "windowDetails":
-                var window = $('#windowDetails').data('tWindow');
+                var windowDetails = $('#windowDetails').data('tWindow');
+                windowDetails.close();
                 break;
 
             default:
                 break;
         }
 
-        window.close();
+        window.location.href = '@Url.Action("Users", "Users")';
     }
 
     //
