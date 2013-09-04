@@ -1,11 +1,13 @@
 ﻿@using System.Data
 @using Telerik.Web.Mvc.UI
 @using BExIS.Dlm.Entities.DataStructure
+@model BExIS.RPM.Model.DataStructureDesignerModel
 
 @{
     ViewBag.Title = "Planing";
 
-    long[] dataAttributeIds = new long[] { }; 
+    long[] dataAttributeIds = new long[] { };
+    Model.GetDataAttributeList(); 
 }
 
 @if ((bool)Session["inUse"] == true)
@@ -26,8 +28,8 @@ else
     <div class="planingPartialDiv" id="createVariable">
         @using (Html.BeginForm("AddVariables", "Home", new { area = "RPM" }))
         {
-            @(Html.Telerik().Grid((List<DataAttribute>)Session["VariableList"])
-            .Name("DataStructureGrid")
+            @(Html.Telerik().Grid(Model.dataAttributeList)
+            .Name("DataAttributeGrid")
             .Columns(columns =>
                 {
                     columns.Template(

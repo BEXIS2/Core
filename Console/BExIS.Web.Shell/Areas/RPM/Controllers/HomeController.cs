@@ -35,6 +35,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             
             Session["inUse"] = false;
             Session["dataStructureId"] = null;
+            Session["Window"] = false;
             return View("DataStructureDesigner", DSDM);
         }
 
@@ -75,16 +76,23 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                 }
                 else
                 {
-                    DataStructureManager DSM = new DataStructureManager();
-                    DataStructureCategory DSC = new DataStructureCategory();
-                    foreach (DataStructureCategory dsc in Enum.GetValues(typeof(DataStructureCategory)))
+                    if (DSDM.dataStructure.Name != "" && DSDM.dataStructure.Name != null)
                     {
-                        if (dsc.ToString().Equals(category))
+                        DataStructureManager DSM = new DataStructureManager();
+                        DataStructureCategory DSC = new DataStructureCategory();
+                        foreach (DataStructureCategory dsc in Enum.GetValues(typeof(DataStructureCategory)))
                         {
-                            DSC = dsc;
+                            if (dsc.ToString().Equals(category))
+                            {
+                                DSC = dsc;
+                            }
                         }
+                        DSM.CreateStructuredDataStructure(DSDM.dataStructure.Name, DSDM.dataStructure.Description, "", "", DSC, null);
                     }
-                    DSM.CreateStructuredDataStructure(DSDM.dataStructure.Name, DSDM.dataStructure.Description, "", "", DSC, null);
+                    else
+                    { 
+                        ViewData["errorMsg"] = "Please type a Name"; 
+                    }
                 }
             }
             else
@@ -166,7 +174,6 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                     //    VariableTable.Rows.Add(Row);
                     //}
                     //Session["VariableTable"] = VariableTable;
-                    Session["VariableList"] = DSDM.dataAttributeList;
 
                     Session["inUse"] = false;
 
