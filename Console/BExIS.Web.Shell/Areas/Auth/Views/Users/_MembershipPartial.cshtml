@@ -8,9 +8,7 @@
 <script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
 <script src="@Url.Content("~/Scripts/jquery.unobtrusive-ajax.js")" type="text/javascript"></script>
 
-Coming Soon!
-
-@*@(Html.Telerik().Grid(Model)
+@(Html.Telerik().Grid(Model)
     .Name("Grid_UserMembership")
     .HtmlAttributes(new { style = "width: 800px" } )
     .DataKeys(keys =>
@@ -19,37 +17,29 @@ Coming Soon!
     })
     .Columns(columns =>
     {
-        columns.Bound(r => r.UserInRole)
-               .ClientTemplate("<input type='checkbox' name='checkedRecords' value='<#= Id #>' />")
-               .Title("UIR")
-               .Width(36)
-               .HtmlAttributes(new { style = "text-align:center" });
-        
+        columns.Bound(r => r.Id)
+            .ClientTemplate("<input type='checkbox' onclick='setMembership(this.checked, <#= UserId #>, <#= Id #>);' name='nothing' <#= UserInRole ? checked='checked' : '' #> />")
+                   .Title("Check")
+                   .Width(50)
+                   .HtmlAttributes(new { style = "text-align:center" });
         columns.Bound(r => r.Id).Width(100);
         columns.Bound(r => r.RoleName).Width(200);
         columns.Bound(r => r.Description);
     })
-    .DataBinding(dataBinding => dataBinding.Ajax()
-        .OperationMode(GridOperationMode.Client)
-        .Select("UserMembership_Select", "Users", (long)ViewData["UserID"]))
+    .DataBinding(dataBinding => dataBinding
+        .Ajax()
+        .Select("UserMembership_Select", "Users", (long)ViewData["UserID"])
+    )
     .Filterable()
     .Sortable(sortable => sortable
         .OrderBy(orderby => orderby
-            .Add(r => r.RoleName).Ascending()))
-    .Scrollable(scrollable => scrollable.Height(350))
+            .Add(r => r.RoleName)
+            .Ascending()
+        )
+    )
+    .Scrollable(scrollable => scrollable.Height(475))
 )
 
-<p>
-    <button type="button" onclick="saveMembership()">Save</button>
-    <button type="button" onclick="resetMembership()">Reset</button>
-</p>
-
 <script type="text/javascript">
-    function saveMembership() {
-        var $checkedRecords = $(':checked');
-        var $uncheckedRecords = $(':not(:checked)');
 
-        $('#contentTabstripMembership').load('@Url.Action("Membership", "Users")', { checked: $checkedRecords, unchecked: $uncheckedRecords});
-        }
-    </script>*@
-
+</script>

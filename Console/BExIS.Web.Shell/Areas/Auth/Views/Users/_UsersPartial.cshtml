@@ -3,9 +3,11 @@
 
 @model List<UserModel>
 
+<script src="@Url.Content("~/Scripts/jquery-1.7.1.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery-ui.js")" type="text/javascript"></script>
+
 @(Html.Telerik().Grid(Model)
         .Name("Grid_Users")
-        .EnableCustomBinding(true)
         .DataKeys(keys =>
         {
             keys.Add(u => u.Id);
@@ -27,9 +29,10 @@
             columns.Bound(u => u.Comment);
         })
         .ClientEvents(clientEvents => clientEvents.OnCommand("onCommand"))
-        .DataBinding(dataBinding => dataBinding.Ajax()
-            .OperationMode(GridOperationMode.Client)
-            .Select("Users_Select", "Users"))
+        .DataBinding(dataBinding => dataBinding
+                .Ajax()
+                .Select("Users_Select", "Users")
+            )
         .Filterable()
         .Sortable(sortable => sortable
             .OrderBy(orderby => orderby
@@ -85,12 +88,19 @@
 
 <script type="text/javascript">
 
+    function setMembership(value, userid, roleid) {
+        if (value) {
+            $.post('@Url.Action("AddUserToRole", "Users")', { UserId: userid, RoleId: roleid });
+        } else {
+            $.post('@Url.Action("RemoveUserFromRole", "Users")', { UserId: userid, RoleId: roleid });
+        }
+    }
+
     function onCommand(e) {
 
         if (e.name == "Create") {
-            $.get('@Url.Action("Create", "Users")', function (data) {
-                $('#contentWindowCreation').html(data);
-            });
+
+            $('#contentWindowCreation').load('@Url.Action("Create", "Users")');
 
             var windowCreation = $('#windowCreation').data('tWindow');
             windowCreation.center().open();
@@ -100,10 +110,12 @@
             var userID = e.dataItem.Id;
 
             $.get('@Url.Action("Details", "Users")', { Id: userID }, function (data) {
+
                 $('#contentWindowDetails').html(data);
             });
 
             $.get('@Url.Action("UserInfo", "Users")', { Id: userID }, function (data) {
+
                 $('#contentTabstripUserInfo').html(data);
             });
 
@@ -126,8 +138,7 @@
 
     //
     //
-    // Create
-
+    // Creation
     function cancelWindowCreation() {
         var windowCreation = $('#windowCreation').data('tWindow');
         windowCreation.close();
@@ -142,6 +153,7 @@
 
     function onCloseWindowCreation() {
         $('#contentWindowCreation').empty();
+        window.location.href = '@Url.Action("Users", "Users")';
     }
 
     //
@@ -169,6 +181,7 @@
 
     function onCloseWindowDetails(e) {
         $('#contentWindowDetails').empty();
+        window.location.href = '@Url.Action("Users", "Users")';
     }
 
     function onSelectTabstripDetails(e, userID) {
@@ -196,8 +209,7 @@
 
     //
     //
-    // Delete
-
+    // Deletion
     function cancelWindowDeletion() {
         var windowDeletion = $('#windowDeletion').data('tWindow');
         windowDeletion.close();
@@ -205,6 +217,7 @@
 
     function onCloseWindowDeletion() {
         $('#contentWindowDeletion').empty();
+        window.location.href = '@Url.Action("Users", "Users")';
     }
 
     function onActivateWindowDeletion(e) {
@@ -214,20 +227,12 @@
         windowDeletion.css("width", "auto");
     }
 
-    function onSuccessWindowDeletion(e) {
-        var windowDeletion = $('#windowDeletion').data('tWindow');
-        windowDeletion.close();
-
-        window.location.href = '@Url.Action("Users", "Users")';
-    }
-
     //
     //
     // Info
-
-    function confirmWindowError(e) {
+    function confirmWindowInfo(e) {
         switch (e) {
-            case "windowDelete":
+            case "windowDeletion":
                 var windowDelete = $('#windowDeletion').data('tWindow');
                 windowDelete.close();
                 break;
@@ -245,8 +250,6 @@
             default:
                 break;
         }
-
-        window.location.href = '@Url.Action("Users", "Users")';
     }
 
     //
