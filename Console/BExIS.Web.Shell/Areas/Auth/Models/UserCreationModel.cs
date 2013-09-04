@@ -23,6 +23,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
 
         [Display(Name = "Password")]
         [Required]
+        [StringLength(100, ErrorMessage = "The password must be at least {2} characters long.", MinimumLength = 6)]
         public string Password { get; set; }
 
         [Compare("Password", ErrorMessage = "The password and confirmation do not match.")]
@@ -36,6 +37,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
 
         [Display(Name = "Security Answer")]
         [Required]
+        [StringLength(50)]
         public string SecurityAnswer { get; set; }
 
         [Display(Name = "Confirm Security Answer")]
