@@ -75,17 +75,12 @@
                     </td>
                 </tr>
             </table>
-        </div>
-        <div>
-            @foreach (Dataset ds in Model.dataStructure.Datasets)
-            { 
-                <p>@ds.Id.ToString()</p>
-            }
         </div>       
-     <button name="create" value="SaveDataStructure" type="submit" class="t-button">Save</button>    
+     <button name="create" value="SaveDataStructure" type="submit" class="t-button">Save</button>
+     @Html.ActionLink("Download", "downloadTemplate", "Home", new { id = Model.dataStructure.Id }, new { area = "RPM", @class = "t-button" })
+     @Html.ActionLink("Delete", "deleteDataStructure", "Home", new { id = Model.dataStructure.Id }, new { area = "RPM", @class = "t-button"})    
      @ViewData["errorMsg"]
  }
-@Html.ActionLink("Download", "downloadTemplate", "Home", new { id = Model.dataStructure.Id }, new { area = "RPM" })
 </div> 
 
 

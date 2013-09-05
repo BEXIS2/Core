@@ -49,6 +49,14 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             if (SelectedItem != null && SelectedItem != 0)
             {
                 DSDM.GetDataStructureByID(SelectedItem);
+                if (DSDM.dataStructure.Datasets.Count > 0)
+                {
+                    Session["inUse"] = true;
+                }
+                else
+                {
+                    Session["inUse"] = false;
+                }
             }
             else
             {
@@ -98,8 +106,8 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             else
             {
                 string description = DSDM.dataStructure.Description;
+                string name = DSDM.dataStructure.Name;
                 DSDM.GetDataStructureByID(DSDM.dataStructure.Id);
-                DSDM.dataStructure.Description = description;
 
                 if (DSDM.dataStructure.Datasets.Count > 0)
                 {
@@ -117,10 +125,42 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                             DSC = dsc;
                         }
                     }
+                    DSDM.dataStructure.Description = description;
+                    DSDM.dataStructure.Name = name;
                     DSM.UpdateStructuredDataStructure(DSDM.dataStructure);
                 }
             }
             return View("DataStructureDesigner", DSDM);
+        }
+
+        public ActionResult deleteDataStructure(long id)
+        {
+            if (id != 0)
+            {
+                DataStructureDesignerModel DSDM = new DataStructureDesignerModel();
+                DSDM.GetDataStructureByID(id);
+
+                if (DSDM.dataStructure.Datasets.Count == 0)
+                {
+                    Session["inUse"] = false;
+                    DataStructureManager DSM = new DataStructureManager();
+                    if (DSDM.dataStructure.Variables.Count > 0)
+                    {
+                        foreach (Variable v in DSDM.dataStructure.Variables)
+                        {
+                            DSM.RemoveVariableUsage(v);
+                        }
+                    }
+                    DSM.DeleteStructuredDataStructure(DSDM.dataStructure);
+                    return RedirectToAction("DataStructureDesigner");
+                }
+                else
+                {
+                    Session["inUse"] = true;
+                    return View("DataStructureDesigner", DSDM);
+                }
+            }
+            return RedirectToAction("DataStructureDesigner");
         }
 
         #endregion
