@@ -39,7 +39,7 @@
 
 @(Html.Telerik().Window()
     .Name("windowCreation")
-    .Title("User Creation")
+    .Title("Role Creation")
     .Draggable(true)
     .Modal(true)
     .Visible(false)
@@ -55,7 +55,7 @@
 
 @(Html.Telerik().Window()
     .Name("windowDetails")
-    .Title("User Details")
+    .Title("Role Details")
     .Draggable(true)
     .Modal(true)
     .Visible(false)
@@ -70,7 +70,7 @@
 
 @(Html.Telerik().Window()
     .Name("windowDeletion")
-    .Title("User Deletion")
+    .Title("Role Deletion")
     .Draggable(true)
     .Modal(true)
     .Visible(false)
@@ -87,9 +87,9 @@
 
     function setMembership(value, userid, roleid) {
         if (value) {
-            $.post('@Url.Action("AddUserToRole", "Users")', { UserId: userid, RoleId: roleid });
+            $.post('@Url.Action("AddUserToRole", "Roles")', { UserId: userid, RoleId: roleid });
         } else {
-            $.post('@Url.Action("RemoveUserFromRole", "Users")', { UserId: userid, RoleId: roleid });
+            $.post('@Url.Action("RemoveUserFromRole", "Roles")', { UserId: userid, RoleId: roleid });
         }
     }
 

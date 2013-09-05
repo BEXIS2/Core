@@ -20,7 +20,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
         {
             return new RoleUserModel()
             {
-                RoleId = user.Id,
+                RoleId = roleId,
 
                 Id = user.Id,
                 UserName = user.Name,

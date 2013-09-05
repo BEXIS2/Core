@@ -28,14 +28,14 @@
         @Html.LabelFor(m => m.Description)
     </div>
     <div class="editor-field">
-        @Html.TextAreaFor(m => m.Description, new { @readonly = "readonly", style = "width: 275px; height: 100px; resize: none; wrap: hard" })
+        @Html.TextAreaFor(m => m.Description, new { @readonly = "readonly", style = "width: 275px; height: 100px; max-width: 350px; max-height: 200px; wrap: hard" })
     </div>
 
     <div class="editor-label">
         @Html.LabelFor(m => m.Comment)
     </div>
     <div class="editor-field">
-        @Html.TextAreaFor(m => m.Comment, new { @readonly = "readonly", style = "width: 275px; height: 100px; resize: none; wrap: hard" })
+        @Html.TextAreaFor(m => m.Comment, new { @readonly = "readonly", style = "width: 275px; height: 100px; max-width: 350px; max-height: 200px; wrap: hard" })
     </div>
     
     <p>

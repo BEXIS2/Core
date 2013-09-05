@@ -32,7 +32,7 @@
         @Html.LabelFor(m => m.Description)
     </div>
     <div class="editor-field">
-        @Html.TextAreaFor(m => m.Description, new { @readonly="readonly", style = "width: 275px; height: 100px; resize: none" })
+        @Html.TextAreaFor(m => m.Description, new { @readonly="readonly", style = "width: 275px; height: 100px; max-width: 350px; max-height: 200px; resize: none" })
         @Html.HiddenFor(m => m.Description)
     </div>
 
@@ -40,7 +40,7 @@
         @Html.LabelFor(m => m.Comment)
     </div>
     <div class="editor-field">
-        @Html.TextAreaFor(m => m.Comment,  new { @readonly="readonly", style = "width: 275px; height: 100px; resize: none" })
+        @Html.TextAreaFor(m => m.Comment,  new { @readonly="readonly", style = "width: 275px; height: 100px; max-width: 350px; max-height: 200px; resize: none" })
         @Html.HiddenFor(m => m.Comment)
     </div>
     

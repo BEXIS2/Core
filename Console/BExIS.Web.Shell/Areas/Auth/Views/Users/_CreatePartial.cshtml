@@ -68,7 +68,7 @@
         @Html.LabelFor(m => m.Comment)
     </div>
     <div class="editor-field">
-        @Html.TextAreaFor(m => m.Comment, new { style = "width: 275px; height: 100px; min-width: 100px; max-width: 350px; min-height: 40px; max-height: 500px" })
+        @Html.TextAreaFor(m => m.Comment, new { style = "width: 275px; height: 100px; max-width: 350px; max-height: 200px" })
         @Html.ValidationMessageFor(m => m.Comment)
     </div>
     

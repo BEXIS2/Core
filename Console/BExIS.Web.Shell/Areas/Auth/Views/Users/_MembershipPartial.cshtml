@@ -17,7 +17,7 @@
     })
     .Columns(columns =>
     {
-        columns.Bound(r => r.Id)
+        columns.Bound(r => r.UserInRole)
             .ClientTemplate("<input type='checkbox' onclick='setMembership(this.checked, <#= UserId #>, <#= Id #>);' name='nothing' <#= UserInRole ? checked='checked' : '' #> />")
                    .Title("Check")
                    .Width(50)

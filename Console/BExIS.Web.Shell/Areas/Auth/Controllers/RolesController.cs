@@ -190,7 +190,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
                 data.ToList().ForEach(u => users.Add(RoleUserModel.Convert(role.Id, u, roleManager.IsUserInRole(u.Name, role.Name))));
             }
 
-            return View(new GridModel<UserRoleModel> { Data = users });
+            return View(new GridModel<RoleUserModel> { Data = users });
         }
 
         public void AddUserToRole(long userId, long roleId)
