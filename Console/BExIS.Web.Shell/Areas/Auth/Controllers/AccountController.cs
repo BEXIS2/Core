@@ -77,7 +77,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
         // POST: /Account/Register
 
         [HttpPost]
-        public ActionResult Register(RegistrationModel model)
+        public ActionResult Register(UserCreationModel model)
         {
             if (ModelState.IsValid)
             {
@@ -90,12 +90,12 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
 
                 if (createStatus == UserCreateStatus.Success)
                 {
-                    FormsAuthentication.SetAuthCookie(model.UserName, false /* createPersistentCookie */);
+                    //FormsAuthentication.SetAuthCookie(model.UserName, false /* createPersistentCookie */);
                     return RedirectToAction("Index", "Home", new { area = "" });
                 }
                 else
                 {
-                    ModelState.AddModelError("", "BLAA");
+                    ModelState.AddModelError(ErrorCodeToErrorKey(createStatus), ErrorCodeToErrorMessage(createStatus));
                 }
             }
 
@@ -106,7 +106,6 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
         //
         // GET: /Account/ChangePassword
 
-        [Authorize]
         public ActionResult ChangePassword()
         {
             return View();
@@ -115,7 +114,6 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
         //
         // POST: /Account/ChangePassword
 
-        [Authorize]
         [HttpPost]
         public ActionResult ChangePassword(ChangePasswordModel model)
         {
@@ -157,44 +155,80 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
             return View();
         }
 
-        #region Status Codes
-        private static string ErrorCodeToString(MembershipCreateStatus createStatus)
+        private static string ErrorCodeToErrorMessage(UserCreateStatus createStatus)
         {
-            // See http://go.microsoft.com/fwlink/?LinkID=177550 for
-            // a full list of status codes.
             switch (createStatus)
             {
-                case MembershipCreateStatus.DuplicateUserName:
-                    return "User name already exists. Please enter a different user name.";
+                case UserCreateStatus.DuplicateUserName:
+                    return "The user name already exists.";
 
-                case MembershipCreateStatus.DuplicateEmail:
-                    return "A user name for that e-mail address already exists. Please enter a different e-mail address.";
+                case UserCreateStatus.DuplicateEmail:
+                    return "The email address already exists.";
 
-                case MembershipCreateStatus.InvalidPassword:
-                    return "The password provided is invalid. Please enter a valid password value.";
-
-                case MembershipCreateStatus.InvalidEmail:
-                    return "The e-mail address provided is invalid. Please check the value and try again.";
-
-                case MembershipCreateStatus.InvalidAnswer:
-                    return "The password retrieval answer provided is invalid. Please check the value and try again.";
-
-                case MembershipCreateStatus.InvalidQuestion:
-                    return "The password retrieval question provided is invalid. Please check the value and try again.";
-
-                case MembershipCreateStatus.InvalidUserName:
-                    return "The user name provided is invalid. Please check the value and try again.";
-
-                case MembershipCreateStatus.ProviderError:
-                    return "The authentication provider returned an error. Please verify your entry and try again. If the problem persists, please contact your system administrator.";
-
-                case MembershipCreateStatus.UserRejected:
-                    return "The user creation request has been canceled. Please verify your entry and try again. If the problem persists, please contact your system administrator.";
+                case UserCreateStatus.InvalidPassword:
+                    return "The password is invalid.";
 
                 default:
                     return "An unknown error occurred. Please verify your entry and try again. If the problem persists, please contact your system administrator.";
             }
         }
+
+        private static string ErrorCodeToErrorKey(UserCreateStatus createStatus)
+        {
+            switch (createStatus)
+            {
+                case UserCreateStatus.DuplicateUserName:
+                    return "UserName";
+
+                case UserCreateStatus.DuplicateEmail:
+                    return "Email";
+
+                case UserCreateStatus.InvalidPassword:
+                    return "Password";
+
+                default:
+                    return "";
+            }
+        }
+
+        #region Status Codes
+        //private static string ErrorCodeToString(MembershipCreateStatus createStatus)
+        //{
+        //    // See http://go.microsoft.com/fwlink/?LinkID=177550 for
+        //    // a full list of status codes.
+        //    switch (createStatus)
+        //    {
+        //        case MembershipCreateStatus.DuplicateUserName:
+        //            return "User name already exists. Please enter a different user name.";
+
+        //        case MembershipCreateStatus.DuplicateEmail:
+        //            return "A user name for that e-mail address already exists. Please enter a different e-mail address.";
+
+        //        case MembershipCreateStatus.InvalidPassword:
+        //            return "The password provided is invalid. Please enter a valid password value.";
+
+        //        case MembershipCreateStatus.InvalidEmail:
+        //            return "The e-mail address provided is invalid. Please check the value and try again.";
+
+        //        case MembershipCreateStatus.InvalidAnswer:
+        //            return "The password retrieval answer provided is invalid. Please check the value and try again.";
+
+        //        case MembershipCreateStatus.InvalidQuestion:
+        //            return "The password retrieval question provided is invalid. Please check the value and try again.";
+
+        //        case MembershipCreateStatus.InvalidUserName:
+        //            return "The user name provided is invalid. Please check the value and try again.";
+
+        //        case MembershipCreateStatus.ProviderError:
+        //            return "The authentication provider returned an error. Please verify your entry and try again. If the problem persists, please contact your system administrator.";
+
+        //        case MembershipCreateStatus.UserRejected:
+        //            return "The user creation request has been canceled. Please verify your entry and try again. If the problem persists, please contact your system administrator.";
+
+        //        default:
+        //            return "An unknown error occurred. Please verify your entry and try again. If the problem persists, please contact your system administrator.";
+        //    }
+        //}
         #endregion
     }
 }
