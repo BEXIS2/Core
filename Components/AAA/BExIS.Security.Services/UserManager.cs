@@ -225,13 +225,19 @@ namespace BExIS.Security.Services
             // Computations
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
-                IRepository<User> repo = uow.GetRepository<User>();
+                IRepository<User> userRepo = uow.GetRepository<User>();
+                IRepository<Role> roleRepo = uow.GetRepository<Role>();
 
-                user = repo.Reload(user);
+                user = userRepo.Reload(user);
+                userRepo.LoadIfNot(user.Roles);
 
-                user.Roles.Clear();
+                foreach (Role role in user.Roles)
+                {
+                    roleRepo.LoadIfNot(role.Users);
+                    role.Users.Remove(user);
+                }
 
-                repo.Delete(user);
+                userRepo.Delete(user);
                 uow.Commit();
             }
 
