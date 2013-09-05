@@ -156,13 +156,13 @@
     //
     //
     // Details
-    function cancelUserEdit(e) {
+    function cancelRoleEdit(e) {
         $.get('@Url.Action("RoleInfo", "Roles")', { Id: e }, function (data) {
                 $('#contentTabstripRoleInfo').html(data);
             });
         }
 
-        function editUserInfo(e) {
+        function editRoleInfo(e) {
             $.get('@Url.Action("RoleEdit", "Roles")', { Id: e }, function (data) {
             $('#contentTabstripRoleInfo').html(data);
         });
