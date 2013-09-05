@@ -228,6 +228,9 @@ namespace BExIS.Security.Services
                 IRepository<User> repo = uow.GetRepository<User>();
 
                 user = repo.Reload(user);
+
+                user.Roles.Clear();
+
                 repo.Delete(user);
                 uow.Commit();
             }
