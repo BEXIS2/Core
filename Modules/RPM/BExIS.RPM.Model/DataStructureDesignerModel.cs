@@ -74,8 +74,22 @@ namespace BExIS.RPM.Model
 
                 DataRow Row = this.DataStructureTable.NewRow();
 
+                List<string> Functions = new List<string>();
+                foreach (Variable v in this.dataStructure.Variables)
+                {
+                    Functions.Add(v.Id.ToString() + "?DataStructureId=" + this.dataStructure.Id);
+                }
+              
+                row = Functions;
+                row.Insert(0, "Functions");
+
+                Row = this.DataStructureTable.NewRow();
+                Row.ItemArray = row.ToArray();
+
+                this.DataStructureTable.Rows.Add(Row);                
+
                 var Names = from p in this.dataStructure.Variables
-                            select p.DataAttribute.Name;
+                            select p.Label;
                 row = Names.ToList();
                 row.Insert(0,"Name");
 

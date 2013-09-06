@@ -13,8 +13,17 @@
 <div>
 @(Html.Telerik().Grid(Model.DataStructureTable)
         .Name("DataStructureGrid")
+        .RowAction(row =>
+            {
+                if (row.Index == 0)
+                {
+                    row.HtmlAttributes["class"] = "function"; 
+                }
+            })
 )
 </div>
+<br />
+<br />
 <div>
         @Html.ActionLink("AddVariable", "ShowVariables", "Home", new { id = Model.dataStructure.Id }, new { area = "RPM", @class = "t-button" })
 </div>
@@ -32,4 +41,29 @@
         
 }
 </div>
+<div style="position:absolute; left:20%; top:60px;">
+@{ Html.Telerik().Window()
+        .Name("editVariableWindow")
+        .Visible((bool)Session["VariableWindow"])
+        .Content(@<text>
+                    @Html.Partial("_editVariable")
+                    </text>)
+        .Width(300)
+        .Height(200)
+        .Render()
+        ;
+        
+}
+</div>
 @{Session["Window"] = false;}
+
+<script type="text/javascript" language="javascript">
+    $(document).ready(function () {
+        for (var i = 0; i < $(".function td").length; i++)
+        {
+            if ($(".function td")[i].innerHTML != "Functions")
+                $(".function td")[i].innerHTML = '<a area="RPM" class="t-icon t-edit" href="/RPM/Home/openVariableWindow/' + $(".function td")[i].innerHTML + '"></a><a area="RPM" class="t-icon t-cancel" href="/RPM/Home/deleteVariable/' + $(".function td")[i].innerHTML + '">Download</a>';
+        }
+    });
+
+</script>

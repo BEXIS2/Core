@@ -133,20 +133,17 @@
     <br />
     @(Html.Telerik().Grid(model)    
             .Name("UnitGrid")
-            .Sortable()
-            .Pageable()            
+            .Sortable()           
             .Columns(columns =>
                 {
                     columns.Template(
                         @<text>
-                            @Html.ActionLink("Add", "openUnitWindow", "Home", new { id = 0 }, new { @class = "t-icon t-add" })
                             @Html.ActionLink("Edit", "openUnitWindow", "Home", new { id = item.Id }, new { @class = "t-icon t-edit" })
                             @Html.ActionLink("Delete", "deletUnit", "Home", new { id = item.Id }, new { @class = "t-icon t-delete" })
                         </text>
                     ).Title("Functions")
                         .Width(50)
                         .ClientTemplate(
-                            @Html.ActionLink("Add", "openUnitWindow", "Home", new { id = "<#= id #>" }, new { @class = "t-icon t-add" }).ToHtmlString() +
                             @Html.ActionLink("Edit", "openUnitWindow", "Home", new { id = "<#= id #>" }, new { @class = "t-icon t-edit" }).ToHtmlString() +
                             @Html.ActionLink("Delete", "deletUnit", "Home", new { id = "<#= id #>" }, new { @class = "t-icon t-delete" }).ToHtmlString()
                         );
@@ -159,6 +156,10 @@
                     columns.Bound(c => c.AssociatedDataTypes);
                 })
     )
+    <br />
+    <br />
+    @Html.ActionLink("Add Unit", "openUnitWindow", "Home", new { id = 0 }, new { @class = "t-button t-add" })
+    
 
     <div style="position:absolute; left:20%; top:60px;">
                     @{ Html.Telerik().Window()

@@ -15,8 +15,9 @@
 @*</header> *@
 
 <div>
-        @Html.ActionLink("newDataStructure", "DataStructureDesigner", "Home", new {@class = "newDataStructure"})
+        @Html.ActionLink("Create Data Structure", "DataStructureDesigner", "Home", new {@class = "t-button"})
 </div>
+<br />
 <div>
 @(Html.Telerik().TreeView()
     .Name("TreeView")

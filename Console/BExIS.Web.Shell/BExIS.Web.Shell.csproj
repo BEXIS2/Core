@@ -865,6 +865,7 @@
     <Content Include="Areas\Auth\Views\Users\_UserInfoPartial.cshtml" />
     <Content Include="Areas\Auth\Views\Users\_InfoPartial.cshtml" />
     <Content Include="Areas\Auth\Views\Roles\_InfoPartial.cshtml" />
+    <Content Include="Areas\RPM\Views\Home\_editVariable.cshtml" />
     <None Include="Properties\PublishProfiles\BEXIS2 DEV.pubxml" />
     <None Include="Properties\PublishProfiles\BEXIS2.pubxml" />
   </ItemGroup>

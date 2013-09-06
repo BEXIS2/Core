@@ -34,8 +34,9 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
             
             Session["inUse"] = false;
-            Session["dataStructureId"] = null;
+            Session["dataStructureId"] = (long)0;
             Session["Window"] = false;
+            Session["VariableWindow"] = false;
             return View("DataStructureDesigner", DSDM);
         }
 
@@ -253,6 +254,80 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             }
             return View("DataStructureDesigner", DSDM);
         }
+
+        public ActionResult deleteVariable(long id, long DataStructureId)
+        {
+            if (DataStructureId != 0)
+            {
+                DataStructureDesignerModel DSDM = new DataStructureDesignerModel();
+                DSDM.GetDataStructureByID(DataStructureId);
+
+                if (DSDM.dataStructure.Datasets.Count == 0)
+                {
+                    Session["inUse"] = false;
+                    DataStructureManager DSM = new DataStructureManager();
+                    if (DSDM.dataStructure.Variables.Count > 0)
+                    {
+                        foreach (Variable v in DSDM.dataStructure.Variables)
+                        {
+                            if (v.Id == id)
+                                DSM.RemoveVariableUsage(v);
+                        }
+                    }
+                    return View("DataStructureDesigner", DSDM);
+                }
+                else
+                {
+                    Session["inUse"] = true;
+                    return View("DataStructureDesigner", DSDM);
+                }
+            }
+            return RedirectToAction("DataStructureDesigner");
+        }
+
+        public ActionResult saveVariable(string name, long id, long dataStructureId)
+        {
+            DataStructureDesignerModel DSDM = new DataStructureDesignerModel();
+            DSDM.GetDataStructureByID(dataStructureId);
+
+            if (id != 0)
+            {
+                DataStructureManager DSM = new DataStructureManager();
+                Variable var = DSM.VariableRepo.Get(id);
+                foreach (Variable v in DSDM.dataStructure.Variables)
+                {
+                    if (v.Id == id)
+                        DSM.RemoveVariableUsage(v);
+                }
+                DSM.AddVariableUsage(DSDM.dataStructure, var.DataAttribute, false, name);
+                
+                Session["variableId"] = null;
+                Session["VariableWindow"] = false;
+            }
+            return View("DataStructureDesigner", DSDM);
+        }
+
+        public ActionResult openVariableWindow(long id, long DataStructureId)
+        {
+
+            DataStructureDesignerModel DSDM = new DataStructureDesignerModel();
+                DSDM.GetDataStructureByID(DataStructureId);
+
+                if (DSDM.dataStructure.Datasets.Count == 0)
+                {
+                    Session["inUse"] = false;
+                    Session["VariableWindow"] = true;
+                    Session["variableId"] = id;
+                    Session["dataStructureId"] = DSDM.dataStructure.Id;
+                }
+                else
+                {
+                    Session["inUse"] = true; 
+                    Session["VariableWindow"] = true;
+                }
+                return View("DataStructureDesigner", DSDM);
+        }
+
         #endregion
 
         public ActionResult downloadTemplate(long id)
@@ -372,7 +447,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             return RedirectToAction(parent);
         }
 
-        public ActionResult deletUnit(int id)
+        public ActionResult deletUnit(long id)
         {
 
             if (id != 0)
@@ -385,7 +460,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             return RedirectToAction("UnitManager");
         }
 
-        public ActionResult openUnitWindow(int id)
+        public ActionResult openUnitWindow(long id)
         {
 
             if (id != 0)
@@ -474,7 +549,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             return RedirectToAction(parent);
         }
 
-        public ActionResult openClassWindow(int id)
+        public ActionResult openClassWindow(long id)
         {
 
             if (id != 0)
@@ -492,7 +567,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             return RedirectToAction("ClassificationManager");
         }
 
-        public ActionResult deletClass(int id)
+        public ActionResult deletClass(long id)
         {
 
             if (id != 0)
@@ -562,7 +637,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             return RedirectToAction(parent);
         }
 
-        public ActionResult openDataTypeWindow(int id)
+        public ActionResult openDataTypeWindow(long id)
         {
 
             if (id != 0)
@@ -580,7 +655,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             return RedirectToAction("DataTypeManager");
         }
 
-        public ActionResult deletDataType(int id)
+        public ActionResult deletDataType(long id)
         {
 
             if (id != 0)
@@ -653,7 +728,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             return RedirectToAction(parent);
         }
 
-        public ActionResult openAttributeWindow(int id)
+        public ActionResult openAttributeWindow(long id)
         {
 
             if (id != 0)

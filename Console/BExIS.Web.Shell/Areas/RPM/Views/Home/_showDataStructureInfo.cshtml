@@ -29,11 +29,11 @@
 
 <h3>@Model.dataStructure.Name</h3>
 
-<div class="planingPartialDiv">   
+<div class="planingPartialDiv" style="width:500px;">   
  @using(Html.BeginForm("saveDataStructure", "Home", new {area = "RPM"}))
  {     
-        <div id="Description">
-                Description:          
+        <div id="Description" style="float:right;">
+                Description: <br />          
                 @(Html.TextAreaFor(m => Model.dataStructure.Description, new {@class = "t-input"}))
         </div>
         <div id="info">
@@ -59,7 +59,7 @@
                 </tr>
                 <tr>
                     <td>
-                        Number of Vareables:
+                        Number of Variables:
                     </td>
                     <td>
                         @Model.dataStructure.Variables.Count
@@ -77,7 +77,7 @@
             </table>
         </div>       
      <button name="create" value="SaveDataStructure" type="submit" class="t-button">Save</button>
-     @Html.ActionLink("Download", "downloadTemplate", "Home", new { id = Model.dataStructure.Id }, new { area = "RPM", @class = "t-button" })
+     @Html.ActionLink("Download", "downloadTemplate", "Home", new { id = Model.dataStructure.Id }, new { area = "RPM", @class = "t-button", @style = "margin:5px;"})
      @Html.ActionLink("Delete", "deleteDataStructure", "Home", new { id = Model.dataStructure.Id }, new { area = "RPM", @class = "t-button"})    
      @ViewData["errorMsg"]
  }

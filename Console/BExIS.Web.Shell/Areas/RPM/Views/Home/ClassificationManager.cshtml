@@ -44,14 +44,12 @@
                 {
                     columns.Template(
                         @<text>
-                            @Html.ActionLink("Add", "openClassWindow", "Home", new { id = 0 }, new { @class = "t-icon t-add" })
                             @Html.ActionLink("Edit", "openClassWindow", "Home", new { id = item.Id }, new { @class = "t-icon t-edit" })
                             @Html.ActionLink("Delete", "deletClass", "Home", new { id = item.Id }, new { @class = "t-icon t-delete" })
                         </text>
                     ).Title("Functions")
                         .Width(50)
                         .ClientTemplate(
-                            @Html.ActionLink("Add", "openClassWindow", "Home", new { id = "<#= id #>" }, new { @class = "t-icon t-add" }).ToHtmlString() +
                             @Html.ActionLink("Edit", "openClassWindow", "Home", new { id = "<#= id #>" }, new { @class = "t-icon t-edit" }).ToHtmlString() +
                             @Html.ActionLink("Delete", "deletClass", "Home", new { id = "<#= id #>" }, new { @class = "t-icon t-delete" }).ToHtmlString()
                         );
@@ -62,7 +60,10 @@
                    
                 })
     )
-
+    <br />
+    <br />
+    @Html.ActionLink("Add Classification", "openClassWindow", "Home", new { id = 0 }, new { @class = "t-button t-add" })
+   
     <div style="position:absolute; left:20%; top:60px;">
                     @{ Html.Telerik().Window()
                             .Name(windowName)

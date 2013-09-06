@@ -10,14 +10,16 @@
                     .Items(item =>
                     {
                         item.Add().Text("Faceted Search").Action("Index", "Home", new { area = "Search" });
-                        item.Add().Text("Search Designer").Action("SearchDesigner", "Home", new { area = "Search" });
-                        item.Add().Text("Semantic Search").Action("Index", "Home", new { area = "Search" });
+                        
                     }
                     );
-                menu.Add().Text("Plan").Action("Index", "Home", new { area = "RPM" })
+                menu.Add().Text("Plan").Action("DataStructureDesigner", "Home", new { area = "RPM" })
                     .Items(item =>
                     {
-                        item.Add().Text("Data Structure Designer").Action("DataStructureDesigner", "Home", new { area = "RPM" });
+                        item.Add().Text("Data Structure Manager").Action("DataStructureDesigner", "Home", new { area = "RPM" });
+                        item.Add().Text("Data Attribute Manager").Action("AttributeManager", "Home", new { area = "RPM" });
+                        item.Add().Text("Data Type Manager").Action("DataTypeManager", "Home", new { area = "RPM" });
+                        item.Add().Text("Unit Manager").Action("UnitManager", "Home", new { area = "RPM" });
                     }
                     );
                 menu.Add().Text("Collect").Action("Index", "Home", new { area = "DCM" })
@@ -29,8 +31,9 @@
                 menu.Add().Text("Administration")
                     .Items(item =>
                     {
-                        item.Add().Text("Roles").Action("Roles", "Roles", new { area = "Auth" });
-                        item.Add().Text("Users").Action("Users", "Users", new { area = "Auth" });
+                        item.Add().Text("Roles Manager").Action("Roles", "Roles", new { area = "Auth" });
+                        item.Add().Text("Users Manager").Action("Users", "Users", new { area = "Auth" });
+                        item.Add().Text("Search Manager").Action("SearchDesigner", "Home", new { area = "Search" });
                     }
                 );
                 

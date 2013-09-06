@@ -9,7 +9,7 @@
     long[] dataAttributeIds = new long[] { };
     Model.GetDataAttributeList();
     
-    if(Session["dataStructureId"] != null)
+    if((long)Session["dataStructureId"] != 0)
     {
         long id = (long)Session["dataStructureId"];
         Session["dataStructureId"] = id; 
@@ -66,8 +66,5 @@ else
             )
             <button name="addVariables" value="add" type="submit" class="t-button">Add Variables</button>
         }
-    </div>
-    <div>
-        @Html.ActionLink("Add", "AddVariables", "Home", new { @class = "addVariable" })
     </div>
 }
