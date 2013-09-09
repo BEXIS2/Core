@@ -64,7 +64,7 @@
         for (var i = 0; i < $(".function td").length; i++)
         {
             if ($(".function td")[i].innerHTML != "Functions")
-                $(".function td")[i].innerHTML = '<a area="RPM" class="t-icon t-edit" href="/RPM/Home/openVariableWindow/' + $(".function td")[i].innerHTML + '"></a><a area="RPM" class="t-icon t-cancel" href="/RPM/Home/deleteVariable/' + $(".function td")[i].innerHTML + '">Download</a>';
+                $(".function td")[i].innerHTML = '<a area="RPM" class="t-icon t-edit" href="/RPM/Home/openVariableWindow/' + $(".function td")[i].innerHTML + '"></a><a area="RPM" class="t-icon t-delete" href="/RPM/Home/deleteVariable/' + $(".function td")[i].innerHTML + '">Download</a>';
         }
 
         $('#DataStructureGrid .t-header').replaceWith('');
