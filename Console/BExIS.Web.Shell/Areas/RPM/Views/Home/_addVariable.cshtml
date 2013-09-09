@@ -35,7 +35,7 @@ else
         @using (Html.BeginForm("AddVariables", "Home", new { area = "RPM" }))
         {
             
-            <button name="addVariables" value="add" type="submit" class="t-button">Add Variables</button>
+            <button name="addVariables" value="add" type="submit" class="t-button">Save</button>
             <br />
             <br />
             @(Html.Telerik().Grid(Model.dataAttributeList)
@@ -69,7 +69,7 @@ else
             )
             <br />
             <br />
-            <button name="addVariables" value="add" type="submit" class="t-button">Add Variables</button>
+            <button name="addVariables" value="add" type="submit" class="t-button">Save</button>
         }
     </div>
 }

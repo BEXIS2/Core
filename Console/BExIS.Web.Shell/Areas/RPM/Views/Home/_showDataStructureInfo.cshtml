@@ -47,7 +47,7 @@
                         @(Html.TextBoxFor(m => Model.dataStructure.Name, new {@class = "t-input"}))
                     </td>
                 </tr>
-                <tr>
+                <tr class ="hidden">
                     <td>
                         @(Html.Telerik().DropDownList()
                             .Name("category")
