@@ -29,7 +29,7 @@
 </div>
 <div style="position:absolute; left:20%; top:60px;">
 @{ Html.Telerik().Window()
-        .Name("AddVariableWindow")
+        .Name("Add_Variable")
         .Visible((bool)Session["Window"])
         .Content(@<text>
                     @Html.Partial("_addVariable")
@@ -43,7 +43,7 @@
 </div>
 <div style="position:absolute; left:20%; top:60px;">
 @{ Html.Telerik().Window()
-        .Name("editVariableWindow")
+        .Name("Edit_Variable")
         .Visible((bool)Session["VariableWindow"])
         .Content(@<text>
                     @Html.Partial("_editVariable")

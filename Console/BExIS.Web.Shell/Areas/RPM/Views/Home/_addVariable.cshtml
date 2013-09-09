@@ -19,7 +19,7 @@
 
 @if ((bool)Session["inUse"] == true)
 { 
-    <p>Can't at variable Data Strucure in use</p>
+    <p>Can't add variable Data Strucure in use</p>
 }
 else
 {
@@ -31,16 +31,19 @@ else
         document.getElementById(element).style.display = 'none';
     }
     </script>
-
     <div class="planingPartialDiv" id="createVariable">
         @using (Html.BeginForm("AddVariables", "Home", new { area = "RPM" }))
         {
+            
+            <button name="addVariables" value="add" type="submit" class="t-button">Add Variables</button>
+            <br />
+            <br />
             @(Html.Telerik().Grid(Model.dataAttributeList)
             .Name("DataAttributeGrid")
             .Columns(columns =>
-                {
-                    columns.Template(
-                        @<text>
+            {
+                columns.Template(
+                    @<text>
                             <input name="checkedRecords" type="checkbox" value="@item.Id " title="checkedRecords" 
                                 @if (dataAttributeIds.Contains(item.Id))
                                 {
@@ -48,22 +51,24 @@ else
                                 }
                             />
                         </text>)
-                        .Title("").Width(36).HtmlAttributes(new { style = "text-align:center" });
+                    .Title("").Width(36).HtmlAttributes(new { style = "text-align:center" });
 
-                    //columns.Command(commands => commands.Select()).Title("Select");
-                    columns.Bound(c => c.Name);
-                    columns.Bound(c => c.Id);
-                    columns.Bound(c => c.ShortName);
-                    columns.Bound(c => c.Description);
-                    columns.Bound(c => c.Classification.Name)
-                        .Title("Classification");
-                    columns.Bound(c => c.Unit.Name)
-                        .Title("Unit");
-                    columns.Bound(c => c.DataType.Name)
-                        .Title("Data Type");
+                //columns.Command(commands => commands.Select()).Title("Select");
+                columns.Bound(c => c.Name);
+                columns.Bound(c => c.Id);
+                columns.Bound(c => c.ShortName);
+                columns.Bound(c => c.Description);
+                columns.Bound(c => c.Classification.Name)
+                    .Title("Classification");
+                columns.Bound(c => c.Unit.Name)
+                    .Title("Unit");
+                columns.Bound(c => c.DataType.Name)
+                    .Title("Data Type");
 
-                })
+            })
             )
+            <br />
+            <br />
             <button name="addVariables" value="add" type="submit" class="t-button">Add Variables</button>
         }
     </div>
