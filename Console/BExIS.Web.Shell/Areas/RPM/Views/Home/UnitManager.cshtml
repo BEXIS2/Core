@@ -153,7 +153,20 @@
                     columns.Bound(c => c.Abbreviation);
                     columns.Bound(c => c.Dimension);
                     columns.Bound(c => c.MeasurementSystem);
-                    columns.Bound(c => c.AssociatedDataTypes);
+                    columns.Template(
+                        @<text>
+                            @{string temp = "";
+                              foreach (DataType dt in item.AssociatedDataTypes)
+                              {
+                                  if (temp== "") 
+                                  {temp = dt.Name;}
+                                  else  
+                                  {temp = temp + ", " + dt.Name;}
+                              }
+                              }
+                              @temp 
+                        </text>
+                    ).Title("Associated Data Types");
                 })
     )
     <br />
