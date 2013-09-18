@@ -34,11 +34,12 @@ namespace BExIS.RPM.Output
         {
             DataStructureManager DSM = new DataStructureManager();
             StructuredDataStructure dataStructure = DSM.StructuredDataStructureRepo.Get(id);
-            string filename = dataStructure.Name + ".xlsx";
+            string filename = dataStructure.Name + ".xlsm";
 
             SpreadsheetDocument template = SpreadsheetDocument.Open(Path.Combine(AppConfiguration.GetModuleWorkspacePath("RPM"),"Template",_fileName),true);
             SpreadsheetDocument dataStructureFile = SpreadsheetDocument.Create(Path.Combine(AppConfiguration.GetModuleWorkspacePath("RPM"), "Template", filename), template.DocumentType);
             //dataStructureFile = SpreadsheetDocument.Open(Path.Combine(AppConfiguration.GetModuleWorkspacePath("RPM"), "Template", filename), true);
+ 
 
             foreach (OpenXmlPart part in template.GetPartsOfType<OpenXmlPart>())
             {
@@ -109,7 +110,7 @@ namespace BExIS.RPM.Output
 
                     string classification = "";
 
-                    if (dataAttribute.Unit != null)
+                    if (dataAttribute.Classification != null)
                     {
                         classification = dataAttribute.Classification.Name;
                     }

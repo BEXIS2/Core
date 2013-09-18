@@ -36,6 +36,8 @@
 
 @if (dtList.Count > 0)
 { 
+    if (dtList.Count > 1)
+    {
            @(Html.Telerik().Slider<Int32>()
                 .Name(Model.DataSourceKey)
                 .Min(dtList.First())//.Min(item.min)
@@ -48,6 +50,11 @@
                            .OnChange("onChangeSlider")
                        )
         )
+    }
+    else
+    { 
+        <b>Slider not work with only one value</b>
+    }
 }
 else
 { 

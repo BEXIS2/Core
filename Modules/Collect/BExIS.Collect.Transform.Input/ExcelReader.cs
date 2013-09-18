@@ -552,23 +552,27 @@ namespace BExIS.DCM.Transform.Input
             {
                 //Parse defined name string...
                 string key = name.Name;
-                string reference = name.InnerText;
-                string sheetName = reference.Split('!')[0];
-                sheetName = sheetName.Trim('\'');
 
-                //Assumption: None of my defined names are relative defined names (i.e. A1)
-                string range = reference.Split('!')[1];
-                string[] rangeArray = range.Split('$');
-                string startCol = rangeArray[1];
-                int startRow = Convert.ToInt32(rangeArray[2].TrimEnd(':'));
-                string endCol = null;
-                int endRow = 0;
-                if (rangeArray.Length > 3)
+                if (key.Equals("Data") || key.Equals("VariableIdentifiers"))
                 {
-                    endCol = rangeArray[3];
-                    endRow = Convert.ToInt32(rangeArray[4]);
+                    string reference = name.InnerText;
+                    string sheetName = reference.Split('!')[0];
+                    sheetName = sheetName.Trim('\'');
+
+                    //Assumption: None of my defined names are relative defined names (i.e. A1)
+                    string range = reference.Split('!')[1];
+                    string[] rangeArray = range.Split('$');
+                    string startCol = rangeArray[1];
+                    int startRow = Convert.ToInt32(rangeArray[2].TrimEnd(':'));
+                    string endCol = null;
+                    int endRow = 0;
+                    if (rangeArray.Length > 3)
+                    {
+                        endCol = rangeArray[3];
+                        endRow = Convert.ToInt32(rangeArray[4]);
+                    }
+                    definedNames.Add(new DefinedNameVal() { Key = key, SheetName = sheetName, StartColumn = startCol, StartRow = startRow, EndColumn = endCol, EndRow = endRow });
                 }
-                definedNames.Add(new DefinedNameVal() { Key = key, SheetName = sheetName, StartColumn = startCol, StartRow = startRow, EndColumn = endCol, EndRow = endRow });
             }
 
             return definedNames;

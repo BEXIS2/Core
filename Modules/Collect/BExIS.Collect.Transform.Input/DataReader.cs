@@ -321,7 +321,7 @@ namespace BExIS.DCM.Transform.Input
 
                 string pattern = "[H|Z][E|T][G|R]\\d+";
 
-                vvm.ValidationList.Add(new PatternValidation(varName, dataType, pattern));
+                //vvm.ValidationList.Add(new PatternValidation(varName, dataType, pattern));
 
             }
 
