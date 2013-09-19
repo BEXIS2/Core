@@ -69,6 +69,7 @@
                             .Name(windowName)
                             .Visible((bool)Session["Window"])
                             .Draggable(true)
+                            .Modal(true)
                             .Content(@<text>
                                         @Html.Partial("_editDataType", dataType)
                                         </text>)

@@ -378,7 +378,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
         {
             if (id == 0)
             {
-                if (Model.Name != "" && Model.Name != null)
+                if ((Model.Name != "" && Model.Name != null) && (Model.Abbreviation!= "" && Model.Abbreviation != null))
                 {
                     List<Unit> unitList = GetUnitRepo();
                     bool nameNotExist = unitList.Where(p => p.Name.Equals(Model.Name)).Count().Equals(0);
@@ -407,9 +407,6 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                             }
                         }
                     }
-                }
-                else
-                { 
                 }
             }
             else
@@ -454,10 +451,29 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             {
                 IList<Unit> unitList = GetUnitRepo();
                 Unit unit = unitList.Where(p => p.Id.Equals(id)).ToList().First();
-                UnitManager UM = new UnitManager();
-                UM.Delete(unit);
+                bool inUse = unitInUse(unit);
+                if (!inUse)
+                {
+                    UnitManager UM = new UnitManager();
+                    UM.Delete(unit);
+                }
             }
             return RedirectToAction("UnitManager");
+        }
+
+        public bool unitInUse(Unit unit)
+        {
+            List<DataAttribute> attributes = GetAttRepo();
+            bool inUse = false;
+            foreach (DataAttribute a in attributes)
+            {
+                if (a.Unit != null)
+                {
+                    if (a.Unit.Id == unit.Id)
+                        inUse = true;
+                }
+            }
+            return inUse;
         }
 
         public ActionResult openUnitWindow(long id)
@@ -617,11 +633,14 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
             if (id == 0)
             {
-                bool nameNotExist = DataTypeList.Where(p => p.Name.Equals(Model.Name)).Count().Equals(0);
-                if (nameNotExist)
+                if (Model.Name != "" && Model.Name != null)
                 {
-                    DataTypeManager DTM = new DataTypeManager();
-                    DTM.Create(Model.Name, Model.Description, typecode);
+                    bool nameNotExist = DataTypeList.Where(p => p.Name.Equals(Model.Name)).Count().Equals(0);
+                    if (nameNotExist)
+                    {
+                        DataTypeManager DTM = new DataTypeManager();
+                        DTM.Create(Model.Name, Model.Description, typecode);
+                    }
                 }
             }
             else
@@ -630,6 +649,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                 DataTypeManager DTM = new DataTypeManager();
                 dataType.Name = Model.Name;
                 dataType.Description = Model.Description;
+                dataType.SystemType = typecode.ToString();
                 DTM.Update(dataType);
             }
             Session["Window"] = false;
@@ -753,13 +773,22 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             {
                 IList<DataAttribute> AttributeList = GetAttRepo();
                 DataAttribute dataAttribute = AttributeList.Where(p => p.Id.Equals(id)).ToList().First();
-                DataContainerManager DAM = new DataContainerManager();
-                DAM.DeleteDataAttribute(dataAttribute);
+                if (!attributeInUse(dataAttribute))
+                {
+                    DataContainerManager DAM = new DataContainerManager();
+                    DAM.DeleteDataAttribute(dataAttribute);
+                }
             }
             return RedirectToAction("AttributeManager");
         }
 
-        
+        public bool attributeInUse(DataAttribute attribute)
+        {         
+           if (attribute.UsagesAsVariable.Count() == 0 && attribute.UsagesAsParameter.Count() == 0)
+               return false;
+           else
+               return true;          
+        }
 
     }
 

@@ -11,7 +11,10 @@
     List<string> SystemTypeList = new List<string>();
     foreach (System.TypeCode tc in Enum.GetValues(typeof(System.TypeCode)))
     {
-        SystemTypeList.Add(tc.ToString());
+        if (!tc.ToString().Equals("Empty") && !tc.ToString().Equals("Object") && !tc.ToString().Equals("DBNull") && !tc.ToString().Equals("SByte") && !tc.ToString().Equals("Byte") && !tc.ToString().Equals("Single"))
+        {
+            SystemTypeList.Add(tc.ToString());
+        }
     } 
 }
 <div class="planingPartialDiv" id="createUnit">

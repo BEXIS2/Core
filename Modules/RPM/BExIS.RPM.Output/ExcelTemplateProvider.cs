@@ -47,21 +47,36 @@ namespace BExIS.RPM.Output
             }
 
             // get worksheet
+            uint[] styleIndex = new uint[4];
+            CellFormats cellFormats = dataStructureFile.WorkbookPart.WorkbookStylesPart.Stylesheet.Elements<CellFormats>().First();
+            //number 0,00
+            CellFormat cellFormat = new CellFormat() { NumberFormatId = (UInt32Value)2U, FontId = (UInt32Value)0U, FillId = (UInt32Value)0U, BorderId = (UInt32Value)0U, FormatId = (UInt32Value)0U, ApplyNumberFormat = true };           
+            cellFormats.Append(cellFormat);
+            styleIndex[0] = (uint)cellFormats.Count++;
+            //number 0
+            cellFormat = new CellFormat() { NumberFormatId = (UInt32Value)1U, FontId = (UInt32Value)0U, FillId = (UInt32Value)0U, BorderId = (UInt32Value)0U, FormatId = (UInt32Value)0U, ApplyNumberFormat = true };
+            cellFormats.Append(cellFormat);
+            styleIndex[1] = (uint)cellFormats.Count++;
+            //text
+            cellFormat = new CellFormat() { NumberFormatId = (UInt32Value)49U, FontId = (UInt32Value)0U, FillId = (UInt32Value)0U, BorderId = (UInt32Value)0U, FormatId = (UInt32Value)0U, ApplyNumberFormat = true };
+            cellFormats.Append(cellFormat);
+            styleIndex[2] = (uint)cellFormats.Count++;
+            //date
+            cellFormat = new CellFormat() { NumberFormatId = (UInt32Value)14U, FontId = (UInt32Value)0U, FillId = (UInt32Value)0U, BorderId = (UInt32Value)0U, FormatId = (UInt32Value)0U, ApplyNumberFormat = true };
+            cellFormats.Append(cellFormat);
+            styleIndex[3] = (uint)cellFormats.Count++;
+
             Worksheet worksheet = dataStructureFile.WorkbookPart.WorksheetParts.First().Worksheet;
 
 
 
                 List<Row> rows = GetRows(worksheet,1,11);
-                
-                    //Cell cell = new Cell();
-                    //cell.CellReference = "M1";
-                    //cell.DataType = new EnumValue<CellValues>(CellValues.String);
-                    //cell.CellValue = new CellValue("test");
-                    
-                    //rows.ElementAt(0).Append(cell);
 
                 foreach (Variable var in dataStructure.Variables)
                 {
+                    DataContainerManager CM = new DataContainerManager();
+                    DataAttribute dataAttribute = CM.DataAttributeRepo.Get(var.DataAttribute.Id);
+
                     int indexVar = dataStructure.Variables.ToList().IndexOf(var) + 1;
 
                     string cellRef = GetClomunIndex(indexVar) + 1;
@@ -74,6 +89,15 @@ namespace BExIS.RPM.Output
                     };
                     rows.ElementAt(0).AppendChild(cell);
 
+                    cellRef = GetClomunIndex(indexVar) + 2;
+                    cell = new Cell()
+                    {
+                        CellReference = cellRef,
+                        DataType = CellValues.String,
+                        StyleIndex = getExcelStyleIndex(dataAttribute.DataType.SystemType, styleIndex),
+                        CellValue = new CellValue("")
+                    };
+                    rows.ElementAt(1).AppendChild(cell);
 
                     cellRef = GetClomunIndex(indexVar) + 3;
                     cell = new Cell()
@@ -84,9 +108,6 @@ namespace BExIS.RPM.Output
                         CellValue = new CellValue(var.Id.ToString())
                     };
                     rows.ElementAt(2).AppendChild(cell);
-
-                    DataContainerManager CM = new DataContainerManager();
-                    DataAttribute dataAttribute = CM.DataAttributeRepo.Get(var.DataAttribute.Id);
 
                     cellRef = GetClomunIndex(indexVar) + 4;
                     cell = new Cell()
@@ -210,6 +231,34 @@ namespace BExIS.RPM.Output
             template.Close();
             dataStructureFile.Close();
 
+        }
+
+        private CellValues getExcelType(string systemType)
+        {
+            if (systemType == "Int16" || systemType == "Int32" || systemType == "Int64" || systemType == "UInt16" || systemType == "UInt32" || systemType == "UInt64" || systemType == "Double" || systemType == "Decimal")
+                return CellValues.Number;
+            if (systemType == "Char" || systemType == "String")
+                return CellValues.SharedString;
+            if (systemType == "DateTime")
+                return CellValues.Date;
+            if (systemType == "Boolean")
+                return CellValues.Boolean;
+            return CellValues.SharedString;
+        }
+
+        private uint getExcelStyleIndex(string systemType, uint[] styleIndex)
+        {
+            if (systemType == "Double" || systemType == "Decimal")
+                return styleIndex[0];
+            if (systemType == "Int16" || systemType == "Int32" || systemType == "Int64" || systemType == "UInt16" || systemType == "UInt32" || systemType == "UInt64")
+                return styleIndex[1];
+            if (systemType == "Char" || systemType == "String")
+                return styleIndex[2];
+            if (systemType == "DateTime")
+                return styleIndex[3];
+            if (systemType == "Boolean")
+                return styleIndex[2];
+            return styleIndex[2];
         }
 
         private List<Row> GetRows(Worksheet worksheet, int start, int end)
