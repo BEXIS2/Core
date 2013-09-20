@@ -301,7 +301,7 @@ namespace BExIS.DCM.Transform.Input
                 dataType.Equals(TypeCode.Double.ToString())||
                 dataType.Equals(TypeCode.DateTime.ToString()))
             {
-                vvm.ValidationList.Add(new RangeValidation(varName,dataType, 1, 100000000));
+                //vvm.ValidationList.Add(new RangeValidation(varName,dataType, 1, 100000000));
             }
 
             if(dataType.Equals(TypeCode.String.ToString()))
