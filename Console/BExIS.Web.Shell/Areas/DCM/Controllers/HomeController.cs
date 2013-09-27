@@ -500,7 +500,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 //string filename = "D:\\" + DateTime.Now.Millisecond.ToString() + SelectFileUploader.FileName;
                 //SelectFileUploader.SaveAs(filename);
 
-                string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), DateTime.Now.Millisecond.ToString() + SelectFileUploader.FileName);
+                string path = Path.Combine(AppConfiguration.WorkspaceRootPath,"temp","DCM", DateTime.Now.Millisecond.ToString() + SelectFileUploader.FileName);
                 SelectFileUploader.SaveAs(path);
 
                 TaskManager.AddToBus("FilePath", path);

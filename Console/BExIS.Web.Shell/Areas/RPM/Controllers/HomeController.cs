@@ -271,7 +271,10 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                         foreach (Variable v in DSDM.dataStructure.Variables)
                         {
                             if (v.Id == id)
+                            {
                                 DSM.RemoveVariableUsage(v);
+                                Session["variableId"] = null;
+                            }
                         }
                     }
                     return View("DataStructureDesigner", DSDM);
@@ -341,7 +344,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                 ExcelTemplateProvider provider = new ExcelTemplateProvider("BExISppTemplate_Clean.xlsm");
                 provider.CreateTemplate(id);
                 string filename = DSDM.dataStructure.Name + ".xlsm";
-                return File(Path.Combine(AppConfiguration.GetModuleWorkspacePath("RPM"), "Template", filename), "application/xlsx", "Template_" + filename);
+                return File(Path.Combine(AppConfiguration.WorkspaceRootPath, "temp","RPM", filename), "application/xlsx", "Template_" + filename);
             }
             return View("DataStructureDesigner", DSDM);
         }

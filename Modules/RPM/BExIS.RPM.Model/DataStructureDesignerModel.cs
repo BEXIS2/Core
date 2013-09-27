@@ -99,7 +99,7 @@ namespace BExIS.RPM.Model
                 this.DataStructureTable.Rows.Add(Row);
 
                 var VariableIDs = from p in this.dataStructure.Variables
-                                  select p.DataAttribute.Id;
+                                  select p.Id;
                 List<long> tmp = VariableIDs.ToList();
                 row = tmp.ConvertAll<string>(p => p.ToString());
                 row.Insert(0, "VariableID");

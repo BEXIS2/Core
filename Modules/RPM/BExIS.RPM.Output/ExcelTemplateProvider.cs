@@ -37,7 +37,7 @@ namespace BExIS.RPM.Output
             string filename = dataStructure.Name + ".xlsm";
 
             SpreadsheetDocument template = SpreadsheetDocument.Open(Path.Combine(AppConfiguration.GetModuleWorkspacePath("RPM"),"Template",_fileName),true);
-            SpreadsheetDocument dataStructureFile = SpreadsheetDocument.Create(Path.Combine(AppConfiguration.GetModuleWorkspacePath("RPM"), "Template", filename), template.DocumentType);
+            SpreadsheetDocument dataStructureFile = SpreadsheetDocument.Create(Path.Combine(AppConfiguration.WorkspaceRootPath, "temp","RPM", filename), template.DocumentType);
             //dataStructureFile = SpreadsheetDocument.Open(Path.Combine(AppConfiguration.GetModuleWorkspacePath("RPM"), "Template", filename), true);
  
 
