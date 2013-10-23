@@ -247,7 +247,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                     if (temp != null)
                     {
                         DataStructureManager DSM = new DataStructureManager();
-                        DSM.AddVariableUsage(DSDM.dataStructure, temp, false, temp.Name);
+                        DSM.AddVariableUsage(DSDM.dataStructure, temp, true, temp.Name);
                     }
                 }
                 DSDM.GetDataStructureByID((long)Session["dataStructureId"]);
@@ -297,12 +297,8 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             {
                 DataStructureManager DSM = new DataStructureManager();
                 Variable var = DSM.VariableRepo.Get(id);
-                foreach (Variable v in DSDM.dataStructure.Variables)
-                {
-                    if (v.Id == id)
-                        DSM.RemoveVariableUsage(v);
-                }
-                DSM.AddVariableUsage(DSDM.dataStructure, var.DataAttribute, false, name);
+                var.Label = name;
+                DSM.UpdateStructuredDataStructure(var.DataStructure);
                 
                 Session["variableId"] = null;
                 Session["VariableWindow"] = false;
