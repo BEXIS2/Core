@@ -42,8 +42,6 @@ namespace BExIS.DCM.Transform.Input
         /// Format of the Date
         /// </summary>
         public string Dateformat { get; set; }
-
-        
-        
+  
     }
 }

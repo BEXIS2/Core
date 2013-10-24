@@ -11,5 +11,10 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
             Id = id;
             Title = title;
         }
+
+        public ListViewItem()
+        {
+            // TODO: Complete member initialization
+        }
     }
 }

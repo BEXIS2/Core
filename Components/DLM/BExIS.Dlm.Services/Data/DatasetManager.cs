@@ -7,6 +7,7 @@ using BExIS.Dlm.Entities.Administration;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using Vaiona.Persistence.Api;
+using Vaiona.Util.Xml;
 
 namespace BExIS.Dlm.Services.Data
 {
@@ -127,6 +128,7 @@ namespace BExIS.Dlm.Services.Data
         /// <summary>
         /// rolls back all the changes done on the latest version (deletes the working copy changes) and takes the dataset back to CheckedIn state
         /// The dataset must be in CheckedOut state and the performing user should be the check out user.
+        /// It does not check-in the dataset so the caller should CheckInDataset after calling Undo
         /// </summary>
         /// <param name="datasetId"></param>
         public void UndoCheckoutDataset(Int64 datasetId, string userName)
@@ -484,24 +486,24 @@ namespace BExIS.Dlm.Services.Data
         /// The general procedure is CheckOut, Edit*, CheckIn or Rollback
         /// While the dataset is checked out, all the changes go to the latest+1 version which acts like a working copy
         /// </summary>
-        /// <param name="workingCoptDatasetVersion"></param>
+        /// <param name="workingCopyDatasetVersion"></param>
         /// <param name="createdTuples"></param>
         /// <param name="editedTuples"></param>
         /// <param name="deletedTuples"></param>
         /// <param name="unchangedTuples">to be removed</param>
         /// <returns></returns>
-        public DatasetVersion EditDatasetVersion(DatasetVersion workingCoptDatasetVersion,
+        public DatasetVersion EditDatasetVersion(DatasetVersion workingCopyDatasetVersion,
             ICollection<DataTuple> createdTuples, ICollection<DataTuple> editedTuples, ICollection<DataTuple> deletedTuples, ICollection<DataTuple> unchangedTuples = null
             //,ICollection<ExtendedPropertyValue> extendedPropertyValues, ICollection<ContentDescriptor> contentDescriptors
             )
         {
-            workingCoptDatasetVersion.Dematerialize();
+            workingCopyDatasetVersion.Dematerialize();
             
             //preserve metadata and XmlExtendedPropertyValues for later use
-            var workingCoptDatasetVersionId = workingCoptDatasetVersion.Id;
-            var metadata = workingCoptDatasetVersion.Metadata;
-            var xmlExtendedPropertyValues = workingCoptDatasetVersion.XmlExtendedPropertyValues;
-            var contentDescriptors = workingCoptDatasetVersion.ContentDescriptors;
+            var workingCoptDatasetVersionId = workingCopyDatasetVersion.Id;
+            var metadata = workingCopyDatasetVersion.Metadata;
+            var xmlExtendedPropertyValues = workingCopyDatasetVersion.XmlExtendedPropertyValues;
+            var contentDescriptors = workingCopyDatasetVersion.ContentDescriptors;
 
             // do not move them to editDatasetVersion function
             this.DatasetRepo.Evict();
@@ -511,15 +513,15 @@ namespace BExIS.Dlm.Services.Data
             this.DatasetRepo.UnitOfWork.ClearCache();
 
             // maybe its better to use Merge function ...
-            workingCoptDatasetVersion = this.DatasetVersionRepo.Get(workingCoptDatasetVersionId);
+            workingCopyDatasetVersion = this.DatasetVersionRepo.Get(workingCoptDatasetVersionId);
             if (metadata != null)
-                workingCoptDatasetVersion.Metadata = metadata;
+                workingCopyDatasetVersion.Metadata = metadata;
             if (xmlExtendedPropertyValues != null)
-                workingCoptDatasetVersion.XmlExtendedPropertyValues = xmlExtendedPropertyValues;
+                workingCopyDatasetVersion.XmlExtendedPropertyValues = xmlExtendedPropertyValues;
             if (contentDescriptors != null)
-                workingCoptDatasetVersion.ContentDescriptors = contentDescriptors;
+                workingCopyDatasetVersion.ContentDescriptors = contentDescriptors;
 
-            return editDatasetVersion(workingCoptDatasetVersion, createdTuples, editedTuples, deletedTuples, unchangedTuples);
+            return editDatasetVersion(workingCopyDatasetVersion, createdTuples, editedTuples, deletedTuples, unchangedTuples);
         }
 
        
@@ -576,18 +578,19 @@ namespace BExIS.Dlm.Services.Data
             return (tuples);
         }
 
-        private DatasetVersion editDatasetVersion(DatasetVersion workingCoptDatasetVersion, ICollection<DataTuple> createdTuples, ICollection<DataTuple> editedTuples, ICollection<DataTuple> deletedTuples, ICollection<DataTuple> unchangedTuples)
+        private DatasetVersion editDatasetVersion(DatasetVersion workingCopyDatasetVersion, ICollection<DataTuple> createdTuples, ICollection<DataTuple> editedTuples, ICollection<DataTuple> deletedTuples, ICollection<DataTuple> unchangedTuples)
         {
-            Contract.Requires(workingCoptDatasetVersion.Dataset != null && workingCoptDatasetVersion.Dataset.Id >= 0);
-            Contract.Requires(workingCoptDatasetVersion.Dataset.Status == DatasetStatus.CheckedOut);
+            Contract.Requires(workingCopyDatasetVersion.Dataset != null && workingCopyDatasetVersion.Dataset.Id >= 0);
+            Contract.Requires(workingCopyDatasetVersion.Dataset.Status == DatasetStatus.CheckedOut);
 
             Contract.Ensures(Contract.Result<DatasetVersion>() != null && Contract.Result<DatasetVersion>().Id >= 0);
 
             // be sure you are working on the latest version (working copy). applyTupleChanges takes the working copy from the DB            
             List<DataTupleVersion> tobeAdded = new List<DataTupleVersion>();
             List<DataTuple> tobeDeleted = new List<DataTuple>();
+            List<DataTuple> tobeEdited = new List<DataTuple>();
 
-            DatasetVersion edited = applyTupleChanges(workingCoptDatasetVersion, ref tobeAdded, ref tobeDeleted, createdTuples, editedTuples, deletedTuples, unchangedTuples);
+            DatasetVersion edited = applyTupleChanges(workingCopyDatasetVersion, ref tobeAdded, ref tobeDeleted, ref tobeEdited, createdTuples, editedTuples, deletedTuples, unchangedTuples);
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
@@ -599,6 +602,12 @@ namespace BExIS.Dlm.Services.Data
                 {
                     tupleVersionRepo.Put(dtv);
                 }
+
+                foreach (var editedTuple in tobeEdited)
+                {
+                    editedTuple.VariableValues.ToList().ForEach(p => System.Diagnostics.Debug.Print(p.Value.ToString()));
+                     System.Diagnostics.Debug.Print(editedTuple.XmlVariableValues.AsString());
+                } 
 
                 foreach (DataTuple tuple in tobeDeleted)
                 {
@@ -705,6 +714,29 @@ namespace BExIS.Dlm.Services.Data
                         ContentDescriptors = new List<ContentDescriptor>(),
                         Status = DatasetVersionStatus.CheckedOut,
                     };
+                    // if there is a previous version, copy its metadata, content descriptors and extended property values to the newly created version
+                    if (ds.Versions.Count() > 0)
+                    {
+                        var previousCheckedInVersion = ds.Versions.Where(p => p.Status == DatasetVersionStatus.CheckedIn).First();
+                        if (previousCheckedInVersion != null)
+                        {
+                            dsNewVersion.Metadata = previousCheckedInVersion.Metadata;
+                            dsNewVersion.ExtendedPropertyValues = previousCheckedInVersion.ExtendedPropertyValues;
+                            foreach (var item in previousCheckedInVersion.ContentDescriptors)
+                            {
+                                ContentDescriptor cd = new ContentDescriptor()
+                                {
+                                    MimeType = item.MimeType,
+                                    Name = item.Name,
+                                    OrderNo = item.OrderNo,
+                                    URI = item.URI,
+                                    DatasetVersion = dsNewVersion,
+                                };
+                                dsNewVersion.ContentDescriptors.Add(cd);
+                            }                            
+                        }
+                    }
+
                     ds.Status = DatasetStatus.CheckedOut;
                     ds.LastCheckIOTimestamp = timestamp;
                     ds.CheckOutUser = getUserIdentifier(userName);
@@ -761,7 +793,8 @@ namespace BExIS.Dlm.Services.Data
         }
 
         /// <summary>
-        /// 
+        /// Undo checkout, removes the checked out version of specified dataset and compensates all the tuples deleted, changed or created from the last check-in.
+        /// It does not check-in the dataset meaning the caller should CheckInDataset after calling Undo
         /// </summary>
         /// <param name="datasetId"></param>
         /// <param name="userName"></param>
@@ -770,20 +803,66 @@ namespace BExIS.Dlm.Services.Data
         private void undoCheckout(Int64 datasetId, string userName, bool adminMode, bool commit = true)
         {
             // maybe its required to pass the caller's repo in order to the rollback changes to be visible to the caller function and be able to commit them
-            // bring back the historical tuples
+            // bring back the historical tuples. recover deleted ones/ edited ones. throw away created ones.
             // remove the version after the processes are finished
             // take the dataset back to the checked in state
             // check for admin mode
+            DateTime timestamp = DateTime.UtcNow;
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<Dataset> repo = uow.GetRepository<Dataset>();
+                Dataset ds = null;
+                if (adminMode)
+                    ds = repo.Get(p => p.Id == datasetId && p.Status == DatasetStatus.CheckedOut).FirstOrDefault();
+                else
+                    ds = repo.Get(p => p.Id == datasetId && p.Status == DatasetStatus.CheckedOut && p.CheckOutUser.Equals(getUserIdentifier(userName))).FirstOrDefault();
+
+                if (ds != null)
+                {
+                    if (ds.Versions.Count() > 0)
+                    {
+                        //remove the version from the dataset, it should cause the version to be removed.
+                        DatasetVersion dsv = ds.Versions.OrderByDescending(t => t.Timestamp).First(p => p.Status == DatasetVersionStatus.CheckedOut);
+                        // handle tuples here
+                        undoTupleChanges(dsv);
+                        ds.Versions.Remove(dsv);
+                    }
+
+                    //// take the dataset back to the checked in status
+                    //ds.Status = DatasetStatus.CheckedIn;
+                    ////var previous = ds.Versions.OrderByDescending(t => t.Timestamp).FirstOrDefault(p => p.Status == DatasetVersionStatus.CheckedIn);
+                    //ds.LastCheckIOTimestamp = timestamp;
+                    //ds.CheckOutUser = string.Empty;
+
+                    if (commit)
+                    {
+                        repo.Put(ds);
+                        uow.Commit();
+                    }
+                }
+            }
         }
 
-        private DatasetVersion applyTupleChanges(DatasetVersion workingCopyVersion, ref List<DataTupleVersion> tupleVersionsTobeAdded, ref List<DataTuple> tuplesTobeDeleted,
-            ICollection<DataTuple> createdTuples, ICollection<DataTuple> editedTuples, ICollection<DataTuple> deletedTuples, ICollection<DataTuple> unchangedTuples = null)
+        private DatasetVersion undoTupleChanges(DatasetVersion workingCopyVersion)
+        {
+            // delete newly created tuples
+            // undo edit
+            //undo delete
+            return (workingCopyVersion);
+        }
+
+        private DatasetVersion applyTupleChanges(DatasetVersion workingCopyVersion
+            , ref List<DataTupleVersion> tupleVersionsTobeAdded, ref List<DataTuple> tuplesTobeDeleted, ref List<DataTuple> tuplesTobeEdited
+            , ICollection<DataTuple> createdTuples, ICollection<DataTuple> editedTuples, ICollection<DataTuple> deletedTuples, ICollection<DataTuple> unchangedTuples = null)
         {
             // do nothing with unchanged for now
 
             #region Process Newly Created Tuples
 
             /// associate newly created tuples to the new version
+            /// try using bulk copy or stateless sessions for large amount of new tuples. it should also apply on deleted tuples.
+            /// Take care of automatic flushing and try to prevent or reduce it while the edit process is not finished.
             if (createdTuples != null && createdTuples.Count() > 0)
             {
                 foreach (var item in createdTuples)
@@ -820,13 +899,9 @@ namespace BExIS.Dlm.Services.Data
                 {
                     foreach (var edited in editedTuples)
                     {
+                        // dematerialize just for the purpose of synching the xml fields with the object properties.
                         edited.Dematerialize();
-                        //need a better way to preserve the changed during the fetch of the original tuple. Maybe deep copy/ evict/ merge works
-                        int orderNo = edited.OrderNo;
-                        var xmlAmendments = edited.XmlAmendments;
-                        var xmlVariableValues = edited.XmlVariableValues;
 
-                        //DataTupleRepo.Evict(detached);
                         DataTuple orginalTuple = latestVersionEffectiveTuples.Where(p => p.Id == edited.Id).Single();//maybe preliminary tuples are enough
                         DataTupleVersion tupleVersion = new DataTupleVersion()
                         {
@@ -844,12 +919,23 @@ namespace BExIS.Dlm.Services.Data
                         //DataTuple merged = 
                         orginalTuple.History.Add(tupleVersion);
 
-                        edited.OrderNo = orderNo;
-                        edited.XmlAmendments = xmlAmendments;
-                        edited.XmlVariableValues = xmlVariableValues;
+                        //need a better way to preserve changes during the fetch of the original tuple. Maybe deep copy/ evict/ merge works
+                        //XmlDocument xmlVariableValues = new XmlDocument();
+                        //xmlVariableValues.LoadXml(edited.XmlVariableValues.AsString());
 
-                        edited.DatasetVersion = workingCopyVersion;
-                        edited.Timestamp = workingCopyVersion.Timestamp;
+                        orginalTuple.OrderNo = edited.OrderNo;
+                        orginalTuple.XmlAmendments = null;
+                        orginalTuple.XmlAmendments = edited.XmlAmendments;
+                        orginalTuple.XmlVariableValues = null;
+                        orginalTuple.XmlVariableValues = edited.XmlVariableValues;
+
+                        //System.Diagnostics.Debug.Print(edited.XmlVariableValues.AsString());                        
+                        //edited.VariableValues.ToList().ForEach(p => System.Diagnostics.Debug.Print(p.Value.ToString()));
+                        //System.Diagnostics.Debug.Print(xmlVariableValues.AsString());
+
+                        orginalTuple.DatasetVersion = workingCopyVersion;
+                        orginalTuple.Timestamp = workingCopyVersion.Timestamp;
+                        tuplesTobeEdited.Add(orginalTuple);
                         //workingCopyVersion.PriliminaryTuples.Add(detached);
 
                         //latestCheckedInVersion.PriliminaryTuples.Remove(orginalTuple);

@@ -1,6 +1,7 @@
 ﻿@{
     ViewBag.Title = "_txtFormularView";
 }
+@model BExIS.Web.Shell.Areas.DCM.Models.FileInfoModel
 
 @using Telerik.Web.Mvc.UI;
 @using BExIS.DCM.Transform.Input;
@@ -28,59 +29,42 @@
       
 }
 
+@using (Html.BeginForm("SaveAsciiFileInfos", "Home", new { area = "DCM" }))
+{
+
 <table>
     <tr>
         <td>
-            Seperator :
+             @(Html.LabelFor(m => m.Seperator))
         </td>
         <td>
-             @(Html.Telerik().DropDownList()
-                    .Name("seperatorDropDownList")
-                    .DropDownHtmlAttributes(new { style = "height: 200px" })
-                    .BindTo(new SelectList(TextSeperatorList))
-                )
+            @Html.DropDownListFor(m => m.Seperator, new SelectList(TextSeperatorList,Model.Seperator), "Select, please")
         </td>
     </tr>
     <tr>
         <td>
-            Decimal :
+             @(Html.LabelFor(m => m.Decimal))
         </td>
         <td>
-            @(Html.Telerik().DropDownList()
-                    .Name("decimalDropDownList")
-                    .DropDownHtmlAttributes(new { style = "height: 200px" })
-                    .BindTo(new SelectList(DecimalCharacterList))
-                )
-        </td>
-    </tr>
-    <tr>
-        <td>
-            Orientation :
-        </td>
-        <td>
-                @(Html.Telerik().DropDownList()
-                    .Name("orientationDropDownList")
-                    .DropDownHtmlAttributes(new { style = "height: 200px" })
-                    .BindTo(new SelectList(OrientationList))
-                    //.Enable(!useTemplate)
-  
-                        )
-        </td>
-    </tr>
-    <tr>
-        <td>
-            Offset :
-        </td>
-        <td>
-            @(Html.Telerik().IntegerTextBox()
-                     .Name("offset")
-                     .Spinners(true)
-                     .MinValue(0)
-                     .MaxValue(30)
-                     .Value(1)
-                     //.Enable(!useTemplate)
+             @Html.DropDownListFor(m => m.Decimal, new SelectList(DecimalCharacterList ,Model.Decimal), "Select, please")
 
-                     )
+        </td>
+    </tr>
+    <tr>
+        <td>
+             @(Html.LabelFor(m => m.Orientation))
+        </td>
+        <td>
+             @Html.DropDownListFor(m => m.Orientation, new SelectList(OrientationList ,Model.Orientation), "Select, please")
+
+    </tr>
+    <tr>
+        <td>
+           @(Html.LabelFor(m => m.Offset))
+        </td>
+        <td>
+           @(Html.TextBoxFor(m => m.Offset , new {@class = "t-input"}))
+                      
         </td>
         <td>
             Number of empty columns (columnwise) or rows (rowwise) before the variables are specified.
@@ -88,18 +72,11 @@
     </tr>
     <tr>
         <td>
-            Variables:
+           @(Html.LabelFor(m => m.Variables))
         </td>
         <td>
-            @(Html.Telerik().IntegerTextBox()
-                     .Name("variableStart")
-                     .Spinners(true)
-                     .MinValue(1)
-                     .MaxValue(30)
-                     .Value(1)
-                     //.Enable(!useTemplate)
-
-                     )
+           @(Html.TextBoxFor(m => m.Variables , new {@class = "t-input"}))
+                      
         </td>
         <td>
              Row (columnwise) or column (rowwise) in which the variables are.
@@ -107,29 +84,25 @@
     </tr>
      <tr>
         <td>
-            Data:
+           @(Html.LabelFor(m => m.Data))
         </td>
         <td>
-            @(Html.Telerik().IntegerTextBox()
-                     .Name("dataStart")
-                     .Spinners(true)
-                     .MinValue(1)
-                     .MaxValue(30)
-                     .Value(2)
-                     //.Enable(!useTemplate)
-
-                     )
+           @(Html.TextBoxFor(m => m.Data , new {@class = "t-input"}))
+                      
         </td>
         <td>
             Row (columnwise) or column (rowwise) in which the data starts.
         </td>
     </tr>
     <tr>
-        <td>
-            Dateformat :
+       <td>
+           @(Html.LabelFor(m => m.Dateformat))
         </td>
         <td>
-            @(Html.TextBox("dataFormat", "",new {@class = "t-input"}))
+           @(Html.TextBoxFor(m => m.Dateformat , new {@class = "t-input"}))
+                      
         </td>
     </tr>
 </table>
+<button type="submit" value="Submit" name="submit"  class="t-button " style="border:0px;">save</button>
+}

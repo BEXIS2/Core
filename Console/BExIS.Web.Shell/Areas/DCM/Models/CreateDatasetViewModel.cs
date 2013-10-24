@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using BExIS.DCM.UploadWizard;
 
 namespace BExIS.Web.Shell.Areas.DCM.Models
 {

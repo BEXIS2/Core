@@ -6,10 +6,44 @@ using System.Xml;
 
 
 
-namespace BExIS.Web.Shell.Areas.DCM.Models
+namespace BExIS.DCM.UploadWizard
 {
     public class TaskManager
     {
+
+        public static string FILENAME = "FileName";
+        public static string FILEPATH = "FilePath";
+        public static string EXTENTION = "Extention";
+
+        public static string FILE_READER_INFO = "FileReaderInfo";
+        public static string IS_TEMPLATE = "IsTemplate";
+        //Dataset 
+        public static string DATASET_ID = "DatasetId";
+        public static string DATASET_TITLE = "DatasetTitle";
+        // value = "new"
+        public static string DATASET_STATUS = "DatasetStatus";
+        // Datastructure
+        public static string DATASTRUCTURE_ID = "DataStructureId";
+        public static string DATASTRUCTURE_TITLE = "DataStructureTitle";
+        //ResearchPlan
+        public static string RESEARCHPLAN_ID = "ResearchPlanId";
+        public static string RESEARCHPLAN_TITLE = "ResearchPlanTitle";
+        //Data
+        public static string PRIMARY_KEYS = "PrimaryKeys";
+        public static string VALID = "Valid";
+        //metadata
+        public static string TITLE = "Title";
+        public static string AUTHOR = "Author";
+        public static string OWNER = "Owner";
+        public static string PROJECTNAME = "ProjectName";
+        public static string INSTITUTE = "Institute";
+
+
+
+
+
+
+
         public List<StepInfo> TaskInfos;
         private StepInfo currentStepInfo;
 
@@ -117,15 +151,12 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
             this.currentStepInfo = this.Prev();
         }
 
-
-
         public StepInfo Jump(int index)
         {
             if (index < 0 || index > TaskInfos.Count) return null;
 
             return TaskInfos.ElementAt(index);
         }
-
 
         public List<Tuple<string, StepStatus>> GetStatusOfStepInfos()
         {

@@ -46,7 +46,6 @@ namespace BExIS.DCM.Transform.Validation.ValueValidation
                    _dataType.Equals(TypeCode.Int32.ToString()))
                 {
                     int tempValue = Convert.ToInt32(value);
-
                     if (tempValue < _min || tempValue > _max) return new Error(ErrorType.Value, "Not in Range", new object[] { _name, value, row, _dataType });
                 }
 

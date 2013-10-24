@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using BExIS.DCM.Transform.Validation.Exceptions;
-
+using BExIS.DCM.UploadWizard;
 
 namespace BExIS.Web.Shell.Areas.DCM.Models
 {
@@ -9,7 +9,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
         public StepInfo StepInfo { get; set; }
         public int SelectedDatasetId { get; set; }
         public int SelectedDatastructureId { get; set; }
-
+        public string DatasetTitle { get; set; }
       
         public List<long> Datasets { get; set; }
         public List<ListViewItem> DatasetsViewList { get; set; }
@@ -24,6 +24,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
             Datasets = new List<long>();
             ErrorList = new List<Error>();
             DatasetsViewList = new List<ListViewItem>();
+            DatasetTitle = "";
         }
 
         

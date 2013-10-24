@@ -1,6 +1,27 @@
-﻿@model BExIS.Web.Shell.Areas.DCM.Models.ValidationModel
+﻿@model BExIS.Web.Shell.Areas.DCM.Models.ChooseDatasetViewModel
+@using Telerik.Web.Mvc.UI;
+@using Telerik.Web.Mvc.Resources;
+@using BExIS.Web.Shell.Areas.DCM.Models;
 
+@{
+    if (this.ViewContext.FormContext == null)
+    {
+        this.ViewContext.FormContext = new FormContext();
+    }
+    
+    bool visibleCreateDatasetWindow = false;
+    
+    if(Session["createDatasetWindowVisible"]!=null)
+    {
+        visibleCreateDatasetWindow = (bool)Session["createDatasetWindowVisible"];
+    }
 
+        
+}
+
+<script src="@Url.Content("~/Scripts/jquery.unobtrusive-ajax.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
 
 <div id="Step3" class="uploadWizardStep">
     <div class="uploadWizardStep_Main">
@@ -9,27 +30,30 @@
         </div>
 
         <div class="uploadWizardStep_Description stepper">
+            <p>In BEXIS your data is stored and managed as part of a dataset. A dataset may contain one or more of your data files. 
+                But all data files within one dataset must be of the same data structure, i.e. the number of variables and their 
+                properties must be identical in each file. 
+            </p>
             <p>
-                With this step the selected data file is validated against the selected data structure. 
-               Both, the structure of the data (e.g. variable properties) and whether the data values 
-               fit to the specified structure (e.g. data type, value range) is evaluated. 
-
+                With the current BEXIS version you are able to create a new dataset for each data file. 
+                Adding data to existing datasets will be available with the next version.
             </p>
         </div>
 
         <div class="uploadWizardStep_Content stepper">
-            <p><button id="validationButton" title="Validate selected data file against a given data structure" >Validate</button>Validate selected data file against a given data structure.</p>
 
-                @if (Model.Validated)
-                { 
-            
-                 <p> Validated!! </p>
-                
-                }
-
+            <table>
+                <tr><td><button id="CreateDatasetButton" title="Create new dataset" >Create</button></td><td>Create a new dataset</td></tr>
+                <tr><td><button id="SelectDatasetButton" title="Add file to a existing dataset" >Add</button></td><td> Add file to a existing dataset.</td></tr>
+            </table>
+            <br />
+            <div id="selectedValue">@if (Model.DatasetTitle != "")
+                                    { <p>"You have selected Dataset :"</p> @Model.DatasetTitle;}</div>
+            <div id="selectedValue2"></div>
         </div>
     </div>
-     <div class="uploadWizardStep_Error stepper">
+
+    <div class="uploadWizardStep_Error stepper">
         @if (Model != null)
         {
             if (Model.ErrorList != null)
@@ -55,25 +79,99 @@
     </div>   
 </div>
 
+
+
+@(Html.Telerik().Window()
+    .Name("DatasetWindow")
+    .Visible(false)
+    .Width(300)
+    .Height(100)
+    .Title("Select a Dataset")
+    .Modal(true)
+    .ClientEvents(events => events
+        .OnActivate("resizeOnRefresh")
+    )
+    .Content(@<text>
+        @Html.Partial("_selectADatasetId", Model.DatasetsViewList)
+    </text>
+    )
+  )
+
+
+@(Html.Telerik().Window()
+    .Name("CreateDatasetWindow")
+    .Visible(false)
+    .Width(300)
+    .Height(100)
+    .Title("Create new dataset")
+    .Modal(true)
+    .ClientEvents(events => events
+        .OnActivate("resizeCreateDatasetWindowOnRefresh")
+        
+    )
+    .Content(@<text>
+
+            @Html.Partial("_createDataset", new CreateDatasetViewModel())
+
+    </text>
+    )
+  )
+
+
+
 <script type="text/javascript">
 
-@*    function validationButton_OnClick(e)
-    {
-        alert("click");
-        $.post('@Url.Action("ValidateFile", "Home", new RouteValueDictionary { { "area", "DCM" } })', function (response) {
-            $("#Step3").html(response);
+    $("#SelectDatasetButton").click(function () {
 
-        })
-    }*@
+        var datasetwindow = $("#DatasetWindow").data("tWindow");
+        datasetwindow.center().open();
+         
+    })
 
-    $('#validationButton').click(function () {
+    $("#CreateDatasetButton").click(function () {
 
-
-        $.post('@Url.Action("ValidateFile", "Home", new RouteValueDictionary { { "area", "DCM" } })', function (response) {
-
-            $("#Step3").html(response);
-
+        $.get('@Url.Action("CreateDataset","Home")', function (data) {
+            $('#createDatasetFormular').html(data);
         });
-    });
+
+        var datastruturewindow = $("#CreateDatasetWindow").data("tWindow");
+        datastruturewindow.center().open();
+    })
+
+    function closeWindow() {
+        var window = $("#DatasetWindow").data("tWindow");
+        window.close();
+
+        document.getElementById("selectedValue").innerHTML = "You have selected Dataset : " + SelectedDatasetId;
+        document.getElementById("selectedValue2").innerHTML = "You have selected Dataset : " + SelectedDatasetTitle;
+     
+    }
+
+    //function closeCreateDatasetWindow() {
+
+    //    var window = $("#CreateDatasetWindow").data("tWindow");
+    //    window.close();
+
+    //    document.getElementById("selectedValue2").innerHTML = "You have created a dataset: ";
+
+    //}
+
+    function resizeOnRefresh() {
+        var winContent = $('#DatasetWindow .t-window-content');
+        winContent.css("height", "");
+        winContent.css("width", "");
+    }
+
+    function RefreshCreateDatasetWindow() {
+        var window = $('#CreateDatasetWindow').data('tWindow');
+        if(window!=null)window.refresh();
+    }
+
+
+    function resizeCreateDatasetWindowOnRefresh() {
+        var winContent = $('#CreateDatasetWindow .t-window-content');
+        winContent.css("height", "");
+        winContent.css("width", "");
+    }
 
 </script>

@@ -48,7 +48,7 @@ namespace BExIS.DCM.Transform.Input
                 using (StreamReader streamReader = new StreamReader(file))
                 {
                     string line;
-                    int index = 1;
+                    int index = fri.Variables;
                     char seperator = getSeperatorCharacter(fri.Seperator);
 
                     while ((line = streamReader.ReadLine()) != null)
@@ -74,6 +74,69 @@ namespace BExIS.DCM.Transform.Input
 
             return this.dataTuples;
         }
+
+        public List<List<string>> ReadValuesFromFile(Stream file, string fileName, AsciiFileReaderInfo fri, StructuredDataStructure sds, long datasetId, List<long> variableList)
+        {
+            this.file = file;
+            this.fileName = fileName;
+            this.info = fri;
+            this.structuredDataStructure = sds;
+            this._datasetId = datasetId;
+
+            List<List<string>> listOfSelectedvalues = new List<List<string>>();
+
+            // Check params
+            if (this.file == null)
+            {
+                this.errorMessages.Add(new Error(ErrorType.Other, "File not exist"));
+            }
+            if (!this.file.CanRead)
+            {
+                this.errorMessages.Add(new Error(ErrorType.Other, "File is not readable"));
+            }
+            if (this.info.Variables <= 0)
+            {
+                this.errorMessages.Add(new Error(ErrorType.Other, "Startrow of Variable can´t be 0"));
+            }
+            if (this.info.Data <= 0)
+            {
+                this.errorMessages.Add(new Error(ErrorType.Other, "Startrow of Data can´t be 0"));
+            }
+
+            if (this.errorMessages.Count == 0)
+            {
+
+
+                using (StreamReader streamReader = new StreamReader(file))
+                {
+                    string line;
+                    int index = fri.Variables;
+                    char seperator = getSeperatorCharacter(fri.Seperator);
+
+                    while ((line = streamReader.ReadLine()) != null)
+                    {
+
+                        if (index == this.info.Variables)
+                        {
+                            variableIdentifierRows.Add(RowToList(line, seperator));
+                            ConvertAndAddToSubmitedVariableIdentifier();
+                        }
+
+                        if (index >= this.info.Data)
+                        {
+                            // return List of VariablesValues, and error messages
+                            listOfSelectedvalues.Add(GetValuesFromRow(RowToList(line, seperator), index, variableList));
+                        }
+
+                        index++;
+
+                    }
+                }
+            }
+
+            return listOfSelectedvalues;
+        }
+
 
         #region validate
 

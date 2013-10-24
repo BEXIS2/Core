@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace BExIS.Web.Shell.Areas.DCM.Models
+namespace BExIS.DCM.UploadWizard
 {
     public class ActionInfo
     {

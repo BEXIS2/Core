@@ -11,7 +11,7 @@
 
         <div class="uploadWizardStep_Description stepper">
             <p>Please select a data file to be uploaded to the BEXIS repository.</p>
-            <p>Supported file format: Microsoft Excel (*.xlsm)</p>
+            <p>Supported file formats: Microsoft Excel (*.xlsm, *.txt, *.csv )</p>
         </div>
         
         <div class="uploadWizardStep_Content stepper">
@@ -36,7 +36,7 @@
                                 )
                             </td>
                             <td>
-                                 <div id="fileNameDiv"/>
+                                 <div id="fileNameDiv">@if(Model.SelectedFileName!=""){@Model.SelectedFileName}</div>
                             </td>
                         </tr>
                     </table>

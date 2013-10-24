@@ -89,21 +89,45 @@ namespace BExIS.DCM.Transform.Input
             DataTuple dt = new DataTuple();
               
             // convert row to List<VariableValue>
-            foreach (string s in row)
+            for(int i=0;i< row.Count();i++ )
             {
                     
-                VariableIdentifier variableIdentifier = this.SubmitedVariableIndentifiers.ElementAt(row.IndexOf(s));
+                VariableIdentifier variableIdentifier = this.SubmitedVariableIndentifiers.ElementAt(i);
                 long variableId = 0;
                 if (variableIdentifier.id > 0)
-                    variableId = this.SubmitedVariableIndentifiers.ElementAt(row.IndexOf(s)).id;
+                    variableId = this.SubmitedVariableIndentifiers.ElementAt(i).id;
                 else
-                    variableId = GetVariableUsage(variableIdentifier).DataAttribute.Id;
+                    variableId = GetVariableUsage(variableIdentifier).Id;
 
-                dt.VariableValues.Add(dM.CreateVariableValue(s,"", DateTime.Now, DateTime.Now, new ObtainingMethod(), variableId, new List<ParameterValue>()));
+                dt.VariableValues.Add(dM.CreateVariableValue(row[i],"", DateTime.Now, DateTime.Now, new ObtainingMethod(), variableId, new List<ParameterValue>()));
             }
 
             return dt;
         }
+
+        /// <summary>
+        /// Read Row an return only values in varList
+        /// and each row to a Datatuple
+        /// </summary>
+        /// <param name="row"></param>
+        /// <param name="indexOfRow"></param>
+        /// <returns></returns>
+        protected List<string> GetValuesFromRow(List<string> row, int indexOfRow, List<long> identifiers)
+        {
+            List<string> temp = new List<string>();
+
+            // convert row to List<VariableValue>
+            for (int i = 0; i < row.Count(); i++)
+            {
+                VariableIdentifier variableIdentifier = this.SubmitedVariableIndentifiers.ElementAt(i);
+                if (identifiers.Contains(variableIdentifier.id))
+                {
+                    temp.Add(row[i]);
+                }
+            }
+            return temp;
+        }
+
 
         #region validation
   

@@ -59,6 +59,15 @@
     <Reference Include="DocumentFormat.OpenXml">
       <HintPath>..\..\Libraries\DocumentFormat.OpenXml.dll</HintPath>
     </Reference>
+    <Reference Include="Glimpse.AspNet">
+      <HintPath>..\..\packages\Glimpse.AspNet.1.3.1\lib\net40\Glimpse.AspNet.dll</HintPath>
+    </Reference>
+    <Reference Include="Glimpse.Core">
+      <HintPath>..\..\packages\Glimpse.1.6.1\lib\net40\Glimpse.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Glimpse.Mvc3">
+      <HintPath>..\..\packages\Glimpse.Mvc3.1.3.3\lib\net40\Glimpse.Mvc3.dll</HintPath>
+    </Reference>
     <Reference Include="IBM.Data.DB2, Version=9.7.4.4, Culture=neutral, PublicKeyToken=7c307b91aa13d208, processorArchitecture=AMD64" />
     <Reference Include="Iesi.Collections, Version=1.0.1.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -78,6 +87,9 @@
     <Reference Include="NHibernate, Version=3.3.1.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\NHibernate.3.3.3.4001\lib\Net35\NHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate.Glimpse">
+      <HintPath>..\..\packages\NHibernate.Glimpse.3.3.3.40011\lib\net35\NHibernate.Glimpse.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.WebPages" />
     <Reference Include="System.Web.Helpers" />
@@ -197,14 +209,14 @@
     <Compile Include="Areas\Auth\Models\UserRoleModel.cs" />
     <Compile Include="Areas\DCM\Controllers\HomeController.cs" />
     <Compile Include="Areas\DCM\DCMAreaRegistration.cs" />
-    <Compile Include="Areas\DCM\Models\ActionInfo.cs" />
     <Compile Include="Areas\DCM\Models\ChooseDatasetViewModel.cs" />
     <Compile Include="Areas\DCM\Models\CreateDatasetViewModel.cs" />
+    <Compile Include="Areas\DCM\Models\FileInfoModel.cs" />
+    <Compile Include="Areas\DCM\Models\GetFileInformationModel.cs" />
     <Compile Include="Areas\DCM\Models\ListViewItem.cs" />
+    <Compile Include="Areas\DCM\Models\PrimaryKeyViewModel.cs" />
     <Compile Include="Areas\DCM\Models\SelectFileViewModel.cs" />
-    <Compile Include="Areas\DCM\Models\StepInfo.cs" />
     <Compile Include="Areas\DCM\Models\SummaryModel.cs" />
-    <Compile Include="Areas\DCM\Models\TaskManager.cs" />
     <Compile Include="Areas\DCM\Models\UploadWizardParameters.cs" />
     <Compile Include="Areas\DCM\Models\ValidationModel.cs" />
     <Compile Include="Areas\RPM\Controllers\HomeController.cs" />
@@ -219,6 +231,7 @@
     <Compile Include="Areas\System\SystemAreaRegistration.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\TestController.cs" />
+    <Compile Include="GlimpseSecurityPolicy.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -557,6 +570,10 @@
     <Content Include="Views\Shared\EditorTemplates\Time.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\BExIS.DCM.UploadWizard\BExIS.DCM.UploadWizard.csproj">
+      <Project>{76378eab-f537-4684-a8dc-7d5dacf529cd}</Project>
+      <Name>BExIS.DCM.UploadWizard</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Components\AAA\BExIS.Security.Services\BExIS.Security.Services.csproj">
       <Project>{681c8bc4-55f0-4f43-a685-90e246a88cb1}</Project>
       <Name>BExIS.Security.Services</Name>
@@ -764,10 +781,9 @@
     <Content Include="Areas\DCM\Views\Home\FinishUpload.cshtml" />
     <Content Include="Areas\DCM\Views\Home\Index.cshtml" />
     <Content Include="Areas\DCM\Views\Home\Step1.cshtml" />
-    <Content Include="Areas\DCM\Views\Home\Step2.cshtml" />
     <Content Include="Areas\DCM\Views\Home\Step3.cshtml" />
-    <Content Include="Areas\DCM\Views\Home\Step4.cshtml" />
     <Content Include="Areas\DCM\Views\Home\Step5.cshtml" />
+    <Content Include="Areas\DCM\Views\Home\Step6.cshtml" />
     <Content Include="Areas\DCM\Views\Home\UploadData.cshtml" />
     <Content Include="Areas\DCM\Views\Home\UploadWizard.cshtml" />
     <Content Include="Areas\DCM\Views\Home\_createDataset.cshtml" />
@@ -866,6 +882,9 @@
     <Content Include="Areas\Auth\Views\Users\_InfoPartial.cshtml" />
     <Content Include="Areas\Auth\Views\Roles\_InfoPartial.cshtml" />
     <Content Include="Areas\RPM\Views\Home\_editVariable.cshtml" />
+    <Content Include="Areas\DCM\Views\Home\Help.cshtml" />
+    <Content Include="Areas\DCM\Views\Home\Step2.cshtml" />
+    <Content Include="Areas\DCM\Views\Home\Step4.cshtml" />
     <None Include="Properties\PublishProfiles\BEXIS2 DEV.pubxml" />
     <None Include="Properties\PublishProfiles\BEXIS2.pubxml" />
   </ItemGroup>
@@ -923,7 +942,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>8072</DevelopmentServerPort>
+          <DevelopmentServerPort>5382</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>http://localhost:4187/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>

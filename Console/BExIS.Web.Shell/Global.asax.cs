@@ -37,8 +37,6 @@ namespace BExIS.Web.Shell
         protected void Application_Start()
         {
             init();
-            //HibernatingRhinos.Profiler.Appender.NHibernate.NHibernateProfiler.Initialize();
-
             AreaRegistration.RegisterAllAreas();
 
             RegisterGlobalFilters(GlobalFilters.Filters);
@@ -54,6 +52,11 @@ namespace BExIS.Web.Shell
             if (AppConfiguration.CreateDatabase)
                 pManager.ExportSchema();
             pManager.Start();
+#if DEBUG
+            //HibernatingRhinos.Profiler.Appender.NHibernate.NHibernateProfiler.Initialize();
+            //just for testing purposes
+            NHibernate.Glimpse.Plugin.RegisterSessionFactory(pManager.Factory as NHibernate.ISessionFactory);
+#endif
         }
 
         private void loadModules()
@@ -64,6 +67,7 @@ namespace BExIS.Web.Shell
         protected void Application_End()
         {
             IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager();
+            
             pManager.Shutdown(); // release all data access related resources!
             IoCFactory.ShutdownContainer();
         }
@@ -71,14 +75,14 @@ namespace BExIS.Web.Shell
         protected void Session_Start()
         {
             //set session culture using DefaultCulture key
-            Session["SessionLevelContainer"] = IoCFactory.Container.CreateSessionLevelContainer();
+            IoCFactory.Container.StartSessionLevelContainer();
             Session.ApplyCulture(AppConfiguration.DefaultCulture);
         }
 
         protected void Session_End()
         {
             //IoCContainer container = Session["SessionLevelContainer"] as IoCContainer;
-            Session.Remove("SessionLevelContainer");
+            IoCFactory.Container.ShutdownSessionLevelContainer();
         }
     }
 }

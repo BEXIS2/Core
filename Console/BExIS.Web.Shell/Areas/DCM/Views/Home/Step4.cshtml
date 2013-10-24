@@ -1,136 +1,50 @@
-﻿@model BExIS.Web.Shell.Areas.DCM.Models.SummaryModel
+﻿@model BExIS.Web.Shell.Areas.DCM.Models.PrimaryKeyViewModel
+@using BExIS.Web.Shell.Areas.DCM.Models;
 
 
-<div id="Step3" class="uploadWizardStep">
+<div id="Step4" class="uploadWizardStep">
     <div class="uploadWizardStep_Main">
         <div class="uploadWizardStep_Header stepper">
             <h3>@Model.StepInfo.title</h3>
         </div>
 
         <div class="uploadWizardStep_Description stepper">
+            <p>
+
+            </p>
         </div>
 
-        <div class="uploadWizardStep_Content stepper">
+        <div id="variableCheckBoxList" class="uploadWizardStep_Content stepper">
 
-            <div  id="summaryLeft">
-                <table>
-                <tr>
-                    <td>
-                        <b>@Html.LabelFor(m=>m.DatasetId) :</b>
-                    </td>
-                    <td>
-                        @Model.DatasetId
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <b>@Html.LabelFor(m=>m.DataStructureTitle) :</b>
+            @foreach (ListViewItem s in Model.VariableLableList)
+            { 
+                    @Html.CheckBox(@s.Title,false)  <b>@s.Title</b>
+            }
 
-                    </td>
-                    <td>
-                        @Model.DataStructureTitle
-                    </td>
-                </tr>
-                 <tr>
-                    <td>
-                        <b>@Html.LabelFor(m=>m.DataStructureId) :</b>
 
-                    </td>
-                    <td>
-                        @Model.DataStructureId
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <b>@Html.LabelFor(m=>m.ResearchPlanTitle)</b>
-
-                    </td>
-                    <td>
-                        @Model.ResearchPlanTitle
-                    </td>
-                </tr>
-                 <tr>
-                    <td>
-                        <b>@Html.LabelFor(m=>m.ResearchPlanId) :</b>
-
-                    </td>
-                    <td>
-                        @Model.ResearchPlanId
-                    </td>
-                </tr>
-              @*   <tr>
-                    <td>
-                        <b>@Html.LabelFor(m=>m.NumOfVars) :</b>
-
-                    </td>
-                    <td>
-                        @Model.NumOfVars
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                       <b>@Html.LabelFor(m=>m.NumOfRows) :</b> 
-
-                    </td>
-                    <td>
-                        @Model.NumOfRows
-                    </td>
-                </tr>*@
-            </table>
-            </div>
-
-            <div id="summaryRight">
-             <table>
-                <tr>
-                    <td>
-                        <b>@Html.LabelFor(m=>m.DatasetTitle) :</b>
-                    </td>
-                    <td>
-                        @Model.DatasetTitle
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <b>@Html.LabelFor(m=>m.Owner) :</b>
-                    </td>
-                    <td>
-                        @Model.Owner
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <b>@Html.LabelFor(m=>m.Author) :</b>
-
-                    </td>
-                    <td>
-                        @Model.Author
-                    </td>
-                </tr>
-                 <tr>
-                    <td>
-                        <b>@Html.LabelFor(m=>m.ProjectName) :</b>
-
-                    </td>
-                    <td>
-                        @Model.ProjectName
-                    </td>
-                </tr>
-                 <tr>
-                    <td>
-                        <b>@Html.LabelFor(m=>m.ProjectInstitute) :</b>
-                    </td>
-                    <td>
-                        @Model.ProjectInstitute
-                    </td>
-                </tr>
-             </table>
-
-            </div>
+             <p><button id="checkButton" title="Check selected variables form primary key" >Check</button>....</p>
         </div>
     </div>
-    <div class="uploadWizardStep_Error stepper">
-        @*@if (Model != null)
+     <div class="uploadWizardStep_Error stepper">
+        @if (Model != null)
         {
+            // if primary keys unique
+            if (Model.IsUnique)
+            { 
+                <ul>
+                    <li>Primarykeys :</li>
+                    @foreach (ListViewItem s in Model.PrimaryKeysList)
+                    { 
+                        <li>@s.Title.ToString()</li>
+                    }
+                 
+                    <li>
+                        Unique!!!
+                    </li>
+
+                </ul>
+            }
+            
             if (Model.ErrorList != null)
             {
                 if (Model.ErrorList.Count == 0)
@@ -150,6 +64,33 @@
                 }
             }
 
-        }*@
-    </div>    
+        }
+    </div>   
 </div>
+
+<script type="text/javascript">
+
+
+    $('#checkButton').click(function () {
+
+        var selected = new Array();
+
+        $('#variableCheckBoxList input:checked').each(function () {
+            selected.push($(this).attr('name'));
+        });
+
+        alert(selected);
+
+        $.ajax({
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify(selected),
+            dataType: 'html',
+            url: '@Url.Action("CheckPrimaryKeys", @Model.StepInfo.GetActionInfo.ControllerName, new RouteValueDictionary { { "area", @Model.StepInfo.GetActionInfo.AreaName }})',
+            success: function (result) {
+                $(@Model.StepInfo.GetActionInfo.ActionName.ToString()).html(result);
+            }
+         });
+    });
+
+</script>

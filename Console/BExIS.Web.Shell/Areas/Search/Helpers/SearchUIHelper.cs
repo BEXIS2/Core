@@ -88,6 +88,8 @@ namespace BExIS.Web.Shell.Areas.Search.Helpers
 
             DataRow dr = dt.NewRow();
 
+            DataStructureManager dsm = new DataStructureManager();
+
             foreach(var vv in t.VariableValues)
             {
                 if (vv.Variable != null)
