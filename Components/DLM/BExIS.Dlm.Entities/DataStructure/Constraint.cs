@@ -1,4 +1,9 @@
-﻿using Vaiona.Entities.Common;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Xml;
+using Vaiona.Entities.Common;
 
 namespace BExIS.Dlm.Entities.DataStructure
 {
@@ -84,8 +89,42 @@ namespace BExIS.Dlm.Entities.DataStructure
     public class ValidatorConstraint : Constraint
     {
         #region Attributes
+        public virtual string Kind { get; set; } // Range, Regex, Domain, Comparer
 
+        /// <summary>
+        /// If Range -> x..y | If domain -> x, y, z | If comparer -> x so that x is the variable Id in the same data structure that the input is compared with
+        /// </summary>
         public virtual string Body { get; set; } // maybe it is possible to write another property of type Func<string, bool> (or Expression) on top of this, to change the string to an executable equivalent
+        public virtual string CultureId { get; set; } // the culture validator applies to. i.e., a Regex to match a taxon name in German may differ from its equivalent in English, ...
+        public virtual string Description { get; set; } // maybe: promote to Constraint
+        public virtual bool Negated { get; set; } // determines whether the body should be evaluated or the negate of it. e.g., the input should be evaluated against the range or outside of the range.
+        
+        /// <summary>
+        /// if it is string -> Range validator checks the length of the input, otherwise the value
+        /// </summary>
+        public virtual System.TypeCode DataType { get; set; }
+
+        /// <summary>
+        /// It is an xml node with variable (preferably on) elements. the content of the element(s) depends on the Kind of the validator
+        /// Range: L: Is lower bound inclusive | U: is upper bound inclusive
+        /// Comparer: 
+        ///     OP: the comparison operator like >, <, ==, . depeneds on the data type, so the UI should show proper operators based on the chosen data type during the validator creation. 
+        ///     TargetType: Var (Variable | Parameter), Value
+        ///     Offset: The value that is considered (added/ multiplied) in the right side of the operator during the evaluation. case: the project finish date should be at least 1000 Ticks after its start time
+        ///     or the amount of water in the v1 variable can not exceed 17% of the v2.
+        ///     OffestType: indicate whether the offset value is absolute or percentage
+        /// </summary>
+        public virtual XmlNode Opntions { get; set; }
+
+        /// <summary>
+        /// provides a scope information so that validators can be grouped, categorized, or distinguished for a specific purpose. Like fast validation, detailed validation, etc.
+        /// </summary>
+        public virtual string Context { get; set; }
+
+        /// <summary>
+        /// The message to be conveyed to the user in case of rule break.
+        /// </summary>
+        public virtual string Message { get; set; }
 
         #endregion
 
@@ -97,9 +136,10 @@ namespace BExIS.Dlm.Entities.DataStructure
 
         public virtual bool Evaulate(object data)
         {
-            // use dynamic link library, Flee or DLR to conver the Body to an executable code, pass data to it and return the result
+            // use dynamic link library, Flee or DLR to cover the Body to an executable code, pass data to it and return the result
             return false;
         }
+
         #endregion
 
     }
