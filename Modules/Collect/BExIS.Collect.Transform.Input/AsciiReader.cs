@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Timers;
 using BExIS.DCM.Transform.Validation.DSValidation;
 using BExIS.DCM.Transform.Validation.Exceptions;
 using BExIS.Dlm.Entities.Data;
@@ -44,7 +46,6 @@ namespace BExIS.DCM.Transform.Input
             if (this.errorMessages.Count == 0)
             {
 
-
                 using (StreamReader streamReader = new StreamReader(file))
                 {
                     string line;
@@ -72,6 +73,105 @@ namespace BExIS.DCM.Transform.Input
                 }
             }
 
+            return this.dataTuples;
+        }
+
+        public List<DataTuple> ReadFile(Stream file, string fileName, AsciiFileReaderInfo fri, StructuredDataStructure sds, long datasetId, int packageSize)
+        {
+
+            // clear list of datatuples
+            this.dataTuples = new List<DataTuple>();
+            this.variableIdentifierRows = new List<List<string>>();
+            this.SubmitedVariableIndentifiers = new List<VariableIdentifier>();
+
+            this.file = file;
+            this.fileName = fileName;
+            this.info = fri;
+            this.structuredDataStructure = sds;
+            this._datasetId = datasetId;
+
+            // Check params
+            if (this.file == null)
+            {
+                this.errorMessages.Add(new Error(ErrorType.Other, "File not exist"));
+            }
+            if (!this.file.CanRead)
+            {
+                this.errorMessages.Add(new Error(ErrorType.Other, "File is not readable"));
+            }
+            if (this.info.Variables <= 0)
+            {
+                this.errorMessages.Add(new Error(ErrorType.Other, "Startrow of Variable can´t be 0"));
+            }
+            if (this.info.Data <= 0)
+            {
+                this.errorMessages.Add(new Error(ErrorType.Other, "Startrow of Data can´t be 0"));
+            }
+
+            if (this.errorMessages.Count == 0)
+            {
+                
+                using (StreamReader streamReader = new StreamReader(file))
+                {
+                    string line;
+                    int index = 1;
+                    int items = 0;
+                    char seperator = getSeperatorCharacter(fri.Seperator);
+
+                    //int end = packageSize;
+                    //int start = 1;
+                    // read to position
+
+                    if (Position == 1)
+                    {
+                        Position = this.info.Data;
+                    }
+
+                    Stopwatch _timer = Stopwatch.StartNew();
+                    for (int i = 1; i < Position; i++)
+                    {
+                        string l = streamReader.ReadLine();
+
+                        if (i == this.info.Variables)
+                        {
+                            variableIdentifierRows.Add(RowToList(l, seperator));
+                            ConvertAndAddToSubmitedVariableIdentifier();
+                        }
+                    }
+
+                    _timer.Stop();
+                    Debug.WriteLine(" ");
+                    Debug.WriteLine("*****************************************************************");
+                    Debug.WriteLine(" position : " + Position+"    -->  Timer: "+ _timer.Elapsed.TotalSeconds.ToString() );
+
+                    _timer = Stopwatch.StartNew();
+                        while ((line = streamReader.ReadLine()) != null && items <= packageSize-1)
+                        {
+
+                            
+
+                            if (Position >= this.info.Data)
+                            {
+                                // return List of VariablesValues, and error messages
+                                this.dataTuples.Add(ReadRow(RowToList(line, seperator), index));
+                            }
+
+
+
+                            Position++;
+                            index++;
+                            items++;
+                        }
+
+                        _timer.Stop();
+
+                        Debug.WriteLine(" created datatuples : " + _timer.Elapsed.TotalSeconds.ToString());
+                        
+
+                }
+            }
+
+            
             return this.dataTuples;
         }
 
@@ -207,7 +307,7 @@ namespace BExIS.DCM.Transform.Input
             {
                 if (ecList.Count > 0)
                 {
-                    this.errorMessages.Concat(ecList);
+                    this.errorMessages = this.errorMessages.Concat(ecList).ToList();
                     return false;
                 }
                 else return true;

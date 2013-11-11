@@ -21,8 +21,12 @@
         var dropDownList = $('#DatasetIds_DropDownList').data('tDropDownList');
         SelectedDatasetId = dropDownList.value();
         SelectedDatasetTitle = dropDownList.text()
-        Parameters.push("DatasetId:" + SelectedDatasetId);
+        //Parameters.push("DatasetId:" + SelectedDatasetId);
         Parameters.push("DatasetTitle:" + SelectedDatasetTitle);
+
+        // send to bus
+        $.post('@Url.Action("AddSelectedDatasetToBus", "Home", new RouteValueDictionary { { "area", "DCM" } })', { id: dropDownList.value() }, function (response) {
+        })
 
         closeWindow();
     })

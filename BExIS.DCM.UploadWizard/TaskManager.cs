@@ -46,6 +46,7 @@ namespace BExIS.DCM.UploadWizard
 
         public List<StepInfo> TaskInfos;
         private StepInfo currentStepInfo;
+        private StepInfo prevStepInfo;
 
         public Dictionary<string, object> Bus = new Dictionary<string, object>();
   
@@ -139,10 +140,14 @@ namespace BExIS.DCM.UploadWizard
         public StepInfo Prev()
         {
             int currentIndex = TaskInfos.IndexOf(currentStepInfo);
-
-            // think about :D
             if (currentIndex == 0) return new StepInfo("");
-            return TaskInfos.ElementAt(currentIndex-1);
+
+            return prevStepInfo;
+        }
+
+        public void SetPrev(StepInfo stepinfo)
+        {
+            prevStepInfo = stepinfo;
         }
 
         public void GoToPrev()

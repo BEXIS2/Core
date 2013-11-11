@@ -110,9 +110,14 @@
     function closePopUp(data) {
 
         if (data.success) {
-            document.getElementById("selectedValue2").innerHTML = "You have selected Dataset ";
-            var window = $("#CreateDatasetWindow").data("tWindow");
-            window.close();
+
+            //alert(data.title);
+            SelectedDatasetTitle = data.title;
+            //document.getElementById("selectedValue2").innerHTML = "You have selected Dataset ";
+            //var window = $("#CreateDatasetWindow").data("tWindow");
+            //window.close();
+
+            closeCreateWindow();
         }
     }
 

@@ -20,6 +20,8 @@ namespace BExIS.DCM.Transform.Input
         #region public
 
         public List<Error> errorMessages { get; set; }
+        public bool EndOfFile { get; protected set; }
+        public int Position {get;set;}
 
         #endregion
 
@@ -63,6 +65,7 @@ namespace BExIS.DCM.Transform.Input
         public DataReader()
         {
             this.errorMessages = new List<Error>();
+            Position = 1;
         }
 
         #region IDataReader Member

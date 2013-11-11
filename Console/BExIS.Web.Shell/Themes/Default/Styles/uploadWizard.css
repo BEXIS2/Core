@@ -1,8 +1,8 @@
 ﻿/*Stepper*/
-.stepper
+.uploadWizardStep
 {
+   height:400px;
 
-   
 }
 
 /*Tables*/
@@ -35,7 +35,9 @@ tr td
 
 #UploadWizardNavDiv
 {
-    width:45%;
+    width:95%;
+    position:absolute;
+    bottom:10px;
 }
 
 #UploadWizard_NavigationTable 
@@ -77,6 +79,15 @@ tr td
     position:absolute;
 }
 
+.uploadWizardStep_Success{
+
+    width:45%;
+    color:green;
+    top:10px;
+    right:10px;
+    position:absolute;
+}
+
 .uploadWizardStep_Main
 {
     width:45%;
@@ -89,4 +100,10 @@ tr td
 {
     width:33%;
 
+}
+
+.uploadWizardStep_Content
+{
+    /*height:220px;
+    overflow:auto;*/
 }

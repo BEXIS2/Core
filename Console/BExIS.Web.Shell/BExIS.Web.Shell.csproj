@@ -301,6 +301,7 @@
     <Content Include="Themes\Default\Styles\Default\editor.png" />
     <Content Include="Themes\Default\Styles\Default\imagebrowser.png" />
     <Content Include="Themes\Default\Styles\Default\loading.gif" />
+    <Content Include="Themes\Default\Styles\Default\preloader.GIF" />
     <Content Include="Themes\Default\Styles\Default\slider-h.gif" />
     <Content Include="Themes\Default\Styles\Default\slider-v.gif" />
     <Content Include="Themes\Default\Styles\Default\sprite-vertical.png" />
@@ -942,7 +943,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>5382</DevelopmentServerPort>
+          <DevelopmentServerPort>4639</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>http://localhost:4187/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>

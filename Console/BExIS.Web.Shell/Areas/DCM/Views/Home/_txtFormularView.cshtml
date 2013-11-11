@@ -29,16 +29,27 @@
       
 }
 
-@using (Html.BeginForm("SaveAsciiFileInfos", "Home", new { area = "DCM" }))
+<div id="asciiFormularDiv">
+@*@using (Ajax.BeginForm("SaveAsciiFileInfos", "Home", new { area = "DCM" },
+                    new AjaxOptions
+                    {
+                        ////InsertionMode = InsertionMode.Replace,
+                        HttpMethod = "POST",
+                        UpdateTargetId = "asciiFormularDiv",
+                     
+                    }))
 {
 
-<table>
+*@
+@*@using (Html.BeginForm("SaveAsciiFileInfos", "Home", new { area = "DCM" }))
+{ 
+*@<table>
     <tr>
         <td>
              @(Html.LabelFor(m => m.Seperator))
         </td>
         <td>
-            @Html.DropDownListFor(m => m.Seperator, new SelectList(TextSeperatorList,Model.Seperator), "Select, please")
+            @Html.DropDownListFor(m => m.Seperator, new SelectList(TextSeperatorList, Model.Seperator), "Select, please", new { @class="asciiFormularField"})
         </td>
     </tr>
     <tr>
@@ -46,7 +57,7 @@
              @(Html.LabelFor(m => m.Decimal))
         </td>
         <td>
-             @Html.DropDownListFor(m => m.Decimal, new SelectList(DecimalCharacterList ,Model.Decimal), "Select, please")
+             @Html.DropDownListFor(m => m.Decimal, new SelectList(DecimalCharacterList ,Model.Decimal), "Select, please", new { @class="asciiFormularField"})
 
         </td>
     </tr>
@@ -55,7 +66,7 @@
              @(Html.LabelFor(m => m.Orientation))
         </td>
         <td>
-             @Html.DropDownListFor(m => m.Orientation, new SelectList(OrientationList ,Model.Orientation), "Select, please")
+             @Html.DropDownListFor(m => m.Orientation, new SelectList(OrientationList ,Model.Orientation), "Select, please", new { @class="asciiFormularField"})
 
     </tr>
     <tr>
@@ -63,7 +74,7 @@
            @(Html.LabelFor(m => m.Offset))
         </td>
         <td>
-           @(Html.TextBoxFor(m => m.Offset , new {@class = "t-input"}))
+           @(Html.TextBoxFor(m => m.Offset , new {@class = "t-input asciiFormularField" }))
                       
         </td>
         <td>
@@ -75,7 +86,7 @@
            @(Html.LabelFor(m => m.Variables))
         </td>
         <td>
-           @(Html.TextBoxFor(m => m.Variables , new {@class = "t-input"}))
+           @(Html.TextBoxFor(m => m.Variables , new {@class = "t-input asciiFormularField" }))
                       
         </td>
         <td>
@@ -87,14 +98,14 @@
            @(Html.LabelFor(m => m.Data))
         </td>
         <td>
-           @(Html.TextBoxFor(m => m.Data , new {@class = "t-input"}))
+           @(Html.TextBoxFor(m => m.Data , new {@class = "t-input asciiFormularField"}))
                       
         </td>
         <td>
             Row (columnwise) or column (rowwise) in which the data starts.
         </td>
     </tr>
-    <tr>
+    @*<tr>
        <td>
            @(Html.LabelFor(m => m.Dateformat))
         </td>
@@ -102,7 +113,21 @@
            @(Html.TextBoxFor(m => m.Dateformat , new {@class = "t-input"}))
                       
         </td>
-    </tr>
+    </tr>*@
 </table>
-<button type="submit" value="Submit" name="submit"  class="t-button " style="border:0px;">save</button>
-}
+@*<button type="submit" value="Submit" name="submit"  class="t-button " style="border:0px;">save</button>*@
+
+</div>
+
+<script type="text/javascript">
+    
+    $('.asciiFormularField').change(function()
+    {
+        $.post('@Url.Action("ChangeAsciiFileInfo", "Home", new RouteValueDictionary { { "area", "DCM" } })', {name : this.id , value : $(this).val()}, function (response) {
+
+
+        })
+
+    })
+
+</script>

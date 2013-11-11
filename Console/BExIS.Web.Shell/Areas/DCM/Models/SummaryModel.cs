@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using BExIS.DCM.Transform.Validation.Exceptions;
 using BExIS.DCM.UploadWizard;
 
 namespace BExIS.Web.Shell.Areas.DCM.Models
@@ -43,6 +45,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
         public int NumOfRows { get; set; }
 
         public StepInfo StepInfo { get; set; }
+        public List<Error> ErrorList = new List<Error>();
+
 
 
         public SummaryModel()

@@ -46,12 +46,14 @@
                 <tr><td><button id="CreateDatasetButton" title="Create new dataset" >Create</button></td><td>Create a new dataset</td></tr>
                 <tr><td><button id="SelectDatasetButton" title="Add file to a existing dataset" >Add</button></td><td> Add file to a existing dataset.</td></tr>
             </table>
-            <br />
-            <div id="selectedValue">@if (Model.DatasetTitle != "")
-                                    { <p>"You have selected Dataset :"</p> @Model.DatasetTitle;}</div>
-            <div id="selectedValue2"></div>
+           
         </div>
     </div>
+
+    <div class="uploadWizardStep_Success stepper">
+         <div id="selectedValue2">@if (Model.DatasetTitle != "")
+                                    { <span>You have selected Dataset : @Model.DatasetTitle</span>}</div>
+    </div> 
 
     <div class="uploadWizardStep_Error stepper">
         @if (Model != null)
@@ -141,10 +143,19 @@
     function closeWindow() {
         var window = $("#DatasetWindow").data("tWindow");
         window.close();
-
-        document.getElementById("selectedValue").innerHTML = "You have selected Dataset : " + SelectedDatasetId;
+        //alert("close");
+        //document.getElementById("selectedValue").innerHTML = "You have selected Dataset : " + SelectedDatasetId;
         document.getElementById("selectedValue2").innerHTML = "You have selected Dataset : " + SelectedDatasetTitle;
      
+    }
+
+    function closeCreateWindow() {
+        var window = $("#CreateDatasetWindow").data("tWindow");
+        window.close();
+        //alert("close");
+        //document.getElementById("selectedValue").innerHTML = "You have selected Dataset : " + SelectedDatasetId;
+        document.getElementById("selectedValue2").innerHTML = "You have selected Dataset : " + SelectedDatasetTitle;
+
     }
 
     //function closeCreateDatasetWindow() {

@@ -14,12 +14,14 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
         public FileInfoModel FileInfoModel { get; set; }
         public string Extention { get; set; }
         public List<Error> ErrorList { get; set; }
+        public bool IsSaved { get; set; }
 
         public GetFileInformationModel()
         {
             FileInfoModel = new FileInfoModel();
             Extention = "";
             ErrorList = new List<Error>();
+            IsSaved = false;
         }
 
     }

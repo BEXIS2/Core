@@ -17,6 +17,7 @@ using BExIS.Dlm.Services.DataStructure;
 using BExIS.Web.Shell.Areas.DCM.Models;
 using BExIS.DCM.UploadWizard;
 using Vaiona.Util.Cfg;
+using System.Diagnostics;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
 {
@@ -133,6 +134,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             //Get StepInfo
             model.StepInfo = TaskManager.Current();
 
+           
+            DirectoryInfo dirInfo = new DirectoryInfo(Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "ServerFiles"));
+            model.serverFileList = dirInfo.GetFiles().Select(i => i.Name).ToList();
 
             return PartialView(model);
         }
@@ -233,6 +237,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                 if (TaskManager.Current().IsValid())
                 {
+                    TaskManager.SetPrev(TaskManager.Current());
                     TaskManager.GoToNext();
                     Session["TaskManager"] = TaskManager;
                     ActionInfo actionInfo = TaskManager.Current().GetActionInfo;
@@ -276,7 +281,15 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     model.FileInfoModel = GetFileInfoModel((AsciiFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO], TaskManager.Bus[TaskManager.EXTENTION].ToString());
                 }
 
+                    
                 model.FileInfoModel.Extention = TaskManager.Bus[TaskManager.EXTENTION].ToString();
+
+                if (model.Extention.Equals(".txt") || model.Extention.Equals(".csv"))
+                    TaskManager.Bus[TaskManager.FILE_READER_INFO] = new AsciiFileReaderInfo();
+
+                if (model.Extention.Equals(".xls"))
+                    TaskManager.Bus[TaskManager.FILE_READER_INFO] = new ExcelFileReaderInfo();
+
 
                 return PartialView(model);
             }
@@ -316,6 +329,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             if (TaskManager.Current().IsValid())
             {
+                TaskManager.SetPrev(TaskManager.Current());
                 TaskManager.GoToNext();
                 Session["TaskManager"] = TaskManager;
                 ActionInfo actionInfo = TaskManager.Current().GetActionInfo;
@@ -328,7 +342,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         [HttpGet]
         public ActionResult Step3(int index)
         {
-
             TaskManager = (TaskManager)Session["TaskManager"];
             //set current stepinfo based on index
             if (TaskManager != null)
@@ -344,10 +357,10 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
 
             // load datasetids
-            DatasetManager dm = new DatasetManager();
-            IList<DatasetVersion> dv = dm.DatasetVersionRepo.Get();
+            //DatasetManager dm = new DatasetManager();
+            //IList<DatasetVersion> dv = dm.DatasetVersionRepo.Get();
             
-            model.Datasets = (from datasets in dm.DatasetRepo.Get() select datasets.Id).ToList();
+            //model.Datasets = (from datasets in dm.DatasetRepo.Get() select datasets.Id).ToList();
             model.StepInfo = TaskManager.Current();
 
 
@@ -398,6 +411,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                 if (TaskManager.Current().valid == true)
                 {
+                    TaskManager.SetPrev(TaskManager.Current());
                     TaskManager.GoToNext();
                     Session["TaskManager"] = TaskManager;
                     ActionInfo actionInfo = TaskManager.Current().GetActionInfo;
@@ -469,6 +483,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             if (TaskManager.Current().IsValid())
             {
+                TaskManager.SetPrev(TaskManager.Current());
                 TaskManager.GoToNext();
                 Session["TaskManager"] = TaskManager;
                 ActionInfo actionInfo = TaskManager.Current().GetActionInfo;
@@ -524,6 +539,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                 if (TaskManager.Current().valid == true)
                 {
+                    TaskManager.SetPrev(TaskManager.Current());
                     TaskManager.GoToNext();
                     Session["TaskManager"] = TaskManager;
                     ActionInfo actionInfo = TaskManager.Current().GetActionInfo;
@@ -613,6 +629,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             {
                 if (TaskManager.Current().valid == false)
                 {
+                    TaskManager.SetPrev(TaskManager.Current());
                     TaskManager.GoToNext();
                     Session["TaskManager"] = TaskManager;
                     ActionInfo actionInfo = TaskManager.Current().GetActionInfo;
@@ -658,16 +675,32 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         }
                         else
                         {
-                            //model.Validated = true;
 
                             DatasetManager dm = new DatasetManager();
                             Dataset ds = dm.GetDataset(id);
 
+                            //XXX Add packagesize to excel read function
                             if (dm.IsDatasetCheckedOutFor(ds.Id, "David") || dm.CheckOutDataset(ds.Id, "David"))
                             {
-                                DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
-                                dm.EditDatasetVersion(workingCopy, rows, null, null);
-                                dm.CheckInDataset(ds.Id, "upload data from upload wizard", "David");
+                                if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_STATUS))
+                                {
+                                    DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
+
+                                    if (TaskManager.Bus[TaskManager.DATASET_STATUS].ToString().Equals("new"))
+                                    {
+                                        dm.EditDatasetVersion(workingCopy, rows, null, null);
+                                        dm.CheckInDataset(ds.Id, "upload data from upload wizard", "David");
+                                    }
+                                    else
+                                    {
+                                        if (rows.Count > 0)
+                                        {
+                                            Dictionary<string, List<DataTuple>> splittedDatatuples = new Dictionary<string, List<DataTuple>>();
+                                            splittedDatatuples = UploadWizardHelper.GetSplitDatatuples(rows, (List<long>)TaskManager.Bus[TaskManager.PRIMARY_KEYS], workingCopy);
+                                            dm.EditDatasetVersion(workingCopy, splittedDatatuples["new"], splittedDatatuples["edit"], null);
+                                        }
+                                    }
+                                }
                             }
                         }
 
@@ -679,61 +712,88 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     {
                         // open file
                         AsciiReader reader = new AsciiReader();
-                        Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
-                        rows = reader.ReadFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), (AsciiFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO], sds, id);
+                        //Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
 
-                        if (reader.errorMessages.Count > 0)
+                        DatasetManager dm = new DatasetManager();
+                        Dataset ds = dm.GetDataset(id);
+
+                        Stopwatch totalTime = Stopwatch.StartNew();
+
+                        if (dm.IsDatasetCheckedOutFor(ds.Id, "David") || dm.CheckOutDataset(ds.Id, "David"))
                         {
-                            //model.ErrorList = reader.errorMessages;
-                        }
-                        else
-                        {
-                            //model.Validated = true;
-
-                            DatasetManager dm = new DatasetManager();
-                            Dataset ds = dm.GetDataset(id);
-
-                            if (dm.IsDatasetCheckedOutFor(ds.Id, "David") || dm.CheckOutDataset(ds.Id, "David"))
+                            DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
+                            int packageSize = 100;
+                            //schleife
+                            do
                             {
-                                DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
-                                if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_STATUS))
-                                {
-                                    if (TaskManager.Bus[TaskManager.DATASET_STATUS].ToString().Equals("new"))
-                                    {
+                                Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
+                                rows = reader.ReadFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), (AsciiFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO], sds, id, packageSize);
+                                Stream.Close();
 
-                                        dm.EditDatasetVersion(workingCopy, rows, null, null);
-                                    }
+                                if (reader.errorMessages.Count > 0)
+                                {
+                                    //model.ErrorList = reader.errorMessages;
                                 }
                                 else
                                 {
-                                    //workingCopy.Metadata = dm.GetDatasetLatestMetadataVersions().Where(p => p.Key.Equals(ds.Id)).First().Value;
+                                    //model.Validated = true;
+                                    Stopwatch dbTimer = Stopwatch.StartNew();
 
-                                    Dictionary<string, List<DataTuple>> splittedDatatuples = new Dictionary<string, List<DataTuple>>();
-                                    splittedDatatuples = UploadWizardHelper.GetSplitDatatuples(rows, (List<long>)TaskManager.Bus[TaskManager.PRIMARY_KEYS], workingCopy);
-                                    dm.EditDatasetVersion(workingCopy, splittedDatatuples["new"], splittedDatatuples["edit"], null);
+                                    if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_STATUS))
+                                    {
+                                        if (TaskManager.Bus[TaskManager.DATASET_STATUS].ToString().Equals("new"))
+                                        {
+
+                                            dm.EditDatasetVersion(workingCopy, rows, null, null);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (rows.Count > 0)
+                                        {
+                                            Dictionary<string, List<DataTuple>> splittedDatatuples = new Dictionary<string, List<DataTuple>>();
+                                            splittedDatatuples = UploadWizardHelper.GetSplitDatatuples(rows, (List<long>)TaskManager.Bus[TaskManager.PRIMARY_KEYS], workingCopy);
+                                            dm.EditDatasetVersion(workingCopy, splittedDatatuples["new"], splittedDatatuples["edit"], null);
+                                        }
+                                    }
+
+                                    dbTimer.Stop();
+                                    Debug.WriteLine(" db time" + dbTimer.Elapsed.TotalSeconds.ToString());
+
                                 }
+                            } while (rows.Count > 0);
 
+                            dm.CheckInDataset(ds.Id, "upload data from upload wizard", "David");
 
-                                dm.CheckInDataset(ds.Id, "upload data from upload wizard", "David");
-                            }
+                            totalTime.Stop();
+                            Debug.WriteLine(" Total Time "+totalTime.Elapsed.TotalSeconds.ToString());
+
+                           
                         }
 
-                        Stream.Close();
+                        //Stream.Close();
                     
                     }
                 }
                 catch
                 {
 
-                    //model.ErrorList.Add(new Error(ErrorType.Other, "Can not valid."));
+                    model.ErrorList.Add(new Error(ErrorType.Other, "Can not valid."));
                 }
             }
             else
             {
-                //model.ErrorList.Add(new Error(ErrorType.Dataset, "Dataset is not selected."));
+                model.ErrorList.Add(new Error(ErrorType.Dataset, "Dataset is not selected."));
             }
 
-            return View();
+            if (model.ErrorList.Count > 0)
+            {
+                Session["TaskManager"] = TaskManager;
+                ActionInfo actionInfo = TaskManager.Current().GetActionInfo;
+                return RedirectToAction(actionInfo.ActionName, actionInfo.ControllerName, new RouteValueDictionary { { "area", actionInfo.AreaName }, { "index", TaskManager.GetCurrentStepInfoIndex() } });
+                
+            }
+            else return View();
         }
 
         public ActionResult CloseUpload()
@@ -755,7 +815,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         /// <returns></returns>
         public ActionResult SelectFileProcess(HttpPostedFileBase SelectFileUploader)
         {
-
             TaskManager TaskManager = (TaskManager)Session["TaskManager"];
             if (SelectFileUploader != null)
             {
@@ -778,6 +837,29 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         }
 
         /// <summary>
+        /// Selected File from server and store into BUS
+        /// </summary>
+        /// <param name="SelectFileUploader"></param>
+        /// <returns></returns>
+        public ActionResult SelectFileFromServerProcess(string fileName)
+        {
+            TaskManager TaskManager = (TaskManager)Session["TaskManager"];
+            if (fileName != null)
+            {
+                string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "ServerFiles",fileName);
+
+                TaskManager.AddToBus(TaskManager.FILEPATH, path);
+
+                TaskManager.AddToBus(TaskManager.FILENAME, fileName);
+                TaskManager.AddToBus(TaskManager.EXTENTION, "."+fileName.Split('.').Last());
+                Session["TaskManager"] = TaskManager;
+            }
+
+            //return RedirectToAction("UploadWizard");
+            return Content("");
+        }
+
+        /// <summary>
         /// Load PartialView to create a Dataset GET
         /// </summary>
         /// <returns></returns>
@@ -790,6 +872,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             return PartialView("_createDataset", model);
         }
+
         /// <summary>
         /// POST of Create Dataset to create a dataset
         /// </summary>
@@ -821,11 +904,11 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 metadata.GetElementsByTagName("bgc:institute")[0].InnerText = model.ProjectInstitute;
 
                 //Add Metadata to Bus
-                TaskManager.AddToBus("Title", model.Title);
-                TaskManager.AddToBus("Owner", model.Owner);
-                TaskManager.AddToBus("Author", model.DatasetAuthor);
-                TaskManager.AddToBus("ProjectName", model.ProjectName);
-                TaskManager.AddToBus("Institute", model.ProjectInstitute);
+                TaskManager.AddToBus(TaskManager.DATASET_TITLE, model.Title);
+                TaskManager.AddToBus(TaskManager.OWNER, model.Owner);
+                TaskManager.AddToBus(TaskManager.AUTHOR, model.DatasetAuthor);
+                TaskManager.AddToBus(TaskManager.PROJECTNAME, model.ProjectName);
+                TaskManager.AddToBus(TaskManager.INSTITUTE, model.ProjectInstitute);
 
                 DatasetManager dm = new DatasetManager();
                 DataStructureManager dsm = new DataStructureManager();
@@ -836,8 +919,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                 Dataset ds = dm.CreateEmptyDataset(dataStructure, rp);
 
-                TaskManager.AddToBus("DatasetTitle", model.Title);
-                TaskManager.AddToBus("ResearchPlanId", model.ResearchPlanId);
+                TaskManager.AddToBus(TaskManager.DATASET_TITLE, model.Title);
+                TaskManager.AddToBus(TaskManager.RESEARCHPLAN_ID, model.ResearchPlanId);
 
                 if (dm.IsDatasetCheckedOutFor(ds.Id, "David") || dm.CheckOutDataset(ds.Id, "David"))
                 {
@@ -845,8 +928,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                     DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
                     workingCopy.Metadata = metadata;
-                    TaskManager.AddToBus("DatasetId",ds.Id);
-                    TaskManager.AddToBus("ResearchPlanTitle", rp.Title);
+                    TaskManager.AddToBus(TaskManager.DATASET_ID,ds.Id);
+                    TaskManager.AddToBus(TaskManager.RESEARCHPLAN_TITLE, rp.Title);
                     dm.EditDatasetVersion(workingCopy, null, null, null);
                 }
 
@@ -856,7 +939,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 Session["createDatasetWindowVisible"] = false;
                 Session["TaskManager"] = TaskManager;
 
-                return Json(new { success = true });
+                return Json(new { success = true, title = model.Title });
             }
             else
             {
@@ -870,6 +953,41 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                 
             return PartialView("_createDataset", model);
+        }
+
+        /// <summary>
+        /// Add Selected Dataset to Bus
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult AddSelectedDatasetToBus(string id)
+        {
+
+            long datasetId = Convert.ToInt64(id);
+
+            DatasetManager datasetManager = new DatasetManager();
+            DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
+
+            TaskManager TaskManager = (TaskManager)Session["TaskManager"];
+
+            TaskManager.AddToBus(TaskManager.DATASET_ID, datasetId);
+            //Add Metadata to Bus
+            TaskManager.AddToBus(TaskManager.DATASET_TITLE, datasetVersion.Metadata.GetElementsByTagName("bgc:title")[0].InnerText);
+            TaskManager.AddToBus(TaskManager.OWNER, datasetVersion.Metadata.GetElementsByTagName("bgc:owner")[0].InnerText);
+            TaskManager.AddToBus(TaskManager.AUTHOR, datasetVersion.Metadata.GetElementsByTagName("bgc:author")[0].InnerText);
+            TaskManager.AddToBus(TaskManager.PROJECTNAME, datasetVersion.Metadata.GetElementsByTagName("bgc:projectName")[0].InnerText);
+            TaskManager.AddToBus(TaskManager.INSTITUTE, datasetVersion.Metadata.GetElementsByTagName("bgc:institute")[0].InnerText);
+
+            ResearchPlanManager rpm = new ResearchPlanManager();
+            ResearchPlan rp = rpm.Repo.Get(datasetVersion.Dataset.ResearchPlan.Id);
+            TaskManager.AddToBus(TaskManager.RESEARCHPLAN_ID, rp.Id);
+            TaskManager.AddToBus(TaskManager.RESEARCHPLAN_TITLE, rp.Title);
+
+
+            Session["TaskManager"] = TaskManager;
+
+            return Content("");
         }
 
         /// <summary>
@@ -920,7 +1038,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             if (UploadWizardHelper.CheckDuplicates(tempDataset) || UploadWizardHelper.CheckDuplicates(tempFromFile))
             {
                 model.IsUnique = false;
-
+                model.PrimaryKeysList = pks;
                 model.ErrorList.Add(new Error(ErrorType.Other, "Selection is not unique"));
 
             }
@@ -959,6 +1077,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
                         reader.ValidateFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), sds, id);
                         Stream.Close();
+                        model.ErrorList = reader.errorMessages;
                     }
 
                     if (TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".csv") ||
@@ -968,6 +1087,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
                         reader.ValidateFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), (AsciiFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO], sds, id);
                         Stream.Close();
+                        model.ErrorList = reader.errorMessages;
                     }
                 }
                 catch
@@ -992,31 +1112,61 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         }
 
         #region ascii file info
-
+        [HttpPost]
         public ActionResult SaveAsciiFileInfos(FileInfoModel  info)
+        {
+
+                TaskManager TaskManager = (TaskManager)Session["TaskManager"];
+
+                AsciiFileReaderInfo asciiFileReaderInfo = new AsciiFileReaderInfo();
+
+                asciiFileReaderInfo.Data = info.Data;
+                asciiFileReaderInfo.Dateformat = "";//info.Dateformat;
+                asciiFileReaderInfo.Decimal = info.Decimal;
+                asciiFileReaderInfo.Offset = info.Offset;
+                asciiFileReaderInfo.Orientation = info.Orientation;
+                asciiFileReaderInfo.Seperator = info.Seperator;
+                asciiFileReaderInfo.Variables = info.Variables;
+
+                TaskManager.AddToBus(TaskManager.FILE_READER_INFO, asciiFileReaderInfo);
+
+                GetFileInformationModel model = new GetFileInformationModel();
+                model.StepInfo = TaskManager.Current();
+                model.StepInfo.SetValid(true);
+                model.Extention = TaskManager.Bus[TaskManager.EXTENTION].ToString();
+                model.FileInfoModel = info;
+                model.FileInfoModel.Extention = TaskManager.Bus[TaskManager.EXTENTION].ToString();
+                model.IsSaved = true;
+
+                return RedirectToAction("ReloadUploadWizard", new { restart = false });
+        }
+
+        public ActionResult ChangeAsciiFileInfo(string name, string value)
         {
             TaskManager TaskManager = (TaskManager)Session["TaskManager"];
 
-            AsciiFileReaderInfo asciiFileReaderInfo = new AsciiFileReaderInfo();
+            if (TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".txt") ||
+                TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".csv"))
+            {
 
-            asciiFileReaderInfo.Data = info.Data;
-            asciiFileReaderInfo.Dateformat = info.Dateformat;
-            asciiFileReaderInfo.Decimal = info.Decimal;
-            asciiFileReaderInfo.Offset = info.Offset;
-            asciiFileReaderInfo.Orientation = info.Orientation;
-            asciiFileReaderInfo.Seperator = info.Seperator;
-            asciiFileReaderInfo.Variables = info.Variables;
+                AsciiFileReaderInfo info = (AsciiFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO];
 
-            TaskManager.AddToBus(TaskManager.FILE_READER_INFO, asciiFileReaderInfo);
+                switch (name)
+                {
+                    case "Seperator": { info.Seperator = AsciiFileReaderInfo.GetSeperator(value); break; }
+                    case "Decimal": { info.Decimal = AsciiFileReaderInfo.GetDecimalCharacter(value); break; }
+                    case "Orientation": { info.Orientation = AsciiFileReaderInfo.GetOrientation(value); break; }
+                    case "Variables": { info.Variables = Convert.ToInt32(value); break; }
+                    case "Data": { info.Data = Convert.ToInt32(value); break; }
+                    case "Offset": { info.Offset = Convert.ToInt32(value); break; }
+                }
 
-            GetFileInformationModel model = new GetFileInformationModel();
-            model.StepInfo = TaskManager.Current();
-            model.Extention = TaskManager.Bus[TaskManager.EXTENTION].ToString();
-            model.FileInfoModel = info;
-            model.FileInfoModel.Extention = TaskManager.Bus[TaskManager.EXTENTION].ToString();
+                TaskManager.Bus[TaskManager.FILE_READER_INFO] = info;
+                Session["TaskManager"] = TaskManager;
+            }
 
-            return RedirectToAction("ReloadUploadWizard", new { restart = false });
-       
+
+            return Content("");
         }
 
         #endregion
@@ -1030,7 +1180,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 ExcelFileReaderInfo excelFileReaderInfo = new ExcelFileReaderInfo();
 
                 excelFileReaderInfo.Data = info.Data;
-                excelFileReaderInfo.Dateformat = info.Dateformat;
+                excelFileReaderInfo.Dateformat = "";//info.Dateformat;
                 excelFileReaderInfo.Decimal = info.Decimal;
                 excelFileReaderInfo.Offset = info.Offset;
                 excelFileReaderInfo.Orientation = info.Orientation;
@@ -1043,6 +1193,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 model.Extention = TaskManager.Bus[TaskManager.EXTENTION].ToString();
                 model.FileInfoModel = info;
                 model.FileInfoModel.Extention = TaskManager.Bus[TaskManager.EXTENTION].ToString();
+                model.IsSaved = true;
 
                 return RedirectToAction("ReloadUploadWizard", new { restart = false });
 

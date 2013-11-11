@@ -20,16 +20,21 @@
         <div class="uploadWizardStep_Content stepper">
             <p><button id="validationButton" title="Validate selected data file against a given data structure" >Validate</button>Validate selected data file against a given data structure.</p>
 
-                @if (Model.Validated)
-                { 
             
-                 <p> Validated!! </p>
-                
-                }
 
         </div>
     </div>
-     <div class="uploadWizardStep_Error stepper">
+
+    <div class="uploadWizardStep_Success stepper">
+            @if (Model.Validated)
+            { 
+            
+                <p> Validated!! </p>
+                
+            }
+    </div>
+
+    <div class="uploadWizardStep_Error stepper">
         @if (Model != null)
         {
             if (Model.ErrorList != null)
@@ -68,11 +73,12 @@
 
     $('#validationButton').click(function () {
 
+        $('#preloader').show();
 
         $.post('@Url.Action("ValidateFile", "Home", new RouteValueDictionary { { "area", "DCM" } })', function (response) {
 
             $(@Model.StepInfo.GetActionInfo.ActionName.ToString()).html(response);
-
+            $('#preloader').hide();
         });
     });
 

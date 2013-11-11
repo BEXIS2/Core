@@ -19,10 +19,14 @@
                     <table>
                         <tr>
                             <td>
+                                local
+                            </td>
+                            <td>
                                 @(Html.Telerik().Upload()
                                 .Name("SelectFileUploader")
                                 .Multiple(false)
                                 .ShowFileList(false)
+                                
                                 .ClientEvents(events =>
                                     events.OnSelect("SelectFileProcess_OnSelect")
                                             .OnRemove("SelectFileProcess_OnRemove")
@@ -35,15 +39,24 @@
                         
                                 )
                             </td>
+                            
+                        </tr>
+                        <tr>
                             <td>
-                                 <div id="fileNameDiv">@if(Model.SelectedFileName!=""){@Model.SelectedFileName}</div>
+                                server
+                            </td>
+                            <td>
+                                @Html.DropDownListFor(m => m.SelectedServerFileName, new SelectList(Model.serverFileList),"Select, please")
                             </td>
                         </tr>
                     </table>
          </div> 
     </div>
 
-     
+     <div class="uploadWizardStep_Success stepper">
+         <div id="fileNameDiv">@if(Model.SelectedFileName!=""){@Model.SelectedFileName}</div>
+     </div>
+
      <div class="uploadWizardStep_Error stepper">
         @if (Model != null)
         {
@@ -77,12 +90,6 @@
     {
         var file = e.files[0];
         Parameters.push("Extention:" + file.extension);
-        //$('#fileNameDiv').text(file.name);
-
-        //$('#SubmitSelectedFile').trigger("click");
-
-        //$('#fileNameDiv').text("Please submit befor go next.");
-        //$('form').submit();
     }
 
     function SelectFileProcess_OnRemove(e) {
@@ -93,5 +100,14 @@
 
         $('#fileNameDiv').text(e.files[0].name);
     }
+
+    $('#SelectedServerFileName').change(function () {
+
+        //alert($(this).val());
+        $.post('@Url.Action("SelectFileFromServerProcess", "Home", new RouteValueDictionary { { "area", "DCM" } })', { fileName: $(this).val() }, function (response) {
+
+            
+        })
+    })
 
 </script>
