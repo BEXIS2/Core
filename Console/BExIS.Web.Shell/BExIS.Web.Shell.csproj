@@ -571,10 +571,6 @@
     <Content Include="Views\Shared\EditorTemplates\Time.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\BExIS.DCM.UploadWizard\BExIS.DCM.UploadWizard.csproj">
-      <Project>{76378eab-f537-4684-a8dc-7d5dacf529cd}</Project>
-      <Name>BExIS.DCM.UploadWizard</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Components\AAA\BExIS.Security.Services\BExIS.Security.Services.csproj">
       <Project>{681c8bc4-55f0-4f43-a685-90e246a88cb1}</Project>
       <Name>BExIS.Security.Services</Name>
@@ -590,6 +586,10 @@
     <ProjectReference Include="..\..\Modules\Collect\BExIS.Collect.Transform.Validation\BExIS.DCM.Transform.Validation.csproj">
       <Project>{c8a05313-b960-406e-92ec-c1e5b3f47fcd}</Project>
       <Name>BExIS.DCM.Transform.Validation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Modules\Collect\BExIS.DCM.UploadWizard\BExIS.DCM.UploadWizard.csproj">
+      <Project>{2c846721-a221-4ae5-a671-4b86de4d3805}</Project>
+      <Name>BExIS.DCM.UploadWizard</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Modules\RPM\BExIS.RPM.Model\BExIS.RPM.Model.csproj">
       <Project>{063b9e3f-e0dd-43fe-9910-5b1544b8b861}</Project>
