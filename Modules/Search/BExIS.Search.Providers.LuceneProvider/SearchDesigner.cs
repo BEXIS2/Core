@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Xml;
+using System.Linq;
 using BExIS.Search.Api;
 using BExIS.Search.Model;
 using BExIS.Search.Providers.LuceneProvider.Helpers;
@@ -196,7 +197,7 @@ namespace BExIS.Search.Providers.LuceneProvider
         public void Reload()
         {
             BexisIndexer bi = new BexisIndexer();
-            
+            bi.ReIndex();            
         }
 
         private XmlElement SetAttributesToNode(XmlElement xmlElement, SearchAttribute sa)

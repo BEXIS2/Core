@@ -26,7 +26,7 @@ namespace BExIS.Search.Providers.LuceneProvider.Config
         private static  searchInitObjects sIO = new searchInitObjects();
 
         private static List<Facet> AllFacetsDefault = sIO.AllFacets;
-       private static List<Property> AllPropertiesDefault = sIO.AllProperties;
+        private static List<Property> AllPropertiesDefault = sIO.AllProperties;
         private static List<Category> AllCategoriesDefault = sIO.AllCategories;
 
 
@@ -41,6 +41,28 @@ namespace BExIS.Search.Providers.LuceneProvider.Config
         public static List<XmlNode> generalXmlNodeList = new List<XmlNode>();
         public static List<XmlNode> headerItemXmlNodeList = new List<XmlNode>();
 
+        public static void Reset()
+        {
+            isLoaded = false;
+            configXML = null;
+            _Reader = BexisIndexSearcher.getIndexReader();
+
+            sIO = new searchInitObjects();
+
+            AllFacetsDefault = sIO.AllFacets;
+            AllPropertiesDefault = sIO.AllProperties;
+            AllCategoriesDefault = sIO.AllCategories;
+
+            numericProperties = new HashSet<string>();        
+
+            facetXmlNodeList = new List<XmlNode>();
+            propertyXmlNodeList = new List<XmlNode>();
+            categoryXmlNodeList = new List<XmlNode>();
+            generalXmlNodeList = new List<XmlNode>();
+            headerItemXmlNodeList = new List<XmlNode>();
+
+        }
+
         public static void LoadConfig()
         {
             if (!isLoaded)
@@ -49,9 +71,6 @@ namespace BExIS.Search.Providers.LuceneProvider.Config
                 isLoaded = true;
             }
         }
-
-
-
 
         private static void Load()
         {

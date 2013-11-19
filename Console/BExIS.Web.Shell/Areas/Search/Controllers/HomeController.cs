@@ -41,11 +41,12 @@ namespace BExIS.Web.Shell.Areas.Search.Controllers
         public ActionResult Index()
         {
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+            //var pp = IoCFactory.Container.ResolveAll<ISearchProvider>();
+
             SetSessionsToDefault();
 
             return View(provider);
         }
-
 
         /// <summary>
         /// This action is called when the search button is pressed
@@ -198,17 +199,17 @@ namespace BExIS.Web.Shell.Areas.Search.Controllers
             List<string> selectedValues = new List<string>();
             string parent = GetParentOfSelectAbleCategories();
 
-           
+            //data.ToList().ForEach(p => selectedValues.Add(p.ToString()));
 
             for (int i = 0; i < this.Request.Form.AllKeys.Count() - 1; i++)
             {
-                string name = this.Request.Form.AllKeys[i];
+                int index = Convert.ToInt32(this.Request.Form.AllKeys[i]);
                 string[] temp = this.Request.Form.GetValues(i);
                 string value = temp[0];
 
                 if (value == "true" || value == "True")
                 {
-                    selectedValues.Add(name);
+                    selectedValues.Add(GetSelectAbleCategoryList().ElementAt(index).Name);
                 }
             }
 
@@ -500,6 +501,7 @@ namespace BExIS.Web.Shell.Areas.Search.Controllers
 
             Session["SelectAbleCategories"] = null;
 
+            Session["SelectedFacets"] = null;
         }
 
         private string GetParentOfSelectAbleCategories()
@@ -720,6 +722,24 @@ namespace BExIS.Web.Shell.Areas.Search.Controllers
 
             return listOfSearchAttributeViewModels;
         }
+
+            #region ReIndex
+
+            public ActionResult ReIndexSearch()
+            {
+                return View();
+            }
+
+            public ActionResult RefreshSearch()
+            {
+                ISearchDesigner sd = new SearchDesigner();
+                sd.Reload();
+
+                return View("ReIndexSearch");
+            }
+        
+
+            #endregion
 
         #endregion
 

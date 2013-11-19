@@ -682,25 +682,29 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                             //XXX Add packagesize to excel read function
                             if (dm.IsDatasetCheckedOutFor(ds.Id, "David") || dm.CheckOutDataset(ds.Id, "David"))
                             {
+                                DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
+
                                 if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_STATUS))
                                 {
-                                    DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
 
                                     if (TaskManager.Bus[TaskManager.DATASET_STATUS].ToString().Equals("new"))
                                     {
                                         dm.EditDatasetVersion(workingCopy, rows, null, null);
-                                        dm.CheckInDataset(ds.Id, "upload data from upload wizard", "David");
+                                        //dm.CheckInDataset(ds.Id, "upload data from upload wizard", "David");
                                     }
-                                    else
-                                    {
+                                }
+                                else
+                                {
                                         if (rows.Count > 0)
                                         {
                                             Dictionary<string, List<DataTuple>> splittedDatatuples = new Dictionary<string, List<DataTuple>>();
                                             splittedDatatuples = UploadWizardHelper.GetSplitDatatuples(rows, (List<long>)TaskManager.Bus[TaskManager.PRIMARY_KEYS], workingCopy);
                                             dm.EditDatasetVersion(workingCopy, splittedDatatuples["new"], splittedDatatuples["edit"], null);
                                         }
-                                    }
                                 }
+
+                                dm.CheckInDataset(ds.Id, "upload data from upload wizard", "David");
+                                
                             }
                         }
 

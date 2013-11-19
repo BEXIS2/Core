@@ -19,44 +19,46 @@ namespace BExIS.Search.Model
             {
                 foreach (var colum in Header)
                 {
-                    DataColumn col = searchResults.Columns.Add(colum.Name); // or DisplayName also
-                    if (colum.DisplayName == "")
-                        col.Caption = colum.Name;
-                    else
-                        col.Caption = colum.DisplayName;
-
-
-                    if (colum.Name.Equals(Id.Name))
+                    if (!searchResults.Columns.Contains(colum.Name)) // when the search provider is reloaded, it contains duplicate items
                     {
-                        col.DataType = System.Type.GetType("System.Int32");
+                        DataColumn col = searchResults.Columns.Add(colum.Name); // or DisplayName also
+                        if (colum.DisplayName == "")
+                            col.Caption = colum.Name;
+                        else
+                            col.Caption = colum.DisplayName;
+
+
+                        if (colum.Name.Equals(Id.Name))
+                        {
+                            col.DataType = System.Type.GetType("System.Int32");
+                        }
+
+                        //switch (colum.DataType)
+                        //{
+                        //    case "String":
+                        //        {
+                        //            System.Type.GetType("System.String");
+                        //            break;
+                        //        }
+                        //    case "Integer":
+                        //        {
+                        //            System.Type.GetType("System.Int32");
+                        //            break;
+                        //        }
+
+                        //    case "DateTime":
+                        //        {
+                        //            System.Type.GetType("System.DateTime");
+                        //            break;
+                        //        }
+                        //    default:
+                        //        {
+                        //            System.Type.GetType("System.String");
+                        //            break;
+                        //        }
+                        //}
+
                     }
-
-                    //switch (colum.DataType)
-                    //{
-                    //    case "String":
-                    //        {
-                    //            System.Type.GetType("System.String");
-                    //            break;
-                    //        }
-                    //    case "Integer":
-                    //        {
-                    //            System.Type.GetType("System.Int32");
-                    //            break;
-                    //        }
-
-                    //    case "DateTime":
-                    //        {
-                    //            System.Type.GetType("System.DateTime");
-                    //            break;
-                    //        }
-                    //    default:
-                    //        {
-                    //            System.Type.GetType("System.String");
-                    //            break;
-                    //        }
-                    //}
-
-                   
                 }
 
                 foreach (var row in Rows)

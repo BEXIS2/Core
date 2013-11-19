@@ -886,6 +886,7 @@
     <Content Include="Areas\DCM\Views\Home\Help.cshtml" />
     <Content Include="Areas\DCM\Views\Home\Step2.cshtml" />
     <Content Include="Areas\DCM\Views\Home\Step4.cshtml" />
+    <Content Include="Areas\Search\Views\Home\ReIndexSearch.cshtml" />
     <None Include="Properties\PublishProfiles\BEXIS2 DEV.pubxml" />
     <None Include="Properties\PublishProfiles\BEXIS2.pubxml" />
   </ItemGroup>

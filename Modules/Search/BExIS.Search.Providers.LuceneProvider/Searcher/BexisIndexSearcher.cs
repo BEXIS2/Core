@@ -26,11 +26,11 @@ namespace BExIS.Search.Providers.LuceneProvider.Searcher
 
         private static Lucene.Net.Store.Directory pathIndex = FSDirectory.Open(new DirectoryInfo(luceneIndexPath));
         private static Lucene.Net.Store.Directory autoCompleteIndex = FSDirectory.Open(new DirectoryInfo(autoCompleteIndexPath));
-        private static IndexReader _Reader = IndexReader.Open(pathIndex, true);
-        private static IndexSearcher searcher = new IndexSearcher(_Reader);
+        public static IndexReader _Reader = IndexReader.Open(pathIndex, true);
+        public static IndexSearcher searcher = new IndexSearcher(_Reader);
 
-        private static IndexReader autoCompleteIndexReader = IndexReader.Open(autoCompleteIndex, true);
-        private static IndexSearcher autoCompleteSearcher = new IndexSearcher(autoCompleteIndexReader);
+        public static IndexReader autoCompleteIndexReader = IndexReader.Open(autoCompleteIndex, true);
+        public static IndexSearcher autoCompleteSearcher = new IndexSearcher(autoCompleteIndexReader);
 
         public static string[] facetFields { get; set; }
         public static string[] storedFields { get; set; }

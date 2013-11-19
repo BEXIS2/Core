@@ -6,29 +6,28 @@ using System.Xml;
 using BExIS.Dlm.Services.Data;
 using BExIS.Search.Model;
 using BExIS.Search.Providers.LuceneProvider.Helpers;
+using BExIS.Search.Providers.LuceneProvider.Searcher;
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
+using System.Linq;
+using Lucene.Net.Search;
 
 
 namespace BExIS.Search.Providers.LuceneProvider.Indexer
 {
-    class BexisIndexer
+    public class BexisIndexer
     {
-
-
-
         private List<Facet> AllFacets = new List<Facet>();
         private List<Property> AllProperties = new List<Property>();
         private List<Category> AllCategories = new List<Category>();
-
+        private bool reIndex = false;
         public List<XmlNode> facetXmlNodeList = new List<XmlNode>();
         public List<XmlNode> propertyXmlNodeList = new List<XmlNode>();
         public List<XmlNode> categoryXmlNodeList = new List<XmlNode>();
         public List<XmlNode> generalXmlNodeList = new List<XmlNode>();
         public List<XmlNode> headerItemXmlNodeList = new List<XmlNode>();
-
 
         private void LoadBeforeIndexing()
         {
@@ -91,9 +90,6 @@ namespace BExIS.Search.Providers.LuceneProvider.Indexer
 
         }
 
-
-
-
         private string luceneIndexPath = Path.Combine(FileHelper.IndexFolderPath, "BexisSearchIndex");
         private string autoCompleteIndexPath = Path.Combine(FileHelper.IndexFolderPath, "BexisAutoComplete");
 
@@ -102,11 +98,8 @@ namespace BExIS.Search.Providers.LuceneProvider.Indexer
 
         XmlDocument configXML;
 
-
-
-        public BexisIndexer()
+        public void Index()
         {
-
             configXML = new XmlDocument();
             configXML.Load(FileHelper.ConfigFilePath);
 
@@ -129,20 +122,51 @@ namespace BExIS.Search.Providers.LuceneProvider.Indexer
 
 
             // there is no need for the metadataAccess class anymore. Talked with David and deleted. 30.18.13. Javad/ compare to the previous version to see the deletions
-            DatasetManager dm = new DatasetManager();            
+            DatasetManager dm = new DatasetManager();
             var metadataDic = dm.GetDatasetLatestMetadataVersions();
 
             foreach (var value in metadataDic.Values)
             {
                 //the values in the dictionary are already xml documents or null. Javad
-                if(value != null)
+                if (value != null)
                     writeBexisIndex(value);
             }
 
             indexWriter.Optimize();
-            indexWriter.Dispose();
             autoCompleteIndexWriter.Optimize();
+
+            if (!reIndex)
+            { 
+                indexWriter.Dispose();
+                autoCompleteIndexWriter.Dispose();
+            }
+        }
+
+       
+        public void ReIndex()
+        {
+            reIndex = true;
+            this.Index();
+            SearchProvider.Providers.Values.Where(p => p.IsAlive).ToList().ForEach(p => ((SearchProvider)p.Target).Reload());
+            IndexReader _Reader = indexWriter.GetReader().Reopen();
+            BexisIndexSearcher.searcher.IndexReader.Dispose();
+            BexisIndexSearcher.searcher.Dispose();
+            BexisIndexSearcher.searcher = new IndexSearcher(_Reader);
+            BexisIndexSearcher._Reader = _Reader;
+            indexWriter.GetReader().Dispose();
+            indexWriter.Dispose();
+
+
+            IndexReader _ReaderAutocomplete = autoCompleteIndexWriter.GetReader().Reopen();
+            BexisIndexSearcher.autoCompleteSearcher.IndexReader.Dispose();
+            BexisIndexSearcher.autoCompleteSearcher.Dispose();
+            BexisIndexSearcher.autoCompleteSearcher = new IndexSearcher(_ReaderAutocomplete);
+            BexisIndexSearcher.autoCompleteIndexReader = _ReaderAutocomplete;
+
+            autoCompleteIndexWriter.GetReader().Dispose();
             autoCompleteIndexWriter.Dispose();
+            reIndex = false;
+
         }
 
         private void writeBexisIndex(XmlDocument metadataDoc)
@@ -310,8 +334,6 @@ namespace BExIS.Search.Providers.LuceneProvider.Indexer
 
         
         }
-
-
 
         private void writeAutoCompleteIndex(String docId, String f, String V)
         {

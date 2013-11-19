@@ -16,6 +16,7 @@ namespace BExIS.Search.Providers.LuceneProvider
 {
     public class SearchProvider : ISearchProvider
     {
+        public static Dictionary<object, WeakReference> Providers = new Dictionary<object, WeakReference>();
 
         public SearchModel DefaultSearchModel { get; private set; }
         public SearchModel WorkingSearchModel { get; private set; }
@@ -24,31 +25,32 @@ namespace BExIS.Search.Providers.LuceneProvider
 
         public SearchProvider()
         {
-
-            //BexisIndexer asd = new BexisIndexer();    
-          SearchConfig.LoadConfig();
-
-                this.DefaultSearchModel = initDefault();
-                this.WorkingSearchModel = initWorking(); //init(WorkingSearchModel); // its better to make a clone form DefualtSearchModel than calling the function twice
-                //this.DefaultSearchModel = Get(this.WorkingSearchModel.CriteriaComponent);
-                this.WorkingSearchModel = Get(this.WorkingSearchModel.CriteriaComponent);
+            load();
+            Providers.Add(this.GetHashCode() , new WeakReference(this));
         }
 
-        public bool RefreshIndex()
+        ~SearchProvider()
         {
-
-            try
-            {
-                BexisIndexer asd = new BexisIndexer();
-
-            }
-            catch
-            {
-                return false;
-            }
-
-            return true;
+            Providers.Remove(this.GetHashCode());
         }
+
+        public void Reload()
+        {
+            load(true);
+        }
+
+        private void load(bool forceReset=false)
+        {
+            if (forceReset == true)
+                SearchConfig.Reset();
+            SearchConfig.LoadConfig();
+
+            this.DefaultSearchModel = initDefault();
+            this.WorkingSearchModel = initWorking(); //init(WorkingSearchModel); // its better to make a clone form DefualtSearchModel than calling the function twice
+            //this.DefaultSearchModel = Get(this.WorkingSearchModel.CriteriaComponent);
+            this.WorkingSearchModel = Get(this.WorkingSearchModel.CriteriaComponent);
+        }
+
 
         #region ISearchDataModel Member
 
@@ -130,6 +132,7 @@ namespace BExIS.Search.Providers.LuceneProvider
             this.WorkingSearchModel = Get(searchCriteria);
             this.WorkingSearchModel = UpdateFacets(searchCriteria);
         }
+    
         public SearchModel SearchAndUpdate(SearchCriteria searchCriteria, int pageSize = 10, int currentPage = 1)
         {
             this.WorkingSearchModel = Get(searchCriteria, pageSize, currentPage);
@@ -137,10 +140,7 @@ namespace BExIS.Search.Providers.LuceneProvider
 
             return this.WorkingSearchModel;
         }
-
-        
-
-
+       
         private void getQueryFromCriteria(SearchCriteria searchCriteria)
         {
 
