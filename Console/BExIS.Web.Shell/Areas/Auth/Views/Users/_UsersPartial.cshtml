@@ -37,258 +37,90 @@
         .Scrollable(scrollable => scrollable.Height(500))
 )
 
-@(Html.Telerik().Window()
-    .Name("windowCreation")
-    .Title("User Creation")
-    .Draggable(true)
-    .Modal(true)
-    .Visible(false)
-    .Scrollable(true)
-    .Content(@<text>
-        <div id="contentWindowCreation"></div>
-    </text>)
-    .ClientEvents(clientEvents => clientEvents
-        .OnActivate("onActivateWindowCreation")
-        .OnClose("onCloseWindowCreation")
-    )
-)
+<div id="Window_UserCreation" title="User Creation" />
 
-@(Html.Telerik().Window()
-    .Name("windowDetails")
-    .Title("User Details")
-    .Draggable(true)
-    .Modal(true)
-    .Visible(false)
-    .Content(@<text>
-        <div id="contentWindowDetails"></div>
-    </text>)
-    .ClientEvents(clientEvents => clientEvents
-        .OnActivate("onActivateWindowDetails")
-        .OnClose("onCloseWindowDetails")
-    )
-)
+<div id="Window_UserDeletion" title="User Deletion" />
 
-@(Html.Telerik().Window()
-    .Name("windowDeletion")
-    .Title("User Deletion")
-    .Draggable(true)
-    .Modal(true)
-    .Visible(false)
-    .Content(@<text>
-        <div id="contentWindowDeletion"></div>
-    </text>)
-    .ClientEvents(clientEvents => clientEvents
-        .OnActivate("onActivateWindowDeletion")
-        .OnClose("onCloseWindowDeletion")
-    )
-)
+<div id="Window_UserDetails" title="User Details" />
 
 <script type="text/javascript">
-
-    function setMembership(value, userid, roleid) {
-        if (value) {
-            $.post('@Url.Action("AddUserToRole", "Users")', { UserId: userid, RoleId: roleid });
-        } else {
-            $.post('@Url.Action("RemoveUserFromRole", "Users")', { UserId: userid, RoleId: roleid });
-        }
-    }
-
+    
     function onCommand(e) {
 
         if (e.name == "Create") {
-
-            $('#contentWindowCreation').load('@Url.Action("Create", "Users")');
-
-            var windowCreation = $('#windowCreation').data('tWindow');
-            windowCreation.center().open();
-        }
-
-        if (e.name == "Details") {
-            var userID = e.dataItem.Id;
-
-            $.get('@Url.Action("Details", "Users")', { Id: userID }, function (data) {
-
-                $('#contentWindowDetails').html(data);
-            });
-
-            $.get('@Url.Action("UserInfo", "Users")', { Id: userID }, function (data) {
-
-                $('#contentTabstripUserInfo').html(data);
-            });
-
-            var windowDetails = $('#windowDetails').data('tWindow');
-            windowDetails.center().open();
+            $('#Window_UserCreation').load('@Url.Action("Create", "Users")',
+                function () {
+                    $('#Window_UserCreation').dialog({
+                        autoOpen: true,
+                        modal: true,
+                        width: "auto",
+                        height: "auto",
+                        resizable: false,
+                        close: function () {
+                            $('#Window_UserCreation').html("");
+                        }
+                    });
+                }
+            );
         }
 
         if (e.name == "Delete") {
             var userID = e.dataItem.Id;
 
-            $.get('@Url.Action("Delete", "Users")', { Id: userID }, function (data) {
+            $.get('@Url.Action("Delete", "Users")', { Id: userID },
+                function (data) {
+                    $('#Window_UserDeletion').html(data);
+                    $('#Window_UserDeletion').dialog({
+                        autoOpen: true,
+                        modal: true,
+                        width: "auto",
+                        height: "auto",
+                        resizable: false,
+                        close: function () {
+                            $('#Window_UserDeletion').html("");
+                        }
+                    });
+                }
+            );
+        }
 
-                    $('#contentWindowDeletion').html(data);                
-            });
+        if (e.name == "Details") {
+            var userID = e.dataItem.Id;
 
-            var windowDeletion = $('#windowDeletion').data('tWindow');
-            windowDeletion.center().open();
+            $.get('@Url.Action("Details", "Users")', { Id: userID },
+                function (data) {
+                    $('#Window_UserDetails').html(data);
+                }
+            );
+
+            $.get('@Url.Action("UserInfo", "Users")', { Id: userID },
+                function (data) {
+                    $('#Tabstrip_UserInfo').html(data);
+                    $('#Window_UserDetails').dialog({
+                        autoOpen: true,
+                        modal: true,
+                        width: "auto",
+                        height: "auto",
+                        resizable: false,
+                        close: function () {
+                            $('#Window_UserDetails').html("");
+                        }
+                    });
+                }
+            );
         }
     }
 
-    //
-    //
-    // Creation
-    function cancelWindowCreation() {
-        var windowCreation = $('#windowCreation').data('tWindow');
-        windowCreation.close();
-    }
-
-    function onActivateWindowCreation() {
-        var windowCreationContent = $('#windowCreation .t-window-content');
-
-        windowCreationContent.css("height", "auto");
-        windowCreationContent.css("width", "auto");
-    }
-
-    function onCloseWindowCreation() {
-        $('#contentWindowCreation').empty();
-        window.location.href = '@Url.Action("Users", "Users")';
-    }
-
-    //
-    //
-    // Details
     function cancelUserEdit(e) {
         $.get('@Url.Action("UserInfo", "Users")', { Id: e }, function (data) {
-            $('#contentTabstripUserInfo').html(data);
+            $('#Window_UserInfo').html(data);
         });
     }
 
     function editUserInfo(e) {
         $.get('@Url.Action("UserEdit", "Users")', { Id: e }, function (data) {
-            $('#contentTabstripUserInfo').html(data);
+            $('#Window_UserInfo').html(data);
         });
     }
 
-    function onActivateWindowDetails(e) {
-        var windowDetails = $('#windowDetails .t-window-content');
-
-        windowDetails.css("height", "auto");
-        windowDetails.css("width", "auto");
-    }
-
-    function onCloseWindowDetails(e) {
-        $('#contentWindowDetails').empty();
-        window.location.href = '@Url.Action("Users", "Users")';
-    }
-
-    function onSelectTabstripDetails(e, userID) {
-        var tab = $(e.item);
-
-        switch (tab.index()) {
-            case 0:
-                $.get('@Url.Action("UserInfo", "Users")', { Id: userID }, function (data) {
-                    $('#contentTabstripUserInfo').html(data);
-                });
-                $('#contentTabstripMembership').empty();
-                break;
-
-            case 1:
-                $.get('@Url.Action("Membership", "Users")', { Id: userID }, function (data) {
-                    $('#contentTabstripMembership').html(data);
-                });
-                $('#contentTabstripUserInfo').empty();
-                break;
-
-            default:
-                break;
-        }
-    }
-
-    //
-    //
-    // Deletion
-    function cancelWindowDeletion() {
-        var windowDeletion = $('#windowDeletion').data('tWindow');
-        windowDeletion.close();
-    }
-
-    function onCloseWindowDeletion() {
-        $('#contentWindowDeletion').empty();
-        window.location.href = '@Url.Action("Users", "Users")';
-    }
-
-    function onActivateWindowDeletion(e) {
-        var windowDeletion = $('#windowDeletion .t-window-content');
-
-        windowDeletion.css("height", "auto");
-        windowDeletion.css("width", "auto");
-    }
-
-    //
-    //
-    // Info
-    function confirmWindowInfo(e) {
-        switch (e) {
-            case "windowDeletion":
-                var windowDelete = $('#windowDeletion').data('tWindow');
-                windowDelete.close();
-                break;
-
-            case "windowDetails":
-                var windowDetails = $('#windowDetails').data('tWindow');
-                windowDetails.close();
-                break;
-
-            case "windowCreation":
-                var windowCreation = $('#windowCreation').data('tWindow');
-                windowCreation.close();
-                break;
-
-            default:
-                break;
-        }
-    }
-
-    //
-    //
-    // RESET FORM JQUERY CODE!!!!!
-    (function ($) {
-
-        //re-set all client validation given a jQuery selected form or child
-        $.fn.resetValidation = function () {
-
-            var $form = this.closest('form');
-
-            //reset jQuery Validate's internals
-            $form.validate().resetForm();
-
-            //reset unobtrusive validation summary, if it exists
-            $form.find("[data-valmsg-summary=true]")
-                .removeClass("validation-summary-errors")
-                .addClass("validation-summary-valid")
-                .find("ul").empty();
-
-            //reset unobtrusive field level, if it exists
-            $form.find("[data-valmsg-replace]")
-                .removeClass("field-validation-error")
-                .addClass("field-validation-valid")
-                .empty();
-
-            return $form;
-        };
-
-        //reset a form given a jQuery selected form or a child
-        //by default validation is also reset
-        $.fn.formReset = function (resetValidation) {
-            var $form = this.closest('form');
-
-            $form[0].reset();
-
-            if (resetValidation == undefined || resetValidation) {
-                $form.resetValidation();
-            }
-
-            return $form;
-        }
-    })(jQuery);
-
-</script> 
+</script>

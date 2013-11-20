@@ -281,7 +281,28 @@
     <Content Include="Scripts\2012.3.1018\telerik.treeview.min.js" />
     <Content Include="Scripts\2012.3.1018\telerik.upload.min.js" />
     <Content Include="Scripts\2012.3.1018\telerik.window.min.js" />
+    <Content Include="Scripts\jQueryUI\1.10.3\css\smoothness\images\animated-overlay.gif" />
+    <Content Include="Scripts\jQueryUI\1.10.3\css\smoothness\images\ui-bg_flat_0_aaaaaa_40x100.png" />
+    <Content Include="Scripts\jQueryUI\1.10.3\css\smoothness\images\ui-bg_flat_75_ffffff_40x100.png" />
+    <Content Include="Scripts\jQueryUI\1.10.3\css\smoothness\images\ui-bg_glass_55_fbf9ee_1x400.png" />
+    <Content Include="Scripts\jQueryUI\1.10.3\css\smoothness\images\ui-bg_glass_65_ffffff_1x400.png" />
+    <Content Include="Scripts\jQueryUI\1.10.3\css\smoothness\images\ui-bg_glass_75_dadada_1x400.png" />
+    <Content Include="Scripts\jQueryUI\1.10.3\css\smoothness\images\ui-bg_glass_75_e6e6e6_1x400.png" />
+    <Content Include="Scripts\jQueryUI\1.10.3\css\smoothness\images\ui-bg_glass_95_fef1ec_1x400.png" />
+    <Content Include="Scripts\jQueryUI\1.10.3\css\smoothness\images\ui-bg_highlight-soft_75_cccccc_1x100.png" />
+    <Content Include="Scripts\jQueryUI\1.10.3\css\smoothness\images\ui-icons_222222_256x240.png" />
+    <Content Include="Scripts\jQueryUI\1.10.3\css\smoothness\images\ui-icons_2e83ff_256x240.png" />
+    <Content Include="Scripts\jQueryUI\1.10.3\css\smoothness\images\ui-icons_454545_256x240.png" />
+    <Content Include="Scripts\jQueryUI\1.10.3\css\smoothness\images\ui-icons_888888_256x240.png" />
+    <Content Include="Scripts\jQueryUI\1.10.3\css\smoothness\images\ui-icons_cd0a0a_256x240.png" />
+    <Content Include="Scripts\jQueryUI\1.10.3\css\smoothness\jquery-ui-1.10.3.custom.css" />
+    <Content Include="Scripts\jQueryUI\1.10.3\css\smoothness\jquery-ui-1.10.3.custom.min.css" />
+    <Content Include="Scripts\jQueryUI\1.10.3\js\jquery-1.9.1.js" />
+    <Content Include="Scripts\jQueryUI\1.10.3\js\jquery-ui-1.10.3.custom.js" />
+    <Content Include="Scripts\jQueryUI\1.10.3\js\jquery-ui-1.10.3.custom.min.js" />
     <Content Include="Scripts\jquery-1.7.1.min.js" />
+    <Content Include="Scripts\jquery-2.0.3.js" />
+    <Content Include="Scripts\jquery-2.0.3.min.js" />
     <Content Include="Scripts\jquery.ba-resize.min.js" />
     <Content Include="Scripts\Search\search.js" />
     <Content Include="Scripts\trunk8.js" />
@@ -535,7 +556,6 @@
     <Folder Include="Areas\System\Models\" />
     <Folder Include="Areas\System\Views\Shared\" />
     <Folder Include="Models\" />
-    <Folder Include="Scripts\Auth\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Home\About.cshtml" />
@@ -880,7 +900,6 @@
   <ItemGroup>
     <Content Include="Areas\Auth\Views\Users\_UserEditPartial.cshtml" />
     <Content Include="Areas\Auth\Views\Users\_UserInfoPartial.cshtml" />
-    <Content Include="Areas\Auth\Views\Users\_InfoPartial.cshtml" />
     <Content Include="Areas\Auth\Views\Roles\_InfoPartial.cshtml" />
     <Content Include="Areas\RPM\Views\Home\_editVariable.cshtml" />
     <Content Include="Areas\DCM\Views\Home\Help.cshtml" />

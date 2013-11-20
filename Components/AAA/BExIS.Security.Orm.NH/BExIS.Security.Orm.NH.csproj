@@ -57,11 +57,18 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <EmbeddedResource Include="Mappings\DB2Dialect\User.hbm.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Mappings\DB2Dialect\Action.hbm.xml" />
+    <Content Include="Mappings\DB2Dialect\Activity.hbm.xml" />
+    <Content Include="Mappings\DB2Dialect\Feature.hbm.xml" />
+    <Content Include="Mappings\DB2Dialect\FeaturePermission.hbm.xml" />
+    <Content Include="Mappings\DB2Dialect\Permission.hbm.xml" />
+    <Content Include="Mappings\DB2Dialect\UserSecurityInfo.hbm.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

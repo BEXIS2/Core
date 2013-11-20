@@ -3,16 +3,15 @@
 
 @model UserCreationModel
 
-<script src="@Url.Content("~/Scripts/jquery-1.7.1.js")" type="text/javascript"></script>
 <script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
 <script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
 <script src="@Url.Content("~/Scripts/jquery.unobtrusive-ajax.js")" type="text/javascript"></script>
 
-@using (Ajax.BeginForm("Create", "Users", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "contentWindowCreation" }))
+@using (Ajax.BeginForm("Create", "Users", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "Window_UserCreation" }))
 {   
     @Html.ValidationSummary(true)
     
-    <div class="editor-label">
+    <div class="editor-label" style="font-weight:bold>
         @Html.LabelFor(m => m.UserName)
     </div>
     <div class="editor-field">
@@ -20,7 +19,7 @@
         @Html.ValidationMessageFor(m => m.UserName)
     </div>
     
-    <div class="editor-label">
+    <div class="editor-label" style="font-weight:bold>
         @Html.LabelFor(m => m.Email)
     </div>
     <div class="editor-field">
@@ -28,7 +27,7 @@
         @Html.ValidationMessageFor(m => m.Email)
     </div>
     
-    <div class="editor-label">
+    <div class="editor-label" style="font-weight:bold>
         @Html.LabelFor(m => m.Password)
     </div>
     <div class="editor-field">
@@ -36,27 +35,27 @@
         @Html.ValidationMessageFor(m => m.Password)
     </div>
 
-    <div class="editor-label">
+    <div class="editor-label" style="font-weight:bold>
         @Html.LabelFor(m => m.ConfirmPassword)
     </div>
     <div class="editor-field">
         @Html.PasswordFor(m => m.ConfirmPassword)
         @Html.ValidationMessageFor(m => m.ConfirmPassword)
     </div>
-    <div class="editor-label">
+    <div class="editor-label" style="font-weight:bold>
         @Html.LabelFor(m => m.SecurityQuestion)
     </div>
     <div class="editor-field">
         @Html.DropDownListFor(m => m.SecurityQuestion, new SelectList(new List<string> { "What is your maternal grandmother's maiden name?", "What was your childhood nickname?", "In what city or town was your first job?" }))
     </div>
-    <div class="editor-label">
+    <div class="editor-label" style="font-weight:bold>
         @Html.LabelFor(m => m.SecurityAnswer)
     </div>
     <div class="editor-field">
         @Html.PasswordFor(m => m.SecurityAnswer)
         @Html.ValidationMessageFor(m => m.SecurityAnswer)
     </div>
-    <div class="editor-label">
+    <div class="editor-label" style="font-weight:bold>
         @Html.LabelFor(m => m.ConfirmSecuritydAnswer)
     </div>
     <div class="editor-field">
@@ -64,7 +63,7 @@
         @Html.ValidationMessageFor(m => m.ConfirmSecuritydAnswer)
     </div>
 
-    <div class="editor-label">
+    <div class="editor-label" style="font-weight:bold>
         @Html.LabelFor(m => m.Comment)
     </div>
     <div class="editor-field">

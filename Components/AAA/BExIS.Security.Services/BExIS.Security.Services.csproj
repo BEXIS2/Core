@@ -52,11 +52,19 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ActivityManager.cs" />
+    <Compile Include="FeatureManager.cs" />
+    <Compile Include="FeaturePermissionManager.cs" />
+    <Compile Include="IActivityManager.cs" />
+    <Compile Include="IFeatureManager.cs" />
+    <Compile Include="IFeaturePermissionManager.cs" />
     <Compile Include="IRoleManager.cs" />
+    <Compile Include="ISecurityManager.cs" />
     <Compile Include="IUserManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RoleCreateStatus.cs" />
     <Compile Include="RoleManager.cs" />
+    <Compile Include="SecurityManager.cs" />
     <Compile Include="UserCreateStatus.cs" />
     <Compile Include="UserManager.cs" />
   </ItemGroup>

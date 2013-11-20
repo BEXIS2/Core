@@ -54,8 +54,6 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
                 RegistrationDate = user.RegistrationDate,
                 LastLoginDate = user.LastLoginDate,
                 LastActivityDate = user.LastActivityDate,
-                IsApproved = user.IsApproved,
-                IsLockedOut = user.IsLockedOut,
                 Comment = user.Comment
             };
         }

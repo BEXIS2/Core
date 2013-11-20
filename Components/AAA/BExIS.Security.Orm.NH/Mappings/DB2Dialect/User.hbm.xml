@@ -1,30 +1,20 @@
 ﻿<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Security.Entities" namespace="BExIS.Security.Entities">
   <joined-subclass xmlns="urn:nhibernate-mapping-2.2" name="User" table="Users" extends="Subject" dynamic-update="true">
 
-    <!-- Mapping Subject Properties -->
+    <!-- SUBJECT ATTRIBUTES -->
     <key column="Id" />
 
-    <!-- Mapping User Properties -->
+    <!-- USER ATTRIBUTES -->
     <property name="Email" type="String" />
-
-    <property name="Password" type="String" />
-    <property name="Salt" type="String" />
-    <property name="PasswordQuestion" type="String" />
-    <property name="PasswordAnswer" type="String" />
-    <property name="PasswordFailureCount" type="Int32" />
-    <property name="PasswordAnswerFailureCount" type="Int32" />
-
+    
     <property name="RegistrationDate" type="DateTime" />
     <property name="LastActivityDate" type="DateTime" />
     <property name="LastLoginDate" type="DateTime" />
     <property name="LastLockOutDate" type="DateTime" />
     <property name="LastPasswordChangeDate" type="DateTime" />
-    <property name="LastPasswordFailureDate" type="DateTime" />
-    <property name="LastPasswordAnswerFailureDate" type="DateTime" />
 
-    <property name="IsApproved" type="yes_no" />
-    <property name="IsLockedOut" type="yes_no" />
 
+    <!-- USER ASSOCIATIONS -->
     <set name="Roles" table="Roles_Users" inverse="true" cascade="save-update" lazy="true">
       <key column="UserRef"/>
       <many-to-many column="RoleRef" class="Role"/>

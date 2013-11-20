@@ -8,9 +8,6 @@ namespace BExIS.Security.Services
     public enum RoleCreateStatus
     {
         Success,
-
         DuplicateRoleName
-
-
     }
 }

@@ -20,6 +20,12 @@
 
     <property name="Comment" type="String" />
 
+    <!-- Mapping Subject Properties -->
+    <set name="Permissions" table="Permissions_Subjects" inverse="true" cascade="save-update" lazy="true">
+      <key column="SubjectRef"/>
+      <many-to-many column="PermissionRef" class="Permission"/>
+    </set>
+
   </class>
 
 </hibernate-mapping>

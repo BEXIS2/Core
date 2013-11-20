@@ -3,16 +3,15 @@
 
 @model UserModel
 
-<script src="@Url.Content("~/Scripts/jquery-1.7.1.js")" type="text/javascript"></script>
 <script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
 <script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
 <script src="@Url.Content("~/Scripts/jquery.unobtrusive-ajax.js")" type="text/javascript"></script>
 
-@using (Ajax.BeginForm("UserEdit", "Users", new AjaxOptions { HttpMethod = "POST", UpdateTargetId="contentTabstripUserInfo" }))
+@using (Ajax.BeginForm("UserEdit", "Users", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "Window_UserInfo" }))
 {   
     @Html.ValidationSummary(true)
     
-    <div class="editor-label">
+    <div class="editor-label" style="font-weight:bold">
         @Html.LabelFor(m => m.Id)
     </div>
     <div class="editor-field">
@@ -20,7 +19,7 @@
         @Html.HiddenFor(m => m.Id)
     </div>
     
-    <div class="editor-label">
+    <div class="editor-label" style="font-weight:bold">
         @Html.LabelFor(m => m.UserName)
     </div>
     <div class="editor-field">
@@ -28,7 +27,7 @@
         @Html.HiddenFor(m => m.UserName)
     </div>
     
-    <div class="editor-label">
+    <div class="editor-label" style="font-weight:bold">
         @Html.LabelFor(m => m.Email)
     </div>
     <div class="editor-field">
@@ -36,7 +35,7 @@
         @Html.ValidationMessageFor(m => m.Email)
     </div>
 
-    <div class="editor-label">
+    <div class="editor-label" style="font-weight:bold">
         @Html.LabelFor(m => m.RegistrationDate)
     </div>
     <div class="editor-field">
@@ -44,7 +43,7 @@
         @Html.HiddenFor(m => m.RegistrationDate)
     </div>
     
-    <div class="editor-label">
+    <div class="editor-label" style="font-weight:bold">
         @Html.LabelFor(m => m.LastLoginDate)
     </div>
     <div class="editor-field">
@@ -52,7 +51,7 @@
         @Html.HiddenFor(m => m.LastLoginDate)
     </div>
     
-    <div class="editor-label">
+    <div class="editor-label" style="font-weight:bold">
         @Html.LabelFor(m => m.LastActivityDate)
     </div>
     <div class="editor-field">
@@ -60,7 +59,7 @@
         @Html.HiddenFor(m => m.LastActivityDate)
     </div>
     
-    <div class="editor-label">
+    <div class="editor-label" style="font-weight:bold">
         @Html.LabelFor(m => m.Comment)
     </div>
     <div class="editor-field">

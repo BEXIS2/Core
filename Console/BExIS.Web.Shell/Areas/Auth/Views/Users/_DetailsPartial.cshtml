@@ -9,32 +9,11 @@
     {
         items.Add()
             .Text("User Info")
-            .Content(@<text>
-                <div id="contentTabstripUserInfo"></div>
-            </text>);
-    
-    items.Add()
-            .Text("Membership")
-            .Content(@<text>
-                <div id="contentTabstripMembership"></div>
-            </text>);
-    
-    items.Add()
-            .Text("Feature Permissions")
-            .Enabled(false)
-            .Content(@<text>
-                <div id="contentTabstripFeaturePermissions"></div>
-            </text>);
-    
-    items.Add()
-            .Text("Data Permissions")
-            .Enabled(false)
-            .Content(@<text>
-                <div id="contentTabstripDataPermissions"></div>
-            </text>);
+            .LoadContentFrom("UserInfo", "Users", new { Id = (long)Model });
+
+        items.Add()
+        .Text("Membership")
+        .LoadContentFrom("Membership", "Users", new { Id = (long)Model });
     })
     .SelectedIndex(0)
-    .ClientEvents(clientEvents => clientEvents
-        .OnSelect("function(e) { onSelectTabstripDetails.call(this,e," + Model + "); }")
-    )
 )

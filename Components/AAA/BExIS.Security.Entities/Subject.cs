@@ -1,4 +1,5 @@
-﻿using Vaiona.Entities.Common;
+﻿using System.Collections.Generic;
+using Vaiona.Entities.Common;
 
 namespace BExIS.Security.Entities
 {
@@ -15,6 +16,8 @@ namespace BExIS.Security.Entities
 
 
         #region Associations
+
+        public virtual ICollection<Permission> Permissions { get; set; }
 
         #endregion
 

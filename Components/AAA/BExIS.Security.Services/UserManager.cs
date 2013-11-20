@@ -18,20 +18,38 @@ namespace BExIS.Security.Services
         {
             IUnitOfWork uow = this.GetUnitOfWork();
 
-            this.Repo = uow.GetReadOnlyRepository<User>();
+            this.UserRepo = uow.GetReadOnlyRepository<User>();
+            this.UserSecurityInfoRepo = uow.GetReadOnlyRepository<UserSecurityInfo>();
         }
 
 
         #region Data Readers
 
-        public IReadOnlyRepository<User> Repo { get; private set; }
+        public IReadOnlyRepository<User> UserRepo { get; private set; }
+        public IReadOnlyRepository<UserSecurityInfo> UserSecurityInfoRepo { get; private set; }
 
         #endregion
 
 
         #region User
 
-        //
+        public UserSecurityInfo GetUserSecurityInfoByName(string userName)
+        {
+            // Requirements
+            Contract.Requires(!String.IsNullOrWhiteSpace(userName));
+
+            // Variables
+            if (UserSecurityInfoRepo.Get(u => u.Name == userName).Count() == 1)
+            {
+                UserSecurityInfo userSecurityInfo = UserSecurityInfoRepo.Get(u => u.Name == userName).FirstOrDefault();
+                return userSecurityInfo;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         public bool ChangePassword(string userName, string password, string newPassword, string machineKey, int minPasswordLength)
         {
             // Requirements
@@ -42,19 +60,24 @@ namespace BExIS.Security.Services
 
             // Variables
             User user = GetUserByName(userName);
+            UserSecurityInfo userSecurityInfo = GetUserSecurityInfoByName(userName);
 
-            if (user != null)
+            if (userSecurityInfo != null)
             {
-                if (ValidateSecurityProperty(password, user.Password, DecodeSalt(user.Salt, machineKey)))
+                if (ValidateSecurityProperty(password, userSecurityInfo.Password, DecodeSalt(userSecurityInfo.Salt, machineKey)))
                 {
                     user.LastActivityDate = DateTime.Now;
                     user.LastPasswordChangeDate = DateTime.Now;
-                    user.Password = EncodeSecurityProperty(newPassword, DecodeSalt(user.Salt, machineKey));
+                    userSecurityInfo.Password = EncodeSecurityProperty(newPassword, DecodeSalt(userSecurityInfo.Salt, machineKey));
 
                     using (IUnitOfWork uow = this.GetUnitOfWork())
                     {
-                        IRepository<User> repo = uow.GetRepository<User>();
-                        repo.Put(user);
+                        IRepository<User> userRepo = uow.GetRepository<User>();
+                        IRepository<UserSecurityInfo> userSecurityInfoRepo = uow.GetRepository<UserSecurityInfo>();
+                        
+                        userRepo.Put(user);
+                        userSecurityInfoRepo.Put(userSecurityInfo);
+
                         uow.Commit();
                     }
 
@@ -71,7 +94,6 @@ namespace BExIS.Security.Services
             }
         }
 
-        //
         public bool ChangePasswordQuestionAndPasswordAnswer(string userName, string password, string newPasswordQuestion, string newPasswordAnswer, string machineKey)
         {
             // Requirements
@@ -82,15 +104,16 @@ namespace BExIS.Security.Services
 
             // Variables
             User user = GetUserByName(userName);
+            UserSecurityInfo userSecurityInfo = GetUserSecurityInfoByName(userName);
 
             if (user != null)
             {
-                if (ValidateSecurityProperty(password, user.Password, DecodeSalt(user.Salt, machineKey)))
+                if (ValidateSecurityProperty(password, userSecurityInfo.Password, DecodeSalt(userSecurityInfo.Salt, machineKey)))
                 {
                     user.LastActivityDate = DateTime.Now;
                     user.LastPasswordChangeDate = DateTime.Now;
-                    user.PasswordAnswer = EncodeSecurityProperty(newPasswordAnswer, DecodeSalt(user.Salt, machineKey));
-                    user.PasswordQuestion = newPasswordQuestion;
+                    userSecurityInfo.PasswordAnswer = EncodeSecurityProperty(newPasswordAnswer, DecodeSalt(userSecurityInfo.Salt, machineKey));
+                    userSecurityInfo.PasswordQuestion = newPasswordQuestion;
 
                     using (IUnitOfWork uow = this.GetUnitOfWork())
                     {
@@ -112,7 +135,6 @@ namespace BExIS.Security.Services
             }
         }
 
-        //
         public User Create(string userName, string email, string password, string passwordQuestion, string passwordAnswer, string comment,  bool uniqueEmail, int minPasswordLength, string machineKey, out UserCreateStatus status, bool isApproved = true)
         {
             // Requirements
@@ -122,9 +144,7 @@ namespace BExIS.Security.Services
             Contract.Requires(!String.IsNullOrWhiteSpace(passwordQuestion));
             Contract.Requires(!String.IsNullOrWhiteSpace(passwordAnswer));
             Contract.Requires(!String.IsNullOrWhiteSpace(machineKey));
-            Contract.Requires(uniqueEmail != null);
             Contract.Requires(comment != null);
-            Contract.Requires(isApproved != null);
 
             // Variables
 
@@ -157,32 +177,37 @@ namespace BExIS.Security.Services
                     // User Properties
                     Email = email,
 
+                    LastActivityDate = DateTime.Now,
+                    LastLockOutDate = DateTime.Now,
+                    LastLoginDate = DateTime.Now,
+                    LastPasswordChangeDate = DateTime.Now,
+                    RegistrationDate = DateTime.Now
+                };
+
+                UserSecurityInfo userSecurityInfo = new UserSecurityInfo()
+                {
+                    Name = userName,
+
                     Password = EncodeSecurityProperty(password, salt),
                     Salt = EncodeSalt(salt, machineKey),
                     PasswordQuestion = passwordQuestion,
                     PasswordAnswer = EncodeSecurityProperty(passwordAnswer, salt),
-
                     PasswordFailureCount = 0,
                     PasswordAnswerFailureCount = 0,
-
-                    LastActivityDate = DateTime.Now,
-                    LastLockOutDate = DateTime.Now,
-                    LastLoginDate = DateTime.Now,
                     LastPasswordAnswerFailureDate = DateTime.Now,
-                    LastPasswordChangeDate = DateTime.Now,
                     LastPasswordFailureDate = DateTime.Now,
-
-                    RegistrationDate = DateTime.Now,
-
                     IsApproved = isApproved,
                     IsLockedOut = false
                 };
 
                 using (IUnitOfWork uow = this.GetUnitOfWork())
                 {
-                    IRepository<User> repo = uow.GetRepository<User>();
+                    IRepository<User> userRepo = uow.GetRepository<User>();
+                    IRepository<UserSecurityInfo> userSecurityInfoRepo = uow.GetRepository<UserSecurityInfo>();
 
-                    repo.Put(user);
+                    userRepo.Put(user);
+                    userSecurityInfoRepo.Put(userSecurityInfo);
+
                     uow.Commit();
                 }
 
@@ -196,7 +221,6 @@ namespace BExIS.Security.Services
             }
         }
 
-        //
         private string DecodeSalt(string salt, string machineKey)
         {
             // Requirements
@@ -216,7 +240,6 @@ namespace BExIS.Security.Services
             return Encoding.Unicode.GetString(DESDecrypt.TransformFinalBlock(Convert.FromBase64String(salt), 0, Convert.FromBase64String(salt).Length));
         }
 
-        //
         public bool Delete(User user)
         {
             // Requirements
@@ -228,8 +251,12 @@ namespace BExIS.Security.Services
                 IRepository<User> userRepo = uow.GetRepository<User>();
                 IRepository<Role> roleRepo = uow.GetRepository<Role>();
 
+                IRepository<UserSecurityInfo> userSecurityInfoRepo = uow.GetRepository<UserSecurityInfo>();
+
                 user = userRepo.Reload(user);
                 userRepo.LoadIfNot(user.Roles);
+
+                UserSecurityInfo userSecurityInfo = GetUserSecurityInfoByName(user.Name);
 
                 foreach (Role role in user.Roles)
                 {
@@ -238,13 +265,14 @@ namespace BExIS.Security.Services
                 }
 
                 userRepo.Delete(user);
+                userSecurityInfoRepo.Delete(userSecurityInfo);
+
                 uow.Commit();
             }
 
             return (true);
         }
 
-        //
         private string EncodeSalt(string salt, string machineKey)
         {
             // Requirements
@@ -265,7 +293,6 @@ namespace BExIS.Security.Services
             return Convert.ToBase64String(DESEncrypt.TransformFinalBlock(Encoding.Unicode.GetBytes(salt), 0, Encoding.Unicode.GetBytes(salt).Length));
         }
 
-        //
         private string EncodeSecurityProperty(string value, string salt)
         {
             // Requirements
@@ -281,28 +308,25 @@ namespace BExIS.Security.Services
             return Convert.ToBase64String(encryptionEncoder.ComputeHash(valueArray, 0, valueArray.Length));
         }
 
-        //
         public IQueryable<User> FindUsersByEmail(string emailToMatch)
         {
             // Requirements
             Contract.Requires(!String.IsNullOrWhiteSpace(emailToMatch));
 
             // Computations
-            return Repo.Query(u => u.Email.ToLower().Contains(emailToMatch.ToLower()));
+            return UserRepo.Query(u => u.Email.ToLower().Contains(emailToMatch.ToLower()));
 
         }
 
-        //
         public IQueryable<User> FindUserByName(string userNameToMatch)
         {
             // Requirements
             Contract.Requires(!String.IsNullOrWhiteSpace(userNameToMatch));
 
             // Computations
-            return Repo.Query(u => u.Name.Contains(userNameToMatch));
+            return UserRepo.Query(u => u.Name.Contains(userNameToMatch));
         }
 
-        //
         private string GeneratePassword(int minPasswordLength)
         {
             // Requirements
@@ -322,7 +346,6 @@ namespace BExIS.Security.Services
             return stringBuilder.ToString();
         }
 
-        //
         private string GenerateSalt()
         {
             // Variables
@@ -333,28 +356,20 @@ namespace BExIS.Security.Services
             return Convert.ToBase64String(salt);
         }
 
-        //
         public IQueryable<User> GetAllUsers()
         {
-            return (Repo.Query());
+            return (UserRepo.Query());
         }
 
-        //
-        public string GetPassword(string userName, string passwordAnswer, int maxFailureAttempts, int failureAttemptsWindow, int minPasswordLength, string machineKey)
-        {
-            throw new NotImplementedException();
-        }
-
-        //
         public User GetUserByEmail(string email)
         {
             // Requirements
             Contract.Requires(!String.IsNullOrWhiteSpace(email));
 
             // Variables
-            if (Repo.Get(u => u.Email.ToLower() == email.ToLower()).Count() == 1)
+            if (UserRepo.Get(u => u.Email.ToLower() == email.ToLower()).Count() == 1)
             {
-                return Repo.Get(u => u.Email.ToLower() == email.ToLower()).FirstOrDefault();
+                return UserRepo.Get(u => u.Email.ToLower() == email.ToLower()).FirstOrDefault();
             }
             else
             {
@@ -362,16 +377,15 @@ namespace BExIS.Security.Services
             }
         }
 
-        //
         public User GetUserById(long id, bool isOnline = false)
         {
             // Requirements
             Contract.Requires(id >= 0);
 
             // Variables
-            if (Repo.Get(u => u.Id == id).Count() == 1)
+            if (UserRepo.Get(u => u.Id == id).Count() == 1)
             {
-                User user = Repo.Get(u => u.Id == id).FirstOrDefault();
+                User user = UserRepo.Get(u => u.Id == id).FirstOrDefault();
 
                 if (user != null && isOnline)
                 {
@@ -393,16 +407,15 @@ namespace BExIS.Security.Services
             }
         }
 
-        //
         public User GetUserByName(string userName, bool isOnline = false)
         {
             // Requirements
             Contract.Requires(!String.IsNullOrWhiteSpace(userName));
 
             // Variables
-            if (Repo.Get(u => u.Name == userName).Count() == 1)
+            if (UserRepo.Get(u => u.Name == userName).Count() == 1)
             {
-                User user = Repo.Get(u => u.Name == userName).FirstOrDefault();
+                User user = UserRepo.Get(u => u.Name == userName).FirstOrDefault();
 
                 if (user != null && isOnline)
                 {
@@ -424,16 +437,15 @@ namespace BExIS.Security.Services
             }
         }
 
-        //
         public string GetUserNameByEmail(string email)
         {
             // Requirements
             Contract.Requires(!String.IsNullOrWhiteSpace(email));
 
             // Variables
-            if (Repo.Get(u => u.Email.ToLower() == email.ToLower()).Count() == 1)
+            if (UserRepo.Get(u => u.Email.ToLower() == email.ToLower()).Count() == 1)
             {
-                return Repo.Get(u => u.Email.ToLower() == email.ToLower()).FirstOrDefault().Name;
+                return UserRepo.Get(u => u.Email.ToLower() == email.ToLower()).FirstOrDefault().Name;
             }
             else
             {
@@ -441,7 +453,6 @@ namespace BExIS.Security.Services
             }
         }
 
-        //
         public int GetUsersOnline()
         {
             // Variables
@@ -449,10 +460,9 @@ namespace BExIS.Security.Services
             DateTime referenceTime = DateTime.Now.Subtract(timeFrame);
 
             // Computations
-            return Repo.Get(u => (DateTime.Compare(u.LastActivityDate, referenceTime) > 0)).Count();
+            return UserRepo.Get(u => (DateTime.Compare(u.LastActivityDate, referenceTime) > 0)).Count();
         }
 
-        //
         public string ResetPassword(string userName, string passwordAnswer, int maxFailureAttempts, int failureAttemptsWindow, int minPasswordLength, string machineKey)
         {
             // Requirements
@@ -468,23 +478,28 @@ namespace BExIS.Security.Services
 
             // Variables
             User user = GetUserByName(userName);
+            UserSecurityInfo userSecurityInfo = GetUserSecurityInfoByName(userName);
 
             // Compuations
             if (user != null)
             {
-                string salt = DecodeSalt(user.Salt, machineKey);
+                string salt = DecodeSalt(userSecurityInfo.Salt, machineKey);
 
-                if (ValidateSecurityProperty(passwordAnswer, user.PasswordAnswer, salt))
+                if (ValidateSecurityProperty(passwordAnswer, userSecurityInfo.PasswordAnswer, salt))
                 {
                     password = GeneratePassword(minPasswordLength);
 
-                    user.Password = EncodeSecurityProperty(password, salt);
+                    userSecurityInfo.Password = EncodeSecurityProperty(password, salt);
                     user.LastPasswordChangeDate = DateTime.Now;
 
                     using (IUnitOfWork uow = this.GetUnitOfWork())
                     {
-                        IRepository<User> repo = uow.GetRepository<User>();
-                        repo.Put(user);
+                        IRepository<User> userRepo = uow.GetRepository<User>();
+                        IRepository<UserSecurityInfo> userSecurityInfoRepo = uow.GetRepository<UserSecurityInfo>();
+
+                        userRepo.Put(user);
+                        userSecurityInfoRepo.Put(userSecurityInfo);
+
                         uow.Commit();
                     }
                 }
@@ -497,24 +512,24 @@ namespace BExIS.Security.Services
             return password;
         }
 
-        //
         public bool UnlockUser(string userName)
         {
             // Requirements
             Contract.Requires(!String.IsNullOrWhiteSpace(userName));
 
             // Variables
-            User user = GetUserByName(userName);
+            UserSecurityInfo userSecurityInfo = GetUserSecurityInfoByName(userName);
 
             // Computations
-            if (user != null)
+            if (userSecurityInfo != null)
             {
-                user.IsLockedOut = false;
+                userSecurityInfo.IsLockedOut = false;
 
                 using (IUnitOfWork uow = this.GetUnitOfWork())
                 {
-                    IRepository<User> repo = uow.GetRepository<User>();
-                    repo.Put(user);
+                    IRepository<UserSecurityInfo> repo = uow.GetRepository<UserSecurityInfo>();
+                    
+                    repo.Put(userSecurityInfo);
                     uow.Commit();
                 }
 
@@ -526,7 +541,6 @@ namespace BExIS.Security.Services
             }
         }
 
-        //
         public User Update(User user)
         {
             Contract.Requires(user != null);
@@ -541,7 +555,6 @@ namespace BExIS.Security.Services
             return (user);
         }
 
-        //
         private void UpdateFailureCount(User user, FailureType failureType, int maxFailureAttempts, int failureAttemptsWindow)
         {
             // Requirements
@@ -554,74 +567,91 @@ namespace BExIS.Security.Services
             TimeSpan timeFrame = new TimeSpan(0, failureAttemptsWindow, 0);
             DateTime referenceTime = DateTime.Now.Subtract(timeFrame);
 
-            user = Repo.Reload(user);
+            user = UserRepo.Reload(user);
+            UserSecurityInfo userSecurityInfo = GetUserSecurityInfoByName(user.Name);
 
             // Computations
             switch (failureType)
             {
                 case FailureType.Password:
-                    if (DateTime.Compare(user.LastPasswordFailureDate, referenceTime) > 0)
+                    if (DateTime.Compare(userSecurityInfo.LastPasswordFailureDate, referenceTime) > 0)
                     {
-                        user.LastPasswordFailureDate = DateTime.Now;
-                        user.PasswordFailureCount = user.PasswordFailureCount + 1;
+                        userSecurityInfo.LastPasswordFailureDate = DateTime.Now;
+                        userSecurityInfo.PasswordFailureCount = userSecurityInfo.PasswordFailureCount + 1;
 
-                        if (user.PasswordFailureCount == maxFailureAttempts)
+                        if (userSecurityInfo.PasswordFailureCount == maxFailureAttempts)
                         {
                             user.LastLockOutDate = DateTime.Now;
-                            user.IsLockedOut = true;
+                            userSecurityInfo.IsLockedOut = true;
                         }
 
                         using (IUnitOfWork uow = this.GetUnitOfWork())
                         {
-                            IRepository<User> repo = uow.GetRepository<User>();
-                            repo.Put(user);
+                            IRepository<User> userRepo = uow.GetRepository<User>();
+                            IRepository<UserSecurityInfo> userSecurityInfoRepo = uow.GetRepository<UserSecurityInfo>();
+
+                            userRepo.Put(user);
+                            userSecurityInfoRepo.Put(userSecurityInfo);
+
                             uow.Commit();
                         }
                     }
                     else
                     {
-                        user.LastPasswordFailureDate = DateTime.Now;
-                        user.PasswordFailureCount = 1;
+                        userSecurityInfo.LastPasswordFailureDate = DateTime.Now;
+                        userSecurityInfo.PasswordFailureCount = 1;
 
                         using (IUnitOfWork uow = this.GetUnitOfWork())
                         {
-                            IRepository<User> repo = uow.GetRepository<User>();
-                            repo.Put(user);
+                            IRepository<User> userRepo = uow.GetRepository<User>();
+                            IRepository<UserSecurityInfo> userSecurityInfoRepo = uow.GetRepository<UserSecurityInfo>();
+
+                            userRepo.Put(user);
+                            userSecurityInfoRepo.Put(userSecurityInfo);
+
                             uow.Commit();
                         }
                     }
 
                     break;
                 case FailureType.PasswordAnswer:
-                    if (DateTime.Compare(user.LastPasswordAnswerFailureDate, referenceTime) > 0)
+                    if (DateTime.Compare(userSecurityInfo.LastPasswordAnswerFailureDate, referenceTime) > 0)
                     {
                         user.LastActivityDate = DateTime.Now;
-                        user.LastPasswordAnswerFailureDate = DateTime.Now;
-                        user.PasswordAnswerFailureCount = user.PasswordAnswerFailureCount + 1;
+                        userSecurityInfo.LastPasswordAnswerFailureDate = DateTime.Now;
+                        userSecurityInfo.PasswordAnswerFailureCount = userSecurityInfo.PasswordAnswerFailureCount + 1;
 
-                        if (user.PasswordAnswerFailureCount == maxFailureAttempts)
+                        if (userSecurityInfo.PasswordAnswerFailureCount == maxFailureAttempts)
                         {
                             user.LastLockOutDate = DateTime.Now;
-                            user.IsLockedOut = true;
+                            userSecurityInfo.IsLockedOut = true;
                         }
 
                         using (IUnitOfWork uow = this.GetUnitOfWork())
                         {
-                            IRepository<User> repo = uow.GetRepository<User>();
-                            repo.Put(user);
+                            IRepository<User> userRepo = uow.GetRepository<User>();
+                            IRepository<UserSecurityInfo> userSecurityInfoRepo = uow.GetRepository<UserSecurityInfo>();
+
+                            userRepo.Put(user);
+                            userSecurityInfoRepo.Put(userSecurityInfo);
+
                             uow.Commit();
                         }
                     }
                     else
                     {
                         user.LastActivityDate = DateTime.Now;
-                        user.LastPasswordAnswerFailureDate = DateTime.Now;
-                        user.PasswordAnswerFailureCount = 1;
+                        userSecurityInfo.LastPasswordAnswerFailureDate = DateTime.Now;
+                        userSecurityInfo.PasswordAnswerFailureCount = 1;
 
                         using (IUnitOfWork uow = this.GetUnitOfWork())
                         {
-                            IRepository<User> repo = uow.GetRepository<User>();
-                            repo.Put(user);
+                            IRepository<User> userRepo = uow.GetRepository<User>();
+                            IRepository<UserSecurityInfo> userSecurityInfoRepo = uow.GetRepository<UserSecurityInfo>();
+
+                            userRepo.Put(user);
+                            userSecurityInfoRepo.Put(userSecurityInfo);
+
                             uow.Commit();
                         }
                     }
@@ -632,7 +662,6 @@ namespace BExIS.Security.Services
             }
         }
 
-        //
         private bool ValidateSecurityProperty(string value, string referenceValue, string salt)
         {
             // Requirements
@@ -651,7 +680,6 @@ namespace BExIS.Security.Services
             }
         }
 
-        //
         public bool ValidateUser(string userName, string password, int maxFailureAttempts, int failureAttemptsWindow, string machineKey)
         {
             // Requirements
@@ -664,14 +692,15 @@ namespace BExIS.Security.Services
             // Variables
             bool validation = false;
             User user = GetUserByName(userName, true);
+            UserSecurityInfo userSecurityInfo = GetUserSecurityInfoByName(user.Name);
 
             if (user != null)
             {
-                if (user.PasswordFailureCount <= maxFailureAttempts)
+                if (userSecurityInfo.PasswordFailureCount <= maxFailureAttempts)
                 {
-                    if (user.IsApproved && !user.IsLockedOut)
+                    if (userSecurityInfo.IsApproved && !userSecurityInfo.IsLockedOut)
                     {
-                        if (ValidateSecurityProperty(password, user.Password, DecodeSalt(user.Salt, machineKey)))
+                        if (ValidateSecurityProperty(password, userSecurityInfo.Password, DecodeSalt(userSecurityInfo.Salt, machineKey)))
                         {
                             validation = true;
 
@@ -679,8 +708,12 @@ namespace BExIS.Security.Services
 
                             using (IUnitOfWork uow = this.GetUnitOfWork())
                             {
-                                IRepository<User> repo = uow.GetRepository<User>();
-                                repo.Put(user);
+                                IRepository<User> userRepo = uow.GetRepository<User>();
+                                IRepository<UserSecurityInfo> userSecurityInfoRepo = uow.GetRepository<UserSecurityInfo>();
+
+                                userRepo.Put(user);
+                                userSecurityInfoRepo.Put(userSecurityInfo);
+
                                 uow.Commit();
                             }
                         }
