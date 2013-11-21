@@ -20,6 +20,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
         HtmlString notOk = new HtmlString("<div class=\"t-icon t-cancel\"></div>");
         HtmlString ok = new HtmlString("<div class=\"t-icon t-update\"></div>");
+        string templateName = "BExISppTemplate_Clean.xlsm";
 
         public ActionResult Index()
         {
@@ -96,7 +97,9 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                                 DSC = dsc;
                             }
                         }
-                        DSM.CreateStructuredDataStructure(DSDM.dataStructure.Name, DSDM.dataStructure.Description, "", "", DSC, null);
+                        DSDM.dataStructure = DSM.CreateStructuredDataStructure(DSDM.dataStructure.Name, DSDM.dataStructure.Description, "", "", DSC, null);
+                        ExcelTemplateProvider provider = new ExcelTemplateProvider(templateName);
+                        provider.CreateTemplate(DSDM.dataStructure.Id);
                     }
                     else
                     { 
@@ -106,17 +109,15 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             }
             else
             {
-                string description = DSDM.dataStructure.Description;
-                string name = DSDM.dataStructure.Name;
-                DSDM.GetDataStructureByID(DSDM.dataStructure.Id);
+                DataStructureManager DSM = new DataStructureManager();
+                StructuredDataStructure DS = DSM.StructuredDataStructureRepo.Get(DSDM.dataStructure.Id);
 
                 if (DSDM.dataStructure.Datasets.Count > 0)
                 {
                     ViewData["errorMsg"] = "Can\'t save Data Structure is in use ";
                 }
                 else
-                {
-                    DataStructureManager DSM = new DataStructureManager();
+                {                   
                     DataStructureCategory DSC = new DataStructureCategory();
                                         
                     foreach (DataStructureCategory dsc in Enum.GetValues(typeof(DataStructureCategory)))
@@ -126,9 +127,14 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                             DSC = dsc;
                         }
                     }
-                    DSDM.dataStructure.Description = description;
-                    DSDM.dataStructure.Name = name;
-                    DSM.UpdateStructuredDataStructure(DSDM.dataStructure);
+                    ExcelTemplateProvider provider = new ExcelTemplateProvider(templateName);
+                    provider.deleteTemplate(DS.Id);
+                    DS.Name = DSDM.dataStructure.Name;
+                    DS.Description = DSDM.dataStructure.Description;
+                    DSM.UpdateStructuredDataStructure(DS);
+                    DSDM.GetDataStructureByID(DS.Id);
+                    provider.CreateTemplate(DSDM.dataStructure.Id);
+                    return View("DataStructureDesigner", DSDM);
                 }
             }
             return View("DataStructureDesigner", DSDM);
@@ -152,6 +158,8 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                             DSM.RemoveVariableUsage(v);
                         }
                     }
+                    ExcelTemplateProvider provider = new ExcelTemplateProvider();
+                    provider.deleteTemplate(id);
                     DSM.DeleteStructuredDataStructure(DSDM.dataStructure);
                     return RedirectToAction("DataStructureDesigner");
                 }
@@ -251,37 +259,35 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                     }
                 }
                 DSDM.GetDataStructureByID((long)Session["dataStructureId"]);
+                ExcelTemplateProvider provider = new ExcelTemplateProvider(templateName);
+                provider.CreateTemplate((long)Session["dataStructureId"]);
             }
             return View("DataStructureDesigner", DSDM);
         }
 
-        public ActionResult deleteVariable(long id, long DataStructureId)
+        public ActionResult deleteVariable(long id, long dataStructureId)
         {
-            if (DataStructureId != 0)
+            if (dataStructureId != 0)
             {
-                DataStructureDesignerModel DSDM = new DataStructureDesignerModel();
-                DSDM.GetDataStructureByID(DataStructureId);
-
-                if (DSDM.dataStructure.Datasets.Count == 0)
+                DataStructureManager DSM = new DataStructureManager();
+                StructuredDataStructure DS = DSM.StructuredDataStructureRepo.Get(dataStructureId);
+               
+                if (DS.Datasets.Count == 0)
                 {
-                    Session["inUse"] = false;
-                    DataStructureManager DSM = new DataStructureManager();
-                    if (DSDM.dataStructure.Variables.Count > 0)
-                    {
-                        foreach (Variable v in DSDM.dataStructure.Variables)
-                        {
-                            if (v.Id == id)
-                            {
-                                DSM.RemoveVariableUsage(v);
-                                Session["variableId"] = null;
-                            }
-                        }
-                    }
+                    Session["inUse"] = false;                
+                    Variable variable = DSM.VariableRepo.Get(id);
+                    DSM.RemoveVariableUsage(variable);
+                    DataStructureDesignerModel DSDM = new DataStructureDesignerModel();
+                    DSDM.GetDataStructureByID(dataStructureId);
+                    ExcelTemplateProvider provider = new ExcelTemplateProvider(templateName);
+                    provider.CreateTemplate(DSDM.dataStructure.Id);
                     return View("DataStructureDesigner", DSDM);
                 }
                 else
                 {
                     Session["inUse"] = true;
+                    DataStructureDesignerModel DSDM = new DataStructureDesignerModel();
+                    DSDM.GetDataStructureByID(dataStructureId);
                     return View("DataStructureDesigner", DSDM);
                 }
             }
@@ -302,6 +308,8 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                 
                 Session["variableId"] = null;
                 Session["VariableWindow"] = false;
+                ExcelTemplateProvider provider = new ExcelTemplateProvider(templateName);
+                provider.CreateTemplate(dataStructureId);
             }
             return View("DataStructureDesigner", DSDM);
         }
@@ -337,7 +345,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             {
                 DSDM.GetDataStructureByID(id);
 
-                ExcelTemplateProvider provider = new ExcelTemplateProvider("BExISppTemplate_Clean.xlsm");
+                ExcelTemplateProvider provider = new ExcelTemplateProvider(templateName);
                 provider.CreateTemplate(id);
                 string filename = DSDM.dataStructure.Name + ".xlsm";
                 return File(Path.Combine(AppConfiguration.WorkspaceRootPath, "temp","RPM", filename), "application/xlsx", "Template_" + filename);

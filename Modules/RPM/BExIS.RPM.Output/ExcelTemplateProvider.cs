@@ -21,6 +21,11 @@ namespace BExIS.RPM.Output
             _fileName = fileName;
         }
 
+        public ExcelTemplateProvider()
+        {
+            _fileName = null; 
+        }
+
         private FileStream loadFile (string file)
         {
             if (File.Exists(file))
@@ -287,6 +292,18 @@ namespace BExIS.RPM.Output
 
             } while (index > 0);
             return column;
+        }
+
+        public void deleteTemplate(long dataStrctureId)
+        {
+            DataStructureManager DSM = new DataStructureManager();
+            StructuredDataStructure dataStructure = DSM.StructuredDataStructureRepo.Get(dataStrctureId);
+            string filename = dataStructure.Name + ".xlsm";
+
+            if(File.Exists(Path.Combine(AppConfiguration.WorkspaceRootPath, "temp", "RPM", filename)))
+            {
+                File.Delete(Path.Combine(AppConfiguration.WorkspaceRootPath, "temp", "RPM", filename));
+            }
         }
 
     }

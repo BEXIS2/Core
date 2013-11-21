@@ -55,6 +55,10 @@
     
     @Html.Partial("_showDataStructureInfo", model)
 </div>
-<div>
-    @Html.Partial("_showDataStructure", model)
-</div>
+
+@if (model != null && model.dataStructure.Id != null && model.dataStructure.Id != 0)
+{
+    <div>
+        @Html.Partial("_showDataStructure", model)
+    </div>
+}

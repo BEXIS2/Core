@@ -75,10 +75,13 @@
                     </td>
                 </tr>
             </table>
-        </div>       
+        </div>      
      <button name="create" value="SaveDataStructure" type="submit" class="t-button">Save</button>
-     @Html.ActionLink("Download", "downloadTemplate", "Home", new { id = Model.dataStructure.Id }, new { area = "RPM", @class = "t-button", @style = "margin:5px;"})
-     @Html.ActionLink("Delete", "deleteDataStructure", "Home", new { id = Model.dataStructure.Id }, new { area = "RPM", @class = "t-button"})    
+     if (Model != null && Model.dataStructure.Id != null && Model.dataStructure.Id != 0)
+     {
+        @Html.ActionLink("Download", "downloadTemplate", "Home", new { id = Model.dataStructure.Id }, new { area = "RPM", @class = "t-button", @style = "margin:5px;"})
+        @Html.ActionLink("Delete", "deleteDataStructure", "Home", new { id = Model.dataStructure.Id }, new { area = "RPM", @class = "t-button"})
+     }    
      @ViewData["errorMsg"]
  }
 </div> 
