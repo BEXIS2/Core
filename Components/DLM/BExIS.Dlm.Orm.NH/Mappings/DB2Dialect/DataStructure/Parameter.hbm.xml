@@ -24,6 +24,15 @@
     <property name="Label" type="String">
       <column name="Label" />
     </property>
+    
+    <property name="DefaultValue" type="String">
+      <column name="DefaultValue" />
+    </property>
+
+    <property name="MissingValue" type="String">
+      <column name="MissingValue" />
+    </property>
+
 
     <many-to-one name="Variable" class="Variable" not-null="true" column="VariableRef"/>
 

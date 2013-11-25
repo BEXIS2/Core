@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using BExIS.Dlm.Entities.Data;
+using System.Xml;
 
 namespace BExIS.Dlm.Entities.DataStructure
 {   
@@ -16,6 +17,12 @@ namespace BExIS.Dlm.Entities.DataStructure
         In cases that time or space coverage is clear by other variables or parameters or is not important, it's possible to not introduce an Indexer.
          */
         public virtual Variable Indexer { get; set; } // 0..1,  the data type of the target data attribute must be compatible with indexer type, see CM Structured Data and its associated relevant classes.
+
+        /// <summary>
+        /// Is the full path to the resources linked to the structure, mainly its templates.
+        /// It contains a collection of Resource elements each follow this pattern: <Resources><Reource Type="Excel, CSV, ..." Edition="2010, 2, ..." Path="full path/ url to the file"></Resource> </Resources>
+        /// </summary>
+        public virtual XmlNode TemplatePaths { get; set; }
 
         // relationship to Metadata Structure
         // Relationship to View

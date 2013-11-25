@@ -11,6 +11,13 @@ namespace BExIS.Dlm.Entities.DataStructure
         public virtual bool IsValueOptional { get; set; }
         public virtual string Label { get; set; }
 
+        /// <summary>
+        /// The actual data type of the value is defined by the DataAttribute.DataType.
+        /// So developer should take care and convert this value to proper type before assigning it to parameter values
+        /// </summary>
+        public virtual string DefaultValue { get; set; }
+        public virtual string MissingValue { get; set; } 
+
     }
 
     public class Variable : BaseEntity
@@ -21,6 +28,13 @@ namespace BExIS.Dlm.Entities.DataStructure
 
         public virtual bool IsValueOptional { get; set; }
         public virtual string Label { get; set; }
+
+        /// <summary>
+        /// The actual data type of the value is defined by the DataAttribute.DataType.
+        /// So developer should take care and convert this value to proper type before assigning it to variable values
+        /// </summary>
+        public virtual string DefaultValue { get; set; }
+        public virtual string MissingValue { get; set; } 
 
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml;
 using Vaiona.Entities.Common;
 
@@ -26,95 +27,17 @@ namespace BExIS.Dlm.Entities.DataStructure
         public virtual ConstraintProviderSource Provider { get; set; }
         public virtual string ConstraintSelectionPredicate { get; set; } // only for external providers
 
-        #endregion
-
-        #region Associations
-
-        public virtual DataContainer DataContainer { get; set; }
-        
-        #endregion
-
-        #region Mathods
-
-        #endregion
-
-    }
-
-    public class DomainValueConstraint : Constraint
-    {
-        #region Attributes
-        
         /// <summary>
-        /// The actual data type of the value is defined by the DataContainer.DataType.
-        /// So developer should take care and convert this value to proper type before assigning it to variable values
+        /// the culture the constraint applies to. i.e., a Regex to match a taxon name in German may differ from its equivalent in English, ...
         /// </summary>
-        public virtual string DomainValue { get; set; } 
+        public virtual string CultureId { get; set; } 
+       
         public virtual string Description { get; set; }
 
-        #endregion
-
-        #region Associations
-
-        #endregion
-
-        #region Mathods
-
-        #endregion
-    }
-
-    public class DefaultValueConstraint : Constraint
-    {
-        #region Attributes
-
         /// <summary>
-        /// The actual data type of the value is defined by the DataContainer.DataType.
-        /// So developer should take care and convert this value to proper type before assigning it to variable values
-        /// Maybe object datatype is better. check if NH supports this and how? is it queriable?
+        /// determines whether the constraint should be evaluated or the negate of it. e.g., the input should be evaluated against the range or outside of the range.
         /// </summary>
-        public virtual string DefaultValue { get; set; } 
-        public virtual string MissingValue { get; set; } 
-
-        #endregion
-
-        #region Associations
-
-        #endregion
-
-        #region Mathods
-
-        #endregion
-
-    }
-
-    public class ValidatorConstraint : Constraint
-    {
-        #region Attributes
-        public virtual string Kind { get; set; } // Range, Regex, Domain, Comparer
-
-        /// <summary>
-        /// If Range -> x..y | If domain -> x, y, z | If comparer -> x so that x is the variable Id in the same data structure that the input is compared with
-        /// </summary>
-        public virtual string Body { get; set; } // maybe it is possible to write another property of type Func<string, bool> (or Expression) on top of this, to change the string to an executable equivalent
-        public virtual string CultureId { get; set; } // the culture validator applies to. i.e., a Regex to match a taxon name in German may differ from its equivalent in English, ...
-        public virtual string Description { get; set; } // maybe: promote to Constraint
-        public virtual bool Negated { get; set; } // determines whether the body should be evaluated or the negate of it. e.g., the input should be evaluated against the range or outside of the range.
-        
-        /// <summary>
-        /// if it is string -> Range validator checks the length of the input, otherwise the value
-        /// </summary>
-        public virtual System.TypeCode DataType { get; set; }
-
-        /// <summary>
-        /// It is an xml node with variable (preferably on) elements. the content of the element(s) depends on the Kind of the validator
-        /// Range: L: Is lower bound inclusive | U: is upper bound inclusive
-        /// Comparer: 
-        ///     OP: the comparison operator like >, <, ==, . depeneds on the data type, so the UI should show proper operators based on the chosen data type during the validator creation. 
-        ///     TargetType: Var (Variable | Parameter), Value
-        ///     Offset: The value that is considered (added/ multiplied) in the right side of the operator during the evaluation. case: the project finish date should be at least 1000 Ticks after its start time
-        ///     or the amount of water in the v1 variable can not exceed 17% of the v2.
-        ///     OffestType: indicate whether the offset value is absolute or percentage
-        /// </summary>
-        public virtual XmlNode Opntions { get; set; }
+        public virtual bool Negated { get; set; }
 
         /// <summary>
         /// provides a scope information so that validators can be grouped, categorized, or distinguished for a specific purpose. Like fast validation, detailed validation, etc.
@@ -126,6 +49,38 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// </summary>
         public virtual string Message { get; set; }
 
+        /// <summary>
+        /// The message to be conveyed to the user in case of negated rule break.
+        /// </summary>
+        // maybe 
+        public virtual string NegatedMessage { get; set; }
+        
+        #endregion
+
+        #region Associations
+
+        public virtual DataContainer DataContainer { get; set; }
+        
+        #endregion
+
+        #region Mathods
+
+        public abstract bool IsSatisfied(object data)
+        {
+            return (true);
+        }
+
+        #endregion
+
+    }
+
+    [AutomaticMaterializationInfo("Items", typeof(List<DomainItem>), "XmlDomainItems", typeof(XmlDocument))]
+    public class DomainConstraint : Constraint
+    {
+        #region Attributes
+
+        public virtual XmlDocument XmlDomainItems { get; set; }
+        public List<DomainItem> Items { get; set; }
         #endregion
 
         #region Associations
@@ -134,13 +89,183 @@ namespace BExIS.Dlm.Entities.DataStructure
 
         #region Mathods
 
-        public virtual bool Evaulate(object data)
+        public DomainConstraint()
         {
-            // use dynamic link library, Flee or DLR to cover the Body to an executable code, pass data to it and return the result
+            // set the default message and the negated message
+        }
+
+        public virtual bool IsSatisfied(object data)
+        {
+            this.Materialize(); // test it
+            // Domain items are stored as string, so instead of converting them to the containers data type, it is easier and faster to convert the input data to string
+            // it computes the XOR between the positive clause of the constraint and the "Negated" Boolean,
+            // meaning if Negated is true the function returns false for inputs that are in the domain
+            return (Negated ^ (Items.Where(p => p.Key.Equals(data.ToString())).Count() > 0)); 
+        }
+
+        #endregion
+
+        public class DomainItem
+        {
+            public string Key { get; set; }
+            public string Value { get; set; }
+        }
+    }
+
+    public class PatternConstraint : Constraint
+    {
+        #region Attributes
+
+        public virtual string MatchingPhrase { get; set; }
+
+        #endregion
+
+        #region Associations
+
+        #endregion
+
+        #region Mathods
+
+        public PatternConstraint()
+        {
+            // set the default message and the negated message
+        }
+        /// <summary>
+        /// checks whether the input parameter matches the MatchingPhrase
+        /// </summary>
+        /// <param name="data">is the input data in STRING format</param>
+        /// <returns></returns>
+        public virtual bool IsSatisfied(object data)
+        {
+            return (Negated ^ (Regex.IsMatch(data.ToString(), MatchingPhrase, RegexOptions.IgnoreCase)));
+        }
+
+        #endregion
+}
+
+    /// <summary>
+    /// checks whether the value is inside/ outside of the specified range, not/including the boundaries.
+    /// The range constraint usually applies to numeric data types, but in case of string it can be used as string length check. The data type
+    /// of the provided value can be determined by the DataContainer.DataType....
+    /// </summary>
+    public class RangeConstraint : Constraint
+    {
+        #region Attributes
+
+        public float Lowerbound { get; set; }
+        public float Upperbound { get; set; }
+        public bool LowerboundIncluded { get; set; }
+        public bool UpperboundIncluded { get; set; }
+
+
+        #endregion
+
+        #region Associations
+
+        #endregion
+
+        #region Mathods
+
+        public RangeConstraint()
+        {
+            // set the default message and the negated message
+        }
+
+        public virtual bool IsSatisfied(object data)
+        {
+            // the data type is defined by the associated data attribute
+            // use dynamic link library, Flee or DLR to convert the Body to an executable code, pass data to it and return the result
+            return false;
+        }
+
+        #endregion
+    }
+  
+    /// <summary>
+    /// compares the input value to a reference/ target one using a specified comparison operator. 
+    /// The reference object can be an object or the value of a variable/ parameter in the same tuple
+    /// </summary>
+    public class ComparerConstraint : Constraint
+    {
+        #region Attributes
+        
+        /// <summary>
+        /// The comparison operator, it is always a binary operator capable of comparing its left side to the right and return true or false.
+        /// valid operators depend on the data type, so the UI should show proper operators based on the data attribute's data type during the constraint definition.
+        /// </summary>
+        public virtual ComparisonOperator Operator { get; set; }
+
+        public ComparisonTargetType TargetType { get; set; }
+
+        /// <summary>
+        /// the target is used in the right side of the comparison operator
+        /// If the target type is:
+        /// Value: the target is the string representation of the value that should be compared to the input. the evaluation method should convert it to the container's data type before use.
+        /// Parameter: the target shows the Id of the parameter in the current type that its value should be used in the comparison
+        /// Variable: the target shows the Id of the variable in the current type that its value should be used in the comparison
+        /// </summary>
+        public string Target { get; set; }
+
+        /// <summary>
+        /// in some cases the right hand side of the operator should be compared to the left having an offset. for example the project end date should be at least 100 days after its start date.
+        /// Or the value of variable v1 can not be greater than 17% of the values of variable v2.
+        /// Offset type can be absolute or ratio. Absolute offsets are added to the right hand side and ratios are multiplied to the right hand side before the comparison to take place
+        /// </summary>
+        public ComparisonOffsetType OffsetType { get; set; }
+
+        /// <summary>
+        /// The value of the offset to be taken into account in the comparison according to <seealso cref="ComparisonOffsetTye"/>
+        /// </summary>
+        public float Offset { get; set; }
+
+        
+
+        /// <summary>        
+        /// Comparer: 
+        ///     OP: the comparison operator like >, <, ==, . depeneds on the data type, so the UI should show proper operators based on the data attribute''s data type during the validator creation. 
+        ///     TargetType: Var (Variable | Parameter), Value
+        ///     Offset: The value that is considered (added/ multiplied) in the right side of the operator during the evaluation. case: the project finish date should be at least 1000 Ticks after its start time
+        ///     or the amount of water in the v1 variable can not exceed 17% of the v2.
+        ///     OffestType: indicate whether the offset value is absolute or percentage
+        /// </summary>
+
+
+        #endregion
+
+        #region Associations
+
+        #endregion
+
+        #region Mathods
+
+        public ComparerConstraint()
+        {
+            // set the default message and the negated message
+        }
+
+        public virtual bool IsSatisfied(object data)
+        {
+            // the data type is defined by the associated data attribute
+            // use dynamic link library, Flee or DLR to convert the Body to an executable code, pass data to it and return the result
             return false;
         }
 
         #endregion
 
+    }
+
+    public enum ComparisonOperator
+    {
+        Equals, GreaerThan, GreaterThanOrEqual, LessThan, LessThanOrEqual, 
+    }
+
+    public enum ComparisonTargetType
+    {
+        Value, Parameter, Variable,
+    }
+
+    public enum ComparisonOffsetType
+    {
+        Absolute, Ratio,
     }
 }

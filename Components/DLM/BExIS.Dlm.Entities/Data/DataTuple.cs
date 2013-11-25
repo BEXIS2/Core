@@ -9,7 +9,9 @@ namespace BExIS.Dlm.Entities.Data
     /// <summary>
     /// Its to overcome an inheritance issue with NH: when TupleVersion is derived from DataTuple all queries on DataTuple return versions too.
     /// </summary>
-    public abstract class AbstractTuple: BaseEntity, IBusinessVersionedEntity
+    [AutomaticMaterializationInfo("VariableValues", typeof(List<VariableValue>), "XmlVariableValues", typeof(XmlDocument))]
+    [AutomaticMaterializationInfo("Amendments", typeof(List<Amendment>), "XmlAmendments", typeof(XmlDocument))]
+    public abstract class AbstractTuple : BaseEntity, IBusinessVersionedEntity
     {
         #region Attributes
         public virtual int OrderNo { get; set; } //indicates the order of the associated tuple in the version
@@ -50,8 +52,6 @@ namespace BExIS.Dlm.Entities.Data
         ,   Untouched   =4 // the tuple is part of this version without any change. in this case the new version points to the previous one by an "Untouched"  action to prevent duplicating the tuple.
     }
 
-    [AutomaticMaterializationInfo("VariableValues", typeof(List<VariableValue>), "XmlVariableValues", typeof(XmlDocument))]
-    [AutomaticMaterializationInfo("Amendments", typeof(List<Amendment>), "XmlAmendments", typeof(XmlDocument))]
     public class DataTuple : AbstractTuple
     {
         #region Associations

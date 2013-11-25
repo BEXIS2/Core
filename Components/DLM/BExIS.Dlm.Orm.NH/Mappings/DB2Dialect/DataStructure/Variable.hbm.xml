@@ -25,6 +25,14 @@
       <column name="Label" />
     </property>
 
+    <property name="DefaultValue" type="String">
+      <column name="DefaultValue" />
+    </property>
+
+    <property name="MissingValue" type="String">
+      <column name="MissingValue" />
+    </property>
+    
     <many-to-one name="DataAttribute" class="DataAttribute" not-null="true" column="DataAttributeRef"/>
 
     <many-to-one name="DataStructure" class="StructuredDataStructure" not-null="true" column="DataStructureRef"/>

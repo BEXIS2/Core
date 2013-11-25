@@ -187,7 +187,7 @@ namespace BExIS.Dlm.Services.DataStructure
 
         #region Associations
 
-        public Variable AddVariableUsage(StructuredDataStructure dataStructure, DataAttribute dataAttribute, bool isValueOptional, string label)
+        public Variable AddVariableUsage(StructuredDataStructure dataStructure, DataAttribute dataAttribute, bool isValueOptional, string label, string defaultValue, string missingValue)
         {
             Contract.Requires(dataStructure != null && dataStructure.Id >= 0);
             Contract.Requires(dataAttribute != null && dataAttribute.Id >= 0);
@@ -209,8 +209,10 @@ namespace BExIS.Dlm.Services.DataStructure
                 DataStructure = dataStructure,
                 DataAttribute = dataAttribute,
                 IsValueOptional = isValueOptional,
-                // if there is no label provided, use the data attribute name and a sequence number caculated by the number of occurances of that data attribute in the current structure
+                // if there is no label provided, use the data attribute name and a sequence number calculated by the number of occurrences of that data attribute in the current structure
                 Label = !string.IsNullOrWhiteSpace(label)? label: (count <=0 ? dataAttribute.Name: string.Format("{0} ({1})", dataAttribute.Name, count)),
+                DefaultValue = defaultValue,
+                MissingValue = missingValue,
             };
             dataAttribute.UsagesAsVariable.Add(usage);
             dataStructure.Variables.Add(usage);
@@ -237,7 +239,7 @@ namespace BExIS.Dlm.Services.DataStructure
             }            
         }
 
-        public Parameter AddParameterUsage(Variable variableUsage, DataAttribute dataAttribute, bool isValueOptional, string label)
+        public Parameter AddParameterUsage(Variable variableUsage, DataAttribute dataAttribute, bool isValueOptional, string label, string defaultValue, string missingValue)
         {
             Contract.Requires(variableUsage != null && variableUsage.DataAttribute.Id >= 0);
             Contract.Requires(dataAttribute != null && dataAttribute.Id >= 0);
@@ -251,7 +253,7 @@ namespace BExIS.Dlm.Services.DataStructure
                         )
                         .Count();
 
-            // supprot multiple use of a data attribute as a paramater ina variable context
+            // support multiple use of a data attribute as a parameter in a variable context
             //if (count > 0)
             //    throw new Exception(string.Format("Data attribute {0} is already used as a parameter in conjunction with variable {1} in data structure {2}", dataAttribute.Id, variableUsage.DataAttribute.Id, variableUsage.DataStructure.Id));
 
@@ -260,9 +262,10 @@ namespace BExIS.Dlm.Services.DataStructure
                 DataAttribute = dataAttribute,
                 Variable = variableUsage,
                 IsValueOptional = isValueOptional,
-                // if there is no label provided, use the data attribute name and a sequence number caculated by the number of occurances of that data attribute in the current usage
+                // if there is no label provided, use the data attribute name and a sequence number calculated by the number of occurrences of that data attribute in the current usage
                 Label = !string.IsNullOrWhiteSpace(label) ? label : (count <= 0 ? dataAttribute.Name : string.Format("{0} ({1})", dataAttribute.Name, count)),
-
+                DefaultValue = defaultValue,
+                MissingValue = missingValue,
             };
             dataAttribute.UsagesAsParameter.Add(usage);
             variableUsage.Parameters.Add(usage);
