@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using BExIS.Ext.Services;
+using System.IO;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Vaiona.IoC;
@@ -7,6 +8,7 @@ using Vaiona.Util.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Data;
+using Vaiona.Web.Mvc.Filters;
 
 namespace BExIS.Web.Shell
 {
@@ -18,6 +20,7 @@ namespace BExIS.Web.Shell
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
             filters.Add(new PersistenceContextProviderAttribute());
+            filters.Add(new AuthorizationDelegationFilter(new IsAuthorizedDelegate(AuthorizationDelegationImplementor.CheckAuthorization)));
             filters.Add(new HandleErrorAttribute());
         }
 
@@ -37,8 +40,8 @@ namespace BExIS.Web.Shell
         protected void Application_Start()
         {
             init();
-            AreaRegistration.RegisterAllAreas();
 
+            AreaRegistration.RegisterAllAreas();
             RegisterGlobalFilters(GlobalFilters.Filters);
             RegisterRoutes(RouteTable.Routes);
         }

@@ -599,6 +599,10 @@
       <Project>{b4e7b1bf-01b4-40af-8d19-b8f362167261}</Project>
       <Name>BExIS.Dlm.Entities</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Components\EXT\BExIS.Ext.Services\BExIS.Ext.Services.csproj">
+      <Project>{b906a66a-4a09-4207-b590-655ee111ccf1}</Project>
+      <Name>BExIS.Ext.Services</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Modules\Collect\BExIS.Collect.Transform.Input\BExIS.DCM.Transform.Input.csproj">
       <Project>{5c4c8570-a53b-4191-a414-de028aaaf36a}</Project>
       <Name>BExIS.DCM.Transform.Input</Name>

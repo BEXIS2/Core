@@ -65,10 +65,7 @@ namespace BExIS.Dlm.Entities.DataStructure
 
         #region Mathods
 
-        public abstract bool IsSatisfied(object data)
-        {
-            return (true);
-        }
+        public abstract bool IsSatisfied(object data);
 
         #endregion
 
@@ -94,7 +91,7 @@ namespace BExIS.Dlm.Entities.DataStructure
             // set the default message and the negated message
         }
 
-        public virtual bool IsSatisfied(object data)
+        public override bool IsSatisfied(object data)
         {
             this.Materialize(); // test it
             // Domain items are stored as string, so instead of converting them to the containers data type, it is easier and faster to convert the input data to string
@@ -135,7 +132,7 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// </summary>
         /// <param name="data">is the input data in STRING format</param>
         /// <returns></returns>
-        public virtual bool IsSatisfied(object data)
+        public override bool IsSatisfied(object data)
         {
             return (Negated ^ (Regex.IsMatch(data.ToString(), MatchingPhrase, RegexOptions.IgnoreCase)));
         }
@@ -171,7 +168,7 @@ namespace BExIS.Dlm.Entities.DataStructure
             // set the default message and the negated message
         }
 
-        public virtual bool IsSatisfied(object data)
+        public override bool IsSatisfied(object data)
         {
             // the data type is defined by the associated data attribute
             // use dynamic link library, Flee or DLR to convert the Body to an executable code, pass data to it and return the result
@@ -243,7 +240,7 @@ namespace BExIS.Dlm.Entities.DataStructure
             // set the default message and the negated message
         }
 
-        public virtual bool IsSatisfied(object data)
+        public override bool IsSatisfied(object data)
         {
             // the data type is defined by the associated data attribute
             // use dynamic link library, Flee or DLR to convert the Body to an executable code, pass data to it and return the result

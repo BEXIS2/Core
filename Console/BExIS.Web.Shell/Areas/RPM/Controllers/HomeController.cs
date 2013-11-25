@@ -117,7 +117,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                     ViewData["errorMsg"] = "Can\'t save Data Structure is in use ";
                 }
                 else
-                {                   
+                {
                     DataStructureCategory DSC = new DataStructureCategory();
                                         
                     foreach (DataStructureCategory dsc in Enum.GetValues(typeof(DataStructureCategory)))
@@ -255,7 +255,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                     if (temp != null)
                     {
                         DataStructureManager DSM = new DataStructureManager();
-                        DSM.AddVariableUsage(DSDM.dataStructure, temp, true, temp.Name);
+                        DSM.AddVariableUsage(DSDM.dataStructure, temp, true, temp.Name, null, null);
                     }
                 }
                 DSDM.GetDataStructureByID((long)Session["dataStructureId"]);
@@ -271,10 +271,10 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             {
                 DataStructureManager DSM = new DataStructureManager();
                 StructuredDataStructure DS = DSM.StructuredDataStructureRepo.Get(dataStructureId);
-               
+
                 if (DS.Datasets.Count == 0)
                 {
-                    Session["inUse"] = false;                
+                    Session["inUse"] = false;
                     Variable variable = DSM.VariableRepo.Get(id);
                     DSM.RemoveVariableUsage(variable);
                     DataStructureDesignerModel DSDM = new DataStructureDesignerModel();

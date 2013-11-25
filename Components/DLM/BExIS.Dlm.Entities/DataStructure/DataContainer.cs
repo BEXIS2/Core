@@ -53,29 +53,18 @@ namespace BExIS.Dlm.Entities.DataStructure
         public virtual ICollection<GlobalizationInfo> GlobalizationInfos { get; set; }
         public virtual ICollection<AggregateFunction> AggregateFunctions { get; set; }
 
-        // not to map
-        public virtual IList<DomainValueConstraint> DomainValues
-        { 
-            get 
-            {
-                return (this.Constraints.Distinct()
-                            .Where(p => p.GetType().Equals(typeof(DomainValueConstraint)))
-                            .ToList() as IList<DomainValueConstraint>
-                        );
-            }
-        }
+        //// not to map
+        //public virtual IList<DomainConstraint> DomainConstraints
+        //{ 
+        //    get 
+        //    {
+        //        return (this.Constraints.Distinct()
+        //                    .Where(p => p.GetType().Equals(typeof(DomainConstraint)))
+        //                    .ToList() as IList<DomainConstraint>
+        //                );
+        //    }
+        //}
 
-        // not to map
-        public virtual IList<ValidatorConstraint> Validators
-        {
-            get
-            {
-                return (this.Constraints.Distinct()
-                            .Where(p => p.GetType().Equals(typeof(ValidatorConstraint)))
-                            .ToList() as IList<ValidatorConstraint>
-                        );
-            }
-        }
         
         #endregion
         
