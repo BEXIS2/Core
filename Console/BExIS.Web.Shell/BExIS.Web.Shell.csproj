@@ -611,6 +611,10 @@
       <Project>{c8a05313-b960-406e-92ec-c1e5b3f47fcd}</Project>
       <Name>BExIS.DCM.Transform.Validation</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Modules\Collect\BExIS.DCM.Transform.Output\BExIS.DCM.Transform.Output.csproj">
+      <Project>{455ec826-9a92-40ff-bd3b-388c288955ce}</Project>
+      <Name>BExIS.DCM.Transform.Output</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Modules\Collect\BExIS.DCM.UploadWizard\BExIS.DCM.UploadWizard.csproj">
       <Project>{2c846721-a221-4ae5-a671-4b86de4d3805}</Project>
       <Name>BExIS.DCM.UploadWizard</Name>

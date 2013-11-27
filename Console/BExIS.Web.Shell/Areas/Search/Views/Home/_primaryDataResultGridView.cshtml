@@ -1,107 +1,124 @@
-﻿@model Tuple<DataTable, int, StructuredDataStructure>
+﻿@model Tuple<DataTable, int, StructuredDataStructure, String>
 @using System.Data;
 @using BExIS.Dlm.Entities.DataStructure;
 
 @{
-    int id = Model.Item2;
-    StructuredDataStructure dataStructure = Model.Item3;
-
-    GridPagerStyles pagerStyles = GridPagerStyles.PageSizeDropDown;
-    pagerStyles |= GridPagerStyles.NextPreviousAndNumeric;
-    pagerStyles |= GridPagerStyles.Numeric;
+	int id = Model.Item2;
+	StructuredDataStructure dataStructure = Model.Item3;
+	string downdloadPath = Model.Item4;
+	
+	GridPagerStyles pagerStyles = GridPagerStyles.PageSizeDropDown;
+	pagerStyles |= GridPagerStyles.NextPreviousAndNumeric;
+	pagerStyles |= GridPagerStyles.Numeric;
 }
 
 @(Html.Telerik().Grid<System.Data.DataRow>()
-        .Name("PrimaryDataResultGrid")
-            .DataBinding(dataBinding => dataBinding
-                .Ajax()
-                .Select("_CustomPrimaryDataBinding", "Home", new RouteValueDictionary { { "area", "Search" },{"datasetID", id} })
-            )
-            .EnableCustomBinding(true)
-                .HtmlAttributes(new { @class = "primaryDataResultGrid" })
-            .ClientEvents(events => events
-                         .OnLoad("PrimaryDataResultGrid_OnLoad")
-                    )
-            .Columns(columns =>
-            {
-                for (int i = 0; i < Model.Item1.Columns.Count; i++)
-                {
-                    DataColumn column = Model.Item1.Columns[i];
+		.Name("PrimaryDataResultGrid")
+			.DataBinding(dataBinding => dataBinding
+				.Ajax()
+				.Select("_CustomPrimaryDataBinding", "Home", new RouteValueDictionary { { "area", "Search" },{"datasetID", id} })
+			)
+			.EnableCustomBinding(true)
+				.HtmlAttributes(new { @class = "primaryDataResultGrid" })
+			.ClientEvents(events => events
+						 .OnLoad("PrimaryDataResultGrid_OnLoad")
+					)
+			.Columns(columns =>
+			{
+				for (int i = 0; i < Model.Item1.Columns.Count; i++)
+				{
+					DataColumn column = Model.Item1.Columns[i];
 
-                    if (dataStructure.Variables.Where(p => p.Label.Equals(column.Caption)) != null)
-                    {
-                        Variable sdvu = dataStructure.Variables.Where(p => p.Label.Equals(column.Caption)).FirstOrDefault();
-                        if (sdvu.Parameters.Count > 0)
-                        {
-                            // Variable has parameters
-                            columns.Template(
-                                    @<text>                                                        
-                                            <table cellspacing="0" class="data-row">
-                                                <tr>
-                                                    <td>@item[column.ColumnName]</td>
-                                                    @foreach (Parameter p in sdvu.Parameters)
-                                                    {
-                                                        <td>@item[p.Label]</td>
-                                                    }
-                                                </tr>
-                                            </table>
-                                        </text>)
-                                    .HeaderTemplate(
-                                        @<text>        
-                                            <table cellspacing="0" class="data-header">
-                                                <tr>
-                                                    <td colspan="2"><strong>@sdvu.Label</strong></td>
-                                                </tr>
-                                                <tr>
-                                                        <td>Value</td>
-                                                        @foreach (Parameter p in sdvu.Parameters)
-                                                        {
-                                                            <td>@p.Label</td>
-                                                        }
-                                                </tr>
-                                            </table>
-                                            </text>)
-                                    .Width(200);
+					if (dataStructure.Variables.Where(p => p.Label.Equals(column.Caption)) != null)
+					{
+						Variable sdvu = dataStructure.Variables.Where(p => p.Label.Equals(column.Caption)).FirstOrDefault();
+						if (sdvu.Parameters.Count > 0)
+						{
+							// Variable has parameters
+							columns.Template(
+									@<text>                                                        
+											<table cellspacing="0" class="data-row">
+												<tr>
+													<td>@item[column.ColumnName]</td>
+													@foreach (Parameter p in sdvu.Parameters)
+													{
+														<td>@item[p.Label]</td>
+													}
+												</tr>
+											</table>
+										</text>)
+									.HeaderTemplate(
+										@<text>        
+											<table cellspacing="0" class="data-header">
+												<tr>
+													<td colspan="2"><strong>@sdvu.Label</strong></td>
+												</tr>
+												<tr>
+														<td>Value</td>
+														@foreach (Parameter p in sdvu.Parameters)
+														{
+															<td>@p.Label</td>
+														}
+												</tr>
+											</table>
+											</text>)
+									.Width(200);
 
-                        }
-                        else
-                            {
+						}
+						else
+							{
 								string title;
 
-                                if (column.Caption == "")
-                                {
-                                    title = column.ColumnName;
-                                }
-                                else
-                                {
-                                    title = column.Caption;
-                                }
+								if (column.Caption == "")
+								{
+									title = column.ColumnName;
+								}
+								else
+								{
+									title = column.Caption;
+								}
 
-                                columns.Bound(column.DataType, column.ColumnName)
-                                    .Title(title)
-                                    ;
-                            }  
-                        
-                  
-                    }
-                }
+								columns.Bound(column.DataType, column.ColumnName)
+									.Title(title)
+									;
+							}  
+						
+				  
+					}
+				}
 
-            })
+			})
 
-            .Pageable(paging =>
-                paging.PageSize(5)
-                    .Style(pagerStyles)
-                    .Position(GridPagerPosition.Both)
-                    )
-            .Sortable()
-            .Filterable()
-            .ColumnContextMenu()
-            .Groupable()
+			.Pageable(paging =>
+				paging.PageSize(5)
+					.Style(pagerStyles)
+					.Position(GridPagerPosition.Both)
+					)
+			.Sortable()
+			.Filterable()
+			.ColumnContextMenu()
+			.Groupable()
 
-            )
+			)
+
+@if (downdloadPath != "")
+{ 
+	@Html.ActionLink("Download", "DownloadPrimaryData", "Home", new { path = @downdloadPath }, new { area = "RPM", @class = "t-button" });
+}
 
 <script type="text/javascript">
-    function PrimaryDataResultGrid_OnLoad(e) {
-        $('.t-grid .t-status').hide();
-    }
+
+
+
+	$("#DownloadDataset").click(function () {
+  
+		$.post('@Url.Action("DownloadPrimaryData", "Home", new RouteValueDictionary { { "area", "Search" } })', { path: '@downdloadPath' }, function (response) {
+			alert(response);
+		})
+
+	})
+
+	function PrimaryDataResultGrid_OnLoad(e) {
+		$('.t-grid .t-status').hide();
+	}
 </script>

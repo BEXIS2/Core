@@ -347,15 +347,31 @@ namespace BExIS.Web.Shell.Areas.Search.Controllers
             DataStructureManager dsm = new DataStructureManager();
             StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(dsv.Dataset.DataStructure.Id);
             List<DataTuple> dsVersionTuples = dm.GetDatasetVersionEffectiveTuples(dsv);
+            string downloadUri = "";
 
-            Tuple<DataTable, int, StructuredDataStructure> m = new Tuple<DataTable, int, StructuredDataStructure>(
+            if(dsv.ContentDescriptors.Count>0)
+            {
+                if(dsv.ContentDescriptors.Select(p=>p.Name.Equals("generated")).First())
+                {
+                    downloadUri = dsv.ContentDescriptors.Where(p=>p.Name.Equals("generated")).First().URI;
+                }
+
+            }
+            Tuple<DataTable, int, StructuredDataStructure, String> m = new Tuple<DataTable, int, StructuredDataStructure,String>(
                SearchUIHelper.ConvertPrimaryDataToDatatable(dsv, dsVersionTuples),
                datasetID,
-               sds
+               sds,
+               downloadUri
                );
             
             return View(m);
         }
+
+        public ActionResult DownloadPrimaryData(string path)
+        {
+            return File(path, "application/xlsm","test.xlsm");
+        }
+
 
         public ActionResult SetResultViewVar(string key, string value)
         {

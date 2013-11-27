@@ -44,6 +44,7 @@ namespace BExIS.DCM.UploadWizard
 
 
 
+        public List<StepInfo> StepInfos;
         public List<StepInfo> TaskInfos;
         private StepInfo currentStepInfo;
         private StepInfo prevStepInfo;
@@ -56,7 +57,7 @@ namespace BExIS.DCM.UploadWizard
             XmlNodeList xmlStepInfos = xmlDocument.GetElementsByTagName("stepInfo");
 
             TaskManager tm = new TaskManager();
-            tm.TaskInfos = new List<StepInfo>();
+            tm.StepInfos = new List<StepInfo>();
 
 
             foreach (XmlNode xmlStepInfo in xmlStepInfos)
@@ -79,10 +80,10 @@ namespace BExIS.DCM.UploadWizard
                     }
                 };
 
-                tm.TaskInfos.Add(si);
+                tm.StepInfos.Add(si);
             }
 
-            tm.currentStepInfo = tm.TaskInfos.First();
+            tm.currentStepInfo = tm.StepInfos.First();
 
             return tm;
         }
@@ -101,32 +102,32 @@ namespace BExIS.DCM.UploadWizard
 
         public void SetCurrent(int index)
         {
-            currentStepInfo = TaskInfos.ElementAt(index);
+            currentStepInfo = StepInfos.ElementAt(index);
             currentStepInfo.SetStatus(StepStatus.inProgress);
 
-            for (int i = index+1; i < TaskInfos.Count(); i++)
+            for (int i = index+1; i < StepInfos.Count(); i++)
             {
-                TaskInfos.ElementAt(i).SetStatus(StepStatus.none);
+                StepInfos.ElementAt(i).SetStatus(StepStatus.none);
             }
 
         }
 
         public StepInfo Start()
         {
-            return TaskInfos.First();
+            return StepInfos.First();
         }
 
         public StepInfo Finish()
         {
-            return TaskInfos.Last();
+            return StepInfos.Last();
         }
 
         public StepInfo Next()
         {
-            int currentIndex = TaskInfos.IndexOf(currentStepInfo);
-            if (currentIndex == TaskInfos.Count-1) return new StepInfo("");
+            int currentIndex = StepInfos.IndexOf(currentStepInfo);
+            if (currentIndex == StepInfos.Count-1) return new StepInfo("");
 
-            return TaskInfos.ElementAt(currentIndex+1);
+            return StepInfos.ElementAt(currentIndex+1);
         }
 
         public void GoToNext()
@@ -139,15 +140,45 @@ namespace BExIS.DCM.UploadWizard
         
         public StepInfo Prev()
         {
-            int currentIndex = TaskInfos.IndexOf(currentStepInfo);
+            int currentIndex = StepInfos.IndexOf(currentStepInfo);
             if (currentIndex == 0) return new StepInfo("");
+
+            //prevStepInfo = TaskInfos.Last();
+            //TaskInfos.Remove(TaskInfos.Last());
 
             return prevStepInfo;
         }
 
-        public void SetPrev(StepInfo stepinfo)
+        public void AddExecutedStep(StepInfo stepinfo)
         {
             prevStepInfo = stepinfo;
+            if (TaskInfos == null)
+                TaskInfos = new List<StepInfo>();
+
+            if (TaskInfos.Count > 0)
+            {
+                if (TaskInfos.Select(p => p.title.Equals(stepinfo.title)).First())
+                {
+                    StepInfo tempStep = TaskInfos.Where(p => p.title.Equals(stepinfo.title)).First();
+                    TaskInfos.Remove(tempStep);
+                }
+            }   
+
+            TaskInfos.Add(stepinfo);
+        }
+
+        public void RemoveExecutedStep(StepInfo stepinfo)
+        {
+
+            if (TaskInfos == null)
+                TaskInfos = new List<StepInfo>();
+            else
+            {
+                if(TaskInfos.Contains(stepinfo))
+                    TaskInfos.Remove(stepinfo);
+
+                prevStepInfo = TaskInfos.Last();
+            }
         }
 
         public void GoToPrev()
@@ -158,16 +189,16 @@ namespace BExIS.DCM.UploadWizard
 
         public StepInfo Jump(int index)
         {
-            if (index < 0 || index > TaskInfos.Count) return null;
+            if (index < 0 || index > StepInfos.Count) return null;
 
-            return TaskInfos.ElementAt(index);
+            return StepInfos.ElementAt(index);
         }
 
         public List<Tuple<string, StepStatus>> GetStatusOfStepInfos()
         {
             List<Tuple<string, StepStatus>> list = new List<Tuple<string, StepStatus>>();
 
-            foreach (StepInfo si in TaskInfos)
+            foreach (StepInfo si in StepInfos)
             {
                 list.Add(si.GetStatusWithName());
             }
@@ -177,12 +208,12 @@ namespace BExIS.DCM.UploadWizard
 
         public int GetIndex(StepInfo stepInfo)
         {
-            return this.TaskInfos.IndexOf(stepInfo);
+            return this.StepInfos.IndexOf(stepInfo);
         }
 
         public int GetCurrentStepInfoIndex()
         {
-            return this.TaskInfos.IndexOf(Current());
+            return this.StepInfos.IndexOf(Current());
         }
 
         public void AddToBus(string key, object value)

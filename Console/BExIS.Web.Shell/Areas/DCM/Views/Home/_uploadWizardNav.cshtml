@@ -21,7 +21,7 @@
                }
             </td>
             <td id="Nav_Pages">
-                 ( @currentPage  of   @Model.TaskInfos.Count )
+                 ( @currentPage  of   @Model.StepInfos.Count )
             </td>
             <td id="Nav_Options">
                @Html.ActionLink("Cancel", "CloseUpload", Model.Current().PostActionInfo.ControllerName, new RouteValueDictionary { { "area", Model.Current().GetActionInfo.AreaName.ToString() } }, new { @class = "t-button",  @style="float:right" })
@@ -47,7 +47,7 @@
       
     $("#prevBt").click(function(){
         
-        var index = '@Model.TaskInfos.IndexOf(@Model.Prev())';
+        var index = '@Model.StepInfos.IndexOf(@Model.Prev())';
   
 
         if (index < 0) index = 0;

@@ -18,6 +18,7 @@ using BExIS.Web.Shell.Areas.DCM.Models;
 using BExIS.DCM.UploadWizard;
 using Vaiona.Util.Cfg;
 using System.Diagnostics;
+using BExIS.DCM.Transform.Output;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
 {
@@ -26,6 +27,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         //
         // GET: /Collect/Home/
 
+        
         List<string> ids = new List<string>();
         private TaskManager TaskManager;
         private FileStream Stream;
@@ -237,7 +239,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                 if (TaskManager.Current().IsValid())
                 {
-                    TaskManager.SetPrev(TaskManager.Current());
+                    TaskManager.AddExecutedStep(TaskManager.Current());
                     TaskManager.GoToNext();
                     Session["TaskManager"] = TaskManager;
                     ActionInfo actionInfo = TaskManager.Current().GetActionInfo;
@@ -255,7 +257,12 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             //set current stepinfo based on index
             if (TaskManager != null)
+            {
                 TaskManager.SetCurrent(index);
+
+                // remove if existing
+                TaskManager.RemoveExecutedStep(TaskManager.Current());
+            }
 
 
             //if its a template jumping direkt to the next step
@@ -329,7 +336,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             if (TaskManager.Current().IsValid())
             {
-                TaskManager.SetPrev(TaskManager.Current());
+                TaskManager.AddExecutedStep(TaskManager.Current());
                 TaskManager.GoToNext();
                 Session["TaskManager"] = TaskManager;
                 ActionInfo actionInfo = TaskManager.Current().GetActionInfo;
@@ -345,8 +352,12 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             TaskManager = (TaskManager)Session["TaskManager"];
             //set current stepinfo based on index
             if (TaskManager != null)
+            {
                 TaskManager.SetCurrent(index);
 
+                // remove if existing
+                TaskManager.RemoveExecutedStep(TaskManager.Current());
+            }
             ChooseDatasetViewModel model = new ChooseDatasetViewModel();
 
             // jump back to this step
@@ -411,7 +422,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                 if (TaskManager.Current().valid == true)
                 {
-                    TaskManager.SetPrev(TaskManager.Current());
+                    TaskManager.AddExecutedStep(TaskManager.Current());
                     TaskManager.GoToNext();
                     Session["TaskManager"] = TaskManager;
                     ActionInfo actionInfo = TaskManager.Current().GetActionInfo;
@@ -443,7 +454,11 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             TaskManager = (TaskManager)Session["TaskManager"];
             //set current stepinfo based on index
             if (TaskManager != null)
+            {
                 TaskManager.SetCurrent(index);
+                // remove if existing
+                TaskManager.RemoveExecutedStep(TaskManager.Current());
+            }
 
             if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_STATUS))
             {
@@ -483,7 +498,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             if (TaskManager.Current().IsValid())
             {
-                TaskManager.SetPrev(TaskManager.Current());
+                TaskManager.AddExecutedStep(TaskManager.Current());
                 TaskManager.GoToNext();
                 Session["TaskManager"] = TaskManager;
                 ActionInfo actionInfo = TaskManager.Current().GetActionInfo;
@@ -499,7 +514,11 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             TaskManager = (TaskManager)Session["TaskManager"];
             //set current stepinfo based on index
             if (TaskManager != null)
+            {
                 TaskManager.SetCurrent(index);
+                // remove if existing
+                TaskManager.RemoveExecutedStep(TaskManager.Current());
+            }
 
             ValidationModel model = new ValidationModel();
             model.StepInfo = TaskManager.Current();
@@ -539,7 +558,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                 if (TaskManager.Current().valid == true)
                 {
-                    TaskManager.SetPrev(TaskManager.Current());
+                    TaskManager.AddExecutedStep(TaskManager.Current());
                     TaskManager.GoToNext();
                     Session["TaskManager"] = TaskManager;
                     ActionInfo actionInfo = TaskManager.Current().GetActionInfo;
@@ -556,7 +575,11 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             TaskManager = (TaskManager)Session["TaskManager"];
             //set current stepinfo based on index
             if (TaskManager != null)
+            {
                 TaskManager.SetCurrent(index);
+                // remove if existing
+                TaskManager.RemoveExecutedStep(TaskManager.Current());
+            }
 
             SummaryModel model = new SummaryModel();
             model.StepInfo = TaskManager.Current();
@@ -629,7 +652,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             {
                 if (TaskManager.Current().valid == false)
                 {
-                    TaskManager.SetPrev(TaskManager.Current());
+                    TaskManager.AddExecutedStep(TaskManager.Current());
                     TaskManager.GoToNext();
                     Session["TaskManager"] = TaskManager;
                     ActionInfo actionInfo = TaskManager.Current().GetActionInfo;
@@ -662,6 +685,13 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     dsm.StructuredDataStructureRepo.LoadIfNot(sds.Variables);
 
                     List<DataTuple> rows;
+
+                    DatasetManager dm = new DatasetManager();
+                    Dataset ds = dm.GetDataset(id);
+                    DatasetVersion workingCopy = new DatasetVersion();
+
+                    #region excel reader
+                    
                     if (TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".xlsm"))
                     {
                         // open file
@@ -676,13 +706,12 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         else
                         {
 
-                            DatasetManager dm = new DatasetManager();
-                            Dataset ds = dm.GetDataset(id);
+                            
 
                             //XXX Add packagesize to excel read function
                             if (dm.IsDatasetCheckedOutFor(ds.Id, "David") || dm.CheckOutDataset(ds.Id, "David"))
                             {
-                                DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
+                                workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
 
                                 if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_STATUS))
                                 {
@@ -703,13 +732,18 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                                         }
                                 }
 
-                                dm.CheckInDataset(ds.Id, "upload data from upload wizard", "David");
+                                //dm.CheckInDataset(ds.Id, "upload data from upload wizard", "David");
                                 
                             }
                         }
 
                         Stream.Close();
                     }
+
+                    #endregion
+
+                    #region ascii reader
+
 
                     if (TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".csv") ||
                         TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".txt"))
@@ -718,14 +752,14 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         AsciiReader reader = new AsciiReader();
                         //Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
 
-                        DatasetManager dm = new DatasetManager();
-                        Dataset ds = dm.GetDataset(id);
+                        //DatasetManager dm = new DatasetManager();
+                        //Dataset ds = dm.GetDataset(id);
 
                         Stopwatch totalTime = Stopwatch.StartNew();
 
                         if (dm.IsDatasetCheckedOutFor(ds.Id, "David") || dm.CheckOutDataset(ds.Id, "David"))
                         {
-                            DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
+                            workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
                             int packageSize = 100;
                             //schleife
                             do
@@ -767,7 +801,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                                 }
                             } while (rows.Count > 0);
 
-                            dm.CheckInDataset(ds.Id, "upload data from upload wizard", "David");
+                           
 
                             totalTime.Stop();
                             Debug.WriteLine(" Total Time "+totalTime.Elapsed.TotalSeconds.ToString());
@@ -776,8 +810,25 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         }
 
                         //Stream.Close();
-                    
+
                     }
+
+                    #endregion
+
+                    // start download generator
+                    // filepath
+                    string path = "";
+                    if (workingCopy != null)
+                    {
+                        path = GenerateDownloadFile(workingCopy);
+                        dm.EditDatasetVersion(workingCopy, null, null, null);
+                    }
+
+                    // ToDo: Get Comment from ui and users
+                    dm.CheckInDataset(ds.Id, "upload data from upload wizard", "David");
+
+                    // open the excelfile and add datatuples
+                    AddDatatuplesToFile(ds.Id, sds.Id, path);
                 }
                 catch
                 {
@@ -792,12 +843,17 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             if (model.ErrorList.Count > 0)
             {
+                //ToDo: remove all changed from dataset and version
+
                 Session["TaskManager"] = TaskManager;
                 ActionInfo actionInfo = TaskManager.Current().GetActionInfo;
                 return RedirectToAction(actionInfo.ActionName, actionInfo.ControllerName, new RouteValueDictionary { { "area", actionInfo.AreaName }, { "index", TaskManager.GetCurrentStepInfoIndex() } });
-                
+
             }
-            else return View();
+            else
+            {
+                return View();
+            } 
         }
 
         public ActionResult CloseUpload()
@@ -806,6 +862,72 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             TaskManager = null;
 
             return RedirectToAction("UploadWizard");
+        }
+
+
+        private string GenerateDownloadFile(DatasetVersion datasetVersion)
+        {
+            string path = "";
+            TaskManager TaskManager = (TaskManager)Session["TaskManager"];
+            
+            long datasetId = Convert.ToInt64(TaskManager.Bus[TaskManager.DATASET_ID]);
+            long dataStructureId = Convert.ToInt64(TaskManager.Bus[TaskManager.DATASTRUCTURE_ID]);
+            
+            DatasetManager datasetManager = new DatasetManager();
+            long datasetVersionId = datasetVersion.Id;
+
+            string title = TaskManager.Bus[TaskManager.DATASET_TITLE].ToString();
+            string ext = TaskManager.Bus[TaskManager.EXTENTION].ToString();
+            
+            
+                // create DownloadFile
+                ExcelWriter excelWriter = new ExcelWriter();
+                path = excelWriter.CreateFile(datasetId, datasetVersionId, dataStructureId, title, ext);
+
+                ContentDescriptor contentDiscriptor = new ContentDescriptor();
+                contentDiscriptor.OrderNo = 1;
+                contentDiscriptor.Name = "generated";
+                contentDiscriptor.MimeType = "application/xlsm";
+                contentDiscriptor.URI = path;
+
+                datasetVersion.ContentDescriptors.Add(contentDiscriptor);
+
+                //Move Original File
+
+                String tempPath = TaskManager.Bus[TaskManager.FILEPATH].ToString();
+
+                string dataPath = AppConfiguration.DataPath; //Path.Combine(AppConfiguration.WorkspaceRootPath, "Data");
+
+                string originalFileName = TaskManager.Bus[TaskManager.FILENAME].ToString();
+
+                string storePath = excelWriter.GetStorePathOriginalFile(datasetId, datasetVersionId, originalFileName);
+
+                excelWriter.MoveFile(tempPath, storePath);
+
+                contentDiscriptor = new ContentDescriptor();
+                contentDiscriptor.OrderNo = 1;
+                contentDiscriptor.Name = "original";
+                contentDiscriptor.MimeType = "application/xlsm";
+                contentDiscriptor.URI = storePath;
+
+                datasetVersion.ContentDescriptors.Add(contentDiscriptor);
+           
+
+            return path;
+        }
+
+        private void AddDatatuplesToFile(long datasetId, long dataStructureId, string path)
+        {
+            List<DataTuple> tempDataTuples = GetDataTuples(datasetId);
+            ExcelWriter excelWriter = new ExcelWriter();
+            excelWriter.AddDataTuplesToTemplate(tempDataTuples, path, dataStructureId);
+        }
+
+        private List<DataTuple> GetDataTuples(long datasetId)
+        { 
+            DatasetManager datasetManager = new DatasetManager();
+            DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
+            return datasetManager.GetDatasetVersionEffectiveTuples(datasetVersion);            
         }
 
         #endregion
@@ -822,13 +944,13 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             TaskManager TaskManager = (TaskManager)Session["TaskManager"];
             if (SelectFileUploader != null)
             {
-                // store file in archive
-                //string filename = "D:\\" + DateTime.Now.Millisecond.ToString() + SelectFileUploader.FileName;
-                //SelectFileUploader.SaveAs(filename);
+                //data/datasets/1/1/
+                string dataPath = AppConfiguration.DataPath; //Path.Combine(AppConfiguration.WorkspaceRootPath, "Data");
+                string storepath = Path.Combine(dataPath, "Temp", "Default");
 
-                string path = Path.Combine(AppConfiguration.WorkspaceRootPath,"temp","DCM", DateTime.Now.Millisecond.ToString() + SelectFileUploader.FileName);
+                string path = Path.Combine(storepath, SelectFileUploader.FileName);
+
                 SelectFileUploader.SaveAs(path);
-                
                 TaskManager.AddToBus(TaskManager.FILEPATH, path);
                 
                 TaskManager.AddToBus(TaskManager.FILENAME, SelectFileUploader.FileName);
@@ -850,7 +972,11 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             TaskManager TaskManager = (TaskManager)Session["TaskManager"];
             if (fileName != null)
             {
-                string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "ServerFiles",fileName);
+                //string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "ServerFiles",fileName);
+
+                //data/datasets/1/1/
+                string dataPath = AppConfiguration.DataPath; //Path.Combine(AppConfiguration.WorkspaceRootPath, "Data");
+                string path = Path.Combine(dataPath, "Temp", "Default");
 
                 TaskManager.AddToBus(TaskManager.FILEPATH, path);
 
