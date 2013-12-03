@@ -54,7 +54,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.RPM.Model", "Modules\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.RPM.Output", "Modules\RPM\BExIS.RPM.Output\BExIS.RPM.Output.csproj", "{ABC877E0-E3DE-4472-A199-1728E88FA5A1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.DCM.UploadWizard", "Modules\Collect\BExIS.DCM.UploadWizard\BExIS.DCM.UploadWizard.csproj", "{2C846721-A221-4AE5-A671-4B86DE4D3805}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.DCM.UploadWizard", "BExIS.DCM.UploadWizard\BExIS.DCM.UploadWizard.csproj", "{2C846721-A221-4AE5-A671-4B86DE4D3805}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EXT", "EXT", "{CD986786-CEA1-4C30-983E-169C33600BA6}"
 EndProject
@@ -128,7 +128,7 @@ Global
 		SccProjectTopLevelParentUniqueName15 = BExIS++.sln
 		SccProjectName15 = Modules/RPM/BExIS.RPM.Output
 		SccLocalPath15 = Modules\\RPM\\BExIS.RPM.Output
-		SccProjectUniqueName16 = Modules\\Collect\\BExIS.DCM.UploadWizard\\BExIS.DCM.UploadWizard.csproj
+		SccProjectUniqueName16 = BExIS.DCM.UploadWizard\\BExIS.DCM.UploadWizard.csproj
 		SccProjectTopLevelParentUniqueName16 = BExIS++.sln
 		SccProjectName16 = Modules/Collect/BExIS.DCM.UploadWizard
 		SccLocalPath16 = Modules\\Collect\\BExIS.DCM.UploadWizard
@@ -329,7 +329,6 @@ Global
 		{ABC877E0-E3DE-4472-A199-1728E88FA5A1}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{ABC877E0-E3DE-4472-A199-1728E88FA5A1}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{ABC877E0-E3DE-4472-A199-1728E88FA5A1}.Release|x86.ActiveCfg = Release|Any CPU
-		{ABC877E0-E3DE-4472-A199-1728E88FA5A1}.Release|x86.Build.0 = Release|Any CPU
 		{2C846721-A221-4AE5-A671-4B86DE4D3805}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2C846721-A221-4AE5-A671-4B86DE4D3805}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2C846721-A221-4AE5-A671-4B86DE4D3805}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
