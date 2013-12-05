@@ -47,28 +47,27 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Mappings\DB2Dialect\Role.hbm.xml">
+    <EmbeddedResource Include="Mappings\DB2Dialect\Subjects\Role.hbm.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Mappings\DB2Dialect\Subject.hbm.xml">
+    <EmbeddedResource Include="Mappings\DB2Dialect\Subjects\Subject.hbm.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Mappings\DB2Dialect\User.hbm.xml">
+    <EmbeddedResource Include="Mappings\DB2Dialect\Subjects\User.hbm.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Mappings\DB2Dialect\Action.hbm.xml" />
-    <Content Include="Mappings\DB2Dialect\Activity.hbm.xml" />
-    <Content Include="Mappings\DB2Dialect\Feature.hbm.xml" />
-    <Content Include="Mappings\DB2Dialect\FeaturePermission.hbm.xml" />
-    <Content Include="Mappings\DB2Dialect\Permission.hbm.xml" />
-    <Content Include="Mappings\DB2Dialect\UserSecurityInfo.hbm.xml" />
+    <Content Include="Mappings\DB2Dialect\Objects\Feature.hbm.xml" />
+    <Content Include="Mappings\DB2Dialect\Security\FeaturePermission.hbm.xml" />
+    <Content Include="Mappings\DB2Dialect\Security\Permission.hbm.xml" />
+    <Content Include="Mappings\DB2Dialect\Objects\Task.hbm.xml" />
+    <Content Include="Mappings\DB2Dialect\Subjects\SecurityUser.hbm.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

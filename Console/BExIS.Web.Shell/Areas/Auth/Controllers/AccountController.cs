@@ -2,6 +2,7 @@
 using System.Web.Mvc;
 using System.Web.Security;
 using BExIS.Security.Services;
+using BExIS.Security.Services.Subjects;
 using BExIS.Web.Shell.Areas.Auth.Models;
 
 namespace BExIS.Web.Shell.Areas.Auth.Controllers
@@ -32,7 +33,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
             {
                 UserManager userManager = new UserManager();
 
-                if (userManager.ValidateUser(model.UserName, model.Password, 3, 30, "qwertzuioplkjhgfdsayxcvbqwertztu"))
+                if (userManager.ValidateUser(model.UserName, model.Password))
                 {
                     FormsAuthentication.SetAuthCookie(model.UserName, model.RememberMe);
                     if (Url.IsLocalUrl(returnUrl) && returnUrl.Length > 1 && returnUrl.StartsWith("/")
@@ -86,7 +87,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
 
                 UserManager userManager = new UserManager();
 
-                userManager.Create(model.UserName, model.Email, model.Password, model.SecurityQuestion, model.SecurityAnswer, null, true, 6, "qwertzuioplkjhgfdsayxcvbqwertztu", out createStatus);
+                userManager.Create(model.UserName, model.Email, model.Password, model.SecurityQuestion, model.SecurityAnswer, out createStatus);
 
                 if (createStatus == UserCreateStatus.Success)
                 {

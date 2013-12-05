@@ -3,8 +3,6 @@
 
 @model UserModel
 
-<div id="Window_UserInfo">
-
 @using (Html.BeginForm())
 {   
     @Html.ValidationSummary(true)
@@ -56,16 +54,7 @@
         @Html.HiddenFor(m => m.LastActivityDate)
     </div>
     
-    <div class="editor-label" style="font-weight:bold">
-        @Html.LabelFor(m => m.Comment)
-    </div>
-    <div class="editor-field">
-        @Html.TextAreaFor(m => m.Comment, new { @readonly = "readonly", style = "width: 275px; height: 100px; max-width: 350px; max-height: 200px; wrap: hard" })
-    </div>
-    
     <p>
-        <button type="button" onclick="editUserInfo(@Model.Id)">Edit</button>
+        <button type="button" onclick="TabStrip_UserInfo_Edit(@Model.Id)">Edit</button>
     </p>
 }
-
-</div>

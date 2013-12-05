@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using BExIS.Security.Entities;
+using BExIS.Security.Entities.Subjects;
 
 namespace BExIS.Web.Shell.Areas.Auth.Models
 {

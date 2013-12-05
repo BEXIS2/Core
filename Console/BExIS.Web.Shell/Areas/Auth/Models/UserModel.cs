@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using BExIS.Security.Entities;
+using BExIS.Security.Entities.Subjects;
 using DataAnnotationsExtensions;
 
 namespace BExIS.Web.Shell.Areas.Auth.Models
@@ -41,9 +41,6 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
         [Display(Name = "Is Locked Out")]
         public bool IsLockedOut { get; set; }
 
-        [Display(Name = "Comment")]
-        public string Comment { get; set; }
-
         public static UserModel Convert(User user)
         {
             return new UserModel()
@@ -54,7 +51,6 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
                 RegistrationDate = user.RegistrationDate,
                 LastLoginDate = user.LastLoginDate,
                 LastActivityDate = user.LastActivityDate,
-                Comment = user.Comment
             };
         }
     }

@@ -49,18 +49,17 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Action.cs" />
-    <Compile Include="Activity.cs" />
-    <Compile Include="DataContext.cs" />
-    <Compile Include="Feature.cs" />
-    <Compile Include="FeatureContext.cs" />
-    <Compile Include="FeaturePermission.cs" />
-    <Compile Include="Permission.cs" />
+    <Compile Include="Objects\DataContext.cs" />
+    <Compile Include="Objects\Feature.cs" />
+    <Compile Include="Security\FeaturePermission.cs" />
+    <Compile Include="Security\Permission.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Role.cs" />
-    <Compile Include="Subject.cs" />
-    <Compile Include="User.cs" />
-    <Compile Include="UserSecurityInfo.cs" />
+    <Compile Include="Subjects\Role.cs" />
+    <Compile Include="Subjects\SecurityUser.cs" />
+    <Compile Include="Subjects\Subject.cs" />
+    <Compile Include="Objects\Task.cs" />
+    <Compile Include="Objects\TaskContext.cs" />
+    <Compile Include="Subjects\User.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Entities.cd" />

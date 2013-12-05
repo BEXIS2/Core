@@ -914,6 +914,7 @@
     <Content Include="Areas\DCM\Views\Home\Step2.cshtml" />
     <Content Include="Areas\DCM\Views\Home\Step4.cshtml" />
     <Content Include="Areas\Search\Views\Home\ReIndexSearch.cshtml" />
+    <Content Include="Areas\Auth\Views\Users\_InfoPartial.cshtml" />
     <None Include="Properties\PublishProfiles\BEXIS2 DEV.pubxml" />
     <None Include="Properties\PublishProfiles\BEXIS2.pubxml" />
   </ItemGroup>
@@ -971,7 +972,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>4639</DevelopmentServerPort>
+          <DevelopmentServerPort>4137</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>http://localhost:4187/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>

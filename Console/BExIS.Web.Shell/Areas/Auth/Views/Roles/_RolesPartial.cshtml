@@ -3,6 +3,14 @@
 
 @model List<RoleModel>
 
+<style>
+    .t-window-content
+    {
+       height: auto !important;
+       width: auto !important;
+    }
+</style>
+
 @(Html.Telerik().Grid(Model)
         .Name("Grid_Roles")
         .DataKeys(keys =>
@@ -23,7 +31,6 @@
             columns.Bound(r => r.Id).Width(100);
             columns.Bound(r => r.RoleName).Width(250);
             columns.Bound(r => r.Description);
-            columns.Bound(r => r.Comment);
         })
         .ClientEvents(clientEvents => clientEvents.OnCommand("onCommand"))
         .DataBinding(dataBinding => dataBinding
@@ -38,86 +45,66 @@
 )
 
 @(Html.Telerik().Window()
-    .Name("windowCreation")
+    .Name("Window_Creation")
     .Title("Role Creation")
     .Draggable(true)
     .Modal(true)
     .Visible(false)
     .Scrollable(true)
+    .ContentHtmlAttributes(new { @style="overflow:auto; width:auto; height:auto; min-height:225px; min-width:400px"})
     .Content(@<text>
-        <div id="contentWindowCreation"></div>
+        <div id="Content_Creation"></div>
     </text>)
     .ClientEvents(clientEvents => clientEvents
-        .OnActivate("onActivateWindowCreation")
-        .OnClose("onCloseWindowCreation")
+        .OnClose("Window_Creation_OnClose")
     )
 )
 
 @(Html.Telerik().Window()
-    .Name("windowDetails")
-    .Title("Role Details")
-    .Draggable(true)
-    .Modal(true)
-    .Visible(false)
-    .Content(@<text>
-        <div id="contentWindowDetails"></div>
-    </text>)
-    .ClientEvents(clientEvents => clientEvents
-        .OnActivate("onActivateWindowDetails")
-        .OnClose("onCloseWindowDetails")
-    )
-)
-
-@(Html.Telerik().Window()
-    .Name("windowDeletion")
+    .Name("Window_Deletion")
     .Title("Role Deletion")
     .Draggable(true)
     .Modal(true)
     .Visible(false)
+    .Scrollable(true)
+    .ContentHtmlAttributes(new { @style="overflow:auto; width:auto; height:auto; min-height:225px; min-width:400px"})
     .Content(@<text>
-        <div id="contentWindowDeletion"></div>
+        <div id="Content_Deletion"></div>
     </text>)
     .ClientEvents(clientEvents => clientEvents
-        .OnActivate("onActivateWindowDeletion")
-        .OnClose("onCloseWindowDeletion")
+        .OnClose("Window_Deletion_OnClose")
+    )
+)
+
+@(Html.Telerik().Window()
+    .Name("Window_Details")
+    .Title("Role Details")
+    .Draggable(true)
+    .Modal(true)
+    .Visible(false)
+    .Scrollable(true)
+    .ContentHtmlAttributes(new { @style="overflow:auto; width:auto; height:auto; min-height:225px; min-width:400px"})
+    .Content(@<text>
+        <div id="Content_Details"></div>
+    </text>)
+    .ClientEvents(clientEvents => clientEvents
+        .OnClose("Window_Details_OnClose")
     )
 )
 
 <script type="text/javascript">
 
-    function setMembership(value, userid, roleid) {
-        if (value) {
-            $.post('@Url.Action("AddUserToRole", "Roles")', { UserId: userid, RoleId: roleid });
-        } else {
-            $.post('@Url.Action("RemoveUserFromRole", "Roles")', { UserId: userid, RoleId: roleid });
-        }
-    }
-
     function onCommand(e) {
 
         if (e.name == "Create") {
 
-            $('#contentWindowCreation').load('@Url.Action("Create", "Roles")');
+            $.get('@Url.Action("Create", "Roles")', function (data) {
 
-            var windowCreation = $('#windowCreation').data('tWindow');
-            windowCreation.center().open();
-        }
+                $('#Content_Creation').html(data);
 
-        if (e.name == "Details") {
-            var roleID = e.dataItem.Id;
-
-            $.get('@Url.Action("Details", "Roles")', { Id: roleID }, function (data) {
-
-                $('#contentWindowDetails').html(data);
+                var window = $('#Window_Creation').data('tWindow');
+                window.center().open();
             });
-
-            $.get('@Url.Action("RoleInfo", "Roles")', { Id: roleID }, function (data) {
-
-                $('#contentTabstripRoleInfo').html(data);
-            });
-
-            var windowDetails = $('#windowDetails').data('tWindow');
-            windowDetails.center().open();
         }
 
         if (e.name == "Delete") {
@@ -125,77 +112,64 @@
 
             $.get('@Url.Action("Delete", "Roles")', { Id: roleID }, function (data) {
 
-                $('#contentWindowDeletion').html(data);
-            });
+                $('#Content_Deletion').html(data);
 
-            var windowDeletion = $('#windowDeletion').data('tWindow');
-            windowDeletion.center().open();
+                var window = $('#Window_Deletion').data('tWindow');
+                window.center().open();
+            });
+        }
+
+        if (e.name == "Details") {
+            var roleID = e.dataItem.Id;
+
+            $.get('@Url.Action("Details", "Roles")', { Id: roleID }, function (windowData) {
+
+                $('#Content_Details').html(windowData);
+
+                $.get('@Url.Action("RoleInfo", "Roles")', { Id: roleID }, function (contentData) {
+
+                    $('#Content_RoleInfo').html(contentData);
+                });
+
+                var window = $('#Window_Details').data('tWindow');
+                window.center().open();
+            });
         }
     }
 
-    //
-    //
     // Create
-    function cancelWindowCreation() {
-        var windowCreation = $('#windowCreation').data('tWindow');
-        windowCreation.close();
+    function Window_Creation_Cancel() {
+        $('#Window_Creation').data('tWindow').close();
     }
 
-    function onActivateWindowCreation() {
-        var windowCreationContent = $('#windowCreation .t-window-content');
-
-        windowCreationContent.css("height", "auto");
-        windowCreationContent.css("width", "auto");
+    function Window_Creation_OnClose() {
+        $('#Content_Creation').empty();
     }
 
-    function onCloseWindowCreation() {
-        $('#contentWindowCreation').empty();
-        window.location.href = '@Url.Action("Roles", "Roles")';
+    // Delete
+    function Window_Deletion_Cancel() {
+        $('#Window_Deletion').data('tWindow').close();
     }
 
-    //
-    //
+    function Window_Deletion_OnClose() {
+        $('#Content_Deletion').empty();
+    }
+
     // Details
-    function cancelRoleEdit(e) {
-        $.get('@Url.Action("RoleInfo", "Roles")', { Id: e }, function (data) {
-                $('#contentTabstripRoleInfo').html(data);
-            });
-        }
-
-        function editRoleInfo(e) {
-            $.get('@Url.Action("RoleEdit", "Roles")', { Id: e }, function (data) {
-            $('#contentTabstripRoleInfo').html(data);
-        });
-    }
-
-    function onActivateWindowDetails(e) {
-        var windowDetails = $('#windowDetails .t-window-content');
-
-        windowDetails.css("height", "auto");
-        windowDetails.css("width", "auto");
-    }
-
-    function onCloseWindowDetails(e) {
-        $('#contentWindowDetails').empty();
-        window.location.href = '@Url.Action("Roles", "Roles")';
-    }
-
-    function onSelectTabstripDetails(e, roleID) {
+    function TabStrip_Details_OnSelect(e, roleID) {
         var tab = $(e.item);
 
         switch (tab.index()) {
             case 0:
                 $.get('@Url.Action("RoleInfo", "Roles")', { Id: roleID }, function (data) {
-                    $('#contentTabstripRoleInfo').html(data);
+                    $('#Content_RoleInfo').html(data);
                 });
-                $('#contentTabstripMembership').empty();
                 break;
 
             case 1:
                 $.get('@Url.Action("Membership", "Roles")', { Id: roleID }, function (data) {
-                    $('#contentTabstripMembership').html(data);
+                    $('#Content_Membership').html(data);
                 });
-                $('#contentTabstripRoleInfo').empty();
                 break;
 
             default:
@@ -203,43 +177,37 @@
         }
     }
 
-    //
-    //
-    // Delete
-    function cancelWindowDeletion() {
-        var windowDeletion = $('#windowDeletion').data('tWindow');
-        windowDeletion.close();
-    }
+    function TabStrip_RoleInfo_CancelEdit(e) {
+        $.get('@Url.Action("RoleInfo", "Roles")', { Id: e }, function (data) {
+             $('#Content_RoleInfo').html(data);
+         });
+     }
 
-    function onCloseWindowDeletion() {
-        $('#contentWindowDeletion').empty();
-        window.location.href = '@Url.Action("Roles", "Roles")';
-    }
+     function TabStrip_RoleInfo_Edit(e) {
+         $.get('@Url.Action("RoleEdit", "Roles")', { Id: e }, function (data) {
+                $('#Content_RoleInfo').html(data);
+            });
+        }
 
-    function onActivateWindowDeletion(e) {
-        var windowDeletion = $('#windowDeletion .t-window-content');
+        function Window_Details_OnClose() {
+            $('#Content_Details').empty();
+        }
 
-        windowDeletion.css("height", "auto");
-        windowDeletion.css("width", "auto");
-    }
-
-    //
-    //
     // Info
-    function confirmWindowInfo(e) {
+    function Window_Info_Confirm(e) {
         switch (e) {
-            case "windowDeletion":
-                var windowDelete = $('#windowDeletion').data('tWindow');
+            case "Window_Deletion":
+                var windowDelete = $('#Window_Deletion').data('tWindow');
                 windowDelete.close();
                 break;
 
-            case "windowDetails":
-                var windowDetails = $('#windowDetails').data('tWindow');
+            case "Window_Details":
+                var windowDetails = $('#Window_Details').data('tWindow');
                 windowDetails.close();
                 break;
 
-            case "windowCreation":
-                var windowCreation = $('#windowCreation').data('tWindow');
+            case "Window_Creation":
+                var windowCreation = $('#Window_Creation').data('tWindow');
                 windowCreation.close();
                 break;
 
@@ -248,47 +216,13 @@
         }
     }
 
-    //
-    //
-    // RESET FORM JQUERY CODE!!!!!
-    (function ($) {
-
-        //re-set all client validation given a jQuery selected form or child
-        $.fn.resetValidation = function () {
-
-            var $form = this.closest('form');
-
-            //reset jQuery Validate's internals
-            $form.validate().resetForm();
-
-            //reset unobtrusive validation summary, if it exists
-            $form.find("[data-valmsg-summary=true]")
-                .removeClass("validation-summary-errors")
-                .addClass("validation-summary-valid")
-                .find("ul").empty();
-
-            //reset unobtrusive field level, if it exists
-            $form.find("[data-valmsg-replace]")
-                .removeClass("field-validation-error")
-                .addClass("field-validation-valid")
-                .empty();
-
-            return $form;
-        };
-
-        //reset a form given a jQuery selected form or a child
-        //by default validation is also reset
-        $.fn.formReset = function (resetValidation) {
-            var $form = this.closest('form');
-
-            $form[0].reset();
-
-            if (resetValidation == undefined || resetValidation) {
-                $form.resetValidation();
-            }
-
-            return $form;
+    // Membership
+    function setMembership(value, userid, roleid) {
+        if (value) {
+            $.post('@Url.Action("AddUserToRole", "Roles")', { UserId: userid, RoleId: roleid });
+        } else {
+            $.post('@Url.Action("RemoveUserFromRole", "Roles")', { UserId: userid, RoleId: roleid });
         }
-    })(jQuery);
+    }
 
 </script> 

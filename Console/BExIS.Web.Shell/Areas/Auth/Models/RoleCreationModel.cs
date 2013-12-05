@@ -17,8 +17,5 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
         [Display(Name = "Description")]
         [Required]
         public string Description { get; set; }
-
-        [Display(Name = "Comment")]
-        public string Comment { get; set; }
     }
 }

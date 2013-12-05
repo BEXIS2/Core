@@ -44,7 +44,5 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
         [Compare("SecurityAnswer", ErrorMessage = "The security answer and confirmation do not match.")]
         [Required]
         public string ConfirmSecuritydAnswer { get; set; }
-
-        public string Comment { get; set; }
     }
 }

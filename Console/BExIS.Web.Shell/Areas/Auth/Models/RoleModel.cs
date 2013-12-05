@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using BExIS.Security.Entities;
+using BExIS.Security.Entities.Subjects;
 
 namespace BExIS.Web.Shell.Areas.Auth.Models
 {
@@ -24,9 +24,6 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
         [Required]
         public string Description { get; set; }
 
-        [Display(Name = "Comment")]
-        public string Comment { get; set; }
-
         public static RoleModel Convert(Role role)
         {
             return new RoleModel()
@@ -34,7 +31,6 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
                 Id = role.Id,
                 RoleName = role.Name,
                 Description = role.Description,
-                Comment = role.Comment
             };
         }
     }

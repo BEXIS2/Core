@@ -6,7 +6,9 @@ using System.IO;
 using System.Linq;
 using System.Web.Mvc;
 using BExIS.Security.Entities;
+using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services;
+using BExIS.Security.Services.Subjects;
 using BExIS.Web.Shell.Areas.Auth.Models;
 using Telerik.Web.Mvc;
 
@@ -37,7 +39,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
 
                 RoleManager roleManager = new RoleManager();
 
-                roleManager.Create(model.RoleName, model.Description, model.Comment, out createStatus);
+                roleManager.Create(model.RoleName, model.Description, out createStatus);
 
                 if (createStatus == RoleCreateStatus.Success)
                 {
@@ -137,7 +139,6 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
                 {
                     role.Name = model.RoleName;
                     role.Description = model.Description;
-                    role.Comment = model.Comment;
 
                     roleManager.Update(role);
 
@@ -187,7 +188,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
             {
                 IQueryable<User> data = userManager.GetAllUsers();
 
-                data.ToList().ForEach(u => users.Add(RoleUserModel.Convert(role.Id, u, roleManager.IsUserInRole(u.Name, role.Name))));
+                data.ToList().ForEach(u => users.Add(RoleUserModel.Convert(role.Id, u, roleManager.IsUserInRole(u, role))));
             }
 
             return View(new GridModel<RoleUserModel> { Data = users });

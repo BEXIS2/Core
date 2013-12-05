@@ -3,17 +3,15 @@
 
 @model RoleModel
 
-@*<script src="@Url.Content("~/Scripts/jquery-1.7.1.js")" type="text/javascript"></script>
-<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
-<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
-<script src="@Url.Content("~/Scripts/jquery.unobtrusive-ajax.js")" type="text/javascript"></script>*@
+<script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.unobtrusive-ajax.min.js")" type="text/javascript"></script>
 
-
-@using (Ajax.BeginForm("RoleEdit", "Roles", new AjaxOptions { HttpMethod = "POST", UpdateTargetId="contentTabstripRoleInfo" }))
+@using (Ajax.BeginForm("RoleEdit", "Roles", new AjaxOptions { HttpMethod = "POST", UpdateTargetId="Content_RoleInfo" }))
 {   
     @Html.ValidationSummary(true)
     
-    <div class="editor-label">
+    <div class="editor-label" style="font-weight:bold">
         @Html.LabelFor(m => m.Id)
     </div>
     <div class="editor-field">
@@ -21,7 +19,7 @@
         @Html.HiddenFor(m => m.Id)
     </div>
     
-    <div class="editor-label">
+    <div class="editor-label" style="font-weight:bold">
         @Html.LabelFor(m => m.RoleName)
     </div>
     <div class="editor-field">
@@ -29,25 +27,17 @@
         @Html.ValidationMessageFor(m => m.RoleName)
     </div>
     
-    <div class="editor-label">
+    <div class="editor-label" style="font-weight:bold">
         @Html.LabelFor(m => m.Description)
     </div>
     <div class="editor-field">
         @Html.TextAreaFor(m => m.Description, new { style = "width: 275px; height: 100px;max-width: 350px; max-height: 200px; wrap: hard" })
         @Html.ValidationMessageFor(m => m.Description)
     </div>
-
-    <div class="editor-label">
-        @Html.LabelFor(m => m.Comment)
-    </div>
-    <div class="editor-field">
-        @Html.TextAreaFor(m => m.Comment, new { style = "width: 275px; height: 100px; max-width: 350px; max-height: 200px; wrap: hard" })
-        @Html.ValidationMessageFor(m => m.Comment)
-    </div>
     
     <p>
         <button type="submit">Save</button>
         <button type="reset" onclick="$(this).resetValidation()">Reset</button>
-        <button type="button" onclick="cancelRoleEdit(@Model.Id)">Cancel</button>
+        <button type="button" onclick="TabStrip_RoleInfo_CancelEdit(@Model.Id)">Cancel</button>
     </p>
 }

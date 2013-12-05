@@ -3,6 +3,14 @@
 
 @model List<UserModel>
 
+<style>
+    .t-window-content
+    {
+       height: auto !important;
+       width: auto !important;
+    }
+</style>
+
 @(Html.Telerik().Grid(Model)
         .Name("Grid_Users")
         .DataKeys(keys =>
@@ -23,7 +31,6 @@
             columns.Bound(u => u.Id).Width(100);
             columns.Bound(u => u.UserName).Width(250);
             columns.Bound(u => u.Email);
-            columns.Bound(u => u.Comment);
         })
         .ClientEvents(clientEvents => clientEvents.OnCommand("onCommand"))
         .DataBinding(dataBinding => dataBinding
@@ -37,90 +44,185 @@
         .Scrollable(scrollable => scrollable.Height(500))
 )
 
-<div id="Window_UserCreation" title="User Creation" />
+@(Html.Telerik().Window()
+    .Name("Window_Creation")
+    .Title("User Creation")
+    .Draggable(true)
+    .Modal(true)
+    .Visible(false)
+    .Scrollable(true)
+    .ContentHtmlAttributes(new { @style="overflow:auto; width:auto; height:auto; min-height:225px; min-width:400px"})
+    .Content(@<text>
+        <div id="Content_Creation"></div>
+    </text>)
+    .ClientEvents(clientEvents => clientEvents
+        .OnClose("Window_Creation_OnClose")
+    )
+)
 
-<div id="Window_UserDeletion" title="User Deletion" />
+@(Html.Telerik().Window()
+    .Name("Window_Deletion")
+    .Title("User Deletion")
+    .Draggable(true)
+    .Modal(true)
+    .Visible(false)
+    .Scrollable(true)
+    .ContentHtmlAttributes(new { @style="overflow:auto; width:auto; height:auto; min-height:225px; min-width:400px"})
+    .Content(@<text>
+        <div id="Content_Deletion"></div>
+    </text>)
+    .ClientEvents(clientEvents => clientEvents
+        .OnClose("Window_Deletion_OnClose")
+    )
+)
 
-<div id="Window_UserDetails" title="User Details" />
+@(Html.Telerik().Window()
+    .Name("Window_Details")
+    .Title("User Details")
+    .Draggable(true)
+    .Modal(true)
+    .Visible(false)
+    .Scrollable(true)
+    .ContentHtmlAttributes(new { @style="overflow:auto; width:auto; height:auto; min-height:225px; min-width:400px"})
+    .Content(@<text>
+        <div id="Content_Details"></div>
+    </text>)
+    .ClientEvents(clientEvents => clientEvents
+        .OnClose("Window_Details_OnClose")
+    )
+)
 
 <script type="text/javascript">
     
     function onCommand(e) {
 
         if (e.name == "Create") {
-            $('#Window_UserCreation').load('@Url.Action("Create", "Users")',
-                function () {
-                    $('#Window_UserCreation').dialog({
-                        autoOpen: true,
-                        modal: true,
-                        width: "auto",
-                        height: "auto",
-                        resizable: false,
-                        close: function () {
-                            $('#Window_UserCreation').html("");
-                        }
-                    });
-                }
-            );
+
+            $.get('@Url.Action("Create", "Users")', function (data) {
+
+                $('#Content_Creation').html(data);
+
+                var window = $('#Window_Creation').data('tWindow');
+                window.center().open();
+            });
         }
 
         if (e.name == "Delete") {
             var userID = e.dataItem.Id;
 
-            $.get('@Url.Action("Delete", "Users")', { Id: userID },
-                function (data) {
-                    $('#Window_UserDeletion').html(data);
-                    $('#Window_UserDeletion').dialog({
-                        autoOpen: true,
-                        modal: true,
-                        width: "auto",
-                        height: "auto",
-                        resizable: false,
-                        close: function () {
-                            $('#Window_UserDeletion').html("");
-                        }
-                    });
-                }
-            );
+            $.get('@Url.Action("Delete", "Users")', { Id : userID }, function (data) {
+
+                $('#Content_Deletion').html(data);
+
+                var window = $('#Window_Deletion').data('tWindow');
+                window.center().open();
+            });
         }
 
         if (e.name == "Details") {
             var userID = e.dataItem.Id;
 
-            $.get('@Url.Action("Details", "Users")', { Id: userID },
-                function (data) {
-                    $('#Window_UserDetails').html(data);
-                }
-            );
+            $.get('@Url.Action("Details", "Users")', { Id: userID }, function (windowData) {
 
-            $.get('@Url.Action("UserInfo", "Users")', { Id: userID },
-                function (data) {
-                    $('#Tabstrip_UserInfo').html(data);
-                    $('#Window_UserDetails').dialog({
-                        autoOpen: true,
-                        modal: true,
-                        width: "auto",
-                        height: "auto",
-                        resizable: false,
-                        close: function () {
-                            $('#Window_UserDetails').html("");
-                        }
-                    });
-                }
-            );
+                $('#Content_Details').html(windowData);
+
+                $.get('@Url.Action("UserInfo", "Users")', { Id: userID }, function (contentData) {
+
+                    $('#Content_UserInfo').html(contentData);
+                });
+
+                var window = $('#Window_Details').data('tWindow');
+                window.center().open();
+            });
         }
     }
 
-    function cancelUserEdit(e) {
+    // Create
+    function Window_Creation_Cancel() {
+        $('#Window_Creation').data('tWindow').close();
+    }
+
+    function Window_Creation_OnClose() {
+        $('#Content_Creation').empty();
+    }
+
+    // Delete
+    function Window_Deletion_Cancel() {
+        $('#Window_Deletion').data('tWindow').close();
+    }
+
+    function Window_Deletion_OnClose() {
+        $('#Content_Deletion').empty();
+    }
+
+    // Details
+    function TabStrip_Details_OnSelect(e, userID) {
+        var tab = $(e.item);
+
+        switch (tab.index()) {
+            case 0:
+                $.get('@Url.Action("UserInfo", "Users")', { Id: userID }, function (data) {
+                    $('#Content_UserInfo').html(data);
+                });
+                break;
+
+            case 1:
+                $.get('@Url.Action("Membership", "Users")', { Id: userID }, function (data) {
+                    $('#Content_Membership').html(data);
+                });
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    function TabStrip_UserInfo_CancelEdit(e) {
         $.get('@Url.Action("UserInfo", "Users")', { Id: e }, function (data) {
-            $('#Window_UserInfo').html(data);
+                $('#Content_UserInfo').html(data);
+            });
+        }
+
+        function TabStrip_UserInfo_Edit(e) {
+            $.get('@Url.Action("UserEdit", "Users")', { Id: e }, function (data) {
+            $('#Content_UserInfo').html(data);
         });
     }
 
-    function editUserInfo(e) {
-        $.get('@Url.Action("UserEdit", "Users")', { Id: e }, function (data) {
-            $('#Window_UserInfo').html(data);
-        });
+    function Window_Details_OnClose() {
+        $('#Content_Details').empty();
+    }
+
+    // Info
+    function Window_Info_Confirm(e) {
+        switch (e) {
+            case "Window_Deletion":
+                var windowDelete = $('#Window_Deletion').data('tWindow');
+                windowDelete.close();
+                break;
+
+            case "Window_Details":
+                var windowDetails = $('#Window_Details').data('tWindow');
+                windowDetails.close();
+                break;
+
+            case "Window_Creation":
+                var windowCreation = $('#Window_Creation').data('tWindow');
+                windowCreation.close();
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    // Membership
+    function setMembership(value, userid, roleid) {
+        if (value) {
+            $.post('@Url.Action("AddUserToRole", "Users")', { UserId: userid, RoleId: roleid });
+        } else {
+            $.post('@Url.Action("RemoveUserFromRole", "Users")', { UserId: userid, RoleId: roleid });
+        }
     }
 
 </script>

@@ -4,16 +4,30 @@
 @model long
 
 @(Html.Telerik().TabStrip()
-    .Name("tabstripDetails")
+    .Name("TabStrip_Details")
     .Items(items =>
     {
         items.Add()
             .Text("User Info")
-            .LoadContentFrom("UserInfo", "Users", new { Id = (long)Model });
-
-        items.Add()
-        .Text("Membership")
-        .LoadContentFrom("Membership", "Users", new { Id = (long)Model });
+            .Content(@<text>
+                <div id="Content_UserInfo"></div>
+            </text>)
+            .Selected(true);
+    
+    items.Add()
+            .Text("Membership")
+            .Content(@<text>
+                <div id="Content_Membership"></div>
+            </text>);
+    
+    items.Add()
+            .Text("Feature Permissions")
+            .Enabled(false)
+            .Content(@<text>
+                <div id="Content_FeaturePermissions"></div>
+            </text>);
     })
-    .SelectedIndex(0)
+    .ClientEvents(clientEvents => clientEvents
+        .OnSelect("function(e) { TabStrip_Details_OnSelect.call(this,e," + Model + "); }")
+    )
 )
