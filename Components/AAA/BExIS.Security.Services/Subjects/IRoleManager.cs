@@ -14,19 +14,22 @@ namespace BExIS.Security.Services.Subjects
         #region Methods
 
         // A
-        bool AddUserToRole(User user, Role role);
+        int AddUserToRole(string userName, string roleName);
+        int AddUserToRole(Int64 userId, Int64 roleId);
 
         // C
-        Role Create(string roleName, string description, out RoleCreateStatus status);
+        Role CreateRole(string roleName, string description, out RoleCreateStatus status);
 
         // D
-        bool Delete(Role role);
+        bool DeleteRoleByName(string roleName);
+        bool DeleteRoleById(Int64 id);
 
         // E
+        bool ExistsRoleId(Int64 id);
         bool ExistsRoleName(string roleName);
 
         // F
-        IQueryable<User> FindUsersInRole(Role role, string userNameToMatch); 
+        IQueryable<User> FindUsersInRole(string roleName, string userNameToMatch); 
 
         // G
         IQueryable<Role> GetAllRoles();
@@ -34,18 +37,23 @@ namespace BExIS.Security.Services.Subjects
         Role GetRoleByName(string roleName);
         Role GetRoleById(Int64 id);
 
-        IQueryable<Role> GetRolesFromUser(User user);
+        string GetRoleNameById(Int64 id);
 
-        IQueryable<User> GetUsersFromRole(Role role);
+        IQueryable<Role> GetRolesFromUser(string userName);
+
+        IQueryable<User> GetUsersFromRole(string roleName);
 
         // I
-        bool IsUserInRole(User user, Role role);
+        bool IsRoleInUse(string roleName);
+
+        bool IsUserInRole(string userName, string roleName);
 
         // R
-        bool RemoveUserFromRole(User user, Role role);
+        int RemoveUserFromRole(string userName, string roleName);
+        int RemoveUserFromRole(Int64 userId, Int64 roleId);
 
         // U
-        Role Update(Role role);
+        Role UpdateRole(Role role);
 
         #endregion
     }

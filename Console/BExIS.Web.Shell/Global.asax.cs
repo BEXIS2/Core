@@ -20,7 +20,9 @@ namespace BExIS.Web.Shell
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
             filters.Add(new PersistenceContextProviderAttribute());
+#if !DEBUG
             filters.Add(new AuthorizationDelegationFilter(new IsAuthorizedDelegate(AuthorizationDelegationImplementor.CheckAuthorization)));
+#endif
             filters.Add(new HandleErrorAttribute());
         }
 

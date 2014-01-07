@@ -63,13 +63,13 @@
     <Compile Include="Security\PermissionCreateStatus.cs" />
     <Compile Include="Subjects\IRoleManager.cs" />
     <Compile Include="Security\ISecurityService.cs" />
+    <Compile Include="Subjects\ISubjectManager.cs" />
     <Compile Include="Subjects\IUserManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Subjects\RoleCreateStatus.cs" />
-    <Compile Include="Subjects\RoleManager.cs" />
     <Compile Include="Security\SecurityService.cs" />
+    <Compile Include="Subjects\SubjectManager.cs" />
     <Compile Include="Subjects\UserCreateStatus.cs" />
-    <Compile Include="Subjects\UserManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BExIS.Security.Entities\BExIS.Security.Entities.csproj">

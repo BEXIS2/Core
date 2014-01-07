@@ -19,7 +19,7 @@
     <property name="Name" type="String" />
 
     <!-- Mapping Subject Properties -->
-    <set name="Permissions" inverse="true" cascade="save-update" lazy="true">
+    <set name="Permissions" inverse="true" cascade="all" lazy="true">
       <key column="SubjectRef"/>
       <one-to-many class="BExIS.Security.Entities.Security.Permission, BExIS.Security.Entities" />
     </set>

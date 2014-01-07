@@ -36,27 +36,31 @@ namespace BExIS.DCM.UploadWizard
 
             foreach (DataTuple newDt in newDatatuples)
             {
-                Dictionary<long, string> PkValues = GetPrimaryKeyValues(newDt, primaryKeys);
-
-                bool exist = false;
-
-                foreach (DataTuple sourceDt in datatuplesSource)
+                if (!IsEmpty(newDt))
                 {
-                    if (SameDatatuple(sourceDt, PkValues))
+                    Dictionary<long, string> PkValues = GetPrimaryKeyValues(newDt, primaryKeys);
+
+                    bool exist = false;
+
+                    foreach (DataTuple sourceDt in datatuplesSource)
                     {
-                        // check for edit
-                        exist = true;
-                        if (!Equal(newDt, sourceDt))
+                        if (SameDatatuple(sourceDt, PkValues))
                         {
-                            editDtList.Add(Merge(newDt, sourceDt));
+                            // check for edit
+                            exist = true;
+                            if (!Equal(newDt, sourceDt))
+                            {
+                                editDtList.Add(Merge(newDt, sourceDt));
+                            }
+
                         }
-                        
+
                     }
 
-                }
+                    if (!exist)
+                        newDtList.Add(newDt);
 
-                if (!exist)
-                    newDtList.Add(newDt);
+                }
             }
             //}
 
@@ -67,6 +71,16 @@ namespace BExIS.DCM.UploadWizard
 
             return data;
 
+        }
+
+        private static bool IsEmpty(DataTuple dataTuple)
+        {
+            foreach(VariableValue variableValue in dataTuple.VariableValues)
+            {
+                if (variableValue.Value!=null) return false;
+            }
+
+            return true;
         }
 
         private static DataTuple Merge(DataTuple newDatatuple, DataTuple sourceDatatuple)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Xml;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -128,7 +129,6 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                         }
                     }
                     ExcelTemplateProvider provider = new ExcelTemplateProvider(templateName);
-                    provider.deleteTemplate(DS.Id);
                     DS.Name = DSDM.dataStructure.Name;
                     DS.Description = DSDM.dataStructure.Description;
                     DSM.UpdateStructuredDataStructure(DS);
@@ -303,6 +303,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             {
                 DataStructureManager DSM = new DataStructureManager();
                 Variable var = DSM.VariableRepo.Get(id);
+                name = cutSpaces(name);
                 var.Label = name;
                 DSM.UpdateStructuredDataStructure(var.DataStructure);
                 
@@ -347,8 +348,19 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
                 ExcelTemplateProvider provider = new ExcelTemplateProvider(templateName);
                 provider.CreateTemplate(id);
-                string filename = DSDM.dataStructure.Name + ".xlsm";
-                return File(Path.Combine(AppConfiguration.WorkspaceRootPath, "temp","RPM", filename), "application/xlsx", "Template_" + filename);
+                string path = "";
+
+                XmlNode resources = DSDM.dataStructure.TemplatePaths.FirstChild;
+
+                XmlNodeList resource = resources.ChildNodes;
+
+                foreach (XmlNode x in resource)
+                {
+                    if (x.Attributes.GetNamedItem("Type").Value == "Excel")
+                        path = x.Attributes.GetNamedItem("Path").Value;
+                    
+                }
+                return File(Path.Combine(AppConfiguration.DataPath, path), "application/xlsm", "Template_" + DSDM.dataStructure.Name + ".xlsm");
             }
             return View("DataStructureDesigner", DSDM);
         }
@@ -383,13 +395,19 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
         public ActionResult editUnit(Unit Model, string parent, long id, string measurementSystem, long[] checkedRecords)
         {
+            Model.Name = cutSpaces(Model.Name);
+            Model.Abbreviation = cutSpaces(Model.Abbreviation);
+            Model.Description = cutSpaces(Model.Description);
+            Model.Dimension = cutSpaces(Model.Dimension);
+
+            List<Unit> unitList = GetUnitRepo();
             if (id == 0)
             {
                 if ((Model.Name != "" && Model.Name != null) && (Model.Abbreviation!= "" && Model.Abbreviation != null))
                 {
-                    List<Unit> unitList = GetUnitRepo();
-                    bool nameNotExist = unitList.Where(p => p.Name.Equals(Model.Name)).Count().Equals(0);
-                    bool abbreviationNotExist = unitList.Where(p => p.Abbreviation.Equals(Model.Abbreviation)).Count().Equals(0);
+                    
+                    bool nameNotExist = unitList.Where(p => p.Name.ToLower().Equals(Model.Name.ToLower())).Count().Equals(0);
+                    bool abbreviationNotExist = unitList.Where(p => p.Abbreviation.ToLower().Equals(Model.Abbreviation.ToLower())).Count().Equals(0);
                     if (nameNotExist && abbreviationNotExist)
                     {
                         foreach (MeasurementSystem msCheck in Enum.GetValues(typeof(MeasurementSystem)))
@@ -418,34 +436,55 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             }
             else
             {
-                IList<Unit> unitList = GetUnitRepo();
-                Unit unit = unitList.Where(p => p.Id.Equals(id)).ToList().First();
-                unit.Name = Model.Name;
-                unit.Description = Model.Description;
-                unit.Abbreviation = Model.Abbreviation;
-                unit.Dimension = Model.Dimension;
-                foreach (MeasurementSystem msCheck in Enum.GetValues(typeof(MeasurementSystem)))
+                if ((Model.Name != "" && Model.Name != null) && (Model.Abbreviation != "" && Model.Abbreviation != null))
                 {
-                    if (msCheck.ToString().Equals(measurementSystem))
-                    {
-                        unit.MeasurementSystem = msCheck;
-                    }
-                }
-                UnitManager UM = new UnitManager();
-                UM.Update(unit);
+                    Unit tempUnitByName = new Unit();
+                    Unit tempUnitByAbbreviation = new Unit();
 
-                unitList = GetUnitRepo();
-                unit = unitList.Where(p => p.Id.Equals(id)).ToList().First();
-                IList<DataType> dataTypeList = GetDataTypeRepo().Get().ToList();
-                if (checkedRecords != null)
-                {
-                    foreach (long dt in checkedRecords)
+                    bool nameNotExist = unitList.Where(p => p.Name.ToLower().Equals(Model.Name.ToLower())).Count().Equals(0);
+                    bool abbreviationNotExist = unitList.Where(p => p.Abbreviation.ToLower().Equals(Model.Abbreviation.ToLower())).Count().Equals(0);
+                    if (!nameNotExist)
+                        tempUnitByName = unitList.Where(p => p.Name.Equals(Model.Name)).ToList().First();
+                    if (!abbreviationNotExist)
+                        tempUnitByAbbreviation = unitList.Where(p => p.Abbreviation.Equals(Model.Abbreviation)).ToList().First();
+
+
+
+                    if ((nameNotExist && abbreviationNotExist) || (tempUnitByName.Id == id && tempUnitByAbbreviation.Id == id) || (tempUnitByName.Id == id && abbreviationNotExist) || (tempUnitByAbbreviation.Id == id && nameNotExist))
                     {
-                        DataType dataType = dataTypeList.Where(p => p.Id.Equals(dt)).ToList().First();
-                        UM.AddAssociatedDataType(unit, dataType);
+                        Unit unit = unitList.Where(p => p.Id.Equals(id)).ToList().First();
+                        if (!(unit.DataContainers.Count() > 0))
+                        {
+                            unit.Name = Model.Name;
+                            unit.Description = Model.Description;
+                            unit.Abbreviation = Model.Abbreviation;
+                            unit.Dimension = Model.Dimension;
+                            foreach (MeasurementSystem msCheck in Enum.GetValues(typeof(MeasurementSystem)))
+                            {
+                                if (msCheck.ToString().Equals(measurementSystem))
+                                {
+                                    unit.MeasurementSystem = msCheck;
+                                }
+                            }
+                            UnitManager UM = new UnitManager();
+                            UM.Update(unit);
+
+                            unitList = GetUnitRepo();
+                            unit = unitList.Where(p => p.Id.Equals(id)).ToList().First();
+                            IList<DataType> dataTypeList = GetDataTypeRepo().Get().ToList();
+                            if (checkedRecords != null)
+                            {
+                                foreach (long dt in checkedRecords)
+                                {
+                                    DataType dataType = dataTypeList.Where(p => p.Id.Equals(dt)).ToList().First();
+                                    UM.AddAssociatedDataType(unit, dataType);
+                                }
+                            }
+                        }
                     }
                 }
             }
+
             Session["Window"] = false;
             Session["Unit"] = new Unit();
             return RedirectToAction(parent);
@@ -622,8 +661,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             if (Session["Window"] == null)
                 Session["Window"] = false;
 
-            List<DataType> DataTypeList = GetDataTypeRepo().Get().ToList();
-            return View(DataTypeList);
+            return View();
         }
 
         public ActionResult editDataType(DataType Model, long id,string systemType, string parent)
@@ -637,12 +675,14 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                     typecode = tc;
             } 
 
+            Model.Name = cutSpaces(Model.Name);
+            Model.Description = cutSpaces(Model.Description);
 
             if (id == 0)
             {
                 if (Model.Name != "" && Model.Name != null)
                 {
-                    bool nameNotExist = DataTypeList.Where(p => p.Name.Equals(Model.Name)).Count().Equals(0);
+                    bool nameNotExist = DataTypeList.Where(p => p.Name.ToLower().Equals(Model.Name.ToLower())).Count().Equals(0);
                     if (nameNotExist)
                     {
                         DataTypeManager DTM = new DataTypeManager();
@@ -652,12 +692,27 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             }
             else
             {
-                DataType dataType = DataTypeList.Where(p => p.Id.Equals(id)).ToList().First();
-                DataTypeManager DTM = new DataTypeManager();
-                dataType.Name = Model.Name;
-                dataType.Description = Model.Description;
-                dataType.SystemType = typecode.ToString();
-                DTM.Update(dataType);
+                if (Model.Name != "" && Model.Name != null)
+                {
+                    DataType tempDataType = new DataType();
+                    bool nameNotExist = DataTypeList.Where(p => p.Name.ToLower().Equals(Model.Name.ToLower())).Count().Equals(0);
+
+                    if (!nameNotExist)
+                        tempDataType = DataTypeList.Where(p => p.Name.Equals(Model.Name)).ToList().First();
+
+                    if (nameNotExist || id == tempDataType.Id)
+                    {
+                        DataType dataType = DataTypeList.Where(p => p.Id.Equals(id)).ToList().First();
+                        if (!(dataType.DataContainers.Count() > 0))
+                        {
+                            DataTypeManager DTM = new DataTypeManager();
+                            dataType.Name = Model.Name;
+                            dataType.Description = Model.Description;
+                            dataType.SystemType = typecode.ToString();
+                            DTM.Update(dataType);
+                        }
+                    }
+                }
             }
             Session["Window"] = false;
             Session["DataType"] = new DataType();
@@ -689,8 +744,11 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             {
                 IList<DataType> DataTypeList = GetDataTypeRepo().Get().ToList();
                 DataType dataType = DataTypeList.Where(p => p.Id.Equals(id)).ToList().First();
-                DataTypeManager DTM = new DataTypeManager();
-                DTM.Delete(dataType);
+                if (dataType.DataContainers.Count == 0)
+                {
+                    DataTypeManager DTM = new DataTypeManager();
+                    DTM.Delete(dataType);
+                }               
             }
             return RedirectToAction("DataTypeManager");
         }
@@ -714,41 +772,62 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             if (Session["Window"] == null)
                 Session["Window"] = false;
 
-            return View(GetAttRepo());
+            return View();
         }
 
         public ActionResult editAttribute(DataAttribute Model, long id, long unitId, long dataTypeId, string parent)
         {
             IList<DataAttribute> DataAttributeList = GetAttRepo();
-          
+
+            Model.ShortName = cutSpaces(Model.ShortName);
+            Model.Name = cutSpaces(Model.Name);
+            Model.Description = cutSpaces(Model.Description);
+
             if (id == 0)
             {
-                bool nameNotExist = DataAttributeList.Where(p => p.Name.Equals(Model.Name)).Count().Equals(0);
-                if (nameNotExist)
+                if (Model.Name != "" && Model.Name != null)
                 {
-                    UnitManager UM = new UnitManager();
-                    Unit unit =  UM.Repo.Get(unitId);
-                    DataTypeManager DTM = new DataTypeManager();
-                    DataType dataType = DTM.Repo.Get(dataTypeId);
-                    DataContainerManager DAM = new DataContainerManager();
+                    bool nameNotExist = DataAttributeList.Where(p => p.Name.ToLower().Equals(Model.Name.ToLower())).Count().Equals(0);
+                    if (nameNotExist)
+                    {
+                        UnitManager UM = new UnitManager();
+                        Unit unit = UM.Repo.Get(unitId);
+                        DataTypeManager DTM = new DataTypeManager();
+                        DataType dataType = DTM.Repo.Get(dataTypeId);
+                        DataContainerManager DAM = new DataContainerManager();
 
-                    DataAttribute temp = new DataAttribute();
-                    DAM.CreateDataAttribute(Model.ShortName, Model.Name,Model.Description,false,false, "",MeasurementScale.Categorial,DataContainerType.ReferenceType,"",dataType,unit,null, null,null,null, null, null);
+                        DataAttribute temp = new DataAttribute();
+                        DAM.CreateDataAttribute(Model.ShortName, Model.Name, Model.Description, false, false, "", MeasurementScale.Categorial, DataContainerType.ReferenceType, "", dataType, unit, null, null, null, null, null, null);
+                    }
                 }
             }
             else
             {
-                DataAttribute dataAttribute = DataAttributeList.Where(p => p.Id.Equals(id)).ToList().First();
-                DataContainerManager DAM = new DataContainerManager();
-                dataAttribute.Name = Model.Name;
-                dataAttribute.ShortName = Model.ShortName;
-                dataAttribute.Description = Model.Description;
-                UnitManager UM = new UnitManager();
-                dataAttribute.Unit = UM.Repo.Get(unitId);
-                DataTypeManager DTM = new DataTypeManager();
-                dataAttribute.DataType = DTM.Repo.Get(dataTypeId);
-                DAM.UpdateDataAttribute(dataAttribute);
-                
+                if (Model.Name != "" && Model.Name != null)
+                {
+                    DataAttribute tempAttribute = new DataAttribute();
+
+                    bool nameNotExist = DataAttributeList.Where(p => p.Name.ToLower().Equals(Model.Name.ToLower())).Count().Equals(0);
+                    if (!nameNotExist)
+                        tempAttribute = DataAttributeList.Where(p => p.Name.Equals(Model.Name)).ToList().First();
+
+                    if (nameNotExist || tempAttribute.Id == id)
+                    {
+                        DataAttribute dataAttribute = DataAttributeList.Where(p => p.Id.Equals(id)).ToList().First();
+                        if (!attributeInUse(dataAttribute))
+                        {
+                            DataContainerManager DAM = new DataContainerManager();
+                            dataAttribute.Name = cutSpaces(Model.Name);
+                            dataAttribute.ShortName = Model.ShortName;
+                            dataAttribute.Description = Model.Description;
+                            UnitManager UM = new UnitManager();
+                            dataAttribute.Unit = UM.Repo.Get(unitId);
+                            DataTypeManager DTM = new DataTypeManager();
+                            dataAttribute.DataType = DTM.Repo.Get(dataTypeId);
+                            DAM.UpdateDataAttribute(dataAttribute);
+                        }
+                    }
+                }
             }
             Session["Window"] = false;
             Session["DataType"] = new DataType();
@@ -795,6 +874,12 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                return false;
            else
                return true;          
+        }
+
+        private string cutSpaces(string name)
+        {
+            name = name.Trim();
+            return (name);
         }
 
     }

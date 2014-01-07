@@ -117,7 +117,7 @@
     function EditSearchAttribute_onClose() {
         $('.t-state-selected[title*="Edit"]').removeClass('t-state-selected');
 
-        $.post('@Url.Action("CloseWindow", "Home", new RouteValueDictionary { { "area", "Search" } })', function (response) {
+            $.post('@Url.Action("CloseWindow", "Home", new RouteValueDictionary { { "area", "Search" } })', function (response) {
 
         })
     }

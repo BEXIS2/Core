@@ -1,4 +1,5 @@
 ﻿@using Telerik.Web.Mvc.UI
+@using System.Linq;
 @using BExIS.Dlm.Entities.DataStructure
 @using BExIS.Dlm.Services.DataStructure
 @model BExIS.Dlm.Entities.DataStructure.DataAttribute
@@ -10,10 +11,9 @@
 @{ 
     UnitManager UM = new UnitManager();
     List<Unit> unitList = UM.Repo.Get().ToList();
-
+    
     DataTypeManager DTM = new DataTypeManager();
-    List<DataType> dataTypeList = DTM.Repo.Get().ToList();
-     
+    List<DataType> dataTypeList = DTM.Repo.Get().ToList(); 
 }
 <div class="planingPartialDiv" id="createUnit">
 @using (Html.BeginForm("editAttribute", "Home", new { area = "RPM" }))

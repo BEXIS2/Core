@@ -34,17 +34,13 @@
                 But all data files within one dataset must be of the same data structure, i.e. the number of variables and their 
                 properties must be identical in each file. 
             </p>
-            <p>
-                With the current BEXIS version you are able to create a new dataset for each data file. 
-                Adding data to existing datasets will be available with the next version.
-            </p>
         </div>
 
         <div class="uploadWizardStep_Content stepper">
 
             <table>
                 <tr><td><button id="CreateDatasetButton" title="Create new dataset" >Create</button></td><td>Create a new dataset</td></tr>
-                <tr><td><button id="SelectDatasetButton" title="Add file to a existing dataset" >Add</button></td><td> Add file to a existing dataset.</td></tr>
+                <tr><td><button id="SelectDatasetButton" title="Add file to an existing dataset" >Add</button></td><td> Add file to an existing dataset.</td></tr>
             </table>
            
         </div>
@@ -103,7 +99,7 @@
 @(Html.Telerik().Window()
     .Name("CreateDatasetWindow")
     .Visible(false)
-    .Width(300)
+    .Width(500)
     .Height(100)
     .Title("Create new dataset")
     .Modal(true)
@@ -127,6 +123,7 @@
 
         var datasetwindow = $("#DatasetWindow").data("tWindow");
         datasetwindow.center().open();
+      
          
     })
 
@@ -146,6 +143,7 @@
         //alert("close");
         //document.getElementById("selectedValue").innerHTML = "You have selected Dataset : " + SelectedDatasetId;
         document.getElementById("selectedValue2").innerHTML = "You have selected Dataset : " + SelectedDatasetTitle;
+        $('.uploadWizardStep_Error').empty();
      
     }
 
@@ -155,7 +153,7 @@
         //alert("close");
         //document.getElementById("selectedValue").innerHTML = "You have selected Dataset : " + SelectedDatasetId;
         document.getElementById("selectedValue2").innerHTML = "You have selected Dataset : " + SelectedDatasetTitle;
-
+        $('.uploadWizardStep_Error').empty();
     }
 
     //function closeCreateDatasetWindow() {
@@ -170,7 +168,7 @@
     function resizeOnRefresh() {
         var winContent = $('#DatasetWindow .t-window-content');
         winContent.css("height", "");
-        winContent.css("width", "");
+        //winContent.css("width", "");
     }
 
     function RefreshCreateDatasetWindow() {

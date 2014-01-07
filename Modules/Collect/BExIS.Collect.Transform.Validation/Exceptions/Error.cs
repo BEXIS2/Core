@@ -14,6 +14,7 @@ namespace BExIS.DCM.Transform.Validation.Exceptions
         public Error(ErrorType errorType, string issue)
         {
             _issue = issue;
+            _errorType = errorType;
         }
 
         public Error(ErrorType errorType, string issue, string name)

@@ -25,27 +25,29 @@ namespace BExIS.Ext.Services
             publics.Add("Auth.Account");
             publics.Add("Site.Nav");
             publics.Add("Shell.Home");
+            publics.Add("Auth.Users.ValidateUserName");
+            publics.Add("Auth.Users.ValidateEmail");
+            publics.Add("Auth.Users.ErrorCodeToErrorMessage");
+            publics.Add("Auth.Users.ErrorCodeToErrorKey");
+            
 
-            if (!publics.Contains(areaName + "." + controllerName))
-            {
-                TaskContext taskContext = new TaskContext()
-                {
-                    AreaName = areaName,
-                    ControllerName = controllerName,
-                    ActionName = "*"
-                };
-
-                UserManager userManager = new UserManager();
-                User user = userManager.GetUserByName(userName);
-
-                if (user == null)
+            if (!publics.Contains(areaName + "." + controllerName) && !publics.Contains(areaName + "." + controllerName + "." + actionName))
+            {              
+                if (string.IsNullOrWhiteSpace(userName) || !isAuthenticated)
                 {
                     throw new UnauthorizedAccessException();
                 }
                 else
                 {
-                    SecurityService securityService = new SecurityService();
-                    securityService.HasTaskAccess(user, taskContext);
+                    TaskContext taskContext = new TaskContext()
+                    {
+                        AreaName = areaName,
+                        ControllerName = controllerName,
+                        ActionName = "*"
+                    };
+
+                    SecurityService securityService = new SecurityService();               
+                    securityService.HasTaskAccess(userName, taskContext);
                 }
             }
         }

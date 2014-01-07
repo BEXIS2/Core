@@ -23,14 +23,19 @@ namespace BExIS.DCM.Transform.Validation.DSValidation
             {
                 foreach (VariableIdentifier o in checkList)
                 {
-                    var test = sourceList.Select(p => p.name.Equals(o.name)).Contains(true);
-                    if (!test) errors.Add(new Error(ErrorType.Datastructure, "Variable from file not exist in datastructure", o.name));
+                    var test = false;
+                    if(o.id==0)
+                        test = sourceList.Select(p => p.name.Equals(o.name)).Contains(true);
+                    else
+                        test = sourceList.Select(p => p.id.Equals(o.id)).Contains(true);
+
+                    if (!test) errors.Add(new Error(ErrorType.Datastructure, "A variable of the data file does not exist in the data structure", o.name));
 
                 }
             }
             else
             {
-                errors.Add(new Error(ErrorType.Datastructure, "Different number of variables", sourceListName));
+                errors.Add(new Error(ErrorType.Datastructure, "Datastructure does not fit. The number of variables in file do not match", sourceListName));
                 return errors;
             }
 

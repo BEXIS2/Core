@@ -1222,12 +1222,14 @@ namespace BExIS.Dlm.Services.Data
 
         #region Content Descriptor
 
+        // Rename the function to Add... 
         public ContentDescriptor CreateContentDescriptor(string name, string mimeType, string uri, Int32 orderNo, DatasetVersion datasetVersion)
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(name));
             Contract.Requires(!string.IsNullOrWhiteSpace(mimeType));
             Contract.Requires(!string.IsNullOrWhiteSpace(uri));
             Contract.Requires(datasetVersion != null);
+            // check whether is it needed that the dataset is checked out to add descriptor
             Contract.Ensures(Contract.Result<ContentDescriptor>() != null);
 
             ContentDescriptor e = new ContentDescriptor()

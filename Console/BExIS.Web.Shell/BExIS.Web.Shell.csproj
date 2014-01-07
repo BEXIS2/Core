@@ -212,6 +212,7 @@
     <Compile Include="Areas\DCM\Models\ChooseDatasetViewModel.cs" />
     <Compile Include="Areas\DCM\Models\CreateDatasetViewModel.cs" />
     <Compile Include="Areas\DCM\Models\FileInfoModel.cs" />
+    <Compile Include="Areas\DCM\Models\FinishUploadModel.cs" />
     <Compile Include="Areas\DCM\Models\GetFileInformationModel.cs" />
     <Compile Include="Areas\DCM\Models\ListViewItem.cs" />
     <Compile Include="Areas\DCM\Models\PrimaryKeyViewModel.cs" />
@@ -807,7 +808,6 @@
     <Content Include="Areas\Auth\Views\Users\_UsersPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\DCM\Views\Home\FinishUpload.cshtml" />
     <Content Include="Areas\DCM\Views\Home\Index.cshtml" />
     <Content Include="Areas\DCM\Views\Home\Step1.cshtml" />
     <Content Include="Areas\DCM\Views\Home\Step3.cshtml" />
@@ -915,6 +915,7 @@
     <Content Include="Areas\DCM\Views\Home\Step4.cshtml" />
     <Content Include="Areas\Search\Views\Home\ReIndexSearch.cshtml" />
     <Content Include="Areas\Auth\Views\Users\_InfoPartial.cshtml" />
+    <Content Include="Areas\DCM\Views\Home\FinishUpload.cshtml" />
     <None Include="Properties\PublishProfiles\BEXIS2 DEV.pubxml" />
     <None Include="Properties\PublishProfiles\BEXIS2.pubxml" />
   </ItemGroup>
@@ -972,9 +973,10 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>4137</DevelopmentServerPort>
+          <DevelopmentServerPort>2178</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:4187/</IISUrl>
+          <IISUrl>
+          </IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

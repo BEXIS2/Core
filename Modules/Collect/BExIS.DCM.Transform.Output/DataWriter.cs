@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 using BExIS.DCM.Transform.Validation.DSValidation;
 using BExIS.DCM.Transform.Validation.Exceptions;
 using BExIS.Dlm.Entities.DataStructure;
@@ -53,7 +54,7 @@ namespace BExIS.DCM.Transform.Output
                 return null;
         }
 
-        public string GetStorePath(long datasetId, long datasetVersionId, string title, string extention)
+        public string GetStorePath(long datasetId, long datasetVersionOrderNr, string title, string extention)
         {
             string dataPath = AppConfiguration.DataPath; //Path.Combine(AppConfiguration.WorkspaceRootPath, "Data");
 
@@ -69,10 +70,17 @@ namespace BExIS.DCM.Transform.Output
                 }
             }
 
-            return Path.Combine(storePath, datasetVersionId.ToString() +"_"+ title + extention);
+            return Path.Combine(storePath,datasetId.ToString()+"_"+datasetVersionOrderNr.ToString() + "_" + title + extention);
         }
 
-        public string GetStorePathOriginalFile(long datasetId, long datasetVersionId, string filename)
+        public string GetDynamicStorePath(long datasetId, long datasetVersionOrderNr, string title, string extention)
+        {
+            string storePath = Path.Combine("Datasets", datasetId.ToString(), "DatasetVersions");
+
+            return Path.Combine(storePath, datasetId.ToString() + "_" + datasetVersionOrderNr.ToString() + "_" + title + extention);
+        }
+
+        public string GetStorePathOriginalFile(long datasetId, long datasetVersionOrderNr, string filename)
         {
             string dataPath = AppConfiguration.DataPath; //Path.Combine(AppConfiguration.WorkspaceRootPath, "Data");
 
@@ -87,20 +95,44 @@ namespace BExIS.DCM.Transform.Output
                     Directory.CreateDirectory(storePath);
                 }
             }
-   
-            return Path.Combine(storePath, datasetVersionId.ToString() + filename);
+
+            return Path.Combine(storePath, datasetId.ToString() + "_" + datasetVersionOrderNr.ToString() + "_" + filename);
+        }
+
+        public string GetDynamicStorePathOriginalFile(long datasetId, long datasetVersionOrderNr, string filename)
+        {
+            //data/datasets/1/1/
+            string storePath = Path.Combine("Datasets", datasetId.ToString());
+            return Path.Combine(storePath, datasetId.ToString() + "_" + datasetVersionOrderNr.ToString() + "_" + filename);
         }
 
         public string GetDataStructureTemplatePath(long dataStructureId, string extention)
         {
             DataStructureManager dataStructureManager = new DataStructureManager();
 
-            DataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataStructureId);
+            StructuredDataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataStructureId);
             string dataStructureTitle = dataStructure.Name;
             // load datastructure from db an get the filepath from this object
 
-            string dataPath = AppConfiguration.DataPath; //Path.Combine(AppConfiguration.WorkspaceRootPath, "Data");
-            return Path.Combine(dataPath, "DataStructure", dataStructureId.ToString(), dataStructureTitle + extention);
+            string path = "";
+
+            if (dataStructure.TemplatePaths != null)
+            {
+                XmlNode resources = dataStructure.TemplatePaths.FirstChild;
+
+                XmlNodeList resource = resources.ChildNodes;
+
+                foreach (XmlNode x in resource)
+                {
+                    if (x.Attributes.GetNamedItem("Type").Value == "Excel")
+                        path = x.Attributes.GetNamedItem("Path").Value;
+                }
+
+
+                //string dataPath = AppConfiguration.DataPath; //Path.Combine(AppConfiguration.WorkspaceRootPath, "Data");
+                return Path.Combine(AppConfiguration.DataPath, path);
+            }
+            return "";
         }
 
         public bool MoveFile(string tempFile, string destinationPath)

@@ -3,14 +3,6 @@
 
 @model List<RoleModel>
 
-<style>
-    .t-window-content
-    {
-       height: auto !important;
-       width: auto !important;
-    }
-</style>
-
 @(Html.Telerik().Grid(Model)
         .Name("Grid_Roles")
         .DataKeys(keys =>
@@ -144,6 +136,7 @@
 
     function Window_Creation_OnClose() {
         $('#Content_Creation').empty();
+        window.location.href = '@Url.Action("Roles", "Roles")';
     }
 
     // Delete
@@ -153,6 +146,7 @@
 
     function Window_Deletion_OnClose() {
         $('#Content_Deletion').empty();
+        window.location.href = '@Url.Action("Roles", "Roles")';
     }
 
     // Details
@@ -162,12 +156,14 @@
         switch (tab.index()) {
             case 0:
                 $.get('@Url.Action("RoleInfo", "Roles")', { Id: roleID }, function (data) {
+                    $('#Content_Membership').empty();
                     $('#Content_RoleInfo').html(data);
                 });
                 break;
 
             case 1:
                 $.get('@Url.Action("Membership", "Roles")', { Id: roleID }, function (data) {
+                    $('#Content_RoleInfo').empty();
                     $('#Content_Membership').html(data);
                 });
                 break;
@@ -191,6 +187,7 @@
 
         function Window_Details_OnClose() {
             $('#Content_Details').empty();
+            window.location.href = '@Url.Action("Roles", "Roles")';
         }
 
     // Info
@@ -219,9 +216,39 @@
     // Membership
     function setMembership(value, userid, roleid) {
         if (value) {
-            $.post('@Url.Action("AddUserToRole", "Roles")', { UserId: userid, RoleId: roleid });
+            $.post('@Url.Action("AddUserToRole", "Roles")', { UserId: userid, RoleId: roleid }, function (e) {
+                if (e == 11) {
+                    alert("The role does not exist anymore.");
+
+                    var windowDetails = $('#Window_Details').data('tWindow');
+                    windowDetails.close();
+                }
+
+                if (e == 12) {
+                    alert("The user does not exist anymore.");
+
+                    $.get('@Url.Action("Membership", "Roles")', { Id: userid }, function (data) {
+                        $('#Content_Membership').html(data);
+                    });
+                }
+            });
         } else {
-            $.post('@Url.Action("RemoveUserFromRole", "Roles")', { UserId: userid, RoleId: roleid });
+            $.post('@Url.Action("RemoveUserFromRole", "Roles")', { UserId: userid, RoleId: roleid }, function (e) {
+                if (e == 11) {
+                    alert("The role does not exist anymore.");
+
+                    var windowDetails = $('#Window_Details').data('tWindow');
+                    windowDetails.close();
+                }
+
+                if (e == 12) {
+                    alert("The user does not exist anymore.");
+
+                    $.get('@Url.Action("Membership", "Roles")', { Id: userid }, function (data) {
+                        $('#Content_Membership').html(data);
+                    });
+                }
+            });
         }
     }
 

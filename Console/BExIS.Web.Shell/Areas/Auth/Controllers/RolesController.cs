@@ -37,13 +37,13 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
             {
                 RoleCreateStatus createStatus;
 
-                RoleManager roleManager = new RoleManager();
+                SubjectManager subjectManager = new SubjectManager();
 
-                roleManager.Create(model.RoleName, model.Description, out createStatus);
+                subjectManager.CreateRole(model.RoleName, model.Description, out createStatus);
 
                 if (createStatus == RoleCreateStatus.Success)
                 {
-                    return PartialView("_InfoPartial", new InfoModel("windowCreation", "The role was successfully created."));
+                    return PartialView("_InfoPartial", new InfoModel("Window_Creation", "The role was successfully created."));
                 }
                 else
                 {
@@ -58,9 +58,9 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
         // Deletion
         public PartialViewResult Delete(long id)
         {
-            RoleManager roleManager = new RoleManager();
+            SubjectManager subjectManager = new SubjectManager();
 
-            Role role = roleManager.GetRoleById(id);
+            Role role = subjectManager.GetRoleById(id);
 
             if (role != null)
             {
@@ -68,23 +68,18 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
             }
             else
             {
-                return PartialView("_InfoPartial", new InfoModel("windowDeletion", "The role does not exist!"));
+                return PartialView("_InfoPartial", new InfoModel("Window_Deletion", "The role does not exist!"));
             }
         }
 
         [HttpPost]
         public PartialViewResult Delete(RoleModel model)
         {
-            RoleManager roleManager = new RoleManager();
+            SubjectManager subjectManager = new SubjectManager();
 
-            Role role = roleManager.GetRoleById(model.Id);
+            subjectManager.DeleteRoleById(model.Id);
 
-            if (role != null)
-            {
-                roleManager.Delete(role);
-            }
-
-            return PartialView("_InfoPartial", new InfoModel("windowDeletion", "The role was successfully deleted."));
+            return PartialView("_InfoPartial", new InfoModel("Window_Deletion", "The role was successfully deleted."));
         }
 
         //
@@ -96,9 +91,9 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
 
         public ActionResult RoleInfo(long id)
         {
-            RoleManager roleManager = new RoleManager();
+            SubjectManager subjectManager = new SubjectManager();
 
-            Role role = roleManager.GetRoleById(id);
+            Role role = subjectManager.GetRoleById(id);
 
             if (role != null)
             {
@@ -106,15 +101,15 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
             }
             else
             {
-                return PartialView("_InfoPartial", new InfoModel("windowDetails", "The role does not exist!"));
+                return PartialView("_InfoPartial", new InfoModel("Window_Details", "The role does not exist!"));
             }
         }
 
         public ActionResult RoleEdit(long id)
         {
-            RoleManager roleManager = new RoleManager();
+            SubjectManager subjectManager = new SubjectManager();
 
-            Role role = roleManager.GetRoleById(id);
+            Role role = subjectManager.GetRoleById(id);
 
             if (role != null)
             {
@@ -122,7 +117,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
             }
             else
             {
-                return PartialView("_InfoPartial", new InfoModel("windowDetails", "The role does not exist!"));
+                return PartialView("_InfoPartial", new InfoModel("Window_Details", "The role does not exist!"));
             }
         }
 
@@ -131,22 +126,22 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
         {
             if (ModelState.IsValid)
             {
-                RoleManager roleManager = new RoleManager();
+                SubjectManager subjectManager = new SubjectManager();
 
-                Role role = roleManager.GetRoleById(model.Id);
+                Role role = subjectManager.GetRoleById(model.Id);
 
                 if (role != null)
                 {
                     role.Name = model.RoleName;
                     role.Description = model.Description;
 
-                    roleManager.Update(role);
+                    subjectManager.UpdateRole(role);
 
                     return PartialView("_RoleInfoPartial", model);
                 }
                 else
                 {
-                    return PartialView("_InfoPartial", new InfoModel("windowDetails", "The role does not exist!"));
+                    return PartialView("_InfoPartial", new InfoModel("Window_Details", "The role does not exist!"));
                 }
             }
 
@@ -157,9 +152,9 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
         // M
         public ActionResult Membership(long id)
         {
-            RoleManager roleManager = new RoleManager();
+            SubjectManager subjectManager = new SubjectManager();
 
-            Role role = roleManager.GetRoleById(id); ;
+            Role role = subjectManager.GetRoleById(id); ;
 
             if (role != null)
             {
@@ -169,68 +164,52 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
             }
             else
             {
-                return PartialView("_InfoPartial", new InfoModel("windowMembership", "The role does not exist!"));
+                return PartialView("_InfoPartial", new InfoModel("Window_Details", "The role does not exist!"));
             }
         }
 
         [GridAction]
         public ActionResult RoleMembership_Select(long id)
         {
-            RoleManager roleManager = new RoleManager();
-            UserManager userManager = new UserManager();
+            SubjectManager subjectManager = new SubjectManager();
 
             // DATA
-            Role role = roleManager.GetRoleById(id);
+            Role role = subjectManager.GetRoleById(id);
 
             List<RoleUserModel> users = new List<RoleUserModel>();
 
             if (role != null)
             {
-                IQueryable<User> data = userManager.GetAllUsers();
+                IQueryable<User> data = subjectManager.GetAllUsers();
 
-                data.ToList().ForEach(u => users.Add(RoleUserModel.Convert(role.Id, u, roleManager.IsUserInRole(u, role))));
+                data.ToList().ForEach(u => users.Add(RoleUserModel.Convert(role.Id, u, subjectManager.IsUserInRole(u.Name, role.Name))));
             }
 
             return View(new GridModel<RoleUserModel> { Data = users });
         }
 
-        public void AddUserToRole(long userId, long roleId)
+        public int AddUserToRole(long userId, long roleId)
         {
-            RoleManager roleManager = new RoleManager();
-            UserManager userManager = new UserManager();
+            SubjectManager subjectManager = new SubjectManager();
 
-            Role role = roleManager.GetRoleById(roleId);
-            User user = userManager.GetUserById(userId);
-
-            if (user != null && role != null)
-            {
-                roleManager.AddUserToRole(user, role);
-            }
-
+            return subjectManager.AddUserToRole(userId, roleId);
         }
 
-        public void RemoveUserFromRole(long userId, long roleId)
+        public int RemoveUserFromRole(long userId, long roleId)
         {
-            RoleManager roleManager = new RoleManager();
-            UserManager userManager = new UserManager();
+            SubjectManager subjectManager = new SubjectManager();
 
-            Role role = roleManager.GetRoleById(roleId);
-            User user = userManager.GetUserById(userId);
-
-            if (user != null && role != null)
-            {
-                roleManager.RemoveUserFromRole(user, role);
-            }
+            return subjectManager.RemoveUserFromRole(userId, roleId);
         }
 
         // R
         [GridAction]
         public ActionResult Roles_Select()
         {
-            RoleManager roleManager = new RoleManager();
+            SubjectManager subjectManager = new SubjectManager();
 
             // DATA
-            IQueryable<Role> data = roleManager.GetAllRoles();
+            IQueryable<Role> data = subjectManager.GetAllRoles();
 
             List<RoleModel> roles = new List<RoleModel>();
             data.ToList().ForEach(r => roles.Add(RoleModel.Convert(r)));
@@ -245,9 +224,9 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
 
         public JsonResult ValidateRoleName(string roleName, long id = 0)
         {
-            RoleManager roleManager = new RoleManager();
+            SubjectManager subjectManager = new SubjectManager(); ;
 
-            Role role = roleManager.GetRoleByName(roleName);
+            Role role = subjectManager.GetRoleByName(roleName);
 
             if (role == null)
             {
@@ -275,6 +254,9 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
                 case RoleCreateStatus.DuplicateRoleName:
                     return "The role name already exists.";
 
+                case RoleCreateStatus.InvalidRoleName:
+                    return "The role name is not valid.";
+
                 default:
                     return "An unknown error occurred. Please verify your entry and try again. If the problem persists, please contact your system administrator.";
             }
@@ -285,6 +267,9 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
             switch (createStatus)
             {
                 case RoleCreateStatus.DuplicateRoleName:
+                    return "RoleName";
+
+                case RoleCreateStatus.InvalidRoleName:
                     return "RoleName";
 
                 default:

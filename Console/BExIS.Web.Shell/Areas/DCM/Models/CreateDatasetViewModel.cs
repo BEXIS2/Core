@@ -7,6 +7,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
     public class CreateDatasetViewModel
     {
         [Required(ErrorMessage = "Please enter a title.")]
+        [RegularExpression("^([A-Za-z0-9- ]+)$", ErrorMessage = "The title must consist only of letters, space, numbers or -.")]
         public string Title { get; set; }
 
         [Display(Name = "Dataset Author")]

@@ -33,7 +33,7 @@
       <column name="URI" />
     </property>
 
-    <many-to-one class="DatasetVersion" name="DatasetVersion" column="DatasetVersionRef">      
+    <many-to-one class="DatasetVersion" name="DatasetVersion" column="DatasetVersionRef" not-null="true">      
     </many-to-one>      
     
   </class>

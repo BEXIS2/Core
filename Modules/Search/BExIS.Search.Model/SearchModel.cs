@@ -17,7 +17,8 @@ namespace BExIS.Search.Model
 
         public void UpdateSearchCriteria(string name, string value, SearchComponentBaseType typeOf, bool multiSelect = false, bool range = false, string valueSearchOperation = "OR")
         {
-            if (value != "" && value !=null)
+            //if (value != "" && value != null)
+            if (value != null)
             {
                 this.CriteriaComponent.Update(this.SearchComponent.GetSearchComponent(name, typeOf), value, multiSelect, valueSearchOperation);
             }

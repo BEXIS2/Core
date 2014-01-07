@@ -38,13 +38,13 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
             {
                 UserCreateStatus createStatus;
 
-                UserManager userManager = new UserManager();
+                SubjectManager subjectManager = new SubjectManager();
 
-                userManager.Create(model.UserName, model.Email, model.Password, model.SecurityQuestion, model.SecurityAnswer, out createStatus);
+                subjectManager.CreateUser(model.UserName, model.Email, model.Password, model.SecurityQuestion, model.SecurityAnswer, out createStatus);
 
                 if (createStatus == UserCreateStatus.Success)
                 {
-                    return PartialView("_InfoPartial", new InfoModel("windowCreation", "The user was successfully created."));
+                    return PartialView("_InfoPartial", new InfoModel("Window_Creation", "The user was successfully created."));
                 }
                 else
                 {
@@ -59,9 +59,9 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
         // Delete
         public ActionResult Delete(long id)
         {
-            UserManager userManager = new UserManager();
+            SubjectManager subjectManager = new SubjectManager();
 
-            User user = userManager.GetUserById(id);
+            User user = subjectManager.GetUserById(id);
 
             if (user != null)
             {
@@ -69,23 +69,18 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
             }
             else
             {
-                return PartialView("_InfoPartial", new InfoModel("windowDeletion", "The user does not exist!"));
+                return PartialView("_InfoPartial", new InfoModel("Window_Deletion", "The user does not exist!"));
             }
         }
 
         [HttpPost]
         public ActionResult Delete(UserModel model)
         {
-            UserManager userManager = new UserManager();
+            SubjectManager subjectManager = new SubjectManager();
 
-            User user = userManager.GetUserById(model.Id);
+            subjectManager.DeleteUserById(model.Id);
 
-            if (user != null)
-            {
-                userManager.Delete(user);
-            }
-
-            return PartialView("_InfoPartial", new InfoModel("windowDeletion", "The user was successfully deleted."));
+            return PartialView("_InfoPartial", new InfoModel("Window_Deletion", "The user was successfully deleted."));
         }
 
         //
@@ -97,9 +92,9 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
 
         public ActionResult UserInfo(long id)
         {
-            UserManager userManager = new UserManager();
+            SubjectManager subjectManager = new SubjectManager();
 
-            User user = userManager.GetUserById(id);
+            User user = subjectManager.GetUserById(id);
 
             if (user != null)
             {
@@ -107,15 +102,15 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
             }
             else
             {
-                return PartialView("_InfoPartial", new InfoModel("windowDetails", "The user does not exist!"));
+                return PartialView("_InfoPartial", new InfoModel("Window_Details", "The user does not exist!"));
             }
         }
 
         public ActionResult UserEdit(long id)
         {
-            UserManager userManager = new UserManager();
+            SubjectManager subjectManager = new SubjectManager();
 
-            User user = userManager.GetUserById(id);
+            User user = subjectManager.GetUserById(id);
 
             if (user != null)
             {
@@ -123,7 +118,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
             }
             else
             {
-                return PartialView("_InfoPartial", new InfoModel("windowDetails", "The user does not exist!"));
+                return PartialView("_InfoPartial", new InfoModel("Window_Details", "The user does not exist!"));
             }
         }
 
@@ -132,21 +127,21 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
         {
             if (ModelState.IsValid)
             {
-                UserManager userManager = new UserManager();
+                SubjectManager subjectManager = new SubjectManager();
 
-                User user = userManager.GetUserById(model.Id);
+                User user = subjectManager.GetUserById(model.Id);
 
                 if (user != null)
                 {
                     user.Email = model.Email;
 
-                    userManager.Update(user);
+                    subjectManager.UpdateUser(user);
 
                     return PartialView("_UserInfoPartial", model);
                 }
                 else
                 {
-                    return PartialView("_InfoPartial", new InfoModel("windowDetails", "The user does not exist!"));
+                    return PartialView("_InfoPartial", new InfoModel("Window_Details", "The user does not exist!"));
                 }
             }
 
@@ -156,9 +151,9 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
         // Membership
         public ActionResult Membership(long id)
         {
-            UserManager userManager = new UserManager();
+            SubjectManager subjectManager = new SubjectManager();
 
-            User user = userManager.GetUserById(id);;
+            User user = subjectManager.GetUserById(id);;
 
             if (user != null)
             {
@@ -168,68 +163,52 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
             }
             else
             {
-                return PartialView("_InfoPartial", new InfoModel("windowMembership", "The user does not exist!"));
+                return PartialView("_InfoPartial", new InfoModel("Window_Details", "The user does not exist!"));
             }
         }
 
         [GridAction]
         public ActionResult UserMembership_Select(long id)
         {
-            RoleManager roleManager = new RoleManager();
-            UserManager userManager = new UserManager();
+            SubjectManager subjectManager = new SubjectManager();
 
             // DATA
-            User user = userManager.GetUserById(id);
+            User user = subjectManager.GetUserById(id);
 
             List<UserRoleModel> roles = new List<UserRoleModel>();
 
             if (user != null)
             {
-                IQueryable<Role> data = roleManager.GetAllRoles();
+                IQueryable<Role> data = subjectManager.GetAllRoles();
 
-                data.ToList().ForEach(r => roles.Add(UserRoleModel.Convert(user.Id, r, roleManager.IsUserInRole(user, r))));
+                data.ToList().ForEach(r => roles.Add(UserRoleModel.Convert(user.Id, r, subjectManager.IsUserInRole(user.Name, r.Name))));
             }
 
             return View(new GridModel<UserRoleModel> { Data = roles });
         }
 
-        public void AddUserToRole(long userId, long roleId)
+        public int AddUserToRole(long userId, long roleId)
         {
-            RoleManager roleManager = new RoleManager();
-            UserManager userManager = new UserManager();
+            SubjectManager subjectManager = new SubjectManager();
 
-            Role role = roleManager.GetRoleById(roleId);
-            User user = userManager.GetUserById(userId);
-
-            if (user != null && role != null)
-            {
-                roleManager.AddUserToRole(user, role);
-            }
-
+            return subjectManager.AddUserToRole(userId, roleId);
         }
 
-        public void RemoveUserFromRole(long userId, long roleId)
+        public int RemoveUserFromRole(long userId, long roleId)
         {
-            RoleManager roleManager = new RoleManager();
-            UserManager userManager = new UserManager();
+            SubjectManager subjectManager = new SubjectManager();
 
-            Role role = roleManager.GetRoleById(roleId);
-            User user = userManager.GetUserById(userId);
-
-            if (user != null && role != null)
-            {
-                roleManager.RemoveUserFromRole(user, role);
-            }
+            return subjectManager.RemoveUserFromRole(userId, roleId);
         }
 
         // S
         [GridAction]
         public ActionResult Users_Select()
         {
-            UserManager userManager = new UserManager();
+            SubjectManager subjectManager = new SubjectManager();
 
             // DATA
-            IQueryable<User> data = userManager.GetAllUsers();
+            IQueryable<User> data = subjectManager.GetAllUsers();
 
             List<UserModel> users = new List<UserModel>();
             data.ToList().ForEach(u => users.Add(UserModel.Convert(u)));
@@ -244,9 +223,9 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
 
         public JsonResult ValidateUserName(string userName, long id = 0)
         {
-            UserManager userManager = new UserManager();
+            SubjectManager subjectManager = new SubjectManager();
 
-            User user = userManager.GetUserByName(userName);
+            User user = subjectManager.GetUserByName(userName);
 
             if (user == null)
             {
@@ -269,9 +248,9 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
 
         public JsonResult ValidateEmail(string email, long id = 0)
         {
-            UserManager userManager = new UserManager();
+            SubjectManager subjectManager = new SubjectManager();
 
-            User user = userManager.GetUserByEmail(email);
+            User user = subjectManager.GetUserByEmail(email);
 
             if (user == null)
             {
@@ -299,6 +278,9 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
                 case UserCreateStatus.DuplicateUserName:
                     return "The user name already exists.";
 
+                case UserCreateStatus.InvalidUserName:
+                    return "The user name is not valid.";
+
                 case UserCreateStatus.DuplicateEmail:
                     return "The email address already exists.";
 
@@ -315,6 +297,9 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
             switch (createStatus)
             {
                 case UserCreateStatus.DuplicateUserName:
+                    return "UserName";
+
+                case UserCreateStatus.InvalidUserName:
                     return "UserName";
 
                 case UserCreateStatus.DuplicateEmail:

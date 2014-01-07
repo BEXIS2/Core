@@ -177,7 +177,11 @@ namespace BExIS.Search.Providers.LuceneProvider
                                 }
                                 parser.PhraseSlop = 5;
                                 parser.DefaultOperator = QueryParser.AND_OPERATOR;
-                                Query query = parser.Parse(value);
+                                string query_value = value;
+                                if (value.Equals("")){
+                                    query_value = "*:*";
+                                }
+                                Query query = parser.Parse(query_value);
                                 bexisSearchingCategory.Add(query, Occur.SHOULD);
                             }
                             ((BooleanQuery)bexisSearching).Add(bexisSearchingCategory, Occur.MUST);

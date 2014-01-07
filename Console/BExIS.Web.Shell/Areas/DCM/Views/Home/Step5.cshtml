@@ -18,10 +18,12 @@
         </div>
 
         <div class="uploadWizardStep_Content stepper">
-            <p><button id="validationButton" title="Validate selected data file against a given data structure" >Validate</button>Validate selected data file against a given data structure.</p>
-
-            
-
+            <table>
+                <tr>
+                    <td><button id="validationButton" title="Validate selected data file against a given data structure" >Validate</button></td>
+                    <td>Validate selected data file against a given data structure.</td>
+                </tr>
+            </table>
         </div>
     </div>
 
@@ -77,8 +79,10 @@
 
         $.post('@Url.Action("ValidateFile", "Home", new RouteValueDictionary { { "area", "DCM" } })', function (response) {
 
+            $('.uploadWizardStep_Error').empty();
             $(@Model.StepInfo.GetActionInfo.ActionName.ToString()).html(response);
             $('#preloader').hide();
+            
         });
     });
 

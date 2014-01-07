@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Web.Mvc;
 using BExIS.Dlm.Entities.Data;
@@ -14,11 +15,14 @@ using BExIS.Web.Shell.Areas.Search.Helpers;
 using BExIS.Web.Shell.Areas.Search.Models;
 using Telerik.Web.Mvc;
 using Vaiona.IoC;
+using Vaiona.Util.Cfg;
 
 namespace BExIS.Web.Shell.Areas.Search.Controllers
 {
     public class HomeController : Controller
     {
+        public bool searchConfigFileInUse = false;
+
         //ISearchProvider provider = null;
         //public HomeController()
         //{
@@ -41,6 +45,12 @@ namespace BExIS.Web.Shell.Areas.Search.Controllers
         public ActionResult Index()
         {
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+
+            if (provider.WorkingSearchModel.CriteriaComponent.SearchCriteriaList.Count > 0)
+            {
+                provider.WorkingSearchModel.CriteriaComponent.Clear();
+                provider.SearchAndUpdate(provider.WorkingSearchModel.CriteriaComponent);
+            }
             //var pp = IoCFactory.Container.ResolveAll<ISearchProvider>();
 
             SetSessionsToDefault();
@@ -235,7 +245,10 @@ namespace BExIS.Web.Shell.Areas.Search.Controllers
 
             var facet = provider.DefaultSearchModel.SearchComponent.Facets.Where(p => p.Name.Equals(parent, StringComparison.InvariantCulture)).FirstOrDefault();
             SetParentOfSelectAbleCategories(parent);
-            SetSelectAbleCategoryList(facet.Childrens);
+
+           // List<Facet> sortedList = facet.Childrens.OrderBy(p => p.DisplayName).ToList();
+
+            SetSelectAbleCategoryList(facet.Childrens.OrderBy(p => p.DisplayName).ToList());
 
             return PartialView("_windowCheckBoxList", provider.WorkingSearchModel);
         }
@@ -351,7 +364,7 @@ namespace BExIS.Web.Shell.Areas.Search.Controllers
 
             if(dsv.ContentDescriptors.Count>0)
             {
-                if(dsv.ContentDescriptors.Select(p=>p.Name.Equals("generated")).First())
+                if(dsv.ContentDescriptors.Count(p=>p.Name.Equals("generated")) == 1)
                 {
                     downloadUri = dsv.ContentDescriptors.Where(p=>p.Name.Equals("generated")).First().URI;
                 }
@@ -369,7 +382,9 @@ namespace BExIS.Web.Shell.Areas.Search.Controllers
 
         public ActionResult DownloadPrimaryData(string path)
         {
-            return File(path, "application/xlsm","test.xlsm");
+            string[] temp = path.Split('\\');
+            // define a correct name
+            return File(Path.Combine(AppConfiguration.DataPath, path), "application/xlsm",temp.Last());
         }
 
 
@@ -667,8 +682,10 @@ namespace BExIS.Web.Shell.Areas.Search.Controllers
 
         public ActionResult SaveConfig()
         {
+
             if (Session["searchAttributeList"] != null)
             {
+
                 List<SearchAttributeViewModel> searchAttributeList = (List<SearchAttributeViewModel>)Session["searchAttributeList"];
                 ISearchDesigner sd = new SearchDesigner();
                 sd.Set(GetListOfSearchAttributes(searchAttributeList));
@@ -676,6 +693,8 @@ namespace BExIS.Web.Shell.Areas.Search.Controllers
                 ViewData["windowVisible"] = false;
 
                 sd.Reload();
+
+                searchConfigFileInUse = false;
             }
 
             return View("SearchDesigner", (List<SearchAttributeViewModel>)Session["searchAttributeList"]);

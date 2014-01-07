@@ -5,10 +5,8 @@ using System.Text;
 
 namespace BExIS.Security.Services.Subjects
 {
-    public enum RoleCreateStatus
+    public interface ISubjectManager : IRoleManager, IUserManager
     {
-        Success,
-        DuplicateRoleName,
-        InvalidRoleName
+
     }
 }

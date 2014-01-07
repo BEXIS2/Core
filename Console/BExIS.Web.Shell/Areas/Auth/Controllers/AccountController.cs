@@ -31,9 +31,9 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
         {
             if (ModelState.IsValid)
             {
-                UserManager userManager = new UserManager();
+                SubjectManager subjectManager = new SubjectManager();
 
-                if (userManager.ValidateUser(model.UserName, model.Password))
+                if (subjectManager.ValidateUser(model.UserName, model.Password))
                 {
                     FormsAuthentication.SetAuthCookie(model.UserName, model.RememberMe);
                     if (Url.IsLocalUrl(returnUrl) && returnUrl.Length > 1 && returnUrl.StartsWith("/")
@@ -85,9 +85,9 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
                 // Attempt to register the user
                 UserCreateStatus createStatus;
 
-                UserManager userManager = new UserManager();
+                SubjectManager subjectManager = new SubjectManager();
 
-                userManager.Create(model.UserName, model.Email, model.Password, model.SecurityQuestion, model.SecurityAnswer, out createStatus);
+                subjectManager.CreateUser(model.UserName, model.Email, model.Password, model.SecurityQuestion, model.SecurityAnswer, out createStatus);
 
                 if (createStatus == UserCreateStatus.Success)
                 {

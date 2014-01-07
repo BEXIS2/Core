@@ -12,5 +12,7 @@ namespace BExIS.Security.Services.Security
         bool HasDataAccess(User user, DataContext dataContext);
 
         bool HasTaskAccess(User user, TaskContext taskContext);
+
+        bool HasTaskAccess(string userName, TaskContext taskContext);
     }
 }

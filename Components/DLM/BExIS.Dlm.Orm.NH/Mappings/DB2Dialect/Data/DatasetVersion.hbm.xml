@@ -97,7 +97,7 @@
       <one-to-many class="DataTuple" />
     </set>
 
-    <set cascade="all" name="ContentDescriptors" inverse="true" lazy="true" order-by="OrderNo">
+    <set name="ContentDescriptors" inverse="true" lazy="true" order-by="OrderNo" cascade="all-delete-orphan">
       <key>
         <column name="DatasetVersionRef" />
       </key>

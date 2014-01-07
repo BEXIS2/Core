@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Xml;
@@ -61,7 +63,59 @@ namespace BExIS.Web.Shell.Areas.Search.Helpers
                     // use vu.Label or vu.DataAttribute.Name
                     DataColumn col = dt.Columns.Add(vu.Label.Replace(" ","")); // or DisplayName also
                     col.Caption = vu.Label;
-                    
+
+                    switch (vu.DataAttribute.DataType.SystemType)
+                    {
+                        case "String":
+                            {
+                                col.DataType = Type.GetType("System.String");
+                                break;
+                            }
+
+                        case "Double":
+                            {
+                                col.DataType = Type.GetType("System.Double");
+                                break;
+                            }
+
+                        case "Int16":
+                            {
+                                col.DataType = Type.GetType("System.Int16");
+                                break;
+                            }
+
+                        case "Int32":
+                            {
+                                col.DataType = Type.GetType("System.Int32");
+                                break;
+                            }
+
+                        case "Int64":
+                            {
+                                col.DataType = Type.GetType("System.Int64");
+                                break;
+                            }
+
+                        case "Decimal":
+                            {
+                                col.DataType = Type.GetType("System.Decimal");
+                                break;
+                            }
+
+                        case "DateTime":
+                            {
+                                col.DataType = Type.GetType("System.DateTime");
+                                break;
+                            }
+
+                        default:
+                            {
+                                col.DataType = Type.GetType("System.String");
+                                break;
+                            }
+                    }
+                   
+
 
                     if(vu.Parameters.Count>0)
                     {
@@ -94,15 +148,69 @@ namespace BExIS.Web.Shell.Areas.Search.Helpers
             {
                 if (vv.Variable != null)
                 {
-                    dr[vv.Variable.Label.Replace(" ", "")] = vv.Value;
+                   
 
-                    if (vv.ParameterValues.Count > 0)
+                    switch (vv.DataAttribute.DataType.SystemType)
+                    { 
+                        case "String":
+                        {
+                            dr[vv.Variable.Label.Replace(" ", "")] = vv.Value;
+                            break;
+                        }
+
+                        case "Double":
+                        {
+                            dr[vv.Variable.Label.Replace(" ", "")] = Convert.ToDouble(vv.Value);
+                            
+                            break;
+                        }
+
+                        case "Int16":
+                        {
+                            dr[vv.Variable.Label.Replace(" ", "")] = Convert.ToInt16(vv.Value);
+                            break;
+                        }
+
+                        case "Int32":
+                        {
+                            dr[vv.Variable.Label.Replace(" ", "")] = Convert.ToInt32(vv.Value);
+                            break;
+                        }
+
+                        case "Int64":
+                        {
+                            dr[vv.Variable.Label.Replace(" ", "")] = Convert.ToInt64(vv.Value);
+                            break;
+                        }
+
+                        case "Decimal":
+                        {
+                            dr[vv.Variable.Label.Replace(" ", "")] = Convert.ToDecimal(vv.Value);
+                            break;
+                        }
+
+                        case "DateTime":
+                        {
+                            dr[vv.Variable.Label.Replace(" ", "")] = Convert.ToDateTime(vv.Value, CultureInfo.InvariantCulture);
+                            break;
+                        }
+                
+                        default:
+                        {
+                            dr[vv.Variable.Label.Replace(" ", "")] = vv.Value;
+                            break;
+                        }
+                    }
+
+                    
+
+                    /*if (vv.ParameterValues.Count > 0)
                     {
                         foreach (var pu in vv.ParameterValues)
                         {
                             dr[pu.Parameter.Label.Replace(" ", "")] = pu.Value;
                         }
-                    }
+                    }*/
                 }
             }
 

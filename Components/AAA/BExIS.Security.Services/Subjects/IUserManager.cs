@@ -16,10 +16,10 @@ namespace BExIS.Security.Services.Subjects
         int MaxPasswordFailureAttempts { get; }
         int MaxSecurityAnswerFailureAttempts { get; }
 
+        int OnlineWindow { get; }
+
         int PasswordFailureAttemptsWindow { get; }
         string PasswordStrengthRegularExpression { get; }
-
-        bool RequiresUniqueEmail { get; }
 
         int SecurityAnswerFailureAttemptsWindow { get; }
 
@@ -29,18 +29,20 @@ namespace BExIS.Security.Services.Subjects
         #region Methods
 
         // A
-        bool ApproveUser(User user);
+        bool ApproveUser(string userName);
 
         // C
-        bool ChangePassword(User user, string password, string newPassword);
-        bool ChangeSecurityQuestionAndSecurityAnswer(User user, string password, string newPasswordQuestion, string newPasswordAnswer);
+        bool ChangePassword(string userName, string password, string newPassword);
+        bool ChangeSecurityQuestionAndSecurityAnswer(string userName, string password, string newPasswordQuestion, string newPasswordAnswer);
 
-        User Create(string userName, string email, string password, string passwordQuestion, string passwordAnswer, out UserCreateStatus status);
+        User CreateUser(string userName, string email, string password, string passwordQuestion, string passwordAnswer, out UserCreateStatus status);
 
         // D
-        bool Delete(User user);
+        bool DeleteUserByName(string userName);
+        bool DeleteUserById(Int64 id);
 
         // E
+        bool ExistsUserId(Int64 id);
         bool ExistsUserName(string userName);
 
         // F
@@ -62,13 +64,13 @@ namespace BExIS.Security.Services.Subjects
         int GetUsersOnline();
 
         // R
-        string ResetPassword(User user, string passwordAnswer);
+        string ResetPassword(string userName, string passwordAnswer);
 
 
         // U
-        bool UnlockUser(User user);
+        bool UnlockUser(string userName);
 
-        User Update(User user);
+        User UpdateUser(User user);
 
         // V
         bool ValidateUser(string userName, string password);

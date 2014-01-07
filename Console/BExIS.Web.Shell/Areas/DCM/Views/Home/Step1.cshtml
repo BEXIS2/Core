@@ -1,7 +1,15 @@
 ﻿@model BExIS.Web.Shell.Areas.DCM.Models.SelectFileViewModel
 @using Telerik.Web.Mvc.UI;
 @using System;
+@using System.Web.Configuration;
 
+@{
+    
+    HttpRuntimeSection section = System.Configuration.ConfigurationManager.GetSection("system.web/httpRuntime") as HttpRuntimeSection;
+    int int_MaxRequestLength = section.MaxRequestLength;
+    int mbMax = int_MaxRequestLength / 1024;
+        
+}
 <div id ="Step1" class="uploadWizardStep">
     <div class="uploadWizardStep_Main">
         <div class="uploadWizardStep_Header stepper">
@@ -11,42 +19,49 @@
 
         <div class="uploadWizardStep_Description stepper">
             <p>Please select a data file to be uploaded to the BEXIS repository.</p>
-            <p>Supported file formats: Microsoft Excel (*.xlsm, *.txt, *.csv )</p>
+            <p>Very large data files that may take several minutes or hours to transfer, should be uploaded to the server before entering the Upload Wizard.<br />
+               Please contact your systems administrator for assistance.</p>
+
+            <p>Supported file formats: Microsoft Excel (*.xlsm), ASCII (*.txt, *.csv )</p>
+
+            <p>Max file size: @mbMax MB</p>
         </div>
         
         <div class="uploadWizardStep_Content stepper">
 
                     <table>
                         <tr>
-                            <td>
-                                local
-                            </td>
+                            
                             <td>
                                 @(Html.Telerik().Upload()
                                 .Name("SelectFileUploader")
                                 .Multiple(false)
                                 .ShowFileList(false)
-                                
+                                .HtmlAttributes(new {title="Browse"})
                                 .ClientEvents(events =>
                                     events.OnSelect("SelectFileProcess_OnSelect")
                                             .OnRemove("SelectFileProcess_OnRemove")
                                             .OnSuccess("SelectFileProcess_OnSuccess")
-                                    
+
                                 )
                                 .Async(async => async
-                                    .Save("SelectFileProcess", "Home",new { area = "DCM" } )
+                                    .Save("SelectFileProcess", "Home", new { area = "DCM" })
                                     .AutoUpload(true))
-                        
+
                                 )
+                            </td>
+                            <td>
+                               Select a data file from your local computer.
                             </td>
                             
                         </tr>
                         <tr>
+                          
                             <td>
-                                server
+                                @Html.DropDownListFor(m => m.SelectedServerFileName, new SelectList(Model.serverFileList), "Select")@*, new { disabled = "disabled" })*@
                             </td>
                             <td>
-                                @Html.DropDownListFor(m => m.SelectedServerFileName, new SelectList(Model.serverFileList),"Select, please")
+                                Select a data file previously uploaded to the server.
                             </td>
                         </tr>
                     </table>
@@ -86,10 +101,26 @@
 <script type="text/javascript">
 
 
-    function SelectFileProcess_OnSelect(e)
-    {
+    function SelectFileProcess_OnSelect(e) {
         var file = e.files[0];
-        Parameters.push("Extention:" + file.extension);
+        var maxsize = '@int_MaxRequestLength';
+        if (file.extension != ".xlsm" && file.extension != ".csv" && file.extension != ".txt") {
+            alert("Only .xlsm, .csv, .txt files can be uploaded")
+            e.preventDefault();
+            return false;
+        }
+        else {
+
+            if(file.size > (maxsize*1024))
+            {
+
+                alert("Max file : "+ maxsize/1024 +" MB is supported. Please contact your administrator to upload bigger files.");
+                e.preventDefault();
+                return false;
+            }
+
+            Parameters.push("Extention:" + file.extension);
+        }
     }
 
     function SelectFileProcess_OnRemove(e) {
@@ -98,15 +129,19 @@
 
     function SelectFileProcess_OnSuccess(e) {
 
+        $('.uploadWizardStep_Error').empty();
         $('#fileNameDiv').text(e.files[0].name);
     }
 
     $('#SelectedServerFileName').change(function () {
 
-        //alert($(this).val());
-        $.post('@Url.Action("SelectFileFromServerProcess", "Home", new RouteValueDictionary { { "area", "DCM" } })', { fileName: $(this).val() }, function (response) {
+        var value = $(this).val();
+
+        $.post('@Url.Action("SelectFileFromServerProcess", "Home", new RouteValueDictionary { { "area", "DCM" } })', { fileName: value }, function (response) {
 
             
+            $('.uploadWizardStep_Error').empty();
+            $('#fileNameDiv').text(value);
         })
     })
 

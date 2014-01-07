@@ -21,9 +21,9 @@
                 {
                 
 
-                    if (Model.PrimaryKeysList != null)
+                    if (Model.PK_Id_List != null)
                     {
-                        if (Model.PrimaryKeysList.Contains(s))
+                        if (Model.PK_Id_List.Contains(s.Id))
                         {
                              @Html.CheckBox(@s.Title,true)  <b>@s.Title</b> <br />
                         }

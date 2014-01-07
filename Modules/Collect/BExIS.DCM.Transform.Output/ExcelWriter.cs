@@ -37,6 +37,7 @@ namespace BExIS.DCM.Transform.Output
         int endColumn = 0;
         int numOfColumns = 0;
         int offset = 0;
+        int numOfDataRows = 0;
 
         List<DataTuple> _dataTuples = new List<DataTuple>();
         StructuredDataStructure _dataStructure = new StructuredDataStructure();
@@ -79,7 +80,7 @@ namespace BExIS.DCM.Transform.Output
                 // Get intergers for reading data
                 startColumn = GetColumnNumber(this._areaOfData.StartColumn);
                 endColumn = GetColumnNumber(this._areaOfData.EndColumn);
-
+                
                 numOfColumns = (endColumn - startColumn) + 1;
                 offset = GetColumnNumber(getColumnName(this._areaOfData.StartColumn)) - 1;
 
@@ -102,6 +103,35 @@ namespace BExIS.DCM.Transform.Output
 
                 AddRows(worksheetPart, this._areaOfData.StartRow, this._areaOfData.EndRow, dataTuples);
 
+                // set data area
+
+                foreach (DefinedName name in workbookPart.Workbook.GetFirstChild<DefinedNames>())
+                {
+                    if (name.Name == "Data")
+                    {
+                        string[] tempArr = name.InnerText.Split('$');
+                        string temp = "";
+                        //$A$10:$C$15
+
+                        tempArr[tempArr.Count() - 1] = numOfDataRows.ToString();
+
+                        foreach (string t in tempArr)
+                        {
+                            if (t == tempArr.First())
+                            {
+                                temp = temp + t;
+                            }
+                            else
+                            {
+                                temp = temp + "$" + t;
+                            }
+                        }
+
+                        name.Text = temp;
+                    }
+                }
+            
+
                 spreadsheetDocument.WorkbookPart.Workbook.Save();
                 spreadsheetDocument.Close();
 
@@ -123,11 +153,27 @@ namespace BExIS.DCM.Transform.Output
  
                 // convert datatuple to row and add it to sheetdata
                 Row row = DatatupleToRow(dataTuple.Id,rowIndex);
-                sheetData.Append(row);
-                rowIndex++;
+
+                bool empty = true;
+                foreach (Cell c in row.Elements<Cell>().ToList())
+                {
+                    if (!String.IsNullOrEmpty(c.InnerText))
+                    {
+                        empty = false;
+                        break;
+                    }
+                }
+
+                if (!empty)
+                {
+                    sheetData.Append(row);
+                    if(!dataTuple.Equals(dataTuples.Last()))
+                        rowIndex++;
+                }
             }
 
-            // change Area data
+            numOfDataRows = rowIndex;
+
         }
 
         //convert Datatuple To Row
@@ -195,7 +241,10 @@ namespace BExIS.DCM.Transform.Output
                 else
                 {
                     cell.DataType = new EnumValue<CellValues>(CellValues.String);
-                    cell.CellValue = new CellValue(value.ToString());
+                    if(value==null)
+                        cell.CellValue = new CellValue("");
+                    else
+                        cell.CellValue = new CellValue(value.ToString());
                 }
             }
            
@@ -215,11 +264,11 @@ namespace BExIS.DCM.Transform.Output
                     };
         }
 
-        public string CreateFile(long datasetId, long datasetVersionId, long dataStructureId, string title, string extention)
+        public string CreateFile(long datasetId, long datasetVersionOrderNr, long dataStructureId, string title, string extention)
         {
 
             string dataStructureFilePath = GetDataStructureTemplatePath(dataStructureId, extention);
-            string dataPath = GetStorePath(datasetId, datasetVersionId, title, extention);
+            string dataPath = GetStorePath(datasetId, datasetVersionOrderNr, title, extention);
 
             try
             {
@@ -278,6 +327,40 @@ namespace BExIS.DCM.Transform.Output
     #region helper
 
         private List<DefinedNameVal> BuildDefinedNamesTable(WorkbookPart workbookPart)
+        {
+            //Build a list
+            List<DefinedNameVal> definedNames = new List<DefinedNameVal>();
+            foreach (DefinedName name in workbookPart.Workbook.GetFirstChild<DefinedNames>())
+            {
+                //Parse defined name string...
+                string key = name.Name;
+
+                if (key.Equals("Data") || key.Equals("VariableIdentifiers"))
+                {
+                    string reference = name.InnerText;
+                    string sheetName = reference.Split('!')[0];
+                    sheetName = sheetName.Trim('\'');
+
+                    //Assumption: None of my defined names are relative defined names (i.e. A1)
+                    string range = reference.Split('!')[1];
+                    string[] rangeArray = range.Split('$');
+                    string startCol = rangeArray[1];
+                    int startRow = Convert.ToInt32(rangeArray[2].TrimEnd(':'));
+                    string endCol = null;
+                    int endRow = 0;
+                    if (rangeArray.Length > 3)
+                    {
+                        endCol = rangeArray[3];
+                        endRow = Convert.ToInt32(rangeArray[4]);
+                    }
+                    definedNames.Add(new DefinedNameVal() { Key = key, SheetName = sheetName, StartColumn = startCol, StartRow = startRow, EndColumn = endCol, EndRow = endRow });
+                }
+            }
+
+            return definedNames;
+        }
+
+        private List<DefinedNameVal> ChangeDefinedNamesTable(WorkbookPart workbookPart)
         {
             //Build a list
             List<DefinedNameVal> definedNames = new List<DefinedNameVal>();

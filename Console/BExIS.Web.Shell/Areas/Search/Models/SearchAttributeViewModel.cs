@@ -67,9 +67,16 @@ namespace BExIS.Web.Shell.Areas.Search.Models
         [Required(ErrorMessage = "Please select a Selection Type")]
         public string aggregationType { get; set; }
 
-        [Display(Name = "Date Format")]
-        public string dateFormat = "bgc:format";
+        /*[Display(Name = "Date Format")]
+        public string dateFormat = "bgc:format";*/
 
+        public SearchAttributeViewModel()
+        {
+            this.store = true;
+            this.analysed = true;
+            this.norm = true;
+            this.boost = 5;
+        }
 
         public static SearchAttribute GetSearchAttribute(SearchAttributeViewModel searchAttributeViewModel)
         {
@@ -99,7 +106,7 @@ namespace BExIS.Web.Shell.Areas.Search.Models
             sa.direction = SearchAttribute.GetDirection(searchAttributeViewModel.direction);
             sa.uiComponent = SearchAttribute.GetUIComponent(searchAttributeViewModel.uiComponent);
             sa.aggregationType = SearchAttribute.GetAggregationType(searchAttributeViewModel.aggregationType);
-            sa.dateFormat = searchAttributeViewModel.dateFormat;
+            //sa.dateFormat = searchAttributeViewModel.dateFormat;
 
             return sa;
         }
@@ -133,7 +140,7 @@ namespace BExIS.Web.Shell.Areas.Search.Models
             sa.direction = SearchAttribute.GetDirectionAsString(searchAttribute.direction);
             sa.uiComponent = SearchAttribute.GetUIComponentAsString(searchAttribute.uiComponent);
             sa.aggregationType = SearchAttribute.GetAggregationTypeAsString(searchAttribute.aggregationType);
-            sa.dateFormat = searchAttribute.dateFormat;
+            //sa.dateFormat = searchAttribute.dateFormat;
 
             return sa;
         }

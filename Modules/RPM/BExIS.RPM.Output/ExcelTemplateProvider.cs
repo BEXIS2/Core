@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Xml;
 using System.Linq;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.DataStructure;
@@ -40,9 +41,15 @@ namespace BExIS.RPM.Output
             DataStructureManager DSM = new DataStructureManager();
             StructuredDataStructure dataStructure = DSM.StructuredDataStructureRepo.Get(id);
             string filename = dataStructure.Name + ".xlsm";
+            string path = Path.Combine("DataStructures", dataStructure.Id.ToString());
+
+            if (!Directory.Exists(Path.Combine(AppConfiguration.DataPath, path)))
+            {
+                Directory.CreateDirectory(Path.Combine(AppConfiguration.DataPath, path));
+            }
 
             SpreadsheetDocument template = SpreadsheetDocument.Open(Path.Combine(AppConfiguration.GetModuleWorkspacePath("RPM"),"Template",_fileName),true);
-            SpreadsheetDocument dataStructureFile = SpreadsheetDocument.Create(Path.Combine(AppConfiguration.WorkspaceRootPath, "temp","RPM", filename), template.DocumentType);
+            SpreadsheetDocument dataStructureFile = SpreadsheetDocument.Create(Path.Combine(AppConfiguration.DataPath, path, filename), template.DocumentType);
             //dataStructureFile = SpreadsheetDocument.Open(Path.Combine(AppConfiguration.GetModuleWorkspacePath("RPM"), "Template", filename), true);
  
 
@@ -233,6 +240,10 @@ namespace BExIS.RPM.Output
             //WorksheetPart worksheetPart = workbookPart.WorksheetParts.First();
         
             dataStructureFile.WorkbookPart.Workbook.Save();
+            XmlDocument resources = new XmlDocument();
+            resources.LoadXml("<Resources><Resource Type=\"Excel\" Edition=\"2010\" Path=\"" + Path.Combine(path, filename) + "\"></Resource></Resources>");
+            dataStructure.TemplatePaths = resources;
+            DSM.UpdateStructuredDataStructure(dataStructure);
             template.Close();
             dataStructureFile.Close();
 
@@ -298,12 +309,23 @@ namespace BExIS.RPM.Output
         {
             DataStructureManager DSM = new DataStructureManager();
             StructuredDataStructure dataStructure = DSM.StructuredDataStructureRepo.Get(dataStrctureId);
-            string filename = dataStructure.Name + ".xlsm";
+            string path = "";
 
-            if(File.Exists(Path.Combine(AppConfiguration.WorkspaceRootPath, "temp", "RPM", filename)))
+            XmlNode resources = dataStructure.TemplatePaths.FirstChild;
+
+            XmlNodeList resource = resources.ChildNodes;
+
+            foreach (XmlNode x in resource)
             {
-                File.Delete(Path.Combine(AppConfiguration.WorkspaceRootPath, "temp", "RPM", filename));
+                path = Path.Combine(AppConfiguration.DataPath, x.Attributes.GetNamedItem("Path").Value);
+                if (File.Exists(path))
+                    File.Delete(path);
             }
+
+            path = Path.Combine(AppConfiguration.DataPath, "DataStructures", dataStructure.Id.ToString());
+
+            if (Directory.Exists(path) && !(Directory.EnumerateFileSystemEntries(path).Any()))
+                Directory.Delete(path);
         }
 
     }

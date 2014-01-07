@@ -46,10 +46,10 @@
 *@<table>
     <tr>
         <td>
-             @(Html.LabelFor(m => m.Seperator))
+           @(Html.LabelFor(m => m.Separator))
         </td>
         <td>
-            @Html.DropDownListFor(m => m.Seperator, new SelectList(TextSeperatorList, Model.Seperator), "Select, please", new { @class="asciiFormularField"})
+            @Html.DropDownListFor(m => m.Separator, new SelectList(TextSeperatorList, Model.Separator), new { @class="asciiFormularField"})
         </td>
     </tr>
     <tr>
@@ -57,7 +57,7 @@
              @(Html.LabelFor(m => m.Decimal))
         </td>
         <td>
-             @Html.DropDownListFor(m => m.Decimal, new SelectList(DecimalCharacterList ,Model.Decimal), "Select, please", new { @class="asciiFormularField"})
+             @Html.DropDownListFor(m => m.Decimal, new SelectList(DecimalCharacterList ,Model.Decimal), new { @class="asciiFormularField"})
 
         </td>
     </tr>
@@ -66,7 +66,7 @@
              @(Html.LabelFor(m => m.Orientation))
         </td>
         <td>
-             @Html.DropDownListFor(m => m.Orientation, new SelectList(OrientationList ,Model.Orientation), "Select, please", new { @class="asciiFormularField"})
+             @Html.DropDownListFor(m => m.Orientation, new SelectList(OrientationList ,Model.Orientation), new { @class="asciiFormularField"})
 
     </tr>
     <tr>

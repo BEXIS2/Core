@@ -12,11 +12,12 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
     public class UserModel
     {
         [Display(Name = "User ID")]
+        [Editable(false)]
         [Required]
         public long Id { get; set; }
 
         [Display(Name = "User Name")]
-        [Remote("ValidateUserName", "Users", AdditionalFields = "Id")]
+        [Editable(false)]
         [Required]
         public string UserName { get; set; }
 
@@ -24,15 +25,19 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
         [Email]
         [Remote("ValidateEmail", "Users", AdditionalFields = "Id")]
         [Required]
+        [StringLength(250, ErrorMessage = "The email must be {2} - {1} characters long.", MinimumLength = 5)]
         public string Email { get; set; }
 
         [Display(Name = "Registration Date")]
+        [Editable(false)]
         public DateTime RegistrationDate { get; set; }
 
         [Display(Name = "Last Login Date")]
+        [Editable(false)]
         public DateTime LastLoginDate { get; set; }
 
         [Display(Name = "Last Activity Date")]
+        [Editable(false)]
         public DateTime LastActivityDate { get; set; }
 
         [Display(Name = "Is Approved")]

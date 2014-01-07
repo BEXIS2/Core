@@ -9,11 +9,11 @@
                 menu.Add().Text("Search").Action("Index", "Home", new { area = "Search" })
                     .Items(item =>
                     {
-                        item.Add().Text("Faceted Search").Action("Index", "Home", new { area = "Search" });
+                        //item.Add().Text("Faceted Search").Action("Index", "Home", new { area = "Search" });
                         
                     }
                     );
-                menu.Add().Text("Plan").Action("DataStructureDesigner", "Home", new { area = "RPM" })
+                menu.Add().Text("Plan")
                     .Items(item =>
                     {
                         item.Add().Text("Data Structure Manager").Action("DataStructureDesigner", "Home", new { area = "RPM" });

@@ -30,6 +30,7 @@ namespace BExIS.DCM.UploadWizard
         public static string RESEARCHPLAN_TITLE = "ResearchPlanTitle";
         //Data
         public static string PRIMARY_KEYS = "PrimaryKeys";
+        public static string PRIMARY_KEYS_UNIQUE = "PrimaryKeysUnique";
         public static string VALID = "Valid";
         //metadata
         public static string TITLE = "Title";

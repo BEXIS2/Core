@@ -34,7 +34,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
         /// </summary>
         public string Dateformat { get; set; }
 
-        public TextSeperator Seperator { get; set; }
+        public TextSeperator Separator { get; set; }
 
         public FileInfoModel()
         {

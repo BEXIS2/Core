@@ -80,7 +80,10 @@
      if (Model != null && Model.dataStructure.Id != null && Model.dataStructure.Id != 0)
      {
         @Html.ActionLink("Download", "downloadTemplate", "Home", new { id = Model.dataStructure.Id }, new { area = "RPM", @class = "t-button", @style = "margin:5px;"})
-        @Html.ActionLink("Delete", "deleteDataStructure", "Home", new { id = Model.dataStructure.Id }, new { area = "RPM", @class = "t-button"})
+        if(!(Model.dataStructure.Datasets.Count > 0))
+        {
+            @Html.ActionLink("Delete", "deleteDataStructure", "Home", new { id = Model.dataStructure.Id }, new { area = "RPM", @class = "t-button"})
+        }
      }    
      @ViewData["errorMsg"]
  }

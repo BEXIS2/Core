@@ -107,7 +107,7 @@ namespace BExIS.Security.Services.Security
         /// <returns></returns>
         public IQueryable<FeaturePermission> GetFeaturePermissionsFromUser(User user)
         {
-            return FeaturePermissionsRepo.Query(p => p.Subject == user).AsQueryable<FeaturePermission>();
+            return FeaturePermissionsRepo.Query(p => ((User)p.Subject).Name == user.Name).AsQueryable<FeaturePermission>();
         }
 
         /// <summary>

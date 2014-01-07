@@ -251,28 +251,39 @@
        
         treeView().disable(parentItem);
 
+        // find all checkboxes and disable it during server request
+        facets_disable();
 
         $.post('@Url.Action("CheckedTreeViewItem", "Home", new RouteValueDictionary { { "area", "Search" } })', { SelectedItem: selectedItemValue, Parent: parent }, function (response) {
             $("#searchTreeView").html(response);
+            facets_disable();
+
+            if (false) {
+                alert('test');
+                $.post('@Url.Action("UpdateFacets", "Home", new RouteValueDictionary { { "area", "Search" } })', {}, function (response) {
+                    $("#searchTreeView").html(response);
+                })
+            }
+            $.post('@Url.Action("GetDataForBreadCrumbView", "Home", new RouteValueDictionary { { "area", "Search" } })', {}, function (response) {
+                //alert(response);
+                $("#breadCrumb").html(response);
+            });
+
+            facets_enable();
         })
-
-        /*
-        $.post('@Url.Action("UpdateContent", "Home", new RouteValueDictionary { { "area", "Search" } })', {}, function (response) {
-            $("#resultContent").html(response);
-        })*/
-
-        $.post('@Url.Action("UpdateFacets", "Home", new RouteValueDictionary { { "area", "Search" } })', {}, function (response) {
-            $("#searchTreeView").html(response);
-        })
-
-
-        $.post('@Url.Action("GetDataForBreadCrumbView", "Home", new RouteValueDictionary { { "area", "Search" } })', {}, function (response) {
-            //alert(response);
-            $("#breadCrumb").html(response);
-        });
-
 
         refreshGrid();
+    }
+
+
+    function facets_disable() {
+        $("#TreeView").find("input:checkbox")
+                                 .attr("disabled", true);
+    }
+
+    function facets_enable() {
+        $("#TreeView").find("input:checkbox")
+                                 .attr("disabled", false);
     }
 
     function onDataBound(e) {

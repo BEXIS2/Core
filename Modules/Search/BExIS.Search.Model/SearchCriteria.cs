@@ -50,7 +50,11 @@ namespace BExIS.Search.Model
                 {
                     // override values of SearchCriterion if not multiselect
                     // or remove if values contains this value
-                    if (sco.Values.Contains(value)) sco.Values.Clear();
+                    if (sco.Values.Contains(value))
+                    {
+                        sco.Values.Clear();
+                        SearchCriteriaList.Remove(sco);
+                    }
                     else
                     {
                         sco.Values.Clear();
@@ -65,7 +69,10 @@ namespace BExIS.Search.Model
                         if (!isDefault)
                         {
                             sco.Values.Clear();
-                            sco.Values.Add(value);
+                            if (!String.IsNullOrEmpty(value))
+                                sco.Values.Add(value);
+                            else
+                                SearchCriteriaList.Remove(sco);
                         }
                         else SearchCriteriaList.Remove(sco);
                     }
@@ -75,7 +82,7 @@ namespace BExIS.Search.Model
             {
 
                 //wenn nicht vorhanden dann füge hinzu
-                if (scb != null)
+                if (scb != null && !String.IsNullOrEmpty(value))
                 {
                     SearchCriteriaList.Add(new SearchCriterion(value, multiSelect, valueSearchOperation, scb));
                 }
@@ -231,7 +238,7 @@ namespace BExIS.Search.Model
                         && (va.Equals(value, StringComparison.InvariantCulture)) && sco.SearchComponent.Type.Equals(type))
                         select value).Count() > 0;
 
-            return false;
+            return isIn;
         }
 
         

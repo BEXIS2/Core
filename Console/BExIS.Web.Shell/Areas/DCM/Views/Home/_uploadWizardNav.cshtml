@@ -7,10 +7,13 @@
 
 @{
 
-    int currentPage = @Model.GetCurrentStepInfoIndex() + 1;    
+    int currentPage = @Model.GetCurrentStepInfoIndex() + 1;
+    
 }
 <div id="UploadWizardNavDiv">
 
+    @if (!(Model.Current() == null))
+    { 
     <table id="UploadWizard_NavigationTable">
         <tr>
             <td id="Nav_Left">
@@ -35,18 +38,20 @@
 
                 @if (Model.Current().Equals(Model.Finish()))
                 { 
-                    @Html.ActionLink("Finish","FinishUpload", Model.Current().PostActionInfo.ControllerName ,new RouteValueDictionary { {"area", Model.Current().GetActionInfo.AreaName.ToString()}}, new { @class="t-button", @style="float:right;" })
+                    @*@Html.ActionLink("Finish",Model.Current().PostActionInfo.ActionName , Model.Current().PostActionInfo.ControllerName ,new RouteValueDictionary { {"area", Model.Current().GetActionInfo.AreaName.ToString()}}, new { @class="t-button", @style="float:right;" })*@
+                    <button id="finishBt" onclick"NextButton_OnClick()" class="t-button" style="float:right" title="Finish">Finish</button>
                 }
 
             </td>
         </tr>
     </table>
- 
+    }
 </div>
 <script type="text/javascript">              
       
     $("#prevBt").click(function(){
         
+        $('#preloader').show();
         var index = '@Model.StepInfos.IndexOf(@Model.Prev())';
   
 
@@ -56,6 +61,7 @@
             $("#StepView").html(response);
             NavigationRefresh();
             TaskListRefresh();
+            $('#preloader').hide();
         })
 
        
@@ -63,6 +69,7 @@
 
     $("#nextBt").click(function () {
        
+        $('#preloader').show();
         $.ajax({ 
             type: 'POST', 
             contentType: 'application/json; charset=utf-8', 
@@ -73,8 +80,39 @@
                     $('#StepView').html(result);
                     NavigationRefresh();
                     TaskListRefresh();
+                    $('#preloader').hide();
                 }
             });
+    })
+
+    $("#finishBt").click(function () {
+
+        $('#preloader').show();
+        $.ajax({
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify(Parameters),
+            dataType: 'html',
+            url: '@Url.Action(@Model.Current().PostActionInfo.ActionName, @Model.Current().PostActionInfo.ControllerName, new RouteValueDictionary { { "area", @Model.Current().PostActionInfo.AreaName }})',
+            success: function (result) {
+
+                if (result == !null || result !="") {
+                    $('#StepView').html(result);
+                    NavigationRefresh();
+                    TaskListRefresh();
+                    $('#preloader').hide();
+                }
+                else {
+
+                    $.get('@Url.Action("FinishUpload", "Home", new RouteValueDictionary { { "area","DCM"  } })', function (response) {
+                        $("body").html(response);
+                
+                        $('#preloader').hide();
+                    })
+                }
+            }
+        });
+       
     })
 
     function NavigationRefresh()

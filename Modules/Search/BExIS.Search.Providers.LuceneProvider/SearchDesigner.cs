@@ -6,6 +6,7 @@ using BExIS.Search.Api;
 using BExIS.Search.Model;
 using BExIS.Search.Providers.LuceneProvider.Helpers;
 using BExIS.Search.Providers.LuceneProvider.Indexer;
+using System.IO;
 
 namespace BExIS.Search.Providers.LuceneProvider
 {
@@ -153,19 +154,24 @@ namespace BExIS.Search.Providers.LuceneProvider
         // write xml config file
         private void Save()
         {
-            if (this._configXML == null)
-            { 
-                this._configXML = new XmlDocument();
-                //this._configXML.Load(FileHelper.ConfigFilePath);
+            XmlElement root;
+            FileStream fileStream;
+            this._configXML = new XmlDocument();
+            if (String.IsNullOrEmpty(FileHelper.ConfigFilePath))
+            {
+                  root = this._configXML.CreateElement("luceneConfig");
+                  this._configXML.AppendChild(root);
+                
             }
+            else
+            {
+                fileStream = new FileStream(FileHelper.ConfigFilePath, FileMode.Open, FileAccess.Read);
+                this._configXML.Load(fileStream);
+                root = this._configXML.DocumentElement;
+                root.RemoveAll();
 
-            //XmlNodeList fieldProperties = this._configXML.GetElementsByTagName("field");
-             
-            XmlElement r = this._configXML.CreateElement("luceneConfig");
-
-            this._configXML.AppendChild(r);
-
-            XmlElement root = this._configXML.DocumentElement;
+                fileStream.Close();
+            }
 
             //XmlNodeList list = new XmlNodeList();
 
@@ -177,8 +183,14 @@ namespace BExIS.Search.Providers.LuceneProvider
             }
 
             //root.AppendChild(xe);
-
-            this._configXML.Save(FileHelper.ConfigFilePath);
+            //System.IO.File.
+            object lk = new object();
+            lock (fileStream = new FileStream(FileHelper.ConfigFilePath, FileMode.Open, FileAccess.Write))
+            {
+                fileStream.SetLength(0);
+                this._configXML.Save(fileStream);
+                fileStream.Close();
+            }
             
         }
 

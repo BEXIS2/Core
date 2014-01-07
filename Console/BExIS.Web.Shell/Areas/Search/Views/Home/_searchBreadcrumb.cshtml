@@ -24,8 +24,8 @@
                 }
                 </div>
           }
-  
-      
+            
+            
            @*searchresult selection one element*@
            @if (item.Values.Count == 1 && item.SearchComponent.Name != "")
            { 
@@ -46,7 +46,7 @@
               </div>
            } 
 
-       
+           
             @*searchresult slection two elements*@
            @if (item.Values.Count == 2)
            { 
@@ -64,7 +64,7 @@
                    )
                </div>
            } 
-       
+            
            @*searchresult slection more then three elements*@
            @if (item.Values.Count >= 3)
            {
@@ -102,18 +102,17 @@
 
 
         var selectedItem = e.id
-
+    
         var dw = $("#MoreWindow").data("tWindow");
 
-        $.post('ShowMoreWindow', { parent: selectedItem }, function (response) {
-
-            $("#more").html(response);
+        $.post('@Url.Action("ShowMoreWindow", "Home", new RouteValueDictionary { { "area", "Search" } })', { parent: selectedItem }, function (response) {
+            //alert(response);
+            $("#search_more").html(response);
 
         })
 
         dw.center().open();
-
-
+  
     }
 
 </script>
