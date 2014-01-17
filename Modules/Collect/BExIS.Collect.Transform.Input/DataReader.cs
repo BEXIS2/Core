@@ -9,6 +9,7 @@ using BExIS.DCM.Transform.Validation.ValueValidation;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
+using BExIS.Dlm.Services.DataStructure;
 
 namespace BExIS.DCM.Transform.Input
 {
@@ -123,9 +124,32 @@ namespace BExIS.DCM.Transform.Input
             for (int i = 0; i < row.Count(); i++)
             {
                 VariableIdentifier variableIdentifier = this.SubmitedVariableIndentifiers.ElementAt(i);
-                if (identifiers.Contains(variableIdentifier.id))
+                long id = variableIdentifier.id;
+
+                // if id == 0 this happen when the incoming file is a text oder csv file
+                // no id for vartiables existing
+                if (id == 0)
                 {
-                    temp.Add(row[i]);
+                    List<string> tempNames = new List<string>();
+                    DataStructureManager dataStructureManager = new DataStructureManager();
+
+                    foreach (long idX in identifiers)
+                    {
+                        string tempName = dataStructureManager.VariableRepo.Get().Where(v => v.Id.Equals(idX)).First().Label;
+                        if (tempName.Equals(variableIdentifier.name))
+                        {
+                            temp.Add(row[i]);
+                        }
+                    }
+                }
+                else
+                {
+                    // if you have the ids of the submitted VariableIdentifiers
+                    // you can check against the ids
+                    if (identifiers.Contains(id))
+                    {
+                        temp.Add(row[i]);
+                    }
                 }
             }
             return temp;

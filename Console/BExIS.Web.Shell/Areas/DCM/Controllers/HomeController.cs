@@ -137,7 +137,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             model.StepInfo = TaskManager.Current();
 
             model.serverFileList = GetServerFileList();
-
+           
             return PartialView(model);
         }
        
@@ -291,13 +291,13 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 }
                 else
                 {
-                    if (model.Extention.Equals(".txt") || model.Extention.Equals(".csv"))
-                        TaskManager.Bus[TaskManager.FILE_READER_INFO] = new AsciiFileReaderInfo();
+                if (model.Extention.Equals(".txt") || model.Extention.Equals(".csv"))
+                    TaskManager.Bus[TaskManager.FILE_READER_INFO] = new AsciiFileReaderInfo();
 
-                    if (model.Extention.Equals(".xls"))
-                        TaskManager.Bus[TaskManager.FILE_READER_INFO] = new ExcelFileReaderInfo();
+                if (model.Extention.Equals(".xls"))
+                    TaskManager.Bus[TaskManager.FILE_READER_INFO] = new ExcelFileReaderInfo();
                 }
-                    
+
                 model.FileInfoModel.Extention = TaskManager.Bus[TaskManager.EXTENTION].ToString();
 
 
@@ -468,7 +468,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 if (TaskManager.Bus.ContainsKey(TaskManager.PRIMARY_KEYS_UNIQUE))
                 {
                     TaskManager.Bus[TaskManager.PRIMARY_KEYS_UNIQUE] = false;
-                }
+            }
                 else
                 {
                     TaskManager.AddToBus(TaskManager.PRIMARY_KEYS_UNIQUE,false);
@@ -493,10 +493,10 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             PrimaryKeyViewModel model = new PrimaryKeyViewModel();
             model.StepInfo = TaskManager.Current();
- 
+
             model.VariableLableList = LoadVariableLableList();
             Session["VariableLableList"] = model.VariableLableList;
-            
+
             // load maybe selected primary keys
             if (TaskManager.Bus.ContainsKey(TaskManager.PRIMARY_KEYS))
             {
@@ -567,7 +567,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 if (TaskManager.Bus.ContainsKey(TaskManager.VALID))
                 {
                     TaskManager.Bus.Remove(TaskManager.VALID);
-                }
+            }
             }
 
             ValidationModel model = new ValidationModel();
@@ -581,7 +581,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         {
             TaskManager = (TaskManager)Session["TaskManager"];
             ValidationModel model = new ValidationModel();
-            
+
 
             if (TaskManager != null)
             {
@@ -704,7 +704,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             TaskManager = (TaskManager)Session["TaskManager"];
             SummaryModel model = new SummaryModel();
-            
+
             model.StepInfo = TaskManager.Current();
 
             model.ErrorList = FinishUpload(TaskManager);
@@ -730,18 +730,18 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_ID))
                 {
                     model.DatasetId = Convert.ToInt32(TaskManager.Bus[TaskManager.DATASET_ID]);
-                }
+            }
 
                 if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_TITLE))
                 {
                     model.DatasetTitle = TaskManager.Bus[TaskManager.DATASET_TITLE].ToString();
-                }
+        }
 
                 if (TaskManager.Bus.ContainsKey(TaskManager.DATASTRUCTURE_ID))
                 {
                     model.DataStructureId = Convert.ToInt32(TaskManager.Bus[TaskManager.DATASTRUCTURE_ID]);
                 }
-
+        
                 if (TaskManager.Bus.ContainsKey(TaskManager.DATASTRUCTURE_TITLE))
                 {
                     model.DataStructureTitle = TaskManager.Bus[TaskManager.DATASTRUCTURE_TITLE].ToString();
@@ -782,15 +782,15 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 {
                     model.ProjectInstitute = TaskManager.Bus[TaskManager.INSTITUTE].ToString();
                 }
-                #endregion
+        #endregion
                 //ToDo: remove all changed from dataset and version
                 return PartialView(model);
-
+        
             }
             else
             {
                 //TaskManager = null;
-               
+
                 return null;
             } 
         }
@@ -838,7 +838,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     DatasetManager dm = new DatasetManager();
                     Dataset ds = dm.GetDataset(id);
                     DatasetVersion workingCopy = new DatasetVersion();
- 
+
                 try
                 {
                     
@@ -857,7 +857,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         }
                         else
                         {
-     
+
                             //XXX Add packagesize to excel read function
                             if (dm.IsDatasetCheckedOutFor(ds.Id, GetUserNameOrDefault()) || dm.CheckOutDataset(ds.Id, GetUserNameOrDefault()))
                             {
@@ -873,14 +873,14 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                                     }
 
                                     if (TaskManager.Bus[TaskManager.DATASET_STATUS].ToString().Equals("edit"))
-                                    { 
+                                {
                                         if (rows.Count > 0)
                                         {
                                             Dictionary<string, List<DataTuple>> splittedDatatuples = new Dictionary<string, List<DataTuple>>();
                                             splittedDatatuples = UploadWizardHelper.GetSplitDatatuples(rows, (List<long>)TaskManager.Bus[TaskManager.PRIMARY_KEYS], workingCopy);
                                             dm.EditDatasetVersion(workingCopy, splittedDatatuples["new"], splittedDatatuples["edit"], null);
                                         }
-                                    }
+                                }
                                 }
                                 else
                                 {
@@ -946,7 +946,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                                                 Dictionary<string, List<DataTuple>> splittedDatatuples = new Dictionary<string, List<DataTuple>>();
                                                 splittedDatatuples = UploadWizardHelper.GetSplitDatatuples(rows, (List<long>)TaskManager.Bus[TaskManager.PRIMARY_KEYS], workingCopy);
                                                 dm.EditDatasetVersion(workingCopy, splittedDatatuples["new"], splittedDatatuples["edit"], null);
-                                            }
+                                    }
                                         }
                                     }
                                     else
@@ -1007,7 +1007,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             }
 
             return temp;
-        }
+            }
 
         public ActionResult CloseUpload()
         {
@@ -1022,24 +1022,24 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         {
             
             TaskManager TaskManager = (TaskManager)Session["TaskManager"];
-
+            
             //dataset id and data structure id are available via datasetVersion properties,why you are passing them via the BUS? Javad
             long datasetId = Convert.ToInt64(TaskManager.Bus[TaskManager.DATASET_ID]);
-            long dataStructureId = Convert.ToInt64(TaskManager.Bus[TaskManager.DATASTRUCTURE_ID]); 
+            long dataStructureId = Convert.ToInt64(TaskManager.Bus[TaskManager.DATASTRUCTURE_ID]);
             
-            DatasetManager datasetManager = new DatasetManager();            
+            DatasetManager datasetManager = new DatasetManager();
 
             string title = TaskManager.Bus[TaskManager.DATASET_TITLE].ToString();
             string ext = ".xlsm";// TaskManager.Bus[TaskManager.EXTENTION].ToString();
-                        
-            ExcelWriter excelWriter = new ExcelWriter();
             
+                ExcelWriter excelWriter = new ExcelWriter();
+
             // Move Original File to its permanent location
-            String tempPath = TaskManager.Bus[TaskManager.FILEPATH].ToString();
+                String tempPath = TaskManager.Bus[TaskManager.FILEPATH].ToString();
             string originalFileName = TaskManager.Bus[TaskManager.FILENAME].ToString();
             string storePath = excelWriter.GetStorePathOriginalFile(datasetId, datasetVersion.Id, originalFileName);
             string dynamicStorePath = excelWriter.GetDynamicStorePathOriginalFile(datasetId, datasetVersion.VersionNo, originalFileName);
-        
+
             //Why using the excel writer, isn't any function available in System.IO.File/ Directory, etc. Javad
             excelWriter.MoveFile(tempPath, storePath);
 
@@ -1068,7 +1068,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 // add current contentdesciptor to list
                 datasetVersion.ContentDescriptors.Add(originalDescriptor);
             }
-            
+
 
 
             // create the generated file and determine its location
@@ -1083,7 +1083,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 URI = dynamicPath,
                 DatasetVersion = datasetVersion,
             };
-
+           
             if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(generatedDescriptor.Name)) > 0)
             {   // remove the one contentdesciptor 
                 foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
@@ -1099,7 +1099,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 // add current contentdesciptor to list
                 datasetVersion.ContentDescriptors.Add(generatedDescriptor);
             }
-    
+
             // note: the descriptors are not persisted yet, they will be persisted if the caller of this method persists the datasetVersion object.
             return path;
         }
@@ -1290,7 +1290,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 }
                 else
                 {
-                    TaskManager.AddToBus("DatasetStatus", "new");
+                TaskManager.AddToBus("DatasetStatus", "new");
                 }
 
                 Session["createDatasetWindowVisible"] = false;
@@ -1348,7 +1348,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
 
 
-            
+
             TaskManager.AddToBus(TaskManager.DATASET_ID, datasetId);
             //Add Metadata to Bus
             TaskManager.AddToBus(TaskManager.DATASET_TITLE, datasetVersion.Metadata.GetElementsByTagName("bgc:title")[0].InnerText);
@@ -1394,32 +1394,32 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             model.StepInfo = TaskManager.Current();
 
             model.VariableLableList = (List<ListViewItem>)Session["VariableLableList"];
-
+            
             if (data != null)
             {
-                // check Identifier
+            // check Identifier
                 List<string> identifiersLables = data.ToList().ConvertAll<string>(delegate(object i) { return i.ToString(); });
-                List<long> identifiers = new List<long>();
-                List<ListViewItem> pks = new List<ListViewItem>();
+            List<long> identifiers = new List<long>();
+            List<ListViewItem> pks = new List<ListViewItem>();
 
                 foreach (string value in identifiersLables)
-                {
-                    identifiers.Add(
+            {
+                identifiers.Add(
                             model.VariableLableList.Where(p => p.Title.Equals(value)).First().Id
-                        );
+                    );
 
-                    pks.Add(model.VariableLableList.Where(p => p.Title.Equals(value)).First());
-                }
+                pks.Add(model.VariableLableList.Where(p => p.Title.Equals(value)).First());
+            }
 
 
-                List<string> tempDataset = UploadWizardHelper.GetIdentifierList(Convert.ToInt64(TaskManager.Bus[TaskManager.DATASET_ID].ToString()), identifiers);
+            List<string> tempDataset = UploadWizardHelper.GetIdentifierList(Convert.ToInt64(TaskManager.Bus[TaskManager.DATASET_ID].ToString()), identifiers);
 
-                List<string> tempFromFile = UploadWizardHelper.GetIdentifierList(TaskManager, Convert.ToInt64(TaskManager.Bus[TaskManager.DATASET_ID].ToString()), identifiers, TaskManager.Bus[TaskManager.EXTENTION].ToString(), TaskManager.Bus[TaskManager.FILENAME].ToString());
+            List<string> tempFromFile = UploadWizardHelper.GetIdentifierList(TaskManager, Convert.ToInt64(TaskManager.Bus[TaskManager.DATASET_ID].ToString()), identifiers, TaskManager.Bus[TaskManager.EXTENTION].ToString(), TaskManager.Bus[TaskManager.FILENAME].ToString());
 
-                if (UploadWizardHelper.CheckDuplicates(tempDataset) || UploadWizardHelper.CheckDuplicates(tempFromFile))
-                {
-                    model.IsUnique = false;
-                    model.PrimaryKeysList = pks;
+            if (UploadWizardHelper.CheckDuplicates(tempDataset) || UploadWizardHelper.CheckDuplicates(tempFromFile))
+            {
+                model.IsUnique = false;
+                model.PrimaryKeysList = pks;
 
                     if (TaskManager.Bus.ContainsKey(TaskManager.PRIMARY_KEYS_UNIQUE))
                     {
@@ -1434,12 +1434,12 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     {
                         TaskManager.Bus.Remove(TaskManager.PRIMARY_KEYS);
                     }
-                    model.ErrorList.Add(new Error(ErrorType.Other, "Selection is not unique"));
+                model.ErrorList.Add(new Error(ErrorType.Other, "Selection is not unique"));
 
-                }
-                else
-                {
-                    model.IsUnique = true;
+            }
+            else
+            {
+                model.IsUnique = true;
 
                     if (TaskManager.Bus.ContainsKey(TaskManager.PRIMARY_KEYS_UNIQUE))
                     {
@@ -1450,9 +1450,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         TaskManager.AddToBus(TaskManager.PRIMARY_KEYS_UNIQUE, true);
                     }
 
-                    TaskManager.Bus[TaskManager.PRIMARY_KEYS] = identifiers;
-                    Session["TaskManager"] = TaskManager;
-                    model.PrimaryKeysList = pks;
+                TaskManager.Bus[TaskManager.PRIMARY_KEYS] = identifiers;
+                Session["TaskManager"] = TaskManager;
+                model.PrimaryKeysList = pks;
                     model.PK_Id_List = identifiers;
                 }
             }
