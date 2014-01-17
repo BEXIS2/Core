@@ -42,15 +42,50 @@ namespace BExIS.Web.Shell.Controllers
             //getDataset();
             Int64 dsId = 0;
 
-            dsId = createDatasetVersion();
-            editDatasetVersion(dsId);
-            deleteTupleFromDatasetVersion(dsId);
-            deleteDataset(dsId);
-            purgeDataset(dsId);
-            purgeAll();
-            getAllDatasetVersions();
+            //dsId = createDatasetVersion();
+            //editDatasetVersion(dsId);
+            //deleteTupleFromDatasetVersion(dsId);
+            //deleteDataset(dsId);
+            //purgeDataset(dsId);
+            //purgeAll();
+            //getAllDatasetVersions();
+
+            addConstraintsTo();
             //return RedirectToAction("About");
             return View();
+        }
+
+        private void addConstraintsTo()
+        {
+            DataContainerManager dcManager = new DataContainerManager();
+            var attr = dcManager.DataAttributeRepo.Get(1);
+
+            ConstraintManager cntManager = new ConstraintManager();
+            var c1 = cntManager.CreateRangeConstraint(ConstraintProviderSource.Internal, "", "en-US", "should be between 1 and 12 meter", true, null, null, null
+                        , 1.00, true, 12.00, true, attr);
+            var v1 = c1.IsSatisfied(14);
+
+            var c2 = cntManager.CreatePatternConstraint(ConstraintProviderSource.Internal, "", "en-US", "a simple email validation constraint", false, null, null, null
+                        , @"^\S+@\S+$", false, attr);
+            var v2 = c2.IsSatisfied("abc@def.com");
+
+            List<DomainItem> items = new List<DomainItem>() { new DomainItem () {Key = "A", Value = "This is A" }, 
+                                                              new DomainItem () {Key = "B", Value = "This is B" }, 
+                                                              new DomainItem () {Key = "C", Value = "This is C" }, 
+                                                              new DomainItem () {Key = "D", Value = "This is D" },
+                                                            };
+            var c3 = cntManager.CreateDomainConstraint(ConstraintProviderSource.Internal, "", "en-US", "a simple email validation constraint", false, null, null, null
+                        , items, attr);
+            var v3 = c3.IsSatisfied("A");
+            v3 = c3.IsSatisfied("E");
+            c3.Negated = true;
+            v3 = c3.IsSatisfied("A");
+
+
+            var c4 = cntManager.CreateCompareConstraint(ConstraintProviderSource.Internal, "", "en-US", "a simple email validation constraint", false, null, null, null
+                , ComparisonOperator.GreaterThanOrEqual, ComparisonTargetType.Value, null, ComparisonOffsetType.Ratio, 1.25, attr);
+            var v4 = c4.IsSatisfied(14, 10);
+        
         }
 
         private void purgeAll()

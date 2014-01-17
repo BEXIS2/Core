@@ -23,244 +23,381 @@ namespace BExIS.Dlm.Services.DataStructure
 
         #endregion
 
-        #region DefaultValueConstraint
+        #region DomainConstraint
 
-        //public DefaultValueConstraint CreateDefaultValueConstraint(string defaultValue, string missingValue, ConstraintProviderSource provider, string constraintSelectionPredicate)
-        //{
-        //    Contract.Requires(!string.IsNullOrWhiteSpace(defaultValue));
-        //    Contract.Requires(!string.IsNullOrWhiteSpace(missingValue));
-        //    Contract.Requires(provider == ConstraintProviderSource.External ? (!string.IsNullOrWhiteSpace(constraintSelectionPredicate)) : true);
-        //    Contract.Ensures(Contract.Result<DefaultValueConstraint>() != null && Contract.Result<DefaultValueConstraint>().Id >= 0);
+        public DomainConstraint CreateDomainConstraint(ConstraintProviderSource provider, string constraintSelectionPredicate, string cultureId
+            , string description, bool negated, string context, string messageTemplate, string negatedMessageTemplate, List<DomainItem> items, DataContainer container)
+        {
+            Contract.Requires(items != null);
+            Contract.Requires(items.Count > 0);
 
-        //    DefaultValueConstraint u = new DefaultValueConstraint()
-        //    {
-        //        DefaultValue = defaultValue,
-        //        MissingValue = missingValue,
-        //        Provider = provider,
-        //        ConstraintSelectionPredicate = constraintSelectionPredicate,
-        //    };
 
-        //    using (IUnitOfWork uow = this.GetUnitOfWork())
-        //    {
-        //        IRepository<DefaultValueConstraint> repo = uow.GetRepository<DefaultValueConstraint>();
-        //        repo.Put(u);
-        //        uow.Commit();
-        //    }
-        //    return (u);            
-        //}
+            Contract.Ensures(Contract.Result<DomainConstraint>() != null && Contract.Result<DomainConstraint>().Id >= 0);
 
-        //public bool DeleteDefaultValueConstraint(DefaultValueConstraint entity)
-        //{
-        //    Contract.Requires(entity != null);
-        //    Contract.Requires(entity.Id >= 0);
+            DomainConstraint u = new DomainConstraint()
+            {
+                Provider = provider,
+                ConstraintSelectionPredicate = constraintSelectionPredicate,
+                CultureId = cultureId,
+                Description = description,
+                Negated = negated,
+                Context = context!= null? context: "Default",
+                MessageTemplate = messageTemplate,
+                NegatedMessageTemplate = negatedMessageTemplate,
+                Items = items,
+                DataContainer = container,
+            };
 
-        //    using (IUnitOfWork uow = this.GetUnitOfWork())
-        //    {
-        //        IRepository<DefaultValueConstraint> repo = uow.GetRepository<DefaultValueConstraint>();
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<DomainConstraint> repo = uow.GetRepository<DomainConstraint>();
+                repo.Put(u);
+                uow.Commit();
+            }
+            return (u);
+        }
 
-        //        entity = repo.Reload(entity);
-        //        repo.Delete(entity);
+        public bool Delete(DomainConstraint entity)
+        {
+            Contract.Requires(entity != null);
+            Contract.Requires(entity.Id >= 0);
 
-        //        uow.Commit();
-        //    }
-        //    return (true);
-        //}
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<DomainConstraint> repo = uow.GetRepository<DomainConstraint>();
 
-        //public bool DeleteDefaultValueConstraint(IEnumerable<DefaultValueConstraint> entities)
-        //{
-        //    Contract.Requires(entities != null);
-        //    Contract.Requires(Contract.ForAll(entities, (DefaultValueConstraint e) => e != null));
-        //    Contract.Requires(Contract.ForAll(entities, (DefaultValueConstraint e) => e.Id >= 0));
+                entity = repo.Reload(entity);
+                //delete the unit
+                repo.Delete(entity);
+                // commit changes
+                uow.Commit();
+            }
+            // if any problem was detected during the commit, an exception will be thrown!
+            return (true);
+        }
 
-        //    using (IUnitOfWork uow = this.GetUnitOfWork())
-        //    {
-        //        IRepository<DefaultValueConstraint> repo = uow.GetRepository<DefaultValueConstraint>();
+        public bool Delete(IEnumerable<DomainConstraint> entities)
+        {
+            Contract.Requires(entities != null);
+            Contract.Requires(Contract.ForAll(entities, (DomainConstraint e) => e != null));
+            Contract.Requires(Contract.ForAll(entities, (DomainConstraint e) => e.Id >= 0));
 
-        //        foreach (var entity in entities)
-        //        {
-        //            var latest = repo.Reload(entity);
-        //            repo.Delete(latest);
-        //        }
-        //        uow.Commit();
-        //    }
-        //    return (true);
-        //}
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<DomainConstraint> repo = uow.GetRepository<DomainConstraint>();
 
-        //public DefaultValueConstraint UpdateDefaultValueConstraint(DefaultValueConstraint entity)
-        //{
-        //    Contract.Requires(entity != null, "provided entity can not be null");
-        //    Contract.Requires(entity.Id >= 0, "provided entity must have a permant ID");
+                foreach (var entity in entities)
+                {
+                    var latest = repo.Reload(entity);
+                    //delete the unit
+                    repo.Delete(latest);
+                }
+                // commit changes
+                uow.Commit();
+            }
+            return (true);
+        }
 
-        //    Contract.Ensures(Contract.Result<DefaultValueConstraint>() != null && Contract.Result<DefaultValueConstraint>().Id >= 0, "No entity is persisted!");
+        public DomainConstraint Update(DomainConstraint entity)
+        {
+            Contract.Requires(entity != null, "provided entity can not be null");
+            Contract.Requires(entity.Id >= 0, "provided entity must have a permanent ID");
 
-        //    using (IUnitOfWork uow = entity.GetUnitOfWork())
-        //    {
-        //        IRepository<DefaultValueConstraint> repo = uow.GetRepository<DefaultValueConstraint>();
-        //        repo.Put(entity); // Merge is required here!!!!
-        //        uow.Commit();
-        //    }
-        //    return (entity);    
-        //}
+            Contract.Ensures(Contract.Result<DomainConstraint>() != null && Contract.Result<DomainConstraint>().Id >= 0, "No entity is persisted!");
 
-        #endregion
-
-        #region DomainValueConstraint
-
-        //public DomainValueConstraint CreateDomainValueConstraint(string domainValue, string description, ConstraintProviderSource provider, string constraintSelectionPredicate)
-        //{
-        //    Contract.Requires(!string.IsNullOrWhiteSpace(domainValue));
-        //    Contract.Requires(provider == ConstraintProviderSource.External ? (!string.IsNullOrWhiteSpace(constraintSelectionPredicate)) : true);
-        //    Contract.Ensures(Contract.Result<DomainValueConstraint>() != null && Contract.Result<DomainValueConstraint>().Id >= 0);
-
-        //    DomainValueConstraint u = new DomainValueConstraint()
-        //    {
-        //        DomainValue = domainValue,
-        //        Description = description,
-        //        Provider = provider,
-        //        ConstraintSelectionPredicate = constraintSelectionPredicate,
-        //    };
-
-        //    using (IUnitOfWork uow = this.GetUnitOfWork())
-        //    {
-        //        IRepository<DomainValueConstraint> repo = uow.GetRepository<DomainValueConstraint>();
-        //        repo.Put(u);
-        //        uow.Commit();
-        //    }
-        //    return (u);
-        //}
-
-        //public bool DeleteDomainValueConstraint(DomainValueConstraint entity)
-        //{
-        //    Contract.Requires(entity != null);
-        //    Contract.Requires(entity.Id >= 0);
-
-        //    using (IUnitOfWork uow = this.GetUnitOfWork())
-        //    {
-        //        IRepository<DomainValueConstraint> repo = uow.GetRepository<DomainValueConstraint>();
-
-        //        entity = repo.Reload(entity);
-        //        repo.Delete(entity);
-
-        //        uow.Commit();
-        //    }
-        //    return (true);
-        //}
-
-        //public bool DeleteDomainValueConstraint(IEnumerable<DomainValueConstraint> entities)
-        //{
-        //    Contract.Requires(entities != null);
-        //    Contract.Requires(Contract.ForAll(entities, (DomainValueConstraint e) => e != null));
-        //    Contract.Requires(Contract.ForAll(entities, (DomainValueConstraint e) => e.Id >= 0));
-
-        //    using (IUnitOfWork uow = this.GetUnitOfWork())
-        //    {
-        //        IRepository<DomainValueConstraint> repo = uow.GetRepository<DomainValueConstraint>();
-
-        //        foreach (var entity in entities)
-        //        {
-        //            var latest = repo.Reload(entity);
-        //            repo.Delete(latest);
-        //        }
-        //        uow.Commit();
-        //    }
-        //    return (true);
-        //}
-
-        //public DomainValueConstraint UpdateDomainValueConstraint(DomainValueConstraint entity)
-        //{
-        //    Contract.Requires(entity != null, "provided entity can not be null");
-        //    Contract.Requires(entity.Id >= 0, "provided entity must have a permant ID");
-
-        //    Contract.Ensures(Contract.Result<DomainValueConstraint>() != null && Contract.Result<DomainValueConstraint>().Id >= 0, "No entity is persisted!");
-
-        //    using (IUnitOfWork uow = entity.GetUnitOfWork())
-        //    {
-        //        IRepository<DomainValueConstraint> repo = uow.GetRepository<DomainValueConstraint>();
-        //        repo.Put(entity); // Merge is required here!!!!
-        //        uow.Commit();
-        //    }
-        //    return (entity);
-        //}
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<DomainConstraint> repo = uow.GetRepository<DomainConstraint>();
+                repo.Put(entity); // Merge is required here!!!!
+                uow.Commit();
+            }
+            return (entity);
+        }
 
         #endregion
 
-        #region ValidatorConstraint
+        #region PatternConstraint
 
-        //public ValidatorConstraint CreateValidatorConstraint(string body, ConstraintProviderSource provider, string constraintSelectionPredicate)
-        //{
-        //    Contract.Requires(!string.IsNullOrWhiteSpace(body));
-        //    Contract.Requires(provider == ConstraintProviderSource.External ? (!string.IsNullOrWhiteSpace(constraintSelectionPredicate)) : true);
-        //    Contract.Ensures(Contract.Result<ValidatorConstraint>() != null && Contract.Result<ValidatorConstraint>().Id >= 0);
+        public PatternConstraint CreatePatternConstraint(ConstraintProviderSource provider, string constraintSelectionPredicate, string cultureId
+            , string description, bool negated, string context, string messageTemplate, string negatedMessageTemplate, string matchingPhrase, bool caseSensitive, DataContainer container)
+        {
+            Contract.Requires(!string.IsNullOrWhiteSpace(matchingPhrase));
 
-        //    ValidatorConstraint u = new ValidatorConstraint()
-        //    {
-        //        Body = body,                
-        //        Provider = provider,
-        //        ConstraintSelectionPredicate = constraintSelectionPredicate,
-        //    };
+            Contract.Ensures(Contract.Result<PatternConstraint>() != null && Contract.Result<PatternConstraint>().Id >= 0);
 
-        //    using (IUnitOfWork uow = this.GetUnitOfWork())
-        //    {
-        //        IRepository<ValidatorConstraint> repo = uow.GetRepository<ValidatorConstraint>();
-        //        repo.Put(u);
-        //        uow.Commit();
-        //    }
-        //    return (u);
-        //}
+            PatternConstraint u = new PatternConstraint()
+            {
+                Provider = provider,
+                ConstraintSelectionPredicate = constraintSelectionPredicate,
+                CultureId = cultureId,
+                Description = description,
+                Negated = negated,
+                Context = context != null ? context : "Default",
+                MessageTemplate = messageTemplate,
+                NegatedMessageTemplate = negatedMessageTemplate,
+                MatchingPhrase = matchingPhrase,
+                CaseSensitive = caseSensitive,
+                DataContainer = container,
+            };
 
-        //public bool DeleteValidatorConstraint(ValidatorConstraint entity)
-        //{
-        //    Contract.Requires(entity != null);
-        //    Contract.Requires(entity.Id >= 0);
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<PatternConstraint> repo = uow.GetRepository<PatternConstraint>();
+                repo.Put(u);
+                uow.Commit();
+            }
+            return (u);
+        }
 
-        //    using (IUnitOfWork uow = this.GetUnitOfWork())
-        //    {
-        //        IRepository<ValidatorConstraint> repo = uow.GetRepository<ValidatorConstraint>();
+        public bool Delete(PatternConstraint entity)
+        {
+            Contract.Requires(entity != null);
+            Contract.Requires(entity.Id >= 0);
 
-        //        entity = repo.Reload(entity);
-        //        repo.Delete(entity);
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<PatternConstraint> repo = uow.GetRepository<PatternConstraint>();
 
-        //        uow.Commit();
-        //    }
-        //    return (true);
-        //}
+                entity = repo.Reload(entity);
+                //delete the unit
+                repo.Delete(entity);
+                // commit changes
+                uow.Commit();
+            }
+            // if any problem was detected during the commit, an exception will be thrown!
+            return (true);
+        }
 
-        //public bool DeleteValidatorConstraint(IEnumerable<ValidatorConstraint> entities)
-        //{
-        //    Contract.Requires(entities != null);
-        //    Contract.Requires(Contract.ForAll(entities, (ValidatorConstraint e) => e != null));
-        //    Contract.Requires(Contract.ForAll(entities, (ValidatorConstraint e) => e.Id >= 0));
+        public bool Delete(IEnumerable<PatternConstraint> entities)
+        {
+            Contract.Requires(entities != null);
+            Contract.Requires(Contract.ForAll(entities, (PatternConstraint e) => e != null));
+            Contract.Requires(Contract.ForAll(entities, (PatternConstraint e) => e.Id >= 0));
 
-        //    using (IUnitOfWork uow = this.GetUnitOfWork())
-        //    {
-        //        IRepository<ValidatorConstraint> repo = uow.GetRepository<ValidatorConstraint>();
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<PatternConstraint> repo = uow.GetRepository<PatternConstraint>();
 
-        //        foreach (var entity in entities)
-        //        {
-        //            var latest = repo.Reload(entity);
-        //            repo.Delete(latest);
-        //        }
-        //        uow.Commit();
-        //    }
-        //    return (true);
-        //}
+                foreach (var entity in entities)
+                {
+                    var latest = repo.Reload(entity);
+                    //delete the unit
+                    repo.Delete(latest);
+                }
+                // commit changes
+                uow.Commit();
+            }
+            return (true);
+        }
 
-        //public ValidatorConstraint UpdateValidatorConstraint(ValidatorConstraint entity)
-        //{
-        //    Contract.Requires(entity != null, "provided entity can not be null");
-        //    Contract.Requires(entity.Id >= 0, "provided entity must have a permant ID");
+        public PatternConstraint Update(PatternConstraint entity)
+        {
+            Contract.Requires(entity != null, "provided entity can not be null");
+            Contract.Requires(entity.Id >= 0, "provided entity must have a permanent ID");
 
-        //    Contract.Ensures(Contract.Result<ValidatorConstraint>() != null && Contract.Result<ValidatorConstraint>().Id >= 0, "No entity is persisted!");
+            Contract.Ensures(Contract.Result<PatternConstraint>() != null && Contract.Result<PatternConstraint>().Id >= 0, "No entity is persisted!");
 
-        //    using (IUnitOfWork uow = entity.GetUnitOfWork())
-        //    {
-        //        IRepository<ValidatorConstraint> repo = uow.GetRepository<ValidatorConstraint>();
-        //        repo.Put(entity); // Merge is required here!!!!
-        //        uow.Commit();
-        //    }
-        //    return (entity);
-        //}
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<PatternConstraint> repo = uow.GetRepository<PatternConstraint>();
+                repo.Put(entity); // Merge is required here!!!!
+                uow.Commit();
+            }
+            return (entity);
+        }
 
         #endregion
+
+        #region RangeConstraint
+
+        public RangeConstraint CreateRangeConstraint(ConstraintProviderSource provider, string constraintSelectionPredicate, string cultureId
+            , string description, bool negated, string context, string messageTemplate, string negatedMessageTemplate, double lowerbound, bool lowerboundIncluded
+            , double upperbound, bool upperboundIncluded, DataContainer container)
+        {
+            Contract.Requires(lowerbound <= upperbound);
+
+            Contract.Ensures(Contract.Result<RangeConstraint>() != null && Contract.Result<RangeConstraint>().Id >= 0);
+
+            RangeConstraint u = new RangeConstraint()
+            {
+                Provider = provider,
+                ConstraintSelectionPredicate = constraintSelectionPredicate,
+                CultureId = cultureId,
+                Description = description,
+                Negated = negated,
+                Context = context != null ? context : "Default",
+                MessageTemplate = messageTemplate,
+                NegatedMessageTemplate = negatedMessageTemplate,
+                Lowerbound = lowerbound,
+                LowerboundIncluded = lowerboundIncluded,
+                Upperbound = upperbound,
+                UpperboundIncluded = upperboundIncluded,
+                DataContainer = container,
+            };
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<RangeConstraint> repo = uow.GetRepository<RangeConstraint>();
+                repo.Put(u);
+                uow.Commit();
+            }
+            return (u);
+        }
+
+        public bool Delete(RangeConstraint entity)
+        {
+            Contract.Requires(entity != null);
+            Contract.Requires(entity.Id >= 0);
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<RangeConstraint> repo = uow.GetRepository<RangeConstraint>();
+
+                entity = repo.Reload(entity);
+                //delete the unit
+                repo.Delete(entity);
+                // commit changes
+                uow.Commit();
+            }
+            // if any problem was detected during the commit, an exception will be thrown!
+            return (true);
+        }
+
+        public bool Delete(IEnumerable<RangeConstraint> entities)
+        {
+            Contract.Requires(entities != null);
+            Contract.Requires(Contract.ForAll(entities, (RangeConstraint e) => e != null));
+            Contract.Requires(Contract.ForAll(entities, (RangeConstraint e) => e.Id >= 0));
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<RangeConstraint> repo = uow.GetRepository<RangeConstraint>();
+
+                foreach (var entity in entities)
+                {
+                    var latest = repo.Reload(entity);
+                    //delete the unit
+                    repo.Delete(latest);
+                }
+                // commit changes
+                uow.Commit();
+            }
+            return (true);
+        }
+
+        public RangeConstraint Update(RangeConstraint entity)
+        {
+            Contract.Requires(entity != null, "provided entity can not be null");
+            Contract.Requires(entity.Id >= 0, "provided entity must have a permanent ID");
+
+            Contract.Ensures(Contract.Result<RangeConstraint>() != null && Contract.Result<RangeConstraint>().Id >= 0, "No entity is persisted!");
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<RangeConstraint> repo = uow.GetRepository<RangeConstraint>();
+                repo.Put(entity); // Merge is required here!!!!
+                uow.Commit();
+            }
+            return (entity);
+        }
+
+        #endregion
+
+        #region CompareConstraint
+
+        public CompareConstraint CreateCompareConstraint(ConstraintProviderSource provider, string constraintSelectionPredicate, string cultureId
+            , string description, bool negated, string context, string messageTemplate, string negatedMessageTemplate, ComparisonOperator comparisonOperator, ComparisonTargetType targetType
+            , string target, ComparisonOffsetType offsetType, double offset, DataContainer container)
+        {
+            //Contract.Requires();
+
+            Contract.Ensures(Contract.Result<CompareConstraint>() != null && Contract.Result<CompareConstraint>().Id >= 0);
+
+            CompareConstraint u = new CompareConstraint()
+            {
+                Provider = provider,
+                ConstraintSelectionPredicate = constraintSelectionPredicate,
+                CultureId = cultureId,
+                Description = description,
+                Negated = negated,
+                Context = context != null ? context : "Default",
+                MessageTemplate = messageTemplate,
+                NegatedMessageTemplate = negatedMessageTemplate,
+                Operator = comparisonOperator,
+                TargetType = targetType,
+                Target = target,
+                OffsetType = offsetType,
+                Offset = offset,
+                DataContainer = container,
+            };
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<CompareConstraint> repo = uow.GetRepository<CompareConstraint>();
+                repo.Put(u);
+                uow.Commit();
+            }
+            return (u);
+        }
+
+        public bool Delete(CompareConstraint entity)
+        {
+            Contract.Requires(entity != null);
+            Contract.Requires(entity.Id >= 0);
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<CompareConstraint> repo = uow.GetRepository<CompareConstraint>();
+
+                entity = repo.Reload(entity);
+                //delete the unit
+                repo.Delete(entity);
+                // commit changes
+                uow.Commit();
+            }
+            // if any problem was detected during the commit, an exception will be thrown!
+            return (true);
+        }
+
+        public bool Delete(IEnumerable<CompareConstraint> entities)
+        {
+            Contract.Requires(entities != null);
+            Contract.Requires(Contract.ForAll(entities, (CompareConstraint e) => e != null));
+            Contract.Requires(Contract.ForAll(entities, (CompareConstraint e) => e.Id >= 0));
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<CompareConstraint> repo = uow.GetRepository<CompareConstraint>();
+
+                foreach (var entity in entities)
+                {
+                    var latest = repo.Reload(entity);
+                    //delete the unit
+                    repo.Delete(latest);
+                }
+                // commit changes
+                uow.Commit();
+            }
+            return (true);
+        }
+
+        public CompareConstraint Update(CompareConstraint entity)
+        {
+            Contract.Requires(entity != null, "provided entity can not be null");
+            Contract.Requires(entity.Id >= 0, "provided entity must have a permanent ID");
+
+            Contract.Ensures(Contract.Result<CompareConstraint>() != null && Contract.Result<CompareConstraint>().Id >= 0, "No entity is persisted!");
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<CompareConstraint> repo = uow.GetRepository<CompareConstraint>();
+                repo.Put(entity); // Merge is required here!!!!
+                uow.Commit();
+            }
+            return (entity);
+        }
+
+        #endregion
+    
     }
 }

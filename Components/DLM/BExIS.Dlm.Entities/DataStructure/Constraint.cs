@@ -22,6 +22,9 @@ namespace BExIS.Dlm.Entities.DataStructure
 
     public abstract class Constraint: BaseEntity
     {
+        protected string defaultMessageTemplate;
+        protected string defaultNegatedMessageTemplate;
+
         #region Attributes
 
         public virtual ConstraintProviderSource Provider { get; set; }
@@ -47,13 +50,13 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// <summary>
         /// The message to be conveyed to the user in case of rule break.
         /// </summary>
-        public virtual string Message { get; set; }
+        public virtual string MessageTemplate { get; set; }
 
         /// <summary>
         /// The message to be conveyed to the user in case of negated rule break.
         /// </summary>
         // maybe 
-        public virtual string NegatedMessage { get; set; }
+        public virtual string NegatedMessageTemplate { get; set; }
         
         #endregion
 
@@ -64,9 +67,15 @@ namespace BExIS.Dlm.Entities.DataStructure
         #endregion
 
         #region Mathods
+        /// <summary>
+        /// to be implemented by concrete classes. it checks whether the input data satisfies the constraint
+        /// </summary>
+        /// <param name="data">the data to be evaluated</param>
+        /// <param name="auxilialy">in most cases not used, but in comparison</param>
+        /// <returns></returns>
+        public abstract bool IsSatisfied(object data, object auxilialy = null);
 
-        public abstract bool IsSatisfied(object data);
-
+        public abstract string ErrorMessage { get; }
         #endregion
 
     }
@@ -77,7 +86,27 @@ namespace BExIS.Dlm.Entities.DataStructure
         #region Attributes
 
         public virtual XmlDocument XmlDomainItems { get; set; }
-        public List<DomainItem> Items { get; set; }
+        public virtual List<DomainItem> Items { get; set; }
+
+        public override string ErrorMessage
+        {
+            get
+            {
+                if (Negated)
+                {
+                    return (string.Format(
+                        (!string.IsNullOrWhiteSpace(NegatedMessageTemplate) ? NegatedMessageTemplate : defaultNegatedMessageTemplate),
+                        string.Join(",", Items.Select(p=>p.Key)) ));
+                }
+                else
+                {
+                    return (string.Format(
+                        (!string.IsNullOrWhiteSpace(MessageTemplate) ? MessageTemplate : defaultMessageTemplate),
+                        string.Join(",", Items.Select(p => p.Key)) ));
+                }
+            }
+        }
+
         #endregion
 
         #region Associations
@@ -89,9 +118,11 @@ namespace BExIS.Dlm.Entities.DataStructure
         public DomainConstraint()
         {
             // set the default message and the negated message
+            defaultMessageTemplate = "Provided value is not a domain item. The value should be one of these items: {0}.";
+            defaultNegatedMessageTemplate = "Provided value is a domain item, but the constraint is negated. The value should not be one of these items: {0}.";
         }
 
-        public override bool IsSatisfied(object data)
+        public override bool IsSatisfied(object data, object auxilialy = null)
         {
             this.Materialize(); // test it
             // Domain items are stored as string, so instead of converting them to the containers data type, it is easier and faster to convert the input data to string
@@ -102,11 +133,13 @@ namespace BExIS.Dlm.Entities.DataStructure
 
         #endregion
 
-        public class DomainItem
-        {
-            public string Key { get; set; }
-            public string Value { get; set; }
-        }
+       
+    }
+
+    public class DomainItem
+    {
+        public string Key { get; set; }
+        public string Value { get; set; }
     }
 
     public class PatternConstraint : Constraint
@@ -114,6 +147,26 @@ namespace BExIS.Dlm.Entities.DataStructure
         #region Attributes
 
         public virtual string MatchingPhrase { get; set; }
+        public virtual bool CaseSensitive { get; set; }
+
+        public override string ErrorMessage
+        {
+            get
+            {
+                if (Negated)
+                {
+                    return (string.Format(
+                        (!string.IsNullOrWhiteSpace(NegatedMessageTemplate) ? NegatedMessageTemplate : defaultNegatedMessageTemplate),
+                        MatchingPhrase, (CaseSensitive? "case insensitive": "case sensitive") ));
+                }
+                else
+                {
+                    return (string.Format(
+                        (!string.IsNullOrWhiteSpace(MessageTemplate) ? MessageTemplate : defaultMessageTemplate),
+                         MatchingPhrase, (CaseSensitive ? "case insensitive" : "case sensitive") ));
+                }
+            }
+        }
 
         #endregion
 
@@ -126,15 +179,21 @@ namespace BExIS.Dlm.Entities.DataStructure
         public PatternConstraint()
         {
             // set the default message and the negated message
+            defaultMessageTemplate = "Provided value does not match the pattern. The value should match {0} {1}.";
+            defaultNegatedMessageTemplate = "Provided value matches the pattern, but the constraint is negated. The value should not match {0} {1}.";
         }
+
         /// <summary>
         /// checks whether the input parameter matches the MatchingPhrase
         /// </summary>
         /// <param name="data">is the input data in STRING format</param>
         /// <returns></returns>
-        public override bool IsSatisfied(object data)
+        public override bool IsSatisfied(object data, object auxilialy = null)
         {
-            return (Negated ^ (Regex.IsMatch(data.ToString(), MatchingPhrase, RegexOptions.IgnoreCase)));
+            if(!CaseSensitive)
+                return (Negated ^ (Regex.IsMatch(data.ToString(), MatchingPhrase, RegexOptions.IgnoreCase)));
+            else
+                return (Negated ^ (Regex.IsMatch(data.ToString(), MatchingPhrase)));
         }
 
         #endregion
@@ -149,12 +208,29 @@ namespace BExIS.Dlm.Entities.DataStructure
     {
         #region Attributes
 
-        public float Lowerbound { get; set; }
-        public float Upperbound { get; set; }
-        public bool LowerboundIncluded { get; set; }
-        public bool UpperboundIncluded { get; set; }
+        public virtual double   Lowerbound { get; set; }
+        public virtual double   Upperbound { get; set; }
+        public virtual bool     LowerboundIncluded { get; set; }
+        public virtual bool     UpperboundIncluded { get; set; }
 
-
+        public override string ErrorMessage
+        {
+            get
+            {
+                if (Negated)
+                {
+                    return (string.Format(
+                        (!string.IsNullOrWhiteSpace(NegatedMessageTemplate) ? NegatedMessageTemplate : defaultNegatedMessageTemplate),
+                        Lowerbound, (LowerboundIncluded ? "less than or equal to" : "less than"), Upperbound, (UpperboundIncluded ? "greater than or equal to" : "greater than")));
+                }
+                else
+                {
+                    return (string.Format(
+                        (!string.IsNullOrWhiteSpace(MessageTemplate) ? MessageTemplate : defaultMessageTemplate),
+                        Lowerbound, (LowerboundIncluded ? "inclusive" : "exclusive"), Upperbound, (UpperboundIncluded ? "inclusive" : "exclusive")));
+                }
+            }
+        }
         #endregion
 
         #region Associations
@@ -166,14 +242,22 @@ namespace BExIS.Dlm.Entities.DataStructure
         public RangeConstraint()
         {
             // set the default message and the negated message
+            defaultMessageTemplate = "Provided value is out of range. The value should be between {0} {1} and {2} {3}.";
+            defaultNegatedMessageTemplate = "Provided value is in range, but the constraint is negated. The value should be {1} {0} or {3} {2}.";
         }
 
-        public override bool IsSatisfied(object data)
+        public override bool IsSatisfied(object data, object auxilialy = null)
         {
             // the data type is defined by the associated data attribute
             // use dynamic link library, Flee or DLR to convert the Body to an executable code, pass data to it and return the result
-            return false;
-        }
+            double d = Convert.ToDouble(data);
+            if (LowerboundIncluded == true && d < Lowerbound || (LowerboundIncluded == false && d <= Lowerbound)) //out of lower bound
+                return (Negated ^ false);
+
+            if (UpperboundIncluded == true && d > Upperbound || (UpperboundIncluded == false && d >= Upperbound)) //out of upper bound
+                return (Negated ^ false);
+            return (Negated ^ true);
+        }        
 
         #endregion
     }
@@ -182,7 +266,7 @@ namespace BExIS.Dlm.Entities.DataStructure
     /// compares the input value to a reference/ target one using a specified comparison operator. 
     /// The reference object can be an object or the value of a variable/ parameter in the same tuple
     /// </summary>
-    public class ComparerConstraint : Constraint
+    public class CompareConstraint : Constraint
     {
         #region Attributes
         
@@ -192,7 +276,7 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// </summary>
         public virtual ComparisonOperator Operator { get; set; }
 
-        public ComparisonTargetType TargetType { get; set; }
+        public virtual ComparisonTargetType TargetType { get; set; }
 
         /// <summary>
         /// the target is used in the right side of the comparison operator
@@ -201,31 +285,39 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// Parameter: the target shows the Id of the parameter in the current type that its value should be used in the comparison
         /// Variable: the target shows the Id of the variable in the current type that its value should be used in the comparison
         /// </summary>
-        public string Target { get; set; }
+        public virtual string Target { get; set; }
 
         /// <summary>
+        /// indicate whether the offset value is absolute or percentage
         /// in some cases the right hand side of the operator should be compared to the left having an offset. for example the project end date should be at least 100 days after its start date.
         /// Or the value of variable v1 can not be greater than 17% of the values of variable v2.
         /// Offset type can be absolute or ratio. Absolute offsets are added to the right hand side and ratios are multiplied to the right hand side before the comparison to take place
         /// </summary>
-        public ComparisonOffsetType OffsetType { get; set; }
+        public virtual ComparisonOffsetType OffsetType { get; set; }
 
         /// <summary>
         /// The value of the offset to be taken into account in the comparison according to <seealso cref="ComparisonOffsetTye"/>
         /// </summary>
-        public float Offset { get; set; }
+        public virtual double Offset { get; set; }
 
-        
-
-        /// <summary>        
-        /// Comparer: 
-        ///     OP: the comparison operator like >, <, ==, . depeneds on the data type, so the UI should show proper operators based on the data attribute''s data type during the validator creation. 
-        ///     TargetType: Var (Variable | Parameter), Value
-        ///     Offset: The value that is considered (added/ multiplied) in the right side of the operator during the evaluation. case: the project finish date should be at least 1000 Ticks after its start time
-        ///     or the amount of water in the v1 variable can not exceed 17% of the v2.
-        ///     OffestType: indicate whether the offset value is absolute or percentage
-        /// </summary>
-
+        public override string ErrorMessage
+        {
+            get
+            {
+                if (Negated)
+                {
+                    return (string.Format(
+                        (!string.IsNullOrWhiteSpace(NegatedMessageTemplate) ? NegatedMessageTemplate : defaultNegatedMessageTemplate),
+                        "put parameters here"));
+                }
+                else
+                {
+                    return (string.Format(
+                        (!string.IsNullOrWhiteSpace(MessageTemplate) ? MessageTemplate : defaultMessageTemplate),
+                        "put parameters here"));
+                }
+            }
+        }
 
         #endregion
 
@@ -235,15 +327,110 @@ namespace BExIS.Dlm.Entities.DataStructure
 
         #region Mathods
 
-        public ComparerConstraint()
+        public CompareConstraint()
         {
             // set the default message and the negated message
+            defaultMessageTemplate = "replace with a proper message {0}.";
+            defaultNegatedMessageTemplate = "replace with a proper message {0}.";
         }
 
-        public override bool IsSatisfied(object data)
+        // problem: the constraint needs the target value to compare it, if it is a variable or parameter the constraint has no clue / responsibility to access its value 
+        // solution: the caller must use the TargetType and Target attributes to access proper variable/ parameter and obtain their values then pass the value as auxiliary data.
+        // the function just compares data to auxiliary according to the operator
+        public override bool IsSatisfied(object data, object auxilialy = null)
         {
             // the data type is defined by the associated data attribute
             // use dynamic link library, Flee or DLR to convert the Body to an executable code, pass data to it and return the result
+            switch (Operator)
+            {
+                case ComparisonOperator.Equals:
+                    {
+                        //check for other type, like string
+                        if (DataContainer.DataType.SystemType.Equals(System.TypeCode.String.ToString(), StringComparison.CurrentCultureIgnoreCase))
+                        {
+                            return Negated ^ (((string)data).Equals((string)auxilialy));
+                        }
+                        double d = Convert.ToDouble(data);
+                        double aux = Convert.ToDouble(auxilialy);
+                        if (OffsetType == ComparisonOffsetType.Absolute)
+                            return Negated ^ (d.Equals(aux + Offset));
+                        if (OffsetType == ComparisonOffsetType.Ratio)
+                            return Negated ^ (d.Equals(aux * Offset));
+                        break;
+                    }
+                case ComparisonOperator.NotEquals:
+                    {
+                        if (DataContainer.DataType.SystemType.Equals(System.TypeCode.String.ToString(), StringComparison.CurrentCultureIgnoreCase))
+                        {
+                            return Negated ^ (!((string)data).Equals((string)auxilialy));
+                        }
+                        double d = Convert.ToDouble(data);
+                        double aux = Convert.ToDouble(auxilialy);
+                        if (OffsetType == ComparisonOffsetType.Absolute)
+                            return Negated ^ (!d.Equals(aux + Offset));
+                        if (OffsetType == ComparisonOffsetType.Ratio)
+                            return Negated ^ (!d.Equals(aux * Offset));
+                        break;
+                    }
+                case ComparisonOperator.GreaerThan:
+                    {
+                        if (DataContainer.DataType.SystemType.Equals(System.TypeCode.String.ToString(), StringComparison.CurrentCultureIgnoreCase))
+                        {
+                            return Negated ^ (((string)data).Length > ((string)auxilialy).Length);
+                        }
+                        double d = Convert.ToDouble(data);
+                        double aux = Convert.ToDouble(auxilialy);
+                        if (OffsetType == ComparisonOffsetType.Absolute)
+                            return Negated ^ (d > (aux + Offset));
+                        if (OffsetType == ComparisonOffsetType.Ratio)
+                            return Negated ^ (d > (aux * Offset));
+                        break;
+                    }
+                case ComparisonOperator.GreaterThanOrEqual:
+                    {
+                        if (DataContainer.DataType.SystemType.Equals(System.TypeCode.String.ToString(), StringComparison.CurrentCultureIgnoreCase))
+                        {
+                            return Negated ^ (((string)data).Length >= ((string)auxilialy).Length);
+                        }
+                        double d = Convert.ToDouble(data);
+                        double aux = Convert.ToDouble(auxilialy);
+                        if (OffsetType == ComparisonOffsetType.Absolute)
+                            return Negated ^ (d >= (aux + Offset));
+                        if (OffsetType == ComparisonOffsetType.Ratio)
+                            return Negated ^ (d >= (aux * Offset));
+                        break;
+                    }
+                case ComparisonOperator.LessThan:
+                    {
+                        if (DataContainer.DataType.SystemType.Equals(System.TypeCode.String.ToString(), StringComparison.CurrentCultureIgnoreCase))
+                        {
+                            return Negated ^ (((string)data).Length < ((string)auxilialy).Length);
+                        }
+                        double d = Convert.ToDouble(data);
+                        double aux = Convert.ToDouble(auxilialy);
+                        if (OffsetType == ComparisonOffsetType.Absolute)
+                            return Negated ^ (d < (aux + Offset));
+                        if (OffsetType == ComparisonOffsetType.Ratio)
+                            return Negated ^ (d < (aux * Offset));
+                        break;
+                    }
+                case ComparisonOperator.LessThanOrEqual:
+                    {                        
+                        if (DataContainer.DataType.SystemType.Equals(System.TypeCode.String.ToString(), StringComparison.CurrentCultureIgnoreCase))
+                        {
+                            return Negated ^ (((string)data).Length <= ((string)auxilialy).Length);
+                        }
+                        double d = Convert.ToDouble(data);
+                        double aux = Convert.ToDouble(auxilialy);
+                        if (OffsetType == ComparisonOffsetType.Absolute)
+                            return Negated ^ (d <= (aux + Offset));
+                        if (OffsetType == ComparisonOffsetType.Ratio)
+                            return Negated ^ (d <= (aux * Offset));
+                        break;
+                    }
+                default:
+                    break;
+            }
             return false;
         }
 
@@ -253,7 +440,7 @@ namespace BExIS.Dlm.Entities.DataStructure
 
     public enum ComparisonOperator
     {
-        Equals, GreaerThan, GreaterThanOrEqual, LessThan, LessThanOrEqual, 
+        Equals, NotEquals, GreaerThan, GreaterThanOrEqual, LessThan, LessThanOrEqual, 
     }
 
     public enum ComparisonTargetType

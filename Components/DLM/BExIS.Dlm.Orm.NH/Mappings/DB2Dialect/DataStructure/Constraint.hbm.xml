@@ -28,8 +28,32 @@
       <column name="Provider" />
     </property>
 
+    <property name="CultureId" type="String">
+      <column name="CultureId" />
+    </property>
+
+    <property name="Description" type="String">
+      <column name="Description" />
+    </property>
+
+    <property name="Negated" type="yes_no">
+      <column name="Negated" />
+    </property>
+
+    <property name="Context" type="String">
+      <column name="Context" />
+    </property>
+
+    <property name="MessageTemplate" type="String">
+      <column name="MessageTemplate" />
+    </property>
+
+    <property name="NegatedMessageTemplate" type="String">
+      <column name="NegatedMessageTemplate" />
+    </property>
+
+    <many-to-one name="DataContainer" class="DataContainer" not-null="true" column="DataContainerRef"/>
     <!--Intentionally commented; Two FK to two different entities that make them null-able! also I am not sure whether they are really needed. 22.02.12 Javad-->
-    <!--<many-to-one name="DataContainer" class="DataContainer" not-null="false" column="DataContainerRef"/>-->
     <!--<many-to-one name="ExtendedPropery" class="ExtendedPropery" not-null="false" column="ExtendedProperyRef"/>-->
     
   </class>

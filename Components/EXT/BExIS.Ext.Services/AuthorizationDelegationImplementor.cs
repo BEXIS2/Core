@@ -25,10 +25,12 @@ namespace BExIS.Ext.Services
             publics.Add("Auth.Account");
             publics.Add("Site.Nav");
             publics.Add("Shell.Home");
+            publics.Add("System.Utils"); 
             publics.Add("Auth.Users.ValidateUserName");
             publics.Add("Auth.Users.ValidateEmail");
             publics.Add("Auth.Users.ErrorCodeToErrorMessage");
             publics.Add("Auth.Users.ErrorCodeToErrorKey");
+
             
 
             if (!publics.Contains(areaName + "." + controllerName) && !publics.Contains(areaName + "." + controllerName + "." + actionName))

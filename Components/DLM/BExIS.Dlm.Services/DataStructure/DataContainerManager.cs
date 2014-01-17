@@ -156,6 +156,7 @@ namespace BExIS.Dlm.Services.DataStructure
             Contract.Requires(container != null && container.Id >= 0);
 
             Contract.Ensures(Contract.Result<ExtendedProperty>() != null && Contract.Result<ExtendedProperty>().Id >= 0);
+          
             ExtendedProperty e = new ExtendedProperty()
             {
                 Name = name,

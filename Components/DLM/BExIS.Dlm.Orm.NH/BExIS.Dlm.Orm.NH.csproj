@@ -54,6 +54,22 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Mappings\DB2Dialect\BaseEntityProperties.xml" />
+    <Content Include="Mappings\DB2Dialect\DataStructure\Constraint.DomainConstraint.hbm.xml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Mappings\DB2Dialect\DataStructure\Constraint.PatternConstraint.hbm.xml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Mappings\DB2Dialect\DataStructure\Constraint.CompareConstraint.hbm.xml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Mappings\DB2Dialect\DataStructure\Constraint.RangeConstraint.hbm.xml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Mappings\DB2Dialect\DataStructure\DataView.hbm.xml">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
