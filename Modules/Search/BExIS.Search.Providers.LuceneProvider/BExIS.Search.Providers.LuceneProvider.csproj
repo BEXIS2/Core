@@ -118,6 +118,7 @@
   <ItemGroup>
     <Compile Include="Config\SearchConfig.cs" />
     <Compile Include="Config\searchInitObjects.cs" />
+    <Compile Include="Helpers\EncoderHelper.cs" />
     <Compile Include="Helpers\FileHelper.cs" />
     <Compile Include="Indexer\BexisAnalyzer.cs" />
     <Compile Include="Indexer\BexisIndexer.cs" />

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using BExIS.Search.Api;
 using BExIS.Search.Model;
+using BExIS.Search.Providers.LuceneProvider.Helpers;
 using BExIS.Search.Providers.LuceneProvider.Config;
 using BExIS.Search.Providers.LuceneProvider.Indexer;
 using BExIS.Search.Providers.LuceneProvider.Searcher;
@@ -97,6 +98,10 @@ namespace BExIS.Search.Providers.LuceneProvider
         {
             if (searchType.Equals("basedon")) getQueryFromCriteria(this.WorkingSearchModel.CriteriaComponent);
             if (searchType.Equals("new")) getQueryFromCriteria(new SearchCriteria());
+
+            // encoding special characters for lucene
+            value = EncoderHelper.Encode(value);
+
             this.WorkingSearchModel.SearchComponent.TextBoxSearchValues = BexisIndexSearcher.doTextSearch(this.bexisSearching, filter, value);
             return this.WorkingSearchModel;
         }
@@ -143,14 +148,15 @@ namespace BExIS.Search.Providers.LuceneProvider
        
         private void getQueryFromCriteria(SearchCriteria searchCriteria)
         {
-
             if (searchCriteria.SearchCriteriaList.Count() > 0)
             {
+
                 bexisSearching = new BooleanQuery();
                 foreach (SearchCriterion sco in searchCriteria.SearchCriteriaList)
                 {
                     if (sco.Values.Count > 0)
                     {
+
                         if (sco.SearchComponent.Type.Equals(SearchComponentBaseType.Category))
                         {
                             BooleanQuery bexisSearchingCategory = new BooleanQuery();
@@ -166,19 +172,20 @@ namespace BExIS.Search.Providers.LuceneProvider
                             }
                             foreach (String value in sco.Values)
                             {
-
+                                String encodedValue = EncoderHelper.Encode(value);
                                 String newString = null;
                               //string value = val.Replace(")", "").Replace("(", "");
                                 char[] delimiter = new char[] { ';', ' ', ',', '!', '.' };
-                                string[] parts = value.ToLower().Split(delimiter, StringSplitOptions.RemoveEmptyEntries);
+                                string[] parts = encodedValue.ToLower().Split(delimiter, StringSplitOptions.RemoveEmptyEntries);
                                 for (int i = 0; i < parts.Length; i++)
                                 {
                                     newString = newString + " " + parts[i] + "~0.6";
                                 }
                                 parser.PhraseSlop = 5;
                                 parser.DefaultOperator = QueryParser.AND_OPERATOR;
-                                string query_value = value;
-                                if (value.Equals("")){
+                                string query_value = encodedValue;
+                                if (encodedValue.Equals(""))
+                                {
                                     query_value = "*:*";
                                 }
                                 Query query = parser.Parse(query_value);
@@ -192,7 +199,8 @@ namespace BExIS.Search.Providers.LuceneProvider
                             BooleanQuery bexisSearchingFacet = new BooleanQuery();
                             foreach (String value in sco.Values)
                             {
-                                Query query = new TermQuery(new Term(fieldName, value));
+                                String encodedValue = EncoderHelper.Encode(value);
+                                Query query = new TermQuery(new Term(fieldName, encodedValue));
                                 bexisSearchingFacet.Add(query, Occur.SHOULD);
                             }
                             ((BooleanQuery)bexisSearching).Add(bexisSearchingFacet, Occur.MUST);
@@ -221,6 +229,7 @@ namespace BExIS.Search.Providers.LuceneProvider
                                 BooleanQuery bexisSearchingProperty = new BooleanQuery();
                                 foreach (String value in sco.Values)
                                 {
+
                                     if (value.ToLower().Equals("all"))
                                     {
                                         Query query = new MatchAllDocsQuery();
@@ -228,6 +237,7 @@ namespace BExIS.Search.Providers.LuceneProvider
                                     }
                                     else
                                     {
+                                        String encodedValue = EncoderHelper.Encode(value);
                                         if (SearchConfig.getNumericProperties().Contains(sco.SearchComponent.Name.ToLower()))
                                         {
 
@@ -236,7 +246,7 @@ namespace BExIS.Search.Providers.LuceneProvider
 
                                         else
                                         {
-                                            Query query = new TermQuery(new Term(fieldName, value));
+                                            Query query = new TermQuery(new Term(fieldName, encodedValue));
                                             bexisSearchingProperty.Add(query, Occur.SHOULD);
                                         }
                                     }
