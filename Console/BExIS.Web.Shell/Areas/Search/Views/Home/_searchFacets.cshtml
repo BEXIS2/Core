@@ -99,11 +99,12 @@
     .Title("Change selection")
     .Modal(false)
     .Width(450)
+    .Draggable(true)
     .ClientEvents(events => events
         .OnActivate("resizeOnRefresh")
         .OnClose("onClose")
     )
-    .Buttons(buttons => buttons.Refresh().Close())
+    .Buttons(buttons => buttons.Close())
     .Content(@<text>
        @Html.Partial("_windowCheckBoxList", new SearchModel())
     </text>

@@ -76,9 +76,9 @@
                    l += value + "\n";
                }
                    
-                 <div id="@item.SearchComponent.Name.ToString()" class="breadCrumbValue" title="@l" onclick="onSelect2(this)" >
+               <div class="breadCrumbValue">
                  |
-               @item.Values.Count.ToString() in <b ><b title="@l" >@item.SearchComponent.DisplayName.ToString()</b> @*@Html.ActionLink(@item.Name.ToString(), "OnClickBreadCrumbItem", new { value = "", parent = @item.Name.ToString() })*@</b>
+                <a  id="@item.SearchComponent.Name.ToString()" class="t-link" title="@l" onclick="onSelect2(this)" > @item.Values.Count.ToString() </a> in <b ><b title="@l" >@item.SearchComponent.DisplayName.ToString()</b> @*@Html.ActionLink(@item.Name.ToString(), "OnClickBreadCrumbItem", new { value = "", parent = @item.Name.ToString() })*@</b>
             
                </div>
         
@@ -114,5 +114,6 @@
         dw.center().open();
   
     }
+
 
 </script>

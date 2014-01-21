@@ -114,7 +114,7 @@
 /**************************/
 /*** _searchResultGrid***/
 
-#resultGrid
+.result-grid 
 {
     position: absolute;
     margin-right:10px;
@@ -258,6 +258,11 @@ div.t-treeview
     margin-top:10px;
 }
 
+#PrimaryDataResultGrid
+{
+    position:absolute;
+    margin-top:10px;
+}
 
 /**************************/
 /*** XLST Metadata***/
