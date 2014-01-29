@@ -154,7 +154,14 @@ namespace BExIS.Web.Shell.Areas.Search.Helpers
                     { 
                         case "String":
                         {
-                            dr[vv.Variable.Label.Replace(" ", "")] = vv.Value;
+                            if (vv.Value == null)
+                            {
+                                dr[vv.Variable.Label.Replace(" ", "")] = "null";
+                            }
+                            else
+                            {
+                                dr[vv.Variable.Label.Replace(" ", "")] = vv.Value.ToString();
+                            }
                             break;
                         }
 
