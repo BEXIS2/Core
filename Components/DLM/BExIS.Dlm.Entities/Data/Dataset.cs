@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using BExIS.Dlm.Entities.Administration;
 using BExIS.Dlm.Entities.DataStructure;
 using Vaiona.Entities.Common;
+using BExIS.Dlm.Entities.MetadataStructure;
 
 namespace BExIS.Dlm.Entities.Data
 {
@@ -28,10 +29,11 @@ namespace BExIS.Dlm.Entities.Data
 
         #region Associations
 
-        public virtual DataStructure.DataStructure DataStructure { get; set; }
-        public virtual ICollection<DatasetVersion> Versions { get; set; }
-        public virtual ResearchPlan ResearchPlan { get; set; } // it can be null, but check how hibernate deals with nullables
-        public virtual ICollection<DataView> Views { get; set; }
+        public virtual DataStructure.DataStructure          DataStructure { get; set; }
+        public virtual MetadataStructure.MetadataStructure  MetadataStructure { get; set; }
+        public virtual ICollection<DatasetVersion>          Versions { get; set; }
+        public virtual ResearchPlan                         ResearchPlan { get; set; } // it can be null, but check how hibernate deals with nullables
+        public virtual ICollection<DataView>                Views { get; set; }
         #endregion
 
         #region Methods

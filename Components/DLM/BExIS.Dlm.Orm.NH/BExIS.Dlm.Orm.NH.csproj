@@ -136,6 +136,24 @@
     <Content Include="Mappings\DB2Dialect\Data\ContentDescriptor.hbm.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Mappings\DB2Dialect\MetadataStructure\DataContainer.MetadataAttribute.hbm.xml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Mappings\DB2Dialect\MetadataStructure\MetadataAttributeUsage.hbm.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Mappings\DB2Dialect\MetadataStructure\MetadataPackage.hbm.xml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Mappings\DB2Dialect\MetadataStructure\MetadataStructure.hbm.xml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Mappings\DB2Dialect\MetadataStructure\MetadataPackageUsage.hbm.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <EmbeddedResource Include="Mappings\MsSql2008Dialect\DataTuple.hbm.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>

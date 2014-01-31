@@ -1,0 +1,128 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="BExIS.Dlm.Entities.MetadataStructure.MetadataAttribute">
+    <Position X="10.75" Y="3" Width="1.75" />
+    <AssociationLine Name="UsedIn" Type="BExIS.Dlm.Entities.MetadataStructure.MetadataAttributeUsage" FixedToPoint="true">
+      <Path>
+        <Point X="11.25" Y="3.908" />
+        <Point X="11.25" Y="5" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-0.286" Y="0.393" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>MetadataStrcuture\MetadataAttribute.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="UsedIn" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.MetadataStructure.MetadataAttributeUsage">
+    <Position X="10.75" Y="5" Width="2" />
+    <AssociationLine Name="MetadataPackage" Type="BExIS.Dlm.Entities.MetadataStructure.MetadataPackage">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.058" Y="0.07" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <AssociationLine Name="MetadataAttribute" Type="BExIS.Dlm.Entities.MetadataStructure.MetadataAttribute" FixedToPoint="true">
+      <Path>
+        <Point X="12.25" Y="5" />
+        <Point X="12.25" Y="3.908" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-0.62" Y="0.352" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAQACCAEA=</HashCode>
+      <FileName>MetadataStrcuture\MetadataAttributeUsage.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="MetadataPackage" />
+      <Property Name="MetadataAttribute" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.MetadataStructure.MetadataPackage">
+    <Position X="7.25" Y="5" Width="1.5" />
+    <AssociationLine Name="MetadataAttributeUsages" Type="BExIS.Dlm.Entities.MetadataStructure.MetadataAttributeUsage" FixedToPoint="true">
+      <Path>
+        <Point X="8.75" Y="6.185" />
+        <Point X="10.75" Y="6.185" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAAAECAAQAAAAAAAAAAAAAAAAAQAA=</HashCode>
+      <FileName>MetadataStrcuture\MetadataPackage.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="UsedIn" />
+      <Property Name="MetadataAttributeUsages" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.MetadataStructure.MetadataPackageUsage">
+    <Position X="4" Y="5" Width="2" />
+    <AssociationLine Name="MetadataStructure" Type="BExIS.Dlm.Entities.MetadataStructure.MetadataStructure" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="4" Y="5.562" />
+        <Point X="3.125" Y="5.562" />
+        <Point X="3.125" Y="4.259" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-0.607" Y="0.298" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEAAAAEAAAAAAAAAAAAAAAAAAAAAAAACCAEA=</HashCode>
+      <FileName>MetadataStrcuture\MetadataPackageUsage.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="MetadataPackage" />
+      <Property Name="MetadataStructure" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="BExIS.Dlm.Entities.MetadataStructure.MetadataStructure">
+    <Position X="2.25" Y="2.5" Width="1.5" />
+    <AssociationLine Name="Parent" Type="BExIS.Dlm.Entities.MetadataStructure.MetadataStructure" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="2.25" Y="2.844" />
+        <Point X="1.875" Y="2.844" />
+        <Point X="1.875" Y="2.125" />
+        <Point X="2.875" Y="2.125" />
+        <Point X="2.875" Y="2.5" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="Children" Type="BExIS.Dlm.Entities.MetadataStructure.MetadataStructure" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="3.5" Y="2.5" />
+        <Point X="3.5" Y="2.125" />
+        <Point X="4.125" Y="2.125" />
+        <Point X="4.125" Y="2.776" />
+        <Point X="3.75" Y="2.776" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.029" Y="0.298" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <AssociationLine Name="MetadataPackageUsages" Type="BExIS.Dlm.Entities.MetadataStructure.MetadataPackageUsage" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="2.375" Y="4.259" />
+        <Point X="2.375" Y="6.125" />
+        <Point X="4" Y="6.125" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAAAAEQQQAAAAAAAAABAAAAAACAAA=</HashCode>
+      <FileName>MetadataStrcuture\MetadataStructure.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Parent" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Children" />
+      <Property Name="MetadataPackageUsages" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Font Name="Tahoma" Size="8.25" />
+</ClassDiagram>
