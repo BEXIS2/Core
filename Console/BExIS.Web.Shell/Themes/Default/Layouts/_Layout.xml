@@ -12,7 +12,7 @@
 
   <MapItem ContentKey="Menu">
     <ContentProviders>
-      <ContentProvider Area="Site" Controller="Nav" Action="Menu" Type="Action">
+      <ContentProvider Area="Site" Controller="Nav" Action="Menu" Type="Action" Enabled="true">
         <Parameters>
           <Parameter Name="oreintation" Value="1"/>
         </Parameters>
@@ -22,7 +22,7 @@
 
   <MapItem ContentKey="Header">
     <ContentProviders>
-      <ContentProvider View="_Header" Type="View">
+      <ContentProvider View="_Header" Type="View" Enabled="true">
         <Parameters>
         </Parameters>
       </ContentProvider>
@@ -31,7 +31,7 @@
 
   <MapItem ContentKey="LogOnStatus">
     <ContentProviders>
-      <ContentProvider View="_LogOnStatus" Type="View">
+      <ContentProvider View="_LogOnStatus" Type="View" Enabled="true">
         <Parameters>
         </Parameters>
       </ContentProvider>
@@ -40,7 +40,7 @@
 
   <MapItem ContentKey="ThemeSelector">
     <ContentProviders>
-      <ContentProvider View="_ThemeSelector" Type="View">
+      <ContentProvider View="_ThemeSelector" Type="View" Enabled="false"> <!--changes are applied after application restart -->
         <Parameters>
         </Parameters>
       </ContentProvider>
@@ -49,7 +49,7 @@
 
   <MapItem ContentKey="Footer">
     <ContentProviders>
-      <ContentProvider View="_Footer" Type="View">
+      <ContentProvider View="_Footer" Type="View" Enabled="true">
         <Parameters>
         </Parameters>
       </ContentProvider>

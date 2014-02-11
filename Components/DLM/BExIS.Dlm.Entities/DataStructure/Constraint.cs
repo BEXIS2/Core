@@ -128,7 +128,7 @@ namespace BExIS.Dlm.Entities.DataStructure
             // Domain items are stored as string, so instead of converting them to the containers data type, it is easier and faster to convert the input data to string
             // it computes the XOR between the positive clause of the constraint and the "Negated" Boolean,
             // meaning if Negated is true the function returns false for inputs that are in the domain
-            return (Negated ^ (Items.Where(p => p.Key.Equals(data.ToString())).Count() > 0)); 
+            return (Negated ^ (Items.Where(p => p.Key.Equals(data.ToString(), StringComparison.InvariantCultureIgnoreCase)).Count() > 0)); 
         }
 
         #endregion

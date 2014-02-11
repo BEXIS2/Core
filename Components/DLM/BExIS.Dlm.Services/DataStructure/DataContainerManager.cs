@@ -238,13 +238,6 @@ namespace BExIS.Dlm.Services.DataStructure
             throw new NotImplementedException();
         }
 
-        /// <summary>
-        /// Removes the association between the container and the constraint. not the container nor the constraint. Note that it is possible for the constraint
-        /// to be associated with more than container
-        /// </summary>
-        /// <param name="container">A variable or a parameter</param>
-        /// <param name="constraint">Any kind of constraint: DomainValue, Validator, DefaultValue</param>
-        /// <returns></returns>
         public DataAttribute RemoveConstraint(DataContainer container, Constraint constraint)
         {
             throw new NotImplementedException();

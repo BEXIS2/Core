@@ -9,6 +9,8 @@ using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using Vaiona.Web.Mvc.Data;
 using Vaiona.Web.Mvc.Models;
+using BExIS.Dlm.Services.MetadataStructure;
+using BExIS.Dlm.Entities.MetadataStructure;
 
 namespace BExIS.Web.Shell.Controllers
 {
@@ -50,9 +52,55 @@ namespace BExIS.Web.Shell.Controllers
             //purgeAll();
             //getAllDatasetVersions();
 
-            addConstraintsTo();
+            //addConstraintsTo();
+            testMetadataStructure();
             //return RedirectToAction("About");
             return View();
+        }
+
+        private void testMetadataStructure()
+        {
+            MetadataStructureManager mdsManager = new MetadataStructureManager();
+            MetadataPackageManager mdpManager = new MetadataPackageManager();
+            MetadataAttributeManager mdaManager = new MetadataAttributeManager();
+
+            MetadataStructure root = mdsManager.MetadataStructureRepo.Get(p => p.Name == "Root").FirstOrDefault();
+            if (root == null) root = mdsManager.Create("Root", "This is the root metadata structure", "", "", null);
+
+            MetadataStructure s1 = mdsManager.MetadataStructureRepo.Get(p => p.Name == "S1").FirstOrDefault();
+            if (s1 == null) s1 = mdsManager.Create("S1", "This is S1 metadata structure", "", "", root);
+
+            MetadataStructure s11 = mdsManager.MetadataStructureRepo.Get(p => p.Name == "S1.1").FirstOrDefault();
+            if (s11 == null) s11 = mdsManager.Create("S1.1", "This is S1.1 metadata structure", "", "", s1);
+
+            MetadataStructure s2 = mdsManager.MetadataStructureRepo.Get(p => p.Name == "S2").FirstOrDefault();
+            if (s2 == null) s2 = mdsManager.Create("S2", "This is S2 metadata structure", "", "", root);
+
+            MetadataPackage p1 = mdpManager.MetadataPackageRepo.Get(p => p.Name == "P1").FirstOrDefault();
+            if (p1 == null) p1 = mdpManager.Create("P1", "Sample Package 1", true);
+
+            MetadataPackage p2 = mdpManager.MetadataPackageRepo.Get(p => p.Name == "P2").FirstOrDefault();
+            if (p2 == null) p2 = mdpManager.Create("P2", "Sample Package 2", true);
+
+            MetadataPackage p3 = mdpManager.MetadataPackageRepo.Get(p => p.Name == "P3").FirstOrDefault();
+            if (p3 == null) p3 = mdpManager.Create("P3", "Sample Package 3", true);
+
+            MetadataPackage p4 = mdpManager.MetadataPackageRepo.Get(p => p.Name == "P4").FirstOrDefault();
+            if (p4 == null) p4 = mdpManager.Create("P4", "Sample Package 4", true);
+
+            if(s1.MetadataPackageUsages.Where(p=>p.MetadataPackage == p1).Count() <=0)
+                mdsManager.AddMetadataPackageUsage(s1, p1, "P1 in S1", 0, 1);
+
+            if (s1.MetadataPackageUsages.Where(p => p.MetadataPackage == p2).Count() <= 0)
+                mdsManager.AddMetadataPackageUsage(s1, p2, "P2 in S1", 1, 1);
+
+            if (s11.MetadataPackageUsages.Where(p => p.MetadataPackage == p3).Count() <= 0)
+                mdsManager.AddMetadataPackageUsage(s11, p3, "P3 in S1.1", 0, 10);
+
+            if (s11.MetadataPackageUsages.Where(p => p.MetadataPackage == p4).Count() <= 0)
+                mdsManager.AddMetadataPackageUsage(s11, p4, "P4 in S1.1", 2, 5);
+
+
         }
 
         private void addConstraintsTo()

@@ -90,7 +90,7 @@ namespace BExIS.Dlm.Services.DataStructure
         public Classifier Update(Classifier entity)
         {
             Contract.Requires(entity != null, "provided entity can not be null");
-            Contract.Requires(entity.Id >= 0, "provided entity must have a permant ID");
+            Contract.Requires(entity.Id >= 0, "provided entity must have a permanent ID");
 
             Contract.Ensures(Contract.Result<Classifier>() != null && Contract.Result<Classifier>().Id >= 0, "No entity is persisted!");
 

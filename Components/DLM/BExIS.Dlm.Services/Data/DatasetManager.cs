@@ -419,6 +419,64 @@ namespace BExIS.Dlm.Services.Data
             //return (qu.ToList());
         }
 
+        public List<Int64> GetDatasetLatestIds(bool includeCheckouts = false)
+        {
+            if (includeCheckouts) // the working copy versions of checked out datasets are also included
+            {
+                var q1 = DatasetVersionRepo.Query(p =>
+                        (p.Dataset.Status == DatasetStatus.CheckedIn || p.Dataset.Status == DatasetStatus.CheckedOut)
+                        && (p.Status == DatasetVersionStatus.CheckedIn || p.Status == DatasetVersionStatus.CheckedOut)
+                    ).Select(p => p.Dataset.Id);
+                return (q1.ToList());
+            }
+            else //just latest checked in versions or checked in datasets 
+            {
+                var q1 = DatasetVersionRepo.Query(p =>
+                        (p.Dataset.Status == DatasetStatus.CheckedIn || p.Dataset.Status == DatasetStatus.CheckedOut) // include checked in (latest) versions of currently checked out datasets
+                        && (p.Status == DatasetVersionStatus.CheckedIn)
+                    ).Select(p => p.Dataset.Id);
+                return (q1.ToList());
+            }
+
+            //// it works using the timestamp technique
+            //var qu = (from dsv in DatasetVersionRepo.Get(p => p.Dataset.Status != DatasetStatus.Deleted)
+            //         group dsv by dsv.Dataset.Id into grp
+            //         let maxTimestamp = grp.Max(p => p.Timestamp)
+            //         select grp.Single(p => p.Timestamp >= maxTimestamp).Metadata);
+
+            //return (qu.ToList());
+        }
+
+        public XmlDocument GetDatasetLatestMetadataVersion(Int64 datasetId, bool includeCheckouts = false)
+        {
+            if (includeCheckouts) // the working copy versions of checked out datasets are also included
+            {
+                var q1 = DatasetVersionRepo.Query(p =>
+                                (p.Dataset.Status == DatasetStatus.CheckedIn || p.Dataset.Status == DatasetStatus.CheckedOut)
+                            &&  (p.Status == DatasetVersionStatus.CheckedIn || p.Status == DatasetVersionStatus.CheckedOut)
+                            &&  (p.Dataset.Id == datasetId)
+                        ).Select(p => p.Metadata);
+                return (q1.FirstOrDefault());
+            }
+            else //just latest checked in versions or checked in datasets 
+            {
+                var q1 = DatasetVersionRepo.Query(p =>
+                                (p.Dataset.Status == DatasetStatus.CheckedIn || p.Dataset.Status == DatasetStatus.CheckedOut) // include checked in (latest) versions of currently checked out datasets
+                            &&  (p.Status == DatasetVersionStatus.CheckedIn)
+                            &&  (p.Dataset.Id == datasetId)
+                        ).Select(p => p.Metadata);
+                return (q1.FirstOrDefault());
+            }
+
+            //// it works using the timestamp technique
+            //var qu = (from dsv in DatasetVersionRepo.Get(p => p.Dataset.Status != DatasetStatus.Deleted)
+            //         group dsv by dsv.Dataset.Id into grp
+            //         let maxTimestamp = grp.Max(p => p.Timestamp)
+            //         select grp.Single(p => p.Timestamp >= maxTimestamp).Metadata);
+
+            //return (qu.ToList());
+        }
+
         public DatasetVersion GetDatasetLatestVersion(Dataset dataset)
         {
             /// the latest checked in version should be returned.
