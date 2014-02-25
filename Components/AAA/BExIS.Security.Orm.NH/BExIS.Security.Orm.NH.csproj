@@ -63,6 +63,21 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Mappings\PostgreSQL82Dialect\Objects\Feature.hbm.xml" />
+    <Content Include="Mappings\PostgreSQL82Dialect\Objects\Task.hbm.xml" />
+    <Content Include="Mappings\PostgreSQL82Dialect\Security\FeaturePermission.hbm.xml" />
+    <Content Include="Mappings\PostgreSQL82Dialect\Security\Permission.hbm.xml" />
+    <EmbeddedResource Include="Mappings\PostgreSQL82Dialect\Subjects\Role.hbm.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <Content Include="Mappings\PostgreSQL82Dialect\Subjects\SecurityUser.hbm.xml" />
+    <EmbeddedResource Include="Mappings\PostgreSQL82Dialect\Subjects\Subject.hbm.xml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Mappings\PostgreSQL82Dialect\Subjects\User.hbm.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
     <Content Include="Mappings\DB2Dialect\Objects\Feature.hbm.xml" />
     <Content Include="Mappings\DB2Dialect\Security\FeaturePermission.hbm.xml" />
     <Content Include="Mappings\DB2Dialect\Security\Permission.hbm.xml" />

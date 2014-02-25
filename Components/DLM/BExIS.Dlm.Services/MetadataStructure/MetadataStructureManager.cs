@@ -14,13 +14,15 @@ namespace BExIS.Dlm.Services.MetadataStructure
         public MetadataStructureManager()
         {
             IUnitOfWork uow = this.GetUnitOfWork();
-            this.MetadataStructureRepo = uow.GetReadOnlyRepository<MDS.MetadataStructure>();
+            this.Repo = uow.GetReadOnlyRepository<MDS.MetadataStructure>();
+            this.PackageUsageRepo = uow.GetReadOnlyRepository<MDS.MetadataPackageUsage>();
         }
 
         #region Data Readers
 
         // provide read only repos for the whole aggregate area
-        public IReadOnlyRepository<MDS.MetadataStructure> MetadataStructureRepo { get; private set; }
+        public IReadOnlyRepository<MDS.MetadataStructure> Repo { get; private set; }
+        public IReadOnlyRepository<MDS.MetadataPackageUsage> PackageUsageRepo { get; private set; }
 
         #endregion
 
@@ -28,14 +30,15 @@ namespace BExIS.Dlm.Services.MetadataStructure
 
         public List<MetadataPackageUsage> GetEffectivePackages(MDS.MetadataStructure structure)
         {
-            //MetadataStructureRepo.Get(
-            return structure.MetadataPackageUsages.ToList(); // plus all the packages of the parents
-            
+            return GetEffectivePackages(structure.Id);            
         }
 
         public List<MetadataPackageUsage> GetEffectivePackages(Int64 structureId)
         {
-            return null; // structure.MetadataPackageUsages.ToList(); // plus all the packages of the parents
+            Dictionary<string, object> parameters = new Dictionary<string, object> ();
+            parameters.Add("metadataStructureId", structureId);
+            List<MetadataPackageUsage> usages = PackageUsageRepo.Get("GetEffectivePackageUsages", parameters).ToList();
+            return usages; // structure.MetadataPackageUsages.ToList(); // plus all the packages of the parents
         }
 
         public MDS.MetadataStructure Create(string name, string description, string xsdFileName, string xslFileName, MDS.MetadataStructure parent)
@@ -188,8 +191,8 @@ namespace BExIS.Dlm.Services.MetadataStructure
 
             Contract.Ensures(Contract.Result<MetadataPackageUsage>() != null && Contract.Result<MetadataPackageUsage>().Id >= 0);
 
-            MetadataStructureRepo.Reload(structure);
-            MetadataStructureRepo.LoadIfNot(structure.MetadataPackageUsages);
+            Repo.Reload(structure);
+            Repo.LoadIfNot(structure.MetadataPackageUsages);
             int count = 0;
             try
             {

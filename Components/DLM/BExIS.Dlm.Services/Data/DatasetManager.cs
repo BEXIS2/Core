@@ -8,6 +8,7 @@ using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using Vaiona.Persistence.Api;
 using Vaiona.Util.Xml;
+using MDS = BExIS.Dlm.Entities.MetadataStructure;
 
 namespace BExIS.Dlm.Services.Data
 {
@@ -60,19 +61,23 @@ namespace BExIS.Dlm.Services.Data
             return (ds);
         }
 
-        public Dataset CreateEmptyDataset(Entities.DataStructure.DataStructure dataStructure, ResearchPlan researchPlan)
+        public Dataset CreateEmptyDataset(Entities.DataStructure.DataStructure dataStructure, ResearchPlan researchPlan, MDS.MetadataStructure metadataStructure)
         {
             Contract.Requires(dataStructure != null && dataStructure.Id >= 0);
             
             Contract.Ensures(Contract.Result<Dataset>() != null && Contract.Result<Dataset>().Id >= 0);
             
             Dataset dataset = new Dataset(dataStructure);
+            
             dataset.ResearchPlan = researchPlan;
+            researchPlan.Datasets.Add(dataset); 
+            
+            dataset.MetadataStructure = metadataStructure;
+            metadataStructure.Datasets.Add(dataset);            
+
             dataset.Status = DatasetStatus.CheckedIn;
             dataset.CheckOutUser = string.Empty;
-
-            dataset.DataStructure.Datasets.Add(dataset);
-            researchPlan.Datasets.Add(dataset);
+            dataset.LastCheckIOTimestamp = DateTime.UtcNow;
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {

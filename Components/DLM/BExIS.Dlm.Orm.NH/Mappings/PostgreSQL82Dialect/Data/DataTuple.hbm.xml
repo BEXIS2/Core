@@ -1,0 +1,60 @@
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.Data">
+  <class xmlns="urn:nhibernate-mapping-2.2" name="DataTuple" table="DataTuples">
+    <!-- Mapping BaseEntity properties -->
+    
+    <id name="Id" type="Int64">
+      <column name="Id" />
+      <generator class="native" />
+    </id>
+
+    <version name="VersionNo" type="Int32">
+      <column name="VersionNo" />
+    </version>
+
+    <property name="Extra" type="System.Xml.XmlDocument, System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+      <column name="Extra" not-null="false" sql-type="xml" />
+    </property>
+
+    <!-- Mapping DataTuple properties -->
+    
+    <property name="OrderNo" type="Int32">
+      <column name="OrderNo" />
+    </property>
+
+    <property name="TupleAction" type="BExIS.Dlm.Entities.Data.TupleAction, BExIS.Dlm.Entities">
+      <column name="TupleAction" />
+    </property>
+
+    <property name="Timestamp" type="DateTime">
+      <column name="Timestamp" />
+    </property>
+
+    <property name="XmlVariableValues" type="System.Xml.XmlDocument, System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+      <column name="XmlVariableValues" not-null="false" sql-type="xml" />
+    </property>
+
+    <property name="XmlAmendments" type="System.Xml.XmlDocument, System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+      <column name="XmlAmendments" not-null="false" sql-type="xml" />
+    </property>
+
+    <many-to-one class="DatasetVersion" name="DatasetVersion" column="DatasetVersionRef">      
+    </many-to-one>
+
+    <set cascade="save-update" name="History" inverse="true" lazy="true" order-by="OriginalTupleRef">
+      <key>
+        <column name="OriginalTupleRef" />
+      </key>
+      <one-to-many class="DataTupleVersion" />
+    </set>
+
+  </class>
+
+  <sql-query name="getLatestCheckedInTuples">
+    <return alias="datatuple" class="BExIS.Dlm.Entities.Data.DataTuple"/>
+    SELECT * FROM DATATUPLES
+    <!--SELECT * FROM DATATUPLES Where DatasetVersionRef IN (SELECT ID FROM DATASETVERSIONS Where DatasetRef=3 AND Timestamp <= '2013-01-01 12:00:00')-->
+    <!--SELECT * FROM DATASETVERSIONS Where (DatasetRef IN (Select DatasetRef From DATASETVERSIONS Where Id= :datasetVersionId)) AND (Timestamp <= (Select Timestamp From DATASETVERSIONS Where Id= :datasetVersionId))-->
+      </sql-query>
+  
+  
+</hibernate-mapping>

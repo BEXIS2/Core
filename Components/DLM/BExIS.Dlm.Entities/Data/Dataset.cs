@@ -51,6 +51,7 @@ namespace BExIS.Dlm.Entities.Data
             //Metadata = null; // new XmlElement();// Metadata.Metadata();
             //XmlExtendedPropertyValues = new XmlDocument();
             this.DataStructure = dataStructure;
+            dataStructure.Datasets.Add(this);
         }
 
         //public override void Validate()

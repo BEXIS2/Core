@@ -1,0 +1,108 @@
+<!--
+<?xml version="1.0" encoding="utf-8" ? >
+<!DOCTYPE hibernate-mapping [ <!ENTITY BaseEntityProperties SYSTEM "..\BaseEntityProperties.xml"> ]>
+-->
+  
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.Data">
+  <class xmlns="urn:nhibernate-mapping-2.2" name="Dataset" table="Datasets">
+    <!-- Mapping BaseEntity properties -->
+    <id name="Id" type="Int64">
+      <column name="Id" />
+      <generator class="native" />
+    </id>
+
+    <!--&BaseEntityProperties;-->
+
+    <version name="VersionNo" type="Int32">
+      <column name="VersionNo" />
+    </version>
+    
+    <property name="Extra" type="System.Xml.XmlDocument, System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+      <column name="Extra" not-null="false" sql-type="xml" />
+    </property>
+
+    <!-- Mapping BusinessEntity properties -->
+
+    <component name="StateInfo">
+      <property name="State" type="string">
+        <column name="State" />
+      </property>
+      <property name="Timestamp" type="DateTime">
+        <column name="StateTimestamp" not-null="false"/>
+      </property>
+      <property name="Comment" type="string">
+        <column name="StateComment" />
+      </property>
+    </component>
+
+    <component name="CreationInfo" >
+      <property name="ActionType" type="Vaiona.Entities.Common.AuditActionType, Vaiona.Entities">
+        <column name="C_ActionType" />
+      </property>
+      <property name="Performer" type="string">
+        <column name="C_Performer" />
+      </property>
+      <property name="Comment" type="string">
+        <column name="C_Comment" />
+      </property>
+      <property name="Timestamp" type="DateTime">
+        <column name="C_Timestamp" not-null="false"/>
+      </property>
+    </component>
+
+    <component name="ModificationInfo" >
+      <property name="ActionType" type="Vaiona.Entities.Common.AuditActionType, Vaiona.Entities">
+        <column name="M_ActionType" />
+      </property>
+      <property name="Performer" type="string">
+        <column name="M_Performer" />
+      </property>
+      <property name="Comment" type="string">
+        <column name="M_Comment" />
+      </property>
+      <property name="Timestamp" type="DateTime">
+        <column name="M_Timestamp" not-null="false"/>
+      </property>
+    </component>
+    
+    <!-- Mapping Dataset properties -->
+
+    <property name="Status" type="BExIS.Dlm.Entities.Data.DatasetStatus, BExIS.Dlm.Entities">
+      <column name="Status"/>
+    </property>
+    
+    <property name="LastCheckIOTimestamp" type="DateTime">
+      <column name="LastCheckIOTimestamp" />
+    </property>
+    
+    <property name="CheckOutUser" type="string">
+      <column name="CheckOutUser" />
+    </property>
+    
+    <!-- Mapping entity associations -->
+    <many-to-one name="DataStructure" class="BExIS.Dlm.Entities.DataStructure.DataStructure" not-null="true" column="DataStructureRef"/>
+
+    <many-to-one name="MetadataStructure" class="BExIS.Dlm.Entities.MetadataStructure.MetadataStructure" not-null="false" column="MetadataStructureRef"/> <!-- not-null should be true, when testing is finished-->
+
+    <many-to-one name="ResearchPlan" class="BExIS.Dlm.Entities.Administration.ResearchPlan" not-null="false" column="ResearchPlanRef"/>
+
+    <set name="Versions" inverse="true" lazy="true" order-by="Timestamp desc" cascade="all-delete-orphan">
+      <key>
+        <column name="DatasetRef" />
+      </key>
+      <one-to-many class="DatasetVersion" />
+    </set>
+
+    <set name="Views" inverse="true" lazy="true" cascade="all">
+      <key column="DatasetRef" not-null="false" foreign-key="FK_Views_Datasets"/>      
+      <one-to-many class="BExIS.Dlm.Entities.DataStructure.DataView" />
+    </set>
+
+  </class>
+
+  <sql-query name="test1">
+    <return alias="dataset" class="BExIS.Dlm.Entities.Data.Dataset"/>
+    select * from Datasets where xmlexists('$c/Metadata/Ownership[LastName= "Chamanara"]' passing Datasets.Metadata as "c")
+  </sql-query>
+  
+</hibernate-mapping>

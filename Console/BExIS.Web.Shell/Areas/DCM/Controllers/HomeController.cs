@@ -19,6 +19,8 @@ using BExIS.DCM.UploadWizard;
 using Vaiona.Util.Cfg;
 using System.Diagnostics;
 using BExIS.DCM.Transform.Output;
+using MDS = BExIS.Dlm.Entities.MetadataStructure;
+using BExIS.Dlm.Services.MetadataStructure;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
 {
@@ -1265,7 +1267,10 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 ResearchPlanManager rpm = new ResearchPlanManager();
                 ResearchPlan rp = rpm.Repo.Get(model.ResearchPlanId);
 
-                Dataset ds = dm.CreateEmptyDataset(dataStructure, rp);
+                MetadataStructureManager mdsManager = new MetadataStructureManager();
+                MDS.MetadataStructure mds = mdsManager.Repo.Query().First(); // change this line to something meaningful. Javad, 24.02.2014
+
+                Dataset ds = dm.CreateEmptyDataset(dataStructure, rp, mds);
 
                 TaskManager.AddToBus(TaskManager.DATASET_TITLE, model.Title);
                 TaskManager.AddToBus(TaskManager.RESEARCHPLAN_ID, model.ResearchPlanId);

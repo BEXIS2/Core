@@ -327,7 +327,7 @@ namespace BExIS.Dlm.Services.DataStructure
                 TargetType = targetType,
                 Target = target,
                 OffsetType = offsetType,
-                Offset = offset,
+                OffsetValue = offset,
                 DataContainer = container,
             };
 

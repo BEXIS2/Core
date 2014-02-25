@@ -11,6 +11,7 @@ using Vaiona.Web.Mvc.Data;
 using Vaiona.Web.Mvc.Models;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Dlm.Entities.MetadataStructure;
+using MDS = BExIS.Dlm.Entities.MetadataStructure;
 
 namespace BExIS.Web.Shell.Controllers
 {
@@ -64,16 +65,16 @@ namespace BExIS.Web.Shell.Controllers
             MetadataPackageManager mdpManager = new MetadataPackageManager();
             MetadataAttributeManager mdaManager = new MetadataAttributeManager();
 
-            MetadataStructure root = mdsManager.MetadataStructureRepo.Get(p => p.Name == "Root").FirstOrDefault();
+            MetadataStructure root = mdsManager.Repo.Get(p => p.Name == "Root").FirstOrDefault();
             if (root == null) root = mdsManager.Create("Root", "This is the root metadata structure", "", "", null);
 
-            MetadataStructure s1 = mdsManager.MetadataStructureRepo.Get(p => p.Name == "S1").FirstOrDefault();
+            MetadataStructure s1 = mdsManager.Repo.Get(p => p.Name == "S1").FirstOrDefault();
             if (s1 == null) s1 = mdsManager.Create("S1", "This is S1 metadata structure", "", "", root);
 
-            MetadataStructure s11 = mdsManager.MetadataStructureRepo.Get(p => p.Name == "S1.1").FirstOrDefault();
+            MetadataStructure s11 = mdsManager.Repo.Get(p => p.Name == "S1.1").FirstOrDefault();
             if (s11 == null) s11 = mdsManager.Create("S1.1", "This is S1.1 metadata structure", "", "", s1);
 
-            MetadataStructure s2 = mdsManager.MetadataStructureRepo.Get(p => p.Name == "S2").FirstOrDefault();
+            MetadataStructure s2 = mdsManager.Repo.Get(p => p.Name == "S2").FirstOrDefault();
             if (s2 == null) s2 = mdsManager.Create("S2", "This is S2 metadata structure", "", "", root);
 
             MetadataPackage p1 = mdpManager.MetadataPackageRepo.Get(p => p.Name == "P1").FirstOrDefault();
@@ -100,7 +101,7 @@ namespace BExIS.Web.Shell.Controllers
             if (s11.MetadataPackageUsages.Where(p => p.MetadataPackage == p4).Count() <= 0)
                 mdsManager.AddMetadataPackageUsage(s11, p4, "P4 in S1.1", 2, 5);
 
-
+            var usages = mdsManager.GetEffectivePackages(3);
         }
 
         private void addConstraintsTo()
@@ -222,7 +223,10 @@ namespace BExIS.Web.Shell.Controllers
             ResearchPlanManager rpManager = new ResearchPlanManager();
             DatasetManager dm = new DatasetManager();
 
-            Dataset ds = dm.CreateEmptyDataset(dsManager.StructuredDataStructureRepo.Get(3), rpManager.Repo.Get(1));
+            MetadataStructureManager mdsManager = new MetadataStructureManager();
+            MDS.MetadataStructure mds = mdsManager.Repo.Query().First();
+
+            Dataset ds = dm.CreateEmptyDataset(dsManager.StructuredDataStructureRepo.Get(3), rpManager.Repo.Get(1), mds);
 
             if (dm.IsDatasetCheckedOutFor(ds.Id, "Javad") || dm.CheckOutDataset(ds.Id, "Javad"))
             {

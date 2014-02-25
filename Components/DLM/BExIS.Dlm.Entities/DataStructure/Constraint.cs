@@ -298,7 +298,7 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// <summary>
         /// The value of the offset to be taken into account in the comparison according to <seealso cref="ComparisonOffsetTye"/>
         /// </summary>
-        public virtual double Offset { get; set; }
+        public virtual double OffsetValue { get; set; }
 
         public override string ErrorMessage
         {
@@ -353,9 +353,9 @@ namespace BExIS.Dlm.Entities.DataStructure
                         double d = Convert.ToDouble(data);
                         double aux = Convert.ToDouble(auxilialy);
                         if (OffsetType == ComparisonOffsetType.Absolute)
-                            return Negated ^ (d.Equals(aux + Offset));
+                            return Negated ^ (d.Equals(aux + OffsetValue));
                         if (OffsetType == ComparisonOffsetType.Ratio)
-                            return Negated ^ (d.Equals(aux * Offset));
+                            return Negated ^ (d.Equals(aux * OffsetValue));
                         break;
                     }
                 case ComparisonOperator.NotEquals:
@@ -367,9 +367,9 @@ namespace BExIS.Dlm.Entities.DataStructure
                         double d = Convert.ToDouble(data);
                         double aux = Convert.ToDouble(auxilialy);
                         if (OffsetType == ComparisonOffsetType.Absolute)
-                            return Negated ^ (!d.Equals(aux + Offset));
+                            return Negated ^ (!d.Equals(aux + OffsetValue));
                         if (OffsetType == ComparisonOffsetType.Ratio)
-                            return Negated ^ (!d.Equals(aux * Offset));
+                            return Negated ^ (!d.Equals(aux * OffsetValue));
                         break;
                     }
                 case ComparisonOperator.GreaerThan:
@@ -381,9 +381,9 @@ namespace BExIS.Dlm.Entities.DataStructure
                         double d = Convert.ToDouble(data);
                         double aux = Convert.ToDouble(auxilialy);
                         if (OffsetType == ComparisonOffsetType.Absolute)
-                            return Negated ^ (d > (aux + Offset));
+                            return Negated ^ (d > (aux + OffsetValue));
                         if (OffsetType == ComparisonOffsetType.Ratio)
-                            return Negated ^ (d > (aux * Offset));
+                            return Negated ^ (d > (aux * OffsetValue));
                         break;
                     }
                 case ComparisonOperator.GreaterThanOrEqual:
@@ -395,9 +395,9 @@ namespace BExIS.Dlm.Entities.DataStructure
                         double d = Convert.ToDouble(data);
                         double aux = Convert.ToDouble(auxilialy);
                         if (OffsetType == ComparisonOffsetType.Absolute)
-                            return Negated ^ (d >= (aux + Offset));
+                            return Negated ^ (d >= (aux + OffsetValue));
                         if (OffsetType == ComparisonOffsetType.Ratio)
-                            return Negated ^ (d >= (aux * Offset));
+                            return Negated ^ (d >= (aux * OffsetValue));
                         break;
                     }
                 case ComparisonOperator.LessThan:
@@ -409,9 +409,9 @@ namespace BExIS.Dlm.Entities.DataStructure
                         double d = Convert.ToDouble(data);
                         double aux = Convert.ToDouble(auxilialy);
                         if (OffsetType == ComparisonOffsetType.Absolute)
-                            return Negated ^ (d < (aux + Offset));
+                            return Negated ^ (d < (aux + OffsetValue));
                         if (OffsetType == ComparisonOffsetType.Ratio)
-                            return Negated ^ (d < (aux * Offset));
+                            return Negated ^ (d < (aux * OffsetValue));
                         break;
                     }
                 case ComparisonOperator.LessThanOrEqual:
@@ -423,9 +423,9 @@ namespace BExIS.Dlm.Entities.DataStructure
                         double d = Convert.ToDouble(data);
                         double aux = Convert.ToDouble(auxilialy);
                         if (OffsetType == ComparisonOffsetType.Absolute)
-                            return Negated ^ (d <= (aux + Offset));
+                            return Negated ^ (d <= (aux + OffsetValue));
                         if (OffsetType == ComparisonOffsetType.Ratio)
-                            return Negated ^ (d <= (aux * Offset));
+                            return Negated ^ (d <= (aux * OffsetValue));
                         break;
                     }
                 default:

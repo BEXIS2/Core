@@ -1,0 +1,19 @@
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.MetadataStructure">
+  
+    <sql-query name="GetEffectivePackageUsages">
+    <return alias="metadataPackageUsage" class="BExIS.Dlm.Entities.MetadataStructure.MetadataPackageUsage"/>
+    WITH RECURSIVE hid(id, name, parentref, level) AS (
+    SELECT id, name, parentref, 0 as level
+    FROM metadatastructures
+    where id = :metadataStructureId
+    UNION ALL
+    SELECT c.id, c.name, c.parentref, level+1
+    FROM hid inner join metadatastructures as c
+    ON hid.parentref = c.id
+    )
+    SELECT  u.* from hid inner join metadatapackageusages as u on hid.id = u.metadatastructureref
+    order by hid.level DESC, u.id
+    ;
+  </sql-query>  
+
+</hibernate-mapping>
