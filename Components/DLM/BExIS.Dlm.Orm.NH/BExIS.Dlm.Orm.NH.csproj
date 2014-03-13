@@ -49,128 +49,128 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Mappings\PostgreSQL82Dialect\Administration\ResearchPlan.hbm.xml">
+    <Content Include="Mappings\Default\Administration\ResearchPlan.hbm.xml">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Mappings\PostgreSQL82Dialect\BaseEntityProperties.xml" />
-    <Content Include="Mappings\PostgreSQL82Dialect\DataStructure\AggregateFunction.hbm.xml">
+    <Content Include="Mappings\Default\Base\BaseEntityProperties.xml" />
+    <Content Include="Mappings\Default\DataStructure\AggregateFunction.hbm.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Mappings\PostgreSQL82Dialect\DataStructure\Classifier.hbm.xml">
+    <Content Include="Mappings\Default\DataStructure\Classifier.hbm.xml">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Mappings\PostgreSQL82Dialect\DataStructure\Constraint.CompareConstraint.hbm.xml">
+    <Content Include="Mappings\Default\DataStructure\Constraint.CompareConstraint.hbm.xml">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Mappings\PostgreSQL82Dialect\DataStructure\Constraint.DomainConstraint.hbm.xml">
+    <Content Include="Mappings\Default\DataStructure\Constraint.DomainConstraint.hbm.xml">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Mappings\PostgreSQL82Dialect\DataStructure\Constraint.hbm.xml">
+    <Content Include="Mappings\Default\DataStructure\Constraint.hbm.xml">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Mappings\PostgreSQL82Dialect\DataStructure\Constraint.PatternConstraint.hbm.xml">
+    <Content Include="Mappings\Default\DataStructure\Constraint.PatternConstraint.hbm.xml">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Mappings\PostgreSQL82Dialect\DataStructure\Constraint.RangeConstraint.hbm.xml">
+    <Content Include="Mappings\Default\DataStructure\Constraint.RangeConstraint.hbm.xml">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Mappings\PostgreSQL82Dialect\DataStructure\ConversionMethod.hbm.xml">
+    <Content Include="Mappings\Default\DataStructure\ConversionMethod.hbm.xml">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Mappings\PostgreSQL82Dialect\DataStructure\DataContainer.DataAttribute.hbm.xml">
+    <Content Include="Mappings\Default\DataStructure\DataContainer.DataAttribute.hbm.xml">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Mappings\PostgreSQL82Dialect\DataStructure\DataContainer.hbm.xml">
+    <Content Include="Mappings\Default\DataStructure\DataContainer.hbm.xml">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Mappings\PostgreSQL82Dialect\DataStructure\DataStructure.hbm.xml">
+    <Content Include="Mappings\Default\DataStructure\DataStructure.hbm.xml">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Mappings\PostgreSQL82Dialect\DataStructure\DataStructure.StructuredDataStructure.hbm.xml">
+    <Content Include="Mappings\Default\DataStructure\DataStructure.StructuredDataStructure.hbm.xml">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Mappings\PostgreSQL82Dialect\DataStructure\DataStructure.UnStructuredDataStructure.hbm.xml">
+    <Content Include="Mappings\Default\DataStructure\DataStructure.UnStructuredDataStructure.hbm.xml">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Mappings\PostgreSQL82Dialect\DataStructure\DataType.hbm.xml">
+    <Content Include="Mappings\Default\DataStructure\DataType.hbm.xml">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Mappings\PostgreSQL82Dialect\DataStructure\DataView.hbm.xml">
+    <Content Include="Mappings\Default\DataStructure\DataView.hbm.xml">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Mappings\PostgreSQL82Dialect\DataStructure\ExtendedProperty.hbm.xml">
+    <Content Include="Mappings\Default\DataStructure\ExtendedProperty.hbm.xml">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Mappings\PostgreSQL82Dialect\DataStructure\GlobalizationInfo.hbm.xml">
+    <Content Include="Mappings\Default\DataStructure\GlobalizationInfo.hbm.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Mappings\PostgreSQL82Dialect\DataStructure\Methodology.hbm.xml">
+    <Content Include="Mappings\Default\DataStructure\Methodology.hbm.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Mappings\PostgreSQL82Dialect\DataStructure\Parameter.hbm.xml">
+    <Content Include="Mappings\Default\DataStructure\Parameter.hbm.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Mappings\PostgreSQL82Dialect\DataStructure\Unit.hbm.xml">
+    <Content Include="Mappings\Default\DataStructure\Unit.hbm.xml">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Mappings\PostgreSQL82Dialect\DataStructure\Variable.hbm.xml">
+    <Content Include="Mappings\Default\DataStructure\Variable.hbm.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Mappings\PostgreSQL82Dialect\Data\ContentDescriptor.hbm.xml">
+    <Content Include="Mappings\Default\Data\ContentDescriptor.hbm.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Mappings\PostgreSQL82Dialect\Data\Dataset.hbm.xml">
+    <Content Include="Mappings\Default\Data\Dataset.hbm.xml">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Mappings\PostgreSQL82Dialect\Data\DatasetVersion.hbm.xml">
+    <Content Include="Mappings\Default\Data\DatasetVersion.hbm.xml">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Mappings\PostgreSQL82Dialect\Data\DataTuple.hbm.xml">
+    <Content Include="Mappings\Default\Data\DataTuple.hbm.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Mappings\PostgreSQL82Dialect\Data\DataTupleVersion.hbm.xml">
+    <Content Include="Mappings\Default\Data\DataTupleVersion.hbm.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Mappings\Default\MetadataStructure\DataContainer.MetadataAttribute.hbm.xml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Mappings\Default\MetadataStructure\MetadataAttributeUsage.hbm.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Mappings\Default\MetadataStructure\MetadataPackage.hbm.xml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Mappings\Default\MetadataStructure\MetadataPackageUsage.hbm.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Mappings\Default\MetadataStructure\MetadataStructure.hbm.xml">
+      <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Mappings\PostgreSQL82Dialect\NativeObjects\Queries.hbm.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Mappings\PostgreSQL82Dialect\MetadataStructure\DataContainer.MetadataAttribute.hbm.xml">
-      <SubType>Designer</SubType>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Mappings\PostgreSQL82Dialect\MetadataStructure\MetadataAttributeUsage.hbm.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Mappings\PostgreSQL82Dialect\MetadataStructure\MetadataPackage.hbm.xml">
-      <SubType>Designer</SubType>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Mappings\PostgreSQL82Dialect\MetadataStructure\MetadataPackageUsage.hbm.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Mappings\PostgreSQL82Dialect\MetadataStructure\MetadataStructure.hbm.xml">
-      <SubType>Designer</SubType>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Mappings\DB2Dialect\Administration\ResearchPlan.hbm.xml">
       <SubType>Designer</SubType>
@@ -277,12 +277,6 @@
     <Content Include="Mappings\DB2Dialect\MetadataStructure\MetadataPackageUsage.hbm.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <EmbeddedResource Include="Mappings\MsSql2008Dialect\DataTuple.hbm.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Mappings\MsSql2008Dialect\Dataset.hbm.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
     <Content Include="Mappings\DB2Dialect\Data\DataTupleVersion.hbm.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -299,12 +293,9 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Mappings\Default\Dataset.hbm.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Mappings\Default\DataTuple.hbm.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
+    <Folder Include="Mappings\Default\NativeObjects\" />
+    <Folder Include="Mappings\Default\PostObjects\" />
+    <Folder Include="Mappings\MsSql2008Dialect\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
