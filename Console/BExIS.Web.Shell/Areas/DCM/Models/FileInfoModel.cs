@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using BExIS.DCM.Transform.Input;
+using BExIS.Io.Transform.Input;
 
 namespace BExIS.Web.Shell.Areas.DCM.Models
 {
@@ -36,6 +36,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
 
         public TextSeperator Separator { get; set; }
 
+        public TextMarker TextMarker { get; set; }
+
         public FileInfoModel()
         {
             Extention = "";
@@ -45,6 +47,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
             Variables = 1;
             Data = 2;
             Dateformat = "";
+            TextMarker = TextMarker.quotes;
         }
   
     }

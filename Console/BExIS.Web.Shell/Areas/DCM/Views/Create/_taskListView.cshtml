@@ -1,0 +1,121 @@
+﻿@model AbstractTaskManager
+@using Telerik.Web.Mvc.UI;
+@using BExIS.Web.Shell.Areas.DCM.Models;
+@using BExIS.Dcm.Wizard;
+
+
+<div id="CreateWizard_TaskListDiv">
+<table id="taskListTable">
+
+    @foreach (var item in Model.StepInfos)
+    {
+        string id = @Model.StepInfos.IndexOf(item) + "_" + @item.title + "_" + @item.GetActionInfo.ActionName + "_" + @item.GetActionInfo.ControllerName;
+        <tr>
+            <td >
+                @if (Model.Current().Equals(item))
+                { 
+                    <b id="@id">@item.title</b>
+                }
+                else
+                { 
+                    <span id="@id" onclick="OnClickStep(this)">@item.title</span>
+                }
+            </td>
+            <td>
+
+                @switch (item.stepStatus)
+                {
+                    case StepStatus.success:
+                        {
+                            <div class="t-link t-icon t-insert" ></div>
+                            break;
+                        }
+                    case StepStatus.inProgress:
+                        {
+                            <div class="t-link t-icon t-arrow-prev" ></div>
+                            break;
+                        }
+                    case StepStatus.error:
+                        {
+                            <div class="t-link t-icon t-delete" ></div>
+                            break;
+                        }
+                    default:
+                        {
+
+                            break;
+                        }
+                }
+
+            </td>
+        </tr>
+    }
+</table>
+</div>
+
+@*JavaScript*@
+<script type="text/javascript">
+
+function TaskListRefresh()
+{
+        $.post('@Url.Action("RefreshTaskList", "Create", new RouteValueDictionary { { "area", "DCM" } })', function (response) {
+            $("#CreateWizard_TaskListDiv").html(response);
+        })
+}
+
+    function OnClickStep(e) {
+
+        //alert("test");
+        $('#preloader').show();
+        var substr = e.id.split('_');
+        var index = substr[0];
+        var action = substr[2];
+        var controller = substr[3];
+
+        var url = '/DCM/' + controller + '/' + action;
+
+        $.get(url, { index: index }, function (response) {
+            $("#StepView").html(response);
+            NavigationRefresh();
+            TaskListRefresh();
+            $('#preloader').hide();
+        })
+
+        //$.ajax({
+        //    url: url,
+        //    type: 'GET',
+        //    data: index,
+        //    dataType: 'JSON',
+        //    contentType: 'application/html; charset=utf-8',
+        //    error: function (xhr) {
+        //        alert('Error1: ' + xhr.statusText);
+        //    },
+        //    success: function (result) {
+        //        $("#StepView").html(response);
+        //        NavigationRefresh();
+        //        TaskListRefresh();
+        //        $('#preloader').hide();
+        //    },
+        //    async: true,
+        //    processData: false
+        //});
+
+    }
+
+</script>
+
+@*CSS*@
+
+<style type="text/css">
+
+    #taskListTable tr td
+    {
+        border-style: none;
+    }
+
+    #taskListTable
+    {
+        border-style: none;
+    }
+
+</style>

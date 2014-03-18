@@ -1,118 +1,118 @@
 ﻿@using Telerik.Web.Mvc.UI;
 @(Html.Telerik().Menu()
 		.Name("menu")
-            .SecurityTrimming(false)
-            .ClientEvents(events => events.OnSelect("onSelect"))
-            .Items(menu =>
-            {
-                menu.Add().Text("Home").Action("Index", "Home", new { area = "" });
-                menu.Add().Text("Search").Action("Index", "Home", new { area = "Search" })
-                    .Items(item =>
-                    {
-                        //item.Add().Text("Faceted Search").Action("Index", "Home", new { area = "Search" });
-                        
-                    }
-                    );
-                menu.Add().Text("Plan")
-                    .Items(item =>
-                    {
-                        item.Add().Text("Data Structure Manager").Action("DataStructureDesigner", "Home", new { area = "RPM" });
-                        item.Add().Text("Data Attribute Manager").Action("AttributeManager", "Home", new { area = "RPM" });
-                        item.Add().Text("Data Type Manager").Action("DataTypeManager", "Home", new { area = "RPM" });
-                        item.Add().Text("Unit Manager").Action("UnitManager", "Home", new { area = "RPM" });
-                    }
-                    );
-                menu.Add().Text("Collect").Action("Index", "Home", new { area = "DCM" })
-                    .Items(item =>
-                    {
-
-                    }
-                    );
-                menu.Add().Text("Administration")
-                    .Items(item =>
-                    {
-                        item.Add().Text("Roles Manager").Action("Roles", "Roles", new { area = "Auth" });
-                        item.Add().Text("Users Manager").Action("Users", "Users", new { area = "Auth" });
-                        item.Add().Text("Search Manager").Action("SearchDesigner", "Home", new { area = "Search" });
-                        item.Add().Text("Refresh Search").Action("ReIndexSearch", "Home", new { area = "Search" });
-                        
-                    }
-                );
-                
-                //menu.Add().Text("Assure").Action("Index", "Home", new { area = "Search" })
-                //    .Items(item =>
-                //    {
-                //        item.Add().Text("Validate data").Action("Index", "Home", new { area = "Search" });
-                //        item.Add().Text("Correct data").Action("Index", "Home", new { area = "Search" });
-                //    }
-                //    );
-                
-                //menu.Add().Text("Analyse").Action("Index", "Home", new { area = "Search" }).Visible(HttpContext.Current.User.IsInRole("Member"))
-                //    .Items(item =>
-                //    {
-                //        item.Add().Text("Calculate aggregated functions").Action("Index", "Home", new { area = "Search" });//.Visible(HttpContext.Current.User.IsInRole("Member"));
-                //    }
-                //    );
-                
-                //menu.Add().Text("Integrate").Action("Index", "Home", new { area = "Search" });//.Visible(HttpContext.Current.User.IsInRole("Member"))
-                //    .Items(item =>
-                //    {
-                //        item.Add().Text("Configure an inbound integration").Action("Index", "Home", new { area = "Search" });
-                //        item.Add().Text("Configure an outbound integration").Action("Index", "Home", new { area = "Search" });
-                //        item.Add().Text("Export a dataset").Action("Index", "Home", new { area = "Search" });
-                //        item.Add().Text("Merge datasets").Action("Index", "Home", new { area = "Search" });
-                //    }
-                //    );
-                
-                //menu.Add().Text("Publish").Action("Index", "Home", new { area = "Search" })
-                //    .Items(item =>
-                //    {
-                //        item.Add().Text("Publish metadata").Action("Index", "Home", new { area = "Search" }).Visible(HttpContext.Current.User.IsInRole("Member"));
-                //        item.Add().Text("Publish a dataset").Action("Index", "Home", new { area = "Search" }).Visible(HttpContext.Current.User.IsInRole("Admins"));
-                //        item.Add().Text("Package a dataset").Action("Index", "Home", new { area = "Search" }).Visible(HttpContext.Current.User.IsInRole("Admins"));
-                //    }
-                //    );
-                
-                //menu.Add().Text("System").Action("Index", "Home", new { area = "Search" }).Visible(HttpContext.Current.User.IsInRole("Admins"))
-                //    .Items(item =>
-                //        {
-                //            item.Add().Text("System Information").Action("Index", "Home", new { area = "Search" }).Visible(HttpContext.Current.User.IsInRole("Admins"));
-                //            item.Add().Text("Manage modules").Action("Index", "Home", new { area = "Search" }).Visible(HttpContext.Current.User.IsInRole("Admins")); // security trimming trick
-                //            item.Add().Text("Configure").Action("Index", "Home", new { area = "Search" }).Visible(HttpContext.Current.User.IsInRole("Admins")); // security trimming trick
-                //            item.Add().Text("Update").Action("Index", "Home", new { area = "Search" }).Visible(HttpContext.Current.User.IsInRole("Admins"));
-                //            item.Add().Text("Security Settings").Action("Index", "Home", new { area = "Search" }).Visible(HttpContext.Current.User.IsInRole("Admins")); // security trimming trick
-                //            item.Add().Text("Report a bug").Action("Index", "Home", new { area = "Search" }).Visible(HttpContext.Current.User.IsInRole("Admins"));
-                //            item.Add().Text("Help").Action("ServerTime2", "Utils", new { area = "System" }).HtmlAttributes(new { ContentPlaceHolder = "RightPaneDiv", InsertType = "Replace" }).Visible(HttpContext.Current.User.IsInRole("Admins")); // Before, After, Replace
-                //            item.Add().Text("About").Action("About", "Home", new { area = "" }).Visible(HttpContext.Current.User.IsInRole("Admins"));
-                //        }
-                //    );                                
-	        }
-    )
+			.SecurityTrimming(false)
+			.ClientEvents(events => events.OnSelect("onSelect"))
+			.Items(menu =>
+			{
+				menu.Add().Text("Home").Action("Index", "Home", new { area = "" });
+				menu.Add().Text("Search").Action("Index", "Home", new { area = "Search" })
+					.Items(item =>
+					{
+						//item.Add().Text("Faceted Search").Action("Index", "Home", new { area = "Search" });
+						
+					}
+					);
+				menu.Add().Text("Plan")
+					.Items(item =>
+					{
+						item.Add().Text("Data Structure Manager").Action("DataStructureDesigner", "Home", new { area = "RPM" });
+						item.Add().Text("Data Attribute Manager").Action("AttributeManager", "Home", new { area = "RPM" });
+						item.Add().Text("Data Type Manager").Action("DataTypeManager", "Home", new { area = "RPM" });
+						item.Add().Text("Unit Manager").Action("UnitManager", "Home", new { area = "RPM" });
+					}
+					);
+				menu.Add().Text("Collect").Action("Index", "Submit", new { area = "DCM" })
+					.Items(item =>
+					{
+						item.Add().Text("Create a dataset").Action("CreateDataset", "Create", new { area = "DCM" });
+					}
+					);
+				menu.Add().Text("Administration")
+					.Items(item =>
+					{
+						item.Add().Text("Roles Manager").Action("Roles", "Roles", new { area = "Auth" });
+						item.Add().Text("Users Manager").Action("Users", "Users", new { area = "Auth" });
+						item.Add().Text("Search Manager").Action("SearchDesigner", "Home", new { area = "Search" });
+						item.Add().Text("Refresh Search").Action("ReIndexSearch", "Home", new { area = "Search" });
+						
+					}
+				);
+				
+				//menu.Add().Text("Assure").Action("Index", "Home", new { area = "Search" })
+				//    .Items(item =>
+				//    {
+				//        item.Add().Text("Validate data").Action("Index", "Home", new { area = "Search" });
+				//        item.Add().Text("Correct data").Action("Index", "Home", new { area = "Search" });
+				//    }
+				//    );
+				
+				//menu.Add().Text("Analyse").Action("Index", "Home", new { area = "Search" }).Visible(HttpContext.Current.User.IsInRole("Member"))
+				//    .Items(item =>
+				//    {
+				//        item.Add().Text("Calculate aggregated functions").Action("Index", "Home", new { area = "Search" });//.Visible(HttpContext.Current.User.IsInRole("Member"));
+				//    }
+				//    );
+				
+				//menu.Add().Text("Integrate").Action("Index", "Home", new { area = "Search" });//.Visible(HttpContext.Current.User.IsInRole("Member"))
+				//    .Items(item =>
+				//    {
+				//        item.Add().Text("Configure an inbound integration").Action("Index", "Home", new { area = "Search" });
+				//        item.Add().Text("Configure an outbound integration").Action("Index", "Home", new { area = "Search" });
+				//        item.Add().Text("Export a dataset").Action("Index", "Home", new { area = "Search" });
+				//        item.Add().Text("Merge datasets").Action("Index", "Home", new { area = "Search" });
+				//    }
+				//    );
+				
+				//menu.Add().Text("Publish").Action("Index", "Home", new { area = "Search" })
+				//    .Items(item =>
+				//    {
+				//        item.Add().Text("Publish metadata").Action("Index", "Home", new { area = "Search" }).Visible(HttpContext.Current.User.IsInRole("Member"));
+				//        item.Add().Text("Publish a dataset").Action("Index", "Home", new { area = "Search" }).Visible(HttpContext.Current.User.IsInRole("Admins"));
+				//        item.Add().Text("Package a dataset").Action("Index", "Home", new { area = "Search" }).Visible(HttpContext.Current.User.IsInRole("Admins"));
+				//    }
+				//    );
+				
+				//menu.Add().Text("System").Action("Index", "Home", new { area = "Search" }).Visible(HttpContext.Current.User.IsInRole("Admins"))
+				//    .Items(item =>
+				//        {
+				//            item.Add().Text("System Information").Action("Index", "Home", new { area = "Search" }).Visible(HttpContext.Current.User.IsInRole("Admins"));
+				//            item.Add().Text("Manage modules").Action("Index", "Home", new { area = "Search" }).Visible(HttpContext.Current.User.IsInRole("Admins")); // security trimming trick
+				//            item.Add().Text("Configure").Action("Index", "Home", new { area = "Search" }).Visible(HttpContext.Current.User.IsInRole("Admins")); // security trimming trick
+				//            item.Add().Text("Update").Action("Index", "Home", new { area = "Search" }).Visible(HttpContext.Current.User.IsInRole("Admins"));
+				//            item.Add().Text("Security Settings").Action("Index", "Home", new { area = "Search" }).Visible(HttpContext.Current.User.IsInRole("Admins")); // security trimming trick
+				//            item.Add().Text("Report a bug").Action("Index", "Home", new { area = "Search" }).Visible(HttpContext.Current.User.IsInRole("Admins"));
+				//            item.Add().Text("Help").Action("ServerTime2", "Utils", new { area = "System" }).HtmlAttributes(new { ContentPlaceHolder = "RightPaneDiv", InsertType = "Replace" }).Visible(HttpContext.Current.User.IsInRole("Admins")); // Before, After, Replace
+				//            item.Add().Text("About").Action("About", "Home", new { area = "" }).Visible(HttpContext.Current.User.IsInRole("Admins"));
+				//        }
+				//    );                                
+			}
+	)
 )
 
 <script language="javascript" type="text/javascript">
-    function onSelect(e) {
-        var placeholder = $(e.item).attr('contentplaceholder');
+	function onSelect(e) {
+		var placeholder = $(e.item).attr('contentplaceholder');
 
-        if (placeholder.length > 0) {
-            var url = $(e.item).find("> a").attr('href');
-            if (url) {
-                //prevent the navigation if the item url is specified
-                // and make the request with jQuery
-                e.preventDefault();
-                $.ajax({
-                    url: url,
-                    success: function (result) {
-                        var inseretType = $(e.item).attr('inserttype');
-                        if (inseretType == "Before")
-                            $("#" + placeholder).prepend(result);
-                        else if (inseretType == "After")
-                            $("#" + placeholder).append(result);
-                        else if (inseretType == "Replace")
-                            $("#" + placeholder).html(result);
-                    }
-                })
-            }
-        }
-    }
+		if (placeholder.length > 0) {
+			var url = $(e.item).find("> a").attr('href');
+			if (url) {
+				//prevent the navigation if the item url is specified
+				// and make the request with jQuery
+				e.preventDefault();
+				$.ajax({
+					url: url,
+					success: function (result) {
+						var inseretType = $(e.item).attr('inserttype');
+						if (inseretType == "Before")
+							$("#" + placeholder).prepend(result);
+						else if (inseretType == "After")
+							$("#" + placeholder).append(result);
+						else if (inseretType == "Replace")
+							$("#" + placeholder).html(result);
+					}
+				})
+			}
+		}
+	}
 </script>

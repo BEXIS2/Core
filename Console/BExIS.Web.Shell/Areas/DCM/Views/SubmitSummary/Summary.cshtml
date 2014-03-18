@@ -1,0 +1,157 @@
+﻿@model BExIS.Web.Shell.Areas.DCM.Models.SummaryModel
+
+
+<div id="Step6" class="uploadWizardStep">
+    <div class="uploadWizardStep_Main">
+        <div class="uploadWizardStep_Header stepper">
+            <h3>@Model.StepInfo.title</h3>
+        </div>
+
+        <div class="uploadWizardStep_Description stepper">
+        </div>
+
+        <div class="uploadWizardStep_Content stepper">
+
+            <div  id="summaryLeft">
+                <table>
+                <tr>
+                    <td>
+                        <b>@Html.LabelFor(m=>m.DatasetId) :</b>
+                    </td>
+                    <td>
+                        @Model.DatasetId
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>@Html.LabelFor(m=>m.DataStructureTitle) :</b>
+
+                    </td>
+                    <td>
+                        @Model.DataStructureTitle
+                    </td>
+                </tr>
+                 <tr>
+                    <td>
+                        <b>@Html.LabelFor(m=>m.DataStructureId) :</b>
+
+                    </td>
+                    <td>
+                        @Model.DataStructureId
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>@Html.LabelFor(m=>m.ResearchPlanTitle)</b>
+
+                    </td>
+                    <td>
+                        @Model.ResearchPlanTitle
+                    </td>
+                </tr>
+                 <tr>
+                    <td>
+                        <b>@Html.LabelFor(m=>m.ResearchPlanId) :</b>
+
+                    </td>
+                    <td>
+                        @Model.ResearchPlanId
+                    </td>
+                </tr>
+              @*   <tr>
+                    <td>
+                        <b>@Html.LabelFor(m=>m.NumOfVars) :</b>
+
+                    </td>
+                    <td>
+                        @Model.NumOfVars
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                       <b>@Html.LabelFor(m=>m.NumOfRows) :</b> 
+
+                    </td>
+                    <td>
+                        @Model.NumOfRows
+                    </td>
+                </tr>*@
+            </table>
+            </div>
+
+            <div id="summaryRight">
+             <table>
+                <tr>
+                    <td>
+                        <b>@Html.LabelFor(m=>m.DatasetTitle) :</b>
+                    </td>
+                    <td>
+                        @Model.DatasetTitle
+                    </td>
+                </tr>
+                @*<tr>
+                    <td>
+                        <b>@Html.LabelFor(m=>m.Owner) :</b>
+                    </td>
+                    <td>
+                        @Model.Owner
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>@Html.LabelFor(m=>m.Author) :</b>
+
+                    </td>
+                    <td>
+                        @Model.Author
+                    </td>
+                </tr>
+                 <tr>
+                    <td>
+                        <b>@Html.LabelFor(m=>m.ProjectName) :</b>
+
+                    </td>
+                    <td>
+                        @Model.ProjectName
+                    </td>
+                </tr>
+                 <tr>
+                    <td>
+                        <b>@Html.LabelFor(m=>m.ProjectInstitute) :</b>
+                    </td>
+                    <td>
+                        @Model.ProjectInstitute
+                    </td>
+                </tr>*@
+             </table>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="uploadWizardStep_Success stepper"><//div>
+    <div class="uploadWizardStep_Error stepper">
+        @if (Model != null)
+        {
+            if (Model.ErrorList != null)
+            {
+                if (Model.ErrorList.Count == 0)
+                {
+
+
+                }
+                else
+                { 
+                   <ul>
+                        @foreach (BExIS.Io.Transform.Validation.Exceptions.Error s in @Model.ErrorList)
+                        { 
+                            <li>@s.ToString()</li>
+                        }
+                   </ul>
+
+                }
+            }
+
+        }
+    </div>    
+</div>

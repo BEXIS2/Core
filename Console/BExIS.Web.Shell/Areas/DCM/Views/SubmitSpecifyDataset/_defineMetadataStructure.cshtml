@@ -1,0 +1,29 @@
+﻿@model List<MetadataPackageModel>
+@using Telerik.Web.Mvc.UI;
+@using BExIS.Web.Shell.Areas.DCM.Models;
+
+
+<div id="DefineMetadataStructure">
+
+    @{ Html.Telerik().TabStrip()
+            .Name("TabStrip")
+            .Items(tabstrip =>
+            {
+                foreach (var package in @Model)
+                { 
+                
+                    tabstrip.Add()
+                        .Text(package.DisplayName)
+                        .Content(@<text>
+                           @Html.Partial("_defineMetadataPackage",package)
+                        </text>
+                         
+                        );
+                }
+            })
+            .SelectedIndex(0)
+            .Render();
+    } 
+
+
+</div>

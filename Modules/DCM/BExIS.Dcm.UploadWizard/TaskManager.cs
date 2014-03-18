@@ -1,0 +1,80 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Xml;
+using BExIS.Dcm.Wizard;
+
+
+
+namespace BExIS.Dcm.UploadWizard
+{
+    public class TaskManager : AbstractTaskManager
+    {
+
+        public static string FILENAME = "FileName";
+        public static string FILEPATH = "FilePath";
+        public static string EXTENTION = "Extention";
+
+        public static string FILE_READER_INFO = "FileReaderInfo";
+        public static string IS_TEMPLATE = "IsTemplate";
+        //Dataset 
+        public static string DATASET_ID = "DatasetId";
+        public static string DATASET_TITLE = "DatasetTitle";
+        // value = "new"
+        public static string DATASET_STATUS = "DatasetStatus";
+        // Datastructure
+        public static string DATASTRUCTURE_ID = "DataStructureId";
+        public static string DATASTRUCTURE_TITLE = "DataStructureTitle";
+        //ResearchPlan
+        public static string RESEARCHPLAN_ID = "ResearchPlanId";
+        public static string RESEARCHPLAN_TITLE = "ResearchPlanTitle";
+        //Data
+        public static string PRIMARY_KEYS = "PrimaryKeys";
+        public static string PRIMARY_KEYS_UNIQUE = "PrimaryKeysUnique";
+        public static string VALID = "Valid";
+        //metadata
+        public static string TITLE = "Title";
+        public static string AUTHOR = "Author";
+        public static string OWNER = "Owner";
+        public static string PROJECTNAME = "ProjectName";
+        public static string INSTITUTE = "Institute";
+
+
+        public static TaskManager Bind(XmlDocument xmlDocument)
+        {
+
+            XmlNodeList xmlStepInfos = xmlDocument.GetElementsByTagName("stepInfo");
+
+            TaskManager tm = new TaskManager();
+            tm.StepInfos = new List<StepInfo>();
+   
+            foreach (XmlNode xmlStepInfo in xmlStepInfos)
+            {
+
+                StepInfo si = new StepInfo(xmlStepInfo.Attributes.GetNamedItem("title").Value)
+                {
+                    GetActionInfo = new ActionInfo
+                    {
+                        ActionName = xmlStepInfo.Attributes.GetNamedItem("action").Value,
+                        ControllerName = xmlStepInfo.Attributes.GetNamedItem("controller").Value,
+                        AreaName = xmlStepInfo.Attributes.GetNamedItem("area").Value
+                    },
+
+                    PostActionInfo = new ActionInfo
+                    {
+                        ActionName = xmlStepInfo.Attributes.GetNamedItem("action").Value,
+                        ControllerName = xmlStepInfo.Attributes.GetNamedItem("controller").Value,
+                        AreaName = xmlStepInfo.Attributes.GetNamedItem("area").Value
+                    }
+                };
+
+                tm.StepInfos.Add(si);
+            }
+
+            tm.currentStepInfo = tm.StepInfos.First();
+
+            return tm;
+        }
+
+    }
+}

@@ -1,0 +1,31 @@
+﻿@{
+    ViewBag.Title = "_metadataPackage";
+
+    string id = @Model.Source.Id + "_" + Model.Source.MetadataStructure.Id + "_" + @Model.Number;
+    string idRemove = id + "_Remove";
+        
+}
+
+@model BExIS.Web.Shell.Areas.DCM.Models.Metadata.MetadataPackageModel
+@using BExIS.Web.Shell.Areas.DCM.Models.Metadata;
+
+
+<div id="@id" class="package" style="border: 1px solid grey; margin:8px;" >
+                
+@foreach (var item in Model.MetadataAttributeModels)
+{ 
+    @Html.Partial("_setMetadataAttribute", item)
+}
+
+</div>
+
+<script type="text/javascript">
+
+    function OnClickRemovePackage(e) {
+
+        // remove all childs from buss
+        $("#" + e.id).closest(".package").remove();
+
+    }
+
+</script>

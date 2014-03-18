@@ -1,0 +1,140 @@
+﻿@{
+    ViewBag.Title = "SelectDatasetInformation";
+}
+@model BExIS.Web.Shell.Areas.DCM.Models.Create.SelectDatasetSetupModel
+
+@using Telerik.Web.Mvc.UI;
+@using BExIS.Web.Shell.Areas.DCM.Models;
+@using BExIS.Dcm.Wizard;
+
+@{
+    bool disableBt = true;
+
+    if (@Model.StepInfo.stepStatus.Equals(StepStatus.success))
+    {
+        disableBt = false;
+    }
+}
+
+<div id="SelectDatasetSetup" class="createWizardStep">
+    <div class="createWizardStep_Main">
+        <div class="uploadWizardStep_Header stepper">
+            <h3>@Model.StepInfo.title</h3>
+        </div>
+
+        <div class="createWizardStep_Description stepper">
+            <p>
+                    
+            </p>
+        </div>
+
+        <div id="createDatasetFormular" class="createWizardStep_Content stepper"> 
+        @using (Ajax.BeginForm("StoreSelectedDatasetSetup", "CreateSelectDatasetSetup", new { area = "DCM" },
+                            new AjaxOptions
+                            {
+                                HttpMethod = "POST",
+
+                                UpdateTargetId = "SelectDatasetSetup",
+                                OnSuccess = "refresh",
+                                OnComplete ="onComplete"
+                       
+                            }))
+        { 
+    
+        <p>Please provide the following information.</p>
+        <table>
+            <tr>
+                <td>@Html.LabelFor(m=>m.SelectedResearchPlanId)</td>
+                <td>
+                    @Html.DropDownListFor(m => m.SelectedResearchPlanId, new SelectList(Model.ResearchPlanViewList,"Id","Title",Model.SelectedResearchPlanId),"Select, please")
+                    @Html.ValidationMessageFor(m => m.SelectedResearchPlanId)
+                </td>
+            </tr>
+            <tr>
+                <td><b></b>@Html.LabelFor(m=>m.SelectedDatastructureId)</td>
+                <td>
+                    @Html.DropDownListFor(m => m.SelectedDatastructureId, new SelectList(Model.DatastructuresViewList,"Id","Title",Model.SelectedDatastructureId),"Select, please")
+                    @Html.ValidationMessageFor(m => m.SelectedDatastructureId)
+                </td>
+            </tr>
+             <tr>
+                <td>@Html.LabelFor(m=>m.SelectedMetadatStructureId)</td>
+                <td>
+                    @Html.DropDownListFor(m => m.SelectedMetadatStructureId, new SelectList(Model.MetadataStructureViewList,"Id","Title",Model.SelectedMetadatStructureId),"Select, please")
+                    @Html.ValidationMessageFor(m => m.SelectedMetadatStructureId)
+                </td>
+            </tr>
+        </table>
+    
+        <br />
+        <br />
+        <button type="submit" value="Save" name="saveDataset"  class="t-button" style="border:0px;" >Create Dataset and load metadata</button>
+            
+        }
+   
+        </div>  
+
+    </div>
+
+    <div class="createWizardStep_Success stepper">
+
+        @*@if (Model != null)
+        {
+            if (Model.ErrorList.Count == 0)
+            {
+               
+            }
+        }*@
+
+    </div>
+
+    <div class="createWizardStep_Error stepper">
+        @if (Model != null)
+        {
+
+            if (Model.ErrorList != null)
+            {
+                if (Model.ErrorList.Count == 0)
+                {
+
+
+                }
+                else
+                { 
+                   <ul>
+                        @foreach (BExIS.Io.Transform.Validation.Exceptions.Error s in @Model.ErrorList)
+                        { 
+                            <li>@s.ToString()</li>
+                        }
+                   </ul>
+
+                }
+            }
+
+        }
+    </div>   
+ </div>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $.validator.unobtrusive.parse("#createDatasetFormular");
+    })
+
+    function refresh(data) {
+
+        if (data.success) {
+
+            NavigationRefresh();
+            TaskListRefresh();
+        }
+    }
+
+    function onComplete()
+    {
+
+        NavigationRefresh();
+        TaskListRefresh();
+    }
+
+</script>

@@ -1,0 +1,438 @@
+﻿@model MetadataPackageContainerModel
+
+@using BExIS.Web.Shell.Areas.DCM.Models.Metadata
+@using Telerik.Web.Mvc.UI
+
+@{
+    string id = @Model.Source.Id + "_"+Model.Source.MetadataStructure.Id;
+    string packageUsageIdPackage = id+"_Package";
+    string idAdd = id + "_Add"; 
+    string idRemove = id + "_Remove";
+
+    int latestPackageNumber = 0;
+
+    int tabIndex = @Model.MetadataPackageModel.Count();
+
+
+  
+ }
+
+<div id="@id" class="createWizardStep">
+
+    <div class="createWizardStep_Main">
+        <div class="createWizardStep_Header stepper">
+            <h3>@Model.DisplayName</h3>
+        </div>
+
+        <div class="createWizardStep_Description stepper">
+            <p>
+                @Model.Discription
+            </p>
+        </div>
+
+        <div class="packages">
+    
+            @if(Model.MaxCardinality<=1)
+            {
+            
+                int index = 0;
+                
+                foreach (var item in Model.MetadataPackageModel)
+                { 
+                    index++;
+                    item.Number = index;
+                    latestPackageNumber = index;
+                    @Html.Partial("_metadataPackage", item);
+                }
+
+            
+            }
+          
+            else
+            {
+                Html.Telerik().TabStrip()
+                .Name("TabStrip")
+       
+                .Items(tabstrip =>
+                {
+                    foreach (var package in @Model.MetadataPackageModel)
+                    {
+                        package.Number = (@Model.MetadataPackageModel.IndexOf(package) + 1);
+                        tabstrip.Add()
+                            .Text(package.Number.ToString())
+                            .ImageUrl("Images/emptyPng.png")
+                            .ImageHtmlAttributes(new { @class = "t-icon t-cancel", onclick = "deleteTab(this)", id = package.Number})
+                            .Content(@<text>
+                                @Html.Partial("_metadataPackage", package)
+                            </text>
+
+                            );
+
+                    }
+
+                    tabstrip.Add()
+                    .Text(" ")
+                    .ImageUrl("Images/emptyPng.png")
+                    .ImageHtmlAttributes(new { @class = "t-icon t-add addTab" })
+                    .Content(@<text>
+                                <b></b>
+                            </text>)
+                    ;
+                })
+                .SelectedIndex(0) 
+                .Render(); 
+            }
+
+
+        
+        </div>
+        <br />
+
+        @Ajax.ActionLink("Validate", "ValidateStep",@Model.StepInfo.GetActionInfo.ControllerName,new RouteValueDictionary { { "area", "DCM" } },
+                 new AjaxOptions { HttpMethod = "GET", 
+                 InsertionMode = InsertionMode.Replace, 
+                 UpdateTargetId = @id
+                 },
+                 new { @class = "t-button",  @style="float:right" })
+ 
+    </div>
+
+    <div class="createWizardStep_Success stepper">
+
+        @if (Model != null && Model.StepInfo.notExecuted == false)
+        {
+            if (Model.ErrorList.Count == 0)
+            {
+                // if primary keys unique
+               <p>no errors</p>
+            }
+        }
+
+    </div>
+
+    <div class="createWizardStep_Error stepper">
+        @if (Model != null)
+        {
+
+            if (Model.ErrorList != null)
+            {
+                if (Model.ErrorList.Count == 0)
+                {
+
+
+                }
+                else
+                { 
+                   <ul>
+                        @foreach (BExIS.Io.Transform.Validation.Exceptions.Error s in @Model.ErrorList)
+                        { 
+                            <li>@s.ToString()</li>
+                        }
+                   </ul>
+
+                }
+            }
+
+        }
+    </div>   
+
+</div>
+
+<script type="text/javascript" >
+
+        
+
+
+        function OnClickAddPackage(e) {
+
+
+            var substr = e.id.split('_');
+
+            var id = substr[0];
+            var metadataStructureId = substr[1];
+            var number = '@latestPackageNumber';
+
+
+            $.post('@Url.Action("AddMetadataPackageUsage", "CreateSetMetadataPackage", new RouteValueDictionary { { "area", "DCM" } })', { id: id, metadataStructureId: metadataStructureId, number: number }, function (response) {
+                $(".packages").append(response);
+
+            })
+        }
+
+
+        function deleteTab(e)
+        {
+            var substr = $("#"+e.id).attr("id");
+           // alert(substr);
+            var id = '@Model.Source.Id';
+            var number = substr;
+
+            if (getTabCount()-1 > '@Model.MinCardinality' && getTabCount() > 0) {
+
+                $.post('@Url.Action("RemoveMetadataPackageUsage", "CreateSetMetadataPackage", new RouteValueDictionary { { "area", "DCM" } })', { id: id, number: number }, function (response) {
+                    $(".createWizardStep").html(response);
+
+                })
+            }
+            else {
+
+                alert("You are not able to remove elements.");
+            }
+        }
+
+
+        $('.addTab').click
+                (function (e) {
+
+             addTabElement(e);
+           
+        })
+
+        function addTabElement(e)
+        {
+            
+            if (getTabCount()-1 < '@Model.MaxCardinality') {
+
+                var number = getTabCount() - 1;
+
+                $.post('@Url.Action("AddMetadataPackageUsage", "CreateSetMetadataPackage", new RouteValueDictionary { { "area", "DCM" } })', { id: '@Model.Source.Id', metadataStructureId: '@Model.Source.MetadataStructure.Id', number: number }, function (response) {
+
+                    removeTab({ index: number });
+                    addTab({ text: getTabCount() + 1, html: response });
+                    createAddTab();
+
+                })
+            }
+            else {
+
+                alert("Maxium cardinality is reached.");
+            }
+        }
+
+
+        /// <summary>
+        /// Get a tab.
+        /// </summary>
+        /// <param type="json object" name="o">json object with either the text or the index of the tab.</param>
+        /// <return>jQuery object of the tab [li.t-item]</return>
+        /// <example>
+        /// var tab = $('#MyTabStrip').data('tTabStrip').getTab({ text: 'Tab 2' })
+        /// var tab = $('#MyTabStrip').data('tTabStrip').getTab({ index: 1 })
+        /// </example>
+        function getTab(o) {
+            var tab = null;
+            if (o.text != null) {
+                tab = $(getTabStripData().element).children('.t-tabstrip-items').find('.t-item').find("a:contains('" + o.text + "')").parent();
+            }
+            else if (o.index != null) {
+                tab = $($(getTabStripData().element).find('.t-item')[o.index]);
+            }
+            return tab;
+        }
+
+        /// <summary>
+        /// Add a tab.
+        /// </summary>
+        /// <param type="json object" name="t">json with the following properties:
+        /// 1. text: text for the tab.
+        /// 2. html: the html content for the tab.
+        /// 3. url: url to retrieve the content for the tab.
+        /// 4. data: data to post to the url.
+        /// 5. complete: callback function to execute when the contents are loaded from the url.
+        /// </param>
+        /// <example>
+        /// tabStrip.addTab({
+        ///     text: 'New Tab', 
+        ///     url: "Url.Content("~")TabStrip/GetTabContent", 
+        ///     data: { tabName: 'New Tab' },
+        ///     complete: function() {
+        ///         tabStrip.selectTab({ text: 'New Tab' });
+        ///     }
+        /// });
+        /// </example>
+        /// <example>
+        /// var $span = $('<span/>').append('Content for the new tab');
+        /// var tabStrip = $('#SampleTabStrip').data('tTabStrip');
+        /// tabStrip.addTab({ text: 'New Tab', html: $span[0] });
+        /// </example>
+        function addTab (t) {
+            var tabstrip = getTabStrip();
+            var tabstripitems = tabstrip.children('.t-tabstrip-items');
+            var cnt = tabstripitems.children().length;
+            var tabname = tabstrip.attr('id');
+            var number = ++cnt;
+
+            var text = '<img class="t-image t-icon t-cancel deleteTab" src="Images/emptyPng.png" alt="image" id="' + cnt + '" onclick="deleteTab(this)">' + t.text
+
+            tabstripitems.append(
+                $('<li />')
+                    .addClass('t-item')
+                    .addClass('t-state-default')
+                    .append(
+                        $('<a />')
+                            .attr('href', '#' + tabname + '-' + (cnt))
+                            .addClass('t-link')
+                            
+                            .html(text)
+                            
+                    )
+                );
+
+            var $contentElement =
+                $('<div />')
+                    .attr('id', tabname + '-' + (cnt))
+                    .addClass('t-content');
+
+            tabstrip.append($contentElement);
+
+            tabstrip.data('tTabStrip').$contentElements.push($contentElement[0]);
+
+            
+
+            if (t.url != undefined) {
+                tabstrip.loadTab($contentElement, t);
+            } else if (t.html != undefined) {
+                $contentElement.append(t.html);
+            }
+          }
+
+        /// <summary>
+        /// Remove a tab.
+        /// </summary>
+        /// <param type="json object" name="o">json object with either the text or the index of the tab.</param>
+        /// <example>
+        /// $('#MyTabStrip').data('tTabStrip').removeTab({ text: 'Tab 2' })
+        /// $('#MyTabStrip').data('tTabStrip').removeTab({ index: 1 })
+        /// </example>
+        function removeTab(o) {
+
+                var tabstrip = getTabStrip();
+                var tabname = tabstrip.attr('id');
+                var tabstripitems = tabstrip.children('.t-tabstrip-items');
+                var i = 0;
+
+                if (o.index == undefined || o.index == null) {
+                    i = this.getTabIndex(o.text);
+                } else {
+                    i = o.index;
+                }
+
+                // There must be atleast two tabs to remove a tab.
+                if (tabstripitems.children().length > 1) {
+                    var tab = this.getTab({ index: i });
+                    // If the active tab is being removed, set another tab as active.
+                    if (tab.hasClass('t-state-active') == true) {
+                        var j = i == 0 ? 1 : (i - 1);
+                        getTabStripData().activateTab(getTab({ index: j }));
+                    }
+
+                    tab.remove();
+
+                    // Remove the tab contents.
+                    $(tabstrip.children()[i + 1]).remove();
+                    tabstrip.data('tTabStrip').$contentElements.splice(i, 1);
+
+                    // Rename the tab href.
+                    $.each(tabstripitems.children(), function (idx, tab) {
+                        $($(tab).children()[0]).attr('href', '#' + tabname + '-' + (idx + 1));
+                    });
+
+                    // Rename tab contents.
+                    $.each(tabstrip.children(), function (idx, contentElement) {
+                        if ($(contentElement).is('div')) {
+                            $(contentElement).attr('id', tabname + '-' + idx);
+                        }
+                    })
+                }
+        }
+
+        /// <summary>
+        /// Get index of tab.
+        /// </summary>
+        /// <param type="string" name="t">text of a tab.</param>
+        /// <example>
+        /// $('#MyTabStrip').data('tTabStrip').getTabIndex('Tab 2')
+        /// </example>
+        function getTabIndex(t) {
+            var idx = 0;
+            $.each($(getTabStripData().element).children('.t-tabstrip-items').find('a.t-link'), function (i, a) {
+                if ($(a).text() == t) {
+                    idx = i;
+                    return false;
+                }
+            })
+            return idx;
+        }
+
+        /// <summary>
+        /// Return a count on the number of tabs in the tabstrip.
+        /// </summary>
+        function getTabCount() {
+            return $(getTabStripData().element).children('.t-tabstrip-items').find('a').length;
+        }
+
+        function setTabText(o) {
+            var tab = getTab(o);
+            if (tab != null) {
+                tab.find('a').text(o.newText);
+            }
+        }
+
+        function getTabStrip() {
+            var tabStrip = $("#TabStrip");
+            return tabStrip;
+        }
+
+        function getTabStripData() {
+            var tabStrip = $("#TabStrip").data("tTabStrip");
+            return tabStrip;
+        }
+
+        function SelectItem() {
+            var tabStrip = $("#TabStrip").data("tTabStrip");
+            tabStrip.select($(".t-item", tabStrip.element)[0]);
+        }
+    
+        function createAddTab()
+        {
+            var t = { text: " ", html: "<b></b>" };
+            var tabstrip = getTabStrip();
+            var tabstripitems = tabstrip.children('.t-tabstrip-items');
+            var cnt = tabstripitems.children().length;
+            var tabname = tabstrip.attr('id');
+            
+
+            t.text = '<img class="t-image t-icon t-add addTab" src="Images/emptyPng.png" alt="image" onclick="addTabElement(this)">'
+
+            tabstripitems.append(
+                $('<li />')
+                    .addClass('t-item')
+                    .addClass('t-state-default')
+                    .append(
+                        $('<a />')
+                            .attr('href', '#' + tabname + '-' + (cnt + 1))
+                            .addClass('t-link')
+                            
+                            .html(t.text)
+                            
+                    )
+                );
+
+            var $contentElement =
+                $('<div />')
+                    .attr('id', tabname + '-' + (cnt + 1))
+                    .addClass('t-content');
+
+            tabstrip.append($contentElement);
+
+            tabstrip.data('tTabStrip').$contentElements.push($contentElement[0]);
+
+            if (t.url != undefined) {
+                tabstrip.loadTab($contentElement, t);
+            } else if (t.html != undefined) {
+                $contentElement.append(t.html);
+            }
+        }
+
+</script>
+

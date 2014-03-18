@@ -1,0 +1,10 @@
+﻿@model MetadataPackageModel
+@using BExIS.Web.Shell.Areas.DCM.Models
+
+<h3>@Model.DisplayName</h3>
+<p> @Model.Discription </p>
+
+@foreach (var item in Model.MetadataAttributeModels)
+{ 
+    @Html.Partial("_defineMetadataAttribute", item)
+}

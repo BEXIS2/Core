@@ -1,0 +1,83 @@
+﻿
+@model SummaryModel
+@using BExIS.Web.Shell.Areas.DCM.Models.Create
+
+
+<div id="SelectDatasetSetup" class="createWizardStep">
+    <div class="createWizardStep_Main">
+        <div class="createWizardStep_Header stepper">
+            <h3>@Model.StepInfo.title</h3>
+        </div>
+
+        <div class="createWizardStep_Description stepper">
+            <p>
+                    
+            </p>
+        </div>
+
+        <div class="createWizardStep_Content stepper"> 
+       
+            @foreach (var package in Model.Packages.Values)
+            { 
+                <h3>@package.DisplayName <b> @package.Number</b></h3>
+    
+                <table>
+
+                    @foreach(var attribute in package.MetadataAttributeModels)
+                    { 
+                        <tr>
+                         <td>
+                             <b>@attribute.DisplayName @if (attribute.Number > 1) { @attribute.Number }</b>
+                         </td>
+                         <td>
+                             @if (attribute.Value != null) { <p>@attribute.Value.ToString()</p> }
+                         </td>
+                        </tr>
+                    }
+                </table>
+    
+                <hr />
+
+            }
+        </div>  
+
+    </div>
+
+    <div class="createWizardStep_Success stepper">
+
+        @if (Model != null)
+        {
+            if (Model.ErrorList.Count == 0)
+            {
+               <p> no erros </p>
+            }
+        }
+
+    </div>
+
+    <div class="createWizardStep_Error stepper">
+        @if (Model != null)
+        {
+
+            if (Model.ErrorList != null)
+            {
+                if (Model.ErrorList.Count == 0)
+                {
+
+
+                }
+                else
+                { 
+                   <ul>
+                        @foreach (BExIS.Io.Transform.Validation.Exceptions.Error s in @Model.ErrorList)
+                        { 
+                            <li>@s.ToString()</li>
+                        }
+                   </ul>
+
+                }
+            }
+
+        }
+    </div>   
+ </div>

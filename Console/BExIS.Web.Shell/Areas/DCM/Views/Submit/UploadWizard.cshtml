@@ -1,0 +1,70 @@
+﻿@{
+    ViewBag.Title = "Upload Wizard";
+}
+@model BExIS.Dcm.UploadWizard.TaskManager
+@using Telerik.Web.Mvc.UI;
+@using BExIS.Web.Shell.Areas.DCM.Models;
+
+@section Scripts{
+    <script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/jquery.unobtrusive-ajax.js")" type="text/javascript"></script>
+     <link href="@Url.Content(Themes.GetResourcePath("Styles","wizard.css"))" rel="stylesheet" type="text/css" />
+}
+
+@section LeftPane 
+{  
+    @Html.Partial("_taskListView", Model.GetStatusOfStepInfos())
+}
+
+
+<div id="StepView" >
+ 
+</div>
+<div id="preloader" style="display:none;" >
+     <img src="../../../../Themes/Default/Styles/Default/preloader.GIF" />
+</div>
+
+@Html.Partial("_uploadWizardNav", Model)
+
+<script type="text/javascript">              
+      
+    var Upload;
+    var SelectedDatasetId;
+    var SelectedDatasetTitle;
+    var SelectedDataStrutureId;
+    var SelectedDataStrutureTitle;
+    var Parameters = new Array();
+
+    $(document).ready(function () {
+
+        var index = '@Model.GetCurrentStepInfoIndex()';
+
+        //$.validator.unobtrusive.parse("#DefineMetadataStructure");
+        $.validator.unobtrusive.parse("createDatasetFormular");
+        //alert(index);
+ 
+
+        $.get('@Url.Action(@Model.Current().GetActionInfo.ActionName, @Model.Current().GetActionInfo.ControllerName, new RouteValueDictionary { { "area", @Model.Current().GetActionInfo.AreaName } })', { index: index }, function (response) {
+
+            //alert("start");
+
+            $("#StepView").html(response);
+
+
+            NavigationRefresh();
+            TaskListRefresh();
+        })
+    })
+
+
+</script>
+
+<style type="text/css">
+
+    .uploadWizardStep
+    {
+        height:300px;
+    }
+
+</style>

@@ -1,0 +1,52 @@
+﻿@{
+    ViewBag.Title = "Test";
+}
+
+@section Scripts{
+    <script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/jquery.unobtrusive-ajax.js")" type="text/javascript"></script>
+     <link href="@Url.Content(Themes.GetResourcePath("Styles","uploadWizard.css"))" rel="stylesheet" type="text/css" />
+}
+
+
+@model BExIS.Web.Shell.Areas.DCM.Models.TestModel
+
+<div id="xyz">
+<h2>Test</h2>
+
+  @using (Ajax.BeginForm("XYZ", "SubmitSpecifyDataset", new { area = "DCM" },
+                    new AjaxOptions
+                    {
+                        HttpMethod = "POST",
+
+                        UpdateTargetId = "xyz",
+                        OnSuccess = "closePopUp"
+
+                    }))
+  { 
+
+    
+           <b> username </b>
+         @Html.TextBoxFor(m => m.UserName)
+
+
+   }
+</div>
+
+
+<script type="text/javascript">              
+      
+    
+
+    $(document).ready(function () {
+
+    
+        $.validator.unobtrusive.parse("xyz");
+     
+    })
+
+
+</script>
+
+

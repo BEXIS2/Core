@@ -1,11 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using BExIS.DCM.UploadWizard;
+using System.Web.Mvc;
+using BExIS.Dcm.UploadWizard;
+using BExIS.Web.Shell.Areas.DCM.Models.Metadata;
 
 namespace BExIS.Web.Shell.Areas.DCM.Models
 {
     public class CreateDatasetViewModel
     {
+        [Remote("Test", "SubmitSpecifyDataset")]
         [Required(ErrorMessage = "Please enter a title.")]
         [RegularExpression("^([A-Za-z0-9- ]+)$", ErrorMessage = "The title must consist only of letters, space, numbers or -.")]
         public string Title { get; set; }
@@ -27,6 +30,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
         public string ProjectInstitute { get; set; }
 
         [Display(Name = "Data Structure")]
+        [Remote("ValidateMetadataAttributeUsage", "SubmitSpecifyDataset")]
         [Required(ErrorMessage = "Please select a datastructure id.")]
         public long DataStructureId { get; set; }
 
@@ -39,6 +43,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
 
         public List<ListViewItem> ResearchPlanViewList { get; set; }
 
+        public List<MetadataPackageModel> MetadataPackageModel { get; set; }
+
         public CreateDatasetViewModel()
         {
             Title = "";
@@ -49,6 +55,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
             DataStructureIds = new List<long>();
             DatastructuresViewList = new List<ListViewItem>();
             ResearchPlanViewList = new List<ListViewItem>();
+            MetadataPackageModel = new List<MetadataPackageModel>();
 
         }
 

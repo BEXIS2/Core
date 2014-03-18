@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Web;
-using BExIS.DCM.Transform.Validation.Exceptions;
-using BExIS.DCM.UploadWizard;
+using BExIS.Io.Transform.Validation.Exceptions;
+using BExIS.Dcm.Wizard;
 
 namespace BExIS.Web.Shell.Areas.DCM.Models
 {

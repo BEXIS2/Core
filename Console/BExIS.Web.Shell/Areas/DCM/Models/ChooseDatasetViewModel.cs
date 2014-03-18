@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
-using BExIS.DCM.Transform.Validation.Exceptions;
-using BExIS.DCM.UploadWizard;
+using BExIS.Io.Transform.Validation.Exceptions;
+using BExIS.Dcm.Wizard;
+using BExIS.Web.Shell.Areas.DCM.Models.Metadata;
 
 namespace BExIS.Web.Shell.Areas.DCM.Models
 {
@@ -17,7 +18,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
 
         public List<Error> ErrorList { get; set; }
 
-        public CreateDatasetViewModel DatasetViewModel { get; set; }
+        //public CreateDatasetViewModel DatasetViewModel { get; set; }
+
+        public List<MetadataPackageModel> DatasetViewModel { get; set; }
 
         public ChooseDatasetViewModel()
         {
@@ -26,9 +29,5 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
             DatasetsViewList = new List<ListViewItem>();
             DatasetTitle = "";
         }
-
-        
-
-        
     }
 }

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using BExIS.DCM.Transform.Validation.Exceptions;
-using BExIS.DCM.UploadWizard;
+using BExIS.Io.Transform.Validation.Exceptions;
+using BExIS.Dcm.Wizard;
 
 namespace BExIS.Web.Shell.Areas.DCM.Models
 {
@@ -26,6 +26,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
         [Display(Name = "Research Plan Title")]
         public String ResearchPlanTitle { get; set; }
 
+        /*
         [Display(Name = "Dataset Owner")]
         public String  Owner { get; set; }
 
@@ -42,7 +43,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
         public int NumOfVars { get; set; }
 
         [Display(Name = "Number of Rows")]
-        public int NumOfRows { get; set; }
+        public int NumOfRows { get; set; }*/
 
         public StepInfo StepInfo { get; set; }
         public List<Error> ErrorList = new List<Error>();
@@ -55,8 +56,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
             DataStructureId = 0;
             DatasetTitle = "";
             DataStructureTitle = "";
-            NumOfRows = 0;
-            NumOfVars = 0;
         }
     }
 }

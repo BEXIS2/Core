@@ -73,7 +73,7 @@ namespace BExIS.Web.Shell
         {
             IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager();
             
-            pManager.Shutdown(); // release all data access related resources!
+         pManager.Shutdown(); // release all data access related resources!
             IoCFactory.ShutdownContainer();
         }
 

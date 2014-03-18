@@ -1,0 +1,145 @@
+﻿ @{
+    ViewBag.Title = "UploadWizardNav";
+}
+
+@model BExIS.Dcm.CreateDatasetWizard.CreateDatasetTaskmanager
+@using BExIS.Web.Shell.Areas.DCM.Models;
+
+@{
+
+    int currentPage = @Model.GetCurrentStepInfoIndex() + 1;
+    
+}
+<div id="UploadWizardNavDiv">
+
+    @if (!(Model.Current() == null))
+    { 
+    <table id="UploadWizard_NavigationTable">
+        <tr>
+            <td id="Nav_Left">
+                @if (!Model.Prev().IsEmpty() || !Model.Current().Equals(Model.StepInfos.First()))
+                {   
+                    <button id="prevBt"class="t-button" title="@Model.Prev().title" >Prev</button>
+               }
+            </td>
+            <td id="Nav_Pages">
+                 ( @currentPage  of   @Model.StepInfos.Count )
+            </td>
+ 
+
+            <td id="Nav_Options" >
+                <button id="saveBt"  class="t-button" title="Save" disabled="disabled" style="float:right" >Save</button>
+
+               @Html.ActionLink("Cancel", "CloseUpload","Create", new RouteValueDictionary { { "area", Model.Current().GetActionInfo.AreaName.ToString() } }, new { @class = "t-button",  @style="float:left" })
+            </td>
+            <td id="Nav_Right">
+                 @if (!Model.Next().IsEmpty())
+                 { 
+                    <button id="nextBt" class="t-button" style="float:right" title="@Model.Next().title">Next</button>
+                 }
+
+                @if (Model.Current().Equals(Model.Finish()) && Model.StepInfos.Count>1)
+                { 
+                   @Html.ActionLink("Submit", "Submit","Create", new RouteValueDictionary { { "area", Model.Current().GetActionInfo.AreaName.ToString() } }, new { @class = "t-button",  @style="float:right" , title="Save and submit" })
+                }
+
+            </td>
+        </tr>
+    </table>
+    }
+</div>
+<script type="text/javascript">              
+      
+   
+
+    $("#prevBt").click(function(){
+        
+        $('#preloader').show();
+        var index = '@Model.StepInfos.IndexOf(@Model.Prev())';
+  
+
+        if (index < 0) index = 0;
+
+        $.get('@Url.Action(@Model.Prev().GetActionInfo.ActionName, @Model.Prev().GetActionInfo.ControllerName, new RouteValueDictionary { { "area", @Model.Prev().GetActionInfo.AreaName  } })', { index: index }, function (response) {
+            $("#StepView").html(response);
+            NavigationRefresh();
+            TaskListRefresh();
+            $('#preloader').hide();
+        })
+
+       
+    })
+
+    $("#nextBt").click(function () {
+       
+        $('#preloader').show();
+        $.ajax({ 
+            type: 'POST', 
+            contentType: 'application/json; charset=utf-8', 
+            data: JSON.stringify(Parameters),
+            dataType: 'html', 
+            url: '@Url.Action(@Model.Current().PostActionInfo.ActionName, @Model.Current().PostActionInfo.ControllerName, new RouteValueDictionary { { "area", @Model.Current().PostActionInfo.AreaName }})',
+                success: function(result) { 
+                    $('#StepView').html(result);
+                    NavigationRefresh();
+                    TaskListRefresh();
+                    $('#preloader').hide();
+                }
+            });
+    })
+
+    $("#saveBt").click(function () {
+
+        $('#preloader').show();
+ 
+
+        $.get('@Url.Action("Save", @Model.Prev().GetActionInfo.ControllerName, new RouteValueDictionary { { "area", @Model.Current().GetActionInfo.AreaName  } })', function (response) {
+            $("#StepView").html(response);
+            NavigationRefresh();
+            TaskListRefresh();
+            $('#preloader').hide();
+        })
+
+
+    })
+
+    @*$("#finishBt").click(function () {
+
+        $('#preloader').show();
+        $.ajax({
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify(Parameters),
+            dataType: 'html',
+            url: '@Url.Action(@Model.Current().PostActionInfo.ActionName, @Model.Current().PostActionInfo.ControllerName, new RouteValueDictionary { { "area", @Model.Current().PostActionInfo.AreaName }})',
+            success: function (result) {
+
+                if (result == !null || result !="") {
+                    $('#StepView').html(result);
+                    NavigationRefresh();
+                    TaskListRefresh();
+                    $('#preloader').hide();
+                }
+                else {
+
+                    $.get('@Url.Action("FinishCreation", "Create", new RouteValueDictionary { { "area","DCM"  } })', function (response) {
+                        
+                        alert(response)
+                
+                        $('#preloader').hide();
+                    })
+                }
+            }
+        });
+       
+    })*@
+
+    function NavigationRefresh()
+    {
+
+        $.post('@Url.Action("RefreshNavigation", "Create", new RouteValueDictionary { { "area", "DCM" } })', function (response) {
+           
+            $("#UploadWizardNavDiv").replaceWith(response);
+        })
+    }
+</script>

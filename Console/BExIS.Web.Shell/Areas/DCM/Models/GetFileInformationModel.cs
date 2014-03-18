@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using BExIS.DCM.Transform.Input;
-using BExIS.DCM.Transform.Validation.Exceptions;
-using BExIS.DCM.UploadWizard;
+using BExIS.Io.Transform.Input;
+using BExIS.Io.Transform.Validation.Exceptions;
+using BExIS.Dcm.Wizard;
 
 namespace BExIS.Web.Shell.Areas.DCM.Models
 {
