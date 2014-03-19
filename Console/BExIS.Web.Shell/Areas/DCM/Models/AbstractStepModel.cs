@@ -11,12 +11,12 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
     {
         public StepInfo StepInfo { get; set; }
         public List<Error> ErrorList { get; set; }
-
+        public bool Saved { get; set; }
 
         public AbstractStepModel()
         {
             ErrorList = new List<Error>();
-
+            Saved = false;
         }
     }
 }

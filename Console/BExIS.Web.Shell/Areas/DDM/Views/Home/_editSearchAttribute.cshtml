@@ -1,0 +1,285 @@
+﻿@model SearchAttributeViewModel
+
+@using BExIS.Ddm.Model;
+@using BExIS.Web.Shell.Areas.DDM.Models;
+
+@{
+    
+
+    // enums to list
+    // metadatanodes to list  
+
+    List<string> SearchComponentBaseType = new List<string>();
+    foreach (SearchComponentBaseType ms in Enum.GetValues(typeof(SearchComponentBaseType)))
+    {
+        SearchComponentBaseType.Add(ms.ToString());
+    }
+
+    List<string> DataType = new List<string>();
+    foreach (TypeCode ms in Enum.GetValues(typeof(TypeCode)))
+    {
+        DataType.Add(ms.ToString());
+    } 
+    
+    //for properties
+
+    List<string> Directions = new List<string>();
+    foreach (Direction ms in Enum.GetValues(typeof(Direction)))
+    {
+        Directions.Add(ms.ToString());
+    }
+
+    List<string> UiComponents = new List<string>();
+    foreach (UiComponent ms in Enum.GetValues(typeof(UiComponent)))
+    {
+        UiComponents.Add(ms.ToString());
+    }
+
+    List<string> AggregationTypes = new List<string>();
+    foreach (AggregationType ms in Enum.GetValues(typeof(AggregationType)))
+    {
+        AggregationTypes.Add(ms.ToString());
+    }
+
+    List<string> metadataNodes = new List<string>();
+    if (Session["metadatNodes"]!=null)
+    {
+        metadataNodes = (List<string>)Session["metadatNodes"];
+    }
+    
+
+ }
+
+@using (Html.BeginForm("Save", "Home", new { area = "DDM" }))
+{
+
+    #region names and link to metadata
+        <b>General</b>
+        
+        <div id="saNames" style="width:600px">
+            <table>
+                <tr>
+                    <td >
+                         @(Html.LabelFor(m => m.id))
+                    </td>
+                    <td>
+                        @(Html.TextBoxFor(m => m.id ,new Dictionary<string, object>(){{"readonly", "true"},{"class","t-input"}}))
+                    </td>
+                    <td>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                         @(Html.LabelFor(m => m.displayName))
+                    </td>
+                    <td>
+                        @(Html.TextBoxFor(m => m.displayName , new {@class = "t-input"}))
+                        @Html.ValidationMessageFor(m => m.displayName)
+                        
+                    </td>
+                    <td>
+                        display name of the item in the search user interface 
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                         @(Html.LabelFor(m => m.sourceName))
+                    </td>
+                    <td>
+                        @(Html.TextBoxFor(m => m.sourceName , new {@class = "t-input"}))
+                         @Html.ValidationMessageFor(m => m.sourceName)
+                    </td>
+                    <td>
+                        name of the field in the lucene index 
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        @(Html.LabelFor(m => m.metadataName))
+                    </td>
+                    <td>
+                        @Html.DropDownListFor(m => m.metadataName, new SelectList(metadataNodes,Model.metadataName), "Select, please")
+                        @Html.ValidationMessageFor(m => m.metadataName)
+                    </td>
+                    <td>
+                        corresponding metadata node to be used for the Lucene index
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        @(Html.LabelFor(m => m.headerItem))
+                    </td>
+                    <td>
+                         @Html.CheckBoxFor(m => m.headerItem)
+                    </td>
+                    <td>
+                        tick if this item should be available as a category (e.g. as a grid column)
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        @(Html.LabelFor(m => m.defaultHeaderItem))
+                    </td>
+                    <td>
+                         @Html.CheckBoxFor(m => m.defaultHeaderItem)
+                    </td>
+                    <td>
+                        tick if the header item should be visible upon page load
+                    </td>
+                </tr>
+            </table>
+       </div> 
+    #endregion
+    
+    #region types
+        <br />
+        <b>Type</b>
+        <div id="saTypes" style="width:600px">
+            <table>
+                <tr>
+                    <td>
+                        @(Html.LabelFor(m => m.searchType))
+                    </td>
+                    <td>
+                         @Html.DropDownListFor(m => m.searchType, new SelectList(SearchComponentBaseType ,Model.searchType), "Select, please")
+                    </td>
+                    <td>
+                        search pattern to be used for this item
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                       @(Html.LabelFor(m => m.dataType))
+                    </td>
+                    <td>
+
+                         @Html.DropDownListFor(m => m.dataType, new SelectList(DataType ,Model.dataType), "Select, please")
+                    </td>
+                    <td>
+                        data type to be indexed
+                    </td>
+                </tr>
+
+            </table>
+        </div>
+    #endregion
+
+    #region parameter
+         <br />
+        <b>Index Parameters</b>
+        <div id="saParameters" style="width:600px">
+            <table>
+                <tr>
+                    <td>
+                       @(Html.LabelFor(m => m.store))
+                    </td>
+                    <td>
+                         @Html.CheckBoxFor(m => m.store)
+                    </td>
+                    <td>
+                        tick to store the entire item value in addition to the index
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                       @(Html.LabelFor(m => m.multiValue))
+                    </td>
+                    <td>
+                         @Html.CheckBoxFor(m => m.multiValue)
+                    </td>
+                    <td>
+                        tick if this item contains multiple values per field (e.g. Name A; Name B; Name C)
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                       @(Html.LabelFor(m => m.analysed))
+                    </td>
+                    <td>
+                          @Html.CheckBoxFor(m => m.analysed)
+                    </td>
+                    <td>
+                        tick if this item should be analyzed for the index (default)
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        @(Html.LabelFor(m => m.norm))
+                    </td>
+                    <td>
+                       @Html.CheckBoxFor(m => m.norm)
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                       @(Html.LabelFor(m => m.boost))
+                    </td>
+                    <td>
+                       @Html.TextBoxFor(m => m.boost, new { type="number", min="0.0"})
+                    </td>
+                    <td>
+                        specify the priority of this item within the search index (10=highest priority)
+                    </td>
+                </tr>
+            </table>
+        </div>
+    #endregion
+    
+    #region properties
+        <br />
+     <b>Property Parameters</b>
+        <div id="saProperties" style="width:600px">
+            <table>
+                <tr>
+                    <td>
+                        @(Html.LabelFor(m => m.uiComponent))
+                    </td>
+                    <td>
+                        @Html.DropDownListFor(m => m.uiComponent, new SelectList(UiComponents ,Model.uiComponent))
+                    </td>
+                    <td>
+                        choose a UI component Type according to the number of options (1-3  = item, 3-15 = list, >15= range)
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        @(Html.LabelFor(m => m.aggregationType))
+                    </td>
+                    <td>
+
+                        @Html.DropDownListFor(m => m.aggregationType, new SelectList(AggregationTypes ,Model.aggregationType))
+                    </td>
+                    <td>
+                        choose a selection type based how many choices should be allowed (single, multiple)
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        @(Html.LabelFor(m => m.direction))
+                    </td>
+                    <td>
+                        @Html.DropDownListFor(m => m.direction, new SelectList(Directions ,Model.direction))
+                    </td>
+                    <td>
+                        default sort direction for this item (ascending, descending)
+                    </td>
+                </tr>
+                @*<tr>
+                    <td>
+                        @(Html.LabelFor(m => m.dateFormat))
+                    </td>
+                    <td>
+                        bgc:format
+                    </td>
+                    <td>
+                        metadata node providing the date format
+                    </td>
+                </tr>*@
+            </table>
+        </div>
+    #endregion
+
+    <br />
+    <button type="submit" value="Save" name="submit"  class="t-button " style="border:0px;">save</button>
+}

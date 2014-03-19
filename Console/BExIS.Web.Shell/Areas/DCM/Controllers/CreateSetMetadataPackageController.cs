@@ -421,7 +421,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             #endregion
 
 
-
             return PartialView("SetMetadataPackage", Create(currentStepIndex, true));
         }
         #endregion

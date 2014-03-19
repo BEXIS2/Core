@@ -1,0 +1,26 @@
+﻿@model BExIS.Ddm.Api.ISearchProvider
+@using BExIS.Ddm.Model;
+@{
+    ViewBag.Title = "Search";
+}
+<header>
+    <link href="@Url.Content(Themes.GetResourcePath("Styles","search.css"))" rel="stylesheet" type="text/css" />   
+    <script type="text/javascript" src="/Scripts/trunk8.js"></script>
+    <script type="text/javascript" src="/Scripts/Search/search.js"></script>
+    <script type="text/javascript" src="/Scripts/jquery.ba-resize.min.js"></script>
+</header> 
+
+@Html.Partial("_searchHeader", Model.WorkingSearchModel)
+
+<div class="searchBreadcrumbNavigation">
+    @Html.Partial("_searchBreadcrumb", Model.WorkingSearchModel)
+</div>     
+<div class="searchContent">
+   @Html.Partial("_searchContent", Model.WorkingSearchModel.ResultComponent)
+</div>
+
+@section LeftPane 
+{       
+        @Html.Partial("_searchFacets", Tuple.Create(Model.WorkingSearchModel, Model.DefaultSearchModel.SearchComponent.Facets))
+        @Html.Partial("_searchProperties", Model.WorkingSearchModel.SearchComponent.Properties)
+}

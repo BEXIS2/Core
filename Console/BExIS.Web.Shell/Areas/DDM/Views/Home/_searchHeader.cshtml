@@ -1,0 +1,95 @@
+﻿@using BExIS.Ddm.Model;
+@model SearchModel
+
+<div class="searchHeader">           
+@using (Html.BeginForm("Index", "Home", new {area="DDM"}))
+{ 
+     
+    <div id="search_Components"> 
+            
+            <div id="search_TypeDiv">
+                 <input type="radio" 
+                         id="searchType" 
+                         name="searchType" 
+                         runat="server"
+                
+                         onclick="changeSearchType(this)"
+                         value = "new" >New search</input>
+                <input type="radio" 
+                         id="searchType" 
+                         name="searchType" 
+                         runat="server"
+                         checked="True"
+                         onclick="changeSearchType(this)"
+                         value = "basedon" >Based on previous search</input>
+            </div> 
+
+            <div class="search_Filter">
+    
+      
+                        @(Html.Telerik().DropDownList()
+                         .Name("FilterList")
+                         .SelectedIndex((int)Session["SelectedIndexFilterAC"])
+                         .DropDownHtmlAttributes(new { style = "height: 200px" })
+                         .ClientEvents(events => events
+                               .OnChange("onChangeFilterList"))
+                     .BindTo(new SelectList(Model.SearchComponent.Categories, "Value", "DisplayName"))
+
+            )
+
+            </div>
+
+            <div class="search_Source">
+                @(Html.Telerik().AutoComplete()
+                        .Name("autoComplete")
+                        .Encode(false)
+
+                        .DataBinding(dataBinding => dataBinding
+                            .Ajax().Select("_AutoCompleteAjaxLoading", "Home")
+                            .Cache(false))
+
+                        .Filterable(filtering =>
+                        {
+                            filtering.FilterMode(AutoCompleteFilterMode.Contains);
+                            filtering.MinimumChars(3);
+
+                        })
+                        //.Multiple(multi =>
+                        //{
+                        //    multi.Separator(" ")
+                        //        .Enabled(true);
+
+                        //})
+               )
+  
+            </div>
+        
+            <div class="search_HeaderButton">
+               <button type="submit" class="t-button">Search</button>
+            </div>
+  </div>       
+   <div class="search_Summery">
+
+        @*<b>@Model.ResultComponent.NumberOfHits results for search "" in
+        Category   </b> *@
+
+   </div>
+
+}
+</div>
+
+ <script type="text/javascript">
+     function onChangeFilterList(e) {
+         //alert(e.value);
+         var data = e.value;
+         var index = $(':selected').val();
+         $.post('@Url.Action("FilterByDropDownList", "Home", new RouteValueDictionary { { "area", "DDM" } })', { SelectedFilter: data }, function (response) { });
+
+     }
+
+     function changeSearchType(e) {
+         $.post('@Url.Action("ChangeSearchValuesACBySearchType", "Home", new RouteValueDictionary { { "area", "DDM" } })', { value: e.value }, function (response) { });
+     }
+
+
+</script>

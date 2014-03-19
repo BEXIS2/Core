@@ -245,10 +245,10 @@
     <Compile Include="Areas\DCM\Models\ValidationModel.cs" />
     <Compile Include="Areas\RPM\Controllers\HomeController.cs" />
     <Compile Include="Areas\RPM\RPMAreaRegistration.cs" />
-    <Compile Include="Areas\Search\Controllers\HomeController.cs" />
-    <Compile Include="Areas\Search\Helpers\SearchUIHelper.cs" />
-    <Compile Include="Areas\Search\Models\SearchAttributeViewModel.cs" />
-    <Compile Include="Areas\Search\SearchAreaRegistration.cs" />
+    <Compile Include="Areas\DDM\Controllers\HomeController.cs" />
+    <Compile Include="Areas\DDM\Helpers\SearchUIHelper.cs" />
+    <Compile Include="Areas\DDM\Models\SearchAttributeViewModel.cs" />
+    <Compile Include="Areas\DDM\SearchAreaRegistration.cs" />
     <Compile Include="Areas\Site\Controllers\NavController.cs" />
     <Compile Include="Areas\Site\SiteAreaRegistration.cs" />
     <Compile Include="Areas\System\Controllers\UtilsController.cs" />
@@ -576,9 +576,9 @@
     <Folder Include="Areas\DCM\Models\Scripts\" />
     <Folder Include="Areas\DCM\Views\Home\" />
     <Folder Include="Areas\DCM\Views\Shared\" />
+    <Folder Include="Areas\DDM\Views\Shared\" />
     <Folder Include="Areas\RPM\Models\" />
     <Folder Include="Areas\RPM\Views\Shared\" />
-    <Folder Include="Areas\Search\Views\Shared\" />
     <Folder Include="Areas\Site\Models\" />
     <Folder Include="Areas\Site\Views\Shared\" />
     <Folder Include="Areas\System\Models\" />
@@ -659,6 +659,22 @@
       <Project>{d17cdd9d-b87b-441b-9248-5c54e92ffc81}</Project>
       <Name>BExIS.Dcm.Wizard</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Modules\DDM\BExIS.Ddm.Api\BExIS.Ddm.Api.csproj">
+      <Project>{8519eac6-fbf8-48b3-813f-e0b9d3cc4a52}</Project>
+      <Name>BExIS.Ddm.Api</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Modules\DDM\BExIS.Ddm.Model\BExIS.Ddm.Model.csproj">
+      <Project>{ab46beb8-c36d-412f-9b1a-646c86299a87}</Project>
+      <Name>BExIS.Ddm.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Modules\DDM\BExIS.Ddm.Providers.DummyProvider\BExIS.Ddm.Providers.DummyProvider.csproj">
+      <Project>{d89e501a-4873-4883-8741-27f0acd03e0b}</Project>
+      <Name>BExIS.Ddm.Providers.DummyProvider</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Modules\DDM\BExIS.Ddm.Providers.LuceneProvider\BExIS.Ddm.Providers.LuceneProvider.csproj">
+      <Project>{fbe3101a-791a-4eab-9b8f-f6e071f8dbdc}</Project>
+      <Name>BExIS.Ddm.Providers.LuceneProvider</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Modules\RPM\BExIS.RPM.Model\BExIS.RPM.Model.csproj">
       <Project>{063b9e3f-e0dd-43fe-9910-5b1544b8b861}</Project>
       <Name>BExIS.RPM.Model</Name>
@@ -666,22 +682,6 @@
     <ProjectReference Include="..\..\Modules\RPM\BExIS.RPM.Output\BExIS.RPM.Output.csproj">
       <Project>{abc877e0-e3de-4472-a199-1728e88fa5a1}</Project>
       <Name>BExIS.RPM.Output</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Modules\Search\BExIS.Search.Api\BExIS.Search.Api.csproj">
-      <Project>{8519EAC6-FBF8-48B3-813F-E0B9D3CC4A52}</Project>
-      <Name>BExIS.Search.Api</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Modules\Search\BExIS.Search.Model\BExIS.Search.Model.csproj">
-      <Project>{AB46BEB8-C36D-412F-9B1A-646C86299A87}</Project>
-      <Name>BExIS.Search.Model</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Modules\Search\BExIS.Search.Providers.DummyProvider\BExIS.Search.Providers.DummyProvider.csproj">
-      <Project>{D89E501A-4873-4883-8741-27F0ACD03E0B}</Project>
-      <Name>BExIS.Search.Providers.DummyProvider</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Modules\Search\BExIS.Search.Providers.LuceneProvider\BExIS.Search.Providers.LuceneProvider.csproj">
-      <Project>{FBE3101A-791A-4EAB-9B8F-F6E071F8DBDC}</Project>
-      <Name>BExIS.Search.Providers.LuceneProvider</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Components\DLM\BExIS.Dlm.Services\BExIS.Dlm.Services.csproj">
       <Project>{C4CA0A99-0AF3-4372-A9B7-B9073599BD8B}</Project>
@@ -730,34 +730,34 @@
     <Content Include="Themes\Default\Partials\_ThemeSelector.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\Search\Views\Web.config" />
+    <Content Include="Areas\DDM\Views\Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\Search\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\DDM\Views\_ViewStart.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\Search\Views\Home\_dropBoxView.cshtml" />
-    <Content Include="Areas\Search\Views\Home\_metaDataResultGridView.cshtml" />
-    <Content Include="Areas\Search\Views\Home\_primaryDataResultGridView.cshtml" />
-    <Content Include="Areas\Search\Views\Home\_radioButtonsView.cshtml" />
-    <Content Include="Areas\Search\Views\Home\_rangeSliderView.cshtml" />
-    <Content Include="Areas\Search\Views\Home\_resultGridView.cshtml" />
-    <Content Include="Areas\Search\Views\Home\_resultListElementView.cshtml" />
-    <Content Include="Areas\Search\Views\Home\_resultListView.cshtml" />
-    <Content Include="Areas\Search\Views\Home\_searchBreadcrumb.cshtml" />
-    <Content Include="Areas\Search\Views\Home\_searchContent.cshtml" />
-    <Content Include="Areas\Search\Views\Home\_searchFacets.cshtml" />
-    <Content Include="Areas\Search\Views\Home\_searchHeader.cshtml" />
-    <Content Include="Areas\Search\Views\Home\_searchProperties.cshtml" />
-    <Content Include="Areas\Search\Views\Home\_sliderView.cshtml" />
-    <Content Include="Areas\Search\Views\Home\_windowCheckBoxList.cshtml" />
+    <Content Include="Areas\DDM\Views\Home\_dropBoxView.cshtml" />
+    <Content Include="Areas\DDM\Views\Home\_metaDataResultGridView.cshtml" />
+    <Content Include="Areas\DDM\Views\Home\_primaryDataResultGridView.cshtml" />
+    <Content Include="Areas\DDM\Views\Home\_radioButtonsView.cshtml" />
+    <Content Include="Areas\DDM\Views\Home\_rangeSliderView.cshtml" />
+    <Content Include="Areas\DDM\Views\Home\_resultGridView.cshtml" />
+    <Content Include="Areas\DDM\Views\Home\_resultListElementView.cshtml" />
+    <Content Include="Areas\DDM\Views\Home\_resultListView.cshtml" />
+    <Content Include="Areas\DDM\Views\Home\_searchBreadcrumb.cshtml" />
+    <Content Include="Areas\DDM\Views\Home\_searchContent.cshtml" />
+    <Content Include="Areas\DDM\Views\Home\_searchFacets.cshtml" />
+    <Content Include="Areas\DDM\Views\Home\_searchHeader.cshtml" />
+    <Content Include="Areas\DDM\Views\Home\_searchProperties.cshtml" />
+    <Content Include="Areas\DDM\Views\Home\_sliderView.cshtml" />
+    <Content Include="Areas\DDM\Views\Home\_windowCheckBoxList.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\Search\Views\Home\ShowMetaData.cshtml" />
-    <Content Include="Areas\Search\Views\Home\ShowPrimaryData.cshtml" />
+    <Content Include="Areas\DDM\Views\Home\ShowMetaData.cshtml" />
+    <Content Include="Areas\DDM\Views\Home\ShowPrimaryData.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\Search\Views\Home\Index.cshtml" />
+    <Content Include="Areas\DDM\Views\Home\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Themes\Default\Partials\_Footer.cshtml" />
@@ -780,7 +780,7 @@
     <Content Include="Themes\Default\Partials\_Header.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\Search\Views\Home\_previewDatastructure.cshtml" />
+    <Content Include="Areas\DDM\Views\Home\_previewDatastructure.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_GlobalResources\UploadLocalization.en-US.resx">
@@ -910,38 +910,38 @@
     </ProjectReference>
     <ProjectReference Include="..\..\Components\IO\BExIS.IoTransform.Input\BExIS.Io.Transform.Input.csproj">
       <Project>{5c4c8570-a53b-4191-a414-de028aaaf36a}</Project>
-      <Name>BExIS.DCM.Transform.Input</Name>
+      <Name>BExIS.Io.Transform.Input</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Components\IO\BExIS.Io.Transform.Validation\BExIS.Io.Transform.Validation.csproj">
       <Project>{c8a05313-b960-406e-92ec-c1e5b3f47fcd}</Project>
-      <Name>BExIS.DCM.Transform.Validation</Name>
+      <Name>BExIS.Io.Transform.Validation</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Modules\RPM\BExIS.RPM.Model\BExIS.RPM.Model.csproj">
       <Project>{063b9e3f-e0dd-43fe-9910-5b1544b8b861}</Project>
       <Name>BExIS.RPM.Model</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Modules\Search\BExIS.Search.Api\BExIS.Search.Api.csproj">
+    <ProjectReference Include="..\..\Modules\DDM\BExIS.Ddm.Api\BExIS.Ddm.Api.csproj">
       <Project>{8519eac6-fbf8-48b3-813f-e0b9d3cc4a52}</Project>
       <Name>BExIS.Search.Api</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Modules\Search\BExIS.Search.Model\BExIS.Search.Model.csproj">
+    <ProjectReference Include="..\..\Modules\DDM\BExIS.Ddm.Model\BExIS.Ddm.Model.csproj">
       <Project>{ab46beb8-c36d-412f-9b1a-646c86299a87}</Project>
       <Name>BExIS.Search.Model</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Modules\Search\BExIS.Search.Providers.DummyProvider\BExIS.Search.Providers.DummyProvider.csproj">
+    <ProjectReference Include="..\..\Modules\DDM\BExIS.Ddm.Providers.DummyProvider\BExIS.Ddm.Providers.DummyProvider.csproj">
       <Project>{d89e501a-4873-4883-8741-27f0acd03e0b}</Project>
       <Name>BExIS.Search.Providers.DummyProvider</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Modules\Search\BExIS.Search.Providers.LuceneProvider\BExIS.Search.Providers.LuceneProvider.csproj">
+    <ProjectReference Include="..\..\Modules\DDM\BExIS.Ddm.Providers.LuceneProvider\BExIS.Ddm.Providers.LuceneProvider.csproj">
       <Project>{fbe3101a-791a-4eab-9b8f-f6e071f8dbdc}</Project>
       <Name>BExIS.Search.Providers.LuceneProvider</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\Search\Views\Home\SearchDesigner.cshtml" />
+    <Content Include="Areas\DDM\Views\Home\SearchDesigner.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\Search\Views\Home\_editSearchAttribute.cshtml" />
+    <Content Include="Areas\DDM\Views\Home\_editSearchAttribute.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\Auth\Views\Users\_UserEditPartial.cshtml" />
@@ -950,7 +950,7 @@
     <Content Include="Areas\RPM\Views\Home\_editVariable.cshtml" />
     <Content Include="Areas\DCM\Views\SubmitGetFileInformation\GetFileInformation.cshtml" />
     <Content Include="Areas\DCM\Views\SubmitDefinePrimaryKey\DefinePrimaryKey.cshtml" />
-    <Content Include="Areas\Search\Views\Home\ReIndexSearch.cshtml" />
+    <Content Include="Areas\DDM\Views\Home\ReIndexSearch.cshtml" />
     <Content Include="Areas\Auth\Views\Users\_InfoPartial.cshtml" />
     <Content Include="Areas\DCM\Views\Submit\FinishUpload.cshtml" />
     <Content Include="Areas\DCM\Views\SubmitSpecifyDataset\_defineMetadataStructure.cshtml" />

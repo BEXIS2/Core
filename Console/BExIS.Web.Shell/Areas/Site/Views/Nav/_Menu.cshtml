@@ -6,7 +6,7 @@
 			.Items(menu =>
 			{
 				menu.Add().Text("Home").Action("Index", "Home", new { area = "" });
-				menu.Add().Text("Search").Action("Index", "Home", new { area = "Search" })
+				menu.Add().Text("Search").Action("Index", "Home", new { area = "DDM" })
 					.Items(item =>
 					{
 						//item.Add().Text("Faceted Search").Action("Index", "Home", new { area = "Search" });
@@ -33,8 +33,8 @@
 					{
 						item.Add().Text("Roles Manager").Action("Roles", "Roles", new { area = "Auth" });
 						item.Add().Text("Users Manager").Action("Users", "Users", new { area = "Auth" });
-						item.Add().Text("Search Manager").Action("SearchDesigner", "Home", new { area = "Search" });
-						item.Add().Text("Refresh Search").Action("ReIndexSearch", "Home", new { area = "Search" });
+						item.Add().Text("Search Manager").Action("SearchDesigner", "Home", new { area = "DDM" });
+                        item.Add().Text("Refresh Search").Action("ReIndexSearch", "Home", new { area = "DDM" });
 						
 					}
 				);
