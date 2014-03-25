@@ -19,10 +19,10 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
         {
             string url = "";
             if (xslPath != ""){
-                url = AppConfiguration.GetModuleWorkspacePath("Search") + "\\UI\\HtmlShowMetadata.xsl";
+                url = AppConfiguration.GetModuleWorkspacePath("DDM") + "\\UI\\HtmlShowMetadata.xsl";
             }
             else {
-                url = AppConfiguration.GetModuleWorkspacePath("Search") + xslPath;
+                url = AppConfiguration.GetModuleWorkspacePath("DDM") + xslPath;
             }
 
             if (m != null)

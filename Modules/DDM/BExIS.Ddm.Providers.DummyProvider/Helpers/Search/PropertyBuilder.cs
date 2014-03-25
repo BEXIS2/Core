@@ -53,7 +53,7 @@ namespace BExIS.Ddm.Providers.DummyProvider.Helpers.Helpers.Search
         /// Load current static configuration NewProperties.xml document
         /// </summary>
         private void LoadXml(){
-            _xmlReader = XmlReader.Create(AppConfiguration.GetModuleWorkspacePath("Search") + "/DummyData/NewProperties.xml");
+            _xmlReader = XmlReader.Create(AppConfiguration.GetModuleWorkspacePath("DDM") + "/DummyData/NewProperties.xml");
             _source.Load(_xmlReader);
         }
 

@@ -27,7 +27,7 @@ namespace BExIS.Ddm.Providers.DummyProvider.Helpers
 
             List<Metadata> data = new List<Metadata>();
 
-            string path = AppConfiguration.GetModuleWorkspacePath("Search") + "/DummyData/";//HttpContext.Current.Server.MapPath("/App_Data/xml/");
+            string path = AppConfiguration.GetModuleWorkspacePath("DDM") + "/DummyData/";//HttpContext.Current.Server.MapPath("/App_Data/xml/");
 
                 // 1. Beispiel
                 Metadata md1 = new Metadata();

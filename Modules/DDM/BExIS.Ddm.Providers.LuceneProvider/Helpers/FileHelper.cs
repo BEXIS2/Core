@@ -7,27 +7,27 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Helpers
     {
         public static string LuceneRoot
         {
-            get { return (Path.Combine(AppConfiguration.GetModuleWorkspacePath("Search"), "Lucene")); }
+            get { return (Path.Combine(AppConfiguration.GetModuleWorkspacePath("DDM"), "Lucene")); }
         }
 
         public static string IndexFolderPath
         {
-            get { return (Path.Combine(AppConfiguration.GetModuleWorkspacePath("Search"), "Lucene", "SearchIndex")); }
+            get { return (Path.Combine(AppConfiguration.GetModuleWorkspacePath("DDM"), "Lucene", "SearchIndex")); }
         }
 
         public static string DataFolderPath
         {
-            get { return (Path.Combine(AppConfiguration.GetModuleWorkspacePath("Search"), "Lucene", "Data")); }
+            get { return (Path.Combine(AppConfiguration.GetModuleWorkspacePath("DDM"), "Lucene", "Data")); }
         }
 
         public static string ConfigFilePath
         {
-            get { return (Path.Combine(AppConfiguration.GetModuleWorkspacePath("Search"), "Lucene", "Config", "LuceneConfig.xml")); }
+            get { return (Path.Combine(AppConfiguration.GetModuleWorkspacePath("DDM"), "Lucene", "Config", "LuceneConfig.xml")); }
         }
 
         public static string ConfigBackUpFilePath
         {
-            get { return (Path.Combine(AppConfiguration.GetModuleWorkspacePath("Search"), "Lucene", "Config","BackUp", "LuceneConfig.xml")); }
+            get { return (Path.Combine(AppConfiguration.GetModuleWorkspacePath("DDM"), "Lucene", "Config", "BackUp", "LuceneConfig.xml")); }
         }
     }
 }
