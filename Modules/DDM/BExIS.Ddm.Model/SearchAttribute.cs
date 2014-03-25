@@ -98,6 +98,7 @@ namespace BExIS.Ddm.Model
                 case "string": return TypeCode.String;
                 case "double": return TypeCode.Double;
                 case "datetime": return TypeCode.DateTime;
+                case "date": return TypeCode.DateTime;
                 case "integer": return TypeCode.Int32;
                 default: return TypeCode.String;
             }
@@ -199,7 +200,7 @@ namespace BExIS.Ddm.Model
             {
                 case TypeCode.String: return "String";
                 case TypeCode.Double: return "Double";
-                case TypeCode.DateTime: return "Date";
+                case TypeCode.DateTime: return "DateTime";
                 case TypeCode.Int32: return "Integer";
                 default: return "String";
             }

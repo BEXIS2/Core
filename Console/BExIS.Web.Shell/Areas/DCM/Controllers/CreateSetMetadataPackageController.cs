@@ -529,11 +529,11 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     if (packageModelDic.ContainsKey(key))
                     {
                         //attribute with the same id and get all higher or equals the number
-                        List<MetadataAttributeModel> temp = packageModelDic[key].MetadataAttributeModels.Where(a => a.Id == model.Id && a.Number>=model.Number).ToList();
+                        List<MetadataAttributeModel> temp = packageModelDic[key].MetadataAttributeModels.Where(a => a.Id == model.Id && a.Number>=model.Number-1).ToList();
                         // default index 0 or last
                         int index = packageModelDic[key].MetadataAttributeModels.Where(a => a.Id == model.Id).ToList().Count();
                         if(temp.Count>0)
-                            index = packageModelDic[key].MetadataAttributeModels.IndexOf(temp.FirstOrDefault());
+                            index = packageModelDic[key].MetadataAttributeModels.IndexOf(temp.FirstOrDefault())+1;
          
 
                         temp.Where(p => p.Number >= model.Number).ToList().ForEach(p => p.Number = p.Number + 1);

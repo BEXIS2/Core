@@ -8,7 +8,6 @@
     string idRemove = id + "_Remove";
     string idUp = id + "_Up";
     string idDown = id + "_Down";
-
     
     
     string displayName = @Model.DisplayName;
@@ -35,7 +34,6 @@
                     </td>    
 
                     <td class="attributeName">
-                       
                         <b title="@Model.Discription">@displayName</b>
                     </td>
                     <td class="attributeValue">
@@ -110,8 +108,10 @@
                                 <button id="@idDown" type="button" value="Down" name="Down"  class="t-icon t-arrow-down" style="border:0px;" onclick="OnClickDown(this)">remove</button>
                             </td>
                         }
+                        
+ 
+
                     }
-                    
                 </tr>
             </table>
   
@@ -230,7 +230,7 @@
         //alert(number);
   
         $.post('@Url.Action("AddMetadataAttributeUsage", "CreateSetMetadataPackage", new RouteValueDictionary { { "area", "DCM" } })', { id: id, parentid:parentid, metadataStructureId:metadataStructureId, number:number, packageModelNumber:packageModelNumber  }, function (response) {
-            //alert(response.toString());
+          
             //$(".package").append(response);
             //$("#" + e.id).closest(".metadataAttributeContent").after(response);
             var id = parentid + "_" + metadataStructureId + "_" + packageModelNumber;

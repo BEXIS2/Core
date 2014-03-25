@@ -101,7 +101,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider
 
         public List<string> GetMetadataNodes()
         {
-            long metadataStructureId = 1;
+            long metadataStructureId = 2;
             if (_metadataNodes.Count > 0)
                 return _metadataNodes;
             else

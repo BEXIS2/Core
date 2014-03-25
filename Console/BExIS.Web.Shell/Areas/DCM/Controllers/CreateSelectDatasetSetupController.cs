@@ -212,7 +212,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
            MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
 
-           List<MetadataPackageUsage> metadataPackageList = metadataStructureManager.Repo.Get(MetadataStructureId).MetadataPackageUsages.ToList();
+           List<MetadataPackageUsage> metadataPackageList = metadataStructureManager.GetEffectivePackages(MetadataStructureId).ToList();
 
            Dictionary<int, long> MetadataPackageDic = new Dictionary<int, long>();
 
@@ -277,7 +277,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         }
             
 
-        // chekc if user exist
+        // check if user exist
         // if true return usernamem otherwise "DEFAULT"
         public string GetUserNameOrDefault()
         {

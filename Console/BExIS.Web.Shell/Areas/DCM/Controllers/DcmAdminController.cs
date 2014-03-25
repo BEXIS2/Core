@@ -64,7 +64,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
 
             // add package to structure
-            if (root.MetadataPackageUsages.Count > 0)
+            if (root.MetadataPackageUsages!=null && root.MetadataPackageUsages.Count > 0)
             {
                 if (root.MetadataPackageUsages.Where(p => p.MetadataPackage == contact).Count() <= 0)
                     mdsManager.AddMetadataPackageUsage(root, contact, "Content Contact", 0, 3);
@@ -133,7 +133,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             }
 
 
-            if (contact.MetadataAttributeUsages.Count > 0)
+            if (contact.MetadataAttributeUsages!=null &contact.MetadataAttributeUsages.Count > 0)
             {
                 // add metadataAttributes to packages
                 if (contact.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Name).Count() <= 0)
@@ -210,11 +210,11 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
             }
 
-            if (Description.MetadataAttributeUsages.Count > 0)
+            if (Description.MetadataAttributeUsages!=null & Description.MetadataAttributeUsages.Count > 0)
             {
                 // add metadataAttributes to packages
                 if (Description.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Title).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(Description, Title, "Description in Metadata", 0, 1);
+                    mdpManager.AddMetadataAtributeUsage(Description, Title, "Title of the dataset", 0, 1);
 
                 if (Description.MetadataAttributeUsages.Where(p => p.MetadataAttribute == RevisionData).Count() <= 0)
                     mdpManager.AddMetadataAtributeUsage(Description, RevisionData, "RevisionData", 0, 1);
@@ -230,9 +230,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             }
             else
             {
-                mdpManager.AddMetadataAtributeUsage(Description, Title, "Title in Metadata", 0, 1);
-                mdpManager.AddMetadataAtributeUsage(Description, RevisionData, "DateModified in Metadata", 0, 1);
-                mdpManager.AddMetadataAtributeUsage(Description, Details, "Details", 0, 1);
+                mdpManager.AddMetadataAtributeUsage(Description, Title, "Title of the dataset", 0, 2);
+                mdpManager.AddMetadataAtributeUsage(Description, RevisionData, "DateModified of the dataset", 0, 1);
+                mdpManager.AddMetadataAtributeUsage(Description, Details, "Details of the dataset", 0, 1);
                 mdpManager.AddMetadataAtributeUsage(Description, Coverage, "Coverage", 0, 1);
                 mdpManager.AddMetadataAtributeUsage(Description, Uri, "Uri", 0, 1);
             }
@@ -253,7 +253,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
             }
 
-            if (Owner.MetadataAttributeUsages.Count > 0)
+            if (Owner.MetadataAttributeUsages!=null & Owner.MetadataAttributeUsages.Count > 0)
             {
                 // add metadataAttributes to packages
                 if (Owner.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Name).Count() <= 0)
@@ -318,7 +318,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
             }
 
-            if (Scope.MetadataAttributeUsages.Count > 0)
+            if (Scope.MetadataAttributeUsages!=null & Scope.MetadataAttributeUsages.Count > 0)
             {
                 // add metadataAttributes to packages
                 if (Scope.MetadataAttributeUsages.Where(p => p.MetadataAttribute == TaxonomicTerm).Count() <= 0)
@@ -339,7 +339,115 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             #endregion
 
 
-            return View("CreateMetadataStructure");
+            #region Exploratory stuff
+
+            MetadataStructure exploratory = mdsManager.Repo.Get(p => p.Name == "Exploratory").FirstOrDefault();
+            if (exploratory == null) exploratory = mdsManager.Create("Exploratory", "This is the exploratory metadata structure", "", "", root);
+
+            MetadataPackage DataDescription = mdpManager.MetadataPackageRepo.Get(p => p.Name == "DataDescription").FirstOrDefault();
+            if (DataDescription == null) DataDescription = mdpManager.Create("DataDescription", "Description of data", true);
+
+            MetadataPackage ResearchObjects = mdpManager.MetadataPackageRepo.Get(p => p.Name == "ResearchObjects").FirstOrDefault();
+            if (ResearchObjects == null) ResearchObjects = mdpManager.Create("ResearchObjects", "Information about research objects", true);
+
+            // add package to structure
+            if (exploratory.MetadataPackageUsages!=null & exploratory.MetadataPackageUsages.Count > 0)
+            {
+                if (exploratory.MetadataPackageUsages.Where(p => p.MetadataPackage == DataDescription).Count() <= 0)
+                    mdsManager.AddMetadataPackageUsage(exploratory, DataDescription, "Data Description", 0, 1);
+
+                if (exploratory.MetadataPackageUsages.Where(p => p.MetadataPackage == ResearchObjects).Count() <= 0)
+                    mdsManager.AddMetadataPackageUsage(exploratory, ResearchObjects, "Research Objects", 0, 1);
+            }
+            else
+            {
+                mdsManager.AddMetadataPackageUsage(exploratory, DataDescription, "Data Description", 0, 1);
+                mdsManager.AddMetadataPackageUsage(exploratory, ResearchObjects, "Research Objects", 0, 1);
+            }
+
+                #region data description
+
+                    MetadataAttribute qualityLevel = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("QualityLevel")).FirstOrDefault();
+                    if (qualityLevel == null)
+                    {
+                        DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String")).FirstOrDefault();
+                        Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
+
+                        qualityLevel = mdaManager.Create("QualityLevel", "QualityLevel", "QualityLevel", false, false, "David Blaa",
+                                MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
+                    }
+
+                    MetadataAttribute dataStatus = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("DataStatus")).FirstOrDefault();
+                    if (dataStatus == null)
+                    {
+                        DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String")).FirstOrDefault();
+                        Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
+
+                        dataStatus = mdaManager.Create("DataStatus", "DataStatus", "DataStatus", false, false, "David Blaa",
+                                MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
+                    }
+
+                    if (DataDescription.MetadataAttributeUsages!=null & DataDescription.MetadataAttributeUsages.Count > 0)
+                    {
+                        // add metadataAttributes to packages
+                        if (DataDescription.MetadataAttributeUsages.Where(p => p.MetadataAttribute == qualityLevel).Count() <= 0)
+                            mdpManager.AddMetadataAtributeUsage(DataDescription, qualityLevel, "Quality Level", 0, 1);
+
+                        if (DataDescription.MetadataAttributeUsages.Where(p => p.MetadataAttribute == dataStatus).Count() <= 0)
+                            mdpManager.AddMetadataAtributeUsage(DataDescription, dataStatus, "Data Status", 0, 1);
+
+                    }
+                    else
+                    {
+                        mdpManager.AddMetadataAtributeUsage(DataDescription, qualityLevel, "Quality Level", 0, 1);
+                        mdpManager.AddMetadataAtributeUsage(DataDescription, dataStatus, "Data Status", 0, 1);
+                    }
+
+                #endregion
+
+
+                #region research objects
+
+                    MetadataAttribute processes = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Processe")).FirstOrDefault();
+                    if (processes == null)
+                    {
+                        DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String")).FirstOrDefault();
+                        Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
+
+                        processes = mdaManager.Create("Processe", "Processe", "Processe", false, false, "David Blaa",
+                                MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
+                    }
+
+                    MetadataAttribute Services = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Service")).FirstOrDefault();
+                    if (Services == null)
+                    {
+                        DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String")).FirstOrDefault();
+                        Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
+
+                        Services = mdaManager.Create("Service", "Service", "Service", false, false, "David Blaa",
+                                MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
+                    }
+
+                    if (ResearchObjects.MetadataAttributeUsages!=null & ResearchObjects.MetadataAttributeUsages.Count > 0)
+                    {
+                        // add metadataAttributes to packages
+                        if (ResearchObjects.MetadataAttributeUsages.Where(p => p.MetadataAttribute == processes).Count() <= 0)
+                            mdpManager.AddMetadataAtributeUsage(ResearchObjects, processes, "Processe", 0, 10);
+
+                        if (ResearchObjects.MetadataAttributeUsages.Where(p => p.MetadataAttribute == dataStatus).Count() <= 0)
+                            mdpManager.AddMetadataAtributeUsage(ResearchObjects, Services, "Service", 0, 10);
+
+                    }
+                    else
+                    {
+                        mdpManager.AddMetadataAtributeUsage(ResearchObjects, processes, "Processe", 0, 10);
+                        mdpManager.AddMetadataAtributeUsage(ResearchObjects, Services, "Service", 0, 10);
+                    }
+                #endregion
+            #endregion
+
+
+                    return View("CreateMetadataStructure");
         }
 
 

@@ -36,7 +36,13 @@
         <div class="uploadWizardStep_Content stepper">
 
             <table>
-                <tr><td><button id="CreateDatasetButton" title="Create new dataset" >Create</button></td><td>Create a new dataset</td></tr>
+                <tr><td>
+                        @Html.ActionLink("Create","CreateDataset", "Create", new { area = "DCM" },new {@class="t-button"})
+                    </td>
+                    <td>
+                        Create a new dataset.
+                    </td>
+                </tr>
                 <tr><td><button id="SelectDatasetButton" title="Add file to an existing dataset" >Add</button></td><td> Add file to an existing dataset.</td></tr>
             </table>
            
@@ -127,12 +133,12 @@
 
     $("#CreateDatasetButton").click(function () {
 
-        $.get('@Url.Action("CreateDataset",@Model.StepInfo.GetActionInfo.ControllerName)', function (data) {
+        @*$.get('@Url.Action("CreateDataset",@Model.StepInfo.GetActionInfo.ControllerName)', function (data) {
             $('#createDatasetFormular').html(data);
         });
 
         var datastruturewindow = $("#CreateDatasetWindow").data("tWindow");
-        datastruturewindow.center().open();
+        datastruturewindow.center().open();*@
     })
 
     function closeWindow() {
