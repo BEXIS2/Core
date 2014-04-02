@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
@@ -9,13 +8,27 @@ using BExIS.Security.Entities.Subjects;
 
 namespace BExIS.Web.Shell.Areas.Auth.Models
 {
+    public class RoleCreationModel
+    {
+        [Display(Name = "Role Name")]
+        [RegularExpression("^([A-Za-z]+)$", ErrorMessage = "The role name must consist only of letters.")]
+        [Remote("ValidateRoleName", "Roles")]
+        [Required]
+        [StringLength(50, ErrorMessage = "The role name must be {2} - {1} characters long.", MinimumLength = 3)]
+        public string RoleName { get; set; }
+
+        [Display(Name = "Description")]
+        [StringLength(250, ErrorMessage = "The description must be less than {1} characters long.")]
+        public string Description { get; set; }
+    }
+
     public class RoleModel
     {
         [Display(Name = "Role ID")]
         [Editable(false)]
         [Required]
         public long Id { get; set; }
-        
+
         [Display(Name = "Role Name")]
         [RegularExpression("^([A-Za-z]+)$", ErrorMessage = "The role name must consist only of letters.")]
         [Remote("ValidateRoleName", "Roles", AdditionalFields = "Id")]
@@ -25,7 +38,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
 
         [Display(Name = "Description")]
         [Required]
-        [StringLength(250, ErrorMessage = "The description must be {2} - {1} characters long.", MinimumLength = 16)]
+        [StringLength(250, ErrorMessage = "The description must be less than {1} characters long.")]
         public string Description { get; set; }
 
         public static RoleModel Convert(Role role)
@@ -34,8 +47,35 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
             {
                 Id = role.Id,
                 RoleName = role.Name,
-                Description = role.Description,
+                Description = role.Description
             };
         }
     }
+
+    public class RoleUserModel
+    {
+        public long RoleId { get; set; }
+
+        public long Id { get; set; }
+        public string UserName { get; set; }
+        public string Email { get; set; }
+
+        public bool UserInRole { get; set; }
+
+        public static RoleUserModel Convert(long roleId, User user, bool userInRole)
+        {
+            return new RoleUserModel()
+            {
+                RoleId = roleId,
+
+                Id = user.Id,
+                UserName = user.Name,
+                Email = user.Email,
+
+                UserInRole = userInRole
+            };
+        }
+    }
+
+    
 }

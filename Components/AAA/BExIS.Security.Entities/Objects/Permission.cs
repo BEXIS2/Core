@@ -5,29 +5,13 @@ using System.Text;
 using BExIS.Security.Entities.Subjects;
 using Vaiona.Entities.Common;
 
-namespace BExIS.Security.Entities.Security
+namespace BExIS.Security.Entities.Objects
 {
     public abstract class Permission : BaseEntity
     {
-        #region Attributes
-
-        public virtual PermissionType PermissionType { get; set; }
-
-        #endregion
-
-
-        #region Associations
-
         public virtual Subject Subject { get; set; }
 
-        #endregion
-
-
-        #region Methods
-
-
-
-        #endregion
+        public virtual PermissionType PermissionType { get; set; }
     }
 
     public enum PermissionType

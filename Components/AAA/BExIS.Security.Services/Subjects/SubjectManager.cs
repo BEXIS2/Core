@@ -5,10 +5,11 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
-using BExIS.Security.Entities.Security;
+using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Subjects;
 using Vaiona.Persistence.Api;
 
+                    
 namespace BExIS.Security.Services.Subjects
 {
     public sealed class SubjectManager : ISubjectManager
@@ -18,15 +19,17 @@ namespace BExIS.Security.Services.Subjects
             IUnitOfWork uow = this.GetUnitOfWork();
 
             this.RolesRepo = uow.GetReadOnlyRepository<Role>();
-            this.UsersRepo = uow.GetReadOnlyRepository<User>();
             this.SecurityUsersRepo = uow.GetReadOnlyRepository<SecurityUser>();
+            this.SubjectsRepo = uow.GetReadOnlyRepository<Subject>();
+            this.UsersRepo = uow.GetReadOnlyRepository<User>();
         }
 
         #region Data Readers
 
         public IReadOnlyRepository<Role> RolesRepo { get; private set; }
-        public IReadOnlyRepository<User> UsersRepo { get; private set; }
         public IReadOnlyRepository<SecurityUser> SecurityUsersRepo { get; private set; }
+        public IReadOnlyRepository<Subject> SubjectsRepo { get; private set; }   
+        public IReadOnlyRepository<User> UsersRepo { get; private set; }      
 
         #endregion
 
@@ -65,7 +68,7 @@ namespace BExIS.Security.Services.Subjects
         public string PasswordStrengthRegularExpression
         {
             //get { return @"((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W]).{6,20})"; }
-            get { return @"^(.{6,})$"; }
+            get { return @"^(.{6,24})$"; }
         }
 
         public int SecurityAnswerFailureAttemptsWindow
@@ -144,10 +147,10 @@ namespace BExIS.Security.Services.Subjects
                 {
                     using (IUnitOfWork uow = this.GetUnitOfWork())
                     {
-                        IRepository<Role> repo = uow.GetRepository<Role>();
+                        IRepository<Role> rolesRepo = uow.GetRepository<Role>();
 
-                        role = repo.Reload(role);
-                        repo.LoadIfNot(role.Users);
+                        role = rolesRepo.Reload(role);
+                        rolesRepo.LoadIfNot(role.Users);
                         if (!role.Users.Contains(user))
                         {
                             role.Users.Add(user);
@@ -414,46 +417,8 @@ namespace BExIS.Security.Services.Subjects
             return Encoding.Unicode.GetString(DESDecrypt.TransformFinalBlock(Convert.FromBase64String(salt), 0, Convert.FromBase64String(salt).Length));
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="roleName"></param>
-        /// <returns></returns>
-        public bool DeleteRoleByName(string roleName)
-        {
-            Contract.Requires(!String.IsNullOrWhiteSpace(roleName));
-
-            Role role = GetRoleByName(roleName);
-
-            if (role != null)
-            {
-                using (IUnitOfWork uow = this.GetUnitOfWork())
-                {
-                    IRepository<Role> rolesRepo = uow.GetRepository<Role>();
-
-                    role = rolesRepo.Reload(role);
-
-                    role.Users.Clear();
-
-                    rolesRepo.Delete(role);
-                    uow.Commit();
-                }
-
-                return (true);
-            }
-
-            return (false);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         public bool DeleteRoleById(long id)
         {
-            Contract.Requires(id > 0);
-
             Role role = GetRoleById(id);
 
             if (role != null)
@@ -476,20 +441,37 @@ namespace BExIS.Security.Services.Subjects
             return (false);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="userName"></param>
-        /// <returns></returns>
-        public bool DeleteUserByName(string userName)
+        public bool DeleteRoleByName(string roleName)
         {
-            Contract.Requires(!String.IsNullOrWhiteSpace(userName));
+            Role role = GetRoleByName(roleName);
 
-            User user = GetUserByName(userName);
-
-            if (user != null)
+            if (role != null)
             {
-                SecurityUser securityUser = GetSecurityUserByName(userName);
+                using (IUnitOfWork uow = this.GetUnitOfWork())
+                {
+                    IRepository<Role> rolesRepo = uow.GetRepository<Role>();
+
+                    role = rolesRepo.Reload(role);
+
+                    role.Users.Clear();
+
+                    rolesRepo.Delete(role);
+                    uow.Commit();
+                }
+
+                return (true);
+            }
+
+            return (false);
+        }
+
+        public bool DeleteUserById(long id)
+        {
+            User user = GetUserById(id);
+
+            if (user != null && !String.IsNullOrWhiteSpace(user.Name))
+            {
+                SecurityUser securityUser = GetSecurityUserByName(user.Name);
 
                 if (securityUser != null)
                 {
@@ -521,20 +503,13 @@ namespace BExIS.Security.Services.Subjects
             return (false);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public bool DeleteUserById(long id)
+        public bool DeleteUserByName(string userName)
         {
-            Contract.Requires(id > 0);
+            User user = GetUserByName(userName);
 
-            User user = GetUserById(id);
-
-            if (user != null && !String.IsNullOrWhiteSpace(user.Name))
+            if (user != null)
             {
-                SecurityUser securityUser = GetSecurityUserByName(user.Name);
+                SecurityUser securityUser = GetSecurityUserByName(userName);
 
                 if (securityUser != null)
                 {
@@ -593,15 +568,8 @@ namespace BExIS.Security.Services.Subjects
             return Convert.ToBase64String(encryptionEncoder.ComputeHash(valueArray, 0, valueArray.Length));
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         public bool ExistsRoleId(long id)
         {
-            Contract.Requires(id > 0);
-
             if (GetRoleById(id) != null)
             {
                 return true;
@@ -612,15 +580,8 @@ namespace BExIS.Security.Services.Subjects
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="roleName"></param>
-        /// <returns></returns>
         public bool ExistsRoleName(string roleName)
         {
-            Contract.Requires(!String.IsNullOrWhiteSpace(roleName));
-
             if (GetRoleByName(roleName) != null)
             {
                 return true;
@@ -631,15 +592,8 @@ namespace BExIS.Security.Services.Subjects
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         public bool ExistsUserId(long id)
         {
-            Contract.Requires(id > 0);
-
             if (GetUserById(id) != null)
             {
                 return true;
@@ -650,15 +604,8 @@ namespace BExIS.Security.Services.Subjects
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="userName"></param>
-        /// <returns></returns>
         public bool ExistsUserName(string userName)
         {
-            Contract.Requires(!String.IsNullOrWhiteSpace(userName));
-
             if (GetUserByName(userName) != null)
             {
                 return true;
@@ -669,27 +616,13 @@ namespace BExIS.Security.Services.Subjects
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="emailToMatch"></param>
-        /// <returns></returns>
         public IQueryable<User> FindUsersByEmail(string emailToMatch)
         {
-            Contract.Requires(!String.IsNullOrWhiteSpace(emailToMatch));
-
             return UsersRepo.Query(u => u.Email.ToLower().Contains(emailToMatch.ToLower()));
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="userNameToMatch"></param>
-        /// <returns></returns>
         public IQueryable<User> FindUserByName(string userNameToMatch)
         {
-            Contract.Requires(!String.IsNullOrWhiteSpace(userNameToMatch));
-
             return UsersRepo.Query(u => u.Name.Contains(userNameToMatch));
         }
 
@@ -742,6 +675,11 @@ namespace BExIS.Security.Services.Subjects
             return (RolesRepo.Query());
         }
 
+        public IQueryable<Subject> GetAllSubjects()
+        {
+            return SubjectsRepo.Query();
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -758,11 +696,9 @@ namespace BExIS.Security.Services.Subjects
         /// <returns></returns>
         public Role GetRoleById(long id)
         {
-            Contract.Requires(id > 0);
-
-            if (RolesRepo.Get(r => r.Id == id).Count() == 1)
+            if (RolesRepo.Query(r => r.Id == id).Count() == 1)
             {
-                return RolesRepo.Get(r => r.Id == id).FirstOrDefault();
+                return RolesRepo.Query(r => r.Id == id).FirstOrDefault();
             }
             else
             {
@@ -779,9 +715,9 @@ namespace BExIS.Security.Services.Subjects
         {
             Contract.Requires(!String.IsNullOrWhiteSpace(roleName));
 
-            if (RolesRepo.Get(r => r.Name.ToLower() == roleName.ToLower()).Count() == 1)
+            if (RolesRepo.Query(r => r.Name.ToLower() == roleName.ToLower()).Count() == 1)
             {
-                return RolesRepo.Get(r => r.Name.ToLower() == roleName.ToLower()).FirstOrDefault();
+                return RolesRepo.Query(r => r.Name.ToLower() == roleName.ToLower()).FirstOrDefault();
             }
             else
             {
@@ -796,11 +732,9 @@ namespace BExIS.Security.Services.Subjects
         /// <returns></returns>
         public string GetRoleNameById(long id)
         {
-            Contract.Requires(id > 0);
-
-            if (RolesRepo.Get(r => r.Id == id).Count() == 1)
+            if (RolesRepo.Query(r => r.Id == id).Count() == 1)
             {
-                return RolesRepo.Get(r => r.Id == id).FirstOrDefault().Name;
+                return RolesRepo.Query(r => r.Id == id).FirstOrDefault().Name;
             }
             else
             {
@@ -822,9 +756,11 @@ namespace BExIS.Security.Services.Subjects
 
         private SecurityUser GetSecurityUserByName(string userName)
         {
-            if (SecurityUsersRepo.Get(u => u.Name.ToLower() == userName.ToLower()).Count() == 1)
+            Contract.Requires(!String.IsNullOrWhiteSpace(userName));
+
+            if (SecurityUsersRepo.Query(u => u.Name.ToLower() == userName.ToLower()).Count() == 1)
             {
-                return SecurityUsersRepo.Get(u => u.Name.ToLower() == userName.ToLower()).FirstOrDefault();
+                return SecurityUsersRepo.Query(u => u.Name.ToLower() == userName.ToLower()).FirstOrDefault();
             }
             else
             {
@@ -851,19 +787,11 @@ namespace BExIS.Security.Services.Subjects
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="isOnline"></param>
-        /// <returns></returns>
         public User GetUserById(long id, bool isOnline = false)
         {
-            Contract.Requires(id > 0);
-
-            if (UsersRepo.Get(u => u.Id == id).Count() == 1)
+            if (UsersRepo.Query(u => u.Id == id).Count() == 1)
             {
-                User user = UsersRepo.Get(u => u.Id == id).FirstOrDefault();
+                User user = UsersRepo.Query(u => u.Id == id).FirstOrDefault();
 
                 if (user != null && isOnline)
                 {
@@ -885,19 +813,11 @@ namespace BExIS.Security.Services.Subjects
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="userName"></param>
-        /// <param name="isOnline"></param>
-        /// <returns></returns>
         public User GetUserByName(string userName, bool isOnline = false)
         {
-            Contract.Requires(!String.IsNullOrWhiteSpace(userName));
-
-            if (UsersRepo.Get(u => u.Name.ToLower() == userName.ToLower()).Count() == 1)
+            if (UsersRepo.Query(u => u.Name.ToLower() == userName.ToLower()).Count() == 1)
             {
-                User user = UsersRepo.Get(u => u.Name.ToLower() == userName.ToLower()).FirstOrDefault();
+                User user = UsersRepo.Query(u => u.Name.ToLower() == userName.ToLower()).FirstOrDefault();
 
                 if (user != null && isOnline)
                 {
@@ -919,18 +839,11 @@ namespace BExIS.Security.Services.Subjects
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="email"></param>
-        /// <returns></returns>
         public string GetUserNameByEmail(string email)
         {
-            Contract.Requires(!String.IsNullOrWhiteSpace(email));
-
-            if (UsersRepo.Get(u => u.Email.ToLower() == email.ToLower()).Count() == 1)
+            if (UsersRepo.Query(u => u.Email.ToLower() == email.ToLower()).Count() == 1)
             {
-                return UsersRepo.Get(u => u.Email.ToLower() == email.ToLower()).FirstOrDefault().Name;
+                return UsersRepo.Query(u => u.Email.ToLower() == email.ToLower()).FirstOrDefault().Name;
             }
             else
             {
@@ -947,9 +860,9 @@ namespace BExIS.Security.Services.Subjects
         {
             Contract.Requires(id > 0);
 
-            if (UsersRepo.Get(u => u.Id == id).Count() == 1)
+            if (UsersRepo.Query(u => u.Id == id).Count() == 1)
             {
-                return UsersRepo.Get(u => u.Id == id).FirstOrDefault().Name;
+                return UsersRepo.Query(u => u.Id == id).FirstOrDefault().Name;
             }
             else
             {
@@ -978,7 +891,7 @@ namespace BExIS.Security.Services.Subjects
             TimeSpan timeFrame = new TimeSpan(0, OnlineWindow, 0);
             DateTime referenceTime = DateTime.Now.Subtract(timeFrame);
 
-            return UsersRepo.Get(u => (DateTime.Compare(u.LastActivityDate, referenceTime) > 0)).Count();
+            return UsersRepo.Query(u => (DateTime.Compare(u.LastActivityDate, referenceTime) > 0)).Count();
         }
 
         /// <summary>

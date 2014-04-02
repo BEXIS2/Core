@@ -5,7 +5,6 @@ using System.Text;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Objects;
-using BExIS.Security.Services.Security;
 using BExIS.Security.Services.Subjects;
 
 namespace BExIS.Ext.Services
@@ -22,34 +21,25 @@ namespace BExIS.Ext.Services
 
             List<string> publics = new List<string>();
 
-            publics.Add("Auth.Account");
-            publics.Add("Site.Nav");
-            publics.Add("Shell.Home");
-            publics.Add("System.Utils"); 
-            publics.Add("Auth.Users.ValidateUserName");
-            publics.Add("Auth.Users.ValidateEmail");
-            publics.Add("Auth.Users.ErrorCodeToErrorMessage");
-            publics.Add("Auth.Users.ErrorCodeToErrorKey");
+            publics.Add("auth.account");
+            publics.Add("site.nav");
+            publics.Add("shell.home");
+            publics.Add("system.utils"); 
 
-            
-
-            if (!publics.Contains(areaName + "." + controllerName) && !publics.Contains(areaName + "." + controllerName + "." + actionName))
-            {              
+            if (!publics.Contains(areaName.ToLower() + "." + controllerName.ToLower()) && !publics.Contains(areaName.ToLower() + "." + controllerName.ToLower() + "." + actionName.ToLower()))
+            {
                 if (string.IsNullOrWhiteSpace(userName) || !isAuthenticated)
                 {
                     throw new UnauthorizedAccessException();
                 }
                 else
                 {
-                    TaskContext taskContext = new TaskContext()
-                    {
-                        AreaName = areaName,
-                        ControllerName = controllerName,
-                        ActionName = "*"
-                    };
+                    PermissionManager permissionManager = new PermissionManager();
 
-                    SecurityService securityService = new SecurityService();               
-                    securityService.HasTaskAccess(userName, taskContext);
+                    if (!permissionManager.CheckFeatureAccessForUser(userName, areaName, controllerName, "*"))
+                    {
+                        throw new UnauthorizedAccessException();
+                    }
                 }
             }
         }

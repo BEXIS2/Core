@@ -1,0 +1,45 @@
+﻿@using Telerik.Web.Mvc.UI;
+@using BExIS.Web.Shell.Areas.Auth.Models;
+
+@model List<FeaturePermissionModel>
+
+@(Html.Telerik().Grid(Model)
+    .Name("Grid_FeaturePermissions")
+    .DataKeys(keys =>
+    {
+        keys.Add(m => m.SubjectId);
+    })
+    .Columns(columns =>
+    {
+        columns.Bound(m => m.FeaturePermissionType)
+            .ClientTemplate("<input type='radio' name='permissionType_<#= SubjectId #>' onclick='setFeaturePermission(1, <#= SubjectId #>, <#= FeatureId #>);' <#= FeaturePermissionType == 1 ? checked='checked' : '' #> />")
+                   .Title("+")
+                   .Width(50)
+                   .HtmlAttributes(new { style = "text-align:center" });
+        columns.Bound(m => m.FeaturePermissionType)
+            .ClientTemplate("<input type='radio' name='<#= SubjectId #>' onclick='setFeaturePermission(2, <#= SubjectId #>, <#= FeatureId #>);' <#= FeaturePermissionType == 2 ? checked='checked' : '' #> />")
+                   .Title("o")
+                   .Width(50)
+                   .HtmlAttributes(new { style = "text-align:center" });
+        columns.Bound(m => m.FeaturePermissionType)
+            .ClientTemplate("<input type='radio' name='<#= SubjectId #>' onclick='setFeaturePermission(0, <#= SubjectId #>, <#= FeatureId #>);' <#= FeaturePermissionType == 0 ? checked='checked' : '' #> />")
+                   .Title("x")
+                   .Width(50)
+                   .HtmlAttributes(new { style = "text-align:center" });
+        columns.Bound(m => m.SubjectId);
+        columns.Bound(m => m.SubjectName);
+        columns.Bound(m => m.SubjectType);
+    })
+    .DataBinding(dataBinding => dataBinding
+        .Ajax()
+        .Select("FeaturePermissions_Select", "Features", (long)ViewData["FeatureID"])
+    )
+    .Filterable()
+    .Sortable(sortable => sortable
+        .OrderBy(orderby => orderby
+            .Add(m => m.SubjectName)
+            .Ascending()
+        )
+    )
+    .Scrollable(scrollable => scrollable.Height(475))
+)

@@ -10,37 +10,50 @@ namespace BExIS.Security.Services.Objects
     public interface IFeatureManager
     {
         // A
-        bool AddTaskToFeature(Task task, Feature feature);
+        int AddTaskToFeature(long taskId, long featureId);
 
         // C
-        Feature Create(string featureName, string description, out FeatureCreateStatus status);
+        Feature CreateFeature(string featureName, string description, out FeatureCreateStatus status, long parentId = 0);
 
         // D
-        bool Delete(Feature feature);
+        bool DeleteFeatureByName(string featureName);
+        bool DeleteFeatureById(long id);
 
         // E
+        bool ExistsFeatureId(long id);
         bool ExistsFeatureName(string featureName);
 
         // G
         IQueryable<Feature> GetAllFeatures();
 
-        IQueryable<Feature> GetChildren(Feature feature);
+        IQueryable<Feature> GetChildren(long id);
 
-        Feature GetFeatureById(Int64 id);
-
+        Feature GetFeatureById(long id);
         Feature GetFeatureByName(string featureName);
 
-        Feature GetParent(Feature feature);
+        Feature GetFeatureFromTask(long id);
 
-        IQueryable<Task> GetTasksFromFeature(Feature feature);
+        Feature GetParent(long id);
+
+        IQueryable<Feature> GetRoots();
+
+        IQueryable<Task> GetTasksFromFeature(long id);
         
         // I
-        bool IsTaskInFeature(Task task, Feature feature);
+        bool IsTaskInFeature(long taskId, long featureId);
 
         // R
-        bool RemoveTaskFromFeature(Task task, Feature feature);
+        int RemoveTaskFromFeature(long taskId);
 
         // U 
-        Feature Update(Feature feature);        
+        Feature UpdateFeature(Feature feature);        
+    }
+
+    public enum FeatureCreateStatus
+    {
+        Success,
+        DuplicateFeatureName,
+        InvalidFeatureName,
+        InvalidParent
     }
 }

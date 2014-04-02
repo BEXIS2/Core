@@ -5,9 +5,7 @@ using System.Text;
 
 namespace BExIS.Security.Services.Objects
 {
-    public enum TaskCreateStatus
+    public interface IDataPermissionManager
     {
-        Success,
-        DuplicateTaskContext
     }
 }

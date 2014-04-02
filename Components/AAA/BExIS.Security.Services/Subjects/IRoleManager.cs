@@ -15,17 +15,17 @@ namespace BExIS.Security.Services.Subjects
 
         // A
         int AddUserToRole(string userName, string roleName);
-        int AddUserToRole(Int64 userId, Int64 roleId);
+        int AddUserToRole(long userId, long roleId);
 
         // C
         Role CreateRole(string roleName, string description, out RoleCreateStatus status);
 
         // D
         bool DeleteRoleByName(string roleName);
-        bool DeleteRoleById(Int64 id);
+        bool DeleteRoleById(long id);
 
         // E
-        bool ExistsRoleId(Int64 id);
+        bool ExistsRoleId(long id);
         bool ExistsRoleName(string roleName);
 
         // F
@@ -35,9 +35,9 @@ namespace BExIS.Security.Services.Subjects
         IQueryable<Role> GetAllRoles();
 
         Role GetRoleByName(string roleName);
-        Role GetRoleById(Int64 id);
+        Role GetRoleById(long id);
 
-        string GetRoleNameById(Int64 id);
+        string GetRoleNameById(long id);
 
         IQueryable<Role> GetRolesFromUser(string userName);
 
@@ -50,11 +50,18 @@ namespace BExIS.Security.Services.Subjects
 
         // R
         int RemoveUserFromRole(string userName, string roleName);
-        int RemoveUserFromRole(Int64 userId, Int64 roleId);
+        int RemoveUserFromRole(long userId, long roleId);
 
         // U
         Role UpdateRole(Role role);
 
         #endregion
+    }
+
+    public enum RoleCreateStatus
+    {
+        Success,
+        DuplicateRoleName,
+        InvalidRoleName
     }
 }

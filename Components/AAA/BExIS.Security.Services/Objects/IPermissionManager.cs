@@ -5,9 +5,8 @@ using System.Text;
 
 namespace BExIS.Security.Services.Objects
 {
-    public enum FeatureCreateStatus
+    public interface IPermissionManager : IDataPermissionManager, IFeaturePermissionManager
     {
-        Success,
-        DuplicateFeatureName
+
     }
 }

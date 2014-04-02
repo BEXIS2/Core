@@ -8,18 +8,20 @@ using Vaiona.Persistence.Api;
 
 namespace BExIS.Security.Services.Objects
 {
-    public class FeatureManager : IFeatureManager
+    public class FeatureManager : IFeatureManager, ITaskManager
     {
         public FeatureManager()
         {
             IUnitOfWork uow = this.GetUnitOfWork();
 
             this.FeaturesRepo = uow.GetReadOnlyRepository<Feature>();
+            this.TasksRepo = uow.GetReadOnlyRepository<Task>();
         }
 
         #region Data Reader
 
         public IReadOnlyRepository<Feature> FeaturesRepo { get; private set; }
+        public IReadOnlyRepository<Task> TasksRepo { get; private set; }
 
         #endregion
 
@@ -29,43 +31,51 @@ namespace BExIS.Security.Services.Objects
 
         #region Methods
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="task"></param>
-        /// <param name="feature"></param>
-        /// <returns></returns>
-        public bool AddTaskToFeature(Task task, Feature feature)
+        public int AddTaskToFeature(long taskId, long featureId)
         {
-            bool result = false;
+            Contract.Requires(taskId > 0);
+            Contract.Requires(featureId > 0);
 
-            using (IUnitOfWork uow = this.GetUnitOfWork())
+            Feature feature = GetFeatureById(featureId);
+
+            if (feature != null)
             {
-                IRepository<Feature> repo = uow.GetRepository<Feature>();
+                Task task = GetTaskById(taskId);
 
-                feature = repo.Reload(feature);
-                repo.LoadIfNot(feature.Tasks);
-                if (!feature.Tasks.Contains(task))
+                if (task != null)
                 {
-                    feature.Tasks.Add(task);
-                    task.Feature = feature;
-                    uow.Commit();
-                    result = true;
+                    using (IUnitOfWork uow = this.GetUnitOfWork())
+                    {
+                        IRepository<Feature> featuresRepo = uow.GetRepository<Feature>();
+
+                        feature = featuresRepo.Reload(feature);
+                        featuresRepo.LoadIfNot(feature.Tasks);
+                        if (!feature.Tasks.Contains(task))
+                        {
+                            feature.Tasks.Add(task);
+                            task.Feature = feature;
+                            uow.Commit();
+                        }
+                    }
+
+                    return 0;
+                }
+                else
+                {
+                    return 12;
                 }
             }
-
-            return (result);
+            else
+            {
+                return 11;
+            }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="featureName"></param>
-        /// <param name="description"></param>
-        /// <param name="status"></param>
-        /// <returns></returns>
-        public Feature Create(string featureName, string description, out FeatureCreateStatus status)
+        public Feature CreateFeature(string featureName, string description, out FeatureCreateStatus status, long parentId = 0)
         {
+            Contract.Requires(!String.IsNullOrWhiteSpace(featureName));
+            Contract.Requires(!String.IsNullOrWhiteSpace(description));
+
             if (ExistsFeatureName(featureName))
             {
                 status = FeatureCreateStatus.DuplicateFeatureName;
@@ -74,17 +84,16 @@ namespace BExIS.Security.Services.Objects
 
             Feature feature = new Feature()
             {
-                // Subject Properties
                 Name = featureName,
-
-                // Role Properties
-                Description = description
+                Description = description,
+                Parent = GetFeatureById(parentId)
             };
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
-                IRepository<Feature> rolesRepo = uow.GetRepository<Feature>();
-                rolesRepo.Put(feature);
+                IRepository<Feature> featuresRepo = uow.GetRepository<Feature>();
+                featuresRepo.Put(feature);
+
                 uow.Commit();
             }
 
@@ -92,37 +101,69 @@ namespace BExIS.Security.Services.Objects
             return (feature);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="feature"></param>
-        /// <returns></returns>
-        public bool Delete(Feature feature)
+        public Task CreateTask(string taskName, string description, string areaName, string controllerName, string actionName, out TaskCreateStatus status, long featureId = 0)
         {
-            Contract.Requires(feature != null);
+            Contract.Requires(!String.IsNullOrWhiteSpace(taskName));
+            Contract.Requires(!String.IsNullOrWhiteSpace(description));
+            Contract.Requires(!String.IsNullOrWhiteSpace(areaName));
+            Contract.Requires(!String.IsNullOrWhiteSpace(controllerName));
+            Contract.Requires(!String.IsNullOrWhiteSpace(actionName));
 
-            // Computations
+            Task task = new Task()
+            {
+                Name = taskName,
+                Description = description,
+                AreaName = areaName,
+                ControllerName = controllerName,
+                ActionName = actionName,
+                Feature = GetFeatureById(featureId)
+            };
+
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
-                IRepository<Feature> repo = uow.GetRepository<Feature>();
-
-                feature = repo.Reload(feature);
-                repo.Delete(feature);
+                IRepository<Task> tasksRepo = uow.GetRepository<Task>();
+                tasksRepo.Put(task);
                 uow.Commit();
             }
 
-            return (true);
+            status = TaskCreateStatus.Success;
+            return (task);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="featureName"></param>
-        /// <returns></returns>
+        public bool DeleteFeatureById(long id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool DeleteFeatureByName(string featureName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool DeleteTaskById(long id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool DeleteTaskByName(string taskName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool ExistsFeatureId(long id)
+        {
+            if (GetFeatureById(id) != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         public bool ExistsFeatureName(string featureName)
         {
-            Contract.Requires(!String.IsNullOrWhiteSpace(featureName));
-
             if (GetFeatureByName(featureName) != null)
             {
                 return true;
@@ -133,113 +174,9 @@ namespace BExIS.Security.Services.Objects
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public IQueryable<Feature> GetAllFeatures()
+        public bool ExistsTaskId(long id)
         {
-            return (FeaturesRepo.Query());
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="feature"></param>
-        /// <returns></returns>
-        public IQueryable<Feature> GetChildren(Feature feature)
-        {
-            Contract.Requires(feature != null);
-
-            feature = FeaturesRepo.Reload(feature);
-            FeaturesRepo.LoadIfNot(feature.Children);
-
-            return feature.Children.AsQueryable<Feature>();
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public Feature GetFeatureById(long id)
-        {
-            Contract.Requires(id >= 0);
-
-            if (FeaturesRepo.Get(f => f.Id == id).Count() == 1)
-            {
-                return FeaturesRepo.Get(f => f.Id == id).FirstOrDefault();
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="featureName"></param>
-        /// <returns></returns>
-        public Feature GetFeatureByName(string featureName)
-        {
-            Contract.Requires(!String.IsNullOrWhiteSpace(featureName));
-
-            if (FeaturesRepo.Get(f => f.Name == featureName).Count() == 1)
-            {
-                return FeaturesRepo.Get(f => f.Name == featureName).FirstOrDefault();
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="feature"></param>
-        /// <returns></returns>
-        public IQueryable<Task> GetTasksFromFeature(Feature feature)
-        {
-            Contract.Requires(feature != null);
-
-            feature = FeaturesRepo.Reload(feature);
-            FeaturesRepo.LoadIfNot(feature.Tasks);
-
-            return feature.Tasks.AsQueryable<Task>();
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="feature"></param>
-        /// <returns></returns>
-        public Feature GetParent(Feature feature)
-        {
-            Contract.Requires(feature != null);
-
-            feature = FeaturesRepo.Reload(feature);
-            FeaturesRepo.LoadIfNot(feature.Parent);
-
-            return feature.Parent;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="task"></param>
-        /// <param name="feature"></param>
-        /// <returns></returns>
-        public bool IsTaskInFeature(Task task, Feature feature)
-        {
-            Contract.Requires(feature != null);
-            Contract.Requires(task != null);
-
-            feature = FeaturesRepo.Reload(feature);
-            FeaturesRepo.LoadIfNot(feature.Tasks);
-
-            if (feature.Tasks.Contains(task))
+            if (GetTaskById(id) != null)
             {
                 return true;
             }
@@ -249,60 +186,188 @@ namespace BExIS.Security.Services.Objects
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="task"></param>
-        /// <param name="feature"></param>
-        /// <returns></returns>
-        public bool RemoveTaskFromFeature(Task task, Feature feature)
+        public bool ExistsTaskName(string taskName)
+        {
+            if (GetTaskByName(taskName) != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public IQueryable<Feature> GetAllFeatures()
+        {
+            return (FeaturesRepo.Query());
+        }
+
+        public IQueryable<Feature> GetChildren(long id)
+        {
+            return (FeaturesRepo.Query(f => f.Parent.Id == id));
+        }
+
+        public Feature GetFeatureById(long id)
+        {
+            if (FeaturesRepo.Query(f => f.Id == id).Count() == 1)
+            {
+                return FeaturesRepo.Query(f => f.Id == id).FirstOrDefault();
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public Feature GetFeatureByName(string featureName)
+        {
+            if (FeaturesRepo.Query(f => f.Name.ToLower() == featureName.ToLower()).Count() == 1)
+            {
+                return FeaturesRepo.Query(f => f.Name.ToLower() == featureName.ToLower()).FirstOrDefault();
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public Feature GetFeatureFromTask(long id)
+        {
+            if (FeaturesRepo.Query(f => f.Tasks.Any(t => t.Id == id)).Count() == 1)
+            {
+                return FeaturesRepo.Query(f => f.Tasks.Any(t => t.Id == id)).FirstOrDefault();
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public Feature GetParent(long id)
+        {
+            if (FeaturesRepo.Query(f => f.Id == id).Count() == 1)
+            {
+                return FeaturesRepo.Query(f => f.Id == id).FirstOrDefault().Parent;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public IQueryable<Feature> GetRoots()
+        {
+            return (FeaturesRepo.Query(f => f.Parent == null));
+        }
+
+        public Task GetTaskById(long id)
+        {
+            if (TasksRepo.Query(t => t.Id == id).Count() == 1)
+            {
+                return TasksRepo.Query(t => t.Id == id).FirstOrDefault();
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public Task GetTaskByName(string taskName)
+        {
+            if (TasksRepo.Query(t => t.Name.ToLower() == taskName.ToLower()).Count() == 1)
+            {
+                return TasksRepo.Query(t => t.Name.ToLower() == taskName.ToLower()).FirstOrDefault();
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public Task GetTaskByContext(string areaName, string controllerName, string actionName)
+        {
+            if (TasksRepo.Query(t => t.AreaName == areaName && t.ControllerName == controllerName && t.ActionName == actionName).Count() == 1)
+            {
+                return TasksRepo.Query(t => t.AreaName == areaName && t.ControllerName == controllerName && t.ActionName == actionName).FirstOrDefault();
+            }
+            else
+            {
+                return null;
+            }
+
+        }
+
+        public IQueryable<Task> GetTasksFromFeature(long id)
+        {
+            return TasksRepo.Query(t => t.Feature.Id == id);
+        }
+
+        public bool IsTaskInFeature(long taskId, long featureId)
+        {
+            if (GetTasksFromFeature(featureId).Where(t => t.Id == taskId).Count() == 1)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public int RemoveTaskFromFeature(long taskId)
+        {
+            Task task = GetTaskById(taskId);
+
+            if (task != null)
+            {
+                using (IUnitOfWork uow = this.GetUnitOfWork())
+                {
+                    IRepository<Task> tasksRepo = uow.GetRepository<Task>();
+
+                    task = tasksRepo.Reload(task);
+
+                    if (task.Feature != null)
+                    {
+                        task.Feature = null;
+                        uow.Commit();
+                    }
+                }
+
+                return 0;
+            }
+            else
+            {
+                return 11;
+            }
+        }
+
+        public Feature UpdateFeature(Feature feature)
         {
             Contract.Requires(feature != null);
-            Contract.Requires(task != null);
 
-            // Variables
-            bool result = false;
-
-            // Computations
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<Feature> featuresRepo = uow.GetRepository<Feature>();
-                IRepository<Task> tasksRepo = uow.GetRepository<Task>();
-
-                feature = featuresRepo.Reload(feature);
-                featuresRepo.LoadIfNot(feature.Tasks);
-
-                task = tasksRepo.Reload(task);
-                tasksRepo.LoadIfNot(task.Feature);
-
-                if (feature.Tasks.Contains(task))
-                {
-                    feature.Tasks.Remove(task);
-                    task.Feature = null;
-
-                    uow.Commit();
-
-                    result = true;
-                }
-            }
-            return (result);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="feature"></param>
-        /// <returns></returns>
-        public Feature Update(Feature feature)
-        {
-            using (IUnitOfWork uow = this.GetUnitOfWork())
-            {
-                IRepository<Feature> repo = uow.GetRepository<Feature>();
-                repo.Put(feature);
+                featuresRepo.Put(feature);
                 uow.Commit();
             }
 
             return (feature);
+        }
+
+        public Task UpdateTask(Task task)
+        {
+            Contract.Requires(task != null);
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<Task> tasksRepo = uow.GetRepository<Task>();
+                tasksRepo.Put(task);
+                uow.Commit();
+            }
+
+            return (task);
         }
 
         #endregion

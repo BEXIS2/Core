@@ -203,16 +203,17 @@
     <Compile Include="App_Start\RegisterClientValidationExtensions.cs" />
     <Compile Include="Areas\Auth\AuthAreaRegistration.cs" />
     <Compile Include="Areas\Auth\Controllers\AccountController.cs" />
+    <Compile Include="Areas\Auth\Controllers\DataController.cs" />
+    <Compile Include="Areas\Auth\Controllers\FeaturesController.cs" />
     <Compile Include="Areas\Auth\Controllers\RolesController.cs" />
     <Compile Include="Areas\Auth\Controllers\UsersController.cs" />
     <Compile Include="Areas\Auth\Models\AccountModel.cs" />
+    <Compile Include="Areas\Auth\Models\FeatureModel.cs" />
     <Compile Include="Areas\Auth\Models\InfoModel.cs" />
-    <Compile Include="Areas\Auth\Models\RoleCreationModel.cs" />
+    <Compile Include="Areas\Auth\Models\PermissionModel.cs" />
     <Compile Include="Areas\Auth\Models\RoleModel.cs" />
-    <Compile Include="Areas\Auth\Models\RoleUserModel.cs" />
-    <Compile Include="Areas\Auth\Models\UserCreationModel.cs" />
+    <Compile Include="Areas\Auth\Models\TaskModel.cs" />
     <Compile Include="Areas\Auth\Models\UserModel.cs" />
-    <Compile Include="Areas\Auth\Models\UserRoleModel.cs" />
     <Compile Include="Areas\DCM\Controllers\CreateController.cs" />
     <Compile Include="Areas\DCM\Controllers\CreateSetMetadataPackageController.cs" />
     <Compile Include="Areas\DCM\Controllers\CreateSelectDatasetSetupController.cs" />
@@ -972,6 +973,11 @@
     <Content Include="Areas\DCM\Views\CreateSummary\Summary.cshtml" />
     <Content Include="Areas\DCM\Views\DcmAdmin\CreateMetadataStructure.cshtml" />
     <Content Include="Areas\DCM\Views\DcmAdmin\Index.cshtml" />
+    <Content Include="Areas\Auth\Views\Data\DataPermissions.cshtml" />
+    <Content Include="Areas\Auth\Views\Features\Features.cshtml" />
+    <Content Include="Areas\Auth\Views\Features\_FeaturePermissionsPartial.cshtml" />
+    <Content Include="Areas\Auth\Views\Features\_FeaturesPartial.cshtml" />
+    <Content Include="Areas\Auth\Views\Features\_InfoPartial.cshtml" />
     <None Include="Properties\PublishProfiles\BEXIS2 DEV.pubxml" />
     <None Include="Properties\PublishProfiles\BEXIS2.pubxml" />
   </ItemGroup>

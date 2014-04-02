@@ -8,6 +8,7 @@ using System.Web.Mvc;
 using BExIS.Security.Entities;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services;
+using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Web.Shell.Areas.Auth.Models;
 using Telerik.Web.Mvc;
@@ -56,7 +57,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
 
         //
         // Deletion
-        public PartialViewResult Delete(long id)
+        public ActionResult Delete(long id)
         {
             SubjectManager subjectManager = new SubjectManager();
 
@@ -73,7 +74,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
         }
 
         [HttpPost]
-        public PartialViewResult Delete(RoleModel model)
+        public ActionResult Delete(RoleModel model)
         {
             SubjectManager subjectManager = new SubjectManager();
 
@@ -169,7 +170,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
         }
 
         [GridAction]
-        public ActionResult RoleMembership_Select(long id)
+        public ActionResult Membership_Select(long id)
         {
             SubjectManager subjectManager = new SubjectManager();
 
@@ -202,6 +203,25 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
             return subjectManager.RemoveUserFromRole(userId, roleId);
         }
 
+        // Feature Permissions
+        public ActionResult FeaturePermissions(long id)
+        {
+            SubjectManager subjectManager = new SubjectManager();
+
+            Role role = subjectManager.GetRoleById(id); ;
+
+            if (role != null)
+            {
+                ViewData["RoleID"] = id;
+
+                return PartialView("_FeaturePermissionsPartial");
+            }
+            else
+            {
+                return PartialView("_InfoPartial", new InfoModel("Window_Details", "The role does not exist!"));
+            }
+        }
+
         // R
         [GridAction]
         public ActionResult Roles_Select()
@@ -224,7 +244,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
 
         public JsonResult ValidateRoleName(string roleName, long id = 0)
         {
-            SubjectManager subjectManager = new SubjectManager(); ;
+            SubjectManager subjectManager = new SubjectManager();
 
             Role role = subjectManager.GetRoleByName(roleName);
 

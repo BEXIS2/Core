@@ -9,6 +9,49 @@ using DataAnnotationsExtensions;
 
 namespace BExIS.Web.Shell.Areas.Auth.Models
 {
+    public class UserCreationModel
+    {
+        [Display(Name = "User name")]
+        [RegularExpression("^([A-Za-z]+)$", ErrorMessage = "The user name must consist only of letters.")]
+        [Remote("ValidateUserName", "Users")]
+        [Required]
+        [StringLength(50, ErrorMessage = "The user name must be {2} - {1} characters long.", MinimumLength = 3)]
+        public string UserName { get; set; }
+
+        [Display(Name = "Email address")]
+        [Email]
+        [Remote("ValidateEmail", "Users")]
+        [Required]
+        [StringLength(250, ErrorMessage = "The email must be {2} - {1} characters long.", MinimumLength = 5)]
+        public string Email { get; set; }
+
+        [Display(Name = "Password")]
+        [Required]
+        [StringLength(24, ErrorMessage = "The password must be {2} - {1} characters long.", MinimumLength = 6)]
+        public string Password { get; set; }
+
+        [Compare("Password", ErrorMessage = "The password and confirmation do not match.")]
+        [Display(Name = "Confirm Password")]
+        [Required]
+        public string ConfirmPassword { get; set; }
+
+        [Display(Name = "Security Question")]
+        [Required]
+        [StringLength(250)]
+        public string SecurityQuestion { get; set; }
+
+        [Display(Name = "Security Answer")]
+        [RegularExpression("^([-_a-zA-Z0-9]+)$", ErrorMessage = "The security answer must consist only of letters, numbers and special characters ('-', '_').")]
+        [Required]
+        [StringLength(50, ErrorMessage = "The security answer must be less than {1} characters long.")]
+        public string SecurityAnswer { get; set; }
+
+        [Display(Name = "Confirm Security Answer")]
+        [Compare("SecurityAnswer", ErrorMessage = "The security answer and confirmation do not match.")]
+        [Required]
+        public string ConfirmSecuritydAnswer { get; set; }
+    }
+
     public class UserModel
     {
         [Display(Name = "User ID")]
@@ -55,8 +98,38 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
                 Email = user.Email,
                 RegistrationDate = user.RegistrationDate,
                 LastLoginDate = user.LastLoginDate,
-                LastActivityDate = user.LastActivityDate,
+                LastActivityDate = user.LastActivityDate
             };
         }
     }
+
+    public class UserRoleModel
+    {
+        // User
+        public long UserId { get; set; }
+
+        // Role
+        public long Id { get; set; }
+        public string RoleName { get; set; }
+        public string Description { get; set; }
+
+        // Membership
+        public bool UserInRole { get; set; }
+
+        public static UserRoleModel Convert(long userId, Role role, bool userInRole)
+        {
+            return new UserRoleModel()
+            {
+                UserId = userId,
+
+                Id = role.Id,
+                RoleName = role.Name,
+                Description = role.Description,
+
+                UserInRole = userInRole
+            };
+        }
+    }
+
+    
 }

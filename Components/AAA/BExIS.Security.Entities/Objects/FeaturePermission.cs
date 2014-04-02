@@ -5,7 +5,8 @@ using System.Text;
 
 namespace BExIS.Security.Entities.Objects
 {
-    public class DataContext
+    public class FeaturePermission : Permission
     {
+        public virtual Feature Feature { get; set; }
     }
 }

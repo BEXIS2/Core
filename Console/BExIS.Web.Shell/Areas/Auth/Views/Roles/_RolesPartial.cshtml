@@ -24,7 +24,9 @@
             columns.Bound(r => r.RoleName).Width(250);
             columns.Bound(r => r.Description);
         })
-        .ClientEvents(clientEvents => clientEvents.OnCommand("onCommand"))
+        .ClientEvents(clientEvents => clientEvents
+            .OnCommand("OnCommand")
+        )
         .DataBinding(dataBinding => dataBinding
             .Ajax()
             .Select("Roles_Select", "Roles")
@@ -86,7 +88,7 @@
 
 <script type="text/javascript">
 
-    function onCommand(e) {
+    function OnCommand(e) {
 
         if (e.name == "Create") {
 
@@ -121,10 +123,10 @@
                 $.get('@Url.Action("RoleInfo", "Roles")', { Id: roleID }, function (contentData) {
 
                     $('#Content_RoleInfo').html(contentData);
-                });
 
-                var window = $('#Window_Details').data('tWindow');
-                window.center().open();
+                    var window = $('#Window_Details').data('tWindow');
+                    window.center().open();
+                });
             });
         }
     }
@@ -136,7 +138,7 @@
 
     function Window_Creation_OnClose() {
         $('#Content_Creation').empty();
-        window.location.href = '@Url.Action("Roles", "Roles")';
+        $("#Grid_Roles .t-refresh").trigger('click');
     }
 
     // Delete
@@ -146,25 +148,33 @@
 
     function Window_Deletion_OnClose() {
         $('#Content_Deletion').empty();
-        window.location.href = '@Url.Action("Roles", "Roles")';
+        $("#Grid_Roles .t-refresh").trigger('click');
     }
 
     // Details
     function TabStrip_Details_OnSelect(e, roleID) {
         var tab = $(e.item);
 
+        $('#Content_RoleInfo').empty();
+        $('#Content_Membership').empty();
+        $('#Content_FeaturePermissions').empty();
+
         switch (tab.index()) {
             case 0:
                 $.get('@Url.Action("RoleInfo", "Roles")', { Id: roleID }, function (data) {
-                    $('#Content_Membership').empty();
                     $('#Content_RoleInfo').html(data);
                 });
                 break;
 
             case 1:
                 $.get('@Url.Action("Membership", "Roles")', { Id: roleID }, function (data) {
-                    $('#Content_RoleInfo').empty();
                     $('#Content_Membership').html(data);
+                });
+                break;
+
+            case 2:
+                $.get('@Url.Action("FeaturePermissions", "Roles")', { Id: roleID }, function (data) {
+                    $('#Content_FeaturePermissions').html(data);
                 });
                 break;
 
@@ -187,7 +197,7 @@
 
         function Window_Details_OnClose() {
             $('#Content_Details').empty();
-            window.location.href = '@Url.Action("Roles", "Roles")';
+            $("#Grid_Roles .t-refresh").trigger('click');
         }
 
     // Info
@@ -214,7 +224,7 @@
     }
 
     // Membership
-    function setMembership(value, userid, roleid) {
+    function setUserInRole(value, userid, roleid) {
         if (value) {
             $.post('@Url.Action("AddUserToRole", "Roles")', { UserId: userid, RoleId: roleid }, function (e) {
                 if (e == 11) {
@@ -222,14 +232,14 @@
 
                     var windowDetails = $('#Window_Details').data('tWindow');
                     windowDetails.close();
+
+                    $("#Grid_RoleMembership .t-refresh").trigger('click');
                 }
 
                 if (e == 12) {
                     alert("The user does not exist anymore.");
 
-                    $.get('@Url.Action("Membership", "Roles")', { Id: userid }, function (data) {
-                        $('#Content_Membership').html(data);
-                    });
+                    $("#Grid_RoleMembership .t-refresh").trigger('click');
                 }
             });
         } else {
@@ -239,14 +249,14 @@
 
                     var windowDetails = $('#Window_Details').data('tWindow');
                     windowDetails.close();
+
+                    $("#Grid_RoleMembership .t-refresh").trigger('click');
                 }
 
                 if (e == 12) {
                     alert("The user does not exist anymore.");
 
-                    $.get('@Url.Action("Membership", "Roles")', { Id: userid }, function (data) {
-                        $('#Content_Membership').html(data);
-                    });
+                    $("#Grid_RoleMembership .t-refresh").trigger('click');
                 }
             });
         }

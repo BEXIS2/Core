@@ -3,7 +3,9 @@ using System.Web.Mvc;
 using System.Web.Security;
 using BExIS.Security.Services;
 using BExIS.Security.Services.Subjects;
+using BExIS.Security.Entities.Subjects;
 using BExIS.Web.Shell.Areas.Auth.Models;
+using System.Globalization;
 
 namespace BExIS.Web.Shell.Areas.Auth.Controllers
 {
@@ -78,7 +80,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
         // POST: /Account/Register
 
         [HttpPost]
-        public ActionResult Register(UserCreationModel model)
+        public ActionResult Register(AccountRegistrationModel model)
         {
             if (ModelState.IsValid)
             {
@@ -156,12 +158,67 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
             return View();
         }
 
+        #region Validation
+
+        public JsonResult ValidateEmail(string email, long id = 0)
+        {
+            SubjectManager subjectManager = new SubjectManager();
+
+            User user = subjectManager.GetUserByEmail(email);
+
+            if (user == null)
+            {
+                return Json(true, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                if (user.Id == id)
+                {
+                    return Json(true, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    string error = String.Format(CultureInfo.InvariantCulture, "Email address already exists.", email);
+
+                    return Json(error, JsonRequestBehavior.AllowGet);
+                }
+            }
+        }
+
+        public JsonResult ValidateUserName(string userName, long id = 0)
+        {
+            SubjectManager subjectManager = new SubjectManager();
+
+            User user = subjectManager.GetUserByName(userName);
+
+            if (user == null)
+            {
+                return Json(true, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                if (user.Id == id)
+                {
+                    return Json(true, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    string error = String.Format(CultureInfo.InvariantCulture, "User name already exists.", userName);
+
+                    return Json(error, JsonRequestBehavior.AllowGet);
+                }
+            }
+        }
+
         private static string ErrorCodeToErrorMessage(UserCreateStatus createStatus)
         {
             switch (createStatus)
             {
                 case UserCreateStatus.DuplicateUserName:
                     return "The user name already exists.";
+
+                case UserCreateStatus.InvalidUserName:
+                    return "The user name is not valid.";
 
                 case UserCreateStatus.DuplicateEmail:
                     return "The email address already exists.";
@@ -181,6 +238,9 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
                 case UserCreateStatus.DuplicateUserName:
                     return "UserName";
 
+                case UserCreateStatus.InvalidUserName:
+                    return "UserName";
+
                 case UserCreateStatus.DuplicateEmail:
                     return "Email";
 
@@ -192,44 +252,6 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
             }
         }
 
-        #region Status Codes
-        //private static string ErrorCodeToString(MembershipCreateStatus createStatus)
-        //{
-        //    // See http://go.microsoft.com/fwlink/?LinkID=177550 for
-        //    // a full list of status codes.
-        //    switch (createStatus)
-        //    {
-        //        case MembershipCreateStatus.DuplicateUserName:
-        //            return "User name already exists. Please enter a different user name.";
-
-        //        case MembershipCreateStatus.DuplicateEmail:
-        //            return "A user name for that e-mail address already exists. Please enter a different e-mail address.";
-
-        //        case MembershipCreateStatus.InvalidPassword:
-        //            return "The password provided is invalid. Please enter a valid password value.";
-
-        //        case MembershipCreateStatus.InvalidEmail:
-        //            return "The e-mail address provided is invalid. Please check the value and try again.";
-
-        //        case MembershipCreateStatus.InvalidAnswer:
-        //            return "The password retrieval answer provided is invalid. Please check the value and try again.";
-
-        //        case MembershipCreateStatus.InvalidQuestion:
-        //            return "The password retrieval question provided is invalid. Please check the value and try again.";
-
-        //        case MembershipCreateStatus.InvalidUserName:
-        //            return "The user name provided is invalid. Please check the value and try again.";
-
-        //        case MembershipCreateStatus.ProviderError:
-        //            return "The authentication provider returned an error. Please verify your entry and try again. If the problem persists, please contact your system administrator.";
-
-        //        case MembershipCreateStatus.UserRejected:
-        //            return "The user creation request has been canceled. Please verify your entry and try again. If the problem persists, please contact your system administrator.";
-
-        //        default:
-        //            return "An unknown error occurred. Please verify your entry and try again. If the problem persists, please contact your system administrator.";
-        //    }
-        //}
         #endregion
     }
 }

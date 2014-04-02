@@ -8,7 +8,6 @@ using System.Web.Security;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Objects;
-using BExIS.Security.Services.Security;
 using BExIS.Security.Services.Subjects;
 using BExIS.Web.Shell.Areas.Auth.Models;
 using Telerik.Web.Mvc;
@@ -168,7 +167,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
         }
 
         [GridAction]
-        public ActionResult UserMembership_Select(long id)
+        public ActionResult Membership_Select(long id)
         {
             SubjectManager subjectManager = new SubjectManager();
 
@@ -199,6 +198,25 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
             SubjectManager subjectManager = new SubjectManager();
 
             return subjectManager.RemoveUserFromRole(userId, roleId);
+        }
+
+        // Feature Permissions
+        public ActionResult FeaturePermissions(long id)
+        {
+            SubjectManager subjectManager = new SubjectManager();
+
+            User user = subjectManager.GetUserById(id); ;
+
+            if (user != null)
+            {
+                ViewData["UserID"] = id;
+
+                return PartialView("_FeaturePermissionsPartial");
+            }
+            else
+            {
+                return PartialView("_InfoPartial", new InfoModel("Window_Details", "The user does not exist!"));
+            }
         }
 
         // S

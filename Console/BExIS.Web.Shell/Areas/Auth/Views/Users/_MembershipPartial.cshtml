@@ -13,7 +13,7 @@
     .Columns(columns =>
     {
         columns.Bound(r => r.UserInRole)
-            .ClientTemplate("<input type='checkbox' onclick='setMembership(this.checked, <#= UserId #>, <#= Id #>);' name='nothing' <#= UserInRole ? checked='checked' : '' #> />")
+            .ClientTemplate("<input type='checkbox' onclick='setUserInRole(this.checked, <#= UserId #>, <#= Id #>);' name='nothing' <#= UserInRole ? checked='checked' : '' #> />")
                    .Title("Check")
                    .Width(50)
                    .HtmlAttributes(new { style = "text-align:center" });
@@ -23,7 +23,7 @@
     })
     .DataBinding(dataBinding => dataBinding
         .Ajax()
-        .Select("UserMembership_Select", "Users", (long)ViewData["UserID"])
+        .Select("Membership_Select", "Users", (long)ViewData["UserID"])
     )
     .Filterable()
     .Sortable(sortable => sortable

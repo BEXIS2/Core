@@ -47,28 +47,35 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Mappings\Default\Objects\Feature.hbm.xml" />
-    <Content Include="Mappings\Default\Objects\Task.hbm.xml" />
-    <Content Include="Mappings\Default\Security\FeaturePermission.hbm.xml" />
-    <Content Include="Mappings\Default\Security\Permission.hbm.xml" />
-    <EmbeddedResource Include="Mappings\Default\Subjects\Role.hbm.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <Content Include="Mappings\Default\Subjects\SecurityUser.hbm.xml" />
-    <EmbeddedResource Include="Mappings\Default\Subjects\Subject.hbm.xml">
-      <SubType>Designer</SubType>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Mappings\Default\Subjects\User.hbm.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Mappings\DB2Dialect\" />
     <Folder Include="Mappings\Default\Base\" />
     <Folder Include="Mappings\Default\NativeObjects\" />
     <Folder Include="Mappings\Default\PostObjects\" />
-    <Folder Include="Mappings\PostgreSQL82Dialect\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Mappings\DB2Dialect\Objects\Feature.hbm.xml" />
+    <Content Include="Mappings\DB2Dialect\Objects\FeaturePermission.hbm.xml" />
+    <Content Include="Mappings\DB2Dialect\Objects\Permission.hbm.xml" />
+    <Content Include="Mappings\DB2Dialect\Objects\Task.hbm.xml" />
+    <Content Include="Mappings\DB2Dialect\Subjects\Role.hbm.xml" />
+    <Content Include="Mappings\DB2Dialect\Subjects\SecurityUser.hbm.xml" />
+    <Content Include="Mappings\DB2Dialect\Subjects\Subject.hbm.xml" />
+    <Content Include="Mappings\DB2Dialect\Subjects\User.hbm.xml" />
+    <Content Include="Mappings\Default\Objects\Feature.hbm.xml" />
+    <Content Include="Mappings\Default\Objects\FeaturePermission.hbm.xml" />
+    <Content Include="Mappings\Default\Objects\Permission.hbm.xml" />
+    <Content Include="Mappings\Default\Objects\Task.hbm.xml" />
+    <Content Include="Mappings\Default\Subjects\Role.hbm.xml" />
+    <Content Include="Mappings\Default\Subjects\SecurityUser.hbm.xml" />
+    <Content Include="Mappings\Default\Subjects\Subject.hbm.xml" />
+    <Content Include="Mappings\Default\Subjects\User.hbm.xml" />
+    <Content Include="Mappings\PostgreSQL82Dialect\Objects\Feature.hbm.xml" />
+    <Content Include="Mappings\PostgreSQL82Dialect\Objects\FeaturePermission.hbm.xml" />
+    <Content Include="Mappings\PostgreSQL82Dialect\Objects\Permission.hbm.xml" />
+    <Content Include="Mappings\PostgreSQL82Dialect\Objects\Task.hbm.xml" />
+    <Content Include="Mappings\PostgreSQL82Dialect\Subjects\Role.hbm.xml" />
+    <Content Include="Mappings\PostgreSQL82Dialect\Subjects\SecurityUser.hbm.xml" />
+    <Content Include="Mappings\PostgreSQL82Dialect\Subjects\Subject.hbm.xml" />
+    <Content Include="Mappings\PostgreSQL82Dialect\Subjects\User.hbm.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
