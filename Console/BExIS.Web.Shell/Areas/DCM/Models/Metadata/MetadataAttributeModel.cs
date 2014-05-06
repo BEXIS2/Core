@@ -22,6 +22,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
         public int MaxCardinality { get; set; }
         public String DataType { get; set; }
         public String SystemType { get; set; }
+        public int NumberOfSourceInPackage { get; set; }
 
         public bool last = false;
         public bool first = false;
@@ -40,11 +41,12 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
                 Parent = metadataPackageUsage,
                 Source = metadataAttributeUsage,
                 DisplayName = metadataAttributeUsage.Label,
-                Discription = metadataAttributeUsage.MetadataAttribute.Description,
+                Discription = metadataAttributeUsage.Description,
                 DataType = metadataAttributeUsage.MetadataAttribute.DataType.Name,
                 SystemType = metadataAttributeUsage.MetadataAttribute.DataType.SystemType,
                 MinCardinality = metadataAttributeUsage.MinCardinality,
                 MaxCardinality = metadataAttributeUsage.MaxCardinality,
+                NumberOfSourceInPackage = 1,
                 first = true,
                 last = true
             };

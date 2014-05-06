@@ -25,6 +25,12 @@ namespace BExIS.Dlm.Entities.MetadataStructure
 
         #region Mathods
 
+        public MetadataPackage()
+        {
+            UsedIn = new List<MetadataPackageUsage>();
+            MetadataAttributeUsages = new List<MetadataAttributeUsage>();
+        }
+
         #endregion
 
     }

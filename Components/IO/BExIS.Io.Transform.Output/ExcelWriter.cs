@@ -51,14 +51,14 @@ namespace BExIS.Io.Transform.Output
         /// <param name="filePath">Path of the excel template file</param>
         /// <param name="dataStructureId">Id of datastructure</param>
         /// <returns>List of Errors or null</returns>
-        public List<Error> AddDataTuplesToTemplate(List<DataTuple> dataTuples, string filePath, long dataStructureId )
+        public List<Error> AddDataTuplesToTemplate(List<long> dataTuplesIds, string filePath, long dataStructureId )
         {
             if (File.Exists(filePath))
             {
 
                 //Stream file = Open(filePath);
 
-                _dataTuples = dataTuples;
+                //_dataTuples = dataTuples;
                 // loading datastructure
                 _dataStructure = GetDataStructure(dataStructureId);
 
@@ -101,7 +101,7 @@ namespace BExIS.Io.Transform.Output
                 this.VariableIndentifiers = GetVariableIdentifiers(worksheetPart, this._areaOfVariables.StartRow, this._areaOfVariables.EndRow);
 
 
-                AddRows(worksheetPart, this._areaOfData.StartRow, this._areaOfData.EndRow, dataTuples);
+                AddRows(worksheetPart, this._areaOfData.StartRow, this._areaOfData.EndRow, dataTuplesIds);
 
                 // set data area
 
@@ -141,18 +141,18 @@ namespace BExIS.Io.Transform.Output
         }
 
         //add rows
-        protected void AddRows(WorksheetPart worksheetPart, int startRow, int endRow, List<DataTuple> dataTuples)
+        protected void AddRows(WorksheetPart worksheetPart, int startRow, int endRow, List<long> dataTuplesIds)
         {
             Worksheet worksheet = worksheetPart.Worksheet;
             SheetData sheetData = worksheet.GetFirstChild<SheetData>();
 
             int rowIndex = endRow;
             //add row
-            foreach (DataTuple dataTuple in dataTuples)
+            foreach (long id in dataTuplesIds)
             {
  
                 // convert datatuple to row and add it to sheetdata
-                Row row = DatatupleToRow(dataTuple.Id,rowIndex);
+                Row row = DatatupleToRow(id,rowIndex);
 
                 bool empty = true;
                 foreach (Cell c in row.Elements<Cell>().ToList())
@@ -167,7 +167,7 @@ namespace BExIS.Io.Transform.Output
                 if (!empty)
                 {
                     sheetData.Append(row);
-                    if(!dataTuple.Equals(dataTuples.Last()))
+                    if(!id.Equals(dataTuplesIds.Last()))
                         rowIndex++;
                 }
             }
@@ -185,6 +185,8 @@ namespace BExIS.Io.Transform.Output
             //DatatupleManager
             DatasetManager datasetManager = new DatasetManager();
             DataTuple dataTuple = datasetManager.DataTupleRepo.Get(dataTupleId);
+            dataTuple.Materialize();
+            
 
             int columnIndex = 0;
             columnIndex += offset;

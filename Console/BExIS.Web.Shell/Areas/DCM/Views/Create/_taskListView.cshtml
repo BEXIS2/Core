@@ -14,11 +14,11 @@
             <td >
                 @if (Model.Current().Equals(item))
                 { 
-                    <b id="@id">@item.title</b>
+                    <b id="@id" class="t-link">@item.title</b>
                 }
                 else
                 { 
-                    <span id="@id" onclick="OnClickStep(this)">@item.title</span>
+                    <span id="@id" class="t-link" onclick="OnClickStep2(this)">@item.title</span>
                 }
             </td>
             <td>
@@ -27,17 +27,17 @@
                 {
                     case StepStatus.success:
                         {
-                            <div class="t-link t-icon t-insert" ></div>
+                            <div class="t-icon t-insert" ></div>
                             break;
                         }
                     case StepStatus.inProgress:
                         {
-                            <div class="t-link t-icon t-arrow-prev" ></div>
+                            <div class="t-icon t-arrow-prev" ></div>
                             break;
                         }
                     case StepStatus.error:
                         {
-                            <div class="t-link t-icon t-cancel" ></div>
+                            <div class="t-icon t-cancel" ></div>
                             break;
                         }
                     default:
@@ -80,26 +80,35 @@ function TaskListRefresh()
             TaskListRefresh();
             $('#preloader').hide();
         })
+    }
 
-        //$.ajax({
-        //    url: url,
-        //    type: 'GET',
-        //    data: index,
-        //    dataType: 'JSON',
-        //    contentType: 'application/html; charset=utf-8',
-        //    error: function (xhr) {
-        //        alert('Error1: ' + xhr.statusText);
-        //    },
-        //    success: function (result) {
-        //        $("#StepView").html(response);
-        //        NavigationRefresh();
-        //        TaskListRefresh();
-        //        $('#preloader').hide();
-        //    },
-        //    async: true,
-        //    processData: false
-        //});
+    function OnClickStep2(e)
+    {
 
+        var substr = e.id.split('_');
+        var index = substr[0];
+
+        //alert(e.id);
+
+        var data = {
+            index: index,
+            name:"test"
+        };
+
+
+        $.ajax({
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify(data),
+            dataType: 'html',
+            url: '@Url.Action(@Model.Current().PostActionInfo.ActionName, @Model.Current().PostActionInfo.ControllerName, new RouteValueDictionary { { "area", @Model.Current().PostActionInfo.AreaName }})',
+            success: function (result) {
+                $('#StepView').html(result);
+                NavigationRefresh();
+                TaskListRefresh();
+                $('#preloader').hide();
+            }
+            });
     }
 
 </script>

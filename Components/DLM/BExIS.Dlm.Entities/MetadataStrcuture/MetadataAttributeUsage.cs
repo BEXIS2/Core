@@ -14,6 +14,7 @@ namespace BExIS.Dlm.Entities.MetadataStructure
         public virtual int MinCardinality { get; set; }
         public virtual int MaxCardinality { get; set; }
         public virtual string Label { get; set; }
+        public virtual string Description { get; set; }
 
         #endregion
 

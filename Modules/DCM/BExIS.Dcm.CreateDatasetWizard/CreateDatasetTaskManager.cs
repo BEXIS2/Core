@@ -11,6 +11,7 @@ namespace BExIS.Dcm.CreateDatasetWizard
     public class CreateDatasetTaskmanager : AbstractTaskManager
     {
         public static string DATASET_ID = "DataSetId";
+        public static string DATASET_TITLE = "DataSetTitle";
 
         public static string METADATA_ATTRIBUTE_USAGE_VALUE_LIST = "METADATA_ATTRIBUTE_VALUE_LIST";
         public static string METADATA_PACKAGE_MODEL_LIST = "METADATA_PACKAGE_MODEL_LIST";
@@ -25,6 +26,7 @@ namespace BExIS.Dcm.CreateDatasetWizard
         public static string METADATASTRUCTURE_ID = "MetadataStructureId";
         public static string METADATAPACKAGE_IDS = "MetadataPackageIds";
 
+        public static string ERROR_DIC = "Error_Dic";
 
         public static CreateDatasetTaskmanager Bind(XmlDocument xmlDocument)
         {

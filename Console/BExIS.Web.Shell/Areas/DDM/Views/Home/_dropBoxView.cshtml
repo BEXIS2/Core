@@ -57,10 +57,10 @@
             $(".searchBreadcrumbNavigation").html(response);
         });
 
-        /*$.post('@Url.Action("UpdateContent", "Home", new RouteValueDictionary { { "area", "DDM" } })', {}, function (response) {
+        $.post('@Url.Action("UpdateContent", "Home", new RouteValueDictionary { { "area", "DDM" } })', {}, function (response) {
             $("#resultContent").html(response);
 
-        })*/
+        })
 
         $.post('@Url.Action("UpdateFacets", "Home", new RouteValueDictionary { { "area", "DDM" } })', {}, function (response) {
             $("#searchTreeView").html(response);

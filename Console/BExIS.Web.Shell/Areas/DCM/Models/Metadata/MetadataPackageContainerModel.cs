@@ -36,7 +36,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Models.Metadata
                 Number = 1,
                 MetadataPackageModel = new List<MetadataPackageModel>(),
                 DisplayName = metadataPackageUsage.Label,
-                Discription = metadataPackageUsage.MetadataPackage.Description,
+                Discription = metadataPackageUsage.Description,
                 MinCardinality = metadataPackageUsage.MinCardinality,
                 MaxCardinality = metadataPackageUsage.MaxCardinality
             };

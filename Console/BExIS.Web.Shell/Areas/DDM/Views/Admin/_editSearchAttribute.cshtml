@@ -50,7 +50,7 @@
 
  }
 
-@using (Html.BeginForm("Save", "Home", new { area = "DDM" }))
+@using (Html.BeginForm("Save", "Admin", new { area = "DDM" }))
 {
 
     #region names and link to metadata
@@ -63,7 +63,7 @@
                          @(Html.LabelFor(m => m.id))
                     </td>
                     <td>
-                        @(Html.TextBoxFor(m => m.id ,new Dictionary<string, object>(){{"readonly", "true"},{"class","t-input"}}))
+                       @Html.DisplayFor(m => m.id)
                     </td>
                     <td>
 

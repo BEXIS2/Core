@@ -41,6 +41,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
         static XmlDocument configXML;
 
         public static string[] getCategoryFields() { init(); return categoryFields; }
+        public static string[] getStoredFields() { init(); return storedFields; }
 
         public static IndexReader getIndexReader()
         {

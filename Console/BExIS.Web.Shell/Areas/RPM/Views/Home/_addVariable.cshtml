@@ -7,13 +7,6 @@
     ViewBag.Title = "Planing";
 
     long[] dataAttributeIds = new long[] { };
-    Model.GetDataAttributeList();
-    
-    if((long)Session["dataStructureId"] != 0)
-    {
-        long id = (long)Session["dataStructureId"];
-        Session["dataStructureId"] = id; 
-    }
     
 }
 
@@ -41,11 +34,12 @@ else
             @(Html.Telerik().Grid(Model.dataAttributeList)
             .Name("DataAttributeGrid")
             .Sortable()
+            .Scrollable(t => t.Height(450))
             .Columns(columns =>
             {
                 columns.Template(
                     @<text>
-                            <input name="checkedRecords" type="checkbox" value="@item.Id " title="checkedRecords" 
+                            <input name="checkedRecords" type="checkbox" value="@item.Id " title="checkedRecords" class="checkBox"
                                 @if (dataAttributeIds.Contains(item.Id))
                                 {
                                     <text>checked="checked"</text>
@@ -53,18 +47,19 @@ else
                             />
                         </text>)
                     .Title("").Width(36).HtmlAttributes(new { style = "text-align:center" });
+                    
 
                 //columns.Command(commands => commands.Select()).Title("Select");
                 columns.Bound(c => c.Name);
                 columns.Bound(c => c.Id);
                 columns.Bound(c => c.ShortName);
                 columns.Bound(c => c.Description);
-                columns.Bound(c => c.Classification.Name)
-                    .Title("Classification");
-                columns.Bound(c => c.Unit.Name)
-                    .Title("Unit");
-                columns.Bound(c => c.DataType.Name)
-                    .Title("Data Type");
+                //columns.Bound(c => c.Classification.Name)
+                //    .Title("Classification");
+                //columns.Bound(c => c.Unit.Name)
+                //    .Title("Unit");
+                ////columns.Bound(c => c.DataType.Name)
+                ////    .Title("Data Type");
 
             })
             )

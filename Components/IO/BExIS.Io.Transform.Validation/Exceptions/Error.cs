@@ -12,6 +12,8 @@ namespace BExIS.Io.Transform.Validation.Exceptions
         private int _number = 0;
         //MetadataPAckageNumber
         private string _package = "";
+        //MetadataPAckageLabel
+        private string _packageLabel = "";
 
         private string _dataType = "";
         private string _issue = "";
@@ -54,9 +56,11 @@ namespace BExIS.Io.Transform.Validation.Exceptions
             if (errorType.Equals(ErrorType.MetadataAttribute))
             {
                 if (valueList[0] != null) _name = valueList[0].ToString();
-                if (valueList[1] != null) _value = valueList[1].ToString();
+                if (valueList[1] == null) _value = "null";
+                else _value = valueList[1].ToString();
                 if (valueList[2] != null) _number = Convert.ToInt32(valueList[2].ToString());
                 if (valueList[3] != null) _package = valueList[3].ToString();
+                if (valueList[4] != null) _packageLabel = valueList[4].ToString();
             }
         }
 
@@ -67,7 +71,21 @@ namespace BExIS.Io.Transform.Validation.Exceptions
                 case ErrorType.Value: return String.Format("{0} : Variable : {1} , Value : {2}, in Row : {3}, DataType : {4}", _issue, _name, _value, _row.ToString(), _dataType);
                 case ErrorType.Dataset: return String.Format("{0} : {1}", _issue, _name);
                 case ErrorType.Datastructure: return String.Format("{0} : {1}", _issue, _name);
-                case ErrorType.MetadataAttribute: return String.Format("(Attribute number {3} name = {0} in {4} with value = {1} ) : {2}", _name, _value, _issue , _number, _package);
+                case ErrorType.MetadataAttribute: return String.Format("(Attribute number {3} name = <b>{0}</b> in {5} with value = {1} ) : {2} in {5} Number {4}", _name, _value, _issue , _number, _package,_packageLabel);
+                default: return String.Format("{0}", _issue);
+            }
+        }
+
+        public string ToHtmlString()
+        {
+            
+
+            switch (_errorType)
+            {
+                case ErrorType.Value: return String.Format("{0} : Variable : {1} , Value : {2}, in Row : {3}, DataType : {4}", _issue, _name, _value, _row.ToString(), _dataType);
+                case ErrorType.Dataset: return String.Format("{0} : {1}", _issue, _name);
+                case ErrorType.Datastructure: return String.Format("{0} : {1}", _issue, _name);
+                case ErrorType.MetadataAttribute: return String.Format("in Package : <b>{5} ({4})</b><br> Attribute : <b>{0} ({3})</b> <br> with value = <b>{1}</b><br>{2} <br>  <hr>", _name, _value, _issue, _number, _package, _packageLabel);
                 default: return String.Format("{0}", _issue);
             }
         }

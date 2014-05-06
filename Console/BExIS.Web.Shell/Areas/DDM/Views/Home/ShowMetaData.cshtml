@@ -2,16 +2,24 @@
     ViewBag.Title = "Metadata";
 }
 
-@Html.ActionLink("Back", "Index", new { target = "_blank", @class = "grid-t-link" })
+@if (ViewData.ModelState.IsValid)
+{ 
+    
+    @Html.ActionLink("Back", "Index", new { target = "_blank", @class = "grid-t-link" })
 
-<br />
-<hr />
+    <br />
+    <hr />
 
-@(
-new HtmlString(Session["Metadata"].ToString())
-)
+    @(
+     new HtmlString(Session["Metadata"].ToString())
+    )
 
 
-<br />
-<hr />
-@Html.ActionLink("Back", "Index", new { target = "_blank", @class = "grid-t-link" })
+    <br />
+    <hr />
+    @Html.ActionLink("Back", "Index", new { target = "_blank", @class = "grid-t-link" })
+}
+else
+{ 
+    @Html.ValidationSummary(true)
+}

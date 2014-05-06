@@ -151,7 +151,7 @@ namespace BExIS.Dcm.UploadWizard
                 // load data
                 DatasetManager dm = new DatasetManager();
 
-                DatasetVersion datasetVersion = dm.GetDatasetLatestVersion(datasetId);
+                DatasetVersion datasetVersion = dm.GetDatasetVersion(datasetId);
 
                 List<DataTuple> datatuples = dm.GetDatasetVersionEffectiveTuples(datasetVersion);
                 if (datatuples.Count > 0)
@@ -172,7 +172,7 @@ namespace BExIS.Dcm.UploadWizard
 
             }
 
-            public static List<string> GetIdentifierList(TaskManager taskManager,  long datasetId, List<long> primaryKeys, string ext, string filename)
+            public static List<string> GetIdentifierList(TaskManager taskManager,  long datasetId, List<long> primaryKeys, string ext, string filename, int packageSize, int position)
             {
                 List<string> temp = new List<string>();
                 TaskManager TaskManager = taskManager;
@@ -180,6 +180,8 @@ namespace BExIS.Dcm.UploadWizard
                 if (ext.Equals(".txt") || ext.Equals(".csv"))
                 {
                     AsciiReader reader = new AsciiReader();
+                    reader.Position = position;
+
                     Stream stream = reader.Open(TaskManager.Bus["FilePath"].ToString());
 
                     AsciiFileReaderInfo afri = (AsciiFileReaderInfo)TaskManager.Bus["FileReaderInfo"];
@@ -187,9 +189,17 @@ namespace BExIS.Dcm.UploadWizard
                     DataStructureManager datastructureManager = new DataStructureManager();
                     StructuredDataStructure sds = datastructureManager.StructuredDataStructureRepo.Get(Convert.ToInt64(TaskManager.Bus["DataStructureId"].ToString()));
 
-                    List<List<string>> tempList = reader.ReadValuesFromFile(stream, filename, afri, sds, datasetId, primaryKeys);
+                    // get a list of values for each row
+                    // e.g.
+                    // primarky keys id, name
+                    // 1 [1][David]
+                    // 2 [2][Javad]
+                    List<List<string>> tempList = reader.ReadValuesFromFile(stream, filename, afri, sds, datasetId, primaryKeys, packageSize);
 
-                    //tempList.ForEach(p => p.ForEach(s => temp.Add(s)));
+                
+                    // convert List of Lists to list of strings
+                    // 1 [1][David] = 1David
+                    // 2 [2][Javad] = 2Javad
                     foreach (List<string> l in tempList)
                     {
                         string tempString = "";

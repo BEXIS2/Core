@@ -10,6 +10,7 @@ using BExIS.Dcm.Wizard;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Web.Shell.Areas.DCM.Models;
+using BExIS.Io.Transform.Input;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
 {
@@ -125,31 +126,88 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             model.VariableLableList = (List<ListViewItem>)Session["VariableLableList"];
 
-            if (data != null)
+            try
             {
-                // check Identifier
-                List<string> identifiersLables = data.ToList().ConvertAll<string>(delegate(object i) { return i.ToString(); });
-                List<long> identifiers = new List<long>();
-                List<ListViewItem> pks = new List<ListViewItem>();
 
-                foreach (string value in identifiersLables)
+                if (data != null)
                 {
-                    identifiers.Add(
-                                model.VariableLableList.Where(p => p.Title.Equals(value)).First().Id
-                        );
+                    // check Identifier
+                    List<string> identifiersLables = data.ToList().ConvertAll<string>(delegate(object i) { return i.ToString(); });
+                    List<long> identifiers = new List<long>();
+                    List<ListViewItem> pks = new List<ListViewItem>();
 
-                    pks.Add(model.VariableLableList.Where(p => p.Title.Equals(value)).First());
+                    foreach (string value in identifiersLables)
+                    {
+                        identifiers.Add(
+                                    model.VariableLableList.Where(p => p.Title.Equals(value)).First().Id
+                            );
+
+                        pks.Add(model.VariableLableList.Where(p => p.Title.Equals(value)).First());
+                    }
+
+
+                    int packageSize = 100;
+                    int position = 1;
+
+                    List<string> tempDataset = new List<string>();
+                    List<string> tempFromFile = new List<string>();
+
+                    tempDataset = UploadWizardHelper.GetIdentifierList(Convert.ToInt64(TaskManager.Bus[TaskManager.DATASET_ID].ToString()), identifiers);
+
+
+                    do
+                    {
+                        tempFromFile = UploadWizardHelper.GetIdentifierList(TaskManager, Convert.ToInt64(TaskManager.Bus[TaskManager.DATASET_ID].ToString()), identifiers, TaskManager.Bus[TaskManager.EXTENTION].ToString(), TaskManager.Bus[TaskManager.FILENAME].ToString(), packageSize, position);
+
+                        if (UploadWizardHelper.CheckDuplicates(tempDataset) || UploadWizardHelper.CheckDuplicates(tempFromFile))
+                        {
+                            model.IsUnique = false;
+                            model.PrimaryKeysList = pks;
+
+                            if (TaskManager.Bus.ContainsKey(TaskManager.PRIMARY_KEYS_UNIQUE))
+                            {
+                                TaskManager.Bus[TaskManager.PRIMARY_KEYS_UNIQUE] = false;
+                            }
+                            else
+                            {
+                                TaskManager.AddToBus(TaskManager.PRIMARY_KEYS_UNIQUE, false);
+                            }
+
+                            if (TaskManager.Bus.ContainsKey(TaskManager.PRIMARY_KEYS))
+                            {
+                                TaskManager.Bus.Remove(TaskManager.PRIMARY_KEYS);
+                            }
+                            model.ErrorList.Add(new Error(ErrorType.Other, "Selection is not unique"));
+
+                        }
+                        else
+                        {
+                            model.IsUnique = true;
+
+                            if (TaskManager.Bus.ContainsKey(TaskManager.PRIMARY_KEYS_UNIQUE))
+                            {
+                                TaskManager.Bus[TaskManager.PRIMARY_KEYS_UNIQUE] = true;
+                            }
+                            else
+                            {
+                                TaskManager.AddToBus(TaskManager.PRIMARY_KEYS_UNIQUE, true);
+                            }
+
+                            TaskManager.Bus[TaskManager.PRIMARY_KEYS] = identifiers;
+                            Session["TaskManager"] = TaskManager;
+                            model.PrimaryKeysList = pks;
+                            model.PK_Id_List = identifiers;
+                        }
+
+                        position += tempFromFile.Count();
+
+                    }
+                    while (tempFromFile.Count > 0 && model.IsUnique);
+
                 }
-
-
-                List<string> tempDataset = UploadWizardHelper.GetIdentifierList(Convert.ToInt64(TaskManager.Bus[TaskManager.DATASET_ID].ToString()), identifiers);
-
-                List<string> tempFromFile = UploadWizardHelper.GetIdentifierList(TaskManager, Convert.ToInt64(TaskManager.Bus[TaskManager.DATASET_ID].ToString()), identifiers, TaskManager.Bus[TaskManager.EXTENTION].ToString(), TaskManager.Bus[TaskManager.FILENAME].ToString());
-
-                if (UploadWizardHelper.CheckDuplicates(tempDataset) || UploadWizardHelper.CheckDuplicates(tempFromFile))
+                else
                 {
                     model.IsUnique = false;
-                    model.PrimaryKeysList = pks;
 
                     if (TaskManager.Bus.ContainsKey(TaskManager.PRIMARY_KEYS_UNIQUE))
                     {
@@ -164,46 +222,13 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     {
                         TaskManager.Bus.Remove(TaskManager.PRIMARY_KEYS);
                     }
-                    model.ErrorList.Add(new Error(ErrorType.Other, "Selection is not unique"));
-
+                    model.ErrorList.Add(new Error(ErrorType.Other, "Please select one or a combination of variables to define a primary key."));
                 }
-                else
-                {
-                    model.IsUnique = true;
 
-                    if (TaskManager.Bus.ContainsKey(TaskManager.PRIMARY_KEYS_UNIQUE))
-                    {
-                        TaskManager.Bus[TaskManager.PRIMARY_KEYS_UNIQUE] = true;
-                    }
-                    else
-                    {
-                        TaskManager.AddToBus(TaskManager.PRIMARY_KEYS_UNIQUE, true);
-                    }
-
-                    TaskManager.Bus[TaskManager.PRIMARY_KEYS] = identifiers;
-                    Session["TaskManager"] = TaskManager;
-                    model.PrimaryKeysList = pks;
-                    model.PK_Id_List = identifiers;
-                }
             }
-            else
+            catch (Exception e)
             {
-                model.IsUnique = false;
-
-                if (TaskManager.Bus.ContainsKey(TaskManager.PRIMARY_KEYS_UNIQUE))
-                {
-                    TaskManager.Bus[TaskManager.PRIMARY_KEYS_UNIQUE] = false;
-                }
-                else
-                {
-                    TaskManager.AddToBus(TaskManager.PRIMARY_KEYS_UNIQUE, false);
-                }
-
-                if (TaskManager.Bus.ContainsKey(TaskManager.PRIMARY_KEYS))
-                {
-                    TaskManager.Bus.Remove(TaskManager.PRIMARY_KEYS);
-                }
-                model.ErrorList.Add(new Error(ErrorType.Other, "Please select one or a combination of variables to define a primary key."));
+                model.ErrorList.Add(new Error(ErrorType.Other, e.Message));
             }
 
             return PartialView(TaskManager.Current().GetActionInfo.ActionName, model);

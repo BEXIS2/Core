@@ -15,6 +15,12 @@ border-radius: 3px;
 width: 150px;
 }
 
+.planingPartialDiv .checkBox {
+border-radius: 3px;
+width: 15px;
+}
+
+
 .planingPartialDiv textarea {
 border: 1px solid #CCC;
 border-radius: 3px;

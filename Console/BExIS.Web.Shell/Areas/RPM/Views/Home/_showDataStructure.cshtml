@@ -15,27 +15,42 @@
         .Name("DataStructureGrid")
         .RowAction(row =>
             {
-                if (row.Index == 0)
+                if (Model.dataStructure.Datasets.Count > 0)
                 {
-                    row.HtmlAttributes["class"] = "function"; 
+                    if (row.Index == 0)
+                    {
+                        row.HtmlAttributes["class"] = "locked";
+                    } 
+                }
+                else
+                {
+                    if (row.Index == 0)
+                    {
+                        row.HtmlAttributes["class"] = "function";
+                    }
                 }
             })
 )
 </div>
-<br />
-<br />
 <div>
-        @Html.ActionLink("AddVariable", "ShowVariables", "Home", new { id = Model.dataStructure.Id }, new { area = "RPM", @class = "t-button" })
+    @if(!(Model.dataStructure.Datasets.Count > 0))
+        {
+            @Html.ActionLink("AddVariable", "ShowVariables", "Home", new { id = Model.dataStructure.Id }, new { area = "RPM", @class = "t-button", @style = "margin-top:5px;"})
+        }
+        else
+        {
+            <button name="AddVariable" class="t-button t-state-disabled" disabled="disabled" style = "margin-top:5px;">AddVariable</button>
+        }       
 </div>
 <div style="position:absolute; left:20%; top:60px;">
 @{ Html.Telerik().Window()
         .Name("Add_Variable")
         .Visible((bool)Session["Window"])
+        .Modal(true)
         .Content(@<text>
-                    @Html.Partial("_addVariable")
+                    @Html.Partial("_addVariable", Model)
                     </text>)
         .Width(1000)
-        .Height(600)
         .Render()
         ;
         
@@ -44,12 +59,12 @@
 <div style="position:absolute; left:20%; top:60px;">
 @{ Html.Telerik().Window()
         .Name("Edit_Variable")
+        .Modal(true)
         .Visible((bool)Session["VariableWindow"])
         .Content(@<text>
-                    @Html.Partial("_editVariable")
+                    @Html.Partial("_editVariable", Model)
                     </text>)
         .Width(300)
-        .Height(200)
         .Render()
         ;
         
@@ -65,6 +80,11 @@
         {
             if ($(".function td")[i].innerHTML != "Functions")
                 $(".function td")[i].innerHTML = '<a area="RPM" class="t-icon t-edit" href="/RPM/Home/openVariableWindow/' + $(".function td")[i].innerHTML + '"></a><a area="RPM" class="t-icon t-delete" href="/RPM/Home/deleteVariable/' + $(".function td")[i].innerHTML + '">Download</a>';
+        }
+
+        for (var i = 0; i < $(".locked td").length; i++) {
+            if ($(".locked td")[i].innerHTML != "Functions")
+                $(".locked td")[i].innerHTML = '<font color="grey">locked</font>';
         }
 
         $('#DataStructureGrid .t-header').replaceWith('');

@@ -6,6 +6,7 @@
 @using Telerik.Web.Mvc.UI;
 @using BExIS.Web.Shell.Areas.DCM.Models;
 @using BExIS.Dcm.Wizard;
+@using BExIS.Io.Transform.Validation.Exceptions;
 
 @{
     bool disableBt = true;
@@ -34,7 +35,7 @@
                             {
                                 HttpMethod = "POST",
 
-                                UpdateTargetId = "SelectDatasetSetup",
+                                UpdateTargetId = "StepView",
                                 OnSuccess = "refresh",
                                 OnComplete ="onComplete"
                        
@@ -44,20 +45,24 @@
         <p>Please provide the following information.</p>
         <table>
             <tr>
-                <td>@Html.LabelFor(m=>m.SelectedResearchPlanId)</td>
+                <td><b title="Required" style="color:red">*</b></td>
+                <td>
+                    @Html.LabelFor(m=>m.SelectedResearchPlanId)</td>
                 <td>
                     @Html.DropDownListFor(m => m.SelectedResearchPlanId, new SelectList(Model.ResearchPlanViewList,"Id","Title",Model.SelectedResearchPlanId),"Select, please")
                     @Html.ValidationMessageFor(m => m.SelectedResearchPlanId)
                 </td>
             </tr>
             <tr>
-                <td><b></b>@Html.LabelFor(m=>m.SelectedDatastructureId)</td>
+                <td><b title="Required" style="color:red">*</b></td>
+                <td>@Html.LabelFor(m=>m.SelectedDatastructureId)</td>
                 <td>
                     @Html.DropDownListFor(m => m.SelectedDatastructureId, new SelectList(Model.DatastructuresViewList,"Id","Title",Model.SelectedDatastructureId),"Select, please")
                     @Html.ValidationMessageFor(m => m.SelectedDatastructureId)
                 </td>
             </tr>
              <tr>
+                <td><b title="Required" style="color:red">*</b></td>
                 <td>@Html.LabelFor(m=>m.SelectedMetadatStructureId)</td>
                 <td>
                     @Html.DropDownListFor(m => m.SelectedMetadatStructureId, new SelectList(Model.MetadataStructureViewList,"Id","Title",Model.SelectedMetadatStructureId),"Select, please")
@@ -91,26 +96,8 @@
     <div class="createWizardStep_Error stepper">
         @if (Model != null)
         {
-
-            if (Model.ErrorList != null)
-            {
-                if (Model.ErrorList.Count == 0)
-                {
-
-
-                }
-                else
-                { 
-                   <ul>
-                        @foreach (BExIS.Io.Transform.Validation.Exceptions.Error s in @Model.ErrorList)
-                        { 
-                            <li>@s.ToString()</li>
-                        }
-                   </ul>
-
-                }
-            }
-
+            
+            @Html.Partial("_errorMessages", Model.ErrorList)
         }
     </div>   
  </div>

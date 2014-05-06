@@ -7,7 +7,8 @@
     <link href="@Url.Content("~/Areas/RPM/Stylesheets/RPM.css")" rel="stylesheet" type="text/css" />  
 @*</header> *@
 
-@{ 
+@if(Model != null)
+{ 
     List<string> SystemTypeList = new List<string>();
     foreach (System.TypeCode tc in Enum.GetValues(typeof(System.TypeCode)))
     {
@@ -16,7 +17,6 @@
             SystemTypeList.Add(tc.ToString());
         }
     } 
-}
 <div class="planingPartialDiv" id="createUnit">
 @using (Html.BeginForm("editDataType", "Home", new { area = "RPM" }))
 {
@@ -62,3 +62,8 @@
     </table>    
 }
 </div>
+}
+else
+{
+ <font color="red" style="margin:10px">Can't edit Data Type doesn't exist anymore.</font>
+}

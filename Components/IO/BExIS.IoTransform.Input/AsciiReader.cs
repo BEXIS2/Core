@@ -229,7 +229,7 @@ namespace BExIS.Io.Transform.Input
         /// <param name="datasetId">Id of the dataset</param>
         /// <param name="variableList">List of variables</param>
         /// <returns></returns>
-        public List<List<string>> ReadValuesFromFile(Stream file, string fileName, AsciiFileReaderInfo fri, StructuredDataStructure sds, long datasetId, List<long> variableList)
+        public List<List<string>> ReadValuesFromFile(Stream file, string fileName, AsciiFileReaderInfo fri, StructuredDataStructure sds, long datasetId, List<long> variableList, int packageSize)
         {
             this.file = file;
             this.fileName = fileName;
@@ -259,33 +259,79 @@ namespace BExIS.Io.Transform.Input
 
             if (this.errorMessages.Count == 0)
             {
-
+                Stopwatch totalTime = Stopwatch.StartNew();
 
                 using (StreamReader streamReader = new StreamReader(file))
                 {
                     string line;
-                    int index = fri.Variables;
+                    //int index = fri.Variables;
+                    int index = 1;
+                    int items = 0;
                     char seperator = AsciiFileReaderInfo.GetSeperator(fri.Seperator);
 
-                    while ((line = streamReader.ReadLine()) != null)
+                    //int end = packageSize;
+                    //int start = 1;
+                    // read to position
+                    if (Position == 1)
                     {
+                        Position = this.info.Data;
+                    }
 
-                        if (index == this.info.Variables)
+                    Stopwatch _timer = Stopwatch.StartNew();
+
+
+                    /// <summary>
+                    /// go to current position is reached at the line
+                    /// </summary>
+                    /// <remarks></remarks>        
+                    for (int i = 1; i < Position; i++)
+                    {
+                        string l = streamReader.ReadLine();
+
+                        if (i == this.info.Variables)
                         {
-                            variableIdentifierRows.Add(RowToList(line, seperator));
+                            variableIdentifierRows.Add(RowToList(l, seperator));
                             ConvertAndAddToSubmitedVariableIdentifier();
                         }
+                    }
 
+
+                    // go to every line
+                    while ((line = streamReader.ReadLine()) != null && items <= packageSize - 1)
+                    {
+
+                        //// is position of datastructure?
+                        //if (index == this.info.Variables)
+                        //{
+                        //    variableIdentifierRows.Add(RowToList(line, seperator));
+                        //    ConvertAndAddToSubmitedVariableIdentifier();
+                        //}
+
+                        // is position = or over startposition of data?
                         if (index >= this.info.Data)
                         {
+                            Stopwatch rowTime = Stopwatch.StartNew();
+
                             // return List of VariablesValues, and error messages
                             listOfSelectedvalues.Add(GetValuesFromRow(RowToList(line, seperator), index, variableList));
+
+                            rowTime.Stop();
+                            //Debug.WriteLine("index : "+index+"   ---- Total Time of primary key check " + rowTime.Elapsed.TotalSeconds.ToString());
                         }
 
+                        Position++;
                         index++;
+                        items++;
 
                     }
+
+                    _timer.Stop();
+
+                    Debug.WriteLine(" get values for primary key check datatuples : " + _timer.Elapsed.TotalSeconds.ToString());
                 }
+
+                totalTime.Stop();
+                Debug.WriteLine(" Total Time of primary key check " + totalTime.Elapsed.TotalSeconds.ToString());
             }
 
             return listOfSelectedvalues;
@@ -456,19 +502,20 @@ namespace BExIS.Io.Transform.Input
         /// <returns>List of values</returns>
         private List<string> RowToList(string line, char seperator)
         {
-            if (this.info != null)
-            {
-                AsciiFileReaderInfo fileReaderInfo = (AsciiFileReaderInfo)this.info;
-                if (fileReaderInfo != null)
-                {
-                   List<string> temp = new List<string>();
-                   temp = TextMarkerHandling(line, seperator, AsciiFileReaderInfo.GetTextMarker(fileReaderInfo.TextMarker));
-                   return temp;
+            //if (this.info != null)
+            //{
+            //    AsciiFileReaderInfo fileReaderInfo = (AsciiFileReaderInfo)this.info;
+            //    if (fileReaderInfo != null)
+            //    {
+            //        List<string> temp = new List<string>();
+            //        temp = TextMarkerHandling(line, seperator, AsciiFileReaderInfo.GetTextMarker(fileReaderInfo.TextMarker));
+            //        return temp;
 
-                }
-                else return line.Split(seperator).ToList();
-            }
-            else return line.Split(seperator).ToList();
+            //    }
+            //    else return line.Split(seperator).ToList();
+            //}
+            //else 
+            return line.Split(seperator).ToList();
         }
 
 
@@ -486,8 +533,8 @@ namespace BExIS.Io.Transform.Input
         private List<string> TextMarkerHandling(string row, char separator, char textmarker)
         {
 
-            List<string> values = row.Split(separator).ToList();
 
+            List<string> values = row.Split(separator).ToList();
 
             /// <summary>
             /// check if the row contains a textmarker

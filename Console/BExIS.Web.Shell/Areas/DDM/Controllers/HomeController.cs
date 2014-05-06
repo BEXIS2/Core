@@ -44,18 +44,27 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
         //[Authorize(Roles="Guest")]
         public ActionResult Index()
         {
-            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
-
-            if (provider.WorkingSearchModel.CriteriaComponent.SearchCriteriaList.Count > 0)
+            try
             {
-                provider.WorkingSearchModel.CriteriaComponent.Clear();
-                provider.SearchAndUpdate(provider.WorkingSearchModel.CriteriaComponent);
+                ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+
+                if (provider.WorkingSearchModel.CriteriaComponent.SearchCriteriaList.Count > 0)
+                {
+                    provider.WorkingSearchModel.CriteriaComponent.Clear();
+                    provider.SearchAndUpdate(provider.WorkingSearchModel.CriteriaComponent);
+                }
+                //var pp = IoCFactory.Container.ResolveAll<ISearchProvider>();
+
+                SetSessionsToDefault();
+
+                return View(provider);
             }
-            //var pp = IoCFactory.Container.ResolveAll<ISearchProvider>();
+            catch(Exception e)
+            {
+                ModelState.AddModelError(String.Empty, e.Message);
 
-            SetSessionsToDefault();
-
-            return View(provider);
+                return View();
+            }
         }
 
         /// <summary>
@@ -134,11 +143,10 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult ChangeSearchValuesACBySearchType(string value)
+        public void ChangeSearchValuesACBySearchType(string value)
         {
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
             Session["SearchType"] = value;
-            return View(provider.WorkingSearchModel);
         }
 
         #endregion
@@ -345,9 +353,16 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
         
         public ActionResult ShowMetaData(int datasetID)
         {
-            DatasetManager dm = new DatasetManager();
-            DatasetVersion dsv = dm.GetDatasetLatestVersion(datasetID);
-            Session["Metadata"] = SearchUIHelper.ConvertXmlToHtml(dsv.Metadata.InnerXml.ToString(),"\\UI\\HtmlShowMetadata.xsl");
+            try
+            {
+                DatasetManager dm = new DatasetManager();
+                DatasetVersion dsv = dm.GetDatasetLatestVersion(datasetID);
+                Session["Metadata"] = SearchUIHelper.ConvertXmlToHtml(dsv.Metadata.InnerXml.ToString(), "\\UI\\HtmlShowMetadata.xsl");
+            }
+            catch (Exception e)
+            {
+                ModelState.AddModelError(String.Empty, e.Message);
+            }
 
             return View();
         }
@@ -582,201 +597,6 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
         #endregion
 
-        #region SearchDesigner
-
-
-        public ActionResult SearchDesigner()
-        {
-            if (Session["searchAttributeList"] == null)
-            {
-                ISearchDesigner sd = new SearchDesigner();
-     
-                Session["searchAttributeList"] = GetListOfSearchAttributeViewModels(sd.Get());
-                Session["metadatNodes"] = sd.GetMetadataNodes();
-                ViewData["windowVisible"] = false;
-            }
-
-            return View((List<SearchAttributeViewModel>)Session["searchAttributeList"]);
-        }
-
-        [GridAction]
-        public ActionResult _CustomSearchDesignerGridBinding(GridCommand command)
-        {
-            if (Session["searchAttributeList"] == null)
-            {
-                ISearchDesigner sd = new SearchDesigner();
-
-                Session["searchAttributeList"] = GetListOfSearchAttributeViewModels(sd.Get());
-                Session["metadatNodes"] = sd.GetMetadataNodes();
-                ViewData["windowVisible"] = false;
-            }
-
-            return View("SearchDesigner", new GridModel((List<SearchAttributeViewModel>)Session["searchAttributeList"]));
-            //return View("SearchDesigner", (List<SearchAttribute>)Session["searchAttributeList"]);
-        }
-    
-        public ActionResult Add()
-        {
-            List<SearchAttributeViewModel> searchAttributeList = (List<SearchAttributeViewModel>)Session["searchAttributeList"];
-
-            SearchAttributeViewModel sa = new SearchAttributeViewModel();
-            sa.id = searchAttributeList.Count;
-
-            ViewData["windowVisible"] = true;
-            ViewData["selectedSearchAttribute"] = sa;
-            return View("SearchDesigner", (List<SearchAttributeViewModel>)Session["searchAttributeList"]);
-        }
-
-        public ActionResult CloseWindow()
-        {
-
-            ViewData["windowVisible"] = false;
-
-            return Content("");
-        }
-
-        public ActionResult Edit(int id)
-        {
-            List<SearchAttributeViewModel> searchAttributeList = (List<SearchAttributeViewModel>)Session["searchAttributeList"];
-
-            ViewData["windowVisible"] = true;
-            ViewData["selectedSearchAttribute"] = searchAttributeList.Where(p => p.id.Equals(id)).First();
-            return View("SearchDesigner", (List<SearchAttributeViewModel>)Session["searchAttributeList"]);
-            //return PartialView("_editSearchAttribute", searchAttributeList.Where(p => p.id.Equals(id)).First());
-        }
-
-        public ActionResult Save(string submit, SearchAttributeViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                if (submit != null)
-                {
-                    List<SearchAttributeViewModel> searchAttributeList = (List<SearchAttributeViewModel>)Session["searchAttributeList"];
-
-                    if (searchAttributeList.Where(p => p.id.Equals(model.id)).Count()>0)
-                    {
-                        SearchAttributeViewModel temp = searchAttributeList.Where(p => p.id.Equals(model.id)).First();
-                        searchAttributeList[searchAttributeList.IndexOf(temp)] = model;
-                    }
-                    else
-                    {
-                        searchAttributeList.Add(model);
-                    }
-
-                    ISearchDesigner sd = new SearchDesigner();
-
-                    //sd.Set(searchAttributeList);
-
-                    Session["searchAttributeList"] = searchAttributeList;
-                    ViewData["windowVisible"] = false;
-                }
-            }
-            else
-            {
-                ViewData["windowVisible"] = true;
-            }
-
-
-            return View("SearchDesigner", (List<SearchAttributeViewModel>)Session["searchAttributeList"]);
-        }
-
-        public ActionResult SaveConfig()
-        {
-
-            if (Session["searchAttributeList"] != null)
-            {
-
-                List<SearchAttributeViewModel> searchAttributeList = (List<SearchAttributeViewModel>)Session["searchAttributeList"];
-                ISearchDesigner sd = new SearchDesigner();
-                sd.Set(GetListOfSearchAttributes(searchAttributeList));
-                Session["searchAttributeList"] = searchAttributeList;
-                ViewData["windowVisible"] = false;
-
-                sd.Reload();
-
-                searchConfigFileInUse = false;
-            }
-
-            return View("SearchDesigner", (List<SearchAttributeViewModel>)Session["searchAttributeList"]);
-        }
-
-        public ActionResult ResetConfig()
-        {
-                ISearchDesigner sd = new SearchDesigner();
-                sd.Reset();
-                Session["searchAttributeList"] = GetListOfSearchAttributeViewModels(sd.Get());
-                Session["metadatNodes"] = sd.GetMetadataNodes();
-                ViewData["windowVisible"] = false;
-
-            return View("SearchDesigner", (List<SearchAttributeViewModel>)Session["searchAttributeList"]);
-        }
-
-
-        public ActionResult ReloadConfig()
-        {
-            ISearchDesigner sd = new SearchDesigner();
-            sd.Reload();
-            //ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
-
-            //((SearchProvider)provider).RefreshIndex();
-
-            return View("SearchDesigner", (List<SearchAttributeViewModel>)Session["searchAttributeList"]);
-        }
-
-
-        public ActionResult Delete(int id)
-        {
-            List<SearchAttributeViewModel> searchAttributeList = (List<SearchAttributeViewModel>)Session["searchAttributeList"];
-            searchAttributeList.Remove(searchAttributeList.Where(p => p.id.Equals(id)).First());
-            Session["searchAttributeList"] = searchAttributeList;
-            ViewData["windowVisible"] = false;
-
-            return View("SearchDesigner", (List<SearchAttributeViewModel>)Session["searchAttributeList"]);
-        }
-
-        private List<SearchAttribute> GetListOfSearchAttributes(List<SearchAttributeViewModel> listOfViewModels)
-        {
-            List<SearchAttribute> listOfSearchAttributes = new List<SearchAttribute>();
-
-            foreach (SearchAttributeViewModel savm in listOfViewModels)
-            {
-                listOfSearchAttributes.Add(SearchAttributeViewModel.GetSearchAttribute(savm));
-            }
-
-            return listOfSearchAttributes;
-        }
-
-        private List<SearchAttributeViewModel> GetListOfSearchAttributeViewModels(List<SearchAttribute> listOfSearchAttributes)
-        {
-            List<SearchAttributeViewModel> listOfSearchAttributeViewModels = new List<SearchAttributeViewModel>();
-
-            foreach (SearchAttribute sa in listOfSearchAttributes)
-            {
-                listOfSearchAttributeViewModels.Add(SearchAttributeViewModel.GetSearchAttributeViewModel(sa));
-            }
-
-            return listOfSearchAttributeViewModels;
-        }
-
-            #region ReIndex
-
-            public ActionResult ReIndexSearch()
-            {
-                return View();
-            }
-
-            public ActionResult RefreshSearch()
-            {
-                ISearchDesigner sd = new SearchDesigner();
-                sd.Reload();
-
-                return View("ReIndexSearch");
-            }
         
-
-            #endregion
-
-        #endregion
-
     }
 }

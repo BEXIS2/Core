@@ -36,7 +36,7 @@ namespace BExIS.Dlm.Entities.DataStructure
             DataContainers = new List<DataContainer>();
             ConversionsIamTheSource = new List<ConversionMethod>();
             ConversionsIamTheTarget = new List<ConversionMethod>();
-            MeasurementSystem = MeasurementSystem.Metric;
+            MeasurementSystem = MeasurementSystem.Unknown;
             AssociatedDataTypes = new List<DataType>();
         }
 

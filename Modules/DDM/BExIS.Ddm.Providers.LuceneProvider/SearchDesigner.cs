@@ -9,6 +9,7 @@ using BExIS.Ddm.Providers.LuceneProvider.Indexer;
 using System.IO;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Dlm.Entities.MetadataStructure;
+using Vaiona.Util.Cfg;
 
 namespace BExIS.Ddm.Providers.LuceneProvider
 {
@@ -101,20 +102,27 @@ namespace BExIS.Ddm.Providers.LuceneProvider
 
         public List<string> GetMetadataNodes()
         {
-            long metadataStructureId = 2;
             if (_metadataNodes.Count > 0)
                 return _metadataNodes;
             else
             {
-                MetadataStructureManager msm = new MetadataStructureManager();
+      
+                MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
+                List<long> ids = new List<long>();
 
-                List<MetadataPackageUsage> metadataPackageUsageList = msm.GetEffectivePackages(metadataStructureId);
-
-                foreach (MetadataPackageUsage mpu in metadataPackageUsageList)
+                ids = metadataStructureManager.Repo.Query().Select(p => p.Id).ToList();
+                
+                foreach (long id in ids)
                 {
-                    _metadataNodes.AddRange(GenerateXPathsofAllAttributes(mpu));
+                    List<MetadataPackageUsage> metadataPackageUsageList = metadataStructureManager.GetEffectivePackages(id);
+
+                    foreach (MetadataPackageUsage mpu in metadataPackageUsageList)
+                    {
+                        _metadataNodes.AddRange(GenerateXPathsofAllAttributes(mpu));
+                    }
                 }
 
+                _metadataNodes = _metadataNodes.Distinct().ToList();
                 _metadataNodes.Sort();
                 return _metadataNodes;
             }

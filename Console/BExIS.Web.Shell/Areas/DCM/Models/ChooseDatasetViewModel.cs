@@ -13,14 +13,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
         public string DatasetTitle { get; set; }
       
         public List<long> Datasets { get; set; }
+
         public List<ListViewItem> DatasetsViewList { get; set; }
-
-
         public List<Error> ErrorList { get; set; }
-
-        //public CreateDatasetViewModel DatasetViewModel { get; set; }
-
-        public List<MetadataPackageModel> DatasetViewModel { get; set; }
 
         public ChooseDatasetViewModel()
         {
@@ -28,6 +23,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
             ErrorList = new List<Error>();
             DatasetsViewList = new List<ListViewItem>();
             DatasetTitle = "";
+           
         }
     }
 }

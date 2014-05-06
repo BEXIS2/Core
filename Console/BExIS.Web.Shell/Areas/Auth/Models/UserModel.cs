@@ -12,7 +12,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
     public class UserCreationModel
     {
         [Display(Name = "User name")]
-        [RegularExpression("^([A-Za-z]+)$", ErrorMessage = "The user name must consist only of letters.")]
+        [RegularExpression("^[^\\s]+(\\s+[^\\s]+)*$", ErrorMessage = "The user name must start and end with no space.")]
         [Remote("ValidateUserName", "Users")]
         [Required]
         [StringLength(50, ErrorMessage = "The user name must be {2} - {1} characters long.", MinimumLength = 3)]
@@ -22,7 +22,6 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
         [Email]
         [Remote("ValidateEmail", "Users")]
         [Required]
-        [StringLength(250, ErrorMessage = "The email must be {2} - {1} characters long.", MinimumLength = 5)]
         public string Email { get; set; }
 
         [Display(Name = "Password")]
@@ -41,15 +40,10 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
         public string SecurityQuestion { get; set; }
 
         [Display(Name = "Security Answer")]
-        [RegularExpression("^([-_a-zA-Z0-9]+)$", ErrorMessage = "The security answer must consist only of letters, numbers and special characters ('-', '_').")]
+        [RegularExpression("^[^\\s]+(\\s+[^\\s]+)*$", ErrorMessage = "The security answer must start and end with no space.")]
         [Required]
         [StringLength(50, ErrorMessage = "The security answer must be less than {1} characters long.")]
         public string SecurityAnswer { get; set; }
-
-        [Display(Name = "Confirm Security Answer")]
-        [Compare("SecurityAnswer", ErrorMessage = "The security answer and confirmation do not match.")]
-        [Required]
-        public string ConfirmSecuritydAnswer { get; set; }
     }
 
     public class UserModel
@@ -68,7 +62,6 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
         [Email]
         [Remote("ValidateEmail", "Users", AdditionalFields = "Id")]
         [Required]
-        [StringLength(250, ErrorMessage = "The email must be {2} - {1} characters long.", MinimumLength = 5)]
         public string Email { get; set; }
 
         [Display(Name = "Registration Date")]

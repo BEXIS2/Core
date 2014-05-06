@@ -2,6 +2,7 @@
 using System.Diagnostics.Contracts;
 using BExIS.Dlm.Entities.DataStructure;
 using Vaiona.Persistence.Api;
+using System.Linq;
 
 namespace BExIS.Dlm.Services.DataStructure
 {
@@ -56,6 +57,7 @@ namespace BExIS.Dlm.Services.DataStructure
                 entity = repo.Reload(entity);
                 
                 // remove all associations
+                entity.ApplicableUnits.ToList().ForEach(u => u.AssociatedDataTypes.Clear());
                 entity.ApplicableUnits.Clear();
                 entity.DataContainers.Clear();
 
@@ -81,6 +83,9 @@ namespace BExIS.Dlm.Services.DataStructure
                     var latest = repo.Reload(entity);
 
                     // remove all associations
+                    latest.ApplicableUnits.ToList().ForEach(u => u.AssociatedDataTypes.Clear());
+                    latest.ApplicableUnits.Clear();
+                    latest.DataContainers.Clear();
 
                     repo.Delete(latest);
                 }

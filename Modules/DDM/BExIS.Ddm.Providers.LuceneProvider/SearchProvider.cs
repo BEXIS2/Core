@@ -164,7 +164,11 @@ namespace BExIS.Ddm.Providers.LuceneProvider
                             QueryParser parser;
                             if (fieldName.ToLower().Equals("category_all"))
                             {
-                                parser = new MultiFieldQueryParser(Lucene.Net.Util.Version.LUCENE_30, BexisIndexSearcher.getCategoryFields(), new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30));
+                                
+                                List<string> temp2 = BexisIndexSearcher.getCategoryFields().ToList();
+                                temp2.AddRange(BexisIndexSearcher.getStoredFields().ToList());
+                                temp2.Add("ng_all");
+                                parser = new MultiFieldQueryParser(Lucene.Net.Util.Version.LUCENE_30, temp2.ToArray(), new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30));
                             }
                             else
                             {

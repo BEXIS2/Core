@@ -21,7 +21,7 @@
 <div>
 @(Html.Telerik().TreeView()
     .Name("TreeView")
-    .BindTo(Model.GetDataStructureList(), mappings => 
+    .BindTo(Model.dataStructureList, mappings => 
     {
         mappings.For<StructuredDataStructure>(binding => binding
                 .ItemDataBound((item, DS) =>
@@ -37,28 +37,26 @@
                         item.Value = DS.Id.ToString();
                     }
                     item.Action("showDataStructure", "Home", new RouteValueDictionary { { "area", "RPM" }, { "SelectedItem", item.Value } });
-                })
-                .Children(DS => DS.Variables));
-        mappings.For<Variable>(binding => binding
-                .ItemDataBound((item, VU) =>
-                {
-                    item.Text = VU.DataAttribute.Name;
                 }));
+        //        .Children(DS => DS.Variables));
+        //mappings.For<Variable>(binding => binding
+        //        .ItemDataBound((item, VU) =>
+        //        {
+        //            item.Text = VU.DataAttribute.Name;
+        //        }));
     })
 )
 </div>
 }  
-
-@{DataStructureDesignerModel model = new DataStructureDesignerModel();
-      model.GetDataStructureByID(Model.dataStructure.Id);}  
+  
 <div>
     
-    @Html.Partial("_showDataStructureInfo", model)
+    @Html.Partial("_showDataStructureInfo", Model)
 </div>
 
-@if (model != null && model.dataStructure.Id != null && model.dataStructure.Id != 0)
+@if (Model != null && Model.dataStructure.Id != null && Model.dataStructure.Id != 0)
 {
     <div>
-        @Html.Partial("_showDataStructure", model)
+        @Html.Partial("_showDataStructure", Model)
     </div>
 }

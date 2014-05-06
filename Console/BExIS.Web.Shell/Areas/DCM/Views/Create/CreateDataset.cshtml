@@ -15,17 +15,23 @@
 
 @section LeftPane 
 {  
-    @Html.Partial("_taskListView", Model)
+    @if (ViewData.ModelState.IsValid)
+    { 
+         @Html.Partial("_taskListView", Model)
+    }
 }
 
 <div id="StepView" >
- 
+    @Html.ValidationSummary(true)
 </div>
 <div id="preloader" style="display:none;" >
-     <img src="../../../../Themes/Default/Styles/Default/preloader.GIF" />
+        <img src="../../../../Themes/Default/Styles/Default/preloader.GIF" />
 </div>
 
-@Html.Partial("_createWizardNav", Model)
+
+@if (ViewData.ModelState.IsValid)
+{ 
+    @Html.Partial("_createWizardNav", Model)
 
 <script type="text/javascript">              
       
@@ -35,22 +41,23 @@
     var SelectedDataStrutureId;
     var SelectedDataStrutureTitle;
     var Parameters = new Array();
+    var index = 0;
 
-    var index = '@Model.GetCurrentStepInfoIndex()';
 
     $(document).ready(function () {
 
+        index = '@Model.GetCurrentStepInfoIndex()';
+
         $.get('@Url.Action(@Model.Current().GetActionInfo.ActionName, @Model.Current().GetActionInfo.ControllerName, new RouteValueDictionary { { "area", @Model.Current().GetActionInfo.AreaName } })', { index: index }, function (response) {
 
-          $("#StepView").html(response);
+            $("#StepView").html(response);
 
 
             NavigationRefresh();
             TaskListRefresh();
         })
+
     })
-
-
-    
-
 </script>
+
+}

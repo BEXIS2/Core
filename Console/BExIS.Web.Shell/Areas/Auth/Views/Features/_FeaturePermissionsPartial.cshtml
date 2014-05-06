@@ -13,19 +13,25 @@
     {
         columns.Bound(m => m.FeaturePermissionType)
             .ClientTemplate("<input type='radio' name='permissionType_<#= SubjectId #>' onclick='setFeaturePermission(1, <#= SubjectId #>, <#= FeatureId #>);' <#= FeaturePermissionType == 1 ? checked='checked' : '' #> />")
-                   .Title("+")
+                   .Title("Grant")
                    .Width(50)
+                   .Filterable(false)
+                   .Sortable(false)
+                   .HtmlAttributes(new { style = "text-align:center;background-color:#DFF5E9" });
+        columns.Bound(m => m.FeaturePermissionType)
+            .ClientTemplate("<input type='radio' name='permissionType_<#= SubjectId #>' onclick='setFeaturePermission(2, <#= SubjectId #>, <#= FeatureId #>);' <#= FeaturePermissionType == 2 ? checked='checked' : '' #> />")
+                   .Title("None")
+                   .Width(50)
+                   .Filterable(false)
+                   .Sortable(false)
                    .HtmlAttributes(new { style = "text-align:center" });
         columns.Bound(m => m.FeaturePermissionType)
-            .ClientTemplate("<input type='radio' name='<#= SubjectId #>' onclick='setFeaturePermission(2, <#= SubjectId #>, <#= FeatureId #>);' <#= FeaturePermissionType == 2 ? checked='checked' : '' #> />")
-                   .Title("o")
+            .ClientTemplate("<input type='radio' name='permissionType_<#= SubjectId #>' onclick='setFeaturePermission(0, <#= SubjectId #>, <#= FeatureId #>);' <#= FeaturePermissionType == 0 ? checked='checked' : '' #> />")
+                   .Title("Deny")
                    .Width(50)
-                   .HtmlAttributes(new { style = "text-align:center" });
-        columns.Bound(m => m.FeaturePermissionType)
-            .ClientTemplate("<input type='radio' name='<#= SubjectId #>' onclick='setFeaturePermission(0, <#= SubjectId #>, <#= FeatureId #>);' <#= FeaturePermissionType == 0 ? checked='checked' : '' #> />")
-                   .Title("x")
-                   .Width(50)
-                   .HtmlAttributes(new { style = "text-align:center" });
+                   .Filterable(false)
+                   .Sortable(false)
+                   .HtmlAttributes(new { style = "text-align:center;background-color:#F5DFDF" });
         columns.Bound(m => m.SubjectId);
         columns.Bound(m => m.SubjectName);
         columns.Bound(m => m.SubjectType);

@@ -19,9 +19,9 @@
     <property name="Name" type="String" />
 
     <!-- Mapping Subject Properties -->
-    <set name="FeaturePermissions" inverse="true" cascade="save-update" lazy="true">
+    <set name="Permissions" cascade="all-delete-orphan" lazy="true">
       <key column="SubjectRef"/>
-      <one-to-many class="BExIS.Security.Entities.Objects.FeaturePermission, BExIS.Security.Entities" />
+      <one-to-many class="BExIS.Security.Entities.Objects.Permission, BExIS.Security.Entities" />
     </set>
 
   </class>

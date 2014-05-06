@@ -8,15 +8,13 @@
     {
         this.ViewContext.FormContext = new FormContext();
     }
-    
-    bool visibleCreateDatasetWindow = false;
-    
-    if(Session["createDatasetWindowVisible"]!=null)
-    {
-        visibleCreateDatasetWindow = (bool)Session["createDatasetWindowVisible"];
-    }
 
-        
+    ListViewItem selectedListeViewitem = new ListViewItem();
+    if (@Model.SelectedDatasetId > 0)
+    {
+        selectedListeViewitem.Id = Model.SelectedDatasetId;
+        selectedListeViewitem.Title = Model.DatasetTitle;
+    }
 }
 
 <div id="Step3" class="uploadWizardStep">
@@ -36,16 +34,13 @@
         <div class="uploadWizardStep_Content stepper">
 
             <table>
+
                 <tr><td>
-                        @Html.ActionLink("Create","CreateDataset", "Create", new { area = "DCM" },new {@class="t-button"})
-                    </td>
-                    <td>
-                        Create a new dataset.
-                    </td>
-                </tr>
-                <tr><td><button id="SelectDatasetButton" title="Add file to an existing dataset" >Add</button></td><td> Add file to an existing dataset.</td></tr>
+                    @Html.DropDownListFor(m => m.SelectedDatasetId, new SelectList(Model.DatasetsViewList,"Id","Title",selectedListeViewitem),"Select")
+                
+    
+                </td><td>Add file to an existing dataset.</td></tr>
             </table>
-           
         </div>
     </div>
 
@@ -81,110 +76,23 @@
 </div>
 
 
-
-@(Html.Telerik().Window()
-    .Name("DatasetWindow")
-    .Visible(false)
-    .Width(300)
-    .Height(100)
-    .Title("Select a Dataset")
-    .Modal(true)
-    .ClientEvents(events => events
-        .OnActivate("resizeOnRefresh")
-    )
-    .Content(@<text>
-        @Html.Partial("_selectADatasetId", Model.DatasetsViewList)
-    </text>
-    )
-  )
-
-
-@(Html.Telerik().Window()
-    .Name("CreateDatasetWindow")
-    .Visible(false)
-    .Width(600)
-    .Height(400)
-    .Title("Create new dataset")
-    .Modal(true)
-    .ClientEvents(events => events
-        .OnActivate("resizeCreateDatasetWindowOnRefresh")
-        
-    )
-    .Content(@<text>
-
-            @Html.Partial("_createDataset", new CreateDatasetViewModel())
-         
-
-    </text>
-    )
-  )
-
-
-
 <script type="text/javascript">
 
-    $("#SelectDatasetButton").click(function () {
+    $("#SelectedDatasetId").change(function () {
 
-        var datasetwindow = $("#DatasetWindow").data("tWindow");
-        datasetwindow.center().open();
-      
-         
+        if ($(this).val() > 0) {
+           
+            SelectedDatasetId = $(this).val();
+            SelectedDatasetTitle = "test";
+            //Parameters.push("DatasetId:" + SelectedDatasetId);
+            //Parameters.push("DatasetTitle:" + SelectedDatasetTitle);
+
+            // send to bus
+            $.post('@Url.Action("AddSelectedDatasetToBus", "SubmitSpecifyDataset", new RouteValueDictionary { { "area", "DCM" } })', { id: SelectedDatasetId }, function (response) {
+                $("#Step3").html(response);
+            })
+        }
+
     })
-
-    $("#CreateDatasetButton").click(function () {
-
-        @*$.get('@Url.Action("CreateDataset",@Model.StepInfo.GetActionInfo.ControllerName)', function (data) {
-            $('#createDatasetFormular').html(data);
-        });
-
-        var datastruturewindow = $("#CreateDatasetWindow").data("tWindow");
-        datastruturewindow.center().open();*@
-    })
-
-    function closeWindow() {
-        var window = $("#DatasetWindow").data("tWindow");
-        window.close();
-        //alert("close");
-        //document.getElementById("selectedValue").innerHTML = "You have selected Dataset : " + SelectedDatasetId;
-        document.getElementById("selectedValue2").innerHTML = "You have selected Dataset : " + SelectedDatasetTitle;
-        $('.uploadWizardStep_Error').empty();
-     
-    }
-
-    function closeCreateWindow() {
-        var window = $("#CreateDatasetWindow").data("tWindow");
-        window.close();
-        alert("close");
-        //document.getElementById("selectedValue").innerHTML = "You have selected Dataset : " + SelectedDatasetId;
-        document.getElementById("selectedValue2").innerHTML = "You have selected Dataset : " + SelectedDatasetTitle;
-        $('.uploadWizardStep_Error').empty();
-    }
-
-    //function closeCreateDatasetWindow() {
-
-    //    var window = $("#CreateDatasetWindow").data("tWindow");
-    //    window.close();
-
-    //    document.getElementById("selectedValue2").innerHTML = "You have created a dataset: ";
-
-    //}
-
-    function resizeOnRefresh() {
-        var winContent = $('#DatasetWindow .t-window-content');
-        winContent.css("height", "");
-        //winContent.css("width", "");
-    }
-
-    function RefreshCreateDatasetWindow() {
-        var window = $('#CreateDatasetWindow').data('tWindow');
-        if(window!=null)window.refresh();
-    }
-
-
-    function resizeCreateDatasetWindowOnRefresh() {
-        var winContent = $('#CreateDatasetWindow .t-window-content');
-        winContent.css("height", "");
-        winContent.css("width", "");
-    }
 
 </script>

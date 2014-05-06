@@ -2,6 +2,7 @@
 
 @using BExIS.Web.Shell.Areas.DCM.Models.Metadata
 @using Telerik.Web.Mvc.UI
+@using BExIS.Io.Transform.Validation.Exceptions; 
 
 @{
     string id = @Model.Source.Id + "_"+Model.Source.MetadataStructure.Id;
@@ -52,7 +53,11 @@
             {
                 Html.Telerik().TabStrip()
                 .Name("TabStrip")
-       
+                //.ClientEvents(events=>events
+                //    .OnSelect("onSelectTab")
+                //)
+                
+                
                 .Items(tabstrip =>
                 {
                     foreach (var package in @Model.MetadataPackageModel)
@@ -60,8 +65,10 @@
                         package.Number = (@Model.MetadataPackageModel.IndexOf(package) + 1);
                         tabstrip.Add()
                             .Text(package.Number.ToString())
+                            .HtmlAttributes(new { width = "100px"})
                             .ImageUrl("Images/emptyPng.png")
-                            .ImageHtmlAttributes(new { @class = "t-icon t-cancel", onclick = "deleteTab(this)", id = package.Number})
+                            .ImageHtmlAttributes(new { @class = "t-icon t-cancel", onclick = "deleteTab(this)", id = package.Number })
+                            
                             .Content(@<text>
                                 @Html.Partial("_metadataPackage", package)
                             </text>
@@ -69,15 +76,18 @@
                             );
 
                     }
-
-                    tabstrip.Add()
-                    .Text(" ")
-                    .ImageUrl("Images/emptyPng.png")
-                    .ImageHtmlAttributes(new { @class = "t-icon t-add addTab" })
-                    .Content(@<text>
-                                <b></b>
-                            </text>)
-                    ;
+                    if (@Model.MetadataPackageModel.Count < @Model.MaxCardinality)
+                    { 
+                        tabstrip.Add()
+                            .Text(" ")
+                            .HtmlAttributes(new { @class = "addTabContainer" })
+                            .ImageUrl("Images/emptyPng.png")
+                            .ImageHtmlAttributes(new { @class = "t-icon t-add addTab" })
+                            .Content(@<text>
+                                        <b></b>
+                                    </text>)
+                            ;
+                    }
                 })
                 .SelectedIndex(0) 
                 .Render(); 
@@ -114,24 +124,8 @@
         @if (Model != null)
         {
 
-            if (Model.ErrorList != null)
-            {
-                if (Model.ErrorList.Count == 0)
-                {
-
-
-                }
-                else
-                { 
-                   <ul>
-                        @foreach (BExIS.Io.Transform.Validation.Exceptions.Error s in @Model.ErrorList)
-                        { 
-                            <li>@s.ToString()</li>
-                        }
-                   </ul>
-
-                }
-            }
+            
+            @Html.Partial("_errorMessages", @Model.ErrorList) 
 
         }
     </div>   
@@ -139,9 +133,6 @@
 </div>
 
 <script type="text/javascript" >
-
-        
-
 
         function OnClickAddPackage(e) {
 
@@ -171,21 +162,23 @@
 
                 $.post('@Url.Action("RemoveMetadataPackageUsage", "CreateSetMetadataPackage", new RouteValueDictionary { { "area", "DCM" } })', { id: id, number: number }, function (response) {
                     $(".createWizardStep").html(response);
-
+                    UpdateDeleteButtons();
                 })
             }
             else {
 
                 alert("You are not able to remove elements.");
             }
+
+           
         }
 
 
         $('.addTab').click
                 (function (e) {
 
-             addTabElement(e);
-           
+                    addTabElement(e);
+                   
         })
 
         function addTabElement(e)
@@ -199,16 +192,26 @@
 
                     removeTab({ index: number });
                     addTab({ text: getTabCount() + 1, html: response });
-                    createAddTab();
 
+                    if (getTabCount() < '@Model.MaxCardinality') {
+                       
+                        createAddTab();
+                        SelectTab(getTabCount() - 2);
+                    }
+                    else {
+                        SelectTab(getTabCount() - 1);
+                    }
+
+                    UpdateDeleteButtons();
                 })
             }
             else {
 
                 alert("Maxium cardinality is reached.");
             }
-        }
 
+            
+        }
 
         /// <summary>
         /// Get a tab.
@@ -262,7 +265,7 @@
             var tabname = tabstrip.attr('id');
             var number = ++cnt;
 
-            var text = '<img class="t-image t-icon t-cancel deleteTab" src="Images/emptyPng.png" alt="image" id="' + cnt + '" onclick="deleteTab(this)">' + t.text
+            var text = '<img class="t-image t-icon t-cancel deleteTab" src="Images/emptyPng.png" alt="image" id="' + cnt + '" onclick="deleteTab(this)" display="none">' + t.text
 
             tabstripitems.append(
                 $('<li />')
@@ -392,6 +395,11 @@
             var tabStrip = $("#TabStrip").data("tTabStrip");
             tabStrip.select($(".t-item", tabStrip.element)[0]);
         }
+
+        function SelectTab(index) {
+            var tabStrip = $("#TabStrip").data("tTabStrip");
+            tabStrip.select($(".t-item", tabStrip.element)[index]);
+        }
     
         function createAddTab()
         {
@@ -408,6 +416,7 @@
                 $('<li />')
                     .addClass('t-item')
                     .addClass('t-state-default')
+                    .addClass('addTabContainer')
                     .append(
                         $('<a />')
                             .attr('href', '#' + tabname + '-' + (cnt + 1))
@@ -434,5 +443,36 @@
             }
         }
 
+
+        function UpdateDeleteButtons()
+        {
+            //$("img.t-cancel").hide();
+            //$("li.t-state-active").find($("img")).show();
+        }
+
+        
+
 </script>
 
+<style type="text/css">
+
+    .t-tabstrip a
+    {
+        min-width:30px;
+    }
+
+    .addTabContainer
+    {
+        width:20px;
+        padding:0;
+        margin:0;
+    }
+     
+    .addTabContainer a.t-link
+    {
+        width:20px;
+        padding-left:7px;
+
+    }
+
+</style>

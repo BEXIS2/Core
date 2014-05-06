@@ -6,7 +6,7 @@
 
 .createWizardStep 
 {
-   height:600px;
+   height:90%;
 
 }
 
@@ -140,6 +140,6 @@ tr td
 
 .createWizardStep_Content
 {
-    height:400px;
+    height:600px;
     overflow:auto;
 }

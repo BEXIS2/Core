@@ -11,6 +11,11 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
 {
     public class AccountController : Controller
     {
+        public ActionResult Error()
+        {
+            return View();
+        }
+
         [ChildActionOnly]
         public ActionResult LogOnStatusPartial()
         {
@@ -22,7 +27,14 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
 
         public ActionResult LogOn()
         {
-            return View();
+            if (Request.IsAuthenticated)
+            {
+                return RedirectToAction("Error", "Account", new { area = "Auth" });
+            }
+            else
+            {
+                return View();
+            }
         }
 
         //
@@ -73,7 +85,14 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
 
         public ActionResult Register()
         {
-            return View();
+            if (Request.IsAuthenticated)
+            {
+                return RedirectToAction("Error", "Account", new { area = "Auth" });
+            }
+            else
+            {
+                return View();
+            }
         }
 
         //
@@ -89,12 +108,12 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
 
                 SubjectManager subjectManager = new SubjectManager();
 
-                subjectManager.CreateUser(model.UserName, model.Email, model.Password, model.SecurityQuestion, model.SecurityAnswer, out createStatus);
+                User user = subjectManager.CreateUser(model.UserName, model.Email, model.Password, model.SecurityQuestion, model.SecurityAnswer, out createStatus);
 
                 if (createStatus == UserCreateStatus.Success)
                 {
-                    //FormsAuthentication.SetAuthCookie(model.UserName, false /* createPersistentCookie */);
-                    return RedirectToAction("Index", "Home", new { area = "" });
+                    FormsAuthentication.SetAuthCookie(model.UserName, false /* createPersistentCookie */);
+                    return RedirectToAction("RegisterSummary", UserModel.Convert(user));
                 }
                 else
                 {
@@ -103,6 +122,11 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
             }
 
             // If we got this far, something failed, redisplay form
+            return View(model);
+        }
+
+        public ActionResult RegisterSummary(UserModel model)
+        {
             return View(model);
         }
 

@@ -61,8 +61,15 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             return PartialView(Create(index, validateIt));
         }
 
+        
+        /// <summary>
+        /// Jump to Step on position Index
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
         [HttpPost]
-        public ActionResult SetMetadataPackage()
+        public ActionResult SetMetadataPackage(int? index, string name=null)
         {
             #region load
                 TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
@@ -94,16 +101,18 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             #region go next success
             
                 //TaskManager.AddExecutedStep(TaskManager.Current());
-                TaskManager.GoToNext();
+                if (index.HasValue)
+                    TaskManager.SetCurrent(index.Value);
+                else
+                    TaskManager.GoToNext();
                 Session["TaskManager"] = TaskManager;
                 ActionInfo actionInfo = TaskManager.Current().GetActionInfo;
                 return RedirectToAction(actionInfo.ActionName, actionInfo.ControllerName, new RouteValueDictionary { { "area", actionInfo.AreaName }, { "index", TaskManager.GetCurrentStepInfoIndex() } });
 
             #endregion
-
-
-                //return PartialView(Create(stepIndex));
         }
+
+
 
         #region Validation
 
@@ -165,14 +174,22 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             foreach (MetadataPackageModel m in metadataPackageModelList)
             {
                 List<Error> temp = ValidatePackage(m);
-                if(temp!=null)
+                if (temp != null)
+                {
                     errorList.AddRange(temp);
+                    m.ErrorList = temp;
+                }
+                else
+                    if (m.ErrorList != null) m.ErrorList = null;
             }
 
-            if(errorList.Count==0)
+            if (errorList.Count == 0)
                 return null;
             else
+            {
                 return errorList;
+            }
+                
         
         }
 
@@ -196,11 +213,14 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         private List<Error> ValidateAttribute(MetadataAttributeModel aModel)
         {
             List<Error> errors = new List<Error>();
-
-
             //optional check
-            if(aModel.MinCardinality>0 && aModel.Value == null)
-                errors.Add(new Error(ErrorType.MetadataAttribute,"is not optional",new object[] { aModel.DisplayName, aModel.Value, aModel.Number, aModel.Source.Label }));
+            if(aModel.MinCardinality>0 && aModel.Value==null)
+                errors.Add(new Error(ErrorType.MetadataAttribute,"is not optional",new object[] { aModel.DisplayName, aModel.Value, aModel.Number, aModel.PackageModelNumber, aModel.Parent.Label }));
+            else
+                if (aModel.MinCardinality > 0 && String.IsNullOrEmpty(aModel.Value.ToString()))
+                    errors.Add(new Error(ErrorType.MetadataAttribute, "is not optional", new object[] { aModel.DisplayName, aModel.Value, aModel.Number, aModel.PackageModelNumber, aModel.Parent.Label }));
+         
+
             if(errors.Count==0)
                 return null;
             else
@@ -350,6 +370,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                  //remove from xml
                  RemovePackageToXml(model.Source, number);
+
+                //Validate
+                 model.ErrorList = ValidatePackageContainer(model.Source.Id);
 
                  return PartialView("SetMetadataPackage", model);
             }
@@ -543,7 +566,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         //set first and last
                         List<MetadataAttributeModel> order = packageModelDic[key].MetadataAttributeModels.Where(a => a.Id == model.Id).ToList();
                         order = UpdateFirstAndLast(order);
-          
+
+                        //set count
+                        order.ForEach(a => a.NumberOfSourceInPackage = order.Count);
 
                         return packageModelDic[key];
                     }
@@ -579,6 +604,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                             //set first and last
                             List<MetadataAttributeModel> order = packageModelDic[key].MetadataAttributeModels.Where(a => a.Id == model.Id).ToList();
                             order = UpdateFirstAndLast(order);
+
+                            // set Count of MetadataAttributes in Package
+                            order.ForEach(a => a.NumberOfSourceInPackage = order.Count);
                             
                         }
                         return packageModelDic[key];
@@ -673,6 +701,29 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     }
                 }
             }
+
+            private int CountMetadataAttributeFromBus(long packageId, int packageNumber, MetadataAttributeModel model)
+            { 
+                TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
+
+                Dictionary<string, MetadataPackageModel> packageModelDic;
+
+                if (TaskManager != null && TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST))
+                {
+                    packageModelDic = (Dictionary<string, MetadataPackageModel>)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST];
+                    string key = CreateIdentfifier(packageId, packageNumber);
+
+
+                    if (packageModelDic.ContainsKey(key))
+                    {
+                        List<MetadataAttributeModel> temp = packageModelDic[key].MetadataAttributeModels;
+
+                        return temp.Where(a => a.Source.Id.Equals(model.Source.Id)).Count();
+                    }
+                }
+
+                return 0;
+            }
         #endregion
 
         #region identifier
@@ -710,7 +761,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             return list;
         }
-
 
         private long GetPackageId(int stepIndex)
         {
@@ -801,8 +851,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 TaskManager.Bus[CreateDatasetTaskmanager.METADATA_XML] = metadataXml;
 
                  // locat path
-                string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "metadataTemp.Xml");
-                metadataXml.Save(path);
+                //string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "metadataTemp.Xml");
+                //metadataXml.Save(path);
             }
 
             private void RemovePackageToXml(MetadataPackageUsage packageUsage, int number)
@@ -817,8 +867,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 TaskManager.Bus[CreateDatasetTaskmanager.METADATA_XML] = metadataXml;
 
                 // locat path
-                string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "metadataTemp.Xml");
-                metadataXml.Save(path);
+                //string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "metadataTemp.Xml");
+               //metadataXml.Save
             }
 
             private void AddAttributeToXml(MetadataPackageUsage packageUsage, int packageNumber, MetadataAttributeUsage attribute, int number)
@@ -834,7 +884,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                 // locat path
                 string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "metadataTemp.Xml");
-                metadataXml.Save(path);
+               //metadataXml.Save
             }
 
             private void RemoveAttributeToXml(MetadataPackageUsage packageUsage, int packageNumber, MetadataAttributeUsage attribute, int number)
@@ -847,8 +897,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                 TaskManager.Bus[CreateDatasetTaskmanager.METADATA_XML] = metadataXml;
                 // locat path
-                string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "metadataTemp.Xml");
-                metadataXml.Save(path);
+                //string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "metadataTemp.Xml");
+               //metadataXml.Save
             }
 
             private void UpdateAttribute(MetadataPackageUsage packageUsage, int packageNumber, MetadataAttributeUsage attribute, int number, object value)
@@ -861,8 +911,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                 TaskManager.Bus[CreateDatasetTaskmanager.METADATA_XML] = metadataXml;
                 // locat path
-                string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "metadataTemp.Xml");
-                metadataXml.Save(path);
+                //string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "metadataTemp.Xml");
+               //metadataXml.Save
             }
            
         #endregion

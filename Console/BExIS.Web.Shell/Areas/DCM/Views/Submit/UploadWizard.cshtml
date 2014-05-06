@@ -13,19 +13,23 @@
 }
 
 @section LeftPane 
-{  
-    @Html.Partial("_taskListView", Model.GetStatusOfStepInfos())
+{   @if (ViewData.ModelState.IsValid)
+    { 
+        @Html.Partial("_taskListView", Model.GetStatusOfStepInfos())
+    }
 }
 
 
 <div id="StepView" >
- 
+   @Html.ValidationSummary(true)
 </div>
 <div id="preloader" style="display:none;" >
      <img src="../../../../Themes/Default/Styles/Default/preloader.GIF" />
 </div>
 
-@Html.Partial("_uploadWizardNav", Model)
+@if (ViewData.ModelState.IsValid)
+{ 
+    @Html.Partial("_uploadWizardNav", Model)
 
 <script type="text/javascript">              
       
@@ -68,3 +72,5 @@
     }
 
 </style>
+    
+}

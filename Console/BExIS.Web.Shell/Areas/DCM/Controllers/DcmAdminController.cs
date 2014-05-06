@@ -48,7 +48,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             //package Person ( Tecnical contact /ContentContact)
             MetadataPackage contact = mdpManager.MetadataPackageRepo.Get(p => p.Name == "Contact").FirstOrDefault();
-            if (contact == null) contact = mdpManager.Create("Contact", "Content Contact", true);
+            if (contact == null) contact = mdpManager.Create("Contact", "Contact", true);
 
             //package Description
             MetadataPackage Description = mdpManager.MetadataPackageRepo.Get(p => p.Name == "Description").FirstOrDefault();
@@ -80,6 +80,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             }
             else
             {
+                
                 mdsManager.AddMetadataPackageUsage(root, contact, "Technical Contact", 1, 1);
                 mdsManager.AddMetadataPackageUsage(root, contact, "Content Contact", 1, 3);
                 mdsManager.AddMetadataPackageUsage(root, Description, "Description", 1, 1);
@@ -150,7 +151,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             }
             else
             {
-                mdpManager.AddMetadataAtributeUsage(contact, Name, "Name", 0, 1);
+                mdpManager.AddMetadataAtributeUsage(contact, Name, "Name", 1, 1);
                 mdpManager.AddMetadataAtributeUsage(contact, Email, "EMail", 0, 1);
                 mdpManager.AddMetadataAtributeUsage(contact, Adress, "Adress", 0, 1);
                 mdpManager.AddMetadataAtributeUsage(contact, Phone, "Phone", 0, 1);
@@ -214,7 +215,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             {
                 // add metadataAttributes to packages
                 if (Description.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Title).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(Description, Title, "Title of the dataset", 0, 1);
+                    mdpManager.AddMetadataAtributeUsage(Description, Title, "Title", 1, 2);
 
                 if (Description.MetadataAttributeUsages.Where(p => p.MetadataAttribute == RevisionData).Count() <= 0)
                     mdpManager.AddMetadataAtributeUsage(Description, RevisionData, "RevisionData", 0, 1);
@@ -230,7 +231,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             }
             else
             {
-                mdpManager.AddMetadataAtributeUsage(Description, Title, "Title of the dataset", 0, 2);
+                mdpManager.AddMetadataAtributeUsage(Description, Title, "Title", 1, 2);
                 mdpManager.AddMetadataAtributeUsage(Description, RevisionData, "DateModified of the dataset", 0, 1);
                 mdpManager.AddMetadataAtributeUsage(Description, Details, "Details of the dataset", 0, 1);
                 mdpManager.AddMetadataAtributeUsage(Description, Coverage, "Coverage", 0, 1);

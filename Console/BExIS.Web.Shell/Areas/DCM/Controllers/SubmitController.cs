@@ -51,12 +51,20 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             if (TaskManager == null)
             {
-                string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "SubmitTaskInfo.xml");
-                XmlDocument xmlTaskInfo = new XmlDocument();
-                xmlTaskInfo.Load(path);
+                try
+                {
+                    string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "SubmitTaskInfo.xml");
+                    XmlDocument xmlTaskInfo = new XmlDocument();
+                    xmlTaskInfo.Load(path);
 
-                
-                Session["TaskManager"] = TaskManager.Bind(xmlTaskInfo);
+
+                    Session["TaskManager"] = TaskManager.Bind(xmlTaskInfo);
+                }
+                catch (Exception e)
+                {
+                    ModelState.AddModelError(String.Empty, e.Message);
+                }
+
                 Session["Filestream"] = Stream;
 
                 TaskManager = (TaskManager)Session["TaskManager"];
@@ -106,11 +114,20 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             finishModel.Filename = TaskManager.Bus[TaskManager.FILENAME].ToString();
 
             Session["TaskManager"] = null;
-            string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "SubmitTaskInfo.xml");
-            XmlDocument xmlTaskInfo = new XmlDocument();
-            xmlTaskInfo.Load(path);
+            try
+            {
+                string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "SubmitTaskInfo.xml");
+                XmlDocument xmlTaskInfo = new XmlDocument();
+                xmlTaskInfo.Load(path);
 
-            Session["TaskManager"] = TaskManager.Bind(xmlTaskInfo);
+
+                Session["TaskManager"] = TaskManager.Bind(xmlTaskInfo);
+            }
+            catch (Exception e)
+            {
+                ModelState.AddModelError(String.Empty, e.Message);
+            }
+
 
             return View(finishModel);
         }

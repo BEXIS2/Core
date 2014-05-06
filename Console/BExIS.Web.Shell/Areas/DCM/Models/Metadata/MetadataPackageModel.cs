@@ -20,7 +20,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Models.Metadata
         public MetadataPackageUsage Source { get; set; }
 
         //public StepInfo StepInfo { get; set; }
-        //public List<Error> ErrorList { get; set; }
+        public List<Error> ErrorList { get; set; }
 
         public MetadataPackageModel()
         {

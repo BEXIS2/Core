@@ -14,8 +14,9 @@
     {
         columns.Bound(r => r.UserInRole)
             .ClientTemplate("<input type='checkbox' onclick='setUserInRole(this.checked, <#= UserId #>, <#= Id #>);' name='nothing' <#= UserInRole ? checked='checked' : '' #> />")
-                   .Title("Check")
-                   .Width(50)
+                   .Title("Member")
+                   .Width(64)
+                   .Filterable(false)
                    .HtmlAttributes(new { style = "text-align:center" });
         columns.Bound(r => r.Id).Width(100);
         columns.Bound(r => r.RoleName).Width(200);

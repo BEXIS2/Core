@@ -4,6 +4,7 @@
 @using System
 @using System.Text.RegularExpressions
 @using BExIS.Web.Shell.Areas.RPM.Controllers
+@model List<BExIS.Dlm.Entities.DataStructure.Unit>
 
 @{
     string rgxPattern = "[ ]";
@@ -13,60 +14,52 @@
     Unit unit = (Unit)Session["Unit"];
     string windowName = "Add";
     
-    if (unit.Name != null && unit.Name != "")
+    if(unit != null)
     {
-        windowName = rgx.Replace(unit.Name, rgxReplace);
+        if (unit.Name != null && unit.Name != "")
+        {
+            windowName = rgx.Replace(unit.Name, rgxReplace);
+        }
     }
     else
     {
         windowName = "Add";
+        unit = new Unit(); 
     }
-    //var MeasurementSystemList = (from u in UnitList select u.MeasurementSystem.ToString()).Distinct();
-    //var DimensionList = (from u in UnitList select u.Dimension.ToString()).Distinct();
-
-    //var temp = MeasurementSystemList.Union(DimensionList);
-    //temp = temp.Union((from u in UnitList select u.Name.ToString()).Distinct());
-    //temp = temp.Union((from u in UnitList select u.Abbreviation.ToString()).Distinct());
-    
-    //List<string> Filters = temp.ToList();
-
-    UnitManager UM = new UnitManager();
-    List<Unit> model = UM.Repo.Get().ToList();
     
 }
 
-<!DOCTYPE html>
+@{
+    ViewBag.Title = "Unit Manager";
+}
 
-<html>
-<head>
-    <title>UnitManager</title>
-</head>
-@*<header>*@
-    
-@*</header> *@
-<body>
+    <div>
+        <h2>Unit Manager</h2>
+         
+        <p>With this interface you are able to manage (e.g. create, edit, delete) units which may be needed to define data attributes. Units cannot be edited or deleted once they are associated with a data attribute (they become locked).</p>
+    </div>
 
     @Html.ActionLink("Add Unit", "openUnitWindow", "Home", new { id = 0 }, new { @class = "t-button t-add" })
     <br />
     <br />
-    @(Html.Telerik().Grid(model)    
+    @(Html.Telerik().Grid(Model)    
             .Name("UnitGrid")
             .Sortable()           
             .Columns(columns =>
                 {
-                    columns.Template(                            
+                    columns.Template(
                         @<text>
+                            <div class="t-button t-button-icontext t-button-bare">
                             @if(!(item.DataContainers.Count > 0))
                             {
-                            <div class="t-button t-button-icontext t-button-bare">
                             @Html.ActionLink("Edit", "openUnitWindow", "Home", new { id = item.Id }, new { @class = "t-icon t-edit" })
                             @Html.ActionLink("Delete", "deletUnit", "Home", new { id = item.Id }, new { @class = "t-icon t-delete" })
-                            </div>
                             }
                             else
                             {
-                                <div class="t-button t-button-icontext t-button-bare">locked</div>
+                                <font color="grey">locked</font>
                             }
+                            </div>
                         </text>
                     ).Title("Functions")
                         .Width(50)
@@ -104,6 +97,7 @@
     <div style="position:absolute; left:20%; top:60px;">
                     @{ Html.Telerik().Window()
                             .Name(windowName)
+                            .Modal(true)
                             .Visible((bool)Session["Window"])
                             .Draggable(true)
                             .Content(@<text>
@@ -115,5 +109,3 @@
                     }
                     @{Session["Window"] = false;}
     </div>
-</body>
-</html>

@@ -18,7 +18,6 @@ namespace BExIS.Security.Services.Objects
 
             this.FeaturePermissionsRepo = uow.GetReadOnlyRepository<FeaturePermission>();
             this.FeaturesRepo = uow.GetReadOnlyRepository<Feature>();
-            this.RolesRepo = uow.GetReadOnlyRepository<Role>();
             this.SubjectsRepo = uow.GetReadOnlyRepository<Subject>();
             this.UsersRepo = uow.GetReadOnlyRepository<User>();
         }
@@ -26,8 +25,7 @@ namespace BExIS.Security.Services.Objects
         #region Data Readers
 
         public IReadOnlyRepository<FeaturePermission> FeaturePermissionsRepo { get; private set; }
-        public IReadOnlyRepository<Feature> FeaturesRepo { get; private set; }
-        public IReadOnlyRepository<Role> RolesRepo { get; private set; }   
+        public IReadOnlyRepository<Feature> FeaturesRepo { get; private set; } 
         public IReadOnlyRepository<Subject> SubjectsRepo { get; private set; }
         public IReadOnlyRepository<User> UsersRepo { get; private set; }     
 
@@ -61,81 +59,71 @@ namespace BExIS.Security.Services.Objects
 
         #region Methods
 
-        private bool CheckFeatureAccess(User user, Feature feature)
+        private bool CheckFeatureAccess(long userId, List<long> roleIds, long featureId)
         {
-            user = UsersRepo.Reload(user);
-            UsersRepo.LoadIfNot(user.Roles);
-
-            feature = FeaturesRepo.Reload(feature);
-            FeaturesRepo.LoadIfNot(feature.Parent);
-
             // User Permission
-            FeaturePermission userPermission = GetFeaturePermissionByFeatureAndSubject(feature.Id, user.Id);
-
-            // Role Permission
-            List<FeaturePermission> rolePermissions = new List<FeaturePermission>();
-
-            foreach (Role role in user.Roles)
-            {
-                rolePermissions.AddRange(GetFeaturePermissionsFromFeature(feature.Id).Where(p => p.Subject.Id == role.Id));
-            }
-
-            //rolePermissions.AddRange(GetFeaturePermissionsFromFeature(feature.Id).Where(p => user.Roles.Any(r => r.Id == p.Subject.Id)).ToList<FeaturePermission>());
+            FeaturePermission userPermission = GetFeaturePermissionByFeatureAndSubject(featureId, userId);
 
             if (userPermission != null)
             {
-                return userPermission.PermissionType == PermissionType.Allow ? true : false;
-            }
-            else if (rolePermissions.Count() > 0)
-            {
-                switch (FeaturePermissionPolicy)
-                {
-                    case 0:
-                        if (rolePermissions.Any(p => p.PermissionType == PermissionType.Deny))
-                        {
-                            return false;
-                        }
-                        else
-                        {
-                            return true;
-                        }               
-
-                    case 1:
-                        if (rolePermissions.Any(p => p.PermissionType == PermissionType.Allow))
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-
-                    case 2:
-                        int grants = rolePermissions.Where(p => p.PermissionType == PermissionType.Allow).Count();
-                        int denies = rolePermissions.Where(p => p.PermissionType == PermissionType.Deny).Count();
-
-                        if (grants == denies)
-                        {
-                            return DrawFeaturePermission;
-                        }
-                        else
-                        {
-                            return grants > denies ? true : false;
-                        }
-
-                    default:
-                        return false;
-                }
+                return userPermission.PermissionType == PermissionType.Deny ? false : true;
             }
             else
             {
-                if (FeaturePermissionHierarchy && feature.Parent != null)
+                // Role Permission
+                List<FeaturePermission> rolePermissions = FeaturePermissionsRepo.Query(p => roleIds.Contains(p.Subject.Id) && p.Feature.Id == featureId).ToList();
+
+                if (rolePermissions.Count() > 0)
                 {
-                    return CheckFeatureAccess(user, feature.Parent);
+                    bool access = false;
+
+                    switch (FeaturePermissionPolicy)
+                    {
+                        case 0:
+                            if (rolePermissions.All(p => p.PermissionType == PermissionType.Allow))
+                            {
+                                access = true;
+                            }
+                            break;
+
+                        case 1:
+                            if (rolePermissions.Any(p => p.PermissionType == PermissionType.Allow))
+                            {
+                                access = true;
+                            }
+                            break;
+
+                        case 2:
+                            int grants = rolePermissions.Where(p => p.PermissionType == PermissionType.Allow).Count();
+                            int denies = rolePermissions.Where(p => p.PermissionType == PermissionType.Deny).Count();
+
+                            if (grants == denies)
+                            {
+                                access = DrawFeaturePermission;
+                            }
+                            else
+                            {
+                                access = grants > denies ? true : false;
+                            }
+                            break;
+
+                        default:
+                            access = false;
+                            break;
+                    }
+
+                    return access;
                 }
                 else
                 {
-                    return DefaultFeaturePermission;
+                    if (FeaturePermissionHierarchy && FeaturesRepo.Query(f => f.Children.Any(g => g.Id == featureId)).Count() == 1)
+                    {
+                        return CheckFeatureAccess(userId, roleIds, FeaturesRepo.Query(f => f.Children.Any(g => g.Id == featureId)).FirstOrDefault().Id);
+                    }
+                    else
+                    {
+                        return DefaultFeaturePermission;
+                    }
                 }
             }
         }
@@ -150,7 +138,7 @@ namespace BExIS.Security.Services.Objects
                 {
                     Feature feature = FeaturesRepo.Query(f => f.Tasks.Any(t => t.AreaName.ToLower() == areaName.ToLower() && t.ControllerName.ToLower() == controllerName.ToLower() && t.ActionName.ToLower() == actionName.ToLower())).FirstOrDefault();
 
-                    return CheckFeatureAccess(user, feature);
+                    return CheckFeatureAccess(user.Id, user.Roles.Select(r => r.Id).ToList(), feature.Id);
                 }
                 else
                 {
@@ -202,7 +190,7 @@ namespace BExIS.Security.Services.Objects
 
                 featurePermissionsRepo.Put(featurePermission);
                 feature.FeaturePermissions.Add(featurePermission);
-                subject.FeaturePermissions.Add(featurePermission);
+                subject.Permissions.Add(featurePermission);
 
                 uow.Commit();
             }
@@ -253,7 +241,7 @@ namespace BExIS.Security.Services.Objects
 
         public bool ExistsFeaturePermission(long featureId, long subjectId)
         {
-            if (GetFeaturePermissionByFeatureAndSubject(featureId, subjectId) != null)
+            if (FeaturePermissionsRepo.Query(p => p.Feature.Id == featureId && p.Subject.Id == subjectId).Count() == 1)
             {
                 return true;
             }
@@ -265,9 +253,11 @@ namespace BExIS.Security.Services.Objects
 
         public FeaturePermission GetFeaturePermissionById(long id)
         {
-            if (FeaturePermissionsRepo.Query(p => p.Id == id).Count() == 1)
+            ICollection<FeaturePermission> featurePermissions = FeaturePermissionsRepo.Query(p => p.Id == id).ToArray();
+
+            if (featurePermissions.Count() == 1)
             {
-                return FeaturePermissionsRepo.Query(p => p.Id == id).FirstOrDefault();
+                return featurePermissions.FirstOrDefault();
             }
             else
             {
@@ -277,9 +267,11 @@ namespace BExIS.Security.Services.Objects
 
         public FeaturePermission GetFeaturePermissionByFeatureAndSubject(long featureId, long subjectId)
         {
-            if (FeaturePermissionsRepo.Query(p => p.Feature.Id == featureId && p.Subject.Id == subjectId).Count() == 1)
+            ICollection<FeaturePermission> subjectPermissions = FeaturePermissionsRepo.Query(p => p.Feature.Id == featureId && p.Subject.Id == subjectId).ToArray();
+
+            if (subjectPermissions.Count() == 1)
             {
-                return FeaturePermissionsRepo.Query(p => p.Feature.Id == featureId && p.Subject.Id == subjectId).FirstOrDefault();
+                return subjectPermissions.FirstOrDefault();
             }
             else
             {

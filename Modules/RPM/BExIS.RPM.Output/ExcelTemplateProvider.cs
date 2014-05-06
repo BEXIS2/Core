@@ -241,6 +241,7 @@ namespace BExIS.RPM.Output
         
             dataStructureFile.WorkbookPart.Workbook.Save();
             XmlDocument resources = new XmlDocument();
+
             resources.LoadXml("<Resources><Resource Type=\"Excel\" Edition=\"2010\" Path=\"" + Path.Combine(path, filename) + "\"></Resource></Resources>");
             dataStructure.TemplatePaths = resources;
             DSM.UpdateStructuredDataStructure(dataStructure);

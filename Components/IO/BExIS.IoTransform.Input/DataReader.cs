@@ -172,8 +172,6 @@ namespace BExIS.Io.Transform.Input
                 VariableIdentifier variableIdentifier = this.SubmitedVariableIdentifiers.ElementAt(i);
                 long id = variableIdentifier.id;
 
-            
-
                 /// <summary>
                 /// if id == 0 this happen when the incoming file is a text oder csv file
                 /// no id for vartiables existing

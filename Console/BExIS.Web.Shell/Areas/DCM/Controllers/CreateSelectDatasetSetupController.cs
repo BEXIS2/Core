@@ -60,7 +60,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         }
 
         [HttpPost]
-        public ActionResult SelectDatasetSetup()
+        public ActionResult SelectDatasetSetup(int? index, string name = null)
         {
 
             TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
@@ -86,8 +86,11 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             if (TaskManager.Current().IsValid())
             {
-                //TaskManager.AddExecutedStep(TaskManager.Current());
-                TaskManager.GoToNext();
+                if (index.HasValue)
+                    TaskManager.SetCurrent(index.Value);
+                else
+                    TaskManager.GoToNext();
+
                 Session["TaskManager"] = TaskManager;
                 ActionInfo actionInfo = TaskManager.Current().GetActionInfo;
                 return RedirectToAction(actionInfo.ActionName, actionInfo.ControllerName, new RouteValueDictionary { { "area", actionInfo.AreaName }, { "index", TaskManager.GetCurrentStepInfoIndex() } });
@@ -125,8 +128,10 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 CreateXml();
 
                 TaskManager.Current().SetStatus(StepStatus.success);
-
-                return PartialView("SelectDatasetSetup", model);
+                TaskManager.GoToNext();
+                ActionInfo actionInfo = TaskManager.Current().GetActionInfo;
+                return RedirectToAction(actionInfo.ActionName, actionInfo.ControllerName, new RouteValueDictionary { { "area", actionInfo.AreaName }, { "index", TaskManager.GetCurrentStepInfoIndex() } });
+         
             }
             else
             {
@@ -266,12 +271,12 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 XDocument metadataXml = xmlMetadatWriter.CreateMetadataXml(Convert.ToInt64(TaskManager.Bus[CreateDatasetTaskmanager.METADATASTRUCTURE_ID]));
 
                 // locat path
-                string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "metadataTemp.Xml");
+                //string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "metadataTemp.Xml");
 
                 TaskManager.AddToBus(CreateDatasetTaskmanager.METADATA_XML, metadataXml);
 
                 //save
-                metadataXml.Save(path);
+                //metadataXml.Save(path);
             }
 
         }

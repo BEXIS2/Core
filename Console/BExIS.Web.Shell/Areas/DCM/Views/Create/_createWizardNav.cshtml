@@ -28,9 +28,14 @@
  
 
             <td id="Nav_Options" >
-                <button id="saveBt"  class="t-button" title="Save" disabled="disabled" style="float:right" >Save</button>
 
-               @Html.ActionLink("Cancel", "CloseUpload","Create", new RouteValueDictionary { { "area", Model.Current().GetActionInfo.AreaName.ToString() } }, new { @class = "t-button",  @style="float:left" })
+                @**If the last step is successfull then stepstatus is exit and other options are available**@
+                @if (!Model.Current().stepStatus.Equals(BExIS.Dcm.Wizard.StepStatus.exit))
+                { 
+                    <button id="saveBt" class="t-button t-state-disabled" title="Save" disabled="disabled" style="float:right" >Save</button>
+
+                    @Html.ActionLink("Cancel", "CloseUpload","Create", new RouteValueDictionary { { "area", Model.Current().GetActionInfo.AreaName.ToString() } }, new { @class = "t-button",  @style="float:left" })
+                }
             </td>
             <td id="Nav_Right">
                  @if (!Model.Next().IsEmpty())
@@ -40,7 +45,15 @@
 
                 @if (Model.Current().Equals(Model.Finish()) && Model.StepInfos.Count>1)
                 { 
-                   @Html.ActionLink("Submit", "Submit","Create", new RouteValueDictionary { { "area", Model.Current().GetActionInfo.AreaName.ToString() } }, new { @class = "t-button",  @style="float:right" , title="Save and submit" })
+                    if (!Model.Current().stepStatus.Equals(BExIS.Dcm.Wizard.StepStatus.exit))
+                    {
+                        <button id="nextBt" class="t-button" style="float:right" title="@Model.Next().title">Submit</button>
+                    }
+                    else
+                    {
+                        @Html.ActionLink("Close", "Close", "Create", new RouteValueDictionary { { "area", Model.Current().GetActionInfo.AreaName.ToString() } }, new { @class = "t-button", @style = "float:left", title = "Close Create a dataset wizard" })
+                    }
+
                 }
 
             </td>
@@ -60,7 +73,7 @@
 
         if (index < 0) index = 0;
 
-        $.get('@Url.Action(@Model.Prev().GetActionInfo.ActionName, @Model.Prev().GetActionInfo.ControllerName, new RouteValueDictionary { { "area", @Model.Prev().GetActionInfo.AreaName  } })', { index: index }, function (response) {
+        $.get('@Url.Action(@Model.Prev().GetActionInfo.ActionName, @Model.Prev().GetActionInfo.ControllerName, new RouteValueDictionary { { "area", @Model.Prev().GetActionInfo.AreaName } })', { index: index }, function (response) {
             $("#StepView").html(response);
             NavigationRefresh();
             TaskListRefresh();
@@ -78,7 +91,7 @@
             contentType: 'application/json; charset=utf-8', 
             data: JSON.stringify(Parameters),
             dataType: 'html', 
-            url: '@Url.Action(@Model.Current().PostActionInfo.ActionName, @Model.Current().PostActionInfo.ControllerName, new RouteValueDictionary { { "area", @Model.Current().PostActionInfo.AreaName }})',
+            url: '@Url.Action(@Model.Current().PostActionInfo.ActionName, @Model.Current().PostActionInfo.ControllerName, new RouteValueDictionary { { "area", @Model.Current().PostActionInfo.AreaName } })',
                 success: function(result) { 
                     $('#StepView').html(result);
                     NavigationRefresh();
@@ -93,7 +106,7 @@
         $('#preloader').show();
  
 
-        $.get('@Url.Action("Save", @Model.Prev().GetActionInfo.ControllerName, new RouteValueDictionary { { "area", @Model.Current().GetActionInfo.AreaName  } })', function (response) {
+        $.get('@Url.Action("Save", @Model.Prev().GetActionInfo.ControllerName, new RouteValueDictionary { { "area", @Model.Current().GetActionInfo.AreaName } })', function (response) {
             $("#StepView").html(response);
             NavigationRefresh();
             TaskListRefresh();

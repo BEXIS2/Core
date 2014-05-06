@@ -3,6 +3,7 @@
 @using BExIS.Dlm.Services.DataStructure
 @using System
 @using System.Text.RegularExpressions
+@model List<BExIS.Dlm.Entities.DataStructure.DataAttribute>
 
 @{
     string rgxPattern = "[ ]";
@@ -12,51 +13,53 @@
     DataAttribute dataAttribute = (DataAttribute)Session["DataAttribute"];
     string windowName = "Add";
 
-    if (dataAttribute.Name != null && dataAttribute.Name != "")
-    {
-        windowName = rgx.Replace(dataAttribute.Name, rgxReplace);
-    }
-    else
-    {
-        windowName = "Add";
-    }
-
-    DataContainerManager DAM = new DataContainerManager();
-    List<DataAttribute> model = DAM.DataAttributeRepo.Get().ToList();
+  
+        if (dataAttribute != null)
+        {
+            if (dataAttribute.Name != null && dataAttribute.Name != "")
+            {
+                windowName = rgx.Replace(dataAttribute.Name, rgxReplace);
+            }
+        }
+        else
+        {
+            windowName = "Add";
+            dataAttribute = new DataAttribute();
+        }
 }
 
-<!DOCTYPE html>
+@{
+    ViewBag.Title = "Data Attribute Manager";
+}
+    <div>
+        <h2>Data Attribute Manager</h2>
+        
+        <p>With this interface you are able to manage (e.g. create, edit, delete) data attributes which may be used as variables in data structures (a variable is an instance of an attribute). Data attributes cannot be edited or deleted once they are associated with a data structure (they become locked).</p>
 
-<html>
-<head>
-    <title>UnitManager</title>
-</head>
-@*<header>*@
-     
-@*</header> *@
-<body>
+    </div>
+
 
     @Html.ActionLink("Add DataAttribute", "openAttributeWindow", "Home", new { id = 0 }, new { @class = "t-button t-add" })
     <br />
     <br />
-    @(Html.Telerik().Grid(model)    
+    @(Html.Telerik().Grid(Model)    
             .Name("Attribute")
             .Sortable()            
             .Columns(columns =>
                 {
                     columns.Template(
                         @<text>
+                            <div class="t-button t-button-icontext t-button-bare">
                             @if(!(item.UsagesAsVariable.Count > 0))
                             {
-                            <div class="t-button t-button-icontext t-button-bare">
                             @Html.ActionLink("Edit", "openAttributeWindow", "Home", new { id = item.Id }, new { @class = "t-icon t-edit" })
                             @Html.ActionLink("Delete", "deletAttribute", "Home", new { id = item.Id }, new { @class = "t-icon t-delete" })
-                            </div>
                             }
                             else
                             {
-                                <div class="t-button t-button-icontext t-button-bare">locked</div>
+                                <font color="grey">locked</font>
                             }
+                            </div>
                         </text>
                     ).Title("Functions")
                         .Width(50)
@@ -66,6 +69,7 @@
                         );
                     columns.Bound(c => c.Name);
                     columns.Bound(c => c.Id);
+                    columns.Bound(c => c.ShortName);
                     columns.Bound(c => c.Description);
                     columns.Bound(c => c.Unit.Name)
                         .Title("Unit");
@@ -82,6 +86,7 @@
     <div style="position:absolute; left:20%; top:60px;">
                     @{ Html.Telerik().Window()
                             .Name(windowName)
+                            .Modal(true)
                             .Visible((bool)Session["Window"])
                             .Draggable(true)
                             .Modal(true)
@@ -94,6 +99,3 @@
                     }
                     @{Session["Window"] = false;}
     </div>
-
-</body>
-</html>

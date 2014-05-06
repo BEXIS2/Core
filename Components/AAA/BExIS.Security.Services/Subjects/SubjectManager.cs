@@ -103,7 +103,6 @@ namespace BExIS.Security.Services.Subjects
                     {
                         IRepository<Role> repo = uow.GetRepository<Role>();
 
-                        role = repo.Reload(role);
                         repo.LoadIfNot(role.Users);
                         if (!role.Users.Contains(user))
                         {
@@ -149,7 +148,6 @@ namespace BExIS.Security.Services.Subjects
                     {
                         IRepository<Role> rolesRepo = uow.GetRepository<Role>();
 
-                        role = rolesRepo.Reload(role);
                         rolesRepo.LoadIfNot(role.Users);
                         if (!role.Users.Contains(user))
                         {
@@ -427,8 +425,7 @@ namespace BExIS.Security.Services.Subjects
                 {
                     IRepository<Role> rolesRepo = uow.GetRepository<Role>();
 
-                    role = rolesRepo.Reload(role);
-
+                    rolesRepo.LoadIfNot(role.Users);
                     role.Users.Clear();
 
                     rolesRepo.Delete(role);
@@ -451,8 +448,7 @@ namespace BExIS.Security.Services.Subjects
                 {
                     IRepository<Role> rolesRepo = uow.GetRepository<Role>();
 
-                    role = rolesRepo.Reload(role);
-
+                    rolesRepo.LoadIfNot(role.Users);
                     role.Users.Clear();
 
                     rolesRepo.Delete(role);
@@ -480,9 +476,6 @@ namespace BExIS.Security.Services.Subjects
                         IRepository<Role> rolesRepo = uow.GetRepository<Role>();
                         IRepository<User> usersRepo = uow.GetRepository<User>();
                         IRepository<SecurityUser> securityUsersRepo = uow.GetRepository<SecurityUser>();
-
-                        user = usersRepo.Reload(user);
-                        securityUser = securityUsersRepo.Reload(securityUser);
 
                         foreach (Role role in user.Roles)
                         {
@@ -518,9 +511,6 @@ namespace BExIS.Security.Services.Subjects
                         IRepository<Role> rolesRepo = uow.GetRepository<Role>();
                         IRepository<User> usersRepo = uow.GetRepository<User>();
                         IRepository<SecurityUser> securityUsersRepo = uow.GetRepository<SecurityUser>();
-
-                        user = usersRepo.Reload(user);
-                        securityUser = securityUsersRepo.Reload(securityUser);
 
                         foreach (Role role in user.Roles)
                         {
@@ -570,7 +560,7 @@ namespace BExIS.Security.Services.Subjects
 
         public bool ExistsRoleId(long id)
         {
-            if (GetRoleById(id) != null)
+            if (RolesRepo.Query(r => r.Id == id).Count() == 1)
             {
                 return true;
             }
@@ -582,7 +572,7 @@ namespace BExIS.Security.Services.Subjects
 
         public bool ExistsRoleName(string roleName)
         {
-            if (GetRoleByName(roleName) != null)
+            if (RolesRepo.Query(r => r.Name == roleName).Count() == 1)
             {
                 return true;
             }
@@ -594,7 +584,7 @@ namespace BExIS.Security.Services.Subjects
 
         public bool ExistsUserId(long id)
         {
-            if (GetUserById(id) != null)
+            if (UsersRepo.Query(u => u.Id == id).Count() == 1)
             {
                 return true;
             }
@@ -606,7 +596,7 @@ namespace BExIS.Security.Services.Subjects
 
         public bool ExistsUserName(string userName)
         {
-            if (GetUserByName(userName) != null)
+            if (UsersRepo.Query(u => u.Name == userName).Count() == 1)
             {
                 return true;
             }
@@ -696,9 +686,11 @@ namespace BExIS.Security.Services.Subjects
         /// <returns></returns>
         public Role GetRoleById(long id)
         {
-            if (RolesRepo.Query(r => r.Id == id).Count() == 1)
+            ICollection<Role> roles = RolesRepo.Query(r => r.Id == id).ToArray();
+
+            if (roles.Count() == 1)
             {
-                return RolesRepo.Query(r => r.Id == id).FirstOrDefault();
+                return roles.FirstOrDefault();
             }
             else
             {
@@ -715,9 +707,11 @@ namespace BExIS.Security.Services.Subjects
         {
             Contract.Requires(!String.IsNullOrWhiteSpace(roleName));
 
-            if (RolesRepo.Query(r => r.Name.ToLower() == roleName.ToLower()).Count() == 1)
+            ICollection<Role> roles = RolesRepo.Query(r => r.Name == roleName).ToArray();
+
+            if (roles.Count() == 1)
             {
-                return RolesRepo.Query(r => r.Name.ToLower() == roleName.ToLower()).FirstOrDefault();
+                return roles.FirstOrDefault();
             }
             else
             {
@@ -732,9 +726,11 @@ namespace BExIS.Security.Services.Subjects
         /// <returns></returns>
         public string GetRoleNameById(long id)
         {
-            if (RolesRepo.Query(r => r.Id == id).Count() == 1)
+            ICollection<Role> roles = RolesRepo.Query(r => r.Id == id).ToArray();
+
+            if (roles.Count() == 1)
             {
-                return RolesRepo.Query(r => r.Id == id).FirstOrDefault().Name;
+                return roles.FirstOrDefault().Name;
             }
             else
             {
@@ -758,9 +754,11 @@ namespace BExIS.Security.Services.Subjects
         {
             Contract.Requires(!String.IsNullOrWhiteSpace(userName));
 
-            if (SecurityUsersRepo.Query(u => u.Name.ToLower() == userName.ToLower()).Count() == 1)
+            ICollection<SecurityUser> securityUsers = SecurityUsersRepo.Query(s => s.Name == userName).ToArray();
+
+            if (securityUsers.Count() == 1)
             {
-                return SecurityUsersRepo.Query(u => u.Name.ToLower() == userName.ToLower()).FirstOrDefault();
+                return securityUsers.FirstOrDefault();
             }
             else
             {
@@ -777,9 +775,11 @@ namespace BExIS.Security.Services.Subjects
         {
             Contract.Requires(!String.IsNullOrWhiteSpace(email));
 
-            if (UsersRepo.Query(u => u.Email.ToLower() == email.ToLower()).Count() == 1)
+            ICollection<User> users = UsersRepo.Query(u => u.Email == email).ToArray();
+
+            if (users.Count() == 1)
             {
-                return UsersRepo.Query(u => u.Email.ToLower() == email.ToLower()).FirstOrDefault();
+                return users.FirstOrDefault();
             }
             else
             {
@@ -789,9 +789,11 @@ namespace BExIS.Security.Services.Subjects
 
         public User GetUserById(long id, bool isOnline = false)
         {
-            if (UsersRepo.Query(u => u.Id == id).Count() == 1)
+            ICollection<User> users = UsersRepo.Query(u => u.Id == id).ToArray();
+
+            if (users.Count() == 1)
             {
-                User user = UsersRepo.Query(u => u.Id == id).FirstOrDefault();
+                User user = users.FirstOrDefault();
 
                 if (user != null && isOnline)
                 {
@@ -815,9 +817,11 @@ namespace BExIS.Security.Services.Subjects
 
         public User GetUserByName(string userName, bool isOnline = false)
         {
-            if (UsersRepo.Query(u => u.Name.ToLower() == userName.ToLower()).Count() == 1)
+            ICollection<User> users = UsersRepo.Query(u => u.Name == userName).ToArray();
+
+            if (users.Count() == 1)
             {
-                User user = UsersRepo.Query(u => u.Name.ToLower() == userName.ToLower()).FirstOrDefault();
+                User user = users.FirstOrDefault();
 
                 if (user != null && isOnline)
                 {
@@ -841,9 +845,11 @@ namespace BExIS.Security.Services.Subjects
 
         public string GetUserNameByEmail(string email)
         {
-            if (UsersRepo.Query(u => u.Email.ToLower() == email.ToLower()).Count() == 1)
+            ICollection<User> users = UsersRepo.Query(u => u.Email == email).ToArray();
+
+            if (users.Count() == 1)
             {
-                return UsersRepo.Query(u => u.Email.ToLower() == email.ToLower()).FirstOrDefault().Name;
+                return users.FirstOrDefault().Name;
             }
             else
             {
@@ -860,9 +866,11 @@ namespace BExIS.Security.Services.Subjects
         {
             Contract.Requires(id > 0);
 
-            if (UsersRepo.Query(u => u.Id == id).Count() == 1)
+            ICollection<User> users = UsersRepo.Query(u => u.Id == id).ToArray();
+
+            if (users.Count() == 1)
             {
-                return UsersRepo.Query(u => u.Id == id).FirstOrDefault().Name;
+                return users.FirstOrDefault().Name;
             }
             else
             {
@@ -957,7 +965,6 @@ namespace BExIS.Security.Services.Subjects
                     {
                         IRepository<Role> repo = uow.GetRepository<Role>();
 
-                        role = repo.Reload(role);
                         repo.LoadIfNot(role.Users);
                         if (role.Users.Contains(user))
                         {
@@ -1003,7 +1010,6 @@ namespace BExIS.Security.Services.Subjects
                     {
                         IRepository<Role> repo = uow.GetRepository<Role>();
 
-                        role = repo.Reload(role);
                         repo.LoadIfNot(role.Users);
                         if (role.Users.Contains(user))
                         {
@@ -1107,7 +1113,7 @@ namespace BExIS.Security.Services.Subjects
 
         private void UpdateFailureCount(User user, FailureType failureType)
         {
-            user = UsersRepo.Reload(user);
+            user = UsersRepo.Refresh(user.Id);
             SecurityUser securityUser = GetSecurityUserByName(user.Name);
 
             if (user != null && securityUser != null)

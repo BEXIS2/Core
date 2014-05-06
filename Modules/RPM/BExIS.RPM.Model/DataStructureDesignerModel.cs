@@ -10,6 +10,10 @@ namespace BExIS.RPM.Model
     public class DataStructureDesignerModel
     {   
         public StructuredDataStructure dataStructure { get; set; }
+        public IList<DataType> dataStructureDataTypeList { get; set; }
+        public int numberOfVariables { get; set; }
+
+        public IList<StructuredDataStructure> dataStructureList { get; set; }
         public DataTable DataStructureTable { get; set; }
         public IList<DataAttribute> dataAttributeList { get; set; }
         
@@ -17,13 +21,8 @@ namespace BExIS.RPM.Model
         public DataStructureDesignerModel()
         {
             this.dataStructure = new StructuredDataStructure();
+            this.numberOfVariables = 0;
             this.DataStructureTable = new DataTable();
-        }
-
-        public IList<StructuredDataStructure> GetDataStructureList()
-        {
-            DataStructureManager dataStructureManager = new DataStructureManager();
-            return (dataStructureManager.StructuredDataStructureRepo.Get());
         }
 
         public bool GetDataStructureByID(long ID)
@@ -42,18 +41,6 @@ namespace BExIS.RPM.Model
                 return (false);
             }
 
-            //IList<StructuredDataStructure> DataStructureList = GetDataStructureList();
-            //if (DataStructureList.Where(p => p.Id.Equals(ID)).Count() > 0)
-            //{
-            //    this.dataStructure = DataStructureList.Where(p => p.Id.Equals(ID)).First();
-            //    this.BuildDataTable();
-            //    return (true);
-            //}
-            //else
-            //{
-            //    this.dataStructure = new StructuredDataStructure();
-            //    return (false);
-            //}
         }
 
         public bool GetDataStructureByID(string ID)
@@ -131,28 +118,28 @@ namespace BExIS.RPM.Model
 
 
 
-                var Classifications = from p in this.dataStructure.Variables
-                                      select p.DataAttribute.Classification;
+                //var Classifications = from p in this.dataStructure.Variables
+                //                      select p.DataAttribute.Classification;
 
-                row = new List<string>();
+                //row = new List<string>();
 
-                foreach(Classifier p in Classifications)
-                {
-                    if (p == null)
-                    {
-                        row.Add("");
-                    }
-                    else
-                    {
-                        row.Add(p.Name);
-                    }
-                }
-                row.Insert(0, "Classification");
+                //foreach(Classifier p in Classifications)
+                //{
+                //    if (p == null)
+                //    {
+                //        row.Add("");
+                //    }
+                //    else
+                //    {
+                //        row.Add(p.Name);
+                //    }
+                //}
+                //row.Insert(0, "Classification");
 
-                Row = this.DataStructureTable.NewRow();    
-                Row.ItemArray = row.ToArray();
+                //Row = this.DataStructureTable.NewRow();    
+                //Row.ItemArray = row.ToArray();
 
-                this.DataStructureTable.Rows.Add(Row);
+                //this.DataStructureTable.Rows.Add(Row);
 
                 var Units = from p in this.dataStructure.Variables
                             select p.DataAttribute.Unit;

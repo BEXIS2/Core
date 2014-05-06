@@ -30,6 +30,12 @@ namespace BExIS.Dlm.Entities.MetadataStructure
 
         #region Mathods
 
+        public MetadataStructure()
+        {
+            Children = new List<MetadataStructure>();
+            MetadataPackageUsages = new List<MetadataPackageUsage>();
+            Datasets = new List<Dataset>();
+        }
         #endregion
 
     }

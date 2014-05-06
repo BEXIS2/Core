@@ -13,6 +13,7 @@
     </property>-->
     <property name="show_sql">True</property>
     <property name="format_sql">True</property>
+    <property name="generate_statistics">true</property>
   </session-factory>
   
 </hibernate-configuration>

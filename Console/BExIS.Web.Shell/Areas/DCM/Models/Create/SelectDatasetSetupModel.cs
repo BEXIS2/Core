@@ -11,15 +11,15 @@ namespace BExIS.Web.Shell.Areas.DCM.Models.Create
     public class SelectDatasetSetupModel
     {
         [Display(Name = "Data Structure")]
-        [Required(ErrorMessage = "Please enter a data structure.")]
+        [Required(ErrorMessage = "Please select a data structure.")]
         public long SelectedDatastructureId { get; set; }
 
         [Display(Name = "Research Plan")]
-        [Required(ErrorMessage = "Please enter a research plan.")]
+        [Required(ErrorMessage = "Please select a research plan.")]
         public long SelectedResearchPlanId { get; set; }
 
         [Display(Name = "Metadata Structure")]
-        [Required(ErrorMessage = "Please enter a metadata structure.")]
+        [Required(ErrorMessage = "Please select a metadata structure.")]
         public long SelectedMetadatStructureId { get; set; }
 
         public StepInfo StepInfo { get; set; }

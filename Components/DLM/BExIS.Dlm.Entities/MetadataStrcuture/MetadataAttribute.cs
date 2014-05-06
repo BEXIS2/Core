@@ -20,6 +20,11 @@ namespace BExIS.Dlm.Entities.MetadataStructure
 
         #region Mathods
 
+        public MetadataAttribute()
+        {
+            UsedIn = new List<MetadataAttributeUsage>();
+        }
+
         #endregion
 
     }

@@ -26,7 +26,7 @@
                  ( @currentPage  of   @Model.StepInfos.Count )
             </td>
             <td id="Nav_Options">
-               @Html.ActionLink("Cancel", "CloseUpload", Model.Current().PostActionInfo.ControllerName, new RouteValueDictionary { { "area", Model.Current().GetActionInfo.AreaName.ToString() } }, new { @class = "t-button",  @style="float:right" })
+               @Html.ActionLink("Cancel", "CloseUpload", "Submit", new RouteValueDictionary { { "area", Model.Current().GetActionInfo.AreaName.ToString() } }, new { @class = "t-button",  @style="float:right" })
             </td>
             <td id="Nav_Right">
                  @if (!Model.Next().IsEmpty())

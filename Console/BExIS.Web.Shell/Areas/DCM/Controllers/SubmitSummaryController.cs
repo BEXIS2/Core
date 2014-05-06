@@ -143,32 +143,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 {
                     model.ResearchPlanTitle = TaskManager.Bus[TaskManager.RESEARCHPLAN_TITLE].ToString();
                 }
-                /*
-                if (TaskManager.Bus.ContainsKey(TaskManager.TITLE))
-                {
-                    model.DatasetTitle = TaskManager.Bus[TaskManager.TITLE].ToString();
-                }
 
-
-                if (TaskManager.Bus.ContainsKey(TaskManager.AUTHOR))
-                {
-                    model.Author = TaskManager.Bus[TaskManager.AUTHOR].ToString();
-                }
-
-                if (TaskManager.Bus.ContainsKey(TaskManager.OWNER))
-                {
-                    model.Owner = TaskManager.Bus[TaskManager.OWNER].ToString();
-                }
-
-                if (TaskManager.Bus.ContainsKey(TaskManager.PROJECTNAME))
-                {
-                    model.ProjectName = TaskManager.Bus[TaskManager.PROJECTNAME].ToString();
-                }
-
-                if (TaskManager.Bus.ContainsKey(TaskManager.INSTITUTE))
-                {
-                    model.ProjectInstitute = TaskManager.Bus[TaskManager.INSTITUTE].ToString();
-                }*/
                 #endregion
                 //ToDo: remove all changed from dataset and version
                 return PartialView(model);
@@ -195,6 +170,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(iddsd);
                 dsm.StructuredDataStructureRepo.LoadIfNot(sds.Variables);
 
+                //datatuple list
                 List<DataTuple> rows;
 
                 DatasetManager dm = new DatasetManager();
@@ -231,7 +207,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                                     if (TaskManager.Bus[TaskManager.DATASET_STATUS].ToString().Equals("new"))
                                     {
                                         dm.EditDatasetVersion(workingCopy, rows, null, null);
-                                        //dm.CheckInDataset(ds.Id, "upload data from upload wizard", "David");
                                     }
 
                                     if (TaskManager.Bus[TaskManager.DATASET_STATUS].ToString().Equals("edit"))
@@ -278,6 +253,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                             workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
                             int packageSize = 100;
                             //schleife
+
                             do
                             {
                                 Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
@@ -325,6 +301,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                                     Debug.WriteLine(" db time" + dbTimer.Elapsed.TotalSeconds.ToString());
 
                                 }
+
                             } while (rows.Count > 0);
 
 
@@ -347,20 +324,21 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     if (workingCopy != null)
                     {
                         path = GenerateDownloadFile(workingCopy);
-                        dm.EditDatasetVersion(workingCopy, null, null, null);
+
+                        dm.EditDatasetVersion(workingCopy, null , null, null);
                     }
 
                     // ToDo: Get Comment from ui and users
                     dm.CheckInDataset(ds.Id, "upload data from upload wizard", GetUserNameOrDefault());
 
-                    // open the excelfile and add datatuples
+                    // open the excel file and add data tuples
                     AddDatatuplesToFile(ds.Id, sds.Id, path);
                 }
-                catch
+                catch(Exception e)
                 {
 
-                    temp.Add(new Error(ErrorType.Other, "Can not upload."));
-                    dm.CheckInDataset(ds.Id, "checked in but no update on datatuples", GetUserNameOrDefault());
+                    temp.Add(new Error(ErrorType.Other, "Can not upload. : "+e.Message));
+                    dm.CheckInDataset(ds.Id, "checked in but no update on data tuples", GetUserNameOrDefault());
                 }
             }
             else
@@ -474,16 +452,18 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         private void AddDatatuplesToFile(long datasetId, long dataStructureId, string path)
         {
-            List<DataTuple> tempDataTuples = GetDataTuples(datasetId);
+            List<long> tempDataTuplesIds = GetDataTuples(datasetId);
+
             ExcelWriter excelWriter = new ExcelWriter();
-            excelWriter.AddDataTuplesToTemplate(tempDataTuples, path, dataStructureId);
+            excelWriter.AddDataTuplesToTemplate(tempDataTuplesIds, path, dataStructureId);
         }
 
-        private List<DataTuple> GetDataTuples(long datasetId)
+        private List<long> GetDataTuples(long datasetId)
         {
             DatasetManager datasetManager = new DatasetManager();
             DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
-            return datasetManager.GetDatasetVersionEffectiveTuples(datasetVersion);
+  
+            return datasetManager.GetDatasetVersionEffectiveTupleIds(datasetVersion);
         }
 
 

@@ -22,20 +22,28 @@
 						item.Add().Text("Unit Manager").Action("UnitManager", "Home", new { area = "RPM" });
 					}
 					);
-				menu.Add().Text("Collect").Action("Index", "Submit", new { area = "DCM" })
+				menu.Add().Text("Collect")
 					.Items(item =>
 					{
-						item.Add().Text("Create a dataset").Action("CreateDataset", "Create", new { area = "DCM" });
+                        item.Add().Text("Create a dataset").Action("CreateDataset", "Create", new { area = "DCM" });
+                        item.Add().Text("Upload data to a dataset").Action("Index", "Submit", new { area = "DCM" });
 					}
 					);
 				menu.Add().Text("Administration")
 					.Items(item =>
 					{
-						item.Add().Text("Roles Manager").Action("Roles", "Roles", new { area = "Auth" });
-						item.Add().Text("Users Manager").Action("Users", "Users", new { area = "Auth" });
-						item.Add().Text("Search Manager").Action("SearchDesigner", "Home", new { area = "DDM" });
-                        item.Add().Text("Refresh Search").Action("ReIndexSearch", "Home", new { area = "DDM" });
-                        item.Add().Text("Collect Manager").Action("Index", "DcmAdmin", new { area = "DCM" });
+                        item.Add().Text("Authorization").Items(subitem =>
+                        {
+                            subitem.Add().Text("Roles Manager").Action("Roles", "Roles", new { area = "Auth" });
+                            subitem.Add().Text("Users Manager").Action("Users", "Users", new { area = "Auth" });
+                            subitem.Add().Text("Features Manager").Action("Features", "Features", new { area = "Auth" });
+
+                        });
+                        item.Add().Text("Data Discovery").Items(subitem =>
+                        {
+                            subitem.Add().Text("Search Manager").Action("SearchDesigner", "Admin", new { area = "DDM" });
+                            subitem.Add().Text("Refresh Search").Action("ReIndexSearch", "Admin", new { area = "DDM" });
+                        });
 						
 					}
 				);
@@ -92,28 +100,31 @@
 )
 
 <script language="javascript" type="text/javascript">
-	function onSelect(e) {
-		var placeholder = $(e.item).attr('contentplaceholder');
+    function onSelect(e) {
 
-		if (placeholder.length > 0) {
-			var url = $(e.item).find("> a").attr('href');
-			if (url) {
-				//prevent the navigation if the item url is specified
-				// and make the request with jQuery
-				e.preventDefault();
-				$.ajax({
-					url: url,
-					success: function (result) {
-						var inseretType = $(e.item).attr('inserttype');
-						if (inseretType == "Before")
-							$("#" + placeholder).prepend(result);
-						else if (inseretType == "After")
-							$("#" + placeholder).append(result);
-						else if (inseretType == "Replace")
-							$("#" + placeholder).html(result);
-					}
-				})
-			}
+		var placeholder = $(e.item).attr('contentplaceholder');
+		//alert(placeholder);
+		if (placeholder != null) {
+		    if (placeholder.length > 0) {
+		        var url = $(e.item).find("> a").attr('href');
+		        if (url) {
+		            //prevent the navigation if the item url is specified
+		            // and make the request with jQuery
+		            e.preventDefault();
+		            $.ajax({
+		                url: url,
+		                success: function (result) {
+		                    var inseretType = $(e.item).attr('inserttype');
+		                    if (inseretType == "Before")
+		                        $("#" + placeholder).prepend(result);
+		                    else if (inseretType == "After")
+		                        $("#" + placeholder).append(result);
+		                    else if (inseretType == "Replace")
+		                        $("#" + placeholder).html(result);
+		                }
+		            })
+		        }
+		    }
 		}
 	}
 </script>

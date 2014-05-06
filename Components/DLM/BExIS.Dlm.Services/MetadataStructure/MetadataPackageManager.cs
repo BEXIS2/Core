@@ -24,7 +24,7 @@ namespace BExIS.Dlm.Services.MetadataStructure
 
         #endregion
 
-        #region MetadataAttribute
+        #region MetadataPackage
 
         public MetadataPackage Create(string name, string description, bool isEnabled = false)
         {

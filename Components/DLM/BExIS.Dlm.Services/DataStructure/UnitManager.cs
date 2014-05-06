@@ -283,6 +283,33 @@ namespace BExIS.Dlm.Services.DataStructure
             return (result);
         }
 
+        public bool AddAssociatedDataType(Unit end1, IEnumerable<DataType> end2)
+        {
+            Contract.Requires(end1 != null && end1.Id >= 0);
+            Contract.Requires(Contract.ForAll(end2, (DataType e) => e != null));
+            Contract.Requires(Contract.ForAll(end2, (DataType e) => e.Id >= 0));
+
+            bool result = false;
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<Unit> repo = uow.GetRepository<Unit>();
+
+                end1 = repo.Reload(end1);
+                repo.LoadIfNot(end1.AssociatedDataTypes);
+                foreach (var e2 in end2)
+                {
+                    if (!end1.AssociatedDataTypes.Contains(e2))
+                    {
+                        end1.AssociatedDataTypes.Add(e2);
+                        e2.ApplicableUnits.Add(end1);
+                    }
+                }
+                uow.Commit();
+                result = true;
+            }
+            return (result);
+        }
+
         public bool RemoveAssociatedDataType(Unit end1, DataType end2)
         {
             Contract.Requires(end1 != null && end1.Id >= 0);
@@ -311,6 +338,36 @@ namespace BExIS.Dlm.Services.DataStructure
             return (result);
         }
 
+        public bool RemoveAssociatedDataType(Unit end1, IEnumerable<DataType> end2)
+        {
+            Contract.Requires(end1 != null && end1.Id >= 0);
+            Contract.Requires(Contract.ForAll(end2, (DataType e) => e != null));
+            Contract.Requires(Contract.ForAll(end2, (DataType e) => e.Id >= 0));
+
+            bool result = false;
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<Unit> repo = uow.GetRepository<Unit>();
+                IRepository<DataType> dtRepo = uow.GetRepository<DataType>();
+
+                //end1 = repo.Reload(end1);
+                repo.LoadIfNot(end1.AssociatedDataTypes);
+
+                foreach (var e2 in end2)
+                {
+                    //var e2Loaded = dtRepo.Reload(e2);
+                    //dtRepo.LoadIfNot(e2Loaded.ApplicableUnits);
+                    if (end1.AssociatedDataTypes.Contains(e2) || e2.ApplicableUnits.Contains(end1))
+                    {
+                        end1.AssociatedDataTypes.Remove(e2);
+                        e2.ApplicableUnits.Remove(end1);
+                    }
+                }
+                uow.Commit();
+                result = true;
+            }
+            return (result);
+        }
         #endregion
 
     }

@@ -41,9 +41,9 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
     public class AccountRegistrationModel
     {
         [Display(Name = "User name")]
-        [RegularExpression("^([A-Za-z]+)$", ErrorMessage = "The user name must consist only of letters.")]
+        [RegularExpression("^[^\\s]+(\\s+[^\\s]+)*", ErrorMessage = "The user name must start and end with no space.")]
         [Remote("ValidateUserName", "Account")]
-        [Required]
+        [Required(AllowEmptyStrings = false)]
         [StringLength(50, ErrorMessage = "The user name must be {2} - {1} characters long.", MinimumLength = 3)]
         public string UserName { get; set; }
 
@@ -70,14 +70,9 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
         public string SecurityQuestion { get; set; }
 
         [Display(Name = "Security Answer")]
-        [RegularExpression("^([-_a-zA-Z0-9]+)$", ErrorMessage = "The security answer must consist only of letters, numbers and special characters ('-', '_').")]
+        [RegularExpression("^[^\\s]+(\\s+[^\\s]+)*", ErrorMessage = "The security answer must start and end with no space.")]
         [Required]
         [StringLength(50, ErrorMessage = "The security answer must be less than {1} characters long.")]
         public string SecurityAnswer { get; set; }
-
-        [Display(Name = "Confirm Security Answer")]
-        [Compare("SecurityAnswer", ErrorMessage = "The security answer and confirmation do not match.")]
-        [Required]
-        public string ConfirmSecuritydAnswer { get; set; }
     }
 }

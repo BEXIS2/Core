@@ -48,15 +48,8 @@
         @Html.LabelFor(m => m.SecurityAnswer)
     </div>
     <div class="editor-field">
-        @Html.PasswordFor(m => m.SecurityAnswer)
+        @Html.TextBoxFor(m => m.SecurityAnswer)
         @Html.ValidationMessageFor(m => m.SecurityAnswer)
-    </div>
-    <div class="editor-label" style="font-weight:bold">
-        @Html.LabelFor(m => m.ConfirmSecuritydAnswer)
-    </div>
-    <div class="editor-field">
-        @Html.PasswordFor(m => m.ConfirmSecuritydAnswer)
-        @Html.ValidationMessageFor(m => m.ConfirmSecuritydAnswer)
     </div>
     
     <p>

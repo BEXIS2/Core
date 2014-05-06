@@ -48,7 +48,6 @@ namespace BExIS.Security.Services.Objects
                     {
                         IRepository<Feature> featuresRepo = uow.GetRepository<Feature>();
 
-                        feature = featuresRepo.Reload(feature);
                         featuresRepo.LoadIfNot(feature.Tasks);
                         if (!feature.Tasks.Contains(task))
                         {
@@ -324,8 +323,6 @@ namespace BExIS.Security.Services.Objects
                 using (IUnitOfWork uow = this.GetUnitOfWork())
                 {
                     IRepository<Task> tasksRepo = uow.GetRepository<Task>();
-
-                    task = tasksRepo.Reload(task);
 
                     if (task.Feature != null)
                     {

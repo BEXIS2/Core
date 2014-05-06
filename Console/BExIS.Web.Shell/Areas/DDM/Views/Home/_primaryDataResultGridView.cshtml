@@ -104,7 +104,7 @@
 <br />
 @if (downdloadPath != "" && File.Exists(Path.Combine(Vaiona.Util.Cfg.AppConfiguration.DataPath, downdloadPath)))
 { 
-	@Html.ActionLink("Download", "DownloadPrimaryData", "Home", new { path = @downdloadPath }, new { area = "RPM", @class = "t-button" });
+	@Html.ActionLink("Download", "DownloadPrimaryData", "Home", new { path = @downdloadPath }, new { area = "RPM", @class = "t-button searchDownloadButton" });
 }
 
 <style type="text/css">
@@ -112,7 +112,13 @@
     .primaryDataResultGrid
     {
         position:absolute;
-        margin-top:10px;
+        top:50px;
+    }
+
+    .searchDownloadButton
+    {
+        position:absolute;
+        top:15px;
     }
 
 

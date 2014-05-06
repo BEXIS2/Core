@@ -20,17 +20,17 @@
                 {
                     case StepStatus.success:
                         {
-                            <div class="t-link t-icon t-insert" ></div>
+                            <div class="t-icon t-insert" ></div>
                             break;
                         }
                     case StepStatus.inProgress:
                         {
-                            <div class="t-link t-icon t-arrow-prev" ></div>
+                            <div class="t-icon t-arrow-prev" ></div>
                             break;
                         }
                     case StepStatus.error:
                         {
-                            <div class="t-link t-icon t-delete" ></div>
+                            <div class="t-icon t-cancel" ></div>
                             break;
                         }
                     default:
@@ -51,7 +51,7 @@
 
 function TaskListRefresh()
 {
-        $.post('@Url.Action("RefreshTaskList", "Home", new RouteValueDictionary { { "area", "DCM" } })', function (response) {
+        $.post('@Url.Action("RefreshTaskList", "Submit", new RouteValueDictionary { { "area", "DCM" } })', function (response) {
             $("#UploadWizard_TaskListDiv").html(response);
         })
 }

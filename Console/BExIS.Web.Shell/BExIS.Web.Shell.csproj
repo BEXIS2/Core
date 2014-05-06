@@ -231,7 +231,7 @@
     <Compile Include="Areas\DCM\Models\ChooseDatasetViewModel.cs" />
     <Compile Include="Areas\DCM\Models\CreateDatasetViewModel.cs" />
     <Compile Include="Areas\DCM\Models\Create\SelectDatasetSetupModel.cs" />
-    <Compile Include="Areas\DCM\Models\Create\SummaryModel.cs" />
+    <Compile Include="Areas\DCM\Models\Create\CreateSummaryModel.cs" />
     <Compile Include="Areas\DCM\Models\FileInfoModel.cs" />
     <Compile Include="Areas\DCM\Models\FinishUploadModel.cs" />
     <Compile Include="Areas\DCM\Models\GetFileInformationModel.cs" />
@@ -245,6 +245,7 @@
     <Compile Include="Areas\DCM\Models\TestModel.cs" />
     <Compile Include="Areas\DCM\Models\UploadWizardParameters.cs" />
     <Compile Include="Areas\DCM\Models\ValidationModel.cs" />
+    <Compile Include="Areas\DDM\Controllers\AdminController.cs" />
     <Compile Include="Areas\RPM\Controllers\HomeController.cs" />
     <Compile Include="Areas\RPM\RPMAreaRegistration.cs" />
     <Compile Include="Areas\DDM\Controllers\HomeController.cs" />
@@ -577,7 +578,6 @@
     <Folder Include="Areas\Auth\Views\Shared\" />
     <Folder Include="Areas\DCM\Models\Scripts\" />
     <Folder Include="Areas\DCM\Views\Home\" />
-    <Folder Include="Areas\DCM\Views\Shared\" />
     <Folder Include="Areas\DDM\Views\Shared\" />
     <Folder Include="Areas\RPM\Models\" />
     <Folder Include="Areas\RPM\Views\Shared\" />
@@ -768,14 +768,6 @@
     <Content Include="Themes\Default\Partials\_LogOnStatus.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\Auth\Views\Account\LogOn.cshtml" />
-    <Content Include="Areas\Auth\Views\Account\Register.cshtml" />
-    <Content Include="Areas\Auth\Views\Account\_RegisterPartial.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\Auth\Views\Account\_LogOnPartial.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Areas\Auth\Views\_ViewStart.cshtml" />
   </ItemGroup>
   <ItemGroup>
@@ -855,10 +847,7 @@
     <Content Include="Areas\DCM\Views\SubmitValidation\Validation.cshtml" />
     <Content Include="Areas\DCM\Views\SubmitSummary\Summary.cshtml" />
     <Content Include="Areas\DCM\Views\Submit\UploadWizard.cshtml" />
-    <Content Include="Areas\DCM\Views\SubmitSpecifyDataset\_createDataset.cshtml" />
     <Content Include="Areas\DCM\Views\Submit\_defaultDatatypFomularView.cshtml" />
-    <Content Include="Areas\DCM\Views\SubmitSpecifyDataset\_selectADatasetId.cshtml" />
-    <Content Include="Areas\DCM\Views\Submit\_selectDataStructureId.cshtml" />
     <Content Include="Areas\DCM\Views\Submit\_taskListView.cshtml" />
     <Content Include="Areas\DCM\Views\SubmitGetFileInformation\_txtFormularView.cshtml" />
     <Content Include="Areas\DCM\Views\Submit\_uploadWizardNav.cshtml" />
@@ -940,10 +929,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\DDM\Views\Home\SearchDesigner.cshtml" />
+    <Content Include="Areas\DDM\Views\Admin\SearchDesigner.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\DDM\Views\Home\_editSearchAttribute.cshtml" />
+    <Content Include="Areas\DDM\Views\Admin\_editSearchAttribute.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\Auth\Views\Users\_UserEditPartial.cshtml" />
@@ -952,14 +941,10 @@
     <Content Include="Areas\RPM\Views\Home\_editVariable.cshtml" />
     <Content Include="Areas\DCM\Views\SubmitGetFileInformation\GetFileInformation.cshtml" />
     <Content Include="Areas\DCM\Views\SubmitDefinePrimaryKey\DefinePrimaryKey.cshtml" />
-    <Content Include="Areas\DDM\Views\Home\ReIndexSearch.cshtml" />
+    <Content Include="Areas\DDM\Views\Admin\ReIndexSearch.cshtml" />
     <Content Include="Areas\Auth\Views\Users\_InfoPartial.cshtml" />
     <Content Include="Areas\DCM\Views\Submit\FinishUpload.cshtml" />
-    <Content Include="Areas\DCM\Views\SubmitSpecifyDataset\_defineMetadataStructure.cshtml" />
-    <Content Include="Areas\DCM\Views\SubmitSpecifyDataset\_defineMetadataPackage.cshtml" />
-    <Content Include="Areas\DCM\Views\SubmitSpecifyDataset\_defineMetadataAttribute.cshtml" />
     <Content Include="Areas\DCM\Views\Submit\Test.cshtml" />
-    <Content Include="Areas\DCM\Views\SubmitSpecifyDataset\Test.cshtml" />
     <Content Include="Areas\DCM\Views\SubmitSelectAFile\Test.cshtml" />
     <Content Include="Areas\DCM\Views\Create\Index.cshtml" />
     <Content Include="Areas\DCM\Views\Create\CreateDataset.cshtml" />
@@ -973,6 +958,16 @@
     <Content Include="Areas\DCM\Views\CreateSummary\Summary.cshtml" />
     <Content Include="Areas\DCM\Views\DcmAdmin\CreateMetadataStructure.cshtml" />
     <Content Include="Areas\DCM\Views\DcmAdmin\Index.cshtml" />
+    <Content Include="Areas\DCM\Views\Shared\_errorMessages.cshtml" />
+    <Content Include="Areas\DCM\Views\Submit\_selectDataStructureId.cshtml" />
+    <Content Include="Areas\DCM\Views\SubmitSpecifyDataset\_selectADatasetId.cshtml" />
+    <Content Include="Areas\Auth\Views\Account\Error.cshtml" />
+    <Content Include="Areas\Auth\Views\Account\LogOn.cshtml" />
+    <Content Include="Areas\Auth\Views\Account\Register.cshtml" />
+    <Content Include="Areas\Auth\Views\Account\RegisterSummary.cshtml" />
+    <None Include="Properties\PublishProfiles\2230.pubxml" />
+    <None Include="Properties\PublishProfiles\2301.pubxml" />
+    <None Include="Properties\PublishProfiles\2302.pubxml" />
     <Content Include="Areas\Auth\Views\Data\DataPermissions.cshtml" />
     <Content Include="Areas\Auth\Views\Features\Features.cshtml" />
     <Content Include="Areas\Auth\Views\Features\_FeaturePermissionsPartial.cshtml" />
@@ -980,6 +975,7 @@
     <Content Include="Areas\Auth\Views\Features\_InfoPartial.cshtml" />
     <None Include="Properties\PublishProfiles\BEXIS2 DEV.pubxml" />
     <None Include="Properties\PublishProfiles\BEXIS2.pubxml" />
+    <None Include="Properties\PublishProfiles\BPP230.pubxml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\Auth\Views\Roles\_CreatePartial.cshtml" />
@@ -1035,7 +1031,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>39341</DevelopmentServerPort>
+          <DevelopmentServerPort>2705</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>

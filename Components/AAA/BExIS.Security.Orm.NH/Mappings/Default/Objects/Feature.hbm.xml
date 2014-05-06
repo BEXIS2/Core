@@ -21,10 +21,10 @@
     <property name="Description" type="String" />
 
     <!-- Mapping Feature Associations -->
-    <many-to-one name="Parent" column="FeatureRef" class="Feature"/>
+    <many-to-one name="Parent" column="ParentRef" class="Feature"/>
 
     <set name="Children" inverse="true" cascade="save-update" lazy="true">
-      <key column="FeatureRef"/>
+      <key column="ParentRef"/>
       <one-to-many class="Feature" />
     </set>
 

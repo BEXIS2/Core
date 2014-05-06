@@ -55,6 +55,7 @@ namespace BExIS.Dcm.Wizard
         none,
         success,
         error,
+        exit,
         inProgress,
     }
 }

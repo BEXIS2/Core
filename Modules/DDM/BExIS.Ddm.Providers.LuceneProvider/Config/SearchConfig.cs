@@ -123,42 +123,50 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Config
                     cDefault.Childrens = new List<Facet>();
                     List<Facet> lcDefault = new List<Facet>();
 
-                    Query query = new QueryParser(Lucene.Net.Util.Version.LUCENE_30, "id", new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30)).Parse("*:*");
-                    SimpleFacetedSearch sfs = new SimpleFacetedSearch(_Reader, new string[] { "facet_" + fieldName });
-                    SimpleFacetedSearch.Hits hits = sfs.Search(query);
-
-                    foreach (SimpleFacetedSearch.HitsPerFacet hpg in hits.HitsPerFacet)
+                    try
                     {
-                        Facet ccDefault = new Facet();
-                        ccDefault.Parent = cDefault;
-                        ccDefault.Name = hpg.Name.ToString();
-                        ccDefault.DisplayName = hpg.Name.ToString();
-                        ccDefault.Text = hpg.Name.ToString();
-                        ccDefault.Value = hpg.Name.ToString();
-                        ccDefault.Count = (int)hpg.HitCount;
-                        lcDefault.Add(ccDefault);
-                    }
 
-                    //SetParent(c);
-                    if (lcDefault.Count() > 0)
-                    {
-                        int childCount = 0;
-                        foreach (Facet c_child in lcDefault)
+                        Query query = new QueryParser(Lucene.Net.Util.Version.LUCENE_30, "id", new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30)).Parse("*:*");
+                        SimpleFacetedSearch sfs = new SimpleFacetedSearch(_Reader, new string[] { "facet_" + fieldName });
+                        SimpleFacetedSearch.Hits hits = sfs.Search(query);
+
+                        foreach (SimpleFacetedSearch.HitsPerFacet hpg in hits.HitsPerFacet)
                         {
-                            childCount += c_child.Count;
-                            //c.Items.Add(c_child);
-                            cDefault.Childrens.Add(c_child);
-
+                            Facet ccDefault = new Facet();
+                            ccDefault.Parent = cDefault;
+                            ccDefault.Name = hpg.Name.ToString();
+                            ccDefault.DisplayName = hpg.Name.ToString();
+                            ccDefault.Text = hpg.Name.ToString();
+                            ccDefault.Value = hpg.Name.ToString();
+                            ccDefault.Count = (int)hpg.HitCount;
+                            lcDefault.Add(ccDefault);
                         }
 
-                        //c.Childs = true;
-                        //c.Text = c.CategoryName + " (" + childCount.ToString() + ")";
-                        cDefault.Text = cDefault.Name;
-                        cDefault.Count += childCount;
+                        //SetParent(c);
+                        if (lcDefault.Count() > 0)
+                        {
+                            int childCount = 0;
+                            foreach (Facet c_child in lcDefault)
+                            {
+                                childCount += c_child.Count;
+                                //c.Items.Add(c_child);
+                                cDefault.Childrens.Add(c_child);
+
+                            }
+
+                            //c.Childs = true;
+                            //c.Text = c.CategoryName + " (" + childCount.ToString() + ")";
+                            cDefault.Text = cDefault.Name;
+                            cDefault.Count += childCount;
+                        }
+                        else { cDefault.Count = 0; }
+                        //c.Count = c.Childrens.Count();
+                        AllFacetsDefault.Add(cDefault);
                     }
-                    else { cDefault.Count = 0; }
-                    //c.Count = c.Childrens.Count();
-                    AllFacetsDefault.Add(cDefault);
+                    catch
+                    { 
+                    
+                    }
                 }
 
                 else if (fieldType.ToLower().Equals("property_field"))
@@ -196,27 +204,31 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Config
                     Query query = new QueryParser(Lucene.Net.Util.Version.LUCENE_30, "id", new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_29)).Parse("*:*");
 
 
-
-                    SimpleFacetedSearch sfs = new SimpleFacetedSearch(_Reader, new string[] { "property_" + fieldName });
-                    SimpleFacetedSearch.Hits hits = sfs.Search(query);
-                    List<string> laDefault = new List<string>();
-                    foreach (SimpleFacetedSearch.HitsPerFacet hpg in hits.HitsPerFacet)
+                    try
                     {
-                        String abc = hpg.Name.ToString();
-
-                        if (cDefault.UIComponent.ToLower().Equals("range") && cDefault.DataType.ToLower().Equals("date"))
+                        SimpleFacetedSearch sfs = new SimpleFacetedSearch(_Reader, new string[] { "property_" + fieldName });
+                        SimpleFacetedSearch.Hits hits = sfs.Search(query);
+                        List<string> laDefault = new List<string>();
+                        foreach (SimpleFacetedSearch.HitsPerFacet hpg in hits.HitsPerFacet)
                         {
-                            laDefault.Add(abc);
+                            String abc = hpg.Name.ToString();
+
+                            if (cDefault.UIComponent.ToLower().Equals("range") && cDefault.DataType.ToLower().Equals("date"))
+                            {
+                                laDefault.Add(abc);
+                            }
+                            else { laDefault.Add(abc); }
                         }
-                        else { laDefault.Add(abc); }
+
+                        if (!cDefault.UIComponent.ToLower().Equals("range")) { laDefault.Add("All"); };
+                        laDefault.Sort();
+                        cDefault.Values = laDefault;
+                        AllPropertiesDefault.Add(cDefault);
                     }
+                    catch
+                    {
 
-                    if (!cDefault.UIComponent.ToLower().Equals("range")) { laDefault.Add("All"); };
-                    laDefault.Sort();
-                    cDefault.Values = laDefault;
-                    AllPropertiesDefault.Add(cDefault);
-
-
+                    }
                 }
                 else if (fieldType.ToLower().Equals("category_field"))
                 {

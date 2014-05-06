@@ -1,6 +1,8 @@
 ﻿@using Telerik.Web.Mvc.UI
 @using BExIS.Dlm.Entities.DataStructure
 @using BExIS.Dlm.Entities.Data
+@using BExIS.Dlm.Services.DataStructure
+@using BExIS.Dlm.Services.Data
 @model BExIS.RPM.Model.DataStructureDesignerModel
 
 @{   
@@ -12,9 +14,8 @@
         CategoryList.Add(tc.ToString());
     }
 
-
     // need DataStructureCategory to create DS but can't find it in a DS
-    if (Model.dataStructure.Name == "" || Model.dataStructure.Name == null)
+    if (Model.dataStructure.Id == null || Model.dataStructure.Id == 0)
     {
         Model.dataStructure.Name = "New Data Structure";
         categoryIndex = 0;
@@ -27,65 +28,96 @@
             
 }
 
-<h3>@Model.dataStructure.Name</h3>
-
-<div class="planingPartialDiv" style="width:500px;">   
+<h3>
+@Model.dataStructure.Name
+@if (Model.dataStructure.Datasets.Count > 0)
+{
+    <font color="grey">(in use)</font>
+}
+</h3>
+<div class="planingPartialDiv" style="width:100%;">   
  @using(Html.BeginForm("saveDataStructure", "Home", new {area = "RPM"}))
  {     
-        <div id="Description" style="float:right;">
-                Description: <br />          
-                @(Html.TextAreaFor(m => Model.dataStructure.Description, new {@class = "t-input"}))
-        </div>
-        <div id="info">
-            Info:
-            <table>
-                <tr>
-                    <td>
-                        Name
-                    </td>
-                    <td>
-                        @(Html.TextBoxFor(m => Model.dataStructure.Name, new {@class = "t-input"}))
-                    </td>
-                </tr>
-                <tr class ="hidden">
-                    <td>
-                        @(Html.Telerik().DropDownList()
-                            .Name("category")
-                            .DropDownHtmlAttributes(new { style = "height: 200px" })
-                            .BindTo(new SelectList(CategoryList))
-                            .SelectedIndex(categoryIndex)
-                        )
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Number of Variables:
-                    </td>
-                    <td>
-                        @Model.dataStructure.Variables.Count
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Data Structure ID:
-                    </td>
-                    <td>
-                        @Model.dataStructure.Id
-                        @(Html.TextBoxFor(m => Model.dataStructure.Id, new {@class = "hidden"}))
-                    </td>
-                </tr>
-            </table>
-        </div>      
-     <button name="create" value="SaveDataStructure" type="submit" class="t-button">Save</button>
-     if (Model != null && Model.dataStructure.Id != null && Model.dataStructure.Id != 0)
-     {
-        @Html.ActionLink("Download", "downloadTemplate", "Home", new { id = Model.dataStructure.Id }, new { area = "RPM", @class = "t-button", @style = "margin:5px;"})
-        if(!(Model.dataStructure.Datasets.Count > 0))
+     <table>
+         <tr>
+            <td>
+                <div id="info">
+                    Info:
+                    <table>
+                        <tr>
+                            <td>
+                                Name
+                            </td>
+                            <td>
+                                @(Html.TextBoxFor(m => Model.dataStructure.Name, new {@class = "t-input"}))
+                            </td>
+                        </tr>
+                        <tr class ="hidden">
+                            <td>
+                                @(Html.Telerik().DropDownList()
+                                    .Name("category")
+                                    .DropDownHtmlAttributes(new { style = "height: 200px" })
+                                    .BindTo(new SelectList(CategoryList))
+                                    .SelectedIndex(categoryIndex)
+                                )
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Number of Variables:
+                            </td>
+                            <td>
+                                @Model.numberOfVariables
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Data Structure ID:
+                            </td>
+                            <td>
+                                @Model.dataStructure.Id
+                                @Html.TextBoxFor(m => Model.dataStructure.Id, new {@class = "hidden"}) 
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </td>
+            <td>
+                <div id="Description" style="position:relative; top:0px; left:5px;">
+                        Description: <br />          
+                        @(Html.TextAreaFor(m => Model.dataStructure.Description, new {@class = "t-input"}))
+                </div>
+            </td>
+            <td>
+                <div class="errorMsg" style="vertical-align:top; padding:5px;">
+                     <font color="red">@ViewData["errorMsg"]</font>
+                </div>
+            </td>
+        </tr>
+    </table>
+     
+    <div class="RPMbuttons">
+        <button name="create" value="SaveDataStructure" type="submit" class="t-button" style = "margin-bottom:5px;">Save</button>
+        @if (Model != null && Model.dataStructure.Id != null && Model.dataStructure.Id != 0)
         {
-            @Html.ActionLink("Delete", "deleteDataStructure", "Home", new { id = Model.dataStructure.Id }, new { area = "RPM", @class = "t-button"})
-        }
-     }    
-     @ViewData["errorMsg"]
+            if(Model.dataStructure.Variables.Count > 0)
+            {
+                @Html.ActionLink("Download", "downloadTemplate", "Home", new { id = Model.dataStructure.Id }, new { area = "RPM", @class = "t-button", @style = "margin:5px;"})
+            }
+            else
+            {
+                <button name="Download" class="t-button t-state-disabled" disabled="disabled" style = "margin:5px;">Download</button>
+            }
+            if(!(Model.dataStructure.Datasets.Count > 0))
+            {
+                @Html.ActionLink("Delete", "deleteDataStructure", "Home", new { id = Model.dataStructure.Id }, new { area = "RPM", @class = "t-button", @style = "margin-bottom:5px;"})
+            }
+            else
+            {
+                <button name="Download" class="t-button t-state-disabled" disabled="disabled" style = "margin-bottom:5px;">Delete</button>
+            }        
+        }          
+    </div> 
  }
 </div> 
 

@@ -3,6 +3,7 @@
 @using BExIS.Dlm.Services.DataStructure
 @using System
 @using System.Text.RegularExpressions
+@model List<BExIS.Dlm.Entities.DataStructure.DataType>
 
 @{
     string rgxPattern = "[ ]";
@@ -12,51 +13,51 @@
     DataType dataType = (DataType)Session["DataType"];
     string windowName = "Add";
 
-    if (dataType.Name != null && dataType.Name != "")
+    if(dataType != null)
     {
-        windowName = rgx.Replace(dataType.Name, rgxReplace);
+        if (dataType.Name != null && dataType.Name != "")
+        {
+            windowName = rgx.Replace(dataType.Name, rgxReplace);
+        }
     }
     else
     {
         windowName = "Add";
+        dataType = new DataType();
     }
-
-    DataTypeManager DTM = new DataTypeManager();
-    List<DataType> model = DTM.Repo.Get().ToList(); 
 }
 
-<!DOCTYPE html>
+@{
+    ViewBag.Title = "Data Type Manager";
+}
+    <div>
+        <h2>Data Type Manager</h2>
+        
+        <p>With this interface you are able to manage (e.g. create, edit, delete) data types which are required to define units and data attributes. Data types cannot be edited or deleted once they are associated with a unit (they become locked).</p>
+    </div>
 
-<html>
-<head>
-    <title>UnitManager</title>
-</head>
-@*<header>*@
-    
-@*</header> *@
-<body>
 
     @Html.ActionLink("Add Data Type", "openDataTypeWindow", "Home", new { id = 0 }, new { @class = "t-button t-add" })
     <br />
     <br />
-    @(Html.Telerik().Grid(model)    
+    @(Html.Telerik().Grid(Model)    
             .Name("UnitGrid")
             .Sortable()            
             .Columns(columns =>
                 {
                     columns.Template(
                         @<text>
-                             @if(!(item.DataContainers.Count > 0))
-                            {
                             <div class="t-button t-button-icontext t-button-bare">
-                            @Html.ActionLink("Edit", "openDataTypeWindow", "Home", new { id = item.Id }, new { @class = "t-icon t-edit" })
-                            @Html.ActionLink("Delete", "deletDataType", "Home", new { id = item.Id }, new { @class = "t-icon t-delete" })
-                            </div>
+                            @if(!(item.DataContainers.Count > 0))
+                            {
+                                @Html.ActionLink("Edit", "openDataTypeWindow", "Home", new { id = item.Id }, new { @class = "t-icon t-edit" })
+                                @Html.ActionLink("Delete", "deletDataType", "Home", new { id = item.Id }, new { @class = "t-icon t-delete" })
                             }
                             else
                             {
-                                <div class="t-button t-button-icontext t-button-bare">locked</div>
+                                <font color="grey">locked</font>
                             }
+                            </div>
                         </text>
                     ).Title("Functions")
                         .Width(50)
@@ -89,6 +90,3 @@
                     }
                     @{Session["Window"] = false;}
     </div>
-
-</body>
-</html>

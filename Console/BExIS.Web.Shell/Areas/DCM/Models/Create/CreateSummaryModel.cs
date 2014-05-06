@@ -7,21 +7,24 @@ using BExIS.Web.Shell.Areas.DCM.Models.Metadata;
 
 namespace BExIS.Web.Shell.Areas.DCM.Models.Create
 {
-    public class SummaryModel : AbstractStepModel
+    public class CreateSummaryModel : AbstractStepModel
     {
         public Dictionary<string, MetadataPackageModel> Packages { get; set; }
+        public String DatasetTitle { get; set; }
 
-        public SummaryModel()
+
+        public CreateSummaryModel()
         {
             Packages = new Dictionary<string, MetadataPackageModel>();
         }
 
-        public static SummaryModel Convert(Dictionary<string,MetadataPackageModel> packages, StepInfo stepInfo)
+        public static CreateSummaryModel Convert(Dictionary<string,MetadataPackageModel> packages, StepInfo stepInfo)
         {
-            return new SummaryModel
+            return new CreateSummaryModel
             {
                 Packages = packages,
-                StepInfo = stepInfo
+                StepInfo = stepInfo,
+                DatasetTitle = ""
             };
         }
     }

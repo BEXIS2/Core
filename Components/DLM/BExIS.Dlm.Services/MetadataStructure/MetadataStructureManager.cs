@@ -4,6 +4,7 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using BExIS.Dlm.Entities.MetadataStructure;
 using Vaiona.Persistence.Api;
+using Vaiona.Util.Cfg;
 using MDS = BExIS.Dlm.Entities.MetadataStructure;
 
 namespace BExIS.Dlm.Services.MetadataStructure
@@ -35,10 +36,34 @@ namespace BExIS.Dlm.Services.MetadataStructure
 
         public List<MetadataPackageUsage> GetEffectivePackages(Int64 structureId)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object> ();
-            parameters.Add("metadataStructureId", structureId);
-            List<MetadataPackageUsage> usages = PackageUsageRepo.Get("GetEffectivePackageUsages", parameters).ToList();
-            return usages; // structure.MetadataPackageUsages.ToList(); // plus all the packages of the parents
+            /*PostgreSQL82Dialect, DB2Dialect*/
+            if (AppConfiguration.DatabaseDialect.Equals("DB2Dialect"))
+            {
+                return GetPackages(structureId);
+            }
+            else //if (AppConfiguration.DatabaseDialect.Equals("PostgreSQL82Dialect"))
+            {
+                Dictionary<string, object> parameters = new Dictionary<string, object>();
+                parameters.Add("metadataStructureId", structureId);
+                List<MetadataPackageUsage> usages = PackageUsageRepo.Get("GetEffectivePackageUsages", parameters).ToList();
+                return usages; // structure.MetadataPackageUsages.ToList(); // plus all the packages of the parents
+            }
+        }
+
+        private List<MetadataPackageUsage> GetPackages(Int64 structureId)
+        {
+            List<MetadataPackageUsage> list = new List<MetadataPackageUsage>();
+            MDS.MetadataStructure metadataStructure = this.Repo.Get(structureId);
+
+
+            if (metadataStructure.Parent != null)
+            {
+                list.AddRange(GetPackages(metadataStructure.Parent.Id));
+            }
+
+            list.AddRange(metadataStructure.MetadataPackageUsages);
+
+            return list;
         }
 
         public MDS.MetadataStructure Create(string name, string description, string xsdFileName, string xslFileName, MDS.MetadataStructure parent)

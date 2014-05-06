@@ -2,103 +2,106 @@
 @using Telerik.Web.Mvc.UI
 @using BExIS.Dlm.Entities.DataStructure
 @using BExIS.Dlm.Services.DataStructure
+@model BExIS.RPM.Model.DataStructureDesignerModel
 
 @{
     ViewBag.Title = "Planing";
-
-    long[] dataAttributeIds = new long[] { };
-    Model.GetDataAttributeList();
 
     Variable variable = new Variable();
     
     if (Session["variableId"] != null)
     {
-        DataStructureManager DSM = new DataStructureManager();
-        variable = DSM.VariableRepo.Get((long)Session["variableId"]);
-        
+        variable = Model.dataStructure.Variables.Where(v => v.Id.Equals((long)Session["variableId"])).FirstOrDefault();  
     }
     
 }
 
-@if ((bool)Session["inUse"] == true)
+@if (variable == null)
 { 
-    <p>Can't edit variable Data Strucure in use</p>
+    <font color="red">Can't edit Variable doesn't exist anymore.</font>
 }
 else
 {
-    <script type="text/javascript">
-    function toggleDiv(element){
-    if(document.getElementById(element).style.display == 'none')
-        document.getElementById(element).style.display = 'block';
-    else
-        document.getElementById(element).style.display = 'none';
+    if ((bool)Session["inUse"] == true)
+    { 
+        <font color="red">Can't edit Variable, Data Strucure in use</font>
     }
-    </script>
-
-    <div class="planingPartialDiv" id="createVariable">
-        @using (Html.BeginForm("saveVariable", "Home", new { area = "RPM" }))
-        {
-        @(Html.TextBox("dataStructureId", (long)Session["dataStructureId"], new {@class = "hidden"}))
-        <table>
-            <tr id="name">
-                <td>
-                    Name:
-                </td>
-                <td>
-                   @(Html.TextBox("name",  variable.Label))
-                </td>
-            </tr>
-            <tr id="shortname">
-                <td>
-                    ID:
-                </td>
-                <td>
-                    @variable.Id
-                    @(Html.TextBox("id", variable.Id, new {@class = "hidden"})) 
-                </td>
-            </tr>
-            @if (variable.DataAttribute != null)
-            {
-            <tr>
-                <td>
-                    Description:
-                </td>
-                <td>
-                    @variable.DataAttribute.Description
-                </td>
-            </tr>
-            if (variable.DataAttribute.Unit != null)
-            {
-            <tr>
-                <td>
-                    Unit:
-                </td>
-                <td>
-                    @variable.DataAttribute.Unit.Name
-                </td>
-            </tr>
-            }
-            if (variable.DataAttribute.DataType != null)
-            {
-            <tr>
-                <td>
-                    DataType:
-                </td>
-                <td>
-                    @variable.DataAttribute.DataType.Name
-                </td>
-            </tr>
-            }
-            }
-            <tr><td colspan="2"> </td></tr>
-            <tr>
-                <td>
-                    <button name="create" value="GetUnitInput" type="submit" class="t-button">Save</button>
-                </td>
-                <td>
-                </td>
-            </tr>    
-        </table> 
+    else
+    {
+        <script type="text/javascript">
+        function toggleDiv(element){
+        if(document.getElementById(element).style.display == 'none')
+            document.getElementById(element).style.display = 'block';
+        else
+            document.getElementById(element).style.display = 'none';
         }
-    </div>
+        </script>
+
+        <div class="planingPartialDiv" id="createVariable">
+            @using (Html.BeginForm("saveVariable", "Home", new { area = "RPM" }))
+            {
+            @(Html.TextBox("dataStructureId", (long)Session["dataStructureId"], new { @class = "hidden" }))
+            <table>
+                <tr id="name">
+                    <td>
+                        Name:
+                    </td>
+                    <td>
+                        @(Html.TextBox("name", variable.Label))
+                    </td>
+                </tr>
+                <tr id="shortname">
+                    <td>
+                        ID:
+                    </td>
+                    <td>
+                        @variable.Id
+                        @(Html.TextBox("id", variable.Id, new { @class = "hidden" })) 
+                    </td>
+                </tr>
+                @if (variable.DataAttribute != null)
+                {
+                <tr>
+                    <td>
+                        Description:
+                    </td>
+                    <td>
+                        @variable.DataAttribute.Description
+                    </td>
+                </tr>
+                    if (variable.DataAttribute.Unit != null)
+                    {
+                <tr>
+                    <td>
+                        Unit:
+                    </td>
+                    <td>
+                        @variable.DataAttribute.Unit.Name
+                    </td>
+                </tr>
+                    }
+                    if (variable.DataAttribute.DataType != null)
+                    {
+                <tr>
+                    <td>
+                        DataType:
+                    </td>
+                    <td>
+                        @variable.DataAttribute.DataType.Name
+                    </td>
+                </tr>
+                    }
+                }
+                <tr><td colspan="2"> </td></tr>
+                <tr>
+                    <td>
+                        <button name="create" value="GetUnitInput" type="submit" class="t-button">Save</button>
+                    </td>
+                    <td>
+                    </td>
+                </tr>    
+            </table> 
+            }
+        </div>
+    }
 }

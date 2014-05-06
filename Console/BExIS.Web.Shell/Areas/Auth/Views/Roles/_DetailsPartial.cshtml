@@ -19,12 +19,6 @@
             .Content(@<text>
                 <div id="Content_Membership"></div>
             </text>);
-    
-        items.Add()
-            .Text("Feature Permissions")
-            .Content(@<text>
-                <div id="Content_FeaturePermissions"></div>
-            </text>);
     })
     .ClientEvents(clientEvents => clientEvents
         .OnSelect("function(e) { TabStrip_Details_OnSelect.call(this,e," + Model + "); }")

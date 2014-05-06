@@ -29,13 +29,38 @@ namespace BExIS.Web.Shell
         public static void RegisterRoutes(RouteCollection routes)
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
+                       
+            routes.MapRoute(
+                "DDM", //Landing page
+                "",
+                new { area = "DDM", controller = "Home", action = "Index" }
+                , new[] { "BExIS.Web.Shell.Areas.DDM.Controllers" }
+            ).DataTokens["UseNamespaceFallback"] = false;
+
+            //routes.MapRoute(
+            //   "Home",
+            //   "Home",
+            //   new { controller = "Home", action = "Index" }
+            //   , new[] { "BExIS.Web.Shell.Controllers" }
+            //);
 
             routes.MapRoute(
-                "Default", // Route name
-                "{controller}/{action}/{id}", // URL with parameters
-                new { controller = "Home", action = "Index", id = UrlParameter.Optional } // Parameter defaults
-                , new[] {"BExIS.Web.Shell.Controllers"} // to prevent conflict between root controllers and area controllers that have same names
-            );
+               "Default", // Route name
+               "{controller}/{action}/{id}", // URL with parameters
+               new { controller = "Home", action = "Index", id = UrlParameter.Optional } // Parameter defaults
+               , new[] { "BExIS.Web.Shell.Controllers" } // to prevent conflict between root controllers and area controllers that have same names
+           );
+
+          //  routes.MapRoute(
+          //    "RPM",
+          //    "RPM/{controller}/{action}/{id}",
+          //    new { controller = "Home", action = "Index" }
+          //    , new[] { "BExIS.Web.Shell.Areas.RPM.Controllers" }
+            //).DataTokens = new RouteValueDictionary(new { area = "RPM" });
+
+
+        
+
 
         }
 
@@ -53,7 +78,7 @@ namespace BExIS.Web.Shell
             IoCFactory.StartContainer(Path.Combine(AppConfiguration.AppRoot, "IoC.config"), "DefaultContainer"); // use AppConfig to access the app root folder
             loadModules();
             IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager(); // just to prepare data access environment
-            pManager.Configure(AppConfiguration.DefaultApplicationConnection.ConnectionString, AppConfiguration.DatabaseDialect);
+            pManager.Configure(AppConfiguration.DefaultApplicationConnection.ConnectionString, AppConfiguration.DatabaseDialect, "Default", AppConfiguration.ShowQueries);
             if (AppConfiguration.CreateDatabase)
                 pManager.ExportSchema();
             pManager.Start();

@@ -2,7 +2,7 @@
 @using BExIS.Web.Shell.Areas.DCM.Models
 @using Telerik.Web.Mvc.UI
 @{
-    string id = @Model.Id + "_" + @Model.Parent.Id + "_" + @Model.MetadataStructureId + "_" + @Model.Number+"_"+@Model.PackageModelNumber;
+    string id = @Model.Id + "_" + @Model.Parent.Id + "_" + @Model.MetadataStructureId + "_" + @Model.Number+"_"+@Model.PackageModelNumber+"_"+@Model.NumberOfSourceInPackage;
     string idInput = id+"_Input";
     string idAdd = id+"_Add";
     string idRemove = id + "_Remove";
@@ -29,7 +29,7 @@
                     <td class="attributeInfo">
                         @if (Model.MinCardinality > 0)
                         { 
-                          <b title="important" style="color:red">*</b>
+                          <b title="Required" style="color:red">*</b>
                         }
                     </td>    
 
@@ -42,7 +42,7 @@
                         {
                             if (Model.DataType.Equals("Text"))
                             { 
-                                @Html.TextAreaFor(m => m.Value, new { OnChange = "OnChange(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @Model.Parent.Label, @class = "ValueClass" })
+                                @Html.TextAreaFor(m => m.Value, new { OnChange = "OnChange(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @Model.Parent.Label, @class = "ValueClass"  })
                             }
 
                             if (Model.DataType.Equals("String"))
@@ -69,6 +69,7 @@
                                 .Value(value)
                                 .TodayButton("d")
                                 .OpenOnFocus(true)
+                                .Format("dd/MM/yyyy")
                                 .ClientEvents(events=>events
                                     .OnChange("OnChangeDatePicker"))
                                 
@@ -98,14 +99,14 @@
                         if (!Model.first)
                         {
                             <td>
-                             <button id="@idUp" type="button" value="Up" name="Up"  class="t-icon t-arrow-up" style="border:0px;" onclick="OnClickUp(this)">remove</button>
+                                <button id="@idUp" type="button" value="Up" name="Up"  class="t-icon t-arrow-up" style="border:0px;" onclick="OnClickUp(this)">up</button>
                             </td>
                         }
                         
                         if (!Model.last)
                         { 
                             <td>
-                                <button id="@idDown" type="button" value="Down" name="Down"  class="t-icon t-arrow-down" style="border:0px;" onclick="OnClickDown(this)">remove</button>
+                                <button id="@idDown" type="button" value="Down" name="Down"  class="t-icon t-arrow-down" style="border:0px;" onclick="OnClickDown(this)">down</button>
                             </td>
                         }
                         
@@ -136,6 +137,7 @@
         var metadataStructureId = substr[2];
         var number = substr[3];
         var packageModelNumber = substr[4];
+        
 
         var data = {
             value: e.value,
@@ -216,31 +218,37 @@
     
     function OnClickAdd(e)
     {
- 
         var substr = e.id.split('_');
         var number = substr[3];
         var id = substr[0];
         var parentid = substr[1];
         var metadataStructureId = substr[2];
         var packageModelNumber = substr[4];
-
+        var NumberOfSourceInPackage = substr[5];
+        
         //alert(id);
         //alert(parentid);
         //alert(metadataStructureId);
         //alert(number);
-  
-        $.post('@Url.Action("AddMetadataAttributeUsage", "CreateSetMetadataPackage", new RouteValueDictionary { { "area", "DCM" } })', { id: id, parentid:parentid, metadataStructureId:metadataStructureId, number:number, packageModelNumber:packageModelNumber  }, function (response) {
-          
-            //$(".package").append(response);
-            //$("#" + e.id).closest(".metadataAttributeContent").after(response);
-            var id = parentid + "_" + metadataStructureId + "_" + packageModelNumber;
-            $("#" + id).replaceWith(response);
-        })
+        
+        if (NumberOfSourceInPackage <= '@Model.Source.MaxCardinality') {
+            $.post('@Url.Action("AddMetadataAttributeUsage", "CreateSetMetadataPackage", new RouteValueDictionary { { "area", "DCM" } })', { id: id, parentid: parentid, metadataStructureId: metadataStructureId, number: number, packageModelNumber: packageModelNumber }, function (response) {
+
+                //$(".package").append(response);
+                //$("#" + e.id).closest(".metadataAttributeContent").after(response);
+                var id = parentid + "_" + metadataStructureId + "_" + packageModelNumber;
+                $("#" + id).replaceWith(response);
+            })
+        }
+        else {
+            alert("Maxium cardinality is reached.");
+        }
     }
 
     function OnClickRemove(e)
     {
-        //alert(value);
+       
+        
         var value = $("#" + e.id).closest(".ValueClass").value;
         if (value != "") {
 
@@ -251,25 +259,29 @@
             var metadataStructureId = substr[2];
             var number = substr[3];
             var packageModelNumber = substr[4];
+            var NumberOfSourceInPackage = substr[5];
 
-            var data = {
-                value: value,
-                id: id,
-                parentid: parentid,
-                metadataStructureId: metadataStructureId,
-                number: number,
-                packageModelNumber:packageModelNumber
-            };
+         
+            if (NumberOfSourceInPackage > 1) {
+                var data = {
+                    value: value,
+                    id: id,
+                    parentid: parentid,
+                    metadataStructureId: metadataStructureId,
+                    number: number,
+                    packageModelNumber: packageModelNumber
+                };
 
-            $.post('@Url.Action("RemoveMetadataAttributeUsage", "CreateSetMetadataPackage", new RouteValueDictionary { { "area", "DCM" } })', { id: id, parentid: parentid, metadataStructureId: metadataStructureId, number: number, packageModelNumber: packageModelNumber }, function (response) {
-     
-                var id = parentid + "_" + metadataStructureId + "_" + packageModelNumber;
-                $("#" + id).replaceWith(response);
-            })
+                $.post('@Url.Action("RemoveMetadataAttributeUsage", "CreateSetMetadataPackage", new RouteValueDictionary { { "area", "DCM" } })', { id: id, parentid: parentid, metadataStructureId: metadataStructureId, number: number, packageModelNumber: packageModelNumber }, function (response) {
 
-
+                    var id = parentid + "_" + metadataStructureId + "_" + packageModelNumber;
+                    $("#" + id).replaceWith(response);
+                })
+            }
+            else {
+                alert("You are not able to remove elements.");
+            }
         }
-
     }
 
     function OnClickUp(e)
@@ -352,6 +364,12 @@
     .attributeValue
     {
         width:200px;
+    }
+
+    .ValueClass
+    {
+        max-width:300px;
+        max-height:100px;
     }
 
 </style>

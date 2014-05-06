@@ -1,12 +1,13 @@
 ﻿using System;
-
 using System.ComponentModel.DataAnnotations;
+using System.Web.Mvc;
 using BExIS.Ddm.Model;
 
 namespace BExIS.Web.Shell.Areas.DDM.Models
 {
     public class SearchAttributeViewModel
     {
+        [Editable(false)]
         public int id { get; set; }
         //names
         [Display(Name = "Display Name")]
@@ -15,6 +16,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Models
 
         [Display(Name = "Source Name")]
         [Required(ErrorMessage = "Please enter a Source Name.")]
+        //[Remote("ValidateSourceName", "Admin", "DDM")]
         public String sourceName { get; set; }
 
         [Display(Name = "Metadata Node")]

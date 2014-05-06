@@ -49,7 +49,7 @@ namespace BExIS.Security.Entities.Subjects
         /// requested access.
         /// </remarks>
         /// <seealso cref="NA"/>        
-        public virtual ICollection<FeaturePermission> FeaturePermissions { get; set; }
+        public virtual ICollection<Permission> Permissions { get; set; }
 
         #endregion
 
@@ -70,7 +70,7 @@ namespace BExIS.Security.Entities.Subjects
         /// </param>       
         public Subject()
         {
-            FeaturePermissions = new List<FeaturePermission>();
+            Permissions = new List<Permission>();
         }
 
         #endregion

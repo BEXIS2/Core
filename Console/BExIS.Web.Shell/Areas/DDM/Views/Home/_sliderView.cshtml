@@ -9,7 +9,7 @@
 
     int Value = new int();
 
-    if (@Model.DataType.Equals("date"))
+    if (@Model.DataType.ToLower().Equals("date"))
     {
         foreach (var item in Model.Values)
         {
@@ -17,6 +17,7 @@
             // M/d/yyyy
             DateTime dt = DateTime.Parse(item, new CultureInfo("en-US", false)); //Convert.ToDateTime(item);
             dtList.Add(dt.Year);
+
         }
     }
 
@@ -30,7 +31,6 @@
         if(Model.Direction.Equals(Direction.decrease)){ Value =  dtList.Last();}
 
         largeStep = dtList.Last() - dtList.First();
-
     }
 }
 
@@ -38,10 +38,20 @@
 { 
     if (dtList.Count > 1)
     {
+        int min = dtList.First();
+        int max = dtList.Last();
+        
+        if(dtList.First().Equals(dtList.Last()))
+        {
+            max = dtList.Last()+1;
+        }
+        
+        largeStep = max-min;
+        
            @(Html.Telerik().Slider<Int32>()
                 .Name(Model.DataSourceKey)
-                .Min(dtList.First())//.Min(item.min)
-                .Max(dtList.Last())//.Max(item.max)
+                .Min(min)//.Min(item.min)
+                .Max(max)//.Max(item.max)
                 .Value(Value)
                 .SmallStep(1)
                 .LargeStep(largeStep)

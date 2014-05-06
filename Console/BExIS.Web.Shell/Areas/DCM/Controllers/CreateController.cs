@@ -37,30 +37,57 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         public ActionResult Index()
         {
-            Session["MetadatStructureList"] = LoadMetadataStructureViewList();
+            //DatasetManager dm = new DatasetManager();
+            //dm.GetDatasetVersion(1);
+
+            //dm.VariableValueRepo.Get();
+
+            //DataStructureManager dsm = new DataStructureManager();
+            //dsm.StructuredDataStructureRepo.Get();
+
+            //UnitManager um = new UnitManager();
+            //IList<Unit> u = um.Repo.Get();
+
+            //foreach (Unit unit in u)
+            //{
+            //    DataType d = unit.AssociatedDataTypes.First();
+            //    d.DataContainers.First();
+            //}
+            
+            //Session["MetadatStructureList"] = LoadMetadataStructureViewList();
 
             return View();
         }
 
         public ActionResult CreateDataset()
         {
+
             Session["CreateDatasetTaskmanager"] = null;
             if (TaskManager == null) TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
 
             if (TaskManager == null)
             {
-                string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "CreateTaskInfo.xml");
-                XmlDocument xmlTaskInfo = new XmlDocument();
-                xmlTaskInfo.Load(path);
-                TaskManager = CreateDatasetTaskmanager.Bind(xmlTaskInfo);
+                try
+                {
+                    string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "CreateTaskInfo.xml");
+                    XmlDocument xmlTaskInfo = new XmlDocument();
+                    xmlTaskInfo.Load(path);
+                    TaskManager = CreateDatasetTaskmanager.Bind(xmlTaskInfo);
+                }
+                catch (Exception e)
+                {
+                    ModelState.AddModelError(String.Empty, e.Message);
+                }
+
+
                 Session["CreateDatasetTaskmanager"] = TaskManager;
                 Session["MetadataStructureViewList"] = LoadMetadataStructureViewList();
                 Session["ResearchPlanViewList"] = LoadResearchPlanViewList();
                 Session["DataStructureViewList"] = LoadDataStructureViewList();
-
-                
             }
 
+            
+        
             return View((CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"]);
         }
 
@@ -96,71 +123,22 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             return RedirectToAction("CreateDataset");
         }
 
-        public ActionResult Submit()
+        public ActionResult Close()
         {
-            #region create dataset
-
-            TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
-
-            if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.DATASTRUCTURE_ID)
-                && TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.RESEARCHPLAN_ID)
-                && TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATASTRUCTURE_ID))
-            {
-                Dataset ds;
-                DatasetManager dm = new DatasetManager();
-                long datasetId = 0;
-                // for e new dataset
-                if (!TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.DATASET_ID))
-                {
-                    long datastructureId = Convert.ToInt64(TaskManager.Bus[CreateDatasetTaskmanager.DATASTRUCTURE_ID]);
-                    long researchPlanId = Convert.ToInt64(TaskManager.Bus[CreateDatasetTaskmanager.RESEARCHPLAN_ID]);
-                    long metadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateDatasetTaskmanager.METADATASTRUCTURE_ID]);
-
-                    DataStructureManager dsm = new DataStructureManager();
-                    DataStructure dataStructure = dsm.StructuredDataStructureRepo.Get(datastructureId);
-
-                    ResearchPlanManager rpm = new ResearchPlanManager();
-                    ResearchPlan rp = rpm.Repo.Get(researchPlanId);
-
-                    MetadataStructureManager msm = new MetadataStructureManager();
-                    MetadataStructure metadataStructure = msm.Repo.Get(metadataStructureId);
-
-                    ds = dm.CreateEmptyDataset(dataStructure, rp, metadataStructure);
-                    datasetId = ds.Id;
-                }
-                else
-                {
-                    datasetId = Convert.ToInt64(TaskManager.Bus[CreateDatasetTaskmanager.DATASET_ID]);
-                }
-
-                TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
-
-
-
-
-
-                if (dm.IsDatasetCheckedOutFor(datasetId, GetUserNameOrDefault()) || dm.CheckOutDataset(datasetId, GetUserNameOrDefault()))
-                {
-                    DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(datasetId);
-
-                    if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATA_XML))
-                    {
-                        XDocument xMetadata = (XDocument)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_XML];
-                        workingCopy.Metadata = XmlMetadataWriter.ToXmlDocument(xMetadata);
-                    }
-
-                    TaskManager.AddToBus(CreateDatasetTaskmanager.DATASET_ID, datasetId);
-
-                    dm.EditDatasetVersion(workingCopy, null, null, null);
-
-                    dm.CheckInDataset(datasetId, "Metadata was submited.", GetUserNameOrDefault());
-                }
-            }
-
-            #endregion
+            Session["CreateDatasetTaskmanager"] = null;
+            TaskManager = null;
 
             return View("FinishCreation");
         }
+
+        public ActionResult StartUploadWizard()
+        {
+            Session["CreateDatasetTaskmanager"] = null;
+            TaskManager = null;
+
+            return RedirectToAction("UploadWizard", "Submit", new RouteValueDictionary { {"area","DCM"}});
+        }
+
 
         #endregion
 

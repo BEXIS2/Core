@@ -18,13 +18,9 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
         public static string ConvertXmlToHtml(string m, string xslPath="")
         {
             string url = "";
-            if (xslPath != ""){
-                url = AppConfiguration.GetModuleWorkspacePath("DDM") + "\\UI\\HtmlShowMetadata.xsl";
-            }
-            else {
-                url = AppConfiguration.GetModuleWorkspacePath("DDM") + xslPath;
-            }
-
+ 
+            url = AppConfiguration.GetModuleWorkspacePath("DDM") + xslPath;
+  
             if (m != null)
             {
                 
