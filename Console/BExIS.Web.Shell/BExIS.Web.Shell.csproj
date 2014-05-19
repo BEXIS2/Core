@@ -252,10 +252,11 @@
     <Compile Include="Areas\DDM\Helpers\SearchUIHelper.cs" />
     <Compile Include="Areas\DDM\Models\SearchAttributeViewModel.cs" />
     <Compile Include="Areas\DDM\SearchAreaRegistration.cs" />
+    <Compile Include="Areas\SAM\Controllers\UnsafeController.cs" />
+    <Compile Include="Areas\SAM\SAMAreaRegistration.cs" />
     <Compile Include="Areas\Site\Controllers\NavController.cs" />
     <Compile Include="Areas\Site\SiteAreaRegistration.cs" />
-    <Compile Include="Areas\System\Controllers\UtilsController.cs" />
-    <Compile Include="Areas\System\SystemAreaRegistration.cs" />
+    <Compile Include="Areas\SAM\Controllers\UtilsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="GlimpseSecurityPolicy.cs" />
@@ -581,10 +582,10 @@
     <Folder Include="Areas\DDM\Views\Shared\" />
     <Folder Include="Areas\RPM\Models\" />
     <Folder Include="Areas\RPM\Views\Shared\" />
+    <Folder Include="Areas\SAM\Models\" />
+    <Folder Include="Areas\SAM\Views\Shared\" />
     <Folder Include="Areas\Site\Models\" />
     <Folder Include="Areas\Site\Views\Shared\" />
-    <Folder Include="Areas\System\Models\" />
-    <Folder Include="Areas\System\Views\Shared\" />
     <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
@@ -717,10 +718,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\System\Views\Web.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\System\Views\Utils\_ServerTime.cshtml" />
+    <Content Include="Areas\SAM\Views\Utils\_ServerTime.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\Site\Views\Web.config" />
@@ -965,6 +963,11 @@
     <Content Include="Areas\Auth\Views\Account\LogOn.cshtml" />
     <Content Include="Areas\Auth\Views\Account\Register.cshtml" />
     <Content Include="Areas\Auth\Views\Account\RegisterSummary.cshtml" />
+    <Content Include="Areas\SAM\Views\Web.config" />
+    <Content Include="Areas\SAM\Views\Unsafe\Index.cshtml" />
+    <Content Include="Areas\SAM\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\SAM\Views\Unsafe\PurgeDataset.cshtml" />
+    <Content Include="Areas\SAM\Views\Unsafe\ListDatasets.cshtml" />
     <None Include="Properties\PublishProfiles\2230.pubxml" />
     <None Include="Properties\PublishProfiles\2301.pubxml" />
     <None Include="Properties\PublishProfiles\2302.pubxml" />
@@ -1031,7 +1034,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>2705</DevelopmentServerPort>
+          <DevelopmentServerPort>6236</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>
