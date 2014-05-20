@@ -15,7 +15,7 @@ namespace BExIS.RPM.Output
     public class ExcelTemplateProvider
     {
         string _fileName = null;
-        private char[] alphabet = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
+        private char[] alphabet = {' ','A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
 
         public ExcelTemplateProvider(string fileName)
         {
@@ -90,8 +90,9 @@ namespace BExIS.RPM.Output
                     DataAttribute dataAttribute = CM.DataAttributeRepo.Get(var.DataAttribute.Id);
 
                     int indexVar = dataStructure.Variables.ToList().IndexOf(var) + 1;
+                    string columnIndex = GetClomunIndex(indexVar);
 
-                    string cellRef = GetClomunIndex(indexVar) + 1;
+                    string cellRef = columnIndex + 1;
                     Cell cell = new Cell()
                     {
                         CellReference = cellRef,
@@ -101,7 +102,7 @@ namespace BExIS.RPM.Output
                     };
                     rows.ElementAt(0).AppendChild(cell);
 
-                    cellRef = GetClomunIndex(indexVar) + 2;
+                    cellRef = columnIndex + 2;
                     cell = new Cell()
                     {
                         CellReference = cellRef,
@@ -111,7 +112,7 @@ namespace BExIS.RPM.Output
                     };
                     rows.ElementAt(1).AppendChild(cell);
 
-                    cellRef = GetClomunIndex(indexVar) + 3;
+                    cellRef = columnIndex + 3;
                     cell = new Cell()
                     {
                         CellReference = cellRef,
@@ -121,7 +122,7 @@ namespace BExIS.RPM.Output
                     };
                     rows.ElementAt(2).AppendChild(cell);
 
-                    cellRef = GetClomunIndex(indexVar) + 4;
+                    cellRef = columnIndex + 4;
                     cell = new Cell()
                     {
                         CellReference = cellRef,
@@ -131,7 +132,7 @@ namespace BExIS.RPM.Output
                     };
                     rows.ElementAt(3).AppendChild(cell);
 
-                    cellRef = GetClomunIndex(indexVar) + 5;
+                    cellRef = columnIndex + 5;
                     cell = new Cell()
                     {
                         CellReference = cellRef,
@@ -148,7 +149,7 @@ namespace BExIS.RPM.Output
                         classification = dataAttribute.Classification.Name;
                     }
 
-                    cellRef = GetClomunIndex(indexVar) + 6;
+                    cellRef = columnIndex + 6;
                     cell = new Cell()
                     {
                         CellReference = cellRef,
@@ -165,7 +166,7 @@ namespace BExIS.RPM.Output
                         unit = dataAttribute.Unit.Name;
                     }
 
-                    cellRef = GetClomunIndex(indexVar) + 7;
+                    cellRef = columnIndex + 7;
                     cell = new Cell()
                     {
                         CellReference = cellRef,
@@ -182,7 +183,7 @@ namespace BExIS.RPM.Output
                         dataType = dataAttribute.DataType.Name;
                     }
 
-                    cellRef = GetClomunIndex(indexVar) + 8;
+                    cellRef = columnIndex + 8;
                     cell = new Cell()
                     {
                         CellReference = cellRef,
@@ -192,7 +193,7 @@ namespace BExIS.RPM.Output
                     };
                     rows.ElementAt(7).AppendChild(cell);
 
-                    cellRef = GetClomunIndex(indexVar) + 9;
+                    cellRef = columnIndex + 9;
                     cell = new Cell()
                     {
                         CellReference = cellRef,
@@ -202,7 +203,7 @@ namespace BExIS.RPM.Output
                     };
                     rows.ElementAt(8).AppendChild(cell);
 
-                    cellRef = GetClomunIndex(indexVar) + 10;
+                    cellRef = columnIndex + 10;
                     cell = new Cell()
                     {
                         CellReference = cellRef,
@@ -220,7 +221,7 @@ namespace BExIS.RPM.Output
                     {
                         string[] tempArr = name.InnerText.Split('$');
                         string temp = "";
-                        tempArr[tempArr.Count() -2] = GetClomunIndex(dataStructure.Variables.Count());
+                        tempArr[tempArr.Count() - 2] = GetClomunIndex(dataStructure.Variables.Count());
                         foreach(string t in tempArr)
                         {
                             if (t == tempArr.First())
@@ -290,17 +291,29 @@ namespace BExIS.RPM.Output
             return temp;
         }
 
-        private string GetClomunIndex(int index)
+        private string GetClomunIndex(int index, int offset = 1)
         {
+
             //if (index <= 25) return alphabet[index].ToString();
             //return "";
             int residual = 0;
             string column = "";
+            bool firstRun= true;
             do
             {
-                residual = index % 25;
-                column = alphabet[residual].ToString() + column;
-                index = index / 25;
+                if(firstRun == true)
+                {
+                    residual = ((index % 26)) + offset;
+                    column = alphabet[residual].ToString() + column;
+                    index = (index / 26);
+                    firstRun = false;
+                }
+                else
+                {
+                    residual = ((index % 26)) + offset;
+                    column = alphabet[residual-1].ToString() + column;
+                    index = (index / 26);
+                }
 
             } while (index > 0);
             return column;

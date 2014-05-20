@@ -57,7 +57,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
                 foreach (var vu in sds.Variables)
                 {
                     // use vu.Label or vu.DataAttribute.Name
-                    DataColumn col = dt.Columns.Add(vu.Label.Replace(" ","")); // or DisplayName also
+                    DataColumn col = dt.Columns.Add("ID"+vu.Id.ToString()); // or DisplayName also
                     col.Caption = vu.Label;
 
                     switch (vu.DataAttribute.DataType.SystemType)
@@ -152,55 +152,55 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
                         {
                             if (vv.Value == null)
                             {
-                                dr[vv.Variable.Label.Replace(" ", "")] = "null";
+                                dr["ID" +vv.Variable.Id.ToString()] = "null";
                             }
                             else
                             {
-                                dr[vv.Variable.Label.Replace(" ", "")] = vv.Value.ToString();
+                                dr["ID"+vv.Variable.Id.ToString()] = vv.Value.ToString();
                             }
                             break;
                         }
 
                         case "Double":
                         {
-                            dr[vv.Variable.Label.Replace(" ", "")] = Convert.ToDouble(vv.Value);
+                            dr["ID"+vv.Variable.Id.ToString()] = Convert.ToDouble(vv.Value);
                             
                             break;
                         }
 
                         case "Int16":
                         {
-                            dr[vv.Variable.Label.Replace(" ", "")] = Convert.ToInt16(vv.Value);
+                            dr["ID"+vv.Variable.Id.ToString()] = Convert.ToInt16(vv.Value);
                             break;
                         }
 
                         case "Int32":
                         {
-                            dr[vv.Variable.Label.Replace(" ", "")] = Convert.ToInt32(vv.Value);
+                            dr["ID"+vv.Variable.Id.ToString()] = Convert.ToInt32(vv.Value);
                             break;
                         }
 
                         case "Int64":
                         {
-                            dr[vv.Variable.Label.Replace(" ", "")] = Convert.ToInt64(vv.Value);
+                            dr["ID"+vv.Variable.Id.ToString()] = Convert.ToInt64(vv.Value);
                             break;
                         }
 
                         case "Decimal":
                         {
-                            dr[vv.Variable.Label.Replace(" ", "")] = Convert.ToDecimal(vv.Value);
+                            dr["ID"+vv.Variable.Id.ToString()] = Convert.ToDecimal(vv.Value);
                             break;
                         }
 
                         case "DateTime":
                         {
-                            dr[vv.Variable.Label.Replace(" ", "")] = Convert.ToDateTime(vv.Value, CultureInfo.InvariantCulture);
+                            dr["ID"+vv.Variable.Id.ToString()] = Convert.ToDateTime(vv.Value, CultureInfo.InvariantCulture);
                             break;
                         }
                 
                         default:
                         {
-                            dr[vv.Variable.Label.Replace(" ", "")] = vv.Value;
+                            dr["ID"+vv.Variable.Id.ToString()] = vv.Value;
                             break;
                         }
                     }

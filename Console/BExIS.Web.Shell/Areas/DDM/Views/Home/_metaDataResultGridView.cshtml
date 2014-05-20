@@ -154,7 +154,7 @@
 
         
         var detailWindow = $("#ShowDatastructureWindow").data("tWindow");
-        $.post('@Url.Action("ShowPreviewDataStructure", "Home", new RouteValueDictionary { { "area", "DDM" } })', { datasetID: e.id }, function (response) {
+        $.post('@Url.Action("ShowPreviewDataStructure", "Data", new RouteValueDictionary { { "area", "DDM" } })', { datasetID: e.id }, function (response) {
             $("#showPreviewDS-resultGrid").html(response);
         })
 
@@ -166,7 +166,7 @@
         var x = '@Model'
 
 
-       $.post('@Url.Action("ShowMetadata", "Home", new RouteValueDictionary { { "area", "DDM" } })', { datasetID: e.id }, function (response) {
+       $.post('@Url.Action("ShowMetadata", "Data", new RouteValueDictionary { { "area", "DDM" } })', { datasetID: e.id }, function (response) {
 
            var win = window.open();
            with (win.document) {
@@ -179,7 +179,7 @@
 
    function pd_OnClick(e) {
 
-       $.post('@Url.Action("ShowPrimaryData", "Home", new RouteValueDictionary { { "area", "DDM" } })', { datasetID: e.id }, function (response) {
+       $.post('@Url.Action("ShowPrimaryData", "Data", new RouteValueDictionary { { "area", "DDM" } })', { datasetID: e.id }, function (response) {
 
            var win = window.open();
            with (win.document) {

@@ -16,7 +16,7 @@
 		.Name("PrimaryDataResultGrid")
 			.DataBinding(dataBinding => dataBinding
 				.Ajax()
-				.Select("_CustomPrimaryDataBinding", "Home", new RouteValueDictionary { { "area", "DDM" },{"datasetID", id} })
+				.Select("_CustomPrimaryDataBinding", "Data", new RouteValueDictionary { { "area", "DDM" },{"datasetID", id} })
 			)
 			.EnableCustomBinding(true)
 				.HtmlAttributes(new { @class = "primaryDataResultGrid" })
@@ -29,10 +29,10 @@
 				{
 					DataColumn column = Model.Item1.Columns[i];
 
-					if (dataStructure.Variables.Where(p => p.Label.Equals(column.Caption)) != null)
-					{
-						Variable sdvu = dataStructure.Variables.Where(p => p.Label.Equals(column.Caption)).FirstOrDefault();
-						if (sdvu.Parameters.Count > 0)
+					//if (dataStructure.Variables.Where(p => p.Id.Equals(Convert.ToInt64(column.ColumnName))) != null)
+					//{
+					//    Variable sdvu = dataStructure.Variables.Where(p => p.Id.Equals(Convert.ToInt64(column.ColumnName))).FirstOrDefault();
+						@*if (sdvu.Parameters.Count > 0)
 						{
 							// Variable has parameters
 							columns.Template(
@@ -66,7 +66,7 @@
 
 						}
 						else
-							{
+							{*@
 								string title;
 
 								if (column.Caption == "")
@@ -81,10 +81,10 @@
 								columns.Bound(column.DataType, column.ColumnName)
 									.Title(title)
 									;
-							}  
+							@*}*@  
 						
 				  
-					}
+					//}
 				}
 
 			})
@@ -104,22 +104,25 @@
 <br />
 @if (downdloadPath != "" && File.Exists(Path.Combine(Vaiona.Util.Cfg.AppConfiguration.DataPath, downdloadPath)))
 { 
-	@Html.ActionLink("Download", "DownloadPrimaryData", "Home", new { path = @downdloadPath }, new { area = "RPM", @class = "t-button searchDownloadButton" });
+	@Html.ActionLink("Download", "DownloadPrimaryData", "Data", new { path = @downdloadPath }, new { area = "RPM", @class = "t-button searchDownloadButton" });
 }
+
+@*@Html.ActionLink("Download csv", "DownloadAsCsvData", "Data", new { id = @Model.Item2 }, new { area = "RPM", @class = "t-button searchDownloadButton" });*@
+
 
 <style type="text/css">
 
-    .primaryDataResultGrid
-    {
-        position:absolute;
-        top:50px;
-    }
+	.primaryDataResultGrid
+	{
+		position:absolute;
+		top:50px;
+	}
 
-    .searchDownloadButton
-    {
-        position:absolute;
-        top:15px;
-    }
+	.searchDownloadButton
+	{
+		position:absolute;
+		top:15px;
+	}
 
 
 </style>    
@@ -129,7 +132,7 @@
 
 	$("#DownloadDataset").click(function () {
   
-		$.post('@Url.Action("DownloadPrimaryData", "Home", new RouteValueDictionary { { "area", "DDM" } })', { path: '@downdloadPath' }, function (response) {
+		$.post('@Url.Action("DownloadPrimaryData", "Data", new RouteValueDictionary { { "area", "DDM" } })', { path: '@downdloadPath' }, function (response) {
 			alert(response);
 		})
 

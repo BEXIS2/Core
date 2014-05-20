@@ -246,6 +246,7 @@
     <Compile Include="Areas\DCM\Models\UploadWizardParameters.cs" />
     <Compile Include="Areas\DCM\Models\ValidationModel.cs" />
     <Compile Include="Areas\DDM\Controllers\AdminController.cs" />
+    <Compile Include="Areas\DDM\Controllers\DataController.cs" />
     <Compile Include="Areas\RPM\Controllers\HomeController.cs" />
     <Compile Include="Areas\RPM\RPMAreaRegistration.cs" />
     <Compile Include="Areas\DDM\Controllers\HomeController.cs" />
@@ -738,7 +739,7 @@
   <ItemGroup>
     <Content Include="Areas\DDM\Views\Home\_dropBoxView.cshtml" />
     <Content Include="Areas\DDM\Views\Home\_metaDataResultGridView.cshtml" />
-    <Content Include="Areas\DDM\Views\Home\_primaryDataResultGridView.cshtml" />
+    <Content Include="Areas\DDM\Views\Data\_primaryDataResultGridView.cshtml" />
     <Content Include="Areas\DDM\Views\Home\_radioButtonsView.cshtml" />
     <Content Include="Areas\DDM\Views\Home\_rangeSliderView.cshtml" />
     <Content Include="Areas\DDM\Views\Home\_resultGridView.cshtml" />
@@ -753,8 +754,8 @@
     <Content Include="Areas\DDM\Views\Home\_windowCheckBoxList.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\DDM\Views\Home\ShowMetaData.cshtml" />
-    <Content Include="Areas\DDM\Views\Home\ShowPrimaryData.cshtml" />
+    <Content Include="Areas\DDM\Views\Data\ShowMetaData.cshtml" />
+    <Content Include="Areas\DDM\Views\Data\ShowPrimaryData.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\DDM\Views\Home\Index.cshtml" />

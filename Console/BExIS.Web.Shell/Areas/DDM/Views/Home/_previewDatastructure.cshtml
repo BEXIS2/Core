@@ -30,7 +30,7 @@
 
                     .DataBinding(dataBinding => dataBinding
                         .Ajax()
-                        .Select("_CustomDataStructureBinding", "Home", new { datasetID = id })
+                        .Select("_CustomDataStructureBinding", "Data", new { datasetID = id })
                     )
                     .EnableCustomBinding(true)
                     .HtmlAttributes(new { @class = "dataStructure-grid" })

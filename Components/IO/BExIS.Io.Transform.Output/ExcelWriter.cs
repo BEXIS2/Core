@@ -30,7 +30,7 @@ namespace BExIS.Io.Transform.Output
         DefinedNameVal _areaOfData = new DefinedNameVal();
         DefinedNameVal _areaOfVariables = new DefinedNameVal();
 
-        char[] alphabet = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
+        char[] alphabet = { ' ','A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
 
 
         int startColumn = 0;
@@ -445,17 +445,26 @@ namespace BExIS.Io.Transform.Output
             return match.Value;
         }
 
-        private string getColumnIndex(int index)
+        private string getColumnIndex(int index, int offset=1)
         {
-            //if (index <= 25) return alphabet[index].ToString();
-            //return "";
             int residual = 0;
             string column = "";
+            bool firstRun = true;
             do
             {
-                residual = index % 25;
-                column = alphabet[residual].ToString() + column;
-                index = index / 25;
+                if (firstRun == true)
+                {
+                    residual = ((index % 26)) + offset;
+                    column = alphabet[residual].ToString() + column;
+                    index = (index / 26);
+                    firstRun = false;
+                }
+                else
+                {
+                    residual = ((index % 26)) + offset;
+                    column = alphabet[residual - 1].ToString() + column;
+                    index = (index / 26);
+                }
 
             } while (index > 0);
             return column;
