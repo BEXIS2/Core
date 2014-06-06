@@ -140,7 +140,110 @@ namespace BExIS.Io.Transform.Output
             return errorMessages;
         }
 
-        //add rows
+        /// <summary>
+        /// Add Datatuples to a Excel Template file
+        /// </summary>
+        /// <param name="dataTuples"> Datatuples to add</param>
+        /// <param name="filePath">Path of the excel template file</param>
+        /// <param name="dataStructureId">Id of datastructure</param>
+        /// <returns>List of Errors or null</returns>
+        public List<Error> AddDataTuplesToTemplate(List<DataTuple> dataTuples, string filePath, long dataStructureId)
+        {
+            if (File.Exists(filePath))
+            {
+
+                //Stream file = Open(filePath);
+
+                //_dataTuples = dataTuples;
+                // loading datastructure
+                _dataStructure = GetDataStructure(dataStructureId);
+
+                // open excel file
+                spreadsheetDocument = SpreadsheetDocument.Open(filePath, true);
+
+                // get workbookpart
+                WorkbookPart workbookPart = spreadsheetDocument.WorkbookPart;
+
+                // get all the defined area 
+                List<DefinedNameVal> namesTable = BuildDefinedNamesTable(workbookPart);
+
+                // select data area
+                this._areaOfData = namesTable.Where(p => p.Key.Equals("Data")).FirstOrDefault();
+
+                // Select variable area
+                this._areaOfVariables = namesTable.Where(p => p.Key.Equals("VariableIdentifiers")).FirstOrDefault();
+
+                // Get intergers for reading data
+                startColumn = GetColumnNumber(this._areaOfData.StartColumn);
+                endColumn = GetColumnNumber(this._areaOfData.EndColumn);
+
+                numOfColumns = (endColumn - startColumn) + 1;
+                offset = GetColumnNumber(getColumnName(this._areaOfData.StartColumn)) - 1;
+
+                // gerneat Style for cell types
+                generateStyle(spreadsheetDocument);
+
+                // get styleSheet
+                _stylesheet = workbookPart.WorkbookStylesPart.Stylesheet;
+
+                // Get shared strings
+                _sharedStrings = workbookPart.SharedStringTablePart.SharedStringTable.Elements<SharedStringItem>().ToArray();
+
+                // select worksheetpart by selected defined name area like data in sheet
+                // sheet where data area is inside
+                WorksheetPart worksheetPart = GetWorkSheetPart(workbookPart, this._areaOfData);
+
+                // Get VarioableIndentifiers
+                this.VariableIndentifiers = GetVariableIdentifiers(worksheetPart, this._areaOfVariables.StartRow, this._areaOfVariables.EndRow);
+
+
+                AddRows(worksheetPart, this._areaOfData.StartRow, this._areaOfData.EndRow, dataTuples);
+
+                // set data area
+
+                foreach (DefinedName name in workbookPart.Workbook.GetFirstChild<DefinedNames>())
+                {
+                    if (name.Name == "Data")
+                    {
+                        string[] tempArr = name.InnerText.Split('$');
+                        string temp = "";
+                        //$A$10:$C$15
+
+                        tempArr[tempArr.Count() - 1] = numOfDataRows.ToString();
+
+                        foreach (string t in tempArr)
+                        {
+                            if (t == tempArr.First())
+                            {
+                                temp = temp + t;
+                            }
+                            else
+                            {
+                                temp = temp + "$" + t;
+                            }
+                        }
+
+                        name.Text = temp;
+                    }
+                }
+
+
+                spreadsheetDocument.WorkbookPart.Workbook.Save();
+                spreadsheetDocument.Close();
+
+            }
+
+            return errorMessages;
+        }
+
+
+        /// <summary>
+        /// Add Rows to a WorksheetPart
+        /// </summary>
+        /// <param name="worksheetPart"></param>
+        /// <param name="startRow"></param>
+        /// <param name="endRow"></param>
+        /// <param name="dataTuplesIds"></param>
         protected void AddRows(WorksheetPart worksheetPart, int startRow, int endRow, List<long> dataTuplesIds)
         {
             Worksheet worksheet = worksheetPart.Worksheet;
@@ -176,14 +279,60 @@ namespace BExIS.Io.Transform.Output
 
         }
 
-        //convert Datatuple To Row
+        /// <summary>
+        ///  Add Rows to a WorksheetPart
+        /// </summary>
+        /// <param name="worksheetPart"></param>
+        /// <param name="startRow"></param>
+        /// <param name="endRow"></param>
+        /// <param name="dataTuples"></param>
+        protected void AddRows(WorksheetPart worksheetPart, int startRow, int endRow, List<DataTuple> dataTuples)
+        {
+            Worksheet worksheet = worksheetPart.Worksheet;
+            SheetData sheetData = worksheet.GetFirstChild<SheetData>();
+
+            int rowIndex = endRow;
+            //add row
+            foreach (DataTuple dataTuple in dataTuples)
+            {
+
+                // convert datatuple to row and add it to sheetdata
+                Row row = DatatupleToRow(dataTuple, rowIndex);
+
+                bool empty = true;
+                foreach (Cell c in row.Elements<Cell>().ToList())
+                {
+                    if (!String.IsNullOrEmpty(c.InnerText))
+                    {
+                        empty = false;
+                        break;
+                    }
+                }
+
+                if (!empty)
+                {
+                    sheetData.Append(row);
+                    if (!dataTuple.Equals(dataTuples.Last()))
+                        rowIndex++;
+                }
+            }
+
+            numOfDataRows = rowIndex;
+
+        }
+
+        /// <summary>
+        /// Convert a Datatuple to a Row
+        /// </summary>
+        /// <param name="dataTupleId">Id of the Datatuple to convert</param>
+        /// <param name="rowIndex">Position of the Row</param>
+        /// <returns></returns>
         protected Row DatatupleToRow(long dataTupleId, int rowIndex)
         { 
             Row row = new Row();
             row.RowIndex = Convert.ToUInt32(rowIndex);
 
-            //DatatupleManager
-            DatasetManager datasetManager = new DatasetManager();
+
             DataTuple dataTuple = datasetManager.DataTupleRepo.Get(dataTupleId);
             dataTuple.Materialize();
             
@@ -205,7 +354,41 @@ namespace BExIS.Io.Transform.Output
             return row;
         }
 
-        // convert VariableValue to Cell
+        /// <summary>
+        /// Convert a Datatuple to a Row
+        /// </summary>
+        /// <param name="dataTuple">Datatuple to convert</param>
+        /// <param name="rowIndex">Position of the Row</param>
+        /// <returns></returns>
+        protected Row DatatupleToRow(DataTuple dataTuple, int rowIndex)
+        {
+            Row row = new Row();
+            row.RowIndex = Convert.ToUInt32(rowIndex);
+
+            int columnIndex = 0;
+            columnIndex += offset;
+
+            // need to add this empty cell to add cells to the right place
+            row.AppendChild(GetEmptyCell(rowIndex, 0));
+
+            foreach (VariableIdentifier variableIdentifier in VariableIndentifiers)
+            {
+                VariableValue variableValue = dataTuple.VariableValues.Where(p => p.VariableId.Equals(variableIdentifier.id)).First();
+                Cell cell = VariableValueToCell(variableValue, rowIndex, columnIndex);
+                row.AppendChild(cell);
+            }
+
+
+            return row;
+        }
+
+        /// <summary>
+        /// Convert a VariableValue to Cell
+        /// </summary>
+        /// <param name="variableValue"></param>
+        /// <param name="rowIndex"></param>
+        /// <param name="columnIndex"></param>
+        /// <returns></returns>
         protected Cell VariableValueToCell(VariableValue variableValue, int rowIndex, int columnIndex)
         {
             DataContainerManager CM = new DataContainerManager();
@@ -253,6 +436,12 @@ namespace BExIS.Io.Transform.Output
             return cell;
         }
 
+        /// <summary>
+        /// Get a empty cell
+        /// </summary>
+        /// <param name="rowIndex"></param>
+        /// <param name="columnIndex"></param>
+        /// <returns></returns>
         protected Cell GetEmptyCell(int rowIndex, int columnIndex)
         {
             string cellRef = getColumnIndex(columnIndex);

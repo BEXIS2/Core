@@ -3,29 +3,6 @@ namespace BExIS.Io.Transform.Input
 {
 
     /// <summary>
-    /// TextSeperator is a list of different characters which used as seperator in ascii files
-    /// </summary>
-    /// <remarks></remarks>        
-    public enum TextSeperator
-    {
-        tab,
-        comma,
-        semicolon,
-        space
-    }
-
-    /// <summary>
-    /// TextMarker is a list of different characters which used as textmarker in ascii files
-    /// </summary>
-    /// <remarks></remarks>
-    public enum TextMarker
-    {
-        quotes,
-        doubleQuotes
-    }
-
-
-    /// <summary>
     /// This class is required to store information that is important to read of data from ascii files.
     /// </summary>
     /// <remarks></remarks>        

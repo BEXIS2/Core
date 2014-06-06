@@ -77,9 +77,13 @@
       <Project>{c8a05313-b960-406e-92ec-c1e5b3f47fcd}</Project>
       <Name>BExIS.Io.Transform.Validation</Name>
     </ProjectReference>
+    <ProjectReference Include="..\BExIS.Io\BExIS.Io.csproj">
+      <Project>{e4795f06-20c2-4c4c-a720-9a79896384df}</Project>
+      <Name>BExIS.Io</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Input.cd" />
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

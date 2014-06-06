@@ -2,19 +2,6 @@
 namespace BExIS.Io.Transform.Input
 {
 
-    public enum DecimalCharacter
-    {
-        point,
-        comma
-    }
-
-    public enum Orientation
-    {
-        columnwise,
-        rowwise
-    }
-
-
     public class FileReaderInfo
     {
 

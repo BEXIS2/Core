@@ -8,6 +8,7 @@ using System.Xml;
 using System.Xml.Xsl;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using Vaiona.Util.Cfg;
 
@@ -15,6 +16,8 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
 {
     public class SearchUIHelper
     {
+        private static DataStructureManager dsm = new DataStructureManager();
+
         public static string ConvertXmlToHtml(string m, string xslPath="")
         {
             string url = "";
@@ -44,8 +47,99 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
 
         }
 
+        public static DataTable ConvertPrimaryDataToDatatable(DatasetVersion dsv, IEnumerable<long> dsVersionTupleIds)
+        {
 
-        public static DataTable ConvertPrimaryDataToDatatable(DatasetVersion dsv, List<DataTuple> dsVersionTuples)
+            DataTable dt = new DataTable();
+            dt.TableName = "Primary data table";
+            DataStructureManager dsm = new DataStructureManager();
+            StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(dsv.Dataset.DataStructure.Id);
+
+            if (dsVersionTupleIds != null && sds != null)
+            {
+                foreach (var vu in sds.Variables)
+                {
+                    // use vu.Label or vu.DataAttribute.Name
+                    DataColumn col = dt.Columns.Add("ID" + vu.Id.ToString()); // or DisplayName also
+                    col.Caption = vu.Label;
+
+                    switch (vu.DataAttribute.DataType.SystemType)
+                    {
+                        case "String":
+                            {
+                                col.DataType = Type.GetType("System.String");
+                                break;
+                            }
+
+                        case "Double":
+                            {
+                                col.DataType = Type.GetType("System.Double");
+                                break;
+                            }
+
+                        case "Int16":
+                            {
+                                col.DataType = Type.GetType("System.Int16");
+                                break;
+                            }
+
+                        case "Int32":
+                            {
+                                col.DataType = Type.GetType("System.Int32");
+                                break;
+                            }
+
+                        case "Int64":
+                            {
+                                col.DataType = Type.GetType("System.Int64");
+                                break;
+                            }
+
+                        case "Decimal":
+                            {
+                                col.DataType = Type.GetType("System.Decimal");
+                                break;
+                            }
+
+                        case "DateTime":
+                            {
+                                col.DataType = Type.GetType("System.DateTime");
+                                break;
+                            }
+
+                        default:
+                            {
+                                col.DataType = Type.GetType("System.String");
+                                break;
+                            }
+                    }
+
+
+
+                    if (vu.Parameters.Count > 0)
+                    {
+                        foreach (var pu in vu.Parameters)
+                        {
+                            DataColumn col2 = dt.Columns.Add(pu.Label.Replace(" ", "")); // or DisplayName also
+                            col2.Caption = pu.Label;
+
+                        }
+                    }
+                }
+
+                DatasetManager datasetManager = new DatasetManager();
+
+                foreach (var id in dsVersionTupleIds)
+                {
+                    DataTuple dataTuple = datasetManager.DataTupleRepo.Get(id);
+                    dataTuple.Materialize();
+                    dt.Rows.Add(ConvertTupleIntoDataRow(dt, dataTuple));
+                }
+            }
+
+            return dt;
+        }
+        public static DataTable ConvertPrimaryDataToDatatable(DatasetVersion dsv, IEnumerable<DataTuple> dsVersionTuples)
         {
             DataTable dt = new DataTable();
             dt.TableName = "Primary data table";
@@ -135,17 +229,12 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
 
         private static DataRow ConvertTupleIntoDataRow(DataTable dt, DataTuple t)
         {
-
+           
             DataRow dr = dt.NewRow();
-
-            DataStructureManager dsm = new DataStructureManager();
-
             foreach(var vv in t.VariableValues)
             {
                 if (vv.Variable != null)
                 {
-                   
-
                     switch (vv.DataAttribute.DataType.SystemType)
                     { 
                         case "String":
@@ -163,44 +252,58 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
 
                         case "Double":
                         {
-                            dr["ID"+vv.Variable.Id.ToString()] = Convert.ToDouble(vv.Value);
+                            if (vv.Value != null)
+                                if(!String.IsNullOrEmpty(vv.Value.ToString()))
+                                    dr["ID"+vv.Variable.Id.ToString()] = Convert.ToDouble(vv.Value);
                             
                             break;
                         }
 
                         case "Int16":
                         {
-                            dr["ID"+vv.Variable.Id.ToString()] = Convert.ToInt16(vv.Value);
+                            if (vv.Value != null)
+                                if (!String.IsNullOrEmpty(vv.Value.ToString()))
+                                    dr["ID"+vv.Variable.Id.ToString()] = Convert.ToInt16(vv.Value);
                             break;
                         }
 
                         case "Int32":
                         {
-                            dr["ID"+vv.Variable.Id.ToString()] = Convert.ToInt32(vv.Value);
+                            if (vv.Value != null)
+                                if (!String.IsNullOrEmpty(vv.Value.ToString()))
+                                    dr["ID"+vv.Variable.Id.ToString()] = Convert.ToInt32(vv.Value);
                             break;
                         }
 
                         case "Int64":
                         {
-                            dr["ID"+vv.Variable.Id.ToString()] = Convert.ToInt64(vv.Value);
+                            if (vv.Value != null)
+                                if (!String.IsNullOrEmpty(vv.Value.ToString()))
+                                    dr["ID"+vv.Variable.Id.ToString()] = Convert.ToInt64(vv.Value);
                             break;
                         }
 
                         case "Decimal":
                         {
-                            dr["ID"+vv.Variable.Id.ToString()] = Convert.ToDecimal(vv.Value);
+                            if (vv.Value != null)
+                                if (!String.IsNullOrEmpty(vv.Value.ToString()))
+                                    dr["ID"+vv.Variable.Id.ToString()] = Convert.ToDecimal(vv.Value);
                             break;
                         }
 
                         case "DateTime":
                         {
-                            dr["ID"+vv.Variable.Id.ToString()] = Convert.ToDateTime(vv.Value, CultureInfo.InvariantCulture);
+                            if (vv.Value != null)
+                                if (!String.IsNullOrEmpty(vv.Value.ToString()))
+                                    dr["ID"+vv.Variable.Id.ToString()] = Convert.ToDateTime(vv.Value, CultureInfo.InvariantCulture);
                             break;
                         }
                 
                         default:
                         {
-                            dr["ID"+vv.Variable.Id.ToString()] = vv.Value;
+                            if (vv.Value != null)
+                                if (!String.IsNullOrEmpty(vv.Value.ToString()))
+                                    dr["ID"+vv.Variable.Id.ToString()] = vv.Value;
                             break;
                         }
                     }

@@ -151,7 +151,7 @@
     </ProjectReference>
     <ProjectReference Include="..\BExIS.Ddm.Api\BExIS.Ddm.Api.csproj">
       <Project>{8519eac6-fbf8-48b3-813f-e0b9d3cc4a52}</Project>
-      <Name>BExIS.Search.Api</Name>
+      <Name>BExIS.Ddm.Api</Name>
     </ProjectReference>
     <ProjectReference Include="..\BExIS.Ddm.Model\BExIS.Ddm.Model.csproj">
       <Project>{ab46beb8-c36d-412f-9b1a-646c86299a87}</Project>

@@ -1,15 +1,21 @@
-﻿@model Tuple<DataTable, int, StructuredDataStructure, String>
+﻿@model Tuple<DataTable, int, StructuredDataStructure>
 @using System.Data;
 @using BExIS.Dlm.Entities.DataStructure;
 
 @{
 	int id = Model.Item2;
 	StructuredDataStructure dataStructure = Model.Item3;
-	string downdloadPath = Model.Item4;
 	
 	GridPagerStyles pagerStyles = GridPagerStyles.PageSizeDropDown;
 	pagerStyles |= GridPagerStyles.NextPreviousAndNumeric;
 	pagerStyles |= GridPagerStyles.Numeric;
+
+
+	int total = 0;
+	if (ViewData["gridTotal"] != null)
+	{
+		total = (int)ViewData["gridTotal"];
+	}
 }
 
 @(Html.Telerik().Grid<System.Data.DataRow>()
@@ -90,9 +96,10 @@
 			})
 
 			.Pageable(paging =>
-				paging.PageSize(5)
+				paging.PageSize(50)
 					.Style(pagerStyles)
 					.Position(GridPagerPosition.Both)
+					.Total(total)
 					)
 			.Sortable()
 			.Filterable()
@@ -101,42 +108,16 @@
 
 			)
 
-<br />
-@if (downdloadPath != "" && File.Exists(Path.Combine(Vaiona.Util.Cfg.AppConfiguration.DataPath, downdloadPath)))
-{ 
-	@Html.ActionLink("Download", "DownloadPrimaryData", "Data", new { path = @downdloadPath }, new { area = "RPM", @class = "t-button searchDownloadButton" });
-}
-
-@*@Html.ActionLink("Download csv", "DownloadAsCsvData", "Data", new { id = @Model.Item2 }, new { area = "RPM", @class = "t-button searchDownloadButton" });*@
-
 
 <style type="text/css">
 
 	.primaryDataResultGrid
 	{
 		position:absolute;
-		top:50px;
+		top:60px;
 	}
-
-	.searchDownloadButton
-	{
-		position:absolute;
-		top:15px;
-	}
-
-
 </style>    
 <script type="text/javascript">
-
-
-
-	$("#DownloadDataset").click(function () {
-  
-		$.post('@Url.Action("DownloadPrimaryData", "Data", new RouteValueDictionary { { "area", "DDM" } })', { path: '@downdloadPath' }, function (response) {
-			alert(response);
-		})
-
-	})
 
 	function PrimaryDataResultGrid_OnLoad(e) {
 		$('.t-grid .t-status').hide();

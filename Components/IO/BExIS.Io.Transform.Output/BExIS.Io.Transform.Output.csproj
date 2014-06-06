@@ -58,6 +58,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AsciiHelper.cs" />
     <Compile Include="AsciiWriter.cs" />
     <Compile Include="DataWriter.cs" />
     <Compile Include="ExcelWriter.cs" />
@@ -75,6 +76,10 @@
     <ProjectReference Include="..\BExIS.Io.Transform.Validation\BExIS.Io.Transform.Validation.csproj">
       <Project>{c8a05313-b960-406e-92ec-c1e5b3f47fcd}</Project>
       <Name>BExIS.Io.Transform.Validation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BExIS.Io\BExIS.Io.csproj">
+      <Project>{e4795f06-20c2-4c4c-a720-9a79896384df}</Project>
+      <Name>BExIS.Io</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

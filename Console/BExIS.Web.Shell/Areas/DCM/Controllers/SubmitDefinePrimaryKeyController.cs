@@ -145,64 +145,55 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         pks.Add(model.VariableLableList.Where(p => p.Title.Equals(value)).First());
                     }
 
-
-                    int packageSize = 100;
-                    int position = 1;
-
                     List<string> tempDataset = new List<string>();
                     List<string> tempFromFile = new List<string>();
 
+                    // data from db
                     tempDataset = UploadWizardHelper.GetIdentifierList(Convert.ToInt64(TaskManager.Bus[TaskManager.DATASET_ID].ToString()), identifiers);
 
+                    //data from file
+                    tempFromFile = UploadWizardHelper.GetIdentifierList(TaskManager, Convert.ToInt64(TaskManager.Bus[TaskManager.DATASET_ID].ToString()), identifiers, TaskManager.Bus[TaskManager.EXTENTION].ToString(), TaskManager.Bus[TaskManager.FILENAME].ToString());
 
-                    do
+                    // if dulpicates exist checkDuplicates return true
+                    if (UploadWizardHelper.CheckDuplicates(tempDataset) || UploadWizardHelper.CheckDuplicates(tempFromFile))
                     {
-                        tempFromFile = UploadWizardHelper.GetIdentifierList(TaskManager, Convert.ToInt64(TaskManager.Bus[TaskManager.DATASET_ID].ToString()), identifiers, TaskManager.Bus[TaskManager.EXTENTION].ToString(), TaskManager.Bus[TaskManager.FILENAME].ToString(), packageSize, position);
+                        model.IsUnique = false;
+                        model.PrimaryKeysList = pks;
 
-                        if (UploadWizardHelper.CheckDuplicates(tempDataset) || UploadWizardHelper.CheckDuplicates(tempFromFile))
+                        if (TaskManager.Bus.ContainsKey(TaskManager.PRIMARY_KEYS_UNIQUE))
                         {
-                            model.IsUnique = false;
-                            model.PrimaryKeysList = pks;
-
-                            if (TaskManager.Bus.ContainsKey(TaskManager.PRIMARY_KEYS_UNIQUE))
-                            {
-                                TaskManager.Bus[TaskManager.PRIMARY_KEYS_UNIQUE] = false;
-                            }
-                            else
-                            {
-                                TaskManager.AddToBus(TaskManager.PRIMARY_KEYS_UNIQUE, false);
-                            }
-
-                            if (TaskManager.Bus.ContainsKey(TaskManager.PRIMARY_KEYS))
-                            {
-                                TaskManager.Bus.Remove(TaskManager.PRIMARY_KEYS);
-                            }
-                            model.ErrorList.Add(new Error(ErrorType.Other, "Selection is not unique"));
-
+                            TaskManager.Bus[TaskManager.PRIMARY_KEYS_UNIQUE] = false;
                         }
                         else
                         {
-                            model.IsUnique = true;
-
-                            if (TaskManager.Bus.ContainsKey(TaskManager.PRIMARY_KEYS_UNIQUE))
-                            {
-                                TaskManager.Bus[TaskManager.PRIMARY_KEYS_UNIQUE] = true;
-                            }
-                            else
-                            {
-                                TaskManager.AddToBus(TaskManager.PRIMARY_KEYS_UNIQUE, true);
-                            }
-
-                            TaskManager.Bus[TaskManager.PRIMARY_KEYS] = identifiers;
-                            Session["TaskManager"] = TaskManager;
-                            model.PrimaryKeysList = pks;
-                            model.PK_Id_List = identifiers;
+                            TaskManager.AddToBus(TaskManager.PRIMARY_KEYS_UNIQUE, false);
                         }
 
-                        position += tempFromFile.Count();
+                        if (TaskManager.Bus.ContainsKey(TaskManager.PRIMARY_KEYS))
+                        {
+                            TaskManager.Bus.Remove(TaskManager.PRIMARY_KEYS);
+                        }
+                        model.ErrorList.Add(new Error(ErrorType.Other, "Selection is not unique"));
 
                     }
-                    while (tempFromFile.Count > 0 && model.IsUnique);
+                    else
+                    {
+                        model.IsUnique = true;
+
+                        if (TaskManager.Bus.ContainsKey(TaskManager.PRIMARY_KEYS_UNIQUE))
+                        {
+                            TaskManager.Bus[TaskManager.PRIMARY_KEYS_UNIQUE] = true;
+                        }
+                        else
+                        {
+                            TaskManager.AddToBus(TaskManager.PRIMARY_KEYS_UNIQUE, true);
+                        }
+
+                        TaskManager.Bus[TaskManager.PRIMARY_KEYS] = identifiers;
+                        Session["TaskManager"] = TaskManager;
+                        model.PrimaryKeysList = pks;
+                        model.PK_Id_List = identifiers;
+                    }
 
                 }
                 else

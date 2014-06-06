@@ -8,6 +8,7 @@ using BExIS.Io.Transform.Validation.DSValidation;
 using BExIS.Io.Transform.Validation.Exceptions;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Services.Data;
 
 namespace BExIS.Io.Transform.Input
 {
@@ -19,6 +20,7 @@ namespace BExIS.Io.Transform.Input
     /// <remarks></remarks>        
     public class AsciiReader:DataReader
     {
+
         /// <summary>
         /// Read the whole file line by line until no more come. 
         /// Convert the lines into a datatuple based on the datastructure.
@@ -228,6 +230,7 @@ namespace BExIS.Io.Transform.Input
         /// <param name="sds">StructuredDataStructure</param>
         /// <param name="datasetId">Id of the dataset</param>
         /// <param name="variableList">List of variables</param>
+        /// <param name="packageSize">size of a package</param>
         /// <returns></returns>
         public List<List<string>> ReadValuesFromFile(Stream file, string fileName, AsciiFileReaderInfo fri, StructuredDataStructure sds, long datasetId, List<long> variableList, int packageSize)
         {
@@ -332,6 +335,90 @@ namespace BExIS.Io.Transform.Input
 
                 totalTime.Stop();
                 Debug.WriteLine(" Total Time of primary key check " + totalTime.Elapsed.TotalSeconds.ToString());
+            }
+
+            return listOfSelectedvalues;
+        }
+
+
+        /// <summary>
+        /// Get all values from the file of each variable in variable list
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref="AsciiFileReaderInfo"/>
+        /// <seealso cref="DataTuple"/>
+        /// <seealso cref="StructuredDataStructure"/>
+        /// <param name="file">Stream of the file</param>
+        /// <param name="fileName">name of the file</param>
+        /// <param name="fri">AsciiFileReaderInfo needed</param>
+        /// <param name="sds">StructuredDataStructure</param>
+        /// <param name="datasetId">Id of the dataset</param>
+        /// <param name="variableList">List of variables</param>
+        /// <returns></returns>
+        public List<List<string>> ReadValuesFromFile(Stream file, string fileName, AsciiFileReaderInfo fri, StructuredDataStructure sds, long datasetId, List<long> variableList)
+        {
+            this.file = file;
+            this.fileName = fileName;
+            this.info = fri;
+            this.structuredDataStructure = sds;
+            this.datasetId = datasetId;
+
+            List<List<string>> listOfSelectedvalues = new List<List<string>>();
+
+            // Check params
+            if (this.file == null)
+            {
+                this.errorMessages.Add(new Error(ErrorType.Other, "File not exist"));
+            }
+            if (!this.file.CanRead)
+            {
+                this.errorMessages.Add(new Error(ErrorType.Other, "File is not readable"));
+            }
+            if (this.info.Variables <= 0)
+            {
+                this.errorMessages.Add(new Error(ErrorType.Other, "Startrow of Variable can´t be 0"));
+            }
+            if (this.info.Data <= 0)
+            {
+                this.errorMessages.Add(new Error(ErrorType.Other, "Startrow of Data can´t be 0"));
+            }
+
+            if (this.errorMessages.Count == 0)
+            {
+                Stopwatch totalTime = Stopwatch.StartNew();
+
+                using (StreamReader streamReader = new StreamReader(file))
+                {
+                    string line;
+                    //int index = fri.Variables;
+                    int index = 1;
+                  
+                    char seperator = AsciiFileReaderInfo.GetSeperator(fri.Seperator);
+
+    
+                    // go to every line
+                    while ((line = streamReader.ReadLine()) != null )
+                    {
+
+                        // is position of datastructure?
+                        if (index == this.info.Variables)
+                        {
+                            variableIdentifierRows.Add(RowToList(line, seperator));
+                            ConvertAndAddToSubmitedVariableIdentifier();
+                        }
+
+                        // is position = or over startposition of data?
+                        if (index >= this.info.Data)
+                        {
+                            // return List of VariablesValues, and error messages
+                            listOfSelectedvalues.Add(GetValuesFromRow(RowToList(line, seperator), index, variableList));
+                        }
+
+                        index++;
+                    }
+                }
+
+                //Debug.WriteLine(" Total Time of primary key check " + totalTime.Elapsed.TotalSeconds.ToString());
             }
 
             return listOfSelectedvalues;

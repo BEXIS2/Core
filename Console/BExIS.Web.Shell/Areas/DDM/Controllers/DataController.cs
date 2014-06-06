@@ -4,15 +4,20 @@ using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
+using BExIS.Io.Transform.Output;
 using BExIS.Web.Shell.Areas.DDM.Helpers;
 using Telerik.Web.Mvc;
+using Telerik.Web.Mvc.UI;
 using Vaiona.Util.Cfg;
+using BExIS.Io;
 
 namespace BExIS.Web.Shell.Areas.DDM.Controllers
 {
@@ -23,6 +28,8 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
         public ActionResult Index()
         {
+           
+            
             return View();
         }
 
@@ -47,30 +54,23 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
         #region primary data
 
-            //Javad: this method is called on the hover of the search results.
             public ActionResult ShowPrimaryData(int datasetID)
             {
+                Session["Filter"] = null;
+                Session["DownloadFullDataset"] = false;
+                ViewData["DownloadOptions"] = null;
+
                 DatasetManager dm = new DatasetManager();
                 DatasetVersion dsv = dm.GetDatasetLatestVersion(datasetID);
                 DataStructureManager dsm = new DataStructureManager();
                 StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(dsv.Dataset.DataStructure.Id);
-                List<DataTuple> dsVersionTuples = dm.GetDatasetVersionEffectiveTuples(dsv);
 
-                string downloadUri = "";
 
-                if (dsv.ContentDescriptors.Count > 0)
-                {
-                    if (dsv.ContentDescriptors.Count(p => p.Name.Equals("generated")) == 1)
-                    {
-                        downloadUri = dsv.ContentDescriptors.Where(p => p.Name.Equals("generated")).First().URI;
-                    }
-                }
 
-                Tuple<DataTable, int, StructuredDataStructure, String> m = new Tuple<DataTable, int, StructuredDataStructure, String>(
-                   SearchUIHelper.ConvertPrimaryDataToDatatable(dsv, dsVersionTuples),
+                Tuple<DataTable, int, StructuredDataStructure> m = new Tuple<DataTable, int, StructuredDataStructure>(
+                   SearchUIHelper.ConvertPrimaryDataToDatatable(dsv, new List<DataTuple>()),
                    datasetID,
-                   sds,
-                   downloadUri
+                   sds
                    );
 
                 return View(m);
@@ -79,35 +79,480 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             [GridAction]
             public ActionResult _CustomPrimaryDataBinding(GridCommand command, int datasetID)
             {
+
+                Session["Filter"] = command;
+
                 DatasetManager dm = new DatasetManager();
                 DatasetVersion dsv = dm.GetDatasetLatestVersion(datasetID);
-                List<DataTuple> dsVersionTuples = dm.GetDatasetVersionEffectiveTuples(dsv);
-                DataTable table = SearchUIHelper.ConvertPrimaryDataToDatatable(dsv, dsVersionTuples);
 
-                foreach (DataRow v in table.Rows)
+
+                IEnumerable<DataTuple> dataTuples = dm.GetDatasetVersionEffectiveTuples(dsv);
+
+                DataTable table = SearchUIHelper.ConvertPrimaryDataToDatatable(dsv, dataTuples);
+                GridModel model = new GridModel(table);
+
+
+                return View(model);
+            }
+
+            #region download
+
+                public ActionResult SetFullDatasetDownload(bool subset)
                 {
-                    Debug.WriteLine(v[0]);
+                    Session["DownloadFullDataset"] = subset;
+
+                    return Content("changed");
+
                 }
 
-                return View(new GridModel(table));
-            }
 
-            public ActionResult DownloadPrimaryData(string path)
-            {
-                string[] temp = path.Split('\\');
-                // define a correct name
-                return File(Path.Combine(AppConfiguration.DataPath, path), "application/xlsm", temp.Last());
-            }
+                public ActionResult DownloadAsExcelData(long id)
+                {
+                    string ext = ".xlsm";
 
-            public ActionResult DownloadAsCsvData(long id)
-            {
+                    DatasetManager datasetManager = new DatasetManager();
+                    DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
+                    ExcelWriter writer = new ExcelWriter();
+
+                    string title = getTitle(writer.GetTitle(id));
+                    
+                    string path = "";
+
+                    // if filter selected
+                    if (filterInUse())
+                    {
+                        #region generate a subset of a dataset
+                            List<DataTuple> datatuples = GetFilteredDataTuples(datasetVersion);
+
+                            long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
+                            path = generateDownloadFile(id, datasetVersion.VersionNo, datastuctureId, title, ext);
+
+                            writer.AddDataTuplesToTemplate(datatuples, path, datastuctureId);
+
+                            return File(path, "application/xlsm", title + ext);
+                        #endregion
+                    }
+
+                    //filter not in use
+                    else
+                    {
+                        //excel allready exist
+                        if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals("generated")) > 0)
+                        {
+                            #region file exist
+
+                                ContentDescriptor contentdescriptor = datasetVersion.ContentDescriptors.Where(p => p.Name.Equals("generated")).FirstOrDefault();
+                                path = Path.Combine(AppConfiguration.DataPath, contentdescriptor.URI);
+
+                                // check if file exist
+                                if (FileHelper.FileExist(path))
+                                {
+                                    return File(path, contentdescriptor.MimeType, title + ext);
+                                }
+                                    // if not generate
+                                else
+                                {
+                                    List<long> datatupleIds = datasetManager.GetDatasetVersionEffectiveTupleIds(datasetVersion);
+                                    long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
+                                    path = generateDownloadFile(id, datasetVersion.VersionNo, datastuctureId, title, ext);
+
+                                    storeGeneratedFilePathToContentDiscriptor(id, datasetVersion, title, ext, writer);
+                                    writer.AddDataTuplesToTemplate(datatupleIds, path, datastuctureId);
+
+                                    return File(Path.Combine(AppConfiguration.DataPath, path), "application/xlsm", title);
+                                }
+
+                            #endregion
+                        }
+                        // not exist needs to generated
+                        else
+                        {
+                            #region file not exist
+
+                                List<long> datatupleIds = datasetManager.GetDatasetVersionEffectiveTupleIds(datasetVersion);
+                                long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
+                                path = generateDownloadFile(id, datasetVersion.VersionNo, datastuctureId, title, ext);
+
+                                storeGeneratedFilePathToContentDiscriptor(id, datasetVersion, title, ext, writer);
+                                writer.AddDataTuplesToTemplate(datatupleIds, path, datastuctureId);
+
+                                return File(Path.Combine(AppConfiguration.DataPath, path), "application/xlsm", title);
+
+                            #endregion
+                        }
+
+                    }
+                }
+
+                public ActionResult DownloadAsCsvData(long id)
+                {
+                    string ext = ".csv";
+
+                    DatasetManager datasetManager = new DatasetManager();
+                    DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
+                    AsciiWriter writer = new AsciiWriter(TextSeperator.comma);
+                    string title = getTitle(writer.GetTitle(id));
+                    string path = "";
+
+                    // if filter selected
+                    if (filterInUse())
+                    {
+                        #region generate a subset of a dataset
+                        List<DataTuple> datatuples = GetFilteredDataTuples(datasetVersion);
+
+                        long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
+
+                        path = generateDownloadFile(id, datasetVersion.VersionNo, datastuctureId, title, ext);
+
+                        writer.AddDataTuples(datatuples, path, datastuctureId);
 
 
+                        return File(path, "text/csv", title + ext);
+                        #endregion
+                    }
 
-                return File(Path.Combine(AppConfiguration.DataPath), "text/plain", "test.txt");
-            }
+                    else
+                    {
+                        //csv allready exist
+                        if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals("generatedCSV")) > 0)
+                        {
+                            #region file exist
+
+                                ContentDescriptor contentdescriptor = datasetVersion.ContentDescriptors.Where(p => p.Name.Equals("generatedCSV")).FirstOrDefault();
+                                path = Path.Combine(AppConfiguration.DataPath, contentdescriptor.URI);
+
+                                if (FileHelper.FileExist(path))
+                                {
+                                    return File(path, contentdescriptor.MimeType, title + ext);
+                                }
+                                else
+                                {
+                                    List<long> datatupleIds = datasetManager.GetDatasetVersionEffectiveTupleIds(datasetVersion);
+                                    long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
+                                    path = generateDownloadFile(id, datasetVersion.VersionNo, datastuctureId, title, ext);
+
+                                    storeGeneratedFilePathToContentDiscriptor(id, datasetVersion, title, ext, writer);
+
+                                    writer.AddDataTuples(datatupleIds, path, datastuctureId);
+
+                                    return File(path, "text/csv", title + ".csv");
+                                }
+
+                            #endregion
+                            
+                        }
+                        // not exist needs to generated
+                        else
+                        {
+                            #region file not exist
+
+                                List<long> datatupleIds = datasetManager.GetDatasetVersionEffectiveTupleIds(datasetVersion);
+                                long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
+                                path = generateDownloadFile(id, datasetVersion.VersionNo, datastuctureId, title, ext);
+
+                                storeGeneratedFilePathToContentDiscriptor(id, datasetVersion, title, ext, writer);
+
+                                writer.AddDataTuples(datatupleIds, path, datastuctureId);
+
+                                return File(path, "text/csv", title + ".csv");
+
+                            #endregion
+                        }
+                    }
+
+                }
+
+                public ActionResult DownloadAsTxtData(long id)
+                {
+                    string ext = ".txt";
+
+                    DatasetManager datasetManager = new DatasetManager();
+                    DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
+                    AsciiWriter writer = new AsciiWriter(TextSeperator.tab);
+                    string title = getTitle(writer.GetTitle(id));
+                    string path = "";
+
+                    if (filterInUse())
+                    {
+                        #region generate a subset of a dataset
+
+                            List<DataTuple> datatuples = GetFilteredDataTuples(datasetVersion);
+
+                            long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
+
+                            path = generateDownloadFile(id, datasetVersion.VersionNo, datastuctureId, title, ext);
+
+                            writer.AddDataTuples(datatuples, path, datastuctureId);
+
+
+                            return File(path, "text/plain", title + ".txt");
+
+                        #endregion
+                    }
+                    else
+                    {
+
+                        List<long> datatupleIds = datasetManager.GetDatasetVersionEffectiveTupleIds(datasetVersion);
+                        long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
+                        path = generateDownloadFile(id, datasetVersion.VersionNo, datastuctureId, title, ext);
+
+                        //csv allready exist
+                        if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals("generatedTXT")) > 0 || datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(path)) == 1)
+                        {
+                            #region file exist
+
+                                ContentDescriptor contentdescriptor = datasetVersion.ContentDescriptors.Where(p => p.Name.Equals("generatedTXT")).FirstOrDefault();
+                                path = Path.Combine(AppConfiguration.DataPath, contentdescriptor.URI);
+
+                                if (FileHelper.FileExist(path))
+                                {
+                                    // return file based on loaded link from content discriptor
+                                    return File(path, contentdescriptor.MimeType, title + ext);
+                                }
+                                else
+                                {
+                                    //generate a entry in the ContentDiscriptor
+                                    storeGeneratedFilePathToContentDiscriptor(id, datasetVersion, title, ext, writer);
+
+                                    // Add DataStructure and Datatuples to file
+                                    writer.AddDataTuples(datatupleIds, path, datastuctureId);
+
+                                    // return created file
+                                    return File(path, "text/plain", title + ext);
+                                }
+
+                            #endregion
+                        }
+                        // not exist needs to generated
+                        else
+                        {
+                            #region file not exist
+
+                                //generate a entry in the ContentDiscriptor
+                                storeGeneratedFilePathToContentDiscriptor(id, datasetVersion, title, ext, writer);
+
+                                // Add DataStructure and Datatuples to file
+                                writer.AddDataTuples(datatupleIds, path, datastuctureId);
+
+                                // return created file
+                                return File(path, "text/plain", title + ext);
+
+                            #endregion
+                        }
+                    }
+
+                }
+
+                #region helper
+
+                    private string generateDownloadFile(long id, long datasetVersionOrderNo,long dataStructureId, string title, string ext)
+                    {
+                        if (ext.Equals(".csv") || ext.Equals(".txt"))
+                        {
+                            AsciiWriter writer = new AsciiWriter();
+                            return writer.CreateFile(id, datasetVersionOrderNo, dataStructureId, title, ext);
+                        }
+                        else
+                        if(ext.Equals(".xlsm"))
+                        {
+                            ExcelWriter writer = new ExcelWriter();
+                            return writer.CreateFile(id, datasetVersionOrderNo, dataStructureId, title, ext);
+                        }
+
+                        return "";
+                    }
+
+                    private void storeGeneratedFilePathToContentDiscriptor(long datasetId,DatasetVersion datasetVersion, string title, string ext, DataWriter writer)
+                    {
+                       
+                        string name = "";
+                        string mimeType = "";
+
+                        if (ext.Contains("csv"))
+                        {
+                            name = "generatedCSV";
+                            mimeType = "text/csv"; 
+                        }
+
+                        if (ext.Contains("txt"))
+                        {
+                            name = "generatedTXT";
+                            mimeType = "text/plain";
+                        }
+
+                        if (ext.Contains("xlsm"))
+                        {
+                            name = "generated";
+                            mimeType = "application/xlsm";
+                        }
+
+                        // create the generated file and determine its location
+                        string dynamicPath = writer.GetDynamicStorePath(datasetId, datasetVersion.VersionNo, title, ext);
+                        //Register the generated data file as a resource of the current dataset version
+                        ContentDescriptor generatedDescriptor = new ContentDescriptor()
+                        {
+                            OrderNo = 1,
+                            Name = name,
+                            MimeType = mimeType,
+                            URI = dynamicPath,
+                            DatasetVersion = datasetVersion,
+                        };
+
+                        if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(generatedDescriptor.Name)) > 0)
+                        {   // remove the one contentdesciptor 
+                            foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
+                            {
+                                if (cd.Name == generatedDescriptor.Name)
+                                {
+                                    cd.URI = generatedDescriptor.URI;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // add current contentdesciptor to list
+                            datasetVersion.ContentDescriptors.Add(generatedDescriptor);
+                        }
+
+                        DatasetManager dm = new DatasetManager();
+                        dm.EditDatasetVersion(datasetVersion, null, null, null);
+                    }
+                    
+                    private List<DataTuple> GetFilteredDataTuples(DatasetVersion datasetVersion)
+                    {
+                        DatasetManager datasetManager = new DatasetManager();
+                        List<DataTuple> datatuples = datasetManager.GetDatasetVersionEffectiveTuples(datasetVersion);
+
+                        if (Session["Filter"] != null)
+                        {
+                            GridCommand command = (GridCommand)Session["Filter"];
+
+                            List<DataTuple> dataTupleList = datatuples;
+
+   
+                            if (command.FilterDescriptors.Count > 0)
+                            {
+                        
+                                foreach (IFilterDescriptor filter in command.FilterDescriptors)
+                                { 
+                                    var test = filter;
+
+                                    // one filter is set
+                                    if (filter.GetType() == typeof(FilterDescriptor))
+                                    {
+                                        FilterDescriptor filterDescriptor = (FilterDescriptor)filter;
+
+                                        // get id as long from filtername
+                                        Regex r = new Regex("(\\d+)");
+                                        long id = Convert.ToInt64(r.Match(filterDescriptor.Member).Value);
+
+                                        var list = from datatuple in dataTupleList
+                                                   let val = datatuple.VariableValues.Where(p => p.Variable.Id.Equals(id)).FirstOrDefault()
+                                                   where GridHelper.ValueComparion(val, filterDescriptor.Operator, filterDescriptor.Value)
+                                                   select datatuple;
+
+                                        dataTupleList = list.ToList();
+                                    }
+                                    else
+                                    // more than one filter is set 
+                                    if (filter.GetType() == typeof(CompositeFilterDescriptor))
+                                    {
+                                        CompositeFilterDescriptor filterDescriptor = (CompositeFilterDescriptor)filter;
+
+                                        foreach (IFilterDescriptor f in filterDescriptor.FilterDescriptors)
+                                        { 
+                                            if ((FilterDescriptor)f != null)
+                                            {
+                                                FilterDescriptor fd = (FilterDescriptor)f;
+                                                // get id as long from filtername
+                                                Regex r = new Regex("(\\d+)");
+                                                long id = Convert.ToInt64(r.Match(fd.Member).Value);
+
+                                                var list = from datatuple in dataTupleList
+                                                           let val = datatuple.VariableValues.Where(p => p.Variable.Id.Equals(id)).FirstOrDefault()
+                                                           where GridHelper.ValueComparion(val, fd.Operator, fd.Value)
+                                                           select datatuple;
+
+                                                dataTupleList = list.ToList();
+                                            }
+                                        }
+
+                                    }
+                                }
+                            }
+
+                            if (command.SortDescriptors.Count > 0)
+                            {
+                                foreach (SortDescriptor sort in command.SortDescriptors)
+                                {
+
+                                    string direction = sort.SortDirection.ToString();
+
+                                    // get id as long from filtername
+                                    Regex r = new Regex("(\\d+)");
+                                    long id = Convert.ToInt64(r.Match(sort.Member).Value);
+
+                                    if (direction.Equals("Ascending"))
+                                    {
+                                        var list = from datatuple in dataTupleList
+                                                   let val = datatuple.VariableValues.Where(p => p.Variable.Id.Equals(id)).FirstOrDefault()
+                                                   orderby val.Value ascending
+                                                   select datatuple;
+
+                                        dataTupleList = list.ToList();
+                                    }
+                                    else
+                                    if (direction.Equals("Descending"))
+                                    {
+                                        var list = from datatuple in dataTupleList
+                                                   let val = datatuple.VariableValues.Where(p => p.Variable.Id.Equals(id)).FirstOrDefault()
+                                                   orderby val.Value descending
+                                                   select datatuple;
+                                        dataTupleList = list.ToList();
+                                    }
+                                }
+
+                            }
+
+                            return dataTupleList;
+                        }
+
+                        return null;
+            
+                    }
+
+                    private string getTitle(string title)
+                    {
+                        if (Session["Filter"] != null)
+                        {
+                            GridCommand command = (GridCommand)Session["Filter"];
+                            if (command.FilterDescriptors.Count > 0 || command.SortDescriptors.Count > 0)
+                            {
+                                return title + "-Filtered";
+                            }
+                        }
+
+                        return title;
+                    }
+
+                    private bool filterInUse()
+                    {
+                        if (Session["Filter"] != null && !(bool)Session["DownloadFullDataset"])
+                        {
+                            GridCommand command = (GridCommand)Session["Filter"];
+                            if (command.FilterDescriptors.Count > 0 || command.SortDescriptors.Count > 0)
+                            {
+                                return true;
+                            }
+                        }
+
+                        return false;
+                    }
+                #endregion
+
+            #endregion
+
         #endregion
-
 
         #region datastructure
 
@@ -147,8 +592,53 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             }
 
         #endregion
-        
 
+        #region helper
+
+            private List<DropDownItem> GetDownloadOptions()
+            {
+                List<DropDownItem> options = new List<DropDownItem>();
+
+                options.Add(new DropDownItem()
+                {
+                    Text = "Excel",
+                    Value = "0"
+                });
+
+                options.Add(new DropDownItem()
+                {
+                    Text = "Excel (filtered)",
+                    Value = "1"
+                });
+
+                options.Add(new DropDownItem()
+                {
+                    Text = "Csv",
+                    Value = "2"
+                });
+
+                options.Add(new DropDownItem()
+                {
+                    Text = "Csv (filtered)",
+                    Value = "3"
+                });
+
+                options.Add(new DropDownItem()
+                {
+                    Text = "Text",
+                    Value = "4"
+                });
+
+                options.Add(new DropDownItem()
+                {
+                    Text = "Text (filtered)",
+                    Value = "5"
+                });
+
+                return options;
+            }
+
+        #endregion
 
     }
 }

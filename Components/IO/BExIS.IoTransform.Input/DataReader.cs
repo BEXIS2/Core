@@ -97,7 +97,7 @@ namespace BExIS.Io.Transform.Input
         #endregion
 
         #region private 
-           
+            IList<Variable> _variableList;
         #endregion
             
 
@@ -126,6 +126,7 @@ namespace BExIS.Io.Transform.Input
                 return null;
         }
 
+     
   
         /// <summary>
         /// Read Row and convert each value into a variableValue
@@ -165,11 +166,14 @@ namespace BExIS.Io.Transform.Input
         protected List<string> GetValuesFromRow(List<string> row, int indexOfRow, List<long> identifiers)
         {
             List<string> temp = new List<string>();
+            VariableIdentifier variableIdentifier;
+            List<string> tempNames = new List<string>();
+            _variableList = structuredDataStructure.Variables.ToList();
 
             // convert row to List<VariableValue>
             for (int i = 0; i < row.Count(); i++)
             {
-                VariableIdentifier variableIdentifier = this.SubmitedVariableIdentifiers.ElementAt(i);
+                variableIdentifier = this.SubmitedVariableIdentifiers.ElementAt(i);
                 long id = variableIdentifier.id;
 
                 /// <summary>
@@ -179,12 +183,9 @@ namespace BExIS.Io.Transform.Input
                 /// <remarks></remarks>        
                 if (id == 0)
                 {
-                    List<string> tempNames = new List<string>();
-                    DataStructureManager dataStructureManager = new DataStructureManager();
-
                     foreach (long idX in identifiers)
                     {
-                        string tempName = dataStructureManager.VariableRepo.Get().Where(v => v.Id.Equals(idX)).First().Label;
+                        string tempName = _variableList.Where(v => v.Id.Equals(idX)).First().Label;
                         if (tempName.Equals(variableIdentifier.name))
                         {
                             temp.Add(row[i]);
@@ -441,6 +442,19 @@ namespace BExIS.Io.Transform.Input
 
             return tempList.ToList();
         }
+        #endregion
+
+
+        #region static methods
+
+            public static bool FileExist(string path)
+            {
+                if (File.Exists(path))
+                    return true;
+                else
+                    return false;
+            }
+
         #endregion
 
     }

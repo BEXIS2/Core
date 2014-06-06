@@ -87,7 +87,7 @@ namespace BExIS.Web.Shell
             //just for testing purposes
             NHibernate.Glimpse.Plugin.RegisterSessionFactory(pManager.Factory as NHibernate.ISessionFactory);
 #endif
-        }
+       }
 
         private void loadModules()
         {

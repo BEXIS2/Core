@@ -247,6 +247,7 @@
     <Compile Include="Areas\DCM\Models\ValidationModel.cs" />
     <Compile Include="Areas\DDM\Controllers\AdminController.cs" />
     <Compile Include="Areas\DDM\Controllers\DataController.cs" />
+    <Compile Include="Areas\DDM\Helpers\GridHelper.cs" />
     <Compile Include="Areas\RPM\Controllers\HomeController.cs" />
     <Compile Include="Areas\RPM\RPMAreaRegistration.cs" />
     <Compile Include="Areas\DDM\Controllers\HomeController.cs" />
@@ -350,6 +351,12 @@
     <Content Include="Themes\Default\Layouts\_Layout.xml">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="Themes\Default\Styles\Default\bpp\csv2_sw_40.png" />
+    <Content Include="Themes\Default\Styles\Default\bpp\csv2_sw_40_subset.png" />
+    <Content Include="Themes\Default\Styles\Default\bpp\txt2_sw_40.png" />
+    <Content Include="Themes\Default\Styles\Default\bpp\txt2_sw_40_subset.png" />
+    <Content Include="Themes\Default\Styles\Default\bpp\xlsx_sw_40.png" />
+    <Content Include="Themes\Default\Styles\Default\bpp\xlsx_sw_40_subset.png" />
     <Content Include="Themes\Default\Styles\Default\editor.png" />
     <Content Include="Themes\Default\Styles\Default\imagebrowser.png" />
     <Content Include="Themes\Default\Styles\Default\loading.gif" />
@@ -361,6 +368,7 @@
     <Content Include="Themes\Default\Styles\Default\treeview-line.png" />
     <Content Include="Themes\Default\Styles\Default\treeview-nodes-rtl.png" />
     <Content Include="Themes\Default\Styles\Default\treeview-nodes.png" />
+    <Content Include="Themes\Default\Styles\images.css" />
     <Content Include="Themes\Default\Styles\search.css" />
     <Content Include="Themes\Default\Styles\telerik.default.min.css" />
     <Content Include="Themes\Default\Styles\wizard.css" />
@@ -647,6 +655,10 @@
       <Project>{5c4c8570-a53b-4191-a414-de028aaaf36a}</Project>
       <Name>BExIS.Io.Transform.Input</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Components\IO\BExIS.Io\BExIS.Io.csproj">
+      <Project>{e4795f06-20c2-4c4c-a720-9a79896384df}</Project>
+      <Name>BExIS.Io</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Components\XML\BExIS.Xml.Services\BExIS.Xml.Services.csproj">
       <Project>{252f7872-a69c-43a6-84b4-4d2abdbdd9ab}</Project>
       <Name>BExIS.Xml.Services</Name>
@@ -912,19 +924,19 @@
     </ProjectReference>
     <ProjectReference Include="..\..\Modules\DDM\BExIS.Ddm.Api\BExIS.Ddm.Api.csproj">
       <Project>{8519eac6-fbf8-48b3-813f-e0b9d3cc4a52}</Project>
-      <Name>BExIS.Search.Api</Name>
+      <Name>BExIS.Ddm.Api</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Modules\DDM\BExIS.Ddm.Model\BExIS.Ddm.Model.csproj">
       <Project>{ab46beb8-c36d-412f-9b1a-646c86299a87}</Project>
-      <Name>BExIS.Search.Model</Name>
+      <Name>BExIS.Ddm.Model</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Modules\DDM\BExIS.Ddm.Providers.DummyProvider\BExIS.Ddm.Providers.DummyProvider.csproj">
       <Project>{d89e501a-4873-4883-8741-27f0acd03e0b}</Project>
-      <Name>BExIS.Search.Providers.DummyProvider</Name>
+      <Name>BExIS.Ddm.Providers.DummyProvider</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Modules\DDM\BExIS.Ddm.Providers.LuceneProvider\BExIS.Ddm.Providers.LuceneProvider.csproj">
       <Project>{fbe3101a-791a-4eab-9b8f-f6e071f8dbdc}</Project>
-      <Name>BExIS.Search.Providers.LuceneProvider</Name>
+      <Name>BExIS.Ddm.Providers.LuceneProvider</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

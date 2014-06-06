@@ -172,7 +172,7 @@ namespace BExIS.Dcm.UploadWizard
 
             }
 
-            public static List<string> GetIdentifierList(TaskManager taskManager,  long datasetId, List<long> primaryKeys, string ext, string filename, int packageSize, int position)
+            public static List<string> GetIdentifierList(TaskManager taskManager,  long datasetId, List<long> primaryKeys, string ext, string filename)
             {
                 List<string> temp = new List<string>();
                 TaskManager TaskManager = taskManager;
@@ -180,8 +180,6 @@ namespace BExIS.Dcm.UploadWizard
                 if (ext.Equals(".txt") || ext.Equals(".csv"))
                 {
                     AsciiReader reader = new AsciiReader();
-                    reader.Position = position;
-
                     Stream stream = reader.Open(TaskManager.Bus["FilePath"].ToString());
 
                     AsciiFileReaderInfo afri = (AsciiFileReaderInfo)TaskManager.Bus["FileReaderInfo"];
@@ -194,7 +192,7 @@ namespace BExIS.Dcm.UploadWizard
                     // primarky keys id, name
                     // 1 [1][David]
                     // 2 [2][Javad]
-                    List<List<string>> tempList = reader.ReadValuesFromFile(stream, filename, afri, sds, datasetId, primaryKeys, packageSize);
+                    List<List<string>> tempList = reader.ReadValuesFromFile(stream, filename, afri, sds, datasetId, primaryKeys);
 
                 
                     // convert List of Lists to list of strings

@@ -1,19 +1,49 @@
-﻿@model Tuple<DataTable, int,  StructuredDataStructure,String>
+﻿@model Tuple<DataTable, int, StructuredDataStructure>
 @using System.Data;
 @using BExIS.Dlm.Entities.DataStructure;
 @{
     ViewBag.Title = "Primary Data";
+
+    bool fullDataset = false;
 }
 
-@*@Html.ActionLink("Back", "Index", new { target = "_blank", @class = "grid-t-link" })*@
 
-<br />
+@section Scripts{
+    <link href="@Url.Content(Themes.GetResourcePath("Styles","images.css"))" rel="stylesheet" type="text/css" />
+}
 
+<div id="downloadOptions">
+
+	       @Html.ActionLink("Download Excel", "DownloadAsExcelData", "Data", new { id = @Model.Item2 }, new { area = "DDM", @class = "t-button", title ="Xlsx download" })
+
+           @Html.ActionLink("Download Csv", "DownloadAsCsvData", "Data", new { id = @Model.Item2 }, new { area = "DDM", @class = "t-button", title ="Csv download"  })
+
+           @Html.ActionLink("Download Text", "DownloadAsTxtData", "Data", new { id = @Model.Item2 }, new { area = "DDM", @class = "t-button", title ="Text download"  })
+           <br />
+           @Html.CheckBox("DownLoadFullDataset", new { text="Download full dataset", @id="fullDatasetDownload" }) @Html.Label("Download full dataset")
+ </div>
 
 @Html.Partial("_primaryDataResultGridView", Model)
 
-<br />
 
+<script type="text/javascript">
+
+    $("#fullDatasetDownload").change(function () {
+       var subset = $('#fullDatasetDownload').is(":checked");
+
+       alert(subset);
+
+       $.post('@Url.Action("SetFullDatasetDownload","Data", new RouteValueDictionary { { "area", "DDM" } })', { subset: subset }, function (response) {
+           alert(response);
+       })
+    }) ;
+
+
+	function PrimaryDataResultGrid_OnLoad(e) {
+		$('.t-grid .t-status').hide();
+	}
+
+</script>
 
 
 

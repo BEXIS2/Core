@@ -10,6 +10,7 @@ using BExIS.Io.Transform.Validation.Exceptions;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.DataStructure;
 using Vaiona.Util.Cfg;
+using BExIS.Dlm.Services.Data;
 
 namespace BExIS.Io.Transform.Output
 {
@@ -54,6 +55,15 @@ namespace BExIS.Io.Transform.Output
 
         #endregion
 
+        //managers
+        protected DatasetManager datasetManager = new DatasetManager();
+
+        //Constructor
+        public DataWriter()
+        {
+            datasetManager = new DatasetManager();
+        }
+
         /// <summary>
         /// If file exist open a FileStream
         /// </summary>
@@ -83,7 +93,6 @@ namespace BExIS.Io.Transform.Output
             else
                 return null;
         }
-
 
         /// <summary>
         /// Create the general store path under AppConfiguration.DataPath
@@ -191,6 +200,13 @@ namespace BExIS.Io.Transform.Output
         {
             DataStructureManager dataStructureManager = new DataStructureManager();
             return dataStructureManager.StructuredDataStructureRepo.Get(id);
+        }
+
+        public String GetTitle(long id)
+        { 
+            DatasetManager datasetManager = new DatasetManager();
+
+            return datasetManager.GetDatasetLatestVersion(id).Metadata.SelectNodes("Metadata/Description/Description/Title/Title")[0].InnerText;
         }
 
     }

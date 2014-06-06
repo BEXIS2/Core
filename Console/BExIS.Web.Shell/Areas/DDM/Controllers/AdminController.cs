@@ -105,39 +105,39 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             }
 
             public ActionResult Save(string submit, SearchAttributeViewModel model)
-        {
-            if (ModelState.IsValid)
             {
-                if (submit != null)
+                if (ModelState.IsValid)
                 {
-                    List<SearchAttributeViewModel> searchAttributeList = (List<SearchAttributeViewModel>)Session["searchAttributeList"];
-
-                    if (searchAttributeList.Where(p => p.id.Equals(model.id)).Count() > 0)
+                    if (submit != null)
                     {
-                        SearchAttributeViewModel temp = searchAttributeList.Where(p => p.id.Equals(model.id)).First();
-                        searchAttributeList[searchAttributeList.IndexOf(temp)] = model;
+                        List<SearchAttributeViewModel> searchAttributeList = (List<SearchAttributeViewModel>)Session["searchAttributeList"];
+
+                        if (searchAttributeList.Where(p => p.id.Equals(model.id)).Count() > 0)
+                        {
+                            SearchAttributeViewModel temp = searchAttributeList.Where(p => p.id.Equals(model.id)).First();
+                            searchAttributeList[searchAttributeList.IndexOf(temp)] = model;
+                        }
+                        else
+                        {
+                            searchAttributeList.Add(model);
+                        }
+
+                        ISearchDesigner sd = new SearchDesigner();
+
+                        //sd.Set(searchAttributeList);
+
+                        Session["searchAttributeList"] = searchAttributeList;
+                        ViewData["windowVisible"] = false;
                     }
-                    else
-                    {
-                        searchAttributeList.Add(model);
-                    }
-
-                    ISearchDesigner sd = new SearchDesigner();
-
-                    //sd.Set(searchAttributeList);
-
-                    Session["searchAttributeList"] = searchAttributeList;
-                    ViewData["windowVisible"] = false;
                 }
-            }
-            else
-            {
-                ViewData["windowVisible"] = true;
-            }
+                else
+                {
+                    ViewData["windowVisible"] = true;
+                }
 
 
-            return View("SearchDesigner", (List<SearchAttributeViewModel>)Session["searchAttributeList"]);
-        }
+                return View("SearchDesigner", (List<SearchAttributeViewModel>)Session["searchAttributeList"]);
+            }
 
         #endregion
 
