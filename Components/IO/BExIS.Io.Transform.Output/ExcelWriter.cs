@@ -147,7 +147,7 @@ namespace BExIS.Io.Transform.Output
         /// <param name="filePath">Path of the excel template file</param>
         /// <param name="dataStructureId">Id of datastructure</param>
         /// <returns>List of Errors or null</returns>
-        public List<Error> AddDataTuplesToTemplate(List<DataTuple> dataTuples, string filePath, long dataStructureId)
+        public List<Error> AddDataTuplesToTemplate(List<AbstractTuple> dataTuples, string filePath, long dataStructureId)
         {
             if (File.Exists(filePath))
             {
@@ -286,7 +286,7 @@ namespace BExIS.Io.Transform.Output
         /// <param name="startRow"></param>
         /// <param name="endRow"></param>
         /// <param name="dataTuples"></param>
-        protected void AddRows(WorksheetPart worksheetPart, int startRow, int endRow, List<DataTuple> dataTuples)
+        protected void AddRows(WorksheetPart worksheetPart, int startRow, int endRow, List<AbstractTuple> dataTuples)
         {
             Worksheet worksheet = worksheetPart.Worksheet;
             SheetData sheetData = worksheet.GetFirstChild<SheetData>();

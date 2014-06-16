@@ -3,6 +3,11 @@ namespace BExIS.Dlm.Entities.Data
 {
     public class DataTupleVersion : AbstractTuple //DataTuple
     {
+        public override DataTupleType TupleType
+        {
+            get { return DataTupleType.History; }
+        }
+
         public virtual DatasetVersion ActingDatasetVersion { get; set; }
         public virtual DataTuple OriginalTuple { get; set; }
 

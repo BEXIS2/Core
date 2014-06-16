@@ -26,7 +26,7 @@ namespace BExIS.Web.Shell.Controllers
         }
 
 
-        public ActionResult Index()
+        public ActionResult Index(Int64 id=0)
         {
             //List<string> a = new List<string>() { "A", "B", "C" };
             //List<string> b = new List<string>() { "A", "B", "D" };
@@ -56,9 +56,18 @@ namespace BExIS.Web.Shell.Controllers
 
             //addConstraintsTo();
             //testMetadataStructure();
-            testSecuirty();
+            //testSecuirty();
+            //getEffectiveTuples(id);
+            getDataStructures();
             //return RedirectToAction("About");
             return View();
+        }
+
+        private void getDataStructures()
+        {
+            var dsm = new DataStructureManager();
+            var all = dsm.AllTypesDataStructureRepo.Get();
+            var uns = all.Where(p => p.Name.Contains("uns")).FirstOrDefault();
         }
 
         private void testSecuirty()
@@ -178,49 +187,57 @@ namespace BExIS.Web.Shell.Controllers
             dm.DeleteDataset(dsId, "Javad", false);
         }
 
-        private void editDatasetVersion(Int64 datasetId)
+        private void getEffectiveTuples(Int64 versionId)
         {
             DatasetManager dm = new DatasetManager();
-            Dataset ds = dm.DatasetRepo.Get(datasetId);
-            //if (!dm.IsDatasetCheckedIn(ds.Id))
-            //    return;
-            if (dm.IsDatasetCheckedOutFor(ds.Id, "Javad") || dm.CheckOutDataset(ds.Id, "Javad"))
-            {
-                DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
+            DatasetVersion workingCopy = dm.GetDatasetVersion(versionId);
+            var changed = dm.GetDatasetVersionEffectiveTuples(workingCopy);
 
-                DataTuple changed = dm.GetDatasetVersionEffectiveTuples(workingCopy).First();
-                changed.VariableValues.First().Value = (new Random()).Next().ToString();
+        }
+
+        private void editDatasetVersion(Int64 datasetId)
+        {
+            //DatasetManager dm = new DatasetManager();
+            //Dataset ds = dm.DatasetRepo.Get(datasetId);
+            ////if (!dm.IsDatasetCheckedIn(ds.Id))
+            ////    return;
+            //if (dm.IsDatasetCheckedOutFor(ds.Id, "Javad") || dm.CheckOutDataset(ds.Id, "Javad"))
+            //{
+            //    DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
+
+            //    AbstractTuple changed = dm.GetDatasetVersionEffectiveTuples(workingCopy).First();
+            //    changed.VariableValues.First().Value = (new Random()).Next().ToString();
                 
-                //DataTuple dt = dm.DataTupleRepo.Get(40);
-                //DataTuple newDt = new DataTuple();
-                //newDt.XmlAmendments = dt.XmlAmendments;
-                //newDt.XmlVariableValues = dt.XmlVariableValues; // in normal cases, the VariableValues are set and then Dematerialize is called
-                //newDt.Materialize();
-                //newDt.OrderNo = 1;
-                //newDt.TupleAction = TupleAction.Created;//not required
-                //newDt.Timestamp = DateTime.UtcNow; //required? no, its set in the Edit
-                //newDt.DatasetVersion = workingCopy;//required? no, its set in the Edit
+            //    //DataTuple dt = dm.DataTupleRepo.Get(40);
+            //    //DataTuple newDt = new DataTuple();
+            //    //newDt.XmlAmendments = dt.XmlAmendments;
+            //    //newDt.XmlVariableValues = dt.XmlVariableValues; // in normal cases, the VariableValues are set and then Dematerialize is called
+            //    //newDt.Materialize();
+            //    //newDt.OrderNo = 1;
+            //    //newDt.TupleAction = TupleAction.Created;//not required
+            //    //newDt.Timestamp = DateTime.UtcNow; //required? no, its set in the Edit
+            //    //newDt.DatasetVersion = workingCopy;//required? no, its set in the Edit
 
-                dm.EditDatasetVersion(workingCopy, null, new List<DataTuple>() { changed }, null);
-                dm.CheckInDataset(ds.Id, "edited version", "Javad");
-            }
+            //    dm.EditDatasetVersion(workingCopy, null, new List<DataTuple>() { changed }, null);
+            //    dm.CheckInDataset(ds.Id, "edited version", "Javad");
+            //}
         }
 
         private void deleteTupleFromDatasetVersion(long datasetId)
         {
-            DatasetManager dm = new DatasetManager();
-            Dataset ds = dm.DatasetRepo.Get(datasetId);
-            //if (!dm.IsDatasetCheckedIn(ds.Id))
-            //    return;
-            if (dm.IsDatasetCheckedOutFor(ds.Id, "Javad") || dm.CheckOutDataset(ds.Id, "Javad"))
-            {
-                DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
+            //DatasetManager dm = new DatasetManager();
+            //Dataset ds = dm.DatasetRepo.Get(datasetId);
+            ////if (!dm.IsDatasetCheckedIn(ds.Id))
+            ////    return;
+            //if (dm.IsDatasetCheckedOutFor(ds.Id, "Javad") || dm.CheckOutDataset(ds.Id, "Javad"))
+            //{
+            //    DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
 
-                DataTuple deleting = dm.GetDatasetVersionEffectiveTuples(workingCopy).First();
+            //    DataTuple deleting = dm.GetDatasetVersionEffectiveTuples(workingCopy).First();
 
-                dm.EditDatasetVersion(workingCopy, null, null, new List<DataTuple>() { deleting });
-                dm.CheckInDataset(ds.Id, "edited version", "Javad");
-            }
+            //    dm.EditDatasetVersion(workingCopy, null, null, new List<DataTuple>() { deleting });
+            //    dm.CheckInDataset(ds.Id, "edited version", "Javad");
+            //}
         }
 
         /// <summary>

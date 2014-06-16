@@ -4,6 +4,7 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using BExIS.Dlm.Entities.DataStructure;
 using Vaiona.Persistence.Api;
+using DS = BExIS.Dlm.Entities.DataStructure;
 
 namespace BExIS.Dlm.Services.DataStructure
 {
@@ -15,6 +16,7 @@ namespace BExIS.Dlm.Services.DataStructure
             IUnitOfWork uow = this.GetUnitOfWork();
             this.StructuredDataStructureRepo = uow.GetReadOnlyRepository<StructuredDataStructure>();
             this.UnStructuredDataStructureRepo = uow.GetReadOnlyRepository<UnStructuredDataStructure>();
+            this.AllTypesDataStructureRepo = uow.GetReadOnlyRepository<DS.DataStructure>();
             this.VariableRepo = uow.GetReadOnlyRepository<Variable>();
         }
 
@@ -23,6 +25,7 @@ namespace BExIS.Dlm.Services.DataStructure
         // provide read only repos for the whole aggregate area
         public IReadOnlyRepository<StructuredDataStructure> StructuredDataStructureRepo { get; private set; }
         public IReadOnlyRepository<UnStructuredDataStructure> UnStructuredDataStructureRepo { get; private set; }
+        public IReadOnlyRepository<DS.DataStructure> AllTypesDataStructureRepo { get; private set; }
         public IReadOnlyRepository<Variable> VariableRepo { get; private set; }
 
         #endregion

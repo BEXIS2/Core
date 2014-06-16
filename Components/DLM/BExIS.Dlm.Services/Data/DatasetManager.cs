@@ -9,6 +9,7 @@ using BExIS.Dlm.Entities.DataStructure;
 using Vaiona.Persistence.Api;
 using Vaiona.Util.Xml;
 using MDS = BExIS.Dlm.Entities.MetadataStructure;
+using System.Linq.Expressions;
 
 namespace BExIS.Dlm.Services.Data
 {
@@ -203,8 +204,8 @@ namespace BExIS.Dlm.Services.Data
 
             Dataset entity = this.DatasetRepo.Get(datasetId);
             
-            //if (entity.Status != DatasetStatus.Deleted)
-            //    return false;
+            if (entity == null)
+                return false;
 
             List<Int64> versionIds = entity.Versions
                            .Select(p => p.Id)
@@ -266,9 +267,14 @@ namespace BExIS.Dlm.Services.Data
         /// </summary>
         /// <param name="datasetVersion"></param>
         /// <returns></returns>
-        public List<DataTuple> GetDatasetVersionEffectiveTuples(DatasetVersion datasetVersion)
+        public List<AbstractTuple> GetDatasetVersionEffectiveTuples(DatasetVersion datasetVersion)
         {
             return getDatasetVersionEffectiveTuples(datasetVersion);
+        }
+
+        public List<DataTuple> GetDatasetVersionEffectiveTuples(DatasetVersion datasetVersion, int pageNumber, int pageSize)
+        {
+            return getDatasetVersionEffectiveTuples(datasetVersion, pageNumber, pageSize);
         }
 
         public List<Int64> GetDatasetVersionEffectiveTupleIds(DatasetVersion datasetVersion)
@@ -470,7 +476,7 @@ namespace BExIS.Dlm.Services.Data
             return getDatasetLatestVersion(dataset);
         }
 
-        public DatasetVersion GetDatasetVersion(Int64 datasetId, Int64 versionId)
+        public DatasetVersion GetDatasetVersion(Int64 versionId)
         {
             /// check whether the version id is in fact the latest? the latest checked in version should be returned. if dataset is checked out, the latest stored version is hidden yet.
             /// If the dataset is marked as deleted its like that it is not there at all
@@ -479,8 +485,7 @@ namespace BExIS.Dlm.Services.Data
 
             // the requested version is earlier than the latest regardless of check-in/ out status or its the latest version and the dataset is checked in.
             DatasetVersion dsVersion = DatasetVersionRepo.Query(p => 
-                                        p.Dataset.Id == datasetId
-                                        && p.Id == versionId
+                                        p.Id == versionId
                                         && (
                                                     (p.Dataset.Status == DatasetStatus.CheckedIn    && p.Status == DatasetVersionStatus.CheckedIn)
                                                 ||  (p.Dataset.Status != DatasetStatus.Deleted      && p.Status == DatasetVersionStatus.Old)
@@ -491,9 +496,12 @@ namespace BExIS.Dlm.Services.Data
                 return (dsVersion);
             
             // else there is a problem, try to find and report it
-            Dataset dataset = DatasetRepo.Get(datasetId); // it would be nice to not fetch the dataset!
+            Dataset dataset = DatasetVersionRepo.Get(versionId).Dataset; // it would be nice to not fetch the dataset!
+
             if (dataset.Status == DatasetStatus.Deleted)
-                throw new Exception(string.Format("Dataset {0} is deleted", datasetId));
+                throw new Exception(string.Format("Dataset version {0} is not associated with any dataset.", versionId));
+            if (dataset.Status == DatasetStatus.Deleted)
+                throw new Exception(string.Format("Dataset {0} is deleted", dataset.Id));
             Int64 latestVersionId = dataset.Versions.Where(p=> p.Status == DatasetVersionStatus.CheckedIn).Select(p=>p.Id).First();// .OrderByDescending(t => t.Timestamp).First().Id;
             if (versionId > latestVersionId)
                 throw new Exception(string.Format("Invalid version id. The version id {0} is greater than the latest version number!", versionId));
@@ -508,31 +516,31 @@ namespace BExIS.Dlm.Services.Data
             return getDatasetWorkingCopy(datasetId);
         }
 
-        /// <summary>
-        /// tries to return the latest checked in version, if not existing, then tries to return the checked out one
-        /// designed for multiple edit/ single check in scenarios
-        /// </summary>
-        /// <param name="datasetId"></param>
-        /// <returns></returns>
-        public DatasetVersion GetDatasetVersion(Int64 datasetId)
-        {
-            try
-            {
-                return getDatasetLatestVersion(datasetId);
-            }
-            catch
-            {
-                try
-                {
-                    return getDatasetWorkingCopy(datasetId);
-                }
-                catch
-                {
-                    throw new Exception(string.Format("Not able to retrieve dataset {0}!", datasetId));
-                }
-            }
+        ///// <summary>
+        ///// tries to return the latest checked in version, if not existing, then tries to return the checked out one
+        ///// designed for multiple edit/ single check in scenarios
+        ///// </summary>
+        ///// <param name="datasetId"></param>
+        ///// <returns></returns>
+        //public DatasetVersion GetDatasetVersion(Int64 datasetId)
+        //{
+        //    try
+        //    {
+        //        return getDatasetLatestVersion(datasetId);
+        //    }
+        //    catch
+        //    {
+        //        try
+        //        {
+        //            return getDatasetWorkingCopy(datasetId);
+        //        }
+        //        catch
+        //        {
+        //            throw new Exception(string.Format("Not able to retrieve dataset {0}!", datasetId));
+        //        }
+        //    }
             
-        }
+        //}
        
         /// <summary>
         /// report what has been done by this version. deletes, updates, new records and changes in the dataset attributes
@@ -651,7 +659,33 @@ namespace BExIS.Dlm.Services.Data
             return null;
         }
         
-        private List<DataTuple> getDatasetVersionEffectiveTuples(DatasetVersion datasetVersion)
+        private List<AbstractTuple> getDatasetVersionEffectiveTuples(DatasetVersion datasetVersion)
+        {
+            List<AbstractTuple> tuples = new List<AbstractTuple>();
+            Dataset dataset = datasetVersion.Dataset;
+            if (dataset.Status == DatasetStatus.Deleted)
+                throw new Exception(string.Format("Provided dataset version {0} belongs to deleted dataset {1}.", datasetVersion.Id, dataset.Id));
+            Int64 latestVersionId = dataset.Versions.OrderByDescending(t => t.Timestamp).Where(p=>p.Timestamp <= dataset.LastCheckIOTimestamp).First().Id; // no need to replace it with the STATUS version
+            if (datasetVersion.Id > latestVersionId)
+                throw new Exception(string.Format("Invalid version id. The dataset version id {0} is greater than the latest version number!", datasetVersion.Id));
+
+            if (latestVersionId == datasetVersion.Id && dataset.Status == DatasetStatus.CheckedOut) // its a request for the working copy
+            {
+                tuples = getWorkingCopyTuples(datasetVersion).Cast<AbstractTuple>().ToList();
+            }
+            else if (latestVersionId == datasetVersion.Id && dataset.Status == DatasetStatus.CheckedIn) // its a request for the latest checked in version that should be served from the Tuples table
+            {
+                tuples = getPrimaryTuples(datasetVersion).Cast<AbstractTuple>().ToList();
+            }
+            else
+            {
+                tuples = getHistoricTuples(datasetVersion);
+            }
+            tuples.ForEach(p => p.Materialize());
+            return (tuples);
+        }
+
+        private List<DataTuple> getDatasetVersionEffectiveTuples(DatasetVersion datasetVersion, int pageNumber, int pageSize)
         {
             List<DataTuple> tuples = new List<DataTuple>();
             Dataset dataset = datasetVersion.Dataset;
@@ -663,15 +697,15 @@ namespace BExIS.Dlm.Services.Data
 
             if (latestVersionId == datasetVersion.Id && dataset.Status == DatasetStatus.CheckedOut) // its a request for the working copy
             {
-                tuples = getWorkingCopyTuples(datasetVersion);
+                tuples = getWorkingCopyTuples(datasetVersion, pageNumber, pageSize);
             }
-            else if (latestVersionId == datasetVersion.Id && dataset.Status == DatasetStatus.CheckedIn) // its a request for the latest checked in version that should be served from the Tuples table
+            else if (latestVersionId == datasetVersion.Id && dataset.Status == DatasetStatus.CheckedIn) // its a request for the latest checked-in version that should be served from the Tuples table
             {
-                tuples = getPrimaryTuples(datasetVersion);
+                tuples = getPrimaryTuples(datasetVersion, pageNumber, pageSize);
             }
             else
             {
-                tuples = getHistoricTuples(datasetVersion);
+                tuples = getHistoricTuples(datasetVersion, pageNumber, pageSize); // its a request for version earlier than the current version, whether the latest version is check-out or in.
             }
             tuples.ForEach(p => p.Materialize());
             return (tuples);
@@ -745,7 +779,82 @@ namespace BExIS.Dlm.Services.Data
             return (edited);
         }
 
-        private List<DataTuple> getHistoricTuples(DatasetVersion datasetVersion)
+        private List<AbstractTuple> getHistoricTuples(DatasetVersion datasetVersion)
+        {
+            //get previous versions including the version specified, because  the data tuples belong to all versions greater or equal to their original versions.
+            List<Int64> versionIds = datasetVersion.Dataset.Versions
+                                       .Where(p => p.Timestamp <= datasetVersion.Timestamp)
+                                       .OrderByDescending(t => t.Timestamp)
+                                       .Select(p => p.Id)
+                                       .ToList();
+            //get all tuples from the main tuples table belonging to one of the previous versions + the current version
+            List<DataTuple> tuples = DataTupleRepo.Get(p => versionIds.Contains(p.DatasetVersion.Id)).ToList();
+
+            // get those history tuples that represent edited versions of data tuples changed from at least one of the effective versions and not committed to them (them: the effective versions).
+            // any single data tuple can be edited by a specific version once at most.
+            // it is possible for a tuple to have beed changed many times between any given two versions v(x) and v(y), so it is required to group the tuples based on their original ID and then select the record corresponding to the max version
+            var editedTupleVersionsGrouped = DataTupleVerionRepo.Query(p => (p.TupleAction == TupleAction.Edited) && (versionIds.Contains(p.DatasetVersion.Id)) && !(versionIds.Contains(p.ActingDatasetVersion.Id)))
+                                         .GroupBy(p => p.OriginalTuple.Id).Select(p => new { OriginalTupleId = p.Key, MaxVersionOfTheTuple = p.Max(l => l.DatasetVersion.Id) }).ToList();
+
+
+            IList<DataTupleVersion> editedTuples = new List<DataTupleVersion>();
+
+            // having a list of original tuple id and related max version, now its time to build a proper query to fetch the actual data tuple versions from the database, the following block builds a dynamic predicate
+            // to be passed to the where clause of the data retrieval method at: DataTupleVerionRepo.Query(...)
+            if (editedTupleVersionsGrouped.Count >= 1)
+            {
+                var param1 = Expression.Parameter(typeof(DataTupleVersion), "p");
+                var exp1 = 
+                    Expression.AndAlso(
+                    Expression.Equal(
+                        Expression.Property(Expression.Property(param1, "OriginalTuple"), "Id"),
+                        Expression.Constant(editedTupleVersionsGrouped.First().OriginalTupleId)
+                    ),
+                    Expression.Equal(
+                        Expression.Property(Expression.Property(param1, "DatasetVersion"), "Id"),
+                        Expression.Constant(editedTupleVersionsGrouped.First().MaxVersionOfTheTuple)
+                    )
+                    );
+                if (editedTupleVersionsGrouped.Count > 1)
+                {
+                    foreach (var item in editedTupleVersionsGrouped.Skip(1))
+                    {
+                        //var param = Expression.Parameter(typeof(DataTupleVersion), "p");
+                        var exp = 
+                            Expression.AndAlso(
+                            Expression.Equal(
+                                Expression.Property(Expression.Property(param1, "OriginalTuple"), "Id"),
+                                Expression.Constant(item.OriginalTupleId)
+                            ),
+                            Expression.Equal(
+                                Expression.Property(Expression.Property(param1, "DatasetVersion"), "Id"),
+                                Expression.Constant(item.MaxVersionOfTheTuple)
+                            )
+                            );
+                       exp1 = Expression.OrElse(exp1, exp); ;
+
+                    }
+                }
+                var typedExpression = Expression.Lambda<Func<DataTupleVersion, bool>>(exp1, new ParameterExpression[] { param1 });
+                editedTuples = DataTupleVerionRepo.Query(typedExpression).ToList();
+            }
+
+          
+            var deletedTuples = DataTupleVerionRepo.Get(p => (p.TupleAction == TupleAction.Deleted) && (versionIds.Contains(p.DatasetVersion.Id)) && !(versionIds.Contains(p.ActingDatasetVersion.Id))).Cast<AbstractTuple>().ToList();
+
+            List<AbstractTuple> result = tuples
+                
+                .Union(editedTuples.Cast<AbstractTuple>())
+                .Union(deletedTuples)
+                // there is no guarantee that the overall list is ordered as its original order! because 1: OrderNo is not set yet. 2: OrderNo is not managed during the changes and so on, 
+                // 3: The timestamp of the current tuples is indeed the timestamp of the change made by their latest acting version, but history record are carrying the original timestamp. but as there should be no overlap between the two table records
+                // and history records have smaller timestamps, no side effect is expected. 4: I don't know why but ...
+                .OrderBy(p=>p.OrderNo).OrderBy(p=>p.Timestamp) 
+                .ToList();
+            return (result);
+        }
+
+        private List<DataTuple> getHistoricTuples(DatasetVersion datasetVersion, int pageNumber, int pageSize)
         {
             //get previous versions including the version specified
             List<Int64> versionIds = datasetVersion.Dataset.Versions
@@ -756,11 +865,19 @@ namespace BExIS.Dlm.Services.Data
             //get all tuples from the main tuples table belonging to one of the previous versions + the current version
             List<DataTuple> tuples = DataTupleRepo.Get(p => versionIds.Contains(p.DatasetVersion.Id)).ToList();
 
-            List<DataTuple> editedTuples = DataTupleVerionRepo.Get(p => (p.TupleAction == TupleAction.Edited) && (p.DatasetVersion.Id == datasetVersion.Id) && !(versionIds.Contains(p.ActingDatasetVersion.Id))).Cast<DataTuple>().ToList();
-            List<DataTuple> deletedTuples = DataTupleVerionRepo.Get(p => (p.TupleAction == TupleAction.Deleted) && (versionIds.Contains(p.DatasetVersion.Id)) && !(versionIds.Contains(p.ActingDatasetVersion.Id))).Cast<DataTuple>().ToList();
-
-            List<DataTuple> result = tuples.Union(editedTuples).Union(deletedTuples).ToList();
-            return (result);
+            List<DataTuple> editedTuples = DataTupleVerionRepo.Get(p => (p.TupleAction == TupleAction.Edited) && (p.DatasetVersion.Id == datasetVersion.Id) && !(versionIds.Contains(p.ActingDatasetVersion.Id)))
+                                                              .Skip(pageNumber*pageSize).Take(pageSize)
+                                                              .Cast<DataTuple>().ToList();
+            List<DataTuple> deletedTuples = DataTupleVerionRepo.Get(p => (p.TupleAction == TupleAction.Deleted) && (versionIds.Contains(p.DatasetVersion.Id)) && !(versionIds.Contains(p.ActingDatasetVersion.Id)))
+                                                               .Skip(pageNumber*pageSize).Take(pageSize)
+                                                               .Cast<DataTuple>().ToList();
+            // the resulting union-ned list is made by a page from edited and a page from the deleted ones, so it is maximum 2 pages, but should be reduced to a page.
+            // for this reason the union is sorted by timestamp and then the first page is taken.
+            List<DataTuple> unioned = tuples.Union(editedTuples).Union(deletedTuples)
+                .OrderBy(p => p.Timestamp)
+                .Take(pageSize)
+                .ToList();
+            return (unioned);
         }
 
         private List<DataTuple> getPrimaryTuples(DatasetVersion datasetVersion)
@@ -772,6 +889,23 @@ namespace BExIS.Dlm.Services.Data
                                         .Select(p=>p.Id)
                                         .ToList();
             List<DataTuple> tuples = (versionIds == null || versionIds.Count() <= 0) ? new List<DataTuple>() : DataTupleRepo.Get(p => versionIds.Contains(p.DatasetVersion.Id)).ToList();
+            //Dictionary<string, object> parameters = new Dictionary<string, object>() { { "datasetVersionId", datasetVersion.Id } };
+            //List<DataTuple> tuples = DataTupleRepo.Get("getLatestCheckedInTuples", parameters).ToList();
+            return (tuples);
+        }
+
+        private List<DataTuple> getPrimaryTuples(DatasetVersion datasetVersion, int pageNumber, int pageSize)
+        {
+            // effective tuples of the latest checked in version are in DataTuples table but they belong to the latest and previous versions
+            List<Int64> versionIds = datasetVersion.Dataset.Versions
+                                        .Where(p => p.Timestamp <= datasetVersion.Timestamp)
+                                        .OrderByDescending(t => t.Timestamp)
+                                        .Select(p => p.Id)
+                                        .ToList();
+            List<DataTuple> tuples = (versionIds == null || versionIds.Count() <= 0) ? new List<DataTuple>() : DataTupleRepo.Get(p => versionIds.Contains(p.DatasetVersion.Id))
+                                                                                                                            .Skip(pageNumber * pageSize).Take(pageSize)
+                                                                                                                            .ToList();
+
             //Dictionary<string, object> parameters = new Dictionary<string, object>() { { "datasetVersionId", datasetVersion.Id } };
             //List<DataTuple> tuples = DataTupleRepo.Get("getLatestCheckedInTuples", parameters).ToList();
             return (tuples);
@@ -798,6 +932,20 @@ namespace BExIS.Dlm.Services.Data
                                         .Select(p => p.Id)
                                         .ToList();
             List<DataTuple> tuples = (versionIds == null || versionIds.Count() <= 0 )? new List<DataTuple>(): DataTupleRepo.Get(p => versionIds.Contains(((DataTuple)p).DatasetVersion.Id)).ToList();
+            return (tuples);
+        }
+
+        private List<DataTuple> getWorkingCopyTuples(DatasetVersion datasetVersion, int pageNumber, int pageSize)
+        {
+            // effective tuples of the working copy are similar to latest checked in version. They are in DataTuples table but they belong to the latest and previous versions
+            List<Int64> versionIds = datasetVersion.Dataset.Versions
+                                        .Where(p => p.Timestamp <= datasetVersion.Timestamp)
+                                        .OrderByDescending(t => t.Timestamp)
+                                        .Select(p => p.Id)
+                                        .ToList();
+            List<DataTuple> tuples = (versionIds == null || versionIds.Count() <= 0) ? new List<DataTuple>() : DataTupleRepo.Get(p => versionIds.Contains(((DataTuple)p).DatasetVersion.Id))
+                                                                                                                            .Skip(pageNumber*pageSize).Take(pageSize)
+                                                                                                                            .ToList();
             return (tuples);
         }
 
@@ -1018,7 +1166,7 @@ namespace BExIS.Dlm.Services.Data
                     item.Dematerialize();
                     workingCopyVersion.PriliminaryTuples.Add(item);
                     item.DatasetVersion = workingCopyVersion;
-                    //item.TupleAction = TupleAction.Created;
+                    item.TupleAction = TupleAction.Created;
                     item.Timestamp = workingCopyVersion.Timestamp;
                 }
             }
@@ -1051,8 +1199,8 @@ namespace BExIS.Dlm.Services.Data
                         edited.Dematerialize();
 
                         DataTuple orginalTuple = latestVersionEffectiveTuples.Where(p => p.Id == edited.Id).Single();//maybe preliminary tuples are enough
-                        //check if the history record for this data tuple has been created before. in cases of multiple edit for example
-                        if (DataTupleVerionRepo.Query(p => p.OriginalTuple.Id == orginalTuple.Id).Count() <= 0) // it is the first time the orginalTuple is getting edited. so add a history record. the history record, keeps the tuple as was before the first edit!
+                        //check if the history record for this data tuple has been created before. in cases of multiple edits in a single version for example
+                        if (DataTupleVerionRepo.Query(p => p.OriginalTuple.Id == orginalTuple.Id && p.DatasetVersion.Id == orginalTuple.DatasetVersion.Id).Count() <= 0) // it is the first time the orginalTuple is getting edited. so add a history record. the history record, keeps the tuple as was before the first edit!
                         {
                             DataTupleVersion tupleVersion = new DataTupleVersion()
                             {
@@ -1064,7 +1212,7 @@ namespace BExIS.Dlm.Services.Data
                                 XmlAmendments = orginalTuple.XmlAmendments,
                                 XmlVariableValues = orginalTuple.XmlVariableValues,
                                 OriginalTuple = orginalTuple,
-                                DatasetVersion = latestCheckedInVersion,
+                                DatasetVersion = orginalTuple.DatasetVersion, //latestCheckedInVersion,
                                 ActingDatasetVersion = workingCopyVersion,
                             };
                             //DataTuple merged = 
@@ -1075,6 +1223,7 @@ namespace BExIS.Dlm.Services.Data
                         //XmlDocument xmlVariableValues = new XmlDocument();
                         //xmlVariableValues.LoadXml(edited.XmlVariableValues.AsString());
 
+                        orginalTuple.TupleAction = TupleAction.Edited;
                         orginalTuple.OrderNo = edited.OrderNo;
                         orginalTuple.XmlAmendments = null;
                         orginalTuple.XmlAmendments = edited.XmlAmendments;
@@ -1109,9 +1258,9 @@ namespace BExIS.Dlm.Services.Data
                 {
                     foreach (var deleted in deletedTuples)
                     {
-                        DataTuple orginalTuple = latestVersionEffectiveTuples.Where(p => p.Id == deleted.Id).Single();
+                        DataTuple originalTuple = latestVersionEffectiveTuples.Where(p => p.Id == deleted.Id).Single();
                         // check if the tuple has a previous history record. for example may be it was first edited and now is going to be deleted. in two different edits but in one version
-                        DataTupleVersion tupleVersion = DataTupleVerionRepo.Query(p => p.OriginalTuple.Id == orginalTuple.Id).FirstOrDefault();
+                        DataTupleVersion tupleVersion = DataTupleVerionRepo.Query(p => p.OriginalTuple.Id == originalTuple.Id).FirstOrDefault();
                         if (tupleVersion != null)
                         {
                             // there is a previous history record, with tuple action equal to Edit or even Delete!
@@ -1122,38 +1271,38 @@ namespace BExIS.Dlm.Services.Data
                             tupleVersion = new DataTupleVersion()
                             {
                                 TupleAction = TupleAction.Deleted,
-                                Extra = orginalTuple.Extra,
+                                Extra = originalTuple.Extra,
                                 //Id = orginalTuple.Id,
-                                OrderNo = orginalTuple.OrderNo,
-                                Timestamp = orginalTuple.Timestamp,
-                                XmlAmendments = orginalTuple.XmlAmendments,
-                                XmlVariableValues = orginalTuple.XmlVariableValues,
+                                OrderNo = originalTuple.OrderNo,
+                                Timestamp = originalTuple.Timestamp,
+                                XmlAmendments = originalTuple.XmlAmendments,
+                                XmlVariableValues = originalTuple.XmlVariableValues,
                                 //OriginalTuple = orginalTuple,
-                                DatasetVersion = latestCheckedInVersion,
+                                DatasetVersion = originalTuple.DatasetVersion, // latestCheckedInVersion,
                                 ActingDatasetVersion = workingCopyVersion,
                             };
                         }
 
                         tupleVersion.OriginalTuple = null;
 
-                        latestCheckedInVersion.PriliminaryTuples.Remove(orginalTuple);
-                        latestVersionEffectiveTuples.Remove(orginalTuple);
-                        workingCopyVersion.PriliminaryTuples.Remove(orginalTuple);
+                        latestCheckedInVersion.PriliminaryTuples.Remove(originalTuple);
+                        latestVersionEffectiveTuples.Remove(originalTuple);
+                        workingCopyVersion.PriliminaryTuples.Remove(originalTuple);
                         try
                         {
-                            orginalTuple.History.ToList().ForEach(p => p.OriginalTuple = null);
+                            originalTuple.History.ToList().ForEach(p => p.OriginalTuple = null);
                         }
                         catch { }
                         try
                         {
-                            orginalTuple.DatasetVersion.PriliminaryTuples.Remove(orginalTuple);
+                            originalTuple.DatasetVersion.PriliminaryTuples.Remove(originalTuple);
                         }
                         catch { }
 
-                        orginalTuple.History.Clear();
-                        orginalTuple.DatasetVersion = null;
+                        originalTuple.History.Clear();
+                        originalTuple.DatasetVersion = null;
 
-                        tuplesTobeDeleted.Add(orginalTuple);
+                        tuplesTobeDeleted.Add(originalTuple);
                         tupleVersionsTobeAdded.Add(tupleVersion);
                     }
                 }

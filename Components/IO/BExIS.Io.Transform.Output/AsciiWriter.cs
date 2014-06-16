@@ -72,7 +72,7 @@ namespace BExIS.Io.Transform.Output
             return errorMessages;
         }
 
-        public List<Error> AddDataTuples(List<DataTuple> dataTuples, string filePath, long dataStructureId)
+        public List<Error> AddDataTuples(List<AbstractTuple> dataTuples, string filePath, long dataStructureId)
         {
             if (File.Exists(filePath))
             {
@@ -80,7 +80,7 @@ namespace BExIS.Io.Transform.Output
 
                 data.AppendLine(DataStructureToRow(dataStructureId));
 
-                foreach (DataTuple dataTuple in dataTuples)
+                foreach (AbstractTuple dataTuple in dataTuples)
                 {
                     data.AppendLine(DatatupleToRow(dataTuple));
                 }
@@ -101,6 +101,8 @@ namespace BExIS.Io.Transform.Output
         {
             //DatatupleManager
             DatasetManager datasetManager = new DatasetManager();
+            
+            // I do not know where this function is called, but there is a chance that the id is referring to a tuple in a previous version, in that case, the tuple is not in the data tuples anymore. Javad
             DataTuple dataTuple = datasetManager.DataTupleRepo.Get(id);
             dataTuple.Materialize();
 
@@ -131,7 +133,7 @@ namespace BExIS.Io.Transform.Output
         /// </summary>
         /// <param name="dataTuple"></param>
         /// <returns></returns>
-        private string DatatupleToRow(DataTuple dataTuple)
+        private string DatatupleToRow(AbstractTuple dataTuple)
         {
             StringBuilder builder = new StringBuilder();
             bool first = true;

@@ -66,7 +66,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 DataStructureManager dsm = new DataStructureManager();
                 StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(dsv.Dataset.DataStructure.Id);
 
-                IEnumerable<DataTuple> dataTuples = dm.GetDatasetVersionEffectiveTuples(dsv);
+                List<AbstractTuple> dataTuples = dm.GetDatasetVersionEffectiveTuples(dsv);
 
                 DataTable table = SearchUIHelper.ConvertPrimaryDataToDatatable(dsv, dataTuples);
 
@@ -97,7 +97,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                     DatasetVersion dsv = dm.GetDatasetLatestVersion(datasetID);
 
 
-                    IEnumerable<DataTuple> dataTuples = dm.GetDatasetVersionEffectiveTuples(dsv);
+                    List<AbstractTuple> dataTuples = dm.GetDatasetVersionEffectiveTuples(dsv);
 
                     DataTable table = SearchUIHelper.ConvertPrimaryDataToDatatable(dsv, dataTuples);
                     GridModel model = new GridModel(table);
@@ -141,7 +141,11 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                     if (filterInUse())
                     {
                         #region generate a subset of a dataset
-                            List<DataTuple> datatuples = GetFilteredDataTuples(datasetVersion);
+
+                        // I have changed all the references to the class "DataTuple" into the class "AbstractTuple" to support previous versions' tuples too.
+                        //the AbstractTuple.TupleType indicates whether the tuple is original or comming from the history
+                        // if(datatuples.First().TupleType == DataTupleType.Original) ...
+                        List<AbstractTuple> datatuples = GetFilteredDataTuples(datasetVersion); 
 
                             long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
                             path = generateDownloadFile(id, datasetVersion.VersionNo, datastuctureId, title, ext);
@@ -217,7 +221,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                     if (filterInUse())
                     {
                         #region generate a subset of a dataset
-                        List<DataTuple> datatuples = GetFilteredDataTuples(datasetVersion);
+                        List<AbstractTuple> datatuples = GetFilteredDataTuples(datasetVersion);
 
                         long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
 
@@ -297,7 +301,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                     {
                         #region generate a subset of a dataset
 
-                            List<DataTuple> datatuples = GetFilteredDataTuples(datasetVersion);
+                        List<AbstractTuple> datatuples = GetFilteredDataTuples(datasetVersion);
 
                             long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
 
@@ -441,17 +445,17 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         DatasetManager dm = new DatasetManager();
                         dm.EditDatasetVersion(datasetVersion, null, null, null);
                     }
-                    
-                    private List<DataTuple> GetFilteredDataTuples(DatasetVersion datasetVersion)
+
+                    private List<AbstractTuple> GetFilteredDataTuples(DatasetVersion datasetVersion)
                     {
                         DatasetManager datasetManager = new DatasetManager();
-                        List<DataTuple> datatuples = datasetManager.GetDatasetVersionEffectiveTuples(datasetVersion);
+                        List<AbstractTuple> datatuples = datasetManager.GetDatasetVersionEffectiveTuples(datasetVersion);
 
                         if (Session["Filter"] != null)
                         {
                             GridCommand command = (GridCommand)Session["Filter"];
 
-                            List<DataTuple> dataTupleList = datatuples;
+                            List<AbstractTuple> dataTupleList = datatuples;
 
    
                             if (command.FilterDescriptors.Count > 0)

@@ -1,0 +1,42 @@
+﻿@using BExIS.Dlm.Entities.Data;
+@model List<DatasetVersion>
+
+@{
+    ViewBag.Title = "List of Dataset Versions";
+}
+<h3>Dataset @ViewBag.VersionId versions</h3> @Html.ActionLink("Return to the list", "listdatasets") <p/>
+<table>
+    <tr>
+        <td>ID</td>
+        <td>Timestamp</td>
+        <td>Status</td>
+        <td>Actions</td>       
+        <td>Comment</td>       
+    </tr>
+@foreach (var item in Model)
+{
+    <tr>
+        <td>@(item.Id)</td>
+        <td>@(item.Timestamp)</td>
+
+        @if (item.Status == DatasetVersionStatus.CheckedIn) 
+         { 
+            <td style="color: darkgreen"> @(item.Status.ToString())</td>
+            <td>@Html.ActionLink("Details", "detailDatasetVersion", new {id = item.Id}) | @Html.ActionLink("Check out", "checkoutDatasetVersion", new {id = item.Id}) </td>
+         }
+        else if (item.Status == DatasetVersionStatus.CheckedOut) 
+        {   
+            <td style="color: darkblue"> @(item.Status.ToString())</td>
+            <td>@Html.ActionLink("Force Commit", "forceCommitDatasetVersion", new {id = item.Id}) | @Html.ActionLink("Rollback", "rollbackDatasetVersion", new {id = item.Id}) </td>
+        }
+        else if (item.Status == DatasetVersionStatus.Old) 
+        { 
+            <td style="color: red">Archived</td>
+            <td> @Html.ActionLink("Details", "detailDatasetVersion", new {id = item.Id}) </td>
+        }
+        <td>@(item.ChangeDescription)</td>
+    </tr>    
+}
+</table>
+<p/>
+@Html.ActionLink("Return to the list", "listdatasets")

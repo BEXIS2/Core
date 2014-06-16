@@ -75,7 +75,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
                             {
                                 col.DataType = Type.GetType("System.Double");
                                 break;
-                            }
+        }
 
                         case "Int16":
                             {
@@ -117,7 +117,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
 
 
                     if (vu.Parameters.Count > 0)
-                    {
+        {
                         foreach (var pu in vu.Parameters)
                         {
                             DataColumn col2 = dt.Columns.Add(pu.Label.Replace(" ", "")); // or DisplayName also
@@ -139,7 +139,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
 
             return dt;
         }
-        public static DataTable ConvertPrimaryDataToDatatable(DatasetVersion dsv, IEnumerable<DataTuple> dsVersionTuples)
+        public static DataTable ConvertPrimaryDataToDatatable(DatasetVersion dsv, IEnumerable<AbstractTuple> dsVersionTuples)
         {
             DataTable dt = new DataTable();
             dt.TableName = "Primary data table";
@@ -227,7 +227,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
             return dt;
         }
 
-        private static DataRow ConvertTupleIntoDataRow(DataTable dt, DataTuple t)
+        private static DataRow ConvertTupleIntoDataRow(DataTable dt, AbstractTuple t)
         {
 
             DataRow dr = dt.NewRow();

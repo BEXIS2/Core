@@ -24,8 +24,9 @@ namespace BExIS.Dlm.Entities.Data
         /// every variablevalue knows about its Obtaining method which is one of the items in the DataAttribute ValueType
         /// </summary>
         public virtual XmlDocument XmlVariableValues { get; set; }
-        public virtual XmlDocument XmlAmendments { get; set; } 
-        
+        public virtual XmlDocument XmlAmendments { get; set; }
+
+        public abstract DataTupleType TupleType { get; }
         #endregion
      
         #region Associations        
@@ -52,15 +53,24 @@ namespace BExIS.Dlm.Entities.Data
         ,   Untouched   =4 // the tuple is part of this version without any change. in this case the new version points to the previous one by an "Untouched"  action to prevent duplicating the tuple.
     }
 
+    public enum DataTupleType
+    {
+        Original,
+        History
+    }
+
     public class DataTuple : AbstractTuple
     {
+        public override DataTupleType TupleType
+        {
+            get { return DataTupleType.Original; }
+        }
+
         #region Associations
 
         public virtual ICollection<DataTupleVersion> History { get; set; }
 
-        #endregion
-
-      
+        #endregion      
 
         #region Methods
 

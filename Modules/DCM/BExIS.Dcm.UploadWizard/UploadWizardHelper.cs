@@ -29,7 +29,7 @@ namespace BExIS.Dcm.UploadWizard
 
 
             DatasetManager datasetManager = new DatasetManager();
-            List<DataTuple> datatuplesSource = datasetManager.GetDatasetVersionEffectiveTuples(workingCopy).ToList();
+            List<AbstractTuple> datatuplesSource = datasetManager.GetDatasetVersionEffectiveTuples(workingCopy).ToList();
 
             //if (datatuplesSource.Count > newDatatuples.Count)
             //{
@@ -149,25 +149,40 @@ namespace BExIS.Dcm.UploadWizard
                 List<string> temp = new List<string>();
 
                 // load data
-                DatasetManager dm = new DatasetManager();
+                DatasetManager datasetManager = new DatasetManager();
 
-                DatasetVersion datasetVersion = dm.GetDatasetVersion(datasetId);
+                Dataset dataset = datasetManager.GetDataset(datasetId);
 
-                List<DataTuple> datatuples = dm.GetDatasetVersionEffectiveTuples(datasetVersion);
-                if (datatuples.Count > 0)
+                DatasetVersion datasetVersion;
+
+                if (datasetManager.IsDatasetCheckedIn(datasetId))
                 {
-                    foreach (DataTuple dt in datatuples)
+                    datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
+
+                    List<AbstractTuple> datatuples = datasetManager.GetDatasetVersionEffectiveTuples(datasetVersion);
+
+                    if (datatuples.Count > 0)
                     {
-                        string value = "";
-
-                        foreach (long t in primaryKeys)
+                        foreach (DataTuple dt in datatuples)
                         {
-                            value += dt.VariableValues.Where(p => p.VariableId.Equals(t)).First().Value;
-                        }
+                            string value = "";
 
-                        temp.Add(value);
+                            foreach (long t in primaryKeys)
+                            {
+                                value += dt.VariableValues.Where(p => p.VariableId.Equals(t)).First().Value;
+                            }
+
+                            temp.Add(value);
+                        }
                     }
+
                 }
+                else
+                {
+                    throw new Exception("Dataset is not checked in.");
+                }
+
+                
                 return temp;
 
             }

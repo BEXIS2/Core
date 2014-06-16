@@ -140,6 +140,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         public ActionResult AddSelectedDatasetToBus(string id)
         {
 
+            ChooseDatasetViewModel model = new ChooseDatasetViewModel();
 
             TaskManager TaskManager = (TaskManager)Session["TaskManager"];
 
@@ -164,25 +165,38 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             long datasetId = Convert.ToInt64(id);
 
-            DatasetVersion datasetVersion = datasetManager.GetDatasetVersion(datasetId);
+            Dataset dataset = datasetManager.GetDataset(datasetId);
+
+            DatasetVersion datasetVersion;
+
+            if(datasetManager.IsDatasetCheckedIn(datasetId))
+            {
+              datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
+
+              TaskManager.AddToBus(TaskManager.DATASET_ID, datasetId);
+              //Add Metadata to Bus
+              TaskManager.AddToBus(TaskManager.DATASET_TITLE, datasetVersion.Metadata.SelectNodes("Metadata/Description/Description/Title/Title")[0].InnerText);
+
+              ResearchPlanManager rpm = new ResearchPlanManager();
+              ResearchPlan rp = rpm.Repo.Get(datasetVersion.Dataset.ResearchPlan.Id);
+              TaskManager.AddToBus(TaskManager.RESEARCHPLAN_ID, rp.Id);
+              TaskManager.AddToBus(TaskManager.RESEARCHPLAN_TITLE, rp.Title);
+
+            }
+            else
+            {
+                model.ErrorList.Add(new Error(ErrorType.Dataset, "Dataset is not checked in."));
+            }
 
 
 
-            TaskManager.AddToBus(TaskManager.DATASET_ID, datasetId);
-            //Add Metadata to Bus
-            TaskManager.AddToBus(TaskManager.DATASET_TITLE, datasetVersion.Metadata.SelectNodes("Metadata/Description/Description/Title/Title")[0].InnerText);
-
-            ResearchPlanManager rpm = new ResearchPlanManager();
-            ResearchPlan rp = rpm.Repo.Get(datasetVersion.Dataset.ResearchPlan.Id);
-            TaskManager.AddToBus(TaskManager.RESEARCHPLAN_ID, rp.Id);
-            TaskManager.AddToBus(TaskManager.RESEARCHPLAN_TITLE, rp.Title);
-
+            
             Session["TaskManager"] = TaskManager;
 
 
             //create Model
 
-            ChooseDatasetViewModel model = new ChooseDatasetViewModel();
+            
             model.StepInfo = TaskManager.Current();
             if ((List<ListViewItem>)Session["DatasetVersionViewList"] != null) model.DatasetsViewList = (List<ListViewItem>)Session["DatasetVersionViewList"];
 
