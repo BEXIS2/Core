@@ -1,4 +1,4 @@
-﻿@model Tuple<StructuredDataStructure, int>
+﻿@model Tuple<StructuredDataStructure, long>
 @using BExIS.Ddm.Model;
 @using System.Data;
 @using BExIS.Dlm.Entities.DataStructure;
@@ -9,7 +9,7 @@
     //Model.item1 = SearchResultPreview
     //Model.item2 = DatasetId
 
-    int id = Model.Item2;
+    long id = Model.Item2;
     DataTable dt = new DataTable();
     if(Model.Item1 != null)
     {
@@ -30,6 +30,7 @@
 
                     .DataBinding(dataBinding => dataBinding
                         .Ajax()
+                        .OperationMode(GridOperationMode.Client)
                         .Select("_CustomDataStructureBinding", "Data", new { datasetID = id })
                     )
                     .EnableCustomBinding(true)

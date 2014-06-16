@@ -12,7 +12,7 @@
 
 
     StructuredDataStructure sds = new StructuredDataStructure();
-    Tuple<StructuredDataStructure, int> defaultModel = new Tuple<StructuredDataStructure, int>(sds, 0);
+    Tuple<StructuredDataStructure, long> defaultModel = new Tuple<StructuredDataStructure, long>(sds, 0);
 
 
     GridPagerStyles pagerStyles = GridPagerStyles.PageSizeDropDown;
@@ -123,7 +123,7 @@
     .Buttons(buttons => buttons.Close())
     .Content(@<text>
         <div id="showPreviewDS-resultGrid" class="showPreviewDS"  >
-             @Html.Partial("_previewDatastructure", defaultModel)
+            
         </div>
     </text>
     )
@@ -181,6 +181,7 @@
 
        $.post('@Url.Action("ShowPrimaryData", "Data", new RouteValueDictionary { { "area", "DDM" } })', { datasetID: e.id }, function (response) {
 
+         
            var win = window.open();
            with (win.document) {
                open();
@@ -199,6 +200,7 @@
 
     function ShowDatastructureWindow_onClose() {
         $('.t-state-selected[title*="Datastructure"]').removeClass('t-state-selected');
+        $("#showPreviewDS-resultGrid").empty();
     }
 
     function dataStructureGrid_OnLoad(e) {

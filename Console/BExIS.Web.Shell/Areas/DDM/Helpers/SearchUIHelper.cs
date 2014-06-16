@@ -229,7 +229,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
 
         private static DataRow ConvertTupleIntoDataRow(DataTable dt, DataTuple t)
         {
-           
+
             DataRow dr = dt.NewRow();
             foreach(var vv in t.VariableValues)
             {
@@ -254,7 +254,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
                         {
                             if (vv.Value != null)
                                 if(!String.IsNullOrEmpty(vv.Value.ToString()))
-                                    dr["ID"+vv.Variable.Id.ToString()] = Convert.ToDouble(vv.Value);
+                            dr["ID"+vv.Variable.Id.ToString()] = Convert.ToDouble(vv.Value);
                             
                             break;
                         }
@@ -263,7 +263,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
                         {
                             if (vv.Value != null)
                                 if (!String.IsNullOrEmpty(vv.Value.ToString()))
-                                    dr["ID"+vv.Variable.Id.ToString()] = Convert.ToInt16(vv.Value);
+                            dr["ID"+vv.Variable.Id.ToString()] = Convert.ToInt16(vv.Value);
                             break;
                         }
 
@@ -271,7 +271,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
                         {
                             if (vv.Value != null)
                                 if (!String.IsNullOrEmpty(vv.Value.ToString()))
-                                    dr["ID"+vv.Variable.Id.ToString()] = Convert.ToInt32(vv.Value);
+                            dr["ID"+vv.Variable.Id.ToString()] = Convert.ToInt32(vv.Value);
                             break;
                         }
 
@@ -279,7 +279,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
                         {
                             if (vv.Value != null)
                                 if (!String.IsNullOrEmpty(vv.Value.ToString()))
-                                    dr["ID"+vv.Variable.Id.ToString()] = Convert.ToInt64(vv.Value);
+                            dr["ID"+vv.Variable.Id.ToString()] = Convert.ToInt64(vv.Value);
                             break;
                         }
 
@@ -287,7 +287,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
                         {
                             if (vv.Value != null)
                                 if (!String.IsNullOrEmpty(vv.Value.ToString()))
-                                    dr["ID"+vv.Variable.Id.ToString()] = Convert.ToDecimal(vv.Value);
+                            dr["ID"+vv.Variable.Id.ToString()] = Convert.ToDecimal(vv.Value);
                             break;
                         }
 
@@ -295,7 +295,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
                         {
                             if (vv.Value != null)
                                 if (!String.IsNullOrEmpty(vv.Value.ToString()))
-                                    dr["ID"+vv.Variable.Id.ToString()] = Convert.ToDateTime(vv.Value, CultureInfo.InvariantCulture);
+                            dr["ID"+vv.Variable.Id.ToString()] = Convert.ToDateTime(vv.Value, CultureInfo.InvariantCulture);
                             break;
                         }
                 
@@ -303,7 +303,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
                         {
                             if (vv.Value != null)
                                 if (!String.IsNullOrEmpty(vv.Value.ToString()))
-                                    dr["ID"+vv.Variable.Id.ToString()] = vv.Value;
+                            dr["ID"+vv.Variable.Id.ToString()] = vv.Value;
                             break;
                         }
                     }
@@ -329,7 +329,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
 
             dt.TableName = "DataStruture";
             dt.Columns.Add("VariableName");
-            dt.Columns.Add("Parameters");
+            //dt.Columns.Add("Parameters");
             dt.Columns.Add("Unit");
             dt.Columns.Add("Description");
 
@@ -346,8 +346,8 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
                     else dr["VariableName"] = "n/a";
 
 
-                    if (sdvu.Parameters.Count > 0) dr["Parameters"] = "current not shown";
-                    else dr["Parameters"] = "n/a";
+                    //if (sdvu.Parameters.Count > 0) dr["Parameters"] = "current not shown";
+                    //else dr["Parameters"] = "n/a";
 
                     if (sdvu.DataAttribute.Unit != null) dr["Unit"] = sdvu.DataAttribute.Unit.Name;
                     else dr["Unit"] = "n/a";

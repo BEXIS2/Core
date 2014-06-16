@@ -99,7 +99,6 @@ namespace BExIS.Io.Transform.Input
         #region private 
             IList<Variable> _variableList;
         #endregion
-            
 
         //Contructor
         public DataReader()
@@ -444,7 +443,6 @@ namespace BExIS.Io.Transform.Input
         }
         #endregion
 
-
         #region static methods
 
             public static bool FileExist(string path)
@@ -458,6 +456,4 @@ namespace BExIS.Io.Transform.Input
         #endregion
 
     }
-
-
 }

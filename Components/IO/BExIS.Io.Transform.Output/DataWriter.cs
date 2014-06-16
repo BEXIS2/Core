@@ -11,6 +11,7 @@ using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.DataStructure;
 using Vaiona.Util.Cfg;
 using BExIS.Dlm.Services.Data;
+using BExIS.Dlm.Entities.Data;
 
 namespace BExIS.Io.Transform.Output
 {
@@ -29,6 +30,7 @@ namespace BExIS.Io.Transform.Output
             /// <remarks></remarks>
             /// <seealso cref="Error"/>    
             public List<Error> errorMessages { get; set; }
+            public String[] visibleColumns { get; set; }
 		 
 	    #endregion
 
@@ -207,6 +209,30 @@ namespace BExIS.Io.Transform.Output
             DatasetManager datasetManager = new DatasetManager();
 
             return datasetManager.GetDatasetLatestVersion(id).Metadata.SelectNodes("Metadata/Description/Description/Title/Title")[0].InnerText;
+        }
+
+        /// <summary>
+        /// select a subset of the variables from a datastructure
+        /// based on a list of variablenames
+        /// </summary>
+        /// <param name="source">full list of variables</param>
+        /// <param name="selected">variablenames</param>
+        /// <returns></returns>
+        protected List<Variable> GetSubsetOfVariables(List<Variable> source, String[] selected)
+        {
+            return source.Where(p=> selected.Contains(p.Id.ToString())).ToList();
+        }
+
+        /// <summary>
+        /// select a subset of the variables from a datastructure
+        /// based on a list of variablenames
+        /// </summary>
+        /// <param name="source">full list of variables</param>
+        /// <param name="selected">variablenames</param>
+        /// <returns></returns>
+        protected List<VariableValue> GetSubsetOfVariableValues(List<VariableValue> source, String[] selected)
+        {
+            return source.Where(p => selected.Contains(p.Variable.Id.ToString())).ToList();
         }
 
     }

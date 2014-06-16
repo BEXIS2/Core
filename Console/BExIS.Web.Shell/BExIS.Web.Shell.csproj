@@ -280,6 +280,7 @@
     <DesignData Include="Db\Settings\MsSql2008Dialect.hibernate.cfg.xml" />
     <DesignData Include="Db\Settings\PostgreSQL82Dialect.hibernate.cfg.xml" />
     <Content Include="Areas\DCM\Images\emptyPng.png" />
+    <Content Include="Areas\DDM\Scripts\ddm.js" />
     <Content Include="Areas\RPM\Scripts\jquery-1.10.1.min.js" />
     <Content Include="Areas\RPM\Stylesheets\RPM.css" />
     <Content Include="Scripts\2012.3.1018\jquery-1.7.1.min.js" />
@@ -751,7 +752,6 @@
   <ItemGroup>
     <Content Include="Areas\DDM\Views\Home\_dropBoxView.cshtml" />
     <Content Include="Areas\DDM\Views\Home\_metaDataResultGridView.cshtml" />
-    <Content Include="Areas\DDM\Views\Data\_primaryDataResultGridView.cshtml" />
     <Content Include="Areas\DDM\Views\Home\_radioButtonsView.cshtml" />
     <Content Include="Areas\DDM\Views\Home\_rangeSliderView.cshtml" />
     <Content Include="Areas\DDM\Views\Home\_resultGridView.cshtml" />
@@ -783,9 +783,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Themes\Default\Partials\_Header.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\DDM\Views\Home\_previewDatastructure.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_GlobalResources\UploadLocalization.en-US.resx">
@@ -981,6 +978,7 @@
     <Content Include="Areas\SAM\Views\_ViewStart.cshtml" />
     <Content Include="Areas\SAM\Views\Unsafe\PurgeDataset.cshtml" />
     <Content Include="Areas\SAM\Views\Unsafe\ListDatasets.cshtml" />
+    <Content Include="Areas\DDM\Views\Data\_previewDatastructure.cshtml" />
     <None Include="Properties\PublishProfiles\2230.pubxml" />
     <None Include="Properties\PublishProfiles\2301.pubxml" />
     <None Include="Properties\PublishProfiles\2302.pubxml" />
@@ -1047,7 +1045,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>6236</DevelopmentServerPort>
+          <DevelopmentServerPort>38914</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>

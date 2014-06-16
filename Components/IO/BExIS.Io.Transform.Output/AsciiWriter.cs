@@ -135,7 +135,15 @@ namespace BExIS.Io.Transform.Output
         {
             StringBuilder builder = new StringBuilder();
             bool first = true;
-            foreach (VariableValue vv in dataTuple.VariableValues)
+
+            List<VariableValue> variableValues = dataTuple.VariableValues.ToList();
+
+            if (visibleColumns != null)
+            {
+                variableValues = GetSubsetOfVariableValues(variableValues, visibleColumns);
+            }
+
+            foreach (VariableValue vv in variableValues)
             {
                 string value = "";
                 if (vv.Value != null)
@@ -166,7 +174,14 @@ namespace BExIS.Io.Transform.Output
             StringBuilder builder = new StringBuilder();
             bool first = true;
 
-            foreach (Variable v in ds.Variables)
+            List<Variable> variables = ds.Variables.ToList();
+
+            if (visibleColumns != null)
+            {
+                variables = GetSubsetOfVariables(ds.Variables.ToList(), visibleColumns);
+            }
+
+            foreach (Variable v in variables)
             {
                 string value = v.Label.ToString();
                 // Add separator if this isn't the first value
@@ -183,6 +198,8 @@ namespace BExIS.Io.Transform.Output
 
             return builder.ToString();
         }
+
+        
     }
 
 
