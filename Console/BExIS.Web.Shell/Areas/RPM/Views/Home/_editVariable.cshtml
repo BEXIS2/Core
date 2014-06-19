@@ -11,7 +11,7 @@
     
     if (Session["variableId"] != null)
     {
-        variable = Model.dataStructure.Variables.Where(v => v.Id.Equals((long)Session["variableId"])).FirstOrDefault();  
+        variable = Model.variables.Where(v => v.Id.Equals((long)Session["variableId"])).FirstOrDefault();  
     }
     
 }
@@ -22,7 +22,7 @@
 }
 else
 {
-    if ((bool)Session["inUse"] == true)
+    if (Model.inUse == true)
     { 
         <font color="red">Can't edit Variable, Data Strucure in use</font>
     }
@@ -40,7 +40,7 @@ else
         <div class="planingPartialDiv" id="createVariable">
             @using (Html.BeginForm("saveVariable", "Home", new { area = "RPM" }))
             {
-            @(Html.TextBox("dataStructureId", (long)Session["dataStructureId"], new { @class = "hidden" }))
+            @(Html.TextBox("dataStructureId", Model.dataStructure.Id, new { @class = "hidden" }))
             <table>
                 <tr id="name">
                     <td>

@@ -45,7 +45,7 @@
         <table>
             <tr id="name">
                 <td>
-                    Name:
+                    Name:*
                 </td>
                 <td>
                     @(Html.TextBoxFor(m => Model.Name, new { @class = "t-input" }))
@@ -53,7 +53,7 @@
             </tr>
             <tr>
                 <td>
-                    Abbreviation:
+                    Abbreviation:*
                 </td>
                 <td>
                     @(Html.TextBoxFor(m => Model.Abbreviation, new { @class = "t-input" }))
@@ -117,6 +117,8 @@
             <tr><td colspan="2"> </td></tr>
             <tr>
                 <td>
+                    * Please don't leave empty
+                    <br /><br />
                     <button name="create" value="GetUnitInput" type="submit" class="t-button">Save</button>
                 </td>
                 <td>

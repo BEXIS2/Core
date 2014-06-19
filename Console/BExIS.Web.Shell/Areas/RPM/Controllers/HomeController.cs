@@ -11,6 +11,7 @@ using BExIS.RPM.Model;
 using BExIS.RPM.Output;
 using Vaiona.Persistence.Api;
 using Vaiona.Util.Cfg;
+using System.Windows.Forms;
 
 namespace BExIS.Web.Shell.Areas.RPM.Controllers
 {
@@ -33,11 +34,29 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
         public ActionResult DataStructureDesigner()
         {
             DataStructureDesignerModel DSDM = new DataStructureDesignerModel();
-            DataStructureManager dataStructureManager = new DataStructureManager();
-            DSDM.dataStructureList = dataStructureManager.StructuredDataStructureRepo.Get();
+            DSDM.show = false;
             
-            Session["inUse"] = false;
-            Session["dataStructureId"] = (long)0;
+            Session["Window"] = false;
+            Session["VariableWindow"] = false;
+            return View("DataStructureDesigner", DSDM);
+        }
+
+        public ActionResult createStructuredDataStrukture()
+        {
+            DataStructureDesignerModel DSDM = new DataStructureDesignerModel();
+
+            Session["Structured"] = true;
+            Session["Window"] = false;
+            Session["VariableWindow"] = false;
+            return View("DataStructureDesigner", DSDM); 
+                }
+        
+        public ActionResult createUnStructuredDataStrukture()
+                {
+            DataStructureDesignerModel DSDM = new DataStructureDesignerModel();
+            DSDM.structured = false;
+
+            Session["Structured"] = false;
             Session["Window"] = false;
             Session["VariableWindow"] = false;
             return View("DataStructureDesigner", DSDM);
@@ -45,36 +64,15 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
         #region Data Structure Info
 
-        public ActionResult showDataStructure(long SelectedItem)
+        public ActionResult showDataStructure(string SelectedItem)
         {
             DataStructureDesignerModel DSDM = new DataStructureDesignerModel();
-            DataStructureManager dataStructureManager = new DataStructureManager();
-            DSDM.dataStructureList = dataStructureManager.StructuredDataStructureRepo.Get();
+            string[] temp = SelectedItem.Split(',');
 
-            if (SelectedItem != 0)
-            {
-                DSDM.dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(SelectedItem);
-                DSDM.numberOfVariables = DSDM.dataStructure.Variables.Count;
-                DSDM.BuildDataTable();
-                if (DSDM.dataStructure.Datasets.Count > 0)
-                {
-                    Session["inUse"] = true;
-                }
-                else
-                {
-                    Session["inUse"] = false;
-                }
-            }
-            else
-            {
-                DSDM = new DataStructureDesignerModel();
-            }
-            Session["Window"] = false;
-            Session["dataStructureId"] = DSDM.dataStructure.Id;
+            DSDM.GetDataStructureByID(Convert.ToInt64(temp[0]), Convert.ToBoolean(temp[1]));
+            Session["Structured"] = DSDM.structured;
             return View("DataStructureDesigner", DSDM);
         }
-
-
 
         #endregion
 
@@ -82,16 +80,16 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
         public ActionResult saveDataStructure(DataStructureDesignerModel DSDM, string category)
         {
-            DataStructureManager DSM = new DataStructureManager();
-            DSDM.dataStructureList = DSM.StructuredDataStructureRepo.Get();
-
             DSDM.dataStructure.Name = cutSpaces(DSDM.dataStructure.Name);
             DSDM.dataStructure.Description = cutSpaces(DSDM.dataStructure.Description);
+            DSDM.structured = (bool)Session["Structured"];
+            
             if(DSDM.dataStructure.Id == 0)
             {
-                if(datasStructureValidation(DSDM)!= "ok")
+                string errorMsg = datasStructureValidation(DSDM);
+                if (errorMsg != "ok")
                 {
-                    ViewData["errorMsg"] = datasStructureValidation(DSDM);
+                    ViewData["errorMsg"] = errorMsg;
                     return View("DataStructureDesigner", DSDM);
                 }
                 else
@@ -99,6 +97,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                     if (DSDM.dataStructure.Name != "" && DSDM.dataStructure.Name != null)
                     {
                         DataStructureCategory DSC = new DataStructureCategory();
+                        DataStructureManager DSM = new DataStructureManager();
                         
                         foreach (DataStructureCategory dsc in Enum.GetValues(typeof(DataStructureCategory)))
                         {
@@ -107,9 +106,17 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                                 DSC = dsc;
                             }
                         }
+                        if (DSDM.structured)
+                        {
                         DSDM.dataStructure = DSM.CreateStructuredDataStructure(DSDM.dataStructure.Name, DSDM.dataStructure.Description, "", "", DSC, null);
                         ExcelTemplateProvider provider = new ExcelTemplateProvider(templateName);
                         provider.CreateTemplate(DSDM.dataStructure.Id);
+                            DSDM.GetDataStructureByID(DSDM.dataStructure.Id, DSDM.structured);
+                    }
+                    else
+                    { 
+                            DSDM.dataStructure = DSM.CreateUnStructuredDataStructure(DSDM.dataStructure.Name, DSDM.dataStructure.Description);
+                        }
                     }
                     else
                     { 
@@ -120,16 +127,16 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             }
             else
             {
-                StructuredDataStructure DS = DSM.StructuredDataStructureRepo.Get(DSDM.dataStructure.Id);
-
-                if (datasStructureValidation(DSDM) != "ok")
+                string errorMsg = datasStructureValidation(DSDM);
+                if (errorMsg != "ok")
                 {
-                    ViewData["errorMsg"] = datasStructureValidation(DSDM);
+                    ViewData["errorMsg"] = errorMsg;
                     return View("DataStructureDesigner", DSDM);
                 }
                 else
                 {
                     DataStructureCategory DSC = new DataStructureCategory();
+                    DataStructureManager DSM = new DataStructureManager();
 
                     foreach (DataStructureCategory dsc in Enum.GetValues(typeof(DataStructureCategory)))
                     {
@@ -138,39 +145,55 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                             DSC = dsc;
                         }
                     }
+                    if (DSDM.structured)
+                    {
+                        StructuredDataStructure DS = DSM.StructuredDataStructureRepo.Get(DSDM.dataStructure.Id);
                     ExcelTemplateProvider provider = new ExcelTemplateProvider(templateName);
                     DS.Name = DSDM.dataStructure.Name;
                     DS.Description = DSDM.dataStructure.Description;
                     DSDM.dataStructure = DSM.UpdateStructuredDataStructure(DS);
                     provider.CreateTemplate(DSDM.dataStructure.Id);
+                        DSDM.GetDataStructureByID(DSDM.dataStructure.Id, DSDM.structured);
+                }
+                    else
+                    {
+                        UnStructuredDataStructure DS = DSM.UnStructuredDataStructureRepo.Get(DSDM.dataStructure.Id);
+                        DS.Name = DSDM.dataStructure.Name;
+                        DS.Description = DSDM.dataStructure.Description;
+                        DSDM.dataStructure = DSM.UpdateUnStructuredDataStructure(DS);
+            }
                 }
             }
 
-            DSDM.dataStructure = DSM.StructuredDataStructureRepo.Get(DSDM.dataStructure.Id);
-            DSDM.dataStructureList = DSM.StructuredDataStructureRepo.Get();
-            DSDM.BuildDataTable();
-            
-            if (DSDM.dataStructure.Datasets.Count > 0)
-                Session["inUse"] = true;
-            else
-                Session["inUse"] = false;            
-
             Session["Window"] = false;
-            Session["dataStructureId"] = DSDM.dataStructure.Id;
             return View("DataStructureDesigner", DSDM);
         }
 
         private string datasStructureValidation(DataStructureDesignerModel dataStructureDesignerModel)
         {
             DataStructureManager dataStructureManager = new DataStructureManager();
+            List<DataStructure> dataStructureList = new List<DataStructure>();
 
-            if (dataStructureManager.StructuredDataStructureRepo.Get(dataStructureDesignerModel.dataStructure.Id) == null && dataStructureDesignerModel.dataStructure.Id != 0)
+                List<StructuredDataStructure> StrTemp = dataStructureManager.StructuredDataStructureRepo.Get().ToList();
+                foreach (DataStructure ds in StrTemp)
+                {
+                    dataStructureList.Add(ds);
+                }
+            
+                List<UnStructuredDataStructure> UnSTemp = dataStructureManager.UnStructuredDataStructureRepo.Get().ToList();
+                foreach (DataStructure ds in UnSTemp)
+                {
+                    dataStructureList.Add(ds);
+                }
+
+
+                if (dataStructureList.Where(p => p.Id.Equals(dataStructureDesignerModel.dataStructure.Id)).Count() > 0 && dataStructureDesignerModel.dataStructure.Id != 0)
                 {
                         return "Can\'t save Data Structure doesn't exsist anymore";
                 }
-                if (dataStructureDesignerModel.dataStructureList.Where(p => cutSpaces(p.Name).Equals(dataStructureDesignerModel.dataStructure.Name)).Count() > 0)
+                if (dataStructureList.Where(p => cutSpaces(p.Name).Equals(dataStructureDesignerModel.dataStructure.Name)).Count() > 0)
                 {
-                    long newDataStructureId = dataStructureDesignerModel.dataStructureList.Where(p => p.Name.Equals(dataStructureDesignerModel.dataStructure.Name)).ToList().First().Id;
+                    long newDataStructureId = dataStructureList.Where(p => p.Name.Equals(dataStructureDesignerModel.dataStructure.Name)).ToList().First().Id;
                     if (newDataStructureId != dataStructureDesignerModel.dataStructure.Id)
                         return "Can\'t save Data Structure Name already exsist";
                 }
@@ -185,35 +208,84 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             return "ok";
         }
 
-        public ActionResult deleteDataStructure(long id)
+        public ActionResult deleteDataStructure(long id, string name)
         {
-            if (id != 0)
+            bool structured = (bool)Session["Structured"];
+
+            string message = "" ;
+
+            if (name != null && name != "")
+                message = "Delete Data Structure " + name + "?";
+            else
+                message = "Delete Data Structure?";
+
+            string caption = "Confirmation";
+            MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+            DialogResult result;
+            // Displays the MessageBox.
+            result = MessageBox.Show(message, caption, buttons);
+
+            if (result == DialogResult.Yes)
             {
-                DataStructureDesignerModel DSDM = new DataStructureDesignerModel();
-                if (DSDM.GetDataStructureByID(id))
+                if (structured)
                 {
-                    if (DSDM.dataStructure.Datasets.Count == 0)
+                    if (id != 0)
                     {
-                        Session["inUse"] = false;
-                        DataStructureManager DSM = new DataStructureManager();
-                        if (DSDM.dataStructure.Variables.Count > 0)
+                        DataStructureManager dataStructureManager = new DataStructureManager();
+                        StructuredDataStructure dataStructure = new StructuredDataStructure();
+                        dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(id);
+
+                        if (dataStructure.Datasets.Count == 0)
                         {
-                            foreach (Variable v in DSDM.dataStructure.Variables)
+                            DataStructureManager DSM = new DataStructureManager();
+                            if (dataStructure.Variables.Count > 0)
                             {
-                                DSM.RemoveVariableUsage(v);
+                                foreach (Variable v in dataStructure.Variables)
+                                {
+                                    DSM.RemoveVariableUsage(v);
+                                }
                             }
+                            ExcelTemplateProvider provider = new ExcelTemplateProvider();
+                            provider.deleteTemplate(id);
+                            DSM.DeleteStructuredDataStructure(dataStructure);
+                            return RedirectToAction("DataStructureDesigner");
                         }
-                        ExcelTemplateProvider provider = new ExcelTemplateProvider();
-                        provider.deleteTemplate(id);
-                        DSM.DeleteStructuredDataStructure(DSDM.dataStructure);
-                        return RedirectToAction("DataStructureDesigner");
-                    }
-                    else
-                    {
-                        Session["inUse"] = true;
-                        return View("DataStructureDesigner", DSDM);
+                        else
+                        {
+                            DataStructureDesignerModel DSDM = new DataStructureDesignerModel();
+                            DSDM.GetDataStructureByID(id);
+                            return View("DataStructureDesigner", DSDM);
+                        }
                     }
                 }
+                else
+                {
+                    if (id != 0)
+                    {
+                        DataStructureManager dataStructureManager = new DataStructureManager();
+                        UnStructuredDataStructure dataStructure = new UnStructuredDataStructure();
+                        dataStructure = dataStructureManager.UnStructuredDataStructureRepo.Get(id);
+
+                        if (dataStructure.Datasets.Count == 0)
+                        {
+                            DataStructureManager DSM = new DataStructureManager();
+                            DSM.DeleteUnStructuredDataStructure(dataStructure);
+                            return RedirectToAction("DataStructureDesigner");
+                        }
+                        else
+                        {
+                            DataStructureDesignerModel DSDM = new DataStructureDesignerModel();
+                            DSDM.GetDataStructureByID(id, false);
+                            return View("DataStructureDesigner", DSDM);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                DataStructureDesignerModel DSDM = new DataStructureDesignerModel();
+                DSDM.GetDataStructureByID(id,structured);
+                return View("DataStructureDesigner", DSDM);
             }
             return RedirectToAction("DataStructureDesigner");
         }
@@ -226,36 +298,23 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
         {
             DataStructureManager dataStructureManager = new DataStructureManager();
             DataStructureDesignerModel DSDM = new DataStructureDesignerModel();
-            DSDM.dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(id);
-            DSDM.dataStructureList = dataStructureManager.StructuredDataStructureRepo.Get();
-            DSDM.numberOfVariables = DSDM.dataStructure.Variables.Count;
-            DSDM.BuildDataTable();
+            DSDM.GetDataStructureByID(id);
 
-            if (DSDM.dataStructure.Datasets.Count > 0)
-            {
-                Session["inUse"] = true;
-            }
-            else
-            {
                 if (id != 0)
                 {
-
-                    Session["inUse"] = false;
                     DataContainerManager dataAttributeManager = new DataContainerManager();
                     DSDM.dataAttributeList = dataAttributeManager.DataAttributeRepo.Get();
-                    
-                }
             }
+                    
             if ((bool)Session["Window"] == false)
             {
                 Session["Window"] = true;
+                Session["dataStructureId"] = DSDM.dataStructure.Id;
             }
             else
             {
                 Session["Window"] = false;
             }
-
-            Session["dataStructureId"] = id;
             return View("DataStructureDesigner", DSDM);
         }
 
@@ -264,13 +323,11 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             long id = (long)Session["dataStructureId"];
             DataStructureManager dataStructureManager = new DataStructureManager();
             DataStructureDesignerModel DSDM = new DataStructureDesignerModel();
-            DSDM.dataStructureList = dataStructureManager.StructuredDataStructureRepo.Get();
-            DSDM.dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(id);
-            DSDM.numberOfVariables = DSDM.dataStructure.Variables.Count;
+            StructuredDataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(id);
             
             if(id != 0)
             {
-                if (!(DSDM.dataStructure.Datasets.Count > 0))
+                if (!(dataStructure.Datasets.Count > 0))
                 {
                     if (checkedRecords != null)
                     {
@@ -283,23 +340,15 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                             if (temp != null)
                             {
                                 DataStructureManager DSM = new DataStructureManager();
-                                DSM.AddVariableUsage(DSDM.dataStructure, temp, true, temp.Name, null, null);
+                                DSM.AddVariableUsage(dataStructure, temp, true, temp.Name, null, null);
                             }
                         }
-
-                        DSDM.dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(id);
                         ExcelTemplateProvider provider = new ExcelTemplateProvider(templateName);
                         provider.CreateTemplate(id);
                     }
                 }
             }
-            if (DSDM.dataStructure.Datasets.Count > 0)
-                Session["inUse"] = true;
-            else
-                Session["inUse"] = false;
-
-            DSDM.numberOfVariables = DSDM.dataStructure.Variables.Count;
-            DSDM.BuildDataTable();
+            DSDM.GetDataStructureByID(dataStructure.Id);
             return View("DataStructureDesigner", DSDM);
         }
 
@@ -307,12 +356,20 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
         {
             if (dataStructureId != 0)
             {
-                DataStructureManager DSM = new DataStructureManager();
-                DataStructureDesignerModel DSDM = new DataStructureDesignerModel();
-                DSDM.dataStructureList = DSM.StructuredDataStructureRepo.Get();
-                DSDM.dataStructure = DSM.StructuredDataStructureRepo.Get(dataStructureId);
+                string message = "Are you sure you want to delete the Varriable?";
+                string caption = "Confirmation";
+                MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+                DialogResult result;
+                // Displays the MessageBox.
+                result = MessageBox.Show(message, caption, buttons);
 
-                if (!(DSDM.dataStructure.Datasets.Count > 0))
+                if (result == DialogResult.Yes)
+                {
+                DataStructureManager DSM = new DataStructureManager();
+                DataStructure dataStructure = DSM.StructuredDataStructureRepo.Get(dataStructureId);
+                DataStructureDesignerModel DSDM = new DataStructureDesignerModel();
+
+                if (!(dataStructure.Datasets.Count > 0))
                 {
                     Session["inUse"] = false;
                     Variable variable = DSM.VariableRepo.Get(id);
@@ -321,21 +378,17 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                     {
                         DSM.RemoveVariableUsage(variable);
                         ExcelTemplateProvider provider = new ExcelTemplateProvider(templateName);
-                        provider.CreateTemplate(DSDM.dataStructure.Id);
+                        provider.CreateTemplate(dataStructure.Id);
                     }
-                    DSDM.dataStructure = DSM.StructuredDataStructureRepo.Get(dataStructureId);
-                    DSDM.numberOfVariables = DSDM.dataStructure.Variables.Count;
-                    DSDM.BuildDataTable();
+                    DSDM.GetDataStructureByID(dataStructure.Id);
                     return View("DataStructureDesigner", DSDM);
                 }
                 else
                 {
-                    Session["inUse"] = true;
-                    DSDM.dataStructure = DSM.StructuredDataStructureRepo.Get(dataStructureId);
-                    DSDM.numberOfVariables = DSDM.dataStructure.Variables.Count;
-                    DSDM.BuildDataTable();
+                    DSDM.GetDataStructureByID(dataStructure.Id);
                     return View("DataStructureDesigner", DSDM);
                 }
+            }
             }
             return RedirectToAction("DataStructureDesigner");
         }
@@ -343,12 +396,11 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
         public ActionResult saveVariable(string name, long id, long dataStructureId)
         {
             DataStructureManager dataStructureManager = new DataStructureManager();
+            DataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataStructureId);
             DataStructureDesignerModel DSDM = new DataStructureDesignerModel();
-            DSDM.dataStructureList = dataStructureManager.StructuredDataStructureRepo.Get();
-            DSDM.dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataStructureId);
 
             name = cutSpaces(name);
-            if (!(DSDM.dataStructure.Datasets.Count > 0))
+            if (!(dataStructure.Datasets.Count > 0))
             {
                 if (id != 0 && name != null && name != "")
                 {
@@ -362,38 +414,27 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                         Session["variableId"] = null;
                         Session["VariableWindow"] = false;
                         ExcelTemplateProvider provider = new ExcelTemplateProvider(templateName);
-                        provider.CreateTemplate(dataStructureId);
-                        DSDM.dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataStructureId);
+                        provider.CreateTemplate(dataStructure.Id);
                     }
                 }
             }
-            DSDM.numberOfVariables = DSDM.dataStructure.Variables.Count;
-            DSDM.BuildDataTable();
+            DSDM.GetDataStructureByID(dataStructure.Id);
             return View("DataStructureDesigner", DSDM);
         }
 
         public ActionResult openVariableWindow(long id, long dataStructureId)
         {
 
-            DataStructureManager dataStructureManager = new DataStructureManager();
             DataStructureDesignerModel DSDM = new DataStructureDesignerModel();
-            DSDM.dataStructureList = dataStructureManager.StructuredDataStructureRepo.Get();
-            DSDM.dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataStructureId);
+            DSDM.GetDataStructureByID(dataStructureId);
 
-            if (DSDM.dataStructure.Datasets.Count == 0)
+            if (!(DSDM.inUse))
             {
-                Session["inUse"] = false;
                 Session["VariableWindow"] = true;
                 Session["variableId"] = id;
-                Session["dataStructureId"] = DSDM.dataStructure.Id;
-
-                DSDM.dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataStructureId);
-                DSDM.numberOfVariables = DSDM.dataStructure.Variables.Count;
-                DSDM.BuildDataTable();
             }
             else
             {
-                Session["inUse"] = true; 
                 Session["VariableWindow"] = true;
             }
             return View("DataStructureDesigner", DSDM);
@@ -403,17 +444,17 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
         public ActionResult downloadTemplate(long id)
         {
-            DataStructureDesignerModel DSDM = new DataStructureDesignerModel();
-            
             if (id != 0)
             {
-                DSDM.GetDataStructureByID(id);
+                DataStructureManager dataStructureManager = new DataStructureManager();
+                StructuredDataStructure dataStructure = new StructuredDataStructure();
+                dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(id);
 
                 ExcelTemplateProvider provider = new ExcelTemplateProvider(templateName);
                 provider.CreateTemplate(id);
                 string path = "";
 
-                XmlNode resources = DSDM.dataStructure.TemplatePaths.FirstChild;
+                XmlNode resources = dataStructure.TemplatePaths.FirstChild;
 
                 XmlNodeList resource = resources.ChildNodes;
 
@@ -423,8 +464,10 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                         path = x.Attributes.GetNamedItem("Path").Value;
                     
                 }
-                return File(Path.Combine(AppConfiguration.DataPath, path), "application/xlsm", "Template_" + DSDM.dataStructure.Name + ".xlsm");
+                return File(Path.Combine(AppConfiguration.DataPath, path), "application/xlsm", "Template_" + dataStructure.Name + ".xlsm");
             }
+            DataStructureDesignerModel DSDM = new DataStructureDesignerModel();
+            DSDM.GetDataStructureByID(id);
             return View("DataStructureDesigner", DSDM);
         }
 
@@ -435,7 +478,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
         private List<Unit> GetUnitRepo()
         {
             UnitManager UM = new UnitManager();
-            List<Unit> repo = UM.Repo.Get().ToList();
+            List<Unit> repo = UM.Repo.Get().Where(u => u.DataContainers.Count != null && u.AssociatedDataTypes.Count != null).ToList();
             
             foreach(Unit u in repo)
             {
@@ -460,32 +503,78 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
         public ActionResult editUnit(Unit Model, string parent, long id, string measurementSystem, long[] checkedRecords)
         {
+            UnitManager unitManager = new UnitManager();
+            List<Unit> unitList = unitManager.Repo.Get().ToList();
+            bool nameNotExist = unitList.Where(p => p.Name.ToLower().Equals(Model.Name.ToLower())).Count().Equals(0);
+
             Model.Name = cutSpaces(Model.Name);
             Model.Abbreviation = cutSpaces(Model.Abbreviation);
             Model.Description = cutSpaces(Model.Description);
             Model.Dimension = cutSpaces(Model.Dimension);
 
-            List<Unit> unitList = GetUnitRepo();
-
-            
-                if (id == 0)
+            if (id == 0)
+            {
+                if ((Model.Name != "" && Model.Name != null) && (Model.Abbreviation != "" && Model.Abbreviation != null))
                 {
-                    if ((Model.Name != "" && Model.Name != null) && (Model.Abbreviation != "" && Model.Abbreviation != null))
+                    bool abbreviationNotExist = unitList.Where(p => p.Abbreviation.ToLower().Equals(Model.Abbreviation.ToLower())).Count().Equals(0);
+                    if (nameNotExist && abbreviationNotExist)
                     {
-
-                        bool nameNotExist = unitList.Where(p => p.Name.ToLower().Equals(Model.Name.ToLower())).Count().Equals(0);
-                        bool abbreviationNotExist = unitList.Where(p => p.Abbreviation.ToLower().Equals(Model.Abbreviation.ToLower())).Count().Equals(0);
-                        if (nameNotExist && abbreviationNotExist)
+                        foreach (MeasurementSystem msCheck in Enum.GetValues(typeof(MeasurementSystem)))
                         {
+                            if (msCheck.ToString().Equals(measurementSystem))
+                            {
+                                Model.MeasurementSystem = msCheck;
+                            }
+                        }
+                        UnitManager UM = new UnitManager();
+                        Unit unit = UM.Create(Model.Name, Model.Abbreviation, Model.Description, Model.Dimension, Model.MeasurementSystem);
+
+                        updataAssociatedDataType(unit, checkedRecords);
+                    }
+                }
+                else
+                {
+                    Session["Window"] = true;
+                    Session["Unit"] = new Unit();
+                    return RedirectToAction(parent);
+            
+                }
+            }
+            else
+            {
+
+                if ((Model.Name != "" && Model.Name != null) && (Model.Abbreviation != "" && Model.Abbreviation != null))
+                {
+                    Unit tempUnitByName = new Unit();
+                    Unit tempUnitByAbbreviation = new Unit();
+
+                    bool abbreviationNotExist = unitList.Where(p => p.Abbreviation.ToLower().Equals(Model.Abbreviation.ToLower())).Count().Equals(0);
+                    if (!nameNotExist)
+                        tempUnitByName = unitList.Where(p => p.Name.Equals(Model.Name)).ToList().First();
+                    if (!abbreviationNotExist)
+                        tempUnitByAbbreviation = unitList.Where(p => p.Abbreviation.Equals(Model.Abbreviation)).ToList().First();
+
+
+
+                    if ((nameNotExist && abbreviationNotExist) || (tempUnitByName.Id == id && tempUnitByAbbreviation.Id == id) || (tempUnitByName.Id == id && abbreviationNotExist) || (tempUnitByAbbreviation.Id == id && nameNotExist))
+                    {
+                        Unit unit = unitList.Where(p => p.Id.Equals(id)).ToList().First();
+                        if (!(unit.DataContainers.Count() > 0))
+                        {
+                            unit.Name = Model.Name;
+                            unit.Description = Model.Description;
+                            unit.Abbreviation = Model.Abbreviation;
+                            unit.Dimension = Model.Dimension;
                             foreach (MeasurementSystem msCheck in Enum.GetValues(typeof(MeasurementSystem)))
                             {
                                 if (msCheck.ToString().Equals(measurementSystem))
                                 {
-                                    Model.MeasurementSystem = msCheck;
+                                    unit.MeasurementSystem = msCheck;
                                 }
                             }
                             UnitManager UM = new UnitManager();
-                            Unit unit = UM.Create(Model.Name, Model.Abbreviation, Model.Description, Model.Dimension, Model.MeasurementSystem);
+                            unit = UM.Update(unit);
+                            List<long> DataTypelIdList = new List<long>();
 
                             updataAssociatedDataType(unit, checkedRecords);
                         }
@@ -493,51 +582,19 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                 }
                 else
                 {
-                    if ((Model.Name != "" && Model.Name != null) && (Model.Abbreviation != "" && Model.Abbreviation != null))
-                    {
-                        Unit tempUnitByName = new Unit();
-                        Unit tempUnitByAbbreviation = new Unit();
 
-                        bool nameNotExist = unitList.Where(p => p.Name.ToLower().Equals(Model.Name.ToLower())).Count().Equals(0);
-                        bool abbreviationNotExist = unitList.Where(p => p.Abbreviation.ToLower().Equals(Model.Abbreviation.ToLower())).Count().Equals(0);
-                        if (!nameNotExist)
-                            tempUnitByName = unitList.Where(p => p.Name.Equals(Model.Name)).ToList().First();
-                        if (!abbreviationNotExist)
-                            tempUnitByAbbreviation = unitList.Where(p => p.Abbreviation.Equals(Model.Abbreviation)).ToList().First();
-
-
-
-                        if ((nameNotExist && abbreviationNotExist) || (tempUnitByName.Id == id && tempUnitByAbbreviation.Id == id) || (tempUnitByName.Id == id && abbreviationNotExist) || (tempUnitByAbbreviation.Id == id && nameNotExist))
-                        {
-                            Unit unit = unitList.Where(p => p.Id.Equals(id)).ToList().First();
-                            if (!(unit.DataContainers.Count() > 0))
-                            {
-                                unit.Name = Model.Name;
-                                unit.Description = Model.Description;
-                                unit.Abbreviation = Model.Abbreviation;
-                                unit.Dimension = Model.Dimension;
-                                foreach (MeasurementSystem msCheck in Enum.GetValues(typeof(MeasurementSystem)))
-                                {
-                                    if (msCheck.ToString().Equals(measurementSystem))
-                                    {
-                                        unit.MeasurementSystem = msCheck;
-                                    }
-                                }
-                                UnitManager UM = new UnitManager();
-                                unit = UM.Update(unit);
-                                List<long> DataTypelIdList = new List<long>();
-
-                                updataAssociatedDataType(unit, checkedRecords);
-                            }
-                        }
-                    }
+                    Session["Window"] = true;
+                    Session["Unit"] = new Unit();
+                    return RedirectToAction(parent);
 
                 }
-          
 
-            Session["Window"] = false;
-            Session["Unit"] = new Unit();
+            }
+        
+            Session["Window"] = false;        
+            Session["Unit"] = new Unit();    
             return RedirectToAction(parent);
+                
         }
 
         private List<DataType> updataAssociatedDataType(Unit unit, long[] newDataTypelIds)
@@ -573,6 +630,15 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
             if (id != 0)
             {
+                string message = "Are you sure you want to delete the Unit? Id=" + id;
+                string caption = "Confirmation";
+                MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+                DialogResult result;
+                // Displays the MessageBox.
+                result = MessageBox.Show(message, caption, buttons);
+
+                if (result == DialogResult.Yes)
+                {
                 UnitManager UM = new UnitManager();
                 Unit unit = UM.Repo.Get(id);
                 if (unit != null)
@@ -583,6 +649,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                         UM.Delete(unit);
                     }
                 }
+            }
             }
             return RedirectToAction("UnitManager");
         }
@@ -761,11 +828,20 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             Model.Name = cutSpaces(Model.Name);
             Model.Description = cutSpaces(Model.Description);
 
+            bool nameNotExist = DataTypeList.Where(p => p.Name.ToLower().Equals(Model.Name.ToLower())).Count().Equals(0);
+
+            if (Model.Name == "" | Model.Name == null | !nameNotExist)
+            {
+                if (!nameNotExist) MessageBox.Show("There is already a Data Type with the same name as you specified. Please specify a different name.", "Existing Data Type");
+                Session["Window"] = true;
+                return RedirectToAction(parent);
+            }
+
             if (id == 0)
             {
                 if (Model.Name != "" && Model.Name != null)
                 {
-                    bool nameNotExist = DataTypeList.Where(p => p.Name.ToLower().Equals(Model.Name.ToLower())).Count().Equals(0);
+                    //bool nameNotExist = DataTypeList.Where(p => p.Name.ToLower().Equals(Model.Name.ToLower())).Count().Equals(0);
                     if (nameNotExist)
                     {
                         DataTypeManager DTM = new DataTypeManager();
@@ -778,7 +854,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                 if (Model.Name != "" && Model.Name != null)
                 {
                     DataType tempDataType = new DataType();
-                    bool nameNotExist = DataTypeList.Where(p => p.Name.ToLower().Equals(Model.Name.ToLower())).Count().Equals(0);
+                    //bool nameNotExist = DataTypeList.Where(p => p.Name.ToLower().Equals(Model.Name.ToLower())).Count().Equals(0);
 
                     if (!nameNotExist)
                         tempDataType = DataTypeList.Where(p => p.Name.Equals(Model.Name)).ToList().First();
@@ -827,6 +903,15 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
             if (id != 0)
             {
+                string message = "Are you sure you want to delete the Data Type? Id=" + id;
+                string caption = "Confirmation";
+                MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+                DialogResult result;
+                // Displays the MessageBox.
+                result = MessageBox.Show(message, caption, buttons);
+
+                if (result == DialogResult.Yes)
+                {
                 DataTypeManager dataTypeManager = new DataTypeManager();
                 DataType dataType = dataTypeManager.Repo.Get(id);
                 if (dataType != null)
@@ -837,6 +922,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                         DTM.Delete(dataType);
                     }
                 }
+            }
             }
             return RedirectToAction("DataTypeManager");
         }
@@ -875,11 +961,22 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             Model.Name = cutSpaces(Model.Name);
             Model.Description = cutSpaces(Model.Description);
 
+            bool nameNotExist = DataAttributeList.Where(p => p.Name.ToLower().Equals(Model.Name.ToLower())).Count().Equals(0);
+
+            if (Model.Name == "" | Model.Name == null | !nameNotExist)
+            {
+                if (!nameNotExist) MessageBox.Show("There is already an Attribute with the same name as you specified. Please specify a different name.", "Existing Attribute");
+                Session["Window"] = true;
+                return RedirectToAction(parent);
+            }
+
             if (id == 0)
             {
                 if (Model.Name != "" && Model.Name != null)
                 {
-                    bool nameNotExist = DataAttributeList.Where(p => p.Name.ToLower().Equals(Model.Name.ToLower())).Count().Equals(0);
+                    /// <param nameNotExist>Please insert description!</param>        
+                    //bool nameNotExist = DataAttributeList.Where(p => p.Name.ToLower().Equals(Model.Name.ToLower())).Count().Equals(0);
+
                     if (nameNotExist)
                     {
                         UnitManager UM = new UnitManager();
@@ -899,9 +996,11 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                 {
                     DataAttribute tempAttribute = new DataAttribute();
 
-                    bool nameNotExist = DataAttributeList.Where(p => p.Name.ToLower().Equals(Model.Name.ToLower())).Count().Equals(0);
+                    //bool nameNotExist = DataAttributeList.Where(p => p.Name.ToLower().Equals(Model.Name.ToLower())).Count().Equals(0);
                     if (!nameNotExist)
+                    {
                         tempAttribute = DataAttributeList.Where(p => p.Name.Equals(Model.Name)).ToList().First();
+                    }
 
                     if (nameNotExist || tempAttribute.Id == id)
                     {
@@ -920,9 +1019,11 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                         }
                     }
                 }
+
             }
+
             Session["Window"] = false;
-            Session["DataType"] = new DataType();
+            Session["DataAttribute"] = new DataAttribute();
             return RedirectToAction(parent);
         }
 
@@ -951,6 +1052,15 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
             if (id != 0)
             {
+                string message = "Are you sure you want to delete the Data Attribute? Id=" + id;
+                string caption = "Confirmation";
+                MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+                DialogResult result;
+                // Displays the MessageBox.
+                result = MessageBox.Show(message, caption, buttons);
+
+                if (result == DialogResult.Yes)
+                {
                 DataContainerManager DAM = new DataContainerManager();
                 DataAttribute dataAttribute = DAM.DataAttributeRepo.Get(id);
                 if (dataAttribute != null)
@@ -961,6 +1071,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                         DAM.DeleteDataAttribute(dataAttribute);
                     }
                 }
+            }
             }
             return RedirectToAction("AttributeManager");
         }

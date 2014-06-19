@@ -1,4 +1,9 @@
 ﻿/*partial Views*/
+
+.locked {
+color:gray;
+text-align: center;
+}
 .planingPartialDiv {
 
 }
@@ -15,6 +20,7 @@ border-radius: 3px;
 width: 150px;
 }
 
+
 .planingPartialDiv .checkBox {
 border-radius: 3px;
 width: 15px;
@@ -24,7 +30,12 @@ width: 15px;
 .planingPartialDiv textarea {
 border: 1px solid #CCC;
 border-radius: 3px;
-width: 145px;
+width: 300px;
+max-width: 300px;
+height: 10px;
+max-height: 10px;
+font:14px arial, verdana;
+
 }
 
 .planingPartialDiv .t-dropdown {

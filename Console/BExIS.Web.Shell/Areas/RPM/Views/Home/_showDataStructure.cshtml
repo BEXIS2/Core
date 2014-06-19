@@ -11,11 +11,11 @@
 
 
 <div>
-@(Html.Telerik().Grid(Model.DataStructureTable)
+@(Html.Telerik().Grid(Model.dataStructureTable)
         .Name("DataStructureGrid")
         .RowAction(row =>
             {
-                if (Model.dataStructure.Datasets.Count > 0)
+                if (Model.inUse)
                 {
                     if (row.Index == 0)
                     {
@@ -33,13 +33,15 @@
 )
 </div>
 <div>
-    @if(!(Model.dataStructure.Datasets.Count > 0))
+    @if(!(Model.inUse))
         {
-            @Html.ActionLink("AddVariable", "ShowVariables", "Home", new { id = Model.dataStructure.Id }, new { area = "RPM", @class = "t-button", @style = "margin-top:5px;"})
+            <div title="Add Variables">
+                @Html.ActionLink("Add Variables", "ShowVariables", "Home", new { id = Model.dataStructure.Id }, new { area = "RPM", @class = "t-button", @style = "margin-top:5px;"})
+            </div>
         }
         else
         {
-            <button name="AddVariable" class="t-button t-state-disabled" disabled="disabled" style = "margin-top:5px;">AddVariable</button>
+            <button title="Add Varriables" name="Add Variables" class="t-button t-state-disabled" disabled="disabled" style = "margin-top:5px;">AddVariable</button>
         }       
 </div>
 <div style="position:absolute; left:20%; top:60px;">

@@ -15,48 +15,61 @@
 @*</header> *@
 
 <div>
-        @Html.ActionLink("Create Data Structure", "DataStructureDesigner", "Home", new {@class = "t-button"})
+        @Html.ActionLink("Create Structured", "createStructuredDataStrukture", "Home", new {@class = "t-button" , @title = "Create srtuctured Data Structure", @style = "margin:3px;"})
+
+        @Html.ActionLink("Create Unsrtuctured", "createUnStructuredDataStrukture", "Home", new {@class = "t-button", @title = "Create unsrtuctured Data Structure", @style = "margin:3px;"})
 </div>
 <br />
 <div>
 @(Html.Telerik().TreeView()
     .Name("TreeView")
-    .BindTo(Model.dataStructureList, mappings => 
+    .BindTo(Model.getDataStructureTree().dataStructureTreeList, mappings =>
     {
-        mappings.For<StructuredDataStructure>(binding => binding
-                .ItemDataBound((item, DS) =>
+        mappings.For<DataStructureTreeList>(binding => binding
+                .ItemDataBound((item, TL) =>
                 {
-                    if (DS.Name == null || DS.Name == "")
+                    if (TL.name == null || TL.name == "")
                     {
                         item.Text = "no Name";
-                        item.Value = DS.Id.ToString();
                     }
                     else
                     {
-                        item.Text = DS.Name;
-                        item.Value = DS.Id.ToString();
+                        item.Text = TL.name;
                     }
+                })
+                .Children(TL => TL.dataStructureTreeElementList));
+                mappings.For<DataStructureTreeElement>(binding => binding
+                .ItemDataBound((item, TEL) =>
+                {
+                    if (TEL.name == null || TEL.name == "")
+                    {
+                        item.Text = "no Name";
+                        item.Value = TEL.id.ToString() + "," + TEL.structured.ToString();
+                    }
+                    else
+                    {
+                        item.Text = TEL.name;
+                        item.Value = TEL.id.ToString() + "," + TEL.structured.ToString();
+                    }
+
                     item.Action("showDataStructure", "Home", new RouteValueDictionary { { "area", "RPM" }, { "SelectedItem", item.Value } });
-                }));
-        //        .Children(DS => DS.Variables));
-        //mappings.For<Variable>(binding => binding
-        //        .ItemDataBound((item, VU) =>
-        //        {
-        //            item.Text = VU.DataAttribute.Name;
-        //        }));
+      }));
     })
+    .ExpandAll(true)
 )
 </div>
 }  
-  
-<div>
-    
-    @Html.Partial("_showDataStructureInfo", Model)
-</div>
 
-@if (Model != null && Model.dataStructure.Id != null && Model.dataStructure.Id != 0)
-{
+@if (Model != null && Model.show == true)
+{  
     <div>
-        @Html.Partial("_showDataStructure", Model)
+        @Html.Partial("_showDataStructureInfo", Model)
     </div>
+
+    if (Model.structured == true && Model.variables != null)
+    {
+        <div>
+            @Html.Partial("_showDataStructure", Model)
+        </div>
+    }
 }

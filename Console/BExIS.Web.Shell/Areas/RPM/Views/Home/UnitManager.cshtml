@@ -39,7 +39,9 @@
         <p>With this interface you are able to manage (e.g. create, edit, delete) units which may be needed to define data attributes. Units cannot be edited or deleted once they are associated with a data attribute (they become locked).</p>
     </div>
 
-    @Html.ActionLink("Add Unit", "openUnitWindow", "Home", new { id = 0 }, new { @class = "t-button t-add" })
+<div title="Create Unit">
+    @Html.ActionLink("Create Unit", "openUnitWindow", "Home", new { id = 0 }, new { @class = "t-button t-add" })
+</div>
     <br />
     <br />
     @(Html.Telerik().Grid(Model)    
@@ -49,19 +51,21 @@
                 {
                     columns.Template(
                         @<text>
-                            <div class="t-button t-button-icontext t-button-bare">
+                            
                             @if(!(item.DataContainers.Count > 0))
                             {
+                            <div class="t-button t-button-icontext t-button-bare">
                             @Html.ActionLink("Edit", "openUnitWindow", "Home", new { id = item.Id }, new { @class = "t-icon t-edit" })
                             @Html.ActionLink("Delete", "deletUnit", "Home", new { id = item.Id }, new { @class = "t-icon t-delete" })
+                            </div>
                             }
                             else
                             {
-                                <font color="grey">locked</font>
+                                <div class="locked">locked</div>
                             }
-                            </div>
+                            
                         </text>
-                    ).Title("Functions")
+                    ).Title("Actions")
                         .Width(50)
                         .ClientTemplate(
                             @Html.ActionLink("Edit", "openUnitWindow", "Home", new { id = "<#= id #>" }, new { @class = "t-icon t-edit" }).ToHtmlString() +
@@ -91,7 +95,9 @@
     )
     <br />
     <br />
-    @Html.ActionLink("Add Unit", "openUnitWindow", "Home", new { id = 0 }, new { @class = "t-button t-add" })
+<div title="Create Unit">
+    @Html.ActionLink("Create Unit", "openUnitWindow", "Home", new { id = 0 }, new { @class = "t-button t-add" })
+</div>
     
 
     <div style="position:absolute; left:20%; top:60px;">
