@@ -50,6 +50,14 @@ else
                         @(Html.TextBox("name", variable.Label))
                     </td>
                 </tr>
+                <tr id="optional">
+                    <td>
+                        Is Optional:
+                    </td>
+                    <td>
+                        @(Html.CheckBox("optional", variable.IsValueOptional))
+                    </td>
+                </tr>
                 <tr id="shortname">
                     <td>
                         ID:

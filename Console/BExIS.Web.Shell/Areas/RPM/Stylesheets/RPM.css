@@ -1,18 +1,39 @@
 ﻿/*partial Views*/
 
+.RPMbuttons .t-button {
+    margin-bottom:5px;
+    margin-left:2px;
+    margin-right:2px;
+}
+
+#DataStructureGrid{
+    position:absolute;
+    min-width:400px;
+}
+
+.unit .t-grid-header th {
+    border: none;
+}
+
+.unit table {
+    margin: 0px;
+    padding: 0px;
+    width: 290px;
+    height: 190px;
+}
+
+.unit {
+    width: 300px;
+    height: 200px;
+}
+
 .locked {
 color:gray;
 text-align: center;
 }
-.planingPartialDiv {
-
-}
 
 .planingPartialDiv table, .planingPartialDiv tr, .planingPartialDiv td {
 border-style: none;
-}
-
-.planingPartialDiv td {
 }
 
 .planingPartialDiv input {
@@ -105,18 +126,4 @@ width: 150px;
     z-index: 3;
 }
 
-.unit .t-grid-header th {
-    border: none;
-}
 
-.unit table {
-    margin: 0px;
-    padding: 0px;
-    width: 290px;
-    height: 190px;
-}
-
-.unit {
-    width: 300px;
-    height: 200px;
-}

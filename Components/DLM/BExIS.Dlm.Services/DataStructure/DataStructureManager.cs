@@ -196,7 +196,7 @@ namespace BExIS.Dlm.Services.DataStructure
             Contract.Requires(dataAttribute != null && dataAttribute.Id >= 0);
             Contract.Ensures(Contract.Result<Variable>() != null && Contract.Result<Variable>().Id >= 0);
 
-            StructuredDataStructureRepo.Reload(dataStructure);
+            //StructuredDataStructureRepo.Reload(dataStructure);
             StructuredDataStructureRepo.LoadIfNot(dataStructure.Variables);
             int count = (   from v in dataStructure.Variables
                             where v.DataAttribute.Id.Equals(dataAttribute.Id)

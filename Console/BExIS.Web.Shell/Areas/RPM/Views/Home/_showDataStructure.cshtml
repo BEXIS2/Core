@@ -15,34 +15,27 @@
         .Name("DataStructureGrid")
         .RowAction(row =>
             {
-                if (Model.inUse)
+                if (row.Index == 0)
                 {
-                    if (row.Index == 0)
+                    if (Model.inUse)
                     {
                         row.HtmlAttributes["class"] = "locked";
-                    } 
+                    }
+                    else
+                    {
+                        row.HtmlAttributes["class"] = "function";
+                    }
+                    
                 }
                 else
                 {
-                    if (row.Index == 0)
+                    if (row.Index == 2)
                     {
-                        row.HtmlAttributes["class"] = "function";
+                        row.HtmlAttributes["class"] = "optional";
                     }
                 }
             })
 )
-</div>
-<div>
-    @if(!(Model.inUse))
-        {
-            <div title="Add Variables">
-                @Html.ActionLink("Add Variables", "ShowVariables", "Home", new { id = Model.dataStructure.Id }, new { area = "RPM", @class = "t-button", @style = "margin-top:5px;"})
-            </div>
-        }
-        else
-        {
-            <button title="Add Varriables" name="Add Variables" class="t-button t-state-disabled" disabled="disabled" style = "margin-top:5px;">AddVariable</button>
-        }       
 </div>
 <div style="position:absolute; left:20%; top:60px;">
 @{ Html.Telerik().Window()
@@ -80,13 +73,21 @@
         
         for (var i = 0; i < $(".function td").length; i++)
         {
-            if ($(".function td")[i].innerHTML != "Functions")
+            if ($(".function td")[i].innerHTML != 'Functions')
                 $(".function td")[i].innerHTML = '<a area="RPM" class="t-icon t-edit" href="/RPM/Home/openVariableWindow/' + $(".function td")[i].innerHTML + '"></a><a area="RPM" class="t-icon t-delete" href="/RPM/Home/deleteVariable/' + $(".function td")[i].innerHTML + '">Download</a>';
         }
 
-        for (var i = 0; i < $(".locked td").length; i++) {
-            if ($(".locked td")[i].innerHTML != "Functions")
-                $(".locked td")[i].innerHTML = '<font color="grey">locked</font>';
+        for (var i = 0; i < $(".locked td").length; i++)
+        {
+            if ($(".locked td")[i].innerHTML != 'Functions')
+                $(".locked td")[i].innerHTML = 'locked';
+        }
+
+        for (var i = 0; i < $(".optional td").length; i++) {
+            if ($(".optional td")[i].innerHTML == 'False')
+                $(".optional td")[i].innerHTML = '<b>-</b>';
+            if ($(".optional td")[i].innerHTML == 'True')
+                $(".optional td")[i].innerHTML = '<div class="t-icon t-update"></div>';
         }
 
         $('#DataStructureGrid .t-header').replaceWith('');

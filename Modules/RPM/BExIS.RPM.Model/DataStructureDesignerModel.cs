@@ -36,8 +36,8 @@ namespace BExIS.RPM.Model
             
             return (tree);
         }
-        
-        public bool GetDataStructureByID(long ID)
+
+        public StructuredDataStructure GetDataStructureByID(long ID)
         {
 
             DataStructureManager dsm = new DataStructureManager();
@@ -57,17 +57,17 @@ namespace BExIS.RPM.Model
             if (this.dataStructure != null)
             {
                 this.BuildDataTable();
-                return (true);
+                return (structuredDataStructure);
             }
             else
             {
                 this.dataStructure = new StructuredDataStructure();
-                return (false);
+                return (structuredDataStructure);
             }
 
         }
 
-        public bool GetDataStructureByID(long ID, bool structured)
+        public DataStructure GetDataStructureByID(long ID, bool structured)
         {
             this.structured = structured;
             if (structured)
@@ -92,12 +92,12 @@ namespace BExIS.RPM.Model
 
                 if (this.dataStructure != null)
                 {
-                    return (true);
+                    return (unStructuredDataStructure);
                 }
                 else
                 {
                     this.dataStructure = new StructuredDataStructure();
-                    return (false);
+                    return (unStructuredDataStructure);
                 }
             }
         }
@@ -126,7 +126,7 @@ namespace BExIS.RPM.Model
                 Row = this.dataStructureTable.NewRow();
                 Row.ItemArray = row.ToArray();
 
-                this.dataStructureTable.Rows.Add(Row);                
+                this.dataStructureTable.Rows.Add(Row);
 
                 var Names = from p in this.variables
                             select p.Label;
@@ -138,10 +138,21 @@ namespace BExIS.RPM.Model
 
                 this.dataStructureTable.Rows.Add(Row);
 
+                var IsValueOptionals = from p in this.variables
+                                       select p.IsValueOptional;
+                List<bool> tmpIOs = IsValueOptionals.ToList();
+                row = tmpIOs.ConvertAll<string>(p => p.ToString());
+                row.Insert(0, "Optional");
+
+                Row = this.dataStructureTable.NewRow();
+                Row.ItemArray = row.ToArray();
+
+                this.dataStructureTable.Rows.Add(Row);
+
                 var VariableIDs = from p in this.variables
                                   select p.Id;
-                List<long> tmp = VariableIDs.ToList();
-                row = tmp.ConvertAll<string>(p => p.ToString());
+                List<long> tmpVIDs = VariableIDs.ToList();
+                row = tmpVIDs.ConvertAll<string>(p => p.ToString());
                 row.Insert(0, "VariableID");
 
                 Row = this.dataStructureTable.NewRow();
@@ -168,8 +179,6 @@ namespace BExIS.RPM.Model
                 Row.ItemArray = row.ToArray();
 
                 this.dataStructureTable.Rows.Add(Row);
-
-
 
                 //var Classifications = from p in this.dataStructure.Variables
                 //                      select p.DataAttribute.Classification;
@@ -198,7 +207,7 @@ namespace BExIS.RPM.Model
                             select p.DataAttribute.Unit;
 
                 row = new List<string>();
-
+                
                 foreach (Unit p in Units)
                 {
                     if (p == null)
@@ -219,8 +228,9 @@ namespace BExIS.RPM.Model
 
                 var DataTypes = from p in this.variables
                                select p.DataAttribute.DataType;
+                
                 row = new List<string>();
-
+                
                 foreach (DataType p in DataTypes)
                 {
                     if (p == null)

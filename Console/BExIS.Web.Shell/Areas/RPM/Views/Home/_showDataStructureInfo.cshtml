@@ -116,7 +116,7 @@ else
     @(Html.TextBoxFor(m => Model.dataStructure.Id, new {@class = "hidden"}))
      
     <div class="RPMbuttons">
-        <button name="create" value="saveDataStructure" type="submit" class="t-button" style = "margin-bottom:5px;" title="Save Data Structure">Save</button>
+        <button name="create" value="saveDataStructure" type="submit" class="t-button" title="Save Data Structure">Save</button>
         @if (Model.dataStructure.Id != null && Model.dataStructure.Id != 0)
         {
             if (Model.variables != null || Model.structured == true)
@@ -124,27 +124,34 @@ else
                 if(Model.variables.Count() > 0)
                 {
                 //<div title="Download">
-                    @Html.ActionLink("Download", "downloadTemplate", "Home", new { id = Model.dataStructure.Id }, new { area = "RPM", @class = "t-button", @style = "margin:5px;", @title = "Download Data Structure Template"})
+                    @Html.ActionLink("Download", "downloadTemplate", "Home", new { id = Model.dataStructure.Id }, new { area = "RPM", @class = "t-button", @title = "Download Data Structure Template"})
                 //</div>
                 }
                 else
                 {
-                    <button title="Download Data Structure Template" name="Download" class="t-button t-state-disabled" disabled="disabled" style = "margin:5px;">Download</button>
+                    <button title="Download Data Structure Template" name="Download" class="t-button t-state-disabled" disabled="disabled">Download</button>
                 }
             }
             else
             {
-                    <button title="Download Data Structure Template" name="Download" class="t-button t-state-disabled" disabled="disabled" style = "margin:5px;">Download</button>
+                    <button title="Download Data Structure Template" name="Download" class="t-button t-state-disabled" disabled="disabled">Download</button>
             }
             if(!(Model.inUse))
             {
-                //<div title="Delete">
-                    @Html.ActionLink("Delete", "deleteDataStructure", "Home", new { id = Model.dataStructure.Id, name = Model.dataStructure.Name }, new { area = "RPM", @class = "t-button", @style = "margin-bottom:5px;", @title = "Delete Data Structure"})
-                //</div>
+                if (Model.structured == true)
+                {
+                    @Html.ActionLink("Add Variables", "ShowVariables", "Home", new { id = Model.dataStructure.Id }, new { area = "RPM", @class = "t-button", @title = "Add Variable to Data Structure"})
+                }   
+                else
+                {
+                    <button title="Add Varriables" name="Add Variables" class="t-button t-state-disabled" disabled="disabled">AddVariable</button>
+                }
+                @Html.ActionLink("Delete", "deleteDataStructure", "Home", new { id = Model.dataStructure.Id, name = Model.dataStructure.Name }, new { area = "RPM", @class = "t-button", @title = "Delete Data Structure"})
             }
             else
             {
-                    <button title="Delete Data Structure" name="Download" class="t-button t-state-disabled" disabled="disabled" style = "margin-bottom:5px;">Delete</button>
+                <button title="Add Varriables" name="Add Variables" class="t-button t-state-disabled" disabled="disabled">AddVariable</button>    
+                <button title="Delete Data Structure" name="Download" class="t-button t-state-disabled" disabled="disabled">Delete</button>
             }        
         }          
     </div>
