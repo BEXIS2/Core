@@ -148,11 +148,11 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                     if (DSDM.structured)
                     {
                         StructuredDataStructure DS = DSM.StructuredDataStructureRepo.Get(DSDM.dataStructure.Id);
-                    ExcelTemplateProvider provider = new ExcelTemplateProvider(templateName);
-                    DS.Name = DSDM.dataStructure.Name;
-                    DS.Description = DSDM.dataStructure.Description;
-                    DSDM.dataStructure = DSM.UpdateStructuredDataStructure(DS);
-                    provider.CreateTemplate(DSDM.dataStructure.Id);
+                        ExcelTemplateProvider provider = new ExcelTemplateProvider(templateName);
+                        DS.Name = DSDM.dataStructure.Name;
+                        DS.Description = DSDM.dataStructure.Description;
+                        DS = DSM.UpdateStructuredDataStructure(DS);
+                        provider.CreateTemplate(DS);
                         DSDM.GetDataStructureByID(DSDM.dataStructure.Id, DSDM.structured);
                 }
                     else
@@ -348,7 +348,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                             }
                         }
                         ExcelTemplateProvider provider = new ExcelTemplateProvider(templateName);
-                        provider.CreateTemplate(dataStructure.Id);
+                        provider.CreateTemplate(dataStructure);
                     }
                 }
             }
@@ -370,7 +370,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                 if (result == DialogResult.Yes)
                 {
                 DataStructureManager DSM = new DataStructureManager();
-                DataStructure dataStructure = DSM.StructuredDataStructureRepo.Get(dataStructureId);
+                StructuredDataStructure dataStructure = DSM.StructuredDataStructureRepo.Get(dataStructureId);
                 DataStructureDesignerModel DSDM = new DataStructureDesignerModel();
 
                 if (!(dataStructure.Datasets.Count > 0))
@@ -381,7 +381,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                     {
                         DSM.RemoveVariableUsage(variable);
                         ExcelTemplateProvider provider = new ExcelTemplateProvider(templateName);
-                        provider.CreateTemplate(dataStructure.Id);
+                        provider.CreateTemplate(dataStructure);
                     }
                     DSDM.GetDataStructureByID(dataStructure.Id);
                     return View("DataStructureDesigner", DSDM);
@@ -399,7 +399,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
         public ActionResult saveVariable(string name, long id, long dataStructureId, bool optional)
         {
             DataStructureManager dataStructureManager = new DataStructureManager();
-            DataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataStructureId);
+            StructuredDataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataStructureId);
             DataStructureDesignerModel DSDM = new DataStructureDesignerModel();
 
             name = cutSpaces(name);
@@ -418,7 +418,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                         Session["variableId"] = null;
                         Session["VariableWindow"] = false;
                         ExcelTemplateProvider provider = new ExcelTemplateProvider(templateName);
-                        provider.CreateTemplate(dataStructure.Id);
+                        provider.CreateTemplate(dataStructure);
                     }
                 }
             }
@@ -455,7 +455,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                 dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(id);
 
                 ExcelTemplateProvider provider = new ExcelTemplateProvider(templateName);
-                provider.CreateTemplate(id);
+                provider.CreateTemplate(dataStructure);
                 string path = "";
 
                 XmlNode resources = dataStructure.TemplatePaths.FirstChild;

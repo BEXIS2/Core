@@ -15,6 +15,7 @@ namespace BExIS.RPM.Output
     public class ExcelTemplateProvider
     {
         string _fileName = null;
+
         private char[] alphabet = {' ','A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
 
         public ExcelTemplateProvider(string fileName)
@@ -24,25 +25,60 @@ namespace BExIS.RPM.Output
 
         public ExcelTemplateProvider()
         {
-            _fileName = null; 
+            _fileName = "BExISppTemplate_Clean.xlsm"; 
         }
 
-        private FileStream loadFile (string file)
-        {
-            if (File.Exists(file))
-                return File.Open(file, FileMode.Open, FileAccess.ReadWrite);
+        //private FileStream loadFile (string file)
+        //{
+        //    if (File.Exists(file))
+        //        return File.Open(file, FileMode.Open, FileAccess.ReadWrite);
 
-            else
-                return null;
+        //    else
+        //        return null;
+        //}
+
+        public void CreateTemplate(long id)
+        {
+            DataStructureManager dataStructureManager = new DataStructureManager();
+            StructuredDataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(id);
+            CreateTemplate(dataStructure);
         }
 
-        public void CreateTemplate (long id)
+        public void CreateTemplate(StructuredDataStructure dataStructure)
         {
-            DataStructureManager DSM = new DataStructureManager();
-            StructuredDataStructure dataStructure = DSM.StructuredDataStructureRepo.Get(id);
+            DataStructureManager dataStructureManager = new DataStructureManager();
+            dataStructureManager.StructuredDataStructureRepo.LoadIfNot(dataStructure.Variables);
             string filename = dataStructure.Name + ".xlsm";
             string path = Path.Combine("DataStructures", dataStructure.Id.ToString());
 
+            CreateTemplate(dataStructure.Variables.ToList(), path, filename);
+
+            XmlDocument resources = new XmlDocument();
+
+            resources.LoadXml("<Resources><Resource Type=\"Excel\" Edition=\"2010\" Path=\"" + Path.Combine(path, filename) + "\"></Resource></Resources>");
+            dataStructure.TemplatePaths = resources;
+            dataStructureManager.UpdateStructuredDataStructure(dataStructure);
+
+        }
+
+        public SpreadsheetDocument CreateTemplate(List<long> variableIds,long dataStructureId, string path, string filename)
+        {
+            DataStructureManager dataStructureManager = new DataStructureManager();
+            StructuredDataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataStructureId);
+
+            if (dataStructure != null)
+            {
+                List<Variable> variables = dataStructure.Variables.Where(p => variableIds.Contains(p.Id)).ToList();
+                return CreateTemplate(variables, path, filename);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public SpreadsheetDocument CreateTemplate(List<Variable> variables, string path, string filename)
+        {            
             if (!Directory.Exists(Path.Combine(AppConfiguration.DataPath, path)))
             {
                 Directory.CreateDirectory(Path.Combine(AppConfiguration.DataPath, path));
@@ -57,6 +93,8 @@ namespace BExIS.RPM.Output
             {
                 OpenXmlPart newPart = dataStructureFile.AddPart<OpenXmlPart>(part);
             }
+
+            template.Close();
 
             // get worksheet
             uint[] styleIndex = new uint[4];
@@ -84,12 +122,12 @@ namespace BExIS.RPM.Output
 
                 List<Row> rows = GetRows(worksheet,1,11);
 
-                foreach (Variable var in dataStructure.Variables)
+                foreach (Variable var in variables)
                 {
                     DataContainerManager CM = new DataContainerManager();
                     DataAttribute dataAttribute = CM.DataAttributeRepo.Get(var.DataAttribute.Id);
 
-                    int indexVar = dataStructure.Variables.ToList().IndexOf(var) + 1;
+                    int indexVar = variables.ToList().IndexOf(var) + 1;
                     string columnIndex = GetClomunIndex(indexVar);
 
                     string cellRef = columnIndex + 1;
@@ -221,7 +259,7 @@ namespace BExIS.RPM.Output
                     {
                         string[] tempArr = name.InnerText.Split('$');
                         string temp = "";
-                        tempArr[tempArr.Count() - 2] = GetClomunIndex(dataStructure.Variables.Count());
+                        tempArr[tempArr.Count() - 2] = GetClomunIndex(variables.Count());
                         foreach(string t in tempArr)
                         {
                             if (t == tempArr.First())
@@ -241,14 +279,10 @@ namespace BExIS.RPM.Output
             //WorksheetPart worksheetPart = workbookPart.WorksheetParts.First();
         
             dataStructureFile.WorkbookPart.Workbook.Save();
-            XmlDocument resources = new XmlDocument();
-
-            resources.LoadXml("<Resources><Resource Type=\"Excel\" Edition=\"2010\" Path=\"" + Path.Combine(path, filename) + "\"></Resource></Resources>");
-            dataStructure.TemplatePaths = resources;
-            DSM.UpdateStructuredDataStructure(dataStructure);
-            template.Close();
+            
             dataStructureFile.Close();
 
+            return dataStructureFile;
         }
 
         private CellValues getExcelType(string systemType)
