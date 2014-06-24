@@ -17,6 +17,8 @@ using BExIS.Dlm.Services.DataStructure;
 using BExIS.Io.Transform.Validation.DSValidation;
 using System.Globalization;
 
+using BExIS.RPM.Output;
+
 namespace BExIS.Io.Transform.Output
 {
     public class ExcelWriter:DataWriter
@@ -235,7 +237,6 @@ namespace BExIS.Io.Transform.Output
 
             return errorMessages;
         }
-
 
         /// <summary>
         /// Add Rows to a WorksheetPart
@@ -457,28 +458,50 @@ namespace BExIS.Io.Transform.Output
 
         public string CreateFile(long datasetId, long datasetVersionOrderNr, long dataStructureId, string title, string extention)
         {
-
-            string dataStructureFilePath = GetDataStructureTemplatePath(dataStructureId, extention);
             string dataPath = GetStorePath(datasetId, datasetVersionOrderNr, title, extention);
 
-            try
+            //Template will not be filtered by columns
+            if (this.visibleColumns == null)
             {
-                SpreadsheetDocument dataStructureFile = SpreadsheetDocument.Open(dataStructureFilePath, true);
-                SpreadsheetDocument dataFile = SpreadsheetDocument.Create(dataPath, dataStructureFile.DocumentType);
+                #region generate file with full datastructure
 
-                foreach (OpenXmlPart part in dataStructureFile.GetPartsOfType<OpenXmlPart>())
-                {
-                    OpenXmlPart newPart = dataFile.AddPart<OpenXmlPart>(part);
-                }
+                    string dataStructureFilePath = GetDataStructureTemplatePath(dataStructureId, extention);
+                    //dataPath = GetStorePath(datasetId, datasetVersionOrderNr, title, extention);
 
-                dataFile.WorkbookPart.Workbook.Save();
-                dataStructureFile.Dispose();
-                dataFile.Dispose();
-                
+                    try
+                    {
+                        SpreadsheetDocument dataStructureFile = SpreadsheetDocument.Open(dataStructureFilePath, true);
+                        SpreadsheetDocument dataFile = SpreadsheetDocument.Create(dataPath, dataStructureFile.DocumentType);
+
+                        foreach (OpenXmlPart part in dataStructureFile.GetPartsOfType<OpenXmlPart>())
+                        {
+                            OpenXmlPart newPart = dataFile.AddPart<OpenXmlPart>(part);
+                        }
+
+                        dataFile.WorkbookPart.Workbook.Save();
+                        dataStructureFile.Dispose();
+                        dataFile.Dispose();
+
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception(ex.Message.ToString());
+                    }
+
+                #endregion
             }
-            catch(Exception ex)
-            {
-                string message = ex.Message.ToString();
+
+            // create a file with a subset of variables
+            if (this.visibleColumns != null)
+            { 
+                /// call templateprovider from rpm
+                ExcelTemplateProvider provider = new ExcelTemplateProvider();
+
+                string path = GetOnlyStorePath(datasetId, datasetVersionOrderNr);
+                string newTitle = GetNewTitle(datasetId, datasetVersionOrderNr, title, extention);
+
+                provider.CreateTemplate(GetVariableIds(this.visibleColumns), dataStructureId, path, newTitle);
+
             }
 
             return dataPath;
@@ -872,6 +895,21 @@ namespace BExIS.Io.Transform.Output
             }//for
 
             return rowAsStringArray.ToList();
+        }
+
+        private List<long> GetVariableIds(string[] stringlist)
+        {
+            List<long> list = new List<long>();
+
+            if(stringlist != null)
+            {
+                foreach(string id in stringlist)
+                {
+                    list.Add(Convert.ToInt64(id));
+                }
+            }
+
+            return list;
         }
 
     #endregion

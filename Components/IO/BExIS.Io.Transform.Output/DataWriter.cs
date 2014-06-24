@@ -121,6 +121,30 @@ namespace BExIS.Io.Transform.Output
             return Path.Combine(storePath,datasetId.ToString()+"_"+datasetVersionOrderNr.ToString() + "_" + title + extention);
         }
 
+        public string GetOnlyStorePath(long datasetId, long datasetVersionOrderNr)
+        {
+            string dataPath = AppConfiguration.DataPath; //Path.Combine(AppConfiguration.WorkspaceRootPath, "Data");
+
+            //data/datasets/1/1/
+            string storePath = Path.Combine(dataPath, "Datasets", datasetId.ToString(), "DatasetVersions");
+
+            if (Directory.Exists(dataPath))
+            {
+                // if folder not exist
+                if (!Directory.Exists(storePath))
+                {
+                    Directory.CreateDirectory(storePath);
+                }
+            }
+
+            return storePath;
+        }
+
+        public string GetNewTitle(long datasetId, long datasetVersionOrderNr, string title, string extention)
+        {
+            return datasetId.ToString() + "_" + datasetVersionOrderNr.ToString() + "_" + title + extention;
+        }
+
         public string GetDynamicStorePath(long datasetId, long datasetVersionOrderNr, string title, string extention)
         {
             string storePath = Path.Combine("Datasets", datasetId.ToString(), "DatasetVersions");

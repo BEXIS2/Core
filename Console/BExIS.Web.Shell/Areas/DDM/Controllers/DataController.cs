@@ -122,7 +122,6 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                     Session["DownloadFullDataset"] = subset;
 
                     return Content("changed");
-
                 }
 
                 public ActionResult DownloadAsExcelData(long id)
@@ -147,8 +146,12 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         // if(datatuples.First().TupleType == DataTupleType.Original) ...
                         List<AbstractTuple> datatuples = GetFilteredDataTuples(datasetVersion); 
 
+                            if (Session["Columns"] != null)
+                                writer.visibleColumns = (String[])Session["Columns"];
+
                             long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
-                            path = generateDownloadFile(id, datasetVersion.VersionNo, datastuctureId, title, ext);
+
+                            path = generateDownloadFile(id, datasetVersion.VersionNo, datastuctureId, title, ext, writer);
 
                             writer.AddDataTuplesToTemplate(datatuples, path, datastuctureId);
 
@@ -177,7 +180,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                                 {
                                     List<long> datatupleIds = datasetManager.GetDatasetVersionEffectiveTupleIds(datasetVersion);
                                     long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
-                                    path = generateDownloadFile(id, datasetVersion.VersionNo, datastuctureId, title, ext);
+                                    path = generateDownloadFile(id, datasetVersion.VersionNo, datastuctureId, title, ext, writer);
 
                                     storeGeneratedFilePathToContentDiscriptor(id, datasetVersion, title, ext, writer);
                                     writer.AddDataTuplesToTemplate(datatupleIds, path, datastuctureId);
@@ -194,7 +197,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
                                 List<long> datatupleIds = datasetManager.GetDatasetVersionEffectiveTupleIds(datasetVersion);
                                 long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
-                                path = generateDownloadFile(id, datasetVersion.VersionNo, datastuctureId, title, ext);
+                                path = generateDownloadFile(id, datasetVersion.VersionNo, datastuctureId, title, ext, writer);
 
                                 storeGeneratedFilePathToContentDiscriptor(id, datasetVersion, title, ext, writer);
                                 writer.AddDataTuplesToTemplate(datatupleIds, path, datastuctureId);
@@ -225,7 +228,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
                         long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
 
-                        path = generateDownloadFile(id, datasetVersion.VersionNo, datastuctureId, title, ext);
+                        path = generateDownloadFile(id, datasetVersion.VersionNo, datastuctureId, title, ext, writer);
 
                         if (Session["Columns"] != null)
                             writer.visibleColumns = (String[])Session["Columns"];
@@ -254,7 +257,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                             {
                                 List<long> datatupleIds = datasetManager.GetDatasetVersionEffectiveTupleIds(datasetVersion);
                                 long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
-                                path = generateDownloadFile(id, datasetVersion.VersionNo, datastuctureId, title, ext);
+                                path = generateDownloadFile(id, datasetVersion.VersionNo, datastuctureId, title, ext ,writer);
 
                                 storeGeneratedFilePathToContentDiscriptor(id, datasetVersion, title, ext, writer);
 
@@ -273,7 +276,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
                             List<long> datatupleIds = datasetManager.GetDatasetVersionEffectiveTupleIds(datasetVersion);
                             long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
-                            path = generateDownloadFile(id, datasetVersion.VersionNo, datastuctureId, title, ext);
+                            path = generateDownloadFile(id, datasetVersion.VersionNo, datastuctureId, title, ext, writer);
 
                             storeGeneratedFilePathToContentDiscriptor(id, datasetVersion, title, ext, writer);
 
@@ -305,7 +308,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
                             long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
 
-                            path = generateDownloadFile(id, datasetVersion.VersionNo, datastuctureId, title, ext);
+                            path = generateDownloadFile(id, datasetVersion.VersionNo, datastuctureId, title, ext, writer);
 
                             if (Session["Columns"] != null)
                                 writer.visibleColumns = (String[])Session["Columns"];
@@ -322,7 +325,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
                         List<long> datatupleIds = datasetManager.GetDatasetVersionEffectiveTupleIds(datasetVersion);
                         long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
-                        path = generateDownloadFile(id, datasetVersion.VersionNo, datastuctureId, title, ext);
+                        path = generateDownloadFile(id, datasetVersion.VersionNo, datastuctureId, title, ext, writer);
 
                         //csv allready exist
                         if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals("generatedTXT")) > 0 || datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(path)) == 1)
@@ -373,18 +376,18 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
                 #region helper
 
-                    private string generateDownloadFile(long id, long datasetVersionOrderNo,long dataStructureId, string title, string ext)
+                    private string generateDownloadFile(long id, long datasetVersionOrderNo,long dataStructureId, string title, string ext, DataWriter writer)
                     {
                         if (ext.Equals(".csv") || ext.Equals(".txt"))
                         {
-                            AsciiWriter writer = new AsciiWriter();
-                            return writer.CreateFile(id, datasetVersionOrderNo, dataStructureId, title, ext);
+                            AsciiWriter asciiwriter = (AsciiWriter)writer;
+                            return asciiwriter.CreateFile(id, datasetVersionOrderNo, dataStructureId, title, ext);
                         }
                         else
                         if(ext.Equals(".xlsm"))
                         {
-                            ExcelWriter writer = new ExcelWriter();
-                            return writer.CreateFile(id, datasetVersionOrderNo, dataStructureId, title, ext);
+                            ExcelWriter excelwriter = (ExcelWriter)writer;
+                            return excelwriter.CreateFile(id, datasetVersionOrderNo, dataStructureId, title, ext);
                         }
 
                         return "";
@@ -445,7 +448,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         DatasetManager dm = new DatasetManager();
                         dm.EditDatasetVersion(datasetVersion, null, null, null);
                     }
-
+                    
                     private List<AbstractTuple> GetFilteredDataTuples(DatasetVersion datasetVersion)
                     {
                         DatasetManager datasetManager = new DatasetManager();
@@ -581,6 +584,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                     {
                         Session["Filter"] = GridHelper.ConvertToGridCommand(filters, orders);
                     }
+
                 #endregion
 
             #endregion
