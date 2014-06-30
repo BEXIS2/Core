@@ -119,7 +119,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 TaskManager.AddToBus(CreateDatasetTaskmanager.DATASTRUCTURE_ID, model.SelectedDatastructureId);
                 TaskManager.AddToBus(CreateDatasetTaskmanager.RESEARCHPLAN_ID, model.SelectedResearchPlanId);
                 TaskManager.AddToBus(CreateDatasetTaskmanager.METADATASTRUCTURE_ID, model.SelectedMetadatStructureId);
-
+                TaskManager.AddToBus(CreateDatasetTaskmanager.DATASTRUCTURE_TYPE, GetDataStructureType(model.SelectedDatastructureId));
                 // creat a new dataset
                 //CreateANewDataset(model.SelectedDatastructureId, model.SelectedResearchPlanId, model.SelectedMetadatStructureId);
 
@@ -324,6 +324,23 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             return model;
         }
 
+        private DataStructureType GetDataStructureType(long id)
+        {
+            DataStructureManager dataStructuremanager = new DataStructureManager();
+            DataStructure dataStructure = dataStructuremanager.AllTypesDataStructureRepo.Get(id);
+
+            if (dataStructure is StructuredDataStructure)
+            {
+                return DataStructureType.Structured;
+            }
+
+            if (dataStructure is UnStructuredDataStructure)
+            {
+                return DataStructureType.Unstructured;
+            }
+
+            return DataStructureType.Structured;
+        }
 
         #endregion
     }

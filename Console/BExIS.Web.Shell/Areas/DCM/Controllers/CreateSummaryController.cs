@@ -137,7 +137,10 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     long metadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateDatasetTaskmanager.METADATASTRUCTURE_ID]);
 
                     DataStructureManager dsm = new DataStructureManager();
+
                     DataStructure dataStructure = dsm.StructuredDataStructureRepo.Get(datastructureId);
+                    //if datastructure is not a structured one
+                    if (dataStructure == null) dataStructure = dsm.UnStructuredDataStructureRepo.Get(datastructureId);
 
                     ResearchPlanManager rpm = new ResearchPlanManager();
                     ResearchPlan rp = rpm.Repo.Get(researchPlanId);

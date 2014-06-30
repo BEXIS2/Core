@@ -11,6 +11,7 @@ using BExIS.Dcm.UploadWizard;
 using BExIS.Dcm.Wizard;
 using BExIS.Web.Shell.Areas.DCM.Models;
 using Vaiona.Util.Cfg;
+using BExIS.Io;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
 {
@@ -39,10 +40,16 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 model.SelectedFileName = TaskManager.Bus[TaskManager.FILENAME].ToString();
             }
 
+            //get datastuctureType
+            model.DataStructureType = GetDataStructureType();
+            model.SupportedFileExtentions = UploadWizardHelper.GetExtentionList(model.DataStructureType);
+
             //Get StepInfo
             model.StepInfo = TaskManager.Current();
 
             model.serverFileList = GetServerFileList();
+
+
 
             return PartialView(model);
         }
@@ -70,61 +77,79 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     {
                         try
                         {
-                            //try save file
-                            string filePath = TaskManager.Bus[TaskManager.FILEPATH].ToString();
-                            //if extention like a makro excel file
-                            if (TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".xlsm"))
+                            if (GetDataStructureType().Equals(DataStructureType.Structured))
                             {
-                                // open file
-                                ExcelReader reader = new ExcelReader();
-                                Stream = reader.Open(filePath);
-                                //Session["Stream"] = Stream;
+                                #region structured datastructure
+                                    //try save file
+                                    string filePath = TaskManager.Bus[TaskManager.FILEPATH].ToString();
+                                    //if extention like a makro excel file
+                                    if (TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".xlsm"))
+                                    {
+                                        // open file
+                                        ExcelReader reader = new ExcelReader();
+                                        Stream = reader.Open(filePath);
+                                        //Session["Stream"] = Stream;
 
-                                //check is it template
+                                        //check is it template
 
-                                if (reader.IsTemplate(Stream))
-                                {
-                                    TaskManager.Current().SetValid(true);
-                                    TaskManager.AddToBus(TaskManager.IS_TEMPLATE, "true");
-                                }
-                                else
-                                {
-                                    model.ErrorList.Add(new Error(ErrorType.Other, "File is not a Template"));
-                                    TaskManager.AddToBus(TaskManager.IS_TEMPLATE, "false");
-                                }
+                                        if (reader.IsTemplate(Stream))
+                                        {
+                                            TaskManager.Current().SetValid(true);
+                                            TaskManager.AddToBus(TaskManager.IS_TEMPLATE, "true");
+                                        }
+                                        else
+                                        {
+                                            model.ErrorList.Add(new Error(ErrorType.Other, "File is not a Template"));
+                                            TaskManager.AddToBus(TaskManager.IS_TEMPLATE, "false");
+                                        }
 
-                                Stream.Close();
+                                        Stream.Close();
+                                    }
+                                    else
+                                    {
+                                        TaskManager.AddToBus(TaskManager.IS_TEMPLATE, "false");
+                                        // excel file
+                                        if (TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".xls"))
+                                        {
+
+                                            // open file
+                                            ExcelReader reader = new ExcelReader();
+                                            Stream = reader.Open(filePath);
+                                            //Session["Stream"] = Stream;
+                                            TaskManager.Current().SetValid(true);
+
+                                            Stream.Close();
+                                        }
+                                        // text ór csv file
+                                        else if (TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".csv") || TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".txt"))
+                                        {
+                                            // open file
+                                            AsciiReader reader = new AsciiReader();
+                                            Stream = reader.Open(filePath);
+                                            //Session["Stream"] = Stream;
+                                            TaskManager.Current().SetValid(true);
+
+                                            Stream.Close();
+                                        }
+                                    }
+                                #endregion
                             }
-                            else
+
+                            if (GetDataStructureType().Equals(DataStructureType.Unstructured))
                             {
-                                TaskManager.AddToBus(TaskManager.IS_TEMPLATE, "false");
-                                // excel file
-                                if (TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".xls"))
+                                #region unstructured datastructure
+                                //try save file
+                                string filePath = TaskManager.Bus[TaskManager.FILEPATH].ToString();
+                              
+                                if(FileHelper.FileExist( filePath ))
                                 {
-
-                                    // open file
-                                    ExcelReader reader = new ExcelReader();
-                                    Stream = reader.Open(filePath);
-                                    //Session["Stream"] = Stream;
                                     TaskManager.Current().SetValid(true);
-
-                                    Stream.Close();
                                 }
 
-                                // text ór csv file
-                                if (TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".csv") || TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".txt"))
-                                {
-                                    // open file
-                                    AsciiReader reader = new AsciiReader();
-                                    Stream = reader.Open(filePath);
-                                    //Session["Stream"] = Stream;
-                                    TaskManager.Current().SetValid(true);
-
-                                    Stream.Close();
-                                }
-
+                                
+                                #endregion
                             }
-
+                            
                         }
                         catch
                         {
@@ -154,6 +179,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             }
 
             model.serverFileList = GetServerFileList();
+            //get datastuctureType
+            model.DataStructureType = GetDataStructureType();
+            model.SupportedFileExtentions = UploadWizardHelper.GetExtentionList(model.DataStructureType);
 
             return PartialView(model);
         }
@@ -269,12 +297,23 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             if (taskManager.Bus.ContainsKey(TaskManager.EXTENTION))
             {
                 string ext = taskManager.Bus[TaskManager.EXTENTION].ToString();
+                DataStructureType type = (DataStructureType)taskManager.Bus[TaskManager.DATASTRUCTURE_TYPE];
 
-                // .xls and xslm not supported
-                if (ext.Equals(".xlsm") || ext.Equals(".csv") || ext.Equals(".txt")) return true;
+                if (UploadWizardHelper.GetExtentionList(type).Contains(ext)) return true;
+
             }
 
             return false;
+        }
+
+        private DataStructureType GetDataStructureType()
+        {
+            if (TaskManager.Bus.ContainsKey(TaskManager.DATASTRUCTURE_TYPE))
+            {
+                return (DataStructureType)TaskManager.Bus[TaskManager.DATASTRUCTURE_TYPE];
+            }
+
+            return DataStructureType.Structured;
         }
 
         #endregion

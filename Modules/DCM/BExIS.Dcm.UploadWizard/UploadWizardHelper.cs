@@ -13,6 +13,10 @@ namespace BExIS.Dcm.UploadWizard
 {
     public class UploadWizardHelper
     {
+
+
+
+
         #region datatuples
 
         public static Dictionary<string,List<DataTuple>> GetSplitDatatuples(List<DataTuple> newDatatuples, List<long> primaryKeys, DatasetVersion workingCopy)
@@ -187,6 +191,7 @@ namespace BExIS.Dcm.UploadWizard
 
             }
 
+            //public static List<string> GetIdentifierList(TaskManager taskManager,  long datasetId, List<long> primaryKeys, string ext, string filename, int packageSize, int position)
             public static List<string> GetIdentifierList(TaskManager taskManager,  long datasetId, List<long> primaryKeys, string ext, string filename)
             {
                 List<string> temp = new List<string>();
@@ -195,6 +200,8 @@ namespace BExIS.Dcm.UploadWizard
                 if (ext.Equals(".txt") || ext.Equals(".csv"))
                 {
                     AsciiReader reader = new AsciiReader();
+                    //reader.Position = position;
+
                     Stream stream = reader.Open(TaskManager.Bus["FilePath"].ToString());
 
                     AsciiFileReaderInfo afri = (AsciiFileReaderInfo)TaskManager.Bus["FileReaderInfo"];
@@ -246,6 +253,35 @@ namespace BExIS.Dcm.UploadWizard
                 }
 
                 return true;
+            }
+
+            public static List<string> GetExtentionList(DataStructureType type)
+            { 
+                if(type.Equals(DataStructureType.Structured))
+                {
+                    return new List<string>()
+                    {
+                        ".xlsm",
+                        ".txt",
+                        ".csv"
+                    };
+                }
+
+                if (type.Equals(DataStructureType.Unstructured))
+                {
+                    return new List<string>()
+                    {
+                        ".doc",
+                        ".docx",
+                        ".gif",
+                        ".jpg",
+                        ".mp3",
+                        ".pdf",
+                        ".png"
+                    };
+                }
+
+                return new List<string>();
             }
 
         #endregion

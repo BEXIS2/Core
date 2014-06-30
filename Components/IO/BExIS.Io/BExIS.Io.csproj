@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BasicFileInfo.cs" />
     <Compile Include="FileHelper.cs" />
     <Compile Include="IoHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

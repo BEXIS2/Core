@@ -88,8 +88,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         dm = new DatasetManager();
                         ds = dm.GetDataset((long)Convert.ToInt32(TaskManager.Bus[TaskManager.DATASET_ID]));
 
-                        TaskManager.AddToBus(TaskManager.DATASTRUCTURE_ID, ((StructuredDataStructure)(ds.DataStructure.Self)).Id);
-                        TaskManager.AddToBus(TaskManager.DATASTRUCTURE_TITLE, ((StructuredDataStructure)(ds.DataStructure.Self)).Name);
+                        TaskManager.AddToBus(TaskManager.DATASTRUCTURE_ID, ((DataStructure)(ds.DataStructure.Self)).Id);
+                        TaskManager.AddToBus(TaskManager.DATASTRUCTURE_TITLE, ((DataStructure)(ds.DataStructure.Self)).Name);
 
                         TaskManager.Current().SetValid(true);
 
@@ -174,7 +174,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
               datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
 
               TaskManager.AddToBus(TaskManager.DATASET_ID, datasetId);
+
               //Add Metadata to Bus
+              // TITLE
               TaskManager.AddToBus(TaskManager.DATASET_TITLE, datasetVersion.Metadata.SelectNodes("Metadata/Description/Description/Title/Title")[0].InnerText);
 
               ResearchPlanManager rpm = new ResearchPlanManager();

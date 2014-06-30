@@ -18,6 +18,9 @@ using Telerik.Web.Mvc;
 using Telerik.Web.Mvc.UI;
 using Vaiona.Util.Cfg;
 using BExIS.Io;
+using System.IO.Compression;
+using BExIS.Web.Shell.Areas.DDM.Models;
+using Ionic.Zip;
 
 namespace BExIS.Web.Shell.Areas.DDM.Controllers
 {
@@ -54,7 +57,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
         #region primary data
 
-            public ActionResult ShowPrimaryData(int datasetID)
+            public ActionResult ShowPrimaryData(long datasetID)
             {
                 Session["Filter"] = null;
                 Session["Columns"] = null;
@@ -64,26 +67,29 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 DatasetManager dm = new DatasetManager();
                 DatasetVersion dsv = dm.GetDatasetLatestVersion(datasetID);
                 DataStructureManager dsm = new DataStructureManager();
+
                 StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(dsv.Dataset.DataStructure.Id);
+                DataStructure ds = dsm.AllTypesDataStructureRepo.Get(dsv.Dataset.DataStructure.Id);
 
-                List<AbstractTuple> dataTuples = dm.GetDatasetVersionEffectiveTuples(dsv);
+                //TITLE
+                string title = dsv.Metadata.SelectNodes("Metadata/Description/Description/Title/Title")[0].InnerText;
 
-                DataTable table = SearchUIHelper.ConvertPrimaryDataToDatatable(dsv, dataTuples);
+                if (ds.Self.GetType() == typeof(StructuredDataStructure))
+                {
 
+                    List<AbstractTuple> dataTuples = dm.GetDatasetVersionEffectiveTuples(dsv);
 
-                //Tuple<DataTable, int, StructuredDataStructure> m = new Tuple<DataTable, int, StructuredDataStructure>(
-                //   SearchUIHelper.ConvertPrimaryDataToDatatable(dsv, new List<DataTuple>()),
-                //   datasetID,
-                //   sds
-                //   );
+                    DataTable table = SearchUIHelper.ConvertPrimaryDataToDatatable(dsv, dataTuples);
 
-                Tuple<DataTable, int, StructuredDataStructure> m = new Tuple<DataTable, int, StructuredDataStructure>(
-                   table,
-                   datasetID,
-                   sds
-                   );
+                    return View(ShowDataModel.Convert(datasetID,title, sds, table));
+                }
 
-                return View(m);
+                if (ds.Self.GetType() == typeof(UnStructuredDataStructure))
+                {
+                    return View(ShowDataModel.Convert(datasetID,title, ds, SearchUIHelper.GetContantDescriptorFromKey(dsv, "unstructuredData")));
+                }
+
+                return null;
             }
 
             #region server side
@@ -590,11 +596,54 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
             #endregion
 
+            #region download file
+
+                public ActionResult DownloadFile(string path,string mimeType)
+                {
+                    string title = path.Split('\\').Last();
+                    return File(Path.Combine(AppConfiguration.DataPath, path),mimeType, title);
+                }
+
+                public ActionResult DownloadAllFiles(long id)
+                {
+                    DatasetManager datasetManager = new DatasetManager();
+                    DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
+
+                    //TITLE
+                    string title = datasetVersion.Metadata.SelectNodes("Metadata/Description/Description/Title/Title")[0].InnerText;
+                     
+                    string zipPath = Path.Combine(AppConfiguration.DataPath, "Datasets", id.ToString(),title + ".zip");
+
+            
+                    if (FileHelper.FileExist(zipPath))
+                    {
+                        if (FileHelper.WaitForFile(zipPath))
+                        {
+                            FileHelper.Delete(zipPath);
+                        }
+                    }
+
+                    ZipFile zip = new ZipFile();
+
+                    foreach( ContentDescriptor cd in datasetVersion.ContentDescriptors)
+                    {
+                        string path = Path.Combine(AppConfiguration.DataPath,cd.URI);
+                        string name = cd.URI.Split('\\').Last();
+
+                        zip.AddFile(path, "");      
+                    }
+
+                    zip.Save(zipPath);
+
+                    return File(zipPath, "application/zip", title + ".zip");
+                }
+            
+            #endregion
         #endregion
 
-        #region datastructure
+                    #region datastructure
 
-            [GridAction]
+                    [GridAction]
             public ActionResult _CustomDataStructureBinding(GridCommand command, long datasetID)
             {
                 long id = datasetID;

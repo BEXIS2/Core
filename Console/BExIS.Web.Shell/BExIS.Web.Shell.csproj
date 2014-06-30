@@ -73,6 +73,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Iesi.Collections.3.2.0.4000\lib\Net35\Iesi.Collections.dll</HintPath>
     </Reference>
+    <Reference Include="Ionic.Zip">
+      <HintPath>..\..\Libraries\Ionic.Zip.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Practices.Unity, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Unity.2.1.505.2\lib\NET35\Microsoft.Practices.Unity.dll</HintPath>
@@ -226,6 +229,7 @@
     <Compile Include="Areas\DCM\Controllers\CreateSelectDatasetSetupController.cs" />
     <Compile Include="Areas\DCM\Controllers\CreateSummaryController.cs" />
     <Compile Include="Areas\DCM\Controllers\DcmAdminController.cs" />
+    <Compile Include="Areas\DCM\Controllers\PushController.cs" />
     <Compile Include="Areas\DCM\Controllers\SubmitDefinePrimaryKeyController.cs" />
     <Compile Include="Areas\DCM\Controllers\SubmitGetFileInformationController.cs" />
     <Compile Include="Areas\DCM\Controllers\SubmitController.cs" />
@@ -247,6 +251,7 @@
     <Compile Include="Areas\DCM\Models\Metadata\MetadataPackageContainerModel.cs" />
     <Compile Include="Areas\DCM\Models\Metadata\MetadataPackageModel.cs" />
     <Compile Include="Areas\DCM\Models\PrimaryKeyViewModel.cs" />
+    <Compile Include="Areas\DCM\Models\Push\SendBigFilesToServerModel.cs" />
     <Compile Include="Areas\DCM\Models\SelectFileViewModel.cs" />
     <Compile Include="Areas\DCM\Models\SummaryModel.cs" />
     <Compile Include="Areas\DCM\Models\TestModel.cs" />
@@ -255,6 +260,7 @@
     <Compile Include="Areas\DDM\Controllers\AdminController.cs" />
     <Compile Include="Areas\DDM\Controllers\DataController.cs" />
     <Compile Include="Areas\DDM\Helpers\GridHelper.cs" />
+    <Compile Include="Areas\DDM\Models\ShowDataModel.cs" />
     <Compile Include="Areas\RPM\Controllers\HomeController.cs" />
     <Compile Include="Areas\RPM\RPMAreaRegistration.cs" />
     <Compile Include="Areas\DDM\Controllers\HomeController.cs" />
@@ -984,6 +990,10 @@
     <Content Include="Areas\SAM\Views\Unsafe\ListDatasetVersions.cshtml" />
     <Content Include="Areas\SAM\Views\Unsafe\DetailDatasetVersion.cshtml" />
     <Content Include="Areas\DDM\Views\Data\_previewDatastructure.cshtml" />
+    <Content Include="Areas\DDM\Views\Data\_showUnstructuredDataView.cshtml" />
+    <Content Include="Areas\DDM\Views\Data\_structuredDataView.cshtml" />
+    <Content Include="Areas\DCM\Views\Push\Index.cshtml" />
+    <Content Include="Areas\DCM\Views\Push\_fileListView.cshtml" />
     <Content Include="Areas\Auth\Views\Permissions\DataPermissions.cshtml" />
     <Content Include="Areas\Auth\Views\Permissions\Features.cshtml" />
     <Content Include="Areas\Auth\Views\Permissions\_CreateDataPermissionPartial.cshtml" />

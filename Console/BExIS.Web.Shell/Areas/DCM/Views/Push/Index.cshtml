@@ -1,0 +1,44 @@
+﻿@{
+    ViewBag.Title = "Send big files to server";
+}
+
+@using Telerik.Web.Mvc.UI;
+@model BExIS.Web.Shell.Areas.DCM.Models.Push.SendBigFilesToServerModel
+<div id="push">
+<h3>Send big files to server</h3>
+
+@using (Html.BeginForm("ProcessSubmit", "Push",new { area="DCM" },
+                         FormMethod.Post, new { id = "uploadForm", enctype = "multipart/form-data" })) {
+
+    @(Html.Telerik().Upload()
+            .Name("attachments")
+            .Multiple(true)
+            .ShowFileList(true)
+            .ClientEvents(  events=>events
+                    .OnComplete("OnComplete")
+                ))
+    
+    <br />
+    <input type="submit" value="Send" class="t-button" />
+    <input type="reset" value="Reset" class="t-button" />
+
+    
+}
+
+@section LeftPane
+{
+    @Html.Partial("_fileListView", Model.ServerFileList)
+}
+</div>
+<script type="text/javascript">
+
+    function OnComplete()
+    {
+        $.post('@Url.Action("Reload","Push", new RouteValueDictionary { { "area", "DCM" } })', function (response) {
+            
+            $('#FileList').replaceWith(response);
+            
+            alert("the files start to send to the server. you get a email when its finished.");
+        })
+    } 
+</script>

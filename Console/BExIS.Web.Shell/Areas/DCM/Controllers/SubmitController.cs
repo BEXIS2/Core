@@ -43,7 +43,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         #region Upload Wizard
 
-        public ActionResult UploadWizard()
+        public ActionResult UploadWizard(DataStructureType type)
         {
             Session["TaskManager"] = null;
 
@@ -53,12 +53,25 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             {
                 try
                 {
-                    string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "SubmitTaskInfo.xml");
+
+                    string path = "";
+
+                    if (type == DataStructureType.Unstructured)
+                        path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "SubmitUnstructuredDataTaskInfo.xml");
+
+                    if (type == DataStructureType.Structured)
+                        path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "SubmitTaskInfo.xml");
+
                     XmlDocument xmlTaskInfo = new XmlDocument();
                     xmlTaskInfo.Load(path);
 
-
                     Session["TaskManager"] = TaskManager.Bind(xmlTaskInfo);
+
+                    TaskManager = (TaskManager)Session["TaskManager"];
+                    TaskManager.AddToBus(TaskManager.DATASTRUCTURE_TYPE, type);
+
+                    Session["TaskManager"] = TaskManager;
+
                 }
                 catch (Exception e)
                 {
@@ -70,8 +83,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 TaskManager = (TaskManager)Session["TaskManager"];
 
                 // get Lists of Dataset and Datastructure
-                Session["DatasetVersionViewList"] = LoadDatasetVersionViewList();
-                Session["DataStructureViewList"] = LoadDataStructureViewList();
+                Session["DatasetVersionViewList"] = LoadDatasetVersionViewList(type);
+                Session["DataStructureViewList"] = LoadDataStructureViewList(type);
                 Session["ResearchPlanViewList"] = LoadResearchPlanViewList();
                 
             }
@@ -162,33 +175,62 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 return !string.IsNullOrWhiteSpace(userName) ? userName : "DEFAULT";
             }
 
-            public List<ListViewItem> LoadDatasetVersionViewList()
+            public List<ListViewItem> LoadDatasetVersionViewList( DataStructureType dataStructureType)
             {
+                DataStructureManager dataStructureManager = new DataStructureManager();
                 DatasetManager dm = new DatasetManager();
+
                 Dictionary<long, XmlDocument> dmtemp = new Dictionary<long, XmlDocument>();
                 dmtemp = dm.GetDatasetLatestMetadataVersions();
+
                 List<ListViewItem> temp = new List<ListViewItem>();
 
-                foreach (long datasetid in dmtemp.Keys)
+                if (dataStructureType.Equals(DataStructureType.Structured))
                 {
-                    if (dmtemp[datasetid] != null)
+                    List<StructuredDataStructure> list = dataStructureManager.StructuredDataStructureRepo.Get().ToList();
+
+                    foreach (StructuredDataStructure sds in list)
                     {
-                        XmlNodeList xnl = dmtemp[datasetid].SelectNodes("Metadata/Description/Description/Title/Title");
-                        string title = "";
-
-                        if (xnl.Count > 0)
+                        foreach (Dataset d in sds.Datasets)
                         {
-                            title = xnl[0].InnerText;
-                        }
+                            XmlNodeList xnl = dmtemp[d.Id].SelectNodes("Metadata/Description/Description/Title/Title");
+                            string title = "";
 
-                        temp.Add(new ListViewItem(datasetid, title));
+                            if (xnl.Count > 0)
+                            {
+                                title = xnl[0].InnerText;
+                            }
+
+                            temp.Add(new ListViewItem(d.Id, title));
+                        }
+                    }
+
+                }
+                else
+                {
+                    List<UnStructuredDataStructure> list = dataStructureManager.UnStructuredDataStructureRepo.Get().ToList();
+
+                    foreach (UnStructuredDataStructure sds in list)
+                    {
+                        foreach (Dataset d in sds.Datasets)
+                        {
+                            XmlNodeList xnl = dmtemp[d.Id].SelectNodes("Metadata/Description/Description/Title/Title");
+                            string title = "";
+
+                            if (xnl.Count > 0)
+                            {
+                                title = xnl[0].InnerText;
+                            }
+
+                            temp.Add(new ListViewItem(d.Id, title));
+                        }
                     }
                 }
 
                return temp.OrderBy(p => p.Title).ToList();
             }
 
-            public List<ListViewItem> LoadDataStructureViewList()
+            public List<ListViewItem> LoadDataStructureViewList( DataStructureType dataStructureType )
             {
                 DataStructureManager dsm = new DataStructureManager();
                 List<ListViewItem> temp = new List<ListViewItem>();
@@ -220,11 +262,11 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 return temp.OrderBy(p => p.Title).ToList();
             }
 
+            
         #endregion
 
         #endregion
 
-       
 
 
 

@@ -56,6 +56,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             
             //Session["MetadatStructureList"] = LoadMetadataStructureViewList();
 
+            
+
             return View();
         }
 
@@ -133,10 +135,20 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         public ActionResult StartUploadWizard()
         {
+            TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
+
+            DataStructureType type = new DataStructureType();
+
+            if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.DATASTRUCTURE_TYPE))
+            {
+                type = (DataStructureType)TaskManager.Bus[CreateDatasetTaskmanager.DATASTRUCTURE_TYPE];
+            }
+
+            
             Session["CreateDatasetTaskmanager"] = null;
             TaskManager = null;
 
-            return RedirectToAction("UploadWizard", "Submit", new RouteValueDictionary { {"area","DCM"}});
+            return RedirectToAction("UploadWizard", "Submit", new RouteValueDictionary { {"area","DCM"} , {"type",type}});
         }
 
 
@@ -162,11 +174,16 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         {
             DataStructureManager dsm = new DataStructureManager();
             List<ListViewItem> temp = new List<ListViewItem>();
-
+            string title = "";
             foreach (DataStructure datasStructure in dsm.StructuredDataStructureRepo.Get())
             {
-                string title = datasStructure.Name;
+                title = datasStructure.Name;
+                temp.Add(new ListViewItem(datasStructure.Id, title));
+            }
 
+            foreach (DataStructure datasStructure in dsm.UnStructuredDataStructureRepo.Get())
+            {
+                title = datasStructure.Name;
                 temp.Add(new ListViewItem(datasStructure.Id, title));
             }
 

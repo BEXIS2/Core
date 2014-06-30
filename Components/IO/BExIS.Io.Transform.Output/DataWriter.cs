@@ -98,11 +98,12 @@ namespace BExIS.Io.Transform.Output
 
         /// <summary>
         /// Create the general store path under AppConfiguration.DataPath
+        /// with filename
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref="AppConfiguration"/>
         /// <param></param>       
-        public string GetStorePath(long datasetId, long datasetVersionOrderNr, string title, string extention)
+        public string GetFullStorePath(long datasetId, long datasetVersionOrderNr, string title, string extention)
         {
             string dataPath = AppConfiguration.DataPath; //Path.Combine(AppConfiguration.WorkspaceRootPath, "Data");
 
@@ -121,7 +122,14 @@ namespace BExIS.Io.Transform.Output
             return Path.Combine(storePath,datasetId.ToString()+"_"+datasetVersionOrderNr.ToString() + "_" + title + extention);
         }
 
-        public string GetOnlyStorePath(long datasetId, long datasetVersionOrderNr)
+        /// <summary>
+        /// Generate the gernal store path based on
+        /// AppConfiguration.DataPath without filename
+        /// </summary>
+        /// <param name="datasetId"></param>
+        /// <param name="datasetVersionOrderNr"></param>
+        /// <returns></returns>
+        public string GetStorePath(long datasetId, long datasetVersionOrderNr)
         {
             string dataPath = AppConfiguration.DataPath; //Path.Combine(AppConfiguration.WorkspaceRootPath, "Data");
 
@@ -140,6 +148,15 @@ namespace BExIS.Io.Transform.Output
             return storePath;
         }
 
+        /// <summary>
+        /// Returns a Title based on incoming 
+        /// parameters
+        /// </summary>
+        /// <param name="datasetId"></param>
+        /// <param name="datasetVersionOrderNr"></param>
+        /// <param name="title"></param>
+        /// <param name="extention"></param>
+        /// <returns></returns>
         public string GetNewTitle(long datasetId, long datasetVersionOrderNr, string title, string extention)
         {
             return datasetId.ToString() + "_" + datasetVersionOrderNr.ToString() + "_" + title + extention;
@@ -152,7 +169,7 @@ namespace BExIS.Io.Transform.Output
             return Path.Combine(storePath, datasetId.ToString() + "_" + datasetVersionOrderNr.ToString() + "_" + title + extention);
         }
 
-        public string GetStorePathOriginalFile(long datasetId, long datasetVersionOrderNr, string filename)
+        public string GetFullStorePathOriginalFile(long datasetId, long datasetVersionOrderNr, string filename)
         {
             string dataPath = AppConfiguration.DataPath; //Path.Combine(AppConfiguration.WorkspaceRootPath, "Data");
 
@@ -207,20 +224,20 @@ namespace BExIS.Io.Transform.Output
             return "";
         }
 
-        public bool MoveFile(string tempFile, string destinationPath)
-        {
-            if (File.Exists(tempFile))
-            {
-                File.Move(tempFile, destinationPath);
+        //public bool MoveFile(string tempFile, string destinationPath)
+        //{
+        //    if (File.Exists(tempFile))
+        //    {
+        //        File.Move(tempFile, destinationPath);
 
-                if (File.Exists(destinationPath))
-                {
-                    return true;
-                }else return false;
-            }
-            else return false;
+        //        if (File.Exists(destinationPath))
+        //        {
+        //            return true;
+        //        }else return false;
+        //    }
+        //    else return false;
 
-        }
+        //}
 
         protected StructuredDataStructure GetDataStructure(long id)
         {

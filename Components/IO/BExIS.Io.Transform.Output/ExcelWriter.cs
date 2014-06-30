@@ -458,7 +458,7 @@ namespace BExIS.Io.Transform.Output
 
         public string CreateFile(long datasetId, long datasetVersionOrderNr, long dataStructureId, string title, string extention)
         {
-            string dataPath = GetStorePath(datasetId, datasetVersionOrderNr, title, extention);
+            string dataPath = GetFullStorePath(datasetId, datasetVersionOrderNr, title, extention);
 
             //Template will not be filtered by columns
             if (this.visibleColumns == null)
@@ -497,7 +497,7 @@ namespace BExIS.Io.Transform.Output
                 /// call templateprovider from rpm
                 ExcelTemplateProvider provider = new ExcelTemplateProvider();
 
-                string path = GetOnlyStorePath(datasetId, datasetVersionOrderNr);
+                string path = GetStorePath(datasetId, datasetVersionOrderNr);
                 string newTitle = GetNewTitle(datasetId, datasetVersionOrderNr, title, extention);
 
                 provider.CreateTemplate(GetVariableIds(this.visibleColumns), dataStructureId, path, newTitle);

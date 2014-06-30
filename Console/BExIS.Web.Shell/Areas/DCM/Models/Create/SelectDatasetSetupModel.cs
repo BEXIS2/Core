@@ -41,5 +41,15 @@ namespace BExIS.Web.Shell.Areas.DCM.Models.Create
             ResearchPlanViewList = new List<ListViewItem>();
             MetadataStructureViewList = new List<ListViewItem>();
         }
+
     }
+
+
+
+    public enum DataStructureType
+    {
+        Structured,
+        Unstructured
+    }
+    
 }

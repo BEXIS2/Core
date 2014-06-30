@@ -27,7 +27,7 @@ namespace BExIS.Io.Transform.Output
 
         public string CreateFile(long datasetId, long datasetVersionOrderNr, long dataStructureId, string title, string extention)
         {
-            string dataPath = GetStorePath(datasetId, datasetVersionOrderNr, title, extention);
+            string dataPath = GetFullStorePath(datasetId, datasetVersionOrderNr, title, extention);
 
             try
             {

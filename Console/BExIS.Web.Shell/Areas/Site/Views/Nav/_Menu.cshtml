@@ -27,6 +27,7 @@
 					{
                         item.Add().Text("Create a dataset").Action("CreateDataset", "Create", new { area = "DCM" });
                         item.Add().Text("Upload data to a dataset").Action("Index", "Submit", new { area = "DCM" });
+                        item.Add().Text("Push big files to server").Action("Index", "Push", new { area = "DCM" });
 					}
 					);
 				menu.Add().Text("Administration")

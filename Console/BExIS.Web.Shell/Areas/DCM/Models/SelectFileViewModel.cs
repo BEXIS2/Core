@@ -4,6 +4,7 @@ using System.IO;
 using System.Web;
 using BExIS.Io.Transform.Validation.Exceptions;
 using BExIS.Dcm.Wizard;
+using BExIS.Dcm.UploadWizard;
 
 namespace BExIS.Web.Shell.Areas.DCM.Models
 {
@@ -15,7 +16,11 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
         public String SelectedFileName = "";
         public String SelectedServerFileName = "";
         public Stream fileStream;
+        public DataStructureType DataStructureType;
 
+        public List<string> SupportedFileExtentions = new List<string>();
+
+        
         public StepInfo StepInfo { get; set; }
     }
 }

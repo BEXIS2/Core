@@ -9,25 +9,11 @@
     HttpRuntimeSection section = System.Configuration.ConfigurationManager.GetSection("system.web/httpRuntime") as HttpRuntimeSection;
     int int_MaxRequestLength = section.MaxRequestLength;
     int mbMax = int_MaxRequestLength / 1024;
-
-    string fileExtListAsString = "";
-
-    foreach (string s in Model.SupportedFileExtentions)
-    {
-        if (fileExtListAsString != "")
-        {
-            fileExtListAsString += "," + s;
-        }
-        else
-        { 
-            fileExtListAsString = s;
-        }
-    } 
+        
 }
-
 <div id ="Step1" class="uploadWizardStep">
 
-     <div class="uploadWizardStep_Main">
+    <div class="uploadWizardStep_Main">
         <div class="uploadWizardStep_Header stepper">
 
             <h3>@Model.StepInfo.title</h3>
@@ -38,9 +24,7 @@
             <p>Very large data files that may take several minutes or hours to transfer, should be uploaded to the server before entering the Upload Wizard.<br />
                Please contact your systems administrator for assistance.</p>
 
-            @*<p>Supported file formats: Microsoft Excel (*.xlsm), ASCII (*.txt, *.csv )</p>*@
-            <p>Supported file formats: @{foreach(string s in @Model.SupportedFileExtentions){<b>(*@s) </b>} }</p>
-
+            <p>Supported file formats: Microsoft Excel (*.xlsm), ASCII (*.txt, *.csv )</p>
 
             <p>Max file size: @mbMax MB</p>
         </div>
@@ -116,94 +100,29 @@
     </div>     
 
 </div>
-
 <script type="text/javascript">
 
 
     function SelectFileProcess_OnSelect(e) {
-        
-        var type = '@Model.DataStructureType';
-        var structuredType = '@BExIS.Dcm.UploadWizard.DataStructureType.Structured';
-        var unStructuredType = '@BExIS.Dcm.UploadWizard.DataStructureType.Unstructured';
-
-        if( type == structuredType)
-        {
-            structuredDataSet(e)
-        }
-
-        if (type == unStructuredType)
-        {
-            unStructuredDataSet(e)
-        }
-    }
-
-    function structuredDataSet(e)
-    {
         var file = e.files[0];
         var maxsize = '@int_MaxRequestLength';
-        //if (file.extension != ".xlsm" && file.extension != ".csv" && file.extension != ".txt") {
-
-        if (!IsExtentionValid(file.extension))
-        {
-            alert("Only " + '@fileExtListAsString' + " files can be uploaded")
+        if (file.extension != ".xlsm" && file.extension != ".csv" && file.extension != ".txt") {
+            alert("Only .xlsm, .csv, .txt files can be uploaded")
             e.preventDefault();
             return false;
         }
         else {
 
-            if (file.size > (maxsize * 1024)) {
+            if(file.size > (maxsize*1024))
+            {
 
-                alert("Max file : " + maxsize / 1024 + " MB is supported. Please contact your administrator to upload bigger files.");
+                alert("Max file : "+ maxsize/1024 +" MB is supported. Please contact your administrator to upload bigger files.");
                 e.preventDefault();
                 return false;
             }
 
             Parameters.push("Extention:" + file.extension);
         }
-    }
-
-    function unStructuredDataSet(e) {
-
-        var file = e.files[0];
-        var maxsize = '@int_MaxRequestLength';
-
-        //alert("is Ext " + IsExtentionValid(file.extension));
-        if (!IsExtentionValid(file.extension)) {
-
-            alert("Only " +'@fileExtListAsString'+ " files can be uploaded")
-            e.preventDefault();
-            return false;
-        }
-        else {
-
-            if (file.size > (maxsize * 1024)) {
-
-                alert("Max file : " + maxsize / 1024 + " MB is supported. Please contact your administrator to upload bigger files.");
-                e.preventDefault();
-                return false;
-            }
-
-            Parameters.push("Extention:" + file.extension);
-        }
-    }
-    
-    /*
-    Is Extention from selected file
-    in list of supported files
-    */
-    function IsExtentionValid(fileExtention)
-    {
-        var extListAsString = '@fileExtListAsString';
-        var extList = extListAsString.split(',');
-
-        for (var i = 0; i < extList.length; i++)
-        {
-            if (fileExtention.toLowerCase() == extList[i]) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     function SelectFileProcess_OnRemove(e) {

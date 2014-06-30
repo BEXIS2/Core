@@ -378,5 +378,18 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
 
             return "";
         }
+
+        public static List<ContentDescriptor> GetContantDescriptorFromKey(DatasetVersion datasetVersion, string key)
+        {
+            List<ContentDescriptor> fileList = new List<ContentDescriptor>();
+
+            foreach (ContentDescriptor contenDescriptor in datasetVersion.ContentDescriptors)
+            {
+                if (contenDescriptor.Name.Equals(key)) fileList.Add(contenDescriptor);
+            }
+
+            return fileList;
+        }
+
     }
 }

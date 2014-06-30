@@ -25,6 +25,7 @@ namespace BExIS.Dcm.UploadWizard
         // Datastructure
         public static string DATASTRUCTURE_ID = "DataStructureId";
         public static string DATASTRUCTURE_TITLE = "DataStructureTitle";
+        public static string DATASTRUCTURE_TYPE = "DataStructureType";
         //ResearchPlan
         public static string RESEARCHPLAN_ID = "ResearchPlanId";
         public static string RESEARCHPLAN_TITLE = "ResearchPlanTitle";
@@ -77,4 +78,11 @@ namespace BExIS.Dcm.UploadWizard
         }
 
     }
+
+    public enum DataStructureType
+    { 
+        Structured,
+        Unstructured
+    }
+
 }
