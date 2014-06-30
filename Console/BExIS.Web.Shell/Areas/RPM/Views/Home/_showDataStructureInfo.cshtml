@@ -26,11 +26,11 @@ else
 {
     if (Model.structured)
     { 
-        <font>New setructured Data Structure</font>
+        <font>New structured Data Structure</font>
     }
     else
     {
-       <font>New unsetructured Data Structure</font> 
+       <font>New unstructured Data Structure</font> 
     }
 }
 @if (Model.inUse)
@@ -66,27 +66,26 @@ else
                        </tr>
                         <tr>
                             <td>
-                                Number of Variables:
                                 @if(Model.variables != null && Model.structured == true)
                                 { 
                                      if(Model.variables.Count() > 0)
                                     {
-                                        @Model.variables.Count();
+                                        <font>Number of Variables:</font>@Model.variables.Count();
                                     }
                                     else
                                     {
-                                        <font color="red">No Variables</font>
+                                        <font>Number of Variables:</font><font color="red">No Variables</font>
                                     }
                                 }
                                 else
                                 {
                                     if(Model.structured == false)
                                     {
-                                        <font color="red">unstructured Data Structure</font>
+                                        <font> </font>
                                     }
                                     else
                                     {
-                                        <font color="red">No Variables</font>
+                                        <font>Number of Variables:</font><font color="red">No Variables</font>
                                     }
                                 }
                             </td>

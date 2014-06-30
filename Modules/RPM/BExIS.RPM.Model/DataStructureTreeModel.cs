@@ -9,9 +9,9 @@ namespace BExIS.RPM.Model
 {
     public class DataStructureTreeElement
     {
-        public String name;
-        public long id;
-        public bool structured; 
+        public String name = null;
+        public long id = 0;
+        public bool structured = true; 
 
         public DataStructureTreeElement()
         {
@@ -24,8 +24,8 @@ namespace BExIS.RPM.Model
 
     public class DataStructureTreeList
     {
-        public String name;
-        public List<DataStructureTreeElement> dataStructureTreeElementList;
+        public String name = null;
+        public List<DataStructureTreeElement> dataStructureTreeElementList = null;
         
 
         public DataStructureTreeList()
@@ -65,7 +65,7 @@ namespace BExIS.RPM.Model
 
     public class DataStructureTree
     {
-        public List<DataStructureTreeList> dataStructureTreeList;
+        public List<DataStructureTreeList> dataStructureTreeList = null;
 
 
         public DataStructureTree()

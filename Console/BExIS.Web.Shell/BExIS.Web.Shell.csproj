@@ -840,10 +840,6 @@
     <Content Include="Views\Test\XmlEdit.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\RPM\Views\Web.config" />
-    <Content Include="Areas\RPM\Views\_ViewStart.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Areas\Auth\Views\Roles\Roles.cshtml" />
   </ItemGroup>
   <ItemGroup>
@@ -1057,7 +1053,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>1324</DevelopmentServerPort>
+          <DevelopmentServerPort>1174</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>

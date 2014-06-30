@@ -1,6 +1,4 @@
 ﻿@using Telerik.Web.Mvc.UI
-@using BExIS.Dlm.Entities.DataStructure
-@using System.Data
 @using BExIS.RPM.Model
 @model BExIS.RPM.Model.DataStructureDesignerModel
 
@@ -10,9 +8,7 @@
 @section LeftPane 
 { 
 
-@*<header>*@
-    <link href="@Url.Content("~/Areas/RPM/Stylesheets/RPM.css")" rel="stylesheet" type="text/css" />  
-@*</header> *@
+<link href="@Url.Content("~/Areas/RPM/Stylesheets/RPM.css")" rel="stylesheet" type="text/css" />  
 
 <div>
         @Html.ActionLink("Create Structured", "createStructuredDataStrukture", "Home", new {@class = "t-button" , @title = "Create srtuctured Data Structure", @style = "margin:3px;"})
