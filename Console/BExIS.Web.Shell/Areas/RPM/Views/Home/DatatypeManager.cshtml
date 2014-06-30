@@ -36,14 +36,15 @@
         <p>With this interface you are able to manage (e.g. create, edit, delete) data types which are required to define units and data attributes. Data types cannot be edited or deleted once they are associated with a unit (they become locked).</p>
     </div>
 
-<div title="Create Data Type">
+<div title="Create a new Data Type">
     @Html.ActionLink("Create Data Type", "openDataTypeWindow", "Home", new { id = 0 }, new { @class = "t-button t-add" })
 </div>
     <br />
     <br />
     @(Html.Telerik().Grid(Model)    
             .Name("UnitGrid")
-            .Sortable()            
+            .Sortable()     
+            .Scrollable(t => t.Height(400))     
             .Columns(columns =>
                 {
                     columns.Template(
@@ -52,7 +53,7 @@
                             {
                                 <div class="t-button t-button-icontext t-button-bare">
                                     @Html.ActionLink("Edit", "openDataTypeWindow", "Home", new { id = item.Id }, new { @class = "t-icon t-edit" })
-                                    @Html.ActionLink("Delete", "deletDataType", "Home", new { id = item.Id }, new { @class = "t-icon t-delete" })
+                                    @Html.ActionLink("Delete", "deletDataType", "Home", new { id = item.Id, item.Name }, new { @class = "t-icon t-delete" })
                                 </div>
                             }
                             else
@@ -61,20 +62,20 @@
                             }
                         </text>
                     ).Title("Actions")
-                        .Width(50)
+                        .Width(100)
                         .ClientTemplate(
                             @Html.ActionLink("Edit", "openDataTypeWindow", "Home", new { id = "<#= id #>" }, new { @class = "t-icon t-edit" }).ToHtmlString() +
-                            @Html.ActionLink("Delete", "deletDataType", "Home", new { id = "<#= id #>" }, new { @class = "t-icon t-delete" }).ToHtmlString()
+                            @Html.ActionLink("Delete", "deletDataType", "Home", new { id = "<#= id #>", dataType.Name}, new { @class = "t-icon t-delete" }).ToHtmlString()
                         );
-                    columns.Bound(c => c.Name);
-                    columns.Bound(c => c.Id);
+                    columns.Bound(c => c.Name).Width(150);
+                    columns.Bound(c => c.Id).Width(80);
+                    columns.Bound(c => c.SystemType).Width(150);
                     columns.Bound(c => c.Description);
-                    columns.Bound(c => c.SystemType);
                 })
     )
     <br />
     <br />
-<div title="Create Data Type">
+<div title="Create a new Data Type">
      @Html.ActionLink("Create Data Type", "openDataTypeWindow", "Home", new { id = 0 }, new { @class = "t-button t-add" })
 </div>
     

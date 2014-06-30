@@ -37,9 +37,11 @@
             })
 )
 </div>
-<div style="position:absolute; left:20%; top:60px;">
+<div style="position:absolute; left:10%; top:60px">
 @{ Html.Telerik().Window()
         .Name("Add_Variable")
+        .Title("Add Variable")
+        .Draggable(true)
         .Visible((bool)Session["Window"])
         .Modal(true)
         .Content(@<text>
@@ -51,9 +53,11 @@
         
 }
 </div>
-<div style="position:absolute; left:20%; top:60px;">
+<div style="position:absolute; left:30%; top:60px;">
 @{ Html.Telerik().Window()
         .Name("Edit_Variable")
+        .Title("Edit Variable")
+        .Draggable(true)
         .Modal(true)
         .Visible((bool)Session["VariableWindow"])
         .Content(@<text>

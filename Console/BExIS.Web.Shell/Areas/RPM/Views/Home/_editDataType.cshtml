@@ -25,7 +25,7 @@
     <table>
         <tr id="name">
             <td>
-                Name:*
+                Name:<Font color="red">*</Font>
             </td>
             <td>
                 @(Html.TextBoxFor(m => Model.Name, new {@class = "t-input"}))
@@ -54,9 +54,9 @@
         <tr><td colspan="2"> </td></tr>
         <tr>
             <td>
-                * Please don't leave empty
+                <Font color="red">*</Font> Please don't leave empty
                 <br /><br />
-                <button name="create" value="GetUnitInput" type="submit" class="t-button">Save</button>
+                <button name="create" value="GetUnitInput" type="submit" class="t-button" title="Save the Data Type">Save</button>
             </td>
             <td>
             </td>

@@ -38,14 +38,15 @@
 
     </div>
 
-<div title="Create Data Attribute">
+<div title="Create a new Data Attribute">
     @Html.ActionLink("Create Data Attribute", "openAttributeWindow", "Home", new { id = 0 }, new { @class = "t-button t-add" })
 </div>
     <br />
     <br />
     @(Html.Telerik().Grid(Model)    
             .Name("Attribute")
-            .Sortable()            
+            .Sortable()   
+            .Scrollable(t => t.Height(400))         
             .Columns(columns =>
                 {
                     columns.Template(
@@ -54,7 +55,7 @@
                             {
                                 <div class="t-button t-button-icontext t-button-bare">
                                     @Html.ActionLink("Edit", "openAttributeWindow", "Home", new { id = item.Id }, new { @class = "t-icon t-edit" })
-                                    @Html.ActionLink("Delete", "deletAttribute", "Home", new { id = item.Id }, new { @class = "t-icon t-delete" })
+                                    @Html.ActionLink("Delete", "deletAttribute", "Home", new { id = item.Id, item.Name }, new { @class = "t-icon t-delete" })
                                 </div>
                             }
                             else
@@ -63,26 +64,26 @@
                             }
                         </text>
                     ).Title("Actions")
-                        .Width(50)
+                        .Width(80)
                         .ClientTemplate(
                             @Html.ActionLink("Edit", "openAttributeWindow", "Home", new { id = "<#= id #>" }, new { @class = "t-icon t-edit" }).ToHtmlString() +
-                            @Html.ActionLink("Delete", "deletAttribute", "Home", new { id = "<#= id #>" }, new { @class = "t-icon t-delete" }).ToHtmlString()
+                            @Html.ActionLink("Delete", "deletAttribute", "Home", new { id = "<#= id #>", dataAttribute.Name }, new { @class = "t-icon t-delete" }).ToHtmlString()
                         );
-                    columns.Bound(c => c.Name);
-                    columns.Bound(c => c.Id);
-                    columns.Bound(c => c.ShortName);
-                    columns.Bound(c => c.Description);
-                    columns.Bound(c => c.Unit.Name)
+                    columns.Bound(c => c.Name).Width(150);
+                    columns.Bound(c => c.Id).Width(50);
+                    columns.Bound(c => c.ShortName).Width(100);
+                    columns.Bound(c => c.Unit.Name).Width(100)
                         .Title("Unit");
-                    columns.Bound(c => c.DataType.Name)
-                        .Title("DataType");                 
+                    columns.Bound(c => c.DataType.Name).Width(100)
+                        .Title("DataType");
+                    columns.Bound(c => c.Description);
                 })
     )
 
     <br />
     <br />
 
-<div title="Create Data Attribute">
+<div title="Create a new Data Attribute">
     @Html.ActionLink("Create Data Attribute", "openAttributeWindow", "Home", new { id = 0 }, new { @class = "t-button t-add" })
 </div>
     <div style="position:absolute; left:20%; top:60px;">

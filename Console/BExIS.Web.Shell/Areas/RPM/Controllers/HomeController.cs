@@ -507,21 +507,32 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
         public ActionResult editUnit(Unit Model, string parent, long id, string measurementSystem, long[] checkedRecords)
         {
-            UnitManager unitManager = new UnitManager();
-            List<Unit> unitList = unitManager.Repo.Get().ToList();
-            bool nameNotExist = unitList.Where(p => p.Name.ToLower().Equals(Model.Name.ToLower())).Count().Equals(0);
-
             Model.Name = cutSpaces(Model.Name);
             Model.Abbreviation = cutSpaces(Model.Abbreviation);
             Model.Description = cutSpaces(Model.Description);
             Model.Dimension = cutSpaces(Model.Dimension);
 
-            if (id == 0)
+            List<Unit> unitList = GetUnitRepo();
+            
+            if (Model.Name == "" | Model.Name == null | Model.Abbreviation == "" | Model.Abbreviation == null)
             {
-                if ((Model.Name != "" && Model.Name != null) && (Model.Abbreviation != "" && Model.Abbreviation != null))
+                Session["Window"] = true;
+                return RedirectToAction(parent);
+            }
+            else
+            {
+                bool nameNotExist = unitList.Where(p => p.Name.ToLower().Equals(Model.Name.ToLower())).Count().Equals(0);
+                bool abbreviationNotExist = unitList.Where(p => p.Abbreviation.ToLower().Equals(Model.Abbreviation.ToLower())).Count().Equals(0);
+
+                if( id == 0)
                 {
-                    bool abbreviationNotExist = unitList.Where(p => p.Abbreviation.ToLower().Equals(Model.Abbreviation.ToLower())).Count().Equals(0);
-                    if (nameNotExist && abbreviationNotExist)
+                    if (!nameNotExist)
+                    {
+                        MessageBox.Show("There is already a unit with the same name as you specified. Please specify a different name.", "Existing Unit");
+                        Session["Window"] = true;
+                        return RedirectToAction(parent);
+                    }
+                    else if (abbreviationNotExist)
                     {
                         foreach (MeasurementSystem msCheck in Enum.GetValues(typeof(MeasurementSystem)))
                         {
@@ -538,27 +549,18 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                 }
                 else
                 {
-                    Session["Window"] = true;
-                    Session["Unit"] = new Unit();
-                    return RedirectToAction(parent);
-            
-                }
-            }
-            else
-            {
-
-                if ((Model.Name != "" && Model.Name != null) && (Model.Abbreviation != "" && Model.Abbreviation != null))
-                {
                     Unit tempUnitByName = new Unit();
                     Unit tempUnitByAbbreviation = new Unit();
 
-                    bool abbreviationNotExist = unitList.Where(p => p.Abbreviation.ToLower().Equals(Model.Abbreviation.ToLower())).Count().Equals(0);
                     if (!nameNotExist)
+                    {
                         tempUnitByName = unitList.Where(p => p.Name.Equals(Model.Name)).ToList().First();
+                        MessageBox.Show("There is already a unit with the same name as you specified. Please specify a different name.", "Existing Unit");
+                        Session["Window"] = true;
+                        return RedirectToAction(parent);
+                    }
                     if (!abbreviationNotExist)
                         tempUnitByAbbreviation = unitList.Where(p => p.Abbreviation.Equals(Model.Abbreviation)).ToList().First();
-
-
 
                     if ((nameNotExist && abbreviationNotExist) || (tempUnitByName.Id == id && tempUnitByAbbreviation.Id == id) || (tempUnitByName.Id == id && abbreviationNotExist) || (tempUnitByAbbreviation.Id == id && nameNotExist))
                     {
@@ -584,21 +586,13 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                         }
                     }
                 }
-                else
-                {
-
-                    Session["Window"] = true;
-                    Session["Unit"] = new Unit();
-                    return RedirectToAction(parent);
-
-                }
 
             }
-        
-            Session["Window"] = false;        
-            Session["Unit"] = new Unit();    
+
+            Session["Window"] = false;
+            Session["Unit"] = new Unit();
             return RedirectToAction(parent);
-                
+
         }
 
         private List<DataType> updataAssociatedDataType(Unit unit, long[] newDataTypelIds)
@@ -629,12 +623,12 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             return null;
         }
 
-        public ActionResult deletUnit(long id)
+        public ActionResult deletUnit(long id, string name)
         {
 
             if (id != 0)
             {
-                string message = "Are you sure you want to delete the Unit? Id=" + id;
+                string message = "Are you sure you want to delete the Unit " + name + " ?";
                 string caption = "Confirmation";
                 MessageBoxButtons buttons = MessageBoxButtons.YesNo;
                 DialogResult result;
@@ -823,45 +817,51 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             IList<DataType> DataTypeList = dataTypeManager.Repo.Get();
             TypeCode typecode = new TypeCode();
 
+
             foreach (TypeCode tc in Enum.GetValues(typeof(TypeCode)))
             {
                 if (tc.ToString() == systemType)
                     typecode = tc;
-            } 
+            }
 
             Model.Name = cutSpaces(Model.Name);
-            Model.Description = cutSpaces(Model.Description);
+            Model.Description = cutSpaces(Model.Description);           
 
-            bool nameNotExist = DataTypeList.Where(p => p.Name.ToLower().Equals(Model.Name.ToLower())).Count().Equals(0);
-
-            if (Model.Name == "" | Model.Name == null | !nameNotExist)
+            if (Model.Name == "" | Model.Name == null)
             {
-                if (!nameNotExist) MessageBox.Show("There is already a Data Type with the same name as you specified. Please specify a different name.", "Existing Data Type");
                 Session["Window"] = true;
                 return RedirectToAction(parent);
             }
-
-            if (id == 0)
+            else
             {
-                if (Model.Name != "" && Model.Name != null)
+                bool nameNotExist = DataTypeList.Where(p => p.Name.ToLower().Equals(Model.Name.ToLower())).Count().Equals(0);
+
+                if (id == 0)
                 {
-                    //bool nameNotExist = DataTypeList.Where(p => p.Name.ToLower().Equals(Model.Name.ToLower())).Count().Equals(0);
                     if (nameNotExist)
                     {
                         DataTypeManager DTM = new DataTypeManager();
                         DTM.Create(Model.Name, Model.Description, typecode);
                     }
+                    else
+                    {
+                        MessageBox.Show("There is already a Data Type with the same name as you specified. Please specify a different name.", "Existing Data Type");
+                        Session["Window"] = true;
+                        return RedirectToAction(parent);
+                    }
+
                 }
-            }
-            else
-            {
-                if (Model.Name != "" && Model.Name != null)
+                else
                 {
                     DataType tempDataType = new DataType();
-                    //bool nameNotExist = DataTypeList.Where(p => p.Name.ToLower().Equals(Model.Name.ToLower())).Count().Equals(0);
 
                     if (!nameNotExist)
+                    {
                         tempDataType = DataTypeList.Where(p => p.Name.Equals(Model.Name)).ToList().First();
+                        MessageBox.Show("There is already a Data Type with the same name as you specified. Please specify a different name.", "Existing Data Type");
+                        Session["Window"] = true;
+                        return RedirectToAction(parent);
+                    }
 
                     if (nameNotExist || id == tempDataType.Id)
                     {
@@ -877,6 +877,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                     }
                 }
             }
+           
             Session["Window"] = false;
             Session["DataType"] = new DataType();
             return RedirectToAction(parent);
@@ -902,12 +903,12 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             return RedirectToAction("DataTypeManager");
         }
 
-        public ActionResult deletDataType(long id)
+        public ActionResult deletDataType(long id, string name)
         {
 
             if (id != 0)
             {
-                string message = "Are you sure you want to delete the Data Type? Id=" + id;
+                string message = "Are you sure you want to delete the Data Type " + name +" ?";
                 string caption = "Confirmation";
                 MessageBoxButtons buttons = MessageBoxButtons.YesNo;
                 DialogResult result;
@@ -965,22 +966,17 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             Model.Name = cutSpaces(Model.Name);
             Model.Description = cutSpaces(Model.Description);
 
-            bool nameNotExist = DataAttributeList.Where(p => p.Name.ToLower().Equals(Model.Name.ToLower())).Count().Equals(0);
-
-            if (Model.Name == "" | Model.Name == null | !nameNotExist)
+            if (Model.Name == "" | Model.Name == null)
             {
-                if (!nameNotExist) MessageBox.Show("There is already an Attribute with the same name as you specified. Please specify a different name.", "Existing Attribute");
                 Session["Window"] = true;
                 return RedirectToAction(parent);
             }
-
-            if (id == 0)
+            else
             {
-                if (Model.Name != "" && Model.Name != null)
-                {
-                    /// <param nameNotExist>Please insert description!</param>        
-                    //bool nameNotExist = DataAttributeList.Where(p => p.Name.ToLower().Equals(Model.Name.ToLower())).Count().Equals(0);
+                bool nameNotExist = DataAttributeList.Where(p => p.Name.ToLower().Equals(Model.Name.ToLower())).Count().Equals(0);
 
+                if (id == 0)
+                {
                     if (nameNotExist)
                     {
                         UnitManager UM = new UnitManager();
@@ -992,21 +988,26 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                         DataAttribute temp = new DataAttribute();
                         DAM.CreateDataAttribute(Model.ShortName, Model.Name, Model.Description, false, false, "", MeasurementScale.Categorial, DataContainerType.ReferenceType, "", dataType, unit, null, null, null, null, null, null);
                     }
+                    if (!nameNotExist)
+                    {
+                        MessageBox.Show("There is already an Attribute with the same name as you specified. Please specify a different name.", "Existing Attribute");
+                        Session["Window"] = true;
+                        return RedirectToAction(parent);
+                    }
                 }
-            }
-            else
-            {
-                if (Model.Name != "" && Model.Name != null)
+                else
                 {
                     DataAttribute tempAttribute = new DataAttribute();
 
-                    //bool nameNotExist = DataAttributeList.Where(p => p.Name.ToLower().Equals(Model.Name.ToLower())).Count().Equals(0);
                     if (!nameNotExist)
                     {
                         tempAttribute = DataAttributeList.Where(p => p.Name.Equals(Model.Name)).ToList().First();
+                        MessageBox.Show("There is already an Attribute with the same name as you specified. Please specify a different name.", "Existing Attribute");
+                        Session["Window"] = true;
+                        return RedirectToAction(parent);
                     }
 
-                    if (nameNotExist || tempAttribute.Id == id)
+                    else if (nameNotExist || tempAttribute.Id == id)
                     {
                         DataAttribute dataAttribute = DataAttributeList.Where(p => p.Id.Equals(id)).ToList().First();
                         if (!attributeInUse(dataAttribute))
@@ -1023,7 +1024,6 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                         }
                     }
                 }
-
             }
 
             Session["Window"] = false;
@@ -1051,12 +1051,12 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             return RedirectToAction("AttributeManager");
         }
 
-        public ActionResult deletAttribute(long id)
+        public ActionResult deletAttribute(long id, string name)
         {
 
             if (id != 0)
             {
-                string message = "Are you sure you want to delete the Data Attribute? Id=" + id;
+                string message = "Are you sure you want to delete the Data Attribute " + name + " ?";
                 string caption = "Confirmation";
                 MessageBoxButtons buttons = MessageBoxButtons.YesNo;
                 DialogResult result;

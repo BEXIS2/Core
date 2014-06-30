@@ -7,6 +7,13 @@
 @*<header>*@
     <link href="@Url.Content("~/Areas/RPM/Stylesheets/RPM.css")" rel="stylesheet" type="text/css" />  
 @*</header> *@
+
+@section Scripts{
+    <script src="@Url.Content("~/Scripts/jQueryUI/1.10.4/js/jquery-ui-1.10.4.custom.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/bppHelper.js")" type="text/javascript"></script>
+    
+}
+
 @if(Model != null)
 {
     List<string> MeasurementSystemList = new List<string>();
@@ -44,8 +51,8 @@
        @(Html.TextBox("id", Model.Id, new { @class = "hidden" })) 
         <table>
             <tr id="name">
-                <td>
-                    Name:*
+                <td id="nameBox">
+                    Name:<Font color="red">*</Font>
                 </td>
                 <td>
                     @(Html.TextBoxFor(m => Model.Name, new { @class = "t-input" }))
@@ -53,7 +60,7 @@
             </tr>
             <tr>
                 <td>
-                    Abbreviation:*
+                    Abbreviation:<Font color="red">*</Font>
                 </td>
                 <td>
                     @(Html.TextBoxFor(m => Model.Abbreviation, new { @class = "t-input" }))
@@ -92,6 +99,7 @@
                 <td colspan="2">
                 @(Html.Telerik().Grid(dataTypeList)
                     .Name("DataTypeGrid")
+                    .Scrollable(t => t.Height(400))
                     .Sortable()
                     .Columns(columns =>
                         {
@@ -107,9 +115,8 @@
                             .Title("").Width(36).HtmlAttributes(new { style = "text-align:center" });
                             columns.Bound(c => c.Name);
                             columns.Bound(c => c.Id);
-                            columns.Bound(c => c.Description);
                             columns.Bound(c => c.SystemType);
-
+                            columns.Bound(c => c.Description);
                         })
                 )
                 </td>
@@ -117,9 +124,9 @@
             <tr><td colspan="2"> </td></tr>
             <tr>
                 <td>
-                    * Please don't leave empty
+                    <Font color="red">*</Font> Please don't leave empty
                     <br /><br />
-                    <button name="create" value="GetUnitInput" type="submit" class="t-button">Save</button>
+                    <button name="create" value="GetUnitInput" type="submit" class="t-button"  id="saveButton" title="Save The Unit">Save</button>
                 </td>
                 <td>
                 </td>
@@ -133,3 +140,4 @@ else
 {
  <font color="red" style="margin:10px">Can't edit Unit doesn't exist anymore.</font>
 }    
+
