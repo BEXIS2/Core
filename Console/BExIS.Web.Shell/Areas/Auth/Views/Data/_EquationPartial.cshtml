@@ -1,9 +1,0 @@
-﻿@*@using BExIS.Web.Shell.Areas.Auth.Helpers;
-
-<div class="equationRow editor-field">
-    @using(Html.BeginCollectionItem("equations")) {
-        <%= Html.DropDownListFor(m => m.Id, new SelectList(Model.OrganizationsList, "Id", "Name"))%>
-        <%= Html.ValidationMessageFor(m => m.Id)%>
-        <a href="#" class="removeOrganization">delete</a>
-    <% } %>
-</div>*@

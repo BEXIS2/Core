@@ -1,7 +1,0 @@
-﻿<div class="organizationRow editor-field">
-    <% using(Html.BeginCollectionItem("Organizations")) { %>
-        <%= Html.DropDownListFor(m => m.Id, new SelectList(Model.OrganizationsList, "Id", "Name"))%>
-        <%= Html.ValidationMessageFor(m => m.Id)%>
-        <a href="#" class="removeOrganization">delete</a>
-    <% } %>
-</div>

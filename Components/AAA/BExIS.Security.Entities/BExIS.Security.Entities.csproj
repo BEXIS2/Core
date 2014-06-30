@@ -55,6 +55,7 @@
     <Compile Include="Objects\Feature.cs" />
     <Compile Include="Objects\FeaturePermission.cs" />
     <Compile Include="Objects\Permission.cs" />
+    <Compile Include="Objects\Property.cs" />
     <Compile Include="Objects\Rule.cs" />
     <Compile Include="Objects\Statement.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

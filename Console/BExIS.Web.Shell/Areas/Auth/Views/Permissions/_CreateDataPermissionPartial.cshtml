@@ -11,7 +11,7 @@
         @Html.LabelFor(m => m.SubjectId)
     </div>
     <div class="editor-field">
-        @Html.DropDownListFor(m => m.SubjectId, new SelectList(Model.SubjectsList, "Id", "Name"))
+        @Html.DropDownListFor(m => m.SubjectId, new SelectList(Model.SubjectsList, "Id", "Name"), "-- SELECT --")
         @Html.ValidationMessageFor(m => m.SubjectId)
     </div>
     
@@ -19,32 +19,61 @@
         @Html.LabelFor(m => m.EntityName)
     </div>
     <div class="editor-field">
-        @Html.DropDownListFor(m => m.EntityName, new SelectList(Model.EntitiesList, "Id", "Name"))
+        @Html.DropDownListFor(m => m.EntityName, new SelectList(Model.EntitiesList, "Id", "Name"), "-- SELECT --", new { onchange = "GetProperties($(this).val())"})
         @Html.ValidationMessageFor(m => m.EntityName)
     </div>
     
     <div class="editor-label" style="font-weight:bold">
-        @Html.LabelFor(m => m.Read)
+        @Html.Label("Expression")
     </div>
     <div class="editor-field">
-        @Html.CheckBoxFor(m => m.Read)
-        @Html.ValidationMessageFor(m => m.Read)
+        @Html.DropDownListFor(m => m.Property, new SelectList(Model.PropertiesList, "Id", "Name"), "-- SELECT --", new { id = "Properties" })
+        @Html.DropDownListFor(m => m.Comparator, new SelectList(Model.ComparatorsList, "Id", "Name"), "-- SELECT --", new { id = "Comparators" })
+        @Html.TextBoxFor(m => m.Value)
     </div>
     
     <div class="editor-label" style="font-weight:bold">
-        @Html.LabelFor(m => m.Update)
+        @Html.Label("Rights")
     </div>
     <div class="editor-field">
-        @Html.CheckBoxFor(m => m.Update)
-        @Html.ValidationMessageFor(m => m.Update)
-    </div>
-    
-    <div class="editor-label" style="font-weight:bold">
-        @Html.LabelFor(m => m.Delete)
-    </div>
-    <div class="editor-field">
-        @Html.CheckBoxFor(m => m.Delete)
-        @Html.ValidationMessageFor(m => m.Delete)
+        <table>
+            <tr>
+                <td>
+                    @Html.LabelFor(m => m.Create)
+                </td>
+                <td>
+                    @Html.CheckBoxFor(m => m.Create)
+                    @Html.ValidationMessageFor(m => m.Create)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.LabelFor(m => m.Read)
+                </td>
+                <td>
+                    @Html.CheckBoxFor(m => m.Read)
+                    @Html.ValidationMessageFor(m => m.Read)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.LabelFor(m => m.Update)
+                </td>
+                <td>
+                    @Html.CheckBoxFor(m => m.Update)
+                    @Html.ValidationMessageFor(m => m.Update)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.LabelFor(m => m.Delete)
+                </td>
+                <td>
+                    @Html.CheckBoxFor(m => m.Delete)
+                    @Html.ValidationMessageFor(m => m.Delete)
+                </td>
+            </tr>
+        </table>
     </div>
     
     <p>
@@ -57,5 +86,22 @@
 <script type="text/javascript">
     $(document).ready(function () {
         $.validator.unobtrusive.parse("#Content_Creation");
+
+        function GetProperties(e) {
+            $.getJSON('@Url.Action("GetProperties", "Permissions")', { id: e }, function (data) {
+                    var select = $("#Properties");
+                    select.empty();
+                    select.append($('<option/>', {
+                        value: 0,
+                        text: "-- SELECT --"
+                    }));
+                    $.each(data, function (index, itemData) {
+                        select.append($('<option/>', {
+                            value: itemData.Id,
+                            text: itemData.Name
+                        }));
+                    });
+                });
+            }
     });
 </script>

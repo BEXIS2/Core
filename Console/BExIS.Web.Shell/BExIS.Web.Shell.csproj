@@ -211,7 +211,6 @@
     <Compile Include="App_Start\RegisterClientValidationExtensions.cs" />
     <Compile Include="Areas\Auth\AuthAreaRegistration.cs" />
     <Compile Include="Areas\Auth\Controllers\AccountController.cs" />
-    <Compile Include="Areas\Auth\Controllers\DataController.cs" />
     <Compile Include="Areas\Auth\Controllers\PermissionsController.cs" />
     <Compile Include="Areas\Auth\Controllers\RolesController.cs" />
     <Compile Include="Areas\Auth\Controllers\UsersController.cs" />
@@ -994,7 +993,7 @@
     <Content Include="Areas\DDM\Views\Data\_structuredDataView.cshtml" />
     <Content Include="Areas\DCM\Views\Push\Index.cshtml" />
     <Content Include="Areas\DCM\Views\Push\_fileListView.cshtml" />
-    <Content Include="Areas\Auth\Views\Permissions\DataPermissions.cshtml" />
+    <Content Include="Areas\Auth\Views\Permissions\Data.cshtml" />
     <Content Include="Areas\Auth\Views\Permissions\Features.cshtml" />
     <Content Include="Areas\Auth\Views\Permissions\_CreateDataPermissionPartial.cshtml" />
     <Content Include="Areas\Auth\Views\Permissions\_DataPermissionsPartial.cshtml" />
@@ -1004,7 +1003,6 @@
     <None Include="Properties\PublishProfiles\2230.pubxml" />
     <None Include="Properties\PublishProfiles\2301.pubxml" />
     <None Include="Properties\PublishProfiles\2302.pubxml" />
-    <Content Include="Areas\Auth\Views\Data\DataPermissions.cshtml" />
     <None Include="Properties\PublishProfiles\BEXIS2 DEV.pubxml" />
     <None Include="Properties\PublishProfiles\BEXIS2.pubxml" />
     <None Include="Properties\PublishProfiles\BPP230.pubxml" />

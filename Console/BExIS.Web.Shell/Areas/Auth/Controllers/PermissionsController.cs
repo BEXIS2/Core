@@ -168,13 +168,13 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
 
         #region Grid - DataPermissions
 
-        public ActionResult DataPermissions()
+        public ActionResult Data()
         {
             return View();
         }
 
         [GridAction]
-        public ActionResult DataPermissions_Select()
+        public ActionResult Data_Select()
         {
             PermissionManager permissionManager = new PermissionManager();
 
@@ -196,6 +196,18 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
         public ActionResult CreateDataPermission(DataPermissionCreationModel model)
         {
             return PartialView("_CreateDataPermissionPartial", model);
+        }
+
+        [AcceptVerbs(HttpVerbs.Get)]
+        public JsonResult GetProperties(string id)
+        {
+            PermissionManager permissionManager = new PermissionManager();
+
+            IQueryable<Property> properties = permissionManager.GetAllProperties(id);
+            List<PropertyItemModel> PropertiesList = new List<PropertyItemModel>();
+            properties.ToList().ForEach(e => PropertiesList.Add(PropertyItemModel.Convert(e)));
+
+            return Json(PropertiesList, JsonRequestBehavior.AllowGet);
         }
 
         #endregion

@@ -329,9 +329,6 @@ namespace BExIS.Security.Services.Objects
 
         #endregion
 
-
-
-
         public DataPermission CreateDataPermission()
         {
             throw new NotImplementedException();
@@ -345,16 +342,63 @@ namespace BExIS.Security.Services.Objects
         public IQueryable<Entity> GetAllEntities()
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
-            XDocument xmlDocument = XDocument.Load(assembly.GetManifestResourceStream("BExIS.Security.Services.Manifest.xml"));
+            XDocument xDocument = XDocument.Load(assembly.GetManifestResourceStream("BExIS.Security.Services.Manifest.xml"));
 
             List<Entity> entities = new List<Entity>();
 
-            foreach (var entity in xmlDocument.Descendants("Entity"))
+            foreach (var entity in xDocument.Descendants("Entity"))
             {
-                entities.Add(new Entity() { Id = entity.Element("Id").Value, Name = entity.Element("Name").Value, Assembly = entity.Element("Assembly").Value, Type = entity.Element("Type").Value });
+                entities.Add(new Entity() { Id = entity.Attribute("Id").Value, Name = entity.Attribute("Name").Value, Assembly = entity.Attribute("Assembly").Value, Type = entity.Attribute("Type").Value });
             }
 
             return entities.AsQueryable<Entity>();
+        }
+
+        public IQueryable<Property> GetAllProperties(string entityName)
+        {
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            XDocument xDocument = XDocument.Load(assembly.GetManifestResourceStream("BExIS.Security.Services.Manifest.xml"));
+
+            List<Property> properties = new List<Property>();
+
+            foreach (var property in xDocument.Descendants("Property").Where(n => n.Ancestors("Entity").FirstOrDefault().Attribute("Id").Value == entityName))
+            {
+                properties.Add(new Property() { Id = property.Attribute("Id").Value, Name = property.Attribute("Name").Value });
+
+            }
+
+            return properties.AsQueryable<Property>();
+        }
+
+        public bool DeleteDataPermission()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IQueryable<DataPermission> GetDataPermissionsByEntityAndSubject(string entityName, long subjectId)
+        {
+            return DataPermissionsRepo.Query(p => p.Subject.Id == subjectId && p.EntityName == entityName);
+        }
+
+
+        //public Tuple<string, object[]> GetDataPermissionExpressionByEntityAndSubject(string entityName, long subjectId)
+        //{
+        //    List<DataPermission> dataPermissions = GetDataPermissionsByEntityAndSubject(entityName, subjectId).ToList();
+
+        //    string predicate = "";
+        //    object[] values = new object[dataPermissions.Count];
+
+        //    for (int i = 0; i < dataPermissions.Count(); i++)
+        //    {
+        //        predicate += 
+        //    }
+
+        //}
+
+
+        public Tuple<string, object[]> GetDataPermissionExpressionByEntityAndSubject(string entityName, long subjectId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

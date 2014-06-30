@@ -17,10 +17,17 @@ namespace BExIS.Security.Services.Objects
         //C
         DataPermission CreateDataPermission();
 
+        bool DeleteDataPermission();
+
         //G
         IQueryable<DataPermission> GetAllDataPermissions();
 
+        IQueryable<DataPermission> GetDataPermissionsByEntityAndSubject(string entityName, long subjectId);
+
         IQueryable<Entity> GetAllEntities();
+        IQueryable<Property> GetAllProperties(string entityName);
+
+        Tuple<string, object[]> GetDataPermissionExpressionByEntityAndSubject(string entityName, long subjectId);
 
         #endregion
     }

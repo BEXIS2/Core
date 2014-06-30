@@ -1,21 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Entities>
-  <Entity>
-    <Id>Dataset</Id>
-    <Name>Dataset</Name>
-    <Assembly>BExIS.Dlm.Entities</Assembly>
-    <Type>BExIS.Dlm.Entities.Data.Dataset</Type>
-  </Entity>
-  <Entity>
-    <Id>User</Id>
-    <Name>User</Name>
-    <Assembly>BExIS.Security.Entities</Assembly>
-    <Type>BExIS.Security.Entities.Subjects.User</Type>
-  </Entity>
-  <Entity>
-    <Id>Role</Id>
-    <Name>Role</Name>
-    <Assembly>BExIS.Security.Entities</Assembly>
-    <Type>BExIS.Security.Entities.Subjects.Role</Type>
+  <Entity Id="Dataset" Name="Dataset" Assembly="BExIS.Dlm.Entities" Type="BExIS.Dlm.Entities.Data.Dataset">
+    <Properties>
+      <Property Id="Id" Name="Id" />
+    </Properties>
   </Entity>
 </Entities> 

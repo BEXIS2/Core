@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 using BExIS.Security.Entities.Objects;
@@ -11,12 +12,14 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
 {
     public class DataPermissionCreationModel
     {
+        [Required]
         public long SubjectId { get; set; }
 
+        [Required]
         public string EntityName { get; set; }
 
         public string Property { get; set; }
-
+        public string Comparator { get; set; }
         public string Value { get; set; }
 
         public bool Create { get; set; }
@@ -26,6 +29,8 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
 
         public List<SubjectItemModel> SubjectsList { get; set; }
         public List<EntityItemModel> EntitiesList { get; set; }
+        public List<PropertyItemModel> PropertiesList { get; set; }
+        public List<ComparatorItemModel> ComparatorsList { get; set; }
 
         public DataPermissionCreationModel()
         {
@@ -40,6 +45,39 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
             IQueryable<Entity> entites = permissionManager.GetAllEntities();
             EntitiesList = new List<EntityItemModel>();
             entites.ToList().ForEach(e => EntitiesList.Add(EntityItemModel.Convert(e)));
+
+            PropertiesList = new List<PropertyItemModel>();
+            ComparatorsList = new List<ComparatorItemModel>();
+        }
+    }
+
+    public class PropertyItemModel
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+
+        public static PropertyItemModel Convert(Property property)
+        {
+            return new PropertyItemModel()
+            {
+                Id = property.Id,
+                Name = property.Name
+            };
+        }
+    }
+
+    public class ComparatorItemModel
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+
+        public static ComparatorItemModel Convert(string value)
+        {
+            return new ComparatorItemModel()
+            {
+                Id = value,
+                Name = value
+            };
         }
     }
 
