@@ -568,10 +568,11 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
                     private bool filterInUse()
                     {
-                        if (Session["Filter"] != null && !(bool)Session["DownloadFullDataset"])
+                        if ((Session["Filter"] != null || Session["Columns"] != null)  && !(bool)Session["DownloadFullDataset"])
                         {
                             GridCommand command = (GridCommand)Session["Filter"];
-                            if (command.FilterDescriptors.Count > 0 || command.SortDescriptors.Count > 0)
+                            string[] columns = (string[])Session["Columns"];
+                            if (command.FilterDescriptors.Count > 0 || command.SortDescriptors.Count > 0 || columns.Count()>0)
                             {
                                 return true;
                             }

@@ -23,17 +23,14 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Config
         static XmlDocument configXML;
         static IndexReader _Reader = BexisIndexSearcher.getIndexReader();
 
-        private static  searchInitObjects sIO = new searchInitObjects();
+        private static searchInitObjects sIO = new searchInitObjects();
 
         private static List<Facet> AllFacetsDefault = sIO.AllFacets;
         private static List<Property> AllPropertiesDefault = sIO.AllProperties;
         private static List<Category> AllCategoriesDefault = sIO.AllCategories;
 
-
-
         private static HashSet<string> numericProperties = new HashSet<string>();
         private static Boolean isLoaded = false;
-
 
         public static List<XmlNode> facetXmlNodeList = new List<XmlNode>();
         public static List<XmlNode> propertyXmlNodeList = new List<XmlNode>();
@@ -53,7 +50,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Config
             AllPropertiesDefault = sIO.AllProperties;
             AllCategoriesDefault = sIO.AllCategories;
 
-            numericProperties = new HashSet<string>();        
+            numericProperties = new HashSet<string>();
 
             facetXmlNodeList = new List<XmlNode>();
             propertyXmlNodeList = new List<XmlNode>();
@@ -76,11 +73,8 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Config
         {
             configXML = new XmlDocument();
 
-
-
             configXML.Load(FileHelper.ConfigFilePath);
             XmlNodeList fieldProperties = configXML.GetElementsByTagName("field");
-
 
             Category categoryDefault = new Category();
             categoryDefault.Name = "All";
@@ -88,173 +82,154 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Config
             categoryDefault.DisplayName = "All";
             categoryDefault.DefaultValue = "nothing";
             AllCategoriesDefault.Add(categoryDefault);
-
             foreach (XmlNode fieldProperty in fieldProperties)
             {
-
-                String headerItem = fieldProperty.Attributes.GetNamedItem("header_item").Value;
-                String storeItem = fieldProperty.Attributes.GetNamedItem("store").Value;
-
-                if (headerItem.ToLower().Equals("yes") && storeItem.ToLower().Equals("yes"))
+                if (!fieldProperty.Attributes.GetNamedItem("type").Value.ToLower().Equals("primary_data_field"))
                 {
-                    headerItemXmlNodeList.Add(fieldProperty);
-                }
-
-                String fieldType = fieldProperty.Attributes.GetNamedItem("type").Value;
-                String fieldName = fieldProperty.Attributes.GetNamedItem("lucene_name").Value;
-
-                String primitiveType = fieldProperty.Attributes.GetNamedItem("primitive_type").Value;
-                if (!primitiveType.ToLower().Equals("string"))
-                {
-                    numericProperties.Add(fieldName.ToLower());
-                }
-
-                if (fieldType.ToLower().Equals("facet_field"))
-                {
-                    facetXmlNodeList.Add(fieldProperty);
-                    Facet cDefault = new Facet();
-                    cDefault.Name = fieldName;
-                    cDefault.Text = fieldName;
-                    cDefault.Value = fieldName;
-                    cDefault.DisplayName = fieldProperty.Attributes.GetNamedItem("display_name").Value;
-                    //c.Expanded = true;
-                    //c.Enabled = true;
-
-                    cDefault.Childrens = new List<Facet>();
-                    List<Facet> lcDefault = new List<Facet>();
-
-                    try
+                    String headerItem = fieldProperty.Attributes.GetNamedItem("header_item").Value;
+                    String storeItem = fieldProperty.Attributes.GetNamedItem("store").Value;
+                    if (headerItem.ToLower().Equals("yes") && storeItem.ToLower().Equals("yes"))
                     {
+                        headerItemXmlNodeList.Add(fieldProperty);
+                    }
 
-                        Query query = new QueryParser(Lucene.Net.Util.Version.LUCENE_30, "id", new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30)).Parse("*:*");
-                        SimpleFacetedSearch sfs = new SimpleFacetedSearch(_Reader, new string[] { "facet_" + fieldName });
-                        SimpleFacetedSearch.Hits hits = sfs.Search(query);
+                    String fieldType = fieldProperty.Attributes.GetNamedItem("type").Value;
+                    String fieldName = fieldProperty.Attributes.GetNamedItem("lucene_name").Value;
 
-                        foreach (SimpleFacetedSearch.HitsPerFacet hpg in hits.HitsPerFacet)
+                    String primitiveType = fieldProperty.Attributes.GetNamedItem("primitive_type").Value;
+                    if (!primitiveType.ToLower().Equals("string"))
+                    {
+                        numericProperties.Add(fieldName.ToLower());
+                    }
+
+                    if (fieldType.ToLower().Equals("facet_field"))
+                    {
+                        facetXmlNodeList.Add(fieldProperty);
+                        Facet cDefault = new Facet();
+                        cDefault.Name = fieldName;
+                        cDefault.Text = fieldName;
+                        cDefault.Value = fieldName;
+                        cDefault.DisplayName = fieldProperty.Attributes.GetNamedItem("display_name").Value;
+
+                        cDefault.Childrens = new List<Facet>();
+                        List<Facet> lcDefault = new List<Facet>();
+                        try
                         {
-                            Facet ccDefault = new Facet();
-                            ccDefault.Parent = cDefault;
-                            ccDefault.Name = hpg.Name.ToString();
-                            ccDefault.DisplayName = hpg.Name.ToString();
-                            ccDefault.Text = hpg.Name.ToString();
-                            ccDefault.Value = hpg.Name.ToString();
-                            ccDefault.Count = (int)hpg.HitCount;
-                            lcDefault.Add(ccDefault);
+                            Query query = new QueryParser(Lucene.Net.Util.Version.LUCENE_30, "id", new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30)).Parse("*:*");
+                            SimpleFacetedSearch sfs = new SimpleFacetedSearch(_Reader, new string[] { "facet_" + fieldName });
+                            SimpleFacetedSearch.Hits hits = sfs.Search(query);
+
+                            int cCount = 0;
+                            foreach (SimpleFacetedSearch.HitsPerFacet hpg in hits.HitsPerFacet)
+                            {
+                                if (!hpg.Name.ToString().Equals(""))
+                                {
+                                    Facet ccDefault = new Facet();
+                                    ccDefault.Name = hpg.Name.ToString();
+                                    ccDefault.Text = hpg.Name.ToString();
+                                    ccDefault.Value = hpg.Name.ToString();
+                                    ccDefault.Count = (int)hpg.HitCount;
+                                    if (ccDefault.Count > 0) cCount++;
+                                    cDefault.Childrens.Add(ccDefault);
+                                }
+                            }
+                            cDefault.Count = cCount;
+                            AllFacetsDefault.Add(cDefault);
+
+                        }
+                        catch
+                        {
+
+                        }
+                    }
+
+                    else if (fieldType.ToLower().Equals("property_field"))
+                    {
+                        propertyXmlNodeList.Add(fieldProperty);
+                        Property cDefault = new Property();
+                        //c.Id = x.Attributes[Property.ID].InnerText;
+                        cDefault.Name = fieldProperty.Attributes.GetNamedItem("lucene_name").Value;
+                        cDefault.DisplayName = fieldProperty.Attributes.GetNamedItem("display_name").Value;
+                        cDefault.DisplayTitle = fieldProperty.Attributes.GetNamedItem("display_name").Value;
+                        cDefault.DataSourceKey = fieldProperty.Attributes.GetNamedItem("metadata_name").Value;
+                        cDefault.UIComponent = fieldProperty.Attributes.GetNamedItem("uiComponent").Value; ;
+                        cDefault.AggregationType = "distinct";
+                        cDefault.DefaultValue = "All";
+                        cDefault.DataType = fieldProperty.Attributes.GetNamedItem("primitive_type").Value;
+                        if (cDefault.UIComponent.ToLower().Equals("range") && cDefault.DataType.ToLower().Equals("date"))
+                        {
+                            String direction = fieldProperty.Attributes.GetNamedItem("direction").Value;
+
+                            if (direction.ToLower().Equals("increase"))
+                            {
+                                cDefault.Direction = Direction.increase;
+                            }
+                            else
+                            {
+                                cDefault.Direction = Direction.decrease;
+                            }
                         }
 
-                        //SetParent(c);
-                        if (lcDefault.Count() > 0)
-                        {
-                            int childCount = 0;
-                            foreach (Facet c_child in lcDefault)
-                            {
-                                childCount += c_child.Count;
-                                //c.Items.Add(c_child);
-                                cDefault.Childrens.Add(c_child);
 
+                        Query query = new QueryParser(Lucene.Net.Util.Version.LUCENE_30, "id", new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_29)).Parse("*:*");
+                        try
+                        {
+                            SimpleFacetedSearch sfs = new SimpleFacetedSearch(_Reader, new string[] { "property_" + fieldName });
+                            SimpleFacetedSearch.Hits hits = sfs.Search(query);
+                            List<string> laDefault = new List<string>();
+                            foreach (SimpleFacetedSearch.HitsPerFacet hpg in hits.HitsPerFacet)
+                            {
+                                laDefault.Add(hpg.Name.ToString());
                             }
 
-                            //c.Childs = true;
-                            //c.Text = c.CategoryName + " (" + childCount.ToString() + ")";
-                            cDefault.Text = cDefault.Name;
-                            cDefault.Count += childCount;
+                            if (!cDefault.UIComponent.ToLower().Equals("range")) { laDefault.Add("All"); };
+                            laDefault.Sort();
+                            cDefault.Values = laDefault;
+                            AllPropertiesDefault.Add(cDefault);
                         }
-                        else { cDefault.Count = 0; }
-                        //c.Count = c.Childrens.Count();
-                        AllFacetsDefault.Add(cDefault);
+                        catch
+                        {
+
+                        }
                     }
-                    catch
-                    { 
-                    
+                    else if (fieldType.ToLower().Equals("category_field"))
+                    {
+                        categoryXmlNodeList.Add(fieldProperty);
+
+                        Category cDefault = new Category();
+                        cDefault.Name = fieldProperty.Attributes.GetNamedItem("lucene_name").Value;
+                        cDefault.DisplayName = fieldProperty.Attributes.GetNamedItem("display_name").Value;
+                        cDefault.Value = fieldProperty.Attributes.GetNamedItem("lucene_name").Value; ;
+                        cDefault.DefaultValue = "nothing";
+
+                        AllCategoriesDefault.Add(cDefault);
                     }
+                    else if (fieldType.ToLower().Equals("general_field"))
+                    {
+                        generalXmlNodeList.Add(fieldProperty);
+                    }
+
                 }
-
-                else if (fieldType.ToLower().Equals("property_field"))
-                {
-                    propertyXmlNodeList.Add(fieldProperty);
-                    Property cDefault = new Property();
-                    //c.Id = x.Attributes[Property.ID].InnerText;
-                    cDefault.Name = fieldProperty.Attributes.GetNamedItem("lucene_name").Value;
-                    cDefault.DisplayName = fieldProperty.Attributes.GetNamedItem("display_name").Value;
-                    cDefault.DisplayTitle = fieldProperty.Attributes.GetNamedItem("display_name").Value;
-                    cDefault.DataSourceKey = fieldProperty.Attributes.GetNamedItem("metadata_name").Value;
-                    cDefault.UIComponent = fieldProperty.Attributes.GetNamedItem("uiComponent").Value; ;
-                    //cDefault.DefaultValue = fieldProperty.Attributes.GetNamedItem("default_value").Value; 
-                    // cDefault.AggregationType = fieldProperty.Attributes.GetNamedItem("type").Value; ;
-                    cDefault.AggregationType = "distinct";
-                    cDefault.DefaultValue = "All";
-                    cDefault.DataType = fieldProperty.Attributes.GetNamedItem("primitive_type").Value;
-                    if (cDefault.UIComponent.ToLower().Equals("range") && cDefault.DataType.ToLower().Equals("date"))
-                    {
-
-                        String direction = fieldProperty.Attributes.GetNamedItem("direction").Value;
-
-                        if (direction.ToLower().Equals("increase"))
-                        {
-                            cDefault.Direction = Direction.increase;
-                        }
-                        else
-                        {
-                            cDefault.Direction = Direction.decrease;
-                        }
-                    }
-
-
-
-                    Query query = new QueryParser(Lucene.Net.Util.Version.LUCENE_30, "id", new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_29)).Parse("*:*");
-
-
-                    try
-                    {
-                        SimpleFacetedSearch sfs = new SimpleFacetedSearch(_Reader, new string[] { "property_" + fieldName });
-                        SimpleFacetedSearch.Hits hits = sfs.Search(query);
-                        List<string> laDefault = new List<string>();
-                        foreach (SimpleFacetedSearch.HitsPerFacet hpg in hits.HitsPerFacet)
-                        {
-                            String abc = hpg.Name.ToString();
-
-                            if (cDefault.UIComponent.ToLower().Equals("range") && cDefault.DataType.ToLower().Equals("date"))
-                            {
-                                laDefault.Add(abc);
-                            }
-                            else { laDefault.Add(abc); }
-                        }
-
-                        if (!cDefault.UIComponent.ToLower().Equals("range")) { laDefault.Add("All"); };
-                        laDefault.Sort();
-                        cDefault.Values = laDefault;
-                        AllPropertiesDefault.Add(cDefault);
-                    }
-                    catch
-                    {
-
-                    }
-                }
-                else if (fieldType.ToLower().Equals("category_field"))
+                else if (fieldProperty.Attributes.GetNamedItem("type").Value.ToLower().Equals("primary_data_field"))
                 {
                     categoryXmlNodeList.Add(fieldProperty);
-
                     Category cDefault = new Category();
                     cDefault.Name = fieldProperty.Attributes.GetNamedItem("lucene_name").Value;
                     cDefault.DisplayName = fieldProperty.Attributes.GetNamedItem("display_name").Value;
                     cDefault.Value = fieldProperty.Attributes.GetNamedItem("lucene_name").Value; ;
                     cDefault.DefaultValue = "nothing";
-
                     AllCategoriesDefault.Add(cDefault);
                 }
-                else if (fieldType.ToLower().Equals("general_field"))
-                {
-                    generalXmlNodeList.Add(fieldProperty);
-                }
+
+
             }
-
-
         }
 
 
 
 
-        public static void reloadConfig() {
+        public static void reloadConfig()
+        {
             isLoaded = false;
             LoadConfig();
         }
@@ -265,9 +240,10 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Config
         public static IEnumerable<Property> getProperties() { return AllPropertiesDefault; }
         public static IEnumerable<Category> getCategories() { return AllCategoriesDefault; }
 
-        public static IEnumerable<Facet> getFacetsCopy() {
+        public static IEnumerable<Facet> getFacetsCopy()
+        {
             searchInitObjects sIOCopy = DeepCopy<searchInitObjects>(sIO);
-            return sIOCopy.AllFacets; 
+            return sIOCopy.AllFacets;
         }
         public static IEnumerable<Property> getPropertiesCopy()
         {

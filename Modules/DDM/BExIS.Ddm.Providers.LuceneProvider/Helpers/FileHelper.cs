@@ -25,6 +25,11 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Helpers
             get { return (Path.Combine(AppConfiguration.GetModuleWorkspacePath("DDM"), "Lucene", "Config", "LuceneConfig.xml")); }
         }
 
+        public static string LuceneManagerConfigFilePath
+        {
+            get { return (Path.Combine(AppConfiguration.GetModuleWorkspacePath("Search"), "Lucene", "Config", "LuceneManagerConfig.xml")); }
+        }
+
         public static string ConfigBackUpFilePath
         {
             get { return (Path.Combine(AppConfiguration.GetModuleWorkspacePath("DDM"), "Lucene", "Config", "BackUp", "LuceneConfig.xml")); }

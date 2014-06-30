@@ -65,15 +65,12 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
 
         private static void BexisIndexSearcherInit()
         {
-
             List<string> facetFieldList = new List<string>();
             List<string> categoryFieldList = new List<string>();
             List<string> propertyFieldList = new List<string>();
             List<string> storedFieldList = new List<string>();
 
-
             configXML = new XmlDocument();
-
             configXML.Load(FileHelper.ConfigFilePath);
             XmlNodeList fieldProperties = configXML.GetElementsByTagName("field");
 
@@ -128,7 +125,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
 
             }
 
-               
+
             List<Row> RowList = new List<Row>();
             foreach (ScoreDoc sd in docs.ScoreDocs)
             {
@@ -160,7 +157,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
                 r.Values = ValueList;
                 RowList.Add(r);
             }
-           
+
             sro.Header = Header;
             sro.DefaultVisibleHeaderItem = DefaultHeader;
             sro.Rows = RowList;
@@ -170,7 +167,6 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
 
         public static IEnumerable<TextValue> doTextSearch(Query origQuery, String queryFilter, String searchtext)
         {
-
             String filter = queryFilter;
             BooleanQuery query = new BooleanQuery();
             query.Add(origQuery, Occur.MUST);
@@ -183,7 +179,6 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
                 filter = "ng_all";
                 queryFilter = "ng_all";
             }
-
             HashSet<string> uniqueText = new HashSet<string>();
             searchtext = searchtext.ToLower();
             QueryParser parser = new QueryParser(Lucene.Net.Util.Version.LUCENE_30, filter, new KeywordAnalyzer());
@@ -191,15 +186,10 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
             Query X1 = parser.Parse(searchtext);
             query.Add(X1, Occur.MUST);
             // Query query = parser.Parse("tree data");
-            TopDocs tds = searcher.Search(query, 100);
+            TopDocs tds = searcher.Search(query, 50);
             QueryScorer scorer = new QueryScorer(query, searchtext);
-            //SimpleHTMLFormatter formatter = new SimpleHTMLFormatter("<span class=\"highlight\">", "</span>");
-            //Highlighter highlighter = new Highlighter(formatter, scorer);
-            // Highlighter highlighter = new Highlighter(scorer);
-            //highlighter.TextFragmenter = new SimpleSpanFragmenter(scorer);
-
             Analyzer analyzer = new NGramAnalyzer();
-            List<TextValue> l = new List<TextValue>();
+            List<TextValue> autoCompleteTextList = new List<TextValue>();
             foreach (ScoreDoc sd in tds.ScoreDocs)
             {
                 Document doc = searcher.Doc(sd.Doc);
@@ -209,7 +199,6 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
                 QueryParser parser1 = new QueryParser(Lucene.Net.Util.Version.LUCENE_30, "value", new KeywordAnalyzer());
                 parser1.DefaultOperator = QueryParser.Operator.AND;
                 Query q2 = parser1.Parse(searchtext);
-                //Query q2 = (new QueryParser(Lucene.Net.Util.Version.LUCENE_30, "value", new NGramAnalyzer())).Parse(searchtext);
                 BooleanQuery q3 = new BooleanQuery();
                 q3.Add(q1, Occur.MUST);
                 q3.Add(q2, Occur.MUST);
@@ -218,22 +207,20 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
                 foreach (ScoreDoc sdAutoComp in tdAutoComp.ScoreDocs)
                 {
                     Document docAutoComp = autoCompleteSearcher.Doc(sdAutoComp.Doc);
-                    //String text = doc.GetFields(filter)[0].StringValue;
-                    //TokenStream stream = TokenSources.GetAnyTokenStream(searcher.IndexReader, sd.Doc, filter, doc, analyzer);
-                    // String fragment = highlighter.GetBestFragments(stream, text, 3, "....");
-                    // String fragment = (highlighter.GetBestTextFragments(stream, text, true, 3 ))[0].ToString();
                     String toAdd = docAutoComp.GetField("value").StringValue;
                     if (!uniqueText.Contains(toAdd))
                     {
-                        TextValue abcd = new TextValue();
-                        abcd.Name = toAdd;
-                        abcd.Value = toAdd;
-                        l.Add(abcd);
+                        TextValue tv = new TextValue();
+                        tv.Name = toAdd;
+                        tv.Value = toAdd;
+                        autoCompleteTextList.Add(tv);
                         uniqueText.Add(toAdd);
                     }
                 }
+
+                if (autoCompleteTextList.Count > 7) break;
             }
-            return l;
+            return autoCompleteTextList;
         }
 
         public static IEnumerable<Facet> facetSearch(Query query, IEnumerable<Facet> facets)
@@ -246,44 +233,27 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
                 c.Text = f.Text;
                 c.Value = f.Value;
                 c.DisplayName = f.DisplayName;
-                //c.Expanded = true;
-                //c.Enabled = true;
                 c.Childrens = new List<Facet>();
-                List<Facet> lc = new List<Facet>();
                 SimpleFacetedSearch sfs = new SimpleFacetedSearch(_Reader, new string[] { "facet_" + f.Name });
                 SimpleFacetedSearch.Hits hits = sfs.Search(query);
+                int cCount = 0;
                 foreach (SimpleFacetedSearch.HitsPerFacet hpg in hits.HitsPerFacet)
                 {
-                    Facet cc = new Facet();
-                    cc.Name = hpg.Name.ToString();
-                    cc.Text = hpg.Name.ToString();
-                    cc.Value = hpg.Name.ToString();
-                    cc.Count = (int)hpg.HitCount;
-                    lc.Add(cc);
-                }
-                //SetParent(c);
-                if (lc.Count() > 0)
-                {
-                    int childCount = 0;
-                    foreach (Facet c_child in lc)
+                    if (!hpg.Name.ToString().Equals(""))
                     {
-                        childCount += c_child.Count;
-                        //c.Items.Add(c_child);
-                        c.Childrens.Add(c_child);
+                        Facet cc = new Facet();
+                        cc.Name = hpg.Name.ToString();
+                        cc.Text = hpg.Name.ToString();
+                        cc.Value = hpg.Name.ToString();
+                        cc.Count = (int)hpg.HitCount;
+                        if (cc.Count > 0) cCount++;
+                        c.Childrens.Add(cc);
                     }
-
-                    //c.Childs = true;
-                    //c.Text = c.CategoryName + " (" + childCount.ToString() + ")";
-                    c.Text = c.Name;
-                    c.Count += childCount;
                 }
-                else c.Count = 0;
-                //c.Count = c.Childrens.Count();
+                c.Count = cCount;
                 l.Add(c);
             }
             return l;
         }
-
-
     }
 }

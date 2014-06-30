@@ -56,6 +56,8 @@
 			.ClientEvents(events => events
 						 .OnLoad("PrimaryDataResultGrid_OnLoad")
 						 .OnDataBound("PrimaryData_OnCommand")
+                         .OnColumnShow("PrimaryData_OnCommand")
+                         .OnColumnHide("PrimaryData_OnCommand")
 					)
 			.Columns(columns =>
 			{
@@ -133,11 +135,13 @@
         }
     });
 
-    $.post('@Url.Action("SetGridCommand", "Data", new RouteValueDictionary { { "area", "DDM" } })', { filters: currentFilter, orders: currentOrder, columns: visibleColumns }, function (response) {
+        $.post('@Url.Action("SetGridCommand", "Data", new RouteValueDictionary { { "area", "DDM" } })', { filters: currentFilter, orders: currentOrder, columns: visibleColumns }, function (response) {
 
-    })
+        })
 
-}
+	}
+
+
 
 </script>
 
