@@ -1,0 +1,143 @@
+﻿@using Telerik.Web.Mvc.UI;
+@using BExIS.Web.Shell.Areas.Auth.Models;
+
+@model List<DataPermissionModel>
+
+@(Html.Telerik().Grid(Model)
+    .Name("Grid_DataPermissions")
+    .DataKeys(keys =>
+    {
+        keys.Add(p => p.Id);
+    })
+    .ToolBar(command =>
+        {
+            command.Custom().Name("Create").Text("New Data Permission").Ajax(true).ButtonType(GridButtonType.ImageAndText).ImageHtmlAttributes(new { @class = "t-icon t-add" });
+        })
+    .Columns(columns =>
+    {
+        columns.Command(command =>
+        {
+            command.Custom("Update").Ajax(true).ButtonType(GridButtonType.BareImage).ImageHtmlAttributes(new { @class = "t-icon t-edit" });
+            command.Custom("Delete").Ajax(true).ButtonType(GridButtonType.BareImage).ImageHtmlAttributes(new { @class = "t-icon t-delete" });
+        }).Title("Actions").Width(90).HtmlAttributes(new { style = "text-align:left" });
+        columns.Bound(p => p.Id);
+        columns.Bound(p => p.SubjectName);
+        columns.Bound(p => p.SubjectType);
+        columns.Bound(p => p.Equation);
+    })
+    .ClientEvents(clientEvents => clientEvents.OnCommand("OnCommand"))
+    .DataBinding(dataBinding => dataBinding
+            .Ajax()
+            .Select("DataPermissions_Select", "Permissions")
+    )
+    .Filterable()
+    .Sortable(sortable => sortable
+        .OrderBy(orderby => orderby
+            .Add(r => r.Id).Descending()))
+    .Scrollable(scrollable => scrollable.Height(500))
+)
+
+@(Html.Telerik().Window()
+    .Name("Window_Creation")
+    .Title("Create Data Permission")
+    .Draggable(true)
+    .Modal(true)
+    .Visible(false)
+    .Scrollable(true)
+    .ContentHtmlAttributes(new { @style="overflow:auto; width:auto; height:auto; min-height:225px; min-width:400px"})
+    .Content(@<text>
+        <div id="Content_Creation"></div>
+    </text>)
+    .ClientEvents(clientEvents => clientEvents
+        .OnClose("Window_Creation_OnClose")
+    )
+)
+
+@(Html.Telerik().Window()
+    .Name("Window_Deletion")
+    .Title("Delete Data Permission")
+    .Draggable(true)
+    .Modal(true)
+    .Visible(false)
+    .Scrollable(true)
+    .ContentHtmlAttributes(new { @style="overflow:auto; width:auto; height:auto; min-height:225px; min-width:400px"})
+    .Content(@<text>
+        <div id="Content_Deletion"></div>
+    </text>)
+    .ClientEvents(clientEvents => clientEvents
+        .OnClose("Window_Deletion_OnClose")
+    )
+)
+
+@(Html.Telerik().Window()
+    .Name("Window_Details")
+    .Title("Update Data Permission")
+    .Draggable(true)
+    .Modal(true)
+    .Visible(false)
+    .Scrollable(true)
+    .ContentHtmlAttributes(new { @style="overflow:auto; width:auto; height:auto; min-height:225px; min-width:400px"})
+    .Content(@<text>
+        <div id="Content_Update"></div>
+    </text>)
+    .ClientEvents(clientEvents => clientEvents
+        .OnClose("Window_Details_OnClose")
+    )
+)
+
+<script type="text/javascript">
+    
+    function OnCommand(e) {
+
+        if (e.name == "Create") {
+
+            $.get('@Url.Action("CreateDataPermission", "Permissions")', function (data) {
+
+                $('#Content_Creation').html(data);
+
+                var window = $('#Window_Creation').data('tWindow');
+                window.center().open();
+            });
+        }
+
+        if (e.name == "Delete") {
+            var userID = e.dataItem.Id;
+
+            $.get('@Url.Action("DeleteDataPermission", "Permissions")', { Id : userID }, function (data) {
+
+                $('#Content_Deletion').html(data);
+
+                var window = $('#Window_Deletion').data('tWindow');
+                window.center().open();
+            });
+        }
+
+        if (e.name == "Update") {
+            var userID = e.dataItem.Id;
+
+            $.get('@Url.Action("UpdateDataPermission", "Permissions")', { Id: userID }, function (windowData) {
+
+                $('#Content_Update').html(windowData);
+
+                $.get('@Url.Action("ShowDataPermission", "Permissions")', { Id: userID }, function (contentData) {
+
+                    $('#Content_DataPermissionDetails').html(contentData);
+
+                    var window = $('#Window_Update').data('tWindow');
+                    window.center().open();
+                });
+            });
+        }
+    }
+
+    // Create
+    function Window_Creation_Cancel() {
+        $('#Window_Creation').data('tWindow').close();
+    }
+
+    function Window_Creation_OnClose() {
+        $('#Content_Creation').empty();
+        $("#Grid_DataPermissions .t-refresh").trigger('click');
+    }
+
+</script>

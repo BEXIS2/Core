@@ -32,7 +32,7 @@
         
         $('#Content_FeaturePermissions').empty();
 
-        $.get('@Url.Action("FeaturePermissions", "Features")', { Id: featureID }, function (contentData) {
+        $.get('@Url.Action("FeaturePermissions", "Permissions")', { Id: featureID }, function (contentData) {
 
             $('#Content_FeaturePermissions').html(contentData);
         });
@@ -40,7 +40,7 @@
 
     // Feature Permission
     function setFeaturePermission(value, subjectId, featureId) {
-        $.post('@Url.Action("SetFeaturePermission", "Features")', { SubjectId: subjectId, FeatureId: featureId, Value: value }, function (e) {
+        $.post('@Url.Action("SetFeaturePermission", "Permissions")', { SubjectId: subjectId, FeatureId: featureId, Value: value }, function (e) {
             $("#Grid_FeaturePermissions .t-refresh").trigger('click');
         });
 

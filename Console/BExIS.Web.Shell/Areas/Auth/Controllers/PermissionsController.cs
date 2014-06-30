@@ -10,14 +10,15 @@ using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Web.Shell.Areas.Auth.Models;
 using Telerik.Web.Mvc;
-using Telerik.Web.Mvc.UI;
 
 namespace BExIS.Web.Shell.Areas.Auth.Controllers
 {
-    public class FeaturesController : Controller
+    public class PermissionsController : Controller
     {
+        #region Features
+
         #region Tree View
-       
+
         public ActionResult Features()
         {
             FeatureManager featureManager = new FeatureManager();
@@ -31,7 +32,6 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
         }
 
         #endregion
-
 
         #region Grid - FeaturePermissions
 
@@ -74,8 +74,6 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
             return View(new GridModel<FeaturePermissionModel> { Data = featurePermissions });
         }
 
-
-
         public void SetFeaturePermission(long subjectId, long featureId, int value)
         {
             PermissionManager permissionManager = new PermissionManager();
@@ -88,7 +86,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
             {
                 FeaturePermission featurePermission = permissionManager.GetFeaturePermissionByFeatureAndSubject(featureId, subjectId);
 
-                if(featurePermission != null)
+                if (featurePermission != null)
                 {
                     featurePermission.PermissionType = (PermissionType)value;
                     permissionManager.UpdateFeaturePermission(featurePermission);
@@ -104,7 +102,6 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
         }
 
         #endregion
-
 
         #region Validation
 
@@ -148,7 +145,6 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
             }
         }
 
-
         private static string ErrorCodeToErrorKey(FeatureCreateStatus status)
         {
             switch (status)
@@ -163,6 +159,50 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
                     return "";
             }
         }
+
+        #endregion
+
+        #endregion
+
+        #region Data
+
+        #region Grid - DataPermissions
+
+        public ActionResult DataPermissions()
+        {
+            return View();
+        }
+
+        [GridAction]
+        public ActionResult DataPermissions_Select()
+        {
+            PermissionManager permissionManager = new PermissionManager();
+
+            // DATA
+            IQueryable<DataPermission> data = permissionManager.GetAllDataPermissions();
+
+            List<DataPermissionModel> permissions = new List<DataPermissionModel>();
+            data.ToList().ForEach(p => permissions.Add(DataPermissionModel.Convert(p)));
+
+            return View(new GridModel<DataPermissionModel> { Data = permissions });
+        }
+
+        public ActionResult CreateDataPermission()
+        {
+            return PartialView("_CreateDataPermissionPartial", new DataPermissionCreationModel());
+        }
+
+        [HttpPost]
+        public ActionResult CreateDataPermission(DataPermissionCreationModel model)
+        {
+            return PartialView("_CreateDataPermissionPartial", model);
+        }
+
+        #endregion
+
+        #region Validation
+
+        #endregion
 
         #endregion
     }

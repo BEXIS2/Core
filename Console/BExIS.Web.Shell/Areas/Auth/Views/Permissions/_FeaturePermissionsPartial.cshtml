@@ -38,7 +38,7 @@
     })
     .DataBinding(dataBinding => dataBinding
         .Ajax()
-        .Select("FeaturePermissions_Select", "Features", (long)ViewData["FeatureID"])
+        .Select("FeaturePermissions_Select", "Permissions", (long)ViewData["FeatureID"])
     )
     .Filterable()
     .Sortable(sortable => sortable

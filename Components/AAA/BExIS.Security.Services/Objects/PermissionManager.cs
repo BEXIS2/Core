@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Linq.Dynamic;
+using System.Reflection;
 using System.Text;
+using System.Xml;
+using System.Xml.Linq;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Subjects;
 using Vaiona.Persistence.Api;
@@ -16,6 +19,7 @@ namespace BExIS.Security.Services.Objects
         {
             IUnitOfWork uow = this.GetUnitOfWork();
 
+            this.DataPermissionsRepo = uow.GetReadOnlyRepository<DataPermission>();
             this.FeaturePermissionsRepo = uow.GetReadOnlyRepository<FeaturePermission>();
             this.FeaturesRepo = uow.GetReadOnlyRepository<Feature>();
             this.SubjectsRepo = uow.GetReadOnlyRepository<Subject>();
@@ -24,6 +28,7 @@ namespace BExIS.Security.Services.Objects
 
         #region Data Readers
 
+        public IReadOnlyRepository<DataPermission> DataPermissionsRepo { get; private set; }
         public IReadOnlyRepository<FeaturePermission> FeaturePermissionsRepo { get; private set; }
         public IReadOnlyRepository<Feature> FeaturesRepo { get; private set; } 
         public IReadOnlyRepository<Subject> SubjectsRepo { get; private set; }
@@ -325,6 +330,31 @@ namespace BExIS.Security.Services.Objects
         #endregion
 
 
-        
+
+
+        public DataPermission CreateDataPermission()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IQueryable<DataPermission> GetAllDataPermissions()
+        {
+            return DataPermissionsRepo.Query();
+        }
+
+        public IQueryable<Entity> GetAllEntities()
+        {
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            XDocument xmlDocument = XDocument.Load(assembly.GetManifestResourceStream("BExIS.Security.Services.Manifest.xml"));
+
+            List<Entity> entities = new List<Entity>();
+
+            foreach (var entity in xmlDocument.Descendants("Entity"))
+            {
+                entities.Add(new Entity() { Id = entity.Element("Id").Value, Name = entity.Element("Name").Value, Assembly = entity.Element("Assembly").Value, Type = entity.Element("Type").Value });
+            }
+
+            return entities.AsQueryable<Entity>();
+        }
     }
 }

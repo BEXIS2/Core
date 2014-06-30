@@ -36,7 +36,7 @@
                         {
                             subitem.Add().Text("Roles Manager").Action("Roles", "Roles", new { area = "Auth" });
                             subitem.Add().Text("Users Manager").Action("Users", "Users", new { area = "Auth" });
-                            subitem.Add().Text("Features Manager").Action("Features", "Features", new { area = "Auth" });
+                            subitem.Add().Text("Features Manager").Action("Features", "Permissions", new { area = "Auth" });
 
                         });
                         item.Add().Text("Data Discovery").Items(subitem =>

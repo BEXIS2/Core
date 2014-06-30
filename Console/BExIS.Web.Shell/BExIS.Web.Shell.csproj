@@ -97,6 +97,10 @@
     <Reference Include="Npgsql">
       <HintPath>..\..\packages\Npgsql.2.0.14.3\lib\net40\Npgsql.dll</HintPath>
     </Reference>
+    <Reference Include="System.Linq.Dynamic, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\System.Linq.Dynamic.1.0.0\lib\net40\System.Linq.Dynamic.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.WebPages" />
     <Reference Include="System.Web.Helpers" />
     <Reference Include="System" />
@@ -205,14 +209,16 @@
     <Compile Include="Areas\Auth\AuthAreaRegistration.cs" />
     <Compile Include="Areas\Auth\Controllers\AccountController.cs" />
     <Compile Include="Areas\Auth\Controllers\DataController.cs" />
-    <Compile Include="Areas\Auth\Controllers\FeaturesController.cs" />
+    <Compile Include="Areas\Auth\Controllers\PermissionsController.cs" />
     <Compile Include="Areas\Auth\Controllers\RolesController.cs" />
     <Compile Include="Areas\Auth\Controllers\UsersController.cs" />
     <Compile Include="Areas\Auth\Models\AccountModel.cs" />
+    <Compile Include="Areas\Auth\Models\EntityModel.cs" />
     <Compile Include="Areas\Auth\Models\FeatureModel.cs" />
     <Compile Include="Areas\Auth\Models\InfoModel.cs" />
     <Compile Include="Areas\Auth\Models\PermissionModel.cs" />
     <Compile Include="Areas\Auth\Models\RoleModel.cs" />
+    <Compile Include="Areas\Auth\Models\SubjectModel.cs" />
     <Compile Include="Areas\Auth\Models\TaskModel.cs" />
     <Compile Include="Areas\Auth\Models\UserModel.cs" />
     <Compile Include="Areas\DCM\Controllers\CreateController.cs" />
@@ -982,14 +988,17 @@
     <Content Include="Areas\SAM\Views\Unsafe\ListDatasetVersions.cshtml" />
     <Content Include="Areas\SAM\Views\Unsafe\DetailDatasetVersion.cshtml" />
     <Content Include="Areas\DDM\Views\Data\_previewDatastructure.cshtml" />
+    <Content Include="Areas\Auth\Views\Permissions\DataPermissions.cshtml" />
+    <Content Include="Areas\Auth\Views\Permissions\Features.cshtml" />
+    <Content Include="Areas\Auth\Views\Permissions\_CreateDataPermissionPartial.cshtml" />
+    <Content Include="Areas\Auth\Views\Permissions\_DataPermissionsPartial.cshtml" />
+    <Content Include="Areas\Auth\Views\Permissions\_FeaturePermissionsPartial.cshtml" />
+    <Content Include="Areas\Auth\Views\Permissions\_FeaturesPartial.cshtml" />
+    <Content Include="Areas\Auth\Views\Permissions\_InfoPartial.cshtml" />
     <None Include="Properties\PublishProfiles\2230.pubxml" />
     <None Include="Properties\PublishProfiles\2301.pubxml" />
     <None Include="Properties\PublishProfiles\2302.pubxml" />
     <Content Include="Areas\Auth\Views\Data\DataPermissions.cshtml" />
-    <Content Include="Areas\Auth\Views\Features\Features.cshtml" />
-    <Content Include="Areas\Auth\Views\Features\_FeaturePermissionsPartial.cshtml" />
-    <Content Include="Areas\Auth\Views\Features\_FeaturesPartial.cshtml" />
-    <Content Include="Areas\Auth\Views\Features\_InfoPartial.cshtml" />
     <None Include="Properties\PublishProfiles\BEXIS2 DEV.pubxml" />
     <None Include="Properties\PublishProfiles\BEXIS2.pubxml" />
     <None Include="Properties\PublishProfiles\BPP230.pubxml" />

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using BExIS.Security.Entities.Subjects;
@@ -16,7 +17,9 @@ namespace BExIS.Security.Entities.Objects
 
     public enum PermissionType
     {
+        [Description("Deny")]
         Deny,
+        [Description("Allow")]
         Allow
     }
 }
