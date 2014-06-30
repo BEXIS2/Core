@@ -272,7 +272,7 @@ namespace BExIS.Dlm.Services.Data
             return getDatasetVersionEffectiveTuples(datasetVersion);
         }
 
-        public List<DataTuple> GetDatasetVersionEffectiveTuples(DatasetVersion datasetVersion, int pageNumber, int pageSize)
+        public List<AbstractTuple> GetDatasetVersionEffectiveTuples(DatasetVersion datasetVersion, int pageNumber, int pageSize)
         {
             return getDatasetVersionEffectiveTuples(datasetVersion, pageNumber, pageSize);
         }
@@ -685,9 +685,9 @@ namespace BExIS.Dlm.Services.Data
             return (tuples);
         }
 
-        private List<DataTuple> getDatasetVersionEffectiveTuples(DatasetVersion datasetVersion, int pageNumber, int pageSize)
+        private List<AbstractTuple> getDatasetVersionEffectiveTuples(DatasetVersion datasetVersion, int pageNumber, int pageSize)
         {
-            List<DataTuple> tuples = new List<DataTuple>();
+            List<AbstractTuple> tuples = new List<AbstractTuple>();
             Dataset dataset = datasetVersion.Dataset;
             if (dataset.Status == DatasetStatus.Deleted)
                 throw new Exception(string.Format("Provided dataset version {0} belongs to deleted dataset {1}.", datasetVersion.Id, dataset.Id));
@@ -697,15 +697,15 @@ namespace BExIS.Dlm.Services.Data
 
             if (latestVersionId == datasetVersion.Id && dataset.Status == DatasetStatus.CheckedOut) // its a request for the working copy
             {
-                tuples = getWorkingCopyTuples(datasetVersion, pageNumber, pageSize);
+                tuples = getWorkingCopyTuples(datasetVersion, pageNumber, pageSize).Cast<AbstractTuple>().ToList();
             }
             else if (latestVersionId == datasetVersion.Id && dataset.Status == DatasetStatus.CheckedIn) // its a request for the latest checked-in version that should be served from the Tuples table
             {
-                tuples = getPrimaryTuples(datasetVersion, pageNumber, pageSize);
+                tuples = getPrimaryTuples(datasetVersion, pageNumber, pageSize).Cast<AbstractTuple>().ToList();
             }
             else
             {
-                tuples = getHistoricTuples(datasetVersion, pageNumber, pageSize); // its a request for version earlier than the current version, whether the latest version is check-out or in.
+                tuples = getHistoricTuples(datasetVersion, pageNumber, pageSize).Cast<AbstractTuple>().ToList(); // its a request for version earlier than the current version, whether the latest version is check-out or in.
             }
             tuples.ForEach(p => p.Materialize());
             return (tuples);
