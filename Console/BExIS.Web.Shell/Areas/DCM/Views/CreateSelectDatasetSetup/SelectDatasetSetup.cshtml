@@ -55,7 +55,8 @@
             </tr>
             <tr>
                 <td><b title="Required" style="color:red">*</b></td>
-                <td>@Html.LabelFor(m=>m.SelectedDatastructureId)</td>
+                <td>@Html.LabelFor(m=>m.SelectedDatastructureId)
+                </td>
                 <td>
                     @Html.DropDownListFor(m => m.SelectedDatastructureId, new SelectList(Model.DatastructuresViewList,"Id","Title",Model.SelectedDatastructureId),"Select, please")
                     @Html.ValidationMessageFor(m => m.SelectedDatastructureId)
@@ -63,7 +64,8 @@
             </tr>
              <tr>
                 <td><b title="Required" style="color:red">*</b></td>
-                <td>@Html.LabelFor(m=>m.SelectedMetadatStructureId)</td>
+                <td>@Html.LabelFor(m=>m.SelectedMetadatStructureId)
+                </td>
                 <td>
                     @Html.DropDownListFor(m => m.SelectedMetadatStructureId, new SelectList(Model.MetadataStructureViewList,"Id","Title",Model.SelectedMetadatStructureId),"Select, please")
                     @Html.ValidationMessageFor(m => m.SelectedMetadatStructureId)
@@ -123,5 +125,25 @@
         NavigationRefresh();
         TaskListRefresh();
     }
+
+    /* events for dropdownlists*/
+
+    $("#SelectedResearchPlanId").change(function (e)
+    {
+        $.post('@Url.Action("StoreSelectedOption","CreateSelectDatasetSetup" , new RouteValueDictionary { { "area", "DCM" } })', { id: $(this).val(), type: "rp" }, function (response) {
+        })
+    })
+
+    $("#SelectedDatastructureId").change(function (e) {
+
+        $.post('@Url.Action("StoreSelectedOption","CreateSelectDatasetSetup" , new RouteValueDictionary { { "area", "DCM" } })', { id: $(this).val(), type: "ds" }, function (response) {
+        })
+    })
+
+    $("#SelectedMetadatStructureId").change(function (e) {
+
+        $.post('@Url.Action("StoreSelectedOption","CreateSelectDatasetSetup" , new RouteValueDictionary { { "area", "DCM" } })', { id: $(this).val(), type: "ms" }, function (response) {
+        })
+    })
 
 </script>

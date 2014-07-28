@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Web;
 using System.Web.UI.WebControls;
 using BExIS.Dlm.Entities.Data;
+using BExIS.Dlm.Entities.DataStructure;
 using Telerik.Web.Mvc;
 
 namespace BExIS.Web.Shell.Areas.DDM.Helpers
@@ -76,7 +78,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
                             double valueAsNumber = Convert.ToDouble(value);
                             double compareValueAsNumber = Convert.ToDouble(val.Value.ToString());
 
-                            if (valueAsNumber > compareValueAsNumber)
+                            if (compareValueAsNumber > valueAsNumber)
                                 return true;
                             else
                                 return false;
@@ -96,7 +98,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
                             double valueAsNumber = Convert.ToDouble(value);
                             double compareValueAsNumber = Convert.ToDouble(val.Value.ToString());
 
-                            if (valueAsNumber >= compareValueAsNumber)
+                            if (compareValueAsNumber >= valueAsNumber)
                                 return true;
                             else
                                 return false;
@@ -113,7 +115,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
                             double valueAsNumber = Convert.ToDouble(value);
                             double compareValueAsNumber = Convert.ToDouble(val.Value.ToString());
 
-                            if (valueAsNumber < compareValueAsNumber)
+                            if (compareValueAsNumber < valueAsNumber)
                                 return true;
                             else
                                 return false;
@@ -131,7 +133,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
                             double valueAsNumber = Convert.ToDouble(value);
                             double compareValueAsNumber = Convert.ToDouble(val.Value.ToString());
 
-                            if (valueAsNumber <= compareValueAsNumber)
+                            if (compareValueAsNumber <= valueAsNumber)
                                 return true;
                             else
                                 return false;
@@ -223,5 +225,46 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
             }
 
         }
+
+        /// <summary>
+        /// Cast a value to a systemtype
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="systemType"></param>
+        /// <returns></returns>
+        public static object CastVariableValue(object value, string systemType)
+        {
+
+            if (!String.IsNullOrEmpty(value.ToString()))
+            {
+                switch (systemType)
+                {
+                    case "Int16": return Convert.ToInt16(value);
+                    case "Int32": return Convert.ToInt32(value);
+                    case "Int64": return Convert.ToInt64(value);
+                    case "Long": return Convert.ToInt64(value);
+                    case "Double": return Convert.ToDouble(value);
+                    case "DateTime": return DateTime.Parse(value.ToString(), new CultureInfo("en-US", false));
+                    default: return value;
+                }
+            }
+            else
+            {
+                switch (systemType)
+                {
+                    case "Int16": return Int16.MaxValue;
+                    case "Int32": return Int32.MaxValue;
+                    case "Int64": return Int64.MaxValue;
+                    case "UInt16": return UInt16.MaxValue;
+                    case "UInt32": return UInt32.MaxValue;
+                    case "UInt64": return UInt64.MaxValue;
+                    case "Long": return Int64.MaxValue;
+                    case "Double": return Double.MaxValue;
+                    case "DateTime": return DateTime.MaxValue;
+                    default: return value;
+                }
+            }
+        }
+
     }
 }

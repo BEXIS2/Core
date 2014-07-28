@@ -7,6 +7,13 @@
     ViewBag.Title = "Planing";
 
     long[] dataAttributeIds = new long[] { };
+
+    List<long> checkedIds = new List<long>();
+
+    if (Session["checked"] != null)
+    {
+        checkedIds = (List<long>)Session["checked"];
+    }
     
 }
 
@@ -16,31 +23,20 @@
 }
 else
 {
-    <script type="text/javascript">
-    function toggleDiv(element){
-    if(document.getElementById(element).style.display == 'none')
-        document.getElementById(element).style.display = 'block';
-    else
-        document.getElementById(element).style.display = 'none';
-    }
-    </script>
     <div class="planingPartialDiv" id="createVariable">
         @using (Html.BeginForm("AddVariables", "Home", new { area = "RPM" }))
         {
-            
-            <button name="addVariables" value="add" type="submit" class="t-button">Save</button>
-            <br />
-            <br />
             @(Html.Telerik().Grid(Model.dataAttributeList)
             .Name("DataAttributeGrid")
             .Sortable()
+            .Filterable()
             .Scrollable(t => t.Height(450))
             .Columns(columns =>
             {
                 columns.Template(
                     @<text>
                             <input name="checkedRecords" type="checkbox" value="@item.Id " title="checkedRecords" class="checkBox"
-                                @if (dataAttributeIds.Contains(item.Id))
+                                @if (dataAttributeIds.Contains(item.Id) || checkedIds.Contains(item.Id))
                                 {
                                     <text>checked="checked"</text>
                                 }
@@ -68,4 +64,43 @@ else
             <button name="addVariables" value="add" type="submit" class="t-button">Save</button>
         }
     </div>
+    
+    <script type="text/jscript">
+   
+    $('.checkBox').change(function () {
+        if ($(this).attr('checked'))
+            $(this).attr('checked', true);
+        else
+            $(this).removeAttr('checked');
+
+        var checked;
+
+        $('.checkBox').each(function () {
+            if ($(this).attr('checked')) {
+                if (checked)
+                    checked += "," + $(this).attr('value');
+                else
+                    checked = $(this).attr('value');
+            }
+        });
+        var checkedIDs = checked.split(',');
+        var data = { checkedIDs: checkedIDs };
+
+        $.ajax({
+            url: '/RPM/Home/setChecked',
+            type: 'POST',
+            data: JSON.stringify(data),
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            error: function (xhr) {
+                //alert('Error: ' + xhr.statusText);
+            },
+            success: function (result) {
+                //alert("success");
+            },
+            async: true,
+            processData: false
+        });
+    });
+</script>
 }

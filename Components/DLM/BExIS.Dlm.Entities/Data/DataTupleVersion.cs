@@ -1,14 +1,37 @@
 ﻿
+/// <summary>
+///
+/// </summary>        
 namespace BExIS.Dlm.Entities.Data
 {
+    /// <summary>
+    ///
+    /// </summary>
+    /// <remarks></remarks>        
     public class DataTupleVersion : AbstractTuple //DataTuple
     {
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public override DataTupleType TupleType
         {
             get { return DataTupleType.History; }
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual DatasetVersion ActingDatasetVersion { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual DataTuple OriginalTuple { get; set; }
 
         //public virtual ICollection<DataTupleVersion> History { get { throw new Exception("DataTuple Version has no history, use DataTuple entity instead");} }

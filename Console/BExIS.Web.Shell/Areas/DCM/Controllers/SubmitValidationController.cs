@@ -118,7 +118,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         ExcelReader reader = new ExcelReader();
                         Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
                         reader.ValidateFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), sds, id);
-                        Stream.Close();
                         model.ErrorList = reader.errorMessages;
                     }
 
@@ -128,14 +127,18 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         AsciiReader reader = new AsciiReader();
                         Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
                         reader.ValidateFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), (AsciiFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO], sds, id);
-                        Stream.Close();
                         model.ErrorList = reader.errorMessages;
                     }
                 }
                 catch (Exception ex)
                 {
-                    model.ErrorList.Add(new Error(ErrorType.Other, "Can not valid."));
+                    model.ErrorList.Add(new Error(ErrorType.Other, "Can not valid. :  " + ex.Message));
                     TaskManager.AddToBus(TaskManager.VALID, false);
+
+                }
+                finally
+                {
+                    Stream.Close();
                 }
             }
             else

@@ -11,10 +11,22 @@ using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Subjects;
 using Vaiona.Persistence.Api;
 
+/// <summary>
+///
+/// </summary>        
 namespace BExIS.Security.Services.Objects
 {
+    /// <summary>
+    ///
+    /// </summary>
+    /// <remarks></remarks>        
     public class PermissionManager : IPermissionManager
     {
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public PermissionManager()
         {
             IUnitOfWork uow = this.GetUnitOfWork();
@@ -28,10 +40,39 @@ namespace BExIS.Security.Services.Objects
 
         #region Data Readers
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public IReadOnlyRepository<DataPermission> DataPermissionsRepo { get; private set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public IReadOnlyRepository<FeaturePermission> FeaturePermissionsRepo { get; private set; }
-        public IReadOnlyRepository<Feature> FeaturesRepo { get; private set; } 
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
+        public IReadOnlyRepository<Feature> FeaturesRepo { get; private set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public IReadOnlyRepository<Subject> SubjectsRepo { get; private set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public IReadOnlyRepository<User> UsersRepo { get; private set; }     
 
         #endregion
@@ -39,21 +80,41 @@ namespace BExIS.Security.Services.Objects
 
         #region Attributes
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public bool DefaultFeaturePermission 
         {
             get { return false; } 
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public bool DrawFeaturePermission 
         {
             get { return false; }
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public bool FeaturePermissionHierarchy 
         {
             get { return true; }
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public int FeaturePermissionPolicy 
         {
             get { return 0; }
@@ -64,127 +125,38 @@ namespace BExIS.Security.Services.Objects
 
         #region Methods
 
-        private bool CheckFeatureAccess(long userId, List<long> roleIds, long featureId)
-        {
-            // User Permission
-            FeaturePermission userPermission = GetFeaturePermissionByFeatureAndSubject(featureId, userId);
-
-            if (userPermission != null)
-            {
-                return userPermission.PermissionType == PermissionType.Deny ? false : true;
-            }
-            else
-            {
-                // Role Permission
-                List<FeaturePermission> rolePermissions = FeaturePermissionsRepo.Query(p => roleIds.Contains(p.Subject.Id) && p.Feature.Id == featureId).ToList();
-
-                if (rolePermissions.Count() > 0)
-                {
-                    bool access = false;
-
-                    switch (FeaturePermissionPolicy)
-                    {
-                        case 0:
-                            if (rolePermissions.All(p => p.PermissionType == PermissionType.Allow))
-                            {
-                                access = true;
-                            }
-                            break;
-
-                        case 1:
-                            if (rolePermissions.Any(p => p.PermissionType == PermissionType.Allow))
-                            {
-                                access = true;
-                            }
-                            break;
-
-                        case 2:
-                            int grants = rolePermissions.Where(p => p.PermissionType == PermissionType.Allow).Count();
-                            int denies = rolePermissions.Where(p => p.PermissionType == PermissionType.Deny).Count();
-
-                            if (grants == denies)
-                            {
-                                access = DrawFeaturePermission;
-                            }
-                            else
-                            {
-                                access = grants > denies ? true : false;
-                            }
-                            break;
-
-                        default:
-                            access = false;
-                            break;
-                    }
-
-                    return access;
-                }
-                else
-                {
-                    if (FeaturePermissionHierarchy && FeaturesRepo.Query(f => f.Children.Any(g => g.Id == featureId)).Count() == 1)
-                    {
-                        return CheckFeatureAccess(userId, roleIds, FeaturesRepo.Query(f => f.Children.Any(g => g.Id == featureId)).FirstOrDefault().Id);
-                    }
-                    else
-                    {
-                        return DefaultFeaturePermission;
-                    }
-                }
-            }
-        }
-
-        public bool CheckFeatureAccessForUser(string userName, string areaName, string controllerName, string actionName)
-        {
-            if (UsersRepo.Query(u => u.Name.ToLower() == userName.ToLower()).Count() == 1)
-            {
-                User user = UsersRepo.Query(u => u.Name.ToLower() == userName.ToLower()).FirstOrDefault();
-
-                if (FeaturesRepo.Query(f => f.Tasks.Any(t => t.AreaName.ToLower() == areaName.ToLower() && t.ControllerName.ToLower() == controllerName.ToLower() && t.ActionName.ToLower() == actionName.ToLower())).Count() == 1)
-                {
-                    Feature feature = FeaturesRepo.Query(f => f.Tasks.Any(t => t.AreaName.ToLower() == areaName.ToLower() && t.ControllerName.ToLower() == controllerName.ToLower() && t.ActionName.ToLower() == actionName.ToLower())).FirstOrDefault();
-
-                    return CheckFeatureAccess(user.Id, user.Roles.Select(r => r.Id).ToList(), feature.Id);
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        public FeaturePermission CreateFeaturePermission(long featureId, long subjectId, PermissionType permissionType, out FeaturePermissionCreateStatus status)
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="featureId"></param>
+        /// <param name="subjectId"></param>
+        public int CreateFeaturePermission(long featureId, long subjectId)
         {
             if(ExistsFeaturePermission(featureId, subjectId))
             {
-                status = FeaturePermissionCreateStatus.DuplicateFeaturePermission;
-                return null;
+                return 1;
             }
 
             Feature feature = FeaturesRepo.Get(featureId);
 
             if (feature == null)
             {
-                status = FeaturePermissionCreateStatus.InvalidFeature;
-                return null;
+                return 3;
             }
 
             Subject subject = SubjectsRepo.Get(subjectId);
 
             if (subject == null)
             {
-                status = FeaturePermissionCreateStatus.InvalidSubject;
-                return null;
+                return 2;
             }
 
             FeaturePermission featurePermission = new FeaturePermission()
             {
                 Feature = feature,
                 Subject = subject,
-                PermissionType = permissionType
             };
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
@@ -200,11 +172,16 @@ namespace BExIS.Security.Services.Objects
                 uow.Commit();
             }
 
-            status = FeaturePermissionCreateStatus.Success;
-            return (featurePermission);
+            return 0;
         }
 
-        public bool DeleteFeaturePermissionById(long id)
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="id"></param>       
+        public int DeleteFeaturePermissionById(long id)
         {
             FeaturePermission featurePermission = GetFeaturePermissionById(id);
 
@@ -217,14 +194,19 @@ namespace BExIS.Security.Services.Objects
                     featurePermissionsRepo.Delete(featurePermission);
                     uow.Commit();
                 }
-
-                return (true);
             }
 
-            return (false);
+            return 0;
         }
 
-        public bool DeleteFeaturePermissionByFeatureAndSubject(long featureId, long subjectId)
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="featureId"></param>
+        /// <param name="subjectId"></param>
+        public int DeleteFeaturePermissionByFeatureAndSubject(long featureId, long subjectId)
         {
             FeaturePermission featurePermission = GetFeaturePermissionByFeatureAndSubject(featureId, subjectId);
 
@@ -237,13 +219,18 @@ namespace BExIS.Security.Services.Objects
                     featurePermissionsRepo.Delete(featurePermission);
                     uow.Commit();
                 }
-
-                return (true);
             }
 
-            return (false);
+            return 0;
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="featureId"></param>
+        /// <param name="subjectId"></param>
         public bool ExistsFeaturePermission(long featureId, long subjectId)
         {
             if (FeaturePermissionsRepo.Query(p => p.Feature.Id == featureId && p.Subject.Id == subjectId).Count() == 1)
@@ -256,6 +243,31 @@ namespace BExIS.Security.Services.Objects
             }
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="featureIds"></param>
+        /// <param name="subjectIds"></param>
+        public bool ExistsFeaturePermission(IEnumerable<long> featureIds, IEnumerable<long> subjectIds)
+        {
+            if (FeaturePermissionsRepo.Query(p => featureIds.Contains(p.Feature.Id) && subjectIds.Contains(p.Subject.Id)).Count() > 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="id"></param>
         public FeaturePermission GetFeaturePermissionById(long id)
         {
             ICollection<FeaturePermission> featurePermissions = FeaturePermissionsRepo.Query(p => p.Id == id).ToArray();
@@ -270,6 +282,13 @@ namespace BExIS.Security.Services.Objects
             }
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="featureId"></param>
+        /// <param name="subjectId"></param>
         public FeaturePermission GetFeaturePermissionByFeatureAndSubject(long featureId, long subjectId)
         {
             ICollection<FeaturePermission> subjectPermissions = FeaturePermissionsRepo.Query(p => p.Feature.Id == featureId && p.Subject.Id == subjectId).ToArray();
@@ -284,35 +303,45 @@ namespace BExIS.Security.Services.Objects
             }
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param>NA</param>       
         public IQueryable<FeaturePermission> GetAllFeaturePermissions()
         {
             return FeaturePermissionsRepo.Query();
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="featureId"></param>
         public IQueryable<FeaturePermission> GetFeaturePermissionsFromFeature(long featureId)
         {
             return FeaturePermissionsRepo.Query(p => p.Feature.Id == featureId);
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="subjectId"></param>
         public IQueryable<FeaturePermission> GetFeaturePermissionsFromSubject(long subjectId)
         {
             return FeaturePermissionsRepo.Query(p => p.Subject.Id == subjectId);
         }
 
-        public int GetFeaturePermissionType(long featureId, long subjectId)
-        {
-            FeaturePermission featurePermission = GetFeaturePermissionByFeatureAndSubject(featureId, subjectId);
-
-            if (featurePermission != null)
-            {
-                return (int)featurePermission.PermissionType;
-            }
-            else
-            {
-                return 2;
-            }
-        }
-
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="featurePermission"></param>
         public FeaturePermission UpdateFeaturePermission(FeaturePermission featurePermission)
         {
             Contract.Requires(featurePermission != null);
@@ -329,16 +358,12 @@ namespace BExIS.Security.Services.Objects
 
         #endregion
 
-        public DataPermission CreateDataPermission()
-        {
-            throw new NotImplementedException();
-        }
-
-        public IQueryable<DataPermission> GetAllDataPermissions()
-        {
-            return DataPermissionsRepo.Query();
-        }
-
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param>NA</param>       
         public IQueryable<Entity> GetAllEntities()
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
@@ -354,51 +379,382 @@ namespace BExIS.Security.Services.Objects
             return entities.AsQueryable<Entity>();
         }
 
-        public IQueryable<Property> GetAllProperties(string entityName)
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="entityId"></param>
+        public string GetAreaFromEntity(string entityId)
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
             XDocument xDocument = XDocument.Load(assembly.GetManifestResourceStream("BExIS.Security.Services.Manifest.xml"));
 
-            List<Property> properties = new List<Property>();
+            var entities = xDocument.Descendants("Entity").Where(n => n.Attribute("Id").Value == entityId);
 
-            foreach (var property in xDocument.Descendants("Property").Where(n => n.Ancestors("Entity").FirstOrDefault().Attribute("Id").Value == entityName))
+            if (entities.Count() == 1)
             {
-                properties.Add(new Property() { Id = property.Attribute("Id").Value, Name = property.Attribute("Name").Value });
-
+                return entities.FirstOrDefault().Attribute("Area").Value;
             }
 
-            return properties.AsQueryable<Property>();
+            return "";
         }
 
-        public bool DeleteDataPermission()
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="entityId"></param>
+        public string GetControllerFromEntity(string entityId)
         {
-            throw new NotImplementedException();
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            XDocument xDocument = XDocument.Load(assembly.GetManifestResourceStream("BExIS.Security.Services.Manifest.xml"));
+
+            var entities = xDocument.Descendants("Entity").Where(n => n.Attribute("Id").Value == entityId);
+
+            if (entities.Count() == 1)
+            {
+                return entities.FirstOrDefault().Attribute("Controller").Value;
+            }
+
+            return "";
         }
 
-        public IQueryable<DataPermission> GetDataPermissionsByEntityAndSubject(string entityName, long subjectId)
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="entityId"></param>
+        public string GetActionFromEntity(string entityId)
         {
-            return DataPermissionsRepo.Query(p => p.Subject.Id == subjectId && p.EntityName == entityName);
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            XDocument xDocument = XDocument.Load(assembly.GetManifestResourceStream("BExIS.Security.Services.Manifest.xml"));
+
+            var entities = xDocument.Descendants("Entity").Where(n => n.Attribute("Id").Value == entityId);
+
+            if (entities.Count() == 1)
+            {
+                return entities.FirstOrDefault().Attribute("Action").Value;
+            }
+
+            return "";
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="dataId"></param>
+        /// <param name="entityId"></param>
+        /// <param name="subjectId"></param>
+        /// <param name="rightType"></param>
+        public int CreateDataPermission(long dataId, string entityId, long subjectId, RightType rightType)
+        {
+            Subject subject = SubjectsRepo.Get(subjectId);
+
+            if (subject != null)
+            {
+                if (!ExistsDataPermission(dataId, entityId, subjectId, rightType))
+                {
+                    DataPermission dataPermission = new DataPermission()
+                    {
+                        DataId = dataId,
+                        EntityId = entityId,
+
+                        Subject = subject,
+
+                        RightType = rightType
+                    };
+
+                    using (IUnitOfWork uow = this.GetUnitOfWork())
+                    {
+                        IRepository<DataPermission> dataPermissionsRepo = uow.GetRepository<DataPermission>();
+                        IRepository<Subject> subjectssRepo = uow.GetRepository<Subject>();
+
+                        dataPermissionsRepo.Put(dataPermission);
+                        subject.Permissions.Add(dataPermission);
+
+                        uow.Commit();
+                    }
+                }
+
+                return 0;
+            }
+            else
+            {
+                return 2;
+            }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="dataId"></param>
+        /// <param name="entityId"></param>
+        /// <param name="userName"></param>
+        /// <param name="rightType"></param>
+        public int CreateDataPermission(long dataId, string entityId, string userName, RightType rightType)
+        {
+            ICollection<User> users = UsersRepo.Get(u => u.Name.ToLower() == userName.ToLower());
+
+            if (users.Count() == 1)
+            {
+                if (!ExistsDataPermission(dataId, entityId, users.FirstOrDefault().Id, rightType))
+                {
+                    DataPermission dataPermission = new DataPermission()
+                    {
+                        DataId = dataId,
+                        EntityId = entityId,
+
+                        Subject = users.FirstOrDefault(),
+
+                        RightType = rightType
+                    };
+
+                    using (IUnitOfWork uow = this.GetUnitOfWork())
+                    {
+                        IRepository<DataPermission> dataPermissionsRepo = uow.GetRepository<DataPermission>();
+                        IRepository<Subject> subjectssRepo = uow.GetRepository<Subject>();
+
+                        dataPermissionsRepo.Put(dataPermission);
+                        users.FirstOrDefault().Permissions.Add(dataPermission);
+
+                        uow.Commit();
+                    }
+                }
+
+                return 0;
+            }
+            else
+            {
+                return 2;
+            }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="dataId"></param>
+        /// <param name="entityId"></param>
+        /// <param name="subjectId"></param>
+        /// <param name="rightType"></param>
+        public int DeleteDataPermission(long dataId, string entityId, long subjectId, RightType rightType)
+        {
+            Subject subject = SubjectsRepo.Get(subjectId);
+
+            if (subject != null)
+            {
+                DataPermission dataPermission = GetDataPermission(dataId, entityId, subjectId, rightType);
+
+                if (dataPermission != null)
+                {
+                    using (IUnitOfWork uow = this.GetUnitOfWork())
+                    {
+                        IRepository<DataPermission> dataPermissionsRepo = uow.GetRepository<DataPermission>();
+                        IRepository<Subject> subjectssRepo = uow.GetRepository<Subject>();
+
+                        dataPermissionsRepo.Delete(dataPermission);
+                        uow.Commit();
+                    }
+                }
+
+                return 0;
+            }
+            else
+            {
+                return 2;
+            }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="dataId"></param>
+        /// <param name="entityId"></param>
+        /// <param name="subjectId"></param>
+        /// <param name="rightType"></param>
+        public bool ExistsDataPermission(long dataId, string entityId, long subjectId, RightType rightType)
+        {
+            if (DataPermissionsRepo.Query(p => p.DataId == dataId && p.EntityId == entityId && p.Subject.Id == subjectId && p.RightType == rightType).Count() == 1)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="dataId"></param>
+        /// <param name="entityId"></param>
+        /// <param name="subjectIds"></param>
+        /// <param name="rightType"></param>
+        public bool ExistsDataPermission(long dataId, string entityId, IEnumerable<long> subjectIds, RightType rightType)
+        {
+            if (DataPermissionsRepo.Query(p => p.DataId == dataId && p.EntityId.ToLower() == entityId.ToLower() && subjectIds.Contains(p.Subject.Id) && p.RightType == rightType).Count() > 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="dataId"></param>
+        /// <param name="entityId"></param>
+        /// <param name="subjectId"></param>
+        /// <param name="rightType"></param>
+        public DataPermission GetDataPermission(long dataId, string entityId, long subjectId, RightType rightType)
+        {
+            ICollection<DataPermission> dataPermissions = DataPermissionsRepo.Query(p => p.DataId == dataId && p.EntityId == entityId && p.Subject.Id == subjectId && p.RightType == rightType).ToArray();
+
+            if (dataPermissions.Count() == 1)
+            {
+                return dataPermissions.FirstOrDefault();
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="dataId"></param>
+        /// <param name="entityId"></param>
+        /// <param name="userName"></param>
+        /// <param name="rightType"></param>
+        public bool HasUserDataAccess(long dataId, string entityId, string userName, RightType rightType)
+        {
+            ICollection<User> users = UsersRepo.Query(u => u.Name == userName).ToArray();
+
+            if (users.Count() == 1)
+            {
+                List<long> subjectIds = new List<long>(users.FirstOrDefault().Roles.Select(r => r.Id));
+                subjectIds.Add(users.FirstOrDefault().Id);
+
+                if (ExistsDataPermission(dataId, entityId, subjectIds, rightType))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="userName"></param>
+        /// <param name="areaName"></param>
+        /// <param name="controllerName"></param>
+        /// <param name="actionName"></param>
+        public bool HasUserFeatureAccess(string userName, string areaName, string controllerName, string actionName)
+        {
+            ICollection<User> users = UsersRepo.Query(u => u.Name.ToLower() == userName.ToLower()).ToArray();
+
+            if (users.Count() == 1)
+            {
+                ICollection<Feature> features = FeaturesRepo.Query(f => f.Tasks.Any(t => t.AreaName.ToLower() == areaName.ToLower() && t.ControllerName.ToLower() == controllerName.ToLower() && t.ActionName.ToLower() == actionName.ToLower())).ToArray();
+
+                if (features.Count() == 1)
+                {
+                    List<long> featureIds = new List<long>(features.FirstOrDefault().Ancestors.Select(f => f.Id));
+                    featureIds.Add(features.FirstOrDefault().Id);
+
+                    List<long> subjectIds = new List<long>(users.FirstOrDefault().Roles.Select(r => r.Id));
+                    subjectIds.Add(users.FirstOrDefault().Id);
+
+                    if (ExistsFeaturePermission(featureIds, subjectIds))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="featureId"></param>
+        /// <param name="subjectId"></param>
+        public bool HasSubjectFeatureAccess(long featureId, long subjectId)
+        {
+            Feature feature = FeaturesRepo.Get(featureId);
+
+            if (feature != null)
+            {
+                Subject subject = SubjectsRepo.Get(subjectId);
+
+                if(subject != null)
+                {
+                    List<long> featureIds = new List<long>(feature.Ancestors.Select(f => f.Id));
+                    featureIds.Add(feature.Id);
+
+                    if(subject is Role)
+                    {
+                        Role role = (Role)subject;
+                        return ExistsFeaturePermission(featureIds, new List<long>(){role.Id});
+                    }
+
+                    if(subject is User)
+                    {
+                        User user = (User)subject;
+
+                        List<long> subjectIds = new List<long>(user.Roles.Select(r => r.Id));
+                        subjectIds.Add(user.Id);
+
+                        return ExistsFeaturePermission(featureIds, subjectIds);
+                    }
+                }
+            }
+
+            return false;
         }
 
 
-        //public Tuple<string, object[]> GetDataPermissionExpressionByEntityAndSubject(string entityName, long subjectId)
-        //{
-        //    List<DataPermission> dataPermissions = GetDataPermissionsByEntityAndSubject(entityName, subjectId).ToList();
-
-        //    string predicate = "";
-        //    object[] values = new object[dataPermissions.Count];
-
-        //    for (int i = 0; i < dataPermissions.Count(); i++)
-        //    {
-        //        predicate += 
-        //    }
-
-        //}
-
-
-        public Tuple<string, object[]> GetDataPermissionExpressionByEntityAndSubject(string entityName, long subjectId)
+        public ICollection<long> GetDataIds(string entityId, string userName, RightType rightType)
         {
-            throw new NotImplementedException();
+            ICollection<User> users = UsersRepo.Query(u => u.Name.ToLower() == userName.ToLower()).ToArray();
+
+            if (users.Count() == 1)
+            {
+                List<long> subjectIds = new List<long>(users.FirstOrDefault().Roles.Select(r => r.Id));
+                subjectIds.Add(users.FirstOrDefault().Id);
+
+                return DataPermissionsRepo.Query(p => subjectIds.Contains(p.Subject.Id) && p.EntityId.ToLower() == entityId.ToLower() && p.RightType == rightType).Select(p => p.DataId).ToList(); 
+            }
+
+            return null; 
         }
     }
 }

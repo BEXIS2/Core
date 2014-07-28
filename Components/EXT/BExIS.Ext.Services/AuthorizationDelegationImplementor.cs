@@ -7,10 +7,27 @@ using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
 
+/// <summary>
+///
+/// </summary>        
 namespace BExIS.Ext.Services
 {
+    /// <summary>
+    ///
+    /// </summary>
+    /// <remarks></remarks>        
     public static class AuthorizationDelegationImplementor
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="areaName"></param>
+        /// <param name="controllerName"></param>
+        /// <param name="actionName"></param>
+        /// <param name="userName"></param>
+        /// <param name="isAuthenticated"></param>
         public static void CheckAuthorization(string areaName, string controllerName, string actionName, string userName, bool isAuthenticated)
         {
             // validate the call using the extensibility information (modules, tasks, actions, etc)
@@ -36,7 +53,7 @@ namespace BExIS.Ext.Services
                 {
                     PermissionManager permissionManager = new PermissionManager();
 
-                    if (!permissionManager.CheckFeatureAccessForUser(userName, areaName, controllerName, "*"))
+                    if (!permissionManager.HasUserFeatureAccess(userName, areaName, controllerName, "*"))
                     {
                         throw new UnauthorizedAccessException();
                     }

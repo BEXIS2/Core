@@ -54,11 +54,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     model.SelectedDatasetId = Convert.ToInt32(TaskManager.Bus[TaskManager.DATASET_ID]);
                 }
 
-
-            // load datasetids
-            //DatasetManager dm = new DatasetManager();
-            //IList<DatasetVersion> dv = dm.DatasetVersionRepo.Get();
-
             model.StepInfo = TaskManager.Current();
             if ((List<ListViewItem>)Session["DatasetVersionViewList"] != null) model.DatasetsViewList = (List<ListViewItem>)Session["DatasetVersionViewList"];
 
@@ -76,8 +71,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             if (TaskManager != null)
             {
                 TaskManager.Current().SetValid(false);
-
-                //if (data != null) TaskManager.AddToBus(data);
 
                 if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_ID))
                 {
@@ -117,21 +110,10 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     TaskManager.Current().SetStatus(StepStatus.error);
 
                     //reload model
-                    DatasetManager dm = new DatasetManager();
-                    //IList<DatasetVersion> dv = dm.DatasetVersionRepo.Get();
-
-                    model.Datasets = (from datasets in dm.DatasetRepo.Get() select datasets.Id).ToList();
                     model.StepInfo = TaskManager.Current();
                     if ((List<ListViewItem>)Session["DatasetVersionViewList"] != null) model.DatasetsViewList = (List<ListViewItem>)Session["DatasetVersionViewList"];
-
-                    //model.DatasetViewModel = new CreateDatasetViewModel();                    
-                    ////load datastructure ids
-                    //if ((List<ListViewItem>)Session["DataStructureViewList"] != null) model.DatasetViewModel.DatastructuresViewList = (List<ListViewItem>)Session["DataStructureViewList"];
-                    //if ((List<ListViewItem>)Session["DatasetVersionViewList"] != null) model.DatasetsViewList = (List<ListViewItem>)Session["DatasetVersionViewList"];
-                }
+              }
             }
-
-
 
             return PartialView(model);
         }
@@ -190,15 +172,10 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 model.ErrorList.Add(new Error(ErrorType.Dataset, "Dataset is not checked in."));
             }
 
-
-
-            
             Session["TaskManager"] = TaskManager;
 
 
             //create Model
-
-            
             model.StepInfo = TaskManager.Current();
             if ((List<ListViewItem>)Session["DatasetVersionViewList"] != null) model.DatasetsViewList = (List<ListViewItem>)Session["DatasetVersionViewList"];
 
@@ -223,7 +200,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             return !string.IsNullOrWhiteSpace(userName) ? userName : "DEFAULT";
         }
-
 
         #endregion
     }

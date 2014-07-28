@@ -16,7 +16,6 @@ namespace BExIS.Web.Shell.Areas.DDM.Models
 
         [Display(Name = "Source Name")]
         [Required(ErrorMessage = "Please enter a Source Name.")]
-        //[Remote("ValidateSourceName", "Admin", "DDM")]
         public String sourceName { get; set; }
 
         [Display(Name = "Metadata Node")]

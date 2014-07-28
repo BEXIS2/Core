@@ -64,14 +64,37 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         {
 
             TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
-            SelectDatasetSetupModel model = new SelectDatasetSetupModel();
+            SelectDatasetSetupModel model = GetDefaultModel();
             model.StepInfo = TaskManager.Current();
 
             if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.DATASTRUCTURE_ID) && 
                 TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATASTRUCTURE_ID) && 
-                TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.RESEARCHPLAN_ID))
+                TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.RESEARCHPLAN_ID)
+                )
             {
-                TaskManager.Current().SetValid(true);
+                bool ready = false;
+                if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.SETUP_LOADED))
+                {
+                    if ((bool)TaskManager.Bus[CreateDatasetTaskmanager.SETUP_LOADED] == true)
+                        ready = true;
+                }
+                else
+                {
+                    AdvanceTaskManager((long)TaskManager.Bus[CreateDatasetTaskmanager.METADATASTRUCTURE_ID]);
+                    CreateXml();
+                    ready = true;
+                }
+
+                if (ready)
+                {
+                    TaskManager.Current().SetValid(true);
+                }
+                else
+                {
+                    TaskManager.Current().SetValid(false);
+                    model.ErrorList.Add(new Error(ErrorType.Dataset, "Select the Button to load the setup."));
+                }
+               
 
             }
             else
@@ -79,7 +102,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                  TaskManager.Current().SetValid(false);
                  model = GetDefaultModel();
                  model.StepInfo = TaskManager.Current();
-                 model.ErrorList.Add(new Error(ErrorType.Dataset, "Informations are not correct"));
+
+                 model.ErrorList.Add(new Error(ErrorType.Dataset, "Select a research plan, data structure and a metadata structure please and store the selections."));
+
             }
 
             
@@ -114,6 +139,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             model = LoadLists(model);
             model.StepInfo = TaskManager.Current();
 
+
+
             if (ModelState.IsValid)
             {
                 TaskManager.AddToBus(CreateDatasetTaskmanager.DATASTRUCTURE_ID, model.SelectedDatastructureId);
@@ -127,6 +154,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                 CreateXml();
 
+                model.IsLoaded = (bool)TaskManager.Bus[CreateDatasetTaskmanager.SETUP_LOADED];
+
                 TaskManager.Current().SetStatus(StepStatus.success);
                 TaskManager.GoToNext();
                 ActionInfo actionInfo = TaskManager.Current().GetActionInfo;
@@ -138,9 +167,41 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 TaskManager.Current().SetStatus(StepStatus.error);
 
                 model.ErrorList.Add(new Error(ErrorType.Dataset, "Can not create dataset."));
+
+                //setup loaded
+                if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.SETUP_LOADED))
+                    TaskManager.Bus[CreateDatasetTaskmanager.SETUP_LOADED] = true;
+                else
+                    TaskManager.Bus.Add(CreateDatasetTaskmanager.SETUP_LOADED, true);
+
+                model.IsLoaded = (bool)TaskManager.Bus[CreateDatasetTaskmanager.SETUP_LOADED];
             }
 
             return PartialView("SelectDatasetSetup", model);
+        }
+
+        [HttpPost]
+        public ActionResult StoreSelectedOption(long id, string type)
+        {
+            TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
+            string key = "";
+
+            switch (type)
+            {
+                case "rp": key = CreateDatasetTaskmanager.RESEARCHPLAN_ID; break;
+                case "ms": key = CreateDatasetTaskmanager.METADATASTRUCTURE_ID; break;
+                case "ds": key = CreateDatasetTaskmanager.DATASTRUCTURE_ID; break;
+            }
+
+            if (key != "")
+            {
+                if (TaskManager.Bus.ContainsKey(key))
+                    TaskManager.Bus[key] = id;
+                else
+                    TaskManager.Bus.Add(key, id);
+            }
+
+            return Content("");
         }
 
         #region save
@@ -275,6 +336,13 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                 TaskManager.AddToBus(CreateDatasetTaskmanager.METADATA_XML, metadataXml);
 
+                //setup loaded
+                if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.SETUP_LOADED))
+                    TaskManager.Bus[CreateDatasetTaskmanager.SETUP_LOADED] = true;
+                else
+                    TaskManager.Bus.Add(CreateDatasetTaskmanager.SETUP_LOADED,true);
+
+
                 //save
                 //metadataXml.Save(path);
             }
@@ -310,6 +378,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATASTRUCTURE_ID))
                 model.SelectedMetadatStructureId = Convert.ToInt64(TaskManager.Bus[CreateDatasetTaskmanager.METADATASTRUCTURE_ID]);
+
+            if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.SETUP_LOADED))
+                model.IsLoaded = (bool)TaskManager.Bus[CreateDatasetTaskmanager.SETUP_LOADED];
 
             return model;
         }

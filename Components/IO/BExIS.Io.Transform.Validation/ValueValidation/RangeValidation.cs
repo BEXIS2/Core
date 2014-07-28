@@ -1,9 +1,15 @@
 ﻿using System;
 using BExIS.Io.Transform.Validation.Exceptions;
 
-
+/// <summary>
+///
+/// </summary>        
 namespace BExIS.Io.Transform.Validation.ValueValidation
 {
+    /// <summary>
+    ///
+    /// </summary>
+    /// <remarks></remarks>        
     public class RangeValidation:IValueValidation
     {
         # region parameter
@@ -38,6 +44,14 @@ namespace BExIS.Io.Transform.Validation.ValueValidation
 
         #endregion
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="value"></param>
+        /// <param name="row"></param>
+        /// <returns></returns>
         public Error Execute(object value, int row)
         {
             if (value!=null && value.ToString()!="")
@@ -68,6 +82,15 @@ namespace BExIS.Io.Transform.Validation.ValueValidation
             return null;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="name"></param>
+        /// <param name="dataType"></param>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
         public RangeValidation(string name, string dataType , double min, double max)
         {
 

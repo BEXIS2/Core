@@ -30,21 +30,42 @@
     function OnSelect(e) {
         var featureID = GetTreeView().getItemValue(e.item);
         
-        $('#Content_FeaturePermissions').empty();
+        $('#Content_Subjects').empty();
 
         $.get('@Url.Action("FeaturePermissions", "Permissions")', { Id: featureID }, function (contentData) {
 
-            $('#Content_FeaturePermissions').html(contentData);
+            $('#Content_Subjects').html(contentData);
         });
     }
 
     // Feature Permission
     function setFeaturePermission(value, subjectId, featureId) {
-        $.post('@Url.Action("SetFeaturePermission", "Permissions")', { SubjectId: subjectId, FeatureId: featureId, Value: value }, function (e) {
-            $("#Grid_FeaturePermissions .t-refresh").trigger('click');
-        });
+        if (value) {
+            $.post('@Url.Action("CreateFeaturePermission", "Permissions")', { FeatureId: featureId, SubjectId: subjectId }, function (e) {
+                if (e == 2) {
+                    alert("The subject does not exist anymore.");
+                }
 
-              
+                if (e == 3) {
+                    alert("The feature does not exist anymore.");
+                }
+
+                $("#Grid_Subjects .t-refresh").trigger('click');
+            });
+        }
+        else {
+            $.post('@Url.Action("DeleteFeaturePermission", "Permissions")', { FeatureId: featureId, SubjectId: subjectId }, function (e) {
+                if (e == 2) {
+                    alert("The subject does not exist anymore.");
+                }
+
+                if (e == 3) {
+                    alert("The feature does not exist anymore.");
+                }
+
+                $("#Grid_Subjects .t-refresh").trigger('click');
+            });
+        }
     }
 
 </script>

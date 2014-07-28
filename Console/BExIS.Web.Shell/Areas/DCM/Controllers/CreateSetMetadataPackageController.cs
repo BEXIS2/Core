@@ -112,8 +112,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             #endregion
         }
 
-
-
         #region Validation
 
         //XX number of index des values nötig

@@ -3,11 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+/// <summary>
+///
+/// </summary>        
 namespace BExIS.Io.Transform.Output
 {
+    /// <summary>
+    ///
+    /// </summary>
+    /// <remarks></remarks>        
     public class AsciiHelper
     {
-
         /// <summary>
         /// Get TextSeperator as string
         /// </summary>
@@ -30,7 +36,6 @@ namespace BExIS.Io.Transform.Output
                 default: return TextSeperator.tab.ToString();
             }
         }
-
 
         /// <summary>
         /// Get TextSeperator based on string as name 

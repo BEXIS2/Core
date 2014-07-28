@@ -21,6 +21,7 @@ using BExIS.Io;
 using System.IO.Compression;
 using BExIS.Web.Shell.Areas.DDM.Models;
 using Ionic.Zip;
+using BExIS.Security.Services.Objects;
 
 namespace BExIS.Web.Shell.Areas.DDM.Controllers
 {
@@ -36,22 +37,42 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             return View();
         }
 
+        public ActionResult ShowData(long id)
+        {
+            DatasetManager dm = new DatasetManager();
+            DatasetVersion dsv = dm.GetDatasetLatestVersion(id);
+            //XXX title
+            string title = dsv.Metadata.SelectNodes("Metadata/Description/Description/Title/Title")[0].InnerText;
+
+            PermissionManager permissionManager = new PermissionManager();
+
+            ShowDataModel model = new ShowDataModel()
+            {
+                Id = id,
+                Title = title,
+                DataAccess = permissionManager.HasUserDataAccess(id, "Dataset", HttpContext.User.Identity.Name, Security.Entities.Objects.RightType.Read)
+            };
+
+
+            return View(model);
+        }
+
         #region metadata
             public ActionResult ShowMetaData(int datasetID)
-        {
-            try
             {
-                DatasetManager dm = new DatasetManager();
-                DatasetVersion dsv = dm.GetDatasetLatestVersion(datasetID);
-                Session["Metadata"] = SearchUIHelper.ConvertXmlToHtml(dsv.Metadata.InnerXml.ToString(), "\\UI\\HtmlShowMetadata.xsl");
-            }
-            catch (Exception e)
-            {
-                ModelState.AddModelError(String.Empty, e.Message);
-            }
+                try
+                {
+                    DatasetManager dm = new DatasetManager();
+                    DatasetVersion dsv = dm.GetDatasetLatestVersion(datasetID);
+                    Session["Metadata"] = SearchUIHelper.ConvertXmlToHtml(dsv.Metadata.InnerXml.ToString(), "\\UI\\HtmlShowMetadata.xsl");
+                }
+                catch (Exception e)
+                {
+                    ModelState.AddModelError(String.Empty, e.Message);
+                }
 
-            return View();
-        }
+                return PartialView();
+            }
 
         #endregion
 
@@ -63,6 +84,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 Session["Columns"] = null;
                 Session["DownloadFullDataset"] = false;
                 ViewData["DownloadOptions"] = null;
+         
 
                 DatasetManager dm = new DatasetManager();
                 DatasetVersion dsv = dm.GetDatasetLatestVersion(datasetID);
@@ -81,39 +103,42 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
                     DataTable table = SearchUIHelper.ConvertPrimaryDataToDatatable(dsv, dataTuples);
 
-                    return View(ShowDataModel.Convert(datasetID,title, sds, table));
+                    ViewData["gridTotal"] = dataTuples.Count();
+
+                    return PartialView(ShowPrimaryDataModel.Convert(datasetID, title, sds, table));
                 }
 
                 if (ds.Self.GetType() == typeof(UnStructuredDataStructure))
                 {
-                    return View(ShowDataModel.Convert(datasetID,title, ds, SearchUIHelper.GetContantDescriptorFromKey(dsv, "unstructuredData")));
+                    return PartialView(ShowPrimaryDataModel.Convert(datasetID,title, ds, SearchUIHelper.GetContantDescriptorFromKey(dsv, "unstructuredData")));
                 }
 
                 return null;
             }
 
             #region server side
-                [GridAction]
-                public ActionResult _CustomPrimaryDataBinding(GridCommand command, int datasetID)
-                {
 
-                    Session["Filter"] = command;
+            [GridAction]
+            public ActionResult _CustomPrimaryDataBinding(GridCommand command, int datasetID)
+            {
 
-                    DatasetManager dm = new DatasetManager();
-                    DatasetVersion dsv = dm.GetDatasetLatestVersion(datasetID);
+                Session["Filter"] = command;
 
-
-                    List<AbstractTuple> dataTuples = dm.GetDatasetVersionEffectiveTuples(dsv);
-
-                    DataTable table = SearchUIHelper.ConvertPrimaryDataToDatatable(dsv, dataTuples);
-                    GridModel model = new GridModel(table);
+                DatasetManager dm = new DatasetManager();
+                DatasetVersion dsv = dm.GetDatasetLatestVersion(datasetID);
 
 
-                    return View(model);
-                }
+                List<AbstractTuple> dataTuples = dm.GetDatasetVersionEffectiveTuples(dsv);
+
+                DataTable table = SearchUIHelper.ConvertPrimaryDataToDatatable(dsv, dataTuples);
+                GridModel model = new GridModel(table);
+
+
+                return View(model);
+            }
             #endregion
 
-                public ActionResult SetGridCommand(string filters, string orders, string columns)
+            public ActionResult SetGridCommand(string filters, string orders, string columns)
                 {
                     Session["Columns"] = columns.Replace("ID","").Split(',');
                     Session["Filter"] = GridHelper.ConvertToGridCommand(filters, orders);
@@ -247,6 +272,9 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                     }
                     else
                     {
+                        List<long> datatupleIds = datasetManager.GetDatasetVersionEffectiveTupleIds(datasetVersion);
+                        long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
+
                         //csv allready exist
                         if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals("generatedCSV")) > 0)
                         {
@@ -261,8 +289,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                             }
                             else
                             {
-                                List<long> datatupleIds = datasetManager.GetDatasetVersionEffectiveTupleIds(datasetVersion);
-                                long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
+                                
                                 path = generateDownloadFile(id, datasetVersion.VersionNo, datastuctureId, title, ext ,writer);
 
                                 storeGeneratedFilePathToContentDiscriptor(id, datasetVersion, title, ext, writer);
@@ -280,8 +307,6 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         {
                             #region file not exist
 
-                            List<long> datatupleIds = datasetManager.GetDatasetVersionEffectiveTupleIds(datasetVersion);
-                            long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
                             path = generateDownloadFile(id, datasetVersion.VersionNo, datastuctureId, title, ext, writer);
 
                             storeGeneratedFilePathToContentDiscriptor(id, datasetVersion, title, ext, writer);
@@ -310,7 +335,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                     {
                         #region generate a subset of a dataset
 
-                        List<AbstractTuple> datatuples = GetFilteredDataTuples(datasetVersion);
+                            List<AbstractTuple> datatuples = GetFilteredDataTuples(datasetVersion);
 
                             long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
 
@@ -331,7 +356,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
                         List<long> datatupleIds = datasetManager.GetDatasetVersionEffectiveTupleIds(datasetVersion);
                         long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
-                        path = generateDownloadFile(id, datasetVersion.VersionNo, datastuctureId, title, ext, writer);
+                       
 
                         //csv allready exist
                         if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals("generatedTXT")) > 0 || datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(path)) == 1)
@@ -348,6 +373,8 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                                 }
                                 else
                                 {
+                                    path = generateDownloadFile(id, datasetVersion.VersionNo, datastuctureId, title, ext, writer);
+
                                     //generate a entry in the ContentDiscriptor
                                     storeGeneratedFilePathToContentDiscriptor(id, datasetVersion, title, ext, writer);
 
@@ -364,6 +391,8 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         else
                         {
                             #region file not exist
+
+                                path = generateDownloadFile(id, datasetVersion.VersionNo, datastuctureId, title, ext, writer);
 
                                 //generate a entry in the ContentDiscriptor
                                 storeGeneratedFilePathToContentDiscriptor(id, datasetVersion, title, ext, writer);
@@ -533,7 +562,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                                     {
                                         var list = from datatuple in dataTupleList
                                                    let val = datatuple.VariableValues.Where(p => p.Variable.Id.Equals(id)).FirstOrDefault()
-                                                   orderby val.Value ascending
+                                                   orderby GridHelper.CastVariableValue(val.Value, val.DataAttribute.DataType.SystemType) ascending
                                                    select datatuple;
 
                                         dataTupleList = list.ToList();
@@ -543,8 +572,9 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                                     {
                                         var list = from datatuple in dataTupleList
                                                    let val = datatuple.VariableValues.Where(p => p.Variable.Id.Equals(id)).FirstOrDefault()
-                                                   orderby val.Value descending
+                                                   orderby GridHelper.CastVariableValue(val.Value, val.DataAttribute.DataType.SystemType) descending
                                                    select datatuple;
+
                                         dataTupleList = list.ToList();
                                     }
                                 }
@@ -641,9 +671,9 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             #endregion
         #endregion
 
-                    #region datastructure
+        #region datastructure
 
-                    [GridAction]
+            [GridAction]
             public ActionResult _CustomDataStructureBinding(GridCommand command, long datasetID)
             {
                 long id = datasetID;
@@ -668,12 +698,13 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 DatasetManager dm = new DatasetManager();
                 DatasetVersion ds = dm.GetDatasetLatestVersion((long)datasetID);
                 DataStructureManager dsm = new DataStructureManager();
-                StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(ds.Dataset.DataStructure.Id);
+                DataStructure dataStructure = dsm.AllTypesDataStructureRepo.Get(ds.Dataset.DataStructure.Id);
+        
 
                 long id = (long)datasetID;
 
-                Tuple<StructuredDataStructure, long> m = new Tuple<StructuredDataStructure, long>(
-                    sds,
+                Tuple<DataStructure, long> m = new Tuple<DataStructure, long>(
+                    dataStructure,
                     id
                    );
 

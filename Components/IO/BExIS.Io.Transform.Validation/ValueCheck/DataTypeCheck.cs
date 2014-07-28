@@ -1,18 +1,33 @@
 ﻿using System;
+using System.Globalization;
+using System.Text.RegularExpressions;
 using BExIS.Io.Transform.Validation.Exceptions;
+using System.Linq;
 
-
+/// <summary>
+///
+/// </summary>        
 namespace BExIS.Io.Transform.Validation.ValueCheck
 {
+    /// <summary>
+    ///
+    /// </summary>
+    /// <remarks></remarks>        
     public class DataTypeCheck:IValueCheck
     {
         # region parameter
         private ValueType _appliedTo = new ValueType();
         private string _name = "";
         private string _dataType = "";
+        private DecimalCharacter _decimalCharacter;
 
-            #region get
+        #region get
 
+            /// <summary>
+            ///
+            /// </summary>
+            /// <remarks></remarks>
+            /// <seealso cref=""/>        
             public ValueType AppliedTo
             {
                 get
@@ -21,14 +36,29 @@ namespace BExIS.Io.Transform.Validation.ValueCheck
                 }
             }
 
+            /// <summary>
+            ///
+            /// </summary>
+            /// <remarks></remarks>
+            /// <seealso cref=""/>        
             public string Name
             {
                 get { return _name; }
             }
 
+            /// <summary>
+            ///
+            /// </summary>
+            /// <remarks></remarks>
+            /// <seealso cref=""/>        
             public string DataType
             {
                 get { return _dataType; }
+            }
+
+            public DecimalCharacter GetDecimalCharacter
+            {
+                get { return _decimalCharacter; }
             }
             
 
@@ -36,6 +66,14 @@ namespace BExIS.Io.Transform.Validation.ValueCheck
 
         #endregion
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="value"></param>
+        /// <param name="row"></param>
+        /// <returns></returns>
         public object Execute(string value, int row)
         {
             if (!String.IsNullOrEmpty(value))
@@ -72,30 +110,86 @@ namespace BExIS.Io.Transform.Validation.ValueCheck
 
                     case "Double":
                         {
-                            try
-                            {
+                            //double convertedValue = 0;
 
-                                if (!String.IsNullOrEmpty(value)) Convert.ToDouble(value);
-                            }
-                            catch (Exception ex)
-                            {
-                                return new Error(ErrorType.Value, "Can not convert to", new object[] { _name, value, row, _dataType });
-                            }
+                            //if(double.TryParse(value,NumberStyles.Number,CultureInfo.InvariantCulture, out convertedValue))
+                            //{
+                                if (_decimalCharacter.Equals(DecimalCharacter.point))
+                                {
+                                    string[] temp = value.Split('.');
+                                    if (temp.Length <= 2)
+                                    {
+                                        if (temp[temp.Length - 1].All(Char.IsDigit))
+                                        {
+                                            return Convert.ToDouble(value, new CultureInfo("en-US"));
+                                        }
+                                        else
+                                        {
+                                            return new Error(ErrorType.Value, "False decimal character.", new object[] { _name, value, row, _dataType });
+                                        }
+                                    }
+                                    else
+                                    {
+                                        return new Error(ErrorType.Value, "Can not convert to.", new object[] { _name, value, row, _dataType });
+                                    } 
+                                }
+
+                                if (_decimalCharacter.Equals(DecimalCharacter.comma))
+                                {
+                                    string[] temp = value.Split(',');
+                                    if (temp.Length <= 2)
+                                    {
+                                        if (temp[temp.Length - 1].All(Char.IsDigit))
+                                        {
+                                            return Convert.ToDouble(value, new CultureInfo("de-DE"));
+                                        }
+                                        else
+                                        {
+                                            return new Error(ErrorType.Value, "False decimal character.", new object[] { _name, value, row, _dataType });
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        return new Error(ErrorType.Value, "Can not convert to.", new object[] { _name, value, row, _dataType });
+                                    }
+                                }
+
+                            //}
+                            //else
+                            //{
+                            //    return new Error(ErrorType.Value, "Can not convert to", new object[] { _name, value, row, _dataType });
+                            //}
 
                             return Convert.ToDouble(value);
                         }
                     case "DateTime": 
                         {
-                            try
+
+                            DateTime dateTime;
+
+                            if(DateTime.TryParse(value,out dateTime))
                             {
-                                DateTime.Parse(value);
-                            }
-                            catch
-                            {
-                                return new Error(ErrorType.Value, "Can not convert to", new object[] { _name, value, row, _dataType });
+                                return dateTime;
                             }
 
-                            return DateTime.Parse(value);
+                            if(DateTime.TryParse(value,new CultureInfo("de-DE", false),DateTimeStyles.None,out dateTime))
+                            {
+                                return dateTime;
+                            }
+
+                            if(DateTime.TryParse(value,new CultureInfo("en-US", false),DateTimeStyles.None,out dateTime))
+                            {
+                                return dateTime;
+                            }
+
+                            if (DateTime.TryParse(value,CultureInfo.InvariantCulture, DateTimeStyles.None, out dateTime))
+                            {
+                                return dateTime;
+                            }
+
+                            return new Error(ErrorType.Value, "Can not convert to", new object[] { _name, value, row, _dataType });
+
                         }
                     case "String":
                         {
@@ -107,11 +201,19 @@ namespace BExIS.Io.Transform.Validation.ValueCheck
             return value;
         }
 
-        public DataTypeCheck(string name, string dataType)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="name"></param>
+        /// <param name="dataType"></param>
+        public DataTypeCheck(string name, string dataType, DecimalCharacter decimalCharacter)
         {
             _appliedTo = ValueType.Number;
             _name = name;
             _dataType = dataType;
+            _decimalCharacter = decimalCharacter;
         }
     }
 }

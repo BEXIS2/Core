@@ -1,11 +1,26 @@
 ﻿
+/// <summary>
+///
+/// </summary>        
 namespace BExIS.Io.Transform.Validation.DSValidation
 {
+    /// <summary>
+    ///
+    /// </summary>
+    /// <remarks></remarks>        
     public class VariableIdentifier
     {
         public string name = "";
         public long id = 0;
+        public string systemType = "";
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="check"></param>
+        /// <returns></returns>
         public bool Equals(VariableIdentifier check)
         {
             if (check != null)

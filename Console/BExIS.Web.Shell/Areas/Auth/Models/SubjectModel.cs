@@ -6,6 +6,16 @@ using BExIS.Security.Entities.Subjects;
 
 namespace BExIS.Web.Shell.Areas.Auth.Models
 {
+    public class SubjectDataPermissionModel
+    {
+        public long SubjectId { get; set; }
+        public string SubjectName { get; set; }
+
+        public bool Read { get; set; }
+        public bool Update { get; set; }
+        public bool Delete { get; set; }
+    }
+
     public class SubjectModel
     {
     }

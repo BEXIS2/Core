@@ -29,13 +29,13 @@ namespace BExIS.Web.Shell
         public static void RegisterRoutes(RouteCollection routes)
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
-                       
-            routes.MapRoute(
-                "DDM", //Landing page
-                "",
-                new { area = "DDM", controller = "Home", action = "Index" }
-                , new[] { "BExIS.Web.Shell.Areas.DDM.Controllers" }
-            ).DataTokens["UseNamespaceFallback"] = false;
+
+            //routes.MapRoute(
+            //    "DDM", //Landing page
+            //    "",
+            //    new { area = "DDM", controller = "Home", action = "Index" }
+            //    , new[] { "BExIS.Web.Shell.Areas.DDM.Controllers" }
+            //).DataTokens["UseNamespaceFallback"] = false;
 
             //routes.MapRoute(
             //   "Home",
@@ -98,7 +98,7 @@ namespace BExIS.Web.Shell
         {
             IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager();
             
-         pManager.Shutdown(); // release all data access related resources!
+            pManager.Shutdown(); // release all data access related resources!
             IoCFactory.ShutdownContainer();
         }
 

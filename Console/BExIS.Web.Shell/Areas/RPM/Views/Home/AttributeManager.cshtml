@@ -45,8 +45,9 @@
     <br />
     @(Html.Telerik().Grid(Model)    
             .Name("Attribute")
-            .Sortable()   
-            .Scrollable(t => t.Height(400))         
+            .Sortable()
+            .Filterable()    
+            .Scrollable(t => t.Height(450))         
             .Columns(columns =>
                 {
                     columns.Template(
@@ -55,7 +56,7 @@
                             {
                                 <div class="t-button t-button-icontext t-button-bare">
                                     @Html.ActionLink("Edit", "openAttributeWindow", "Home", new { id = item.Id }, new { @class = "t-icon t-edit" })
-                                    @Html.ActionLink("Delete", "deletAttribute", "Home", new { id = item.Id, item.Name }, new { @class = "t-icon t-delete" })
+                                    @Html.ActionLink("Delete", "deletAttribute", "Home", new { id = item.Id, item.Name }, new { @class = "t-icon t-delete", onclick = "return confirm('Are you sure you want to delete the Data Attribute " + item.Name + " ?')" })
                                 </div>
                             }
                             else
@@ -67,7 +68,7 @@
                         .Width(80)
                         .ClientTemplate(
                             @Html.ActionLink("Edit", "openAttributeWindow", "Home", new { id = "<#= id #>" }, new { @class = "t-icon t-edit" }).ToHtmlString() +
-                            @Html.ActionLink("Delete", "deletAttribute", "Home", new { id = "<#= id #>", dataAttribute.Name }, new { @class = "t-icon t-delete" }).ToHtmlString()
+                            @Html.ActionLink("Delete", "deletAttribute", "Home", new { id = "<#= id #>", dataAttribute.Name }, new { @class = "t-icon t-delete", onclick = "return confirm('Are you sure you want to delete the Data Attribute " + dataAttribute.Name + " ?')" }).ToHtmlString()
                         );
                     columns.Bound(c => c.Name).Width(150);
                     columns.Bound(c => c.Id).Width(50);
@@ -82,10 +83,6 @@
 
     <br />
     <br />
-
-<div title="Create a new Data Attribute">
-    @Html.ActionLink("Create Data Attribute", "openAttributeWindow", "Home", new { id = 0 }, new { @class = "t-button t-add" })
-</div>
     <div style="position:absolute; left:20%; top:60px;">
                     @{ Html.Telerik().Window()
                             .Name(windowName)

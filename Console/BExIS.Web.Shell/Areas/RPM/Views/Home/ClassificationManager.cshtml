@@ -45,13 +45,13 @@
                     columns.Template(
                         @<text>
                             @Html.ActionLink("Edit", "openClassWindow", "Home", new { id = item.Id }, new { @class = "t-icon t-edit" })
-                            @Html.ActionLink("Delete", "deletClass", "Home", new { id = item.Id }, new { @class = "t-icon t-delete" })
+                            @Html.ActionLink("Delete", "deletClass", "Home", new { id = item.Id }, new { @class = "t-icon t-delete", onclick = "return confirm('Are you sure you want to delete?')" })
                         </text>
                     ).Title("Functions")
                         .Width(50)
                         .ClientTemplate(
                             @Html.ActionLink("Edit", "openClassWindow", "Home", new { id = "<#= id #>" }, new { @class = "t-icon t-edit" }).ToHtmlString() +
-                            @Html.ActionLink("Delete", "deletClass", "Home", new { id = "<#= id #>" }, new { @class = "t-icon t-delete" }).ToHtmlString()
+                            @Html.ActionLink("Delete", "deletClass", "Home", new { id = "<#= id #>" }, new { @class = "t-icon t-delete", onclick = "return confirm('Are you sure you want to delete?')" }).ToHtmlString()
                         );
                     columns.Bound(c => c.Name);
                     columns.Bound(c => c.Id);

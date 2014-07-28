@@ -5,13 +5,10 @@
     <key column="Id" />
 
     <!-- Mapping Feature Permission Associations -->
-    <property name="EntityName" type="String" />
-
-    <property name="Rights" type="byte" />
-
-    <property name="Property" type="String" />
-    <property name="Comparator" type="BExIS.Security.Entities.Objects.Comparator, BExIS.Security.Entities" />
-    <property name="Value" type="String" />
+    <property name="DataId" type="Int64" />
+    <property name="EntityId" type="string" />
+    
+    <property name="RightType" type="BExIS.Security.Entities.Objects.RightType, BExIS.Security.Entities" />
 
   </joined-subclass>
 

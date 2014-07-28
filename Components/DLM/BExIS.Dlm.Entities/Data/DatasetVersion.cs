@@ -4,8 +4,14 @@ using System.Linq;
 using System.Xml;
 using Vaiona.Entities.Common;
 
+/// <summary>
+///
+/// </summary>        
 namespace BExIS.Dlm.Entities.Data
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public enum DatasetVersionStatus
     {
         Old = 0             // a previous version that is checked in and not the latest version anymore
@@ -14,6 +20,11 @@ namespace BExIS.Dlm.Entities.Data
     }
 
     [AutomaticMaterializationInfo("ExtendedPropertyValues", typeof(List<ExtendedPropertyValue>), "XmlExtendedPropertyValues", typeof(XmlNode))]
+
+    /// <summary>
+    ///
+    /// </summary>
+    /// <remarks></remarks>        
     public class DatasetVersion : BusinessEntity, IBusinessVersionedEntity
     {
         #region Attributes
@@ -22,16 +33,51 @@ namespace BExIS.Dlm.Entities.Data
         /// also helps to reduce the complexity of content versioning, as there are less associations.
         //public virtual string Title { get; set; }
         //public virtual string Description { get; set; } // Description of the dataset not the changes made in this version.
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual string ChangeDescription { get; set; } // the information about the change itself, the reason, etc
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual DateTime Timestamp { get; set; } // to find latest version, ordering the versions, etc.
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual XmlDocument Metadata { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual XmlDocument XmlExtendedPropertyValues { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual DatasetVersionStatus Status { get; set; }
 
         #endregion
 
         #region Associations
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual Dataset Dataset { get; set; }
 
         /// <summary>
@@ -42,11 +88,15 @@ namespace BExIS.Dlm.Entities.Data
         /// for these reasons, its better to not have the tuples loaded by the data access layer at first.       
         /// PriliminaryTuples are those added or edited by this version. they may change over time
         /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
         public virtual ICollection<DataTuple> PriliminaryTuples { get; set; }
 
         /// <summary>
         /// At least one for unstructured data
         /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
         public virtual ICollection<ContentDescriptor> ContentDescriptors { get; set; }
 
         /// <summary>
@@ -57,6 +107,12 @@ namespace BExIS.Dlm.Entities.Data
 
         //public virtual ICollection<DataTuple> Tuples { get; set; } // if (dataStructure is UnStructuredDataStructure) no tuple can be added to this property
         // Don't Map for persistence
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual IList<ExtendedPropertyValue> ExtendedPropertyValues { get; set; }
 
         #endregion
@@ -64,6 +120,13 @@ namespace BExIS.Dlm.Entities.Data
         #region Methods
 
         ///it is here for the automatic object creation by the persistence layer. Programmers SHOULD use the other constructor that takes a Dataset as a parameter
+        
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param></param>       
         public DatasetVersion()
         {
             ExtendedPropertyValues = new List<ExtendedPropertyValue>();
@@ -72,6 +135,12 @@ namespace BExIS.Dlm.Entities.Data
             //XmlExtendedPropertyValues = new XmlDocument();
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="dataset"></param>
         public DatasetVersion(Dataset   dataset): this()
         {
             this.Dataset = dataset;
@@ -84,7 +153,13 @@ namespace BExIS.Dlm.Entities.Data
         //{            
         //    // check whether type of data structure is unstructured? if yes, at least one ContentDescriptor must be provided
         //}
-       
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param></param>       
         public override void Materialize()
         {
             base.Materialize();
@@ -92,6 +167,12 @@ namespace BExIS.Dlm.Entities.Data
                 this.PriliminaryTuples.ToList().ForEach(p => p.Materialize());
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param></param>       
         public override void Dematerialize()
         {
             base.Dematerialize();

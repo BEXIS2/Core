@@ -4,8 +4,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+/// <summary>
+///
+/// </summary>        
 namespace BExIS.Dlm.Entities.MetadataStructure
 {
+    /// <summary>
+    ///
+    /// </summary>
+    /// <remarks></remarks>        
     public class MetadataAttribute : DataContainer
     {
         #region Attributes
@@ -14,12 +21,23 @@ namespace BExIS.Dlm.Entities.MetadataStructure
 
         #region Associations
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual ICollection<MetadataAttributeUsage> UsedIn { get; set; }
 
         #endregion
 
         #region Mathods
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param></param>       
         public MetadataAttribute()
         {
             UsedIn = new List<MetadataAttributeUsage>();

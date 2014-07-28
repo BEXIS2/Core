@@ -20,7 +20,7 @@
         
 .search_winLeft
 {
-    position:absolute;
+    position:relative;
     float:left;
     width:50%;
     margin:0;
@@ -61,7 +61,6 @@
 {
     display: block;
     position: relative;
-    left: 153px;
 }
 
 #search_Components .search_Filter
@@ -84,6 +83,17 @@
     width:280px;
 }
 
+#search_Components table, #search_Components td, #search_Components tr
+{
+    border:none;
+    padding:2px;
+
+}
+
+#search_Components table
+{
+
+}
 
 /**************************/
 /*** _searchBreadCrumb***/
@@ -114,11 +124,21 @@
 /**************************/
 /*** _searchResultGrid***/
 
-.result-grid 
+/*.result-grid
 {
-    position: absolute;
-    margin-right:10px;
+
+    height:auto;
+    max-height:600px;
+    
 }
+
+.result-grid t-grid-content
+{
+    overflow:auto;
+    height:auto;
+    max-height:600px;
+    
+}*/
 
 /**************************/
 /*** _searchListView***/

@@ -1,8 +1,13 @@
 ﻿using System.Collections.Generic;
 
+/// <summary>
+///
+/// </summary>        
 namespace BExIS.Ddm.Model
 {
-
+    /// <summary>
+    /// 
+    /// </summary>
     public enum SearchComponentBaseType
     {
         //Base,
@@ -12,16 +17,50 @@ namespace BExIS.Ddm.Model
         General
     }
 
-    public class SearchComponentBase 
+    /// <summary>
+    ///
+    /// </summary>
+    /// <remarks></remarks>        
+    public class SearchComponentBase
     {
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public string Name { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public string DisplayName { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public string DefaultValue { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public SearchComponentBaseType Type { get; set; }
     }
 
+    /// <summary>
+    ///
+    /// </summary>
+    /// <remarks></remarks>        
     public class Facet : SearchComponentBase //, IHierarchyData. maybe it is good to implement this interface in order to make UI data binding easier!
     {
+         /// <summary>
+         /// 
+         /// </summary>
         public Facet() 
         {
 
@@ -31,33 +70,75 @@ namespace BExIS.Ddm.Model
         /// <summary>
         /// Displayed Name
         /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
         public string Text { get; set; }
+
         /// <summary>
         /// to work with.
         /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
         public string Value { get; set; }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public int Count { get; set; }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public Facet Parent { get; set; }
 
-        public List<Facet> Childrens { get; set; }
-
-       
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
+        public List<Facet> Childrens { get; set; }       
     }
 
+    /// <summary>
+    ///
+    /// </summary>
+    /// <remarks></remarks>        
     public class Category : SearchComponentBase
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
         public Category()
         {
 
             this.Type = SearchComponentBaseType.Category;
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public string Value { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public bool HasFacet { get; set; }
     }
 
+    /// <summary>
+    ///
+    /// </summary>
+    /// <remarks></remarks>        
     public class Property : SearchComponentBase
     {
         public const string ID = "id";
@@ -81,47 +162,88 @@ namespace BExIS.Ddm.Model
 
         public const string DEFAULT_ALL = "all";
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public Property() 
         {
 
             this.Type = SearchComponentBaseType.Property;
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public string DisplayTitle { get; set; }
+        
         /// <summary>
         /// Key for searching
         /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
         public string DataSourceKey { get; set; }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public string UIComponent { get; set; }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public string AggregationType { get; set; }
-        
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public string DataType { get; set; }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public Direction Direction { get; set; }
 
         /// <summary>
         /// If the Propertie based on a date then we need the dateformat
         /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
         public IEnumerable<string> Formats { get; set; }
 
         /// <summary>
         /// List of Values for the Property
         /// </summary>
-        public IEnumerable<string> Values { get; set; }
-
-    
-       
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        public IEnumerable<string> Values { get; set; }      
     }
 
     // no needed -  change textvalues to string list
+
+    /// <summary>
+    ///
+    /// </summary>
+    /// <remarks></remarks>        
     public class TextValue : SearchComponentBase
     {
         public string Value { get; set; }
     }
 
-
+    /// <summary>
+    /// 
+    /// </summary>
     public enum Direction { 
     
         none,

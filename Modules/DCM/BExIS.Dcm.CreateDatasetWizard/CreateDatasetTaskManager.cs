@@ -4,10 +4,15 @@ using System.Linq;
 using System.Xml;
 using BExIS.Dcm.Wizard;
 
-
-
+/// <summary>
+///
+/// </summary>        
 namespace BExIS.Dcm.CreateDatasetWizard
 {
+    /// <summary>
+    ///
+    /// </summary>
+    /// <remarks></remarks>        
     public class CreateDatasetTaskmanager : AbstractTaskManager
     {
         public static string DATASET_ID = "DataSetId";
@@ -27,8 +32,17 @@ namespace BExIS.Dcm.CreateDatasetWizard
         public static string METADATASTRUCTURE_ID = "MetadataStructureId";
         public static string METADATAPACKAGE_IDS = "MetadataPackageIds";
 
+        public static string SETUP_LOADED = "SETUP_LOADED";
+    
         public static string ERROR_DIC = "Error_Dic";
-
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="xmlDocument"></param>
+        /// <returns></returns>
         public static CreateDatasetTaskmanager Bind(XmlDocument xmlDocument)
         {
             XmlNodeList xmlStepInfos = xmlDocument.GetElementsByTagName("stepInfo");
@@ -64,6 +78,12 @@ namespace BExIS.Dcm.CreateDatasetWizard
             return tm;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="index"></param>
         public void SetCurrent(int index)
         {
             currentStepInfo = StepInfos.ElementAt(index);
@@ -76,6 +96,12 @@ namespace BExIS.Dcm.CreateDatasetWizard
 
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <returns></returns>
         public StepInfo Prev()
         {
             int currentIndex = StepInfos.IndexOf(currentStepInfo);
@@ -87,6 +113,12 @@ namespace BExIS.Dcm.CreateDatasetWizard
             return StepInfos.ElementAt(currentIndex - 1);
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param>NA</param>       
         public void GoToNext()
         {
             //this.currentStepInfo.SetStatus(StepStatus.success);
@@ -94,6 +126,12 @@ namespace BExIS.Dcm.CreateDatasetWizard
             this.currentStepInfo = this.Next();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="newIndex"></param>
         public void UpdateStepStatus(int newIndex)
         {
             // new index higher than current Index and next Index

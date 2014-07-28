@@ -38,12 +38,12 @@
                             subitem.Add().Text("Roles Manager").Action("Roles", "Roles", new { area = "Auth" });
                             subitem.Add().Text("Users Manager").Action("Users", "Users", new { area = "Auth" });
                             subitem.Add().Text("Features Manager").Action("Features", "Permissions", new { area = "Auth" });
+                            subitem.Add().Text("Data Manager").Action("Data", "Permissions", new { area = "Auth" });
 
                         });
                         item.Add().Text("Data Discovery").Items(subitem =>
                         {
                             subitem.Add().Text("Search Manager").Action("SearchDesigner", "Admin", new { area = "DDM" });
-                            subitem.Add().Text("Refresh Search").Action("ReIndexSearch", "Admin", new { area = "DDM" });
                         });
 						
 					}

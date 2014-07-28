@@ -11,7 +11,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
     public class RoleCreationModel
     {
         [Display(Name = "Role Name")]
-        [RegularExpression("^[^\\s]+(\\s+[^\\s]+)*", ErrorMessage = "The role name must start and end with no space.")]
+        [RegularExpression("^[\\S]*$", ErrorMessage = "The role name is invalid.")]
         [Remote("ValidateRoleName", "Roles")]
         [Required]
         [StringLength(50, ErrorMessage = "The role name must be {2} - {1} characters long.", MinimumLength = 3)]
@@ -31,14 +31,13 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
         public long Id { get; set; }
 
         [Display(Name = "Role Name")]
-        [RegularExpression("^[^\\s]+(\\s+[^\\s]+)*", ErrorMessage = "The role name must start and end with no space.")]
+        [RegularExpression("^[\\S]*$", ErrorMessage = "The role name is invalid.")]
         [Remote("ValidateRoleName", "Roles", AdditionalFields = "Id")]
         [Required]
         [StringLength(50, ErrorMessage = "The role name must be {2} - {1} characters long.", MinimumLength = 3)]
         public string RoleName { get; set; }
 
         [Display(Name = "Description")]
-        [RegularExpression("^[^\\s]+(\\s+[^\\s]+)*", ErrorMessage = "The description must start and end with no space.")]
         [StringLength(250, ErrorMessage = "The description must be less than {1} characters long.")]
         public string Description { get; set; }
 

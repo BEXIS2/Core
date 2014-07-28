@@ -1,4 +1,7 @@
 ﻿
+/// <summary>
+///
+/// </summary>        
 namespace BExIS.Dlm.Entities.DataStructure
 {
     //public class Parameter : DataContainer

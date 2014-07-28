@@ -212,6 +212,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
         [HttpPost]
         public ActionResult AddFacetsToSearch()
         {
+
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
 
             List<string> selectedValues = new List<string>();
@@ -256,14 +257,14 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
            // List<Facet> sortedList = facet.Childrens.OrderBy(p => p.DisplayName).ToList();
 
-            SetSelectAbleCategoryList(facet.Childrens.OrderBy(p => p.DisplayName).ToList());
+            SetSelectAbleCategoryList(facet.Childrens.OrderBy(p => p.Name.ToLower()).ToList());
 
             return PartialView("_windowCheckBoxList", provider.WorkingSearchModel);
         }
 
         #endregion
         
-        #region breadcrumbView
+        #region BreadcrumbView
         //+++++++++++++++++++++BreadCrumb Update Data +++++++++++++++++++++++++++
 
         /// <summary>

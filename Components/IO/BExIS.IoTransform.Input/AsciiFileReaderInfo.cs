@@ -1,14 +1,18 @@
 ﻿
+/// <summary>
+///
+/// </summary>        
 namespace BExIS.Io.Transform.Input
 {
-
     /// <summary>
     /// This class is required to store information that is important to read of data from ascii files.
     /// </summary>
     /// <remarks></remarks>        
     public class AsciiFileReaderInfo:FileReaderInfo
     {
-
+        /// <summary>
+        /// 
+        /// </summary>
         public AsciiFileReaderInfo()
         {
             this.Seperator = TextSeperator.tab;
@@ -19,7 +23,6 @@ namespace BExIS.Io.Transform.Input
             this.Data = 2;
             this.Offset = 0;
         }
-
 
         /// <summary>
         /// separator stores the TextSeperator type from which serves as a delimiter
@@ -58,7 +61,6 @@ namespace BExIS.Io.Transform.Input
             }
         }
 
-
         /// <summary>
         /// Get TextSeperator based on string as name 
         /// </summary>
@@ -86,6 +88,8 @@ namespace BExIS.Io.Transform.Input
         /// Get a Textseparator as a Character
         /// </summary>
         /// <param name="sep"></param>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
         /// <returns>TextSeperator as character</returns>
         public static char GetSeperator(TextSeperator sep)
         {
@@ -106,6 +110,8 @@ namespace BExIS.Io.Transform.Input
         /// <summary>
         /// Get Textmarker enum type as String
         /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
         /// <param name="tmarker">TextMarker enum type</param>
         /// <returns>tmarker as string</returns>
         public static string GetTextMarkerAsString(TextMarker tmarker)
@@ -123,6 +129,8 @@ namespace BExIS.Io.Transform.Input
         /// <summary>
         /// Get a Textmarker based on the textmarker string name input
         /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
         /// <param name="textMarker"> name from textmarker</param>
         /// <returns>TextMarker based on name</returns>
         public static TextMarker GetTextMarker(string textMarker)
@@ -140,6 +148,8 @@ namespace BExIS.Io.Transform.Input
         /// <summary>
         /// Get character based on the Textmarker enum type
         /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
         /// <param name="tmarker">TextMarker enum</param>
         /// <returns>Character based on the tmarker</returns>
         public static char GetTextMarker(TextMarker tmarker)

@@ -4,10 +4,15 @@ using System.Linq;
 using System.Xml;
 using BExIS.Dcm.Wizard;
 
-
-
+/// <summary>
+///
+/// </summary>        
 namespace BExIS.Dcm.UploadWizard
 {
+    /// <summary>
+    ///
+    /// </summary>
+    /// <remarks></remarks>        
     public class TaskManager : AbstractTaskManager
     {
 
@@ -40,7 +45,13 @@ namespace BExIS.Dcm.UploadWizard
         public static string PROJECTNAME = "ProjectName";
         public static string INSTITUTE = "Institute";
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="xmlDocument"></param>
+        /// <returns></returns>
         public static TaskManager Bind(XmlDocument xmlDocument)
         {
 
@@ -79,6 +90,9 @@ namespace BExIS.Dcm.UploadWizard
 
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public enum DataStructureType
     { 
         Structured,

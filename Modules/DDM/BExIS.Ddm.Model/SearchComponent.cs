@@ -2,14 +2,23 @@
 using System.Collections.Generic;
 using System.Linq;
 
+/// <summary>
+///
+/// </summary>        
 namespace BExIS.Ddm.Model
 {
-
+    /// <summary>
+    ///
+    /// </summary>
+    /// <remarks></remarks>        
     public class SearchComponent
     {
-        // represents the search components of the search UI
-
-
+        /// <summary>
+        /// represents the search components of the search UI
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param></param>       
         public SearchComponent()
         {
             this.Categories = new List<Category>();
@@ -19,6 +28,14 @@ namespace BExIS.Ddm.Model
         
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="name"></param>
+        /// <param name="typeOf"></param>
+        /// <returns></returns>
         public SearchComponentBase GetSearchComponent(string name, SearchComponentBaseType typeOf)
         {
             switch (typeOf)
@@ -42,25 +59,36 @@ namespace BExIS.Ddm.Model
             return null;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="name"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public bool ContainsSearchComponent(string name, string value)
         {
             if (this.ContainsFacet(name)) return true;
             if (this.ContainsProperty(name)) return true;
             if (this.ContainsCategory(name)) return true;
             return false;
-        }
-
+        }     
 
         #region Facets
         /// <summary>
         /// a list of (hierarchical) facets
         /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
         public IEnumerable<Facet> Facets { get; set; }
 
         /// <summary>
         /// Get a facet from Facets where facename and parentname equal 
         /// to facets child
         /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
         /// <param name="facetName"></param>
         /// <param name="parentName"></param>
         /// <returns></returns>
@@ -82,11 +110,25 @@ namespace BExIS.Ddm.Model
             return null;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="facetName"></param>
+        /// <returns></returns>
         public IEnumerable<Facet> GetFacetChildrens(string facetName)
         {
             return Facets.Where(p => p.Name.Equals(facetName, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault().Childrens;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="facetName"></param>
+        /// <returns></returns>
         public bool ContainsFacet(string facetName)
         {
             return  Facets.Where(p => p.Name.Equals(facetName, StringComparison.InvariantCultureIgnoreCase)).Count() > 0;
@@ -100,12 +142,16 @@ namespace BExIS.Ddm.Model
         /// <summary>
         /// usable for category-list in dropdown
         /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
         public IEnumerable<Category> Categories { get; set; }
 
         /// <summary>
         /// Get a category from Categories where value equal 
         /// to facets category
         /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
         /// <param name="facetName"></param>
         /// <param name="parentName"></param>
         /// <returns></returns>
@@ -114,6 +160,13 @@ namespace BExIS.Ddm.Model
             return (Categories.Where(p => p.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault());
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public bool ContainsCategory(string name)
         {
             return Categories.Where(p => p.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase)).Count() > 0;
@@ -130,6 +183,12 @@ namespace BExIS.Ddm.Model
         //  - now we'll got a list with all values in type string, but I assume there a too many values to  be handled smoothly by application
         //  - maybe better to make a direct connection to lucene ? - what would be the data type ?
 
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public IEnumerable<TextValue> TextBoxSearchValues { get; set; }
      
         #endregion
@@ -137,12 +196,20 @@ namespace BExIS.Ddm.Model
         #region Properties
         //-------------------------------------------------------------------
         // Properties
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public IEnumerable<Property> Properties { get; set; }
 
         /// <summary>
         /// Get a proptery from Properties where value and DataSourceKey are equal 
         /// otherwise null
         /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
         /// <param name="facetName"></param>
         /// <param name="parentName"></param>
         /// <returns></returns>
@@ -151,6 +218,13 @@ namespace BExIS.Ddm.Model
             return (Properties.Where(p => p.DataSourceKey.Equals(name, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault());
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public bool ContainsProperty(string name)
         {
             return Properties.Where(p => p.DataSourceKey.Equals(name, StringComparison.InvariantCultureIgnoreCase)).Count() > 0;

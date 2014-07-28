@@ -31,6 +31,13 @@
 
     List<DataType> dataTypeList = (List<DataType>)Session["dataTypeList"];
 
+    List<long> checkedIds = new List<long>();
+
+    if (Session["checked"] != null)
+    {
+        checkedIds = (List<long>)Session["checked"];
+    }
+ 
     List<long> dataTypeIds = new List<long>();
     
     if(Model != null)
@@ -47,7 +54,6 @@
 
     @using (Html.BeginForm("editUnit", "Home", new { area = "RPM" }))
     {
-       @(Html.TextBox("parent", @HttpContext.Current.Request.RequestContext.RouteData.Values["action"].ToString(), new { @class = "hidden" }))
        @(Html.TextBox("id", Model.Id, new { @class = "hidden" })) 
         <table>
             <tr id="name">
@@ -56,6 +62,9 @@
                 </td>
                 <td>
                     @(Html.TextBoxFor(m => Model.Name, new { @class = "t-input" }))
+                    <div class="errorMsg" style="vertical-align:top;">
+                        <font color="red">@Session["nameMsg"]</font>
+                    </div>
                 </td>
             </tr>
             <tr>
@@ -64,6 +73,9 @@
                 </td>
                 <td>
                     @(Html.TextBoxFor(m => Model.Abbreviation, new { @class = "t-input" }))
+                    <div class="errorMsg" style="vertical-align:top;">
+                        <font color="red">@Session["abbrMsg"]</font>
+                    </div>
                 </td>
             </tr>
             <tr>
@@ -99,14 +111,16 @@
                 <td colspan="2">
                 @(Html.Telerik().Grid(dataTypeList)
                     .Name("DataTypeGrid")
-                    .Scrollable(t => t.Height(400))
+                    .Scrollable(t => t.Height(250))
                     .Sortable()
+                    .Filterable()
+                    //.DataBinding(binding => binding.Ajax().OperationMode(GridOperationMode.Client))
                     .Columns(columns =>
                         {
                             columns.Template(
                             @<text>
-                                <input name="checkedRecords" type="checkbox" value="@item.Id " title="checkedRecords" 
-                                    @if (dataTypeIds.Contains(item.Id))
+                                <input class="checkBox" name="checkedRecords" type="checkbox" value="@item.Id " title="checkedRecords" 
+                                    @if (dataTypeIds.Contains(item.Id) || checkedIds.Contains(item.Id))
                                     {
                                         <text>checked="checked"</text>
                                     }
@@ -118,7 +132,7 @@
                             columns.Bound(c => c.SystemType);
                             columns.Bound(c => c.Description);
                         })
-                )
+                                            )
                 </td>
             </tr>
             <tr><td colspan="2"> </td></tr>
@@ -139,5 +153,43 @@
 else
 {
  <font color="red" style="margin:10px">Can't edit Unit doesn't exist anymore.</font>
-}    
+}
+    
+<script type="text/jscript">
+   
+    $('.checkBox').change(function () {
+        if ($(this).attr('checked'))
+            $(this).attr('checked', true);
+        else
+            $(this).removeAttr('checked');
 
+        var checked;
+
+        $('.checkBox').each(function () {
+            if ($(this).attr('checked')) {
+                if (checked)
+                    checked += "," + $(this).attr('value');
+                else
+                    checked = $(this).attr('value');
+            }
+        });
+        var checkedIDs = checked.split(',');
+        var data = { checkedIDs: checkedIDs };
+
+        $.ajax({
+            url: '/RPM/Home/setChecked',
+            type: 'POST',
+            data: JSON.stringify(data),
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            error: function (xhr) {
+                //alert('Error: ' + xhr.statusText);
+            },
+            success: function (result) {
+                //alert("success");
+            },
+            async: true,
+            processData: false
+        });
+    });
+</script>

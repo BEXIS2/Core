@@ -12,8 +12,9 @@ using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 
-
-
+/// <summary>
+///
+/// </summary>        
 namespace BExIS.Io.Transform.Input
 {
     /// <summary>
@@ -42,6 +43,11 @@ namespace BExIS.Io.Transform.Input
         int rows = 0;
 
         private char[] alphabet = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
+
+        public ExcelReader()
+        {
+            this.info = new ExcelFileReaderInfo();
+        }
 
         #region read file
 
@@ -145,10 +151,7 @@ namespace BExIS.Io.Transform.Input
             }
 
             return this.dataTuples;
-        }
-
-
-       
+        }  
 
         /// <summary>
         /// Read a Excel row by row
@@ -241,6 +244,140 @@ namespace BExIS.Io.Transform.Input
             return this.dataTuples;
         }
 
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="file"></param>
+        /// <param name="fileName"></param>
+        /// <param name="sds"></param>
+        /// <param name="datasetId"></param>
+        /// <param name="variableList"></param>
+        /// <param name="packageSize"></param>
+        /// <returns></returns>
+        public List<List<string>> ReadValuesFromFile(Stream file, string fileName, StructuredDataStructure sds, long datasetId, List<long> variableList, int packageSize)
+        {
+            List<List<string>> listOfSelectedvalues = new List<List<string>>();
+
+            this.file = file;
+            this.fileName = fileName;
+
+            this.structuredDataStructure = sds;
+            //this.info = efri;
+            this.datasetId = datasetId;
+
+            // open excel file
+            spreadsheetDocument = SpreadsheetDocument.Open(this.file, false);
+
+            // get workbookpart
+            WorkbookPart workbookPart = spreadsheetDocument.WorkbookPart;
+
+            // get all the defined area 
+            List<DefinedNameVal> namesTable = BuildDefinedNamesTable(workbookPart);
+
+
+            // select data area
+            this._areaOfData = namesTable.Where(p => p.Key.Equals("Data")).FirstOrDefault();
+
+            // Select variable area
+            this._areaOfVariables = namesTable.Where(p => p.Key.Equals("VariableIdentifiers")).FirstOrDefault();
+
+            // Get intergers for reading data
+            startColumn = GetColumnNumber(this._areaOfData.StartColumn);
+            endColumn = GetColumnNumber(this._areaOfData.EndColumn);
+
+            numOfColumns = (endColumn - startColumn) + 1;
+            offset = GetColumnNumber(GetColumnName(this._areaOfData.StartColumn)) - 1;
+
+            // select worksheetpart by selected defined name area like data in sheet
+            // sheet where data area is inside
+            WorksheetPart worksheetPart = GetWorkSheetPart(workbookPart, this._areaOfData);
+            //worksheet = worksheetPart.Worksheet;
+            // get styleSheet
+            _stylesheet = workbookPart.WorkbookStylesPart.Stylesheet;
+
+            // Get shared strings
+            _sharedStrings = workbookPart.SharedStringTablePart.SharedStringTable.Elements<SharedStringItem>().ToArray();
+
+            if (Position == 1)
+            {
+                Position = this._areaOfData.StartRow;
+            }
+
+            if (GetSubmitedVariableIdentifier(worksheetPart, this._areaOfVariables.StartRow, this._areaOfVariables.EndRow) != null)
+            {
+                listOfSelectedvalues= GetValuesFromRows(worksheetPart,variableList, Position, Position + packageSize);
+                Position += packageSize; 
+            }
+
+
+            return listOfSelectedvalues;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="worksheetPart"></param>
+        /// <param name="variableList"></param>
+        /// <param name="startRow"></param>
+        /// <param name="endRow"></param>
+        /// <returns></returns>
+        private List<List<string>> GetValuesFromRows(WorksheetPart worksheetPart, List<long> variableList, int startRow, int endRow)
+        {
+            List<List<string>> temp = new List<List<string>>();
+
+            OpenXmlReader reader = OpenXmlReader.Create(worksheetPart);
+            int count = 0;
+            int rowNum = 0;
+
+            while (reader.Read())
+            {
+                if (reader.ElementType == typeof(Row))
+                {
+                    do
+                    {
+                        if (reader.HasAttributes)
+                            rowNum = Convert.ToInt32(reader.Attributes.First(a => a.LocalName == "r").Value);
+
+                        if (endRow == 0)
+                        {
+                            if (rowNum >= startRow)
+                            {
+                                Row row = (Row)reader.LoadCurrentElement();
+
+                                temp.Add(RowToList(row, variableList));
+
+                                count++;
+                            }
+                        }
+                        else
+                        {
+                            if (rowNum >= startRow && rowNum <= endRow)
+                            {
+                                Row row = (Row)reader.LoadCurrentElement();
+
+
+                               temp.Add(RowToList(row, variableList));
+                                count++;
+
+                            }
+                        }
+
+
+                    } while (reader.ReadNextSibling()); // Skip to the next row
+
+                    break;
+                }
+            }
+
+            return temp;
+        }
+
+
         /// <summary>
         /// Read rows from worksheetPart starts from a startrow and ends on the endrow
         /// </summary>
@@ -292,9 +429,7 @@ namespace BExIS.Io.Transform.Input
                     } while (reader.ReadNextSibling()); // Skip to the next row
 
                     break;
-
                 }
-
             }
         }
 
@@ -440,7 +575,6 @@ namespace BExIS.Io.Transform.Input
 
         #region helper methods
 
-
         /// <summary>
         /// Convert a excel row to a list of strings
         /// Every cell is one value
@@ -451,7 +585,6 @@ namespace BExIS.Io.Transform.Input
         /// <returns>list of string for each cell in the row</returns>
         private List<string> RowToList(Row r)
         {
-
             string[] rowAsStringArray = new string[numOfColumns];
 
             // create a new cell
@@ -464,17 +597,17 @@ namespace BExIS.Io.Transform.Input
 
                 string value = "";
 
-                
                 if (c != null)
                 {
+                    int cellReferencAsInterger = GetColumnNumber(GetColumnName(c.CellReference));
+
                     if (c.CellValue != null)
                     {
                         // if cell reference in range of the area
-                        int cellReferencAsInterger = GetColumnNumber(GetColumnName(c.CellReference));
                         int start = GetColumnNumber(this._areaOfData.StartColumn);
                         int end = GetColumnNumber(this._areaOfData.EndColumn);
 
-                        if (cellReferencAsInterger >= start && cellReferencAsInterger<=end)
+                        if (cellReferencAsInterger >= start && cellReferencAsInterger <= end)
                         {
 
                             // if Value a text
@@ -494,31 +627,26 @@ namespace BExIS.Io.Transform.Input
                                 {
                                     uint numberFormatId = cellFormat.NumberFormatId.Value;
 
-                                        // Number format 14-22 and 45-47 are built-in date and/or time formats
-                                        if ((numberFormatId >= 14 && numberFormatId <= 22) || (numberFormatId >= 45 && numberFormatId <= 47))
+                                    // Number format 14-22 and 45-47 are built-in date and/or time formats
+                                    if ((numberFormatId >= 14 && numberFormatId <= 22) || (numberFormatId >= 45 && numberFormatId <= 47))
+                                    {
+                                        DateTime dateTime = DateTime.FromOADate(double.Parse(c.CellValue.Text, CultureInfo.InvariantCulture));
+                                        value = dateTime.ToString();
+                                    }
+                                    else
+                                    {
+                                        if (_stylesheet.NumberingFormats != null && _stylesheet.NumberingFormats.Any(numFormat => ((NumberingFormat)numFormat).NumberFormatId.Value == numberFormatId))
                                         {
-                                            DateTime dateTime = DateTime.FromOADate(double.Parse(c.CellValue.Text, CultureInfo.InvariantCulture));
-                                            value = dateTime.ToString();
-                                        }
-                                        else
-                                        {
-                                            if (_stylesheet.NumberingFormats != null && _stylesheet.NumberingFormats.Any(numFormat => ((NumberingFormat)numFormat).NumberFormatId.Value == numberFormatId))
+                                            NumberingFormat numberFormat = _stylesheet.NumberingFormats.First(numFormat => ((NumberingFormat)numFormat).NumberFormatId.Value == numberFormatId) as NumberingFormat;
+
+                                            if (numberFormat != null && numberFormat.FormatCode != null && numberFormat.FormatCode.HasValue)
                                             {
-                                                NumberingFormat numberFormat = _stylesheet.NumberingFormats.First(numFormat => ((NumberingFormat)numFormat).NumberFormatId.Value == numberFormatId) as NumberingFormat;
-
-                                                if (numberFormat != null && numberFormat.FormatCode != null && numberFormat.FormatCode.HasValue)
+                                                string formatCode = numberFormat.FormatCode.Value;
+                                                if ((formatCode.Contains("h") && formatCode.Contains("m")) || (formatCode.Contains("m") && formatCode.Contains("d")))
                                                 {
-                                                    string formatCode = numberFormat.FormatCode.Value;
-                                                    if ((formatCode.Contains("h") && formatCode.Contains("m")) || (formatCode.Contains("m") && formatCode.Contains("d")))
-                                                    {
-                                                        DateTime dateTime = DateTime.FromOADate(double.Parse(c.CellValue.Text, CultureInfo.InvariantCulture));
-                                                        value = dateTime.ToString();
+                                                    DateTime dateTime = DateTime.FromOADate(double.Parse(c.CellValue.Text, CultureInfo.InvariantCulture));
+                                                    value = dateTime.ToString();
 
-                                                    }
-                                                    else
-                                                    {
-                                                        value = c.CellValue.Text;
-                                                    }
                                                 }
                                                 else
                                                 {
@@ -530,25 +658,172 @@ namespace BExIS.Io.Transform.Input
                                                 value = c.CellValue.Text;
                                             }
                                         }
+                                        else
+                                        {
+                                            value = c.CellValue.Text;
+                                        }
                                     }
-                                    else
-                                    {
-                                        value = c.CellValue.Text;
-                                    }
-
                                 }
-                        
+                                else
+                                {
+                                    value = c.CellValue.Text;
+                                }
+
+                            }
+
                             // define index based on cell refernce - offset 
-                            int index = cellReferencAsInterger - offset-1;
+                            int index = cellReferencAsInterger - offset - 1;
                             rowAsStringArray[index] = value;
                         }
                     }//end if cell value
+                    else
+                    {
+                        int index = cellReferencAsInterger - offset - 1;
+                        rowAsStringArray[index] = "";
+                    }
                 }//end if cell null
 
             }//for
 
+            // replace all null values with "";
+            for (int i = 0; i < rowAsStringArray.Length; i++)
+            {
+                if (rowAsStringArray[i] == null) rowAsStringArray[i] = "";
+            }
+
             return rowAsStringArray.ToList();
         }
+
+        /// <summary>
+        /// Convert a excel row to a list of strings
+        /// Every cell is one value
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="r"> row from a excel file</param>  
+        /// <returns>list of string for each cell in the row</returns>
+        private List<string> RowToList(Row r, List<long> varIds)
+        {
+            List<int> columns = new List<int>();
+            foreach(long id in varIds)
+            {
+                //get the index of the variableintifier where id euqls id from varids
+
+                int columnPosition = GetColumnNumber(this._areaOfData.StartColumn)+this.SubmitedVariableIdentifiers.IndexOf(this.SubmitedVariableIdentifiers.Where(p => p.id.Equals(id)).FirstOrDefault());
+
+                columns.Add(columnPosition);
+            }
+
+            List<string> rowAsStringArray = new List<string>();
+
+            // create a new cell
+            Cell c = new Cell();
+
+            for (int i = 0; i < r.ChildElements.Count(); i++)
+            {
+                // get current cell at i
+                c = r.Elements<Cell>().ElementAt(i);
+
+                string value = "";
+
+
+                if (c != null)
+                {
+                    int cellReferencAsInterger = GetColumnNumber(GetColumnName(c.CellReference));
+
+                    if (c.CellValue != null)
+                    {
+                        // if cell reference in range of the area
+                        int start = GetColumnNumber(this._areaOfData.StartColumn);
+                        int end = GetColumnNumber(this._areaOfData.EndColumn);
+
+                        if (columns.Contains(cellReferencAsInterger))
+                        {
+
+                            // if Value a text
+                            if (c.DataType != null && c.DataType.HasValue && c.DataType.Value == CellValues.SharedString)
+                            {
+                                int sharedStringIndex = int.Parse(c.CellValue.Text, CultureInfo.InvariantCulture);
+                                SharedStringItem sharedStringItem = _sharedStrings[sharedStringIndex];
+                                value = sharedStringItem.InnerText;
+
+                            }
+                            // not a text
+                            else if (c.StyleIndex != null && c.StyleIndex.HasValue)
+                            {
+                                uint styleIndex = c.StyleIndex.Value;
+                                CellFormat cellFormat = _stylesheet.CellFormats.ChildElements[(int)styleIndex] as CellFormat;
+                                if (cellFormat.ApplyNumberFormat != null && cellFormat.ApplyNumberFormat.HasValue && cellFormat.ApplyNumberFormat.Value && cellFormat.NumberFormatId != null && cellFormat.NumberFormatId.HasValue)
+                                {
+                                    uint numberFormatId = cellFormat.NumberFormatId.Value;
+
+                                    // Number format 14-22 and 45-47 are built-in date and/or time formats
+                                    if ((numberFormatId >= 14 && numberFormatId <= 22) || (numberFormatId >= 45 && numberFormatId <= 47))
+                                    {
+                                        DateTime dateTime = DateTime.FromOADate(double.Parse(c.CellValue.Text, CultureInfo.InvariantCulture));
+                                        value = dateTime.ToString();
+                                    }
+                                    else
+                                    {
+                                        if (_stylesheet.NumberingFormats != null && _stylesheet.NumberingFormats.Any(numFormat => ((NumberingFormat)numFormat).NumberFormatId.Value == numberFormatId))
+                                        {
+                                            NumberingFormat numberFormat = _stylesheet.NumberingFormats.First(numFormat => ((NumberingFormat)numFormat).NumberFormatId.Value == numberFormatId) as NumberingFormat;
+
+                                            if (numberFormat != null && numberFormat.FormatCode != null && numberFormat.FormatCode.HasValue)
+                                            {
+                                                string formatCode = numberFormat.FormatCode.Value;
+                                                if ((formatCode.Contains("h") && formatCode.Contains("m")) || (formatCode.Contains("m") && formatCode.Contains("d")))
+                                                {
+                                                    DateTime dateTime = DateTime.FromOADate(double.Parse(c.CellValue.Text, CultureInfo.InvariantCulture));
+                                                    value = dateTime.ToString();
+
+                                                }
+                                                else
+                                                {
+                                                    value = c.CellValue.Text;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                value = c.CellValue.Text;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            value = c.CellValue.Text;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    value = c.CellValue.Text;
+                                }
+
+                            }
+
+                            // define index based on cell refernce - offset 
+                            //int index = cellReferencAsInterger - offset - 1;
+                            if (columns.Contains(cellReferencAsInterger))
+                            {
+                                rowAsStringArray.Add(value);
+                            }
+                        }
+                    }//end if cell value
+                    else
+                    {
+                        if (columns.Contains(cellReferencAsInterger))
+                        {
+                            rowAsStringArray.Add(value);
+                        }
+                        
+                    }
+                }//end if cell null
+
+            }//for
+
+            return rowAsStringArray;
+        }
+       
 
         /// <summary>
         /// Generate a list of VariableIdentifiers from the excel file
@@ -666,7 +941,6 @@ namespace BExIS.Io.Transform.Input
             return definedNames;
         }
 
-
         /// <summary>
         /// Return the worksheet which include a specific area
         /// </summary>
@@ -684,9 +958,7 @@ namespace BExIS.Io.Transform.Input
                 .Id;
                 return (WorksheetPart)workbookPart.GetPartById(relId);
         }
-
-        
-
+       
         /// <summary>
         /// Get the cloumn name from a cell
         /// </summary>
@@ -718,7 +990,6 @@ namespace BExIS.Io.Transform.Input
 
             return Convert.ToInt32(match.Value);
         }
-
 
         /// <summary>
         /// Get Column number based on a column name
@@ -758,7 +1029,6 @@ namespace BExIS.Io.Transform.Input
         #endregion
 
     }
-
 
     /// <summary>
     /// Represent a area in a excel file

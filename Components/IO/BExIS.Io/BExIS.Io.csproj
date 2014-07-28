@@ -47,6 +47,7 @@
     <Compile Include="BasicFileInfo.cs" />
     <Compile Include="FileHelper.cs" />
     <Compile Include="IoHelper.cs" />
+    <Compile Include="IOUtility.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

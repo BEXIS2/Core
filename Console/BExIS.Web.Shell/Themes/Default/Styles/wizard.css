@@ -81,6 +81,9 @@ tr td
     color:red;
     top:10px;
     right:10px;
+    height:auto;
+    max-height:600px;
+    overflow:auto;
     position:absolute;
 }
 
@@ -90,6 +93,9 @@ tr td
     color:red;
     top:10px;
     right:10px;
+    height:auto;
+    max-height:600px;
+    overflow:auto;
     position:absolute;
 }
 

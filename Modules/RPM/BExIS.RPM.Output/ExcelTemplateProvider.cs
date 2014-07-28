@@ -8,6 +8,8 @@ using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using Vaiona.Util.Cfg;
+using System.Text.RegularExpressions;
+using System;
 
 
 namespace BExIS.RPM.Output
@@ -43,15 +45,59 @@ namespace BExIS.RPM.Output
             StructuredDataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(id);
             CreateTemplate(dataStructure);
         }
-
+                
         public void CreateTemplate(StructuredDataStructure dataStructure)
         {
             DataStructureManager dataStructureManager = new DataStructureManager();
             dataStructureManager.StructuredDataStructureRepo.LoadIfNot(dataStructure.Variables);
-            string filename = dataStructure.Name + ".xlsm";
+            dataStructureManager.StructuredDataStructureRepo.LoadIfNot(dataStructure.Extra);
+
+            XmlDocument doc = (XmlDocument)dataStructure.Extra;
+            XmlNodeList order;
+            if (doc == null)
+            {
+                doc = new XmlDocument();
+                doc.LoadXml("<extras><order></order></extras>");
+                order = doc.GetElementsByTagName("order");
+                if (dataStructure.Variables != null)
+                {
+                    foreach (Variable v in dataStructure.Variables)
+                    {
+
+                        XmlNode variable = doc.CreateNode(XmlNodeType.Element, "variable", null);
+                        variable.InnerText = v.Id.ToString();
+                        order[0].AppendChild(variable);
+                    }
+                }
+                dataStructure.Extra = doc;
+                dataStructure = dataStructureManager.UpdateStructuredDataStructure(dataStructure);
+            }
+
+            List<Variable>variables = new List<Variable>();
+
+            order = doc.GetElementsByTagName("order");
+            if (dataStructure.Variables.ToList() != null)
+            {
+                foreach (XmlNode x in order[0])
+                {
+                    foreach (Variable v in dataStructure.Variables.ToList())
+                    {
+                        if (v.Id == Convert.ToInt64(x.InnerText))
+                            variables.Add(v);
+
+                    }
+                }
+            }
+            
+            string rgxPattern = "[<>?\":|\\\\/*]";
+            string rgxReplace = "-";
+            Regex rgx = new Regex(rgxPattern);
+
+            string filename = filename = dataStructure.Id + "_" + rgx.Replace(dataStructure.Name, rgxReplace) +".xlsm";
+            
             string path = Path.Combine("DataStructures", dataStructure.Id.ToString());
 
-            CreateTemplate(dataStructure.Variables.ToList(), path, filename);
+            CreateTemplate(variables, path, filename);
 
             XmlDocument resources = new XmlDocument();
 

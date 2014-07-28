@@ -1,8 +1,15 @@
 ﻿using System;
 using BExIS.Io.Transform.Validation.Exceptions;
 
+/// <summary>
+///
+/// </summary>        
 namespace BExIS.Io.Transform.Validation.ValueCheck
 {
+    /// <summary>
+    ///
+    /// </summary>
+    /// <remarks></remarks>        
     public class OptionalCheck:IValueCheck
     {
         # region parameter
@@ -13,7 +20,12 @@ namespace BExIS.Io.Transform.Validation.ValueCheck
             private string _dataType = "";
 
             #region get
-            
+
+            /// <summary>
+            ///
+            /// </summary>
+            /// <remarks></remarks>
+            /// <seealso cref=""/>        
             public ValueType AppliedTo
             {
                 get
@@ -22,11 +34,21 @@ namespace BExIS.Io.Transform.Validation.ValueCheck
                 }
             }
 
+            /// <summary>
+            ///
+            /// </summary>
+            /// <remarks></remarks>
+            /// <seealso cref=""/>        
             public string Name
             {
                 get { return _name; }
             }
 
+            /// <summary>
+            ///
+            /// </summary>
+            /// <remarks></remarks>
+            /// <seealso cref=""/>        
             public string DataType
             {
                 get { return _dataType; }
@@ -36,6 +58,14 @@ namespace BExIS.Io.Transform.Validation.ValueCheck
 
         #endregion
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="value"></param>
+        /// <param name="row"></param>
+        /// <returns></returns>
         public object Execute(string value, int row)
         {
             if (String.IsNullOrEmpty(value) && this._optional == false)
@@ -47,6 +77,14 @@ namespace BExIS.Io.Transform.Validation.ValueCheck
             return value;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="name"></param>
+        /// <param name="dataType"></param>
+        /// <param name="optional"></param>
         public OptionalCheck(string name, string dataType, bool optional)
         {
             _appliedTo = ValueType.All;

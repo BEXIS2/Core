@@ -1,5 +1,10 @@
 ﻿@using BExIS.Web.Shell.Areas.Auth.Models;
 
+@{
+    ViewBag.Title = "Role Manager";
+}
+
+
 @model List<RoleModel>
 
 @section Scripts{
@@ -14,6 +19,27 @@
        height: auto !important;
        width: auto !important;
     }
+
+    #Grid_Roles .t-grid-content
+    {
+       height: auto !important;
+       max-height: 495px !important;
+    }
+
+    #Grid_RoleMembership .t-grid-content
+    {
+       height: auto !important;
+       max-height: 450px !important;
+    }
+
 </style>
+
+<h2>
+    Role Manager
+</h2>
+
+<p style="max-width:800px">
+    With this interface you are able to add, edit, or delete roles. Please note that any change will take effect immediately without any further confirmation or save/submit action.
+</p>
 
 @Html.Partial("_RolesPartial", Model)

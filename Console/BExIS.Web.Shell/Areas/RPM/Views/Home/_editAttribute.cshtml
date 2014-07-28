@@ -10,24 +10,14 @@
 
 @if(Model != null)
 {  
-    int count = 0;
-    int unitIndex = 0;
-    int dataTypeIndex = 0;
+    long unitIndex = 0;
+    long dataTypeIndex = 0;
 
     List<Unit> unitList = (List<Unit>)Session["unitlist"];
 
     if(Model.Unit != null)
     {
-        unitIndex = 0;
-        count = 0;
-        foreach (Unit u in unitList)
-        {
-            if (u.Id == Model.Unit.Id)
-            {
-                unitIndex = count;
-            }
-            count++;
-        }
+        unitIndex = Model.Unit.Id;
     }
 
 
@@ -35,16 +25,7 @@
 
     if(Model.DataType != null)
     {
-        dataTypeIndex = 0;
-        count = 0;
-        foreach (DataType d in dataTypeList)
-        {
-            if (d.Id == Model.DataType.Id)
-            {
-                dataTypeIndex = count;
-            }
-            count++;
-        }
+        dataTypeIndex = Model.DataType.Id;
     } 
 <div class="planingPartialDiv" id="createUnit">
 @using (Html.BeginForm("editAttribute", "Home", new { area = "RPM" }))
@@ -58,6 +39,9 @@
             </td>
             <td>
                 @(Html.TextBoxFor(m => Model.Name, new {@class = "t-input"}))
+                <div class="errorMsg" style="vertical-align:top;">
+                    <font color="red">@Session["nameMsg"]</font>
+                </div>
             </td>
         </tr>
         <tr id="shortname">
@@ -81,12 +65,14 @@
                 Unit:
             </td>
             <td>
-                @(Html.Telerik().DropDownList()
+              @*  @(Html.Telerik().DropDownList()
                     .Name("unitId")
                     .SelectedIndex(unitIndex)
-                    .DropDownHtmlAttributes(new { style = "height: 200px" })
-                    .BindTo(new SelectList(unitList,"Id","Name"))
-                )
+                    .ClientEvents(events => events.OnChange("test"))
+                    .BindTo(new SelectList(unitList, "Id", "Name"))
+                )*@
+
+                @Html.DropDownList("unitId", new SelectList(unitList, "Id", "Name", unitIndex), new { @class =" t-dropdown t-header t-dropdown-wrap" })
             </td>
         </tr>
         <tr>
@@ -94,12 +80,13 @@
                 DataType:
             </td>
             <td>
-                @(Html.Telerik().DropDownList()
+                @*@(Html.Telerik().DropDownList()
                     .Name("dataTypeId")
                     .SelectedIndex(dataTypeIndex)
-                    .DropDownHtmlAttributes(new { style = "height: 200px" })
                     .BindTo(new SelectList(dataTypeList,"Id","Name"))
-                )
+                )*@
+
+                @Html.DropDownList("dataTypeId", new SelectList(dataTypeList,"Id","Name", dataTypeIndex), new { @class =" t-dropdown t-header t-dropdown-wrap" })
             </td>
         </tr>
         <tr><td colspan="2"> </td></tr>
@@ -115,6 +102,32 @@
     </table>    
 }
 </div>
+    
+<script type="text/jscript">
+   
+    $('#unitId').change(function () {
+        $.getJSON('/RPM/Home/getDatatypeList/' + $(this).val(), function (data) {
+            var items = '';
+            $.each(data, function (i, dataType) {
+                items += "<option value='" + dataType.Value + "'>" + dataType.Text + "</option>";
+            });
+            $('#dataTypeId').html(items);
+        });
+    })
+   
+    $(document).ready(function () {
+        $.getJSON('/RPM/Home/getDatatypeList/' + $('#unitId').val(), function (data) {
+            var items = '';
+            $.each(data, function (i, dataType) {
+                if (dataType.Value == @dataTypeIndex)
+                    items += "<option selected='selected' value='" + dataType.Value + "'>" + dataType.Text + "</option>"; 
+                else
+                    items += "<option value='" + dataType.Value + "'>" + dataType.Text + "</option>";
+            });
+            $('#dataTypeId').html(items);
+        });
+    })
+</script>    
 }
 else
 {

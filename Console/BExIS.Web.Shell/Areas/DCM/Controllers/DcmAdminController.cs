@@ -109,17 +109,17 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String")).FirstOrDefault();
                 Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
-                Email = mdaManager.Create("EMail", "EMail", "EMail adress", false, false, "David Blaa",
+                Email = mdaManager.Create("EMail", "EMail", "EMail address", false, false, "David Blaa",
                         MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
             }
 
-            MetadataAttribute Adress = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Adress")).FirstOrDefault();
-            if (Adress == null)
+            MetadataAttribute Address = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Address")).FirstOrDefault();
+            if (Address == null)
             {
                 DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String")).FirstOrDefault();
                 Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
-                Adress = mdaManager.Create("Adress", "Adress", "Adress", false, false, "David Blaa",
+                Address = mdaManager.Create("Address", "Address", "Address", false, false, "David Blaa",
                         MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
             }
 
@@ -143,8 +143,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 if (contact.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Email).Count() <= 0)
                     mdpManager.AddMetadataAtributeUsage(contact, Email, "EMail", 0, 1);
 
-                if (contact.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Adress).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(contact, Adress, "Adress", 0, 1);
+                if (contact.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Address).Count() <= 0)
+                    mdpManager.AddMetadataAtributeUsage(contact, Address, "Address", 0, 1);
 
                 if (contact.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Phone).Count() <= 0)
                     mdpManager.AddMetadataAtributeUsage(contact, Phone, "Phone", 0, 1);
@@ -153,7 +153,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             {
                 mdpManager.AddMetadataAtributeUsage(contact, Name, "Name", 1, 1);
                 mdpManager.AddMetadataAtributeUsage(contact, Email, "EMail", 0, 1);
-                mdpManager.AddMetadataAtributeUsage(contact, Adress, "Adress", 0, 1);
+                mdpManager.AddMetadataAtributeUsage(contact, Address, "Address", 0, 1);
                 mdpManager.AddMetadataAtributeUsage(contact, Phone, "Phone", 0, 1);
             }
 
@@ -269,8 +269,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 if (Owner.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Role).Count() <= 0)
                     mdpManager.AddMetadataAtributeUsage(Owner, Role, "Role", 0, 1);
 
-                if (Owner.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Adress).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(Owner, Adress, "Adress", 0, 3);
+                if (Owner.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Address).Count() <= 0)
+                    mdpManager.AddMetadataAtributeUsage(Owner, Address, "Address", 0, 3);
 
                 if (Owner.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Email).Count() <= 0)
                     mdpManager.AddMetadataAtributeUsage(Owner, Email, "Email", 0, 4);
@@ -287,7 +287,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 mdpManager.AddMetadataAtributeUsage(Owner, Name, "Full Name", 1, 1);
                 mdpManager.AddMetadataAtributeUsage(Owner, Name, "Sorting Name", 0, 1);
                 mdpManager.AddMetadataAtributeUsage(Owner, Name, "Organisation Name", 0, 1);
-                mdpManager.AddMetadataAtributeUsage(Owner, Adress, "Adress", 0, 3);
+                mdpManager.AddMetadataAtributeUsage(Owner, Address, "Address", 0, 3);
                 mdpManager.AddMetadataAtributeUsage(Owner, Email, "Email", 0, 4);
                 mdpManager.AddMetadataAtributeUsage(Owner, Role, "Role", 0, 1);
                 mdpManager.AddMetadataAtributeUsage(Owner, Phone, "Phone", 0, 4);

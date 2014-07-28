@@ -3,18 +3,61 @@
 }
 
 @using Telerik.Web.Mvc.UI;
+@using System.Web.Configuration;
 @model BExIS.Web.Shell.Areas.DCM.Models.Push.SendBigFilesToServerModel
-<div id="push">
-<h3>Send big files to server</h3>
 
-@using (Html.BeginForm("ProcessSubmit", "Push",new { area="DCM" },
-                         FormMethod.Post, new { id = "uploadForm", enctype = "multipart/form-data" })) {
+
+@{
+    
+    HttpRuntimeSection section = System.Configuration.ConfigurationManager.GetSection("system.web/httpRuntime") as HttpRuntimeSection;
+    int int_MaxRequestLength = section.MaxRequestLength;
+    int mbMax = int_MaxRequestLength / 1024;
+
+    string fileExtListAsString = "";
+
+    foreach (string s in Model.SupportedFileExtentions)
+    {
+        if (fileExtListAsString != "")
+        {
+            fileExtListAsString += "," + s;
+        }
+        else
+        { 
+            fileExtListAsString = s;
+        }
+    } 
+}
+
+<div id="push">
+<h3></h3>
+
+<div class="push_Header stepper">
+
+    <h3>Send big files to server</h3>
+</div>
+
+<div class="push_Description stepper">
+    <p>Please select one or more data files to be uploaded to the BExIS repository.</p>
+    <p>Note:  Large data files may take several minutes or hours to transfer, depending on your network speed.<br />
+       The system is freezed until the file has been transfered completely. Please be patient!</p>
+
+    <p>Supported file formats: @{foreach (string s in @Model.SupportedFileExtentions)
+                                 {<b>(*@s) </b>} }</p>
+
+
+    <p>Maximum file size: @mbMax MB</p>
+</div>
+
+@using (Html.BeginForm("ProcessSubmit", "Push", new { area = "DCM" },
+                         FormMethod.Post, new { id = "uploadForm", enctype = "multipart/form-data" }))
+{
 
     @(Html.Telerik().Upload()
             .Name("attachments")
             .Multiple(true)
             .ShowFileList(true)
-            .ClientEvents(  events=>events
+            .ClientEvents(events => events
+                    .OnSelect("Push_OnSelect")
                     .OnComplete("OnComplete")
                 ))
     
@@ -32,6 +75,31 @@
 </div>
 <script type="text/javascript">
 
+    function Push_OnSelect(e) {
+
+        var maxsize = '@int_MaxRequestLength';
+
+        for (var i = 0; i < e.files.length; i = i + 1) {
+
+            var file = e.files[i];
+
+            if (!IsExtentionValid(file.extension)) {
+                alert("File : " +file.name +";\n"+ "Only " + '@fileExtListAsString' + "/n files can be uploaded")
+                e.preventDefault();
+                return false;
+            }
+            else {
+
+                if (file.size > (maxsize * 1024)) {
+
+                    alert("Max file : " + maxsize / 1024 + " MB is supported. Please contact your administrator to upload bigger files.");
+                    e.preventDefault();
+                    return false;
+                }
+            }
+        }
+    }
+
     function OnComplete()
     {
         $.post('@Url.Action("Reload","Push", new RouteValueDictionary { { "area", "DCM" } })', function (response) {
@@ -40,5 +108,23 @@
             
             alert("the files start to send to the server. you get a email when its finished.");
         })
-    } 
+    }
+
+    /*
+    Is Extention from selected file
+    in list of supported files
+    */
+    function IsExtentionValid(fileExtention) {
+        var extListAsString = '@fileExtListAsString';
+        var extList = extListAsString.split(',');
+
+        for (var i = 0; i < extList.length; i++) {
+            if (fileExtention.toLowerCase() == extList[i]) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 </script>

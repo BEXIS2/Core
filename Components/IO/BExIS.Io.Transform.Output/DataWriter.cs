@@ -13,9 +13,11 @@ using Vaiona.Util.Cfg;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Entities.Data;
 
+/// <summary>
+///
+/// </summary>        
 namespace BExIS.Io.Transform.Output
 {
-
     /// <summary>
     /// DataWriter is an abstract class that has basic functions for storing file.
     /// 
@@ -30,6 +32,12 @@ namespace BExIS.Io.Transform.Output
             /// <remarks></remarks>
             /// <seealso cref="Error"/>    
             public List<Error> errorMessages { get; set; }
+
+            /// <summary>
+            ///
+            /// </summary>
+            /// <remarks></remarks>
+            /// <seealso cref=""/>        
             public String[] visibleColumns { get; set; }
 		 
 	    #endregion
@@ -43,16 +51,19 @@ namespace BExIS.Io.Transform.Output
             /// <seealso cref="Stream"/>  
             protected Stream file { get; set; }
 
-
             /// <summary>
             /// List of VariableIdentifiers 
             /// with VariableName and VariableID
             /// </summary>
             /// <remarks></remarks>
             /// <seealso cref=""/>        
-            protected List<VariableIdentifier> VariableIndentifiers = new List<VariableIdentifier>();
+            protected List<VariableIdentifier> VariableIdentifiers = new List<VariableIdentifier>();
 
-
+            /// <summary>
+            ///
+            /// </summary>
+            /// <remarks></remarks>
+            /// <seealso cref=""/>        
             protected List<List<string>> variableIdentifierRows = new List<List<string>>();
 
         #endregion
@@ -61,6 +72,13 @@ namespace BExIS.Io.Transform.Output
         protected DatasetManager datasetManager = new DatasetManager();
 
         //Constructor
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param>NA</param>       
         public DataWriter()
         {
             datasetManager = new DatasetManager();
@@ -162,6 +180,16 @@ namespace BExIS.Io.Transform.Output
             return datasetId.ToString() + "_" + datasetVersionOrderNr.ToString() + "_" + title + extention;
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="datasetId"></param>
+        /// <param name="datasetVersionOrderNr"></param>
+        /// <param name="title"></param>
+        /// <param name="extention"></param>
+        /// <returns></returns>
         public string GetDynamicStorePath(long datasetId, long datasetVersionOrderNr, string title, string extention)
         {
             string storePath = Path.Combine("Datasets", datasetId.ToString(), "DatasetVersions");
@@ -169,6 +197,15 @@ namespace BExIS.Io.Transform.Output
             return Path.Combine(storePath, datasetId.ToString() + "_" + datasetVersionOrderNr.ToString() + "_" + title + extention);
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="datasetId"></param>
+        /// <param name="datasetVersionOrderNr"></param>
+        /// <param name="filename"></param>
+        /// <returns></returns>
         public string GetFullStorePathOriginalFile(long datasetId, long datasetVersionOrderNr, string filename)
         {
             string dataPath = AppConfiguration.DataPath; //Path.Combine(AppConfiguration.WorkspaceRootPath, "Data");
@@ -188,6 +225,15 @@ namespace BExIS.Io.Transform.Output
             return Path.Combine(storePath, datasetId.ToString() + "_" + datasetVersionOrderNr.ToString() + "_" + filename);
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="datasetId"></param>
+        /// <param name="datasetVersionOrderNr"></param>
+        /// <param name="filename"></param>
+        /// <returns></returns>
         public string GetDynamicStorePathOriginalFile(long datasetId, long datasetVersionOrderNr, string filename)
         {
             //data/datasets/1/1/
@@ -195,6 +241,14 @@ namespace BExIS.Io.Transform.Output
             return Path.Combine(storePath, datasetId.ToString() + "_" + datasetVersionOrderNr.ToString() + "_" + filename);
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="dataStructureId"></param>
+        /// <param name="extention"></param>
+        /// <returns></returns>
         public string GetDataStructureTemplatePath(long dataStructureId, string extention)
         {
             DataStructureManager dataStructureManager = new DataStructureManager();
@@ -239,12 +293,26 @@ namespace BExIS.Io.Transform.Output
 
         //}
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="id"></param>       
+        /// <returns></returns>
         protected StructuredDataStructure GetDataStructure(long id)
         {
             DataStructureManager dataStructureManager = new DataStructureManager();
             return dataStructureManager.StructuredDataStructureRepo.Get(id);
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public String GetTitle(long id)
         { 
             DatasetManager datasetManager = new DatasetManager();
@@ -256,6 +324,8 @@ namespace BExIS.Io.Transform.Output
         /// select a subset of the variables from a datastructure
         /// based on a list of variablenames
         /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
         /// <param name="source">full list of variables</param>
         /// <param name="selected">variablenames</param>
         /// <returns></returns>
@@ -268,6 +338,8 @@ namespace BExIS.Io.Transform.Output
         /// select a subset of the variables from a datastructure
         /// based on a list of variablenames
         /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
         /// <param name="source">full list of variables</param>
         /// <param name="selected">variablenames</param>
         /// <returns></returns>

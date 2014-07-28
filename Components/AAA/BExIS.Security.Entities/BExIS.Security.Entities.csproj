@@ -51,13 +51,10 @@
   <ItemGroup>
     <Compile Include="Objects\DataPermission.cs" />
     <Compile Include="Objects\Entity.cs" />
-    <Compile Include="Objects\Equation.cs" />
     <Compile Include="Objects\Feature.cs" />
     <Compile Include="Objects\FeaturePermission.cs" />
     <Compile Include="Objects\Permission.cs" />
     <Compile Include="Objects\Property.cs" />
-    <Compile Include="Objects\Rule.cs" />
-    <Compile Include="Objects\Statement.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Subjects\Role.cs" />
     <Compile Include="Subjects\SecurityUser.cs" />
@@ -67,6 +64,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Entities.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\DLM\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
+      <Project>{b4e7b1bf-01b4-40af-8d19-b8f362167261}</Project>
+      <Name>BExIS.Dlm.Entities</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -1,0 +1,36 @@
+﻿@{
+    ViewBag.Title = "ShowData";
+}
+
+@model BExIS.Web.Shell.Areas.DDM.Models.ShowDataModel
+
+@using Telerik.Web.Mvc.UI;
+
+<h2>@Model.Title</h2>
+
+@if(@Model != null)
+{
+    @(Html.Telerik().TabStrip()
+            .Name("ShowDataTabStrip")
+            .SelectedIndex(0)
+            .Items(tabs =>
+            {
+
+                tabs.Add()
+                    .Text("Meta Data")
+                    .LoadContentFrom("ShowMetaData", "Data", new { area = "DDM", datasetID = @Model.Id });
+                
+                tabs.Add()
+                    .Text("Data Structure")
+                    .LoadContentFrom("ShowPreviewDataStructure", "Data", new { area = "DDM", datasetID = @Model.Id });
+
+                tabs.Add()
+                    .Text("Primary Data")
+                    .LoadContentFrom("ShowPrimaryData", "Data", new { area = "DDM", datasetID = @Model.Id })
+                    .Enabled(@Model.DataAccess);
+
+
+            })
+    )
+}
+

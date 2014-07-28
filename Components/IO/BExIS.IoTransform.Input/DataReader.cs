@@ -10,10 +10,13 @@ using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
+using System.Diagnostics;
 
+/// <summary>
+///
+/// </summary>        
 namespace BExIS.Io.Transform.Input
 {
-
     /// <summary>
     /// DataReader is an abstract class that has functions for reading and validate the rows.
     /// </summary>
@@ -31,7 +34,6 @@ namespace BExIS.Io.Transform.Input
         /// <seealso cref="Error"/>        
         public List<Error> errorMessages { get; set; }
 
-
         /// <summary>
         /// Store the position of the last readed row 
         /// </summary>
@@ -41,11 +43,9 @@ namespace BExIS.Io.Transform.Input
 
         //public bool EndOfFile { get; protected set; }
 
-
         #endregion
 
         #region protected 
-
 
             /// <summary>
             /// File to be read as stream
@@ -53,11 +53,20 @@ namespace BExIS.Io.Transform.Input
             /// <remarks></remarks>
             /// <seealso cref="Stream"/>        
             protected Stream file { get; set; }
- 
+
+            /// <summary>
+            ///
+            /// </summary>
+            /// <remarks></remarks>
+            /// <seealso cref=""/>        
             protected string fileName { get; set; }
 
+            /// <summary>
+            ///
+            /// </summary>
+            /// <remarks></remarks>
+            /// <seealso cref=""/>        
             protected StructuredDataStructure structuredDataStructure { get; set; }
-
 
             /// <summary>
             /// stores additional information that are needed to read the file
@@ -67,32 +76,54 @@ namespace BExIS.Io.Transform.Input
             /// <seealso cref="ExcelReaderInfo"/> 
             protected FileReaderInfo info { get; set; }
 
-
+            /// <summary>
+            ///
+            /// </summary>
+            /// <remarks></remarks>
+            /// <seealso cref=""/>        
             protected List<DataTuple> dataTuples = new List<DataTuple>();
 
+            /// <summary>
+            ///
+            /// </summary>
+            /// <remarks></remarks>
+            /// <seealso cref=""/>        
             protected DatasetManager datasetManager = new DatasetManager();
 
+            /// <summary>
+            ///
+            /// </summary>
+            /// <remarks></remarks>
+            /// <seealso cref=""/>        
             protected long datasetId = 0;
 
+            /// <summary>
+            ///
+            /// </summary>
+            /// <remarks></remarks>
+            /// <seealso cref=""/>        
             protected List<List<string>> variableIdentifierRows = new List<List<string>>();
 
             /// <summary>
             /// VariableIndentifiers from  file
             /// </summary>
             /// <remarks></remarks>    
+            /// <seealso cref=""/>        
             protected List<VariableIdentifier> SubmitedVariableIdentifiers = new List<VariableIdentifier>();
 
             /// <summary>
             /// VariableIndentifiers from DataStructure
             /// </summary>
             /// <remarks></remarks>    
+            /// <seealso cref=""/>        
             protected List<VariableIdentifier> DataStructureVariableIndentifiers = new List<VariableIdentifier>();
 
             /// <summary>
             /// Dictionary with variable id as key and and a ValueValidationManager for each variable
             /// </summary>
             /// <remarks></remarks>    
-            protected Dictionary<long,ValueValidationManager> ValueValidationManagerDic = new Dictionary<long ,ValueValidationManager>();
+            /// <seealso cref=""/>        
+            protected Dictionary<long, ValueValidationManager> ValueValidationManagerDic = new Dictionary<long, ValueValidationManager>();
 
         #endregion
 
@@ -101,6 +132,13 @@ namespace BExIS.Io.Transform.Input
         #endregion
 
         //Contructor
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param></param>       
         public DataReader()
         {
             this.errorMessages = new List<Error>();
@@ -137,7 +175,9 @@ namespace BExIS.Io.Transform.Input
         public DataTuple ReadRow(List<string> row, int indexOfRow)
         {
             DataTuple dt = new DataTuple();
-              
+            DataStructureManager dsm = new DataStructureManager();
+            string value = "";
+
             // convert row to List<VariableValue>
             for(int i=0;i< row.Count();i++ )
             {
@@ -149,8 +189,43 @@ namespace BExIS.Io.Transform.Input
                 else
                     variableId = GetVariableUsage(variableIdentifier).Id;
 
-                dt.VariableValues.Add(datasetManager.CreateVariableValue(row[i],"", DateTime.Now, DateTime.Now, new ObtainingMethod(), variableId, new List<ParameterValue>()));
+                
+
+                // if variable from systemtype datatime
+                // maybee needs to convert into the default datetime culture format
+                if (this.structuredDataStructure.Variables.Where(p => p.Id.Equals(variableId)).FirstOrDefault().DataAttribute.DataType.SystemType.Equals("DateTime"))
+                {
+                    value = IOUtility.ConvertDateToCulture(row[i]);
+                }
+                else
+                {
+                    if (this.structuredDataStructure.Variables.Where(p => p.Id.Equals(variableId)).FirstOrDefault().DataAttribute.DataType.SystemType.Equals("Double")||
+                        this.structuredDataStructure.Variables.Where(p => p.Id.Equals(variableId)).FirstOrDefault().DataAttribute.DataType.SystemType.Equals("Decimal")||
+                        this.structuredDataStructure.Variables.Where(p => p.Id.Equals(variableId)).FirstOrDefault().DataAttribute.DataType.SystemType.Equals("Float"))
+                    {
+                        value = row[i];
+
+                        if (info.Decimal.Equals(DecimalCharacter.comma))
+                        { 
+                            if(value.Contains(".")) value = value.Replace(".","");
+                            if(value.Contains(",")) value = value.Replace(',', '.');
+                        }
+
+                        if (info.Decimal.Equals(DecimalCharacter.point))
+                        {
+                            if (value.Contains(",")) value = value.Remove(',');
+                        }
+
+                    }
+                    else
+                    {
+                        value = row[i];
+                    }
+                }
+                
+                dt.VariableValues.Add(datasetManager.CreateVariableValue(value,"", DateTime.Now, DateTime.Now, new ObtainingMethod(), variableId, new List<ParameterValue>()));
             }
+
 
             return dt;
         }
@@ -205,6 +280,7 @@ namespace BExIS.Io.Transform.Input
                     }
                 }
             }
+
             return temp;
         }
 
@@ -279,6 +355,7 @@ namespace BExIS.Io.Transform.Input
         /// Compare Datastructure with Submited Variables
         /// And create a Dictionary of ValueValidationmanagers
         /// </summary>
+        /// <remarks></remarks>
         /// <param name="row"></param>
         /// <returns></returns>
         public List<Error> ValidateComparisonWithDatatsructure(List<VariableIdentifier> variableIdentifers)
@@ -288,7 +365,6 @@ namespace BExIS.Io.Transform.Input
             try
             {
                 
-
                 List<VariableIdentifier> source = GetDatastructureVariableIdentifiers();
 
                 DatastructureMatchCheck dmc = new DatastructureMatchCheck();
@@ -337,6 +413,7 @@ namespace BExIS.Io.Transform.Input
         /// <summary>
         ///  Create ValueValidationManager of a Variable
         /// </summary>
+        /// <remarks></remarks>
         /// <param name="varName"></param>
         /// <param name="dataType"></param>
         /// <param name="optional"></param>
@@ -344,7 +421,7 @@ namespace BExIS.Io.Transform.Input
         /// <returns></returns>
         private ValueValidationManager CreateValueValidationManager(string varName, string dataType, bool optional, DataAttribute variable)
         {
-            ValueValidationManager vvm = new ValueValidationManager(varName, dataType, optional);
+            ValueValidationManager vvm = new ValueValidationManager(varName, dataType, optional, info.Decimal);
 
             // add checks
             //vvm.NullOrOptionalCheck = new OptionalCheck(varName, dataType, optional);
@@ -388,6 +465,7 @@ namespace BExIS.Io.Transform.Input
         /// <summary>
         /// Get VariableUsage based on VariableIdentifer
         /// </summary>
+        /// <remarks></remarks>
         /// <param name="hv"></param>
         /// <returns></returns>
         private Variable GetVariableUsage(VariableIdentifier hv)
@@ -436,7 +514,8 @@ namespace BExIS.Io.Transform.Input
                            select new VariableIdentifier
                            {
                                name = v.Label,
-                               id = v.Id
+                               id = v.Id,
+                               systemType = v.DataAttribute.DataType.SystemType
                            };
 
             return tempList.ToList();
@@ -445,13 +524,19 @@ namespace BExIS.Io.Transform.Input
 
         #region static methods
 
-            public static bool FileExist(string path)
-            {
-                if (File.Exists(path))
-                    return true;
-                else
-                    return false;
-            }
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="path"></param>
+        public static bool FileExist(string path)
+        {
+            if (File.Exists(path))
+                return true;
+            else
+                return false;
+        }
 
         #endregion
 

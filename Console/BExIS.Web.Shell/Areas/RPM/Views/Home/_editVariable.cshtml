@@ -48,6 +48,9 @@ else
                     </td>
                     <td>
                         @(Html.TextBox("name", variable.Label))
+                        <div class="errorMsg" style="vertical-align:top;">
+                             <font color="red">@ViewData["varErrorMsg"]</font>
+                        </div>
                     </td>
                 </tr>
                 <tr id="optional">

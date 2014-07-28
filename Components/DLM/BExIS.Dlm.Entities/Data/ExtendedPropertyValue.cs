@@ -3,21 +3,43 @@ using System.Linq;
 using System.Xml.Serialization;
 using BExIS.Dlm.Entities.DataStructure;
 
+/// <summary>
+///
+/// </summary>        
 namespace BExIS.Dlm.Entities.Data
 {
+    /// <summary>
+    ///
+    /// </summary>
+    /// <remarks></remarks>        
     public class ExtendedPropertyValue: DataValue
     {
         #region Attributes
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>              
         public Int64 ExtendedPropertyId { get; set; } // when ExtendedProperty is not loaded. It happens when mapping from Xml data is performed after loading object from DB
 
         #endregion
 
         #region Associations
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         [XmlIgnore]
         public DatasetVersion DatasetVersion { get; set; }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         [XmlIgnore]
         public ExtendedProperty ExtendedProperty //{ get; set; } // it should be connected to the real extended property object
         {

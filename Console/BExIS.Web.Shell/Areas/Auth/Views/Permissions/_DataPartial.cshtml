@@ -1,0 +1,64 @@
+﻿@using Telerik.Web.Mvc.UI
+@using BExIS.Web.Shell.Areas.Auth.Models;
+
+@model DataModel
+
+@*@Html.DropDownList("Entity", new SelectList(Model.EntitiesList, "Id", "Name"), "-- SELECT --", new { id = "Entities"})*@
+
+<div id="Content_Data">
+    @Html.Partial("_DatasetsPartial")
+</div>
+
+<br />
+
+<div id="Content_Subjects"></div>
+
+<script type="text/javascript">
+    $("#Entities").change(function () {
+        var entityId = $(this).val();
+
+        $.get('@Url.Action("Entities", "Permissions")', { EntityId: entityId }, function (data) {
+            $('#Content_Data').html(data);
+        });
+    });
+
+    function OnRowSelected(e) {
+        var dataId = $('#Content_Data .t-grid').data('tGrid').dataItem(e.row)['Id'];
+        //var entityId = $("#Entities").val();
+
+        $('#Content_Subjects').empty();
+
+        $.get('@Url.Action("Subjects", "Permissions")', { DataId: dataId, EntityId : "Dataset" }, function (data) {
+            $('#Content_Subjects').html(data);
+        });
+    }
+
+    function setDataPermission(value, rightType, subjectId, dataId, entityId) {
+        if (value) {
+            $.post('@Url.Action("CreateDataPermission", "Permissions")', { DataId: dataId, EntityId: entityId, SubjectId : subjectId, RightType : rightType }, function (e) {
+                if (e == 2) {
+                    alert("The subject does not exist anymore.");
+
+                    $("#Grid_Subjects .t-refresh").trigger('click');
+                }
+
+                if (e == 3) {
+                    alert("The data does not exist anymore.");
+                }
+            });
+        } else {
+            $.post('@Url.Action("DeleteDataPermission", "Permissions")', { DataId: dataId, EntityId: entityId, SubjectId: subjectId, RightType: rightType }, function (e) {
+                        if (e == 2) {
+                            alert("The subject does not exist anymore.");
+
+                            $("#Grid_Subjects .t-refresh").trigger('click');
+                        }
+
+                        if (e == 3) {
+                            alert("The data does not exist anymore.");
+                        }
+                    });
+                }
+    }
+
+</script>

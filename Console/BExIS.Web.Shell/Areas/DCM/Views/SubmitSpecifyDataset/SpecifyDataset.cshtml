@@ -25,9 +25,7 @@
         </div>
 
         <div class="uploadWizardStep_Description stepper">
-            <p>In BEXIS your data is stored and managed as part of a dataset. A dataset may contain one or more of your data files. 
-                But all data files within one dataset must be of the same data structure, i.e. the number of variables and their 
-                properties must be identical in each file. 
+            <p>In BExIS your data is stored and managed as part of a dataset.<br />A dataset may contain one or more of your data files. But all data files within one dataset must be of the same data structure, i.e. in structured datasets the number of variables and their properties must be identical in each file.
             </p>
         </div>
 
@@ -39,7 +37,7 @@
                     @Html.DropDownListFor(m => m.SelectedDatasetId, new SelectList(Model.DatasetsViewList,"Id","Title",selectedListeViewitem),"Select")
                 
     
-                </td><td>Add file to an existing dataset.</td></tr>
+                </td><td>Select an existing dataset to attach your file with.</td></tr>
             </table>
         </div>
     </div>

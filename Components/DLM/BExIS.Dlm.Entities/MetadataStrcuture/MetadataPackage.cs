@@ -4,27 +4,68 @@ using System.Linq;
 using System.Text;
 using Vaiona.Entities.Common;
 
+/// <summary>
+///
+/// </summary>        
 namespace BExIS.Dlm.Entities.MetadataStructure
 {
+    /// <summary>
+    ///
+    /// </summary>
+    /// <remarks></remarks>        
     public class MetadataPackage: BusinessEntity
     {
         #region Attributes
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual string   Name        { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual string   Description { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual bool     IsEnabled     { get; set; }
         
         #endregion
 
         #region Associations
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual ICollection<MetadataPackageUsage>    UsedIn                  { get; set; }
-        public virtual ICollection<MetadataAttributeUsage>  MetadataAttributeUsages { get; set; } // needs to preserve the order
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks> needs to preserve the order </remarks>
+        /// <seealso cref=""/>        
+        public virtual ICollection<MetadataAttributeUsage>  MetadataAttributeUsages { get; set; }
         
         #endregion
 
         #region Mathods
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param>NA</param>       
         public MetadataPackage()
         {
             UsedIn = new List<MetadataPackageUsage>();

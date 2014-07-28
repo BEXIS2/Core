@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Routing;
 using BExIS.Ddm.Api;
 using BExIS.Ddm.Model;
 using BExIS.Ddm.Providers.LuceneProvider;
@@ -31,11 +33,12 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             {
                 //if (Session["searchAttributeList"] == null)
                 //{
-                    ISearchDesigner sd = new SearchDesigner();
+                ISearchDesigner sd = GetSearchDesigner();
 
                     Session["searchAttributeList"] = GetListOfSearchAttributeViewModels(sd.Get());
                     Session["metadatNodes"] = sd.GetMetadataNodes();
                     ViewData["windowVisible"] = false;
+                    Session["IncludePrimaryData"] = sd.IsPrimaryDataIncluded();
                 //}
 
             }
@@ -54,7 +57,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
                 if (Session["searchAttributeList"] == null)
                 {
-                    ISearchDesigner sd = new SearchDesigner();
+                    ISearchDesigner sd = GetSearchDesigner();
 
                     Session["searchAttributeList"] = GetListOfSearchAttributeViewModels(sd.Get());
                     Session["metadatNodes"] = sd.GetMetadataNodes();
@@ -101,15 +104,19 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 Session["searchAttributeList"] = searchAttributeList;
                 ViewData["windowVisible"] = false;
 
+                //update config file
+                SaveConfig();
+
                 return View("SearchDesigner", (List<SearchAttributeViewModel>)Session["searchAttributeList"]);
             }
 
-            public ActionResult Save(string submit, SearchAttributeViewModel model)
+
+            public ActionResult Save(SearchAttributeViewModel model)
             {
                 if (ModelState.IsValid)
                 {
-                    if (submit != null)
-                    {
+                    //if (submit != null)
+                    //{
                         List<SearchAttributeViewModel> searchAttributeList = (List<SearchAttributeViewModel>)Session["searchAttributeList"];
 
                         if (searchAttributeList.Where(p => p.id.Equals(model.id)).Count() > 0)
@@ -122,13 +129,16 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                             searchAttributeList.Add(model);
                         }
 
-                        ISearchDesigner sd = new SearchDesigner();
+                        ISearchDesigner sd = GetSearchDesigner();
 
                         //sd.Set(searchAttributeList);
 
                         Session["searchAttributeList"] = searchAttributeList;
                         ViewData["windowVisible"] = false;
-                    }
+
+                        //create new config file
+                        SaveConfig();
+                    //}
                 }
                 else
                 {
@@ -141,6 +151,13 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
         #endregion
 
+        public ActionResult ChangeIncludePrimaryData(bool includePrimaryData)
+        {
+            Session["IncludePrimaryData"] = includePrimaryData;
+
+            return Content("true");
+        }
+
         public ActionResult CloseWindow()
         {
 
@@ -150,30 +167,37 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
         }
 
 
-        public ActionResult SaveConfig()
+        public void SaveConfig()
         {
 
             if (Session["searchAttributeList"] != null)
             {
                 List<SearchAttributeViewModel> searchAttributeList = (List<SearchAttributeViewModel>)Session["searchAttributeList"];
-                ISearchDesigner sd = new SearchDesigner();
-                sd.Set(GetListOfSearchAttributes(searchAttributeList));
-                Session["searchAttributeList"] = searchAttributeList;
-                ViewData["windowVisible"] = false;
+                ISearchDesigner sd = GetSearchDesigner();
+
+                try
+                {
+                    sd.Set(GetListOfSearchAttributes(searchAttributeList), (bool)Session["IncludePrimaryData"]);
+                    Session["searchAttributeList"] = searchAttributeList;
+                    ViewData["windowVisible"] = false;
+                }
+                catch(Exception e)
+                {
+
+                }
 
                 //sd.Reload();
-
                 //searchConfigFileInUse = false;
             }
 
-            return View("SearchDesigner", (List<SearchAttributeViewModel>)Session["searchAttributeList"]);
+            //return View("SearchDesigner", (List<SearchAttributeViewModel>)Session["searchAttributeList"]);
         }
 
         public ActionResult ResetConfig()
         {
             try
             {
-                ISearchDesigner sd = new SearchDesigner();
+                ISearchDesigner sd = GetSearchDesigner();
                 sd.Reset();
                 Session["searchAttributeList"] = GetListOfSearchAttributeViewModels(sd.Get());
                 Session["metadatNodes"] = sd.GetMetadataNodes();
@@ -189,8 +213,9 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
         public ActionResult ReloadConfig()
         {
-            ISearchDesigner sd = new SearchDesigner();
+            ISearchDesigner sd = GetSearchDesigner();
             sd.Reload();
+
             //ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
 
             //((SearchProvider)provider).RefreshIndex();
@@ -224,30 +249,33 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
             #region Validation
 
-                public JsonResult ValidateSourceName(string sourceName)
-                {
-                    List<SearchAttributeViewModel> list = (List<SearchAttributeViewModel>)Session["searchAttributeList"];
+            [HttpGet]
+            public JsonResult ValidateSourceName(string sourceName, long id)
+            {
+                List<SearchAttributeViewModel> list = (List<SearchAttributeViewModel>)Session["searchAttributeList"];
 
-                    if (list != null)
+                if (list != null)
+                {
+                    foreach(SearchAttributeViewModel sa in list )
                     {
-                        if (list.Where(a => a.sourceName.Equals(sourceName)).Count() > 0)
+                        if (sa.sourceName.ToLower().Equals(sourceName.ToLower()) && sa.id != id)
                         {
                             string error = String.Format(CultureInfo.InvariantCulture, "Source name already exists.", sourceName);
 
                             return Json(error, JsonRequestBehavior.AllowGet);
                         }
-                        else
-                        {
-                            return Json(true, JsonRequestBehavior.AllowGet);
-                        }
                     }
-                    else
-                    {
-                        string error = String.Format(CultureInfo.InvariantCulture, "Is not possible to compare Sourcename with a empty list of search attributes.", sourceName);
 
-                        return Json(error, JsonRequestBehavior.AllowGet);
-                    }
+                    return Json(true, JsonRequestBehavior.AllowGet);
+
                 }
+                else
+                {
+                    string error = String.Format(CultureInfo.InvariantCulture, "Is not possible to compare Sourcename with a empty list of search attributes.", sourceName);
+
+                    return Json(error, JsonRequestBehavior.AllowGet);
+                }
+            }
 
             #endregion
 
@@ -255,28 +283,53 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
         #region ReIndex
 
-        public ActionResult ReIndexSearch()
+            public ActionResult RefreshSearch()
         {
-            return View();
-        }
+            ISearchDesigner sd = GetSearchDesigner();
 
-        public ActionResult RefreshSearch()
-        {
+            bool success = false;
+
             try
             {
-                ISearchDesigner sd = new SearchDesigner();
                 sd.Reload();
+                success = true;
             }
             catch (Exception e)
             {
                 ModelState.AddModelError(String.Empty, e.Message);
+                success = false;
+            }
+            finally
+            {
+                sd.Dispose();
             }
 
-            return View("ReIndexSearch");
+            if(success)
+                    return RedirectToAction("Index","Home",new RouteValueDictionary{{ "area", "DDM" }});
+            else
+                    return View("SearchDesigner", (List<SearchAttributeViewModel>)Session["searchAttributeList"]);
+
         }
 
+        #endregion
 
-      
+        #region
+
+        private SearchDesigner GetSearchDesigner()
+        { 
+
+            if (Session["SearchDesigner"] != null)
+            {
+                return (SearchDesigner)Session["SearchDesigner"];
+            }
+
+            return new SearchDesigner();
+        }
+
+        private void SetSearchDesigner(SearchDesigner searchDesigner)
+        {
+            Session["SearchDesigner"] = searchDesigner;
+        }
 
         #endregion
 

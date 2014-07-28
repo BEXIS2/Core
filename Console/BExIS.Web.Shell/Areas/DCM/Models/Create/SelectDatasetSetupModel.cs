@@ -29,6 +29,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Models.Create
         public List<ListViewItem> ResearchPlanViewList { get; set; }
         public List<ListViewItem> MetadataStructureViewList { get; set; }
 
+        public bool IsLoaded { get; set; }
+
         public SelectDatasetSetupModel()
         {
             SelectedDatastructureId = 0;
@@ -40,6 +42,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Models.Create
             DatastructuresViewList = new List<ListViewItem>();
             ResearchPlanViewList = new List<ListViewItem>();
             MetadataStructureViewList = new List<ListViewItem>();
+
+            IsLoaded = false;
         }
 
     }

@@ -1,55 +1,84 @@
 ﻿@using BExIS.Ddm.Model;
 @model SearchModel
 
-@using (Html.BeginForm("AddFacetsToSearch", "Home", new { area="DDM"}))
+@{
+    List<Facet> listOfAllFacets = new List<Facet>();
+
+    int rows = 0;
+
+    string title = "No title";
+    
+    if ((IEnumerable<Facet>)Session["SelectAbleCategories"] != null)
+    {
+        listOfAllFacets = ((IEnumerable<Facet>)Session["SelectAbleCategories"]).ToList();
+    
+        int numOfFacets = listOfAllFacets.Count;
+    
+        if (numOfFacets % 2 == 0)
+        {
+            rows = numOfFacets / 2;
+        }
+        else
+        {
+            rows = (numOfFacets / 2)+1;
+        }
+    }
+    
+     if (@Session["ParentOfSelectAbleCategories"] != null)
+     {
+        title = @Session["ParentOfSelectAbleCategories"].ToString().Titleize();
+     }
+ }
+
+@using (Html.BeginForm("AddFacetsToSearch", "Home", new { area = "DDM" }))
 { 
               
     <div id="search_more" >
-            <h3>@if (@Session["ParentOfSelectAbleCategories"] != null)
-                {@Session["ParentOfSelectAbleCategories"].ToString().Titleize();
-                }</h3>
+            <h4> @title</h4>
             <hr />
-           
             <div id="search_moreCheckBox">
-            @if ((IEnumerable<Facet>)Session["SelectAbleCategories"] != null)
+            @if (listOfAllFacets != null)
             {
-                if (((IEnumerable<Facet>)Session["SelectAbleCategories"]).Count() > 0)
+                if (listOfAllFacets.Count() > 0)
                 {
-                    var i = 0;
-                    int id = 0;
-                    foreach (var it in (IEnumerable<Facet>)Session["SelectAbleCategories"])
-                    {
-                        it.Parent = Model.SearchComponent.GetFacet(@Session["ParentOfSelectAbleCategories"].ToString());
-                        
-                        string displayedName;
-                        if (it.Name.Length > 20)
+
+                    <table>
+                        @for (int i = 0; i < rows; i++)
                         {
-                            displayedName = it.Name.Truncate(20);
-                        }
-                        else { displayedName = it.Name; }
+                            <tr>
+                            
+                            @{
+                                for (int j = 0; j < 2; j++)
+                                {
+                                    int pos = 0;
 
-                        if (i == 0)
-                        { 
-                            <p class="search_winLeft" title="@it.Name.ToString()">@Html.CheckBox(id.ToString(), @Model.CriteriaComponent.ContainsFacet(it), new { text=@it.Name.ToString() })  @Html.Label(@it.Name.ToString(), displayedName)</p>
-                            i=1;
-                         
-                        }
-                        else if (i == 1)
-                        {
-                            <p class="search_winRight"  title="@it.Name.ToString()">@Html.CheckBox(id.ToString(), @Model.CriteriaComponent.ContainsFacet(it), new { text=@it.Name.ToString() }) @Html.Label(@it.Name.ToString(), displayedName)</p>
-                            i=0;
-                        }
+                                    if (j == 0) { pos = i; }
+                                    else { pos = i + rows; }
 
-                        id++;
+                                    if (pos < listOfAllFacets.Count)
+                                    { 
+                                        var facet = listOfAllFacets.ElementAt(pos);
+                                        facet.Parent = Model.SearchComponent.GetFacet(@Session["ParentOfSelectAbleCategories"].ToString());
 
-                    }
+                                        string displayedName;
+                                        
+                                        if (facet.Name.Length > 23){ displayedName = facet.Name.Truncate(23); }
+                                        else { displayedName = facet.Name; }
+                                            
+                                        <td title="@facet.Name.ToString()">@Html.CheckBox(pos.ToString(), @Model.CriteriaComponent.ContainsFacet(facet), new { text = @facet.Name.ToString() })  @Html.Label(@facet.Name.ToString(), displayedName)</td>
+                                    }    
+                                }
+                            }
+                            </tr>
+                        }
+                    </table>
                 }
             }
            
            </div>
            <div id="search_winFooter">
-           <br />
            <hr />
+           <br />
             <button type="submit" class="t-button" value="add" name="button"@* onclick="Search_OnClickSubmit()"*@ >Submit</button>
             <button id="all" type="button" class="t-button" value="all" name="button" onclick="Search_OnClickAll()" >All</button>
             <button id="none" type="button" class="t-button" value="none" name="button" onclick="Search_OnClickNone()" >None</button>
@@ -58,27 +87,6 @@
 }
 
 <script type="text/javascript">
-
-   @* function Search_OnClickSubmit()
-    {
-        var selected = new Array();
-        $('#search_moreCheckBox input:checked').each(function () {
-            selected.push($(this).attr('name'));
-        });
-
-        $.ajax({
-            type: 'POST',
-            contentType: 'application/json; charset=utf-8',
-            data: JSON.stringify(selected),
-            dataType: 'html',
-            url: '@Url.Action("AddFacetsToSearch", "Home", new RouteValueDictionary { { "area", "DDM" } })',
-            success: function (result) {
-                
-                alert("replaced");
-            }
-       });
-
-    }*@
 
     function Search_OnClickAll() {
      $("#search_moreCheckBox").find("input:checkbox")
@@ -91,3 +99,21 @@
  }
 
 </script>
+<style type="text/css">
+
+    #search_moreCheckBox table, #search_moreCheckBox td, #search_moreCheckBox tr
+    {
+        border:none;
+        padding:0;
+    }
+
+    #search_moreCheckBox table
+    {
+        width:100%;
+    }
+
+    #search_moreCheckBox td
+    {
+        width:50%;
+    }
+</style>

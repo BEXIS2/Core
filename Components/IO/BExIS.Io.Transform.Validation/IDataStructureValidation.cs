@@ -1,6 +1,13 @@
 ﻿
+/// <summary>
+///
+/// </summary>        
 namespace BExIS.Io.Transform.Validation
 {
+    /// <summary>
+    ///
+    /// </summary>
+    /// <remarks></remarks>        
     public interface IDataStructureValidation
     {
         DsType AppliedTo { get; }
@@ -8,6 +15,9 @@ namespace BExIS.Io.Transform.Validation
 
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public enum DsType
     {
         Dataset,

@@ -1,27 +1,68 @@
 ﻿using System.Collections.Generic;
 using Vaiona.Entities.Common;
 
+/// <summary>
+///
+/// </summary>        
 namespace BExIS.Dlm.Entities.DataStructure
 {
+    /// <summary>
+    ///
+    /// </summary>
+    /// <remarks></remarks>        
     public class DataType : BaseEntity
     {
         #region Attributes
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual string Name { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual string Description { get; set; }
-        public virtual string SystemType { get; set; } // System.Int32, etc
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks> System.Int32, etc </remarks>
+        /// <seealso cref=""/>        
+        public virtual string SystemType { get; set; }
 
         #endregion
 
         #region Associations
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual ICollection<DataContainer> DataContainers { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual ICollection<Unit> ApplicableUnits { get; set; }
 
         #endregion
 
         #region Mathods
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param>NA</param>       
         public DataType()
         {
             DataContainers = new List<DataContainer>();

@@ -299,7 +299,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 string ext = taskManager.Bus[TaskManager.EXTENTION].ToString();
                 DataStructureType type = (DataStructureType)taskManager.Bus[TaskManager.DATASTRUCTURE_TYPE];
 
-                if (UploadWizardHelper.GetExtentionList(type).Contains(ext)) return true;
+                if (UploadWizardHelper.GetExtentionList(type).Contains(ext.ToLower())) return true;
 
             }
 

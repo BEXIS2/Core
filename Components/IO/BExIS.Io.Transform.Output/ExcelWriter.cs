@@ -18,9 +18,17 @@ using BExIS.Io.Transform.Validation.DSValidation;
 using System.Globalization;
 
 using BExIS.RPM.Output;
+using System.Diagnostics;
 
+/// <summary>
+///
+/// </summary>        
 namespace BExIS.Io.Transform.Output
 {
+    /// <summary>
+    ///
+    /// </summary>
+    /// <remarks></remarks>        
     public class ExcelWriter:DataWriter
     {
 
@@ -49,6 +57,8 @@ namespace BExIS.Io.Transform.Output
         /// <summary>
         /// Add Datatuples to a Excel Template file
         /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
         /// <param name="dataTuples"> Datatuples to add</param>
         /// <param name="filePath">Path of the excel template file</param>
         /// <param name="dataStructureId">Id of datastructure</param>
@@ -100,7 +110,7 @@ namespace BExIS.Io.Transform.Output
                 WorksheetPart worksheetPart = GetWorkSheetPart(workbookPart, this._areaOfData);
 
                 // Get VarioableIndentifiers
-                this.VariableIndentifiers = GetVariableIdentifiers(worksheetPart, this._areaOfVariables.StartRow, this._areaOfVariables.EndRow);
+                this.VariableIdentifiers = GetVariableIdentifiers(worksheetPart, this._areaOfVariables.StartRow, this._areaOfVariables.EndRow);
 
 
                 AddRows(worksheetPart, this._areaOfData.StartRow, this._areaOfData.EndRow, dataTuplesIds);
@@ -145,6 +155,8 @@ namespace BExIS.Io.Transform.Output
         /// <summary>
         /// Add Datatuples to a Excel Template file
         /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
         /// <param name="dataTuples"> Datatuples to add</param>
         /// <param name="filePath">Path of the excel template file</param>
         /// <param name="dataStructureId">Id of datastructure</param>
@@ -196,7 +208,7 @@ namespace BExIS.Io.Transform.Output
                 WorksheetPart worksheetPart = GetWorkSheetPart(workbookPart, this._areaOfData);
 
                 // Get VarioableIndentifiers
-                this.VariableIndentifiers = GetVariableIdentifiers(worksheetPart, this._areaOfVariables.StartRow, this._areaOfVariables.EndRow);
+                this.VariableIdentifiers = GetVariableIdentifiers(worksheetPart, this._areaOfVariables.StartRow, this._areaOfVariables.EndRow);
 
 
                 AddRows(worksheetPart, this._areaOfData.StartRow, this._areaOfData.EndRow, dataTuples);
@@ -241,6 +253,8 @@ namespace BExIS.Io.Transform.Output
         /// <summary>
         /// Add Rows to a WorksheetPart
         /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
         /// <param name="worksheetPart"></param>
         /// <param name="startRow"></param>
         /// <param name="endRow"></param>
@@ -283,6 +297,8 @@ namespace BExIS.Io.Transform.Output
         /// <summary>
         ///  Add Rows to a WorksheetPart
         /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
         /// <param name="worksheetPart"></param>
         /// <param name="startRow"></param>
         /// <param name="endRow"></param>
@@ -325,6 +341,8 @@ namespace BExIS.Io.Transform.Output
         /// <summary>
         /// Convert a Datatuple to a Row
         /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
         /// <param name="dataTupleId">Id of the Datatuple to convert</param>
         /// <param name="rowIndex">Position of the Row</param>
         /// <returns></returns>
@@ -344,7 +362,7 @@ namespace BExIS.Io.Transform.Output
             // need to add this empty cell to add cells to the right place
             row.AppendChild(GetEmptyCell(rowIndex, 0));    
 
-            foreach (VariableIdentifier variableIdentifier in VariableIndentifiers)
+            foreach (VariableIdentifier variableIdentifier in VariableIdentifiers)
             {
                 VariableValue variableValue = dataTuple.VariableValues.Where(p => p.VariableId.Equals(variableIdentifier.id)).First();
                 Cell cell = VariableValueToCell(variableValue, rowIndex, columnIndex);
@@ -358,6 +376,8 @@ namespace BExIS.Io.Transform.Output
         /// <summary>
         /// Convert a Datatuple to a Row
         /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
         /// <param name="dataTuple">Datatuple to convert</param>
         /// <param name="rowIndex">Position of the Row</param>
         /// <returns></returns>
@@ -372,26 +392,30 @@ namespace BExIS.Io.Transform.Output
             // need to add this empty cell to add cells to the right place
             row.AppendChild(GetEmptyCell(rowIndex, 0));
 
-            foreach (VariableIdentifier variableIdentifier in VariableIndentifiers)
+            foreach (VariableIdentifier variableIdentifier in VariableIdentifiers)
             {
                 VariableValue variableValue = dataTuple.VariableValues.Where(p => p.VariableId.Equals(variableIdentifier.id)).First();
                 Cell cell = VariableValueToCell(variableValue, rowIndex, columnIndex);
                 row.AppendChild(cell);
             }
-
-
+         
             return row;
         }
 
         /// <summary>
         /// Convert a VariableValue to Cell
         /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
         /// <param name="variableValue"></param>
         /// <param name="rowIndex"></param>
         /// <param name="columnIndex"></param>
         /// <returns></returns>
         protected Cell VariableValueToCell(VariableValue variableValue, int rowIndex, int columnIndex)
         {
+            string message = "row :" + rowIndex + "column:" + columnIndex;
+            Debug.WriteLine(message);
+
             DataContainerManager CM = new DataContainerManager();
             DataAttribute dataAttribute = CM.DataAttributeRepo.Get(variableValue.DataAttribute.Id);
 
@@ -409,8 +433,19 @@ namespace BExIS.Io.Transform.Output
             if (value != null && !(value is DBNull) && cellValueType == CellValues.Number)
             {
                 cell.DataType = new EnumValue<CellValues>(CellValues.Number);
-                double d = Convert.ToDouble(value, System.Globalization.CultureInfo.InvariantCulture);
-                cell.CellValue = new CellValue(d.ToString(System.Globalization.CultureInfo.InvariantCulture));
+
+                try
+                {
+                    if (value != "")
+                    {
+                        double d = Convert.ToDouble(value, System.Globalization.CultureInfo.InvariantCulture);
+                        cell.CellValue = new CellValue(d.ToString(System.Globalization.CultureInfo.InvariantCulture));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message + "\n|"+message);
+                }
 
                 return cell;
             }
@@ -421,8 +456,18 @@ namespace BExIS.Io.Transform.Output
 
                     cell.DataType = new EnumValue<CellValues>(CellValues.Number);
                     //CultureInfo provider = CultureInfo.InvariantCulture;
-                    DateTime dt = Convert.ToDateTime(value.ToString());
-                    cell.CellValue = new CellValue(dt.ToOADate().ToString());
+                    try
+                    {
+                        if (value != "")
+                        {
+                            DateTime dt = Convert.ToDateTime(value.ToString());
+                            cell.CellValue = new CellValue(dt.ToOADate().ToString());
+                        }
+                    }
+                    catch(Exception ex)
+                    {
+                        throw new Exception(ex.Message + "|" + message);
+                    }
                 }
                 else
                 {
@@ -440,6 +485,8 @@ namespace BExIS.Io.Transform.Output
         /// <summary>
         /// Get a empty cell
         /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
         /// <param name="rowIndex"></param>
         /// <param name="columnIndex"></param>
         /// <returns></returns>
@@ -456,6 +503,17 @@ namespace BExIS.Io.Transform.Output
                     };
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="datasetId"></param>
+        /// <param name="datasetVersionOrderNr"></param>
+        /// <param name="dataStructureId"></param>
+        /// <param name="title"></param>
+        /// <param name="extention"></param>
+        /// <returns></returns>
         public string CreateFile(long datasetId, long datasetVersionOrderNr, long dataStructureId, string title, string extention)
         {
             string dataPath = GetFullStorePath(datasetId, datasetVersionOrderNr, title, extention);
@@ -507,6 +565,13 @@ namespace BExIS.Io.Transform.Output
             return dataPath;
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="file"></param>
+        /// <returns></returns>
         public bool IsTemplate(Stream file)
         {
             this.file = file;
@@ -540,6 +605,13 @@ namespace BExIS.Io.Transform.Output
 
     #region helper
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="workbookPart"></param>
+        /// <returns></returns>
         private List<DefinedNameVal> BuildDefinedNamesTable(WorkbookPart workbookPart)
         {
             //Build a list
@@ -574,6 +646,13 @@ namespace BExIS.Io.Transform.Output
             return definedNames;
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="workbookPart"></param>
+        /// <returns></returns>
         private List<DefinedNameVal> ChangeDefinedNamesTable(WorkbookPart workbookPart)
         {
             //Build a list
@@ -608,6 +687,14 @@ namespace BExIS.Io.Transform.Output
             return definedNames;
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="workbookPart"></param>
+        /// <param name="definedName"></param>
+        /// <returns></returns>
         private static WorksheetPart GetWorkSheetPart(WorkbookPart workbookPart, DefinedNameVal definedName)
         {
             //get worksheet based on defined name
@@ -618,7 +705,13 @@ namespace BExIS.Io.Transform.Output
             return (WorksheetPart)workbookPart.GetPartById(relId);
         }
 
-        // Given a cell name, parses the specified cell to get the column number.
+        /// <summary>
+        /// Given a cell name, parses the specified cell to get the column number.
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="columnName"></param>
+        /// <returns></returns>
         private static int GetColumnNumber(string columnName)
         {
             char[] chars = columnName.ToCharArray();
@@ -647,7 +740,13 @@ namespace BExIS.Io.Transform.Output
             }
         }
 
-        // Given a cell name, parses the specified cell to get the column name.
+        /// <summary>
+        /// Given a cell name, parses the specified cell to get the column name.
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="cellName"></param>
+        /// <returns></returns>
         private static string getColumnName(string cellName)
         {
             // Create a regular expression to match the column name portion of the cell name.
@@ -657,6 +756,14 @@ namespace BExIS.Io.Transform.Output
             return match.Value;
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="index"></param>
+        /// <param name="offset"></param>
+        /// <returns></returns>
         private string getColumnIndex(int index, int offset=1)
         {
             int residual = 0;
@@ -682,6 +789,12 @@ namespace BExIS.Io.Transform.Output
             return column;
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="spreadsheetDocument"></param>
         private void generateStyle(SpreadsheetDocument spreadsheetDocument)
         {
             CellFormats cellFormats = spreadsheetDocument.WorkbookPart.WorkbookStylesPart.Stylesheet.Elements<CellFormats>().First();
@@ -703,6 +816,14 @@ namespace BExIS.Io.Transform.Output
             styleIndexArray[3] = (uint)cellFormats.Count++;
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="styleIndex"></param>
+        /// <param name="systemType"></param>
+        /// <returns></returns>
         private uint getExcelStyleIndex(string systemType, uint[] styleIndex)
         {
             if (systemType == "Double" || systemType == "Decimal")
@@ -718,6 +839,13 @@ namespace BExIS.Io.Transform.Output
             return styleIndex[2];
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="systemType"></param>
+        /// <returns></returns>
         private CellValues getExcelType(string systemType)
         {
             if (systemType == "Int16" || systemType == "Int32" || systemType == "Int64" || systemType == "UInt16" || systemType == "UInt32" || systemType == "UInt64" || systemType == "Double" || systemType == "Decimal")
@@ -731,10 +859,19 @@ namespace BExIS.Io.Transform.Output
             return CellValues.SharedString;
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="worksheetPart"></param>
+        /// <param name="startRow"></param>
+        /// <param name="endRow"></param>
+        /// <returns></returns>
         private List<VariableIdentifier> GetVariableIdentifiers(WorksheetPart worksheetPart, int startRow, int endRow)
         {
             //NEW OPENXMLREADER
-            if (this.VariableIndentifiers == null || this.VariableIndentifiers.Count == 0)
+            if (this.VariableIdentifiers == null || this.VariableIdentifiers.Count == 0)
             {
 
                 OpenXmlReader reader = OpenXmlReader.Create(worksheetPart);
@@ -770,13 +907,13 @@ namespace BExIS.Io.Transform.Output
                     foreach (List<string> l in variableIdentifierRows)
                     {
                         //create headerVariables
-                        if (VariableIndentifiers.Count == 0)
+                        if (VariableIdentifiers.Count == 0)
                         {
                             foreach (string s in l)
                             {
                                 VariableIdentifier hv = new VariableIdentifier();
                                 hv.name = s;
-                                VariableIndentifiers.Add(hv);
+                                VariableIdentifiers.Add(hv);
                             }
                         }
                         else
@@ -785,17 +922,24 @@ namespace BExIS.Io.Transform.Output
                             {
                                 int id = Convert.ToInt32(s);
                                 int index = l.IndexOf(s);
-                                VariableIndentifiers.ElementAt(index).id = id;
+                                VariableIdentifiers.ElementAt(index).id = id;
                             }
                         }
                     }
                 }
             }
 
-            if (this.VariableIndentifiers != null) return this.VariableIndentifiers;
+            if (this.VariableIdentifiers != null) return this.VariableIdentifiers;
             else return null;
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="r"></param>
+        /// <returns></returns>
         private List<string> RowToList(Row r)
         {
 
@@ -897,6 +1041,13 @@ namespace BExIS.Io.Transform.Output
             return rowAsStringArray.ToList();
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="stringlist"></param>
+        /// <returns></returns>
         private List<long> GetVariableIds(string[] stringlist)
         {
             List<long> list = new List<long>();
@@ -916,6 +1067,10 @@ namespace BExIS.Io.Transform.Output
 
     }
 
+    /// <summary>
+    ///
+    /// </summary>
+    /// <remarks></remarks>        
     public class DefinedNameVal
     {
         public string Key = "";

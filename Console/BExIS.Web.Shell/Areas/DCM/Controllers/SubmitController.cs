@@ -23,6 +23,7 @@ using BExIS.Xml.Services;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Dcm.Wizard;
+using BExIS.Security.Services.Objects;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
 {
@@ -149,12 +150,21 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         
         #region Navigation options
 
-        public ActionResult CloseUpload()
+        public ActionResult CancelUpload()
         {
-            Session["TaskManager"] = null;
+            TaskManager = (TaskManager)Session["Taskmanager"];
+
+            DataStructureType type = new DataStructureType();
+
+            if (TaskManager.Bus.ContainsKey(TaskManager.DATASTRUCTURE_TYPE))
+            {
+                type = (DataStructureType)TaskManager.Bus[TaskManager.DATASTRUCTURE_TYPE];
+            }
+
+            Session["Taskmanager"] = null;
             TaskManager = null;
 
-            return RedirectToAction("UploadWizard");
+            return RedirectToAction("UploadWizard", "Submit", new RouteValueDictionary { { "area", "DCM" }, { "type", type } });
         }
 
         #endregion
@@ -177,6 +187,11 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             public List<ListViewItem> LoadDatasetVersionViewList( DataStructureType dataStructureType)
             {
+                PermissionManager permissionManager = new PermissionManager();
+
+                // add security
+                ICollection<long> datasetIDs = permissionManager.GetDataIds("Dataset",GetUserNameOrDefault(),Security.Entities.Objects.RightType.Update);
+
                 DataStructureManager dataStructureManager = new DataStructureManager();
                 DatasetManager dm = new DatasetManager();
 
@@ -191,17 +206,22 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                     foreach (StructuredDataStructure sds in list)
                     {
+                        sds.Materialize();
+
                         foreach (Dataset d in sds.Datasets)
                         {
-                            XmlNodeList xnl = dmtemp[d.Id].SelectNodes("Metadata/Description/Description/Title/Title");
-                            string title = "";
-
-                            if (xnl.Count > 0)
+                            if (datasetIDs.Contains(d.Id))
                             {
-                                title = xnl[0].InnerText;
-                            }
+                                XmlNodeList xnl = dmtemp[d.Id].SelectNodes("Metadata/Description/Description/Title/Title");
+                                string title = "";
 
-                            temp.Add(new ListViewItem(d.Id, title));
+                                if (xnl.Count > 0)
+                                {
+                                    title = xnl[0].InnerText;
+                                }
+
+                                temp.Add(new ListViewItem(d.Id, title));
+                            }
                         }
                     }
 
@@ -214,15 +234,18 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     {
                         foreach (Dataset d in sds.Datasets)
                         {
-                            XmlNodeList xnl = dmtemp[d.Id].SelectNodes("Metadata/Description/Description/Title/Title");
-                            string title = "";
-
-                            if (xnl.Count > 0)
+                            if (datasetIDs.Contains(d.Id))
                             {
-                                title = xnl[0].InnerText;
-                            }
+                                XmlNodeList xnl = dmtemp[d.Id].SelectNodes("Metadata/Description/Description/Title/Title");
+                                string title = "";
 
-                            temp.Add(new ListViewItem(d.Id, title));
+                                if (xnl.Count > 0)
+                                {
+                                    title = xnl[0].InnerText;
+                                }
+
+                                temp.Add(new ListViewItem(d.Id, title));
+                            }
                         }
                     }
                 }

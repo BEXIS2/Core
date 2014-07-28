@@ -1,8 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 
+/// <summary>
+///
+/// </summary>        
 namespace BExIS.Dcm.Wizard
 {
+    /// <summary>
+    ///
+    /// </summary>
+    /// <remarks></remarks>        
     public class StepInfo
     {
         public string title;
@@ -11,10 +18,26 @@ namespace BExIS.Dcm.Wizard
         public bool notExecuted = true;
         public Dictionary<string, object> parameters;
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public ActionInfo GetActionInfo { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public ActionInfo PostActionInfo { get; set; }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="title"></param>            
         public StepInfo(string title)
         {
             this.title = title;
@@ -23,33 +46,69 @@ namespace BExIS.Dcm.Wizard
             this.PostActionInfo = new ActionInfo();
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param>NA</param> 
+        /// <returns></returns>
         public Tuple<string, StepStatus> GetStatusWithName()
         {
             return new Tuple<string, StepStatus>(title, stepStatus);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="status"></param>
         public void SetStatus(StepStatus status)
         {
             this.stepStatus = status;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param>NA</param>
+        /// <returns></returns>
         public bool IsEmpty()
         {
             if (String.IsNullOrEmpty(title)) return true;
             else return false;
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param>NA</param>   
+        /// <returns></returns>
         public bool IsValid()
         {
             return valid;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="valid"></param>
         public void SetValid(bool valid)
         {
             this.valid = valid;
         }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public enum StepStatus
     { 
         none,

@@ -1,152 +1,211 @@
-﻿@model BExIS.Web.Shell.Areas.DDM.Models.ShowDataModel
+﻿@model BExIS.Web.Shell.Areas.DDM.Models.ShowPrimaryDataModel
 @using System.Data;
 @using BExIS.Dlm.Entities.DataStructure;
 @using Telerik.Web.Mvc.UI;
 
 @{
-	ViewBag.Title = "Primary Data";
+    ViewBag.Title = "Primary Data";
 
-	bool fullDataset = false;
-	
-	long id = Model.DatasetId;
-	StructuredDataStructure dataStructure = (StructuredDataStructure)Model.DataStructure;
-	
-	GridPagerStyles pagerStyles = GridPagerStyles.PageSizeDropDown;
-	pagerStyles |= GridPagerStyles.NextPreviousAndNumeric;
-	pagerStyles |= GridPagerStyles.Numeric;
+    bool fullDataset = false;
+
+    long id = Model.DatasetId;
+    StructuredDataStructure dataStructure = (StructuredDataStructure)Model.DataStructure;
+
+    GridPagerStyles pagerStyles = GridPagerStyles.PageSizeDropDown;
+    pagerStyles |= GridPagerStyles.NextPreviousAndNumeric;
+    pagerStyles |= GridPagerStyles.Numeric;
 
 
-	int total = 0;
-	if (ViewData["gridTotal"] != null)
-	{
-		total = (int)ViewData["gridTotal"];
-	}
+    int total = 0;
+    if (ViewData["gridTotal"] != null)
+    {
+        total = (int)ViewData["gridTotal"];
+    }
+
+    string compareValues = String.Join(",", Model.CompareValuesOfDataTypes.ToArray());
 
 }
 
 
 @section Scripts{
-	<link href="@Url.Content(Themes.GetResourcePath("Styles","images.css"))" rel="stylesheet" type="text/css" />
-    <script type="text/javascript" src="/Areas/DDM/Scripts/ddm.js"></script>
-    @*<script type="text/javascript" src="/Areas/DDM/Views/Shared/ddm.js"></script>*@
+	<link href="@Url.Content(Themes.GetResourcePath("Styles", "images.css"))" rel="stylesheet" type="text/css" />
+	<script type="text/javascript" src="/Areas/DDM/Scripts/ddm.js"></script>
+	@*<script type="text/javascript" src="/Areas/DDM/Views/Shared/ddm.js"></script>*@
 }
+
+<div class="ShowData_Description">
+<p>Downloading primary data follows the What-You-See-Is-What-You-Get-Principle.
+ So you are able to download a subset of the data by specifying filters on columns (e.g. Plot = 123), <br /> apply sorting, or select specific columns from the data table (right-click the column header). Paging does not effect the subset.
+</p>
+</div>
 
 <div id="downloadOptions">
 
-		   @Html.ActionLink("Download Excel", "DownloadAsExcelData", "Data", new { id = @Model.DatasetId }, new { area = "DDM", @class = "t-button", title ="Xlsx download" })
+		   @Html.ActionLink("Download Excel", "DownloadAsExcelData", "Data", new { id = @Model.DatasetId }, new { area = "DDM", @class = "t-button", title = "Xlsx download" })
 
-		   @Html.ActionLink("Download Delimeter Comma", "DownloadAsCsvData", "Data", new { id = @Model.DatasetId }, new { area = "DDM", @class = "t-button", title ="Csv download"  })
+		   @Html.ActionLink("Download Comma Separated", "DownloadAsCsvData", "Data", new { id = @Model.DatasetId }, new { area = "DDM", @class = "t-button", title = "Csv download" })
 
-		   @Html.ActionLink("Download Delimeter Tab", "DownloadAsTxtData", "Data", new { id = @Model.DatasetId }, new { area = "DDM", @class = "t-button", title ="Text download"  })
-		   <br />
-		   @Html.CheckBox("DownLoadFullDataset", new { text="Download full dataset", @id="fullDatasetDownload" }) @Html.Label("Download full dataset")
+		   @Html.ActionLink("Download Tab Separated", "DownloadAsTxtData", "Data", new { id = @Model.DatasetId }, new { area = "DDM", @class = "t-button", title = "Text download" })
+		  
+		   @Html.CheckBox("DownLoadFullDataset", new { text = "Download full dataset", @id = "fullDatasetDownload" }) @Html.Label("Download full dataset")
 </div>
-
+<br />
 @(Html.Telerik().Grid(Model.Data)
-		.Name("PrimaryDataResultGrid")
-			
-				.DataBinding(dataBinding => dataBinding
-					.Ajax()
-					.Select("_CustomPrimaryDataBinding", "Data", new RouteValueDictionary { { "area", "DDM" },{"datasetID", id} })
-					.OperationMode(GridOperationMode.Client)
-				 )
+        .Name("PrimaryDataResultGrid")
 
-				.EnableCustomBinding(true)
-				.HtmlAttributes(new { @class = "primaryDataResultGrid" })
-			.ClientEvents(events => events
-						 .OnLoad("PrimaryDataResultGrid_OnLoad")
-						 .OnDataBound("PrimaryData_OnCommand")
-					)
-			.Columns(columns =>
-			{
+            .DataBinding(dataBinding => dataBinding
+                    .Ajax()
+                    .Select("_CustomPrimaryDataBinding", "Data", new RouteValueDictionary { { "area", "DDM" }, { "datasetID", id } })
+                    .OperationMode(GridOperationMode.Client)
+                 )
+
+                .EnableCustomBinding(true)
+                .HtmlAttributes(new { @class = "primaryDataResultGrid" })
+                .ClientEvents(events => events
+                         .OnLoad("PrimaryDataResultGrid_OnLoad")
+                         .OnDataBound("PrimaryData_OnCommand")
+                         .OnColumnHide("PrimaryData_OnCommand")
+                         .OnColumnShow("PrimaryData_OnCommand")
+                         
+                        
+
+                    )
+            .Columns(columns =>
+            {
                 for (int i = 0; i < Model.Data.Columns.Count; i++)
-				{
+                {
                     DataColumn column = Model.Data.Columns[i];
 
-								string title;
+                    string title;
 
-								if (column.Caption == "")
-								{
-									title = column.ColumnName;
-								}
-								else
-								{
-									title = column.Caption;
-								}
+                    if (column.Caption == "")
+                    {
+                        title = column.ColumnName;
+                    }
+                    else
+                    {
+                        title = column.Caption;
+                    }
 
-								columns.Bound(column.DataType, column.ColumnName)
-									.Title(title)
-									;
-				}
-			})
+                    columns.Bound(column.DataType, column.ColumnName)
+                            .Title(title);
 
-			.Pageable(paging =>
-				paging.PageSize(50)
-					.Style(pagerStyles)
-					.Position(GridPagerPosition.Both)
-					.Total(total)
-					)
-			.Sortable()
-			.Filterable()
-			.ColumnContextMenu()
-			.Groupable()
+
+                }
+            })
+
+
+            .Pageable(paging =>
+                paging.PageSize(50)
+                    .Style(pagerStyles)
+                    .Position(GridPagerPosition.Both)
+                    .Total(total)
+                    )
+            .Sortable()
+            .Filterable()
+            .ColumnContextMenu()
+            .Groupable()
+            .Scrollable(s => s.Height(350))
 
 )
 
-
+<br />
 
 
 <script type="text/javascript">
 
 
-    $("#fullDatasetDownload").change(function () {
-            var subset = $('#fullDatasetDownload').is(":checked");
-
-            alert(subset);
-
-            $.post('@Url.Action("SetFullDatasetDownload","Data", new RouteValueDictionary { { "area", "DDM" } })', { subset: subset }, function (response) {
-            alert(response);
-        })
-    });
-
-    function PrimaryDataResultGrid_OnLoad(e) {
-        $('.t-grid .t-status').hide();
-    }
-	    function PrimaryData_OnCommand(e) {
-
-    var grid = $("#PrimaryDataResultGrid").data("tGrid");
-
-    var columns = grid.columns;
-
-    var currentFilter = grid.filterBy;
-    var currentOrder = grid.orderBy;
-
-    var visibleColumns ="";
-    jQuery.each(columns, function (index) {
-        if (!this.hidden) {
-            if (visibleColumns != "")
-
-                visibleColumns += "," + this.member;
-            else
-                visibleColumns = this.member;
-        }
-    });
-
-    $.post('@Url.Action("SetGridCommand", "Data", new RouteValueDictionary { { "area", "DDM" } })', { filters: currentFilter, orders: currentOrder, columns: visibleColumns }, function (response) {
-
+    $(document).ready(function(){
+    
+        OnDataBound();
     })
 
-}
+	$("#fullDatasetDownload").change(function () {
+			var subset = $('#fullDatasetDownload').is(":checked");
+
+			$.post('@Url.Action("SetFullDatasetDownload", "Data", new RouteValueDictionary { { "area", "DDM" } })', { subset: subset }, function (response) {
+
+		})
+	});
+
+	function PrimaryDataResultGrid_OnLoad(e) {
+		$('.t-grid .t-status').hide();
+	}
+
+	function PrimaryData_OnCommand(e) {
+
+	var grid = $("#PrimaryDataResultGrid").data("tGrid");
+
+	var columns = grid.columns;
+
+	var currentFilter = grid.filterBy;
+	var currentOrder = grid.orderBy;
+
+	var visibleColumns ="";
+	jQuery.each(columns, function (index) {
+		if (!this.hidden) {
+			if (visibleColumns != "")
+
+				visibleColumns += "," + this.member;
+			else
+				visibleColumns = this.member;
+		}
+	});
+
+	$.post('@Url.Action("SetGridCommand", "Data", new RouteValueDictionary { { "area", "DDM" } })', { filters: currentFilter, orders: currentOrder, columns: visibleColumns }, function (response) {
+
+	})
+
+	    OnDataBound();
+	}
+
+    function OnDataBound()
+    {
+        var compareValuesString = '@compareValues'
+        var compareValuesArray = compareValuesString.split(",")
+
+
+        $("#PrimaryDataResultGrid td").each(function () {
+            
+            for (var i = 0; i < compareValuesArray.length; i = i + 1) {
+
+                if (this.innerHTML == compareValuesArray[i]) {
+                    this.innerHTML = "";
+                }
+            }
+        })
+
+        $("#PrimaryDataResultGrid .t-grouping-row .t-reset").each(function () {
+
+            var valueArray = this.innerHTML.split(": ");
+            //alert(valueArray);
+            var value =  valueArray[valueArray.length-1];
+
+            //alert(value);
+            for (var i = 0; i < compareValuesArray.length; i = i + 1) {
+
+                if (value == compareValuesArray[i]) {
+
+                    var newValue = valueArray[0] + ": ";
+                    this.innerHTML = newValue;
+                }
+            }
+
+        })
+
+    }
 
 </script>
 
 <style type="text/css">
 
-	.primaryDataResultGrid
+	.primaryDataResultGrid .t-grid-content
 	{
-		position:absolute;
-		top:120px;
+		height : auto !important;
+		max-height:350px;
+
 	}
+
 </style>    
 
 

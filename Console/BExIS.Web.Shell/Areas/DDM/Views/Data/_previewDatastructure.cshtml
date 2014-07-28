@@ -1,4 +1,4 @@
-﻿@model Tuple<StructuredDataStructure, long>
+﻿@model Tuple<DataStructure, long>
 @using BExIS.Ddm.Model;
 @using System.Data;
 @using BExIS.Dlm.Entities.DataStructure;
@@ -9,20 +9,30 @@
     //Model.item1 = SearchResultPreview
     //Model.item2 = DatasetId
 
-    long id = Model.Item2;
-    DataTable dt = new DataTable();
-    if(Model.Item1 != null)
-    {
-        if (Model.Item2 > 0)
-        {
-            dt = SearchUIHelper.ConvertStructuredDataStructureToDataTable(Model.Item1);//Model.Item1.ConvertToDataTable();
-        }
-    }
+    
 
 }
 
-@if (Model.Item1 != null)
+
+@if (@Model.Item1 != null)
+{ 
+    <h2>@Model.Item1.Self.Name</h2>
+    <p>@Model.Item1.Self.Description</p>
+}
+
+@if(Model.Item1.Self is StructuredDataStructure)
 {
+    long id = Model.Item2;
+    DataTable dt = new DataTable();
+    if (Model.Item1 != null)
+    {
+        if (Model.Item2 > 0)
+        {
+            dt = SearchUIHelper.ConvertStructuredDataStructureToDataTable((StructuredDataStructure)Model.Item1.Self);//Model.Item1.ConvertToDataTable();
+        }
+    }
+    
+    
     if (Model.Item2 > 0)
     { 
         @(Html.Telerik().Grid<System.Data.DataRow>()
@@ -47,10 +57,10 @@
 
                     })
             
-                    .ClientEvents(events => events
-                         .OnRowDataBound("dataStructureGrid_OnRowDataBound")
-                         .OnLoad("dataStructureGrid_OnLoad")
-                        )
+                    //.ClientEvents(events => events
+                    //     .OnRowDataBound("dataStructureGrid_OnRowDataBound")
+                    //     .OnLoad("dataStructureGrid_OnLoad")
+                    //    )
 
                     .Pageable(paging =>
                         paging.PageSize(10)
@@ -59,8 +69,5 @@
         )
     }
 }
-else
-{ 
-    <p>DatasetId :  @Model.Item2</p>
-    <b>Sorry, it is a unstrutucred Dataset</b>
-}
+
+<br />

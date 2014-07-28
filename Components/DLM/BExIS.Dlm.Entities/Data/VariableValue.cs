@@ -4,23 +4,50 @@ using System.Linq;
 using System.Xml.Serialization;
 using BExIS.Dlm.Entities.DataStructure;
 
+/// <summary>
+///
+/// </summary>        
 namespace BExIS.Dlm.Entities.Data
 {
+    /// <summary>
+    ///
+    /// </summary>
+    /// <remarks></remarks>        
     public class VariableValue: DataValue
     {
         #region Attributes
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         [XmlIgnore]
         public DataTuple Tuple { get; set; } // reference to the containing tuple
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public Int64 VariableId { get; set; } // when variable is not loaded!
 
         #endregion
 
         #region Associations
-        
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public IList<ParameterValue> ParameterValues { get; set; }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         [XmlIgnore]
         public DataAttribute DataAttribute
         {
@@ -34,6 +61,11 @@ namespace BExIS.Dlm.Entities.Data
             }
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         [XmlIgnore]
         public Variable Variable
         {
@@ -54,6 +86,12 @@ namespace BExIS.Dlm.Entities.Data
 
         #region Mathods
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param>NA</param>       
         public VariableValue()
         {
             ParameterValues = new List<ParameterValue>();

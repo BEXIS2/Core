@@ -75,7 +75,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
                             {
                                 col.DataType = Type.GetType("System.Double");
                                 break;
-        }
+                            }
 
                         case "Int16":
                             {
@@ -139,6 +139,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
 
             return dt;
         }
+
         public static DataTable ConvertPrimaryDataToDatatable(DatasetVersion dsv, IEnumerable<AbstractTuple> dsVersionTuples)
         {
             DataTable dt = new DataTable();
@@ -227,84 +228,123 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
             return dt;
         }
 
+        /// <summary>
+        /// This function convert a datatuple into datarow for a datatable to show on the client side
+        /// the grid in the client side (in client mode) has unknow problem with value 0 and null
+        /// So every empty cell get the max value of the specific Systemtype.
+        /// On the client side this values replaced with ""
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <param name="t"></param>
+        /// <returns></returns>
         private static DataRow ConvertTupleIntoDataRow(DataTable dt, AbstractTuple t)
         {
 
             DataRow dr = dt.NewRow();
+
+           
+
             foreach(var vv in t.VariableValues)
             {
                 if (vv.Variable != null)
                 {
-                    switch (vv.DataAttribute.DataType.SystemType)
-                    { 
-                        case "String":
-                        {
-                            if (vv.Value == null)
-                            {
-                                dr["ID" +vv.Variable.Id.ToString()] = "null";
-                            }
-                            else
-                            {
-                                dr["ID"+vv.Variable.Id.ToString()] = vv.Value.ToString();
-                            }
-                            break;
-                        }
-
-                        case "Double":
-                        {
-                            if (vv.Value != null)
-                                if(!String.IsNullOrEmpty(vv.Value.ToString()))
-                            dr["ID"+vv.Variable.Id.ToString()] = Convert.ToDouble(vv.Value);
-                            
-                            break;
-                        }
-
-                        case "Int16":
-                        {
-                            if (vv.Value != null)
-                                if (!String.IsNullOrEmpty(vv.Value.ToString()))
-                            dr["ID"+vv.Variable.Id.ToString()] = Convert.ToInt16(vv.Value);
-                            break;
-                        }
-
-                        case "Int32":
-                        {
-                            if (vv.Value != null)
-                                if (!String.IsNullOrEmpty(vv.Value.ToString()))
-                            dr["ID"+vv.Variable.Id.ToString()] = Convert.ToInt32(vv.Value);
-                            break;
-                        }
-
-                        case "Int64":
-                        {
-                            if (vv.Value != null)
-                                if (!String.IsNullOrEmpty(vv.Value.ToString()))
-                            dr["ID"+vv.Variable.Id.ToString()] = Convert.ToInt64(vv.Value);
-                            break;
-                        }
-
-                        case "Decimal":
-                        {
-                            if (vv.Value != null)
-                                if (!String.IsNullOrEmpty(vv.Value.ToString()))
-                            dr["ID"+vv.Variable.Id.ToString()] = Convert.ToDecimal(vv.Value);
-                            break;
-                        }
-
-                        case "DateTime":
-                        {
-                            if (vv.Value != null)
-                                if (!String.IsNullOrEmpty(vv.Value.ToString()))
-                            dr["ID"+vv.Variable.Id.ToString()] = Convert.ToDateTime(vv.Value, CultureInfo.InvariantCulture);
-                            break;
-                        }
+                    string valueAsString="";
+                    if (vv.Value == null)
+                    {
+                        dr["ID" + vv.Variable.Id.ToString()] = DBNull.Value;
+                    }
+                    else
+                    {
+                        valueAsString = vv.Value.ToString();
                 
-                        default:
-                        {
-                            if (vv.Value != null)
+                        
+                        switch (vv.DataAttribute.DataType.SystemType)
+                        { 
+                            case "String":
+                            {
+                                dr["ID" +vv.Variable.Id.ToString()] = valueAsString;
+                                break;
+                            }
+
+                            case "Double":
+                            {
+                                double value;
+                                if(double.TryParse(valueAsString,out value))
+                                    dr["ID" + vv.Variable.Id.ToString()] = Convert.ToDouble(valueAsString);
+                                else
+                                    dr["ID" + vv.Variable.Id.ToString()] = double.MaxValue;
+                                break;
+                            }
+
+                            case "Int16":
+                            {
+                                Int16 value;
+                                if(Int16.TryParse(valueAsString,out value))
+                                    dr["ID" + vv.Variable.Id.ToString()] = Convert.ToInt16(valueAsString);
+                                else
+                                    dr["ID" + vv.Variable.Id.ToString()] = Int16.MaxValue;
+                                break;
+                            }
+
+                            case "Int32":
+                            {
+                                Int32 value;
+                                if(Int32.TryParse(valueAsString,out value))
+                                    dr["ID" + vv.Variable.Id.ToString()] = Convert.ToInt32(valueAsString);
+                                else
+                                    dr["ID" + vv.Variable.Id.ToString()] = Int32.MaxValue;
+                                break;
+                            }
+
+                            case "Int64":
+                            {
+                                Int64 value;
+                                if(Int64.TryParse(valueAsString,out value))
+                                    dr["ID" + vv.Variable.Id.ToString()] = Convert.ToInt64(valueAsString);
+                                else
+                                    dr["ID" + vv.Variable.Id.ToString()] = Int64.MaxValue;
+                                break;
+                            }
+
+                            case "Decimal":
+                            {
+                                decimal value;
+                                if(decimal.TryParse(valueAsString,out value))
+                                    dr["ID" + vv.Variable.Id.ToString()] = Convert.ToDecimal(valueAsString);
+                                else
+                                    dr["ID" + vv.Variable.Id.ToString()] = decimal.MaxValue;
+                                break;
+                            }
+
+                            case "Float":
+                            {
+                                decimal value;
+                                if (decimal.TryParse(valueAsString, out value))
+                                    dr["ID" + vv.Variable.Id.ToString()] = Convert.ToDecimal(valueAsString);
+                                else
+                                    dr["ID" + vv.Variable.Id.ToString()] = decimal.MaxValue;
+                                break;
+                            }
+
+                            case "DateTime":
+                            {
+                                    if (!String.IsNullOrEmpty(valueAsString))
+                                        dr["ID"+vv.Variable.Id.ToString()] = Convert.ToDateTime(valueAsString, CultureInfo.InvariantCulture);
+                                    else
+                                        dr["ID" + vv.Variable.Id.ToString()] = DateTime.MaxValue;
+
+                                break;
+                            }
+                
+                            default:
+                            {
                                 if (!String.IsNullOrEmpty(vv.Value.ToString()))
-                            dr["ID"+vv.Variable.Id.ToString()] = vv.Value;
-                            break;
+                                    dr["ID"+vv.Variable.Id.ToString()] = valueAsString;
+                                else 
+                                    dr["ID" + vv.Variable.Id.ToString()] = DBNull.Value;
+
+                                break;
+                            }
                         }
                     }
 

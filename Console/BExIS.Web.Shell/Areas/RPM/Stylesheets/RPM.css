@@ -1,4 +1,17 @@
 ﻿/*partial Views*/
+.function td, .locked td {
+text-align:center;
+min-width:100px;
+}
+
+#unitId option, #dataTypeId option{
+background-color:white;
+}
+
+.errorMsg {
+padding-left:5px;
+vertical-align:top;
+}
 
 .RPMbuttons .t-button {
     margin-bottom:5px;

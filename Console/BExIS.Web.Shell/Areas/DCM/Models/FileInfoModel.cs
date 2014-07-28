@@ -42,7 +42,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
         public FileInfoModel()
         {
             Extention = "";
-            Decimal = DecimalCharacter.comma;
+            Decimal = DecimalCharacter.point;
             Orientation = Orientation.columnwise;
             Offset = 0;
             Variables = 1;

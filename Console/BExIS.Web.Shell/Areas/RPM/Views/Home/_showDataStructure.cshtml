@@ -3,10 +3,14 @@
 @model BExIS.RPM.Model.DataStructureDesignerModel
 
 @{
-    if (Session["Window"] == null)
+    long first = 0;
+    long last = 0;
+
+    if(Model.variables.Count() != 0)
     {
-        Session["Window"] = false;
-    }    
+        first = Model.variables.First().Id;
+        last = Model.variables.Last().Id;
+    }     
 }
 
 
@@ -27,31 +31,19 @@
                     }
                     
                 }
-                else
+
+                if (row.Index == 1)
                 {
-                    if (row.Index == 2)
-                    {
-                        row.HtmlAttributes["class"] = "optional";
-                    }
+                    row.HtmlAttributes["class"] = "name";
                 }
+               
+                if (row.Index == 2)
+                {
+                    row.HtmlAttributes["class"] = "optional";
+                }
+                
             })
 )
-</div>
-<div style="position:absolute; left:10%; top:60px">
-@{ Html.Telerik().Window()
-        .Name("Add_Variable")
-        .Title("Add Variable")
-        .Draggable(true)
-        .Visible((bool)Session["Window"])
-        .Modal(true)
-        .Content(@<text>
-                    @Html.Partial("_addVariable", Model)
-                    </text>)
-        .Width(1000)
-        .Render()
-        ;
-        
-}
 </div>
 <div style="position:absolute; left:30%; top:60px;">
 @{ Html.Telerik().Window()
@@ -69,22 +61,56 @@
         
 }
 </div>
-@{Session["Window"] = false;}
 @{Session["VariableWindow"] = false;}
 
 <script type="text/javascript" language="javascript">
     $(document).ready(function () {
         
+        var first = @first;
+        var last =  @last;
+
         for (var i = 0; i < $(".function td").length; i++)
         {
             if ($(".function td")[i].innerHTML != 'Functions')
-                $(".function td")[i].innerHTML = '<a area="RPM" class="t-icon t-edit" href="/RPM/Home/openVariableWindow/' + $(".function td")[i].innerHTML + '"></a><a area="RPM" class="t-icon t-delete" href="/RPM/Home/deleteVariable/' + $(".function td")[i].innerHTML + '">Download</a>';
+            {
+                var edit = '<a area="RPM" class="t-icon t-edit" href="/RPM/Home/openVariableWindow/' + $(".function td")[i].innerHTML + '"></a>';
+                var del = '<a area="RPM" class="t-icon t-delete" href="/RPM/Home/deleteVariable/' + $(".function td")[i].innerHTML + '" onclick = "return confirm(\'Are you sure you want to delete the Variable ' + $(".name td")[i].innerHTML + '?\')"></a>'
+                var temp = $(".function td")[i].innerHTML.split('?');
+                var left = '<a area="RPM" class="t-icon t-arrow-prev" href="/RPM/Home/shiftVariableLeft/'+ $(".function td")[i].innerHTML +'"></a>';
+                var right = '<a area="RPM" class="t-icon t-arrow-next" href="/RPM/Home/shiftVariableRight/'+ $(".function td")[i].innerHTML +'"></a>';
+
+                $(".function td")[i].innerHTML = edit + del;
+                
+                if (temp[0] != first && temp[0] != last)
+                    $(".function td")[i].innerHTML = left + edit + del + right;
+                else
+                {
+                    if(temp[0] == first)
+                        $(".function td")[i].innerHTML = edit + del + right;
+                    else
+                        $(".function td")[i].innerHTML = left + edit + del;
+                }            
+            }
         }
 
         for (var i = 0; i < $(".locked td").length; i++)
         {
             if ($(".locked td")[i].innerHTML != 'Functions')
-                $(".locked td")[i].innerHTML = 'locked';
+            {
+                var temp = $(".locked td")[i].innerHTML.split('?');
+                var left = '<a area="RPM" class="t-icon t-arrow-prev" href="/RPM/Home/shiftVariableLeft/'+ $(".locked td")[i].innerHTML +'"></a>';
+                var right = '<a area="RPM" class="t-icon t-arrow-next" href="/RPM/Home/shiftVariableRight/'+ $(".locked td")[i].innerHTML +'"></a>';
+
+                if (temp[0] != first && temp[0] != last)
+                    $(".locked td")[i].innerHTML = left + 'locked' + right;
+                else
+                {
+                    if(temp[0] == first)
+                        $(".locked td")[i].innerHTML = 'locked' + right;
+                    else
+                        $(".locked td")[i].innerHTML = left + 'locked';
+                }
+            }
         }
 
         for (var i = 0; i < $(".optional td").length; i++) {

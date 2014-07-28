@@ -5,21 +5,22 @@
 @{
     ViewBag.Title = "Data Structure Designer";
 }
+
 @section LeftPane 
 { 
 
 <link href="@Url.Content("~/Areas/RPM/Stylesheets/RPM.css")" rel="stylesheet" type="text/css" />  
 
 <div>
-        @Html.ActionLink("Create Structured", "createStructuredDataStrukture", "Home", new {@class = "t-button" , @title = "Create srtuctured Data Structure", @style = "margin:3px;"})
+        @Html.ActionLink("Create Structured", "createStructuredDataStrukture", "Home", new {@class = "t-button" , @title = "Create structured Data Structure", @style = "margin:3px;"})
 
-        @Html.ActionLink("Create Unsrtuctured", "createUnStructuredDataStrukture", "Home", new {@class = "t-button", @title = "Create unsrtuctured Data Structure", @style = "margin:3px;"})
+        @Html.ActionLink("Create Unstructured", "createUnStructuredDataStrukture", "Home", new {@class = "t-button", @title = "Create unstructured Data Structure", @style = "margin:3px;"})
 </div>
 <br />
 <div>
 @(Html.Telerik().TreeView()
     .Name("TreeView")
-    .BindTo(Model.getDataStructureTree().dataStructureTreeList, mappings =>
+    .BindTo(Model.dataStructureTree.dataStructureTreeList, mappings =>
     {
         mappings.For<DataStructureTreeList>(binding => binding
                 .ItemDataBound((item, TL) =>
@@ -37,19 +38,41 @@
                 mappings.For<DataStructureTreeElement>(binding => binding
                 .ItemDataBound((item, TEL) =>
                 {
-                    if (TEL.name == null || TEL.name == "")
+                    if (TEL.inUse == true)
                     {
-                        item.Text = "no Name";
-                        item.Value = TEL.id.ToString() + "," + TEL.structured.ToString();
+                        if (TEL.name == null || TEL.name == "")
+                        {
+                            item.Text = "no Name (in use)";
+                            item.Value = TEL.id.ToString() + "," + TEL.structured.ToString();
+                        }
+                        else
+                        {
+                            item.Text = TEL.name + " (in use)";
+                            item.Value = TEL.id.ToString() + "," + TEL.structured.ToString();
+
+                        }
                     }
                     else
                     {
-                        item.Text = TEL.name;
-                        item.Value = TEL.id.ToString() + "," + TEL.structured.ToString();
-                    }
+                        if (TEL.name == null || TEL.name == "")
+                        {
+                            item.Text = "no Name";
+                            item.Value = TEL.id.ToString() + "," + TEL.structured.ToString();
+                        }
+                        else
+                        {
+                            item.Text = TEL.name;
+                            item.Value = TEL.id.ToString() + "," + TEL.structured.ToString();
 
+                        }
+                    }
+                    
+                    if (TEL.id == Model.dataStructure.Id)
+                    {
+                        item.Selected = true;
+                    }
                     item.Action("showDataStructure", "Home", new RouteValueDictionary { { "area", "RPM" }, { "SelectedItem", item.Value } });
-      }));
+                }));
     })
     .ExpandAll(true)
 )

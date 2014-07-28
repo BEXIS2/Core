@@ -215,6 +215,8 @@
     <Compile Include="Areas\Auth\Controllers\RolesController.cs" />
     <Compile Include="Areas\Auth\Controllers\UsersController.cs" />
     <Compile Include="Areas\Auth\Models\AccountModel.cs" />
+    <Compile Include="Areas\Auth\Models\DataModel.cs" />
+    <Compile Include="Areas\Auth\Models\DatasetModel.cs" />
     <Compile Include="Areas\Auth\Models\EntityModel.cs" />
     <Compile Include="Areas\Auth\Models\FeatureModel.cs" />
     <Compile Include="Areas\Auth\Models\InfoModel.cs" />
@@ -237,6 +239,7 @@
     <Compile Include="Areas\DCM\Controllers\SubmitSummaryController.cs" />
     <Compile Include="Areas\DCM\Controllers\SubmitValidationController.cs" />
     <Compile Include="Areas\DCM\DCMAreaRegistration.cs" />
+    <Compile Include="Areas\DCM\Helpers\UploadUtility.cs" />
     <Compile Include="Areas\DCM\Models\AbstractStepModel.cs" />
     <Compile Include="Areas\DCM\Models\ChooseDatasetViewModel.cs" />
     <Compile Include="Areas\DCM\Models\CreateDatasetViewModel.cs" />
@@ -260,6 +263,7 @@
     <Compile Include="Areas\DDM\Controllers\DataController.cs" />
     <Compile Include="Areas\DDM\Helpers\GridHelper.cs" />
     <Compile Include="Areas\DDM\Models\ShowDataModel.cs" />
+    <Compile Include="Areas\DDM\Models\ShowPrimaryDataModel.cs" />
     <Compile Include="Areas\RPM\Controllers\HomeController.cs" />
     <Compile Include="Areas\RPM\RPMAreaRegistration.cs" />
     <Compile Include="Areas\DDM\Controllers\HomeController.cs" />
@@ -364,12 +368,6 @@
     <Content Include="Themes\Default\Layouts\_Layout.xml">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Themes\Default\Styles\Default\bpp\csv2_sw_40.png" />
-    <Content Include="Themes\Default\Styles\Default\bpp\csv2_sw_40_subset.png" />
-    <Content Include="Themes\Default\Styles\Default\bpp\txt2_sw_40.png" />
-    <Content Include="Themes\Default\Styles\Default\bpp\txt2_sw_40_subset.png" />
-    <Content Include="Themes\Default\Styles\Default\bpp\xlsx_sw_40.png" />
-    <Content Include="Themes\Default\Styles\Default\bpp\xlsx_sw_40_subset.png" />
     <Content Include="Themes\Default\Styles\Default\editor.png" />
     <Content Include="Themes\Default\Styles\Default\imagebrowser.png" />
     <Content Include="Themes\Default\Styles\Default\loading.gif" />
@@ -644,84 +642,6 @@
     <Content Include="Views\Shared\EditorTemplates\Time.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Components\AAA\BExIS.Security.Services\BExIS.Security.Services.csproj">
-      <Project>{681c8bc4-55f0-4f43-a685-90e246a88cb1}</Project>
-      <Name>BExIS.Security.Services</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Components\DLM\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
-      <Project>{b4e7b1bf-01b4-40af-8d19-b8f362167261}</Project>
-      <Name>BExIS.Dlm.Entities</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Components\EXT\BExIS.Ext.Services\BExIS.Ext.Services.csproj">
-      <Project>{b906a66a-4a09-4207-b590-655ee111ccf1}</Project>
-      <Name>BExIS.Ext.Services</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Components\IO\BExIS.Io.Transform.Output\BExIS.Io.Transform.Output.csproj">
-      <Project>{455ec826-9a92-40ff-bd3b-388c288955ce}</Project>
-      <Name>BExIS.Io.Transform.Output</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Components\IO\BExIS.Io.Transform.Validation\BExIS.Io.Transform.Validation.csproj">
-      <Project>{c8a05313-b960-406e-92ec-c1e5b3f47fcd}</Project>
-      <Name>BExIS.Io.Transform.Validation</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Components\IO\BExIS.IoTransform.Input\BExIS.Io.Transform.Input.csproj">
-      <Project>{5c4c8570-a53b-4191-a414-de028aaaf36a}</Project>
-      <Name>BExIS.Io.Transform.Input</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Components\IO\BExIS.Io\BExIS.Io.csproj">
-      <Project>{e4795f06-20c2-4c4c-a720-9a79896384df}</Project>
-      <Name>BExIS.Io</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Components\XML\BExIS.Xml.Services\BExIS.Xml.Services.csproj">
-      <Project>{252f7872-a69c-43a6-84b4-4d2abdbdd9ab}</Project>
-      <Name>BExIS.Xml.Services</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Modules\DCM\BExIS.Dcm.CreateDatasetWizard\BExIS.Dcm.CreateDatasetWizard.csproj">
-      <Project>{93eeeda5-6d79-41a1-947b-0a3fc9e46abc}</Project>
-      <Name>BExIS.Dcm.CreateDatasetWizard</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Modules\DCM\BExIS.Dcm.UploadWizard\BExIS.Dcm.UploadWizard.csproj">
-      <Project>{2c846721-a221-4ae5-a671-4b86de4d3805}</Project>
-      <Name>BExIS.Dcm.UploadWizard</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Modules\DCM\BExIS.Dcm.Wizard\BExIS.Dcm.Wizard.csproj">
-      <Project>{d17cdd9d-b87b-441b-9248-5c54e92ffc81}</Project>
-      <Name>BExIS.Dcm.Wizard</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Modules\DDM\BExIS.Ddm.Api\BExIS.Ddm.Api.csproj">
-      <Project>{8519eac6-fbf8-48b3-813f-e0b9d3cc4a52}</Project>
-      <Name>BExIS.Ddm.Api</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Modules\DDM\BExIS.Ddm.Model\BExIS.Ddm.Model.csproj">
-      <Project>{ab46beb8-c36d-412f-9b1a-646c86299a87}</Project>
-      <Name>BExIS.Ddm.Model</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Modules\DDM\BExIS.Ddm.Providers.DummyProvider\BExIS.Ddm.Providers.DummyProvider.csproj">
-      <Project>{d89e501a-4873-4883-8741-27f0acd03e0b}</Project>
-      <Name>BExIS.Ddm.Providers.DummyProvider</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Modules\DDM\BExIS.Ddm.Providers.LuceneProvider\BExIS.Ddm.Providers.LuceneProvider.csproj">
-      <Project>{fbe3101a-791a-4eab-9b8f-f6e071f8dbdc}</Project>
-      <Name>BExIS.Ddm.Providers.LuceneProvider</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Modules\RPM\BExIS.RPM.Model\BExIS.RPM.Model.csproj">
-      <Project>{063b9e3f-e0dd-43fe-9910-5b1544b8b861}</Project>
-      <Name>BExIS.RPM.Model</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Modules\RPM\BExIS.RPM.Output\BExIS.RPM.Output.csproj">
-      <Project>{abc877e0-e3de-4472-a199-1728e88fa5a1}</Project>
-      <Name>BExIS.RPM.Output</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Components\DLM\BExIS.Dlm.Services\BExIS.Dlm.Services.csproj">
-      <Project>{C4CA0A99-0AF3-4372-A9B7-B9073599BD8B}</Project>
-      <Name>BExIS.Dlm.Services</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Components\AAA\BExIS.Security.Entities\BExIS.Security.Entities.csproj">
-      <Project>{C230693B-D780-438B-B26C-82257642DD5C}</Project>
-      <Name>BExIS.Security.Entities</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -754,9 +674,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Themes\Default\Partials\_ThemeSelector.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\DDM\Views\Web.config" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\DDM\Views\_ViewStart.cshtml" />
@@ -899,9 +816,21 @@
     <Content Include="Areas\RPM\Views\Home\_editAttribute.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Components\AAA\BExIS.Security.Data\BExIS.Security.Data.csproj">
+      <Project>{057c48c0-34b7-447b-91ae-9c26d58fa431}</Project>
+      <Name>BExIS.Security.Data</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Components\AAA\BExIS.Security.Entities\BExIS.Security.Entities.csproj">
       <Project>{c230693b-d780-438b-b26c-82257642dd5c}</Project>
       <Name>BExIS.Security.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Components\AAA\BExIS.Security.Entities\BExIS.Security.Entities.csproj">
+      <Project>{c230693b-d780-438b-b26c-82257642dd5c}</Project>
+      <Name>BExIS.Security.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Components\AAA\BExIS.Security.Services\BExIS.Security.Services.csproj">
+      <Project>{681c8bc4-55f0-4f43-a685-90e246a88cb1}</Project>
+      <Name>BExIS.Security.Services</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Components\AAA\BExIS.Security.Services\BExIS.Security.Services.csproj">
       <Project>{681c8bc4-55f0-4f43-a685-90e246a88cb1}</Project>
@@ -911,9 +840,29 @@
       <Project>{b4e7b1bf-01b4-40af-8d19-b8f362167261}</Project>
       <Name>BExIS.Dlm.Entities</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Components\DLM\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
+      <Project>{b4e7b1bf-01b4-40af-8d19-b8f362167261}</Project>
+      <Name>BExIS.Dlm.Entities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Components\DLM\BExIS.Dlm.Services\BExIS.Dlm.Services.csproj">
       <Project>{c4ca0a99-0af3-4372-a9b7-b9073599bd8b}</Project>
       <Name>BExIS.Dlm.Services</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Components\DLM\BExIS.Dlm.Services\BExIS.Dlm.Services.csproj">
+      <Project>{c4ca0a99-0af3-4372-a9b7-b9073599bd8b}</Project>
+      <Name>BExIS.Dlm.Services</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Components\EXT\BExIS.Ext.Services\BExIS.Ext.Services.csproj">
+      <Project>{b906a66a-4a09-4207-b590-655ee111ccf1}</Project>
+      <Name>BExIS.Ext.Services</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Components\IO\BExIS.Io.Transform.Output\BExIS.Io.Transform.Output.csproj">
+      <Project>{455ec826-9a92-40ff-bd3b-388c288955ce}</Project>
+      <Name>BExIS.Io.Transform.Output</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Components\IO\BExIS.Io.Transform.Validation\BExIS.Io.Transform.Validation.csproj">
+      <Project>{c8a05313-b960-406e-92ec-c1e5b3f47fcd}</Project>
+      <Name>BExIS.Io.Transform.Validation</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Components\IO\BExIS.IoTransform.Input\BExIS.Io.Transform.Input.csproj">
       <Project>{5c4c8570-a53b-4191-a414-de028aaaf36a}</Project>
@@ -922,6 +871,46 @@
     <ProjectReference Include="..\..\Components\IO\BExIS.Io.Transform.Validation\BExIS.Io.Transform.Validation.csproj">
       <Project>{c8a05313-b960-406e-92ec-c1e5b3f47fcd}</Project>
       <Name>BExIS.Io.Transform.Validation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Components\IO\BExIS.IoTransform.Input\BExIS.Io.Transform.Input.csproj">
+      <Project>{5c4c8570-a53b-4191-a414-de028aaaf36a}</Project>
+      <Name>BExIS.Io.Transform.Input</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Components\IO\BExIS.Io\BExIS.Io.csproj">
+      <Project>{e4795f06-20c2-4c4c-a720-9a79896384df}</Project>
+      <Name>BExIS.Io</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Components\XML\BExIS.Xml.Services\BExIS.Xml.Services.csproj">
+      <Project>{252f7872-a69c-43a6-84b4-4d2abdbdd9ab}</Project>
+      <Name>BExIS.Xml.Services</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Modules\DCM\BExIS.Dcm.CreateDatasetWizard\BExIS.Dcm.CreateDatasetWizard.csproj">
+      <Project>{93eeeda5-6d79-41a1-947b-0a3fc9e46abc}</Project>
+      <Name>BExIS.Dcm.CreateDatasetWizard</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Modules\DCM\BExIS.Dcm.UploadWizard\BExIS.Dcm.UploadWizard.csproj">
+      <Project>{2c846721-a221-4ae5-a671-4b86de4d3805}</Project>
+      <Name>BExIS.Dcm.UploadWizard</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Modules\DCM\BExIS.Dcm.Wizard\BExIS.Dcm.Wizard.csproj">
+      <Project>{d17cdd9d-b87b-441b-9248-5c54e92ffc81}</Project>
+      <Name>BExIS.Dcm.Wizard</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Modules\DDM\BExIS.Ddm.Api\BExIS.Ddm.Api.csproj">
+      <Project>{8519eac6-fbf8-48b3-813f-e0b9d3cc4a52}</Project>
+      <Name>BExIS.Ddm.Api</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Modules\DDM\BExIS.Ddm.Model\BExIS.Ddm.Model.csproj">
+      <Project>{ab46beb8-c36d-412f-9b1a-646c86299a87}</Project>
+      <Name>BExIS.Ddm.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Modules\DDM\BExIS.Ddm.Providers.DummyProvider\BExIS.Ddm.Providers.DummyProvider.csproj">
+      <Project>{d89e501a-4873-4883-8741-27f0acd03e0b}</Project>
+      <Name>BExIS.Ddm.Providers.DummyProvider</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Modules\DDM\BExIS.Ddm.Providers.LuceneProvider\BExIS.Ddm.Providers.LuceneProvider.csproj">
+      <Project>{fbe3101a-791a-4eab-9b8f-f6e071f8dbdc}</Project>
+      <Name>BExIS.Ddm.Providers.LuceneProvider</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Modules\RPM\BExIS.RPM.Model\BExIS.RPM.Model.csproj">
       <Project>{063b9e3f-e0dd-43fe-9910-5b1544b8b861}</Project>
@@ -942,6 +931,14 @@
     <ProjectReference Include="..\..\Modules\DDM\BExIS.Ddm.Providers.LuceneProvider\BExIS.Ddm.Providers.LuceneProvider.csproj">
       <Project>{fbe3101a-791a-4eab-9b8f-f6e071f8dbdc}</Project>
       <Name>BExIS.Ddm.Providers.LuceneProvider</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Modules\RPM\BExIS.RPM.Model\BExIS.RPM.Model.csproj">
+      <Project>{063b9e3f-e0dd-43fe-9910-5b1544b8b861}</Project>
+      <Name>BExIS.RPM.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Modules\RPM\BExIS.RPM.Output\BExIS.RPM.Output.csproj">
+      <Project>{abc877e0-e3de-4472-a199-1728e88fa5a1}</Project>
+      <Name>BExIS.RPM.Output</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -989,20 +986,27 @@
     <Content Include="Areas\SAM\Views\Unsafe\ListDatasetVersions.cshtml" />
     <Content Include="Areas\SAM\Views\Unsafe\DetailDatasetVersion.cshtml" />
     <Content Include="Areas\DDM\Views\Data\_previewDatastructure.cshtml" />
-    <Content Include="Areas\DDM\Views\Data\_showUnstructuredDataView.cshtml" />
+    <Content Include="Areas\DDM\Views\Data\_unstructuredDataView.cshtml" />
     <Content Include="Areas\DDM\Views\Data\_structuredDataView.cshtml" />
     <Content Include="Areas\DCM\Views\Push\Index.cshtml" />
     <Content Include="Areas\DCM\Views\Push\_fileListView.cshtml" />
     <Content Include="Areas\Auth\Views\Permissions\Data.cshtml" />
     <Content Include="Areas\Auth\Views\Permissions\Features.cshtml" />
-    <Content Include="Areas\Auth\Views\Permissions\_CreateDataPermissionPartial.cshtml" />
-    <Content Include="Areas\Auth\Views\Permissions\_DataPermissionsPartial.cshtml" />
     <Content Include="Areas\Auth\Views\Permissions\_FeaturePermissionsPartial.cshtml" />
     <Content Include="Areas\Auth\Views\Permissions\_FeaturesPartial.cshtml" />
     <Content Include="Areas\Auth\Views\Permissions\_InfoPartial.cshtml" />
+    <Content Include="Areas\Auth\Views\Permissions\_DatasetsPartial.cshtml" />
+    <Content Include="Areas\Auth\Views\Permissions\_SubjectsPartial.cshtml" />
+    <Content Include="Areas\Auth\Views\Permissions\_DataPartial.cshtml" />
+    <Content Include="Areas\Auth\Views\Permissions\_ResearchPlansPartial.cshtml" />
+    <Content Include="Areas\Auth\Views\Permissions\_DataStructuresPartial.cshtml" />
+    <Content Include="Areas\DDM\Views\Data\ShowData.cshtml" />
+    <Content Include="Areas\RPM\Views\Home\_showDatasets.cshtml" />
+    <Content Include="Areas\DDM\Views\Web.config" />
     <None Include="Properties\PublishProfiles\2230.pubxml" />
     <None Include="Properties\PublishProfiles\2301.pubxml" />
     <None Include="Properties\PublishProfiles\2302.pubxml" />
+    <None Include="Properties\PublishProfiles\2400.pubxml" />
     <None Include="Properties\PublishProfiles\BEXIS2 DEV.pubxml" />
     <None Include="Properties\PublishProfiles\BEXIS2.pubxml" />
     <None Include="Properties\PublishProfiles\BPP230.pubxml" />
@@ -1061,7 +1065,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>1174</DevelopmentServerPort>
+          <DevelopmentServerPort>35608</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>

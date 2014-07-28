@@ -1,4 +1,4 @@
-﻿@model BExIS.Web.Shell.Areas.DDM.Models.ShowDataModel
+﻿@model BExIS.Web.Shell.Areas.DDM.Models.ShowPrimaryDataModel
 
 @using System.Data;
 @using BExIS.Dlm.Entities.DataStructure;
@@ -6,26 +6,22 @@
 @using BExIS.Web.Shell.Areas.DDM.Models;
 
 <div class="ShowData_Main">
-        <div class="ShowData_Header">
+        @*<div class="ShowData_Header">
             <h3>@Model.DatasetTitle</h3>
-        </div>
+        </div>*@
 
-        <div class="ShowData_Description">
-           <p>...description pls <br /></p>
-        </div>
-	
         <div class="ShowDataContent">
 	
             @if (Model.DataStructureType == DataStructureType.Structured && Model.Data != null)
-	{
+	        {
                 @Html.Partial("_structuredDataView", Model);
-	}
+	        }
 
 
             @if (Model.DataStructureType == DataStructureType.Unstructured && Model.Data == null)
             {
-                @Html.Partial("_showUnstructuredDataView", Model);
-}
+                @Html.Partial("_unstructuredDataView", Model);
+            }
 
         </div>
 </div>

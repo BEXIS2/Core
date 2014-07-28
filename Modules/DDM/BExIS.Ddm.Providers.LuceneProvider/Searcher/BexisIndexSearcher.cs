@@ -21,7 +21,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Searcher
 
 
         private static string luceneIndexPath = Path.Combine(FileHelper.IndexFolderPath, "BexisSearchIndex");
-        private static string autoCompleteIndexPath = Path.Combine(FileHelper.IndexFolderPath, "AutoCompleteBexisDir");
+        private static string autoCompleteIndexPath = Path.Combine(FileHelper.IndexFolderPath, "BexisAutoComplete");
 
 
         private static Lucene.Net.Store.Directory pathIndex = FSDirectory.Open(new DirectoryInfo(luceneIndexPath));

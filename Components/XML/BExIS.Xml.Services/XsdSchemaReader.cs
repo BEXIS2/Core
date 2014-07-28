@@ -10,8 +10,15 @@ using System.Xml;
 using System.Xml.Schema;
 using Vaiona.Util.Cfg;
 
+/// <summary>
+///
+/// </summary>        
 namespace BExIS.Xml.Services
 {
+    /// <summary>
+    ///
+    /// </summary>
+    /// <remarks></remarks>        
     public class XsdSchemaReader
     {
         private List<string> metadataAttributeNames = new List<string>();
@@ -20,6 +27,12 @@ namespace BExIS.Xml.Services
         private int area = 0;
         private int packages = 0;
 
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public void Read()
         {
 
@@ -178,7 +191,13 @@ namespace BExIS.Xml.Services
             //Debug.WriteLine("----------------------------------------------");
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="xmlSchemaElement"></param>
+        /// <returns></returns>
         private int GetXmlSchemaElementCount(XmlSchemaElement xmlSchemaElement)
         {
             // Get the complex type of the Customer element.
@@ -193,7 +212,13 @@ namespace BExIS.Xml.Services
             return 0;
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="xmlSchemaObject"></param>
+        /// <returns></returns>
         private XmlSchemaComplexType findParentElement(XmlSchemaObject xmlSchemaObject)
         {
             if(!xmlSchemaObject.GetType().Equals(typeof(XmlSchemaComplexType)))
@@ -208,6 +233,13 @@ namespace BExIS.Xml.Services
 
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
         private void ValidationCallback(object sender, ValidationEventArgs args)
         {
             if (args.Severity == XmlSeverityType.Warning)

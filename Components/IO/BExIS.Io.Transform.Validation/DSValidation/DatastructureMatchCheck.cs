@@ -2,18 +2,43 @@
 using System.Linq;
 using BExIS.Io.Transform.Validation.Exceptions;
 
-
+/// <summary>
+///
+/// </summary>        
 namespace BExIS.Io.Transform.Validation.DSValidation
 {
+    /// <summary>
+    ///
+    /// </summary>
+    /// <remarks></remarks>        
     public class DatastructureMatchCheck : IDataStructureValidation
     {
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         private DsType _appliedTo = new DsType();
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public DsType AppliedTo
         {
             get { return _appliedTo; }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="checkList"></param>
+        /// <param name="sourceList"></param>
+        /// <param name="sourceListName"></param>
+        /// <returns></returns>
         public List<Error> Execute(List<VariableIdentifier> checkList, List<VariableIdentifier> sourceList, string sourceListName)
         {
             List<Error> errors = new List<Error>();
@@ -46,6 +71,12 @@ namespace BExIS.Io.Transform.Validation.DSValidation
             return null;
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param>NA</param>       
         public DatastructureMatchCheck()
         {
             _appliedTo = DsType.Datastructure;

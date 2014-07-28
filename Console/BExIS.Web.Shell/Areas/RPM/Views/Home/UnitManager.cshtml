@@ -34,9 +34,7 @@
 }
 
 @section Scripts{
-    <script src="@Url.Content("~/Scripts/jQueryUI/1.10.4/js/jquery-ui-1.10.4.custom.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/Scripts/bppHelper.js")" type="text/javascript"></script>
-    
+  
 }
 
 
@@ -55,8 +53,9 @@
 
     @(Html.Telerik().Grid(Model)    
             .Name("UnitGrid")
-            .Sortable() 
-            .Scrollable(t => t.Height(400))         
+            .Sortable()
+            .Filterable() 
+            .Scrollable(t => t.Height(440))         
             .Columns(columns =>
                 {
                     columns.Template(
@@ -66,7 +65,7 @@
                             {
                             <div class="t-button t-button-icontext t-button-bare">
                             @Html.ActionLink("Edit", "openUnitWindow", "Home", new { id = item.Id }, new { @class = "t-icon t-edit" })
-                            @Html.ActionLink("Delete", "deletUnit", "Home", new { id = item.Id, item.Name }, new { @class = "t-icon t-delete" })
+                            @Html.ActionLink("Delete", "deletUnit", "Home", new { id = item.Id, item.Name }, new { @class = "t-icon t-delete", onclick = "return confirm('Are you sure you want to delete the Unit " + item.Name +" ?')"})
                             
                             </div>
                             }
@@ -80,7 +79,7 @@
                         .Width(80)
                         .ClientTemplate(
                             @Html.ActionLink("Edit", "openUnitWindow", "Home", new { id = "<#= id #>" }, new { @class = "t-icon t-edit" }).ToHtmlString() +
-                            @Html.ActionLink("Delete", "deletUnit", "Home", new { id = "<#= id #>", unit.Name}, new { @class = "t-icon t-delete" }).ToHtmlString()
+                            @Html.ActionLink("Delete", "deletUnit", "Home", new { id = "<#= id #>", unit.Name }, new { @class = "t-icon t-delete", onclick = "return confirm('Are you sure you want to delete the Unit " + unit.Name +" ?')" }).ToHtmlString()
                             );
                     columns.Bound(c => c.Name).Width(150);
                     columns.Bound(c => c.Id).Width(50);
@@ -106,15 +105,13 @@
     )
 <br />
 <br />
-<div title="Create a new Unit">
-    @Html.ActionLink("Create Unit", "openUnitWindow", "Home", new { id = 0 }, new { @class = "t-button t-add" })
-</div>
 <br />
     
 
     <div style="position:absolute; left:20%; top:60px;">
                     @{ Html.Telerik().Window()
                             .Name(windowName)
+                            .ClientEvents((events => events.OnClose("close")))
                             .Draggable(true)
                             .Modal(true)
                             .Visible((bool)Session["Window"])
@@ -125,14 +122,32 @@
                             .Render()
                             ;
         
-                    }
-        @{Session["Window"] = false;}
-
-
-     
+                    }        
     </div>
+@{Session["Window"] = false;}
 
-
+<script type="text/javascript">
+    function close(e)
+    {
+        checkedIDs = new Array(0);
+        var data = { checkedIDs: checkedIDs };
+        $.ajax({
+            url: '/RPM/Home/setChecked',
+            type: 'POST',
+            data: JSON.stringify(data),
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            error: function (xhr) {
+                //alert('Error: ' + xhr.statusText);
+            },
+            success: function (result) {
+                //alert("success");
+            },
+            async: true,
+            processData: false
+        });
+    }
+</script>
 
    
 @*<script type="text/javascript">

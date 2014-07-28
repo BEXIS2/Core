@@ -149,13 +149,33 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     List<string> tempFromFile = new List<string>();
 
                     // data from db
-                    tempDataset = UploadWizardHelper.GetIdentifierList(Convert.ToInt64(TaskManager.Bus[TaskManager.DATASET_ID].ToString()), identifiers);
+                    //tempDataset = UploadWizardHelper.GetIdentifierList(Convert.ToInt64(TaskManager.Bus[TaskManager.DATASET_ID].ToString()), identifiers);
 
                     //data from file
-                    tempFromFile = UploadWizardHelper.GetIdentifierList(TaskManager, Convert.ToInt64(TaskManager.Bus[TaskManager.DATASET_ID].ToString()), identifiers, TaskManager.Bus[TaskManager.EXTENTION].ToString(), TaskManager.Bus[TaskManager.FILENAME].ToString());
+                    //tempFromFile = UploadWizardHelper.GetIdentifierList(TaskManager, Convert.ToInt64(TaskManager.Bus[TaskManager.DATASET_ID].ToString()), identifiers, TaskManager.Bus[TaskManager.EXTENTION].ToString(), TaskManager.Bus[TaskManager.FILENAME].ToString());
 
                     // if dulpicates exist checkDuplicates return true
-                    if (UploadWizardHelper.CheckDuplicates(tempDataset) || UploadWizardHelper.CheckDuplicates(tempFromFile))
+                    //if (UploadWizardHelper.CheckDuplicates(tempDataset) || UploadWizardHelper.CheckDuplicates(tempFromFile))
+                    if(UploadWizardHelper.IsUnique(Convert.ToInt64(TaskManager.Bus[TaskManager.DATASET_ID].ToString()), identifiers)
+                        && UploadWizardHelper.IsUnique(TaskManager, Convert.ToInt64(TaskManager.Bus[TaskManager.DATASET_ID].ToString()), identifiers, TaskManager.Bus[TaskManager.EXTENTION].ToString(), TaskManager.Bus[TaskManager.FILENAME].ToString()))
+                     {
+                        model.IsUnique = true;
+
+                        if (TaskManager.Bus.ContainsKey(TaskManager.PRIMARY_KEYS_UNIQUE))
+                        {
+                            TaskManager.Bus[TaskManager.PRIMARY_KEYS_UNIQUE] = true;
+                        }
+                        else
+                        {
+                            TaskManager.AddToBus(TaskManager.PRIMARY_KEYS_UNIQUE, true);
+                        }
+
+                        TaskManager.Bus[TaskManager.PRIMARY_KEYS] = identifiers;
+                        Session["TaskManager"] = TaskManager;
+                        model.PrimaryKeysList = pks;
+                        model.PK_Id_List = identifiers;
+                    }
+                    else
                     {
                         model.IsUnique = false;
                         model.PrimaryKeysList = pks;
@@ -176,24 +196,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         model.ErrorList.Add(new Error(ErrorType.Other, "Selection is not unique"));
 
                     }
-                    else
-                    {
-                        model.IsUnique = true;
-
-                        if (TaskManager.Bus.ContainsKey(TaskManager.PRIMARY_KEYS_UNIQUE))
-                        {
-                            TaskManager.Bus[TaskManager.PRIMARY_KEYS_UNIQUE] = true;
-                        }
-                        else
-                        {
-                            TaskManager.AddToBus(TaskManager.PRIMARY_KEYS_UNIQUE, true);
-                        }
-
-                        TaskManager.Bus[TaskManager.PRIMARY_KEYS] = identifiers;
-                        Session["TaskManager"] = TaskManager;
-                        model.PrimaryKeysList = pks;
-                        model.PK_Id_List = identifiers;
-                    }
+                   
 
                 }
                 else

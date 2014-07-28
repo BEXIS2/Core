@@ -5,21 +5,37 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 
+/// <summary>
+///
+/// </summary>        
 namespace BExIS.Xml.Services
 {
-
+    /// <summary>
+    /// 
+    /// </summary>
     public enum XmlNodeMode
     {
         xPath,
         type
     }
 
+    /// <summary>
+    ///
+    /// </summary>
+    /// <remarks></remarks>        
     public class XmlWriter
     {
         protected XmlNodeMode _mode;
         protected XDocument _tempXDoc;
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="name"></param>
+        /// <param name="type"></param>
+        /// <returns></returns>
         protected XElement CreateXElement(string name, XmlNodeType type)
         {
             if (_mode.Equals(XmlNodeMode.type))
@@ -38,6 +54,13 @@ namespace BExIS.Xml.Services
             return null;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="name"></param>
+        /// <returns></returns>
         protected bool Exist(string name)
         {
             if (_mode.Equals(XmlNodeMode.type))
@@ -59,6 +82,14 @@ namespace BExIS.Xml.Services
             return false;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="name"></param>
+        /// <param name="number"></param>
+        /// <returns></returns>
         protected bool Exist(string name, int number)
         {
             if (_mode.Equals(XmlNodeMode.type))
@@ -81,6 +112,14 @@ namespace BExIS.Xml.Services
             return false;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="name"></param>
+        /// <param name="source"></param>
+        /// <returns></returns>
         protected bool Exist(string name, XElement source)
         {
             if (_mode.Equals(XmlNodeMode.type))
@@ -102,6 +141,15 @@ namespace BExIS.Xml.Services
             return false;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="name"></param>
+        /// <param name="number"></param>
+        /// <param name="source"></param>
+        /// <returns></returns>
         protected bool Exist(string name, int number, XElement source)
         {
             if (_mode.Equals(XmlNodeMode.type))
@@ -124,6 +172,13 @@ namespace BExIS.Xml.Services
             return false;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="name"></param>
+        /// <returns></returns>
         protected XElement Get(string name)
         {
             if (_mode.Equals(XmlNodeMode.type))
@@ -140,6 +195,14 @@ namespace BExIS.Xml.Services
             return null;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="name"></param>
+        /// <param name="number"></param>
+        /// <returns></returns>
         protected XElement Get(string name, int number)
         {
             if (_mode.Equals(XmlNodeMode.type))
@@ -156,6 +219,14 @@ namespace BExIS.Xml.Services
             return null;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="name"></param>
+        /// <param name="source"></param>
+        /// <returns></returns>
         protected XElement Get(string name, XElement source)
         {
             if (_mode.Equals(XmlNodeMode.type))
@@ -172,6 +243,15 @@ namespace BExIS.Xml.Services
             return null;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="name"></param>
+        /// <param name="number"></param>
+        /// <param name="source"></param>
+        /// <returns></returns>
         protected XElement Get(string name, int number, XElement source)
         {
             if (_mode.Equals(XmlNodeMode.type))
@@ -190,6 +270,15 @@ namespace BExIS.Xml.Services
 
 
         #region get list of xelement
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <remarks></remarks>
+            /// <seealso cref=""/>
+            /// <param name="name"></param>
+            /// <param name="source"></param>
+            /// <returns></returns>
             protected List<XElement> GetChildren(string name, XElement source)
             {
                 if (_mode.Equals(XmlNodeMode.type))
@@ -208,6 +297,14 @@ namespace BExIS.Xml.Services
         #endregion
 
             #region static
+
+                /// <summary>
+                /// 
+                /// </summary>
+                /// <remarks></remarks>
+                /// <seealso cref=""/>
+                /// <param name="xDocument"></param>
+                /// <returns></returns>
                 public static XmlDocument ToXmlDocument(XDocument xDocument)
                 {
                     var xmlDocument = new XmlDocument();
@@ -218,6 +315,13 @@ namespace BExIS.Xml.Services
                     return xmlDocument;
                 }
 
+                /// <summary>
+                /// 
+                /// </summary>
+                /// <remarks></remarks>
+                /// <seealso cref=""/>
+                /// <param name="xmlDocument"></param>
+                /// <returns></returns>
                 public static XDocument ToXDocument(XmlDocument xmlDocument)
                 {
                     using (var nodeReader = new XmlNodeReader(xmlDocument))

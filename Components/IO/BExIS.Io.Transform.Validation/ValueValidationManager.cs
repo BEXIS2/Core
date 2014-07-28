@@ -3,25 +3,64 @@ using System.Collections.Generic;
 using BExIS.Io.Transform.Validation.Exceptions;
 using BExIS.Io.Transform.Validation.ValueCheck;
 
+/// <summary>
+///
+/// </summary>        
 namespace BExIS.Io.Transform.Validation
 {
+    /// <summary>
+    ///
+    /// </summary>
+    /// <remarks></remarks>        
     public class ValueValidationManager
     {
 
         private string _name = "";
         private string _dataType = "";
         private bool _optional = false;
-        
+
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public string Value { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public string DateFormat { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public Object ConvertedValue { get; set; }
+        
         //public List<IValueCheck> CheckList { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public List<IValueValidation> ValidationList { get; set; }
 
         public OptionalCheck NullOrOptionalCheck;
         public DataTypeCheck DataTypeCheck;
        
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="value"></param>
+        /// <param name="row"></param>
+        /// <returns></returns>
         public List<Error> CheckValue(string value, int row)
         {
             List<Error> errors = new List<Error>();
@@ -50,6 +89,15 @@ namespace BExIS.Io.Transform.Validation
             return errors;
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="value"></param>
+        /// <param name="row"></param>
+        /// <returns></returns>
         public List<Error> ValidateValue(object value, int row)
         {
             List<Error> errors = new List<Error>();
@@ -62,14 +110,22 @@ namespace BExIS.Io.Transform.Validation
             return errors;
         }
 
-        public ValueValidationManager(string name, string dataType, bool optional)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="name"></param>
+        /// <param name="dataType"></param>
+        /// <param name="optional"></param>
+        public ValueValidationManager(string name, string dataType, bool optional, DecimalCharacter decimalCharacter)
         {
             _name = name;
             _dataType = dataType;
             _optional = optional;
             ValidationList = new List<IValueValidation>();
             this.NullOrOptionalCheck = new OptionalCheck(name, dataType, optional);
-            this.DataTypeCheck = new DataTypeCheck(name, dataType);
+            this.DataTypeCheck = new DataTypeCheck(name, dataType, decimalCharacter);
         }
     }
 }

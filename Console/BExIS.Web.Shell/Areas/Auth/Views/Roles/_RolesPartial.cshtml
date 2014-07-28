@@ -35,7 +35,7 @@
         .Sortable(sortable => sortable
             .OrderBy(orderby => orderby
                 .Add(r => r.Id).Descending()))
-        .Scrollable(scrollable => scrollable.Height(500))
+        .Scrollable()
 )
 
 @(Html.Telerik().Window()

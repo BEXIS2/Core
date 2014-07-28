@@ -41,7 +41,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
     public class AccountRegistrationModel
     {
         [Display(Name = "User name")]
-        [RegularExpression("^[^\\s]+(\\s+[^\\s]+)*", ErrorMessage = "The user name must start and end with no space.")]
+        [RegularExpression("^[\\S]*$", ErrorMessage = "The user name is invalid.")]
         [Remote("ValidateUserName", "Account")]
         [Required(AllowEmptyStrings = false)]
         [StringLength(50, ErrorMessage = "The user name must be {2} - {1} characters long.", MinimumLength = 3)]
@@ -55,6 +55,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
         public string Email { get; set; }
 
         [Display(Name = "Password")]
+        [RegularExpression("^[\\S]*$", ErrorMessage = "The password is invalid.")]
         [Required]
         [StringLength(24, ErrorMessage = "The password must be {2} - {1} characters long.", MinimumLength = 6)]
         public string Password { get; set; }

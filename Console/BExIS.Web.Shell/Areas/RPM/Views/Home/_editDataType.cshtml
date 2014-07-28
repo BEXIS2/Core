@@ -29,6 +29,9 @@
             </td>
             <td>
                 @(Html.TextBoxFor(m => Model.Name, new {@class = "t-input"}))
+                <div class="errorMsg" style="vertical-align:top;">
+                    <font color="red">@Session["nameMsg"]</font>
+                </div>
             </td>
         </tr>
         <tr>

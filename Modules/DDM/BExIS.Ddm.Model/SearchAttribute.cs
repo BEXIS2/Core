@@ -1,51 +1,151 @@
 ﻿using System;
 
-
-
+/// <summary>
+///
+/// </summary>        
 namespace BExIS.Ddm.Model
 {
-    
+    /// <summary>
+    ///
+    /// </summary>
+    /// <remarks></remarks>            
     public class SearchAttribute
     {
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public int id { get; set; }
 
         //names
+        
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public String displayName { get; set; }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public String sourceName { get; set; }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public String metadataName { get; set; }
 
         //Type
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public SearchComponentBaseType searchType { get; set; }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public TypeCode dataType { get; set; }
 
         // parameter for index
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public bool store { get; set; }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public bool multiValue { get; set; }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public bool analysed { get; set; }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public bool norm { get; set; }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public double boost { get; set; }
 
         // ResultView
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public bool headerItem { get; set; }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public bool defaultHeaderItem { get; set; }
 
         // properties
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public Direction direction { get; set; }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public UiComponent uiComponent { get; set; }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public AggregationType aggregationType { get; set; }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public string dateFormat = "bgc:format";
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param>NA</param>       
         public SearchAttribute()
         {
             displayName = "";
@@ -71,6 +171,13 @@ namespace BExIS.Ddm.Model
         }
 
         #region reader helper
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public static SearchComponentBaseType GetSearchType(String value)
         {
             switch (value)
@@ -91,6 +198,13 @@ namespace BExIS.Ddm.Model
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public static TypeCode GetDataType(String value)
         {
             switch (value.ToLower())
@@ -104,6 +218,13 @@ namespace BExIS.Ddm.Model
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public static Direction GetDirection(string value)
         {
             switch (value.ToLower())
@@ -114,6 +235,11 @@ namespace BExIS.Ddm.Model
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public static bool GetBoolean(string value)
         {
             switch (value.ToLower())
@@ -124,6 +250,13 @@ namespace BExIS.Ddm.Model
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public static UiComponent GetUIComponent(string value)
         {
             switch (value.ToLower())
@@ -135,6 +268,13 @@ namespace BExIS.Ddm.Model
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public static AggregationType GetAggregationType(string value)
         {
             switch (value)
@@ -148,6 +288,13 @@ namespace BExIS.Ddm.Model
 
         #region writer helper
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public static string GetSearchTypeAsString(SearchComponentBaseType value)
         {
             switch (value)
@@ -160,6 +307,13 @@ namespace BExIS.Ddm.Model
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public static string GetSearchTypeAsDisplayString(SearchComponentBaseType value)
         {
             switch (value)
@@ -172,6 +326,13 @@ namespace BExIS.Ddm.Model
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public static string GetBooleanAsString(bool value)
         {
             switch (value)
@@ -182,6 +343,13 @@ namespace BExIS.Ddm.Model
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public static string GetDataTypeAsString(TypeCode value)
         {
             switch (value)
@@ -194,6 +362,13 @@ namespace BExIS.Ddm.Model
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public static string GetDataTypeAsDisplayString(TypeCode value)
         {
             switch (value)
@@ -206,6 +381,13 @@ namespace BExIS.Ddm.Model
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public static string GetDirectionAsString(Direction value)
         {
             switch (value)
@@ -216,6 +398,13 @@ namespace BExIS.Ddm.Model
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public static string GetUIComponentAsString(UiComponent value)
         {
             switch (value)
@@ -227,6 +416,13 @@ namespace BExIS.Ddm.Model
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public static string GetAggregationTypeAsString(AggregationType value)
         {
             switch (value)
@@ -240,11 +436,17 @@ namespace BExIS.Ddm.Model
         #endregion
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public enum UiComponent
     { 
         None, List,Item,Range
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public enum AggregationType
     {
         None, Union, Distinct

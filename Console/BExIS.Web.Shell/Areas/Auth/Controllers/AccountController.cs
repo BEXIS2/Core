@@ -47,9 +47,11 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
             {
                 SubjectManager subjectManager = new SubjectManager();
 
+                User user = subjectManager.GetUserByName(model.UserName);
+
                 if (subjectManager.ValidateUser(model.UserName, model.Password))
                 {
-                    FormsAuthentication.SetAuthCookie(model.UserName, model.RememberMe);
+                    FormsAuthentication.SetAuthCookie(user.Name, model.RememberMe);
                     if (Url.IsLocalUrl(returnUrl) && returnUrl.Length > 1 && returnUrl.StartsWith("/")
                         && !returnUrl.StartsWith("//") && !returnUrl.StartsWith("/\\"))
                     {

@@ -258,7 +258,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                                 if (dm.IsDatasetCheckedOutFor(ds.Id, GetUserNameOrDefault()) || dm.CheckOutDataset(ds.Id, GetUserNameOrDefault()))
                                 {
                                     workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
-                                    int packageSize = 100;
+                                    int packageSize = 10000;
                                     //schleife
 
                                     do
@@ -346,6 +346,10 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                             temp.Add(new Error(ErrorType.Other, "Can not upload. : " + e.Message));
                             dm.CheckInDataset(ds.Id, "checked in but no update on data tuples", GetUserNameOrDefault());
+                        }
+                        finally
+                        { 
+                            
                         }
                     }
 

@@ -120,6 +120,28 @@ namespace BExIS.Security.Entities.Objects
             Tasks = new List<Task>();
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param></param>       
+        public virtual ICollection<Feature> Ancestors
+        {
+            get
+            {
+                List<Feature> ancestors = new List<Feature>();
+
+                if (Parent != null)
+                {
+                    ancestors.Add(Parent);
+                    ancestors.AddRange(Parent.Ancestors);
+                }
+
+                return ancestors;
+            }
+        }
+
         #endregion
     }
 }

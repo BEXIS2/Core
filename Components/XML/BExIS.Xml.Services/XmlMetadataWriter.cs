@@ -8,10 +8,14 @@ using Vaiona.Entities.Common;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
 
+/// <summary>
+///
+/// </summary>        
 namespace BExIS.Xml.Services
 {
-    
-
+    /// <summary>
+    /// 
+    /// </summary>
     public enum XmlNodeType
     { 
         package,
@@ -20,14 +24,30 @@ namespace BExIS.Xml.Services
         attributeRole
     }
 
+    /// <summary>
+    ///
+    /// </summary>
+    /// <remarks></remarks>        
     public class XmlMetadataWriter:XmlWriter
     {
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="mode"></param>
         public XmlMetadataWriter(XmlNodeMode mode)
         {
             _mode = mode;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="metadataStructureId"></param>
+        /// <returns></returns>
         public XDocument CreateMetadataXml(long metadataStructureId)
         {
             MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
@@ -93,6 +113,16 @@ namespace BExIS.Xml.Services
         }
 
         #region package
+            
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <remarks></remarks>
+            /// <seealso cref=""/>
+            /// <param name="metadataXml"></param>
+            /// <param name="packageUsage"></param>
+            /// <param name="number"></param>
+            /// <returns></returns>
             public XDocument AddPackage(XDocument metadataXml, MetadataPackageUsage packageUsage, int number)
             {
                 this._tempXDoc = metadataXml;
@@ -138,6 +168,15 @@ namespace BExIS.Xml.Services
                 return metadataXml;
             }
 
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <remarks></remarks>
+            /// <seealso cref=""/>
+            /// <param name="metadataXml"></param>
+            /// <param name="packageUsage"></param>
+            /// <param name="number"></param>
+            /// <returns></returns>
             public XDocument RemovePackage(XDocument metadataXml, MetadataPackageUsage packageUsage, int number)
             {
                 this._tempXDoc = metadataXml;
@@ -163,6 +202,15 @@ namespace BExIS.Xml.Services
 
         #region attribute
             //Add Attribute to a package return a apackage
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <remarks></remarks>
+            /// <seealso cref=""/>
+            /// <param name="package"></param>
+            /// <param name="attributeUsage"></param>
+            /// <param name="number"></param>
+            /// <returns></returns>
             private XElement AddAttribute(XElement package, MetadataAttributeUsage attributeUsage, int number)
             {
                 if (!Exist(attributeUsage.MetadataAttribute.Name, number, package))
@@ -194,6 +242,17 @@ namespace BExIS.Xml.Services
             }
 
             //Add Attribute to a package return a apackage
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <remarks></remarks>
+            /// <seealso cref=""/>
+            /// <param name="metadataXml"></param>
+            /// <param name="packageUsage"></param>
+            /// <param name="packageNumber"></param>
+            /// <param name="attributeUsage"></param>
+            /// <param name="number"></param>
+            /// <returns></returns>
             public XDocument AddAttribute(XDocument metadataXml, MetadataPackageUsage packageUsage, int packageNumber, MetadataAttributeUsage attributeUsage, int number)
             {
                 _tempXDoc = metadataXml;
@@ -244,6 +303,17 @@ namespace BExIS.Xml.Services
                 return _tempXDoc;
             }
 
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <remarks></remarks>
+            /// <seealso cref=""/>
+            /// <param name="metadataXml"></param>
+            /// <param name="packageUsage"></param>
+            /// <param name="packageNumber"></param>
+            /// <param name="attributeUsage"></param>
+            /// <param name="number"></param>
+            /// <returns></returns>
             public XDocument RemoveAttribute(XDocument metadataXml, MetadataPackageUsage packageUsage, int packageNumber, MetadataAttributeUsage attributeUsage, int number)
             {
                 _tempXDoc = metadataXml;
@@ -278,6 +348,18 @@ namespace BExIS.Xml.Services
 
         #region update
 
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <remarks></remarks>
+            /// <seealso cref=""/>
+            /// <param name="metadataXml"></param>
+            /// <param name="packageUsage"></param>
+            /// <param name="packageNumber"></param>
+            /// <param name="attributeUsage"></param>
+            /// <param name="number"></param>
+            /// <param name="value"></param>
+            /// <returns></returns>
             public XDocument Update(XDocument metadataXml, MetadataPackageUsage packageUsage, int packageNumber, MetadataAttributeUsage attributeUsage, int number, object value)
             {
                 _tempXDoc = metadataXml;

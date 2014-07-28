@@ -6,6 +6,9 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using Vaiona.Entities.Common;
 
+/// <summary>
+///
+/// </summary>        
 namespace BExIS.Dlm.Entities.DataStructure
 {
 
@@ -20,6 +23,10 @@ namespace BExIS.Dlm.Entities.DataStructure
         Internal, External
     }
 
+    /// <summary>
+    ///
+    /// </summary>
+    /// <remarks></remarks>        
     public abstract class Constraint: BaseEntity
     {
         protected string defaultMessageTemplate;
@@ -27,41 +34,71 @@ namespace BExIS.Dlm.Entities.DataStructure
 
         #region Attributes
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual ConstraintProviderSource Provider { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual string ConstraintSelectionPredicate { get; set; } // only for external providers
 
         /// <summary>
         /// the culture the constraint applies to. i.e., a Regex to match a taxon name in German may differ from its equivalent in English, ...
         /// </summary>
-        public virtual string CultureId { get; set; } 
-       
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        public virtual string CultureId { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual string Description { get; set; }
 
         /// <summary>
         /// determines whether the constraint should be evaluated or the negate of it. e.g., the input should be evaluated against the range or outside of the range.
         /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual bool Negated { get; set; }
 
         /// <summary>
         /// provides a scope information so that validators can be grouped, categorized, or distinguished for a specific purpose. Like fast validation, detailed validation, etc.
         /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual string Context { get; set; }
 
         /// <summary>
         /// The message to be conveyed to the user in case of rule break.
         /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual string MessageTemplate { get; set; }
 
         /// <summary>
         /// The message to be conveyed to the user in case of negated rule break.
         /// </summary>
-        // maybe 
+        /// <remarks> maybe </remarks>
+        /// <seealso cref=""/>        
         public virtual string NegatedMessageTemplate { get; set; }
         
         #endregion
 
         #region Associations
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual DataContainer DataContainer { get; set; }
         
         #endregion
@@ -70,24 +107,50 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// <summary>
         /// to be implemented by concrete classes. it checks whether the input data satisfies the constraint
         /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
         /// <param name="data">the data to be evaluated</param>
-        /// <param name="auxilialy">in most cases not used, but in comparison</param>
-        /// <returns></returns>
+        /// <param name="auxilialy">in most cases not used, but in comparison</param>     
         public abstract bool IsSatisfied(object data, object auxilialy = null);
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public abstract string ErrorMessage { get; }
         #endregion
 
     }
 
+    /// <summary>
+    ///
+    /// </summary>
+    /// <remarks></remarks>        
     [AutomaticMaterializationInfo("Items", typeof(List<DomainItem>), "XmlDomainItems", typeof(XmlDocument))]
     public class DomainConstraint : Constraint
     {
         #region Attributes
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual XmlDocument XmlDomainItems { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual List<DomainItem> Items { get; set; }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public override string ErrorMessage
         {
             get
@@ -115,13 +178,25 @@ namespace BExIS.Dlm.Entities.DataStructure
 
         #region Mathods
 
+        /// <summary>
+        /// set the default message and the negated message
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param>NA</param>       
         public DomainConstraint()
-        {
-            // set the default message and the negated message
+        {      
             defaultMessageTemplate = "Provided value is not a domain item. The value should be one of these items: {0}.";
             defaultNegatedMessageTemplate = "Provided value is a domain item, but the constraint is negated. The value should not be one of these items: {0}.";
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="data"></param>
+        /// <param name="auxilialy"></param>
         public override bool IsSatisfied(object data, object auxilialy = null)
         {
             this.Materialize(); // test it
@@ -136,19 +211,54 @@ namespace BExIS.Dlm.Entities.DataStructure
        
     }
 
+    /// <summary>
+    ///
+    /// </summary>
+    /// <remarks></remarks>        
     public class DomainItem
     {
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public string Key { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public string Value { get; set; }
     }
 
+    /// <summary>
+    ///
+    /// </summary>
+    /// <remarks></remarks>        
     public class PatternConstraint : Constraint
     {
         #region Attributes
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual string MatchingPhrase { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual bool CaseSensitive { get; set; }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public override string ErrorMessage
         {
             get
@@ -176,9 +286,14 @@ namespace BExIS.Dlm.Entities.DataStructure
 
         #region Mathods
 
+        /// <summary>
+        /// set the default message and the negated message
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param>NA</param>       
         public PatternConstraint()
         {
-            // set the default message and the negated message
             defaultMessageTemplate = "Provided value does not match the pattern. The value should match {0} {1}.";
             defaultNegatedMessageTemplate = "Provided value matches the pattern, but the constraint is negated. The value should not match {0} {1}.";
         }
@@ -186,8 +301,10 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// <summary>
         /// checks whether the input parameter matches the MatchingPhrase
         /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
         /// <param name="data">is the input data in STRING format</param>
-        /// <returns></returns>
+        /// <param name="auxilialy"></param>
         public override bool IsSatisfied(object data, object auxilialy = null)
         {
             if(!CaseSensitive)
@@ -204,15 +321,44 @@ namespace BExIS.Dlm.Entities.DataStructure
     /// The range constraint usually applies to numeric data types, but in case of string it can be used as string length check. The data type
     /// of the provided value can be determined by the DataContainer.DataType....
     /// </summary>
+    /// <remarks></remarks>   
     public class RangeConstraint : Constraint
     {
         #region Attributes
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual double   Lowerbound { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual double   Upperbound { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual bool     LowerboundIncluded { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual bool     UpperboundIncluded { get; set; }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public override string ErrorMessage
         {
             get
@@ -239,13 +385,25 @@ namespace BExIS.Dlm.Entities.DataStructure
 
         #region Mathods
 
+        /// <summary>
+        /// set the default message and the negated message
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param></param>       
         public RangeConstraint()
         {
-            // set the default message and the negated message
             defaultMessageTemplate = "Provided value is out of range. The value should be between {0} {1} and {2} {3}.";
             defaultNegatedMessageTemplate = "Provided value is in range, but the constraint is negated. The value should be {1} {0} or {3} {2}.";
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="data"></param>
+        /// <param name="auxilialy"></param>
         public override bool IsSatisfied(object data, object auxilialy = null)
         {
             // the data type is defined by the associated data attribute
@@ -266,6 +424,7 @@ namespace BExIS.Dlm.Entities.DataStructure
     /// compares the input value to a reference/ target one using a specified comparison operator. 
     /// The reference object can be an object or the value of a variable/ parameter in the same tuple
     /// </summary>
+    /// <remarks></remarks>  
     public class CompareConstraint : Constraint
     {
         #region Attributes
@@ -274,8 +433,15 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// The comparison operator, it is always a binary operator capable of comparing its left side to the right and return true or false.
         /// valid operators depend on the data type, so the UI should show proper operators based on the data attribute's data type during the constraint definition.
         /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual ComparisonOperator Operator { get; set; }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual ComparisonTargetType TargetType { get; set; }
 
         /// <summary>
@@ -285,6 +451,8 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// Parameter: the target shows the Id of the parameter in the current type that its value should be used in the comparison
         /// Variable: the target shows the Id of the variable in the current type that its value should be used in the comparison
         /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual string Target { get; set; }
 
         /// <summary>
@@ -293,13 +461,22 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// Or the value of variable v1 can not be greater than 17% of the values of variable v2.
         /// Offset type can be absolute or ratio. Absolute offsets are added to the right hand side and ratios are multiplied to the right hand side before the comparison to take place
         /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual ComparisonOffsetType OffsetType { get; set; }
 
         /// <summary>
         /// The value of the offset to be taken into account in the comparison according to <seealso cref="ComparisonOffsetTye"/>
         /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual double OffsetValue { get; set; }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public override string ErrorMessage
         {
             get
@@ -327,20 +504,35 @@ namespace BExIS.Dlm.Entities.DataStructure
 
         #region Mathods
 
+        /// <summary>
+        /// set the default message and the negated message
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param></param>       
         public CompareConstraint()
         {
-            // set the default message and the negated message
             defaultMessageTemplate = "replace with a proper message {0}.";
             defaultNegatedMessageTemplate = "replace with a proper message {0}.";
         }
 
-        // problem: the constraint needs the target value to compare it, if it is a variable or parameter the constraint has no clue / responsibility to access its value 
-        // solution: the caller must use the TargetType and Target attributes to access proper variable/ parameter and obtain their values then pass the value as auxiliary data.
-        // the function just compares data to auxiliary according to the operator
+
+        /// <summary>
+        /// problem: the constraint needs the target value to compare it, if it is a variable or parameter the constraint has no clue / responsibility to access its value 
+        /// solution: the caller must use the TargetType and Target attributes to access proper variable/ parameter and obtain their values then pass the value as auxiliary data.
+        /// the function just compares data to auxiliary according to the operator
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="data"></param>
+        /// <param name="auxilialy"></param>
         public override bool IsSatisfied(object data, object auxilialy = null)
         {
-            // the data type is defined by the associated data attribute
-            // use dynamic link library, Flee or DLR to convert the Body to an executable code, pass data to it and return the result
+            /// <summary>
+            /// the data type is defined by the associated data attribute
+            /// use dynamic link library, Flee or DLR to convert the Body to an executable code, pass data to it and return the result
+            /// </summary>
+            /// <remarks></remarks>        
             switch (Operator)
             {
                 case ComparisonOperator.Equals:
@@ -438,16 +630,25 @@ namespace BExIS.Dlm.Entities.DataStructure
 
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public enum ComparisonOperator
     {
         Equals, NotEquals, GreaerThan, GreaterThanOrEqual, LessThan, LessThanOrEqual, 
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public enum ComparisonTargetType
     {
         Value, Parameter, Variable,
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public enum ComparisonOffsetType
     {
         Absolute, Ratio,

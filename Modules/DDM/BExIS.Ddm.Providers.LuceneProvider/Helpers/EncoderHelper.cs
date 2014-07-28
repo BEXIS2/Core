@@ -14,7 +14,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Helpers
     /// <remarks></remarks>        
     public static class EncoderHelper
     {
-        static string[] specialCharacterArray = new string[] {"\\","\"", "+", "-","&&","||","!","(",")","{","}","[","]","~","*","?",":", };
+        static string[] specialCharacterArray = new string[] {"\\","\"", "+", "-","&&","||","!","(",")","{","}","[","]","~","*","?",":","<" };
 
         public static string Encode(string value)
         {

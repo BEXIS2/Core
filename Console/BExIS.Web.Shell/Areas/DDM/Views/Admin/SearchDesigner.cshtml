@@ -7,6 +7,8 @@
     ViewBag.Title = "Manage Search Component";
 
     bool windowVisible = false;
+    bool isPrimaryDataNodeExist = false;
+    
     SearchAttributeViewModel selectedSA = new SearchAttributeViewModel();
     
     if(ViewData["windowVisible"]!=null)
@@ -18,6 +20,11 @@
     {
         selectedSA = (SearchAttributeViewModel)ViewData["selectedSearchAttribute"];
     }
+
+    if (Session["IncludePrimaryData"] != null)
+    {
+        isPrimaryDataNodeExist = (bool)Session["IncludePrimaryData"];
+    }
    
 }
 
@@ -28,68 +35,73 @@
 }
 
 
-@if (ViewData.ModelState.IsValid)
-{ 
+    @if (ViewData.ModelState.IsValid)
+    { 
+
     <h2>Manage Search Component</h2>
 
-<p>With this interface you are able to customize the search component and define what fields of the 
-    metadata are searchable and how they appear in the application. Changes made through the interface will 
-    alter the Lucene configuration file on the server. For a detailed description of each parameter please 
-    refer to the Lucene User Manual provided with the BEXIS installation package.</p>
+    <p>With this interface you are able to customize the search component and define what fields of the 
+        metadata are searchable and how they appear in the application. Changes made through the interface will 
+        alter the Lucene configuration file on the server. For a detailed description of each parameter please 
+        refer to the Lucene User Manual provided with the BEXIS installation package.</p>
+    
+    <div style="float:left;">
+        @Html.ActionLink("Add Item", "Add", "Admin", new { @class = "t-button", @title = "Add Search Item" })
 
-@Html.ActionLink("Add Item", "Add", "Admin", new { @class = "t-button", @title = "Add Search Item" })
-<br />
-<br />
-@(Html.Telerik().Grid(Model)
-        .Name("SearchDesignerGrid")
+        @Html.CheckBox("includePrimaryDataCheckBox",isPrimaryDataNodeExist) <b>include primary data</b>  
+    </div> 
 
-            .DataBinding(dataBinding => dataBinding
-                .Ajax()
-                .Select("_CustomSearchDesignerGridBinding", "Admin")
+    <div id="#searchDesigerOptions" style="float:right;">  
+        
+        @Html.ActionLink("Refresh Search", "RefreshSearch", "Admin", new { @class = "t-button", @title = "Refresh index from search" })
+
+        @Html.ActionLink("Reset to last working setup", "ResetConfig", "Admin", new { @class = "t-button", @title = "Reset to Default" })
+    </div>   
+
+
+    <br />
+    <br />
+    @(Html.Telerik().Grid(Model)
+            .Name("SearchDesignerGrid")
+            
+                .DataBinding(dataBinding => dataBinding
+                    .Ajax()
+                    .Select("_CustomSearchDesignerGridBinding", "Admin")
+                )
+
+                .Columns(columns =>
+                {
+                    columns.Template(
+                             @<text>
+                                @Html.ActionLink("Edit", "Edit", "Admin", new { id = item.id }, new { @class = "t-icon t-edit", @title = "Open edit form" })
+                                @Html.ActionLink("Delete", "Delete", "Admin", new { id = item.id }, new { @class = "t-icon t-delete", @title = "Delete search item", onclick = "return confirm('Are you sure you want delete the search attribute " + item.displayName + " ?')" })
+                            </text>
+
+                     ).Title("")
+                     .Width(60)
+                        .HtmlAttributes(new {style = "text-align:center;" })
+                        .ClientTemplate(
+                            @Html.ActionLink("Edit", "Edit", "Admin", new { id = "<#= id #>" }, new { @class = "t-icon t-edit", @title = "Open edit form" }).ToString() +
+                            @Html.ActionLink("Delete", "Delete", "Admin", new { id = "<#= id #>" }, new { @class = "t-icon t-delete", @title = "Delete search item" }).ToString()
+                        );
+
+                    columns.Bound(o => o.displayName).Width(200);
+                    columns.Bound(o => o.searchType).Width(180);//.ClientTemplate("<input type='text' name='Search Type' value='@Enum.GetName(typeof(SearchComponentBaseType)', Convert.ToInt32("<#= searchType #>") )' />");//.ClientTemplate(Enum.GetName(typeof(SearchComponentBaseType), Convert.ToInt32("<#= searchType #>") ));
+                    columns.Bound(o => o.dataType).Width(100);
+                    columns.Bound(o => o.headerItem).ClientTemplate("<input type='checkbox' disabled='disabled' name='Header Item' <#= headerItem ? checked='checked' : '' #> />").Width(100);
+                    columns.Bound(o => o.defaultHeaderItem).ClientTemplate("<input type='checkbox' disabled='disabled' name='Default Header Item' <#= defaultHeaderItem ? checked='checked' : '' #> />").Width(150);
+                    columns.Bound(o => o.multiValue).ClientTemplate("<input type='checkbox' disabled='disabled' name='Multi Value' <#= multiValue ? checked='checked' : '' #> />").Width(100);
+                    columns.Bound(o => o.analysed).ClientTemplate("<input type='checkbox' disabled='disabled' name='Analysed' <#= analysed ? checked='checked' : '' #> />").Width(100);
+                    columns.Bound(o => o.metadataName);
+
+                })
+
+            .Sortable()
+            .Scrollable()
+        
             )
 
-            .Columns(columns =>
-            {
-                columns.Template(
-                         @<text>
-                            @Html.ActionLink("Edit", "Edit", "Admin", new { id = item.id }, new { @class = "t-icon t-edit", @title = "Open edit form" })
-                            @Html.ActionLink("Delete", "Delete", "Admin", new { id = item.id }, new { @class = "t-icon t-delete", @title = "Delete search item" })
-                        </text>
 
-                 ).Title("Functions")
-                 .Width(50)
-                  .ClientTemplate(
-                        @Html.ActionLink("Edit", "Edit", "Admin", new { id = "<#= id #>" }, new { @class = "t-icon t-edit", @title = "Open edit form" }).ToString() +
-                        @Html.ActionLink("Delete", "Delete", "Admin", new { id = "<#= id #>" }, new { @class = "t-icon t-delete", @title = "Delete search item" }).ToString()
-                   );
-
-                columns.Bound(o => o.displayName);
-                columns.Bound(o => o.searchType);//.ClientTemplate("<input type='text' name='Search Type' value='@Enum.GetName(typeof(SearchComponentBaseType)', Convert.ToInt32("<#= searchType #>") )' />");//.ClientTemplate(Enum.GetName(typeof(SearchComponentBaseType), Convert.ToInt32("<#= searchType #>") ));
-                columns.Bound(o => o.dataType);
-                columns.Bound(o => o.headerItem).ClientTemplate("<input type='checkbox' disabled='disabled' name='Header Item' <#= headerItem ? checked='checked' : '' #> />");
-                columns.Bound(o => o.defaultHeaderItem).ClientTemplate("<input type='checkbox' disabled='disabled' name='Default Header Item' <#= defaultHeaderItem ? checked='checked' : '' #> />");
-                columns.Bound(o => o.multiValue).ClientTemplate("<input type='checkbox' disabled='disabled' name='Multi Value' <#= multiValue ? checked='checked' : '' #> />");
-                columns.Bound(o => o.analysed).ClientTemplate("<input type='checkbox' disabled='disabled' name='Analysed' <#= analysed ? checked='checked' : '' #> />");
-                columns.Bound(o => o.metadataName);
-            })
-
-
-        //.Pageable(paging =>
-        //        paging.PageSize(10)
-        //            )
-        .Sortable()
-        )
-
-<br />
-<hr />
-<br />
-<div>
-
-    @Html.ActionLink("Save", "SaveConfig", "Admin", new { @class = "t-button", @title = "Save Changes and Refresh Index" })
-
-    @Html.ActionLink("Reset", "ResetConfig", "Admin", new { @class = "t-button", @title = "Reset to Default" })
-    <span>Saving is not reindexing the search.</span>
- </div>
 
 
 @(Html.Telerik().Window()
@@ -114,9 +126,8 @@
     )
 )
 
-<script type="text/javascript">
 
-    
+<script type="text/javascript">
 
     function EditSearchAttribute_resizeOnRefresh() {
         var winContent = $('#EditSearchAttribute .t-window-content');
@@ -135,10 +146,29 @@
         })
     }
     
+    $("#includePrimaryDataCheckBox").change(function(e)
+    {
+        //alert($("#includePrimaryDataCheckBox").is(':checked'));
+        var includePrimaryData = $("#includePrimaryDataCheckBox").is(':checked');
+        $.post('@Url.Action("ChangeIncludePrimaryData", "Admin", new RouteValueDictionary { { "area", "DDM" } })', { includePrimaryData: includePrimaryData }, function (response) {
+        })
+    })
+
  </script>
     
-}
-else
-{ 
-    @Html.ValidationSummary(true);
-}
+    }
+    else
+    { 
+        @Html.ValidationSummary(true);
+    }
+
+<style type="text/css">
+
+    #SearchDesignerGrid .t-grid-content
+    {
+        height:auto !important;
+        overflow:auto;
+        max-height:490px;
+    }
+
+</style>

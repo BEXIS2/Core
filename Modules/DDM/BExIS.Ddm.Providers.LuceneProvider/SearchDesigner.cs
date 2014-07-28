@@ -18,6 +18,9 @@ namespace BExIS.Ddm.Providers.LuceneProvider
         private XmlDocument _configXML;
         private List<SearchAttribute> _searchAttributeList = new List<SearchAttribute>();
         private List<string> _metadataNodes = new List<string>();
+        private bool _includePrimaryData = false;
+
+        private BexisIndexer bexisIndexer = new BexisIndexer();
 
         public List<SearchAttribute> Get()
         {
@@ -36,47 +39,49 @@ namespace BExIS.Ddm.Providers.LuceneProvider
             int index = 0;
             foreach (XmlNode fieldProperty in fieldProperties)
             {
-                SearchAttribute sa = new SearchAttribute();
-                sa.id = index;
-                //Names
-                if(fieldProperty.Attributes.GetNamedItem("display_name")!=null)
-                    sa.displayName = fieldProperty.Attributes.GetNamedItem("display_name").Value;
+                if (!fieldProperty.Attributes.GetNamedItem("lucene_name").Value.Equals("Primarydata"))
+                {
+                    SearchAttribute sa = new SearchAttribute();
+                    sa.id = index;
+                    //Names
+                    if (fieldProperty.Attributes.GetNamedItem("display_name") != null)
+                        sa.displayName = fieldProperty.Attributes.GetNamedItem("display_name").Value;
 
-                if(fieldProperty.Attributes.GetNamedItem("lucene_name")!=null)
-                    sa.sourceName = fieldProperty.Attributes.GetNamedItem("lucene_name").Value;
+                    if (fieldProperty.Attributes.GetNamedItem("lucene_name") != null)
+                        sa.sourceName = fieldProperty.Attributes.GetNamedItem("lucene_name").Value;
 
-                if(fieldProperty.Attributes.GetNamedItem("metadata_name")!=null)
-                    sa.metadataName = fieldProperty.Attributes.GetNamedItem("metadata_name").Value;
-                
-
-                //types
-                if(fieldProperty.Attributes.GetNamedItem("type")!=null)
-                    sa.searchType = SearchAttribute.GetSearchType(fieldProperty.Attributes.GetNamedItem("type").Value);
-
-                if(fieldProperty.Attributes.GetNamedItem("primitive_type")!=null)
-                    sa.dataType = SearchAttribute.GetDataType(fieldProperty.Attributes.GetNamedItem("primitive_type").Value);
-
-             
-
-                //// parameter for index
-                if(fieldProperty.Attributes.GetNamedItem("store")!=null)
-                    sa.store = SearchAttribute.GetBoolean(fieldProperty.Attributes.GetNamedItem("store").Value);
-
-                if(fieldProperty.Attributes.GetNamedItem("multivalued")!=null)
-                    sa.multiValue = SearchAttribute.GetBoolean(fieldProperty.Attributes.GetNamedItem("multivalued").Value);
-
-                if(fieldProperty.Attributes.GetNamedItem("analyzed")!=null)
-                    sa.analysed = SearchAttribute.GetBoolean(fieldProperty.Attributes.GetNamedItem("analyzed").Value);
-
-                if(fieldProperty.Attributes.GetNamedItem("norm")!=null)
-                    sa.norm = SearchAttribute.GetBoolean(fieldProperty.Attributes.GetNamedItem("norm").Value);
-
-                if(fieldProperty.Attributes.GetNamedItem("boost")!=null)
-                     sa.boost = Convert.ToDouble(fieldProperty.Attributes.GetNamedItem("boost").Value);
+                    if (fieldProperty.Attributes.GetNamedItem("metadata_name") != null)
+                        sa.metadataName = fieldProperty.Attributes.GetNamedItem("metadata_name").Value;
 
 
-                // Resultview
-                    if(fieldProperty.Attributes.GetNamedItem("header_item")!=null)
+                    //types
+                    if (fieldProperty.Attributes.GetNamedItem("type") != null)
+                        sa.searchType = SearchAttribute.GetSearchType(fieldProperty.Attributes.GetNamedItem("type").Value);
+
+                    if (fieldProperty.Attributes.GetNamedItem("primitive_type") != null)
+                        sa.dataType = SearchAttribute.GetDataType(fieldProperty.Attributes.GetNamedItem("primitive_type").Value);
+
+
+
+                    //// parameter for index
+                    if (fieldProperty.Attributes.GetNamedItem("store") != null)
+                        sa.store = SearchAttribute.GetBoolean(fieldProperty.Attributes.GetNamedItem("store").Value);
+
+                    if (fieldProperty.Attributes.GetNamedItem("multivalued") != null)
+                        sa.multiValue = SearchAttribute.GetBoolean(fieldProperty.Attributes.GetNamedItem("multivalued").Value);
+
+                    if (fieldProperty.Attributes.GetNamedItem("analyzed") != null)
+                        sa.analysed = SearchAttribute.GetBoolean(fieldProperty.Attributes.GetNamedItem("analyzed").Value);
+
+                    if (fieldProperty.Attributes.GetNamedItem("norm") != null)
+                        sa.norm = SearchAttribute.GetBoolean(fieldProperty.Attributes.GetNamedItem("norm").Value);
+
+                    if (fieldProperty.Attributes.GetNamedItem("boost") != null)
+                        sa.boost = Convert.ToDouble(fieldProperty.Attributes.GetNamedItem("boost").Value);
+
+
+                    // Resultview
+                    if (fieldProperty.Attributes.GetNamedItem("header_item") != null)
                         sa.headerItem = SearchAttribute.GetBoolean(fieldProperty.Attributes.GetNamedItem("header_item").Value);
 
                     if (fieldProperty.Attributes.GetNamedItem("default_visible_item") != null)
@@ -94,10 +99,20 @@ namespace BExIS.Ddm.Providers.LuceneProvider
                     if (fieldProperty.Attributes.GetNamedItem("date_format") != null)
                         sa.dateFormat = fieldProperty.Attributes.GetNamedItem("date_format").Value;
 
-                this._searchAttributeList.Add(sa);
-                index++;
+                    this._searchAttributeList.Add(sa);
+                    index++;
+                }
+                else
+                {
+                    this._includePrimaryData = true;
+                }
             }
 
+        }
+
+        public bool IsPrimaryDataIncluded()
+        {
+            return this._includePrimaryData;
         }
 
         public List<string> GetMetadataNodes()
@@ -152,46 +167,71 @@ namespace BExIS.Ddm.Providers.LuceneProvider
             Save();
         }
 
+        public void Set(List<SearchAttribute> SearchAttributeList, bool includePrimaryData)
+        {
+            this._searchAttributeList = SearchAttributeList;
+            this._includePrimaryData = includePrimaryData;
+            Save();
+        }
+
+
         // write xml config file
         private void Save()
         {
             XmlElement root;
             FileStream fileStream;
-            this._configXML = new XmlDocument();
-            if (String.IsNullOrEmpty(FileHelper.ConfigFilePath))
-            {
-                  root = this._configXML.CreateElement("luceneConfig");
-                  this._configXML.AppendChild(root);
-                
-            }
-            else
-            {
-                fileStream = new FileStream(FileHelper.ConfigFilePath, FileMode.Open, FileAccess.Read);
-                this._configXML.Load(fileStream);
-                root = this._configXML.DocumentElement;
-                root.RemoveAll();
 
-                fileStream.Close();
-            }
-
-            //XmlNodeList list = new XmlNodeList();
-
-            foreach (SearchAttribute sa in this._searchAttributeList)
+            try
             {
-                XmlElement xe = this._configXML.CreateElement("field");
-                xe = SetAttributesToNode(xe, sa);
-                root.AppendChild(xe);
+
+                this._configXML = new XmlDocument();
+                if (String.IsNullOrEmpty(FileHelper.ConfigFilePath))
+                {
+                    root = this._configXML.CreateElement("luceneConfig");
+                    this._configXML.AppendChild(root);
+
+                }
+                else
+                {
+                    fileStream = new FileStream(FileHelper.ConfigFilePath, FileMode.Open, FileAccess.Read);
+                    this._configXML.Load(fileStream);
+                    root = this._configXML.DocumentElement;
+                    root.RemoveAll();
+
+                    fileStream.Close();
+                }
+
+
+                //add primary data node
+                if (this._includePrimaryData)
+                {
+                    XmlElement xe = this._configXML.CreateElement("field");
+                    xe = SetPrimaryDataAttributeToNode(xe);
+                    root.AppendChild(xe);
+                }
+
+                foreach (SearchAttribute sa in this._searchAttributeList)
+                {
+                    XmlElement xe = this._configXML.CreateElement("field");
+                    xe = SetAttributesToNode(xe, sa);
+                    root.AppendChild(xe);
+                }
+
+                //root.AppendChild(xe);
+                //System.IO.File.
+                object lk = new object();
+                lock (fileStream = new FileStream(FileHelper.ConfigFilePath, FileMode.Open, FileAccess.Write))
+                {
+                    fileStream.SetLength(0);
+                    this._configXML.Save(fileStream);
+                    fileStream.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+
             }
 
-            //root.AppendChild(xe);
-            //System.IO.File.
-            object lk = new object();
-            lock (fileStream = new FileStream(FileHelper.ConfigFilePath, FileMode.Open, FileAccess.Write))
-            {
-                fileStream.SetLength(0);
-                this._configXML.Save(fileStream);
-                fileStream.Close();
-            }
             
         }
 
@@ -209,13 +249,19 @@ namespace BExIS.Ddm.Providers.LuceneProvider
 
         public void Reload()
         {
-            BexisIndexer bi = new BexisIndexer();
-            bi.ReIndex();            
+            bexisIndexer.ReIndex();            
         }
+
+        public void Dispose()
+        { 
+            bexisIndexer.Dispose();
+        }
+
+
 
         private XmlElement SetAttributesToNode(XmlElement xmlElement, SearchAttribute sa)
         {
-
+            
             // names
             XmlAttribute xa = this._configXML.CreateAttribute("display_name");
             xa.Value = sa.displayName;
@@ -268,7 +314,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider
             xmlElement.Attributes.Append(xa);
 
             xa = this._configXML.CreateAttribute("default_visible_item");
-            xa.Value = SearchAttribute.GetBooleanAsString(sa.headerItem);
+            xa.Value = SearchAttribute.GetBooleanAsString(sa.defaultHeaderItem);
             xmlElement.Attributes.Append(xa);
 
 
@@ -296,5 +342,49 @@ namespace BExIS.Ddm.Providers.LuceneProvider
             return xmlElement;
         }
 
+        private XmlElement SetPrimaryDataAttributeToNode(XmlElement xmlElement)
+        { 
+        
+            // names
+            XmlAttribute xa = this._configXML.CreateAttribute("display_name");
+            xa.Value = "Primary Data";
+            xmlElement.Attributes.Append(xa);
+
+            xa = this._configXML.CreateAttribute("lucene_name");
+            xa.Value = "Primarydata";
+            xmlElement.Attributes.Append(xa);
+
+            //types
+            xa = this._configXML.CreateAttribute("type");
+            xa.Value = "primary_data_field";
+            xmlElement.Attributes.Append(xa);
+
+            xa = this._configXML.CreateAttribute("primitive_type");
+            xa.Value = "String";
+            xmlElement.Attributes.Append(xa);
+
+            // parameter for index
+            xa = this._configXML.CreateAttribute("store");
+            xa.Value = "yes";
+            xmlElement.Attributes.Append(xa);
+
+            xa = this._configXML.CreateAttribute("analysed");
+            xa.Value = "yes";
+            xmlElement.Attributes.Append(xa);
+
+            xa = this._configXML.CreateAttribute("norm");
+            xa.Value = "yes";
+            xmlElement.Attributes.Append(xa);
+            
+
+            //boost
+            xa = this._configXML.CreateAttribute("boost");
+            xa.Value = "3";
+            xmlElement.Attributes.Append(xa);
+
+            return xmlElement;
+        }
+
+        
     }
 }

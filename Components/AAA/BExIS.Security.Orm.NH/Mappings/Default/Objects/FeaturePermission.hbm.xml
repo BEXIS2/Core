@@ -3,7 +3,7 @@
 
     <!-- Mapping Permission Properties -->
     <key column="Id" />
-
+    
     <!-- Mapping Feature Permission Associations -->
     <many-to-one name="Feature" column="FeatureRef" class="BExIS.Security.Entities.Objects.Feature, BExIS.Security.Entities"/>
 

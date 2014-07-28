@@ -1,7 +1,14 @@
 ﻿using System;
 
+/// <summary>
+///
+/// </summary>        
 namespace BExIS.Io.Transform.Validation.Exceptions
 {
+    /// <summary>
+    ///
+    /// </summary>
+    /// <remarks></remarks>        
     public class Error
     {
         private string _name = "";
@@ -19,12 +26,27 @@ namespace BExIS.Io.Transform.Validation.Exceptions
         private string _issue = "";
         private ErrorType _errorType;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="errorType"></param>
+        /// <param name="issue"></param>
         public Error(ErrorType errorType, string issue)
         {
             _issue = issue;
             _errorType = errorType;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="errorType"></param>
+        /// <param name="issue"></param>
+        /// <param name="name"></param>
         public Error(ErrorType errorType, string issue, string name)
         {
             _name = name;
@@ -34,12 +56,13 @@ namespace BExIS.Io.Transform.Validation.Exceptions
         /// <summary>
         /// This is a test
         /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
         /// <param name="errorType"></param>
         /// <param name="issue"></param>
         /// <param name="valueList">Value :(0 = name, 1 = value, 2 = row, 3 = datatype)
         /// MetadataAttribute: (0=name, 1=value, 2=attributeNumber, 3= packageNumber)
         /// </param>
-        /// 
         public Error(ErrorType errorType ,string issue, params object[] valueList)
         {
             _errorType = errorType;
@@ -64,6 +87,13 @@ namespace BExIS.Io.Transform.Validation.Exceptions
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param>NA</param>
+        /// <returns></returns>
         public override string ToString()
         {
             switch(_errorType)
@@ -76,10 +106,15 @@ namespace BExIS.Io.Transform.Validation.Exceptions
             }
         }
 
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param>NA</param>       
         public string ToHtmlString()
         {
-            
-
             switch (_errorType)
             {
                 case ErrorType.Value: return String.Format("{0} : Variable : {1} , Value : {2}, in Row : {3}, DataType : {4}", _issue, _name, _value, _row.ToString(), _dataType);
@@ -89,10 +124,12 @@ namespace BExIS.Io.Transform.Validation.Exceptions
                 default: return String.Format("{0}", _issue);
             }
         }
-
-        
+      
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public enum ErrorType
     {
         Dataset,

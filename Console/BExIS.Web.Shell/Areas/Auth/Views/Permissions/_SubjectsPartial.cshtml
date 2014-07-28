@@ -1,0 +1,48 @@
+﻿@using Telerik.Web.Mvc.UI;
+@using BExIS.Web.Shell.Areas.Auth.Models;
+
+@model List<DataSubjectModel>
+
+@(Html.Telerik().Grid(Model)
+    .Name("Grid_Subjects")
+    .DataKeys(keys =>
+    {
+        keys.Add(s => s.SubjectId);
+    })
+    .Columns(columns =>
+    {
+        columns.Bound(s => s.Read)
+            .ClientTemplate("<input type='checkbox' onclick='setDataPermission(this.checked, 1, <#= SubjectId #>, <#= DataId #>, \"<#= EntityId #>\");' name='nothing' <#= Read ? checked='checked' : '' #> />")
+                   .Title("Read")
+                   .Width(64)
+                   .Filterable(false)
+                   .HtmlAttributes(new { style = "text-align:center" });
+        columns.Bound(s => s.Update)
+            .ClientTemplate("<input type='checkbox' onclick='setDataPermission(this.checked, 2, <#= SubjectId #>, <#= DataId #>, \"<#= EntityId #>\");' name='nothing' <#= Update ? checked='checked' : '' #> />")
+                   .Title("Update")
+                   .Width(64)
+                   .Filterable(false)
+                   .HtmlAttributes(new { style = "text-align:center" });
+        columns.Bound(s => s.Delete)
+            .ClientTemplate("<input type='checkbox' onclick='setDataPermission(this.checked, 3, <#= SubjectId #>, <#= DataId #>, \"<#= EntityId #>\");' name='nothing' <#= Delete ? checked='checked' : '' #> />")
+                   .Title("Delete")
+                   .Width(64)
+                   .Filterable(false)
+                   .HtmlAttributes(new { style = "text-align:center" });        
+        columns.Bound(s => s.SubjectId);
+        columns.Bound(s => s.SubjectName);
+        columns.Bound(s => s.SubjectType);
+    })
+    .DataBinding(dataBinding => dataBinding
+        .Ajax()
+        .Select("Subjects_Select", "Permissions", new { dataId = (long)ViewData["DataId"], entityId = (string)ViewData["EntityId"] })
+    )
+    .Filterable()
+    .Sortable(sortable => sortable
+        .OrderBy(orderby => orderby
+            .Add(s => s.SubjectName)
+            .Ascending()
+        )
+    )
+    .Scrollable(scrollable => scrollable.Height(1000))
+)

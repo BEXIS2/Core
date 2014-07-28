@@ -2,55 +2,160 @@
 using System.Linq;
 using Vaiona.Entities.Common;
 
+/// <summary>
+///
+/// </summary>        
 namespace BExIS.Dlm.Entities.DataStructure
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public enum DataContainerType
     {
         ValueType, ReferenceType
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public enum MeasurementScale
     {
         Nominal, Ordinal, Interval, Ratio, DateTime, Categorial
     }
 
+    /// <summary>
+    ///
+    /// </summary>
+    /// <remarks></remarks>        
     public abstract class DataContainer: BusinessEntity
     {
         #region Attributes
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual string Name { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual string ShortName { get; set; } // Abbrev.
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual string Description { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual bool IsMultiValue { get; set; }
-        
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual bool IsBuiltIn { get; set; } // the build in containers can not be deleted, except by their owner
         // Owner of the container is the module who created it 
         // or the RPM (Research Planning Module) if its created via the web interface
         // or DCM (Data Collection Module) if its created during data submission
-        public virtual string Owner { get; set; } 
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
+        public virtual string Owner { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual DataContainerType ContainerType { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual MeasurementScale MeasurementScale { get; set; }
 
-        public virtual string EntitySelectionPredicate { get; set; } // only if Type == ReferenceType
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks> only if Type == ReferenceType </remarks>
+        /// <seealso cref=""/>        
+        public virtual string EntitySelectionPredicate { get; set; }
 
         /// <summary>
         /// This is a workaround according to NHibernate's Lazy loading proxy creation!
         /// It should not be mapped!
         /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual DataContainer Self { get { return this; } }
 
         #endregion
 
         #region Associations
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual DataType DataType { get; set; } //1
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual Unit Unit { get; set; } // 0..1
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual Methodology Methodology { get; set; } //0..1        
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual ICollection<Constraint> Constraints { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual ICollection<ExtendedProperty> ExtendedProperties { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual ICollection<GlobalizationInfo> GlobalizationInfos { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public virtual ICollection<AggregateFunction> AggregateFunctions { get; set; }
 
         //// not to map
@@ -69,7 +174,13 @@ namespace BExIS.Dlm.Entities.DataStructure
         #endregion
         
         #region Methods
-        
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param>NA</param>       
         public DataContainer()
         {
             IsBuiltIn = false;
@@ -95,6 +206,12 @@ namespace BExIS.Dlm.Entities.DataStructure
         //    throw new NotImplementedException();
         //}
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="data"></param>
         public virtual bool ValidateDomainValues(object data)
         {
             // data must be of type DataType linked to the container
@@ -102,6 +219,12 @@ namespace BExIS.Dlm.Entities.DataStructure
             return false;
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="data"></param>
         public virtual bool ValidateValidatores(object data)
         {
             // data must be of type DataType linked to the container

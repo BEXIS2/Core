@@ -10,17 +10,17 @@ using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 
+/// <summary>
+///
+/// </summary>        
 namespace BExIS.Io.Transform.Input
 {
-
-
     /// <summary>
     /// this class is used to read and validate ascii files
     /// </summary>
     /// <remarks></remarks>        
     public class AsciiReader:DataReader
     {
-
         /// <summary>
         /// Read the whole file line by line until no more come. 
         /// Convert the lines into a datatuple based on the datastructure.
@@ -311,7 +311,7 @@ namespace BExIS.Io.Transform.Input
                         //}
 
                         // is position = or over startposition of data?
-                        if (index >= this.info.Data)
+                        if (Position >= this.info.Data)
                         {
                             Stopwatch rowTime = Stopwatch.StartNew();
 
@@ -340,7 +340,6 @@ namespace BExIS.Io.Transform.Input
             return listOfSelectedvalues;
         }
 
-
         /// <summary>
         /// Get all values from the file of each variable in variable list
         /// </summary>
@@ -355,74 +354,74 @@ namespace BExIS.Io.Transform.Input
         /// <param name="datasetId">Id of the dataset</param>
         /// <param name="variableList">List of variables</param>
         /// <returns></returns>
-        public List<List<string>> ReadValuesFromFile(Stream file, string fileName, AsciiFileReaderInfo fri, StructuredDataStructure sds, long datasetId, List<long> variableList)
-        {
-            this.file = file;
-            this.fileName = fileName;
-            this.info = fri;
-            this.structuredDataStructure = sds;
-            this.datasetId = datasetId;
+        //public List<List<string>> ReadValuesFromFile(Stream file, string fileName, AsciiFileReaderInfo fri, StructuredDataStructure sds, long datasetId, List<long> variableList)
+        //{
+        //    this.file = file;
+        //    this.fileName = fileName;
+        //    this.info = fri;
+        //    this.structuredDataStructure = sds;
+        //    this.datasetId = datasetId;
 
-            List<List<string>> listOfSelectedvalues = new List<List<string>>();
+        //    List<List<string>> listOfSelectedvalues = new List<List<string>>();
 
-            // Check params
-            if (this.file == null)
-            {
-                this.errorMessages.Add(new Error(ErrorType.Other, "File not exist"));
-            }
-            if (!this.file.CanRead)
-            {
-                this.errorMessages.Add(new Error(ErrorType.Other, "File is not readable"));
-            }
-            if (this.info.Variables <= 0)
-            {
-                this.errorMessages.Add(new Error(ErrorType.Other, "Startrow of Variable can´t be 0"));
-            }
-            if (this.info.Data <= 0)
-            {
-                this.errorMessages.Add(new Error(ErrorType.Other, "Startrow of Data can´t be 0"));
-            }
+        //    // Check params
+        //    if (this.file == null)
+        //    {
+        //        this.errorMessages.Add(new Error(ErrorType.Other, "File not exist"));
+        //    }
+        //    if (!this.file.CanRead)
+        //    {
+        //        this.errorMessages.Add(new Error(ErrorType.Other, "File is not readable"));
+        //    }
+        //    if (this.info.Variables <= 0)
+        //    {
+        //        this.errorMessages.Add(new Error(ErrorType.Other, "Startrow of Variable can´t be 0"));
+        //    }
+        //    if (this.info.Data <= 0)
+        //    {
+        //        this.errorMessages.Add(new Error(ErrorType.Other, "Startrow of Data can´t be 0"));
+        //    }
 
-            if (this.errorMessages.Count == 0)
-            {
-                Stopwatch totalTime = Stopwatch.StartNew();
+        //    if (this.errorMessages.Count == 0)
+        //    {
+        //        Stopwatch totalTime = Stopwatch.StartNew();
 
-                using (StreamReader streamReader = new StreamReader(file))
-                {
-                    string line;
-                    //int index = fri.Variables;
-                    int index = 1;
+        //        using (StreamReader streamReader = new StreamReader(file))
+        //        {
+        //            string line;
+        //            //int index = fri.Variables;
+        //            int index = 1;
                   
-                    char seperator = AsciiFileReaderInfo.GetSeperator(fri.Seperator);
+        //            char seperator = AsciiFileReaderInfo.GetSeperator(fri.Seperator);
 
     
-                    // go to every line
-                    while ((line = streamReader.ReadLine()) != null )
-                    {
+        //            // go to every line
+        //            while ((line = streamReader.ReadLine()) != null )
+        //            {
 
-                        // is position of datastructure?
-                        if (index == this.info.Variables)
-                        {
-                            variableIdentifierRows.Add(RowToList(line, seperator));
-                            ConvertAndAddToSubmitedVariableIdentifier();
-                        }
+        //                // is position of datastructure?
+        //                if (index == this.info.Variables)
+        //                {
+        //                    variableIdentifierRows.Add(RowToList(line, seperator));
+        //                    ConvertAndAddToSubmitedVariableIdentifier();
+        //                }
 
-                        // is position = or over startposition of data?
-                        if (index >= this.info.Data)
-                        {
-                            // return List of VariablesValues, and error messages
-                            listOfSelectedvalues.Add(GetValuesFromRow(RowToList(line, seperator), index, variableList));
-                        }
+        //                // is position = or over startposition of data?
+        //                if (index >= this.info.Data)
+        //                {
+        //                    // return List of VariablesValues, and error messages
+        //                    listOfSelectedvalues.Add(GetValuesFromRow(RowToList(line, seperator), index, variableList));
+        //                }
 
-                        index++;
-                    }
-                }
+        //                index++;
+        //            }
+        //        }
 
-                //Debug.WriteLine(" Total Time of primary key check " + totalTime.Elapsed.TotalSeconds.ToString());
-            }
+        //        //Debug.WriteLine(" Total Time of primary key check " + totalTime.Elapsed.TotalSeconds.ToString());
+        //    }
 
-            return listOfSelectedvalues;
-        }
+        //    return listOfSelectedvalues;
+        //}
 
 
         #region validate
@@ -580,10 +579,12 @@ namespace BExIS.Io.Transform.Input
         #endregion
 
         #region helper methods
-        
+
         /// <summary>
         /// Convert a row as a string to a list of strings
         /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
         /// <param name="line">Row as a string</param>
         /// <param name="seperator">Character used as TextSeparator</param>
         /// <returns>List of values</returns>
@@ -619,8 +620,6 @@ namespace BExIS.Io.Transform.Input
         /// <returns>List of values as a string list</returns>
         private List<string> TextMarkerHandling(string row, char separator, char textmarker)
         {
-
-
             List<string> values = row.Split(separator).ToList();
 
             /// <summary>
