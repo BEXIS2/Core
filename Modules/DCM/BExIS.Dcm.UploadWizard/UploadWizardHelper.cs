@@ -235,6 +235,8 @@ namespace BExIS.Dcm.UploadWizard
             {
 
                 Hashtable hashtable = new Hashtable();
+                Hashtable test = new Hashtable();
+                List<string> testString = new List<string>();
 
                 List<string> primaryValuesAsOneString = new List<string>();
 
@@ -285,7 +287,7 @@ namespace BExIS.Dcm.UploadWizard
 
                                 try
                                 {
-                                    hashtable.Add(Utility.ComputeKey(pKey), "");
+                                    hashtable.Add(Utility.ComputeKey(pKey), "pKey");
                                 }
                                 catch
                                 {
@@ -296,7 +298,7 @@ namespace BExIS.Dcm.UploadWizard
                         }
 
 
-                        position = reader.Position;
+                        position = reader.Position + 1;
                         stream.Close();
 
                     } while (primaryValuesAsOneString.Count > 0);
@@ -348,7 +350,7 @@ namespace BExIS.Dcm.UploadWizard
 
                                 try
                                 {
-                                    hashtable.Add(Utility.ComputeKey(pKey), "");
+                                    hashtable.Add(Utility.ComputeKey(pKey), pKey);
                                 }
                                 catch
                                 {
@@ -360,7 +362,7 @@ namespace BExIS.Dcm.UploadWizard
                         }
 
 
-                        position = reader.Position;
+                        position = reader.Position + 1;
                         stream.Close();
 
                     } while (primaryValuesAsOneString.Count > 0);

@@ -857,6 +857,40 @@ namespace BExIS.Security.Services.Subjects
         /// <param>NA</param>       
         public IQueryable<User> GetAllUsers()
         {
+            Assembly b = Assembly.Load("BExIS.Security.Entities");
+            Type A = b.GetType("BExIS.Security.Entities.Subjects.User");
+
+            //ParameterExpression pe = Expression.Parameter(typeof(string), "Name");
+
+            //Expression left = Expression.Call(pe, typeof(string).GetMethod("ToLower", System.Type.EmptyTypes));
+            //Expression right = Expression.Constant("admin");
+            //Expression e1 = Expression.Equal(left, right);
+
+            //Type D = typeof(Func<,>).MakeGenericType(A, typeof(bool));
+
+            //Func<User, bool> a = new Func<User, bool>(x => x.Name == "Admin");
+
+            //object e = Activator.CreateInstance(typeof(List<>).MakeGenericType(new Type[] { D }), new object[] { } );
+
+            //Expression<Func<User, bool>> test = Expression.<Func<User, bool>>(System.Linq.Dynamic.DynamicExpression.Parse(A, "Name = @0 AND Id > @1", "Admin", 5));
+
+            //BinaryExpression r0 = Expression.Equal(Expression.Parameter(typeof(int), "Id"), Expression.Constant(0, typeof(int)));
+
+            //BinaryExpression r1 = Expression.Equal(Expression.Parameter(typeof(string), "Name"), Expression.Constant("Admin", typeof(string)));
+
+            //var invokedExpr = Expression.Invoke(r0, r1.Left);
+            //return Expression.Lambda<Func<A, bool>>
+            //      (Expression.OrElse(expr1.Body, invokedExpr), expr1.Parameters);
+
+            //BinaryExpression expOr = Expression.OrElse(r0, r1);
+
+            //Expression<Func<User, bool>> or = Expression.Lambda<Func<User, bool>>(r0);
+
+            //Expression expr4 = System.Linq.Dynamic.DynamicExpression.Parse(A, "Name = @0", "Admin").;
+            //Expression expr5 = System.Linq.Dynamic.DynamicExpression.Parse(A, "Id > @0", 5);
+
+            //Expression expr6 = Expression.And(expr4, expr5);
+
             return UsersRepo.Query();
         }
 

@@ -85,10 +85,17 @@
                     $(".function td")[i].innerHTML = left + edit + del + right;
                 else
                 {
-                    if(temp[0] == first)
-                        $(".function td")[i].innerHTML = edit + del + right;
+                    if(temp[0] == first && temp[0] == last)
+                    {
+                        $(".function td")[i].innerHTML = edit + del;
+                    }
                     else
-                        $(".function td")[i].innerHTML = left + edit + del;
+                    {
+                        if(temp[0] == first)
+                            $(".function td")[i].innerHTML = edit + del + right;
+                        else
+                            $(".function td")[i].innerHTML = left + edit + del;
+                    }
                 }            
             }
         }
@@ -105,10 +112,17 @@
                     $(".locked td")[i].innerHTML = left + 'locked' + right;
                 else
                 {
-                    if(temp[0] == first)
+                    if(temp[0] == first && temp[0] == last)
+                    {
                         $(".locked td")[i].innerHTML = 'locked' + right;
+                    }
                     else
-                        $(".locked td")[i].innerHTML = left + 'locked';
+                    {
+                        if(temp[0] == first)
+                            $(".locked td")[i].innerHTML = 'locked' + right;
+                        else
+                            $(".locked td")[i].innerHTML = left + 'locked';
+                    }
                 }
             }
         }
