@@ -154,6 +154,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             {
                 //TaskManager = null;
 
+                //return PartialView("FinishUpload",finishUploadModel);
+                //return RedirectToAction("FinishUpload", "SubmitController", new { area = "DCM" });
+                //return Content("Upload Success");
                 return null;
             }
         }
@@ -183,6 +186,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     {
                         try
                         {
+                            
 
                             StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(iddsd);
                             dsm.StructuredDataStructureRepo.LoadIfNot(sds.Variables);
@@ -191,51 +195,67 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                             if (TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".xlsm"))
                             {
-                                // open file
+                                int packageSize = 10000;
+                                int counter = 0;
+
                                 ExcelReader reader = new ExcelReader();
-                                Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
-                                rows = reader.ReadFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), sds, (int)id);
 
-                                if (reader.errorMessages.Count > 0)
+                                //schleife
+                                do
                                 {
-                                    //model.ErrorList = reader.errorMessages;
-                                }
-                                else
-                                {
+                                    Stopwatch packageTime = Stopwatch.StartNew();
 
-                                    //XXX Add packagesize to excel read function
-                                    if (dm.IsDatasetCheckedOutFor(ds.Id, GetUserNameOrDefault()) || dm.CheckOutDataset(ds.Id, GetUserNameOrDefault()))
+                                    counter++;
+                                    // open file
+                                    Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
+                                    rows = reader.ReadFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), sds, (int)id, packageSize);
+
+                                    if (reader.errorMessages.Count > 0)
                                     {
-                                        workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
+                                        //model.ErrorList = reader.errorMessages;
+                                    }
+                                    else
+                                    {
 
-                                        if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_STATUS))
+                                        //XXX Add packagesize to excel read function
+                                        if (dm.IsDatasetCheckedOutFor(ds.Id, GetUserNameOrDefault()) || dm.CheckOutDataset(ds.Id, GetUserNameOrDefault()))
                                         {
 
-                                            if (TaskManager.Bus[TaskManager.DATASET_STATUS].ToString().Equals("new"))
-                                            {
-                                                dm.EditDatasetVersion(workingCopy, rows, null, null);
-                                            }
+                                            workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
 
-                                            if (TaskManager.Bus[TaskManager.DATASET_STATUS].ToString().Equals("edit"))
+                                            if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_STATUS))
                                             {
-                                                if (rows.Count > 0)
+
+                                                if (TaskManager.Bus[TaskManager.DATASET_STATUS].ToString().Equals("new"))
                                                 {
-                                                    Dictionary<string, List<DataTuple>> splittedDatatuples = new Dictionary<string, List<DataTuple>>();
-                                                    splittedDatatuples = UploadWizardHelper.GetSplitDatatuples(rows, (List<long>)TaskManager.Bus[TaskManager.PRIMARY_KEYS], workingCopy);
-                                                    dm.EditDatasetVersion(workingCopy, splittedDatatuples["new"], splittedDatatuples["edit"], null);
+                                                    dm.EditDatasetVersion(workingCopy, rows, null, null);
+                                                }
+
+                                                if (TaskManager.Bus[TaskManager.DATASET_STATUS].ToString().Equals("edit"))
+                                                {
+                                                    if (rows.Count > 0)
+                                                    {
+                                                        Dictionary<string, List<DataTuple>> splittedDatatuples = new Dictionary<string, List<DataTuple>>();
+                                                        splittedDatatuples = UploadWizardHelper.GetSplitDatatuples(rows, (List<long>)TaskManager.Bus[TaskManager.PRIMARY_KEYS], workingCopy);
+                                                        dm.EditDatasetVersion(workingCopy, splittedDatatuples["new"], splittedDatatuples["edit"], null);
+                                                    }
                                                 }
                                             }
-                                        }
-                                        else
-                                        {
+                                            else
+                                            {
+
+                                            }
+                                            //dm.CheckInDataset(ds.Id, "upload data from upload wizard", "David");
 
                                         }
-                                        //dm.CheckInDataset(ds.Id, "upload data from upload wizard", "David");
-
                                     }
-                                }
 
-                                Stream.Close();
+                                    Stream.Close();
+
+                                    packageTime.Stop();
+                                    Debug.WriteLine("Package : " + counter +" packageTime Time " + packageTime.Elapsed.TotalSeconds.ToString());
+
+                                } while (rows.Count > 0);
                             }
 
                             #endregion

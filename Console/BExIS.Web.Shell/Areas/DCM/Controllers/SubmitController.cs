@@ -123,9 +123,13 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             TaskManager = (TaskManager)Session["TaskManager"];
             //TaskManager.SetCurrent(null);
 
+            
             FinishUploadModel finishModel = new FinishUploadModel();
-            finishModel.DatasetTitle = TaskManager.Bus[TaskManager.DATASET_TITLE].ToString();
-            finishModel.Filename = TaskManager.Bus[TaskManager.FILENAME].ToString();
+            if (TaskManager != null)
+            {
+                finishModel.DatasetTitle = TaskManager.Bus[TaskManager.DATASET_TITLE].ToString();
+                finishModel.Filename = TaskManager.Bus[TaskManager.FILENAME].ToString();
+            }
 
             Session["TaskManager"] = null;
             try

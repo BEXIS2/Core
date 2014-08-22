@@ -10,5 +10,11 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
         public string DatasetTitle { get; set; }
         public string Filename { get; set; }
 
+        public FinishUploadModel()
+        {
+            DatasetTitle = "";
+            Filename = "";
+        }
+
     }
 }

@@ -151,7 +151,88 @@ namespace BExIS.Io.Transform.Input
             }
 
             return this.dataTuples;
+        }
+
+        /// <summary>
+        /// Read a Excel Template file wth package size
+        /// Convert the rows into a datatuple based on the datastructure.
+        /// Return a list of datatuples
+        /// </summary>
+        /// <remarks>Only when excel template is in use</remarks>
+        /// <seealso cref=""/>
+        /// <param name="file">File as stream</param>
+        /// <param name="fileName">Name of the file</param>
+        /// <param name="sds">StructuredDataStructure of a dataset</param>
+        /// <param name="datasetId">Datasetid of a dataset</param>
+        /// <returns>List of DataTuples</returns>
+        public List<DataTuple> ReadFile(Stream file, string fileName, StructuredDataStructure sds, long datasetId,int packageSize)
+        {
+
+            this.file = file;
+            this.fileName = fileName;
+
+            // clear lsit of datatuples for the next package
+            this.dataTuples = new List<DataTuple>();
+
+            this.structuredDataStructure = sds;
+            //this.info = efri;
+            this.datasetId = datasetId;
+
+            // open excel file
+            spreadsheetDocument = SpreadsheetDocument.Open(this.file, false);
+
+            // get workbookpart
+            WorkbookPart workbookPart = spreadsheetDocument.WorkbookPart;
+
+            // get all the defined area 
+            List<DefinedNameVal> namesTable = BuildDefinedNamesTable(workbookPart);
+
+            // select data area
+            this._areaOfData = namesTable.Where(p => p.Key.Equals("Data")).FirstOrDefault();
+
+            // Select variable area
+            this._areaOfVariables = namesTable.Where(p => p.Key.Equals("VariableIdentifiers")).FirstOrDefault();
+
+            // Get intergers for reading data
+            startColumn = GetColumnNumber(this._areaOfData.StartColumn);
+            endColumn = GetColumnNumber(this._areaOfData.EndColumn);
+
+            numOfColumns = (endColumn - startColumn) + 1;
+            offset = GetColumnNumber(GetColumnName(this._areaOfData.StartColumn)) - 1;
+
+            // select worksheetpart by selected defined name area like data in sheet
+            // sheet where data area is inside
+            WorksheetPart worksheetPart = GetWorkSheetPart(workbookPart, this._areaOfData);
+            //worksheet = worksheetPart.Worksheet;
+            // get styleSheet
+            _stylesheet = workbookPart.WorkbookStylesPart.Stylesheet;
+
+            // Get shared strings
+            _sharedStrings = workbookPart.SharedStringTablePart.SharedStringTable.Elements<SharedStringItem>().ToArray();
+
+            if (Position == 1)
+            {
+                Position = this._areaOfData.StartRow;
+            }
+            else
+                Position++;
+
+            int endPosition =  Position + packageSize;
+
+            if (endPosition > this._areaOfData.EndRow)
+                endPosition = this._areaOfData.EndRow;
+
+            if (GetSubmitedVariableIdentifier(worksheetPart, this._areaOfVariables.StartRow, this._areaOfVariables.EndRow) != null)
+            {
+  
+                ReadRows(worksheetPart, Position, endPosition);
+                Position += packageSize;
+
+            }
+
+            return this.dataTuples;
         }  
+
 
         /// <summary>
         /// Read a Excel row by row

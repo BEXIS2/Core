@@ -119,7 +119,7 @@ namespace BExIS.Io.Transform.Validation.ValueCheck
                                     string[] temp = value.Split('.');
                                     if (temp.Length <= 2)
                                     {
-                                        if (temp[temp.Length - 1].All(Char.IsDigit))
+                                        if (!temp[temp.Length - 1].Contains(',') )
                                         {
                                             return Convert.ToDouble(value, new CultureInfo("en-US"));
                                         }
@@ -139,7 +139,7 @@ namespace BExIS.Io.Transform.Validation.ValueCheck
                                     string[] temp = value.Split(',');
                                     if (temp.Length <= 2)
                                     {
-                                        if (temp[temp.Length - 1].All(Char.IsDigit))
+                                        if (!temp[temp.Length - 1].Contains('.'))
                                         {
                                             return Convert.ToDouble(value, new CultureInfo("de-DE"));
                                         }
