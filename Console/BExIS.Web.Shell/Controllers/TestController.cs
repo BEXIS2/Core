@@ -109,16 +109,16 @@ namespace BExIS.Web.Shell.Controllers
             if (p4 == null) p4 = mdpManager.Create("P4", "Sample Package 4", true);
 
             if(s1.MetadataPackageUsages.Where(p=>p.MetadataPackage == p1).Count() <=0)
-                mdsManager.AddMetadataPackageUsage(s1, p1, "P1 in S1", 0, 1);
+                mdsManager.AddMetadataPackageUsage(s1, p1, "P1 in S1", null, 0, 1);
 
             if (s1.MetadataPackageUsages.Where(p => p.MetadataPackage == p2).Count() <= 0)
-                mdsManager.AddMetadataPackageUsage(s1, p2, "P2 in S1", 1, 1);
+                mdsManager.AddMetadataPackageUsage(s1, p2, "P2 in S1", null, 1, 1);
 
             if (s11.MetadataPackageUsages.Where(p => p.MetadataPackage == p3).Count() <= 0)
-                mdsManager.AddMetadataPackageUsage(s11, p3, "P3 in S1.1", 0, 10);
+                mdsManager.AddMetadataPackageUsage(s11, p3, "P3 in S1.1", null, 0, 10);
 
             if (s11.MetadataPackageUsages.Where(p => p.MetadataPackage == p4).Count() <= 0)
-                mdsManager.AddMetadataPackageUsage(s11, p4, "P4 in S1.1", 2, 5);
+                mdsManager.AddMetadataPackageUsage(s11, p4, "P4 in S1.1", null, 2, 5);
 
             var usages = mdsManager.GetEffectivePackages(3);
         }

@@ -67,25 +67,25 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             if (root.MetadataPackageUsages!=null && root.MetadataPackageUsages.Count > 0)
             {
                 if (root.MetadataPackageUsages.Where(p => p.MetadataPackage == contact).Count() <= 0)
-                    mdsManager.AddMetadataPackageUsage(root, contact, "Content Contact", 0, 3);
+                    mdsManager.AddMetadataPackageUsage(root, contact, "Content Contact", null, 0, 3);
 
                 if (root.MetadataPackageUsages.Where(p => p.MetadataPackage == Description).Count() <= 0)
-                    mdsManager.AddMetadataPackageUsage(root, Description, "Description", 0, 1);
+                    mdsManager.AddMetadataPackageUsage(root, Description, "Description", null, 0, 1);
 
                 if (root.MetadataPackageUsages.Where(p => p.MetadataPackage == Owner).Count() <= 0)
-                    mdsManager.AddMetadataPackageUsage(root, Owner, "Owner", 1, 5);
+                    mdsManager.AddMetadataPackageUsage(root, Owner, "Owner", null, 1, 5);
 
                 if (root.MetadataPackageUsages.Where(p => p.MetadataPackage == Scope).Count() <= 0)
-                    mdsManager.AddMetadataPackageUsage(root, Scope, "Scope", 0, 1);
+                    mdsManager.AddMetadataPackageUsage(root, Scope, "Scope", null, 0, 1);
             }
             else
             {
-                
-                mdsManager.AddMetadataPackageUsage(root, contact, "Technical Contact", 1, 1);
-                mdsManager.AddMetadataPackageUsage(root, contact, "Content Contact", 1, 3);
-                mdsManager.AddMetadataPackageUsage(root, Description, "Description", 1, 1);
-                mdsManager.AddMetadataPackageUsage(root, Owner, "Owner", 1, 5);
-                mdsManager.AddMetadataPackageUsage(root, Scope, "Scope", 0, 1);
+
+                mdsManager.AddMetadataPackageUsage(root, contact, "Technical Contact", null, 1, 1);
+                mdsManager.AddMetadataPackageUsage(root, contact, "Content Contact", null, 1, 3);
+                mdsManager.AddMetadataPackageUsage(root, Description, "Description", null, 1, 1);
+                mdsManager.AddMetadataPackageUsage(root, Owner, "Owner", null, 1, 5);
+                mdsManager.AddMetadataPackageUsage(root, Scope, "Scope", null, 0, 1);
 
             }
 
@@ -355,15 +355,15 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             if (exploratory.MetadataPackageUsages!=null & exploratory.MetadataPackageUsages.Count > 0)
             {
                 if (exploratory.MetadataPackageUsages.Where(p => p.MetadataPackage == DataDescription).Count() <= 0)
-                    mdsManager.AddMetadataPackageUsage(exploratory, DataDescription, "Data Description", 0, 1);
+                    mdsManager.AddMetadataPackageUsage(exploratory, DataDescription, "Data Description", null, 0, 1);
 
                 if (exploratory.MetadataPackageUsages.Where(p => p.MetadataPackage == ResearchObjects).Count() <= 0)
-                    mdsManager.AddMetadataPackageUsage(exploratory, ResearchObjects, "Research Objects", 0, 1);
+                    mdsManager.AddMetadataPackageUsage(exploratory, ResearchObjects, "Research Objects", null, 0, 1);
             }
             else
             {
-                mdsManager.AddMetadataPackageUsage(exploratory, DataDescription, "Data Description", 0, 1);
-                mdsManager.AddMetadataPackageUsage(exploratory, ResearchObjects, "Research Objects", 0, 1);
+                mdsManager.AddMetadataPackageUsage(exploratory, DataDescription, "Data Description", null, 0, 1);
+                mdsManager.AddMetadataPackageUsage(exploratory, ResearchObjects, "Research Objects", null, 0, 1);
             }
 
                 #region data description

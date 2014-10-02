@@ -13,6 +13,15 @@ using System.Linq.Expressions;
 
 namespace BExIS.Dlm.Services.Data
 {
+    /// <summary>
+    /// Contains methods for accessing and manipulating datasets, dataset versions, data tuples, the values of the tuples' variables, and other associated entities.
+    /// </summary>
+    /// <remarks>
+    ///     <list type="bullet">
+    ///         <item><description>Effective use of this class needs solid knowledge of the conceptual model and the versioning method used.Effective use of this class needs solid knowledge of the conceptual model and the versioning method used.</description></item>
+    ///         <item><description>There is an automatic and transparent authorization based result set trimming in place, that may reduce the matching entities based on the current user access rights.</description></item>
+    ///     </list>
+    /// </remarks>
     public class DatasetManager
     {
         public DatasetManager()
@@ -31,29 +40,83 @@ namespace BExIS.Dlm.Services.Data
         #region Data Readers
 
         // provide read only repos for the whole aggregate area
+
+        /// <summary>
+        /// Provides read-only querying and access to datasets
+        /// </summary>
         public IReadOnlyRepository<Dataset> DatasetRepo { get; private set; }
+        
+        /// <summary>
+        /// Provides read-only querying and access to dataset versions
+        /// </summary>
         public IReadOnlyRepository<DatasetVersion> DatasetVersionRepo { get; private set; }
+
+        /// <summary>
+        /// Provides read-only querying and access to the tuples of dataset versions
+        /// </summary>
         public IReadOnlyRepository<DataTuple> DataTupleRepo { get; private set; }
+        
+        /// <summary>
+        /// Provides read-only querying and access to the previously archived versions of data tuples
+        /// </summary>
         public IReadOnlyRepository<DataTupleVersion> DataTupleVerionRepo { get; private set; }
+
+        /// <summary>
+        /// Provides read-only querying and access to the values of extended properties associated to datasets
+        /// </summary>
         public IReadOnlyRepository<ExtendedPropertyValue> ExtendedPropertyValueRepo { get; private set; }
+
+        /// <summary>
+        /// Provides read-only querying and access to the values of variables
+        /// </summary>
         public IReadOnlyRepository<VariableValue> VariableValueRepo { get; private set; }
+
+        /// <summary>
+        /// Provides read-only querying and access to the values of parameters
+        /// </summary>
         public IReadOnlyRepository<ParameterValue> ParameterValueRepo { get; private set; }
+
+        /// <summary>
+        /// Provides read-only querying and access to the amendments of the data tuples
+        /// </summary>
         public IReadOnlyRepository<Amendment> AmendmentRepo { get; private set; }
 
         #endregion
 
         #region Dataset
 
+        /// <summary>
+        /// Determines whether the dataset <paramref name="datasetId"/> is checked out by the user <paramref name="userName"/>.
+        /// </summary>
+        /// <param name="datasetId">The identifier of the dataset.</param>
+        /// <param name="userName">the username of the user that may have checked the dataset out.</param>
+        /// <returns>True if the dataset is checked out by the passed username, False otherwise.</returns>
+        /// <remarks>
+        /// Returning false does not mean the dataset is not checked out or not by the designated user, it may imply that the dataset does not exist, deleted, or purged.
+        /// So do NOT rely on the false return value and use the method when exclusively interested in knowing whether the user <paramref name="userName"/> has checked out the dataset <paramref name="datasetId"/>.
+        /// </remarks>
         public bool IsDatasetCheckedOutFor(Int64 datasetId, string userName)
         {
             return ( DatasetRepo.Query(p => p.Status == DatasetStatus.CheckedOut && p.Id == datasetId && p.CheckOutUser == getUserIdentifier(userName)).Count() == 1);
         }
 
+        /// <summary>
+        /// Determines whether the dataset <paramref name="datasetId"/> is in checked-in state.
+        /// </summary>
+        /// <param name="datasetId">The identifier of the dataset.</param>
+        /// <returns>True if dataset exists and is in checked-in state, False otherwise.</returns>
+        /// <remarks>Do NOT rely on False return value to conclude the dataset is not checked in, it may imply that the dataset does not exist.</remarks>
         public bool IsDatasetCheckedIn(Int64 datasetId)
         {
             return (DatasetRepo.Query(p => p.Status == DatasetStatus.CheckedIn && p.Id == datasetId).Count() == 1);
         }
         
+        /// <summary>
+        /// Retrieves the dataset object having identifier <paramref name="datasetId"/> from the database.
+        /// </summary>
+        /// <param name="datasetId">The identifier of the dataset.</param>
+        /// <returns>The semi-populated dataset entity if exists, or null.</returns>
+        /// <remarks>The object based attributes of the entity that are persisted as XML are not populated by default. In order to fully populate the entity, call the <see cref="Materialize"/> method.</remarks>
         public Dataset GetDataset(Int64 datasetId)
         {
             Dataset ds = DatasetRepo.Get(datasetId);
@@ -62,9 +125,18 @@ namespace BExIS.Dlm.Services.Data
             return (ds);
         }
 
+        /// <summary>
+        /// Creates an empty dataset that has no data tuple, puts it into the checked-in state, and persists it in the database. At the time of creation a valid data structure, research plan, and metadata structure must be available.
+        /// </summary>
+        /// <param name="dataStructure">A valid and persisted data structure entity.</param>
+        /// <param name="researchPlan">A valid and persisted research plan entity.</param>
+        /// <param name="metadataStructure">A valid and persisted metadata structure entity.</param>
+        /// <returns>A dataset associated to the <paramref name="dataStructure"/>, <paramref name="researchPlan"/>, and <paramref name="metadataStructure"/> entities.</returns>
         public Dataset CreateEmptyDataset(Entities.DataStructure.DataStructure dataStructure, ResearchPlan researchPlan, MDS.MetadataStructure metadataStructure)
         {
             Contract.Requires(dataStructure != null && dataStructure.Id >= 0);
+            Contract.Requires(researchPlan != null && researchPlan.Id >= 0);
+            Contract.Requires(metadataStructure != null && metadataStructure.Id >= 0);
             
             Contract.Ensures(Contract.Result<Dataset>() != null && Contract.Result<Dataset>().Id >= 0);
             
@@ -90,10 +162,13 @@ namespace BExIS.Dlm.Services.Data
         }
 
         /// <summary>
-        /// In cases that the dataset's attributes are changed, data set is bound to a research plan and so on, use this function
+        /// In cases that the dataset's attributes are changed, data set is bound to a research plan or other attributes of the dataset entity are changed, this method persists the changes.
         /// </summary>
-        /// <param name="dataset"></param>
-        /// <returns></returns>
+        /// <param name="dataset">A dataset instance containing the changes</param>
+        /// <returns>The dataset instance with the changes applied</returns>
+        /// <remarks>
+        /// Do NOT use this method to change the status of the dataset
+        /// </remarks>
         public Dataset UpdateDataset(Dataset dataset)
         {
             Contract.Requires(dataset != null);
@@ -111,10 +186,11 @@ namespace BExIS.Dlm.Services.Data
         }
 
         /// <summary>
-        /// Checks out the dataset in order to make it available for edit! edit means the possibility to add a new version.
-        /// dataset must be in CheckedIn status
+        /// Checks out the dataset for the specified user, in order to make it available for editing. As datasets are versioned, applying the edit on a checked out dataset, will create another version and checks it in.
+        /// dataset must be in CheckedIn state.
         /// </summary>
-        /// <param name="datasetId"></param>
+        /// <param name="datasetId">The identifier of the dataset</param>
+        /// <returns>True if the dataset is checked out, False otherwise</returns>
         public bool CheckOutDataset(Int64 datasetId, string userName)
         {
             return(checkOutDataset(datasetId, userName));
@@ -122,26 +198,38 @@ namespace BExIS.Dlm.Services.Data
 
         /// <summary>
         /// approves the working copy version as a new version and changes the status of the dataset to CheckedIn.
-        /// The status must be in CheckedOut and the user must be similar to the checkout user.
-        /// try preventing simultaneous check-in
+        /// The status must be in CheckedOut and the user must be similar to the checkout user.        
         /// </summary>
-        /// <param name="datasetId"></param>
+        /// <param name="datasetId">The identifier of the dataset to be checked-in</param>
+        /// <param name="comment">A free form text to describe what has changed with this check-in</param>
+        /// <param name="userName">The username that performs the check-in, which should be the same as the check-out username</param>
+        /// <remarks>Does not support simultaneous check-ins</remarks>
         public void CheckInDataset(Int64 datasetId, string comment, string userName)
         {
             checkInDataset(datasetId, comment, userName, false);
         }
 
         /// <summary>
-        /// rolls back all the changes done on the latest version (deletes the working copy changes) and takes the dataset back to CheckedIn state
+        /// Rolls back all the non checked-in changes done to the latest version (deletes the working copy changes) and takes the dataset back to the latest CheckedIn version.
         /// The dataset must be in CheckedOut state and the performing user should be the check out user.
-        /// It does not check-in the dataset so the caller should CheckInDataset after calling Undo
+        /// It does not check-in the dataset so the caller should <see cref="CheckInDataset"/> afterward, if needed.
         /// </summary>
-        /// <param name="datasetId"></param>
+        /// <param name="datasetId">The identifier of the dataset to be checked-in</param>
+        /// <param name="userName">The username that performs the check-in, which should be the same as the check-out username</param>        
         public void UndoCheckoutDataset(Int64 datasetId, string userName)
         {
             undoCheckout(datasetId, userName, false);
         }
 
+        /// <summary>
+        /// Marks the dataset as deleted but does not physically deletes it from the database. If the dataset is checked out and the <paramref name="rollbackCheckout"/> is
+        /// True, the dataset's changes will be roll-backed and then the delete operation takes place, but if the <paramref name="rollbackCheckout"/> is false, 
+        /// The changes will be checked in as a new version and then the deletion operation is executed.
+        /// </summary>
+        /// <param name="datasetId">The identifier of the dataset to be checked-in.</param>
+        /// <param name="userName">The username that performs the check-in, which should be the same as the check-out username.</param>        
+        /// <param name="rollbackCheckout">Determines whether latest uncommitted changes should be rolled back or checked in before marking the dataset as deleted.</param>
+        /// <returns>True if the dataset is deleted, False otherwise.</returns>
         public bool DeleteDataset(Int64 datasetId, string userName, bool rollbackCheckout)
         {
             Contract.Requires(datasetId >= 0);
@@ -189,11 +277,17 @@ namespace BExIS.Dlm.Services.Data
             return (true);
         }
 
+        /// <summary>
+        /// Physically deletes the whole dataset, including its versions and data tuples, from the database.
+        /// </summary>
+        /// <param name="datasetId">The identifier of the dataset to be checked-in.</param>
+        /// <returns>True if the dataset is purged, False otherwise.</returns>
+        /// <remarks>There is no way to recover the dataset after this method has successfully purged it.</remarks>
         public bool PurgeDataset(Int64 datasetId)
         {
             Contract.Requires(datasetId >= 0);
 
-            // Attention: when create and purge or delete tuple are called in one run (one http request) the is a problem with removal of tuples/ version/ dataset because having some reference!!!
+            // Attention: when create and purge or delete tuple are called in one run (one http request) the is a problem with removal of tuples/ version/ dataset because having some references!!!
             // but if they are called on a single dataset in 2 different http requests, there is no problem!?
             // perhaps the NH session is not flushed completely or has some references to the objects in the caches, as the session end function is not called yet! this is why an Evict before purge is required!
 
@@ -260,28 +354,54 @@ namespace BExIS.Dlm.Services.Data
         #region DatasetVersion
         
         /// <summary>
-        /// if dataset is checked in, get latest version bur returning whatever is in the tuples table from the requested version and before
-        /// if its checked out get a version before the latest Versions.OrderByDesc(Timestamp),Skip(1).Take(1)/ 
-        /// in case the user has asked for the latest version while the dataset is checked out, the new and unchanged tuples are in the Tuples table but deleted and changed one should be retrieved from the TupleVersions table
-        /// get the latest version by querying Tuples table for records with version <= latest version
+        /// Each dataset may have more than one versions, each having their own data tuples. The data tuples of the latest version are kept in a separate collection,
+        /// but the previous versions are scattered among the data tuple and historical tuple collections. The later is the place that acts as the place to keep record of
+        /// all the previous actions done on the dataset and its their results.
+        /// This method may be called to get the tuples of the version 2 while the current version is i.e. 10. 
+        /// Based on the status of the requested version, the method may use the tuple collection alone or in combination with the history records to rebuild the version as it was at its check-in time.
+        /// The versions are stored in the tuple collection in a differential way, so that the version 3 computes the differences to the version 2 and applies the difference only.
+        /// So retrieving algorithm in this method rebuilds the requested version from its own and previous versions' tuples.
+        /// If the latest version is requested and the dataset is checked in, the algorithm retrieves all tuples in the tuple collection associated with the current and all previous versions.
+        /// If the latest version is requested and the dataset is in checked-out state, the method retrieves the working copy tuples.
         /// </summary>
-        /// <param name="datasetVersion"></param>
-        /// <returns></returns>
+        /// <param name="datasetVersion">The object representing the data set version requested.</param>
+        /// <returns>A list of data tuples representing the associated data of the version requested.</returns>
+        /// <remarks>The returned list may contain normal and historic tuples, if the requested version is not the latest. All the tuples are <b>materialized</b>.</remarks>
         public List<AbstractTuple> GetDatasetVersionEffectiveTuples(DatasetVersion datasetVersion)
         {
             return getDatasetVersionEffectiveTuples(datasetVersion);
         }
 
+        /// <summary>
+        /// Returns one page of the data tuples of the dataset version requested. See <see cref="GetDatasetVersionEffectiveTuples"/> for more details about the effective tuples of a dataset.
+        /// </summary>
+        /// <param name="datasetVersion"></param>
+        /// <param name="pageNumber"></param>
+        /// <param name="pageSize"></param>
+        /// <returns>A list containing one page of maximum length of <paramref name="pageSize"/> from the effective tuples of the <paramref name="datasetVersion"/>.</returns>
+        /// <remarks>The actual returned tuples depend on the status of the dataset and whether the requested version is the latest.</remarks>
         public List<AbstractTuple> GetDatasetVersionEffectiveTuples(DatasetVersion datasetVersion, int pageNumber, int pageSize)
         {
             return getDatasetVersionEffectiveTuples(datasetVersion, pageNumber, pageSize);
         }
 
+        /// <summary>
+        /// Returns a list of <b>identifiers</b> of the effective tuples of the dataset version requested. See <see cref="GetDatasetVersionEffectiveTuples"/> for more details about the effective tuples of a dataset.
+        /// </summary>
+        /// <param name="datasetVersion">The object representing the data set version requested</param>
+        /// <returns>The list of identifiers of the specified version</returns>
         public List<Int64> GetDatasetVersionEffectiveTupleIds(DatasetVersion datasetVersion)
         {
             return getDatasetVersionEffectiveTupleIds(datasetVersion);
         }
 
+      
+        /// <summary>
+        /// Returns all checked-in versions of the dataset <paramref name="datasetId"/>. 
+        /// </summary>
+        /// <param name="datasetId">The identifier of the dataset.</param>
+        /// <returns>The list of checked-in versions of the dataset requested.</returns>
+        /// <remarks>The checked-out version, if exists, is not included in the return list.</remarks>
         public List<DatasetVersion> GetDatasettVersions(Int64 datasetId)
         {
             List<DatasetVersion> dsVersions = DatasetVersionRepo.Query(p => 
@@ -317,11 +437,90 @@ namespace BExIS.Dlm.Services.Data
             return (null);
         }
 
+        /// <summary>
+        /// Returns the dataset version specified by the version identifier <paramref name="versionId"/>.
+        /// If the requested version is the latest but the dataset is checked-out an exception is thrown.
+        /// </summary>
+        /// <param name="versionId">The identifier of the dataset version requested.</param>
+        /// <returns>The retrieved dataset version</returns>
+        /// <exception cref="Exception">The method throws an exception in the following cases:
+        ///     <list type="bullet">
+        ///         <item><description>The provided version is is greater than the latest version identifier</description></item>
+        ///         <item><description>The provided version identifier is not associated with any version.</description></item>
+        ///         <item><description>The identifier is pointing to a version, but the version is not associated to any dataset (orphan version).</description></item>
+        ///         <item><description>The version is associated to a dataset which is marked as deleted.</description></item>
+        ///         <item><description>The identifier is pointing to a working copy, which means the dataset is checked out and the identifier is pointing to the latest (not committed working copy).</description></item>
+        ///     </list>
+        /// </exception>
+        public DatasetVersion GetDatasetVersion(Int64 versionId)
+        {
+            /// check whether the version id is in fact the latest? the latest checked in version should be returned. if dataset is checked out, the latest stored version is hidden yet.
+            /// If the dataset is marked as deleted its like that it is not there at all
+            /// get the latest version from the Versions property, or run a direct query on the db
+            /// get the latest version by querying Tuples table for records with version <= latest version
+
+            // the requested version is earlier than the latest regardless of check-in/ out status or its the latest version and the dataset is checked in.
+            DatasetVersion dsVersion = DatasetVersionRepo.Query(p =>
+                                        p.Id == versionId
+                                        && (
+                                                    (p.Dataset.Status == DatasetStatus.CheckedIn && p.Status == DatasetVersionStatus.CheckedIn)
+                                                || (p.Dataset.Status != DatasetStatus.Deleted && p.Status == DatasetVersionStatus.Old)
+                                            )
+                                        )
+                                      .FirstOrDefault();
+            if (dsVersion != null)
+                return (dsVersion);
+
+            // else there is a problem, try to find and report it
+            Dataset dataset = DatasetVersionRepo.Get(versionId).Dataset; // it would be nice to not fetch the dataset!
+
+            if (dataset.Status == DatasetStatus.Deleted)
+                throw new Exception(string.Format("Dataset version {0} is not associated with any dataset.", versionId));
+            if (dataset.Status == DatasetStatus.Deleted)
+                throw new Exception(string.Format("Dataset {0} is deleted", dataset.Id));
+            Int64 latestVersionId = dataset.Versions.Where(p => p.Status == DatasetVersionStatus.CheckedIn).Select(p => p.Id).First();// .OrderByDescending(t => t.Timestamp).First().Id;
+            if (versionId > latestVersionId)
+                throw new Exception(string.Format("Invalid version id. The version id {0} is greater than the latest version number!", versionId));
+
+            if (latestVersionId.Equals(versionId) && dataset.Status == DatasetStatus.CheckedOut) // its a request for the working copy which is hidden
+                throw new Exception(string.Format("Invalid version is requested. The version {0} points to the working copy!", versionId));
+            return null;
+        }
+
+        /// <summary>
+        /// Returns the latest version of the dataset <paramref name="datasetId"/> if the dataset is in checked-in state, 
+        /// otherwise it throws an exception.
+        /// </summary>
+        /// <param name="datasetId">The identifier of the dataset</param>
+        /// <returns>The latest dataset version</returns>
+        /// <exception cref="Exception">The method throws an exception if the dataset does not exist, is deleted, or is checked out.</exception>
         public DatasetVersion GetDatasetLatestVersion(Int64 datasetId)
         {
             return getDatasetLatestVersion(datasetId);
         }
 
+        /// <summary>
+        /// Returns the latest version of the dataset <paramref name="dataset"/> if the dataset is in checked-in state, 
+        /// otherwise it throws an exception.
+        /// </summary>
+        /// <param name="dataset">The dataset instance</param>
+        /// <returns>The latest version of the dataset</returns>
+        /// <exception cref="Exception">The method throws an exception if the dataset is null, deleted, or checked out.</exception>
+        public DatasetVersion GetDatasetLatestVersion(Dataset dataset)
+        {
+            /// the latest checked in version should be returned.
+            /// if dataset is checked out, exception
+            /// If the dataset is marked as deleted its like that it is not there at all
+
+            return getDatasetLatestVersion(dataset);
+        }
+
+        /// <summary>
+        /// Returns a list of the latest versions of the provided <paramref name="datasetIds"/> including/ excluding the checked out versions.
+        /// </summary>
+        /// <param name="datasetIds">The list of identifiers of the datasets whose their latest versions is requested</param>
+        /// <param name="includeCheckouts">Determines whether the checked out versions should be included in the result.</param>
+        /// <returns>The list of the latest versions of the provided datasets</returns>
         public List<DatasetVersion> GetDatasetLatestVersions(List<Int64> datasetIds, bool includeCheckouts = false)
         {
             if (includeCheckouts) // the working copy versions of checked out datasets are also included
@@ -351,6 +550,11 @@ namespace BExIS.Dlm.Services.Data
            //return (qu.ToList());
         }
 
+        /// <summary>
+        /// Returns a list of the latest versions of all datasets including/ excluding the checked out versions.
+        /// </summary>
+        /// <param name="includeCheckouts">Determines whether the checked out versions should be included in the result.</param>
+        /// <returns>The list of the latest versions of all datasets</returns>
         public List<DatasetVersion> GetDatasetLatestVersions(bool includeCheckouts = false)
         {
             if (includeCheckouts) // the working copy versions of checked out datasets are also included
@@ -381,6 +585,16 @@ namespace BExIS.Dlm.Services.Data
             //return (qu.ToList());
         }
 
+        public DatasetVersion GetDatasetWorkingCopy(Int64 datasetId)
+        {
+            return getDatasetWorkingCopy(datasetId);
+        }
+
+        /// <summary>
+        /// Returns the metadata of the latest versions of all datasets, alongside with their identifiers including/ excluding the checked out versions.
+        /// </summary>
+        /// <param name="includeCheckouts">Determines whether the checked out versions should be included in the result.</param>
+        /// <returns>The Dictionary of the identifier/ metadata pairs of the latest versions of all datasets</returns>
         public Dictionary<Int64, XmlDocument> GetDatasetLatestMetadataVersions(bool includeCheckouts = false)
         {
             if (includeCheckouts) // the working copy versions of checked out datasets are also included
@@ -409,6 +623,11 @@ namespace BExIS.Dlm.Services.Data
             //return (qu.ToList());
         }
 
+        /// <summary>
+        /// Returns the list of identifiers of the latest versions of all datasets, alongside with their identifiers including/ excluding the checked out versions.
+        /// </summary>
+        /// <param name="includeCheckouts">Determines whether the checked out versions should be included in the result.</param>
+        /// <returns>The list of the identifiers of the latest versions of all datasets</returns>
         public List<Int64> GetDatasetLatestIds(bool includeCheckouts = false)
         {
             if (includeCheckouts) // the working copy versions of checked out datasets are also included
@@ -437,9 +656,14 @@ namespace BExIS.Dlm.Services.Data
             //return (qu.ToList());
         }
 
+        /// <summary>
+        /// Returns the metadata of the latest versions of the dataset <param name="datasetId"></param>.
+        /// </summary>
+        /// <param name="includeCheckouts">Determines whether the method should return the metadata if the dataset is checked-out.</param>
+        /// <returns>The metadata of the latest version of the specified dataset as an <typeparamref name="XmlDocument"/>.</returns>
         public XmlDocument GetDatasetLatestMetadataVersion(Int64 datasetId, bool includeCheckouts = false)
         {
-            if (includeCheckouts) // the working copy versions of checked out datasets are also included
+            if (includeCheckouts) // the working copy version of checked out dataset is also included
             {
                 var q1 = DatasetVersionRepo.Query(p =>
                                 (p.Dataset.Status == DatasetStatus.CheckedIn || p.Dataset.Status == DatasetStatus.CheckedOut)
@@ -448,7 +672,7 @@ namespace BExIS.Dlm.Services.Data
                         ).Select(p => p.Metadata);
                 return (q1.FirstOrDefault());
             }
-            else //just latest checked in versions or checked in datasets 
+            else //just latest checked in version of the checked in dataset
             {
                 var q1 = DatasetVersionRepo.Query(p =>
                                 (p.Dataset.Status == DatasetStatus.CheckedIn || p.Dataset.Status == DatasetStatus.CheckedOut) // include checked in (latest) versions of currently checked out datasets
@@ -467,88 +691,12 @@ namespace BExIS.Dlm.Services.Data
             //return (qu.ToList());
         }
 
-        public DatasetVersion GetDatasetLatestVersion(Dataset dataset)
-        {
-            /// the latest checked in version should be returned.
-            /// if dataset is checked out, exception
-            /// If the dataset is marked as deleted its like that it is not there at all
-
-            return getDatasetLatestVersion(dataset);
-        }
-
-        public DatasetVersion GetDatasetVersion(Int64 versionId)
-        {
-            /// check whether the version id is in fact the latest? the latest checked in version should be returned. if dataset is checked out, the latest stored version is hidden yet.
-            /// If the dataset is marked as deleted its like that it is not there at all
-            /// get the latest version from the Versions property, or run a direct query on the db
-            /// get the latest version by querying Tuples table for records with version <= latest version
-
-            // the requested version is earlier than the latest regardless of check-in/ out status or its the latest version and the dataset is checked in.
-            DatasetVersion dsVersion = DatasetVersionRepo.Query(p => 
-                                        p.Id == versionId
-                                        && (
-                                                    (p.Dataset.Status == DatasetStatus.CheckedIn    && p.Status == DatasetVersionStatus.CheckedIn)
-                                                ||  (p.Dataset.Status != DatasetStatus.Deleted      && p.Status == DatasetVersionStatus.Old)
-                                            )
-                                        )
-                                      .FirstOrDefault();
-            if (dsVersion != null)
-                return (dsVersion);
-            
-            // else there is a problem, try to find and report it
-            Dataset dataset = DatasetVersionRepo.Get(versionId).Dataset; // it would be nice to not fetch the dataset!
-
-            if (dataset.Status == DatasetStatus.Deleted)
-                throw new Exception(string.Format("Dataset version {0} is not associated with any dataset.", versionId));
-            if (dataset.Status == DatasetStatus.Deleted)
-                throw new Exception(string.Format("Dataset {0} is deleted", dataset.Id));
-            Int64 latestVersionId = dataset.Versions.Where(p=> p.Status == DatasetVersionStatus.CheckedIn).Select(p=>p.Id).First();// .OrderByDescending(t => t.Timestamp).First().Id;
-            if (versionId > latestVersionId)
-                throw new Exception(string.Format("Invalid version id. The version id {0} is greater than the latest version number!", versionId));
-
-            if (latestVersionId.Equals(versionId) && dataset.Status == DatasetStatus.CheckedOut) // its a request for the working copy which is hidden
-                throw new Exception(string.Format("Invalid version is requested. The version {0} points to the working copy!", versionId));
-            return null;
-        }
-
-        public DatasetVersion GetDatasetWorkingCopy(Int64 datasetId)
-        {
-            return getDatasetWorkingCopy(datasetId);
-        }
-
-        ///// <summary>
-        ///// tries to return the latest checked in version, if not existing, then tries to return the checked out one
-        ///// designed for multiple edit/ single check in scenarios
-        ///// </summary>
-        ///// <param name="datasetId"></param>
-        ///// <returns></returns>
-        //public DatasetVersion GetDatasetVersion(Int64 datasetId)
-        //{
-        //    try
-        //    {
-        //        return getDatasetLatestVersion(datasetId);
-        //    }
-        //    catch
-        //    {
-        //        try
-        //        {
-        //            return getDatasetWorkingCopy(datasetId);
-        //        }
-        //        catch
-        //        {
-        //            throw new Exception(string.Format("Not able to retrieve dataset {0}!", datasetId));
-        //        }
-        //    }
-            
-        //}
-       
         /// <summary>
-        /// report what has been done by this version. deletes, updates, new records and changes in the dataset attributes
+        /// reports what changes have been done by the version specified by <paramref name="versionId"/>. Deletions, updates, new records, and changes in the dataset attributes are among the reported items.
         /// </summary>
-        /// <param name="datasetId"></param>
         /// <param name="versionId"></param>
-        /// <returns></returns>
-        public DatasetVersion GetDatasetVersionProfile(Int64 datasetId, Int64 versionId)
+        /// <returns>Not clearly defined it</returns>
+        public object GetDatasetVersionProfile(Int64 versionId)
         {
             /// get the latest version from the Versions property, or run a direct query on the db
             /// get the latest version by querying Tuples table for records with version <= latest version
@@ -557,17 +705,20 @@ namespace BExIS.Dlm.Services.Data
         }
 
         /// <summary>
-        /// there is no need to pass metadata, extendedPropertyValues, contentDescriptors .. as they can be assigned to the version before sending it to this editing method
-        /// Just if they are null, they will not affect the version. deleting these items should be conducted through proper methods of the Dataset Manager
+        /// Applies the submitted changes to the working copy and persists the changes but does <b>NOT</b> check-in the dataset.
+        /// The changes are coming in the form of the tuples to be added, deleted, or edited.
+        /// The general procedure of making changes is CheckOut, Edit (one or more times), CheckIn or Rollback.
+        /// there is no need to pass metadata, extendedPropertyValues, contentDescriptors .. as they can be assigned to the working copy version before sending it to the method.
+        /// Just if they are null, they will not affect the version. 
         /// The general procedure is CheckOut, Edit*, CheckIn or Rollback
         /// While the dataset is checked out, all the changes go to the latest+1 version which acts like a working copy
         /// </summary>
-        /// <param name="workingCopyDatasetVersion"></param>
-        /// <param name="createdTuples"></param>
-        /// <param name="editedTuples"></param>
-        /// <param name="deletedTuples"></param>
+        /// <param name="workingCopyDatasetVersion">The working copy version that accepts the changes.</param>
+        /// <param name="createdTuples">The list of the new tuples to be added to the working copy.</param>
+        /// <param name="editedTuples">The list of the tuples whose values have been changed and the changes should be considered in the working copy.</param>
+        /// <param name="deletedTuples">The list of existing tuples to be deleted from the working copy.</param>
         /// <param name="unchangedTuples">to be removed</param>
-        /// <returns></returns>
+        /// <returns>The working copy having the changes applied on it.</returns>
         public DatasetVersion EditDatasetVersion(DatasetVersion workingCopyDatasetVersion,
             ICollection<DataTuple> createdTuples, ICollection<DataTuple> editedTuples, ICollection<DataTuple> deletedTuples, ICollection<DataTuple> unchangedTuples = null
             //,ICollection<ExtendedPropertyValue> extendedPropertyValues, ICollection<ContentDescriptor> contentDescriptors
@@ -984,7 +1135,7 @@ namespace BExIS.Dlm.Services.Data
         }
 
         /// <summary>
-        /// checks out the dataset and creates a new version on it. the new version acts like a working copy while it is not committed, hence editable.
+        /// checks out the dataset and creates a new version on it. The new version acts like a working copy while it is not committed, hence editable.
         /// </summary>
         /// <param name="datasetId"></param>
         /// <param name="userName"></param>
@@ -1315,13 +1466,27 @@ namespace BExIS.Dlm.Services.Data
         #endregion
 
         #region DataTuple
-
+        /// <summary>
+        /// Using the provided values creates a data tuple, attaches it to the version and persists it in the database. 
+        /// This method does not affect the status of the dataset version.
+        /// </summary>
+        /// <param name="orderNo">The order of the data tuple in the list of tuples</param>
+        /// <param name="variableValues">The values to be considered as the data tuple. They must be attached to their corresponding variables according to the dataset's data structure.</param>
+        /// <param name="amendments">Each data tuple can have amendments and if provided, the method attaches them to the data tuple.</param>
+        /// <param name="datasetVersion">The version of the dataset the data tuple is attached to. The version must be checked-out.</param>
+        /// <returns>the created data tuple</returns>
+        /// <exception cref="Exception">throws and exception if the dataset version is not checked-out.</exception>
         public DataTuple CreateDataTuple(int orderNo, ICollection<VariableValue> variableValues, ICollection<Amendment> amendments, DatasetVersion datasetVersion)
         {
             //Contract.Requires(!string.IsNullOrWhiteSpace(name));
             Contract.Requires(datasetVersion != null);
 
             Contract.Ensures(Contract.Result<DataTuple>() != null && Contract.Result<DataTuple>().Id >= 0);
+            if (datasetVersion.Status != DatasetVersionStatus.CheckedOut)
+            {
+                throw new Exception(string.Format("The dataset version {0} must be checked-out!", datasetVersion.Id));
+            }
+
             DataTuple e = new DataTuple()
             {
                 OrderNo = orderNo,
@@ -1387,10 +1552,15 @@ namespace BExIS.Dlm.Services.Data
             return (true);
         }
 
+        /// <summary>
+        /// Provided that the data tuple entity contains some changes, the method persists the changes into the database.
+        /// </summary>
+        /// <param name="entity">The data tuple containing the changes.</param>
+        /// <returns>The same data tuple having the changes applied.</returns>
         public DataTuple UpdateDataTuple(DataTuple entity)
         {
-            Contract.Requires(entity != null, "provided entity can not be null");
-            Contract.Requires(entity.Id >= 0, "provided entity must have a permant ID");
+            Contract.Requires(entity != null, "provided entity can not be null.");
+            Contract.Requires(entity.Id >= 0, "provided entity must have a permanent ID.");
 
             Contract.Ensures(Contract.Result<DataTuple>() != null && Contract.Result<DataTuple>().Id >= 0, "No entity is persisted!");
 
@@ -1410,8 +1580,20 @@ namespace BExIS.Dlm.Services.Data
 
         #region Extended Property Value
 
-        public ExtendedPropertyValue CreateExtendedPropertyValue(string value, string note, DateTime samplingTime, DateTime resultTime, ObtainingMethod obtainingMethod,
-            Int64 extendedPropertyId, DatasetVersion datasetVersion)
+        /// <summary>
+        /// An extended property is a custom property that is assigned to a dataset version in addition to the predefined properties. Then each dataset version owner/ accessor 
+        /// can provide a value for the attached properties.
+        /// </summary>
+        /// <param name="extendedPropertyId">The identifier of the extended property.</param>
+        /// <param name="value">The value to be assigned to the extended property of the dataset version.</param>
+        /// <param name="note"><see cref="DataValue"/></param>
+        /// <param name="samplingTime"><see cref="DataValue"/></param>
+        /// <param name="resultTime"><see cref="DataValue"/></param>
+        /// <param name="obtainingMethod"><see cref="DataValue"/></param>
+        /// <param name="datasetVersion">The dataset version receiving the property value</param>
+        /// <returns>The extended property value linked to its <see cref="ExtendedProperty"/> and the <see cref="DatasetVersion"/></returns>
+        public ExtendedPropertyValue CreateExtendedPropertyValue(Int64 extendedPropertyId, string value, string note, DateTime samplingTime, DateTime resultTime, ObtainingMethod obtainingMethod,
+             DatasetVersion datasetVersion)
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(value));
             Contract.Requires(extendedPropertyId > 0);
@@ -1443,6 +1625,19 @@ namespace BExIS.Dlm.Services.Data
 
         #region Amendments
 
+        /// <summary>
+        /// An amendment is like a variable value that is added to a data tuple. The difference is that the amendment does not need to be defined in the dataset's structure 
+        /// and also not all the data tuples need to have the same amendments.
+        /// This method creates and amendment object, attaches it to the data tuple but does <b>NOT</b> persist it.
+        /// </summary>
+        /// <param name="value"><see cref="DataValue"/></param>
+        /// <param name="note"><see cref="DataValue"/></param>
+        /// <param name="samplingTime"><see cref="DataValue"/></param>
+        /// <param name="resultTime"><see cref="DataValue"/></param>
+        /// <param name="obtainingMethod"><see cref="DataValue"/></param>
+        /// <param name="parameterId">The identifier of the parameter that the amendment will be linked to. needs more clarification</param>
+        /// <param name="tuple">The data tuple receiving the amendment.ku</param>
+        /// <returns></returns>
         public Amendment CreateAmendment(string value, string note, DateTime samplingTime, DateTime resultTime, ObtainingMethod obtainingMethod, Int64 parameterId, DataTuple tuple)
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(value));
@@ -1474,6 +1669,21 @@ namespace BExIS.Dlm.Services.Data
 
         #region Variable Value
 
+        /// <summary>
+        /// This method creates a variable value and returns it without persisting the object in the database. Usually the returned variable value should be added to a data tuple which in turn is belonging to a data set version.
+        /// A value is a compound object holding information about a single event (sampling). The event can be a(n) measurement, observation, estimation, simulation, or computation of a feature of an entity.
+        /// The value can be a assigned to a variable or a parameter based on the design of the data structure.
+        /// </summary>
+        /// <param name="value">The result of the event which can be a(n) measurement, observation, estimation, simulation, or computation</param>
+        /// <param name="note">A free format, but short, description about the value</param>
+        /// <param name="samplingTime">The exact time of the start of the event. It shows when the sampling is started.</param>
+        /// <param name="resultTime">The sampling, or the processing may take time (like in the computation or simulation cases), also some devices/ sensors have a response time. The parameter captures the time when the result (value) is ready.
+        /// The result time and its difference to sampling time are important for some analyses.
+        /// </param>
+        /// <param name="obtainingMethod">Determines how the values is obtained, which is one of the measurement, observation, estimation, simulation, or computation cases.</param>
+        /// <param name="variableId">The identifier of the variable that the value is belonging to.</param>
+        /// <param name="parameterValues">If the variable has parameters attached, the parameter values are passed alongside, so that the method links them to their corresponding variable value using <paramref name="variableId"/>.</param>
+        /// <returns>A transient object of type <seealso cref="VariableValue"/>.</returns>
         public VariableValue CreateVariableValue(string value, string note, DateTime samplingTime, DateTime resultTime, ObtainingMethod obtainingMethod, Int64 variableId, ICollection<ParameterValue> parameterValues)
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(value));
@@ -1504,6 +1714,16 @@ namespace BExIS.Dlm.Services.Data
 
         #region Parameter Value
 
+        /// <summary>
+        /// Creates a parameter value similar to <see cref="CreateVariableValue"/>.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="note"></param>
+        /// <param name="samplingTime"></param>
+        /// <param name="resultTime"></param>
+        /// <param name="obtainingMethod"></param>
+        /// <param name="parameterId"></param>
+        /// <returns>A transient object of type <seealso cref="ParameterValue"/>.</returns>
         public ParameterValue CreateParameterValue(string value, string note, DateTime samplingTime, DateTime resultTime, ObtainingMethod obtainingMethod, Int64 parameterId)
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(value));
@@ -1533,7 +1753,19 @@ namespace BExIS.Dlm.Services.Data
 
         #region Content Descriptor
 
-        // Rename the function to Add... 
+        /// <summary>
+        /// Resource descriptors are the way to link resources to data set versions (and some other entity types, too).
+        /// The resources can be persisted in the local or a remote file system or any other location reachable via a URL.
+        /// The resource itself can be any type of file, service returning a resource, a normal webpage, and so on.
+        /// The method creates a resource descriptor, links it to the provided data set version and persists the descriptor.
+        /// </summary>
+        /// <param name="name">A friendly name for the resource, mainly used in the UI</param>
+        /// <param name="mimeType">The type of the resource. Used in the methods that transfer and/or process the resource</param>
+        /// <param name="uri">The URI of the resource, may contain protocol, access method, authorization information , etc.</param>
+        /// <param name="orderNo">The order of the resource in the list of all resources associated to the same dataset version.</param>
+        /// <param name="datasetVersion"></param>
+        /// <returns>A persisted <seealso cref="ContentDescriptor"/> object linked to the <paramref name="datasetVersion"/></returns>
+        /// <remarks>The method does not have access to the resource itself, and does not persist it.</remarks>
         public ContentDescriptor CreateContentDescriptor(string name, string mimeType, string uri, Int32 orderNo, DatasetVersion datasetVersion)
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(name));
@@ -1562,6 +1794,11 @@ namespace BExIS.Dlm.Services.Data
             return (e);
         }
 
+        /// <summary>
+        /// Detaches the content descriptor object from its corresponding dataset version, and then deletes the content descriptor.
+        /// </summary>
+        /// <param name="entity">The content descriptor object to be deleted.</param>
+        /// <returns>True if successful, False otherwise.</returns>
         public bool DeleteContentDescriptor(ContentDescriptor entity)
         {
             Contract.Requires(entity != null);
@@ -1582,6 +1819,11 @@ namespace BExIS.Dlm.Services.Data
             return (true);
         }
 
+        /// <summary>
+        /// Detaches a list of content descriptor objects from their, possibly different, corresponding dataset versions, and then deletes the content descriptors.
+        /// </summary>
+        /// <param name="entities">The content descriptor entities to be deleted.</param>
+        /// <returns></returns>
         public bool DeleteContentDescriptor(IEnumerable<ContentDescriptor> entities)
         {
             Contract.Requires(entities != null);
@@ -1604,10 +1846,16 @@ namespace BExIS.Dlm.Services.Data
             return (true);
         }
 
+        /// <summary>
+        /// Having a changed  content descriptor entity, the method applies the changes to the original entity and persists the changes.
+        /// </summary>
+        /// <param name="entity">The edited version of the content descriptor entity.</param>
+        /// <returns>The changed instance.</returns>
+        /// <remarks>The entity should already exists in the database.</remarks>
         public ContentDescriptor UpdateContentDescriptor(ContentDescriptor entity)
         {
             Contract.Requires(entity != null, "provided entity can not be null");
-            Contract.Requires(entity.Id >= 0, "provided entity must have a permant ID");
+            Contract.Requires(entity.Id >= 0, "provided entity must have a permanent ID");
 
             Contract.Ensures(Contract.Result<ContentDescriptor>() != null && Contract.Result<ContentDescriptor>().Id >= 0, "No entity is persisted!");
 
@@ -1624,9 +1872,17 @@ namespace BExIS.Dlm.Services.Data
 
         #region Associations
 
-        // there is no need for RemoveDataView as it is equal to DeleteDataView. DataView must be associated with a dataset or some datastructures but not both
-        // if you like to promote a view from a dataset to a datastructure, set its Dataset property to null and send it to DataStructureManager.AddDataView
+        // there is no need for RemoveDataView as it is equal to DeleteDataView. DataView must be associated with a dataset or some data structures but not both
+        // if you like to promote a view from a dataset to a data structure, set its Dataset property to null and send it to DataStructureManager.AddDataView
 
+        /// <summary>
+        /// Adds a data view to the designated dataset. This method does not execute the view, but only associates it with the dataset so that later its application can be requested.
+        /// A data view is the specification of a set of criteria to filter a dataset vertically and horizontally in on demand.
+        /// Applying a data view on a dataset version filters its data tuples and variables if the dataset is structured.
+        /// For unstructured dataset the data view can be used to pass the filtering criteria to a proper processing tool.
+        /// </summary>
+        /// <param name="dataset">The dataset the view is linked to</param>
+        /// <param name="view">The data view to be associated to the <paramref name="dataset"/>.</param>
         public void AddDataView(Dataset dataset, DataView view)
         {
             Contract.Requires(dataset != null );
@@ -1657,6 +1913,11 @@ namespace BExIS.Dlm.Services.Data
             }
         }
 
+        /// <summary>
+        /// Detaches the data view from its dataset and deletes the view from the database.
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns>True if successful, False otherwise.</returns>
         public bool DeleteDataView(DataView entity)
         {
             Contract.Requires(entity != null);

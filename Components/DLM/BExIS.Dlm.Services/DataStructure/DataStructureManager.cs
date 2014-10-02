@@ -8,6 +8,11 @@ using DS = BExIS.Dlm.Entities.DataStructure;
 
 namespace BExIS.Dlm.Services.DataStructure
 {
+    /// <summary>
+    /// DataStructureManager class is responsible for CRUD (Create, Read, Update, Delete) operations on the aggregate area of the data structure.
+    /// The data structure aggregate area is a set of entities like <see cref="DataStructure"/>, <see cref="VariableUsage"/>, and <see cref="ParameterUsage"/> that in 
+    /// cooperation together can materialize the formal specification of the structure of group of datasets.
+    /// </summary>
     public sealed class DataStructureManager
     {
 
@@ -22,16 +27,40 @@ namespace BExIS.Dlm.Services.DataStructure
 
         #region Data Readers
 
-        // provide read only repos for the whole aggregate area
+        /// <summary>
+        /// Provides read-only querying and access to structured data structures
+        /// </summary>
         public IReadOnlyRepository<StructuredDataStructure> StructuredDataStructureRepo { get; private set; }
+
+        /// <summary>
+        /// Provides read-only querying and access to unstructured data structures
+        /// </summary>
         public IReadOnlyRepository<UnStructuredDataStructure> UnStructuredDataStructureRepo { get; private set; }
+
+        /// <summary>
+        /// Provides read-only querying and access to both data structure types
+        /// </summary>
         public IReadOnlyRepository<DS.DataStructure> AllTypesDataStructureRepo { get; private set; }
+
+        /// <summary>
+        /// Provides read-only querying and access to variables
+        /// </summary>
         public IReadOnlyRepository<Variable> VariableRepo { get; private set; }
 
         #endregion
 
         #region StructuredDataStructure
 
+        /// <summary>
+        /// Creates a structured data structure <seealso cref="StructuredDataStructure"/> and persists the entity in the database.
+        /// </summary>
+        /// <param name="name">The name of the data structure</param>
+        /// <param name="description">A free text describing the purpose, usage, and/or the domain of the data structure usage.</param>
+        /// <param name="xsdFileName">Not in use.</param>
+        /// <param name="xslFileName">Not in use.</param>
+        /// <param name="indexerType">If the data structure is used as a matrix, The indexer type show what kind of column would be represented by the indexer variable. <see cref="DataStructureCategory"/></param>
+        /// <param name="indexer">The variable indicating the first indexing column of the matrix, if the data structure is representing a matrix.</param>
+        /// <returns>The persisted structured data structure instance.</returns>
         public StructuredDataStructure CreateStructuredDataStructure(string name, string description, string xsdFileName, string xslFileName, DataStructureCategory indexerType, Variable indexer = null)
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(name));
@@ -57,6 +86,12 @@ namespace BExIS.Dlm.Services.DataStructure
             return (e);            
         }
 
+        /// <summary>
+        /// If the <paramref name="entity"/> is not associated to any <see cref="Dateset"/>, the method deletes it from the database.
+        /// </summary>
+        /// <param name="entity">The data structure object to be deleted.</param>
+        /// <returns>True if the data structure is deleted, False otherwise.</returns>
+        /// <remarks>Database exceptions are not handled intentionally, so that if the data structure is related to some datasets, a proper exception will be thrown.</remarks>
         public bool DeleteStructuredDataStructure(StructuredDataStructure entity)
         {
             Contract.Requires(entity != null);
@@ -74,6 +109,14 @@ namespace BExIS.Dlm.Services.DataStructure
             return (true);
         }
 
+        /// <summary>
+        /// If non of the <paramref name="entities"/> are associated to any <see cref="Dateset"/> entity, the method deletes them from the database.
+        /// </summary>
+        /// <param name="entities">The data structure objects to be deleted in a all or none approach.</param>
+        /// <returns>True if all the data structures are deleted, False otherwise.</returns>
+        /// <remarks>If any of the data structure objects is used by any dataset, the whole transaction will be roll backed, so that the other entities are also not deleted.
+        /// <br>Database exceptions are not handled intentionally, so that if the data structure is related to some datasets, a proper exception will be thrown.</br>
+        /// </remarks>
         public bool DeleteStructuredDataStructure(IEnumerable<StructuredDataStructure> entities)
         {
             Contract.Requires(entities != null);
@@ -94,10 +137,15 @@ namespace BExIS.Dlm.Services.DataStructure
             return (true);
         }
 
+        /// <summary>
+        /// Applies changes to the data structure and persists them in the database.
+        /// </summary>
+        /// <param name="entity">The entity containing the changes.</param>
+        /// <returns>The data structure entity with the changes applied.</returns>
         public StructuredDataStructure UpdateStructuredDataStructure(StructuredDataStructure entity)
         {
             Contract.Requires(entity != null, "provided entity can not be null");
-            Contract.Requires(entity.Id >= 0, "provided entity must have a permant ID");
+            Contract.Requires(entity.Id >= 0, "provided entity must have a permanent ID");
 
             Contract.Ensures(Contract.Result<StructuredDataStructure>() != null && Contract.Result<StructuredDataStructure>().Id >= 0, "No entity is persisted!");
 
@@ -114,6 +162,11 @@ namespace BExIS.Dlm.Services.DataStructure
 
         #region UnStructuredDataStructure
 
+        /// <summary>
+        /// Creates an unstructured data structure <seealso cref="UnStructuredDataStructure"/> and persists it in the database.
+        /// </summary>
+        /// <param name="name">The name of the data structure</param>
+        /// <param name="description">A free text describing the purpose, usage, and/or the domain of the data structure usage.</param>
         public UnStructuredDataStructure CreateUnStructuredDataStructure(string name, string description)
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(name));
@@ -134,6 +187,12 @@ namespace BExIS.Dlm.Services.DataStructure
             return (e);
         }
 
+        /// <summary>
+        /// If the <paramref name="entity"/> is not associated to any <see cref="Dateset"/>, the method deletes it from the database.
+        /// </summary>
+        /// <param name="entity">The data structure object to be deleted.</param>
+        /// <returns>True if the data structure is deleted, False otherwise.</returns>
+        /// <remarks>Database exceptions are not handled intentionally, so that if the data structure is related to some datasets, a proper exception will be thrown.</remarks>
         public bool DeleteUnStructuredDataStructure(UnStructuredDataStructure entity)
         {
             Contract.Requires(entity != null);
@@ -151,6 +210,14 @@ namespace BExIS.Dlm.Services.DataStructure
             return (true);
         }
 
+        /// <summary>
+        /// If non of the <paramref name="entities"/> are associated to any <see cref="Dateset"/> entity, the method deletes them from the database.
+        /// </summary>
+        /// <param name="entities">The data structure objects to be deleted in a all or none approach.</param>
+        /// <returns>True if all the data structures are deleted, False otherwise.</returns>
+        /// <remarks>If any of the data structure objects is used by any dataset, the whole transaction will be roll backed, so that the other entities are also not deleted.
+        /// <br>Database exceptions are not handled intentionally, so that if the data structure is related to some datasets, a proper exception will be thrown.</br>
+        /// </remarks>
         public bool DeleteUnStructuredDataStructure(IEnumerable<UnStructuredDataStructure> entities)
         {
             Contract.Requires(entities != null);
@@ -171,6 +238,11 @@ namespace BExIS.Dlm.Services.DataStructure
             return (true);
         }
 
+        /// <summary>
+        /// Applies changes to the data structure and persists them in the database.
+        /// </summary>
+        /// <param name="entity">The entity containing the changes.</param>
+        /// <returns>The data structure entity with the changes applied.</returns>
         public UnStructuredDataStructure UpdateUnStructuredDataStructure(UnStructuredDataStructure entity)
         {
             Contract.Requires(entity != null, "provided entity can not be null");
@@ -190,6 +262,18 @@ namespace BExIS.Dlm.Services.DataStructure
 
         #region Associations
 
+        /// <summary>
+        /// Creates a link between a <see cref="StructuredDataStructure"/> and <see cref="DataAttribute"/>. This link is known as <see cref="Variable"/>.
+        /// In addition to what a variable inherits from the associated data attribute, it can have its own label, default and missing values, and optionality of its value.
+        /// </summary>
+        /// <param name="dataStructure">The structured data structure to be linked to the data attribute</param>
+        /// <param name="dataAttribute">The data attribute to be used in a data structure as a variable</param>
+        /// <param name="isValueOptional">Indicates whether the <see cref="VariableValue"/> associated to the variable is optional or not. This allows dataset to not provide data values for optional variables.</param>
+        /// <param name="label">The display name of the variable. It may differ from the associated data attribute name. The variable label usually indicates the role of the data attribute in the structure. 
+        /// Its possible for a data structure to use a data attribute more than once by creating more than one variables, hence having different labels.</param>
+        /// <param name="defaultValue">The default value of the associated variable values. Mainly considered for user interface purposes.</param>
+        /// <param name="missingValue">A specific sentinel value that when is put into the variable values, means those values are missing and should not be considered data.</param>
+        /// <returns>A created and persisted variable object.</returns>
         public Variable AddVariableUsage(StructuredDataStructure dataStructure, DataAttribute dataAttribute, bool isValueOptional, string label, string defaultValue, string missingValue)
         {
             Contract.Requires(dataStructure != null && dataStructure.Id >= 0);
@@ -228,6 +312,11 @@ namespace BExIS.Dlm.Services.DataStructure
             return (usage);
         }
 
+        /// <summary>
+        /// Detaches the data attribute and the data structure that were linked by the variable and then deletes the variable from the database.
+        /// </summary>
+        /// <param name="usage">The variable object to be deleted.</param>
+        /// <remarks>If the variable is referenced by any <see cref="DataValue"/> the method fails to delete the variable. Also, all the parameters associated to the variable will be deleted.</remarks>
         public void RemoveVariableUsage(Variable usage)
         {
             Contract.Requires(usage != null && usage.Id >= 0);
@@ -242,6 +331,16 @@ namespace BExIS.Dlm.Services.DataStructure
             }            
         }
 
+        /// <summary>
+        /// The method functions in a similar way to the <see cref="AddVariableUsage"/> method, but operates on a <see cref="Parameter"/>
+        /// </summary>
+        /// <param name="variableUsage"></param>
+        /// <param name="dataAttribute"></param>
+        /// <param name="isValueOptional"></param>
+        /// <param name="label"></param>
+        /// <param name="defaultValue"></param>
+        /// <param name="missingValue"></param>
+        /// <returns></returns>
         public Parameter AddParameterUsage(Variable variableUsage, DataAttribute dataAttribute, bool isValueOptional, string label, string defaultValue, string missingValue)
         {
             Contract.Requires(variableUsage != null && variableUsage.DataAttribute.Id >= 0);
@@ -281,6 +380,10 @@ namespace BExIS.Dlm.Services.DataStructure
             return (usage);
         }
 
+        /// <summary>
+        /// The method functions in a similar way to the <see cref="RemoveVariableUsage"/> method, but operates on a <see cref="Parameter"/>
+        /// </summary>
+        /// <param name="usage"></param>
         public void RemoveParameterUsage(Parameter usage)
         {
             Contract.Requires(usage != null && usage.Id >= 0);
@@ -293,6 +396,11 @@ namespace BExIS.Dlm.Services.DataStructure
             }
         }
 
+        /// <summary>
+        /// Adds a spanning view to the passed structured data structure. Spanning views are available and applicable to all datasets associated with the data structure.
+        /// </summary>
+        /// <param name="dataStructure">The structured data structure to add the data view to.</param>
+        /// <param name="view">The data view to be linked to the data structure as a spanning view.</param>
         public void AddDataView(BExIS.Dlm.Entities.DataStructure.StructuredDataStructure dataStructure, DataView view)
         {
             // view should not be connected to a Dataset. if so throw an exception and the caller must remove the relationship to that dataset and then add to a data structure
@@ -323,6 +431,11 @@ namespace BExIS.Dlm.Services.DataStructure
             }       
         }
 
+        /// <summary>
+        /// Adds a spanning view to the passed unstructured data structure. Spanning views are available and applicable to all datasets associated with the data structure.
+        /// </summary>
+        /// <param name="dataStructure">The unstructured data structure to add the data view to.</param>
+        /// <param name="view">The data view to be linked to the data structure as a spanning view.</param>
         public void AddDataView(BExIS.Dlm.Entities.DataStructure.UnStructuredDataStructure dataStructure, DataView view)
         {
             // view should not be connected to a Dataset. if so throw an exception and the caller must remove the relationship to that dataset and then add to a data structure
@@ -353,6 +466,11 @@ namespace BExIS.Dlm.Services.DataStructure
             }
         }
 
+        /// <summary>
+        /// Removes the relationship between the structured data structure and the view, neither the data structure nor the view.
+        /// </summary>
+        /// <param name="dataStructure">The data structure to be release from the relationship.</param>
+        /// <param name="view">The view to be release from the relationship.</param>
         public void RemoveDataView(BExIS.Dlm.Entities.DataStructure.StructuredDataStructure dataStructure, DataView view)
         {
             Contract.Requires(dataStructure != null && dataStructure.Id >= 0);
@@ -378,9 +496,15 @@ namespace BExIS.Dlm.Services.DataStructure
                 IRepository<StructuredDataStructure> repo = uow.GetRepository<StructuredDataStructure>();
                 repo.Put(dataStructure);
                 uow.Commit();
-            } throw new NotImplementedException();
+            } 
+            //throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Removes the relationship between the structured data structure and the view, neither the data structure nor the view.
+        /// </summary>
+        /// <param name="dataStructure">The data structure to be release from the relationship.</param>
+        /// <param name="view">The view to be release from the relationship.</param>
         public void RemoveDataView(BExIS.Dlm.Entities.DataStructure.UnStructuredDataStructure dataStructure, DataView view)
         {
             Contract.Requires(dataStructure != null && dataStructure.Id >= 0);
@@ -406,7 +530,8 @@ namespace BExIS.Dlm.Services.DataStructure
                 IRepository<UnStructuredDataStructure> repo = uow.GetRepository<UnStructuredDataStructure>();
                 repo.Put(dataStructure);
                 uow.Commit();
-            } throw new NotImplementedException();
+            } 
+            //throw new NotImplementedException();
         }
 
         #endregion

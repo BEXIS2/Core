@@ -209,7 +209,7 @@ namespace BExIS.Dlm.Services.MetadataStructure
             return (result);
         }
 
-        public MetadataPackageUsage AddMetadataPackageUsage(MDS.MetadataStructure structure, MetadataPackage package, string label, int minCardinality, int maxCardinality)
+        public MetadataPackageUsage AddMetadataPackageUsage(MDS.MetadataStructure structure, MetadataPackage package, string label, string description, int minCardinality, int maxCardinality)
         {
             Contract.Requires(package != null && package.Id >= 0);
             Contract.Requires(structure != null && structure.Id >= 0);
@@ -235,6 +235,7 @@ namespace BExIS.Dlm.Services.MetadataStructure
                 MetadataStructure = structure,
                 // if no label is provided, use the package name and a sequence number calculated by the number of occurrences of that package in the current structure
                 Label = !string.IsNullOrWhiteSpace(label) ? label : (count <= 0 ? package.Name : string.Format("{0} ({1})", package.Name, count)),
+                Description = description,
                 MinCardinality = minCardinality,
                 MaxCardinality = maxCardinality,
             };
