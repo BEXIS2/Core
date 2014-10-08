@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using BExIS.Security.Entities.Security;
 
 /// <summary>
 /// The security system contains three types of entities. This namespace is used for
@@ -19,123 +20,51 @@ namespace BExIS.Security.Entities.Subjects
     public class User : Subject
     {
         #region Attributes
-
-        /// <summary>
-        /// Get or set the email of the user.
-        /// </summary>
-        /// <remarks>
-        /// The security system needs that information for several reasons (e.g. password reset). 
-        /// </remarks>
-        /// <seealso cref="NA"/>        
+      
         public virtual string Email { get; set; }
 
-        /// <summary>
-        /// Get or set the registration date of the user.
-        /// </summary>
-        /// <remarks>
-        /// The security system does not require this information. Nevertheless, this 
-        /// information might be important for the administration / user management.
-        /// </remarks>
-        /// <seealso cref="NA"/> 
+        public virtual string Password { get; set; }
+        public virtual string PasswordSalt { get; set; }
+
+        public virtual string SecurityQuestion { get; set; }
+        public virtual string SecurityAnswer { get; set; }
+        public virtual string SecurityAnswerSalt { get; set; }
+
         public virtual DateTime RegistrationDate { get; set; }
-
-        /// <summary>
-        /// Get or set the last activity date of the user.
-        /// </summary>
-        /// <remarks>
-        /// The security system does not require this information. Nevertheless, this 
-        /// information might be important for the administration / user management.
-        /// </remarks>
-        /// <seealso cref="NA"/> 
         public virtual DateTime LastActivityDate { get; set; }
-
-        /// <summary>
-        /// Get or set the last lock out date of the user.
-        /// </summary>
-        /// <remarks>
-        /// The security system does not require this information. Nevertheless, this 
-        /// information might be important for the administration / user management.
-        /// </remarks>
-        /// <seealso cref="NA"/> 
         public virtual DateTime LastLockOutDate { get; set; }
-
-        /// <summary>
-        /// Get or set the last login date of the user.
-        /// </summary>
-        /// <remarks>
-        /// The security system does not require this information. Nevertheless, this 
-        /// information might be important for the administration / user management.
-        /// </remarks>
-        /// <seealso cref="NA"/> 
         public virtual DateTime LastLoginDate { get; set; }
-
-        /// <summary>
-        /// Get or set the last password change date of the user.
-        /// </summary>
-        /// <remarks>
-        /// The security system does not require this information. Nevertheless, this 
-        /// information might be important for the administration / user management.
-        /// </remarks>
-        /// <seealso cref="NA"/> 
         public virtual DateTime LastPasswordChangeDate { get; set; }
 
-        /// <summary>
-        /// Get or set the approval property of the user.
-        /// </summary>
-        /// <remarks>
-        /// The security system needs that information for authentication issues.
-        /// </remarks>
-        /// <seealso cref="NA"/> 
+        public virtual Boolean IsActive { get; set; }
         public virtual Boolean IsApproved { get; set; }
-
-        /// <summary>
-        /// Get or set the lock out property of the user.
-        /// </summary>
-        /// <remarks>
-        /// The security system needs that information for authentication issues.
-        /// </remarks>
-        /// <seealso cref="NA"/> 
         public virtual Boolean IsLockedOut { get; set; }
+
+        public virtual Int32 PasswordFailureCount { get; set; }
+        public virtual Int32 SecurityAnswerFailureCount { get; set; }
+
+        public virtual DateTime LastPasswordFailureDate { get; set; }
+        public virtual DateTime LastSecurityAnswerFailureDate { get; set; }
+
+        public virtual Authenticator ActiveAuthenticator { get; set; }
 
         #endregion
 
 
         #region Associations
 
-        /// <summary>
-        /// Get or set the roles of the user.
-        /// </summary>
-        /// <remarks>
-        /// The security system is based on the user-role security approach. That is why each 
-        /// user is assigned to a set of roles. This information is important to calculate 
-        /// the effective rights of the user, because the security system needs to have all 
-        /// relevant data for security calculations.
-        /// 
-        /// In addition, this information might be important for the administration / user management.
-        /// </remarks>
-        /// <seealso cref="NA"/>        
-        public virtual ICollection<Role> Roles { get; set; }
+        public virtual Authenticator Authenticator { get; set; }
+
+        public virtual ICollection<Group> Groups { get; set; }
 
         #endregion
 
 
         #region Methods
-
-        /// <summary>
-        /// Create an empty user construct.
-        /// </summary>
-        /// <remarks>
-        /// This is the constructor of the user entity. Since a user contains a 
-        /// collection of roles, this method is needed to create an empty user.
-        /// Otherwise, the collection is not going to be initialized.
-        /// </remarks>
-        /// <seealso cref="NA"/>
-        /// <param>
-        /// NA
-        /// </param>       
+      
         public User()
         {
-            Roles = new List<Role>();
+            Groups = new List<Group>();
         }
 
         #endregion

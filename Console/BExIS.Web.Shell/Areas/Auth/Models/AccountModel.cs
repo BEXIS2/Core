@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Web.Mvc;
+using BExIS.Security.Entities.Security;
 using DataAnnotationsExtensions;
 
 namespace BExIS.Web.Shell.Areas.Auth.Models
@@ -36,6 +37,13 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
 
         [Display(Name = "Remember me?")]
         public bool RememberMe { get; set; }
+
+        public AuthenticatorSelectListModel AuthenticatorList { get; set; }
+
+        public LogOnModel()
+        {
+            AuthenticatorList = new AuthenticatorSelectListModel();
+        }
     }
 
     public class AccountRegistrationModel

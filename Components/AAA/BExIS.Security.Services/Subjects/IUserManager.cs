@@ -16,6 +16,8 @@ namespace BExIS.Security.Services.Subjects
     {
         #region Attributes
 
+        bool AutoActivation { get; }
+
         /// <summary>
         ///
         /// </summary>
@@ -110,6 +112,8 @@ namespace BExIS.Security.Services.Subjects
         /// <param name="newPasswordAnswer"></param>
         bool ChangeSecurityQuestionAndSecurityAnswer(string userName, string password, string newPasswordQuestion, string newPasswordAnswer);
 
+        User CreateUser(string userName, long providerId);
+
         /// <summary>
         ///
         /// </summary>
@@ -121,7 +125,7 @@ namespace BExIS.Security.Services.Subjects
         /// <param name="passwordQuestion"></param>
         /// <param name="passwordAnswer"></param>
         /// <param name="status"></param>
-        User CreateUser(string userName, string email, string password, string passwordQuestion, string passwordAnswer, out UserCreateStatus status);
+        User CreateUser(string userName, string email, string password, string passwordQuestion, string passwordAnswer);
 
         // D
 
@@ -159,6 +163,8 @@ namespace BExIS.Security.Services.Subjects
         /// <param name="userName"></param>
         bool ExistsUserName(string userName);
 
+
+        bool ExistsUserWithUserNameAndAuthenticatorId(string userName, long authenticatorId);
         // F
 
         /// <summary>

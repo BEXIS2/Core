@@ -653,7 +653,7 @@ namespace BExIS.Security.Services.Objects
 
             if (users.Count() == 1)
             {
-                List<long> subjectIds = new List<long>(users.FirstOrDefault().Roles.Select(r => r.Id));
+                List<long> subjectIds = new List<long>(users.FirstOrDefault().Groups.Select(r => r.Id));
                 subjectIds.Add(users.FirstOrDefault().Id);
 
                 if (ExistsDataPermission(dataId, entityId, subjectIds, rightType))
@@ -687,7 +687,7 @@ namespace BExIS.Security.Services.Objects
                     List<long> featureIds = new List<long>(features.FirstOrDefault().Ancestors.Select(f => f.Id));
                     featureIds.Add(features.FirstOrDefault().Id);
 
-                    List<long> subjectIds = new List<long>(users.FirstOrDefault().Roles.Select(r => r.Id));
+                    List<long> subjectIds = new List<long>(users.FirstOrDefault().Groups.Select(r => r.Id));
                     subjectIds.Add(users.FirstOrDefault().Id);
 
                     if (ExistsFeaturePermission(featureIds, subjectIds))
@@ -720,9 +720,9 @@ namespace BExIS.Security.Services.Objects
                     List<long> featureIds = new List<long>(feature.Ancestors.Select(f => f.Id));
                     featureIds.Add(feature.Id);
 
-                    if(subject is Role)
+                    if(subject is Group)
                     {
-                        Role role = (Role)subject;
+                        Group role = (Group)subject;
                         return ExistsFeaturePermission(featureIds, new List<long>(){role.Id});
                     }
 
@@ -730,7 +730,7 @@ namespace BExIS.Security.Services.Objects
                     {
                         User user = (User)subject;
 
-                        List<long> subjectIds = new List<long>(user.Roles.Select(r => r.Id));
+                        List<long> subjectIds = new List<long>(user.Groups.Select(r => r.Id));
                         subjectIds.Add(user.Id);
 
                         return ExistsFeaturePermission(featureIds, subjectIds);
@@ -748,7 +748,7 @@ namespace BExIS.Security.Services.Objects
 
             if (users.Count() == 1)
             {
-                List<long> subjectIds = new List<long>(users.FirstOrDefault().Roles.Select(r => r.Id));
+                List<long> subjectIds = new List<long>(users.FirstOrDefault().Groups.Select(r => r.Id));
                 subjectIds.Add(users.FirstOrDefault().Id);
 
                 return DataPermissionsRepo.Query(p => subjectIds.Contains(p.Subject.Id) && p.EntityId.ToLower() == entityId.ToLower() && p.RightType == rightType).Select(p => p.DataId).ToList(); 

@@ -23,6 +23,14 @@
             <legend>Account Information</legend>
 
             <div class="editor-label">
+                @Html.LabelFor(m => m.AuthenticatorList.Id)
+            </div>
+            <div class="editor-field">
+                @Html.DropDownListFor(m => m.AuthenticatorList.Id, new SelectList(Model.AuthenticatorList.AuthenticatorList, "Id", "Name"))
+                @Html.ValidationMessageFor(m => m.AuthenticatorList.Id)
+            </div>
+
+            <div class="editor-label">
                 @Html.LabelFor(model => model.UserName)
             </div>
             <div class="editor-field">

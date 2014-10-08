@@ -6,6 +6,13 @@ using BExIS.Security.Services.Subjects;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Web.Shell.Areas.Auth.Models;
 using System.Globalization;
+using BExIS.Security.Services.Security;
+using BExIS.Security.Entities.Security;
+using System.Reflection;
+using BExIS.Security.Providers.Authentication;
+using System.Linq.Expressions;
+using System.Linq;
+using BExIS.Dlm.Entities.Data;
 
 namespace BExIS.Web.Shell.Areas.Auth.Controllers
 {
@@ -13,6 +20,10 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
     {
         public ActionResult Error()
         {
+            Func<Dataset, bool> x;
+
+            x = d => d.Versions.AsQueryable().FirstOrDefault().Metadata.GetElementsByTagName("Title").Item(0).Value == "hallo";
+
             return View();
         }
 
@@ -24,7 +35,6 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
 
         //
         // GET: /Account/LogOn
-
         public ActionResult LogOn()
         {
             if (Request.IsAuthenticated)
@@ -33,25 +43,34 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
             }
             else
             {
-                return View();
+                return View(new LogOnModel());
             }
         }
-
-        //
-        // POST: /Account/LogOn
 
         [HttpPost]
         public ActionResult LogOn(LogOnModel model, string returnUrl)
         {
             if (ModelState.IsValid)
             {
-                SubjectManager subjectManager = new SubjectManager();
+                AuthenticatorManager authenticatorManager = new AuthenticatorManager();
 
-                User user = subjectManager.GetUserByName(model.UserName);
+                Authenticator authenticator = authenticatorManager.GetAuthenticatorById(model.AuthenticatorList.Id);
 
-                if (subjectManager.ValidateUser(model.UserName, model.Password))
+                Assembly assembly = Assembly.Load(authenticator.ProjectPath);
+                Type type = assembly.GetType(authenticator.ClassPath);
+
+                IAuthenticationProvider authenticationProvider = (IAuthenticationProvider)Activator.CreateInstance(type, authenticator.ConnectionString);
+
+                if (authenticationProvider.IsUserAuthenticated(model.UserName, model.Password))
                 {
-                    FormsAuthentication.SetAuthCookie(user.Name, model.RememberMe);
+                    SubjectManager subjectManager = new SubjectManager();
+
+                    if(!subjectManager.ExistsUserWithUserNameAndAuthenticatorId(model.UserName, model.AuthenticatorList.Id))
+                    {
+                        subjectManager.CreateUser(model.UserName, model.AuthenticatorList.Id);
+                    }
+
+                    FormsAuthentication.SetAuthCookie(model.UserName, model.RememberMe);
                     if (Url.IsLocalUrl(returnUrl) && returnUrl.Length > 1 && returnUrl.StartsWith("/")
                         && !returnUrl.StartsWith("//") && !returnUrl.StartsWith("/\\"))
                     {
@@ -59,7 +78,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
                     }
                     else
                     {
-                        return RedirectToAction("Index", "Home", new { area = ""});
+                        return RedirectToAction("Index", "Home", new { area = "" });
                     }
                 }
                 else
@@ -68,7 +87,6 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
                 }
             }
 
-            // If we got this far, something failed, redisplay form
             return View(model);
         }
 
@@ -110,16 +128,16 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
 
                 SubjectManager subjectManager = new SubjectManager();
 
-                User user = subjectManager.CreateUser(model.UserName, model.Email, model.Password, model.SecurityQuestion, model.SecurityAnswer, out createStatus);
-
-                if (createStatus == UserCreateStatus.Success)
+                try
                 {
+                    User user = subjectManager.CreateUser(model.UserName, model.Email, model.Password, model.SecurityQuestion, model.SecurityAnswer);
+
                     FormsAuthentication.SetAuthCookie(model.UserName, false /* createPersistentCookie */);
                     return RedirectToAction("RegisterSummary", UserModel.Convert(user));
                 }
-                else
+                catch (Exception e)
                 {
-                    ModelState.AddModelError(ErrorCodeToErrorKey(createStatus), ErrorCodeToErrorMessage(createStatus));
+
                 }
             }
 

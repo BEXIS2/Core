@@ -1,5 +1,5 @@
 ﻿<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Security.Entities" namespace="BExIS.Security.Entities.Subjects">
-  <joined-subclass xmlns="urn:nhibernate-mapping-2.2" name="Role" table="Roles" extends="Subject" dynamic-update="true">
+  <joined-subclass xmlns="urn:nhibernate-mapping-2.2" name="Group" table="Groups" extends="Subject" dynamic-update="true">
 
     <!-- Mapping Subject Properties -->
     <key column="Id" />
@@ -7,8 +7,8 @@
     <!-- Role Entity Properties -->
     <property name="Description" type="String" />
 
-    <set name="Users" table="Roles_Users" cascade="save-update" lazy="true">
-      <key column="RoleRef"/>
+    <set name="Users" table="Groups_Users" cascade="save-update" lazy="true">
+      <key column="GroupRef"/>
       <many-to-many column="UserRef" class="User"/>
     </set>
 

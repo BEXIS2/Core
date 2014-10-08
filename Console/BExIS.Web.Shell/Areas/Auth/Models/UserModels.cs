@@ -4,13 +4,12 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using BExIS.Security.Entities.Security;
 using BExIS.Security.Entities.Subjects;
 using DataAnnotationsExtensions;
 
 namespace BExIS.Web.Shell.Areas.Auth.Models
 {
-    public class UserCreationModel
+    public class UserCreateModel
     {
         [Display(Name = "User name")]
         [RegularExpression("^[\\S]*$", ErrorMessage = "The user name is invalid.")]
@@ -48,7 +47,61 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
         public string SecurityAnswer { get; set; }
     }
 
-    public class UserModel
+    public class UserUpdateModel
+    {
+        public long Id { get; set; }
+        public string UserName { get; set; }
+        public string Email { get; set; }
+
+        public static UserUpdateModel Convert(User user)
+        {
+            return new UserUpdateModel()
+            {
+                Id = user.Id,
+                UserName = user.Name,
+                Email = user.Email
+            };
+
+        }
+    }
+
+    public class UserReadModel
+    {
+        public long Id { get; set; }
+        public string UserName { get; set; }
+        public string Email { get; set; }
+
+        public static UserReadModel Convert(User user)
+        {
+            return new UserReadModel()
+            {
+                Id = user.Id,
+                UserName = user.Name,
+                Email = user.Email
+            };
+
+        }
+    }
+
+    public class UserDeleteModel
+    {
+        public long Id { get; set; }
+        public string UserName { get; set; }
+        public string Email { get; set; }
+
+        public static UserDeleteModel Convert(User user)
+        {
+            return new UserDeleteModel()
+            {
+                Id = user.Id,
+                UserName = user.Name,
+                Email = user.Email
+            };
+
+        }
+    }
+
+    public class UserGridRowModel
     {
         [Display(Name = "User ID")]
         [Editable(false)]
@@ -84,9 +137,9 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
         [Display(Name = "Is Locked Out")]
         public bool IsLockedOut { get; set; }
 
-        public static UserModel Convert(User user)
+        public static UserGridRowModel Convert(User user)
         {
-            return new UserModel()
+            return new UserGridRowModel()
             {
                 Id = user.Id,
                 UserName = user.Name,
@@ -98,33 +151,38 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
         }
     }
 
-    public class UserRoleModel
+    public class UserMembershipGridRowModel
     {
-        // User
         public long UserId { get; set; }
 
-        // Role
         public long Id { get; set; }
-        public string RoleName { get; set; }
+        public string GroupName { get; set; }
         public string Description { get; set; }
 
-        // Membership
-        public bool UserInRole { get; set; }
+        public bool UserInGroup { get; set; }
 
-        public static UserRoleModel Convert(long userId, Role role, bool userInRole)
+        public static UserMembershipGridRowModel Convert(long userId, Group group, bool userInGroup)
         {
-            return new UserRoleModel()
+            return new UserMembershipGridRowModel()
             {
                 UserId = userId,
 
-                Id = role.Id,
-                RoleName = role.Name,
-                Description = role.Description,
+                Id = group.Id,
+                GroupName = group.Name,
+                Description = group.Description,
 
-                UserInRole = userInRole
+                UserInGroup = userInGroup
             };
         }
     }
 
-    
+    public class UserSelectListItemModel
+    {
+
+    }
+
+    public class UserSelectListModel
+    {
+
+    }
 }

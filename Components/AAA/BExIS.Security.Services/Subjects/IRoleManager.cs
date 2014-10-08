@@ -13,192 +13,192 @@ namespace BExIS.Security.Services.Subjects
     /// <remarks></remarks>        
     public interface IRoleManager
     {
-        #region Attributes
+        //#region Attributes
 
-        #endregion
+        //#endregion
 
 
-        #region Methods
+        //#region Methods
 
-        // A
+        //// A
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>
-        /// <param name="roleName"></param>
-        /// <param name="userName"></param>
-        int AddUserToRole(string userName, string roleName);
+        ///// <summary>
+        /////
+        ///// </summary>
+        ///// <remarks></remarks>
+        ///// <seealso cref=""/>
+        ///// <param name="roleName"></param>
+        ///// <param name="userName"></param>
+        //int AddUserToRole(string userName, string roleName);
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>
-        /// <param name="userId"></param>
-        /// <param name="roleId"></param>
-        int AddUserToRole(long userId, long roleId);
+        ///// <summary>
+        /////
+        ///// </summary>
+        ///// <remarks></remarks>
+        ///// <seealso cref=""/>
+        ///// <param name="userId"></param>
+        ///// <param name="roleId"></param>
+        //int AddUserToRole(long userId, long roleId);
 
-        // C
+        //// C
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>
-        /// <param name="roleName"></param>
-        /// <param name="description"></param>
-        /// <param name="status"></param>
-        Role CreateRole(string roleName, string description, out RoleCreateStatus status);
+        ///// <summary>
+        /////
+        ///// </summary>
+        ///// <remarks></remarks>
+        ///// <seealso cref=""/>
+        ///// <param name="roleName"></param>
+        ///// <param name="description"></param>
+        ///// <param name="status"></param>
+        //Role CreateRole(string roleName, string description, out RoleCreateStatus status);
 
-        // D
+        //// D
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>
-        /// <param name="roleName"></param>
-        bool DeleteRoleByName(string roleName);
+        ///// <summary>
+        /////
+        ///// </summary>
+        ///// <remarks></remarks>
+        ///// <seealso cref=""/>
+        ///// <param name="roleName"></param>
+        //bool DeleteRoleByName(string roleName);
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>
-        /// <param name="id"></param>
-        bool DeleteRoleById(long id);
+        ///// <summary>
+        /////
+        ///// </summary>
+        ///// <remarks></remarks>
+        ///// <seealso cref=""/>
+        ///// <param name="id"></param>
+        //bool DeleteRoleById(long id);
 
-        // E
+        //// E
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>
-        /// <param name="id"></param>
-        bool ExistsRoleId(long id);
+        ///// <summary>
+        /////
+        ///// </summary>
+        ///// <remarks></remarks>
+        ///// <seealso cref=""/>
+        ///// <param name="id"></param>
+        //bool ExistsRoleId(long id);
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>
-        /// <param name="roleName"></param>
-        bool ExistsRoleName(string roleName);
+        ///// <summary>
+        /////
+        ///// </summary>
+        ///// <remarks></remarks>
+        ///// <seealso cref=""/>
+        ///// <param name="roleName"></param>
+        //bool ExistsRoleName(string roleName);
 
-        // F
+        //// F
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>
-        /// <param name="roleName"></param>
-        /// <param name="userNameToMatch"></param>
-        IQueryable<User> FindUsersInRole(string roleName, string userNameToMatch); 
+        ///// <summary>
+        /////
+        ///// </summary>
+        ///// <remarks></remarks>
+        ///// <seealso cref=""/>
+        ///// <param name="roleName"></param>
+        ///// <param name="userNameToMatch"></param>
+        //IQueryable<User> FindUsersInRole(string roleName, string userNameToMatch); 
 
-        // G
+        //// G
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>
-        /// <param>NA</param>       
-        IQueryable<Role> GetAllRoles();
+        ///// <summary>
+        /////
+        ///// </summary>
+        ///// <remarks></remarks>
+        ///// <seealso cref=""/>
+        ///// <param>NA</param>       
+        //IQueryable<Role> GetAllRoles();
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>
-        /// <param name="roleName"></param>
-        Role GetRoleByName(string roleName);
+        ///// <summary>
+        /////
+        ///// </summary>
+        ///// <remarks></remarks>
+        ///// <seealso cref=""/>
+        ///// <param name="roleName"></param>
+        //Role GetRoleByName(string roleName);
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>
-        /// <param name="id"></param>
-        Role GetRoleById(long id);
+        ///// <summary>
+        /////
+        ///// </summary>
+        ///// <remarks></remarks>
+        ///// <seealso cref=""/>
+        ///// <param name="id"></param>
+        //Role GetRoleById(long id);
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>
-        /// <param name="id"></param>
-        string GetRoleNameById(long id);
+        ///// <summary>
+        /////
+        ///// </summary>
+        ///// <remarks></remarks>
+        ///// <seealso cref=""/>
+        ///// <param name="id"></param>
+        //string GetRoleNameById(long id);
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>
-        /// <param name="userName"></param>
-        IQueryable<Role> GetRolesFromUser(string userName);
+        ///// <summary>
+        /////
+        ///// </summary>
+        ///// <remarks></remarks>
+        ///// <seealso cref=""/>
+        ///// <param name="userName"></param>
+        //IQueryable<Role> GetRolesFromUser(string userName);
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>
-        /// <param name="roleName"></param>
-        IQueryable<User> GetUsersFromRole(string roleName);
+        ///// <summary>
+        /////
+        ///// </summary>
+        ///// <remarks></remarks>
+        ///// <seealso cref=""/>
+        ///// <param name="roleName"></param>
+        //IQueryable<User> GetUsersFromRole(string roleName);
 
-        // I
+        //// I
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>
-        /// <param name="roleName"></param>
-        bool IsRoleInUse(string roleName);
+        ///// <summary>
+        /////
+        ///// </summary>
+        ///// <remarks></remarks>
+        ///// <seealso cref=""/>
+        ///// <param name="roleName"></param>
+        //bool IsRoleInUse(string roleName);
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>
-        /// <param name="userName"></param>
-        /// <param name="roleName"></param>
-        bool IsUserInRole(string userName, string roleName);
+        ///// <summary>
+        /////
+        ///// </summary>
+        ///// <remarks></remarks>
+        ///// <seealso cref=""/>
+        ///// <param name="userName"></param>
+        ///// <param name="roleName"></param>
+        //bool IsUserInRole(string userName, string roleName);
 
-        // R
+        //// R
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>
-        /// <param name="userName"></param>
-        /// <param name="roleName"></param>
-        int RemoveUserFromRole(string userName, string roleName);
+        ///// <summary>
+        /////
+        ///// </summary>
+        ///// <remarks></remarks>
+        ///// <seealso cref=""/>
+        ///// <param name="userName"></param>
+        ///// <param name="roleName"></param>
+        //int RemoveUserFromRole(string userName, string roleName);
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>
-        /// <param name="userId"></param>
-        /// <param name="roleId"></param>
-        int RemoveUserFromRole(long userId, long roleId);
+        ///// <summary>
+        /////
+        ///// </summary>
+        ///// <remarks></remarks>
+        ///// <seealso cref=""/>
+        ///// <param name="userId"></param>
+        ///// <param name="roleId"></param>
+        //int RemoveUserFromRole(long userId, long roleId);
 
-        // U
+        //// U
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>
-        /// <param name="role"></param>
-        Role UpdateRole(Role role);
+        ///// <summary>
+        /////
+        ///// </summary>
+        ///// <remarks></remarks>
+        ///// <seealso cref=""/>
+        ///// <param name="role"></param>
+        //Role UpdateRole(Role role);
 
-        #endregion
+        //#endregion
     }
 
     /// <summary>

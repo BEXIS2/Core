@@ -1,0 +1,265 @@
+﻿@using Telerik.Web.Mvc.UI
+@using BExIS.Web.Shell.Areas.Auth.Models;
+
+@model List<GroupGridRowModel>
+
+@(Html.Telerik().Grid(Model)
+        .Name("Grid_Groups")
+        .DataKeys(keys =>
+        {
+            keys.Add(r => r.Id);
+        })
+        .ToolBar(command =>
+            {
+                command.Custom().Name("Create").Text("New Group").Ajax(true).ButtonType(GridButtonType.ImageAndText).ImageHtmlAttributes(new { @class = "t-icon t-add" });
+            })
+        .Columns(columns =>
+        {
+            columns.Command(command =>
+            {
+                command.Custom("Details").Ajax(true).ButtonType(GridButtonType.BareImage).ImageHtmlAttributes(new { @class = "t-icon t-edit" });
+                command.Custom("Delete").Ajax(true).ButtonType(GridButtonType.BareImage).ImageHtmlAttributes(new { @class = "t-icon t-delete" });
+            }).Title("Actions").Width(90).HtmlAttributes(new { style = "text-align:left" });
+            columns.Bound(r => r.Id).Width(100);
+            columns.Bound(r => r.GroupName).Width(250);
+            columns.Bound(r => r.Description);
+        })
+        .ClientEvents(clientEvents => clientEvents
+            .OnCommand("OnCommand")
+        )
+        .DataBinding(dataBinding => dataBinding
+            .Ajax()
+            .Select("Groups_Select", "Groups")
+        )
+        .Filterable()
+        .Sortable(sortable => sortable
+            .OrderBy(orderby => orderby
+                .Add(r => r.Id).Descending()))
+        .Scrollable()
+)
+
+@(Html.Telerik().Window()
+    .Name("Window_Creation")
+    .Title("Create Group")
+    .Draggable(true)
+    .Modal(true)
+    .Visible(false)
+    .Scrollable(true)
+    .ContentHtmlAttributes(new { @style="overflow:auto; width:auto; height:auto; min-height:225px; min-width:400px"})
+    .Content(@<text>
+        <div id="Content_Creation"></div>
+    </text>)
+    .ClientEvents(clientEvents => clientEvents
+        .OnClose("Window_Creation_OnClose")
+    )
+)
+
+@(Html.Telerik().Window()
+    .Name("Window_Deletion")
+    .Title("Delete Group")
+    .Draggable(true)
+    .Modal(true)
+    .Visible(false)
+    .Scrollable(true)
+    .ContentHtmlAttributes(new { @style="overflow:auto; width:auto; height:auto; min-height:225px; min-width:400px"})
+    .Content(@<text>
+        <div id="Content_Deletion"></div>
+    </text>)
+    .ClientEvents(clientEvents => clientEvents
+        .OnClose("Window_Deletion_OnClose")
+    )
+)
+
+@(Html.Telerik().Window()
+    .Name("Window_Details")
+    .Title("Edit Group")
+    .Draggable(true)
+    .Modal(true)
+    .Visible(false)
+    .Scrollable(true)
+    .ContentHtmlAttributes(new { @style="overflow:auto; width:auto; height:auto; min-height:225px; min-width:400px"})
+    .Content(@<text>
+        <div id="Content_Details"></div>
+    </text>)
+    .ClientEvents(clientEvents => clientEvents
+        .OnClose("Window_Details_OnClose")
+    )
+)
+
+<script type="text/javascript">
+
+    function OnCommand(e) {
+
+        if (e.name == "Create") {
+
+            $.get('@Url.Action("Create", "Groups")', function (data) {
+
+                $('#Content_Creation').html(data);
+
+                var window = $('#Window_Creation').data('tWindow');
+                window.center().open();
+            });
+        }
+
+        if (e.name == "Delete") {
+            var groupID = e.dataItem.Id;
+
+            $.get('@Url.Action("Delete", "Groups")', { Id: groupID }, function (data) {
+
+                $('#Content_Deletion').html(data);
+
+                var window = $('#Window_Deletion').data('tWindow');
+                window.center().open();
+            });
+        }
+
+        if (e.name == "Details") {
+            var groupID = e.dataItem.Id;
+
+            $.get('@Url.Action("Details", "Groups")', { Id: groupID }, function (windowData) {
+
+                $('#Content_Details').html(windowData);
+
+                $.get('@Url.Action("GroupInfo", "Groups")', { Id: groupID }, function (contentData) {
+
+                    $('#Content_GroupInfo').html(contentData);
+
+                    var window = $('#Window_Details').data('tWindow');
+                    window.center().open();
+                });
+            });
+        }
+    }
+
+    // Create
+    function Window_Creation_Cancel() {
+        $('#Window_Creation').data('tWindow').close();
+    }
+
+    function Window_Creation_OnClose() {
+        $('#Content_Creation').empty();
+        $("#Grid_Groups .t-refresh").trigger('click');
+    }
+
+    // Delete
+    function Window_Deletion_Cancel() {
+        $('#Window_Deletion').data('tWindow').close();
+    }
+
+    function Window_Deletion_OnClose() {
+        $('#Content_Deletion').empty();
+        $("#Grid_Groups .t-refresh").trigger('click');
+    }
+
+    // Details
+    function TabStrip_Details_OnSelect(e, groupID) {
+        var tab = $(e.item);
+
+        $('#Content_GroupInfo').empty();
+        $('#Content_Membership').empty();
+        $('#Content_FeaturePermissions').empty();
+
+        switch (tab.index()) {
+            case 0:
+                $.get('@Url.Action("GroupInfo", "Groups")', { Id: groupID }, function (data) {
+                    $('#Content_GroupInfo').html(data);
+                });
+                break;
+
+            case 1:
+                $.get('@Url.Action("Membership", "Groups")', { Id: groupID }, function (data) {
+                    $('#Content_Membership').html(data);
+                });
+                break;
+
+            case 2:
+                $.get('@Url.Action("FeaturePermissions", "Groups")', { Id: groupID }, function (data) {
+                    $('#Content_FeaturePermissions').html(data);
+                });
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    function TabStrip_GroupInfo_CancelEdit(e) {
+        $.get('@Url.Action("GroupInfo", "Groups")', { Id: e }, function (data) {
+             $('#Content_GroupInfo').html(data);
+         });
+     }
+
+     function TabStrip_GroupInfo_Edit(e) {
+         $.get('@Url.Action("GroupEdit", "Groups")', { Id: e }, function (data) {
+                $('#Content_GroupInfo').html(data);
+            });
+        }
+
+        function Window_Details_OnClose() {
+            $('#Content_Details').empty();
+            $("#Grid_Groups .t-refresh").trigger('click');
+        }
+
+    // Info
+    function Window_Info_Confirm(e) {
+        switch (e) {
+            case "Window_Deletion":
+                var windowDelete = $('#Window_Deletion').data('tWindow');
+                windowDelete.close();
+                break;
+
+            case "Window_Details":
+                var windowDetails = $('#Window_Details').data('tWindow');
+                windowDetails.close();
+                break;
+
+            case "Window_Creation":
+                var windowCreation = $('#Window_Creation').data('tWindow');
+                windowCreation.close();
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    // Membership
+    function setUserInGroup(value, userid, groupid) {
+        if (value) {
+            $.post('@Url.Action("AddUserToGroup", "Groups")', { UserId: userid, GroupId: groupid }, function (e) {
+                if (e == 11) {
+                    alert("The group does not exist anymore.");
+
+                    var windowDetails = $('#Window_Details').data('tWindow');
+                    windowDetails.close();
+
+                    $("#Grid_GroupMembership .t-refresh").trigger('click');
+                }
+
+                if (e == 12) {
+                    alert("The user does not exist anymore.");
+
+                    $("#Grid_GroupMembership .t-refresh").trigger('click');
+                }
+            });
+        } else {
+            $.post('@Url.Action("RemoveUserFromGroup", "Groups")', { UserId: userid, GroupId: groupid }, function (e) {
+                if (e == 11) {
+                    alert("The group does not exist anymore.");
+
+                    var windowDetails = $('#Window_Details').data('tWindow');
+                    windowDetails.close();
+
+                    $("#Grid_GroupMembership .t-refresh").trigger('click');
+                }
+
+                if (e == 12) {
+                    alert("The user does not exist anymore.");
+
+                    $("#Grid_GroupMembership .t-refresh").trigger('click');
+                }
+            });
+        }
+    }
+
+</script> 

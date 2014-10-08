@@ -1,4 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<Entities>
-  <Entity Id="Dataset" Name="Dataset" Assembly="BExIS.Dlm.Entities" Type="BExIS.Dlm.Entities.Data.Dataset" Area="Auth" Controller="Permissions" Action="Datasets" />
-</Entities> 

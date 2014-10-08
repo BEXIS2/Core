@@ -19,6 +19,11 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
 {
     public class UsersController : Controller
     {
+        public ActionResult Index()
+        {
+            return View();
+        }
+
         #region Grid View
 
         public ActionResult Users()
@@ -38,20 +43,20 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
         {
             if (ModelState.IsValid)
             {
-                UserCreateStatus createStatus;
-
                 SubjectManager subjectManager = new SubjectManager();
 
-                subjectManager.CreateUser(model.UserName, model.Email, model.Password, model.SecurityQuestion, model.SecurityAnswer, out createStatus);
-
-                if (createStatus == UserCreateStatus.Success)
+                try
                 {
+                    subjectManager.CreateUser(model.UserName, model.Email, model.Password, model.SecurityQuestion, model.SecurityAnswer);
+
                     return PartialView("_InfoPartial", new InfoModel("Window_Creation", "The user was successfully created."));
                 }
-                else
+                catch(Exception e)
                 {
-                    ModelState.AddModelError(ErrorCodeToErrorKey(createStatus), ErrorCodeToErrorMessage(createStatus));
+
                 }
+
+                
             }
 
             return PartialView("_CreatePartial", model);
@@ -177,30 +182,30 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
             // DATA
             User user = subjectManager.GetUserById(id);
 
-            List<UserRoleModel> roles = new List<UserRoleModel>();
+            List<UserMembershipGridRowModel> groups = new List<UserMembershipGridRowModel>();
 
             if (user != null)
             {
-                IQueryable<Role> data = subjectManager.GetAllRoles();
+                IQueryable<Group> data = subjectManager.GetAllGroups();
 
-                data.ToList().ForEach(r => roles.Add(UserRoleModel.Convert(user.Id, r, subjectManager.IsUserInRole(user.Name, r.Name))));
+                data.ToList().ForEach(g => groups.Add(UserMembershipGridRowModel.Convert(user.Id, g, subjectManager.IsUserInGroup(user.Name, g.Name))));
             }
 
-            return View(new GridModel<UserRoleModel> { Data = roles });
+            return View(new GridModel<UserMembershipGridRowModel> { Data = groups });
         }
 
-        public int AddUserToRole(long userId, long roleId)
+        public bool AddUserToGroup(long userId, long groupId)
         {
             SubjectManager subjectManager = new SubjectManager();
 
-            return subjectManager.AddUserToRole(userId, roleId);
+            return subjectManager.AddUserToGroup(userId, groupId);
         }
 
-        public int RemoveUserFromRole(long userId, long roleId)
+        public bool RemoveUserFromGroup(long userId, long groupId)
         {
             SubjectManager subjectManager = new SubjectManager();
 
-            return subjectManager.RemoveUserFromRole(userId, roleId);
+            return subjectManager.RemoveUserFromGroup(userId, groupId);
         }
 
         // Feature Permissions

@@ -17,286 +17,286 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
 {
     public class RolesController : Controller
     {
-        #region Grid View
+        //#region Grid View
 
-        public ActionResult Roles()
-        {
-            return View();
-        }
+        //public ActionResult Roles()
+        //{
+        //    return View();
+        //}
 
-        //
-        // Creation
-        public ActionResult Create()
-        {
-            return PartialView("_CreatePartial");
-        }
+        ////
+        //// Creation
+        //public ActionResult Create()
+        //{
+        //    return PartialView("_CreatePartial");
+        //}
 
-        [HttpPost]
-        public ActionResult Create(RoleCreationModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                RoleCreateStatus createStatus;
+        //[HttpPost]
+        //public ActionResult Create(RoleCreationModel model)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        RoleCreateStatus createStatus;
 
-                SubjectManager subjectManager = new SubjectManager();
+        //        SubjectManager subjectManager = new SubjectManager();
 
-                subjectManager.CreateRole(model.RoleName, model.Description, out createStatus);
+        //        subjectManager.CreateRole(model.RoleName, model.Description, out createStatus);
 
-                if (createStatus == RoleCreateStatus.Success)
-                {
-                    return PartialView("_InfoPartial", new InfoModel("Window_Creation", "The role was successfully created."));
-                }
-                else
-                {
-                    ModelState.AddModelError(ErrorCodeToErrorKey(createStatus), ErrorCodeToErrorMessage(createStatus));
-                }
-            }
+        //        if (createStatus == RoleCreateStatus.Success)
+        //        {
+        //            return PartialView("_InfoPartial", new InfoModel("Window_Creation", "The role was successfully created."));
+        //        }
+        //        else
+        //        {
+        //            ModelState.AddModelError(ErrorCodeToErrorKey(createStatus), ErrorCodeToErrorMessage(createStatus));
+        //        }
+        //    }
 
-            return PartialView("_CreatePartial", model);
-        }
+        //    return PartialView("_CreatePartial", model);
+        //}
 
-        //
-        // Deletion
-        public ActionResult Delete(long id)
-        {
-            SubjectManager subjectManager = new SubjectManager();
+        ////
+        //// Deletion
+        //public ActionResult Delete(long id)
+        //{
+        //    SubjectManager subjectManager = new SubjectManager();
 
-            Role role = subjectManager.GetRoleById(id);
+        //    Role role = subjectManager.GetRoleById(id);
 
-            if (role != null)
-            {
-                return PartialView("_DeletePartial", RoleModel.Convert(role));
-            }
-            else
-            {
-                return PartialView("_InfoPartial", new InfoModel("Window_Deletion", "The role does not exist!"));
-            }
-        }
+        //    if (role != null)
+        //    {
+        //        return PartialView("_DeletePartial", RoleModel.Convert(role));
+        //    }
+        //    else
+        //    {
+        //        return PartialView("_InfoPartial", new InfoModel("Window_Deletion", "The role does not exist!"));
+        //    }
+        //}
 
-        [HttpPost]
-        public ActionResult Delete(RoleModel model)
-        {
-            SubjectManager subjectManager = new SubjectManager();
+        //[HttpPost]
+        //public ActionResult Delete(RoleModel model)
+        //{
+        //    SubjectManager subjectManager = new SubjectManager();
 
-            subjectManager.DeleteRoleById(model.Id);
+        //    subjectManager.DeleteRoleById(model.Id);
 
-            return PartialView("_InfoPartial", new InfoModel("Window_Deletion", "The role was successfully deleted."));
-        }
+        //    return PartialView("_InfoPartial", new InfoModel("Window_Deletion", "The role was successfully deleted."));
+        //}
 
-        //
-        // Details
-        public ActionResult Details(long id)
-        {
-            return PartialView("_DetailsPartial", id);
-        }
+        ////
+        //// Details
+        //public ActionResult Details(long id)
+        //{
+        //    return PartialView("_DetailsPartial", id);
+        //}
 
-        public ActionResult RoleInfo(long id)
-        {
-            SubjectManager subjectManager = new SubjectManager();
+        //public ActionResult RoleInfo(long id)
+        //{
+        //    SubjectManager subjectManager = new SubjectManager();
 
-            Role role = subjectManager.GetRoleById(id);
+        //    Role role = subjectManager.GetRoleById(id);
 
-            if (role != null)
-            {
-                return PartialView("_RoleInfoPartial", RoleModel.Convert(role));
-            }
-            else
-            {
-                return PartialView("_InfoPartial", new InfoModel("Window_Details", "The role does not exist!"));
-            }
-        }
+        //    if (role != null)
+        //    {
+        //        return PartialView("_RoleInfoPartial", RoleModel.Convert(role));
+        //    }
+        //    else
+        //    {
+        //        return PartialView("_InfoPartial", new InfoModel("Window_Details", "The role does not exist!"));
+        //    }
+        //}
 
-        public ActionResult RoleEdit(long id)
-        {
-            SubjectManager subjectManager = new SubjectManager();
+        //public ActionResult RoleEdit(long id)
+        //{
+        //    SubjectManager subjectManager = new SubjectManager();
 
-            Role role = subjectManager.GetRoleById(id);
+        //    Role role = subjectManager.GetRoleById(id);
 
-            if (role != null)
-            {
-                return PartialView("_RoleEditPartial", RoleModel.Convert(role));
-            }
-            else
-            {
-                return PartialView("_InfoPartial", new InfoModel("Window_Details", "The role does not exist!"));
-            }
-        }
+        //    if (role != null)
+        //    {
+        //        return PartialView("_RoleEditPartial", RoleModel.Convert(role));
+        //    }
+        //    else
+        //    {
+        //        return PartialView("_InfoPartial", new InfoModel("Window_Details", "The role does not exist!"));
+        //    }
+        //}
 
-        [HttpPost]
-        public ActionResult RoleEdit(RoleModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                SubjectManager subjectManager = new SubjectManager();
+        //[HttpPost]
+        //public ActionResult RoleEdit(RoleModel model)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        SubjectManager subjectManager = new SubjectManager();
 
-                Role role = subjectManager.GetRoleById(model.Id);
+        //        Role role = subjectManager.GetRoleById(model.Id);
 
-                if (role != null)
-                {
-                    role.Name = model.RoleName;
-                    role.Description = model.Description;
+        //        if (role != null)
+        //        {
+        //            role.Name = model.RoleName;
+        //            role.Description = model.Description;
 
-                    subjectManager.UpdateRole(role);
+        //            subjectManager.UpdateRole(role);
 
-                    return PartialView("_RoleInfoPartial", model);
-                }
-                else
-                {
-                    return PartialView("_InfoPartial", new InfoModel("Window_Details", "The role does not exist!"));
-                }
-            }
+        //            return PartialView("_RoleInfoPartial", model);
+        //        }
+        //        else
+        //        {
+        //            return PartialView("_InfoPartial", new InfoModel("Window_Details", "The role does not exist!"));
+        //        }
+        //    }
 
-            return PartialView("_RoleEditPartial", model);
-        }
+        //    return PartialView("_RoleEditPartial", model);
+        //}
 
-        //
-        // M
-        public ActionResult Membership(long id)
-        {
-            SubjectManager subjectManager = new SubjectManager();
+        ////
+        //// M
+        //public ActionResult Membership(long id)
+        //{
+        //    SubjectManager subjectManager = new SubjectManager();
 
-            Role role = subjectManager.GetRoleById(id); ;
+        //    Role role = subjectManager.GetRoleById(id); ;
 
-            if (role != null)
-            {
-                ViewData["roleID"] = id;
+        //    if (role != null)
+        //    {
+        //        ViewData["roleID"] = id;
 
-                return PartialView("_MembershipPartial");
-            }
-            else
-            {
-                return PartialView("_InfoPartial", new InfoModel("Window_Details", "The role does not exist!"));
-            }
-        }
+        //        return PartialView("_MembershipPartial");
+        //    }
+        //    else
+        //    {
+        //        return PartialView("_InfoPartial", new InfoModel("Window_Details", "The role does not exist!"));
+        //    }
+        //}
 
-        [GridAction]
-        public ActionResult Membership_Select(long id)
-        {
-            SubjectManager subjectManager = new SubjectManager();
+        //[GridAction]
+        //public ActionResult Membership_Select(long id)
+        //{
+        //    SubjectManager subjectManager = new SubjectManager();
 
-            // DATA
-            Role role = subjectManager.GetRoleById(id);
+        //    // DATA
+        //    Role role = subjectManager.GetRoleById(id);
 
-            List<RoleUserModel> users = new List<RoleUserModel>();
+        //    List<RoleUserModel> users = new List<RoleUserModel>();
 
-            if (role != null)
-            {
-                IQueryable<User> data = subjectManager.GetAllUsers();
+        //    if (role != null)
+        //    {
+        //        IQueryable<User> data = subjectManager.GetAllUsers();
 
-                data.ToList().ForEach(u => users.Add(RoleUserModel.Convert(role.Id, u, subjectManager.IsUserInRole(u.Name, role.Name))));
-            }
+        //        data.ToList().ForEach(u => users.Add(RoleUserModel.Convert(role.Id, u, subjectManager.IsUserInRole(u.Name, role.Name))));
+        //    }
 
-            return View(new GridModel<RoleUserModel> { Data = users });
-        }
+        //    return View(new GridModel<RoleUserModel> { Data = users });
+        //}
 
-        public int AddUserToRole(long userId, long roleId)
-        {
-            SubjectManager subjectManager = new SubjectManager();
+        //public int AddUserToRole(long userId, long roleId)
+        //{
+        //    SubjectManager subjectManager = new SubjectManager();
 
-            return subjectManager.AddUserToRole(userId, roleId);
-        }
+        //    return subjectManager.AddUserToRole(userId, roleId);
+        //}
 
-        public int RemoveUserFromRole(long userId, long roleId)
-        {
-            SubjectManager subjectManager = new SubjectManager();
+        //public int RemoveUserFromRole(long userId, long roleId)
+        //{
+        //    SubjectManager subjectManager = new SubjectManager();
 
-            return subjectManager.RemoveUserFromRole(userId, roleId);
-        }
+        //    return subjectManager.RemoveUserFromRole(userId, roleId);
+        //}
 
-        // Feature Permissions
-        public ActionResult FeaturePermissions(long id)
-        {
-            SubjectManager subjectManager = new SubjectManager();
+        //// Feature Permissions
+        //public ActionResult FeaturePermissions(long id)
+        //{
+        //    SubjectManager subjectManager = new SubjectManager();
 
-            Role role = subjectManager.GetRoleById(id); ;
+        //    Role role = subjectManager.GetRoleById(id); ;
 
-            if (role != null)
-            {
-                ViewData["RoleID"] = id;
+        //    if (role != null)
+        //    {
+        //        ViewData["RoleID"] = id;
 
-                return PartialView("_FeaturePermissionsPartial");
-            }
-            else
-            {
-                return PartialView("_InfoPartial", new InfoModel("Window_Details", "The role does not exist!"));
-            }
-        }
+        //        return PartialView("_FeaturePermissionsPartial");
+        //    }
+        //    else
+        //    {
+        //        return PartialView("_InfoPartial", new InfoModel("Window_Details", "The role does not exist!"));
+        //    }
+        //}
 
-        // R
-        [GridAction]
-        public ActionResult Roles_Select()
-        {
-            SubjectManager subjectManager = new SubjectManager();
+        //// R
+        //[GridAction]
+        //public ActionResult Roles_Select()
+        //{
+        //    SubjectManager subjectManager = new SubjectManager();
 
-            // DATA
-            IQueryable<Role> data = subjectManager.GetAllRoles();
+        //    // DATA
+        //    IQueryable<Role> data = subjectManager.GetAllRoles();
 
-            List<RoleModel> roles = new List<RoleModel>();
-            data.ToList().ForEach(r => roles.Add(RoleModel.Convert(r)));
+        //    List<RoleModel> roles = new List<RoleModel>();
+        //    data.ToList().ForEach(r => roles.Add(RoleModel.Convert(r)));
 
-            return View(new GridModel<RoleModel> { Data = roles });
-        }
+        //    return View(new GridModel<RoleModel> { Data = roles });
+        //}
 
-        #endregion
+        //#endregion
 
 
-        #region Validation
+        //#region Validation
 
-        public JsonResult ValidateRoleName(string roleName, long id = 0)
-        {
-            SubjectManager subjectManager = new SubjectManager();
+        //public JsonResult ValidateRoleName(string roleName, long id = 0)
+        //{
+        //    SubjectManager subjectManager = new SubjectManager();
 
-            Role role = subjectManager.GetRoleByName(roleName);
+        //    Role role = subjectManager.GetRoleByName(roleName);
 
-            if (role == null)
-            {
-                return Json(true, JsonRequestBehavior.AllowGet);
-            }
-            else
-            {
-                if (role.Id == id)
-                {
-                    return Json(true, JsonRequestBehavior.AllowGet);
-                }
-                else
-                {
-                    string error = String.Format(CultureInfo.InvariantCulture, "The role name already exists.", roleName);
+        //    if (role == null)
+        //    {
+        //        return Json(true, JsonRequestBehavior.AllowGet);
+        //    }
+        //    else
+        //    {
+        //        if (role.Id == id)
+        //        {
+        //            return Json(true, JsonRequestBehavior.AllowGet);
+        //        }
+        //        else
+        //        {
+        //            string error = String.Format(CultureInfo.InvariantCulture, "The role name already exists.", roleName);
 
-                    return Json(error, JsonRequestBehavior.AllowGet);
-                }
-            }
-        }
+        //            return Json(error, JsonRequestBehavior.AllowGet);
+        //        }
+        //    }
+        //}
 
-        private static string ErrorCodeToErrorMessage(RoleCreateStatus createStatus)
-        {
-            switch (createStatus)
-            {
-                case RoleCreateStatus.DuplicateRoleName:
-                    return "The role name already exists.";
+        //private static string ErrorCodeToErrorMessage(RoleCreateStatus createStatus)
+        //{
+        //    switch (createStatus)
+        //    {
+        //        case RoleCreateStatus.DuplicateRoleName:
+        //            return "The role name already exists.";
 
-                case RoleCreateStatus.InvalidRoleName:
-                    return "The role name is not valid.";
+        //        case RoleCreateStatus.InvalidRoleName:
+        //            return "The role name is not valid.";
 
-                default:
-                    return "An unknown error occurred. Please verify your entry and try again. If the problem persists, please contact your system administrator.";
-            }
-        }
+        //        default:
+        //            return "An unknown error occurred. Please verify your entry and try again. If the problem persists, please contact your system administrator.";
+        //    }
+        //}
 
-        private static string ErrorCodeToErrorKey(RoleCreateStatus createStatus)
-        {
-            switch (createStatus)
-            {
-                case RoleCreateStatus.DuplicateRoleName:
-                    return "RoleName";
+        //private static string ErrorCodeToErrorKey(RoleCreateStatus createStatus)
+        //{
+        //    switch (createStatus)
+        //    {
+        //        case RoleCreateStatus.DuplicateRoleName:
+        //            return "RoleName";
 
-                case RoleCreateStatus.InvalidRoleName:
-                    return "RoleName";
+        //        case RoleCreateStatus.InvalidRoleName:
+        //            return "RoleName";
 
-                default:
-                    return "";
-            }
-        }
+        //        default:
+        //            return "";
+        //    }
+        //}
 
-        #endregion
+        //#endregion
     }
 }

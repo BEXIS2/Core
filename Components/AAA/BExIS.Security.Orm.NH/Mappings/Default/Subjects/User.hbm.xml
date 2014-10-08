@@ -6,6 +6,13 @@
 
     <!-- USER ATTRIBUTES -->
     <property name="Email" type="String" />
+
+    <property name="Password" type="String" />
+    <property name="PasswordSalt" type="String" />
+    
+    <property name="SecurityQuestion" type="String" />
+    <property name="SecurityAnswer" type="String" />
+    <property name="SecurityAnswerSalt" type="String" />
     
     <property name="RegistrationDate" type="DateTime" />
     <property name="LastActivityDate" type="DateTime" />
@@ -13,13 +20,22 @@
     <property name="LastLockOutDate" type="DateTime" />
     <property name="LastPasswordChangeDate" type="DateTime" />
 
+    <property name="IsActive" type="yes_no" />
     <property name="IsApproved" type="yes_no" />
     <property name="IsLockedOut" type="yes_no" />
 
+    <property name="PasswordFailureCount" type="Int32" />
+    <property name="SecurityAnswerFailureCount" type="Int32" />
+    
+    <property name="LastPasswordFailureDate" type="DateTime" />
+    <property name="LastSecurityAnswerFailureDate" type="DateTime" />
+
     <!-- USER ASSOCIATIONS -->
-    <set name="Roles" table="Roles_Users" inverse="true" cascade="save-update" lazy="true">
+    <many-to-one name="Authenticator" column="AuthenticatorRef" class="BExIS.Security.Entities.Security.Authenticator, BExIS.Security.Entities"/>
+
+    <set name="Groups" table="Groups_Users" inverse="true" cascade="save-update" lazy="true">
       <key column="UserRef"/>
-      <many-to-many column="RoleRef" class="Role"/>
+      <many-to-many column="GroupRef" class="Group"/>
     </set>
 
   </joined-subclass>
