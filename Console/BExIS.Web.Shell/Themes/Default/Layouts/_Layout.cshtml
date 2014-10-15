@@ -8,6 +8,8 @@
 	<title>@ViewBag.Title</title>
 	<link href="@Url.Content("~/Content/Site.css")" rel="stylesheet" type="text/css" />
     <script src="@Url.Content("~/Scripts/jquery-1.7.1.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/jQueryUI/1.10.3/js/jquery-ui-1.10.3.custom.min.js")" type="text/javascript"></script>
+    <link href="@Url.Content("~/Scripts/jQueryUI/1.10.3/css/smoothness/jquery-ui-1.10.3.custom.min.css")" rel="stylesheet" type="text/css" />
     @RenderSection("Scripts", false)
     @(Html.Telerik().StyleSheetRegistrar().DefaultGroup(group => group
                 .DefaultPath(Themes.ThemeDirectory) //  "~/Themes/" 

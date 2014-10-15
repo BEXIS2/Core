@@ -6,8 +6,22 @@ using System.Text;
 
 namespace BExIS.Security.Entities.Security
 {
-    public class DataPermission<TEntity> where TEntity : class
+    public class DataPermission : Permission
     {
-        public virtual Expression<Func<TEntity, bool>> Expression { get; set; }
+        public virtual string EntityName { get; set; }
+        public virtual long DataId { get; set; }
+
+        public virtual Right Right { get; set; }
+    }
+
+    public enum Right
+    {
+        Create = 0,
+        Read = 1,
+        Update = 2,
+        Delete = 3,
+        Download = 4,
+        View = 5,
+        Grant = 6
     }
 }
