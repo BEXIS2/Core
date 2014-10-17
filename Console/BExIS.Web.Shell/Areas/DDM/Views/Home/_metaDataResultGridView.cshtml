@@ -24,82 +24,81 @@
 
 
 @(Html.Telerik().Grid<System.Data.DataRow>()
-		.Name("resultGrid")
+        .Name("resultGrid")
 
 
-			.DataBinding(dataBinding => dataBinding
-				.Ajax()
-				.Select("_CustomBinding", "Home")
-			)
-			.EnableCustomBinding(true)
-			.HtmlAttributes(new { @class = "result-grid" })
+            .DataBinding(dataBinding => dataBinding
+                .Ajax()
+                .Select("_CustomBinding", "Home", new { area = "DDM" })
+            )
+            .EnableCustomBinding(true)
+            .HtmlAttributes(new { @class = "result-grid" })
 
-			.Columns(columns =>
-				{
-					if (@Model.Columns.Count > 0)
-					{
-						columns.Bound("Functions").ClientTemplate(
-							"<div class='searchResultFunctionDiv'>" +
-								@Html.ActionLink("Details", "ShowData", "Data", new { area = "DDM", id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>" }, new { @class = "t-button" }) +
-							  "</div>"
-							)
-							.Width("auto")
-							.Groupable(false)
-							.Sortable(false)
-							.Filterable(false);
+            .Columns(columns =>
+                {
+                    if (@Model.Columns.Count > 0)
+                    {
+                            columns.Bound("Functions").ClientTemplate(
+                            "<div class='searchResultFunctionDiv'>" +
+                                @Html.ActionLink("Details", "ShowData", "Data", new { area = "DDM", id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>" }, new { @class = "t-button" }) +
+                              "</div>"
+                            )
+                            .Width("auto")
+                            .Groupable(false)
+                            .Sortable(false)
+                            .Filterable(false);
 
-					}
-					for (int i = 0; i < Model.Columns.Count; i++)
-					{
-						DataColumn column = Model.Columns[i];
-						if (DefaultHeaderList.Where(p => p.Name.Equals(column.ColumnName)).Count() > 0)
-						{
+                    }
+                    for (int i = 0; i < Model.Columns.Count; i++)
+                    {
+                        DataColumn column = Model.Columns[i];
+                        if (DefaultHeaderList.Where(p => p.Name.Equals(column.ColumnName)).Count() > 0)
+                        {
 
-							string title;
+                            string title;
 
-							if (column.Caption == "")
-							{
-								title = column.ColumnName;
-							}
-							else
-							{
-								title = column.Caption;
-							}
-							
-							columns.Bound(column.DataType, column.ColumnName)
+                            if (column.Caption == "")
+                            {
+                                title = column.ColumnName;
+                            }
+                            else
+                            {
+                                title = column.Caption;
+                            }
+
+                            columns.Bound(column.DataType, column.ColumnName)
                                     .Title(title);
-						}
-						else
-						{
+                        }
+                        else
+                        {
                             columns.Bound(column.DataType, column.ColumnName).Hidden()
                                    .Title(column.Caption);
-                                   
 
-						}
-					}
+                        }
+                    }
 
-				})
+                })
 
-			.ClientEvents(events => events
-						.OnComplete("onComplete")
-						.OnLoad("refreshGrid")
-						.OnSubmitChanges("refreshGrid")
-						.OnRowDataBound("resultGrid_OnRowDataBound")
-					   )
-			.Pageable(paging =>
-				paging
-					.Style(pagerStyles)
-					.PageSize(PageSize)
-					.Position(GridPagerPosition.Both)
-					.PageTo(CurrentPage)
-					)
-			
-			.Sortable()
-			.Filterable()
-			.ColumnContextMenu()
-			.Groupable()
-			.Scrollable()
-			
+            .ClientEvents(events => events
+                        .OnComplete("onComplete")
+                        .OnLoad("refreshGrid")
+                        .OnSubmitChanges("refreshGrid")
+                        .OnRowDataBound("resultGrid_OnRowDataBound")
+                       )
+            .Pageable(paging =>
+                paging
+                    .Style(pagerStyles)
+                    .PageSize(PageSize)
+                    .Position(GridPagerPosition.Both)
+                    .PageTo(CurrentPage)
+                    )
+
+            .Sortable()
+            .Filterable()
+            .ColumnContextMenu()
+            .Groupable()
+            .Scrollable()
+
 )
 
 

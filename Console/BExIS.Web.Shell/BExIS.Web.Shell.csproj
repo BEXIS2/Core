@@ -268,6 +268,8 @@
     <Compile Include="Areas\DDM\Helpers\GridHelper.cs" />
     <Compile Include="Areas\DDM\Models\ShowDataModel.cs" />
     <Compile Include="Areas\DDM\Models\ShowPrimaryDataModel.cs" />
+    <Compile Include="Areas\DIM\Controllers\AdminController.cs" />
+    <Compile Include="Areas\DIM\DIMAreaRegistration.cs" />
     <Compile Include="Areas\RPM\Controllers\HomeController.cs" />
     <Compile Include="Areas\RPM\RPMAreaRegistration.cs" />
     <Compile Include="Areas\DDM\Controllers\HomeController.cs" />
@@ -604,6 +606,8 @@
     <Folder Include="Areas\DCM\Models\Scripts\" />
     <Folder Include="Areas\DCM\Views\Home\" />
     <Folder Include="Areas\DDM\Views\Shared\" />
+    <Folder Include="Areas\DIM\Models\" />
+    <Folder Include="Areas\DIM\Views\Shared\" />
     <Folder Include="Areas\RPM\Models\" />
     <Folder Include="Areas\RPM\Views\Shared\" />
     <Folder Include="Areas\SAM\Models\" />
@@ -884,6 +888,10 @@
       <Project>{e4795f06-20c2-4c4c-a720-9a79896384df}</Project>
       <Name>BExIS.Io</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Components\XML\BExIS.Xml.Entities\BExIS.Xml.Entities.csproj">
+      <Project>{c0c9f0f2-9e65-448d-8000-d311db326460}</Project>
+      <Name>BExIS.Xml.Entities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Components\XML\BExIS.Xml.Services\BExIS.Xml.Services.csproj">
       <Project>{252f7872-a69c-43a6-84b4-4d2abdbdd9ab}</Project>
       <Name>BExIS.Xml.Services</Name>
@@ -1007,6 +1015,9 @@
     <Content Include="Areas\DDM\Views\Data\ShowData.cshtml" />
     <Content Include="Areas\RPM\Views\Home\_showDatasets.cshtml" />
     <Content Include="Areas\DDM\Views\Web.config" />
+    <Content Include="Areas\DIM\Views\Admin\Index.cshtml" />
+    <Content Include="Areas\DIM\Views\Web.config" />
+    <Content Include="Areas\DIM\Views\_ViewStart.cshtml" />
     <Content Include="Areas\Auth\Views\Groups\Groups.cshtml" />
     <Content Include="Areas\Auth\Views\Groups\_GroupsPartial.cshtml" />
     <Content Include="Areas\Auth\Views\Groups\_CreatePartial.cshtml" />

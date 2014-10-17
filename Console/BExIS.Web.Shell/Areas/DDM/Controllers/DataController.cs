@@ -42,7 +42,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             DatasetManager dm = new DatasetManager();
             DatasetVersion dsv = dm.GetDatasetLatestVersion(id);
             //XXX title
-            string title = dsv.Metadata.SelectNodes("Metadata/Description/Description/Title/Title")[0].InnerText;
+            string title = "title missing";//dsv.Metadata.SelectNodes("Metadata/Description/Description/Title/Title")[0].InnerText;
 
             PermissionManager permissionManager = new PermissionManager();
 

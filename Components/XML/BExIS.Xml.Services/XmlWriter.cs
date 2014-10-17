@@ -268,7 +268,6 @@ namespace BExIS.Xml.Services
             return null;
         }
 
-
         #region get list of xelement
 
             /// <summary>
@@ -296,7 +295,7 @@ namespace BExIS.Xml.Services
             }
         #endregion
 
-            #region static
+        #region static
 
                 /// <summary>
                 /// 

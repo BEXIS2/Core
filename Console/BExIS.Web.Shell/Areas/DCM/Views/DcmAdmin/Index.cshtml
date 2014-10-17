@@ -3,7 +3,9 @@
 }
 
 
-@Html.ActionLink("create Metadata Structure", "CreateMetadataStructure", "DcmAdmin", new { area = "DCM" }, new { @class="t-button"})
+@Html.ActionLink("create ABCD Metadata Structure", "CreateABCDMetadataStructure", "DcmAdmin", new { area = "DCM" }, new { @class="t-button"})
+
+@Html.ActionLink("create EML Metadata Structure", "CreateEMLMetadataStructure", "DcmAdmin", new { area = "DCM" }, new { @class="t-button"})
 
 @Html.ActionLink("XSD Scheme Read Test", "XsdRead", "DcmAdmin", new { area = "DCM" }, new { @class = "t-button" })
 

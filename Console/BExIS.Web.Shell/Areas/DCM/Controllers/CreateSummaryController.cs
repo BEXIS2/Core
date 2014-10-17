@@ -183,7 +183,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         workingCopy.Metadata = XmlMetadataWriter.ToXmlDocument(xMetadata);
                     }
 
-                    TaskManager.AddToBus(CreateDatasetTaskmanager.DATASET_TITLE, workingCopy.Metadata.SelectNodes("Metadata/Description/Description/Title/Title")[0].InnerText);
+                    //XXX TITLE
+                    TaskManager.AddToBus(CreateDatasetTaskmanager.DATASET_TITLE, "Title missing");//workingCopy.Metadata.SelectNodes("Metadata/Description/Description/Title/Title")[0].InnerText);
 
 
                     TaskManager.AddToBus(CreateDatasetTaskmanager.DATASET_ID, datasetId);
