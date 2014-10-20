@@ -82,6 +82,12 @@
   <ItemGroup>
     <EmbeddedResource Include="Mappings\Default\Security\Authenticator.hbm.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Mappings\Default\Security\DataPermission.hbm.xml" />
+    <EmbeddedResource Include="Mappings\Default\Security\Entity.hbm.xml" />
+    <EmbeddedResource Include="Mappings\Default\Security\FeaturePermission.hbm.xml" />
+    <EmbeddedResource Include="Mappings\Default\Security\Permission.hbm.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>rmdir /S /Q  "$(SolutionDir)Workspace\Components\Security\Db\Mappings"

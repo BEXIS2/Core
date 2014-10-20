@@ -1,0 +1,12 @@
+﻿<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Security.Entities" namespace="BExIS.Security.Entities.Security">
+  <joined-subclass xmlns="urn:nhibernate-mapping-2.2" name="FeaturePermission" table="FeaturePermissions" extends="Permission" dynamic-update="true">
+
+    <!-- Mapping Permission Properties -->
+    <key column="Id" />
+
+    <!-- Mapping Feature Permission Associations -->
+    <many-to-one name="Feature" column="FeatureRef" class="BExIS.Security.Entities.Objects.Feature, BExIS.Security.Entities"/>
+
+  </joined-subclass>
+
+</hibernate-mapping>

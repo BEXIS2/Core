@@ -8,7 +8,7 @@ namespace BExIS.Security.Entities.Security
 {
     public class DataPermission : Permission
     {
-        public virtual string EntityName { get; set; }
+        public virtual Entity Entity { get; set; }
         public virtual long DataId { get; set; }
 
         public virtual Right Right { get; set; }
