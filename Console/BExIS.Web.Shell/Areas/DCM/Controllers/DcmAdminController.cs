@@ -569,9 +569,11 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             if (eml.Extra == null)
             {
                 XmlDocument extraDoc = new XmlDocument();
-                extraDoc.LoadXml("<infos>" +
-                                 " <info name='title' value=\"Metadata/Description/DescriptionEML/Title/Title\" />" +
-                                 "</infos>"
+                extraDoc.LoadXml("<extra>" +
+                                 "<nodeReferences>"+
+                                 " <nodeRef name='title' value=\"Metadata/Description/DescriptionEML/Title/Title\" />" +
+                                 "</nodeReferences>"+
+                                 "</extra>"
                     );
 
                 eml.Extra = extraDoc;
@@ -1079,9 +1081,70 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 mdpManager.AddMetadataAtributeUsage(projectEml, RoleType, "Role", 0, 1);
                 mdpManager.AddMetadataAtributeUsage(projectEml, DescriptionAttr, "Project description", 0, 1);
             }
+
+        }
             #endregion
 
             #endregion
-        }
+
+
+
+           #region helper
+
+           private XmlNode AddNodeReferncesToMetadatStructure(MetadataStructure metadataStructure, string nodeName, string nodePath)
+           {
+               XmlDocument doc = new XmlDocument();
+
+               XmlNode extra;
+
+               if(metadataStructure.Extra !=null)
+               {
+                    extra = metadataStructure.Extra;
+               }
+               else
+               {
+                    extra = doc.CreateElement("extra");
+               }
+
+               doc.AppendChild(extra);
+
+               if(XmlUtility.GetXmlNodeByName(extra,"nodeReferences")!=null)
+               {
+                  XmlNode nodeReferences = XmlUtility.GetXmlNodeByName(extra,"nodeReferences");
+                  bool founded = false;
+                  
+                  if(nodeReferences.HasChildNodes)
+                  {
+                    foreach(XmlNode nodeRef in nodeReferences.ChildNodes)
+                    {
+                       if(nodeRef.Attributes.Count>0)
+                       {
+                            foreach(XmlAttribute attr in nodeRef.Attributes)
+                            {
+                                if(attr.Name.Equals("title"))
+                                {
+                                    attr.Value = nodePath;
+                                    founded = true;
+                                    break;
+                                }
+                            }
+                       }
+                    }
+                  }
+
+                if(!founded)
+                {
+                    XmlNode nodeRef = doc.CreateElement("nodeRef");
+
+                }
+                  
+               }
+
+
+               return doc.DocumentElement;
+           
+            }
+
+           #endregion
     }
 }

@@ -65,7 +65,11 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                     Property c = new Property();
                     c.Name = fieldProperty.Attributes.GetNamedItem("lucene_name").Value;
                     c.DisplayName = fieldProperty.Attributes.GetNamedItem("display_name").Value; ;
+
+
                     c.DataSourceKey = fieldProperty.Attributes.GetNamedItem("metadata_name").Value;
+
+
                     c.UIComponent = fieldProperty.Attributes.GetNamedItem("uiComponent").Value; ;
                     c.AggregationType = "distinct";
                     c.DefaultValue = "All";
@@ -226,19 +230,22 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             foreach (XmlNode facet in facetNodes)
             {
                 String multivalued = facet.Attributes.GetNamedItem("multivalued").Value;
-                String metadataElementName = facet.Attributes.GetNamedItem("metadata_name").Value;
+                string[] metadataElementNames = facet.Attributes.GetNamedItem("metadata_name").Value.Split(';');
                 String lucene_name = facet.Attributes.GetNamedItem("lucene_name").Value;
 
-                XmlNodeList elemList = metadataDoc.SelectNodes(metadataElementName);
-                for (int i = 0; i < elemList.Count; i++)
+                foreach (string metadataElementName in metadataElementNames)
                 {
-                    string eleme = elemList[i].InnerText;
-                    if (!elemList[i].InnerText.Trim().Equals(""))
+                    XmlNodeList elemList = metadataDoc.SelectNodes(metadataElementName);
+                    for (int i = 0; i < elemList.Count; i++)
                     {
-                        dataset.Add(new Field("facet_" + lucene_name, elemList[i].InnerText, Lucene.Net.Documents.Field.Store.YES, Field.Index.NOT_ANALYZED));
-                        dataset.Add(new Field("ng_all", elemList[i].InnerText, Lucene.Net.Documents.Field.Store.YES, Field.Index.ANALYZED));
-                        writeAutoCompleteIndex(docId, lucene_name, elemList[i].InnerText);
-                        writeAutoCompleteIndex(docId, "ng_all", elemList[i].InnerText);
+                        string eleme = elemList[i].InnerText;
+                        if (!elemList[i].InnerText.Trim().Equals(""))
+                        {
+                            dataset.Add(new Field("facet_" + lucene_name, elemList[i].InnerText, Lucene.Net.Documents.Field.Store.YES, Field.Index.NOT_ANALYZED));
+                            dataset.Add(new Field("ng_all", elemList[i].InnerText, Lucene.Net.Documents.Field.Store.YES, Field.Index.ANALYZED));
+                            writeAutoCompleteIndex(docId, lucene_name, elemList[i].InnerText);
+                            writeAutoCompleteIndex(docId, "ng_all", elemList[i].InnerText);
+                        }
                     }
                 }
             }
@@ -248,53 +255,57 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             {
                 String multivalued = property.Attributes.GetNamedItem("multivalued").Value;
                 String lucene_name = property.Attributes.GetNamedItem("lucene_name").Value;
-                String metadataElementName = property.Attributes.GetNamedItem("metadata_name").Value;
-                XmlNodeList elemList = metadataDoc.SelectNodes(metadataElementName);
-                String primitiveType = property.Attributes.GetNamedItem("primitive_type").Value;
-                if (elemList[0] != null)
+                string[] metadataElementNames = property.Attributes.GetNamedItem("metadata_name").Value.Split(';');
+
+                foreach (string metadataElementName in metadataElementNames)
                 {
-                    if (primitiveType.ToLower().Equals("string"))
+                    XmlNodeList elemList = metadataDoc.SelectNodes(metadataElementName);
+                    String primitiveType = property.Attributes.GetNamedItem("primitive_type").Value;
+                    if (elemList[0] != null)
                     {
-                        dataset.Add(new Field("property_" + lucene_name, elemList[0].InnerText, Lucene.Net.Documents.Field.Store.YES, Field.Index.NOT_ANALYZED));
-                        dataset.Add(new Field("ng_all", elemList[0].InnerText, Lucene.Net.Documents.Field.Store.YES, Field.Index.ANALYZED));
-                        writeAutoCompleteIndex(docId, lucene_name, elemList[0].InnerText);
-                        writeAutoCompleteIndex(docId, "ng_all", elemList[0].InnerText);
-                    }
-                    else if (primitiveType.ToLower().Equals("date"))
-                    {
-                        //DateTime MyDateTime = DateTime.Now;
-                        DateTime MyDateTime = new DateTime();
-                        /*String dTFormatElementName = property.Attributes.GetNamedItem("date_format").Value;
-                        XmlNodeList dtFormatElements = metadataDoc.GetElementsByTagName(dTFormatElementName);
-                        String dateTimeFormat = dtFormatElements[0].InnerText;*/
-
-                        if (DateTime.TryParse(elemList[0].InnerText, out MyDateTime))
+                        if (primitiveType.ToLower().Equals("string"))
                         {
-                            //MyDateTime = DateTime.ParseExact(elemList[0].InnerText, dateTimeFormat,
-                            //            CultureInfo.InvariantCulture);
-                            long t = MyDateTime.Ticks;
-
-                            NumericField xyz = new NumericField("property_numeric_" + lucene_name).SetLongValue(MyDateTime.Ticks);
-                            String dateToString = MyDateTime.Date.ToString("d", CultureInfo.CreateSpecificCulture("en-US"));
-                            dataset.Add(xyz);
-                            dataset.Add(new Field("property_" + lucene_name, dateToString, Lucene.Net.Documents.Field.Store.NO, Field.Index.NOT_ANALYZED));
-
-                            writeAutoCompleteIndex(docId, lucene_name, MyDateTime.Date.ToString());
-                            writeAutoCompleteIndex(docId, "ng_all", MyDateTime.Date.ToString());
+                            dataset.Add(new Field("property_" + lucene_name, elemList[0].InnerText, Lucene.Net.Documents.Field.Store.YES, Field.Index.NOT_ANALYZED));
+                            dataset.Add(new Field("ng_all", elemList[0].InnerText, Lucene.Net.Documents.Field.Store.YES, Field.Index.ANALYZED));
+                            writeAutoCompleteIndex(docId, lucene_name, elemList[0].InnerText);
+                            writeAutoCompleteIndex(docId, "ng_all", elemList[0].InnerText);
                         }
-                    }
-                    else if (primitiveType.ToLower().Equals("integer"))
-                    {
-                        dataset.Add(new NumericField("property_numeric" + lucene_name).SetIntValue(Convert.ToInt32(elemList[0].InnerText)));
-                        dataset.Add(new Field("property_" + lucene_name, elemList[0].InnerText, Lucene.Net.Documents.Field.Store.NO, Field.Index.NOT_ANALYZED));
-                        //  writeAutoCompleteIndex(lucene_name, elemList[0].InnerText);
-                    }
-                    else if (primitiveType.ToLower().Equals("double"))
-                    {
-                        dataset.Add(new NumericField("property_numeric" + lucene_name).SetDoubleValue(Convert.ToDouble(elemList[0].InnerText)));
-                        dataset.Add(new Field("property_" + lucene_name, elemList[0].InnerText, Lucene.Net.Documents.Field.Store.NO, Field.Index.NOT_ANALYZED));
-                        writeAutoCompleteIndex(docId, lucene_name, elemList[0].InnerText);
-                        writeAutoCompleteIndex(docId, "ng_all", elemList[0].InnerText);
+                        else if (primitiveType.ToLower().Equals("date"))
+                        {
+                            //DateTime MyDateTime = DateTime.Now;
+                            DateTime MyDateTime = new DateTime();
+                            /*String dTFormatElementName = property.Attributes.GetNamedItem("date_format").Value;
+                            XmlNodeList dtFormatElements = metadataDoc.GetElementsByTagName(dTFormatElementName);
+                            String dateTimeFormat = dtFormatElements[0].InnerText;*/
+
+                            if (DateTime.TryParse(elemList[0].InnerText, out MyDateTime))
+                            {
+                                //MyDateTime = DateTime.ParseExact(elemList[0].InnerText, dateTimeFormat,
+                                //            CultureInfo.InvariantCulture);
+                                long t = MyDateTime.Ticks;
+
+                                NumericField xyz = new NumericField("property_numeric_" + lucene_name).SetLongValue(MyDateTime.Ticks);
+                                String dateToString = MyDateTime.Date.ToString("d", CultureInfo.CreateSpecificCulture("en-US"));
+                                dataset.Add(xyz);
+                                dataset.Add(new Field("property_" + lucene_name, dateToString, Lucene.Net.Documents.Field.Store.NO, Field.Index.NOT_ANALYZED));
+
+                                writeAutoCompleteIndex(docId, lucene_name, MyDateTime.Date.ToString());
+                                writeAutoCompleteIndex(docId, "ng_all", MyDateTime.Date.ToString());
+                            }
+                        }
+                        else if (primitiveType.ToLower().Equals("integer"))
+                        {
+                            dataset.Add(new NumericField("property_numeric" + lucene_name).SetIntValue(Convert.ToInt32(elemList[0].InnerText)));
+                            dataset.Add(new Field("property_" + lucene_name, elemList[0].InnerText, Lucene.Net.Documents.Field.Store.NO, Field.Index.NOT_ANALYZED));
+                            //  writeAutoCompleteIndex(lucene_name, elemList[0].InnerText);
+                        }
+                        else if (primitiveType.ToLower().Equals("double"))
+                        {
+                            dataset.Add(new NumericField("property_numeric" + lucene_name).SetDoubleValue(Convert.ToDouble(elemList[0].InnerText)));
+                            dataset.Add(new Field("property_" + lucene_name, elemList[0].InnerText, Lucene.Net.Documents.Field.Store.NO, Field.Index.NOT_ANALYZED));
+                            writeAutoCompleteIndex(docId, lucene_name, elemList[0].InnerText);
+                            writeAutoCompleteIndex(docId, "ng_all", elemList[0].InnerText);
+                        }
                     }
                 }
             }
@@ -340,12 +351,12 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                     String multivalued = category.Attributes.GetNamedItem("multivalued").Value;
                     String primitiveType = category.Attributes.GetNamedItem("primitive_type").Value;
                     String lucene_name = category.Attributes.GetNamedItem("lucene_name").Value;
-                    String metadataElementName = category.Attributes.GetNamedItem("metadata_name").Value;
                     String storing = category.Attributes.GetNamedItem("store").Value;
                     String analysing = category.Attributes.GetNamedItem("analysed").Value;
                     float boosting = Convert.ToSingle(category.Attributes.GetNamedItem("boost").Value);
                     var toStore = Lucene.Net.Documents.Field.Store.NO;
                     var toAnalyse = Lucene.Net.Documents.Field.Index.NOT_ANALYZED;
+
                     if (storing.ToLower().Equals("yes"))
                     {
                         toStore = Lucene.Net.Documents.Field.Store.YES;
@@ -355,16 +366,21 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                         toAnalyse = Lucene.Net.Documents.Field.Index.ANALYZED;
                     }
 
-                    XmlNodeList elemList = metadataDoc.SelectNodes(metadataElementName);
-                    for (int i = 0; i < elemList.Count; i++)
+                    string[] metadataElementNames = category.Attributes.GetNamedItem("metadata_name").Value.Split(';');
+
+                    foreach (string metadataElementName in metadataElementNames)
                     {
-                        Field a = new Field("category_" + lucene_name, elemList[i].InnerText, toStore, toAnalyse);
-                        a.Boost = boosting;
-                        dataset.Add(a);
-                        dataset.Add(new Field("ng_" + lucene_name, elemList[i].InnerText, Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.ANALYZED));
-                        dataset.Add(new Field("ng_all", elemList[i].InnerText, Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.ANALYZED));
-                        writeAutoCompleteIndex(docId, lucene_name, elemList[i].InnerText);
-                        writeAutoCompleteIndex(docId, "ng_all", elemList[i].InnerText);
+                        XmlNodeList elemList = metadataDoc.SelectNodes(metadataElementName);
+                        for (int i = 0; i < elemList.Count; i++)
+                        {
+                            Field a = new Field("category_" + lucene_name, elemList[i].InnerText, toStore, toAnalyse);
+                            a.Boost = boosting;
+                            dataset.Add(a);
+                            dataset.Add(new Field("ng_" + lucene_name, elemList[i].InnerText, Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.ANALYZED));
+                            dataset.Add(new Field("ng_all", elemList[i].InnerText, Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.ANALYZED));
+                            writeAutoCompleteIndex(docId, lucene_name, elemList[i].InnerText);
+                            writeAutoCompleteIndex(docId, "ng_all", elemList[i].InnerText);
+                        }
                     }
 
                 }
@@ -379,11 +395,9 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                 String multivalued = general.Attributes.GetNamedItem("multivalued").Value;
                 String primitiveType = general.Attributes.GetNamedItem("primitive_type").Value;
                 String lucene_name = general.Attributes.GetNamedItem("lucene_name").Value;
-                String metadataElementName = general.Attributes.GetNamedItem("metadata_name").Value;
 
                 String storing = general.Attributes.GetNamedItem("store").Value;
                 String analysing = general.Attributes.GetNamedItem("analysed").Value;
-                float boosting = Convert.ToSingle(general.Attributes.GetNamedItem("boost").Value);
 
                 var toStore = Lucene.Net.Documents.Field.Store.NO;
                 var toAnalyse = Lucene.Net.Documents.Field.Index.NOT_ANALYZED;
@@ -396,15 +410,23 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                 {
                     toAnalyse = Lucene.Net.Documents.Field.Index.ANALYZED;
                 }
-                XmlNodeList elemList = metadataDoc.SelectNodes(metadataElementName);
-                for (int i = 0; i < elemList.Count; i++)
+                float boosting = Convert.ToSingle(general.Attributes.GetNamedItem("boost").Value);
+
+                string[] metadataElementNames = general.Attributes.GetNamedItem("metadata_name").Value.Split(';');
+
+                foreach (string metadataElementName in metadataElementNames)
                 {
-                    Field a = new Field(lucene_name, elemList[i].InnerText, toStore, toAnalyse);
-                    a.Boost = boosting;
-                    dataset.Add(a);
-                    dataset.Add(new Field("ng_all", elemList[i].InnerText, Lucene.Net.Documents.Field.Store.NO, Field.Index.ANALYZED));
-                    writeAutoCompleteIndex(docId, lucene_name, elemList[i].InnerText);
-                    writeAutoCompleteIndex(docId, "ng_all", elemList[i].InnerText);
+
+                    XmlNodeList elemList = metadataDoc.SelectNodes(metadataElementName);
+                    for (int i = 0; i < elemList.Count; i++)
+                    {
+                        Field a = new Field(lucene_name, elemList[i].InnerText, toStore, toAnalyse);
+                        a.Boost = boosting;
+                        dataset.Add(a);
+                        dataset.Add(new Field("ng_all", elemList[i].InnerText, Lucene.Net.Documents.Field.Store.NO, Field.Index.ANALYZED));
+                        writeAutoCompleteIndex(docId, lucene_name, elemList[i].InnerText);
+                        writeAutoCompleteIndex(docId, "ng_all", elemList[i].InnerText);
+                    }
                 }
 
             }

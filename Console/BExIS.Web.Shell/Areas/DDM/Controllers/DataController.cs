@@ -22,6 +22,7 @@ using System.IO.Compression;
 using BExIS.Web.Shell.Areas.DDM.Models;
 using Ionic.Zip;
 using BExIS.Security.Services.Objects;
+using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Security.Entities.Security;
 
 namespace BExIS.Web.Shell.Areas.DDM.Controllers
@@ -757,6 +758,16 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 });
 
                 return options;
+            }
+
+            private string getTitle(DatasetVersion datasetVerion)
+            {
+                // get MetadataStructure 
+                MetadataStructure metadataStructure = datasetVerion.Dataset.MetadataStructure;
+
+     
+
+                return "title missing";
             }
 
         #endregion
