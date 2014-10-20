@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using BExIS.Security.Entities.Objects;
+using BExIS.Security.Entities.Security;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Objects;
 
@@ -25,7 +26,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
     public class DataSubjectModel
     {
         public long DataId { get; set; }
-        public string EntityId { get; set; }
+        public long EntityId { get; set; }
 
         public long SubjectId { get; set; }
         public string SubjectName { get; set; }
@@ -35,7 +36,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
         public bool Update { get; set; }
         public bool Delete { get; set; }
 
-        public static DataSubjectModel Convert(long DataId, string EntityId, Subject subject, bool read, bool update, bool delete)
+        public static DataSubjectModel Convert(long DataId, long EntityId, Subject subject, bool read, bool update, bool delete)
         {
             return new DataSubjectModel()
             {

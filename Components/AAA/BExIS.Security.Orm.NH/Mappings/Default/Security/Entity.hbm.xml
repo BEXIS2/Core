@@ -21,7 +21,7 @@
 
     <set name="DataPermissions" inverse="true" cascade="all-delete-orphan" lazy="true">
       <key column="EntityRef"/>
-      <one-to-many class="JE.Entities.Security.Authorization.DataPermission, JE.Entities" />
+      <one-to-many class="BExIS.Security.Entities.Security.DataPermission, BExIS.Security.Entities" />
     </set>
 
   </class>

@@ -9,7 +9,7 @@
 
     <many-to-one name="Entity" column="EntityRef" class="BExIS.Security.Entities.Security.Entity, BExIS.Security.Entities"/>
 
-    <property name="RightType" type="BExIS.Security.Entities.Objects.RightType, BExIS.Security.Entities" />
+    <property name="RightType" type="BExIS.Security.Entities.Security.RightType, BExIS.Security.Entities" />
 
   </joined-subclass>
 

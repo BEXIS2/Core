@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using BExIS.Security.Entities.Security;
 using BExIS.Security.Entities.Subjects;
 using Vaiona.Entities.Common;
 

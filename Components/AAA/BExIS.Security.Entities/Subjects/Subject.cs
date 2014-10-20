@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using BExIS.Security.Entities.Objects;
+using BExIS.Security.Entities.Security;
 using Vaiona.Entities.Common;
 
 

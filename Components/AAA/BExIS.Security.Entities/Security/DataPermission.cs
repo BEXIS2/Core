@@ -11,10 +11,10 @@ namespace BExIS.Security.Entities.Security
         public virtual Entity Entity { get; set; }
         public virtual long DataId { get; set; }
 
-        public virtual Right Right { get; set; }
+        public virtual RightType RightType { get; set; }
     }
 
-    public enum Right
+    public enum RightType
     {
         Create = 0,
         Read = 1,

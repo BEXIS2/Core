@@ -35,7 +35,7 @@
 
     <set name="FeaturePermissions" inverse="true" cascade="save-update" lazy="true">
       <key column="FeatureRef"/>
-      <one-to-many class="FeaturePermission" />
+      <one-to-many class="BExIS.Security.Entities.Security.FeaturePermission, BExIS.Security.Entities" />
     </set>
 
   </class>

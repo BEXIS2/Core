@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using BExIS.Security.Entities.Objects;
+using BExIS.Security.Entities.Security;
 
 /// <summary>
 ///
@@ -32,7 +33,7 @@ namespace BExIS.Security.Services.Objects
         /// <param name="entityId"></param>
         /// <param name="subjectId"></param>
         /// <param name="rightType"></param>
-        int CreateDataPermission(long dataId, string entityId, long subjectId, RightType rightType);
+        int CreateDataPermission(long dataId, long entityId, long subjectId, RightType rightType);
 
         /// <summary>
         ///
@@ -43,7 +44,7 @@ namespace BExIS.Security.Services.Objects
         /// <param name="entityId"></param>
         /// <param name="userName"></param>
         /// <param name="rightType"></param>
-        int CreateDataPermission(long dataId, string entityId, string userName, RightType rightType);
+        int CreateDataPermission(long dataId, long entityId, string userName, RightType rightType);
 
         // D
 
@@ -56,7 +57,7 @@ namespace BExIS.Security.Services.Objects
         /// <param name="entityId"></param>
         /// <param name="subjectId"></param>
         /// <param name="rightType"></param>
-        int DeleteDataPermission(long dataId, string entityId, long subjectId, RightType rightType);
+        int DeleteDataPermission(long dataId, long entityId, long subjectId, RightType rightType);
 
         // E
 
@@ -69,7 +70,7 @@ namespace BExIS.Security.Services.Objects
         /// <param name="entityId"></param>
         /// <param name="subjectId"></param>
         /// <param name="rightType"></param>
-        bool ExistsDataPermission(long dataId, string entityId, long subjectId, RightType rightType);
+        bool ExistsDataPermission(long dataId, long entityId, long subjectId, RightType rightType);
 
         /// <summary>
         ///
@@ -80,7 +81,7 @@ namespace BExIS.Security.Services.Objects
         /// <param name="entityId"></param>
         /// <param name="subjectIds"></param>
         /// <param name="rightType"></param>
-        bool ExistsDataPermission(long dataId, string entityId, IEnumerable<long> subjectIds, RightType rightType);
+        bool ExistsDataPermission(long dataId, long entityId, IEnumerable<long> subjectIds, RightType rightType);
 
         // G
 
@@ -97,37 +98,13 @@ namespace BExIS.Security.Services.Objects
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param name="entityId"></param>
-        string GetAreaFromEntity(string entityId);
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>
-        /// <param name="entityId"></param>
-        string GetControllerFromEntity(string entityId);
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>
-        /// <param name="entityId"></param>
-        string GetActionFromEntity(string entityId);
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>
         /// <param name="dataId"></param>
         /// <param name="entityId"></param>
         /// <param name="subjectId"></param>
         /// <param name="rightType"></param>
-        DataPermission GetDataPermission(long dataId, string entityId, long subjectId, RightType rightType);
+        DataPermission GetDataPermission(long dataId, long entityId, long subjectId, RightType rightType);
 
-        ICollection<long> GetDataIds(string entityId, string userName, RightType rightType);
+        ICollection<long> GetDataIds(long entityId, string userName, RightType rightType);
 
         // U
 
@@ -140,7 +117,7 @@ namespace BExIS.Security.Services.Objects
         /// <param name="entityId"></param>
         /// <param name="userName"></param>
         /// <param name="rightType"></param>
-        bool HasUserDataAccess(long dataId, string entityId, string userName, RightType rightType);
+        bool HasUserDataAccess(long dataId, long entityId, string userName, RightType rightType);
         #endregion
     }
 }

@@ -7,6 +7,7 @@ using System.Web.Mvc;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
 using BExIS.Security.Entities.Objects;
+using BExIS.Security.Entities.Security;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
@@ -164,9 +165,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
 
         public ActionResult Entities(string entityId)
         {
-            PermissionManager permissionManager = new PermissionManager();
-
-            return RedirectToAction(permissionManager.GetActionFromEntity(entityId), permissionManager.GetControllerFromEntity(entityId));
+            return View();
         }
 
         public ActionResult Datasets()
@@ -197,7 +196,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
         }
 
         [GridAction]
-        public ActionResult Subjects_Select(long dataId, string entityId)
+        public ActionResult Subjects_Select(long dataId, long entityId)
         {
             PermissionManager permissionManager = new PermissionManager();
             SubjectManager subjectManager = new SubjectManager();
@@ -210,14 +209,14 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
             return View(new GridModel<DataSubjectModel> { Data = subjects });
         }
 
-        public int CreateDataPermission(long dataId, string entityId, long subjectId, int rightType)
+        public int CreateDataPermission(long dataId, long entityId, long subjectId, int rightType)
         {
             PermissionManager permissionManager = new PermissionManager();
 
             return permissionManager.CreateDataPermission(dataId, entityId, subjectId, (RightType)rightType);
         }
 
-        public int DeleteDataPermission(long dataId, string entityId, long subjectId, int rightType)
+        public int DeleteDataPermission(long dataId, long entityId, long subjectId, int rightType)
         {
             PermissionManager permissionManager = new PermissionManager();
 

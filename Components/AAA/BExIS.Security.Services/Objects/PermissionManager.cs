@@ -8,6 +8,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using BExIS.Security.Entities.Objects;
+using BExIS.Security.Entities.Security;
 using BExIS.Security.Entities.Subjects;
 using Vaiona.Persistence.Api;
 
@@ -32,6 +33,7 @@ namespace BExIS.Security.Services.Objects
             IUnitOfWork uow = this.GetUnitOfWork();
 
             this.DataPermissionsRepo = uow.GetReadOnlyRepository<DataPermission>();
+            this.EntitiesRepo = uow.GetReadOnlyRepository<Entity>();
             this.FeaturePermissionsRepo = uow.GetReadOnlyRepository<FeaturePermission>();
             this.FeaturesRepo = uow.GetReadOnlyRepository<Feature>();
             this.SubjectsRepo = uow.GetReadOnlyRepository<Subject>();
@@ -47,6 +49,8 @@ namespace BExIS.Security.Services.Objects
         /// <seealso cref=""/>        
         public IReadOnlyRepository<DataPermission> DataPermissionsRepo { get; private set; }
 
+
+        public IReadOnlyRepository<Entity> EntitiesRepo { get; private set; }
         /// <summary>
         ///
         /// </summary>
@@ -366,92 +370,10 @@ namespace BExIS.Security.Services.Objects
         /// <param>NA</param>       
         public IQueryable<Entity> GetAllEntities()
         {
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            XDocument xDocument = XDocument.Load(assembly.GetManifestResourceStream("BExIS.Security.Services.Manifest.xml"));
-
-            List<Entity> entities = new List<Entity>();
-
-            foreach (var entity in xDocument.Descendants("Entity"))
-            {
-                entities.Add(new Entity() { Id = entity.Attribute("Id").Value, Name = entity.Attribute("Name").Value, Assembly = entity.Attribute("Assembly").Value, Type = entity.Attribute("Type").Value });
-            }
-
-            return entities.AsQueryable<Entity>();
+            return EntitiesRepo.Query();
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>
-        /// <param name="entityId"></param>
-        public string GetAreaFromEntity(string entityId)
-        {
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            XDocument xDocument = XDocument.Load(assembly.GetManifestResourceStream("BExIS.Security.Services.Manifest.xml"));
-
-            var entities = xDocument.Descendants("Entity").Where(n => n.Attribute("Id").Value == entityId);
-
-            if (entities.Count() == 1)
-            {
-                return entities.FirstOrDefault().Attribute("Area").Value;
-            }
-
-            return "";
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>
-        /// <param name="entityId"></param>
-        public string GetControllerFromEntity(string entityId)
-        {
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            XDocument xDocument = XDocument.Load(assembly.GetManifestResourceStream("BExIS.Security.Services.Manifest.xml"));
-
-            var entities = xDocument.Descendants("Entity").Where(n => n.Attribute("Id").Value == entityId);
-
-            if (entities.Count() == 1)
-            {
-                return entities.FirstOrDefault().Attribute("Controller").Value;
-            }
-
-            return "";
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>
-        /// <param name="entityId"></param>
-        public string GetActionFromEntity(string entityId)
-        {
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            XDocument xDocument = XDocument.Load(assembly.GetManifestResourceStream("BExIS.Security.Services.Manifest.xml"));
-
-            var entities = xDocument.Descendants("Entity").Where(n => n.Attribute("Id").Value == entityId);
-
-            if (entities.Count() == 1)
-            {
-                return entities.FirstOrDefault().Attribute("Action").Value;
-            }
-
-            return "";
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>
-        /// <param name="dataId"></param>
-        /// <param name="entityId"></param>
-        /// <param name="subjectId"></param>
-        /// <param name="rightType"></param>
-        public int CreateDataPermission(long dataId, string entityId, long subjectId, RightType rightType)
+        public int CreateDataPermission(long dataId, long entityId, long subjectId, RightType rightType)
         {
             Subject subject = SubjectsRepo.Get(subjectId);
 
@@ -462,7 +384,7 @@ namespace BExIS.Security.Services.Objects
                     DataPermission dataPermission = new DataPermission()
                     {
                         DataId = dataId,
-                        EntityId = entityId,
+                        Entity = EntitiesRepo.Get(entityId),
 
                         Subject = subject,
 
@@ -498,7 +420,7 @@ namespace BExIS.Security.Services.Objects
         /// <param name="entityId"></param>
         /// <param name="userName"></param>
         /// <param name="rightType"></param>
-        public int CreateDataPermission(long dataId, string entityId, string userName, RightType rightType)
+        public int CreateDataPermission(long dataId, long entityId, string userName, RightType rightType)
         {
             ICollection<User> users = UsersRepo.Get(u => u.Name.ToLower() == userName.ToLower());
 
@@ -509,7 +431,7 @@ namespace BExIS.Security.Services.Objects
                     DataPermission dataPermission = new DataPermission()
                     {
                         DataId = dataId,
-                        EntityId = entityId,
+                        Entity = EntitiesRepo.Get(entityId),
 
                         Subject = users.FirstOrDefault(),
 
@@ -545,7 +467,7 @@ namespace BExIS.Security.Services.Objects
         /// <param name="entityId"></param>
         /// <param name="subjectId"></param>
         /// <param name="rightType"></param>
-        public int DeleteDataPermission(long dataId, string entityId, long subjectId, RightType rightType)
+        public int DeleteDataPermission(long dataId, long entityId, long subjectId, RightType rightType)
         {
             Subject subject = SubjectsRepo.Get(subjectId);
 
@@ -582,9 +504,9 @@ namespace BExIS.Security.Services.Objects
         /// <param name="entityId"></param>
         /// <param name="subjectId"></param>
         /// <param name="rightType"></param>
-        public bool ExistsDataPermission(long dataId, string entityId, long subjectId, RightType rightType)
+        public bool ExistsDataPermission(long dataId, long entityId, long subjectId, RightType rightType)
         {
-            if (DataPermissionsRepo.Query(p => p.DataId == dataId && p.EntityId == entityId && p.Subject.Id == subjectId && p.RightType == rightType).Count() == 1)
+            if (DataPermissionsRepo.Query(p => p.DataId == dataId && p.Entity.Id == entityId && p.Subject.Id == subjectId && p.RightType == rightType).Count() == 1)
             {
                 return true;
             }
@@ -603,9 +525,9 @@ namespace BExIS.Security.Services.Objects
         /// <param name="entityId"></param>
         /// <param name="subjectIds"></param>
         /// <param name="rightType"></param>
-        public bool ExistsDataPermission(long dataId, string entityId, IEnumerable<long> subjectIds, RightType rightType)
+        public bool ExistsDataPermission(long dataId, long entityId, IEnumerable<long> subjectIds, RightType rightType)
         {
-            if (DataPermissionsRepo.Query(p => p.DataId == dataId && p.EntityId.ToLower() == entityId.ToLower() && subjectIds.Contains(p.Subject.Id) && p.RightType == rightType).Count() > 0)
+            if (DataPermissionsRepo.Query(p => p.DataId == dataId && p.Entity.Id == entityId && subjectIds.Contains(p.Subject.Id) && p.RightType == rightType).Count() > 0)
             {
                 return true;
             }
@@ -624,9 +546,9 @@ namespace BExIS.Security.Services.Objects
         /// <param name="entityId"></param>
         /// <param name="subjectId"></param>
         /// <param name="rightType"></param>
-        public DataPermission GetDataPermission(long dataId, string entityId, long subjectId, RightType rightType)
+        public DataPermission GetDataPermission(long dataId, long entityId, long subjectId, RightType rightType)
         {
-            ICollection<DataPermission> dataPermissions = DataPermissionsRepo.Query(p => p.DataId == dataId && p.EntityId == entityId && p.Subject.Id == subjectId && p.RightType == rightType).ToArray();
+            ICollection<DataPermission> dataPermissions = DataPermissionsRepo.Query(p => p.DataId == dataId && p.Entity.Id == entityId && p.Subject.Id == subjectId && p.RightType == rightType).ToArray();
 
             if (dataPermissions.Count() == 1)
             {
@@ -647,7 +569,7 @@ namespace BExIS.Security.Services.Objects
         /// <param name="entityId"></param>
         /// <param name="userName"></param>
         /// <param name="rightType"></param>
-        public bool HasUserDataAccess(long dataId, string entityId, string userName, RightType rightType)
+        public bool HasUserDataAccess(long dataId, long entityId, string userName, RightType rightType)
         {
             ICollection<User> users = UsersRepo.Query(u => u.Name == userName).ToArray();
 
@@ -742,7 +664,7 @@ namespace BExIS.Security.Services.Objects
         }
 
 
-        public ICollection<long> GetDataIds(string entityId, string userName, RightType rightType)
+        public ICollection<long> GetDataIds(long entityId, string userName, RightType rightType)
         {
             ICollection<User> users = UsersRepo.Query(u => u.Name.ToLower() == userName.ToLower()).ToArray();
 
@@ -751,7 +673,7 @@ namespace BExIS.Security.Services.Objects
                 List<long> subjectIds = new List<long>(users.FirstOrDefault().Groups.Select(r => r.Id));
                 subjectIds.Add(users.FirstOrDefault().Id);
 
-                return DataPermissionsRepo.Query(p => subjectIds.Contains(p.Subject.Id) && p.EntityId.ToLower() == entityId.ToLower() && p.RightType == rightType).Select(p => p.DataId).ToList(); 
+                return DataPermissionsRepo.Query(p => subjectIds.Contains(p.Subject.Id) && p.Entity.Id == entityId && p.RightType == rightType).Select(p => p.DataId).ToList(); 
             }
 
             return null; 

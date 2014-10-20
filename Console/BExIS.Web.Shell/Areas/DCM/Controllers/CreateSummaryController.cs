@@ -20,6 +20,7 @@ using BExIS.Xml.Services;
 using BExIS.Dcm.Wizard;
 using BExIS.Io.Transform.Validation.Exceptions;
 using BExIS.Security.Services.Objects;
+using BExIS.Security.Entities.Security;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
 {
@@ -156,9 +157,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     if (GetUserNameOrDefault() != "DEFAULT")
                     {
                         PermissionManager pm = new PermissionManager();
-                        pm.CreateDataPermission(ds.Id, "Dataset", GetUserNameOrDefault(), Security.Entities.Objects.RightType.Read);
-                        pm.CreateDataPermission(ds.Id, "Dataset", GetUserNameOrDefault(), Security.Entities.Objects.RightType.Update);
-                        pm.CreateDataPermission(ds.Id, "Dataset", GetUserNameOrDefault(), Security.Entities.Objects.RightType.Delete);
+                        pm.CreateDataPermission(ds.Id, 1, GetUserNameOrDefault(), RightType.Read);
+                        pm.CreateDataPermission(ds.Id, 1, GetUserNameOrDefault(), RightType.Update);
+                        pm.CreateDataPermission(ds.Id, 1, GetUserNameOrDefault(), RightType.Delete);
                     }
 
                 }

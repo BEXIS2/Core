@@ -22,6 +22,7 @@ using System.IO.Compression;
 using BExIS.Web.Shell.Areas.DDM.Models;
 using Ionic.Zip;
 using BExIS.Security.Services.Objects;
+using BExIS.Security.Entities.Security;
 
 namespace BExIS.Web.Shell.Areas.DDM.Controllers
 {
@@ -50,7 +51,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             {
                 Id = id,
                 Title = title,
-                DataAccess = permissionManager.HasUserDataAccess(id, "Dataset", HttpContext.User.Identity.Name, Security.Entities.Objects.RightType.Read)
+                DataAccess = permissionManager.HasUserDataAccess(id, 1, HttpContext.User.Identity.Name, RightType.Read)
             };
 
 

@@ -24,6 +24,7 @@ using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Dcm.Wizard;
 using BExIS.Security.Services.Objects;
+using BExIS.Security.Entities.Security;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
 {
@@ -194,7 +195,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 PermissionManager permissionManager = new PermissionManager();
 
                 // add security
-                ICollection<long> datasetIDs = permissionManager.GetDataIds("Dataset",GetUserNameOrDefault(),Security.Entities.Objects.RightType.Update);
+                ICollection<long> datasetIDs = permissionManager.GetDataIds(1,GetUserNameOrDefault(), RightType.Update);
 
                 DataStructureManager dataStructureManager = new DataStructureManager();
                 DatasetManager dm = new DatasetManager();
