@@ -1,0 +1,15 @@
+﻿<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Security.Entities" namespace="BExIS.Security.Entities.Authorization">
+  <joined-subclass xmlns="urn:nhibernate-mapping-2.2" name="DataPermission" table="DataPermissions" extends="Permission" dynamic-update="true">
+
+    <!-- Mapping Permission Properties -->
+    <key column="Id" />
+
+    <!-- Mapping Feature Permission Associations -->
+    <property name="DataId" type="Int64" />
+    <property name="RightType" type="BExIS.Security.Entities.Objects.RightType, BExIS.Security.Entities" />
+
+    <many-to-one name="Entity" column="EntityRef" class="BExIS.Security.Entities.Objects.Entity, BExIS.Security.Entities"/>
+
+  </joined-subclass>
+
+</hibernate-mapping>

@@ -137,7 +137,7 @@ namespace BExIS.Xml.Services.Mapping
             return xmlMapper;
         }
 
-        public void Export(XmlDocument metadataXml , long id)
+        public string Export(XmlDocument metadataXml , long id)
         {
             #region abcd (metadata from bexis to abcd)
 
@@ -191,6 +191,7 @@ namespace BExIS.Xml.Services.Mapping
 
             #endregion
 
+            return path;
         }
 
         private void validationEventHandler(object sender, ValidationEventArgs e)

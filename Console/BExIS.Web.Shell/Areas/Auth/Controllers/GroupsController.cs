@@ -13,9 +13,6 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
 {
     public class GroupsController : Controller
     {
-        //
-        // GET: /Auth/Groups/
-
         public ActionResult Index()
         {
             return View();
@@ -43,47 +40,20 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
             if (ModelState.IsValid)
             {
                 SubjectManager subjectManager = new SubjectManager();
+                subjectManager.CreateGroup(model.GroupName, model.Description);
 
-                try
-                {
-                    subjectManager.CreateGroup(model.GroupName, model.Description);
-
-                    return PartialView("_InfoPartial", new InfoModel("Window_Creation", "The group was successfully created."));
-                }
-                catch(Exception e)
-                {
-
-                }
+                return Json(new { success = true });
             }
 
             return PartialView("_CreatePartial", model);
         }
 
         // D
-        public ActionResult Delete(long id)
-        {
-            SubjectManager subjectManager = new SubjectManager();
-
-            Group group = subjectManager.GetGroupById(id);
-
-            if (group != null)
-            {
-                return PartialView("_DeletePartial", GroupDeleteModel.Convert(group));
-            }
-            else
-            {
-                return PartialView("_InfoPartial", new InfoModel("Window_Deletion", "The group does not exist!"));
-            }
-        }
-
         [HttpPost]
-        public ActionResult Delete(GroupDeleteModel model)
+        public void Delete(long id)
         {
             SubjectManager subjectManager = new SubjectManager();
-
-            subjectManager.DeleteGroupById(model.Id);
-
-            return PartialView("_InfoPartial", new InfoModel("Window_Deletion", "The group was successfully deleted."));
+            subjectManager.DeleteGroupById(id);
         }
 
         // E
@@ -119,7 +89,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
 
                     subjectManager.UpdateGroup(group);
 
-                    return PartialView("_ShowPartial", model);
+                    return PartialView("_ShowPartial", GroupReadModel.Convert(group));
                 }
                 else
                 {
@@ -145,7 +115,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
             IQueryable<Group> data = subjectManager.GetAllGroups();
 
             List<GroupGridRowModel> groups = new List<GroupGridRowModel>();
-            data.ToList().ForEach(r => groups.Add(GroupGridRowModel.Convert(r)));
+            data.ToList().ForEach(g => groups.Add(GroupGridRowModel.Convert(g)));
 
             return View(new GridModel<GroupGridRowModel> { Data = groups });
         }
@@ -159,7 +129,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
 
             if (group != null)
             {
-                ViewData["groupID"] = id;
+                ViewData["GroupId"] = id;
 
                 return PartialView("_MembershipPartial");
             }
@@ -183,7 +153,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
             {
                 IQueryable<User> data = subjectManager.GetAllUsers();
 
-                data.ToList().ForEach(u => users.Add(GroupMembershipGridRowModel.Convert(group.Id, u, subjectManager.IsUserInGroup(u.Name, group.Name))));
+                data.ToList().ForEach(u => users.Add(GroupMembershipGridRowModel.Convert(group.Id, u, subjectManager.IsUserInGroup(u.Id, group.Id))));
             }
 
             return View(new GridModel<GroupMembershipGridRowModel> { Data = users });

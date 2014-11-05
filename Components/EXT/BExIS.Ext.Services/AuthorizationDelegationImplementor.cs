@@ -4,30 +4,14 @@ using System.Linq;
 using System.Text;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Subjects;
+using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
-
-/// <summary>
-///
-/// </summary>        
+     
 namespace BExIS.Ext.Services
-{
-    /// <summary>
-    ///
-    /// </summary>
-    /// <remarks></remarks>        
+{    
     public static class AuthorizationDelegationImplementor
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>
-        /// <param name="areaName"></param>
-        /// <param name="controllerName"></param>
-        /// <param name="actionName"></param>
-        /// <param name="userName"></param>
-        /// <param name="isAuthenticated"></param>
         public static void CheckAuthorization(string areaName, string controllerName, string actionName, string userName, bool isAuthenticated)
         {
             // validate the call using the extensibility information (modules, tasks, actions, etc)
@@ -36,28 +20,37 @@ namespace BExIS.Ext.Services
 
             // Ask for specific URLs (LogOn, Register, ...)
 
-            List<string> publics = new List<string>();
+            TaskManager taskManager = new TaskManager();
 
-            publics.Add("auth.account");
-            publics.Add("site.nav");
-            publics.Add("shell.home");
-            publics.Add("system.utils"); 
+            Task task = taskManager.GetTask(areaName, controllerName, "*");
 
-            if (!publics.Contains(areaName.ToLower() + "." + controllerName.ToLower()) && !publics.Contains(areaName.ToLower() + "." + controllerName.ToLower() + "." + actionName.ToLower()))
+            if (task != null)
             {
-                if (string.IsNullOrWhiteSpace(userName) || !isAuthenticated)
+                if (!task.IsPublic)
                 {
-                    throw new UnauthorizedAccessException();
-                }
-                else
-                {
-                    PermissionManager permissionManager = new PermissionManager();
+                    SubjectManager subjectManager = new SubjectManager();
 
-                    if (!permissionManager.HasUserFeatureAccess(userName, areaName, controllerName, "*"))
+                    User user = subjectManager.GetUserByName(userName);
+
+                    if (user != null)
+                    {
+                        PermissionManager permissionManager = new PermissionManager();
+
+                        if (!permissionManager.HasSubjectFeatureAccess(user.Id, task.Feature.Id))
+                        {
+                            throw new UnauthorizedAccessException();
+                        }
+                    }
+                    else
                     {
                         throw new UnauthorizedAccessException();
                     }
+                    
                 }
+            }
+            else
+            {
+                throw new UnauthorizedAccessException();
             }
         }
     }

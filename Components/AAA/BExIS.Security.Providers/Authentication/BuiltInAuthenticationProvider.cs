@@ -18,7 +18,7 @@ namespace BExIS.Security.Providers.Authentication
 
         public IReadOnlyRepository<User> UsersRepo { get; private set; }   
 
-        public bool IsUserAuthenticated(string userName, string password)
+        public bool ValidateUser(string userName, string password)
         {
             throw new NotImplementedException();
         }

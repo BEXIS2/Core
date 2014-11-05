@@ -30,6 +30,8 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
         public bool ExistsPermission { get; set; }
         public bool EffectiveRight { get; set; }
 
+        public int FeaturePermissionType { get; set; }
+
         public static FeaturePermissionModel Convert(Feature feature, Subject subject, bool existsPermission, bool effectiveRight)
         {
             return new FeaturePermissionModel()

@@ -20,7 +20,10 @@ using BExIS.Xml.Services;
 using BExIS.Dcm.Wizard;
 using BExIS.Io.Transform.Validation.Exceptions;
 using BExIS.Security.Services.Objects;
-using BExIS.Security.Entities.Security;
+using System.Xml;
+using BExIS.Security.Services.Authorization;
+using BExIS.Security.Entities.Objects;
+using BExIS.Security.Services.Subjects;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
 {
@@ -157,9 +160,14 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     if (GetUserNameOrDefault() != "DEFAULT")
                     {
                         PermissionManager pm = new PermissionManager();
-                        pm.CreateDataPermission(ds.Id, 1, GetUserNameOrDefault(), RightType.Read);
-                        pm.CreateDataPermission(ds.Id, 1, GetUserNameOrDefault(), RightType.Update);
-                        pm.CreateDataPermission(ds.Id, 1, GetUserNameOrDefault(), RightType.Delete);
+                        SubjectManager sm = new SubjectManager();
+
+                        BExIS.Security.Entities.Subjects.User user = sm.GetUserByName(GetUserNameOrDefault());
+
+                        foreach (RightType rightType in Enum.GetValues(typeof(RightType)).Cast<RightType>())
+                        {
+                            pm.CreateDataPermission(user.Id, 1, ds.Id, rightType);
+                        }
                     }
 
                 }
@@ -184,9 +192,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         workingCopy.Metadata = XmlMetadataWriter.ToXmlDocument(xMetadata);
                     }
 
-                    //XXX TITLE
-                    TaskManager.AddToBus(CreateDatasetTaskmanager.DATASET_TITLE, "Title missing");//workingCopy.Metadata.SelectNodes("Metadata/Description/Description/Title/Title")[0].InnerText);
-
+                    TaskManager.AddToBus(CreateDatasetTaskmanager.DATASET_TITLE, getTitle(workingCopy));//workingCopy.Metadata.SelectNodes("Metadata/Description/Description/Title/Title")[0].InnerText);
 
                     TaskManager.AddToBus(CreateDatasetTaskmanager.DATASET_ID, datasetId);
 
@@ -200,6 +206,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         }
 
         #region helper
+
             public string GetUserNameOrDefault()
             {
                 string userName = string.Empty;
@@ -211,6 +218,20 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                 return !string.IsNullOrWhiteSpace(userName) ? userName : "DEFAULT";
             }
+
+            private string getTitle(DatasetVersion datasetVersion)
+            {
+                // get MetadataStructure 
+                MetadataStructure metadataStructure = datasetVersion.Dataset.MetadataStructure;
+                XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)datasetVersion.Dataset.MetadataStructure.Extra);
+                XElement temp = XmlUtility.GetXElementByAttribute("nodeRef", "name", "title", xDoc);
+
+                string xpath = temp.Attribute("value").Value.ToString();
+                string title = datasetVersion.Metadata.SelectSingleNode(xpath).InnerText;
+
+                return title;
+            }
+
         #endregion
 
         // Check if existing packageModels have errors or not

@@ -27,7 +27,7 @@
                 tabs.Add()
                     .Text("Primary Data")
                     .LoadContentFrom("ShowPrimaryData", "Data", new { area = "DDM", datasetID = @Model.Id })
-                    .Enabled(@Model.DataAccess);
+                    .Enabled(@Model.ViewAccess);
 
 
             })

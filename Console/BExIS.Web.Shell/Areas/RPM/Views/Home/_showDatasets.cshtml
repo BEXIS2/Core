@@ -7,9 +7,13 @@
     ViewBag.Title = "Planing";   
 }
 
+@*<header>*@
+    <link href="@Url.Content("~/Areas/RPM/Stylesheets/RPM.css")" rel="stylesheet" type="text/css" />  
+@*</header> *@
+
 @if (Model.inUse == true)
 { 
-        <div id="showDatasets">         
+        <div class="planingPartialDiv" id="showDatasets">         
            
             @(Html.Telerik().Grid(Model.datasets)
             .Name("DatasetGrid")

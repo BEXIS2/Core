@@ -1,0 +1,35 @@
+﻿@using BExIS.Web.Shell.Areas.Auth.Models;
+@using Telerik.Web.Mvc.UI
+
+@{
+    ViewBag.Title = "Feature Manager";
+}
+
+@model IEnumerable<FeatureTreeViewModel>
+
+<style>
+    #Grid_Subjects .t-grid-content
+    {
+       height: auto !important;
+       max-height: 475px !important;
+    }
+</style>
+
+@section LeftPane 
+{ 
+    @Html.Partial("_FeaturesPartial", Model)
+}
+
+<h2>
+    Feature Permissions
+</h2>
+
+<p style="max-width:800px">
+    Here you are able to manage how users (or roles) have access to individual system features or entire modules. 
+    Please use the tree structure on left for navigation. 
+    By default feature permissions are not set, which means access is denied unless access permissions are explicitly granted or inherited from an upper level feature (e.g. module). 
+    Individual grants on features rule out higher level settings. 
+    Effective permissions are shown in the first column of the table. Please note that any change will take effect immediately without further confirmation or save/submit action.
+</p>
+
+<div id="Content_Subjects"></div>

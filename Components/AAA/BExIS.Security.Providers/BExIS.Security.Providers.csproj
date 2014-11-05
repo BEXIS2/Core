@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Authentication\ADAuthenticationProvider.cs" />
+    <Compile Include="Authentication\AuthenticationProvider.cs" />
     <Compile Include="Authentication\BuiltInAuthenticationProvider.cs" />
     <Compile Include="Authentication\IAuthenticationProvider.cs" />
     <Compile Include="Authentication\LdapAuthenticationProvider.cs" />

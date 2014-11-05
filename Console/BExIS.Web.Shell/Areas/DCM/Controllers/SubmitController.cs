@@ -23,8 +23,10 @@ using BExIS.Xml.Services;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Dcm.Wizard;
-using BExIS.Security.Services.Objects;
-using BExIS.Security.Entities.Security;
+using BExIS.Security.Entities.Objects;
+using BExIS.Security.Services.Authorization;
+using BExIS.Security.Services.Subjects;
+using System.Xml.Linq;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
 {
@@ -193,9 +195,10 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             public List<ListViewItem> LoadDatasetVersionViewList( DataStructureType dataStructureType)
             {
                 PermissionManager permissionManager = new PermissionManager();
+                SubjectManager subjectManager = new SubjectManager();
 
                 // add security
-                ICollection<long> datasetIDs = permissionManager.GetDataIds(1,GetUserNameOrDefault(), RightType.Update);
+                ICollection<long> datasetIDs = permissionManager.GetAllDataIds(subjectManager.GetUserByName(GetUserNameOrDefault()).Id, 1, RightType.Update).ToList();
 
                 DataStructureManager dataStructureManager = new DataStructureManager();
                 DatasetManager dm = new DatasetManager();
@@ -217,15 +220,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         {
                             if (datasetIDs.Contains(d.Id))
                             {
-                                XmlNodeList xnl = dmtemp[d.Id].SelectNodes("Metadata/Description/Description/Title/Title");
-                                string title = "";
-
-                                if (xnl.Count > 0)
-                                {
-                                    title = xnl[0].InnerText;
-                                }
-
-                                temp.Add(new ListViewItem(d.Id, title));
+                                temp.Add(new ListViewItem(d.Id, getTitle(dm.GetDatasetLatestVersion(d))));
                             }
                         }
                     }
@@ -234,22 +229,15 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 else
                 {
                     List<UnStructuredDataStructure> list = dataStructureManager.UnStructuredDataStructureRepo.Get().ToList();
-
+                                       
                     foreach (UnStructuredDataStructure sds in list)
                     {
                         foreach (Dataset d in sds.Datasets)
                         {
                             if (datasetIDs.Contains(d.Id))
                             {
-                                XmlNodeList xnl = dmtemp[d.Id].SelectNodes("Metadata/Description/Description/Title/Title");
-                                string title = "";
-
-                                if (xnl.Count > 0)
-                                {
-                                    title = xnl[0].InnerText;
-                                }
-
-                                temp.Add(new ListViewItem(d.Id, title));
+                                DatasetVersion datasetVersion = dm.GetDatasetLatestVersion(d);
+                                temp.Add(new ListViewItem(d.Id, getTitle(datasetVersion)));
                             }
                         }
                     }
@@ -296,7 +284,20 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         #endregion
 
 
+        #region helper
 
+            private string getTitle(DatasetVersion datasetVersion)
+            {
+                XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)datasetVersion.Dataset.MetadataStructure.Extra);
+                XElement temp = XmlUtility.GetXElementByAttribute("nodeRef", "name", "title", xDoc);
+
+                string xpath = temp.Attribute("value").Value.ToString();
+                string title = datasetVersion.Metadata.SelectSingleNode(xpath).InnerText;
+
+                return title;
+            }
+
+        #endregion
 
 
     }

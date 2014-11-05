@@ -40,4 +40,24 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
             };
         }
     }
+
+    public class FeatureTreeViewModel
+    {
+        public long Id { get; set; }
+        public string FeatureName { get; set; }
+        public string Description { get; set; }
+
+        public List<FeatureTreeViewModel> Children { get; set; }
+
+        public static FeatureTreeViewModel Convert(Feature feature)
+        {
+            return new FeatureTreeViewModel()
+            {
+                Id = feature.Id,
+                FeatureName = feature.Name,
+                Description = feature.Description,
+                Children = feature.Children.Select(c => FeatureTreeViewModel.Convert(c)).ToList<FeatureTreeViewModel>()
+            };
+        }
+    }
 }

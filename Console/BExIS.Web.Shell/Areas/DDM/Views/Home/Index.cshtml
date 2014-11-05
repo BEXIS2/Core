@@ -17,7 +17,7 @@
         @Html.Partial("_searchBreadcrumb", Model.WorkingSearchModel)
     </div>     
     <div class="searchContent">
-     @Html.Partial("_searchContent", Model.WorkingSearchModel.ResultComponent)
+        @Html.Partial("_searchContent", Model.WorkingSearchModel.ResultComponent)
     </div>
 }
 else
@@ -26,9 +26,9 @@ else
 }
 
 @section LeftPane 
-{    @if (ViewData.ModelState.IsValid)
-        {   
+{   @if (ViewData.ModelState.IsValid)
+    {   
         @Html.Partial("_searchFacets", Tuple.Create(Model.WorkingSearchModel, Model.DefaultSearchModel.SearchComponent.Facets))
         @Html.Partial("_searchProperties", Model.WorkingSearchModel.SearchComponent.Properties)
-        }
+    }
 }

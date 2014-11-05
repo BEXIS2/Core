@@ -26,78 +26,43 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
 
         #region Grid View
 
-        public ActionResult Users()
+        // A
+        public bool AddUserToGroup(long userId, long groupId)
         {
-            return View();
+            SubjectManager subjectManager = new SubjectManager();
+
+            return subjectManager.AddUserToGroup(userId, groupId);
         }
 
-        //
-        // Create
+        // C
         public ActionResult Create()
         {
-            return PartialView("_CreatePartial");
+            return PartialView("_CreatePartial", new UserCreateModel());
         }
 
         [HttpPost]
-        public ActionResult Create(UserCreationModel model)
+        public ActionResult Create(UserCreateModel model)
         {
             if (ModelState.IsValid)
             {
                 SubjectManager subjectManager = new SubjectManager();
+                subjectManager.CreateUser(model.UserName, model.Password, model.FullName, model.Email, model.SecurityQuestionList.Id, model.SecurityAnswer, model.AuthenticatorList.Id);
 
-                try
-                {
-                    subjectManager.CreateUser(model.UserName, model.Email, model.Password, model.SecurityQuestion, model.SecurityAnswer);
-
-                    return PartialView("_InfoPartial", new InfoModel("Window_Creation", "The user was successfully created."));
-                }
-                catch(Exception e)
-                {
-
-                }
-
-                
+                return Json(new { success = true });
             }
 
             return PartialView("_CreatePartial", model);
         }
 
-        //
-        // Delete
-        public ActionResult Delete(long id)
-        {
-            SubjectManager subjectManager = new SubjectManager();
-
-            User user = subjectManager.GetUserById(id);
-
-            if (user != null)
-            {
-                return PartialView("_DeletePartial", UserModel.Convert(user));         
-            }
-            else
-            {
-                return PartialView("_InfoPartial", new InfoModel("Window_Deletion", "The user does not exist!"));
-            }
-        }
-
         [HttpPost]
-        public ActionResult Delete(UserModel model)
+        public void Delete(long id)
         {
             SubjectManager subjectManager = new SubjectManager();
-
-            subjectManager.DeleteUserById(model.Id);
-
-            return PartialView("_InfoPartial", new InfoModel("Window_Deletion", "The user was successfully deleted."));
+            subjectManager.DeleteUserById(id);
         }
 
-        //
-        // Details
-        public ActionResult Details(long id)
-        {
-            return PartialView("_DetailsPartial", id);
-        }
-
-        public ActionResult UserInfo(long id)
+        // E
+        public ActionResult Edit(long id)
         {
             SubjectManager subjectManager = new SubjectManager();
 
@@ -105,23 +70,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
 
             if (user != null)
             {
-                return PartialView("_UserInfoPartial", UserModel.Convert(user));
-            }
-            else
-            {
-                return PartialView("_InfoPartial", new InfoModel("Window_Details", "The user does not exist!"));
-            }
-        }
-
-        public ActionResult UserEdit(long id)
-        {
-            SubjectManager subjectManager = new SubjectManager();
-
-            User user = subjectManager.GetUserById(id);
-
-            if (user != null)
-            {
-                return PartialView("_UserEditPartial", UserModel.Convert(user));
+                return PartialView("_EditPartial", UserUpdateModel.Convert(user));
             }
             else
             {
@@ -130,7 +79,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
         }
 
         [HttpPost]
-        public ActionResult UserEdit(UserModel model)
+        public ActionResult Edit(UserUpdateModel model)
         {
             if (ModelState.IsValid)
             {
@@ -140,11 +89,12 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
 
                 if (user != null)
                 {
+                    user.FullName = model.FullName;
                     user.Email = model.Email;
 
                     subjectManager.UpdateUser(user);
 
-                    return PartialView("_UserInfoPartial", model);
+                    return PartialView("_ShowPartial", UserReadModel.Convert(user));
                 }
                 else
                 {
@@ -152,19 +102,39 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
                 }
             }
 
-            return PartialView("_UserEditPartial", model);
+            return PartialView("_EditPartial", model);
         }
 
-        // Membership
+        // G
+        public ActionResult Users()
+        {
+            return View();
+        }
+
+        [GridAction]
+        public ActionResult Users_Select()
+        {
+            SubjectManager subjectManager = new SubjectManager();
+
+            // DATA
+            IQueryable<User> data = subjectManager.GetAllUsers();
+
+            List<UserGridRowModel> groups = new List<UserGridRowModel>();
+            data.ToList().ForEach(u => groups.Add(UserGridRowModel.Convert(u)));
+
+            return View(new GridModel<UserGridRowModel> { Data = groups });
+        }
+
+        // M
         public ActionResult Membership(long id)
         {
             SubjectManager subjectManager = new SubjectManager();
 
-            User user = subjectManager.GetUserById(id);;
+            User user = subjectManager.GetUserById(id); ;
 
             if (user != null)
             {
-                ViewData["UserID"] = id;
+                ViewData["UserId"] = id;
 
                 return PartialView("_MembershipPartial");
             }
@@ -188,19 +158,13 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
             {
                 IQueryable<Group> data = subjectManager.GetAllGroups();
 
-                data.ToList().ForEach(g => groups.Add(UserMembershipGridRowModel.Convert(user.Id, g, subjectManager.IsUserInGroup(user.Name, g.Name))));
+                data.ToList().ForEach(g => groups.Add(UserMembershipGridRowModel.Convert(user.Id, g, subjectManager.IsUserInGroup(user.Id, g.Id))));
             }
 
             return View(new GridModel<UserMembershipGridRowModel> { Data = groups });
         }
 
-        public bool AddUserToGroup(long userId, long groupId)
-        {
-            SubjectManager subjectManager = new SubjectManager();
-
-            return subjectManager.AddUserToGroup(userId, groupId);
-        }
-
+        // R
         public bool RemoveUserFromGroup(long userId, long groupId)
         {
             SubjectManager subjectManager = new SubjectManager();
@@ -208,18 +172,16 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
             return subjectManager.RemoveUserFromGroup(userId, groupId);
         }
 
-        // Feature Permissions
-        public ActionResult FeaturePermissions(long id)
+        // S
+        public ActionResult Show(long id)
         {
             SubjectManager subjectManager = new SubjectManager();
 
-            User user = subjectManager.GetUserById(id); ;
+            User user = subjectManager.GetUserById(id);
 
             if (user != null)
             {
-                ViewData["UserID"] = id;
-
-                return PartialView("_FeaturePermissionsPartial");
+                return PartialView("_ShowPartial", UserReadModel.Convert(user));
             }
             else
             {
@@ -227,25 +189,13 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
             }
         }
 
-        // S
-        [GridAction]
-        public ActionResult Users_Select()
+        // U
+        public ActionResult Update(long id)
         {
-            SubjectManager subjectManager = new SubjectManager();
-
-            // DATA
-            IQueryable<User> data = subjectManager.GetAllUsers();
-
-            List<UserModel> users = new List<UserModel>();
-            data.ToList().ForEach(u => users.Add(UserModel.Convert(u)));
-
-            return View(new GridModel<UserModel> { Data = users });
+            return PartialView("_UpdatePartial", id);
         }
 
         #endregion
-
-
-        #region Validation
 
         public JsonResult ValidateUserName(string userName, long id = 0)
         {
@@ -265,11 +215,11 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
                 }
                 else
                 {
-                    string error = String.Format(CultureInfo.InvariantCulture, "User name already exists.", userName);
+                    string error = String.Format(CultureInfo.InvariantCulture, "The user name already exists.", userName);
 
                     return Json(error, JsonRequestBehavior.AllowGet);
                 }
-            }              
+            }
         }
 
         public JsonResult ValidateEmail(string email, long id = 0)
@@ -290,55 +240,11 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
                 }
                 else
                 {
-                    string error = String.Format(CultureInfo.InvariantCulture, "Email address already exists.", email);
+                    string error = String.Format(CultureInfo.InvariantCulture, "The e-mail address already exists.", email);
 
                     return Json(error, JsonRequestBehavior.AllowGet);
                 }
             }
         }
-
-        private static string ErrorCodeToErrorMessage(UserCreateStatus createStatus)
-        {
-            switch (createStatus)
-            {
-                case UserCreateStatus.DuplicateUserName:
-                    return "The user name already exists.";
-
-                case UserCreateStatus.InvalidUserName:
-                    return "The user name is not valid.";
-
-                case UserCreateStatus.DuplicateEmail:
-                    return "The email address already exists.";
-
-                case UserCreateStatus.InvalidPassword:
-                    return "The password is invalid.";
-
-                default:
-                    return "An unknown error occurred. Please verify your entry and try again. If the problem persists, please contact your system administrator.";
-            }
-        }
-
-        private static string ErrorCodeToErrorKey(UserCreateStatus createStatus)
-        {
-            switch (createStatus)
-            {
-                case UserCreateStatus.DuplicateUserName:
-                    return "UserName";
-
-                case UserCreateStatus.InvalidUserName:
-                    return "UserName";
-
-                case UserCreateStatus.DuplicateEmail:
-                    return "Email";
-
-                case UserCreateStatus.InvalidPassword:
-                    return "Password";
-
-                default:
-                    return "";
-            }
-        }
-
-        #endregion
     }
 }

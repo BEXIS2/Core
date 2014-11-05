@@ -33,16 +33,16 @@
             )
             .EnableCustomBinding(true)
             .HtmlAttributes(new { @class = "result-grid" })
-
             .Columns(columns =>
                 {
                     if (@Model.Columns.Count > 0)
                     {
                             columns.Bound("Functions").ClientTemplate(
                             "<div class='searchResultFunctionDiv'>" +
-                                @Html.ActionLink("Details", "ShowData", "Data", new { area = "DDM", id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>" }, new { @class = "t-button" }) +
-                              "</div>"
+                                @Html.ActionLink("Details", "ShowData", "Data", new { area = "DDM", id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>" }, new { @class = "t-button", @id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>" }) +
+                             "</div>"
                             )
+                            
                             .Width("auto")
                             .Groupable(false)
                             .Sortable(false)
@@ -104,6 +104,11 @@
 
 <script type="text/javascript">
 
+    $('document').ready(function () {
+
+        $('.t-filter').attr("title", "Filter");
+    })
+
 	function resultGrid_OnRowDataBound(e) {
 
 		//alert(e.item);
@@ -129,5 +134,10 @@
 		max-height:450px;
 		/*overflow:auto;*/
 	}
+
+    #resultGrid .t-status
+    {
+       display:none;
+    }
 
 </style>

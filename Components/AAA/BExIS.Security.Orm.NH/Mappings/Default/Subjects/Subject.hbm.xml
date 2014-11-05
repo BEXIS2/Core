@@ -21,7 +21,7 @@
     <!-- Mapping Subject Properties -->
     <set name="Permissions" cascade="all-delete-orphan" lazy="true">
       <key column="SubjectRef"/>
-      <one-to-many class="BExIS.Security.Entities.Security.Permission, BExIS.Security.Entities" />
+      <one-to-many class="BExIS.Security.Entities.Authorization.Permission, BExIS.Security.Entities" />
     </set>
 
   </class>

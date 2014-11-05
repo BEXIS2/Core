@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using BExIS.Security.Entities.Security;
-using BExIS.Security.Services.Security;
+using BExIS.Security.Entities.Authentication;
+using BExIS.Security.Entities.Objects;
+using BExIS.Security.Services.Authentication;
 
 namespace BExIS.Web.Shell.Areas.Auth.Models
 {
@@ -43,7 +44,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
             return new AuthenticatorSelectListItemModel()
             {
                 Id = authenticator.Id,
-                Name = authenticator.Alias
+                Name = authenticator.Name
             };
         }
     }
@@ -54,10 +55,18 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
 
         public List<AuthenticatorSelectListItemModel> AuthenticatorList { get; set; }
 
-        public AuthenticatorSelectListModel()
+        public AuthenticatorSelectListModel(bool internalOnly = false)
         {
             AuthenticatorManager authenticatorManager = new AuthenticatorManager();
-            AuthenticatorList = authenticatorManager.GetAllAuthenticators().Select(a => AuthenticatorSelectListItemModel.Convert(a)).ToList<AuthenticatorSelectListItemModel>();
+
+            if (internalOnly)
+            {
+                AuthenticatorList = authenticatorManager.GetInternalAuthenticators().Select(a => AuthenticatorSelectListItemModel.Convert(a)).ToList<AuthenticatorSelectListItemModel>();
+            }
+            else
+            {
+                AuthenticatorList = authenticatorManager.GetAllAuthenticators().Select(a => AuthenticatorSelectListItemModel.Convert(a)).ToList<AuthenticatorSelectListItemModel>();
+            } 
         }
     }
 }

@@ -1,0 +1,106 @@
+﻿@using Telerik.Web.Mvc.UI;
+@using BExIS.Web.Shell.Areas.Auth.Models;
+
+@model AccountRegisterModel
+
+@using (Ajax.BeginForm("Register", "Account", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "Content_Register", OnSuccess = "onSuccess" }))
+{   
+    @Html.ValidationSummary(true)
+
+    <div id="accordion">
+    
+        <h3 style="font-weight:bold">User Information</h3>
+        <div>
+
+            <div class="editor-label" style="font-weight:bold">
+                @Html.LabelFor(m => m.AuthenticatorList.Id)
+            </div>
+            <div class="editor-field">
+                @Html.DropDownListFor(m => m.AuthenticatorList.Id, new SelectList(Model.AuthenticatorList.AuthenticatorList, "Id", "Name"))
+                @Html.ValidationMessageFor(m => m.AuthenticatorList.Id)
+            </div>
+
+            <div class="editor-label" style="font-weight:bold">
+                @Html.LabelFor(m => m.UserName)
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(m => m.UserName)
+                @Html.ValidationMessageFor(m => m.UserName)
+            </div>
+         
+            <div class="editor-label" style="font-weight:bold">
+                @Html.LabelFor(m => m.Password)
+            </div>
+            <div class="editor-field">
+                @Html.PasswordFor(m => m.Password)
+                @Html.ValidationMessageFor(m => m.Password)
+            </div>
+
+            <div class="editor-label" style="font-weight:bold">
+                @Html.LabelFor(m => m.ConfirmPassword)
+            </div>
+            <div class="editor-field">
+                @Html.PasswordFor(m => m.ConfirmPassword)
+                @Html.ValidationMessageFor(m => m.ConfirmPassword)
+            </div>
+
+            <div class="editor-label" style="font-weight:bold">
+                @Html.LabelFor(m => m.FullName)
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(m => m.FullName)
+                @Html.ValidationMessageFor(m => m.FullName)
+            </div>
+
+            <div class="editor-label" style="font-weight:bold">
+                @Html.LabelFor(m => m.Email)
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(m => m.Email)
+                @Html.ValidationMessageFor(m => m.Email)
+            </div>
+
+            <div class="editor-label" style="font-weight:bold">
+                @Html.LabelFor(m => m.SecurityQuestionList.Id)
+            </div>
+            <div class="editor-field">
+                @Html.DropDownListFor(m => m.SecurityQuestionList.Id, new SelectList(Model.SecurityQuestionList.SecurityQuestionList, "Id", "Question"))
+                @Html.ValidationMessageFor(m => m.SecurityQuestionList.Id)
+            </div>
+
+            <div class="editor-label" style="font-weight:bold">
+                @Html.LabelFor(m => m.SecurityAnswer)
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(m => m.SecurityAnswer)
+                @Html.ValidationMessageFor(m => m.SecurityAnswer)
+            </div>
+
+        </div>
+
+    </div>
+    
+    <p>
+        <button type="submit">Create</button>
+        <button type="reset">Reset</button>
+        <button type="button" onclick="Window_Register_Cancel()">Cancel</button>
+    </p>
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $.validator.unobtrusive.parse("#Content_Register");
+    });
+
+    $("#accordion").accordion({
+        heightStyle: "content"
+    });
+
+    function onSuccess(data) {
+        if (data.success) {
+            $('#Content_Register').empty();
+            $('#Window_Register').data('tWindow').close();
+            location.reload();
+        }
+    }
+</script>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Web.Mvc;
 using BExIS.Ddm.Model;
@@ -20,7 +21,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Models
 
         [Display(Name = "Metadata Node")]
         [Required(ErrorMessage = "Please select a Metadata link.")]
-        public String metadataName { get; set; }
+        public List<string> metadataNames { get; set; }
 
         //Type
         [Display(Name = "Search Component Type")]
@@ -77,6 +78,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Models
             this.analysed = true;
             this.norm = true;
             this.boost = 5;
+            this.metadataNames = new List<string>();
         }
 
         public static SearchAttribute GetSearchAttribute(SearchAttributeViewModel searchAttributeViewModel)
@@ -86,7 +88,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Models
             //names
             sa.displayName = searchAttributeViewModel.displayName;
             sa.sourceName = searchAttributeViewModel.sourceName;
-            sa.metadataName = searchAttributeViewModel.metadataName;
+            sa.metadataName = String.Join(",", searchAttributeViewModel.metadataNames.ToArray());
 
             //types
             sa.dataType = SearchAttribute.GetDataType(searchAttributeViewModel.dataType);
@@ -120,7 +122,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Models
             //names
             sa.displayName = searchAttribute.displayName;
             sa.sourceName = searchAttribute.sourceName;
-            sa.metadataName = searchAttribute.metadataName;
+            sa.metadataNames.AddRange(searchAttribute.metadataName.Split(','));
 
             //types
             sa.dataType = SearchAttribute.GetDataTypeAsDisplayString(searchAttribute.dataType);

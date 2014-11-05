@@ -1,7 +1,47 @@
-﻿@{
-    ViewBag.Title = "Index";
+﻿@model BExIS.Web.Shell.Areas.DIM.Models.AdminModel
+@using Telerik.Web.Mvc.UI;
+
+
+@{
+	ViewBag.Title = "Index";
 }
 
-@Html.ActionLink("Convert Metadata to Abcd", "ConvertMetadataToABCD", "Admin", new { @class = "t-button", @title = "abcd" })
+@*@Html.ActionLink("Convert Metadata to Abcd", "ConvertMetadataToABCD", "Admin", new { @class = "t-button", @title = "abcd" })
 
-@Html.ActionLink("Convert Metadata to EML", "ConvertMetadataToEML", "Admin", new { @class = "t-button", @title = "eml" })
+@Html.ActionLink("Convert Metadata to EML", "ConvertMetadataToEML", "Admin", new { @class = "t-button", @title = "eml" })*@
+
+<p> 
+	On this page you can convert the Metadata of a 
+	Datasets to a specfic Standard like ABCD or EML.<br />
+
+	<ul>
+		<li>Please select a Metadata Structure first</li>
+		<li>Select the datasets for convertion</li>
+		<li>Click the button to convert</li>
+	</ul> 
+</p>
+
+@if(@Model != null)
+{
+	@(Html.Telerik().TabStrip()
+			.Name("ShowDataTabStrip")
+			.SelectedIndex(0)
+			.Items(tabs =>
+			{
+				foreach (var metadataStructure in Model.MetadataStructuresDic)
+				{
+					tabs.Add()
+						.Text(metadataStructure.Value)
+						.LoadContentFrom("LoadMetadataStructureTab", "Admin", new { area = "DIM", Id = metadataStructure.Key });
+				}
+
+			})
+	)
+}
+
+
+
+<script type="text/javascript">
+
+
+</script>

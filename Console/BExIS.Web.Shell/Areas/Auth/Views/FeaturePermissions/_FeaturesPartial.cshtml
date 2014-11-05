@@ -1,0 +1,50 @@
+﻿@using Telerik.Web.Mvc.UI
+@using BExIS.Web.Shell.Areas.Auth.Models;
+
+@model IEnumerable<FeatureTreeViewModel>
+
+@(Html.Telerik().TreeView()
+        .Name("TreeView_Features")
+        .BindTo(Model, mappings =>
+        {
+            mappings.For<FeatureTreeViewModel>(binding => binding
+                .ItemDataBound((item, feature) =>
+                {
+                    item.Text = feature.FeatureName;
+                    item.Value = feature.Id.ToString();
+                })
+                .Children(feature => feature.Children));
+        })
+        .ClientEvents(events => events
+            .OnSelect("OnSelect")
+        )
+        .ExpandAll(true)
+)
+
+<script type="text/javascript">
+
+    function GetTreeView() {
+        return $('#TreeView_Features').data('tTreeView');
+    }
+
+    function OnSelect(e) {
+        var featureID = GetTreeView().getItemValue(e.item);
+
+        $('#Content_Subjects').empty();
+
+        $.get('@Url.Action("Subjects", "FeaturePermissions")', { Id: featureID }, function (contentData) {
+
+            $('#Content_Subjects').html(contentData);
+        });
+    }
+
+    // Feature Permission
+    function setFeaturePermission(value, subjectId, featureId) {
+        $.post('@Url.Action("SetFeaturePermission", "FeaturePermissions")', { SubjectId: subjectId, FeatureId: featureId, Value: value }, function (e) {
+            $("#Grid_Subjects .t-refresh").trigger('click');
+        });
+
+
+    }
+
+</script>

@@ -43,7 +43,7 @@ namespace BExIS.Security.Providers.Authentication
             }
         }
 
-        public bool IsUserAuthenticated(string username, string password)
+        public bool ValidateUser(string username, string password)
         {
             PrincipalContext AD = new PrincipalContext(ContextType.Domain, this.Host, this.BaseContainer, this.AdminUsername, this.AdminPassword);
 
@@ -53,37 +53,5 @@ namespace BExIS.Security.Providers.Authentication
             }
             return false;
         }
-
-        public User GetUser(string username, string password)
-        {
-            PrincipalContext AD = new PrincipalContext(ContextType.Domain, this.Host, this.BaseContainer, this.AdminUsername, this.AdminPassword);
-
-            if (AD.ValidateCredentials(username, password))
-            {
-                UserPrincipal u = new UserPrincipal(AD);
-                u.SamAccountName = username;
-
-                PrincipalSearcher search = new PrincipalSearcher(u);
-                UserPrincipal result = (UserPrincipal)search.FindOne();
-                search.Dispose();
-
-                if (result != null)
-                {
-                    User AdUser = new User();
-                    AdUser.Name = result.DisplayName;
-                    AdUser.Email = result.EmailAddress;
-                    return AdUser;
-                }
-                else
-                {
-                    throw new Exception("User not found");
-                }
-            }
-            else
-            {
-                throw new Exception("User could not be authenticated");
-            }
-        }
-
     }
 }

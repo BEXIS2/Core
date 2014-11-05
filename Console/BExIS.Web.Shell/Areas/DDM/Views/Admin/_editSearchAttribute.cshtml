@@ -48,16 +48,21 @@
         AggregationTypes.Add(ms.ToString());
     }
 
-    List<string> metadataNodes = new List<string>();
+    List<SearchMetadataNode> metadataNodes = new List<SearchMetadataNode>();
     if (Session["metadatNodes"]!=null)
     {
-        metadataNodes = (List<string>)Session["metadatNodes"];
+        metadataNodes = (List<SearchMetadataNode>)Session["metadatNodes"];
     }
     
 
  }
 
-@using (Html.BeginForm("Save", "Admin", new { area = "DDM" }))
+@using (Ajax.BeginForm("Save", "Admin", new AjaxOptions {
+    HttpMethod = "Post",
+    UpdateTargetId = "searchAttributeForm",
+    OnSuccess = "OnSuccess",
+    OnFailure = "OnFailure"
+}))
 {
     <h3> @Title </h3>
     <hr />
@@ -103,15 +108,25 @@
                 </tr>
                 <tr>
                     <td>
-                        @(Html.LabelFor(m => m.metadataName))
+                        @(Html.LabelFor(m => m.metadataNames))
                     </td>
                     <td>
-                        @Html.DropDownListFor(m => m.metadataName, new SelectList(metadataNodes, Model.metadataName), "Select, please")
+                        <div id="metadataNodes">
 
-                        <label title="Corresponding metadata node to be used for the Lucene index.">?</label>
+                            @if (Model.metadataNames != null && Model.metadataNames.Count > 0)
+                            {
+                                foreach (var xpath in Model.metadataNames)
+                                {
+                                    Html.RenderPartial("_metadataNode", xpath);
+                                }
+                            }
+                        </div>
 
-
-                        @Html.ValidationMessageFor(m => m.metadataName)
+                        <div>
+                            @Html.ActionLink("Add", "AddMetadataNode", null, new { id = "addNode", @class = "t-icon t-add" })
+                            <label title="Corresponding metadata node to be used for the Lucene index.">?</label>
+                            @Html.ValidationMessageFor(m => m.metadataNames)
+                        </div>
                     </td>
                 </tr>
                 <tr>
@@ -137,7 +152,7 @@
        </div> 
     #endregion
 
-    #region types
+                            #region types
         <br />
         <b>Type</b>
         <hr />
@@ -164,9 +179,9 @@
 
             </table>
         </div>
-    #endregion
+                            #endregion
 
-    #region parameter
+                            #region parameter
          <br />
         <b>Index Parameters</b>
         <hr />
@@ -219,9 +234,9 @@
                 </tr>
             </table>
         </div>
-    #endregion
+                            #endregion
 
-    #region properties
+                            #region properties
         <br />
         <b>Property Parameters</b>
         <hr />
@@ -271,12 +286,51 @@
                 </tr>*@
             </table>
         </div>
-    #endregion
+     #endregion
     }
     </div>
     <hr />
     <button type="submit" value="Save" name="submit"  class="t-button " style="border:0px;">save</button>
 }
+
+<script type="text/javascript">
+
+
+    var run = false;
+    $("#addNode").unbind().click(function () {
+
+
+            $.ajax({
+                url: this.href,
+                cache: false,
+                success: function (html) { $("#metadataNodes").append(html); }
+            });
+
+        return false;
+    });
+
+    $("a.removeMetadataNode").live("click", function () {
+        $(this).parents("div.metadataNode:first").remove();
+        return false;
+    });
+
+
+    function OnSuccess() {
+        
+        var window = $('#EditSearchAttribute').data('tWindow');
+        window.close();
+
+        @*$.post('@Url.Action("SearchDesigner", "Admin", new RouteValueDictionary { { "area", "DDM" } })', function (response) {
+            $("body").html(response);
+        })*@
+
+    }
+
+    function OnFailure(response) {
+        alert("failed");
+    }
+
+</script>
 
 <style type="text/css">
 

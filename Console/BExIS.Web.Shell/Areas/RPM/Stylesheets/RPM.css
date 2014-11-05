@@ -1,4 +1,8 @@
 ﻿/*partial Views*/
+.t-status, .t-refresh{
+display:none !important;
+}
+
 .function td, .locked td {
 text-align:center;
 min-width:100px;
@@ -41,13 +45,19 @@ vertical-align:top;
 }
 
 .locked {
-color:gray;
-text-align: center;
+    color:gray;
+    text-align: center;
 }
 
 .planingPartialDiv table, .planingPartialDiv tr, .planingPartialDiv td {
-border-style: none;
+    border-style: none;
 }
+
+.planingPartialDiv #DataTypeGrid, .planingPartialDiv #DatasetGrid {
+    margin: 0px;
+    padding: 0px;
+    width: 800px;
+} 
 
 .planingPartialDiv input {
 border-radius: 3px;
@@ -80,63 +90,3 @@ width: 150px;
 .planingPartialDiv .hidden {
     display: none;
 }
-
-/**** Isotope Filtering ****/
-
-.isotope-item {
-  z-index: auto;
-}
-
-.isotope-hidden.isotope-item {
-  pointer-events: none;
-  z-index: auto;
-}
-
-/**** Isotope CSS3 transitions ****/
-
-.isotope,
-.isotope .isotope-item {
-  -webkit-transition-duration: 0.8s;
-     -moz-transition-duration: 0.8s;
-      -ms-transition-duration: 0.8s;
-       -o-transition-duration: 0.8s;
-          transition-duration: 0.8s;
-}
-
-.isotope {
-  -webkit-transition-property: height, width;
-     -moz-transition-property: height, width;
-      -ms-transition-property: height, width;
-       -o-transition-property: height, width;
-          transition-property: height, width;
-}
-
-.isotope .isotope-item {
-  -webkit-transition-property: -webkit-transform, opacity;
-     -moz-transition-property:    -moz-transform, opacity;
-      -ms-transition-property:     -ms-transform, opacity;
-       -o-transition-property:      -o-transform, opacity;
-          transition-property:         transform, opacity;
-}
-
-/**** disabling Isotope CSS3 transitions ****/
-
-.isotope.no-transition,
-.isotope.no-transition .isotope-item,
-.isotope .isotope-item.no-transition {
-  -webkit-transition-duration: 0s;
-     -moz-transition-duration: 0s;
-      -ms-transition-duration: 0s;
-       -o-transition-duration: 0s;
-          transition-duration: 0s;
-}
-
-.filter .selected {
-    font-weight: bold;
-}
-
-#AutoComp {
-    z-index: 3;
-}
-
-

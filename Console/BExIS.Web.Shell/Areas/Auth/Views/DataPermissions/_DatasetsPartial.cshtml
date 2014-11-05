@@ -1,0 +1,39 @@
+﻿@using Telerik.Web.Mvc.UI
+@using BExIS.Web.Shell.Areas.Auth.Models;
+
+<h2>
+    Dataset Permission Manager
+</h2>
+
+<p style="max-width:800px">
+    Here you are able to manage how users (or roles) have access to individual datasets. 
+    Please select a dataset in the table below and then specify who should have permissions to read, update, or delete primary data (Note: metadata is always free). 
+    By default only the creator of a dataset has fully access, all other permissions are not set, which means access is denied. 
+    Grants for individual users rule out higher level settings for roles. Please note that any change will take effect immediately without further confirmation or save/submit action.
+</p>
+
+@(Html.Telerik().Grid(new List<DatasetGridRowModel>())
+        .Name("Grid_Datasets")
+        .DataKeys(keys =>
+        {
+            keys.Add(d => d.Id);
+        })
+        .Columns(columns =>
+        {
+            columns.Bound(d => d.Id);
+            columns.Bound(d => d.Version);
+            columns.Bound(d => d.Title);
+        })
+        .DataBinding(dataBinding => dataBinding
+                .Ajax()
+                .Select("Datasets_Select", "DataPermissions")
+        )
+        .ClientEvents(events => events.OnRowSelected("OnRowSelected"))
+        .Filterable()
+        .Sortable(sortable => sortable
+            .OrderBy(orderby => orderby
+                .Add(r => r.Id).Descending()))
+        .Scrollable(scrollable => scrollable.Height(275))
+        .Selectable()
+
+)

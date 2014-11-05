@@ -142,6 +142,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                 if (errorMsg != "ok")
                 {
                     ViewData["errorMsg"] = errorMsg;
+                    DSDM.GetDataStructureByID(DSDM.dataStructure.Id, DSDM.structured);
                     return View("DataStructureDesigner", DSDM);
                 }
                 else
@@ -597,8 +598,12 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                 string rgxReplace = "-";
                 Regex rgx = new Regex(rgxPattern);
 
-                string filename = dataStructure.Id + "_" + rgx.Replace(dataStructure.Name, rgxReplace);
-                return File(Path.Combine(AppConfiguration.DataPath, path), "application/xlsm", "Template_" + filename + ".xlsm");
+                string filename = rgx.Replace(dataStructure.Name, rgxReplace);
+
+                if (filename.Length > 50)
+                    filename = filename.Substring(0, 50);
+
+                return File(Path.Combine(AppConfiguration.DataPath, path), "application/xlsm", "Template_" + dataStructure.Id + "_" + filename + ".xlsm");
             }
             DataStructureDesignerModel DSDM = new DataStructureDesignerModel();
             DSDM.GetDataStructureByID(id);
@@ -850,6 +855,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
         public ActionResult openUnitWindow(long id)
         {
             UnitManager unitManager = new UnitManager();
+            DataTypeManager dataTypeManager = new DataTypeManager();
             List<Unit> unitList = unitManager.Repo.Get().Where(u => u.DataContainers.Count != null && u.AssociatedDataTypes.Count != null).ToList();
 
             if (id != 0)
@@ -866,6 +872,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                 }
                 Session["Unit"] = unit;
                 Session["Window"] = true;
+                Session["dataTypeList"] = dataTypeManager.Repo.Get().ToList();
             }
             else
             {
@@ -876,6 +883,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                 //Session["checked"] = null;
                 Session["Unit"] = new Unit();
                 Session["Window"] = true;
+                Session["dataTypeList"] = dataTypeManager.Repo.Get().ToList();
             }
             return View("UnitManager", unitList);
         }
@@ -1125,7 +1133,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                         DTM.Delete(dataType);
                     }
                 
-            }
+                }
             }
             return RedirectToAction("DataTypeManager");
         }

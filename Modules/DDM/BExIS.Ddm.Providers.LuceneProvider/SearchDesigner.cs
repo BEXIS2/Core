@@ -17,7 +17,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider
     {
         private XmlDocument _configXML;
         private List<SearchAttribute> _searchAttributeList = new List<SearchAttribute>();
-        private List<string> _metadataNodes = new List<string>();
+        private List<SearchMetadataNode> _metadataNodes = new List<SearchMetadataNode>();
         private bool _includePrimaryData = false;
 
         private BexisIndexer bexisIndexer = new BexisIndexer();
@@ -25,7 +25,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider
         public List<SearchAttribute> Get()
         {
             this.Load();
-            this._metadataNodes = new List<string>();
+            this._metadataNodes = new List<SearchMetadataNode>();
             return this._searchAttributeList;
         }
 
@@ -115,7 +115,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider
             return this._includePrimaryData;
         }
 
-        public List<string> GetMetadataNodes()
+        public List<SearchMetadataNode> GetMetadataNodes()
         {
             if (_metadataNodes.Count > 0)
                 return _metadataNodes;
@@ -133,20 +133,22 @@ namespace BExIS.Ddm.Providers.LuceneProvider
 
                     foreach (MetadataPackageUsage mpu in metadataPackageUsageList)
                     {
-                        _metadataNodes.AddRange(GenerateXPathsofAllAttributes(mpu));
+                        _metadataNodes.AddRange(GenerateMetadataNodesOfAllAttributes(mpu));
                     }
                 }
 
                 _metadataNodes = _metadataNodes.Distinct().ToList();
-                _metadataNodes.Sort();
+                _metadataNodes.Sort((x,y)=>String.Compare(x.DisplayName,y.DisplayName));
                 return _metadataNodes;
             }
             
         }
 
-        private List<string> GenerateXPathsofAllAttributes(MetadataPackageUsage source)
+        private List<SearchMetadataNode> GenerateMetadataNodesOfAllAttributes(MetadataPackageUsage source)
         {
-            List<string> xpaths = new List<string>();
+
+
+            List<SearchMetadataNode> SearchMetadataNodes = new List<SearchMetadataNode>();
 
             string root = "Metadata";
             string packageUsageLabel = source.Label.Replace(" ","");
@@ -154,11 +156,16 @@ namespace BExIS.Ddm.Providers.LuceneProvider
 
             foreach(MetadataAttributeUsage mau in source.MetadataPackage.MetadataAttributeUsages)
             {
-                xpaths.Add(String.Format("{0}/{1}/{2}/{3}/{4}",root,packageUsageLabel,package,mau.Label.Replace(" ",""),mau.MetadataAttribute.Name.Replace(" ","")));
-            }
-            
+                string metadataStructureName = source.MetadataStructure.Name;
+                string xPath = string.Format("{0}/{1}/{2}/{3}/{4}", root, packageUsageLabel, package, mau.Label.Replace(" ", ""), mau.MetadataAttribute.Name.Replace(" ", ""));
 
-            return xpaths;
+                SearchMetadataNodes.Add(
+                    new SearchMetadataNode(metadataStructureName,xPath)
+                    );
+            }
+
+
+            return SearchMetadataNodes;
         }
 
         public void Set(List<SearchAttribute> SearchAttributeList)

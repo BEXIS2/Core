@@ -3,7 +3,7 @@
 
 @model GroupCreateModel
 
-@using (Ajax.BeginForm("Create", "Groups", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "Content_Creation" }))
+@using (Ajax.BeginForm("Create", "Groups", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "Content_Create", OnSuccess = "onSuccess" }))
 {   
     @Html.ValidationSummary(true)
 
@@ -35,12 +35,23 @@
     <p>
         <button type="submit">Create</button>
         <button type="reset">Reset</button>
-        <button type="button" onclick="Window_Creation_Cancel()">Cancel</button>
+        <button type="button" onclick="Window_Create_Cancel()">Cancel</button>
     </p>
 }
 
 <script type="text/javascript">
+    $(document).ready(function () {
+        $.validator.unobtrusive.parse("#Content_Create");
+    });
+
     $("#accordion").accordion({
         heightStyle: "content"
     });
+
+    function onSuccess(data) {
+        if (data.success) {
+            $('#Content_Create').empty();
+            $('#Window_Create').data('tWindow').close();
+        }
+    }
 </script>

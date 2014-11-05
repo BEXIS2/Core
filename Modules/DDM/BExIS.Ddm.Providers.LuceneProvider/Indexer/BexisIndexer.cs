@@ -230,7 +230,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             foreach (XmlNode facet in facetNodes)
             {
                 String multivalued = facet.Attributes.GetNamedItem("multivalued").Value;
-                string[] metadataElementNames = facet.Attributes.GetNamedItem("metadata_name").Value.Split(';');
+                string[] metadataElementNames = facet.Attributes.GetNamedItem("metadata_name").Value.Split(',');
                 String lucene_name = facet.Attributes.GetNamedItem("lucene_name").Value;
 
                 foreach (string metadataElementName in metadataElementNames)
@@ -255,7 +255,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             {
                 String multivalued = property.Attributes.GetNamedItem("multivalued").Value;
                 String lucene_name = property.Attributes.GetNamedItem("lucene_name").Value;
-                string[] metadataElementNames = property.Attributes.GetNamedItem("metadata_name").Value.Split(';');
+                string[] metadataElementNames = property.Attributes.GetNamedItem("metadata_name").Value.Split(',');
 
                 foreach (string metadataElementName in metadataElementNames)
                 {
@@ -366,7 +366,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                         toAnalyse = Lucene.Net.Documents.Field.Index.ANALYZED;
                     }
 
-                    string[] metadataElementNames = category.Attributes.GetNamedItem("metadata_name").Value.Split(';');
+                    string[] metadataElementNames = category.Attributes.GetNamedItem("metadata_name").Value.Split(',');
 
                     foreach (string metadataElementName in metadataElementNames)
                     {
@@ -412,7 +412,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                 }
                 float boosting = Convert.ToSingle(general.Attributes.GetNamedItem("boost").Value);
 
-                string[] metadataElementNames = general.Attributes.GetNamedItem("metadata_name").Value.Split(';');
+                string[] metadataElementNames = general.Attributes.GetNamedItem("metadata_name").Value.Split(',');
 
                 foreach (string metadataElementName in metadataElementNames)
                 {

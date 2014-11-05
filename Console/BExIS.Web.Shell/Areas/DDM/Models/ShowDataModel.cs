@@ -9,7 +9,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Models
     {
         public long Id { get; set; }
         public string Title { get; set; }
-        public bool DataAccess { get; set; }
+        public bool ViewAccess { get; set; }
 
     }
 }

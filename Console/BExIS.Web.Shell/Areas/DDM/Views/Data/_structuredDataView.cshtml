@@ -24,6 +24,7 @@
 
     string compareValues = String.Join(",", Model.CompareValuesOfDataTypes.ToArray());
 
+
 }
 
 
@@ -41,6 +42,8 @@
 
 <div id="downloadOptions">
 
+    @if (Model.DownloadAccess)
+    { 
 		   @Html.ActionLink("Download Excel", "DownloadAsExcelData", "Data", new { id = @Model.DatasetId }, new { area = "DDM", @class = "t-button", title = "Xlsx download" })
 
 		   @Html.ActionLink("Download Comma Separated", "DownloadAsCsvData", "Data", new { id = @Model.DatasetId }, new { area = "DDM", @class = "t-button", title = "Csv download" })
@@ -48,6 +51,15 @@
 		   @Html.ActionLink("Download Tab Separated", "DownloadAsTxtData", "Data", new { id = @Model.DatasetId }, new { area = "DDM", @class = "t-button", title = "Text download" })
 		  
 		   @Html.CheckBox("DownLoadFullDataset", new { text = "Download full dataset", @id = "fullDatasetDownload" }) @Html.Label("Download full dataset")
+    }
+    else
+    {
+           <button title="Download Excel" name="Download Excel" class="t-button t-state-disabled" disabled="disabled">Download Excel</button>
+           <button title="Download Comma Separated" name="Download Comma Separated" class="t-button t-state-disabled" disabled="disabled">Download Comma Separated</button>
+           <button title="Download Tab Separated" name="Download Tab Separated" class="t-button t-state-disabled" disabled="disabled">Download Tab Separated</button>
+           <input type="checkbox"  disabled="disabled" >Download full dataset</input>
+    }
+    
 </div>
 <br />
 @(Html.Telerik().Grid(Model.Data)
@@ -66,8 +78,8 @@
                          .OnDataBound("PrimaryData_OnCommand")
                          .OnColumnHide("PrimaryData_OnCommand")
                          .OnColumnShow("PrimaryData_OnCommand")
-                         
-                        
+
+
 
                     )
             .Columns(columns =>

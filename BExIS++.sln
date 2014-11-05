@@ -74,15 +74,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.Ddm.Model", "Modules\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.Io", "Components\IO\BExIS.Io\BExIS.Io.csproj", "{E4795F06-20C2-4C4C-A720-9A79896384DF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.Security.Providers", "Components\AAA\BExIS.Security.Providers\BExIS.Security.Providers.csproj", "{5A6136EF-4E05-4D51-A3D7-9C7F0D14A9AB}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.Security.Data", "Components\AAA\BExIS.Security.Data\BExIS.Security.Data.csproj", "{057C48C0-34B7-447B-91AE-9C26D58FA431}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.Xml.Entities", "Components\XML\BExIS.Xml.Entities\BExIS.Xml.Entities.csproj", "{C0C9F0F2-9E65-448D-8000-D311DB326460}"
 EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 25
+		SccNumberOfProjects = 24
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = http://bexis2.vmguest.uni-jena.de:8080/tfs/bpp
 		SccLocalPath0 = .
@@ -174,26 +170,10 @@ Global
 		SccProjectTopLevelParentUniqueName22 = BExIS++.sln
 		SccProjectName22 = Components/IO/BExIS.Io
 		SccLocalPath22 = Components\\IO\\BExIS.Io
-		SccProjectUniqueName23 = Components\\AAA\\BExIS.Security.Providers\\BExIS.Security.Providers.csproj
+		SccProjectUniqueName23 = Components\\XML\\BExIS.Xml.Entities\\BExIS.Xml.Entities.csproj
 		SccProjectTopLevelParentUniqueName23 = BExIS++.sln
-		SccProjectName23 = Components/AAA/BExIS.Security.Data
-		SccLocalPath23 = Components\\AAA\\BExIS.Security.Data
-		SccProjectUniqueName24 = Components\\XML\\BExIS.Xml.Entities\\BExIS.Xml.Entities.csproj
-		SccProjectTopLevelParentUniqueName24 = BExIS++.sln
-		SccProjectName24 = Components/XML/BExIS.Xml.Entities
-		SccLocalPath24 = Components\\XML\\BExIS.Xml.Entities
-		SccProjectName23 = Components/AAA/BExIS.Security.Providers
-		SccLocalPath23 = Components\\AAA\\BExIS.Security.Providers
-		SccProjectUniqueName24 = Components\\AAA\\BExIS.Security.Data\\BExIS.Security.Data.csproj
-		SccProjectTopLevelParentUniqueName24 = BExIS++.sln
-		SccProjectName24 = Components/AAA/BExIS.Security.Data
-		SccLocalPath24 = Components\\AAA\\BExIS.Security.Data
-		SccProjectName23 = Components/AAA/BExIS.Security.Providers
-		SccLocalPath23 = Components\\AAA\\BExIS.Security.Providers
-		SccProjectUniqueName24 = Components\\AAA\\BExIS.Security.Data\\BExIS.Security.Data.csproj
-		SccProjectTopLevelParentUniqueName24 = BExIS++.sln
-		SccProjectName24 = Components/AAA/BExIS.Security.Data
-		SccLocalPath24 = Components\\AAA\\BExIS.Security.Data
+		SccProjectName23 = Components/XML/BExIS.Xml.Entities
+		SccLocalPath23 = Components\\XML\\BExIS.Xml.Entities
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -443,26 +423,6 @@ Global
 		{E4795F06-20C2-4C4C-A720-9A79896384DF}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{E4795F06-20C2-4C4C-A720-9A79896384DF}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{E4795F06-20C2-4C4C-A720-9A79896384DF}.Release|x86.ActiveCfg = Release|Any CPU
-		{5A6136EF-4E05-4D51-A3D7-9C7F0D14A9AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5A6136EF-4E05-4D51-A3D7-9C7F0D14A9AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5A6136EF-4E05-4D51-A3D7-9C7F0D14A9AB}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{5A6136EF-4E05-4D51-A3D7-9C7F0D14A9AB}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{5A6136EF-4E05-4D51-A3D7-9C7F0D14A9AB}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{5A6136EF-4E05-4D51-A3D7-9C7F0D14A9AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5A6136EF-4E05-4D51-A3D7-9C7F0D14A9AB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5A6136EF-4E05-4D51-A3D7-9C7F0D14A9AB}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{5A6136EF-4E05-4D51-A3D7-9C7F0D14A9AB}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{5A6136EF-4E05-4D51-A3D7-9C7F0D14A9AB}.Release|x86.ActiveCfg = Release|Any CPU
-		{057C48C0-34B7-447B-91AE-9C26D58FA431}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{057C48C0-34B7-447B-91AE-9C26D58FA431}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{057C48C0-34B7-447B-91AE-9C26D58FA431}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{057C48C0-34B7-447B-91AE-9C26D58FA431}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{057C48C0-34B7-447B-91AE-9C26D58FA431}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{057C48C0-34B7-447B-91AE-9C26D58FA431}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{057C48C0-34B7-447B-91AE-9C26D58FA431}.Release|Any CPU.Build.0 = Release|Any CPU
-		{057C48C0-34B7-447B-91AE-9C26D58FA431}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{057C48C0-34B7-447B-91AE-9C26D58FA431}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{057C48C0-34B7-447B-91AE-9C26D58FA431}.Release|x86.ActiveCfg = Release|Any CPU
 		{C0C9F0F2-9E65-448D-8000-D311DB326460}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C0C9F0F2-9E65-448D-8000-D311DB326460}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C0C9F0F2-9E65-448D-8000-D311DB326460}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -490,8 +450,6 @@ Global
 		{C230693B-D780-438B-B26C-82257642DD5C} = {946EB891-B5C8-4E03-B953-69583E886E57}
 		{3D726430-CB41-4607-A615-CD48F510229B} = {946EB891-B5C8-4E03-B953-69583E886E57}
 		{681C8BC4-55F0-4F43-A685-90E246A88CB1} = {946EB891-B5C8-4E03-B953-69583E886E57}
-		{057C48C0-34B7-447B-91AE-9C26D58FA431} = {946EB891-B5C8-4E03-B953-69583E886E57}
-		{5A6136EF-4E05-4D51-A3D7-9C7F0D14A9AB} = {946EB891-B5C8-4E03-B953-69583E886E57}
 		{6C18F986-A56C-4366-88A4-7046E8901929} = {692AFF14-3A57-47D8-912F-093EC8F561C4}
 		{3FECE534-E021-47D1-8ABA-05A238D20A83} = {692AFF14-3A57-47D8-912F-093EC8F561C4}
 		{A98E4405-1702-4F38-9EBD-AEA67D4185A6} = {692AFF14-3A57-47D8-912F-093EC8F561C4}

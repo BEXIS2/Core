@@ -13,7 +13,7 @@
     .Columns(columns =>
     {
         columns.Bound(m => m.IsUserInGroup)
-            .ClientTemplate("<input type='checkbox' onclick='setUserInGroup(this.checked, <#= Id #>, <#= GroupId #>);' name='nothing' <#= IsUserInGroup ? checked='checked' : '' #> />")
+            .ClientTemplate("<input type='checkbox' onclick='setMembership(this.checked, <#= Id #>, <#= GroupId #>);' name='nothing' <#= IsUserInGroup ? checked='checked' : '' #> />")
                    .Title("Member")
                    .Width(64)
                    .Filterable(false)

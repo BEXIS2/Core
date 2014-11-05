@@ -15,16 +15,13 @@
       <column name="Extra" not-null="false" sql-type="xml" />
     </property>
 
-    <!-- Mapping Action Properties -->
-    <property name="Name" type="String" />
-    <property name="Description" type="String" />
-
     <property name="AreaName" type="String" />
     <property name="ControllerName" type="String" />
     <property name="ActionName" type="String" />
+    <property name="IsPublic" type="yes_no" />
 
     <!-- Mapping Action Associations -->
-    <many-to-one name="Feature" column="FeatureRef" class="Feature"/>
+    <many-to-one name="Feature" column="FeatureRef" class="BExIS.Security.Entities.Objects.Feature, BExIS.Security.Entities"/>
 
   </class>
 

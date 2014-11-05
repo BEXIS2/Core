@@ -1,32 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using BExIS.Security.Entities.Security;
-
-/// <summary>
-/// The security system contains three types of entities. This namespace is used for
-/// all subject entities of the security system - users and roles.
-/// </summary>           
+using BExIS.Security.Entities.Authentication;
+using BExIS.Security.Entities.Objects;
+      
 namespace BExIS.Security.Entities.Subjects
-{
-    /// <summary>
-    /// A user is one concrete type of a subject.
-    /// </summary>
-    /// <remarks>
-    /// The security system needs to distinguish between different types of subjects.
-    /// On the one hand there are real users who register with the system. And on the
-    /// other side, there are unreal constructs (e.g. roles). It is obvious that 
-    /// these two types are used for different purposes. 
-    /// </remarks>        
+{      
     public class User : Subject
     {
         #region Attributes
       
         public virtual string Email { get; set; }
 
+        public virtual string FullName { get; set; }
+
         public virtual string Password { get; set; }
         public virtual string PasswordSalt { get; set; }
 
-        public virtual string SecurityQuestion { get; set; }
         public virtual string SecurityAnswer { get; set; }
         public virtual string SecurityAnswerSalt { get; set; }
 
@@ -56,6 +45,8 @@ namespace BExIS.Security.Entities.Subjects
         public virtual Authenticator Authenticator { get; set; }
 
         public virtual ICollection<Group> Groups { get; set; }
+
+        public virtual SecurityQuestion SecurityQuestion { get; set; }
 
         #endregion
 

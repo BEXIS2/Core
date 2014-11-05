@@ -5,74 +5,244 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Xml;
+using System.Xml.Linq;
+using BExIS.Web.Shell.Areas.DIM.Models;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
+using BExIS.Xml.Services;
 using BExIS.Xml.Services.Mapping;
 using Vaiona.Util.Cfg;
+using BExIS.Dlm.Services.MetadataStructure;
+using BExIS.Dlm.Entities.MetadataStructure;
 
 namespace BExIS.Web.Shell.Areas.DIM.Controllers
 {
     public class AdminController : Controller
     {
+
+        private List<long> datasetVersionIds = new List<long>();
+        private XmlMapperManager xmlMapperManager = new XmlMapperManager();
+        
         //
         // GET: /DIM/Admin/
 
         public ActionResult Index()
         {
-            return View();
+            AdminModel model = new AdminModel();
+
+            MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
+            IList<MetadataStructure> metadataStructures = metadataStructureManager.Repo.Get();
+
+            foreach(MetadataStructure metadataStructure in metadataStructures)
+            {
+                model.Add(metadataStructure);
+            }
+            
+            return View(model);
         }
 
-        public ActionResult ConvertMetadataToABCD()
+
+
+        public ActionResult LoadMetadataStructureTab(long Id)
         {
-            string path_mapping_abcd = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), "mapping_abcd.xml");
+            #region load Model
 
-            XmlMapperManager xmlMapperManager = new XmlMapperManager();
+                DatasetManager datasetManager = new DatasetManager();
+                datasetVersionIds = datasetManager.GetDatasetLatestIds();
 
-            xmlMapperManager.Load(path_mapping_abcd);
+                MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
+                MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(Id);
 
-            DatasetManager datasetManager = new DatasetManager();
+                MetadataStructureModel model = new MetadataStructureModel(
+                        metadataStructure.Id,
+                        metadataStructure.Name,
+                        metadataStructure.Description,
+                        getDatasetVersionsDic(metadataStructure,datasetVersionIds)
+                
+                    );
 
-            List<long> ids = datasetManager.GetDatasetLatestIds();
+            #endregion
+
+            return PartialView("_metadataStructureView",model);
+        }
 
 
-            foreach (long id in ids)
+        public ActionResult ConvertSelectedDatasetVersion(string Id, string SelectedDatasetIds)
+        {
+
+            #region load Model
+
+                DatasetManager datasetManager = new DatasetManager();
+                datasetVersionIds = datasetManager.GetDatasetLatestIds();
+
+                MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
+                MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(Convert.ToInt64(Id));
+
+                MetadataStructureModel model = new MetadataStructureModel(
+                        metadataStructure.Id,
+                        metadataStructure.Name,
+                        metadataStructure.Description,
+                        getDatasetVersionsDic(metadataStructure,datasetVersionIds)
+                
+                    );
+
+            #endregion
+
+            #region convert
+
+            if (SelectedDatasetIds != null && SelectedDatasetIds!="")
             {
-                Dataset dataset = datasetManager.GetDataset(id);
-                if (dataset.MetadataStructure.Id.Equals(xmlMapperManager.xmlMapper.Id))
+
+                string[] ids = SelectedDatasetIds.Split(',');
+
+                foreach (string id in ids)
                 {
-                    XmlDocument metadata = datasetManager.GetDatasetLatestMetadataVersion(id);
-                    xmlMapperManager.Export(metadata, id);
+                    string path = Export(Convert.ToInt64(id));
+                    model.AddMetadataPath(Convert.ToInt64(id), path);
                 }
             }
 
-            return View("Index");
+            #endregion
+
+
+            return PartialView("_metadataStructureView",model);
         }
 
-        public ActionResult ConvertMetadataToEML()
+        public ActionResult Download(string path)
         {
-            string path_mapping_eml = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), "mapping_eml.xml");
+            return File(path, "text/xml");
+        }
 
-            XmlMapperManager xmlMapperManager = new XmlMapperManager();
-            //xmlMapperManager.SearchForSequenceByDuplicatedElementNames = false;
+        //public ActionResult ConvertMetadataToABCD()
+        //{
+        //    string path_mapping_abcd = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), "mapping_abcd.xml");
 
-            xmlMapperManager.Load(path_mapping_eml);
+        //    XmlMapperManager xmlMapperManager = new XmlMapperManager();
 
+        //    xmlMapperManager.Load(path_mapping_abcd);
+
+        //    DatasetManager datasetManager = new DatasetManager();
+
+        //    List<long> ids = datasetManager.GetDatasetLatestIds();
+
+
+        //    foreach (long id in ids)
+        //    {
+        //        Dataset dataset = datasetManager.GetDataset(id);
+        //        if (dataset.MetadataStructure.Id.Equals(xmlMapperManager.xmlMapper.Id))
+        //        {
+        //            XmlDocument metadata = datasetManager.GetDatasetLatestMetadataVersion(id);
+        //            xmlMapperManager.Export(metadata, id);
+        //        }
+        //    }
+
+        //    return View("Index");
+        //}
+
+        private string Export(long datasetVersionId)
+        {
             DatasetManager datasetManager = new DatasetManager();
+            DatasetVersion datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
 
-            List<long> ids = datasetManager.GetDatasetLatestIds();
-
-            foreach (long id in ids)
+            string fileName = getMappingFileName(datasetVersion);
+            string path_mapping_file = "";
+            try
             {
-                Dataset dataset = datasetManager.GetDataset(id);
-                if (dataset.MetadataStructure.Id.Equals(xmlMapperManager.xmlMapper.Id))
-                {
-                    XmlDocument metadata = datasetManager.GetDatasetLatestMetadataVersion(id);
-                    xmlMapperManager.Export(metadata, id);
-                }
+                    path_mapping_file = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), fileName);
+
+                    xmlMapperManager = new XmlMapperManager();
+                    xmlMapperManager.Load(path_mapping_file);
+
+                    return xmlMapperManager.Export(datasetVersion.Metadata, datasetVersion.Id);
+            }
+            catch
+            {
+            
             }
 
-            return View("Index");
+            return "";
         }
+
+
+        //public ActionResult ConvertMetadataToEML()
+        //{
+        //    string path_mapping_eml = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), "mapping_eml.xml");
+
+        //    XmlMapperManager xmlMapperManager = new XmlMapperManager();
+        //    //xmlMapperManager.SearchForSequenceByDuplicatedElementNames = false;
+
+        //    xmlMapperManager.Load(path_mapping_eml);
+
+        //    DatasetManager datasetManager = new DatasetManager();
+
+        //    List<long> ids = datasetManager.GetDatasetLatestIds();
+
+        //    foreach (long id in ids)
+        //    {
+        //        Dataset dataset = datasetManager.GetDataset(id);
+        //        if (dataset.MetadataStructure.Id.Equals(xmlMapperManager.xmlMapper.Id))
+        //        {
+        //            XmlDocument metadata = datasetManager.GetDatasetLatestMetadataVersion(id);
+        //            xmlMapperManager.Export(metadata, id);
+        //        }
+        //    }
+
+        //    return View("Index");
+        //}
+
+
+        #region helper
+
+        private string getTitle(DatasetVersion datasetVersion)
+        {
+         
+            // get MetadataStructure 
+            XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)datasetVersion.Dataset.MetadataStructure.Extra);
+            XElement temp = XmlUtility.GetXElementByAttribute("nodeRef", "name", "title", xDoc);
+
+            string xpath = temp.Attribute("value").Value.ToString();
+            string title = datasetVersion.Metadata.SelectSingleNode(xpath).InnerText;
+
+            return title;
+        }
+
+        private string getMappingFileName(DatasetVersion datasetVersion)
+        {
+            // get MetadataStructure 
+            XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)datasetVersion.Dataset.MetadataStructure.Extra);
+            XElement temp = XmlUtility.GetXElementByAttribute("convertRef", "name", "mappingFile", xDoc);
+
+            return temp.Attribute("value").Value.ToString();
+        }
+
+        private List<DatasetVersionModel> getDatasetVersionsDic(MetadataStructure metadataStructure, List<long> datasetVersionIds)
+        {
+            List<DatasetVersionModel> datasetVersions = new List<DatasetVersionModel>();
+            DatasetManager datasetManager = new DatasetManager();
+
+            DatasetVersion datasetVersion;
+
+            foreach(long id in datasetVersionIds)
+            {
+                datasetVersion = datasetManager.GetDatasetVersion(id);
+                if(datasetVersion.Dataset.MetadataStructure.Id.Equals(metadataStructure.Id))
+                {
+                    datasetVersions.Add(
+                        new DatasetVersionModel
+                        {
+                            Id = id,
+                            Title = getTitle(datasetVersion),
+                            MetadataDownloadPath = ""
+                        });
+
+                }
+
+            }
+
+            return datasetVersions;
+        }
+
+        #endregion
 
 
     }

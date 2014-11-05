@@ -1,0 +1,128 @@
+﻿@model BExIS.Web.Shell.Areas.DIM.Models.MetadataStructureModel
+@using Telerik.Web.Mvc.UI;
+
+@{
+    ViewBag.Title = @Model.Displayname;
+
+    string id = "DIM-"+Model.Id.ToString();
+    string all_id = "all_" + id;
+    string none_id = "none_" + id;
+    string convert_id = "convert_" + id;
+    string preloader_id = "preloader_" + id;
+}
+<div id="@id">
+
+<h2 >@Model.Displayname</h2>
+
+<div id="@preloader_id" style="display:none;" >
+     <img src="../../../../Themes/Default/Styles/Default/preloader.GIF" />
+</div>
+
+
+<p>@Model.Description</p>
+
+
+    @(Html.Telerik().Grid(Model.DatasetVersions)
+            .Name("datasetversionsConvertGrid")
+            .HtmlAttributes(new { @class = "convert-grid" })
+            .Filterable()
+            .Pageable()
+            .ToolBar(command =>
+            {
+                command.Template(
+                    @<text>
+                        <button id="@convert_id" type="button" class="t-button" value="Convert" name="button" onclick="dim_OnClickConvert(this)" >Convert</button>
+                    </text>
+                    );
+            })
+            .Columns(columns =>
+                {
+                    columns.Template(
+                        @<text>
+                            <input id="@item.Id" name="checkedDatasetVersion" type="checkbox" value="@item.Id " title="checkedDatasetVersion" class="checkBox" />
+                        </text>
+                        ).Width(30)
+                        .HeaderTemplate(
+                            @<text>
+                                <input id="@all_id" name="checkedDatasetVersion" type="checkbox" value="all" title="checkedDatasetVersion" class="checkBox" onclick="OnChangeAllCheckbox(this)" />
+                            </text>
+                        );
+                    columns.Bound(o => o.Title).Title("Dataset Title")
+                           .Filterable(true);
+                    columns.Template(
+                        @<text>
+                            @if (item.MetadataDownloadPath != "")
+                            { 
+                                @Html.ActionLink("download", "Download", "Admin", new { path = @item.MetadataDownloadPath }, new { area = "DIM" });
+                            }
+                        </text>
+
+                        ).Title("Download Link");
+
+
+                }
+           ))
+        
+</div>
+<style type="text/css">
+
+    #datasetversionsConvertGrid .t-status
+    {
+        display:none;
+    }
+    
+
+</style>
+
+
+<script type="text/javascript">
+
+
+    function dim_OnClickConvert(obj)
+    {
+        var selectedDatasetIds = "";
+        var idString = obj.id.split('_')[1];
+        var id = idString.split('-')[1];
+
+        $("#" + idString + " input:checkbox:checked").each(function () {
+
+            if (this.id.indexOf("all") == -1) {
+                if (selectedDatasetIds == "")
+                    selectedDatasetIds = this.id;
+                else
+                    selectedDatasetIds += "," + this.id;
+            }
+        })
+
+        //alert(selectedDatasetIds);
+
+        var preloaderId = "preloader_" + idString;
+        $('#' + preloaderId).show();
+
+        $.post('@Url.Action("ConvertSelectedDatasetVersion", "Admin", new { area="DIM"})', { Id: id, SelectedDatasetIds: selectedDatasetIds }, function (e) {
+            $("#" + idString).html(e);
+            $('#' + preloaderId).hide();
+        });
+
+    }
+
+    function OnChangeAllCheckbox(obj) {
+
+        var id = obj.id.split('_')[1];
+        var objid = obj.id;
+
+        var val = $('#' + objid).prop("checked");
+
+        if (val == false) {
+            $("#" + id).find("input:checkbox")
+                       .attr("checked", false);
+        }
+        else {
+            $("#" + id).find("input:checkbox")
+                       .attr("checked", true);
+        }
+
+    }
+
+
+</script>

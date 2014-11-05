@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using BExIS.Security.Entities.Security;
 
 namespace BExIS.Security.Providers.Authentication
 {
@@ -15,6 +14,6 @@ namespace BExIS.Security.Providers.Authentication
         // Registration is not necessary at all. Just use the IsUserAuthenticated function
         //User RegisterUser(string userName, string password);
 
-        bool IsUserAuthenticated(string userName, string password);
+        bool ValidateUser(string userName, string password);
     }
 }

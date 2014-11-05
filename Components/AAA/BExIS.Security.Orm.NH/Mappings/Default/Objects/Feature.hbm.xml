@@ -17,7 +17,6 @@
 
     <!-- Mapping Feature Properties -->
     <property name="Name" type="String" />
-
     <property name="Description" type="String" />
 
     <!-- Mapping Feature Associations -->
@@ -35,7 +34,7 @@
 
     <set name="FeaturePermissions" inverse="true" cascade="save-update" lazy="true">
       <key column="FeatureRef"/>
-      <one-to-many class="BExIS.Security.Entities.Security.FeaturePermission, BExIS.Security.Entities" />
+      <one-to-many class="BExIS.Security.Entities.Authorization.FeaturePermission, BExIS.Security.Entities" />
     </set>
 
   </class>

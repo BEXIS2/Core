@@ -51,6 +51,7 @@
     <Folder Include="Mappings\Default\Base\" />
     <Folder Include="Mappings\Default\NativeObjects\" />
     <Folder Include="Mappings\Default\PostObjects\" />
+    <Folder Include="Mappings\Default\Security\" />
     <Folder Include="Mappings\PostgreSQL82Dialect\" />
   </ItemGroup>
   <ItemGroup>
@@ -71,13 +72,18 @@
     <EmbeddedResource Include="Mappings\Default\Subjects\Group.hbm.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Mappings\Default\Security\Authenticator.hbm.xml" />
+    <EmbeddedResource Include="Mappings\Default\Authentication\Authenticator.hbm.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Mappings\Default\Security\DataPermission.hbm.xml" />
-    <EmbeddedResource Include="Mappings\Default\Security\Entity.hbm.xml" />
-    <EmbeddedResource Include="Mappings\Default\Security\FeaturePermission.hbm.xml" />
-    <EmbeddedResource Include="Mappings\Default\Security\Permission.hbm.xml" />
+    <EmbeddedResource Include="Mappings\Default\Authorization\DataPermission.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Mappings\Default\Objects\Entity.hbm.xml" />
+    <EmbeddedResource Include="Mappings\Default\Authorization\FeaturePermission.hbm.xml" />
+    <EmbeddedResource Include="Mappings\Default\Authorization\Permission.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Mappings\Default\Objects\SecurityQuestion.hbm.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

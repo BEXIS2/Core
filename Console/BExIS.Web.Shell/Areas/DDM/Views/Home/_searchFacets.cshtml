@@ -5,7 +5,10 @@
            
 <div id="searchTreeView" >
 
-  <h5>Categories</h5>
+@if(Model.Item1.SearchComponent.Facets.Count() > 0)
+{ 
+    <h5>Categories</h5>
+}
 
 @(Html.Telerik().TreeView()
        .Name("TreeView")

@@ -13,6 +13,7 @@ using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Dlm.Entities.MetadataStructure;
 using MDS = BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Security.Services.Objects;
+using BExIS.Security.Services.Authorization;
 
 namespace BExIS.Web.Shell.Controllers
 {
@@ -73,9 +74,9 @@ namespace BExIS.Web.Shell.Controllers
         private void testSecuirty()
         {
             PermissionManager pManager = new PermissionManager();
-            var user = pManager.UsersRepo.Get(3); // Roman
-            var the = pManager.UsersRepo.Refresh(user.Id);
-            var the2 = pManager.UsersRepo.Reload(user);
+            //var user = pManager.UsersRepo.Get(3); // Roman
+            //var the = pManager.UsersRepo.Refresh(user.Id);
+            //var the2 = pManager.UsersRepo.Reload(user);
         }
 
         private void testMetadataStructure()

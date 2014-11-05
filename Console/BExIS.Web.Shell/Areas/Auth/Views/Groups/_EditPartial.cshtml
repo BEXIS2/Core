@@ -49,6 +49,10 @@
 }
 
 <script type="text/javascript">
+    $(document).ready(function () {
+        $.validator.unobtrusive.parse("#tabs-1");
+    });
+
     $("#accordion").accordion({
         heightStyle: "content"
     });

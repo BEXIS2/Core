@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using BExIS.Security.Entities.Security;
+using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Subjects;
 
 namespace BExIS.Web.Shell.Areas.Auth.Models

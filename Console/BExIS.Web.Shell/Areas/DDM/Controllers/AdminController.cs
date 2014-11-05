@@ -139,14 +139,16 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         //create new config file
                         SaveConfig();
                     //}
+
+                    return Json(true);
                 }
                 else
                 {
                     ViewData["windowVisible"] = true;
                 }
 
-
-                return View("SearchDesigner", (List<SearchAttributeViewModel>)Session["searchAttributeList"]);
+                return Json(false);
+                //return View("SearchDesigner", (List<SearchAttributeViewModel>)Session["searchAttributeList"]);
             }
 
         #endregion
@@ -283,7 +285,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
         #region ReIndex
 
-            public ActionResult RefreshSearch()
+        public ActionResult RefreshSearch()
         {
             ISearchDesigner sd = GetSearchDesigner();
 
@@ -329,6 +331,11 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
         private void SetSearchDesigner(SearchDesigner searchDesigner)
         {
             Session["SearchDesigner"] = searchDesigner;
+        }
+
+        public ActionResult AddMetadataNode()
+        {
+            return PartialView("_metadataNode", "");
         }
 
         #endregion

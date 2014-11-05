@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml;
+using System.Xml.Linq;
 
 namespace BExIS.Xml.Services
 {
@@ -74,5 +75,54 @@ namespace BExIS.Xml.Services
             //doc.DocumentElement.NamespaceURI
             return doc.CreateElement(nodeName);
         }
+
+        #region xdoc
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <remarks></remarks>
+            /// <seealso cref=""/>
+            /// <param name="name"></param>
+            /// <returns></returns>
+            public static XElement GetXElementByAttribute(string nodeName, string attrName, string value, XDocument xDoc)
+            {
+                return xDoc.Root.Descendants(nodeName).Where(p => p.Attribute(attrName).Value.Equals(value)).FirstOrDefault();
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <remarks></remarks>
+            /// <seealso cref=""/>
+            /// <param name="xDocument"></param>
+            /// <returns></returns>
+            public static XmlDocument ToXmlDocument(XDocument xDocument)
+            {
+                var xmlDocument = new XmlDocument();
+                using (var xmlReader = xDocument.CreateReader())
+                {
+                    xmlDocument.Load(xmlReader);
+                }
+                return xmlDocument;
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <remarks></remarks>
+            /// <seealso cref=""/>
+            /// <param name="xmlDocument"></param>
+            /// <returns></returns>
+            public static XDocument ToXDocument(XmlDocument xmlDocument)
+            {
+                using (var nodeReader = new XmlNodeReader(xmlDocument))
+                {
+                    nodeReader.MoveToContent();
+                    return XDocument.Load(nodeReader);
+                }
+            }
+
+        #endregion
     }
 }

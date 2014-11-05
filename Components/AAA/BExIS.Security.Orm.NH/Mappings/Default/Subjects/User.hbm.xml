@@ -6,11 +6,12 @@
 
     <!-- USER ATTRIBUTES -->
     <property name="Email" type="String" />
+    
+    <property name="FullName" type="String" />
 
     <property name="Password" type="String" />
     <property name="PasswordSalt" type="String" />
     
-    <property name="SecurityQuestion" type="String" />
     <property name="SecurityAnswer" type="String" />
     <property name="SecurityAnswerSalt" type="String" />
     
@@ -31,12 +32,14 @@
     <property name="LastSecurityAnswerFailureDate" type="DateTime" />
 
     <!-- USER ASSOCIATIONS -->
-    <many-to-one name="Authenticator" column="AuthenticatorRef" class="BExIS.Security.Entities.Security.Authenticator, BExIS.Security.Entities"/>
+    <many-to-one name="Authenticator" column="AuthenticatorRef" class="BExIS.Security.Entities.Authentication.Authenticator, BExIS.Security.Entities"/>
 
     <set name="Groups" table="Groups_Users" inverse="true" cascade="save-update" lazy="true">
       <key column="UserRef"/>
       <many-to-many column="GroupRef" class="Group"/>
     </set>
+
+    <many-to-one name="SecurityQuestion" column="SecurityQuestionRef" class="BExIS.Security.Entities.Objects.SecurityQuestion, BExIS.Security.Entities"/>
 
   </joined-subclass>
 

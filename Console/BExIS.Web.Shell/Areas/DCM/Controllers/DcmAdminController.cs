@@ -44,21 +44,18 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             #region ABCD
 
+            MetadataStructure abcd = mdsManager.Repo.Get(p => p.Name == "ABCD").FirstOrDefault();
+            if (abcd == null) abcd = mdsManager.Create("ABCD", "This is the ABCD structure", "", "", null);
 
-            MetadataStructure root = mdsManager.Repo.Get(p => p.Name == "ABCD").FirstOrDefault();
-            if (root == null) root = mdsManager.Create("ABCD", "This is the ABCD structure", "", "", null);
+            XmlDocument xmlDoc = new XmlDocument();
 
-            if (root.Extra == null)
+            if (abcd.Extra != null)
             {
-                XmlDocument extraDoc = new XmlDocument();
-                extraDoc.LoadXml("<infos>" +
-                                 " <info name='title' value=\"Metadata/Description/Description/Title/Title\" />" +
-                                 "</infos>"
-                    );
-
-                root.Extra = extraDoc;
-                mdsManager.Update(root);
+                xmlDoc.AppendChild(abcd.Extra);
             }
+
+            abcd.Extra = AddNodeReferncesToMetadatStructure(abcd, "title", "Metadata/Description/Description/Title/Title",xmlDoc);
+            mdsManager.Update(abcd);
 
             //package Person ( Tecnical contact /ContentContact)
             MetadataPackage person = mdpManager.MetadataPackageRepo.Get(p => p.Name == "Person").FirstOrDefault();
@@ -78,28 +75,28 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
 
             // add package to structure
-            if (root.MetadataPackageUsages != null && root.MetadataPackageUsages.Count > 0)
+            if (abcd.MetadataPackageUsages != null && abcd.MetadataPackageUsages.Count > 0)
             {
-                if (root.MetadataPackageUsages.Where(p => p.MetadataPackage == person).Count() <= 0)
-                    mdsManager.AddMetadataPackageUsage(root, person, "Content Contact", "", 0, 3);
+                if (abcd.MetadataPackageUsages.Where(p => p.MetadataPackage == person).Count() <= 0)
+                    mdsManager.AddMetadataPackageUsage(abcd, person, "Content Contact", "", 0, 3);
 
-                if (root.MetadataPackageUsages.Where(p => p.MetadataPackage == Description).Count() <= 0)
-                    mdsManager.AddMetadataPackageUsage(root, Description, "Description", "", 0, 1);
+                if (abcd.MetadataPackageUsages.Where(p => p.MetadataPackage == Description).Count() <= 0)
+                    mdsManager.AddMetadataPackageUsage(abcd, Description, "Description", "", 0, 1);
 
-                if (root.MetadataPackageUsages.Where(p => p.MetadataPackage == Owner).Count() <= 0)
-                    mdsManager.AddMetadataPackageUsage(root, Owner, "Owner", "", 1, 5);
+                if (abcd.MetadataPackageUsages.Where(p => p.MetadataPackage == Owner).Count() <= 0)
+                    mdsManager.AddMetadataPackageUsage(abcd, Owner, "Owner", "", 1, 5);
 
-                if (root.MetadataPackageUsages.Where(p => p.MetadataPackage == Scope).Count() <= 0)
-                    mdsManager.AddMetadataPackageUsage(root, Scope, "Scope", "", 0, 1);
+                if (abcd.MetadataPackageUsages.Where(p => p.MetadataPackage == Scope).Count() <= 0)
+                    mdsManager.AddMetadataPackageUsage(abcd, Scope, "Scope", "", 0, 1);
             }
             else
             {
 
-                mdsManager.AddMetadataPackageUsage(root, person, "Technical Contact", "", 1, 1);
-                mdsManager.AddMetadataPackageUsage(root, person, "Content Contact", "", 1, 10);
-                mdsManager.AddMetadataPackageUsage(root, Description, "Description", "", 1, 1);
-                mdsManager.AddMetadataPackageUsage(root, Owner, "Owner", "", 1, 10);
-                mdsManager.AddMetadataPackageUsage(root, Scope, "Scope", "", 0, 1);
+                mdsManager.AddMetadataPackageUsage(abcd, person, "Technical Contact", "", 1, 1);
+                mdsManager.AddMetadataPackageUsage(abcd, person, "Content Contact", "", 1, 10);
+                mdsManager.AddMetadataPackageUsage(abcd, Description, "Description", "", 1, 1);
+                mdsManager.AddMetadataPackageUsage(abcd, Owner, "Owner", "", 1, 10);
+                mdsManager.AddMetadataPackageUsage(abcd, Scope, "Scope", "", 0, 1);
 
             }
 
@@ -357,18 +354,18 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             MetadataPackage Unit = mdpManager.MetadataPackageRepo.Get(p => p.Name == "Unit").FirstOrDefault();
             if (Unit == null) Unit = mdpManager.Create("Unit", "A container for all data referring to a unit (specimen or observation record).", true);
 
-            if (root.MetadataPackageUsages != null && root.MetadataPackageUsages.Count > 0)
+            if (abcd.MetadataPackageUsages != null && abcd.MetadataPackageUsages.Count > 0)
             {
-                if (root.MetadataPackageUsages.Where(p => p.MetadataPackage == Unit).Count() <= 0)
+                if (abcd.MetadataPackageUsages.Where(p => p.MetadataPackage == Unit).Count() <= 0)
                 {
-                    mdsManager.AddMetadataPackageUsage(root, Unit, "Unit", "", 1, 5);
+                    mdsManager.AddMetadataPackageUsage(abcd, Unit, "Unit", "", 1, 5);
                 }
 
             }
             else
             {
 
-                mdsManager.AddMetadataPackageUsage(root, Unit, "Unit", "", 1, 5);
+                mdsManager.AddMetadataPackageUsage(abcd, Unit, "Unit", "", 1, 5);
             }
 
             // metadata attributes for Unit
@@ -412,7 +409,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             #region Exploratory stuff
 
             MetadataStructure exploratory = mdsManager.Repo.Get(p => p.Name == "Exploratory").FirstOrDefault();
-            if (exploratory == null) exploratory = mdsManager.Create("Exploratory", "This is the exploratory metadata structure", "", "", root);
+            if (exploratory == null) exploratory = mdsManager.Create("Exploratory", "This is the exploratory metadata structure", "", "", abcd);
 
             if (exploratory.Extra == null)
             {
@@ -548,8 +545,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         #endregion
 
-
-
         private void CreateEmlBasic()
         {
             MetadataStructureManager mdsManager = new MetadataStructureManager();
@@ -559,26 +554,22 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             DataTypeManager dataTypeManager = new DataTypeManager();
             UnitManager unitManager = new UnitManager();
 
-            MetadataStructure root = mdsManager.Repo.Get(p => p.Name == "ABCD").FirstOrDefault();
-            if (root == null) root = mdsManager.Create("ABCD", "This is the ABCD structure", "", "", null);
+            MetadataStructure abcd = mdsManager.Repo.Get(p => p.Name == "ABCD").FirstOrDefault();
+            if (abcd == null) abcd = mdsManager.Create("ABCD", "This is the ABCD structure", "", "", null);
 
             MetadataStructure eml = mdsManager.Repo.Get(p => p.Name == "EML").FirstOrDefault();
 
             if (eml == null) eml = mdsManager.Create("EML", "This is the EML structure", "", "", null);
 
-            if (eml.Extra == null)
-            {
-                XmlDocument extraDoc = new XmlDocument();
-                extraDoc.LoadXml("<extra>" +
-                                 "<nodeReferences>"+
-                                 " <nodeRef name='title' value=\"Metadata/Description/DescriptionEML/Title/Title\" />" +
-                                 "</nodeReferences>"+
-                                 "</extra>"
-                    );
+            XmlDocument xmlDoc = new XmlDocument();
 
-                eml.Extra = extraDoc;
-                mdsManager.Update(root);
+            if (eml.Extra != null)
+            {
+                xmlDoc.AppendChild(eml.Extra);
             }
+
+            eml.Extra = AddNodeReferncesToMetadatStructure(eml, "title", "Metadata/Description/DescriptionEML/Title/Title", xmlDoc);
+            mdsManager.Update(eml);
 
             //package Description for title
             MetadataPackage DescEml = mdpManager.MetadataPackageRepo.Get(p => p.Name == "DescriptionEML").FirstOrDefault();
@@ -759,17 +750,15 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             if (eml == null) eml = mdsManager.Create("EML Dataset", "This is the EML structure", "", "", null);
 
-            if (eml.Extra == null)
-            {
-                XmlDocument extraDoc = new XmlDocument();
-                extraDoc.LoadXml("<infos>" +
-                                 " <info name='title' value=\"Metadata/Description/DescriptionEML/Title/Title\" />" +
-                                 "</infos>"
-                    );
+            XmlDocument xmlDoc = new XmlDocument();
 
-                eml.Extra = extraDoc;
-                mdsManager.Update(eml);
+            if (eml.Extra != null)
+            {
+                xmlDoc = (XmlDocument)eml.Extra;
             }
+
+            eml.Extra = AddNodeReferncesToMetadatStructure(eml, "title", "Metadata/Description/DescriptionEML/Title/Title", xmlDoc);
+            mdsManager.Update(eml);
 
             #region create packages
            
@@ -787,11 +776,11 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             //package PersonEML ( Creator / Contact)
             MetadataPackage projectEml = mdpManager.MetadataPackageRepo.Get(p => p.Name == "ProjectEML").FirstOrDefault();
-            if (projectEml == null) projectEml = mdpManager.Create("ProjectEML", "PersonEML", true);
+            if (projectEml == null) projectEml = mdpManager.Create("ProjectEML", "ProjectEML", true);
 
             //package PersonEML ( Creator / Contact)
             MetadataPackage coverage = mdpManager.MetadataPackageRepo.Get(p => p.Name == "Coverage").FirstOrDefault();
-            if (coverage == null) projectEml = mdpManager.Create("Coverage", "Coverage", true);
+            if (coverage == null) coverage = mdpManager.Create("Coverage", "Coverage", true);
 
             #endregion
 
@@ -868,7 +857,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             MetadataAttribute Info = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Information")).FirstOrDefault();
             if (Info == null)
             {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String")).FirstOrDefault();
+                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("Text")).FirstOrDefault();
                 Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
                 Info = mdaManager.Create("Information", "Information", "Information", false, false, "David Blaa",
@@ -1025,7 +1014,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             MetadataAttribute DescriptionAttr = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Description")).FirstOrDefault();
             if (DescriptionAttr == null)
             {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String")).FirstOrDefault();
+                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("Text")).FirstOrDefault();
                 Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
                 DescriptionAttr = mdaManager.Create("Description", "Description", "Description", false, false, "David Blaa",
@@ -1083,68 +1072,94 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             }
 
         }
-            #endregion
+        #endregion
 
-            #endregion
+        #endregion
 
+        #region helper
 
+        private XmlDocument AddNodeReferncesToMetadatStructure(MetadataStructure metadataStructure, string nodeName, string nodePath, XmlDocument xmlDoc)
+        {
 
-           #region helper
+            string destinationPath = "extra/nodeReferences/nodeRef";
 
-           private XmlNode AddNodeReferncesToMetadatStructure(MetadataStructure metadataStructure, string nodeName, string nodePath)
-           {
-               XmlDocument doc = new XmlDocument();
+            XmlDocument doc = xmlDoc;
+            XmlNode extra;
 
-               XmlNode extra;
+            if(metadataStructure.Extra !=null)
+            {
 
-               if(metadataStructure.Extra !=null)
-               {
-                    extra = metadataStructure.Extra;
-               }
-               else
-               {
-                    extra = doc.CreateElement("extra");
-               }
-
-               doc.AppendChild(extra);
-
-               if(XmlUtility.GetXmlNodeByName(extra,"nodeReferences")!=null)
-               {
-                  XmlNode nodeReferences = XmlUtility.GetXmlNodeByName(extra,"nodeReferences");
-                  bool founded = false;
-                  
-                  if(nodeReferences.HasChildNodes)
-                  {
-                    foreach(XmlNode nodeRef in nodeReferences.ChildNodes)
-                    {
-                       if(nodeRef.Attributes.Count>0)
-                       {
-                            foreach(XmlAttribute attr in nodeRef.Attributes)
-                            {
-                                if(attr.Name.Equals("title"))
-                                {
-                                    attr.Value = nodePath;
-                                    founded = true;
-                                    break;
-                                }
-                            }
-                       }
-                    }
-                  }
-
-                if(!founded)
-                {
-                    XmlNode nodeRef = doc.CreateElement("nodeRef");
-
-                }
-                  
-               }
-
-
-               return doc.DocumentElement;
-           
+                extra = ((XmlDocument)metadataStructure.Extra).DocumentElement;
+            }
+            else
+            {
+                extra = doc.CreateElement("extra","");
             }
 
-           #endregion
+            doc.AppendChild(extra);
+
+            XmlNode x = createMissingNodes(destinationPath, doc.DocumentElement, doc);
+
+            if (x.Attributes.Count > 0)
+            {
+                foreach (XmlAttribute attr in x.Attributes)
+                {
+                    if (attr.Name == "name") attr.Value = nodeName;
+                    if (attr.Name == "value") attr.Value = nodePath;
+                }
+            }
+            else
+            {
+                XmlAttribute name = doc.CreateAttribute("name");
+                name.Value = nodeName;
+                XmlAttribute value = doc.CreateAttribute("value");
+                value.Value = nodePath;
+
+                x.Attributes.Append(name);
+                x.Attributes.Append(value);
+
+            }
+
+            return doc;
+           
+        }
+
+        /// <summary>
+        /// Add missing node to the desitnation document
+        /// </summary>
+        /// <param name="destinationParentXPath"></param>
+        /// <param name="currentParentXPath"></param>
+        /// <param name="parentNode"></param>
+        /// <param name="doc"></param>
+        /// <returns></returns>
+        private XmlNode createMissingNodes(string destinationParentXPath, XmlNode parentNode, XmlDocument doc)
+        {
+            string dif = destinationParentXPath;
+
+            List<string> temp = dif.Split('/').ToList();
+            temp.RemoveAt(0);
+
+            XmlNode parentTemp = parentNode;
+
+            foreach (string s in temp)
+            {
+                if (XmlUtility.GetXmlNodeByName(parentTemp, s) == null)
+                {
+                    XmlNode t = XmlUtility.CreateNode(s, doc);
+
+                    parentTemp.AppendChild(t);
+                    parentTemp = t;
+                }
+                else
+                {
+                    XmlNode t = XmlUtility.GetXmlNodeByName(parentTemp, s);
+                    parentTemp = t;
+                }
+            }
+
+            return parentTemp;
+        }
+
+        #endregion
     }
 }

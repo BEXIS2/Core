@@ -1,37 +1,37 @@
 ﻿@using Telerik.Web.Mvc.UI;
 @using BExIS.Web.Shell.Areas.Auth.Models;
 
-@model List<UserRoleModel>
+@model List<UserMembershipGridRowModel>
 
 @(Html.Telerik().Grid(Model)
-    .Name("Grid_UserMembership")
-    .HtmlAttributes(new { style = "width: 800px" } )
+    .Name("Grid_Membership")
+    .HtmlAttributes(new { style = "width: 800px" })
     .DataKeys(keys =>
     {
-        keys.Add(r => r.Id);
+        keys.Add(m => m.Id);
     })
     .Columns(columns =>
     {
-        columns.Bound(r => r.UserInRole)
-            .ClientTemplate("<input type='checkbox' onclick='setUserInRole(this.checked, <#= UserId #>, <#= Id #>);' name='nothing' <#= UserInRole ? checked='checked' : '' #> />")
+        columns.Bound(m => m.IsUserInGroup)
+            .ClientTemplate("<input type='checkbox' onclick='setMembership(this.checked, <#= UserId #>, <#= Id #>);' name='nothing' <#= IsUserInGroup ? checked='checked' : '' #> />")
                    .Title("Member")
                    .Width(64)
                    .Filterable(false)
                    .HtmlAttributes(new { style = "text-align:center" });
-        columns.Bound(r => r.Id).Width(100);
-        columns.Bound(r => r.RoleName).Width(200);
-        columns.Bound(r => r.Description);
+        columns.Bound(m => m.Id);
+        columns.Bound(m => m.GroupName);
+        columns.Bound(m => m.Description);
     })
     .DataBinding(dataBinding => dataBinding
         .Ajax()
-        .Select("Membership_Select", "Users", (long)ViewData["UserID"])
+        .Select("Membership_Select", "Users", (long)ViewData["UserId"])
     )
     .Filterable()
     .Sortable(sortable => sortable
         .OrderBy(orderby => orderby
-            .Add(r => r.RoleName)
+            .Add(m => m.GroupName)
             .Ascending()
         )
     )
-    .Scrollable()
+    .Scrollable(scrollable => scrollable.Height(475))
 )

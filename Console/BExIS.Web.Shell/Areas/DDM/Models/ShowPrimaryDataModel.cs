@@ -28,7 +28,9 @@ namespace BExIS.Web.Shell.Areas.DDM.Models
 
         public List<object> CompareValuesOfDataTypes { get; set; }
 
-        public static ShowPrimaryDataModel Convert(long datasetId, string title, DataStructure dataStructure, DataTable data)
+        public bool DownloadAccess { get; set; }
+
+        public static ShowPrimaryDataModel Convert(long datasetId, string title, DataStructure dataStructure, DataTable data, bool downloadAccess)
         {
             ShowPrimaryDataModel model = new ShowPrimaryDataModel();
             model.Data = data;
@@ -37,11 +39,12 @@ namespace BExIS.Web.Shell.Areas.DDM.Models
             model.DataStructureType = DataStructureType.Structured;
             model.DatasetTitle = title;
             model.CompareValuesOfDataTypes = CompareValues();
+            model.DownloadAccess = downloadAccess;
 
             return model;
         }
 
-        public static ShowPrimaryDataModel Convert(long datasetId, string title, DataStructure dataStructure, List<ContentDescriptor> dataFileList)
+        public static ShowPrimaryDataModel Convert(long datasetId, string title, DataStructure dataStructure, List<ContentDescriptor> dataFileList, bool downloadAccess)
         {
             ShowPrimaryDataModel model = new ShowPrimaryDataModel();
             model.FileList = ConvertContentDiscriptorsToFileInfos(dataFileList);
@@ -50,6 +53,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Models
             model.DataStructureType = DataStructureType.Unstructured;
             model.DatasetTitle = title;
             model.CompareValuesOfDataTypes = CompareValues();
+            model.DownloadAccess = downloadAccess;
 
             return model;
         }

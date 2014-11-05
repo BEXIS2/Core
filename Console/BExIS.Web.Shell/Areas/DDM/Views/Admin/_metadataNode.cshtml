@@ -1,0 +1,20 @@
+﻿@model String
+@using BExIS.Web.Shell.Areas.DDM.Helpers;
+@using BExIS.Ddm.Model;
+
+@{
+    List<SearchMetadataNode> metadataNodes = new List<SearchMetadataNode>();
+    if (Session["metadatNodes"]!=null)
+    {
+        metadataNodes = (List<SearchMetadataNode>)Session["metadatNodes"];
+    }
+
+ }
+<div class="metadataNode">
+@using (Html.BeginCollectionItem("metadataNames"))
+{ 
+    @Html.DropDownListFor(m => m, new SelectList(metadataNodes,"XPath","DisplayName", Model), "Select, please")
+     <a href="#" class="removeMetadataNode t-icon t-delete" >delete</a>
+}
+
+</div>

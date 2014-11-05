@@ -35,19 +35,19 @@
 					{
                         item.Add().Text("Authorization").Items(subitem =>
                         {
-                            subitem.Add().Text("Roles Manager").Action("Roles", "Roles", new { area = "Auth" });
+                            subitem.Add().Text("Groups Manager").Action("Groups", "Groups", new { area = "Auth" });
                             subitem.Add().Text("Users Manager").Action("Users", "Users", new { area = "Auth" });
-                            subitem.Add().Text("Features Manager").Action("Features", "Permissions", new { area = "Auth" });
-                            subitem.Add().Text("Data Manager").Action("Data", "Permissions", new { area = "Auth" });
+                            subitem.Add().Text("Features Manager").Action("Features", "FeaturePermissions", new { area = "Auth" });
+                            subitem.Add().Text("Data Manager").Action("Data", "DataPermissions", new { area = "Auth" });
 
                         });
                         item.Add().Text("Data Discovery").Items(subitem =>
                         {
                             subitem.Add().Text("Search Manager").Action("SearchDesigner", "Admin", new { area = "DDM" });
                         });
-                        item.Add().Text("Data Collection").Items(subitem =>
+                        item.Add().Text("Initialize").Items(subitem =>
                         {
-                            subitem.Add().Text("Create").Action("Index", "DcmAdmin", new { area = "DCM" });
+                            subitem.Add().Text("Create seed data").Action("Index", "Seed", new { area = "SAM" });
                         });
                         item.Add().Text("Data Dissemination").Items(subitem =>
                         {

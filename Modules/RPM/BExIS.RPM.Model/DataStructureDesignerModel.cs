@@ -7,6 +7,9 @@ using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.Data;
+using BExIS.Dlm.Entities.MetadataStructure;
+using System.Xml.Linq;
+using BExIS.Xml.Services;
 
 namespace BExIS.RPM.Model
 {
@@ -83,7 +86,7 @@ namespace BExIS.RPM.Model
                         foreach (Variable v in structuredDataStructure.Variables)
                         {
 
-                            XmlNode variable = doc.CreateNode(XmlNodeType.Element, "variable", null);
+                            XmlNode variable = doc.CreateNode(System.Xml.XmlNodeType.Element, "variable", null);
                             variable.InnerText = v.Id.ToString();
                             order[0].AppendChild(variable);
                         }
@@ -124,7 +127,7 @@ namespace BExIS.RPM.Model
                         foreach (Dataset d in structuredDataStructure.Datasets)
                         {
                             if (dm.GetDatasetLatestMetadataVersion(d.Id) != null)
-                                datasetListElement = new DatasetListElement(d.Id, dm.GetDatasetLatestMetadataVersion(d.Id).SelectNodes("Metadata/Description/Description/Title/Title")[0].InnerText);
+                                datasetListElement = new DatasetListElement(d.Id,getTitle(d));
                             else
                                 datasetListElement = new DatasetListElement(0, "");
                             datasets.Add(datasetListElement);
@@ -347,5 +350,24 @@ namespace BExIS.RPM.Model
             DataContainerManager DataAttributeManager = new DataContainerManager();
             this.dataAttributeList = DataAttributeManager.DataAttributeRepo.Get().ToList();
         }
+
+    #region helper
+
+        private string getTitle(Dataset dataset)
+        {
+            DatasetManager dm = new DatasetManager();
+
+            DatasetVersion datasetVersion = dm.GetDatasetLatestVersion(dataset);
+            // get MetadataStructure 
+            MetadataStructure metadataStructure = datasetVersion.Dataset.MetadataStructure;
+            XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)datasetVersion.Dataset.MetadataStructure.Extra);
+            XElement temp = XmlUtility.GetXElementByAttribute("nodeRef", "name", "title", xDoc);
+
+            string xpath = temp.Attribute("value").Value.ToString();
+            string title = datasetVersion.Metadata.SelectSingleNode(xpath).InnerText;
+
+            return title;
+        }
+    #endregion
     }
 }

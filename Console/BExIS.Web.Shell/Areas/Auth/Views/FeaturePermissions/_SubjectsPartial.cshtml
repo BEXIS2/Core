@@ -1,0 +1,57 @@
+﻿@using Telerik.Web.Mvc.UI;
+@using BExIS.Web.Shell.Areas.Auth.Models;
+
+@model List<FeaturePermissionGridRowModel>
+
+@(Html.Telerik().Grid(Model)
+    .Name("Grid_Subjects")
+    .DataKeys(keys =>
+    {
+        keys.Add(m => m.SubjectId);
+    })
+    .Columns(columns =>
+    { 
+        columns.Bound(s => s.EffectiveRight)
+            .ClientTemplate("<div class=' <#= EffectiveRight ? 't-icon t-update' : 't-icon t-delete' #>' />")
+                   .Title("Effective")
+                   .Width(64)
+                   .Filterable(false)
+                   .HtmlAttributes(new { style = "text-align:center" });
+        columns.Bound(m => m.FeaturePermissionType)
+            .ClientTemplate("<input type='radio' name='permissionType_<#= SubjectId #>' onclick='setFeaturePermission(1, <#= SubjectId #>, <#= FeatureId #>);' <#= FeaturePermissionType == 1 ? checked='checked' : '' #> />")
+                   .Title("Grant")
+                   .Width(50)
+                   .Filterable(false)
+                   .Sortable(false)
+                   .HtmlAttributes(new { style = "text-align:center;background-color:#DFF5E9" });
+        columns.Bound(m => m.FeaturePermissionType)
+            .ClientTemplate("<input type='radio' name='permissionType_<#= SubjectId #>' onclick='setFeaturePermission(2, <#= SubjectId #>, <#= FeatureId #>);' <#= FeaturePermissionType == 2 ? checked='checked' : '' #> />")
+                   .Title("None")
+                   .Width(50)
+                   .Filterable(false)
+                   .Sortable(false)
+                   .HtmlAttributes(new { style = "text-align:center" });
+        columns.Bound(m => m.FeaturePermissionType)
+            .ClientTemplate("<input type='radio' name='permissionType_<#= SubjectId #>' onclick='setFeaturePermission(0, <#= SubjectId #>, <#= FeatureId #>);' <#= FeaturePermissionType == 0 ? checked='checked' : '' #> />")
+                   .Title("Deny")
+                   .Width(50)
+                   .Filterable(false)
+                   .Sortable(false)
+                   .HtmlAttributes(new { style = "text-align:center;background-color:#F5DFDF" });
+        columns.Bound(m => m.SubjectId);
+        columns.Bound(m => m.SubjectName);
+        columns.Bound(m => m.SubjectType);
+    })
+    .DataBinding(dataBinding => dataBinding
+        .Ajax()
+        .Select("Subjects_Select", "FeaturePermissions", (long)ViewData["FeatureId"])
+    )
+    .Filterable()
+    .Sortable(sortable => sortable
+        .OrderBy(orderby => orderby
+            .Add(m => m.SubjectName)
+            .Ascending()
+        )
+    )
+    .Scrollable(scrollable => scrollable.Height(475))
+)

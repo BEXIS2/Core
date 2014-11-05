@@ -23,7 +23,12 @@ using BExIS.Web.Shell.Areas.DDM.Models;
 using Ionic.Zip;
 using BExIS.Security.Services.Objects;
 using BExIS.Dlm.Entities.MetadataStructure;
-using BExIS.Security.Entities.Security;
+using BExIS.Xml.Services;
+using System.Xml;
+using System.Xml.Linq;
+using BExIS.Security.Services.Authorization;
+using BExIS.Security.Entities.Objects;
+using BExIS.Security.Services.Subjects;
 
 namespace BExIS.Web.Shell.Areas.DDM.Controllers
 {
@@ -43,16 +48,18 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
         {
             DatasetManager dm = new DatasetManager();
             DatasetVersion dsv = dm.GetDatasetLatestVersion(id);
-            //XXX title
-            string title = "title missing";//dsv.Metadata.SelectNodes("Metadata/Description/Description/Title/Title")[0].InnerText;
+
+            string title = getTitle(dsv);
 
             PermissionManager permissionManager = new PermissionManager();
+            SubjectManager subjectManager = new SubjectManager();
+
 
             ShowDataModel model = new ShowDataModel()
             {
                 Id = id,
                 Title = title,
-                DataAccess = permissionManager.HasUserDataAccess(id, 1, HttpContext.User.Identity.Name, RightType.Read)
+                ViewAccess = permissionManager.HasUserDataAccess(subjectManager.GetUserByName(HttpContext.User.Identity.Name).Id, 1, id, RightType.View),
             };
 
 
@@ -95,8 +102,14 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(dsv.Dataset.DataStructure.Id);
                 DataStructure ds = dsm.AllTypesDataStructureRepo.Get(dsv.Dataset.DataStructure.Id);
 
+                //permission download
+                PermissionManager permissionManager = new PermissionManager();
+                SubjectManager subjectManager = new SubjectManager();
+                
+                bool downloadAccess = permissionManager.HasUserDataAccess(subjectManager.GetUserByName(HttpContext.User.Identity.Name).Id, 1, datasetID, RightType.Download);
+
                 //TITLE
-                string title = dsv.Metadata.SelectNodes("Metadata/Description/Description/Title/Title")[0].InnerText;
+                string title = getTitle(dsv);
 
                 if (ds.Self.GetType() == typeof(StructuredDataStructure))
                 {
@@ -107,12 +120,12 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
                     ViewData["gridTotal"] = dataTuples.Count();
 
-                    return PartialView(ShowPrimaryDataModel.Convert(datasetID, title, sds, table));
+                    return PartialView(ShowPrimaryDataModel.Convert(datasetID, title, sds, table, downloadAccess));
                 }
 
                 if (ds.Self.GetType() == typeof(UnStructuredDataStructure))
                 {
-                    return PartialView(ShowPrimaryDataModel.Convert(datasetID,title, ds, SearchUIHelper.GetContantDescriptorFromKey(dsv, "unstructuredData")));
+                    return PartialView(ShowPrimaryDataModel.Convert(datasetID,title, ds, SearchUIHelper.GetContantDescriptorFromKey(dsv, "unstructuredData"),downloadAccess));
                 }
 
                 return null;
@@ -642,7 +655,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                     DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
 
                     //TITLE
-                    string title = datasetVersion.Metadata.SelectNodes("Metadata/Description/Description/Title/Title")[0].InnerText;
+                    string title = getTitle(datasetVersion);
                      
                     string zipPath = Path.Combine(AppConfiguration.DataPath, "Datasets", id.ToString(),title + ".zip");
 
@@ -760,14 +773,17 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 return options;
             }
 
-            private string getTitle(DatasetVersion datasetVerion)
+            private string getTitle(DatasetVersion datasetVersion)
             {
                 // get MetadataStructure 
-                MetadataStructure metadataStructure = datasetVerion.Dataset.MetadataStructure;
+                MetadataStructure metadataStructure = datasetVersion.Dataset.MetadataStructure;
+                XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)datasetVersion.Dataset.MetadataStructure.Extra);
+                XElement temp = XmlUtility.GetXElementByAttribute("nodeRef","name", "title", xDoc);
 
-     
+                string xpath = temp.Attribute("value").Value.ToString();
+                string title = datasetVersion.Metadata.SelectSingleNode(xpath).InnerText;
 
-                return "title missing";
+                return title;
             }
 
         #endregion

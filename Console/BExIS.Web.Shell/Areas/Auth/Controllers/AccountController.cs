@@ -6,13 +6,13 @@ using BExIS.Security.Services.Subjects;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Web.Shell.Areas.Auth.Models;
 using System.Globalization;
-using BExIS.Security.Services.Security;
-using BExIS.Security.Entities.Security;
 using System.Reflection;
-using BExIS.Security.Providers.Authentication;
 using System.Linq.Expressions;
 using System.Linq;
 using BExIS.Dlm.Entities.Data;
+using BExIS.Security.Entities.Authentication;
+using BExIS.Security.Services.Authentication;
+using System.IO;
 
 namespace BExIS.Web.Shell.Areas.Auth.Controllers
 {
@@ -20,10 +20,6 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
     {
         public ActionResult Error()
         {
-            Func<Dataset, bool> x;
-
-            x = d => d.Versions.AsQueryable().FirstOrDefault().Metadata.GetElementsByTagName("Title").Item(0).Value == "hallo";
-
             return View();
         }
 
@@ -33,53 +29,61 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
             return PartialView("_LogOnStatusPartial");
         }
 
-        //
-        // GET: /Account/LogOn
-        public ActionResult LogOn()
+        public ActionResult LogOn(string returnUrl)
         {
             if (Request.IsAuthenticated)
             {
-                return RedirectToAction("Error", "Account", new { area = "Auth" });
+                return View("Error");
             }
             else
             {
-                return View(new LogOnModel());
+                if (returnUrl != null)
+                {
+                    Session["ReturnUrl"] = returnUrl;
+                    return View("LogOn");
+                }
+                else
+                {
+                    Session["ReturnUrl"] = "";
+                    return PartialView("_LogOnPartial", new AccountLogOnModel());
+                }
+                
             }
+                       
         }
 
         [HttpPost]
-        public ActionResult LogOn(LogOnModel model, string returnUrl)
+        public ActionResult LogOn(AccountLogOnModel model)
         {
             if (ModelState.IsValid)
             {
+                #region Authenticator
+
                 AuthenticatorManager authenticatorManager = new AuthenticatorManager();
-
                 Authenticator authenticator = authenticatorManager.GetAuthenticatorById(model.AuthenticatorList.Id);
-
-                Assembly assembly = Assembly.Load(authenticator.ProjectPath);
+                Assembly assembly = Assembly.Load(authenticator.AssemblyPath);
                 Type type = assembly.GetType(authenticator.ClassPath);
 
-                IAuthenticationProvider authenticationProvider = (IAuthenticationProvider)Activator.CreateInstance(type, authenticator.ConnectionString);
+                #endregion
 
-                if (authenticationProvider.IsUserAuthenticated(model.UserName, model.Password))
+                #region AuthenticationManager
+
+                IAuthenticationManager authenticationManager = (IAuthenticationManager)Activator.CreateInstance(type, authenticator.ConnectionString);
+
+                #endregion
+
+                if (authenticationManager.ValidateUser(model.UserName, model.Password))
                 {
                     SubjectManager subjectManager = new SubjectManager();
 
-                    if(!subjectManager.ExistsUserWithUserNameAndAuthenticatorId(model.UserName, model.AuthenticatorList.Id))
+                    if (!subjectManager.ExistsUserNameWithAuthenticatorId(model.UserName, model.AuthenticatorList.Id))
                     {
                         subjectManager.CreateUser(model.UserName, model.AuthenticatorList.Id);
                     }
 
-                    FormsAuthentication.SetAuthCookie(model.UserName, model.RememberMe);
-                    if (Url.IsLocalUrl(returnUrl) && returnUrl.Length > 1 && returnUrl.StartsWith("/")
-                        && !returnUrl.StartsWith("//") && !returnUrl.StartsWith("/\\"))
-                    {
-                        return Redirect(returnUrl);
-                    }
-                    else
-                    {
-                        return RedirectToAction("Index", "Home", new { area = "" });
-                    }
+                    FormsAuthentication.SetAuthCookie(model.UserName, false);
+
+                    return Json(new { success = true });
                 }
                 else
                 {
@@ -87,11 +91,8 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
                 }
             }
 
-            return View(model);
+            return PartialView("_LogOnPartial", model);
         }
-
-        //
-        // GET: /Account/LogOff
 
         public ActionResult LogOff()
         {
@@ -100,106 +101,30 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
             return RedirectToAction("Index", "Home", new { area = "" });
         }
 
-        //
-        // GET: /Account/Register
-
         public ActionResult Register()
         {
-            if (Request.IsAuthenticated)
-            {
-                return RedirectToAction("Error", "Account", new { area = "Auth" });
-            }
-            else
-            {
-                return View();
-            }
+            return PartialView("_RegisterPartial", new AccountRegisterModel());
         }
 
-        //
-        // POST: /Account/Register
-
         [HttpPost]
-        public ActionResult Register(AccountRegistrationModel model)
+        public ActionResult Register(AccountRegisterModel model)
         {
             if (ModelState.IsValid)
             {
-                // Attempt to register the user
-                UserCreateStatus createStatus;
-
                 SubjectManager subjectManager = new SubjectManager();
 
-                try
-                {
-                    User user = subjectManager.CreateUser(model.UserName, model.Email, model.Password, model.SecurityQuestion, model.SecurityAnswer);
+                User user = subjectManager.CreateUser(model.UserName, model.Password, model.FullName, model.Email, model.SecurityQuestionList.Id, model.SecurityAnswer, model.AuthenticatorList.Id);
 
-                    FormsAuthentication.SetAuthCookie(model.UserName, false /* createPersistentCookie */);
-                    return RedirectToAction("RegisterSummary", UserModel.Convert(user));
-                }
-                catch (Exception e)
-                {
-
-                }
+                FormsAuthentication.SetAuthCookie(model.UserName, false);
+                return Json(new { success = true });
             }
 
-            // If we got this far, something failed, redisplay form
-            return View(model);
+            return PartialView("_RegisterPartial", model);
         }
 
         public ActionResult RegisterSummary(UserModel model)
         {
             return View(model);
-        }
-
-        //
-        // GET: /Account/ChangePassword
-
-        public ActionResult ChangePassword()
-        {
-            return View();
-        }
-
-        //
-        // POST: /Account/ChangePassword
-
-        [HttpPost]
-        public ActionResult ChangePassword(ChangePasswordModel model)
-        {
-            if (ModelState.IsValid)
-            {
-
-                // ChangePassword will throw an exception rather
-                // than return false in certain failure scenarios.
-                bool changePasswordSucceeded;
-                try
-                {
-                    MembershipUser currentUser = Membership.GetUser(User.Identity.Name, true /* userIsOnline */);
-                    changePasswordSucceeded = currentUser.ChangePassword(model.OldPassword, model.NewPassword);
-                }
-                catch (Exception)
-                {
-                    changePasswordSucceeded = false;
-                }
-
-                if (changePasswordSucceeded)
-                {
-                    return RedirectToAction("ChangePasswordSuccess");
-                }
-                else
-                {
-                    ModelState.AddModelError("", "The current password is incorrect or the new password is invalid.");
-                }
-            }
-
-            // If we got this far, something failed, redisplay form
-            return View(model);
-        }
-
-        //
-        // GET: /Account/ChangePasswordSuccess
-
-        public ActionResult ChangePasswordSuccess()
-        {
-            return View();
         }
 
         #region Validation
@@ -254,48 +179,26 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
             }
         }
 
-        private static string ErrorCodeToErrorMessage(UserCreateStatus createStatus)
-        {
-            switch (createStatus)
-            {
-                case UserCreateStatus.DuplicateUserName:
-                    return "The user name already exists.";
-
-                case UserCreateStatus.InvalidUserName:
-                    return "The user name is not valid.";
-
-                case UserCreateStatus.DuplicateEmail:
-                    return "The email address already exists.";
-
-                case UserCreateStatus.InvalidPassword:
-                    return "The password is invalid.";
-
-                default:
-                    return "An unknown error occurred. Please verify your entry and try again. If the problem persists, please contact your system administrator.";
-            }
-        }
-
-        private static string ErrorCodeToErrorKey(UserCreateStatus createStatus)
-        {
-            switch (createStatus)
-            {
-                case UserCreateStatus.DuplicateUserName:
-                    return "UserName";
-
-                case UserCreateStatus.InvalidUserName:
-                    return "UserName";
-
-                case UserCreateStatus.DuplicateEmail:
-                    return "Email";
-
-                case UserCreateStatus.InvalidPassword:
-                    return "Password";
-
-                default:
-                    return "";
-            }
-        }
-
         #endregion
+
+        public string RenderRazorViewToString()
+        {
+            Controller controller = this;
+            string viewName = "_LogOnPartial";
+            AccountLogOnModel model = new AccountLogOnModel();
+
+
+
+
+            controller.ViewData.Model = model;
+            using (var sw = new StringWriter())
+            {
+                var viewResult = ViewEngines.Engines.FindPartialView(controller.ControllerContext, viewName);
+                var viewContext = new ViewContext(controller.ControllerContext, viewResult.View, controller.ViewData, controller.TempData, sw);
+                viewResult.View.Render(viewContext, sw);
+                viewResult.ViewEngine.ReleaseView(controller.ControllerContext, viewResult.View);
+                return sw.GetStringBuilder().ToString();
+            }
+        }
     }
 }

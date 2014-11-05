@@ -21,7 +21,7 @@ namespace BExIS.Ddm.Api
 
         void Dispose();
 
-        List<string> GetMetadataNodes();
+        List<SearchMetadataNode> GetMetadataNodes();
 
         bool IsPrimaryDataIncluded();
 

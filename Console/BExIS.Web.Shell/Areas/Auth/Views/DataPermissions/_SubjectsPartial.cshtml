@@ -1,0 +1,40 @@
+﻿@using Telerik.Web.Mvc.UI;
+@using BExIS.Security.Entities.Objects;
+@using BExIS.Web.Shell.Areas.Auth.Models;
+
+@model List<DataPermissionGridRowModel>
+
+@(Html.Telerik().Grid(Model)
+    .Name("Grid_Subjects")
+    .DataKeys(keys =>
+    {
+        keys.Add(s => s.SubjectId);
+    })
+    .Columns(columns =>
+    {
+        foreach (RightType rightType in Enum.GetValues(typeof(RightType)).Cast<RightType>())
+        {          
+            columns.Bound(m => m.Rights)
+                        .ClientTemplate("<input type='checkbox' onclick='setDataPermission(this.checked, " + (int)@rightType + ", <#= SubjectId #>, <#= DataId #>, <#= EntityId #>);' name='nothing' <#= existsRightType(Rights, " + (int)@rightType + ") ? checked='checked' : '' #> />")
+                               .Title(rightType.ToString())
+                               .Width(64)
+                               .Filterable(false)
+                               .HtmlAttributes(new { style = "text-align:center" });
+        }     
+        columns.Bound(m => m.SubjectId);
+        columns.Bound(m => m.SubjectName);
+        columns.Bound(m => m.SubjectType);
+    })
+    .DataBinding(dataBinding => dataBinding
+        .Ajax()
+        .Select("Subjects_Select", "DataPermissions", new { dataId = (long)ViewData["DataId"], entityId = (long)ViewData["EntityId"] })
+    )
+    .Filterable()
+    .Sortable(sortable => sortable
+        .OrderBy(orderby => orderby
+            .Add(s => s.SubjectName)
+            .Ascending()
+        )
+    )
+    .Scrollable(scrollable => scrollable.Height(1000))
+)

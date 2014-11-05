@@ -48,11 +48,11 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             {
                 ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
 
-                if (provider.WorkingSearchModel.CriteriaComponent.SearchCriteriaList.Count > 0)
-                {
+                //if (provider.WorkingSearchModel.CriteriaComponent.SearchCriteriaList.Count > 0)
+                //{
                     provider.WorkingSearchModel.CriteriaComponent.Clear();
                     provider.SearchAndUpdate(provider.WorkingSearchModel.CriteriaComponent);
-                }
+                //}
                 //var pp = IoCFactory.Container.ResolveAll<ISearchProvider>();
 
                 SetSessionsToDefault();

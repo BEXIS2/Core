@@ -11,18 +11,12 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
 {
     public class UserCreateModel
     {
-        [Display(Name = "User name")]
+        [Display(Name = "User Name")]
         [RegularExpression("^[\\S]*$", ErrorMessage = "The user name is invalid.")]
         [Remote("ValidateUserName", "Users")]
         [Required]
-        [StringLength(50, ErrorMessage = "The user name must be {2} - {1} characters long.", MinimumLength = 3)]
+        [StringLength(64, ErrorMessage = "The user name must be {2} - {1} characters long.", MinimumLength = 3)]
         public string UserName { get; set; }
-
-        [Display(Name = "Email address")]
-        [Email]
-        [Remote("ValidateEmail", "Users")]
-        [Required]
-        public string Email { get; set; }
 
         [Display(Name = "Password")]
         [RegularExpression("^[\\S]*$", ErrorMessage = "The password is invalid.")]
@@ -35,22 +29,39 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
         [Required]
         public string ConfirmPassword { get; set; }
 
-        [Display(Name = "Security Question")]
+        [Display(Name = "Full Name")]
         [Required]
-        [StringLength(250)]
-        public string SecurityQuestion { get; set; }
+        public string FullName { get; set; }
+
+        [Display(Name = "Email Address")]
+        [Email]
+        [Remote("ValidateEmail", "Users")]
+        [Required]
+        [StringLength(250, ErrorMessage = "The email must be {2} - {1} characters long.", MinimumLength = 5)]
+        public string Email { get; set; }
 
         [Display(Name = "Security Answer")]
-        [RegularExpression("^[^\\s]+(\\s+[^\\s]+)*$", ErrorMessage = "The security answer must start and end with no space.")]
+        [RegularExpression("^[^\\s]+(\\s+[^\\s]+)*", ErrorMessage = "The security answer must start and end with no space.")]
         [Required]
         [StringLength(50, ErrorMessage = "The security answer must be less than {1} characters long.")]
         public string SecurityAnswer { get; set; }
+
+        public SecurityQuestionSelectListModel SecurityQuestionList { get; set; }
+
+        public AuthenticatorSelectListModel AuthenticatorList { get; set; }
+
+        public UserCreateModel()
+        {
+            SecurityQuestionList = new SecurityQuestionSelectListModel();
+            AuthenticatorList = new AuthenticatorSelectListModel(true);
+        }
     }
 
     public class UserUpdateModel
     {
         public long Id { get; set; }
         public string UserName { get; set; }
+        public string FullName { get; set; }
         public string Email { get; set; }
 
         public static UserUpdateModel Convert(User user)
@@ -59,6 +70,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
             {
                 Id = user.Id,
                 UserName = user.Name,
+                FullName = user.FullName,
                 Email = user.Email
             };
 
@@ -69,6 +81,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
     {
         public long Id { get; set; }
         public string UserName { get; set; }
+        public string FullName { get; set; }
         public string Email { get; set; }
 
         public static UserReadModel Convert(User user)
@@ -77,6 +90,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
             {
                 Id = user.Id,
                 UserName = user.Name,
+                FullName = user.FullName,
                 Email = user.Email
             };
 
@@ -87,6 +101,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
     {
         public long Id { get; set; }
         public string UserName { get; set; }
+        public string FullName { get; set; }
         public string Email { get; set; }
 
         public static UserDeleteModel Convert(User user)
@@ -95,6 +110,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
             {
                 Id = user.Id,
                 UserName = user.Name,
+                FullName = user.FullName,
                 Email = user.Email
             };
 
@@ -103,39 +119,10 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
 
     public class UserGridRowModel
     {
-        [Display(Name = "User ID")]
-        [Editable(false)]
-        [Required]
         public long Id { get; set; }
-
-        [Display(Name = "User Name")]
-        [Editable(false)]
-        [Required]
         public string UserName { get; set; }
-
-        [Display(Name = "Email")]
-        [Email]
-        [Remote("ValidateEmail", "Users", AdditionalFields = "Id")]
-        [Required]
+        public string FullName { get; set; }
         public string Email { get; set; }
-
-        [Display(Name = "Registration Date")]
-        [Editable(false)]
-        public DateTime RegistrationDate { get; set; }
-
-        [Display(Name = "Last Login Date")]
-        [Editable(false)]
-        public DateTime LastLoginDate { get; set; }
-
-        [Display(Name = "Last Activity Date")]
-        [Editable(false)]
-        public DateTime LastActivityDate { get; set; }
-
-        [Display(Name = "Is Approved")]
-        public bool IsApproved { get; set; }
-
-        [Display(Name = "Is Locked Out")]
-        public bool IsLockedOut { get; set; }
 
         public static UserGridRowModel Convert(User user)
         {
@@ -143,11 +130,10 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
             {
                 Id = user.Id,
                 UserName = user.Name,
-                Email = user.Email,
-                RegistrationDate = user.RegistrationDate,
-                LastLoginDate = user.LastLoginDate,
-                LastActivityDate = user.LastActivityDate
+                FullName = user.FullName,
+                Email = user.Email
             };
+
         }
     }
 
@@ -159,9 +145,9 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
         public string GroupName { get; set; }
         public string Description { get; set; }
 
-        public bool UserInGroup { get; set; }
+        public bool IsUserInGroup { get; set; }
 
-        public static UserMembershipGridRowModel Convert(long userId, Group group, bool userInGroup)
+        public static UserMembershipGridRowModel Convert(long userId, Group group, bool isUserInGroup)
         {
             return new UserMembershipGridRowModel()
             {
@@ -171,7 +157,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
                 GroupName = group.Name,
                 Description = group.Description,
 
-                UserInGroup = userInGroup
+                IsUserInGroup = isUserInGroup
             };
         }
     }

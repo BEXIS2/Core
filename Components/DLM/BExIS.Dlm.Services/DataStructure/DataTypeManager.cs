@@ -57,7 +57,7 @@ namespace BExIS.Dlm.Services.DataStructure
                 entity = repo.Reload(entity);
                 
                 // remove all associations
-                entity.ApplicableUnits.ToList().ForEach(u => u.AssociatedDataTypes.Clear());
+                entity.ApplicableUnits.ToList().ForEach(u => u.AssociatedDataTypes.Remove(entity));
                 entity.ApplicableUnits.Clear();
                 entity.DataContainers.Clear();
 

@@ -211,22 +211,24 @@
     <Compile Include="App_Start\RegisterClientValidationExtensions.cs" />
     <Compile Include="Areas\Auth\AuthAreaRegistration.cs" />
     <Compile Include="Areas\Auth\Controllers\AccountController.cs" />
+    <Compile Include="Areas\Auth\Controllers\DataPermissionsController.cs" />
+    <Compile Include="Areas\Auth\Controllers\FeaturePermissionsController.cs" />
     <Compile Include="Areas\Auth\Controllers\GroupsController.cs" />
     <Compile Include="Areas\Auth\Controllers\PermissionsController.cs" />
-    <Compile Include="Areas\Auth\Controllers\RolesController.cs" />
     <Compile Include="Areas\Auth\Controllers\UsersController.cs" />
-    <Compile Include="Areas\Auth\Models\AccountModel.cs" />
+    <Compile Include="Areas\Auth\Models\AccountModels.cs" />
     <Compile Include="Areas\Auth\Models\AuthenticatorModels.cs" />
-    <Compile Include="Areas\Auth\Models\DataModel.cs" />
+    <Compile Include="Areas\Auth\Models\DataPermissionModels.cs" />
     <Compile Include="Areas\Auth\Models\DatasetModel.cs" />
     <Compile Include="Areas\Auth\Models\EntityModel.cs" />
     <Compile Include="Areas\Auth\Models\FeatureModel.cs" />
+    <Compile Include="Areas\Auth\Models\FeatureModels.cs" />
+    <Compile Include="Areas\Auth\Models\FeaturePermissionModels.cs" />
     <Compile Include="Areas\Auth\Models\GroupModels.cs" />
     <Compile Include="Areas\Auth\Models\InfoModel.cs" />
     <Compile Include="Areas\Auth\Models\PermissionModel.cs" />
     <Compile Include="Areas\Auth\Models\RoleModel.cs" />
-    <Compile Include="Areas\Auth\Models\SubjectModel.cs" />
-    <Compile Include="Areas\Auth\Models\TaskModel.cs" />
+    <Compile Include="Areas\Auth\Models\SecurityQuestionModels.cs" />
     <Compile Include="Areas\Auth\Models\UserModel.cs" />
     <Compile Include="Areas\Auth\Models\UserModels.cs" />
     <Compile Include="Areas\DCM\Controllers\CreateController.cs" />
@@ -266,16 +268,21 @@
     <Compile Include="Areas\DDM\Controllers\AdminController.cs" />
     <Compile Include="Areas\DDM\Controllers\DataController.cs" />
     <Compile Include="Areas\DDM\Helpers\GridHelper.cs" />
+    <Compile Include="Areas\DDM\Helpers\HtmlPrefixScopeExtentions.cs" />
     <Compile Include="Areas\DDM\Models\ShowDataModel.cs" />
     <Compile Include="Areas\DDM\Models\ShowPrimaryDataModel.cs" />
     <Compile Include="Areas\DIM\Controllers\AdminController.cs" />
     <Compile Include="Areas\DIM\DIMAreaRegistration.cs" />
+    <Compile Include="Areas\DIM\Models\AdminModel.cs" />
+    <Compile Include="Areas\DIM\Models\DatasetVersionModel.cs" />
+    <Compile Include="Areas\DIM\Models\MetadataStructureModel.cs" />
     <Compile Include="Areas\RPM\Controllers\HomeController.cs" />
     <Compile Include="Areas\RPM\RPMAreaRegistration.cs" />
     <Compile Include="Areas\DDM\Controllers\HomeController.cs" />
     <Compile Include="Areas\DDM\Helpers\SearchUIHelper.cs" />
     <Compile Include="Areas\DDM\Models\SearchAttributeViewModel.cs" />
     <Compile Include="Areas\DDM\SearchAreaRegistration.cs" />
+    <Compile Include="Areas\SAM\Controllers\SeedController.cs" />
     <Compile Include="Areas\SAM\Controllers\UnsafeController.cs" />
     <Compile Include="Areas\SAM\SAMAreaRegistration.cs" />
     <Compile Include="Areas\Site\Controllers\NavController.cs" />
@@ -606,7 +613,6 @@
     <Folder Include="Areas\DCM\Models\Scripts\" />
     <Folder Include="Areas\DCM\Views\Home\" />
     <Folder Include="Areas\DDM\Views\Shared\" />
-    <Folder Include="Areas\DIM\Models\" />
     <Folder Include="Areas\DIM\Views\Shared\" />
     <Folder Include="Areas\RPM\Models\" />
     <Folder Include="Areas\RPM\Views\Shared\" />
@@ -770,13 +776,7 @@
     <Content Include="Views\Test\XmlEdit.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\Auth\Views\Roles\Roles.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Areas\Auth\Views\Users\Users.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\Auth\Views\Roles\_RolesPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\Auth\Views\Users\_UsersPartial.cshtml" />
@@ -831,10 +831,6 @@
     <ProjectReference Include="..\..\Components\AAA\BExIS.Security.Entities\BExIS.Security.Entities.csproj">
       <Project>{c230693b-d780-438b-b26c-82257642dd5c}</Project>
       <Name>BExIS.Security.Entities</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Components\AAA\BExIS.Security.Providers\BExIS.Security.Providers.csproj">
-      <Project>{5a6136ef-4e05-4d51-a3d7-9c7f0d14a9ab}</Project>
-      <Name>BExIS.Security.Providers</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Components\AAA\BExIS.Security.Services\BExIS.Security.Services.csproj">
       <Project>{681c8bc4-55f0-4f43-a685-90e246a88cb1}</Project>
@@ -960,9 +956,6 @@
     <Content Include="Areas\DDM\Views\Admin\_editSearchAttribute.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\Auth\Views\Users\_UserEditPartial.cshtml" />
-    <Content Include="Areas\Auth\Views\Users\_UserInfoPartial.cshtml" />
-    <Content Include="Areas\Auth\Views\Roles\_InfoPartial.cshtml" />
     <Content Include="Areas\RPM\Views\Home\_editVariable.cshtml" />
     <Content Include="Areas\DCM\Views\SubmitGetFileInformation\GetFileInformation.cshtml" />
     <Content Include="Areas\DCM\Views\SubmitDefinePrimaryKey\DefinePrimaryKey.cshtml" />
@@ -987,9 +980,6 @@
     <Content Include="Areas\DCM\Views\Submit\_selectDataStructureId.cshtml" />
     <Content Include="Areas\DCM\Views\SubmitSpecifyDataset\_selectADatasetId.cshtml" />
     <Content Include="Areas\Auth\Views\Account\Error.cshtml" />
-    <Content Include="Areas\Auth\Views\Account\LogOn.cshtml" />
-    <Content Include="Areas\Auth\Views\Account\Register.cshtml" />
-    <Content Include="Areas\Auth\Views\Account\RegisterSummary.cshtml" />
     <Content Include="Areas\SAM\Views\Web.config" />
     <Content Include="Areas\SAM\Views\Unsafe\Index.cshtml" />
     <Content Include="Areas\SAM\Views\_ViewStart.cshtml" />
@@ -1003,9 +993,7 @@
     <Content Include="Areas\DCM\Views\Push\Index.cshtml" />
     <Content Include="Areas\DCM\Views\Push\_fileListView.cshtml" />
     <Content Include="Areas\Auth\Views\Permissions\Data.cshtml" />
-    <Content Include="Areas\Auth\Views\Permissions\Features.cshtml" />
     <Content Include="Areas\Auth\Views\Permissions\_FeaturePermissionsPartial.cshtml" />
-    <Content Include="Areas\Auth\Views\Permissions\_FeaturesPartial.cshtml" />
     <Content Include="Areas\Auth\Views\Permissions\_InfoPartial.cshtml" />
     <Content Include="Areas\Auth\Views\Permissions\_DatasetsPartial.cshtml" />
     <Content Include="Areas\Auth\Views\Permissions\_SubjectsPartial.cshtml" />
@@ -1021,12 +1009,26 @@
     <Content Include="Areas\Auth\Views\Groups\Groups.cshtml" />
     <Content Include="Areas\Auth\Views\Groups\_GroupsPartial.cshtml" />
     <Content Include="Areas\Auth\Views\Groups\_CreatePartial.cshtml" />
-    <Content Include="Areas\Auth\Views\Groups\_DeletePartial.cshtml" />
     <Content Include="Areas\Auth\Views\Groups\_ShowPartial.cshtml" />
     <Content Include="Areas\Auth\Views\Groups\_EditPartial.cshtml" />
     <Content Include="Areas\Auth\Views\Groups\_MembershipPartial.cshtml" />
     <Content Include="Areas\Auth\Views\Groups\_InfoPartial.cshtml" />
     <Content Include="Areas\Auth\Views\Groups\_UpdatePartial.cshtml" />
+    <Content Include="Areas\Auth\Views\Account\_RegisterPartial.cshtml" />
+    <Content Include="Areas\Auth\Views\Account\_LogOnPartial.cshtml" />
+    <Content Include="Areas\Auth\Views\Users\_UpdatePartial.cshtml" />
+    <Content Include="Areas\Auth\Views\Users\_EditPartial.cshtml" />
+    <Content Include="Areas\Auth\Views\Users\_ShowPartial.cshtml" />
+    <Content Include="Areas\SAM\Views\Seed\Index.cshtml" />
+    <Content Include="Areas\Auth\Views\FeaturePermissions\Features.cshtml" />
+    <Content Include="Areas\Auth\Views\FeaturePermissions\_FeaturesPartial.cshtml" />
+    <Content Include="Areas\Auth\Views\FeaturePermissions\_SubjectsPartial.cshtml" />
+    <Content Include="Areas\Auth\Views\DataPermissions\_DatasetsPartial.cshtml" />
+    <Content Include="Areas\Auth\Views\DataPermissions\_SubjectsPartial.cshtml" />
+    <Content Include="Areas\Auth\Views\DataPermissions\Data.cshtml" />
+    <Content Include="Areas\DDM\Views\Admin\_metadataNode.cshtml" />
+    <Content Include="Areas\Auth\Views\Account\LogOn.cshtml" />
+    <Content Include="Areas\DIM\Views\Admin\_metadataStructureView.cshtml" />
     <None Include="Properties\PublishProfiles\2230.pubxml" />
     <None Include="Properties\PublishProfiles\2301.pubxml" />
     <None Include="Properties\PublishProfiles\2302.pubxml" />
@@ -1036,36 +1038,10 @@
     <None Include="Properties\PublishProfiles\BPP230.pubxml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\Auth\Views\Roles\_CreatePartial.cshtml" />
-    <Content Include="Areas\Auth\Views\Roles\_DeletePartial.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\Auth\Views\Account\ChangePassword.cshtml" />
-    <Content Include="Areas\Auth\Views\Account\_ChangePasswordPartial.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\Auth\Views\Roles\_MembershipPartial.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\Auth\Views\Users\_DeletePartial.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\Auth\Views\Users\_DetailsPartial.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Areas\Auth\Views\Users\_CreatePartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\Auth\Views\Users\_MembershipPartial.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\Auth\Views\Roles\_RoleInfoPartial.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\Auth\Views\Roles\_RoleEditPartial.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\Auth\Views\Roles\_DetailsPartial.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

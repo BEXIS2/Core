@@ -20,6 +20,8 @@ using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Web.Shell.Areas.DCM.Models;
 using Vaiona.Util.Cfg;
 using BExIS.Web.Shell.Areas.DCM.Models.Metadata;
+using System.Xml.Linq;
+using BExIS.Xml.Services;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
 {
@@ -158,8 +160,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
               TaskManager.AddToBus(TaskManager.DATASET_ID, datasetId);
 
               //Add Metadata to Bus
-              // TITLE
-              TaskManager.AddToBus(TaskManager.DATASET_TITLE, datasetVersion.Metadata.SelectNodes("Metadata/Description/Description/Title/Title")[0].InnerText);
+              //TITLE
+              TaskManager.AddToBus(TaskManager.DATASET_TITLE, getTitle(datasetVersion));
 
               ResearchPlanManager rpm = new ResearchPlanManager();
               ResearchPlan rp = rpm.Repo.Get(datasetVersion.Dataset.ResearchPlan.Id);
@@ -187,6 +189,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
  
         #region private methods
 
+
+        #region helper
+
         // chekc if user exist
         // if true return usernamem otherwise "DEFAULT"
         public string GetUserNameOrDefault()
@@ -200,6 +205,19 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             return !string.IsNullOrWhiteSpace(userName) ? userName : "DEFAULT";
         }
+
+        private string getTitle(DatasetVersion datasetVersion)
+        {
+            XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)datasetVersion.Dataset.MetadataStructure.Extra);
+            XElement temp = XmlUtility.GetXElementByAttribute("nodeRef", "name", "title", xDoc);
+
+            string xpath = temp.Attribute("value").Value.ToString();
+            string title = datasetVersion.Metadata.SelectSingleNode(xpath).InnerText;
+
+            return title;
+        }
+
+        #endregion
 
         #endregion
     }
