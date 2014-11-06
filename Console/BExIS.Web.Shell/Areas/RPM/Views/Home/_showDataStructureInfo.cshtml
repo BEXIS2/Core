@@ -54,7 +54,7 @@ else
                             <td>
                                 Name: 
                                 <div title="The name will be used for a new Data Structure">
-                                @(Html.TextBoxFor(m => Model.dataStructure.Name, new {@class = "t-input"}))
+                                @(Html.TextBoxFor(m => Model.dataStructure.Name, new {@class = "t-input", @Value = Model.dataStructure.Name, @autofocus = "autofocus", @tabindex = 1}))
                                 </div>
                             </td>
                         </tr>
@@ -62,6 +62,7 @@ else
                             <td>
                                 @(Html.Telerik().DropDownList()
                                     .Name("category")
+                                    //.HtmlAttributes(new { @tabindex = 2 })
                                     .DropDownHtmlAttributes(new { style = "height: 200px" })
                                     .BindTo(new SelectList(CategoryList))
                                     .SelectedIndex(categoryIndex)
@@ -106,7 +107,7 @@ else
             <td>
                 <div id="Description" style="vertical-align:top; padding:5px;" title="Description">
                     Description:         
-                    @(Html.TextAreaFor(m => Model.dataStructure.Description, new {@class = "t-input datastrDes"}))
+                    @(Html.TextAreaFor(m => Model.dataStructure.Description, new {@class = "t-input datastrDes",@Value = Model.dataStructure.Description, @tabindex = 3}))
                 </div>
             </td>
             <td>
@@ -116,7 +117,7 @@ else
             </td>
         </tr>
     </table>
-    @(Html.TextBoxFor(m => Model.dataStructure.Id, new {@class = "hidden"}))
+    @(Html.TextBoxFor(m => Model.dataStructure.Id, new {@class = "hidden",@Value = Model.dataStructure.Id}))
      
     <div class="RPMbuttons">
         <button name="create" value="saveDataStructure" type="submit" class="t-button" title="Save Data Structure">Save</button>

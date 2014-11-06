@@ -9,7 +9,7 @@ using BExIS.Xml.Services;
 
 namespace BExIS.Web.Shell.Areas.Auth.Models
 {
-    public class DatasetModel
+    public class DatasetModels
     {
         public long Id { get; set; }
         public int Version { get; set; }
@@ -18,9 +18,9 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
         public string ContentContact { get; set; }
         public string Owner { get; set; }
 
-        public static DatasetModel Convert(Dataset dataset)
+        public static DatasetModels Convert(Dataset dataset)
         {
-            return new DatasetModel()
+            return new DatasetModels()
             {
                 Id = dataset.Id,
                 Version = dataset.VersionNo,

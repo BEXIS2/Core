@@ -13,7 +13,7 @@
         <div>
 
             <div class="editor-label" style="font-weight:bold">
-                @Html.LabelFor(m => m.AuthenticatorList.Id)
+                @Html.Label("Authenticator")
             </div>
             <div class="editor-field">
                 @Html.DropDownListFor(m => m.AuthenticatorList.Id, new SelectList(Model.AuthenticatorList.AuthenticatorList, "Id", "Name"))

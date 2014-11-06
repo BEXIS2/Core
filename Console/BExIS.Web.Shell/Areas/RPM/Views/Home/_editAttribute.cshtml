@@ -38,7 +38,7 @@
                 Name:<Font color="red">*</Font>
             </td>
             <td>
-                @(Html.TextBoxFor(m => Model.Name, new {@class = "t-input"}))
+                @(Html.TextBoxFor(m => Model.Name, new {@class = "t-input", @autofocus = "autofocus", @tabindex = 1}))
                 <div class="errorMsg" style="vertical-align:top;">
                     <font color="red">@Session["nameMsg"]</font>
                 </div>
@@ -49,7 +49,7 @@
                 ShortName:
             </td>
             <td>
-                @(Html.TextBoxFor(m => Model.ShortName, new {@class = "t-input"}))
+                @(Html.TextBoxFor(m => Model.ShortName, new {@class = "t-input", @tabindex = 2}))
             </td>
         </tr>
         <tr>
@@ -57,7 +57,7 @@
                 Description:
             </td>
             <td>
-                @(Html.TextBoxFor(m => Model.Description, new {@class = "t-input"}))
+                @(Html.TextBoxFor(m => Model.Description, new {@class = "t-input", @tabindex = 3}))
             </td>
         </tr>
         <tr>
@@ -72,7 +72,7 @@
                     .BindTo(new SelectList(unitList, "Id", "Name"))
                 )*@
 
-                @Html.DropDownList("unitId", new SelectList(unitList, "Id", "Name", unitIndex), new { @class =" t-dropdown t-header t-dropdown-wrap" })
+                @Html.DropDownList("unitId", new SelectList(unitList, "Id", "Name", unitIndex), new { @class =" t-dropdown t-header t-dropdown-wrap", @tabindex = 4 })
             </td>
         </tr>
         <tr>
@@ -86,7 +86,7 @@
                     .BindTo(new SelectList(dataTypeList,"Id","Name"))
                 )*@
 
-                @Html.DropDownList("dataTypeId", new SelectList(dataTypeList,"Id","Name", dataTypeIndex), new { @class =" t-dropdown t-header t-dropdown-wrap" })
+                @Html.DropDownList("dataTypeId", new SelectList(dataTypeList,"Id","Name", dataTypeIndex), new { @class =" t-dropdown t-header t-dropdown-wrap", @tabindex = 5 })
             </td>
         </tr>
         <tr><td colspan="2"> </td></tr>

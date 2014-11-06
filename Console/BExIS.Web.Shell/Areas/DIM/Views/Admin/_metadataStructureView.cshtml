@@ -12,15 +12,9 @@
 }
 <div id="@id">
 
-<h2 >@Model.Displayname</h2>
-
 <div id="@preloader_id" style="display:none;" >
      <img src="../../../../Themes/Default/Styles/Default/preloader.GIF" />
 </div>
-
-
-<p>@Model.Description</p>
-
 
     @(Html.Telerik().Grid(Model.DatasetVersions)
             .Name("datasetversionsConvertGrid")

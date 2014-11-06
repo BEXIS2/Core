@@ -1,4 +1,5 @@
 ﻿using System.Web.Mvc;
+using Vaiona.Util.Cfg;
 
 namespace BExIS.Web.Shell.Areas.Auth
 {
@@ -19,6 +20,8 @@ namespace BExIS.Web.Shell.Areas.Auth
                 "Auth/{controller}/{action}/{id}",
                 new { action = "Index", id = UrlParameter.Optional }
             );
+
+           if(AppConfiguration.CreateDatabase) Auth.Helpers.AuthSeedDataGenerator.GenerateSeedData();
         }
     }
 }

@@ -28,7 +28,7 @@
                 Name:<Font color="red">*</Font>
             </td>
             <td>
-                @(Html.TextBoxFor(m => Model.Name, new {@class = "t-input"}))
+                @(Html.TextBoxFor(m => Model.Name, new {@class = "t-input", @autofocus = "autofocus", @tabindex = 1}))
                 <div class="errorMsg" style="vertical-align:top;">
                     <font color="red">@Session["nameMsg"]</font>
                 </div>
@@ -39,7 +39,7 @@
                 Description:
             </td>
             <td>
-                @(Html.TextBoxFor(m => Model.Description, new {@class = "t-input"}))
+                @(Html.TextBoxFor(m => Model.Description, new {@class = "t-input", @tabindex = 2}))
             </td>
         </tr>
         <tr>
@@ -49,7 +49,8 @@
             <td>
                 @(Html.Telerik().DropDownList()
                     .Name("SystemType")
-                    .DropDownHtmlAttributes(new { style = "height: 200px" })
+                    .HtmlAttributes(new {@tabindex = 3})
+                    .DropDownHtmlAttributes(new {@style = "height: 200px"})
                     .BindTo(new SelectList(SystemTypeList))
                 )
             </td>

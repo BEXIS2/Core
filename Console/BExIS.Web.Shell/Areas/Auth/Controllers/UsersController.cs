@@ -68,14 +68,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
 
             User user = subjectManager.GetUserById(id);
 
-            if (user != null)
-            {
-                return PartialView("_EditPartial", UserUpdateModel.Convert(user));
-            }
-            else
-            {
-                return PartialView("_InfoPartial", new InfoModel("Window_Details", "The user does not exist!"));
-            }
+            return PartialView("_EditPartial", UserUpdateModel.Convert(user));
         }
 
         [HttpPost]

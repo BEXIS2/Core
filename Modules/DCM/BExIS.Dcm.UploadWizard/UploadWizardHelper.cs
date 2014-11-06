@@ -492,6 +492,7 @@ namespace BExIS.Dcm.UploadWizard
                         ".gif",
                         ".jpg",
                         ".mp3",
+                        ".mp4",
                         ".pdf",
                         ".png",
                         ".shp",

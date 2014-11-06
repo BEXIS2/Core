@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Web;
-using System.Web.Mvc;
 using System.Xml;
 using System.Xml.Linq;
 using BExIS.Dlm.Entities.Administration;
@@ -13,201 +12,33 @@ using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.Administration;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
-using BExIS.Security.Entities.Authentication;
-using BExIS.Security.Entities.Objects;
-using BExIS.Security.Entities.Subjects;
-using BExIS.Security.Services.Authentication;
-using BExIS.Security.Services.Authorization;
-using BExIS.Security.Services.Objects;
-using BExIS.Security.Services.Subjects;
 using BExIS.Xml.Services;
 using Vaiona.Util.Cfg;
 
-namespace BExIS.Web.Shell.Areas.SAM.Controllers
+namespace BExIS.Web.Shell.Areas.RPM.Helpers
 {
-    public class SeedController : Controller
+    public class RPMSeedDataGenerator
     {
-        //
-        // GET: /SAM/Seed/
 
-        public ActionResult Index()
+        public static void GenerateSeedData()
         {
-            return View();
+            createResearchPlan();
+            createSeedDataTypes();
+            createSIUnits();
+
+            createEmlDatasetAdv();
         }
 
-        #region SEED
-
-        public ActionResult CreateSeedData()
+        private static void createResearchPlan()
         {
-
-            CreateSeedDataTypes();
-
-            //security
-            CreateSecuritySeedData();
-
-
             //ResearchPlan
             ResearchPlanManager rpm = new ResearchPlanManager();
             ResearchPlan researchPlan = rpm.Repo.Get(r => r.Title.Equals("Research plan")).FirstOrDefault();
             if (researchPlan == null) rpm.Create("Research plan", "");
 
-            //Datatypes
-            CreateSeedDataTypes();
-
-            //Unit
-            UnitManager unitManager = new UnitManager();
-            Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
-            if (unit == null) unitManager.Create("None", "None", "If no unit is used.", "None", MeasurementSystem.Unknown);
-
-            return View("Index");
         }
 
-        private void CreateSecuritySeedData()
-        {
-#if DEBUG
-            #region Security
-
-            // Authenticators
-            AuthenticatorManager authenticatorManager = new AuthenticatorManager();
-
-            Authenticator a1 = authenticatorManager.CreateAuthenticator("local", "BExIS.Security.Services.Authentication.BuiltInAuthenticationManager", "BExIS.Security.Services", "", AuthenticatorType.Internal);
-            Authenticator a2 = authenticatorManager.CreateAuthenticator("ldap test server", "BExIS.Security.Services.Authentication.LdapAuthenticationManager", "BExIS.Security.Services", "ldapHost:ldap.forumsys.com;ldapPort:389;ldapBaseDn:dc=example,dc=com;ldapSecure:false;ldapAuthUid:uid;ldapProtocolVersion:3", AuthenticatorType.External);
-
-            // Security Questions
-            SecurityQuestionManager securityQuestionManager = new SecurityQuestionManager();
-
-            SecurityQuestion sq1 = securityQuestionManager.CreateSecurityQuestion("What is the first name of the person you first kissed?");
-            SecurityQuestion sq2 = securityQuestionManager.CreateSecurityQuestion("What was your favorite place to visit as a child?");
-            SecurityQuestion sq3 = securityQuestionManager.CreateSecurityQuestion("What is the name of the place your wedding reception was held?");
-            SecurityQuestion sq4 = securityQuestionManager.CreateSecurityQuestion("In what city or town did you meet your spouse/partner?");
-            SecurityQuestion sq5 = securityQuestionManager.CreateSecurityQuestion("What was the make and model of your first car?");
-            SecurityQuestion sq6 = securityQuestionManager.CreateSecurityQuestion("What was the name of your elementary / primary school?");
-
-            // Entities
-            EntityManager entityManager = new EntityManager();
-
-            entityManager.CreateEntity("Dataset", "BExIS.Dlm.Entities.Data.Dataset", "BExIS.Dlm.Entities");
-
-            // Subjects
-            SubjectManager subjectManager = new SubjectManager();
-
-            Group g1 = subjectManager.CreateGroup("Admin", "Admin");
-            User u1 = subjectManager.CreateUser("Administrator", "gWg2xG", "Admin", "admin@bexis.de", sq1.Id, "Nothing", a1.Id);
-
-            subjectManager.AddUserToGroup(u1.Id, g1.Id);
-
-            // Tasks
-            TaskManager taskManager = new TaskManager();
-
-            taskManager.CreateTask("Auth", "Account", "*", true);
-            taskManager.CreateTask("Site", "Nav", "*", true);
-            taskManager.CreateTask("Shell", "Home", "*", true);
-            taskManager.CreateTask("System", "Utils", "*", true);
-
-            // Features
-            FeatureManager featureManager = new FeatureManager();
-            Feature f1 = featureManager.CreateFeature("BExIS", "BExIS");
-
-            Feature f2 = featureManager.CreateFeature("Administration", "Administration", f1.Id);
-            Feature f3 = featureManager.CreateFeature("Users Management", "Users Management", f2.Id);
-            Feature f4 = featureManager.CreateFeature("Groups Management", "Groups Management", f2.Id);
-            Feature f5 = featureManager.CreateFeature("Data Management", "Data Management", f2.Id);
-            Feature f6 = featureManager.CreateFeature("Feature Management", "Feature Management", f2.Id);
-            Feature f7 = featureManager.CreateFeature("Search", "Search", f2.Id);
-            Feature f8 = featureManager.CreateFeature("Seed Data Creation", "Seed Data Creation", f2.Id);
-
-            Feature f9 = featureManager.CreateFeature("Search", "Search", f1.Id);
-
-            Feature f10 = featureManager.CreateFeature("Data Collection", "Data Collection", f1.Id);
-            Feature f11 = featureManager.CreateFeature("Dataset Creation", "Dataset Creation", f10.Id);
-            Feature f12 = featureManager.CreateFeature("Dataset Submission", "Dataset Submission", f10.Id);
-
-            Feature f13 = featureManager.CreateFeature("Research Plan", "Research Plan", f1.Id);
-
-            Feature f14 = featureManager.CreateFeature("Data Dissemination", "Data Dissemination", f1.Id);
-            
-            Task t1 = taskManager.CreateTask("Auth", "Users", "*");
-            t1.Feature = f3;
-            taskManager.UpdateTask(t1);
-            Task t2 = taskManager.CreateTask("Auth", "Groups", "*");
-            t2.Feature = f4;
-            taskManager.UpdateTask(t2);
-            Task t3 = taskManager.CreateTask("Auth", "DataPermissions", "*");
-            t3.Feature = f5;
-            taskManager.UpdateTask(t3);
-            Task t4 = taskManager.CreateTask("Auth", "FeaturePermissions", "*");
-            t4.Feature = f6;
-            taskManager.UpdateTask(t4);
-            Task t5 = taskManager.CreateTask("DDM", "Admin", "*");
-            t5.Feature = f7;
-            taskManager.UpdateTask(t5);
-            Task t6 = taskManager.CreateTask("SAM", "Seed", "*");
-            t6.Feature = f8;
-            taskManager.UpdateTask(t6);
-
-
-            Task t7 = taskManager.CreateTask("DDM", "Data", "*");
-            t7.Feature = f9;
-            taskManager.UpdateTask(t7);
-            Task t8 = taskManager.CreateTask("DDM", "Home", "*");
-            t8.Feature = f9;
-            taskManager.UpdateTask(t8);
-
-            Task t9 = taskManager.CreateTask("DCM", "Create", "*");
-            t9.Feature = f11;
-            taskManager.UpdateTask(t9);
-            Task t10 = taskManager.CreateTask("DCM", "CreateSelectDatasetSetup", "*");
-            t10.Feature = f11;
-            taskManager.UpdateTask(t10);
-            Task t11 = taskManager.CreateTask("DCM", "CreateSetMetadataPackage", "*");
-            t11.Feature = f11;
-            taskManager.UpdateTask(t11);
-            Task t12 = taskManager.CreateTask("DCM", "CreateSummary", "*");
-            t12.Feature = f11;
-            taskManager.UpdateTask(t12);
-
-            Task t15 = taskManager.CreateTask("DCM", "Push", "*");
-            t15.Feature = f12;
-            taskManager.UpdateTask(t15);
-            Task t16 = taskManager.CreateTask("DCM", "Submit", "*");
-            t16.Feature = f12;
-            taskManager.UpdateTask(t16);
-            Task t17 = taskManager.CreateTask("DCM", "SubmitDefinePrimaryKey", "*");
-            t17.Feature = f12;
-            taskManager.UpdateTask(t17);
-            Task t18 = taskManager.CreateTask("DCM", "SubmitGetFileInformation", "*");
-            t18.Feature = f12;
-            taskManager.UpdateTask(t18);
-            Task t19 = taskManager.CreateTask("DCM", "SubmitSelectAFile", "*");
-            t19.Feature = f12;
-            taskManager.UpdateTask(t19);
-            Task t20 = taskManager.CreateTask("DCM", "SubmitSpecifyDataset", "*");
-            t20.Feature = f12;
-            taskManager.UpdateTask(t20);
-            Task t21 = taskManager.CreateTask("DCM", "SubmitSummary", "*");
-            t21.Feature = f12;
-            taskManager.UpdateTask(t21);
-            Task t22 = taskManager.CreateTask("DCM", "SubmitValidation", "*");
-            t22.Feature = f12;
-            taskManager.UpdateTask(t22);
-
-            Task t23 = taskManager.CreateTask("RPM", "Home", "*");
-            t23.Feature = f13;
-            taskManager.UpdateTask(t23);
-
-            Task t24 = taskManager.CreateTask("DIM", "Admin", "*");
-            t24.Feature = f14;
-            taskManager.UpdateTask(t24);
-
-            // Feature Permissions
-            PermissionManager permissionManager = new PermissionManager();
-            permissionManager.CreateFeaturePermission(g1.Id, f1.Id);
-
-            #endregion
-#endif
-        }
-
-        private void CreateSeedDataTypes()
+        private static void createSeedDataTypes()
         {
             DataTypeManager dataTypeManager = new DataTypeManager();
             DataType dataType;
@@ -250,36 +81,13 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
 
             }
             catch (Exception ex)
-            { 
-            
+            {
+
             }
 
-            ////Datatypes
-            
-            //DataType stringDataType = dataTypeManager.Repo.Get(p => p.Name.Equals("String")).FirstOrDefault();
-            //if (stringDataType == null) dataTypeManager.Create("String", "A Unicode String", TypeCode.String);
-
-            //DataType numberDataType = dataTypeManager.Repo.Get(p => p.Name.Equals("Number")).FirstOrDefault();
-            //if (numberDataType == null) dataTypeManager.Create("Number", "An Integer Number", TypeCode.Int32);
-
-            //DataType decimalDataType = dataTypeManager.Repo.Get(p => p.Name.Equals("Decimal")).FirstOrDefault();
-            //if (decimalDataType == null) dataTypeManager.Create("Decimal", "A Real Number", TypeCode.Double);
-
-            //DataType dateDataType = dataTypeManager.Repo.Get(p => p.Name.Equals("Date")).FirstOrDefault();
-            //if (dateDataType == null) dataTypeManager.Create("Date", "A Date +Time", TypeCode.DateTime);
-
-            //DataType textDataType = dataTypeManager.Repo.Get(p => p.Name.Equals("Text")).FirstOrDefault();
-            //if (dateDataType == null) dataTypeManager.Create("Text", "for long text", TypeCode.String);
         }
 
-        public ActionResult CreateSIUnits()
-        {
-            createSIUnits();
-
-            return View("Index");
-        }
-
-        private void createSIUnits()
+        private static void createSIUnits()
         {
             DataTypeManager dataTypeManager = new DataTypeManager();
 
@@ -325,425 +133,25 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
                     {
                         unit = unitManager.Create(name, abbrevation, description, dimension, measurementSystemEnum);
 
-                        foreach(string dtName in associatedDataTypes)
+                        foreach (string dtName in associatedDataTypes)
                         {
-                            DataType dt = dataTypeManager.Repo.Get().Where(d=>d.Name.Equals(dtName)).FirstOrDefault();
-                            if(dt!=null)
-                            unit.AssociatedDataTypes.Add(dt);
+                            DataType dt = dataTypeManager.Repo.Get().Where(d => d.Name.Equals(dtName)).FirstOrDefault();
+                            if (dt != null)
+                                unit.AssociatedDataTypes.Add(dt);
                         }
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message); 
+                Debug.WriteLine(ex.Message);
             }
 
         }
 
-        #endregion
+        #region METADATA
 
-        #region metadata
-
-        public ActionResult CreateABCDMetadataStructure()
-        {
-            MetadataStructureManager mdsManager = new MetadataStructureManager();
-            MetadataPackageManager mdpManager = new MetadataPackageManager();
-            MetadataAttributeManager mdaManager = new MetadataAttributeManager();
-
-            DataTypeManager dataTypeManager = new DataTypeManager();
-            UnitManager unitManager = new UnitManager();
-
-            #region ABCD
-
-            MetadataStructure abcd = mdsManager.Repo.Get(p => p.Name == "ABCD").FirstOrDefault();
-            if (abcd == null) abcd = mdsManager.Create("ABCD", "This is the ABCD structure", "", "", null);
-
-            XmlDocument xmlDoc = new XmlDocument();
-
-            if (abcd.Extra != null)
-            {
-                xmlDoc = (XmlDocument)abcd.Extra;
-            }
-
-            // add title Node
-            xmlDoc = AddReferenceToMetadatStructure(abcd, "title", "Metadata/Description/Description/Title/Title", "extra/nodeReferences/nodeRef", xmlDoc);
-
-            // add ConvertReference Mapping file node
-            xmlDoc = AddReferenceToMetadatStructure(abcd, "mappingFile", "mapping_abcd.xml", "extra/convertReferences/convertRef", xmlDoc);
-
-            abcd.Extra = xmlDoc;
-            mdsManager.Update(abcd);
-
-            //package Person ( Tecnical contact /ContentContact)
-            MetadataPackage person = mdpManager.MetadataPackageRepo.Get(p => p.Name == "Person").FirstOrDefault();
-            if (person == null) person = mdpManager.Create("Person", "Person", true);
-
-            //package Description
-            MetadataPackage Description = mdpManager.MetadataPackageRepo.Get(p => p.Name == "Description").FirstOrDefault();
-            if (Description == null) Description = mdpManager.Create("Description", "Description about a dataset", true);
-
-            //package Owner
-            MetadataPackage Owner = mdpManager.MetadataPackageRepo.Get(p => p.Name == "Owner").FirstOrDefault();
-            if (Owner == null) Owner = mdpManager.Create("Owner", "Owner/s of the dataset", true);
-
-            // Package Scope
-            MetadataPackage Scope = mdpManager.MetadataPackageRepo.Get(p => p.Name == "Scope").FirstOrDefault();
-            if (Scope == null) Scope = mdpManager.Create("Scope", "Scope of the dataset", true);
-
-
-            // add package to structure
-            if (abcd.MetadataPackageUsages != null && abcd.MetadataPackageUsages.Count > 0)
-            {
-                if (abcd.MetadataPackageUsages.Where(p => p.MetadataPackage == person).Count() <= 0)
-                    mdsManager.AddMetadataPackageUsage(abcd, person, "Content Contact", "", 0, 3);
-
-                if (abcd.MetadataPackageUsages.Where(p => p.MetadataPackage == Description).Count() <= 0)
-                    mdsManager.AddMetadataPackageUsage(abcd, Description, "Description", "", 0, 1);
-
-                if (abcd.MetadataPackageUsages.Where(p => p.MetadataPackage == Owner).Count() <= 0)
-                    mdsManager.AddMetadataPackageUsage(abcd, Owner, "Owner", "", 1, 5);
-
-                if (abcd.MetadataPackageUsages.Where(p => p.MetadataPackage == Scope).Count() <= 0)
-                    mdsManager.AddMetadataPackageUsage(abcd, Scope, "Scope", "", 0, 1);
-            }
-            else
-            {
-
-                mdsManager.AddMetadataPackageUsage(abcd, person, "Technical Contact", "", 1, 1);
-                mdsManager.AddMetadataPackageUsage(abcd, person, "Content Contact", "", 1, 10);
-                mdsManager.AddMetadataPackageUsage(abcd, Description, "Description", "", 1, 1);
-                mdsManager.AddMetadataPackageUsage(abcd, Owner, "Owner", "", 1, 10);
-                mdsManager.AddMetadataPackageUsage(abcd, Scope, "Scope", "", 0, 1);
-
-            }
-
-
-            #region person
-
-            MetadataAttribute Name = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Name")).FirstOrDefault();
-            if (Name == null)
-            {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String")).FirstOrDefault();
-                Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
-
-                Name = mdaManager.Create("Name", "Name", "first and last name", false, false, "David Blaa",
-                        MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
-            }
-
-            MetadataAttribute Email = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Email")).FirstOrDefault();
-            if (Email == null)
-            {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String")).FirstOrDefault();
-                Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
-
-                Email = mdaManager.Create("Email", "Email", "Email address", false, false, "David Blaa",
-                        MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
-            }
-
-            MetadataAttribute Address = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Address")).FirstOrDefault();
-            if (Address == null)
-            {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String")).FirstOrDefault();
-                Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
-
-                Address = mdaManager.Create("Address", "Address", "Address", false, false, "David Blaa",
-                        MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
-            }
-
-            MetadataAttribute Phone = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Phone")).FirstOrDefault();
-            if (Phone == null)
-            {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String")).FirstOrDefault();
-                Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
-
-                Phone = mdaManager.Create("Phone", "Phone", "Phone", false, false, "David Blaa",
-                        MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
-            }
-
-
-            if (person.MetadataAttributeUsages != null & person.MetadataAttributeUsages.Count > 0)
-            {
-                // add metadataAttributes to packages
-                if (person.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Name).Count() <= 0)
-                   mdpManager.AddMetadataAtributeUsage(person, Name, "Name", 1, 1);
-
-                if (person.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Email).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(person, Email, "Email", 0, 1);
-
-                if (person.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Address).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(person, Address, "Address", 0, 1);
-
-                if (person.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Phone).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(person, Phone, "Phone", 0, 1);
-            }
-            else
-            {
-                mdpManager.AddMetadataAtributeUsage(person, Name, "Name", 1, 1);
-                mdpManager.AddMetadataAtributeUsage(person, Email, "Email", 0, 1);
-                mdpManager.AddMetadataAtributeUsage(person, Address, "Address", 0, 1);
-                mdpManager.AddMetadataAtributeUsage(person, Phone, "Phone", 0, 1);
-            }
-
-            #endregion
-
-            #region metadata
-
-            MetadataAttribute Title = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Title")).FirstOrDefault();
-            if (Title == null)
-            {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String")).FirstOrDefault();
-                Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
-
-                Title = mdaManager.Create("Title", "Title", "Title", false, false, "David Blaa",
-                        MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
-            }
-
-            MetadataAttribute RevisionData = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("RevisionData")).FirstOrDefault();
-            if (RevisionData == null)
-            {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("DateTime")).FirstOrDefault();
-                Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
-
-                RevisionData = mdaManager.Create("RevisionData", "RevisionData", "RevisionData", false, false, "David Blaa",
-                        MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
-            }
-
-            MetadataAttribute Details = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Details")).FirstOrDefault();
-            if (Details == null)
-            {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.Equals("Text")).FirstOrDefault();
-                Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
-
-                Details = mdaManager.Create("Details", "Details", "Details", false, false, "David Blaa",
-                        MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
-            }
-
-            MetadataAttribute Coverage = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Coverage")).FirstOrDefault();
-            if (Coverage == null)
-            {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String")).FirstOrDefault();
-                Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
-
-                Coverage = mdaManager.Create("Coverage", "Coverage", "Coverage", false, false, "David Blaa",
-                        MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
-            }
-
-            MetadataAttribute URI = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("URI")).FirstOrDefault();
-            if (URI == null)
-            {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String")).FirstOrDefault();
-                Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
-
-                URI = mdaManager.Create("URI", "URI", "URI", false, false, "David Blaa",
-                        MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
-            }
-
-            if (Description.MetadataAttributeUsages != null & Description.MetadataAttributeUsages.Count > 0)
-            {
-                // add metadataAttributes to packages
-                if (Description.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Title).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(Description, Title, "Title", 1, 1);
-
-                if (Description.MetadataAttributeUsages.Where(p => p.MetadataAttribute == RevisionData).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(Description, RevisionData, "RevisionData", 0, 1);
-
-                if (Description.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Details).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(Description, Details, "Details", 0, 1);
-
-                if (Description.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Coverage).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(Description, Coverage, "Coverage", 0, 1);
-
-                if (Description.MetadataAttributeUsages.Where(p => p.MetadataAttribute == URI).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(Description, URI, "URI", 0, 1);
-            }
-            else
-            {
-                mdpManager.AddMetadataAtributeUsage(Description, Title, "Title", 1, 1);
-                mdpManager.AddMetadataAtributeUsage(Description, RevisionData, "DateModified", 0, 1);
-                mdpManager.AddMetadataAtributeUsage(Description, Details, "Details", 0, 1);
-                mdpManager.AddMetadataAtributeUsage(Description, Coverage, "Coverage", 0, 1);
-                mdpManager.AddMetadataAtributeUsage(Description, URI, "URI", 0, 1);
-            }
-
-
-
-            #endregion
-
-            #region Owner package
-
-            MetadataAttribute Role = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Role")).FirstOrDefault();
-            if (Role == null)
-            {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String")).FirstOrDefault();
-                Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
-
-                Role = mdaManager.Create("Role", "Role", "Role", false, false, "David Blaa",
-                        MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
-            }
-
-            if (Owner.MetadataAttributeUsages != null & Owner.MetadataAttributeUsages.Count > 0)
-            {
-                // add metadataAttributes to packages
-                if (Owner.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Name).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(Owner, Name, "Full Name", 1, 1);
-
-                if (Owner.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Name).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(Owner, Name, "Sorting Name", 0, 1);
-
-                if (Owner.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Name).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(Owner, Name, "Organisation Name", 0, 1);
-
-                if (Owner.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Role).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(Owner, Role, "Role", 0, 1);
-
-                if (Owner.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Address).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(Owner, Address, "Address", 0, 1);
-
-                if (Owner.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Email).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(Owner, Email, "Email", 0, 1);
-
-                if (Owner.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Phone).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(Owner, Phone, "Phone", 0, 1);
-
-                if (Owner.MetadataAttributeUsages.Where(p => p.MetadataAttribute == URI).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(Owner, URI, "URI", 0, 1);
-
-            }
-            else
-            {
-                mdpManager.AddMetadataAtributeUsage(Owner, Name, "Full Name", 1, 1);
-                mdpManager.AddMetadataAtributeUsage(Owner, Name, "Sorting Name", 0, 1);
-                mdpManager.AddMetadataAtributeUsage(Owner, Name, "Organisation Name", 0, 1);
-                mdpManager.AddMetadataAtributeUsage(Owner, Address, "Address", 0, 1);
-                mdpManager.AddMetadataAtributeUsage(Owner, Email, "Email", 0, 1);
-                mdpManager.AddMetadataAtributeUsage(Owner, Role, "Role", 0, 1);
-                mdpManager.AddMetadataAtributeUsage(Owner, Phone, "Phone", 0, 1);
-                mdpManager.AddMetadataAtributeUsage(Owner, URI, "URI", 0, 1);
-
-            }
-
-            #endregion
-
-            #region Scope package
-
-            MetadataAttribute TaxonomicTerm = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("TaxonomicTerm")).FirstOrDefault();
-            if (TaxonomicTerm == null)
-            {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String")).FirstOrDefault();
-                Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
-
-                TaxonomicTerm = mdaManager.Create("TaxonomicTerm", "TaxonomicTerm", "TaxonomicTerm", false, false, "David Blaa",
-                        MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
-            }
-
-            MetadataAttribute GeoEcologicalTerm = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("GeoEcologicalTerm")).FirstOrDefault();
-            if (GeoEcologicalTerm == null)
-            {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String")).FirstOrDefault();
-                Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
-
-                GeoEcologicalTerm = mdaManager.Create("GeoEcologicalTerm", "GeoEcologicalTerm", "GeoEcologicalTerm", false, false, "David Blaa",
-                        MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
-            }
-
-            if (Scope.MetadataAttributeUsages != null & Scope.MetadataAttributeUsages.Count > 0)
-            {
-                // add metadataAttributes to packages
-                if (Scope.MetadataAttributeUsages.Where(p => p.MetadataAttribute == TaxonomicTerm).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(Scope, TaxonomicTerm, "TaxonomicTerm", 0, 10);
-
-                if (Scope.MetadataAttributeUsages.Where(p => p.MetadataAttribute == GeoEcologicalTerm).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(Scope, GeoEcologicalTerm, "GeoEcologicalTerm", 0, 10);
-
-            }
-            else
-            {
-                mdpManager.AddMetadataAtributeUsage(Scope, TaxonomicTerm, "TaxonomicTerm", 0, 10);
-                mdpManager.AddMetadataAtributeUsage(Scope, GeoEcologicalTerm, "GeoEcologicalTerm", 0, 10);
-            }
-
-
-            #endregion
-
-            #region Unit (ABCD Part)
-
-            MetadataPackage Unit = mdpManager.MetadataPackageRepo.Get(p => p.Name == "Unit").FirstOrDefault();
-            if (Unit == null) Unit = mdpManager.Create("Unit", "A container for all data referring to a unit (specimen or observation record).", true);
-
-            if (abcd.MetadataPackageUsages != null && abcd.MetadataPackageUsages.Count > 0)
-            {
-                if (abcd.MetadataPackageUsages.Where(p => p.MetadataPackage == Unit).Count() <= 0)
-                {
-                    mdsManager.AddMetadataPackageUsage(abcd, Unit, "Unit", "", 1, 5);
-                }
-
-            }
-            else
-            {
-
-                mdsManager.AddMetadataPackageUsage(abcd, Unit, "Unit", "", 1, 5);
-            }
-
-            // metadata attributes for Unit
-            MetadataAttribute Id = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Id")).FirstOrDefault();
-            if (Id == null)
-            {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String")).FirstOrDefault();
-                Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
-
-                Id = mdaManager.Create("Id", "Id", "Name or code of the data source", false, false, "David Blaa",
-                        MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
-            }
-
-            // MetadataAttribute Usage
-            if (Unit.MetadataAttributeUsages != null & Unit.MetadataAttributeUsages.Count > 0)
-            {
-                // add metadataAttributes to packages
-                if (Unit.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Id).Count() <= 0)
-                {
-
-                    MetadataAttributeUsage mau = mdpManager.AddMetadataAtributeUsage(Unit, Id, "SourceInstitutionID", 1, 1);
-                }
-
-                if (Unit.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Id).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(Unit, Id, "SourceID", 1, 1);
-
-                if (Unit.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Id).Count() <= 0)
-                    mdpManager.AddMetadataAtributeUsage(Unit, Id, "UnitID", 1, 1);
-
-            }
-            else
-            {
-                mdpManager.AddMetadataAtributeUsage(Unit, Id, "SourceInstitutionID", 1, 1);
-                mdpManager.AddMetadataAtributeUsage(Unit, Id, "SourceID", 1, 1);
-                mdpManager.AddMetadataAtributeUsage(Unit, Id, "UnitID", 1, 1);
-            }
-
-
-            #endregion
-
-            #endregion
-
-            return View("Index");
-        }
-
-        public ActionResult CreateEMLMetadataStructure()
-        {
-
-            #region eml
-
-            CreateEmlDatasetAdv();
-
-            #endregion
-
-            return View("Index");
-        }
-
-
-        #endregion
-
-        private void CreateEmlBasic()
+        private static void CreateEmlBasic()
         {
             MetadataStructureManager mdsManager = new MetadataStructureManager();
             MetadataPackageManager mdpManager = new MetadataPackageManager();
@@ -763,7 +171,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
 
             if (eml.Extra != null)
             {
-                xmlDoc=(XmlDocument)eml.Extra;
+                xmlDoc = (XmlDocument)eml.Extra;
             }
 
             // add title Node
@@ -941,7 +349,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
             #endregion
         }
 
-        private void CreateEmlDatasetAdv()
+        private static void createEmlDatasetAdv()
         {
             MetadataStructureManager mdsManager = new MetadataStructureManager();
             MetadataPackageManager mdpManager = new MetadataPackageManager();
@@ -1283,15 +691,14 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
                 mdpManager.AddMetadataAtributeUsage(projectEml, DescriptionAttr, "Project description", 0, 1);
             }
 
-        #endregion
+            #endregion
+
+            #endregion
         }
-
-
-        #endregion
 
         #region helper
 
-        private XmlDocument AddReferenceToMetadatStructure(MetadataStructure metadataStructure, string nodeName, string nodePath,string destinationPath, XmlDocument xmlDoc)
+        private static XmlDocument AddReferenceToMetadatStructure(MetadataStructure metadataStructure, string nodeName, string nodePath, string destinationPath, XmlDocument xmlDoc)
         {
 
             XmlDocument doc = xmlDoc;
@@ -1346,7 +753,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
         /// <param name="parentNode"></param>
         /// <param name="doc"></param>
         /// <returns></returns>
-        private XmlNode createMissingNodes(string destinationParentXPath, XmlNode parentNode, XmlDocument doc)
+        private static XmlNode createMissingNodes(string destinationParentXPath, XmlNode parentNode, XmlDocument doc)
         {
             string dif = destinationParentXPath;
 
@@ -1375,6 +782,9 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
         }
 
         #endregion
+
+        #endregion
+
 
     }
 }

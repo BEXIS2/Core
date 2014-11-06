@@ -47,7 +47,7 @@ else
                         Name:
                     </td>
                     <td>
-                        @(Html.TextBox("name", variable.Label))
+                        @(Html.TextBox("name", variable.Label, new { @autofocus = "autofocus", @tabindex = 1 }))
                         <div class="errorMsg" style="vertical-align:top;">
                              <font color="red">@ViewData["varErrorMsg"]</font>
                         </div>
@@ -58,7 +58,7 @@ else
                         Is Optional:
                     </td>
                     <td>
-                        @(Html.CheckBox("optional", variable.IsValueOptional))
+                        @(Html.CheckBox("optional", variable.IsValueOptional, new { @tabindex = 2 }))
                     </td>
                 </tr>
                 <tr id="shortname">

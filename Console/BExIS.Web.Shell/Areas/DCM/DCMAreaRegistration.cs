@@ -1,4 +1,5 @@
 ﻿using System.Web.Mvc;
+using Vaiona.Util.Cfg;
 
 namespace BExIS.Web.Shell.Areas.DCM
 {
@@ -19,6 +20,8 @@ namespace BExIS.Web.Shell.Areas.DCM
                 "DCM/{controller}/{action}/{id}",
                 new { action = "Index", id = UrlParameter.Optional }
             );
+
+            //if(AppConfiguration.CreateDatabase)DCM.Helpers.DCMSeedDataGenerator.GenerateSeedData();
         }
     }
 }

@@ -61,7 +61,7 @@
                     Name:<font color="red">*</font>
                 </td>
                 <td>
-                    @(Html.TextBoxFor(m => Model.Name, new { @class = "t-input" }))
+                    @(Html.TextBoxFor(m => Model.Name, new { @class = "t-input" , @autofocus = "autofocus", @tabindex = 1}))
                     <div class="errorMsg" style="vertical-align:top;">
                         <font color="red">@Session["nameMsg"]</font>
                     </div>
@@ -72,7 +72,7 @@
                     Abbreviation:<Font color="red">*</Font>
                 </td>
                 <td>
-                    @(Html.TextBoxFor(m => Model.Abbreviation, new { @class = "t-input" }))
+                    @(Html.TextBoxFor(m => Model.Abbreviation, new { @class = "t-input", @tabindex = 2}))
                     <div class="errorMsg" style="vertical-align:top;">
                         <font color="red">@Session["abbrMsg"]</font>
                     </div>
@@ -83,7 +83,7 @@
                     Description:
                 </td>
                 <td>
-                    @(Html.TextBoxFor(m => Model.Description, new { @class = "t-input" }))
+                    @(Html.TextBoxFor(m => Model.Description, new { @class = "t-input", @tabindex = 3}))
                 </td>
             </tr>
             <tr>
@@ -91,7 +91,7 @@
                     Dimension:
                 </td>
                 <td>
-                    @(Html.TextBoxFor(m => Model.Dimension, new { @class = "t-input" }))
+                    @(Html.TextBoxFor(m => Model.Dimension, new { @class = "t-input", @tabindex = 4 }))
                 </td>
             </tr>
             <tr>
@@ -101,6 +101,7 @@
                 <td>
                     @(Html.Telerik().DropDownList()
                         .Name("measurementSystem")
+                        .HtmlAttributes(new {@tabindex = 5})
                         .DropDownHtmlAttributes(new { style = "height: 200px" })
                         .SelectedIndex(MeasurementSystemIndex)
                         .BindTo(new SelectList(MeasurementSystemList))

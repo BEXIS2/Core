@@ -126,6 +126,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                         else
                         { 
                             DSDM.dataStructure = DSM.CreateUnStructuredDataStructure(DSDM.dataStructure.Name, DSDM.dataStructure.Description);
+                            DSDM.GetDataStructureByID(DSDM.dataStructure.Id);
                             DSDM.dataStructureTree = DSDM.getDataStructureTree();
                         }
                     }

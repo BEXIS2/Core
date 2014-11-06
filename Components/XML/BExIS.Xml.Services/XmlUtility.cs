@@ -85,6 +85,18 @@ namespace BExIS.Xml.Services
             /// <seealso cref=""/>
             /// <param name="name"></param>
             /// <returns></returns>
+            public static IEnumerable<XElement> GetXElementByNodeName(string nodeName, XDocument xDoc)
+            {
+                return xDoc.Root.Descendants(nodeName);
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <remarks></remarks>
+            /// <seealso cref=""/>
+            /// <param name="name"></param>
+            /// <returns></returns>
             public static XElement GetXElementByAttribute(string nodeName, string attrName, string value, XDocument xDoc)
             {
                 return xDoc.Root.Descendants(nodeName).Where(p => p.Attribute(attrName).Value.Equals(value)).FirstOrDefault();

@@ -1,4 +1,5 @@
 ﻿using System.Web.Mvc;
+using Vaiona.Util.Cfg;
 
 namespace BExIS.Web.Shell.Areas.RPM
 {
@@ -19,6 +20,9 @@ namespace BExIS.Web.Shell.Areas.RPM
                 "RPM/{controller}/{action}/{id}",
                 new { action = "Index", id = UrlParameter.Optional }
             );
+
+            if(AppConfiguration.CreateDatabase) RPM.Helpers.RPMSeedDataGenerator.GenerateSeedData();
+
         }
     }
 }

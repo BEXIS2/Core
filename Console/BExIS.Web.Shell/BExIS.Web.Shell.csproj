@@ -214,22 +214,20 @@
     <Compile Include="Areas\Auth\Controllers\DataPermissionsController.cs" />
     <Compile Include="Areas\Auth\Controllers\FeaturePermissionsController.cs" />
     <Compile Include="Areas\Auth\Controllers\GroupsController.cs" />
-    <Compile Include="Areas\Auth\Controllers\PermissionsController.cs" />
     <Compile Include="Areas\Auth\Controllers\UsersController.cs" />
+    <Compile Include="Areas\Auth\Helpers\AuthSeedDataGenerator.cs" />
+    <Compile Include="Areas\Auth\Helpers\HtmlPrefixScopeExtensions.cs" />
     <Compile Include="Areas\Auth\Models\AccountModels.cs" />
     <Compile Include="Areas\Auth\Models\AuthenticatorModels.cs" />
     <Compile Include="Areas\Auth\Models\DataPermissionModels.cs" />
-    <Compile Include="Areas\Auth\Models\DatasetModel.cs" />
+    <Compile Include="Areas\Auth\Models\DatasetModels.cs" />
     <Compile Include="Areas\Auth\Models\EntityModel.cs" />
-    <Compile Include="Areas\Auth\Models\FeatureModel.cs" />
     <Compile Include="Areas\Auth\Models\FeatureModels.cs" />
     <Compile Include="Areas\Auth\Models\FeaturePermissionModels.cs" />
     <Compile Include="Areas\Auth\Models\GroupModels.cs" />
-    <Compile Include="Areas\Auth\Models\InfoModel.cs" />
+    <Compile Include="Areas\Auth\Models\InfoModels.cs" />
     <Compile Include="Areas\Auth\Models\PermissionModel.cs" />
-    <Compile Include="Areas\Auth\Models\RoleModel.cs" />
     <Compile Include="Areas\Auth\Models\SecurityQuestionModels.cs" />
-    <Compile Include="Areas\Auth\Models\UserModel.cs" />
     <Compile Include="Areas\Auth\Models\UserModels.cs" />
     <Compile Include="Areas\DCM\Controllers\CreateController.cs" />
     <Compile Include="Areas\DCM\Controllers\CreateSetMetadataPackageController.cs" />
@@ -245,6 +243,7 @@
     <Compile Include="Areas\DCM\Controllers\SubmitSummaryController.cs" />
     <Compile Include="Areas\DCM\Controllers\SubmitValidationController.cs" />
     <Compile Include="Areas\DCM\DCMAreaRegistration.cs" />
+    <Compile Include="Areas\DCM\Helpers\DCMSeedDataGenerator.cs" />
     <Compile Include="Areas\DCM\Helpers\UploadUtility.cs" />
     <Compile Include="Areas\DCM\Models\AbstractStepModel.cs" />
     <Compile Include="Areas\DCM\Models\ChooseDatasetViewModel.cs" />
@@ -277,6 +276,7 @@
     <Compile Include="Areas\DIM\Models\DatasetVersionModel.cs" />
     <Compile Include="Areas\DIM\Models\MetadataStructureModel.cs" />
     <Compile Include="Areas\RPM\Controllers\HomeController.cs" />
+    <Compile Include="Areas\RPM\Helpers\RPMSeedDataGenerator.cs" />
     <Compile Include="Areas\RPM\RPMAreaRegistration.cs" />
     <Compile Include="Areas\DDM\Controllers\HomeController.cs" />
     <Compile Include="Areas\DDM\Helpers\SearchUIHelper.cs" />
@@ -811,9 +811,6 @@
     <Content Include="Areas\RPM\Views\Home\Index.cshtml" />
     <Content Include="Areas\RPM\Views\Home\UnitManager.cshtml" />
     <Content Include="Areas\RPM\Views\Home\_addVariable.cshtml" />
-    <Content Include="Areas\RPM\Views\Home\_createClassification.cshtml" />
-    <Content Include="Areas\RPM\Views\Home\_createDataType.cshtml" />
-    <Content Include="Areas\RPM\Views\Home\_createVariable.cshtml" />
     <Content Include="Areas\RPM\Views\Home\_editClassifier.cshtml" />
     <Content Include="Areas\RPM\Views\Home\_editDataType.cshtml" />
     <Content Include="Areas\RPM\Views\Home\_editUnit.cshtml" />
@@ -960,7 +957,6 @@
     <Content Include="Areas\DCM\Views\SubmitGetFileInformation\GetFileInformation.cshtml" />
     <Content Include="Areas\DCM\Views\SubmitDefinePrimaryKey\DefinePrimaryKey.cshtml" />
     <Content Include="Areas\DDM\Views\Admin\ReIndexSearch.cshtml" />
-    <Content Include="Areas\Auth\Views\Users\_InfoPartial.cshtml" />
     <Content Include="Areas\DCM\Views\Submit\FinishUpload.cshtml" />
     <Content Include="Areas\DCM\Views\Submit\Test.cshtml" />
     <Content Include="Areas\DCM\Views\SubmitSelectAFile\Test.cshtml" />
@@ -992,14 +988,6 @@
     <Content Include="Areas\DDM\Views\Data\_structuredDataView.cshtml" />
     <Content Include="Areas\DCM\Views\Push\Index.cshtml" />
     <Content Include="Areas\DCM\Views\Push\_fileListView.cshtml" />
-    <Content Include="Areas\Auth\Views\Permissions\Data.cshtml" />
-    <Content Include="Areas\Auth\Views\Permissions\_FeaturePermissionsPartial.cshtml" />
-    <Content Include="Areas\Auth\Views\Permissions\_InfoPartial.cshtml" />
-    <Content Include="Areas\Auth\Views\Permissions\_DatasetsPartial.cshtml" />
-    <Content Include="Areas\Auth\Views\Permissions\_SubjectsPartial.cshtml" />
-    <Content Include="Areas\Auth\Views\Permissions\_DataPartial.cshtml" />
-    <Content Include="Areas\Auth\Views\Permissions\_ResearchPlansPartial.cshtml" />
-    <Content Include="Areas\Auth\Views\Permissions\_DataStructuresPartial.cshtml" />
     <Content Include="Areas\DDM\Views\Data\ShowData.cshtml" />
     <Content Include="Areas\RPM\Views\Home\_showDatasets.cshtml" />
     <Content Include="Areas\DDM\Views\Web.config" />
@@ -1012,7 +1000,6 @@
     <Content Include="Areas\Auth\Views\Groups\_ShowPartial.cshtml" />
     <Content Include="Areas\Auth\Views\Groups\_EditPartial.cshtml" />
     <Content Include="Areas\Auth\Views\Groups\_MembershipPartial.cshtml" />
-    <Content Include="Areas\Auth\Views\Groups\_InfoPartial.cshtml" />
     <Content Include="Areas\Auth\Views\Groups\_UpdatePartial.cshtml" />
     <Content Include="Areas\Auth\Views\Account\_RegisterPartial.cshtml" />
     <Content Include="Areas\Auth\Views\Account\_LogOnPartial.cshtml" />
@@ -1065,7 +1052,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>1323</DevelopmentServerPort>
+          <DevelopmentServerPort>11644</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>

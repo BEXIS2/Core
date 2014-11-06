@@ -39,14 +39,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
 
             FeatureManager featureManager = new FeatureManager();
 
-            if (featureManager.ExistsFeatureId(id))
-            {
-                return PartialView("_SubjectsPartial");
-            }
-            else
-            {
-                return PartialView("_InfoPartial", new InfoModel("Window_Details", "The feature does not exist!"));
-            }
+            return PartialView("_SubjectsPartial");
         }
 
         [GridAction]

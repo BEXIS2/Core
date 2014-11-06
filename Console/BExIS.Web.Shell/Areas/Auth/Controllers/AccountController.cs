@@ -122,11 +122,6 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
             return PartialView("_RegisterPartial", model);
         }
 
-        public ActionResult RegisterSummary(UserModel model)
-        {
-            return View(model);
-        }
-
         #region Validation
 
         public JsonResult ValidateEmail(string email, long id = 0)

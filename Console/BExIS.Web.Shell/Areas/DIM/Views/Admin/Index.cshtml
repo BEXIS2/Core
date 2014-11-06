@@ -6,19 +6,13 @@
 	ViewBag.Title = "Index";
 }
 
-@*@Html.ActionLink("Convert Metadata to Abcd", "ConvertMetadataToABCD", "Admin", new { @class = "t-button", @title = "abcd" })
-
-@Html.ActionLink("Convert Metadata to EML", "ConvertMetadataToEML", "Admin", new { @class = "t-button", @title = "eml" })*@
-
-<p> 
-	On this page you can convert the Metadata of a 
-	Datasets to a specfic Standard like ABCD or EML.<br />
-
-	<ul>
-		<li>Please select a Metadata Structure first</li>
-		<li>Select the datasets for convertion</li>
-		<li>Click the button to convert</li>
-	</ul> 
+<p>
+On this page you are able to export metadata from an internal representation to a standard compliant XML file, i.e. ABCD or EML.<br />
+<ul>
+    <li> Please select a metadata structure first (tab)</li>
+    <li>Select one or more datasets to export</li>
+    <li>Click the export button to create XML files</li>
+</ul>
 </p>
 
 @if(@Model != null)

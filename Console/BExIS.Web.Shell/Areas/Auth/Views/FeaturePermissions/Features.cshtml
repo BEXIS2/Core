@@ -2,7 +2,7 @@
 @using Telerik.Web.Mvc.UI
 
 @{
-    ViewBag.Title = "Feature Manager";
+    ViewBag.Title = "Feature Permissions";
 }
 
 @model IEnumerable<FeatureTreeViewModel>
@@ -25,7 +25,7 @@
 </h2>
 
 <p style="max-width:800px">
-    Here you are able to manage how users (or roles) have access to individual system features or entire modules. 
+    Here you are able to manage how users (or groups) have access to individual system features or entire modules. 
     Please use the tree structure on left for navigation. 
     By default feature permissions are not set, which means access is denied unless access permissions are explicitly granted or inherited from an upper level feature (e.g. module). 
     Individual grants on features rule out higher level settings. 

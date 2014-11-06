@@ -1,7 +1,7 @@
 ﻿@using BExIS.Web.Shell.Areas.Auth.Models;
 
 @{
-    ViewBag.Title = "Data Manager";
+    ViewBag.Title = "Dataset Permissions";
 }
 
 
@@ -21,21 +21,21 @@
     }
 </style>
 
-@Html.DropDownList("Entity", new SelectList(Model.EntityList, "Id", "Name"), "-- SELECT --", new { id = "Entities"})
+@*@Html.DropDownList("Entity", new SelectList(Model.EntityList, "Id", "Name"), "-- SELECT --", new { id = "Entities"})*@
 
-<div id="Content_Data"></div>
+<div id="Content_Data">@Html.Partial("_DatasetsPartial")</div>
 
 <div id="Content_Subjects"></div>
 
 
 <script type="text/javascript">
-    $("#Entities").change(function () {
+@*    $("#Entities").change(function () {
         var entityId = $(this).val();
 
         $.get('@Url.Action("Entities_OnSelect", "DataPermissions")', { EntityId: entityId }, function (data) {
             $('#Content_Data').html(data);
         });
-    });
+    });*@
 
     function OnRowSelected(e) {
         var dataId = $('#Content_Data .t-grid').data('tGrid').dataItem(e.row)['Id'];
