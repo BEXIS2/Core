@@ -45,10 +45,6 @@
                         {
                             subitem.Add().Text("Search Manager").Action("SearchDesigner", "Admin", new { area = "DDM" });
                         });
-                        item.Add().Text("Initialize").Items(subitem =>
-                        {
-                            subitem.Add().Text("Create seed data").Action("Index", "Seed", new { area = "SAM" });
-                        });
                         item.Add().Text("Data Dissemination").Items(subitem =>
                         {
                             subitem.Add().Text("Metadata Export").Action("Index", "Admin", new { area = "DIM" });

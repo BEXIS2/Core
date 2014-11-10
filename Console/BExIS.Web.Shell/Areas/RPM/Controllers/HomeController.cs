@@ -1248,10 +1248,12 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             {
                 DataTypeManager dataTypeManager = new DataTypeManager();
                 dataTypeList = dataTypeManager.Repo.Get().ToList();
+                dataTypeList = dataTypeList.OrderBy(p => p.Name).ToList();
             }
             else
             {
                 dataTypeList = unitManager.Repo.Get(tempId).AssociatedDataTypes.ToList();
+                dataTypeList = dataTypeList.OrderBy(p => p.Name).ToList();
             }
 
             return Json(new SelectList(dataTypeList.ToArray(), "Id", "Name"), JsonRequestBehavior.AllowGet);

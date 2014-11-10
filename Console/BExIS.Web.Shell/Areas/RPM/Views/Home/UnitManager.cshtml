@@ -9,6 +9,7 @@
 @{
     string rgxPattern = "[ ]";
     string rgxReplace = "_";
+    string temp = "";
     Regex rgx = new Regex(rgxPattern);
     
     Unit unit = (Unit)Session["Unit"];
@@ -85,21 +86,25 @@
                     columns.Bound(c => c.Id).Width(50);
                     columns.Bound(c => c.Abbreviation).Width(100);
                     columns.Bound(c => c.Dimension).Width(100);
-                    columns.Bound(c => c.MeasurementSystem).Width(160);
+                    columns.Bound(c => c.MeasurementSystem).Width(160);                        
                     columns.Template(
                         @<text>
-                            @{string temp = "";
-                              foreach (DataType dt in item.AssociatedDataTypes)
-                              {
-                                  if (temp== "") 
-                                  {temp = dt.Name;}
-                                  else  
-                                  {temp = temp + ", " + dt.Name;}
-                              }
+                            @{
+                                temp = "";
+                                List<DataType> tempList = item.AssociatedDataTypes.OrderBy(p=>p.Name).ToList();
+                                foreach (DataType dt in tempList)
+                                {
+                                    if (temp == "")
+                                    { temp = dt.Name; }
+                                    else
+                                    { temp = temp + ", " + dt.Name; }
+                                }
                               }
                               @temp 
                         </text>
-                    ).Title("Associated Data Types").Width(160);
+                        )
+                        .ClientTemplate("test")
+                        .Title("Associated Data Types").Width(160);
                     columns.Bound(c => c.Description);
                 })
     )

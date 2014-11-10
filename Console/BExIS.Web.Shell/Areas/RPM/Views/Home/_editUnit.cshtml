@@ -29,7 +29,7 @@
         count++;
     }
 
-    List<DataType> dataTypeList = (List<DataType>)Session["dataTypeList"];
+    List<DataType> dataTypeList = ((List<DataType>)Session["dataTypeList"]).OrderBy(p=>p.Name).ToList();
 
     List<long> checkedIds = new List<long>();
 

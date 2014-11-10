@@ -103,7 +103,7 @@ namespace BExIS.Dlm.Services.MetadataStructure
 
         #region Associations
 
-        public MetadataAttributeUsage AddMetadataAtributeUsage(MetadataPackage package, MetadataAttribute attribute, string label, int minCardinality, int maxCardinality)
+        public MetadataAttributeUsage AddMetadataAtributeUsage(MetadataPackage package, MetadataAttribute attribute, string label, string description, int minCardinality, int maxCardinality)
         {
             Contract.Requires(package != null && package.Id >= 0);
             Contract.Requires(attribute != null && attribute.Id >= 0);
@@ -129,6 +129,7 @@ namespace BExIS.Dlm.Services.MetadataStructure
                 MetadataAttribute = attribute,
                 // if there is no label provided, use the attribute name and a sequence number calculated by the number of occurrences of that attribute in the current structure
                 Label = !string.IsNullOrWhiteSpace(label) ? label : (count <= 0 ? attribute.Name : string.Format("{0} ({1})", attribute.Name, count)),
+                Description = description,
                 MinCardinality = minCardinality,
                 MaxCardinality = maxCardinality,
             };

@@ -12,9 +12,15 @@
 }
 <div id="@id">
 
+<div>
+    <p>
+        @Model.Description
+    </p>
+</div>
 <div id="@preloader_id" style="display:none;" >
      <img src="../../../../Themes/Default/Styles/Default/preloader.GIF" />
 </div>
+
 
     @(Html.Telerik().Grid(Model.DatasetVersions)
             .Name("datasetversionsConvertGrid")
@@ -25,7 +31,7 @@
             {
                 command.Template(
                     @<text>
-                        <button id="@convert_id" type="button" class="t-button" value="Convert" name="button" onclick="dim_OnClickConvert(this)" >Convert</button>
+                        <button id="@convert_id" type="button" class="t-button" value="Convert" name="button" onclick="dim_OnClickConvert(this)" >Export</button>
                     </text>
                     );
             })
@@ -33,7 +39,7 @@
                 {
                     columns.Template(
                         @<text>
-                            <input id="@item.Id" name="checkedDatasetVersion" type="checkbox" value="@item.Id " title="checkedDatasetVersion" class="checkBox" />
+                            <input id="@item.DatasetVersionId" name="checkedDatasetVersion" type="checkbox" value="@item.DatasetVersionId " title="checkedDatasetVersion" class="checkBox" />
                         </text>
                         ).Width(30)
                         .HeaderTemplate(
@@ -41,6 +47,8 @@
                                 <input id="@all_id" name="checkedDatasetVersion" type="checkbox" value="all" title="checkedDatasetVersion" class="checkBox" onclick="OnChangeAllCheckbox(this)" />
                             </text>
                         );
+                    columns.Bound(o => o.DatasetId).Title("Dataset id").Width(40);
+                    columns.Bound(o => o.DatasetVersionId).Title("Datasetversion id").Width(40);       
                     columns.Bound(o => o.Title).Title("Dataset Title")
                            .Filterable(true);
                     columns.Template(

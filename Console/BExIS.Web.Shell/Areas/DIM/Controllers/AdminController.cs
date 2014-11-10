@@ -48,7 +48,8 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
             #region load Model
 
                 DatasetManager datasetManager = new DatasetManager();
-                datasetVersionIds = datasetManager.GetDatasetLatestIds();
+                // retrieves all the dataset version IDs which are in the checked-in state
+                datasetVersionIds = datasetManager.GetDatasetVersionLatestIds();
 
                 MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
                 MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(Id);
@@ -57,7 +58,7 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
                         metadataStructure.Id,
                         metadataStructure.Name,
                         metadataStructure.Description,
-                        getDatasetVersionsDic(metadataStructure,datasetVersionIds)
+                        getDatasetVersionsDic(metadataStructure, datasetVersionIds)
                 
                     );
 
@@ -73,7 +74,7 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
             #region load Model
 
                 DatasetManager datasetManager = new DatasetManager();
-                datasetVersionIds = datasetManager.GetDatasetLatestIds();
+                datasetVersionIds = datasetManager.GetDatasetVersionLatestIds();
 
                 MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
                 MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(Convert.ToInt64(Id));
@@ -220,25 +221,20 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
             List<DatasetVersionModel> datasetVersions = new List<DatasetVersionModel>();
             DatasetManager datasetManager = new DatasetManager();
 
-            DatasetVersion datasetVersion;
+            // gets all the dataset versions that their Id is in the datasetVersionIds and they are using a specific metadata structure as indicated by metadataStructure parameter
+            var q = datasetManager.DatasetVersionRepo.Get(p => datasetVersionIds.Contains(p.Id) && p.Dataset.MetadataStructure.Id.Equals(metadataStructure.Id)).Distinct();
 
-            foreach(long id in datasetVersionIds)
+            foreach (DatasetVersion datasetVersion in q)
             {
-                datasetVersion = datasetManager.GetDatasetVersion(id);
-                if(datasetVersion.Dataset.MetadataStructure.Id.Equals(metadataStructure.Id))
-                {
-                    datasetVersions.Add(
-                        new DatasetVersionModel
-                        {
-                            Id = id,
-                            Title = getTitle(datasetVersion),
-                            MetadataDownloadPath = ""
-                        });
-
-                }
-
+                datasetVersions.Add(
+                    new DatasetVersionModel
+                    {
+                        DatasetVersionId = datasetVersion.Id,
+                        DatasetId = datasetVersion.Dataset.Id,
+                        Title = getTitle(datasetVersion),
+                        MetadataDownloadPath = ""
+                    });
             }
-
             return datasetVersions;
         }
 

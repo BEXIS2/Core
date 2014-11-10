@@ -22,6 +22,7 @@
 
 
     List<DataType> dataTypeList = (List<DataType>)Session["dataTypeList"];
+    dataTypeList = dataTypeList.OrderBy(p => p.Name).ToList();
 
     if(Model.DataType != null)
     {

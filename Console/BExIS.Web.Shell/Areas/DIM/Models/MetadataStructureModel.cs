@@ -24,7 +24,7 @@ namespace BExIS.Web.Shell.Areas.DIM.Models
 
         public void AddMetadataPath(long id, string path)
         {
-            this.DatasetVersions.Where(d => d.Id.Equals(id)).FirstOrDefault().MetadataDownloadPath = path;
+            this.DatasetVersions.Where(d => d.DatasetVersionId.Equals(id)).FirstOrDefault().MetadataDownloadPath = path;
         }
     }
 }

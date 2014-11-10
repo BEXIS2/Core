@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -40,9 +41,11 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Helpers
 
             foreach (string specailCharacter in specialCharacterArray)
             {
-                if (value.Contains(specailCharacter)) value = value.Replace(specailCharacter, "\\" + specailCharacter);
+             
+                if (value.Contains(specailCharacter)) value = value.Replace(specailCharacter, @"\" + specailCharacter);
             }
 
+            Debug.WriteLine(value);
 
             return value;
         }

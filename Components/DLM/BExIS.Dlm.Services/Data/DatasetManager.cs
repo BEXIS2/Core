@@ -624,26 +624,28 @@ namespace BExIS.Dlm.Services.Data
         }
 
         /// <summary>
-        /// Returns the list of identifiers of the latest versions of all datasets, alongside with their identifiers including/ excluding the checked out versions.
+        /// Returns the list of identifiers of all the matching datasets.
+        /// If <paramref name="includeCheckouts"/> is false, just the datasets having the latest version checked-in are included
+        /// , otherwise the datasets with versions either checked-in or checked-out will be included.
         /// </summary>
         /// <param name="includeCheckouts">Determines whether the checked out versions should be included in the result.</param>
-        /// <returns>The list of the identifiers of the latest versions of all datasets</returns>
+        /// <returns>The list of the identifiers of all the matching datasets</returns>
         public List<Int64> GetDatasetLatestIds(bool includeCheckouts = false)
         {
-            if (includeCheckouts) // the working copy versions of checked out datasets are also included
+            if (includeCheckouts) // the datasets that their latest version is checked-in or checked-out
             {
                 var q1 = DatasetVersionRepo.Query(p =>
                         (p.Dataset.Status == DatasetStatus.CheckedIn || p.Dataset.Status == DatasetStatus.CheckedOut)
                         && (p.Status == DatasetVersionStatus.CheckedIn || p.Status == DatasetVersionStatus.CheckedOut)
-                    ).Select(p => p.Dataset.Id);
+                    ).Select(p => p.Dataset.Id).Distinct();
                 return (q1.ToList());
             }
-            else //just latest checked in versions or checked in datasets 
+            else //just the datasets that their latest version is checked-in
             {
                 var q1 = DatasetVersionRepo.Query(p =>
                         (p.Dataset.Status == DatasetStatus.CheckedIn || p.Dataset.Status == DatasetStatus.CheckedOut) // include checked in (latest) versions of currently checked out datasets
                         && (p.Status == DatasetVersionStatus.CheckedIn)
-                    ).Select(p => p.Dataset.Id);
+                    ).Select(p => p.Dataset.Id).Distinct();
                 return (q1.ToList());
             }
 
@@ -654,6 +656,31 @@ namespace BExIS.Dlm.Services.Data
             //         select grp.Single(p => p.Timestamp >= maxTimestamp).Metadata);
 
             //return (qu.ToList());
+        }
+
+        /// <summary>
+        /// Returns the list of identifiers of the latest version of of the datasets.
+        /// </summary>
+        /// <param name="includeCheckouts">Determines whether the checked out versions should be included in the result.</param>
+        /// <returns>The list of the identifiers of all the matching dataset versions</returns>
+        public List<Int64> GetDatasetVersionLatestIds(bool includeCheckouts = false)
+        {
+            if (includeCheckouts) // the working copy versions of checked out datasets are also included
+            {
+                var q1 = DatasetVersionRepo.Query(p =>
+                        (p.Dataset.Status == DatasetStatus.CheckedIn || p.Dataset.Status == DatasetStatus.CheckedOut)
+                        && (p.Status == DatasetVersionStatus.CheckedIn || p.Status == DatasetVersionStatus.CheckedOut)
+                    ).Select(p => p.Id).Distinct();
+                return (q1.ToList());
+            }
+            else //just latest checked in versions
+            {
+                var q1 = DatasetVersionRepo.Query(p =>
+                        (p.Dataset.Status == DatasetStatus.CheckedIn || p.Dataset.Status == DatasetStatus.CheckedOut)
+                        && (p.Status == DatasetVersionStatus.CheckedIn)
+                    ).Select(p => p.Id).Distinct();
+                return (q1.ToList());
+            }
         }
 
         /// <summary>

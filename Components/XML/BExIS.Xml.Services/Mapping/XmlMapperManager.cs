@@ -130,7 +130,8 @@ namespace BExIS.Xml.Services.Mapping
             #region xmlschema
 
             xmlSchemaManager = new XmlSchemaManager();
-            xmlSchemaManager.Load(xmlMapper.Header.Schemas.First().Value);
+            string schemaPath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), xmlMapper.Header.Schemas.First().Value);
+            xmlSchemaManager.Load(schemaPath);
 
             #endregion
 
