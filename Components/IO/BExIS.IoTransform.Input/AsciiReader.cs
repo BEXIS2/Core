@@ -603,6 +603,7 @@ namespace BExIS.Io.Transform.Input
             //    else return line.Split(seperator).ToList();
             //}
             //else 
+
             return line.Split(seperator).ToList();
         }
 
