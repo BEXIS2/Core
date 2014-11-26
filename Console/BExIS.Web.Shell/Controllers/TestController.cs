@@ -55,11 +55,11 @@ namespace BExIS.Web.Shell.Controllers
             //purgeAll();
             //getAllDatasetVersions();
 
-            //addConstraintsTo();
+            addConstraintsTo();
             //testMetadataStructure();
             //testSecuirty();
             //getEffectiveTuples(id);
-            getDataStructures();
+            //getDataStructures();
             //return RedirectToAction("About");
             return View();
         }
@@ -110,16 +110,16 @@ namespace BExIS.Web.Shell.Controllers
             if (p4 == null) p4 = mdpManager.Create("P4", "Sample Package 4", true);
 
             if(s1.MetadataPackageUsages.Where(p=>p.MetadataPackage == p1).Count() <=0)
-                mdsManager.AddMetadataPackageUsage(s1, p1, "P1 in S1", null, 0, 1);
+                mdsManager.AddMetadataPackageUsage(s1, p1, "P1 in S1", "", 0, 1);
 
             if (s1.MetadataPackageUsages.Where(p => p.MetadataPackage == p2).Count() <= 0)
-                mdsManager.AddMetadataPackageUsage(s1, p2, "P2 in S1", null, 1, 1);
+                mdsManager.AddMetadataPackageUsage(s1, p2, "P2 in S1", "", 1, 1);
 
             if (s11.MetadataPackageUsages.Where(p => p.MetadataPackage == p3).Count() <= 0)
-                mdsManager.AddMetadataPackageUsage(s11, p3, "P3 in S1.1", null, 0, 10);
+                mdsManager.AddMetadataPackageUsage(s11, p3, "P3 in S1.1", "", 0, 10);
 
             if (s11.MetadataPackageUsages.Where(p => p.MetadataPackage == p4).Count() <= 0)
-                mdsManager.AddMetadataPackageUsage(s11, p4, "P4 in S1.1", null, 2, 5);
+                mdsManager.AddMetadataPackageUsage(s11, p4, "P4 in S1.1", "", 2, 5);
 
             var usages = mdsManager.GetEffectivePackages(3);
         }
@@ -129,30 +129,30 @@ namespace BExIS.Web.Shell.Controllers
             DataContainerManager dcManager = new DataContainerManager();
             var attr = dcManager.DataAttributeRepo.Get(1);
 
-            ConstraintManager cntManager = new ConstraintManager();
-            var c1 = cntManager.CreateRangeConstraint(ConstraintProviderSource.Internal, "", "en-US", "should be between 1 and 12 meter", true, null, null, null
-                        , 1.00, true, 12.00, true, attr);
+            var c1 = new RangeConstraint(ConstraintProviderSource.Internal, "", "en-US", "should be between 1 and 12 meter", true, null, null, null, 1.00, true, 12.00, true);
+            dcManager.AddConstraint(c1, attr);
             var v1 = c1.IsSatisfied(14);
 
-            var c2 = cntManager.CreatePatternConstraint(ConstraintProviderSource.Internal, "", "en-US", "a simple email validation constraint", false, null, null, null
-                        , @"^\S+@\S+$", false, attr);
-            var v2 = c2.IsSatisfied("abc@def.com");
+            var c2 = new PatternConstraint(ConstraintProviderSource.Internal, "", "en-US", "a simple email validation constraint", false, null, null, null, @"^\S+@\S+$", false);
+            dcManager.AddConstraint(c2, attr);
+            var v2 = c2.IsSatisfied("javad.chamanara@uni-jena.com");
 
             List<DomainItem> items = new List<DomainItem>() { new DomainItem () {Key = "A", Value = "This is A" }, 
                                                               new DomainItem () {Key = "B", Value = "This is B" }, 
                                                               new DomainItem () {Key = "C", Value = "This is C" }, 
                                                               new DomainItem () {Key = "D", Value = "This is D" },
                                                             };
-            var c3 = cntManager.CreateDomainConstraint(ConstraintProviderSource.Internal, "", "en-US", "a simple email validation constraint", false, null, null, null
-                        , items, attr);
+            var c3 = new DomainConstraint(ConstraintProviderSource.Internal, "", "en-US", "a simple domain validation constraint", false, null, null, null, items);            
+            dcManager.AddConstraint(c3, attr);
             var v3 = c3.IsSatisfied("A");
             v3 = c3.IsSatisfied("E");
             c3.Negated = true;
             v3 = c3.IsSatisfied("A");
 
 
-            var c4 = cntManager.CreateCompareConstraint(ConstraintProviderSource.Internal, "", "en-US", "a simple email validation constraint", false, null, null, null
-                , ComparisonOperator.GreaterThanOrEqual, ComparisonTargetType.Value, null, ComparisonOffsetType.Ratio, 1.25, attr);
+            var c4 = new ComparisonConstraint(ConstraintProviderSource.Internal, "", "en-US", "a comparison validation constraint", false, null, null, null
+                , ComparisonOperator.GreaterThanOrEqual, ComparisonTargetType.Value, "" , ComparisonOffsetType.Ratio, 1.25);            
+            dcManager.AddConstraint(c4, attr);
             var v4 = c4.IsSatisfied(14, 10);
         
         }

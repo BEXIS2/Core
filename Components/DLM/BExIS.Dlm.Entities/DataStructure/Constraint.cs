@@ -1,32 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using Vaiona.Entities.Common;
 
-/// <summary>
-///
-/// </summary>        
 namespace BExIS.Dlm.Entities.DataStructure
 {
 
     /// <summary>
-    /// Internal or external.
-    /// In case of internal, the definition of the constraint is inside the model by means of validator, default or domain values.
-    /// If it is external, the constraint is defined somewhere else like a database. and model just contains its identifier and access method. 
-    /// This is good option for integration of variable values with external systems. or variables that their values changes over time
+    /// The base class for all concrete constraint types. It provides various attributes needed for all the constraint sub types. Among them the cultureId is a means 
+    /// to define different constraints on a single data attribute based on the culture.
     /// </summary>
-    public enum ConstraintProviderSource
-    {
-        Internal, External
-    }
-
-    /// <summary>
-    ///
-    /// </summary>
-    /// <remarks></remarks>        
     public abstract class Constraint: BaseEntity
     {
         protected string defaultMessageTemplate;
@@ -35,59 +22,43 @@ namespace BExIS.Dlm.Entities.DataStructure
         #region Attributes
 
         /// <summary>
-        ///
+        /// Indicates whether the constraint is defined internally or should be populated by accessing an external provider.
         /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>        
         public virtual ConstraintProviderSource Provider { get; set; }
 
         /// <summary>
-        ///
+        /// If the constraint is defined externally, the provider is supposed to have all the information needed to access the external source in order to obtain the required constraint attributes.
         /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>        
         public virtual string ConstraintSelectionPredicate { get; set; } // only for external providers
 
         /// <summary>
         /// the culture the constraint applies to. i.e., a Regex to match a taxon name in German may differ from its equivalent in English, ...
         /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>
         public virtual string CultureId { get; set; }
 
         /// <summary>
-        ///
+        /// A free form description of the constraint
         /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>        
         public virtual string Description { get; set; }
 
         /// <summary>
-        /// determines whether the constraint should be evaluated or the negate of it. e.g., the input should be evaluated against the range or outside of the range.
+        /// determines whether the constraint or its negation should be evaluated. e.g., the input should be evaluated for being in a range or outside of it.
         /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>        
         public virtual bool Negated { get; set; }
 
         /// <summary>
-        /// provides a scope information so that validators can be grouped, categorized, or distinguished for a specific purpose. Like fast validation, detailed validation, etc.
+        /// provides a piece of  information for grouping, categorizing, or distinguishing for purposes. Like fast validation, detailed validation, validation via the UI or API, etc.
         /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>        
         public virtual string Context { get; set; }
 
         /// <summary>
-        /// The message to be conveyed to the user in case of rule break.
+        /// The message to be conveyed to the user in case of the constraint break.
         /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>        
         public virtual string MessageTemplate { get; set; }
 
         /// <summary>
-        /// The message to be conveyed to the user in case of negated rule break.
+        /// The message to be conveyed to the user in case of the negated constraint break.
         /// </summary>
-        /// <remarks> maybe </remarks>
-        /// <seealso cref=""/>        
         public virtual string NegatedMessageTemplate { get; set; }
         
         #endregion
@@ -95,29 +66,23 @@ namespace BExIS.Dlm.Entities.DataStructure
         #region Associations
 
         /// <summary>
-        ///
+        /// The <see cref="DataContainer"/> the constraint applies on.
         /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>        
         public virtual DataContainer DataContainer { get; set; }
         
         #endregion
 
         #region Mathods
         /// <summary>
-        /// to be implemented by concrete classes. it checks whether the input data satisfies the constraint
+        /// The method checks whether the input <paramref name="data"/> satisfies the constraint. To be implemented by concrete sub-classes.
         /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>
         /// <param name="data">the data to be evaluated</param>
-        /// <param name="auxilialy">in most cases not used, but in comparison</param>     
-        public abstract bool IsSatisfied(object data, object auxilialy = null);
+        /// <param name="auxiliary">An optional data item needed by some of the constraints. In most cases not used, but in comparison</param>     
+        public abstract bool IsSatisfied(object data, object auxiliary = null);
 
         /// <summary>
-        ///
+        /// The actual error message to be returned to the caller. It is generated based on the <
         /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>        
         public abstract string ErrorMessage { get; }
         #endregion
 
@@ -190,14 +155,31 @@ namespace BExIS.Dlm.Entities.DataStructure
             defaultNegatedMessageTemplate = "Provided value is a domain item, but the constraint is negated. The value should not be one of these items: {0}.";
         }
 
+        public DomainConstraint(ConstraintProviderSource provider, string constraintSelectionPredicate, string cultureId
+            , string description, bool negated, string context, string messageTemplate, string negatedMessageTemplate, List<DomainItem> items): this()
+        {
+            Contract.Requires(items != null);
+            Contract.Requires(items.Count > 0);
+
+            Provider = provider;
+            ConstraintSelectionPredicate = constraintSelectionPredicate;
+            CultureId = cultureId;
+            Description = description;
+            Negated = negated;
+            Context = !string.IsNullOrEmpty(context) ? context : "Default";
+            MessageTemplate = messageTemplate;
+            NegatedMessageTemplate = negatedMessageTemplate;
+            Items = items;
+        }
+
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
         /// <param name="data"></param>
-        /// <param name="auxilialy"></param>
-        public override bool IsSatisfied(object data, object auxilialy = null)
+        /// <param name="auxiliary"></param>
+        public override bool IsSatisfied(object data, object auxiliary = null)
         {
             this.Materialize(); // test it
             // Domain items are stored as string, so instead of converting them to the containers data type, it is easier and faster to convert the input data to string
@@ -267,13 +249,13 @@ namespace BExIS.Dlm.Entities.DataStructure
                 {
                     return (string.Format(
                         (!string.IsNullOrWhiteSpace(NegatedMessageTemplate) ? NegatedMessageTemplate : defaultNegatedMessageTemplate),
-                        MatchingPhrase, (CaseSensitive? "case insensitive": "case sensitive") ));
+                        MatchingPhrase, (CaseSensitive? "case sensitive": "case insensitive") ));
                 }
                 else
                 {
                     return (string.Format(
                         (!string.IsNullOrWhiteSpace(MessageTemplate) ? MessageTemplate : defaultMessageTemplate),
-                         MatchingPhrase, (CaseSensitive ? "case insensitive" : "case sensitive") ));
+                         MatchingPhrase, (CaseSensitive ? "case sensitive" : "case insensitive") ));
                 }
             }
         }
@@ -298,14 +280,31 @@ namespace BExIS.Dlm.Entities.DataStructure
             defaultNegatedMessageTemplate = "Provided value matches the pattern, but the constraint is negated. The value should not match {0} {1}.";
         }
 
+        public PatternConstraint(ConstraintProviderSource provider, string constraintSelectionPredicate, string cultureId
+            , string description, bool negated, string context, string messageTemplate, string negatedMessageTemplate, string matchingPhrase, bool caseSensitive)
+        {
+            Contract.Requires(!string.IsNullOrWhiteSpace(matchingPhrase));
+
+            Provider = provider;
+            ConstraintSelectionPredicate = constraintSelectionPredicate;
+            CultureId = cultureId;
+            Description = description;
+            Negated = negated;
+            Context = !string.IsNullOrEmpty(context) ? context : "Default";
+            MessageTemplate = messageTemplate;
+            NegatedMessageTemplate = negatedMessageTemplate;
+            MatchingPhrase = matchingPhrase;
+            CaseSensitive = caseSensitive;
+        }
+
         /// <summary>
         /// checks whether the input parameter matches the MatchingPhrase
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
         /// <param name="data">is the input data in STRING format</param>
-        /// <param name="auxilialy"></param>
-        public override bool IsSatisfied(object data, object auxilialy = null)
+        /// <param name="auxiliary"></param>
+        public override bool IsSatisfied(object data, object auxiliary = null)
         {
             if(!CaseSensitive)
                 return (Negated ^ (Regex.IsMatch(data.ToString(), MatchingPhrase, RegexOptions.IgnoreCase)));
@@ -397,18 +396,52 @@ namespace BExIS.Dlm.Entities.DataStructure
             defaultNegatedMessageTemplate = "Provided value is in range, but the constraint is negated. The value should be {1} {0} or {3} {2}.";
         }
 
+        public RangeConstraint(ConstraintProviderSource provider, string constraintSelectionPredicate, string cultureId
+            , string description, bool negated, string context, string messageTemplate, string negatedMessageTemplate, double lowerbound, bool lowerboundIncluded
+            , double upperbound, bool upperboundIncluded)
+        {
+            Contract.Requires(lowerbound <= upperbound);
+
+            Provider = provider;
+            ConstraintSelectionPredicate = constraintSelectionPredicate;
+            CultureId = cultureId;
+            Description = description;
+            Negated = negated;
+            Context = !string.IsNullOrEmpty(context) ? context : "Default";
+            MessageTemplate = messageTemplate;
+            NegatedMessageTemplate = negatedMessageTemplate;
+            Lowerbound = lowerbound;
+            LowerboundIncluded = lowerboundIncluded;
+            Upperbound = upperbound;
+            UpperboundIncluded = upperboundIncluded;
+        }
+
+
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
         /// <param name="data"></param>
-        /// <param name="auxilialy"></param>
-        public override bool IsSatisfied(object data, object auxilialy = null)
+        /// <param name="auxiliary"></param>
+        public override bool IsSatisfied(object data, object auxiliary = null)
         {
             // the data type is defined by the associated data attribute
             // use dynamic link library, Flee or DLR to convert the Body to an executable code, pass data to it and return the result
-            double d = Convert.ToDouble(data);
+            double d = 0.0;
+            if (data is string)
+                d = ((string)data).Length;
+            else
+            {
+                try
+                {
+                    d =  Convert.ToDouble(data);
+                }
+                catch
+                {
+                    return (Negated ^ false); 
+                }
+            }
             if (LowerboundIncluded == true && d < Lowerbound || (LowerboundIncluded == false && d <= Lowerbound)) //out of lower bound
                 return (Negated ^ false);
 
@@ -425,7 +458,7 @@ namespace BExIS.Dlm.Entities.DataStructure
     /// The reference object can be an object or the value of a variable/ parameter in the same tuple
     /// </summary>
     /// <remarks></remarks>  
-    public class CompareConstraint : Constraint
+    public class ComparisonConstraint : Constraint
     {
         #region Attributes
         
@@ -510,26 +543,47 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// <remarks></remarks>
         /// <seealso cref=""/>
         /// <param></param>       
-        public CompareConstraint()
+        public ComparisonConstraint()
         {
             defaultMessageTemplate = "replace with a proper message {0}.";
             defaultNegatedMessageTemplate = "replace with a proper message {0}.";
         }
 
+        public ComparisonConstraint(ConstraintProviderSource provider, string constraintSelectionPredicate, string cultureId
+            , string description, bool negated, string context, string messageTemplate, string negatedMessageTemplate, ComparisonOperator comparisonOperator, ComparisonTargetType targetType
+            , string target, ComparisonOffsetType offsetType, double offset)
+        {
+            //Contract.Requires();
+
+            Provider = provider;
+            ConstraintSelectionPredicate = constraintSelectionPredicate;
+            CultureId = cultureId;
+            Description = description;
+            Negated = negated;
+            Context = context != null ? context : "Default";
+            MessageTemplate = messageTemplate;
+            NegatedMessageTemplate = negatedMessageTemplate;
+            Operator = comparisonOperator;
+            TargetType = targetType;
+            Target = target;
+            OffsetType = offsetType;
+            OffsetValue = offset;
+        }
+
 
         /// <summary>
         /// problem: the constraint needs the target value to compare it, if it is a variable or parameter the constraint has no clue / responsibility to access its value 
-        /// solution: the caller must use the TargetType and Target attributes to access proper variable/ parameter and obtain their values then pass the value as auxiliary data.
+        /// solution: the caller must use the TargetType and Target properties to access proper variable/ parameter and obtain their values then pass the value as auxiliary data.
         /// the function just compares data to auxiliary according to the operator
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
         /// <param name="data"></param>
-        /// <param name="auxilialy"></param>
-        public override bool IsSatisfied(object data, object auxilialy = null)
+        /// <param name="auxiliary"></param>
+        public override bool IsSatisfied(object data, object auxiliary = null)
         {
             /// <summary>
-            /// the data type is defined by the associated data attribute
+            /// the data type is defined by the associated data attribute 
             /// use dynamic link library, Flee or DLR to convert the Body to an executable code, pass data to it and return the result
             /// </summary>
             /// <remarks></remarks>        
@@ -540,10 +594,10 @@ namespace BExIS.Dlm.Entities.DataStructure
                         //check for other type, like string
                         if (DataContainer.DataType.SystemType.Equals(System.TypeCode.String.ToString(), StringComparison.CurrentCultureIgnoreCase))
                         {
-                            return Negated ^ (((string)data).Equals((string)auxilialy));
+                            return Negated ^ (((string)data).Equals((string)auxiliary));
                         }
                         double d = Convert.ToDouble(data);
-                        double aux = Convert.ToDouble(auxilialy);
+                        double aux = Convert.ToDouble(auxiliary);
                         if (OffsetType == ComparisonOffsetType.Absolute)
                             return Negated ^ (d.Equals(aux + OffsetValue));
                         if (OffsetType == ComparisonOffsetType.Ratio)
@@ -554,10 +608,10 @@ namespace BExIS.Dlm.Entities.DataStructure
                     {
                         if (DataContainer.DataType.SystemType.Equals(System.TypeCode.String.ToString(), StringComparison.CurrentCultureIgnoreCase))
                         {
-                            return Negated ^ (!((string)data).Equals((string)auxilialy));
+                            return Negated ^ (!((string)data).Equals((string)auxiliary));
                         }
                         double d = Convert.ToDouble(data);
-                        double aux = Convert.ToDouble(auxilialy);
+                        double aux = Convert.ToDouble(auxiliary);
                         if (OffsetType == ComparisonOffsetType.Absolute)
                             return Negated ^ (!d.Equals(aux + OffsetValue));
                         if (OffsetType == ComparisonOffsetType.Ratio)
@@ -568,10 +622,10 @@ namespace BExIS.Dlm.Entities.DataStructure
                     {
                         if (DataContainer.DataType.SystemType.Equals(System.TypeCode.String.ToString(), StringComparison.CurrentCultureIgnoreCase))
                         {
-                            return Negated ^ (((string)data).Length > ((string)auxilialy).Length);
+                            return Negated ^ (((string)data).Length > ((string)auxiliary).Length);
                         }
                         double d = Convert.ToDouble(data);
-                        double aux = Convert.ToDouble(auxilialy);
+                        double aux = Convert.ToDouble(auxiliary);
                         if (OffsetType == ComparisonOffsetType.Absolute)
                             return Negated ^ (d > (aux + OffsetValue));
                         if (OffsetType == ComparisonOffsetType.Ratio)
@@ -582,10 +636,10 @@ namespace BExIS.Dlm.Entities.DataStructure
                     {
                         if (DataContainer.DataType.SystemType.Equals(System.TypeCode.String.ToString(), StringComparison.CurrentCultureIgnoreCase))
                         {
-                            return Negated ^ (((string)data).Length >= ((string)auxilialy).Length);
+                            return Negated ^ (((string)data).Length >= ((string)auxiliary).Length);
                         }
                         double d = Convert.ToDouble(data);
-                        double aux = Convert.ToDouble(auxilialy);
+                        double aux = Convert.ToDouble(auxiliary);
                         if (OffsetType == ComparisonOffsetType.Absolute)
                             return Negated ^ (d >= (aux + OffsetValue));
                         if (OffsetType == ComparisonOffsetType.Ratio)
@@ -596,10 +650,10 @@ namespace BExIS.Dlm.Entities.DataStructure
                     {
                         if (DataContainer.DataType.SystemType.Equals(System.TypeCode.String.ToString(), StringComparison.CurrentCultureIgnoreCase))
                         {
-                            return Negated ^ (((string)data).Length < ((string)auxilialy).Length);
+                            return Negated ^ (((string)data).Length < ((string)auxiliary).Length);
                         }
                         double d = Convert.ToDouble(data);
-                        double aux = Convert.ToDouble(auxilialy);
+                        double aux = Convert.ToDouble(auxiliary);
                         if (OffsetType == ComparisonOffsetType.Absolute)
                             return Negated ^ (d < (aux + OffsetValue));
                         if (OffsetType == ComparisonOffsetType.Ratio)
@@ -610,10 +664,10 @@ namespace BExIS.Dlm.Entities.DataStructure
                     {                        
                         if (DataContainer.DataType.SystemType.Equals(System.TypeCode.String.ToString(), StringComparison.CurrentCultureIgnoreCase))
                         {
-                            return Negated ^ (((string)data).Length <= ((string)auxilialy).Length);
+                            return Negated ^ (((string)data).Length <= ((string)auxiliary).Length);
                         }
                         double d = Convert.ToDouble(data);
-                        double aux = Convert.ToDouble(auxilialy);
+                        double aux = Convert.ToDouble(auxiliary);
                         if (OffsetType == ComparisonOffsetType.Absolute)
                             return Negated ^ (d <= (aux + OffsetValue));
                         if (OffsetType == ComparisonOffsetType.Ratio)
@@ -628,6 +682,16 @@ namespace BExIS.Dlm.Entities.DataStructure
 
         #endregion
 
+    }
+
+    /// <summary>
+    /// Constraints can obtain the definition of their function from their internal attributes or from an external source.
+    /// In case of internal, the definition of the constraint is inside the constraint, but If it is external, the constraint is defined somewhere else like a database, and model just contains its identifier and access method. 
+    /// This is a good option for integration of variable values with external systems. or variables that their values changes over time
+    /// </summary>
+    public enum ConstraintProviderSource
+    {
+        Internal, External
     }
 
     /// <summary>

@@ -3,18 +3,14 @@ using System.Diagnostics.Contracts;
 using BExIS.Dlm.Entities.DataStructure;
 using Vaiona.Persistence.Api;
 
-namespace BExIS.Dlm.Services.DataStructure
+namespace BExIS.Dlm.Services.Helpers
 {
-    public sealed class ConstraintManager
+    /// <summary>
+    /// Design decision: should it be a static class?!
+    /// </summary>
+    /// <remarks>Should not be used directly or by any function outside of the service layer.</remarks>
+    internal sealed class ConstraintHelper
     {
-        //public ConstraintManager() 
-        //{
-        //    IUnitOfWork uow = this.GetUnitOfWork();
-        //    this.DefaultValueRepo = uow.GetReadOnlyRepository<DefaultValueConstraint>();
-        //    this.DomainValueRepo = uow.GetReadOnlyRepository<DomainValueConstraint>();
-        //    this.ValidatorRepo = uow.GetReadOnlyRepository<ValidatorConstraint>();
-        //}
-
         #region Data Readers
 
         //public IReadOnlyRepository<DefaultValueConstraint> DefaultValueRepo { get; private set; }
@@ -25,39 +21,25 @@ namespace BExIS.Dlm.Services.DataStructure
 
         #region DomainConstraint
 
-        public DomainConstraint CreateDomainConstraint(ConstraintProviderSource provider, string constraintSelectionPredicate, string cultureId
-            , string description, bool negated, string context, string messageTemplate, string negatedMessageTemplate, List<DomainItem> items, DataContainer container)
+        internal DomainConstraint SaveConstraint(DomainConstraint constraint, DataContainer container)
         {
-            Contract.Requires(items != null);
-            Contract.Requires(items.Count > 0);
-
+            Contract.Requires(constraint.Items != null);
+            Contract.Requires(constraint.Items.Count > 0);
+            Contract.Requires(container != null);
 
             Contract.Ensures(Contract.Result<DomainConstraint>() != null && Contract.Result<DomainConstraint>().Id >= 0);
 
-            DomainConstraint u = new DomainConstraint()
-            {
-                Provider = provider,
-                ConstraintSelectionPredicate = constraintSelectionPredicate,
-                CultureId = cultureId,
-                Description = description,
-                Negated = negated,
-                Context = context!= null? context: "Default",
-                MessageTemplate = messageTemplate,
-                NegatedMessageTemplate = negatedMessageTemplate,
-                Items = items,
-                DataContainer = container,
-            };
-
+            constraint.DataContainer = container;
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<DomainConstraint> repo = uow.GetRepository<DomainConstraint>();
-                repo.Put(u);
+                repo.Put(constraint);
                 uow.Commit();
             }
-            return (u);
+            return (constraint);
         }
 
-        public bool Delete(DomainConstraint entity)
+        internal bool Delete(DomainConstraint entity)
         {
             Contract.Requires(entity != null);
             Contract.Requires(entity.Id >= 0);
@@ -76,7 +58,7 @@ namespace BExIS.Dlm.Services.DataStructure
             return (true);
         }
 
-        public bool Delete(IEnumerable<DomainConstraint> entities)
+        internal bool Delete(IEnumerable<DomainConstraint> entities)
         {
             Contract.Requires(entities != null);
             Contract.Requires(Contract.ForAll(entities, (DomainConstraint e) => e != null));
@@ -98,7 +80,7 @@ namespace BExIS.Dlm.Services.DataStructure
             return (true);
         }
 
-        public DomainConstraint Update(DomainConstraint entity)
+        internal DomainConstraint Update(DomainConstraint entity)
         {
             Contract.Requires(entity != null, "provided entity can not be null");
             Contract.Requires(entity.Id >= 0, "provided entity must have a permanent ID");
@@ -118,38 +100,25 @@ namespace BExIS.Dlm.Services.DataStructure
 
         #region PatternConstraint
 
-        public PatternConstraint CreatePatternConstraint(ConstraintProviderSource provider, string constraintSelectionPredicate, string cultureId
-            , string description, bool negated, string context, string messageTemplate, string negatedMessageTemplate, string matchingPhrase, bool caseSensitive, DataContainer container)
+        internal PatternConstraint SaveConstraint(PatternConstraint constraint, DataContainer container)
         {
-            Contract.Requires(!string.IsNullOrWhiteSpace(matchingPhrase));
+            Contract.Requires(constraint != null);
+            Contract.Requires(!string.IsNullOrWhiteSpace(constraint.MatchingPhrase));
+            Contract.Requires(container != null);
 
             Contract.Ensures(Contract.Result<PatternConstraint>() != null && Contract.Result<PatternConstraint>().Id >= 0);
 
-            PatternConstraint u = new PatternConstraint()
-            {
-                Provider = provider,
-                ConstraintSelectionPredicate = constraintSelectionPredicate,
-                CultureId = cultureId,
-                Description = description,
-                Negated = negated,
-                Context = context != null ? context : "Default",
-                MessageTemplate = messageTemplate,
-                NegatedMessageTemplate = negatedMessageTemplate,
-                MatchingPhrase = matchingPhrase,
-                CaseSensitive = caseSensitive,
-                DataContainer = container,
-            };
-
+            constraint.DataContainer = container;
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<PatternConstraint> repo = uow.GetRepository<PatternConstraint>();
-                repo.Put(u);
+                repo.Put(constraint);
                 uow.Commit();
             }
-            return (u);
+            return (constraint);
         }
 
-        public bool Delete(PatternConstraint entity)
+        internal bool Delete(PatternConstraint entity)
         {
             Contract.Requires(entity != null);
             Contract.Requires(entity.Id >= 0);
@@ -168,7 +137,7 @@ namespace BExIS.Dlm.Services.DataStructure
             return (true);
         }
 
-        public bool Delete(IEnumerable<PatternConstraint> entities)
+        internal bool Delete(IEnumerable<PatternConstraint> entities)
         {
             Contract.Requires(entities != null);
             Contract.Requires(Contract.ForAll(entities, (PatternConstraint e) => e != null));
@@ -190,7 +159,7 @@ namespace BExIS.Dlm.Services.DataStructure
             return (true);
         }
 
-        public PatternConstraint Update(PatternConstraint entity)
+        internal PatternConstraint Update(PatternConstraint entity)
         {
             Contract.Requires(entity != null, "provided entity can not be null");
             Contract.Requires(entity.Id >= 0, "provided entity must have a permanent ID");
@@ -210,41 +179,24 @@ namespace BExIS.Dlm.Services.DataStructure
 
         #region RangeConstraint
 
-        public RangeConstraint CreateRangeConstraint(ConstraintProviderSource provider, string constraintSelectionPredicate, string cultureId
-            , string description, bool negated, string context, string messageTemplate, string negatedMessageTemplate, double lowerbound, bool lowerboundIncluded
-            , double upperbound, bool upperboundIncluded, DataContainer container)
+        internal RangeConstraint SaveConstraint(RangeConstraint constraint, DataContainer container)
         {
-            Contract.Requires(lowerbound <= upperbound);
+            Contract.Requires(constraint.Lowerbound <= constraint.Upperbound);
+            Contract.Requires(container != null);
 
             Contract.Ensures(Contract.Result<RangeConstraint>() != null && Contract.Result<RangeConstraint>().Id >= 0);
 
-            RangeConstraint u = new RangeConstraint()
-            {
-                Provider = provider,
-                ConstraintSelectionPredicate = constraintSelectionPredicate,
-                CultureId = cultureId,
-                Description = description,
-                Negated = negated,
-                Context = context != null ? context : "Default",
-                MessageTemplate = messageTemplate,
-                NegatedMessageTemplate = negatedMessageTemplate,
-                Lowerbound = lowerbound,
-                LowerboundIncluded = lowerboundIncluded,
-                Upperbound = upperbound,
-                UpperboundIncluded = upperboundIncluded,
-                DataContainer = container,
-            };
-
+            constraint.DataContainer = container;
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<RangeConstraint> repo = uow.GetRepository<RangeConstraint>();
-                repo.Put(u);
+                repo.Put(constraint);
                 uow.Commit();
             }
-            return (u);
+            return (constraint);
         }
 
-        public bool Delete(RangeConstraint entity)
+        internal bool Delete(RangeConstraint entity)
         {
             Contract.Requires(entity != null);
             Contract.Requires(entity.Id >= 0);
@@ -263,7 +215,7 @@ namespace BExIS.Dlm.Services.DataStructure
             return (true);
         }
 
-        public bool Delete(IEnumerable<RangeConstraint> entities)
+        internal bool Delete(IEnumerable<RangeConstraint> entities)
         {
             Contract.Requires(entities != null);
             Contract.Requires(Contract.ForAll(entities, (RangeConstraint e) => e != null));
@@ -285,7 +237,7 @@ namespace BExIS.Dlm.Services.DataStructure
             return (true);
         }
 
-        public RangeConstraint Update(RangeConstraint entity)
+        internal RangeConstraint Update(RangeConstraint entity)
         {
             Contract.Requires(entity != null, "provided entity can not be null");
             Contract.Requires(entity.Id >= 0, "provided entity must have a permanent ID");
@@ -303,51 +255,33 @@ namespace BExIS.Dlm.Services.DataStructure
 
         #endregion
 
-        #region CompareConstraint
+        #region ComparisonConstraint
 
-        public CompareConstraint CreateCompareConstraint(ConstraintProviderSource provider, string constraintSelectionPredicate, string cultureId
-            , string description, bool negated, string context, string messageTemplate, string negatedMessageTemplate, ComparisonOperator comparisonOperator, ComparisonTargetType targetType
-            , string target, ComparisonOffsetType offsetType, double offset, DataContainer container)
+        internal ComparisonConstraint SaveConstraint(ComparisonConstraint constraint, DataContainer container)
         {
             //Contract.Requires();
+            Contract.Requires(container != null);
 
-            Contract.Ensures(Contract.Result<CompareConstraint>() != null && Contract.Result<CompareConstraint>().Id >= 0);
+            Contract.Ensures(Contract.Result<ComparisonConstraint>() != null && Contract.Result<ComparisonConstraint>().Id >= 0);
 
-            CompareConstraint u = new CompareConstraint()
-            {
-                Provider = provider,
-                ConstraintSelectionPredicate = constraintSelectionPredicate,
-                CultureId = cultureId,
-                Description = description,
-                Negated = negated,
-                Context = context != null ? context : "Default",
-                MessageTemplate = messageTemplate,
-                NegatedMessageTemplate = negatedMessageTemplate,
-                Operator = comparisonOperator,
-                TargetType = targetType,
-                Target = target,
-                OffsetType = offsetType,
-                OffsetValue = offset,
-                DataContainer = container,
-            };
-
+            constraint.DataContainer = container;
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
-                IRepository<CompareConstraint> repo = uow.GetRepository<CompareConstraint>();
-                repo.Put(u);
+                IRepository<ComparisonConstraint> repo = uow.GetRepository<ComparisonConstraint>();
+                repo.Put(constraint);
                 uow.Commit();
             }
-            return (u);
+            return (constraint);
         }
 
-        public bool Delete(CompareConstraint entity)
+        internal bool Delete(ComparisonConstraint entity)
         {
             Contract.Requires(entity != null);
             Contract.Requires(entity.Id >= 0);
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
-                IRepository<CompareConstraint> repo = uow.GetRepository<CompareConstraint>();
+                IRepository<ComparisonConstraint> repo = uow.GetRepository<ComparisonConstraint>();
 
                 entity = repo.Reload(entity);
                 //delete the unit
@@ -359,15 +293,15 @@ namespace BExIS.Dlm.Services.DataStructure
             return (true);
         }
 
-        public bool Delete(IEnumerable<CompareConstraint> entities)
+        internal bool Delete(IEnumerable<ComparisonConstraint> entities)
         {
             Contract.Requires(entities != null);
-            Contract.Requires(Contract.ForAll(entities, (CompareConstraint e) => e != null));
-            Contract.Requires(Contract.ForAll(entities, (CompareConstraint e) => e.Id >= 0));
+            Contract.Requires(Contract.ForAll(entities, (ComparisonConstraint e) => e != null));
+            Contract.Requires(Contract.ForAll(entities, (ComparisonConstraint e) => e.Id >= 0));
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
-                IRepository<CompareConstraint> repo = uow.GetRepository<CompareConstraint>();
+                IRepository<ComparisonConstraint> repo = uow.GetRepository<ComparisonConstraint>();
 
                 foreach (var entity in entities)
                 {
@@ -381,16 +315,16 @@ namespace BExIS.Dlm.Services.DataStructure
             return (true);
         }
 
-        public CompareConstraint Update(CompareConstraint entity)
+        internal ComparisonConstraint Update(ComparisonConstraint entity)
         {
             Contract.Requires(entity != null, "provided entity can not be null");
             Contract.Requires(entity.Id >= 0, "provided entity must have a permanent ID");
 
-            Contract.Ensures(Contract.Result<CompareConstraint>() != null && Contract.Result<CompareConstraint>().Id >= 0, "No entity is persisted!");
+            Contract.Ensures(Contract.Result<ComparisonConstraint>() != null && Contract.Result<ComparisonConstraint>().Id >= 0, "No entity is persisted!");
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
-                IRepository<CompareConstraint> repo = uow.GetRepository<CompareConstraint>();
+                IRepository<ComparisonConstraint> repo = uow.GetRepository<ComparisonConstraint>();
                 repo.Put(entity); // Merge is required here!!!!
                 uow.Commit();
             }

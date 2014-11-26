@@ -1,5 +1,5 @@
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.DataStructure">
-  <subclass name="CompareConstraint" extends="Constraint" discriminator-value="CMP" dynamic-update="true">
+  <subclass name="ComparisonConstraint" extends="Constraint" discriminator-value="CMP" dynamic-update="true">
     <!-- Mapping BaseEntity properties -->
     
 

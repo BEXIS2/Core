@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using BExIS.Dlm.Entities.DataStructure;
 using Vaiona.Persistence.Api;
+using BExIS.Dlm.Services.Helpers;
 
 namespace BExIS.Dlm.Services.DataStructure
 {
     public sealed class DataContainerManager
     {
+        ConstraintHelper helper = new ConstraintHelper();
 
         public DataContainerManager()
         {
@@ -233,16 +235,47 @@ namespace BExIS.Dlm.Services.DataStructure
 
         #region Associations
 
-        public DataAttribute AddConstraint(DataContainer container, Constraint constraint)
+        public void AddConstraint(DomainConstraint constraint, DataContainer container)
         {
-            throw new NotImplementedException();
+            helper.SaveConstraint(constraint, container);
         }
 
-        public DataAttribute RemoveConstraint(DataContainer container, Constraint constraint)
+        public void AddConstraint(PatternConstraint constraint, DataContainer container)
         {
-            throw new NotImplementedException();
+            helper.SaveConstraint(constraint, container);
         }
 
+        public void AddConstraint(RangeConstraint constraint, DataContainer container)
+        {
+            helper.SaveConstraint(constraint, container);
+        }
+
+        public void AddConstraint(ComparisonConstraint constraint, DataContainer container)
+        {
+            helper.SaveConstraint(constraint, container);
+        }
+        
+        public void RemoveConstraint(DomainConstraint constraint)
+        {
+            helper.Delete(constraint);
+        }
+
+        public void RemoveConstraint(PatternConstraint constraint)
+        {
+            helper.Delete(constraint);
+        }
+
+        public void RemoveConstraint(RangeConstraint constraint)
+        {
+            helper.Delete(constraint);
+        }
+
+        public void RemoveConstraint(ComparisonConstraint constraint)
+        {
+            helper.Delete(constraint);
+        }
+        
+        // to be developed: from this line
         public DataAttribute AddConstraint(ExtendedProperty extendedProperty, Constraint constraint)
         {
             throw new NotImplementedException();
