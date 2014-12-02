@@ -65,6 +65,54 @@ namespace BExIS.RPM.Model
             return (tree);
         }
 
+        public List<Variable> getOrderedVariables(StructuredDataStructure structuredDataStructure)
+        {
+            DataStructureManager dsm = new DataStructureManager();
+            XmlDocument doc = (XmlDocument)structuredDataStructure.Extra;
+            XmlNode order;
+
+            if (doc == null)
+            {
+                doc = new XmlDocument();
+                XmlNode root = doc.CreateNode(System.Xml.XmlNodeType.Element, "extra", null);
+                doc.AppendChild(root);
+            }
+            if (doc.GetElementsByTagName("order").Count == 0)
+            {
+
+                if (structuredDataStructure.Variables.Count > 0)
+                {
+                    order = doc.CreateNode(System.Xml.XmlNodeType.Element, "order", null);
+                    foreach (Variable v in structuredDataStructure.Variables)
+                    {
+
+                        XmlNode variable = doc.CreateNode(System.Xml.XmlNodeType.Element, "variable", null);
+                        variable.InnerText = v.Id.ToString();
+                        order.AppendChild(variable);
+                    }
+                    doc.FirstChild.AppendChild(order);
+                    structuredDataStructure.Extra = doc;
+                    dsm.UpdateStructuredDataStructure(structuredDataStructure);
+                }
+            }
+
+            order = doc.GetElementsByTagName("order")[0];
+            List<Variable> orderedVariables = new List<Variable>();
+            if (structuredDataStructure.Variables.Count != 0)
+            {
+                foreach (XmlNode x in order)
+                {
+                    foreach (Variable v in structuredDataStructure.Variables)
+                    {
+                        if (v.Id == Convert.ToInt64(x.InnerText))
+                            orderedVariables.Add(v);
+
+                    }
+                }
+            }
+            return orderedVariables; 
+        }
+
         public StructuredDataStructure GetDataStructureByID(long ID)
         {
 
@@ -74,44 +122,7 @@ namespace BExIS.RPM.Model
 
             if (this.dataStructure != null)
             {
-                XmlDocument doc = (XmlDocument)this.dataStructure.Extra;
-                XmlNodeList order;
-                if (doc == null)
-                {
-                    doc = new XmlDocument();
-                    doc.LoadXml("<extras><order></order></extras>");
-                    order = doc.GetElementsByTagName("order");
-                    if (structuredDataStructure.Variables != null)
-                    {
-                        foreach (Variable v in structuredDataStructure.Variables)
-                        {
-
-                            XmlNode variable = doc.CreateNode(System.Xml.XmlNodeType.Element, "variable", null);
-                            variable.InnerText = v.Id.ToString();
-                            order[0].AppendChild(variable);
-                        }
-                    }
-                    structuredDataStructure.Extra = doc;
-                    this.dataStructure = dsm.UpdateStructuredDataStructure(structuredDataStructure);
-                }
-
-                this.variables = structuredDataStructure.Variables.ToList();
-
-                order = doc.GetElementsByTagName("order");
-                List<Variable> sortedVariables = new List<Variable>();
-                if (this.variables != null)
-                {
-                    foreach (XmlNode x in order[0])
-                    {
-                        foreach (Variable v in this.variables)
-                        {
-                            if (v.Id == Convert.ToInt64(x.InnerText))
-                                sortedVariables.Add(v);
-
-                        }
-                    }
-                }
-                this.variables = sortedVariables;
+                this.variables = getOrderedVariables(structuredDataStructure);
 
                 if (this.dataStructure.Datasets == null)
                 {
@@ -127,7 +138,7 @@ namespace BExIS.RPM.Model
                         foreach (Dataset d in structuredDataStructure.Datasets)
                         {
                             if (dm.GetDatasetLatestMetadataVersion(d.Id) != null)
-                                datasetListElement = new DatasetListElement(d.Id,getTitle(d));
+                                datasetListElement = new DatasetListElement(d.Id, XmlDatasetHelper.GetInformation(d, AttributeNames.title));
                             else
                                 datasetListElement = new DatasetListElement(0, "");
                             datasets.Add(datasetListElement);
@@ -178,7 +189,7 @@ namespace BExIS.RPM.Model
                             DatasetManager dm = new DatasetManager();
                             foreach (Dataset d in unStructuredDataStructure.Datasets)
                             {
-                                datasetListElement = new DatasetListElement(d.Id, dm.GetDatasetLatestMetadataVersion(d.Id).SelectNodes("Metadata/Description/Description/Title/Title")[0].InnerText);
+                                datasetListElement = new DatasetListElement(d.Id, XmlDatasetHelper.GetInformation(d,AttributeNames.title));
                                 datasets.Add(datasetListElement);
                             }
                         }
@@ -353,21 +364,6 @@ namespace BExIS.RPM.Model
 
     #region helper
 
-        private string getTitle(Dataset dataset)
-        {
-            DatasetManager dm = new DatasetManager();
-
-            DatasetVersion datasetVersion = dm.GetDatasetLatestVersion(dataset);
-            // get MetadataStructure 
-            MetadataStructure metadataStructure = datasetVersion.Dataset.MetadataStructure;
-            XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)datasetVersion.Dataset.MetadataStructure.Extra);
-            XElement temp = XmlUtility.GetXElementByAttribute("nodeRef", "name", "title", xDoc);
-
-            string xpath = temp.Attribute("value").Value.ToString();
-            string title = datasetVersion.Metadata.SelectSingleNode(xpath).InnerText;
-
-            return title;
-        }
     #endregion
     }
 }

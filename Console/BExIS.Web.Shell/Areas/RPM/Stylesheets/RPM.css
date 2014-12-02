@@ -57,7 +57,11 @@ vertical-align:top;
     margin: 0px;
     padding: 0px;
     width: 800px;
-} 
+}
+
+.planingPartialDiv #DataAttributeGrid .t-numerictextbox, .planingPartialDiv #DataAttributeGrid .t-numerictextbox .t-formatted-value ,.planingPartialDiv #DataAttributeGrid .t-numerictextbox .t-input {
+width:30px !important;
+}  
 
 .planingPartialDiv input {
 border-radius: 3px;

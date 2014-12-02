@@ -11,6 +11,7 @@
 
 @if (Model.DataStructureType == DataStructureType.Unstructured && Model.Data == null)
 {
+
     <table>
         @foreach (BExIS.Io.BasicFileInfo cd in Model.FileList)
         {
@@ -32,14 +33,13 @@
 
                 </td>
                 <td>
-                    @if (Model.DownloadAccess)
+                    @if (Model.DownloadAccess && Model.FileList.Count>0)
                     { 
                         @Html.ActionLink("Download all", "DownloadAllFiles", "Data", new { area = "DDM", id=@Model.DatasetId}, new { @class="t-button" })
                     }
                 </td>
           </tr>
     </table>
-    
 }
 <br />
 

@@ -151,6 +151,10 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             return RedirectToAction("UploadWizard", "Submit", new RouteValueDictionary { {"area","DCM"} , {"type",type}});
         }
 
+        public ActionResult ShowData(long id)
+        {
+            return RedirectToAction("ShowData", "Data", new RouteValueDictionary { { "area", "DDM" }, { "id", id } });
+        }
 
         #endregion
 

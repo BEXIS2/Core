@@ -3,18 +3,23 @@
 @using BExIS.Dlm.Entities.DataStructure
 @model BExIS.RPM.Model.DataStructureDesignerModel
 
+@*<header>*@
+    <link href="@Url.Content("~/Areas/RPM/Stylesheets/RPM.css")" rel="stylesheet" type="text/css" />  
+@*</header> *@
+
 @{
     ViewBag.Title = "Planing";
 
-    long[] dataAttributeIds = new long[] { };
-
-    List<long> checkedIds = new List<long>();
-
-    if (Session["checked"] != null)
-    {
-        checkedIds = (List<long>)Session["checked"];
-    }
+    long[][] selected = new long[][] { };
     
+    if (Session["selected"] != null)
+    {
+        selected = (long[][])Session["selected"];
+    }
+
+    int value = 0;
+
+    Session["dataStructureId"] = Model.dataStructure.Id;
 }
 
 @if (Model.inUse == true)
@@ -35,14 +40,28 @@ else
             {
                 columns.Template(
                     @<text>
-                            <input name="checkedRecords" type="checkbox" value="@item.Id " title="checkedRecords" class="checkBox"
-                                @if (dataAttributeIds.Contains(item.Id) || checkedIds.Contains(item.Id))
+                            @{
+                                value = 0;
+                                for(int i = 0; i < selected.Length; i++)
                                 {
-                                    <text>checked="checked"</text>
+                                    if(selected[i][0] == item.Id)
+                                    {
+                                        value = Convert.ToInt32(selected[i][1]);
+                                    }
                                 }
-                            />
+                            }
+                            @(Html.Telerik().IntegerTextBox()
+                                .Name(item.Id.ToString())
+                                .Value(value)
+                                .MinValue(0)
+                                .ClientEvents(events =>
+                                {
+                                    events.OnChange("change");
+                                }))
                         </text>)
-                    .Title("").Width(36).HtmlAttributes(new { style = "text-align:center" });
+                    .Title("")
+                    .Width(50)
+                    .HtmlAttributes(new { style = "text-align:center" });
                     
 
                 //columns.Command(commands => commands.Select()).Title("Select");
@@ -67,27 +86,24 @@ else
     
     <script type="text/jscript">
    
-    $('.checkBox').change(function () {
-        if ($(this).attr('checked'))
-            $(this).attr('checked', true);
-        else
-            $(this).removeAttr('checked');
+    function change(e) {
+        var selected = new Array();
+        var count = 0;
 
-        var checked;
-
-        $('.checkBox').each(function () {
-            if ($(this).attr('checked')) {
-                if (checked)
-                    checked += "," + $(this).attr('value');
-                else
-                    checked = $(this).attr('value');
+        $('.t-numerictextbox .t-input').each(function () {
+            var id = $(this).attr('id');
+            if ($('#' + id).data('tTextBox').value() > 0) {
+                selected[count] = new Array();
+                selected[count][0] = $('#' + id).attr('id');
+                selected[count][1] =$('#' + id).data('tTextBox').value();
+                count ++;
             }
         });
-        var checkedIDs = checked.split(',');
-        var data = { checkedIDs: checkedIDs };
+
+        var data = { selected: selected };
 
         $.ajax({
-            url: '/RPM/Home/setChecked',
+            url: '/RPM/Home/setSelected',
             type: 'POST',
             data: JSON.stringify(data),
             dataType: 'json',
@@ -101,6 +117,6 @@ else
             async: true,
             processData: false
         });
-    });
+    }
 </script>
 }

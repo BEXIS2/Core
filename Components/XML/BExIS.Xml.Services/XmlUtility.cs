@@ -90,6 +90,7 @@ namespace BExIS.Xml.Services
                 return xDoc.Root.Descendants(nodeName);
             }
 
+
             /// <summary>
             /// 
             /// </summary>

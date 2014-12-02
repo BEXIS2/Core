@@ -194,19 +194,6 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
 
         #region helper
 
-        private string getTitle(DatasetVersion datasetVersion)
-        {
-         
-            // get MetadataStructure 
-            XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)datasetVersion.Dataset.MetadataStructure.Extra);
-            XElement temp = XmlUtility.GetXElementByAttribute("nodeRef", "name", "title", xDoc);
-
-            string xpath = temp.Attribute("value").Value.ToString();
-            string title = datasetVersion.Metadata.SelectSingleNode(xpath).InnerText;
-
-            return title;
-        }
-
         private string getMappingFileName(DatasetVersion datasetVersion)
         {
             // get MetadataStructure 
@@ -231,7 +218,7 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
                     {
                         DatasetVersionId = datasetVersion.Id,
                         DatasetId = datasetVersion.Dataset.Id,
-                        Title = getTitle(datasetVersion),
+                        Title = XmlDatasetHelper.GetInformation(datasetVersion, AttributeNames.title),
                         MetadataDownloadPath = ""
                     });
             }

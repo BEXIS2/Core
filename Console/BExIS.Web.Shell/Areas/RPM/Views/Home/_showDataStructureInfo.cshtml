@@ -37,6 +37,7 @@ else
        <font>New unstructured Data Structure</font> 
     }
 }
+
 @if (Model.inUse)
 {
     <font color="grey">(in use)</font>
@@ -118,9 +119,12 @@ else
         </tr>
     </table>
     @(Html.TextBoxFor(m => Model.dataStructure.Id, new {@class = "hidden",@Value = Model.dataStructure.Id}))
+    @(Html.TextBoxFor(m => Model.structured, new {@class = "hidden",@Value = Model.structured}))
      
     <div class="RPMbuttons">
-        <button name="create" value="saveDataStructure" type="submit" class="t-button" title="Save Data Structure">Save</button>
+        <button name="create" value="save" type="submit" class="t-button" title="Save Data Structure">Save</button>
+        <button name="create" value="saveAs" type="submit" class="t-button" title="Save Data Structure as">Save as</button>
+
         @if (Model.dataStructure.Id != null && Model.dataStructure.Id != 0)
         {
             if (Model.variables != null || Model.structured == true)
@@ -183,6 +187,7 @@ else
 }
 </div>
 @{Session["Window"] = false;}
+
 <div style="position:absolute; left:10%; top:60px">
 @{ Html.Telerik().Window()
         .Name("showDatasets")
@@ -197,16 +202,32 @@ else
         .Render()
         ;        
 }
-</div> 
+</div>
 @{Session["DatasetWindow"] = false;}
+
+<div style="position:absolute; left:10%; top:60px">
+@{ Html.Telerik().Window()
+        .Name("saveAs")
+        .Title(Model.dataStructure.Name + " Save As")
+        .Draggable(true)
+        .Visible((bool)Session["saveAsWindow"])
+        .Modal(true)
+        .Content(@<text>
+                    @Html.Partial("_dataStructureSaveAs", Model)
+                   </text>)
+        .Width(500)
+        .Render()
+        ;        
+}
+</div>
+@{Session["saveAsWindow"] = false;}
 
 <script type="text/javascript">
     function close(e)
-    {
-        checkedIDs = new Array(0);
-        var data = { checkedIDs: checkedIDs };
+    {        
+        var data = { selected: null };
         $.ajax({
-            url: '/RPM/Home/setChecked',
+            url: '/RPM/Home/setSelected',
             type: 'POST',
             data: JSON.stringify(data),
             dataType: 'json',

@@ -32,14 +32,20 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
         #region Data Structure Designer
 
+        private void setSessions()
+        {
+            Session["Window"] = false;
+            Session["VariableWindow"] = false;
+            Session["DatasetWindow"] = false;
+            Session["saveAsWindow"] = false;
+        }
+
         public ActionResult DataStructureDesigner()
         {
             DataStructureDesignerModel DSDM = new DataStructureDesignerModel();
             DSDM.show = false;
-            
-            Session["Window"] = false;
-            Session["VariableWindow"] = false;
-            Session["DatasetWindow"] = false;
+
+            setSessions();
 
             return View("DataStructureDesigner", DSDM);
         }
@@ -49,9 +55,8 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             DataStructureDesignerModel DSDM = new DataStructureDesignerModel();
 
             Session["Structured"] = true;
-            Session["Window"] = false;
-            Session["VariableWindow"] = false;
-            Session["DatasetWindow"] = false;
+            setSessions();
+
             return View("DataStructureDesigner", DSDM); 
                 }
         
@@ -61,9 +66,8 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             DSDM.structured = false;
 
             Session["Structured"] = false;
-            Session["Window"] = false;
-            Session["VariableWindow"] = false;
-            Session["DatasetWindow"] = false;
+            setSessions();
+
             return View("DataStructureDesigner", DSDM);
         }
 
@@ -85,14 +89,15 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
         public ActionResult saveDataStructure(DataStructureDesignerModel DSDM, string category)
         {
+            DataStructureManager DSM = new DataStructureManager();
             DSDM.dataStructure.Name = cutSpaces(DSDM.dataStructure.Name);
             DSDM.dataStructure.Description = cutSpaces(DSDM.dataStructure.Description);
             DSDM.structured = (bool)Session["Structured"];
             
             if(DSDM.dataStructure.Id == 0)
             {
-                string errorMsg = dataStructureValidation(DSDM);
-                if (errorMsg != "ok")
+                string errorMsg = dataStructureValidation(DSDM.dataStructure);
+                if (errorMsg != null)
                 {
                     ViewData["errorMsg"] = errorMsg;
                     return View("DataStructureDesigner", DSDM);
@@ -102,7 +107,6 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                     if (DSDM.dataStructure.Name != "" && DSDM.dataStructure.Name != null)
                     {
                         DataStructureCategory DSC = new DataStructureCategory();
-                        DataStructureManager DSM = new DataStructureManager();
                         
                         foreach (DataStructureCategory dsc in Enum.GetValues(typeof(DataStructureCategory)))
                         {
@@ -115,9 +119,6 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                         {
                             ExcelTemplateProvider provider = new ExcelTemplateProvider(templateName);
                             StructuredDataStructure DS = DSM.CreateStructuredDataStructure(DSDM.dataStructure.Name, DSDM.dataStructure.Description, "", "", DSC, null);
-                            XmlDocument doc = new XmlDocument();
-                            doc.LoadXml("<extras><order></order></extras>");
-                            DS.Extra = doc;
                             DSM.UpdateStructuredDataStructure(DS);
                             provider.CreateTemplate(DS.Id);
                             DSDM.GetDataStructureByID(DS.Id);
@@ -139,8 +140,22 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             }
             else
             {
-                string errorMsg = dataStructureValidation(DSDM);
-                if (errorMsg != "ok")
+                string errorMsg = null;
+                
+                if (Request.Params["create"] == "save")
+                {
+                    errorMsg = dataStructureValidation(DSDM.dataStructure);
+                }
+                else if (Request.Params["create"] == "saveAs")
+                {
+                    if (openSaveAsWindow(DSDM.dataStructure))
+                    {
+                        DSDM.GetDataStructureByID(DSDM.dataStructure.Id, DSDM.structured);
+                        return View("DataStructureDesigner", DSDM);
+                    }
+                }
+
+                if (errorMsg != null)
                 {
                     ViewData["errorMsg"] = errorMsg;
                     DSDM.GetDataStructureByID(DSDM.dataStructure.Id, DSDM.structured);
@@ -149,7 +164,6 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                 else
                 {
                     DataStructureCategory DSC = new DataStructureCategory();
-                    DataStructureManager DSM = new DataStructureManager();
 
                     foreach (DataStructureCategory dsc in Enum.GetValues(typeof(DataStructureCategory)))
                     {
@@ -160,32 +174,117 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                     }
                     if (DSDM.structured)
                     {
-                        StructuredDataStructure DS = DSM.StructuredDataStructureRepo.Get(DSDM.dataStructure.Id);
+                        StructuredDataStructure DS = new StructuredDataStructure();
                         ExcelTemplateProvider provider = new ExcelTemplateProvider(templateName);
-                        DS.Name = DSDM.dataStructure.Name;
-                        DS.Description = DSDM.dataStructure.Description;
-                        provider.deleteTemplate(DS.Id);
-                        DS = DSM.UpdateStructuredDataStructure(DS);
+                        if (Request.Params["create"] == "save")
+                        {
+                            DS = DSM.StructuredDataStructureRepo.Get(DSDM.dataStructure.Id);
+                            provider.deleteTemplate(DS.Id);
+                            DS.Name = DSDM.dataStructure.Name;
+                            DS.Description = DSDM.dataStructure.Description;
+                            DS = DSM.UpdateStructuredDataStructure(DS);
+                        }
+                        else if (Request.Params["create"] == "saveAs")
+                        {
+                            StructuredDataStructure DsOld = DSM.StructuredDataStructureRepo.Get(DSDM.dataStructure.Id);
+                            DS = DSM.CreateStructuredDataStructure(DSDM.dataStructure.Name, DSDM.dataStructure.Description, "", "", DSC, null);
+                            List<Variable> variables = DSDM.getOrderedVariables(DSM.StructuredDataStructureRepo.Get(DsOld.Id));
+                            XmlDocument doc = (XmlDocument)DS.Extra;
+                            if (doc == null)
+                            {
+                                doc = new XmlDocument();
+                                XmlNode root = doc.CreateNode(XmlNodeType.Element, "extra", null);
+                                doc.AppendChild(root);
+                            }
+                            if (doc.GetElementsByTagName("original").Count == 0)
+                            {
+                                XmlNode original = doc.CreateNode(XmlNodeType.Element, "original", null);
+                                XmlNode id = doc.CreateNode(XmlNodeType.Element, "id", null);
+                                XmlNode versionNo = doc.CreateNode(XmlNodeType.Element, "versionNo", null);
+                                id.InnerText = Convert.ToString(DsOld.Id);
+                                versionNo.InnerText = Convert.ToString(DsOld.VersionNo);
+                                original.AppendChild(id);
+                                original.AppendChild(versionNo);
+                                doc.FirstChild.AppendChild(original);
+                            }
+                            if(doc.GetElementsByTagName("order").Count == 0)
+                                if (variables.Count != 0)
+                                {
+                                    XmlNode order = doc.CreateNode(XmlNodeType.Element, "order", null);
+                                    Variable temp;
+                                    foreach (Variable v in variables)
+                                    {
+                                        XmlNode variable = doc.CreateNode(XmlNodeType.Element, "variable", null);
+                                        temp = DSM.AddVariableUsage(DS, v.DataAttribute, true, v.Label, null, null);
+                                        variable.InnerText = temp.Id.ToString();
+                                        order.AppendChild(variable);
+                                    }
+                                    doc.FirstChild.AppendChild(order);
+                                    DS.Extra = doc;
+                                }                                
+                            DSM.UpdateStructuredDataStructure(DS);
+                        }
                         provider.CreateTemplate(DS);
-                        DSDM.GetDataStructureByID(DSDM.dataStructure.Id, DSDM.structured);
+                        DSDM.GetDataStructureByID(DS.Id, DSDM.structured);
                         DSDM.dataStructureTree = DSDM.getDataStructureTree();
                     }
                     else
                     {
-                        UnStructuredDataStructure DS = DSM.UnStructuredDataStructureRepo.Get(DSDM.dataStructure.Id);
-                        DS.Name = DSDM.dataStructure.Name;
-                        DS.Description = DSDM.dataStructure.Description;
-                        DSDM.dataStructure = DSM.UpdateUnStructuredDataStructure(DS);
+                        UnStructuredDataStructure DS = new UnStructuredDataStructure();
+                        if (Request.Params["create"] == "save")
+                        {
+                            DS = DSM.UnStructuredDataStructureRepo.Get(DSDM.dataStructure.Id);
+                            DS.Name = DSDM.dataStructure.Name;
+                            DS.Description = DSDM.dataStructure.Description;
+                            DS = DSM.UpdateUnStructuredDataStructure(DS);
+                        }
+                        else if (Request.Params["create"] == "saveAs")
+                        {
+                            DS = DSM.CreateUnStructuredDataStructure(DSDM.dataStructure.Name, DSDM.dataStructure.Description);                    
+                        }
+                        DSDM.GetDataStructureByID(DS.Id, DSDM.structured);
                         DSDM.dataStructureTree = DSDM.getDataStructureTree();
                     }
                 }
             }
 
             Session["Window"] = false;
+            Session["saveAsWindow"] = false;
             return View("DataStructureDesigner", DSDM);
         }
 
-        private string dataStructureValidation(DataStructureDesignerModel dataStructureDesignerModel)
+        private bool openSaveAsWindow(DataStructure dataStructure)
+        {
+            DataStructureManager dataStructureManager = new DataStructureManager();
+            List<DataStructure> dataStructureList = new List<DataStructure>();
+            
+            List<StructuredDataStructure> StrTemp = dataStructureManager.StructuredDataStructureRepo.Get().ToList();
+            foreach (DataStructure ds in StrTemp)
+            {
+                dataStructureList.Add(ds);
+            }
+
+            List<UnStructuredDataStructure> UnSTemp = dataStructureManager.UnStructuredDataStructureRepo.Get().ToList();
+            foreach (DataStructure ds in UnSTemp)
+            {
+                dataStructureList.Add(ds);
+            }
+
+            if (cutSpaces(dataStructure.Name) == "" || cutSpaces(dataStructure.Name) == null)
+            {
+                Session["saveAsWindow"] = true;
+                return true;
+            }
+            else if (dataStructureList.Where(p => cutSpaces(p.Name).ToLower().Equals(cutSpaces(dataStructure.Name).ToLower())).Count() > 0)
+            {
+                Session["saveAsWindow"] = true;
+                return true;
+            }
+            Session["saveAsWindow"] = false;
+            return false;
+        }
+
+        private string dataStructureValidation(DataStructure dataStructure)
         {
             DataStructureManager dataStructureManager = new DataStructureManager();
             List<DataStructure> dataStructureList = new List<DataStructure>();
@@ -203,28 +302,25 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                 }
 
 
-                if (!(dataStructureList.Where(p => p.Id.Equals(dataStructureDesignerModel.dataStructure.Id)).Count() > 0) && dataStructureDesignerModel.dataStructure.Id != 0)
+                if (!(dataStructureList.Where(p => p.Id.Equals(dataStructure.Id)).Count() > 0) && dataStructure.Id != 0)
                 {
-                        return "Can\'t save Data Structure doesn't exsist anymore";
+                    return "Can\'t save Data Structure doesn't exsist anymore";
                 }
-                if (dataStructureDesignerModel.dataStructure.Datasets.Count > 0)
+                if (dataStructure.Datasets.Count > 0)
                 {
                     return "Can\'t save Data Structure is in use ";
                 }
-                if (cutSpaces(dataStructureDesignerModel.dataStructure.Name) == "" || cutSpaces(dataStructureDesignerModel.dataStructure.Name) == null)
+                if (cutSpaces(dataStructure.Name) == "" || cutSpaces(dataStructure.Name) == null)
                 {
                     return "Can\'t save invalid Name";
                 }
-                else
+                else if (dataStructureList.Where(p => cutSpaces(p.Name).ToLower().Equals(cutSpaces(dataStructure.Name).ToLower())).Count() > 0)
                 {
-                    if (dataStructureList.Where(p => cutSpaces(p.Name).ToLower().Equals(cutSpaces(dataStructureDesignerModel.dataStructure.Name).ToLower())).Count() > 0)
-                    {
-                        long newDataStructureId = dataStructureList.Where(p => cutSpaces(p.Name).ToLower().Equals(cutSpaces(dataStructureDesignerModel.dataStructure.Name).ToLower())).ToList().First().Id;
-                        if (newDataStructureId != dataStructureDesignerModel.dataStructure.Id)
-                            return "Can\'t save Data Structure Name already exsist";
-                    }
+                    long newDataStructureId = dataStructureList.Where(p => cutSpaces(p.Name).ToLower().Equals(cutSpaces(dataStructure.Name).ToLower())).ToList().First().Id;
+                    if (newDataStructureId != dataStructure.Id)
+                        return "Can\'t save Data Structure Name already exsist";
                 }
-            return "ok";
+            return null;
         }
 
      
@@ -337,14 +433,16 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             else
             {
                 Session["Window"] = false;
-                Session["checked"] = null;
+                Session["selected"] = null;
             }
             return View("DataStructureDesigner", DSDM);
         }
 
-        public ActionResult AddVariables(long[] checkedRecords)
-        {
+        public ActionResult AddVariables()
+        {            
             long id = (long)Session["dataStructureId"];
+            long[][] selected = (long[][])Session["selected"];
+
             DataStructureManager dataStructureManager = new DataStructureManager();
             StructuredDataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(id);
             //StructuredDataStructure dataStructure = DSDM.GetDataStructureByID(id);
@@ -353,29 +451,53 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             {
                 if (!(dataStructure.Datasets.Count() > 0))
                 {
-                    if (checkedRecords != null)
+                    if (selected != null)
                     {
                         DataContainerManager dataAttributeManager = new DataContainerManager();
                         DataAttribute temp = new DataAttribute();
                         XmlDocument doc = (XmlDocument)dataStructure.Extra;
-                        XmlNodeList order = doc.GetElementsByTagName("order");
-
-                        for (int i = 0; i < checkedRecords.Length; i++)
+                        XmlNode order;
+                        if (doc == null)
                         {
-                            temp = dataAttributeManager.DataAttributeRepo.Get(checkedRecords[i]);
+                            doc = new XmlDocument();
+                            XmlNode root = doc.CreateNode(XmlNodeType.Element, "extra", null);
+                            doc.AppendChild(root);
+                        }
+                        if (doc.GetElementsByTagName("order").Count != 0)
+                        {
+                            order = doc.GetElementsByTagName("order")[0];
+                        }
+                        else
+                        {
+                            order = order = doc.CreateNode(XmlNodeType.Element, "order", null);
+                            doc.FirstChild.AppendChild(order);
+                        }
+                        
+                        Variable var = new Variable();
+                        int count = 0;
+                        string tempName = null;
+
+                        for (int i = 0; i < selected.Length; i++)
+                        {
+                            temp = dataAttributeManager.DataAttributeRepo.Get(selected[i][0]);
+                            tempName = temp.Name;
                             if (temp != null)
                             {
-                                //Session confusion can't load Variables 
+                                for (int j = 0; j < selected[i][1]; j++)
+                                {
+                                    while (dataStructure.Variables.Where(p => cutSpaces(p.Label).ToLower().Equals(cutSpaces(tempName).ToLower())).Count() > 0)
+                                    {
+                                        count++;
+                                        tempName = temp.Name + "_" + count;                                            
+                                    }
+                                    var = dataStructureManager.AddVariableUsage(dataStructure, temp, true,tempName, null, null);
 
-                                //dataStructureManager.StructuredDataStructureRepo.LoadIfNot(dataStructure.Variables);
-                                //dataStructure.Variables.Count();
-                                Variable var = dataStructureManager.AddVariableUsage(dataStructure, temp, true, temp.Name, null, null);
-                                XmlNode variable = doc.CreateNode(XmlNodeType.Element, "variable", null);
-                                variable.InnerText = var.Id.ToString();
-                                order[0].AppendChild(variable);                         
+                                    XmlNode variable = doc.CreateNode(XmlNodeType.Element, "variable", null);
+                                    variable.InnerText = var.Id.ToString();
+                                    order.AppendChild(variable);                            
+                                }                  
                             }
                         }
-                        dataStructure.Extra = doc;
                         dataStructureManager.UpdateStructuredDataStructure(dataStructure);
                         ExcelTemplateProvider provider = new ExcelTemplateProvider(templateName);
                         provider.CreateTemplate(dataStructure);
@@ -384,12 +506,12 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             }
             else
             {
-                Session["checked"] = null;
+                Session["selected"] = null;
                 return RedirectToAction("DataStructureDesigner");
             }
             DataStructureDesignerModel DSDM = new DataStructureDesignerModel();
             DSDM.GetDataStructureByID(dataStructure.Id);
-            Session["checked"] = null;
+            Session["selected"] = null;
             return View("DataStructureDesigner", DSDM);
         }
 
@@ -416,6 +538,21 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
                     if (variable != null)
                     {
+                        XmlDocument doc = (XmlDocument)dataStructure.Extra;
+
+                        if (doc.GetElementsByTagName("order").Count != 0)
+                        {
+                            XmlNode order = doc.GetElementsByTagName("order")[0];
+                            foreach (XmlNode v in order)
+                            {
+                                if (Convert.ToInt64(v.InnerText) == variable.Id)
+                                {
+                                    order.RemoveChild(v);
+                                    break;
+                                }
+                            }
+                        }
+
                         DSM.RemoveVariableUsage(variable);
                         ExcelTemplateProvider provider = new ExcelTemplateProvider(templateName);
                         provider.CreateTemplate(dataStructure);
@@ -450,14 +587,38 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                     {
                         if (name != null && name != "")
                         {
-                            var.Label = name;
-                            var.IsValueOptional = optional;
-                            dataStructureManager.UpdateStructuredDataStructure(var.DataStructure);
+                            if (dataStructure.Variables.Where(p => cutSpaces(p.Label).ToLower().Equals(cutSpaces(name).ToLower())).Count() > 0)
+                            {
+                                long newVarId = dataStructure.Variables.Where(p => cutSpaces(p.Label).ToLower().Equals(cutSpaces(name).ToLower())).ToList().First().Id;
+                                if (newVarId != var.Id)
+                                {
+                                    ViewData["varErrorMsg"] = "Name already exsist";
+                                    Session["variableId"] = id;
+                                    Session["VariableWindow"] = true;
+                                }
+                                else
+                                {
+                                    var.Label = name;
+                                    var.IsValueOptional = optional;
+                                    dataStructureManager.UpdateStructuredDataStructure(var.DataStructure);
 
-                            Session["variableId"] = null;
-                            Session["VariableWindow"] = false;
-                            ExcelTemplateProvider provider = new ExcelTemplateProvider(templateName);
-                            provider.CreateTemplate(dataStructure);
+                                    Session["variableId"] = null;
+                                    Session["VariableWindow"] = false;
+                                    ExcelTemplateProvider provider = new ExcelTemplateProvider(templateName);
+                                    provider.CreateTemplate(dataStructure);
+                                }
+                            }
+                            else
+                            {
+                                var.Label = name;
+                                var.IsValueOptional = optional;
+                                dataStructureManager.UpdateStructuredDataStructure(var.DataStructure);
+
+                                Session["variableId"] = null;
+                                Session["VariableWindow"] = false;
+                                ExcelTemplateProvider provider = new ExcelTemplateProvider(templateName);
+                                provider.CreateTemplate(dataStructure);
+                            }
                         }
 
                         else
@@ -1024,7 +1185,10 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             foreach (TypeCode tc in Enum.GetValues(typeof(TypeCode)))
             {
                 if (tc.ToString() == systemType)
+                {
                     typecode = tc;
+                    break;
+                }
             }
 
             Model.Id = id;
@@ -1159,8 +1323,8 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
             UnitManager unitManager = new UnitManager();
             DataTypeManager dataTypeManager = new DataTypeManager();
-            Session["dataTypeList"] = dataTypeManager.Repo.Get().ToList();
-            Session["unitlist"] = unitManager.Repo.Get().ToList();
+            Session["dataTypeList"] = dataTypeManager.Repo.Get().OrderBy(p => p.Name).ToList();
+            Session["unitlist"] = unitManager.Repo.Get().OrderBy(p => p.Name).ToList();
 
             return View(dataAttributeList);
         }
@@ -1349,22 +1513,21 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             return (str);
         }
 
-        public JsonResult setChecked(long[] checkedIDs)
+        public JsonResult setSelected(long[][] selected)
         {
-            if (checkedIDs != null)
+            if (selected != null)
             {
-                List<long> Ids = new List<long>();
-                foreach (long l in checkedIDs)
-                {
-                    Ids.Add(Convert.ToInt64(l));
-                }
-                Session["checked"] = Ids;
+                Session["selected"] = selected;
+                Session["dataStructureId"] = Session["dataStructureId"];
             }
             else
-                Session["checked"] = null;
+            {
+                Session["selected"] = null;
+                Session["dataStructureId"] = Session["dataStructureId"];
+            }
             return Json(true, JsonRequestBehavior.AllowGet);
         }
-
     }
-
 }
+
+    

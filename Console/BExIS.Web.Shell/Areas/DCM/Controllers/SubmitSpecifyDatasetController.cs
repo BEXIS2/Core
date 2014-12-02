@@ -161,7 +161,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
               //Add Metadata to Bus
               //TITLE
-              TaskManager.AddToBus(TaskManager.DATASET_TITLE, getTitle(datasetVersion));
+              TaskManager.AddToBus(TaskManager.DATASET_TITLE, XmlDatasetHelper.GetInformation(datasetVersion, AttributeNames.title));
 
               ResearchPlanManager rpm = new ResearchPlanManager();
               ResearchPlan rp = rpm.Repo.Get(datasetVersion.Dataset.ResearchPlan.Id);
@@ -204,17 +204,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             catch { }
 
             return !string.IsNullOrWhiteSpace(userName) ? userName : "DEFAULT";
-        }
-
-        private string getTitle(DatasetVersion datasetVersion)
-        {
-            XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)datasetVersion.Dataset.MetadataStructure.Extra);
-            XElement temp = XmlUtility.GetXElementByAttribute("nodeRef", "name", "title", xDoc);
-
-            string xpath = temp.Attribute("value").Value.ToString();
-            string title = datasetVersion.Metadata.SelectSingleNode(xpath).InnerText;
-
-            return title;
         }
 
         #endregion

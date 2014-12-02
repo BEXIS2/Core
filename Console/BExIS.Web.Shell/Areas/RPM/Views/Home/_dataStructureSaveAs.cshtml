@@ -1,0 +1,39 @@
+﻿@using System.Data
+@using Telerik.Web.Mvc.UI
+@using BExIS.Dlm.Entities.DataStructure
+@using BExIS.Dlm.Services.DataStructure
+@model BExIS.RPM.Model.DataStructureDesignerModel
+
+@*<header>*@
+    <link href="@Url.Content("~/Areas/RPM/Stylesheets/RPM.css")" rel="stylesheet" type="text/css" />  
+@*</header> *@
+
+@{
+    ViewBag.Title = "Planing";   
+}
+
+<div class="planingPartialDiv" id="createVariable">
+    @using(Html.BeginForm("saveDataStructure", "Home", new {area = "RPM"}))
+    {
+        <table>
+            <tr>
+                <td>
+                    Name: 
+                    <div title="The name will be used for a new Data Structure">
+                    @(Html.TextBoxFor(m => Model.dataStructure.Name, new {@class = "t-input", @Value = Model.dataStructure.Name, @autofocus = "autofocus", @tabindex = 1}))
+                    </div>
+                </td>
+                <td>
+                <div id="Description" style="vertical-align:top; padding:5px;" title="Description">
+                    Description:         
+                    @(Html.TextAreaFor(m => Model.dataStructure.Description, new {@class = "t-input datastrDes",@Value = Model.dataStructure.Description, @tabindex = 3}))
+                </div>
+            </td>
+            </tr>
+        </table>
+        @(Html.TextBoxFor(m => Model.dataStructure.Id, new {@class = "hidden",@Value = Model.dataStructure.Id}))
+        @(Html.TextBoxFor(m => Model.structured, new {@class = "hidden",@Value = Model.structured}))
+         
+        <button name="create" value="saveAs" type="submit" class="t-button" title="Save Data Structure as">Save</button>
+    }
+</div>

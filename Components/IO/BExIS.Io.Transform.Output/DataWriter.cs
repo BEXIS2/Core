@@ -12,6 +12,7 @@ using BExIS.Dlm.Services.DataStructure;
 using Vaiona.Util.Cfg;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Entities.Data;
+using BExIS.Xml.Services;
 
 /// <summary>
 ///
@@ -317,7 +318,7 @@ namespace BExIS.Io.Transform.Output
         { 
             DatasetManager datasetManager = new DatasetManager();
 
-            return datasetManager.GetDatasetLatestVersion(id).Metadata.SelectNodes("Metadata/Description/Description/Title/Title")[0].InnerText;
+            return XmlDatasetHelper.GetInformation(datasetManager.GetDatasetLatestVersion(id), AttributeNames.title);
         }
 
         /// <summary>

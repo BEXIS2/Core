@@ -49,7 +49,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             DatasetManager dm = new DatasetManager();
             DatasetVersion dsv = dm.GetDatasetLatestVersion(id);
 
-            string title = getTitle(dsv);
+            string title = XmlDatasetHelper.GetInformation(dsv, AttributeNames.title);
 
             PermissionManager permissionManager = new PermissionManager();
             SubjectManager subjectManager = new SubjectManager();
@@ -109,7 +109,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 bool downloadAccess = permissionManager.HasUserDataAccess(subjectManager.GetUserByName(HttpContext.User.Identity.Name).Id, 1, datasetID, RightType.Download);
 
                 //TITLE
-                string title = getTitle(dsv);
+                string title = XmlDatasetHelper.GetInformation(dsv, AttributeNames.title);
 
                 if (ds.Self.GetType() == typeof(StructuredDataStructure))
                 {
@@ -655,7 +655,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                     DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
 
                     //TITLE
-                    string title = getTitle(datasetVersion);
+                    string title = XmlDatasetHelper.GetInformation(datasetVersion, AttributeNames.title);
                      
                     string zipPath = Path.Combine(AppConfiguration.DataPath, "Datasets", id.ToString(),title + ".zip");
 
@@ -771,19 +771,6 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 });
 
                 return options;
-            }
-
-            private string getTitle(DatasetVersion datasetVersion)
-            {
-                // get MetadataStructure 
-                MetadataStructure metadataStructure = datasetVersion.Dataset.MetadataStructure;
-                XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)datasetVersion.Dataset.MetadataStructure.Extra);
-                XElement temp = XmlUtility.GetXElementByAttribute("nodeRef","name", "title", xDoc);
-
-                string xpath = temp.Attribute("value").Value.ToString();
-                string title = datasetVersion.Metadata.SelectSingleNode(xpath).InnerText;
-
-                return title;
             }
 
         #endregion

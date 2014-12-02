@@ -11,6 +11,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Models.Create
     {
         public Dictionary<string, MetadataPackageModel> Packages { get; set; }
         public String DatasetTitle { get; set; }
+        public long DatasetId { get; set; }
+
 
 
         public CreateSummaryModel()
@@ -24,7 +26,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Models.Create
             {
                 Packages = packages,
                 StepInfo = stepInfo,
-                DatasetTitle = ""
+                DatasetTitle = "",
+                DatasetId=0
             };
         }
     }

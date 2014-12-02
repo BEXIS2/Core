@@ -52,6 +52,12 @@
                 <p>You successfully created dataset: <br /><b>@Model.DatasetTitle</b></p>
                 <p>Please use the <b>@Html.ActionLink("Upload Data Wizard ", "StartUploadWizard", "Create", new RouteValueDictionary { { "area", Model.StepInfo.GetActionInfo.AreaName.ToString() } }, new { title = "Link to upload wizard" })</b><br />
                     to add primary data to this dataset.</p>
+
+                if (@Model.DatasetId > 0)
+                { 
+                    <p>Or see your dataset here <b>@Html.ActionLink(@Model.DatasetTitle, "ShowData", "Create", new  {id = @Model.DatasetId }, new { title = "Link to your dataset." })</b><br /></p>
+                    
+                }
             }
 
     </div>

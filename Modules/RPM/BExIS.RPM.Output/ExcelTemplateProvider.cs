@@ -45,49 +45,60 @@ namespace BExIS.RPM.Output
             StructuredDataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(id);
             CreateTemplate(dataStructure);
         }
+
+        public List<Variable> getOrderedVariables(StructuredDataStructure structuredDataStructure)
+        {
+            DataStructureManager dataStructureManager = new DataStructureManager();
+            XmlDocument doc = (XmlDocument)structuredDataStructure.Extra;
+            XmlNode order;
+            XmlNodeList temp;
+            if (doc == null)
+            {
+                doc = new XmlDocument();
+                XmlNode root = doc.CreateNode(System.Xml.XmlNodeType.Element, "extra", null);
+                doc.AppendChild(root);
+            }
+            if (doc.GetElementsByTagName("order").Count == 0)
+            {
+
+                if (structuredDataStructure.Variables.Count != 0)
+                {
+                    order = doc.CreateNode(System.Xml.XmlNodeType.Element, "order", null);
+                    foreach (Variable v in structuredDataStructure.Variables)
+                    {
+
+                        XmlNode variable = doc.CreateNode(System.Xml.XmlNodeType.Element, "variable", null);
+                        variable.InnerText = v.Id.ToString();
+                        order.AppendChild(variable);
+                    }
+                    doc.FirstChild.AppendChild(order);
+                    structuredDataStructure.Extra = doc;
+                    dataStructureManager.UpdateStructuredDataStructure(structuredDataStructure);
+                }
+            }
+
+            temp = doc.GetElementsByTagName("order");
+            order = temp[0];
+            List<Variable> orderedVariables = new List<Variable>();
+            if (structuredDataStructure.Variables.Count != 0)
+            {
+                foreach (XmlNode x in order)
+                {
+                    foreach (Variable v in structuredDataStructure.Variables)
+                    {
+                        if (v.Id == Convert.ToInt64(x.InnerText))
+                            orderedVariables.Add(v);
+
+                    }
+                }
+            }
+            return orderedVariables;
+        }
                 
         public void CreateTemplate(StructuredDataStructure dataStructure)
         {
             DataStructureManager dataStructureManager = new DataStructureManager();
-            dataStructureManager.StructuredDataStructureRepo.LoadIfNot(dataStructure.Variables);
-            dataStructureManager.StructuredDataStructureRepo.LoadIfNot(dataStructure.Extra);
-
-            XmlDocument doc = (XmlDocument)dataStructure.Extra;
-            XmlNodeList order;
-            if (doc == null)
-            {
-                doc = new XmlDocument();
-                doc.LoadXml("<extras><order></order></extras>");
-                order = doc.GetElementsByTagName("order");
-                if (dataStructure.Variables != null)
-                {
-                    foreach (Variable v in dataStructure.Variables)
-                    {
-
-                        XmlNode variable = doc.CreateNode(XmlNodeType.Element, "variable", null);
-                        variable.InnerText = v.Id.ToString();
-                        order[0].AppendChild(variable);
-                    }
-                }
-                dataStructure.Extra = doc;
-                dataStructure = dataStructureManager.UpdateStructuredDataStructure(dataStructure);
-            }
-
-            List<Variable>variables = new List<Variable>();
-
-            order = doc.GetElementsByTagName("order");
-            if (dataStructure.Variables.ToList() != null)
-            {
-                foreach (XmlNode x in order[0])
-                {
-                    foreach (Variable v in dataStructure.Variables.ToList())
-                    {
-                        if (v.Id == Convert.ToInt64(x.InnerText))
-                            variables.Add(v);
-
-                    }
-                }
-            }
+            List<Variable> variables = getOrderedVariables(dataStructure);
             
             string rgxPattern = "[<>?\":|\\\\/*]";
             string rgxReplace = "-";

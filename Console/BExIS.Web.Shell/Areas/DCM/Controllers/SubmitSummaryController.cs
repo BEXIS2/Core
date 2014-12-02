@@ -152,11 +152,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             }
             else
             {
-                //TaskManager = null;
-
-                //return PartialView("FinishUpload",finishUploadModel);
-                //return RedirectToAction("FinishUpload", "SubmitController", new { area = "DCM" });
-                //return Content("Upload Success");
                 return null;
             }
         }

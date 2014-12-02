@@ -94,7 +94,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     Submit();
                     if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.DATASET_TITLE))
                         model.DatasetTitle = TaskManager.Bus[CreateDatasetTaskmanager.DATASET_TITLE].ToString();
-
+                    model.DatasetId = Convert.ToInt64(TaskManager.Bus[CreateDatasetTaskmanager.DATASET_ID]);
                     model.StepInfo.SetStatus(StepStatus.exit);
                     model.PageStatus = Models.PageStatus.LastAndSubmitted;
                 }
@@ -192,7 +192,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         workingCopy.Metadata = XmlMetadataWriter.ToXmlDocument(xMetadata);
                     }
 
-                    TaskManager.AddToBus(CreateDatasetTaskmanager.DATASET_TITLE, getTitle(workingCopy));//workingCopy.Metadata.SelectNodes("Metadata/Description/Description/Title/Title")[0].InnerText);
+                    TaskManager.AddToBus(CreateDatasetTaskmanager.DATASET_TITLE, XmlDatasetHelper.GetInformation(workingCopy, AttributeNames.title));//workingCopy.Metadata.SelectNodes("Metadata/Description/Description/Title/Title")[0].InnerText);
 
                     TaskManager.AddToBus(CreateDatasetTaskmanager.DATASET_ID, datasetId);
 
@@ -218,20 +218,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                 return !string.IsNullOrWhiteSpace(userName) ? userName : "DEFAULT";
             }
-
-            private string getTitle(DatasetVersion datasetVersion)
-            {
-                // get MetadataStructure 
-                MetadataStructure metadataStructure = datasetVersion.Dataset.MetadataStructure;
-                XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)datasetVersion.Dataset.MetadataStructure.Extra);
-                XElement temp = XmlUtility.GetXElementByAttribute("nodeRef", "name", "title", xDoc);
-
-                string xpath = temp.Attribute("value").Value.ToString();
-                string title = datasetVersion.Metadata.SelectSingleNode(xpath).InnerText;
-
-                return title;
-            }
-
         #endregion
 
         // Check if existing packageModels have errors or not

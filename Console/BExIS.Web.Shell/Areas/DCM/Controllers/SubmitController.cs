@@ -150,7 +150,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             }
 
 
-            return View(finishModel);
+            return ShowData((long)TaskManager.Bus[TaskManager.DATASET_ID]);
         }
 
         #endregion
@@ -172,6 +172,11 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             TaskManager = null;
 
             return RedirectToAction("UploadWizard", "Submit", new RouteValueDictionary { { "area", "DCM" }, { "type", type } });
+        }
+
+        public ActionResult ShowData(long id)
+        {
+            return RedirectToAction("ShowData", "Data", new RouteValueDictionary { { "area", "DDM" }, { "id", id } });
         }
 
         #endregion
@@ -220,7 +225,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         {
                             if (datasetIDs.Contains(d.Id))
                             {
-                                temp.Add(new ListViewItem(d.Id, getTitle(dm.GetDatasetLatestVersion(d))));
+                                temp.Add(new ListViewItem(d.Id, XmlDatasetHelper.GetInformation(dm.GetDatasetLatestVersion(d), AttributeNames.title)));
                             }
                         }
                     }
@@ -237,7 +242,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                             if (datasetIDs.Contains(d.Id))
                             {
                                 DatasetVersion datasetVersion = dm.GetDatasetLatestVersion(d);
-                                temp.Add(new ListViewItem(d.Id, getTitle(datasetVersion)));
+                                temp.Add(new ListViewItem(d.Id, XmlDatasetHelper.GetInformation(datasetVersion, AttributeNames.title)));
                             }
                         }
                     }
@@ -285,17 +290,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
 
         #region helper
-
-            private string getTitle(DatasetVersion datasetVersion)
-            {
-                XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)datasetVersion.Dataset.MetadataStructure.Extra);
-                XElement temp = XmlUtility.GetXElementByAttribute("nodeRef", "name", "title", xDoc);
-
-                string xpath = temp.Attribute("value").Value.ToString();
-                string title = datasetVersion.Metadata.SelectSingleNode(xpath).InnerText;
-
-                return title;
-            }
 
         #endregion
 
