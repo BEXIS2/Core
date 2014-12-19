@@ -373,6 +373,9 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
 
             // add title Node
             xmlDoc = AddReferenceToMetadatStructure(eml, "title", "Metadata/Description/DescriptionEML/Title/Title", "extra/nodeReferences/nodeRef", xmlDoc);
+            // add description
+            xmlDoc = AddReferenceToMetadatStructure(eml, "description", "Metadata/Description/DescriptionEML/AdditionalInformation/Information", "extra/nodeReferences/nodeRef", xmlDoc);
+
 
             // add ConvertReference Mapping file node
             xmlDoc = AddReferenceToMetadatStructure(eml, "mappingFile", "mapping_eml.xml", "extra/convertReferences/convertRef", xmlDoc);
@@ -721,6 +724,9 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
 
             // add title Node
             xmlDoc = AddReferenceToMetadatStructure(abcd, "title", "Metadata/Description/Description/Title/Title", "extra/nodeReferences/nodeRef", xmlDoc);
+            // add Description
+            xmlDoc = AddReferenceToMetadatStructure(abcd, "description", "Metadata/Description/Description/Details/Details", "extra/nodeReferences/nodeRef", xmlDoc);
+
 
             // add ConvertReference Mapping file node
             xmlDoc = AddReferenceToMetadatStructure(abcd, "mappingFile", "mapping_abcd.xml", "extra/convertReferences/convertRef", xmlDoc);
@@ -1102,10 +1108,13 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
                 doc.AppendChild(extra);
             }
 
-            XmlNode x = createMissingNodes(destinationPath, doc.DocumentElement, doc);
+            XmlNode x = createMissingNodes(destinationPath, doc.DocumentElement, doc, nodeName);
 
+            //check attrviute of the xmlnode
             if (x.Attributes.Count > 0)
             {
+
+
                 foreach (XmlAttribute attr in x.Attributes)
                 {
                     if (attr.Name == "name") attr.Value = nodeName;
@@ -1136,7 +1145,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
         /// <param name="parentNode"></param>
         /// <param name="doc"></param>
         /// <returns></returns>
-        private static XmlNode createMissingNodes(string destinationParentXPath, XmlNode parentNode, XmlDocument doc)
+        private static XmlNode createMissingNodes(string destinationParentXPath, XmlNode parentNode, XmlDocument doc, string name)
         {
             string dif = destinationParentXPath;
 
@@ -1157,6 +1166,17 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
                 else
                 {
                     XmlNode t = XmlUtility.GetXmlNodeByName(parentTemp, s);
+
+                    if (temp.Last().Equals(s))
+                    {
+                        if (!t.Attributes["name"].Equals(name))
+                        {
+                            t = XmlUtility.CreateNode(s, doc);
+                            parentTemp.AppendChild(t);
+                        }
+
+                    }
+
                     parentTemp = t;
                 }
             }

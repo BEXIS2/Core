@@ -47,6 +47,15 @@
     </ContentProviders>
   </MapItem>
 
+  <MapItem ContentKey="HomePage">
+    <ContentProviders>
+      <ContentProvider Area="DDM" Controller="Home" Action="ShowMyDatasets" Type="Action" Enabled="true">
+        <Parameters>
+        </Parameters>
+      </ContentProvider>
+    </ContentProviders>
+  </MapItem>
+  
   <MapItem ContentKey="Footer">
     <ContentProviders>
       <ContentProvider View="_Footer" Type="View" Enabled="true">
@@ -55,7 +64,7 @@
       </ContentProvider>
     </ContentProviders>
   </MapItem>
-
+  
   <!--
   It is possible to create mapping nodes to point to action of controllers of desired areas. Also it possible to point to partial views in the "Partials" folders of themes.
   Mapping items can provide parameters to the content providers (actions and partial views).

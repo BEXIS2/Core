@@ -55,7 +55,8 @@ namespace BExIS.Xml.Services
 
     public enum AttributeNames
     {
-        title
+        title,
+        description
     }
 
 }

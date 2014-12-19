@@ -16,6 +16,11 @@ using BExIS.Web.Shell.Areas.DDM.Models;
 using Telerik.Web.Mvc;
 using Vaiona.IoC;
 using Vaiona.Util.Cfg;
+using BExIS.Security.Services.Authorization;
+using BExIS.Security.Services.Subjects;
+using BExIS.Security.Entities.Objects;
+using System.Xml;
+using BExIS.Xml.Services;
 
 namespace BExIS.Web.Shell.Areas.DDM.Controllers
 {
@@ -383,12 +388,13 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
         }
 
         /// <summary>
-        /// Remove a property from the Dictionary
-        /// example: 
+        /// Remove a property from the Dictionary 
+        /// </summary>
+        /// <example>
         /// grassland: all | yes | no
         /// grassland is name
         /// value is (all | yes | no)
-        /// </summary>
+        /// </example>
         /// <param name="name">Name of the property</param>
         /// <param name="value">Value of the property</param>
         public void RemoveFromPropertiesDic(string name, string value, SearchCriteria sc)
@@ -501,6 +507,315 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
         #endregion
 
-        
+        #region mydatasets
+
+        public ActionResult ShowMyDatasets()
+        {
+                DataTable model = new DataTable();
+
+                ViewData["PageSize"] = 10;
+                ViewData["CurrentPage"] = 1;
+
+
+                #region header
+                List<HeaderItem> headerItems = new List<HeaderItem>();
+
+
+                HeaderItem headerItem = new HeaderItem()
+                {
+                    Name = "ID",
+                    DisplayName = "ID",
+                    DataType = "Int64"
+                };
+                headerItems.Add(headerItem);
+
+                ViewData["Id"] = headerItem;
+
+                headerItem = new HeaderItem()
+                {
+                    Name = "Title",
+                    DisplayName = "Title",
+                    DataType = "String"
+                };
+                headerItems.Add(headerItem);
+
+                headerItem = new HeaderItem()
+                {
+                    Name = "Description",
+                    DisplayName = "Description",
+                    DataType = "String"
+                };
+                headerItems.Add(headerItem);
+
+                headerItem = new HeaderItem()
+                {
+                    Name = "View",
+                    DisplayName = "View",
+                    DataType = "String"
+                };
+                headerItems.Add(headerItem);
+
+                headerItem = new HeaderItem()
+                {
+                    Name = "Update",
+                    DisplayName = "Update",
+                    DataType = "String"
+                };
+                headerItems.Add(headerItem);
+
+                headerItem = new HeaderItem()
+                {
+                    Name = "Delete",
+                    DisplayName = "Delete",
+                    DataType = "String"
+                };
+                headerItems.Add(headerItem);
+
+                headerItem = new HeaderItem()
+                {
+                    Name = "Download",
+                    DisplayName = "Download",
+                    DataType = "String"
+                };
+                headerItems.Add(headerItem);
+
+                headerItem = new HeaderItem()
+                {
+                    Name = "Grant",
+                    DisplayName = "Grant",
+                    DataType = "String"
+                };
+                headerItems.Add(headerItem);
+
+                ViewData["DefaultHeaderList"] = headerItems;
+
+                #endregion
+
+                model = CreateDataTable(headerItems);
+
+                return PartialView("_myDatasetGridView", model);
+        }
+
+        [GridAction]
+        public ActionResult _CustomMyDatasetBinding(GridCommand command)
+        {
+            DataTable model = new DataTable();
+
+            ViewData["PageSize"] = 10;
+            ViewData["CurrentPage"] = 1;
+
+
+            #region header
+            List<HeaderItem> headerItems = new List<HeaderItem>();
+
+            HeaderItem headerItem = new HeaderItem()
+            {
+                Name = "ID",
+                DisplayName = "ID",
+                DataType = "Int64"
+            };
+            headerItems.Add(headerItem);
+
+            ViewData["Id"] = headerItem;
+
+            headerItem = new HeaderItem()
+            {
+                Name = "Title",
+                DisplayName = "Title",
+                DataType = "String"
+            };
+            headerItems.Add(headerItem);
+
+            headerItem = new HeaderItem()
+            {
+                Name = "Description",
+                DisplayName = "Description",
+                DataType = "String"
+            };
+            headerItems.Add(headerItem);
+
+            headerItem = new HeaderItem()
+            {
+                Name = "View",
+                DisplayName = "View",
+                DataType = "String"
+            };
+            headerItems.Add(headerItem);
+
+            headerItem = new HeaderItem()
+            {
+                Name = "Update",
+                DisplayName = "Update",
+                DataType = "String"
+            };
+            headerItems.Add(headerItem);
+
+            headerItem = new HeaderItem()
+            {
+                Name = "Delete",
+                DisplayName = "Delete",
+                DataType = "String"
+            };
+            headerItems.Add(headerItem);
+
+            headerItem = new HeaderItem()
+            {
+                Name = "Download",
+                DisplayName = "Download",
+                DataType = "String"
+            };
+            headerItems.Add(headerItem);
+
+            headerItem = new HeaderItem()
+            {
+                Name = "Grant",
+                DisplayName = "Grant",
+                DataType = "String"
+            };
+            headerItems.Add(headerItem);
+
+            ViewData["DefaultHeaderList"] = headerItems;
+
+            #endregion
+
+            model = CreateDataTable(headerItems);
+
+            DatasetManager datasetManager = new DatasetManager();
+            PermissionManager permissionManager = new PermissionManager();
+            SubjectManager subjectManager = new SubjectManager();
+
+            List<RightType> rightTypes = new List<RightType>();
+            rightTypes.Add(RightType.Delete);
+            rightTypes.Add(RightType.Download);
+            rightTypes.Add(RightType.Grant);
+            rightTypes.Add(RightType.Update);
+            rightTypes.Add(RightType.View);
+
+            List<long> datasetIDs = permissionManager.GetAllDataIds(subjectManager.GetUserByName(GetUserNameOrDefault()).Id, 1, rightTypes).ToList();
+                
+            if (datasetIDs != null)
+            {
+                foreach (long datasetId in datasetIDs)
+                {
+                    DatasetVersion dsv = datasetManager.GetDatasetLatestVersion(datasetId);
+                    string title = XmlDatasetHelper.GetInformation(dsv, AttributeNames.title);
+                    string description = XmlDatasetHelper.GetInformation(dsv, AttributeNames.description);
+
+                    DataRow dataRow = model.NewRow();
+                    Object[] rowArray = new Object[8];
+
+                    rowArray[0] = Convert.ToInt64(datasetId);
+                    rowArray[1] = title;
+                    rowArray[2] = description;
+
+                    //get permissions
+                    bool viewRight = permissionManager.ExistsDataPermission(subjectManager.GetUserByName(GetUserNameOrDefault()).Id, 1, datasetId, RightType.View);
+                    bool updateRight = permissionManager.ExistsDataPermission(subjectManager.GetUserByName(GetUserNameOrDefault()).Id, 1, datasetId, RightType.Update);
+                    bool deleteRight = permissionManager.ExistsDataPermission(subjectManager.GetUserByName(GetUserNameOrDefault()).Id, 1, datasetId, RightType.Delete);
+                    bool downloadRight = permissionManager.ExistsDataPermission(subjectManager.GetUserByName(GetUserNameOrDefault()).Id, 1, datasetId, RightType.Download);
+                    bool grantRight = permissionManager.ExistsDataPermission(subjectManager.GetUserByName(GetUserNameOrDefault()).Id, 1, datasetId, RightType.Grant);
+
+                    if (viewRight) { rowArray[3] = "✔"; } else { rowArray[3] = "✘"; }
+                    if (updateRight) { rowArray[4] = "✔"; } else { rowArray[4] = "✘"; }
+                    if (deleteRight) { rowArray[5] = "✔"; } else { rowArray[5] = "✘"; }
+                    if (downloadRight) { rowArray[6] = "✔"; } else { rowArray[6] = "✘"; }
+                    if (grantRight) { rowArray[7] = "✔"; } else { rowArray[7] = "✘"; }
+
+                    dataRow = model.NewRow();
+                    dataRow.ItemArray = rowArray;
+                    model.Rows.Add(dataRow);
+                }
+            }
+            return View(new GridModel(model));
+        }
+
+ 
+        private DataTable CreateDataTable(List<HeaderItem> items)
+        {
+            DataTable table = new DataTable();
+
+            foreach (HeaderItem item in items)
+            {
+                table.Columns.Add(new DataColumn(){
+                    ColumnName = item.Name,
+                    Caption = item.DisplayName,
+                    DataType = getDataType(item.DataType)
+                });
+            }
+
+            return table;
+        }
+
+        private Type getDataType(string dataType)
+        {
+            switch (dataType)
+            {
+                case "String":
+                    {
+                        return Type.GetType("System.String");
+                        break;
+                    }
+
+                case "Double":
+                    {
+                        return Type.GetType("System.Double");
+                        break;
+                    }
+
+                case "Int16":
+                    {
+                        return Type.GetType("System.Int16");
+                        break;
+                    }
+
+                case "Int32":
+                    {
+                        return Type.GetType("System.Int32");
+                        break;
+                    }
+
+                case "Int64":
+                    {
+                        return Type.GetType("System.Int64");
+                        break;
+                    }
+
+                case "Decimal":
+                    {
+                        return Type.GetType("System.Decimal");
+                        break;
+                    }
+
+                case "DateTime":
+                    {
+                        return Type.GetType("System.DateTime");
+                        break;
+                    }
+
+                default:
+                    {
+                        return Type.GetType("System.String");
+                        break;
+                    }
+            }
+        }
+
+        // chekc if user exist
+        // if true return usernamem otherwise "DEFAULT"
+        public string GetUserNameOrDefault()
+        {
+            string userName = string.Empty;
+            try
+            {
+                userName = HttpContext.User.Identity.Name;
+            }
+            catch { }
+
+            return !string.IsNullOrWhiteSpace(userName) ? userName : "DEFAULT";
+        }
+
+        #endregion
+
+
     }
 }

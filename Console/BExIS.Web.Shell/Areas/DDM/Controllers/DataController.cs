@@ -67,20 +67,87 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
         }
 
         #region metadata
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="datasetID"></param>
+        /// <returns>model</returns>
             public ActionResult ShowMetaData(int datasetID)
             {
+            ShowMetadataModel model = new ShowMetadataModel();
+
                 try
                 {
                     DatasetManager dm = new DatasetManager();
                     DatasetVersion dsv = dm.GetDatasetLatestVersion(datasetID);
-                    Session["Metadata"] = SearchUIHelper.ConvertXmlToHtml(dsv.Metadata.InnerXml.ToString(), "\\UI\\HtmlShowMetadata.xsl");
+
+                //get title
+                model.Title = XmlDatasetHelper.GetInformation(dsv,AttributeNames.title);
+                model.Description = XmlDatasetHelper.GetInformation(dsv, AttributeNames.description);
+
+                #region create table
+                XDocument xDoc = XmlUtility.ToXDocument(dsv.Metadata);
+
+                //get a list of MetadataPackageUsages
+                IEnumerable<XElement> MetadataPackageUsageList = helper.GetElementsByAttribute(xDoc, "type", BExIS.Xml.Services.XmlNodeType.MetadataPackageUsage.ToString());
+
+                //For Each MetadataPackageUsage
+                foreach (XElement packageUsage in MetadataPackageUsageList)
+                {
+                    PackageUsage puElement = new PackageUsage();
+                    puElement.Name = packageUsage.Attribute("name").Value;
+
+                    //get a list of MetadataAttributeUsages
+                    IEnumerable<XElement> MetadataPackageList = helper.GetElementsByAttribute(packageUsage, "type", BExIS.Xml.Services.XmlNodeType.MetadataPackage.ToString());
+                    
+                    //For Each MetadataPackage
+                    foreach (XElement attributeUsage in MetadataPackageList)
+                    {
+                        Package pElement = new Package();
+
+                        // get a list of AAtributeUsages
+                        IEnumerable<XElement> MetadataAttributeUsageList = helper.GetElementsByAttribute(attributeUsage, "type", BExIS.Xml.Services.XmlNodeType.MetadataAttributeUsage.ToString());
+
+                        //For Each AttributeUsage
+                        foreach (XElement attribute in MetadataAttributeUsageList)
+                        {
+                            string value = "";
+                            string name = attribute.Attribute("name").Value;
+
+                            //get a list of Attributes
+                            IEnumerable<XElement> MetadataAttributeList = helper.GetElementsByAttribute(attribute, "type", BExIS.Xml.Services.XmlNodeType.MetadataAttribute.ToString());
+
+                            foreach (XElement e in MetadataAttributeList)
+                            {
+                                value += e.Value.ToString();
+
+                            }
+
+                            //Add a list of AttributeUsages and their values
+                            pElement.AttributeUsages.Add(name, value);
+                        }
+
+                        //Add a MetadataPackage
+                        puElement.Packages.Add(pElement);
+
+                        
+                    }
+
+                    model.PU.Add(puElement);
+                }
+                #endregion
+                
+
                 }
                 catch (Exception e)
                 {
                     ModelState.AddModelError(String.Empty, e.Message);
                 }
 
-                return PartialView();
+            return PartialView(model);
             }
 
         #endregion

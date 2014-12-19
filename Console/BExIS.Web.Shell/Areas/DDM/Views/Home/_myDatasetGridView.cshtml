@@ -4,9 +4,19 @@
 @using BExIS.Dlm.Entities.DataStructure;
 
 @{
-	
-	int PageSize = Convert.ToInt16(ViewData["PageSize"]);
-	int CurrentPage =  Convert.ToInt16(ViewData["CurrentPage"]);
+    int PageSize = 10;
+    int CurrentPage = 1;
+    
+    if (ViewData["PageSize"] != null)
+    {
+        PageSize = Convert.ToInt16(ViewData["PageSize"]);	    
+    }
+    
+    if (ViewData["CurrentPage"] != null)
+    {
+        CurrentPage = Convert.ToInt16(ViewData["CurrentPage"]);	    
+    }
+    
 	List<HeaderItem> DefaultHeaderList = (List<HeaderItem>)ViewData["DefaultHeaderList"];
 	HeaderItem Id = (HeaderItem)ViewData["Id"];
 
@@ -28,7 +38,7 @@
 
             .DataBinding(dataBinding => dataBinding
                 .Ajax()
-                .Select("_CustomBinding", "Home", new { area = "DDM" })
+                .Select("_CustomMyDatasetBinding", "Home", new { area = "DDM" })
             )
             .EnableCustomBinding(true)
             .HtmlAttributes(new { @class = "result-grid" })
@@ -42,7 +52,7 @@
                              "</div>"
                             )
                             
-                            .Width("auto")
+                            .Width("60px")
                             .Groupable(false)
                             .Sortable(false)
                             .Filterable(false);
@@ -64,16 +74,41 @@
                             {
                                 title = column.Caption;
                             }
-
-                            columns.Bound(column.DataType, column.ColumnName)
-                                    .Title(title);
+                            if (title == "ID")
+                            {
+                                columns.Bound(column.DataType, column.ColumnName)
+                                   .Title(title)
+                                   .Width("35px");
+                            }
+                            if (title == "Title")
+                            {
+                                columns.Bound(column.DataType, column.ColumnName)
+                                   .Title(title)
+                                   .Width("100px");
+                            }
+                            if (title == "Description")
+                            {
+                                columns.Bound(column.DataType, column.ColumnName)
+                                   .Title(title)
+                                   .Width("220px");
+                            }
+                            if (title == "View" | title == "Update" | title == "Delete" | title == "Download" | title == "Grant")
+                            {
+                                columns.Bound(column.DataType, column.ColumnName)
+                                   .Title(title)
+                                   .Width("40px")
+                                   .Filterable(false);
+                            }
+                            
+                                
                         }
                         else
                         {
                             columns.Bound(column.DataType, column.ColumnName).Hidden()
                                    .Title(column.Caption);
 
-                        }
+                        }                       
+                        
                     }
 
                 })
@@ -83,6 +118,7 @@
                         .OnLoad("refreshGrid")
                         .OnSubmitChanges("refreshGrid")
                         .OnRowDataBound("resultGrid_OnRowDataBound")
+                        
                        )
             .Pageable(paging =>
                 paging
@@ -116,11 +152,25 @@
 		$.each(obj, function (i) {
 
 			obj[i].title = obj[i].textContent;
-			if (obj[i].textContent.length > 35) {
-				obj[i].textContent = jQuery.trim(obj[i].textContent).substring(0, 35).trim(this) + "...";
+			if (obj[i].textContent.length > 50) {
+				obj[i].textContent = jQuery.trim(obj[i].textContent).substring(0, 50).trim(this) + "...";
 			}
 		});
 	}
+
+	function onComplete()
+	{
+	
+
+	}
+
+
+	function refreshGrid() {
+	    //$(".t-grid .t-refresh").trigger('click');
+	    $(".t-grid .t-refresh").trigger('click');
+	    /*alert("GridRefresh");*/
+	}
+
 
 </script>
 

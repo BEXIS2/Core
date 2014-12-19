@@ -2,13 +2,108 @@
     ViewBag.Title = "Metadata";
 }
 
+@model BExIS.Web.Shell.Areas.DDM.Models.ShowMetadataModel
+
 <br />
 @if (ViewData.ModelState.IsValid)
 { 
-    @(new HtmlString(Session["Metadata"].ToString()))
+    <br />
+    <div class ="description">
+        @Model.Description
+    </div>
+
+    <br /><br /><br />
+    
+    
+    <table border="0" class="tableInformation">
+   
+    @foreach (var packageUsage in Model.PU)
+    {
+        
+        for (int i = 0; i < packageUsage.Packages.Count(); i++)
+        {
+            string index = "";
+            int j = i + 1;
+            if (j > 1) { index = j.ToString();}
+            
+            <tr>
+                <td class="packageName">
+                    <table><tr>
+                        <b>@packageUsage.Name @index</b>
+                    </tr></table>
+                </td>
+
+
+               <td class="childrens">
+               @foreach (KeyValuePair<string, string> obj in packageUsage.Packages.ElementAt(i).AttributeUsages)
+               {
+                   if(obj.Key != "Details" & obj.Key != "Additional Information")    
+                   {              
+                       <table border="0" class="tableInformation" ><tr>
+                         <td class="PackageAttributeUsage">
+                            <b>@obj.Key</b>
+                       </td>
+                       <td class="PackageAttributeUsageValue"> 
+                           @obj.Value
+                       </td>  
+                           </tr></table>
+                   }
+               }
+
+            </td>
+           </tr>
+        }
+        
+
+    }
+
+
+</table>                                       
 }
 else
 { 
     @Html.ValidationSummary(true)
 }
 <br />
+
+
+<style type="text/css">
+
+    .tableInformation {  
+        padding:0px;
+        vertical-align:text-top;
+        border-style:none;
+    }
+
+    .childrens {  
+        border-style:none;
+    }
+
+    .description {
+        text-align:justify;
+
+    }
+
+    .packageName {
+        vertical-align:text-top; 
+        font-size:120%;
+        width:200px;
+        color:#666;
+        border-style:none;
+    }
+
+    .PackageAttributeUsage {
+
+        width:150px;
+        padding:0px;
+        color:#666;
+        border-style:none;
+    }
+
+    .PackageAttributeUsageValue {
+        
+        padding:0px;
+        border-style:none;
+    }
+
+</style>

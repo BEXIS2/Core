@@ -20,7 +20,7 @@ namespace BExIS.Xml.Services
     }
 
     /// <summary>
-    ///
+    /// 
     /// </summary>
     /// <remarks></remarks>        
     public class XmlWriter
@@ -42,13 +42,17 @@ namespace BExIS.Xml.Services
             {
                 XElement element = new XElement(type.ToString());
                 element.SetAttributeValue("name", name);
+                element.SetAttributeValue("type", type.ToString());
 
                 return element;
             }
 
             if (_mode.Equals(XmlNodeMode.xPath))
             {
-                return new XElement(name.Replace(" ", ""));
+                XElement element = new XElement(name.Replace(" ", ""));
+                element.SetAttributeValue("type", type.ToString());
+
+                return element; 
             }
 
             return null;

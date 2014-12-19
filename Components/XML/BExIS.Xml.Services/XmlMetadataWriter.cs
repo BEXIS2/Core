@@ -18,10 +18,10 @@ namespace BExIS.Xml.Services
     /// </summary>
     public enum XmlNodeType
     { 
-        package,
-        packageRole,
-        attribute,
-        attributeRole
+        MetadataPackage,
+        MetadataPackageUsage,
+        MetadataAttribute,
+        MetadataAttributeUsage
     }
 
     /// <summary>
@@ -73,14 +73,14 @@ namespace BExIS.Xml.Services
                 XElement package;
 
                 // create the role
-                XElement role = CreateXElement(mpu.Label, XmlNodeType.packageRole);
+                XElement role = CreateXElement(mpu.Label, XmlNodeType.MetadataPackageUsage);
                 if (_mode.Equals(XmlNodeMode.xPath)) role.SetAttributeValue("name", mpu.Label);
 
                 role.SetAttributeValue("id", mpu.Id.ToString());
                 root.Add(role);
 
                 // create the package
-                package = CreateXElement(mpu.MetadataPackage.Name, XmlNodeType.package);
+                package = CreateXElement(mpu.MetadataPackage.Name, XmlNodeType.MetadataPackage);
                 if (_mode.Equals(XmlNodeMode.xPath)) package.SetAttributeValue("name", mpu.MetadataPackage.Name);
                 package.SetAttributeValue("roleId", mpu.Id.ToString());
                 package.SetAttributeValue("id", mpu.MetadataPackage.Id.ToString());
@@ -94,11 +94,11 @@ namespace BExIS.Xml.Services
                 {
                     XElement attribute;
 
-                    XElement attributeRole = CreateXElement(mau.Label, XmlNodeType.attributeRole);
+                    XElement attributeRole = CreateXElement(mau.Label, XmlNodeType.MetadataAttributeUsage);
                     if (_mode.Equals(XmlNodeMode.xPath)) attributeRole.SetAttributeValue("name", mau.Label);
                     package.Add(attributeRole);
 
-                    attribute = CreateXElement(mau.MetadataAttribute.Name, XmlNodeType.attribute);
+                    attribute = CreateXElement(mau.MetadataAttribute.Name, XmlNodeType.MetadataAttribute);
                     if (_mode.Equals(XmlNodeMode.xPath)) attribute.SetAttributeValue("name", mau.MetadataAttribute.Name);
 
                     attribute.SetAttributeValue("roleId", mau.Id.ToString());
@@ -136,7 +136,7 @@ namespace BExIS.Xml.Services
                 else
                 {
                     // create the role
-                    role = CreateXElement(packageUsage.Label, XmlNodeType.packageRole);
+                    role = CreateXElement(packageUsage.Label, XmlNodeType.MetadataPackageUsage);
                     if (_mode.Equals(XmlNodeMode.xPath)) role.SetAttributeValue("name", packageUsage.Label);
                     role.SetAttributeValue("id", packageUsage.Id.ToString());
                 }
@@ -147,7 +147,7 @@ namespace BExIS.Xml.Services
                 {
                     XElement package;
                     // create the package
-                    package = CreateXElement(packageUsage.MetadataPackage.Name, XmlNodeType.package);
+                    package = CreateXElement(packageUsage.MetadataPackage.Name, XmlNodeType.MetadataPackage);
 
                     if (_mode.Equals(XmlNodeMode.xPath)) package.SetAttributeValue("name", packageUsage.MetadataPackage.Name);
                     package.SetAttributeValue("roleId", packageUsage.Id.ToString());
@@ -218,12 +218,12 @@ namespace BExIS.Xml.Services
                     XElement role = Get(attributeUsage.Label, package);
                     if (role == null)
                     {
-                        role = CreateXElement(attributeUsage.Label, XmlNodeType.attributeRole);
+                        role = CreateXElement(attributeUsage.Label, XmlNodeType.MetadataAttributeUsage);
                         if (_mode.Equals(XmlNodeMode.xPath)) role.SetAttributeValue("name", attributeUsage.Label);
                         role.SetAttributeValue("id", attributeUsage.Id.ToString());
                     }
 
-                    XElement element = CreateXElement(attributeUsage.MetadataAttribute.Name, XmlNodeType.attribute);
+                    XElement element = CreateXElement(attributeUsage.MetadataAttribute.Name, XmlNodeType.MetadataAttribute);
 
                     if (_mode.Equals(XmlNodeMode.xPath)) element.SetAttributeValue("name", attributeUsage.MetadataAttribute.Name);
                     element.SetAttributeValue("roleId", attributeUsage.Id.ToString());
@@ -265,12 +265,12 @@ namespace BExIS.Xml.Services
                     XElement role = Get(attributeUsage.Label, package);
                     if (role == null)
                     {
-                        role = CreateXElement(attributeUsage.Label, XmlNodeType.attributeRole);
+                        role = CreateXElement(attributeUsage.Label, XmlNodeType.MetadataAttributeUsage);
                         if (_mode.Equals(XmlNodeMode.xPath)) role.SetAttributeValue("name", attributeUsage.Label);
                         role.SetAttributeValue("id", attributeUsage.Id.ToString());
                     }
 
-                    XElement element = CreateXElement(attributeUsage.MetadataAttribute.Name, XmlNodeType.attribute);
+                    XElement element = CreateXElement(attributeUsage.MetadataAttribute.Name, XmlNodeType.MetadataAttribute);
 
                     if (_mode.Equals(XmlNodeMode.xPath)) element.SetAttributeValue("name", attributeUsage.MetadataAttribute.Name);
                     element.SetAttributeValue("roleId", attributeUsage.Id.ToString());

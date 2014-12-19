@@ -238,9 +238,25 @@ namespace BExIS.Security.Services.Authorization
 
             return GetAllDataIds(subjectIds, entityId, rightType);
         }
+
+        public IQueryable<long> GetAllDataIds(long userId, long entityId, List<RightType> rightTypes)
+        {
+            User user = UsersRepo.Get(userId);
+
+            List<long> subjectIds = new List<long>(user.Groups.Select(g => g.Id));
+            subjectIds.Add(user.Id);
+
+            return GetAllDataIds(subjectIds, entityId, rightTypes);
+        }
+
         public IQueryable<long> GetAllDataIds(IEnumerable<long> subjectIds, long entityId, RightType rightType)
         {
             return DataPermissionsRepo.Query(p => p.Entity.Id == entityId && subjectIds.Contains(p.Subject.Id) && p.RightType == rightType).Select(p => p.DataId);
+        }
+
+        public IQueryable<long> GetAllDataIds(IEnumerable<long> subjectIds, long entityId, List<RightType> rightTypes)
+        {
+            return DataPermissionsRepo.Query(p => p.Entity.Id == entityId && subjectIds.Contains(p.Subject.Id) && rightTypes.Contains(p.RightType)).Select(p => p.DataId).Distinct();
         }
 
         public IQueryable<DataPermission> GetAllDataPermissions()
