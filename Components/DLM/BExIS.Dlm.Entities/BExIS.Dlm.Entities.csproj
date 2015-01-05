@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Administration\ResearchPlan.cs" />
+    <Compile Include="Common\BaseUsage.cs" />
     <Compile Include="DataStructure\AggregateFunction.cs" />
     <Compile Include="DataStructure\Classifier.cs" />
     <Compile Include="DataStructure\Constraint.cs" />
@@ -65,7 +66,6 @@
     <Compile Include="DataStructure\GlobalizationInfo.cs" />
     <Compile Include="DataStructure\Mathodology.cs" />
     <Compile Include="DataStructure\ObtainingMethod.cs" />
-    <Compile Include="DataStructure\Parameter.cs" />
     <Compile Include="DataStructure\StructuredDataStructure.cs" />
     <Compile Include="DataStructure\Unit.cs" />
     <Compile Include="DataStructure\UnStructuredDataStructure.cs" />
@@ -81,10 +81,13 @@
     <Compile Include="Data\VariableValueCollection.cs" />
     <Compile Include="Data\Dataset.cs" />
     <Compile Include="Data\DataTuple.cs" />
+    <Compile Include="MetadataStrcuture\MetadataNestedAttributeUsage.cs" />
     <Compile Include="MetadataStrcuture\MetadataAttribute.cs" />
     <Compile Include="MetadataStrcuture\MetadataAttributeUsage.cs" />
+    <Compile Include="MetadataStrcuture\MetadataCompoundAttribute.cs" />
     <Compile Include="MetadataStrcuture\MetadataPackage.cs" />
     <Compile Include="MetadataStrcuture\MetadataPackageUsage.cs" />
+    <Compile Include="MetadataStrcuture\MetadataSimpleAttribute.cs" />
     <Compile Include="MetadataStrcuture\MetadataStructure.cs" />
     <Compile Include="Metadata\Metadata.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

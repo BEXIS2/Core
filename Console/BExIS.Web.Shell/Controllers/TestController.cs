@@ -23,6 +23,8 @@ namespace BExIS.Web.Shell.Controllers
         [DoesNotNeedDataAccess] // tells the persistence manager to not create an ambient session context for this action!
         public ActionResult Index2()
         {
+            addConstraintsTo();
+
             return View("Index");
         }
 
@@ -55,12 +57,13 @@ namespace BExIS.Web.Shell.Controllers
             //purgeAll();
             //getAllDatasetVersions();
 
-            addConstraintsTo();
+            //addConstraintsTo();
             //testMetadataStructure();
             //testSecuirty();
             //getEffectiveTuples(id);
             //getDataStructures();
             //return RedirectToAction("About");
+            createMetadataAttribute();
             return View();
         }
 
@@ -350,6 +353,78 @@ namespace BExIS.Web.Shell.Controllers
             //    dm.CreateDataset(sent);//sent.Title, sent.Description, sent.Metadata, sent.Tuples, sent.ExtendedPropertyValues, sent.ContentDescriptors, sent.DataStructure);
             //}
             //catch (Exception ex) { }
+        }
+
+        private void createMetadataAttribute()
+        {
+            //UnitManager um = new UnitManager();
+            //Unit km = um.Create("Kilometer", "Km", "This is the Kilometer", "Length", MeasurementSystem.Metric);
+            DataTypeManager dtManager = new DataTypeManager();
+            DataType dt1 = dtManager.Repo.Get(p => p.Name.Equals("String")).FirstOrDefault();
+            if (dt1 == null)
+            {
+                dt1 = dtManager.Create("String", "A test String", System.TypeCode.String);
+            }
+
+            MetadataAttributeManager maManager = new MetadataAttributeManager();
+
+            // for unique name checks USE maManager.MetadataAttributeRepo that is searching both simple and compound attribute names
+            var msa1 = maManager.MetadataAttributeRepo.Get(p => p.ShortName.Equals("Simple 1")).FirstOrDefault();
+            if (msa1 == null)
+            {
+                msa1 = new MetadataSimpleAttribute()
+                {
+                    ShortName = "Simple 1",
+                    DataType = dt1,
+                };
+                maManager.Create((MetadataSimpleAttribute)msa1);
+            }
+            var msa2 = maManager.MetadataAttributeRepo.Get(p => p.ShortName.Equals("Simple 2")).FirstOrDefault();
+            if (msa2 == null)
+            {
+                msa2 = new MetadataSimpleAttribute()
+                {
+                    ShortName = "Simple 2",
+                    DataType = dt1,
+                };
+                maManager.Create((MetadataSimpleAttribute)msa2);
+            }
+
+            MetadataCompoundAttribute mca1 = (MetadataCompoundAttribute)maManager.MetadataAttributeRepo.Get(p => p.ShortName.Equals("Compound 1")).FirstOrDefault();
+            if (mca1 == null)
+            {
+                mca1 = new MetadataCompoundAttribute()
+                {
+                    ShortName = "Compound 1",
+                    DataType = dt1,
+
+                };
+                MetadataNestedAttributeUsage u1 = new MetadataNestedAttributeUsage()
+                {
+                    Label = "First member",
+                    Description = "I am a link between Compound 1 and Simple 1",
+                    MinCardinality = 0,
+                    MaxCardinality = 2,
+                    Master = mca1,
+                    Member = msa1,
+                };
+                mca1.MetadataNestedAttributeUsages.Add(u1);
+
+                MetadataNestedAttributeUsage u2 = new MetadataNestedAttributeUsage()
+                {
+                    Label = "Second member",
+                    Description = "I am a link between Compound 1 and Simple 2",
+                    MinCardinality = 0,
+                    MaxCardinality = 2,
+                    Master = mca1,
+                    Member = msa2,
+                };
+                mca1.MetadataNestedAttributeUsages.Add(u2);
+
+                maManager.Create(mca1);
+            }
+
+            maManager.Delete(msa1);
         }
 
         private void Add2UnitsAnd1ConversionUsingAPI()

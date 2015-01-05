@@ -184,7 +184,7 @@ namespace BExIS.Dlm.Entities.DataStructure
         public DataContainer()
         {
             IsBuiltIn = false;
-            Owner = "RPM";
+            Owner = "DLM";
             Constraints = new List<Constraint>();
             ExtendedProperties = new List<ExtendedProperty>();
             GlobalizationInfos = new List<GlobalizationInfo>();

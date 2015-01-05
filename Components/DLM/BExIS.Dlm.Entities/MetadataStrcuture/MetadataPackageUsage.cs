@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BExIS.Dlm.Entities.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,37 +14,9 @@ namespace BExIS.Dlm.Entities.MetadataStructure
     ///
     /// </summary>
     /// <remarks></remarks>        
-    public class MetadataPackageUsage: BaseEntity
+    public class MetadataPackageUsage: BaseUsage
     {
         #region Attributes
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <remarks> Min cardinality 0 is interpreted as optional usage, Min can not be negative. not supported in NH </remarks>
-        /// <seealso cref=""/>        
-        public virtual int MinCardinality { get; set; }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>        
-        public virtual int MaxCardinality { get; set; }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>        
-        public virtual string Label { get; set; }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>        
-        public virtual string Description { get; set; }
 
         #endregion
 

@@ -28,7 +28,7 @@ namespace BExIS.Dlm.Services.Helpers
             Contract.Requires(container != null);
 
             Contract.Ensures(Contract.Result<DomainConstraint>() != null && Contract.Result<DomainConstraint>().Id >= 0);
-
+            constraint.Dematerialize();
             constraint.DataContainer = container;
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {

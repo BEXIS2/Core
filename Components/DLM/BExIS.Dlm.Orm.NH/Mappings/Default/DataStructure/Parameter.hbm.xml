@@ -16,15 +16,23 @@
     </property>
 
     <!-- Mapping Entity properties -->
-    
-    <property name="IsValueOptional" type="yes_no">
-      <column name="IsValueOptional" />
+
+    <property name="MinCardinality" type="Int32">
+      <column name="MinCardinality" />
+    </property>
+
+    <property name="MaxCardinality" type="Int32">
+      <column name="MaxCardinality" />
     </property>
 
     <property name="Label" type="String">
       <column name="Label" />
     </property>
-    
+
+    <property name="Description" type="String">
+      <column name="Description" />
+    </property>
+
     <property name="DefaultValue" type="String">
       <column name="DefaultValue" />
     </property>

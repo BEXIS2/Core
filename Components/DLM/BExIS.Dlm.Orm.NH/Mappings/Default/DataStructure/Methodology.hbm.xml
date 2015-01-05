@@ -34,7 +34,7 @@
     </property>
 
     <set name="DataContainers" inverse="true">
-      <key column="MthodologyRef" not-null="false"/>
+      <key column="MethodologyRef" not-null="false"/>
       <one-to-many class="DataContainer"/>
     </set>
     

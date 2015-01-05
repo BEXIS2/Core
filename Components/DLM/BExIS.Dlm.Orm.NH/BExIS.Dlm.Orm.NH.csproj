@@ -150,6 +150,17 @@
     <Content Include="Mappings\Default\Data\DataTupleVersion.hbm.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Mappings\Default\MetadataStructure\MetadataNestedAttributeUsage.hbm.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Mappings\Default\MetadataStructure\DataContainer.MetadataAttribute.Compound.hbm.xml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Mappings\Default\MetadataStructure\DataContainer.MetadataAttribute.Simple.hbm.xml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Mappings\Default\MetadataStructure\DataContainer.MetadataAttribute.hbm.xml">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

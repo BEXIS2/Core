@@ -1,5 +1,5 @@
-<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.DataStructure">
-  <class xmlns="urn:nhibernate-mapping-2.2" name="Variable" table="Variables" dynamic-update="true">
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.MetadataStructure">
+  <class xmlns="urn:nhibernate-mapping-2.2" name="MetadataNestedAttributeUsage" table="MetadataNestedAttributeUsages" dynamic-update="true">
     <!-- Mapping BaseEntity properties -->
     
     <id name="Id" type="Int64">
@@ -16,7 +16,7 @@
     </property>
 
     <!-- Mapping Entity properties -->
-
+    
     <property name="MinCardinality" type="Int32">
       <column name="MinCardinality" />
     </property>
@@ -33,23 +33,9 @@
       <column name="Description" />
     </property>
 
-    <property name="DefaultValue" type="String">
-      <column name="DefaultValue" />
-    </property>
-
-    <property name="MissingValue" type="String">
-      <column name="MissingValue" />
-    </property>
+    <many-to-one name="Master" class="MetadataCompoundAttribute" not-null="true" column="MetadataCompoundAttributeRef"/>
     
-    <many-to-one name="DataAttribute" class="DataAttribute" not-null="true" column="DataAttributeRef"/>
-
-    <many-to-one name="DataStructure" class="StructuredDataStructure" not-null="true" column="DataStructureRef"/>
-
-    <set name="Parameters" inverse="true">
-      <key column="VariableRef" not-null="false"/>
-      <one-to-many class="Parameter"/>
-    </set>
-
+    <many-to-one name="Member"   class="MetadataAttribute"   not-null="true" column="MetadataAttributeRef"/>
 
   </class>
 

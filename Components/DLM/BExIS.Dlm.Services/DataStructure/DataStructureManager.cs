@@ -274,7 +274,7 @@ namespace BExIS.Dlm.Services.DataStructure
         /// <param name="defaultValue">The default value of the associated variable values. Mainly considered for user interface purposes.</param>
         /// <param name="missingValue">A specific sentinel value that when is put into the variable values, means those values are missing and should not be considered data.</param>
         /// <returns>A created and persisted variable object.</returns>
-        public Variable AddVariableUsage(StructuredDataStructure dataStructure, DataAttribute dataAttribute, bool isValueOptional, string label, string defaultValue, string missingValue)
+        public Variable AddVariableUsage(StructuredDataStructure dataStructure, DataAttribute dataAttribute, bool isValueOptional, string label, string defaultValue, string missingValue, string description)
         {
             Contract.Requires(dataStructure != null && dataStructure.Id >= 0);
             Contract.Requires(dataAttribute != null && dataAttribute.Id >= 0);
@@ -295,11 +295,12 @@ namespace BExIS.Dlm.Services.DataStructure
             {
                 DataStructure = dataStructure,
                 DataAttribute = dataAttribute,
-                IsValueOptional = isValueOptional,
+                MinCardinality = isValueOptional? 0:1,
                 // if there is no label provided, use the data attribute name and a sequence number calculated by the number of occurrences of that data attribute in the current structure
                 Label = !string.IsNullOrWhiteSpace(label)? label: (count <=0 ? dataAttribute.Name: string.Format("{0} ({1})", dataAttribute.Name, count)),
                 DefaultValue = defaultValue,
                 MissingValue = missingValue,
+                Description = description,
             };
             dataAttribute.UsagesAsVariable.Add(usage);
             dataStructure.Variables.Add(usage);
@@ -341,7 +342,7 @@ namespace BExIS.Dlm.Services.DataStructure
         /// <param name="defaultValue"></param>
         /// <param name="missingValue"></param>
         /// <returns></returns>
-        public Parameter AddParameterUsage(Variable variableUsage, DataAttribute dataAttribute, bool isValueOptional, string label, string defaultValue, string missingValue)
+        public Parameter AddParameterUsage(Variable variableUsage, DataAttribute dataAttribute, bool isValueOptional, string label, string defaultValue, string missingValue, string description)
         {
             Contract.Requires(variableUsage != null && variableUsage.DataAttribute.Id >= 0);
             Contract.Requires(dataAttribute != null && dataAttribute.Id >= 0);
@@ -363,11 +364,12 @@ namespace BExIS.Dlm.Services.DataStructure
             {
                 DataAttribute = dataAttribute,
                 Variable = variableUsage,
-                IsValueOptional = isValueOptional,
+                MinCardinality = isValueOptional? 0:1,
                 // if there is no label provided, use the data attribute name and a sequence number calculated by the number of occurrences of that data attribute in the current usage
                 Label = !string.IsNullOrWhiteSpace(label) ? label : (count <= 0 ? dataAttribute.Name : string.Format("{0} ({1})", dataAttribute.Name, count)),
                 DefaultValue = defaultValue,
                 MissingValue = missingValue,
+                Description = description
             };
             dataAttribute.UsagesAsParameter.Add(usage);
             variableUsage.Parameters.Add(usage);

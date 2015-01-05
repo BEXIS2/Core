@@ -15,7 +15,7 @@ namespace BExIS.Dlm.Entities.MetadataStructure
     ///
     /// </summary>
     /// <remarks></remarks>        
-    public class MetadataAttributeUsage: BaseUsage
+    public class MetadataNestedAttributeUsage: BaseUsage
     {
         #region Attributes
 
@@ -28,19 +28,18 @@ namespace BExIS.Dlm.Entities.MetadataStructure
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
-        public virtual MetadataPackage      MetadataPackage     { get; set; }
+        public virtual MetadataCompoundAttribute      Master     { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
-        public virtual MetadataAttribute    MetadataAttribute   { get; set; }
+        public virtual MetadataAttribute    Member   { get; set; }
 
         #endregion
 
         #region Mathods
-
         #endregion
 
     }
