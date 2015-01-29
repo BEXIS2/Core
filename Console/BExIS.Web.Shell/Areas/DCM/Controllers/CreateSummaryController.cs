@@ -16,14 +16,15 @@ using BExIS.Dlm.Entities.Administration;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Dlm.Entities.MetadataStructure;
 using System.Xml.Linq;
-using BExIS.Xml.Services;
+using BExIS.Xml.Helpers;
 using BExIS.Dcm.Wizard;
-using BExIS.Io.Transform.Validation.Exceptions;
+using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Security.Services.Objects;
 using System.Xml;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Subjects;
+using BExIS.Xml.Services;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
 {
@@ -48,7 +49,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                 if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST))
                 {
-                    Dictionary<string, MetadataPackageModel> list = (Dictionary<string, MetadataPackageModel>)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST];
+                    Dictionary<string, AbstractMetadataStepModel> list = (Dictionary<string, AbstractMetadataStepModel>)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST];
                     model = CreateSummaryModel.Convert(list, TaskManager.Current());
                     model.ErrorList = ValidatePackageModels();
                     model.PageStatus = Models.PageStatus.FirstLoad;
@@ -86,7 +87,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 model.StepInfo = TaskManager.Current();
 
                 model.StepInfo.SetValid(false);
-                Dictionary<string, MetadataPackageModel> list = (Dictionary<string, MetadataPackageModel>)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST];
+                Dictionary<string, AbstractMetadataStepModel> list = (Dictionary<string, AbstractMetadataStepModel>)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST];
                 model = CreateSummaryModel.Convert(list, TaskManager.Current());
 
                 if (ValidatePackageModels().Count==0)
@@ -256,7 +257,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     long metadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateDatasetTaskmanager.METADATASTRUCTURE_ID]);
                     List<MetadataPackageUsage> metadataPackageUsageList = msm.GetEffectivePackages(metadataStructureId);
 
-                    List<MetadataPackageModel> tempModels = new List<MetadataPackageModel>();
+                    List<AbstractMetadataStepModel> tempModels = new List<AbstractMetadataStepModel>();
                     foreach(MetadataPackageUsage mpu in metadataPackageUsageList)
                     {
                         tempModels = GetMetadataPackageModelsFromBus(mpu.Id);
@@ -319,16 +320,16 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             return list;
         }
 
-        private List<MetadataPackageModel> GetMetadataPackageModelsFromBus(long metadataPackageUsageId)
+        private List<AbstractMetadataStepModel> GetMetadataPackageModelsFromBus(long metadataPackageUsageId)
         {
-            Dictionary<string, MetadataPackageModel> packageModelDic = new Dictionary<string, MetadataPackageModel>();
-            List<MetadataPackageModel> temp = new List<MetadataPackageModel>();
+            Dictionary<string, AbstractMetadataStepModel> packageModelDic = new Dictionary<string, AbstractMetadataStepModel>();
+            List<AbstractMetadataStepModel> temp = new List<AbstractMetadataStepModel>();
 
             if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST))
             {
-                packageModelDic = (Dictionary<string, MetadataPackageModel>)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST];
+                packageModelDic = (Dictionary<string, AbstractMetadataStepModel>)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST];
 
-                foreach (KeyValuePair<string, MetadataPackageModel> keyValuePair in packageModelDic)
+                foreach (KeyValuePair<string, AbstractMetadataStepModel> keyValuePair in packageModelDic)
                 {
                     if (GetPackageUsageIdFromIdentfifier(keyValuePair.Key).Equals(metadataPackageUsageId))
                         temp.Add(keyValuePair.Value);

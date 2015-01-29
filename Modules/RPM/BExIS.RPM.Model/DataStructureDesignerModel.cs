@@ -9,21 +9,41 @@ using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Entities.MetadataStructure;
 using System.Xml.Linq;
+using BExIS.Xml.Helpers;
 using BExIS.Xml.Services;
 
+/// <summary>
+///
+/// </summary>        
 namespace BExIS.RPM.Model
 {
+    /// <summary>
+    ///
+    /// </summary>
+    /// <remarks></remarks>        
     public class DatasetListElement
     {
         public long Id = 0;
         public string Title = "";
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="Id"></param>
+        /// <param name="Title"></param>
         public DatasetListElement(long Id,string Title)
         {
             this.Id = Id;
             this.Title = Title;
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public DatasetListElement()
         {
             this.Id = 0;
@@ -31,20 +51,64 @@ namespace BExIS.RPM.Model
         }
     }
 
+
+    /// <summary>
+    ///
+    /// </summary>
+    /// <remarks></remarks>        
     public class DataStructureDesignerModel
     {
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public DataStructure dataStructure { get; set; }
 
         public bool structured = true;
         public bool show = true;
         public bool inUse = false;
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public DataTable dataStructureTable { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public List<DataAttribute> dataAttributeList { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public List<Variable> variables { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public List<DatasetListElement> datasets { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public DataStructureTree dataStructureTree { get; set; }
         
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
         public DataStructureDesignerModel()
         {
             this.dataStructure = new StructuredDataStructure();
@@ -57,6 +121,14 @@ namespace BExIS.RPM.Model
             datasets = new List<DatasetListElement>();
         }
 
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param>NA</param>       
+        /// <returns></returns>
         public DataStructureTree getDataStructureTree()
         {
             
@@ -71,25 +143,25 @@ namespace BExIS.RPM.Model
             XmlDocument doc = (XmlDocument)structuredDataStructure.Extra;
             XmlNode order;
 
-            if (doc == null)
-            {
-                doc = new XmlDocument();
+                if (doc == null)
+                {
+                    doc = new XmlDocument();
                 XmlNode root = doc.CreateNode(System.Xml.XmlNodeType.Element, "extra", null);
                 doc.AppendChild(root);
             }
             if (doc.GetElementsByTagName("order").Count == 0)
-            {
+                    {
 
                 if (structuredDataStructure.Variables.Count > 0)
                 {
                     order = doc.CreateNode(System.Xml.XmlNodeType.Element, "order", null);
-                    foreach (Variable v in structuredDataStructure.Variables)
-                    {
+                        foreach (Variable v in structuredDataStructure.Variables)
+                        {
 
-                        XmlNode variable = doc.CreateNode(System.Xml.XmlNodeType.Element, "variable", null);
-                        variable.InnerText = v.Id.ToString();
+                            XmlNode variable = doc.CreateNode(System.Xml.XmlNodeType.Element, "variable", null);
+                            variable.InnerText = v.Id.ToString();
                         order.AppendChild(variable);
-                    }
+                        }
                     doc.FirstChild.AppendChild(order);
                     structuredDataStructure.Extra = doc;
                     dsm.UpdateStructuredDataStructure(structuredDataStructure);
@@ -99,19 +171,19 @@ namespace BExIS.RPM.Model
             order = doc.GetElementsByTagName("order")[0];
             List<Variable> orderedVariables = new List<Variable>();
             if (structuredDataStructure.Variables.Count != 0)
-            {
-                foreach (XmlNode x in order)
                 {
-                    foreach (Variable v in structuredDataStructure.Variables)
+                foreach (XmlNode x in order)
                     {
-                        if (v.Id == Convert.ToInt64(x.InnerText))
+                    foreach (Variable v in structuredDataStructure.Variables)
+                        {
+                            if (v.Id == Convert.ToInt64(x.InnerText))
                             orderedVariables.Add(v);
 
+                        }
                     }
-                }
             }
             return orderedVariables; 
-        }
+                }
 
         public StructuredDataStructure GetDataStructureByID(long ID)
         {
@@ -160,6 +232,14 @@ namespace BExIS.RPM.Model
 
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="ID"></param>
+        /// <param name="structured"></param>
+        /// <returns></returns>
         public DataStructure GetDataStructureByID(long ID, bool structured)
         {
             this.structured = structured;
@@ -208,6 +288,11 @@ namespace BExIS.RPM.Model
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
         public void BuildDataTable()
         {
             this.dataStructureTable = new DataTable();
@@ -356,6 +441,11 @@ namespace BExIS.RPM.Model
                 this.dataStructureTable.Rows.Add(Row);      
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public void GetDataAttributeList()
         {
             DataContainerManager DataAttributeManager = new DataContainerManager();

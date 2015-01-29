@@ -11,13 +11,15 @@ using Lucene.Net.Index;
 using Lucene.Net.QueryParsers;
 using Lucene.Net.Search;
 
-
-
-
-
-
+/// <summary>
+///
+/// </summary>        
 namespace BExIS.Ddm.Providers.LuceneProvider.Config
 {
+    /// <summary>
+    ///
+    /// </summary>
+    /// <remarks></remarks>        
     public static class SearchConfig
     {
         static XmlDocument configXML;
@@ -38,6 +40,11 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Config
         public static List<XmlNode> generalXmlNodeList = new List<XmlNode>();
         public static List<XmlNode> headerItemXmlNodeList = new List<XmlNode>();
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>               
         public static void Reset()
         {
             isLoaded = false;
@@ -60,6 +67,11 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Config
 
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public static void LoadConfig()
         {
             if (!isLoaded)
@@ -69,6 +81,11 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Config
             }
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         private static void Load()
         {
             configXML = new XmlDocument();
@@ -225,38 +242,100 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Config
             }
         }
 
-
-
-
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public static void reloadConfig()
         {
             isLoaded = false;
             LoadConfig();
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param>NA</param>       
+        /// <returns></returns>
         public static HashSet<string> getNumericProperties() { return numericProperties; }
-
+        
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param>NA</param>       
+        /// <returns></returns>
         public static IEnumerable<Facet> getFacets() { return AllFacetsDefault; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param>NA</param>       
+        /// <returns></returns>
         public static IEnumerable<Property> getProperties() { return AllPropertiesDefault; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param>NA</param>       
+        /// <returns></returns>
         public static IEnumerable<Category> getCategories() { return AllCategoriesDefault; }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param>NA</param>       
+        /// <returns></returns>
         public static IEnumerable<Facet> getFacetsCopy()
         {
             searchInitObjects sIOCopy = DeepCopy<searchInitObjects>(sIO);
             return sIOCopy.AllFacets;
         }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param>NA</param>       
+        /// <returns></returns>
         public static IEnumerable<Property> getPropertiesCopy()
         {
             searchInitObjects sIOCopy = DeepCopy<searchInitObjects>(sIO);
             return sIOCopy.AllProperties;
         }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param>NA</param>       
+        /// <returns></returns>
         public static IEnumerable<Category> getCategoriesCopy()
         {
             searchInitObjects sIOCopy = DeepCopy<searchInitObjects>(sIO);
             return sIOCopy.AllCategories;
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public static T DeepCopy<T>(T obj)
         {
             if (obj == null)
@@ -264,6 +343,14 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Config
             return (T)Process(obj, new Dictionary<object, object>() { });
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="obj"></param>
+        /// <param name="circular"></param>
+        /// <returns></returns>
         static object Process(object obj, Dictionary<object, object> circular)
         {
             if (obj == null)
@@ -315,7 +402,13 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Config
                 throw new ArgumentException("Unknown type");
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="t"></param>
+        /// <returns></returns>
         public static IEnumerable<System.Reflection.FieldInfo> GetAllFields(Type t)
         {
             if (t == null)

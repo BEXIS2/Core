@@ -1,17 +1,44 @@
 ﻿using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Standard;
 
+/// <summary>
+///
+/// </summary>        
 namespace Lucene.Net.SynonymEngine
 {
+    /// <summary>
+    ///
+    /// </summary>
+    /// <remarks></remarks>        
     public class SynonymAnalyzer : Analyzer
     {
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public ISynonymEngine SynonymEngine { get; private set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="engine"></param>
+        /// <return>NA</return>
         public SynonymAnalyzer(ISynonymEngine engine)
         {
             SynonymEngine = engine;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="fieldName"></param>
+        /// <param name="reader"></param>
+        /// <returns></returns>
         public override TokenStream TokenStream(string fieldName, System.IO.TextReader reader)
         {
             //create the tokenizer

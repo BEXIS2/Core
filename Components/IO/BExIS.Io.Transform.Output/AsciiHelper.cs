@@ -6,7 +6,7 @@ using System.Text;
 /// <summary>
 ///
 /// </summary>        
-namespace BExIS.Io.Transform.Output
+namespace BExIS.IO.Transform.Output
 {
     /// <summary>
     ///

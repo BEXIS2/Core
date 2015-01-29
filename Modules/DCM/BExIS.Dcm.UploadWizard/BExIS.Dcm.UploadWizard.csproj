@@ -79,13 +79,13 @@
       <Project>{c4ca0a99-0af3-4372-a9b7-b9073599bd8b}</Project>
       <Name>BExIS.Dlm.Services</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Components\IO\BExIS.IoTransform.Input\BExIS.Io.Transform.Input.csproj">
+    <ProjectReference Include="..\..\..\Components\IO\BExIS.IO.Transform.Input\BExIS.IO.Transform.Input.csproj">
       <Project>{5c4c8570-a53b-4191-a414-de028aaaf36a}</Project>
-      <Name>BExIS.Io.Transform.Input</Name>
+      <Name>BExIS.IO.Transform.Input</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Components\IO\BExIS.Io.Transform.Validation\BExIS.Io.Transform.Validation.csproj">
-      <Project>{c8a05313-b960-406e-92ec-c1e5b3f47fcd}</Project>
-      <Name>BExIS.Io.Transform.Validation</Name>
+    <ProjectReference Include="..\..\..\Components\IO\BExIS.IO.Transform.Output\BExIS.IO.Transform.Output.csproj">
+      <Project>{455ec826-9a92-40ff-bd3b-388c288955ce}</Project>
+      <Name>BExIS.IO.Transform.Output</Name>
     </ProjectReference>
     <ProjectReference Include="..\BExIS.Dcm.Wizard\BExIS.Dcm.Wizard.csproj">
       <Project>{d17cdd9d-b87b-441b-9248-5c54e92ffc81}</Project>

@@ -4,9 +4,15 @@ using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.NGram;
 using Lucene.Net.Analysis.Standard;
 
-
+/// <summary>
+///
+/// </summary>        
 namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
 {
+    /// <summary>
+    ///
+    /// </summary>
+    /// <remarks></remarks>        
     class NGramAnalyzer : Analyzer
     {
 
@@ -37,8 +43,11 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
         /// </summary>
         private ICollection<string> excltable = new List<string>();
 
-
-
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public NGramAnalyzer()
         {
             stoptable = StopFilter.MakeStopSet(GERMAN_STOP_WORDS);
@@ -47,7 +56,10 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
         /// <summary>
         /// Builds an exclusionlist from an array of Strings. 
         /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
         /// <param name="exclusionlist"></param>
+        /// <return></return>
         public void SetStemExclusionTable(String[] exclusionlist)
         {
             excltable = StopFilter.MakeStopSet(exclusionlist);
@@ -56,14 +68,23 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
         /// <summary>
         /// Builds an exclusionlist from a Hashtable. 
         /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
         /// <param name="exclusionlist"></param>
+        /// <return></return>
         public void SetStemExclusionTable(ICollection<string> exclusionlist)
         {
             excltable = exclusionlist;
         }
 
-
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="fieldName"></param>
+        /// <param name="reader"></param>
+        /// <returns></returns>
         public override TokenStream TokenStream(String fieldName, System.IO.TextReader reader)
         {
             TokenStream result = new StandardTokenizer(Lucene.Net.Util.Version.LUCENE_30, reader);

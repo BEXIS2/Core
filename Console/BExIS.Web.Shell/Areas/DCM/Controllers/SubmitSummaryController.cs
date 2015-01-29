@@ -5,9 +5,10 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using BExIS.Io.Transform.Input;
-using BExIS.Io.Transform.Output;
-using BExIS.Io.Transform.Validation.Exceptions;
+using BExIS.IO;
+using BExIS.IO.Transform.Input;
+using BExIS.IO.Transform.Output;
+using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Dcm.UploadWizard;
 using BExIS.Dcm.Wizard;
 using BExIS.Dlm.Entities.Data;
@@ -15,7 +16,6 @@ using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Web.Shell.Areas.DCM.Models;
-using BExIS.Io;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
 {
@@ -205,7 +205,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                                     Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
                                     rows = reader.ReadFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), sds, (int)id, packageSize);
 
-                                    if (reader.errorMessages.Count > 0)
+                                    if (reader.ErrorMessages.Count > 0)
                                     {
                                         //model.ErrorList = reader.errorMessages;
                                     }
@@ -282,7 +282,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                                         rows = reader.ReadFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), (AsciiFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO], sds, id, packageSize);
                                         Stream.Close();
 
-                                        if (reader.errorMessages.Count > 0)
+                                        if (reader.ErrorMessages.Count > 0)
                                         {
                                             //model.ErrorList = reader.errorMessages;
                                         }

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Web;
-using BExIS.Io.Transform.Validation.Exceptions;
+using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Dlm.Entities.Data;
 
 namespace BExIS.Web.Shell.Areas.DCM.Models

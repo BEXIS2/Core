@@ -5,7 +5,8 @@ using System.Web;
 using System.Xml;
 using System.Xml.Linq;
 using BExIS.Dlm.Entities.Data;
-using BExIS.Xml.Services;
+using BExIS.Xml.Helpers;
+
 
 namespace BExIS.Web.Shell.Areas.Auth.Models
 {

@@ -5,19 +5,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
-using BExIS.Io.Transform.Validation.DSValidation;
-using BExIS.Io.Transform.Validation.Exceptions;
+using BExIS.IO.Transform.Validation.DSValidation;
+using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.DataStructure;
 using Vaiona.Util.Cfg;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Entities.Data;
+using BExIS.Dlm.Entities.MetadataStructure;
+using System.Xml.Linq;
+using BExIS.Xml.Helpers;
 using BExIS.Xml.Services;
 
 /// <summary>
 ///
 /// </summary>        
-namespace BExIS.Io.Transform.Output
+namespace BExIS.IO.Transform.Output
 {
     /// <summary>
     /// DataWriter is an abstract class that has basic functions for storing file.
@@ -32,14 +35,14 @@ namespace BExIS.Io.Transform.Output
             /// </summary>
             /// <remarks></remarks>
             /// <seealso cref="Error"/>    
-            public List<Error> errorMessages { get; set; }
+            public List<Error> ErrorMessages { get; set; }
 
             /// <summary>
             ///
             /// </summary>
             /// <remarks></remarks>
             /// <seealso cref=""/>        
-            public String[] visibleColumns { get; set; }
+            public String[] VisibleColumns { get; set; }
 		 
 	    #endregion
 
@@ -50,7 +53,7 @@ namespace BExIS.Io.Transform.Output
             /// </summary>
             /// <remarks></remarks>
             /// <seealso cref="Stream"/>  
-            protected Stream file { get; set; }
+            protected Stream FileStream { get; set; }
 
             /// <summary>
             /// List of VariableIdentifiers 
@@ -65,12 +68,12 @@ namespace BExIS.Io.Transform.Output
             /// </summary>
             /// <remarks></remarks>
             /// <seealso cref=""/>        
-            protected List<List<string>> variableIdentifierRows = new List<List<string>>();
+            protected List<List<string>> VariableIdentifierRows = new List<List<string>>();
 
         #endregion
 
         //managers
-        protected DatasetManager datasetManager = new DatasetManager();
+        protected DatasetManager DatasetManager = new DatasetManager();
 
         //Constructor
 
@@ -82,7 +85,7 @@ namespace BExIS.Io.Transform.Output
         /// <param>NA</param>       
         public DataWriter()
         {
-            datasetManager = new DatasetManager();
+            DatasetManager = new DatasetManager();
         }
 
         /// <summary>
@@ -279,21 +282,6 @@ namespace BExIS.Io.Transform.Output
             return "";
         }
 
-        //public bool MoveFile(string tempFile, string destinationPath)
-        //{
-        //    if (File.Exists(tempFile))
-        //    {
-        //        File.Move(tempFile, destinationPath);
-
-        //        if (File.Exists(destinationPath))
-        //        {
-        //            return true;
-        //        }else return false;
-        //    }
-        //    else return false;
-
-        //}
-
         /// <summary>
         ///
         /// </summary>
@@ -316,6 +304,18 @@ namespace BExIS.Io.Transform.Output
         /// <returns></returns>
         public String GetTitle(long id)
         { 
+            DatasetVersion datasetVersion = DatasetManager.GetDatasetLatestVersion(id);
+
+            // get MetadataStructure 
+            MetadataStructure metadataStructure = datasetVersion.Dataset.MetadataStructure;
+            XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)datasetVersion.Dataset.MetadataStructure.Extra);
+            XElement temp = XmlUtility.GetXElementByAttribute("nodeRef", "name", "title", xDoc);
+
+            string xpath = temp.Attribute("value").Value.ToString();
+            string title = datasetVersion.Metadata.SelectSingleNode(xpath).InnerText;
+
+            return title;
+
             DatasetManager datasetManager = new DatasetManager();
 
             return XmlDatasetHelper.GetInformation(datasetManager.GetDatasetLatestVersion(id), AttributeNames.title);

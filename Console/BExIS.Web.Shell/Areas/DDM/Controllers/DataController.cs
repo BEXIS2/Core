@@ -12,23 +12,24 @@ using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
-using BExIS.Io.Transform.Output;
+using BExIS.IO.Transform.Output;
 using BExIS.Web.Shell.Areas.DDM.Helpers;
 using Telerik.Web.Mvc;
 using Telerik.Web.Mvc.UI;
 using Vaiona.Util.Cfg;
-using BExIS.Io;
+using BExIS.IO;
 using System.IO.Compression;
 using BExIS.Web.Shell.Areas.DDM.Models;
 using Ionic.Zip;
 using BExIS.Security.Services.Objects;
 using BExIS.Dlm.Entities.MetadataStructure;
-using BExIS.Xml.Services;
 using System.Xml;
 using System.Xml.Linq;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Subjects;
+using BExIS.Xml.Helpers;
+using BExIS.Xml.Services;
 
 namespace BExIS.Web.Shell.Areas.DDM.Controllers
 {
@@ -92,7 +93,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 XDocument xDoc = XmlUtility.ToXDocument(dsv.Metadata);
 
                 //get a list of MetadataPackageUsages
-                IEnumerable<XElement> MetadataPackageUsageList = helper.GetElementsByAttribute(xDoc, "type", BExIS.Xml.Services.XmlNodeType.MetadataPackageUsage.ToString());
+                IEnumerable<XElement> MetadataPackageUsageList = helper.GetElementsByAttribute(xDoc, "type", BExIS.Xml.Helpers.XmlNodeType.MetadataPackageUsage.ToString());
 
                 //For Each MetadataPackageUsage
                 foreach (XElement packageUsage in MetadataPackageUsageList)
@@ -101,7 +102,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                     puElement.Name = packageUsage.Attribute("name").Value;
 
                     //get a list of MetadataAttributeUsages
-                    IEnumerable<XElement> MetadataPackageList = helper.GetElementsByAttribute(packageUsage, "type", BExIS.Xml.Services.XmlNodeType.MetadataPackage.ToString());
+                    IEnumerable<XElement> MetadataPackageList = helper.GetElementsByAttribute(packageUsage, "type", BExIS.Xml.Helpers.XmlNodeType.MetadataPackage.ToString());
                     
                     //For Each MetadataPackage
                     foreach (XElement attributeUsage in MetadataPackageList)
@@ -109,7 +110,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         Package pElement = new Package();
 
                         // get a list of AAtributeUsages
-                        IEnumerable<XElement> MetadataAttributeUsageList = helper.GetElementsByAttribute(attributeUsage, "type", BExIS.Xml.Services.XmlNodeType.MetadataAttributeUsage.ToString());
+                        IEnumerable<XElement> MetadataAttributeUsageList = helper.GetElementsByAttribute(attributeUsage, "type", BExIS.Xml.Helpers.XmlNodeType.MetadataAttributeUsage.ToString());
 
                         //For Each AttributeUsage
                         foreach (XElement attribute in MetadataAttributeUsageList)
@@ -118,7 +119,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                             string name = attribute.Attribute("name").Value;
 
                             //get a list of Attributes
-                            IEnumerable<XElement> MetadataAttributeList = helper.GetElementsByAttribute(attribute, "type", BExIS.Xml.Services.XmlNodeType.MetadataAttribute.ToString());
+                            IEnumerable<XElement> MetadataAttributeList = helper.GetElementsByAttribute(attribute, "type", BExIS.Xml.Helpers.XmlNodeType.MetadataAttribute.ToString());
 
                             foreach (XElement e in MetadataAttributeList)
                             {
@@ -260,7 +261,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         List<AbstractTuple> datatuples = GetFilteredDataTuples(datasetVersion); 
 
                             if (Session["Columns"] != null)
-                                writer.visibleColumns = (String[])Session["Columns"];
+                                writer.VisibleColumns = (String[])Session["Columns"];
 
                             long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
 
@@ -278,12 +279,12 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         //excel allready exist
                         if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals("generated")) > 0)
                         {
-                            #region file exist
+                            #region FileStream exist
 
                                 ContentDescriptor contentdescriptor = datasetVersion.ContentDescriptors.Where(p => p.Name.Equals("generated")).FirstOrDefault();
                                 path = Path.Combine(AppConfiguration.DataPath, contentdescriptor.URI);
 
-                                // check if file exist
+                                // check if FileStream exist
                                 if (FileHelper.FileExist(path))
                                 {
                                     return File(path, contentdescriptor.MimeType, title + ext);
@@ -306,7 +307,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         // not exist needs to generated
                         else
                         {
-                            #region file not exist
+                            #region FileStream not exist
 
                                 List<long> datatupleIds = datasetManager.GetDatasetVersionEffectiveTupleIds(datasetVersion);
                                 long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
@@ -344,7 +345,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         path = generateDownloadFile(id, datasetVersion.VersionNo, datastuctureId, title, ext, writer);
 
                         if (Session["Columns"] != null)
-                            writer.visibleColumns = (String[])Session["Columns"];
+                            writer.VisibleColumns = (String[])Session["Columns"];
 
                         writer.AddDataTuples(datatuples, path, datastuctureId);
 
@@ -360,7 +361,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         //csv allready exist
                         if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals("generatedCSV")) > 0)
                         {
-                            #region file exist
+                            #region FileStream exist
 
                             ContentDescriptor contentdescriptor = datasetVersion.ContentDescriptors.Where(p => p.Name.Equals("generatedCSV")).FirstOrDefault();
                             path = Path.Combine(AppConfiguration.DataPath, contentdescriptor.URI);
@@ -387,7 +388,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         // not exist needs to generated
                         else
                         {
-                            #region file not exist
+                            #region FileStream not exist
 
                             path = generateDownloadFile(id, datasetVersion.VersionNo, datastuctureId, title, ext, writer);
 
@@ -424,7 +425,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                             path = generateDownloadFile(id, datasetVersion.VersionNo, datastuctureId, title, ext, writer);
 
                             if (Session["Columns"] != null)
-                                writer.visibleColumns = (String[])Session["Columns"];
+                                writer.VisibleColumns = (String[])Session["Columns"];
 
                             writer.AddDataTuples(datatuples, path, datastuctureId);
 
@@ -443,14 +444,14 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         //csv allready exist
                         if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals("generatedTXT")) > 0 || datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(path)) == 1)
                         {
-                            #region file exist
+                            #region FileStream exist
 
                                 ContentDescriptor contentdescriptor = datasetVersion.ContentDescriptors.Where(p => p.Name.Equals("generatedTXT")).FirstOrDefault();
                                 path = Path.Combine(AppConfiguration.DataPath, contentdescriptor.URI);
 
                                 if (FileHelper.FileExist(path))
                                 {
-                                    // return file based on loaded link from content discriptor
+                                    // return FileStream based on loaded link from content discriptor
                                     return File(path, contentdescriptor.MimeType, title + ext);
                                 }
                                 else
@@ -460,10 +461,10 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                                     //generate a entry in the ContentDiscriptor
                                     storeGeneratedFilePathToContentDiscriptor(id, datasetVersion, title, ext, writer);
 
-                                    // Add DataStructure and Datatuples to file
+                                    // Add DataStructure and Datatuples to FileStream
                                     writer.AddDataTuples(datatupleIds, path, datastuctureId);
 
-                                    // return created file
+                                    // return created FileStream
                                     return File(path, "text/plain", title + ext);
                                 }
 
@@ -472,17 +473,17 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         // not exist needs to generated
                         else
                         {
-                            #region file not exist
+                            #region FileStream not exist
 
                                 path = generateDownloadFile(id, datasetVersion.VersionNo, datastuctureId, title, ext, writer);
 
                                 //generate a entry in the ContentDiscriptor
                                 storeGeneratedFilePathToContentDiscriptor(id, datasetVersion, title, ext, writer);
 
-                                // Add DataStructure and Datatuples to file
+                                // Add DataStructure and Datatuples to FileStream
                                 writer.AddDataTuples(datatupleIds, path, datastuctureId);
 
-                                // return created file
+                                // return created FileStream
                                 return File(path, "text/plain", title + ext);
 
                             #endregion
@@ -534,9 +535,9 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                             mimeType = "application/xlsm";
                         }
 
-                        // create the generated file and determine its location
+                        // create the generated FileStream and determine its location
                         string dynamicPath = writer.GetDynamicStorePath(datasetId, datasetVersion.VersionNo, title, ext);
-                        //Register the generated data file as a resource of the current dataset version
+                        //Register the generated data FileStream as a resource of the current dataset version
                         ContentDescriptor generatedDescriptor = new ContentDescriptor()
                         {
                             OrderNo = 1,
@@ -708,7 +709,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
             #endregion
 
-            #region download file
+            #region download FileStream
 
                 public ActionResult DownloadFile(string path,string mimeType)
                 {

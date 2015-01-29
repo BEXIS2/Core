@@ -5,9 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
+/// <summary>
+///
+/// </summary>        
 namespace BExIS.Ddm.Providers.LuceneProvider.Helpers
 {
-
     /// <summary>
     /// Lucene use some spacial Characters for query
     /// This Encoder find and replace this special Character for searching
@@ -17,6 +19,13 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Helpers
     {
         static string[] specialCharacterArray = new string[] {"\\","\"", "+", "-","&&","||","!","(",")","{","}","[","]","~","*","?",":","<" };
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public static string Encode(string value)
         {
             if (SpecialCharactrersInValue(value))
@@ -28,14 +37,14 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Helpers
             return value;
         }
 
-
         /// <summary>
         /// compare the list of Special Characters with the
         /// incoming value and add a \ before it
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param name="value"></param>       
+        /// <param name="value"></param>    
+        /// <returns></returns>
         private static string ReplaceSpecialCharacters(string value)
         {
 
@@ -56,6 +65,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Helpers
         /// <remarks></remarks>
         /// <seealso cref=""/>
         /// <param name="value"></param>   
+        /// <returns></returns>
         private static bool SpecialCharactrersInValue(string value)
         {
             string regExPattern = @"[+\-&&||!(){}[\]~*?:\\""]";

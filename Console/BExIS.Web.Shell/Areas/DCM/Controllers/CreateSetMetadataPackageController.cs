@@ -10,6 +10,7 @@ using System.Xml.Linq;
 using BExIS.Dcm.CreateDatasetWizard;
 using BExIS.Dcm.Wizard;
 using BExIS.Dlm.Entities.Administration;
+using BExIS.Dlm.Entities.Common;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Entities.MetadataStructure;
@@ -17,10 +18,11 @@ using BExIS.Dlm.Services.Administration;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
-using BExIS.Io.Transform.Validation.Exceptions;
+using BExIS.Dlm.Services.TypeSystem;
+using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Web.Shell.Areas.DCM.Models;
 using BExIS.Web.Shell.Areas.DCM.Models.Metadata;
-using BExIS.Xml.Services;
+using BExIS.Xml.Helpers;
 using Vaiona.Util.Cfg;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
@@ -34,8 +36,73 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         [HttpGet]
         public ActionResult SetMetadataPackage(int index)
         {
+
+            #region load
+
+            TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
+            int stepIndex = TaskManager.GetCurrentStepInfoIndex();
+            long packageId = GetUsageId(stepIndex);
+
+            //step should executed = true;
+            TaskManager.Current().notExecuted = false;
+
+            TaskManager.SetCurrent(index);
+
+            #endregion
+
+            //#region go next success
             
-            #region load taskmanager and setup 
+            //TaskManager.SetCurrent(index);
+            //TaskManager.GoToNext();
+            //Session["TaskManager"] = TaskManager;
+            //ActionInfo actionInfo = TaskManager.Current().GetActionInfo;
+            //return RedirectToAction(actionInfo.ActionName, actionInfo.ControllerName, new RouteValueDictionary { { "area", actionInfo.AreaName }, { "index", TaskManager.GetCurrentStepInfoIndex() } });
+
+            //#endregion
+
+            return PartialView("_metadataPackage", CreatePackageModel(index,false));
+
+        }
+
+        
+        /// <summary>
+        /// Jump to Step on position Index
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult SetMetadataPackage(int? index, string name=null)
+        {
+            #region load
+                TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
+                int stepIndex = TaskManager.GetCurrentStepInfoIndex();
+                long packageId = GetUsageId(stepIndex);
+
+                //step should executed = true;
+                TaskManager.Current().notExecuted = false;
+                
+                MetadataPackageModel model = new MetadataPackageModel();
+            #endregion
+
+            #region go next success
+            
+                //TaskManager.AddExecutedStep(TaskManager.Current());
+                if (index.HasValue)
+                    TaskManager.SetCurrent(index.Value);
+                else
+                    TaskManager.GoToNext();
+                Session["TaskManager"] = TaskManager;
+                ActionInfo actionInfo = TaskManager.Current().GetActionInfo;
+                return RedirectToAction(actionInfo.ActionName, actionInfo.ControllerName, new RouteValueDictionary { { "area", actionInfo.AreaName }, { "index", TaskManager.GetCurrentStepInfoIndex() } });
+
+            #endregion
+        }
+
+        [HttpGet]
+        public ActionResult SetMetadataPackageInstanze(int index)
+        {
+            #region load taskmanager and setup
             bool validateIt = true;
             TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
 
@@ -58,86 +125,220 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             #endregion
 
-            return PartialView(Create(index, validateIt));
+            return PartialView("_setMetadataPackageInstanz", CreatePackageModel(index, validateIt));
         }
 
-        
-        /// <summary>
-        /// Jump to Step on position Index
-        /// </summary>
-        /// <param name="index"></param>
-        /// <param name="name"></param>
-        /// <returns></returns>
         [HttpPost]
-        public ActionResult SetMetadataPackage(int? index, string name=null)
+        public ActionResult SetMetadataPackageInstanze(int? index, string name = null)
         {
-            #region load
-                TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
-                int stepIndex = TaskManager.GetCurrentStepInfoIndex();
-                long packageId = GetPackageId(stepIndex);
 
-                //step should executed = true;
-                TaskManager.Current().notExecuted = false;
-                
-                MetadataPackageContainerModel model = new MetadataPackageContainerModel();
+            #region load
+            TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
+            int stepIndex = TaskManager.GetCurrentStepInfoIndex();
+            long usageId = GetUsageId(stepIndex);
+            int number = 1;
+            //step should executed = true;
+            TaskManager.Current().notExecuted = false;
+
             #endregion
 
             #region validate
 
-                List<Error> errors = ValidatePackageContainer(packageId);
-                if (errors == null || errors.Count == 0)
-                {
-                    TaskManager.Current().SetValid(true);
-                    TaskManager.Current().SetStatus(StepStatus.success);
-                    //UpdateXml(packageId);
-                }
-                else
-                {
-                    TaskManager.Current().SetValid(false);
-                    TaskManager.Current().SetStatus(StepStatus.error);
-                }
+            List<Error> errors = validateStep(GetModelFromBus(usageId, number));
+
+            if (errors == null || errors.Count == 0)
+            {
+                TaskManager.Current().SetValid(true);
+                TaskManager.Current().SetStatus(StepStatus.success);
+                //UpdateXml(packageId);
+            }
+            else
+            {
+                TaskManager.Current().SetValid(false);
+                TaskManager.Current().SetStatus(StepStatus.error);
+            }
             #endregion
 
             #region go next success
-            
-                //TaskManager.AddExecutedStep(TaskManager.Current());
-                if (index.HasValue)
-                    TaskManager.SetCurrent(index.Value);
-                else
-                    TaskManager.GoToNext();
-                Session["TaskManager"] = TaskManager;
-                ActionInfo actionInfo = TaskManager.Current().GetActionInfo;
-                return RedirectToAction(actionInfo.ActionName, actionInfo.ControllerName, new RouteValueDictionary { { "area", actionInfo.AreaName }, { "index", TaskManager.GetCurrentStepInfoIndex() } });
+
+            //TaskManager.AddExecutedStep(TaskManager.Current());
+            if (index.HasValue)
+                TaskManager.SetCurrent(index.Value);
+            else
+                TaskManager.GoToNext();
+            Session["TaskManager"] = TaskManager;
+            ActionInfo actionInfo = TaskManager.Current().GetActionInfo;
+            return RedirectToAction(actionInfo.ActionName, actionInfo.ControllerName, new RouteValueDictionary { { "area", actionInfo.AreaName }, { "index", TaskManager.GetCurrentStepInfoIndex() } });
 
             #endregion
         }
+
+        [HttpGet]
+        public ActionResult SetMetadataCompoundAttribute(int index)
+        {
+            #region load
+            TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
+            int stepIndex = TaskManager.GetCurrentStepInfoIndex();
+
+
+            //step should executed = true;
+            TaskManager.Current().notExecuted = false;
+            #endregion
+
+            TaskManager.SetCurrent(index);
+
+            return PartialView("_setMetadataCompoundAttribute", CreateCompoundModel(index,false, TaskManager.IsParentChildfromRoot()));
+
+        }
+
+        [HttpPost]
+        public ActionResult SetMetadataCompoundAttribute(int? index, string name = null)
+        {
+
+            #region load
+            TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
+            int stepIndex = TaskManager.GetCurrentStepInfoIndex();
+            long packageId = GetUsageId(stepIndex);
+
+            //step should executed = true;
+            TaskManager.Current().notExecuted = false;
+
+            #endregion
+
+            #region go next success
+
+            //TaskManager.AddExecutedStep(TaskManager.Current());
+            if (index.HasValue)
+                TaskManager.SetCurrent(index.Value);
+            else
+                TaskManager.GoToNext();
+            Session["TaskManager"] = TaskManager;
+            ActionInfo actionInfo = TaskManager.Current().GetActionInfo;
+            return RedirectToAction(actionInfo.ActionName, actionInfo.ControllerName, new RouteValueDictionary { { "area", actionInfo.AreaName }, { "index", TaskManager.GetCurrentStepInfoIndex() } });
+
+            #endregion
+
+        }
+
+        [HttpGet]
+        public ActionResult SetMetadataCompoundAttributeInstanze(int index)
+        {
+            #region load taskmanager and setup
+
+            bool validateIt = true;
+            TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
+
+            //set current stepinfo based on index
+            if (TaskManager != null)
+            {
+                // if jump to a other step like the next
+                TaskManager.UpdateStepStatus(index);
+
+                TaskManager.SetCurrent(index);
+
+                if (TaskManager.Current().notExecuted)
+                {
+                    //TaskManager.Current().notExecuted = false;
+                    validateIt = false;
+                }
+                // remove if existing
+                //TaskManager.RemoveExecutedStep(TaskManager.Current());
+            }
+
+            #endregion
+
+            return PartialView("_setMetadataCompoundAttributeInstanz", CreateCompoundModel(index, validateIt, TaskManager.IsParentChildfromRoot()));
+        }
+
+        [HttpPost]
+        public ActionResult SetMetadataCompoundAttributeInstanze(int? index, string name = null)
+        {
+
+            #region load
+            TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
+            int stepIndex = TaskManager.GetCurrentStepInfoIndex();
+            long usageId = GetUsageId(stepIndex);
+            int number = 1;
+            //step should executed = true;
+            TaskManager.Current().notExecuted = false;
+
+            #endregion
+
+            #region validate
+
+            List<Error> errors = validateStep(GetModelFromBus(usageId, number));
+
+            if (errors == null || errors.Count == 0)
+            {
+                TaskManager.Current().SetValid(true);
+                TaskManager.Current().SetStatus(StepStatus.success);
+                //UpdateXml(packageId);
+            }
+            else
+            {
+                TaskManager.Current().SetValid(false);
+                TaskManager.Current().SetStatus(StepStatus.error);
+            }
+            #endregion
+
+            #region go next success
+
+            //TaskManager.AddExecutedStep(TaskManager.Current());
+            if (index.HasValue)
+                TaskManager.SetCurrent(index.Value);
+            else
+                TaskManager.GoToNext();
+            Session["TaskManager"] = TaskManager;
+            ActionInfo actionInfo = TaskManager.Current().GetActionInfo;
+            return RedirectToAction(actionInfo.ActionName, actionInfo.ControllerName, new RouteValueDictionary { { "area", actionInfo.AreaName }, { "index", TaskManager.GetCurrentStepInfoIndex() } });
+
+            #endregion
+
+        }
+    
+
+
 
         #region Validation
 
         //XX number of index des values nötig
         [HttpPost]
-        public JsonResult ValidateMetadataAttributeUsage(object value, int id, int parentid, string parentname, int metadataStructureId, int number, int packageModelNumber)
+        public JsonResult ValidateMetadataAttributeUsage(object value, int id, int parentid, string parentname, int number, int parentModelNumber)
         {
-            #region load metadataattribute
-                MetadataStructureManager msm = new MetadataStructureManager();
-                MetadataStructure metadataStructure = msm.Repo.Get(metadataStructureId);
+             TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
 
-                MetadataPackageUsage metadataPackageUsage = metadataStructure.MetadataPackageUsages.Where(m => m.Id.Equals(parentid)).FirstOrDefault();
-                MetadataAttributeUsage metadataAttributeUsage = metadataPackageUsage.MetadataPackage.MetadataAttributeUsages.Where(m => m.Id.Equals(id)).FirstOrDefault();
+             MetadataAttributeModel model;
+             BaseUsage metadataAttributeUsage;
+             BaseUsage parentUsage;
 
-            #endregion
+             long metadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateDatasetTaskmanager.METADATASTRUCTURE_ID]);
 
-            MetadataAttributeModel model = MetadataAttributeModel.Convert(metadataAttributeUsage, metadataPackageUsage, metadataStructure.Id, packageModelNumber);
+             if (TaskManager.IsParentChildfromRoot())
+             {
+                 #region load metadataattribute
+                 metadataAttributeUsage = UsageHelper.GetMetadataCompoundAttributeUsageById(id);
+                 parentUsage = UsageHelper.GetMetadataAttributeUsageById(parentid);
+                 #endregion
+
+             }
+             else
+             {
+                 metadataAttributeUsage = UsageHelper.GetMetadataCompoundAttributeUsageById(id);
+                 parentUsage = UsageHelper.GetMetadataCompoundAttributeUsageById(parentid);
+             }
+
+
+            model = MetadataAttributeModel.Convert(metadataAttributeUsage, parentUsage, metadataStructureId, parentModelNumber);
             model.Value = value;
             model.Number = number;
 
             //UpdateXml
-            UpdateAttribute(metadataPackageUsage, packageModelNumber, metadataAttributeUsage, number, value);
+            UpdateAttribute(parentUsage, parentModelNumber, metadataAttributeUsage, number, value);
 
-            if (ContainsAttribute(id, number, parentid, packageModelNumber))
-                UpdateAttributeToPackageIntoBus(parentid, packageModelNumber, model);
+            if (ContainsAttribute(id, number, parentid, parentModelNumber))
+                UpdateAttributeToPackageIntoBus(parentid, parentModelNumber, model);
             else
-                AddAttributeToPackageIntoBus(parentid, packageModelNumber, model);
+                AddAttributeToPackageIntoBus(parentid, parentModelNumber, model);
 
             return Json(true, JsonRequestBehavior.AllowGet);
         }
@@ -146,10 +347,15 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         { 
             TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
             int currentStepIndex = TaskManager.GetCurrentStepInfoIndex();
-            long packageId = GetPackageId(currentStepIndex);
             
-            List<Error> errors = ValidatePackageContainer(packageId);
+            long usageId = GetUsageId(currentStepIndex);
+            BaseUsage usage = UsageHelper.GetMetadataAttributeUsageById(usageId);
+            int number = 1;
 
+
+            List<Error> errors = validateStep(GetModelFromBus(usageId, number));
+
+ 
             TaskManager.Current().notExecuted = false;
 
             if(errors==null || errors.Count==0)
@@ -157,49 +363,27 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             else
                 TaskManager.Current().SetStatus(StepStatus.error);
 
-            return PartialView("SetMetadataPackage", Create(currentStepIndex, true));
-        }
 
-        private List<Error> ValidatePackageContainer(long pId)
-        {
-            List<Error> errorList = new List<Error>();
-            TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
-
-            List<MetadataPackageModel> metadataPackageModelList = new List<MetadataPackageModel>();
-            // get stored MetadataPackages from Bus
-            metadataPackageModelList = GetMetadataPackageModelsFromBus(pId);
-
-            foreach (MetadataPackageModel m in metadataPackageModelList)
-            {
-                List<Error> temp = ValidatePackage(m);
-                if (temp != null)
-                {
-                    errorList.AddRange(temp);
-                    m.ErrorList = temp;
-                }
-                else
-                    if (m.ErrorList != null) m.ErrorList = null;
-            }
-
-            if (errorList.Count == 0)
-                return null;
+            if(TaskManager.IsRoot(TaskManager.Current().Parent.Parent))
+                return PartialView("_setMetadataPackageInstanz", CreatePackageModel(currentStepIndex, true));
             else
-            {
-                return errorList;
-            }
-                
-        
+                return PartialView("_setMetadataCompoundAttributeInstanz", CreateCompoundModel(currentStepIndex, true,TaskManager.IsParentChildfromRoot()));
+
         }
 
-        private List<Error> ValidatePackage(MetadataPackageModel pModel)
+        private List<Error> validateStep(AbstractMetadataStepModel pModel)
         {
             List<Error> errorList = new List<Error>();
 
-            foreach (MetadataAttributeModel m in pModel.MetadataAttributeModels)
+            if (pModel != null)
             {
-                List<Error> temp = ValidateAttribute(m);
-                if (temp != null)
-                    errorList.AddRange(temp);
+
+                foreach (MetadataAttributeModel m in pModel.MetadataAttributeModels)
+                {
+                    List<Error> temp = ValidateAttribute(m);
+                    if (temp != null)
+                        errorList.AddRange(temp);
+                }
             }
 
             if (errorList.Count == 0)
@@ -213,11 +397,32 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             List<Error> errors = new List<Error>();
             //optional check
             if(aModel.MinCardinality>0 && aModel.Value==null)
-                errors.Add(new Error(ErrorType.MetadataAttribute,"is not optional",new object[] { aModel.DisplayName, aModel.Value, aModel.Number, aModel.PackageModelNumber, aModel.Parent.Label }));
+                errors.Add(new Error(ErrorType.MetadataAttribute,"is not optional",new object[] { aModel.DisplayName, aModel.Value, aModel.Number, aModel.ParentModelNumber, aModel.Parent.Label }));
             else
                 if (aModel.MinCardinality > 0 && String.IsNullOrEmpty(aModel.Value.ToString()))
-                    errors.Add(new Error(ErrorType.MetadataAttribute, "is not optional", new object[] { aModel.DisplayName, aModel.Value, aModel.Number, aModel.PackageModelNumber, aModel.Parent.Label }));
-         
+                    errors.Add(new Error(ErrorType.MetadataAttribute, "is not optional", new object[] { aModel.DisplayName, aModel.Value, aModel.Number, aModel.ParentModelNumber, aModel.Parent.Label }));
+            
+            //check datatype
+            if (aModel.Value!=null)
+            {
+                if (!DataTypeUtility.IsTypeOf(aModel.Value, aModel.SystemType))
+                {
+                    errors.Add(new Error(ErrorType.MetadataAttribute, "Value can´t convert to the type: " + aModel.SystemType + ".", new object[] { aModel.DisplayName, aModel.Value, aModel.Number, aModel.ParentModelNumber, aModel.Parent.Label }));
+                }
+            }
+            
+            // check Constraints
+            foreach (Constraint constraint in aModel.GetMetadataAttribute().Constraints)
+            {
+                if (aModel.Value != null)
+                {
+                    if (!constraint.IsSatisfied(aModel.Value))
+                    {
+                        errors.Add(new Error(ErrorType.MetadataAttribute, constraint.ErrorMessage, new object[] { aModel.DisplayName, aModel.Value, aModel.Number, aModel.ParentModelNumber, aModel.Parent.Label }));
+                    }
+                }
+            }
+
 
             if(errors.Count==0)
                 return null;
@@ -229,151 +434,286 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         #endregion
 
         #region Add and Remove
-            public ActionResult AddMetadataAttributeUsage(int id, int parentid, int metadataStructureId, int number, int packageModelNumber)
+        public ActionResult AddMetadataAttributeUsage(int id, int parentid, int number, int parentModelNumber)
+        {
+            TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
+
+            BaseUsage metadataAttributeUsage;
+            BaseUsage parentUsage;
+
+            long metadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateDatasetTaskmanager.METADATASTRUCTURE_ID]);
+
+            if (TaskManager.IsParentChildfromRoot())
             {
-                MetadataStructureManager msm = new MetadataStructureManager();
-                MetadataStructure metadataStructure = msm.Repo.Get(metadataStructureId);
+                #region load metadataattribute
+                metadataAttributeUsage = UsageHelper.GetMetadataCompoundAttributeUsageById(id);
+                parentUsage = UsageHelper.GetMetadataAttributeUsageById(parentid);
+                #endregion
 
-                MetadataPackageUsage metadataPackageUsage = metadataStructure.MetadataPackageUsages.Where(m => m.Id.Equals(parentid)).FirstOrDefault();
-                MetadataAttributeUsage metadataAttributeUsage = metadataPackageUsage.MetadataPackage.MetadataAttributeUsages.Where(m => m.Id.Equals(id)).FirstOrDefault();
-
-                MetadataAttributeModel modelAttribute = MetadataAttributeModel.Convert(metadataAttributeUsage, metadataPackageUsage, metadataStructure.Id, packageModelNumber);
-                modelAttribute.Number = ++number;
-
-                MetadataPackageModel model = AddAttributeToPackageIntoBus(parentid, packageModelNumber, modelAttribute);
-
-                //addtoxml
-                AddAttributeToXml(metadataPackageUsage, packageModelNumber, metadataAttributeUsage, number);
-
-                if (model != null)
-                {
-
-                    string key = CreateIdentfifier(parentid, packageModelNumber);
-                    TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
-
-
-                    Dictionary<string, MetadataPackageModel> packageModelDic;
-
-                    if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST))
-                    {
-                        packageModelDic = (Dictionary<string, MetadataPackageModel>)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST];
-                        return PartialView("_metadataPackage", packageModelDic[key]);
-                    }
-                }
-
-
-                return PartialView("_metadataPackage", model);
+            }
+            else
+            {
+                metadataAttributeUsage = UsageHelper.GetMetadataCompoundAttributeUsageById(id);
+                parentUsage = UsageHelper.GetMetadataCompoundAttributeUsageById(parentid);
             }
 
-            public ActionResult RemoveMetadataAttributeUsage(object value, int id, int parentid, long metadataStructureId, int number,int packageModelNumber)
+            MetadataAttributeModel modelAttribute = MetadataAttributeModel.Convert(metadataAttributeUsage, parentUsage, metadataStructureId, parentModelNumber);
+            modelAttribute.Number = ++number;
+
+            AbstractMetadataStepModel model = AddAttributeToPackageIntoBus(parentid, parentModelNumber, modelAttribute);
+
+            //addtoxml
+            AddAttributeToXml(parentUsage, parentModelNumber, metadataAttributeUsage, number);
+
+            model.ConvertInstance((XDocument)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_XML]);
+
+            if (model != null)
             {
-                MetadataPackageModel model = RemoveAttributeFromPackageIntoBus(id,number,parentid, packageModelNumber);
 
-                
-
-                if (model != null)
-                {
-
-                    string key = CreateIdentfifier(parentid, packageModelNumber);
-                    TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
-
-                    Dictionary<string, MetadataPackageModel> packageModelDic;
-
-                    if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST))
-                    {
-                        packageModelDic = (Dictionary<string, MetadataPackageModel>)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST];
-                        return PartialView("_metadataPackage", packageModelDic[key]);
-                    }
-                }
-
-                return null;
-            }
-
-            public ActionResult UpMetadataAttributeUsage(object value, int id, int parentid, long metadataStructureId, int number, int packageModelNumber)
-            {
-                MetadataPackageModel model = ChangeOrderAttributeFromPackageIntoBus(id, number, parentid, packageModelNumber,true);
-
-                if (model != null)
-                {
-
-                    string key = CreateIdentfifier(parentid, packageModelNumber);
-                    TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
-
-                    Dictionary<string, MetadataPackageModel> packageModelDic;
-
-                    if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST))
-                    {
-                        packageModelDic = (Dictionary<string, MetadataPackageModel>)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST];
-                        return PartialView("_metadataPackage", packageModelDic[key]);
-                    }
-                }
-
-                return null;
-            }
-
-            public ActionResult DownMetadataAttributeUsage(object value, int id, int parentid, long metadataStructureId, int number, int packageModelNumber)
-            {
-                MetadataPackageModel model = ChangeOrderAttributeFromPackageIntoBus(id, number, parentid, packageModelNumber, false);
-
-                if (model != null)
-                {
-
-                    string key = CreateIdentfifier(parentid, packageModelNumber);
-                    TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
-
-                    Dictionary<string, MetadataPackageModel> packageModelDic;
-
-                    if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST))
-                    {
-                        packageModelDic = (Dictionary<string, MetadataPackageModel>)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST];
-                        return PartialView("_metadataPackage", packageModelDic[key]);
-                    }
-                }
-
-                return null;
-            }
-
-            public ActionResult AddMetadataPackageUsage(int id, int metadataStructureId, int number)
-            {
-                MetadataStructureManager msm = new MetadataStructureManager();
-                MetadataStructure metadataStructure = msm.Repo.Get(metadataStructureId);
-
-                MetadataPackageUsage metadataPackageUsage = metadataStructure.MetadataPackageUsages.Where(m => m.Id.Equals(id)).FirstOrDefault();
-
-                MetadataPackageModel model = MetadataPackageModel.Convert(metadataPackageUsage);
-                model.Number = ++number;
-
-                //add to bus
-                AddPackageIntoBus(model);
-
-                //add to xml
-                AddPackageToXml(model.Source, model.Number);
-
-                foreach (MetadataAttributeUsage mau in model.Source.MetadataPackage.MetadataAttributeUsages)
-                {
-                    model.MetadataAttributeModels.Add(MetadataAttributeModel.Convert(mau, metadataPackageUsage, metadataStructureId, model.Number));
-                }
-
-                return PartialView("_metadataPackage", model);
-            }
-
-            public ActionResult RemoveMetadataPackageUsage(int id, int number)
-            { 
+                string key = CreateIdentfifier(parentid, parentModelNumber);
                 TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
-                 
-                 MetadataPackageContainerModel model = Create(TaskManager.GetCurrentStepInfoIndex(),true);
 
-                 // remove from bus
-                 model.MetadataPackageModel = RemovePackageFromBus(id, number);
 
-                 //remove from xml
-                 RemovePackageToXml(model.Source, number);
+                Dictionary<string, AbstractMetadataStepModel> packageModelDic;
 
-                //Validate
-                 model.ErrorList = ValidatePackageContainer(model.Source.Id);
+                if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST))
+                {
+                    packageModelDic = (Dictionary<string, AbstractMetadataStepModel>)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST];
+                    packageModelDic[key] = model;
 
-                 return PartialView("SetMetadataPackage", model);
+
+                    //return PartialView("_setMetadataPackageInstanz", model);
+                }
+
+
+                if (model is MetadataPackageModel)
+                {
+                    return PartialView("_setMetadataPackageInstanz", model);
+                }
+
+                if (model is MetadataCompoundAttributeModel)
+                {
+                    return PartialView("_setMetadataCompoundAttributeInstanz", model);
+                }
             }
+
+            return PartialView("_setMetadataCompoundAttributeInstanz", model);
+            
+        }
+
+        public ActionResult RemoveMetadataAttributeUsage(object value, int id, int parentid, int number, int parentModelNumber)
+        {
+            AbstractMetadataStepModel model = RemoveAttributeFromPackageIntoBus(id, number, parentid, parentModelNumber);
+
+            if (model != null)
+            {
+
+                string key = CreateIdentfifier(parentid, parentModelNumber);
+                TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
+
+                Dictionary<string, AbstractMetadataStepModel> packageModelDic;
+
+                if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST))
+                {
+                    packageModelDic = (Dictionary<string, AbstractMetadataStepModel>)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST];
+                    //return PartialView("_setMetadataPackageInstanz", packageModelDic[key]);
+                }
+
+                if (model is MetadataPackageModel)
+                {
+                    return PartialView("_setMetadataPackageInstanz", model);
+                }
+
+                if (model is MetadataCompoundAttributeModel)
+                {
+                    return PartialView("_setMetadataCompoundAttributeInstanz", model);
+                }
+            }
+
+            return null;
+        }
+
+        public ActionResult UpMetadataAttributeUsage(object value, int id, int parentid, int number, int parentModelNumber)
+        {
+            AbstractMetadataStepModel model = ChangeOrderAttributeFromPackageIntoBus(id, number, parentid, parentModelNumber, true);
+
+            if (model != null)
+            {
+
+                string key = CreateIdentfifier(parentid, parentModelNumber);
+                TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
+
+                Dictionary<string, AbstractMetadataStepModel> packageModelDic;
+
+                if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST))
+                {
+                    packageModelDic = (Dictionary<string, AbstractMetadataStepModel>)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST];
+                    //return PartialView("_setMetadataPackageInstanz", packageModelDic[key]);
+                }
+
+                if (model is MetadataPackageModel)
+                {
+                    return PartialView("_setMetadataPackageInstanz", model);
+                }
+
+                if (model is MetadataCompoundAttributeModel)
+                {
+                    return PartialView("_setMetadataCompoundAttributeInstanz", model);
+                }
+            }
+
+            return null;
+        }
+
+        public ActionResult DownMetadataAttributeUsage(object value, int id, int parentid, int number, int parentModelNumber)
+        {
+            AbstractMetadataStepModel model = ChangeOrderAttributeFromPackageIntoBus(id, number, parentid, parentModelNumber, false);
+
+            if (model != null)
+            {
+
+                string key = CreateIdentfifier(parentid, parentModelNumber);
+                TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
+
+                Dictionary<string, AbstractMetadataStepModel> packageModelDic;
+
+                if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST))
+                {
+                    packageModelDic = (Dictionary<string, AbstractMetadataStepModel>)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST];
+                    //return PartialView("_setMetadataPackageInstanz", packageModelDic[key]);
+                }
+
+                if (model is MetadataPackageModel)
+                {
+                    return PartialView("_setMetadataPackageInstanz", model);
+                }
+
+                if (model is MetadataCompoundAttributeModel)
+                {
+                    return PartialView("_setMetadataCompoundAttributeInstanz", model);
+                }
+            }
+
+            return null;
+        }
+
+        public ActionResult AddMetadataPackageUsage(long id, int number)
+        {
+            TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
+            long metadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateDatasetTaskmanager.METADATASTRUCTURE_ID]);
+            MetadataStructureManager msm = new MetadataStructureManager();
+            MetadataStructure metadataStructure = msm.Repo.Get(metadataStructureId);
+
+            MetadataPackageUsage metadataPackageUsage = metadataStructure.MetadataPackageUsages.Where(m => m.Id.Equals(id)).FirstOrDefault();
+
+            MetadataPackageModel model = MetadataPackageModel.Convert(metadataPackageUsage, number);
+            model.Number = ++number;
+            model.ConvertMetadataAttributeModels(metadataPackageUsage.MetadataPackage.MetadataAttributeUsages);
+
+            //add to bus
+            AddModelIntoBus(model);
+
+            //add to xml
+            AddPackageToXml(model.Source, model.Number);
+
+            // load Instanz
+            model.ConvertInstance((XDocument)(TaskManager.Bus[CreateDatasetTaskmanager.METADATA_XML]));
+
+            TaskManager.Current().Children.AddRange(UpdateStepsBasedOnUsage(model.Source));
+
+            //Add to Steps
+            model.StepInfo = TaskManager.Current();
+
+            return PartialView("_metadataPackage", model);
+        }
+
+        public ActionResult RemoveMetadataPackageUsage(int id, int number)
+        {
+            TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
+
+            AbstractMetadataStepModel model = GetModelFromBus(id, number);
+            if (model != null)
+            {
+                // remove from bus
+                RemoveModelFromBus(id, number);
+                //remove from xml
+                RemovePackageToXml(model.Source, number);
+
+            }
+            else
+            { 
+                //load parent
+                long usageId = GetUsageId(id);
+                UsageHelper.GetMetadataAttributeUsageById(usageId);
+                RemovePackageToXml(model.Source, number);
+            }
+
+            model = CreatePackageModel(TaskManager.Current().Id, true);
+
+            TaskManager.Remove(TaskManager.Current(), number-1);
+
+            //Validate
+            //model.ErrorList = Validates(model.Source.Id);
+
+            return PartialView("_metadataPackage", model);
+        }
+
+        public ActionResult AddMetadataCompundAttributeUsage(int id, int number)
+        {
+            TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
+
+            MetadataCompoundAttributeModel model = MetadataCompoundAttributeModel.ConvertToModel(UsageHelper.GetMetadataCompoundAttributeUsageById(id), number);
+            model.Number = ++number;
+            model.ConvertMetadataAttributeModels();
+
+            //add to bus
+            AddModelIntoBus(model);
+
+            //add to xml
+            AddCompoundAttributeToXml(model.Source, model.Number);
+
+            // load InstanzB
+            model.ConvertInstance((XDocument)(TaskManager.Bus[CreateDatasetTaskmanager.METADATA_XML]));
+
+            TaskManager.Current().Children.AddRange(UpdateStepsBasedOnUsage(model.Source));
+
+            //Add to Steps
+            model.StepInfo = TaskManager.Current();
+
+            return PartialView("_setMetadataCompoundAttribute", model);
+        }
+
+        public ActionResult RemoveMetadataCompundAttributeUsage(int id, int number)
+        {
+            TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
+
+            AbstractMetadataStepModel model = GetModelFromBus(id, number);
+            if (model != null)
+            {
+                // remove from bus
+                RemoveModelFromBus(id, number);
+                //remove from xml
+                RemoveCompoundAttributeToXml(model.Source, number);
+
+            }
+            else
+            {
+                //load parent
+                long usageId = GetUsageId(TaskManager.Current().Id);
+                RemoveCompoundAttributeToXml(UsageHelper.GetMetadataAttributeUsageById(usageId), number);
+            }
+
+            model = CreateCompoundModel(TaskManager.Current().Id, true, TaskManager.IsParentChildfromRoot());
+
+            TaskManager.Remove(TaskManager.Current(), number - 1);
+
+            //Validate
+            //model.ErrorList = Validates(model.Source.Id);
+
+            return PartialView("_setMetadataCompoundAttribute", model);
+        }
+
+
         #endregion
 
         #region save
@@ -382,7 +722,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         {
             TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
             int currentStepIndex = TaskManager.GetCurrentStepInfoIndex();
-            long packageId = GetPackageId(currentStepIndex);
+            long packageId = GetUsageId(currentStepIndex);
 
             #region create dataset
 
@@ -442,227 +782,254 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             #endregion
 
 
-            return PartialView("SetMetadataPackage", Create(currentStepIndex, true));
+            return PartialView("SetMetadataPackage", CreatePackageModel(currentStepIndex, true));
         }
         #endregion
 
         #region bus functions
 
         #region package
-        private void AddPackageIntoBus(MetadataPackageModel model)
+
+        private void AddModelIntoBus(AbstractMetadataStepModel model)
+        {
+            TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
+
+            Dictionary<string, AbstractMetadataStepModel> packageModelDic;
+
+            if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST))
             {
-                TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
-
-                Dictionary<string, MetadataPackageModel> packageModelDic;
-
-                if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST))
-                {
-                    packageModelDic = (Dictionary<string, MetadataPackageModel>)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST];
-                }
-                else
-                {
-                    packageModelDic = new Dictionary<string, MetadataPackageModel>();
-                }
-
-                string key = CreateIdentfifier(model.Source.Id, model.Number);
-
-                if (!packageModelDic.ContainsKey(key))
-                    packageModelDic.Add(key, model);
-
-                    
+                packageModelDic = (Dictionary<string, AbstractMetadataStepModel>)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST];
+            }
+            else
+            {
+                packageModelDic = new Dictionary<string, AbstractMetadataStepModel>();
+                TaskManager.Bus.Add(CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST,packageModelDic);
             }
 
-            private List<MetadataPackageModel> RemovePackageFromBus(long id, int number)
+            string key = CreateIdentfifier(model.Source.Id, model.Number);
+
+            if (!packageModelDic.ContainsKey(key))
+                packageModelDic.Add(key, model);
+
+        }
+
+        private void RemoveModelFromBus(long id, int number)
+        {
+            TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
+            Dictionary<string, AbstractMetadataStepModel> packageModelDic;
+
+            if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST))
             {
-                TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
-                Dictionary<string, MetadataPackageModel> packageModelDic;
-
-                if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST))
-                {
-                    packageModelDic = (Dictionary<string, MetadataPackageModel>)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST];
-                }
-                else
-                {
-                    packageModelDic = new Dictionary<string, MetadataPackageModel>();
-                }
-
-                string key = CreateIdentfifier(id, number);
-
-                if (packageModelDic.ContainsKey(key))
-                    packageModelDic.Remove(key);
-
-                List<MetadataPackageModel> newList = GetMetadataPackageModelsFromBus(id).Where(p => p.Number > number).ToList();
-
-                foreach (MetadataPackageModel mpm in newList)
-                {
-                    string oldID = CreateIdentfifier(mpm.Source.Id, mpm.Number);
-
-                    if (packageModelDic.ContainsKey(oldID))
-                    {
-                        packageModelDic.Remove(oldID);
-
-                        mpm.Number = (mpm.Number - 1);
-                        mpm.MetadataAttributeModels.ForEach(a => a.PackageModelNumber = mpm.Number);
-
-                        string newId = CreateIdentfifier(mpm.Source.Id, mpm.Number);
-                        packageModelDic.Add(newId, mpm);
-                    }
-                }
-                return GetMetadataPackageModelsFromBus(id);
-    
+                packageModelDic = (Dictionary<string, AbstractMetadataStepModel>)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST];
+            }
+            else
+            {
+                packageModelDic = new Dictionary<string, AbstractMetadataStepModel>();
             }
 
-            private List<MetadataPackageModel> GetMetadataPackageModelsFromBus(long metadataPackageUsageId)
+            string key = CreateIdentfifier(id, number);
+
+            if (packageModelDic.ContainsKey(key))
+                packageModelDic.Remove(key);
+
+            //List<AbstractMetadataStepModel> newList = GetModelsFromBus(id).Where(p => p.Number > number).ToList();
+
+            //foreach (AbstractMetadataStepModel mpm in newList)
+            //{
+            //    string oldID = CreateIdentfifier(mpm.Source.Id, mpm.Number);
+
+            //    if (packageModelDic.ContainsKey(oldID))
+            //    {
+            //        packageModelDic.Remove(oldID);
+
+            //        mpm.Number = (mpm.Number - 1);
+            //        mpm.MetadataAttributeModels.ForEach(a => a.ParentModelNumber = mpm.Number);
+
+            //        string newId = CreateIdentfifier(mpm.Source.Id, mpm.Number);
+            //        packageModelDic.Add(newId, mpm);
+            //    }
+            //}
+        }
+
+        private List<AbstractMetadataStepModel> GetModeleFromBus(long usageId)
+        {
+            Dictionary<string, AbstractMetadataStepModel> packageModelDic = new Dictionary<string, AbstractMetadataStepModel>();
+            List<AbstractMetadataStepModel> temp = new List<AbstractMetadataStepModel>();
+
+            if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST))
             {
-                Dictionary<string, MetadataPackageModel> packageModelDic = new Dictionary<string,MetadataPackageModel>();
-                List<MetadataPackageModel> temp = new List<MetadataPackageModel>();
+                packageModelDic = (Dictionary<string, AbstractMetadataStepModel>)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST];
 
-                if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST))
+                foreach (KeyValuePair<string, AbstractMetadataStepModel> keyValuePair in packageModelDic)
                 {
-                    packageModelDic = (Dictionary<string, MetadataPackageModel>)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST];
-
-                    foreach (KeyValuePair<string, MetadataPackageModel> keyValuePair in packageModelDic)
-                    {
-                        if (GetPackageUsageIdFromIdentfifier(keyValuePair.Key).Equals(metadataPackageUsageId))
-                            temp.Add(keyValuePair.Value);
-                    }
+                    if (GetPackageUsageIdFromIdentfifier(keyValuePair.Key).Equals(usageId))
+                        temp.Add(keyValuePair.Value);
                 }
-                else {
-
-                    TaskManager.Bus[CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST] = packageModelDic;
-                }
-
-                return temp;
             }
+            else
+            {
+
+                TaskManager.Bus[CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST] = packageModelDic;
+            }
+
+            return temp;
+        }
+
+        private AbstractMetadataStepModel GetModelFromBus(long usageId, int number)
+        {
+            Dictionary<string, AbstractMetadataStepModel> packageModelDic = new Dictionary<string, AbstractMetadataStepModel>();
+            List<AbstractMetadataStepModel> temp = new List<AbstractMetadataStepModel>();
+
+            if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST))
+            {
+                packageModelDic = (Dictionary<string, AbstractMetadataStepModel>)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST];
+
+                foreach (KeyValuePair<string, AbstractMetadataStepModel> keyValuePair in packageModelDic)
+                {
+                    if (GetPackageUsageIdFromIdentfifier(keyValuePair.Key).Equals(usageId) &&
+                        GetNumberFromIdentfifier(keyValuePair.Key).Equals(number))
+                        return keyValuePair.Value;
+                }
+            }
+            else {
+
+                TaskManager.Bus[CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST] = packageModelDic;
+            }
+
+            return null;
+        }
+
+        
+
         #endregion
 
         #region attribute
-            private MetadataPackageModel AddAttributeToPackageIntoBus(long packageId, int packageNumber, MetadataAttributeModel model)
-            {
-                TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
-                Dictionary<string, MetadataPackageModel> packageModelDic;
-
-                if (TaskManager !=null && TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST))
+            private AbstractMetadataStepModel AddAttributeToPackageIntoBus(long packageId, int packageNumber, MetadataAttributeModel model)
                 {
-                    packageModelDic = (Dictionary<string, MetadataPackageModel>)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST];
-                    string key = CreateIdentfifier(packageId, packageNumber);
+                    TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
+                    Dictionary<string, AbstractMetadataStepModel> packageModelDic;
 
-                    if (packageModelDic.ContainsKey(key))
+                    if (TaskManager !=null && TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST))
                     {
-                        //attribute with the same id and get all higher or equals the number
-                        List<MetadataAttributeModel> temp = packageModelDic[key].MetadataAttributeModels.Where(a => a.Id == model.Id && a.Number>=model.Number-1).ToList();
-                        // default index 0 or last
-                        int index = packageModelDic[key].MetadataAttributeModels.Where(a => a.Id == model.Id).ToList().Count();
-                        if(temp.Count>0)
-                            index = packageModelDic[key].MetadataAttributeModels.IndexOf(temp.FirstOrDefault())+1;
+                        packageModelDic = (Dictionary<string, AbstractMetadataStepModel>)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST];
+                        string key = CreateIdentfifier(packageId, packageNumber);
+
+                        if (packageModelDic.ContainsKey(key))
+                        {
+                            //attribute with the same id and get all higher or equals the number
+                            List<MetadataAttributeModel> temp = packageModelDic[key].MetadataAttributeModels.Where(a => a.Id == model.Id && a.Number>=model.Number-1).ToList();
+                            // default index 0 or last
+                            int index = packageModelDic[key].MetadataAttributeModels.Where(a => a.Id == model.Id).ToList().Count();
+                            if(temp.Count>0)
+                                index = packageModelDic[key].MetadataAttributeModels.IndexOf(temp.FirstOrDefault())+1;
          
 
-                        temp.Where(p => p.Number >= model.Number).ToList().ForEach(p => p.Number = p.Number + 1);
+                            temp.Where(p => p.Number >= model.Number).ToList().ForEach(p => p.Number = p.Number + 1);
 
-                        packageModelDic[key].MetadataAttributeModels.Insert(index, model);
-
-                        //set first and last
-                        List<MetadataAttributeModel> order = packageModelDic[key].MetadataAttributeModels.Where(a => a.Id == model.Id).ToList();
-                        order = UpdateFirstAndLast(order);
-
-                        //set count
-                        order.ForEach(a => a.NumberOfSourceInPackage = order.Count);
-
-                        return packageModelDic[key];
-                    }
-                }
-
-                return null;
-            }
-
-            private MetadataPackageModel RemoveAttributeFromPackageIntoBus(long id,int number, long packageId, int packageNumber)
-            {
-                Dictionary<string, MetadataPackageModel> packageModelDic;
-
-                TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
-
-                if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST))
-                {
-                    packageModelDic = (Dictionary<string, MetadataPackageModel>)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST];
-                    string key = CreateIdentfifier(packageId, packageNumber);
-
-                    if (packageModelDic.ContainsKey(key))
-                    {
-                        MetadataAttributeModel model =  packageModelDic[key].MetadataAttributeModels.Where(a=>a.Id.Equals(id) && a.Number.Equals(number)).FirstOrDefault();
-                        if (model != null)
-                        {
-                            packageModelDic[key].MetadataAttributeModels.Remove(model);
-
-                            //remove from xml
-                            RemoveAttributeToXml(packageModelDic[key].Source, packageNumber, model.Source, number);
-
-                            List<MetadataAttributeModel> temp = packageModelDic[key].MetadataAttributeModels.Where(a => a.Number > number).ToList();
-                            temp.ForEach(a => a.Number = (a.Number - 1));
+                            packageModelDic[key].MetadataAttributeModels.Insert(index, model);
 
                             //set first and last
                             List<MetadataAttributeModel> order = packageModelDic[key].MetadataAttributeModels.Where(a => a.Id == model.Id).ToList();
                             order = UpdateFirstAndLast(order);
 
-                            // set Count of MetadataAttributes in Package
+                            //set count
                             order.ForEach(a => a.NumberOfSourceInPackage = order.Count);
-                            
+
+                            return packageModelDic[key];
                         }
-                        return packageModelDic[key];
                     }
+
+                    return null;
                 }
 
-                return null;
-            }
-
-            private MetadataPackageModel ChangeOrderAttributeFromPackageIntoBus(long id, int number, long packageId, int packageNumber, bool ascent)
-            {
-                Dictionary<string, MetadataPackageModel> packageModelDic;
-
-                TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
-
-                if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST))
+            private AbstractMetadataStepModel RemoveAttributeFromPackageIntoBus(long id, int number, long packageId, int packageNumber)
                 {
-                    packageModelDic = (Dictionary<string, MetadataPackageModel>)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST];
-                    string key = CreateIdentfifier(packageId, packageNumber);
+                    Dictionary<string, AbstractMetadataStepModel> packageModelDic;
 
-                    if (packageModelDic.ContainsKey(key))
+                    TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
+
+                    if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST))
                     {
-                        MetadataAttributeModel model = packageModelDic[key].MetadataAttributeModels.Where(a => a.Id.Equals(id) && a.Number.Equals(number)).FirstOrDefault();
-                   
-                        if (model != null)
+                        packageModelDic = (Dictionary<string, AbstractMetadataStepModel>)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST];
+                        string key = CreateIdentfifier(packageId, packageNumber);
+
+                        if (packageModelDic.ContainsKey(key))
                         {
-                            int index = packageModelDic[key].MetadataAttributeModels.IndexOf(model);
-                            int newIndex = 0;
-
-                            if(ascent)newIndex = --index;
-                            else newIndex = ++index;
-
-                            if (newIndex != -1)
+                            MetadataAttributeModel model =  packageModelDic[key].MetadataAttributeModels.Where(a=>a.Id.Equals(id) && a.Number.Equals(number)).FirstOrDefault();
+                            if (model != null)
                             {
-                                MetadataAttributeModel temp = packageModelDic[key].MetadataAttributeModels.ElementAt(newIndex);
+                                packageModelDic[key].MetadataAttributeModels.Remove(model);
 
-                                object data = temp.Value;
-                                temp.Value = model.Value;
-                                model.Value = data;
+                                //remove from xml
+                                //RemoveAttributeToXml(packageModelDic[key].Source, packageNumber, (MetadataAttributeUsage)model.Source, number);
+
+                                List<MetadataAttributeModel> temp = packageModelDic[key].MetadataAttributeModels.Where(a => a.Number > number).ToList();
+                                temp.ForEach(a => a.Number = (a.Number - 1));
+
+                                //set first and last
+                                List<MetadataAttributeModel> order = packageModelDic[key].MetadataAttributeModels.Where(a => a.Id == model.Id).ToList();
+                                order = UpdateFirstAndLast(order);
+
+                                // set Count of MetadataAttributes in Package
+                                order.ForEach(a => a.NumberOfSourceInPackage = order.Count);
+                            
                             }
-  
+                            return packageModelDic[key];
                         }
-                        return packageModelDic[key];
                     }
+
+                    return null;
                 }
 
-                return null;
-            }
+            private AbstractMetadataStepModel ChangeOrderAttributeFromPackageIntoBus(long id, int number, long packageId, int packageNumber, bool ascent)
+                {
+                    Dictionary<string, AbstractMetadataStepModel> packageModelDic;
+
+                    TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
+
+                    if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST))
+                    {
+                        packageModelDic = (Dictionary<string, AbstractMetadataStepModel>)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST];
+                        string key = CreateIdentfifier(packageId, packageNumber);
+
+                        if (packageModelDic.ContainsKey(key))
+                        {
+                            MetadataAttributeModel model = packageModelDic[key].MetadataAttributeModels.Where(a => a.Id.Equals(id) && a.Number.Equals(number)).FirstOrDefault();
+                   
+                            if (model != null)
+                            {
+                                int index = packageModelDic[key].MetadataAttributeModels.IndexOf(model);
+                                int newIndex = 0;
+
+                                if(ascent)newIndex = --index;
+                                else newIndex = ++index;
+
+                                if (newIndex != -1)
+                                {
+                                    MetadataAttributeModel temp = packageModelDic[key].MetadataAttributeModels.ElementAt(newIndex);
+
+                                    object data = temp.Value;
+                                    temp.Value = model.Value;
+                                    model.Value = data;
+                                }
+  
+                            }
+                            return packageModelDic[key];
+                        }
+                    }
+
+                    return null;
+                }
 
             private bool ContainsAttribute(long id, int number, long packageId, int packageNumber)
             {
                 TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
 
-                Dictionary<string, MetadataPackageModel> packageModelDic;
+                Dictionary<string, AbstractMetadataStepModel> packageModelDic;
 
                 if (TaskManager != null &&  TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST))
                 {
-                    packageModelDic = (Dictionary<string, MetadataPackageModel>)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST];
+                    packageModelDic = (Dictionary<string, AbstractMetadataStepModel>)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST];
                     string key = CreateIdentfifier(packageId, packageNumber);
 
                     if (packageModelDic.ContainsKey(key))
@@ -678,11 +1045,11 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             {
                 TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
 
-                Dictionary<string, MetadataPackageModel> packageModelDic;
+                Dictionary<string, AbstractMetadataStepModel> packageModelDic;
 
                 if (TaskManager != null &&  TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST))
                 {
-                    packageModelDic = (Dictionary<string, MetadataPackageModel>)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST];
+                    packageModelDic = (Dictionary<string, AbstractMetadataStepModel>)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST];
                     string key = CreateIdentfifier(packageId, packageNumber);
 
 
@@ -704,11 +1071,11 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             { 
                 TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
 
-                Dictionary<string, MetadataPackageModel> packageModelDic;
+                Dictionary<string, AbstractMetadataStepModel> packageModelDic;
 
                 if (TaskManager != null && TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST))
                 {
-                    packageModelDic = (Dictionary<string, MetadataPackageModel>)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST];
+                    packageModelDic = (Dictionary<string, AbstractMetadataStepModel>)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST];
                     string key = CreateIdentfifier(packageId, packageNumber);
 
 
@@ -722,6 +1089,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                 return 0;
             }
+            
         #endregion
 
         #region identifier
@@ -760,7 +1128,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             return list;
         }
 
-        private long GetPackageId(int stepIndex)
+        private long GetUsageId(int stepIndex)
         {
 
             if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATAPACKAGE_IDS))
@@ -768,9 +1136,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                 if ((Dictionary<int, long>)TaskManager.Bus[CreateDatasetTaskmanager.METADATAPACKAGE_IDS] != null)
                 {
-                    Dictionary<int, long> metadataPackageDic = (Dictionary<int, long>)TaskManager.Bus[CreateDatasetTaskmanager.METADATAPACKAGE_IDS];
+                    Dictionary<int, long> metadataUsageDic = (Dictionary<int, long>)TaskManager.Bus[CreateDatasetTaskmanager.METADATAPACKAGE_IDS];
 
-                    if (metadataPackageDic.ContainsKey(stepIndex)) return Convert.ToInt64(metadataPackageDic[stepIndex]);
+                    if (metadataUsageDic.ContainsKey(stepIndex)) return Convert.ToInt64(metadataUsageDic[stepIndex]);
                 }
             }
 
@@ -778,11 +1146,11 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 
         }
 
-        private MetadataPackageContainerModel Create(int index, bool validateIt)
+        private MetadataPackageModel CreatePackageModel(int index, bool validateIt)
         {
-            List<MetadataPackageModel> metadataPackageModelList = new List<MetadataPackageModel>();
+
+            long metadataPackageId = GetUsageId(index);
             long metadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateDatasetTaskmanager.METADATASTRUCTURE_ID]);
-            long metadataPackageId = GetPackageId(index) ;
 
             MetadataStructureManager mdsManager = new MetadataStructureManager();
             MetadataPackageManager mdpManager = new MetadataPackageManager();
@@ -792,37 +1160,40 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 metadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateDatasetTaskmanager.METADATASTRUCTURE_ID]);
             }
 
-            MetadataPackageModel modelchild = new MetadataPackageModel();
 
-
-            //get PackageIdFrom Bus based on stepindex
-            metadataPackageId = GetPackageId(index);
-
-            // get stored MetadataPackages from Bus
-            metadataPackageModelList = GetMetadataPackageModelsFromBus(metadataPackageId);
-
-            //create Model
             MetadataPackageUsage mpu = mdsManager.GetEffectivePackages(metadataStructureId).Where(p => p.Id.Equals(metadataPackageId)).FirstOrDefault();
-            MetadataPackageContainerModel model = MetadataPackageContainerModel.Convert(mpu);
 
-            if (metadataPackageModelList == null || metadataPackageModelList.Count() == 0)
+            MetadataPackageModel model = new MetadataPackageModel();
+
+            model = MetadataPackageModel.Convert(mpu, getInstanzNumber(index));
+
+            model.ConvertMetadataAttributeModels(mpu.MetadataPackage.MetadataAttributeUsages);
+
+            if (TaskManager.Current().IsInstanze == false)
             {
-                modelchild = MetadataPackageModel.Convert(mpu);
-                modelchild.ConvertMetadataAttributeModels(mpu.MetadataPackage.MetadataAttributeUsages);
-                //modelchild = CompareWithBus(modelchild);
-                AddPackageIntoBus(modelchild);
-                model.MetadataPackageModel.Add(modelchild);
+                //get Instance
+                if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATA_XML))
+                {
+                    XDocument xMetadata = (XDocument)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_XML];
+                    model.ConvertInstance(xMetadata);
+                }
             }
             else
             {
-                model.MetadataPackageModel = metadataPackageModelList;
-
+                if (GetModelFromBus(GetUsageId(index), getInstanzNumber(index)) != null)
+                {
+                    model = (MetadataPackageModel)GetModelFromBus(GetUsageId(index), getInstanzNumber(index));
+                }
+                else
+                {
+                    AddModelIntoBus(model);
+                }
             }
 
             if (validateIt)
             {
                 //validate packages
-                List<Error> errors = ValidatePackageContainer(model.Source.Id);
+                List<Error> errors = validateStep(GetModelFromBus(model.Source.Id, model.Number));
                 if (errors != null)
                     model.ErrorList = errors;
 
@@ -833,50 +1204,151 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             return model;
         }
 
-    #endregion
+        private MetadataCompoundAttributeModel CreateCompoundModel(int index,bool validateIt,bool parentIsPackage)
+        {
+            long Id = GetUsageId(index);
+            //long parentId = GetUsageId(parentStep);
+            long metadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateDatasetTaskmanager.METADATASTRUCTURE_ID]);
+
+            MetadataStructureManager mdsManager = new MetadataStructureManager();
+            MetadataPackageManager mdpManager = new MetadataPackageManager();
+
+            MetadataAttributeManager mam = new MetadataAttributeManager();
+
+            if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATASTRUCTURE_ID))
+            {
+                metadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateDatasetTaskmanager.METADATASTRUCTURE_ID]);
+            }
+
+            BaseUsage mca;
+            if(parentIsPackage)
+            {
+                mca = UsageHelper.GetMetadataAttributeUsageById(Id);
+            }
+            else
+            {
+                //Id ist zu dem zeitpunktt die Id des attributes
+                mca = UsageHelper.GetMetadataCompoundAttributeUsageById(Id);
+            }
+            
+            MetadataCompoundAttributeModel model = MetadataCompoundAttributeModel.ConvertToModel(mca, getInstanzNumber(index));
+
+            // get children
+            model.ConvertMetadataAttributeModels();
+
+            if (TaskManager.Current().IsInstanze == false)
+            {
+                //get Instance
+                if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATA_XML))
+                {
+                    XDocument xMetadata = (XDocument)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_XML];
+                    model.ConvertInstance(xMetadata);
+                }
+            }
+            else
+            {
+                if (GetModelFromBus(GetUsageId(index), getInstanzNumber(index)) != null)
+                {
+                    model = (MetadataCompoundAttributeModel)GetModelFromBus(GetUsageId(index), getInstanzNumber(index));
+                }
+                else
+                {
+                    AddModelIntoBus(model);
+                } 
+            }
+
+            if (validateIt)
+            {
+                ////validate packages
+                //List<Error> errors = ValidatePackageContainer(model.Source.Id);
+                //if (errors != null)
+                //    model.ErrorList = errors;
+
+            }
+
+            model.StepInfo = TaskManager.Current();
+
+            return model;
+        }
+
+        private BaseUsage GetMetadataCompoundAttributeUsage(long id)
+        {
+            //return UsageHelper.GetChildrenUsageById(Id);
+            return UsageHelper.GetMetadataAttributeUsageById(id);
+        }
+
+        private BaseUsage GetPackageUsage(long Id)
+        {
+            MetadataStructureManager mpm = new MetadataStructureManager();
+            return mpm.PackageUsageRepo.Get(Id);
+        }
+
+         #endregion
 
         #region xml
 
-            private void AddPackageToXml(MetadataPackageUsage packageUsage, int number)
+            private void AddPackageToXml(BaseUsage usage, int number)
             {
                 TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
 
                 XDocument metadataXml = (XDocument)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_XML];
 
                 XmlMetadataWriter xmlMetadataWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
-                metadataXml = xmlMetadataWriter.AddPackage(metadataXml,packageUsage, number);
+
+
+                metadataXml = xmlMetadataWriter.AddPackage(metadataXml,usage, number, UsageHelper.GetNameOfType(usage),UsageHelper.GetIdOfType(usage), UsageHelper.GetChildren(usage),BExIS.Xml.Helpers.XmlNodeType.MetadataPackage, BExIS.Xml.Helpers.XmlNodeType.MetadataPackageUsage);
 
                 TaskManager.Bus[CreateDatasetTaskmanager.METADATA_XML] = metadataXml;
 
-                 // locat path
-                //string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "metadataTemp.Xml");
-                //metadataXml.Save(path);
             }
 
-            private void RemovePackageToXml(MetadataPackageUsage packageUsage, int number)
+            private void RemovePackageToXml(BaseUsage usage, int number)
             {
                 TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
 
                 XDocument metadataXml = (XDocument)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_XML];
 
                 XmlMetadataWriter xmlMetadataWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
-                metadataXml = xmlMetadataWriter.RemovePackage(metadataXml, packageUsage, number);
+                metadataXml = xmlMetadataWriter.RemovePackage(metadataXml, usage, number, UsageHelper.GetNameOfType(usage));
+
+                TaskManager.Bus[CreateDatasetTaskmanager.METADATA_XML] = metadataXml;
+            }
+
+            private void AddCompoundAttributeToXml(BaseUsage usage, int number)
+            {
+                TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
+
+                XDocument metadataXml = (XDocument)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_XML];
+
+                XmlMetadataWriter xmlMetadataWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
+
+
+                metadataXml = xmlMetadataWriter.AddPackage(metadataXml, usage, number, UsageHelper.GetNameOfType(usage), UsageHelper.GetIdOfType(usage), UsageHelper.GetChildren(usage), BExIS.Xml.Helpers.XmlNodeType.MetadataAttribute, BExIS.Xml.Helpers.XmlNodeType.MetadataAttributeUsage);
 
                 TaskManager.Bus[CreateDatasetTaskmanager.METADATA_XML] = metadataXml;
 
-                // locat path
-                //string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "metadataTemp.Xml");
-               //metadataXml.Save
             }
 
-            private void AddAttributeToXml(MetadataPackageUsage packageUsage, int packageNumber, MetadataAttributeUsage attribute, int number)
+            private void RemoveCompoundAttributeToXml(BaseUsage usage, int number)
             {
                 TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
 
                 XDocument metadataXml = (XDocument)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_XML];
 
                 XmlMetadataWriter xmlMetadataWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
-                metadataXml = xmlMetadataWriter.AddAttribute(metadataXml, packageUsage, packageNumber, attribute, number);
+                metadataXml = xmlMetadataWriter.RemovePackage(metadataXml, usage, number, UsageHelper.GetNameOfType(usage));
+
+                TaskManager.Bus[CreateDatasetTaskmanager.METADATA_XML] = metadataXml;
+            }
+
+            private void AddAttributeToXml(BaseUsage parentUsage, int parentNumber, BaseUsage attribute, int number)
+            {
+                TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
+
+                XDocument metadataXml = (XDocument)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_XML];
+
+                XmlMetadataWriter xmlMetadataWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
+                metadataXml = xmlMetadataWriter.AddAttribute(metadataXml, parentUsage, parentNumber, attribute, number, UsageHelper.GetNameOfType(parentUsage),UsageHelper.GetNameOfType(attribute), UsageHelper.GetIdOfType(attribute).ToString());
 
                 TaskManager.Bus[CreateDatasetTaskmanager.METADATA_XML] = metadataXml;
 
@@ -885,13 +1357,13 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                //metadataXml.Save
             }
 
-            private void RemoveAttributeToXml(MetadataPackageUsage packageUsage, int packageNumber, MetadataAttributeUsage attribute, int number)
+            private void RemoveAttributeToXml(BaseUsage parentUsage, int packageNumber, MetadataAttributeUsage attribute, int number)
             {
                 TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
                 XDocument metadataXml = (XDocument)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_XML];
                 XmlMetadataWriter xmlMetadataWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
 
-                metadataXml = xmlMetadataWriter.RemoveAttribute(metadataXml, packageUsage, packageNumber, attribute, number);
+                metadataXml = xmlMetadataWriter.RemoveAttribute(metadataXml, parentUsage, packageNumber, attribute, number, UsageHelper.GetNameOfType(parentUsage));
 
                 TaskManager.Bus[CreateDatasetTaskmanager.METADATA_XML] = metadataXml;
                 // locat path
@@ -899,22 +1371,204 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                //metadataXml.Save
             }
 
-            private void UpdateAttribute(MetadataPackageUsage packageUsage, int packageNumber, MetadataAttributeUsage attribute, int number, object value)
+            private void UpdateAttribute(BaseUsage parentUsage, int packageNumber, BaseUsage attribute, int number, object value)
             {
                 TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
                 XDocument metadataXml = (XDocument)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_XML];
                 XmlMetadataWriter xmlMetadataWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
 
-                metadataXml = xmlMetadataWriter.Update(metadataXml, packageUsage, packageNumber, attribute, number, value);
+                metadataXml = xmlMetadataWriter.Update(metadataXml, parentUsage, packageNumber, attribute, number, value, UsageHelper.GetNameOfType(parentUsage), UsageHelper.GetNameOfType(attribute));
 
                 TaskManager.Bus[CreateDatasetTaskmanager.METADATA_XML] = metadataXml;
                 // locat path
-                //string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "metadataTemp.Xml");
-               //metadataXml.Save
+                // string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "metadataTemp.Xml");
+                // metadataXml.Save
             }
-           
+
+
         #endregion
 
+        #region steps
+
+            private int getInstanzNumber(int stepId)
+            {
+                TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
+
+                Dictionary<int, long> StepUsageRefs = new Dictionary<int, long>();
+                if(TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATAPACKAGE_IDS))
+                {
+                    StepUsageRefs = (Dictionary<int, long>)TaskManager.Bus[CreateDatasetTaskmanager.METADATAPACKAGE_IDS];
+
+                    var temp = from stepUsageRef in StepUsageRefs
+                                     where stepUsageRef.Value.Equals(GetUsageId(stepId))
+                                     select stepUsageRef.Key;
+
+                    if (temp.Contains(stepId))
+                    {
+                        temp.ToList().Sort();
+
+                        return temp.ToList().IndexOf(stepId);
+                    }
+                }
+                return 0;
+            }
+
+            private List<StepInfo> UpdateStepsBasedOnUsage(BaseUsage usage)
+            {
+                // genertae action, controller base on usage
+                string actionName = "";
+
+                if (usage is MetadataPackageUsage)
+                {
+                    actionName = "SetMetadataPackageInstanze";
+                }
+                else
+                {
+                    actionName = "SetMetadataCompoundAttributeInstanze";
+                }
+
+                List<StepInfo> list = new List<StepInfo>();
+                Dictionary<int, long> MetadataPackageDic = (Dictionary<int, long>)TaskManager.Bus[CreateDatasetTaskmanager.METADATAPACKAGE_IDS];
+
+                if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATA_XML))
+                {
+                    XDocument xMetadata = (XDocument)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_XML];
+
+                    var x = XmlUtility.GetXElementByAttribute(usage.Label, "type", BExIS.Xml.Helpers.XmlNodeType.MetadataAttributeUsage.ToString(), xMetadata);
+
+                    if (x == null)
+                        x = XmlUtility.GetXElementByAttribute(usage.Label, "type", BExIS.Xml.Helpers.XmlNodeType.MetadataPackageUsage.ToString(), xMetadata);
+
+                    if (x != null)
+                    {
+
+                        StepInfo current = TaskManager.Current();
+                        IEnumerable<XElement> xelements = x.Elements();
+
+                        if (xelements.Count() > 0)
+                        {
+                            int counter = 0;
+                            foreach (XElement element in xelements)
+                            {
+                                counter++;
+                                string title = usage.Label + " (" + counter + ")";
+
+                                if(current.Children.Where(s=>s.title.Equals(title)).Count()==0)
+                                {
+                                    long id = Convert.ToInt64((element.Attribute("roleId")).Value.ToString());
+
+                                    StepInfo s = new StepInfo(title)
+                                    {
+                                        Id = TaskManager.GenerateStepId(),
+                                        Parent = current,
+                                        IsInstanze = true,
+                                        GetActionInfo = new ActionInfo
+                                        {
+                                            ActionName = actionName,
+                                            ControllerName = "CreateSetMetadataPackage",
+                                            AreaName = "DCM"
+                                        },
+
+                                        PostActionInfo = new ActionInfo
+                                        {
+                                            ActionName = actionName,
+                                            ControllerName = "CreateSetMetadataPackage",
+                                            AreaName = "DCM"
+                                        }
+                                    };
+
+                                    s.Children = GetChildrenSteps(usage, s);
+                                    current.Children.Add(s);
+
+                                    if (TaskManager.Root.Children.Where(z => z.title.Equals(title)).Count() == 0)
+                                    {
+                                        MetadataPackageDic.Add(s.Id, id);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    TaskManager.AddToBus(CreateDatasetTaskmanager.METADATAPACKAGE_IDS, MetadataPackageDic);
+                }
+                return list;
+            }
+
+            private List<StepInfo> GetChildrenSteps(BaseUsage usage, StepInfo parent)
+            {
+                List<StepInfo> childrenSteps = new List<StepInfo>();
+                List<BaseUsage> childrenUsages = UsageHelper.GetCompoundChildrens(usage);
+                Dictionary<int, long> MetadataPackageDic = (Dictionary<int, long>)TaskManager.Bus[CreateDatasetTaskmanager.METADATAPACKAGE_IDS];
+
+                foreach (BaseUsage u in childrenUsages)
+                {
+
+                    bool complex = false;
+
+                    string actionName = "";
+
+                    if (u is MetadataPackageUsage)
+                    {
+                        actionName = "SetMetadataPackage";
+                    }
+                    else
+                    {
+                        actionName = "SetMetadataCompoundAttribute";
+
+                        if (u is MetadataAttributeUsage)
+                        {
+                            MetadataAttributeUsage mau = (MetadataAttributeUsage)u;
+                            if (mau.MetadataAttribute.Self is MetadataCompoundAttribute)
+                                complex = true;
+                        }
+
+                        if (u is MetadataNestedAttributeUsage)
+                        {
+                            MetadataNestedAttributeUsage mau = (MetadataNestedAttributeUsage)u;
+                            if (mau.Member.Self is MetadataCompoundAttribute)
+                                complex = true;
+                        }
+
+                    }
+
+                    if (complex)
+                    {
+                        StepInfo s = new StepInfo(u.Label)
+                        {
+                            Id = TaskManager.GenerateStepId(),
+                            Parent = parent,
+                            IsInstanze = false,
+                            GetActionInfo = new ActionInfo
+                            {
+                                ActionName = actionName,
+                                ControllerName = "CreateSetMetadataPackage",
+                                AreaName = "DCM"
+                            },
+
+                            PostActionInfo = new ActionInfo
+                            {
+                                ActionName = actionName,
+                                ControllerName = "CreateSetMetadataPackage",
+                                AreaName = "DCM"
+                            }
+                        };
+
+                        s.Children = UpdateStepsBasedOnUsage(u).ToList();
+                        childrenSteps.Add(s);
+
+                        if (TaskManager.Root.Children.Where(z => z.title.Equals(s.title)).Count() == 0)
+                        {
+                            MetadataPackageDic.Add(s.Id, u.Id);
+                        }
+                    }
+
+                }
+
+                return childrenSteps;
+            }
+
+        #endregion
+     
         #region helper
 
             public string GetUserNameOrDefault()
@@ -930,7 +1584,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             }
 
         #endregion
-
 
     }
 }

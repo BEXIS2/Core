@@ -2,19 +2,19 @@
 @using BExIS.Web.Shell.Areas.DCM.Models
 @using Telerik.Web.Mvc.UI
 @{
-    string id = @Model.Id + "_" + @Model.Parent.Id + "_" + @Model.MetadataStructureId + "_" + @Model.Number+"_"+@Model.PackageModelNumber+"_"+@Model.NumberOfSourceInPackage;
-    string idInput = id+"_Input";
-    string idAdd = id+"_Add";
+    string id = @Model.Id + "_" + @Model.Parent.Id + "_" + @Model.Number + "_" + @Model.ParentModelNumber + "_" + @Model.NumberOfSourceInPackage;
+    string idInput = id + "_Input";
+    string idAdd = id + "_Add";
     string idRemove = id + "_Remove";
     string idUp = id + "_Up";
     string idDown = id + "_Down";
-    
-    
+
+
     string displayName = @Model.DisplayName;
     DateTime defaultDate = DateTime.Today;
-    
-    if (@Model.Number > 1){ displayName += " " + @Model.Number; }
-    
+
+    if (@Model.Number > 1) { displayName += " " + @Model.Number; }
+     
  }
 
 
@@ -41,45 +41,102 @@
                         @if (Model.SystemType.Equals(TypeCode.String.ToString()))
                         {
                             if (Model.DataType.Equals("Text"))
-                            { 
-                                @Html.TextAreaFor(m => m.Value, new { OnChange = "OnChange(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @Model.Parent.Label, @class = "ValueClass"  })
+                            {
+                                if (Model.DomainList.Count == 0)
+                                {
+                                    @Html.TextAreaFor(m => m.Value, new { OnChange = "OnChange(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @Model.Parent.Label, @class = "ValueClass" })
+                                }
+                                else
+                                {
+                                    @Html.DropDownListFor(m => m.Value, new SelectList(Model.DomainList), new { OnChange = "OnChange(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @Model.Parent.Label, @class = "ValueClass" })
+                                }
+
                             }
 
                             if (Model.DataType.Equals("String"))
                             {
-                                @Html.TextBoxFor(m => m.Value, new { OnChange = "OnChange(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @Model.Parent.Label, @class = "ValueClass" })
+                                if (Model.DomainList.Count == 0)
+                                { 
+                                    @Html.TextBoxFor(m => m.Value, new { OnChange = "OnChange(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @Model.Parent.Label, @class = "ValueClass" })
+                                }
+                                else
+                                {
+                                    @Html.DropDownListFor(m => m.Value, new SelectList(Model.DomainList), new { OnChange = "OnChange(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @Model.Parent.Label, @class = "ValueClass" })
+                                }
                             }
                         }
 
+                        @if (Model.SystemType.Equals(TypeCode.Boolean.ToString()))
+                        {
+                               @Html.CheckBox(Model.DisplayName, new { OnChange = "OnChange(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @Model.Parent.Label, @class = "ValueClass" });
+                        }
+
+                        @if (Model.SystemType.Equals(TypeCode.Int32.ToString()) ||
+                             Model.SystemType.Equals(TypeCode.Int64.ToString())
+                            )
+                        {
+                              int value = 0;
+                              value = Convert.ToInt32(Model.Value);
+
+                               @(Html.Telerik().IntegerTextBox()
+                                              .Name(idInput)
+                                              .MinValue(0)
+                                              .MaxValue(Int32.MaxValue)
+                                              .Value(value)
+                                              .ClientEvents(events => events
+                                                .OnChange("OnChangeNumbers"))
+                                              .InputHtmlAttributes(new { PackageId = @Model.Parent.Id, Title = @Model.Parent.Label,@class = "ValueNumberClass"})
+                                              )
+                        }
+
+                        @if (Model.SystemType.Equals(TypeCode.Decimal.ToString())||
+                            Model.SystemType.Equals(TypeCode.Double.ToString()))
+                        {
+                             @* var value = 0.0;
+                              value = Convert.ToDouble(Model.Value);
+
+                               @(Html.Telerik().NumericTextBox()
+                                              .Name(idInput)
+                                              .MinValue(0)  
+                                              .MaxValue(double.MaxValue)
+                                              .Spinners(false)
+                                              .Value(value)
+                                              .ClientEvents(events => events
+                                                .OnChange("OnChangeNumbers"))
+                                              .HtmlAttributes(new { PackageId = @Model.Parent.Id, Title = @Model.Parent.Label, @class = "ValueNumberClass"})
+                                              )*@
+                            
+                           @Html.TextBoxFor(m => m.Value, new { OnChange = "OnChange(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @Model.Parent.Label, @class = "ValueClass" })
+
+                        }
+
+
                         @if (Model.SystemType.Equals(TypeCode.DateTime.ToString()))
                         {
-                            string value ="";
+                            string value = "";
                             if (Model.Value != null)
                             {
                                 value = Model.Value.ToString();
                             }
                             else
                             {
-                                value = @defaultDate.ToString(); 
+                                value = "";//@defaultDate.ToString();
                             }
                             
                             @(Html.Telerik().DatePicker()
                                 .Name(@idInput)
                                 .ShowButton(true)
-                                .Value(value)
                                 .TodayButton("d")
                                 .OpenOnFocus(true)
                                 .Format("dd/MM/yyyy")
-                                .ClientEvents(events=>events
+                                .Value(value)
+                                .ClientEvents(events => events
                                     .OnChange("OnChangeDatePicker"))
-                                
+
                             )
 
                         }
 
-
-                       
-   
                     </td>
                     <td class="attributeMessage">
                         @Html.ValidationMessageFor(m => m.Value)
@@ -102,15 +159,15 @@
                                 <button id="@idUp" type="button" value="Up" name="Up"  class="t-icon t-arrow-up" style="border:0px;" onclick="OnClickUp(this)">up</button>
                             </td>
                         }
-                        
+
                         if (!Model.last)
                         { 
                             <td>
                                 <button id="@idDown" type="button" value="Down" name="Down"  class="t-icon t-arrow-down" style="border:0px;" onclick="OnClickDown(this)">down</button>
                             </td>
                         }
-                        
- 
+
+
 
                     }
                 </tr>
@@ -128,15 +185,12 @@
    
     function OnChange(e)
     {
-
-        //alert(e.id);
         var substr = e.id.split('_');
         var id = substr[0];
         var parentid = substr[1];
         var parentname = $("#" + e.id).attr("title");
-        var metadataStructureId = substr[2];
-        var number = substr[3];
-        var packageModelNumber = substr[4];
+        var number = substr[2];
+        var ParentModelNumber = substr[3];
         
 
         var data = {
@@ -144,9 +198,50 @@
             id: id,
             parentid: parentid,
             parentname: parentname,
-            metadataStructureId: metadataStructureId,
             number: number,
-            packageModelNumber :packageModelNumber
+            parentModelNumber :ParentModelNumber
+        };
+
+        //alert(id);
+        //alert(parentid);
+        //alert(metadataStructureId);
+        //alert(number);
+
+        $.ajax({
+            url: '/DCM/CreateSetMetadataPackage/ValidateMetadataAttributeUsage',
+            type: 'POST',
+            data: JSON.stringify(data),
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            error: function (xhr) {
+                //alert('Error: ' + xhr.statusText);
+            },
+            success: function (result) {
+                //alert("success");
+            },
+            async: true,
+            processData: false
+        });
+    }
+
+    function OnChangeNumbers(e) {
+
+        var substr = e.target.id.split('_');
+        var id = substr[0];
+        var parentid = substr[1];
+        var parentname = e.target.attr("title");
+        var metadataStructureId = substr[2];
+        var number = substr[3];
+        var ParentModelNumber = substr[4];
+
+
+        var data = {
+            value: e.target.value,
+            id: id,
+            parentid: parentid,
+            parentname: parentname,
+            number: number,
+            ParentModelNumber: ParentModelNumber
         };
 
         //alert(id);
@@ -178,18 +273,17 @@
         var id = substr[0];
         var parentid = substr[1];
         var parentname = $("#" + e.id).attr("title");
-        var metadataStructureId = substr[2];
-        var number = substr[3];
-        var packageModelNumber = substr[4];
+        //var metadataStructureId = substr[2];
+        var number = substr[2];
+        var ParentModelNumber = substr[3];
 
         var data = {
             value: e.value,
             id: id,
             parentid: parentid,
             parentname: parentname,
-            metadataStructureId: metadataStructureId,
             number: number,
-            packageModelNumber: packageModelNumber
+            ParentModelNumber: ParentModelNumber
         };
 
         //alert(id);
@@ -214,29 +308,28 @@
         });
     }
 
-
-    
     function OnClickAdd(e)
     {
+        
         var substr = e.id.split('_');
-        var number = substr[3];
         var id = substr[0];
         var parentid = substr[1];
-        var metadataStructureId = substr[2];
-        var packageModelNumber = substr[4];
-        var NumberOfSourceInPackage = substr[5];
+        var number = substr[2];
+        var ParentModelNumber = substr[3];
+        var NumberOfSourceInPackage = substr[4];
         
-        //alert(id);
-        //alert(parentid);
-        //alert(metadataStructureId);
-        //alert(number);
+        @*alert("AddClick -" +e.id +" - "+NumberOfSourceInPackage+" <= "+'@Model.Source.MaxCardinality');
+        alert("id -"+id);
+        alert("parentid -" + parentid);
+        alert("metadataStructureId -" + metadataStructureId);
+        alert("number -" + number);
+        alert("ParentModelNumber -" + ParentModelNumber);
+        alert("NumberOfSourceInPackage -" + NumberOfSourceInPackage);*@
         
         if (NumberOfSourceInPackage <= '@Model.Source.MaxCardinality') {
-            $.post('@Url.Action("AddMetadataAttributeUsage", "CreateSetMetadataPackage", new RouteValueDictionary { { "area", "DCM" } })', { id: id, parentid: parentid, metadataStructureId: metadataStructureId, number: number, packageModelNumber: packageModelNumber }, function (response) {
+            $.post('@Url.Action("AddMetadataAttributeUsage", "CreateSetMetadataPackage", new RouteValueDictionary { { "area", "DCM" } })', { id: id, parentid: parentid, number: number, parentModelNumber: ParentModelNumber }, function (response) {
 
-                //$(".package").append(response);
-                //$("#" + e.id).closest(".metadataAttributeContent").after(response);
-                var id = parentid + "_" + metadataStructureId + "_" + packageModelNumber;
+                var id = parentid;
                 $("#" + id).replaceWith(response);
             })
         }
@@ -248,18 +341,16 @@
     function OnClickRemove(e)
     {
        
-        
         var value = $("#" + e.id).closest(".ValueClass").value;
+
         if (value != "") {
 
             var substr = e.id.split('_');
-            var number = substr[3];
             var id = substr[0];
             var parentid = substr[1];
-            var metadataStructureId = substr[2];
-            var number = substr[3];
-            var packageModelNumber = substr[4];
-            var NumberOfSourceInPackage = substr[5];
+            var number = substr[2];
+            var ParentModelNumber = substr[3];
+            var NumberOfSourceInPackage = substr[4];
 
          
             if (NumberOfSourceInPackage > 1) {
@@ -267,14 +358,13 @@
                     value: value,
                     id: id,
                     parentid: parentid,
-                    metadataStructureId: metadataStructureId,
                     number: number,
-                    packageModelNumber: packageModelNumber
+                    ParentModelNumber: ParentModelNumber
                 };
 
-                $.post('@Url.Action("RemoveMetadataAttributeUsage", "CreateSetMetadataPackage", new RouteValueDictionary { { "area", "DCM" } })', { id: id, parentid: parentid, metadataStructureId: metadataStructureId, number: number, packageModelNumber: packageModelNumber }, function (response) {
+                $.post('@Url.Action("RemoveMetadataAttributeUsage", "CreateSetMetadataPackage", new RouteValueDictionary { { "area", "DCM" } })', { id: id, parentid: parentid, number: number, parentModelNumber: ParentModelNumber }, function (response) {
 
-                    var id = parentid + "_" + metadataStructureId + "_" + packageModelNumber;
+                    var id = parentid;
                     $("#" + id).replaceWith(response);
                 })
             }
@@ -291,25 +381,24 @@
         if (value != "") {
 
             var substr = e.id.split('_');
-            var number = substr[3];
             var id = substr[0];
             var parentid = substr[1];
-            var metadataStructureId = substr[2];
-            var number = substr[3];
-            var packageModelNumber = substr[4];
+            var number = substr[2];
+            var ParentModelNumber = substr[3];
+
+
 
             var data = {
                 value: value,
                 id: id,
                 parentid: parentid,
-                metadataStructureId: metadataStructureId,
                 number: number,
-                packageModelNumber:packageModelNumber
+                ParentModelNumber:ParentModelNumber
             };
 
-            $.post('@Url.Action("UpMetadataAttributeUsage", "CreateSetMetadataPackage", new RouteValueDictionary { { "area", "DCM" } })', { id: id, parentid: parentid, metadataStructureId: metadataStructureId, number: number, packageModelNumber: packageModelNumber }, function (response) {
+            $.post('@Url.Action("UpMetadataAttributeUsage", "CreateSetMetadataPackage", new RouteValueDictionary { { "area", "DCM" } })', { id: id, parentid: parentid, number: number, ParentModelNumber: ParentModelNumber }, function (response) {
      
-                var id = parentid + "_" + metadataStructureId + "_" + packageModelNumber;
+                var id = parentid;
                 $("#" + id).replaceWith(response);
             })
 
@@ -322,25 +411,22 @@
         if (value != "") {
 
             var substr = e.id.split('_');
-            var number = substr[3];
             var id = substr[0];
             var parentid = substr[1];
-            var metadataStructureId = substr[2];
-            var number = substr[3];
-            var packageModelNumber = substr[4];
+            var number = substr[2];
+            var ParentModelNumber = substr[3];
 
             var data = {
                 value: value,
                 id: id,
                 parentid: parentid,
-                metadataStructureId: metadataStructureId,
                 number: number,
-                packageModelNumber: packageModelNumber
+                ParentModelNumber: ParentModelNumber
             };
 
-            $.post('@Url.Action("DownMetadataAttributeUsage", "CreateSetMetadataPackage", new RouteValueDictionary { { "area", "DCM" } })', { id: id, parentid: parentid, metadataStructureId: metadataStructureId, number: number, packageModelNumber: packageModelNumber }, function (response) {
+            $.post('@Url.Action("DownMetadataAttributeUsage", "CreateSetMetadataPackage", new RouteValueDictionary { { "area", "DCM" } })', { id: id, parentid: parentid, number: number, ParentModelNumber: ParentModelNumber }, function (response) {
 
-                var id = parentid + "_" + metadataStructureId + "_" + packageModelNumber;
+                var id = parentid;
                 $("#" + id).replaceWith(response);
             })
 
@@ -370,6 +456,12 @@
     {
         max-width:300px;
         max-height:100px;
+    }
+
+    .ValueNumberClass
+    {
+         max-height:100px;
+         width:30px;
     }
 
 </style>

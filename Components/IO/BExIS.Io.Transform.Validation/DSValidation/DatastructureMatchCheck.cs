@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using BExIS.Io.Transform.Validation.Exceptions;
+using BExIS.IO.Transform.Validation.Exceptions;
 
 /// <summary>
 ///
 /// </summary>        
-namespace BExIS.Io.Transform.Validation.DSValidation
+namespace BExIS.IO.Transform.Validation.DSValidation
 {
     /// <summary>
     ///
@@ -18,16 +18,16 @@ namespace BExIS.Io.Transform.Validation.DSValidation
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
-        private DsType _appliedTo = new DsType();
+        private DataEntityType appliedTo = new DataEntityType();
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
-        public DsType AppliedTo
+        public DataEntityType AppliedTo
         {
-            get { return _appliedTo; }
+            get { return appliedTo; }
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace BExIS.Io.Transform.Validation.DSValidation
         /// <param>NA</param>       
         public DatastructureMatchCheck()
         {
-            _appliedTo = DsType.Datastructure;
+            appliedTo = DataEntityType.Datastructure;
         }
     }
 }

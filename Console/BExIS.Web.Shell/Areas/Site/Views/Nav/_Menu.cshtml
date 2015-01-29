@@ -45,6 +45,12 @@
                         {
                             subitem.Add().Text("Search Manager").Action("SearchDesigner", "Admin", new { area = "DDM" });
                         });
+                        item.Add().Text("Data Collection").Items(subitem =>
+                        {
+                            subitem.Add().Text("Import a metadata structure").Action("ImportMetadataStructureWizard", "ImportMetadataStructure", new { area = "DCM" });
+                        }
+                        );
+                            
                         item.Add().Text("Data Dissemination").Items(subitem =>
                         {
                             subitem.Add().Text("Metadata Export").Action("Index", "Admin", new { area = "DIM" });

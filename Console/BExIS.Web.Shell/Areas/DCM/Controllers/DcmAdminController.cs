@@ -8,7 +8,8 @@ using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
-using BExIS.Xml.Services;
+using BExIS.Xml.Helpers;
+
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
 {

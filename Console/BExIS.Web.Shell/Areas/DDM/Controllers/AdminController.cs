@@ -104,7 +104,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 Session["searchAttributeList"] = searchAttributeList;
                 ViewData["windowVisible"] = false;
 
-                //update config file
+                //update config FileStream
                 SaveConfig();
 
                 return View("SearchDesigner", (List<SearchAttributeViewModel>)Session["searchAttributeList"]);
@@ -136,7 +136,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         Session["searchAttributeList"] = searchAttributeList;
                         ViewData["windowVisible"] = false;
 
-                        //create new config file
+                        //create new config FileStream
                         SaveConfig();
                     //}
 

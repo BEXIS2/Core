@@ -20,7 +20,8 @@ using BExIS.Security.Services.Authentication;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
-using BExIS.Xml.Services;
+using BExIS.Xml.Helpers;
+using BExIS.Xml.Models;
 using Vaiona.Util.Cfg;
 
 namespace BExIS.Web.Shell.Areas.SAM.Controllers

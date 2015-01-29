@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using BExIS.Io.Transform.Input;
+using BExIS.IO.Transform.Input;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
@@ -59,13 +59,13 @@ namespace BExIS.Dcm.UploadWizard
             {
                 if (!IsEmpty(newDt))
                 {
-                    Dictionary<long, string> PkValues = GetPrimaryKeyValues(newDt, primaryKeys);
+                    Dictionary<long, string> PkValues = getPrimaryKeyValues(newDt, primaryKeys);
 
                     bool exist = false;
 
                     foreach (DataTuple sourceDt in datatuplesSource)
                     {
-                        if (SameDatatuple(sourceDt, PkValues))
+                        if (sameDatatuple(sourceDt, PkValues))
                         {
                             // check for edit
                             exist = true;
@@ -162,7 +162,7 @@ namespace BExIS.Dcm.UploadWizard
         /// <param name="dt"></param>
         /// <param name="pks"></param>
         /// <returns></returns>
-        private static Dictionary<long, string> GetPrimaryKeyValues(DataTuple dt, List<long> pks)
+        private static Dictionary<long, string> getPrimaryKeyValues(DataTuple dt, List<long> pks)
         {
             Dictionary<long, string> temp = new Dictionary<long,string>();
 
@@ -186,7 +186,7 @@ namespace BExIS.Dcm.UploadWizard
         /// <param name="dt"></param>
         /// <param name="pksVs"></param>
         /// <returns></returns>
-        private static bool SameDatatuple(DataTuple dt, Dictionary<long, string> pksVs)
+        private static bool sameDatatuple(DataTuple dt, Dictionary<long, string> pksVs)
         {
             bool IsSame = true;
 
@@ -221,7 +221,7 @@ namespace BExIS.Dcm.UploadWizard
         #region identifier
 
             /// <summary>
-            /// test unique of primary keys in a file
+            /// test unique of primary keys in a FileStream
             /// </summary>
             /// <remarks></remarks>
             /// <seealso cref=""/>
@@ -407,7 +407,7 @@ namespace BExIS.Dcm.UploadWizard
                         dataTuple = datasetManager.DataTupleRepo.Get(id);
 
 
-                        pKey = GetPrimaryKeysAsString(dataTuple, primaryKeys);
+                        pKey = getPrimaryKeysAsString(dataTuple, primaryKeys);
 
                         if (pKey != "")
                         {
@@ -441,7 +441,7 @@ namespace BExIS.Dcm.UploadWizard
             /// <param name="datatuple"></param>
             /// <param name="primaryKeys"></param>
             /// <returns></returns>
-            private static string GetPrimaryKeysAsString(DataTuple datatuple, List<long> primaryKeys)
+            private static string getPrimaryKeysAsString(DataTuple datatuple, List<long> primaryKeys)
             {
                 string value = "";
 

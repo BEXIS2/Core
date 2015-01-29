@@ -1,9 +1,9 @@
-﻿@model List<BExIS.Io.BasicFileInfo>
+﻿@model List<BExIS.IO.BasicFileInfo>
 
 <div id="FileList">
     <h4>Your Files</h4>
     <div>
-            @foreach(BExIS.Io.BasicFileInfo x in Model)
+            @foreach(BExIS.IO.BasicFileInfo x in Model)
             {
                 <p>@x.Name @Html.ActionLink("Delete", "Delete","Push", new { area = "DCM", name = @x.Name, path = @x.Uri }, new { @class=" t-icon t-cancel" }) </p>
             }

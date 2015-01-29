@@ -1,9 +1,9 @@
-﻿using BExIS.Io.Transform.Validation.Exceptions;
+﻿using BExIS.IO.Transform.Validation.Exceptions;
 
 /// <summary>
 ///
 /// </summary>        
-namespace BExIS.Io.Transform.Validation
+namespace BExIS.IO.Transform.Validation
 {
     /// <summary>
     ///

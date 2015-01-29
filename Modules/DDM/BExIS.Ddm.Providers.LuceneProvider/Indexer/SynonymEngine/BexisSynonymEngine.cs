@@ -7,17 +7,26 @@ using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
 
-
+/// <summary>
+///
+/// </summary>        
 namespace Lucene.Net.SynonymEngine
 {
+    /// <summary>
+    ///
+    /// </summary>
+    /// <remarks></remarks>        
     class BexisSynonymEngine : ISynonymEngine
     {
-
         IndexSearcher searcherTranslator;
         IndexSearcher searcherWordnet;
         Lucene.Net.Store.Directory fsDir;
 
-
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public BexisSynonymEngine()
         {
             string wordNetIndexPath = Path.Combine(FileHelper.IndexFolderPath, "WordnetIndex");
@@ -26,12 +35,24 @@ namespace Lucene.Net.SynonymEngine
             searcherWordnet = new IndexSearcher(FSDirectory.Open(new System.IO.DirectoryInfo(wordNetIndexPath)), true);
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public void close()
         {
             searcherWordnet.Dispose();
             searcherTranslator.Dispose();
-        }
+        }    
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="theWord"></param>
+        /// <returns></returns>
         public String[] GetSynonyms(string theWord)
         {
             List<string> synList = new List<string>();

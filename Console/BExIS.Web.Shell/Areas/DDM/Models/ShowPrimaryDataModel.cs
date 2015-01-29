@@ -7,7 +7,7 @@ using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Entities.Data;
 using Vaiona.Util.Cfg;
 using System.IO;
-using BExIS.Io;
+using BExIS.IO;
 
 
 namespace BExIS.Web.Shell.Areas.DDM.Models

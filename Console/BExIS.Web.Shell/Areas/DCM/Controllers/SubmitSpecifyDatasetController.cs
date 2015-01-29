@@ -6,7 +6,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Xml;
-using BExIS.Io.Transform.Validation.Exceptions;
+using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Dcm.UploadWizard;
 using BExIS.Dcm.Wizard;
 using BExIS.Dlm.Entities.Administration;
@@ -21,6 +21,7 @@ using BExIS.Web.Shell.Areas.DCM.Models;
 using Vaiona.Util.Cfg;
 using BExIS.Web.Shell.Areas.DCM.Models.Metadata;
 using System.Xml.Linq;
+using BExIS.Xml.Helpers;
 using BExIS.Xml.Services;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers

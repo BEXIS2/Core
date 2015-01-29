@@ -1,10 +1,10 @@
 ﻿using System;
-using BExIS.Io.Transform.Validation.Exceptions;
+using BExIS.IO.Transform.Validation.Exceptions;
 
 /// <summary>
 ///
 /// </summary>        
-namespace BExIS.Io.Transform.Validation.ValueValidation
+namespace BExIS.IO.Transform.Validation.ValueValidation
 {
     /// <summary>
     ///
@@ -12,12 +12,13 @@ namespace BExIS.Io.Transform.Validation.ValueValidation
     /// <remarks></remarks>        
     public class RangeValidation:IValueValidation
     {
-        # region parameter
-        private ValueType _appliedTo = new ValueType();
-        private string _name = "";
-        private string _dataType = "";
-        private double _min = 0;
-        private double _max = 0;
+        # region private
+
+        private ValueType appliedTo = new ValueType();
+        private string name = "";
+        private string dataType = "";
+        private double min = 0;
+        private double max = 0;
 
             #region get
 
@@ -26,18 +27,18 @@ namespace BExIS.Io.Transform.Validation.ValueValidation
             {
                 get
                 {
-                    return _appliedTo;
+                    return appliedTo;
                 }
             }
 
             public string Name
             {
-                get { return _name; }
+                get { return name; }
             }
 
             public string DataType
             {
-                get { return _dataType; }
+                get { return dataType; }
             }
 
             #endregion
@@ -56,26 +57,26 @@ namespace BExIS.Io.Transform.Validation.ValueValidation
         {
             if (value!=null && value.ToString()!="")
             {
-                if (_dataType.Equals(TypeCode.Int16.ToString()) ||
-                   _dataType.Equals(TypeCode.Int32.ToString()))
+                if (dataType.Equals(TypeCode.Int16.ToString()) ||
+                   dataType.Equals(TypeCode.Int32.ToString()))
                 {
                     int tempValue = Convert.ToInt32(value);
-                    if (tempValue < _min || tempValue > _max) return new Error(ErrorType.Value, "Not in Range", new object[] { _name, value, row, _dataType });
+                    if (tempValue < min || tempValue > max) return new Error(ErrorType.Value, "Not in Range", new object[] { name, value, row, dataType });
                 }
 
-                if (_dataType.Equals(TypeCode.Double.ToString()))
+                if (dataType.Equals(TypeCode.Double.ToString()))
                 {
                     double tempValue = Convert.ToDouble(value);
 
-                    if (tempValue < _min || tempValue > _max) return new Error(ErrorType.Value, "Not in Range", new object[] { _name, value, row, _dataType });
+                    if (tempValue < min || tempValue > max) return new Error(ErrorType.Value, "Not in Range", new object[] { name, value, row, dataType });
                 }
 
-                if (_dataType.Equals(TypeCode.DateTime.ToString()))
+                if (dataType.Equals(TypeCode.DateTime.ToString()))
                 {
                     DateTime dt = DateTime.Parse(value.ToString());
                     double tempValue = dt.ToOADate();
 
-                    if (tempValue < _min || tempValue > _max) return new Error(ErrorType.Value, "Not in Range", new object[] { _name, value, row, _dataType });
+                    if (tempValue < min || tempValue > max) return new Error(ErrorType.Value, "Not in Range", new object[] { name, value, row, dataType });
                 }
             }
 
@@ -93,16 +94,11 @@ namespace BExIS.Io.Transform.Validation.ValueValidation
         /// <param name="max"></param>
         public RangeValidation(string name, string dataType , double min, double max)
         {
-
-            _appliedTo = ValueType.All;
-            _min = min;
-            _max = max;
-            _name = name;
-            _dataType = dataType;
-
+            this.appliedTo = ValueType.All;
+            this.min = min;
+            this.max = max;
+            this.name = name;
+            this.dataType = dataType;
         }
-
-
-       
     }
 }

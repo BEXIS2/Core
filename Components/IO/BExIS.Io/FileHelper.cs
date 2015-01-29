@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace BExIS.Io
+namespace BExIS.IO
 {
     public class FileHelper
     {
@@ -47,6 +47,8 @@ namespace BExIS.Io
 
         public static bool WaitForFile(string fullPath)
         {
+           
+
             int numTries = 0;
             while (true)
             {

@@ -35,7 +35,22 @@ namespace BExIS.Dcm.CreateDatasetWizard
         public static string SETUP_LOADED = "SETUP_LOADED";
     
         public static string ERROR_DIC = "Error_Dic";
-        
+
+        private int MaxStepId;
+
+        public StepInfo Root { get; set; }
+
+        public CreateDatasetTaskmanager()
+        {
+            MaxStepId = 0;
+
+            Root = new StepInfo("ROOT")
+            {
+                Id = GenerateStepId()
+            };
+
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -46,15 +61,16 @@ namespace BExIS.Dcm.CreateDatasetWizard
         public static CreateDatasetTaskmanager Bind(XmlDocument xmlDocument)
         {
             XmlNodeList xmlStepInfos = xmlDocument.GetElementsByTagName("stepInfo");
-
             CreateDatasetTaskmanager tm = new CreateDatasetTaskmanager(); 
             tm.StepInfos = new List<StepInfo>();
-   
+
             foreach (XmlNode xmlStepInfo in xmlStepInfos)
             {
-
                 StepInfo si = new StepInfo(xmlStepInfo.Attributes.GetNamedItem("title").Value)
                 {
+                    Id = tm.GenerateStepId(),
+                    Parent = tm.Root,
+                    IsInstanze = true,
                     GetActionInfo = new ActionInfo
                     {
                         ActionName = xmlStepInfo.Attributes.GetNamedItem("action").Value,
@@ -71,11 +87,21 @@ namespace BExIS.Dcm.CreateDatasetWizard
                 };
 
                 tm.StepInfos.Add(si);
+                tm.Root.Children.Add(si);
             }
 
-            tm.currentStepInfo = tm.StepInfos.First();
+            tm.currentStepInfo = tm.Root.Children.First();
 
             return tm;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public int GetCurrentStepInfoIndex()
+        {
+            return Current().Id;
         }
 
         /// <summary>
@@ -84,17 +110,38 @@ namespace BExIS.Dcm.CreateDatasetWizard
         /// <remarks></remarks>
         /// <seealso cref=""/>
         /// <param name="index"></param>
-        public void SetCurrent(int index)
+        public void SetCurrent(int id)
         {
-            currentStepInfo = StepInfos.ElementAt(index);
-            currentStepInfo.SetStatus(StepStatus.inProgress);
+            currentStepInfo = Get(id);
+        }
 
-            for (int i = index + 1; i < StepInfos.Count(); i++)
+        public bool IsCurrent(StepInfo stepInfo)
+        {
+            if (this.currentStepInfo.Id.Equals(stepInfo.Id))
+                return true;
+            else
+                return false;
+        }
+
+        public bool IsChildCurrent(StepInfo stepInfo)
+        {
+            if(IsCurrent(stepInfo))
             {
-                if(!StepInfos.ElementAt(i).stepStatus.Equals(StepStatus.success))StepInfos.ElementAt(i).SetStatus(StepStatus.none);
+                return true;
             }
 
+            if (stepInfo.Children.Count > 0)
+            {
+                foreach (StepInfo child in stepInfo.Children)
+                {
+                   if(IsChildCurrent(child) ==true) return true;
+                }
+            }
+
+            return false;
         }
+
+        
 
         /// <summary>
         /// 
@@ -104,13 +151,146 @@ namespace BExIS.Dcm.CreateDatasetWizard
         /// <returns></returns>
         public StepInfo Prev()
         {
-            int currentIndex = StepInfos.IndexOf(currentStepInfo);
-            if (currentIndex == 0) return new StepInfo("");
+            this.prevStepInfo = findPrev(this.currentStepInfo);
+            return this.prevStepInfo;
+        }
 
-            //prevStepInfo = TaskInfos.Last();
-            //TaskInfos.Remove(TaskInfos.Last());
+        private StepInfo findPrev(StepInfo child)
+        {
+            StepInfo parent = child.Parent;
+            int index = parent.Children.IndexOf(child);
 
-            return StepInfos.ElementAt(currentIndex - 1);
+            if (IsRoot(parent))
+            {
+                if (index > 0)
+                    return Last(parent.Children.ElementAt(index - 1));
+                else
+                    return new StepInfo("");
+            }
+            else
+            {
+
+                if (index > 0)
+                    return parent.Children.ElementAt(index - 1);
+                else
+                   return parent;
+            }
+
+        }
+
+        private StepInfo findPrevInstanze(StepInfo child)
+        {
+            StepInfo parent = child.Parent;
+            int index = parent.Children.IndexOf(child);
+
+            if (IsRoot(parent))
+            {
+                if (index > 0)
+                    return Last(parent.Children.ElementAt(index - 1));
+                else
+                    return new StepInfo("");
+            }
+            else
+            {
+                if (!parent.IsInstanze)
+                    return findPrevInstanze(parent);
+
+                if (index > 0)
+                    return parent.Children.ElementAt(index - 1);
+                else
+                    return parent;
+            }
+        }
+
+        public StepInfo Next()
+        {
+            if (this.currentStepInfo.Children.Count > 0)
+            {
+                return this.currentStepInfo.Children.First();
+            }
+            else
+            {
+                return findNext(this.currentStepInfo);
+            }
+
+        }
+
+        private StepInfo findNext(StepInfo child)
+        {
+            StepInfo parent = child.Parent;
+
+            int index = parent.Children.IndexOf(child);
+
+            if (index + 1 < parent.Children.Count)
+            {
+                // return next child
+                return parent.Children.ElementAt(index + 1);
+            }
+            else
+            {
+                if (IsRoot(parent)) return new StepInfo("");
+                else
+                {
+
+                    return findNext(parent);
+                }
+            }
+        }
+
+        private StepInfo findNextInstanze(StepInfo child)
+        {
+            //if (child.IsInstanze)
+            //{
+                StepInfo parent = child.Parent;
+
+                int index = parent.Children.IndexOf(child);
+
+                if (index + 1 < parent.Children.Count)
+                {
+                    // return next child
+                    return parent.Children.ElementAt(index + 1);
+                }
+                else
+                {
+                    if (IsRoot(parent)) return new StepInfo("");
+                    else
+                    {
+
+                        return findNextInstanze(parent);
+                    }
+                }
+            //}
+            //else
+            //{
+            //    return findNextInstanze(child.Parent);
+            //}
+        }
+
+        /// <summary>
+        /// find last step from root
+        /// </summary>
+        /// <returns></returns>
+        public StepInfo Last()
+        {
+            return findLast(this.Root);
+        }
+
+        /// <summary>
+        ///  find last step from step
+        /// </summary>
+        /// <param name="stepInfo"></param>
+        /// <returns></returns>
+        public StepInfo Last(StepInfo stepInfo)
+        {
+            return findLast(stepInfo);
+        }
+
+        private StepInfo findLast(StepInfo stepInfo)
+        {
+            if (stepInfo.Children.Count == 0)
+                return stepInfo;
+            else
+                return findLast(stepInfo.Children.Last());
         }
 
         /// <summary>
@@ -135,24 +315,143 @@ namespace BExIS.Dcm.CreateDatasetWizard
         public void UpdateStepStatus(int newIndex)
         {
             // new index higher than current Index and next Index
-            if (newIndex > GetCurrentStepInfoIndex() && newIndex>=GetIndex(Next()))
+            //if (newIndex > GetCurrentStepInfoIndex() && newIndex>=GetIndex(Next()))
+            //{
+            //    for (int i = GetCurrentStepInfoIndex(); i < newIndex;i++)
+            //    {
+            //        if (StepInfos[i].stepStatus!=StepStatus.success) StepInfos[i].SetStatus(StepStatus.error);
+            //    }
+            //}
+
+            //// new index lower than currentindex && lower than prev index
+            //if (newIndex < GetCurrentStepInfoIndex() && newIndex <= GetIndex(Next()))
+            //{
+            //    for (int i = GetCurrentStepInfoIndex(); i > newIndex; i--)
+            //    {
+            //        if (StepInfos[i].stepStatus != StepStatus.success) StepInfos[i].SetStatus(StepStatus.error);
+            //    }
+            //}
+        
+        }
+
+        public int GenerateStepId()
+        {
+            return MaxStepId++;
+        }
+
+        public bool IsRoot(StepInfo stepInfo)
+        {
+            if (stepInfo.Id.Equals(this.Root.Id)) return true;
+            else return false;
+        }
+
+        public StepInfo Get(int id)
+        {
+            StepInfo stepInfo;
+
+            foreach (StepInfo si in this.StepInfos)
             {
-                for (int i = GetCurrentStepInfoIndex(); i < newIndex;i++)
+                if (si.Id.Equals(id)) return si;
+
+                if (si.Children.Count > 0)
                 {
-                    if (StepInfos[i].stepStatus!=StepStatus.success) StepInfos[i].SetStatus(StepStatus.error);
+                    stepInfo = get(si, id);
+
+                    if (stepInfo != null) return stepInfo;
                 }
             }
 
-            // new index lower than currentindex && lower than prev index
-            if (newIndex < GetCurrentStepInfoIndex() && newIndex <= GetIndex(Next()))
+            return null;
+        }
+
+        private StepInfo get(StepInfo parent, int id)
+        {
+            foreach (StepInfo child in parent.Children)
             {
-                for (int i = GetCurrentStepInfoIndex(); i > newIndex; i--)
+                if (child.Id.Equals(id)) return child;
+
+                if (child.Children.Count > 0)
                 {
-                    if (StepInfos[i].stepStatus != StepStatus.success) StepInfos[i].SetStatus(StepStatus.error);
+                    StepInfo s = get(child, id);
+                    if(s !=null) return s;
                 }
             }
-        
+
+            return null;
         }
+
+        public int CountSteps()
+        {
+            return countSteps(this.Root);
+        }
+
+        private int countSteps(StepInfo step)
+        {
+            int i = 0;
+
+            if (step.Children.Count > 0)
+            {
+                i = step.Children.Count;
+
+                foreach (StepInfo s in step.Children)
+                {
+                    i += countSteps(s);
+                }
+            }
+
+            return i;
+        }
+
+        /// <summary>
+        /// Remove stepInfo from parent stepInfo
+        /// 
+        /// </summary>
+        /// <param name="parent">parent step</param>
+        /// <param name="index">position of the stepinfo in children</param>
+        /// <returns></returns>
+        public StepInfo Remove(StepInfo parent, int index)
+        {
+            try
+            {
+                parent.Children.RemoveAt(index);
+
+                for (int i = index; i < parent.Children.Count; i++)
+                {
+                    int position = i + 1;
+                    parent.Children.ElementAt(i).title = parent.title + " (" + position + ")";
+                }
+
+
+            }
+            catch (Exception ex)
+            { 
+                
+            }
+
+            return parent;
+        }
+
+        /// <summary>
+        /// XXX 
+        /// this funktion needs to be replaced
+        /// its only to know if a usage schould bee a metadataAttributeUsage or
+        /// MetadataNestedAttributeUsage
+        /// </summary>
+        /// <returns></returns>
+        public bool IsParentChildfromRoot()
+        {
+            if (IsRoot(Current().Parent.Parent.Parent) ||
+               IsRoot(Current().Parent.Parent.Parent.Parent))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
+        }
+    
 
     }
 }

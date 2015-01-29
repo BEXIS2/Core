@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using BExIS.Io.Transform.Validation.Exceptions;
+using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Dcm.Wizard;
 using BExIS.Web.Shell.Areas.DCM.Models.Metadata;
 

@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using BExIS.Io;
-using BExIS.Io.Transform.Input;
+using BExIS.IO;
+using BExIS.IO.Transform.Input;
 
 namespace BExIS.Web.Shell.Areas.DCM.Models
 {

@@ -13,33 +13,73 @@ using Lucene.Net.Index;
 using Lucene.Net.QueryParsers;
 using Lucene.Net.Search;
 
+/// <summary>
+///
+/// </summary>        
 namespace BExIS.Ddm.Providers.LuceneProvider
 {
+    /// <summary>
+    ///
+    /// </summary>
+    /// <remarks></remarks>        
     public class SearchProvider : ISearchProvider
     {
         public static Dictionary<object, WeakReference> Providers = new Dictionary<object, WeakReference>();
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public SearchModel DefaultSearchModel { get; private set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public SearchModel WorkingSearchModel { get; private set; }
 
         private Query bexisSearching;
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public SearchProvider()
         {
             load();
             Providers.Add(this.GetHashCode() , new WeakReference(this));
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         ~SearchProvider()
         {
             Providers.Remove(this.GetHashCode());
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public void Reload()
         {
             load(true);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="forceReset"></param>
+        /// <return></return>
         private void load(bool forceReset=false)
         {
             if (forceReset == true)
@@ -55,6 +95,13 @@ namespace BExIS.Ddm.Providers.LuceneProvider
 
         #region ISearchDataModel Member
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param>NA</param>   
+        /// <returns></returns>
         private SearchModel initDefault()
         {
             SearchModel model = new SearchModel();
@@ -73,7 +120,14 @@ namespace BExIS.Ddm.Providers.LuceneProvider
             return model;
             //throw new NotImplementedException();
         }
-            
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param>NA</param>   
+        /// <returns></returns>
         private SearchModel initWorking()
         {
             SearchModel model = new SearchModel();
@@ -94,6 +148,16 @@ namespace BExIS.Ddm.Providers.LuceneProvider
             //throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="value"></param>
+        /// <param name="filter"></param>
+        /// <param name="searchType"></param>
+        /// <param name="numberOfResults"></param>
+        /// <returns></returns>
         public SearchModel GetTextBoxSearchValues(string value, string filter, string searchType, int numberOfResults)
         {
             if (searchType.Equals("basedon")) getQueryFromCriteria(this.WorkingSearchModel.CriteriaComponent);
@@ -106,6 +170,17 @@ namespace BExIS.Ddm.Providers.LuceneProvider
             return this.WorkingSearchModel;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="value"></param>
+        /// <param name="filter"></param>
+        /// <param name="searchType"></param>
+        /// <param name="numberOfResults"></param>
+        /// <param name="searchCriteria"></param>
+        /// <returns></returns>
         public SearchModel GetTextBoxSearchValues(string value, string filter, string searchType, int numberOfResults, SearchCriteria searchCriteria)
         {
             throw new NotImplementedException();
@@ -122,6 +197,15 @@ namespace BExIS.Ddm.Providers.LuceneProvider
             return this.WorkingSearchModel;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="searchCriteria"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="currentPage"></param>
+        /// <returns></returns>
         public SearchModel Get(SearchCriteria searchCriteria, int pageSize = 10, int currentPage = 1)
         {
 
@@ -132,12 +216,28 @@ namespace BExIS.Ddm.Providers.LuceneProvider
             //return null;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="searchCriteria"></param>
+        /// <return></return>
         public void SearchAndUpdate(SearchCriteria searchCriteria)
         {
             this.WorkingSearchModel = Get(searchCriteria);
             this.WorkingSearchModel = UpdateFacets(searchCriteria);
         }
     
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="searchCriteria"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="currentPage"></param>
+        /// <returns></returns>
         public SearchModel SearchAndUpdate(SearchCriteria searchCriteria, int pageSize = 10, int currentPage = 1)
         {
             this.WorkingSearchModel = Get(searchCriteria, pageSize, currentPage);
@@ -146,6 +246,13 @@ namespace BExIS.Ddm.Providers.LuceneProvider
             return this.WorkingSearchModel;
         }
        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="searchCriteria"></param>
+        /// <return></return>
         private void getQueryFromCriteria(SearchCriteria searchCriteria)
         {
             if (searchCriteria.SearchCriteriaList.Count() > 0)

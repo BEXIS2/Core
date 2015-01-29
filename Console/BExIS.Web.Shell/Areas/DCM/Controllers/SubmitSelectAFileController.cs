@@ -5,13 +5,13 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
-using BExIS.Io.Transform.Input;
-using BExIS.Io.Transform.Validation.Exceptions;
+using BExIS.IO.Transform.Input;
+using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Dcm.UploadWizard;
 using BExIS.Dcm.Wizard;
 using BExIS.Web.Shell.Areas.DCM.Models;
 using Vaiona.Util.Cfg;
-using BExIS.Io;
+using BExIS.IO;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
 {
@@ -70,7 +70,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             if (TaskManager != null)
             {
-                // is path of file exist
+                // is path of FileStream exist
                 if (TaskManager.Bus.ContainsKey(TaskManager.FILEPATH))
                 {
                     if (IsSupportedExtention(TaskManager))
@@ -80,12 +80,12 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                             if (GetDataStructureType().Equals(DataStructureType.Structured))
                             {
                                 #region structured datastructure
-                                    //try save file
+                                    //try save FileStream
                                     string filePath = TaskManager.Bus[TaskManager.FILEPATH].ToString();
-                                    //if extention like a makro excel file
+                                    //if extention like a makro excel FileStream
                                     if (TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".xlsm"))
                                     {
-                                        // open file
+                                        // open FileStream
                                         ExcelReader reader = new ExcelReader();
                                         Stream = reader.Open(filePath);
                                         //Session["Stream"] = Stream;
@@ -108,11 +108,11 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                                     else
                                     {
                                         TaskManager.AddToBus(TaskManager.IS_TEMPLATE, "false");
-                                        // excel file
+                                        // excel FileStream
                                         if (TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".xls"))
                                         {
 
-                                            // open file
+                                            // open FileStream
                                             ExcelReader reader = new ExcelReader();
                                             Stream = reader.Open(filePath);
                                             //Session["Stream"] = Stream;
@@ -120,10 +120,10 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                                             Stream.Close();
                                         }
-                                        // text ór csv file
+                                        // text ór csv FileStream
                                         else if (TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".csv") || TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".txt"))
                                         {
-                                            // open file
+                                            // open FileStream
                                             AsciiReader reader = new AsciiReader();
                                             Stream = reader.Open(filePath);
                                             //Session["Stream"] = Stream;
@@ -138,7 +138,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                             if (GetDataStructureType().Equals(DataStructureType.Unstructured))
                             {
                                 #region unstructured datastructure
-                                //try save file
+                                //try save FileStream
                                 string filePath = TaskManager.Bus[TaskManager.FILEPATH].ToString();
                               
                                 if(FileHelper.FileExist( filePath ))
@@ -153,7 +153,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         }
                         catch
                         {
-                            model.ErrorList.Add(new Error(ErrorType.Other, "Cannot access file on server."));
+                            model.ErrorList.Add(new Error(ErrorType.Other, "Cannot access FileStream on server."));
                         }
                     }
                     else
@@ -165,7 +165,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 }
                 else
                 {
-                    model.ErrorList.Add(new Error(ErrorType.Other, "No file selected or submitted."));
+                    model.ErrorList.Add(new Error(ErrorType.Other, "No FileStream selected or submitted."));
                 }
 
                 if (TaskManager.Current().IsValid())
@@ -210,8 +210,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                 string path = Path.Combine(storepath, SelectFileUploader.FileName);
 
-
-
                 SelectFileUploader.SaveAs(path);
                 TaskManager.AddToBus(TaskManager.FILEPATH, path);
 
@@ -255,7 +253,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         /// <summary>
         /// read filenames from datapath/Temp/Username
         /// </summary>
-        /// <returns>return a list with all names from file in the folder</returns>
+        /// <returns>return a list with all names from FileStream in the folder</returns>
         private List<String> GetServerFileList()
         {
 

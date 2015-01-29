@@ -1,0 +1,87 @@
+﻿@model BExIS.Web.Shell.Areas.DCM.Models.ImportMetadata.SummaryModel
+@using Telerik.Web.Mvc.UI;
+@using System;
+@using System.Web.Configuration;
+@using BExIS.Web.Shell.Areas.DCM.Models;
+
+@{
+    
+
+}
+
+<div class="wizardStep">
+
+     <div class="wizardStep_Main">
+        <div class="wizardStep_Header stepper">
+
+            <h3>@Model.StepInfo.title</h3>
+        </div>
+
+        <div class="wizardStep_Description stepper">
+            
+
+        </div>
+        
+        <div class="wizardStep_Content stepper">
+
+            <table>
+                <tr>
+                    <td>
+                        Metadata structure name
+                    </td>
+                    <td>
+                       @Model.SchemaName
+                    </td>
+                </tr>
+                 <tr>
+                    <td>
+                        Root node
+                    </td>
+                     <td>
+                         @Model.RootName
+                    </td>
+                </tr>
+            </table>
+
+        </div>
+    </div>
+
+     <div class="wizardStep_Success stepper">
+       
+
+        <p>You successfully created metadata structure: <br /><b>@Model.SchemaName</b></p>
+        <p>Please use the <b>@Html.ActionLink("Create a Dataset", "CreateDataset", "Create", new RouteValueDictionary { { "area", Model.StepInfo.GetActionInfo.AreaName.ToString() } }, new { title = "Link to create a dataset" })</b><br />
+            to create a dataset with this metadata structure.</p>
+
+     </div>
+
+     <div class="wizardStep_Error stepper">
+        @if (Model != null)
+        {
+            if (Model.ErrorList != null)
+            {
+                if (Model.ErrorList.Count == 0)
+                {
+
+
+                }
+                else
+                { 
+                   <ul>
+                        @foreach (BExIS.IO.Transform.Validation.Exceptions.Error s in @Model.ErrorList)
+                        { 
+                            <li>@s.ToString()</li>
+                        }
+                   </ul>
+
+                }
+            }
+
+        }
+    </div>     
+
+</div>
+
+<script type="text/javascript">
+
+</script>

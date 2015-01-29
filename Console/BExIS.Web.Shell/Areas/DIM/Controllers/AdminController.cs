@@ -9,11 +9,12 @@ using System.Xml.Linq;
 using BExIS.Web.Shell.Areas.DIM.Models;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
-using BExIS.Xml.Services;
-using BExIS.Xml.Services.Mapping;
+using BExIS.Xml.Helpers;
+using BExIS.Xml.Helpers.Mapping;
 using Vaiona.Util.Cfg;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Dlm.Entities.MetadataStructure;
+using BExIS.Xml.Services;
 
 namespace BExIS.Web.Shell.Areas.DIM.Controllers
 {

@@ -170,6 +170,8 @@ namespace BExIS.Dlm.Entities.DataStructure
             MessageTemplate = messageTemplate;
             NegatedMessageTemplate = negatedMessageTemplate;
             Items = items;
+
+            this.Dematerialize();
         }
 
         /// <summary>

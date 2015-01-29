@@ -6,8 +6,8 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Xml;
-using BExIS.Io.Transform.Input;
-using BExIS.Io.Transform.Validation.Exceptions;
+using BExIS.IO.Transform.Input;
+using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Dlm.Entities.Administration;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
@@ -18,8 +18,7 @@ using BExIS.Web.Shell.Areas.DCM.Models;
 using BExIS.Dcm.UploadWizard;
 using Vaiona.Util.Cfg;
 using System.Diagnostics;
-using BExIS.Io.Transform.Output;
-using BExIS.Xml.Services;
+using BExIS.IO.Transform.Output;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Dcm.Wizard;
@@ -27,6 +26,8 @@ using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Subjects;
 using System.Xml.Linq;
+using BExIS.Xml.Helpers;
+using BExIS.Xml.Services;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
 {

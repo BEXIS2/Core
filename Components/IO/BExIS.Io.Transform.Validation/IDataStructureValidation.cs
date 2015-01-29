@@ -2,7 +2,7 @@
 /// <summary>
 ///
 /// </summary>        
-namespace BExIS.Io.Transform.Validation
+namespace BExIS.IO.Transform.Validation
 {
     /// <summary>
     ///
@@ -10,15 +10,13 @@ namespace BExIS.Io.Transform.Validation
     /// <remarks></remarks>        
     public interface IDataStructureValidation
     {
-        DsType AppliedTo { get; }
-        //Error Execute(int id);
-
+        DataEntityType AppliedTo { get; }
     }
 
     /// <summary>
     /// 
     /// </summary>
-    public enum DsType
+    public enum DataEntityType
     {
         Dataset,
         Datastructure

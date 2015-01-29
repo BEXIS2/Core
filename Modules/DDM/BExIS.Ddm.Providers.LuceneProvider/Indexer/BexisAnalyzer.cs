@@ -4,11 +4,17 @@ using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.SynonymEngine;
 
+/// <summary>
+///
+/// </summary>        
 namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
 {
+    /// <summary>
+    ///
+    /// </summary>
+    /// <remarks></remarks>        
     class BexisAnalyzer : Analyzer
     {
-
         private String[] GERMAN_STOP_WORDS = 
 		{
 			"einer", "eine", "eines", "einem", "einen",
@@ -37,19 +43,22 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
         /// </summary>
         private ISet<string> excltable;
 
-
-
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public BexisAnalyzer()
         {
             stoptable = StopFilter.MakeStopSet(GERMAN_STOP_WORDS);
             SynonymEngine = new BexisSynonymEngine();
         }
 
-
-
         /// <summary>
         /// Builds an exclusionlist from an array of Strings. 
         /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
         /// <param name="exclusionlist"></param>
         public void SetStemExclusionTable(String[] exclusionlist)
         {
@@ -59,20 +68,35 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
         /// <summary>
         /// Builds an exclusionlist from a Hashtable. 
         /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
         /// <param name="exclusionlist"></param>
         public void SetStemExclusionTable(ISet<string> exclusionlist)
         {
             excltable = exclusionlist;
         }
 
-
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param></param>  
+        /// <returns></returns>
         public int getPositionIncrementGap(String fieldName)
         {
 
             return 100;
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="fieldName"></param>
+        /// <param name="reader"></param>
+        /// <returns></returns>
         public override TokenStream TokenStream(String fieldName, System.IO.TextReader reader)
         {
             TokenStream result = new StandardTokenizer(Lucene.Net.Util.Version.LUCENE_30, reader);

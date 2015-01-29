@@ -140,6 +140,9 @@
     <Compile Include="MetadataStructure\MetadataAttributeManager.cs" />
     <Compile Include="MetadataStructure\MetadataStructureManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TypeSystem\DataTypeCode.cs" />
+    <Compile Include="TypeSystem\DataTypeInfo.cs" />
+    <Compile Include="TypeSystem\DataTypeUtility.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">

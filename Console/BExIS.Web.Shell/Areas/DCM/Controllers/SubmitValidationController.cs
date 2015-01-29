@@ -5,8 +5,8 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
-using BExIS.Io.Transform.Input;
-using BExIS.Io.Transform.Validation.Exceptions;
+using BExIS.IO.Transform.Input;
+using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Dcm.UploadWizard;
 using BExIS.Dcm.Wizard;
 using BExIS.Dlm.Entities.DataStructure;
@@ -75,7 +75,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 }
                 else
                 {
-                    model.ErrorList.Add(new Error(ErrorType.Other, "Validation failed! Please check that the information you provided  in the previous steps conforms to your data file."));
+                    model.ErrorList.Add(new Error(ErrorType.Other, "Validation failed! Please check that the information you provided  in the previous steps conforms to your data FileStream."));
                     model.StepInfo = TaskManager.Current();
                 }
 
@@ -114,11 +114,11 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                     if (TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".xlsm"))
                     {
-                        // open file
+                        // open FileStream
                         ExcelReader reader = new ExcelReader();
                         Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
                         reader.ValidateFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), sds, id);
-                        model.ErrorList = reader.errorMessages;
+                        model.ErrorList = reader.ErrorMessages;
                     }
 
                     if (TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".csv") ||
@@ -127,7 +127,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         AsciiReader reader = new AsciiReader();
                         Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
                         reader.ValidateFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), (AsciiFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO], sds, id);
-                        model.ErrorList = reader.errorMessages;
+                        model.ErrorList = reader.ErrorMessages;
                     }
                 }
                 catch (Exception ex)

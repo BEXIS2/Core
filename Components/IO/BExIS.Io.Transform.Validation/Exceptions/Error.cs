@@ -3,7 +3,7 @@
 /// <summary>
 ///
 /// </summary>        
-namespace BExIS.Io.Transform.Validation.Exceptions
+namespace BExIS.IO.Transform.Validation.Exceptions
 {
     /// <summary>
     ///

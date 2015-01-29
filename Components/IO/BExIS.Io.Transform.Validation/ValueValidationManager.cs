@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using BExIS.Io.Transform.Validation.Exceptions;
-using BExIS.Io.Transform.Validation.ValueCheck;
+using BExIS.IO.Transform.Validation.Exceptions;
+using BExIS.IO.Transform.Validation.ValueCheck;
 
 /// <summary>
 ///
 /// </summary>        
-namespace BExIS.Io.Transform.Validation
+namespace BExIS.IO.Transform.Validation
 {
     /// <summary>
     ///

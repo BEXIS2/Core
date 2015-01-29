@@ -7,8 +7,8 @@
     <ProjectGuid>{455EC826-9A92-40FF-BD3B-388C288955CE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BExIS.Io.Transform.Output</RootNamespace>
-    <AssemblyName>BExIS.Io.Transform.Output</AssemblyName>
+    <RootNamespace>BExIS.IO.Transform.Output</RootNamespace>
+    <AssemblyName>BExIS.IO.Transform.Output</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>SAK</SccProjectName>
@@ -77,17 +77,17 @@
       <Project>{abc877e0-e3de-4472-a199-1728e88fa5a1}</Project>
       <Name>BExIS.RPM.Output</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\XML\BExIS.Xml.Services\BExIS.Xml.Services.csproj">
+    <ProjectReference Include="..\..\XML\BExIS.Xml.Helpers\BExIS.Xml.Helpers.csproj">
       <Project>{252f7872-a69c-43a6-84b4-4d2abdbdd9ab}</Project>
-      <Name>BExIS.Xml.Services</Name>
+      <Name>BExIS.Xml.Helpers</Name>
     </ProjectReference>
-    <ProjectReference Include="..\BExIS.Io.Transform.Validation\BExIS.Io.Transform.Validation.csproj">
+    <ProjectReference Include="..\BExIS.Io.Transform.Validation\BExIS.IO.Transform.Validation.csproj">
       <Project>{c8a05313-b960-406e-92ec-c1e5b3f47fcd}</Project>
-      <Name>BExIS.Io.Transform.Validation</Name>
+      <Name>BExIS.IO.Transform.Validation</Name>
     </ProjectReference>
-    <ProjectReference Include="..\BExIS.Io\BExIS.Io.csproj">
+    <ProjectReference Include="..\BExIS.Io\BExIS.IO.csproj">
       <Project>{e4795f06-20c2-4c4c-a720-9a79896384df}</Project>
-      <Name>BExIS.Io</Name>
+      <Name>BExIS.IO</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

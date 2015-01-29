@@ -18,9 +18,15 @@ using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 
-
+/// <summary>
+///
+/// </summary>        
 namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
 {
+    /// <summary>
+    ///
+    /// </summary>
+    /// <remarks></remarks>        
     public class BexisIndexer
     {
         private List<Facet> AllFacets = new List<Facet>();
@@ -33,6 +39,11 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
         public List<XmlNode> generalXmlNodeList = new List<XmlNode>();
         public List<XmlNode> headerItemXmlNodeList = new List<XmlNode>();
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         private void LoadBeforeIndexing()
         {
             XmlNodeList fieldProperties = configXML.GetElementsByTagName("field");
@@ -90,8 +101,6 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                     generalXmlNodeList.Add(fieldProperty);
                 }
             }
-
-
         }
 
         private string luceneIndexPath = Path.Combine(FileHelper.IndexFolderPath, "BexisSearchIndex");
@@ -102,6 +111,11 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
 
         XmlDocument configXML;
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public void Index()
         {
             configXML = new XmlDocument();
@@ -148,7 +162,14 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             }
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="dsVersionTuples"></param>
+        /// <param name="sds"></param>
+        /// <returns></returns>
         private List<string> generateStringFromTuples(List<AbstractTuple> dsVersionTuples, StructuredDataStructure sds)
         {
             if (dsVersionTuples.Count > 0)
@@ -193,6 +214,11 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             return null;
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public void ReIndex()
         {
             reIndex = true;
@@ -216,9 +242,16 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             autoCompleteIndexWriter.GetReader().Dispose();
             autoCompleteIndexWriter.Dispose();
             reIndex = false;
-
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="id"></param>
+        /// <param name="metadataDoc"></param>
+        /// <return></return>
         private void writeBexisIndex(long id, XmlDocument metadataDoc)
         {
             String docId = id.ToString();//metadataDoc.GetElementsByTagName("bgc:id")[0].InnerText;
@@ -434,7 +467,11 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             indexWriter.AddDocument(dataset);
         }
 
-
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public void updateIndex()
         {
 
@@ -447,6 +484,15 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
 
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="docId"></param>
+        /// <param name="f"></param>
+        /// <param name="V"></param>
+        /// <return></return>
         private void writeAutoCompleteIndex(String docId, String f, String V)
         {
             var dataset = new Document();
@@ -456,14 +502,16 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             autoCompleteIndexWriter.AddDocument(dataset);
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public void Dispose()
         {
             indexWriter.Dispose();
             autoCompleteIndexWriter.Dispose();
         }
-
-
-
     }
 }
 

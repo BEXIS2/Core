@@ -1,0 +1,72 @@
+﻿@model MetadataPackageModel
+
+@using BExIS.Web.Shell.Areas.DCM.Models.Metadata
+@using Telerik.Web.Mvc.UI
+@using BExIS.IO.Transform.Validation.Exceptions; 
+
+@{
+    string id = @Model.Source.Id.ToString(); // XXX METADATSTRUCTURE+ "_"+Model..MetadataStructure.Id;
+    string packageUsageIdPackage = id+"_Package";
+    string idAdd = id + "_Add"; 
+    string idRemove = id + "_Remove";
+      
+ }
+
+<div id="@id" class="createWizardStep">
+
+    <div class="createWizardStep_Main">
+        <div class="createWizardStep_Header stepper">
+            <h3>@Model.DisplayName ( @Model.Number )</h3>
+        </div>
+
+        <div class="createWizardStep_Description stepper">
+            <p>
+                @Model.Discription
+            </p>
+        </div>
+
+        <div class="packages">
+ 
+           @foreach (var item in Model.MetadataAttributeModels)
+            {
+                if (item.GetMetadataAttribute().Self is BExIS.Dlm.Entities.MetadataStructure.MetadataSimpleAttribute)
+                {
+                    @Html.Partial("_setMetadataAttribute", item)
+
+                }
+            }
+
+        </div>
+        <br />
+
+        @Ajax.ActionLink("Validate", "ValidateStep",@Model.StepInfo.GetActionInfo.ControllerName,new RouteValueDictionary { { "area", "DCM" } },
+                 new AjaxOptions { HttpMethod = "GET", 
+                 InsertionMode = InsertionMode.Replace, 
+                 UpdateTargetId = @id
+                 },
+                 new { @class = "t-button",  @style="float:right" })
+ 
+    </div>
+
+    <div class="createWizardStep_Success stepper">
+
+        @if (Model != null && Model.StepInfo.notExecuted == false)
+        {
+            if (Model.ErrorList.Count == 0)
+            {
+                // if primary keys unique
+               <p>no errors</p>
+            }
+        }
+
+    </div>
+
+    <div class="createWizardStep_Error stepper">
+        @if (Model != null)
+        {
+            @Html.Partial("_errorMessages", @Model.ErrorList) 
+
+        }
+    </div>   
+
+</div>

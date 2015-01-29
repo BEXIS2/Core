@@ -1,15 +1,84 @@
-﻿@model AbstractTaskManager
+﻿@model BExIS.Dcm.CreateDatasetWizard.CreateDatasetTaskmanager
 @using Telerik.Web.Mvc.UI;
 @using BExIS.Web.Shell.Areas.DCM.Models;
 @using BExIS.Dcm.Wizard;
+@using BExIS.Dcm.CreateDatasetWizard;
 
-
+@{
+   
+    
+       
+ }
 <div id="CreateWizard_TaskListDiv">
-<table id="taskListTable">
+    
+    @(Html.Telerik().TreeView()
+        .Name("StepTreeView")
+        .ClientEvents(events => events
+                .OnSelect("OnClickStep"))
+        .BindTo(Model.StepInfos, mappings =>
+        {
+            mappings.For<StepInfo>(binding => binding
+                .ItemDataBound((item, stepinfo) =>
+                {
+                    item.Text = stepinfo.title;
+                    item.Value = stepinfo.Id.ToString();
+                    item.Selected = @Model.IsCurrent(stepinfo);
+                    item.Expanded = (@Model.IsCurrent(stepinfo) || @Model.IsChildCurrent(stepinfo));
+                    item.LinkHtmlAttributes["actionName"] = stepinfo.GetActionInfo.ActionName;
+                    item.LinkHtmlAttributes["controllerName"] = stepinfo.GetActionInfo.ControllerName;
+                    item.LinkHtmlAttributes["areaName"] = stepinfo.GetActionInfo.AreaName;
+                    
 
-    @foreach (var item in Model.StepInfos)
+
+                    switch (stepinfo.stepStatus)
+                    {
+                        case StepStatus.success:
+                            {
+                                item.ImageUrl = "Images/emptyPng.png";
+                                item.LinkHtmlAttributes["class"] = "facetSuccess";
+                                item.ImageHtmlAttributes["class"] = "t-icon t-insert";
+                                break;
+                            }
+                        case StepStatus.inProgress:
+                            {
+                                item.ImageUrl = "Images/emptyPng.png";
+                                item.ImageHtmlAttributes["class"] = "t-icon t-arrow-prev";
+                                break;
+                            }
+                        case StepStatus.error:
+                            {
+                                item.ImageUrl = "Images/emptyPng.png";
+                                item.LinkHtmlAttributes["class"] = "facetError";
+                                item.ImageHtmlAttributes["class"] = "t-icon t-cancel";
+                                break;
+                            }
+                        default:
+                            {
+
+                                break;
+                            }
+                    }
+
+                    //item.ActionName = stepinfo.GetActionInfo.ActionName;
+                    //item.ControllerName = stepinfo.GetActionInfo.ControllerName;
+                    //item.Action(stepinfo.GetActionInfo.ActionName, stepinfo.GetActionInfo.ControllerName, new RouteValueDictionary { { "area", stepinfo.GetActionInfo.AreaName }, { "index", stepinfo.Id } });
+                    
+                })
+                .Children(stepinfo => stepinfo.Children));
+        }
+        
+    ))
+
+@*<table id="taskListTable">
+
+    <br />
+    <hr />
+    <br />
+    <br />
+
+    @foreach (var item in Model.Root.Children)
     {
-        string id = @Model.StepInfos.IndexOf(item) + "_" + @item.title + "_" + @item.GetActionInfo.ActionName + "_" + @item.GetActionInfo.ControllerName;
+        string id = @item.Id + "_" + @item.title + "_" + @item.GetActionInfo.ActionName + "_" + @item.GetActionInfo.ControllerName;
         <tr>
             <td >
                 @if (Model.Current().Equals(item))
@@ -50,7 +119,7 @@
             </td>
         </tr>
     }
-</table>
+</table>*@
 </div>
 
 @*JavaScript*@
@@ -58,23 +127,33 @@
 
 function TaskListRefresh()
 {
-        $.post('@Url.Action("RefreshTaskList", "Create", new RouteValueDictionary { { "area", "DCM" } })', function (response) {
-            $("#CreateWizard_TaskListDiv").html(response);
-        })
+    $.post('@Url.Action("RefreshTaskList", "Create", new RouteValueDictionary { { "area", "DCM" } })', function (response) {
+        $("#CreateWizard_TaskListDiv").html(response);
+    })
 }
+
+    function treeView() {
+        return $('#StepTreeView').data('tTreeView');
+    }
 
     function OnClickStep(e) {
 
+        var element = e.item;
+        var selectedItem = treeView().getItemText(e.item);
+        var selectedItemValue = treeView().getItemValue(e.item);
+
+        var span = element.getElementsByClassName("t-in")[0];
+
+        var action = span.getAttribute("actionname");
+        var controller = span.getAttribute("controllername");
+        var area = span.getAttribute("areaname");
+
         //alert("test");
         $('#preloader').show();
-        var substr = e.id.split('_');
-        var index = substr[0];
-        var action = substr[2];
-        var controller = substr[3];
 
-        var url = '/DCM/' + controller + '/' + action;
+        var url = '/'+area+'/' + controller + '/' + action;
 
-        $.get(url, { index: index }, function (response) {
+        $.get(url, { index: selectedItemValue }, function (response) {
             $("#StepView").html(response);
             NavigationRefresh();
             TaskListRefresh();
@@ -82,40 +161,21 @@ function TaskListRefresh()
         })
     }
 
-    function OnClickStep2(e)
-    {
-
-        var substr = e.id.split('_');
-        var index = substr[0];
-
-        //alert(e.id);
-
-        var data = {
-            index: index,
-            name:"test"
-        };
-
-
-        $.ajax({
-            type: 'POST',
-            contentType: 'application/json; charset=utf-8',
-            data: JSON.stringify(data),
-            dataType: 'html',
-            url: '@Url.Action(@Model.Current().PostActionInfo.ActionName, @Model.Current().PostActionInfo.ControllerName, new RouteValueDictionary { { "area", @Model.Current().PostActionInfo.AreaName }})',
-            success: function (result) {
-                $('#StepView').html(result);
-                NavigationRefresh();
-                TaskListRefresh();
-                $('#preloader').hide();
-            }
-            });
-    }
-
 </script>
 
 @*CSS*@
 
 <style type="text/css">
+
+    .facetError
+    {
+        background-color:#FF4040
+    }
+
+    .facetSuccess
+    {
+        background-color:#90EE90
+    }
 
     #taskListTable tr td
     {

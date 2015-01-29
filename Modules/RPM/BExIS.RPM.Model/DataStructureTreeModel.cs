@@ -5,8 +5,15 @@ using System.Linq;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.DataStructure;
 
+/// <summary>
+///
+/// </summary>        
 namespace BExIS.RPM.Model
 {
+    /// <summary>
+    ///
+    /// </summary>
+    /// <remarks></remarks>        
     public class DataStructureTreeElement
     {
         public String name = null;
@@ -14,6 +21,11 @@ namespace BExIS.RPM.Model
         public bool structured = true;
         public bool inUse = true;
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public DataStructureTreeElement()
         {
             name = " ";
@@ -23,18 +35,33 @@ namespace BExIS.RPM.Model
 
     }
 
+    /// <summary>
+    ///
+    /// </summary>
+    /// <remarks></remarks>        
     public class DataStructureTreeList
     {
         public String name = null;
         public List<DataStructureTreeElement> dataStructureTreeElementList = null;
-        
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public DataStructureTreeList()
         {
             name = "";
             dataStructureTreeElementList = new List<DataStructureTreeElement>();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="structuredDatastructureList"></param>
+        /// <return></return>
         public DataStructureTreeList(IList<StructuredDataStructure> structuredDatastructureList)
         {
             name = "Structured";
@@ -78,6 +105,13 @@ namespace BExIS.RPM.Model
             dataStructureTreeElementList = tempTreeElement;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="unStructuredDatastructureList"></param>
+        /// <return></return>
         public DataStructureTreeList(IList<UnStructuredDataStructure> unStructuredDatastructureList)
         {
             name = "Unstructured";
@@ -124,11 +158,20 @@ namespace BExIS.RPM.Model
 
     }
 
+    /// <summary>
+    ///
+    /// </summary>
+    /// <remarks></remarks>        
     public class DataStructureTree
     {
         public List<DataStructureTreeList> dataStructureTreeList = null;
 
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public DataStructureTree()
         {
             dataStructureTreeList = new List<DataStructureTreeList>();

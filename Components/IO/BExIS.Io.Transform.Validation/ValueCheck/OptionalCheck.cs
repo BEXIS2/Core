@@ -1,10 +1,10 @@
 ﻿using System;
-using BExIS.Io.Transform.Validation.Exceptions;
+using BExIS.IO.Transform.Validation.Exceptions;
 
 /// <summary>
 ///
 /// </summary>        
-namespace BExIS.Io.Transform.Validation.ValueCheck
+namespace BExIS.IO.Transform.Validation.ValueCheck
 {
     /// <summary>
     ///
@@ -12,12 +12,12 @@ namespace BExIS.Io.Transform.Validation.ValueCheck
     /// <remarks></remarks>        
     public class OptionalCheck:IValueCheck
     {
-        # region parameter
+        # region private
 
-            private ValueType _appliedTo = new ValueType();
-            private bool _optional = false;
-            private string _name = "";
-            private string _dataType = "";
+            private ValueType appliedTo = new ValueType();
+            private bool optional = false;
+            private string name = "";
+            private string dataType = "";
 
             #region get
 
@@ -30,7 +30,7 @@ namespace BExIS.Io.Transform.Validation.ValueCheck
             {
                 get
                 {
-                    return _appliedTo;
+                    return appliedTo;
                 }
             }
 
@@ -41,7 +41,7 @@ namespace BExIS.Io.Transform.Validation.ValueCheck
             /// <seealso cref=""/>        
             public string Name
             {
-                get { return _name; }
+                get { return name; }
             }
 
             /// <summary>
@@ -51,7 +51,7 @@ namespace BExIS.Io.Transform.Validation.ValueCheck
             /// <seealso cref=""/>        
             public string DataType
             {
-                get { return _dataType; }
+                get { return dataType; }
             }
             
             #endregion
@@ -68,10 +68,10 @@ namespace BExIS.Io.Transform.Validation.ValueCheck
         /// <returns></returns>
         public object Execute(string value, int row)
         {
-            if (String.IsNullOrEmpty(value) && this._optional == false)
+            if (String.IsNullOrEmpty(value) && this.optional == false)
             {
                 // create Error Object
-                Error e = new Error(ErrorType.Value, "Is empty and not optional ", new object[] { _name, "empty", row, _dataType });
+                Error e = new Error(ErrorType.Value, "Is empty and not optional ", new object[] { name, "empty", row, dataType });
                 return e;
             }
             return value;
@@ -87,10 +87,10 @@ namespace BExIS.Io.Transform.Validation.ValueCheck
         /// <param name="optional"></param>
         public OptionalCheck(string name, string dataType, bool optional)
         {
-            _appliedTo = ValueType.All;
-            _optional = optional;
-            _name = name;
-            _dataType = dataType;
+            this.appliedTo = ValueType.All;
+            this.optional = optional;
+            this.name = name;
+            this.dataType = dataType;
 
         }
 

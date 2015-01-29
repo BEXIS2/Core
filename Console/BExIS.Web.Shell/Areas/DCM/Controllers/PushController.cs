@@ -9,7 +9,7 @@ using System.Threading;
 using System.Web;
 using System.Web.Mvc;
 using BExIS.Dcm.UploadWizard;
-using BExIS.Io;
+using BExIS.IO;
 using BExIS.Web.Shell.Areas.DCM.Models.Push;
 using Vaiona.Util.Cfg;
 
@@ -61,7 +61,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         /// <summary>
         /// read filenames from datapath/Temp/Username
         /// </summary>
-        /// <returns>return a list with all names from file in the folder</returns>
+        /// <returns>return a list with all names from FileStream in the folder</returns>
         private List<BasicFileInfo> GetServerFileList()
         {
             List<BasicFileInfo> fileList = new List<BasicFileInfo>();

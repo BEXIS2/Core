@@ -12,11 +12,18 @@ namespace BExIS.Dcm.Wizard
     /// <remarks></remarks>        
     public class StepInfo
     {
+
         public string title;
         public bool valid = false;
         public StepStatus stepStatus;
         public bool notExecuted = true;
         public Dictionary<string, object> parameters;
+
+        public bool Root { get; set;}
+        public bool IsInstanze { get; set; }
+        public int Id { get; set; }
+        public StepInfo Parent { get; set; }
+        public List<StepInfo> Children { get; set; }
 
         /// <summary>
         ///
@@ -44,6 +51,7 @@ namespace BExIS.Dcm.Wizard
             this.stepStatus = StepStatus.none;
             this.GetActionInfo = new ActionInfo();
             this.PostActionInfo = new ActionInfo();
+            this.Children = new List<StepInfo>();
         }
 
         /// <summary>

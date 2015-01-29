@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 using BExIS.Dcm.Wizard;
-using BExIS.Io.Transform.Validation.Exceptions;
+using BExIS.IO.Transform.Validation.Exceptions;
 
 namespace BExIS.Web.Shell.Areas.DCM.Models.Create
 {

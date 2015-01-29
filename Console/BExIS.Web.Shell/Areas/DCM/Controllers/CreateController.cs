@@ -20,7 +20,7 @@ using BExIS.Web.Shell.Areas.DCM.Models.Create;
 using BExIS.Web.Shell.Areas.DCM.Models.Metadata;
 using BExIS.Dlm.Entities.Data;
 using System.Xml.Linq;
-using BExIS.Xml.Services;
+using BExIS.Xml.Helpers;
 using BExIS.Dlm.Services.Data;
 
 
@@ -75,6 +75,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     XmlDocument xmlTaskInfo = new XmlDocument();
                     xmlTaskInfo.Load(path);
                     TaskManager = CreateDatasetTaskmanager.Bind(xmlTaskInfo);
+
                 }
                 catch (Exception e)
                 {

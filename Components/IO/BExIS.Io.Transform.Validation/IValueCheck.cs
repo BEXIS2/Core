@@ -2,7 +2,7 @@
 /// <summary>
 ///
 /// </summary>        
-namespace BExIS.Io.Transform.Validation
+namespace BExIS.IO.Transform.Validation
 {
     /// <summary>
     ///

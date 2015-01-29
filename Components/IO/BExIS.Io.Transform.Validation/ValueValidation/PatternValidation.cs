@@ -1,10 +1,10 @@
 ﻿using System.Text.RegularExpressions;
-using BExIS.Io.Transform.Validation.Exceptions;
+using BExIS.IO.Transform.Validation.Exceptions;
 
 /// <summary>
 ///
 /// </summary>        
-namespace BExIS.Io.Transform.Validation.ValueValidation
+namespace BExIS.IO.Transform.Validation.ValueValidation
 {
     /// <summary>
     ///
@@ -12,10 +12,10 @@ namespace BExIS.Io.Transform.Validation.ValueValidation
     /// <remarks></remarks>        
     public class PatternValidation:IValueValidation
     {
-        private ValueType _appliedTo = new ValueType();
-        private string _name = "";
-        private string _dataType = "";
-        private string _pattern = "";
+        private ValueType appliedTo = new ValueType();
+        private string name = "";
+        private string dataType = "";
+        private string pattern = "";
 
         /// <summary>
         ///
@@ -24,7 +24,7 @@ namespace BExIS.Io.Transform.Validation.ValueValidation
         /// <seealso cref=""/>             
         public ValueType AppliedTo
         {
-            get { return _appliedTo; }
+            get { return appliedTo; }
         }
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace BExIS.Io.Transform.Validation.ValueValidation
         /// <seealso cref=""/>        
         public string Name
         {
-            get { return _name; }
+            get { return name; }
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace BExIS.Io.Transform.Validation.ValueValidation
         /// <seealso cref=""/>        
         public string DataType
         {
-            get { return _dataType; }
+            get { return dataType; }
         }
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace BExIS.Io.Transform.Validation.ValueValidation
         /// <seealso cref=""/>        
         public string Pattern
         {
-            get { return _pattern; }
+            get { return pattern; }
         }
 
         /// <summary>
@@ -69,13 +69,13 @@ namespace BExIS.Io.Transform.Validation.ValueValidation
         {
             if (value!=null)
             {
-                Regex rx = new Regex(_pattern);
+                Regex rx = new Regex(pattern);
 
                 if (rx.IsMatch(value.ToString()))
                 {
                     return null;
                 }
-                else return new Error(ErrorType.Value, "Value not matched on variable pattern.", new object[] { _name, value, row, _dataType });
+                else return new Error(ErrorType.Value, "Value not matched on variable pattern.", new object[] { name, value, row, dataType });
             }
             return null;
         }
@@ -90,10 +90,10 @@ namespace BExIS.Io.Transform.Validation.ValueValidation
         /// <param name="pattern"></param>
         public PatternValidation(string name, string dataType, string pattern)
         {
-            _appliedTo = ValueType.All;
-            _name = name;
-            _dataType = dataType;
-            _pattern = pattern;
+            this.appliedTo = ValueType.All;
+            this.name = name;
+            this.dataType = dataType;
+            this.pattern = pattern;
         }
     
     }

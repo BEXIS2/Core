@@ -4,8 +4,8 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
-using BExIS.Io.Transform.Input;
-using BExIS.Io.Transform.Validation.Exceptions;
+using BExIS.IO.Transform.Input;
+using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Dcm.UploadWizard;
 using BExIS.Dcm.Wizard;
 using BExIS.Web.Shell.Areas.DCM.Models;
@@ -135,7 +135,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             return FileReaderInfo;
         }
 
-        #region ascii file info
+        #region ascii FileStream info
         [HttpPost]
         public ActionResult SaveAsciiFileInfos(FileInfoModel info)
         {
@@ -197,7 +197,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         #endregion
 
-        #region excel file info
+        #region excel FileStream info
 
         public ActionResult SaveExcelFileInfos(FileInfoModel info)
         {

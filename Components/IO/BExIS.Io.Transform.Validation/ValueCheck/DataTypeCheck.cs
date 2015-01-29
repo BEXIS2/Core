@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Globalization;
 using System.Text.RegularExpressions;
-using BExIS.Io.Transform.Validation.Exceptions;
+using BExIS.IO.Transform.Validation.Exceptions;
 using System.Linq;
 
 /// <summary>
 ///
 /// </summary>        
-namespace BExIS.Io.Transform.Validation.ValueCheck
+namespace BExIS.IO.Transform.Validation.ValueCheck
 {
     /// <summary>
     ///
@@ -15,11 +15,12 @@ namespace BExIS.Io.Transform.Validation.ValueCheck
     /// <remarks></remarks>        
     public class DataTypeCheck:IValueCheck
     {
-        # region parameter
-        private ValueType _appliedTo = new ValueType();
-        private string _name = "";
-        private string _dataType = "";
-        private DecimalCharacter _decimalCharacter;
+        # region private
+
+        private ValueType appliedTo = new ValueType();
+        private string name = "";
+        private string dataType = "";
+        private DecimalCharacter decimalCharacter;
 
         #region get
 
@@ -32,7 +33,7 @@ namespace BExIS.Io.Transform.Validation.ValueCheck
             {
                 get
                 {
-                    return _appliedTo;
+                    return appliedTo;
                 }
             }
 
@@ -43,7 +44,7 @@ namespace BExIS.Io.Transform.Validation.ValueCheck
             /// <seealso cref=""/>        
             public string Name
             {
-                get { return _name; }
+                get { return name; }
             }
 
             /// <summary>
@@ -53,12 +54,12 @@ namespace BExIS.Io.Transform.Validation.ValueCheck
             /// <seealso cref=""/>        
             public string DataType
             {
-                get { return _dataType; }
+                get { return dataType; }
             }
 
             public DecimalCharacter GetDecimalCharacter
             {
-                get { return _decimalCharacter; }
+                get { return decimalCharacter; }
             }
             
 
@@ -78,7 +79,7 @@ namespace BExIS.Io.Transform.Validation.ValueCheck
         {
             if (!String.IsNullOrEmpty(value))
             {
-                switch (_dataType)
+                switch (dataType)
                 {
                     case "Int16":
                         {
@@ -88,7 +89,7 @@ namespace BExIS.Io.Transform.Validation.ValueCheck
                             }
                             catch (Exception ex)
                             {
-                                return new Error(ErrorType.Value, "Can not convert to", new object[] { _name, value, row, _dataType });
+                                return new Error(ErrorType.Value, "Can not convert to", new object[] { name, value, row, dataType });
                             }
 
                             return Convert.ToInt16(value);
@@ -102,7 +103,7 @@ namespace BExIS.Io.Transform.Validation.ValueCheck
                             }
                             catch (Exception ex)
                             {
-                                return new Error(ErrorType.Value, "Can not convert to", new object[] { _name, value, row, _dataType });
+                                return new Error(ErrorType.Value, "Can not convert to", new object[] { name, value, row, dataType });
                             }
 
                             return Convert.ToInt32(value);
@@ -114,7 +115,7 @@ namespace BExIS.Io.Transform.Validation.ValueCheck
 
                             //if(double.TryParse(value,NumberStyles.Number,CultureInfo.InvariantCulture, out convertedValue))
                             //{
-                                if (_decimalCharacter.Equals(DecimalCharacter.point))
+                                if (decimalCharacter.Equals(DecimalCharacter.point))
                                 {
                                     string[] temp = value.Split('.');
                                     if (temp.Length <= 2)
@@ -125,16 +126,16 @@ namespace BExIS.Io.Transform.Validation.ValueCheck
                                         }
                                         else
                                         {
-                                            return new Error(ErrorType.Value, "False decimal character.", new object[] { _name, value, row, _dataType });
+                                            return new Error(ErrorType.Value, "False decimal character.", new object[] { name, value, row, dataType });
                                         }
                                     }
                                     else
                                     {
-                                        return new Error(ErrorType.Value, "Can not convert to.", new object[] { _name, value, row, _dataType });
+                                        return new Error(ErrorType.Value, "Can not convert to.", new object[] { name, value, row, dataType });
                                     } 
                                 }
 
-                                if (_decimalCharacter.Equals(DecimalCharacter.comma))
+                                if (decimalCharacter.Equals(DecimalCharacter.comma))
                                 {
                                     string[] temp = value.Split(',');
                                     if (temp.Length <= 2)
@@ -145,13 +146,13 @@ namespace BExIS.Io.Transform.Validation.ValueCheck
                                         }
                                         else
                                         {
-                                            return new Error(ErrorType.Value, "False decimal character.", new object[] { _name, value, row, _dataType });
+                                            return new Error(ErrorType.Value, "False decimal character.", new object[] { name, value, row, dataType });
                                         }
 
                                     }
                                     else
                                     {
-                                        return new Error(ErrorType.Value, "Can not convert to.", new object[] { _name, value, row, _dataType });
+                                        return new Error(ErrorType.Value, "Can not convert to.", new object[] { name, value, row, dataType });
                                     }
                                 }
 
@@ -188,7 +189,7 @@ namespace BExIS.Io.Transform.Validation.ValueCheck
                                 return dateTime;
                             }
 
-                            return new Error(ErrorType.Value, "Can not convert to", new object[] { _name, value, row, _dataType });
+                            return new Error(ErrorType.Value, "Can not convert to", new object[] { name, value, row, dataType });
 
                         }
                     case "String":
@@ -210,10 +211,10 @@ namespace BExIS.Io.Transform.Validation.ValueCheck
         /// <param name="dataType"></param>
         public DataTypeCheck(string name, string dataType, DecimalCharacter decimalCharacter)
         {
-            _appliedTo = ValueType.Number;
-            _name = name;
-            _dataType = dataType;
-            _decimalCharacter = decimalCharacter;
+            this.appliedTo = ValueType.Number;
+            this.name = name;
+            this.dataType = dataType;
+            this.decimalCharacter = decimalCharacter;
         }
     }
 }

@@ -38,6 +38,14 @@ tr td
 
 /*Navigation*/
 
+
+#NavDiv
+{
+    width:95%;
+    position:absolute;
+    bottom:10px;
+}
+
 #UploadWizardNavDiv
 {
     width:95%;
@@ -45,7 +53,13 @@ tr td
     bottom:10px;
 }
 
-#UploadWizard_NavigationTable 
+#NavigationTable  
+{
+    border-style: none;
+    width:100%;
+}
+
+#UploadWizard_NavigationTable
 {
     border-style: none;
     width:100%;
@@ -75,6 +89,19 @@ tr td
 
 
 /**Errors*/
+
+.wizardStep_Error
+{
+    width:45%;
+    color:red;
+    top:10px;
+    right:10px;
+    height:auto;
+    max-height:600px;
+    overflow:auto;
+    position:absolute;
+}
+
 .uploadWizardStep_Error
 {
     width:45%;
@@ -99,6 +126,15 @@ tr td
     position:absolute;
 }
 
+.wizardStep_Success
+{
+    width:45%;
+    color:green;
+    top:10px;
+    right:10px;
+    position:absolute;
+}
+
 .uploadWizardStep_Success
 {
     width:45%;
@@ -117,6 +153,14 @@ tr td
     position:absolute;
 }
 
+.wizardStep_Main
+{
+    width:45%;
+    top:10px;
+    left:10%;
+    height:400px;
+}
+
 .uploadWizardStep_Main
 {
     width:45%;
@@ -132,10 +176,22 @@ tr td
     left:10%;
 }
 
+.wizard_PK_Span
+{
+    width:33%;
+
+}
+
 .uploadWizard_PK_Span
 {
     width:33%;
 
+}
+
+.wizardStep_Content 
+{
+    height:220px;
+   
 }
 
 .uploadWizardStep_Content 

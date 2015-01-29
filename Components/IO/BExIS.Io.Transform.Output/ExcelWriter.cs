@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using BExIS.Dlm.Entities.Data;
-using BExIS.Io.Transform.Validation.Exceptions;
+using BExIS.IO.Transform.Validation.Exceptions;
 using DocumentFormat.OpenXml.Packaging;
 using Vaiona.Util.Cfg;
 using DocumentFormat.OpenXml.Spreadsheet;
@@ -14,7 +14,7 @@ using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using DocumentFormat.OpenXml;
 using BExIS.Dlm.Services.DataStructure;
-using BExIS.Io.Transform.Validation.DSValidation;
+using BExIS.IO.Transform.Validation.DSValidation;
 using System.Globalization;
 
 using BExIS.RPM.Output;
@@ -23,7 +23,7 @@ using System.Diagnostics;
 /// <summary>
 ///
 /// </summary>        
-namespace BExIS.Io.Transform.Output
+namespace BExIS.IO.Transform.Output
 {
     /// <summary>
     ///
@@ -31,28 +31,30 @@ namespace BExIS.Io.Transform.Output
     /// <remarks></remarks>        
     public class ExcelWriter:DataWriter
     {
+        #region private
 
-        SpreadsheetDocument spreadsheetDocument;
-        Worksheet worksheet;
-        SharedStringItem[] _sharedStrings;
-        Stylesheet _stylesheet = new Stylesheet();
+        private SpreadsheetDocument spreadsheetDocument;
+        private SharedStringItem[] sharedStrings;
+        private Stylesheet stylesheet = new Stylesheet();
 
-        DefinedNameVal _areaOfData = new DefinedNameVal();
-        DefinedNameVal _areaOfVariables = new DefinedNameVal();
+        private DefinedNameVal areaOfData = new DefinedNameVal();
+        private DefinedNameVal areaOfVariables = new DefinedNameVal();
 
-        char[] alphabet = { ' ','A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
+        private char[] alphabet = { ' ','A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
 
 
-        int startColumn = 0;
-        int endColumn = 0;
-        int numOfColumns = 0;
-        int offset = 0;
-        int numOfDataRows = 0;
+        private int startColumn = 0;
+        private int endColumn = 0;
+        private int numOfColumns = 0;
+        private int offset = 0;
+        private int numOfDataRows = 0;
 
-        List<DataTuple> _dataTuples = new List<DataTuple>();
-        StructuredDataStructure _dataStructure = new StructuredDataStructure();
+        private List<DataTuple> dataTuples = new List<DataTuple>();
+        private StructuredDataStructure dataStructure = new StructuredDataStructure();
 
-        uint[] styleIndexArray = new uint[4];
+        private uint[] styleIndexArray = new uint[4];
+
+        #endregion
 
         /// <summary>
         /// Add Datatuples to a Excel Template file
@@ -72,7 +74,7 @@ namespace BExIS.Io.Transform.Output
 
                 //_dataTuples = dataTuples;
                 // loading datastructure
-                _dataStructure = GetDataStructure(dataStructureId);
+                dataStructure = GetDataStructure(dataStructureId);
 
                 // open excel file
                 spreadsheetDocument = SpreadsheetDocument.Open(filePath, true);
@@ -81,39 +83,39 @@ namespace BExIS.Io.Transform.Output
                 WorkbookPart workbookPart = spreadsheetDocument.WorkbookPart;
 
                 // get all the defined area 
-                List<DefinedNameVal> namesTable = BuildDefinedNamesTable(workbookPart);
+                List<DefinedNameVal> namesTable = buildDefinedNamesTable(workbookPart);
 
                 // select data area
-                this._areaOfData = namesTable.Where(p => p.Key.Equals("Data")).FirstOrDefault();
+                this.areaOfData = namesTable.Where(p => p.Key.Equals("Data")).FirstOrDefault();
 
                 // Select variable area
-                this._areaOfVariables = namesTable.Where(p => p.Key.Equals("VariableIdentifiers")).FirstOrDefault();
+                this.areaOfVariables = namesTable.Where(p => p.Key.Equals("VariableIdentifiers")).FirstOrDefault();
 
                 // Get intergers for reading data
-                startColumn = GetColumnNumber(this._areaOfData.StartColumn);
-                endColumn = GetColumnNumber(this._areaOfData.EndColumn);
+                startColumn = getColumnNumber(this.areaOfData.StartColumn);
+                endColumn = getColumnNumber(this.areaOfData.EndColumn);
                 
                 numOfColumns = (endColumn - startColumn) + 1;
-                offset = GetColumnNumber(getColumnName(this._areaOfData.StartColumn)) - 1;
+                offset = getColumnNumber(getColumnName(this.areaOfData.StartColumn)) - 1;
 
                 // gerneat Style for cell types
                 generateStyle(spreadsheetDocument);
 
                 // get styleSheet
-                _stylesheet = workbookPart.WorkbookStylesPart.Stylesheet;
+                stylesheet = workbookPart.WorkbookStylesPart.Stylesheet;
 
                 // Get shared strings
-                _sharedStrings = workbookPart.SharedStringTablePart.SharedStringTable.Elements<SharedStringItem>().ToArray();
+                sharedStrings = workbookPart.SharedStringTablePart.SharedStringTable.Elements<SharedStringItem>().ToArray();
 
                 // select worksheetpart by selected defined name area like data in sheet
                 // sheet where data area is inside
-                WorksheetPart worksheetPart = GetWorkSheetPart(workbookPart, this._areaOfData);
+                WorksheetPart worksheetPart = getWorkSheetPart(workbookPart, this.areaOfData);
 
                 // Get VarioableIndentifiers
-                this.VariableIdentifiers = GetVariableIdentifiers(worksheetPart, this._areaOfVariables.StartRow, this._areaOfVariables.EndRow);
+                this.VariableIdentifiers = getVariableIdentifiers(worksheetPart, this.areaOfVariables.StartRow, this.areaOfVariables.EndRow);
 
 
-                AddRows(worksheetPart, this._areaOfData.StartRow, this._areaOfData.EndRow, dataTuplesIds);
+                AddRows(worksheetPart, this.areaOfData.StartRow, this.areaOfData.EndRow, dataTuplesIds);
 
                 // set data area
 
@@ -149,7 +151,7 @@ namespace BExIS.Io.Transform.Output
 
             }
 
-            return errorMessages;
+            return ErrorMessages;
         }
 
         /// <summary>
@@ -170,7 +172,7 @@ namespace BExIS.Io.Transform.Output
 
                 //_dataTuples = dataTuples;
                 // loading datastructure
-                _dataStructure = GetDataStructure(dataStructureId);
+                dataStructure = GetDataStructure(dataStructureId);
 
                 // open excel file
                 spreadsheetDocument = SpreadsheetDocument.Open(filePath, true);
@@ -179,39 +181,39 @@ namespace BExIS.Io.Transform.Output
                 WorkbookPart workbookPart = spreadsheetDocument.WorkbookPart;
 
                 // get all the defined area 
-                List<DefinedNameVal> namesTable = BuildDefinedNamesTable(workbookPart);
+                List<DefinedNameVal> namesTable = buildDefinedNamesTable(workbookPart);
 
                 // select data area
-                this._areaOfData = namesTable.Where(p => p.Key.Equals("Data")).FirstOrDefault();
+                this.areaOfData = namesTable.Where(p => p.Key.Equals("Data")).FirstOrDefault();
 
                 // Select variable area
-                this._areaOfVariables = namesTable.Where(p => p.Key.Equals("VariableIdentifiers")).FirstOrDefault();
+                this.areaOfVariables = namesTable.Where(p => p.Key.Equals("VariableIdentifiers")).FirstOrDefault();
 
                 // Get intergers for reading data
-                startColumn = GetColumnNumber(this._areaOfData.StartColumn);
-                endColumn = GetColumnNumber(this._areaOfData.EndColumn);
+                startColumn = getColumnNumber(this.areaOfData.StartColumn);
+                endColumn = getColumnNumber(this.areaOfData.EndColumn);
 
                 numOfColumns = (endColumn - startColumn) + 1;
-                offset = GetColumnNumber(getColumnName(this._areaOfData.StartColumn)) - 1;
+                offset = getColumnNumber(getColumnName(this.areaOfData.StartColumn)) - 1;
 
                 // gerneat Style for cell types
                 generateStyle(spreadsheetDocument);
 
                 // get styleSheet
-                _stylesheet = workbookPart.WorkbookStylesPart.Stylesheet;
+                stylesheet = workbookPart.WorkbookStylesPart.Stylesheet;
 
                 // Get shared strings
-                _sharedStrings = workbookPart.SharedStringTablePart.SharedStringTable.Elements<SharedStringItem>().ToArray();
+                sharedStrings = workbookPart.SharedStringTablePart.SharedStringTable.Elements<SharedStringItem>().ToArray();
 
                 // select worksheetpart by selected defined name area like data in sheet
                 // sheet where data area is inside
-                WorksheetPart worksheetPart = GetWorkSheetPart(workbookPart, this._areaOfData);
+                WorksheetPart worksheetPart = getWorkSheetPart(workbookPart, this.areaOfData);
 
                 // Get VarioableIndentifiers
-                this.VariableIdentifiers = GetVariableIdentifiers(worksheetPart, this._areaOfVariables.StartRow, this._areaOfVariables.EndRow);
+                this.VariableIdentifiers = getVariableIdentifiers(worksheetPart, this.areaOfVariables.StartRow, this.areaOfVariables.EndRow);
 
 
-                AddRows(worksheetPart, this._areaOfData.StartRow, this._areaOfData.EndRow, dataTuples);
+                AddRows(worksheetPart, this.areaOfData.StartRow, this.areaOfData.EndRow, dataTuples);
 
                 // set data area
 
@@ -247,7 +249,7 @@ namespace BExIS.Io.Transform.Output
 
             }
 
-            return errorMessages;
+            return ErrorMessages;
         }
 
         /// <summary>
@@ -352,7 +354,7 @@ namespace BExIS.Io.Transform.Output
             row.RowIndex = Convert.ToUInt32(rowIndex);
 
 
-            DataTuple dataTuple = datasetManager.DataTupleRepo.Get(dataTupleId);
+            DataTuple dataTuple = DatasetManager.DataTupleRepo.Get(dataTupleId);
             dataTuple.Materialize();
             
 
@@ -519,7 +521,7 @@ namespace BExIS.Io.Transform.Output
             string dataPath = GetFullStorePath(datasetId, datasetVersionOrderNr, title, extention);
 
             //Template will not be filtered by columns
-            if (this.visibleColumns == null)
+            if (this.VisibleColumns == null)
             {
                 #region generate file with full datastructure
 
@@ -550,7 +552,7 @@ namespace BExIS.Io.Transform.Output
             }
 
             // create a file with a subset of variables
-            if (this.visibleColumns != null)
+            if (this.VisibleColumns != null)
             { 
                 /// call templateprovider from rpm
                 ExcelTemplateProvider provider = new ExcelTemplateProvider();
@@ -558,7 +560,7 @@ namespace BExIS.Io.Transform.Output
                 string path = GetStorePath(datasetId, datasetVersionOrderNr);
                 string newTitle = GetNewTitle(datasetId, datasetVersionOrderNr, title, extention);
 
-                provider.CreateTemplate(GetVariableIds(this.visibleColumns), dataStructureId, path, newTitle);
+                provider.CreateTemplate(getVariableIds(this.VisibleColumns), dataStructureId, path, newTitle);
 
             }
 
@@ -574,10 +576,10 @@ namespace BExIS.Io.Transform.Output
         /// <returns></returns>
         public bool IsTemplate(Stream file)
         {
-            this.file = file;
+            this.FileStream = file;
 
             // open excel file
-            spreadsheetDocument = SpreadsheetDocument.Open(this.file, false);
+            spreadsheetDocument = SpreadsheetDocument.Open(this.FileStream, false);
 
             // get workbookpart
             WorkbookPart workbookPart = spreadsheetDocument.WorkbookPart;
@@ -586,7 +588,7 @@ namespace BExIS.Io.Transform.Output
             try
             {
                 // get all the defined area 
-                List<DefinedNameVal> namesTable = BuildDefinedNamesTable(workbookPart);
+                List<DefinedNameVal> namesTable = buildDefinedNamesTable(workbookPart);
 
                 if (namesTable.Where(p => p.Key.Equals("Data")).FirstOrDefault() != null
                     && namesTable.Where(p => p.Key.Equals("VariableIdentifiers")).FirstOrDefault() != null)
@@ -603,7 +605,7 @@ namespace BExIS.Io.Transform.Output
             return false;
         }
 
-    #region helper
+        #region helper
 
         /// <summary>
         ///
@@ -612,7 +614,7 @@ namespace BExIS.Io.Transform.Output
         /// <seealso cref=""/>
         /// <param name="workbookPart"></param>
         /// <returns></returns>
-        private List<DefinedNameVal> BuildDefinedNamesTable(WorkbookPart workbookPart)
+        private List<DefinedNameVal> buildDefinedNamesTable(WorkbookPart workbookPart)
         {
             //Build a list
             List<DefinedNameVal> definedNames = new List<DefinedNameVal>();
@@ -653,7 +655,7 @@ namespace BExIS.Io.Transform.Output
         /// <seealso cref=""/>
         /// <param name="workbookPart"></param>
         /// <returns></returns>
-        private List<DefinedNameVal> ChangeDefinedNamesTable(WorkbookPart workbookPart)
+        private List<DefinedNameVal> changeDefinedNamesTable(WorkbookPart workbookPart)
         {
             //Build a list
             List<DefinedNameVal> definedNames = new List<DefinedNameVal>();
@@ -695,7 +697,7 @@ namespace BExIS.Io.Transform.Output
         /// <param name="workbookPart"></param>
         /// <param name="definedName"></param>
         /// <returns></returns>
-        private static WorksheetPart GetWorkSheetPart(WorkbookPart workbookPart, DefinedNameVal definedName)
+        private static WorksheetPart getWorkSheetPart(WorkbookPart workbookPart, DefinedNameVal definedName)
         {
             //get worksheet based on defined name
             string relId = workbookPart.Workbook.Descendants<Sheet>()
@@ -712,7 +714,7 @@ namespace BExIS.Io.Transform.Output
         /// <seealso cref=""/>
         /// <param name="columnName"></param>
         /// <returns></returns>
-        private static int GetColumnNumber(string columnName)
+        private static int getColumnNumber(string columnName)
         {
             char[] chars = columnName.ToCharArray();
 
@@ -868,7 +870,7 @@ namespace BExIS.Io.Transform.Output
         /// <param name="startRow"></param>
         /// <param name="endRow"></param>
         /// <returns></returns>
-        private List<VariableIdentifier> GetVariableIdentifiers(WorksheetPart worksheetPart, int startRow, int endRow)
+        private List<VariableIdentifier> getVariableIdentifiers(WorksheetPart worksheetPart, int startRow, int endRow)
         {
             //NEW OPENXMLREADER
             if (this.VariableIdentifiers == null || this.VariableIdentifiers.Count == 0)
@@ -891,8 +893,8 @@ namespace BExIS.Io.Transform.Output
                             {
                                 Row row = (Row)reader.LoadCurrentElement();
 
-                                if (row.Hidden == null) variableIdentifierRows.Add(RowToList(row));
-                                else if (row.Hidden != true) variableIdentifierRows.Add(RowToList(row));
+                                if (row.Hidden == null) VariableIdentifierRows.Add(rowToList(row));
+                                else if (row.Hidden != true) VariableIdentifierRows.Add(rowToList(row));
 
                             }
 
@@ -902,9 +904,9 @@ namespace BExIS.Io.Transform.Output
                 }
 
                 // convert variable rows to VariableIdentifiers
-                if (variableIdentifierRows != null)
+                if (VariableIdentifierRows != null)
                 {
-                    foreach (List<string> l in variableIdentifierRows)
+                    foreach (List<string> l in VariableIdentifierRows)
                     {
                         //create headerVariables
                         if (VariableIdentifiers.Count == 0)
@@ -940,7 +942,7 @@ namespace BExIS.Io.Transform.Output
         /// <seealso cref=""/>
         /// <param name="r"></param>
         /// <returns></returns>
-        private List<string> RowToList(Row r)
+        private List<string> rowToList(Row r)
         {
 
             string[] rowAsStringArray = new string[numOfColumns];
@@ -961,9 +963,9 @@ namespace BExIS.Io.Transform.Output
                     if (c.CellValue != null)
                     {
                         // if cell reference in range of the area
-                        int cellReferencAsInterger = GetColumnNumber(getColumnName(c.CellReference));
-                        int start = GetColumnNumber(this._areaOfData.StartColumn);
-                        int end = GetColumnNumber(this._areaOfData.EndColumn);
+                        int cellReferencAsInterger = getColumnNumber(getColumnName(c.CellReference));
+                        int start = getColumnNumber(this.areaOfData.StartColumn);
+                        int end = getColumnNumber(this.areaOfData.EndColumn);
 
                         if (cellReferencAsInterger >= start && cellReferencAsInterger <= end)
                         {
@@ -972,7 +974,7 @@ namespace BExIS.Io.Transform.Output
                             if (c.DataType != null && c.DataType.HasValue && c.DataType.Value == CellValues.SharedString)
                             {
                                 int sharedStringIndex = int.Parse(c.CellValue.Text, CultureInfo.InvariantCulture);
-                                SharedStringItem sharedStringItem = _sharedStrings[sharedStringIndex];
+                                SharedStringItem sharedStringItem = sharedStrings[sharedStringIndex];
                                 value = sharedStringItem.InnerText;
 
                             }
@@ -980,7 +982,7 @@ namespace BExIS.Io.Transform.Output
                             else if (c.StyleIndex != null && c.StyleIndex.HasValue)
                             {
                                 uint styleIndex = c.StyleIndex.Value;
-                                CellFormat cellFormat = _stylesheet.CellFormats.ChildElements[(int)styleIndex] as CellFormat;
+                                CellFormat cellFormat = stylesheet.CellFormats.ChildElements[(int)styleIndex] as CellFormat;
                                 if (cellFormat.ApplyNumberFormat != null && cellFormat.ApplyNumberFormat.HasValue && cellFormat.ApplyNumberFormat.Value && cellFormat.NumberFormatId != null && cellFormat.NumberFormatId.HasValue)
                                 {
                                     uint numberFormatId = cellFormat.NumberFormatId.Value;
@@ -993,9 +995,9 @@ namespace BExIS.Io.Transform.Output
                                     }
                                     else
                                     {
-                                        if (_stylesheet.NumberingFormats != null && _stylesheet.NumberingFormats.Any(numFormat => ((NumberingFormat)numFormat).NumberFormatId.Value == numberFormatId))
+                                        if (stylesheet.NumberingFormats != null && stylesheet.NumberingFormats.Any(numFormat => ((NumberingFormat)numFormat).NumberFormatId.Value == numberFormatId))
                                         {
-                                            NumberingFormat numberFormat = _stylesheet.NumberingFormats.First(numFormat => ((NumberingFormat)numFormat).NumberFormatId.Value == numberFormatId) as NumberingFormat;
+                                            NumberingFormat numberFormat = stylesheet.NumberingFormats.First(numFormat => ((NumberingFormat)numFormat).NumberFormatId.Value == numberFormatId) as NumberingFormat;
 
                                             if (numberFormat != null && numberFormat.FormatCode != null && numberFormat.FormatCode.HasValue)
                                             {
@@ -1048,7 +1050,7 @@ namespace BExIS.Io.Transform.Output
         /// <seealso cref=""/>
         /// <param name="stringlist"></param>
         /// <returns></returns>
-        private List<long> GetVariableIds(string[] stringlist)
+        private List<long> getVariableIds(string[] stringlist)
         {
             List<long> list = new List<long>();
 
@@ -1063,7 +1065,7 @@ namespace BExIS.Io.Transform.Output
             return list;
         }
 
-    #endregion
+        #endregion
 
     }
 

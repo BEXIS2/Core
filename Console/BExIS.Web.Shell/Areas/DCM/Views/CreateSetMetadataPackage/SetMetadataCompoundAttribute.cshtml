@@ -1,0 +1,62 @@
+﻿@model BExIS.Web.Shell.Areas.DCM.Models.Metadata.MetadataCompoundAttributeModel
+
+@{
+    ViewBag.Title = "SetMetadataCompoundAttribute";
+}
+
+@{
+    string id = @Model.Source.Id.ToString(); //+Model.Source.MetadataStructure.Id;
+    string packageUsageIdPackage = id+"_Package";
+    string idAdd = id + "_Add"; 
+    string idRemove = id + "_Remove";
+
+    int latestPackageNumber = 0;
+
+ }
+
+<div id="@id" class="createWizardStep">
+
+    <div class="createWizardStep_Main">
+        <div class="createWizardStep_Header stepper">
+            <h3>@Model.DisplayName</h3>
+        </div>
+
+        <div class="createWizardStep_Description stepper">
+            <p>
+                @Model.Discription
+            </p>
+        </div>
+
+        <div class="compound">
+    
+
+
+        </div>
+        <br />
+
+    </div>
+
+    <div class="createWizardStep_Success stepper">
+
+        @if (Model != null && Model.StepInfo.notExecuted == false)
+        {
+            if (Model.ErrorList.Count == 0)
+            {
+                // if primary keys unique
+               <p>no errors</p>
+            }
+        }
+
+    </div>
+
+    <div class="createWizardStep_Error stepper">
+        @if (Model != null)
+        {
+
+            
+            @Html.Partial("_errorMessages", @Model.ErrorList) 
+
+        }
+    </div>   
+
+</div>

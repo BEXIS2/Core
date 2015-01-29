@@ -11,20 +11,37 @@ using Vaiona.Util.Cfg;
 using System.Text.RegularExpressions;
 using System;
 
-
+/// <summary>
+///
+/// </summary>        
 namespace BExIS.RPM.Output
 {
+    /// <summary>
+    ///
+    /// </summary>
+    /// <remarks></remarks>        
     public class ExcelTemplateProvider
     {
         string _fileName = null;
 
         private char[] alphabet = {' ','A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="fileName"></param>
         public ExcelTemplateProvider(string fileName)
         {
             _fileName = fileName;
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
         public ExcelTemplateProvider()
         {
             _fileName = "BExISppTemplate_Clean.xlsm"; 
@@ -39,13 +56,19 @@ namespace BExIS.RPM.Output
         //        return null;
         //}
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="id"></param>
         public void CreateTemplate(long id)
         {
             DataStructureManager dataStructureManager = new DataStructureManager();
             StructuredDataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(id);
             CreateTemplate(dataStructure);
         }
-
+                
         public List<Variable> getOrderedVariables(StructuredDataStructure structuredDataStructure)
         {
             DataStructureManager dataStructureManager = new DataStructureManager();
@@ -59,10 +82,10 @@ namespace BExIS.RPM.Output
                 doc.AppendChild(root);
             }
             if (doc.GetElementsByTagName("order").Count == 0)
-            {
+                {
 
                 if (structuredDataStructure.Variables.Count != 0)
-                {
+                    {
                     order = doc.CreateNode(System.Xml.XmlNodeType.Element, "order", null);
                     foreach (Variable v in structuredDataStructure.Variables)
                     {
@@ -93,8 +116,8 @@ namespace BExIS.RPM.Output
                 }
             }
             return orderedVariables;
-        }
-                
+            }
+            
         public void CreateTemplate(StructuredDataStructure dataStructure)
         {
             DataStructureManager dataStructureManager = new DataStructureManager();
@@ -118,6 +141,16 @@ namespace BExIS.RPM.Output
 
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="variableIds"></param>
+        /// <param name="dataStructureId"></param>
+        /// <param name="path"></param>
+        /// <param name="filename"></param>
+        /// <returns></returns>
         public SpreadsheetDocument CreateTemplate(List<long> variableIds,long dataStructureId, string path, string filename)
         {
             DataStructureManager dataStructureManager = new DataStructureManager();
@@ -134,6 +167,15 @@ namespace BExIS.RPM.Output
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="variables"></param>
+        /// <param name="path"></param>
+        /// <param name="filename"></param>
+        /// <returns></returns>
         public SpreadsheetDocument CreateTemplate(List<Variable> variables, string path, string filename)
         {            
             if (!Directory.Exists(Path.Combine(AppConfiguration.DataPath, path)))
@@ -342,6 +384,13 @@ namespace BExIS.RPM.Output
             return dataStructureFile;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="systemType"></param>
+        /// <returns></returns>
         private CellValues getExcelType(string systemType)
         {
             if (systemType == "Int16" || systemType == "Int32" || systemType == "Int64" || systemType == "UInt16" || systemType == "UInt32" || systemType == "UInt64" || systemType == "Double" || systemType == "Decimal")
@@ -355,6 +404,14 @@ namespace BExIS.RPM.Output
             return CellValues.SharedString;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="systemType"></param>
+        /// <param name="styleIndex"></param>
+        /// <returns></returns>
         private uint getExcelStyleIndex(string systemType, uint[] styleIndex)
         {
             if (systemType == "Double" || systemType == "Decimal")
@@ -370,6 +427,15 @@ namespace BExIS.RPM.Output
             return styleIndex[2];
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="worksheet"></param>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <returns></returns>
         private List<Row> GetRows(Worksheet worksheet, int start, int end)
         {
             List<Row> temp = new List<Row>();
@@ -382,6 +448,14 @@ namespace BExIS.RPM.Output
             return temp;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="index"></param>
+        /// <param name="offset"></param>
+        /// <returns></returns>
         private string GetClomunIndex(int index, int offset = 1)
         {
 
@@ -410,6 +484,12 @@ namespace BExIS.RPM.Output
             return column;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="dataStrctureId"></param>
         public void deleteTemplate(long dataStrctureId)
         {
             DataStructureManager DSM = new DataStructureManager();

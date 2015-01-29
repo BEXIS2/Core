@@ -1,0 +1,66 @@
+﻿@{
+    ViewBag.Title = "ImportMetadataStructureWizard";
+}
+@model BExIS.Dcm.ImportMetadataStructureWizard.ImportMetadataStructureTaskManager
+@using Telerik.Web.Mvc.UI;
+
+@section Scripts{
+
+     <link href="@Url.Content(Themes.GetResourcePath("Styles","wizard.css"))" rel="stylesheet" type="text/css" />
+}
+
+@section LeftPane 
+{   @if (ViewData.ModelState.IsValid)
+    { 
+        @Html.Partial("_taskListView", Model.GetStatusOfStepInfos())
+    }
+}
+
+<div id="StepView" >
+   @Html.ValidationSummary(true)
+</div>
+<div id="preloader" style="display:none;" >
+     <img src="../../../../Themes/Default/Styles/Default/preloader.GIF" />
+</div>
+
+@if (ViewData.ModelState.IsValid)
+{ 
+    @Html.Partial("_wizardNav", Model)
+
+<script type="text/javascript">              
+      
+    var Parameters = new Array();
+
+    $(document).ready(function () {
+
+        var index = '@Model.GetCurrentStepInfoIndex()';
+
+        //$.validator.unobtrusive.parse("#DefineMetadataStructure");
+        //$.validator.unobtrusive.parse("createDatasetFormular");
+        //alert(index);
+ 
+
+        $.get('@Url.Action(@Model.Current().GetActionInfo.ActionName, @Model.Current().GetActionInfo.ControllerName, new RouteValueDictionary { { "area", @Model.Current().GetActionInfo.AreaName } })', { index: index }, function (response) {
+
+            //alert("start");
+
+            $("#StepView").html(response);
+
+            NavigationRefresh();
+            TaskListRefresh();
+        })
+    })
+
+
+</script>
+
+<style type="text/css">
+
+    .uploadWizardStep
+    {
+        height:300px;
+    }
+
+</style>
+    
+}

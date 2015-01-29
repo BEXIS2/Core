@@ -10,6 +10,7 @@ using System.Xml.Linq;
 using BExIS.Dcm.CreateDatasetWizard;
 using BExIS.Dcm.Wizard;
 using BExIS.Dlm.Entities.Administration;
+using BExIS.Dlm.Entities.Common;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Entities.MetadataStructure;
@@ -17,10 +18,10 @@ using BExIS.Dlm.Services.Administration;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
-using BExIS.Io.Transform.Validation.Exceptions;
+using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Web.Shell.Areas.DCM.Models;
 using BExIS.Web.Shell.Areas.DCM.Models.Create;
-using BExIS.Xml.Services;
+using BExIS.Xml.Helpers;
 using Vaiona.Util.Cfg;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
@@ -51,8 +52,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             SelectDatasetSetupModel model = GetDefaultModel();
             model.StepInfo = TaskManager.Current();
-            //Get StepInfo
-            //model.StepInfo = TaskManager.Current();
+
             Session["CreateDatasetTaskmanager"] = TaskManager;
 
 
@@ -80,8 +80,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 }
                 else
                 {
-                    AdvanceTaskManager((long)TaskManager.Bus[CreateDatasetTaskmanager.METADATASTRUCTURE_ID]);
                     CreateXml();
+                    AdvanceTaskManager((long)TaskManager.Bus[CreateDatasetTaskmanager.METADATASTRUCTURE_ID]);
+
                     ready = true;
                 }
 
@@ -150,9 +151,10 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 // creat a new dataset
                 //CreateANewDataset(model.SelectedDatastructureId, model.SelectedResearchPlanId, model.SelectedMetadatStructureId);
 
+                CreateXml();
+
                 AdvanceTaskManager(model.SelectedMetadatStructureId);
 
-                CreateXml();
 
                 model.IsLoaded = (bool)TaskManager.Bus[CreateDatasetTaskmanager.SETUP_LOADED];
 
@@ -274,50 +276,117 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         private void AdvanceTaskManager(long MetadataStructureId)
         {
-           CreateDatasetTaskmanager TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
+           TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
 
            MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
 
            List<MetadataPackageUsage> metadataPackageList = metadataStructureManager.GetEffectivePackages(MetadataStructureId).ToList();
 
            Dictionary<int, long> MetadataPackageDic = new Dictionary<int, long>();
+           TaskManager.AddToBus(CreateDatasetTaskmanager.METADATAPACKAGE_IDS, MetadataPackageDic);
 
            StepInfo summary = TaskManager.StepInfos.Last();
            //TaskManager.StepInfos.Remove(TaskManager.StepInfos.Last());
-           StepInfo start = TaskManager.StepInfos.First();
+           StepInfo start = TaskManager.Root.Children.First();
            TaskManager.StepInfos.Clear();
+           TaskManager.Root.Children.Clear();
            TaskManager.StepInfos.Add(start);
+           TaskManager.Root.Children.Add(start);
 
            foreach (MetadataPackageUsage mpu in metadataPackageList)
            {
-               StepInfo si = new StepInfo(mpu.Label)
-               {
-                   GetActionInfo = new ActionInfo
+               // only add none optional usages
+               if (mpu.MinCardinality > 0)
+               { 
+                   StepInfo si = new StepInfo(mpu.Label)
                    {
-                       ActionName = "SetMetadataPackage",
-                       ControllerName = "CreateSetMetadataPackage",
-                       AreaName = "DCM"
-                   },
+                       Id = TaskManager.GenerateStepId(),
+                       Parent = TaskManager.Root,
+                       IsInstanze = false,
+                       GetActionInfo = new ActionInfo
+                       {
+                           ActionName = "SetMetadataPackage",
+                           ControllerName = "CreateSetMetadataPackage",
+                           AreaName = "DCM"
+                       },
 
-                   PostActionInfo = new ActionInfo
-                   {
-                       ActionName = "SetMetadataPackage",
-                       ControllerName = "CreateSetMetadataPackage",
-                       AreaName = "DCM"
-                   }
-               };
+                       PostActionInfo = new ActionInfo
+                       {
+                           ActionName = "SetMetadataPackage",
+                           ControllerName = "CreateSetMetadataPackage",
+                           AreaName = "DCM"
+                       }
+                   };
 
-               TaskManager.StepInfos.Add(si);
-               MetadataPackageDic.Add(TaskManager.StepInfos.IndexOf(si), mpu.Id);
+
+                   TaskManager.StepInfos.Add(si);
+                   MetadataPackageDic.Add(si.Id, mpu.Id);
+                   si = AddStepsBasedOnUsage(mpu,si);
+                   TaskManager.Root.Children.Add(si);
+
+                   TaskManager.Bus[CreateDatasetTaskmanager.METADATAPACKAGE_IDS] = MetadataPackageDic;
+               }
            }
 
            TaskManager.StepInfos.Add(summary);
-           
-            
-           TaskManager.AddToBus(CreateDatasetTaskmanager.METADATAPACKAGE_IDS, MetadataPackageDic);
+           TaskManager.Root.Children.Add(summary);
+           TaskManager.Bus[CreateDatasetTaskmanager.METADATAPACKAGE_IDS] = MetadataPackageDic;
            Session["CreateDatasetTaskmanager"] = TaskManager;
         }
-        
+
+        private List<BaseUsage> GetCompoundAttributeUsages(BaseUsage usage)
+        {
+            List<BaseUsage> list = new List<BaseUsage>();
+
+            if (usage is MetadataPackageUsage)
+            {
+                MetadataPackageUsage mpu = (MetadataPackageUsage)usage;
+
+                foreach (MetadataAttributeUsage mau in mpu.MetadataPackage.MetadataAttributeUsages)
+                {
+                    list.AddRange(GetCompoundAttributeUsages(mau));
+                }
+            }
+
+            if (usage is MetadataAttributeUsage)
+            {
+                MetadataAttributeUsage mau = (MetadataAttributeUsage)usage;
+
+                if (mau.MetadataAttribute.Self is MetadataCompoundAttribute)
+                {
+                    list.Add(mau);
+
+                    MetadataCompoundAttribute mca = (MetadataCompoundAttribute)mau.MetadataAttribute.Self;
+
+                    foreach (MetadataNestedAttributeUsage mnau in mca.MetadataNestedAttributeUsages)
+                    {
+                        list.AddRange(GetCompoundAttributeUsages(mnau));
+                    }
+                }
+                
+            }
+
+            if (usage is MetadataNestedAttributeUsage)
+            {
+                MetadataNestedAttributeUsage mnau = (MetadataNestedAttributeUsage)usage;
+
+               
+                if (mnau.Member.Self is MetadataCompoundAttribute)
+                {
+                    list.Add(mnau);
+
+                    MetadataCompoundAttribute mca = (MetadataCompoundAttribute)mnau.Member.Self;
+
+                    foreach (MetadataNestedAttributeUsage m in mca.MetadataNestedAttributeUsages)
+                    {
+                        list.AddRange(GetCompoundAttributeUsages(m));
+                    }
+                }
+            }
+
+            return list;
+        }
+
         private void CreateXml()
         {
             TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
@@ -349,7 +418,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         }
             
-
         // check if user exist
         // if true return usernamem otherwise "DEFAULT"
         public string GetUserNameOrDefault()
@@ -412,6 +480,184 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             return DataStructureType.Structured;
         }
+
+
+        #region load advanced steps
+
+        private long GetPackageId(int stepIndex)
+        {
+
+            if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATAPACKAGE_IDS))
+            {
+
+                if ((Dictionary<int, long>)TaskManager.Bus[CreateDatasetTaskmanager.METADATAPACKAGE_IDS] != null)
+                {
+                    Dictionary<int, long> metadataPackageDic = (Dictionary<int, long>)TaskManager.Bus[CreateDatasetTaskmanager.METADATAPACKAGE_IDS];
+
+                    if (metadataPackageDic.ContainsKey(stepIndex)) return Convert.ToInt64(metadataPackageDic[stepIndex]);
+                }
+            }
+
+            return 0;
+
+        }
+
+        private StepInfo AddStepsBasedOnUsage(BaseUsage usage, StepInfo current)
+        {
+            // genertae action, controller base on usage
+            string actionName = "";
+            int min = usage.MinCardinality;
+
+            if (usage is MetadataPackageUsage)
+            {
+                actionName = "SetMetadataPackageInstanze";
+            }
+            else
+            {
+                actionName = "SetMetadataCompoundAttributeInstanze";
+            }
+
+            List<StepInfo> list = new List<StepInfo>();
+            Dictionary<int, long> MetadataPackageDic = (Dictionary<int, long>)TaskManager.Bus[CreateDatasetTaskmanager.METADATAPACKAGE_IDS];
+
+            if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATA_XML))
+            {
+                XDocument xMetadata = (XDocument)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_XML];
+
+                var x = XmlUtility.GetXElementByAttribute(usage.Label, "type", BExIS.Xml.Helpers.XmlNodeType.MetadataAttributeUsage.ToString(), xMetadata);
+
+                if (x == null)
+                    x = XmlUtility.GetXElementByAttribute(usage.Label, "type", BExIS.Xml.Helpers.XmlNodeType.MetadataPackageUsage.ToString(), xMetadata);
+
+                if (x != null)
+                {
+
+                    
+                    IEnumerable<XElement> xelements = x.Elements();
+
+                    if (xelements.Count() > 0)
+                    {
+                        int counter = 0;
+
+                        foreach (XElement element in xelements)
+                        {
+                            counter++;
+                            string title = usage.Label + " (" + counter + ")";
+                            long id = Convert.ToInt64((element.Attribute("roleId")).Value.ToString());
+
+                            StepInfo s = new StepInfo(title)
+                            {
+                                Id = TaskManager.GenerateStepId(),
+                                Parent = current,
+                                IsInstanze = true,
+                                GetActionInfo = new ActionInfo
+                                {
+                                    ActionName = actionName,
+                                    ControllerName = "CreateSetMetadataPackage",
+                                    AreaName = "DCM"
+                                },
+
+                                PostActionInfo = new ActionInfo
+                                {
+                                    ActionName = actionName,
+                                    ControllerName = "CreateSetMetadataPackage",
+                                    AreaName = "DCM"
+                                }
+                            };
+
+                            s.Children = GetChildrenSteps(usage, s);
+                            current.Children.Add(s);
+
+                            if (TaskManager.Root.Children.Where(z => z.title.Equals(title)).Count() == 0)
+                            {
+                                MetadataPackageDic.Add(s.Id, id);
+                            }
+
+                        }
+                    }
+                }
+
+                TaskManager.AddToBus(CreateDatasetTaskmanager.METADATAPACKAGE_IDS, MetadataPackageDic);
+            }
+            return current;
+        }
+
+        private List<StepInfo> GetChildrenSteps(BaseUsage usage, StepInfo parent)
+        {
+            List<StepInfo> childrenSteps = new List<StepInfo>();
+            List<BaseUsage> childrenUsages = UsageHelper.GetCompoundChildrens(usage);
+            Dictionary<int, long> MetadataPackageDic = (Dictionary<int, long>)TaskManager.Bus[CreateDatasetTaskmanager.METADATAPACKAGE_IDS];
+
+            foreach (BaseUsage u in childrenUsages)
+            {
+
+                    bool complex = false;
+
+                    string actionName = "";
+
+                    if (u is MetadataPackageUsage)
+                    {
+                        actionName = "SetMetadataPackage";
+                    }
+                    else
+                    {
+                        actionName = "SetMetadataCompoundAttribute";
+
+                        if (u is MetadataAttributeUsage)
+                        {
+                            MetadataAttributeUsage mau = (MetadataAttributeUsage)u;
+                            if (mau.MetadataAttribute.Self is MetadataCompoundAttribute)
+                                complex = true;
+                        }
+
+                        if (u is MetadataNestedAttributeUsage)
+                        {
+                            MetadataNestedAttributeUsage mau = (MetadataNestedAttributeUsage)u;
+                            if (mau.Member.Self is MetadataCompoundAttribute)
+                                complex = true;
+                        }
+
+                    }
+
+                    if (complex)
+                    {
+                        StepInfo s = new StepInfo(u.Label)
+                        {
+                            Id = TaskManager.GenerateStepId(),
+                            Parent = parent,
+                            IsInstanze = false,
+                            GetActionInfo = new ActionInfo
+                            {
+                                ActionName = actionName,
+                                ControllerName = "CreateSetMetadataPackage",
+                                AreaName = "DCM"
+                            },
+
+                            PostActionInfo = new ActionInfo
+                            {
+                                ActionName = actionName,
+                                ControllerName = "CreateSetMetadataPackage",
+                                AreaName = "DCM"
+                            }
+                        };
+
+                        //only not optional
+                        s = AddStepsBasedOnUsage(u, s);
+                        childrenSteps.Add(s);
+
+                        if (TaskManager.Root.Children.Where(z => z.title.Equals(s.title)).Count() == 0)
+                        {
+                            MetadataPackageDic.Add(s.Id, u.Id);
+                        }
+                    }
+                //}
+
+            }
+
+            return childrenSteps;
+        }
+
+        #endregion
 
         #endregion
     }

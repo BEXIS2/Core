@@ -7,8 +7,8 @@
     <ProjectGuid>{C8A05313-B960-406E-92EC-C1E5B3F47FCD}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BExIS.Io.Transform.Validation</RootNamespace>
-    <AssemblyName>BExIS.Io.Transform.Validation</AssemblyName>
+    <RootNamespace>BExIS.IO.Transform.Validation</RootNamespace>
+    <AssemblyName>BExIS.IO.Transform.Validation</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -67,9 +67,9 @@
       <Project>{c4ca0a99-0af3-4372-a9b7-b9073599bd8b}</Project>
       <Name>BExIS.Dlm.Services</Name>
     </ProjectReference>
-    <ProjectReference Include="..\BExIS.Io\BExIS.Io.csproj">
+    <ProjectReference Include="..\BExIS.Io\BExIS.IO.csproj">
       <Project>{e4795f06-20c2-4c4c-a720-9a79896384df}</Project>
-      <Name>BExIS.Io</Name>
+      <Name>BExIS.IO</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

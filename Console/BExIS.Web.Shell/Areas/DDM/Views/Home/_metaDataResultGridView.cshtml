@@ -30,6 +30,7 @@
                 .Ajax()
                 .Select("_CustomBinding", "Home", new { area = "DDM" })
             )
+            
             .EnableCustomBinding(true)
             .HtmlAttributes(new { @class = "result-grid" })
             .Columns(columns =>

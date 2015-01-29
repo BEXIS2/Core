@@ -7,14 +7,14 @@
 
 @{
 
-    int currentPage = @Model.GetCurrentStepInfoIndex() + 1;
+    int currentPage = @Model.GetCurrentStepInfoIndex();
     
 }
-<div id="UploadWizardNavDiv">
+<div id="NavDiv">
 
     @if (!(Model.Current() == null))
     { 
-    <table id="UploadWizard_NavigationTable">
+    <table id="NavigationTable">
         <tr>
             <td id="Nav_Left">
                 @if (!Model.Prev().IsEmpty() || !Model.Current().Equals(Model.StepInfos.First()))
@@ -23,7 +23,7 @@
                }
             </td>
             <td id="Nav_Pages">
-                 ( @currentPage  of   @Model.StepInfos.Count )
+                 ( @currentPage  of   @Model.CountSteps() )
             </td>
  
 
@@ -68,7 +68,7 @@
     $("#prevBt").click(function(){
         
         $('#preloader').show();
-        var index = '@Model.StepInfos.IndexOf(@Model.Prev())';
+        var index = '@Model.Prev().Id';
   
 
         if (index < 0) index = 0;
@@ -116,43 +116,13 @@
 
     })
 
-    @*$("#finishBt").click(function () {
-
-        $('#preloader').show();
-        $.ajax({
-            type: 'POST',
-            contentType: 'application/json; charset=utf-8',
-            data: JSON.stringify(Parameters),
-            dataType: 'html',
-            url: '@Url.Action(@Model.Current().PostActionInfo.ActionName, @Model.Current().PostActionInfo.ControllerName, new RouteValueDictionary { { "area", @Model.Current().PostActionInfo.AreaName }})',
-            success: function (result) {
-
-                if (result == !null || result !="") {
-                    $('#StepView').html(result);
-                    NavigationRefresh();
-                    TaskListRefresh();
-                    $('#preloader').hide();
-                }
-                else {
-
-                    $.get('@Url.Action("FinishCreation", "Create", new RouteValueDictionary { { "area","DCM"  } })', function (response) {
-                        
-                        alert(response)
-                
-                        $('#preloader').hide();
-                    })
-                }
-            }
-        });
-       
-    })*@
 
     function NavigationRefresh()
     {
 
         $.post('@Url.Action("RefreshNavigation", "Create", new RouteValueDictionary { { "area", "DCM" } })', function (response) {
            
-            $("#UploadWizardNavDiv").replaceWith(response);
+            $("#NavDiv").replaceWith(response);
         })
     }
 </script>

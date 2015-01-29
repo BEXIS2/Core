@@ -7,8 +7,8 @@
     <ProjectGuid>{E4795F06-20C2-4C4C-A720-9A79896384DF}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BExIS.Io</RootNamespace>
-    <AssemblyName>BExIS.Io</AssemblyName>
+    <RootNamespace>BExIS.IO</RootNamespace>
+    <AssemblyName>BExIS.IO</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>SAK</SccProjectName>
@@ -46,14 +46,14 @@
   <ItemGroup>
     <Compile Include="BasicFileInfo.cs" />
     <Compile Include="FileHelper.cs" />
-    <Compile Include="IoHelper.cs" />
+    <Compile Include="IOHelper.cs" />
     <Compile Include="IOUtility.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\XML\BExIS.Xml.Services\BExIS.Xml.Services.csproj">
+    <ProjectReference Include="..\..\XML\BExIS.Xml.Helpers\BExIS.Xml.Helpers.csproj">
       <Project>{252f7872-a69c-43a6-84b4-4d2abdbdd9ab}</Project>
-      <Name>BExIS.Xml.Services</Name>
+      <Name>BExIS.Xml.Helpers</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

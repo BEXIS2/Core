@@ -6,13 +6,13 @@ using System.Text;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
-using BExIS.Io.Transform.Validation.DSValidation;
-using BExIS.Io.Transform.Validation.Exceptions;
+using BExIS.IO.Transform.Validation.DSValidation;
+using BExIS.IO.Transform.Validation.Exceptions;
 
 /// <summary>
 ///
 /// </summary>        
-namespace BExIS.Io.Transform.Output
+namespace BExIS.IO.Transform.Output
 {
     /// <summary>
     ///
@@ -94,18 +94,18 @@ namespace BExIS.Io.Transform.Output
             {
                 StringBuilder data = new StringBuilder();
 
-                data.AppendLine(DataStructureToRow(dataStructureId));
+                data.AppendLine(dataStructureToRow(dataStructureId));
 
                 foreach (long id in dataTuplesIds)
                 {
-                    data.AppendLine(DatatupleToRow(id));
+                    data.AppendLine(datatupleToRow(id));
                 }
 
 
                 File.WriteAllText(filePath, data.ToString());
             }
 
-            return errorMessages;
+            return ErrorMessages;
         }
 
         /// <summary>
@@ -123,18 +123,18 @@ namespace BExIS.Io.Transform.Output
             {
                 StringBuilder data = new StringBuilder();
 
-                data.AppendLine(DataStructureToRow(dataStructureId));
+                data.AppendLine(dataStructureToRow(dataStructureId));
 
                 foreach (AbstractTuple dataTuple in dataTuples)
                 {
-                    data.AppendLine(DatatupleToRow(dataTuple));
+                    data.AppendLine(datatupleToRow(dataTuple));
                 }
 
 
                 File.WriteAllText(filePath, data.ToString());
             }
 
-            return errorMessages;
+            return ErrorMessages;
         }
 
         /// <summary>
@@ -144,7 +144,7 @@ namespace BExIS.Io.Transform.Output
         /// <seealso cref=""/>
         /// <param name="id">Id of the Datatuple</param>
         /// <returns></returns>
-        private string DatatupleToRow(long id)
+        private string datatupleToRow(long id)
         {
             //DatatupleManager
             DatasetManager datasetManager = new DatasetManager();
@@ -192,7 +192,7 @@ namespace BExIS.Io.Transform.Output
             //    first = false;
             //}
 
-            return DatatupleToRow(dataTuple);
+            return datatupleToRow(dataTuple);
         }
 
         /// <summary>
@@ -202,7 +202,7 @@ namespace BExIS.Io.Transform.Output
         /// <seealso cref=""/>
         /// <param name="dataTuple"></param>
         /// <returns></returns>
-        private string DatatupleToRow(AbstractTuple dataTuple)
+        private string datatupleToRow(AbstractTuple dataTuple)
         {
             StringBuilder builder = new StringBuilder();
             bool first = true;
@@ -262,7 +262,7 @@ namespace BExIS.Io.Transform.Output
         /// <seealso cref=""/>
         /// <param name="id"></param>
         /// <returns></returns>
-        private string DataStructureToRow(long id)
+        private string dataStructureToRow(long id)
         {
             StructuredDataStructure ds = GetDataStructure(id);
             StringBuilder builder = new StringBuilder();
@@ -270,9 +270,9 @@ namespace BExIS.Io.Transform.Output
 
             List<Variable> variables = ds.Variables.ToList();
 
-            if (visibleColumns != null)
+            if (VisibleColumns != null)
             {
-                variables = GetSubsetOfVariables(ds.Variables.ToList(), visibleColumns);
+                variables = GetSubsetOfVariables(ds.Variables.ToList(), VisibleColumns);
             }
 
             foreach (Variable v in variables)

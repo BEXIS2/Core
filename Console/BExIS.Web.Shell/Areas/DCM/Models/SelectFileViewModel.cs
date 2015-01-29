@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Web;
-using BExIS.Io.Transform.Validation.Exceptions;
+using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Dcm.Wizard;
 using BExIS.Dcm.UploadWizard;
 
