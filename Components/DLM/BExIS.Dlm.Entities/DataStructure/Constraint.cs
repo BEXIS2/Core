@@ -60,7 +60,7 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// The message to be conveyed to the user in case of the negated constraint break.
         /// </summary>
         public virtual string NegatedMessageTemplate { get; set; }
-        
+
         #endregion
 
         #region Associations
@@ -84,6 +84,11 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// The actual error message to be returned to the caller. It is generated based on the <
         /// </summary>
         public abstract string ErrorMessage { get; }
+        
+        /// <summary>
+        /// The formal human readable translation of the constraint.
+        /// </summary>
+        public abstract string FormalDescription { get; }
         #endregion
 
     }
@@ -131,6 +136,21 @@ namespace BExIS.Dlm.Entities.DataStructure
                     return (string.Format(
                         (!string.IsNullOrWhiteSpace(MessageTemplate) ? MessageTemplate : defaultMessageTemplate),
                         string.Join(",", Items.Select(p => p.Key)) ));
+                }
+            }
+        }
+
+        public override string FormalDescription
+        {
+            get
+            {
+                if (Negated)
+                {
+                    return (string.Format("The value must not be any of these items: {0}.", string.Join(",", Items)));
+                }
+                else
+                {
+                    return (string.Format("The value must be one of these items: {0}.", string.Join(",", Items)));
                 }
             }
         }
@@ -262,6 +282,21 @@ namespace BExIS.Dlm.Entities.DataStructure
             }
         }
 
+        public override string FormalDescription
+        {
+            get
+            {
+                if (Negated)
+                {
+                    return (string.Format("The value must not match this pattern: '{0}' {1}.", MatchingPhrase, (CaseSensitive ? "case sensitive" : "case insensitive")));
+                }
+                else
+                {
+                    return (string.Format("The value must match this pattern: '{0}' {1}.", MatchingPhrase, (CaseSensitive ? "case sensitive" : "case insensitive")));
+                }
+            }
+        }
+
         #endregion
 
         #region Associations
@@ -378,6 +413,22 @@ namespace BExIS.Dlm.Entities.DataStructure
                 }
             }
         }
+
+        public override string FormalDescription
+        {
+            get
+            {
+                if (Negated)
+                {
+                    return (string.Format("The value must be {1} {0} or {3} {2}.", Lowerbound, (LowerboundIncluded ? "less than or equal to" : "less than"), Upperbound, (UpperboundIncluded ? "greater than or equal to" : "greater than")));
+                }
+                else
+                {
+                    return (string.Format("The value must be between {0} {1} and {2} {3}.", Lowerbound, (LowerboundIncluded ? "inclusive" : "exclusive"), Upperbound, (UpperboundIncluded ? "inclusive" : "exclusive")));
+                }
+            }
+        }
+
         #endregion
 
         #region Associations
@@ -527,6 +578,93 @@ namespace BExIS.Dlm.Entities.DataStructure
                     return (string.Format(
                         (!string.IsNullOrWhiteSpace(MessageTemplate) ? MessageTemplate : defaultMessageTemplate),
                         "put parameters here"));
+                }
+            }
+        }
+
+        public override string FormalDescription
+        {
+            get
+            {
+                String comparer = "", target = "", offestType = "";
+                switch (TargetType)
+                {
+                    case ComparisonTargetType.Value:
+                        target = Target;
+                        break;
+                    case ComparisonTargetType.Parameter:
+                        target = "The value of parameter with Id: " + Target;
+                        break;
+                    case ComparisonTargetType.Variable:
+                        target = "The value of variable with Id: " + Target;
+                        break;
+                    default:
+                        break;
+                }
+                switch (OffsetType)
+                {
+                    case ComparisonOffsetType.Absolute:
+                        offestType = "plus";
+                        break;
+                    case ComparisonOffsetType.Ratio:
+                        offestType = "multiply";
+                        break;
+                    default:
+                        break;
+                }
+                if (Negated)
+                {
+                    switch (Operator)
+                    {
+                        case ComparisonOperator.Equals:
+                            comparer = "not equal to";
+                            break;
+                        case ComparisonOperator.NotEquals:
+                            comparer = "equal to";
+                            break;
+                        case ComparisonOperator.GreaerThan:
+                            comparer = "less than or equal to";
+                            break;
+                        case ComparisonOperator.GreaterThanOrEqual:
+                            comparer = "less than";
+                            break;
+                        case ComparisonOperator.LessThan:
+                            comparer = "greater than or equal to";
+                            break;
+                        case ComparisonOperator.LessThanOrEqual:
+                            comparer = "greater than";
+                            break;
+                        default:
+                            break;
+                    }
+                    return (string.Format("The value must be {0} {1} {2} {3}", comparer, target, offestType, OffsetValue));
+                }
+                else
+                {
+                    switch (Operator)
+                    {
+                        case ComparisonOperator.Equals:
+                            comparer = "equal to";
+                            break;
+                        case ComparisonOperator.NotEquals:
+                            comparer = "not equal to";
+                            break;
+                        case ComparisonOperator.GreaerThan:
+                            comparer = "greater than";
+                            break;
+                        case ComparisonOperator.GreaterThanOrEqual:
+                            comparer = "greater than or equal to";
+                            break;
+                        case ComparisonOperator.LessThan:
+                            comparer = "less than";
+                            break;
+                        case ComparisonOperator.LessThanOrEqual:
+                            comparer = "less than or equal to";
+                            break;
+                        default:
+                            break;
+                    }
+                    return (string.Format("The value must be {0} {1} {2} {3}", comparer, target, offestType, OffsetValue)); // the value must be greater than the target value plus the offest
                 }
             }
         }

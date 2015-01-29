@@ -43,7 +43,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="Vaiona.Entities">
-      <HintPath>..\..\..\..\ModuleBranches\DCM\Libraries\Vaiona\Vaiona.Entities.dll</HintPath>
+      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Entities.dll</HintPath>
     </Reference>
     <Reference Include="Vaiona.Entities.Orm.NH">
       <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Entities.Orm.NH.dll</HintPath>
