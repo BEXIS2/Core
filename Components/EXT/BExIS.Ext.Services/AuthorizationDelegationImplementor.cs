@@ -26,27 +26,29 @@ namespace BExIS.Ext.Services
 
             if (task != null)
             {
-                if (!task.IsPublic)
+                if (task.Feature != null)
                 {
-                    SubjectManager subjectManager = new SubjectManager();
-
-                    User user = subjectManager.GetUserByName(userName);
-
-                    if (user != null)
+                    if (!task.Feature.IsPublic)
                     {
-                        PermissionManager permissionManager = new PermissionManager();
+                        SubjectManager subjectManager = new SubjectManager();
 
-                        if (!permissionManager.HasSubjectFeatureAccess(user.Id, task.Feature.Id))
+                        User user = subjectManager.GetUserByName(userName);
+
+                        if (user != null)
+                        {
+                            PermissionManager permissionManager = new PermissionManager();
+
+                            if (!permissionManager.HasSubjectFeatureAccess(user.Id, task.Feature.Id))
+                            {
+                                throw new UnauthorizedAccessException();
+                            }
+                        }
+                        else
                         {
                             throw new UnauthorizedAccessException();
                         }
                     }
-                    else
-                    {
-                        throw new UnauthorizedAccessException();
-                    }
-                    
-                }
+                }          
             }
             else
             {

@@ -17,7 +17,7 @@
         {
             columns.Command(command =>
             {
-                command.Custom("Update").Ajax(true).ButtonType(GridButtonType.BareImage).ImageHtmlAttributes(new { @class = "t-icon t-edit" });
+                command.Custom("Update").Ajax(true).ButtonType(GridButtonType.BareImage).ImageHtmlAttributes(new { @class = "t-icon t-edit", @disabled = "<#= IsSystemSubject #> ? 'disabled' : ''" });
                 command.Custom("Delete").Ajax(true).ButtonType(GridButtonType.BareImage).ImageHtmlAttributes(new { @class = "t-icon t-delete" });
             }).Title("Actions").Width(90).HtmlAttributes(new { style = "text-align:left" });
             columns.Bound(r => r.Id).Width(100);

@@ -8,7 +8,7 @@ namespace BExIS.Security.Services.Objects
 {
     public interface ITaskManager
     {
-        Task CreateTask(string areaName, string controllerName, string actionName, bool isPublic = false);
+        Task CreateTask(string areaName, string controllerName, string actionName);
 
         bool DeleteTaskById(long id);
 

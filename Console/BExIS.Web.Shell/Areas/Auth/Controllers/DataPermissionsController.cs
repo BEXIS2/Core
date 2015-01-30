@@ -45,7 +45,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
             IQueryable<Dataset> data = datasetManager.DatasetRepo.Query();
 
             List<DatasetGridRowModel> datasets = new List<DatasetGridRowModel>();
-            data.ToList().ForEach(d => datasets.Add(DatasetGridRowModel.Convert(d)));
+            data.ToList().ForEach(d => datasets.Add(DatasetGridRowModel.Convert(d, false)));
 
             return View(new GridModel<DatasetGridRowModel> { Data = datasets });
         }
@@ -86,7 +86,21 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
 
             permissionManager.DeleteDataPermission(subjectId, entityId, dataId, (RightType)rightType);
 
-            return false; 
+            return true; 
+        }
+
+        public bool PublishDataset(long entityId, long datasetId)
+        {
+            PermissionManager permissionManager = new PermissionManager();
+
+
+
+            return true;
+        }
+
+        public bool ConcealDataset(long entityId, long datasetId)
+        {
+            return true;
         }
     }
 }

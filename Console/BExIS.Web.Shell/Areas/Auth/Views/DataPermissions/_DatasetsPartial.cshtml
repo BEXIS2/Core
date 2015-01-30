@@ -23,6 +23,12 @@
             columns.Bound(d => d.Id);
             columns.Bound(d => d.Version);
             columns.Bound(d => d.Title);
+            columns.Bound(d => d.IsPublic)
+            .ClientTemplate("<input type='checkbox' onclick='setPublicity(this.checked, <#= Id #>);' name='nothing' <#= IsPublic ? checked='checked' : '' #> />")
+                   .Title("IsPublic")
+                   .Width(64)
+                   .Filterable(false)
+                   .HtmlAttributes(new { style = "text-align:center" });
         })
         .DataBinding(dataBinding => dataBinding
                 .Ajax()

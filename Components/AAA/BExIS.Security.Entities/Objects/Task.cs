@@ -11,7 +11,6 @@ namespace BExIS.Security.Entities.Objects
         public virtual string AreaName { get; set; }
         public virtual string ControllerName { get; set; }
         public virtual string ActionName { get; set; }
-        public virtual bool IsPublic { get; set; }
 
         public virtual Feature Feature { get; set; }
     }

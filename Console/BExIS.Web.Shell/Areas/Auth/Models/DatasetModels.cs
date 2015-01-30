@@ -39,7 +39,9 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
         public int Version { get; set; }
         public string Title { get; set; }
 
-        public static DatasetGridRowModel Convert(Dataset dataset)
+        public bool IsPublic { get; set; }
+
+        public static DatasetGridRowModel Convert(Dataset dataset, bool isPublic)
         {
             XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)dataset.MetadataStructure.Extra);
             XElement temp = XmlUtility.GetXElementByAttribute("nodeRef", "name", "title", xDoc);
@@ -51,7 +53,8 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
             {
                 Id = dataset.Id,
                 Version = dataset.VersionNo,
-                Title = title
+                Title = title,
+                IsPublic = isPublic
             };
         }
     }

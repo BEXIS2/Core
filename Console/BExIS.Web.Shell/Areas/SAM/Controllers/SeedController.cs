@@ -100,10 +100,10 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
             // Tasks
             TaskManager taskManager = new TaskManager();
 
-            taskManager.CreateTask("Auth", "Account", "*", true);
-            taskManager.CreateTask("Site", "Nav", "*", true);
-            taskManager.CreateTask("Shell", "Home", "*", true);
-            taskManager.CreateTask("System", "Utils", "*", true);
+            taskManager.CreateTask("Auth", "Account", "*");
+            taskManager.CreateTask("Site", "Nav", "*");
+            taskManager.CreateTask("Shell", "Home", "*");
+            taskManager.CreateTask("System", "Utils", "*");
 
             // Features
             FeatureManager featureManager = new FeatureManager();

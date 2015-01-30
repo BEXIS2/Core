@@ -100,7 +100,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
             {
                 Id = group.Id,
                 GroupName = group.Name,
-                Description = group.Description
+                Description = group.Description,
             };
         }
     }

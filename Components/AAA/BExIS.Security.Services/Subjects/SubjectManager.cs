@@ -336,9 +336,22 @@ namespace BExIS.Security.Services.Subjects
             throw new NotImplementedException();
         }
 
-        public bool ChangePassword(string userName, string password, string newPassword)
+        public bool ChangePassword(long id, string password)
         {
-            throw new NotImplementedException();
+            User user = GetUserById(id);
+
+            if (user != null)
+            {
+                user.Password = hashSecurityProperty(password, user.PasswordSalt);
+                user.LastPasswordChangeDate = DateTime.Now;
+                user.PasswordFailureCount = 0;
+                user.LastPasswordFailureDate = DateTime.Now;
+
+                UpdateUser(user);
+                return true;
+            }
+
+            return false;
         }
 
         public bool ChangeSecurityQuestionAndSecurityAnswer(string userName, string password, long securityQuestionId, string newPasswordAnswer)
@@ -359,8 +372,8 @@ namespace BExIS.Security.Services.Subjects
                 LastPasswordChangeDate = DateTime.Now,
                 RegistrationDate = DateTime.Now,
 
-                IsActive = AutoActivation,
                 IsApproved = AutoApproval,
+                IsBanned = false,
                 IsLockedOut = false,
 
                 PasswordFailureCount = 0,
@@ -402,8 +415,8 @@ namespace BExIS.Security.Services.Subjects
                 LastPasswordChangeDate = DateTime.Now,
                 RegistrationDate = DateTime.Now,
 
-                IsActive = AutoActivation,
                 IsApproved = AutoApproval,
+                IsBanned = false,
                 IsLockedOut = false,
 
                 PasswordFailureCount = 0,
@@ -621,8 +634,8 @@ namespace BExIS.Security.Services.Subjects
                 LastPasswordChangeDate = DateTime.Now,
                 RegistrationDate = DateTime.Now,
 
-                IsActive = AutoActivation,
                 IsApproved = AutoApproval,
+                IsBanned = false,
                 IsLockedOut = false,
 
                 PasswordFailureCount = 0,
@@ -644,9 +657,31 @@ namespace BExIS.Security.Services.Subjects
             return (user);
         }
 
-        public string ResetPassword(string userName, string passwordAnswer)
+        public bool ResetPassword(string userName, string securityAnswer, string password)
         {
-            throw new NotImplementedException();
+            User user = GetUserByName(userName);
+
+            if (user != null)
+            {
+                if (hashSecurityProperty(securityAnswer, user.SecurityAnswerSalt) == user.SecurityAnswer)
+                {
+                    user.PasswordSalt = generateSalt(SaltLength);
+                    user.Password = hashSecurityProperty(password, user.PasswordSalt);
+
+                    using (IUnitOfWork uow = this.GetUnitOfWork())
+                    {
+                        IRepository<User> usersRepo = uow.GetRepository<User>();
+
+                        usersRepo.Put(user);
+
+                        uow.Commit();
+                    }
+
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public bool UnlockUser(string userName)

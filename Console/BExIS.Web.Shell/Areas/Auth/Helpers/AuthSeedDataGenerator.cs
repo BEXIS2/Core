@@ -51,6 +51,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Helpers
             SubjectManager subjectManager = new SubjectManager();
 
             Group g1 = subjectManager.CreateGroup("Admin", "Admin");
+
             User u1 = subjectManager.CreateUser("Administrator", "gWg2xG", "Admin", "admin@bexis.de", sq1.Id, "Nothing", a1.Id);
 
             subjectManager.AddUserToGroup(u1.Id, g1.Id);
@@ -58,10 +59,10 @@ namespace BExIS.Web.Shell.Areas.Auth.Helpers
             // Tasks
             TaskManager taskManager = new TaskManager();
 
-            taskManager.CreateTask("Auth", "Account", "*", true);
-            taskManager.CreateTask("Site", "Nav", "*", true);
-            taskManager.CreateTask("Shell", "Home", "*", true);
-            taskManager.CreateTask("System", "Utils", "*", true);
+            taskManager.CreateTask("Auth", "Account", "*");
+            taskManager.CreateTask("Site", "Nav", "*");
+            taskManager.CreateTask("Shell", "Home", "*");
+            taskManager.CreateTask("System", "Utils", "*");
 
             // Features
             FeatureManager featureManager = new FeatureManager();

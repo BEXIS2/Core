@@ -23,6 +23,17 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
             return View();
         }
 
+        public ActionResult ChangePassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult ChangePassword(ChangePasswordModel model)
+        {
+            return View();
+        }
+
         [ChildActionOnly]
         public ActionResult LogOnStatusPartial()
         {

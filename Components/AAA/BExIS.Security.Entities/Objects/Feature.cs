@@ -15,6 +15,8 @@ namespace BExIS.Security.Entities.Objects
         public virtual string Name { get; set; }   
         public virtual string Description { get; set; }
 
+        public virtual bool IsPublic { get; set; }
+
         #endregion
 
 

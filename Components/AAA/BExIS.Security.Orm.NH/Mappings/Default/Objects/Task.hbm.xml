@@ -18,7 +18,6 @@
     <property name="AreaName" type="String" />
     <property name="ControllerName" type="String" />
     <property name="ActionName" type="String" />
-    <property name="IsPublic" type="yes_no" />
 
     <!-- Mapping Action Associations -->
     <many-to-one name="Feature" column="FeatureRef" class="BExIS.Security.Entities.Objects.Feature, BExIS.Security.Entities"/>

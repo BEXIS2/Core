@@ -274,11 +274,11 @@
     <Compile Include="Areas\DCM\Models\ValidationModel.cs" />
     <Compile Include="Areas\DDM\Controllers\AdminController.cs" />
     <Compile Include="Areas\DDM\Controllers\DataController.cs" />
-    <Compile Include="Areas\DDM\Helpers\helper.cs" />
-    <Compile Include="Areas\DDM\Models\ShowMetadataModel.cs" />
     <Compile Include="Areas\DDM\Helpers\GridHelper.cs" />
+    <Compile Include="Areas\DDM\Helpers\helper.cs" />
     <Compile Include="Areas\DDM\Helpers\HtmlPrefixScopeExtentions.cs" />
     <Compile Include="Areas\DDM\Models\ShowDataModel.cs" />
+    <Compile Include="Areas\DDM\Models\ShowMetadataModel.cs" />
     <Compile Include="Areas\DDM\Models\ShowPrimaryDataModel.cs" />
     <Compile Include="Areas\DIM\Controllers\AdminController.cs" />
     <Compile Include="Areas\DIM\DIMAreaRegistration.cs" />
@@ -307,12 +307,12 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Properties\App_Data\data2.xml">
+    <Content Include="App_Data\data2.xml">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Properties\App_Data\edit.xsl" />
-    <Content Include="Properties\App_Data\data.xml" />
-    <Content Include="Properties\App_Data\view.xsl" />
+    <Content Include="App_Data\edit.xsl" />
+    <Content Include="App_Data\data.xml" />
+    <Content Include="App_Data\view.xsl" />
     <DesignData Include="Db\Settings\DB2Dialect.hibernate.cfg.xml">
       <SubType>Designer</SubType>
     </DesignData>
@@ -622,7 +622,6 @@
     <Folder Include="Areas\Auth\Views\Shared\" />
     <Folder Include="Areas\DCM\Models\Scripts\" />
     <Folder Include="Areas\DCM\Views\Home\" />
-    <Folder Include="Areas\DCM\Views\SubmitDefinePrimaryKey\" />
     <Folder Include="Areas\DDM\Views\Shared\" />
     <Folder Include="Areas\DIM\Views\Shared\" />
     <Folder Include="Areas\RPM\Models\" />
@@ -673,9 +672,6 @@
     <Content Include="IoC.config">
       <SubType>Designer</SubType>
     </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="_AppStart.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Themes\Default\Layouts\_Layout.cshtml" />
@@ -868,37 +864,37 @@
       <Project>{b906a66a-4a09-4207-b590-655ee111ccf1}</Project>
       <Name>BExIS.Ext.Services</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Components\IO\BExIS.Io.Transform.Output\BExIS.Io.Transform.Output.csproj">
+      <Project>{455ec826-9a92-40ff-bd3b-388c288955ce}</Project>
+      <Name>BExIS.Io.Transform.Output</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Components\IO\BExIS.Io.Transform.Validation\BExIS.Io.Transform.Validation.csproj">
+      <Project>{c8a05313-b960-406e-92ec-c1e5b3f47fcd}</Project>
+      <Name>BExIS.Io.Transform.Validation</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Components\IO\BExIS.IO.Transform.Input\BExIS.IO.Transform.Input.csproj">
       <Project>{5c4c8570-a53b-4191-a414-de028aaaf36a}</Project>
-      <Name>BExIS.IO.Transform.Input</Name>
+      <Name>BExIS.Io.Transform.Input</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Components\IO\BExIS.IO.Transform.Output\BExIS.IO.Transform.Output.csproj">
-      <Project>{455ec826-9a92-40ff-bd3b-388c288955ce}</Project>
-      <Name>BExIS.IO.Transform.Output</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Components\IO\BExIS.IO.Transform.Validation\BExIS.IO.Transform.Validation.csproj">
+    <ProjectReference Include="..\..\Components\IO\BExIS.Io.Transform.Validation\BExIS.Io.Transform.Validation.csproj">
       <Project>{c8a05313-b960-406e-92ec-c1e5b3f47fcd}</Project>
-      <Name>BExIS.IO.Transform.Validation</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Components\IO\BExIS.IO.Transform.Validation\BExIS.IO.Transform.Validation.csproj">
-      <Project>{c8a05313-b960-406e-92ec-c1e5b3f47fcd}</Project>
-      <Name>BExIS.IO.Transform.Validation</Name>
+      <Name>BExIS.Io.Transform.Validation</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Components\IO\BExIS.IoTransform.Input\BExIS.Io.Transform.Input.csproj">
       <Project>{5c4c8570-a53b-4191-a414-de028aaaf36a}</Project>
       <Name>BExIS.Io.Transform.Input</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Components\IO\BExIS.IO\BExIS.IO.csproj">
+    <ProjectReference Include="..\..\Components\IO\BExIS.Io\BExIS.Io.csproj">
       <Project>{e4795f06-20c2-4c4c-a720-9a79896384df}</Project>
-      <Name>BExIS.IO</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Components\XML\BExIS.Xml.Helpers\BExIS.Xml.Helpers.csproj">
-      <Project>{252f7872-a69c-43a6-84b4-4d2abdbdd9ab}</Project>
-      <Name>BExIS.Xml.Helpers</Name>
+      <Name>BExIS.Io</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Components\XML\BExIS.Xml.Models\BExIS.Xml.Models.csproj">
       <Project>{c0c9f0f2-9e65-448d-8000-d311db326460}</Project>
-      <Name>BExIS.Xml.Models</Name>
+      <Name>BExIS.Xml.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Components\XML\BExIS.Xml.Helpers\BExIS.Xml.Helpers.csproj">
+      <Project>{252f7872-a69c-43a6-84b4-4d2abdbdd9ab}</Project>
+      <Name>BExIS.Xml.Services</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Modules\DCM\BExIS.Dcm.CreateDatasetWizard\BExIS.Dcm.CreateDatasetWizard.csproj">
       <Project>{93eeeda5-6d79-41a1-947b-0a3fc9e46abc}</Project>
@@ -970,10 +966,11 @@
   <ItemGroup>
     <Content Include="Areas\RPM\Views\Home\_editVariable.cshtml" />
     <Content Include="Areas\DCM\Views\SubmitGetFileInformation\GetFileInformation.cshtml" />
-    <Content Include="Areas\DCM\Views\SubmitGetFileInformation\DefinePrimaryKey.cshtml" />
+    <Content Include="Areas\DCM\Views\SubmitDefinePrimaryKey\DefinePrimaryKey.cshtml" />
     <Content Include="Areas\DDM\Views\Admin\ReIndexSearch.cshtml" />
     <Content Include="Areas\DCM\Views\Submit\FinishUpload.cshtml" />
     <Content Include="Areas\DCM\Views\Submit\Test.cshtml" />
+    <Content Include="Areas\DCM\Views\SubmitSelectAFile\Test.cshtml" />
     <Content Include="Areas\DCM\Views\Create\Index.cshtml" />
     <Content Include="Areas\DCM\Views\Create\CreateDataset.cshtml" />
     <Content Include="Areas\DCM\Views\Create\_createWizardNav.cshtml" />
@@ -1030,20 +1027,15 @@
     <Content Include="Areas\DDM\Views\Admin\_metadataNode.cshtml" />
     <Content Include="Areas\Auth\Views\Account\LogOn.cshtml" />
     <Content Include="Areas\DIM\Views\Admin\_metadataStructureView.cshtml" />
-    <Content Include="Areas\DCM\Views\ImportMetadataStructure\Index.cshtml" />
-    <Content Include="Areas\DCM\Views\ImportMetadataStructure\_wizardNav.cshtml" />
-    <Content Include="Areas\DCM\Views\ImportMetadataStructure\_taskListView.cshtml" />
-    <Content Include="Areas\DCM\Views\ImportMetadataStructureSelectAFile\SelectAFile.cshtml" />
-    <Content Include="Areas\DCM\Views\ImportMetadataStructure\ImportMetadataStructureWizard.cshtml">
-      <SubType>Code</SubType>
-    </Content>
-    <Content Include="Areas\DCM\Views\ImportMetadataStructureSummary\Summary.cshtml" />
+    <Content Include="Areas\Auth\Views\Users\_ChangePasswordPartial.cshtml" />
+    <Content Include="Areas\Auth\Views\Users\_ShowPasswordPartial.cshtml" />
     <Content Include="Areas\DCM\Views\ImportMetadataStructureReadSource\ReadSource.cshtml" />
-    <Content Include="Areas\RPM\Views\Home\_dataStructureSaveAs.cshtml" />
-    <Content Include="Areas\DDM\Views\Home\_myDatasetGridView.cshtml" />
-    <Content Include="Areas\DCM\Views\CreateSetMetadataPackage\_setMetadataCompoundAttributeInstanz.cshtml" />
-    <Content Include="Areas\DCM\Views\CreateSetMetadataPackage\_setMetadataPackageInstanz.cshtml" />
-    <Content Include="Areas\DCM\Views\CreateSetMetadataPackage\_setMetadataCompoundAttribute.cshtml" />
+    <Content Include="Areas\DCM\Views\ImportMetadataStructureSelectAFile\SelectAFile.cshtml" />
+    <Content Include="Areas\DCM\Views\ImportMetadataStructureSummary\Summary.cshtml" />
+    <Content Include="Areas\DCM\Views\ImportMetadataStructure\ImportMetadataStructureWizard.cshtml" />
+    <Content Include="Areas\DCM\Views\ImportMetadataStructure\Index.cshtml" />
+    <Content Include="Areas\DCM\Views\ImportMetadataStructure\_taskListView.cshtml" />
+    <Content Include="Areas\DCM\Views\ImportMetadataStructure\_wizardNav.cshtml" />
     <None Include="Properties\PublishProfiles\2230.pubxml" />
     <None Include="Properties\PublishProfiles\2301.pubxml" />
     <None Include="Properties\PublishProfiles\2302.pubxml" />
@@ -1051,16 +1043,13 @@
     <None Include="Properties\PublishProfiles\BEXIS2 DEV.pubxml" />
     <None Include="Properties\PublishProfiles\BEXIS2.pubxml" />
     <None Include="Properties\PublishProfiles\BPP230.pubxml" />
-    <None Include="Properties\PublishProfiles\BPP_DEMO.pubxml" />
+    <Content Include="_AppStart.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\Auth\Views\Users\_CreatePartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\Auth\Views\Users\_MembershipPartial.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -1084,7 +1073,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>8035</DevelopmentServerPort>
+          <DevelopmentServerPort>11644</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>

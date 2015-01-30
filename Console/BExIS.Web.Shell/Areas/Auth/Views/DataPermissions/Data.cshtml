@@ -59,6 +59,7 @@
         }
     }
 
+    // Permission
     function setDataPermission(value, rightType, subjectId, dataId, entityId) {
         if (value) {
             $.post('@Url.Action("CreateDataPermission", "DataPermissions")', { DataId: dataId, EntityId: entityId, SubjectId: subjectId, RightType: rightType }, function (e) {
@@ -67,6 +68,19 @@
         } else {
             $.post('@Url.Action("DeleteDataPermission", "DataPermissions")', { DataId: dataId, EntityId: entityId, SubjectId: subjectId, RightType: rightType }, function (e) {
                 $("#Grid_Subjects .t-refresh").trigger('click');
+            });
+        }
+    }
+
+    // Publicity
+    function setPublicity(value, id) {
+        if (value) {
+            $.post('@Url.Action("PublishDataset", "DataPermissions")', { EntityId: 1, DatasetId: id }, function (e) {
+                $("#Grid_Datasets .t-refresh").trigger('click');
+            });
+        } else {
+            $.post('@Url.Action("ConcealDataset", "DataPermissions")', { EntityId: 1, DatasetId: id }, function (e) {
+                $("#Grid_Datasets .t-refresh").trigger('click');
             });
         }
     }

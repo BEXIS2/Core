@@ -35,6 +35,59 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
         }
 
         // C
+        public ActionResult ChangePassword(long id)
+        {
+            return PartialView("_ChangePasswordPartial", new UserChangePasswordModel() { Id = id });
+        }
+
+        [HttpPost]
+        public ActionResult ChangePassword(UserChangePasswordModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                SubjectManager subjectManager = new SubjectManager();
+
+                if (subjectManager.ChangePassword(model.Id, model.Password))
+                {
+                    return PartialView("_ShowPasswordPartial", model.Id);
+                }
+            }
+
+            return PartialView("_ChangePasswordPartial", model);
+            
+        }
+
+        public ActionResult ShowPassword(long id)
+        {
+            return PartialView("_ShowPasswordPartial", id);
+        }
+
+        public ActionResult ChangeStatus(long id, string status, bool value)
+        {
+            SubjectManager subjectManager = new SubjectManager();
+
+            User user = subjectManager.GetUserById(id);
+
+            switch (status)
+            {
+                case "isDisabled":
+                    user.IsBanned = value;
+                    break;
+                case "isApproved":
+                    user.IsApproved = value;
+                    break;
+                case "isLockedOut":
+                    user.IsLockedOut = value;
+                    break;
+                default:
+                    break;
+            }
+
+            subjectManager.UpdateUser(user);
+
+            return PartialView("_ShowPartial", UserReadModel.Convert(user));
+        }
+
         public ActionResult Create()
         {
             return PartialView("_CreatePartial", new UserCreateModel());

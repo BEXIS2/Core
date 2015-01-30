@@ -5,6 +5,8 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using BExIS.Security.Entities.Objects;
+using BExIS.Security.Services.Authorization;
+using BExIS.Web.Shell.Areas.Auth.Controllers;
 
 namespace BExIS.Web.Shell.Areas.Auth.Models
 {
@@ -47,6 +49,8 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
         public string FeatureName { get; set; }
         public string Description { get; set; }
 
+        public bool IsPublic { get; set; }
+
         public List<FeatureTreeViewModel> Children { get; set; }
 
         public static FeatureTreeViewModel Convert(Feature feature)
@@ -56,6 +60,9 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
                 Id = feature.Id,
                 FeatureName = feature.Name,
                 Description = feature.Description,
+
+                IsPublic = feature.IsPublic,
+
                 Children = feature.Children.Select(c => FeatureTreeViewModel.Convert(c)).ToList<FeatureTreeViewModel>()
             };
         }

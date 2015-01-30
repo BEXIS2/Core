@@ -14,6 +14,8 @@ using Telerik.Web.Mvc;
 
 namespace BExIS.Web.Shell.Areas.Auth.Controllers
 {
+    public delegate bool IsPublicDelegate(long featureId);
+
     public class FeaturePermissionsController : Controller
     {
         public ActionResult Index()
@@ -93,6 +95,24 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
                     return true;
                 }
             }
+        }
+
+        public bool SetFeaturePublicity(long featureId, bool value)
+        {
+            FeatureManager featureManager = new FeatureManager();
+
+            Feature feature = featureManager.GetFeatureById(featureId);
+
+            if (feature != null)
+            {
+                feature.IsPublic = value;
+
+                featureManager.UpdateFeature(feature);
+
+                return true;
+            }
+
+            return false;
         }
     }
 }

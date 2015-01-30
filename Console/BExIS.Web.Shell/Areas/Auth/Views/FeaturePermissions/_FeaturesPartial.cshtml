@@ -5,18 +5,22 @@
 
 @(Html.Telerik().TreeView()
         .Name("TreeView_Features")
+        .ShowCheckBox(true)
         .BindTo(Model, mappings =>
         {
             mappings.For<FeatureTreeViewModel>(binding => binding
+                
                 .ItemDataBound((item, feature) =>
                 {
                     item.Text = feature.FeatureName;
                     item.Value = feature.Id.ToString();
-                })
+                    item.Checked = feature.IsPublic;
+                })                
                 .Children(feature => feature.Children));
         })
         .ClientEvents(events => events
             .OnSelect("OnSelect")
+            .OnChecked("OnChecked")
         )
         .ExpandAll(true)
 )
@@ -26,6 +30,16 @@
     function GetTreeView() {
         return $('#TreeView_Features').data('tTreeView');
     }
+
+    function OnChecked(e) {
+        var value = e.checked;
+        var featureId = GetTreeView().getItemValue(e.item);
+
+        $.post('@Url.Action("SetFeaturePublicity", "FeaturePermissions")', { FeatureId: featureId, Value: value }, function (e) {
+            GetTreeView().dataSource.read();
+        });
+    }
+
 
     function OnSelect(e) {
         var featureID = GetTreeView().getItemValue(e.item);
@@ -43,8 +57,6 @@
         $.post('@Url.Action("SetFeaturePermission", "FeaturePermissions")', { SubjectId: subjectId, FeatureId: featureId, Value: value }, function (e) {
             $("#Grid_Subjects .t-refresh").trigger('click');
         });
-
-
     }
 
 </script>

@@ -24,14 +24,13 @@ namespace BExIS.Security.Services.Objects
 
 
 
-        public Task CreateTask(string areaName, string controllerName, string actionName, bool isPublic = false)
+        public Task CreateTask(string areaName, string controllerName, string actionName)
         {
             Task task = new Task()
             {
                 AreaName = areaName,
                 ControllerName = controllerName,
                 ActionName = actionName,
-                IsPublic = isPublic
             };
 
             using (IUnitOfWork uow = this.GetUnitOfWork())

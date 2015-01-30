@@ -27,7 +27,7 @@ namespace BExIS.Security.Services.Subjects
 
         bool ApproveUser(string userName);
 
-        bool ChangePassword(string userName, string password, string newPassword);
+        bool ChangePassword(long id, string password);
 
         bool ChangeSecurityQuestionAndSecurityAnswer(string userName, string password, long securityQuestionId, string newPasswordAnswer);
 
@@ -60,8 +60,6 @@ namespace BExIS.Security.Services.Subjects
         int GetUsersOnline();
 
         User RegisterUser(string userName, string password, string fullName, string email, long securityQuestionId, string securityAnswer, long authenticatorId);
-
-        string ResetPassword(string userName, string passwordAnswer);
 
         bool UnlockUser(string userName);
 
