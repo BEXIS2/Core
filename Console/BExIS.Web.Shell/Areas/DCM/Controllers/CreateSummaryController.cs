@@ -95,6 +95,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     Submit();
                     if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.DATASET_TITLE))
                         model.DatasetTitle = TaskManager.Bus[CreateDatasetTaskmanager.DATASET_TITLE].ToString();
+                    else
+                        model.DatasetTitle = "no title";
+
                     model.DatasetId = Convert.ToInt64(TaskManager.Bus[CreateDatasetTaskmanager.DATASET_ID]);
                     model.StepInfo.SetStatus(StepStatus.exit);
                     model.PageStatus = Models.PageStatus.LastAndSubmitted;
@@ -265,28 +268,28 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         //if tempModel count > 0 , model exist , add if errors exist to error list
                         if (tempModels.Count > 0)
                         {
-                            foreach (MetadataPackageModel model in tempModels)
-                            {
-                                if (model.ErrorList != null)
-                                {
-                                    if (model.ErrorList.Count() > 0)
-                                    {
-                                        errors.AddRange(model.ErrorList);
-                                    }
-                                }
-                            }
+                            //foreach (MetadataPackageModel model in tempModels)
+                            //{
+                            //    if (model.ErrorList != null)
+                            //    {
+                            //        if (model.ErrorList.Count() > 0)
+                            //        {
+                            //            errors.AddRange(model.ErrorList);
+                            //        }
+                            //    }
+                            //}
                         }
                         //mopdel not exist
                         else {
 
-                            if (hasRequiredMetadataAttributeUsage(mpu))
-                            {
-                                List<MetadataAttributeUsage> listOfRequiredAttributes = GetRequiredMetadataAttributeUsage(mpu);
-                                foreach (MetadataAttributeUsage metadataAttributeUsage in listOfRequiredAttributes)
-                                {
-                                    errors.Add(new Error(ErrorType.MetadataAttribute, "is not optional", new object[] { metadataAttributeUsage.Label, null, 1, 1, mpu.Label }));
-                                }
-                            }
+                            //if (hasRequiredMetadataAttributeUsage(mpu))
+                            //{
+                            //    List<MetadataAttributeUsage> listOfRequiredAttributes = GetRequiredMetadataAttributeUsage(mpu);
+                            //    foreach (MetadataAttributeUsage metadataAttributeUsage in listOfRequiredAttributes)
+                            //    {
+                            //        errors.Add(new Error(ErrorType.MetadataAttribute, "is not optional", new object[] { metadataAttributeUsage.Label, null, 1, 1, mpu.Label }));
+                            //    }
+                            //}
 
                         }
                     }

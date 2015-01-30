@@ -550,6 +550,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                                 Id = TaskManager.GenerateStepId(),
                                 Parent = current,
                                 IsInstanze = true,
+                                HasContent = UsageHelper.HasUsagesWithSimpleType(usage),
                                 GetActionInfo = new ActionInfo
                                 {
                                     ActionName = actionName,

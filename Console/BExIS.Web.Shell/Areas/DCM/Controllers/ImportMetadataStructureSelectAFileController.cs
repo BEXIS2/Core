@@ -10,6 +10,7 @@ using BExIS.Dcm.Wizard;
 using BExIS.IO;
 using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Web.Shell.Areas.DCM.Models;
+using BExIS.Xml.Helpers.Mapping;
 using Vaiona.Util.Cfg;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
@@ -105,6 +106,19 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     model.ErrorList.Add(new Error(ErrorType.Other, "No FileStream selected or submitted."));
                 }
 
+                try
+                {
+                    LoadXSDSchema();
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", ex.Message);
+                    model.ErrorList.Add(new Error(ErrorType.Other, "Can not find any dependent files to the selected schema."));
+                    TaskManager.Current().SetValid(false);
+                }
+
+                
+
                 if (TaskManager.Current().IsValid())
                 {
                     TaskManager.AddExecutedStep(TaskManager.Current());
@@ -122,6 +136,22 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         }
 
         #region private methods
+
+        private void LoadXSDSchema()
+        {
+            TaskManager = (ImportMetadataStructureTaskManager)Session["TaskManager"];
+
+            string path = TaskManager.Bus[ImportMetadataStructureTaskManager.FILEPATH].ToString();
+
+            //open schema
+            XmlSchemaManager xmlSchemaManager = new XmlSchemaManager();
+            xmlSchemaManager.Load(path);
+
+            if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.XML_SCHEMA_MANAGER))
+                TaskManager.Bus[ImportMetadataStructureTaskManager.XML_SCHEMA_MANAGER] = xmlSchemaManager;
+            else
+                TaskManager.Bus.Add(ImportMetadataStructureTaskManager.XML_SCHEMA_MANAGER, xmlSchemaManager);
+        }
 
         /// <summary>
         /// Selected File store din the BUS

@@ -10,6 +10,8 @@ using System.IO;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Dlm.Entities.MetadataStructure;
 using Vaiona.Util.Cfg;
+using BExIS.Xml.Helpers;
+using System.Xml.Linq;
 
 namespace BExIS.Ddm.Providers.LuceneProvider
 {
@@ -129,12 +131,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider
                 
                 foreach (long id in ids)
                 {
-                    List<MetadataPackageUsage> metadataPackageUsageList = metadataStructureManager.GetEffectivePackages(id);
-
-                    foreach (MetadataPackageUsage mpu in metadataPackageUsageList)
-                    {
-                        _metadataNodes.AddRange(GenerateMetadataNodesOfAllAttributes(mpu));
-                    }
+                    _metadataNodes.AddRange(GetAllXPathsOfSimpleAttributes(id));
                 }
 
                 _metadataNodes = _metadataNodes.Distinct().ToList();
@@ -144,28 +141,30 @@ namespace BExIS.Ddm.Providers.LuceneProvider
             
         }
 
-        private List<SearchMetadataNode> GenerateMetadataNodesOfAllAttributes(MetadataPackageUsage source)
+        public List<SearchMetadataNode> GetAllXPathsOfSimpleAttributes(long id)
         {
+            List<SearchMetadataNode> list = new List<SearchMetadataNode>();
 
 
-            List<SearchMetadataNode> SearchMetadataNodes = new List<SearchMetadataNode>();
+            // load metadatastructure with all packages and attributes
 
-            string root = "Metadata";
-            string packageUsageLabel = source.Label.Replace(" ","");
-            string package = source.MetadataPackage.Name;
+                MetadataStructureManager msd = new MetadataStructureManager();
+                string title = msd.Repo.Get(id).Name;
 
-            foreach(MetadataAttributeUsage mau in source.MetadataPackage.MetadataAttributeUsages)
-            {
-                string metadataStructureName = source.MetadataStructure.Name;
-                string xPath = string.Format("{0}/{1}/{2}/{3}/{4}", root, packageUsageLabel, package, mau.Label.Replace(" ", ""), mau.MetadataAttribute.Name.Replace(" ", ""));
+                XmlMetadataWriter xmlMetadatWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
+                XDocument metadataXml = xmlMetadatWriter.CreateMetadataXml(id);
 
-                SearchMetadataNodes.Add(
-                    new SearchMetadataNode(metadataStructureName,xPath)
-                    );
-            }
+                List<XElement> elements = metadataXml.Root.Descendants().Where(e => e.HasElements.Equals(false)).ToList();
 
+                foreach (XElement element in elements)
+                {
+                    list.Add(
+                      new SearchMetadataNode(title, XExtentsions.GetAbsoluteXPath(element).Substring(1))
+                      );
 
-            return SearchMetadataNodes;
+                }
+
+            return list;
         }
 
         public void Set(List<SearchAttribute> SearchAttributeList)

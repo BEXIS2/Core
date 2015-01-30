@@ -84,6 +84,9 @@
      </div>
 
      <div class="wizardStep_Error stepper">
+
+         @Html.ValidationSummary(true)
+
         @if (Model != null)
         {
             if (Model.ErrorList != null)

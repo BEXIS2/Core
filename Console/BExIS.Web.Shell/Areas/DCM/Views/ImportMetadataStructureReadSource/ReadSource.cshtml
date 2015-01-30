@@ -27,13 +27,14 @@
 
             <table>
                 <tr>
-                    <td>@Html.LabelFor(m => m.RootNode)</td>
-                    <td>@Html.TextBoxFor(m => m.RootNode)</td>
-                </tr>
-                <tr>
                     <td>@Html.LabelFor(m => m.SchemaName)</td>
                     <td>@Html.TextBoxFor(m => m.SchemaName)</td>
                 </tr>
+                <tr>
+                    <td>@Html.LabelFor(m => m.RootNode)</td>
+                    <td>@Html.TextBoxFor(m => m.RootNode)</td>
+                </tr>
+
                 <tr>
                     <td>
                         @Ajax.ActionLink("Generate", "GenerateMS",@Model.StepInfo.GetActionInfo.ControllerName,new RouteValueDictionary { { "area", "DCM" } },
@@ -124,6 +125,24 @@
         var name = $('#SchemaName').val();
 
         $.post('@Url.Action("SetSchemaName", @Model.StepInfo.GetActionInfo.ControllerName, new RouteValueDictionary { { "area", "DCM" } })', { name: name }, function (response) {
+        })
+
+    })
+
+    $('#TitleNode').change(function () {
+
+        var name = $('#TitleNode').val();
+
+        $.post('@Url.Action("SetTitleNode", @Model.StepInfo.GetActionInfo.ControllerName, new RouteValueDictionary { { "area", "DCM" } })', { name: name }, function (response) {
+        })
+
+    })
+
+    $('#DescriptionNode').change(function () {
+
+        var name = $('#DescriptionNode').val();
+
+        $.post('@Url.Action("SetDescriptionNode", @Model.StepInfo.GetActionInfo.ControllerName, new RouteValueDictionary { { "area", "DCM" } })', { name: name }, function (response) {
         })
 
     })

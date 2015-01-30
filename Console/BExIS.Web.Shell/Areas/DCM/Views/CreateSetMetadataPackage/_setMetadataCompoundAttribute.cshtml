@@ -30,7 +30,7 @@
 
         <div class="packages">
 
-            @if (Model.MinCardinality > 1 && Model.Instance.Count< Model.MaxCardinality)
+            @*@if (Model.MaxCardinality > 1 && Model.Instance.Count < Model.MaxCardinality)
             { 
                 @Ajax.ActionLink("Add", "AddMetadataCompundAttributeUsage", @Model.StepInfo.GetActionInfo.ControllerName, new { area = @Model.StepInfo.GetActionInfo.AreaName, id = @idAsLong, number = @Model.Instance.Count },
                                     new AjaxOptions
@@ -40,7 +40,7 @@
                                         OnSuccess = "OnSucess()",
                                         OnBegin = "OnLoad()"
                                     })
-            }
+            }*@
             <table>
 
             @foreach (MetadataInstanceModel instance in Model.Instance)
@@ -88,11 +88,11 @@
     </div>
 
     <div class="createWizardStep_Error stepper">
-        @if (Model != null)
+       @* @if (Model != null)
         {
             @Html.Partial("_errorMessages", @Model.ErrorList) 
 
-        }
+        }*@
     </div>   
 
 </div>

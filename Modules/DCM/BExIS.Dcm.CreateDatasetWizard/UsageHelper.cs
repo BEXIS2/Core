@@ -268,5 +268,43 @@ namespace BExIS.Dcm.CreateDatasetWizard
             return 0;
         }
 
+        public static bool HasUsagesWithSimpleType(BaseUsage usage)
+        {
+            if (usage is MetadataPackageUsage)
+            {
+                MetadataPackageUsage mpu = (MetadataPackageUsage)usage;
+
+                foreach (BaseUsage childUsage in mpu.MetadataPackage.MetadataAttributeUsages)
+                {
+                    if(IsSimple(childUsage)) return true;
+                }
+            }
+
+            if (usage is MetadataAttributeUsage)
+            {
+                MetadataAttributeUsage mau = (MetadataAttributeUsage)usage;
+                if (mau.MetadataAttribute.Self is MetadataCompoundAttribute)
+                {
+                    foreach (BaseUsage childUsage in ((MetadataCompoundAttribute)mau.MetadataAttribute.Self).MetadataNestedAttributeUsages)
+                    {
+                       if(IsSimple(childUsage)) return true;
+                    }
+                }
+            }
+
+            if (usage is MetadataNestedAttributeUsage)
+            {
+                MetadataNestedAttributeUsage mnau = (MetadataNestedAttributeUsage)usage;
+                if (mnau.Member.Self is MetadataCompoundAttribute)
+                {
+                    foreach (BaseUsage childUsage in ((MetadataCompoundAttribute)mnau.Member.Self).MetadataNestedAttributeUsages)
+                    {
+                        if (IsSimple(childUsage)) return true;
+                    }
+                }
+            }
+
+            return false;
+        }
     }
 }

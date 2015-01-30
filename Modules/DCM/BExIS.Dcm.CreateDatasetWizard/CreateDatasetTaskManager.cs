@@ -71,6 +71,7 @@ namespace BExIS.Dcm.CreateDatasetWizard
                     Id = tm.GenerateStepId(),
                     Parent = tm.Root,
                     IsInstanze = true,
+                    HasContent = true,
                     GetActionInfo = new ActionInfo
                     {
                         ActionName = xmlStepInfo.Attributes.GetNamedItem("action").Value,
@@ -113,6 +114,7 @@ namespace BExIS.Dcm.CreateDatasetWizard
         public void SetCurrent(int id)
         {
             currentStepInfo = Get(id);
+            currentStepInfo.Expand = true;
         }
 
         public bool IsCurrent(StepInfo stepInfo)
@@ -141,6 +143,65 @@ namespace BExIS.Dcm.CreateDatasetWizard
             return false;
         }
 
+        public bool IsChildExpand(StepInfo stepInfo)
+        {
+
+            if (stepInfo.Children.Count > 0)
+            {
+                foreach (StepInfo child in stepInfo.Children)
+                {
+                    if (child.Expand == true) return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <returns></returns>
+        public StepInfo Prev()
+        {
+            StepInfo newStep = currentStepInfo;
+
+            do
+            {
+                newStep = findPrev(newStep);
+            }
+            while (newStep.HasContent == false || newStep.IsInstanze == false);
+
+            this.prevStepInfo = newStep;
+
+            return this.prevStepInfo;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param>NA</param>       
+        /// <returns></returns>
+        public StepInfo Next()
+        {
+            StepInfo newStep = currentStepInfo;
+
+            do
+            {
+                if (newStep.Children.Count > 0)
+                {
+                    newStep = newStep.Children.First();
+                }
+                else
+                {
+                    newStep = findNext(newStep);
+                }
+            }
+            while (newStep.HasContent == false || newStep.IsInstanze == false);
+
+            return newStep;
+        }
         
 
         /// <summary>
@@ -149,11 +210,24 @@ namespace BExIS.Dcm.CreateDatasetWizard
         /// <remarks></remarks>
         /// <seealso cref=""/>
         /// <returns></returns>
-        public StepInfo Prev()
-        {
-            this.prevStepInfo = findPrev(this.currentStepInfo);
-            return this.prevStepInfo;
-        }
+        //public StepInfo Prev()
+        //{
+        //    this.prevStepInfo = findPrev(this.currentStepInfo);
+        //    return this.prevStepInfo;
+        //}
+
+        //public StepInfo Next()
+        //{
+        //    if (this.currentStepInfo.Children.Count > 0)
+        //    {
+        //        return this.currentStepInfo.Children.First();
+        //    }
+        //    else
+        //    {
+        //        return findNext(this.currentStepInfo);
+        //    }
+
+        //}
 
         private StepInfo findPrev(StepInfo child)
         {
@@ -171,9 +245,15 @@ namespace BExIS.Dcm.CreateDatasetWizard
             {
 
                 if (index > 0)
-                    return parent.Children.ElementAt(index - 1);
+                {
+                    StepInfo pStep = parent.Children.ElementAt(index - 1);
+                    if (pStep.Children.Count == 0)
+                        return pStep;
+                    else
+                        return findLast(pStep);
+                }
                 else
-                   return parent;
+                    return parent;
             }
 
         }
@@ -202,18 +282,6 @@ namespace BExIS.Dcm.CreateDatasetWizard
             }
         }
 
-        public StepInfo Next()
-        {
-            if (this.currentStepInfo.Children.Count > 0)
-            {
-                return this.currentStepInfo.Children.First();
-            }
-            else
-            {
-                return findNext(this.currentStepInfo);
-            }
-
-        }
 
         private StepInfo findNext(StepInfo child)
         {

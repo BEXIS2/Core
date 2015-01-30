@@ -21,6 +21,8 @@ namespace BExIS.Dcm.Wizard
 
         public bool Root { get; set;}
         public bool IsInstanze { get; set; }
+        public bool HasContent { get; set; }
+        public bool Expand { get; set; }
         public int Id { get; set; }
         public StepInfo Parent { get; set; }
         public List<StepInfo> Children { get; set; }
@@ -52,6 +54,9 @@ namespace BExIS.Dcm.Wizard
             this.GetActionInfo = new ActionInfo();
             this.PostActionInfo = new ActionInfo();
             this.Children = new List<StepInfo>();
+            this.HasContent = true;
+            this.IsInstanze = true;
+            this.Expand = false;
         }
 
         /// <summary>

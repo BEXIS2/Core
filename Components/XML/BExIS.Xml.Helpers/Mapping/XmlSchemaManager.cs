@@ -364,7 +364,7 @@ namespace BExIS.Xml.Helpers.Mapping
 
         #region metadataAttritbute
 
-        public void GenerateMetadataStructure(string nameOfStartNode,string schemaName)
+        public long GenerateMetadataStructure(string nameOfStartNode,string schemaName)
         {
             if (!String.IsNullOrEmpty(schemaName))
                 SchemaName = schemaName;
@@ -523,6 +523,7 @@ namespace BExIS.Xml.Helpers.Mapping
 
             //#endregion
 
+            return test.Id;
         }
 
 

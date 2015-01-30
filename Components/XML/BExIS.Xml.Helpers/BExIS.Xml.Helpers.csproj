@@ -57,6 +57,7 @@
   <ItemGroup>
     <Compile Include="Mapping\XmlMapperManager.cs" />
     <Compile Include="Mapping\XmlSchemaManager.cs" />
+    <Compile Include="XExtentsions.cs" />
     <Compile Include="XmlDatasetHelper.cs" />
     <Compile Include="XmlMetadataWriter.cs" />
     <Compile Include="XmlSchemaUtility.cs" />

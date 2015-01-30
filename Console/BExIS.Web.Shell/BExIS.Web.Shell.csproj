@@ -237,6 +237,7 @@
     <Compile Include="Areas\DCM\Controllers\ImportMetadataStructureController.cs" />
     <Compile Include="Areas\DCM\Controllers\ImportMetadataStructureReadSourceController.cs" />
     <Compile Include="Areas\DCM\Controllers\ImportMetadataStructureSelectAFileController.cs" />
+    <Compile Include="Areas\DCM\Controllers\ImportMetadataStructureSetParametersController.cs" />
     <Compile Include="Areas\DCM\Controllers\ImportMetadataStructureSummaryController.cs" />
     <Compile Include="Areas\DCM\Controllers\PushController.cs" />
     <Compile Include="Areas\DCM\Controllers\SubmitDefinePrimaryKeyController.cs" />
@@ -257,6 +258,7 @@
     <Compile Include="Areas\DCM\Models\FileInfoModel.cs" />
     <Compile Include="Areas\DCM\Models\FinishUploadModel.cs" />
     <Compile Include="Areas\DCM\Models\GetFileInformationModel.cs" />
+    <Compile Include="Areas\DCM\Models\ImportMetadata\ParametersModel.cs" />
     <Compile Include="Areas\DCM\Models\ImportMetadata\ReadSourceModel.cs" />
     <Compile Include="Areas\DCM\Models\ImportMetadata\SummaryModel.cs" />
     <Compile Include="Areas\DCM\Models\ListViewItem.cs" />
@@ -1036,6 +1038,7 @@
     <Content Include="Areas\DCM\Views\ImportMetadataStructure\Index.cshtml" />
     <Content Include="Areas\DCM\Views\ImportMetadataStructure\_taskListView.cshtml" />
     <Content Include="Areas\DCM\Views\ImportMetadataStructure\_wizardNav.cshtml" />
+    <Content Include="Areas\DCM\Views\ImportMetadataStructureSetParameters\SetParameters.cshtml" />
     <None Include="Properties\PublishProfiles\2230.pubxml" />
     <None Include="Properties\PublishProfiles\2301.pubxml" />
     <None Include="Properties\PublishProfiles\2302.pubxml" />

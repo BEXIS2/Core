@@ -94,6 +94,18 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             return View((CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"]);
         }
 
+        public ActionResult ChangeStepVisibillity(int id)
+        {
+            if (TaskManager == null) TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
+
+            StepInfo stepInfo = TaskManager.Get(id);
+
+            if (stepInfo.Expand) stepInfo.Expand = false;
+            else stepInfo.Expand = true;
+
+            return Content("");
+        }
+
         #region Navigation
 
         [HttpPost]

@@ -40,7 +40,15 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         {
             TaskManager = (ImportMetadataStructureTaskManager)Session["TaskManager"];
 
-            TaskManager.Current().SetValid(true);
+            ReadSourceModel model = new ReadSourceModel(TaskManager.Current());
+
+            if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.IS_GENERATE))
+            {
+                TaskManager.Current().SetValid(true);
+                TaskManager.Current().SetStatus(StepStatus.success);
+            }
+            else
+                ModelState.AddModelError("", "Please click generate button.");
 
             if (TaskManager.Current().IsValid())
             {
@@ -51,7 +59,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 return RedirectToAction(actionInfo.ActionName, actionInfo.ControllerName, new RouteValueDictionary { { "area", actionInfo.AreaName }, { "index", TaskManager.GetCurrentStepInfoIndex() } });
             }
 
-            ReadSourceModel model = new ReadSourceModel(TaskManager.Current());
 
             return PartialView(model);
         }
@@ -86,6 +93,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         {
             string root = "";
             string schemaName = "";
+            long metadataStructureid = 0;
 
             TaskManager = (ImportMetadataStructureTaskManager)Session["TaskManager"];
 
@@ -94,6 +102,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.SCHEMA_NAME))
                 schemaName = TaskManager.Bus[ImportMetadataStructureTaskManager.SCHEMA_NAME].ToString();
+
+
 
             TaskManager = (ImportMetadataStructureTaskManager)Session["TaskManager"];
 
@@ -104,23 +114,16 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             model.SchemaName = schemaName;
             model.RootNode = root;
 
+
             //open schema
             XmlSchemaManager xmlSchemaManager = new XmlSchemaManager();
-            try
-            {
-                xmlSchemaManager.Load(path);
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError("", ex.Message);
-                model.ErrorList.Add(new Error(ErrorType.Other, "Can not find any dependent files to the selected schema."));
-            }
+            xmlSchemaManager.Load(path);
 
             if (model.ErrorList.Count == 0)
             {
                 try
                 {
-                    xmlSchemaManager.GenerateMetadataStructure(root, schemaName);
+                    metadataStructureid = xmlSchemaManager.GenerateMetadataStructure(root, schemaName);
                 }
                 catch (Exception ex)
                 {
@@ -130,6 +133,20 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             }
 
             model.StepInfo.notExecuted = false;
+
+            if (model.ErrorList.Count == 0)
+            {
+                if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.IS_GENERATE))
+                    TaskManager.Bus[ImportMetadataStructureTaskManager.IS_GENERATE] = true;
+                else
+                    TaskManager.Bus.Add(ImportMetadataStructureTaskManager.IS_GENERATE, true);
+
+                if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.METADATASTRUCTURE_ID))
+                    TaskManager.Bus[ImportMetadataStructureTaskManager.METADATASTRUCTURE_ID] = metadataStructureid;
+                else
+                    TaskManager.Bus.Add(ImportMetadataStructureTaskManager.METADATASTRUCTURE_ID, metadataStructureid);
+            }    
+
 
             return PartialView("ReadSource",model);
         }

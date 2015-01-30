@@ -41,7 +41,7 @@
 
         </div>
         <br />
-            @if (@Model.MetadataAttributeModels != null && @Model.MetadataAttributeModels.Count>0)
+            @*@if (@Model.MetadataAttributeModels != null && @Model.MetadataAttributeModels.Count>0)
             { 
                 @Ajax.ActionLink("Validate", "ValidateStep", @Model.StepInfo.GetActionInfo.ControllerName,
                          new AjaxOptions
@@ -51,7 +51,7 @@
                              UpdateTargetId = @id
                          },
                          new { @class = "t-button", @style = "float:right" })
-            }
+            }*@
     </div>
 
     <div class="createWizardStep_Success stepper">
@@ -68,11 +68,11 @@
     </div>
 
     <div class="createWizardStep_Error stepper">
-        @if (Model != null)
+        @*@if (Model != null)
         {
             @Html.Partial("_errorMessages", @Model.ErrorList) 
 
-        }
+        }*@
     </div>   
 
 </div>

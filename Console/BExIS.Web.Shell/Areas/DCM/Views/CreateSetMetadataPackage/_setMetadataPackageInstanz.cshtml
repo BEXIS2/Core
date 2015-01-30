@@ -39,13 +39,13 @@
         </div>
         <br />
 
-        @Ajax.ActionLink("Validate", "ValidateStep",@Model.StepInfo.GetActionInfo.ControllerName,new RouteValueDictionary { { "area", "DCM" } },
+      @*  @Ajax.ActionLink("Validate", "ValidateStep",@Model.StepInfo.GetActionInfo.ControllerName,new RouteValueDictionary { { "area", "DCM" } },
                  new AjaxOptions { HttpMethod = "GET", 
                  InsertionMode = InsertionMode.Replace, 
                  UpdateTargetId = @id
                  },
                  new { @class = "t-button",  @style="float:right" })
- 
+ *@
     </div>
 
     <div class="createWizardStep_Success stepper">
@@ -62,11 +62,11 @@
     </div>
 
     <div class="createWizardStep_Error stepper">
-        @if (Model != null)
+       @* @if (Model != null)
         {
             @Html.Partial("_errorMessages", @Model.ErrorList) 
 
-        }
+        }*@
     </div>   
 
 </div>

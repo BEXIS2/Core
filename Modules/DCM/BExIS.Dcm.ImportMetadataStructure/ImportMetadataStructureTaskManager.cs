@@ -19,6 +19,14 @@ namespace BExIS.Dcm.ImportMetadataStructureWizard
         public static string SOURCE_STRUCTURE = "source_structure";
         public static string SCHEMA_NAME = "schema_name";
         public static string ROOT_NODE = "ROOT_NODE";
+        public static string TITLE_NODE = "TITLE_NODE";
+        public static string DESCRIPTION_NODE = "DESCRIPTION_NODE";
+        public static string IS_GENERATE = "IS_GENERATE";
+
+        public static string METADATASTRUCTURE_ID = "METADATASTRUCTURE_ID";
+
+        public static string XML_SCHEMA_MANAGER = "XML_SCHEMA_MANAGER";
+        public static string XML_ELEMENT_LIST = "XML_ELEMENT_LIST";
         /// <summary>
         /// 
         /// </summary>
@@ -89,9 +97,6 @@ namespace BExIS.Dcm.ImportMetadataStructureWizard
         {
             int currentIndex = StepInfos.IndexOf(currentStepInfo);
             if (currentIndex == 0) return new StepInfo("");
-
-            //prevStepInfo = TaskInfos.Last();
-            //TaskInfos.Remove(TaskInfos.Last());
 
             return StepInfos.ElementAt(currentIndex - 1);
         }
