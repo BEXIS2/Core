@@ -87,17 +87,20 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
         #region save Datastructure
 
-        public ActionResult saveDataStructure(DataStructureDesignerModel DSDM, string category)
+        public ActionResult saveDataStructure(DataStructureDesignerModel DSDM, string category, string[] varName, long[] optional, long[] varId)
         {
             DataStructureManager DSM = new DataStructureManager();
             DSDM.dataStructure.Name = cutSpaces(DSDM.dataStructure.Name);
             DSDM.dataStructure.Description = cutSpaces(DSDM.dataStructure.Description);
             DSDM.structured = (bool)Session["Structured"];
-            
+            List<string> errorMsg = new List<string>();
+
             if(DSDM.dataStructure.Id == 0)
             {
-                string errorMsg = dataStructureValidation(DSDM.dataStructure);
-                if (errorMsg != null)
+                if (dataStructureValidation(DSDM.dataStructure) != null)
+                    errorMsg.Add(dataStructureValidation(DSDM.dataStructure));
+
+                if (errorMsg.Count() > 0)
                 {
                     ViewData["errorMsg"] = errorMsg;
                     return View("DataStructureDesigner", DSDM);
@@ -132,30 +135,54 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                         }
                     }
                     else
-                    { 
-                        ViewData["errorMsg"] = "Please type a Name";
+                    {
+                        errorMsg.Add("Please type a Name");
+                        ViewData["errorMsg"] = errorMsg;
                         return View("DataStructureDesigner", DSDM);
                     }
                 }
             }
             else
-            {
-                string errorMsg = null;
-                
+            {   
                 if (Request.Params["create"] == "save")
                 {
-                    errorMsg = dataStructureValidation(DSDM.dataStructure);
+                    if (varId != null)
+                    {
+                        bool opt = false;
+                        string tempMsg = null;
+
+                        for (int i = 0; i < varId.Count(); i++)
+                        {
+                            if (optional.Contains(varId[i]))
+                                opt = true;
+                            else
+                                opt = false;
+
+                            tempMsg = saveVariable(cutSpaces(varName[i]), varId[i], DSDM.dataStructure.Id, opt);
+
+                            if (tempMsg != null)
+                                errorMsg.Add(tempMsg);
+                        }
+                    }
+                    if (dataStructureValidation(DSDM.dataStructure) != null)
+                        errorMsg.Add(dataStructureValidation(DSDM.dataStructure));
                 }
                 else if (Request.Params["create"] == "saveAs")
                 {
                     if (openSaveAsWindow(DSDM.dataStructure))
                     {
+                        DataStructure tempDS = new StructuredDataStructure();
+                        tempDS.Name = DSDM.dataStructure.Name;
+                        if (dataStructureValidation(tempDS) != null)
+                            errorMsg.Add(dataStructureValidation(tempDS));
+
+                        ViewData["errorMsg"] = errorMsg;
                         DSDM.GetDataStructureByID(DSDM.dataStructure.Id, DSDM.structured);
                         return View("DataStructureDesigner", DSDM);
                     }
                 }
 
-                if (errorMsg != null)
+                if (errorMsg.Count() > 0)
                 {
                     ViewData["errorMsg"] = errorMsg;
                     DSDM.GetDataStructureByID(DSDM.dataStructure.Id, DSDM.structured);
@@ -180,9 +207,9 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                         {
                             DS = DSM.StructuredDataStructureRepo.Get(DSDM.dataStructure.Id);
                             provider.deleteTemplate(DS.Id);
-                        DS.Name = DSDM.dataStructure.Name;
-                        DS.Description = DSDM.dataStructure.Description;
-                        DS = DSM.UpdateStructuredDataStructure(DS);
+                            DS.Name = DSDM.dataStructure.Name;
+                            DS.Description = DSDM.dataStructure.Description;
+                            DS = DSM.UpdateStructuredDataStructure(DS);
                         }
                         else if (Request.Params["create"] == "saveAs")
                         {
@@ -212,20 +239,56 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                                 {
                                     XmlNode order = doc.CreateNode(XmlNodeType.Element, "order", null);
                                     Variable temp;
+                                    bool opt = false;
+
                                     foreach (Variable v in variables)
                                     {
-                                        XmlNode variable = doc.CreateNode(XmlNodeType.Element, "variable", null);
-                                        temp = DSM.AddVariableUsage(DS, v.DataAttribute, true, v.Label, null, null, "");
-                                        variable.InnerText = temp.Id.ToString();
-                                        order.AppendChild(variable);
+                                        if (varName != null)
+                                        {
+                                            for (int i = 0; i < varId.Count(); i++)
+                                            {
+                                                if (v.Id == varId[i])
+                                                {
+                                                    XmlNode variable = doc.CreateNode(XmlNodeType.Element, "variable", null);
+
+                                                    if (optional.Contains(varId[i]))
+                                                        opt = true;
+                                                    else
+                                                        opt = false;
+
+                                                    if (DS.Variables.Where(p => cutSpaces(p.Label).ToLower().Equals(cutSpaces(varName[i]).ToLower())).Count() > 0 || cutSpaces(varName[i]) == "")
+                                                    {
+                                                        if (cutSpaces(varName[i]) == "")
+                                                            errorMsg.Add("Can't rename Variable " + v.Label + ", invalid name");
+                                                        else
+                                                            errorMsg.Add("Can't rename Variable " + v.Label + ", name already exsist");
+                                                        temp = DSM.AddVariableUsage(DS, v.DataAttribute, opt, v.Label, null, null, "");
+                                                    }
+                                                    else
+                                                    {
+                                                        temp = DSM.AddVariableUsage(DS, v.DataAttribute, opt, cutSpaces(varName[i]), null, null, "");
+                                                    }
+                                                    variable.InnerText = temp.Id.ToString();
+                                                    order.AppendChild(variable);
+                                                    ViewData["errorMsg"] = errorMsg;
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            XmlNode variable = doc.CreateNode(XmlNodeType.Element, "variable", null);
+                                            temp = DSM.AddVariableUsage(DS, v.DataAttribute, v.IsValueOptional, v.Label, null, null, "");
+                                            variable.InnerText = temp.Id.ToString();
+                                            order.AppendChild(variable);
+                                        }
                                     }
                                     doc.FirstChild.AppendChild(order);
                                     DS.Extra = doc;
                                 }                                
-                            DSM.UpdateStructuredDataStructure(DS);
+                            DS = DSM.UpdateStructuredDataStructure(DS);
                         }
-                        provider.CreateTemplate(DS);
                         DSDM.GetDataStructureByID(DS.Id, DSDM.structured);
+                        provider.CreateTemplate(DSM.StructuredDataStructureRepo.Get(DSDM.dataStructure.Id));
                         DSDM.dataStructureTree = DSDM.getDataStructureTree();
                     }
                     else
@@ -234,8 +297,8 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                         if (Request.Params["create"] == "save")
                         {
                             DS = DSM.UnStructuredDataStructureRepo.Get(DSDM.dataStructure.Id);
-                        DS.Name = DSDM.dataStructure.Name;
-                        DS.Description = DSDM.dataStructure.Description;
+                            DS.Name = DSDM.dataStructure.Name;
+                            DS.Description = DSDM.dataStructure.Description;
                             DS = DSM.UpdateUnStructuredDataStructure(DS);
                         }
                         else if (Request.Params["create"] == "saveAs")
@@ -308,11 +371,11 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                 }
                 if (dataStructure.Datasets.Count > 0)
                 {
-                    return "Can\'t save Data Structure is in use ";
+                    return "Can\'t save/rename Data Structure is in use ";
                 }
                 if (cutSpaces(dataStructure.Name) == "" || cutSpaces(dataStructure.Name) == null)
                 {
-                    return "Can\'t save invalid Name";
+                    return "Can\'t save/rename Data Structure invalid Name";
                 }
                 else if (dataStructureList.Where(p => cutSpaces(p.Name).ToLower().Equals(cutSpaces(dataStructure.Name).ToLower())).Count() > 0)
                 {
@@ -570,11 +633,12 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             return RedirectToAction("DataStructureDesigner");
         }
 
-        public ActionResult saveVariable(string name, long id, long dataStructureId, bool optional)
+        public string saveVariable(string name, long id, long dataStructureId, bool optional)
         {
             DataStructureManager dataStructureManager = new DataStructureManager();
             StructuredDataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataStructureId);
             DataStructureDesignerModel DSDM = new DataStructureDesignerModel();
+            string errorMsg = null;
 
             name = cutSpaces(name);
             if (!(dataStructure.Datasets.Count > 0))
@@ -592,9 +656,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                                 long newVarId = dataStructure.Variables.Where(p => cutSpaces(p.Label).ToLower().Equals(cutSpaces(name).ToLower())).ToList().First().Id;
                                 if (newVarId != var.Id)
                                 {
-                                    ViewData["varErrorMsg"] = "Name already exsist";
-                                    Session["variableId"] = id;
-                                    Session["VariableWindow"] = true;
+                                    errorMsg = "Can't rename Variable "+var.Label+", name already exsist";
                                 }
                                 else
                                 {
@@ -602,8 +664,6 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                                     var.IsValueOptional = optional;
                                     dataStructureManager.UpdateStructuredDataStructure(var.DataStructure);
 
-                                    Session["variableId"] = null;
-                                    Session["VariableWindow"] = false;
                                     ExcelTemplateProvider provider = new ExcelTemplateProvider(templateName);
                                     provider.CreateTemplate(dataStructure);
                                 }
@@ -614,8 +674,6 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                             var.IsValueOptional = optional;
                             dataStructureManager.UpdateStructuredDataStructure(var.DataStructure);
 
-                            Session["variableId"] = null;
-                            Session["VariableWindow"] = false;
                             ExcelTemplateProvider provider = new ExcelTemplateProvider(templateName);
                             provider.CreateTemplate(dataStructure);
                         }
@@ -623,15 +681,13 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
                         else
                         {
-                            ViewData["varErrorMsg"] = "invalid Name";
-                            Session["variableId"] = id;
-                            Session["VariableWindow"] = true;
+                            errorMsg = "Can't rename Variable " + var.Label + ", invalid Name";
                         }
                     }
                 }
             }
             DSDM.GetDataStructureByID(dataStructure.Id);
-            return View("DataStructureDesigner", DSDM);
+            return errorMsg;
         }
 
         public ActionResult shiftVariableLeft(long id, long dataStructureId)

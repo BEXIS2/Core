@@ -1,20 +1,309 @@
 ﻿@using Telerik.Web.Mvc.UI
 @using BExIS.Dlm.Entities.DataStructure
+@using System.Data;
 @model BExIS.RPM.Model.DataStructureDesignerModel
 
 @{
     long first = 0;
     long last = 0;
+    DataRow r = null;
 
-    if(Model.variables.Count() != 0)
+    if (Model.variables.Count() != 0)
     {
         first = Model.variables.First().Id;
         last = Model.variables.Last().Id;
     }     
 }
 
+<div class="t-widget" id = "DataStructureGrid">
+    <table cellspacing ="0"> 
+        @for (int i = 0; i < Model.dataStructureTable.Rows.Count; i++)
+        {
+            r = Model.dataStructureTable.Rows[i];
 
-<div>
+            switch (r.ItemArray.First().ToString().ToLower())
+            {
+                case "functions":
+                    if (i % 2 != 0)
+                    {
+                        if (!Model.inUse)
+                        {
+                            <tr class ="function t-alt">
+                            @foreach (object o in r.ItemArray)
+                            {
+                                if (o != r.ItemArray.First())
+                                {
+                                    <td class="data">@o.ToString()</td>
+                                }
+                                else
+                                {
+                                    <td  class="head">@o.ToString()</td>
+                                }
+                            }
+                            </tr>
+                        }
+                        else
+                        {
+                            <tr class ="locked t-alt">
+                            @foreach (object o in r.ItemArray)
+                            {
+                                if (o != r.ItemArray.First())
+                                {
+                                    <td class="data">@o.ToString()</td>
+                                }
+                                else
+                                {
+                                    <td class="head">@o.ToString()</td>
+                                }
+                            }
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        if (!Model.inUse)
+                        {
+                            <tr class ="function">
+                            @foreach (object o in r.ItemArray)
+                            {
+                                if (o != r.ItemArray.First())
+                                {
+                                    <td class="data">@o.ToString()</td>
+                                }
+                                else
+                                {
+                                    <td class="head">@o.ToString()</td>
+                                }
+                            }
+                            </tr>
+                        }
+                        else
+                        {
+                            <tr class ="locked">
+                            @foreach (object o in r.ItemArray)
+                            {
+                                if (o != r.ItemArray.First())
+                                {
+                                    <td class="data">@o.ToString()</td>
+                                }
+                                else
+                                {
+                                    <td class="head">@o.ToString()</td>
+                                }
+                            }
+                            </tr>
+                        }
+                    }
+                    break;
+
+                case "name":
+                    if (i % 2 != 0)
+                    {
+                        <tr class ="name t-alt">
+                        @foreach (object o in r.ItemArray)
+                        {
+                            if (o != r.ItemArray.First())
+                            {
+                                if (!Model.inUse)
+                                {
+                                    <td class="data">@Html.TextBox("varName",o.ToString(), new { @Value = o.ToString() })</td>
+                                }
+                                else
+                                {
+                                    <td class="data">@o.ToString()</td>
+                                }
+                            }
+                            else
+                            {
+                                <td class="head">@o.ToString()</td>
+                            }
+                        }                          
+                        </tr>
+                    }
+                    else
+                    {
+                        <tr class ="name">
+                        @foreach (object o in r.ItemArray)
+                        {
+                            if (o != r.ItemArray.First())
+                            {
+                                if (!Model.inUse)
+                                {
+                                    <td class="data">@Html.TextBox("varName", o.ToString(), new { @Value = o.ToString() })</td>
+                                }
+                                else
+                                {
+                                    <td class="data">@o.ToString()</td>
+                                }
+                            }
+                            else
+                            {
+                                <td class="head">@o.ToString()</td>
+                            }
+                        }
+                        </tr>
+                    }
+                    break;
+
+                case "optional":
+                    object obj = new object();
+                    DataRow temp = null;
+
+                    if (i % 2 != 0)
+                    {   
+                        <tr class ="optional t-alt">
+                        @for (int j = 0; j < r.ItemArray.Count(); j++)
+                        {
+                            obj = r.ItemArray[j];
+
+                            if (obj != r.ItemArray.First())
+                            {
+                                if (!Model.inUse)
+                                {
+                                    foreach (DataRow row in Model.dataStructureTable.Rows)
+                                    {
+                                        if (row.ItemArray.First().ToString().ToLower() == "variableid")
+                                        {
+                                            temp = row;
+                                            break;
+                                        }
+                                    }
+                                  
+                                    <td class="data"><input id="optional" name="optional" type="checkbox" value="@temp.ItemArray[j]" class="checkBox"
+                                    @if (Convert.ToBoolean(obj.ToString().ToLower()) == true)
+                                    {
+                                        <text>checked="checked"</text>
+                                    }
+                                    /></td>
+                                }
+                                else
+                                {
+                                    <td class="data">@obj.ToString()</td>
+                                }
+                            }
+                            else
+                            {
+                                <td class="head">@obj.ToString()</td>
+                            }
+                        }
+                        </tr>
+                    }
+                    else
+                    {
+                        <tr class ="optional">
+                        @for (int j = 0; j < r.ItemArray.Count(); j++)
+                        {
+                            obj = r.ItemArray[j];
+
+                            if (obj != r.ItemArray.First())
+                            {
+                                if (!Model.inUse)
+                                {
+                                    foreach (DataRow row in Model.dataStructureTable.Rows)
+                                    {
+                                        if (row.ItemArray.First().ToString().ToLower() == "variableid")
+                                        {
+                                            temp = row;
+                                            break;
+                                        }
+                                    }
+                                  
+                                    <td class="data"><input id="optional" name="optional" type="checkbox" value="@temp.ItemArray[j]" class="checkBox"
+                                    @if (Convert.ToBoolean(obj.ToString().ToLower()) == true)
+                                    {
+                                        <text>checked="checked"</text>
+                                    }
+                                    /></td>
+                                }
+                                else
+                                {
+                                    <td class="data">@obj.ToString()</td>
+                                }
+                            }
+                            else
+                            {
+                                <td class="head">@obj.ToString()</td>
+                            }
+                        }
+                        </tr>
+                    }
+                    break;
+
+                    case "variableid":
+                    if (i % 2 != 0)
+                    {    
+                        <tr class ="t-alt">
+                        @foreach (object o in r.ItemArray)
+                        {
+                            if (o != r.ItemArray.First())
+                            { 
+                                <td class="data">@o.ToString()@Html.TextBox("varId", o.ToString(), new { @class = "hidden", @Value = o.ToString() })</td>
+                            }
+                            else
+                            {
+                                <td class="head">@o.ToString()</td>
+                            }
+                        }
+                        </tr>
+                    }
+                    else
+                    {
+                        <tr>
+                        @foreach (object o in r.ItemArray)
+                        {
+                            if (o != r.ItemArray.First())
+                            { 
+                                <td class="data">@o.ToString()@Html.TextBox("varId", o.ToString(), new { @class = "hidden", @Value = o.ToString() })</td>
+                            }
+                            else
+                            {
+                                <td class="head">@o.ToString()</td>
+                            }
+                        }
+                        </tr>
+                    }
+                    break;
+
+                default:
+                    if (i % 2 != 0)
+                    {    
+                        <tr class ="t-alt">
+                        @foreach (object o in r.ItemArray)
+                        {
+                            if (o != r.ItemArray.First())
+                            { 
+                                <td class="data">@o.ToString()</td>
+                            }
+                            else
+                            {
+                                <td class="head">@o.ToString()</td>
+                            }
+                        }
+                        </tr>
+                    }
+                    else
+                    {
+                        <tr>
+                        @foreach (object o in r.ItemArray)
+                        {
+                            if (o != r.ItemArray.First())
+                            { 
+                                <td class="data">@o.ToString()</td>
+                            }
+                            else
+                            {
+                                <td class="head">@o.ToString()</td>
+                            }
+                        }
+                        </tr>
+                    }
+                    break;
+            }
+        } 
+    </table>
+</div>
+
+@*<div>
 @(Html.Telerik().Grid(Model.dataStructureTable)
         .Name("DataStructureGrid")
         .RowAction(row =>
@@ -44,8 +333,9 @@
                 
             })
 )
-</div>
-<div style="position:absolute; left:30%; top:60px;">
+</div>*@
+
+@*<div style="position:absolute; left:30%; top:60px;">
 @{ Html.Telerik().Window()
         .Name("Edit_Variable")
         .Title("Edit Variable")
@@ -53,7 +343,7 @@
         .Modal(true)
         .Visible((bool)Session["VariableWindow"])
         .Content(@<text>
-                    @Html.Partial("_editVariable", Model)
+                    @Html.Partial("_editVariable", Model.dataStructureTable)
                     </text>)
         .Width(300)
         .Render()
@@ -61,7 +351,7 @@
         
 }
 </div>
-@{Session["VariableWindow"] = false;}
+@{Session["VariableWindow"] = false;}*@
 
 <script type="text/javascript" language="javascript">
     $(document).ready(function () {
@@ -69,32 +359,33 @@
         var first = @first;
         var last =  @last;
 
+
         for (var i = 0; i < $(".function td").length; i++)
         {
             if ($(".function td")[i].innerHTML != 'Functions')
             {
-                var edit = '<a area="RPM" class="t-icon t-edit" href="/RPM/Home/openVariableWindow/' + $(".function td")[i].innerHTML + '"></a>';
+                //var edit = '<a area="RPM" class="t-icon t-edit" href="/RPM/Home/openVariableWindow/' + $(".function td")[i].innerHTML + '"></a>';
                 var del = '<a area="RPM" class="t-icon t-delete" href="/RPM/Home/deleteVariable/' + $(".function td")[i].innerHTML + '" onclick = "return confirm(\'Are you sure you want to delete the Variable ' + $(".name td")[i].innerHTML + '?\')"></a>'
                 var temp = $(".function td")[i].innerHTML.split('?');
                 var left = '<a area="RPM" class="t-icon t-arrow-prev" href="/RPM/Home/shiftVariableLeft/'+ $(".function td")[i].innerHTML +'"></a>';
                 var right = '<a area="RPM" class="t-icon t-arrow-next" href="/RPM/Home/shiftVariableRight/'+ $(".function td")[i].innerHTML +'"></a>';
 
-                $(".function td")[i].innerHTML = edit + del;
+                $(".function td")[i].innerHTML = del;
                 
                 if (temp[0] != first && temp[0] != last)
-                    $(".function td")[i].innerHTML = left + edit + del + right;
+                    $(".function td")[i].innerHTML = left + del + right;
                 else
                 {
                     if(temp[0] == first && temp[0] == last)
                     {
-                        $(".function td")[i].innerHTML = edit + del;
+                        $(".function td")[i].innerHTML = del;
                     }
                     else
                     {
                         if(temp[0] == first)
-                            $(".function td")[i].innerHTML = edit + del + right;
+                            $(".function td")[i].innerHTML = del + right;
                         else
-                            $(".function td")[i].innerHTML = left + edit + del;
+                            $(".function td")[i].innerHTML = left + del;
                     }
                 }            
             }
@@ -133,8 +424,6 @@
             if ($(".optional td")[i].innerHTML == 'True')
                 $(".optional td")[i].innerHTML = '<div class="t-icon t-update"></div>';
         }
-
-        $('#DataStructureGrid .t-header').replaceWith('');
     });
 
 </script>

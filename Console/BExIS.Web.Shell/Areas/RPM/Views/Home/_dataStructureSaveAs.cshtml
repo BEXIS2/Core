@@ -4,12 +4,17 @@
 @using BExIS.Dlm.Services.DataStructure
 @model BExIS.RPM.Model.DataStructureDesignerModel
 
-@*<header>*@
-    <link href="@Url.Content("~/Areas/RPM/Stylesheets/RPM.css")" rel="stylesheet" type="text/css" />  
-@*</header> *@
-
 @{
     ViewBag.Title = "Planing";   
+}
+
+@{  
+    List<string> errorMsg = new List<string>(); 
+    
+    if (ViewData["errorMsg"] != null)
+    {
+        errorMsg = (List<string>)ViewData["errorMsg"]; 
+    }
 }
 
 <div class="planingPartialDiv" id="createVariable">
@@ -36,4 +41,13 @@
          
         <button name="create" value="saveAs" type="submit" class="t-button" title="Save Data Structure as">Save</button>
     }
+</div>
+
+<div class="errorMsg" style="vertical-align:top; padding:5px;">
+    <ul>
+    @foreach (string s in errorMsg)
+    {
+        <li class="errorMsg">@s</li>
+    }
+    </ul>
 </div>

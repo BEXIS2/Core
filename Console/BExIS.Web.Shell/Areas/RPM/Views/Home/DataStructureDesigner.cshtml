@@ -84,11 +84,4 @@
     <div>
         @Html.Partial("_showDataStructureInfo", Model)
     </div>
-
-    if (Model.structured == true && Model.variables != null)
-    {
-        <div>
-            @Html.Partial("_showDataStructure", Model)
-        </div>
-    }
 }

@@ -4,17 +4,20 @@ display:none !important;
 }
 
 .function td, .locked td {
-text-align:center;
-min-width:100px;
+    text-align : center;
 }
 
 #unitId option, #dataTypeId option{
-background-color:white;
+    background-color : white;
 }
 
 .errorMsg {
-padding-left:5px;
-vertical-align:top;
+    padding-left:5px;
+    vertical-align:top;
+}
+
+.RPMbuttons {
+    margin-top : 10px;
 }
 
 .RPMbuttons .t-button {
@@ -24,8 +27,35 @@ vertical-align:top;
 }
 
 #DataStructureGrid{
-    position:absolute;
-    min-width:400px;
+    overflow-x:scroll;
+}
+
+#DataStructureGrid table {
+    width :100%;
+}
+
+#DataStructureGrid td {
+    min-width : 100px;
+}
+
+#DataStructureGrid .data {
+    width : auto;
+}
+
+#DataStructureGrid .head {
+   text-align: left;
+   width:100px;
+   color:black;
+   background-color:lightgray;
+   border-color:gray;
+   border-left:none;
+   border-top-color:lightgray;  
+}
+
+#DataStructureGrid input {
+    border-radius: 3px;
+    min-width: 100px;
+    width:99%;
 }
 
 .unit .t-grid-header th {
@@ -91,6 +121,14 @@ border-radius: 3px;
 width: 150px;
 }
 
-.planingPartialDiv .hidden {
+.hidden {
     display: none;
+}
+
+div {
+    border-radius: 3px;
+}
+
+.errorMsg {
+    color:red;
 }
