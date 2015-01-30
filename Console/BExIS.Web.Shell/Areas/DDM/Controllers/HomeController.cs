@@ -508,7 +508,14 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
         #endregion
 
         #region mydatasets
-
+        
+        /// <summary>
+        /// create the model of My Dataset table
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref="_CustomMyDatasetBinding"/>
+        /// <param>NA</param>       
+        /// <returns>model</returns>
         public ActionResult ShowMyDatasets()
         {
                 DataTable model = new DataTable();
@@ -597,13 +604,19 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
         }
 
         [GridAction]
-        public ActionResult _CustomMyDatasetBinding(GridCommand command)
+        /// <summary>
+        /// create a model to fill the table of My Dataset
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref="ShowMyDatasets"/>
+        /// <param>NA</param>       
+        /// <returns>model</returns>
+        public ActionResult _CustomMyDatasetBinding()
         {
             DataTable model = new DataTable();
 
             ViewData["PageSize"] = 10;
             ViewData["CurrentPage"] = 1;
-
 
             #region header
             List<HeaderItem> headerItems = new List<HeaderItem>();
@@ -684,6 +697,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             PermissionManager permissionManager = new PermissionManager();
             SubjectManager subjectManager = new SubjectManager();
 
+            //Create a list of rightTypes
             List<RightType> rightTypes = new List<RightType>();
             rightTypes.Add(RightType.Delete);
             rightTypes.Add(RightType.Download);
@@ -691,8 +705,9 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             rightTypes.Add(RightType.Update);
             rightTypes.Add(RightType.View);
 
+            //List of DatasetIDs that its owner is current user
             List<long> datasetIDs = permissionManager.GetAllDataIds(subjectManager.GetUserByName(GetUserNameOrDefault()).Id, 1, rightTypes).ToList();
-                
+
             if (datasetIDs != null)
             {
                 foreach (long datasetId in datasetIDs)
@@ -725,7 +740,10 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                     dataRow.ItemArray = rowArray;
                     model.Rows.Add(dataRow);
                 }
+
+               
             }
+
             return View(new GridModel(model));
         }
 

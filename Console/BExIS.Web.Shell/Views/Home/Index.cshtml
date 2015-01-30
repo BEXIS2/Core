@@ -9,17 +9,19 @@
 
     @if(Request.IsAuthenticated) 
     {
-        <p>    This page is not in its final state. 
-        <br /> It is an experimental feature to provide the datasets owned by the current logged in user.</p>
+        <p>
+            This table contains all datasets, created by you as a current logged on user. <br />
+            By right clicking on the header, you can manage the visibility of columns.
+            You can also use filtering or grouping to see the more operative informations.
+        </p>
         <br />
         @Html.RenderAuto("HomePage")
     }
     else 
     {
-        
         <p>
-            <b>    You are not log in.</b>
-            <br /> Please log in to the system and continue.
+            <b>You are not logged in.</b><br /> 
+            Please log in to the system and continue.
         </p>            
     }
 </p>

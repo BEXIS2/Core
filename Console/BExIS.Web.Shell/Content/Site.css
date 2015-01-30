@@ -5,7 +5,7 @@ to use a different color start by replacing all instances of
 ----------------------------------------------------------*/
 body
 {
-    background-color: #5c87b2;
+    background-color: white;
     font-size: 75%;
     font-family: Verdana, Tahoma, Arial, "Helvetica Neue", Helvetica, Sans-Serif;
     margin: 0;
@@ -96,25 +96,26 @@ first child of the left and right table columns */
 page width. Or, you can specify an exact pixel width. */
 .page
 {
-    width: 90%;
+    width: 100%;
     margin-left: auto;
     margin-right: auto;
 }
 
 header, #header
 {
-    position: relative;
+    position:relative;
     margin-bottom: 0px;
-    color: #000;
+    background-color:grey;
+    color: White;
     padding: 0;
 }
 
 header h1, #header h1
 {
     font-weight: bold;
+    color:white;
     padding: 5px 0;
-    margin: 0;
-    color: #fff;
+    margin: 0;   
     border: none;
     line-height: 2em;
     font-size: 32px !important;
@@ -130,12 +131,31 @@ header h1, #header h1
 
 footer, #footer
 {
-    color: #999;
+    color: lightgray;
+    background-color:gray;
     padding: 10px 0;
     text-align: center;
     line-height: normal;
     margin: 0;
     font-size: .9em;
+}
+
+#footer a:link
+{
+    color: lightgray;
+    text-decoration: underline;
+}
+
+#footer a:visited
+{
+    color: lightgray;
+    text-decoration: underline;
+}
+
+#footer a:hover
+{
+    color: darkgray;
+    text-decoration: none;
 }
 
 /* MENU   
@@ -237,27 +257,26 @@ div#title
 #logindisplay
 {
     font-size:1.1em;
-    display:block;
     text-align:right;
     margin:10px;
-    color:White;
+    color:#000;
 }
 
 #logindisplay a:link
 {
-    color: white;
+    color:lightgray;
     text-decoration: underline;
 }
 
 #logindisplay a:visited
 {
-    color: white;
+    color:lightgray;
     text-decoration: underline;
 }
 
 #logindisplay a:hover
 {
-    color: white;
+    color:darkgray;
     text-decoration: none;
 }
 
