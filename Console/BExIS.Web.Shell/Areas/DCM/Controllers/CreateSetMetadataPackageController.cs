@@ -307,32 +307,60 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         {
              TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
 
-             MetadataAttributeModel model;
-             BaseUsage metadataAttributeUsage;
-             BaseUsage parentUsage;
+             int childUsageId = id;
+             long parentUsageId = parentid;
+             long grantParentUsageID = 0;
 
-             long metadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateDatasetTaskmanager.METADATASTRUCTURE_ID]);
+             if (parentModelNumber == 0) parentModelNumber = 1;
 
-             if (TaskManager.IsParentChildfromRoot())
-             {
-                 #region load metadataattribute
-                 metadataAttributeUsage = UsageHelper.GetMetadataCompoundAttributeUsageById(id);
-                 parentUsage = UsageHelper.GetMetadataAttributeUsageById(parentid);
-                 #endregion
+            if(TaskManager.Current().Parent.Parent!=null)
+              grantParentUsageID = GetUsageId(TaskManager.Current().Parent.Parent.Id);
+ 
+             AbstractMetadataStepModel parentModel = GetModelFromBus(parentUsageId);
 
-             }
-             else
+             AbstractMetadataStepModel grantParentModel = new AbstractMetadataStepModel();
+
+             if(grantParentUsageID != 0)
+                grantParentModel = GetModelFromBus(grantParentUsageID);
+
+             BaseUsage metadataAttributeUsage = new BaseUsage();
+             BaseUsage parentUsage = new BaseUsage();
+
+             // both nested Usages
+             if (parentModel is MetadataCompoundAttributeModel && grantParentModel is MetadataCompoundAttributeModel)
              {
                  metadataAttributeUsage = UsageHelper.GetMetadataCompoundAttributeUsageById(id);
                  parentUsage = UsageHelper.GetMetadataCompoundAttributeUsageById(parentid);
              }
 
+             // parent = nested Usage && grantParent PackageUsage
+             if (parentModel is MetadataCompoundAttributeModel && grantParentModel is MetadataPackageModel)
+             {
+                 metadataAttributeUsage = UsageHelper.GetMetadataCompoundAttributeUsageById(id);
+                 parentUsage = UsageHelper.GetUsageById(parentid);
+             }
 
-            model = MetadataAttributeModel.Convert(metadataAttributeUsage, parentUsage, metadataStructureId, parentModelNumber);
+             // parent = nested Usage && grantParent PackageUsage
+             if (parentModel is MetadataCompoundAttributeModel && grantParentModel == null)
+             {
+                 metadataAttributeUsage = UsageHelper.GetMetadataCompoundAttributeUsageById(id);
+                 parentUsage = UsageHelper.GetMetadataCompoundAttributeUsageById(parentid);
+             }
+
+             //parent MetadataAttributeUsage grantParent PackageUsage
+             if (parentModel is MetadataPackageModel && grantParentUsageID == 0)
+             {
+                 metadataAttributeUsage = UsageHelper.GetMetadataAttributeUsageById(id);
+                 parentUsage = UsageHelper.GetUsageById(parentid);
+             }
+
+
+            //UpdateXml
+            long metadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateDatasetTaskmanager.METADATASTRUCTURE_ID]);
+            MetadataAttributeModel model = MetadataAttributeModel.Convert(metadataAttributeUsage, parentUsage, metadataStructureId, parentModelNumber);
             model.Value = value;
             model.Number = number;
 
-            //UpdateXml
             UpdateAttribute(parentUsage, parentModelNumber, metadataAttributeUsage, number, value);
 
             if (ContainsAttribute(id, number, parentid, parentModelNumber))
@@ -899,6 +927,32 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             return null;
         }
 
+        private AbstractMetadataStepModel GetModelFromBus(long usageId)
+        {
+            Dictionary<string, AbstractMetadataStepModel> packageModelDic = new Dictionary<string, AbstractMetadataStepModel>();
+            List<AbstractMetadataStepModel> temp = new List<AbstractMetadataStepModel>();
+
+            if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST))
+            {
+                packageModelDic = (Dictionary<string, AbstractMetadataStepModel>)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST];
+
+                foreach (KeyValuePair<string, AbstractMetadataStepModel> keyValuePair in packageModelDic)
+                {
+                    if (GetPackageUsageIdFromIdentfifier(keyValuePair.Key).Equals(usageId))
+                    {
+                        return keyValuePair.Value;
+                    }
+                }
+            }
+            else
+            {
+
+                TaskManager.Bus[CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST] = packageModelDic;
+            }
+
+            return null;
+        }
+
         
 
         #endregion
@@ -1381,8 +1435,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                 TaskManager.Bus[CreateDatasetTaskmanager.METADATA_XML] = metadataXml;
                 // locat path
-                // string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "metadataTemp.Xml");
-                // metadataXml.Save
+                 string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "metadataTemp.Xml");
+                 metadataXml.Save(path);
             }
 
 
@@ -1407,7 +1461,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     {
                         temp.ToList().Sort();
 
-                        return temp.ToList().IndexOf(stepId);
+                        return temp.ToList().IndexOf(stepId)+1;
                     }
                 }
                 return 0;

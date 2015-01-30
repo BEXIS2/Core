@@ -508,7 +508,9 @@ namespace BExIS.Dcm.CreateDatasetWizard
         /// <returns></returns>
         public bool IsParentChildfromRoot()
         {
-            if (IsRoot(Current().Parent.Parent.Parent) ||
+            if (IsRoot(Current().Parent) ||
+                IsRoot(Current().Parent.Parent) ||
+                IsRoot(Current().Parent.Parent.Parent) ||
                IsRoot(Current().Parent.Parent.Parent.Parent))
             {
                 return true;

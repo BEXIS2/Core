@@ -51,7 +51,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 {
                     Dictionary<string, AbstractMetadataStepModel> list = (Dictionary<string, AbstractMetadataStepModel>)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST];
                     model = CreateSummaryModel.Convert(list, TaskManager.Current());
-                    model.ErrorList = ValidatePackageModels();
+                    //model.ErrorList = ValidatePackageModels();
                     model.PageStatus = Models.PageStatus.FirstLoad;
                     return PartialView(model);
                 }
@@ -60,7 +60,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     TaskManager.Bus[CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST] = new Dictionary<string, MetadataPackageModel>();
                 }
 
-                model.ErrorList = ValidatePackageModels();
+                //model.ErrorList = ValidatePackageModels();
             }
 
            model.StepInfo = TaskManager.Current();
@@ -90,24 +90,27 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 Dictionary<string, AbstractMetadataStepModel> list = (Dictionary<string, AbstractMetadataStepModel>)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST];
                 model = CreateSummaryModel.Convert(list, TaskManager.Current());
 
-                if (ValidatePackageModels().Count==0)
-                {
+                //if (ValidatePackageModels().Count==0)
+                //{
                     Submit();
                     if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.DATASET_TITLE))
                         model.DatasetTitle = TaskManager.Bus[CreateDatasetTaskmanager.DATASET_TITLE].ToString();
                     else
-                        model.DatasetTitle = "no title";
-
+                    {
+                        TaskManager.Bus[CreateDatasetTaskmanager.DATASET_TITLE] = "no title available";
+                        model.DatasetTitle = TaskManager.Bus[CreateDatasetTaskmanager.DATASET_TITLE].ToString();
+                    }
+                    
                     model.DatasetId = Convert.ToInt64(TaskManager.Bus[CreateDatasetTaskmanager.DATASET_ID]);
                     model.StepInfo.SetStatus(StepStatus.exit);
                     model.PageStatus = Models.PageStatus.LastAndSubmitted;
+                //}
+                //else
+                //{
+                //    model.PageStatus = Models.PageStatus.Error;
+                //    model.ErrorList = ValidatePackageModels();
+                //}
                 }
-                else
-                {
-                    model.PageStatus = Models.PageStatus.Error;
-                    model.ErrorList = ValidatePackageModels();
-                }
-            }
 
             
             //jump to a other step
