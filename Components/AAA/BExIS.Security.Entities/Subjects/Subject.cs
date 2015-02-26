@@ -11,6 +11,8 @@ namespace BExIS.Security.Entities.Subjects
       
         public virtual string Name { get; set; }
 
+        public virtual bool IsSystemSubject { get; set; }
+
         #endregion
 
 

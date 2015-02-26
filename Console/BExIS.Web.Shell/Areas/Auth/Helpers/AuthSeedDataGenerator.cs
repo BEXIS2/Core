@@ -50,6 +50,8 @@ namespace BExIS.Web.Shell.Areas.Auth.Helpers
             // Subjects
             SubjectManager subjectManager = new SubjectManager();
 
+            Group everyone = subjectManager.CreateGroup("everyone", "everyone group", true);
+
             Group g1 = subjectManager.CreateGroup("Admin", "Admin");
 
             User u1 = subjectManager.CreateUser("Administrator", "gWg2xG", "Admin", "admin@bexis.de", sq1.Id, "Nothing", a1.Id);
@@ -85,6 +87,8 @@ namespace BExIS.Web.Shell.Areas.Auth.Helpers
             Feature f13 = featureManager.CreateFeature("Research Plan", "Research Plan", f1.Id);
 
             Feature f14 = featureManager.CreateFeature("Data Dissemination", "Data Dissemination", f1.Id);
+
+            Feature f15 = featureManager.CreateFeature("Data Collection", "Data Collection", f2.Id);
             
             Task t1 = taskManager.CreateTask("Auth", "Users", "*");
             t1.Feature = f3;
@@ -158,6 +162,26 @@ namespace BExIS.Web.Shell.Areas.Auth.Helpers
             Task t24 = taskManager.CreateTask("DIM", "Admin", "*");
             t24.Feature = f14;
             taskManager.UpdateTask(t24);
+
+            Task t25 = taskManager.CreateTask("DCM", "ImportMetadataStructure", "*");
+            t25.Feature = f15;
+            taskManager.UpdateTask(t25);
+
+            Task t26 = taskManager.CreateTask("DCM", "ImportMetadataStructureReadSource", "*");
+            t26.Feature = f15;
+            taskManager.UpdateTask(t26);
+
+            Task t27 = taskManager.CreateTask("DCM", "ImportMetadataStructureSelectAFile", "*");
+            t27.Feature = f15;
+            taskManager.UpdateTask(t27);
+
+            Task t28 = taskManager.CreateTask("DCM", "ImportMetadataStructureSetParameters", "*");
+            t28.Feature = f15;
+            taskManager.UpdateTask(t28);
+
+            Task t29 = taskManager.CreateTask("DCM", "ImportMetadataStructureSummary", "*");
+            t29.Feature = f15;
+            taskManager.UpdateTask(t29);
 
             // Feature Permissions
             PermissionManager permissionManager = new PermissionManager();

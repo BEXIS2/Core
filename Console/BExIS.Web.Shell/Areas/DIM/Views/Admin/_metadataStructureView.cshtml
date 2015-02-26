@@ -31,39 +31,45 @@
             {
                 command.Template(
                     @<text>
-                        <button id="@convert_id" type="button" class="t-button" value="Convert" name="button" onclick="dim_OnClickConvert(this)" >Export</button>
+                        @if(@Model.ExportIsAvailable == true ){
+                            <button id="@convert_id" type="button" class="t-button" value="Convert" name="button" onclick="dim_OnClickConvert(this)" >Export</button>
+                        }
+                        else
+                        {
+                            <button id="@convert_id" type="button" class="t-button t-state-disabled" value="Convert" name="button" onclick="dim_OnClickConvert(this)" disabled="disabled">Export</button>
+                        }
                     </text>
                     );
             })
-            .Columns(columns =>
-                {
-                    columns.Template(
-                        @<text>
+                                        .Columns(columns =>
+                                        {
+                                            columns.Template(
+                                                @<text>
                             <input id="@item.DatasetVersionId" name="checkedDatasetVersion" type="checkbox" value="@item.DatasetVersionId " title="checkedDatasetVersion" class="checkBox" />
                         </text>
-                        ).Width(30)
-                        .HeaderTemplate(
-                            @<text>
+                                                ).Width(30)
+                                                .HeaderTemplate(
+                                                    @<text>
                                 <input id="@all_id" name="checkedDatasetVersion" type="checkbox" value="all" title="checkedDatasetVersion" class="checkBox" onclick="OnChangeAllCheckbox(this)" />
                             </text>
-                        );
-                    columns.Bound(o => o.DatasetId).Title("Dataset id").Width(40);
-                    columns.Bound(o => o.DatasetVersionId).Title("Datasetversion id").Width(40);       
-                    columns.Bound(o => o.Title).Title("Dataset Title")
-                           .Filterable(true);
-                    columns.Template(
-                        @<text>
+                                                );
+                                            columns.Bound(o => o.DatasetId).Title("Dataset id").Width(40);
+                                            columns.Bound(o => o.DatasetVersionId).Title("Datasetversion id").Width(40);
+                                            columns.Bound(o => o.Title).Title("Dataset Title")
+                                                   .Filterable(true);
+                                            columns.Template(
+                                                @<text>
                             @if (item.MetadataDownloadPath != "")
                             { 
                                 @Html.ActionLink("download", "Download", "Admin", new { path = @item.MetadataDownloadPath }, new { area = "DIM" });
                             }
                         </text>
 
-                        ).Title("Download Link");
+                                                ).Title("Download Link");
 
 
-                }
-           ))
+                                        }
+                                           ))
         
 </div>
 <style type="text/css">

@@ -7,13 +7,26 @@ display:none !important;
     text-align : center;
 }
 
-#unitId option, #dataTypeId option{
+.planingPartialDiv option{
     background-color : white;
 }
 
 .errorMsg {
-    padding-left:5px;
+    padding:5px;
     vertical-align:top;
+    color:red;
+    overflow-y:auto;
+    height:auto;
+    max-height:100px;
+    max-width:700px;
+}
+.errorMsg ul, .errorMsg li{
+    padding:0px;
+}
+
+.errorMsg ul {
+    padding:0px;
+    margin:0px;
 }
 
 .RPMbuttons {
@@ -27,7 +40,8 @@ display:none !important;
 }
 
 #DataStructureGrid{
-    overflow-x:scroll;
+    overflow-x:auto;
+    border-radius: 3px;
 }
 
 #DataStructureGrid table {
@@ -36,28 +50,39 @@ display:none !important;
 
 #DataStructureGrid td {
     min-width : 100px;
+    max-width : 300px;
+    padding:3px;
+    vertical-align:middle;
 }
 
 #DataStructureGrid .data {
     width : auto;
+    border-style:solid;
 }
 
 #DataStructureGrid .head {
    text-align: left;
    width:100px;
    color:black;
+   border-style:solid;
    background-color:lightgray;
    border-color:gray;
    border-left:none;
    border-top-color:lightgray;  
 }
 
-#DataStructureGrid input {
+#DataStructureGrid input, #DataStructureGrid textarea {
     border-radius: 3px;
-    min-width: 100px;
-    width:99%;
+    min-width:90px;  
 }
-
+#DataStructureGrid input {
+    max-width:297px;
+    width:100%;
+}
+#DataStructureGrid textarea {
+    max-width:290px;
+    width:95%;
+}
 .unit .t-grid-header th {
     border: none;
 }
@@ -72,6 +97,18 @@ display:none !important;
 .unit {
     width: 300px;
     height: 200px;
+}
+
+#createDataType {
+    width:400px;
+}
+
+#createDataType table, #createDataType form{
+    width:100%;
+}
+
+#createDataType td{
+    width:33%;
 }
 
 .locked {
@@ -104,16 +141,13 @@ border-radius: 3px;
 width: 15px;
 }
 
-
 .planingPartialDiv textarea {
 border: 1px solid #CCC;
 border-radius: 3px;
 width: 300px;
-max-width: 300px;
-height: 10px;
-max-height: 10px;
+max-width: 600px;
+max-height:200px;
 font:14px arial, verdana;
-
 }
 
 .planingPartialDiv .t-dropdown {
@@ -121,14 +155,25 @@ border-radius: 3px;
 width: 150px;
 }
 
+.planingPartialDiv form {
+display:inline-block;
+max-width:100%;
+}
+
 .hidden {
     display: none;
 }
 
-div {
+table, .t-grid {
     border-radius: 3px;
 }
 
-.errorMsg {
-    color:red;
+.functions {
+float:left;
+max-width:50%;
+}
+
+.submit {
+float:right;
+max-width:50%;
 }

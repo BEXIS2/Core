@@ -5,7 +5,7 @@
     <key column="Id" />
 
     <!-- Role Entity Properties -->
-    <property name="Description" type="String" />
+    <property name="Description" type="String" />   
 
     <set name="Users" table="Groups_Users" cascade="save-update" lazy="true">
       <key column="GroupRef"/>

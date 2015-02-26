@@ -1,59 +1,107 @@
 ﻿@using Telerik.Web.Mvc.UI;
 @using BExIS.Web.Shell.Areas.Auth.Models;
 
-@model GroupUpdateModel
+@model GroupEditModel
 
-@using (Ajax.BeginForm("Edit", "Groups", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "tabs-1" }))
+@using (Ajax.BeginForm("Edit", "Groups", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "contentEdit", OnSuccess = "groupEdit_onSuccess" }))
 {       
     @Html.ValidationSummary(true)
 
-    <div id="accordion">
+    <div id="tabs">
             
-        <h3 style="font-weight:bold">Group Information</h3>
-        <div>
+        <ul>
+            <li><a href="#contentDetails">Details</a></li>
+            <li><a href="#contentMembership">Membership</a></li>
+        </ul>
     
-            <div class="editor-label" style="font-weight:bold">
-                @Html.LabelFor(m => m.Id)
-            </div>
-            <div class="editor-field">
-                @Html.DisplayFor(m => m.Id)
-                @Html.HiddenFor(m => m.Id)
-            </div>
-            
-            <div class="editor-label" style="font-weight:bold">
-                @Html.LabelFor(m => m.GroupName)
-            </div>
-            <div class="editor-field">
-                @Html.TextBoxFor(m => m.GroupName)
-                @Html.ValidationMessageFor(m => m.GroupName)
-            </div>
-            
-            <div class="editor-label" style="font-weight:bold">
-                @Html.LabelFor(m => m.Description)
-            </div>
-            <div class="editor-field">
-                @Html.TextAreaFor(m => m.Description, new { style = "width: 275px; height: 100px;max-width: 350px; max-height: 200px; word-wrap:break-word" })
-                @Html.HiddenFor(m => m.Description)
-            </div>
+        <div id="contentDetails">
+            <table>
+                <tr>
+                    <td>
+                        @Html.LabelFor(m => m.GroupId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(m => m.GroupId)
+                        @Html.HiddenFor(m => m.GroupId)
+                    </td>
+                </tr>
 
+                <tr>
+                    <td>
+                        @Html.LabelFor(m => m.GroupName)
+                    </td>
+                    <td>
+                        @Html.TextBoxFor(m => m.GroupName)
+                        @Html.ValidationMessageFor(m => m.GroupName)
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        @Html.LabelFor(m => m.Description)
+                    </td>
+                    <td>
+                        @Html.TextAreaFor(m => m.Description)
+                        @Html.ValidationMessageFor(m => m.Description)
+                    </td>
+                </tr>
+            </table>
         </div>
-
+    
+        <div id="contentMembership">
+            @(Html.Telerik().Grid<GroupMembershipGridRowModel>()
+                .Name("gridMembership")
+                .HtmlAttributes(new { style = "width: 500px" })
+                .Columns(columns =>
+                {
+                    columns.Bound(m => m.IsUserInGroup)
+                        .Template(@<text>   
+                            @if(item.IsUserInGroup)
+                            {
+                                <input type='checkbox' onchange='setMembership(this.checked, @item.Id);' name='selectedUsers' value='@item.Id' checked='checked') /> 
+                            }
+                            else
+                            {
+                                <input type='checkbox' onchange='setMembership(this.checked, @item.Id);' name='selectedUsers' value='@item.Id' />
+                            }
+                        </text>)
+                        .ClientTemplate("<input type='checkbox' onchange='setMembership(this.checked, <#= Id #>);' name='selectedUsers' value='<#= Id #>' <#= IsUserInGroup ? checked='checked' : '' #> />")
+                        .Title("Member")
+                        .Width(64)
+                        .Filterable(false)
+                        .HtmlAttributes(new { style = "text-align:center" });
+                    columns.Bound(m => m.Id)
+                        .ClientTemplate("<#= Id #>" + "<input type='hidden' name='Id' value='<#= Id #> />'");
+                    columns.Bound(m => m.UserName);
+                    columns.Bound(m => m.FullName);
+                    columns.Bound(m => m.Email);
+                })
+                .DataBinding(dataBinding => dataBinding
+                    .Ajax()
+                    .OperationMode(GridOperationMode.Client)
+                    .Select("Membership_Select", "Groups", new { id = Model.GroupId, selectedGroups = (long[])ViewData["Users"] })
+                )
+                .Filterable()
+                .Pageable()
+                .Sortable()
+            )
+        </div>
+    
     </div>
     
     <p>
-        <button type="submit">Save</button>
-        <button type="reset" onclick="$(this).resetValidation()">Reset</button>
-        <button type="button" onclick="Window_Update_Show(@Model.Id)">Show</button>
-        <button type="button" onclick="Window_Update_Cancel()">Cancel</button>
+        <button style="float:left" type="button" onclick="windowEdit_onDelete(@Model.GroupId)" class="t-button">Delete</button>
+
+        <button style="float:right;margin-left:1px" type="button" onclick="windowEdit_onCancel()" class="t-button">Cancel</button>
+        <button style="float:right;margin-right:1px" type="submit" class="t-button">Save</button>
     </p>
+    
 }
 
 <script type="text/javascript">
-    $(document).ready(function () {
-        $.validator.unobtrusive.parse("#tabs-1");
-    });
+    $("#tabs").tabs();
 
-    $("#accordion").accordion({
-        heightStyle: "content"
+    $(document).ready(function () {
+        $.validator.unobtrusive.parse("#contentEdit");
     });
 </script>

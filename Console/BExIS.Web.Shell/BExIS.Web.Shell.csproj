@@ -100,6 +100,7 @@
     <Reference Include="Npgsql">
       <HintPath>..\..\packages\Npgsql.2.0.14.3\lib\net40\Npgsql.dll</HintPath>
     </Reference>
+    <Reference Include="System.Data.Linq" />
     <Reference Include="System.Linq.Dynamic, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\System.Linq.Dynamic.1.0.0\lib\net40\System.Linq.Dynamic.dll</HintPath>
@@ -309,12 +310,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Data\data2.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="App_Data\edit.xsl" />
-    <Content Include="App_Data\data.xml" />
-    <Content Include="App_Data\view.xsl" />
     <DesignData Include="Db\Settings\DB2Dialect.hibernate.cfg.xml">
       <SubType>Designer</SubType>
     </DesignData>
@@ -379,6 +374,10 @@
     <Content Include="Scripts\jquery-2.0.3.min.js" />
     <Content Include="Scripts\jquery.ba-resize.min.js" />
     <Content Include="Scripts\Search\search.js" />
+    <Content Include="Scripts\switchery\switchery.css" />
+    <Content Include="Scripts\switchery\switchery.js" />
+    <Content Include="Scripts\switchery\switchery.min.css" />
+    <Content Include="Scripts\switchery\switchery.min.js" />
     <Content Include="Scripts\trunk8.js" />
     <Content Include="Themes\Black\Styles\Black\editor.png" />
     <Content Include="Themes\Black\Styles\Black\imagebrowser.png" />
@@ -621,6 +620,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="App_Data\" />
     <Folder Include="Areas\Auth\Views\Shared\" />
     <Folder Include="Areas\DCM\Models\Scripts\" />
     <Folder Include="Areas\DCM\Views\Home\" />
@@ -786,9 +786,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\Auth\Views\Users\Users.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\Auth\Views\Users\_UsersPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\DCM\Views\Submit\Index.cshtml" />
@@ -968,11 +965,9 @@
   <ItemGroup>
     <Content Include="Areas\RPM\Views\Home\_editVariable.cshtml" />
     <Content Include="Areas\DCM\Views\SubmitGetFileInformation\GetFileInformation.cshtml" />
-    <Content Include="Areas\DCM\Views\SubmitDefinePrimaryKey\DefinePrimaryKey.cshtml" />
     <Content Include="Areas\DDM\Views\Admin\ReIndexSearch.cshtml" />
     <Content Include="Areas\DCM\Views\Submit\FinishUpload.cshtml" />
     <Content Include="Areas\DCM\Views\Submit\Test.cshtml" />
-    <Content Include="Areas\DCM\Views\SubmitSelectAFile\Test.cshtml" />
     <Content Include="Areas\DCM\Views\Create\Index.cshtml" />
     <Content Include="Areas\DCM\Views\Create\CreateDataset.cshtml" />
     <Content Include="Areas\DCM\Views\Create\_createWizardNav.cshtml" />
@@ -1008,17 +1003,11 @@
     <Content Include="Areas\DIM\Views\Web.config" />
     <Content Include="Areas\DIM\Views\_ViewStart.cshtml" />
     <Content Include="Areas\Auth\Views\Groups\Groups.cshtml" />
-    <Content Include="Areas\Auth\Views\Groups\_GroupsPartial.cshtml" />
     <Content Include="Areas\Auth\Views\Groups\_CreatePartial.cshtml" />
-    <Content Include="Areas\Auth\Views\Groups\_ShowPartial.cshtml" />
     <Content Include="Areas\Auth\Views\Groups\_EditPartial.cshtml" />
-    <Content Include="Areas\Auth\Views\Groups\_MembershipPartial.cshtml" />
-    <Content Include="Areas\Auth\Views\Groups\_UpdatePartial.cshtml" />
     <Content Include="Areas\Auth\Views\Account\_RegisterPartial.cshtml" />
     <Content Include="Areas\Auth\Views\Account\_LogOnPartial.cshtml" />
-    <Content Include="Areas\Auth\Views\Users\_UpdatePartial.cshtml" />
     <Content Include="Areas\Auth\Views\Users\_EditPartial.cshtml" />
-    <Content Include="Areas\Auth\Views\Users\_ShowPartial.cshtml" />
     <Content Include="Areas\SAM\Views\Seed\Index.cshtml" />
     <Content Include="Areas\Auth\Views\FeaturePermissions\Features.cshtml" />
     <Content Include="Areas\Auth\Views\FeaturePermissions\_FeaturesPartial.cshtml" />
@@ -1029,8 +1018,6 @@
     <Content Include="Areas\DDM\Views\Admin\_metadataNode.cshtml" />
     <Content Include="Areas\Auth\Views\Account\LogOn.cshtml" />
     <Content Include="Areas\DIM\Views\Admin\_metadataStructureView.cshtml" />
-    <Content Include="Areas\Auth\Views\Users\_ChangePasswordPartial.cshtml" />
-    <Content Include="Areas\Auth\Views\Users\_ShowPasswordPartial.cshtml" />
     <Content Include="Areas\DCM\Views\ImportMetadataStructureReadSource\ReadSource.cshtml" />
     <Content Include="Areas\DCM\Views\ImportMetadataStructureSelectAFile\SelectAFile.cshtml" />
     <Content Include="Areas\DCM\Views\ImportMetadataStructureSummary\Summary.cshtml" />
@@ -1039,6 +1026,14 @@
     <Content Include="Areas\DCM\Views\ImportMetadataStructure\_taskListView.cshtml" />
     <Content Include="Areas\DCM\Views\ImportMetadataStructure\_wizardNav.cshtml" />
     <Content Include="Areas\DCM\Views\ImportMetadataStructureSetParameters\SetParameters.cshtml" />
+    <Content Include="Areas\DCM\Views\SubmitDefinePrimaryKey\DefinePrimaryKey.cshtml" />
+    <Content Include="Areas\DCM\Views\CreateSetMetadataPackage\SetMetadataCompoundAttribute.cshtml" />
+    <Content Include="Areas\DCM\Views\CreateSetMetadataPackage\_setMetadataCompoundAttribute.cshtml" />
+    <Content Include="Areas\DCM\Views\CreateSetMetadataPackage\_setMetadataCompoundAttributeInstanz.cshtml" />
+    <Content Include="Areas\DCM\Views\CreateSetMetadataPackage\_setMetadataPackageInstanz.cshtml" />
+    <Content Include="Areas\RPM\Views\Home\_dataStructureSaveAs.cshtml" />
+    <Content Include="Areas\DDM\Views\Home\_myDatasetGridView.cshtml" />
+    <Content Include="Areas\DDM\Views\Data\_showItem.cshtml" />
     <None Include="Properties\PublishProfiles\2230.pubxml" />
     <None Include="Properties\PublishProfiles\2301.pubxml" />
     <None Include="Properties\PublishProfiles\2302.pubxml" />
@@ -1047,12 +1042,10 @@
     <None Include="Properties\PublishProfiles\BEXIS2.pubxml" />
     <None Include="Properties\PublishProfiles\BPP230.pubxml" />
     <Content Include="_AppStart.cshtml" />
+    <None Include="Properties\PublishProfiles\BPP2602.pubxml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\Auth\Views\Users\_CreatePartial.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\Auth\Views\Users\_MembershipPartial.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -1076,7 +1069,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>8812</DevelopmentServerPort>
+          <DevelopmentServerPort>4278</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>

@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
+using System.Web.Mvc;
 using BExIS.Dcm.Wizard;
 
 namespace BExIS.Web.Shell.Areas.DCM.Models.ImportMetadata
@@ -12,6 +13,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Models.ImportMetadata
     {
         
         [Display(Name = "Schema name")]
+        [Required(ErrorMessage = "Please define a name for the metadata structure.")]
         public string SchemaName { get; set; }
 
         [Display(Name = "Root node" ) ]

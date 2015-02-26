@@ -27,25 +27,30 @@
 
         <div class="packages">
  
-           @foreach (var item in Model.MetadataAttributeModels)
-            {
-                if (item.GetMetadataAttribute().Self is BExIS.Dlm.Entities.MetadataStructure.MetadataSimpleAttribute)
+            @if (Model.MetadataAttributeModels.Count > 0)
+            { 
+               <table>
+               @foreach (var item in Model.MetadataAttributeModels)
                 {
-                    @Html.Partial("_setMetadataAttribute", item)
+                    if (item.GetMetadataAttribute().Self is BExIS.Dlm.Entities.MetadataStructure.MetadataSimpleAttribute)
+                    {
+                        @Html.Partial("_setMetadataAttribute", item)
 
+                    }
                 }
+                </table>
             }
 
         </div>
         <br />
 
-      @*  @Ajax.ActionLink("Validate", "ValidateStep",@Model.StepInfo.GetActionInfo.ControllerName,new RouteValueDictionary { { "area", "DCM" } },
+        @*@Ajax.ActionLink("Validate", "ValidateStep",@Model.StepInfo.GetActionInfo.ControllerName,new RouteValueDictionary { { "area", "DCM" } },
                  new AjaxOptions { HttpMethod = "GET", 
                  InsertionMode = InsertionMode.Replace, 
                  UpdateTargetId = @id
                  },
-                 new { @class = "t-button",  @style="float:right" })
- *@
+                 new { @class = "t-button",  @style="float:right" })*@
+ 
     </div>
 
     <div class="createWizardStep_Success stepper">
@@ -62,7 +67,7 @@
     </div>
 
     <div class="createWizardStep_Error stepper">
-       @* @if (Model != null)
+        @*@if (Model != null)
         {
             @Html.Partial("_errorMessages", @Model.ErrorList) 
 

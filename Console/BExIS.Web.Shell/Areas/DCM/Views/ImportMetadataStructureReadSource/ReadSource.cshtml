@@ -19,12 +19,11 @@
         </div>
 
         <div class="wizardStep_Description stepper">
-            
-
+            <p>Please specify a name for the new metadata structure. You may also enter a root node if only a part of the XSD is to be used (optional).</p>
+            <p>Generating the new metadata structure in the system may take a few minutes, depending on the size and complexity of the XSD schema. Please wait for the confirmation message before heading to the next step.</p>
         </div>
         
         <div class="wizardStep_Content stepper">
-
             <table>
                 <tr>
                     <td>@Html.LabelFor(m => m.SchemaName)</td>
@@ -51,6 +50,7 @@
                 </tr>
 
             </table>
+
         </div>
     </div>
 
@@ -63,7 +63,7 @@
                {
                    if (!Model.StepInfo.notExecuted)
                    { 
-                      <b>the metadata structure @Model.SchemaName was created successfully</b>
+                      <b>The metadata structure @Model.SchemaName was created successfully</b>
                    }
                }
            }
@@ -129,22 +129,6 @@
 
     })
 
-    $('#TitleNode').change(function () {
 
-        var name = $('#TitleNode').val();
-
-        $.post('@Url.Action("SetTitleNode", @Model.StepInfo.GetActionInfo.ControllerName, new RouteValueDictionary { { "area", "DCM" } })', { name: name }, function (response) {
-        })
-
-    })
-
-    $('#DescriptionNode').change(function () {
-
-        var name = $('#DescriptionNode').val();
-
-        $.post('@Url.Action("SetDescriptionNode", @Model.StepInfo.GetActionInfo.ControllerName, new RouteValueDictionary { { "area", "DCM" } })', { name: name }, function (response) {
-        })
-
-    })
 
 </script>

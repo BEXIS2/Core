@@ -27,7 +27,7 @@ namespace BExIS.Xml.Helpers.Mapping
         /// create a XmlMapper
         /// </summary>
         /// <returns></returns>
-        public XmlMapper Load(string mappingFilePath)
+        public XmlMapper Load(string mappingFilePath, string userName)
         {
             xmlMapper = new XmlMapper();
 
@@ -53,7 +53,6 @@ namespace BExIS.Xml.Helpers.Mapping
             }
 
             #endregion
-
 
             #region create Header as xmlMappingHeader
 
@@ -132,7 +131,7 @@ namespace BExIS.Xml.Helpers.Mapping
 
             xmlSchemaManager = new XmlSchemaManager();
             string schemaPath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), xmlMapper.Header.Schemas.First().Value);
-            xmlSchemaManager.Load(schemaPath);
+            xmlSchemaManager.Load(schemaPath, userName);
 
             #endregion
 

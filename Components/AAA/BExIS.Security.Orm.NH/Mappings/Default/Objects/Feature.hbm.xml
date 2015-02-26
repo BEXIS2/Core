@@ -19,8 +19,6 @@
     <property name="Name" type="String" />
     <property name="Description" type="String" />
 
-    <property name="IsPublic" type="yes_no" />
-
     <!-- Mapping Feature Associations -->
     <many-to-one name="Parent" column="ParentRef" class="Feature"/>
 

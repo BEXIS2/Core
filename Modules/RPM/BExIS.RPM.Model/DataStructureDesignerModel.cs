@@ -362,7 +362,7 @@ namespace BExIS.RPM.Model
                 this.dataStructureTable.Rows.Add(Row);
 
                 var Descriptions = from p in this.variables
-                                   select p.DataAttribute.Description;
+                                   select getDescription(p);
                 row = Descriptions.ToList();
                 row.Insert(0, "Description");
 
@@ -453,6 +453,14 @@ namespace BExIS.RPM.Model
         }
 
     #region helper
+
+    private string getDescription(Variable v)
+    {
+        if (v.Description != null && v.Description != "")
+            return v.Description;
+        else
+            return v.DataAttribute.Description;
+    }
 
     #endregion
     }

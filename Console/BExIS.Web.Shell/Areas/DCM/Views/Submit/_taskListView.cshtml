@@ -51,7 +51,7 @@
 
 function TaskListRefresh()
 {
-        $.post('@Url.Action("RefreshTaskList", "ImportMetadataStructure", new RouteValueDictionary { { "area", "DCM" } })', function (response) {
+        $.post('@Url.Action("RefreshTaskList", "Submit", new RouteValueDictionary { { "area", "DCM" } })', function (response) {
             $("#TaskListDiv").html(response);
         })
 }

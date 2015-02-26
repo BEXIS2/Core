@@ -26,32 +26,37 @@
         </div>
 
         <div class="packages">
- 
-           @if (@Model.MetadataAttributeModels != null)
-           { 
-                foreach (var item in Model.MetadataAttributeModels)
-                {
-                    if (item.GetMetadataAttribute().Self is BExIS.Dlm.Entities.MetadataStructure.MetadataSimpleAttribute)
-                    {
-                        @Html.Partial("_setMetadataAttribute", item)
+            @if (Model.MetadataAttributeModels.Count > 0)
+            { 
+               <table>
+                   @if (@Model.MetadataAttributeModels != null)
+                    { 
+                        foreach (var item in Model.MetadataAttributeModels)
+                        {
+                            if (item.GetMetadataAttribute().Self is BExIS.Dlm.Entities.MetadataStructure.MetadataSimpleAttribute)
+                            {
+                                @Html.Partial("_setMetadataAttribute", item)
 
+                            }
+                        }
                     }
-                }
-            }
 
+               </table>
+                
+             }
         </div>
         <br />
-            @*@if (@Model.MetadataAttributeModels != null && @Model.MetadataAttributeModels.Count>0)
-            { 
-                @Ajax.ActionLink("Validate", "ValidateStep", @Model.StepInfo.GetActionInfo.ControllerName,
-                         new AjaxOptions
-                         {
-                             HttpMethod = "GET",
-                             InsertionMode = InsertionMode.Replace,
-                             UpdateTargetId = @id
-                         },
-                         new { @class = "t-button", @style = "float:right" })
-            }*@
+       @* @if (@Model.MetadataAttributeModels != null && @Model.MetadataAttributeModels.Count>0)
+        { 
+            @Ajax.ActionLink("Validate", "ValidateStep", @Model.StepInfo.GetActionInfo.ControllerName,
+                        new AjaxOptions
+                        {
+                            HttpMethod = "GET",
+                            InsertionMode = InsertionMode.Replace,
+                            UpdateTargetId = @id
+                        },
+                        new { @class = "t-button", @style = "float:right" })
+        }*@
     </div>
 
     <div class="createWizardStep_Success stepper">
@@ -68,7 +73,7 @@
     </div>
 
     <div class="createWizardStep_Error stepper">
-        @*@if (Model != null)
+       @* @if (Model != null)
         {
             @Html.Partial("_errorMessages", @Model.ErrorList) 
 

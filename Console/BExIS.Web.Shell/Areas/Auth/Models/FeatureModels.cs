@@ -49,11 +49,11 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
         public string FeatureName { get; set; }
         public string Description { get; set; }
 
-        public bool IsPublic { get; set; }
+        public bool IsFeatureInEveryoneGroup { get; set; }
 
         public List<FeatureTreeViewModel> Children { get; set; }
 
-        public static FeatureTreeViewModel Convert(Feature feature)
+        public static FeatureTreeViewModel Convert(Feature feature, IsFeatureInEveryoneGroupDelegate isFeatureInEveryoneGroupDelegate)
         {
             return new FeatureTreeViewModel()
             {
@@ -61,9 +61,9 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
                 FeatureName = feature.Name,
                 Description = feature.Description,
 
-                IsPublic = feature.IsPublic,
+                IsFeatureInEveryoneGroup = isFeatureInEveryoneGroupDelegate(feature.Id),
 
-                Children = feature.Children.Select(c => FeatureTreeViewModel.Convert(c)).ToList<FeatureTreeViewModel>()
+                Children = feature.Children.Select(c => FeatureTreeViewModel.Convert(c, isFeatureInEveryoneGroupDelegate)).ToList<FeatureTreeViewModel>()
             };
         }
     }

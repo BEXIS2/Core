@@ -3,55 +3,52 @@
 
 @model GroupCreateModel
 
-@using (Ajax.BeginForm("Create", "Groups", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "Content_Create", OnSuccess = "onSuccess" }))
+@using (Ajax.BeginForm("Create", "Groups", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "contentCreate", OnSuccess = "groupCreate_onSuccess" }))
 {   
     @Html.ValidationSummary(true)
 
-    <div id="accordion">
-    
-        <h3 style="font-weight:bold">Group Information</h3>
-        <div>
-
-            <div class="editor-label" style="font-weight:bold">
-                @Html.LabelFor(m => m.GroupName)
-            </div>
-            <div class="editor-field">
-                @Html.TextBoxFor(m => m.GroupName)
-                @Html.ValidationMessageFor(m => m.GroupName)
-            </div>
+    <div id="tabs">
             
-            <div class="editor-label" style="font-weight:bold">
-                @Html.LabelFor(m => m.Description)
-            </div>
-            <div class="editor-field">
-                @Html.TextAreaFor(m => m.Description, new { style = "width: 275px; height: 100px; max-width: 350px; max-height: 200px" })
-                @Html.ValidationMessageFor(m => m.Description)
-            </div>
+        <ul>
+            <li><a href="#contentDetails">Details</a></li>
+            @*<li><a href="#contentMembership">Membership</a></li>*@
+        </ul>
 
+        <div id="contentDetails">
+            <table>
+                <tr>
+                    <td>
+                        @Html.LabelFor(m => m.GroupName)
+                    </td>
+                    <td>
+                        @Html.TextBoxFor(m => m.GroupName)
+                        @Html.ValidationMessageFor(m => m.GroupName)
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        @Html.LabelFor(m => m.Description)
+                    </td>
+                    <td>
+                        @Html.TextAreaFor(m => m.Description)
+                        @Html.ValidationMessageFor(m => m.Description)
+                    </td>
+                </tr>
+            </table>
         </div>
-
     </div>
     
+    
     <p>
-        <button type="submit">Create</button>
-        <button type="reset">Reset</button>
-        <button type="button" onclick="Window_Create_Cancel()">Cancel</button>
+        <button style="float:right;margin-left:1px" type="button" onclick="windowCreate_onCancel()" class="t-button">Cancel</button>
+        <button style="float:right;margin-right:1px" type="submit" class="t-button">Save</button>
     </p>
 }
 
 <script type="text/javascript">
+    $("#tabs").tabs();
+
     $(document).ready(function () {
-        $.validator.unobtrusive.parse("#Content_Create");
+        $.validator.unobtrusive.parse("#contentCreate");
     });
-
-    $("#accordion").accordion({
-        heightStyle: "content"
-    });
-
-    function onSuccess(data) {
-        if (data.success) {
-            $('#Content_Create').empty();
-            $('#Window_Create').data('tWindow').close();
-        }
-    }
 </script>

@@ -14,12 +14,12 @@ using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.IO.Transform.Output;
 using BExIS.Web.Shell.Areas.DDM.Helpers;
+using BExIS.Web.Shell.Areas.DDM.Models;
 using Telerik.Web.Mvc;
 using Telerik.Web.Mvc.UI;
 using Vaiona.Util.Cfg;
 using BExIS.IO;
 using System.IO.Compression;
-using BExIS.Web.Shell.Areas.DDM.Models;
 using Ionic.Zip;
 using BExIS.Security.Services.Objects;
 using BExIS.Dlm.Entities.MetadataStructure;
@@ -60,7 +60,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             {
                 Id = id,
                 Title = title,
-                ViewAccess = permissionManager.HasUserDataAccess(subjectManager.GetUserByName(HttpContext.User.Identity.Name).Id, 1, id, RightType.View),
+                ViewAccess = permissionManager.HasUserDataAccess(HttpContext.User.Identity.Name, 1, id, RightType.View),
             };
 
 
@@ -76,80 +76,101 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
         /// <seealso cref=""/>
         /// <param name="datasetID"></param>
         /// <returns>model</returns>
-            public ActionResult ShowMetaData(int datasetID)
-            {
+        public ActionResult ShowMetaData(int datasetID)
+        {
             ShowMetadataModel model = new ShowMetadataModel();
 
-                try
+            try
+            {
+                DatasetManager dm = new DatasetManager();
+                DatasetVersion dsv = dm.GetDatasetLatestVersion(datasetID);
+
+            //get title
+            model.Title = XmlDatasetHelper.GetInformation(dsv,AttributeNames.title);
+            model.Description = XmlDatasetHelper.GetInformation(dsv, AttributeNames.description);
+
+            #region create table
+            XDocument xDoc = XmlUtility.ToXDocument(dsv.Metadata);
+
+            //get a list of MetadataPackageUsages
+            IEnumerable<XElement> MetadataPackageUsageList = helper.GetElementsByAttribute(xDoc, "type", BExIS.Xml.Helpers.XmlNodeType.MetadataPackageUsage.ToString());
+                
+            //For Each MetadataPackageUsage
+            foreach (XElement packageUsage in MetadataPackageUsageList)
+            {
+                PackageUsageModel puElement = new PackageUsageModel();
+                puElement.Name = packageUsage.Attribute("name").Value;
+
+                // get childrens of
+                List<XElement> childrens = XmlUtility.GetChildren(packageUsage).ToList();
+
+                foreach (XElement child in childrens)
                 {
-                    DatasetManager dm = new DatasetManager();
-                    DatasetVersion dsv = dm.GetDatasetLatestVersion(datasetID);
-
-                //get title
-                model.Title = XmlDatasetHelper.GetInformation(dsv,AttributeNames.title);
-                model.Description = XmlDatasetHelper.GetInformation(dsv, AttributeNames.description);
-
-                #region create table
-                XDocument xDoc = XmlUtility.ToXDocument(dsv.Metadata);
-
-                //get a list of MetadataPackageUsages
-                IEnumerable<XElement> MetadataPackageUsageList = helper.GetElementsByAttribute(xDoc, "type", BExIS.Xml.Helpers.XmlNodeType.MetadataPackageUsage.ToString());
-
-                //For Each MetadataPackageUsage
-                foreach (XElement packageUsage in MetadataPackageUsageList)
-                {
-                    PackageUsage puElement = new PackageUsage();
-                    puElement.Name = packageUsage.Attribute("name").Value;
-
-                    //get a list of MetadataAttributeUsages
-                    IEnumerable<XElement> MetadataPackageList = helper.GetElementsByAttribute(packageUsage, "type", BExIS.Xml.Helpers.XmlNodeType.MetadataPackage.ToString());
-                    
-                    //For Each MetadataPackage
-                    foreach (XElement attributeUsage in MetadataPackageList)
-                    {
-                        Package pElement = new Package();
-
-                        // get a list of AAtributeUsages
-                        IEnumerable<XElement> MetadataAttributeUsageList = helper.GetElementsByAttribute(attributeUsage, "type", BExIS.Xml.Helpers.XmlNodeType.MetadataAttributeUsage.ToString());
-
-                        //For Each AttributeUsage
-                        foreach (XElement attribute in MetadataAttributeUsageList)
-                        {
-                            string value = "";
-                            string name = attribute.Attribute("name").Value;
-
-                            //get a list of Attributes
-                            IEnumerable<XElement> MetadataAttributeList = helper.GetElementsByAttribute(attribute, "type", BExIS.Xml.Helpers.XmlNodeType.MetadataAttribute.ToString());
-
-                            foreach (XElement e in MetadataAttributeList)
-                            {
-                                value += e.Value.ToString();
-
-                            }
-
-                            //Add a list of AttributeUsages and their values
-                            pElement.AttributeUsages.Add(name, value);
-                        }
-
-                        //Add a MetadataPackage
-                        puElement.Packages.Add(pElement);
-
-                        
-                    }
-
-                    model.PU.Add(puElement);
+                    puElement.Attributes.Add(
+                            GetModelFromElement(child)
+                        );
                 }
-                #endregion
+
+                model.PU.Add(puElement);
+            }
+            #endregion
                 
 
-                }
-                catch (Exception e)
-                {
-                    ModelState.AddModelError(String.Empty, e.Message);
-                }
+            }
+            catch (Exception e)
+            {
+                ModelState.AddModelError(String.Empty, e.Message);
+            }
 
             return PartialView(model);
+        }
+
+        private BaseModelElement GetModelFromElement(XElement element)
+        {
+            
+            string name = element.Attribute("name").Value;
+            string displayName = "";
+            BExIS.Xml.Helpers.XmlNodeType type;
+
+            // get Type 
+            type = BExIS.Xml.Helpers.XmlMetadataWriter.GetXmlNodeType(element.Attribute("type").Value);
+
+            // get DisplayName
+            if (type.Equals(BExIS.Xml.Helpers.XmlNodeType.MetadataAttribute))
+                displayName = element.Parent.Attribute("name").Value;
+            else
+                displayName = element.Attribute("name").Value;
+
+
+
+            if (XmlUtility.HasChildren(element))
+            {
+                CompundAttributeModel model = new CompundAttributeModel();
+                model.Name = name;
+                model.Type = type;
+                model.DisplayName = displayName;
+
+                List<XElement> childrens = XmlUtility.GetChildren(element).ToList();
+                foreach (XElement child in childrens)
+                {
+                    model.Childrens.Add(GetModelFromElement(child));
+                }
+
+                return model;
+
             }
+            else
+            {
+
+                return new SimpleAttributeModel()
+                {
+                    Name = name,
+                    DisplayName = displayName,
+                    Value = element.Value,
+                    Type = type
+                };
+            }
+        }
 
         #endregion
 
@@ -174,7 +195,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 PermissionManager permissionManager = new PermissionManager();
                 SubjectManager subjectManager = new SubjectManager();
                 
-                bool downloadAccess = permissionManager.HasUserDataAccess(subjectManager.GetUserByName(HttpContext.User.Identity.Name).Id, 1, datasetID, RightType.Download);
+                bool downloadAccess = permissionManager.HasUserDataAccess(HttpContext.User.Identity.Name, 1, datasetID, RightType.Download);
 
                 //TITLE
                 string title = XmlDatasetHelper.GetInformation(dsv, AttributeNames.title);
@@ -608,6 +629,8 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                                     {
                                         CompositeFilterDescriptor filterDescriptor = (CompositeFilterDescriptor)filter;
 
+                                        List<AbstractTuple> temp = new List<AbstractTuple>();
+
                                         foreach (IFilterDescriptor f in filterDescriptor.FilterDescriptors)
                                         { 
                                             if ((FilterDescriptor)f != null)
@@ -622,9 +645,12 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                                                            where GridHelper.ValueComparion(val, fd.Operator, fd.Value)
                                                            select datatuple;
 
+                                                 //temp  = list.Intersect<AbstractTuple>(temp as IEnumerable<AbstractTuple>).ToList();
                                                 dataTupleList = list.ToList();
                                             }
                                         }
+
+                                        //dataTupleList = temp;
 
                                     }
                                 }

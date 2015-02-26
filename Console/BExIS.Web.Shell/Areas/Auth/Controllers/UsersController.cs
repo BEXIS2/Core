@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data.Linq;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Dynamic;
@@ -22,70 +23,6 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
         public ActionResult Index()
         {
             return View();
-        }
-
-        #region Grid View
-
-        // A
-        public bool AddUserToGroup(long userId, long groupId)
-        {
-            SubjectManager subjectManager = new SubjectManager();
-
-            return subjectManager.AddUserToGroup(userId, groupId);
-        }
-
-        // C
-        public ActionResult ChangePassword(long id)
-        {
-            return PartialView("_ChangePasswordPartial", new UserChangePasswordModel() { Id = id });
-        }
-
-        [HttpPost]
-        public ActionResult ChangePassword(UserChangePasswordModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                SubjectManager subjectManager = new SubjectManager();
-
-                if (subjectManager.ChangePassword(model.Id, model.Password))
-                {
-                    return PartialView("_ShowPasswordPartial", model.Id);
-                }
-            }
-
-            return PartialView("_ChangePasswordPartial", model);
-            
-        }
-
-        public ActionResult ShowPassword(long id)
-        {
-            return PartialView("_ShowPasswordPartial", id);
-        }
-
-        public ActionResult ChangeStatus(long id, string status, bool value)
-        {
-            SubjectManager subjectManager = new SubjectManager();
-
-            User user = subjectManager.GetUserById(id);
-
-            switch (status)
-            {
-                case "isDisabled":
-                    user.IsBanned = value;
-                    break;
-                case "isApproved":
-                    user.IsApproved = value;
-                    break;
-                case "isLockedOut":
-                    user.IsLockedOut = value;
-                    break;
-                default:
-                    break;
-            }
-
-            subjectManager.UpdateUser(user);
-
-            return PartialView("_ShowPartial", UserReadModel.Convert(user));
         }
 
         public ActionResult Create()
@@ -114,44 +51,93 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
             subjectManager.DeleteUserById(id);
         }
 
-        // E
         public ActionResult Edit(long id)
         {
             SubjectManager subjectManager = new SubjectManager();
 
             User user = subjectManager.GetUserById(id);
 
-            return PartialView("_EditPartial", UserUpdateModel.Convert(user));
+            return PartialView("_EditPartial", UserEditModel.Convert(user));
         }
 
         [HttpPost]
-        public ActionResult Edit(UserUpdateModel model)
+        public ActionResult Edit(UserEditModel model, long[] selectedGroups)
         {
             if (ModelState.IsValid)
             {
                 SubjectManager subjectManager = new SubjectManager();
 
-                User user = subjectManager.GetUserById(model.Id);
+                User user = subjectManager.GetUserById(model.UserId);
 
-                if (user != null)
+                if (model.Password == model.ConfirmPassword && model.Password != null)
                 {
-                    user.FullName = model.FullName;
-                    user.Email = model.Email;
-
-                    subjectManager.UpdateUser(user);
-
-                    return PartialView("_ShowPartial", UserReadModel.Convert(user));
+                    subjectManager.ChangePassword(user.Id, model.Password);
                 }
-                else
+
+                user.FullName = model.FullName;
+                user.Email = model.Email;
+
+                user.IsApproved = model.IsApproved;
+                user.IsBlocked = model.IsBlocked;
+                user.IsLockedOut = model.IsLockedOut;
+
+                long[] groups = user.Groups.Select(g => g.Id).ToArray();
+
+                if (groups != null)
                 {
-                    return PartialView("_InfoPartial", new InfoModel("Window_Details", "The user does not exist!"));
+                    foreach (long groupId in groups)
+                    {
+                        subjectManager.RemoveUserFromGroup(user.Id, groupId);
+                    }
                 }
+
+                if (selectedGroups != null)
+                {
+                    foreach (long groupId in selectedGroups)
+                    {
+                        subjectManager.AddUserToGroup(user.Id, groupId);
+                    }
+                }
+
+                subjectManager.UpdateUser(user);
+                
+                return Json(new { success = true });
             }
+            else
+            {
+                ViewData["SelectedGroups"] = selectedGroups;
 
-            return PartialView("_EditPartial", model);
+                return PartialView("_EditPartial", model);
+            }
         }
 
-        // G
+        [GridAction]
+        public ActionResult Membership_Select(long id, long[] selectedGroups)
+        {
+            SubjectManager subjectManager = new SubjectManager();
+
+            List<UserMembershipGridRowModel> groups = new List<UserMembershipGridRowModel>();
+            
+            if (selectedGroups != null)
+            {
+                groups = subjectManager.GetAllGroups().Select(g => UserMembershipGridRowModel.Convert(g, selectedGroups.Contains(g.Id))).ToList();
+            }
+            else
+            {
+                User user = subjectManager.GetUserById(id);
+
+                groups = subjectManager.GetAllGroups().Select(g => UserMembershipGridRowModel.Convert(g, g.Users.Any(u => u.Id == id))).ToList();
+            }
+
+            return View(new GridModel<UserMembershipGridRowModel> { Data = groups });
+        }
+
+        // --------------------------------------------------
+        // USERS
+        // --------------------------------------------------
+        
+        #region Users
+
         public ActionResult Users()
         {
             return View();
@@ -161,87 +147,19 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
         public ActionResult Users_Select()
         {
             SubjectManager subjectManager = new SubjectManager();
+            List<UserGridRowModel> users = subjectManager.GetAllUsers().Select(u => UserGridRowModel.Convert(u)).ToList();
 
-            // DATA
-            IQueryable<User> data = subjectManager.GetAllUsers();
-
-            List<UserGridRowModel> groups = new List<UserGridRowModel>();
-            data.ToList().ForEach(u => groups.Add(UserGridRowModel.Convert(u)));
-
-            return View(new GridModel<UserGridRowModel> { Data = groups });
-        }
-
-        // M
-        public ActionResult Membership(long id)
-        {
-            SubjectManager subjectManager = new SubjectManager();
-
-            User user = subjectManager.GetUserById(id); ;
-
-            if (user != null)
-            {
-                ViewData["UserId"] = id;
-
-                return PartialView("_MembershipPartial");
-            }
-            else
-            {
-                return PartialView("_InfoPartial", new InfoModel("Window_Details", "The user does not exist!"));
-            }
-        }
-
-        [GridAction]
-        public ActionResult Membership_Select(long id)
-        {
-            SubjectManager subjectManager = new SubjectManager();
-
-            // DATA
-            User user = subjectManager.GetUserById(id);
-
-            List<UserMembershipGridRowModel> groups = new List<UserMembershipGridRowModel>();
-
-            if (user != null)
-            {
-                IQueryable<Group> data = subjectManager.GetAllGroups();
-
-                data.ToList().ForEach(g => groups.Add(UserMembershipGridRowModel.Convert(user.Id, g, subjectManager.IsUserInGroup(user.Id, g.Id))));
-            }
-
-            return View(new GridModel<UserMembershipGridRowModel> { Data = groups });
-        }
-
-        // R
-        public bool RemoveUserFromGroup(long userId, long groupId)
-        {
-            SubjectManager subjectManager = new SubjectManager();
-
-            return subjectManager.RemoveUserFromGroup(userId, groupId);
-        }
-
-        // S
-        public ActionResult Show(long id)
-        {
-            SubjectManager subjectManager = new SubjectManager();
-
-            User user = subjectManager.GetUserById(id);
-
-            if (user != null)
-            {
-                return PartialView("_ShowPartial", UserReadModel.Convert(user));
-            }
-            else
-            {
-                return PartialView("_InfoPartial", new InfoModel("Window_Details", "The user does not exist!"));
-            }
-        }
-
-        // U
-        public ActionResult Update(long id)
-        {
-            return PartialView("_UpdatePartial", id);
+            return View(new GridModel<UserGridRowModel> { Data = users });
         }
 
         #endregion
+
+
+        // --------------------------------------------------
+        // REMOTE VALIDATION
+        // --------------------------------------------------
+
+        #region Remote Validation
 
         public JsonResult ValidateUserName(string userName, long id = 0)
         {
@@ -292,5 +210,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
                 }
             }
         }
+
+        #endregion
     }
 }

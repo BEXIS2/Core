@@ -1,10 +1,11 @@
-﻿@using BExIS.Web.Shell.Areas.Auth.Models;
+﻿@using Telerik.Web.Mvc.UI
+@using BExIS.Web.Shell.Areas.Auth.Models;
+
+@model List<UserGridRowModel>
 
 @{
     ViewBag.Title = "Users";
 }
-
-@model List<UserGridRowModel>
 
 <style>
     .t-window-content
@@ -31,7 +32,166 @@
 </h2>
 
 <p style="max-width:800px">
-    With this interface you are able to add, edit, or delete individual users. Please note that any change will take effect immediately without any further confirmation or save/submit action.
+    With this interface you are able to manage users. New users can be added with the "Create" button. Existing users can be edited (properties, memberships, delete) through the "Edit" button. 
 </p>
 
-@Html.Partial("_UsersPartial", Model)
+@(Html.Telerik().Grid<UserGridRowModel>()
+        .Name("gridUsers")
+        .ToolBar(command =>
+        {
+            command.Custom().Name("Create").Text("Create").Ajax(true).Action("Create", "Users").ButtonType(GridButtonType.ImageAndText).ImageHtmlAttributes(new { @class = "t-icon t-add" });
+        })
+        .Columns(columns =>
+        {
+            columns.Command(command =>
+            {
+                command.Custom("Edit").Text("Edit").Ajax(true).ButtonType(GridButtonType.Text);
+            }).Title("Actions").Width(90).HtmlAttributes(new { style = "text-align:left" });
+            columns.Bound(u => u.Id);
+            columns.Bound(u => u.UserName);
+            columns.Bound(u => u.FullName);
+            columns.Bound(u => u.Email);
+            columns.Bound(u => u.IsApproved);
+            columns.Bound(u => u.IsBlocked);
+            columns.Bound(u => u.IsLockedOut);
+        })
+        .ClientEvents(clientEvents => clientEvents
+            .OnCommand("gridUsers_onCommand")
+        )
+        .DataBinding(dataBinding => dataBinding
+            .Ajax()
+            .OperationMode(GridOperationMode.Client)
+            .Select("Users_Select", "Users")
+        )
+        .Filterable()
+        .Pageable()
+        .Sortable()
+)
+
+<script type="text/javascript">
+
+    // --------------------------------------------------
+    // GRID
+    // --------------------------------------------------
+
+    function gridUsers_onCommand(e) {
+
+        switch (e.name) {
+            case "Create":
+                $.ajax({
+                    type: 'GET',
+                    url: '@Url.Action("Create", "Users")',
+                    dataType: 'html',
+                    success: function (htmlData) {
+                        var windowElement = $.telerik.window.create({
+                            title: "Create User",
+                            html: "<div id='contentCreate'>" + htmlData + "</div>",
+                            contentUrl: "",
+                            actions: ["Close"],
+                            modal: true,
+                            width: 500,
+                            height: 500,
+                            resizable: false,
+                            draggable: true,
+                            scrollable: false,
+                            onClose: function () {
+                                $("#windowCreate").data('tWindow').destroy();
+                                $("#gridUsers .t-refresh").trigger('click');
+                            }
+                        });
+
+                        windowElement.attr('id', 'windowCreate');
+                        var window = $(windowElement).data('tWindow');
+                        window.center().open();
+                    }
+                })
+
+                break;
+
+            case "Edit":
+                $.ajax({
+                    type: 'GET',
+                    url: '@Url.Action("Edit", "Users")',
+                    data: { Id: e.dataItem.Id },
+                    dataType: 'html',
+                    success: function (htmlData) {
+                        var windowElement = $.telerik.window.create({
+                            title: "Edit User: " + e.dataItem.UserName + " (Id: " + e.dataItem.Id + ")",
+                            html: "<div id='contentEdit'>" + htmlData + "</div>",
+                            contentUrl: "",
+                            actions: ["Close"],
+                            modal: true,
+                            width: 500,
+                            height: 500,
+                            resizable: false,
+                            draggable: true,
+                            scrollable: false,
+                            onClose: function () {
+                                $("#windowEdit").data('tWindow').destroy();
+                                $("#gridUsers .t-refresh").trigger('click');
+                            }
+                        });
+
+                        windowElement.attr('id', 'windowEdit');
+                        var window = $(windowElement).data('tWindow');
+                        window.center().open();
+                    }
+                })
+
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    // --------------------------------------------------
+    // CREATE
+    // --------------------------------------------------
+
+    function userCreate_onSuccess(data) {
+        if (data.success) {
+            $('#windowCreate').data('tWindow').close();
+        }
+    }
+
+    function windowCreate_onCancel() {
+        $('#windowCreate').data('tWindow').close();
+    }
+
+    // --------------------------------------------------
+    // EDIT
+    // --------------------------------------------------
+
+    function userEdit_onSuccess(data) {
+        if (data.success) {
+            $('#windowEdit').data('tWindow').close();
+        }
+    }
+
+    function windowEdit_onCancel() {
+        $('#windowEdit').data('tWindow').close();
+    }
+
+    function setMembership(value, id) {
+        
+        var rows = $("#gridMembership").data("tGrid").data;
+
+        for (var i = 0; i < rows.length; ++i) {
+            if (rows[i].Id == id) {
+                rows[i].IsUserInGroup = value;
+            }
+        }
+    }
+
+    function windowEdit_onDelete(userId) {
+        var result = confirm('Are you sure you want to delete this user (Id:' + userId + ')?');
+
+        if (result) {
+            $.post('@Url.Action("Delete", "Users")', { id: userId }, function (e) {
+                $('#windowEdit').data('tWindow').close();
+            });
+        }
+    }
+
+</script> 

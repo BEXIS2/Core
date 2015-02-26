@@ -96,7 +96,7 @@ first child of the left and right table columns */
 page width. Or, you can specify an exact pixel width. */
 .page
 {
-    width: 100%;
+    width: 99%;
     margin-left: auto;
     margin-right: auto;
 }
@@ -105,15 +105,14 @@ header, #header
 {
     position:relative;
     margin-bottom: 0px;
-    background-color:grey;
-    color: White;
+    color: grey;
     padding: 0;
 }
 
 header h1, #header h1
 {
     font-weight: bold;
-    color:white;
+    color: #555555;
     padding: 5px 0;
     margin: 0;   
     border: none;
@@ -131,8 +130,8 @@ header h1, #header h1
 
 footer, #footer
 {
-    color: lightgray;
-    background-color:gray;
+    color: gray;
+    background-color:white;
     padding: 10px 0;
     text-align: center;
     line-height: normal;
@@ -142,13 +141,13 @@ footer, #footer
 
 #footer a:link
 {
-    color: lightgray;
+    color: gray;
     text-decoration: underline;
 }
 
 #footer a:visited
 {
-    color: lightgray;
+    color: gray;
     text-decoration: underline;
 }
 
@@ -264,13 +263,13 @@ div#title
 
 #logindisplay a:link
 {
-    color:lightgray;
+    color:gray;
     text-decoration: underline;
 }
 
 #logindisplay a:visited
 {
-    color:lightgray;
+    color:gray;
     text-decoration: underline;
 }
 

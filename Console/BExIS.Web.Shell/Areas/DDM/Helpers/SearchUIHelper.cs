@@ -5,11 +5,13 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Xml;
+using System.Xml.Linq;
 using System.Xml.Xsl;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
+using BExIS.Xml.Helpers;
 using Vaiona.Util.Cfg;
 
 namespace BExIS.Web.Shell.Areas.DDM.Helpers
@@ -147,10 +149,17 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
             DataStructureManager dsm = new DataStructureManager();
             StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(dsv.Dataset.DataStructure.Id);
 
+            XmlDocument doc = new XmlDocument();
+            doc = (XmlDocument)sds.Extra;
+
+            IEnumerable<XElement> orderList = XmlUtility.GetXElementByNodeName("variable", XmlUtility.ToXDocument(doc));
+
             if (dsVersionTuples != null && sds != null)
             {
-                foreach (var vu in sds.Variables)
+                foreach (XElement element in orderList)
                 {
+                    var vu = sds.Variables.Where(v => v.Id.Equals(Convert.ToInt64(element.Value))).FirstOrDefault();
+             
                     // use vu.Label or vu.DataAttribute.Name
                     DataColumn col = dt.Columns.Add("ID"+vu.Id.ToString()); // or DisplayName also
                     col.Caption = vu.Label;
@@ -269,10 +278,10 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
                             case "Double":
                             {
                                 double value;
-                                if(double.TryParse(valueAsString,out value))
+                                if (double.TryParse(valueAsString, out value))
                                     dr["ID" + vv.Variable.Id.ToString()] = Convert.ToDouble(valueAsString);
                                 else
-                                    dr["ID" + vv.Variable.Id.ToString()] = double.MaxValue;
+                                    dr["ID" + vv.Variable.Id.ToString()] = -99999;//double.MaxValue;
                                 break;
                             }
 
@@ -309,10 +318,10 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
                             case "Decimal":
                             {
                                 decimal value;
-                                if(decimal.TryParse(valueAsString,out value))
+                                if (decimal.TryParse(valueAsString, out value))
                                     dr["ID" + vv.Variable.Id.ToString()] = Convert.ToDecimal(valueAsString);
                                 else
-                                    dr["ID" + vv.Variable.Id.ToString()] = decimal.MaxValue;
+                                    dr["ID" + vv.Variable.Id.ToString()] = -99999;//decimal.MaxValue;
                                 break;
                             }
 
@@ -322,7 +331,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
                                 if (decimal.TryParse(valueAsString, out value))
                                     dr["ID" + vv.Variable.Id.ToString()] = Convert.ToDecimal(valueAsString);
                                 else
-                                    dr["ID" + vv.Variable.Id.ToString()] = decimal.MaxValue;
+                                    dr["ID" + vv.Variable.Id.ToString()] = -99999;
                                 break;
                             }
 

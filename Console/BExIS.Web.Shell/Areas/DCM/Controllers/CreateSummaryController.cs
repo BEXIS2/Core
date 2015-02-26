@@ -25,6 +25,7 @@ using BExIS.Security.Services.Authorization;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Xml.Services;
+using BExIS.Dlm.Entities.Common;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
 {
@@ -51,7 +52,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 {
                     Dictionary<string, AbstractMetadataStepModel> list = (Dictionary<string, AbstractMetadataStepModel>)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST];
                     model = CreateSummaryModel.Convert(list, TaskManager.Current());
-                    //model.ErrorList = ValidatePackageModels();
+                    model.ErrorList = ValidatePackageModels();
                     model.PageStatus = Models.PageStatus.FirstLoad;
                     return PartialView(model);
                 }
@@ -60,7 +61,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     TaskManager.Bus[CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST] = new Dictionary<string, MetadataPackageModel>();
                 }
 
-                //model.ErrorList = ValidatePackageModels();
+                model.ErrorList = ValidatePackageModels();
             }
 
            model.StepInfo = TaskManager.Current();
@@ -92,14 +93,24 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                 //if (ValidatePackageModels().Count==0)
                 //{
+
                     Submit();
+
                     if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.DATASET_TITLE))
+                    {
                         model.DatasetTitle = TaskManager.Bus[CreateDatasetTaskmanager.DATASET_TITLE].ToString();
+                        if (String.IsNullOrEmpty(model.DatasetTitle))
+                        {
+                            model.DatasetTitle = "No title available";
+                            TaskManager.Bus[CreateDatasetTaskmanager.DATASET_TITLE] = model.DatasetTitle; 
+                        }
+                    }
                     else
                     {
-                        TaskManager.Bus[CreateDatasetTaskmanager.DATASET_TITLE] = "no title available";
+                        TaskManager.Bus[CreateDatasetTaskmanager.DATASET_TITLE] = "No title available";
                         model.DatasetTitle = TaskManager.Bus[CreateDatasetTaskmanager.DATASET_TITLE].ToString();
                     }
+
                     
                     model.DatasetId = Convert.ToInt64(TaskManager.Bus[CreateDatasetTaskmanager.DATASET_ID]);
                     model.StepInfo.SetStatus(StepStatus.exit);
@@ -185,10 +196,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                 TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
 
-
-
-
-
                 if (dm.IsDatasetCheckedOutFor(datasetId, GetUserNameOrDefault()) || dm.CheckOutDataset(datasetId, GetUserNameOrDefault()))
                 {
                     DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(datasetId);
@@ -253,55 +260,51 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         {
             List<Error> errors = new List<Error>();
 
-
             TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
-            if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST))
+
+            // go to every step in the taskmanager
+           
+            foreach (StepInfo step in TaskManager.Root.Children)
             {
-                if(TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATASTRUCTURE_ID))
+                if (!AllStepsValid(step))
+                { 
+                    errors.Add(new Error(ErrorType.Other, "Errors in package : "+step.title ));
+                }
+            }
+
+            return errors;
+        }
+
+        private bool AllStepsValid(StepInfo step)
+        {
+            if (IsStepValid(step))
+            {
+                if(step.Children.Count>0)
                 {
-                    MetadataStructureManager msm = new MetadataStructureManager();
-                    long metadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateDatasetTaskmanager.METADATASTRUCTURE_ID]);
-                    List<MetadataPackageUsage> metadataPackageUsageList = msm.GetEffectivePackages(metadataStructureId);
-
-                    List<AbstractMetadataStepModel> tempModels = new List<AbstractMetadataStepModel>();
-                    foreach(MetadataPackageUsage mpu in metadataPackageUsageList)
+                    foreach(StepInfo childStep in step.Children)
                     {
-                        tempModels = GetMetadataPackageModelsFromBus(mpu.Id);
-
-                        //if tempModel count > 0 , model exist , add if errors exist to error list
-                        if (tempModels.Count > 0)
+                        if (!AllStepsValid(childStep))
                         {
-                            //foreach (MetadataPackageModel model in tempModels)
-                            //{
-                            //    if (model.ErrorList != null)
-                            //    {
-                            //        if (model.ErrorList.Count() > 0)
-                            //        {
-                            //            errors.AddRange(model.ErrorList);
-                            //        }
-                            //    }
-                            //}
-                        }
-                        //mopdel not exist
-                        else {
-
-                            //if (hasRequiredMetadataAttributeUsage(mpu))
-                            //{
-                            //    List<MetadataAttributeUsage> listOfRequiredAttributes = GetRequiredMetadataAttributeUsage(mpu);
-                            //    foreach (MetadataAttributeUsage metadataAttributeUsage in listOfRequiredAttributes)
-                            //    {
-                            //        errors.Add(new Error(ErrorType.MetadataAttribute, "is not optional", new object[] { metadataAttributeUsage.Label, null, 1, 1, mpu.Label }));
-                            //    }
-                            //}
-
+                            return false;
                         }
                     }
                 }
-            
+            }
+            else
+            {
+                return false;
             }
 
 
-            return errors;
+            return true;
+        }
+
+        private bool IsStepValid(StepInfo step)
+        { 
+            if(step.stepStatus.Equals(StepStatus.error))
+                return false;
+
+            return true;
         }
 
         private bool hasRequiredMetadataAttributeUsage(MetadataPackageUsage mpu)
@@ -370,7 +373,5 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             return Id;
         }
         #endregion
-
-
     }
 }

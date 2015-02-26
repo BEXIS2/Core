@@ -5,25 +5,24 @@
 @using System.Text.RegularExpressions
 @model List<BExIS.Dlm.Entities.DataStructure.DataAttribute>
 
-@{
-    string rgxPattern = "[ ]";
-    string rgxReplace = "_";
-    Regex rgx = new Regex(rgxPattern);
+@*<header>*@
+    <link href="@Url.Content("~/Areas/RPM/Stylesheets/RPM.css")" rel="stylesheet" type="text/css" />  
+@*</header> *@
 
+@{
     DataAttribute dataAttribute = (DataAttribute)Session["DataAttribute"];
-    string windowName = "Add";
+    string windowName = "Create Data Attribute";
 
   
         if (dataAttribute != null)
         {
             if (dataAttribute.Name != null && dataAttribute.Name != "")
             {
-                windowName = rgx.Replace(dataAttribute.Name, rgxReplace);
+                windowName = "Edit "+dataAttribute.Name;
             }
         }
         else
         {
-            windowName = "Add";
             dataAttribute = new DataAttribute();
         }
 }
@@ -85,7 +84,8 @@
     <br />
     <div style="position:absolute; left:20%; top:60px;">
                     @{ Html.Telerik().Window()
-                            .Name(windowName)
+                            .Name("AttributeWindow")
+                            .Title(windowName)
                             .Modal(true)
                             .Visible((bool)Session["Window"])
                             .Draggable(true)

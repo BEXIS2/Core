@@ -40,12 +40,14 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
         public ActionResult Datasets_Select()
         {
             DatasetManager datasetManager = new DatasetManager();
+            PermissionManager permissionManager = new PermissionManager();
+            SubjectManager subjectManager = new SubjectManager();
 
             // DATA
             IQueryable<Dataset> data = datasetManager.DatasetRepo.Query();
 
             List<DatasetGridRowModel> datasets = new List<DatasetGridRowModel>();
-            data.ToList().ForEach(d => datasets.Add(DatasetGridRowModel.Convert(d, false)));
+            data.ToList().ForEach(d => datasets.Add(DatasetGridRowModel.Convert(d, permissionManager.ExistsDataPermission(subjectManager.GetGroupByName("everyone").Id, 1, d.Id, RightType.View))));
 
             return View(new GridModel<DatasetGridRowModel> { Data = datasets });
         }
@@ -89,18 +91,24 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
             return true; 
         }
 
-        public bool PublishDataset(long entityId, long datasetId)
+        public void PublishDataset(long entityId, long datasetId)
         {
             PermissionManager permissionManager = new PermissionManager();
+            SubjectManager subjectManager = new SubjectManager();
 
+            Group group = subjectManager.GetGroupByName("everyone");
 
-
-            return true;
+            permissionManager.CreateDataPermission(group.Id, entityId, datasetId, RightType.View);
         }
 
-        public bool ConcealDataset(long entityId, long datasetId)
+        public void ConcealDataset(long entityId, long datasetId)
         {
-            return true;
+            PermissionManager permissionManager = new PermissionManager();
+            SubjectManager subjectManager = new SubjectManager();
+
+            Group group = subjectManager.GetGroupByName("everyone");
+
+            permissionManager.DeleteDataPermission(group.Id, entityId, datasetId, RightType.View);
         }
     }
 }

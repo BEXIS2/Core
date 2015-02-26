@@ -29,8 +29,8 @@
 
         <div class="packages">
  
-                    
-            @*@if (Model.MinCardinality > 1 && Model.Instance.Count< Model.MaxCardinality)
+         
+            @if (Model.MinCardinality > 0 && Model.Instance.Count< Model.MaxCardinality)
             {
             
                 @Ajax.ActionLink("Add", "AddMetadataPackageUsage", @Model.StepInfo.GetActionInfo.ControllerName, new { area = @Model.StepInfo.GetActionInfo.AreaName, id = @idAsLong, number = @Model.Instance.Count },
@@ -41,7 +41,7 @@
                                     OnSuccess = "OnSucess()",
                                     OnBegin = "OnLoad()"
                                 })
-           }*@
+           }
 
             <table>
  

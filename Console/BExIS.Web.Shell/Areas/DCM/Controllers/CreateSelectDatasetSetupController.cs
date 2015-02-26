@@ -524,15 +524,27 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             {
                 XDocument xMetadata = (XDocument)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_XML];
 
-                var x = XmlUtility.GetXElementByAttribute(usage.Label, "type", BExIS.Xml.Helpers.XmlNodeType.MetadataAttributeUsage.ToString(), xMetadata);
+                var x = new XElement("null");
+                List<XElement> elements = new List<XElement>();
 
-                if (x == null)
-                    x = XmlUtility.GetXElementByAttribute(usage.Label, "type", BExIS.Xml.Helpers.XmlNodeType.MetadataPackageUsage.ToString(), xMetadata);
+                Dictionary<string,string> keyValueDic= new Dictionary<string,string>();
+                keyValueDic.Add("id", usage.Id.ToString());
 
-                if (x != null)
+                if (usage is MetadataPackageUsage)
                 {
+                    keyValueDic.Add("type", BExIS.Xml.Helpers.XmlNodeType.MetadataPackageUsage.ToString());
+                    elements = XmlUtility.GetXElementsByAttribute(usage.Label, keyValueDic, xMetadata).ToList();
+                }
+                else
+                {
+                    keyValueDic.Add("type", BExIS.Xml.Helpers.XmlNodeType.MetadataAttributeUsage.ToString());
+                    elements = XmlUtility.GetXElementsByAttribute(usage.Label, keyValueDic, xMetadata).ToList();
+                }
 
-                    
+                x = elements.FirstOrDefault();
+
+                if (x != null && !x.Name.Equals("null"))
+                {
                     IEnumerable<XElement> xelements = x.Elements();
 
                     if (xelements.Count() > 0)

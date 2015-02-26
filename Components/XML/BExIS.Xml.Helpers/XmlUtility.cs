@@ -78,6 +78,29 @@ namespace BExIS.Xml.Helpers
 
         #region xdoc
 
+            public static bool HasChildren(XElement element)
+            {
+                if (element.Nodes().OfType<XElement>().Count() > 0)
+                    return true;
+
+                return false;
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <remarks></remarks>
+            /// <seealso cref=""/>
+            /// <param name="name"></param>
+            /// <param name="source"></param>
+            /// <returns></returns>
+            public static IEnumerable<XElement> GetChildren(XElement source)
+            {
+
+                return source.Nodes().OfType<XElement>();
+
+            }
+
             /// <summary>
             /// 
             /// </summary>
@@ -102,6 +125,45 @@ namespace BExIS.Xml.Helpers
             {
                 string name = nodeName.Replace(" ","");
                 return xDoc.Root.Descendants(name).Where(p => p.Attribute(attrName).Value.Equals(value)).FirstOrDefault();
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <remarks></remarks>
+            /// <seealso cref=""/>
+            /// <param name="name"></param>
+            /// <returns></returns>
+            public static IEnumerable<XElement> GetXElementsByAttribute(string nodeName, string attrName, string value, XDocument xDoc)
+            {
+                string name = nodeName.Replace(" ", "");
+                return xDoc.Root.Descendants(name).Where(p => p.Attribute(attrName).Value.Equals(value));
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <remarks></remarks>
+            /// <seealso cref=""/>
+            /// <param name="name"></param>
+            /// <returns></returns>
+            public static IEnumerable<XElement> GetXElementsByAttribute(string nodeName, Dictionary<string,string> AttrValueDic, XDocument xDoc)
+            {
+                string name = nodeName.Replace(" ", "");
+                IEnumerable<XElement> elements = new List<XElement>();
+
+                foreach (KeyValuePair<string, string> keyValuePair in AttrValueDic)
+                {
+                    IEnumerable<XElement> newElements = GetXElementsByAttribute(nodeName, keyValuePair.Key, keyValuePair.Value, xDoc);
+
+                    if (elements.Count() > 0)
+                        elements = elements.Intersect(newElements);
+                    else
+                        elements = newElements;
+
+                }
+
+                return elements;
             }
 
             /// <summary>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using BExIS.Web.Shell.Areas.DDM.Models;
+using BExIS.Xml.Helpers;
 
 /// <summary>
 /// 
@@ -15,11 +16,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Models
     /// <remarks></remarks>        
     public class ShowMetadataModel
     {
-        public List<string> PackageUsages { get; set; }
-        public List<string> Packages { get; set; }
-        public List<string> AttributesUsages { get; set; }
-        public List<string> Attributes { get; set; }
-        public List<PackageUsage> PU { get; set; }
+        public List<PackageUsageModel> PU { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
 
@@ -32,11 +29,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Models
         /// <param>NA</param>       
         public ShowMetadataModel()
         {
-            Packages = new List<string>();
-            PackageUsages = new List<string>();
-            AttributesUsages = new List<string>();
-            Attributes = new List<string>();
-            PU = new List<PackageUsage>();
+            PU = new List<PackageUsageModel>();
             Title = "";
             Description = "";
         }
@@ -46,31 +39,27 @@ namespace BExIS.Web.Shell.Areas.DDM.Models
     /// 
     /// </summary>
     /// <remarks></remarks>        
-    public class PackageUsage
+    public class PackageUsageModel:BaseModelElement
     {
-        /// <summary>
-        /// Name of a Package
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>             
-        public string Name { get; set; }
 
         /// <summary>
         /// List of Packages
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
-        public List<Package> Packages { get; set; }
+        public List<BaseModelElement> Attributes { get; set; }
 
         /// <summary>
         /// PackageUsage includes the name and a list of Packages
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>   
-        public PackageUsage()
+        public PackageUsageModel()
         {
             Name = "";
-            Packages = new List<Package>();
+            DisplayName = "";
+            Attributes = new List<BaseModelElement>();
+            Type = XmlNodeType.MetadataPackageUsage;
         }
     }
 
@@ -78,24 +67,58 @@ namespace BExIS.Web.Shell.Areas.DDM.Models
     /// 
     /// </summary>
     /// <remarks></remarks>        
-    public class Package
+    public class PackageModel:BaseModelElement
     {
         /// <summary>
         /// AttribueUsages is a dictionary
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
-        public Dictionary<string, string> AttributeUsages;
+        public List<BaseModelElement> Attributes;
 
         /// <summary>
         /// Create a new dictionary called AttributeUsages
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
-        public Package()
+        public PackageModel()
         {
-            AttributeUsages = new Dictionary<string, string>();
+            Name="";
+            DisplayName = "";
+            Attributes = new List<BaseModelElement>();
         }
+    }
+
+    public class SimpleAttributeModel:BaseModelElement
+    {
+        public string Value { get; set; }
+
+        public SimpleAttributeModel()
+        {
+            Name = "";
+            DisplayName = "";
+            Value = "";
+        }
+    }
+
+    public class CompundAttributeModel:BaseModelElement
+    {
+        public List<BaseModelElement> Childrens { get; set; }
+
+        public CompundAttributeModel()
+        {
+            Name = "";
+            DisplayName = "";
+            Childrens = new List<BaseModelElement>();
+        }
+    }
+
+    public abstract class BaseModelElement
+    {
+        public String Name { get; set; }
+        public String DisplayName { get; set; }
+        public XmlNodeType Type { get; set; }
+
     }
 
 }

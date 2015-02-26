@@ -68,10 +68,16 @@ namespace BExIS.RPM.Output
             StructuredDataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(id);
             CreateTemplate(dataStructure);
         }
-                
+
         public List<Variable> getOrderedVariables(StructuredDataStructure structuredDataStructure)
         {
+            return getOrderedVariables(structuredDataStructure.Id, structuredDataStructure.Variables.ToList());
+        }
+
+        public List<Variable> getOrderedVariables(long dataStructureID, List<Variable> Variables)
+        {
             DataStructureManager dataStructureManager = new DataStructureManager();
+            StructuredDataStructure structuredDataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataStructureID);
             XmlDocument doc = (XmlDocument)structuredDataStructure.Extra;
             XmlNode order;
             XmlNodeList temp;
@@ -103,11 +109,11 @@ namespace BExIS.RPM.Output
             temp = doc.GetElementsByTagName("order");
             order = temp[0];
             List<Variable> orderedVariables = new List<Variable>();
-            if (structuredDataStructure.Variables.Count != 0)
+            if (Variables.Count != 0)
             {
                 foreach (XmlNode x in order)
                 {
-                    foreach (Variable v in structuredDataStructure.Variables)
+                    foreach (Variable v in Variables)
                     {
                         if (v.Id == Convert.ToInt64(x.InnerText))
                             orderedVariables.Add(v);
@@ -159,6 +165,7 @@ namespace BExIS.RPM.Output
             if (dataStructure != null)
             {
                 List<Variable> variables = dataStructure.Variables.Where(p => variableIds.Contains(p.Id)).ToList();
+                variables = getOrderedVariables(dataStructureId, variables);
                 return CreateTemplate(variables, path, filename);
             }
             else

@@ -106,7 +106,7 @@
                             {
                                 if (!Model.inUse)
                                 {
-                                    <td class="data">@Html.TextBox("varName",o.ToString(), new { @Value = o.ToString() })</td>
+                                    <td class="data">@Html.TextBox("varName", o.ToString(), new { @Value = o.ToString(), @tabindex = "5" })</td>
                                 }
                                 else
                                 {
@@ -129,7 +129,60 @@
                             {
                                 if (!Model.inUse)
                                 {
-                                    <td class="data">@Html.TextBox("varName", o.ToString(), new { @Value = o.ToString() })</td>
+                                    <td class="data">@Html.TextBox("varName", o.ToString(), new { @Value = o.ToString(), @tabindex = "5" })</td>
+                                }
+                                else
+                                {
+                                    <td class="data">@o.ToString()</td>
+                                }
+                            }
+                            else
+                            {
+                                <td class="head">@o.ToString()</td>
+                            }
+                        }
+                        </tr>
+                    }
+                    break;
+
+                case "description":
+                    if (i % 2 != 0)
+                    {
+                        <tr class ="description t-alt">
+                        @foreach (object o in r.ItemArray)
+                        {
+                            if (o != r.ItemArray.First())
+                            {
+                                if (!Model.inUse)
+                                {
+                                    <td class="data">
+                                        <textarea id="varDesc" name="varDesc" tabindex = "5">@o.ToString()</textarea>
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td class="data">@o.ToString()</td>
+                                }
+                            }
+                            else
+                            {
+                                <td class="head">@o.ToString()</td>
+                            }
+                        }                          
+                        </tr>
+                    }
+                    else
+                    {
+                        <tr class ="description">
+                        @foreach (object o in r.ItemArray)
+                        {
+                            if (o != r.ItemArray.First())
+                            {
+                                if (!Model.inUse)
+                                {
+                                    <td class="data">
+                                        <textarea id="varDesc" name="varDesc" tabindex = "5">@o.ToString()</textarea>
+                                    </td>
                                 }
                                 else
                                 {
@@ -169,7 +222,7 @@
                                         }
                                     }
                                   
-                                    <td class="data"><input id="optional" name="optional" type="checkbox" value="@temp.ItemArray[j]" class="checkBox"
+                                    <td class="data"><input id="optional" name="optional" type="checkbox" value="@temp.ItemArray[j]" class="checkBox" tabindex = "5"
                                     @if (Convert.ToBoolean(obj.ToString().ToLower()) == true)
                                     {
                                         <text>checked="checked"</text>
@@ -208,7 +261,7 @@
                                         }
                                     }
                                   
-                                    <td class="data"><input id="optional" name="optional" type="checkbox" value="@temp.ItemArray[j]" class="checkBox"
+                                    <td class="data"><input id="optional" name="optional" type="checkbox" value="@temp.ItemArray[j]" class="checkBox" tabindex = "5"
                                     @if (Convert.ToBoolean(obj.ToString().ToLower()) == true)
                                     {
                                         <text>checked="checked"</text>
@@ -229,7 +282,7 @@
                     }
                     break;
 
-                    case "variableid":
+                case "variableid":
                     if (i % 2 != 0)
                     {    
                         <tr class ="t-alt">
@@ -304,7 +357,7 @@
 </div>
 
 @*<div>
-@(Html.Telerik().Grid(Model.dataStructureTable)
+@(Html.Telerik().Grid(Model.dataStructureTable) 
         .Name("DataStructureGrid")
         .RowAction(row =>
             {
@@ -360,69 +413,44 @@
         var last =  @last;
 
 
-        for (var i = 0; i < $(".function td").length; i++)
+        for (var i = 0; i < $(".function .data").length; i++)
         {
-            if ($(".function td")[i].innerHTML != 'Functions')
-            {
-                //var edit = '<a area="RPM" class="t-icon t-edit" href="/RPM/Home/openVariableWindow/' + $(".function td")[i].innerHTML + '"></a>';
-                var del = '<a area="RPM" class="t-icon t-delete" href="/RPM/Home/deleteVariable/' + $(".function td")[i].innerHTML + '" onclick = "return confirm(\'Are you sure you want to delete the Variable ' + $(".name td")[i].innerHTML + '?\')"></a>'
-                var temp = $(".function td")[i].innerHTML.split('?');
-                var left = '<a area="RPM" class="t-icon t-arrow-prev" href="/RPM/Home/shiftVariableLeft/'+ $(".function td")[i].innerHTML +'"></a>';
-                var right = '<a area="RPM" class="t-icon t-arrow-next" href="/RPM/Home/shiftVariableRight/'+ $(".function td")[i].innerHTML +'"></a>';
+            //var edit = '<a area="RPM" class="t-icon t-edit" href="/RPM/Home/openVariableWindow/' + $(".function td")[i].innerHTML + '"></a>';
+            var del = '<a area="RPM" class="t-icon t-delete" href="/RPM/Home/deleteVariable/' + $(".function .data")[i].innerHTML + '" onclick = "return confirm(\'Are you sure you want to delete the Variable ' + $(".name #varName")[i].value + '?\')"></a>'
+            var temp = $(".function .data")[i].innerHTML.split('?');
+            var left = '<a area="RPM" class="t-icon t-arrow-prev" href="/RPM/Home/shiftVariableLeft/'+ $(".function .data")[i].innerHTML +'"></a>';
+            var right = '<a area="RPM" class="t-icon t-arrow-next" href="/RPM/Home/shiftVariableRight/'+ $(".function .data")[i].innerHTML +'"></a>';
 
-                $(".function td")[i].innerHTML = del;
+            $(".function .data")[i].innerHTML = del;
                 
-                if (temp[0] != first && temp[0] != last)
-                    $(".function td")[i].innerHTML = left + del + right;
-                else
-                {
-                    if(temp[0] == first && temp[0] == last)
-                    {
-                        $(".function td")[i].innerHTML = del;
-                    }
-                    else
-                    {
-                        if(temp[0] == first)
-                            $(".function td")[i].innerHTML = del + right;
-                        else
-                            $(".function td")[i].innerHTML = left + del;
-                    }
-                }            
-            }
-        }
-
-        for (var i = 0; i < $(".locked td").length; i++)
-        {
-            if ($(".locked td")[i].innerHTML != 'Functions')
+            if (temp[0] != first && temp[0] != last)
+                $(".function .data")[i].innerHTML = left + del + right;
+            else
             {
-                var temp = $(".locked td")[i].innerHTML.split('?');
-                var left = '<a area="RPM" class="t-icon t-arrow-prev" href="/RPM/Home/shiftVariableLeft/'+ $(".locked td")[i].innerHTML +'"></a>';
-                var right = '<a area="RPM" class="t-icon t-arrow-next" href="/RPM/Home/shiftVariableRight/'+ $(".locked td")[i].innerHTML +'"></a>';
-
-                if (temp[0] != first && temp[0] != last)
-                    $(".locked td")[i].innerHTML = left + 'locked' + right;
+                if(temp[0] == first && temp[0] == last)
+                {
+                    $(".function .data")[i].innerHTML = del;
+                }
                 else
                 {
-                    if(temp[0] == first && temp[0] == last)
-                    {
-                        $(".locked td")[i].innerHTML = 'locked';
-                    }
+                    if(temp[0] == first)
+                        $(".function .data")[i].innerHTML = del + right;
                     else
-                    {
-                        if(temp[0] == first)
-                            $(".locked td")[i].innerHTML = 'locked' + right;
-                        else
-                            $(".locked td")[i].innerHTML = left + 'locked';
-                    }
+                        $(".function .data")[i].innerHTML = left + del;
                 }
-            }
+            }                       
         }
 
-        for (var i = 0; i < $(".optional td").length; i++) {
-            if ($(".optional td")[i].innerHTML == 'False')
-                $(".optional td")[i].innerHTML = '<b>-</b>';
-            if ($(".optional td")[i].innerHTML == 'True')
-                $(".optional td")[i].innerHTML = '<div class="t-icon t-update"></div>';
+        for (var i = 0; i < $(".locked .data").length; i++)
+        {
+            $(".locked .data")[i].innerHTML ='locked';
+        }
+
+        for (var i = 0; i < $(".optional .data").length; i++) {
+            if ($(".optional .data")[i].innerHTML == 'False')
+                $(".optional .data")[i].innerHTML = '<b>-</b>';
+            if ($(".optional .data")[i].innerHTML == 'True')
+                $(".optional .data")[i].innerHTML = '<div class="t-icon t-update"></div>';
         }
     });
 

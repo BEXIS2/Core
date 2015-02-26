@@ -21,6 +21,8 @@ namespace BExIS.Security.Services.Authorization
             this.FeaturesRepo = uow.GetReadOnlyRepository<Feature>();
             this.SubjectsRepo = uow.GetReadOnlyRepository<Subject>();
             this.UsersRepo = uow.GetReadOnlyRepository<User>();
+            this.GroupsRepo = uow.GetReadOnlyRepository<Group>();
+
         }
 
         #region Data Readers
@@ -29,9 +31,10 @@ namespace BExIS.Security.Services.Authorization
         public IReadOnlyRepository<Entity> EntitiesRepo { get; private set; }
         public IReadOnlyRepository<FeaturePermission> FeaturePermissionsRepo { get; private set; }
         public IReadOnlyRepository<Feature> FeaturesRepo { get; private set; }
+        public IReadOnlyRepository<Group> GroupsRepo { get; private set; }
         public IReadOnlyRepository<Subject> SubjectsRepo { get; private set; }
         public IReadOnlyRepository<User> UsersRepo { get; private set; }
-
+        
         #endregion
 
         public FeaturePermission CreateFeaturePermission(long subjectId, long featureId, PermissionType permissionType = PermissionType.Grant)
@@ -301,6 +304,32 @@ namespace BExIS.Security.Services.Authorization
             subjectIds.Add(user.Id);
 
             return ExistsDataPermission(subjectIds, entityId, dataId, rightType);
+        }
+
+        public bool HasUserDataAccess(string userName, long entityId, long dataId, RightType rightType)
+        {
+            Group everyone = GroupsRepo.Get(g => g.Name == "everyone").FirstOrDefault();
+
+            if (ExistsDataPermission(everyone.Id, entityId, dataId, rightType))
+            {
+                return true;
+            }
+            else
+            {
+                User user = UsersRepo.Get(u => u.Name.ToLower() == userName.ToLower()).FirstOrDefault();
+
+                if (user == null)
+                {
+                    return false;
+                }
+                else
+                {
+                    List<long> subjectIds = new List<long>(user.Groups.Select(g => g.Id));
+                    subjectIds.Add(user.Id);
+
+                    return ExistsDataPermission(subjectIds, entityId, dataId, rightType);
+                }
+            }
         }
 
         public bool ExistsDataPermission(IEnumerable<long> subjectIds, long entityId, long dataId, RightType rightType)

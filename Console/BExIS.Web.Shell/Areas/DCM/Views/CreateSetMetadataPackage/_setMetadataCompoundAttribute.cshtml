@@ -30,7 +30,8 @@
 
         <div class="packages">
 
-            @*@if (Model.MaxCardinality > 1 && Model.Instance.Count < Model.MaxCardinality)
+            <div class="ready">
+            @if (Model.MaxCardinality > 1 && Model.Instance.Count < Model.MaxCardinality)
             { 
                 @Ajax.ActionLink("Add", "AddMetadataCompundAttributeUsage", @Model.StepInfo.GetActionInfo.ControllerName, new { area = @Model.StepInfo.GetActionInfo.AreaName, id = @idAsLong, number = @Model.Instance.Count },
                                     new AjaxOptions
@@ -40,7 +41,11 @@
                                         OnSuccess = "OnSucess()",
                                         OnBegin = "OnLoad()"
                                     })
-            }*@
+            }
+            </div>
+            <div class="process" style="display:none;">
+                Add
+            </div>
             <table>
 
             @foreach (MetadataInstanceModel instance in Model.Instance)
@@ -49,6 +54,7 @@
                     <td>@instance.Name</td>
                     <td>@instance.Number</td>
                     <td>
+                         <div class="ready">
                         @if (Model.Instance.Count > 1 && Model.Instance.Count> Model.MinCardinality)
                         {
                             @Ajax.ActionLink("Delete", "RemoveMetadataCompundAttributeUsage", @Model.StepInfo.GetActionInfo.ControllerName, new { area = @Model.StepInfo.GetActionInfo.AreaName, id= @idAsLong , number= @instance.Number }, 
@@ -57,6 +63,10 @@
                                                           OnSuccess="OnSucess()",
                                                           OnBegin="OnLoad()"})
                         }
+                    </div>
+                    <div class="process" style="display:none;">
+                        Delete
+                    </div>
                     </td>
                 </tr>
             }
@@ -102,6 +112,9 @@
     function OnLoad()
     {
         $('#preloader').show();
+        $('.ready').hide();
+        $('.process').show();
+
     }
 
     function OnSucess()
@@ -109,6 +122,9 @@
         NavigationRefresh();
         TaskListRefresh();
         $('#preloader').hide();
+
+        $('.ready').show();
+        $('.process').hide();
     }
 
 </script>

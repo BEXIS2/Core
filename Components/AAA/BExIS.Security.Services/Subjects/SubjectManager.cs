@@ -39,7 +39,7 @@ namespace BExIS.Security.Services.Subjects
 
         public IQueryable<Subject> GetAllSubjects()
         {
-            return SubjectsRepo.Query();
+            return SubjectsRepo.Query(s => s.IsSystemSubject == false);
         }
 
         public bool AddUserToGroup(string userName, string groupName)
@@ -88,12 +88,13 @@ namespace BExIS.Security.Services.Subjects
             }
         }
 
-        public Group CreateGroup(string groupName, string description)
+        public Group CreateGroup(string groupName, string description, bool isSystemSubject = false)
         {
             Group group = new Group()
             {
                 Name = groupName,
-                Description = description
+                Description = description,
+                IsSystemSubject = isSystemSubject
             };
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
@@ -159,7 +160,7 @@ namespace BExIS.Security.Services.Subjects
 
         public IQueryable<Group> GetAllGroups()
         {
-            return GroupsRepo.Query();
+            return GroupsRepo.Query(g => g.IsSystemSubject == false);
         }
 
         public Group GetGroupByName(string groupName)
@@ -373,7 +374,7 @@ namespace BExIS.Security.Services.Subjects
                 RegistrationDate = DateTime.Now,
 
                 IsApproved = AutoApproval,
-                IsBanned = false,
+                IsBlocked = false,
                 IsLockedOut = false,
 
                 PasswordFailureCount = 0,
@@ -416,7 +417,7 @@ namespace BExIS.Security.Services.Subjects
                 RegistrationDate = DateTime.Now,
 
                 IsApproved = AutoApproval,
-                IsBanned = false,
+                IsBlocked = false,
                 IsLockedOut = false,
 
                 PasswordFailureCount = 0,
@@ -434,6 +435,10 @@ namespace BExIS.Security.Services.Subjects
 
                 uow.Commit();
             }
+
+            Group group = GetGroupByName("everyone");
+
+            AddUserToGroup(user.Id, group.Id); 
 
             return (user);
         }
@@ -521,7 +526,7 @@ namespace BExIS.Security.Services.Subjects
 
         public IQueryable<User> GetAllUsers()
         {
-            return UsersRepo.Query();
+            return UsersRepo.Query(u => u.IsSystemSubject == false);
         }
 
         public User GetUserByEmail(string email)
@@ -635,7 +640,7 @@ namespace BExIS.Security.Services.Subjects
                 RegistrationDate = DateTime.Now,
 
                 IsApproved = AutoApproval,
-                IsBanned = false,
+                IsBlocked = false,
                 IsLockedOut = false,
 
                 PasswordFailureCount = 0,
@@ -804,7 +809,7 @@ namespace BExIS.Security.Services.Subjects
 
             if (user != null)
             {
-                if (user.IsApproved && !user.IsLockedOut)
+                if (user.IsApproved && !user.IsLockedOut && !user.IsBlocked)
                 {
                     if (hashSecurityProperty(password, user.PasswordSalt) == user.Password)
                     {

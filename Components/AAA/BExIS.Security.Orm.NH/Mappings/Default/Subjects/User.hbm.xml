@@ -22,7 +22,7 @@
     <property name="LastPasswordChangeDate" type="DateTime" />
 
     <property name="IsApproved" type="yes_no" />
-    <property name="IsBanned" type="yes_no" />
+    <property name="IsBlocked" type="yes_no" />
     <property name="IsLockedOut" type="yes_no" />
 
     <property name="PasswordFailureCount" type="Int32" />

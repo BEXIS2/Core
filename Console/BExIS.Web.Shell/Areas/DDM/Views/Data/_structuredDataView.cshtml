@@ -78,9 +78,6 @@
                          .OnDataBound("PrimaryData_OnCommand")
                          .OnColumnHide("PrimaryData_OnCommand")
                          .OnColumnShow("PrimaryData_OnCommand")
-
-
-
                     )
             .Columns(columns =>
             {
@@ -165,10 +162,11 @@
 	});
 
 	$.post('@Url.Action("SetGridCommand", "Data", new RouteValueDictionary { { "area", "DDM" } })', { filters: currentFilter, orders: currentOrder, columns: visibleColumns }, function (response) {
-
+	    //alert("set grid");
+	    OnDataBound();
 	})
 
-	    OnDataBound();
+	    
 	}
 
     function OnDataBound()
@@ -176,13 +174,12 @@
         var compareValuesString = '@compareValues'
         var compareValuesArray = compareValuesString.split(",")
 
-
         $("#PrimaryDataResultGrid td").each(function () {
-            
+
             for (var i = 0; i < compareValuesArray.length; i = i + 1) {
 
                 if (this.innerHTML == compareValuesArray[i]) {
-                    this.innerHTML = "";
+                   this.innerHTML = " ";
                 }
             }
         })
@@ -204,6 +201,12 @@
             }
 
         })
+
+    }
+
+    function binding()
+    {
+
 
     }
 

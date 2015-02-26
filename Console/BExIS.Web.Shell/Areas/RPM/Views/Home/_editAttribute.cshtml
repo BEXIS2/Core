@@ -4,10 +4,6 @@
 @using BExIS.Dlm.Services.DataStructure
 @model BExIS.Dlm.Entities.DataStructure.DataAttribute
 
-@*<header>*@
-    <link href="@Url.Content("~/Areas/RPM/Stylesheets/RPM.css")" rel="stylesheet" type="text/css" />  
-@*</header> *@
-
 @if(Model != null)
 {  
     long unitIndex = 0;
@@ -28,7 +24,7 @@
     {
         dataTypeIndex = Model.DataType.Id;
     } 
-<div class="planingPartialDiv" id="createUnit">
+<div class="planingPartialDiv" id="createAttribute">
 @using (Html.BeginForm("editAttribute", "Home", new { area = "RPM" }))
 {
    @(Html.TextBox("parent", @HttpContext.Current.Request.RequestContext.RouteData.Values["action"].ToString(), new {@class = "hidden"}))
@@ -39,18 +35,16 @@
                 Name:<Font color="red">*</Font>
             </td>
             <td>
-                @(Html.TextBoxFor(m => Model.Name, new {@class = "t-input", @autofocus = "autofocus", @tabindex = 1}))
-                <div class="errorMsg" style="vertical-align:top;">
-                    <font color="red">@Session["nameMsg"]</font>
-                </div>
+                @(Html.TextBoxFor(m => Model.Name, new {@class = "t-input", @autofocus = "autofocus", @tabindex = "1"}))
             </td>
+            <td class="errorMsg">@Session["nameMsg"]</td>
         </tr>
         <tr id="shortname">
             <td>
                 ShortName:
             </td>
             <td>
-                @(Html.TextBoxFor(m => Model.ShortName, new {@class = "t-input", @tabindex = 2}))
+                @(Html.TextBoxFor(m => Model.ShortName, new {@class = "t-input", @tabindex = "2"}))
             </td>
         </tr>
         <tr>
@@ -58,7 +52,7 @@
                 Description:
             </td>
             <td>
-                @(Html.TextBoxFor(m => Model.Description, new {@class = "t-input", @tabindex = 3}))
+                @(Html.TextBoxFor(m => Model.Description, new {@class = "t-input", @tabindex = "3"}))
             </td>
         </tr>
         <tr>
@@ -73,7 +67,7 @@
                     .BindTo(new SelectList(unitList, "Id", "Name"))
                 )*@
 
-                @Html.DropDownList("unitId", new SelectList(unitList, "Id", "Name", unitIndex), new { @class =" t-dropdown t-header t-dropdown-wrap", @tabindex = 4 })
+                @Html.DropDownList("unitId", new SelectList(unitList, "Id", "Name", unitIndex), new { @class =" t-dropdown t-header t-dropdown-wrap", @tabindex = "4" })
             </td>
         </tr>
         <tr>
@@ -87,20 +81,18 @@
                     .BindTo(new SelectList(dataTypeList,"Id","Name"))
                 )*@
 
-                @Html.DropDownList("dataTypeId", new SelectList(dataTypeList,"Id","Name", dataTypeIndex), new { @class =" t-dropdown t-header t-dropdown-wrap", @tabindex = 5 })
+                @Html.DropDownList("dataTypeId", new SelectList(dataTypeList,"Id","Name", dataTypeIndex), new { @class =" t-dropdown t-header t-dropdown-wrap", @tabindex = "5" })
             </td>
         </tr>
-        <tr><td colspan="2"> </td></tr>
-        <tr>
-            <td>
-                <Font color="red">*</Font> Please don't leave empty.
-                <br /><br />
-                <button name="create" value="GetUnitInput" type="submit" class="t-button" title="Save the Attribute">Save</button>
-            </td>
-            <td>
-            </td>
-        </tr>    
-    </table>    
+    </table>
+    <div class="functions RPMbuttons">
+        <font class="RPMbuttons" color="red">*</font>Please don't leave empty
+    </div>
+    <div class="submit RPMbuttons">
+        <button name="create" value="create" type="submit" class="t-button"  id="saveButton" title="Save The Unit" tabindex = "6">Save</button>
+        @Html.ActionLink("Cancel", "AttributeManager", "Home", new { area = "RPM", @class = "t-button", @title = "Cancel", @tabindex = "7" })
+    </div>  
+               
 }
 </div>
     

@@ -19,6 +19,9 @@ using System.Globalization;
 
 using BExIS.RPM.Output;
 using System.Diagnostics;
+using BExIS.Xml.Helpers;
+using System.Xml;
+using System.Xml.Linq;
 
 /// <summary>
 ///
@@ -559,6 +562,7 @@ namespace BExIS.IO.Transform.Output
 
                 string path = GetStorePath(datasetId, datasetVersionOrderNr);
                 string newTitle = GetNewTitle(datasetId, datasetVersionOrderNr, title, extention);
+
 
                 provider.CreateTemplate(getVariableIds(this.VisibleColumns), dataStructureId, path, newTitle);
 

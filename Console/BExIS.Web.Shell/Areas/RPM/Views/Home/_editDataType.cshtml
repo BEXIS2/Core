@@ -1,73 +1,87 @@
 ﻿@using Telerik.Web.Mvc.UI
 @using BExIS.Dlm.Entities.DataStructure
 @using BExIS.Dlm.Services.DataStructure
+@using BExIS.Dlm.Services.TypeSystem
 @model BExIS.Dlm.Entities.DataStructure.DataType
 
-@*<header>*@
-    <link href="@Url.Content("~/Areas/RPM/Stylesheets/RPM.css")" rel="stylesheet" type="text/css" />  
-@*</header> *@
-
 @if(Model != null)
-{ 
-    List<string> SystemTypeList = new List<string>();
-    foreach (System.TypeCode tc in Enum.GetValues(typeof(System.TypeCode)))
-    {
-        if (!tc.ToString().Equals("Empty") && !tc.ToString().Equals("Object") && !tc.ToString().Equals("DBNull") && !tc.ToString().Equals("SByte") && !tc.ToString().Equals("Byte") && !tc.ToString().Equals("Single"))
-        {
-            SystemTypeList.Add(tc.ToString());
-        }
-    } 
-<div class="planingPartialDiv" id="createUnit">
-@using (Html.BeginForm("editDataType", "Home", new { area = "RPM" }))
 {
-   @(Html.TextBox("parent", @HttpContext.Current.Request.RequestContext.RouteData.Values["action"].ToString(), new {@class = "hidden"}))
-   @(Html.TextBox("id", Model.Id, new {@class = "hidden"})) 
-    <table>
-        <tr id="name">
-            <td>
-                Name:<Font color="red">*</Font>
-            </td>
-            <td>
-                @(Html.TextBoxFor(m => Model.Name, new {@class = "t-input", @autofocus = "autofocus", @tabindex = 1}))
-                <div class="errorMsg" style="vertical-align:top;">
-                    <font color="red">@Session["nameMsg"]</font>
-                </div>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                Description:
-            </td>
-            <td>
-                @(Html.TextBoxFor(m => Model.Description, new {@class = "t-input", @tabindex = 2}))
-            </td>
-        </tr>
-        <tr>
-            <td>
-                SystemType:
-            </td>
-            <td>
-                @(Html.Telerik().DropDownList()
-                    .Name("SystemType")
-                    .HtmlAttributes(new {@tabindex = 3})
-                    .DropDownHtmlAttributes(new {@style = "height: 200px"})
-                    .BindTo(new SelectList(SystemTypeList))
-                )
-            </td>
-        </tr>
-        <tr><td colspan="2"> </td></tr>
-        <tr>
-            <td>
-                <Font color="red">*</Font> Please don't leave empty
-                <br /><br />
-                <button name="create" value="GetUnitInput" type="submit" class="t-button" title="Save the Data Type">Save</button>
-            </td>
-            <td>
-            </td>
-        </tr>    
-    </table>    
-}
-</div>
+    <div class="planingPartialDiv" id="createDataType">
+    @using (Html.BeginForm("editDataType", "Home", new { area = "RPM" }))
+    {
+       @(Html.TextBox("parent", @HttpContext.Current.Request.RequestContext.RouteData.Values["action"].ToString(), new {@class = "hidden"}))
+       @(Html.TextBox("id", Model.Id, new {@class = "hidden"})) 
+        <table>
+            <tr id="name">
+                <td>
+                    Name:<Font color="red">*</Font>
+                </td>
+                <td>
+                    @(Html.TextBoxFor(m => Model.Name, new {@class = "t-input", @autofocus = "autofocus", @tabindex = 1}))
+                </td>
+                <td class="errorMsg">@Session["nameMsg"]</td>
+            </tr>
+            <tr>
+                <td>
+                    Description:
+                </td>
+                <td>
+                    @(Html.TextBoxFor(m => Model.Description, new {@class = "t-input", @tabindex = 2}))
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    SystemType:
+                </td>
+                <td>
+                    <select class =" t-dropdown t-header t-dropdown-wrap systemType" name="systemType" id="systemType" tabindex = "3">
+                    @foreach (DataTypeInfo item in DataTypeInfo.Types)
+                    {
+                        <option value="@item.Code" title="@item.Description">@item.DisplayName</option>                  
+                    }
+                    </select>
+
+
+                </td>
+            </tr>
+            <tr>
+                <td><i>Note:</i></td>
+                <td><i id="note"></i></td>
+            </tr>
+        </table>
+        <div class="functions RPMbuttons">
+            <font class="RPMbuttons" color="red">*</font>Please don't leave empty
+        </div>
+        <div class="submit RPMbuttons">
+            <button name="create" value="create" type="submit" class="t-button"  id="saveButton" title="Save The Unit" tabindex = "4">Save</button>
+            @Html.ActionLink("Cancel", "DataTypeManager", "Home", new { area = "RPM", @class = "t-button", @title = "Cancel", @tabindex = "5" })
+        </div>     
+    }
+    </div>
+    
+    <script type="text/jscript">
+
+        $('#systemType').change(function () {
+            for (var i = 0; i < $('#systemType option').length; i++) {
+                if ($('#systemType').val() == $('#systemType option')[i].value)
+                {
+                    $('#note')[0].innerHTML = $('#systemType option')[i].title;
+                    $('#systemType')[0].title = $('#systemType option')[i].value;
+                }
+            }
+        })
+   
+        $(document).ready(function () {
+            for (var i = 0; i < $('#systemType option').length; i++)
+            {
+                if ($('#systemType').val() == $('#systemType option')[i].value)
+                {
+                    $('#note')[0].innerHTML = $('#systemType option')[i].title;
+                    $('#systemType')[0].title = $('#systemType option')[i].value;
+                }
+            }
+        })
+    </script>
 }
 else
 {

@@ -34,7 +34,7 @@
         </div>
 
         <div class="wizardStep_Description stepper">
-            <p>Please select a xsd schema to create a metadatastructure.</p>
+            <p>To import a new metadata structure into the system, please select a XSD schema either from your local computer or from the previously uploaded files.</p>
 
         </div>
         
@@ -62,7 +62,7 @@
                                 )
                             </td>
                             <td>
-                               Select a data file from your local computer.
+                               Select an XSD file from your local computer.
                             </td>
                             
                         </tr>
@@ -72,7 +72,7 @@
                                 @Html.DropDownListFor(m => m.SelectedServerFileName, new SelectList(Model.serverFileList), "Select")@*, new { disabled = "disabled" })*@
                             </td>
                             <td>
-                                Select a data file previously uploaded to the server.
+                                Select an XSD file previously uploaded to the server.
                             </td>
                         </tr>
                     </table>

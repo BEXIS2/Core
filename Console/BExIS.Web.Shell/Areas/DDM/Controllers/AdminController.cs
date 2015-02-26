@@ -156,6 +156,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
         public ActionResult ChangeIncludePrimaryData(bool includePrimaryData)
         {
             Session["IncludePrimaryData"] = includePrimaryData;
+            SaveConfig();
 
             return Content("true");
         }

@@ -486,6 +486,7 @@ namespace BExIS.Dcm.UploadWizard
                     return new List<string>()
                     {
                         ".avi",
+                        ".bmp",
                         ".csv",
                         ".doc",
                         ".docx",
@@ -500,6 +501,7 @@ namespace BExIS.Dcm.UploadWizard
                         ".txt",
                         ".xls",
                         ".xlsm",
+                        ".xsd",
                         ".zip"
                     };
                 }

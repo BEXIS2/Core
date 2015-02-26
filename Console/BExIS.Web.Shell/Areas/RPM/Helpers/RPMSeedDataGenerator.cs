@@ -26,8 +26,8 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
             createSeedDataTypes();
             createSIUnits();
 
-            //createEmlDatasetAdv();
-            //createABCD();
+            createEmlDatasetAdv();
+            createABCD();
         }
 
         private static void createResearchPlan()
@@ -360,9 +360,9 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
             DataTypeManager dataTypeManager = new DataTypeManager();
             UnitManager unitManager = new UnitManager();
 
-            MetadataStructure eml = mdsManager.Repo.Get(p => p.Name == "eml-dataset").FirstOrDefault();
+            MetadataStructure eml = mdsManager.Repo.Get(p => p.Name == "eml-dataset basic").FirstOrDefault();
 
-            if (eml == null) eml = mdsManager.Create("eml-dataset", "The eml-dataset module contains general information that describes dataset resources. It provides an overview about the dataset attributes such as title, abstract, keywords, contacts, and distribution of the data themselves.", "", "", null);
+            if (eml == null) eml = mdsManager.Create("eml-dataset basic", "The eml-dataset module contains general information that describes dataset resources. It provides an overview about the dataset attributes such as title, abstract, keywords, contacts, and distribution of the data themselves.", "", "", null);
 
             XmlDocument xmlDoc = new XmlDocument();
 
@@ -712,8 +712,8 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
 
             #region ABCD
 
-            MetadataStructure abcd = mdsManager.Repo.Get(p => p.Name == "ABCD").FirstOrDefault();
-            if (abcd == null) abcd = mdsManager.Create("ABCD", "Access to Biological Collections Data - Schema is a common data specification for biological collection units, including living and preserved specimens, along with field observations that did not produce voucher specimens.", "", "", null);
+            MetadataStructure abcd = mdsManager.Repo.Get(p => p.Name == "ABCD Basic").FirstOrDefault();
+            if (abcd == null) abcd = mdsManager.Create("ABCD Basic", "Access to Biological Collections Data - Schema is a common data specification for biological collection units, including living and preserved specimens, along with field observations that did not produce voucher specimens.", "", "", null);
 
             XmlDocument xmlDoc = new XmlDocument();
 

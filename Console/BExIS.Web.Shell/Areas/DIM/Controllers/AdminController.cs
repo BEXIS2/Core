@@ -59,7 +59,8 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
                         metadataStructure.Id,
                         metadataStructure.Name,
                         metadataStructure.Description,
-                        getDatasetVersionsDic(metadataStructure, datasetVersionIds)
+                        getDatasetVersionsDic(metadataStructure, datasetVersionIds),
+                         IsExportAvailable(metadataStructure)
                 
                     );
 
@@ -84,7 +85,8 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
                         metadataStructure.Id,
                         metadataStructure.Name,
                         metadataStructure.Description,
-                        getDatasetVersionsDic(metadataStructure,datasetVersionIds)
+                        getDatasetVersionsDic(metadataStructure,datasetVersionIds),
+                        IsExportAvailable(metadataStructure)
                 
                     );
 
@@ -153,7 +155,8 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
                     path_mapping_file = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), fileName);
 
                     xmlMapperManager = new XmlMapperManager();
-                    xmlMapperManager.Load(path_mapping_file);
+
+                    xmlMapperManager.Load(path_mapping_file, GetUserNameOrDefault());
 
                     return xmlMapperManager.Export(datasetVersion.Metadata, datasetVersion.Id);
             }
@@ -195,6 +198,18 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
 
         #region helper
 
+        public string GetUserNameOrDefault()
+        {
+            string userName = string.Empty;
+            try
+            {
+                userName = HttpContext.User.Identity.Name;
+            }
+            catch { }
+
+            return !string.IsNullOrWhiteSpace(userName) ? userName : "DEFAULT";
+        }
+
         private string getMappingFileName(DatasetVersion datasetVersion)
         {
             // get MetadataStructure 
@@ -224,6 +239,20 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
                     });
             }
             return datasetVersions;
+        }
+
+        private bool IsExportAvailable(MetadataStructure metadataStructure)
+        {
+            bool hasMappingFile = false;
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml(metadataStructure.Extra.OuterXml);
+
+            if (XmlUtility.GetXElementByNodeName("convertRef", XmlUtility.ToXDocument(doc)).Count() == 1)
+            {
+                hasMappingFile = true;
+            }
+
+            return hasMappingFile;
         }
 
         #endregion

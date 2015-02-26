@@ -163,7 +163,8 @@
     {
         //alert($("#includePrimaryDataCheckBox").is(':checked'));
         var includePrimaryData = $("#includePrimaryDataCheckBox").is(':checked');
-        $.post('@Url.Action("ChangeIncludePrimaryData", "Admin", new RouteValueDictionary { { "area", "DDM" } })', { includePrimaryData: includePrimaryData }, function (response) {
+           
+            $.post('@Url.Action("ChangeIncludePrimaryData", "Admin", new RouteValueDictionary { { "area", "DDM" } })', { includePrimaryData: includePrimaryData }, function (response) {
         })
     })
 

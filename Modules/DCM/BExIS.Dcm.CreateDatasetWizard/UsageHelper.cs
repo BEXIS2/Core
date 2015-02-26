@@ -72,6 +72,11 @@ namespace BExIS.Dcm.CreateDatasetWizard
             }
         }
 
+        /// <summary>
+        /// Search in the packageusages 
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
         public static BaseUsage GetUsageById(long Id)
         {
             BaseUsage usage = new BaseUsage();
@@ -86,17 +91,20 @@ namespace BExIS.Dcm.CreateDatasetWizard
             {
                 return q.FirstOrDefault();
             }
-            else
-            {
-                MetadataAttributeManager mam = new MetadataAttributeManager();
 
-                var x = from c in mam.MetadataCompoundAttributeRepo.Get()
-                        from u in c.Self.MetadataNestedAttributeUsages
-                        where u.Id == Id
-                        select u;
+            return null;
 
-                return x.FirstOrDefault();
-            }
+            //else
+            //{
+            //    MetadataAttributeManager mam = new MetadataAttributeManager();
+
+            //    var x = from c in mam.MetadataCompoundAttributeRepo.Get()
+            //            from u in c.Self.MetadataNestedAttributeUsages
+            //            where u.Id == Id
+            //            select u;
+
+            //    return x.FirstOrDefault();
+            //}
         }
 
         public static List<BaseUsage> GetChildren(BaseUsage usage)

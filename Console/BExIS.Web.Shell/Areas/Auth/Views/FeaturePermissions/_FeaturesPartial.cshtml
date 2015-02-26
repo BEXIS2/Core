@@ -14,7 +14,8 @@
                 {
                     item.Text = feature.FeatureName;
                     item.Value = feature.Id.ToString();
-                    item.Checked = feature.IsPublic;
+                    item.Checked = feature.IsFeatureInEveryoneGroup;
+                    item.LinkHtmlAttributes["title"] = "Select " + feature.FeatureName + " to manage the corresponding feature permissions on the right.";
                 })                
                 .Children(feature => feature.Children));
         })
@@ -58,5 +59,7 @@
             $("#Grid_Subjects .t-refresh").trigger('click');
         });
     }
+
+    $(":checkbox").attr("title", "Checked \t -> \t public feature \nUnchecked \t -> \t NOT public feature");
 
 </script>

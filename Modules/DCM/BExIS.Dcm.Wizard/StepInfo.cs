@@ -117,6 +117,14 @@ namespace BExIS.Dcm.Wizard
         {
             this.valid = valid;
         }
+
+        public bool IsEquals(StepInfo stepInfo)
+        {
+            if (this.Id.Equals(stepInfo.Id))
+                return true;
+            else
+                return false;
+        }
     }
 
     /// <summary>

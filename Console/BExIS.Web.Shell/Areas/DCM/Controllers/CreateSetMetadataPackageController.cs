@@ -311,7 +311,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
              long parentUsageId = parentid;
              long grantParentUsageID = 0;
 
-             if (parentModelNumber == 0) parentModelNumber = 1;
+            if (parentModelNumber == 0) parentModelNumber = 1;
 
             if(TaskManager.Current().Parent.Parent!=null)
               grantParentUsageID = GetUsageId(TaskManager.Current().Parent.Parent.Id);
@@ -323,37 +323,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
              if(grantParentUsageID != 0)
                 grantParentModel = GetModelFromBus(grantParentUsageID);
 
-             BaseUsage metadataAttributeUsage = new BaseUsage();
-             BaseUsage parentUsage = new BaseUsage();
-
-             // both nested Usages
-             if (parentModel is MetadataCompoundAttributeModel && grantParentModel is MetadataCompoundAttributeModel)
-             {
-                 metadataAttributeUsage = UsageHelper.GetMetadataCompoundAttributeUsageById(id);
-                 parentUsage = UsageHelper.GetMetadataCompoundAttributeUsageById(parentid);
-             }
-
-             // parent = nested Usage && grantParent PackageUsage
-             if (parentModel is MetadataCompoundAttributeModel && grantParentModel is MetadataPackageModel)
-             {
-                 metadataAttributeUsage = UsageHelper.GetMetadataCompoundAttributeUsageById(id);
-                 parentUsage = UsageHelper.GetUsageById(parentid);
-             }
-
-             // parent = nested Usage && grantParent PackageUsage
-             if (parentModel is MetadataCompoundAttributeModel && grantParentModel == null)
-             {
-                 metadataAttributeUsage = UsageHelper.GetMetadataCompoundAttributeUsageById(id);
-                 parentUsage = UsageHelper.GetMetadataCompoundAttributeUsageById(parentid);
-             }
-
-             //parent MetadataAttributeUsage grantParent PackageUsage
-             if (parentModel is MetadataPackageModel && grantParentUsageID == 0)
-             {
-                 metadataAttributeUsage = UsageHelper.GetMetadataAttributeUsageById(id);
-                 parentUsage = UsageHelper.GetUsageById(parentid);
-             }
-
+            Tuple<BaseUsage, BaseUsage> usages = GetUsages(childUsageId, parentUsageId, grantParentUsageID);
+            BaseUsage metadataAttributeUsage = usages.Item1;
+            BaseUsage parentUsage = usages.Item2;
 
             //UpdateXml
             long metadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateDatasetTaskmanager.METADATASTRUCTURE_ID]);
@@ -466,24 +438,26 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         {
             TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
 
-            BaseUsage metadataAttributeUsage;
-            BaseUsage parentUsage;
-
             long metadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateDatasetTaskmanager.METADATASTRUCTURE_ID]);
 
-            if (TaskManager.IsParentChildfromRoot())
-            {
-                #region load metadataattribute
-                metadataAttributeUsage = UsageHelper.GetMetadataCompoundAttributeUsageById(id);
-                parentUsage = UsageHelper.GetMetadataAttributeUsageById(parentid);
-                #endregion
+            //if (TaskManager.IsParentChildfromRoot())
+            //{
+            //    #region load metadataattribute
+            //    metadataAttributeUsage = UsageHelper.GetMetadataCompoundAttributeUsageById(id);
+            //    parentUsage = UsageHelper.GetMetadataAttributeUsageById(parentid);
+            //    #endregion
 
-            }
-            else
-            {
-                metadataAttributeUsage = UsageHelper.GetMetadataCompoundAttributeUsageById(id);
-                parentUsage = UsageHelper.GetMetadataCompoundAttributeUsageById(parentid);
-            }
+            //}
+            //else
+            //{
+            //    metadataAttributeUsage = UsageHelper.GetMetadataCompoundAttributeUsageById(id);
+            //    parentUsage = UsageHelper.GetMetadataCompoundAttributeUsageById(parentid);
+            //}
+
+            Tuple<BaseUsage, BaseUsage> usages = GetUsages(id, parentid, GetUsageId(TaskManager.Current().Parent.Parent.Id));
+            BaseUsage metadataAttributeUsage = usages.Item1;
+            BaseUsage parentUsage = usages.Item2;
+
 
             MetadataAttributeModel modelAttribute = MetadataAttributeModel.Convert(metadataAttributeUsage, parentUsage, metadataStructureId, parentModelNumber);
             modelAttribute.Number = ++number;
@@ -647,7 +621,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             // load Instanz
             model.ConvertInstance((XDocument)(TaskManager.Bus[CreateDatasetTaskmanager.METADATA_XML]));
 
-            TaskManager.Current().Children.AddRange(UpdateStepsBasedOnUsage(model.Source));
+            TaskManager.Current().Children.AddRange(UpdateStepsBasedOnUsage(model.Source, TaskManager.Current()));
 
             //Add to Steps
             model.StepInfo = TaskManager.Current();
@@ -690,7 +664,14 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         {
             TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
 
-            MetadataCompoundAttributeModel model = MetadataCompoundAttributeModel.ConvertToModel(UsageHelper.GetMetadataCompoundAttributeUsageById(id), number);
+            // get usageid
+            int parentStepId = 0;
+            if (TaskManager.Current().Parent != null)
+            {
+                parentStepId = TaskManager.Current().Parent.Id;
+            }
+
+            MetadataCompoundAttributeModel model = MetadataCompoundAttributeModel.ConvertToModel(GetCompundAttributeUsage(id,  GetUsageId(parentStepId)), number);
             model.Number = ++number;
             model.ConvertMetadataAttributeModels();
 
@@ -703,7 +684,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             // load InstanzB
             model.ConvertInstance((XDocument)(TaskManager.Bus[CreateDatasetTaskmanager.METADATA_XML]));
 
-            TaskManager.Current().Children.AddRange(UpdateStepsBasedOnUsage(model.Source));
+            TaskManager.Current().Children.AddRange(UpdateStepsBasedOnUsage(model.Source,TaskManager.Current()));
 
             //Add to Steps
             model.StepInfo = TaskManager.Current();
@@ -1250,6 +1231,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 List<Error> errors = validateStep(GetModelFromBus(model.Source.Id, model.Number));
                 if (errors != null)
                     model.ErrorList = errors;
+                else
+                    model.ErrorList = new List<Error>();
 
             }
 
@@ -1284,6 +1267,16 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 //Id ist zu dem zeitpunktt die Id des attributes
                 mca = UsageHelper.GetMetadataCompoundAttributeUsageById(Id);
             }
+
+            long parentUsageId = 0;
+            long grantParentUsageId = 0;
+
+              if(TaskManager.Current().Parent!=null)
+                  parentUsageId = GetUsageId(TaskManager.Current().Parent.Id);
+
+              if (TaskManager.Current().Parent.Parent != null)
+                  grantParentUsageId = GetUsageId(TaskManager.Current().Parent.Parent.Id);
+
             
             MetadataCompoundAttributeModel model = MetadataCompoundAttributeModel.ConvertToModel(mca, getInstanzNumber(index));
 
@@ -1313,10 +1306,10 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             if (validateIt)
             {
-                ////validate packages
-                //List<Error> errors = ValidatePackageContainer(model.Source.Id);
-                //if (errors != null)
-                //    model.ErrorList = errors;
+                //validate packages
+                List<Error> errors = validateStep(model);
+                if (errors != null)
+                    model.ErrorList = errors;
 
             }
 
@@ -1459,15 +1452,16 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                     if (temp.Contains(stepId))
                     {
-                        temp.ToList().Sort();
+                        List<int> resultList = temp.ToList();
+                        resultList.Sort();
 
-                        return temp.ToList().IndexOf(stepId)+1;
+                        return resultList.IndexOf(stepId);
                     }
                 }
                 return 0;
             }
 
-            private List<StepInfo> UpdateStepsBasedOnUsage(BaseUsage usage)
+            private List<StepInfo> UpdateStepsBasedOnUsage(BaseUsage usage, StepInfo currentSelected)
             {
                 // genertae action, controller base on usage
                 string actionName = "";
@@ -1488,15 +1482,29 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 {
                     XDocument xMetadata = (XDocument)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_XML];
 
-                    var x = XmlUtility.GetXElementByAttribute(usage.Label, "type", BExIS.Xml.Helpers.XmlNodeType.MetadataAttributeUsage.ToString(), xMetadata);
+                    var x = new XElement("null");
+                    List<XElement> elements = new List<XElement>();
 
-                    if (x == null)
-                        x = XmlUtility.GetXElementByAttribute(usage.Label, "type", BExIS.Xml.Helpers.XmlNodeType.MetadataPackageUsage.ToString(), xMetadata);
+                    Dictionary<string, string> keyValueDic = new Dictionary<string, string>();
+                    keyValueDic.Add("id", usage.Id.ToString());
 
-                    if (x != null)
+                    if (usage is MetadataPackageUsage)
+                    {
+                        keyValueDic.Add("type", BExIS.Xml.Helpers.XmlNodeType.MetadataPackageUsage.ToString());
+                        elements = XmlUtility.GetXElementsByAttribute(usage.Label, keyValueDic, xMetadata).ToList();
+                    }
+                    else
+                    {
+                        keyValueDic.Add("type", BExIS.Xml.Helpers.XmlNodeType.MetadataAttributeUsage.ToString());
+                        elements = XmlUtility.GetXElementsByAttribute(usage.Label, keyValueDic, xMetadata).ToList();
+                    }
+
+                    x = elements.FirstOrDefault();
+
+                    if (x != null && !x.Name.Equals("null"))
                     {
 
-                        StepInfo current = TaskManager.Current();
+                        StepInfo current = currentSelected;
                         IEnumerable<XElement> xelements = x.Elements();
 
                         if (xelements.Count() > 0)
@@ -1532,7 +1540,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                                     };
 
                                     s.Children = GetChildrenSteps(usage, s);
-                                    current.Children.Add(s);
+                                    //current.Children.Add(s);
+                                    list.Add(s);
 
                                     if (TaskManager.Root.Children.Where(z => z.title.Equals(title)).Count() == 0)
                                     {
@@ -1607,7 +1616,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                             }
                         };
 
-                        s.Children = UpdateStepsBasedOnUsage(u).ToList();
+                        s.Children = UpdateStepsBasedOnUsage(u, s).ToList();
                         childrenSteps.Add(s);
 
                         if (TaskManager.Root.Children.Where(z => z.title.Equals(s.title)).Count() == 0)
@@ -1635,6 +1644,86 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 catch { }
 
                 return !string.IsNullOrWhiteSpace(userName) ? userName : "DEFAULT";
+            }
+
+            private Tuple<BaseUsage, BaseUsage> GetUsages(int usageId, long parentUsageId, long grantParentUsageId)
+            {
+
+                AbstractMetadataStepModel parentModel = GetModelFromBus(parentUsageId);
+
+                AbstractMetadataStepModel grantParentModel = new AbstractMetadataStepModel();
+
+                if (grantParentUsageId != 0)
+                    grantParentModel = GetModelFromBus(grantParentUsageId);
+
+                BaseUsage metadataAttributeUsage = new BaseUsage();
+                BaseUsage parentUsage = new BaseUsage();
+
+                // both nested Usages
+                if (parentModel is MetadataCompoundAttributeModel && grantParentModel is MetadataCompoundAttributeModel)
+                {
+                    metadataAttributeUsage = UsageHelper.GetMetadataCompoundAttributeUsageById(usageId);
+                    parentUsage = UsageHelper.GetMetadataCompoundAttributeUsageById(parentUsageId);
+                }
+
+                // parent = nested Usage && grantParent PackageUsage
+                if (parentModel is MetadataCompoundAttributeModel && grantParentModel is MetadataPackageModel)
+                {
+                    metadataAttributeUsage = UsageHelper.GetMetadataCompoundAttributeUsageById(usageId);
+                    parentUsage = UsageHelper.GetMetadataAttributeUsageById(parentUsageId);
+                }
+
+                // parent = nested Usage && grantParent PackageUsage
+                if (parentModel is MetadataCompoundAttributeModel && grantParentModel == null)
+                {
+                    metadataAttributeUsage = UsageHelper.GetMetadataCompoundAttributeUsageById(usageId);
+                    parentUsage = UsageHelper.GetMetadataCompoundAttributeUsageById(parentUsageId);
+                }
+
+                //parent MetadataAttributeUsage grantParent PackageUsage
+                if (parentModel is MetadataPackageModel && grantParentUsageId == 0)
+                {
+                    metadataAttributeUsage = UsageHelper.GetMetadataAttributeUsageById(usageId);
+                    parentUsage = UsageHelper.GetUsageById(parentUsageId);
+                }
+
+                //parent MetadataAttributeUsage grantParent PackageUsage
+                if (parentModel is MetadataPackageModel && grantParentModel is MetadataPackageModel)
+                {
+                    metadataAttributeUsage = UsageHelper.GetMetadataAttributeUsageById(usageId);
+                    parentUsage = UsageHelper.GetUsageById(parentUsageId);
+                }
+
+                return new Tuple<BaseUsage, BaseUsage>(metadataAttributeUsage, parentUsage);
+            }
+
+            private BaseUsage GetCompundAttributeUsage(int usageId, long parentUsageId)
+            {
+
+                AbstractMetadataStepModel parentModel = GetModelFromBus(parentUsageId);
+
+                BaseUsage metadataAttributeUsage = new BaseUsage();
+                BaseUsage parentUsage = new BaseUsage();
+
+                // both nested Usages
+                if (parentModel is MetadataCompoundAttributeModel)
+                {
+                    metadataAttributeUsage = UsageHelper.GetMetadataCompoundAttributeUsageById(usageId);
+                }
+
+                //parent MetadataAttributeUsage grantParent PackageUsage
+                if (parentModel is MetadataPackageModel)
+                {
+                    metadataAttributeUsage = UsageHelper.GetMetadataAttributeUsageById(usageId);
+                }
+
+                if (parentModel == null)
+                {
+                    metadataAttributeUsage = UsageHelper.GetMetadataAttributeUsageById(usageId);
+                }
+
+
+                return metadataAttributeUsage;
             }
 
         #endregion

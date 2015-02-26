@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -28,8 +29,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             long metadatstructureId = 0;
 
             ParametersModel model = new ParametersModel();
-            model.StepInfo = TaskManager.Current();
-            model.StepInfo.notExecuted = true;
 
             if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.METADATASTRUCTURE_ID))
             {
@@ -45,6 +44,16 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             {
                 ModelState.AddModelError("", "MetadataStructure not exist");
             }
+
+            if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.TITLE_NODE))
+                model.TitleNode = TaskManager.Bus[ImportMetadataStructureTaskManager.TITLE_NODE].ToString();
+
+            if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.DESCRIPTION_NODE))
+                model.DescriptionNode = TaskManager.Bus[ImportMetadataStructureTaskManager.DESCRIPTION_NODE].ToString();
+
+
+            model.StepInfo = TaskManager.Current();
+            model.StepInfo.notExecuted = true;
 
            return PartialView(model);
         }
@@ -64,6 +73,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             }
             else
             {
+
                 TaskManager.Current().SetValid(false);
                 ModelState.AddModelError("", "Please save the configurations.");
             }
@@ -153,6 +163,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             return PartialView("SetParameters",model);
         }
 
+      
         #region extra xdoc
 
         private void StoreParametersToMetadataStruture(long id, string titlePath, string descriptionPath)

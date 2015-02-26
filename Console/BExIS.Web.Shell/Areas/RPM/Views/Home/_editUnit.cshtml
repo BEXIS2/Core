@@ -4,16 +4,6 @@
 @using BExIS.Dlm.Services.DataStructure
 @model BExIS.Dlm.Entities.DataStructure.Unit
 
-@*<header>*@
-    <link href="@Url.Content("~/Areas/RPM/Stylesheets/RPM.css")" rel="stylesheet" type="text/css" />  
-@*</header> *@
-
-@section Scripts{
-    <script src="@Url.Content("~/Scripts/jQueryUI/1.10.4/js/jquery-ui-1.10.4.custom.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/Scripts/bppHelper.js")" type="text/javascript"></script>
-    
-}
-
 @if(Model != null)
 {
     List<string> MeasurementSystemList = new List<string>();
@@ -61,29 +51,25 @@
                     Name:<font color="red">*</font>
                 </td>
                 <td>
-                    @(Html.TextBoxFor(m => Model.Name, new { @class = "t-input" , @autofocus = "autofocus", @tabindex = 1}))
-                    <div class="errorMsg" style="vertical-align:top;">
-                        <font color="red">@Session["nameMsg"]</font>
-                    </div>
+                    @(Html.TextBoxFor(m => Model.Name, new { @class = "t-input" , @autofocus = "autofocus", @tabindex = "1"}))
                 </td>
+                <td class="errorMsg">@Session["nameMsg"]</td>
             </tr>
             <tr>
                 <td>
                     Abbreviation:<Font color="red">*</Font>
                 </td>
                 <td>
-                    @(Html.TextBoxFor(m => Model.Abbreviation, new { @class = "t-input", @tabindex = 2}))
-                    <div class="errorMsg" style="vertical-align:top;">
-                        <font color="red">@Session["abbrMsg"]</font>
-                    </div>
+                    @(Html.TextBoxFor(m => Model.Abbreviation, new { @class = "t-input", @tabindex = "2"}))
                 </td>
+                <td class="errorMsg">@Session["abbrMsg"]</td>
             </tr>
             <tr>
                 <td>
                     Description:
                 </td>
                 <td>
-                    @(Html.TextBoxFor(m => Model.Description, new { @class = "t-input", @tabindex = 3}))
+                    @(Html.TextBoxFor(m => Model.Description, new { @class = "t-input", @tabindex = "3"}))
                 </td>
             </tr>
             <tr>
@@ -91,7 +77,7 @@
                     Dimension:
                 </td>
                 <td>
-                    @(Html.TextBoxFor(m => Model.Dimension, new { @class = "t-input", @tabindex = 4 }))
+                    @(Html.TextBoxFor(m => Model.Dimension, new { @class = "t-input", @tabindex = "4" }))
                 </td>
             </tr>
             <tr>
@@ -108,45 +94,39 @@
                     )
                 </td>
             </tr>
-            <tr>
-                <td colspan="2">
-                @(Html.Telerik().Grid(dataTypeList)
-                    .Name("DataTypeGrid")
-                    .Scrollable(t => t.Height(250))
-                    .Sortable()
-                    .Filterable()
-                    //.DataBinding(binding => binding.Ajax().OperationMode(GridOperationMode.Client))
-                    .Columns(columns =>
-                        {
-                            columns.Template(
-                            @<text>
-                                <input class="checkBox" name="checkedRecords" type="checkbox" value="@item.Id " title="checkedRecords" 
-                                    @if (dataTypeIds.Contains(item.Id) || checkedIds.Contains(item.Id))
-                                    {
-                                        <text>checked="checked"</text>
-                                    }
-                                />
-                            </text>)
-                            .Title("").Width(36).HtmlAttributes(new { style = "text-align:center" });
-                            columns.Bound(c => c.Name);
-                            columns.Bound(c => c.Id);
-                            columns.Bound(c => c.SystemType);
-                            columns.Bound(c => c.Description);
-                        })
-                                            )
-                </td>
-            </tr>
-            <tr><td colspan="2"> </td></tr>
-            <tr>
-                <td>
-                    <Font color="red">*</Font> Please don't leave empty
-                    <br /><br />
-                    <button name="create" value="GetUnitInput" type="submit" class="t-button"  id="saveButton" title="Save The Unit">Save</button>
-                </td>
-                <td>
-                </td>
-            </tr>    
-        </table>    
+        </table>
+        <div class="errorMsg">@Session["dataTypeMsg"]</div>
+        @(Html.Telerik().Grid(dataTypeList)
+            .Name("DataTypeGrid")
+            .Scrollable(t => t.Height(250))
+            .Sortable()
+            .Filterable()
+            //.DataBinding(binding => binding.Ajax().OperationMode(GridOperationMode.Client))
+            .Columns(columns =>
+                {
+                    columns.Template(
+                    @<text>
+                        <input class="checkBox" name="checkedRecords" type="checkbox" value="@item.Id " title="checkedRecords" tabindex = "5" 
+                            @if (dataTypeIds.Contains(item.Id) || checkedIds.Contains(item.Id))
+                            {
+                                <text>checked="checked"</text>
+                            }
+                        />
+                    </text>)
+                    .Title("").Width(36).HtmlAttributes(new { style = "text-align:center" });
+                    columns.Bound(c => c.Name);
+                    columns.Bound(c => c.Id);
+                    columns.Bound(c => c.SystemType);
+                    columns.Bound(c => c.Description);
+                })
+            )
+        <div class="functions RPMbuttons">
+        <font class="RPMbuttons" color="red">*</font>Please don't leave empty
+        </div>
+        <div class="submit RPMbuttons">
+            <button name="create" value="create" type="submit" class="t-button"  id="saveButton" title="Save The Unit" tabindex = "6">Save</button>
+            @Html.ActionLink("Cancel", "UnitManager", "Home", new { area = "RPM", @class = "t-button", @title = "Cancel", @tabindex = "7" })
+        </div>       
     }
 
 </div>

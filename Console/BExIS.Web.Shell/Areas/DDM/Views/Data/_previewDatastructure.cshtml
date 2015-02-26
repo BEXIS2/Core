@@ -9,7 +9,9 @@
     //Model.item1 = SearchResultPreview
     //Model.item2 = DatasetId
 
-    
+    GridPagerStyles pagerStyles = GridPagerStyles.PageSizeDropDown;
+    pagerStyles |= GridPagerStyles.NextPreviousAndNumeric;
+    pagerStyles |= GridPagerStyles.Numeric;
 
 }
 
@@ -64,7 +66,10 @@
 
                     .Pageable(paging =>
                         paging.PageSize(10)
-                            )
+                        .Style(pagerStyles)
+                        .Position(GridPagerPosition.Both)
+                    )
+                            
                     .ColumnContextMenu()
         )
     }

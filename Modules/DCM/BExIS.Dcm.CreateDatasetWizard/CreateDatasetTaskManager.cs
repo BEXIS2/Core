@@ -102,6 +102,8 @@ namespace BExIS.Dcm.CreateDatasetWizard
         /// <returns></returns>
         public int GetCurrentStepInfoIndex()
         {
+
+
             return Current().Id;
         }
 
@@ -469,6 +471,35 @@ namespace BExIS.Dcm.CreateDatasetWizard
 
             return i;
         }
+
+        public int GetPosition()
+        { 
+            return GetX(Current(), 1);
+        }
+
+        public int GetX(StepInfo step, int position)
+        {
+            StepInfo parent = step.Parent;
+
+            if (IsRoot(parent))
+            {
+                int stepIndex = parent.Children.IndexOf(step);
+
+                for (int i = 0; i < stepIndex; i++)
+                {
+                    position += countSteps(parent.Children.ElementAt(i))+1;
+                }
+            }
+            else
+            {
+                position += parent.Children.IndexOf(step) + 1;
+                position = GetX(parent, position);
+            }
+
+            return position;
+        }
+
+        
 
         /// <summary>
         /// Remove stepInfo from parent stepInfo

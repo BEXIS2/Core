@@ -64,14 +64,26 @@ namespace BExIS.Xml.Helpers
                     Debug.WriteLine(item.Name);
                     Debug.WriteLine("---------------------------------");
                     //elements.Add((XmlSchemaElement)item);
-                    elements = GetElements((XmlSchemaElement)item, elements, true);
+                    elements = GetElements((XmlSchemaElement)item, elements, true, new List<XmlSchemaElement>());
                 }
             }
 
             return elements;
         }
 
-        public static List<XmlSchemaElement> GetAllElements(XmlSchemaObject obj, bool recursive)
+        public static List<XmlSchemaGroup> GetAllGroups(XmlSchema schema)
+        {
+            List<XmlSchemaGroup> groups = new List<XmlSchemaGroup>();
+
+            foreach (XmlSchemaGroup item in schema.Groups.Values)
+            {
+                groups.Add(item);
+            }
+
+            return groups;
+        }
+
+        public static List<XmlSchemaElement> GetAllElements(XmlSchemaObject obj, bool recursive, List<XmlSchemaElement> allElements)
         {
             List<XmlSchemaElement> elements  = new List<XmlSchemaElement>(); 
 
@@ -92,7 +104,7 @@ namespace BExIS.Xml.Helpers
                         // Iterate over each XmlSchemaElement in the Items collection.
                         foreach (XmlSchemaObject childElement in sequence.Items)
                         {
-                            elements = GetElements(childElement, elements, recursive);
+                            elements = GetElements(childElement, elements, recursive, allElements);
                         }
                     }
 
@@ -106,7 +118,7 @@ namespace BExIS.Xml.Helpers
                         // Iterate over each XmlSchemaElement in the Items collection.
                         foreach (XmlSchemaObject childElement in choice.Items)
                         {
-                            elements = GetElements(childElement, elements, recursive);
+                            elements = GetElements(childElement, elements, recursive, allElements);
                         }
                     }
                     #endregion
@@ -127,7 +139,7 @@ namespace BExIS.Xml.Helpers
                         // Iterate over each XmlSchemaElement in the Items collection.
                         foreach (XmlSchemaObject childElement in sequence.Items)
                         {
-                            elements = GetElements(childElement, elements, recursive);
+                            elements = GetElements(childElement, elements, recursive, allElements);
                         }
                     }
 
@@ -141,21 +153,71 @@ namespace BExIS.Xml.Helpers
                         // Iterate over each XmlSchemaElement in the Items collection.
                         foreach (XmlSchemaObject childElement in choice.Items)
                         {
-                            elements = GetElements(childElement, elements, recursive);
+                            elements = GetElements(childElement, elements, recursive, allElements);
                         }
                     }
                     #endregion
                 }
             }
 
+            if (obj is XmlSchemaGroup)
+            {
+                XmlSchemaGroup group = obj as XmlSchemaGroup;
 
+              #region sequence
+                    /// Get the sequence particle of the complex type.
+                    XmlSchemaSequence sequence = group.Particle as XmlSchemaSequence;
+                    if (sequence != null)
+                    {
+                        // Iterate over each XmlSchemaElement in the Items collection.
+                        foreach (XmlSchemaObject childElement in sequence.Items)
+                        {
+                            elements = GetElements(childElement, elements, recursive, allElements);
+                        }
+                    }
+
+              #endregion
+
+                #region choice
+                // check if it is e choice
+                XmlSchemaChoice choice = group.Particle as XmlSchemaChoice;
+                if (choice != null)
+                {
+                    // Iterate over each XmlSchemaElement in the Items collection.
+                    foreach (XmlSchemaObject childElement in choice.Items)
+                    {
+                        elements = GetElements(childElement, elements, recursive, allElements);
+                    }
+                }
+                #endregion
+
+            }
+
+            //if (obj is XmlSchemaSequence)
+            //{
+            //    // Iterate over each XmlSchemaElement in the Items collection.
+            //    foreach (XmlSchemaObject childElement in ((XmlSchemaSequence)obj).Items)
+            //    {
+            //        elements = GetAllElements(childElement, recursive, allElements);
+            //    }
+            //}
+
+            //if (obj is XmlSchemaChoice)
+            //{
+            //    // Iterate over each XmlSchemaElement in the Items collection.
+            //    foreach (XmlSchemaObject childElement in ((XmlSchemaChoice)obj).Items)
+            //    {
+            //        elements = GetAllElements(childElement, recursive, allElements);
+            //    }
+            //}
+
+        
             return elements;
 
         }
 
-        private static List<XmlSchemaElement> GetElements(XmlSchemaObject element, List<XmlSchemaElement> list, bool recursive )
+        private static List<XmlSchemaElement> GetElements(XmlSchemaObject element, List<XmlSchemaElement> list, bool recursive, List<XmlSchemaElement> allElements)
         {
-
             // Element
             if (element.GetType().Equals(typeof(XmlSchemaElement)))
             {
@@ -163,12 +225,11 @@ namespace BExIS.Xml.Helpers
 
                 if (child.Name != null)
                 {
-
                     if (list.Where(e => e.Name.Equals(child.Name)).Count() == 0)
                     {
                         //if (!child.SchemaTypeName.Name.Equals(parentTypeName))
                         //{
-
+                        
                         list.Add(child);
 
                         if (recursive)
@@ -187,7 +248,7 @@ namespace BExIS.Xml.Helpers
                                     // Iterate over each XmlSchemaElement in the Items collection.
                                     foreach (XmlSchemaObject childElement in sequence.Items)
                                     {
-                                        list = GetElements(childElement, list, recursive);
+                                        list = GetElements(childElement, list, recursive, allElements);
                                     }
                                 }
 
@@ -201,7 +262,7 @@ namespace BExIS.Xml.Helpers
                                     // Iterate over each XmlSchemaElement in the Items collection.
                                     foreach (XmlSchemaObject childElement in choice.Items)
                                     {
-                                        list = GetElements(childElement, list, recursive);
+                                        list = GetElements(childElement, list, recursive, allElements);
                                     }
                                 }
                                 #endregion
@@ -209,6 +270,54 @@ namespace BExIS.Xml.Helpers
                         }
 
                         //}
+                    }
+                }
+                else
+                {
+                    if (child.RefName != null)
+                    {
+                        XmlSchemaElement refElement = allElements.Where(e => e.QualifiedName.Equals(child.RefName)).FirstOrDefault();
+                        if (refElement != null)
+                        {
+                            list.Add(refElement);
+
+                            if (recursive)
+                            {
+
+                                Debug.WriteLine("--<" + refElement.Name);
+
+                                XmlSchemaComplexType complexType = refElement.ElementSchemaType as XmlSchemaComplexType;
+                                if (complexType != null)
+                                {
+                                    #region sequence
+                                    /// Get the sequence particle of the complex type.
+                                    XmlSchemaSequence sequence = complexType.ContentTypeParticle as XmlSchemaSequence;
+                                    if (sequence != null)
+                                    {
+                                        // Iterate over each XmlSchemaElement in the Items collection.
+                                        foreach (XmlSchemaObject childElement in sequence.Items)
+                                        {
+                                            list = GetElements(childElement, list, recursive, allElements);
+                                        }
+                                    }
+
+                                    #endregion
+
+                                    #region choice
+                                    // check if it is e choice
+                                    XmlSchemaChoice choice = complexType.ContentTypeParticle as XmlSchemaChoice;
+                                    if (choice != null)
+                                    {
+                                        // Iterate over each XmlSchemaElement in the Items collection.
+                                        foreach (XmlSchemaObject childElement in choice.Items)
+                                        {
+                                            list = GetElements(childElement, list, recursive, allElements);
+                                        }
+                                    }
+                                    #endregion
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -220,7 +329,7 @@ namespace BExIS.Xml.Helpers
                 // Iterate over each XmlSchemaElement in the Items collection.
                 foreach (XmlSchemaObject childElement in choice.Items)
                 {
-                    list = GetElements(childElement, list, recursive);
+                    list = GetElements(childElement, list, recursive, allElements);
                 }
             }
             else 
@@ -231,7 +340,7 @@ namespace BExIS.Xml.Helpers
                 // Iterate over each XmlSchemaElement in the Items collection.
                 foreach (XmlSchemaObject childElement in sequence.Items)
                 {
-                    list = GetElements(childElement, list, recursive);
+                    list = GetElements(childElement, list, recursive, allElements);
                 }
             }
 
@@ -281,12 +390,52 @@ namespace BExIS.Xml.Helpers
             return false;
         }
 
+        public static bool IsAllSimpleType(List<XmlSchemaElement> elements)
+        {
+            bool allSimple = true;
+
+            foreach (XmlSchemaElement element in elements)
+            {
+                if (!IsSimpleType(element))
+                {
+                    allSimple = false;
+                }
+            }
+
+            return allSimple;
+        }
+
         public static XmlSchemaComplexType GetComplextType(XmlSchemaElement element)
         {
             if (element.ElementSchemaType is XmlSchemaComplexType)
                 return element.ElementSchemaType as XmlSchemaComplexType;
 
             return null;
+        }
+
+
+        public static List<XmlSchemaElement> GetAllSimpleElements(List<XmlSchemaElement> elements)
+        {
+            List<XmlSchemaElement> simpleElementList = new List<XmlSchemaElement>();
+
+            foreach (XmlSchemaElement element in elements)
+            {
+                if (IsSimpleType(element)) simpleElementList.Add(element);
+            }
+
+            return simpleElementList;
+        }
+
+        public static List<XmlSchemaElement> GetAllComplexElements(List<XmlSchemaElement> elements)
+        {
+            List<XmlSchemaElement> simpleElementList = new List<XmlSchemaElement>();
+
+            foreach (XmlSchemaElement element in elements)
+            {
+                if (!IsSimpleType(element)) simpleElementList.Add(element);
+            }
+
+            return simpleElementList;
         }
     }
 }

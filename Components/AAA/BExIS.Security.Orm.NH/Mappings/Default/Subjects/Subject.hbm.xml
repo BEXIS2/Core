@@ -18,6 +18,8 @@
     <!-- Mapping Subject Properties -->
     <property name="Name" type="String" />
 
+    <property name="IsSystemSubject" type="yes_no" />
+
     <!-- Mapping Subject Properties -->
     <set name="Permissions" cascade="all-delete-orphan" lazy="true">
       <key column="SubjectRef"/>

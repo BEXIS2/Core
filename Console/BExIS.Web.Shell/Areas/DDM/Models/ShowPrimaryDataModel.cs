@@ -92,6 +92,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Models
             values.Add(float.MaxValue);
             values.Add(decimal.MaxValue);
             values.Add(DateTime.MaxValue);
+            values.Add(-99999);
 
             return values;
         }

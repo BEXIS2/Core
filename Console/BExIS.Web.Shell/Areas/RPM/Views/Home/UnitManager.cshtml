@@ -6,25 +6,25 @@
 @using BExIS.Web.Shell.Areas.RPM.Controllers
 @model List<BExIS.Dlm.Entities.DataStructure.Unit>
 
+@*<header>*@
+    <link href="@Url.Content("~/Areas/RPM/Stylesheets/RPM.css")" rel="stylesheet" type="text/css" />  
+@*</header> *@
+
 @{
-    string rgxPattern = "[ ]";
-    string rgxReplace = "_";
     string temp = "";
-    Regex rgx = new Regex(rgxPattern);
     
     Unit unit = (Unit)Session["Unit"];
-    string windowName = "Add";
+    string windowName = "Create Unit";
     
     if(unit != null)
     {
         if (unit.Name != null && unit.Name != "")
         {
-            windowName = rgx.Replace(unit.Name, rgxReplace);
+            windowName = "Edit "+unit.Name;
         }
     }
     else
     {
-        windowName = "Add";
         unit = new Unit(); 
     }
     
@@ -115,7 +115,8 @@
 
     <div style="position:absolute; left:20%; top:60px;">
                     @{ Html.Telerik().Window()
-                            .Name(windowName)
+                            .Name("UintWindow")
+                            .Title(windowName)
                             .ClientEvents((events => events.OnClose("close")))
                             .Draggable(true)
                             .Modal(true)
@@ -150,9 +151,10 @@
             async: true,
             processData: false
         });
+
+        window.location.href = '/RPM/Home/UnitManager';
     }
 </script>
-
    
 @*<script type="text/javascript">
 

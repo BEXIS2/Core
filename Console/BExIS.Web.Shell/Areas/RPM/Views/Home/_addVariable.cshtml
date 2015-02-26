@@ -48,6 +48,7 @@ else
                             }
                             @(Html.Telerik().IntegerTextBox()
                                 .Name(item.Id.ToString())
+                                .HtmlAttributes(new { @tabindex = "3" })
                                 .Value(value)
                                 .MinValue(0)
                                 .ClientEvents(events =>
@@ -74,9 +75,10 @@ else
 
             })
             )
-            <br />
-            <br />
-            <button name="addVariables" value="add" type="submit" class="t-button">Save</button>
+            <div class="submit RPMbuttons">
+            <button name="addVariables" value="add" type="submit" class="t-button"  id="saveButton" title="Save The Unit" tabindex = "1">Save</button>
+            @Html.ActionLink("Cancel", "showDataStructure", "Home", new { SelectedItem = Model.dataStructure.Id + "," + Model.structured }, new { area = "RPM", @class = "t-button", @title = "Cancel", @tabindex = "2", @autofocus = "autofocus" })
+        </div>
         }
     </div>
     

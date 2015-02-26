@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Xml;
+using System.Xml.Linq;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.IO.Transform.Validation.DSValidation;
 using BExIS.IO.Transform.Validation.Exceptions;
+using BExIS.Xml.Helpers;
 
 /// <summary>
 ///
@@ -275,6 +278,8 @@ namespace BExIS.IO.Transform.Output
                 variables = GetSubsetOfVariables(ds.Variables.ToList(), VisibleColumns);
             }
 
+            variables = SortVariablesOnDatastructure(variables, ds);
+
             foreach (Variable v in variables)
             {
                 string value = v.Label.ToString();
@@ -302,6 +307,26 @@ namespace BExIS.IO.Transform.Output
             }
 
             return builder.ToString();
+        }
+
+        private List<Variable> SortVariablesOnDatastructure(List<Variable> variables, DataStructure datastructure)
+        {
+            List<Variable> sortedVariables = new List<Variable>();
+
+            XmlDocument extra = new XmlDocument();
+            extra.LoadXml(datastructure.Extra.OuterXml);
+            IEnumerable<XElement> elements = XmlUtility.GetXElementByNodeName("variable", XmlUtility.ToXDocument(extra));
+
+            foreach (XElement element in elements)
+            {
+                long id = Convert.ToInt64(element.Value);
+                Variable var =variables.Where(v => v.Id.Equals(id)).FirstOrDefault();
+                if(var !=null)
+                    sortedVariables.Add(var);
+            }
+
+
+            return sortedVariables;
         }
 
         

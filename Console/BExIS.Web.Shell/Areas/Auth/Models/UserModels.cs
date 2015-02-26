@@ -11,12 +11,9 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
 {
     public class UserChangePasswordModel
     {
-        public long Id { get; set; }
+        public long UserId { get; set; }
 
-        [Display(Name = "Password")]
-        [RegularExpression("^[\\S]*$", ErrorMessage = "The password is invalid.")]
         [Required]
-        [StringLength(24, ErrorMessage = "The password must be {2} - {1} characters long.", MinimumLength = 6)]
         public string Password { get; set; }
     }
 
@@ -68,88 +65,48 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
         }
     }
 
-    public class UserUpdateModel
+    public class UserEditModel
     {
-        public long Id { get; set; }
+        public long UserId { get; set; }
+
+        [Required]
         public string UserName { get; set; }
+
+        [Required]
         public string FullName { get; set; }
+
+        [Required]
+        [Email]
         public string Email { get; set; }
 
+        public string Password { get; set; }
+
+        [Compare("Password", ErrorMessage = "The password and confirmation do not match.")]
+        [Display(Name = "Confirm Password")]
+        public string ConfirmPassword { get; set; }
+
+        [Display(Name = "Approved")]
         public bool IsApproved { get; set; }
-        public bool IsBanned { get; set; }
+
+        [Display(Name = "Blocked")]
+        public bool IsBlocked { get; set; }
+
+        [Display(Name = "Locked Out")]
         public bool IsLockedOut { get; set; }
 
-
-        public static UserUpdateModel Convert(User user)
+        public static UserEditModel Convert(User user)
         {
-            return new UserUpdateModel()
+            return new UserEditModel()
             {
-                Id = user.Id,
+                UserId = user.Id,
                 UserName = user.Name,
                 FullName = user.FullName,
                 Email = user.Email,
 
                 IsApproved = user.IsApproved,
-                IsBanned = user.IsBanned,
-                IsLockedOut = user.IsLockedOut
+                IsBlocked = user.IsBlocked,
+                IsLockedOut = user.IsLockedOut,
             };
-
-        }
-    }
-
-    public class UserReadModel
-    {
-        public long Id { get; set; }
-        public string UserName { get; set; }
-        public string FullName { get; set; }
-        public string Email { get; set; }
-
-        public bool IsApproved { get; set; }
-        public bool IsBanned { get; set; }
-        public bool IsLockedOut { get; set; }
-
-        public static UserReadModel Convert(User user)
-        {
-            return new UserReadModel()
-            {
-                Id = user.Id,
-                UserName = user.Name,
-                FullName = user.FullName,
-                Email = user.Email,
-
-                IsApproved = user.IsApproved,
-                IsBanned = user.IsBanned,
-                IsLockedOut = user.IsLockedOut
-            };
-
-        }
-    }
-
-    public class UserDeleteModel
-    {
-        public long Id { get; set; }
-        public string UserName { get; set; }
-        public string FullName { get; set; }
-        public string Email { get; set; }
-
-        public bool IsApproved { get; set; }
-        public bool IsBanned { get; set; }
-        public bool IsLockedOut { get; set; }
-
-        public static UserDeleteModel Convert(User user)
-        {
-            return new UserDeleteModel()
-            {
-                Id = user.Id,
-                UserName = user.Name,
-                FullName = user.FullName,
-                Email = user.Email,
-
-                IsApproved = user.IsApproved,
-                IsBanned = user.IsBanned,
-                IsLockedOut = user.IsLockedOut
-            };
-
         }
     }
 
@@ -161,7 +118,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
         public string Email { get; set; }
 
         public bool IsApproved { get; set; }
-        public bool IsBanned { get; set; }
+        public bool IsBlocked { get; set; }
         public bool IsLockedOut { get; set; }
 
 
@@ -175,7 +132,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
                 Email = user.Email,
 
                 IsApproved = user.IsApproved,
-                IsBanned = user.IsBanned,
+                IsBlocked = user.IsBlocked,
                 IsLockedOut = user.IsLockedOut
             };
 
@@ -184,20 +141,16 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
 
     public class UserMembershipGridRowModel
     {
-        public long UserId { get; set; }
-
         public long Id { get; set; }
         public string GroupName { get; set; }
         public string Description { get; set; }
 
         public bool IsUserInGroup { get; set; }
 
-        public static UserMembershipGridRowModel Convert(long userId, Group group, bool isUserInGroup)
+        public static UserMembershipGridRowModel Convert(Group group, bool isUserInGroup)
         {
             return new UserMembershipGridRowModel()
             {
-                UserId = userId,
-
                 Id = group.Id,
                 GroupName = group.Name,
                 Description = group.Description,
@@ -205,15 +158,5 @@ namespace BExIS.Web.Shell.Areas.Auth.Models
                 IsUserInGroup = isUserInGroup
             };
         }
-    }
-
-    public class UserSelectListItemModel
-    {
-
-    }
-
-    public class UserSelectListModel
-    {
-
     }
 }

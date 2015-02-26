@@ -28,16 +28,15 @@ namespace BExIS.Ext.Services
             {
                 if (task.Feature != null)
                 {
-                    if (!task.Feature.IsPublic)
-                    {
-                        SubjectManager subjectManager = new SubjectManager();
+                    PermissionManager permissionManager = new PermissionManager();
+                    SubjectManager subjectManager = new SubjectManager();
 
+                    if (!permissionManager.ExistsFeaturePermission(subjectManager.GetGroupByName("everyone").Id, task.Feature.Id))
+                    {
                         User user = subjectManager.GetUserByName(userName);
 
                         if (user != null)
                         {
-                            PermissionManager permissionManager = new PermissionManager();
-
                             if (!permissionManager.HasSubjectFeatureAccess(user.Id, task.Feature.Id))
                             {
                                 throw new UnauthorizedAccessException();
@@ -48,7 +47,7 @@ namespace BExIS.Ext.Services
                             throw new UnauthorizedAccessException();
                         }
                     }
-                }          
+                }
             }
             else
             {

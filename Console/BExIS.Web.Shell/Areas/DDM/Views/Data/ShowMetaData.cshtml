@@ -13,52 +13,32 @@
     </div>
 
     <br /><br /><br />
-    
-    
-    <table border="0" class="tableInformation">
-   
+<table class="tableInformation">
+
     @foreach (var packageUsage in Model.PU)
     {
-        
-        for (int i = 0; i < packageUsage.Packages.Count(); i++)
-        {
-            string index = "";
-            int j = i + 1;
-            if (j > 1) { index = j.ToString();}
-            
-            <tr>
-                <td class="packageName">
-                    <table><tr>
-                        <b>@packageUsage.Name @index</b>
-                    </tr></table>
-                </td>
-
-
-               <td class="childrens">
-               @foreach (KeyValuePair<string, string> obj in packageUsage.Packages.ElementAt(i).AttributeUsages)
-               {
-                   if(obj.Key != "Details" & obj.Key != "Additional Information")    
-                   {              
-                       <table border="0" class="tableInformation" ><tr>
-                         <td class="PackageAttributeUsage">
-                            <b>@obj.Key</b>
-                       </td>
-                       <td class="PackageAttributeUsageValue"> 
-                           @obj.Value
-                       </td>  
-                           </tr></table>
-                   }
-               }
-
+        <tr class="rowMD">
+            <td class="packageName">
+                <table><tr>
+                    <b>@packageUsage.Name</b>
+                </tr></table>
             </td>
-           </tr>
-        }
+            <td class="childrens">
+                <table class="noBorder">
+                @foreach (var child in packageUsage.Attributes)
+                { 
+                    <tr class="noBorder">
+                        @Html.Partial("_showItem", child)
+                    </tr>
+                }
+                </table>
+            </td>
+        </tr>
         
-
     }
 
-
-</table>                                       
+</table>  
+                                       
 }
 else
 { 
@@ -73,10 +53,13 @@ else
         padding:0px;
         vertical-align:text-top;
         border-style:none;
+        width:1000px;
     }
 
     .childrens {  
         border-style:none;
+        padding:0px;
+        margin:0px;
     }
 
     .description {
@@ -86,13 +69,66 @@ else
 
     .packageName {
         vertical-align:text-top; 
-        font-size:120%;
+        font-size:130%;
         width:200px;
         color:#666;
         border-style:none;
+        background-color:#eee;
+
     }
 
-    .PackageAttributeUsage {
+    .rowMD
+    {
+         border:none;
+         border-top: solid 1px;
+         padding-bottom: 5px;
+         padding-top: 5px;
+
+    }
+
+    .noBorder
+    {
+        border:none;
+        padding:0px;
+        padding-top:2px;
+        padding-bottom:0px;
+        margin:0px;
+    }
+
+    .highlight
+    {
+        border:none;
+        border-bottom:solid 1px; 
+        border-color:#eee;
+    }
+
+    .noBorder table,.noBorder tr, .tableInformation table
+    {
+        width:100%;
+    }
+
+    .lable
+    {
+        color:#666;
+        font-weight:bold;
+    }
+
+    .lableType
+    {
+        font-size:115%;
+    }
+
+    .value
+    {
+        width:300px;
+    }
+
+    .subNode
+    {
+        padding-left:10px;
+    }
+
+    /*.PackageAttributeUsage {
 
         width:150px;
         padding:0px;
@@ -104,6 +140,6 @@ else
         
         padding:0px;
         border-style:none;
-    }
+    }*/
 
 </style>

@@ -11,15 +11,17 @@ namespace BExIS.Web.Shell.Areas.DIM.Models
         public long Id { get; set; }
 
         public string Description { get; set; }
+        public bool ExportIsAvailable { get; set; }
 
         public List<DatasetVersionModel> DatasetVersions { get; set; }
 
-        public MetadataStructureModel(long id, string displayName, string description, List<DatasetVersionModel> datasetVersions)
+        public MetadataStructureModel(long id, string displayName, string description, List<DatasetVersionModel> datasetVersions, bool exportIsAvailable)
         {
             this.Id = id;
             this.Displayname = displayName;
             this.Description = description;
             this.DatasetVersions = datasetVersions;
+            this.ExportIsAvailable = exportIsAvailable;
         }
 
         public void AddMetadataPath(long id, string path)

@@ -108,7 +108,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                 try
                 {
-                    LoadXSDSchema();
+                    LoadXSDSchema(GetUserNameOrDefault());
                 }
                 catch (Exception ex)
                 {
@@ -137,7 +137,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         #region private methods
 
-        private void LoadXSDSchema()
+        private void LoadXSDSchema(string userName)
         {
             TaskManager = (ImportMetadataStructureTaskManager)Session["TaskManager"];
 
@@ -145,8 +145,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             //open schema
             XmlSchemaManager xmlSchemaManager = new XmlSchemaManager();
-            xmlSchemaManager.Load(path);
-
+            xmlSchemaManager.Load(path, userName);
+             
             if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.XML_SCHEMA_MANAGER))
                 TaskManager.Bus[ImportMetadataStructureTaskManager.XML_SCHEMA_MANAGER] = xmlSchemaManager;
             else

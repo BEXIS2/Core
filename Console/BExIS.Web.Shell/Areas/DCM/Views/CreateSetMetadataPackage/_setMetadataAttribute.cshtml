@@ -19,13 +19,12 @@
 
 
 
-<div id="@id" class="metadataAttributeContent">
+<tr id="@id" class="metadataAttributeContent">
 
    
     @if (@Model != null)
     {
-            <table>
-                <tr>
+
                     <td class="attributeInfo">
                         @if (Model.MinCardinality > 0)
                         { 
@@ -142,7 +141,7 @@
                         @Html.ValidationMessageFor(m => m.Value)
                     </td>
 
-                    @if (Model.MaxCardinality > 1)
+                    if (Model.MaxCardinality > 1)
                     {
 
                         <td>
@@ -170,15 +169,14 @@
 
 
                     }
-                </tr>
-            </table>
+
   
     }
     else
     { 
     <b>null</b>
     }
-</div> 
+</tr> 
      
 
 <script type="text/javascript">

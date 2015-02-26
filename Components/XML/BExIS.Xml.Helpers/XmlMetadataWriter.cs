@@ -9,6 +9,7 @@ using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Dlm.Entities.Common;
 using System.Xml.Schema;
+using System.Diagnostics;
 
 /// <summary>
 ///
@@ -25,7 +26,8 @@ namespace BExIS.Xml.Helpers
         MetadataAttribute,
         MetadataAttributeUsage,
         MetadataCompoundAttribute,
-        MetadataNestedAttributeUsage
+        MetadataNestedAttributeUsage,
+        Other
     }
 
     /// <summary>
@@ -152,6 +154,7 @@ namespace BExIS.Xml.Helpers
                 {
                     //XElement x = element.Descendants().Where(e => e.Name.Equals(nestedUsage.Member.Name)).First();
                     XElement x = AddAndReturnAttribute(element, nestedUsage, 1);
+                    Debug.WriteLine("ADDDDDDDD:            " + element.Name);
                     x = setChildren(x, nestedUsage);
                 }
             }
@@ -270,7 +273,7 @@ namespace BExIS.Xml.Helpers
                 string typeName = "";
                 string id = "";
                 string roleId = "";
-
+                List<MetadataNestedAttributeUsage> children = new List<MetadataNestedAttributeUsage>();
 
                 if (attributeUsage is MetadataAttributeUsage)
                 {
@@ -285,6 +288,12 @@ namespace BExIS.Xml.Helpers
                     typeName = mnau.Member.Name;
                     id = mnau.Member.Id.ToString();
                     roleId = mnau.Id.ToString();
+
+                    if (mnau.Member.Self is MetadataCompoundAttribute)
+                    {
+                        MetadataCompoundAttribute mca = (MetadataCompoundAttribute)mnau.Member.Self;
+                        children = mca.MetadataNestedAttributeUsages.ToList();
+                    }
                 }
                
 
@@ -304,6 +313,15 @@ namespace BExIS.Xml.Helpers
                     element.SetAttributeValue("roleId", roleId);
                     element.SetAttributeValue("id", id);
                     element.SetAttributeValue("number", number);
+
+                    if (children.Count > 0)
+                    {
+                        foreach (BaseUsage baseUsage in children)
+                        {
+                            element = AddAttribute(element, baseUsage, 1);
+                        }
+                    }
+        
                     role.Add(element);
                     current.Add(role);
                 
@@ -597,5 +615,22 @@ namespace BExIS.Xml.Helpers
 
         #endregion
 
+
+        #region static
+
+        public static XmlNodeType GetXmlNodeType(string typeName)
+        {
+            foreach (XmlNodeType type in Enum.GetValues(typeof(XmlNodeType)))
+            {
+                if (type.ToString().Equals(typeName))
+                    return type;
+            }
+
+            return XmlNodeType.Other;
+        }
+
+        #endregion
     }
+
+
 }

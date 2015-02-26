@@ -166,6 +166,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
 
                 for (int i = 0; i < filterSplit.Length; i += 3)
                 {
+                    filterDescriptor = new FilterDescriptor();
                     filterDescriptor.Member = filterSplit[i];
                     filterDescriptor.Operator = GetFilterOperator(filterSplit[i + 1]);
                     filterDescriptor.Value = filterSplit[i + 2].Replace("'","");
@@ -185,7 +186,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
 
                 for (int i = 0; i < orderSplit.Length; i += 2)
                 {
-
+                    sortDescriptor = new SortDescriptor();
                     sortDescriptor.Member = orderSplit[i];
                     sortDescriptor.SortDirection = GetSortDirection(orderSplit[i]);
                     command.SortDescriptors.Add(sortDescriptor);

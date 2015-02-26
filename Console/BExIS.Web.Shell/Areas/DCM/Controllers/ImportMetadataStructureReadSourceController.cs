@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using BExIS.Dcm.ImportMetadataStructureWizard;
 using BExIS.Dcm.Wizard;
+using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Web.Shell.Areas.DCM.Models.ImportMetadata;
 using BExIS.Xml.Helpers.Mapping;
@@ -27,10 +29,17 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             if (TaskManager != null)
             {
                 TaskManager.SetCurrent(index);
-
+                TaskManager.RemoveExecutedStep(TaskManager.Current());
+                TaskManager.Current().notExecuted = true;
             }
 
             ReadSourceModel model = new ReadSourceModel(TaskManager.Current());
+
+            if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.ROOT_NODE))
+                model.RootNode = TaskManager.Bus[ImportMetadataStructureTaskManager.ROOT_NODE].ToString();
+
+            if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.SCHEMA_NAME))
+                model.SchemaName = TaskManager.Bus[ImportMetadataStructureTaskManager.SCHEMA_NAME].ToString();
 
             return PartialView(model);
         }
@@ -89,8 +98,25 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             return Content("");
         }
 
+        public bool SchemaNameExist(string SchemaName)
+        {
+            MetadataStructureManager msm = new MetadataStructureManager();
+
+            if (msm.Repo.Get().Where(m => m.Name.ToLower().Equals(SchemaName.ToLower())).Count() == 0)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+
         public ActionResult GenerateMS()
         {
+          
+
             string root = "";
             string schemaName = "";
             long metadataStructureid = 0;
@@ -104,6 +130,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 schemaName = TaskManager.Bus[ImportMetadataStructureTaskManager.SCHEMA_NAME].ToString();
 
 
+           
 
             TaskManager = (ImportMetadataStructureTaskManager)Session["TaskManager"];
 
@@ -114,10 +141,22 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             model.SchemaName = schemaName;
             model.RootNode = root;
 
+            //
+
+            if (SchemaNameExist(schemaName))
+            {
+               model.ErrorList.Add(new Error(ErrorType.Other, "A Metadata structure with this name already exist. Please choose a other name."));
+            }
+
+            if (String.IsNullOrEmpty(schemaName))
+            {
+                model.ErrorList.Add(new Error(ErrorType.Other, "A Metadata structure must have a name."));
+            }
+
 
             //open schema
             XmlSchemaManager xmlSchemaManager = new XmlSchemaManager();
-            xmlSchemaManager.Load(path);
+            xmlSchemaManager.Load(path, GetUserNameOrDefault());
 
             if (model.ErrorList.Count == 0)
             {
@@ -127,6 +166,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 }
                 catch (Exception ex)
                 {
+                    xmlSchemaManager.Delete(schemaName);
                     ModelState.AddModelError("", ex.Message);
                     model.ErrorList.Add(new Error(ErrorType.Other, "Can not create metadatastructure."));
                 }
@@ -149,6 +189,20 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
 
             return PartialView("ReadSource",model);
+        }
+
+        // chekc if user exist
+        // if true return usernamem otherwise "DEFAULT"
+        public string GetUserNameOrDefault()
+        {
+            string userName = string.Empty;
+            try
+            {
+                userName = HttpContext.User.Identity.Name;
+            }
+            catch { }
+
+            return !string.IsNullOrWhiteSpace(userName) ? userName : "DEFAULT";
         }
     }
 }

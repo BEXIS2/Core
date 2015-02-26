@@ -7,7 +7,7 @@
 
 @{
 
-    int currentPage = @Model.GetCurrentStepInfoIndex();
+    int currentPage = @Model.GetPosition();
     
 }
 <div id="NavDiv">
@@ -49,10 +49,12 @@
                     {
                         <button id="nextBt" class="t-button" style="float:right" title="@Model.Next().title">Submit</button>
                     }
+                    
+                    @*
                     else
                     {
                         @Html.ActionLink("Close", "Close", "Create", new RouteValueDictionary { { "area", Model.Current().GetActionInfo.AreaName.ToString() } }, new { @class = "t-button", @style = "float:left", title = "Close Create a dataset wizard" })
-                    }
+                    }*@
 
                 }
 

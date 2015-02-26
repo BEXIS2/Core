@@ -5,24 +5,23 @@
 @using System.Text.RegularExpressions
 @model List<BExIS.Dlm.Entities.DataStructure.DataType>
 
-@{
-    string rgxPattern = "[ ]";
-    string rgxReplace = "_";
-    Regex rgx = new Regex(rgxPattern);
+@*<header>*@
+    <link href="@Url.Content("~/Areas/RPM/Stylesheets/RPM.css")" rel="stylesheet" type="text/css" />  
+@*</header> *@
 
+@{
     DataType dataType = (DataType)Session["DataType"];
-    string windowName = "Add";
+    string windowName = "Create Data Type";
 
     if(dataType != null)
     {
         if (dataType.Name != null && dataType.Name != "")
         {
-            windowName = rgx.Replace(dataType.Name, rgxReplace);
+            windowName = "Edit " +dataType.Name;
         }
     }
     else
     {
-        windowName = "Add";
         dataType = new DataType();
     }
 }
@@ -78,7 +77,8 @@
     <br />
     <div style="position:absolute; left:20%; top:60px;">
                     @{ Html.Telerik().Window()
-                            .Name(windowName)
+                            .Name("DataTypeWindow")
+                            .Title(windowName)
                             .Visible((bool)Session["Window"])
                             .Draggable(true)
                             .Modal(true)

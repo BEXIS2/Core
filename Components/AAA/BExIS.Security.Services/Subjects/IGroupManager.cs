@@ -12,7 +12,7 @@ namespace BExIS.Security.Services.Subjects
 
         bool AddUserToGroup(long userId, long groupId);
 
-        Group CreateGroup(string groupName, string description);
+        Group CreateGroup(string groupName, string description, bool isSystemSubject = false);
 
         bool DeleteGroupByName(string groupName);
 

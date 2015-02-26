@@ -26,7 +26,7 @@ namespace BExIS.Security.Entities.Subjects
         public virtual DateTime LastPasswordChangeDate { get; set; }
 
         public virtual Boolean IsApproved { get; set; }
-        public virtual Boolean IsBanned { get; set; }
+        public virtual Boolean IsBlocked { get; set; }
         public virtual Boolean IsLockedOut { get; set; }
 
         public virtual Int32 PasswordFailureCount { get; set; }

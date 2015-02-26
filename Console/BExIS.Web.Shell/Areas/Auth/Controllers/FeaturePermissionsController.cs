@@ -14,13 +14,21 @@ using Telerik.Web.Mvc;
 
 namespace BExIS.Web.Shell.Areas.Auth.Controllers
 {
-    public delegate bool IsPublicDelegate(long featureId);
+    public delegate bool IsFeatureInEveryoneGroupDelegate(long featureId);
 
     public class FeaturePermissionsController : Controller
     {
         public ActionResult Index()
         {
             return View();
+        }
+
+        public bool IsFeatureInEveryoneGroup(long featureId)
+        {
+            PermissionManager permissionManager = new PermissionManager();
+            SubjectManager subjectManager = new SubjectManager();
+
+            return permissionManager.ExistsFeaturePermission(subjectManager.GetGroupByName("everyone").Id, featureId);
         }
 
         public ActionResult Features()
@@ -30,7 +38,7 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
             List<FeatureTreeViewModel> features = new List<FeatureTreeViewModel>();
 
             IQueryable<Feature> roots = featureManager.GetRoots();
-            roots.ToList().ForEach(f => features.Add(FeatureTreeViewModel.Convert(f)));
+            roots.ToList().ForEach(f => features.Add(FeatureTreeViewModel.Convert(f, new IsFeatureInEveryoneGroupDelegate(IsFeatureInEveryoneGroup))));
 
             return View(features.AsEnumerable<FeatureTreeViewModel>());
         }
@@ -100,14 +108,22 @@ namespace BExIS.Web.Shell.Areas.Auth.Controllers
         public bool SetFeaturePublicity(long featureId, bool value)
         {
             FeatureManager featureManager = new FeatureManager();
+            PermissionManager permissionManager = new PermissionManager();
+            SubjectManager subjectManager = new SubjectManager();
 
             Feature feature = featureManager.GetFeatureById(featureId);
 
             if (feature != null)
             {
-                feature.IsPublic = value;
-
-                featureManager.UpdateFeature(feature);
+                if (value)
+                {
+                    permissionManager.CreateFeaturePermission(subjectManager.GetGroupByName("everyone").Id, feature.Id);
+                }
+                else
+                {
+                    permissionManager.DeleteFeaturePermission(subjectManager.GetGroupByName("everyone").Id, feature.Id);
+                }
+                
 
                 return true;
             }

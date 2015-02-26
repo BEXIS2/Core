@@ -6,10 +6,13 @@
 </h2>
 
 <p style="max-width:800px">
-    Here you are able to manage how users (or groups) have access to individual datasets. 
-    Please select a dataset in the table below and then specify who should have permissions to view, update delete or download primary data (Note: metadata is always free). 
-    By default only the creator of a dataset has fully access, all other permissions are not set, which means access is denied. 
-    Grants for individual users rule out higher level settings for groups. Please note that any change will take effect immediately without further confirmation or save/submit action.
+    Here you are able to manage how users (or groups) have access to individual datasets. Please select a dataset in the table below and specify who should have permissions to view, update, delete, download data, or who is able to grant access to other users (Note: metadata is always free). Ticking the checkboxes "public access" in the upper table will make a dataset accessible without authentification (public access to primary data). Please use with care!
+</p>
+<p style="max-width:800px">
+    By default only the creator of a dataset (in the system) has full access, all other permissions are not set, which means access is denied. Grants for individual users rule out higher level settings for groups.
+</p>
+<p style="max-width:800px">
+    Please note that any change will take effect immediately without further confirmation or save/submit action. 
 </p>
 
 @(Html.Telerik().Grid(new List<DatasetGridRowModel>())
@@ -20,19 +23,20 @@
         })
         .Columns(columns =>
         {
-            columns.Bound(d => d.Id);
-            columns.Bound(d => d.Version);
-            columns.Bound(d => d.Title);
             columns.Bound(d => d.IsPublic)
-            .ClientTemplate("<input type='checkbox' onclick='setPublicity(this.checked, <#= Id #>);' name='nothing' <#= IsPublic ? checked='checked' : '' #> />")
+            .ClientTemplate("<input type='checkbox' onclick='setPublicity(this.checked, <#= Id #>);' name='nothing' title='Checked \t -> \t public dataset \r Unchecked \t -> \t NOT public dataset' <#= IsPublic ? checked='checked' : '' #> />")
                    .Title("IsPublic")
                    .Width(64)
                    .Filterable(false)
                    .HtmlAttributes(new { style = "text-align:center" });
+            columns.Bound(d => d.Id);
+            columns.Bound(d => d.Title);
+            columns.Bound(d => d.Version);  
         })
         .DataBinding(dataBinding => dataBinding
                 .Ajax()
                 .Select("Datasets_Select", "DataPermissions")
+                .OperationMode(GridOperationMode.Client)
         )
         .ClientEvents(events => events.OnRowSelected("OnRowSelected"))
         .Filterable()

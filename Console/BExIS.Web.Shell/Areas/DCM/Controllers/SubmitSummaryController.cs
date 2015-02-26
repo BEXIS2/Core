@@ -190,7 +190,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                             if (TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".xlsm"))
                             {
-                                int packageSize = 10000;
+                                int packageSize = 100000;
                                 int counter = 0;
 
                                 ExcelReader reader = new ExcelReader();
@@ -273,7 +273,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                                 if (dm.IsDatasetCheckedOutFor(ds.Id, GetUserNameOrDefault()) || dm.CheckOutDataset(ds.Id, GetUserNameOrDefault()))
                                 {
                                     workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
-                                    int packageSize = 10000;
+                                    int packageSize = 100000;
                                     //schleife
 
                                     do
