@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Xml;
 using BExIS.Ddm.Model;
-using Vaiona.Util.Cfg;
+using Vaiona.Utils.Cfg;
 
 namespace BExIS.Ddm.Providers.DummyProvider.Helpers.Helpers.Search
 {

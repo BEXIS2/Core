@@ -11,7 +11,7 @@ using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
 using BExIS.Xml.Helpers;
 using BExIS.Xml.Helpers.Mapping;
-using Vaiona.Util.Cfg;
+using Vaiona.Utils.Cfg;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Xml.Services;

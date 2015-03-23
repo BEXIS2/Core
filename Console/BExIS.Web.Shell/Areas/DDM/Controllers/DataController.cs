@@ -17,7 +17,7 @@ using BExIS.Web.Shell.Areas.DDM.Helpers;
 using BExIS.Web.Shell.Areas.DDM.Models;
 using Telerik.Web.Mvc;
 using Telerik.Web.Mvc.UI;
-using Vaiona.Util.Cfg;
+using Vaiona.Utils.Cfg;
 using BExIS.IO;
 using System.IO.Compression;
 using Ionic.Zip;

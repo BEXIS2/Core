@@ -11,8 +11,8 @@ using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
+using Vaiona.Utils.Cfg;
 using BExIS.Xml.Helpers;
-using Vaiona.Util.Cfg;
 
 namespace BExIS.Web.Shell.Areas.DDM.Helpers
 {

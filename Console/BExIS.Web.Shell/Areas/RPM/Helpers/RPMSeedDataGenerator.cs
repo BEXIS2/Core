@@ -13,7 +13,7 @@ using BExIS.Dlm.Services.Administration;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Xml.Helpers;
-using Vaiona.Util.Cfg;
+using Vaiona.Utils.Cfg;
 
 namespace BExIS.Web.Shell.Areas.RPM.Helpers
 {

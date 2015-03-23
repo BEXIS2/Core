@@ -9,7 +9,7 @@ using BExIS.IO.Transform.Validation.DSValidation;
 using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.DataStructure;
-using Vaiona.Util.Cfg;
+using Vaiona.Utils.Cfg;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.MetadataStructure;

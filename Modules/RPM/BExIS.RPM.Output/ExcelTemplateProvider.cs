@@ -7,7 +7,7 @@ using BExIS.Dlm.Services.DataStructure;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
-using Vaiona.Util.Cfg;
+using Vaiona.Utils.Cfg;
 using System.Text.RegularExpressions;
 using System;
 

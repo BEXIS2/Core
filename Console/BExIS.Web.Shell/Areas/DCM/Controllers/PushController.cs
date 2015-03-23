@@ -11,7 +11,7 @@ using System.Web.Mvc;
 using BExIS.Dcm.UploadWizard;
 using BExIS.IO;
 using BExIS.Web.Shell.Areas.DCM.Models.Push;
-using Vaiona.Util.Cfg;
+using Vaiona.Utils.Cfg;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
 {

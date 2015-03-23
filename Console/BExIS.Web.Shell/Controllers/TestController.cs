@@ -14,6 +14,8 @@ using BExIS.Dlm.Entities.MetadataStructure;
 using MDS = BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Authorization;
+using Vaiona.Logging.Aspects;
+using Vaiona.Logging;
 
 namespace BExIS.Web.Shell.Controllers
 {
@@ -28,7 +30,9 @@ namespace BExIS.Web.Shell.Controllers
             return View("Index");
         }
 
-
+        [RecordCall]
+        [LogExceptions]
+        [Diagnose]
         public ActionResult Index(Int64 id=0)
         {
             //List<string> a = new List<string>() { "A", "B", "C" };
@@ -37,6 +41,7 @@ namespace BExIS.Web.Shell.Controllers
 
             //dm.DatasetRepo.LoadIfNot(ds.Tuples);
             ////dm.DatasetRepo.Get(
+            LoggerFactory.LogCustom("Here");
 
             //DatasetExportTest2();
             //SimpleMatDematWithExport();
@@ -63,7 +68,7 @@ namespace BExIS.Web.Shell.Controllers
             //getEffectiveTuples(id);
             //getDataStructures();
             //return RedirectToAction("About");
-            createMetadataAttribute();
+            //createMetadataAttribute();
             return View();
         }
 

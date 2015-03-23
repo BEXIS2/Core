@@ -9,7 +9,7 @@ using BExIS.Ddm.Providers.LuceneProvider.Indexer;
 using System.IO;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Dlm.Entities.MetadataStructure;
-using Vaiona.Util.Cfg;
+using Vaiona.Utils.Cfg;
 using BExIS.Xml.Helpers;
 using System.Xml.Linq;
 
@@ -132,7 +132,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider
                 foreach (long id in ids)
                 {
                     _metadataNodes.AddRange(GetAllXPathsOfSimpleAttributes(id));
-                }
+                    }
 
                 _metadataNodes = _metadataNodes.Distinct().ToList();
                 _metadataNodes.Sort((x,y)=>String.Compare(x.DisplayName,y.DisplayName));
@@ -157,12 +157,12 @@ namespace BExIS.Ddm.Providers.LuceneProvider
                 List<XElement> elements = metadataXml.Root.Descendants().Where(e => e.HasElements.Equals(false)).ToList();
 
                 foreach (XElement element in elements)
-                {
+            {
                     list.Add(
                       new SearchMetadataNode(title, XExtentsions.GetAbsoluteXPath(element).Substring(1))
                       );
 
-                }
+            }
 
             return list;
         }

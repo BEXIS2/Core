@@ -11,7 +11,7 @@ using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
-using Vaiona.Util.Cfg;
+using Vaiona.Utils.Cfg;
 
 namespace BExIS.Xml.Helpers.Mapping
 {

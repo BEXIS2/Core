@@ -7,7 +7,7 @@ using System.IO;
 using BExIS.Dlm.Entities.Data;
 using BExIS.IO.Transform.Validation.Exceptions;
 using DocumentFormat.OpenXml.Packaging;
-using Vaiona.Util.Cfg;
+using Vaiona.Utils.Cfg;
 using DocumentFormat.OpenXml.Spreadsheet;
 using System.Text.RegularExpressions;
 using BExIS.Dlm.Services.Data;

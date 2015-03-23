@@ -7,7 +7,7 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using System.Xml;
 using BExIS.Dcm.ImportMetadataStructureWizard;
-using Vaiona.Util.Cfg;
+using Vaiona.Utils.Cfg;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
 {

@@ -22,7 +22,7 @@ using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Xml.Helpers;
 using BExIS.Xml.Models;
-using Vaiona.Util.Cfg;
+using Vaiona.Utils.Cfg;
 
 namespace BExIS.Web.Shell.Areas.SAM.Controllers
 {

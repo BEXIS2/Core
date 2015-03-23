@@ -10,7 +10,7 @@ using System.Xml.Linq;
 using System.Xml.Schema;
 using BExIS.Xml.Models;
 using BExIS.Xml.Models.Mapping;
-using Vaiona.Util.Cfg;
+using Vaiona.Utils.Cfg;
 
 
 namespace BExIS.Xml.Helpers.Mapping

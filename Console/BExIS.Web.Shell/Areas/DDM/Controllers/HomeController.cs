@@ -15,7 +15,7 @@ using BExIS.Web.Shell.Areas.DDM.Helpers;
 using BExIS.Web.Shell.Areas.DDM.Models;
 using Telerik.Web.Mvc;
 using Vaiona.IoC;
-using Vaiona.Util.Cfg;
+using Vaiona.Utils.Cfg;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Subjects;
 using BExIS.Security.Entities.Objects;

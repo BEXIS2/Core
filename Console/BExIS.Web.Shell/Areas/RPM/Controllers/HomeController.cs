@@ -11,7 +11,7 @@ using BExIS.Dlm.Services.TypeSystem;
 using BExIS.RPM.Model;
 using BExIS.RPM.Output;
 using Vaiona.Persistence.Api;
-using Vaiona.Util.Cfg;
+using Vaiona.Utils.Cfg;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
 

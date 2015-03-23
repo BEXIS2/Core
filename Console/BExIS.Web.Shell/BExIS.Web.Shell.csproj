@@ -87,8 +87,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Libraries\Microsoft.Web.Helpers.dll</HintPath>
     </Reference>
-    <Reference Include="Mono.Security">
-      <HintPath>..\..\packages\Npgsql.2.0.14.3\lib\net40\Mono.Security.dll</HintPath>
+    <Reference Include="Mono.Security, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Npgsql.2.2.4.3\lib\net40\Mono.Security.dll</HintPath>
     </Reference>
     <Reference Include="NHibernate, Version=3.3.1.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -97,8 +98,13 @@
     <Reference Include="NHibernate.Glimpse">
       <HintPath>..\..\packages\NHibernate.Glimpse.3.3.3.40011\lib\net35\NHibernate.Glimpse.dll</HintPath>
     </Reference>
-    <Reference Include="Npgsql">
-      <HintPath>..\..\packages\Npgsql.2.0.14.3\lib\net40\Npgsql.dll</HintPath>
+    <Reference Include="Npgsql, Version=2.2.4.3, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Npgsql.2.2.4.3\lib\net40\Npgsql.dll</HintPath>
+    </Reference>
+    <Reference Include="PostSharp, Version=2.1.0.0, Culture=neutral, PublicKeyToken=b13fd38b8f9c99d7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Libraries\PostSharp\PostSharp.dll</HintPath>
     </Reference>
     <Reference Include="System.Data.Linq" />
     <Reference Include="System.Linq.Dynamic, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -146,6 +152,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Libraries\Vaiona\Vaiona.IoC.dll</HintPath>
     </Reference>
+    <Reference Include="Vaiona.Logging">
+      <HintPath>..\..\Libraries\Vaiona\Vaiona.Logging.dll</HintPath>
+    </Reference>
     <Reference Include="Vaiona.Model">
       <HintPath>..\..\Libraries\Vaiona\Vaiona.Model.dll</HintPath>
     </Reference>
@@ -157,9 +166,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Libraries\Vaiona\Vaiona.PersistenceProviders.NH.dll</HintPath>
     </Reference>
-    <Reference Include="Vaiona.Util, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Vaiona.Utils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Libraries\Vaiona\Vaiona.Util.dll</HintPath>
+      <HintPath>..\..\Libraries\Vaiona\Vaiona.Utils.dll</HintPath>
     </Reference>
     <Reference Include="Vaiona.Web, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -1069,7 +1078,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>4278</DevelopmentServerPort>
+          <DevelopmentServerPort>59251</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>
@@ -1083,7 +1092,9 @@
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup>
-    <PostBuildEvent>C:\Windows\System32\xcopy "$(ProjectDir)Db\Settings" "$(SolutionDir)Workspace\General\Db\Settings" /E /C /Y /I</PostBuildEvent>
+    <PostBuildEvent>C:\Windows\System32\xcopy "$(ProjectDir)Db\Settings" "$(SolutionDir)Workspace\General\Db\Settings" /E /C /Y /I
+rmdir /S /Q  "$(SolutionDir)Workspace\Components\Vaiona\Db\Mappings"
+C:\Windows\System32\xcopy "$(SolutionDir)Libraries\Vaiona\Workspace" "$(SolutionDir)Workspace" /E /C /Y /I</PostBuildEvent>
   </PropertyGroup>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
 </Project>

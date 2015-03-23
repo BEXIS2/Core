@@ -1,5 +1,5 @@
 ﻿using System.Web.Mvc;
-using Vaiona.Util.Cfg;
+using Vaiona.Utils.Cfg;
 
 namespace BExIS.Web.Shell.Areas.Auth
 {

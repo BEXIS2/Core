@@ -1,5 +1,5 @@
 ﻿using System.Xml;
-using Vaiona.Util.Cfg;
+using Vaiona.Utils.Cfg;
 
 
 namespace BExIS.Ddm.Providers.DummyProvider.Helpers

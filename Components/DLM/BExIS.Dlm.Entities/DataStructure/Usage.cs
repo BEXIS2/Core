@@ -101,7 +101,7 @@ namespace BExIS.Dlm.Entities.DataStructure
         public virtual bool IsValueOptional 
         {
             get { return MinCardinality < 1; } //if MinCardinality cardinality is zero (less than 1), the variable value is optional
-            set { MinCardinality = value ? 0 : 1; } // if value is optional, set the min cardinality to zero
+            set { MinCardinality = (value ? 0 : 1); } // if value is optional, set the min cardinality to zero
         }
 
         /// <summary>

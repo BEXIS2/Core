@@ -16,7 +16,7 @@ using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Web.Shell.Areas.DCM.Models;
 using BExIS.Dcm.UploadWizard;
-using Vaiona.Util.Cfg;
+using Vaiona.Utils.Cfg;
 using System.Diagnostics;
 using BExIS.IO.Transform.Output;
 using BExIS.Dlm.Entities.MetadataStructure;

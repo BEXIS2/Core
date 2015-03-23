@@ -5,7 +5,7 @@ using System.Web;
 using System.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Entities.Data;
-using Vaiona.Util.Cfg;
+using Vaiona.Utils.Cfg;
 using System.IO;
 using BExIS.IO;
 

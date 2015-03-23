@@ -7,7 +7,7 @@ using BExIS.Dlm.Entities.Administration;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using Vaiona.Persistence.Api;
-using Vaiona.Util.Xml;
+using Vaiona.Utils.Xml;
 using MDS = BExIS.Dlm.Entities.MetadataStructure;
 using System.Linq.Expressions;
 

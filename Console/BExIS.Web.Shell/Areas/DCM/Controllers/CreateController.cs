@@ -15,7 +15,7 @@ using BExIS.Dlm.Entities.DataStructure;
 using System.Web.Routing;
 using System.Xml;
 using System.IO;
-using Vaiona.Util.Cfg;
+using Vaiona.Utils.Cfg;
 using BExIS.Web.Shell.Areas.DCM.Models.Create;
 using BExIS.Web.Shell.Areas.DCM.Models.Metadata;
 using BExIS.Dlm.Entities.Data;

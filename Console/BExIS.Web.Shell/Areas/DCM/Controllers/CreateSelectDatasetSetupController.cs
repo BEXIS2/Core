@@ -22,7 +22,7 @@ using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Web.Shell.Areas.DCM.Models;
 using BExIS.Web.Shell.Areas.DCM.Models.Create;
 using BExIS.Xml.Helpers;
-using Vaiona.Util.Cfg;
+using Vaiona.Utils.Cfg;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
 {

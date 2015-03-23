@@ -10,7 +10,7 @@ using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Dcm.UploadWizard;
 using BExIS.Dcm.Wizard;
 using BExIS.Web.Shell.Areas.DCM.Models;
-using Vaiona.Util.Cfg;
+using Vaiona.Utils.Cfg;
 using BExIS.IO;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers

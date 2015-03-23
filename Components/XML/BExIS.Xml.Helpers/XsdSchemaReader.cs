@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Schema;
-using Vaiona.Util.Cfg;
+using Vaiona.Utils.Cfg;
 
 /// <summary>
 ///

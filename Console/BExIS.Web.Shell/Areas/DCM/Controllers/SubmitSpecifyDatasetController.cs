@@ -18,7 +18,7 @@ using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Web.Shell.Areas.DCM.Models;
-using Vaiona.Util.Cfg;
+using Vaiona.Utils.Cfg;
 using BExIS.Web.Shell.Areas.DCM.Models.Metadata;
 using System.Xml.Linq;
 using BExIS.Xml.Helpers;

@@ -1,5 +1,5 @@
 ﻿using System.IO;
-using Vaiona.Util.Cfg;
+using Vaiona.Utils.Cfg;
 
 /// <summary>
 ///

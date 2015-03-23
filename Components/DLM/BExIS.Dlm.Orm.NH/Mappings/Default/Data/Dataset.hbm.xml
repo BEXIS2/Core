@@ -78,6 +78,9 @@
     <property name="CheckOutUser" type="string">
       <column name="CheckOutUser" />
     </property>
+    <property name="TestAtt1" type="string">
+      <column name="TestAtt1" />
+    </property>
     
     <!-- Mapping entity associations -->
     <many-to-one name="DataStructure" class="BExIS.Dlm.Entities.DataStructure.DataStructure" not-null="true" column="DataStructureRef"/>

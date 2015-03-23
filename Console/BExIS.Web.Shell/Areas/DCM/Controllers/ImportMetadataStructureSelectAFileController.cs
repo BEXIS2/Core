@@ -11,7 +11,7 @@ using BExIS.IO;
 using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Web.Shell.Areas.DCM.Models;
 using BExIS.Xml.Helpers.Mapping;
-using Vaiona.Util.Cfg;
+using Vaiona.Utils.Cfg;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
 {

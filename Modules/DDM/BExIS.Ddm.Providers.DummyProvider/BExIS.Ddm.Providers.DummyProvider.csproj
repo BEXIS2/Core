@@ -43,8 +43,8 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="Vaiona.Util">
-      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Util.dll</HintPath>
+    <Reference Include="Vaiona.Utils">
+      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Utils.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

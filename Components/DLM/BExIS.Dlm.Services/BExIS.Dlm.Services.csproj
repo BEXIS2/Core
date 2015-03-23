@@ -117,9 +117,8 @@
     <Reference Include="Vaiona.Persistence.Api">
       <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Persistence.Api.dll</HintPath>
     </Reference>
-    <Reference Include="Vaiona.Util, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Util.dll</HintPath>
+    <Reference Include="Vaiona.Utils">
+      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Utils.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

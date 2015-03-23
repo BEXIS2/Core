@@ -4,7 +4,7 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using BExIS.Dlm.Entities.MetadataStructure;
 using Vaiona.Persistence.Api;
-using Vaiona.Util.Cfg;
+using Vaiona.Utils.Cfg;
 using MDS = BExIS.Dlm.Entities.MetadataStructure;
 
 namespace BExIS.Dlm.Services.MetadataStructure

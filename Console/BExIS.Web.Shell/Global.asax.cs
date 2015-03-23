@@ -4,7 +4,7 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using Vaiona.IoC;
 using Vaiona.Persistence.Api;
-using Vaiona.Util.Cfg;
+using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Data;
@@ -80,8 +80,9 @@ namespace BExIS.Web.Shell
             IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager(); // just to prepare data access environment
             pManager.Configure(AppConfiguration.DefaultApplicationConnection.ConnectionString, AppConfiguration.DatabaseDialect, "Default", AppConfiguration.ShowQueries);
             if (AppConfiguration.CreateDatabase)
-                pManager.ExportSchema();
+                pManager.ExportSchema();                
             pManager.Start();
+            //pManager.UpdateSchema(true, true); // seems NH has dropped the support for schema update!
 #if DEBUG
             //HibernatingRhinos.Profiler.Appender.NHibernate.NHibernateProfiler.Initialize();
             //just for testing purposes
@@ -112,6 +113,8 @@ namespace BExIS.Web.Shell
         protected void Session_End()
         {
             //IoCContainer container = Session["SessionLevelContainer"] as IoCContainer;
+            IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager();
+            pManager.ShutdownConversation(); 
             IoCFactory.Container.ShutdownSessionLevelContainer();
         }
     }

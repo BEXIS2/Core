@@ -4,7 +4,7 @@ using System.Linq;
 using System.Xml;
 using BExIS.Ddm.Model;
 using BExIS.Ddm.Providers.DummyProvider.Helpers.Helpers.Search;
-using Vaiona.Util.Cfg;
+using Vaiona.Utils.Cfg;
 
 
 namespace BExIS.Ddm.Providers.DummyProvider.Helpers
