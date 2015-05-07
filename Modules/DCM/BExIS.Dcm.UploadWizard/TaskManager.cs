@@ -45,6 +45,11 @@ namespace BExIS.Dcm.UploadWizard
         public static string PROJECTNAME = "ProjectName";
         public static string INSTITUTE = "Institute";
 
+
+        public static string NUMBERSOFROWS = "NUMBERSOFROWS";
+        public static string CURRENTPACKAGE = "CURRENTPACKAGE";
+        public static string CURRENTPACKAGESIZE = "CURRENTPACKAGE";
+
         /// <summary>
         /// 
         /// </summary>

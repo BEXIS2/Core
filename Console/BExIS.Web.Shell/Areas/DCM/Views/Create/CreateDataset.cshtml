@@ -42,9 +42,9 @@
 
     $(document).ready(function () {
 
-        index = '@Model.GetCurrentStepInfoIndex()';
+        id = '@Model.GetCurrentStepInfoIndex()';
 
-        $.get('@Url.Action(@Model.Current().GetActionInfo.ActionName, @Model.Current().GetActionInfo.ControllerName, new RouteValueDictionary { { "area", @Model.Current().GetActionInfo.AreaName } })', { index: index }, function (response) {
+        $.get('@Url.Action(@Model.Current().GetActionInfo.ActionName, @Model.Current().GetActionInfo.ControllerName, new RouteValueDictionary { { "area", @Model.Current().GetActionInfo.AreaName } })', { stepId: id }, function (response) {
 
             $("#StepView").html(response);
 

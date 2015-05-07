@@ -75,7 +75,7 @@
 
         if (index < 0) index = 0;
 
-        $.get('@Url.Action(@Model.Prev().GetActionInfo.ActionName, @Model.Prev().GetActionInfo.ControllerName, new RouteValueDictionary { { "area", @Model.Prev().GetActionInfo.AreaName } })', { index: index }, function (response) {
+        $.get('@Url.Action(@Model.Prev().GetActionInfo.ActionName, @Model.Prev().GetActionInfo.ControllerName, new RouteValueDictionary { { "area", @Model.Prev().GetActionInfo.AreaName } })', { stepId: index }, function (response) {
             $("#StepView").html(response);
             NavigationRefresh();
             TaskListRefresh();

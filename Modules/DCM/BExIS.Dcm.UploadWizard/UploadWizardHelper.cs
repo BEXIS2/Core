@@ -36,44 +36,53 @@ namespace BExIS.Dcm.UploadWizard
         /// <param name="primaryKeys"></param>
         /// <param name="workingCopy"></param>
         /// <returns></returns>
-        public static Dictionary<string,List<DataTuple>> GetSplitDatatuples(List<DataTuple> newDatatuples, List<long> primaryKeys, DatasetVersion workingCopy)
+        public static Dictionary<string, List<DataTuple>> GetSplitDatatuples(DataTuple[] newDatatuples, List<long> primaryKeys, DatasetVersion workingCopy, ref List<AbstractTuple> datatuplesFromDatabase)
         {
 
-            Dictionary<string,List<DataTuple>> data = new Dictionary<string,List<DataTuple>>();
+            Dictionary<string, List<DataTuple>> data = new Dictionary<string, List<DataTuple>>();
             List<DataTuple> newDtList = new List<DataTuple>();
             List<DataTuple> editDtList = new List<DataTuple>();
             List<DataTuple> deleteDtList = new List<DataTuple>();
 
-
-            // alle gleichen raus filtern
-            // alle ungleichen
-
-            
             DatasetManager datasetManager = new DatasetManager();
-            List<AbstractTuple> datatuplesSource = datasetManager.GetDatasetVersionEffectiveTuples(workingCopy).ToList();
 
-            //if (datatuplesSource.Count > newDatatuples.Count)
-            //{
+            DataTuple sourceDt;
+            Dictionary<long, string> PkValues;
 
-            foreach (DataTuple newDt in newDatatuples)
+            // load datatuples from db
+            // later packagesize
+
+            for (int j = 0; j < newDatatuples.Count(); j++)
             {
+                DataTuple newDt = newDatatuples[j];
+
                 if (!IsEmpty(newDt))
                 {
-                    Dictionary<long, string> PkValues = getPrimaryKeyValues(newDt, primaryKeys);
+                    PkValues = getPrimaryKeyValues(newDt, primaryKeys);
 
                     bool exist = false;
 
-                    foreach (DataTuple sourceDt in datatuplesSource)
+                    for (int i = 0; i < datatuplesFromDatabase.Count; i++)
                     {
-                        if (sameDatatuple(sourceDt, PkValues))
+                        sourceDt = (DataTuple)datatuplesFromDatabase.ElementAt(i);
+
+                        if (sourceDt != null && sameDatatuple(sourceDt, PkValues))
                         {
                             // check for edit
                             exist = true;
                             if (!Equal(newDt, sourceDt))
                             {
+                                //sourceDt.Materialize();
                                 editDtList.Add(Merge(newDt, sourceDt));
+
                             }
 
+                            if (datatuplesFromDatabase.Count > 0)
+                            {
+                                datatuplesFromDatabase.RemoveAt(i);
+                            }
+
+                            break;
                         }
 
                     }
@@ -85,7 +94,6 @@ namespace BExIS.Dcm.UploadWizard
             }
             //}
 
-            
             data.Add("new", newDtList);
             data.Add("edit", editDtList);
 
@@ -192,24 +200,30 @@ namespace BExIS.Dcm.UploadWizard
 
             foreach (KeyValuePair<long, string> kvp in pksVs)
             {
-
-                object value = dt.VariableValues.Where(p => p.VariableId.Equals(kvp.Key)).First().Value;
-
-                if (value != null)
+                if (dt.VariableValues.Count > 0)
                 {
-                    //value not equal different datatuples
-                    if (value.ToString() != kvp.Value)
+                    object value = dt.VariableValues.Where(p => p.VariableId.Equals(kvp.Key)).First().Value;
+
+                    if (value != null)
+                    {
+                        //value not equal different datatuples
+                        if (value.ToString() != kvp.Value)
+                        {
+                            IsSame = false; break;
+                        }
+                    }
+                    // if value is null means not equal to a not null value and 
+                    // v1 = null != v2 = null
+                    else
                     {
                         IsSame = false; break;
                     }
                 }
-                // if value is null means not equal to a not null value and 
-                // v1 = null != v2 = null
                 else
                 {
                     IsSame = false; break;
                 }
-                
+
             }
 
             return IsSame;
@@ -405,8 +419,6 @@ namespace BExIS.Dcm.UploadWizard
                     foreach (long id in dataTupleIds)
                     {
                         dataTuple = datasetManager.DataTupleRepo.Get(id);
-
-
                         pKey = getPrimaryKeysAsString(dataTuple, primaryKeys);
 
                         if (pKey != "")

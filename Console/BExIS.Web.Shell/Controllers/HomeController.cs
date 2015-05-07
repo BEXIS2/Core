@@ -10,5 +10,10 @@ namespace BExIS.Web.Shell.Controllers
         {
             return View();
         }
+
+        public ActionResult SessionTimeout()
+        {
+            return View();
+        }
     }
 }

@@ -43,6 +43,8 @@ namespace BExIS.IO.Transform.Input
 
         //public bool EndOfFile { get; protected set; }
 
+        public int NumberOfRows { get; set; }
+
         #endregion
 
         #region protected 
@@ -347,6 +349,8 @@ namespace BExIS.IO.Transform.Input
                 errors.Add(e);
 
             }
+
+            NumberOfRows++;
 
             return errors;
         }

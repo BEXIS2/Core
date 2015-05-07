@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
+using System.Xml.XPath;
 
 /// <summary>
 ///
@@ -86,6 +87,21 @@ namespace BExIS.Xml.Helpers
 
             return false;
 
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        protected bool Exist(string xpath)
+        {
+            if (_tempXDoc.XPathSelectElement(xpath)!=null)
+                return true;
+            else
+                return false;
         }
 
         /// <summary>
@@ -203,6 +219,19 @@ namespace BExIS.Xml.Helpers
 
             return null;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        protected XElement Get(string xpath)
+        {
+            return _tempXDoc.XPathSelectElement(xpath);
+        }
+
 
         /// <summary>
         /// 

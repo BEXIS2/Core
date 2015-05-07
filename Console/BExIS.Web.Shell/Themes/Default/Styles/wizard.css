@@ -114,7 +114,8 @@ tr td
     position:absolute;
 }
 
-.createWizardStep_Error{
+.createWizardStep_Error
+{
 
     width:20%;
     color:red;
@@ -124,6 +125,11 @@ tr td
     max-height:600px;
     overflow:auto;
     position:absolute;
+}
+
+.createWizardStep_Error a
+{
+    color:red;
 }
 
 .wizardStep_Success

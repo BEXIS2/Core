@@ -130,13 +130,14 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             TaskManager TaskManager = (TaskManager)Session["TaskManager"];
 
             DatasetManager datasetManager = new DatasetManager();
+            long datasetId;
 
             if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_STATUS))
             {
                 if (TaskManager.Bus[TaskManager.DATASET_STATUS].Equals("new"))
                 {
-                    long newid = Convert.ToInt64(TaskManager.Bus[TaskManager.DATASET_ID]);
-                    datasetManager.PurgeDataset(newid);
+                    //long newid = Convert.ToInt64(TaskManager.Bus[TaskManager.DATASET_ID]);
+                    //datasetManager.PurgeDataset(newid);
 
                 }
 
@@ -144,11 +145,17 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             }
             else
             {
-                TaskManager.AddToBus("DatasetStatus", "edit");
+                datasetId = Convert.ToInt64(id);
+                if (datasetManager.GetDatasetVersionEffectiveTupleIds(datasetManager.GetDatasetLatestVersion(datasetId)).Count > 0)
+                {
+                    TaskManager.AddToBus("DatasetStatus", "edit");
+                }
+                else
+                    TaskManager.AddToBus("DatasetStatus", "new");
             }
 
 
-            long datasetId = Convert.ToInt64(id);
+            datasetId = Convert.ToInt64(id);
 
             Dataset dataset = datasetManager.GetDataset(datasetId);
 

@@ -148,16 +148,10 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     List<string> tempDataset = new List<string>();
                     List<string> tempFromFile = new List<string>();
 
-                    // data from db
-                    //tempDataset = UploadWizardHelper.GetIdentifierList(Convert.ToInt64(TaskManager.Bus[TaskManager.DATASET_ID].ToString()), identifiers);
+                    bool IsUniqueInDb = UploadWizardHelper.IsUnique(Convert.ToInt64(TaskManager.Bus[TaskManager.DATASET_ID].ToString()), identifiers);
+                    bool IsUniqueInFile = UploadWizardHelper.IsUnique(TaskManager, Convert.ToInt64(TaskManager.Bus[TaskManager.DATASET_ID].ToString()), identifiers, TaskManager.Bus[TaskManager.EXTENTION].ToString(), TaskManager.Bus[TaskManager.FILENAME].ToString());
 
-                    //data from FileStream
-                    //tempFromFile = UploadWizardHelper.GetIdentifierList(TaskManager, Convert.ToInt64(TaskManager.Bus[TaskManager.DATASET_ID].ToString()), identifiers, TaskManager.Bus[TaskManager.EXTENTION].ToString(), TaskManager.Bus[TaskManager.FILENAME].ToString());
-
-                    // if dulpicates exist checkDuplicates return true
-                    //if (UploadWizardHelper.CheckDuplicates(tempDataset) || UploadWizardHelper.CheckDuplicates(tempFromFile))
-                    if(UploadWizardHelper.IsUnique(Convert.ToInt64(TaskManager.Bus[TaskManager.DATASET_ID].ToString()), identifiers)
-                        && UploadWizardHelper.IsUnique(TaskManager, Convert.ToInt64(TaskManager.Bus[TaskManager.DATASET_ID].ToString()), identifiers, TaskManager.Bus[TaskManager.EXTENTION].ToString(), TaskManager.Bus[TaskManager.FILENAME].ToString()))
+                    if(IsUniqueInDb && IsUniqueInFile)
                      {
                         model.IsUnique = true;
 

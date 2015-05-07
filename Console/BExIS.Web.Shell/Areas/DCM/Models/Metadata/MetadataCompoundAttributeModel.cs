@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Xml.Linq;
+using BExIS.Dcm.CreateDatasetWizard;
 using BExIS.Dcm.Wizard;
 using BExIS.Dlm.Entities.Common;
 using BExIS.Dlm.Entities.MetadataStructure;
@@ -50,8 +51,10 @@ namespace BExIS.Web.Shell.Areas.DCM.Models.Metadata
             };
         }
 
-        public void ConvertMetadataAttributeModels()
+        public void ConvertMetadataAttributeModels( BaseUsage source, long metadataStructureId)
         {
+            Source = source;
+
             if (Source is MetadataAttributeUsage)
             {
 
@@ -63,7 +66,13 @@ namespace BExIS.Web.Shell.Areas.DCM.Models.Metadata
 
                     if (mca != null)
                     {
-                        mca.MetadataNestedAttributeUsages.ToList().ForEach(a => MetadataAttributeModels.Add(MetadataAttributeModel.Convert(a, mau, 1, Number)));
+                        foreach (MetadataNestedAttributeUsage usage in mca.MetadataNestedAttributeUsages)
+                        {
+                            if (UsageHelper.IsSimple(usage))
+                            {
+                                MetadataAttributeModels.Add(MetadataAttributeModel.Convert(usage, mau, metadataStructureId, Number));
+                            }
+                        }
                     }
                 }
             }
@@ -77,7 +86,13 @@ namespace BExIS.Web.Shell.Areas.DCM.Models.Metadata
 
                     if (mca != null)
                     {
-                        mca.MetadataNestedAttributeUsages.ToList().ForEach(a => MetadataAttributeModels.Add(MetadataAttributeModel.Convert(a, mnau, 1, Number)));
+                        foreach (MetadataNestedAttributeUsage usage in mca.MetadataNestedAttributeUsages)
+                        {
+                            if (UsageHelper.IsSimple(usage))
+                            {
+                                MetadataAttributeModels.Add(MetadataAttributeModel.Convert(usage, mnau, metadataStructureId, Number));
+                            }
+                        }
                     }
                 }
             }

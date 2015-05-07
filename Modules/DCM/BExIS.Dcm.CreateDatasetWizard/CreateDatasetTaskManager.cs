@@ -19,7 +19,9 @@ namespace BExIS.Dcm.CreateDatasetWizard
         public static string DATASET_TITLE = "DataSetTitle";
 
         public static string METADATA_ATTRIBUTE_USAGE_VALUE_LIST = "METADATA_ATTRIBUTE_VALUE_LIST";
+
         public static string METADATA_PACKAGE_MODEL_LIST = "METADATA_PACKAGE_MODEL_LIST";
+        public static string METADATA_STEP_MODEL_HELPER = "METADATA_STEP_MODEL_HELPER";
         public static string METADATA_XML = "METADATA_XML";
         // Datastructure
         public static string DATASTRUCTURE_ID = "DataStructureId";

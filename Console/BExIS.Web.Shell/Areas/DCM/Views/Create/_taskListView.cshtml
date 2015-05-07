@@ -29,34 +29,34 @@
                     item.LinkHtmlAttributes["areaName"] = stepinfo.GetActionInfo.AreaName;
 
 
-                    //switch (stepinfo.stepStatus)
-                    //{
-                    //    case StepStatus.success:
-                    //        {
-                    //            item.ImageUrl = "Images/emptyPng.png";
-                    //            item.LinkHtmlAttributes["class"] = "facetSuccess";
-                    //            item.ImageHtmlAttributes["class"] = "t-icon t-insert";
-                    //            break;
-                    //        }
-                    //    case StepStatus.inProgress:
-                    //        {
-                    //            item.ImageUrl = "Images/emptyPng.png";
-                    //            item.ImageHtmlAttributes["class"] = "t-icon t-arrow-prev";
-                    //            break;
-                    //        }
-                    //    case StepStatus.error:
-                    //        {
-                    //            item.ImageUrl = "Images/emptyPng.png";
-                    //            item.LinkHtmlAttributes["class"] = "facetError";
-                    //            item.ImageHtmlAttributes["class"] = "t-icon t-cancel";
-                    //            break;
-                    //        }
-                    //    default:
-                    //        {
+                    switch (stepinfo.stepStatus)
+                    {
+                        //case StepStatus.success:
+                        //    {
+                        //        item.ImageUrl = "Images/emptyPng.png";
+                        //        item.LinkHtmlAttributes["class"] = "facetSuccess";
+                        //        item.ImageHtmlAttributes["class"] = "t-icon t-insert";
+                        //        break;
+                        //    }
+                        case StepStatus.inProgress:
+                            {
+                                item.ImageUrl = "Images/emptyPng.png";
+                                item.ImageHtmlAttributes["class"] = "t-icon t-arrow-prev";
+                                break;
+                            }
+                        case StepStatus.error:
+                            {
+                                item.ImageUrl = "Images/emptyPng.png";
+                                item.LinkHtmlAttributes["class"] = "facetError";
+                                item.ImageHtmlAttributes["class"] = "t-icon t-cancel";
+                                break;
+                            }
+                        default:
+                            {
 
-                    //            break;
-                    //        }
-                    //}
+                                break;
+                            }
+                    }
 
                     //item.ActionName = stepinfo.GetActionInfo.ActionName;
                     //item.ControllerName = stepinfo.GetActionInfo.ControllerName;
@@ -76,69 +76,17 @@
             )
     
     )
-
-@*<table id="taskListTable">
-
-    <br />
-    <hr />
-    <br />
-    <br />
-
-    @foreach (var item in Model.Root.Children)
-    {
-        string id = @item.Id + "_" + @item.title + "_" + @item.GetActionInfo.ActionName + "_" + @item.GetActionInfo.ControllerName;
-        <tr>
-            <td >
-                @if (Model.Current().Equals(item))
-                { 
-                    <b id="@id" class="t-link">@item.title</b>
-                }
-                else
-                { 
-                    <span id="@id" class="t-link" onclick="OnClickStep2(this)">@item.title</span>
-                }
-            </td>
-            <td>
-
-                @switch (item.stepStatus)
-                {
-                    case StepStatus.success:
-                        {
-                            <div class="t-icon t-insert" ></div>
-                            break;
-                        }
-                    case StepStatus.inProgress:
-                        {
-                            <div class="t-icon t-arrow-prev" ></div>
-                            break;
-                        }
-                    case StepStatus.error:
-                        {
-                            <div class="t-icon t-cancel" ></div>
-                            break;
-                        }
-                    default:
-                        {
-
-                            break;
-                        }
-                }
-
-            </td>
-        </tr>
-    }
-</table>*@
 </div>
 
 @*JavaScript*@
 <script type="text/javascript">
 
-function TaskListRefresh()
-{
-    $.post('@Url.Action("RefreshTaskList", "Create", new RouteValueDictionary { { "area", "DCM" } })', function (response) {
-        $("#CreateWizard_TaskListDiv").html(response);
-    })
-}
+    function TaskListRefresh()
+    {
+        $.post('@Url.Action("RefreshTaskList", "Create", new RouteValueDictionary { { "area", "DCM" } })', function (response) {
+            $("#CreateWizard_TaskListDiv").html(response);
+        })
+    }
 
     function treeView() {
         return $('#StepTreeView').data('tTreeView');
@@ -161,7 +109,7 @@ function TaskListRefresh()
 
         var url = '/'+area+'/' + controller + '/' + action;
 
-        $.get(url, { index: selectedItemValue }, function (response) {
+        $.post(url, { stepId: selectedItemValue }, function (response) {
             $("#StepView").html(response);
             NavigationRefresh();
             TaskListRefresh();
@@ -196,7 +144,8 @@ function TaskListRefresh()
 
     .facetError
     {
-        background-color:#FF4040
+        color:indianred;
+        font-weight:bold;
     }
 
     .facetSuccess

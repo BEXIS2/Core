@@ -44,32 +44,58 @@ namespace BExIS.Dcm.CreateDatasetWizard
         
 
 
-        public static BaseUsage GetSimpleUsageById(long Id)
+        public static BaseUsage GetSimpleUsageById(BaseUsage parent, long Id)
         {
             BaseUsage usage = new BaseUsage();
 
-            MetadataPackageManager mpm = new MetadataPackageManager();
-
-            var q = from p in mpm.MetadataPackageRepo.Get()
-                    from u in p.MetadataAttributeUsages
-                    where u.Id == Id && u.MetadataAttribute.Self is MetadataSimpleAttribute
-                    select u;
-
-            if (q != null && q.ToList().Count > 0)
+            if (parent is MetadataPackageUsage)
             {
-                return q.FirstOrDefault();
+                MetadataPackageManager mpm = new MetadataPackageManager();
+
+                var q = from p in mpm.MetadataPackageRepo.Get()
+                        from u in p.MetadataAttributeUsages
+                        where p.Id.Equals(parent.Id) && u.Id == Id && u.MetadataAttribute.Self is MetadataSimpleAttribute
+                        select u;
+
+                if (q != null && q.ToList().Count > 0)
+                {
+                    return q.FirstOrDefault();
+                }
+                else return null;
             }
+
             else
+            if (parent is MetadataNestedAttributeUsage)
             {
                 MetadataAttributeManager mam = new MetadataAttributeManager();
 
-                var x = from c in mam.MetadataCompoundAttributeRepo.Get()
-                        from u in c.Self.MetadataNestedAttributeUsages
-                        where u.Id == Id && u.Member.Self is MetadataSimpleAttribute
-                        select u;
+                MetadataNestedAttributeUsage pUsage = (MetadataNestedAttributeUsage)parent;
+
+                MetadataCompoundAttribute mca = mam.MetadataCompoundAttributeRepo.Get(pUsage.Member.Self.Id);
+
+                var x = from nestedUsage in mca.MetadataNestedAttributeUsages
+                        where nestedUsage.Id == Id && nestedUsage.Member.Self is MetadataSimpleAttribute
+                        select nestedUsage;
+
+                //var x = from c in mam.MetadataCompoundAttributeRepo.Get()
+                //        from u in c.Self.MetadataNestedAttributeUsages
+                //        where u.Id.Equals(parent.Id) && u.Member.Self.Id == Id && u.Member.Self is MetadataSimpleAttribute
+                //        select u;
 
                 return x.FirstOrDefault();
             }
+            else if (parent is MetadataAttributeUsage)
+            {
+                MetadataAttributeUsage mau = (MetadataAttributeUsage)parent;
+                if (mau.MetadataAttribute.Self is MetadataCompoundAttribute)
+                {
+                    MetadataCompoundAttribute mca = (MetadataCompoundAttribute)mau.MetadataAttribute.Self;
+                    return mca.MetadataNestedAttributeUsages.Where(m => m.Id.Equals(Id)).FirstOrDefault();
+                }
+               
+            }
+    
+            return null;
         }
 
         /// <summary>
@@ -194,23 +220,28 @@ namespace BExIS.Dcm.CreateDatasetWizard
 
         private static bool IsCompound(BaseUsage usage)
         {
+            MetadataAttributeManager mam = new MetadataAttributeManager();
+
             if (usage is MetadataAttributeUsage)
             {
                 MetadataAttributeUsage mau = (MetadataAttributeUsage)usage;
-                if (mau.MetadataAttribute.Self is MetadataCompoundAttribute) return true;
+                MetadataAttribute ma = mam.MetadataAttributeRepo.Get(mau.MetadataAttribute.Id);
+
+                if (ma is MetadataCompoundAttribute) return true;
                 
             }
 
             if (usage is MetadataNestedAttributeUsage)
             {
                 MetadataNestedAttributeUsage mnau = (MetadataNestedAttributeUsage)usage;
-                if (mnau.Member.Self is MetadataCompoundAttribute) return true;
+                MetadataAttribute ma = mam.MetadataAttributeRepo.Get(mnau.Member.Id);
+                if (ma is MetadataCompoundAttribute) return true;
             }
             
             return false;
         }
 
-        private static bool IsSimple(BaseUsage usage)
+        public static bool IsSimple(BaseUsage usage)
         {
             if (usage is MetadataAttributeUsage)
             {
@@ -308,6 +339,53 @@ namespace BExIS.Dcm.CreateDatasetWizard
                     foreach (BaseUsage childUsage in ((MetadataCompoundAttribute)mnau.Member.Self).MetadataNestedAttributeUsages)
                     {
                         if (IsSimple(childUsage)) return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        public static bool IsRequired(BaseUsage usage)
+        {
+            if (usage.MinCardinality > 0)
+                return true;
+            else
+                return false;
+        }
+
+        public static bool HasRequiredSimpleTypes(BaseUsage usage) 
+        {
+            if (usage is MetadataPackageUsage)
+            {
+                MetadataPackageUsage mpu = (MetadataPackageUsage)usage;
+
+                foreach (BaseUsage childUsage in mpu.MetadataPackage.MetadataAttributeUsages)
+                {
+                    if (IsSimple(childUsage) && childUsage.MinCardinality > 0) return true;
+                }
+            }
+
+            if (usage is MetadataAttributeUsage)
+            {
+                MetadataAttributeUsage mau = (MetadataAttributeUsage)usage;
+                if (mau.MetadataAttribute.Self is MetadataCompoundAttribute)
+                {
+                    foreach (BaseUsage childUsage in ((MetadataCompoundAttribute)mau.MetadataAttribute.Self).MetadataNestedAttributeUsages)
+                    {
+                        if (IsSimple(childUsage) && childUsage.MinCardinality > 0 ) return true;
+                    }
+                }
+            }
+
+            if (usage is MetadataNestedAttributeUsage)
+            {
+                MetadataNestedAttributeUsage mnau = (MetadataNestedAttributeUsage)usage;
+                if (mnau.Member.Self is MetadataCompoundAttribute)
+                {
+                    foreach (BaseUsage childUsage in ((MetadataCompoundAttribute)mnau.Member.Self).MetadataNestedAttributeUsages)
+                    {
+                        if (IsSimple(childUsage) && childUsage.MinCardinality > 0 ) return true;
                     }
                 }
             }

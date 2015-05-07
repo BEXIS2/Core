@@ -9,6 +9,8 @@ using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Data;
 using Vaiona.Web.Mvc.Filters;
+using System.Web;
+using System;
 
 namespace BExIS.Web.Shell
 {
@@ -99,12 +101,30 @@ namespace BExIS.Web.Shell
         {
             IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager();
             
-            pManager.Shutdown(); // release all data access related resources!
+           pManager.Shutdown(); // release all data access related resources!
             IoCFactory.ShutdownContainer();
         }
 
         protected void Session_Start()
         {
+            if (Context.Session.IsNewSession)
+            {
+                string sCookieHeader = Request.Headers["Cookie"];
+                if ((null != sCookieHeader) && (sCookieHeader.IndexOf("ASP.NET_SessionId") >= 0))
+                {
+                    //intercept current route
+                    HttpContextBase currentContext = new HttpContextWrapper(HttpContext.Current);
+                    RouteData routeData = RouteTable.Routes.GetRouteData(currentContext);
+
+   
+
+                    Response.Redirect("~/Home/SessionTimeout");
+
+                    Response.Flush();
+                    Response.End();
+                }
+            }
+
             //set session culture using DefaultCulture key
             IoCFactory.Container.StartSessionLevelContainer();
             Session.ApplyCulture(AppConfiguration.DefaultCulture);

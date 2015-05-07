@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
+using System.Xml.XPath;
 using Vaiona.Entities.Common;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
@@ -175,14 +176,14 @@ namespace BExIS.Xml.Helpers
             /// <param name="packageUsage"></param>
             /// <param name="number"></param>
             /// <returns></returns>
-        public XDocument AddPackage(XDocument metadataXml, BaseUsage usage, int number, string typeName, long typeId, List<BaseUsage> children, XmlNodeType xmlType, XmlNodeType xmlUsageType)
+        public XDocument AddPackage(XDocument metadataXml, BaseUsage usage, int number, string typeName, long typeId, List<BaseUsage> children, XmlNodeType xmlType, XmlNodeType xmlUsageType, string xpath)
             {
                 this._tempXDoc = metadataXml;
                 XElement role; 
                 //check if role exist
-                if (Exist(usage.Label, usage.Id))
+                if (Exist(xpath))
                 {
-                    role = Get(usage.Label, usage.Id);
+                    role = Get(xpath);
 
                 }
                 else
@@ -194,8 +195,10 @@ namespace BExIS.Xml.Helpers
                 }
 
                 //root.Add(role);
+                string xPathForNewElement = xpath + "//" + typeName + "[" + number + "]"; ;//xpath.Substring (0,xpath.Length-2)+number+"]";
 
-                if (!Exist(typeName, number, usage.Id))
+                //if (!Exist(xPathForNewElement))
+                if(!Exist(typeName,number,role))
                 {
                     XElement package;
                     // create the package
@@ -209,7 +212,7 @@ namespace BExIS.Xml.Helpers
 
                     foreach (BaseUsage attribute in children)
                     {
-                        package = AddAttribute(package, attribute, 1);
+                        AddAttribute(package, attribute, 1);
                     }
 
                     //XElement element = XmlUtility.GetXElementByAttribute(usage.Label, "id", usage.Id.ToString(), metadataXml);
@@ -223,6 +226,42 @@ namespace BExIS.Xml.Helpers
 
                 return metadataXml;
             }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="metadataXml"></param>
+        /// <param name="xpath"></param>
+        /// <returns></returns>
+        public XDocument Remove(XDocument metadataXml, string xpath)
+        {
+            this._tempXDoc = metadataXml;
+
+            if (this._tempXDoc.XPathSelectElement(xpath) != null)
+            {
+                XElement element = this._tempXDoc.XPathSelectElement(xpath);
+
+                XElement parent = element.Parent;
+
+                removeAndUpdate(element, parent);
+            }
+
+           
+            return metadataXml;
+        }
+
+        private void removeAndUpdate(XElement element, XElement parent)
+        {
+            int number = Convert.ToInt32(element.Attribute("number").Value);
+
+            List<XElement> listOfPackagesAfter = parent.Elements().Where(p => p.Attribute("number") != null && Convert.ToInt64(p.Attribute("number").Value) > number).ToList();
+
+            if (element != null)
+            {
+                element.Remove();
+                listOfPackagesAfter.ForEach(p => p.Attribute("number").SetValue(Convert.ToInt64(p.Attribute("number").Value) - 1));
+            }
+        }
 
         /// <summary>
         /// 
@@ -536,7 +575,7 @@ namespace BExIS.Xml.Helpers
             /// <param name="attributeUsage"></param>
             /// <param name="number"></param>
             /// <returns></returns>
-            public XDocument RemoveAttribute(XDocument metadataXml, BaseUsage parentUsage, int packageNumber, MetadataAttributeUsage attributeUsage, int number, string parentTypeName)
+            public XDocument RemoveAttribute(XDocument metadataXml, BaseUsage parentUsage, int packageNumber, BaseUsage attributeUsage, int number, string parentTypeName, string attributeName)
             {
                 _tempXDoc = metadataXml;
 
@@ -545,11 +584,11 @@ namespace BExIS.Xml.Helpers
                 XElement role = Get(attributeUsage.Label, package);
                 if (role != null)
                 {
-                    if (Exist(attributeUsage.MetadataAttribute.Name, number, role))
+                    if (Exist(attributeName, number, role))
                     {
 
-                        XElement attribute = Get(attributeUsage.MetadataAttribute.Name, number, role);
-                        List<XElement> listOfPackagesAfter = GetChildren(attributeUsage.MetadataAttribute.Name, role).Where(p => p.Attribute("number") != null && Convert.ToInt64(p.Attribute("number").Value) > number).ToList();
+                        XElement attribute = Get(attributeName, number, role);
+                        List<XElement> listOfPackagesAfter = GetChildren(attributeName, role).Where(p => p.Attribute("number") != null && Convert.ToInt64(p.Attribute("number").Value) > number).ToList();
 
                         if (attribute != null)
                         {

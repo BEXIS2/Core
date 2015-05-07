@@ -251,8 +251,6 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
 
             DataRow dr = dt.NewRow();
 
-           
-
             foreach(var vv in t.VariableValues)
             {
                 if (vv.Variable != null)
@@ -401,10 +399,10 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
                     if (sdvu.DataAttribute.Unit != null) dr["Unit"] = sdvu.DataAttribute.Unit.Name;
                     else dr["Unit"] = "n/a";
 
-                    if (sdvu.DataAttribute.Description != null || sdvu.DataAttribute.Description != "")
+                    if (sdvu.Description != null || sdvu.Description != "")
                     {
 
-                        dr["Description"] = sdvu.DataAttribute.Description;
+                        dr["Description"] = sdvu.Description;
                     }
                     else dr["Description"] = "n/a";
 

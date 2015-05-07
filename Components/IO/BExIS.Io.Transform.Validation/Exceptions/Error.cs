@@ -120,7 +120,14 @@ namespace BExIS.IO.Transform.Validation.Exceptions
                 case ErrorType.Value: return String.Format("{0} : Variable : {1} , Value : {2}, in Row : {3}, DataType : {4}", _issue, _name, _value, _row.ToString(), _dataType);
                 case ErrorType.Dataset: return String.Format("{0} : {1}", _issue, _name);
                 case ErrorType.Datastructure: return String.Format("{0} : {1}", _issue, _name);
-                case ErrorType.MetadataAttribute: return String.Format("in Package : <b>{5} ({4})</b><br> Attribute : <b>{0} ({3})</b> <br> with value = <b>{1}</b><br>{2} <br>  <hr>", _name, _value, _issue, _number, _package, _packageLabel);
+                case ErrorType.MetadataAttribute:{
+
+                    if (String.IsNullOrEmpty(_value))
+                        return String.Format("in Package : <b>{5} ({4})</b><br> Attribute : <b>{0} ({3})</b> <br> with value = <b>{1}</b><br>{2} <br>  <hr>", _name, _value, _issue, _number, _package, _packageLabel);
+                    else
+                        return String.Format("in Package : <b>{5} ({4})</b><br> Attribute : <b>{0} ({3})</b> <br>{2} <br>  <hr>", _name, _value, _issue, _number, _package, _packageLabel);
+
+                } 
                 default: return String.Format("{0}", _issue);
             }
         }

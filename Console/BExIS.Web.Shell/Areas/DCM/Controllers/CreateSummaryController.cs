@@ -26,6 +26,7 @@ using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Xml.Services;
 using BExIS.Dlm.Entities.Common;
+using BExIS.Web.Shell.Areas.DCM.Models;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
 {
@@ -36,23 +37,25 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         //
         // GET: /DCM/CreateSummary/
         [HttpGet]
-        public ActionResult Summary(int index)
+        public ActionResult Summary(int stepId)
         {
             TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
             CreateSummaryModel model = new CreateSummaryModel();
             //set current stepinfo based on index
             if (TaskManager != null)
             {
-                TaskManager.UpdateStepStatus(index);
-                TaskManager.SetCurrent(index);
+                TaskManager.UpdateStepStatus(stepId);
+                TaskManager.SetCurrent(stepId);
                 Session["CreateDatasetTaskmanager"] = TaskManager;
 
+                TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
 
-                if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST))
+
+                if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATA_STEP_MODEL_HELPER))
                 {
-                    Dictionary<string, AbstractMetadataStepModel> list = (Dictionary<string, AbstractMetadataStepModel>)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST];
+                    List<StepModelHelper> list = (List<StepModelHelper>)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_STEP_MODEL_HELPER];
                     model = CreateSummaryModel.Convert(list, TaskManager.Current());
-                    model.ErrorList = ValidatePackageModels();
+                    model.AllErrors = ValidatePackageModels();
                     model.PageStatus = Models.PageStatus.FirstLoad;
                     return PartialView(model);
                 }
@@ -61,7 +64,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     TaskManager.Bus[CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST] = new Dictionary<string, MetadataPackageModel>();
                 }
 
-                model.ErrorList = ValidatePackageModels();
+                model.AllErrors = ValidatePackageModels();
             }
 
            model.StepInfo = TaskManager.Current();
@@ -69,7 +72,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         }
 
         [HttpPost]
-        public ActionResult Summary(int? index, string name = null)
+        public ActionResult Summary(int? stepId, string name = null)
         {
             TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
 
@@ -83,12 +86,13 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
          
             CreateSummaryModel model = new CreateSummaryModel();
             // prepare model
-            if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST))
-            {
+             if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATA_STEP_MODEL_HELPER))
+             {
                 model.StepInfo = TaskManager.Current();
 
                 model.StepInfo.SetValid(false);
-                Dictionary<string, AbstractMetadataStepModel> list = (Dictionary<string, AbstractMetadataStepModel>)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST];
+
+                List<StepModelHelper> list = (List<StepModelHelper>)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_STEP_MODEL_HELPER];
                 model = CreateSummaryModel.Convert(list, TaskManager.Current());
 
                 //if (ValidatePackageModels().Count==0)
@@ -125,12 +129,12 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             
             //jump to a other step
-            if (index.HasValue)
+            if (stepId.HasValue)
             {
-                TaskManager.SetCurrent(index.Value);
+                TaskManager.SetCurrent(stepId.Value);
                 Session["TaskManager"] = TaskManager;
                 ActionInfo actionInfo = TaskManager.Current().GetActionInfo;
-                return RedirectToAction(actionInfo.ActionName, actionInfo.ControllerName, new RouteValueDictionary { { "area", actionInfo.AreaName }, { "index", TaskManager.GetCurrentStepInfoIndex() } });
+                return RedirectToAction(actionInfo.ActionName, actionInfo.ControllerName, new RouteValueDictionary { { "area", actionInfo.AreaName }, { "stepId", TaskManager.GetCurrentStepInfoIndex() } });
 
             }
             else
@@ -221,7 +225,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         #region helper
 
-            public string GetUserNameOrDefault()
+        public string GetUserNameOrDefault()
             {
                 string userName = string.Empty;
                 try
@@ -234,144 +238,85 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             }
         #endregion
 
-        // Check if existing packageModels have errors or not
-        // is valid == ture mean no errors
-        private bool IsValid()
+        private List<Tuple<StepInfo,List<Error>>> ValidatePackageModels()
         {
-            if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST))
-            {
-                Dictionary<string, MetadataPackageModel> list = (Dictionary<string, MetadataPackageModel>)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST];
-
-                foreach (MetadataPackageModel packageModel in list.Values)
-                {
-                    if (packageModel.ErrorList != null)
-                    {
-                        if (packageModel.ErrorList.Count > 0) return false;
-                    }
-                }
-
-                return true;
-            }
-
-            return false;
-        }
-
-        private List<Error> ValidatePackageModels()
-        {
-            List<Error> errors = new List<Error>();
+            List<Tuple<StepInfo,List<Error>>> errors = new List<Tuple<StepInfo,List<Error>>>();;
 
             TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
 
-            // go to every step in the taskmanager
-           
-            foreach (StepInfo step in TaskManager.Root.Children)
+            List<StepModelHelper> list = (List<StepModelHelper>)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_STEP_MODEL_HELPER];
+
+            foreach(StepModelHelper stepModeHelper in list)
             {
-                if (!AllStepsValid(step))
-                { 
-                    errors.Add(new Error(ErrorType.Other, "Errors in package : "+step.title ));
+                // if model exist then validate attributes
+                if (stepModeHelper.Model != null)
+                {
+                    if (stepModeHelper.Model.StepInfo.stepStatus == StepStatus.error)
+                        errors.Add(new Tuple<StepInfo,List<Error>>(stepModeHelper.Model.StepInfo,stepModeHelper.Model.ErrorList));
                 }
+                // else check for required elements 
+                else
+                { 
+                    stepModeHelper.Usage = LoadUsage(stepModeHelper.Usage);
+                    if(UsageHelper.HasUsagesWithSimpleType(stepModeHelper.Usage))
+                    {
+                        if(UsageHelper.HasRequiredSimpleTypes(stepModeHelper.Usage))
+                        {
+                            StepInfo step = TaskManager.Get(stepModeHelper.StepId);
+                            if (step != null && step.IsInstanze)
+                            {
+                                Error error = new Error(ErrorType.Other, String.Format("{0} : {1} {2}", "Step: ", stepModeHelper.Usage.Label, "is not valid. There are fields that are required and not yet completed are."));
+                                List<Error> tempErrors = new List<Error>();
+                                tempErrors.Add(error);
+                                
+                                errors.Add(new Tuple<StepInfo,List<Error>>(step,tempErrors));
+
+                                step.stepStatus = StepStatus.error;
+                            }
+                        }
+                    }
+                }
+
+
             }
 
             return errors;
         }
 
-        private bool AllStepsValid(StepInfo step)
+        private BaseUsage LoadUsage(BaseUsage usage)
         {
-            if (IsStepValid(step))
+            if (usage is MetadataPackageUsage)
             {
-                if(step.Children.Count>0)
-                {
-                    foreach(StepInfo childStep in step.Children)
-                    {
-                        if (!AllStepsValid(childStep))
-                        {
-                            return false;
-                        }
-                    }
-                }
-            }
-            else
-            {
-                return false;
+                MetadataStructureManager msm = new MetadataStructureManager();
+                return msm.PackageUsageRepo.Get(usage.Id);
             }
 
-
-            return true;
-        }
-
-        private bool IsStepValid(StepInfo step)
-        { 
-            if(step.stepStatus.Equals(StepStatus.error))
-                return false;
-
-            return true;
-        }
-
-        private bool hasRequiredMetadataAttributeUsage(MetadataPackageUsage mpu)
-        {
-            foreach (MetadataAttributeUsage metadataAttributeUsage in mpu.MetadataPackage.MetadataAttributeUsages)
+            if (usage is MetadataNestedAttributeUsage)
             {
-                if (metadataAttributeUsage.MinCardinality > 0) return true;
+                MetadataAttributeManager mam = new MetadataAttributeManager();
+
+                var x = from c in mam.MetadataCompoundAttributeRepo.Get()
+                        from u in c.Self.MetadataNestedAttributeUsages
+                        where u.Id == usage.Id //&& c.Id.Equals(parentId)
+                        select u;
+
+                return x.FirstOrDefault();
             }
 
-            return false;
-        }
-
-        private List<MetadataAttributeUsage> GetRequiredMetadataAttributeUsage(MetadataPackageUsage mpu)
-        {
-            List<MetadataAttributeUsage> list = new List<MetadataAttributeUsage>();
-
-            foreach (MetadataAttributeUsage metadataAttributeUsage in mpu.MetadataPackage.MetadataAttributeUsages)
+            if (usage is MetadataAttributeUsage)
             {
-                if (metadataAttributeUsage.MinCardinality > 0) list.Add(metadataAttributeUsage);
+                MetadataPackageManager mpm = new MetadataPackageManager();
+
+                var q = from p in mpm.MetadataPackageRepo.Get()
+                        from u in p.MetadataAttributeUsages
+                        where u.Id == usage.Id // && p.Id.Equals(parentId)
+                        select u;
+
+                return q.FirstOrDefault();
             }
 
-            return list;
+
+            return usage;
         }
-
-        private List<AbstractMetadataStepModel> GetMetadataPackageModelsFromBus(long metadataPackageUsageId)
-        {
-            Dictionary<string, AbstractMetadataStepModel> packageModelDic = new Dictionary<string, AbstractMetadataStepModel>();
-            List<AbstractMetadataStepModel> temp = new List<AbstractMetadataStepModel>();
-
-            if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST))
-            {
-                packageModelDic = (Dictionary<string, AbstractMetadataStepModel>)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST];
-
-                foreach (KeyValuePair<string, AbstractMetadataStepModel> keyValuePair in packageModelDic)
-                {
-                    if (GetPackageUsageIdFromIdentfifier(keyValuePair.Key).Equals(metadataPackageUsageId))
-                        temp.Add(keyValuePair.Value);
-                }
-            }
-            else
-            {
-
-                TaskManager.Bus[CreateDatasetTaskmanager.METADATA_PACKAGE_MODEL_LIST] = packageModelDic;
-            }
-
-            return temp;
-        }
-
-        #region identifier
-        private string CreateIdentfifier(long usageId, int number)
-        {
-            return usageId + "_" + number;
-        }
-
-        private long GetPackageUsageIdFromIdentfifier(string key)
-        {
-            string[] keyArray = key.Split('_');
-            long Id = Convert.ToInt64(keyArray[0]);
-            return Id;
-        }
-
-        private long GetNumberFromIdentfifier(string key)
-        {
-            string[] keyArray = key.Split('_');
-            long Id = Convert.ToInt64(keyArray[1]);
-            return Id;
-        }
-        #endregion
     }
 }

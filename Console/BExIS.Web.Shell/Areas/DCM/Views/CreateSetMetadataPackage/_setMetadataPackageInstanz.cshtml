@@ -16,7 +16,7 @@
 
     <div class="createWizardStep_Main">
         <div class="createWizardStep_Header stepper">
-            <h3>@Model.DisplayName ( @Model.Number )</h3>
+            <h3>@Model.DisplayName</h3>
         </div>
 
         <div class="createWizardStep_Description stepper">
@@ -44,12 +44,14 @@
         </div>
         <br />
 
-        @*@Ajax.ActionLink("Validate", "ValidateStep",@Model.StepInfo.GetActionInfo.ControllerName,new RouteValueDictionary { { "area", "DCM" } },
+        @Ajax.ActionLink("Validate", "ValidateStep",@Model.StepInfo.GetActionInfo.ControllerName,new RouteValueDictionary { { "area", "DCM" } },
                  new AjaxOptions { HttpMethod = "GET", 
-                 InsertionMode = InsertionMode.Replace, 
-                 UpdateTargetId = @id
+                     InsertionMode = InsertionMode.Replace, 
+                     UpdateTargetId = @id,
+                     OnSuccess = "OnSucess()",
+                     OnBegin = "OnLoad()"
                  },
-                 new { @class = "t-button",  @style="float:right" })*@
+                 new { @class = "t-button",  @style="float:right" })
  
     </div>
 
@@ -67,11 +69,27 @@
     </div>
 
     <div class="createWizardStep_Error stepper">
-        @*@if (Model != null)
+        @if (Model != null)
         {
             @Html.Partial("_errorMessages", @Model.ErrorList) 
 
-        }*@
+        }
     </div>   
 
 </div>
+
+<script type="text/javascript">
+
+    function OnLoad()
+    {
+        $('#preloader').show();
+    }
+
+    function OnSucess()
+    {
+        NavigationRefresh();
+        TaskListRefresh();
+        $('#preloader').hide();
+    }
+
+</script>

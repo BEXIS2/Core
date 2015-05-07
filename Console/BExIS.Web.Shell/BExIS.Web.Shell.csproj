@@ -68,7 +68,6 @@
     <Reference Include="Glimpse.Mvc3">
       <HintPath>..\..\packages\Glimpse.Mvc3.1.3.3\lib\net40\Glimpse.Mvc3.dll</HintPath>
     </Reference>
-    <Reference Include="IBM.Data.DB2, Version=9.7.4.4, Culture=neutral, PublicKeyToken=7c307b91aa13d208, processorArchitecture=AMD64" />
     <Reference Include="Iesi.Collections, Version=1.0.1.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Iesi.Collections.3.2.0.4000\lib\Net35\Iesi.Collections.dll</HintPath>
@@ -87,9 +86,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Libraries\Microsoft.Web.Helpers.dll</HintPath>
     </Reference>
-    <Reference Include="Mono.Security, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Npgsql.2.2.4.3\lib\net40\Mono.Security.dll</HintPath>
+    <Reference Include="Mono.Security">
+      <HintPath>..\..\packages\Npgsql.2.0.14.3\lib\net40\Mono.Security.dll</HintPath>
     </Reference>
     <Reference Include="NHibernate, Version=3.3.1.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -98,13 +96,12 @@
     <Reference Include="NHibernate.Glimpse">
       <HintPath>..\..\packages\NHibernate.Glimpse.3.3.3.40011\lib\net35\NHibernate.Glimpse.dll</HintPath>
     </Reference>
-    <Reference Include="Npgsql, Version=2.2.4.3, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Npgsql.2.2.4.3\lib\net40\Npgsql.dll</HintPath>
+    <Reference Include="Npgsql">
+      <HintPath>..\..\packages\Npgsql.2.0.14.3\lib\net40\Npgsql.dll</HintPath>
     </Reference>
     <Reference Include="PostSharp, Version=2.1.0.0, Culture=neutral, PublicKeyToken=b13fd38b8f9c99d7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Libraries\PostSharp\PostSharp.dll</HintPath>
+      <HintPath>..\..\..\ModuleBranches\C_DLM\Libraries\PostSharp\PostSharp.dll</HintPath>
     </Reference>
     <Reference Include="System.Data.Linq" />
     <Reference Include="System.Linq.Dynamic, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -145,7 +142,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Libraries\Vaiona\Vaiona.Entities.dll</HintPath>
     </Reference>
-    <Reference Include="Vaiona.Entities.Orm.NH">
+    <Reference Include="Vaiona.Entities.Orm.NH, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Libraries\Vaiona\Vaiona.Entities.Orm.NH.dll</HintPath>
     </Reference>
     <Reference Include="Vaiona.IoC, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -155,7 +153,8 @@
     <Reference Include="Vaiona.Logging">
       <HintPath>..\..\Libraries\Vaiona\Vaiona.Logging.dll</HintPath>
     </Reference>
-    <Reference Include="Vaiona.Model">
+    <Reference Include="Vaiona.Model, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Libraries\Vaiona\Vaiona.Model.dll</HintPath>
     </Reference>
     <Reference Include="Vaiona.Persistence.Api, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -265,6 +264,7 @@
     <Compile Include="Areas\DCM\Models\CreateDatasetViewModel.cs" />
     <Compile Include="Areas\DCM\Models\Create\SelectDatasetSetupModel.cs" />
     <Compile Include="Areas\DCM\Models\Create\CreateSummaryModel.cs" />
+    <Compile Include="Areas\DCM\Models\Create\StepModelHelper.cs" />
     <Compile Include="Areas\DCM\Models\FileInfoModel.cs" />
     <Compile Include="Areas\DCM\Models\FinishUploadModel.cs" />
     <Compile Include="Areas\DCM\Models\GetFileInformationModel.cs" />
@@ -323,7 +323,9 @@
       <SubType>Designer</SubType>
     </DesignData>
     <DesignData Include="Db\Settings\MsSql2008Dialect.hibernate.cfg.xml" />
-    <DesignData Include="Db\Settings\PostgreSQL82Dialect.hibernate.cfg.xml" />
+    <DesignData Include="Db\Settings\PostgreSQL82Dialect.hibernate.cfg.xml">
+      <SubType>Designer</SubType>
+    </DesignData>
     <Content Include="Areas\DCM\Images\emptyPng.png" />
     <Content Include="Areas\DDM\Scripts\ddm.js" />
     <Content Include="Areas\RPM\Scripts\jquery-1.10.1.min.js" />
@@ -1043,6 +1045,7 @@
     <Content Include="Areas\RPM\Views\Home\_dataStructureSaveAs.cshtml" />
     <Content Include="Areas\DDM\Views\Home\_myDatasetGridView.cshtml" />
     <Content Include="Areas\DDM\Views\Data\_showItem.cshtml" />
+    <Content Include="Areas\DCM\Views\Shared\_summaryErrorMessages.cshtml" />
     <None Include="Properties\PublishProfiles\2230.pubxml" />
     <None Include="Properties\PublishProfiles\2301.pubxml" />
     <None Include="Properties\PublishProfiles\2302.pubxml" />
@@ -1052,6 +1055,7 @@
     <None Include="Properties\PublishProfiles\BPP230.pubxml" />
     <Content Include="_AppStart.cshtml" />
     <None Include="Properties\PublishProfiles\BPP2602.pubxml" />
+    <Content Include="Views\Home\SessionTimeout.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\Auth\Views\Users\_CreatePartial.cshtml" />
@@ -1078,7 +1082,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>59251</DevelopmentServerPort>
+          <DevelopmentServerPort>23418</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>
@@ -1092,9 +1096,7 @@
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup>
-    <PostBuildEvent>C:\Windows\System32\xcopy "$(ProjectDir)Db\Settings" "$(SolutionDir)Workspace\General\Db\Settings" /E /C /Y /I
-rmdir /S /Q  "$(SolutionDir)Workspace\Components\Vaiona\Db\Mappings"
-C:\Windows\System32\xcopy "$(SolutionDir)Libraries\Vaiona\Workspace" "$(SolutionDir)Workspace" /E /C /Y /I</PostBuildEvent>
+    <PostBuildEvent>C:\Windows\System32\xcopy "$(ProjectDir)Db\Settings" "$(SolutionDir)Workspace\General\Db\Settings" /E /C /Y /I</PostBuildEvent>
   </PropertyGroup>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
 </Project>

@@ -35,7 +35,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
 
         [HttpGet]
-        public ActionResult SelectDatasetSetup(int index)
+        public ActionResult SelectDatasetSetup(int stepId)
         {
 
             TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
@@ -43,8 +43,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             //set current stepinfo based on index
             if (TaskManager != null)
             {
-                TaskManager.UpdateStepStatus(index);
-                TaskManager.SetCurrent(index);
+                TaskManager.UpdateStepStatus(stepId);
+                TaskManager.SetCurrent(stepId);
                 Session["CreateDatasetTaskmanager"] = TaskManager;
                //remove if existing
                //TaskManager.RemoveExecutedStep(TaskManager.Current());
@@ -60,7 +60,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         }
 
         [HttpPost]
-        public ActionResult SelectDatasetSetup(int? index, string name = null)
+        public ActionResult SelectDatasetSetup(int? stepId, string name = null)
         {
 
             TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
@@ -112,14 +112,14 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             if (TaskManager.Current().IsValid())
             {
-                if (index.HasValue)
-                    TaskManager.SetCurrent(index.Value);
+                if (stepId.HasValue)
+                    TaskManager.SetCurrent(stepId.Value);
                 else
                     TaskManager.GoToNext();
 
                 Session["TaskManager"] = TaskManager;
                 ActionInfo actionInfo = TaskManager.Current().GetActionInfo;
-                return RedirectToAction(actionInfo.ActionName, actionInfo.ControllerName, new RouteValueDictionary { { "area", actionInfo.AreaName }, { "index", TaskManager.GetCurrentStepInfoIndex() } });
+                return RedirectToAction(actionInfo.ActionName, actionInfo.ControllerName, new RouteValueDictionary { { "area", actionInfo.AreaName }, { "stepId", TaskManager.GetCurrentStepInfoIndex() } });
             }
 
 
@@ -161,7 +161,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 TaskManager.Current().SetStatus(StepStatus.success);
                 TaskManager.GoToNext();
                 ActionInfo actionInfo = TaskManager.Current().GetActionInfo;
-                return RedirectToAction(actionInfo.ActionName, actionInfo.ControllerName, new RouteValueDictionary { { "area", actionInfo.AreaName }, { "index", TaskManager.GetCurrentStepInfoIndex() } });
+                return RedirectToAction(actionInfo.ActionName, actionInfo.ControllerName, new RouteValueDictionary { { "area", actionInfo.AreaName }, { "stepId", TaskManager.GetCurrentStepInfoIndex() } });
          
             }
             else
@@ -282,8 +282,16 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
            List<MetadataPackageUsage> metadataPackageList = metadataStructureManager.GetEffectivePackages(MetadataStructureId).ToList();
 
-           Dictionary<int, long> MetadataPackageDic = new Dictionary<int, long>();
-           TaskManager.AddToBus(CreateDatasetTaskmanager.METADATAPACKAGE_IDS, MetadataPackageDic);
+           List<StepModelHelper> stepModelHelperList = new List<StepModelHelper>();
+           if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATA_STEP_MODEL_HELPER))
+           {
+               TaskManager.Bus[CreateDatasetTaskmanager.METADATA_STEP_MODEL_HELPER] = stepModelHelperList;
+           }
+           else
+           {
+               TaskManager.Bus.Add(CreateDatasetTaskmanager.METADATA_STEP_MODEL_HELPER,stepModelHelperList);
+           }
+
 
            StepInfo summary = TaskManager.StepInfos.Last();
            //TaskManager.StepInfos.Remove(TaskManager.StepInfos.Last());
@@ -292,6 +300,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
            TaskManager.Root.Children.Clear();
            TaskManager.StepInfos.Add(start);
            TaskManager.Root.Children.Add(start);
+
 
            foreach (MetadataPackageUsage mpu in metadataPackageList)
            {
@@ -318,19 +327,20 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                        }
                    };
 
-
                    TaskManager.StepInfos.Add(si);
-                   MetadataPackageDic.Add(si.Id, mpu.Id);
-                   si = AddStepsBasedOnUsage(mpu,si);
+                   StepModelHelper stepModelHelper = new StepModelHelper(si.Id, 1, mpu, "Metadata//" + mpu.Label.Replace(" ",string.Empty) + "[1]");
+                   stepModelHelperList.Add(stepModelHelper);
+
+                   si = AddStepsBasedOnUsage(mpu,si,stepModelHelper.XPath);
                    TaskManager.Root.Children.Add(si);
 
-                   TaskManager.Bus[CreateDatasetTaskmanager.METADATAPACKAGE_IDS] = MetadataPackageDic;
+                   TaskManager.Bus[CreateDatasetTaskmanager.METADATA_STEP_MODEL_HELPER] = stepModelHelperList;
                }
            }
 
            TaskManager.StepInfos.Add(summary);
            TaskManager.Root.Children.Add(summary);
-           TaskManager.Bus[CreateDatasetTaskmanager.METADATAPACKAGE_IDS] = MetadataPackageDic;
+           TaskManager.Bus[CreateDatasetTaskmanager.METADATA_STEP_MODEL_HELPER] = stepModelHelperList;
            Session["CreateDatasetTaskmanager"] = TaskManager;
         }
 
@@ -484,41 +494,32 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         #region load advanced steps
 
-        private long GetPackageId(int stepIndex)
-        {
-
-            if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATAPACKAGE_IDS))
-            {
-
-                if ((Dictionary<int, long>)TaskManager.Bus[CreateDatasetTaskmanager.METADATAPACKAGE_IDS] != null)
-                {
-                    Dictionary<int, long> metadataPackageDic = (Dictionary<int, long>)TaskManager.Bus[CreateDatasetTaskmanager.METADATAPACKAGE_IDS];
-
-                    if (metadataPackageDic.ContainsKey(stepIndex)) return Convert.ToInt64(metadataPackageDic[stepIndex]);
-                }
-            }
-
-            return 0;
-
-        }
-
-        private StepInfo AddStepsBasedOnUsage(BaseUsage usage, StepInfo current)
+        private StepInfo AddStepsBasedOnUsage(BaseUsage usage, StepInfo current, string parentXpath)
         {
             // genertae action, controller base on usage
             string actionName = "";
+            string childName = "";
             int min = usage.MinCardinality;
 
             if (usage is MetadataPackageUsage)
             {
                 actionName = "SetMetadataPackageInstanze";
+                childName = ((MetadataPackageUsage)usage).MetadataPackage.Name;
             }
             else
             {
                 actionName = "SetMetadataCompoundAttributeInstanze";
+
+                if (usage is MetadataNestedAttributeUsage)
+                    childName = ((MetadataNestedAttributeUsage)usage).Member.Name;
+
+                if (usage is MetadataAttributeUsage)
+                    childName = ((MetadataAttributeUsage)usage).MetadataAttribute.Name;
+
             }
 
             List<StepInfo> list = new List<StepInfo>();
-            Dictionary<int, long> MetadataPackageDic = (Dictionary<int, long>)TaskManager.Bus[CreateDatasetTaskmanager.METADATAPACKAGE_IDS];
+            List<StepModelHelper> stepHelperModelList = (List<StepModelHelper>)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_STEP_MODEL_HELPER];
 
             if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATA_XML))
             {
@@ -554,7 +555,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         foreach (XElement element in xelements)
                         {
                             counter++;
-                            string title = usage.Label + " (" + counter + ")";
+                            string title = usage.Label+" (" + counter + ")";
                             long id = Convert.ToInt64((element.Attribute("roleId")).Value.ToString());
 
                             StepInfo s = new StepInfo(title)
@@ -578,31 +579,43 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                                 }
                             };
 
-                            s.Children = GetChildrenSteps(usage, s);
+                            string xPath = parentXpath + "//" + childName.Replace(" ",string.Empty) + "[" + counter + "]";
+
+                            s.Children = GetChildrenSteps(usage, s, xPath);
+
+                            if (s.Children.Count == 0)
+                            {
+
+                            }
+
                             current.Children.Add(s);
 
                             if (TaskManager.Root.Children.Where(z => z.title.Equals(title)).Count() == 0)
                             {
-                                MetadataPackageDic.Add(s.Id, id);
+                                stepHelperModelList.Add(new StepModelHelper(s.Id, 1, usage, xPath));
                             }
 
                         }
                     }
                 }
 
-                TaskManager.AddToBus(CreateDatasetTaskmanager.METADATAPACKAGE_IDS, MetadataPackageDic);
+                //TaskManager.AddToBus(CreateDatasetTaskmanager.METADATAPACKAGE_IDS, MetadataPackageDic);
             }
             return current;
         }
 
-        private List<StepInfo> GetChildrenSteps(BaseUsage usage, StepInfo parent)
+        private List<StepInfo> GetChildrenSteps(BaseUsage usage, StepInfo parent, string parentXpath)
         {
             List<StepInfo> childrenSteps = new List<StepInfo>();
             List<BaseUsage> childrenUsages = UsageHelper.GetCompoundChildrens(usage);
-            Dictionary<int, long> MetadataPackageDic = (Dictionary<int, long>)TaskManager.Bus[CreateDatasetTaskmanager.METADATAPACKAGE_IDS];
+            List<StepModelHelper> stepHelperModelList = (List<StepModelHelper>)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_STEP_MODEL_HELPER];
 
-            foreach (BaseUsage u in childrenUsages)
+            if (childrenUsages.Count > 0)
             {
+                foreach (BaseUsage u in childrenUsages)
+                {
+
+                    string xPath = parentXpath + "//" + u.Label.Replace(" ", string.Empty) + "[1]";
 
                     bool complex = false;
 
@@ -655,20 +668,24 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         };
 
                         //only not optional
-                        s = AddStepsBasedOnUsage(u, s);
+                        s = AddStepsBasedOnUsage(u, s, xPath);
                         childrenSteps.Add(s);
 
                         if (TaskManager.Root.Children.Where(z => z.title.Equals(s.title)).Count() == 0)
                         {
-                            MetadataPackageDic.Add(s.Id, u.Id);
+                            // MetadataPackageDic.Add(s.Id, u.Id);
+                            stepHelperModelList.Add(new StepModelHelper(s.Id, 1, u, xPath));
                         }
                     }
-                //}
+                    //}
 
+                }
             }
+            
 
             return childrenSteps;
         }
+
 
         #endregion
 

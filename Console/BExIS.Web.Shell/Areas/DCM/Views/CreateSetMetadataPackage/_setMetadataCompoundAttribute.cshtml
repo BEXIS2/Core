@@ -6,12 +6,12 @@
 @using BExIS.IO.Transform.Validation.Exceptions; 
 
 @{
-    string id = @Model.Source.Id.ToString(); // XXX METADATSTRUCTURE+ "_"+Model..MetadataStructure.Id;
+    string id = @Model.StepInfo.Id.ToString(); // XXX METADATSTRUCTURE+ "_"+Model..MetadataStructure.Id;
     string packageUsageIdPackage = id+"_Package";
     string idAdd = id + "_Add"; 
     string idRemove = id + "_Remove";
-    
-    long idAsLong = @Model.Source.Id;
+
+    int idAsLong = @Model.StepInfo.Id;
     
  }
 
@@ -33,14 +33,15 @@
             <div class="ready">
             @if (Model.MaxCardinality > 1 && Model.Instance.Count < Model.MaxCardinality)
             { 
-                @Ajax.ActionLink("Add", "AddMetadataCompundAttributeUsage", @Model.StepInfo.GetActionInfo.ControllerName, new { area = @Model.StepInfo.GetActionInfo.AreaName, id = @idAsLong, number = @Model.Instance.Count },
+                @Ajax.ActionLink("Add", "AddMetadataCompundAttributeUsage", @Model.StepInfo.GetActionInfo.ControllerName, new { area = @Model.StepInfo.GetActionInfo.AreaName, stepId = @idAsLong, number = @Model.Instance.Count },
                                     new AjaxOptions
                                     {
                                         UpdateTargetId = @id,
                                         HttpMethod = "GET",
                                         OnSuccess = "OnSucess()",
                                         OnBegin = "OnLoad()"
-                                    })
+                                    },
+                                    new { @class="t-icon t-add"})
             }
             </div>
             <div class="process" style="display:none;">
@@ -57,11 +58,12 @@
                          <div class="ready">
                         @if (Model.Instance.Count > 1 && Model.Instance.Count> Model.MinCardinality)
                         {
-                            @Ajax.ActionLink("Delete", "RemoveMetadataCompundAttributeUsage", @Model.StepInfo.GetActionInfo.ControllerName, new { area = @Model.StepInfo.GetActionInfo.AreaName, id= @idAsLong , number= @instance.Number }, 
+                            @Ajax.ActionLink("Delete", "RemoveMetadataCompundAttributeUsage", @Model.StepInfo.GetActionInfo.ControllerName, new { area = @Model.StepInfo.GetActionInfo.AreaName, stepId= @idAsLong , number= @instance.Number }, 
                                         new AjaxOptions { UpdateTargetId = @id, 
                                                           HttpMethod = "GET",
                                                           OnSuccess="OnSucess()",
-                                                          OnBegin="OnLoad()"})
+                                                          OnBegin="OnLoad()"},
+                                                          new { @class="t-icon t-delete"})
                         }
                     </div>
                     <div class="process" style="display:none;">
@@ -90,7 +92,6 @@
         {
             if (Model.ErrorList.Count == 0)
             {
-                // if primary keys unique
                <p>no errors</p>
             }
         }
@@ -106,25 +107,3 @@
     </div>   
 
 </div>
-
-<script type="text/javascript">
-
-    function OnLoad()
-    {
-        $('#preloader').show();
-        $('.ready').hide();
-        $('.process').show();
-
-    }
-
-    function OnSucess()
-    {
-        NavigationRefresh();
-        TaskListRefresh();
-        $('#preloader').hide();
-
-        $('.ready').show();
-        $('.process').hide();
-    }
-
-</script>

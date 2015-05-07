@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -29,6 +30,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
         public int NumberOfSourceInPackage { get; set; }
         public List<object> DomainList { get; set; }
 
+        public string ConstraintDescription { get; set; }
+
         public bool last = false;
         public bool first = false;
 
@@ -38,6 +41,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
         {
             MetadataAttribute metadataAttribute;
             List<object> domainConstraintList = new List<object>();
+            string constraintsDescription="";
 
             if (current is MetadataNestedAttributeUsage)
             {
@@ -46,6 +50,15 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
 
                 if (metadataAttribute.Constraints.Where(c => (c is DomainConstraint)).Count() > 0)
                     domainConstraintList = createDomainContraintList(metadataAttribute);
+
+                if (metadataAttribute.Constraints.Count > 0)
+                { 
+                    foreach(Constraint c in  metadataAttribute.Constraints)
+                    {
+                        constraintsDescription = Path.Combine("{0} , {1}", constraintsDescription, c.FormalDescription);
+                    }
+                }
+
             }
             else
             { 
@@ -63,6 +76,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
                 Source = current,
                 DisplayName = current.Label,
                 Discription = current.Description,
+                ConstraintDescription = constraintsDescription,
                 DataType = metadataAttribute.DataType.Name,
                 SystemType = metadataAttribute.DataType.SystemType,
                 MinCardinality = current.MinCardinality,

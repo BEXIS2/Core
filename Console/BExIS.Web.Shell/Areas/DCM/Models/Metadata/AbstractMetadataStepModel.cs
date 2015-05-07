@@ -28,17 +28,12 @@ namespace BExIS.Web.Shell.Areas.DCM.Models.Metadata
             MetadataAttributeModels = new List<MetadataAttributeModel>();
         }
 
-        public void ConvertInstance(XDocument metadata)
+        public void ConvertInstance(XDocument metadata, string xpath)
         {
-            var x = XmlUtility.GetXElementByAttribute(Source.Label, "type", BExIS.Xml.Helpers.XmlNodeType.MetadataAttributeUsage.ToString(), metadata);
-
-            if (x == null)
-                x = XmlUtility.GetXElementByAttribute(Source.Label, "type", BExIS.Xml.Helpers.XmlNodeType.MetadataPackageUsage.ToString(), metadata);
+            var x = XmlUtility.GetXElementByXPath(xpath, metadata);
 
             if (x != null)
             {
-
-
                 IEnumerable<XElement> xelements = x.Elements();
 
                 if (xelements.Count() > 0)
@@ -48,7 +43,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Models.Metadata
                     foreach (XElement element in xelements)
                     {
                         long id = Convert.ToInt64(element.Attribute("id").Value.ToString());
-                        string name = element.Attribute("name").Value.ToString();
+                        string name = element.Parent.Attribute("name").Value.ToString();
                         long usageId = Convert.ToInt64(element.Attribute("roleId").Value.ToString());
                         int number = Convert.ToInt32(element.Attribute("number").Value.ToString());
 

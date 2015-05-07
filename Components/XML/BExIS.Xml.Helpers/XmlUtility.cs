@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
+using System.Xml.XPath;
 
 namespace BExIS.Xml.Helpers
 {
@@ -165,6 +166,22 @@ namespace BExIS.Xml.Helpers
 
                 return elements;
             }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <remarks></remarks>
+            /// <seealso cref=""/>
+            /// <param name="name"></param>
+            /// <returns></returns>
+            public static XElement GetXElementByXPath(string xpath, XDocument xDoc)
+            {
+                return xDoc.XPathSelectElement(xpath.Replace(" ",string.Empty));
+            }
+
+            
+            
+            
 
             /// <summary>
             /// 

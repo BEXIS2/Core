@@ -26,7 +26,7 @@
     
      if (@Session["ParentOfSelectAbleCategories"] != null)
      {
-        title = @Session["ParentOfSelectAbleCategories"].ToString().Titleize();
+         title = System.StringExtensions.Titleize(@Session["ParentOfSelectAbleCategories"].ToString());
      }
  }
 
@@ -61,8 +61,8 @@
                                         facet.Parent = Model.SearchComponent.GetFacet(@Session["ParentOfSelectAbleCategories"].ToString());
 
                                         string displayedName;
-                                        
-                                        if (facet.Name.Length > 23){ displayedName = facet.Name.Truncate(23); }
+
+                                        if (facet.Name.Length > 23) { displayedName = System.StringExtensions.Truncate(facet.Name,23); }
                                         else { displayedName = facet.Name; }
                                             
                                         <td title="@facet.Name.ToString()">@Html.CheckBox(pos.ToString(), @Model.CriteriaComponent.ContainsFacet(facet), new { text = @facet.Name.ToString() })  @Html.Label(@facet.Name.ToString(), displayedName)</td>

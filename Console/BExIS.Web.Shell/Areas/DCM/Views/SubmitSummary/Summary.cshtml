@@ -129,7 +129,9 @@
         </div>
     </div>
 
-    <div class="uploadWizardStep_Success stepper"><//div>
+    <div class="uploadWizardStep_Success stepper">
+        <div id="progress"></div>
+    <//div>
     <div class="uploadWizardStep_Error stepper">
         @if (Model != null)
         {
@@ -155,3 +157,43 @@
         }
     </div>    
 </div>
+
+
+<script type="text/javascript">
+
+    //$(document).ready(function () {
+
+
+    //});
+
+    @*function StartProgress() {
+
+        $.post('@Url.Action("StartProgress", "SubmitSummary", new RouteValueDictionary { { "area", "DCM" } })', {}, function (taskId) {
+
+            // Init monitors
+            $("#progress").append($("<p id='" + taskId + "'/>"));
+            updateMonitor(taskId, "Started");
+
+            // Periodically update monitors
+            var intervalId = setInterval(function () {
+                $.post('@Url.Action("Progress", "SubmitSummary", new RouteValueDictionary { { "area", "DCM" } })', { id: taskId }, function (progress) {
+                    if (progress >= 100) {
+                        updateMonitor(taskId, "Completed");
+                        clearInterval(intervalId);
+                    } else {
+                        updateMonitor(taskId, progress + "%");
+                    }
+                });
+            }, 100);
+
+        });
+          
+    };
+
+
+    function updateMonitor(taskId, status) {
+        $("#" + taskId).html("Task [" + taskId + "]: " + status + $.now());
+    }*@
+   
+
+</script>

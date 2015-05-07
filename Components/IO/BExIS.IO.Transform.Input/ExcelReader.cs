@@ -48,6 +48,7 @@ namespace BExIS.IO.Transform.Input
         public ExcelReader()
         {
             this.Info = new ExcelFileReaderInfo();
+            NumberOfRows = 0;
         }
 
         #region read file
@@ -649,8 +650,8 @@ namespace BExIS.IO.Transform.Input
                     break;
 
                 }
-
             }
+
         }
 
         #endregion

@@ -6,12 +6,12 @@
 @using BExIS.IO.Transform.Validation.Exceptions; 
 
 @{
-    string id = @Model.Source.Id.ToString(); // XXX METADATSTRUCTURE+ "_"+Model..MetadataStructure.Id;
+    string id = @Model.StepInfo.Id.ToString(); // XXX METADATSTRUCTURE+ "_"+Model..MetadataStructure.Id;
     string packageUsageIdPackage = id+"_Package";
     string idAdd = id + "_Add"; 
     string idRemove = id + "_Remove";
 
-    long idAsLong = @Model.Source.Id;
+    long idAsLong = @Model.StepInfo.Id;
  }
 
 <div id="@id" class="createWizardStep">
@@ -33,15 +33,16 @@
             @if (Model.MinCardinality > 0 && Model.Instance.Count< Model.MaxCardinality)
             {
             
-                @Ajax.ActionLink("Add", "AddMetadataPackageUsage", @Model.StepInfo.GetActionInfo.ControllerName, new { area = @Model.StepInfo.GetActionInfo.AreaName, id = @idAsLong, number = @Model.Instance.Count },
+                @Ajax.ActionLink("Add", "AddMetadataPackageUsage", @Model.StepInfo.GetActionInfo.ControllerName, new { area = @Model.StepInfo.GetActionInfo.AreaName, stepId = @idAsLong, number = @Model.Instance.Count },
                                 new AjaxOptions
                                 {
                                     UpdateTargetId = @id,
                                     HttpMethod = "GET",
                                     OnSuccess = "OnSucess()",
                                     OnBegin = "OnLoad()"
-                                })
-           }
+                                },
+                                new { @class="t-icon t-add"})
+            }
 
             <table>
  
@@ -53,11 +54,15 @@
                     @if (Model.Instance.Count > 1 && Model.Instance.Count> Model.MinCardinality)
                     {
                         <td>
-                            @Ajax.ActionLink("Delete", "RemoveMetadataPackageUsage", @Model.StepInfo.GetActionInfo.ControllerName, new { area = @Model.StepInfo.GetActionInfo.AreaName, id= @idAsLong , number= @Model.Instance.Count }, 
-                                    new AjaxOptions { UpdateTargetId = @id, 
-                                                      HttpMethod = "GET",
-                                                      OnSuccess="OnSucess()",
-                                                      OnBegin="OnLoad()"})
+                            @Ajax.ActionLink("Delete", "RemoveMetadataPackageUsage", @Model.StepInfo.GetActionInfo.ControllerName, new { area = @Model.StepInfo.GetActionInfo.AreaName, stepId= @idAsLong , number= @instance.Number }, 
+                                                    new AjaxOptions 
+                                                    { 
+                                                        UpdateTargetId = @id, 
+                                                        HttpMethod = "GET",
+                                                        OnSuccess="OnSucess()",
+                                                        OnBegin="OnLoad()"
+                                                    },
+                                                    new { @class="t-icon t-delete"})
 
                         </td>
                     }

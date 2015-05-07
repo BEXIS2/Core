@@ -47,7 +47,7 @@
                                 }
                                 else
                                 {
-                                    @Html.DropDownListFor(m => m.Value, new SelectList(Model.DomainList), new { OnChange = "OnChange(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @Model.Parent.Label, @class = "ValueClass" })
+                                    @Html.DropDownListFor(m => m.Value, new SelectList(Model.DomainList),"Select, please", new { OnChange = "OnChange(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @Model.Parent.Label, @class = "ValueClass" })
                                 }
 
                             }
@@ -60,7 +60,7 @@
                                 }
                                 else
                                 {
-                                    @Html.DropDownListFor(m => m.Value, new SelectList(Model.DomainList), new { OnChange = "OnChange(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @Model.Parent.Label, @class = "ValueClass" })
+                                    @Html.DropDownListFor(m => m.Value, new SelectList(Model.DomainList), "Select, please", new { OnChange = "OnChange(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @Model.Parent.Label, @class = "ValueClass" })
                                 }
                             }
                         }
@@ -165,12 +165,17 @@
                                 <button id="@idDown" type="button" value="Down" name="Down"  class="t-icon t-arrow-down" style="border:0px;" onclick="OnClickDown(this)">down</button>
                             </td>
                         }
-
-
-
                     }
 
-  
+                    if (!String.IsNullOrEmpty(Model.ConstraintDescription))
+                    {
+                      
+                        @*<td>
+                            <label title="@Model.ConstraintDescription">?</label>
+                        </td>*@
+                    }
+
+
     }
     else
     { 

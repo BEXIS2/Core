@@ -286,7 +286,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
                             long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
 
-                            path = generateDownloadFile(id, datasetVersion.VersionNo, datastuctureId, title, ext, writer);
+                            path = generateDownloadFile(id, datasetVersion.Id, datastuctureId, title, ext, writer);
 
                             writer.AddDataTuplesToTemplate(datatuples, path, datastuctureId);
 
@@ -305,22 +305,26 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                                 ContentDescriptor contentdescriptor = datasetVersion.ContentDescriptors.Where(p => p.Name.Equals("generated")).FirstOrDefault();
                                 path = Path.Combine(AppConfiguration.DataPath, contentdescriptor.URI);
 
+                                long version = datasetVersion.Id;
+                                long versionNrGeneratedFile = Convert.ToInt64(contentdescriptor.URI.Split('\\').Last().Split('_')[1]);
+
                                 // check if FileStream exist
-                                if (FileHelper.FileExist(path))
+                                if (FileHelper.FileExist(path) && version == versionNrGeneratedFile)
                                 {
                                     return File(path, contentdescriptor.MimeType, title + ext);
                                 }
-                                    // if not generate
+
+                                // if not generate
                                 else
                                 {
                                     List<long> datatupleIds = datasetManager.GetDatasetVersionEffectiveTupleIds(datasetVersion);
                                     long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
-                                    path = generateDownloadFile(id, datasetVersion.VersionNo, datastuctureId, title, ext, writer);
+                                    path = generateDownloadFile(id, datasetVersion.Id, datastuctureId, title, ext, writer);
 
                                     storeGeneratedFilePathToContentDiscriptor(id, datasetVersion, title, ext, writer);
                                     writer.AddDataTuplesToTemplate(datatupleIds, path, datastuctureId);
 
-                                    return File(Path.Combine(AppConfiguration.DataPath, path), "application/xlsm", title);
+                                    return File(Path.Combine(AppConfiguration.DataPath, path), "application/xlsm", title + ext);
                                 }
 
                             #endregion
@@ -332,12 +336,12 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
                                 List<long> datatupleIds = datasetManager.GetDatasetVersionEffectiveTupleIds(datasetVersion);
                                 long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
-                                path = generateDownloadFile(id, datasetVersion.VersionNo, datastuctureId, title, ext, writer);
+                                path = generateDownloadFile(id, datasetVersion.Id, datastuctureId, title, ext, writer);
 
                                 storeGeneratedFilePathToContentDiscriptor(id, datasetVersion, title, ext, writer);
                                 writer.AddDataTuplesToTemplate(datatupleIds, path, datastuctureId);
 
-                                return File(Path.Combine(AppConfiguration.DataPath, path), "application/xlsm", title);
+                                return File(Path.Combine(AppConfiguration.DataPath, path), "application/xlsm", title + ext);
 
                             #endregion
                         }
@@ -363,7 +367,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
                         long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
 
-                        path = generateDownloadFile(id, datasetVersion.VersionNo, datastuctureId, title, ext, writer);
+                        path = generateDownloadFile(id, datasetVersion.Id, datastuctureId, title, ext, writer);
 
                         if (Session["Columns"] != null)
                             writer.VisibleColumns = (String[])Session["Columns"];
@@ -394,7 +398,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                             else
                             {
                                 
-                                path = generateDownloadFile(id, datasetVersion.VersionNo, datastuctureId, title, ext ,writer);
+                                path = generateDownloadFile(id, datasetVersion.Id, datastuctureId, title, ext ,writer);
 
                                 storeGeneratedFilePathToContentDiscriptor(id, datasetVersion, title, ext, writer);
 
@@ -411,7 +415,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         {
                             #region FileStream not exist
 
-                            path = generateDownloadFile(id, datasetVersion.VersionNo, datastuctureId, title, ext, writer);
+                            path = generateDownloadFile(id, datasetVersion.Id, datastuctureId, title, ext, writer);
 
                             storeGeneratedFilePathToContentDiscriptor(id, datasetVersion, title, ext, writer);
 
@@ -443,7 +447,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
                             long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
 
-                            path = generateDownloadFile(id, datasetVersion.VersionNo, datastuctureId, title, ext, writer);
+                            path = generateDownloadFile(id, datasetVersion.Id, datastuctureId, title, ext, writer);
 
                             if (Session["Columns"] != null)
                                 writer.VisibleColumns = (String[])Session["Columns"];
@@ -477,7 +481,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                                 }
                                 else
                                 {
-                                    path = generateDownloadFile(id, datasetVersion.VersionNo, datastuctureId, title, ext, writer);
+                                    path = generateDownloadFile(id, datasetVersion.Id, datastuctureId, title, ext, writer);
 
                                     //generate a entry in the ContentDiscriptor
                                     storeGeneratedFilePathToContentDiscriptor(id, datasetVersion, title, ext, writer);
@@ -496,7 +500,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         {
                             #region FileStream not exist
 
-                                path = generateDownloadFile(id, datasetVersion.VersionNo, datastuctureId, title, ext, writer);
+                                path = generateDownloadFile(id, datasetVersion.Id, datastuctureId, title, ext, writer);
 
                                 //generate a entry in the ContentDiscriptor
                                 storeGeneratedFilePathToContentDiscriptor(id, datasetVersion, title, ext, writer);
@@ -557,7 +561,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         }
 
                         // create the generated FileStream and determine its location
-                        string dynamicPath = writer.GetDynamicStorePath(datasetId, datasetVersion.VersionNo, title, ext);
+                        string dynamicPath = writer.GetDynamicStorePath(datasetId, datasetVersion.Id, title, ext);
                         //Register the generated data FileStream as a resource of the current dataset version
                         ContentDescriptor generatedDescriptor = new ContentDescriptor()
                         {

@@ -5,7 +5,7 @@
 @using BExIS.IO.Transform.Validation.Exceptions
 @using BExIS.Dcm.Wizard
 
-<div id="SelectDatasetSetup" class="createWizardStep">
+<div id="Summary" class="createWizardStep">
     <div class="createWizardStep_Main">
         <div class="createWizardStep_Header stepper">
             <h3>@Model.StepInfo.title</h3>
@@ -19,26 +19,29 @@
 
         <div class="createWizardStep_Content stepper"> 
        
-            @foreach (var package in Model.Packages.Values)
+            @foreach (var stepModelHelper in Model.StepModelHelpers)
             { 
-                <h3>@package.DisplayName <b> @package.Number</b></h3>
-    
-                <table>
-
-                    @foreach(var attribute in package.MetadataAttributeModels)
+                    if (stepModelHelper.Model!=null)
                     { 
-                        <tr>
-                         <td>
-                             <b>@attribute.DisplayName @if (attribute.Number > 1) { @attribute.Number }</b>
-                         </td>
-                         <td>
-                             @if (attribute.Value != null) { <p>@attribute.Value.ToString()</p> }
-                         </td>
-                        </tr>
-                    }
-                </table>
+                        <h3>@stepModelHelper.Usage.Label <b> @stepModelHelper.Number</b></h3>
     
-                <hr />
+                        <table>
+
+                        @foreach (var attribute in stepModelHelper.Model.MetadataAttributeModels)
+                        { 
+                            <tr>
+                             <td>
+                                 <b>@attribute.DisplayName @if (attribute.Number > 1) { @attribute.Number }</b>
+                             </td>
+                             <td>
+                                 @if (attribute.Value != null) { <p>@attribute.Value.ToString()</p> }
+                             </td>
+                            </tr>
+                        }
+                        </table>
+                        <hr />
+                   }
+    
 
             }
         </div>  
@@ -64,7 +67,7 @@
 
     <div class="createWizardStep_Error stepper">
  
-        @*@if (Model != null)
+        @if (Model != null)
         {
             if (Model.PageStatus.Equals(PageStatus.Error))
             { 
@@ -73,9 +76,9 @@
                 <hr />
             }
        
-            @Html.Partial("_errorMessages", Model.ErrorList)   
+            @Html.Partial("_summaryErrorMessages", Model.AllErrors)  
  
-         }*@
+         }
 
     </div>   
  </div>

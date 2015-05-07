@@ -112,6 +112,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(iddsd);
                     dsm.StructuredDataStructureRepo.LoadIfNot(sds.Variables);
 
+
                     if (TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".xlsm"))
                     {
                         // open FileStream
@@ -119,6 +120,16 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
                         reader.ValidateFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), sds, id);
                         model.ErrorList = reader.ErrorMessages;
+
+                        if (TaskManager.Bus.ContainsKey(TaskManager.NUMBERSOFROWS))
+                        {
+                            TaskManager.Bus[TaskManager.NUMBERSOFROWS] = reader.NumberOfRows;
+                        }
+                        else
+                        {
+                            TaskManager.Bus.Add(TaskManager.NUMBERSOFROWS, reader.NumberOfRows); 
+                        }
+
                     }
 
                     if (TaskManager.Bus[TaskManager.EXTENTION].ToString().Equals(".csv") ||
@@ -128,7 +139,16 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
                         reader.ValidateFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), (AsciiFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO], sds, id);
                         model.ErrorList = reader.ErrorMessages;
+
+                        if (TaskManager.Bus.ContainsKey(TaskManager.NUMBERSOFROWS))
+                        {
+                            TaskManager.Bus[TaskManager.NUMBERSOFROWS] = reader.NumberOfRows;
+                        }
                     }
+
+                    
+
+                    
                 }
                 catch (Exception ex)
                 {
