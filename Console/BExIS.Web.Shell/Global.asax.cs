@@ -88,7 +88,6 @@ namespace BExIS.Web.Shell
 #if DEBUG
             //HibernatingRhinos.Profiler.Appender.NHibernate.NHibernateProfiler.Initialize();
             //just for testing purposes
-            NHibernate.Glimpse.Plugin.RegisterSessionFactory(pManager.Factory as NHibernate.ISessionFactory);
 #endif
        }
 

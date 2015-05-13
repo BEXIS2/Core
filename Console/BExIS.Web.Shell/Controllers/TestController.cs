@@ -22,10 +22,10 @@ namespace BExIS.Web.Shell.Controllers
 #if DEBUG // it is designed just for testing and debugging purposes. For production versions, use release profile. Javad. 07.02.13
     public class TestController : Controller
     {
-        [DoesNotNeedDataAccess] // tells the persistence manager to not create an ambient session context for this action!
+        [DoesNotNeedDataAccess] // tells the persistence manager to not create an ambient session context for this action, which saves a considerable resources and reduces the execution time
         public ActionResult Index2()
         {
-            addConstraintsTo();
+            addConstraintsTo(); // should face an exception since thre is no ambient session created, see DoesNotNeedDataAccess attribute
 
             return View("Index");
         }
@@ -41,7 +41,9 @@ namespace BExIS.Web.Shell.Controllers
 
             //dm.DatasetRepo.LoadIfNot(ds.Tuples);
             ////dm.DatasetRepo.Get(
-            LoggerFactory.LogCustom("Here");
+            LoggerFactory.LogCustom("Hi, I am a custom message!");
+            LoggerFactory.LogData(id.ToString(), typeof(Dataset).Name, Vaiona.Entities.Logging.CrudState.Deleted);
+            LoggerFactory.LogDataRelation(id.ToString(), typeof(Dataset).Name, "20", typeof(DatasetVersion).Name, Vaiona.Entities.Logging.CrudState.Deleted);
 
             //DatasetExportTest2();
             //SimpleMatDematWithExport();
@@ -228,7 +230,7 @@ namespace BExIS.Web.Shell.Controllers
             //    //newDt.DatasetVersion = workingCopy;//required? no, its set in the Edit
 
             //    dm.EditDatasetVersion(workingCopy, null, new List<DataTuple>() { changed }, null);
-            //    dm.CheckInDataset(ds.Id, "edited version", "Javad");
+            //    dm.CheckInDataset(ds.Id, "editedVersion version", "Javad");
             //}
         }
 
@@ -245,7 +247,7 @@ namespace BExIS.Web.Shell.Controllers
             //    DataTuple deleting = dm.GetDatasetVersionEffectiveTuples(workingCopy).First();
 
             //    dm.EditDatasetVersion(workingCopy, null, null, new List<DataTuple>() { deleting });
-            //    dm.CheckInDataset(ds.Id, "edited version", "Javad");
+            //    dm.CheckInDataset(ds.Id, "editedVersion version", "Javad");
             //}
         }
 

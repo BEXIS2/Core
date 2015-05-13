@@ -12,6 +12,7 @@ using BExIS.IO.Transform.Validation.Exceptions;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
+using Vaiona.Logging.Aspects;
 
 /// <summary>
 ///
@@ -167,6 +168,7 @@ namespace BExIS.IO.Transform.Input
         /// <param name="sds">StructuredDataStructure of a dataset</param>
         /// <param name="datasetId">Datasetid of a dataset</param>
         /// <returns>List of DataTuples</returns>
+        [MeasurePerformance][Diagnose]
         public List<DataTuple> ReadFile(Stream file, string fileName, StructuredDataStructure sds, long datasetId,int packageSize)
         {
 

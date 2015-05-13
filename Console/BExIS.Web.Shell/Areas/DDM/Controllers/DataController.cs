@@ -30,6 +30,7 @@ using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Xml.Helpers;
 using BExIS.Xml.Services;
+using BExIS.Dlm.Services.MetadataStructure;
 
 namespace BExIS.Web.Shell.Areas.DDM.Controllers
 {
@@ -49,6 +50,9 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
         {
             DatasetManager dm = new DatasetManager();
             DatasetVersion dsv = dm.GetDatasetLatestVersion(id);
+
+            MetadataStructureManager msm = new MetadataStructureManager();
+            dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
 
             string title = XmlDatasetHelper.GetInformation(dsv, AttributeNames.title);
 
@@ -84,6 +88,9 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             {
                 DatasetManager dm = new DatasetManager();
                 DatasetVersion dsv = dm.GetDatasetLatestVersion(datasetID);
+
+                MetadataStructureManager msm = new MetadataStructureManager();
+                dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
 
             //get title
             model.Title = XmlDatasetHelper.GetInformation(dsv,AttributeNames.title);
@@ -751,6 +758,9 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 {
                     DatasetManager datasetManager = new DatasetManager();
                     DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
+
+                    MetadataStructureManager msm = new MetadataStructureManager();
+                    datasetVersion.Dataset.MetadataStructure = msm.Repo.Get(datasetVersion.Dataset.MetadataStructure.Id);
 
                     //TITLE
                     string title = XmlDatasetHelper.GetInformation(datasetVersion, AttributeNames.title);

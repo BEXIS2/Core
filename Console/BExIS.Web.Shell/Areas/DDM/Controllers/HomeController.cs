@@ -21,6 +21,7 @@ using BExIS.Security.Services.Subjects;
 using BExIS.Security.Entities.Objects;
 using System.Xml;
 using BExIS.Xml.Services;
+using BExIS.Dlm.Services.MetadataStructure;
 
 namespace BExIS.Web.Shell.Areas.DDM.Controllers
 {
@@ -713,6 +714,10 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 foreach (long datasetId in datasetIDs)
                 {
                     DatasetVersion dsv = datasetManager.GetDatasetLatestVersion(datasetId);
+
+                    MetadataStructureManager msm = new MetadataStructureManager();
+                    dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
+
                     string title = XmlDatasetHelper.GetInformation(dsv, AttributeNames.title);
                     string description = XmlDatasetHelper.GetInformation(dsv, AttributeNames.description);
 
