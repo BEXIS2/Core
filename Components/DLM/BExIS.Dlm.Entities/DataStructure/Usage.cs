@@ -32,32 +32,6 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// <seealso cref=""/>        
         public virtual Variable Variable { get; set; }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>        
-        public virtual bool IsValueOptional 
-        {
-            get { return MinCardinality < 1; } //if MinCardinality cardinality is zero (less than 1), the parameter value is optional
-            set { MinCardinality = value ? 0 : 1; } // if value is optional, set the min cardinality to zero
-        }
-
-        /// <summary>
-        /// The actual data type of the value is defined by the DataAttribute.DataType.
-        /// So developer should take care and convert this value to proper type before assigning it to parameter values
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>        
-        public virtual string DefaultValue { get; set; }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>        
-        public virtual string MissingValue { get; set; } 
-
     }
 
     /// <summary>
@@ -94,30 +68,13 @@ namespace BExIS.Dlm.Entities.DataStructure
         public virtual ICollection<Parameter> Parameters { get; set; }
 
         /// <summary>
-        ///
+        /// This is the unit directly associated with the variable. At the variable creation time, it is possible to attach the
+        /// variable to the unit of its associated data container or to another unit that its dimension is equal to the dimension of the 
+        /// unit of the data container.        
         /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>        
-        public virtual bool IsValueOptional 
-        {
-            get { return MinCardinality < 1; } //if MinCardinality cardinality is zero (less than 1), the variable value is optional
-            set { MinCardinality = (value ? 0 : 1); } // if value is optional, set the min cardinality to zero
-        }
-
-        /// <summary>
-        /// The actual data type of the value is defined by the DataAttribute.DataType.
-        /// So developer should take care and convert this value to proper type before assigning it to variable values
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>        
-        public virtual string DefaultValue { get; set; }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>        
-        public virtual string MissingValue { get; set; } 
+        /// <remarks>If the data attribute's unit changes, the validity of the variable's unit should be evaluated again.</remarks>
+        /// <remarks>If the variable's unit is going to be changed, the compatibility to the data container's unit's dimension should be preserved.</remarks>
+        public virtual Unit Unit { get; set; } // 0..1
 
     }
 }

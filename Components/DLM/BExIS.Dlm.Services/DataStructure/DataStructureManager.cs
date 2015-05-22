@@ -64,7 +64,7 @@ namespace BExIS.Dlm.Services.DataStructure
         public StructuredDataStructure CreateStructuredDataStructure(string name, string description, string xsdFileName, string xslFileName, DataStructureCategory indexerType, Variable indexer = null)
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(name));
-            Contract.Requires(indexerType != DataStructureCategory.Generic ? (indexer != null) : true);            
+            Contract.Requires(indexerType != DataStructureCategory.Generic ? (indexer != null) : true);
             Contract.Ensures(Contract.Result<StructuredDataStructure>() != null && Contract.Result<StructuredDataStructure>().Id >= 0);
 
             StructuredDataStructure e = new StructuredDataStructure()
@@ -83,7 +83,7 @@ namespace BExIS.Dlm.Services.DataStructure
                 repo.Put(e);
                 uow.Commit();
             }
-            return (e);            
+            return (e);
         }
 
         /// <summary>
@@ -155,7 +155,7 @@ namespace BExIS.Dlm.Services.DataStructure
                 repo.Put(entity); // Merge is required here!!!!
                 uow.Commit();
             }
-            return (entity);    
+            return (entity);
         }
 
         #endregion
@@ -257,7 +257,7 @@ namespace BExIS.Dlm.Services.DataStructure
             }
             return (entity);
         }
-           
+
         #endregion
 
         #region Associations
@@ -273,18 +273,21 @@ namespace BExIS.Dlm.Services.DataStructure
         /// Its possible for a data structure to use a data attribute more than once by creating more than one variables, hence having different labels.</param>
         /// <param name="defaultValue">The default value of the associated variable values. Mainly considered for user interface purposes.</param>
         /// <param name="missingValue">A specific sentinel value that when is put into the variable values, means those values are missing and should not be considered data.</param>
+        /// <param name="variableUnit">A specific unit for the variable. If not provided the unit of the <paramref name="dataAttibute"/> is used.
+        /// If provided, its dimension must be equal to the dimension of the <paramref name="dataAttribute"/>'s unit.</param>
         /// <returns>A created and persisted variable object.</returns>
-        public Variable AddVariableUsage(StructuredDataStructure dataStructure, DataAttribute dataAttribute, bool isValueOptional, string label, string defaultValue, string missingValue, string description)
+        public Variable AddVariableUsage(StructuredDataStructure dataStructure, DataAttribute dataAttribute, bool isValueOptional, string label, string defaultValue, string missingValue, string description, Unit variableUnit = null)
         {
             Contract.Requires(dataStructure != null && dataStructure.Id >= 0);
             Contract.Requires(dataAttribute != null && dataAttribute.Id >= 0);
+            Contract.Requires((variableUnit == null && dataAttribute.Unit == null) || (variableUnit == null) || (variableUnit.Dimension == dataAttribute.Unit.Dimension));
             Contract.Ensures(Contract.Result<Variable>() != null && Contract.Result<Variable>().Id >= 0);
 
             //StructuredDataStructureRepo.Reload(dataStructure);
             StructuredDataStructureRepo.LoadIfNot(dataStructure.Variables);
-            int count = (   from v in dataStructure.Variables
-                            where v.DataAttribute.Id.Equals(dataAttribute.Id)
-                            select v
+            int count = (from v in dataStructure.Variables
+                         where v.DataAttribute.Id.Equals(dataAttribute.Id)
+                         select v
                         )
                         .Count();
 
@@ -295,12 +298,13 @@ namespace BExIS.Dlm.Services.DataStructure
             {
                 DataStructure = dataStructure,
                 DataAttribute = dataAttribute,
-                MinCardinality = isValueOptional? 0:1,
+                MinCardinality = isValueOptional ? 0 : 1,
                 // if there is no label provided, use the data attribute name and a sequence number calculated by the number of occurrences of that data attribute in the current structure
-                Label = !string.IsNullOrWhiteSpace(label)? label: (count <=0 ? dataAttribute.Name: string.Format("{0} ({1})", dataAttribute.Name, count)),
+                Label = !string.IsNullOrWhiteSpace(label) ? label : (count <= 0 ? dataAttribute.Name : string.Format("{0} ({1})", dataAttribute.Name, count)),
                 DefaultValue = defaultValue,
                 MissingValue = missingValue,
                 Description = description,
+                Unit = (variableUnit != null ? variableUnit : dataAttribute.Unit),
             };
             dataAttribute.UsagesAsVariable.Add(usage);
             dataStructure.Variables.Add(usage);
@@ -329,7 +333,7 @@ namespace BExIS.Dlm.Services.DataStructure
                 repo.Delete(usage);
                 paramRepo.Delete(usage.Parameters.ToList());
                 uow.Commit();
-            }            
+            }
         }
 
         /// <summary>
@@ -352,7 +356,7 @@ namespace BExIS.Dlm.Services.DataStructure
             VariableRepo.LoadIfNot(variableUsage.Parameters);
             int count = (from pu in variableUsage.Parameters
                          where pu.DataAttribute.Id.Equals(dataAttribute.Id)
-                            select pu
+                         select pu
                         )
                         .Count();
 
@@ -364,7 +368,7 @@ namespace BExIS.Dlm.Services.DataStructure
             {
                 DataAttribute = dataAttribute,
                 Variable = variableUsage,
-                MinCardinality = isValueOptional? 0:1,
+                MinCardinality = isValueOptional ? 0 : 1,
                 // if there is no label provided, use the data attribute name and a sequence number calculated by the number of occurrences of that data attribute in the current usage
                 Label = !string.IsNullOrWhiteSpace(label) ? label : (count <= 0 ? dataAttribute.Name : string.Format("{0} ({1})", dataAttribute.Name, count)),
                 DefaultValue = defaultValue,
@@ -389,7 +393,7 @@ namespace BExIS.Dlm.Services.DataStructure
         public void RemoveParameterUsage(Parameter usage)
         {
             Contract.Requires(usage != null && usage.Id >= 0);
-            
+
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<Parameter> repo = uow.GetRepository<Parameter>();
@@ -411,7 +415,7 @@ namespace BExIS.Dlm.Services.DataStructure
             Contract.Requires(view.Dataset == null);
             //Contract.Ensures(Contract.Result<StructuredDataStructure>() != null && Contract.Result<StructuredDataStructure>().Id >= 0);
 
-            
+
             StructuredDataStructureRepo.Reload(dataStructure);
             StructuredDataStructureRepo.LoadIfNot(dataStructure.Views);
             int count = (from v in dataStructure.Views
@@ -430,7 +434,7 @@ namespace BExIS.Dlm.Services.DataStructure
                 IRepository<StructuredDataStructure> repo = uow.GetRepository<StructuredDataStructure>();
                 repo.Put(dataStructure);
                 uow.Commit();
-            }       
+            }
         }
 
         /// <summary>
@@ -479,7 +483,7 @@ namespace BExIS.Dlm.Services.DataStructure
             Contract.Requires(view != null && view.Id >= 0);
             Contract.Requires(view.Dataset == null);
             //Contract.Ensures(Contract.Result<StructuredDataStructure>() != null && Contract.Result<StructuredDataStructure>().Id >= 0);
-            
+
             StructuredDataStructureRepo.Reload(dataStructure);
             StructuredDataStructureRepo.LoadIfNot(dataStructure.Views);
             int count = (from v in dataStructure.Views
@@ -498,7 +502,7 @@ namespace BExIS.Dlm.Services.DataStructure
                 IRepository<StructuredDataStructure> repo = uow.GetRepository<StructuredDataStructure>();
                 repo.Put(dataStructure);
                 uow.Commit();
-            } 
+            }
             //throw new NotImplementedException();
         }
 
@@ -532,7 +536,7 @@ namespace BExIS.Dlm.Services.DataStructure
                 IRepository<UnStructuredDataStructure> repo = uow.GetRepository<UnStructuredDataStructure>();
                 repo.Put(dataStructure);
                 uow.Commit();
-            } 
+            }
             //throw new NotImplementedException();
         }
 

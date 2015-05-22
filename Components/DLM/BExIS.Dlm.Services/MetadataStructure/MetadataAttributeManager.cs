@@ -62,7 +62,7 @@ namespace BExIS.Dlm.Services.MetadataStructure
         /// <param name="description"></param>
         /// <param name="isMultiValue">Indicates whether the attribute accepts multiple values.</param>
         /// <param name="isBuiltIn">If yes, the attribute is created by the system itself and is not delete-able</param>
-        /// <param name="owner">Creates a context of ownership for the attribute so that the modules, or different parts of the system can use it i.e. for filtering.</param>
+        /// <param name="scope">Creates a context of ownership for the attribute so that the modules, or different parts of the system can use it i.e. for filtering.</param>
         /// <param name="measurementScale"></param>
         /// <param name="containerType"></param>
         /// <param name="entitySelectionPredicate"></param>
@@ -73,7 +73,7 @@ namespace BExIS.Dlm.Services.MetadataStructure
         /// <param name="globalizationInfos"></param>
         /// <param name="constraints"></param>
         /// <returns></returns>
-        public MetadataSimpleAttribute Create(string shortName, string name, string description, bool isMultiValue, bool isBuiltIn, string owner, MeasurementScale measurementScale, DataContainerType containerType, string entitySelectionPredicate,
+        public MetadataSimpleAttribute Create(string shortName, string name, string description, bool isMultiValue, bool isBuiltIn, string scope, MeasurementScale measurementScale, DataContainerType containerType, string entitySelectionPredicate,
             DataType dataType, Unit unit, Methodology methodology, 
             //Classifier classifier, 
             ICollection<AggregateFunction> functions, ICollection<GlobalizationInfo> globalizationInfos, ICollection<Constraint> constraints            
@@ -92,7 +92,7 @@ namespace BExIS.Dlm.Services.MetadataStructure
                 Description = description,
                 IsMultiValue = isMultiValue,
                 IsBuiltIn = isBuiltIn,
-                Owner = owner,
+                Scope = scope,
                 MeasurementScale = measurementScale,
                 ContainerType = containerType,
                 EntitySelectionPredicate = entitySelectionPredicate,

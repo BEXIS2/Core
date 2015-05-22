@@ -30,7 +30,7 @@ namespace BExIS.Dlm.Services.DataStructure
 
         #region DataAttribute
 
-        public DataAttribute CreateDataAttribute(string shortName, string name, string description, bool isMultiValue, bool isBuiltIn, string owner, MeasurementScale measurementScale, DataContainerType containerType, string entitySelectionPredicate,
+        public DataAttribute CreateDataAttribute(string shortName, string name, string description, bool isMultiValue, bool isBuiltIn, string scope, MeasurementScale measurementScale, DataContainerType containerType, string entitySelectionPredicate,
             DataType dataType, Unit unit, Methodology methodology, Classifier classifier,
             ICollection<AggregateFunction> functions, ICollection<GlobalizationInfo> globalizationInfos, ICollection<Constraint> constraints,
             ICollection<ExtendedProperty> extendedProperies
@@ -49,7 +49,7 @@ namespace BExIS.Dlm.Services.DataStructure
                 Description = description,
                 IsMultiValue = isMultiValue,
                 IsBuiltIn = isBuiltIn,
-                Owner = owner,
+                Scope = scope,
                 MeasurementScale = measurementScale,
                 ContainerType = containerType,
                 EntitySelectionPredicate = entitySelectionPredicate,

@@ -64,8 +64,8 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
-        public virtual bool IsBuiltIn { get; set; } // the build in containers can not be deleted, except by their owner
-        // Owner of the container is the module who created it 
+        public virtual bool IsBuiltIn { get; set; } // the build in containers can not be deleted, except by their scope
+        // Scope of the container is the module who created it 
         // or the RPM (Research Planning Module) if its created via the web interface
         // or DCM (Data Collection Module) if its created during data submission
 
@@ -74,7 +74,7 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
-        public virtual string Owner { get; set; }
+        public virtual string Scope { get; set; }
 
         /// <summary>
         ///
@@ -184,7 +184,7 @@ namespace BExIS.Dlm.Entities.DataStructure
         public DataContainer()
         {
             IsBuiltIn = false;
-            Owner = "DLM";
+            Scope = "DLM";
             Constraints = new List<Constraint>();
             ExtendedProperties = new List<ExtendedProperty>();
             GlobalizationInfos = new List<GlobalizationInfo>();

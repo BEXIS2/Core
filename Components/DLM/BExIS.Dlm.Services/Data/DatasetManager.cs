@@ -1080,11 +1080,11 @@ namespace BExIS.Dlm.Services.Data
             List<DataTuple> tuples = DataTupleRepo.Get(p => versionIds.Contains(p.DatasetVersion.Id)).ToList();
 
             List<DataTuple> editedTuples = DataTupleVerionRepo.Get(p => (p.TupleAction == TupleAction.Edited) && (p.DatasetVersion.Id == datasetVersion.Id) && !(versionIds.Contains(p.ActingDatasetVersion.Id)))
-                                                              .Skip(pageNumber * pageSize).Take(pageSize)
-                                                              .Cast<DataTuple>().ToList();
+                                        .Skip(pageNumber * pageSize).Take(pageSize)
+                                        .Cast<DataTuple>().ToList();
             List<DataTuple> deletedTuples = DataTupleVerionRepo.Get(p => (p.TupleAction == TupleAction.Deleted) && (versionIds.Contains(p.DatasetVersion.Id)) && !(versionIds.Contains(p.ActingDatasetVersion.Id)))
-                                                               .Skip(pageNumber * pageSize).Take(pageSize)
-                                                               .Cast<DataTuple>().ToList();
+                                        .Skip(pageNumber * pageSize).Take(pageSize)
+                                        .Cast<DataTuple>().ToList();
             // the resulting union-ned list is made by a page from editedVersion and a page from the deleted ones, so it is maximum 2 pages, but should be reduced to a page.
             // for this reason the union is sorted by timestamp and then the first page is taken.
             List<DataTuple> unioned = tuples.Union(editedTuples).Union(deletedTuples)
@@ -1110,8 +1110,8 @@ namespace BExIS.Dlm.Services.Data
             List<Int64> versionIds = getPreviousVersionIds(datasetVersion);
             List<DataTuple> tuples = (versionIds == null || versionIds.Count() <= 0) ? new List<DataTuple>() :
                 DataTupleRepo.Get(p => versionIds.Contains(p.DatasetVersion.Id))
-                                                                                                                            .Skip(pageNumber * pageSize).Take(pageSize)
-                                                                                                                            .ToList();
+                                        .Skip(pageNumber * pageSize).Take(pageSize)
+                                        .ToList();
 
             //Dictionary<string, object> parameters = new Dictionary<string, object>() { { "datasetVersionId", datasetVersion.Id } };
             //List<DataTuple> tuples = DataTupleRepo.Get("getLatestCheckedInTuples", parameters).ToList();
@@ -1123,8 +1123,8 @@ namespace BExIS.Dlm.Services.Data
             // effective tuples of the latest checked in version are in DataTuples table but they belong to the latest and previous versions
             List<Int64> versionIds = getPreviousVersionIds(datasetVersion);
             List<Int64> tuples = (versionIds == null || versionIds.Count() <= 0) ? 
-                                                        new List<Int64>() 
-                                                        : DataTupleRepo.Get(p => versionIds.Contains(p.DatasetVersion.Id)).Select(p=> p.Id).ToList();
+                                        new List<Int64>() 
+                                        : DataTupleRepo.Get(p => versionIds.Contains(p.DatasetVersion.Id)).Select(p=> p.Id).ToList();
             return (tuples);
         }
 

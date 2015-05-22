@@ -36,5 +36,31 @@ namespace BExIS.Dlm.Entities.Common
         /// <seealso cref=""/>        
         public virtual string Description { get; set; }
 
+        /// <summary>
+        /// The actual data type of the value is defined by the DataAttribute.DataType.
+        /// So developer should take care and convert this value to proper type before assigning it to parameter values
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
+        public virtual string DefaultValue { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
+        public virtual string MissingValue { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
+        public virtual bool IsValueOptional
+        {
+            get { return MinCardinality < 1; } //if MinCardinality cardinality is zero (less than 1), the parameter value is optional
+            set { MinCardinality = value ? 0 : 1; } // if value is optional, set the min cardinality to zero
+        }
+
     }
 }
