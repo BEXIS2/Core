@@ -437,9 +437,9 @@ namespace BExIS.Web.Shell.Controllers
         private void Add2UnitsAnd1ConversionUsingAPI()
         {
             UnitManager um = new UnitManager();
-            Unit km = um.Create("Kilometer", "Km", "This is the Kilometer", "Length", MeasurementSystem.Metric);
-            Unit m = um.Create("Meter", "M", "This is the Meter", "Length", MeasurementSystem.Metric);
-            Unit cm = um.Create("Centimeter", "Cm", "This is the CentiMeter which is equal to 0.01 Meter", "Length", MeasurementSystem.Metric);
+            Unit km = um.Create("Kilometer", "Km", "This is the Kilometer", null, MeasurementSystem.Metric);// null dimension should be replaced
+            Unit m = um.Create("Meter", "M", "This is the Meter", null, MeasurementSystem.Metric);// null dimension should be replaced
+            Unit cm = um.Create("Centimeter", "Cm", "This is the CentiMeter which is equal to 0.01 Meter", null, MeasurementSystem.Metric);
             ConversionMethod cm1 = um.CreateConversionMethod("s*100", "Converts meter to centi meter", m, cm);
             ConversionMethod cm2 = um.CreateConversionMethod("s*1000", "Converts kilometer to meter", km, m);
             ConversionMethod cm3 = um.CreateConversionMethod("s/1000", "Converts meter to kilometer", m, km);

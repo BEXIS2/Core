@@ -881,7 +881,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             Model.Name = cutSpaces(Model.Name);
             Model.Abbreviation = cutSpaces(Model.Abbreviation);
             Model.Description = cutSpaces(Model.Description);
-            Model.Dimension = cutSpaces(Model.Dimension);
+            Model.Dimension.Name = cutSpaces(Model.Dimension.Name);
 
             if( Model.Id == 0)
             {

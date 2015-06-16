@@ -62,6 +62,7 @@
     <Compile Include="DataStructure\DataStructure.cs" />
     <Compile Include="DataStructure\DataType.cs" />
     <Compile Include="DataStructure\DataView.cs" />
+    <Compile Include="DataStructure\Dimension.cs" />
     <Compile Include="DataStructure\ExtendedProperty.cs" />
     <Compile Include="DataStructure\GlobalizationInfo.cs" />
     <Compile Include="DataStructure\Mathodology.cs" />

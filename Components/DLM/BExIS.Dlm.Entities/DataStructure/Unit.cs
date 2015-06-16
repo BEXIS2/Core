@@ -43,12 +43,6 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// <seealso cref=""/>        
         public virtual string Description { get; set; }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <remarks> L: Length, M: Mass, A: Area, LT-1 </remarks>
-        /// <seealso cref=""/>        
-        public virtual string Dimension { get; set; }
 
         /// <summary>
         ///
@@ -64,6 +58,13 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// <summary>
         ///
         /// </summary>
+        /// <remarks> L: Length, M: Mass, A: Area, L(0)T(-1) </remarks>
+        /// <seealso cref=""/>        
+        public virtual Dimension Dimension { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
         public virtual ICollection<DataContainer> DataContainers { get; set; }
@@ -73,7 +74,7 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
-        public virtual ICollection<ConversionMethod> ConversionsIamTheSource{ get; set; } // ConversionMethod holds the relationship (FK)
+        public virtual ICollection<ConversionMethod> ConversionsIamTheSource { get; set; } // ConversionMethod holds the relationship (FK)
 
         /// <summary>
         ///
@@ -88,7 +89,7 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// <remarks></remarks>
         /// <seealso cref=""/>        
         public virtual ICollection<DataType> AssociatedDataTypes { get; set; } // datatype controls the relationship
-        
+
         #endregion
 
         #region Mathods

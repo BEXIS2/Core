@@ -29,10 +29,6 @@
       <column name="Description" />
     </property>
 
-    <property name="Dimension" type="String">
-      <column name="Dimension" />
-    </property>
-
     <property name="MeasurementSystem" type="BExIS.Dlm.Entities.DataStructure.MeasurementSystem, BExIS.Dlm.Entities">
       <column name="MeasurementSystem" />
     </property>
@@ -62,7 +58,10 @@
       <key column="UnitRef"/>
       <many-to-many column="DataTypeRef" class="DataType"/>
     </set>
-    
-</class>
+
+    <many-to-one name="Dimension" class="BExIS.Dlm.Entities.DataStructure.Dimension" not-null="true" column="DimensionRef"/>
+
+
+  </class>
 
 </hibernate-mapping>

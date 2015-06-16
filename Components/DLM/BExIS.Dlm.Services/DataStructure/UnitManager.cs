@@ -12,6 +12,7 @@ namespace BExIS.Dlm.Services.DataStructure
         // provide read only repos for the whole aggregate area
         public IReadOnlyRepository<Unit> Repo { get; private set; }
         public IReadOnlyRepository<ConversionMethod> ConversionMethodRepo { get; private set; }
+        public IReadOnlyRepository<Dimension> DimensionRepo { get; private set; }
 
         public UnitManager() //: base(false, true, true)
         {
@@ -20,6 +21,7 @@ namespace BExIS.Dlm.Services.DataStructure
             IUnitOfWork uow = this.GetUnitOfWork();
             this.Repo = uow.GetReadOnlyRepository<Unit>();
             this.ConversionMethodRepo = uow.GetReadOnlyRepository<ConversionMethod>();
+            this.DimensionRepo = uow.GetReadOnlyRepository<Dimension>();
         }
 
         #region Data Readers
@@ -29,11 +31,11 @@ namespace BExIS.Dlm.Services.DataStructure
 
         #region Unit
 
-        public Unit Create(string name, string abbreviation, string description, string dimension, MeasurementSystem measurementSystem)
+        public Unit Create(string name, string abbreviation, string description, Dimension dimension, MeasurementSystem measurementSystem)
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(name));
             Contract.Requires(!string.IsNullOrWhiteSpace(abbreviation));
-            Contract.Requires(!string.IsNullOrWhiteSpace(dimension));
+            Contract.Requires(dimension != null);
 
             Contract.Ensures(Contract.Result<Unit>() != null && Contract.Result<Unit>().Id >= 0);
 
@@ -43,16 +45,16 @@ namespace BExIS.Dlm.Services.DataStructure
                 Abbreviation = abbreviation,
                 Description = description,
                 Dimension = dimension,
-                MeasurementSystem = measurementSystem,                
+                MeasurementSystem = measurementSystem,
             };
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
-                IRepository<Unit> repo = uow.GetRepository < Unit>();
+                IRepository<Unit> repo = uow.GetRepository<Unit>();
                 repo.Put(u);
                 uow.Commit();
             }
-            return (u);            
+            return (u);
         }
 
         public bool Delete(Unit entity)
@@ -66,11 +68,11 @@ namespace BExIS.Dlm.Services.DataStructure
                 IRepository<ConversionMethod> repoCM = uow.GetRepository<ConversionMethod>();
 
                 entity = repo.Reload(entity);
-                
+
                 // delete all conversions that are somehow connected to current unit
                 repoCM.Delete(entity.ConversionsIamTheSource);
                 repoCM.Delete(entity.ConversionsIamTheTarget);
-                
+
                 // remove all associations between current unit and the conversions
                 entity.ConversionsIamTheSource.ToList().ForEach(a => a.Source = a.Target = null);
                 entity.ConversionsIamTheTarget.ToList().ForEach(a => a.Source = a.Target = null);
@@ -134,7 +136,86 @@ namespace BExIS.Dlm.Services.DataStructure
                 repo.Put(entity); // Merge is required here!!!!
                 uow.Commit();
             }
-            return (entity);    
+            return (entity);
+        }
+
+        #endregion
+
+        #region Dimension
+
+        public Dimension Create(string name, string description, string specification)
+        {
+            Contract.Requires(!string.IsNullOrWhiteSpace(name));
+            Contract.Requires(!string.IsNullOrWhiteSpace(specification));
+
+            Contract.Ensures(Contract.Result<Dimension>() != null && Contract.Result<Dimension>().Id >= 0);
+
+            Dimension d = new Dimension()
+            {
+                Name = name,
+                Description = description,
+                Specification = specification,
+            };
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<Dimension> repo = uow.GetRepository<Dimension>();
+                repo.Put(d);
+                uow.Commit();
+            }
+            return (d);
+        }
+
+        public bool Delete(Dimension entity)
+        {
+            Contract.Requires(entity != null);
+            Contract.Requires(entity.Id >= 0);
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<Dimension> repo = uow.GetRepository<Dimension>();
+                //entity = repo.Reload(entity);
+                repo.Delete(entity);
+                uow.Commit();
+            }
+            // if any problem was detected during the commit, an exception will be thrown!
+            return (true);
+        }
+
+        public bool Delete(IEnumerable<Dimension> entities)
+        {
+            Contract.Requires(entities != null);
+            Contract.Requires(Contract.ForAll(entities, (Dimension e) => e != null));
+            Contract.Requires(Contract.ForAll(entities, (Dimension e) => e.Id >= 0));
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<Dimension> repo = uow.GetRepository<Dimension>();
+
+                foreach (var entity in entities)
+                {
+                    //var latest = repo.Reload(entity);
+                    repo.Delete(entity);
+                }
+                uow.Commit();
+            }
+            return (true);
+        }
+
+        public Dimension Update(Dimension entity)
+        {
+            Contract.Requires(entity != null, "provided entity can not be null");
+            Contract.Requires(entity.Id >= 0, "provided entity must have a permanent ID");
+
+            Contract.Ensures(Contract.Result<Dimension>() != null && Contract.Result<Dimension>().Id >= 0, "No entity is persisted!");
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<Dimension> repo = uow.GetRepository<Dimension>();
+                repo.Put(entity); // Merge is required here!!!!
+                uow.Commit();
+            }
+            return (entity);
         }
 
         #endregion
@@ -202,7 +283,7 @@ namespace BExIS.Dlm.Services.DataStructure
                 // remove all associations
                 entity.Source = null;
                 entity.Target = null;
-                
+
                 //delete the entity
                 repoCM.Delete(entity);
 
@@ -253,7 +334,7 @@ namespace BExIS.Dlm.Services.DataStructure
                 repoCM.Put(entity); // Merge is required here!!!!
                 uow.Commit();
             }
-            return (entity); 
+            return (entity);
         }
 
         #endregion
@@ -322,8 +403,8 @@ namespace BExIS.Dlm.Services.DataStructure
                 IRepository<DataType> dtRepo = uow.GetRepository<DataType>();
 
                 end1 = repo.Reload(end1);
-                repo.LoadIfNot(end1.AssociatedDataTypes); 
-                
+                repo.LoadIfNot(end1.AssociatedDataTypes);
+
                 end2 = dtRepo.Reload(end2);
                 dtRepo.LoadIfNot(end2.ApplicableUnits);
 

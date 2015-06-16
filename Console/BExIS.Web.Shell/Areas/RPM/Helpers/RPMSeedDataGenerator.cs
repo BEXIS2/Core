@@ -94,7 +94,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
 
             UnitManager unitManager = new UnitManager();
             Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
-            if (unit == null) unitManager.Create("None", "None", "If no unit is used.", "None", MeasurementSystem.Unknown);
+            if (unit == null) unitManager.Create("None", "None", "If no unit is used.", null, MeasurementSystem.Unknown);// null dimension should be replaced
 
             try
             {
@@ -132,7 +132,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
 
                     if (unit == null)
                     {
-                        unit = unitManager.Create(name, abbrevation, description, dimension, measurementSystemEnum);
+                        unit = unitManager.Create(name, abbrevation, description, null, measurementSystemEnum); // null dimension should be replaced bz a proper Dimension object
 
                         foreach (string dtName in associatedDataTypes)
                         {

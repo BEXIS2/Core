@@ -950,7 +950,7 @@ namespace BExIS.Xml.Helpers.Mapping
                 //unit
                 Unit noneunit = unitManager.Repo.Get().Where(u => u.Name.Equals("None")).First();
                 if (noneunit == null)
-                    unitManager.Create("None", "None", "If no unit is used.", "None", MeasurementSystem.Unknown);
+                    unitManager.Create("None", "None", "If no unit is used.", null, MeasurementSystem.Unknown); // the null dimension should be replaced bz a proper valid one. Javad 11.06
 
                 MetadataAttribute temp = metadataAttributeManager.MetadataAttributeRepo.Get().Where(m => m.Name.Equals(name)).FirstOrDefault();
 
@@ -988,9 +988,10 @@ namespace BExIS.Xml.Helpers.Mapping
                     DataType dataType = GetDataType(datatype);
 
                     //unit
+                    // it is the second time I am seeing this cose segment, would be good to factor it out to a function
                     Unit noneunit = unitManager.Repo.Get().Where(u => u.Name.Equals("None")).First();
                     if (noneunit == null)
-                        unitManager.Create("None", "None", "If no unit is used.", "None", MeasurementSystem.Unknown);
+                        unitManager.Create("None", "None", "If no unit is used.", null, MeasurementSystem.Unknown); // null diemsion to be replaced
 
                     MetadataAttribute temp = metadataAttributeManager.MetadataAttributeRepo.Get().Where(m => m.Name.Equals(name)).FirstOrDefault();
 
