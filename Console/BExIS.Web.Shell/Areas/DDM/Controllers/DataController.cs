@@ -210,13 +210,16 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 if (ds.Self.GetType() == typeof(StructuredDataStructure))
                 {
 
-                    List<AbstractTuple> dataTuples = dm.GetDatasetVersionEffectiveTuples(dsv);
+                    List<AbstractTuple> dataTuples = dm.GetDatasetVersionEffectiveTuples(dsv,1,100);
+                    //List<AbstractTuple> dataTuples = dm.GetDatasetVersionEffectiveTuples(dsv);
 
                     DataTable table = SearchUIHelper.ConvertPrimaryDataToDatatable(dsv, dataTuples);
 
-                    ViewData["gridTotal"] = dataTuples.Count();
+                    Session["gridTotal"] = dm.GetDatasetVersionEffectiveTupleIds(dsv).Count();
 
                     return PartialView(ShowPrimaryDataModel.Convert(datasetID, title, sds, table, downloadAccess));
+
+                    //return PartialView(new ShowPrimaryDataModel());
                 }
 
                 if (ds.Self.GetType() == typeof(UnStructuredDataStructure))
@@ -229,7 +232,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
             #region server side
 
-            [GridAction]
+            [GridAction(EnableCustomBinding = true)]
             public ActionResult _CustomPrimaryDataBinding(GridCommand command, int datasetID)
             {
 
@@ -239,23 +242,26 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 DatasetVersion dsv = dm.GetDatasetLatestVersion(datasetID);
 
 
-                List<AbstractTuple> dataTuples = dm.GetDatasetVersionEffectiveTuples(dsv);
+                List<AbstractTuple> dataTuples = dm.GetDatasetVersionEffectiveTuples(dsv,command.Page-1,command.PageSize);
+
+                Session["gridTotal"] = dm.GetDatasetVersionEffectiveTupleIds(dsv).Count();
 
                 DataTable table = SearchUIHelper.ConvertPrimaryDataToDatatable(dsv, dataTuples);
                 GridModel model = new GridModel(table);
-
+                model.Total = (int)Session["gridTotal"];
 
                 return View(model);
             }
             #endregion
 
             public ActionResult SetGridCommand(string filters, string orders, string columns)
-                {
-                    Session["Columns"] = columns.Replace("ID","").Split(',');
-                    Session["Filter"] = GridHelper.ConvertToGridCommand(filters, orders);
+            {
+                Session["Columns"] = columns.Replace("ID","").Split(',');
 
-                    return null;
-                }
+                Session["Filter"] = GridHelper.ConvertToGridCommand(filters, orders);
+
+                return null;
+            }
 
             #region download
 

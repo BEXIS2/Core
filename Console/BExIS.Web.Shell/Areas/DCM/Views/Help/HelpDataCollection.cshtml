@@ -1,0 +1,16 @@
+﻿@model BExIS.Web.Shell.Areas.DCM.Models.ShowHelpModel
+@using BExIS.Web.Shell.Areas.DCM.Models;
+
+@{
+    ViewBag.Title = "ShowHelpDC";
+    HtmlString index = new HtmlString(Model.Title);
+    HtmlString content = new HtmlString(Model.Description);
+
+}
+
+@content
+
+@section LeftPane 
+{             
+    @index
+}

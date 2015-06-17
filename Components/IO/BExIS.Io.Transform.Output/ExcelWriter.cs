@@ -499,6 +499,12 @@ namespace BExIS.IO.Transform.Output
         {
             string cellRef = getColumnIndex(columnIndex);
 
+            //CellFormat cellFormat = new CellFormat() { NumberFormatId = (UInt32Value)2U, FontId = (UInt32Value)0U, FillId = (UInt32Value)0U, BorderId = (UInt32Value)0U, FormatId = (UInt32Value)0U, ApplyNumberFormat = true };
+            //cellFormat.Protection = new Protection();
+            //cellFormat.Protection.Locked = false;
+
+            //Sty
+
             return  new Cell()
                     {
                         CellReference = cellRef,
@@ -806,18 +812,26 @@ namespace BExIS.IO.Transform.Output
             CellFormats cellFormats = spreadsheetDocument.WorkbookPart.WorkbookStylesPart.Stylesheet.Elements<CellFormats>().First();
             //number 0,00
             CellFormat cellFormat = new CellFormat() { NumberFormatId = (UInt32Value)2U, FontId = (UInt32Value)0U, FillId = (UInt32Value)0U, BorderId = (UInt32Value)0U, FormatId = (UInt32Value)0U, ApplyNumberFormat = true };
+            cellFormat.Protection = new Protection();
+            cellFormat.Protection.Locked = false;
             cellFormats.Append(cellFormat);
             styleIndexArray[0] = (uint)cellFormats.Count++;
             //number 0
             cellFormat = new CellFormat() { NumberFormatId = (UInt32Value)1U, FontId = (UInt32Value)0U, FillId = (UInt32Value)0U, BorderId = (UInt32Value)0U, FormatId = (UInt32Value)0U, ApplyNumberFormat = true };
+            cellFormat.Protection = new Protection();
+            cellFormat.Protection.Locked = false;
             cellFormats.Append(cellFormat);
             styleIndexArray[1] = (uint)cellFormats.Count++;
             //text
             cellFormat = new CellFormat() { NumberFormatId = (UInt32Value)49U, FontId = (UInt32Value)0U, FillId = (UInt32Value)0U, BorderId = (UInt32Value)0U, FormatId = (UInt32Value)0U, ApplyNumberFormat = true };
+            cellFormat.Protection = new Protection();
+            cellFormat.Protection.Locked = false;
             cellFormats.Append(cellFormat);
             styleIndexArray[2] = (uint)cellFormats.Count++;
             //date
             cellFormat = new CellFormat() { NumberFormatId = (UInt32Value)14U, FontId = (UInt32Value)0U, FillId = (UInt32Value)0U, BorderId = (UInt32Value)0U, FormatId = (UInt32Value)0U, ApplyNumberFormat = true };
+            cellFormat.Protection = new Protection();
+            cellFormat.Protection.Locked = false;
             cellFormats.Append(cellFormat);
             styleIndexArray[3] = (uint)cellFormats.Count++;
         }

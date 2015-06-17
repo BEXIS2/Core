@@ -1,0 +1,16 @@
+﻿@model BExIS.Web.Shell.Areas.SAM.Models.ShowHelpModel
+@using BExIS.Web.Shell.Areas.SAM.Models;
+
+@{
+    ViewBag.Title = "ShowHelpA";
+    HtmlString index = new HtmlString(Model.Title);
+    HtmlString content = new HtmlString(Model.Description);
+}
+
+@content
+
+@section LeftPane 
+{             
+    @index
+}
+

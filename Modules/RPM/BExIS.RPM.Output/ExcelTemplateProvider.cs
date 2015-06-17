@@ -206,19 +206,27 @@ namespace BExIS.RPM.Output
             uint[] styleIndex = new uint[4];
             CellFormats cellFormats = dataStructureFile.WorkbookPart.WorkbookStylesPart.Stylesheet.Elements<CellFormats>().First();
             //number 0,00
-            CellFormat cellFormat = new CellFormat() { NumberFormatId = (UInt32Value)2U, FontId = (UInt32Value)0U, FillId = (UInt32Value)0U, BorderId = (UInt32Value)0U, FormatId = (UInt32Value)0U, ApplyNumberFormat = true };           
+            CellFormat cellFormat = new CellFormat() { NumberFormatId = (UInt32Value)2U, FontId = (UInt32Value)0U, FillId = (UInt32Value)0U, BorderId = (UInt32Value)0U, FormatId = (UInt32Value)1U, ApplyNumberFormat = true};
+            cellFormat.Protection = new Protection();
+            cellFormat.Protection.Locked = false;
             cellFormats.Append(cellFormat);
             styleIndex[0] = (uint)cellFormats.Count++;
             //number 0
-            cellFormat = new CellFormat() { NumberFormatId = (UInt32Value)1U, FontId = (UInt32Value)0U, FillId = (UInt32Value)0U, BorderId = (UInt32Value)0U, FormatId = (UInt32Value)0U, ApplyNumberFormat = true };
+            cellFormat = new CellFormat() { NumberFormatId = (UInt32Value)1U, FontId = (UInt32Value)0U, FillId = (UInt32Value)0U, BorderId = (UInt32Value)0U, FormatId = (UInt32Value)1U, ApplyNumberFormat = true};
+            cellFormat.Protection = new Protection();
+            cellFormat.Protection.Locked = false;
             cellFormats.Append(cellFormat);
             styleIndex[1] = (uint)cellFormats.Count++;
             //text
-            cellFormat = new CellFormat() { NumberFormatId = (UInt32Value)49U, FontId = (UInt32Value)0U, FillId = (UInt32Value)0U, BorderId = (UInt32Value)0U, FormatId = (UInt32Value)0U, ApplyNumberFormat = true };
+            cellFormat = new CellFormat() { NumberFormatId = (UInt32Value)49U, FontId = (UInt32Value)0U, FillId = (UInt32Value)0U, BorderId = (UInt32Value)0U, FormatId = (UInt32Value)1U, ApplyNumberFormat = true};
+            cellFormat.Protection = new Protection();
+            cellFormat.Protection.Locked = false;
             cellFormats.Append(cellFormat);
             styleIndex[2] = (uint)cellFormats.Count++;
             //date
-            cellFormat = new CellFormat() { NumberFormatId = (UInt32Value)14U, FontId = (UInt32Value)0U, FillId = (UInt32Value)0U, BorderId = (UInt32Value)0U, FormatId = (UInt32Value)0U, ApplyNumberFormat = true };
+            cellFormat = new CellFormat() { NumberFormatId = (UInt32Value)14U, FontId = (UInt32Value)0U, FillId = (UInt32Value)0U, BorderId = (UInt32Value)0U, FormatId = (UInt32Value)1U, ApplyNumberFormat = true};
+            cellFormat.Protection = new Protection();
+            cellFormat.Protection.Locked = false;
             cellFormats.Append(cellFormat);
             styleIndex[3] = (uint)cellFormats.Count++;
 
@@ -234,24 +242,24 @@ namespace BExIS.RPM.Output
                     DataAttribute dataAttribute = CM.DataAttributeRepo.Get(var.DataAttribute.Id);
 
                     int indexVar = variables.ToList().IndexOf(var) + 1;
-                    string columnIndex = GetClomunIndex(indexVar);
-
+                    string columnIndex = GetClomunIndex(indexVar);                
+                    
                     string cellRef = columnIndex + 1;
                     Cell cell = new Cell()
                     {
-                        CellReference = cellRef,
-                        StyleIndex = (UInt32Value)5U,
+                        CellReference = cellRef,                          
+                        StyleIndex = (UInt32Value)4U,
                         DataType = CellValues.String,
-                        CellValue = new CellValue(var.Label)
+                        CellValue = new CellValue(var.Label)                        
                     };
                     rows.ElementAt(0).AppendChild(cell);
 
                     cellRef = columnIndex + 2;
                     cell = new Cell()
-                    {
+                    {                        
                         CellReference = cellRef,
                         DataType = CellValues.String,
-                        StyleIndex = getExcelStyleIndex(dataAttribute.DataType.SystemType, styleIndex),
+                        StyleIndex = getExcelStyleIndex(dataAttribute.DataType.SystemType, styleIndex),                        
                         CellValue = new CellValue("")
                     };
                     rows.ElementAt(1).AppendChild(cell);
@@ -260,7 +268,7 @@ namespace BExIS.RPM.Output
                     cell = new Cell()
                     {
                         CellReference = cellRef,
-                        StyleIndex = (UInt32Value)5U,
+                        StyleIndex = (UInt32Value)4U,
                         DataType = CellValues.String,
                         CellValue = new CellValue(var.Id.ToString())
                     };
@@ -270,7 +278,7 @@ namespace BExIS.RPM.Output
                     cell = new Cell()
                     {
                         CellReference = cellRef,
-                        StyleIndex = (UInt32Value)5U,
+                        StyleIndex = (UInt32Value)4U,
                         DataType = CellValues.String,
                         CellValue = new CellValue(dataAttribute.ShortName)
                     };
@@ -280,7 +288,7 @@ namespace BExIS.RPM.Output
                     cell = new Cell()
                     {
                         CellReference = cellRef,
-                        StyleIndex = (UInt32Value)5U,
+                        StyleIndex = (UInt32Value)4U,
                         DataType = CellValues.String,
                         CellValue = new CellValue(dataAttribute.Description)
                     };
@@ -297,7 +305,7 @@ namespace BExIS.RPM.Output
                     cell = new Cell()
                     {
                         CellReference = cellRef,
-                        StyleIndex = (UInt32Value)5U,
+                        StyleIndex = (UInt32Value)4U,
                         DataType = CellValues.String,
                         CellValue = new CellValue(classification)
                     };
@@ -314,7 +322,7 @@ namespace BExIS.RPM.Output
                     cell = new Cell()
                     {
                         CellReference = cellRef,
-                        StyleIndex = (UInt32Value)5U,
+                        StyleIndex = (UInt32Value)4U,
                         DataType = CellValues.String,
                         CellValue = new CellValue(unit)
                     };
@@ -331,7 +339,7 @@ namespace BExIS.RPM.Output
                     cell = new Cell()
                     {
                         CellReference = cellRef,
-                        StyleIndex = (UInt32Value)5U,
+                        StyleIndex = (UInt32Value)4U,
                         DataType = CellValues.String,
                         CellValue = new CellValue(dataType)
                     };
@@ -341,7 +349,7 @@ namespace BExIS.RPM.Output
                     cell = new Cell()
                     {
                         CellReference = cellRef,
-                        StyleIndex = (UInt32Value)5U,
+                        StyleIndex = (UInt32Value)4U,
                         DataType = CellValues.String,
                         CellValue = new CellValue(var.IsValueOptional.ToString())
                     };
@@ -351,11 +359,11 @@ namespace BExIS.RPM.Output
                     cell = new Cell()
                     {
                         CellReference = cellRef,
-                        StyleIndex = (UInt32Value)5U,
+                        StyleIndex = (UInt32Value)4U,                     
                         DataType = CellValues.String,
                         CellValue = new CellValue(dataAttribute.IsMultiValue.ToString())
                     };
-                    rows.ElementAt(9).AppendChild(cell);
+                    rows.ElementAt(9).AppendChild(cell);                   
 
                 }
 
@@ -383,7 +391,7 @@ namespace BExIS.RPM.Output
             
             //WorkbookPart workbookPart = spreadsheetDocument.WorkbookPart;
             //WorksheetPart worksheetPart = workbookPart.WorksheetParts.First();
-        
+
             dataStructureFile.WorkbookPart.Workbook.Save();
             
             dataStructureFile.Close();

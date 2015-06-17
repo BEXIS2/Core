@@ -336,3 +336,27 @@ div#title
 {
     width: 6em;
 }
+
+/* Styles for help documents
+----------------------------------------------------------*/
+p.MsoToc2, li.MsoToc2, div.MsoToc2
+{
+	margin-left:11.0pt;
+}
+p.MsoToc3, li.MsoToc3, div.MsoToc3
+{
+	margin-left:22.0pt;
+}
+p.MsoTitle, li.MsoTitle, div.MsoTitle
+{
+	margin-bottom:15.0pt;
+	font-size:26.0pt;
+	color:#17365D;
+	letter-spacing:.25pt;
+}
+p.MsoTocHeading, li.MsoTocHeading, div.MsoTocHeading
+{
+    margin-top:15.0pt;
+    line-height:115%;
+    font-size:larger;
+	font-weight:bold;}

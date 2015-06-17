@@ -17,9 +17,9 @@
 
 
     int total = 0;
-    if (ViewData["gridTotal"] != null)
+    if (Session["gridTotal"] != null)
     {
-        total = (int)ViewData["gridTotal"];
+        total = (int)Session["gridTotal"];
     }
 
     string compareValues = String.Join(",", Model.CompareValuesOfDataTypes.ToArray());
@@ -77,11 +77,10 @@
 <br />
 @(Html.Telerik().Grid(Model.Data)
         .Name("PrimaryDataResultGrid")
-
             .DataBinding(dataBinding => dataBinding
                     .Ajax()
                     .Select("_CustomPrimaryDataBinding", "Data", new RouteValueDictionary { { "area", "DDM" }, { "datasetID", id } })
-                    .OperationMode(GridOperationMode.Client)
+                    .OperationMode(GridOperationMode.Server)
                  )
 
                 .EnableCustomBinding(true)
@@ -123,12 +122,13 @@
                     .Position(GridPagerPosition.Both)
                     .Total(total)
                     )
-            .Sortable()
-            .Filterable()
-            .ColumnContextMenu()
-            .Groupable()
+            //.Sortable()
+            //.Filterable()
+            //.ColumnContextMenu()
+            //.Groupable()
             .Scrollable(s => s.Height(350))
-
+    
+            
 )
 
 <br />
@@ -174,10 +174,10 @@
 		}
 	});
 
-	$.post('@Url.Action("SetGridCommand", "Data", new RouteValueDictionary { { "area", "DDM" } })', { filters: currentFilter, orders: currentOrder, columns: visibleColumns }, function (response) {
+	@*$.post('@Url.Action("SetGridCommand", "Data", new RouteValueDictionary { { "area", "DDM" } })', { filters: currentFilter, orders: currentOrder, columns: visibleColumns }, function (response) {
 	    //alert("set grid");
 	    OnDataBound();
-	})
+	})*@
 
 	}
 

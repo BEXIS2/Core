@@ -1,0 +1,17 @@
+@model BExIS.Web.Shell.Areas.RPM.Models.ShowHelpModel
+@using BExIS.Web.Shell.Areas.RPM.Models;
+
+@{
+    ViewBag.Title = "ShowHelpDP";
+    HtmlString index = new HtmlString(Model.Title);
+    HtmlString content = new HtmlString(Model.Description);
+}
+
+@content
+
+@section LeftPane 
+{             
+    @index
+}
+
+

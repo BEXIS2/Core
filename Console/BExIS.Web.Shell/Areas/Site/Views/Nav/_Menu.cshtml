@@ -58,6 +58,19 @@
 						
 					}
 				);
+                
+                menu.Add().Text("Help")
+                    .Items(item =>
+                    {
+                        item.Add().Text("Search").Action("HelpSearch", "Help", new { area = "DDM" });
+                        item.Add().Text("Data Planning").Action("HelpDataPlanning", "Help", new { area = "RPM" });
+                        item.Add().Text("Data Collection").Action("HelpDataCollection", "Help", new { area = "DCM" });
+                        item.Add().Text("Data Dissemination").Action("HelpDissemination", "Help", new { area = "DIM" });
+                        item.Add().Text("Administration").Action("HelpAdministration", "Help", new { area = "SAM" });
+                        item.Add().Text("Security").Action("HelpSecurity", "Help", new { area = "Auth" });
+                    }
+                );
+
 				
 				//menu.Add().Text("Assure").Action("Index", "Home", new { area = "Search" })
 				//    .Items(item =>
