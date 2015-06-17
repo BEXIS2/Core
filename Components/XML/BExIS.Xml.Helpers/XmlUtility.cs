@@ -148,6 +148,19 @@ namespace BExIS.Xml.Helpers
             /// <seealso cref=""/>
             /// <param name="name"></param>
             /// <returns></returns>
+            public static XElement GetXElementByAttribute(string nodeName, string attrName, string value, XElement Parent)
+            {
+                string name = nodeName.Replace(" ", "");
+                return Parent.Descendants(name).Where(p => p.Attribute(attrName).Value.Equals(value)).FirstOrDefault();
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <remarks></remarks>
+            /// <seealso cref=""/>
+            /// <param name="name"></param>
+            /// <returns></returns>
             public static IEnumerable<XElement> GetXElementsByAttribute(string nodeName, Dictionary<string,string> AttrValueDic, XDocument xDoc)
             {
                 string name = nodeName.Replace(" ", "");

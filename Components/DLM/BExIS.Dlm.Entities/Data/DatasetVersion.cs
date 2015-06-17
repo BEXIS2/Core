@@ -172,7 +172,7 @@ namespace BExIS.Dlm.Entities.Data
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param></param>       
+        /// <param></param>      
         public override void Dematerialize()
         {
             base.Dematerialize();

@@ -47,23 +47,22 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
             {
                 MetadataNestedAttributeUsage mnau = (MetadataNestedAttributeUsage)current;
                 metadataAttribute = mnau.Member;
-
-                if (metadataAttribute.Constraints.Where(c => (c is DomainConstraint)).Count() > 0)
-                    domainConstraintList = createDomainContraintList(metadataAttribute);
-
-                if (metadataAttribute.Constraints.Count > 0)
-                { 
-                    foreach(Constraint c in  metadataAttribute.Constraints)
-                    {
-                        constraintsDescription = Path.Combine("{0} , {1}", constraintsDescription, c.FormalDescription);
-                    }
-                }
-
             }
             else
             { 
                 MetadataAttributeUsage mau = (MetadataAttributeUsage)current;
                 metadataAttribute = mau.MetadataAttribute;
+            }
+
+            if (metadataAttribute.Constraints.Where(c => (c is DomainConstraint)).Count() > 0)
+                domainConstraintList = createDomainContraintList(metadataAttribute);
+
+            if (metadataAttribute.Constraints.Count > 0)
+            {
+                foreach (Constraint c in metadataAttribute.Constraints)
+                {
+                    constraintsDescription = Path.Combine("{0} , {1}", constraintsDescription, c.FormalDescription);
+                }
             }
 
             return new MetadataAttributeModel

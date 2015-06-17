@@ -305,9 +305,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
            foreach (MetadataPackageUsage mpu in metadataPackageList)
            {
                // only add none optional usages
-               if (mpu.MinCardinality > 0)
-               { 
-                   StepInfo si = new StepInfo(mpu.Label)
+               StepInfo si = new StepInfo(mpu.Label)
                    {
                        Id = TaskManager.GenerateStepId(),
                        Parent = TaskManager.Root,
@@ -331,6 +329,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                    StepModelHelper stepModelHelper = new StepModelHelper(si.Id, 1, mpu, "Metadata//" + mpu.Label.Replace(" ",string.Empty) + "[1]");
                    stepModelHelperList.Add(stepModelHelper);
 
+                if (mpu.MinCardinality > 0)
+                { 
+                   
                    si = AddStepsBasedOnUsage(mpu,si,stepModelHelper.XPath);
                    TaskManager.Root.Children.Add(si);
 

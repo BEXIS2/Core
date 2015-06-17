@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 using Vaiona.Entities.Common;
+using Vaiona.Logging.Aspects;
+using Vaiona.Logging;
 
 /// <summary>
 ///
@@ -159,7 +161,7 @@ namespace BExIS.Dlm.Entities.Data
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param>NA</param>       
+        /// <param>NA</param>  
         public DataTuple()
         {
             //XmlVariableValues = new XmlDocument();
@@ -174,7 +176,7 @@ namespace BExIS.Dlm.Entities.Data
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param>NA</param>       
+        /// <param>NA</param>   
         public override void Materialize()
         {
             base.Materialize();

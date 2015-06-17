@@ -174,6 +174,7 @@
                             <label title="@Model.ConstraintDescription">?</label>
                         </td>*@
                     }
+                    
 
 
     }
@@ -329,7 +330,9 @@
         alert("ParentModelNumber -" + ParentModelNumber);
         alert("NumberOfSourceInPackage -" + NumberOfSourceInPackage);*@
         
-        if (NumberOfSourceInPackage <= '@Model.Source.MaxCardinality') {
+        var maxcardinality = '@Model.Source.MaxCardinality';
+
+        if (NumberOfSourceInPackage <= parseInt(maxcardinality)) {
             $.post('@Url.Action("AddMetadataAttributeUsage", "CreateSetMetadataPackage", new RouteValueDictionary { { "area", "DCM" } })', { id: id, parentid: parentid, number: number, parentModelNumber: ParentModelNumber }, function (response) {
 
                 var id = parentid;

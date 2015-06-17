@@ -11,6 +11,7 @@ using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Web.Shell.Areas.DCM.Models;
 using BExIS.IO.Transform.Input;
+using Vaiona.Logging.Aspects;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
 {
@@ -117,6 +118,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             return PartialView(model);
         }
 
+        [MeasurePerformance]
         public ActionResult CheckPrimaryKeys(object[] data)
         {
             TaskManager TaskManager = (TaskManager)Session["TaskManager"];
@@ -148,7 +150,12 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     List<string> tempDataset = new List<string>();
                     List<string> tempFromFile = new List<string>();
 
-                    bool IsUniqueInDb = UploadWizardHelper.IsUnique(Convert.ToInt64(TaskManager.Bus[TaskManager.DATASET_ID].ToString()), identifiers);
+                    //bool IsUniqueInDb = UploadWizardHelper.IsUnique(Convert.ToInt64(TaskManager.Bus[TaskManager.DATASET_ID].ToString()), identifiers);
+
+                    // temporary solution to make it a little bit faster
+                    // direct link to xml is no t allow, need to call functions from dlm
+                    bool IsUniqueInDb = UploadWizardHelper.IsUnique2(Convert.ToInt64(TaskManager.Bus[TaskManager.DATASET_ID].ToString()), identifiers);
+                    
                     bool IsUniqueInFile = UploadWizardHelper.IsUnique(TaskManager, Convert.ToInt64(TaskManager.Bus[TaskManager.DATASET_ID].ToString()), identifiers, TaskManager.Bus[TaskManager.EXTENTION].ToString(), TaskManager.Bus[TaskManager.FILENAME].ToString());
 
                     if(IsUniqueInDb && IsUniqueInFile)

@@ -159,7 +159,6 @@ namespace BExIS.Web.Shell.Controllers
             c3.Negated = true;
             v3 = c3.IsSatisfied("A");
 
-
             var c4 = new ComparisonConstraint(ConstraintProviderSource.Internal, "", "en-US", "a comparison validation constraint", false, null, null, null
                 , ComparisonOperator.GreaterThanOrEqual, ComparisonTargetType.Value, "" , ComparisonOffsetType.Ratio, 1.25);            
             dcManager.AddConstraint(c4, attr);

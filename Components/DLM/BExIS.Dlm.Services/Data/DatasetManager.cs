@@ -616,7 +616,7 @@ namespace BExIS.Dlm.Services.Data
             //return (qu.ToList());
         }
 
-        [Diagnose]
+
         public DatasetVersion GetDatasetWorkingCopy(Int64 datasetId)
         {
             return getDatasetWorkingCopy(datasetId);
@@ -778,7 +778,6 @@ namespace BExIS.Dlm.Services.Data
         /// <param name="deletedTuples">The list of existing tuples to be deleted from the working copy.</param>
         /// <param name="unchangedTuples">to be removed</param>
         /// <returns>The working copy having the changes applied on it.</returns>
-        [MeasurePerformance]
         public DatasetVersion EditDatasetVersion(DatasetVersion workingCopyDatasetVersion,
             ICollection<DataTuple> createdTuples, ICollection<DataTuple> editedTuples, ICollection<DataTuple> deletedTuples, ICollection<DataTuple> unchangedTuples = null
             //,ICollection<ExtendedPropertyValue> extendedPropertyValues, ICollection<ContentDescriptor> contentDescriptors
@@ -946,6 +945,7 @@ namespace BExIS.Dlm.Services.Data
             return (tuples);
         }
 
+        [MeasurePerformance]
         private DatasetVersion editDatasetVersion(DatasetVersion workingCopyDatasetVersion, ICollection<DataTuple> createdTuples, ICollection<DataTuple> editedTuples, ICollection<DataTuple> deletedTuples, ICollection<DataTuple> unchangedTuples)
         {
             Contract.Requires(workingCopyDatasetVersion.Dataset != null && workingCopyDatasetVersion.Dataset.Id >= 0);

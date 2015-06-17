@@ -157,7 +157,6 @@ namespace BExIS.IO.Transform.Input
         /// <remarks></remarks>
         /// <seealso cref="File"/>
         /// <param ="fileName">Full path of the FileStream</param>       
-        [Diagnose]
         public FileStream Open(string fileName)
         {
             if (File.Exists(fileName))
