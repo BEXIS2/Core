@@ -2,24 +2,27 @@
 @using System
 @using BExIS.Dlm.Entities.DataStructure
 @using BExIS.Dlm.Services.DataStructure
-@model BExIS.Dlm.Entities.DataStructure.Unit
+@model BExIS.Web.Shell.Areas.RPM.Models.EditUnitStruct
 
-@if(Model != null)
-{
+@{
+    string temp = "";
+    HtmlString dimensionArray = new HtmlString(temp);
+}
+
+@if(Model.Unit != null)
+{   
     List<string> MeasurementSystemList = new List<string>();
     int MeasurementSystemIndex = 0;
     int count = 0;
     foreach (MeasurementSystem ms in Enum.GetValues(typeof(MeasurementSystem)))
     {
         MeasurementSystemList.Add(ms.ToString());
-        if (ms == Model.MeasurementSystem)
+        if (ms == Model.Unit.MeasurementSystem)
         {
             MeasurementSystemIndex = count;
         }
         count++;
     }
-
-    List<DataType> dataTypeList = ((List<DataType>)Session["dataTypeList"]).OrderBy(p=>p.Name).ToList();
 
     List<long> checkedIds = new List<long>();
 
@@ -30,28 +33,24 @@
  
     List<long> dataTypeIds = new List<long>();
     
-    if(Model != null)
+    foreach (DataType dt in Model.Unit.AssociatedDataTypes)
     {
-        foreach (DataType dt in Model.AssociatedDataTypes)
-        {
-            dataTypeIds.Add(dt.Id);
-        }
+        dataTypeIds.Add(dt.Id);
     }
+
             
 <div class="planingPartialDiv" id="createUnit">
 
- 
-
     @using (Html.BeginForm("editUnit", "Home", new { area = "RPM" }))
     {
-       @(Html.TextBox("id", Model.Id, new { @class = "hidden" })) 
+       @(Html.HiddenFor(m => Model.Unit.Id, new { @class = "hidden" })) 
         <table>
             <tr id="name">
                 <td id="nameBox">
                     Name:<font color="red">*</font>
                 </td>
                 <td>
-                    @(Html.TextBoxFor(m => Model.Name, new { @class = "t-input" , @autofocus = "autofocus", @tabindex = "1"}))
+                    @(Html.TextBoxFor(m => Model.Unit.Name, new { @class = "t-input" , @autofocus = "autofocus", @tabindex = "1"}))
                 </td>
                 <td class="errorMsg">@Session["nameMsg"]</td>
             </tr>
@@ -60,7 +59,7 @@
                     Abbreviation:<Font color="red">*</Font>
                 </td>
                 <td>
-                    @(Html.TextBoxFor(m => Model.Abbreviation, new { @class = "t-input", @tabindex = "2"}))
+                    @(Html.TextBoxFor(m => Model.Unit.Abbreviation, new { @class = "t-input", @tabindex = "2"}))
                 </td>
                 <td class="errorMsg">@Session["abbrMsg"]</td>
             </tr>
@@ -69,15 +68,51 @@
                     Description:
                 </td>
                 <td>
-                    @(Html.TextBoxFor(m => Model.Description, new { @class = "t-input", @tabindex = "3"}))
+                    @(Html.TextBoxFor(m => Model.Unit.Description, new { @class = "t-input", @tabindex = "3"}))
                 </td>
             </tr>
             <tr>
                 <td>
-                    Dimension:
+                    Dimension Name:
                 </td>
                 <td>
-                    @(Html.TextBoxFor(m => Model.Dimension, new { @class = "t-input", @tabindex = "4" }))
+                    @(Html.Telerik().ComboBox()
+                        .Name("Unit_Dimension_Name_ComboBox")
+                        .Items(item => 
+                        {
+                            item.Add().Text("type or select").Value("0");                      
+                            foreach (Dimension d in Model.DimensionList)
+                            {
+                                if (Model.Unit.Dimension.Id == d.Id)
+                                {
+                                    item.Add().Text(d.Name.ToString()).Value(d.Id.ToString()).Selected(true);
+                                }
+                                else
+                                {
+                                    item.Add().Text(d.Name.ToString()).Value(d.Id.ToString());
+                                }
+                                if (temp == "" || temp == null)
+                                {
+                                    temp = "[" + d.Id + ",'" + d.Specification + "']";
+                                }
+                                else
+                                {
+                                    temp = temp + ",[" + d.Id + ",'" + d.Specification + "']";
+                                }
+                            }
+                            dimensionArray = new HtmlString(temp);
+                        })
+                        .ClientEvents(e => e.OnChange("dimensionChange")))
+                        @(Html.HiddenFor(m => Model.Unit.Dimension.Id, new { @class = "hidden" }))
+                        @(Html.HiddenFor(m => Model.Unit.Dimension.Name, new { @class = "hidden" }))
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Dimension Specification:
+                </td>
+                <td>
+                    @(Html.TextBoxFor(m => Model.Unit.Dimension.Specification, new { @class = "t-input", @tabindex = "3"}))
                 </td>
             </tr>
             <tr>
@@ -96,7 +131,7 @@
             </tr>
         </table>
         <div class="errorMsg">@Session["dataTypeMsg"]</div>
-        @(Html.Telerik().Grid(dataTypeList)
+        @(Html.Telerik().Grid(Model.DataTypeList)
             .Name("DataTypeGrid")
             .Scrollable(t => t.Height(250))
             .Sortable()
@@ -121,7 +156,7 @@
                 })
             )
         <div class="functions RPMbuttons">
-        <font class="RPMbuttons" color="red">*</font>Please don't leave empty
+            <font class="RPMbuttons" color="red">*</font>Please don't leave empty
         </div>
         <div class="submit RPMbuttons">
             <button name="create" value="create" type="submit" class="t-button"  id="saveButton" title="Save The Unit" tabindex = "6">Save</button>
@@ -137,6 +172,35 @@ else
 }
     
 <script type="text/jscript">
+
+    $(document).ready(function () {
+        dimensionChange();
+    })
+
+
+    function dimensionChange()
+    {
+        var temp = $("#Unit_Dimension_Name_ComboBox").val();
+        if (isNaN(parseInt(temp)))
+        {
+            temp = 0;
+        }
+
+        $('#Unit_Dimension_Id').val(temp);
+        $('#Unit_Dimension_Name').val($("#Unit_Dimension_Name_ComboBox-input").val());
+
+        var dimensionArray = [@dimensionArray];
+        $('#Unit_Dimension_Specification').prop('disabled', false);
+        
+        for (var i = 0; i < dimensionArray.length; i++)
+        {
+            if (dimensionArray[i][0] == temp)
+            {
+                $('#Unit_Dimension_Specification').val(dimensionArray[i][1]);
+                $('#Unit_Dimension_Specification').prop('disabled', true);
+            }
+        }
+    }
    
     $('.checkBox').change(function () {
         if ($(this).attr('checked'))

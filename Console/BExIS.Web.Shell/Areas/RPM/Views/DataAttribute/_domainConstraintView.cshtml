@@ -1,0 +1,75 @@
+﻿@model BExIS.Web.Shell.Areas.RPM.Models.DomainConstraintModel
+
+@using BExIS.Web.Shell.Areas.RPM.Helpers;
+@using BExIS.Web.Shell.Areas.RPM.Models;
+
+@using (Html.BeginCollectionItem("domainConstraints"))
+{ 
+<div class="constraint container">
+    <table class="container">
+        <tr>
+            <td rowspan="2" class="add">
+                @Html.ActionLink("Add", "AddDomainItem", null, new { id = "addDomainItem", @class = "t-icon t-add addDomainItem" })
+            </td>
+            <td class="domain container" rowspan="2">
+                <div class="domainItems container" id="domainItems">
+                        @if (Model.DomainItems != null && Model.DomainItems.Count > 0)
+                        {
+
+                            foreach (DomainConstraintItemModel item in Model.DomainItems)
+                            {
+                                Html.RenderPartial("_domainItemView", item);
+                            }
+                        }
+                        else if (Model.DomainItems != null && Model.DomainItems.Count == 0)
+                        {
+                            for (int i = 0; i < 4 - Model.DomainItems.Count; i++)
+                            {
+                                Html.RenderPartial("_domainItemView", new DomainConstraintItemModel());
+                            }                              
+                        }
+                </div>
+            </td>
+            <td class="descLabel">
+                <!--Description-->
+                @Html.LabelFor(m => m.Description):
+            </td>
+            <td class="descArea">
+                @Html.TextAreaFor(m => m.Description)
+            </td>
+        </tr>
+        <tr>
+            <td class="descLabel">
+                <!--Constrain-->
+                @Html.LabelFor(m => m.Negated):
+            </td>
+            <td>
+                <!--Negated-->
+                 @Html.CheckBoxFor(m => m.Negated)
+            </td>
+        </tr>
+        
+    </table>
+</div>
+}
+
+<script>
+
+    $("#addDomainItem").unbind().click(function () {
+
+    
+        $.ajax({
+            url: this.href,
+            cache: false,
+            success: function (html) { $("#domainItems").append(html); }
+        });
+
+        return false;
+    });
+
+    $("a.removeDomainItem").live("click", function () {
+        $(this).parents("div.domainItem:first").remove();
+        return false;
+    });
+
+</script>

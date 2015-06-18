@@ -8,7 +8,7 @@ using BExIS.Dlm.Services.DataStructure;
 /// <summary>
 ///
 /// </summary>        
-namespace BExIS.RPM.Model
+namespace BExIS.Web.Shell.Areas.RPM.Models
 {
     /// <summary>
     ///

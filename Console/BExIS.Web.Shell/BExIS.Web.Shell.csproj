@@ -293,8 +293,17 @@
     <Compile Include="Areas\DIM\Models\MetadataStructureModel.cs" />
     <Compile Include="Areas\DIM\Models\ShowHelpModel.cs" />
     <Compile Include="Areas\RPM\Controllers\HelpController.cs" />
+    <Compile Include="Areas\RPM\Controllers\DataAttributeController.cs" />
+    <Compile Include="Areas\RPM\Controllers\DataTypeController.cs" />
     <Compile Include="Areas\RPM\Controllers\HomeController.cs" />
+    <Compile Include="Areas\RPM\Helpers\HtmlPrefixScopeExtentions.cs" />
     <Compile Include="Areas\RPM\Helpers\RPMSeedDataGenerator.cs" />
+    <Compile Include="Areas\RPM\Models\ConstraintModels.cs" />
+    <Compile Include="Areas\RPM\Models\UnitManagerModel.cs" />
+    <Compile Include="Areas\RPM\Models\DataAttributeModel.cs" />
+    <Compile Include="Areas\RPM\Models\DataStructureDesignerModel.cs" />
+    <Compile Include="Areas\RPM\Models\DataStructureTreeModel.cs" />
+    <Compile Include="Areas\RPM\Models\UnitDimenstionModel.cs" />
     <Compile Include="Areas\RPM\Models\ShowHelpModel.cs" />
     <Compile Include="Areas\RPM\RPMAreaRegistration.cs" />
     <Compile Include="Areas\DDM\Controllers\HomeController.cs" />
@@ -897,9 +906,6 @@
     <Content Include="Areas\RPM\Views\_ViewStart.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\RPM\Views\Home\AttributeManager.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Areas\RPM\Views\Home\ClassificationManager.cshtml" />
     <Content Include="Areas\RPM\Views\Home\DataStructureDesigner.cshtml" />
     <Content Include="Areas\RPM\Views\Home\DatatypeManager.cshtml" />
@@ -911,9 +917,6 @@
     <Content Include="Areas\RPM\Views\Home\_editUnit.cshtml" />
     <Content Include="Areas\RPM\Views\Home\_showDataStructure.cshtml" />
     <Content Include="Areas\RPM\Views\Home\_showDataStructureInfo.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\RPM\Views\Home\_editAttribute.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Components\AAA\BExIS.Security.Entities\BExIS.Security.Entities.csproj">
@@ -1130,6 +1133,12 @@
     <Content Include="Areas\DDM\Views\Help\HelpSearch.cshtml" />
     <Content Include="Areas\Auth\Views\Help\HelpSecurity.cshtml" />
     <Content Include="Areas\DIM\Views\Help\HelpDissemination.cshtml" />
+    <Content Include="Areas\RPM\Views\DataAttribute\AttributeManager.cshtml" />
+    <Content Include="Areas\RPM\Views\DataAttribute\_domainConstraintView.cshtml" />
+    <Content Include="Areas\RPM\Views\DataAttribute\_domainItemView.cshtml" />
+    <Content Include="Areas\RPM\Views\DataAttribute\_editAttribute.cshtml" />
+    <Content Include="Areas\RPM\Views\DataAttribute\_patternConstraintView.cshtml" />
+    <Content Include="Areas\RPM\Views\DataAttribute\_rangeConstraintView.cshtml" />
     <None Include="Properties\PublishProfiles\2230.pubxml" />
     <None Include="Properties\PublishProfiles\2301.pubxml" />
     <None Include="Properties\PublishProfiles\2302.pubxml" />

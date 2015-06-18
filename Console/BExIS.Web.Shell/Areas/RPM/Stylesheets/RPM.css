@@ -1,10 +1,33 @@
 ﻿/*partial Views*/
+.planingPartialDiv .constraint .addDomainItem{
+    float:left;
+}
+
+.planingPartialDiv .constraint .domainItems{
+    float:right;
+}
+
 .t-status, .t-refresh{
 display:none !important;
 }
 
 .function td, .locked td {
-    text-align : center;
+    text-align:center;
+}
+
+.planingPartialDiv .tdRight
+{
+    text-align:right;
+}
+
+.planingPartialDiv .checkbox
+{
+    width:13px !important;
+}
+
+.constraints
+{
+    display:none;
 }
 
 .planingPartialDiv option{
@@ -70,6 +93,44 @@ display:none !important;
    border-left:none;
    border-top-color:lightgray;  
 }
+#createAttribute textarea, #createVariable textarea{
+    width:150px;
+    min-width:150px;
+    max-width: 300px;
+}
+
+#createAttribute .descLabel, #createVariable .descLabel{
+    width:71px;  
+}
+
+#createAttribute .label, #createVariable .label{
+    width:113px;
+}
+
+.container{
+    vertical-align:text-top;
+    vertical-align:top;
+    margin:0;
+    padding:0;
+}
+
+#createAttribute .descArea, #createAttribute .descLabel, #createVariable .descArea, #createVariable .descLabel{
+    vertical-align:text-top;
+    vertical-align:top; 
+}
+
+#createAttribute .domain{
+    width:263px;
+}
+
+#createAttribute .add{
+    vertical-align:text-bottom;
+    vertical-align:bottom;
+}
+
+#createAttribute .textBox{
+    width:150px;
+}
 
 #DataStructureGrid input, #DataStructureGrid textarea {
     border-radius: 3px;
@@ -116,8 +177,14 @@ display:none !important;
     text-align: center;
 }
 
+.planingPartialDiv table, .planingPartialDiv tr {
+    width:100%;
+  
+}
+
 .planingPartialDiv table, .planingPartialDiv tr, .planingPartialDiv td {
     border-style: none;
+    
 }
 
 .planingPartialDiv #DataTypeGrid, .planingPartialDiv #DatasetGrid, .planingPartialDiv #DataAttributeGrid{
@@ -135,6 +202,13 @@ border-radius: 3px;
 width: 150px;
 }
 
+.planingPartialDiv .midinput {
+width: 75px;
+}
+
+.planingPartialDiv .smallinput {
+width: 40px;
+}
 
 .planingPartialDiv .checkBox {
 border-radius: 3px;

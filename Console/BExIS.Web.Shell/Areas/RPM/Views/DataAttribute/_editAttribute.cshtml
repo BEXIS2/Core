@@ -1,0 +1,196 @@
+﻿@using Telerik.Web.Mvc.UI
+@using System.Linq;
+@using BExIS.Dlm.Entities.DataStructure
+@using BExIS.Web.Shell.Areas.RPM.Models
+
+@model BExIS.Web.Shell.Areas.RPM.Models.DataAttributeModel
+
+@if(Model != null)
+{
+    long unitIndex = 0;
+    long dataTypeIndex = 0;
+    string className = ""; 
+    
+
+    Model.Units = (List<UnitItemModel>)Session["unitlist"];
+
+    //if(Model.Unit != null)
+    //{
+    //    unitIndex = Model.Unit.Id;
+    //}
+
+
+    Model.DataTypes = (List<DataTypeItemModel>)Session["dataTypeList"];
+    //dataTypeList = dataTypeList.OrderBy(p => p.Name).ToList();
+
+    if (Model.DataType != null)
+    {
+        dataTypeIndex = Model.DataType.Id;
+    } 
+    
+<div class="planingPartialDiv" id="createAttribute">
+@using (Html.BeginForm("editAttribute", "DataAttribute", new { area = "RPM" }))
+{
+   @(Html.TextBox("parent", @HttpContext.Current.Request.RequestContext.RouteData.Values["action"].ToString(), new {@class = "hidden"}))
+   @(Html.TextBox("id", Model.Id, new {@class = "hidden"})) 
+    <table>
+        <tr>
+            <td id="name" class="label">
+                Name:<Font color="red">*</Font>
+            </td>
+            <td class="tdRight">
+                @(Html.TextBoxFor(m => Model.Name, new {@class = "t-input", @autofocus = "autofocus", @tabindex = "1"}))
+            </td>
+            <td class="descLabel" rowspan="4">
+                Description:
+            </td>
+            <td rowspan="4" class="descArea">
+                @(Html.TextAreaFor(m => Model.Description, new {@class = "t-input", @style="min-height: 100px;", @tabindex = "3"}))
+            </td>
+        </tr>
+        <tr id="shortname">
+            <td class="label">
+                ShortName:
+            </td>
+            <td class="textBox">
+                @(Html.TextBoxFor(m => Model.ShortName, new {@class = "t-input", @tabindex = "2"}))
+            </td>
+        </tr>
+        <tr>
+            <td class="label">
+                Unit:
+            </td>
+            <td class="textBox">
+                @Html.DropDownListFor(m => Model.Unit.Id, new SelectList(Model.Units, "Id", "Name"), new { @tabindex = "4", @id="unitId" })
+            </td>
+        </tr>
+        <tr>
+            <td class="label">
+                DataType:
+            </td>
+            <td class="textBox">
+                @Html.DropDownListFor(m => Model.DataType.Id, new SelectList(Model.DataTypes, "Id", "Name"), new { @tabindex = "5", @id="dataTypeId" })
+            </td>
+        </tr>
+        <tr>
+            <td class="errorMsg" colspan="4">@Session["nameMsg"]</td>
+        </tr>
+        <tr>
+            <td colspan="4" class="container">
+                <h4><a href="javascript:clickConstraints()">Constraints</a></h4>
+   
+                @if(Model.DomainConstraints.Count > 0 || Model.RangeConstraints.Count > 0 || Model.PatternConstraints.Count > 0)
+                {    
+                    className =  "";
+                }
+                else
+                {
+                    className = "constraints";
+                }
+
+                <div id="constraints" class="@className container" style="border:1px,solid">
+
+                        <h4 id="rangeTitle">Range</h4>
+        
+                        <div id="RangeConstraints" class="container">
+                    
+                   
+                            @if (Model.PatternConstraints.Count > 0)
+                            {
+                                @Html.Partial("_rangeConstraintView", Model.RangeConstraints.FirstOrDefault())
+                            }
+                            else
+                            { 
+                                @Html.Partial("_rangeConstraintView", new RangeConstraintModel())
+                            }
+                     
+                        </div>
+
+
+                        <h4 id="patternTitle">Pattern</h4>
+
+                        <div id="PatternConstraints" class="container">
+
+                            @if (Model.PatternConstraints.Count > 0)
+                            {
+                                @Html.Partial("_patternConstraintView", Model.PatternConstraints.FirstOrDefault())
+                            }
+                            else
+                            { 
+                                @Html.Partial("_patternConstraintView", new PatternConstraintModel());
+                            }
+                        </div>
+ 
+                        <div id="DomainConstraints" class="container">
+
+                        <h4 id="domainTitle">Domain</h4>
+
+                   
+                        @if (Model.DomainConstraints.Count > 0)
+                        {
+                            @Html.Partial("_domainConstraintView", Model.DomainConstraints.FirstOrDefault())
+                        }
+                        else
+                        { 
+                            @Html.Partial("_domainConstraintView", new DomainConstraintModel());
+                        }
+                    
+                    </div>
+                </div>
+            </td>
+        </tr>
+</table>
+
+
+    
+    <div class="functions RPMbuttons">
+        <font class="RPMbuttons" color="red">*</font>Please don't leave empty
+    </div>
+    <div class="submit RPMbuttons">
+        <button name="create" value="create" type="submit" class="t-button"  id="saveButton" title="Save The Unit" tabindex = "6">Save</button>
+        @Html.ActionLink("Cancel", "AttributeManager", "DataAttribute", new { area = "RPM", @class = "t-button", @title = "Cancel", @tabindex = "7" })
+    </div>  
+               
+}
+</div>
+    
+<script type="text/jscript">
+   
+    $('#unitId').change(function () {
+
+        $.getJSON('/RPM/DataAttribute/getDatatypeList/' + $(this).val(), function (data) {
+            
+
+            var items = '';
+            $.each(data, function (i, dataType) {
+                items += "<option value='" + dataType.Value + "'>" + dataType.Text + "</option>";
+            });
+            $('#dataTypeId').html(items);
+        });
+    })
+   
+    $(document).ready(function () {
+        $.getJSON('/RPM/DataAttribute/getDatatypeList/' + $('#unitId').val(), function (data) {
+            var items = '';
+            $.each(data, function (i, dataType) {
+                if (dataType.Value == @dataTypeIndex)
+                    items += "<option selected='selected' value='" + dataType.Value + "'>" + dataType.Text + "</option>"; 
+                else
+                    items += "<option value='" + dataType.Value + "'>" + dataType.Text + "</option>";
+            });
+            $('#dataTypeId').html(items);
+        });
+    })
+
+
+    function clickConstraints()
+    {
+        $('#constraints').toggle();
+    }
+
+</script>    
+}
+else
+{
+ <font color="red" style="margin:10px">Can't edit Data Attribute doesn't exist anymore.</font>
+}

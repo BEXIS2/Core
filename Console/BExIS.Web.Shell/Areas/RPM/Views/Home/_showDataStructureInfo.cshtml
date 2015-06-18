@@ -3,7 +3,7 @@
 @using BExIS.Dlm.Entities.Data
 @using BExIS.Dlm.Services.DataStructure
 @using BExIS.Dlm.Services.Data
-@model BExIS.RPM.Model.DataStructureDesignerModel
+@model BExIS.Web.Shell.Areas.RPM.Models.DataStructureDesignerModel
 
 @{   
   
@@ -93,11 +93,11 @@
                         }
                     </td>
                     <td>
-                        @if (Model.variables != null && Model.structured == true)
+                        @if (Model.variableStructs != null && Model.structured == true)
                         {
-                            if (Model.variables.Count() > 0)
+                            if (Model.variableStructs.Count() > 0)
                             {
-                                @Model.variables.Count();
+                                @Model.variableStructs.Count();
                             }
                             else
                             {
@@ -120,7 +120,7 @@
 
    
      
-                if (Model.structured == true && Model.variables.Count > 0)
+                if (Model.structured == true && Model.variableStructs.Count > 0)
                 {
         <div>@Html.Partial("_showDataStructure", Model)</div>
                 } 
@@ -138,9 +138,9 @@
                 @Html.ActionLink("Datasets", "showDatasets", "Home", new { id = Model.dataStructure.Id, structured = Model.structured }, new { area = "RPM", @class = "t-button", @title = "show Datasets using this Data Structure", @tabindex = "5" })
             }
 
-            if (Model.variables != null || Model.structured == true)
+            if (Model.variableStructs != null || Model.structured == true)
             {
-                if (Model.variables.Count() > 0)
+                if (Model.variableStructs.Count() > 0)
                 {
                     //<div title="Download">
                     @Html.ActionLink("Download", "downloadTemplate", "Home", new { id = Model.dataStructure.Id }, new { area = "RPM", @class = "t-button", @title = "Download Data Structure Template", @tabindex = "6" })
@@ -213,6 +213,25 @@
 </div>
 @{Session["Window"] = false;}
 
+<div style="position:absolute; left:30%; top:60px;">
+@{ Html.Telerik().Window()
+        .Name("Edit_Variable")
+        .Title("Edit Variable")
+        .Draggable(true)
+        .Modal(true)
+        .Visible((bool)Session["VariableWindow"])
+        .ClientEvents((events => events.OnClose("close")))
+        .Content(@<text>
+                    @Html.Partial("_editVariable", Model)
+                    </text>)
+        .Width(300)
+        .Render()
+        ;
+        
+}
+</div>
+@{Session["VariableWindow"] = false;}
+
 <div style="position:absolute; left:10%; top:60px">
 @if (Session["DatasetWindow"] == null)
 {
@@ -233,7 +252,6 @@
         ;        
 }
 </div>
-
 @{Session["DatasetWindow"] = false;}
 
 <div style="position:absolute; left:10%; top:60px">

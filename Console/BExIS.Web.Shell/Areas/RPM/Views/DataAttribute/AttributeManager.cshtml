@@ -1,16 +1,18 @@
 ﻿@using Telerik.Web.Mvc.UI
 @using BExIS.Dlm.Entities.DataStructure
-@using BExIS.Dlm.Services.DataStructure
 @using System
 @using System.Text.RegularExpressions
-@model List<BExIS.Dlm.Entities.DataStructure.DataAttribute>
+
+@using BExIS.Web.Shell.Areas.RPM.Models;
+
+@model List<DataAttributeModel>
 
 @*<header>*@
     <link href="@Url.Content("~/Areas/RPM/Stylesheets/RPM.css")" rel="stylesheet" type="text/css" />  
 @*</header> *@
 
 @{
-    DataAttribute dataAttribute = (DataAttribute)Session["DataAttribute"];
+    DataAttributeModel dataAttribute = (DataAttributeModel)Session["DataAttribute"];
     string windowName = "Create Data Attribute";
 
   
@@ -23,7 +25,7 @@
         }
         else
         {
-            dataAttribute = new DataAttribute();
+            dataAttribute = new DataAttributeModel();
         }
 }
 
@@ -38,7 +40,7 @@
     </div>
 
 <div title="Create a new Data Attribute">
-    @Html.ActionLink("Create Data Attribute", "openAttributeWindow", "Home", new { id = 0 }, new { @class = "t-button t-add" })
+    @Html.ActionLink("Create Data Attribute", "openAttributeWindow", "DataAttribute", new { id = 0 }, new { @class = "t-button t-add" })
 </div>
     <br />
     <br />
@@ -51,11 +53,11 @@
                 {
                     columns.Template(
                         @<text>
-                            @if(!(item.UsagesAsVariable.Count > 0))
+                            @if(!item.InUse)
                             {
                                 <div class="t-button t-button-icontext t-button-bare">
-                                    @Html.ActionLink("Edit", "openAttributeWindow", "Home", new { id = item.Id }, new { @class = "t-icon t-edit" })
-                                    @Html.ActionLink("Delete", "deletAttribute", "Home", new { id = item.Id, item.Name }, new { @class = "t-icon t-delete", onclick = "return confirm('Are you sure you want to delete the Data Attribute " + item.Name + " ?')" })
+                                    @Html.ActionLink("Edit", "openAttributeWindow", "DataAttribute", new { id = item.Id }, new { @class = "t-icon t-edit" })
+                                    @Html.ActionLink("Delete", "deletAttribute", "DataAttribute", new { id = item.Id, item.Name }, new { @class = "t-icon t-delete", onclick = "return confirm('Are you sure you want to delete the Data Attribute " + item.Name + " ?')" })
                                 </div>
                             }
                             else
@@ -66,8 +68,8 @@
                     ).Title("Actions")
                         .Width(80)
                         .ClientTemplate(
-                            @Html.ActionLink("Edit", "openAttributeWindow", "Home", new { id = "<#= id #>" }, new { @class = "t-icon t-edit" }).ToHtmlString() +
-                            @Html.ActionLink("Delete", "deletAttribute", "Home", new { id = "<#= id #>", dataAttribute.Name }, new { @class = "t-icon t-delete", onclick = "return confirm('Are you sure you want to delete the Data Attribute " + dataAttribute.Name + " ?')" }).ToHtmlString()
+                            @Html.ActionLink("Edit", "openAttributeWindow", "DataAttribute", new { id = "<#= id #>" }, new { @class = "t-icon t-edit" }).ToHtmlString() +
+                            @Html.ActionLink("Delete", "deletAttribute", "DataAttribute", new { id = "<#= id #>", dataAttribute.Name }, new { @class = "t-icon t-delete", onclick = "return confirm('Are you sure you want to delete the Data Attribute " + dataAttribute.Name + " ?')" }).ToHtmlString()
                         );
                     columns.Bound(c => c.Name).Width(150);
                     columns.Bound(c => c.Id).Width(50);

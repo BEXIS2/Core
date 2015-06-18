@@ -9,18 +9,26 @@ using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Entities.MetadataStructure;
 using System.Xml.Linq;
-using BExIS.Xml.Helpers;
 using BExIS.Xml.Services;
+
+using BExIS.Web.Shell.Areas.RPM.Models;
 
 /// <summary>
 ///
 /// </summary>        
-namespace BExIS.RPM.Model
+namespace BExIS.Web.Shell.Areas.RPM.Models
 {
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>        
+    /// <remarks></remarks>
+
+    public struct VariableStruct
+    {
+        public Variable variable;
+        public List<UnitStruct> unitStructs;
+    }
+
     public class DatasetListElement
     {
         public long Id = 0;
@@ -87,8 +95,9 @@ namespace BExIS.RPM.Model
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
-        public List<Variable> variables { get; set; }
+        /// <seealso cref=""/>
+
+        public List<VariableStruct> variableStructs { get; set; }
 
         /// <summary>
         ///
@@ -117,7 +126,7 @@ namespace BExIS.RPM.Model
             structured = true;
             show = true;
             inUse = false;
-            variables = new List<Variable>();
+            variableStructs = new List<VariableStruct>();
             datasets = new List<DatasetListElement>();
         }
 
@@ -137,16 +146,30 @@ namespace BExIS.RPM.Model
             return (tree);
         }
 
+        public List<VariableStruct> getOrderedVariableStructs(StructuredDataStructure structuredDataStructure)
+        {
+            List<VariableStruct> variableStructs = new List<VariableStruct>();
+            List<Variable> variables = getOrderedVariables(structuredDataStructure);
+            VariableStruct temp;
+            UnitDimenstionModel unitDimenstionModel = new UnitDimenstionModel();
+            foreach (Variable v in variables)
+            {
+                temp.variable = v;
+                temp.unitStructs = unitDimenstionModel.getUnitDimenstionListByDimenstion(v.DataAttribute.Unit.Dimension);
+                variableStructs.Add(temp);
+            }
+            return variableStructs;
+        }
         public List<Variable> getOrderedVariables(StructuredDataStructure structuredDataStructure)
         {
             DataStructureManager dsm = new DataStructureManager();
             XmlDocument doc = (XmlDocument)structuredDataStructure.Extra;
             XmlNode order;
 
-                if (doc == null)
-                {
-                    doc = new XmlDocument();
-                XmlNode root = doc.CreateNode(System.Xml.XmlNodeType.Element, "extra", null);
+            if (doc == null)
+            {
+                doc = new XmlDocument();
+                XmlNode root = doc.CreateNode(XmlNodeType.Element, "extra", null);
                 doc.AppendChild(root);
             }
             if (doc.GetElementsByTagName("order").Count == 0)
@@ -154,14 +177,16 @@ namespace BExIS.RPM.Model
 
                 if (structuredDataStructure.Variables.Count > 0)
                 {
-                    order = doc.CreateNode(System.Xml.XmlNodeType.Element, "order", null);
-                        foreach (Variable v in structuredDataStructure.Variables)
-                        {
+                    order = doc.CreateNode(XmlNodeType.Element, "order", null);
 
-                            XmlNode variable = doc.CreateNode(System.Xml.XmlNodeType.Element, "variable", null);
-                            variable.InnerText = v.Id.ToString();
+                    foreach (Variable v in structuredDataStructure.Variables)
+                    {
+
+                        XmlNode variable = doc.CreateNode(XmlNodeType.Element, "variable", null);
+                        variable.InnerText = v.Id.ToString();
                         order.AppendChild(variable);
-                        }
+                    }
+
                     doc.FirstChild.AppendChild(order);
                     structuredDataStructure.Extra = doc;
                     dsm.UpdateStructuredDataStructure(structuredDataStructure);
@@ -183,7 +208,7 @@ namespace BExIS.RPM.Model
                     }
             }
             return orderedVariables; 
-                }
+        }
 
         public StructuredDataStructure GetDataStructureByID(long ID)
         {
@@ -194,7 +219,7 @@ namespace BExIS.RPM.Model
 
             if (this.dataStructure != null)
             {
-                this.variables = getOrderedVariables(structuredDataStructure);
+                this.variableStructs = getOrderedVariableStructs(structuredDataStructure);
 
                 if (this.dataStructure.Datasets == null)
                 {
@@ -255,7 +280,7 @@ namespace BExIS.RPM.Model
                
                 if (this.dataStructure != null)
                 {
-                    this.variables = null;
+                    this.variableStructs = null;
                     if (this.dataStructure.Datasets == null)
                     {
                         inUse = false;
@@ -298,7 +323,7 @@ namespace BExIS.RPM.Model
             this.dataStructureTable = new DataTable();
                 List<string> row = new List<string>();
 
-                for (int i = 0; i <= this.variables.Count; i++)
+                for (int i = 0; i <= this.variableStructs.Count; i++)
                 {
                     this.dataStructureTable.Columns.Add(new DataColumn());
                 }
@@ -306,9 +331,9 @@ namespace BExIS.RPM.Model
                 DataRow Row = this.dataStructureTable.NewRow();
 
                 List<string> Functions = new List<string>();
-                foreach (Variable v in this.variables)
+                foreach (VariableStruct v in this.variableStructs)
                 {
-                    Functions.Add(v.Id.ToString() + "?DataStructureId=" + this.dataStructure.Id);
+                    Functions.Add(v.variable.Id.ToString() + "?DataStructureId=" + this.dataStructure.Id);
                 }
               
                 row = Functions;
@@ -319,8 +344,8 @@ namespace BExIS.RPM.Model
 
                 this.dataStructureTable.Rows.Add(Row);
 
-                var Names = from p in this.variables
-                            select p.Label;
+                var Names = from p in this.variableStructs
+                            select p.variable.Label;
                 row = Names.ToList();
                 row.Insert(0,"Name");
 
@@ -329,8 +354,8 @@ namespace BExIS.RPM.Model
 
                 this.dataStructureTable.Rows.Add(Row);
 
-                var IsValueOptionals = from p in this.variables
-                                       select p.IsValueOptional;
+                var IsValueOptionals = from p in this.variableStructs
+                                       select p.variable.IsValueOptional;
                 List<bool> tmpIOs = IsValueOptionals.ToList();
                 row = tmpIOs.ConvertAll<string>(p => p.ToString());
                 row.Insert(0, "Optional");
@@ -340,8 +365,8 @@ namespace BExIS.RPM.Model
 
                 this.dataStructureTable.Rows.Add(Row);
 
-                var VariableIDs = from p in this.variables
-                                  select p.Id;
+                var VariableIDs = from p in this.variableStructs
+                                  select p.variable.Id;
                 List<long> tmpVIDs = VariableIDs.ToList();
                 row = tmpVIDs.ConvertAll<string>(p => p.ToString());
                 row.Insert(0, "VariableID");
@@ -351,8 +376,8 @@ namespace BExIS.RPM.Model
 
                 this.dataStructureTable.Rows.Add(Row);
 
-                var ShortNames = from p in this.variables
-                                 select p.DataAttribute.ShortName;
+                var ShortNames = from p in this.variableStructs
+                                 select p.variable.DataAttribute.ShortName;
                 row = ShortNames.ToList();
                 row.Insert(0, "ShortName");
 
@@ -361,8 +386,8 @@ namespace BExIS.RPM.Model
 
                 this.dataStructureTable.Rows.Add(Row);
 
-                var Descriptions = from p in this.variables
-                                   select getDescription(p);
+                var Descriptions = from p in this.variableStructs
+                                   select getDescription(p.variable);
                 row = Descriptions.ToList();
                 row.Insert(0, "Description");
 
@@ -394,8 +419,8 @@ namespace BExIS.RPM.Model
 
                 //this.DataStructureTable.Rows.Add(Row);
 
-                var Units = from p in this.variables
-                            select p.DataAttribute.Unit;
+                var Units = from p in this.variableStructs
+                            select p.variable.DataAttribute.Unit;
 
                 row = new List<string>();
                 
@@ -417,8 +442,8 @@ namespace BExIS.RPM.Model
 
                 this.dataStructureTable.Rows.Add(Row);
 
-                var DataTypes = from p in this.variables
-                               select p.DataAttribute.DataType;
+                var DataTypes = from p in this.variableStructs
+                               select p.variable.DataAttribute.DataType;
                 
                 row = new List<string>();
                 
@@ -453,6 +478,14 @@ namespace BExIS.RPM.Model
         }
 
     #region helper
+
+    private string getDescription(Variable v)
+    {
+        if (v.Description != null && v.Description != "")
+            return v.Description;
+        else
+            return v.DataAttribute.Description;
+    }
 
     #endregion
     }

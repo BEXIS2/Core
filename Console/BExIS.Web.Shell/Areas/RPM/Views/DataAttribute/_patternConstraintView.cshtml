@@ -1,0 +1,36 @@
+﻿@model BExIS.Web.Shell.Areas.RPM.Models.PatternConstraintModel
+
+@using BExIS.Web.Shell.Areas.RPM.Helpers;
+
+@using (Html.BeginCollectionItem("patternConstraints"))
+{ 
+    <div class="constraint container">
+        <table class="container">
+            <tr>
+                <td class="label">
+                        @Html.Label("Matching Phrase:")
+                </td>
+                <td class="textBox">
+                        @Html.TextBoxFor(m=>m.MatchingPhrase)
+                </td>
+                <td class="descLabel" rowspan="2">
+                    <!--Description-->
+                    @Html.LabelFor(m => m.Description):
+                </td>
+                <td rowspan="2" class="descArea">
+                    @Html.TextAreaFor(m => m.Description)
+                </td>
+            </tr>
+            <tr>
+                <td class="label">
+                    <!--Constrain-->
+                    @Html.LabelFor(m => m.Negated):
+                </td>
+                <td>
+                    <!--Negated-->
+                     @Html.CheckBoxFor(m => m.Negated)
+                </td>
+            </tr>
+        </table>
+    </div>
+}

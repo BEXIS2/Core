@@ -2,7 +2,7 @@
 @using Telerik.Web.Mvc.UI
 @using BExIS.Dlm.Entities.DataStructure
 @using BExIS.Dlm.Services.DataStructure
-@model BExIS.RPM.Model.DataStructureDesignerModel
+@model BExIS.Web.Shell.Areas.RPM.Models.DataStructureDesignerModel
 
 @{
     ViewBag.Title = "Planing";   
@@ -39,7 +39,10 @@
         @(Html.TextBoxFor(m => Model.dataStructure.Id, new {@class = "hidden",@Value = Model.dataStructure.Id}))
         @(Html.TextBoxFor(m => Model.structured, new {@class = "hidden",@Value = Model.structured}))
          
-        <button name="create" value="saveAs" type="submit" class="t-button" title="Save Data Structure as">Save</button>
+        <div class="submit RPMbutton">
+        <button name="create" value="create" type="submit" class="t-button"  id="saveButton" title="Save The Unit" tabindex = "4">Save</button>
+        @Html.ActionLink("Cancel", "showDataStructure", "Home", new {SelectedItem = Model.dataStructure.Id.ToString() + "," + Model.structured.ToString() }, new { area = "RPM", @class = "t-button", @title = "Cancel", @tabindex = "5" })
+        </div>
     }
 </div>
 

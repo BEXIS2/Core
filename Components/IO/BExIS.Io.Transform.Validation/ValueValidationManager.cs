@@ -61,13 +61,13 @@ namespace BExIS.IO.Transform.Validation
         /// <param name="value"></param>
         /// <param name="row"></param>
         /// <returns></returns>
-        public List<Error> CheckValue(string value, int row)
+        public object CheckValue(string value, int row, ref List<Error> errors)
         {
-            List<Error> errors = new List<Error>();
+            object temp = value;
 
             if (this.NullOrOptionalCheck != null)
             {
-                object temp = this.NullOrOptionalCheck.Execute(value, row);
+                temp = this.NullOrOptionalCheck.Execute(value, row);
 
                 if (temp is Error)
                 {
@@ -86,7 +86,7 @@ namespace BExIS.IO.Transform.Validation
                 }
             }
 
-            return errors;
+            return temp;
         }
 
 

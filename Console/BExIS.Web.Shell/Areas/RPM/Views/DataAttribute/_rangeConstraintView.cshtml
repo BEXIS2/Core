@@ -1,0 +1,44 @@
+﻿@model BExIS.Web.Shell.Areas.RPM.Models.RangeConstraintModel
+
+@using BExIS.Web.Shell.Areas.RPM.Helpers;
+
+@using (Html.BeginCollectionItem("rangeConstraints"))
+{ 
+<div class="constraint container">
+    <table class="container">
+        <tr>
+            <td class="label">
+                    @Html.LabelFor(m=>m.Min):
+            </td>
+            <td class="textBox">
+                    @Html.TextBoxFor(m=>m.Min)
+            </td>
+            <td class="descLabel" rowspan="3">
+                <!--Description-->
+                @Html.LabelFor(m => m.Description):
+            </td>
+            <td rowspan="3" class="descArea">
+                @Html.TextAreaFor(m => m.Description)
+            </td>
+        </tr>
+        <tr>
+            <td class="label">
+                @Html.LabelFor(m=>m.Max):
+            </td>
+            <td class="textBox">
+                @Html.TextBoxFor(m=>m.Max)
+            </td>
+        </tr>
+        <tr>
+            <td class="label">
+                <!--Constrain-->
+                @Html.LabelFor(m => m.Negated):
+            </td>
+            <td>
+                <!--Negated-->
+                 @Html.CheckBoxFor(m => m.Negated)
+            </td>
+        </tr>
+    </table>
+</div>
+}

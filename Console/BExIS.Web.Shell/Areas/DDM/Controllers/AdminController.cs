@@ -250,37 +250,37 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             return listOfSearchAttributeViewModels;
         }
 
-            #region Validation
+        #region Validation
 
-            [HttpGet]
-            public JsonResult ValidateSourceName(string sourceName, long id)
+        [HttpGet]
+        public JsonResult ValidateSourceName(string sourceName, long id)
+        {
+            List<SearchAttributeViewModel> list = (List<SearchAttributeViewModel>)Session["searchAttributeList"];
+
+            if (list != null)
             {
-                List<SearchAttributeViewModel> list = (List<SearchAttributeViewModel>)Session["searchAttributeList"];
-
-                if (list != null)
+                foreach(SearchAttributeViewModel sa in list )
                 {
-                    foreach(SearchAttributeViewModel sa in list )
+                    if (sa.sourceName.ToLower().Equals(sourceName.ToLower()) && sa.id != id)
                     {
-                        if (sa.sourceName.ToLower().Equals(sourceName.ToLower()) && sa.id != id)
-                        {
-                            string error = String.Format(CultureInfo.InvariantCulture, "Source name already exists.", sourceName);
+                        string error = String.Format(CultureInfo.InvariantCulture, "Source name already exists.", sourceName);
 
-                            return Json(error, JsonRequestBehavior.AllowGet);
-                        }
+                        return Json(error, JsonRequestBehavior.AllowGet);
                     }
-
-                    return Json(true, JsonRequestBehavior.AllowGet);
-
                 }
-                else
-                {
-                    string error = String.Format(CultureInfo.InvariantCulture, "Is not possible to compare Sourcename with a empty list of search attributes.", sourceName);
 
-                    return Json(error, JsonRequestBehavior.AllowGet);
-                }
+                return Json(true, JsonRequestBehavior.AllowGet);
+
             }
+            else
+            {
+                string error = String.Format(CultureInfo.InvariantCulture, "Is not possible to compare Sourcename with a empty list of search attributes.", sourceName);
 
-            #endregion
+                return Json(error, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        #endregion
 
         #endregion
 

@@ -321,11 +321,22 @@ namespace BExIS.IO.Transform.Input
 
                         ValueValidationManager validationManager = ValueValidationManagerDic[sdvu.Id];
 
-                        List<Error> temp = validationManager.CheckValue(v, indexOfRow);
+                        List<Error> temp = new List<Error>();
+
+                        // returns the checked value and update the error list if error appears
+                        object value = validationManager.CheckValue(v, indexOfRow,ref temp);
 
                         if (temp.Count == 0)
                         {
                             temp = validationManager.ValidateValue(v, indexOfRow);
+
+                            // check Constraints
+                            foreach (Constraint constraint in sdvu.DataAttribute.Constraints)
+                            {
+                                //new Error(ErrorType.Value, "Not in Range", new object[] { name, value, row, dataType });
+                                if (!constraint.IsSatisfied(value))
+                                    temp.Add(new Error(ErrorType.Value, constraint.FormalDescription, new object[] { sdvu.Label, value, indexOfRow, sdvu.DataAttribute.DataType.Name }));
+                            }
                         }
 
                         if (temp != null) errors = errors.Union(temp).ToList();

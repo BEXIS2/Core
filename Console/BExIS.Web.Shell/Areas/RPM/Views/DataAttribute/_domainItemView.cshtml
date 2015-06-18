@@ -1,0 +1,30 @@
+﻿@model BExIS.Web.Shell.Areas.RPM.Models.DomainConstraintItemModel
+
+@using BExIS.Web.Shell.Areas.RPM.Helpers
+
+
+@using (Html.BeginCollectionItem("DomainItems"))
+{ 
+    <div class="domainItem container domain">
+        <table class="container domain">
+            <tr>
+                <td>
+                    @Html.LabelFor(m=>m.Key):
+                </td>
+                <td>
+                    @Html.TextBoxFor(m=>m.Key, new { @class ="smallinput"})
+                </td>
+                <td>
+                    @Html.LabelFor(m=>m.Value):
+                </td>
+                <td>
+                    @Html.TextBoxFor(m=>m.Value, new { @class ="midinput"})
+                </td>
+                <td>
+                    <a href="#" class="removeDomainItem t-icon t-delete" >delete</a>
+                </td>
+            </tr>
+        </table>
+        
+    </div>
+}

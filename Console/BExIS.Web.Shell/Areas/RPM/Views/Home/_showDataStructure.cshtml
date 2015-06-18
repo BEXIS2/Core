@@ -1,17 +1,21 @@
-﻿@using Telerik.Web.Mvc.UI
-@using BExIS.Dlm.Entities.DataStructure
+﻿@using Telerik.Web.Mvc.UI;
+@using BExIS.Dlm.Entities.DataStructure;
 @using System.Data;
-@model BExIS.RPM.Model.DataStructureDesignerModel
+@using BExIS.Web.Shell.Areas.RPM.Models;
+@model BExIS.Web.Shell.Areas.RPM.Models.DataStructureDesignerModel
 
 @{
     long first = 0;
     long last = 0;
     DataRow r = null;
 
-    if (Model.variables.Count() != 0)
+    List<List<UnitStruct>> unitStructs = new List<List<UnitStruct>>();
+    List<long> unitId = new List<long>();
+
+    if (Model.variableStructs.Count() != 0)
     {
-        first = Model.variables.First().Id;
-        last = Model.variables.Last().Id;
+        first = Model.variableStructs.First().variable.Id;
+        last = Model.variableStructs.Last().variable.Id;
     }     
 }
 
@@ -291,6 +295,8 @@
                             if (o != r.ItemArray.First())
                             { 
                                 <td class="data">@o.ToString()@Html.TextBox("varId", o.ToString(), new { @class = "hidden", @Value = o.ToString() })</td>
+                                unitStructs.Add(Model.variableStructs.Where(v => v.variable.Id.Equals(Convert.ToInt64(o))).FirstOrDefault().unitStructs);
+                                unitId.Add(Model.variableStructs.Where(v => v.variable.Id.Equals(Convert.ToInt64(o))).FirstOrDefault().variable.DataAttribute.Unit.Id);
                             }
                             else
                             {
@@ -307,12 +313,67 @@
                             if (o != r.ItemArray.First())
                             { 
                                 <td class="data">@o.ToString()@Html.TextBox("varId", o.ToString(), new { @class = "hidden", @Value = o.ToString() })</td>
+                                unitStructs.Add(Model.variableStructs.Where(v => v.variable.Id.Equals(Convert.ToInt64(o))).FirstOrDefault().unitStructs);
+                                unitId.Add(Model.variableStructs.Where(v => v.variable.Id.Equals(Convert.ToInt64(o))).FirstOrDefault().variable.DataAttribute.Unit.Id);
                             }
                             else
                             {
                                 <td class="head">@o.ToString()</td>
                             }
                         }
+                        </tr>
+                    }
+                    break;
+
+                case "unit":
+                    if (i % 2 != 0)
+                    {
+                        <tr class ="name t-alt">
+                        @for (int j = 0; j < r.ItemArray.Count(); j++)
+                        {
+                            obj = r.ItemArray[j];
+
+                            if (obj != r.ItemArray.First())
+                            {
+                                if (!Model.inUse)
+                                {
+                                    <td class="data">@Html.DropDownList("varUnit", new SelectList(unitStructs.ElementAt(j-1),"Id","Name", unitId.ElementAt(j-1)), new { @tabindex = "5" })</td>
+                                }
+                                else
+                                {
+                                    <td class="data">@obj.ToString()</td>
+                                }
+                            }
+                            else
+                            {
+                                <td class="head">@obj.ToString()</td>
+                            }
+                        }                          
+                        </tr>
+                    }
+                    else
+                    {
+                        <tr class ="name">
+                        @for (int j = 0; j < r.ItemArray.Count(); j++)
+                        {
+                            obj = r.ItemArray[j];
+
+                            if (obj != r.ItemArray.First())
+                            {
+                                if (!Model.inUse)
+                                {
+                                    <td class="data">@Html.DropDownList("varUnit", new SelectList(unitStructs.ElementAt(j-1),"Id","Name", unitId.ElementAt(j-1)), new { @tabindex = "5" })</td>
+                                }
+                                else
+                                {
+                                    <td class="data">@obj.ToString()</td>
+                                }
+                            }
+                            else
+                            {
+                                <td class="head">@obj.ToString()</td>
+                            }
+                        } 
                         </tr>
                     }
                     break;
@@ -356,56 +417,6 @@
     </table>
 </div>
 
-@*<div>
-@(Html.Telerik().Grid(Model.dataStructureTable) 
-        .Name("DataStructureGrid")
-        .RowAction(row =>
-            {
-                if (row.Index == 0)
-                {
-                    if (Model.inUse)
-                    {
-                        row.HtmlAttributes["class"] = "locked";
-                    }
-                    else
-                    {
-                        row.HtmlAttributes["class"] = "function";
-                    }
-                    
-                }
-
-                if (row.Index == 1)
-                {
-                    row.HtmlAttributes["class"] = "name";
-                }
-               
-                if (row.Index == 2)
-                {
-                    row.HtmlAttributes["class"] = "optional";
-                }
-                
-            })
-)
-</div>*@
-
-@*<div style="position:absolute; left:30%; top:60px;">
-@{ Html.Telerik().Window()
-        .Name("Edit_Variable")
-        .Title("Edit Variable")
-        .Draggable(true)
-        .Modal(true)
-        .Visible((bool)Session["VariableWindow"])
-        .Content(@<text>
-                    @Html.Partial("_editVariable", Model.dataStructureTable)
-                    </text>)
-        .Width(300)
-        .Render()
-        ;
-        
-}
-</div>
-@{Session["VariableWindow"] = false;}*@
-
 <script type="text/javascript" language="javascript">
     $(document).ready(function () {
         
@@ -415,7 +426,7 @@
 
         for (var i = 0; i < $(".function .data").length; i++)
         {
-            //var edit = '<a area="RPM" class="t-icon t-edit" href="/RPM/Home/openVariableWindow/' + $(".function td")[i].innerHTML + '"></a>';
+            var edit = '<a area="RPM" class="t-icon t-edit" href="/RPM/Home/openVariableWindow/' + $(".function .data")[i].innerHTML + '"></a>';
             var del = '<a area="RPM" class="t-icon t-delete" href="/RPM/Home/deleteVariable/' + $(".function .data")[i].innerHTML + '" onclick = "return confirm(\'Are you sure you want to delete the Variable ' + $(".name #varName")[i].value + '?\')"></a>'
             var temp = $(".function .data")[i].innerHTML.split('?');
             var left = '<a area="RPM" class="t-icon t-arrow-prev" href="/RPM/Home/shiftVariableLeft/'+ $(".function .data")[i].innerHTML +'"></a>';
@@ -424,19 +435,19 @@
             $(".function .data")[i].innerHTML = del;
                 
             if (temp[0] != first && temp[0] != last)
-                $(".function .data")[i].innerHTML = left + del + right;
+                $(".function .data")[i].innerHTML = left + edit + del + right;
             else
             {
                 if(temp[0] == first && temp[0] == last)
                 {
-                    $(".function .data")[i].innerHTML = del;
+                    $(".function .data")[i].innerHTML = edit + del;
                 }
                 else
                 {
                     if(temp[0] == first)
-                        $(".function .data")[i].innerHTML = del + right;
+                        $(".function .data")[i].innerHTML = edit + del + right;
                     else
-                        $(".function .data")[i].innerHTML = left + del;
+                        $(".function .data")[i].innerHTML = left + edit + del;
                 }
             }                       
         }

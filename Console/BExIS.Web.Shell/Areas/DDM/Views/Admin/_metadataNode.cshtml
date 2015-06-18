@@ -13,8 +13,10 @@
 <div class="metadataNode">
 @using (Html.BeginCollectionItem("metadataNames"))
 { 
-    @Html.DropDownListFor(m => m, new SelectList(metadataNodes,"XPath","DisplayName", Model), "Select, please")
-     <a href="#" class="removeMetadataNode t-icon t-delete" >delete</a>
+    @*@Html.DropDownListFor(m => m, new SelectList(metadataNodes,"XPath","DisplayName", Model), "Select, please")
+     *@
+    @Html.TextBoxFor(m => m);
+    <a href="#" class="removeMetadataNode t-icon t-delete" >delete</a>
 }
 
 </div>

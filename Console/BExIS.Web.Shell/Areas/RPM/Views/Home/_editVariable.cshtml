@@ -2,117 +2,119 @@
 @using Telerik.Web.Mvc.UI
 @using BExIS.Dlm.Entities.DataStructure
 @using BExIS.Dlm.Services.DataStructure
-@model BExIS.RPM.Model.DataStructureDesignerModel
+@using BExIS.Web.Shell.Areas.RPM.Models;
+@model BExIS.Web.Shell.Areas.RPM.Models.DataStructureDesignerModel
 
 @{
     ViewBag.Title = "Planing";
 
     Variable variable = new Variable();
+    List<UnitStruct> unitStructs = new List<UnitStruct>();
     
     if (Session["variableId"] != null)
     {
-        variable = Model.variables.Where(v => v.Id.Equals((long)Session["variableId"])).FirstOrDefault();  
+        variable = Model.variableStructs.Where(v => v.variable.Id.Equals((long)Session["variableId"])).FirstOrDefault().variable;       
+        unitStructs = Model.variableStructs.Where(v => v.variable.Id.Equals((long)Session["variableId"])).FirstOrDefault().unitStructs;
     }
     
 }
-
-@if (variable == null)
+@if (Session["variableId"] == null || variable.Id == 0)
 { 
-    <font color="red">Can't edit Variable doesn't exist anymore.</font>
+    <font color="red">Variable not found</font>
 }
 else
 {
-    if (Model.inUse == true)
+    if (variable == null)
     { 
-        <font color="red">Can't edit Variable, Data Strucure in use</font>
+        <font color="red">Can't edit Variable doesn't exist anymore.</font>
     }
     else
     {
-        <script type="text/javascript">
-        function toggleDiv(element){
-        if(document.getElementById(element).style.display == 'none')
-            document.getElementById(element).style.display = 'block';
-        else
-            document.getElementById(element).style.display = 'none';
+        if (Model.inUse == true)
+        { 
+            <font color="red">Can't edit Variable, Data Strucure in use</font>
         }
-        </script>
-
-        <div class="planingPartialDiv" id="createVariable">
-            @using (Html.BeginForm("saveVariable", "Home", new { area = "RPM" }))
-            {
-            @(Html.TextBox("dataStructureId", Model.dataStructure.Id, new { @class = "hidden" }))
-            <table>
-                <tr id="name">
-                    <td>
-                        Name:
-                    </td>
-                    <td>
-                        @(Html.TextBox("name", variable.Label, new { @autofocus = "autofocus", @tabindex = 1 }))
-                        <div class="errorMsg" style="vertical-align:top;">
-                             <font color="red">@ViewData["varErrorMsg"]</font>
-                        </div>
-                    </td>
-                </tr>
-                <tr id="optional">
-                    <td>
-                        Is Optional:
-                    </td>
-                    <td>
-                        @(Html.CheckBox("optional", variable.IsValueOptional, new { @tabindex = 2 }))
-                    </td>
-                </tr>
-                <tr id="shortname">
-                    <td>
-                        ID:
-                    </td>
-                    <td>
-                        @variable.Id
-                        @(Html.TextBox("id", variable.Id, new { @class = "hidden" })) 
-                    </td>
-                </tr>
-                @if (variable.DataAttribute != null)
-                {
-                <tr>
-                    <td>
-                        Description:
-                    </td>
-                    <td>
-                        @variable.DataAttribute.Description
-                    </td>
-                </tr>
-                    if (variable.DataAttribute.Unit != null)
-                    {
-                <tr>
-                    <td>
-                        Unit:
-                    </td>
-                    <td>
-                        @variable.DataAttribute.Unit.Name
-                    </td>
-                </tr>
-                    }
-                    if (variable.DataAttribute.DataType != null)
-                    {
-                <tr>
-                    <td>
-                        DataType:
-                    </td>
-                    <td>
-                        @variable.DataAttribute.DataType.Name
-                    </td>
-                </tr>
-                    }
-                }
-                <tr><td colspan="2"> </td></tr>
-                <tr>
-                    <td>
-                        <button name="create" value="GetUnitInput" type="submit" class="t-button">Save</button>
-                    </td>
-                    <td>
-                    </td>
-                </tr>    
-            </table> 
+        else
+        {
+            <script type="text/javascript">
+            function toggleDiv(element){
+            if(document.getElementById(element).style.display == 'none')
+                document.getElementById(element).style.display = 'block';
+            else
+                document.getElementById(element).style.display = 'none';
             }
-        </div>
+            </script>
+
+            <div class="planingPartialDiv" id="createVariable">
+                @using (Html.BeginForm("editVariable", "Home", new { area = "RPM" }))
+                {
+                @(Html.TextBox("dataStructureId", Model.dataStructure.Id, new { @class = "hidden" }))
+                <table>
+                    <tr id="name">
+                        <td>
+                            Name:
+                        </td>
+                        <td>
+                            @(Html.TextBox("name", variable.Label, new { @autofocus = "autofocus", @tabindex = 1 }))
+                            <div class="errorMsg" style="vertical-align:top;">
+                                 <font color="red">@ViewData["varErrorMsg"]</font>
+                            </div>
+                        </td>
+                        <td class="descLabel" rowspan="4">
+                            Description:
+                        </td>
+                        <td class="descArea"rowspan="4">
+                            @(Html.TextArea("description", variable.Description, new { @tabindex = 2 }))
+                        </td>
+                    </tr>
+                    <tr id="optional">
+                        <td>
+                            Is Optional:
+                        </td>
+                        <td>
+                            @(Html.CheckBox("optional", variable.IsValueOptional, new { @tabindex = 3 }))
+                        </td>
+                    </tr>
+                    <tr id="shortname">
+                        <td>
+                            ID:
+                        </td>
+                        <td>
+                            @variable.Id
+                            @(Html.TextBox("id", variable.Id, new { @class = "hidden" })) 
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Unit:
+                        </td>
+                        <td>
+                            @if (unitStructs.Count > 1)
+                            {
+                                @Html.DropDownList("unitId", new SelectList(unitStructs, "Id", "Name", variable.DataAttribute.Unit.Id), new { @tabindex = "4" })
+                            }
+                            else
+                            {
+                                @variable.DataAttribute.Unit.Name
+                            }
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            DataType:
+                        </td>
+                        <td>
+                            @variable.DataAttribute.DataType.Name
+                        </td>
+                    </tr>
+                    <tr><td colspan="2"> </td></tr>
+                </table> 
+                <div class="submit RPMbutton">
+                    <button name="create" value="create" type="submit" class="t-button"  id="saveButton" title="Save The Unit" tabindex = "5">Save</button>
+                    @Html.ActionLink("Cancel", "showDataStructure", "Home", new {SelectedItem = Model.dataStructure.Id.ToString() + "," + Model.structured.ToString() }, new { area = "RPM", @class = "t-button", @title = "Cancel", @tabindex = "6" })
+                </div>
+                }
+            </div>
+        }
     }
 }
