@@ -1,6 +1,6 @@
 ﻿using System.Web.Mvc;
 
-namespace BExIS.Web.Shell.Areas.SAM
+namespace BExIS.Web.Shell.Areas.Sam
 {
     public class SAMAreaRegistration : AreaRegistration
     {

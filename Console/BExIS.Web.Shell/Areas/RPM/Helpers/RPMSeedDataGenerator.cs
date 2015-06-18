@@ -99,7 +99,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
             Dimension dimNone = new Dimension();
             dimNone.Name = "None";
 
-            dimNone = unitManager.Create("None", "", "");
+            dimNone = unitManager.Create("None", "", "L(0,0)M(0,0)T(0,0)");
 
             if (unit == null) unitManager.Create("None", "None", "If no unit is used.", dimNone, MeasurementSystem.Unknown);// null dimension should be replaced
 
@@ -140,7 +140,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
                     if (unit == null)
                     {
                         Dimension dim = new Dimension();
-                        dim = unitManager.Create(dimension, "", "");
+                        dim = unitManager.Create(dimension, "", "L(0,0)M(0,0)T(0,0)");
 
                         unit = unitManager.Create(name, abbrevation, description, dim, measurementSystemEnum); // null dimension should be replaced bz a proper Dimension object
 

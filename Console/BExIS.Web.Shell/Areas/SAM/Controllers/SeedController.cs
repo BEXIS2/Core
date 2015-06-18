@@ -24,12 +24,12 @@ using BExIS.Xml.Helpers;
 using BExIS.Xml.Models;
 using Vaiona.Utils.Cfg;
 
-namespace BExIS.Web.Shell.Areas.SAM.Controllers
+namespace BExIS.Web.Shell.Areas.Sam.Controllers
 {
     public class SeedController : Controller
     {
         //
-        // GET: /SAM/Seed/
+        // GET: /Sam/Seed/
 
         public ActionResult Index()
         {

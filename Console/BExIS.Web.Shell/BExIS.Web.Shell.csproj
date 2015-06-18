@@ -303,7 +303,7 @@
     <Compile Include="Areas\DDM\SearchAreaRegistration.cs" />
     <Compile Include="Areas\SAM\Controllers\HelpController.cs" />
     <Compile Include="Areas\SAM\Controllers\SeedController.cs" />
-    <Compile Include="Areas\SAM\Controllers\UnsafeController.cs" />
+    <Compile Include="Areas\SAM\Controllers\DatasetController.cs" />
     <Compile Include="Areas\SAM\Models\ShowHelpModel.cs" />
     <Compile Include="Areas\SAM\SAMAreaRegistration.cs" />
     <Compile Include="Areas\Site\Controllers\NavController.cs" />
@@ -1074,12 +1074,12 @@
     <Content Include="Areas\DCM\Views\SubmitSpecifyDataset\_selectADatasetId.cshtml" />
     <Content Include="Areas\Auth\Views\Account\Error.cshtml" />
     <Content Include="Areas\SAM\Views\Web.config" />
-    <Content Include="Areas\SAM\Views\Unsafe\Index.cshtml" />
+    <Content Include="Areas\SAM\Views\Dataset\Index.cshtml" />
     <Content Include="Areas\SAM\Views\_ViewStart.cshtml" />
-    <Content Include="Areas\SAM\Views\Unsafe\PurgeDataset.cshtml" />
-    <Content Include="Areas\SAM\Views\Unsafe\ListDatasets.cshtml" />
-    <Content Include="Areas\SAM\Views\Unsafe\ListDatasetVersions.cshtml" />
-    <Content Include="Areas\SAM\Views\Unsafe\DetailDatasetVersion.cshtml" />
+    <Content Include="Areas\SAM\Views\Dataset\Purge.cshtml" />
+    <Content Include="Areas\SAM\Views\Dataset\List.cshtml" />
+    <Content Include="Areas\SAM\Views\Dataset\Versions.cshtml" />
+    <Content Include="Areas\SAM\Views\Dataset\Version.cshtml" />
     <Content Include="Areas\DDM\Views\Data\_previewDatastructure.cshtml" />
     <Content Include="Areas\DDM\Views\Data\_unstructuredDataView.cshtml" />
     <Content Include="Areas\DDM\Views\Data\_structuredDataView.cshtml" />
