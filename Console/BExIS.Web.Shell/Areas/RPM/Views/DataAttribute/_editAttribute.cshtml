@@ -10,17 +10,12 @@
     long unitIndex = 0;
     long dataTypeIndex = 0;
     string className = ""; 
-    
-
-    Model.Units = (List<UnitItemModel>)Session["unitlist"];
 
     //if(Model.Unit != null)
     //{
     //    unitIndex = Model.Unit.Id;
     //}
 
-
-    Model.DataTypes = (List<DataTypeItemModel>)Session["dataTypeList"];
     //dataTypeList = dataTypeList.OrderBy(p => p.Name).ToList();
 
     if (Model.DataType != null)
@@ -31,8 +26,7 @@
 <div class="planingPartialDiv" id="createAttribute">
 @using (Html.BeginForm("editAttribute", "DataAttribute", new { area = "RPM" }))
 {
-   @(Html.TextBox("parent", @HttpContext.Current.Request.RequestContext.RouteData.Values["action"].ToString(), new {@class = "hidden"}))
-   @(Html.TextBox("id", Model.Id, new {@class = "hidden"})) 
+   @(Html.HiddenFor(m=>m.Id, new {@class = "hidden"})) 
     <table>
         <tr>
             <td id="name" class="label">
@@ -78,7 +72,12 @@
         <tr>
             <td colspan="4" class="container">
                 <h4><a href="javascript:clickConstraints()">Constraints</a></h4>
-   
+            </td>
+        </tr>
+        <tr id="constraints" class="hidden">
+            <td colspan="4" class="container">
+                
+
                 @if(Model.DomainConstraints.Count > 0 || Model.RangeConstraints.Count > 0 || Model.PatternConstraints.Count > 0)
                 {    
                     className =  "";
@@ -87,56 +86,38 @@
                 {
                     className = "constraints";
                 }
-
-                <div id="constraints" class="@className container" style="border:1px,solid">
-
-                        <h4 id="rangeTitle">Range</h4>
-        
-                        <div id="RangeConstraints" class="container">
-                    
-                   
-                            @if (Model.PatternConstraints.Count > 0)
-                            {
-                                @Html.Partial("_rangeConstraintView", Model.RangeConstraints.FirstOrDefault())
-                            }
-                            else
-                            { 
-                                @Html.Partial("_rangeConstraintView", new RangeConstraintModel())
-                            }
+                           
+                @if (Model.RangeConstraints.Count > 0)
+                {
+                    @Html.Partial("_rangeConstraintView", Model.RangeConstraints.FirstOrDefault())
+                }
+                else
+                { 
+                    @Html.Partial("_rangeConstraintView", new RangeConstraintModel())
+                }
                      
-                        </div>
 
+                        
 
-                        <h4 id="patternTitle">Pattern</h4>
-
-                        <div id="PatternConstraints" class="container">
-
-                            @if (Model.PatternConstraints.Count > 0)
-                            {
-                                @Html.Partial("_patternConstraintView", Model.PatternConstraints.FirstOrDefault())
-                            }
-                            else
-                            { 
-                                @Html.Partial("_patternConstraintView", new PatternConstraintModel());
-                            }
-                        </div>
- 
-                        <div id="DomainConstraints" class="container">
-
-                        <h4 id="domainTitle">Domain</h4>
-
+                @if (Model.PatternConstraints.Count > 0)
+                {
+                    @Html.Partial("_patternConstraintView", Model.PatternConstraints.FirstOrDefault())
+                }
+                else
+                { 
+                    @Html.Partial("_patternConstraintView", new PatternConstraintModel());
+                }
+                        
                    
-                        @if (Model.DomainConstraints.Count > 0)
-                        {
-                            @Html.Partial("_domainConstraintView", Model.DomainConstraints.FirstOrDefault())
-                        }
-                        else
-                        { 
-                            @Html.Partial("_domainConstraintView", new DomainConstraintModel());
-                        }
+                @if (Model.DomainConstraints.Count > 0)
+                {
+                    @Html.Partial("_domainConstraintView", Model.DomainConstraints.FirstOrDefault())
+                }
+                else
+                { 
+                    @Html.Partial("_domainConstraintView", new DomainConstraintModel());
+                }
                     
-                    </div>
-                </div>
             </td>
         </tr>
 </table>

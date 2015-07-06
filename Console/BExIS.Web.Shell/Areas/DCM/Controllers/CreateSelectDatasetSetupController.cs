@@ -304,10 +304,11 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
            foreach (MetadataPackageUsage mpu in metadataPackageList)
            {
-               // only add none optional usages
-               StepInfo si = new StepInfo(mpu.Label)
+                   //only add none optional usages
+                   StepInfo si = new StepInfo(mpu.Label)
                    {
                        Id = TaskManager.GenerateStepId(),
+                       parentTitle =  mpu.MetadataPackage.Name, 
                        Parent = TaskManager.Root,
                        IsInstanze = false,
                        GetActionInfo = new ActionInfo
@@ -556,7 +557,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         foreach (XElement element in xelements)
                         {
                             counter++;
-                            string title = usage.Label+" (" + counter + ")";
+                            string title = counter.ToString(); //usage.Label+" (" + counter + ")";
                             long id = Convert.ToInt64((element.Attribute("roleId")).Value.ToString());
 
                             StepInfo s = new StepInfo(title)
@@ -621,6 +622,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     bool complex = false;
 
                     string actionName = "";
+                    string attrName = "";
 
                     if (u is MetadataPackageUsage)
                     {
@@ -634,14 +636,20 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         {
                             MetadataAttributeUsage mau = (MetadataAttributeUsage)u;
                             if (mau.MetadataAttribute.Self is MetadataCompoundAttribute)
+                            {
                                 complex = true;
+                                attrName = mau.MetadataAttribute.Self.Name;
+                            }
                         }
 
                         if (u is MetadataNestedAttributeUsage)
                         {
                             MetadataNestedAttributeUsage mau = (MetadataNestedAttributeUsage)u;
                             if (mau.Member.Self is MetadataCompoundAttribute)
+                            {
                                 complex = true;
+                                attrName = mau.Member.Self.Name;
+                            }
                         }
 
                     }
@@ -651,6 +659,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         StepInfo s = new StepInfo(u.Label)
                         {
                             Id = TaskManager.GenerateStepId(),
+                            parentTitle = attrName,
                             Parent = parent,
                             IsInstanze = false,
                             GetActionInfo = new ActionInfo

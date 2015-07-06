@@ -1,4 +1,5 @@
 ﻿using System.Web.Mvc;
+using Vaiona.Utils.Cfg;
 
 namespace BExIS.Web.Shell.Areas.Sam
 {
@@ -19,6 +20,8 @@ namespace BExIS.Web.Shell.Areas.Sam
                 "SAM/{controller}/{action}/{id}",
                 new { action = "Index", id = UrlParameter.Optional }
             );
+
+            if (AppConfiguration.CreateDatabase) SAM.Helpers.SamSeedDataGenerator.GenerateSeedData();
         }
     }
 }

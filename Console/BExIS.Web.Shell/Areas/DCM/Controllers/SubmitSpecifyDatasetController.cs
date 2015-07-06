@@ -146,7 +146,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             else
             {
                 datasetId = Convert.ToInt64(id);
-                if (datasetManager.GetDatasetVersionEffectiveTupleIds(datasetManager.GetDatasetLatestVersion(datasetId)).Count > 0)
+                if (datasetManager.GetDatasetVersionEffectiveTupleCount(datasetManager.GetDatasetLatestVersion(datasetId)) > 0)
                 {
                     TaskManager.AddToBus("DatasetStatus", "edit");
                 }

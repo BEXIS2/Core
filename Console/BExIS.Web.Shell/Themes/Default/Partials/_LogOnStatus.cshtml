@@ -2,7 +2,7 @@
 
 @if(Request.IsAuthenticated) {
     <text>Welcome <strong>@User.Identity.Name</strong>!
-    [ @Html.ActionLink("Log Off", "LogOff", "Account", new { area = "Auth"}, null) ]</text>
+    [ @Html.ActionLink("Log Off", "LogOff", "Account", new { area = "SAM"}, null) ]</text>
 }
 else {
     <text>[ <a href="#" onclick="LogOn()">LogOn</a> ]</text>
@@ -45,7 +45,7 @@ else {
 <script type="text/javascript">
 
     function Register() {
-        $.get('@Url.Action("Register", "Account", new { area = "Auth" })', function (data) {
+        $.get('@Url.Action("Register", "Account", new { area = "SAM" })', function (data) {
 
             $('#Content_Register').html(data);
 
@@ -63,7 +63,7 @@ else {
     }
 
     function LogOn() {
-        $.get('@Url.Action("LogOn", "Account", new { area = "Auth" })', function (data) {
+        $.get('@Url.Action("LogOn", "Account", new { area = "SAM" })', function (data) {
 
             $('#Content_LogOn').html(data);
 

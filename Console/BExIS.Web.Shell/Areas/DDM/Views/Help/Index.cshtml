@@ -1,0 +1,16 @@
+﻿@model BExIS.Web.Shell.Areas.DDM.Models.ShowHelpModel
+@using BExIS.Web.Shell.Areas.DDM.Models;
+
+@{
+    ViewBag.Title = "Search Manual";
+    HtmlString index = new HtmlString(Model.Title);
+    HtmlString content = new HtmlString(Model.Description);
+}
+
+@content
+
+@section LeftPane 
+{             
+    @index
+}
+

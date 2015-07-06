@@ -215,6 +215,26 @@ namespace BExIS.Security.Services.Authorization
             return (false);
         }
 
+        public bool DeleteDataPermissionsByEntity(long entityId, long dataId)
+        {
+            List<DataPermission>dataPermissions = GetDataPermissionsFromEntity(entityId, dataId).ToList();
+
+            if (dataPermissions != null)
+            {
+                using (IUnitOfWork uow = this.GetUnitOfWork())
+                {
+                    IRepository<DataPermission> dataPermissionsRepo = uow.GetRepository<DataPermission>();
+
+                    dataPermissionsRepo.Delete(dataPermissions);
+                    uow.Commit();
+                }
+
+                return (true);
+            }
+
+            return (false);
+        }
+
         public bool ExistsDataPermissionId(long id)
         {
             return DataPermissionsRepo.Get(id) != null ? true : false;
@@ -246,7 +266,7 @@ namespace BExIS.Security.Services.Authorization
         {
             User user = UsersRepo.Get(userId);
 
-            List<long> subjectIds = new List<long>(user.Groups.Select(g => g.Id));
+            List<long> subjectIds = new List<long>(user.Groups.Where(g => g.Name != "everyone").Select(g => g.Id));
             subjectIds.Add(user.Id);
 
             return GetAllDataIds(subjectIds, entityId, rightTypes);
@@ -280,6 +300,11 @@ namespace BExIS.Security.Services.Authorization
         public DataPermission GetDataPermission(long subjectId, long entityId, long dataId, RightType rightType)
         {
             return DataPermissionsRepo.Get(p => p.Subject.Id == subjectId && p.Entity.Id == entityId && p.DataId == dataId && p.RightType == rightType).FirstOrDefault();
+        }
+
+        public IQueryable<DataPermission> GetDataPermissionsFromEntity(long entityId, long dataId)
+        {
+            return DataPermissionsRepo.Query(p => p.Entity.Id == entityId && p.DataId == dataId);
         }
 
         public int GetFeaturePermissionType(long subjectId, long featureId)
@@ -349,26 +374,55 @@ namespace BExIS.Security.Services.Authorization
             Feature feature = FeaturesRepo.Get(featureId);
             Subject subject = SubjectsRepo.Get(subjectId);
 
-            List<long> featureIds = new List<long>(feature.Ancestors.Select(f => f.Id));
-            featureIds.Add(feature.Id);
+            FeaturePermission featurePermission;
 
             if (subject is Group)
             {
-                Group group = (Group)subject;
+                while (feature != null)
+                {
+                    featurePermission = GetFeaturePermission(subject.Id, feature.Id);
 
-                // Maximum
-                return ExistsFeaturePermission(new List<long>() { group.Id }, featureIds, PermissionType.Grant);
+                    if (featurePermission != null)
+                    {
+                        return featurePermission.PermissionType == PermissionType.Grant;
+                    }
+
+                    feature = feature.Parent;
+                }
+
+                return false;
             }
 
             if (subject is User)
             {
-                User user = (User)subject;
+                User user = subject as User;
+                List<long> groupIds = user.Groups.Select(g => g.Id).ToList();
 
-                List<long> subjectIds = new List<long>(user.Groups.Select(g => g.Id));
-                subjectIds.Add(user.Id);
+                while (feature != null)
+                {
+                    featurePermission = GetFeaturePermission(subject.Id, feature.Id);
 
-                // Maximum
-                return ExistsFeaturePermission(subjectIds, featureIds, PermissionType.Grant);
+                    if (featurePermission != null)
+                    {
+                        return featurePermission.PermissionType == PermissionType.Grant;
+                    }
+                    
+                    if (ExistsFeaturePermission(groupIds, new[] { feature.Id }, PermissionType.Deny))
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        if (ExistsFeaturePermission(groupIds, new[] { feature.Id }, PermissionType.Grant))
+                        {
+                            return true;
+                        }
+                    }
+
+                    feature = feature.Parent;
+                }
+
+                return false;
             }
 
             return false;

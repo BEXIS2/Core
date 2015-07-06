@@ -6,10 +6,11 @@
     ViewBag.Title = "Data Structure Manager";
 }
 
+<link href="@Url.Content("~/Areas/RPM/Stylesheets/RPM.css")" rel="stylesheet" type="text/css" />  
+
 @section LeftPane 
 { 
 
-<link href="@Url.Content("~/Areas/RPM/Stylesheets/RPM.css")" rel="stylesheet" type="text/css" />  
 
 <div>
         @Html.ActionLink("Create Structured", "createStructuredDataStrukture", "Home", new {@class = "t-button" , @title = "Create structured Data Structure", @style = "margin:3px;"})
@@ -25,7 +26,7 @@
         mappings.For<DataStructureTreeList>(binding => binding
                 .ItemDataBound((item, TL) =>
                 {
-                    if (TL.name == null || TL.name == "")
+                    if (string.IsNullOrEmpty(TL.name))
                     {
                         item.Text = "no Name";
                     }
@@ -40,7 +41,7 @@
                 {
                     if (TEL.inUse == true)
                     {
-                        if (TEL.name == null || TEL.name == "")
+                        if (string.IsNullOrEmpty(TEL.name))
                         {
                             item.Text = "no Name (in use)";
                             item.Value = TEL.id.ToString() + "," + TEL.structured.ToString();
@@ -54,7 +55,7 @@
                     }
                     else
                     {
-                        if (TEL.name == null || TEL.name == "")
+                        if (string.IsNullOrEmpty(TEL.name))
                         {
                             item.Text = "no Name";
                             item.Value = TEL.id.ToString() + "," + TEL.structured.ToString();

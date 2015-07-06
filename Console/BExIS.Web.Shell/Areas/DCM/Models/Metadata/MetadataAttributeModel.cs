@@ -61,7 +61,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
             {
                 foreach (Constraint c in metadataAttribute.Constraints)
                 {
-                    constraintsDescription = Path.Combine("{0} , {1}", constraintsDescription, c.FormalDescription);
+                    if (string.IsNullOrEmpty(constraintsDescription)) constraintsDescription = c.FormalDescription;
+                    else constraintsDescription = String.Format("{0}\n{1}", constraintsDescription, c.FormalDescription);
                 }
             }
 

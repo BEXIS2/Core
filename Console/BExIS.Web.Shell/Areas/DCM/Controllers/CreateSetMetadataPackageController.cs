@@ -1327,7 +1327,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                             foreach (XElement element in xelements)
                             {
                                 counter++;
-                                string title = usage.Label + " (" + counter + ")";
+                                string title = counter.ToString();
 
                                 if(current.Children.Where(s=>s.title.Equals(title)).Count()==0)
                                 {

@@ -26,16 +26,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
         public ActionResult Index()
         {
-            return View();
-        }
-
-        /// <summary>
-        /// To show help page for searching part
-        /// </summary>
-        /// <returns></returns>
-        public ActionResult HelpDataPlanning()
-        {
-            string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Areas", "RPM", "Views\\Help\\UserGuides\\DataPlanning_UserGuide.htm");
+            string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Areas", "RPM", "Views\\Help\\UserGuides\\RPM_UserGuide.htm");
             string imagePath = "/Areas/RPM/Images/";
 
             ShowHelpModel model = new ShowHelpModel();
@@ -91,6 +82,5 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
             return View(model);
         }
-
     }
 }

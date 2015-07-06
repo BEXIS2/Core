@@ -18,7 +18,7 @@
 					{
 						item.Add().Text("Data Structure Manager").Action("DataStructureDesigner", "Home", new { area = "RPM" });
 						item.Add().Text("Data Attribute Manager").Action("AttributeManager", "DataAttribute", new { area = "RPM" });
-						item.Add().Text("Unit Manager").Action("UnitManager", "Home", new { area = "RPM" });
+						item.Add().Text("Unit Manager").Action("UnitManager", "Unit", new { area = "RPM" });
                         item.Add().Text("Data Type Manager").Action("DataTypeManager", "Home", new { area = "RPM" });
 					}
 					);
@@ -35,11 +35,10 @@
 					{
                         item.Add().Text("Authorization").Items(subitem =>
                         {
-                            subitem.Add().Text("Users").Action("Users", "Users", new { area = "Auth" });
-                            subitem.Add().Text("Groups").Action("Groups", "Groups", new { area = "Auth" });
-                            subitem.Add().Text("Features").Action("Features", "FeaturePermissions", new { area = "Auth" });
-                            subitem.Add().Text("Datasets").Action("Data", "DataPermissions", new { area = "Auth" });
-
+                            subitem.Add().Text("Users").Action("Users", "Users", new { area = "SAM" });
+                            subitem.Add().Text("Groups").Action("Groups", "Groups", new { area = "SAM" });
+                            subitem.Add().Text("Features").Action("Features", "FeaturePermissions", new { area = "SAM" });
+                            subitem.Add().Text("Datasets").Action("Data", "DataPermissions", new { area = "SAM" });
                         });
                         item.Add().Text("Data Discovery").Items(subitem =>
                         {
@@ -55,19 +54,19 @@
                         {
                             subitem.Add().Text("Metadata Export").Action("Index", "Admin", new { area = "DIM" });
                         });
-						
+
+                        item.Add().Text("Maintenance").Action("Index", "Dataset", new { area = "SAM" });
 					}
 				);
                 
                 menu.Add().Text("Help")
                     .Items(item =>
                     {
-                        item.Add().Text("Search").Action("HelpSearch", "Help", new { area = "DDM" });
-                        item.Add().Text("Data Planning").Action("HelpDataPlanning", "Help", new { area = "RPM" });
-                        item.Add().Text("Data Collection").Action("HelpDataCollection", "Help", new { area = "DCM" });
-                        item.Add().Text("Data Dissemination").Action("HelpDissemination", "Help", new { area = "DIM" });
-                        item.Add().Text("Administration").Action("HelpAdministration", "Help", new { area = "SAM" });
-                        item.Add().Text("Security").Action("HelpSecurity", "Help", new { area = "Auth" });
+                        item.Add().Text("Search").Action("Index", "Help", new { area = "DDM" });
+                        item.Add().Text("Data Planning").Action("Index", "Help", new { area = "RPM" });
+                        item.Add().Text("Data Collection").Action("Index", "Help", new { area = "DCM" });
+                        item.Add().Text("Data Dissemination").Action("Index", "Help", new { area = "DIM" });
+                        item.Add().Text("Administration").Action("Index", "Help", new { area = "SAM" });
                     }
                 );
 

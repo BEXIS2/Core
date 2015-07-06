@@ -14,6 +14,7 @@ namespace BExIS.Dcm.Wizard
     {
 
         public string title;
+        public string parentTitle;
         public bool valid = false;
         public StepStatus stepStatus;
         public bool notExecuted = true;
@@ -50,6 +51,7 @@ namespace BExIS.Dcm.Wizard
         public StepInfo(string title)
         {
             this.title = title;
+            this.parentTitle = "";
             this.stepStatus = StepStatus.none;
             this.GetActionInfo = new ActionInfo();
             this.PostActionInfo = new ActionInfo();

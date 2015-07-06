@@ -1,0 +1,103 @@
+﻿@model BExIS.Web.Shell.Areas.SAM.Models.UserCreateModel
+@using (Ajax.BeginForm("Create", "Users", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "contentCreate", OnSuccess = "userCreate_onSuccess" }))
+{
+    @Html.ValidationSummary(true)
+
+    <div id="tabs">
+
+        <ul>
+            <li><a href="#contentDetails">Details</a></li>
+            @*<li><a href="#contentMembership">Membership</a></li>*@
+        </ul>
+
+        <div id="contentDetails">
+            <table>
+                <tr>
+                    <td>
+                        @Html.Label("Authenticaton Provider")
+                    </td>
+                    <td>
+                        @Html.DropDownListFor(m => m.AuthenticatorList.Id, new SelectList(Model.AuthenticatorList.AuthenticatorList, "Id", "Name"))
+                        @Html.ValidationMessageFor(m => m.AuthenticatorList.Id)
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        @Html.LabelFor(m => m.UserName)
+                    </td>
+                    <td>
+                        @Html.TextBoxFor(m => m.UserName)
+                        @Html.ValidationMessageFor(m => m.UserName)
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        @Html.LabelFor(m => m.Password)
+                    </td>
+                    <td>
+                        @Html.PasswordFor(m => m.Password)
+                        @Html.ValidationMessageFor(m => m.Password)
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        @Html.LabelFor(m => m.ConfirmPassword)
+                    </td>
+                    <td>
+                        @Html.PasswordFor(m => m.ConfirmPassword)
+                        @Html.ValidationMessageFor(m => m.ConfirmPassword)
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        @Html.LabelFor(m => m.FullName)
+                    </td>
+                    <td>
+                        @Html.TextBoxFor(m => m.FullName)
+                        @Html.ValidationMessageFor(m => m.FullName)
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        @Html.LabelFor(m => m.Email)
+                    </td>
+                    <td>
+                        @Html.TextBoxFor(m => m.Email)
+                        @Html.ValidationMessageFor(m => m.Email)
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        @Html.Label("Security Question")
+                    </td>
+                    <td>
+                        @Html.DropDownListFor(m => m.SecurityQuestionList.Id, new SelectList(Model.SecurityQuestionList.SecurityQuestionList, "Id", "Question"))
+                        @Html.ValidationMessageFor(m => m.SecurityQuestionList.Id)
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        @Html.LabelFor(m => m.SecurityAnswer)
+                    </td>
+                    <td>
+                        @Html.TextBoxFor(m => m.SecurityAnswer)
+                        @Html.ValidationMessageFor(m => m.SecurityAnswer)
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <p>
+        <button style="float: right; margin-left: 1px" type="button" onclick="windowCreate_onCancel()" class="t-button">Cancel</button>
+        <button style="float: right; margin-right: 1px" type="submit" class="t-button">Save</button>
+    </p>
+}
+
+<script type="text/javascript">
+    $("#tabs").tabs();
+
+    $(document).ready(function () {
+        $.validator.unobtrusive.parse("#contentCreate");
+    });
+</script>

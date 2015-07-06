@@ -14,6 +14,8 @@ namespace BExIS.Security.Services.Authorization
         bool DeleteDataPermissionById(long id);
         bool DeleteDataPermission(long subjectId, long entityId, long dataId, RightType rightType);
 
+        bool DeleteDataPermissionsByEntity(long entityId, long dataId);
+
         bool ExistsDataPermissionId(long id);
         bool ExistsDataPermission(long subjectId, long entityId, long dataId, RightType rightType);
         bool ExistsDataPermission(IEnumerable<long> subjectIds, long entityId, long dataId, RightType rightType);
@@ -25,6 +27,7 @@ namespace BExIS.Security.Services.Authorization
         
         DataPermission GetDataPermissionById(long id);
         DataPermission GetDataPermission(long subjectId, long entityId, long dataId, RightType rightType);
+        IQueryable<DataPermission> GetDataPermissionsFromEntity(long entityId, long dataId);
 
         bool HasUserDataAccess(long userId, long entityId, long dataId, RightType rightType); 
 

@@ -26,16 +26,7 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
 
         public ActionResult Index()
         {
-            return View();
-        }
-
-        /// <summary>
-        /// To show help page for searching part
-        /// </summary>
-        /// <returns></returns>
-        public ActionResult HelpDissemination()
-        {
-            string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Areas", "DIM", "Views\\Help\\UserGuides\\DataDissemination_UserGuide.htm");
+            string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Areas", "DIM", "Views\\Help\\UserGuides\\DIM_UserGuide.htm");
             string imagePath = "/Areas/DIM/Images/";
 
             ShowHelpModel model = new ShowHelpModel();
@@ -91,6 +82,5 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
 
             return View(model);
         }
-
     }
 }

@@ -8,6 +8,7 @@ using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.TypeSystem;
 using BExIS.Web.Shell.Areas.RPM.Models;
+using Vaiona.Utils.Cfg;
 
 namespace BExIS.Web.Shell.Areas.RPM.Controllers
 {
@@ -34,45 +35,28 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             if (Session["Window"] == null)
                 Session["Window"] = false;
 
-            DataContainerManager dataAttributeManager = new DataContainerManager();
-            List<DataAttribute> dataAttributeList = dataAttributeManager.DataAttributeRepo.Get().Where(a => a.UsagesAsVariable.Count != null && a.Unit.Name != null && a.DataType.Name != null).ToList();
-
-            List<DataAttributeModel> dataAttributeModelList = new List<DataAttributeModel>();
-
-            dataAttributeList.ForEach(d => dataAttributeModelList.Add(new DataAttributeModel(d)));
-
-            #region load datatypes and units
-
-                Session["dataTypeList"] = getAllDatatypeItemModels();
-                Session["unitlist"] = getAllUnitItemModels();
-
-            #endregion
-
-
-            return View(dataAttributeModelList);
+            return View(new DataAttributeManagerModel());
         }
 
-        public ActionResult editAttribute(DataAttributeModel Model, long id, string parent)
+        public ActionResult editAttribute(DataAttributeModel Model)
         {
-            
-
             DataContainerManager dataAttributeManager = new DataContainerManager();
             IList<DataAttribute> DataAttributeList = dataAttributeManager.DataAttributeRepo.Get();
             long tempUnitId = Convert.ToInt64(Model.Unit.Id);
             long tempDataTypeId = Convert.ToInt64(Model.DataType.Id);
 
-            Model.Id = id;
+            Model.Id = Model.Id;
             Model.ShortName = cutSpaces(Model.ShortName);
             Model.Name = cutSpaces(Model.Name);
             Model.Description = cutSpaces(Model.Description);
 
-            if (Model.DomainConstraints.Count > 0)
-            {
-                if (Model.DomainItems != null && Model.DomainItems.Count > 0)
-                {
-                    Model.DomainConstraints.FirstOrDefault().DomainItems = clearEmptyItems(Model.DomainItems);
-                }
-            }
+            //if (Model.DomainConstraints.Count > 0)
+            //{
+            //    if (Model.DomainConstraints. != null && Model.DomainItems.Count > 0)
+            //    {
+            //        Model.DomainConstraints.FirstOrDefault().DomainItems = clearEmptyItems(Model.DomainItems);
+            //    }
+            //}
 
 
             if (Model.Name == "" | Model.Name == null)
@@ -81,8 +65,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
                 Session["nameMsg"] = "invalid Name";
                 Session["Window"] = true;
-                Session["DataAttribute"] = Model;
-                return RedirectToAction(parent);
+                return View("AttributeManager", new DataAttributeManagerModel(Model));
             }
             else
             {
@@ -111,11 +94,12 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                         if (Model.PatternConstraints.Count > 0 && !String.IsNullOrEmpty(Model.PatternConstraints.FirstOrDefault().MatchingPhrase))
                             temp = storeConstraint(Model.PatternConstraints.First(), temp);
 
-                        if (Model.DomainConstraints.Count > 0 && Model.DomainItems.Count > 0)
+                        if (Model.DomainConstraints.Count > 0)
                         {
-                            DomainConstraintModel cmodel = Model.DomainConstraints.First();
-                            cmodel.DomainItems = Model.DomainItems;
-                            temp = storeConstraint(Model.DomainConstraints.First(), temp);
+                            foreach (DomainConstraintModel d in Model.DomainConstraints)
+                            {
+                                temp = storeConstraint(d, temp);
+                            }
                         }
 
                         #endregion
@@ -127,8 +111,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                     {
                         Session["nameMsg"] = "Name already exist";
                         Session["Window"] = true;
-                        Session["DataAttribute"] = Model;
-                        return RedirectToAction(parent);
+                        return View("AttributeManager", new DataAttributeManagerModel(Model));
                     }
                 }
                 else
@@ -146,6 +129,26 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                             dataAttribute.Unit = UM.Repo.Get(tempUnitId);
                             DataTypeManager DTM = new DataTypeManager();
                             dataAttribute.DataType = DTM.Repo.Get(tempDataTypeId);
+
+                            #region store constraint
+
+                            if (Model.RangeConstraints.Count > 0 && (Model.RangeConstraints.FirstOrDefault().Min != null || Model.RangeConstraints.FirstOrDefault().Max != null)
+                                && (Model.RangeConstraints.FirstOrDefault().Min != 0.0 || Model.RangeConstraints.FirstOrDefault().Max != 0.0))
+                                dataAttribute = storeConstraint(Model.RangeConstraints.First(), dataAttribute);
+
+                            if (Model.PatternConstraints.Count > 0 && !String.IsNullOrEmpty(Model.PatternConstraints.FirstOrDefault().MatchingPhrase))
+                                dataAttribute = storeConstraint(Model.PatternConstraints.First(), dataAttribute);
+
+                            if (Model.DomainConstraints.Count > 0)
+                            {
+                                foreach (DomainConstraintModel d in Model.DomainConstraints)
+                                {
+                                    dataAttribute = storeConstraint(d, dataAttribute);
+                                }
+                            }
+
+                            #endregion
+                            
                             DAM.UpdateDataAttribute(dataAttribute);
                         }
                     }
@@ -153,14 +156,13 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                     {
                         Session["nameMsg"] = "Name already exist";
                         Session["Window"] = true;
-                        return RedirectToAction(parent);
+                        return View("AttributeManager", new DataAttributeManagerModel(Model));
                     }
                 }
             }
 
             Session["Window"] = false;
-            Session["DataAttribute"] = new DataAttributeModel();
-            return RedirectToAction(parent);
+            return View("AttributeManager", new DataAttributeManagerModel(Model));
         }
 
         public ActionResult deletAttribute(long id, string name)
@@ -185,24 +187,19 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
         public ActionResult openAttributeWindow(long id)
         {
-
             if (id != 0)
             {
-                DataContainerManager DAM = new DataContainerManager();
-                DataAttribute dataAttribute = DAM.DataAttributeRepo.Get(id);
 
                 Session["nameMsg"] = null;
-                Session["DataAttribute"] = new DataAttributeModel(dataAttribute);
                 Session["Window"] = true;
-
+                return View("AttributeManager", new DataAttributeManagerModel(id));
             }
             else
             {
                 Session["nameMsg"] = null;
-                Session["DataAttribute"] = new DataAttributeModel();
                 Session["Window"] = true;
+                return View("AttributeManager", new DataAttributeManagerModel());
             }
-            return RedirectToAction("AttributeManager");
         }
 
         public JsonResult getDatatypeList(string Id)
@@ -226,6 +223,26 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             return Json(new SelectList(dataTypeList.ToArray(), "Id", "Name"), JsonRequestBehavior.AllowGet);
         }
 
+        public JsonResult getRangeConstraintFormalDescription(string invert, string min, string max, string mininclude, string maxinclude)
+        {
+            RangeConstraint temp = new RangeConstraint(ConstraintProviderSource.Internal, "", AppConfiguration.Culture.Name, "", Convert.ToBoolean(invert), null, null, null, Convert.ToDouble(min), Convert.ToBoolean(mininclude), Convert.ToDouble(max), Convert.ToBoolean(maxinclude));
+            return Json((temp.FormalDescription), JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult getPatternConstraintFormalDescription(string invert, string phrase)
+        {
+            PatternConstraint temp = new PatternConstraint(ConstraintProviderSource.Internal, "", AppConfiguration.Culture.Name, "", Convert.ToBoolean(invert), null, null, null, phrase, false);
+            return Json((temp.FormalDescription), JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult getDomainConstraintFormalDescription(string invert, string Terms)
+        {
+            List<DomainItem> items = createDomainItems(Terms);
+
+            DomainConstraint Temp = new DomainConstraint(ConstraintProviderSource.Internal, "", AppConfiguration.Culture.Name, "", Convert.ToBoolean(invert), null, null, null, items);
+            return Json((Temp.FormalDescription), JsonRequestBehavior.AllowGet);
+        }
+
         private string cutSpaces(string str)
         {
             if (str != "" && str != null)
@@ -237,40 +254,6 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             return (str);
         }
 
-
-        #region units and dataTypes
-
-        private List<DataTypeItemModel> getAllDatatypeItemModels()
-        {
-            DataTypeManager dataTypeManager = new DataTypeManager();
-
-            List<DataType> dataTypes = dataTypeManager.Repo.Get().OrderBy(p => p.Name).ToList();
-
-            List<DataTypeItemModel> dataTypeItemModels = new List<DataTypeItemModel>();
-            dataTypes.ForEach(d => dataTypeItemModels.Add(new DataTypeItemModel(d)));
-
-            return dataTypeItemModels;
-
-
-           
-        }
-
-        private List<UnitItemModel> getAllUnitItemModels()
-        {
-            UnitManager unitManager = new UnitManager();
-         
-
-            List<Unit> units = unitManager.Repo.Get().OrderBy(p => p.Name).ToList();
-
-            List<UnitItemModel> unitItemModels = new List<UnitItemModel>();
-            units.ForEach(u => unitItemModels.Add(new UnitItemModel(u)));
-
-            return unitItemModels;
-        }
-
-
-        #endregion
-
         #region constraints
 
         public ActionResult AddDomainItem()
@@ -281,41 +264,158 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
         private DataAttribute storeConstraint(ConstraintModel constraintModel, DataAttribute dataAttribute)
         {
             DataContainerManager dcManager = new DataContainerManager();
-            var attr = dataAttribute;
-
-            
+           
             if (constraintModel is RangeConstraintModel)
             {
                 RangeConstraintModel rcm = (RangeConstraintModel)constraintModel;
-
-                var constraint = new RangeConstraint(ConstraintProviderSource.Internal, "", "en-US", rcm.Description, rcm.Negated, null, null, null, rcm.Min, true, rcm.Max, true);
-                dcManager.AddConstraint(constraint, attr);
+                
+                if (rcm.Id == 0)
+                {
+                    RangeConstraint constraint = new RangeConstraint(ConstraintProviderSource.Internal, "", AppConfiguration.Culture.Name, rcm.Description, rcm.Negated, null, null, null, rcm.Min, rcm.MinInclude, rcm.Max, rcm.MaxInclude);
+                    dcManager.AddConstraint(constraint, dataAttribute);             
+                }
+                else
+                { 
+                    for(int i = 0; i < dataAttribute.Constraints.Count; i++)
+                    {
+                        if (dataAttribute.Constraints.ElementAt(i).Id == rcm.Id)
+                        {
+                            ((RangeConstraint)dataAttribute.Constraints.ElementAt(i)).Description = rcm.Description;
+                            ((RangeConstraint)dataAttribute.Constraints.ElementAt(i)).Negated = rcm.Negated;
+                            ((RangeConstraint)dataAttribute.Constraints.ElementAt(i)).Lowerbound = rcm.Min;
+                            ((RangeConstraint)dataAttribute.Constraints.ElementAt(i)).LowerboundIncluded = rcm.MinInclude;
+                            ((RangeConstraint)dataAttribute.Constraints.ElementAt(i)).Upperbound = rcm.Max;
+                            ((RangeConstraint)dataAttribute.Constraints.ElementAt(i)).UpperboundIncluded = rcm.MaxInclude;
+                        }
+                    }
+                }
             }
 
             if (constraintModel is PatternConstraintModel)
             {
-                PatternConstraintModel rcm = (PatternConstraintModel)constraintModel;
+                PatternConstraintModel pcm = (PatternConstraintModel)constraintModel;
 
-                var constraint = new PatternConstraint(ConstraintProviderSource.Internal, "", "en-US", rcm.Description, rcm.Negated, null, null, null, rcm.MatchingPhrase, false);
-                dcManager.AddConstraint(constraint, attr);
+                if (pcm.Id == 0)
+                {
+                    PatternConstraint constraint = new PatternConstraint(ConstraintProviderSource.Internal, "", AppConfiguration.Culture.Name, pcm.Description, pcm.Negated, null, null, null, pcm.MatchingPhrase, false);
+                    dcManager.AddConstraint(constraint, dataAttribute);
+                }
+                else
+                {
+                    for (int i = 0; i < dataAttribute.Constraints.Count; i++)
+                    {
+                        if (dataAttribute.Constraints.ElementAt(i).Id == pcm.Id)
+                        {
+                            ((PatternConstraint)dataAttribute.Constraints.ElementAt(i)).Description = pcm.Description;
+                            ((PatternConstraint)dataAttribute.Constraints.ElementAt(i)).Negated = pcm.Negated;
+                            ((PatternConstraint)dataAttribute.Constraints.ElementAt(i)).MatchingPhrase = pcm.MatchingPhrase;
+                        }
+                    }
+                }
             }
 
             if (constraintModel is DomainConstraintModel)
             {
                 DomainConstraintModel dcm = (DomainConstraintModel)constraintModel;
 
-                List<DomainItem> items = new List<DomainItem>();
+                List<DomainItem> items = createDomainItems(dcm.Terms);
 
-                dcm.DomainItems.ToList().ForEach(d => items.Add(new DomainItem() {
-                    Key = d.Key,
-                    Value = d.Value
-                }));
+                dcm.Terms = cutSpaces(dcm.Terms);
 
-                var constraint = new DomainConstraint(ConstraintProviderSource.Internal, "", "en-US", dcm.Description, dcm.Negated, null, null, null, items);
-                dcManager.AddConstraint(constraint, attr);
+                if (items.Count > 0)
+                {
+                    if (dcm.Id == 0)
+                    {
+                        DomainConstraint constraint = new DomainConstraint(ConstraintProviderSource.Internal, "", AppConfiguration.Culture.Name, dcm.Description, dcm.Negated, null, null, null, items);
+                        dcManager.AddConstraint(constraint, dataAttribute);
+                    }
+                    else
+                    {
+                        DomainConstraint temp = new DomainConstraint();
+                        for (int i = 0; i < dataAttribute.Constraints.Count; i++)
+                        {
+                            if (dataAttribute.Constraints.ElementAt(i).Id == dcm.Id)
+                            {
+                                temp = (DomainConstraint)dataAttribute.Constraints.ElementAt(i);
+                                temp.Materialize();
+                                temp.Description = dcm.Description;
+                                temp.Negated = dcm.Negated;
+                                temp.Items = items;
+                                dcManager.AddConstraint(temp, dataAttribute);
+                            }
+                        }
+                    }
+                }                
             }
 
-            return attr;
+            return dataAttribute;
+        }
+
+        private List<DomainItem> createDomainItems(string Terms)
+        { 
+            List<DomainItem> items = new List<DomainItem>();
+
+            Terms = cutSpaces(Terms);
+
+            if (!String.IsNullOrEmpty(Terms))
+            {
+                string[] pairs = Terms.Split(';');
+                if (pairs.Length > 1)
+                {
+                    foreach (string s in pairs)
+                    {
+                        string temp = cutSpaces(s);
+
+                        if (!String.IsNullOrEmpty(temp))
+                        {
+                            string[] terms = temp.Split(',');
+
+                            string[] tempArray = new string[terms.Length];
+                            for (int i = 0; i < terms.Length; i++)
+                            {
+                                tempArray[i] = cutSpaces(terms[i]);
+                            }
+                            if (tempArray.Length > 1)
+                            {
+                                if (!String.IsNullOrEmpty(tempArray[0]) && !String.IsNullOrEmpty(tempArray[1]))
+                                {
+                                    items.Add(new DomainItem() { Key = cutSpaces(tempArray[0]), Value = cutSpaces(tempArray[1]) });
+                                }
+                            }
+                            else
+                            {
+                                if (tempArray.Length > 0)
+                                {
+                                    if (!String.IsNullOrEmpty(tempArray[0]))
+                                    {
+                                        items.Add(new DomainItem() { Key = cutSpaces(tempArray[0]), Value = "na" });
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    pairs[0] = cutSpaces(pairs[0]);
+
+                    if (!String.IsNullOrEmpty(pairs[0]))
+                    {
+                        string[] terms = pairs[0].Split(',');
+
+                        foreach (string s in terms)
+                        {
+                            string temp = cutSpaces(s);
+
+                            if (!String.IsNullOrEmpty(temp))
+                            {
+                                items.Add(new DomainItem() { Key = cutSpaces(temp) });
+                            }
+                        }
+                    }
+                }
+            }
+            return items;
         }
 
         private List<DomainConstraintItemModel> clearEmptyItems(List<DomainConstraintItemModel> list)

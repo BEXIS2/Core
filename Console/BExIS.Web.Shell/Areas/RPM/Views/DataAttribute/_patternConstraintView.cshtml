@@ -2,35 +2,56 @@
 
 @using BExIS.Web.Shell.Areas.RPM.Helpers;
 
-@using (Html.BeginCollectionItem("patternConstraints"))
+@using (Html.BeginCollectionItem("PatternConstraints"))
 { 
-    <div class="constraint container">
-        <table class="container">
-            <tr>
-                <td class="label">
-                        @Html.Label("Matching Phrase:")
-                </td>
-                <td class="textBox">
-                        @Html.TextBoxFor(m=>m.MatchingPhrase)
-                </td>
-                <td class="descLabel" rowspan="2">
-                    <!--Description-->
-                    @Html.LabelFor(m => m.Description):
-                </td>
-                <td rowspan="2" class="descArea">
-                    @Html.TextAreaFor(m => m.Description)
-                </td>
-            </tr>
-            <tr>
-                <td class="label">
-                    <!--Constrain-->
-                    @Html.LabelFor(m => m.Negated):
-                </td>
-                <td>
+    <table class="container constrainTable" id="patternConstraint">
+        <tr>
+            <td class="constrainlabel">
+                Pattern
+                @Html.HiddenFor(m=>m.Id)
+            </td>
+            <td class="negated">
+                <div class="container">
+                    <div class="text">@Html.Label("invert")</div>
                     <!--Negated-->
-                     @Html.CheckBoxFor(m => m.Negated)
-                </td>
-            </tr>
-        </table>
-    </div>
+                    @Html.CheckBoxFor(m => m.Negated, new { @class = "checkBox", @id = "pattern_invert"})
+                </div>
+            </td>
+            <td class="constrainValue">
+                <div class="container">
+                    <div class="text">@Html.LabelFor(m=>m.MatchingPhrase)</div>
+                    @Html.TextBoxFor(m=>m.MatchingPhrase, new { @id = "pattern_phrase"})
+                </div>
+                <div class="container" title="@Model.FormalDescription" id="pattern_FormalDescription">
+                    <img src="../../../../Themes/Default/Styles/Default/infoicon.png" />
+                </div>
+            </td>
+            <td class="constrainDesc">
+                <div class="container">
+                    <div class="text">@Html.Label("Description")</div>
+                    @Html.TextBoxFor(m => m.Description)
+                </div>
+            </td>
+        </tr>
+    </table>
 }
+<script type="text/jscript">
+
+    $('#patternConstraint').change(function () {
+
+        if ($('#pattern_invert').is(":checked")) {
+            $('#pattern_invert').val(true)
+        }
+        else
+        {
+            $('#pattern_invert').val(false)
+        }
+
+        var variables = '?invert=' + $('#pattern_invert').val() + '&phrase=' + $('#pattern_phrase').val();
+
+        $.getJSON('/RPM/DataAttribute/getPatternConstraintFormalDescription/' + variables, function (data) {
+            $('#pattern_FormalDescription').attr("title", data);
+        });
+    })
+
+</script>

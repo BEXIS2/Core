@@ -45,6 +45,11 @@ namespace BExIS.Ddm.Providers.DummyProvider
             this.WorkingSearchModel = Get(this.WorkingSearchModel.CriteriaComponent);
         }
 
+        public void Reload()
+        {
+
+        }
+
         /// <summary>
         ///
         /// </summary>

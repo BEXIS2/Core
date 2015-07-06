@@ -519,7 +519,7 @@ namespace BExIS.Dcm.CreateDatasetWizard
                 for (int i = index; i < parent.Children.Count; i++)
                 {
                     int position = i + 1;
-                    parent.Children.ElementAt(i).title = parent.title + " (" + position + ")";
+                    parent.Children.ElementAt(i).title = position.ToString();
                 }
 
 

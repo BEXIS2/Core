@@ -5,29 +5,26 @@
 
 @using BExIS.Web.Shell.Areas.RPM.Models;
 
-@model List<DataAttributeModel>
+@model DataAttributeManagerModel
 
 @*<header>*@
     <link href="@Url.Content("~/Areas/RPM/Stylesheets/RPM.css")" rel="stylesheet" type="text/css" />  
 @*</header> *@
 
 @{
-    DataAttributeModel dataAttribute = (DataAttributeModel)Session["DataAttribute"];
     string windowName = "Create Data Attribute";
 
   
-        if (dataAttribute != null)
+        if (Model.DataAttributeModel.Id != 0)
         {
-            if (dataAttribute.Name != null && dataAttribute.Name != "")
+            if (!String.IsNullOrEmpty(Model.DataAttributeModel.Name))
             {
-                windowName = "Edit "+dataAttribute.Name;
+                windowName = "Edit Data Attribute: " + Model.DataAttributeModel.Name + " (Id: " + Model.DataAttributeModel.Id + ")";
             }
         }
-        else
-        {
-            dataAttribute = new DataAttributeModel();
-        }
 }
+
+
 
 @{
     ViewBag.Title = "Data Attribute Manager";
@@ -44,7 +41,7 @@
 </div>
     <br />
     <br />
-    @(Html.Telerik().Grid(Model)    
+    @(Html.Telerik().Grid(Model.DataAttributeStructs)    
             .Name("Attribute")
             .Sortable()
             .Filterable()    
@@ -66,18 +63,20 @@
                             }
                         </text>
                     ).Title("Actions")
-                        .Width(80)
-                        .ClientTemplate(
-                            @Html.ActionLink("Edit", "openAttributeWindow", "DataAttribute", new { id = "<#= id #>" }, new { @class = "t-icon t-edit" }).ToHtmlString() +
-                            @Html.ActionLink("Delete", "deletAttribute", "DataAttribute", new { id = "<#= id #>", dataAttribute.Name }, new { @class = "t-icon t-delete", onclick = "return confirm('Are you sure you want to delete the Data Attribute " + dataAttribute.Name + " ?')" }).ToHtmlString()
-                        );
+                        .Width(80);
+                        //.ClientTemplate(
+                        //    @Html.ActionLink("Edit", "openAttributeWindow", "DataAttribute", new { id = "<#= id #>" }, new { @class = "t-icon t-edit" }).ToHtmlString() +
+                        //    @Html.ActionLink("Delete", "deletAttribute", "DataAttribute", new { id = "<#= id #>", dataAttributeModel.Name }, new { @class = "t-icon t-delete", onclick = "return confirm('Are you sure you want to delete the Data Attribute " + dataAttributeModel.Name + " ?')" }).ToHtmlString()
+                        //);
                     columns.Bound(c => c.Name).Width(150);
                     columns.Bound(c => c.Id).Width(50);
                     columns.Bound(c => c.ShortName).Width(100);
-                    columns.Bound(c => c.Unit.Name).Width(100)
+                    columns.Bound(c => c.Unit).Width(100)
                         .Title("Unit");
-                    columns.Bound(c => c.DataType.Name).Width(100)
+                    columns.Bound(c => c.DataType).Width(100)
                         .Title("DataType");
+                    columns.Bound(c => c.FormalDescriptions).Width(300)
+                        .Title("Constraints");
                     columns.Bound(c => c.Description);
                 })
     )
@@ -92,7 +91,7 @@
                             .Visible((bool)Session["Window"])
                             .Draggable(true)
                             .Content(@<text>
-                                        @Html.Partial("_editAttribute", dataAttribute)
+                                        @Html.Partial("_editAttribute", Model.DataAttributeModel)
                                         </text>)
                             .Render()
                             ;

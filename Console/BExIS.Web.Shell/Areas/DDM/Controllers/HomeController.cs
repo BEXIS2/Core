@@ -698,20 +698,12 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             PermissionManager permissionManager = new PermissionManager();
             SubjectManager subjectManager = new SubjectManager();
 
-            //Create a list of rightTypes
-            List<RightType> rightTypes = new List<RightType>();
-            rightTypes.Add(RightType.Delete);
-            rightTypes.Add(RightType.Download);
-            rightTypes.Add(RightType.Grant);
-            rightTypes.Add(RightType.Update);
-            rightTypes.Add(RightType.View);
-
-            //List of DatasetIDs that its owner is current user
-            List<long> datasetIDs = permissionManager.GetAllDataIds(subjectManager.GetUserByName(GetUserNameOrDefault()).Id, 1, rightTypes).ToList();
-
-            if (datasetIDs != null)
+            foreach (long datasetId in datasetManager.GetDatasetLatestIds())
             {
-                foreach (long datasetId in datasetIDs)
+                //get permissions
+                List<int> rights = permissionManager.GetAllRights(subjectManager.GetUserByName(GetUserNameOrDefault()).Id, 1, datasetId).ToList();
+
+                if (rights.Count > 0)
                 {
                     DatasetVersion dsv = datasetManager.GetDatasetLatestVersion(datasetId);
 
@@ -728,25 +720,16 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                     rowArray[1] = title;
                     rowArray[2] = description;
 
-                    //get permissions
-                    bool viewRight = permissionManager.ExistsDataPermission(subjectManager.GetUserByName(GetUserNameOrDefault()).Id, 1, datasetId, RightType.View);
-                    bool updateRight = permissionManager.ExistsDataPermission(subjectManager.GetUserByName(GetUserNameOrDefault()).Id, 1, datasetId, RightType.Update);
-                    bool deleteRight = permissionManager.ExistsDataPermission(subjectManager.GetUserByName(GetUserNameOrDefault()).Id, 1, datasetId, RightType.Delete);
-                    bool downloadRight = permissionManager.ExistsDataPermission(subjectManager.GetUserByName(GetUserNameOrDefault()).Id, 1, datasetId, RightType.Download);
-                    bool grantRight = permissionManager.ExistsDataPermission(subjectManager.GetUserByName(GetUserNameOrDefault()).Id, 1, datasetId, RightType.Grant);
-
-                    if (viewRight) { rowArray[3] = "✔"; } else { rowArray[3] = "✘"; }
-                    if (updateRight) { rowArray[4] = "✔"; } else { rowArray[4] = "✘"; }
-                    if (deleteRight) { rowArray[5] = "✔"; } else { rowArray[5] = "✘"; }
-                    if (downloadRight) { rowArray[6] = "✔"; } else { rowArray[6] = "✘"; }
-                    if (grantRight) { rowArray[7] = "✔"; } else { rowArray[7] = "✘"; }
+                    if (rights.Contains(1)) { rowArray[3] = "✔"; } else { rowArray[3] = "✘"; }
+                    if (rights.Contains(2)) { rowArray[4] = "✔"; } else { rowArray[4] = "✘"; }
+                    if (rights.Contains(3)) { rowArray[5] = "✔"; } else { rowArray[5] = "✘"; }
+                    if (rights.Contains(4)) { rowArray[6] = "✔"; } else { rowArray[6] = "✘"; }
+                    if (rights.Contains(5)) { rowArray[7] = "✔"; } else { rowArray[7] = "✘"; }
 
                     dataRow = model.NewRow();
                     dataRow.ItemArray = rowArray;
                     model.Rows.Add(dataRow);
                 }
-
-               
             }
 
             return View(new GridModel(model));

@@ -1,21 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using System.Xml;
-using BExIS.Xml.Helpers;
-using BExIS.Web.Shell.Areas.SAM.Models;
-using System.Windows;
-using System.Xml.Linq;
-using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Wordprocessing;
-using Vaiona.Utils.Cfg;
 using System.IO;
-using BExIS.IO.Transform.Input;
-using System.Windows.Forms;
 using System.Net;
-using System.Text.RegularExpressions;
+using System.Web.Mvc;
+using BExIS.Web.Shell.Areas.SAM.Models;
 
 namespace BExIS.Web.Shell.Areas.SAM.Controllers
 {
@@ -26,16 +13,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
 
         public ActionResult Index()
         {
-            return View();
-        }
-
-        /// <summary>
-        /// To show help page for searching part
-        /// </summary>
-        /// <returns></returns>
-        public ActionResult HelpAdministration()
-        {
-            string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Areas", "SAM", "Views\\Help\\UserGuides\\SystemAdministration_UserGuide.htm");
+            string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Areas", "SAM", "Views\\Help\\UserGuides\\SAM_UserGuide.htm");
             string imagePath = "/Areas/SAM/Images/";
 
             ShowHelpModel model = new ShowHelpModel();
@@ -66,7 +44,6 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
                     StreamReader reader = new StreamReader(filePath);
                     int endFile = (int)reader.BaseStream.Length;
 
-
                     string text = "";
 
                     for (i = startCX + 13; i < endFile; ++i)
@@ -91,6 +68,5 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
 
             return View(model);
         }
-
     }
 }

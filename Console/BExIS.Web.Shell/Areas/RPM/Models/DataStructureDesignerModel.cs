@@ -27,6 +27,9 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
     {
         public Variable variable;
         public List<UnitStruct> unitStructs;
+        public List<DomainConstraint> domainConstraints;
+        public List<PatternConstraint> patternConstraints;
+        public List<RangeConstraint> rangeConstraints;
     }
 
     public class DatasetListElement
@@ -150,12 +153,33 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
         {
             List<VariableStruct> variableStructs = new List<VariableStruct>();
             List<Variable> variables = getOrderedVariables(structuredDataStructure);
-            VariableStruct temp;
+            DataContainerManager dataAttributeManager = new DataContainerManager();
+            VariableStruct temp = new VariableStruct();
+            List<BExIS.Dlm.Entities.DataStructure.Constraint> tempconstraints;
             UnitDimenstionModel unitDimenstionModel = new UnitDimenstionModel();
             foreach (Variable v in variables)
             {
+                unitDimenstionModel = new UnitDimenstionModel();
                 temp.variable = v;
-                temp.unitStructs = unitDimenstionModel.getUnitDimenstionListByDimenstion(v.DataAttribute.Unit.Dimension);
+                temp.unitStructs = unitDimenstionModel.getUnitDimenstionListByDimenstion(v.DataAttribute.Unit.Dimension.Id);
+                tempconstraints = dataAttributeManager.DataAttributeRepo.Get(v.DataAttribute.Id).Constraints.ToList();
+                temp.rangeConstraints = new List<RangeConstraint>();
+                temp.domainConstraints = new List<DomainConstraint>();
+                temp.patternConstraints = new List<PatternConstraint>();
+                foreach(BExIS.Dlm.Entities.DataStructure.Constraint c in tempconstraints) 
+                {
+                    if (c is DomainConstraint)
+                    {
+                        DomainConstraint tempDomainConstraint = (DomainConstraint)c;
+                        tempDomainConstraint.Materialize();
+                        temp.domainConstraints.Add(tempDomainConstraint);
+                    }
+                    if (c is PatternConstraint)
+                        temp.patternConstraints.Add((PatternConstraint)c);
+                    if (c is RangeConstraint)
+                        temp.rangeConstraints.Add((RangeConstraint)c);
+
+                }
                 variableStructs.Add(temp);
             }
             return variableStructs;

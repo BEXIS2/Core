@@ -1,6 +1,6 @@
-﻿@model string
-           
-@if(Model.Equals("A", StringComparison.InvariantCultureIgnoreCase))
+﻿@using System
+@model string
+@if (Model.Equals("A", StringComparison.InvariantCultureIgnoreCase))
 {
     <text>The time is @DateTime.Now.ToLongTimeString() using format: @Model</text>
 }

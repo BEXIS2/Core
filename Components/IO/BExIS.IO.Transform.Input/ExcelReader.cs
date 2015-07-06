@@ -502,8 +502,12 @@ namespace BExIS.IO.Transform.Input
                             {
                                 Row row = (Row)reader.LoadCurrentElement();
 
+                                if (!IsEmpty(row))
+                                { 
+                                    this.DataTuples.Add(ReadRow(RowToList(row), Convert.ToInt32(row.RowIndex.ToString())));
+                                }
+
                                 //this.errorMessages = this.errorMessages.Union(Validate(RowToList(row), Convert.ToInt32(row.RowIndex.ToString()))).ToList();
-                                this.DataTuples.Add(ReadRow(RowToList(row), Convert.ToInt32(row.RowIndex.ToString())));
                                 count++;
 
                             }
@@ -1108,6 +1112,24 @@ namespace BExIS.IO.Transform.Input
             {
                 return -1;
             }
+        }
+
+        private bool IsEmpty(Row row)
+        {
+            Cell c;
+
+            for (int i = 0; i < row.ChildElements.Count(); i++)
+            {
+                // get current cell at i
+                c = row.Elements<Cell>().ElementAt(i);
+                if (c.CellValue != null)
+                {
+                    return false;
+                }
+
+            }
+
+            return true;
         }
 
         #endregion

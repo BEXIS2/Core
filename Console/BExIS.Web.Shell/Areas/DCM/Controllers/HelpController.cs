@@ -26,16 +26,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         public ActionResult Index()
         {
-            return View();
-        }
-
-        /// <summary>
-        /// To show help page for searching part
-        /// </summary>
-        /// <returns></returns>
-        public ActionResult HelpDataCollection()
-        {
-            string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Areas", "DCM", "Views\\Help\\UserGuides\\DataCollection_UserGuide.htm");
+            string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Areas", "DCM", "Views\\Help\\UserGuides\\DCM_UserGuide.htm");
             string imagePath = "/Areas/DCM/Images/";
 
             ShowHelpModel model = new ShowHelpModel();
@@ -91,7 +82,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             return View(model);
         }
-
     }
 }
 

@@ -11,39 +11,30 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
     {
         public long Id {get; set;}
         public string Name {get; set;}
-        public Dimension Dimension {get; set;}
     }
 
     public class UnitDimenstionModel
-    {   
-        List<UnitStruct> unitStructs = new List<UnitStruct>();
+    {
+        UnitManager unitmanager = new UnitManager();
+        public List<UnitStruct> UnitStructs;
 
         public UnitDimenstionModel()
-        { 
-            UnitManager unitManager = new UnitManager();
-            List<Unit> units = unitManager.Repo.Get().ToList();
-            UnitStruct unitStruct = new UnitStruct();
-            for (int i = 0; i < units.Count; i++)
-            {
-                unitStruct.Id = units.ElementAt(i).Id;
-                unitStruct.Name = units.ElementAt(i).Name;
-                unitStruct.Dimension = units.ElementAt(i).Dimension;
-                this.unitStructs.Add(unitStruct);
-            }
+        {
+            UnitStructs = new List<UnitStruct>();
         }
 
-        public List<UnitStruct> getUnitDimenstionListByDimenstion(Dimension dimension)
+        public List<UnitStruct> getUnitDimenstionListByDimenstion(long dimensionId)
         {
-            List<UnitStruct> tempUnitStructs = new List<UnitStruct>();
-
-            for (int i = 0; i < unitStructs.Count; i++)
+            List<Unit> units = unitmanager.DimensionRepo.Get(dimensionId).Units.ToList();
+            UnitStruct tempUnitStruct = new UnitStruct();
+            foreach (Unit u in units)
             {
-                if (unitStructs.ElementAt(i).Dimension.Specification.Trim().ToLower() == dimension.Specification.Trim().ToLower())
-                {
-                    tempUnitStructs.Add(unitStructs.ElementAt(i));
-                }
+                tempUnitStruct.Id = u.Id;
+                tempUnitStruct.Name = u.Name;
+                UnitStructs.Add(tempUnitStruct);
             }
-            return tempUnitStructs;
+
+            return UnitStructs;
         }
 
     }

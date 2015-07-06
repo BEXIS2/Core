@@ -3,7 +3,7 @@
 namespace BExIS.Web.Shell.Areas.System.Controllers
 {
     public class UtilsController : Controller
-    {        
+    {
         [ChildActionOnly]
         public ActionResult ServerTime(string format)
         {
@@ -14,6 +14,5 @@ namespace BExIS.Web.Shell.Areas.System.Controllers
         {
             return PartialView("_ServerTime", "A");
         }
-
     }
 }

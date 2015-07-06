@@ -93,5 +93,9 @@ namespace BExIS.Ddm.Api
         /// <seealso cref=""/>
         /// <param name="searchCriteria"></param>
         void SearchAndUpdate(SearchCriteria searchCriteria);
+
+
+
+        void Reload();
     }
 }

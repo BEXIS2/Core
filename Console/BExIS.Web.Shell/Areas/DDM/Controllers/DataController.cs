@@ -31,6 +31,7 @@ using BExIS.Security.Services.Subjects;
 using BExIS.Xml.Helpers;
 using BExIS.Xml.Services;
 using BExIS.Dlm.Services.MetadataStructure;
+using Vaiona.Logging.Aspects;
 
 namespace BExIS.Web.Shell.Areas.DDM.Controllers
 {
@@ -183,6 +184,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
         #region primary data
 
+            [MeasurePerformance]
             public ActionResult ShowPrimaryData(long datasetID)
             {
                 Session["Filter"] = null;
@@ -210,12 +212,12 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 if (ds.Self.GetType() == typeof(StructuredDataStructure))
                 {
 
-                    List<AbstractTuple> dataTuples = dm.GetDatasetVersionEffectiveTuples(dsv,1,100);
+                    List<AbstractTuple> dataTuples = dm.GetDatasetVersionEffectiveTuples(dsv,0,100);
                     //List<AbstractTuple> dataTuples = dm.GetDatasetVersionEffectiveTuples(dsv);
 
                     DataTable table = SearchUIHelper.ConvertPrimaryDataToDatatable(dsv, dataTuples);
 
-                    Session["gridTotal"] = dm.GetDatasetVersionEffectiveTupleIds(dsv).Count();
+                    Session["gridTotal"] = dm.GetDatasetVersionEffectiveTupleCount(dsv);
 
                     return PartialView(ShowPrimaryDataModel.Convert(datasetID, title, sds, table, downloadAccess));
 
@@ -233,6 +235,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             #region server side
 
             [GridAction(EnableCustomBinding = true)]
+            [MeasurePerformance]
             public ActionResult _CustomPrimaryDataBinding(GridCommand command, int datasetID)
             {
 
@@ -244,11 +247,11 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
                 List<AbstractTuple> dataTuples = dm.GetDatasetVersionEffectiveTuples(dsv,command.Page-1,command.PageSize);
 
-                Session["gridTotal"] = dm.GetDatasetVersionEffectiveTupleIds(dsv).Count();
+                Session["gridTotal"] = dm.GetDatasetVersionEffectiveTupleCount(dsv);
 
                 DataTable table = SearchUIHelper.ConvertPrimaryDataToDatatable(dsv, dataTuples);
                 GridModel model = new GridModel(table);
-                model.Total = (int)Session["gridTotal"];
+                model.Total = Convert.ToInt32(Session["gridTotal"]);// (int)Session["gridTotal"];
 
                 return View(model);
             }
@@ -734,9 +737,13 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         {
                             GridCommand command = (GridCommand)Session["Filter"];
                             string[] columns = (string[])Session["Columns"];
-                            if (command.FilterDescriptors.Count > 0 || command.SortDescriptors.Count > 0 || columns.Count()>0)
+
+                            if (columns != null)
                             {
-                                return true;
+                                if (command.FilterDescriptors.Count > 0 || command.SortDescriptors.Count > 0 || columns.Count() > 0)
+                                {
+                                    return true;
+                                }
                             }
                         }
 

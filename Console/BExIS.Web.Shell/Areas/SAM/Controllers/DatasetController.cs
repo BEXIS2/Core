@@ -1,18 +1,17 @@
-﻿using BExIS.Dlm.Entities.Data;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Web.Mvc;
+using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+using BExIS.Security.Services.Authorization;
 
 namespace BExIS.Web.Shell.Areas.Sam.Controllers
 {
     /// <summary>
     /// Manages all funactions an authorized user can do with datasets and their versions
     /// </summary>
-    public class DatasetsController : Controller
+    public class DatasetController : Controller
     {
         /// <summary>
         /// Shows a berif intro about the functions available as well as some warnings that inofrom the user about non recoverability of some of the operations
@@ -45,9 +44,8 @@ namespace BExIS.Web.Shell.Areas.Sam.Controllers
         public ActionResult Delete(long id)
         {
             DatasetManager dm = new DatasetManager();
-            // get the user from an approved API, ask Sven or look at other parts of the code
             bool b = dm.DeleteDataset(id, this.ControllerContext.HttpContext.User.Identity.Name, true);
-            return View();
+            return RedirectToAction("List");
         }
 
         /// <summary>
@@ -59,6 +57,9 @@ namespace BExIS.Web.Shell.Areas.Sam.Controllers
         public ActionResult Purge(long id)
         {
             DatasetManager dm = new DatasetManager();
+            PermissionManager pm = new PermissionManager();
+
+            pm.DeleteDataPermissionsByEntity(1, id);
             bool b = dm.PurgeDataset(id);
             return View();
         }
@@ -71,7 +72,7 @@ namespace BExIS.Web.Shell.Areas.Sam.Controllers
         public ActionResult Versions(int id)
         {
             DatasetManager dm = new DatasetManager();
-            List<DatasetVersion> versions = dm.DatasetVersionRepo.Query(p=>p.Dataset.Id == id).OrderBy(p=>p.Id).ToList();
+            List<DatasetVersion> versions = dm.DatasetVersionRepo.Query(p => p.Dataset.Id == id).OrderBy(p => p.Id).ToList();
             ViewBag.VersionId = id;
             return View(versions);
         }

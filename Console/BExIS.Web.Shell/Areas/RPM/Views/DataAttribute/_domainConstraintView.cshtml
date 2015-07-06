@@ -3,57 +3,62 @@
 @using BExIS.Web.Shell.Areas.RPM.Helpers;
 @using BExIS.Web.Shell.Areas.RPM.Models;
 
-@using (Html.BeginCollectionItem("domainConstraints"))
+@using (Html.BeginCollectionItem("DomainConstraints"))
 { 
-<div class="constraint container">
-    <table class="container">
+    <table class="container constrainTable" id="domainConstraint">
         <tr>
-            <td rowspan="2" class="add">
-                @Html.ActionLink("Add", "AddDomainItem", null, new { id = "addDomainItem", @class = "t-icon t-add addDomainItem" })
+            <td class="constrainlabel">
+                Domain
+                @Html.HiddenFor(m=>m.Id)
             </td>
-            <td class="domain container" rowspan="2">
-                <div class="domainItems container" id="domainItems">
-                        @if (Model.DomainItems != null && Model.DomainItems.Count > 0)
-                        {
-
-                            foreach (DomainConstraintItemModel item in Model.DomainItems)
-                            {
-                                Html.RenderPartial("_domainItemView", item);
-                            }
-                        }
-                        else if (Model.DomainItems != null && Model.DomainItems.Count == 0)
-                        {
-                            for (int i = 0; i < 4 - Model.DomainItems.Count; i++)
-                            {
-                                Html.RenderPartial("_domainItemView", new DomainConstraintItemModel());
-                            }                              
-                        }
+            <td class="negated">
+                <!--Negated-->
+                <div class="container">
+                    <div class="text">@Html.Label("invert")</div>
+                    @Html.CheckBoxFor(m => m.Negated, new { @class = "checkBox", @id = "domain_invert"})
                 </div>
             </td>
-            <td class="descLabel">
-                <!--Description-->
-                @Html.LabelFor(m => m.Description):
+            <td class="constrainValue">
+                <div class="container">
+                    <div class="text">@Html.Label("Terms")</div>
+                    @Html.TextBoxFor(m => m.Terms, new {@id = "domain_terms"})
+                </div>
+                <div class="container" title="@Model.FormalDescription" id="domain_FormalDescription">
+                    <img src="../../../../Themes/Default/Styles/Default/infoicon.png" />
+                </div>
             </td>
-            <td class="descArea">
-                @Html.TextAreaFor(m => m.Description)
-            </td>
-        </tr>
-        <tr>
-            <td class="descLabel">
-                <!--Constrain-->
-                @Html.LabelFor(m => m.Negated):
-            </td>
-            <td>
-                <!--Negated-->
-                 @Html.CheckBoxFor(m => m.Negated)
+            <td class="constrainDesc">
+                <div class="container">
+                    <div class="text">@Html.Label("Description")</div>
+                    @Html.TextBoxFor(m => m.Description)
+                </div>
             </td>
         </tr>
-        
     </table>
-</div>
 }
 
-<script>
+<script type="text/jscript">
+
+    $('#domainConstraint').change(function () {
+
+        if ($('#domain_invert').is(":checked")) {
+            $('#domain_invert').val(true)
+        }
+        else
+        {
+            $('#domain_invert').val(false)
+        }
+
+        var variables = '?invert=' + $('#domain_invert').val() + '&Terms=' + $('#domain_terms').val();
+
+        $.getJSON('/RPM/DataAttribute/getDomainConstraintFormalDescription/' + variables, function (data) {
+            $('#domain_FormalDescription').attr("title", data);
+        });
+    })
+
+</script>
+
+@*<script>
 
     $("#addDomainItem").unbind().click(function () {
 
@@ -72,4 +77,4 @@
         return false;
     });
 
-</script>
+</script>*@

@@ -1,0 +1,11 @@
+﻿<script type="text/javascript">
+    $(document).ready(function () {
+        $.get('@Url.Action("RenderRazorViewToString", "Account", new { area = "SAM" })', function (data) {
+
+            $('#Content_LogOn').html(data);
+
+            var window = $('#Window_LogOn').data('tWindow');
+            window.center().open();
+        });
+    });
+</script>

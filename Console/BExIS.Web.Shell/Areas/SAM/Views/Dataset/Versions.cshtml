@@ -1,42 +1,46 @@
 ﻿@using BExIS.Dlm.Entities.Data;
-@model List<DatasetVersion>
-
+@using Lucene.Net.Search.Highlight
+@model System.Collections.Generic.List<DatasetVersion>
 @{
     ViewBag.Title = "List of Dataset Versions";
 }
-<h3>Dataset @ViewBag.VersionId versions</h3> @Html.ActionLink("Return to the list", "List", "Dataset", new {area = "Sam"}) <p/>
+<h3>Dataset @ViewBag.VersionId versions</h3>
+@Html.ActionLink("Return to the list", "List", new { area = "Sam" })
+<p />
 <table>
     <tr>
         <td>ID</td>
         <td>Timestamp</td>
         <td>Status</td>
-        <td>Actions</td>       
-        <td>Comment</td>       
+        <td>Actions</td>
+        <td>Comment</td>
     </tr>
-@foreach (var item in Model)
-{
-    <tr>
-        <td>@(item.Id)</td>
-        <td>@(item.Timestamp)</td>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@(item.Id)</td>
+            <td>@(item.Timestamp)</td>
 
-        @if (item.Status == DatasetVersionStatus.CheckedIn) 
-         { 
-            <td style="color: darkgreen"> @(item.Status.ToString())</td>
-            <td>@Html.ActionLink("Details", "Version", "Dataset", new {id = item.Id, area ="Sam"}) | @Html.ActionLink("Check out", "checkout", "Dataset",new {id = item.Id, area ="Sam"}) </td>
-         }
-        else if (item.Status == DatasetVersionStatus.CheckedOut) 
-        {   
-            <td style="color: darkblue"> @(item.Status.ToString())</td>
-            <td>@Html.ActionLink("Checkin", "checkin", "Dataset", new {id = item.Id, area ="Sam"}) | @Html.ActionLink("Rollback", "rollback", "Dataset", new {id = item.Id, area ="Sam"}) </td>
-        }
-        else if (item.Status == DatasetVersionStatus.Old) 
-        { 
-            <td style="color: red">Archived</td>
-            <td> @Html.ActionLink("Details", "Version", "Dataset", new {id = item.Id, area ="Sam"}) </td>
-        }
-        <td>@(item.ChangeDescription)</td>
-    </tr>    
-}
+            @if (item.Status == DatasetVersionStatus.CheckedIn)
+            {
+                <td style="color: darkgreen">@(item.Status.ToString())</td>
+                <td>@Html.ActionLink("Details", "Version",  new { id = item.Id, area = "Sam" }) @*| @Html.ActionLink("Check out", "checkout", "Dataset", new { id = item.Id, area = "Sam" })*@ </td>
+            }
+            
+            @*else if (item.Status == DatasetVersionStatus.CheckedOut)
+            {
+                <td style="color: darkblue">@(item.Status.ToString())</td>
+                <td>@Html.ActionLink("Checkin", "checkin", "Dataset", new { id = item.Id, area = "Sam" }) | @Html.ActionLink("Rollback", "rollback", "Dataset", new { id = item.Id, area = "Sam" }) </td>
+            }*@
+            
+            else if (item.Status == DatasetVersionStatus.Old)
+            {
+                <td style="color: red">Archived</td>
+                <td>@Html.ActionLink("Details", "Version", new { id = item.Id, area = "Sam" }) </td>
+            }
+            <td>@(item.ChangeDescription)</td>
+        </tr>
+    }
 </table>
-<p/>
-@Html.ActionLink("Return to the list", "List", "Dataset", new {area = "Sam"})
+<p />
+@Html.ActionLink("Return to the list", "List", new { area = "Sam" })

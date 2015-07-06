@@ -146,11 +146,11 @@ namespace BExIS.Dlm.Entities.DataStructure
             {
                 if (Negated)
                 {
-                    return (string.Format("The value must not be any of these items: {0}.", string.Join(",", Items)));
+                    return (string.Format("The value must not be any of these items: {0}.", string.Join(",", Items.Select(p=>p.Key))));
                 }
                 else
                 {
-                    return (string.Format("The value must be one of these items: {0}.", string.Join(",", Items)));
+                    return (string.Format("The value must be one of these items: {0}.", string.Join(",", Items.Select(p => p.Key))));
                 }
             }
         }
@@ -288,11 +288,11 @@ namespace BExIS.Dlm.Entities.DataStructure
             {
                 if (Negated)
                 {
-                    return (string.Format("The value must not match this pattern: '{0}' {1}.", MatchingPhrase, (CaseSensitive ? "case sensitive" : "case insensitive")));
+                    return (string.Format("The value must not match this pattern: '{0}'. The matching is {1}.", MatchingPhrase, (CaseSensitive ? "case sensitive" : "case insensitive")));
                 }
                 else
                 {
-                    return (string.Format("The value must match this pattern: '{0}' {1}.", MatchingPhrase, (CaseSensitive ? "case sensitive" : "case insensitive")));
+                    return (string.Format("The value must match this pattern: '{0}'. The matching is {1}.", MatchingPhrase, (CaseSensitive ? "case sensitive" : "case insensitive")));
                 }
             }
         }
@@ -403,7 +403,7 @@ namespace BExIS.Dlm.Entities.DataStructure
                 {
                     return (string.Format(
                         (!string.IsNullOrWhiteSpace(NegatedMessageTemplate) ? NegatedMessageTemplate : defaultNegatedMessageTemplate),
-                        Lowerbound, (LowerboundIncluded ? "less than or equal to" : "less than"), Upperbound, (UpperboundIncluded ? "greater than or equal to" : "greater than")));
+                        Lowerbound, (!LowerboundIncluded ? "less than or equal to" : "less than"), Upperbound, (!UpperboundIncluded ? "greater than or equal to" : "greater than")));
                 }
                 else
                 {
@@ -420,11 +420,15 @@ namespace BExIS.Dlm.Entities.DataStructure
             {
                 if (Negated)
                 {
-                    return (string.Format("The value must be {1} {0} or {3} {2}.", Lowerbound, (LowerboundIncluded ? "less than or equal to" : "less than"), Upperbound, (UpperboundIncluded ? "greater than or equal to" : "greater than")));
+                    return (string.Format("The value must be {0} {1} or {2} {3}.", (!LowerboundIncluded ? "less than or equal to" : "less than"), Lowerbound // if boundaries are not included in the constarint, they are part of the negated
+                                                                                 , (!UpperboundIncluded ? "greater than or equal to" : "greater than"), Upperbound
+                           ));
                 }
                 else
                 {
-                    return (string.Format("The value must be between {0} {1} and {2} {3}.", Lowerbound, (LowerboundIncluded ? "inclusive" : "exclusive"), Upperbound, (UpperboundIncluded ? "inclusive" : "exclusive")));
+                    return (string.Format("The value must be between {0} ({1}) and {2} ({3}).", Lowerbound, (LowerboundIncluded ? "including" : "excluding")
+                                                                                          , Upperbound, (UpperboundIncluded ? "including" : "excluding")
+                           ));
                 }
             }
         }

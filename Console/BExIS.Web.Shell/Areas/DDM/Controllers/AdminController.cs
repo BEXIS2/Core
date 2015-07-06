@@ -11,6 +11,7 @@ using BExIS.Ddm.Model;
 using BExIS.Ddm.Providers.LuceneProvider;
 using BExIS.Web.Shell.Areas.DDM.Models;
 using Telerik.Web.Mvc;
+using Vaiona.IoC;
 
 namespace BExIS.Web.Shell.Areas.DDM.Controllers
 {
@@ -288,6 +289,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
         public ActionResult RefreshSearch()
         {
+
             ISearchDesigner sd = GetSearchDesigner();
 
             bool success = false;
@@ -305,6 +307,9 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             finally
             {
                 sd.Dispose();
+
+                ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+                provider.Reload();
             }
 
             if(success)

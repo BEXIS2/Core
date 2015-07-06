@@ -11,22 +11,33 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
         public long Id { get; set; }
         public string Description { get; set; }
         public bool Negated { get; set; }
-
+        public string FormalDescription { get; set; }
     }
 
     public class RangeConstraintModel:ConstraintModel
     {
         public double Min { get; set; }
         public double Max { get; set; }
+        public bool MinInclude { get; set; }
+        public bool MaxInclude { get; set; }
 
+        public RangeConstraintModel()
+        {
+            MinInclude = true;
+            FormalDescription = (new RangeConstraint() {LowerboundIncluded = MinInclude}).FormalDescription;
+        }
         public static RangeConstraintModel Convert(RangeConstraint rangeConstraint)
         {
             return new RangeConstraintModel()
             {
                 Id = rangeConstraint.Id,
+                Negated = rangeConstraint.Negated,
                 Description = rangeConstraint.Description,
                 Min = rangeConstraint.Lowerbound,
-                Max = rangeConstraint.Upperbound
+                Max = rangeConstraint.Upperbound,
+                MinInclude = rangeConstraint.LowerboundIncluded,
+                MaxInclude = rangeConstraint.UpperboundIncluded,
+                FormalDescription = rangeConstraint.FormalDescription
             };
         }
     }
@@ -35,39 +46,69 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
     {
         public string MatchingPhrase { get; set; }
 
+        public PatternConstraintModel()
+        {
+            FormalDescription = (new PatternConstraint()).FormalDescription;
+        }
+
         public static PatternConstraintModel Convert(PatternConstraint patternConstraint)
         {
             return new PatternConstraintModel()
             {
                 Id = patternConstraint.Id,
+                Negated = patternConstraint.Negated,
                 Description = patternConstraint.Description,
-                MatchingPhrase = patternConstraint.MatchingPhrase
+                MatchingPhrase = patternConstraint.MatchingPhrase,
+                FormalDescription = patternConstraint.FormalDescription
             };
         }
     }
 
     public class DomainConstraintModel:ConstraintModel
     {
-        public  List<DomainConstraintItemModel> DomainItems { get; set; }
+        public string Terms { get; set; }
 
         public DomainConstraintModel()
         {
-            DomainItems = new List<DomainConstraintItemModel>();
+            Terms= "";
+            List<DomainItem> ldi = new List<DomainItem>();
+            ldi.Add(new DomainItem());
+            FormalDescription = (new DomainConstraint() {Items = ldi}).FormalDescription;
         }
 
         public static DomainConstraintModel Convert(DomainConstraint domainConstraint)
         {
             domainConstraint.Materialize();
 
-            List<DomainConstraintItemModel> domainItemList = new List<DomainConstraintItemModel>();
-            if (domainConstraint.Items!=null)
-                domainConstraint.Items.ForEach(d => domainItemList.Add(new DomainConstraintItemModel(d.Key, d.Value)));
+            string terms = "";
+            if (domainConstraint.Items != null)
+            {
+                foreach(DomainItem i in domainConstraint.Items)
+                {
+                    if (String.IsNullOrEmpty(i.Value))
+                    {
+                        if (terms == "")
+                            terms = i.Key;
+                        else
+                            terms = terms + ", " + i.Key;
+                    }
+                    else
+                    {
+                        if (terms == "")
+                            terms = i.Key + ", " + i.Value;
+                        else
+                            terms = terms + "; " + i.Key + ", " + i.Value;
+                    }
+                }
+            }
          
             return new DomainConstraintModel()
             {
                 Id = domainConstraint.Id,
+                Negated = domainConstraint.Negated,
                 Description = domainConstraint.Description,
-                DomainItems = domainItemList
+                Terms = terms,
+                FormalDescription = domainConstraint.FormalDescription
             };
         }
 

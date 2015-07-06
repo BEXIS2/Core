@@ -8,23 +8,22 @@
 @{
     ViewBag.Title = "Planing";
 
-    Variable variable = new Variable();
-    List<UnitStruct> unitStructs = new List<UnitStruct>();
+    VariableStruct variableStruct = new VariableStruct();
+    string terms = "";
     
     if (Session["variableId"] != null)
     {
-        variable = Model.variableStructs.Where(v => v.variable.Id.Equals((long)Session["variableId"])).FirstOrDefault().variable;       
-        unitStructs = Model.variableStructs.Where(v => v.variable.Id.Equals((long)Session["variableId"])).FirstOrDefault().unitStructs;
+        variableStruct = Model.variableStructs.Where(v => v.variable.Id.Equals((long)Session["variableId"])).FirstOrDefault();       
     }
     
 }
-@if (Session["variableId"] == null || variable.Id == 0)
+@if (Session["variableId"] == null)
 { 
     <font color="red">Variable not found</font>
 }
 else
 {
-    if (variable == null)
+    if (variableStruct.variable == null)
     { 
         <font color="red">Can't edit Variable doesn't exist anymore.</font>
     }
@@ -55,7 +54,7 @@ else
                             Name:
                         </td>
                         <td>
-                            @(Html.TextBox("name", variable.Label, new { @autofocus = "autofocus", @tabindex = 1 }))
+                            @(Html.TextBox("name", variableStruct.variable.Label, new { @autofocus = "autofocus", @tabindex = 1 }))
                             <div class="errorMsg" style="vertical-align:top;">
                                  <font color="red">@ViewData["varErrorMsg"]</font>
                             </div>
@@ -64,54 +63,197 @@ else
                             Description:
                         </td>
                         <td class="descArea"rowspan="4">
-                            @(Html.TextArea("description", variable.Description, new { @tabindex = 2 }))
+                            @(Html.TextArea("description", variableStruct.variable.Description, new { @tabindex = 2 }))
                         </td>
                     </tr>
                     <tr id="optional">
-                        <td>
+                        <td class="label">
                             Is Optional:
                         </td>
                         <td>
-                            @(Html.CheckBox("optional", variable.IsValueOptional, new { @tabindex = 3 }))
+                            @(Html.CheckBox("optional", variableStruct.variable.IsValueOptional, new { @tabindex = 3 }))
                         </td>
                     </tr>
                     <tr id="shortname">
-                        <td>
+                        <td class="label">
                             ID:
                         </td>
                         <td>
-                            @variable.Id
-                            @(Html.TextBox("id", variable.Id, new { @class = "hidden" })) 
+                            @variableStruct.variable.Id
+                            @(Html.TextBox("id", variableStruct.variable.Id, new { @class = "hidden" })) 
                         </td>
                     </tr>
                     <tr>
-                        <td>
+                        <td class="label">
                             Unit:
                         </td>
                         <td>
-                            @if (unitStructs.Count > 1)
-                            {
-                                @Html.DropDownList("unitId", new SelectList(unitStructs, "Id", "Name", variable.DataAttribute.Unit.Id), new { @tabindex = "4" })
-                            }
-                            else
-                            {
-                                @variable.DataAttribute.Unit.Name
-                            }
+                            @Html.DropDownList("unitId", new SelectList(variableStruct.unitStructs, "Id", "Name", variableStruct.variable.DataAttribute.Unit.Id), new { @tabindex = "4" })
                         </td>
                     </tr>
                     <tr>
-                        <td>
+                        <td class="label">
                             DataType:
                         </td>
                         <td>
-                            @variable.DataAttribute.DataType.Name
+                            @variableStruct.variable.DataAttribute.DataType.Name
                         </td>
                     </tr>
+                    <tr>
+                        <td colspan ="3">
+                            <h4>Constrains:</h4>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan ="4">
+                            <table class="constrainTable">                          
+                                @foreach (RangeConstraint c in variableStruct.rangeConstraints)
+                                {
+                                <tr>
+                                     <td title="@c.FormalDescription">
+                                        Range
+                                    </td>
+                                    <td class="negated">
+                                        <div class="container">
+                                            <div class="text">@Html.Label("invert")</div>
+                                            @Html.CheckBox("Negated", c.Negated, new {disabled = "disabled", @class = "checkBox"})
+                                        </div>
+                                    </td>
+                                    <td class="constrainValue">                                 
+                                        <div class="container">
+                                            <div class="text">@Html.Label("Min ")</div>
+                                            @Html.TextBox("min",c.Lowerbound, new {disabled = "disabled", @class = "midinput"})
+                                        </div>
+                                        <div class="container">
+                                            <div class="text include">@Html.Label("include")</div>
+                                            @Html.CheckBox("lowerInclude", c.LowerboundIncluded, new {disabled = "disabled", @class = "checkBox"})
+                                        </div>
+                                        
+                                        <div class="container">
+                                            <div class="text">@Html.Label("Max")</div>
+                                            @Html.TextBox("max",c.Upperbound, new {disabled = "disabled", @class = "midinput"})
+                                        </div>
+                                        <div class="container">
+                                            <div class="text include">@Html.Label("include")</div>
+                                            @Html.CheckBox("upperInclude", c.UpperboundIncluded, new {disabled = "disabled", @class = "checkBox"})
+                                        </div>
+                                        <div class="container" title="@c.FormalDescription">
+                                            <img src="../../../../Themes/Default/Styles/Default/infoicon.png" />
+                                        </div>
+                                    </td>
+                                    <td class="constrainDesc">
+                                        <div class="container">
+                                            <div class="text">@Html.Label("Description")</div>
+                                            @if(c.Description != null)
+                                            {
+                                                c.Description = ""; 
+                                            }
+                                            @Html.TextBox("desc", c.Description, new { disabled = "disabled" })
+                                        </div>
+                                    </td>
+                                </tr>
+                                }
+                                @foreach (PatternConstraint c in variableStruct.patternConstraints)
+                                {
+                                <tr>
+                                    <td title="@c.FormalDescription">
+                                        Pattern
+                                    </td>
+                                    <td class="negated">
+                                        <div class="container">
+                                            <div class="text">@Html.Label("invert")</div>
+                                            @Html.CheckBox("Negated", c.Negated, new {disabled = "disabled", @class = "checkBox"})
+                                        </div>
+                                    </td>
+                                    <td class="constrainValue">
+                                        <div class="container">
+                                            <div class="text">@Html.Label("RegEx Pattern: ")</div>
+                                            @Html.TextBox("pattern",c.MatchingPhrase, new {disabled = "disabled"})
+                                        </div>
+                                        <div class="container" title="@c.FormalDescription">
+                                            <img src="../../../../Themes/Default/Styles/Default/infoicon.png" />
+                                        </div>
+                                    </td>
+                                    <td class="constrainDesc">
+                                        <div class="container">
+                                            <div class="text">@Html.Label("Description")</div>
+                                            @if(c.Description != null)
+                                            {
+                                                c.Description = ""; 
+                                            }
+                                            @Html.TextBox("desc", c.Description, new { disabled = "disabled" })
+                                        </div>
+                                    </td>
+                                </tr>
+                                } 
+                                @foreach (DomainConstraint c in variableStruct.domainConstraints)
+                                {
+                                <tr>
+                                    <td title="@c.FormalDescription">
+                                        Domain
+                                    </td>
+                                    <td class="negated">
+                                        <div class="container">
+                                            <div class="text">@Html.Label("invert")</div>
+                                            @Html.CheckBox("Negated", c.Negated, new {disabled = "disabled", @class = "checkBox"})
+                                        </div>
+                                    </td>
+                                    <td class="constrainValue">
+                                        <div class="container">
+                                            <div class="text">@Html.Label("Terms: ")</div>
+                                            @if(c.Items != null)
+                                            {     
+                                                foreach(DomainItem i in c.Items)
+                                                {
+                                                    if (String.IsNullOrEmpty(i.Value))
+                                                    {
+                                                        if (terms == "")
+                                                        {
+                                                            terms = i.Key;
+                                                        }
+                                                        else
+                                                        {
+                                                            terms = terms + ", " + i.Key;
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        if (terms == "")
+                                                        {
+                                                            terms = i.Key + ", " + i.Value;
+                                                        }
+                                                        else
+                                                        {
+                                                            terms = terms + "; " + i.Key + ", " + i.Value;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            @Html.TextBox("terms",terms, new {disabled = "disabled"})
+                                        </div>
+                                        <div class="container" title="@c.FormalDescription">
+                                            <img src="../../../../Themes/Default/Styles/Default/infoicon.png" />
+                                        </div>
+                                    </td>
+                                    <td class="constrainDesc">
+                                        <div class="container">
+                                            <div class="text">@Html.Label("Description")</div>
+                                            @if(c.Description != null)
+                                            {
+                                                c.Description = ""; 
+                                            }
+                                            @Html.TextBox("desc", c.Description, new { disabled = "disabled" })
+                                        </div>
+                                    </td>
+                                </tr>
+                                }                        
+                            </table>
+                        </td>
                     <tr><td colspan="2"> </td></tr>
                 </table> 
                 <div class="submit RPMbutton">
                     <button name="create" value="create" type="submit" class="t-button"  id="saveButton" title="Save The Unit" tabindex = "5">Save</button>
-                    @Html.ActionLink("Cancel", "showDataStructure", "Home", new {SelectedItem = Model.dataStructure.Id.ToString() + "," + Model.structured.ToString() }, new { area = "RPM", @class = "t-button", @title = "Cancel", @tabindex = "6" })
+                    @Html.ActionLink("Cancel", "showDataStructure", "Home", new { SelectedItem = Model.dataStructure.Id.ToString() + "," + Model.structured.ToString() }, new { area = "RPM", @class = "t-button", @title = "Cancel", @tabindex = "6" })
                 </div>
                 }
             </div>

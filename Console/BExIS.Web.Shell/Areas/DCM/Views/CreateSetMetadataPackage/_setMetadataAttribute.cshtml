@@ -1,4 +1,5 @@
 ﻿@model MetadataAttributeModel
+@using System
 @using BExIS.Web.Shell.Areas.DCM.Models
 @using Telerik.Web.Mvc.UI
 @{
@@ -167,13 +168,13 @@
                         }
                     }
 
-                    if (!String.IsNullOrEmpty(Model.ConstraintDescription))
+                    @*if (!String.IsNullOrEmpty(Model.ConstraintDescription))
                     {
                       
-                        @*<td>
+                        <td>
                             <label title="@Model.ConstraintDescription">?</label>
-                        </td>*@
-                    }
+                        </td>
+                    }*@
                     
 
 

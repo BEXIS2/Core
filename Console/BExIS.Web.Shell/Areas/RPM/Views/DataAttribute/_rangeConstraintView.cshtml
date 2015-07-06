@@ -2,43 +2,82 @@
 
 @using BExIS.Web.Shell.Areas.RPM.Helpers;
 
-@using (Html.BeginCollectionItem("rangeConstraints"))
+@using (Html.BeginCollectionItem("RangeConstraints"))
 { 
-<div class="constraint container">
-    <table class="container">
-        <tr>
-            <td class="label">
-                    @Html.LabelFor(m=>m.Min):
-            </td>
-            <td class="textBox">
-                    @Html.TextBoxFor(m=>m.Min)
-            </td>
-            <td class="descLabel" rowspan="3">
-                <!--Description-->
-                @Html.LabelFor(m => m.Description):
-            </td>
-            <td rowspan="3" class="descArea">
-                @Html.TextAreaFor(m => m.Description)
-            </td>
-        </tr>
-        <tr>
-            <td class="label">
-                @Html.LabelFor(m=>m.Max):
-            </td>
-            <td class="textBox">
-                @Html.TextBoxFor(m=>m.Max)
-            </td>
-        </tr>
-        <tr>
-            <td class="label">
-                <!--Constrain-->
-                @Html.LabelFor(m => m.Negated):
-            </td>
-            <td>
-                <!--Negated-->
-                 @Html.CheckBoxFor(m => m.Negated)
-            </td>
-        </tr>
-    </table>
-</div>
+<table class="container constrainTable" id="rangeConstraint">
+    <tr>
+        <td class="constrainlabel">
+            Range
+            @Html.HiddenFor(m=>m.Id)
+        </td>
+        <td class="negated">
+            <!--Negated-->
+            <div class="container">
+                <div class="text">@Html.Label("invert")</div>
+                @Html.CheckBoxFor(m => m.Negated, new { @class = "checkBox",@id = "range_invert"})
+            </div>
+        </td>
+        <td class="constrainValue">
+            <div class="container">
+                <div class="text">@Html.LabelFor(m=>m.Min)</div>              
+                @Html.TextBoxFor(m=>m.Min, new { @class = "midinput", @id = "range_min"})
+            </div>
+            <div class="container">
+                <div class="text include">@Html.Label("include")</div>
+                @Html.CheckBoxFor(m => m.MinInclude, new { @class = "checkBox", @id = "range_mininclude"})
+            </div>
+            <div class="container">
+                <div class="text">@Html.LabelFor(m=>m.Max)</div>
+                @Html.TextBoxFor(m=>m.Max, new { @class = "midinput", @id = "range_max"})
+            </div>
+            <div class="container">
+                <div class="text include">@Html.Label("include")</div>
+                @Html.CheckBoxFor(m => m.MaxInclude, new { @class = "checkBox", @id = "range_maxinclude"})
+            </div>
+            <div class="container" id="range_FormalDescription" title="@Model.FormalDescription">
+                <img src="../../../../Themes/Default/Styles/Default/infoicon.png" />
+            </div>
+        </td>
+        <td class="constrainDesc">
+            <div class="container">
+                <div class="text">@Html.Label("Description")</div>
+                @Html.TextBoxFor(m => m.Description)
+            </div>
+        </td>
+    </tr>
+</table>
 }
+
+<script type="text/jscript">
+
+    $('#rangeConstraint').change(function () {
+
+        if ($('#range_invert').is(":checked")) {
+            $('#range_invert').val(true)
+        }
+        else
+        {
+            $('#range_invert').val(false)
+        }
+
+        if ($('#range_mininlude').is(":checked")) {
+            $('#range_mininlude').val(true)
+        }
+        else {
+            $('#range_mininlude').val(false)
+        }
+
+        if ($('#range_maxinlude').is(":checked")) {
+            $('#range_maxinlude').val(true)
+        }
+        else {
+            $('#range_maxinlude').val(false)
+        }
+        var variables = '?invert=' + $('#range_invert').val() + '&min=' + $('#range_min').val() + '&max=' + $('#range_max').val() + '&mininclude=' + $('#range_mininclude').val() + '&maxinclude=' + $('#range_maxinclude').val();
+
+        $.getJSON('/RPM/DataAttribute/getRangeConstraintFormalDescription/' + variables, function (data) {
+            $('#range_FormalDescription').attr("title",data);
+        });
+    })
+
+</script>

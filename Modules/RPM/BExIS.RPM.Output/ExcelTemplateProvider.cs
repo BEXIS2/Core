@@ -274,6 +274,8 @@ namespace BExIS.RPM.Output
                     };
                     rows.ElementAt(2).AppendChild(cell);
 
+
+                    
                     cellRef = columnIndex + 4;
                     cell = new Cell()
                     {
@@ -284,13 +286,18 @@ namespace BExIS.RPM.Output
                     };
                     rows.ElementAt(3).AppendChild(cell);
 
+                    // description from variable 
+                    // if not then from attribute
+                    string description = "";
+                    description = String.IsNullOrEmpty(var.Description) ? dataAttribute.Description : var.Description;
+   
                     cellRef = columnIndex + 5;
                     cell = new Cell()
                     {
                         CellReference = cellRef,
                         StyleIndex = (UInt32Value)4U,
                         DataType = CellValues.String,
-                        CellValue = new CellValue(dataAttribute.Description)
+                        CellValue = new CellValue(description)
                     };
                     rows.ElementAt(4).AppendChild(cell);
 
@@ -313,9 +320,9 @@ namespace BExIS.RPM.Output
                     
                     string unit = "";
 
-                    if (dataAttribute.Unit != null)
+                    if (var.Unit != null)
                     {
-                        unit = dataAttribute.Unit.Name;
+                        unit = var.Unit.Name;
                     }
 
                     cellRef = columnIndex + 7;
@@ -510,22 +517,28 @@ namespace BExIS.RPM.Output
             DataStructureManager DSM = new DataStructureManager();
             StructuredDataStructure dataStructure = DSM.StructuredDataStructureRepo.Get(dataStrctureId);
             string path = "";
-
-            XmlNode resources = dataStructure.TemplatePaths.FirstChild;
-
-            XmlNodeList resource = resources.ChildNodes;
-
-            foreach (XmlNode x in resource)
+            try
             {
-                path = Path.Combine(AppConfiguration.DataPath, x.Attributes.GetNamedItem("Path").Value);
-                if (File.Exists(path))
-                    File.Delete(path);
+                XmlNode resources = dataStructure.TemplatePaths.FirstChild;
+
+                XmlNodeList resource = resources.ChildNodes;
+
+                foreach (XmlNode x in resource)
+                {
+                    path = Path.Combine(AppConfiguration.DataPath, x.Attributes.GetNamedItem("Path").Value);
+                    if (File.Exists(path))
+                        File.Delete(path);
+                }
+
+                path = Path.Combine(AppConfiguration.DataPath, "DataStructures", dataStructure.Id.ToString());
+
+                if (Directory.Exists(path) && !(Directory.EnumerateFileSystemEntries(path).Any()))
+                    Directory.Delete(path);
             }
-
-            path = Path.Combine(AppConfiguration.DataPath, "DataStructures", dataStructure.Id.ToString());
-
-            if (Directory.Exists(path) && !(Directory.EnumerateFileSystemEntries(path).Any()))
-                Directory.Delete(path);
+            catch
+            { 
+            
+            }
         }
 
     }

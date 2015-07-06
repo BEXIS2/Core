@@ -49,7 +49,6 @@ namespace BExIS.Dlm.Entities.Data
         /// <remarks></remarks>
         /// <seealso cref=""/>        
         public virtual string CheckOutUser { get; set; }
-        public virtual string TestAtt1 { get; set; }
         #endregion
 
         #region Associations

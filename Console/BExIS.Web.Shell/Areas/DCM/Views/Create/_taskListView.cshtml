@@ -20,7 +20,13 @@
             mappings.For<StepInfo>(binding => binding
                 .ItemDataBound((item, stepinfo) =>
                 {
-                    item.Text = stepinfo.title;
+                    string title = stepinfo.title;
+                    if (!String.IsNullOrEmpty(stepinfo.parentTitle))
+                    {
+                        title = stepinfo.title + " / " + stepinfo.parentTitle;
+                    } 
+                    
+                    item.Text = title;
                     item.Value = stepinfo.Id.ToString();
                     item.Selected = @Model.IsCurrent(stepinfo);
                     item.Expanded = (@Model.IsCurrent(stepinfo) || @Model.IsChildCurrent(stepinfo) || stepinfo.Expand || @Model.IsChildExpand(stepinfo));

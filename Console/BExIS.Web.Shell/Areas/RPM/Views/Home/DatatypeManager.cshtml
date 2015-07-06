@@ -15,9 +15,9 @@
 
     if(dataType != null)
     {
-        if (dataType.Name != null && dataType.Name != "")
+        if (!string.IsNullOrEmpty(dataType.Name))
         {
-            windowName = "Edit " +dataType.Name;
+            windowName = "Edit Data Type: " + dataType.Name + " (Id: " + dataType.Id + ")";
         }
     }
     else

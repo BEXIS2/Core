@@ -128,7 +128,7 @@ display:none !important;
     vertical-align:bottom;
 }
 
-#createAttribute .textBox{
+#createAttribute .textBox, #createAttribute .textBox select, #createAttribute .textBox option{
     width:150px;
 }
 
@@ -195,24 +195,43 @@ display:none !important;
 
 .planingPartialDiv #DataAttributeGrid .t-numerictextbox, .planingPartialDiv #DataAttributeGrid .t-numerictextbox .t-formatted-value ,.planingPartialDiv #DataAttributeGrid .t-numerictextbox .t-input {
 width:30px !important;
-}  
+}
 
 .planingPartialDiv input {
 border-radius: 3px;
 width: 150px;
 }
 
-.planingPartialDiv .midinput {
-width: 75px;
+.planingPartialDiv .constrainlabel, .planingPartialDiv .negated {
+width: 60px;
+
 }
 
-.planingPartialDiv .smallinput {
-width: 40px;
+.planingPartialDiv .negated, .planingPartialDiv .constrainValue .include{
+text-align:center;
+align-content:center;
 }
 
-.planingPartialDiv .checkBox {
-border-radius: 3px;
-width: 15px;
+.planingPartialDiv .constrainheader, .planingPartialDiv .constrainTable .text {
+    color: gray;
+    font-size: 9px;
+}
+
+.planingPartialDiv .constrainheader, .planingPartialDiv .constrainheader td, .planingPartialDiv .constrainheader td.header {
+    border:none;
+}
+
+.planingPartialDiv .constrainValue .container {
+float:left;
+margin-right:5px;
+}
+
+.planingPartialDiv .constrainValue input {
+width:230px;
+}
+
+.planingPartialDiv .constrainTable td {
+border-top:1px solid #CCC;
 }
 
 .planingPartialDiv textarea {
@@ -250,4 +269,21 @@ max-width:50%;
 .submit {
 float:right;
 max-width:50%;
+}
+
+.planingPartialDiv .midinput, .planingPartialDiv input.midinput, .planingPartialDiv .constrainValue input.midinput{
+width: 75px;
+}
+
+.planingPartialDiv .smallinput, .planingPartialDiv input.smallinput, .planingPartialDiv .constrainValue input.smallinput {
+width: 40px;
+}
+
+.planingPartialDiv .tallinput, .planingPartialDiv input.tallinput, .planingPartialDiv .constrainValue input.tallinput {
+width: 300px;
+}
+
+.planingPartialDiv input.checkBox, .planingPartialDiv .constrainValue input.checkBox {
+border-radius: 3px;
+width: 15px;
 }

@@ -49,7 +49,7 @@
             @foreach (MetadataInstanceModel instance in Model.Instance)
             { 
                 <tr>
-                    <td>@instance.Name</td>
+                    @*<td>@instance.Name</td>*@
                     <td>@instance.Number</td>
                     @if (Model.Instance.Count > 1 && Model.Instance.Count> Model.MinCardinality)
                     {

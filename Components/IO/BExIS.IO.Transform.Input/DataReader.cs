@@ -335,7 +335,7 @@ namespace BExIS.IO.Transform.Input
                             {
                                 //new Error(ErrorType.Value, "Not in Range", new object[] { name, value, row, dataType });
                                 if (!constraint.IsSatisfied(value))
-                                    temp.Add(new Error(ErrorType.Value, constraint.FormalDescription, new object[] { sdvu.Label, value, indexOfRow, sdvu.DataAttribute.DataType.Name }));
+                                    temp.Add(new Error(ErrorType.Value, constraint.ErrorMessage, new object[] { sdvu.Label, value, indexOfRow, sdvu.DataAttribute.DataType.Name }));
                             }
                         }
 

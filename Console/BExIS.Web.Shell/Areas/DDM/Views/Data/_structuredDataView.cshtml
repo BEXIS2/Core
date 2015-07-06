@@ -19,7 +19,7 @@
     int total = 0;
     if (Session["gridTotal"] != null)
     {
-        total = (int)Session["gridTotal"];
+        total = Convert.ToInt32(Session["gridTotal"]); //  (int)Session["gridTotal"];
     }
 
     string compareValues = String.Join(",", Model.CompareValuesOfDataTypes.ToArray());
@@ -35,14 +35,18 @@
 }
 
 <div class="ShowData_Description">
-<p>Downloading primary data follows the What-You-See-Is-What-You-Get-Principle.
+    @*<p>Downloading primary data follows the What-You-See-Is-What-You-Get-Principle.
  So you are able to download a subset of the data by specifying filters on columns (e.g. Plot = 123), <br /> apply sorting, or select specific columns from the data table (right-click the column header). Paging does not effect the subset.
-</p>
+</p>*@
+    <p>To download the entire dataset choose one of the following formats.</p>
+
+    <p>Note: If you are the first one to download this dataset it may take a
+        little longer, because the file has to be created.</p>
 </div>
 
 <div id="downloadOptions">
 
-    @if (Model.DownloadAccess)
+    @if (Model.DownloadAccess && Model.Data != null && Model.Data.Rows.Count > 0)
     { 
 		   @Html.ActionLink("Download Excel", "DownloadAsExcelData", "Data", new { id = @Model.DatasetId }, new { area = "DDM", @class = "t-button margin", title = "Xlsx download" })
 
@@ -50,7 +54,7 @@
 
 		   @Html.ActionLink("Download Tab Separated", "DownloadAsTxtData", "Data", new { id = @Model.DatasetId }, new { area = "DDM", @class = "t-button margin", title = "Text download" })
 		  
-		   @Html.CheckBox("DownLoadFullDataset", new { text = "Download full dataset", @id = "fullDatasetDownload" }) @Html.Label("Download full dataset")
+		  @* @Html.CheckBox("DownLoadFullDataset", new { text = "Download full dataset", @id = "fullDatasetDownload" }) @Html.Label("Download full dataset")*@
     }
     else
     {
@@ -70,7 +74,7 @@
                class="t-button t-state-disabled margin" 
                disabled="disabled"
                >Download Tab Separated</button>
-           <input type="checkbox"  disabled="disabled" >Download full dataset</input>
+           @*<input type="checkbox"  disabled="disabled" >Download full dataset</input>*@
     }
     
 </div>

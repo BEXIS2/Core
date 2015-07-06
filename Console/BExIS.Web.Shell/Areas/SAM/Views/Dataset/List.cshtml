@@ -1,6 +1,5 @@
 ﻿@using BExIS.Dlm.Entities.Data;
-@model List<Dataset>
-
+@model System.Collections.Generic.List<Dataset>
 @{
     ViewBag.Title = "List of Datasets";
 }
@@ -9,29 +8,28 @@
     <tr>
         <td>ID</td>
         <td>Status</td>
-        <td>Actions</td>       
+        <td>Actions</td>
     </tr>
-@foreach (var item in Model)
-{
-    <tr>
-        <td>@(item.Id)</td>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@(item.Id)</td>
 
-        @if (item.Status == DatasetStatus.CheckedIn) 
-         { 
-            <td style="color: darkgreen"> @(item.Status.ToString())</td>
-            <td>@Html.ActionLink("Delete", "Delete", new {id = item.Id, area = "Sam"})  | @Html.ActionLink("Purge", "Purge", new {id = item.Id, area = "Sam"}) | @Html.ActionLink("Versions", "Versions", new {id = item.Id, area = "Sam"}) </td>
-         }
-        else if (item.Status == DatasetStatus.CheckedOut) 
-        {   
-            <td style="color: darkblue"> @(item.Status.ToString())</td>
-            <td>@Html.ActionLink("Purge", "Purge", new {id = item.Id}) | @Html.ActionLink("Versions", "Versions", new {id = item.Id, area = "Sam"}) </td>
-        }
-        else if (item.Status == DatasetStatus.Deleted) 
-        { 
-            <td style="color: red"> @(item.Status.ToString())</td>
-            <td> @Html.ActionLink("Versions", "Versions", new {id = item.Id, area = "Sam"}) </td>
-        }
-
-    </tr>    
-}
+            @if (item.Status == DatasetStatus.CheckedIn)
+            {
+                <td style="color: darkgreen">@(item.Status.ToString())</td>
+                <td>@Html.ActionLink("Delete", "Delete", new { id = item.Id, area = "Sam" })  | @Html.ActionLink("Purge", "Purge", new { id = item.Id, area = "Sam" }) | @Html.ActionLink("Versions", "Versions", new { id = item.Id, area = "Sam" }) </td>
+            }
+            else if (item.Status == DatasetStatus.CheckedOut)
+            {
+                <td style="color: darkblue">@(item.Status.ToString())</td>
+                <td>@Html.ActionLink("Purge", "Purge", new { id = item.Id }) | @Html.ActionLink("Versions", "Versions", new { id = item.Id, area = "Sam" }) </td>
+            }
+            else if (item.Status == DatasetStatus.Deleted)
+            {
+                <td style="color: red">@(item.Status.ToString())</td>
+                <td>@Html.ActionLink("Purge", "Purge", new { id = item.Id, area = "Sam" }) </td>
+            }
+        </tr>
+    }
 </table>

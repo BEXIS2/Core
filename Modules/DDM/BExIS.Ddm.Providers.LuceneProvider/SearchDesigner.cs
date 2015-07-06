@@ -255,7 +255,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider
 
         public void Reload()
         {
-            bexisIndexer.ReIndex();            
+            bexisIndexer.ReIndex();
         }
 
         public void Dispose()

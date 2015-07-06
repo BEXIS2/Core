@@ -296,7 +296,7 @@
                             { 
                                 <td class="data">@o.ToString()@Html.TextBox("varId", o.ToString(), new { @class = "hidden", @Value = o.ToString() })</td>
                                 unitStructs.Add(Model.variableStructs.Where(v => v.variable.Id.Equals(Convert.ToInt64(o))).FirstOrDefault().unitStructs);
-                                unitId.Add(Model.variableStructs.Where(v => v.variable.Id.Equals(Convert.ToInt64(o))).FirstOrDefault().variable.DataAttribute.Unit.Id);
+                                unitId.Add(Model.variableStructs.Where(v => v.variable.Id.Equals(Convert.ToInt64(o))).FirstOrDefault().variable.Unit.Id);
                             }
                             else
                             {
@@ -314,7 +314,7 @@
                             { 
                                 <td class="data">@o.ToString()@Html.TextBox("varId", o.ToString(), new { @class = "hidden", @Value = o.ToString() })</td>
                                 unitStructs.Add(Model.variableStructs.Where(v => v.variable.Id.Equals(Convert.ToInt64(o))).FirstOrDefault().unitStructs);
-                                unitId.Add(Model.variableStructs.Where(v => v.variable.Id.Equals(Convert.ToInt64(o))).FirstOrDefault().variable.DataAttribute.Unit.Id);
+                                unitId.Add(Model.variableStructs.Where(v => v.variable.Id.Equals(Convert.ToInt64(o))).FirstOrDefault().variable.Unit.Id);
                             }
                             else
                             {
