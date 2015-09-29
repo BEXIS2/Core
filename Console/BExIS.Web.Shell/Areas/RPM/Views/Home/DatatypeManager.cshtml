@@ -29,47 +29,45 @@
 @{
     ViewBag.Title = "Data Type Manager";
 }
-    <div>
-        <h2>Data Type Manager</h2>
-        
-        <p>With this interface you are able to manage (e.g. create, edit, delete) data types which are required to define units and data attributes. Data types cannot be edited or deleted once they are associated with a unit (they become locked).</p>
-    </div>
 
-<div title="Create a new Data Type">
-    @Html.ActionLink("Create Data Type", "openDataTypeWindow", "Home", new { id = 0 }, new { @class = "t-button t-add" })
+@section Information
+{
+    With this interface you are able to manage (e.g. create, edit, delete) data types which are required to define units and data attributes. Data types cannot be edited or deleted once they are associated with a unit (they become locked).
+}
+
+<div title="Create a new Data Type" class="bx-rpm-buttons">
+    @Html.ActionLink("Create Data Type", "openDataTypeWindow", "Home", new { id = 0 }, new { @class = "t-button function" })
 </div>
-    <br />
-    <br />
+
     @(Html.Telerik().Grid(Model)    
-            .Name("UnitGrid")
+            .Name("bx-rpm-dataTypeGrid")
             .Sortable()
-            .Filterable()      
-            .Scrollable(t => t.Height(450))     
+            .Filterable()           
             .Columns(columns =>
                 {
                     columns.Template(
                         @<text>
                             @if(!(item.DataContainers.Count > 0))
                             {
-                                <div class="t-button t-button-icontext t-button-bare">
-                                    @Html.ActionLink("Edit", "openDataTypeWindow", "Home", new { id = item.Id }, new { @class = "t-icon t-edit" })
-                                    @Html.ActionLink("Delete", "deletDataType", "Home", new { id = item.Id, item.Name }, new { @class = "t-icon t-delete", onclick = "return confirm('Are you sure you want to delete the Data Type " + item.Name + " ?')" })
+                                <div>
+                                    @Html.ActionLink("EDIT", "openDataTypeWindow", "Home", new { id = item.Id }, new { @class = "bx-button small" })
+                                    @Html.ActionLink("DELETE", "deletDataType", "Home", new { id = item.Id, item.Name }, new { @class = "bx-button small", onclick = "return confirm('Are you sure you want to delete the Data Type " + item.Name + " ?')" })
                                 </div>
                             }
                             else
                             {
-                                <div class="locked">locked</div>
+                                <div style="text-align:center;"><button class="bx-button small bx-disabled">locked</button></div>
                             }
                         </text>
                     ).Title("Actions")
-                        .Width(100)
+                        .Width(180)
                         .ClientTemplate(
-                            @Html.ActionLink("Edit", "openDataTypeWindow", "Home", new { id = "<#= id #>" }, new { @class = "t-icon t-edit" }).ToHtmlString() +
-                            @Html.ActionLink("Delete", "deletDataType", "Home", new { id = "<#= id #>", dataType.Name }, new { @class = "t-icon t-delete", onclick = "return confirm('Are you sure you want to delete the Data Type " + dataType.Name + " ?')" }).ToHtmlString()
+                            @Html.ActionLink("EDIT", "openDataTypeWindow", "Home", new { id = "<#= id #>" }, new { @class = "t-icon t-edit" }).ToHtmlString() +
+                            @Html.ActionLink("DELETE", "deletDataType", "Home", new { id = "<#= id #>", dataType.Name }, new { @class = "t-icon t-delete", onclick = "return confirm('Are you sure you want to delete the Data Type " + dataType.Name + " ?')" }).ToHtmlString()
                         );
-                    columns.Bound(c => c.Name).Width(150);
-                    columns.Bound(c => c.Id).Width(80);
-                    columns.Bound(c => c.SystemType).Width(150);
+                    columns.Bound(c => c.Name);
+                    columns.Bound(c => c.Id);
+                    columns.Bound(c => c.SystemType);
                     columns.Bound(c => c.Description);
                 })
     )

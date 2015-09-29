@@ -118,7 +118,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             return PartialView(model);
         }
 
-        [MeasurePerformance]
+        //[MeasurePerformance]
         public ActionResult CheckPrimaryKeys(object[] data)
         {
             TaskManager TaskManager = (TaskManager)Session["TaskManager"];

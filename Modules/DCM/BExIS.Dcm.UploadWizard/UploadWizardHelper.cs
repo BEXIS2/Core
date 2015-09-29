@@ -496,7 +496,7 @@ namespace BExIS.Dcm.UploadWizard
             /// <param name="datasetId"></param>
             /// <param name="primaryKeys"></param>
             /// <returns></returns>
-            //[MeasurePerformance]
+            ////[MeasurePerformance]
             public static Boolean IsUnique(long datasetId, List<long> primaryKeys)
             {
 
@@ -574,7 +574,7 @@ namespace BExIS.Dcm.UploadWizard
             /// <param name="datasetId"></param>
             /// <param name="primaryKeys"></param>
             /// <returns></returns>
-            //[MeasurePerformance]
+            ////[MeasurePerformance]
             public static Boolean IsUnique2(long datasetId, List<long> primaryKeys)
             {
 

@@ -30,12 +30,14 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                 return true;
         }
 
-        public ActionResult AttributeManager()
+        public ActionResult AttributeManager(DataAttributeManagerModel dataAttributeManagerModel = null)
         {
             if (Session["Window"] == null)
                 Session["Window"] = false;
-
-            return View(new DataAttributeManagerModel());
+            if(dataAttributeManagerModel == null)
+                return View(new DataAttributeManagerModel());
+            else
+                return View(dataAttributeManagerModel);
         }
 
         public ActionResult editAttribute(DataAttributeModel Model)
@@ -192,13 +194,13 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
                 Session["nameMsg"] = null;
                 Session["Window"] = true;
-                return View("AttributeManager", new DataAttributeManagerModel(id));
+                return RedirectToAction("AttributeManager", new DataAttributeManagerModel(id));
             }
             else
             {
                 Session["nameMsg"] = null;
                 Session["Window"] = true;
-                return View("AttributeManager", new DataAttributeManagerModel());
+                return RedirectToAction("AttributeManager", new DataAttributeManagerModel());
             }
         }
 

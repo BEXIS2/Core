@@ -10,6 +10,30 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Components", "Components", "{A753DD30-104E-48DB-A9D8-73C0DDE973E6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modules", "Modules", "{692AFF14-3A57-47D8-912F-093EC8F561C4}"
+	ProjectSection(SolutionItems) = preProject
+		Console\BExIS.Web.Shell\Web.config = Console\BExIS.Web.Shell\Web.config
+		Console\BExIS.Web.Shell\Web.Debug.config = Console\BExIS.Web.Shell\Web.Debug.config
+		Console\BExIS.Web.Shell\Web.Release.config = Console\BExIS.Web.Shell\Web.Release.config
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{40AC90D2-82EA-46F8-A9E6-667632E349AE}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DCM", "DCM", "{6C18F986-A56C-4366-88A4-7046E8901929}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RPM", "RPM", "{3FECE534-E021-47D1-8ABA-05A238D20A83}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EXT", "EXT", "{CD986786-CEA1-4C30-983E-169C33600BA6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XML", "XML", "{36639C81-78C6-4C77-B856-41B8291942DA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IO", "IO", "{A83D7DBD-986A-482F-A24C-EA581E3FD8F2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DDM", "DDM", "{A98E4405-1702-4F38-9EBD-AEA67D4185A6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.Security.Entities", "Components\AAA\BExIS.Security.Entities\BExIS.Security.Entities.csproj", "{C230693B-D780-438B-B26C-82257642DD5C}"
 EndProject
@@ -25,36 +49,17 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.Dlm.Services", "Compo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.Web.Shell", "Console\BExIS.Web.Shell\BExIS.Web.Shell.csproj", "{E5128814-4541-45C8-A9E6-6C91A7E3D1E2}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{40AC90D2-82EA-46F8-A9E6-667632E349AE}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\NuGet.Config = .nuget\NuGet.Config
-		.nuget\NuGet.exe = .nuget\NuGet.exe
-		.nuget\NuGet.targets = .nuget\NuGet.targets
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DCM", "DCM", "{6C18F986-A56C-4366-88A4-7046E8901929}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RPM", "RPM", "{3FECE534-E021-47D1-8ABA-05A238D20A83}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.RPM.Model", "Modules\RPM\BExIS.RPM.Model\BExIS.RPM.Model.csproj", "{063B9E3F-E0DD-43FE-9910-5B1544B8B861}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.RPM.Output", "Modules\RPM\BExIS.RPM.Output\BExIS.RPM.Output.csproj", "{ABC877E0-E3DE-4472-A199-1728E88FA5A1}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EXT", "EXT", "{CD986786-CEA1-4C30-983E-169C33600BA6}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.Ext.Services", "Components\EXT\BExIS.Ext.Services\BExIS.Ext.Services.csproj", "{B906A66A-4A09-4207-B590-655EE111CCF1}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XML", "XML", "{36639C81-78C6-4C77-B856-41B8291942DA}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IO", "IO", "{A83D7DBD-986A-482F-A24C-EA581E3FD8F2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.Dcm.CreateDatasetWizard", "Modules\DCM\BExIS.Dcm.CreateDatasetWizard\BExIS.Dcm.CreateDatasetWizard.csproj", "{93EEEDA5-6D79-41A1-947B-0A3FC9E46ABC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.Dcm.Wizard", "Modules\DCM\BExIS.Dcm.Wizard\BExIS.Dcm.Wizard.csproj", "{D17CDD9D-B87B-441B-9248-5C54E92FFC81}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.Dcm.UploadWizard", "Modules\DCM\BExIS.Dcm.UploadWizard\BExIS.Dcm.UploadWizard.csproj", "{2C846721-A221-4AE5-A671-4B86DE4D3805}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DDM", "DDM", "{A98E4405-1702-4F38-9EBD-AEA67D4185A6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.Ddm.Api", "Modules\DDM\BExIS.Ddm.Api\BExIS.Ddm.Api.csproj", "{8519EAC6-FBF8-48B3-813F-E0B9D3CC4A52}"
 EndProject
@@ -90,34 +95,34 @@ Global
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = http://bexis2.vmguest.uni-jena.de:8080/tfs/bpp
 		SccLocalPath0 = .
-		SccProjectUniqueName1 = Components\\AAA\\BExIS.Security.Entities\\BExIS.Security.Entities.csproj
+		SccProjectUniqueName1 = Console\\BExIS.Web.Shell\\BExIS.Web.Shell.csproj
 		SccProjectTopLevelParentUniqueName1 = BExIS++.sln
-		SccProjectName1 = Components/AAA/BExIS.Security.Entities
-		SccLocalPath1 = Components\\AAA\\BExIS.Security.Entities
-		SccProjectUniqueName2 = Components\\AAA\\BExIS.Security.Orm.NH\\BExIS.Security.Orm.NH.csproj
+		SccProjectName1 = Console/BExIS.Web.Shell
+		SccLocalPath1 = Console\\BExIS.Web.Shell
+		SccProjectUniqueName2 = Components\\AAA\\BExIS.Security.Entities\\BExIS.Security.Entities.csproj
 		SccProjectTopLevelParentUniqueName2 = BExIS++.sln
-		SccProjectName2 = Components/AAA/BExIS.Security.Orm.NH
-		SccLocalPath2 = Components\\AAA\\BExIS.Security.Orm.NH
-		SccProjectUniqueName3 = Components\\AAA\\BExIS.Security.Services\\BExIS.Security.Services.csproj
+		SccProjectName2 = Components/AAA/BExIS.Security.Entities
+		SccLocalPath2 = Components\\AAA\\BExIS.Security.Entities
+		SccProjectUniqueName3 = Components\\AAA\\BExIS.Security.Orm.NH\\BExIS.Security.Orm.NH.csproj
 		SccProjectTopLevelParentUniqueName3 = BExIS++.sln
-		SccProjectName3 = Components/AAA/BExIS.Security.Services
-		SccLocalPath3 = Components\\AAA\\BExIS.Security.Services
-		SccProjectUniqueName4 = Components\\DLM\\BExIS.Dlm.Entities\\BExIS.Dlm.Entities.csproj
+		SccProjectName3 = Components/AAA/BExIS.Security.Orm.NH
+		SccLocalPath3 = Components\\AAA\\BExIS.Security.Orm.NH
+		SccProjectUniqueName4 = Components\\AAA\\BExIS.Security.Services\\BExIS.Security.Services.csproj
 		SccProjectTopLevelParentUniqueName4 = BExIS++.sln
-		SccProjectName4 = Components/DLM/BExIS.Dlm.Entities
-		SccLocalPath4 = Components\\DLM\\BExIS.Dlm.Entities
-		SccProjectUniqueName5 = Components\\DLM\\BExIS.Dlm.Orm.NH\\BExIS.Dlm.Orm.NH.csproj
+		SccProjectName4 = Components/AAA/BExIS.Security.Services
+		SccLocalPath4 = Components\\AAA\\BExIS.Security.Services
+		SccProjectUniqueName5 = Components\\DLM\\BExIS.Dlm.Entities\\BExIS.Dlm.Entities.csproj
 		SccProjectTopLevelParentUniqueName5 = BExIS++.sln
-		SccProjectName5 = Components/DLM/BExIS.Dlm.Orm.NH
-		SccLocalPath5 = Components\\DLM\\BExIS.Dlm.Orm.NH
-		SccProjectUniqueName6 = Components\\DLM\\BExIS.Dlm.Services\\BExIS.Dlm.Services.csproj
+		SccProjectName5 = Components/DLM/BExIS.Dlm.Entities
+		SccLocalPath5 = Components\\DLM\\BExIS.Dlm.Entities
+		SccProjectUniqueName6 = Components\\DLM\\BExIS.Dlm.Orm.NH\\BExIS.Dlm.Orm.NH.csproj
 		SccProjectTopLevelParentUniqueName6 = BExIS++.sln
-		SccProjectName6 = Components/DLM/BExIS.Dlm.Services
-		SccLocalPath6 = Components\\DLM\\BExIS.Dlm.Services
-		SccProjectUniqueName7 = Console\\BExIS.Web.Shell\\BExIS.Web.Shell.csproj
+		SccProjectName6 = Components/DLM/BExIS.Dlm.Orm.NH
+		SccLocalPath6 = Components\\DLM\\BExIS.Dlm.Orm.NH
+		SccProjectUniqueName7 = Components\\DLM\\BExIS.Dlm.Services\\BExIS.Dlm.Services.csproj
 		SccProjectTopLevelParentUniqueName7 = BExIS++.sln
-		SccProjectName7 = Console/BExIS.Web.Shell
-		SccLocalPath7 = Console\\BExIS.Web.Shell
+		SccProjectName7 = Components/DLM/BExIS.Dlm.Services
+		SccLocalPath7 = Components\\DLM\\BExIS.Dlm.Services
 		SccProjectUniqueName8 = Modules\\RPM\\BExIS.RPM.Model\\BExIS.RPM.Model.csproj
 		SccProjectTopLevelParentUniqueName8 = BExIS++.sln
 		SccProjectName8 = Modules/RPM/BExIS.RPM.Model

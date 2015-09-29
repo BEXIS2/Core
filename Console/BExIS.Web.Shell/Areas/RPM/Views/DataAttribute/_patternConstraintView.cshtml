@@ -4,32 +4,30 @@
 
 @using (Html.BeginCollectionItem("PatternConstraints"))
 { 
-    <table class="container constrainTable" id="patternConstraint">
+    <table class="bx-rpm-container bx-rpm-constrainTable" id="patternConstraint">
         <tr>
-            <td class="constrainlabel">
+            <td class="bx-rpm-constrainlabel">
                 Pattern
                 @Html.HiddenFor(m=>m.Id)
             </td>
-            <td class="negated">
-                <div class="container">
-                    <div class="text">@Html.Label("invert")</div>
+            <td class="bx-rpm-negated">
+                <div class="bx-rpm-container">
+                    <div class="bx-rpm-text">@Html.Label("invert")</div>
                     <!--Negated-->
-                    @Html.CheckBoxFor(m => m.Negated, new { @class = "checkBox", @id = "pattern_invert"})
+                    @Html.CheckBoxFor(m => m.Negated, new { @class = "bx-rpm-checkBox", @id = "pattern_invert"})
                 </div>
             </td>
-            <td class="constrainValue">
-                <div class="container">
-                    <div class="text">@Html.LabelFor(m=>m.MatchingPhrase)</div>
-                    @Html.TextBoxFor(m=>m.MatchingPhrase, new { @id = "pattern_phrase"})
+            <td class="bx-rpm-constrainValue">
+                <div class="bx-rpm-container">
+                    <div class="bx-rpm-text">@Html.LabelFor(m=>m.MatchingPhrase)</div>
+                    @Html.TextBoxFor(m=>m.MatchingPhrase, new { @id = "pattern_phrase", @class = "bx-input" })
                 </div>
-                <div class="container" title="@Model.FormalDescription" id="pattern_FormalDescription">
-                    <img src="../../../../Themes/Default/Styles/Default/infoicon.png" />
-                </div>
+                <div class="bx-function bx-info" title="@Model.FormalDescription" id="pattern_FormalDescription"></div>
             </td>
-            <td class="constrainDesc">
-                <div class="container">
-                    <div class="text">@Html.Label("Description")</div>
-                    @Html.TextBoxFor(m => m.Description)
+            <td class="bx-rpm-constrainDesc">
+                <div class="bx-rpm-container">
+                    <div class="bx-rpm-text">@Html.Label("Description")</div>
+                    @Html.TextBoxFor(m => m.Description, new { @class = "bx-input" })
                 </div>
             </td>
         </tr>

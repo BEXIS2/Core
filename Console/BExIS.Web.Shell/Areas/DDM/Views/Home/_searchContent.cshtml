@@ -122,7 +122,9 @@
         return $('#Grid').data('tGrid');
     }
 
-    function onComplete(e) {
+    function onComplete(e)
+    {
+
         if (e.name == "watchlist") {
             var detailWindow = $("#AddTo").data("tWindow");
             var datainfo = e.response.datainfo;
@@ -142,9 +144,10 @@
     }
 
 
-    function refreshGrid() {
+    function refreshGrid()
+    {
         $(".t-grid .t-refresh").trigger('click');
+        
     }
-
 
 </script>

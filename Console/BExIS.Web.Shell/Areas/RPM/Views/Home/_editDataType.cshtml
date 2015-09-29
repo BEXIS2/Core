@@ -11,22 +11,22 @@
     {
        @(Html.TextBox("parent", @HttpContext.Current.Request.RequestContext.RouteData.Values["action"].ToString(), new {@class = "hidden"}))
        @(Html.TextBox("id", Model.Id, new {@class = "hidden"})) 
-        <table>
+        <table class="bx-rpm-info">
             <tr id="name">
                 <td>
                     Name:<Font color="red">*</Font>
                 </td>
                 <td>
-                    @(Html.TextBoxFor(m => Model.Name, new {@class = "t-input", @autofocus = "autofocus", @tabindex = 1}))
+                    @(Html.TextBoxFor(m => Model.Name, new {@class = "bx-input", @autofocus = "autofocus", @tabindex = 1}))
                 </td>
-                <td class="errorMsg">@Session["nameMsg"]</td>
+                <td class="bx-rpm-errorMsg">@Session["nameMsg"]</td>
             </tr>
             <tr>
                 <td>
                     Description:
                 </td>
                 <td>
-                    @(Html.TextBoxFor(m => Model.Description, new {@class = "t-input", @tabindex = 2}))
+                    @(Html.TextBoxFor(m => Model.Description, new {@class = "bx-input", @tabindex = 2}))
                 </td>
             </tr>
             <tr>
@@ -34,14 +34,17 @@
                     SystemType:
                 </td>
                 <td>
-                    <select class =" t-dropdown t-header t-dropdown-wrap systemType" name="systemType" id="systemType" tabindex = "3">
-                    @foreach (DataTypeInfo item in DataTypeInfo.Types)
-                    {
-                        <option value="@item.Code" title="@item.Description">@item.DisplayName</option>                  
-                    }
-                    </select>
-
-
+                    <div>
+                        <span>
+                            <select class="bx-dropdown bx-rpm-dropdown" name="systemType" id="systemType" tabindex="3">
+                                @foreach (DataTypeInfo item in DataTypeInfo.Types)
+                                {
+                                    <option value="@item.Code" title="@item.Description">@item.DisplayName</option>
+                                }
+                            </select>
+                        </span>
+                        <span class="t-arrow-down bx-rpm-dropdownArrow"/>
+                    </div>                   
                 </td>
             </tr>
             <tr>
@@ -49,12 +52,12 @@
                 <td><i id="note"></i></td>
             </tr>
         </table>
-        <div class="functions RPMbuttons">
-            <font class="RPMbuttons" color="red">*</font>Please don't leave empty
+        <div class="bx-rpm-functions bx-rpm-buttons">
+            <font color="red">*</font> Indicates required field
         </div>
-        <div class="submit RPMbuttons">
-            <button name="create" value="create" type="submit" class="t-button"  id="saveButton" title="Save The Unit" tabindex = "4">Save</button>
-            @Html.ActionLink("Cancel", "DataTypeManager", "Home", new { area = "RPM", @class = "t-button", @title = "Cancel", @tabindex = "5" })
+        <div class="bx-rpm-submit bx-rpm-buttons">
+            <button name="create" value="create" type="submit" class="t-button action"  id="saveButton" title="Save The Unit" tabindex = "4">Save</button>
+            @Html.ActionLink("Cancel", "DataTypeManager", "Home", new { area = "RPM", @class = "t-button action", @title = "Cancel", @tabindex = "5" })
         </div>     
     }
     </div>

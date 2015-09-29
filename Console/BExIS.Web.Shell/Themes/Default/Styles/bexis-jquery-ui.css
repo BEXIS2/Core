@@ -1,0 +1,21 @@
+﻿
+/**Window**/
+.ui-dialog{padding:0;border-radius:0;border-color:#666666;}
+.ui-dialog{width:600px;}
+.ui-dialog .ui-helper-clearfix{border:none;}
+.ui-dialog,
+.ui-dialog .ui-dialog-content{background-color:#ebebeb;font-size:12px;font-weight:bold;text-align:center;}
+
+.ui-widget-header{border-radius:0;border:none;background-image:none;background-color:#666666;font-size:16px;color:white;padding:0;margin:0;text-align:center;text-transform:uppercase;}
+.ui-dialog .ui-widget-header .ui-dialog-titlebar-close{border:none;background-image:none;background-color:#666666;color:white;}
+.ui-dialog .ui-widget-header .ui-icon,
+.ui-dialog .ui-widget-header .ui-button-text{display:none;}
+.ui-dialog .ui-dialog-buttonpane{padding:0;margin:0;background-image:none;background-color:#ebebeb;}
+.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset{border:none;text-align: center;width: 100%;}
+.ui-dialog .ui-dialog-buttonpane button{min-width:160px;margin-bottom:40px;}
+
+.alert{border-color:#f24c24;background-color:#ebebeb;}
+.alert .ui-widget-header{background-color:#f24c24;border-color:#f24c24;color:white;}
+.alert .ui-widget-header .ui-dialog-titlebar-close{background-color:#f24c24;}
+
+

@@ -33,7 +33,12 @@ namespace BExIS.Web.Shell.Areas.SAM.Helpers
             SecurityQuestion sq3 = securityQuestionManager.CreateSecurityQuestion("What is the name of the place your wedding reception was held?");
             SecurityQuestion sq4 = securityQuestionManager.CreateSecurityQuestion("In what city or town did you meet your spouse/partner?");
             SecurityQuestion sq5 = securityQuestionManager.CreateSecurityQuestion("What was the make and model of your first car?");
-            SecurityQuestion sq6 = securityQuestionManager.CreateSecurityQuestion("What was the name of your elementary / primary school?");
+            SecurityQuestion sq6 = securityQuestionManager.CreateSecurityQuestion("What was the name of your first teacher?");
+            SecurityQuestion sq7 = securityQuestionManager.CreateSecurityQuestion("What is the name of your best friend from childhood?");
+            SecurityQuestion sq8 = securityQuestionManager.CreateSecurityQuestion("What color was your first bycicle?");
+            SecurityQuestion sq9 = securityQuestionManager.CreateSecurityQuestion("What was the first name of your manager at your first job?");
+            SecurityQuestion sq10 = securityQuestionManager.CreateSecurityQuestion("What was the name of your first pet?");
+            SecurityQuestion sq11 = securityQuestionManager.CreateSecurityQuestion("What was the name of your elementary/primary school?");
 
             // Entities
             EntityManager entityManager = new EntityManager();

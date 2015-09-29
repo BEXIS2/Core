@@ -39,9 +39,6 @@
              .BindTo(new SelectList(Model.Values))
             .ClientEvents(events => events
             .OnChange("onChange"))
-
-
-
 )
 </div>
 <script type="text/javascript">
@@ -49,7 +46,9 @@
       
         var value = e.value;
         var node = e.currentTarget.name;
-        $("#" + e.currentTarget.name).prop("selectedIndex");
+
+        //alert(value + "," + e.currentTarget);
+        $("#" + e.currentTarget.id).prop("selectedIndex");
 
         $.post('@Url.Action("FilterByDropDown", "Home", new RouteValueDictionary { { "area", "DDM" } })', { value: value, node: node }, function (response) {
             //alert(response);

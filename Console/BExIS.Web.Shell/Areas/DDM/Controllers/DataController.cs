@@ -184,7 +184,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
         #region primary data
 
-            [MeasurePerformance]
+            //[MeasurePerformance]
             public ActionResult ShowPrimaryData(long datasetID)
             {
                 Session["Filter"] = null;
@@ -235,7 +235,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             #region server side
 
             [GridAction(EnableCustomBinding = true)]
-            [MeasurePerformance]
+            //[MeasurePerformance]
             public ActionResult _CustomPrimaryDataBinding(GridCommand command, int datasetID)
             {
 

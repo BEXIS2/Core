@@ -35,20 +35,8 @@
             .HtmlAttributes(new { @class = "result-grid" })
             .Columns(columns =>
                 {
-                    if (@Model.Columns.Count > 0)
-                    {
-                            columns.Bound("Functions").ClientTemplate(
-                            "<div class='searchResultFunctionDiv'>" +
-                                @Html.ActionLink("Details", "ShowData", "Data", new { area = "DDM", id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>" }, new { @class = "t-button", @id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>" }) +
-                             "</div>"
-                            )
-                            
-                            .Width("auto")
-                            .Groupable(false)
-                            .Sortable(false)
-                            .Filterable(false);
-
-                    }
+                    
+                    
                     for (int i = 0; i < Model.Columns.Count; i++)
                     {
                         DataColumn column = Model.Columns[i];
@@ -77,6 +65,21 @@
                         }
                     }
 
+                    if (@Model.Columns.Count > 0)
+                    {
+                        columns.Bound("").ClientTemplate(
+                        "<div class='searchResultFunctionDiv'>" +
+                            @Html.ActionLink("Details", "ShowData", "Data", new { area = "DDM", id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>" }, new { @class = "bx-button small", @id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>" }) +
+                         "</div>"
+                        )
+
+                        .Width("auto")
+                        .Groupable(false)
+                        .Sortable(false)
+                        .Filterable(false);
+
+                    }
+
                 })
 
             .ClientEvents(events => events
@@ -84,20 +87,20 @@
                         .OnLoad("refreshGrid")
                         .OnSubmitChanges("refreshGrid")
                         .OnRowDataBound("resultGrid_OnRowDataBound")
-                       )
+                        .OnDataBound("onDataBound")
+                        )
             .Pageable(paging =>
                 paging
-                    .Style(pagerStyles)
-                    .PageSize(PageSize)
-                    .Position(GridPagerPosition.Both)
-                    .PageTo(CurrentPage)
+                        .Style(pagerStyles)
+                        .PageSize(PageSize)
+                    .Position(GridPagerPosition.Bottom)
+                        .PageTo(CurrentPage)
                     )
 
             .Sortable()
             .Filterable()
             .ColumnContextMenu()
             .Groupable()
-            .Scrollable()
 
 )
 
@@ -107,6 +110,7 @@
     $('document').ready(function () {
 
         $('.t-filter').attr("title", "Filter");
+
     })
 
 	function resultGrid_OnRowDataBound(e) {
@@ -121,7 +125,15 @@
 				obj[i].textContent = jQuery.trim(obj[i].textContent).substring(0, 35).trim(this) + "...";
 			}
 		});
+
 	}
+
+
+	function onDataBound()
+	{
+	    resetAllTelerikIconTitles();
+	}
+
 
 </script>
 
@@ -135,9 +147,15 @@
 		/*overflow:auto;*/
 	}
 
-    #resultGrid .t-status
+    #resultGrid .t-status,
+    #resultGrid .t-status-text
     {
        display:none;
+    }
+
+    #resultGrid .searchResultFunctionDiv
+    {
+        text-align:right;
     }
 
 </style>

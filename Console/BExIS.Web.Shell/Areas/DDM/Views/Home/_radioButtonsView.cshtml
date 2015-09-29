@@ -20,23 +20,23 @@
     {
         if (value == itemValue.ToString())
         {
-             <input type="radio" 
-                 id="@Model.DataSourceKey" 
-                 name="@Model.DataSourceKey" 
-                 runat="server"
-                 onclick="confirmSubmit(this)"
-                 checked="True"
-                 value = "@itemValue.ToString()" >@itemValue.ToString()</input>
+            <input type="radio"
+                   id="@Model.DataSourceKey"
+                   name="@Model.DataSourceKey"
+                   runat="server"
+                   onclick="confirmSubmit(this)"
+                   checked="True"
+                   value="@itemValue.ToString()"/>@itemValue.ToString()
         }
         else
         {
-             <input type="radio" 
-                 id="@Model.DataSourceKey" 
-                 name="@Model.DataSourceKey" 
-                 runat="server"
-                 onclick="confirmSubmit(this)"
-                
-                 value = "@itemValue.ToString()" >@itemValue.ToString()</input>
+            <input type="radio"
+                   id="@Model.DataSourceKey"
+                   name="@Model.DataSourceKey"
+                   runat="server"
+                   onclick="confirmSubmit(this)"
+
+                   value="@itemValue.ToString()"/>@itemValue.ToString()
         }
 
     }

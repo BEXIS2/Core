@@ -39,28 +39,28 @@
 .searchHeader
 {
 
-    width:100%;
+    /*width:100%;
     min-width:730px;
     height:70px;
     border-bottom-style:inset;
-    border-bottom-width:1px;
+    border-bottom-width:1px;*/
     
 }
 
 
 #search_Components
 {
-    display:inline;
+    /*display:inline;
     position:absolute;
     left:15%;
     top:20px;
-    height:40px;
+    height:40px;*/
 }
 
 #search_Components #search_TypeDiv
 {
-    display: block;
-    position: relative;
+    /*display: block;
+    position: relative;*/
 }
 
 #search_Components .search_Filter
@@ -87,11 +87,6 @@
 {
     border:none;
     padding:2px;
-
-}
-
-#search_Components table
-{
 
 }
 

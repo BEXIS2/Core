@@ -134,7 +134,7 @@ namespace BExIS.Dlm.Services.Data
         /// <param name="researchPlan">A valid and persisted research plan entity.</param>
         /// <param name="metadataStructure">A valid and persisted metadata structure entity.</param>
         /// <returns>A dataset associated to the <paramref name="dataStructure"/>, <paramref name="researchPlan"/>, and <paramref name="metadataStructure"/> entities.</returns>
-        [MeasurePerformance]
+        //[MeasurePerformance]
         public Dataset CreateEmptyDataset(Entities.DataStructure.DataStructure dataStructure, ResearchPlan researchPlan, MDS.MetadataStructure metadataStructure)
         {
             Contract.Requires(dataStructure != null && dataStructure.Id >= 0);
@@ -194,7 +194,7 @@ namespace BExIS.Dlm.Services.Data
         /// </summary>
         /// <param name="datasetId">The identifier of the dataset</param>
         /// <returns>True if the dataset is checked out, False otherwise</returns>
-        [Diagnose]
+        //[Diagnose]
         public bool CheckOutDataset(Int64 datasetId, string userName)
         {
             return(checkOutDataset(datasetId, userName, DateTime.UtcNow));
@@ -220,7 +220,7 @@ namespace BExIS.Dlm.Services.Data
         /// <param name="timestamp">The timestamp of the migrated dataset.</param>
         /// <remarks>The timestamp MUST be greater than the timestamp of the current checked in version, if exist.</remarks>
         /// <returns></returns>
-        [Diagnose]
+        //[Diagnose]
         public bool CheckOutDataset(Int64 datasetId, string userName, DateTime timestamp)
         {
             return (checkOutDataset(datasetId, userName, timestamp));
@@ -235,7 +235,7 @@ namespace BExIS.Dlm.Services.Data
         /// <param name="userName">The username that performs the check-in, which should be the same as the check-out username</param>
         /// <remarks>Does not support simultaneous check-ins</remarks>
         
-        [Diagnose]
+        //[Diagnose]
         public void CheckInDataset(Int64 datasetId, string comment, string userName)
         {
             checkInDataset(datasetId, comment, userName, false);
@@ -412,7 +412,7 @@ namespace BExIS.Dlm.Services.Data
         /// <param name="pageSize"></param>
         /// <returns>A list containing one page of maximum length of <paramref name="pageSize"/> from the effective tuples of the <paramref name="datasetVersion"/>.</returns>
         /// <remarks>The actual returned tuples depend on the status of the dataset and whether the requested version is the latest.</remarks>
-        [MeasurePerformance]
+        //[MeasurePerformance]
         public List<AbstractTuple> GetDatasetVersionEffectiveTuples(DatasetVersion datasetVersion, int pageNumber, int pageSize)
         {
             return getDatasetVersionEffectiveTuples(datasetVersion, pageNumber, pageSize);
@@ -984,7 +984,7 @@ namespace BExIS.Dlm.Services.Data
             return (tuplesCount);
         }
 
-        [MeasurePerformance]
+        //[MeasurePerformance]
         private DatasetVersion editDatasetVersion(DatasetVersion workingCopyDatasetVersion, ICollection<DataTuple> createdTuples, ICollection<DataTuple> editedTuples, ICollection<DataTuple> deletedTuples, ICollection<DataTuple> unchangedTuples)
         {
             Contract.Requires(workingCopyDatasetVersion.Dataset != null && workingCopyDatasetVersion.Dataset.Id >= 0);
@@ -1637,13 +1637,13 @@ namespace BExIS.Dlm.Services.Data
         }
 
 #if DEBUG
-        [Diagnose]
+        //[Diagnose]
         private void measureVersionSize(int currentTuples, int tobeAdded, int tobeDelected, int tobeEdited)
         {
             // do nothing, this is a performance counting point, which is automatically recorded in the debug mode.
         }
 
-        [Diagnose]
+        //[Diagnose]
         private void measureTupleSize(int p1, string p2)
         {
             // do nothing, 

@@ -1,153 +1,146 @@
-﻿@using Telerik.Web.Mvc.UI;
-@(Html.Telerik().Menu()
-		.Name("menu")
-			.SecurityTrimming(false)
-			.ClientEvents(events => events.OnSelect("onSelect"))
-			.Items(menu =>
-			{
-				menu.Add().Text("Home").Action("Index", "Home", new { area = "" });
-				menu.Add().Text("Search").Action("Index", "Home", new { area = "DDM" })
-					.Items(item =>
-					{
-						//item.Add().Text("Faceted Search").Action("Index", "Home", new { area = "Search" });
-						
-					}
-					);
-				menu.Add().Text("Plan")
-					.Items(item =>
-					{
-						item.Add().Text("Data Structure Manager").Action("DataStructureDesigner", "Home", new { area = "RPM" });
-						item.Add().Text("Data Attribute Manager").Action("AttributeManager", "DataAttribute", new { area = "RPM" });
-						item.Add().Text("Unit Manager").Action("UnitManager", "Unit", new { area = "RPM" });
-                        item.Add().Text("Data Type Manager").Action("DataTypeManager", "Home", new { area = "RPM" });
-					}
-					);
-				menu.Add().Text("Collect")
-					.Items(item =>
-					{
-                        item.Add().Text("Create a dataset").Action("CreateDataset", "Create", new { area = "DCM" });
-                        item.Add().Text("Upload data to a dataset").Action("Index", "Submit", new { area = "DCM" });
-                        item.Add().Text("Push big files to server").Action("Index", "Push", new { area = "DCM" });
-					}
-					);
-				menu.Add().Text("Administration")
-					.Items(item =>
-					{
-                        item.Add().Text("Authorization").Items(subitem =>
-                        {
-                            subitem.Add().Text("Users").Action("Users", "Users", new { area = "SAM" });
-                            subitem.Add().Text("Groups").Action("Groups", "Groups", new { area = "SAM" });
-                            subitem.Add().Text("Features").Action("Features", "FeaturePermissions", new { area = "SAM" });
-                            subitem.Add().Text("Datasets").Action("Data", "DataPermissions", new { area = "SAM" });
-                        });
-                        item.Add().Text("Data Discovery").Items(subitem =>
-                        {
-                            subitem.Add().Text("Search Manager").Action("SearchDesigner", "Admin", new { area = "DDM" });
-                        });
-                        item.Add().Text("Data Collection").Items(subitem =>
-                        {
-                            subitem.Add().Text("Import a metadata structure").Action("ImportMetadataStructureWizard", "ImportMetadataStructure", new { area = "DCM" });
-                        }
-                        );
-                            
-                        item.Add().Text("Data Dissemination").Items(subitem =>
-                        {
-                            subitem.Add().Text("Metadata Export").Action("Index", "Admin", new { area = "DIM" });
-                        });
+﻿@using System
+@using Telerik.Web.Mvc.UI
 
-                        item.Add().Text("Maintenance").Action("Index", "Dataset", new { area = "SAM" });
-					}
-				);
-                
-                menu.Add().Text("Help")
-                    .Items(item =>
-                    {
-                        item.Add().Text("Search").Action("Index", "Help", new { area = "DDM" });
-                        item.Add().Text("Data Planning").Action("Index", "Help", new { area = "RPM" });
-                        item.Add().Text("Data Collection").Action("Index", "Help", new { area = "DCM" });
-                        item.Add().Text("Data Dissemination").Action("Index", "Help", new { area = "DIM" });
-                        item.Add().Text("Administration").Action("Index", "Help", new { area = "SAM" });
-                    }
-                );
+<div class="navbar navbar-default navbar-fixed-top" style="z-index: 1337">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" data-target="#navbarCollapse" data-toggle="collapse" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="@Url.Action("Index", "Home", new {area = ""})" class="navbar-brand">
+                <img alt="BExIS" style="max-width: 40px; margin-top: -10px;" src="~/Content/Images/Bildmarke_BEXIS_cmyk.svg">
+            </a>
+        </div>
+        <div id="navbarCollapse" class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li>@Html.ActionLink("Search", "Index", "Home", new {area = "DDM"}, null)</li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Plan<span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li>@Html.ActionLink("Data Structure Designer", "DataStructureDesigner", "Home", new {area = "RPM"}, null)</li>
+                        <li>@Html.ActionLink("Data Attribute Designer", "AttributeManager", "DataAttribute", new {area = "RPM"}, null)</li>
+                        <li>@Html.ActionLink("Unit Manager", "UnitManager", "Unit", new {area = "RPM"}, null)</li>
+                        <li>@Html.ActionLink("Data Type Manager", "DataTypeManager", "Home", new {area = "RPM"}, null)</li>
 
-				
-				//menu.Add().Text("Assure").Action("Index", "Home", new { area = "Search" })
-				//    .Items(item =>
-				//    {
-				//        item.Add().Text("Validate data").Action("Index", "Home", new { area = "Search" });
-				//        item.Add().Text("Correct data").Action("Index", "Home", new { area = "Search" });
-				//    }
-				//    );
-				
-				//menu.Add().Text("Analyse").Action("Index", "Home", new { area = "Search" }).Visible(HttpContext.Current.User.IsInRole("Member"))
-				//    .Items(item =>
-				//    {
-				//        item.Add().Text("Calculate aggregated functions").Action("Index", "Home", new { area = "Search" });//.Visible(HttpContext.Current.User.IsInRole("Member"));
-				//    }
-				//    );
-				
-				//menu.Add().Text("Integrate").Action("Index", "Home", new { area = "Search" });//.Visible(HttpContext.Current.User.IsInRole("Member"))
-				//    .Items(item =>
-				//    {
-				//        item.Add().Text("Configure an inbound integration").Action("Index", "Home", new { area = "Search" });
-				//        item.Add().Text("Configure an outbound integration").Action("Index", "Home", new { area = "Search" });
-				//        item.Add().Text("Export a dataset").Action("Index", "Home", new { area = "Search" });
-				//        item.Add().Text("Merge datasets").Action("Index", "Home", new { area = "Search" });
-				//    }
-				//    );
-				
-				//menu.Add().Text("Publish").Action("Index", "Home", new { area = "Search" })
-				//    .Items(item =>
-				//    {
-				//        item.Add().Text("Publish metadata").Action("Index", "Home", new { area = "Search" }).Visible(HttpContext.Current.User.IsInRole("Member"));
-				//        item.Add().Text("Publish a dataset").Action("Index", "Home", new { area = "Search" }).Visible(HttpContext.Current.User.IsInRole("Admins"));
-				//        item.Add().Text("Package a dataset").Action("Index", "Home", new { area = "Search" }).Visible(HttpContext.Current.User.IsInRole("Admins"));
-				//    }
-				//    );
-				
-				//menu.Add().Text("System").Action("Index", "Home", new { area = "Search" }).Visible(HttpContext.Current.User.IsInRole("Admins"))
-				//    .Items(item =>
-				//        {
-				//            item.Add().Text("System Information").Action("Index", "Home", new { area = "Search" }).Visible(HttpContext.Current.User.IsInRole("Admins"));
-				//            item.Add().Text("Manage modules").Action("Index", "Home", new { area = "Search" }).Visible(HttpContext.Current.User.IsInRole("Admins")); // security trimming trick
-				//            item.Add().Text("Configure").Action("Index", "Home", new { area = "Search" }).Visible(HttpContext.Current.User.IsInRole("Admins")); // security trimming trick
-				//            item.Add().Text("Update").Action("Index", "Home", new { area = "Search" }).Visible(HttpContext.Current.User.IsInRole("Admins"));
-				//            item.Add().Text("Security Settings").Action("Index", "Home", new { area = "Search" }).Visible(HttpContext.Current.User.IsInRole("Admins")); // security trimming trick
-				//            item.Add().Text("Report a bug").Action("Index", "Home", new { area = "Search" }).Visible(HttpContext.Current.User.IsInRole("Admins"));
-				//            item.Add().Text("Help").Action("ServerTime2", "Utils", new { area = "System" }).HtmlAttributes(new { ContentPlaceHolder = "RightPaneDiv", InsertType = "Replace" }).Visible(HttpContext.Current.User.IsInRole("Admins")); // Before, After, Replace
-				//            item.Add().Text("About").Action("About", "Home", new { area = "" }).Visible(HttpContext.Current.User.IsInRole("Admins"));
-				//        }
-				//    );                                
-			}
-	)
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Collect<span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li>@Html.ActionLink("Create Dataset", "CreateDataset", "Create", new {area = "DCM"}, null)</li>
+                        <li>@Html.ActionLink("Upload Data", "Index", "Submit", new {area = "DCM"}, null)</li>
+                        <li>@Html.ActionLink("Push Big File", "Index", "Push", new {area = "DCM"}, null)</li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Administration<span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li>@Html.ActionLink("Users", "Users", "Users", new {area = "SAM"}, null)</li>
+                        <li>@Html.ActionLink("Groups", "Groups", "Groups", new {area = "SAM"}, null)</li>
+                        <li>@Html.ActionLink("Features", "Features", "FeaturePermissions", new {area = "SAM"}, null)</li>
+                        <li>@Html.ActionLink("Data", "Data", "DataPermissions", new {area = "SAM"}, null)</li>
+                        <li role="separator" class="divider"></li>
+                        <li>@Html.ActionLink("Search Manager", "SearchDesigner", "Admin", new {area = "DDM"}, null)</li>
+                        <li role="separator" class="divider"></li>
+                        <li>@Html.ActionLink("Metadata Structure Import", "ImportMetadataStructureWizard", "ImportMetadataStructure", new {area = "DCM"}, null)</li>
+                        <li role="separator" class="divider"></li>
+                        <li>@Html.ActionLink("Metadata Export", "Index", "Admin", new {area = "DIM"}, null)</li>
+                        <li role="separator" class="divider"></li>
+                        <li>@Html.ActionLink("Maintenance", "Index", "Dataset", new {area = "SAM"}, null)</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                @if (Request.IsAuthenticated)
+                {
+                    <li><a>Welcome <strong>@User.Identity.Name</strong></a></li>
+                    <li>@Html.ActionLink("Log Off", "LogOff", "Account", new {area = "SAM"}, null)</li>
+                }
+                else
+                {
+                    <li><a href="#" onclick="LogOn()">LogOn</a></li>
+                }
+
+                <li><a href="#"><i class="fa fa-cog"></i></a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="container-fluid">
+    
+    </div>
+</div>
+
+@(Html.Telerik().Window()
+    .Name("Window_Register")
+    .Title("Register")
+    .Draggable(true)
+    .Modal(true)
+    .Visible(false)
+    .Scrollable(true)
+    .ContentHtmlAttributes(new { @style = "overflow:auto; width:auto; height:auto; min-height:225px; min-width:400px" })
+    .Content(@<text>
+        <div id="Content_Register"></div>
+    </text>)
+    .ClientEvents(clientEvents => clientEvents
+        .OnClose("Window_Register_OnClose")
+    )
 )
 
-<script language="javascript" type="text/javascript">
-    function onSelect(e) {
+@(Html.Telerik().Window()
+    .Name("Window_LogOn")
+    .Title("LogOn")
+    .Draggable(true)
+    .Modal(true)
+    .Visible(false)
+    .Scrollable(true)
+    .ContentHtmlAttributes(new { @style = "overflow:auto; width:auto; height:auto; min-height:225px; min-width:400px" })
+    .Content(@<text>
+        <div id="Content_LogOn"></div>
+    </text>)
+    .ClientEvents(clientEvents => clientEvents
+        .OnClose("Window_LogOn_OnClose")
+    )
+)
 
-		var placeholder = $(e.item).attr('contentplaceholder');
-		//alert(placeholder);
-		if (placeholder != null) {
-		    if (placeholder.length > 0) {
-		        var url = $(e.item).find("> a").attr('href');
-		        if (url) {
-		            //prevent the navigation if the item url is specified
-		            // and make the request with jQuery
-		            e.preventDefault();
-		            $.ajax({
-		                url: url,
-		                success: function (result) {
-		                    var inseretType = $(e.item).attr('inserttype');
-		                    if (inseretType == "Before")
-		                        $("#" + placeholder).prepend(result);
-		                    else if (inseretType == "After")
-		                        $("#" + placeholder).append(result);
-		                    else if (inseretType == "Replace")
-		                        $("#" + placeholder).html(result);
-		                }
-		            })
-		        }
-		    }
-		}
-	}
+<script type="text/javascript">
+
+    function Register() {
+        $.get('@Url.Action("Register", "Account", new { area = "SAM" })', function (data) {
+
+            $('#Content_Register').html(data);
+
+            var window = $('#Window_Register').data('tWindow');
+            window.center().open();
+        });
+    }
+
+    function Window_Register_Cancel() {
+        $('#Window_Register').data('tWindow').close();
+    }
+
+    function Window_Register_OnClose() {
+        $('#Content_Register').empty();
+    }
+
+    function LogOn() {
+        $.get('@Url.Action("LogOn", "Account", new { area = "SAM" })', function (data) {
+
+            $('#Content_LogOn').html(data);
+
+            var window = $('#Window_LogOn').data('tWindow');
+            window.center().open();
+        });
+    }
+
+    function Window_LogOn_Cancel() {
+        $('#Window_LogOn').data('tWindow').close();
+    }
+
+    function Window_LogOn_OnClose() {
+        $('#Content_LogOn').empty();
+    }
 </script>

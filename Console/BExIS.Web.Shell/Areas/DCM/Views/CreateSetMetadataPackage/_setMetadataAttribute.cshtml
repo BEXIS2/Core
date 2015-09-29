@@ -2,23 +2,23 @@
 @using System
 @using BExIS.Web.Shell.Areas.DCM.Models
 @using Telerik.Web.Mvc.UI
+
 @{
-    string id = @Model.Id + "_" + @Model.Parent.Id + "_" + @Model.Number + "_" + @Model.ParentModelNumber + "_" + @Model.NumberOfSourceInPackage;
+    string id = Model.Id + "_" + Model.Parent.Id + "_" + Model.Number + "_" + Model.ParentModelNumber + "_" + Model.NumberOfSourceInPackage;
     string idInput = id + "_Input";
     string idAdd = id + "_Add";
     string idRemove = id + "_Remove";
     string idUp = id + "_Up";
     string idDown = id + "_Down";
 
-
-    string displayName = @Model.DisplayName;
+    string displayName = Model.DisplayName;
     DateTime defaultDate = DateTime.Today;
 
-    if (@Model.Number > 1) { displayName += " " + @Model.Number; }
-     
- }
-
-
+    if (Model.Number > 1)
+    {
+        displayName += " " + Model.Number;
+    }
+}
 
 <tr id="@id" class="metadataAttributeContent">
 
@@ -44,11 +44,11 @@
                             {
                                 if (Model.DomainList.Count == 0)
                                 {
-                                    @Html.TextAreaFor(m => m.Value, new { OnChange = "OnChange(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @Model.Parent.Label, @class = "ValueClass" })
+                                    @Html.TextAreaFor(m => m.Value, new { OnChange = "OnChange(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @Model.Parent.Label, @class = "ValueClass bx-input" })
                                 }
                                 else
                                 {
-                                    @Html.DropDownListFor(m => m.Value, new SelectList(Model.DomainList),"Select, please", new { OnChange = "OnChange(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @Model.Parent.Label, @class = "ValueClass" })
+                                    @Html.DropDownListFor(m => m.Value, new SelectList(Model.DomainList),"Select, please", new { OnChange = "OnChange(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @Model.Parent.Label, @class = "ValueClass  bx-dropdown" })
                                 }
 
                             }
@@ -57,11 +57,11 @@
                             {
                                 if (Model.DomainList.Count == 0)
                                 { 
-                                    @Html.TextBoxFor(m => m.Value, new { OnChange = "OnChange(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @Model.Parent.Label, @class = "ValueClass" })
+                                    @Html.TextBoxFor(m => m.Value, new { OnChange = "OnChange(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @Model.Parent.Label, @class = "ValueClass bx-input" })
                                 }
                                 else
                                 {
-                                    @Html.DropDownListFor(m => m.Value, new SelectList(Model.DomainList), "Select, please", new { OnChange = "OnChange(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @Model.Parent.Label, @class = "ValueClass" })
+                                    @Html.DropDownListFor(m => m.Value, new SelectList(Model.DomainList), "Select, please", new { OnChange = "OnChange(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @Model.Parent.Label, @class = "ValueClass bx-input" })
                                 }
                             }
                         }
@@ -106,7 +106,7 @@
                                               .HtmlAttributes(new { PackageId = @Model.Parent.Id, Title = @Model.Parent.Label, @class = "ValueNumberClass"})
                                               )*@
                             
-                           @Html.TextBoxFor(m => m.Value, new { OnChange = "OnChange(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @Model.Parent.Label, @class = "ValueClass" })
+                           @Html.TextBoxFor(m => m.Value, new { OnChange = "OnChange(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @Model.Parent.Label, @class = "ValueClass bx-input" })
 
                         }
 
@@ -132,9 +132,7 @@
                                 .Value(value)
                                 .ClientEvents(events => events
                                     .OnChange("OnChangeDatePicker"))
-
                             )
-
                         }
 
                     </td>
@@ -188,6 +186,12 @@
 
 <script type="text/javascript">
    
+    $(document).ready(function ()
+    {
+        resetAllTelerikIconTitles();
+    });
+
+
     function OnChange(e)
     {
         var substr = e.id.split('_');

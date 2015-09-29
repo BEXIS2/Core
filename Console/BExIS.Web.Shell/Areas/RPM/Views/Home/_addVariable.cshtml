@@ -28,7 +28,7 @@ else
         @using (Html.BeginForm("AddVariables", "Home", new { area = "RPM" }))
         {
             @(Html.Telerik().Grid(Model.dataAttributeList)
-            .Name("DataAttributeGrid")
+            .Name("bx-rpm-dataAttributeGrid")
             .Sortable()
             .Filterable()
             .Scrollable(t => t.Height(450))
@@ -58,7 +58,7 @@ else
                         </text>)
                     .Title("")
                     .Width(50)
-                    .HtmlAttributes(new { style = "text-align:center" });
+                    .HtmlAttributes(new { style = "text-align:center; padding:0px;" });
                     
 
                 //columns.Command(commands => commands.Select()).Title("Select");
@@ -75,9 +75,9 @@ else
 
             })
             )
-            <div class="submit RPMbuttons">
-            <button name="addVariables" value="add" type="submit" class="t-button"  id="saveButton" title="Save The Unit" tabindex = "1">Save</button>
-            @Html.ActionLink("Cancel", "showDataStructure", "Home", new { SelectedItem = Model.dataStructure.Id + "," + Model.structured }, new { area = "RPM", @class = "t-button", @title = "Cancel", @tabindex = "2", @autofocus = "autofocus" })
+            <div class="bx-rpm-submit bx-rpm-buttons">
+            <button name="addVariables" value="add" type="submit" class="t-button action"  id="saveButton" title="Save The Unit" tabindex = "1">Save</button>
+            @Html.ActionLink("Cancel", "showDataStructure", "Home", new { SelectedItem = Model.dataStructure.Id + "," + Model.structured }, new { area = "RPM", @class = "t-button action", @title = "Cancel", @tabindex = "2", @autofocus = "autofocus" })
         </div>
         }
     </div>

@@ -1,9 +1,9 @@
 ﻿/*partial Views*/
-.planingPartialDiv .constraint .addDomainItem{
+ .bx-rpm-constraint .bx-rpm-addDomainItem{
     float:left;
 }
 
-.planingPartialDiv .constraint .domainItems{
+ .bx-rpm-constraint .bx-rpm-domainItems{
     float:right;
 }
 
@@ -11,30 +11,30 @@
 display:none !important;
 }
 
-.function td, .locked td {
+.bx-rpm-function td, .bx-rpm-locked td {
     text-align:center;
 }
 
-.planingPartialDiv .tdRight
+ .bx-rpm-tdRight
 {
     text-align:right;
 }
 
-.planingPartialDiv .checkbox
+ .bx-rpm-checkbox
 {
     width:13px !important;
 }
 
-.constraints
+.bx-rpm-constraints
 {
     display:none;
 }
 
-.planingPartialDiv option{
+ option{
     background-color : white;
 }
 
-.errorMsg {
+.bx-rpm-errorMsg {
     padding:5px;
     vertical-align:top;
     color:red;
@@ -43,7 +43,7 @@ display:none !important;
     max-height:100px;
     max-width:700px;
 }
-.errorMsg ul, .errorMsg li{
+.bx-rpm-errorMsg ul, .bx-rpm-errorMsg li{
     padding:0px;
 }
 
@@ -52,27 +52,36 @@ display:none !important;
     margin:0px;
 }
 
-.RPMbuttons {
+.bx-rpm-buttons {
     margin-top : 10px;
+    margin-bottom:10px;
 }
 
-.RPMbuttons .t-button {
-    margin-bottom:5px;
+.bx-rpm-buttons .t-button { 
     margin-left:2px;
     margin-right:2px;
 }
 
+.bx-rpm-info {
+padding-left:10px;
+}
+
+.bx-rpm-info table,.bx-rpm-info tr,.bx-rpm-info td {
+border:none;
+}
+
 #DataStructureGrid{
     overflow-x:auto;
-    border-radius: 3px;
+    /*border-radius: 3px;*/
 }
 
 #DataStructureGrid table {
     width :100%;
+    margin:24px 0px 10px 0px;
 }
 
 #DataStructureGrid td {
-    min-width : 100px;
+    min-width : 140px;
     max-width : 300px;
     padding:3px;
     vertical-align:middle;
@@ -80,60 +89,18 @@ display:none !important;
 
 #DataStructureGrid .data {
     width : auto;
-    border-style:solid;
 }
 
 #DataStructureGrid .head {
    text-align: left;
    width:100px;
-   color:black;
-   border-style:solid;
-   background-color:lightgray;
-   border-color:gray;
-   border-left:none;
-   border-top-color:lightgray;  
-}
-#createAttribute textarea, #createVariable textarea{
-    width:150px;
-    min-width:150px;
-    max-width: 300px;
-}
-
-#createAttribute .descLabel, #createVariable .descLabel{
-    width:71px;  
-}
-
-#createAttribute .label, #createVariable .label{
-    width:113px;
-}
-
-.container{
-    vertical-align:text-top;
-    vertical-align:top;
-    margin:0;
-    padding:0;
-}
-
-#createAttribute .descArea, #createAttribute .descLabel, #createVariable .descArea, #createVariable .descLabel{
-    vertical-align:text-top;
-    vertical-align:top; 
-}
-
-#createAttribute .domain{
-    width:263px;
-}
-
-#createAttribute .add{
-    vertical-align:text-bottom;
-    vertical-align:bottom;
-}
-
-#createAttribute .textBox, #createAttribute .textBox select, #createAttribute .textBox option{
-    width:150px;
+   color:#ffffff;
+   background-color:#B4B4B4;
+   border-color:#666666;
+   font-weight:bold;
 }
 
 #DataStructureGrid input, #DataStructureGrid textarea {
-    border-radius: 3px;
     min-width:90px;  
 }
 #DataStructureGrid input {
@@ -144,32 +111,9 @@ display:none !important;
     max-width:290px;
     width:95%;
 }
-.unit .t-grid-header th {
-    border: none;
-}
 
-.unit table {
-    margin: 0px;
-    padding: 0px;
-    width: 290px;
-    height: 190px;
-}
-
-.unit {
-    width: 300px;
-    height: 200px;
-}
-
-#createDataType {
-    width:400px;
-}
-
-#createDataType table, #createDataType form{
-    width:100%;
-}
-
-#createDataType td{
-    width:33%;
+#DataStructureGrid .t-icon {
+    margin: 0px 2px 0px 2px;
 }
 
 .locked {
@@ -177,113 +121,127 @@ display:none !important;
     text-align: center;
 }
 
-.planingPartialDiv table, .planingPartialDiv tr {
+table, tr {
     width:100%;
   
 }
 
-.planingPartialDiv table, .planingPartialDiv tr, .planingPartialDiv td {
-    border-style: none;
-    
-}
-
-.planingPartialDiv #DataTypeGrid, .planingPartialDiv #DatasetGrid, .planingPartialDiv #DataAttributeGrid{
+#bx-rpm-dataAttributeGrid, #bx-rpm-selectDataTypeGrid{
     margin: 0px;
     padding: 0px;
-    width: 800px;
+    width:1000px
 }
 
-.planingPartialDiv #DataAttributeGrid .t-numerictextbox, .planingPartialDiv #DataAttributeGrid .t-numerictextbox .t-formatted-value ,.planingPartialDiv #DataAttributeGrid .t-numerictextbox .t-input {
-width:30px !important;
+#bx-rpm-dataAttributeGrid .t-grid-content .t-numerictextbox .t-input{
+    width:40px !important;
+    text-align:left;
 }
 
-.planingPartialDiv input {
+#bx-rpm-dataAttributeGrid .t-grid-content, #bx-rpm-selectDataTypeGrid .t-grid-content{
+    overflow-y:scroll;
+}
+
+/* input {
 border-radius: 3px;
 width: 150px;
-}
+}*/
 
-.planingPartialDiv .constrainlabel, .planingPartialDiv .negated {
+ .bx-rpm-constrainlabel,  .bx-rpm-negated {
 width: 60px;
 
 }
 
-.planingPartialDiv .negated, .planingPartialDiv .constrainValue .include{
-text-align:center;
-align-content:center;
+ .bx-rpm-negated,  .bx-rpm-constrainValue .bx-rpm-include{
+    text-align:center;
+    align-content:center;
 }
 
-.planingPartialDiv .constrainheader, .planingPartialDiv .constrainTable .text {
+.bx-rpm-constrainValue {
+width:456px;
+}
+
+.bx-rpm-constrainValue input {
+width:348px;
+}
+
+.bx-rpm-constrainValue .bx-rpm-midinput {
+width:153px;
+}
+
+.bx-rpm-constrainheader,  .bx-rpm-constrainTable .bx-rpm-text {
     color: gray;
     font-size: 9px;
 }
 
-.planingPartialDiv .constrainheader, .planingPartialDiv .constrainheader td, .planingPartialDiv .constrainheader td.header {
+.bx-rpm-constrainheader,  .bx-rpm-constrainheader td,  .bx-rpm-constrainheader td.header {
     border:none;
 }
 
-.planingPartialDiv .constrainValue .container {
+.bx-rpm-constrainValue .bx-rpm-container {
 float:left;
 margin-right:5px;
 }
 
-.planingPartialDiv .constrainValue input {
-width:230px;
-}
-
-.planingPartialDiv .constrainTable td {
-border-top:1px solid #CCC;
-}
-
-.planingPartialDiv textarea {
-border: 1px solid #CCC;
-border-radius: 3px;
-width: 300px;
+textarea {
 max-width: 600px;
 max-height:200px;
-font:14px arial, verdana;
+width:330px;
+}
+.bx-rpm-dropdownArrow {
+margin-left:-23px;
+z-index:1;
+position:relative;
 }
 
-.planingPartialDiv .t-dropdown {
-border-radius: 3px;
-width: 150px;
+.bx-dropdown, .bx-input{
+    width:350px;
+    z-index:10;
+    position:relative;
 }
 
-.planingPartialDiv form {
-display:inline-block;
-max-width:100%;
+.bx-rpm-dropdown {
+background:none;
 }
 
-.hidden {
+.bx-rpm-hidden {
     display: none;
 }
 
-table, .t-grid {
-    border-radius: 3px;
-}
-
-.functions {
+.bx-rpm-functions {
 float:left;
 max-width:50%;
 }
 
-.submit {
+.bx-rpm-submit {
 float:right;
 max-width:50%;
 }
 
-.planingPartialDiv .midinput, .planingPartialDiv input.midinput, .planingPartialDiv .constrainValue input.midinput{
+.t-treeview-lines{
+    overflow:hidden;
+}
+
+ .bx-rpm-midinput{
 width: 75px;
 }
 
-.planingPartialDiv .smallinput, .planingPartialDiv input.smallinput, .planingPartialDiv .constrainValue input.smallinput {
+ .bx-rpm-smallinput{
 width: 40px;
 }
 
-.planingPartialDiv .tallinput, .planingPartialDiv input.tallinput, .planingPartialDiv .constrainValue input.tallinput {
+ .bx-rpm-tallinput{
 width: 300px;
 }
 
-.planingPartialDiv input.checkBox, .planingPartialDiv .constrainValue input.checkBox {
+ input.bx-rpm-checkBox {
 border-radius: 3px;
 width: 15px;
+}
+
+#range_FormalDescription, #domain_FormalDescription, #pattern_FormalDescription{
+    margin-top:26px;
+ }
+
+#domain_FormalDescription, #pattern_FormalDescription {
+    margin-left:34px;
 }

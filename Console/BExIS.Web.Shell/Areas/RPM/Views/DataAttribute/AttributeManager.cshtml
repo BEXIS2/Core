@@ -29,53 +29,48 @@
 @{
     ViewBag.Title = "Data Attribute Manager";
 }
-    <div>
-        <h2>Data Attribute Manager</h2>
-        
-        <p>With this interface you are able to manage (e.g. create, edit, delete) data attributes which may be used as variables in data structures (a variable is an instance of an attribute). Data attributes cannot be edited or deleted once they are associated with a data structure (they become locked).</p>
 
-    </div>
-
-<div title="Create a new Data Attribute">
-    @Html.ActionLink("Create Data Attribute", "openAttributeWindow", "DataAttribute", new { id = 0 }, new { @class = "t-button t-add" })
+@section Information
+{
+    With this interface you are able to manage (e.g. create, edit, delete) data attributes which may be used as variables in data structures (a variable is an instance of an attribute). Data attributes cannot be edited or deleted once they are associated with a data structure (they become locked).
+}
+<div class="bx-rpm-buttons">
+    @Html.ActionLink("Create Data Attribute", "openAttributeWindow", "DataAttribute", new { id = 0 }, new { @class = "t-button function" })
 </div>
-    <br />
-    <br />
     @(Html.Telerik().Grid(Model.DataAttributeStructs)    
-            .Name("Attribute")
+            .Name("bx-rpm-attributeGrid")
             .Sortable()
-            .Filterable()    
-            .Scrollable(t => t.Height(450))         
+            .Filterable()             
             .Columns(columns =>
                 {
                     columns.Template(
                         @<text>
                             @if(!item.InUse)
                             {
-                                <div class="t-button t-button-icontext t-button-bare">
-                                    @Html.ActionLink("Edit", "openAttributeWindow", "DataAttribute", new { id = item.Id }, new { @class = "t-icon t-edit" })
-                                    @Html.ActionLink("Delete", "deletAttribute", "DataAttribute", new { id = item.Id, item.Name }, new { @class = "t-icon t-delete", onclick = "return confirm('Are you sure you want to delete the Data Attribute " + item.Name + " ?')" })
+                                <div>
+                                    @Html.ActionLink("EDIT", "openAttributeWindow", "DataAttribute", new { id = item.Id }, new { @class = "bx-button small" })
+                                    @Html.ActionLink("DELETE", "deletAttribute", "DataAttribute", new { id = item.Id, item.Name }, new { @class = "bx-button small", onclick = "return confirm('Are you sure you want to delete the Data Attribute " + item.Name + " ?')" })
                                 </div>
                             }
                             else
                             {
-                                <div class="locked">locked</div>
+                                <div style="text-align:center;"><button class="bx-button small bx-disabled">locked</button></div>
                             }
                         </text>
                     ).Title("Actions")
-                        .Width(80);
+                        .Width(180);
                         //.ClientTemplate(
                         //    @Html.ActionLink("Edit", "openAttributeWindow", "DataAttribute", new { id = "<#= id #>" }, new { @class = "t-icon t-edit" }).ToHtmlString() +
                         //    @Html.ActionLink("Delete", "deletAttribute", "DataAttribute", new { id = "<#= id #>", dataAttributeModel.Name }, new { @class = "t-icon t-delete", onclick = "return confirm('Are you sure you want to delete the Data Attribute " + dataAttributeModel.Name + " ?')" }).ToHtmlString()
                         //);
-                    columns.Bound(c => c.Name).Width(150);
-                    columns.Bound(c => c.Id).Width(50);
-                    columns.Bound(c => c.ShortName).Width(100);
-                    columns.Bound(c => c.Unit).Width(100)
+                    columns.Bound(c => c.Name);
+                    columns.Bound(c => c.Id);
+                    columns.Bound(c => c.ShortName);
+                    columns.Bound(c => c.Unit)
                         .Title("Unit");
-                    columns.Bound(c => c.DataType).Width(100)
+                    columns.Bound(c => c.DataType)
                         .Title("DataType");
-                    columns.Bound(c => c.FormalDescriptions).Width(300)
+                    columns.Bound(c => c.FormalDescriptions)
                         .Title("Constraints");
                     columns.Bound(c => c.Description);
                 })

@@ -33,55 +33,50 @@
   
 }
 
+@section Information
+{
 
-    <div>
-        <h2>Unit Manager</h2>
-         
-        <p>With this interface you are able to manage (e.g. create, edit, delete) units which may be needed to define data attributes. Units cannot be edited or deleted once they are associated with a data attribute (they become locked).</p>
-    </div>
+    With this interface you are able to manage (e.g. create, edit, delete) units which may be needed to define data attributes. Units cannot be edited or deleted once they are associated with a data attribute (they become locked).
+}
 
-<br />
-<div title="Create a new Unit">
-    @Html.ActionLink("Create Unit", "openUnitWindow", "Unit", new { id = 0 }, new { @class = "t-button t-add" })
+<div title="Create a new Unit" class="bx-rpm-buttons">
+    @Html.ActionLink("Create Unit", "openUnitWindow", "Unit", new { id = 0 }, new { @class = "t-button function" })
 </div>
-<br />
-<br />
 
     @(Html.Telerik().Grid(Model.editUnitModelList)    
-            .Name("UnitGrid")
+            .Name("bx-rpm-unitGrid")
             .Sortable()
-            .Filterable() 
-            .Scrollable(t => t.Height(440))         
+            .Filterable()          
             .Columns(columns =>
                 {
                     columns.Template(
                         @<text>
                             
-                            @if(item.inUse)
+                            @if (item.inUse)
                             {
-                                <div class="locked">locked</div>
+                                <div style="text-align:center;"><button class="bx-button small bx-disabled">locked</button></div>
                             }
                             else
                             {
-                                <div class="t-button t-button-icontext t-button-bare">
-                                    @Html.ActionLink("Edit", "openUnitWindow", "Unit", new { id = item.Unit.Id }, new { @class = "t-icon t-edit" })
-                                    @Html.ActionLink("Delete", "deletUnit", "Unit", new { id = item.Unit.Id }, new { @class = "t-icon t-delete", onclick = "return confirm('Are you sure you want to delete the Unit " + item.Unit.Name + " ?')" })
+                                <div>
+                                    @Html.ActionLink("EDIT", "openUnitWindow", "Unit", new { id = item.Unit.Id }, new { @class = "bx-button small" })
+                                    @Html.ActionLink("DELETE", "deletUnit", "Unit", new { id = item.Unit.Id }, new { @class = "bx-button small", onclick = "return confirm('Are you sure you want to delete the Unit " + item.Unit.Name + " ?')" })
                             
                                 </div>
                             }
                             
                         </text>
                     ).Title("Actions")
-                        .Width(80)
+                        .Width(180)
                         .ClientTemplate(
                             @Html.ActionLink("Edit", "openUnitWindow", "Unit", new { id = "<#= id #>" }, new { @class = "t-icon t-edit" }).ToHtmlString() +
                             @Html.ActionLink("Delete", "deletUnit", "Unit", new { id = "<#= id #>" }, new { @class = "t-icon t-delete", onclick = "return confirm('Are you sure you want to delete the Unit " + Model.editUnitModel.Unit.Name + " ?')" }).ToHtmlString()
                             );
-                    columns.Bound(c => c.Unit.Name).Width(150);
-                    columns.Bound(c => c.Unit.Id).Width(50);
-                    columns.Bound(c => c.Unit.Abbreviation).Width(100);
-                    columns.Bound(c => c.Unit.Dimension.Name).Width(130).Title("Dimension Name");
-                    columns.Bound(c => c.Unit.MeasurementSystem).Width(160);
+                    columns.Bound(c => c.Unit.Name);
+                    columns.Bound(c => c.Unit.Id);
+                    columns.Bound(c => c.Unit.Abbreviation);
+                    columns.Bound(c => c.Unit.Dimension.Name).Title("Dimension Name");
+                    columns.Bound(c => c.Unit.MeasurementSystem);
                     columns.Template(
                         @<text>
                             @{
@@ -99,7 +94,7 @@
                         </text>
                         )
                         .ClientTemplate("test")
-                        .Title("Associated Data Types").Width(160);
+                        .Title("Associated Data Types").Width(200);
                     columns.Bound(c => c.Unit.Description);
                 }))
 <br />

@@ -10,40 +10,26 @@
            <tr>
                 <td></td>
                 <td>
-                   <div id="search_TypeDiv">
-                         <input type="radio" 
-                                 id="searchType" 
-                                 name="searchType" 
-                                 runat="server"
-                                 onclick="changeSearchType(this)"
-                                 value = "new" >New search</input>
 
-                        <input type="radio" 
-                                 id="searchType" 
-                                 name="searchType" 
-                                 runat="server"
-                                 checked="True"
-                                 onclick="changeSearchType(this)"
-                                 value = "basedon" >Based on previous search</input>
-                    </div> 
                 </td>
            </tr>
            <tr>
                 <td>
-                    <div class="search_Filter">
+
                     @(Html.Telerik().DropDownList()
                          .Name("FilterList")
                          .SelectedIndex((int)Session["SelectedIndexFilterAC"])
-                         .DropDownHtmlAttributes(new { style = "height: 200px" })
+                         .DropDownHtmlAttributes(new { style = "height: 200px;" })
+                         .HtmlAttributes(new { style="top:2px;" })
                          .ClientEvents(events => events
                                .OnChange("onChangeFilterList"))
                         .BindTo(new SelectList(Model.SearchComponent.Categories, "Value", "DisplayName"))
 
                     )
-                    </div>
+
                 </td>
                 <td>
-                   <div class="search_Source">
+ 
                         @(Html.Telerik().AutoComplete()
                                 .Name("autoComplete")
                                 .Encode(false)
@@ -59,16 +45,15 @@
 
                                 })
                        )
-                    </div>
+
                 </td>
                <td>
-                    <div class="search_HeaderButton">
-                        <button type="submit" class="t-button">Search</button>
-                    </div>
+
+                        <button type="submit" class="bx-button small function">Search</button>
+  
                </td>
   
            </tr>
-
        </table>
   </div>      
      
@@ -96,3 +81,13 @@
 
 
 </script>
+<style type="text/css">
+
+    
+    #search_Components table
+    {
+        width:auto;
+    }
+
+
+</style>

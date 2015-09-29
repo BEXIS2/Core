@@ -4,12 +4,6 @@
 @model Tuple<SearchModel,IEnumerable<Facet>>
            
 <div id="searchTreeView" >
-
-@if(Model.Item1.SearchComponent.Facets.Count() > 0)
-{ 
-    <h5>Categories</h5>
-}
-
 @(Html.Telerik().TreeView()
        .Name("TreeView")
        .ShowCheckBox(true)
@@ -31,7 +25,7 @@
                            item.Checkable = false;
                            item.Checked = false;
                            item.Expanded = true;
-                           item.LinkHtmlAttributes["class"] = "searchFacet";
+                           item.LinkHtmlAttributes["class"] = "searchFacet, t-headeritem";
                            item.LinkHtmlAttributes["title"] = facet.Text + " (" + facet.Count + ")";
 
 
@@ -60,7 +54,7 @@
                                    subitem.Enabled = true;//t.Enabled;
                                    subitem.Checked = IsSelected;
                                    subitem.Selected = IsSelected;
-                                   subitem.LinkHtmlAttributes["class"] = "searchFacet";
+                                   subitem.LinkHtmlAttributes["class"] = "searchFacet, t-item-child";
                                    subitem.ActionName = "OnSelectTreeViewItem";
                                    subitem.ControllerName = "Home";
                                    subitem.LinkHtmlAttributes["title"] = t.Text + " (" + t.Count + ")";
@@ -83,7 +77,7 @@
                                moreBt.Selected = false;
                                moreBt.Checkable = false;
                                moreBt.LinkHtmlAttributes["title"] = "more";
-                               moreBt.LinkHtmlAttributes["class"] = "more";
+                               moreBt.LinkHtmlAttributes["class"] = "t-item-more";
 
                                if (!item.Items.Contains(moreBt))
                                    item.Items
@@ -92,7 +86,7 @@
                            }
                        }
           ))
-</div>  
+</div>
 
    @(Html.Telerik().Window()
 

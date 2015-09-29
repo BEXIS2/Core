@@ -4,6 +4,9 @@
 @using BExIS.Dlm.Entities.DataStructure;
 @using Telerik.Web.Mvc.UI;
 @using BExIS.Web.Shell.Areas.DDM.Models;
+@using FluentBootstrap;
+
+
 @{
 
        
@@ -12,34 +15,40 @@
 @if (Model.DataStructureType == DataStructureType.Unstructured && Model.Data == null)
 {
 
-    <table>
-        @foreach (BExIS.IO.BasicFileInfo cd in Model.FileList)
+
+        foreach (BExIS.IO.BasicFileInfo cd in Model.FileList)
         {
-            <tr>
-                <td>
-                    @cd.Name
-                </td>
-                <td>
-                    @if (Model.DownloadAccess)
+
+            using (var row = Html.Bootstrap().GridRow().Begin())
+            {
+                using (row.GridColumn(2).Begin())
+                {
+                     @cd.Name
+                }
+                
+                using (row.GridColumn(2).Begin())
+                {
+                    if (Model.DownloadAccess)
                     { 
                         @Html.ActionLink("Download", "DownloadFile", "Data", new { area = "DDM", path = @cd.Uri, mimeType=cd.MimeType }, new { @class="t-button" })
                     }
-                </td>
-            </tr>
+                }
+            }
 
         }
-        <tr>
-                <td>
+        
+        using (var row = Html.Bootstrap().GridRow().Begin())
+        {
+            using (row.GridColumn(2).SetMdOffset(2).Begin())
+            {
+                if (Model.DownloadAccess && Model.FileList.Count>0)
+                { 
+                    @Html.ActionLink("Download all", "DownloadAllFiles", "Data", new { area = "DDM", id=@Model.DatasetId}, new { @class="t-button" })
+                }
+            }
+                
+        }
 
-                </td>
-                <td>
-                    @if (Model.DownloadAccess && Model.FileList.Count>0)
-                    { 
-                        @Html.ActionLink("Download all", "DownloadAllFiles", "Data", new { area = "DDM", id=@Model.DatasetId}, new { @class="t-button" })
-                    }
-                </td>
-          </tr>
-    </table>
 }
-<br />
+
 

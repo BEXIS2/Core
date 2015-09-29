@@ -48,7 +48,7 @@
                     {
                             columns.Bound("Functions").ClientTemplate(
                             "<div class='searchResultFunctionDiv'>" +
-                                @Html.ActionLink("Details", "ShowData", "Data", new { area = "DDM", id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>" }, new { @class = "t-button", @id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>" }) +
+                                @Html.ActionLink("Details", "ShowData", "Data", new { area = "DDM", id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>" }, new { @class = "bx-button small", @id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>" }) +
                              "</div>"
                             )
                             
@@ -118,13 +118,13 @@
                         .OnLoad("refreshGrid")
                         .OnSubmitChanges("refreshGrid")
                         .OnRowDataBound("resultGrid_OnRowDataBound")
-                        
+                        .OnDataBound("onDataBound")
                        )
             .Pageable(paging =>
                 paging
                     .Style(pagerStyles)
                     .PageSize(PageSize)
-                    .Position(GridPagerPosition.Both)
+                    .Position(GridPagerPosition.Bottom)
                     .PageTo(CurrentPage)
                     )
 
@@ -132,7 +132,7 @@
             .Filterable()
             .ColumnContextMenu()
             .Groupable()
-            .Scrollable()
+
 
 )
 
@@ -170,22 +170,13 @@
 	    /*alert("GridRefresh");*/
 	}
 
+	function onDataBound()
+	{
+	    resetAllTelerikIconTitles();
+	}
 
 </script>
 
 <style type="text/css">
-
-	#resultGrid .t-grid-content
-	{
-        position:relative;
-		height : auto !important;
-		max-height:450px;
-		/*overflow:auto;*/
-	}
-
-    #resultGrid .t-status
-    {
-       display:none;
-    }
 
 </style>

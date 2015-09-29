@@ -1,15 +1,16 @@
 ﻿/*Stepper*/
-.uploadWizardStep 
-{
-   height:400px;
-}
-
 .createWizardStep 
 {
    height:90%;
-
 }
-
+#preloader
+{
+    position:fixed;
+    overflow:visible;
+    top:50%;
+    left:50%;
+    z-index:100000;
+}
 /*Tables*/
 
 table
@@ -38,18 +39,15 @@ tr td
 
 /*Navigation*/
 
-
 #NavDiv
 {
-    width:95%;
-    position:absolute;
+    width:100%;
     bottom:10px;
 }
 
 #UploadWizardNavDiv
 {
-    width:95%;
-    position:absolute;
+    width:100%;
     bottom:10px;
 }
 
@@ -78,7 +76,7 @@ tr td
 
 #Nav_Options
 {
-    width:110px;
+    width:210px;
 }
 
 #Nav_Pages
@@ -97,7 +95,7 @@ tr td
     top:10px;
     right:10px;
     height:auto;
-    max-height:600px;
+    max-height:500px;
     overflow:auto;
     position:absolute;
 }
@@ -106,10 +104,10 @@ tr td
 {
     width:45%;
     color:red;
-    top:10px;
+    top:120px;
     right:10px;
     height:auto;
-    max-height:600px;
+    max-height:500px;
     overflow:auto;
     position:absolute;
 }
@@ -119,10 +117,10 @@ tr td
 
     width:20%;
     color:red;
-    top:10px;
+    top:120px;
     right:10px;
     height:auto;
-    max-height:600px;
+    max-height:500px;
     overflow:auto;
     position:absolute;
 }
@@ -136,7 +134,7 @@ tr td
 {
     width:45%;
     color:green;
-    top:10px;
+    top:120px;
     right:10px;
     position:absolute;
 }
@@ -145,7 +143,7 @@ tr td
 {
     width:45%;
     color:green;
-    top:10px;
+    top:120px;
     right:10px;
     position:absolute;
 }
@@ -154,7 +152,7 @@ tr td
 
     width:20%;
     color:green;
-    top:10px;
+    top:120px;
     right:10px;
     position:absolute;
 }
@@ -172,7 +170,7 @@ tr td
     width:45%;
     top:10px;
     left:10%;
-    height:400px;
+    min-height:500px;
 }
 
 .createWizardStep_Main
@@ -180,6 +178,7 @@ tr td
     width:65%;
     top:10px;
     left:10%;
+    min-height:500px;
 }
 
 .wizard_PK_Span
@@ -208,6 +207,6 @@ tr td
 
 .createWizardStep_Content
 {
-    height:600px;
+    height:auto;
     overflow:auto;
 }

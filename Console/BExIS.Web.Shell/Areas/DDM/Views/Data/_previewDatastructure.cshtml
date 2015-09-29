@@ -45,10 +45,9 @@
                         .OperationMode(GridOperationMode.Client)
                         .Select("_CustomDataStructureBinding", "Data", new { datasetID = id })
                     )
+                    .HtmlAttributes(new {@class=".t-grid-without-filter"})
                     .EnableCustomBinding(true)
-                    .HtmlAttributes(new { @class = "dataStructure-grid" })
-
-
+                  
                     .Columns(columns =>
                     {
                         for (int i = 0; i < dt.Columns.Count; i++)
@@ -58,16 +57,14 @@
                         }
 
                     })
-            
-                    //.ClientEvents(events => events
-                    //     .OnRowDataBound("dataStructureGrid_OnRowDataBound")
-                    //     .OnLoad("dataStructureGrid_OnLoad")
-                    //    )
+
+                    .ClientEvents(events => events
+                            .OnDataBound("onDataBound")
+                        )
 
                     .Pageable(paging =>
                         paging.PageSize(10)
-                        .Style(pagerStyles)
-                        .Position(GridPagerPosition.Both)
+                        .Position(GridPagerPosition.Bottom)
                     )
                             
                     .ColumnContextMenu()
@@ -76,3 +73,26 @@
 }
 
 <br />
+
+<script type="text/javascript">
+    function onDataBound()
+    {
+        resetAllTelerikIconTitles();
+    }
+</script>
+<style type="text/css">
+    #dataStructureGrid td
+    {
+        text-align:left;
+    }
+
+    #dataStructureGrid th
+    {
+        padding-left:30px;
+    }
+
+    #dataStructureGrid .t-status-text
+    {
+        display:none;
+    }
+</style>

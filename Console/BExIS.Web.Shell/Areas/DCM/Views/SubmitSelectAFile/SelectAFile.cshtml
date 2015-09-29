@@ -72,7 +72,13 @@
                         <tr>
                           
                             <td>
-                                @Html.DropDownListFor(m => m.SelectedServerFileName, new SelectList(Model.serverFileList), "Select")@*, new { disabled = "disabled" })*@
+                                  @(Html.Telerik().DropDownList()
+                                    .Placeholder("Select, please")
+                                    .Name("SelectedServerFileName")
+                                    .BindTo(new SelectList(Model.serverFileList))
+                                    .ClientEvents(e=>e.OnChange("SelectedServerFileName_onChange")))
+
+                                @*@Html.DropDownListFor(m => m.SelectedServerFileName, new SelectList(Model.serverFileList), "Select")*@@*, new { disabled = "disabled" })*@
                             </td>
                             <td>
                                 Select a data file previously uploaded to the server.
@@ -115,9 +121,15 @@
 
 <script type="text/javascript">
 
+    $(document).ready(function ()
+    {
+        resetAllTelerikIconTitles();
+    });
 
     function SelectFileProcess_OnSelect(e) {
         
+        alert("onselect");
+
         var type = '@Model.DataStructureType';
         var structuredType = '@BExIS.Dcm.UploadWizard.DataStructureType.Structured';
         var unStructuredType = '@BExIS.Dcm.UploadWizard.DataStructureType.Unstructured';
@@ -212,17 +224,19 @@
         $('#fileNameDiv').text(e.files[0].name);
     }
 
-    $('#SelectedServerFileName').change(function () {
+    function SelectedServerFileName_onChange()
+    {
 
         var value = $(this).val();
-       
 
-        $.post('@Url.Action("SelectFileFromServerProcess", @Model.StepInfo.PostActionInfo.ControllerName , new RouteValueDictionary { { "area", "DCM" } })', { fileName: value }, function (response) {
 
-            
+        $.post('@Url.Action("SelectFileFromServerProcess", @Model.StepInfo.PostActionInfo.ControllerName , new RouteValueDictionary { { "area", "DCM" } })', { fileName: value }, function (response)
+        {
+
+
             $('.uploadWizardStep_Error').empty();
             $('#fileNameDiv').text(value);
         })
-    })
+    }
 
 </script>

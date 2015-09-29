@@ -61,60 +61,56 @@
 <span class="planingPartialDiv">   
  @using (Html.BeginForm("saveDataStructure", "Home", new { area = "RPM" }))
  {    
-    <table>
+    <table class="bx-rpm-info">
         <tr>
-        <td>
-            <table>
-                <tr>
-                    <td>Name:<font color="red">*</font></td>
-                    <td>@(Html.TextBoxFor(m => Model.dataStructure.Name, new { @class = "t-input", @Value = Model.dataStructure.Name, @autofocus = "autofocus", @tabindex = "1", @title = "The name will be used for a new Data Structure" }))</td>
-                </tr>
-                <tr class ="hidden">
-                    <td></td>
-                    <td>
-                        @(Html.Telerik().DropDownList()
-                            .Name("category")
-                            //.HtmlAttributes(new { @tabindex = 2 })
-                            .DropDownHtmlAttributes(new { style = "height: 200px" })
-                            .BindTo(new SelectList(CategoryList))
-                            .SelectedIndex(categoryIndex)
-                        )
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        @if (Model.structured == true)
-                        {
-                            <font>Number of Variables:</font>
-                        }
-                        else
-                        {
-                            <font></font> 
-                        }
-                    </td>
-                    <td>
-                        @if (Model.variableStructs != null && Model.structured == true)
-                        {
-                            if (Model.variableStructs.Count() > 0)
-                            {
-                                @Model.variableStructs.Count();
-                            }
-                            else
-                            {
-                                <font color="red">No Variables</font>
-                            }
-                        }
-                    </td>
-                </tr>
-                <tr>
-                    <td>Data Structure ID:</td>
-                    <td>@Model.dataStructure.Id</td>
-                </tr>
-            </table>
-        </td>
-        <td style="vertical-align:top;">Description: @(Html.TextAreaFor(m => Model.dataStructure.Description, new { @class = "t-input datastrDes", @Value = Model.dataStructure.Description, @tabindex = "3", @title = "Description" }))</td>
-    </tr>
+            <td style="width:180px">Name:<font color="red">*</font></td>
+            <td style="width:180px">@(Html.TextBoxFor(m => Model.dataStructure.Name, new { @class = "t-input bx-input", @Value = Model.dataStructure.Name, @autofocus = "autofocus", @tabindex = "1", @title = "The name will be used for a new Data Structure" }))</td>
+            <td rowspan="3" style="width:100px; vertical-align:top;">Description:</td>
+            <td rowspan="3" style="text-align:left">@(Html.TextAreaFor(m => Model.dataStructure.Description, new { @class = "t-input datastrDes bx-textarea", @Value = Model.dataStructure.Description, @tabindex = "3", @title = "Description" }))</td>
+        </tr>
+        <tr class ="hidden">
+            <td style="width:180px"></td>
+            <td style="width:180px">
+                @(Html.Telerik().DropDownList()
+                    .Name("category")
+                    //.HtmlAttributes(new { @tabindex = 2 })
+                    .DropDownHtmlAttributes(new { style = "height: 200px" })
+                    .BindTo(new SelectList(CategoryList))
+                    .SelectedIndex(categoryIndex)
+                )
+            </td>
+        </tr>
+        <tr>
+            <td style="width:180px">
+                @if (Model.structured == true)
+                {
+                    <font>Number of Variables:</font>
+                }
+                else
+                {
+                    <font></font> 
+                }
+            </td>
+            <td style="width:180px">
+                @if (Model.variableStructs != null && Model.structured == true)
+                {
+                    if (Model.variableStructs.Count() > 0)
+                    {
+                        @Model.variableStructs.Count();
+                    }
+                    else
+                    {
+                        <font color="red">No Variables</font>
+                    }
+                }
+            </td>
+        </tr>
+        <tr>
+            <td style="width:180px">Data Structure ID:</td>
+            <td style="width:180px">@Model.dataStructure.Id</td>
+        </tr>
     </table>
+
     @(Html.TextBoxFor(m => Model.dataStructure.Id, new { @class = "hidden", @Value = Model.dataStructure.Id }))
     @(Html.TextBoxFor(m => Model.structured, new { @class = "hidden", @Value = Model.structured }))
 
@@ -125,7 +121,7 @@
         <div>@Html.Partial("_showDataStructure", Model)</div>
                 } 
      
-    <div class="functions RPMbuttons">
+    <div class="bx-rpm-functions bx-rpm-buttons">
 
         @if (Model.dataStructure.Id != null && Model.dataStructure.Id != 0)
         {
@@ -135,7 +131,7 @@
             }
             else
             {
-                @Html.ActionLink("Datasets", "showDatasets", "Home", new { id = Model.dataStructure.Id, structured = Model.structured }, new { area = "RPM", @class = "t-button", @title = "show Datasets using this Data Structure", @tabindex = "5" })
+                @Html.ActionLink("Datasets", "showDatasets", "Home", new { id = Model.dataStructure.Id, structured = Model.structured }, new { area = "RPM", @class = "t-button function", @title = "show Datasets using this Data Structure", @tabindex = "5" })
             }
 
             if (Model.variableStructs != null || Model.structured == true)
@@ -143,7 +139,7 @@
                 if (Model.variableStructs.Count() > 0)
                 {
                     //<div title="Download">
-                    @Html.ActionLink("Download", "downloadTemplate", "Home", new { id = Model.dataStructure.Id }, new { area = "RPM", @class = "t-button", @title = "Download Data Structure Template", @tabindex = "6" })
+                    @Html.ActionLink("Download", "downloadTemplate", "Home", new { id = Model.dataStructure.Id }, new { area = "RPM", @class = "t-button function", @title = "Download Data Structure Template", @tabindex = "6" })
                     //</div>
                 }
                 else
@@ -159,13 +155,13 @@
             {
                 if (Model.structured == true)
                 {
-                    @Html.ActionLink("Add Variables", "showVariables", "Home", new { id = Model.dataStructure.Id }, new { area = "RPM", @class = "t-button", @title = "Add Variable to Data Structure", @tabindex = "7" })
+                    @Html.ActionLink("Add Variables", "showVariables", "Home", new { id = Model.dataStructure.Id }, new { area = "RPM", @class = "t-button function", @title = "Add Variable to Data Structure", @tabindex = "7" })
                 }
                 else
                 {
                     <button title="Add Varriables" name="Add Variables" class="t-button t-state-disabled" disabled="disabled">AddVariable</button>
                 }
-                @Html.ActionLink("Delete", "deleteDataStructure", "Home", new { id = Model.dataStructure.Id }, new { area = "RPM", @class = "t-button", @title = "Delete Data Structure", onclick = "return confirm('Are you sure you want to delete the Data Structure " + Model.dataStructure.Name + "?')", @tabindex = "8" })
+                @Html.ActionLink("Delete", "deleteDataStructure", "Home", new { id = Model.dataStructure.Id }, new { area = "RPM", @class = "t-button function", @title = "Delete Data Structure", onclick = "return confirm('Are you sure you want to delete the Data Structure " + Model.dataStructure.Name + "?')", @tabindex = "8" })
 
             }
             else
@@ -175,17 +171,17 @@
             }
         }        
     </div>
-    <div class="submit RPMbuttons">
-        <button name="create" value="save" type="submit" class="t-button" title="Save Data Structure" tabindex = "9">Save</button>
+    <div class="bx-rpm-submit bx-rpm-buttons">
+        <button name="create" value="save" type="submit" class="t-button action" title="Save Data Structure" tabindex = "9">Save</button>
 
         @if (Model.dataStructure.Id != null && Model.dataStructure.Id != 0)
         {
-            <button name="create" value="saveAs" type="submit" class="t-button" title="Save Data Structure as" tabindex = "10">Save as</button>
-            @Html.ActionLink("Cancel", "showDataStructure", "Home", new { SelectedItem = Model.dataStructure.Id + "," + Model.structured }, new { area = "RPM", @class = "t-button", @title = "Cancel", @tabindex = "11" })
+            <button name="create" value="saveAs" type="submit" class="t-button action" title="Save Data Structure as" tabindex = "10">Save as</button>
+            @Html.ActionLink("Cancel", "showDataStructure", "Home", new { SelectedItem = Model.dataStructure.Id + "," + Model.structured }, new { area = "RPM", @class = "t-button action", @title = "Cancel", @tabindex = "11" })
         }
         else
         {
-            @Html.ActionLink("Cancel", "createStructuredDataStrukture", "Home", new { area = "RPM", @class = "t-button", @title = "Cancel", @tabindex = "11" })
+            @Html.ActionLink("Cancel", "createStructuredDataStrukture", "Home", new { area = "RPM", @class = "t-button action", @title = "Cancel", @tabindex = "11" })
         }
     </div>
  }

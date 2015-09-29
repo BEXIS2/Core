@@ -19,7 +19,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
         [StringLength(24, ErrorMessage = "The password must be {2} - {1} characters long.", MinimumLength = 6)]
         public string Password { get; set; }
 
-        [Compare("Password", ErrorMessage = "The password and confirmation do not match.")]
+        [global::System.Web.Mvc.Compare("Password", ErrorMessage = "The password and confirmation do not match.")]
         [Display(Name = "Confirm Password")]
         [Required]
         public string ConfirmPassword { get; set; }

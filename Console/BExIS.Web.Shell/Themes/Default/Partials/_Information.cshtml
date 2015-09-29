@@ -1,0 +1,12 @@
+﻿@using FluentBootstrap
+@using Microsoft.Web.Helpers;
+@using Telerik.Web.Mvc.UI;
+@using Vaiona.Web.Mvc;
+
+
+<div class="container-fluid" style="background-color: black; color: white">
+    <a href="#" style="color: white">Information <i class="fa fa-angle-double-down" data-toggle="collapse" href="#information"></i></a>
+    <div class="collapse" id="information">
+        @RenderSection("Information", false)
+    </div>
+</div>

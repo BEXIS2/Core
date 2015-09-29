@@ -37,6 +37,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         public ActionResult Index()
         {
+            
+            ModelState.AddModelError("username", "fehler");
+
             //DatasetManager dm = new DatasetManager();
             //dm.GetDatasetVersion(1);
 

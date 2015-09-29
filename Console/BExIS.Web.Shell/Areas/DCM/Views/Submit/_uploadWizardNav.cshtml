@@ -10,33 +10,33 @@
     int currentPage = @Model.GetCurrentStepInfoIndex() + 1;
     
 }
-<div id="UploadWizardNavDiv">
+<div id="NavDiv">
 
     @if (!(Model.Current() == null))
     { 
-    <table id="UploadWizard_NavigationTable">
+    <table id="NavigationTable">
         <tr>
             <td id="Nav_Left">
                 @if (!Model.Prev().IsEmpty())
                 {   
-                    <button id="prevBt" onclick"PrevButton_OnClick()"  class="t-button" title="@Model.Prev().title" >Prev</button>
+                    <button id="prevBt" onclick"PrevButton_OnClick()"  class="t-button action" title="@Model.Prev().title" >Prev</button>
                }
             </td>
             <td id="Nav_Pages">
                  ( @currentPage  of   @Model.StepInfos.Count )
             </td>
             <td id="Nav_Options">
-               @Html.ActionLink("Cancel", "CancelUpload", "Submit", new RouteValueDictionary { { "area", Model.Current().GetActionInfo.AreaName.ToString() } }, new { @class = "t-button",  @style="float:right" })
+               @Html.ActionLink("Cancel", "CancelUpload", "Submit", new RouteValueDictionary { { "area", Model.Current().GetActionInfo.AreaName.ToString() } }, new { @class = "t-button action",  @style="float:right" })
             </td>
             <td id="Nav_Right">
                  @if (!Model.Next().IsEmpty())
                  { 
-                    <button id="nextBt" onclick"NextButton_OnClick()" class="t-button" style="float:right" title="@Model.Next().title">Next</button>
+                    <button id="nextBt" onclick"NextButton_OnClick()" class="t-button action" style="float:right" title="@Model.Next().title">Next</button>
                  }
 
                 @if (Model.Current().Equals(Model.Finish()))
                 { 
-                    <button id="finishBt" onclick"NextButton_OnClick()" class="t-button" style="float:right" title="Finish">Finish</button>
+                    <button id="finishBt" onclick"NextButton_OnClick()" class="t-button action" style="float:right" title="Finish">Finish</button>
                 }
 
             </td>
@@ -126,7 +126,7 @@
 
         $.post('@Url.Action("RefreshNavigation", "Submit", new RouteValueDictionary { { "area", "DCM" } })', function (response) {
            
-            $("#UploadWizardNavDiv").replaceWith(response);
+            $("#NavDiv").replaceWith(response);
         })
     }
 </script>

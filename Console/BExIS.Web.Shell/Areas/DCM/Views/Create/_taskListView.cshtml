@@ -46,15 +46,14 @@
                         //    }
                         case StepStatus.inProgress:
                             {
-                                item.ImageUrl = "Images/emptyPng.png";
-                                item.ImageHtmlAttributes["class"] = "t-icon t-arrow-prev";
+                                //item.ImageUrl = "Images/emptyPng.png";
+                                item.LinkHtmlAttributes["class"] = "fa fa-hand-o-right";
                                 break;
                             }
                         case StepStatus.error:
                             {
-                                item.ImageUrl = "Images/emptyPng.png";
-                                item.LinkHtmlAttributes["class"] = "facetError";
-                                item.ImageHtmlAttributes["class"] = "t-icon t-cancel";
+                                //item.ImageUrl = "Images/emptyPng.png";
+                                item.LinkHtmlAttributes["class"] = "facetError fa fa-exclamation";
                                 break;
                             }
                         default:

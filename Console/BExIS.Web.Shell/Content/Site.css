@@ -1,16 +1,29 @@
 ﻿/*----------------------------------------------------------
-The base color for this template is #5c87b2. If you'd like
-to use a different color start by replacing all instances of
-#5c87b2 with your new color.
+Color Overview
+
+White    #000000
+Gray 01  #f5f5f5
+Gray 02  #ebebeb
+Gray 03  #afb0b1
+Gray 04  #009cdf
+Black    #ffffff
+Yellow   #ffbb52
+Orange   #ff9700
+Red      #f24c24
+Green 01  #388670
+Green 02  #72b1a0
+Green 03  #bee1da
+Green 04  #d2e8e3
+Green 05  #eff7f6
+
 ----------------------------------------------------------*/
 body
 {
-    background-color: white;
-    font-size: 75%;
-    font-family: Verdana, Tahoma, Arial, "Helvetica Neue", Helvetica, Sans-Serif;
-    margin: 0;
-    padding: 0;
-    color: #696969;
+    background-color: #ffffff;
+    font-size: 11pt;
+    font-family: Arial;
+    padding: 50px 0 0 0;
+    color: #000000;
 }
 
 header,
@@ -21,6 +34,9 @@ section
     display: block;
 }
 
+#region
+
+#endregion
 /*SECTIONS
 ----------------------------------------------------------*/
 
@@ -200,40 +216,40 @@ textarea
     min-height: 75px;
 }
 
-input[type="text"] 
-{
-    width: 200px;
-    border: 1px solid #CCC;
-}
-
-input[type="password"] 
-{
-    width: 200px;
-    border: 1px solid #CCC;
-}
 
 /* TABLE
 ----------------------------------------------------------*/
 
 table 
 {
-  border: solid 1px #e8eef4;
-  border-collapse: collapse;
+    width: 100%;
+
 }
 
 table td 
 {
   padding: 5px;   
-  border: solid 1px #e8eef4;
+  border-bottom: #ebebeb solid thin;
+  vertical-align:middle;
+  line-height: 14pt; 
+  /*overflow:hidden;*/
 }
+
 
 table th
 {
-  padding: 6px 5px;
-  text-align: left;
-  background-color: #e8eef4; 
-  border: solid 1px #e8eef4;   
+    margin: 3px 0 3px 0;
+    padding: 0;
+    text-align: left;
+    border-top: solid 1px #000000; 
+    border-Bottom: solid 1px #000000;  
+    line-height: 28px;  
 }
+
+table tr{ border: none; line-height: 14pt; }
+table th a {text-decoration: none; color: black;font-weight: bold;margin-right: 5px; }
+
+
 
 /* MISC  
 ----------------------------------------------------------*/
@@ -359,4 +375,25 @@ p.MsoTocHeading, li.MsoTocHeading, div.MsoTocHeading
     margin-top:15.0pt;
     line-height:115%;
     font-size:larger;
-	font-weight:bold;}
+	font-weight:bold;
+}
+
+.navbar 
+{
+    border: none !important; 
+}
+
+.breadcrumb 
+{
+    background-color: #f8f8f8 !important;
+    margin-bottom: 0px !important; 
+}
+
+table.bx-table-form tr td
+{
+    padding: 5px;
+    border: 0 none;
+    vertical-align:middle;
+    line-height: 14pt; 
+    /*overflow:hidden;*/
+}

@@ -27,55 +27,59 @@
 @using (Html.BeginForm("editAttribute", "DataAttribute", new { area = "RPM" }))
 {
    @(Html.HiddenFor(m=>m.Id, new {@class = "hidden"})) 
-    <table>
+    <table class="bx-rpm-info">
         <tr>
-            <td id="name" class="label">
+            <td id="name" style="width:120px">
                 Name:<Font color="red">*</Font>
             </td>
-            <td class="tdRight">
-                @(Html.TextBoxFor(m => Model.Name, new {@class = "t-input", @autofocus = "autofocus", @tabindex = "1"}))
+            <td>
+                @(Html.TextBoxFor(m => Model.Name, new {@class = "t-input bx-input", @autofocus = "autofocus", @tabindex = "1"}))
             </td>
-            <td class="descLabel" rowspan="4">
+            <td rowspan="4" style="vertical-align:top;width:110px">
                 Description:
             </td>
-            <td rowspan="4" class="descArea">
-                @(Html.TextAreaFor(m => Model.Description, new {@class = "t-input", @style="min-height: 100px;", @tabindex = "3"}))
+            <td rowspan="4" style="vertical-align:top;">
+                @(Html.TextAreaFor(m => Model.Description, new {@class = "t-input bx-textarea", @style="min-height: 100px;", @tabindex = "3"}))
             </td>
         </tr>
         <tr id="shortname">
-            <td class="label">
+            <td>
                 ShortName:
             </td>
-            <td class="textBox">
-                @(Html.TextBoxFor(m => Model.ShortName, new {@class = "t-input", @tabindex = "2"}))
+            <td>
+                @(Html.TextBoxFor(m => Model.ShortName, new {@class = "t-input  bx-input", @tabindex = "2"}))
             </td>
         </tr>
         <tr>
-            <td class="label">
+            <td>
                 Unit:
             </td>
-            <td class="textBox">
-                @Html.DropDownListFor(m => Model.Unit.Id, new SelectList(Model.Units, "Id", "Name"), new { @tabindex = "4", @id="unitId" })
+            <td>
+                <div>
+                    <span>@Html.DropDownListFor(m => Model.Unit.Id, new SelectList(Model.Units, "Id", "Name"), new { @tabindex = "4", @id = "unitId", @class = "t-input bx-dropdown bx-rpm-dropdown" })</span>
+                    <span class="t-arrow-down bx-rpm-dropdownArrow"/>
+                </div>
             </td>
         </tr>
         <tr>
-            <td class="label">
+            <td>
                 DataType:
             </td>
-            <td class="textBox">
-                @Html.DropDownListFor(m => Model.DataType.Id, new SelectList(Model.DataTypes, "Id", "Name"), new { @tabindex = "5", @id="dataTypeId" })
+            <td>
+                @Html.DropDownListFor(m => Model.DataType.Id, new SelectList(Model.DataTypes, "Id", "Name"), new { @tabindex = "5", @id= "dataTypeId", @class = "bx-dropdown bx-rpm-dropdown" })
+                <div class="t-arrow-down bx-rpm-dropdownArrow"></div>
             </td>
         </tr>
         <tr>
             <td class="errorMsg" colspan="4">@Session["nameMsg"]</td>
         </tr>
         <tr>
-            <td colspan="4" class="container">
+            <td colspan="4" class="bx-rpm-container">
                 <h4><a href="javascript:clickConstraints()">Constraints</a></h4>
             </td>
         </tr>
-        <tr id="constraints" class="hidden">
-            <td colspan="4" class="container">
+        <tr id="constraints" style="display:none">
+            <td colspan="4" class="bx-rpm-container">
                 
 
                 @if(Model.DomainConstraints.Count > 0 || Model.RangeConstraints.Count > 0 || Model.PatternConstraints.Count > 0)
@@ -95,8 +99,6 @@
                 { 
                     @Html.Partial("_rangeConstraintView", new RangeConstraintModel())
                 }
-                     
-
                         
 
                 @if (Model.PatternConstraints.Count > 0)
@@ -124,12 +126,12 @@
 
 
     
-    <div class="functions RPMbuttons">
-        <font class="RPMbuttons" color="red">*</font>Please don't leave empty
+    <div class="bx-rpm-functions bx-rpm-buttons">
+        <font class="bx-rpm-buttons" color="red">*</font> Indicates required field
     </div>
-    <div class="submit RPMbuttons">
-        <button name="create" value="create" type="submit" class="t-button"  id="saveButton" title="Save The Unit" tabindex = "6">Save</button>
-        @Html.ActionLink("Cancel", "AttributeManager", "DataAttribute", new { area = "RPM", @class = "t-button", @title = "Cancel", @tabindex = "7" })
+    <div class="bx-rpm-submit bx-rpm-buttons">
+        <button name="create" value="create" type="submit" class="t-button action"  id="saveButton" title="Save The Unit" tabindex = "6">Save</button>
+        @Html.ActionLink("Cancel", "AttributeManager", "DataAttribute", new { area = "RPM", @class = "t-button action", @title = "Cancel", @tabindex = "7" })
     </div>  
                
 }

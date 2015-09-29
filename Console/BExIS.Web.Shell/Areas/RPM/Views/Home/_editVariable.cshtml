@@ -48,34 +48,34 @@ else
                 @using (Html.BeginForm("editVariable", "Home", new { area = "RPM" }))
                 {
                 @(Html.TextBox("dataStructureId", Model.dataStructure.Id, new { @class = "hidden" }))
-                <table>
+                <table class="bx-rpm-info">
                     <tr id="name">
                         <td>
                             Name:
                         </td>
                         <td>
-                            @(Html.TextBox("name", variableStruct.variable.Label, new { @autofocus = "autofocus", @tabindex = 1 }))
+                            @(Html.TextBox("name", variableStruct.variable.Label, new { @autofocus = "autofocus", @tabindex = 1, @class="bx-input" }))
                             <div class="errorMsg" style="vertical-align:top;">
                                  <font color="red">@ViewData["varErrorMsg"]</font>
                             </div>
                         </td>
-                        <td class="descLabel" rowspan="4">
+                        <td style="vertical-align: top;" rowspan="4">
                             Description:
                         </td>
-                        <td class="descArea"rowspan="4">
-                            @(Html.TextArea("description", variableStruct.variable.Description, new { @tabindex = 2 }))
+                        <td style="vertical-align: top;" rowspan="4">
+                            @(Html.TextArea("description", variableStruct.variable.Description, new { @tabindex = 2, @class = "bx-textarea" }))
                         </td>
                     </tr>
-                    <tr id="optional">
-                        <td class="label">
+                    <tr>
+                        <td>
                             Is Optional:
                         </td>
                         <td>
                             @(Html.CheckBox("optional", variableStruct.variable.IsValueOptional, new { @tabindex = 3 }))
                         </td>
                     </tr>
-                    <tr id="shortname">
-                        <td class="label">
+                    <tr>
+                        <td>
                             ID:
                         </td>
                         <td>
@@ -84,15 +84,20 @@ else
                         </td>
                     </tr>
                     <tr>
-                        <td class="label">
+                        <td>
                             Unit:
                         </td>
                         <td>
-                            @Html.DropDownList("unitId", new SelectList(variableStruct.unitStructs, "Id", "Name", variableStruct.variable.DataAttribute.Unit.Id), new { @tabindex = "4" })
+                            <div>
+                                <span>
+                                    @Html.DropDownList("unitId", new SelectList(variableStruct.unitStructs, "Id", "Name", variableStruct.variable.DataAttribute.Unit.Id), new { @tabindex = "4", @class = "bx-dropdown bx-rpm-dropdown" })
+                                </span>
+                                <span class="t-arrow-down bx-rpm-dropdownArrow" />
+                            </div>
                         </td>
                     </tr>
                     <tr>
-                        <td class="label">
+                        <td>
                             DataType:
                         </td>
                         <td>

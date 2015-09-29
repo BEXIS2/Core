@@ -9,7 +9,7 @@
     .Columns(columns =>
     {
         columns.Bound(s => s.EffectiveRight)
-            .ClientTemplate("<div class=' <#= EffectiveRight ? 't-icon t-update' : 't-icon t-delete' #>' />")
+            .ClientTemplate("<div class=' <#= EffectiveRight ? 'bx bx-check' : 'bx bx-close' #>' />")
                    .Title("Effective")
                    .Width(64)
                    .Filterable(false)
@@ -55,5 +55,8 @@
             .Ascending()
         )
     )
-    .Scrollable(scrollable => scrollable.Height(475))
+    .ClientEvents(events =>
+    {
+        events.OnDataBound("resetAllTelerikIconTitles");
+    })
 )

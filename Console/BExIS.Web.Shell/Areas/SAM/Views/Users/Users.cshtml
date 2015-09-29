@@ -27,12 +27,12 @@
     }
 </style>
 
-<h2>Users
-</h2>
 
-<p>
+
+@section Information
+{
     With this interface you are able to manage users. New users can be added with the "Create" button. Existing users can be edited (properties, memberships, delete) through the "Edit" button.
-</p>
+}
 
 @(Html.Telerik().Grid<UserGridRowModel>()
       .Name("gridUsers")

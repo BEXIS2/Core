@@ -29,6 +29,24 @@
     </ContentProviders>
   </MapItem>
 
+  <MapItem ContentKey="Breadcrumb">
+    <ContentProviders>
+      <ContentProvider View="_Breadcrumb" Type="View" Enabled="true">
+        <Parameters>
+        </Parameters>
+      </ContentProvider>
+    </ContentProviders>
+  </MapItem>
+
+  <MapItem ContentKey="Information">
+    <ContentProviders>
+      <ContentProvider View="_Information" Type="View" Enabled="true">
+        <Parameters>
+        </Parameters>
+      </ContentProvider>
+    </ContentProviders>
+  </MapItem>
+
   <MapItem ContentKey="LogOnStatus">
     <ContentProviders>
       <ContentProvider View="_LogOnStatus" Type="View" Enabled="true">

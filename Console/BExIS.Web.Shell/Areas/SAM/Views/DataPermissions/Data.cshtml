@@ -17,6 +17,16 @@
     }
 </style>
 
+@section Information
+{
+    Here you are able to manage how users (or groups) have access to individual datasets.
+    Please select a dataset in the table below and specify who should have permissions to view, update, delete, download data, or who is able to grant access to other users (Note: metadata is always free).
+    Ticking the checkboxes "public access" in the upper table will make a dataset accessible without authentification (public access to primary data). Please use with care!
+    By default only the creator of a dataset (in the system) has full access, all other permissions are not set, which means access is denied.
+    Grants for individual users rule out higher level settings for groups.
+    Please note that any change will take effect immediately without further confirmation or save/submit action.
+}
+
 @*@Html.DropDownList("Entity", new SelectList(Model.EntityList, "Id", "Name"), "-- SELECT --", new { id = "Entities"})*@
 
 <div id="Content_Data">@Html.Partial("_DatasetsPartial")</div>

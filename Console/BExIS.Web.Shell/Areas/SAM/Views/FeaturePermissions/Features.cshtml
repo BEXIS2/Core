@@ -16,17 +16,15 @@
     @Html.Partial("_FeaturesPartial", Model)
 }
 
-<h2>Feature Permissions
-</h2>
-
-<p>
-    Here you are able to manage how users (or groups) have access to individual system features or entire modules. Please click on the name in the tree structure on left to view individual permissions. Ticking the checkboxes in the navigation tree will make a feature accessible without authentification (public access). Please use with care!
-</p>
-<p>
-    By default feature permissions are not set, which means access is denied unless access permissions are explicitly granted or inherited from an upper level feature (e.g. module). Individual grants on features rule out higher level settings. Effective permissions are shown in the first column of the table.
-</p>
-<p>
+@section Information
+{
+    Here you are able to manage how users (or groups) have access to individual system features or entire modules.
+    Please click on the name in the tree structure on left to view individual permissions.
+    Ticking the checkboxes in the navigation tree will make a feature accessible without authentification (public access).
+    Please use with care!
+    By default feature permissions are not set, which means access is denied unless access permissions are explicitly granted or inherited from an upper level feature (e.g. module).
+    Individual grants on features rule out higher level settings. Effective permissions are shown in the first column of the table.
     Please note that any change will take effect immediately without further confirmation or save/submit action.
-</p>
+}
 
 <div id="Content_Subjects"></div>

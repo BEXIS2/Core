@@ -40,4 +40,8 @@
         pageable.PageSize(10, new[] {10, 20, 50, 100});
         pageable.Style(GridPagerStyles.NextPreviousAndNumeric | GridPagerStyles.PageSizeDropDown);
     })
+    .ClientEvents(events =>
+    {
+        events.OnDataBound("resetAllTelerikIconTitles");
+    })
 )

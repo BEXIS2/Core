@@ -5,32 +5,30 @@
 
 @using (Html.BeginCollectionItem("DomainConstraints"))
 { 
-    <table class="container constrainTable" id="domainConstraint">
+    <table class="bx-rpm-container bx-rpm-constrainTable" id="domainConstraint">
         <tr>
-            <td class="constrainlabel">
+            <td class="bx-rpm-constrainlabel">
                 Domain
                 @Html.HiddenFor(m=>m.Id)
             </td>
-            <td class="negated">
+            <td class="bx-rpm-negated">
                 <!--Negated-->
-                <div class="container">
-                    <div class="text">@Html.Label("invert")</div>
+                <div class="bx-rpm-container">
+                    <div class="bx-rpm-text">@Html.Label("invert")</div>
                     @Html.CheckBoxFor(m => m.Negated, new { @class = "checkBox", @id = "domain_invert"})
                 </div>
             </td>
-            <td class="constrainValue">
-                <div class="container">
-                    <div class="text">@Html.Label("Terms")</div>
-                    @Html.TextBoxFor(m => m.Terms, new {@id = "domain_terms"})
+            <td class="bx-rpm-constrainValue">
+                <div class="bx-rpm-container">
+                    <div class="bx-rpm-text">@Html.Label("Terms")</div>
+                    @Html.TextBoxFor(m => m.Terms, new {@id = "domain_terms", @class = "bx-input" })
                 </div>
-                <div class="container" title="@Model.FormalDescription" id="domain_FormalDescription">
-                    <img src="../../../../Themes/Default/Styles/Default/infoicon.png" />
-                </div>
+                <div class="bx-function bx-info" title="@Model.FormalDescription" id="domain_FormalDescription"></div>
             </td>
-            <td class="constrainDesc">
-                <div class="container">
-                    <div class="text">@Html.Label("Description")</div>
-                    @Html.TextBoxFor(m => m.Description)
+            <td class="bx-rpm-constrainDesc">
+                <div class="bx-rpm-container">
+                    <div class="bx-rpm-text">@Html.Label("Description")</div>
+                    @Html.TextBoxFor(m => m.Description, new { @class = "bx-input" })
                 </div>
             </td>
         </tr>

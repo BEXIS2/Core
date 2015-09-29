@@ -4,44 +4,42 @@
 
 @using (Html.BeginCollectionItem("RangeConstraints"))
 { 
-<table class="container constrainTable" id="rangeConstraint">
+<table class="bx-rpm-container bx-rpm-constrainTable" id="rangeConstraint">
     <tr>
-        <td class="constrainlabel">
+        <td class="bx-rpm-constrainlabel">
             Range
             @Html.HiddenFor(m=>m.Id)
         </td>
-        <td class="negated">
+        <td class="bx-rpm-negated">
             <!--Negated-->
-            <div class="container">
-                <div class="text">@Html.Label("invert")</div>
-                @Html.CheckBoxFor(m => m.Negated, new { @class = "checkBox",@id = "range_invert"})
+            <div class="bx-rpm-container">
+                <div class="bx-rpm-text">@Html.Label("invert")</div>
+                @Html.CheckBoxFor(m => m.Negated, new { @class = "bx-rpm-checkBox", @id = "range_invert"})
             </div>
         </td>
-        <td class="constrainValue">
-            <div class="container">
-                <div class="text">@Html.LabelFor(m=>m.Min)</div>              
-                @Html.TextBoxFor(m=>m.Min, new { @class = "midinput", @id = "range_min"})
+        <td class="bx-rpm-constrainValue">
+            <div class="bx-rpm-container">
+                <div class="bx-rpm-text">@Html.LabelFor(m=>m.Min)</div>              
+                @Html.TextBoxFor(m=>m.Min, new { @class = "bx-rpm-midinput bx-input", @id = "range_min"})
             </div>
-            <div class="container">
-                <div class="text include">@Html.Label("include")</div>
-                @Html.CheckBoxFor(m => m.MinInclude, new { @class = "checkBox", @id = "range_mininclude"})
+            <div class="bx-rpm-container" style="text-align: center;">
+                <div class="bx-rpm-text bx-rpm-include">@Html.Label("include")</div>
+                @Html.CheckBoxFor(m => m.MinInclude, new { @class = "bx-rpm-checkBox", @id = "range_mininclude"})
             </div>
-            <div class="container">
-                <div class="text">@Html.LabelFor(m=>m.Max)</div>
-                @Html.TextBoxFor(m=>m.Max, new { @class = "midinput", @id = "range_max"})
+            <div class="bx-rpm-container">
+                <div class="bx-rpm-text">@Html.LabelFor(m=>m.Max)</div>
+                @Html.TextBoxFor(m=>m.Max, new { @class = "bx-rpm-midinput bx-input", @id = "range_max"})
             </div>
-            <div class="container">
-                <div class="text include">@Html.Label("include")</div>
-                @Html.CheckBoxFor(m => m.MaxInclude, new { @class = "checkBox", @id = "range_maxinclude"})
+            <div class="bx-rpm-container" style="text-align: center;">
+                <div class="bx-rpm-text bx-rpm-include">@Html.Label("include")</div>
+                @Html.CheckBoxFor(m => m.MaxInclude, new { @class = "bx-rpm-checkBox", @id = "range_maxinclude"})
             </div>
-            <div class="container" id="range_FormalDescription" title="@Model.FormalDescription">
-                <img src="../../../../Themes/Default/Styles/Default/infoicon.png" />
-            </div>
+            <div class="bx-function bx-info" id="range_FormalDescription" title="@Model.FormalDescription"></div>
         </td>
-        <td class="constrainDesc">
-            <div class="container">
-                <div class="text">@Html.Label("Description")</div>
-                @Html.TextBoxFor(m => m.Description)
+        <td class="bx-rpm-constrainDesc">
+            <div class="bx-rpm-container">
+                <div class="bx-rpm-text">@Html.Label("Description")</div>
+                @Html.TextBoxFor(m => m.Description, new { @class = "bx-input" })
             </div>
         </td>
     </tr>

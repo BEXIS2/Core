@@ -1,0 +1,238 @@
+/*
+Color Overview
+
+White    #000000
+Gray 01  #f5f5f5
+Gray 02  #ebebeb
+Gray 03  #afb0b1
+Gray 04  #009cdf
+Black    #ffffff
+Yellow   #ffbb52
+Orange   #ff9700
+Red      #f24c24
+Green 01  #388670
+Green 02  #72b1a0
+Green 03  #bee1da
+Green 04  #d2e8e3
+Green 05  #eff7f6
+*/
+
+button, 
+.t-button,
+.bx-button,
+.t-filter-options .t-clear-button, 
+.t-filter-options .t-filter-button,
+.ui-dialog .ui-dialog-buttonpane button
+{
+	display: inline-block;
+	border-radius: 8px;
+	background: #666666;
+	text-transform: uppercase;
+	text-decoration:none;
+	color: white;
+	text-align: center;
+	margin: 2px;
+	border: none;
+	padding: 10px 20px 10px 20px;
+	font-size: inherit;
+}
+
+button.small, 
+.bx-button.small, 
+.t-filter-options .t-clear-button, 
+.t-filter-options .t-filter-button,
+.t-grid-Edit,
+.t-grid-Create,
+.t-grid-Delete,
+.ui-dialog .ui-dialog-buttonpane button 
+{
+	padding: 6px 12px 6px 12px;
+    font-size:94%;
+}
+
+button.action,
+.t-button.action, 
+.bx-button.action {
+	background: #00876F;
+}
+
+button.function,
+.t-button.function, 
+.bx-button.function,
+.t-upload-button
+{
+	background: #FF9800;
+}
+
+button.confirm,
+.t-button.confirm, 
+.bx-button.confirm
+{
+	background: #000000;
+}
+
+.bx-button.bx-disabled,
+button.bx-disabled,
+button.t-state-disabled,
+.t-link.t-state-disabled .t-icon,
+li.t-state-disabled .t-link
+{
+	background-color:white;
+	border: 1px #bbbbbb solid;
+	color:#bbbbbb;
+}
+
+input[type=radio].css-checkbox {
+	background: none;
+}
+
+/**Tab**/
+.bx-tab,
+.t-tabstrip .t-item
+{
+	background-color:white;
+	color:#f5f5f5;
+}
+
+.bx-tab-active,
+.t-tabstrip li.t-state-active
+{
+	background-color:#f5f5f5;
+	color:white;
+}
+
+
+
+
+/**Input**/
+
+/*.bx-small-input,
+.t-animation-container input[type=text],
+.t-animation-container select
+{
+	height:24px;
+	width:90%;
+}*/
+
+/* Input/ Select/  Dropdown*/
+.bx-input,
+.bx-dropdown,
+.bx-textarea,
+.t-autocomplete,
+.t-datepicker .t-picker-wrap input
+{
+	-webkit-appearance: none;  /*Removes default chrome and safari style*/
+	-moz-appearance: none; /* Removes Default Firefox style*/
+	width: 100px; /*Width of select dropdown to give space for arrow image*/
+	text-indent: 0.01px; /* Removes default arrow from firefox*/
+	text-overflow: "";  /*Removes default arrow from firefox*/
+
+	border: 2px solid black;
+	font-size: 12pt;
+	font-family: Arial;
+	padding-left:5px;
+	padding-right:5px;
+}
+
+.bx-input,
+.bx-textarea,
+.t-autocomplete
+{
+	width: 372px;
+}
+
+.bx-input,
+.t-autocomplete,
+.t-datepicker .t-picker-wrap input
+{
+	height:30px;
+}
+
+.bx-dropdown
+{
+	height:36px;
+	width:auto;
+}
+
+.bx-select-mouseover
+{
+	background-color:#ff9700;
+	color:white;
+}
+
+/*Lists*/
+.bx-list, 
+.bx-list-multi
+{
+	width:100%;
+	border-bottom: 1px solid #ebebeb;
+}
+
+ul.bx-list, 
+ul.bx-list-multi
+{
+	list-style-type: none; 
+	width:100%;
+	padding:0;
+	margin:0;
+	border-bottom: 1px solid #ebebeb;
+}
+
+.bx-list li, 
+.bx-list-multi li
+{
+   padding: 13px 40px 13px;
+   padding-top:13px;
+   padding-bottom:13px;
+   font-size:12pt;
+   margin:0;
+   border-top: 1px solid #ebebeb;
+}
+
+.bx-list li:hover, 
+.bx-list-multi li:hover
+{
+   background-color:#eff7f6;
+   color:#388670;
+   border-top: 1px solid white;
+}
+
+.bx-list li.selected,
+.bx-list-multi li.selected
+{
+   background-color:#eff7f6;
+   color:#388670;
+   /*font-weight:bold;*/
+   border-top: 1px solid #388670;
+   border-bottom: 1px solid #388670;
+}
+
+/* Container */
+.overlay
+{
+	display:none;
+	background-color:#bee1da;
+	padding: 12px 25px 12px 25px;
+	width:calc(250px + 12pt);
+	margin-left:-15px;
+	z-index:1000;
+}
+
+.overlayHeader
+{
+	color:#72b1a0;
+	text-transform:uppercase;
+	font-size:16px;
+	padding-bottom:12px;
+}
+
+.overlayContent
+{
+	border-color:#72b1a0;
+}
+
+.overlay .overlayHeader i:hover
+{
+	color:white;
+    cursor:pointer;
+}
