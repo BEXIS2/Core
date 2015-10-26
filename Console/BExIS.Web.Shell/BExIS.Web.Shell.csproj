@@ -297,6 +297,7 @@
     </Compile>
     <Compile Include="App_Start\RegisterClientValidationExtensions.cs" />
     <Compile Include="Areas\DCM\Controllers\CreateController.cs" />
+    <Compile Include="Areas\DCM\Controllers\CreateDatasetController.cs" />
     <Compile Include="Areas\DCM\Controllers\CreateSetMetadataPackageController.cs" />
     <Compile Include="Areas\DCM\Controllers\CreateSelectDatasetSetupController.cs" />
     <Compile Include="Areas\DCM\Controllers\CreateSummaryController.cs" />
@@ -321,6 +322,8 @@
     <Compile Include="Areas\DCM\Models\AbstractStepModel.cs" />
     <Compile Include="Areas\DCM\Models\ChooseDatasetViewModel.cs" />
     <Compile Include="Areas\DCM\Models\CreateDatasetViewModel.cs" />
+    <Compile Include="Areas\DCM\Models\CreateDataset\MetadataEditorModel.cs" />
+    <Compile Include="Areas\DCM\Models\CreateDataset\SetupModel.cs" />
     <Compile Include="Areas\DCM\Models\Create\SelectDatasetSetupModel.cs" />
     <Compile Include="Areas\DCM\Models\Create\CreateSummaryModel.cs" />
     <Compile Include="Areas\DCM\Models\Create\StepModelHelper.cs" />
@@ -527,10 +530,18 @@
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="Content\bootstrap-theme.css.map" />
     <Content Include="Content\bootstrap.css.map" />
+    <Content Include="Scripts\bexis-metadata.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Content\Images\Bildmarke_BEXIS_cmyk.ai" />
     <Content Include="Content\Images\Logo_BEXIS_cmyk.ai" />
+    <Content Include="Areas\DCM\Views\CreateDataset\Index.cshtml" />
+    <Content Include="Areas\DCM\Views\CreateDataset\MetadataEditor.cshtml" />
+    <Content Include="Areas\DCM\Views\CreateDataset\_metadataAttributeView.cshtml" />
+    <Content Include="Areas\DCM\Views\CreateDataset\_metadataCompoundAttributeView.cshtml" />
+    <Content Include="Areas\DCM\Views\CreateDataset\_metadataPackageUsageView.cshtml" />
+    <Content Include="Areas\DCM\Views\CreateDataset\_metadataPackageView.cshtml" />
+    <Content Include="Areas\DCM\Views\CreateDataset\_metadataCompoundAttributeUsageView.cshtml" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
@@ -620,6 +631,7 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Themes\Default\Styles\bexis-jquery-ui.css" />
+    <Content Include="Themes\Default\Styles\bexis-metadata.css" />
     <Content Include="Themes\Default\Styles\bexis-telerik.css" />
     <Content Include="Themes\Default\Styles\bexis-elements.css" />
     <Content Include="Themes\Default\Styles\Copy of telerik.default.min.css" />

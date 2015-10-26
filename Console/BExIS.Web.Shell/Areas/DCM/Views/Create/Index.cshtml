@@ -2,6 +2,5 @@
     ViewBag.Title = "Index";
 }
 
-<h2>Index</h2>
 
-@Html.ActionLink("create a dataset", "CreateDataset", "Create", new { area = "DCM" }, new { @class = "t-button" })
+@Html.Partial("SelectDatasetSetup")

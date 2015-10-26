@@ -1,0 +1,16 @@
+﻿@model MetadataEditorModel
+@using BExIS.Web.Shell.Areas.DCM.Models.CreateDataset
+
+<h2>MetadataEditor</h2>
+
+<div id="root">
+
+
+@foreach (var element in Model.StepModelHelpers)
+{
+    @Html.Partial("_metadataPackageView",element)
+}
+
+</div>
+@Html.ActionLink("Submit", "Submit", "CreateDataset");
+    

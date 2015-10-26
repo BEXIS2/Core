@@ -39,7 +39,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Models.Metadata
                 return null;
         }
 
-        public void ConvertMetadataAttributeModels(BaseUsage source, long metadataStructureId)
+        public void ConvertMetadataAttributeModels(BaseUsage source, long metadataStructureId, int stepId)
         {
             Source = source;
 
@@ -98,7 +98,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Models.Metadata
                         {
                             if (UsageHelper.IsSimple(usage))
                             {
-                                MetadataAttributeModels.Add(MetadataAttributeModel.Convert(usage, mpu, metadataStructureId, Number));
+                                MetadataAttributeModels.Add(MetadataAttributeModel.Convert(usage, mpu, metadataStructureId, Number, stepId));
                             }
                         }
                     }

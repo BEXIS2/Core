@@ -1,0 +1,96 @@
+﻿@model BExIS.Web.Shell.Areas.DCM.Models.Create.StepModelHelper
+@using BExIS.Dcm.Wizard;
+
+@{
+    string stepId = @Model.StepId.ToString();
+    long parentStepId = @Model.Model.StepInfo.Parent.Id;
+    string parentTargetId = parentStepId.ToString();
+    
+    string parentContentId = @Model.Model.StepInfo.Parent.Id + "_Content";
+    string id_add = @parentStepId + "_" + @Model.Number+"_Add";
+    string id_remove = @parentStepId + "_" + @Model.Number + "_Remove";
+    string id_view_button = @parentStepId + "_" + @Model.Number + "_ViewButton";
+    string id_container = @parentStepId + "_" + @Model.Number + "_Container";
+
+}
+<div id="@stepId" name="@Model.Usage.Label" number="@Model.Number" class="metadataPackageUsage">
+
+    <div class="header">
+        <div class="labelContainer">
+            <b>@Model.Usage.Label ( @Model.Number )</b>
+            <span id="@id_view_button" onclick="showHideClick(this)" >show/hide</span>
+        </div>
+        <div class="optionContainer">
+            @if (Model.Model.MaxCardinality > 1 && Model.Model.StepInfo.Parent.Children.Count < Model.Model.MaxCardinality)
+            {
+                <span id="@id_add" onclick="Add(this)">Add</span>
+            }
+
+            @if (Model.Model.StepInfo.Parent.Children.Count > 1)
+            {
+                <span id="@id_remove" onclick="Remove(this)">Remove</span>
+            }
+        </div>
+    </div>
+
+    <div id="@id_container" class="contentContainer">
+        @if (Model.Model.MetadataAttributeModels.Any())
+        {   
+            <div class="simpleAttributesContainer">
+                @foreach (var element in Model.Model.MetadataAttributeModels)
+                {
+                    @Html.Partial("_metadataAttributeView", element)
+                }
+            </div>
+        }
+
+   
+        @if (Model.Childrens.Any())
+        {
+                <div class="complexAttributesContainer">
+                @foreach (var element in Model.Childrens)
+                {
+                    @Html.Partial("_metadataCompoundAttributeView", element)
+                }
+            </div>
+        }
+    </div>
+</div>
+<script type="text/javascript">
+
+    function Add(e)
+    {
+        var temp = e.id;
+        var parentId = temp.split("_")[0];
+        var number = temp.split("_")[1];
+
+        $.get('@Url.Action("AddComplexUsage", "CreateDataset", new RouteValueDictionary { { "area", "DCM" } })', { parentStepId : parentId, number : number  }, function (response)
+        {
+            $('#' + parentId).replaceWith(response);
+        })
+    }
+
+    function Remove(e)
+    {
+        var temp = e.id;
+        var parentId = temp.split("_")[0];
+        var number = temp.split("_")[1];
+
+        $.get('@Url.Action("RemoveComplexUsage", "CreateDataset",  new RouteValueDictionary { { "area", "DCM" } })', { parentStepId: parentId, number: number }, function (response)
+        {
+            $('#' + parentId).replaceWith(response);
+        })
+    }
+
+    function showHideClick(e)
+    {
+        var temp = e.id;
+        var parentId = temp.split("_")[0];
+        var number = temp.split("_")[1];
+
+        var id = parentId + "_" + number + "_Container";
+
+        $('#' + id).toggle();
+    }
+
+</script>

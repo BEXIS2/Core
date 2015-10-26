@@ -51,7 +51,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Models.Metadata
             };
         }
 
-        public void ConvertMetadataAttributeModels( BaseUsage source, long metadataStructureId)
+        public void ConvertMetadataAttributeModels( BaseUsage source, long metadataStructureId, long stepId)
         {
             Source = source;
 
@@ -70,7 +70,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Models.Metadata
                         {
                             if (UsageHelper.IsSimple(usage))
                             {
-                                MetadataAttributeModels.Add(MetadataAttributeModel.Convert(usage, mau, metadataStructureId, Number));
+                                MetadataAttributeModels.Add(MetadataAttributeModel.Convert(usage, mau, metadataStructureId, Number, stepId));
                             }
                         }
                     }
@@ -90,7 +90,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Models.Metadata
                         {
                             if (UsageHelper.IsSimple(usage))
                             {
-                                MetadataAttributeModels.Add(MetadataAttributeModel.Convert(usage, mnau, metadataStructureId, Number));
+                                MetadataAttributeModels.Add(MetadataAttributeModel.Convert(usage, mnau, metadataStructureId, Number, stepId));
                             }
                         }
                     }

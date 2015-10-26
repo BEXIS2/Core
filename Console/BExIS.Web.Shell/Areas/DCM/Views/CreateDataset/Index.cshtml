@@ -1,0 +1,46 @@
+﻿@model SetupModel
+
+@using BExIS.Web.Shell.Areas.DCM.Models.CreateDataset;
+
+<p>Please provide the following information.</p>
+@using (Html.BeginForm("StoreSelectedDatasetSetup", "CreateDataset", new {area = "DCM"},FormMethod.Post))
+{
+    <table>
+        <tr>
+            <td><b title="Required" style="color: red">*</b></td>
+            <td>@Html.LabelFor(m => m.SelectedMetadatStructureId)
+            </td>
+            <td>
+                @Html.DropDownListFor(m => m.SelectedMetadatStructureId, new SelectList(Model.MetadataStructureViewList, "Id", "Title", Model.SelectedMetadatStructureId), "Select, please")
+                @Html.ValidationMessageFor(m => m.SelectedMetadatStructureId)
+            </td>
+        </tr>
+        <tr>
+            <td><b title="Required" style="color: red">*</b></td>
+            <td>@Html.LabelFor(m => m.SelectedDataStructureId)
+            </td>
+            <td>
+                @Html.DropDownListFor(m => m.SelectedDataStructureId, new SelectList(Model.DataStructureViewList, "Id", "Title", Model.SelectedDataStructureId), "Select, please")
+                @Html.ValidationMessageFor(m => m.SelectedDataStructureId)
+            </td>
+        </tr>
+    </table>
+    
+    
+    <br />
+    <br />
+    <button type="submit" value="Save" name="saveDataset"  class="t-button" style="border:0px;" >Load metadata</button>
+       
+}
+
+
+<script type="text/javascript">
+
+    $("#SelectedMetadatStructureId").change(function (e) {
+
+        $.post('@Url.Action("StoreSelectedOption","CreateSelectDatasetSetup" , new RouteValueDictionary { { "area", "DCM" } })', { id: $(this).val(), type: "ms" }, function (response) {
+            
+        })
+    })
+
+</script>

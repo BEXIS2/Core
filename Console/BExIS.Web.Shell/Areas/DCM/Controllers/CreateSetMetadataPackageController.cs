@@ -305,7 +305,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
               
             //UpdateXml
             long metadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateDatasetTaskmanager.METADATASTRUCTURE_ID]);
-            MetadataAttributeModel model = MetadataAttributeModel.Convert(metadataAttributeUsage, parentUsage, metadataStructureId, parentModelNumber);
+            MetadataAttributeModel model = MetadataAttributeModel.Convert(metadataAttributeUsage, parentUsage, metadataStructureId, parentModelNumber, stepModelHelper.StepId);
             model.Value = value;
             model.Number = number;
 
@@ -454,7 +454,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             BaseUsage parentUsage = LoadUsage(stepModelHelperParent.Usage);
             BaseUsage metadataAttributeUsage = UsageHelper.GetSimpleUsageById(parentUsage, id);
 
-            MetadataAttributeModel modelAttribute = MetadataAttributeModel.Convert(metadataAttributeUsage, parentUsage, metadataStructureId, parentModelNumber);
+            MetadataAttributeModel modelAttribute = MetadataAttributeModel.Convert(metadataAttributeUsage, parentUsage, metadataStructureId, parentModelNumber, stepModelHelperParent.StepId);
             modelAttribute.Number = ++number;
 
             AbstractMetadataStepModel model = stepModelHelperParent.Model;
@@ -596,7 +596,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             MetadataPackageModel model = MetadataPackageModel.Convert(stepModelHelper.Usage, number);
             model.Number = ++number;
-            model.ConvertMetadataAttributeModels(LoadUsage(stepModelHelper.Usage), metadataStructureId);
+            model.ConvertMetadataAttributeModels(LoadUsage(stepModelHelper.Usage), metadataStructureId,stepId);
 
             BaseUsage u = LoadUsage(stepModelHelper.Usage);
 
@@ -669,7 +669,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             MetadataCompoundAttributeModel model = MetadataCompoundAttributeModel.ConvertToModel(stepModelHelper.Usage, number);
             model.Number = ++number;
-            model.ConvertMetadataAttributeModels(LoadUsage(stepModelHelper.Usage), metadataStructureId);
+            model.ConvertMetadataAttributeModels(LoadUsage(stepModelHelper.Usage), metadataStructureId,stepId);
 
             BaseUsage u = LoadUsage(stepModelHelper.Usage);
 
@@ -1041,7 +1041,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             MetadataPackageModel model = new MetadataPackageModel();
 
             model = MetadataPackageModel.Convert(mpu, stepModelHelper.Number);
-            model.ConvertMetadataAttributeModels(mpu,metadataStructureId);
+            model.ConvertMetadataAttributeModels(mpu,metadataStructureId, stepId);
 
             if (TaskManager.Current().IsInstanze == false)
             {
@@ -1091,7 +1091,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             MetadataCompoundAttributeModel model = MetadataCompoundAttributeModel.ConvertToModel(stepModelHelper.Usage, stepModelHelper.Number);
 
             // get children
-            model.ConvertMetadataAttributeModels(LoadUsage(stepModelHelper.Usage), metadataStructureId);
+            model.ConvertMetadataAttributeModels(LoadUsage(stepModelHelper.Usage), metadataStructureId,stepId);
 
             if (TaskManager.Current().IsInstanze == false)
             {
@@ -1143,7 +1143,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             return mpm.PackageUsageRepo.Get(Id);
         }
 
-         #endregion
+        #endregion
 
         #region xml
 

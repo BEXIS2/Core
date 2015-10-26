@@ -39,7 +39,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Models.Metadata
                 if (xelements.Count() > 0)
                 {
                     int counter = 0;
-
+                    ;
                     foreach (XElement element in xelements)
                     {
                         long id = Convert.ToInt64(element.Attribute("id").Value.ToString());
@@ -47,17 +47,28 @@ namespace BExIS.Web.Shell.Areas.DCM.Models.Metadata
                         long usageId = Convert.ToInt64(element.Attribute("roleId").Value.ToString());
                         int number = Convert.ToInt32(element.Attribute("number").Value.ToString());
 
-                        Instance.Add(
+                        MetadataInstanceModel temp = new MetadataInstanceModel()
+                        {
+                            Id = id,
+                            UsageId = usageId,
+                            Name = name,
+                            Number = number
+                        };
 
-                            new MetadataInstanceModel()
-                            {
-                                Id = id,
-                                UsageId = usageId,
-                                Name = name,
-                                Number = number
-                            }
+                        if (!Instance.Where(t=>t.Id.Equals(temp.Id) && t.Number.Equals(temp.Number)).Any())
+                        {
+                            Instance.Add(
 
-                            );
+                                new MetadataInstanceModel()
+                                {
+                                    Id = id,
+                                    UsageId = usageId,
+                                    Name = name,
+                                    Number = number
+                                }
+
+                                );
+                        }
 
                     }
                 }

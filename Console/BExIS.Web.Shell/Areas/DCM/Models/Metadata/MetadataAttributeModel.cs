@@ -17,6 +17,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
         public long Id { get; set; }
         public long Number { get; set; }
         public long ParentModelNumber { get; set; }
+        public long ParentStepId { get; set; }
         public long MetadataStructureId { get; set; }
         public BaseUsage Source { get; set; }
         public BaseUsage Parent { get; set; }
@@ -37,7 +38,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
 
         public object Value { get; set; }
 
-        public static MetadataAttributeModel Convert(BaseUsage current , BaseUsage parent, long metadataStructureId, int packageModelNumber)
+        public static MetadataAttributeModel Convert(BaseUsage current , BaseUsage parent, long metadataStructureId, int packageModelNumber, long parentStepId)
         {
             MetadataAttribute metadataAttribute;
             List<object> domainConstraintList = new List<object>();
@@ -85,7 +86,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
                 first = true,
                 DomainList = domainConstraintList,
                 last = true,
-                MetadataAttributeId = metadataAttribute.Id
+                MetadataAttributeId = metadataAttribute.Id,
+                ParentStepId = parentStepId
             };
         }
 

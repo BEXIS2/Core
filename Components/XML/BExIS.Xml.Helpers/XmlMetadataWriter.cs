@@ -163,8 +163,6 @@ namespace BExIS.Xml.Helpers
             return element;
         }
 
-
-
         #region package
             
             /// <summary>
@@ -177,55 +175,59 @@ namespace BExIS.Xml.Helpers
             /// <param name="number"></param>
             /// <returns></returns>
         public XDocument AddPackage(XDocument metadataXml, BaseUsage usage, int number, string typeName, long typeId, List<BaseUsage> children, XmlNodeType xmlType, XmlNodeType xmlUsageType, string xpath)
+        {
+            this._tempXDoc = metadataXml;
+            XElement role; 
+            //check if role exist
+            if (Exist(xpath))
             {
-                this._tempXDoc = metadataXml;
-                XElement role; 
-                //check if role exist
-                if (Exist(xpath))
-                {
-                    role = Get(xpath);
+                role = Get(xpath);
 
-                }
-                else
-                {
-                    // create the role
-                    role = CreateXElement(usage.Label, xmlUsageType);
-                    if (_mode.Equals(XmlNodeMode.xPath)) role.SetAttributeValue("name", usage.Label);
-                    role.SetAttributeValue("id", usage.Id.ToString());
-                }
-
-                //root.Add(role);
-                string xPathForNewElement = xpath + "//" + typeName + "[" + number + "]"; ;//xpath.Substring (0,xpath.Length-2)+number+"]";
-
-                //if (!Exist(xPathForNewElement))
-                if(!Exist(typeName,number,role))
-                {
-                    XElement package;
-                    // create the package
-                    package = CreateXElement(typeName, xmlType);
-
-                    if (_mode.Equals(XmlNodeMode.xPath)) package.SetAttributeValue("name", typeName);
-                    package.SetAttributeValue("roleId", usage.Id.ToString());
-                    package.SetAttributeValue("id", typeId);
-                    package.SetAttributeValue("number", number);
-                    role.Add(package);
-
-                    foreach (BaseUsage attribute in children)
-                    {
-                        AddAttribute(package, attribute, 1);
-                    }
-
-                    //XElement element = XmlUtility.GetXElementByAttribute(usage.Label, "id", usage.Id.ToString(), metadataXml);
-
-                    //element.Add(package);
-                }
-                else
-                {
-                    throw new Exception("package exist");
-                }
-
-                return metadataXml;
             }
+            else
+            {
+                // create the role
+                role = CreateXElement(usage.Label, xmlUsageType);
+                if (_mode.Equals(XmlNodeMode.xPath)) role.SetAttributeValue("name", usage.Label);
+                role.SetAttributeValue("id", usage.Id.ToString());
+            }
+
+            //root.Add(role);
+            string xPathForNewElement = xpath + "//" + typeName + "[" + number + "]"; ;//xpath.Substring (0,xpath.Length-2)+number+"]";
+
+            XElement package;
+            // create the package
+            package = CreateXElement(typeName, xmlType);
+
+            if (_mode.Equals(XmlNodeMode.xPath)) package.SetAttributeValue("name", typeName);
+            package.SetAttributeValue("roleId", usage.Id.ToString());
+            package.SetAttributeValue("id", typeId);
+            package.SetAttributeValue("number", number);
+
+            //if (!Exist(xPathForNewElement))
+            if(!Exist(typeName,number,role))
+            {
+                role.Add(package);
+                foreach (BaseUsage attribute in children)
+                {
+                    AddAttribute(package, attribute, 1);
+                }
+
+                //XElement element = XmlUtility.GetXElementByAttribute(usage.Label, "id", usage.Id.ToString(), metadataXml);
+
+                //element.Add(package);
+            }
+            else
+            {
+                role = UpdateNumberOfSameElements(role, package, typeName, number);
+                foreach (BaseUsage attribute in children)
+                {
+                    AddAttribute(package, attribute, 1);
+                }
+            }
+
+            return metadataXml;
+        }
 
         /// <summary>
         /// 
@@ -521,44 +523,28 @@ namespace BExIS.Xml.Helpers
                 }
                 XElement package = Get(parentTypeName, packageNumber, packageRole);
 
+                XElement role = Get(attributeUsage.Label, package);
+                if (role == null)
+                {
+                    role = CreateXElement(attributeUsage.Label, XmlNodeType.MetadataAttributeUsage);
+                    if (_mode.Equals(XmlNodeMode.xPath)) role.SetAttributeValue("name", attributeUsage.Label);
+                    role.SetAttributeValue("id", attributeUsage.Id.ToString());
+                }
+
+                XElement element = CreateXElement(attributeTypeName, XmlNodeType.MetadataAttribute);
+
+                if (_mode.Equals(XmlNodeMode.xPath)) element.SetAttributeValue("name", attributeTypeName);
+                element.SetAttributeValue("roleId", attributeUsage.Id.ToString());
+                element.SetAttributeValue("id", attributeId);
+                element.SetAttributeValue("number", number);
+
                 if (!Exist(attributeTypeName, number, package))
                 {
-                    XElement role = Get(attributeUsage.Label, package);
-                    if (role == null)
-                    {
-                        role = CreateXElement(attributeUsage.Label, XmlNodeType.MetadataAttributeUsage);
-                        if (_mode.Equals(XmlNodeMode.xPath)) role.SetAttributeValue("name", attributeUsage.Label);
-                        role.SetAttributeValue("id", attributeUsage.Id.ToString());
-                    }
-
-                    XElement element = CreateXElement(attributeTypeName, XmlNodeType.MetadataAttribute);
-
-                    if (_mode.Equals(XmlNodeMode.xPath)) element.SetAttributeValue("name", attributeTypeName);
-                    element.SetAttributeValue("roleId", attributeUsage.Id.ToString());
-                    element.SetAttributeValue("id", attributeId);
-                    element.SetAttributeValue("number", number);
-
-
-                    List<XElement> listOfPackagesAfter = GetChildren(attributeTypeName, role).Where(p => p.Attribute("number") != null && Convert.ToInt64(p.Attribute("number").Value) >= number).ToList();
-                    listOfPackagesAfter.ForEach(p => p.Attribute("number").SetValue(Convert.ToInt64(p.Attribute("number").Value) + 1));
-
-                    //after element
-                    XElement afterElement = Get(attributeTypeName, number + 1, role);
-                    if (afterElement != null)
-                    {
-                        afterElement.AddBeforeSelf(element);
-                    }
-                    else
-                    {
-                        role.Add(element);
-                    }
-
-                    //package.Add(role);
-
+                    role = UpdateNumberOfSameElements(role, element, attributeTypeName, number);
                 }
                 else
                 {
-                    throw new Exception("attribute exist");
+                    role = UpdateNumberOfSameElements(role, element, attributeTypeName, number);
                 }
 
                 return _tempXDoc;
@@ -651,9 +637,36 @@ namespace BExIS.Xml.Helpers
 
                 return _tempXDoc;
             }
+            
+            /// <summary>
+            /// Updating the number of all childrens after the number was selected
+            /// and adding the element to the parent on the specific plave
+            /// </summary>
+            /// <param name="parent"></param>
+            /// <param name="element"></param>
+            /// <param name="typeName"></param>
+            /// <param name="number"></param>
+            /// <returns></returns>
+            private XElement UpdateNumberOfSameElements(XElement parent, XElement element, string typeName, int number)
+            {
+                List<XElement> listOfPackagesAfter = GetChildren(typeName, parent).Where(p => p.Attribute("number") != null && Convert.ToInt64(p.Attribute("number").Value) >= number).ToList();
+                listOfPackagesAfter.ForEach(p => p.Attribute("number").SetValue(Convert.ToInt64(p.Attribute("number").Value) + 1));
+
+                //after element
+                XElement afterElement = Get(typeName, number + 1, parent);
+                if (afterElement != null)
+                {
+                    afterElement.AddBeforeSelf(element);
+                }
+                else
+                {
+                    parent.Add(element);
+                }
+
+                return parent;
+            }
 
         #endregion
-
 
         #region static
 

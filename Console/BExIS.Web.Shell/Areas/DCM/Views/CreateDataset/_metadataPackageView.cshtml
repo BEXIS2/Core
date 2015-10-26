@@ -1,0 +1,25 @@
+﻿@model BExIS.Web.Shell.Areas.DCM.Models.Create.StepModelHelper
+@{
+
+        string stepId = @Model.Model.StepInfo.Id.ToString(); //@Model.Model.Source.Id.ToString(); // XXX METADATSTRUCTURE+ "_"+Model.MetadataStructure.Id;
+        string contentId = stepId + "_Content";
+}
+
+<div id="@stepId" name="@Model.Usage.Label Container" class="createWizardStep">
+   
+   @if(Model.Model.StepInfo.IsInstanze == false)
+   {
+    <!-- CONTENT -->
+    <div id="@contentId" class="content">
+            @if (Model.Childrens.Any())
+            {
+                for (int i = 1; i <= Model.Childrens.Count; i++)
+                {
+                    var item = Model.Childrens.ElementAt(i-1);
+                    @Html.Partial("_metadataPackageUsageView", item)
+                }
+        
+            }
+    </div>  
+   }
+</div>
