@@ -1,7 +1,21 @@
 ﻿@using BExIS.Dlm.Entities.Data;
 @model System.Collections.Generic.List<Dataset>
+@section Information
+{
+    This maintenance tool is meant for administrators only. All datasets are
+    listed with their internal ID, status, and the option to remove them
+    from the system. Use with care!
+}
+
 @{
-    ViewBag.Title = "List of Datasets";
+    var DatasetIds = new List<long>();
+    
+    if (ViewData["DatasetIds"] != null)
+    {
+        DatasetIds = ViewData["DatasetIds"] as List<long>;
+    }
+    
+    
 }
 <h3>Datasets</h3>
 <table>
@@ -15,20 +29,33 @@
         <tr>
             <td>@(item.Id)</td>
 
-            @if (item.Status == DatasetStatus.CheckedIn)
+            @if (DatasetIds.Contains(item.Id))
             {
-                <td style="color: darkgreen">@(item.Status.ToString())</td>
-                <td>@Html.ActionLink("Delete", "Delete", new { id = item.Id, area = "Sam" })  | @Html.ActionLink("Purge", "Purge", new { id = item.Id, area = "Sam" }) | @Html.ActionLink("Versions", "Versions", new { id = item.Id, area = "Sam" }) </td>
+                if (item.Status == DatasetStatus.CheckedIn)
+                {
+                    <td style="color: darkgreen">@(item.Status.ToString())</td>
+                    <td>
+
+                        @Html.ActionLink("Delete", "Delete", new {id = item.Id, area = "Sam"}) | @Html.ActionLink("Purge", "Purge", new {id = item.Id, area = "Sam"})
+                    </td>
+                }
+                else if (item.Status == DatasetStatus.CheckedOut)
+                {
+                    <td style="color: darkblue">@(item.Status.ToString())</td>
+                    <td>@Html.ActionLink("Purge", "Purge", new { id = item.Id })</td>
+                }
+                else if (item.Status == DatasetStatus.Deleted)
+                {
+                    <td style="color: red">@(item.Status.ToString())</td>
+                    <td>@Html.ActionLink("Purge", "Purge", new { id = item.Id, area = "Sam" }) </td>
+                }
             }
-            else if (item.Status == DatasetStatus.CheckedOut)
-            {
-                <td style="color: darkblue">@(item.Status.ToString())</td>
-                <td>@Html.ActionLink("Purge", "Purge", new { id = item.Id }) | @Html.ActionLink("Versions", "Versions", new { id = item.Id, area = "Sam" }) </td>
-            }
-            else if (item.Status == DatasetStatus.Deleted)
+            else
             {
                 <td style="color: red">@(item.Status.ToString())</td>
-                <td>@Html.ActionLink("Purge", "Purge", new { id = item.Id, area = "Sam" }) </td>
+                <td>
+                    No Permissions!
+                </td>
             }
         </tr>
     }

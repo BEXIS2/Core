@@ -8,6 +8,7 @@ using System.Web.Routing;
 using System.Xml;
 using BExIS.Dcm.ImportMetadataStructureWizard;
 using Vaiona.Utils.Cfg;
+using Vaiona.Web.Mvc.Models;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
 {
@@ -25,6 +26,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         public ActionResult ImportMetadataStructureWizard()
         {
+            ViewBag.Title = PresentationModel.GetViewTitle("Import Metadata Structure ");
+
             Session["TaskManager"] = null;
             if (TaskManager == null) TaskManager = (ImportMetadataStructureTaskManager)Session["TaskManager"];
 

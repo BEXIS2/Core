@@ -35,6 +35,7 @@ namespace BExIS.Dcm.CreateDatasetWizard
         public static string METADATAPACKAGE_IDS = "MetadataPackageIds";
 
         public static string SETUP_LOADED = "SETUP_LOADED";
+        public static string EDIT_MODE = "EDIT_MODE";
     
         public static string ERROR_DIC = "Error_Dic";
 

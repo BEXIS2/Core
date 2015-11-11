@@ -9,6 +9,7 @@ using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authentication;
 using BExIS.Security.Services.Subjects;
 using BExIS.Web.Shell.Areas.SAM.Models;
+using Vaiona.Web.Mvc.Models;
 
 namespace BExIS.Web.Shell.Areas.SAM.Controllers
 {
@@ -28,6 +29,51 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
         public ActionResult ChangePassword(ChangePasswordModel model)
         {
             return View();
+        }
+
+        public ActionResult MyAccount()
+        {
+            ViewBag.Title = PresentationModel.GetViewTitle("My Account");
+
+            SubjectManager subjectManager = new SubjectManager();
+            User user = subjectManager.GetUserByName(HttpContext.User.Identity.Name);
+
+            if (user != null)
+            {
+                return View("MyAccount", MyAccountModel.Convert(user));
+            }
+            else
+            {
+                return View("MyAccount");
+            }
+            
+        }
+
+        [HttpPost]
+        public ActionResult MyAccount(MyAccountModel model)
+        {
+            if (!ModelState.IsValid) return View("MyAccount", model);
+
+            SubjectManager subjectManager = new SubjectManager();
+
+            User user = subjectManager.GetUserById(model.UserId);
+
+            if (model.Password == model.ConfirmPassword && model.Password != null)
+            {
+                subjectManager.ChangePassword(user.Id, model.Password);
+            }
+
+            if (model.SecurityAnswer != null)
+            {
+                subjectManager.ChangeSecurityQuestionAndSecurityAnswer(user.Id, model.SecurityQuestionId, model.SecurityAnswer);
+            }
+
+            user.Email = model.Email;
+            user.FullName = model.FullName;
+
+            subjectManager.UpdateUser(user);
+
+            return RedirectToAction("Index", "Home", new { area = "" });
         }
 
         [ChildActionOnly]
@@ -129,7 +175,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
 
         #region Validation
 
-        public JsonResult ValidateEmail(string email, long id = 0)
+        public JsonResult ValidateEmail(string email, long userId = 0)
         {
             SubjectManager subjectManager = new SubjectManager();
 
@@ -141,13 +187,13 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
             }
             else
             {
-                if (user.Id == id)
+                if (user.Id == userId)
                 {
                     return Json(true, JsonRequestBehavior.AllowGet);
                 }
                 else
                 {
-                    string error = String.Format(CultureInfo.InvariantCulture, "Email address already exists.", email);
+                    string error = String.Format(CultureInfo.InvariantCulture, "The e-mail address already exists.", email);
 
                     return Json(error, JsonRequestBehavior.AllowGet);
                 }

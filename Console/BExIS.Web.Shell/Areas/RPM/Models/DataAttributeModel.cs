@@ -13,15 +13,22 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
         public DataAttributeModel DataAttributeModel = new DataAttributeModel();
         public List<DataAttributeStruct> DataAttributeStructs = new List<DataAttributeStruct>();
 
+
         public DataAttributeManagerModel()
         {
             DataAttributeModel = new DataAttributeModel();
             dataContainerManager.DataAttributeRepo.Get().ToList().ForEach(da => DataAttributeStructs.Add(new DataAttributeStruct() { Id = da.Id, Name = da.Name, ShortName = da.ShortName, Description = da.Description, DataType = da.DataType.Name, Unit = da.Unit.Name, InUse = inUse(da), FormalDescriptions = getFormalDescriptions(da) }));
         }
 
-        public DataAttributeManagerModel(long dataAttributeId)
+        public DataAttributeManagerModel(bool showConstraints)
         {
-            DataAttributeModel = new DataAttributeModel(dataContainerManager.DataAttributeRepo.Get(dataAttributeId));
+            DataAttributeModel = new DataAttributeModel(showConstraints);
+            dataContainerManager.DataAttributeRepo.Get().ToList().ForEach(da => DataAttributeStructs.Add(new DataAttributeStruct() { Id = da.Id, Name = da.Name, ShortName = da.ShortName, Description = da.Description, DataType = da.DataType.Name, Unit = da.Unit.Name, InUse = inUse(da), FormalDescriptions = getFormalDescriptions(da) }));
+        }
+
+        public DataAttributeManagerModel(long dataAttributeId, bool showConstraints = false)
+        {
+            DataAttributeModel = new DataAttributeModel(dataContainerManager.DataAttributeRepo.Get(dataAttributeId), showConstraints);
             dataContainerManager.DataAttributeRepo.Get().ToList().ForEach(da => DataAttributeStructs.Add(new DataAttributeStruct() { Id = da.Id, Name = da.Name, ShortName = da.ShortName, Description = da.Description, DataType = da.DataType.Name, Unit = da.Unit.Name, InUse = inUse(da), FormalDescriptions = getFormalDescriptions(da) }));
         }
 
@@ -85,6 +92,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
         public string ShortName { get; set; }
         public string Description { get; set; }
         public bool InUse { get; set; }
+        public bool ShowConstraints { get; set; }
 
         public DataTypeItemModel DataType { get; set; }
         public List<DataTypeItemModel> DataTypes = new List<DataTypeItemModel>(); 
@@ -96,7 +104,6 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
         public List<DomainConstraintModel> DomainConstraints { get; set; }
         public List<PatternConstraintModel> PatternConstraints { get; set; }
 
-
         public DataAttributeModel()
         {
             Id = 0;
@@ -104,38 +111,60 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
             ShortName = "";
             Description = "";
             InUse = false;
+            ShowConstraints = false;
 
             DataType = new DataTypeItemModel();
             Unit = new UnitItemModel();
-           
-            dataTypeManager.Repo.Get().ToList().ForEach(dt => DataTypes.Add(new DataTypeItemModel(dt)));
-            unitManager.Repo.Get().ToList().ForEach(u => Units.Add(new UnitItemModel(u)));
+
+            dataTypeManager.Repo.Get().OrderBy(dt => dt.Name).ToList().ForEach(dt => DataTypes.Add(new DataTypeItemModel(dt)));
+            unitManager.Repo.Get().OrderBy(u => u.Name).ToList().ForEach(u => Units.Add(new UnitItemModel(u)));
 
             RangeConstraints = new List<RangeConstraintModel>();
             DomainConstraints = new List<DomainConstraintModel>();
             PatternConstraints = new List<PatternConstraintModel>();
         }
 
-        public DataAttributeModel(DataAttribute dataAttribute)
+        public DataAttributeModel(bool showConstraints)
+        {
+            Id = 0;
+            Name = "";
+            ShortName = "";
+            Description = "";
+            InUse = false;
+            ShowConstraints = showConstraints;
+
+            DataType = new DataTypeItemModel();
+            Unit = new UnitItemModel();
+
+            dataTypeManager.Repo.Get().OrderBy(dt => dt.Name).ToList().ForEach(dt => DataTypes.Add(new DataTypeItemModel(dt)));
+            unitManager.Repo.Get().OrderBy(u=>u.Name).ToList().ForEach(u => Units.Add(new UnitItemModel(u)));
+
+            RangeConstraints = new List<RangeConstraintModel>();
+            DomainConstraints = new List<DomainConstraintModel>();
+            PatternConstraints = new List<PatternConstraintModel>();
+        }
+
+        public DataAttributeModel(DataAttribute dataAttribute, bool showConstraints = false)
         {
             Id = dataAttribute.Id;
             Name = dataAttribute.Name;
             ShortName = dataAttribute.ShortName;
             Description = dataAttribute.Description;
+            ShowConstraints = showConstraints;
 
             DataType = new DataTypeItemModel(dataAttribute.DataType);
             Unit = new UnitItemModel(dataAttribute.Unit);
 
-            dataTypeManager.Repo.Get().ToList().ForEach(dt => DataTypes.Add(new DataTypeItemModel(dt)));
-            unitManager.Repo.Get().ToList().ForEach(u => Units.Add(new UnitItemModel(u)));
+            dataTypeManager.Repo.Get().OrderBy(dt => dt.Name).ToList().ForEach(dt => DataTypes.Add(new DataTypeItemModel(dt)));
+            unitManager.Repo.Get().OrderBy(u => u.Name).ToList().ForEach(u => Units.Add(new UnitItemModel(u)));
 
             RangeConstraints = new List<RangeConstraintModel>();
             DomainConstraints = new List<DomainConstraintModel>();
             PatternConstraints = new List<PatternConstraintModel>();
 
-            dataAttribute.Constraints.ToList().Where(c => c.GetType().Equals(typeof(RangeConstraint))).ToList().ForEach(rc => RangeConstraints.Add(RangeConstraintModel.Convert((RangeConstraint)rc)));
-            dataAttribute.Constraints.ToList().Where(c => c.GetType().Equals(typeof(PatternConstraint))).ToList().ForEach(pc => PatternConstraints.Add(PatternConstraintModel.Convert((PatternConstraint)pc)));
-            dataAttribute.Constraints.ToList().Where(c => c.GetType().Equals(typeof(DomainConstraint))).ToList().ForEach(dc => DomainConstraints.Add(DomainConstraintModel.Convert((DomainConstraint)dc)));
+            dataAttribute.Constraints.ToList().Where(c => c.GetType().Equals(typeof(RangeConstraint))).ToList().ForEach(rc => RangeConstraints.Add(RangeConstraintModel.Convert((RangeConstraint)rc, Id)));
+            dataAttribute.Constraints.ToList().Where(c => c.GetType().Equals(typeof(PatternConstraint))).ToList().ForEach(pc => PatternConstraints.Add(PatternConstraintModel.Convert((PatternConstraint)pc, Id)));
+            dataAttribute.Constraints.ToList().Where(c => c.GetType().Equals(typeof(DomainConstraint))).ToList().ForEach(dc => DomainConstraints.Add(DomainConstraintModel.Convert((DomainConstraint)dc, Id)));
 
             if (dataAttribute.UsagesAsVariable != null && dataAttribute.UsagesAsVariable.Count > 0)
                 InUse = true;
@@ -146,16 +175,16 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
                 {
                     if (c is RangeConstraint)
                     { 
-                        RangeConstraints.Add(RangeConstraintModel.Convert((RangeConstraint)c));
+                        RangeConstraints.Add(RangeConstraintModel.Convert((RangeConstraint)c, Id));
                     }
                     if (c is PatternConstraint)
                     { 
-                        PatternConstraints.Add(PatternConstraintModel.Convert((PatternConstraint)c));
+                        PatternConstraints.Add(PatternConstraintModel.Convert((PatternConstraint)c, Id));
                     }
 
                     if (c is DomainConstraint)
                     {
-                        DomainConstraints.Add(DomainConstraintModel.Convert((DomainConstraint)c));
+                        DomainConstraints.Add(DomainConstraintModel.Convert((DomainConstraint)c, Id));
                     }
                 }
             }

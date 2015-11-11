@@ -5,102 +5,65 @@
 {
     @Html.ValidationSummary(true)
 
-    <div id="tabs">
+    @(Html.Telerik().TabStrip()
+            .Name("tabStripEditUser")
+            .SelectedIndex(0)
+            .Items(tabs =>
+            {
 
-        <ul>
-            <li><a href="#contentDetails">Details</a></li>
-            <li><a href="#contentMembership">Membership</a></li>
-        </ul>
+                tabs.Add()
+                    .Text("Details")
+                    .Content(@<text>
+                        <table class="bx-table-form">
+                            <tr>
+                                <td>
+                                    @Html.LabelFor(m => m.GroupId)
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(m => m.GroupId, new { @class = "t-input bx-input", @disabled = "disabled" })
+                                    @Html.HiddenFor(m => m.GroupId)
+                                </td>
+                            </tr>
+                        
+                            <tr>
+                                <td>
+                                    @Html.LabelFor(m => m.GroupName)
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(m => m.GroupName, new { @class = "t-input bx-input" })
+                                    @Html.ValidationMessageFor(m => m.GroupName)
+                                </td>
+                            </tr>
+                        
+                            <tr>
+                                <td>
+                                    @Html.LabelFor(m => m.Description)
+                                </td>
+                                <td>
+                                    @Html.TextAreaFor(m => m.Description, new { @class = "t-input bx-input" })
+                                    @Html.ValidationMessageFor(m => m.Description)
+                                </td>
+                            </tr>
+                        </table>
+                    </text>);
 
-        <div id="contentDetails">
-            <table class="bx-table-form">
-                <tr>
-                    <td>
-                        @Html.LabelFor(m => m.GroupId)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(m => m.GroupId)
-                        @Html.HiddenFor(m => m.GroupId)
-                    </td>
-                </tr>
+                tabs.Add()
+                    .Text("Membership")
+                    .Content(@<text>
+                        @Html.Partial("_Membership")
+                    </text>);
+            })
+    )
 
-                <tr>
-                    <td>
-                        @Html.LabelFor(m => m.GroupName)
-                    </td>
-                    <td>
-                        @Html.TextBoxFor(m => m.GroupName)
-                        @Html.ValidationMessageFor(m => m.GroupName)
-                    </td>
-                </tr>
-
-                <tr>
-                    <td>
-                        @Html.LabelFor(m => m.Description)
-                    </td>
-                    <td>
-                        @Html.TextAreaFor(m => m.Description)
-                        @Html.ValidationMessageFor(m => m.Description)
-                    </td>
-                </tr>
-            </table>
-        </div>
-
-        <div id="contentMembership">
-            @(Html.Telerik().Grid<GroupMembershipGridRowModel>()
-                  .Name("gridMembership")
-                  .HtmlAttributes(new { style = "width: 500px" })
-                  .Columns(columns =>
-                  {
-                    columns.Bound(m => m.IsUserInGroup)
-                          .Template(@<text>
-                        @if (item.IsUserInGroup)
-                        {
-                            <input type='checkbox' onchange='setMembership(this.checked, @item.Id);' name='selectedUsers' value='@item.Id' checked='checked') />
-                        }
-                        else
-                        {
-                            <input type='checkbox' onchange='setMembership(this.checked, @item.Id);' name='selectedUsers' value='@item.Id' />
-                        }
-                        </text>)
-                .ClientTemplate("<input type='checkbox' onchange='setMembership(this.checked, <#= Id #>);' name='selectedUsers' value='<#= Id #>' <#= IsUserInGroup ? checked='checked' : '' #> />")
-                    .Title("Member")
-                    .Width(64)
-                    .Filterable(false)
-                    .HtmlAttributes(new { style = "text-align:center" });
-             columns.Bound(m => m.Id)
-                          .ClientTemplate("<#= Id #>" + "<input type='hidden' name='Id' value='<#= Id #> />'");
-                      columns.Bound(m => m.UserName);
-                      columns.Bound(m => m.FullName);
-                      columns.Bound(m => m.Email);
-                  })
-                  .DataBinding(dataBinding => dataBinding
-                      .Ajax()
-                      .OperationMode(GridOperationMode.Client)
-                      .Select("Membership_Select", "Groups", new { id = Model.GroupId, selectedGroups = (long[])ViewData["Users"] })
-                  )
-                  .Filterable()
-                    .Pageable(pageable =>
-                    {
-                        pageable.PageSize(10, new[] {10, 20, 50, 100});
-                        pageable.Style(GridPagerStyles.NextPreviousAndNumeric | GridPagerStyles.PageSizeDropDown);
-                    })
-                  .Sortable())
-        </div>
+    <div class="bx-footer right">
+        <button type="button" style="float:left" onclick="windowEdit_onDelete(@Model.GroupId)" class="bx-button action">Delete</button>
+        <button style="margin-right: 1px" type="submit" onclick="windowEdit_onSubmit()" class="bx-button action">Save</button>
+        <button style="margin-left: 1px" type="button" onclick="windowEdit_onCancel()" class="bx-button action">Cancel</button>
     </div>
-
-    <p>
-        <button style="float:left" type="button" onclick="windowEdit_onDelete(@Model.GroupId)" class="t-button">Delete</button>
-
-        <button style="float: right; margin-left: 1px" type="button" onclick="windowEdit_onCancel()" class="t-button">Cancel</button>
-        <button style="float: right; margin-right: 1px" type="submit" class="t-button">Save</button>
-    </p>
 
 }
 
 <script type="text/javascript">
-    $("#tabs").tabs();
-
     $(document).ready(function () {
         $.validator.unobtrusive.parse("#contentEdit");
     });

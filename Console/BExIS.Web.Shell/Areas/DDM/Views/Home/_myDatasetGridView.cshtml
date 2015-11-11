@@ -44,20 +44,7 @@
             .HtmlAttributes(new { @class = "result-grid" })
             .Columns(columns =>
                 {
-                    if (@Model.Columns.Count > 0)
-                    {
-                            columns.Bound("Functions").ClientTemplate(
-                            "<div class='searchResultFunctionDiv'>" +
-                                @Html.ActionLink("Details", "ShowData", "Data", new { area = "DDM", id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>" }, new { @class = "bx-button small", @id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>" }) +
-                             "</div>"
-                            )
-                            
-                            .Width("60px")
-                            .Groupable(false)
-                            .Sortable(false)
-                            .Filterable(false);
-
-                    }
+                    
                     for (int i = 0; i < Model.Columns.Count; i++)
                     {
                         DataColumn column = Model.Columns[i];
@@ -77,26 +64,22 @@
                             if (title == "ID")
                             {
                                 columns.Bound(column.DataType, column.ColumnName)
-                                   .Title(title)
-                                   .Width("35px");
+                                   .Title(title);
                             }
                             if (title == "Title")
                             {
                                 columns.Bound(column.DataType, column.ColumnName)
-                                   .Title(title)
-                                   .Width("100px");
+                                   .Title(title);
                             }
                             if (title == "Description")
                             {
                                 columns.Bound(column.DataType, column.ColumnName)
-                                   .Title(title)
-                                   .Width("220px");
+                                   .Title(title);
                             }
                             if (title == "View" | title == "Update" | title == "Delete" | title == "Download" | title == "Grant")
                             {
                                 columns.Bound(column.DataType, column.ColumnName)
                                    .Title(title)
-                                   .Width("40px")
                                    .Filterable(false);
                             }
                             
@@ -110,6 +93,17 @@
                         }                       
                         
                     }
+                    if (@Model.Columns.Count > 0)
+                    {
+                            columns.Bound("").Width(40).ClientTemplate(
+                            "<div class='searchResultFunctionDiv'>" +
+                                @Html.ActionLink(" ", "ShowData", "Data", new { area = "DDM", id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>" }, new { @class = "bx bx-grid-function bx-show", @id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>" }) +
+                             "</div>"
+                            )                            
+                            .Groupable(false)
+                            .Sortable(false)
+                            .Filterable(false);
+                    }
 
                 })
 
@@ -118,22 +112,20 @@
                         .OnLoad("refreshGrid")
                         .OnSubmitChanges("refreshGrid")
                         .OnRowDataBound("resultGrid_OnRowDataBound")
-                        .OnDataBound("onDataBound")
+                        .OnDataBound("resetAllTelerikIconTitles")
+                        
                        )
             .Pageable(paging =>
                 paging
                     .Style(pagerStyles)
                     .PageSize(PageSize)
-                    .Position(GridPagerPosition.Bottom)
+                    .Position(GridPagerPosition.Both)
                     .PageTo(CurrentPage)
                     )
 
             .Sortable()
             .Filterable()
             .ColumnContextMenu()
-            .Groupable()
-
-
 )
 
 <script type="text/javascript">
@@ -141,42 +133,51 @@
     $('document').ready(function () {
 
         $('.t-filter').attr("title", "Filter");
+        resetAllTelerikIconTitles();
     })
 
-	function resultGrid_OnRowDataBound(e) {
+    function resultGrid_OnRowDataBound(e) {
 
-		//alert(e.item);
-		var obj = e.row.childNodes;
+        //alert(e.item);
+        var obj = e.row.childNodes;
 
-		$.each(obj, function (i) {
+        $.each(obj, function (i) {
 
-			obj[i].title = obj[i].textContent;
-			if (obj[i].textContent.length > 50) {
-				obj[i].textContent = jQuery.trim(obj[i].textContent).substring(0, 50).trim(this) + "...";
-			}
-		});
-	}
+            obj[i].title = obj[i].textContent;
+            if (obj[i].textContent.length > 50) {
+                obj[i].textContent = jQuery.trim(obj[i].textContent).substring(0, 50).trim(this) + "...";
+            }
+        });
+    }
 
-	function onComplete()
-	{
-	
-
-	}
+    function onComplete() {
 
 
-	function refreshGrid() {
-	    //$(".t-grid .t-refresh").trigger('click');
-	    $(".t-grid .t-refresh").trigger('click');
-	    /*alert("GridRefresh");*/
-	}
+    }
 
-	function onDataBound()
-	{
-	    resetAllTelerikIconTitles();
-	}
+
+    function refreshGrid() {
+        //$(".t-grid .t-refresh").trigger('click');
+        $(".t-grid .t-refresh").trigger('click');
+        /*alert("GridRefresh");*/
+    }
+
 
 </script>
 
 <style type="text/css">
+
+	#resultGrid .t-grid-content
+	{
+        position:relative;
+		height : auto !important;
+		max-height:450px;
+		/*overflow:auto;*/
+	}
+
+    #resultGrid .t-status
+    {
+       display:none;
+    }
 
 </style>

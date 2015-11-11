@@ -7,6 +7,7 @@ using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Web.Shell.Areas.SAM.Models;
 using Telerik.Web.Mvc;
+using Vaiona.Web.Mvc.Models;
 
 namespace BExIS.Web.Shell.Areas.SAM.Controllers
 {
@@ -53,7 +54,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
         }
 
         [HttpPost]
-        public ActionResult Edit(UserEditModel model, long[] selectedGroups)
+        public ActionResult Edit(UserEditModel model)
         {
             if (ModelState.IsValid)
             {
@@ -73,21 +74,23 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
                 user.IsBlocked = model.IsBlocked;
                 user.IsLockedOut = model.IsLockedOut;
 
+                // removing
                 long[] groups = user.Groups.Select(g => g.Id).ToArray();
 
-                if (groups != null)
+                foreach (long groupId in groups)
                 {
-                    foreach (long groupId in groups)
-                    {
-                        subjectManager.RemoveUserFromGroup(user.Id, groupId);
-                    }
+                    subjectManager.RemoveUserFromGroup(user.Id, groupId);
                 }
 
-                if (selectedGroups != null)
+                //adding
+                if (Session["Groups"] != null)
                 {
-                    foreach (long groupId in selectedGroups)
+                    foreach (UserMembershipGridRowModel group in (UserMembershipGridRowModel[]) Session["Groups"])
                     {
-                        subjectManager.AddUserToGroup(user.Id, groupId);
+                        if (group.IsUserInGroup)
+                        {
+                            subjectManager.AddUserToGroup(user.Id, group.Id);
+                        }
                     }
                 }
 
@@ -97,8 +100,6 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
             }
             else
             {
-                ViewData["SelectedGroups"] = selectedGroups;
-
                 return PartialView("_EditPartial", model);
             }
         }
@@ -124,6 +125,11 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
             return View(new GridModel<UserMembershipGridRowModel> { Data = groups });
         }
 
+        public void SetMembership(UserMembershipGridRowModel[] groups)
+        {
+            Session["Groups"] = groups;
+        }
+
         // --------------------------------------------------
         // USERS
         // --------------------------------------------------
@@ -132,6 +138,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
 
         public ActionResult Users()
         {
+            ViewBag.Title = PresentationModel.GetViewTitle("Users");
             return View();
         }
 

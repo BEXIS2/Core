@@ -4,7 +4,7 @@
 
 @using (Html.BeginCollectionItem("PatternConstraints"))
 { 
-    <table class="bx-rpm-container bx-rpm-constrainTable" id="patternConstraint">
+    <table class="bx-rpm-container bx-rpm-constrainTable" id="patternConstraint_@Model.Id">
         <tr>
             <td class="bx-rpm-constrainlabel">
                 Pattern
@@ -22,12 +22,17 @@
                     <div class="bx-rpm-text">@Html.LabelFor(m=>m.MatchingPhrase)</div>
                     @Html.TextBoxFor(m=>m.MatchingPhrase, new { @id = "pattern_phrase", @class = "bx-input" })
                 </div>
-                <div class="bx-function bx-info" title="@Model.FormalDescription" id="pattern_FormalDescription"></div>
+                <div class="bx-function bx-info bx-disabled" title="@Model.FormalDescription" id="pattern_FormalDescription"></div>
             </td>
             <td class="bx-rpm-constrainDesc">
                 <div class="bx-rpm-container">
                     <div class="bx-rpm-text">@Html.Label("Description")</div>
-                    @Html.TextBoxFor(m => m.Description, new { @class = "bx-input" })
+                    @Html.TextBoxFor(m => m.Description, new { @class = "bx-input",id= "pattern_desc" })
+                </div>
+            </td>
+            <td>
+                <div>
+                    <a class="bx bx-grid-function bx-eraser" style="margin-top: 26px" onclick="restPattern(this)" id="@Model.Id" title="Erase Constraint"></a>
                 </div>
             </td>
         </tr>

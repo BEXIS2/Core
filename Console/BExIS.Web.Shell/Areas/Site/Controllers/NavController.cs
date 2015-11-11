@@ -1,4 +1,6 @@
-﻿using System.Web.Mvc;
+﻿using System.Net.NetworkInformation;
+using System.Web.Mvc;
+using System.Windows.Forms;
 
 namespace BExIS.Web.Shell.Areas.Site.Controllers
 {

@@ -11,43 +11,67 @@
 
        
 }
+<div style="text-align:left; padding-bottom:5px;">
+@if (Model.DownloadAccess && Model.FileList.Count > 0)
+{ 
+        @Html.ActionLink("Download all", "DownloadAllFiles", "Data", new { area = "DDM", id = @Model.DatasetId }, new { @class = "bx-button action " })
+}
+else
+{ 
+        <button class="bx-button bx-disabled" disabled>Download all</button>
+}
+</div>
 
 @if (Model.DataStructureType == DataStructureType.Unstructured && Model.Data == null)
 {
+        <table>
+            <tr>
+                <th>
+                    Filename
+                </th>
+                <th>
+                    Type
+                </th>
+                <th>
+                    Description
+                </th>
+                <th>
 
-
-        foreach (BExIS.IO.BasicFileInfo cd in Model.FileList)
-        {
-
-            using (var row = Html.Bootstrap().GridRow().Begin())
-            {
-                using (row.GridColumn(2).Begin())
-                {
-                     @cd.Name
-                }
-                
-                using (row.GridColumn(2).Begin())
-                {
-                    if (Model.DownloadAccess)
-                    { 
-                        @Html.ActionLink("Download", "DownloadFile", "Data", new { area = "DDM", path = @cd.Uri, mimeType=cd.MimeType }, new { @class="t-button" })
-                    }
-                }
-            }
-
-        }
+                </th>
+            </tr>
+      
         
-        using (var row = Html.Bootstrap().GridRow().Begin())
+
+        @foreach (BExIS.IO.BasicFileInfo cd in Model.FileList)
         {
-            using (row.GridColumn(2).SetMdOffset(2).Begin())
-            {
-                if (Model.DownloadAccess && Model.FileList.Count>0)
-                { 
-                    @Html.ActionLink("Download all", "DownloadAllFiles", "Data", new { area = "DDM", id=@Model.DatasetId}, new { @class="t-button" })
-                }
-            }
-                
+                <tr>
+                    <td>
+                         @cd.Name
+                    </td>
+                    <td>
+                         @cd.MimeType
+                    </td>
+                    <td>
+                        
+                    </td>
+                    <td style="width:30px;">
+                        @if (Model.DownloadAccess)
+                        {
+                            @Html.ActionLink(" ", "DownloadFile", "Data", new { area = "DDM", path = @cd.Uri, mimeType = cd.MimeType }, new { @class = "bx bx-grid-function bx-download" })
+                        }
+                        else
+                        {
+                            <div class="bx bx-grid-function bx-download bx-disabled" disabled></div>
+                        }
+                    </td>
+                </tr>
+
         }
+
+        </table>
+        
+    
+
 
 }
 

@@ -10,13 +10,30 @@
     }
 
  }
-<div class="metadataNode">
+<div class="metadataNode row">
 @using (Html.BeginCollectionItem("metadataNames"))
 { 
-    @Html.DropDownListFor(m => m, new SelectList(metadataNodes,"XPath","DisplayName", Model), "Select, please")
-     
+    <div class="col-lg-10 vcenter">
+         @Html.DropDownListFor(m => m, new SelectList(metadataNodes, "XPath", "DisplayName", Model), "Select, please", new { title="Corresponding metadata node to be used for the Lucene index."})
+    </div>
+    <div class="col-lg-1 text-left vcenter">
+         <a href="#" class="removeMetadataNode bx-trash bx-function" ></a>
+    </div>
     @*@Html.TextBoxFor(m => m);*@
-    <a href="#" class="removeMetadataNode t-icon t-delete" >delete</a>
+    
 }
-
 </div>
+<style type="text/css">
+
+    .metadataNode select
+    {
+        width:100%;
+    }
+
+    .metadataNode
+    {
+        width:95%;
+        margin:0;
+    }
+
+</style>

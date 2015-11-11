@@ -18,8 +18,11 @@
 
 @if (@Model.Item1 != null)
 { 
-    <h2>@Model.Item1.Self.Name</h2>
-    <p>@Model.Item1.Self.Description</p>
+    <div style="text-align:left">
+        <h2>@Model.Item1.Self.Name</h2>
+        <p>@Model.Item1.Self.Description</p>
+    </div>
+    
 }
 
 @if(Model.Item1.Self is StructuredDataStructure)
@@ -45,28 +48,35 @@
                         .OperationMode(GridOperationMode.Client)
                         .Select("_CustomDataStructureBinding", "Data", new { datasetID = id })
                     )
-                    .HtmlAttributes(new {@class=".t-grid-without-filter"})
+                    .HtmlAttributes(new { @class = ".t-grid-without-filter" })
                     .EnableCustomBinding(true)
-                  
+
                     .Columns(columns =>
                     {
-                        for (int i = 0; i < dt.Columns.Count; i++)
+                    for (int i = 0; i < dt.Columns.Count; i++)
+                    {
+                        DataColumn column = dt.Columns[i];
+
+                        if (column.ColumnName.ToLower() == "optional")
                         {
-                            DataColumn column = dt.Columns[i];
-                            columns.Bound(column.DataType, column.ColumnName);
+                            columns.Bound(column.DataType, column.ColumnName)
+                                .ClientTemplate("<input id='<#= " + column.ColumnName + "#>' name='<#= " + column.ColumnName + "#>' type='checkbox' value='<#= " + @dt.Columns["Optional"] + "#>' class='bx-disabled bx-ddm-checkbox' disabled = 'disabled' />").Title(column.ColumnName);
                         }
-
-                    })
-
+                        else
+                        {
+                                    columns.Bound(column.DataType, column.ColumnName);
+                                }
+                    }
+})
                     .ClientEvents(events => events
                             .OnDataBound("onDataBound")
                         )
 
                     .Pageable(paging =>
                         paging.PageSize(10)
-                        .Position(GridPagerPosition.Bottom)
+                        .Position(GridPagerPosition.Both)
                     )
-                            
+
                     .ColumnContextMenu()
         )
     }
@@ -78,6 +88,14 @@
     function onDataBound()
     {
         resetAllTelerikIconTitles();
+
+        for (var i = 0; i < $(".bx-ddm-checkbox").length; i++)
+        {
+            if ($(".bx-ddm-checkbox")[i].getAttribute('value') == "True")
+            {
+                $(".bx-ddm-checkbox")[i].setAttribute('checked','checked')
+            }
+        }
     }
 </script>
 <style type="text/css">

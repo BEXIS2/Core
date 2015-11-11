@@ -3,6 +3,7 @@
 <head>
 <meta http-equiv=Content-Type content="text/html; charset=windows-1252">
 <meta name=Generator content="Microsoft Word 12 (filtered)">
+
 <style>
 <!--
  /* Font Definitions */
@@ -90,14 +91,16 @@ p.MsoHeader, li.MsoHeader, div.MsoHeader
 	{mso-style-link:"Header Char";
 	margin:0cm;
 	margin-bottom:.0001pt;
-	font-size:11.0pt;
+	font-size:10.0pt;
 	font-family:"Calibri","sans-serif";}
 p.MsoFooter, li.MsoFooter, div.MsoFooter
 	{mso-style-link:"Footer Char";
 	margin:0cm;
 	margin-bottom:.0001pt;
-	font-size:11.0pt;
+	font-size:10.0pt;
 	font-family:"Calibri","sans-serif";}
+span.MsoCommentReference
+	{font-family:"Times New Roman","serif";}
 p.MsoTitle, li.MsoTitle, div.MsoTitle
 	{mso-style-link:"Title Char";
 	margin-top:0cm;
@@ -155,7 +158,8 @@ p.MsoSubtitle, li.MsoSubtitle, div.MsoSubtitle
 	letter-spacing:.75pt;
 	font-style:italic;}
 a:link, span.MsoHyperlink
-	{color:blue;
+	{font-family:"Times New Roman","serif";
+	color:blue;
 	text-decoration:underline;}
 a:visited, span.MsoHyperlinkFollowed
 	{color:purple;
@@ -215,7 +219,8 @@ p.MsoListParagraphCxSpLast, li.MsoListParagraphCxSpLast, div.MsoListParagraphCxS
 	font-size:11.0pt;
 	font-family:"Calibri","sans-serif";}
 span.MsoIntenseEmphasis
-	{color:#4F81BD;
+	{font-family:"Times New Roman","serif";
+	color:#4F81BD;
 	font-weight:bold;
 	font-style:italic;}
 p.MsoTocHeading, li.MsoTocHeading, div.MsoTocHeading
@@ -230,40 +235,44 @@ p.MsoTocHeading, li.MsoTocHeading, div.MsoTocHeading
 	font-family:"Cambria","serif";
 	color:#365F91;
 	font-weight:bold;}
-span.TitleChar
-	{mso-style-name:"Title Char";
-	mso-style-link:Title;
-	font-family:"Cambria","serif";
-	color:#17365D;
-	letter-spacing:.25pt;}
 span.Heading1Char
 	{mso-style-name:"Heading 1 Char";
 	mso-style-link:"Heading 1";
 	font-family:"Cambria","serif";
 	color:#365F91;
 	font-weight:bold;}
-span.BalloonTextChar
-	{mso-style-name:"Balloon Text Char";
-	mso-style-link:"Balloon Text";
-	font-family:"Tahoma","sans-serif";}
-span.HeaderChar
-	{mso-style-name:"Header Char";
-	mso-style-link:Header;}
-span.FooterChar
-	{mso-style-name:"Footer Char";
-	mso-style-link:Footer;}
 span.Heading2Char
 	{mso-style-name:"Heading 2 Char";
 	mso-style-link:"Heading 2";
 	font-family:"Cambria","serif";
 	color:#4F81BD;
 	font-weight:bold;}
+span.TitleChar
+	{mso-style-name:"Title Char";
+	mso-style-link:Title;
+	font-family:"Cambria","serif";
+	color:#17365D;
+	letter-spacing:.25pt;}
+span.BalloonTextChar
+	{mso-style-name:"Balloon Text Char";
+	mso-style-link:"Balloon Text";
+	font-family:"Tahoma","sans-serif";}
+span.HeaderChar
+	{mso-style-name:"Header Char";
+	mso-style-link:Header;
+	font-family:"Times New Roman","serif";}
+span.FooterChar
+	{mso-style-name:"Footer Char";
+	mso-style-link:Footer;
+	font-family:"Times New Roman","serif";}
 span.CommentTextChar
 	{mso-style-name:"Comment Text Char";
-	mso-style-link:"Comment Text";}
+	mso-style-link:"Comment Text";
+	font-family:"Times New Roman","serif";}
 span.CommentSubjectChar
 	{mso-style-name:"Comment Subject Char";
 	mso-style-link:"Comment Subject";
+	font-family:"Times New Roman","serif";
 	font-weight:bold;}
 span.SubtitleChar
 	{mso-style-name:"Subtitle Char";
@@ -272,9 +281,8 @@ span.SubtitleChar
 	color:#4F81BD;
 	letter-spacing:.75pt;
 	font-style:italic;}
-.MsoPapDefault
-	{margin-bottom:10.0pt;
-	line-height:115%;}
+.MsoChpDefault
+	{font-size:10.0pt;}
  /* Page Definitions */
  @page WordSection1
 	{size:595.3pt 841.9pt;
@@ -297,11 +305,11 @@ ul
 
 <div style='border:none;border-bottom:solid #4F81BD 1.0pt;padding:0cm 0cm 4.0pt 0cm'>
 
-<p class=MsoTitleCxSpFirst style='text-align:justify'><span lang=EN-US>BExIS 2.7.0
-</span></p>
+<p class=MsoTitleCxSpFirst style='text-align:justify'><span lang=EN-US>BEXIS
+2.8.0 </span></p>
 
-<p class=MsoTitleCxSpLast style='text-align:justify'><span lang=EN-US>Search
-Manual</span></p>
+<p class=MsoTitleCxSpLast style='text-align:justify'><span lang=EN-US>Data
+Discovery Module</span></p>
 
 </div>
 
@@ -425,133 +433,128 @@ justify;line-height:normal'><b><i><span style='color:#4F81BD'>Contact</span></i>
 
 <p class=MsoNormal style='margin-top:0cm;margin-right:0cm;margin-bottom:0cm;
 margin-left:35.4pt;margin-bottom:.0001pt;text-align:justify;line-height:normal'><span
-style='color:gray'>Website:             </span><span lang=DE><a
-href="http://fusion.cs.uni-jena.de/bexis"><span lang=EN-GB style='color:blue'>http://fusion.cs.uni-jena.de/bexis</span></a></span></p>
+style='color:gray'>Website:             </span><u><span style='color:blue'>http://fusion.cs.uni-jena.de/bexis</span></u></p>
 
 <p class=MsoNormal style='margin-top:0cm;margin-right:0cm;margin-bottom:0cm;
 margin-left:35.4pt;margin-bottom:.0001pt;text-align:justify;line-height:normal'><span
-style='color:gray'>Email:                   bexis-support@uni-jena.de </span></p>
+lang=FR style='color:gray'>Email:                   bexis-support@uni-jena.de </span></p>
 
 <p class=MsoNormal style='margin-top:0cm;margin-right:0cm;margin-bottom:0cm;
 margin-left:35.4pt;margin-bottom:.0001pt;text-align:justify;line-height:normal'><span
-lang=DE style='color:gray'>Phone:                                +49-(0)3641-948968
+lang=FR style='color:gray'>Phone:                                +49-(0)3641-948968
 </span></p>
 
-<p class=MsoNormal style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
+<p class=MsoNormal style='text-align:justify'><span lang=FR>&nbsp;</span></p>
 
-<span lang=EN-US style='font-size:11.0pt;line-height:115%;font-family:"Calibri","sans-serif"'><br
+<span lang=FR style='font-size:11.0pt;line-height:115%;font-family:"Calibri","sans-serif"'><br
 clear=all style='page-break-before:always'>
 </span>
 
-<p class=MsoNormal style='text-align:justify'><span lang=EN-US>Start Contents</span></p>
+<p class=MsoNormal style='text-align:justify'><span lang=FR>Start Contents</span></p>
 
-<p class=MsoTocHeading style='text-align:justify'><span lang=EN-US>Search ToC</span></p>
+<p class=MsoTocHeading style='text-align:justify'><span lang=EN-US>Content</span></p>
 
 <p class=MsoNormal style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
 
-<p class=MsoToc1><span lang=DE><a href="#_Toc412202577"><span lang=EN-GB>1.
+<p class=MsoToc1><span lang=DE><a href="#_Toc434575995"><span lang=EN-GB>1.
 Search UI</span><span style='color:windowtext;display:none;text-decoration:
 none'> </span><span
 style='color:windowtext;display:none;text-decoration:none'>3</span></a></span></p>
 
-<p class=MsoToc2><span lang=DE><a href="#_Toc412202578"><span lang=EN-US>1.1.
+<p class=MsoToc2><span lang=DE><a href="#_Toc434575996"><span lang=EN-US>1.1.
 Categories</span><span style='color:windowtext;display:none;text-decoration:
 none'>. </span><span
 style='color:windowtext;display:none;text-decoration:none'>3</span></a></span></p>
 
-<p class=MsoToc2><span lang=DE><a href="#_Toc412202579"><span lang=EN-US>1.2.
+<p class=MsoToc2><span lang=DE><a href="#_Toc434575997"><span lang=EN-US>1.2.
 Properties</span><span style='color:windowtext;display:none;text-decoration:
 none'>. </span><span
 style='color:windowtext;display:none;text-decoration:none'>3</span></a></span></p>
 
-<p class=MsoToc2><span lang=DE><a href="#_Toc412202580"><span lang=EN-US>1.3.
+<p class=MsoToc2><span lang=DE><a href="#_Toc434575998"><span lang=EN-US>1.3.
 Free text search with Autocomplete</span><span style='color:windowtext;
 display:none;text-decoration:none'>. </span><span
 style='color:windowtext;display:none;text-decoration:none'>3</span></a></span></p>
 
-<p class=MsoToc2><span lang=DE><a href="#_Toc412202581"><span lang=EN-US>1.4.
+<p class=MsoToc2><span lang=DE><a href="#_Toc434575999"><span lang=EN-US>1.4.
 Selected Filter</span><span style='color:windowtext;display:none;text-decoration:
 none'>. </span><span
 style='color:windowtext;display:none;text-decoration:none'>4</span></a></span></p>
 
-<p class=MsoToc2><span lang=DE><a href="#_Toc412202582"><span lang=EN-US>1.5.
+<p class=MsoToc2><span lang=DE><a href="#_Toc434576000"><span lang=EN-US>1.5.
 Results</span><span style='color:windowtext;display:none;text-decoration:none'>. </span><span
 style='color:windowtext;display:none;text-decoration:none'>4</span></a></span></p>
 
-<p class=MsoToc1><span lang=DE><a href="#_Toc412202583"><span lang=EN-US>2.
+<p class=MsoToc1><span lang=DE><a href="#_Toc434576001"><span lang=EN-US>2.
 Data Details</span><span style='color:windowtext;display:none;text-decoration:
 none'>. </span><span
-style='color:windowtext;display:none;text-decoration:none'>4</span></a></span></p>
+style='color:windowtext;display:none;text-decoration:none'>5</span></a></span></p>
 
-<p class=MsoToc2><span lang=DE><a href="#_Toc412202584"><span lang=EN-US>2.1.
+<p class=MsoToc2><span lang=DE><a href="#_Toc434576002"><span lang=EN-US>2.1.
 Meta Data</span><span style='color:windowtext;display:none;text-decoration:
 none'>. </span><span
-style='color:windowtext;display:none;text-decoration:none'>4</span></a></span></p>
+style='color:windowtext;display:none;text-decoration:none'>5</span></a></span></p>
 
-<p class=MsoToc2><span lang=DE><a href="#_Toc412202585"><span lang=EN-US>2.2.
+<p class=MsoToc2><span lang=DE><a href="#_Toc434576003"><span lang=EN-US>2.2.
 Data Structure</span><span style='color:windowtext;display:none;text-decoration:
 none'>. </span><span
-style='color:windowtext;display:none;text-decoration:none'>5</span></a></span></p>
+style='color:windowtext;display:none;text-decoration:none'>6</span></a></span></p>
 
-<p class=MsoToc2><span lang=DE><a href="#_Toc412202586"><span lang=EN-US>2.3.
+<p class=MsoToc2><span lang=DE><a href="#_Toc434576004"><span lang=EN-US>2.3.
 Primary Data</span><span style='color:windowtext;display:none;text-decoration:
 none'>. </span><span
-style='color:windowtext;display:none;text-decoration:none'>5</span></a></span></p>
+style='color:windowtext;display:none;text-decoration:none'>6</span></a></span></p>
 
-<p class=MsoToc1><span lang=DE><a href="#_Toc412202587"><span lang=EN-US>3.
+<p class=MsoToc1><span lang=DE><a href="#_Toc434576005"><span lang=EN-US>3.
 Search Manager</span><span style='color:windowtext;display:none;text-decoration:
 none'>. </span><span
-style='color:windowtext;display:none;text-decoration:none'>5</span></a></span></p>
+style='color:windowtext;display:none;text-decoration:none'>7</span></a></span></p>
 
 <p class=MsoNormal style='text-align:justify'><span lang=DE>&nbsp;</span></p>
 
 <p class=MsoNormal style='text-align:justify'><span lang=EN-US>Start Context</span></p>
 
-<h1 style='text-align:justify'><a name="_Toc412202577">1. Search UI</a></h1>
+<span lang=EN-US style='font-size:11.0pt;line-height:115%;font-family:"Calibri","sans-serif"'><br
+clear=all style='page-break-before:always'>
+</span>
 
-<p class=MsoNormal>&nbsp;</p>
+<p class=MsoNormal style='text-align:justify'>&nbsp;</p>
+
+<h1 style='text-align:justify'><a name="_Toc434575995">1. Search UI</a></h1>
 
 <p class=MsoNormal style='text-align:justify'><span lang=EN-US>Search UI
 contains some parts to make search easier. In this way, you are able to look
 for all details of datasets, but not for the uploaded data. You can control the
 search UI via search manager explained in section 3.</span></p>
 
-<p class=MsoNormal style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
+<p class=MsoNormal style='text-align:justify'><img
+id="Picture 1" src="DDM_UserGuide_files/image001.gif" alt=Bild1></p>
 
-<h2 style='text-align:justify'><a name="_Toc393962508"><img width=605
-height=275 id="Grafik 18" src="DDM_UserGuide_files/image001.png"></a></h2>
-
-<p class=MsoListParagraph style='margin-left:18.0pt;text-align:justify'><span
-lang=EN-US><br>
-<br>
-</span></p>
-
-<h2 style='text-align:justify'><a name="_Toc412202578"><span lang=EN-US>1.1. Categories</span></a><span
+<h2 style='text-align:justify'><a name="_Toc434575996"><span lang=EN-US>1.1. Categories</span></a><span
 lang=EN-US> </span></h2>
 
 <p class=MsoNormal style='text-align:justify'><span lang=EN-US>Categories are
-defined by number 1 in the image above. The main nodes like “Project Name” are based
-on nodes in the metadata. The elements are values in the metadata from a main
-node and can be used to restrict the current selection. The numbers next to the
-elements and main nodes show the number of existing data sets in the database. This
-list changes according to the current selection. After selection the results
-and the facets updated. With the “more” button it is possible to select more
-than one element at the same time.</span></p>
+defined by number 1 in the image above. The main nodes like “Project Name” are
+based on nodes in the metadata. The elements are values in the metadata from a
+main node and can be used to restrict the current selection. The numbers next
+to the elements and main nodes show the number of existing data sets in the
+database. This list changes according to the current selection. After selection
+the results and the facets updated. With the “more” button it is possible to
+select more than one element at the same time.</span></p>
 
 <p class=MsoNormal style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
 
-<h2 style='text-align:justify'><a name="_Toc412202579"><span lang=EN-US>1.2. Properties</span></a><span
+<h2 style='text-align:justify'><a name="_Toc434575997"><span lang=EN-US>1.2. Properties</span></a><span
 lang=EN-US> </span></h2>
 
-<p class=MsoNormal style='text-align:justify'><span lang=EN-US>Number 2 in the
-image above is related with properties. In this section there are predefined UI
-Components like dropdown, radio button or slider to filter the data. There is
-only one possible choice for every component. After selection the results and
-the facets are updated accordingly. </span></p>
+<p class=MsoNormal style='text-align:justify'><span lang=EN-US>Number 2 in the image above is related with properties. In this section there are predefined UI Components
+like dropdown, radio button or slider to filter the data. There is only one
+possible choice for every component. After selection the results and the facets
+are updated accordingly. </span></p>
 
 <p class=MsoNormal style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
 
-<h2 style='text-align:justify'><a name="_Toc412202580"><span lang=EN-US>1.3. Free
+<h2 style='text-align:justify'><a name="_Toc434575998"><span lang=EN-US>1.3. Free
 text search with Autocomplete</span></a></h2>
 
 <p class=MsoNormal style='text-align:justify'><span lang=EN-US>The free text
@@ -561,67 +564,73 @@ letters or figures are entered. It supports also different languages.</span></p>
 
 <p class=MsoNormal style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
 
-<h2 style='text-align:justify'><a name="_Toc412202581"><span lang=EN-US>1.4. Selected
+<h2 style='text-align:justify'><a name="_Toc434575999"><span lang=EN-US>1.4. Selected
 Filter</span></a></h2>
 
 <p class=MsoNormal style='text-align:justify'><span lang=EN-US>You can find
-selected filter part by number 4 in the image above. Every filter applied from section
-1.1-1.3 is displayed here. Filters can be deselected just by clicking on it. In
-point 1 by the categories you are able to select more than one option to a
-category. If there are more than 2 you will see only the category. Click on the
-category and a window will open to define your selection for this category.</span></p>
+selected filter part by number 4 in the image above. Every filter applied from
+section 1.1-1.3 is displayed here. Filters can be deselected just by clicking
+on it. In point 1 by the categories you are able to select more than one option
+to a category. If there are more than 2 you will see only the category. Click
+on the category and a window will open to define your selection for this
+category.</span></p>
 
 <p class=MsoNormal style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
 
-<h2 style='text-align:justify'><a name="_Toc412202582"><span lang=EN-US>1.5. Results</span></a></h2>
+<h2 style='text-align:justify'><a name="_Toc434576000"><span lang=EN-US>1.5. Results</span></a></h2>
 
 <p class=MsoNormal style='text-align:justify'><span lang=EN-US>The matching
-results are displayed in a table or in the list view. It marks by number 5 in
-the image above. Basic functions like sorting, filtering, paging are available
-in the table header. Additionally you are able to group columns by dragging a
-column to the top of the table. By right clicking on the header, you can change
-visibility of columns.</span></p>
+results are displayed in a table or in the list view. It marks by number 5 in the image above. Basic functions like sorting, filtering, paging are available in the table
+header. Additionally you are able to group columns by dragging a column to the
+top of the table. By right clicking on the header, you can change visibility of
+columns.</span></p>
 
 <p class=MsoNormal style='text-align:justify'><span lang=EN-US>The details
 button opens the detailed view of the selected dataset.</span></p>
 
 <p class=MsoNormal style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
 
-<h1 style='text-align:justify'><a name="_Toc412202583"><span lang=EN-US>2. Data
-Details</span></a></h1>
+<b><span lang=EN-US style='font-size:14.0pt;line-height:115%;font-family:"Cambria","serif";
+color:#365F91'><br clear=all style='page-break-before:always'>
+</span></b>
 
-<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+<h1 style='text-align:justify'><a name="_GoBack"></a><a name="_Toc434576001"><span
+lang=EN-US>2. Data Details</span></a></h1>
 
 <p class=MsoNormal style='text-align:justify'><span lang=EN-US>About each
-dataset created in the BExIS, you can find a detail contains Meta Data, Data
+dataset created in the BEXIS, you can find a detail contains Meta Data, Data
 Structure and Primary Data explain later.</span></p>
 
 <p class=MsoNormal style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
 
-<h2 style='text-align:justify'><a name="_Toc412202584"><span lang=EN-US>2.1. Meta
-Data</span></a></h2>
+<h2 style='text-align:justify'><a name="_Toc434576002"><span lang=EN-US>2.1. </span></a><span lang=EN-US>Meta</span><span lang=EN-US> Data</span></h2>
 
 <p class=MsoNormal style='text-align:justify'><span lang=EN-US>On this tab you
 have access to the Meta data of the selected datasets.</span></p>
 
-<p class=MsoNormal style='text-align:justify'><img width=605 height=207
+<p class=MsoNormal style='text-align:justify'><img
 id="Grafik 1" src="DDM_UserGuide_files/image002.jpg"></p>
 
-<h2 style='text-align:justify'><span lang=EN-US>&nbsp;</span></h2>
+<span lang=EN-US style='font-size:11.0pt;line-height:115%;font-family:"Calibri","sans-serif"'><br
+clear=all style='page-break-before:always'>
+</span>
 
 <p class=MsoNormal><b><span lang=EN-US style='font-size:13.0pt;line-height:
 115%;font-family:"Cambria","serif";color:#4F81BD'>&nbsp;</span></b></p>
 
-<h2 style='text-align:justify'><a name="_Toc412202585"><span lang=EN-US>2.2. Data
+<h2 style='text-align:justify'><a name="_Toc434576003"><span lang=EN-US>2.2. Data
 Structure</span></a></h2>
 
 <p class=MsoNormal style='text-align:justify'><span lang=EN-US>On this tab you
 have access to the data structure of the selected datasets.</span></p>
 
-<p class=MsoNormal style='text-align:justify'><img width=605 height=201
-id="Grafik 19" src="DDM_UserGuide_files/image003.png"></p>
+<p class=MsoNormal style='text-align:justify'><img
+id="Picture 3" src="DDM_UserGuide_files/image003.jpg"></p>
 
-<h2 style='text-align:justify'><a name="_Toc412202586"><span lang=EN-US>2.3. Primary
+<p class=MsoListParagraph style='margin-left:18.0pt;text-align:justify'><b><span
+lang=EN-US>&nbsp;</span></b></p>
+
+<h2 style='text-align:justify'><a name="_Toc434576004"><span lang=EN-US>2.3. Primary
 Data</span></a></h2>
 
 <p class=MsoNormal style='text-align:justify'><span lang=EN-US>On this tab you
@@ -631,14 +640,18 @@ in a TXT file.</span></p>
 
 <p class=MsoNormal style='text-align:justify'><span style='position:absolute;
 z-index:1;left:0px;margin-left:213px;margin-top:71px;width:144px;height:13px'><img
-width=144 height=13 src="DDM_UserGuide_files/image004.png"></span><img
-width=605 height=284 id="Grafik 4" src="DDM_UserGuide_files/image005.png"></p>
+src="DDM_UserGuide_files/image004.gif"></span><img id="Picture 4" src="DDM_UserGuide_files/image005.jpg"
+alt="Primary Data"></p>
 
-<h1><a name="_Toc412202587"><span lang=EN-US>&nbsp;</span></a></h1>
+<p class=MsoNormal style='text-align:justify'><b><span lang=EN-US>&nbsp;</span></b></p>
 
-<h1><span lang=EN-US><a name="_Toc412202587">3. Search Manager</a></span></h1>
+<b><span lang=EN-US style='font-size:14.0pt;line-height:115%;font-family:"Cambria","serif";
+color:#365F91'><br clear=all style='page-break-before:always'>
+</span></b>
 
-<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+<h1><span lang=EN-US>&nbsp;</span></h1>
+
+<h1><a name="_Toc434576005"><span lang=EN-US>3. Search Manager</span></a></h1>
 
 <p class=MsoNormal><span lang=EN-US>With the help of the search manager, you
 can make search UI more operative. </span></p>
@@ -646,19 +659,16 @@ can make search UI more operative. </span></p>
 <p class=MsoNormal><span lang=EN-US>You need to click on the Refresh Search
 button, to make the search result effective.</span></p>
 
-<p class=MsoNormal><img width=605 height=327 id="Picture 1"
-src="DDM_UserGuide_files/image006.jpg" alt="New Picture (14).bmp"></p>
-
-<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+<p class=MsoNormal><img id="Picture 5"
+src="DDM_UserGuide_files/image006.jpg" alt="Manage search"></p>
 
 <p class=MsoNormal style='text-align:justify'><span lang=EN-US>Reset to last
 working setup helps you to make changes back, if you are not happy with them.</span></p>
 
 <p class=MsoNormal style='text-align:justify'><span lang=EN-US>You can u</span>se
-<span lang=DE><img width=24 height=17 id=rectole0000000006
-src="DDM_UserGuide_files/image007.jpg"></span><span lang=DE> </span>for edit
-and <span lang=DE><img width=17 height=13 id=rectole0000000005
-src="DDM_UserGuide_files/image008.jpg"></span> for delete a search component. </p>
+<img id="Picture 6" src="DDM_UserGuide_files/image007.jpg"> for
+edit and <img id="Picture 7"
+src="DDM_UserGuide_files/image008.jpg"> for delete a search component. </p>
 
 <p class=MsoNormal style='text-align:justify'>To add a new search component,
 click on the Add Item button. <span lang=EN-US>The configuration files consist
@@ -667,10 +677,8 @@ represent each lucene field and its attribute are used to configure indexing,
 searching, and display. </span>Take mouse over each question mark near by a
 field and you can see the help information.</p>
 
-<p class=MsoNormal><img width=459 height=331 id="Picture 2"
-src="DDM_UserGuide_files/image009.jpg" alt="New Picture (16).bmp"></p>
-
-<p class=MsoNormal>&nbsp;</p>
+<p class=MsoNormal><img id="Picture 8"
+src="DDM_UserGuide_files/image009.jpg" alt="Create Search Attribute"></p>
 
 <p class=MsoNormal style='text-align:justify'><span lang=EN-US>We, therefore,
 go through each of the elements attributes of the configuration file.</span></p>
@@ -721,7 +729,7 @@ what field should contain norms </span></p>
 <p class=MsoNormal style='text-align:justify'><span lang=EN-US>Boost: This
 specifies the importance or weight of a field relative to others in a search.
 E.g. you may want the terms in “title” of a document to carry more weight than
-the content of the “footnotes” while indexing and searching.<a name="_GoBack"></a></span></p>
+the content of the “footnotes” while indexing and searching.</span></p>
 
 </div>
 

@@ -257,21 +257,25 @@ namespace BExIS.Dlm.Services.DataStructure
         
         public void RemoveConstraint(DomainConstraint constraint)
         {
+            constraint.DataContainer = null;
             helper.Delete(constraint);
         }
 
         public void RemoveConstraint(PatternConstraint constraint)
         {
+            constraint.DataContainer = null;
             helper.Delete(constraint);
         }
 
         public void RemoveConstraint(RangeConstraint constraint)
         {
+            constraint.DataContainer = null; 
             helper.Delete(constraint);
         }
 
         public void RemoveConstraint(ComparisonConstraint constraint)
         {
+            constraint.DataContainer = null; 
             helper.Delete(constraint);
         }
         

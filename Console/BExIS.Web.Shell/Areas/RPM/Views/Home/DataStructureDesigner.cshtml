@@ -3,23 +3,34 @@
 
 @model BExIS.Web.Shell.Areas.RPM.Models.DataStructureDesignerModel
 
-@{
+@*@{
     ViewBag.Title = "Data Structure Manager";
-}
+}*@
 
 <link href="@Url.Content("~/Areas/RPM/Stylesheets/RPM.css")" rel="stylesheet" type="text/css" />
+<script src="@Url.Content("~/Scripts/trunk8.js")" type="text/javascript"></script>
+
+@section Information
+{
+The Data Structure Manager is a tool to create, modify and delete Data Structures. Data Structures contain Variables, which are specific instances of Data Attributes. 
+It is possible to create Data Structures for structured data (Excel tables, CSV-Files ...) and for unstructured data (images, videos ...).
+    <p>
+        More information 
+        @Html.ActionLink("here", "Index", "Help", new { id = 0 }, new { @class = "bx-informationLink", title="go to help", target="_blank"})
+    </p>
+}
 
 @section LeftPane 
 { 
 
 
-<div style="text-align:center;">
-    @Html.ActionLink("Create Structured", "createStructuredDataStrukture", "Home", new {@class = "t-button action" , @title = "Create structured Data Structure", @style = "margin:3px;"})
+<div style="text-align:left;">
+    @Html.ActionLink("Create Structured", "createStructuredDataStrukture", "Home", new {@class = "t-button action" , @title = "Create structured Data Structure", @style = "margin:3px; width:70%;"})
     <br/>
-    @Html.ActionLink("Create Unstructured", "createUnStructuredDataStrukture", "Home", new {@class = "t-button action", @title = "Create unstructured Data Structure", @style = "margin:3px;"})
+    @Html.ActionLink("Create Unstructured", "createUnStructuredDataStrukture", "Home", new {@class = "t-button action", @title = "Create unstructured Data Structure", @style = "margin:3px; width:70%;" })
 </div>
 <br />
-<div style="width:237px;">
+<div class="bx-trunc-parent" style="width:237px;">
 @(Html.Telerik().TreeView()
     .Name("TreeView")
     .BindTo(Model.dataStructureTree.dataStructureTreeList, mappings =>
@@ -40,30 +51,35 @@
                 mappings.For<DataStructureTreeElement>(binding => binding
                 .ItemDataBound((item, TEL) =>
                 {
+                    item.LinkHtmlAttributes["class"] = "bx-trunc-child";
+                    
                     if (TEL.inUse == true)
                     {
-                        if (string.IsNullOrEmpty(TEL.name))
+                        if (string.IsNullOrEmpty(TEL.name.ToString()))
                         {
-                            item.Text = "no Name (in use)";
+                            item.LinkHtmlAttributes["class"] = "bx-rpm-ds-locked";
+                            item.Text = "No Name";
                             item.Value = TEL.id.ToString() + "," + TEL.structured.ToString();
+                            
                         }
                         else
                         {
-                            item.Text = TEL.name + " (in use)";
+                            item.LinkHtmlAttributes["class"] = "bx-rpm-ds-locked";
+                            item.Text = TEL.name;
                             item.Value = TEL.id.ToString() + "," + TEL.structured.ToString();
 
                         }
                     }
                     else
                     {
-                        if (string.IsNullOrEmpty(TEL.name))
+                        if (string.IsNullOrEmpty(TEL.name.ToString()))
                         {
-                            item.Text = "no Name";
+                            item.Text = "No Name";
                             item.Value = TEL.id.ToString() + "," + TEL.structured.ToString();
                         }
                         else
                         {
-                            item.Text = TEL.name;
+                            item.Text = TEL.name.ToString();
                             item.Value = TEL.id.ToString() + "," + TEL.structured.ToString();
 
                         }
@@ -73,7 +89,7 @@
                     {
                         item.Selected = true;
                     }
-                    item.Action("showDataStructure", "Home", new RouteValueDictionary { { "area", "RPM" }, { "SelectedItem", item.Value } });
+                    item.Action("showDataStructure", "Home", new RouteValueDictionary { { "area", "RPM" }, { "SelectedItem", item.Value } }); ;
                 }));
     })
     .ExpandAll(true)
@@ -87,3 +103,13 @@
         @Html.Partial("_showDataStructureInfo", Model)
     </div>
 }
+
+<script type="text/javascript" language="javascript">
+    $(document).ready(function () {
+        for (var i = 0; i < $('.bx-rpm-ds-locked').length ; i++)
+        {
+            var temp = $('.bx-rpm-ds-locked')[i].innerHTML;
+            $('.bx-rpm-ds-locked')[i].innerHTML = temp + ' <span class="bx bx-lock"></span>';
+        }
+    });
+</script>

@@ -32,6 +32,7 @@ using BExIS.Xml.Helpers;
 using BExIS.Xml.Services;
 using BExIS.Dlm.Services.MetadataStructure;
 using Vaiona.Logging.Aspects;
+using Vaiona.Web.Mvc.Models;
 
 namespace BExIS.Web.Shell.Areas.DDM.Controllers
 {
@@ -49,6 +50,8 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
         public ActionResult ShowData(long id)
         {
+           
+
             DatasetManager dm = new DatasetManager();
             DatasetVersion dsv = dm.GetDatasetLatestVersion(id);
 
@@ -59,6 +62,8 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
             PermissionManager permissionManager = new PermissionManager();
             SubjectManager subjectManager = new SubjectManager();
+
+            ViewBag.Title = PresentationModel.GetViewTitle("Show Data : "+title);
 
 
             ShowDataModel model = new ShowDataModel()
@@ -81,7 +86,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
         /// <seealso cref=""/>
         /// <param name="datasetID"></param>
         /// <returns>model</returns>
-        public ActionResult ShowMetaData(int datasetID)
+        public ActionResult ShowMetaData(long datasetID)
         {
             ShowMetadataModel model = new ShowMetadataModel();
 

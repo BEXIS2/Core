@@ -180,6 +180,7 @@ namespace BExIS.Xml.Helpers
                 return elements;
             }
 
+
             /// <summary>
             /// 
             /// </summary>
@@ -191,10 +192,6 @@ namespace BExIS.Xml.Helpers
             {
                 return xDoc.XPathSelectElement(xpath.Replace(" ",string.Empty));
             }
-
-            
-            
-            
 
             /// <summary>
             /// 

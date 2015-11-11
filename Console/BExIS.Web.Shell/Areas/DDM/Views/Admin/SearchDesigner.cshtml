@@ -26,15 +26,29 @@
         isPrimaryDataNodeExist = (bool)Session["IncludePrimaryData"];
     }
 
+    string windowTitle = "New Search Attribute";
+    if (ViewData["selectedSearchAttribute"] != null)
+    {
+        SearchAttributeViewModel sa = (SearchAttributeViewModel)ViewData["selectedSearchAttribute"];
+        if (sa.displayName!=null) {
+            windowTitle = "Edit Searchattribute: "+sa.displayName+" ("+sa.id+")";
+        
+        }
+    }
+
 }
 
 @section Information
-        {
-
+{
     With this interface you are able to customize the search component and define what fields of the
     metadata are searchable and how they appear in the application. Changes made through the interface will
     alter the Lucene configuration file on the server. For a detailed description of each parameter please
     refer to the Lucene User Manual provided with the installation package.
+    <p>
+        More information 
+        @Html.ActionLink("here", "Index", "Help", new { id = 0 }, new { @class = "bx-informationLink", title="go to help", target="_blank"})
+    </p>
+
 }
 
 @*@section Scripts{
@@ -46,19 +60,21 @@
 
     @if (ViewData.ModelState.IsValid)
     {
-    
-    <div style="float:left;">
-        @Html.ActionLink("Add Item", "Add", "Admin", new { @class = "t-button function", @title = "Add Search Item" })
+    <div style="position:relative; width:100%; height: 15px;">
+        <div style="position:absolute; left:0px;">
+            @Html.ActionLink("Create Search Attribute", "Add", "Admin", new { @class = "bx-button function", @title = "Create Search Item" })
 
-        @Html.CheckBox("includePrimaryDataCheckBox",isPrimaryDataNodeExist) <b>include primary data</b>  
-    </div> 
+            @Html.CheckBox("includePrimaryDataCheckBox",isPrimaryDataNodeExist) <b>include primary data</b>  
+        </div> 
 
-    <div id="#searchDesigerOptions" style="float:right; padding-bottom:5px;">  
+        <div id="#searchDesigerOptions"  style="position:absolute; right:0px;">  
         
-        @Html.ActionLink("Refresh Search", "RefreshSearch", "Admin", new { @class = "t-button action", @title = "Refresh index from search" })
-
-        @Html.ActionLink("Reset to last working setup", "ResetConfig", "Admin", new { @class = "t-button function", @title = "Reset to Default" })
-    </div>   
+            @Html.ActionLink("Refresh Search", "RefreshSearch", "Admin", new { @class = "bx-button action", @title = "Refresh index from search" })
+        
+            @*@Html.ActionLink("Reset to last working setup", "ResetConfig", "Admin", new { @class = "bx-button function", @title = "Reset to Default" })*@
+        </div> 
+    </div>
+      
 
 
     <br />
@@ -70,23 +86,11 @@
                     .Ajax()
                     .Select("_CustomSearchDesignerGridBinding", "Admin")
                 )
-
+                .ClientEvents(events=>events.OnDataBound("onDataBound"))
 
                 .Columns(columns =>
                 {
-                    columns.Template(
-                             @<text>
-                                @Html.ActionLink("Edit", "Edit", "Admin", new { id = item.id }, new { @class = "bx-button small", @title = "Open edit form" })
-                                @Html.ActionLink("Delete", "Delete", "Admin", new { id = item.id }, new { @class = "bx-button small", @title = "Delete search item", onclick = "return confirm('Are you sure you want delete the search attribute " + item.displayName + " ?')" })
-                            </text>
-
-                     ).Title("Actions")
-                     .Width(160)
-                        .ClientTemplate(
-                            @Html.ActionLink("Edit", "Edit", "Admin", new { id = "<#= id #>" }, new { @class = "bx-button small", @title = "Open edit form" }).ToString() +
-                            @Html.ActionLink("Delete", "Delete", "Admin", new { id = "<#= id #>" }, new { @class = "bx-button small", @title = "Delete search item" }).ToString()
-                        );
-
+                    
                     columns.Bound(o => o.displayName).Width(200);
                     columns.Bound(o => o.searchType).Width(180);//.ClientTemplate("<input type='text' name='Search Type' value='@Enum.GetName(typeof(SearchComponentBaseType)', Convert.ToInt32("<#= searchType #>") )' />");//.ClientTemplate(Enum.GetName(typeof(SearchComponentBaseType), Convert.ToInt32("<#= searchType #>") ));
                     columns.Bound(o => o.dataType).Width(100);
@@ -106,23 +110,35 @@
                     )
                     .ClientTemplate("<#= loadClientTemplate(metadataNames) #>");
 
+                    columns.Template(
+                             @<text>
+                                @Html.ActionLink(" ", "Edit", "Admin", new { id = item.id }, new { @class = "bx bx-grid-function bx-edit", @title = "Edit Search Item" })
+                                @Html.ActionLink(" ", "Delete", "Admin", new { id = item.id }, new { @class = "bx bx-grid-function bx-trash", @title = "Delete Search Item", onclick = "return confirm('Are you sure you want delete the search attribute " + item.displayName + " ?')" })
+                            </text>
+
+                     )
+
+                    .ClientTemplate(
+                        @Html.ActionLink(" ", "Edit", "Admin", new { id = "<#= id #>" }, new { @class = "bx bx-grid-function bx-edit", @title = "Edit Search Item" }).ToString() +" " + 
+                        @Html.ActionLink(" ", "Delete", "Admin", new { id = "<#= id #>" }, new { @class = "bx bx-grid-function bx-trash", @title = "Delete Search Item", onclick = "return confirm('Are you sure you want delete the search attribute <#= displayName #> ?')" }).ToString()
+                    )
+                    .Width(80);
 
                 })
 
-            .Sortable()
-            .Scrollable()
-        
-            )
+                .Sortable()
+
+                )
 
 
 
 
 @(Html.Telerik().Window()
-
     .Name("EditSearchAttribute")
     .Visible(windowVisible)
-    .Title("Edit")
+    .Title(windowTitle)
     .Modal(true)
+    .HtmlAttributes(new { @class = "bx-window" })
     .Draggable(true)
     .Width(0)
     .Height(500)
@@ -192,7 +208,7 @@
       padding-left:0;
     }
 
-    #SearchDesignerGrid .t-grid-content a.fa
+    #SearchDesignerGrid .t-grid-content a.bx
     {
         text-decoration:none;
         margin-right:5px;
@@ -205,7 +221,7 @@
 
     #EditSearchAttribute
     {
-        width:750px;
+        width:900px;
     }
 
 </style>
@@ -224,4 +240,10 @@
         return template;
     }
 
+
+    function onDataBound()
+    {
+        resetAllTelerikIconTitles();
+        addTooltips();
+    }
 </script>

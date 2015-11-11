@@ -42,21 +42,21 @@
             .Sortable()            
             .Columns(columns =>
                 {
-                    columns.Template(
-                        @<text>
-                            @Html.ActionLink("Edit", "openClassWindow", "Home", new { id = item.Id }, new { @class = "t-icon t-edit" })
-                            @Html.ActionLink("Delete", "deletClass", "Home", new { id = item.Id }, new { @class = "t-icon t-delete", onclick = "return confirm('Are you sure you want to delete?')" })
-                        </text>
-                    ).Title("Functions")
-                        .Width(50)
-                        .ClientTemplate(
-                            @Html.ActionLink("Edit", "openClassWindow", "Home", new { id = "<#= id #>" }, new { @class = "t-icon t-edit" }).ToHtmlString() +
-                            @Html.ActionLink("Delete", "deletClass", "Home", new { id = "<#= id #>" }, new { @class = "t-icon t-delete", onclick = "return confirm('Are you sure you want to delete?')" }).ToHtmlString()
-                        );
+                    
                     columns.Bound(c => c.Name);
                     columns.Bound(c => c.Id);
                     columns.Bound(c => c.Description);
                     columns.Bound(c => c.Parent.Name);
+                    columns.Template(
+                        @<text>
+                            @Html.ActionLink(" ", "openClassWindow", "Home", new { id = item.Id }, new { @class = "bx bx-grid-function bx-edit " })
+                            @Html.ActionLink(" ", "deletClass", "Home", new { id = item.Id }, new { @class = "bx bx-grid-function bx-trash", onclick = "return confirm('Are you sure you want to delete?')" })
+                        </text>
+                    ).Width(110)
+                        .ClientTemplate(
+                            @Html.ActionLink(" ", "openClassWindow", "Home", new { id = "<#= id #>" }, new { @class = "bx bx-grid-function bx-edit" }).ToHtmlString() +
+                            @Html.ActionLink(" ", "deletClass", "Home", new { id = "<#= id #>" }, new { @class = "bx bx-grid-function bx-trash", onclick = "return confirm('Are you sure you want to delete?')" }).ToHtmlString()
+                        );
                    
                 })
     )

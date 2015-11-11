@@ -22,24 +22,13 @@ using BExIS.Security.Entities.Objects;
 using System.Xml;
 using BExIS.Xml.Services;
 using BExIS.Dlm.Services.MetadataStructure;
+using Vaiona.Web.Mvc.Models;
 
 namespace BExIS.Web.Shell.Areas.DDM.Controllers
 {
     public class HomeController : Controller
     {
         public bool searchConfigFileInUse = false;
-
-        //ISearchProvider provider = null;
-        //public HomeController()
-        //{
-        //    if (HttpContext.Session != null && HttpContext.Session["ISearchProvider"] != null)
-        //        provider = HttpContext.Session["ISearchProvider"] as ISearchProvider;
-        //    if (provider == null) // this check should be done by the IoC lifetime manager. Javad, 29.11.12
-        //    {
-        //        provider = IoCFactory.Container.Resolve<ISearchProvider>() as ISearchProvider;
-        //        HttpContext.Session["ISearchProvider"] = provider;
-        //    }
-        //}
 
         /// <summary>
         /// is called when the Search View is selected
@@ -50,6 +39,8 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
         //[Authorize(Roles="Guest")]
         public ActionResult Index()
         {
+            ViewBag.Title = PresentationModel.GetViewTitle("Search");
+
             try
             {
                 ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
@@ -84,6 +75,8 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
         [HttpPost]
         public ActionResult Index(string autoComplete, string FilterList, string searchType)
         {
+            ViewBag.Title = PresentationModel.GetViewTitle("Search");
+
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
 
 
@@ -519,6 +512,8 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
         /// <returns>model</returns>
         public ActionResult ShowMyDatasets()
         {
+            ViewBag.Title = PresentationModel.GetViewTitle("Dashboard");
+
                 DataTable model = new DataTable();
 
                 ViewData["PageSize"] = 10;

@@ -1,8 +1,4 @@
-﻿@{
-    ViewBag.Title = "Feature Permissions";
-}
-
-@model System.Collections.Generic.IEnumerable<BExIS.Web.Shell.Areas.SAM.Models.FeatureTreeViewModel>
+﻿@model System.Collections.Generic.IEnumerable<BExIS.Web.Shell.Areas.SAM.Models.FeatureTreeViewModel>
 <style>
     #Grid_Subjects .t-grid-content
     {
@@ -25,6 +21,10 @@
     By default feature permissions are not set, which means access is denied unless access permissions are explicitly granted or inherited from an upper level feature (e.g. module).
     Individual grants on features rule out higher level settings. Effective permissions are shown in the first column of the table.
     Please note that any change will take effect immediately without further confirmation or save/submit action.
+    <p>
+        More information 
+        @Html.ActionLink("here", "Index", "Help", new { id = 0 }, new { @class = "bx-informationLink", title="go to help", target="_blank"})
+    </p>
 }
 
 <div id="Content_Subjects"></div>

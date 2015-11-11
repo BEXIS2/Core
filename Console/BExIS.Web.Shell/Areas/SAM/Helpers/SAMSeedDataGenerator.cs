@@ -119,7 +119,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Helpers
             t8.Feature = f9;
             taskManager.UpdateTask(t8);
 
-            Task t9 = taskManager.CreateTask("DCM", "Create", "*");
+            Task t9 = taskManager.CreateTask("DCM", "CreateDataset", "*");
             t9.Feature = f11;
             taskManager.UpdateTask(t9);
             Task t10 = taskManager.CreateTask("DCM", "CreateSelectDatasetSetup", "*");

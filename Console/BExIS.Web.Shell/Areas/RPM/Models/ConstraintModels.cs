@@ -9,6 +9,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
     public class ConstraintModel
     {
         public long Id { get; set; }
+        public long AttributeId { get; set; }
         public string Description { get; set; }
         public bool Negated { get; set; }
         public string FormalDescription { get; set; }
@@ -21,14 +22,22 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
         public bool MinInclude { get; set; }
         public bool MaxInclude { get; set; }
 
+
         public RangeConstraintModel()
         {
             MinInclude = true;
+            AttributeId = 0;
+            FormalDescription = (new RangeConstraint() { LowerboundIncluded = MinInclude }).FormalDescription;
+        }
+        public RangeConstraintModel(long attributeId)
+        {
+            MinInclude = true;
+            AttributeId = attributeId;
             FormalDescription = (new RangeConstraint() {LowerboundIncluded = MinInclude}).FormalDescription;
         }
-        public static RangeConstraintModel Convert(RangeConstraint rangeConstraint)
+        public static RangeConstraintModel Convert(RangeConstraint rangeConstraint, long attributeId)
         {
-            return new RangeConstraintModel()
+            return new RangeConstraintModel(attributeId)
             {
                 Id = rangeConstraint.Id,
                 Negated = rangeConstraint.Negated,
@@ -48,12 +57,19 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
 
         public PatternConstraintModel()
         {
+            AttributeId = 0;
             FormalDescription = (new PatternConstraint()).FormalDescription;
         }
 
-        public static PatternConstraintModel Convert(PatternConstraint patternConstraint)
+        public PatternConstraintModel(long attributeId)
         {
-            return new PatternConstraintModel()
+            AttributeId = attributeId;
+            FormalDescription = (new PatternConstraint()).FormalDescription;
+        }
+
+        public static PatternConstraintModel Convert(PatternConstraint patternConstraint, long attributeId)
+        {
+            return new PatternConstraintModel(attributeId)
             {
                 Id = patternConstraint.Id,
                 Negated = patternConstraint.Negated,
@@ -71,12 +87,22 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
         public DomainConstraintModel()
         {
             Terms= "";
+            AttributeId = 0;
             List<DomainItem> ldi = new List<DomainItem>();
             ldi.Add(new DomainItem());
             FormalDescription = (new DomainConstraint() {Items = ldi}).FormalDescription;
         }
 
-        public static DomainConstraintModel Convert(DomainConstraint domainConstraint)
+        public DomainConstraintModel(long attributeId)
+        {
+            Terms = "";
+            AttributeId = attributeId;
+            List<DomainItem> ldi = new List<DomainItem>();
+            ldi.Add(new DomainItem());
+            FormalDescription = (new DomainConstraint() { Items = ldi }).FormalDescription;
+        }
+
+        public static DomainConstraintModel Convert(DomainConstraint domainConstraint, long attributeId)
         {
             domainConstraint.Materialize();
 
@@ -102,7 +128,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
                 }
             }
          
-            return new DomainConstraintModel()
+            return new DomainConstraintModel(attributeId)
             {
                 Id = domainConstraint.Id,
                 Negated = domainConstraint.Negated,

@@ -24,17 +24,13 @@
 
    
     @if (@Model != null)
-    {
-
-                    <td class="attributeInfo">
-                        @if (Model.MinCardinality > 0)
-                        { 
-                          <b title="Required" style="color:red">*</b>
-                        }
-                    </td>    
-
+    {                
                     <td class="attributeName">
                         <b title="@Model.Discription">@displayName</b>
+                        @if (Model.MinCardinality > 0)
+                        {
+                            <span class="bx bx-required" title="Required"></span>
+                        }
                     </td>
                     <td class="attributeValue">
 

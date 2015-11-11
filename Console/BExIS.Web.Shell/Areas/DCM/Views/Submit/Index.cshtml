@@ -1,5 +1,10 @@
-﻿@{
-    ViewBag.Title = "Data Collection";
+﻿@section Information
+{
+    This wizard will assist you in uploading data into the BExIS repository. A dataset can be structured or unstructured.
+    <p>
+        More information 
+        @Html.ActionLink("here", "Index", "Help", new { id = 0 }, new { @class = "bx-informationLink", title="go to help", target="_blank"})
+    </p>
 }
 
 @using BExIS.Dcm.UploadWizard
@@ -9,5 +14,5 @@
 <p>In order to add to or update data of an existing dataset in the system, please select whether the dataset is structured or unstructured.
 </p>
 <br />
-@Html.ActionLink("Structured Data", "UploadWizard", "Submit", new { area = "DCM", type=DataStructureType.Structured }, new { @class = "t-button", title = "Start Data Upload Wizard" })
-@Html.ActionLink("Unstructured Data", "UploadWizard", "Submit", new { area = "DCM", type=DataStructureType.Unstructured }, new { @class = "t-button", title = "Start Data Upload Wizard" })
+@Html.ActionLink("Structured Data", "UploadWizard", "Submit", new { area = "DCM", type=DataStructureType.Structured }, new { @class = "bx-button action", title = "Start Data Upload Wizard" })
+@Html.ActionLink("Unstructured Data", "UploadWizard", "Submit", new { area = "DCM", type=DataStructureType.Unstructured }, new { @class = "bx-button action", title = "Start Data Upload Wizard" })

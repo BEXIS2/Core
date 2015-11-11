@@ -1,12 +1,21 @@
-﻿@{
-    ViewBag.Title = "ShowData";
-}
-
-@model BExIS.Web.Shell.Areas.DDM.Models.ShowDataModel
+﻿@model BExIS.Web.Shell.Areas.DDM.Models.ShowDataModel
 
 @using Telerik.Web.Mvc.UI;
 
-<h2>@Model.Title</h2>
+@section Information
+{
+    Show Data contains a detailed view on the metadata, the data structure
+    and the primary data of a dataset. Depending on dataset permissions you
+    may also edit the metadata or download the primary data from here.
+    <p>
+        More information 
+        @Html.ActionLink("here", "Index", "Help", new { id = 0 }, new { @class = "bx-informationLink", title="go to help", target="_blank"})
+    </p>
+
+}
+
+
+<h2>@Model.Title ( @Model.Id )</h2>
 
 @if(@Model != null)
 {
@@ -17,8 +26,8 @@
             {
 
                 tabs.Add()
-                    .Text("Meta Data")
-                    .LoadContentFrom("ShowMetaData", "Data", new { area = "DDM", datasetID = @Model.Id });
+                    .Text("Metadata")
+                    .LoadContentFrom("LoadMetadata", "CreateDataset", new { area = "DCM", datasetId = @Model.Id, locked = true });
                 
                 tabs.Add()
                     .Text("Data Structure")
@@ -28,9 +37,6 @@
                     .Text("Primary Data")
                     .LoadContentFrom("ShowPrimaryData", "Data", new { area = "DDM", datasetID = @Model.Id })
                     .Enabled(@Model.ViewAccess);
-
-
             })
     )
 }
-

@@ -4,7 +4,7 @@
 
 @using (Html.BeginCollectionItem("RangeConstraints"))
 { 
-<table class="bx-rpm-container bx-rpm-constrainTable" id="rangeConstraint">
+<table class="bx-rpm-container bx-rpm-constrainTable" id="rangeConstraint_@Model.Id">
     <tr>
         <td class="bx-rpm-constrainlabel">
             Range
@@ -21,6 +21,7 @@
             <div class="bx-rpm-container">
                 <div class="bx-rpm-text">@Html.LabelFor(m=>m.Min)</div>              
                 @Html.TextBoxFor(m=>m.Min, new { @class = "bx-rpm-midinput bx-input", @id = "range_min"})
+                <div class="bx-rpm-midinput bx-errorMsg">@Html.ValidationMessageFor(m => m.Min)</div>
             </div>
             <div class="bx-rpm-container" style="text-align: center;">
                 <div class="bx-rpm-text bx-rpm-include">@Html.Label("include")</div>
@@ -29,17 +30,23 @@
             <div class="bx-rpm-container">
                 <div class="bx-rpm-text">@Html.LabelFor(m=>m.Max)</div>
                 @Html.TextBoxFor(m=>m.Max, new { @class = "bx-rpm-midinput bx-input", @id = "range_max"})
+                <div class="bx-rpm-midinput bx-errorMsg">@Html.ValidationMessageFor(m => m.Max)</div>
             </div>
             <div class="bx-rpm-container" style="text-align: center;">
                 <div class="bx-rpm-text bx-rpm-include">@Html.Label("include")</div>
                 @Html.CheckBoxFor(m => m.MaxInclude, new { @class = "bx-rpm-checkBox", @id = "range_maxinclude"})
             </div>
-            <div class="bx-function bx-info" id="range_FormalDescription" title="@Model.FormalDescription"></div>
+            <div class="bx-function bx-info bx-disabled" id="range_FormalDescription" title="@Model.FormalDescription"></div>
         </td>
         <td class="bx-rpm-constrainDesc">
             <div class="bx-rpm-container">
                 <div class="bx-rpm-text">@Html.Label("Description")</div>
-                @Html.TextBoxFor(m => m.Description, new { @class = "bx-input" })
+                @Html.TextBoxFor(m => m.Description, new { @class = "bx-input", id = "range_desc" })
+            </div>
+        </td>
+        <td>
+            <div>
+                <a class = "bx bx-grid-function  bx-eraser" style="margin-top: 26px" onclick = "restRange(this)" id="@Model.Id" title="Erase Constraint"></a>
             </div>
         </td>
     </tr>
@@ -51,25 +58,25 @@
     $('#rangeConstraint').change(function () {
 
         if ($('#range_invert').is(":checked")) {
-            $('#range_invert').val(true)
+            $('#range_invert').val(true);
         }
         else
         {
-            $('#range_invert').val(false)
+            $('#range_invert').val(false);
         }
 
-        if ($('#range_mininlude').is(":checked")) {
-            $('#range_mininlude').val(true)
+        if ($('#range_mininclude').is(":checked")) {
+            $('#range_mininclude').val(true);
         }
         else {
-            $('#range_mininlude').val(false)
+            $('#range_mininclude').val(false);
         }
 
-        if ($('#range_maxinlude').is(":checked")) {
-            $('#range_maxinlude').val(true)
+        if ($('#range_maxinclude').is(":checked")) {
+            $('#range_maxinclude').val(true);
         }
         else {
-            $('#range_maxinlude').val(false)
+            $('#range_maxinclude').val(false)
         }
         var variables = '?invert=' + $('#range_invert').val() + '&min=' + $('#range_min').val() + '&max=' + $('#range_max').val() + '&mininclude=' + $('#range_mininclude').val() + '&maxinclude=' + $('#range_maxinclude').val();
 

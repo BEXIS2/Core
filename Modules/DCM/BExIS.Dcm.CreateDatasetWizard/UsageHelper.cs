@@ -227,7 +227,7 @@ namespace BExIS.Dcm.CreateDatasetWizard
                 MetadataAttributeUsage mau = (MetadataAttributeUsage)usage;
                 MetadataAttribute ma = mam.MetadataAttributeRepo.Get(mau.MetadataAttribute.Id);
 
-                if (ma is MetadataCompoundAttribute) return true;
+                if (ma.Self is MetadataCompoundAttribute) return true;
                 
             }
 
@@ -235,7 +235,7 @@ namespace BExIS.Dcm.CreateDatasetWizard
             {
                 MetadataNestedAttributeUsage mnau = (MetadataNestedAttributeUsage)usage;
                 MetadataAttribute ma = mam.MetadataAttributeRepo.Get(mnau.Member.Id);
-                if (ma is MetadataCompoundAttribute) return true;
+                if (ma.Self is MetadataCompoundAttribute) return true;
             }
             
             return false;

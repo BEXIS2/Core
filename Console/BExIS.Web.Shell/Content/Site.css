@@ -1,20 +1,20 @@
 ﻿/*----------------------------------------------------------
 Color Overview
 
-White    #000000
+White    #000000    brigth
 Gray 01  #f5f5f5
 Gray 02  #ebebeb
 Gray 03  #afb0b1
-Gray 04  #009cdf
+Gray 04  #009cdf    // new 323232 dark
 Black    #ffffff
 Yellow   #ffbb52
 Orange   #ff9700
 Red      #f24c24
-Green 01  #388670
+Green 01  #388670 dark
 Green 02  #72b1a0
 Green 03  #bee1da
 Green 04  #d2e8e3
-Green 05  #eff7f6
+Green 05  #eff7f6 brigth
 
 ----------------------------------------------------------*/
 body
@@ -223,7 +223,7 @@ textarea
 table 
 {
     width: 100%;
-
+    background-color:white;
 }
 
 table td 
@@ -232,23 +232,38 @@ table td
   border-bottom: #ebebeb solid thin;
   vertical-align:middle;
   line-height: 14pt; 
-  /*overflow:hidden;*/
+  text-align: left;
+  float:none;
 }
 
 
 table th
 {
+    color:black;
     margin: 3px 0 3px 0;
     padding: 0;
     text-align: left;
-    border-top: solid 1px #000000; 
-    border-Bottom: solid 1px #000000;  
+    border-top: solid 2px #565655; 
+    border-Bottom: solid 2px #565655;  
     line-height: 28px;  
+    
+}
+table th, table td
+{
+    border-right: solid 4px white;  
 }
 
 table tr{ border: none; line-height: 14pt; }
-table th a {text-decoration: none; color: black;font-weight: bold;margin-right: 5px; }
+table th a {text-decoration: none; font-weight: bold;margin-right: 5px; }
 
+/* Information Container
+----------------------------------------------------------*/
+.collapse, 
+.in,
+.collapsing
+{
+    /*margin-top:-30px;*/
+}
 
 
 /* MISC  
@@ -299,7 +314,7 @@ div#title
 -----------------------------------------------------------*/
 .field-validation-error
 {
-    color: #ff0000;
+    color: #f24c24;
 }
 
 .field-validation-valid
@@ -381,6 +396,7 @@ p.MsoTocHeading, li.MsoTocHeading, div.MsoTocHeading
 .navbar 
 {
     border: none !important; 
+    font-size:large;
 }
 
 .breadcrumb 
@@ -396,4 +412,27 @@ table.bx-table-form tr td
     vertical-align:middle;
     line-height: 14pt; 
     /*overflow:hidden;*/
+}
+
+#Content_Data > .t-grid > table > tbody > tr:hover
+{
+    background-color: #eff7f6;
+}
+
+#Content_Data >.t-grid > table > tbody > tr:active,
+#Content_Data > .t-grid > table > tbody > tr.t-state-selected
+{
+    background-color: #d2e8e3;
+}
+
+.t-grid > table {
+    width: 100%;
+    table-layout: fixed;
+}
+
+.t-grid > table > tbody > tr > td,
+.t-grid > table > thead > tr > th{
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }

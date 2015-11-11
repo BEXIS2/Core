@@ -12,6 +12,7 @@ using BExIS.Dcm.UploadWizard;
 using BExIS.IO;
 using BExIS.Web.Shell.Areas.DCM.Models.Push;
 using Vaiona.Utils.Cfg;
+using Vaiona.Web.Mvc.Models;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
 {
@@ -22,12 +23,16 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         public ActionResult Index()
         {
+            ViewBag.Title = PresentationModel.GetViewTitle("Push Big File ");
+
             Session["Files"] = null;
             return View(LoadDefaultModel());
         }
 
         public ActionResult Delete(string path)
         {
+            ViewBag.Title = PresentationModel.GetViewTitle("Push Big File");
+
             FileHelper.Delete(path);
             return View("Index", LoadDefaultModel());
         }

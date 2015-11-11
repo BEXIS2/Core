@@ -909,6 +909,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 string originalFileName = TaskManager.Bus[TaskManager.FILENAME].ToString();
                 string storePath = excelWriter.GetFullStorePathOriginalFile(datasetVersion.Dataset.Id, datasetVersion.VersionNo, originalFileName);
                 string dynamicStorePath = excelWriter.GetDynamicStorePathOriginalFile(datasetVersion.Dataset.Id, datasetVersion.VersionNo, originalFileName);
+                string extention = TaskManager.Bus[TaskManager.EXTENTION].ToString();
+
+                Debug.WriteLine("extention : " + extention);
 
                 //Why using the excel writer, isn't any function available in System.IO.File/ Directory, etc. Javad
                 FileHelper.MoveFile(tempPath, storePath);
@@ -918,7 +921,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 {
                     OrderNo = 1,
                     Name = "unstructuredData",
-                    MimeType = "application/xlsm",
+                    MimeType = extention,
                     URI = dynamicStorePath,
                     DatasetVersion = datasetVersion,
                 };

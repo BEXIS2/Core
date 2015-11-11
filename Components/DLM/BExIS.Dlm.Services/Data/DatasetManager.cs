@@ -630,6 +630,35 @@ namespace BExIS.Dlm.Services.Data
         }
 
 
+        /// <summary>
+        /// Returns a list of the latest versions of all datasets associated to a data structure, including/ excluding the checked out versions.
+        /// </summary>
+        /// <param name="structureId">The data structure that its associated datasets are searched.</param>
+        /// <param name="includeCheckouts">Determines whether the checked out versions should be included in the result.</param>
+        /// <returns>The list of the latest versions of the matching datasets alongside with thier dataset identifiers.</returns>
+        /// <remarks>identifiers are returned to reduce the number of database roundtrips!</remarks>
+        public Dictionary<Int64, DatasetVersion> GetDatasetLatestVersions(Int64 structureId, bool includeCheckouts = false)
+        {
+            if (includeCheckouts) // the working copy versions of checked out datasets are also included
+            {
+                var q1 = DatasetVersionRepo.Query(p =>
+                        (p.Dataset.DataStructure.Id == structureId)
+                        && (p.Dataset.Status == DatasetStatus.CheckedIn || p.Dataset.Status == DatasetStatus.CheckedOut)
+                        && (p.Status == DatasetVersionStatus.CheckedIn || p.Status == DatasetVersionStatus.CheckedOut)
+                    ).Select(p => new KeyValuePair<Int64, DatasetVersion>(p.Dataset.Id, p));
+                return (q1.ToList().ToDictionary(kvp => kvp.Key, kvp => kvp.Value));
+            }
+            else //just latest checked in versions or checked in datasets 
+            {
+                var q1 = DatasetVersionRepo.Query(p =>
+                        (p.Dataset.DataStructure.Id == structureId)
+                        && (p.Dataset.Status == DatasetStatus.CheckedIn)
+                        && (p.Status == DatasetVersionStatus.CheckedIn)
+                    ).Select(p => new KeyValuePair<Int64, DatasetVersion>(p.Dataset.Id, p));
+                return (q1.ToList().ToDictionary(kvp => kvp.Key, kvp => kvp.Value));
+            }
+        }
+
         public DatasetVersion GetDatasetWorkingCopy(Int64 datasetId)
         {
             return getDatasetWorkingCopy(datasetId);
@@ -654,6 +683,42 @@ namespace BExIS.Dlm.Services.Data
             {
                 var q1 = DatasetVersionRepo.Query(p =>
                         (p.Dataset.Status == DatasetStatus.CheckedIn || p.Dataset.Status == DatasetStatus.CheckedOut) // include checked in (latest) versions of currently checked out datasets
+                        && (p.Status == DatasetVersionStatus.CheckedIn)
+                    ).Select(p => new KeyValuePair<Int64, XmlDocument>(p.Dataset.Id, p.Metadata));
+                return (q1.ToList().ToDictionary(kvp => kvp.Key, kvp => kvp.Value));
+            }
+
+            //// it works using the timestamp technique
+            //var qu = (from dsv in DatasetVersionRepo.Get(p => p.Dataset.Status != DatasetStatus.Deleted)
+            //         group dsv by dsv.Dataset.Id into grp
+            //         let maxTimestamp = grp.Max(p => p.Timestamp)
+            //         select grp.Single(p => p.Timestamp >= maxTimestamp).Metadata);
+
+            //return (qu.ToList());
+        }
+
+        /// <summary>
+        /// Returns the metadata of the latest versions of all datasets associated to a data structure, alongside with their identifiers including/ excluding the checked out versions.
+        /// </summary>
+        /// <param name="structureId">The data structure that its associated datasets are searched.</param>
+        /// <param name="includeCheckouts">Determines whether the checked out versions should be included in the result.</param>
+        /// <returns>The Dictionary of the identifier/ metadata pairs of the latest versions of all datasets</returns>
+        public Dictionary<Int64, XmlDocument> GetDatasetLatestMetadataVersions(Int64 structureId, bool includeCheckouts = false)
+        {
+            if (includeCheckouts) // the working copy versions of checked out datasets are also included
+            {
+                var q1 = DatasetVersionRepo.Query(p =>
+                        (p.Dataset.DataStructure.Id == structureId)
+                        && (p.Dataset.Status == DatasetStatus.CheckedIn || p.Dataset.Status == DatasetStatus.CheckedOut)
+                        && (p.Status == DatasetVersionStatus.CheckedIn || p.Status == DatasetVersionStatus.CheckedOut)
+                    ).Select(p => new KeyValuePair<Int64, XmlDocument>(p.Dataset.Id, p.Metadata));
+                return (q1.ToList().ToDictionary(kvp => kvp.Key, kvp => kvp.Value));
+            }
+            else //just latest checked in versions or checked in datasets 
+            {
+                var q1 = DatasetVersionRepo.Query(p =>
+                        (p.Dataset.DataStructure.Id == structureId)
+                        && (p.Dataset.Status == DatasetStatus.CheckedIn || p.Dataset.Status == DatasetStatus.CheckedOut) // include checked in (latest) versions of currently checked out datasets
                         && (p.Status == DatasetVersionStatus.CheckedIn)
                     ).Select(p => new KeyValuePair<Int64, XmlDocument>(p.Dataset.Id, p.Metadata));
                 return (q1.ToList().ToDictionary(kvp => kvp.Key, kvp => kvp.Value));
@@ -731,6 +796,7 @@ namespace BExIS.Dlm.Services.Data
         /// <summary>
         /// Returns the metadata of the latest versions of the dataset <param name="datasetId"></param>.
         /// </summary>
+        /// <param name="datasetId">The dataset whose latest metadata version is returned.</param>
         /// <param name="includeCheckouts">Determines whether the method should return the metadata if the dataset is checked-out.</param>
         /// <returns>The metadata of the latest version of the specified dataset as an <typeparamref name="XmlDocument"/>.</returns>
         public XmlDocument GetDatasetLatestMetadataVersion(Int64 datasetId, bool includeCheckouts = false)
@@ -853,7 +919,7 @@ namespace BExIS.Dlm.Services.Data
             }
             catch (Exception ex)
             {
-                throw ex; // new Exception(string.Format("Dataset {0} does not exist or an  error occurred!", datasetId));
+              throw ex; // new Exception(string.Format("Dataset {0} does not exist or an  error occurred!", datasetId));
             }
             return (null);
         }

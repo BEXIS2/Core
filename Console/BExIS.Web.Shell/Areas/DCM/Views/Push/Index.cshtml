@@ -1,5 +1,10 @@
-﻿@{
-    ViewBag.Title = "Send big files to server";
+﻿@section Information
+{
+    Each user has a personal folder on the server where files are stored temporary. This wizard will assist you in pushing your files to server. You can also see the uploaded files, delete each file, or use these files later, when you want to upload data to a dataset.
+    <p>
+        More information 
+        @Html.ActionLink("here", "Index", "Help", new { id = 0 }, new { @class = "bx-informationLink", title="go to help", target="_blank"})
+    </p>
 }
 
 @using Telerik.Web.Mvc.UI;
@@ -33,7 +38,7 @@
 
 <div class="push_Header stepper">
 
-    <h3>Send big files to server</h3>
+    <h3>Send files to server</h3>
 </div>
 
 <div class="push_Description stepper">
@@ -62,7 +67,7 @@
                 ))
     
     <br />
-    <input type="submit" value="Send" class="t-button function" />
+    <input type="submit" value="Push" class="bx-button function" />
     
 }
 

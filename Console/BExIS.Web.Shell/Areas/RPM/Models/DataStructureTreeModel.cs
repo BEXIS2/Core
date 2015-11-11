@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.DataStructure;
+using System.Web;
 
 /// <summary>
 ///
@@ -16,7 +17,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
     /// <remarks></remarks>        
     public class DataStructureTreeElement
     {
-        public String name = null;
+        public string name = null;
         public long id = 0;
         public bool structured = true;
         public bool inUse = true;
@@ -28,7 +29,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
         /// <seealso cref=""/>        
         public DataStructureTreeElement()
         {
-            name = " ";
+            name = "";
             id = 0;
             structured = true;
         }
@@ -98,7 +99,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
             {
                 foreach (DataStructureTreeElement te in this.dataStructureTreeElementList)
                 {
-                    if (te.name == s)
+                    if (te.name.ToString() == s)
                         tempTreeElement.Add(te);
                 }
             }
@@ -149,7 +150,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
             {
                 foreach (DataStructureTreeElement te in this.dataStructureTreeElementList)
                 {
-                    if (te.name == s)
+                    if (te.name.ToString() == s)
                         tempTreeElement.Add(te);
                 }
             }

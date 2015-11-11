@@ -1,5 +1,14 @@
 ﻿@{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Maintain Datasets";
+}
+
+@section Information
+{
+    With this interface you are able to see alist of Datasets. In this list you can see the status of each dataset and some useful actions for the maintenance of a dataset. 
+    <p>
+        More information 
+        @Html.ActionLink("here", "Index", "Help", new { id = 0 }, new { @class = "bx-informationLink", title="go to help", target="_blank"})
+    </p>
 }
 
 <h2>The dataset management functions accessible from here may have unrecoverable effets! Use them with care.</h2>

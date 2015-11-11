@@ -46,15 +46,14 @@
         <p>Please provide the following information.</p>
         <table>
             <tr>
-                <td><b title="Required" style="color:red">*</b></td>
-                <td>
-                    @Html.LabelFor(m=>m.SelectedResearchPlanId)</td>
+                <td style="width:200px;">
+                    @Html.LabelFor(m=>m.SelectedResearchPlanId) <span class="bx bx-required" title="Required"></span></td>
                 <td>
                     @(Html.Telerik().DropDownList()
                         .Placeholder("Select, please")
-                        .Name("SelectedResearchPlanId")
+                        .Name("SelectedResearchPlanId")       
+                        .ClientEvents(events=>events.OnChange("OnSelectedResearchPlanIdChange"))
                         .BindTo(new SelectList(Model.ResearchPlanViewList, "Id", "Title", Model.SelectedResearchPlanId)))
-                        
                     
                @*     @Html.DropDownListFor(m => m.SelectedResearchPlanId, new SelectList(Model.ResearchPlanViewList, "Id", "Title", Model.SelectedResearchPlanId), "Select, please", new { @class="bx-dropdown" })
                  *@   
@@ -63,13 +62,13 @@
                 </td>
             </tr>
             <tr>
-                <td><b title="Required" style="color:red">*</b></td>
-                <td>@Html.LabelFor(m=>m.SelectedDatastructureId)
+                <td style="width:200px;">@Html.LabelFor(m=>m.SelectedDatastructureId) <span class="bx bx-required" title="Required"></span>
                 </td>
                 <td>
                     @(Html.Telerik().DropDownList()
                         .Placeholder("Select, please")
                         .Name("SelectedDatastructureId")
+                        .ClientEvents(events=>events.OnChange("OnSelectedDatastructureIdChange"))
                         .BindTo(new SelectList(Model.DatastructuresViewList, "Id", "Title", Model.SelectedDatastructureId)))
 
                     @*@Html.DropDownListFor(m => m.SelectedDatastructureId, new SelectList(Model.DatastructuresViewList,"Id","Title",Model.SelectedDatastructureId),"Select, please", new { @class="bx-dropdown" })*@
@@ -77,13 +76,13 @@
                 </td>
             </tr>
              <tr>
-                <td><b title="Required" style="color:red">*</b></td>
-                <td>@Html.LabelFor(m=>m.SelectedMetadatStructureId)
+                <td style="width:200px;">@Html.LabelFor(m=>m.SelectedMetadatStructureId) <span class="bx bx-required" title="Required"></span>
                 </td>
                 <td>
                     @(Html.Telerik().DropDownList()
                         .Placeholder("Select, please")
                         .Name("SelectedMetadatStructureId")
+                        .ClientEvents(events=>events.OnChange("OnSelectedMetadatStructureIdChange"))
                         .BindTo(new SelectList(Model.MetadataStructureViewList, "Id", "Title", Model.SelectedMetadatStructureId)))
                     @*@Html.DropDownListFor(m => m.SelectedMetadatStructureId, new SelectList(Model.MetadataStructureViewList,"Id","Title",Model.SelectedMetadatStructureId),"Select, please", new { @class="bx-dropdown" })*@
                     @Html.ValidationMessageFor(m => m.SelectedMetadatStructureId)
@@ -91,9 +90,10 @@
             </tr>
         </table>
     
+            @*
         <br />
         <br />
-        <button type="submit" value="Save" name="saveDataset"  class="t-button function" style="border:0px;" >Create Dataset and load metadata</button>
+        <button type="submit" value="Save" name="saveDataset"  class="t-button function" style="border:0px;" >Create Dataset and load metadata</button>*@
             
         }
    
@@ -121,7 +121,13 @@
             }
         </div>  
 </div>
+<style type="text/css">
+    .t-dropdown
+    {
+        min-width:300px;
+    }
 
+</style>
 <script type="text/javascript">
 
     $(document).ready(function () {
@@ -147,22 +153,26 @@
 
     /* events for dropdownlists*/
 
-    $("#SelectedResearchPlanId").change(function (e)
+    function OnSelectedResearchPlanIdChange(e)
     {
         $.post('@Url.Action("StoreSelectedOption","CreateSelectDatasetSetup" , new RouteValueDictionary { { "area", "DCM" } })', { id: $(this).val(), type: "rp" }, function (response) {
         })
-    })
+    }
 
-    $("#SelectedDatastructureId").change(function (e) {
+    function OnSelectedDatastructureIdChange(e)
+    {
 
         $.post('@Url.Action("StoreSelectedOption","CreateSelectDatasetSetup" , new RouteValueDictionary { { "area", "DCM" } })', { id: $(this).val(), type: "ds" }, function (response) {
         })
-    })
+    }
 
-    $("#SelectedMetadatStructureId").change(function (e) {
-
-        $.post('@Url.Action("StoreSelectedOption","CreateSelectDatasetSetup" , new RouteValueDictionary { { "area", "DCM" } })', { id: $(this).val(), type: "ms" }, function (response) {
+    
+    function OnSelectedMetadatStructureIdChange(e)
+    {
+        
+        $.post('@Url.Action("StoreSelectedOption","CreateSelectDatasetSetup" , new RouteValueDictionary { { "area", "DCM" } })', { id: $(this).val(), type: "ms" }, function (response)
+        {
         })
-    })
+    }
 
 </script>

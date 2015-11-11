@@ -4,7 +4,11 @@ using System.Web.Mvc;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
+using BExIS.Security.Entities.Objects;
+using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
+using BExIS.Security.Services.Subjects;
+using Vaiona.Web.Mvc.Models;
 
 namespace BExIS.Web.Shell.Areas.Sam.Controllers
 {
@@ -20,6 +24,7 @@ namespace BExIS.Web.Shell.Areas.Sam.Controllers
         /// <returns></returns>
         public ActionResult Index()
         {
+            ViewBag.Title = PresentationModel.GetViewTitle("Index");
             return View();
         }
 
@@ -29,8 +34,24 @@ namespace BExIS.Web.Shell.Areas.Sam.Controllers
         /// <returns></returns>
         public ActionResult List()
         {
+            ViewBag.Title = PresentationModel.GetViewTitle("Datasets");
+
             DatasetManager dm = new DatasetManager();
+            PermissionManager permissionManager = new PermissionManager();
+            SubjectManager subjectManager = new SubjectManager();
+
+            User user = subjectManager.GetUserByName(HttpContext.User.Identity.Name);
+
             List<Dataset> datasets = dm.DatasetRepo.Query().ToList();
+
+            List<long> datasetIds = new List<long>();
+            if (user != null)
+            {
+                datasetIds.AddRange(permissionManager.GetAllDataIds(user.Id, 1, RightType.Delete));
+            }
+
+            ViewData["DatasetIds"] = datasetIds;
+
             return View(datasets);
         }
 
@@ -44,6 +65,9 @@ namespace BExIS.Web.Shell.Areas.Sam.Controllers
         public ActionResult Delete(long id)
         {
             DatasetManager dm = new DatasetManager();
+            PermissionManager pm = new PermissionManager();
+
+            pm.DeleteDataPermissionsByEntity(1, id);
             bool b = dm.DeleteDataset(id, this.ControllerContext.HttpContext.User.Identity.Name, true);
             return RedirectToAction("List");
         }
@@ -56,6 +80,8 @@ namespace BExIS.Web.Shell.Areas.Sam.Controllers
         /// <returns></returns>
         public ActionResult Purge(long id)
         {
+            ViewBag.Title = PresentationModel.GetViewTitle("Purge");
+
             DatasetManager dm = new DatasetManager();
             PermissionManager pm = new PermissionManager();
 
@@ -71,6 +97,7 @@ namespace BExIS.Web.Shell.Areas.Sam.Controllers
         /// <returns></returns>
         public ActionResult Versions(int id)
         {
+            ViewBag.Title = PresentationModel.GetViewTitle("Versions");
             DatasetManager dm = new DatasetManager();
             List<DatasetVersion> versions = dm.DatasetVersionRepo.Query(p => p.Dataset.Id == id).OrderBy(p => p.Id).ToList();
             ViewBag.VersionId = id;
@@ -84,12 +111,24 @@ namespace BExIS.Web.Shell.Areas.Sam.Controllers
         /// <returns></returns>
         public ActionResult Version(int id)
         {
+            ViewBag.Title = PresentationModel.GetViewTitle("Version");
+
             DatasetManager dm = new DatasetManager();
             DatasetVersion version = dm.DatasetVersionRepo.Get(p => p.Id == id).First();
             var tuples = dm.GetDatasetVersionEffectiveTuples(version);
             ViewBag.VersionId = id;
             ViewBag.DatasetId = version.Dataset.Id;
-            ViewBag.Variables = ((StructuredDataStructure)version.Dataset.DataStructure.Self).Variables.ToList();
+
+            if (version.Dataset.DataStructure is StructuredDataStructure)
+            {
+                ViewBag.Variables = ((StructuredDataStructure) version.Dataset.DataStructure.Self).Variables.ToList();
+            }
+            else
+            {
+                ViewBag.Variables = new List<Variable>();
+            }
+
+
             return View(tuples);
         }
 

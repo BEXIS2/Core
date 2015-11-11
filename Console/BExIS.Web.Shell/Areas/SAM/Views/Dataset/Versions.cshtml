@@ -1,9 +1,14 @@
 ﻿@using BExIS.Dlm.Entities.Data;
 @using Lucene.Net.Search.Highlight
 @model System.Collections.Generic.List<DatasetVersion>
-@{
-    ViewBag.Title = "List of Dataset Versions";
+
+@section Information
+{
+    This maintenance tool is meant for administrators only. All datasets are
+    listed with their internal ID, status, and the option to remove them
+    from the system. Use with care!
 }
+
 <h3>Dataset @ViewBag.VersionId versions</h3>
 @Html.ActionLink("Return to the list", "List", new { area = "Sam" })
 <p />

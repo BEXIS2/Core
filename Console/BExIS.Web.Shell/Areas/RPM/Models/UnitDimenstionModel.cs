@@ -23,7 +23,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
             UnitStructs = new List<UnitStruct>();
         }
 
-        public List<UnitStruct> getUnitDimenstionListByDimenstion(long dimensionId)
+        public List<UnitStruct> getUnitListByDimenstion(long dimensionId)
         {
             List<Unit> units = unitmanager.DimensionRepo.Get(dimensionId).Units.ToList();
             UnitStruct tempUnitStruct = new UnitStruct();
@@ -37,5 +37,34 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
             return UnitStructs;
         }
 
+        public List<UnitStruct> getUnitListByDimenstionAndDataType(long dimensionId,long dataTypeId)
+        {
+            List<Unit> units = unitmanager.DimensionRepo.Get(dimensionId).Units.ToList();
+            UnitStruct tempUnitStruct = new UnitStruct();
+            foreach (Unit u in units)
+            {
+                if (u.Name.ToLower() != "none")
+                {
+                    foreach (DataType dt in u.AssociatedDataTypes)
+                    {
+                        if (dt.Id == dataTypeId)
+                        {
+                            tempUnitStruct.Id = u.Id;
+                            tempUnitStruct.Name = u.Name;
+                            UnitStructs.Add(tempUnitStruct);
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    tempUnitStruct.Id = u.Id;
+                    tempUnitStruct.Name = u.Name;
+                    UnitStructs.Add(tempUnitStruct);
+                }
+            }
+
+            return UnitStructs;
+        }
     }
 }

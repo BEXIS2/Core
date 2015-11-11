@@ -16,6 +16,7 @@ using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Authorization;
 using Vaiona.Logging.Aspects;
 using Vaiona.Logging;
+using Vaiona.Utils.Cfg;
 
 namespace BExIS.Web.Shell.Controllers
 {
@@ -35,15 +36,16 @@ namespace BExIS.Web.Shell.Controllers
         //[Diagnose]
         public ActionResult Index(Int64 id=0)
         {
+            ViewBag.Title = PresentationModel.GetViewTitle("Test Page"); /*in the Vaiona.Web.Mvc.Models namespace*/ //String.Format("{0} {1} - {2}", AppConfiguration.ApplicationName, AppConfiguration.ApplicationVersion, "Test Page");
             //List<string> a = new List<string>() { "A", "B", "C" };
             //List<string> b = new List<string>() { "A", "B", "D" };
             //var ab = a.Union(b);
 
             //dm.DatasetRepo.LoadIfNot(ds.Tuples);
             ////dm.DatasetRepo.Get(
-            LoggerFactory.LogCustom("Hi, I am a custom message!");
-            LoggerFactory.LogData(id.ToString(), typeof(Dataset).Name, Vaiona.Entities.Logging.CrudState.Deleted);
-            LoggerFactory.LogDataRelation(id.ToString(), typeof(Dataset).Name, "20", typeof(DatasetVersion).Name, Vaiona.Entities.Logging.CrudState.Deleted);
+            //LoggerFactory.LogCustom("Hi, I am a custom message!");
+            //LoggerFactory.LogData(id.ToString(), typeof(Dataset).Name, Vaiona.Entities.Logging.CrudState.Deleted);
+            //LoggerFactory.LogDataRelation(id.ToString(), typeof(Dataset).Name, "20", typeof(DatasetVersion).Name, Vaiona.Entities.Logging.CrudState.Deleted);
 
             //DatasetExportTest2();
             //SimpleMatDematWithExport();

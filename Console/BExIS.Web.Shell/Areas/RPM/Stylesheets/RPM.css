@@ -7,6 +7,12 @@
     float:right;
 }
 
+#domain_FormalDescription,
+#pattern_FormalDescription,
+#range_FormalDescription {
+    cursor:default;
+}
+
 .t-status, .t-refresh{
 display:none !important;
 }
@@ -72,6 +78,7 @@ border:none;
 
 #DataStructureGrid{
     overflow-x:auto;
+    background-color:#ffffff;
     /*border-radius: 3px;*/
 }
 
@@ -94,25 +101,27 @@ border:none;
 #DataStructureGrid .head {
    text-align: left;
    width:100px;
-   color:#ffffff;
-   background-color:#B4B4B4;
-   border-color:#666666;
+   color:#000000;
+   background-color:#bee1da;
+   border-color:#72b1a0;
+   border-right-color:#ffffff;
    font-weight:bold;
+   padding-left:10px;
 }
 
-#DataStructureGrid input, #DataStructureGrid textarea {
-    min-width:90px;  
+#DataStructureGrid .empty {
+   text-align: left;
+   border-color:#72b1a0;
+   border-right-color:#ffffff;
 }
-#DataStructureGrid input {
-    max-width:297px;
+
+#DataStructureGrid input, #DataStructureGrid select, #DataStructureGrid textarea {
     width:100%;
-}
-#DataStructureGrid textarea {
-    max-width:290px;
-    width:95%;
+    max-width:100%;
+    min-width:100%;
 }
 
-#DataStructureGrid .t-icon {
+#DataStructureGrid .bx-grid-function {
     margin: 0px 2px 0px 2px;
 }
 
@@ -126,10 +135,15 @@ table, tr {
   
 }
 
-#bx-rpm-dataAttributeGrid, #bx-rpm-selectDataTypeGrid{
+#dataStructure_Description {
+    width:350px
+}
+
+#bx-rpm-dataAttributeGrid, #bx-rpm-selectDataTypeGrid, #DatasetGrid{
     margin: 0px;
     padding: 0px;
-    width:1000px
+    width:1000px;
+    background-color:#ffffff;
 }
 
 #bx-rpm-dataAttributeGrid .t-grid-content .t-numerictextbox .t-input{
@@ -156,9 +170,9 @@ width: 60px;
     align-content:center;
 }
 
-.bx-rpm-constrainValue {
+/*.bx-rpm-constrainValue {
 width:456px;
-}
+}*/
 
 .bx-rpm-constrainValue input {
 width:348px;
@@ -187,7 +201,7 @@ max-width: 600px;
 max-height:200px;
 width:330px;
 }
-.bx-rpm-dropdownArrow {
+.t-arrow-down.bx-rpm-dropdownArrow {
 margin-left:-23px;
 z-index:1;
 position:relative;
@@ -210,11 +224,13 @@ background:none;
 .bx-rpm-functions {
 float:left;
 max-width:50%;
+display:normal;
 }
 
 .bx-rpm-submit {
 float:right;
 max-width:50%;
+display:normal;
 }
 
 .t-treeview-lines{
@@ -244,4 +260,16 @@ width: 15px;
 
 #domain_FormalDescription, #pattern_FormalDescription {
     margin-left:34px;
+}
+
+.planingPartialDiv .t-numerictextbox .t-formatted-value {
+    padding: 2px 0px 0px 8px;
+}
+
+.planingPartialDiv .t-numerictextbox .t-arrow-up {
+    margin:-2px 0px 0px -16px;
+}
+
+.planingPartialDiv .t-numerictextbox .t-arrow-down {
+    margin: 0px 0px 5px -8.4px;
 }

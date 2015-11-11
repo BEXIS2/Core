@@ -28,43 +28,6 @@
             switch (r.ItemArray.First().ToString().ToLower())
             {
                 case "functions":
-                    if (i % 2 != 0)
-                    {
-                        if (!Model.inUse)
-                        {
-                            <tr class ="bx-rpm-function t-alt">
-                            @foreach (object o in r.ItemArray)
-                            {
-                                if (o != r.ItemArray.First())
-                                {
-                                    <td class="data">@o.ToString()</td>
-                                }
-                                else
-                                {
-                                    <td  class="head">@o.ToString()</td>
-                                }
-                            }
-                            </tr>
-                        }
-                        else
-                        {
-                            <tr class ="bx-rpm-locked t-alt">
-                            @foreach (object o in r.ItemArray)
-                            {
-                                if (o != r.ItemArray.First())
-                                {
-                                    <td class="data">@o.ToString()</td>
-                                }
-                                else
-                                {
-                                    <td class="head">@o.ToString()</td>
-                                }
-                            }
-                            </tr>
-                        }
-                    }
-                    else
-                    {
                         if (!Model.inUse)
                         {
                             <tr class ="bx-rpm-function">
@@ -76,7 +39,7 @@
                                 }
                                 else
                                 {
-                                    <td class="head">@o.ToString()</td>
+                                    <td class="empty"></td>
                                 }
                             }
                             </tr>
@@ -92,18 +55,15 @@
                                 }
                                 else
                                 {
-                                    <td class="head">@o.ToString()</td>
+                                    <td class="empty"></td>
                                 }
                             }
                             </tr>
                         }
-                    }
                     break;
 
                 case "name":
-                    if (i % 2 != 0)
-                    {
-                        <tr class ="name t-alt">
+                    <tr class ="name">
                         @foreach (object o in r.ItemArray)
                         {
                             if (o != r.ItemArray.First())
@@ -114,7 +74,7 @@
                                 }
                                 else
                                 {
-                                    <td class="data">@o.ToString()</td>
+                                    <td class="data">@Html.TextBox("varName", o.ToString(), new { @Value = o.ToString(), @tabindex = "5", @disabled = "disabled" })</td>
                                 }
                             }
                             else
@@ -123,60 +83,9 @@
                             }
                         }                          
                         </tr>
-                    }
-                    else
-                    {
-                        <tr class ="name">
-                        @foreach (object o in r.ItemArray)
-                        {
-                            if (o != r.ItemArray.First())
-                            {
-                                if (!Model.inUse)
-                                {
-                                    <td class="data">@Html.TextBox("varName", o.ToString(), new { @Value = o.ToString(), @tabindex = "5" })</td>
-                                }
-                                else
-                                {
-                                    <td class="data">@o.ToString()</td>
-                                }
-                            }
-                            else
-                            {
-                                <td class="head">@o.ToString()</td>
-                            }
-                        }
-                        </tr>
-                    }
                     break;
 
                 case "description":
-                    if (i % 2 != 0)
-                    {
-                        <tr class ="description t-alt">
-                        @foreach (object o in r.ItemArray)
-                        {
-                            if (o != r.ItemArray.First())
-                            {
-                                if (!Model.inUse)
-                                {
-                                    <td class="data">
-                                        <textarea id="varDesc" name="varDesc" tabindex = "5">@o.ToString()</textarea>
-                                    </td>
-                                }
-                                else
-                                {
-                                    <td class="data">@o.ToString()</td>
-                                }
-                            }
-                            else
-                            {
-                                <td class="head">@o.ToString()</td>
-                            }
-                        }                          
-                        </tr>
-                    }
-                    else
-                    {
                         <tr class ="description">
                         @foreach (object o in r.ItemArray)
                         {
@@ -190,63 +99,23 @@
                                 }
                                 else
                                 {
-                                    <td class="data">@o.ToString()</td>
+                                    <td class="data">
+                                        <textarea disabled="disabled" id="disabled" name="disabled" tabindex="5">@o.ToString()</textarea>
+                                    </td>
                                 }
                             }
                             else
                             {
                                 <td class="head">@o.ToString()</td>
                             }
-                        }
+                        }                          
                         </tr>
-                    }
                     break;
 
                 case "optional":
                     object obj = new object();
                     DataRow temp = null;
-
-                    if (i % 2 != 0)
-                    {   
-                        <tr class="optional t-alt">
-                        @for (int j = 0; j < r.ItemArray.Count(); j++)
-                        {
-                            obj = r.ItemArray[j];
-
-                            if (obj != r.ItemArray.First())
-                            {
-                                if (!Model.inUse)
-                                {
-                                    foreach (DataRow row in Model.dataStructureTable.Rows)
-                                    {
-                                        if (row.ItemArray.First().ToString().ToLower() == "variableid")
-                                        {
-                                            temp = row;
-                                            break;
-                                        }
-                                    }
-                                  
-                                    <td class="data"><input id="optional" name="optional" type="checkbox" value="@temp.ItemArray[j]" class="checkBox" tabindex = "5"
-                                    @if (Convert.ToBoolean(obj.ToString().ToLower()) == true)
-                                    {
-                                        <text>checked="checked"</text>
-                                    }
-                                    /></td>
-                                }
-                                else
-                                {
-                                    <td class="data">@obj.ToString()</td>
-                                }
-                            }
-                            else
-                            {
-                                <td class="head">@obj.ToString()</td>
-                            }
-                        }
-                        </tr>
-                    }
-                    else
-                    {
+  
                         <tr class="optional">
                         @for (int j = 0; j < r.ItemArray.Count(); j++)
                         {
@@ -258,13 +127,13 @@
                                 {
                                     foreach (DataRow row in Model.dataStructureTable.Rows)
                                     {
-                                        if (row.ItemArray.First().ToString().ToLower() == "variableid")
+                                        if (row.ItemArray.First().ToString().ToLower() == "variable id")
                                         {
                                             temp = row;
                                             break;
                                         }
                                     }
-                                  
+
                                     <td class="data"><input id="optional" name="optional" type="checkbox" value="@temp.ItemArray[j]" class="checkBox" tabindex = "5"
                                     @if (Convert.ToBoolean(obj.ToString().ToLower()) == true)
                                     {
@@ -274,7 +143,13 @@
                                 }
                                 else
                                 {
-                                    <td class="data">@obj.ToString()</td>
+                                    <td class="data">
+                                        <input id="optional" name="optional" type="checkbox" class="checkBox bx-disabled" disabled="disabled" tabindex="5"
+                                        @if (Convert.ToBoolean(obj.ToString().ToLower()) == true)
+                                        {
+                                            <text> checked="checked" </text>  
+                                        } />
+                                    </td>
                                 }
                             }
                             else
@@ -283,36 +158,18 @@
                             }
                         }
                         </tr>
-                    }
                     break;
 
-                case "variableid":
-                    if (i % 2 != 0)
-                    {    
-                        <tr class ="t-alt">
-                        @foreach (object o in r.ItemArray)
-                        {
-                            if (o != r.ItemArray.First())
-                            { 
-                                <td class="data">@o.ToString()@Html.TextBox("varId", o.ToString(), new { @class = "hidden", @Value = o.ToString() })</td>
-                                unitStructs.Add(Model.variableStructs.Where(v => v.variable.Id.Equals(Convert.ToInt64(o))).FirstOrDefault().unitStructs);
-                                unitId.Add(Model.variableStructs.Where(v => v.variable.Id.Equals(Convert.ToInt64(o))).FirstOrDefault().variable.Unit.Id);
-                            }
-                            else
-                            {
-                                <td class="head">@o.ToString()</td>
-                            }
-                        }
-                        </tr>
-                    }
-                    else
-                    {
+                case "variable id": 
                         <tr>
                         @foreach (object o in r.ItemArray)
                         {
                             if (o != r.ItemArray.First())
-                            { 
-                                <td class="data">@o.ToString()@Html.TextBox("varId", o.ToString(), new { @class = "hidden", @Value = o.ToString() })</td>
+                            {
+                                <td class="data">
+                                    @Html.TextBox("disabled", o.ToString(), new { @Value = o.ToString(), @tabindex = "5", @disabled = "disabled" })
+                                    @Html.TextBox("varId", o.ToString(), new { @class = "hidden", @hidden = "hidden",  @Value = o.ToString() })
+                                </td>
                                 unitStructs.Add(Model.variableStructs.Where(v => v.variable.Id.Equals(Convert.ToInt64(o))).FirstOrDefault().unitStructs);
                                 unitId.Add(Model.variableStructs.Where(v => v.variable.Id.Equals(Convert.ToInt64(o))).FirstOrDefault().variable.Unit.Id);
                             }
@@ -322,37 +179,9 @@
                             }
                         }
                         </tr>
-                    }
                     break;
 
                 case "unit":
-                    if (i % 2 != 0)
-                    {
-                        <tr class ="unit t-alt">
-                        @for (int j = 0; j < r.ItemArray.Count(); j++)
-                        {
-                            obj = r.ItemArray[j];
-
-                            if (obj != r.ItemArray.First())
-                            {
-                                if (!Model.inUse)
-                                {
-                                    <td class="data">@Html.DropDownList("varUnit", new SelectList(unitStructs.ElementAt(j-1),"Id","Name", unitId.ElementAt(j-1)), new { @tabindex = "5" })</td>
-                                }
-                                else
-                                {
-                                    <td class="data">@obj.ToString()</td>
-                                }
-                            }
-                            else
-                            {
-                                <td class="head">@obj.ToString()</td>
-                            }
-                        }                          
-                        </tr>
-                    }
-                    else
-                    {
                         <tr class ="unit">
                         @for (int j = 0; j < r.ItemArray.Count(); j++)
                         {
@@ -366,43 +195,24 @@
                                 }
                                 else
                                 {
-                                    <td class="data">@obj.ToString()</td>
+                                    <td>@Html.TextBox("disabled", obj.ToString(), new { @Value = obj.ToString(), @tabindex = "5", @disabled = "disabled" })</td>
                                 }
                             }
                             else
                             {
                                 <td class="head">@obj.ToString()</td>
                             }
-                        } 
+                        }                          
                         </tr>
-                    }
                     break;
 
-                default:
-                    if (i % 2 != 0)
-                    {    
-                        <tr class ="t-alt">
-                        @foreach (object o in r.ItemArray)
-                        {
-                            if (o != r.ItemArray.First())
-                            { 
-                                <td class="data">@o.ToString()</td>
-                            }
-                            else
-                            {
-                                <td class="head">@o.ToString()</td>
-                            }
-                        }
-                        </tr>
-                    }
-                    else
-                    {
+                default:   
                         <tr>
                         @foreach (object o in r.ItemArray)
                         {
                             if (o != r.ItemArray.First())
-                            { 
-                                <td class="data">@o.ToString()</td>
+                            {
+                                <td>@Html.TextBox("disabled", o.ToString(), new { @Value = o.ToString(), @tabindex = "5", @disabled = "disabled" })</td>
                             }
                             else
                             {
@@ -410,7 +220,6 @@
                             }
                         }
                         </tr>
-                    }
                     break;
             }
         } 
@@ -423,14 +232,16 @@
         var first = @first;
         var last =  @last;
 
-
         for (var i = 0; i < $(".bx-rpm-function .data").length; i++)
         {
-            var edit = '<a area="RPM" class="t-icon t-edit" href="/RPM/Home/openVariableWindow/' + $(".bx-rpm-function .data")[i].innerHTML + '"></a>';
-            var del = '<a area="RPM" class="t-icon t-delete" href="/RPM/Home/deleteVariable/' + $(".bx-rpm-function .data")[i].innerHTML + '" onclick = "return confirm(\'Are you sure you want to delete the Variable ' + $(".name #varName")[i].value + '?\')"></a>'
+            var edit = '<a area="RPM" class="bx bx-grid-function bx-edit" title = "Edit Variable &quot;'+ $(".name #varName")[i].value +'&quot;" href="/RPM/Home/openVariableWindow/' + $(".bx-rpm-function .data")[i].innerHTML + '"></a>';
+            var del = '<a area="RPM" class="bx bx-grid-function bx-trash" title = "Delete Variable &quot;'+ $(".name #varName")[i].value +'&quot;" href="/RPM/Home/deleteVariable/' + $(".bx-rpm-function .data")[i].innerHTML + '" onclick = "return confirm(\'Are you sure you want to delete the Variable ' + $(".name #varName")[i].value + '?\')"></a>'
             var temp = $(".bx-rpm-function .data")[i].innerHTML.split('?');
-            var left = '<a area="RPM" class="t-icon t-arrow-prev" href="/RPM/Home/shiftVariableLeft/'+ $(".bx-rpm-function .data")[i].innerHTML +'"></a>';
-            var right = '<a area="RPM" class="t-icon t-arrow-next" href="/RPM/Home/shiftVariableRight/'+ $(".bx-rpm-function .data")[i].innerHTML +'"></a>';
+            var left = '<a area="RPM" class="bx bx-grid-function bx-previous" title = "Move Variabel &quot;'+ $(".name #varName")[i].value +'&quot; to the left" href="/RPM/Home/shiftVariableLeft/'+ $(".bx-rpm-function .data")[i].innerHTML +'"></a>';
+            var right = '<a area="RPM" class="bx bx-grid-function bx-next" title = "Move Variabel &quot;'+ $(".name #varName")[i].value +'&quot; to the right" href="/RPM/Home/shiftVariableRight/'+ $(".bx-rpm-function .data")[i].innerHTML +'"></a>';
+
+            var leftDisabled = '<div area="RPM" class="bx bx-grid-function bx-previous bx-disabled" title = "Move Variabel  &quot;'+ $(".name #varName")[i].value +'&quot; to the left"></div>';
+            var rightDisabled = '<div area="RPM" class="bx bx-grid-function bx-next bx-disabled" title = "Move Variabel  &quot;'+ $(".name #varName")[i].value +'&quot; to the right"></div>';
 
             $(".bx-rpm-function .data")[i].innerHTML = del;
                 
@@ -440,28 +251,26 @@
             {
                 if(temp[0] == first && temp[0] == last)
                 {
-                    $(".bx-rpm-function .data")[i].innerHTML = edit + del;
+                    $(".bx-rpm-function .data")[i].innerHTML = leftDisabled + edit + del + rightDisabled;
                 }
                 else
                 {
                     if(temp[0] == first)
-                        $(".bx-rpm-function .data")[i].innerHTML = edit + del + right;
+                        $(".bx-rpm-function .data")[i].innerHTML = leftDisabled + edit + del + right;
                     else
-                        $(".bx-rpm-function .data")[i].innerHTML = left + edit + del;
+                        $(".bx-rpm-function .data")[i].innerHTML = left + edit + del + rightDisabled;
                 }
             }                       
         }
 
         for (var i = 0; i < $(".bx-rpm-locked .data").length; i++)
         {
-            $(".bx-rpm-locked .data")[i].innerHTML ='<div style="text-align:center;"><button class="bx-button small bx-disabled">locked</button></div>';
-        }
+            var editDisabled = '<div area="RPM" class="bx bx-grid-function bx-edit bx-disabled" title = "Edit Variable &quot;'+ $(".name #varName")[i].value +'&quot;"></div>';
+            var delDisabled = '<div area="RPM" class="bx bx-grid-function bx-trash bx-disabled" title = "Delete Variable &quot;'+ $(".name #varName")[i].value +'&quot;"></div>';
+            var leftDisabled = '<div area="RPM" class="bx bx-grid-function bx-previous bx-disabled" title = "Move Variabel  &quot;'+ $(".name #varName")[i].value +'&quot; to the left"></div>';
+            var rightDisabled = '<div area="RPM" class="bx bx-grid-function bx-next bx-disabled" title = "Move Variabel  &quot;'+ $(".name #varName")[i].value +'&quot; to the right"></div>';
 
-        for (var i = 0; i < $(".bx-rpm-optional .data").length; i++) {
-            if ($(".bx-rpm-optional .data")[i].innerHTML == 'False')
-                $(".bx-rpm-optional .data")[i].innerHTML = '<b>-</b>';
-            if ($(".bx-rpm-optional .data")[i].innerHTML == 'True')
-                $(".bx-rpm-optional .data")[i].innerHTML = '<div class="t-icon t-update"></div>';
+            $(".bx-rpm-locked .data")[i].innerHTML = leftDisabled + editDisabled + delDisabled + rightDisabled;
         }
     });
 

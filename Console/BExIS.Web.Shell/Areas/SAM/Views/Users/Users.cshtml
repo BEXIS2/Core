@@ -1,11 +1,6 @@
-﻿@using System.Web.UI.WebControls
-@using BExIS.Web.Shell.Areas.SAM.Models
+﻿@using BExIS.Web.Shell.Areas.SAM.Models
 @using Telerik.Web.Mvc.UI
-@using Telerik.Web.Mvc.UI.Fluent
 @model System.Collections.Generic.List<BExIS.Web.Shell.Areas.SAM.Models.UserGridRowModel>
-@{
-    ViewBag.Title = "Users";
-}
 
 <style>
     .t-window-content
@@ -14,16 +9,9 @@
         width: auto !important;
     }
 
-    #Grid_Users .t-grid-content
+    #gridMembership
     {
-        height: auto !important;
-        max-height: 495px !important;
-    }
-
-    #Grid_UserMembership .t-grid-content
-    {
-        height: auto !important;
-        max-height: 450px !important;
+        width: 768px !important;
     }
 </style>
 
@@ -32,124 +20,93 @@
 @section Information
 {
     With this interface you are able to manage users. New users can be added with the "Create" button. Existing users can be edited (properties, memberships, delete) through the "Edit" button.
+    <p>
+        More information 
+        @Html.ActionLink("here", "Index", "Help", new { id = 0 }, new { @class = "bx-informationLink", title="go to help", target="_blank"})
+    </p>
 }
 
-@(Html.Telerik().Grid<UserGridRowModel>()
-      .Name("gridUsers")
-      .ToolBar(command =>
-      {
-          command.Custom().Name("Create").Text("Create").Ajax(true).Action("Create", "Users").ButtonType(GridButtonType.ImageAndText).ImageHtmlAttributes(new { @class = "t-icon t-add" });
-      })
-      .Columns(columns =>
-      {
-          columns.Command(command =>
-          {
-              command.Custom("Edit").Text("Edit").Ajax(true).ButtonType(GridButtonType.Text);
-          }).Title("Actions").Width(90).HtmlAttributes(new { style = "text-align:left" });
-          columns.Bound(u => u.Id);
-          columns.Bound(u => u.UserName);
-          columns.Bound(u => u.FullName);
-          columns.Bound(u => u.Email);
-          columns.Bound(u => u.IsApproved);
-          columns.Bound(u => u.IsBlocked);
-          columns.Bound(u => u.IsLockedOut);
-      })
-      .ClientEvents(clientEvents => clientEvents
-          .OnCommand("gridUsers_onCommand")
-      )
-      .DataBinding(dataBinding => dataBinding
-          .Ajax()
-          .OperationMode(GridOperationMode.Client)
-          .Select("Users_Select", "Users")
-      )
-      .Filterable()
-      .Pageable(pageable =>
-      {
-          pageable.PageSize(10, new[] {10, 20, 50, 100});
-          pageable.Style(GridPagerStyles.NextPreviousAndNumeric | GridPagerStyles.PageSizeDropDown);
-      })
-      .Sortable())
+<button type="button" class="bx-button function" onclick="userCreate_onClick()">Create User</button>
+
+    @(Html.Telerik().Grid<UserGridRowModel>()
+    .Name("gridUsers")
+    .Columns(columns =>
+    {
+        columns.Bound(u => u.Id);
+        columns.Bound(u => u.UserName);
+        columns.Bound(u => u.FullName);
+        columns.Bound(u => u.Email);
+        columns.Bound(u => u.IsApproved);
+        columns.Bound(u => u.IsBlocked);
+        columns.Bound(u => u.IsLockedOut);
+        columns.Template(@<text>
+            <button type="button" class="bx bx-grid-function bx-edit" onclick="userEdit_onClick('@item.UserName', @item.Id);"></button>
+            <button type="button" class="bx bx-grid-function bx-trash" onclick="userDelete_onClick('@item.UserName', @item.Id)"></button>
+        </text>)
+            .ClientTemplate("<button type=\"button\" class=\"bx bx-grid-function bx-edit\" onclick=\"userEdit_onClick(\'<#= UserName #>\', <#= Id #>);\" value=\"<#= Id #>\"></button>" +
+                            "<button type=\"button\" class=\"bx bx-grid-function bx-trash\" onclick=\"userDelete_onClick(\'<#= UserName #>\', <#= Id #>);\" value=\"<#= Id #>\"></button>")
+            .Width(70);
+    })
+        .ClientEvents(clientEvents =>
+        {
+            clientEvents.OnDataBound("gridUsers_onDataBound");
+        })
+        .DataBinding(dataBinding => dataBinding
+            .Ajax()
+            .OperationMode(GridOperationMode.Client)
+            .Select("Users_Select", "Users")
+        )
+        .Filterable()
+        .Pageable(pageable =>
+        {
+            pageable.PageSize(10, new[] { 10, 20, 50, 100 });
+            pageable.Style(GridPagerStyles.NextPreviousAndNumeric | GridPagerStyles.PageSizeDropDown);
+            pageable.Position(GridPagerPosition.Both);
+        })
+        .Sortable())
 
 <script type="text/javascript">
 
-    // --------------------------------------------------
-    // GRID
-    // --------------------------------------------------
-
-    function gridUsers_onCommand(e) {
-
-        switch (e.name) {
-            case "Create":
-                $.ajax({
-                    type: 'GET',
-                    url: '@Url.Action("Create", "Users")',
-                    dataType: 'html',
-                    success: function (htmlData) {
-                        var windowElement = $.telerik.window.create({
-                            title: "Create User",
-                            html: "<div id='contentCreate'>" + htmlData + "</div>",
-                            contentUrl: "",
-                            actions: ["Close"],
-                            modal: true,
-                            width: 500,
-                            height: 500,
-                            resizable: false,
-                            draggable: true,
-                            scrollable: false,
-                            onClose: function () {
-                                $("#windowCreate").data('tWindow').destroy();
-                                $("#gridUsers .t-refresh").trigger('click');
-                            }
-                        });
-
-                        windowElement.attr('id', 'windowCreate');
-                        var window = $(windowElement).data('tWindow');
-                        window.center().open();
-                    }
-                })
-
-                break;
-
-            case "Edit":
-                $.ajax({
-                    type: 'GET',
-                    url: '@Url.Action("Edit", "Users")',
-                    data: { Id: e.dataItem.Id },
-                    dataType: 'html',
-                    success: function (htmlData) {
-                        var windowElement = $.telerik.window.create({
-                            title: "Edit User: " + e.dataItem.UserName + " (Id: " + e.dataItem.Id + ")",
-                            html: "<div id='contentEdit'>" + htmlData + "</div>",
-                            contentUrl: "",
-                            actions: ["Close"],
-                            modal: true,
-                            width: 500,
-                            height: 500,
-                            resizable: false,
-                            draggable: true,
-                            scrollable: false,
-                            onClose: function () {
-                                $("#windowEdit").data('tWindow').destroy();
-                                $("#gridUsers .t-refresh").trigger('click');
-                            }
-                        });
-
-                        windowElement.attr('id', 'windowEdit');
-                        var window = $(windowElement).data('tWindow');
-                        window.center().open();
-                    }
-                })
-
-                break;
-
-            default:
-                break;
-        }
+    function gridUsers_onDataBound() {
+        resetAllTelerikIconTitles();
+        addTooltips();
     }
 
     // --------------------------------------------------
     // CREATE
     // --------------------------------------------------
+
+    function userCreate_onClick() {
+        $.ajax({
+            type: 'GET',
+            url: '@Url.Action("Create", "Users")',
+            dataType: 'html',
+            success: function (htmlData) {
+                var windowElement = $.telerik.window.create({
+                    title: "Create User",
+                    html: "<div id='contentCreate' class='bx-window'>" + htmlData + "</div>",
+                    contentUrl: "",
+                    actions: ["Close"],
+                    modal: true,
+                    width: 500,
+                    height: 500,
+                    resizable: false,
+                    draggable: true,
+                    scrollable: false,
+                    onClose: function () {
+                        $("#windowCreate").data('tWindow').destroy();
+                        $("#gridUsers .t-refresh").trigger('click');
+                    }
+                });
+
+                windowElement.attr('id', 'windowCreate');
+                var window = $(windowElement).data('tWindow');
+                window.center().open();
+
+                resetAllTelerikIconTitles();
+            }
+        });
+    }
 
     function userCreate_onSuccess(data) {
         if (data.success) {
@@ -165,14 +122,56 @@
     // EDIT
     // --------------------------------------------------
 
+    function userEdit_onClick(userName, id) {
+        $.ajax({
+            type: 'GET',
+            url: '@Url.Action("Edit", "Users")',
+            data: { Id:id },
+            dataType: 'html',
+            success: function (htmlData) {
+                var windowElement = $.telerik.window.create({
+                    title: "Edit User: " + userName + " (Id: " + id + ")",
+                    html: "<div id='contentEdit' class='bx-window'>" + htmlData + "</div>",
+                    contentUrl: "",
+                    actions: ["Close"],
+                    modal: true,
+                    width: 500,
+                    height: 500,
+                    resizable: false,
+                    draggable: true,
+                    scrollable: false,
+                    onClose: function () {
+                        $("#windowEdit").data('tWindow').destroy();
+                        $("#gridUsers .t-refresh").trigger('click');
+                    }
+                });
+
+                windowElement.attr('id', 'windowEdit');
+                var window = $(windowElement).data('tWindow');
+                window.center().open();
+
+                resetAllTelerikIconTitles();
+            }
+        });
+    }
+
     function userEdit_onSuccess(data) {
         if (data.success) {
             $('#windowEdit').data('tWindow').close();
         }
     }
 
+    function gridMembership_onDataBound() {
+        resetAllTelerikIconTitles();
+        addTooltips();
+    }
+
     function windowEdit_onCancel() {
         $('#windowEdit').data('tWindow').close();
+    }
+
+    function windowEdit_onSubmit() {
+        $.post('@Url.Action("SetMembership", "Users")', { Groups: $("#gridMembership").data("tGrid").dataSource._data });
     }
 
     function setMembership(value, id) {
@@ -186,12 +185,12 @@
         }
     }
 
-    function windowEdit_onDelete(userId) {
-        var result = confirm('Are you sure you want to delete this user (Id:' + userId + ')?');
+    function userDelete_onClick(userName, id) {
+        var result = confirm('Are you sure you want to delete this user (UserName:' + userName + ', Id:' + id + ')?');
 
         if (result) {
-            $.post('@Url.Action("Delete", "Users")', { id: userId }, function (e) {
-                $('#windowEdit').data('tWindow').close();
+            $.post('@Url.Action("Delete", "Users")', { Id: id }, function (e) {
+                $("#gridUsers .t-refresh").trigger('click');
             });
         }
     }

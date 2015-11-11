@@ -34,25 +34,23 @@
 	@*<script type="text/javascript" src="/Areas/DDM/Views/Shared/ddm.js"></script>*@
 }
 
-<div class="ShowData_Description">
-    @*<p>Downloading primary data follows the What-You-See-Is-What-You-Get-Principle.
- So you are able to download a subset of the data by specifying filters on columns (e.g. Plot = 123), <br /> apply sorting, or select specific columns from the data table (right-click the column header). Paging does not effect the subset.
-</p>*@
+@section information
+{
     <p>To download the entire dataset choose one of the following formats.</p>
 
     <p>Note: If you are the first one to download this dataset it may take a
         little longer, because the file has to be created.</p>
-</div>
 
-<div id="downloadOptions">
+}
+<div id="downloadOptions" style="text-align:left;">
 
     @if (Model.DownloadAccess && Model.Data != null && Model.Data.Rows.Count > 0)
     { 
-		   @Html.ActionLink("Download Excel", "DownloadAsExcelData", "Data", new { id = @Model.DatasetId }, new { area = "DDM", @class = "t-button margin", title = "Xlsx download" })
+		   @Html.ActionLink("Download Excel", "DownloadAsExcelData", "Data", new { id = @Model.DatasetId }, new { area = "DDM", @class = "bx-button function", title = "Xlsx download" })
 
-		   @Html.ActionLink("Download Comma Separated", "DownloadAsCsvData", "Data", new { id = @Model.DatasetId }, new { area = "DDM", @class = "t-button margin", title = "Csv download" })
+		   @Html.ActionLink("Download Comma Separated", "DownloadAsCsvData", "Data", new { id = @Model.DatasetId }, new { area = "DDM", @class = "bx-button function", title = "Csv download" })
 
-		   @Html.ActionLink("Download Tab Separated", "DownloadAsTxtData", "Data", new { id = @Model.DatasetId }, new { area = "DDM", @class = "t-button margin", title = "Text download" })
+		   @Html.ActionLink("Download Tab Separated", "DownloadAsTxtData", "Data", new { id = @Model.DatasetId }, new { area = "DDM", @class = "bx-button function", title = "Text download" })
 		  
 		  @* @Html.CheckBox("DownLoadFullDataset", new { text = "Download full dataset", @id = "fullDatasetDownload" }) @Html.Label("Download full dataset")*@
     }
@@ -123,15 +121,13 @@
             .Pageable(paging =>
                 paging.PageSize(100,new int[]{10,20,50,100,500})
                     .Style(pagerStyles)
-                    .Position(GridPagerPosition.Bottom)
+                    .Position(GridPagerPosition.Both)
                     .Total(total)
                     )
             //.Sortable()
             //.Filterable()
             //.ColumnContextMenu()
             //.Groupable()
-            .Scrollable(s => s.Height(350))
-    
             
 )
 
@@ -183,12 +179,14 @@
 	    OnDataBound();
 	})*@
 
-	resetAllTelerikIconTitles();
+	    resetAllTelerikIconTitles();
+	    addTooltips();
 
 	}
 
     function OnDataBound()
     {
+        addTooltips();
         resetAllTelerikIconTitles();
 
         var compareValuesString = '@compareValues'
@@ -227,10 +225,18 @@
 </script>
 
 <style type="text/css">
+
 	.primaryDataResultGrid .t-grid-content
 	{
 		height : auto !important;
+       
 	}
+
+    .primaryDataResultGrid .t-grid-content td
+    {
+        padding-left:0;
+        text-align:left;
+    }
 
     .margin
     {

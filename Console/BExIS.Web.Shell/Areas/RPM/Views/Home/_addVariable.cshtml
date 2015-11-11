@@ -74,10 +74,11 @@ else
                 ////    .Title("Data Type");
 
             })
+            .ClientEvents(events=>events.OnDataBound("onDataBound"))
             )
             <div class="bx-rpm-submit bx-rpm-buttons">
             <button name="addVariables" value="add" type="submit" class="t-button action"  id="saveButton" title="Save The Unit" tabindex = "1">Save</button>
-            @Html.ActionLink("Cancel", "showDataStructure", "Home", new { SelectedItem = Model.dataStructure.Id + "," + Model.structured }, new { area = "RPM", @class = "t-button action", @title = "Cancel", @tabindex = "2", @autofocus = "autofocus" })
+            @Html.ActionLink("Cancel", "showDataStructure", "Home", new { SelectedItem = Model.dataStructure.Id + "," + Model.structured }, new { area = "RPM", @class = "bx-button action", @title = "Cancel", @tabindex = "2", @autofocus = "autofocus" })
         </div>
         }
     </div>
@@ -116,5 +117,11 @@ else
             processData: false
         });
     }
+    
+    function onDataBound()
+    {
+        addTooltips();
+    }
+
 </script>
 }

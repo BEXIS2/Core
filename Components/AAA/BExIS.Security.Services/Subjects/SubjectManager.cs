@@ -355,9 +355,20 @@ namespace BExIS.Security.Services.Subjects
             return false;
         }
 
-        public bool ChangeSecurityQuestionAndSecurityAnswer(string userName, string password, long securityQuestionId, string newPasswordAnswer)
+        public bool ChangeSecurityQuestionAndSecurityAnswer(long id, long securityQuestionId, string passwordAnswer)
         {
-            throw new NotImplementedException();
+            User user = GetUserById(id);
+
+            if (user != null)
+            {
+                user.SecurityQuestion = SecurityQuestionsRepo.Get(securityQuestionId);
+                user.SecurityAnswer = hashSecurityProperty(passwordAnswer, user.SecurityAnswerSalt);
+
+                UpdateUser(user);
+                return true;
+            }
+
+            return false;
         }
 
         public User CreateUser(string userName, long authenticatorId)

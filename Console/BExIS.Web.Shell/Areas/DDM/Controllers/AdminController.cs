@@ -12,6 +12,7 @@ using BExIS.Ddm.Providers.LuceneProvider;
 using BExIS.Web.Shell.Areas.DDM.Models;
 using Telerik.Web.Mvc;
 using Vaiona.IoC;
+using Vaiona.Web.Mvc.Models;
 
 namespace BExIS.Web.Shell.Areas.DDM.Controllers
 {
@@ -30,6 +31,8 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
         public ActionResult SearchDesigner()
         {
+            ViewBag.Title = PresentationModel.GetViewTitle("Manage Search");
+
             try
             {
                 //if (Session["searchAttributeList"] == null)

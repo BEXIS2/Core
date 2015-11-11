@@ -5,7 +5,7 @@
     <div>
             @foreach(BExIS.IO.BasicFileInfo x in Model)
             {
-                <p>@x.Name @Html.ActionLink("Delete", "Delete","Push", new { area = "DCM", name = @x.Name, path = @x.Uri }, new { @class="bx-button small" }) </p>
+                <p>@Html.ActionLink(" ", "Delete","Push", new { area = "DCM", name = @x.Name, path = @x.Uri }, new { @class="bx-trash bx-function" }) @x.Name </p>
             }
     </div>
 </div>

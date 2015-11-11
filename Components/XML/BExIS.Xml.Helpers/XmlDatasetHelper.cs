@@ -22,7 +22,7 @@ namespace BExIS.Xml.Services
         public static string GetInformation(DatasetVersion datasetVersion, AttributeNames name)
         {
             // get MetadataStructure 
-            if (datasetVersion != null && datasetVersion.Dataset != null && datasetVersion.Dataset.MetadataStructure != null)
+            if (datasetVersion != null && datasetVersion.Dataset != null && datasetVersion.Dataset.MetadataStructure != null &&  datasetVersion.Metadata != null)
             {
                 MetadataStructure metadataStructure = datasetVersion.Dataset.MetadataStructure;
                 XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)datasetVersion.Dataset.MetadataStructure.Extra);

@@ -7,6 +7,7 @@ using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Entities.Common;
 using BExIS.Dcm.CreateDatasetWizard;
+using System.Xml.Linq;
 
 namespace BExIS.Web.Shell.Areas.DCM.Models.Metadata
 {
@@ -42,6 +43,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Models.Metadata
         public void ConvertMetadataAttributeModels(BaseUsage source, long metadataStructureId, int stepId)
         {
             Source = source;
+
+
 
             //if (Source is MetadataAttributeUsage)
             //{

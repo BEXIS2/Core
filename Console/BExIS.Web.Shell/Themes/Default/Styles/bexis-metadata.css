@@ -14,27 +14,65 @@ Green 03  #bee1da
 Green 04  #d2e8e3
 Green 05  #eff7f6
 */
-.metadataPackageUsage {
-    
+#root table,
+#root td {
+    border:none;
+    background:none;
+}
+
+#MetadataEditor
+{
+    background-color:white;
 }
 
 .header
 {
     padding:5px;
     border-top:2px solid #afb0b1;
-    height:30px;
+    height:auto;
+}
+
+.labelContainer
+{
+    line-height: 30px;
+    text-align:left;
+    cursor:pointer;
+}
+
+.contentContainer
+{
+    margin-bottom:10px;
 }
 
 .optionContainer
 {
     float:right;
-    margin-top:-10px;
+    margin-top:-28px;
+}
+.optionContainer table,
+.optionContainer td
+{
+    border:none;
+}
+
+.optionContainer td,
+.metadataAttributeOption td,
+#attributeOptionTable td
+{
+    width:30px;
+    padding:0;
+}
+
+#attributeOptionTable
+{
+    width:auto;
 }
 
 .simpleAttributesContainer
 {
     text-align:center;
     /*border:ridge 1px blue;*/
+    margin-bottom:30px;
 }
 
 .metadataAttributeLabel
@@ -49,20 +87,25 @@ Green 05  #eff7f6
     /*border:ridge 1px yellow;*/
 }
 
+.metadataAttributeInput .bx-dropdown
+{
+    width:100%;
+}
+
 .metadataAttributeOption
 {
-     width:40%;
+     width:30%;
      text-align:left;
 }
 
 .metadataCompountAttributeUsage
 {
-    padding:20px 0 20px 20px;
+    padding:0 0 0px 20px;
 }
 
 
 .metadataAttributeContent
 {
     /*border:dotted 1px green;*/
-    margin:5px;
+    margin:10px;
 }

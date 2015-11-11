@@ -5,172 +5,135 @@
 {
     @Html.ValidationSummary(true)
 
-    <div id="tabs">
-
-        <ul>
-            <li><a href="#contentDetails">Details</a></li>
-            <li><a href="#contentMembership">Membership</a></li>
-        </ul>
-
-        <div id="contentDetails">
-            <table class="bx-table-form">
-                <tr>
-                    <td>
-                        @Html.LabelFor(m => m.UserId)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(m => m.UserId)
-                        @Html.HiddenFor(m => m.UserId)
-                    </td>
-                </tr>
-
-                <tr>
-                    <td>
-                        @Html.LabelFor(m => m.UserName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(m => m.UserName)
-                        @Html.HiddenFor(m => m.UserName)
-                    </td>
-                </tr>
-
-                <tr>
-                    <td>
-                        @Html.LabelFor(m => m.FullName)
-                    </td>
-                    <td>
-                        @Html.TextBoxFor(m => m.FullName)
-                        @Html.ValidationMessageFor(m => m.FullName)
-                    </td>
-                </tr>
-
-                <tr>
-                    <td>
-                        @Html.LabelFor(m => m.Email)
-                    </td>
-                    <td>
-                        @Html.TextBoxFor(m => m.Email)
-                        @Html.ValidationMessageFor(m => m.Email)
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        @Html.LabelFor(m => m.Password)
-                    </td>
-                    <td>
-                        @Html.PasswordFor(m => m.Password)
-                        @Html.ValidationMessageFor(m => m.Password)
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        @Html.LabelFor(m => m.ConfirmPassword)
-                    </td>
-                    <td>
-                        @Html.PasswordFor(m => m.ConfirmPassword)
-                        @Html.ValidationMessageFor(m => m.ConfirmPassword)
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        @Html.LabelFor(m => m.IsApproved)
-                    </td>
-                    <td>
-                        @if (Model.IsApproved)
-                        {
-                            <input type="checkbox" value="" disabled="disabled" checked="checked" class="js-switch" />
-                            @Html.HiddenFor(m => m.IsApproved)
-                        }
-                        else
-                        {
-                            @Html.CheckBoxFor(m => m.IsApproved, new { @class = "js-switch" })
-                        }
-                    </td>
-                </tr>
-
-                <tr>
-                    <td>
-                        @Html.LabelFor(m => m.IsBlocked)
-                    </td>
-                    <td>
-                        @Html.CheckBoxFor(m => m.IsBlocked, new { @class = "js-switch" })
-                    </td>
-                </tr>
-
-                <tr>
-                    <td>
-                        @Html.LabelFor(m => m.IsLockedOut)
-                    </td>
-                    <td>
-                        @if (Model.IsLockedOut)
-                        {
-                            @Html.CheckBoxFor(m => m.IsLockedOut, new { @class = "js-switch" })
-
-                        }
-                        else
-                        {
-                            <input type="checkbox" value="" disabled="disabled" class="js-switch" />
-                            @Html.HiddenFor(m => m.IsLockedOut)
-                        }
-                    </td>
-                </tr>
-            </table>
-        </div>
-
-        <div id="contentMembership">
-            @(Html.Telerik().Grid<UserMembershipGridRowModel>()
-                  .Name("gridMembership")
-                  .HtmlAttributes(new { style = "width: 500px" })
-                  .Columns(columns =>
-                  {
-                      columns.Bound(m => m.IsUserInGroup)
-                          .Template(@<text>
-            @if (item.IsUserInGroup)
+    @(Html.Telerik().TabStrip()
+            .Name("tabStripEditUser")
+            .SelectedIndex(0)
+            .Items(tabs =>
             {
-                <input type='checkbox' onchange='setMembership(this.checked, @item.Id);' name='selectedGroups' value='@item.Id' checked='checked') />
-            }
-            else
-            {
-                <input type='checkbox' onchange='setMembership(this.checked, @item.Id);' name='selectedGroups' value='@item.Id' />
-            }
-            </text>)
-                          .ClientTemplate("<input type='checkbox' onchange='setMembership(this.checked, <#= Id #>);' name='selectedGroups' value='<#= Id #>' <#= IsUserInGroup ? checked='checked' : '' #> />")
-                          .Title("Member")
-                          .Width(64)
-                          .Filterable(false)
-                          .HtmlAttributes(new { style = "text-align:center" });
-                      columns.Bound(m => m.Id)
-                          .ClientTemplate("<#= Id #>" + "<input type='hidden' name='Id' value='<#= Id #> />'");
-                      columns.Bound(m => m.GroupName);
-                      columns.Bound(m => m.Description);
-                  })
-                  .DataBinding(dataBinding => dataBinding
-                      .Ajax()
-                      .OperationMode(GridOperationMode.Client)
-                      .Select("Membership_Select", "Users", new { id = Model.UserId, selectedGroups = (long[])ViewData["Groups"] })
-                  )
-                  .Filterable()
-                  .Pageable(pageable =>
-                    {
-                        pageable.PageSize(10, new[] {10, 20, 50, 100});
-                        pageable.Style(GridPagerStyles.NextPreviousAndNumeric | GridPagerStyles.PageSizeDropDown);
-                    })
-                  .Sortable())
-        </div>
+
+                tabs.Add()
+                    .Text("Details")
+                    .Content(@<text>
+                        <table class="bx-table-form">
+                                     <tr>
+                                         <td>
+                                             @Html.LabelFor(m => m.UserId)
+                                         </td>
+                                         <td>
+                                             @Html.DisplayFor(m => m.UserId, new { @class = "t-input bx-input" })
+                                             @Html.HiddenFor(m => m.UserId)
+                                         </td>
+                                     </tr>
+
+                                     <tr>
+                                         <td>
+                                             @Html.LabelFor(m => m.UserName)
+                                         </td>
+                                         <td>
+                                             @Html.DisplayFor(m => m.UserName, new { @class = "t-input bx-input" })
+                                             @Html.HiddenFor(m => m.UserName)
+                                         </td>
+                                     </tr>
+
+                                     <tr>
+                                         <td>
+                                             @Html.LabelFor(m => m.FullName)
+                                         </td>
+                                         <td>
+                                             @Html.TextBoxFor(m => m.FullName, new { @class = "t-input bx-input" })
+                                             @Html.ValidationMessageFor(m => m.FullName)
+                                         </td>
+                                     </tr>
+
+                                     <tr>
+                                         <td>
+                                             @Html.LabelFor(m => m.Email)
+                                         </td>
+                                         <td>
+                                             @Html.TextBoxFor(m => m.Email, new { @class = "t-input bx-input" })
+                                             @Html.ValidationMessageFor(m => m.Email)
+                                         </td>
+                                     </tr>
+                                     <tr>
+                                         <td>
+                                             @Html.LabelFor(m => m.Password)
+                                         </td>
+                                         <td>
+                                             @Html.PasswordFor(m => m.Password, new { @class = "t-input bx-input" })
+                                             @Html.ValidationMessageFor(m => m.Password)
+                                         </td>
+                                     </tr>
+                                     <tr>
+                                         <td>
+                                             @Html.LabelFor(m => m.ConfirmPassword)
+                                         </td>
+                                         <td>
+                                             @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "t-input bx-input" })
+                                             @Html.ValidationMessageFor(m => m.ConfirmPassword)
+                                         </td>
+                                     </tr>
+                                     <tr>
+                                         <td>
+                                             @Html.LabelFor(m => m.IsApproved)
+                                         </td>
+                                         <td>
+                                             @if (Model.IsApproved)
+                                             {
+                                                 <input type="checkbox" value="" disabled="disabled" checked="checked" class="js-switch"/>
+                                                 @Html.HiddenFor(m => m.IsApproved)
+                                             }
+                                             else
+                                             {
+                                                 @Html.CheckBoxFor(m => m.IsApproved, new {@class = "js-switch"})
+                                             }
+                                         </td>
+                                     </tr>
+
+                                     <tr>
+                                         <td>
+                                             @Html.LabelFor(m => m.IsBlocked)
+                                         </td>
+                                         <td>
+                                             @Html.CheckBoxFor(m => m.IsBlocked, new {@class = "js-switch"})
+                                         </td>
+                                     </tr>
+
+                                     <tr>
+                                         <td>
+                                             @Html.LabelFor(m => m.IsLockedOut)
+                                         </td>
+                                         <td>
+                                             @if (Model.IsLockedOut)
+                                             {
+                                                 @Html.CheckBoxFor(m => m.IsLockedOut, new {@class = "js-switch"})
+
+                                             }
+                                             else
+                                             {
+                                                 <input type="checkbox" value="" disabled="disabled" class="js-switch"/>
+                                                 @Html.HiddenFor(m => m.IsLockedOut)
+                                             }
+                                         </td>
+                                     </tr>
+                                 </table>
+                    </text>);
+
+                tabs.Add()
+                    .Text("Membership")
+                    .Content(@<text>
+                        @Html.Partial("_Membership")
+                    </text>);
+            })
+    )
+
+    <div class="bx-footer right">
+        <button style="margin-right: 1px" type="submit" onclick="windowEdit_onSubmit()"class="bx-button action">Save</button>
+        <button style="margin-left: 1px" type="button" onclick="windowEdit_onCancel()" class="bx-button action">Cancel</button>
     </div>
-
-    <p>
-        <button style="float:left" type="button" onclick="windowEdit_onDelete(@Model.UserId)" class="t-button">Delete</button>
-
-        <button style="float: right; margin-left: 1px" type="button" onclick="windowEdit_onCancel()" class="t-button">Cancel</button>
-        <button style="float: right; margin-right: 1px" type="submit" class="t-button">Save</button>
-    </p>
 
 }
 
 <script type="text/javascript">
-    $("#tabs").tabs();
-
     $(document).ready(function () {
 
         var checkboxes = Array.prototype.slice.call(document.querySelectorAll('.js-switch'));

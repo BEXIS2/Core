@@ -14,6 +14,7 @@ using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
+using Vaiona.Web.Mvc.Models;
 
 namespace BExIS.Web.Shell.Areas.RPM.Controllers
 {
@@ -26,9 +27,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
         public ActionResult Index()
         {
-            DataStructureManager dm = new DataStructureManager();
-            dm.StructuredDataStructureRepo.Get();
-            return View();
+            return RedirectToAction("DataStructureDesigner");
         }
 
         #region Data Structure Designer
@@ -38,12 +37,13 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             Session["Window"] = false;
             Session["VariableWindow"] = false;
             Session["DatasetWindow"] = false;
-            Session["variableId"] = null;
+            Session["variableId"] = 0;
             Session["saveAsWindow"] = false;
         }
 
         public ActionResult DataStructureDesigner()
         {
+            ViewBag.Title = PresentationModel.GetViewTitle("Manage Data Structures");
             DataStructureDesignerModel DSDM = new DataStructureDesignerModel();
             DSDM.show = false;
             
@@ -54,16 +54,18 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
         public ActionResult createStructuredDataStrukture()
         {
+            ViewBag.Title = PresentationModel.GetViewTitle("Create structured Data Strukture");
             DataStructureDesignerModel DSDM = new DataStructureDesignerModel();
 
             Session["Structured"] = true;
             setSessions();
 
             return View("DataStructureDesigner", DSDM); 
-                }
+        }
         
         public ActionResult createUnStructuredDataStrukture()
-                {
+        {
+            ViewBag.Title = PresentationModel.GetViewTitle("Create unstructured Data Strukture");
             DataStructureDesignerModel DSDM = new DataStructureDesignerModel();
             DSDM.structured = false;
 
@@ -82,7 +84,9 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             string[] temp = SelectedItem.Split(',');
 
             DSDM.GetDataStructureByID(Convert.ToInt64(temp[0]), Convert.ToBoolean(temp[1]));
+            ViewBag.Title = PresentationModel.GetViewTitle("Edit Data Structure: " + DSDM.dataStructure.Name + " (Id: " + DSDM.dataStructure.Id + ")");
             Session["Structured"] = DSDM.structured;
+            Session["variableId"] = 0;
             return View("DataStructureDesigner", DSDM);
         }
 
@@ -105,6 +109,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
                 if (errorMsg.Count() > 0)
                 {
+                    ViewBag.Title = PresentationModel.GetViewTitle("Edit Data Structure: " + DSDM.dataStructure.Name + " (Id: " + DSDM.dataStructure.Id + ")");
                     ViewData["errorMsg"] = errorMsg;
                     setSessions();
                     return View("DataStructureDesigner", DSDM);
@@ -140,6 +145,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                     }
                     else
                     {
+                        ViewBag.Title = PresentationModel.GetViewTitle("Edit Data Structure: " + DSDM.dataStructure.Name + " (Id: " + DSDM.dataStructure.Id + ")");
                         errorMsg.Add("Please type a Name");
                         ViewData["errorMsg"] = errorMsg;
                         setSessions();
@@ -190,6 +196,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
                         ViewData["errorMsg"] = errorMsg;
                         DSDM.GetDataStructureByID(DSDM.dataStructure.Id, DSDM.structured);
+                        ViewBag.Title = PresentationModel.GetViewTitle("Edit Data Structure: " + DSDM.dataStructure.Name + " (Id: " + DSDM.dataStructure.Id + ")");
                         setSessions();
                         Session["saveAsWindow"] = true;
                         return View("DataStructureDesigner", DSDM);
@@ -200,6 +207,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                 {
                     ViewData["errorMsg"] = errorMsg;
                     DSDM.GetDataStructureByID(DSDM.dataStructure.Id, DSDM.structured);
+                    ViewBag.Title = PresentationModel.GetViewTitle("Edit Data Structure: " + DSDM.dataStructure.Name + " (Id: " + DSDM.dataStructure.Id + ")");
                     setSessions();
                     return View("DataStructureDesigner", DSDM);
                 }
@@ -993,6 +1001,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
         public ActionResult DataTypeManager()
         {
+            ViewBag.Title = PresentationModel.GetViewTitle( "Manage Data Types");
             if (Session["Window"] == null)
                 Session["Window"] = false;
 
@@ -1050,8 +1059,6 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                     DataType tempdataType = new DataType();
                     if(nameExist)
                         tempdataType = DataTypeList.Where(p => cutSpaces(p.Name).ToLower().Equals(cutSpaces(Model.Name.ToLower()))).ToList().First();
-                    else
-                        tempdataType = new DataType();
                     
                     if (!nameExist || Model.Id == tempdataType.Id)
                     {
@@ -1139,6 +1146,8 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             if (id != 0)
             {
                 DSDM.GetDataStructureByID(id, structured);
+                ViewBag.Title = PresentationModel.GetViewTitle("Edit Data Structure: " + DSDM.dataStructure.Name + " (Id: " + DSDM.dataStructure.Id + ")");
+                DSDM.fillDatasetList();
             }
 
             if ((bool)Session["Window"] == false)

@@ -1,53 +1,52 @@
-﻿@model BExIS.Web.Shell.Areas.SAM.Models.AccountLogOnModel
+﻿@using Telerik.Web.Mvc.UI
+@model BExIS.Web.Shell.Areas.SAM.Models.AccountLogOnModel
 @using (Ajax.BeginForm("LogOn", "Account", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "Content_LogOn", OnSuccess = "onSuccess" }))
 {
     @Html.ValidationSummary(true)
 
-    <div id="accordion">
-
-        <h3 style="font-weight: bold">User Information</h3>
-        <div>
-
-            <div class="editor-label" style="font-weight: bold">
+    <table class="bx-table-form">
+        <tr>
+            <td>
                 @Html.Label("Authenticator")
-            </div>
-            <div class="editor-field">
-                @Html.DropDownListFor(m => m.AuthenticatorList.Id, new SelectList(Model.AuthenticatorList.AuthenticatorList, "Id", "Name"))
+            </td>
+            <td>
+                @(Html.Telerik().DropDownListFor(m => m.AuthenticatorList.Id)
+                    .HtmlAttributes(new { style = "width:372px; padding-left: 2px;", @class = "t-input bx-input" })
+                    .DropDownHtmlAttributes(new { style = "width:auto;", @class = "t-input bx-input" })
+                    .BindTo(new SelectList(Model.AuthenticatorList.AuthenticatorList, "Id", "Name")))
                 @Html.ValidationMessageFor(m => m.AuthenticatorList.Id)
-            </div>
-
-            <div class="editor-label" style="font-weight: bold">
+            </td>
+        </tr>
+        <tr>
+            <td>
                 @Html.LabelFor(m => m.UserName)
-            </div>
-            <div class="editor-field">
-                @Html.TextBoxFor(m => m.UserName)
+            </td>
+            <td>
+                @Html.TextBoxFor(m => m.UserName, new { @class = "t-input bx-input" })
                 @Html.ValidationMessageFor(m => m.UserName)
-            </div>
-
-            <div class="editor-label" style="font-weight: bold">
+            </td>
+        </tr>
+        <tr>
+            <td>
                 @Html.LabelFor(m => m.Password)
-            </div>
-            <div class="editor-field">
-                @Html.PasswordFor(m => m.Password)
+            </td>
+            <td>
+                @Html.PasswordFor(m => m.Password, new { @class = "t-input bx-input" })
                 @Html.ValidationMessageFor(m => m.Password)
-            </div>
-        </div>
-    </div>
+            </td>
+        </tr>
+    </table>
 
-    <p>
-        <button type="submit">LogOn</button>
-        <button type="reset">Reset</button>
-        <button type="button" onclick="Window_LogOn_Cancel()">Cancel</button>
-    </p>
+    <div class="bx-footer right">
+        <button type="submit" class="bx-button action">LogOn</button>
+        <button type="button" class="bx-button action" onclick="Window_LogOn_Cancel()">Cancel</button>
+    </div>
 }
 
 <script type="text/javascript">
     $(document).ready(function () {
         $.validator.unobtrusive.parse("#Content_LogOn");
-    });
-
-    $("#accordion").accordion({
-        heightStyle: "content"
+        resetAllTelerikIconTitles();
     });
 
     function onSuccess(data) {

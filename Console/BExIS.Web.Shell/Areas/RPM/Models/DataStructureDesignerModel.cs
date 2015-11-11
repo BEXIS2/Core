@@ -161,7 +161,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
             {
                 unitDimenstionModel = new UnitDimenstionModel();
                 temp.variable = v;
-                temp.unitStructs = unitDimenstionModel.getUnitDimenstionListByDimenstion(v.DataAttribute.Unit.Dimension.Id);
+                temp.unitStructs = unitDimenstionModel.getUnitListByDimenstionAndDataType(v.DataAttribute.Unit.Dimension.Id, v.DataAttribute.DataType.Id);
                 tempconstraints = dataAttributeManager.DataAttributeRepo.Get(v.DataAttribute.Id).Constraints.ToList();
                 temp.rangeConstraints = new List<RangeConstraint>();
                 temp.domainConstraints = new List<DomainConstraint>();
@@ -254,16 +254,6 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
                     if (this.dataStructure.Datasets.Count > 0)
                     {
                         inUse = true;
-                        DatasetListElement datasetListElement = new DatasetListElement();
-                        DatasetManager dm = new DatasetManager();
-                        foreach (Dataset d in structuredDataStructure.Datasets)
-                        {
-                            if (dm.GetDatasetLatestMetadataVersion(d.Id) != null)
-                                datasetListElement = new DatasetListElement(d.Id, XmlDatasetHelper.GetInformation(d, AttributeNames.title));
-                            else
-                                datasetListElement = new DatasetListElement(0, "");
-                            datasets.Add(datasetListElement);
-                        }
                     }
                     else
                     {
@@ -279,6 +269,18 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
                 return (structuredDataStructure);
             }
 
+        }
+
+        public void fillDatasetList()
+        {
+            DatasetListElement datasetListElement = new DatasetListElement();
+            DatasetManager dm = new DatasetManager();
+            datasets = new List<DatasetListElement>();
+            foreach (var item in dm.GetDatasetLatestVersions(dataStructure.Id, true))
+            {
+                datasetListElement = new DatasetListElement(item.Key, XmlDatasetHelper.GetInformation(item.Value, AttributeNames.title));
+                datasets.Add(datasetListElement);
+            }
         }
 
         /// <summary>
@@ -314,13 +316,13 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
                         if (this.dataStructure.Datasets.Count > 0)
                         {
                             inUse = true;
-                            DatasetListElement datasetListElement = new DatasetListElement();
-                            DatasetManager dm = new DatasetManager();
-                            foreach (Dataset d in unStructuredDataStructure.Datasets)
-                            {
-                                datasetListElement = new DatasetListElement(d.Id, XmlDatasetHelper.GetInformation(d,AttributeNames.title));
-                                datasets.Add(datasetListElement);
-                            }
+                            //DatasetListElement datasetListElement = new DatasetListElement();
+                            //DatasetManager dm = new DatasetManager();
+                            //foreach (Dataset d in unStructuredDataStructure.Datasets)
+                            //{
+                            //    datasetListElement = new DatasetListElement(d.Id, XmlDatasetHelper.GetInformation(d,AttributeNames.title));
+                            //    datasets.Add(datasetListElement);
+                            //}
                         }
                         else
                         {
@@ -393,7 +395,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
                                   select p.variable.Id;
                 List<long> tmpVIDs = VariableIDs.ToList();
                 row = tmpVIDs.ConvertAll<string>(p => p.ToString());
-                row.Insert(0, "VariableID");
+                row.Insert(0, "Variable Id");
 
                 Row = this.dataStructureTable.NewRow();
                 Row.ItemArray = row.ToArray();
@@ -403,7 +405,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
                 var ShortNames = from p in this.variableStructs
                                  select p.variable.DataAttribute.ShortName;
                 row = ShortNames.ToList();
-                row.Insert(0, "ShortName");
+                row.Insert(0, "Short Name");
 
                 Row = this.dataStructureTable.NewRow();
                 Row.ItemArray = row.ToArray();
@@ -444,7 +446,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
                 //this.DataStructureTable.Rows.Add(Row);
 
                 var Units = from p in this.variableStructs
-                            select p.variable.DataAttribute.Unit;
+                            select p.variable.Unit;
 
                 row = new List<string>();
                 

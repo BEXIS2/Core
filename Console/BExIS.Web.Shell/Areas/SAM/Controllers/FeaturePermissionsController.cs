@@ -9,6 +9,7 @@ using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Web.Shell.Areas.SAM.Models;
 using Telerik.Web.Mvc;
+using Vaiona.Web.Mvc.Models;
 
 namespace BExIS.Web.Shell.Areas.SAM.Controllers
 {
@@ -31,6 +32,8 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
 
         public ActionResult Features()
         {
+            ViewBag.Title = PresentationModel.GetViewTitle("Feature Permissions");
+
             FeatureManager featureManager = new FeatureManager();
 
             List<FeatureTreeViewModel> features = new List<FeatureTreeViewModel>();

@@ -1,12 +1,18 @@
-﻿@{
-    ViewBag.Title = "ImportMetadataStructureWizard";
-}
-@model BExIS.Dcm.ImportMetadataStructureWizard.ImportMetadataStructureTaskManager
+﻿@model BExIS.Dcm.ImportMetadataStructureWizard.ImportMetadataStructureTaskManager
 @using Telerik.Web.Mvc.UI;
 
 @section Scripts{
 
      <link href="@Url.Content(Themes.GetResourcePath("Styles","wizard.css"))" rel="stylesheet" type="text/css" />
+}
+
+@section Information
+{
+   This wizard will assist you in importing your metadata structure into the BExIS system.  A metadata structure must be defined in a XSD schema file.
+    <p>
+        More information 
+        @Html.ActionLink("here", "Index", "Help", new { id = 0 }, new { @class = "bx-informationLink", title="go to help", target="_blank"})
+    </p>
 }
 
 @section LeftPane 

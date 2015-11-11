@@ -12,7 +12,7 @@
 
 @{
     string temp = "";
-    
+
     string windowName = "Create Unit";
 
     if (Model.editUnitModel.Unit != new Unit())
@@ -25,9 +25,9 @@
     
 }
 
-@{
+@*@{
     ViewBag.Title = "Unit Manager";
-}
+}*@
 
 @section Scripts{
   
@@ -35,78 +35,89 @@
 
 @section Information
 {
-
     With this interface you are able to manage (e.g. create, edit, delete) units which may be needed to define data attributes. Units cannot be edited or deleted once they are associated with a data attribute (they become locked).
+    <p>
+        More information 
+        @Html.ActionLink("here", "Index", "Help", new { id = 0 }, new { @class = "bx-informationLink", title="go to help", target="_blank"})
+    </p>
 }
 
 <div title="Create a new Unit" class="bx-rpm-buttons">
     @Html.ActionLink("Create Unit", "openUnitWindow", "Unit", new { id = 0 }, new { @class = "t-button function" })
 </div>
 
-    @(Html.Telerik().Grid(Model.editUnitModelList)    
+    @(Html.Telerik().Grid(Model.editUnitModelList)
             .Name("bx-rpm-unitGrid")
+            .Filterable()
             .Sortable()
-            .Filterable()          
             .Columns(columns =>
-                {
-                    columns.Template(
-                        @<text>
+            {
+
+                columns.Bound(c => c.Unit.Name);
+                columns.Bound(c => c.Unit.Id);
+                columns.Bound(c => c.Unit.Abbreviation);
+                columns.Bound(c => c.Unit.Dimension.Name).Title("Dimension Name");
+                columns.Bound(c => c.Unit.MeasurementSystem);
+                columns.Template(
+                    @<text>
+                            @{
+                                temp = "";
+                                if (item.Unit.Name.ToLower() == "none")
+                                {
+                                    temp = "All Data Types";
+                                    }
+                                else
+                                {
+                                    foreach (DataType dt in item.Unit.AssociatedDataTypes.OrderBy(p => p.Name).ToList())
+                                    {
+                                        if (temp == "")
+                                        { temp = dt.Name; }
+                                        else
+                                        { temp = temp + ", " + dt.Name; }
+                                    }
+                                }
+                                }
+                              @temp 
+                        </text>
+                    )
+                    .Title("Associated Data Types");
+                                columns.Bound(c => c.Unit.Description)
+                                                    .HtmlAttributes(new { @style ="max-width:500px" });
+                                columns.Template(
+                    @<text>
                             
                             @if (item.inUse)
                             {
-                                <div style="text-align:center;"><button class="bx-button small bx-disabled">locked</button></div>
+                                <div>
+                                    <div class = "bx bx-grid-function bx-edit bx-disabled" disabled = "disabled" title = 'Edit Unit "@item.Unit.Name"'></div>
+                                    <div class = "bx bx-grid-function bx-trash bx-disabled" disabled = "disabled" title = 'Delete Unit "@item.Unit.Name"'></div>
+                                </div>
                             }
                             else
                             {
                                 <div>
-                                    @Html.ActionLink("EDIT", "openUnitWindow", "Unit", new { id = item.Unit.Id }, new { @class = "bx-button small" })
-                                    @Html.ActionLink("DELETE", "deletUnit", "Unit", new { id = item.Unit.Id }, new { @class = "bx-button small", onclick = "return confirm('Are you sure you want to delete the Unit " + item.Unit.Name + " ?')" })
+                                    @Html.ActionLink(" ", "openUnitWindow", "Unit", new { id = item.Unit.Id }, new { @class = "bx bx-grid-function bx-edit ", title = "Edit Unit \"" + item.Unit.Name + "\"" })
+                                    @Html.ActionLink(" ", "deletUnit", "Unit", new { id = item.Unit.Id }, new { @class = "bx bx-grid-function bx-trash",title = "Delete Unit \""+item.Unit.Name+"\"", onclick = "return confirm('Are you sure you want to delete the Unit " + item.Unit.Name + " ?')" })
                             
                                 </div>
                             }
                             
                         </text>
-                    ).Title("Actions")
-                        .Width(180)
-                        .ClientTemplate(
-                            @Html.ActionLink("Edit", "openUnitWindow", "Unit", new { id = "<#= id #>" }, new { @class = "t-icon t-edit" }).ToHtmlString() +
-                            @Html.ActionLink("Delete", "deletUnit", "Unit", new { id = "<#= id #>" }, new { @class = "t-icon t-delete", onclick = "return confirm('Are you sure you want to delete the Unit " + Model.editUnitModel.Unit.Name + " ?')" }).ToHtmlString()
-                            );
-                    columns.Bound(c => c.Unit.Name);
-                    columns.Bound(c => c.Unit.Id);
-                    columns.Bound(c => c.Unit.Abbreviation);
-                    columns.Bound(c => c.Unit.Dimension.Name).Title("Dimension Name");
-                    columns.Bound(c => c.Unit.MeasurementSystem);
-                    columns.Template(
-                        @<text>
-                            @{
-                                temp = "";
-                                List<DataType> tempList = item.Unit.AssociatedDataTypes.OrderBy(p => p.Name).ToList();
-                                foreach (DataType dt in tempList)
-                                {
-                                    if (temp == "")
-                                    { temp = dt.Name; }
-                                    else
-                                    { temp = temp + ", " + dt.Name; }
-                                }
-                              }
-                              @temp 
-                        </text>
-                        )
-                        .ClientTemplate("test")
-                        .Title("Associated Data Types").Width(200);
-                    columns.Bound(c => c.Unit.Description);
-                }))
-<br />
-<br />
-<br />
-    
+                ).Title("")
+                    .Width(70)
+                    .ClientTemplate(
+                        @Html.ActionLink(" ", "openUnitWindow", "Unit", new { id = "<#= id #>" }, new { @class = "bx bx-grid-function bx-edit" }).ToHtmlString() +
+                        @Html.ActionLink(" ", "deletUnit", "Unit", new { id = "<#= id #>" }, new { @class = "bx bx-grid-function bx-trash", onclick = "return confirm('Are you sure you want to delete the Unit " + Model.editUnitModel.Unit.Name + " ?')" }).ToHtmlString()
+                        );
+            })
+            .ClientEvents(events=>events.OnDataBound("onDataBound"))
+            )
 
-    <div style="position:absolute; left:20%; top:60px;">
+    <div style="position:absolute; left:calc(50% - 508px); top:15%;">
                     @{ Html.Telerik().Window()
                             .Name("UintWindow")
                             .Title(windowName)
-                            .ClientEvents((events => events.OnClose("close")))
+                            .ClientEvents(events => events.OnClose("close"))
                             .Draggable(true)
                             .Modal(true)
                             .Visible((bool)Session["Window"])
@@ -121,6 +132,12 @@
 @{Session["Window"] = false;}
 
 <script type="text/javascript">
+
+    function onDataBound()
+    {
+        addTooltips();
+    }
+
     function close(e)
     {
         checkedIDs = new Array(0);
@@ -143,6 +160,7 @@
 
         window.location.href = '/RPM/Unit/UnitManager';
     }
+
 </script>
    
 @*<script type="text/javascript">

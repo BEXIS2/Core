@@ -2,9 +2,6 @@
 @using BExIS.Ddm.Model;
 @using FluentBootstrap;
 
-@{
-    ViewBag.Title = "Search";   
-}
 <header>
 	<link href="@Url.Content(Themes.GetResourcePath("Styles", "search.css"))" rel="stylesheet" type="text/css" />   
 	<script type="text/javascript" src="/Scripts/trunk8.js"></script>
@@ -12,12 +9,23 @@
 	<script type="text/javascript" src="/Scripts/jquery.ba-resize.min.js"></script>
 </header> 
 
+@section Information
+{
+    <p>It's just like any other search engine, enter a phrase or keyword with at least 3 characters and press "Search". You may select a category from the dropdown list in front of the search field to restrict your search (e.g Contact Person).</p>
+    <p>The search result contains all datasets where your term has been found in either the metadata or primary data.</p>
+    <p>To tweak the result list, click on the facets in the green area on the left or the specify a filter in the header of the list. Clicking on a name in the column header will sort the results.</p>
+    <p>To view more details of a dataset, click the "View Details" button available in each row.</p>
+    <p>
+        More information 
+        @Html.ActionLink("here", "Index", "Help", new { id = 0 }, new { @class = "bx-informationLink", title="go to help", target="_blank"})
+    </p>
+}
 
 @section LeftPane 
 {  
     <div id="facetsClosed">
 	    <div class="facetsClosedHeader" onclick="onClickFacetOverlay()">
-		    <div id="facetsClosedHeaderIcon" class="fa fa-angle-double-right"></div>     
+		   @* <div id="facetsClosedHeaderIcon" class="fa fa-angle-double-right"></div>     *@
 		    <p id="facetsClosedHeaderName" class="rotate css-vertical-text">Facets</p>
 	    </div>
    
@@ -25,7 +33,7 @@
 
     <div id="facetsOverlay" class="overlay">
 	    <div class="overlayHeader" onclick="onClickFacetOverlay()">
-		    <i class="fa fa-angle-double-left"></i>
+		    @*<i class="fa fa-angle-double-left"></i>*@
 		    <span>Facets</span>
 	    </div>
 	    <div class="overlayContent">
@@ -54,8 +62,8 @@
 
 	function onClickFacetOverlay()
 	{
-		$('#facetsOverlay').toggle();
-		$('#facetsClosed').toggle();
+		//$('#facetsOverlay').toggle();
+		//$('#facetsClosed').toggle();
 	}
 
 </script>
@@ -63,6 +71,7 @@
 
 	#facetsClosed
 	{
+        display:none;
         /*position:fixed;
         overflow:visible;*/
 		background-color:#bee1da;

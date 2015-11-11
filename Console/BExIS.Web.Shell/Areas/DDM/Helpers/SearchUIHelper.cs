@@ -376,9 +376,13 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
 
             dt.TableName = "DataStruture";
             dt.Columns.Add("VariableName");
+            dt.Columns.Add("Optional");
+            dt.Columns.Add("VariableId");
+            dt.Columns.Add("ShortName");
             //dt.Columns.Add("Parameters");
-            dt.Columns.Add("Unit");
             dt.Columns.Add("Description");
+            dt.Columns.Add("Unit");
+            dt.Columns.Add("DataType");
 
             DataStructureManager dsm = new DataStructureManager();
             StructuredDataStructure datastructure = dsm.StructuredDataStructureRepo.Get(sds.Id);
@@ -389,22 +393,40 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
                     Variable sdvu = dsm.VariableRepo.Get(var.Id);
 
                     DataRow dr = dt.NewRow();
-                    if (sdvu.Label != null) dr["VariableName"] = sdvu.Label;
-                    else dr["VariableName"] = "n/a";
+                    if (sdvu.Label != null)
+                        dr["VariableName"] = sdvu.Label;
+                    else
+                        dr["VariableName"] = "n/a";
 
+                    dr["Optional"] = sdvu.IsValueOptional.ToString();
+
+                    if (sdvu.Label != null)
+                        dr["VariableId"] = sdvu.Id;
+                    else
+                        dr["VariableId"] = "n/a";
+
+                    if (sdvu.DataAttribute.DataType != null)
+                        dr["ShortName"] = sdvu.DataAttribute.ShortName;
+                    else
+                        dr["ShortName"] = "n/a";
 
                     //if (sdvu.Parameters.Count > 0) dr["Parameters"] = "current not shown";
                     //else dr["Parameters"] = "n/a";
 
-                    if (sdvu.DataAttribute.Unit != null) dr["Unit"] = sdvu.DataAttribute.Unit.Name;
-                    else dr["Unit"] = "n/a";
-
                     if (sdvu.Description != null || sdvu.Description != "")
-                    {
-
                         dr["Description"] = sdvu.Description;
-                    }
-                    else dr["Description"] = "n/a";
+                    else
+                        dr["Description"] = "n/a";
+
+                    if (sdvu.Unit != null)
+                        dr["Unit"] = sdvu.Unit.Name;
+                    else
+                        dr["Unit"] = "n/a";
+
+                    if (sdvu.DataAttribute.DataType != null)
+                        dr["DataType"] = sdvu.DataAttribute.DataType.Name;
+                    else
+                        dr["DataType"] = "n/a";
 
                     dt.Rows.Add(dr);
                 }

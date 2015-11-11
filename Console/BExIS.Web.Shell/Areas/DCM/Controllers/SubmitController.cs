@@ -28,6 +28,7 @@ using BExIS.Security.Services.Subjects;
 using System.Xml.Linq;
 using BExIS.Xml.Helpers;
 using BExIS.Xml.Services;
+using Vaiona.Web.Mvc.Models;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
 {
@@ -43,6 +44,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         public ActionResult Index()
         {
+            ViewBag.Title = PresentationModel.GetViewTitle("Upload Data");
             return View();
         }
 
@@ -50,6 +52,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         public ActionResult UploadWizard(DataStructureType type)
         {
+            ViewBag.Title = PresentationModel.GetViewTitle("Upload Data");
+
             Session["TaskManager"] = null;
 
             if (TaskManager == null) TaskManager = (TaskManager)Session["TaskManager"];

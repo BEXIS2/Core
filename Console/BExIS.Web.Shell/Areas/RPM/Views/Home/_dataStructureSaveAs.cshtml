@@ -20,37 +20,64 @@
 <div class="planingPartialDiv" id="createVariable">
     @using(Html.BeginForm("saveDataStructure", "Home", new {area = "RPM"}))
     {
-        <table>
+        <table class="bx-rpm-info" style="width:774px">
+            <tr>
+                <td style="vertical-align:top">
+                    Name 
+                </td>
+                <td style="vertical-align:top">
+                    <span title="The name will be used for a new Data Structure">
+                    @(Html.TextBoxFor(m => Model.dataStructure.Name, new { @class = "bx-input", @style = "width:180px", @Value = Model.dataStructure.Name, @autofocus = "autofocus", @tabindex = 1}))
+                    </span>
+                </td>
+                <td style="vertical-align:top" rowspan="2">            
+                    Description
+                </td>
+                <td rowspan="2">         
+                    @(Html.TextAreaFor(m => Model.dataStructure.Description, new { @class = "bx-input bx-rpm-datastrDes", @Value = Model.dataStructure.Description, @tabindex = 3 }))
+                </td>
+            </tr>
             <tr>
                 <td>
-                    Name: 
-                    <div title="The name will be used for a new Data Structure">
-                    @(Html.TextBoxFor(m => Model.dataStructure.Name, new {@class = "t-input", @Value = Model.dataStructure.Name, @autofocus = "autofocus", @tabindex = 1}))
-                    </div>
+                    @if (Model.structured == true)
+                    {
+                        <span>Number of Variables</span>
+                    }
+                    else
+                    {
+                        <span></span>
+                    }
                 </td>
                 <td>
-                <div id="Description" style="vertical-align:top; padding:5px;" title="Description">
-                    Description:         
-                    @(Html.TextAreaFor(m => Model.dataStructure.Description, new {@class = "t-input datastrDes",@Value = Model.dataStructure.Description, @tabindex = 3}))
-                </div>
-            </td>
+                    @if (Model.variableStructs != null && Model.structured == true)
+                {
+                    if (Model.variableStructs.Count() > 0)
+                    {
+                            @(Html.TextBox("NumberOfVariables", Model.variableStructs.Count(), new { @class = "bx-input bx-disabled", @style = "width:180px", @autofocus = "autofocus", @tabindex = "1", @disabled = "disabled" }))
+                        }
+                        else
+                        {
+                            @(Html.TextBox("NumberOfVariables", "No Variables", new { @class = "bx-input bx-disabled bx-errorMsg", @style = "width:180px", @autofocus = "autofocus", @tabindex = "1", @disabled = "disabled" }))
+                        }
+                    }
+                </td>
             </tr>
         </table>
         @(Html.TextBoxFor(m => Model.dataStructure.Id, new {@class = "hidden",@Value = Model.dataStructure.Id}))
         @(Html.TextBoxFor(m => Model.structured, new {@class = "hidden",@Value = Model.structured}))
          
-        <div class="submit RPMbutton">
-        <button name="create" value="saveAs" type="submit" class="t-button"  id="saveButton" title="Save The Unit" tabindex = "4">Save</button>
-        @Html.ActionLink("Cancel", "showDataStructure", "Home", new {SelectedItem = Model.dataStructure.Id.ToString() + "," + Model.structured.ToString() }, new { area = "RPM", @class = "t-button", @title = "Cancel", @tabindex = "5" })
+        <div class="bx-rpm-submit bx-rpm-buttons">
+        <button name="create" value="saveAs" type="submit" class="bx-button action"  id="saveButton" title="Save The Unit" tabindex = "4">Save</button>
+        @Html.ActionLink("Cancel", "showDataStructure", "Home", new {SelectedItem = Model.dataStructure.Id.ToString() + "," + Model.structured.ToString() }, new { area = "RPM", @class = "bx-button action", @title = "Cancel", @tabindex = "5" })
         </div>
     }
 </div>
 
 <div class="errorMsg" style="vertical-align:top; padding:5px;">
-    <ul>
+    <ul style="list-style-type:none">
     @foreach (string s in errorMsg)
     {
-        <li class="errorMsg">@s</li>
+        <li class="bx-errorMsg">@s</li>
     }
     </ul>
 </div>

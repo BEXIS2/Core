@@ -1,7 +1,8 @@
 ﻿@model BExIS.Ddm.Model.Property
 @using System.Data;   
 @using BExIS.Ddm.Model;   
-@using System.Globalization;     
+@using System.Globalization;    
+@using BExIS.Web.Shell.Helpers; 
 <div>
 <p class="PropertyHeader">@Model.DisplayName</p>
 @{
@@ -48,18 +49,15 @@
         
         largeStep = max-min;
         
-           @(Html.Telerik().Slider<Int32>()
-                .Name(Model.DataSourceKey)
-                .Min(min)//.Min(item.min)
-                .Max(max)//.Max(item.max)
-                .Value(Value)
-                .SmallStep(1)
-                .LargeStep(largeStep)
-                .ShowButtons(true)
-                     .ClientEvents(events => events
-                           .OnChange("onChangeSlider")
-                       )
-        )
+        @(Html.BexisUI().Slider()
+                        .Name(Model.DataSourceKey)
+                        .Min(min)
+                        .Max(max)
+                        .Steps(1)
+                        .ClientEvent("onchange","onChangeSlider")
+                        .Value(Value)
+                        .Render())
+     
     }
     else
     { 
@@ -74,8 +72,8 @@ else
 </div>
  <script type="text/javascript">
      function onChangeSlider(e) {
-         var value = e.value;
-         var id = e.currentTarget.id;
+         var value = e.value.newValue;
+         var id = e.target.name;
 
 
          $.post('@Url.Action("FilterBySlider", "Home", new RouteValueDictionary { { "area", "DDM" } })', { value: value, parent: id }, function (response) {

@@ -248,9 +248,9 @@ namespace BExIS.Xml.Helpers
                 removeAndUpdate(element, parent);
             }
 
-           
             return metadataXml;
         }
+
 
         private void removeAndUpdate(XElement element, XElement parent)
         {
@@ -592,6 +592,34 @@ namespace BExIS.Xml.Helpers
                 return _tempXDoc;
             }
         #endregion
+
+
+        public XDocument Change(XDocument metadataXml, string firstXPath, string secondXPath)
+        {
+            this._tempXDoc = metadataXml;
+            
+
+            if (this._tempXDoc.XPathSelectElement(firstXPath) != null &&
+                this._tempXDoc.XPathSelectElement(secondXPath) != null)
+            {
+                XmlDocument xmlDocument = XmlUtility.ToXmlDocument(metadataXml);
+
+                XmlNode first = xmlDocument.SelectSingleNode(firstXPath);
+                XmlNode next = xmlDocument.SelectSingleNode(secondXPath);
+
+                string contentFromFirst = first.InnerXml;
+                string contentFromNext = next.InnerXml;
+
+                first.InnerXml = contentFromNext;
+                next.InnerXml = contentFromFirst;
+
+                metadataXml = XmlUtility.ToXDocument(xmlDocument);
+
+            }
+
+            return metadataXml;
+        }
+
 
         #region update
 

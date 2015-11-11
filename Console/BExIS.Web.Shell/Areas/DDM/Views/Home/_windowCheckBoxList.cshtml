@@ -29,60 +29,60 @@
          title = System.StringExtensions.Titleize(@Session["ParentOfSelectAbleCategories"].ToString());
      }
  }
-
 @using (Html.BeginForm("AddFacetsToSearch", "Home", new { area = "DDM" }))
 { 
-              
-    <div id="search_more" >
-            <h4> @title</h4>
-            <hr />
-            <div id="search_moreCheckBox">
-            @if (listOfAllFacets != null)
-            {
-                if (listOfAllFacets.Count() > 0)
+    <div id="search_more">
+        <div class="bx-title">@title</div>  
+       
+        <div class="bx-content">
+            
+                <div id="search_moreCheckBox">
+                @if (listOfAllFacets != null)
                 {
+                    if (listOfAllFacets.Count() > 0)
+                    {
 
-                    <table>
-                        @for (int i = 0; i < rows; i++)
-                        {
-                            <tr>
+                        <table>
+                            @for (int i = 0; i < rows; i++)
+                            {
+                                <tr>
                             
-                            @{
-                                for (int j = 0; j < 2; j++)
-                                {
-                                    int pos = 0;
+                                @{
+                                    for (int j = 0; j < 2; j++)
+                                    {
+                                        int pos = 0;
 
-                                    if (j == 0) { pos = i; }
-                                    else { pos = i + rows; }
+                                        if (j == 0) { pos = i; }
+                                        else { pos = i + rows; }
 
-                                    if (pos < listOfAllFacets.Count)
-                                    { 
-                                        var facet = listOfAllFacets.ElementAt(pos);
-                                        facet.Parent = Model.SearchComponent.GetFacet(@Session["ParentOfSelectAbleCategories"].ToString());
+                                        if (pos < listOfAllFacets.Count)
+                                        { 
+                                            var facet = listOfAllFacets.ElementAt(pos);
+                                            facet.Parent = Model.SearchComponent.GetFacet(@Session["ParentOfSelectAbleCategories"].ToString());
 
-                                        string displayedName;
+                                            string displayedName;
 
-                                        if (facet.Name.Length > 23) { displayedName = System.StringExtensions.Truncate(facet.Name,23); }
-                                        else { displayedName = facet.Name; }
+                                            if (facet.Name.Length > 23) { displayedName = System.StringExtensions.Truncate(facet.Name,23); }
+                                            else { displayedName = facet.Name; }
                                             
-                                        <td title="@facet.Name.ToString()">@Html.CheckBox(pos.ToString(), @Model.CriteriaComponent.ContainsFacet(facet), new { text = @facet.Name.ToString() })  @Html.Label(@facet.Name.ToString(), displayedName)</td>
-                                    }    
+                                            <td title="@facet.Name.ToString()">@Html.CheckBox(pos.ToString(), @Model.CriteriaComponent.ContainsFacet(facet), new { text = @facet.Name.ToString() })  @Html.Label(@facet.Name.ToString(), displayedName)</td>
+                                        }    
+                                    }
                                 }
+                                </tr>
                             }
-                            </tr>
-                        }
-                    </table>
+                        </table>
+                    }
                 }
-            }
            
-           </div>
-           <div id="search_winFooter">
-           <hr />
-           <br />
-            <button type="submit" class="t-button" value="add" name="button"@* onclick="Search_OnClickSubmit()"*@ >Submit</button>
-            <button id="all" type="button" class="t-button" value="all" name="button" onclick="Search_OnClickAll()" >All</button>
-            <button id="none" type="button" class="t-button" value="none" name="button" onclick="Search_OnClickNone()" >None</button>
-           </div>
+               </div>
+        </div>
+        <div id="search_winFooter" class="bx-footer right">
+
+            <button type="submit" class="bx-button action" value="add" name="button"@* onclick="Search_OnClickSubmit()"*@ >Submit</button>
+            <button id="all" type="button" class="bx-button action" value="all" name="button" onclick="Search_OnClickAll()" >All</button>
+            <button id="none" type="button" class="bx-button action" value="none" name="button" onclick="Search_OnClickNone()" >None</button>
+        </div>
     </div>
 }
 

@@ -94,6 +94,18 @@ namespace BExIS.IO.Transform.Validation.Exceptions
         /// <seealso cref=""/>
         /// <param>NA</param>
         /// <returns></returns>
+        public string GetMessage()
+        {
+            return _issue;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param>NA</param>
+        /// <returns></returns>
         public override string ToString()
         {
             switch(_errorType)
@@ -105,7 +117,6 @@ namespace BExIS.IO.Transform.Validation.Exceptions
                 default: return String.Format("{0}", _issue);
             }
         }
-
 
         /// <summary>
         ///

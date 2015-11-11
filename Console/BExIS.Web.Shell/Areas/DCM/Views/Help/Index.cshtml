@@ -2,10 +2,15 @@
 @using BExIS.Web.Shell.Areas.DCM.Models;
 
 @{
-    ViewBag.Title = "Data Collection Manual";
+
     HtmlString toc = new HtmlString(Model.Title);
     HtmlString content = new HtmlString(Model.Description);
 
+}
+
+@section Information
+{
+    This guide will walk you through the basics of data collection including how to upload data and how to import a metadata structure.
 }
 
 @content

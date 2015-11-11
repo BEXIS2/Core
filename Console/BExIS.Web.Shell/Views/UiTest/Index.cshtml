@@ -1,7 +1,9 @@
-﻿@using System.Collections.Generic
-@using System.Data
+﻿@using System.Collections.Generic;
+@using System.Data;
 @using BExIS.Ddm.Model;
 @using FluentBootstrap;
+
+@model BExIS.Web.Shell.Models.UiTestModel
 
 @{
     ViewBag.Title = "title";
@@ -137,8 +139,89 @@
    #endregion      
    
    #endregion
- 
+
+
+    List<string> list = new List<string>();
+    list.Add("1");
+    list.Add("2");
+    list.Add("3");
+    list.Add("4");
 }
+@*
+Color Overview
+
+White    #000000   brigth
+Gray 01  #f5f5f5
+Gray 02  #ebebeb
+Gray 03  #afb0b1
+Gray 04  #009cdf   dark // new 323232 
+Black    #ffffff
+Yellow   #ffbb52
+Orange   #ff9700
+Red      #f24c24
+Green 01  #388670   dark
+Green 02  #72b1a0
+Green 03  #bee1da
+Green 04  #d2e8e3
+Green 05  #eff7f6   brigth
+*@
+
+<h3>BEXIS UI COLOR OVERVIEW</h3>
+<div>
+    <table>
+        <tr>
+            <th>
+                Color
+            </th>
+            <th>
+                Color Code
+            </th>
+            <th>
+                Color Name
+            </th>
+        </tr>
+        <tr><td style="background-color: #ffffff;"></td><td>#ffffff</td><td>White</td></tr>
+        <tr><td style="background-color: #f5f5f5;"></td><td>#f5f5f5</td><td>Gray 01</td></tr>
+        <tr><td style="background-color: #ebebeb;"></td><td>#ebebeb</td><td>Gray 02</td></tr>
+        <tr><td style="background-color: #afb0b1;"></td><td>#afb0b1</td><td>Gray 03</td></tr>
+        <tr><td style="background-color: #565655;"></td><td>#565655</td><td>old Gray 04</td></tr>
+        <tr><td style="background-color: #323232;"></td><td>#323232</td><td>new Gray 04 (wrong)</td></tr>
+        <tr><td style="background-color: #000000;"></td><td>#000000</td><td>Black</td></tr>
+        <tr><td style="background-color: #f24c24;"></td><td>#f24c24</td><td>Red</td></tr>
+        <tr><td style="background-color: #ff9700;"></td><td>#ff9700</td><td>Orange</td></tr>
+        <tr><td style="background-color: #388670;"></td><td>#388670</td><td>Green 01</td></tr>
+        <tr><td style="background-color: #72b1a0;"></td><td>#72b1a0</td><td>Green 02</td></tr>
+        <tr><td style="background-color: #bee1da;"></td><td>#bee1da</td><td>Green 03</td></tr>
+        <tr><td style="background-color: #d2e8e3;"></td><td>#d2e8e3</td><td>Green 04</td></tr>
+        <tr><td style="background-color: #eff7f6;"></td><td>#eff7f6</td><td>Green 05</td></tr>
+    </table>
+
+</div>
+
+
+<h3>BEXIS UI HELPER</h3>
+<div>
+
+@using(Html.BeginForm("sendForm", "UiTest"))
+{
+    
+    @Html.BexisUI().TextBox().Name("Name").Value(Model.Name).Icon("bx-info").Render()
+    @Html.ValidationMessageFor(m => m.Name)
+    <br />
+
+    @Html.BexisUI().Slider().Name("slider").Min(0).Max(1000).Value(100).Steps(10).Render();
+
+    <button class="bx-button" type="submit" >send</button>
+}
+
+
+    
+    @*@(Html.BexisUI().List()
+                    .Data(new SelectList(list))
+                    .Action("OnSelectTreeViewItem", "Home", new RouteValueDictionary { { "area", "DDM" }},"Id")
+                    .Render())*@
+
+</div>
 
 
 <h3>html vs telerik vs bootstrap</h3>
@@ -153,12 +236,12 @@
     </tr>
     <tr>
         <td>Dropdown</td>
-        <td>@Html.DropDownList("test", new SelectList(testList), new { @class="bx-dropdown" })</td>
+        <td>@Html.DropDownList("test", new SelectList(testList), new { @class = "bx-dropdown" })</td>
         <td>
             @(Html.Telerik().DropDownList()
                          .Name("FilterList")
                          .BindTo(new SelectList(testList))
-                         
+                         .ClientEvents(e => e.OnChange("onChange"))
                     )
 
         </td>
@@ -180,7 +263,7 @@
         <td >
             
 
-            @using(var dropdown = Html.Bootstrap().Dropdown("My Dropdown").Begin())
+            @using (var dropdown = Html.Bootstrap().Dropdown("My Dropdown").Begin())
             {
                 @dropdown.DropdownLink("Action", "/Action")
                 @dropdown.DropdownHeader("Header")
@@ -193,7 +276,7 @@
     </tr>
     <tr>
         <td>TextBox</td>
-        <td> @Html.TextBox("test","",new  { @class="bx-input"})</td>
+        <td> @Html.TextBox("test", "", new { @class = "bx-input" })</td>
         <td>
             autocomplete
 
@@ -216,7 +299,7 @@
     </tr>
     <tr>
         <td>TextArea</td>
-        <td> @Html.TextArea("test","", new { @class="bx-textarea"})</td>
+        <td> @Html.TextArea("test", "", new { @class = "bx-textarea" })</td>
         <td>
         </td>
     </tr>
@@ -228,7 +311,7 @@
     </tr>
     <tr>
         <td>RadioButton</td>
-        <td> @Html.RadioButton("hallo",true) yes</td>
+        <td> @Html.RadioButton("hallo", true) yes</td>
         <td>
         </td>
     </tr>
@@ -322,6 +405,7 @@
 
 <div >
     <p>click for the window</p>
+    <button class="bx-button smaller" onclick="onSelect(this)">smallest</button>
     <button class="bx-button small" onclick="onSelect(this)">more</button>
     <button class="bx-button" onclick="openAlertDialog()">alert</button>
     <button class="bx-button" onclick="openMessageDialog()">message</button>
@@ -345,14 +429,35 @@
     .Name("MoreWindow")
     .Visible(false)
     .Title("More")
+    .HtmlAttributes(new { @class = "bx-window" })
     .Modal(false)
     .Draggable(true)
     .Buttons(buttons => buttons.Close())
     .Content(@<text>
-       <h1>huhu</h1>
-        <p>
-            Musik mit Gameboys - wie das geht,<br /> kann man nächste Woche in einem der vielen ‪#‎play15‬ Workshops lernen:
-        </p>
+           <div class="bx-title"><h2>html vs telerik vs bootstrap</h2></div>
+           <div class="bx-content">
+               <div>
+                   asdkhahsdöfjh  ahsdk jfhkjsdhkhkajdhk ddh chnyxkjh fhwsa jdkach yjh fuidy disjykdh c myxbkjxdh asuie ui<br /> 
+                   sdghjhbxjnb< jb usjh daiu soasdi niasjhdf kjyh xjigh yiusdgh iaug kjb kxyjhx isueg ajsg isds 
+               </div>
+               <div>
+                    @(Html.Telerik().Grid(table)
+                          .Name("TestGrid")
+                          .Groupable()
+                          .Pageable(pageable => pageable.Position(GridPagerPosition.Both))
+                          .Filterable()
+                          .Sortable()
+                           .Pageable(paging =>
+                                paging.PageSize(50, new int[] { 1, 2, 3, 10, 50 })
+                                    .Total(table.Rows.Count)
+                                    )
+                          )
+                </div>
+           </div>
+           <div class="bx-footer right">
+                <button class="bx-button action" onclick="onSelect(this)">more</button>
+                <button class="bx-button action" onclick="openAlertDialog()">alert</button>
+           </div>
     </text>
     )
 )
@@ -376,10 +481,10 @@
 
                 tabs.Add()
                     .Text("Meta Data")
-                    .Content("Did you know two cherry pits contain enough cyanide to kill you? And that drinking six liters of water is enough to induce a coma and even death?"+
-"And although it is essentially impossible to die from marijuana, you can die from listening to your music too loud. Check out this video by AsapScience explaining just how much will kill you."+
+                    .Content("Did you know two cherry pits contain enough cyanide to kill you? And that drinking six liters of water is enough to induce a coma and even death?" +
+"And although it is essentially impossible to die from marijuana, you can die from listening to your music too loud. Check out this video by AsapScience explaining just how much will kill you." +
 "*Edit - the video states the 'Death Zone' at high altitudes begins at 8,000ft. This is incorrect - the Death Zone is known to begin at 24,000ft, or 7,300m.");
-                    
+
                 tabs.Add()
                     .Text("Data Structure")
                     .Content("56789");
@@ -396,7 +501,7 @@
        .Name("TreeView")
        .ShowCheckBox(true)
        .ExpandAll(true)
-       
+
 
                        .BindTo<Facet>(@facets, (item, facet) =>
                        {
@@ -422,25 +527,25 @@
                                bool IsSelected = false;
 
 
-                                TreeViewItem subitem = new TreeViewItem();
-                                item.Items.Add(subitem);
+                               TreeViewItem subitem = new TreeViewItem();
+                               item.Items.Add(subitem);
 
-                                subitem.Text = t.Name + " (" + t.Count + ")";
-                                //subitem.Text = t.Text;
-                                   
-                                //subitem.Parent = item;
-                                subitem.Value = t.Name;
-                                subitem.Enabled = true;//t.Enabled;
-                                //subitem.Checked = IsSelected;
-                                //subitem.Selected = IsSelected;
-                                subitem.LinkHtmlAttributes["class"] = "t-item-child";
+                               subitem.Text = t.Name + " (" + t.Count + ")";
+                               //subitem.Text = t.Text;
+
+                               //subitem.Parent = item;
+                               subitem.Value = t.Name;
+                               subitem.Enabled = true;//t.Enabled;
+                               //subitem.Checked = IsSelected;
+                               //subitem.Selected = IsSelected;
+                               subitem.LinkHtmlAttributes["class"] = "t-item-child";
 
                            }
 
                            //Get Count from Facets
                            int count = 5;
-                   
-                           
+
+
                            if (item.Items.Count < count && count > 0)
                            {
                                TreeViewItem moreBt = new TreeViewItem();
@@ -471,7 +576,7 @@
           .Filterable()
           .Sortable()
            .Pageable(paging =>
-                paging.PageSize(50,new int[]{1,2,3,10,50})
+                paging.PageSize(50, new int[] { 1, 2, 3, 10, 50 })
                     .Total(table.Rows.Count)
                     )
           )
@@ -481,6 +586,8 @@
 <div style="padding: 10px">
     <table>
         <tr class="header">
+
+            <th>Functions</th>
             @foreach (DataColumn c in table.Columns)
             {
                 <th>@c.ColumnName</th>
@@ -489,6 +596,10 @@
         @foreach (DataRow r in table.Rows)
         {
             <tr>
+                <td>
+                    <button class="bx-grid-function bx-edit"></button>
+                    <button class="bx-grid-function bx-trash"></button>
+                </td>
                 @foreach (object o in r.ItemArray)
                 {
                     <td>@o</td>
@@ -498,16 +609,54 @@
 
     </table>
 </div>
+<b>table</b>
+<div style="padding: 10px">
+    <table>
+        <tr class="header">
+            <th>Functions</th>
+            @foreach (DataColumn c in table.Columns)
+            {
+                <th>@c.ColumnName</th>
+            }
+        </tr>
+        @foreach (DataRow r in table.Rows)
+        {
+            <tr>
+                <td>
+                    <button class="bx-button smaller function">edit</button>
+                    <button class="bx-button smaller function">delete</button>
+                </td>
+                @foreach (object o in r.ItemArray)
+                {
+                    <td>@o</td>
+                }
+            </tr>
+        }
 
+    </table>
 
+    
 
+</div>
+
+<style>
+    .slider-selection {
+	background: #BABABA;
+}
+</style>
+
+   
 <script type="text/javascript">
     
     $(document).ready(function ()
     {
-        
         resetAllTelerikIconTitles();
     });
+
+    function onChange(e)
+    {
+
+    }
 
     function onSelect(e)
     {
@@ -524,4 +673,5 @@
     {
         bx_openDialog("#messageDialog","message");
     }
+
 </script>

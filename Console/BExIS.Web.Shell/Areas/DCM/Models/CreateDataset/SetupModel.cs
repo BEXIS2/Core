@@ -10,7 +10,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Models.CreateDataset
     {
         [Display(Name = "Metadata Structure")]
         [Required(ErrorMessage = "Please select a metadata structure.")]
-        public long SelectedMetadatStructureId { get; set; }
+        public long SelectedMetadataStructureId { get; set; }
 
         [Display(Name = "Data Structure")]
         [Required(ErrorMessage = "Please select a data structure.")]
@@ -22,7 +22,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Models.CreateDataset
 
         public SetupModel()
         {
-            SelectedMetadatStructureId = 0;
+            SelectedMetadataStructureId = 0;
             MetadataStructureViewList = new List<ListViewItem>();
 
             SelectedDataStructureId = 0;

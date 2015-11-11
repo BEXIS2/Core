@@ -28,7 +28,7 @@
         .ClientEvents(events =>
         {
             events.OnRowSelect("OnRowSelected");
-            events.OnDataBound("resetAllTelerikIconTitles");
+            events.OnDataBound("onDataBound");
         })
         .Filterable()
         .Sortable(sortable => sortable
@@ -41,3 +41,13 @@
         })
         .Selectable()
 )
+
+<script type="text/javascript">
+
+    function onDataBound()
+    {
+        addTooltips();
+        resetAllTelerikIconTitles();
+    }
+
+</script>

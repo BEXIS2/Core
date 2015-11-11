@@ -2,8 +2,12 @@
 @using BExIS.Dlm.Entities.Data;
 @using BExIS.Dlm.Entities.DataStructure;
 @model System.Collections.Generic.List<AbstractTuple>
-@{
-    ViewBag.Title = "Detail Dataset Version";
+
+@section Information
+{
+    This maintenance tool is meant for administrators only. All datasets are
+    listed with their internal ID, status, and the option to remove them
+    from the system. Use with care!
 }
 
 <h3>Dataset version @ViewBag.VersionId detail</h3>

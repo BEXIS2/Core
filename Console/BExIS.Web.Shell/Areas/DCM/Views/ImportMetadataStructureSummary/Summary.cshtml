@@ -50,7 +50,7 @@
        
 
         <p>You successfully created metadata structure: <br /><b>@Model.SchemaName</b></p>
-        <p>Please use the <b>@Html.ActionLink("Create a Dataset", "CreateDataset", "Create", new RouteValueDictionary { { "area", Model.StepInfo.GetActionInfo.AreaName.ToString() } }, new { title = "Link to create a dataset" })</b><br />
+        <p>Please use the <b>@Html.ActionLink("Create a Dataset", "Index", "CreateDataset", new RouteValueDictionary { { "area", Model.StepInfo.GetActionInfo.AreaName.ToString() } }, new { title = "Link to create a dataset" })</b><br />
             to create a dataset with this metadata structure.</p>
 
      </div>

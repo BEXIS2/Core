@@ -5,7 +5,7 @@
 
 @using (Html.BeginCollectionItem("DomainConstraints"))
 { 
-    <table class="bx-rpm-container bx-rpm-constrainTable" id="domainConstraint">
+    <table class="bx-rpm-container bx-rpm-constrainTable" id="domainConstraint_@Model.Id">
         <tr>
             <td class="bx-rpm-constrainlabel">
                 Domain
@@ -23,12 +23,17 @@
                     <div class="bx-rpm-text">@Html.Label("Terms")</div>
                     @Html.TextBoxFor(m => m.Terms, new {@id = "domain_terms", @class = "bx-input" })
                 </div>
-                <div class="bx-function bx-info" title="@Model.FormalDescription" id="domain_FormalDescription"></div>
+                <div class="bx-function bx-info bx-disabled" title="@Model.FormalDescription" id="domain_FormalDescription"></div>
             </td>
             <td class="bx-rpm-constrainDesc">
                 <div class="bx-rpm-container">
                     <div class="bx-rpm-text">@Html.Label("Description")</div>
-                    @Html.TextBoxFor(m => m.Description, new { @class = "bx-input" })
+                    @Html.TextBoxFor(m => m.Description, new { @class = "bx-input", id = "domain_desc" })
+                </div>
+            </td>
+            <td>
+                <div>
+                    <a class="bx bx-grid-function  bx-eraser" style="margin-top: 26px" onclick="resetDomain(this)" id="@Model.Id" title="Erase Constraint"></a>
                 </div>
             </td>
         </tr>

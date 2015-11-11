@@ -2,6 +2,8 @@
 $(document).ready(function ()
 {
 	resetAllTelerikIconTitles();
+	truncateTitle();
+
 });
 
 function resetAllTelerikIconTitles()
@@ -24,14 +26,105 @@ function resetAllTelerikIconTitles()
 	});
 }
 
+/*Truncate Title*/
+function truncateTitle()
+{
+	
+	$('.bx-trunc-child').each(function ()
+	{
+
+		//$(this).trunk8();
+
+		//if (!$(this).attr("title") == true) { 
+		var n = $(".bx-trunc-parent").width()-90;
+		var text = $(this).text();
+
+		//Link Breiter als/ oder gleich breit Container
+		if ($(this).width() >= n)
+		{
+
+			$(this).width(n);
+
+			//get text from title or text
+			if ($(this).attr("title") != null)
+				t = $(this).attr("title");
+			else
+				t = $(this).text();
+
+			var nt = t.split(" ");
+			var ntLast = nt.pop();
+			$(this).trunk8(
+			{
+				fill: "..." + ntLast
+			});
+
+
+		}
+			//Link kürzer als Container
+		else if (text.indexOf(".") != -1 || text == '' || text == null)
+		{
+
+			var l = $(this).text().length;
+		    if (l == 0)
+			{
+				l = 1;
+			}
+
+			var w = $(this).width();
+		    if (w == 0)
+			{
+				w = 1;
+			}
+
+			var m = w / l;
+
+			m = Math.round(m).toFixed(0);
+
+			var t = $(this).attr("title");
+			var maxWidth = t.length * m;
+			maxWidth = maxWidth + 20;
+
+			if (maxWidth >= n)
+			{
+				$(this).width(n);
+			}
+			else
+			{
+
+				$(this).width(maxWidth);
+			}
+
+			var nt = t.split(" ");
+			var ntLast = nt.pop();
+
+
+			$(this).trunk8(
+				{
+					fill: "..." + ntLast
+				});
+		}
+
+
+	});
+
+}
+
+function addTooltips() {
+	$(".t-grid > table > tbody > tr > td , .t-grid > table > thead > tr > th").each(function ()
+	{
+        var $this = $(this);
+        var text = $this.text();
+        $this.attr("title", text);
+    });
+}
+
 
 /*List*/
 
-$(".bx-list >li").click(function ()
+$(".bx-list > li").click(function ()
 {
-	$(this).parent().find(".selected").removeClass("selected")
-
-	if ($(this).hasClass("selected"))
+	$(this).parent().find(".selected").removeClass("selected");
+    if ($(this).hasClass("selected"))
 	{
 		$(this).removeClass("selected");
 	}
@@ -39,8 +132,7 @@ $(".bx-list >li").click(function ()
 	{
 		$(this).addClass("selected");
 	}
-})
-
+});
 $(".bx-list-multi >li").click(function ()
 {
 	//$(this).parent().find(".selected").removeClass("selected")
@@ -53,7 +145,9 @@ $(".bx-list-multi >li").click(function ()
 	{
 		$(this).addClass("selected");
 	}
-})
+});
+  
+
 
 
 

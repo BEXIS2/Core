@@ -9,6 +9,7 @@ using BExIS.Dlm.Entities.Common;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
+using BExIS.IO.Transform.Validation.Exceptions;
 
 namespace BExIS.Web.Shell.Areas.DCM.Models
 {
@@ -30,6 +31,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
         public String SystemType { get; set; }
         public int NumberOfSourceInPackage { get; set; }
         public List<object> DomainList { get; set; }
+        public List<Error> Errors { get; set; }
 
         public string ConstraintDescription { get; set; }
 
@@ -40,6 +42,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
 
         public static MetadataAttributeModel Convert(BaseUsage current , BaseUsage parent, long metadataStructureId, int packageModelNumber, long parentStepId)
         {
+            
             MetadataAttribute metadataAttribute;
             List<object> domainConstraintList = new List<object>();
             string constraintsDescription="";
@@ -87,7 +90,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
                 DomainList = domainConstraintList,
                 last = true,
                 MetadataAttributeId = metadataAttribute.Id,
-                ParentStepId = parentStepId
+                ParentStepId = parentStepId,
+                Errors = null
             };
         }
 
@@ -115,5 +119,31 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
 
         }
 
+        public MetadataAttributeModel Kopie(long number, int numberOfSourceInPackage)
+        {
+            return new MetadataAttributeModel
+            {
+                    Id = this.Id,
+                    Number = number,
+                    ParentModelNumber = this.ParentModelNumber,
+                    MetadataStructureId = this.MetadataStructureId,
+                    Parent = this.Parent,
+                    Source = this.Source,
+                    DisplayName = this.DisplayName,
+                    Discription = this.Discription,
+                    ConstraintDescription = this.ConstraintDescription,
+                    DataType = this.DataType,
+                    SystemType = this.SystemType,
+                    MinCardinality = this.MinCardinality,
+                    MaxCardinality = this.MaxCardinality,
+                    NumberOfSourceInPackage = numberOfSourceInPackage,
+                    first = false,
+                    DomainList = this.DomainList,
+                    last = false,
+                    MetadataAttributeId = this.MetadataAttributeId,
+                    ParentStepId = this.ParentStepId,
+                    Errors = null
+            };
+        }
     }
 }

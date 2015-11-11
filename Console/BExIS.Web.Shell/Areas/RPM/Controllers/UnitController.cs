@@ -7,6 +7,8 @@ using System.Web.Mvc;
 using BExIS.Web.Shell.Areas.RPM.Models;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.DataStructure;
+using Vaiona.Utils.Cfg;
+using Vaiona.Web.Mvc.Models;
 
 namespace BExIS.Web.Shell.Areas.RPM.Controllers
 {
@@ -22,6 +24,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
         public ActionResult UnitManager()
         {
+            ViewBag.Title = PresentationModel.GetViewTitle( "Manage Units");
             if (Session["Window"] == null)
                 Session["Window"] = false;
 
@@ -30,6 +33,8 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
         public ActionResult editUnit(EditUnitModel Model, string measurementSystem, long[] checkedRecords)
         {
+            ViewBag.Title = PresentationModel.GetViewTitle( "Manage Units");
+
             UnitManager unitManager = new UnitManager();
 
             Model.Unit.Name = cutSpaces(Model.Unit.Name);
@@ -245,13 +250,16 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
         public ActionResult openUnitWindow(long id)
         {
+            
+
             UnitManager unitManager = new UnitManager();
             DataTypeManager dataTypeManager = new DataTypeManager();
             UnitManagerModel Model;
 
             if (id != 0)
-            {
+            {               
                 Model = new UnitManagerModel(id);
+                ViewBag.Title = PresentationModel.GetViewTitle( "Edit Unit: " + Model.editUnitModel.Unit.Name + "(Id: " + Model.editUnitModel.Unit.Id + ")");
                 Session["nameMsg"] = null;
                 Session["abbrMsg"] = null;
                 Session["dataTypeMsg"] = null;
@@ -262,14 +270,17 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                         Session["checked"] = null;
                 }
                 Session["Window"] = true;
+                Session["dimensionMsg"] = null;
             }
             else
             {
+                ViewBag.Title = PresentationModel.GetViewTitle( "Create Unit");
                 Model = new UnitManagerModel();
                 Session["nameMsg"] = null;
                 Session["abbrMsg"] = null;
                 Session["dataTypeMsg"] = null;
                 Session["Window"] = true;
+                Session["dimensionMsg"] = null;
             }
             return View("UnitManager", Model);
         }

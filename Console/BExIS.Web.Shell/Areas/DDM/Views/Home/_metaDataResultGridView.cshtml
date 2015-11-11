@@ -24,107 +24,118 @@
 
 
 @(Html.Telerik().Grid<System.Data.DataRow>()
-        .Name("resultGrid")
+		.Name("resultGrid")
 
-            .DataBinding(dataBinding => dataBinding
-                .Ajax()
-                .Select("_CustomBinding", "Home", new { area = "DDM" })
-            )
-            
-            .EnableCustomBinding(true)
-            .HtmlAttributes(new { @class = "result-grid" })
-            .Columns(columns =>
-                {
-                    
-                    
-                    for (int i = 0; i < Model.Columns.Count; i++)
-                    {
-                        DataColumn column = Model.Columns[i];
-                        if (DefaultHeaderList.Where(p => p.Name.Equals(column.ColumnName)).Count() > 0)
-                        {
+			.DataBinding(dataBinding => dataBinding
+				.Ajax()
+				.Select("_CustomBinding", "Home", new { area = "DDM" })
+			)
+			
+			.EnableCustomBinding(true)
+			.HtmlAttributes(new { @class = "result-grid" })
+			.Columns(columns =>
+				{
+					
+					
+					for (int i = 0; i < Model.Columns.Count; i++)
+					{
+						DataColumn column = Model.Columns[i];
+						if (DefaultHeaderList.Any(p => p.Name.Equals(column.ColumnName)))
+						{
 
-                            string title;
+							string title;
 
-                            if (column.Caption == "")
-                            {
-                                title = column.ColumnName;
-                            }
-                            else
-                            {
-                                title = column.Caption;
-                            }
+							if (column.Caption == "")
+							{
+								title = column.ColumnName;
+							}
+							else
+							{
+								title = column.Caption;
+							}
 
-                            columns.Bound(column.DataType, column.ColumnName)
-                                    .Title(title);
-                        }
-                        else
-                        {
-                            columns.Bound(column.DataType, column.ColumnName).Hidden()
-                                   .Title(column.Caption);
+						    columns.Bound(column.DataType, column.ColumnName)
+						        .Title(title);
+						}
+						else
+						{
+							columns.Bound(column.DataType, column.ColumnName).Hidden()
+								   .Title(column.Caption);
 
-                        }
-                    }
+						}
+					}
 
-                    if (@Model.Columns.Count > 0)
-                    {
-                        columns.Bound("").ClientTemplate(
-                        "<div class='searchResultFunctionDiv'>" +
-                            @Html.ActionLink("Details", "ShowData", "Data", new { area = "DDM", id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>" }, new { @class = "bx-button small", @id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>" }) +
-                         "</div>"
-                        )
+					if (@Model.Columns.Count > 0)
+					{
+						columns.Bound("").Width(40).ClientTemplate(
+						"<div class='searchResultFunctionDiv'>" +
+							@Html.ActionLink(" ", "ShowData", "Data", new { area = "DDM", id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>" }, new { @class = "bx bx-grid-function bx-show", @id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>" }) +
+						 "</div>"
+						)
+						.Groupable(false)
+						.Sortable(false)
+						.Filterable(false);
 
-                        .Width("auto")
-                        .Groupable(false)
-                        .Sortable(false)
-                        .Filterable(false);
+					}
 
-                    }
+				})
 
-                })
+			.ClientEvents(events => events
+						.OnComplete("onComplete")
+						.OnLoad("refreshGrid")
+						.OnSubmitChanges("refreshGrid")
+						.OnRowDataBound("resultGrid_OnRowDataBound")
+						.OnDataBound("onDataBound")
+                        .OnColumnShow("resultGrid_OnColumnChanged")
+                        .OnColumnHide("resultGrid_OnColumnChanged")
+                        
+						)
+			.Pageable(paging =>
+				paging
+						.Style(pagerStyles)
+						.PageSize(PageSize)
+					.Position(GridPagerPosition.Both)
+						.PageTo(CurrentPage)
+					)
 
-            .ClientEvents(events => events
-                        .OnComplete("onComplete")
-                        .OnLoad("refreshGrid")
-                        .OnSubmitChanges("refreshGrid")
-                        .OnRowDataBound("resultGrid_OnRowDataBound")
-                        .OnDataBound("onDataBound")
-                        )
-            .Pageable(paging =>
-                paging
-                        .Style(pagerStyles)
-                        .PageSize(PageSize)
-                    .Position(GridPagerPosition.Bottom)
-                        .PageTo(CurrentPage)
-                    )
-
-            .Sortable()
-            .Filterable()
-            .ColumnContextMenu()
-            .Groupable()
+			.Sortable()
+			.Filterable()
+			.ColumnContextMenu()
+			
 
 )
 
 
 <script type="text/javascript">
 
-    $('document').ready(function () {
+	$('document').ready(function () {
 
-        $('.t-filter').attr("title", "Filter");
+		$('.t-filter').attr("title", "Filter");
 
-    })
+	})
+
+	function resultGrid_OnColumnChanged(e)
+	{
+	    //alert("changed");
+	
+	}
+
 
 	function resultGrid_OnRowDataBound(e) {
 
+	    //alert("changed");
+	    //truncateTitle();
+
 		//alert(e.item);
-		var obj = e.row.childNodes;
+		//var obj = e.row.childNodes;
 
-		$.each(obj, function (i) {
+		//$.each(obj, function (i) {
 
-			obj[i].title = obj[i].textContent;
-			if (obj[i].textContent.length > 35) {
-				obj[i].textContent = jQuery.trim(obj[i].textContent).substring(0, 35).trim(this) + "...";
-			}
-		});
+		//	obj[i].title = obj[i].textContent;
+		//	if (obj[i].textContent.length > 35) {
+		//		obj[i].textContent = jQuery.trim(obj[i].textContent).substring(0, 35).trim(this) + "...";
+		//	}
+		//});
 
 	}
 
@@ -132,6 +143,7 @@
 	function onDataBound()
 	{
 	    resetAllTelerikIconTitles();
+	    addTooltips();
 	}
 
 
@@ -141,21 +153,22 @@
 
 	#resultGrid .t-grid-content
 	{
-        position:relative;
+		position:relative;
 		height : auto !important;
 		max-height:450px;
 		/*overflow:auto;*/
 	}
 
-    #resultGrid .t-status,
-    #resultGrid .t-status-text
-    {
-       display:none;
-    }
+	#resultGrid .t-status,
+	#resultGrid .t-status-text
+	{
+	 
+	}
 
-    #resultGrid .searchResultFunctionDiv
-    {
-        text-align:right;
-    }
+	#resultGrid .searchResultFunctionDiv
+	{
+
+		text-align:right;
+	}
 
 </style>

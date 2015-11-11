@@ -22,6 +22,7 @@ using BExIS.Dlm.Entities.Data;
 using System.Xml.Linq;
 using BExIS.Xml.Helpers;
 using BExIS.Dlm.Services.Data;
+using Vaiona.Web.Mvc.Models;
 
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
@@ -37,8 +38,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         public ActionResult Index()
         {
-            
-            ModelState.AddModelError("username", "fehler");
+            ViewBag.Title = PresentationModel.GetViewTitle("Create Dataset");
+            //ModelState.AddModelError("username", "fehler");
 
             //DatasetManager dm = new DatasetManager();
             //dm.GetDatasetVersion(1);
@@ -66,6 +67,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         public ActionResult CreateDataset()
         {
+            ViewBag.Title = PresentationModel.GetViewTitle("Create Dataset");
 
             Session["CreateDatasetTaskmanager"] = null;
             if (TaskManager == null) TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];

@@ -9,6 +9,8 @@
 <head>
     <title>@ViewBag.Title</title>
 
+    <link rel="shortcut icon" type="image/x-icon" href="@Url.Content("~/Content/Images/favicon.ico")">
+
     <script src="@Url.Content("~/Scripts/jquery-2.1.4.min.js")" type="text/javascript"></script>
     <script src="@Url.Content("~/Scripts/jquery-migrate-1.2.1.min.js")" type="text/javascript"></script>
     <script src="@Url.Content("~/Scripts/jQueryUI/1.10.3/js/jquery-ui-1.10.3.custom.min.js")" type="text/javascript"></script>
@@ -17,18 +19,20 @@
     <link href="@Url.Content("~/Scripts/switchery/switchery.css")" rel="stylesheet" type="text/css" />
     <script src="@Url.Content("~/Scripts/switchery/switchery.js")" type="text/javascript"></script>
 
+
+
     <script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
     <script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
     <script src="@Url.Content("~/Scripts/jquery.unobtrusive-ajax.min.js")" type="text/javascript"></script>
 
-
-    <script src="@Url.Content("~/Scripts/bootstrap.min.js")" type="text/javascript"></script>
-    <link href="@Url.Content("~/Content/bootstrap.css")" rel="stylesheet" type="text/css" />
-
-    <link href="@Url.Content("~/Content/Site.css")" rel="stylesheet" type="text/css" />
-    @*<link href="@Url.Content("~/Content/bootstrap.min.css")" rel="stylesheet" type="text/css" />*@
     
-    @*<script src="@Url.Content("~/Scripts/bootstrap.min.js")" type="text/javascript"></script>*@
+    <script src="@Url.Content("~/Scripts/bootstrap.min.js")" type="text/javascript"></script>
+
+    <link href="@Url.Content("~/Content/bootstrap.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/Site.css")" rel="stylesheet" type="text/css" />
+
+    <script src="@Url.Content("~/Scripts/bootstrap-slider.min.js")" type="text/javascript"></script>
+    <link href="@Url.Content("~/Content/bootstrap-slider.min.css")" rel="stylesheet" type="text/css" />
 
     <style>
         .t-window-content
@@ -63,13 +67,13 @@
 </head>
 
 <body>
-    <div>
+    <div id="informationContainer">
         @Html.RenderAuto("Menu")
 
         <div class="container-fluid" style="background-color: black; color: white; position: fixed; width: 100%; z-index: 1336">
             <a href="#information" data-toggle="collapse" style="color: white">@ViewBag.Title <i class="fa fa-angle-double-down"></i></a>
             <div class="collapse" id="information">
-                <div class="container" style="padding: 24pt 48pt 24pt 48pt; text-align: justify;">
+                <div class="container" style="padding: 0pt 48pt 24pt 48pt; text-align: justify;">
                     @RenderSection("Information", false)
                 </div>
             </div>
@@ -131,6 +135,7 @@
     $(document).ready(function ()
     {
         resetAllTelerikIconTitles();
+        addTooltips();
     });
 
 

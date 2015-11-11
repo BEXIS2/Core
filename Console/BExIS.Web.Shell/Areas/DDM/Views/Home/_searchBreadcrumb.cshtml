@@ -17,7 +17,7 @@
           @if (item.SearchComponent.Name == "" && item.Values.Count == 1)
           { 
                <div class="breadCrumbValue"  >
-                |
+                
                 @foreach (string s in @item.Values)
                 {
                    <b>@item.SearchComponent.DisplayName.ToString() :</b><span ><b id="@item.SearchComponent.Name.ToString()" title="deselect @item.SearchComponent.DisplayName.ToString() ">"@Html.ActionLink(@s.ToString(), "OnClickBreadCrumbItem", new { value = s })"</b></span>

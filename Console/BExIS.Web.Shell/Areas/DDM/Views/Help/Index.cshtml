@@ -2,9 +2,13 @@
 @using BExIS.Web.Shell.Areas.DDM.Models;
 
 @{
-    ViewBag.Title = "Search Manual";
     HtmlString index = new HtmlString(Model.Title);
     HtmlString content = new HtmlString(Model.Description);
+}
+
+@section Information
+{
+    This guide will walk you through the basics of using search UI including how to manage search component.
 }
 
 @content

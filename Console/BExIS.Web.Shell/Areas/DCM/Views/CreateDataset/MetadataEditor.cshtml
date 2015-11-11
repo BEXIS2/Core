@@ -1,16 +1,134 @@
 ﻿@model MetadataEditorModel
 @using BExIS.Web.Shell.Areas.DCM.Models.CreateDataset
+@{
+    string lockedClass = "";
+    bool locked = false;
+    bool editMode = false;
+}
 
-<h2>MetadataEditor</h2>
+@if (ViewData.Keys.Contains("Locked"))
+{
+    locked = (bool)ViewData["Locked"];
+    lockedClass = "bx-disabled";
+}
+
+@section Information
+{
+    <p>Here you can enter metadata for your new dataset. The form varies according to the metadata structure you selected in the first step.
+    Mandatory fields are indicated with an red asterisk.</p>
+    <p>You can add, remove, or re-order elements (e.g. multiple Creators) using the buttons at the right.</p>
+
+    <p>
+        More information 
+        @Html.ActionLink("here", "Index", "Help", new { id = 0 }, new { @class = "bx-informationLink", title="go to help", target="_blank"})
+    </p>
+}
+
+
+<div id="MetadataEditor">
+
+<div>
+    <table>
+        <tr>
+            @if (locked && Model.EditRight)
+            {
+                <td><button onclick="edit()" class="bx-button function" >Edit</button></td>
+            }
+
+            @if (Model.Created && Model.DatasetId != -1 && !@Model.FromEditMode)
+            { 
+
+                <td>You successfully created dataset: <br /><b>@Model.DatasetTitle</b></td>
+                <td>Please use the <b>@Html.ActionLink("Upload Data Wizard ", "StartUploadWizard", "CreateDataset", new RouteValueDictionary { { "area", "DCM" } }, new { title = "Link to upload wizard", @class="bx-link" })</b><br />
+                    to add primary data to this dataset.</td>
+
+                if (@Model.DatasetId > 0)
+                { 
+                    <td>Or see your dataset here <b>@Html.ActionLink(@Model.DatasetTitle, "ShowData", "CreateDataset", new  {id = @Model.DatasetId }, new { title = "Link to your dataset.", @class="bx-link" })</b><br /></td>
+                    
+                }
+            }
+        </tr>
+    </table>
+
+</div>
+
+
+
+
+
 
 <div id="root">
-
-
 @foreach (var element in Model.StepModelHelpers)
 {
-    @Html.Partial("_metadataPackageView",element)
+    @Html.Partial("_metadataPackageView", element)
 }
 
 </div>
-@Html.ActionLink("Submit", "Submit", "CreateDataset");
+@if (!locked)
+{ 
+    <div class="bx-footer right">
+        <button onclick="validate()" class="bx-button function" >Validate</button>
+        <button onclick="submit()" class="bx-button action" >Submit</button>
+    </div>
+}
+
+
+@section RightPane
+{
+ 
     
+
+}
+</div>
+<script>
+
+    function validate()
+    {
+        $.get('@Url.Action("Validate", "CreateDataset", new RouteValueDictionary { { "area", "DCM" }})', function (response)
+        {
+            $('#MetadataEditor').replaceWith(response);
+        })
+    }
+
+    function edit()
+    {
+        $.get('@Url.Action("EditMetadata", "CreateDataset", new RouteValueDictionary {{ "area", "DCM" }, {"datasetId",@Model.DatasetId},{"locked" ,false},{"created" ,false} })', function (response)
+        {
+            $('#MetadataEditor').replaceWith(response);
+        })
+    }
+
+
+    function submit()
+    {
+        $.get('@Url.Action("Validate", "CreateDataset", new RouteValueDictionary { { "area", "DCM" } })', function (response)
+        {
+            $('#MetadataEditor').replaceWith(response);
+
+            var errors = $('.bx-input-error');
+
+            if (errors.length == 0)
+            {
+                callSubmitAction();
+            }
+            else
+            {
+                if (confirm('Metadata is not valid! \n Do you really want to save?'))
+                {
+                    callSubmitAction();
+                }
+            }
+        }) 
+    }
+
+    function callSubmitAction()
+    {
+        $.get('@Url.Action("Submit", "CreateDataset", new RouteValueDictionary { { "area", "DCM" }, {"editMode",@Model.FromEditMode} })', function (response)
+        {
+            $('#MetadataEditor').replaceWith(response);
+            $('html, body').animate({ scrollTop: 0 }, 'slow');
+        })
+    }
+
+</script>

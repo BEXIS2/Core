@@ -47,25 +47,25 @@
         <table class="bx-rpm-info">
             <tr id="name">
                 <td id="nameBox">
-                    Name:<font color="red">*</font>
+                    Name <span class="bx bx-required" title="Required"></span>
                 </td>
                 <td>
                     @(Html.TextBoxFor(m => Model.Unit.Name, new { @class = "t-input bx-input" , @autofocus = "autofocus", @tabindex = "1"}))
                 </td>
-                <td class="errorMsg">@Session["nameMsg"]</td>
+                <td class="bx-errorMsg">@Session["nameMsg"]</td>
             </tr>
             <tr>
                 <td>
-                    Abbreviation:<Font color="red">*</Font>
+                    Abbreviation <span class="bx bx-required" title="Required"></span>
                 </td>
                 <td>
                     @(Html.TextBoxFor(m => Model.Unit.Abbreviation, new { @class = "t-input bx-input", @tabindex = "2"}))
                 </td>
-                <td class="errorMsg">@Session["abbrMsg"]</td>
+                <td class="bx-errorMsg">@Session["abbrMsg"]</td>
             </tr>
             <tr>
                 <td>
-                    Description:
+                    Description
                 </td>
                 <td>
                     @(Html.TextBoxFor(m => Model.Unit.Description, new { @class = "t-input bx-input", @tabindex = "3"}))
@@ -73,7 +73,7 @@
             </tr>
             <tr>
                 <td>
-                    Dimension Name:
+                    Dimension Name <span class="bx bx-required" title="Required"></span>
                 </td>
                 <td>
                     @(Html.Telerik().ComboBox()
@@ -112,11 +112,11 @@
                         @(Html.HiddenFor(m => Model.Unit.Dimension.Id, new { @class = "hidden" }))
                         @(Html.HiddenFor(m => Model.Unit.Dimension.Name, new { @class = "hidden" }))
                 </td>
-                <td class="errorMsg">@Session["dimensionMsg"]</td>
+                <td class="bx-errorMsg">@Session["dimensionMsg"]</td>
             </tr>
             <tr>
                 <td>
-                    Dimension Specification:
+                    Dimension Specification
                 </td>
                 <td>
                     @(Html.TextBoxFor(m => Model.Unit.Dimension.Specification, new { @class = "bx-input", @tabindex = "3", @placeholder = "L(0,0)M(0,0)T(0,0)I(0,0)Θ(0,0)N(0,0)J(0,0)"}))
@@ -124,20 +124,18 @@
             </tr>
             <tr>
                 <td>
-                    Measurement System:
+                    Measurement System
                 </td>
                 <td>
                     @(Html.Telerik().DropDownList()
                         .Name("measurementSystem")
                         .HtmlAttributes(new {@class = "bx-dropdown", @tabindex = 5})
-                        .DropDownHtmlAttributes(new { @class = "bx-dropdown", style = "height: 200px" })
                         .SelectedIndex(MeasurementSystemIndex)
                         .BindTo(new SelectList(MeasurementSystemList))
                     )
                 </td>
             </tr>
         </table>
-        <div class="errorMsg">@Session["dataTypeMsg"]</div>
         @(Html.Telerik().Grid(Model.DataTypeList)
             .Name("bx-rpm-selectDataTypeGrid")
             .Scrollable(t => t.Height(250))
@@ -161,9 +159,10 @@
                     columns.Bound(c => c.SystemType);
                     columns.Bound(c => c.Description);
                 })
+                .ClientEvents(events=>events.OnDataBound("onDataBound"))
             )
-        <div class="bx-rpm-functions bx-rpm-buttons">
-            <font class="bx-rpm-buttons" color="red">*</font> Indicates required field
+        <div class="bx-errorMsg bx-rpm-functions">
+                @Session["dataTypeMsg"]
         </div>
         <div class="bx-rpm-submit bx-rpm-buttons">
             <button name="create" value="create" type="submit" class="t-button action"  id="saveButton" title="Save The Unit" tabindex = "6">Save</button>
@@ -175,10 +174,16 @@
 }
 else
 {
- <font color="red" style="margin:10px">Can't edit Unit doesn't exist anymore.</font>
+ <span class="bx-errorMsg">Can't edit Unit doesn't exist anymore.</span>
 }
     
-<script type="text/jscript">
+
+<script type="text/javascript">
+
+    function onDataBound()
+    {
+        addTooltips();
+    }
 
     $(document).ready(function () {
         dimensionChange();

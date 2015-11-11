@@ -1,19 +1,20 @@
 ﻿@model BExIS.Web.Shell.Areas.DIM.Models.AdminModel
 @using Telerik.Web.Mvc.UI;
 
+@section Information
+{
 
-@{
-	ViewBag.Title = "Index";
+    On this page you are able to export metadata to a standard compliant XML file, i.e. ABCD or EML.<br />
+    <ul>
+        <li>Please select a metadata structure first (tab)</li>
+        <li>Select one or more datasets to export</li>
+        <li>Click the export button to create XML files</li>
+    </ul>
+    <p>
+        More information 
+        @Html.ActionLink("here", "Index", "Help", new { id = 0 }, new { @class = "bx-informationLink", title="go to help", target="_blank"})
+    </p>
 }
-
-<p>
-On this page you are able to export metadata to a standard compliant XML file, i.e. ABCD or EML.<br />
-<ul>
-    <li>Please select a metadata structure first (tab)</li>
-    <li>Select one or more datasets to export</li>
-    <li>Click the export button to create XML files</li>
-</ul>
-</p>
 
 @if(@Model != null)
 {
@@ -32,10 +33,3 @@ On this page you are able to export metadata to a standard compliant XML file, i
 			})
 	)
 }
-
-
-
-<script type="text/javascript">
-
-
-</script>

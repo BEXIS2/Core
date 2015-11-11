@@ -36,19 +36,28 @@ namespace BExIS.Web.Shell.Areas.DCM.Models.Create
             Childrens = new List<StepModelHelper>();
         }
 
-        //public void UpdatePosition(int position)
-        //{
-        //    Number = position;
-        //    //XPath = parentStepModelHelper.XPath + "//" + label.Replace(" ", string.Empty) + "[" + model.Number + "]"
-        //    string[] temp = XPath.Split('/');
-        //    XPath="";
-        //    for (int i = 0; i < temp.Count()-2; i++)
-        //    {
-        //        XPath +="/"+temp[i];
-        //    }
+        public string GetXPathFromSimpleAttribute(long id)
+        {
+            if (Model != null && Model.MetadataAttributeModels != null && Model.MetadataAttributeModels.Any())
+            {
+                MetadataAttributeModel temp = Model.MetadataAttributeModels.Where(a => a.Id.Equals(id) && a.Number.Equals(Number)).First();
 
-        //    XPath +="/"+Usage.Label.Replace(" ", string.Empty)+"Type" + "[" + Number + "]";
-            
-        //}
+                return XPath + "//" + temp.Source.Label + "[1]//" + temp.GetMetadataAttribute().Self.Name;
+            }
+
+            return "";
+        }
+
+        public string GetXPathFromSimpleAttribute(long id, long number)
+        {
+            if(Model != null && Model.MetadataAttributeModels != null && Model.MetadataAttributeModels.Any())
+            {
+                MetadataAttributeModel temp =  Model.MetadataAttributeModels.Where(a => a.Id.Equals(id)).First();
+
+                return XPath + "//" + temp.Source.Label + "[1]//" + temp.GetMetadataAttribute().Self.Name+"["+number+"]";
+            }
+
+            return "";
+        }
     }
 }

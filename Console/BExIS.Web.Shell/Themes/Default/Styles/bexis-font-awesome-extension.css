@@ -36,6 +36,7 @@
 
 /* style for BEXIS2 functions */
 .bx-function, 
+.bx-grid-function, 
 .bx-action, 
 .t-grid-filter,
 .t-state-active,
@@ -67,6 +68,7 @@
 }
 
 .bx-function, 
+.bx-grid-function, 
 .t-grid-filter,
 .t-state-active,
 .t-arrow-first,
@@ -92,6 +94,9 @@
 .bx-function:hover, 
 .bx-function.active:hover,
 .bx-function:active:hover,
+.bx-grid-function:hover, 
+.bx-grid-function.active:hover,
+.bx-grid-function:active:hover,
 .t-state-active:hover,
 .t-numeric .t-link:hover,
 .t-arrow-first:hover,
@@ -106,13 +111,31 @@
   text-decoration:none;
 }
 
-.bx-action:active, .bx-action.active, 
-.bx-function:active, .bx-function.active, 
+.bx-action.bx-disabled:hover,
+.bx-action.bx-disabled.active:hover,
+.bx-action.bx-disabled:active:hover,
+.bx-function.bx-disabled:hover,
+.bx-function.bx-disabled.active:hover,
+.bx-function.bx-disabled:active:hover,
+.bx-grid-function.bx-disabled:hover,
+.bx-grid-function.bx-disabled.active:hover,
+.bx-grid-function.bx-disabled:active:hover {
+    background: #ffffff;
+    text-decoration:none;
+}
+
+
+.bx-action:active,
+.bx-action.active, 
+.bx-function:active,
+.bx-function.active, 
 .t-state-active,
 .t-grid-filter.t-active-filter,
 .t-group-indicator,
-.t-edit:active, .t-edit.active,
-.t-delete:active, .t-delete:active
+.t-edit:active,
+.t-edit.active,
+.t-delete:active,
+.t-delete:active
 {
   background: #45B2A1;
 }
@@ -374,7 +397,8 @@
 .fa-list-alt:before {
   content: "\f022";
 }
-.fa-lock:before {
+.fa-lock:before,
+.bx-lock:before {
   content: "\f023";
 }
 .fa-flag:before {
@@ -552,10 +576,13 @@
 .fa-ban:before {
   content: "\f05e";
 }
-.fa-arrow-left:before {
+.fa-arrow-left:before,
+.bx-arrow-left:before
+ {
   content: "\f060";
 }
-.fa-arrow-right:before {
+.fa-arrow-right:before,
+.bx-arrow-right:before {
   content: "\f061";
 }
 .fa-arrow-up:before {
@@ -583,7 +610,9 @@
 {
   content: "\f068";
 }
-.fa-asterisk:before {
+.fa-asterisk:before,
+.bx-required:before
+{
   content: "\f069";
 }
 .fa-exclamation-circle:before {
@@ -598,7 +627,8 @@
 .fa-fire:before {
   content: "\f06d";
 }
-.fa-eye:before {
+.fa-eye:before,
+.bx-show:before {
   content: "\f06e";
 }
 .fa-eye-slash:before {
@@ -947,7 +977,8 @@
 .fa-exchange:before {
   content: "\f0ec";
 }
-.fa-cloud-download:before {
+.fa-cloud-download:before,
+.bx-cloud-download:before {
   content: "\f0ed";
 }
 .fa-cloud-upload:before {
@@ -971,7 +1002,8 @@
 .fa-cutlery:before {
   content: "\f0f5";
 }
-.fa-file-text-o:before {
+.fa-file-text-o:before, 
+.bx-file-text-o:before {
   content: "\f0f6";
 }
 .fa-building-o:before {
@@ -1004,10 +1036,12 @@
 .fa-angle-double-right:before, .bx-last:before, .t-arrow-last:before {
   content: "\f101";
 }
-.fa-angle-double-up:before {
+.fa-angle-double-up:before,
+.bx-angle-double-up:before {
   content: "\f102";
 }
-.fa-angle-double-down:before {
+.fa-angle-double-down:before,
+.bx-angle-double-down:before {
   content: "\f103";
 }
 .fa-angle-left:before, 
@@ -1020,10 +1054,12 @@
 .t-arrow-next:before {
   content: "\f105";
 }
-.fa-angle-up:before {
+.fa-angle-up:before,
+.bx-up:before  {
   content: "\f106";
 }
-.fa-angle-down:before {
+.fa-angle-down:before,
+.bx-down:before  {
   content: "\f107";
 }
 .fa-desktop:before {
@@ -1131,7 +1167,8 @@
 .fa-subscript:before {
   content: "\f12c";
 }
-.fa-eraser:before {
+.fa-eraser:before,
+.bx-eraser:before {
   content: "\f12d";
 }
 .fa-puzzle-piece:before {
@@ -1572,7 +1609,8 @@
 .fa-file-word-o:before {
   content: "\f1c2";
 }
-.fa-file-excel-o:before {
+.fa-file-excel-o:before, 
+.bx-file-excel-o:before{
   content: "\f1c3";
 }
 .fa-file-powerpoint-o:before {
@@ -1738,7 +1776,8 @@
 .fa-bell-slash-o:before {
   content: "\f1f7";
 }
-.fa-trash:before {
+.fa-trash:before,
+.bx-trash:before {
   content: "\f1f8";
 }
 .fa-copyright:before {

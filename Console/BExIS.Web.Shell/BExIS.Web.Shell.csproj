@@ -324,6 +324,7 @@
     <Compile Include="Areas\DCM\Models\CreateDatasetViewModel.cs" />
     <Compile Include="Areas\DCM\Models\CreateDataset\MetadataEditorModel.cs" />
     <Compile Include="Areas\DCM\Models\CreateDataset\SetupModel.cs" />
+    <Compile Include="Areas\DCM\Models\CreateDataset\StepModelHelper.cs" />
     <Compile Include="Areas\DCM\Models\Create\SelectDatasetSetupModel.cs" />
     <Compile Include="Areas\DCM\Models\Create\CreateSummaryModel.cs" />
     <Compile Include="Areas\DCM\Models\Create\StepModelHelper.cs" />
@@ -414,6 +415,8 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\BexisUIHelper.cs" />
+    <Compile Include="Models\UiTestModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -425,25 +428,42 @@
       <SubType>Designer</SubType>
     </DesignData>
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image001.png" />
+    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image002.gif" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image002.png" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image003.png" />
+    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image004.gif" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image004.png" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image005.png" />
+    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image006.gif" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image006.png" />
+    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image007.jpg" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image007.png" />
+    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image008.jpg" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image008.png" />
+    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image009.jpg" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image009.png" />
+    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image010.jpg" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image010.png" />
+    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image011.gif" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image011.png" />
+    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image012.jpg" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image012.png" />
+    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image013.jpg" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image013.png" />
+    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image014.jpg" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image014.png" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image015.jpg" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image016.jpg" />
+    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image016.png" />
+    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image017.jpg" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image017.png" />
+    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image018.jpg" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image018.png" />
+    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image019.jpg" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image019.png" />
+    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image020.jpg" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image020.png" />
+    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image021.jpg" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image021.png" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image022.jpg" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image023.jpg" />
@@ -457,6 +477,8 @@
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image031.jpg" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image032.jpg" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image033.jpg" />
+    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image033.png" />
+    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image034.jpg" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image034.png" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image035.jpg" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image036.jpg" />
@@ -467,29 +489,46 @@
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image041.jpg" />
     <Content Include="Areas\DCM\Images\emptyPng.png" />
     <Content Include="Areas\DCM\Views\Help\UserGuides\DCM_UserGuide.htm" />
+    <Content Include="Areas\DDM\Images\DDM_UserGuide_files\image001.gif" />
     <Content Include="Areas\DDM\Images\DDM_UserGuide_files\image001.png" />
+    <Content Include="Areas\DDM\Images\DDM_UserGuide_files\image002.gif" />
     <Content Include="Areas\DDM\Images\DDM_UserGuide_files\image002.jpg" />
+    <Content Include="Areas\DDM\Images\DDM_UserGuide_files\image002.png" />
+    <Content Include="Areas\DDM\Images\DDM_UserGuide_files\image003.jpg" />
     <Content Include="Areas\DDM\Images\DDM_UserGuide_files\image003.png" />
-    <Content Include="Areas\DDM\Images\DDM_UserGuide_files\image004.png" />
+    <Content Include="Areas\DDM\Images\DDM_UserGuide_files\image004.gif" />
     <Content Include="Areas\DDM\Images\DDM_UserGuide_files\image005.jpg" />
     <Content Include="Areas\DDM\Images\DDM_UserGuide_files\image006.jpg" />
     <Content Include="Areas\DDM\Images\DDM_UserGuide_files\image007.jpg" />
     <Content Include="Areas\DDM\Images\DDM_UserGuide_files\image008.jpg" />
+    <Content Include="Areas\DDM\Images\DDM_UserGuide_files\image009.jpg" />
     <Content Include="Areas\DDM\Views\Help\UserGuides\DDM_UserGuide.htm" />
     <Content Include="Areas\DDM\Scripts\ddm.js" />
     <Content Include="Areas\DIM\Images\DIM_UserGuide_files\image001.jpg" />
     <Content Include="Areas\DIM\Views\Help\UserGuides\DIM_UserGuide.htm" />
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image001.jpg" />
+    <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image001.png" />
+    <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image002.gif" />
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image002.jpg" />
+    <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image002.png" />
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image003.jpg" />
+    <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image003.png" />
+    <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image004.gif" />
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image004.jpg" />
+    <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image004.png" />
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image005.jpg" />
+    <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image005.png" />
+    <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image006.gif" />
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image006.jpg" />
+    <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image006.png" />
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image007.jpg" />
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image008.jpg" />
+    <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image009.jpg" />
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image009.png" />
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image010.jpg" />
+    <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image011.jpg" />
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image011.png" />
+    <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image012.jpg" />
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image012.png" />
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image013.jpg" />
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image014.jpg" />
@@ -506,6 +545,10 @@
     <Content Include="Areas\SAM\Images\SAM_UserGuide_files\image007.jpg" />
     <Content Include="Areas\SAM\Images\SAM_UserGuide_files\image008.jpg" />
     <Content Include="Areas\SAM\Images\SAM_UserGuide_files\image009.jpg" />
+    <Content Include="Areas\SAM\Images\SAM_UserGuide_files\image010.jpg" />
+    <Content Include="Areas\SAM\Images\SAM_UserGuide_files\image011.jpg" />
+    <Content Include="Areas\SAM\Images\SAM_UserGuide_files\image012.jpg" />
+    <Content Include="Areas\SAM\Images\SAM_UserGuide_files\image013.jpg" />
     <Content Include="Areas\SAM\Views\Help\UserGuides\SAM_UserGuide.htm" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
@@ -516,12 +559,15 @@
     <Content Include="Content\Images\Bildmarke_BEXIS_rgb_830x830.png" />
     <Content Include="Content\Images\Bildmarke_BEXIS_rgb_94x94.jpg" />
     <Content Include="Content\Images\Bildmarke_BEXIS_rgb_94x94.png" />
+    <Content Include="Content\Images\2.svg" />
+    <Content Include="Content\Images\favicon.ico" />
     <Content Include="Content\Images\Logo_BEXIS_cmyk.svg" />
     <Content Include="Content\Images\Logo_BEXIS_rgb_2600x830.jpg" />
     <Content Include="Content\Images\Logo_BEXIS_rgb_2600x830.png" />
     <Content Include="Content\Images\Logo_BEXIS_rgb_377x94.jpg" />
     <Content Include="Content\Images\Logo_BEXIS_rgb_377x94.png" />
     <Content Include="Content\Site.css" />
+    <Content Include="Content\bootstrap-slider.min.css" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Scripts\bexis-jquery-ui.js" />
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
@@ -530,6 +576,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="Content\bootstrap-theme.css.map" />
     <Content Include="Content\bootstrap.css.map" />
+    <Content Include="Scripts\bootstrap-slider.min.js" />
     <Content Include="Scripts\bexis-metadata.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
@@ -542,6 +589,9 @@
     <Content Include="Areas\DCM\Views\CreateDataset\_metadataPackageUsageView.cshtml" />
     <Content Include="Areas\DCM\Views\CreateDataset\_metadataPackageView.cshtml" />
     <Content Include="Areas\DCM\Views\CreateDataset\_metadataCompoundAttributeUsageView.cshtml" />
+    <Content Include="Areas\SAM\Views\Users\_Membership.cshtml" />
+    <Content Include="Areas\SAM\Views\Groups\_Membership.cshtml" />
+    <Content Include="Areas\SAM\Views\Account\MyAccount.cshtml" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
@@ -868,6 +918,7 @@
     <Content Include="Scripts\jquery-2.1.4.min.map" />
     <Content Include="Themes\Default\Partials\_Breadcrumb.cshtml" />
     <Content Include="Themes\Default\Partials\_Information.cshtml" />
+    <Content Include="Views\Test\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -879,7 +930,6 @@
     <Folder Include="Areas\SAM\Views\Shared\" />
     <Folder Include="Areas\Site\Models\" />
     <Folder Include="Areas\Site\Views\Shared\" />
-    <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Home\About.cshtml" />

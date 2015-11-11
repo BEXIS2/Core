@@ -29,7 +29,7 @@ namespace BExIS.Security.Services.Subjects
 
         bool ChangePassword(long id, string password);
 
-        bool ChangeSecurityQuestionAndSecurityAnswer(string userName, string password, long securityQuestionId, string newPasswordAnswer);
+        bool ChangeSecurityQuestionAndSecurityAnswer(long id, long securityQuestionId, string newPasswordAnswer);
 
         User CreateUser(string userName, long authenticatorId);
 

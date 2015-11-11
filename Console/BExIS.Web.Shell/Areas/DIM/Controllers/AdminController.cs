@@ -15,6 +15,7 @@ using Vaiona.Utils.Cfg;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Xml.Services;
+using Vaiona.Web.Mvc.Models;
 
 namespace BExIS.Web.Shell.Areas.DIM.Controllers
 {
@@ -29,6 +30,8 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
 
         public ActionResult Index()
         {
+            ViewBag.Title = PresentationModel.GetViewTitle("Export Metadata");
+
             AdminModel model = new AdminModel();
 
             MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
@@ -108,7 +111,6 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
 
             #endregion
 
-
             return PartialView("_metadataStructureView",model);
         }
 
@@ -116,32 +118,6 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
         {
             return File(path, "text/xml");
         }
-
-        //public ActionResult ConvertMetadataToABCD()
-        //{
-        //    string path_mapping_abcd = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), "mapping_abcd.xml");
-
-        //    XmlMapperManager xmlMapperManager = new XmlMapperManager();
-
-        //    xmlMapperManager.Load(path_mapping_abcd);
-
-        //    DatasetManager datasetManager = new DatasetManager();
-
-        //    List<long> ids = datasetManager.GetDatasetLatestIds();
-
-
-        //    foreach (long id in ids)
-        //    {
-        //        Dataset dataset = datasetManager.GetDataset(id);
-        //        if (dataset.MetadataStructure.Id.Equals(xmlMapperManager.xmlMapper.Id))
-        //        {
-        //            XmlDocument metadata = datasetManager.GetDatasetLatestMetadataVersion(id);
-        //            xmlMapperManager.Export(metadata, id);
-        //        }
-        //    }
-
-        //    return View("Index");
-        //}
 
         private string Export(long datasetVersionId)
         {
@@ -167,34 +143,6 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
 
             return "";
         }
-
-
-        //public ActionResult ConvertMetadataToEML()
-        //{
-        //    string path_mapping_eml = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), "mapping_eml.xml");
-
-        //    XmlMapperManager xmlMapperManager = new XmlMapperManager();
-        //    //xmlMapperManager.SearchForSequenceByDuplicatedElementNames = false;
-
-        //    xmlMapperManager.Load(path_mapping_eml);
-
-        //    DatasetManager datasetManager = new DatasetManager();
-
-        //    List<long> ids = datasetManager.GetDatasetLatestIds();
-
-        //    foreach (long id in ids)
-        //    {
-        //        Dataset dataset = datasetManager.GetDataset(id);
-        //        if (dataset.MetadataStructure.Id.Equals(xmlMapperManager.xmlMapper.Id))
-        //        {
-        //            XmlDocument metadata = datasetManager.GetDatasetLatestMetadataVersion(id);
-        //            xmlMapperManager.Export(metadata, id);
-        //        }
-        //    }
-
-        //    return View("Index");
-        //}
-
 
         #region helper
 
