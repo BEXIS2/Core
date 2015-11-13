@@ -430,8 +430,8 @@ table.bx-table-form tr td
     table-layout: fixed;
 }
 
-.t-grid > table > tbody > tr > td,
-.t-grid > table > thead > tr > th{
+.t-grid td,
+.t-grid th{
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;

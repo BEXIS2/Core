@@ -52,9 +52,9 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             return View("DataStructureDesigner", DSDM);
         }
 
-        public ActionResult createStructuredDataStrukture()
+        public ActionResult createStructuredDataStructure()
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Create structured Data Strukture");
+            ViewBag.Title = PresentationModel.GetViewTitle("Create structured Data Structure");
             DataStructureDesignerModel DSDM = new DataStructureDesignerModel();
 
             Session["Structured"] = true;
@@ -63,9 +63,9 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             return View("DataStructureDesigner", DSDM); 
         }
         
-        public ActionResult createUnStructuredDataStrukture()
+        public ActionResult createUnStructuredDataStructure()
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Create unstructured Data Strukture");
+            ViewBag.Title = PresentationModel.GetViewTitle("Create unstructured Data Structure");
             DataStructureDesignerModel DSDM = new DataStructureDesignerModel();
             DSDM.structured = false;
 
