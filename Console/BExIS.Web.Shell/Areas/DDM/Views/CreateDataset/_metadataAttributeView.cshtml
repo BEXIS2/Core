@@ -1,0 +1,552 @@
+﻿@model MetadataAttributeModel
+@using System
+@using BExIS.Web.Shell.Areas.DCM.Models
+@using Telerik.Web.Mvc.UI
+@{
+    string id = @Model.Id + "_" + @Model.Parent.Id + "_" + @Model.Number + "_" + @Model.ParentModelNumber + "_" + @Model.NumberOfSourceInPackage+"_"+@Model.ParentStepId;
+    string idInput = id + "_Input";
+    string idAdd = id + "_Add";
+    string idRemove = id + "_Remove";
+    string idUp = id + "_Up";
+    string idDown = id + "_Down";
+
+
+    string displayName = @Model.DisplayName;
+    DateTime defaultDate = DateTime.Today;
+
+    if (@Model.Number > 1)displayName += " " + @Model.Number;
+
+    bool hasErrors = false;
+    string errorMessage = "";
+    string errorClass = "";
+    string lockedClass = "";
+    bool locked = false;
+    
+    
+
+}   
+
+@if (ViewData.Keys.Contains("Locked"))
+{
+    locked = (bool)ViewData["Locked"];
+    lockedClass = "bx-disabled";
+}
+ 
+@if (Model.Errors != null && Model.Errors.Count() > 0)
+{
+    hasErrors = true;
+}
+
+@if (hasErrors == true)
+{
+    errorClass = "bx-input-error";
+    foreach (var item in Model.Errors)
+    {
+        if (Model.Errors.First().Equals(item))
+        {
+            errorMessage = item.GetMessage();
+        }
+        else
+        {
+            errorMessage += ", " + item.GetMessage();
+        }
+    }
+}
+
+<div id="@id" class="metadataAttributeContent" onload="metadataAttributeOnLoad(this)">
+
+   
+    @if (@Model != null)
+    {
+        <table>
+            <tr>
+
+           
+            <td class="metadataAttributeLabel">
+                @if (Model.MinCardinality > 0)
+                { 
+                    <b title="Required" style="color:red">*</b>
+                }
+
+                <b title="@Model.Discription">@displayName</b>
+            </td>
+        
+            <td class="metadataAttributeInput">
+                    @if (Model.SystemType.Equals(TypeCode.String.ToString()))
+                    {
+                        if (Model.DataType.Equals("Text"))
+                        {
+                            if (!locked)
+                            {
+                                if (Model.DomainList.Count == 0)
+                                {
+                                    @Html.TextAreaFor(m => m.Value, new { OnChange = "OnChange(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-textarea " + @errorClass})
+                                }
+                                else
+                                {
+                                        @(Html.Telerik().DropDownList()
+                                            .Placeholder("Select, please")
+                                            .Name(@idInput)
+                                            .HtmlAttributes(new { PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-dropdown" + @errorClass })
+                                            .ClientEvents(events => events.OnChange("OnChangeDropDown"))
+                                            .BindTo(new SelectList(Model.DomainList, Model.Value)))
+                                }
+                            }
+                            else
+                            { 
+                                    @Html.TextAreaFor(m => m.Value, new { OnChange = "OnChange(this)",disabled="disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-textarea " + @errorClass + " " + lockedClass })
+                            }
+
+                        }
+
+                        if (Model.DataType.Equals("String"))
+                        {
+                            if (!locked)
+                            {
+
+                                if (Model.DomainList.Count == 0)
+                                { 
+                                    @Html.TextBoxFor(m => m.Value, new { OnChange = "OnChange(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input " + @errorClass })
+                                }
+                                else
+                                {
+                                    @(Html.Telerik().DropDownList()
+                                            .Name(@idInput)
+                                            .Placeholder("Select, please")
+                                            .HtmlAttributes(new { PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-dropdown " + @errorClass })
+                                            .ClientEvents(events => events.OnChange("OnChangeDropDown"))
+                                            .BindTo(new SelectList(Model.DomainList, Model.Value)))
+                                }
+                            }
+                            else
+                            { 
+                                    @Html.TextBoxFor(m => m.Value, new { OnChange = "OnChange(this)", disabled="disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input " + @errorClass + " " + lockedClass })
+                            }
+                        }
+                    }
+                    
+                    @if (Model.SystemType.Equals(TypeCode.Boolean.ToString()))
+                    {
+                        if (!locked)
+                        { 
+                             @Html.CheckBox(Model.DisplayName, new { OnChange = "OnChange(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage });
+                        }
+                        else
+                        { 
+                             @Html.CheckBox(Model.DisplayName, new { OnChange = "OnChange(this)", disabled="disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage });
+                        }
+                           
+                    }
+
+                    @if (Model.SystemType.Equals(TypeCode.Int32.ToString()) ||
+                            Model.SystemType.Equals(TypeCode.Int64.ToString())
+                        )
+                    {
+                            if(!locked)
+                            {
+                        
+                                    int value = 0;
+                                    value = Convert.ToInt32(Model.Value);
+
+                                    @(Html.Telerik().IntegerTextBox()
+                                                    .Name(idInput)
+                                                    .MinValue(0)
+                                                    .MaxValue(Int32.MaxValue)
+                                                    .Value(value)
+                                                    .ClientEvents(events => events
+                                                    .OnChange("OnChangeNumbers"))
+                                                    .InputHtmlAttributes(new { PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input "+@errorClass})
+                                                    )
+                            }
+                            else
+                            {
+                                    @Html.TextBoxFor(m => m.Value, new { OnChange = "OnChange(this)", disabled="disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input " + @errorClass + " " + lockedClass })
+                            }
+                    }
+
+                    @if (Model.SystemType.Equals(TypeCode.Decimal.ToString())||
+                        Model.SystemType.Equals(TypeCode.Double.ToString()))
+                    {
+                        if(!locked)
+                        {
+                            @Html.TextBoxFor(m => m.Value, new { OnChange = "OnChange(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input "+@errorClass })
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.Value, new { OnChange = "OnChange(this)",disabled="disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input "+@errorClass })
+                        }
+                   }
+
+
+                    @if (Model.SystemType.Equals(TypeCode.DateTime.ToString()))
+                    {
+                        if (!locked)
+                        {
+                            string value = "";
+                            if (Model.Value != null)
+                            {
+                                value = Model.Value.ToString();
+                            }
+                            else
+                            {
+                                value = "";//@defaultDate.ToString();
+                            }
+                            
+                            @(Html.Telerik().DatePicker()
+                                .Name(@idInput)
+                                .ShowButton(true)
+                                .TodayButton("d")
+                                .OpenOnFocus(true)
+                                .Format("dd/MM/yyyy")
+                                .Value(value)
+                                .ClientEvents(events => events
+                                    .OnChange("OnChangeDatePicker"))
+                            )
+                        }
+                        else
+                        { 
+                            @Html.TextBoxFor(m => m.Value, new { OnChange = "OnChange(this)",disabled="disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input "+@errorClass })
+                        }
+                    }
+                </td>
+                <td class="metadataAttributeOption">
+                    @Html.ValidationMessageFor(m => m.Value)
+                    @if (Model.MaxCardinality > 1 && !locked)
+                    { 
+                    <table id="attributeOptionTable">
+                        <tr>
+                            <td><button id="@idAdd" type="button" value="Add" name="Add"  class="bx-function bx-add" onclick="OnClickAdd(this)"></button></td>
+                            <td><button id="@idRemove" type="button" value="Remove" name="Remove"  class="bx-function bx-delete" onclick="OnClickRemove(this)"></button></td>
+                            <td>
+                                @if (!Model.last)
+                                { 
+                                    <button id="@idDown" type="button" value="Down" name="Down"  class="bx-function bx-down" onclick="OnClickDown(this)"></button>
+                                }
+                                else
+                                { 
+                                    <button id="@idDown" type="button" value="Down" name="Down"  class="bx-function bx-down bx-disabled" disabled ></button>
+                                }
+                                
+                            </td>
+                            <td>
+                                @if (!Model.first)
+                                {
+                                    <button id="@idUp" type="button" value="Up" name="Up"  class="bx-function bx-up" onclick="OnClickUp(this)"></button>
+                                }
+                                else
+                                { 
+                                    <button id="@idUp" type="button" value="Up" name="Up"  class="bx-function bx-up bx-disabled" disabled ></button>
+                                }
+                                
+                            </td>
+                        </tr>
+                    </table>
+                    }
+                </td>
+            </tr>
+        </table>
+        
+        
+    }
+    else
+    { 
+        <b>null</b>
+    }
+</div> 
+     
+
+<script type="text/javascript">
+   
+    function metadataAttributeOnLoad(e)
+    {
+        if('@hasErrors')
+        {
+            $('#' + e.id + "_input").AddClass("bx-input-error");
+        }
+    }
+
+    function OnChange(e)
+    {
+        var substr = e.id.split('_');
+        var id = substr[0];
+        var parentid = substr[1];
+        var parentname = $("#" + e.id).attr("title");
+        var number = substr[2];
+        var ParentModelNumber = substr[3];
+        var ParentStepID = substr[5];
+
+        var data = {
+            value: e.value,
+            id: id,
+            parentid: parentid,
+            parentname: parentname,
+            number: number,
+            parentModelNumber: ParentModelNumber,
+            ParentStepId: ParentStepID
+        };
+
+        //alert(parentid);
+        //alert(metadataStructureId);
+        //alert(ParentStepID);
+        //object value,  int id, int parentid,       string parentname,     int number, int parentModelNumber,                    int parentStepId)
+        $.post('@Url.Action("ValidateMetadataAttributeUsage", "CreateDataset", new RouteValueDictionary { { "area", "DCM" } })', { value: e.value, id: id, parentid: parentid, parentname: parentname, number: number, parentModelNumber: ParentModelNumber, ParentStepId: ParentStepID }, function (response)
+        {
+            //alert(e.value);
+            //alert(response);
+            //var id = parentid;
+            var index = e.id.lastIndexOf("_");
+            var newId = e.id.substr(0, index);
+            //alert(newId);
+
+            $("#" + newId).replaceWith(response);
+        })
+
+    }
+
+    function OnChangeDropDown(e)
+    {
+        var substr = e.target.id.split('_');
+        var id = substr[0];
+        var parentid = substr[1];
+        var parentname = $("#" + e.id).attr("title");
+        var number = substr[2];
+        var ParentModelNumber = substr[3];
+        var ParentStepID = substr[5];
+
+        var data = {
+            value: e.value,
+            id: id,
+            parentid: parentid,
+            parentname: parentname,
+            number: number,
+            parentModelNumber: ParentModelNumber,
+            ParentStepId: ParentStepID
+        };
+
+      @*  alert(id);
+        alert('@id');*@
+        //alert(parentid);
+        //alert(metadataStructureId);
+        //alert(ParentStepID);
+        //object value,  int id, int parentid,       string parentname,     int number, int parentModelNumber,                    int parentStepId)
+        $.post('@Url.Action("ValidateMetadataAttributeUsage", "CreateDataset", new RouteValueDictionary { { "area", "DCM" } })', { value: e.value, id: id, parentid: parentid, parentname: parentname, number: number, parentModelNumber: ParentModelNumber, ParentStepId: ParentStepID }, function (response)
+        {
+
+        })
+
+
+    }
+
+    function OnChangeNumbers(e) {
+
+        var substr = e.target.id.split('_');
+        var id = substr[0];
+        var parentid = substr[1];
+        var parentname = e.target.attr("title");
+        var metadataStructureId = substr[2];
+        var number = substr[3];
+        var ParentModelNumber = substr[4];
+        var ParentStepID = substr[5];
+
+
+        var data = {
+            value: e.target.value,
+            id: id,
+            parentid: parentid,
+            parentname: parentname,
+            number: number,
+            ParentModelNumber: ParentModelNumber,
+            ParentStepId: ParentStepID
+        };
+
+        //alert(id);
+        //alert(parentid);
+        //alert(metadataStructureId);
+        //alert(number);
+
+        $.ajax({
+            url: '/DCM/CreateDataset/ValidateMetadataAttributeUsage',
+            type: 'POST',
+            data: JSON.stringify(data),
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            error: function (xhr) {
+                //alert('Error: ' + xhr.statusText);
+            },
+            success: function (result) {
+                //alert("success");
+            },
+            async: true,
+            processData: false
+        });
+    }
+
+    function OnChangeDatePicker(e) {
+
+
+        var substr = e.target.id.split('_');
+        var id = substr[0];
+        var parentid = substr[1];
+        var parentname = $("#" + e.id).attr("title");
+        //var metadataStructureId = substr[2];
+        var number = substr[2];
+        var ParentModelNumber = substr[3];
+        var ParentStepID = substr[5];
+
+        var data = {
+            value: e.value,
+            id: id,
+            parentid: parentid,
+            parentname: parentname,
+            number: number,
+            ParentModelNumber: ParentModelNumber,
+            ParentStepId: ParentStepID 
+        };
+
+        //alert(id);
+        //alert(parentid);
+        //alert(metadataStructureId);
+        //alert(number);
+
+        $.ajax({
+            url: '/DCM/CreateDataset/ValidateMetadataAttributeUsage',
+            type: 'POST',
+            data: JSON.stringify(data),
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            error: function (xhr) {
+                //alert('Error: ' + xhr.statusText);
+            },
+            success: function (result) {
+                //alert("success");
+            },
+            async: true,
+            processData: false
+        });
+    }
+
+    function OnClickAdd(e)
+    {
+        
+        var substr = e.id.split('_');
+        var id = substr[0];
+        var parentid = substr[1];
+        var number = substr[2];
+        var ParentModelNumber = substr[3];
+        var NumberOfSourceInPackage = substr[4];
+        var ParentStepID = substr[5];
+        
+        @*alert("AddClick -" +e.id +" - "+NumberOfSourceInPackage+" <= "+'@Model.Source.MaxCardinality');
+        alert("id -"+id);
+        alert("parentid -" + parentid);
+        alert("metadataStructureId -" + metadataStructureId);
+        alert("number -" + number);
+        alert("ParentModelNumber -" + ParentModelNumber);
+        alert("NumberOfSourceInPackage -" + NumberOfSourceInPackage);*@
+        
+        var maxcardinality = '@Model.Source.MaxCardinality';
+
+        if (NumberOfSourceInPackage <= parseInt(maxcardinality)) {
+            $.post('@Url.Action("AddMetadataAttributeUsage", "CreateDataset", new RouteValueDictionary { { "area", "DCM" } })', { id: id, parentid: parentid, number: number, parentModelNumber: ParentModelNumber, ParentStepId: ParentStepID }, function (response) {
+
+                var id = ParentStepID;
+                //alert(id);
+                //alert(response);
+                $("#" + id).replaceWith(response);
+            })
+        }
+        else {
+            alert("Maxium cardinality is reached.");
+        }
+    }
+
+    function OnClickRemove(e)
+    {
+       
+        var value = $("#" + e.id).closest(".ValueClass").value;
+
+        if (value != "") {
+
+            var substr = e.id.split('_');
+            var id = substr[0];
+            var parentid = substr[1];
+            var number = substr[2];
+            var ParentModelNumber = substr[3];
+            var NumberOfSourceInPackage = substr[4];
+            var ParentStepID = substr[5];
+
+         
+            if (NumberOfSourceInPackage > 1) {
+                var data = {
+                    value: value,
+                    id: id,
+                    parentid: parentid,
+                    number: number,
+                    ParentModelNumber: ParentModelNumber
+                };
+
+                $.post('@Url.Action("RemoveMetadataAttributeUsage", "CreateDataset", new RouteValueDictionary { { "area", "DCM" } })', { id: id, parentid: parentid, number: number, parentModelNumber: ParentModelNumber, ParentStepId: ParentStepID }, function (response) {
+
+                    var id = ParentStepID;
+                    $("#" + id).replaceWith(response);
+                })
+            }
+            else {
+                alert("You are not able to remove elements.");
+            }
+        }
+    }
+
+    function OnClickUp(e)
+    {
+        //alert(value);
+        var value = $("#" + e.id).closest(".ValueClass").value;
+        if (value != "") {
+
+            var substr = e.id.split('_');
+            var id = substr[0];
+            var parentid = substr[1];
+            var number = substr[2];
+            var ParentModelNumber = substr[3];
+            var ParentStepID = substr[5];
+
+
+            $.post('@Url.Action("UpMetadataAttributeUsage", "CreateDataset", new RouteValueDictionary { { "area", "DCM" } })', { id: id, parentid: parentid, number: number, ParentModelNumber: ParentModelNumber, ParentStepId: ParentStepID }, function (response) {
+     
+                var id = ParentStepID;
+                $("#" + id).replaceWith(response);
+            })
+
+        }
+    }
+
+    function OnClickDown(e) {
+        //alert(value);
+        var value = $("#" + e.id).closest(".ValueClass").value;
+        if (value != "") {
+
+            var substr = e.id.split('_');
+            var id = substr[0];
+            var parentid = substr[1];
+            var number = substr[2];
+            var ParentModelNumber = substr[3];
+            var ParentStepID = substr[5];
+
+            var data = {
+                value: value,
+                id: id,
+                parentid: parentid,
+                number: number,
+                ParentModelNumber: ParentModelNumber
+            };
+
+            $.post('@Url.Action("DownMetadataAttributeUsage", "CreateDataset", new RouteValueDictionary { { "area", "DCM" } })', { id: id, parentid: parentid, number: number, ParentModelNumber: ParentModelNumber, ParentStepId: ParentStepID }, function (response) {
+
+                var id = ParentStepID;
+                $("#" + id).replaceWith(response);
+            })
+
+        }
+    }
+
+</script>

@@ -109,7 +109,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
                 FullName = user.FullName,
                 Email = user.Email,
                 AuthenticatorId = user.Authenticator.Id,
-                SecurityQuestionId = user.SecurityQuestion.Id
+                SecurityQuestionId = user.Authenticator.Id == 1 ? user.SecurityQuestion.Id : 0
             };
         }
     }

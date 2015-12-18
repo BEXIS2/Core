@@ -60,7 +60,6 @@
 
 
 <div id="root">
-
 @foreach (var element in Model.StepModelHelpers)
 {
     if (element.Usage is MetadataPackageUsage)
@@ -68,6 +67,7 @@
         @Html.Partial("_metadataPackageView", element)
     }
 }
+
 </div>
 @if (!locked)
 { 
@@ -97,7 +97,7 @@
 
     function edit()
     {
-        $.get('@Url.Action("EditMetadata", "CreateDataset", new RouteValueDictionary {{ "area", "DCM" }, {"datasetId",@Model.DatasetId},{"locked" ,false},{"created" ,false}})', function (response)
+        $.get('@Url.Action("EditMetadata", "CreateDataset", new RouteValueDictionary {{ "area", "DCM" }, {"datasetId",@Model.DatasetId},{"locked" ,false},{"created" ,false} })', function (response)
         {
             $('#MetadataEditor').replaceWith(response);
         })
@@ -128,7 +128,7 @@
 
     function callSubmitAction()
     {
-        $.get('@Url.Action("Submit", "CreateDataset", new RouteValueDictionary { { "area", "DCM" },{"editMode",@Model.FromEditMode}})', function (response)
+        $.get('@Url.Action("Submit", "CreateDataset", new RouteValueDictionary { { "area", "DDM" }, {"editMode",@Model.FromEditMode} })', function (response)
         {
             $('#MetadataEditor').replaceWith(response);
             $('html, body').animate({ scrollTop: 0 }, 'slow');

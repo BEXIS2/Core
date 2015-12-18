@@ -349,6 +349,7 @@
     <Compile Include="Areas\DCM\Models\UploadWizardParameters.cs" />
     <Compile Include="Areas\DCM\Models\ValidationModel.cs" />
     <Compile Include="Areas\DDM\Controllers\AdminController.cs" />
+    <Compile Include="Areas\DDM\Controllers\CreateDatasetController.cs" />
     <Compile Include="Areas\DDM\Controllers\DataController.cs" />
     <Compile Include="Areas\DDM\Controllers\HelpController.cs" />
     <Compile Include="Areas\DDM\Helpers\GridHelper.cs" />
@@ -592,6 +593,13 @@
     <Content Include="Areas\SAM\Views\Users\_Membership.cshtml" />
     <Content Include="Areas\SAM\Views\Groups\_Membership.cshtml" />
     <Content Include="Areas\SAM\Views\Account\MyAccount.cshtml" />
+    <Content Include="Areas\DDM\Views\CreateDataset\_metadataAttributeView.cshtml" />
+    <Content Include="Areas\DDM\Views\CreateDataset\_metadataCompoundAttributeUsageView.cshtml" />
+    <Content Include="Areas\DDM\Views\CreateDataset\_metadataCompoundAttributeView.cshtml" />
+    <Content Include="Areas\DDM\Views\CreateDataset\_metadataPackageUsageView.cshtml" />
+    <Content Include="Areas\DDM\Views\CreateDataset\_metadataPackageView.cshtml" />
+    <Content Include="Areas\DDM\Views\CreateDataset\Index.cshtml" />
+    <Content Include="Areas\DDM\Views\CreateDataset\MetadataEditor.cshtml" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
@@ -1424,7 +1432,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>18541</DevelopmentServerPort>
+          <DevelopmentServerPort>5412</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>

@@ -467,7 +467,7 @@ namespace BExIS.Xml.Helpers.Mapping
             MetadataPackageManager mdpManager = new MetadataPackageManager();
 
              // create default metadataStructure
-            MetadataStructure test = mdsManager.Repo.Get(p => p.Name == SchemaName).FirstOrDefault();
+            MetadataStructure test = null; //mdsManager.Repo.Get(p => p.Name == SchemaName).FirstOrDefault();
             if (test == null) test = mdsManager.Create(SchemaName, SchemaName, "", "", null);
 
             
@@ -513,7 +513,7 @@ namespace BExIS.Xml.Helpers.Mapping
                 {
                     XmlSchemaGroup rootAsGroup = (XmlSchemaGroup)root;
 
-                    MetadataPackage package = mdpManager.MetadataPackageRepo.Get(p => p.Name == rootAsGroup.Name).FirstOrDefault();
+                    MetadataPackage package = getExistingMetadataPackage(rootAsGroup.Name);
                     if (package == null) package = mdpManager.Create(rootAsGroup.Name, GetDescription(rootAsGroup.Annotation), true);
 
                     if (test.MetadataPackageUsages.Where(p => p.MetadataPackage == package).Count() <= 0)
@@ -563,7 +563,7 @@ namespace BExIS.Xml.Helpers.Mapping
 
                     if (simpleElements.Count > 0)
                     {
-                        MetadataPackage package = mdpManager.MetadataPackageRepo.Get(p => p.Name == rootNodePackage).FirstOrDefault();
+                        MetadataPackage package = getExistingMetadataPackage(rootNodePackage); ;// = mdpManager.MetadataPackageRepo.Get(p => p.Name == rootNodePackage).FirstOrDefault();
                         if (package == null) package = mdpManager.Create(rootNodePackage, rootNodePackageDescription, true);
 
                         if (test.MetadataPackageUsages.Where(p => p.MetadataPackage == package).Count() <= 0)
@@ -595,7 +595,7 @@ namespace BExIS.Xml.Helpers.Mapping
                         if (!XmlSchemaUtility.IsSimpleType(element))
                         {
                             #region complexType
-                            MetadataPackage package = mdpManager.MetadataPackageRepo.Get(p => p.Name == element.Name).FirstOrDefault();
+                            MetadataPackage package = getExistingMetadataPackage(element.Name);// = mdpManager.MetadataPackageRepo.Get(p => p.Name == element.Name).FirstOrDefault();
                             if (package == null) package = mdpManager.Create(element.Name, GetDescription(element.Annotation), true);
 
                             // add package to structure
@@ -699,7 +699,6 @@ namespace BExIS.Xml.Helpers.Mapping
      
         }
 
-
         private MetadataCompoundAttribute get(XmlSchemaElement element, List<string> parents)
         {
 
@@ -713,7 +712,7 @@ namespace BExIS.Xml.Helpers.Mapping
             else
                 nameOfType = element.Name + "Type";
 
-            MetadataCompoundAttribute metadataCompountAttr = metadataAttributeManager.MetadataCompoundAttributeRepo.Get(p => p.Name == nameOfType).FirstOrDefault();
+            MetadataCompoundAttribute metadataCompountAttr = getExistingMetadataCompoundAttribute(nameOfType);
             
             if (metadataCompountAttr == null)
             {
@@ -888,7 +887,7 @@ namespace BExIS.Xml.Helpers.Mapping
                 MetadataAttribute attribute;
 
                 if (metadataAttributeManager.MetadataAttributeRepo != null && 
-                    metadataAttributeManager.MetadataAttributeRepo.Get().Where(m => m.Name.Equals(element.Name)).Count() > 0)
+                    getExistingMetadataAttribute(element.Name)!=null)
                 {
                     attribute = metadataAttributeManager.MetadataAttributeRepo.Get().Where(m => m.Name.Equals(element.Name)).First();
                 }
@@ -952,7 +951,7 @@ namespace BExIS.Xml.Helpers.Mapping
                 if (noneunit == null)
                     unitManager.Create("None", "None", "If no unit is used.", null, MeasurementSystem.Unknown); // the null dimension should be replaced bz a proper valid one. Javad 11.06
 
-                MetadataAttribute temp = metadataAttributeManager.MetadataAttributeRepo.Get().Where(m => m.Name.Equals(name)).FirstOrDefault();
+                MetadataAttribute temp = getExistingMetadataAttribute(name);// = metadataAttributeManager.MetadataAttributeRepo.Get().Where(m => m.Name.Equals(name)).FirstOrDefault();
 
                 if (temp == null)
                 {
@@ -993,7 +992,7 @@ namespace BExIS.Xml.Helpers.Mapping
                     if (noneunit == null)
                         unitManager.Create("None", "None", "If no unit is used.", null, MeasurementSystem.Unknown); // null diemsion to be replaced
 
-                    MetadataAttribute temp = metadataAttributeManager.MetadataAttributeRepo.Get().Where(m => m.Name.Equals(name)).FirstOrDefault();
+                    MetadataAttribute temp = getExistingMetadataAttribute(name);// = metadataAttributeManager.MetadataAttributeRepo.Get().Where(m => m.Name.Equals(name)).FirstOrDefault();
 
                     if (temp == null)
                     {
@@ -1024,7 +1023,7 @@ namespace BExIS.Xml.Helpers.Mapping
         private MetadataCompoundAttribute createMetadataCompoundAttribute(XmlSchemaComplexType complexType)
         {
              // create a compoundAttribute
-            MetadataCompoundAttribute mca = metadataAttributeManager.MetadataCompoundAttributeRepo.Get(p => p.Name == complexType.Name).FirstOrDefault();
+            MetadataCompoundAttribute mca = getExistingMetadataCompoundAttribute(complexType.Name);// = metadataAttributeManager.MetadataCompoundAttributeRepo.Get(p => p.Name == complexType.Name).FirstOrDefault();
 
             DataType dt1 = dataTypeManager.Repo.Get(p => p.Name.Equals("String")).FirstOrDefault();
             if (dt1 == null)
@@ -1050,7 +1049,7 @@ namespace BExIS.Xml.Helpers.Mapping
         {
             // create a compoundAttribute
             int i = 0;
-            MetadataCompoundAttribute mca = metadataAttributeManager.MetadataCompoundAttributeRepo.Get(p => p.Name == element.Name+"Type").FirstOrDefault();
+            MetadataCompoundAttribute mca = getExistingMetadataCompoundAttribute(element.Name + "Type"); ;// = metadataAttributeManager.MetadataCompoundAttributeRepo.Get(p => p.Name == element.Name+"Type").FirstOrDefault();
             Debug.WriteLine("createMetadataCompoundAttribute" + i++);
             DataType dt1 = dataTypeManager.Repo.Get(p => p.Name.Equals("String")).FirstOrDefault();
             if (dt1 == null)
@@ -1076,6 +1075,24 @@ namespace BExIS.Xml.Helpers.Mapping
 
         #region helper functions
 
+        private MetadataAttribute getExistingMetadataAttribute(string name)
+        {
+            // TODO: need to implement; 
+
+            return null;
+        }
+
+        private MetadataCompoundAttribute getExistingMetadataCompoundAttribute(string name)
+        {
+            // TODO: need to implement; 
+            return null;
+        }
+
+        private MetadataPackage getExistingMetadataPackage(string name)
+        {
+            // TODO: need to implement; 
+            return null;
+        }
 
         // vielleicht besser mit festen datatypes im system
         private DataType GetDataType(string dataTypeAsString)
@@ -1197,7 +1214,6 @@ namespace BExIS.Xml.Helpers.Mapping
 
             return constraints;
         }
-
 
         /// <summary>
         ///  length, minLength,maxLength,pattern,enumeration,whiteSpace,maxInclusive,maxExclusive,minExclusive,minInclusive,totalDigits,fractionDigits
@@ -1484,7 +1500,6 @@ namespace BExIS.Xml.Helpers.Mapping
         }
 
         #endregion
-
 
         #endregion
     }

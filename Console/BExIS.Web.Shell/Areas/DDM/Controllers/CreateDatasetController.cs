@@ -1,4 +1,18 @@
-﻿using System;
+﻿/****
+ * This class is added temporary
+ * because of showing the metadata view in the ddm
+ *  
+ * the idea was to use the CreateDatasetController in the dcm
+ * but in the case of using search as public feature, the dcm action is not
+ * public as well
+ * 
+ * included files from dcm to ddm
+ * 
+ * Controller/CreatedatasetController
+ * View/CreateDataset  - all views
+ * 
+ */
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -33,7 +47,7 @@ using BExIS.Xml.Services;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Models;
 
-namespace BExIS.Web.Shell.Areas.DCM.Controllers
+namespace BExIS.Web.Shell.Areas.DDM.Controllers
 {
     public class CreateDatasetController : Controller
     {
@@ -154,7 +168,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             if (loadFromExternal)
             {
-                TaskManager = new CreateDatasetTaskmanager();
+
                 Session["CreateDatasetTaskmanager"] = TaskManager;
                 TaskManager.AddToBus(CreateDatasetTaskmanager.DATASET_ID, datasetId);
 
@@ -163,7 +177,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 DatasetVersion dsv = dm.GetDatasetLatestVersion(datasetId);
 
                 TaskManager.AddToBus(CreateDatasetTaskmanager.METADATASTRUCTURE_ID, dsv.Dataset.MetadataStructure.Id);
-                TaskManager.AddToBus(CreateDatasetTaskmanager.RESEARCHPLAN_ID, dsv.Dataset.ResearchPlan.Id);
+                TaskManager.AddToBus(CreateDatasetTaskmanager.RESEARCHPLAN_ID, dsv.Dataset.MetadataStructure.Id);
                 TaskManager.AddToBus(CreateDatasetTaskmanager.DATASTRUCTURE_ID, dsv.Dataset.DataStructure.Id);
                 TaskManager.AddToBus(CreateDatasetTaskmanager.METADATA_XML, XmlUtility.ToXDocument(dsv.Metadata));
 
@@ -173,7 +187,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 TaskManager.AddToBus(CreateDatasetTaskmanager.RESEARCHPLAN_ID, rpm.Repo.Get().First().Id);
 
                 AdvanceTaskManagerBasedOnExistingMetadata(dsv.Dataset.MetadataStructure.Id);
-                //AdvanceTaskManager(dsv.Dataset.MetadataStructure.Id);
+
 
 
                 foreach (var stepInfo in TaskManager.StepInfos)
@@ -237,7 +251,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             PermissionManager permissionManager = new PermissionManager();
             SubjectManager subjectManager = new SubjectManager();
 
-            Model.EditRight = permissionManager.HasUserDataAccess(subjectManager.GetUserByName(GetUserNameOrDefault()).Id, 1, datasetId, RightType.Update);
+
+            if (GetUserNameOrDefault() !="DEFAULT")
+                Model.EditRight = permissionManager.HasUserDataAccess(subjectManager.GetUserByName(GetUserNameOrDefault()).Id, 1, datasetId, RightType.Update);
 
             return PartialView("MetadataEditor", Model);
         }
@@ -2270,17 +2286,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     {
                         int counter = 0;
 
-                        XElement last = null;
-
                         foreach (XElement element in xelements)
                         {
-                            // if the last has not the same name reset count
-                            if (last != null && !last.Name.Equals(element.Name))
-                            {
-                                counter = 0;
-                            }
-
-                            last = element;
                             counter++;
                             string title = counter.ToString(); //usage.Label+" (" + counter + ")";
                             long id = Convert.ToInt64((element.Attribute("roleId")).Value.ToString());
@@ -2342,11 +2349,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             if (childrenUsages.Count > 0)
             {
-
                 foreach (BaseUsage u in childrenUsages)
                 {
-
-                    int number = 1;//childrenUsages.IndexOf(u) + 1;
+                    int number = 1; //childrenUsages.IndexOf(u) + 1;
                     string xPath = parentXpath + "//" + u.Label.Replace(" ", string.Empty) + "["+ number +"]";
 
                     bool complex = false;

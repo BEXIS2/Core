@@ -58,24 +58,29 @@
                 @Html.HiddenFor(m => m.UserName)
             </td>
         </tr>
-        <tr>
-            <td>
-                @Html.LabelFor(m => m.Password)
-            </td>
-            <td>
-                @Html.PasswordFor(m => m.Password, new {@class = "t-input bx-input"})
-                @Html.ValidationMessageFor(m => m.Password)
-            </td>
-        </tr>
-        <tr>
-            <td>
-                @Html.LabelFor(m => m.ConfirmPassword)
-            </td>
-            <td>
-                @Html.PasswordFor(m => m.ConfirmPassword, new {@class = "t-input bx-input"})
-                @Html.ValidationMessageFor(m => m.ConfirmPassword)
-            </td>
-        </tr>
+
+        @if (Model.AuthenticatorId == 1)
+        {
+            <tr>
+                <td>
+                    @Html.LabelFor(m => m.Password)
+                </td>
+                <td>
+                    @Html.PasswordFor(m => m.Password, new { @class = "t-input bx-input" })
+                    @Html.ValidationMessageFor(m => m.Password)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.LabelFor(m => m.ConfirmPassword)
+                </td>
+                <td>
+                    @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "t-input bx-input" })
+                    @Html.ValidationMessageFor(m => m.ConfirmPassword)
+                </td>
+            </tr>
+        }
+        
         <tr>
             <td>
                 @Html.LabelFor(m => m.FullName)
@@ -94,28 +99,33 @@
                 @Html.ValidationMessageFor(m => m.Email)
             </td>
         </tr>
-        <tr>
-            <td>
-                @Html.Label("Security Question")
-            </td>
-            <td>
-                @(Html.Telerik().DropDownListFor(m => m.SecurityQuestionId)
+
+        @if (Model.AuthenticatorId == 1)
+        {
+            <tr>
+                <td>
+                    @Html.Label("Security Question")
+                </td>
+                <td>
+                    @(Html.Telerik().DropDownListFor(m => m.SecurityQuestionId)
                       .Placeholder("--- SELECT ---")
-                      .HtmlAttributes(new {style = "width:372px; padding-left: 2px;", @class = "t-input bx-input"})
-                      .DropDownHtmlAttributes(new {style = "width:auto;"})
+                      .HtmlAttributes(new { style = "width:372px; padding-left: 2px;", @class = "t-input bx-input" })
+                      .DropDownHtmlAttributes(new { style = "width:auto;" })
                       .BindTo(new SelectList(Model.SecurityQuestionList.SecurityQuestionList, "Id", "Question")))
-                @Html.ValidationMessageFor(m => m.SecurityQuestionId)
-            </td>
-        </tr>
-        <tr>
-            <td>
-                @Html.LabelFor(m => m.SecurityAnswer)
-            </td>
-            <td>
-                @Html.TextBoxFor(m => m.SecurityAnswer, new {@class = "t-input bx-input"})
-                @Html.ValidationMessageFor(m => m.SecurityAnswer)
-            </td>
-        </tr>
+                    @Html.ValidationMessageFor(m => m.SecurityQuestionId)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.LabelFor(m => m.SecurityAnswer)
+                </td>
+                <td>
+                    @Html.TextBoxFor(m => m.SecurityAnswer, new { @class = "t-input bx-input" })
+                    @Html.ValidationMessageFor(m => m.SecurityAnswer)
+                </td>
+            </tr>
+        }
+        
     </table>
 
     <div class="bx-footer right">

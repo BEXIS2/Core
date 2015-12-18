@@ -118,6 +118,9 @@ namespace BExIS.Web.Shell.Areas.SAM.Helpers
             Task t8 = taskManager.CreateTask("DDM", "Home", "*");
             t8.Feature = f9;
             taskManager.UpdateTask(t8);
+            Task t33 = taskManager.CreateTask("DDM", "CreateDataset", "*");
+            t33.Feature = f9;
+            taskManager.UpdateTask(t33);
 
             Task t9 = taskManager.CreateTask("DCM", "CreateDataset", "*");
             t9.Feature = f11;
