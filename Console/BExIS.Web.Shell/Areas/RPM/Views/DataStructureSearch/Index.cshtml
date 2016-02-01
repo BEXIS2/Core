@@ -1,0 +1,30 @@
+﻿@using Telerik.Web.Mvc.UI
+@using BExIS.Web.Shell.Areas.RPM.Models
+
+<link href="@Url.Content("~/Areas/RPM/Stylesheets/DataStructureSearch.css")" rel="stylesheet" type="text/css" />
+
+<div class="bx-rpm-searchBar">
+    @Html.TextBox("SearchBox", "", new { @class = "bx-input", onkeypress = "keypressed(this)" })
+    <a id="SearchButton"class="bx bx-button small function bx-search" href="javascript:loadResults()"></a>
+</div>
+<div id="SearchResults">
+    @Html.Partial("_datatructureSearchResult")
+</div>
+
+<script type="text/javascript">
+    function keypressed(e) {
+        if (event.keyCode == 13)
+        {
+            loadResults();
+        }
+    }
+
+    function loadResults() {
+        var parametrs = '/?searchTerms=' + $('#SearchBox').val();
+            $.get('@Url.Action("_dataStructureResultBinding", "DataStructureSearch", new { area = "RPM"} )' + parametrs, function (data) {
+                $('#SearchResults').html(data);
+            });
+        $('#SearchBox').val("");
+    }
+
+</script>

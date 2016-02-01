@@ -1,0 +1,120 @@
+﻿@using Telerik.Web.Mvc.UI
+
+@using BExIS.Web.Shell.Areas.RPM.Models
+@model string
+
+@{Html.Telerik().Grid<DataStructureResultStruct>()
+                .Name("bx-rpm-dataStructureResultGrid")
+                .HtmlAttributes(new { @class = "bx-rpm-resultGrid" })
+                .DataBinding(dataBinding => dataBinding
+                    .Ajax()
+                    .Select("_dataStructureResultGridBinding", "DataStructureSearch", new { area = "RPM", searchTerms = Model })
+                )
+                .ClientEvents(e =>
+                {
+                    e.OnDataBinding("dataStructureResultGrid_onDataBinding");
+                    e.OnDataBound("dataStructureResultGrid_onDataBound");
+                })
+                .Filterable()
+                .Sortable()
+                .Columns(columns =>
+                {
+                    columns.Bound(c => c.Title);
+                    columns.Bound(c => c.Id);
+                    columns.Bound(c => c.Description);
+                    columns.Bound(c => c.inUse);
+                    columns.Template(
+                    @<text>
+                    </text>
+                    )
+                    .HeaderHtmlAttributes(new { @class = "bx-rpm-gridfunction" });
+                })
+                .ClientRowTemplate(
+                    "<tr>" +
+                      "<td class='bx-rpm-result'><span class='bx-rpm-title' onclick='javascript:clickDatastructure(<#= Id #>)'><#= Title #><span id='collapse<#= Id #>' class='bx bx-angle-double-down'></span></span></td>" +
+                      "<td class='bx-rpm-result'><#= Id #></td>" +
+                      "<td class='bx-rpm-result'><#= Description #></td>" +
+                      "<td class='bx-rpm-result'><#= inUse #></td>" +
+                      "<td class='bx-rpm-result bx-rpm-gridfunction'>" +
+                          "<a class='bx bx-grid-function bx-edit' href='/RPM/Home/showDataStructure?SelectedItem=<#= Id #>%2C<#= Structured #>'></a>" +
+                          "<a id='download<#= Id #>' class='bx bx-grid-function bx-download' structured='<#= Structured #>' href='/RPM/Home/downloadTemplate?id=<#= Id #>'></a>" +
+                      "</td>" +
+                  "</tr>" +
+                  "<tr class='bx-rpm-preview hidden' id='preview<#= Id #>' structured='<#= Structured #>' preview='<#= Preview #>'>" +
+                      "<td colspan='4' id='content<#= Id #>'></td>" +
+                  "</tr>" +
+                  "<tr>" +
+                      "<td class='bx-rpm-empty'></td>" +
+                      "<td class='bx-rpm-empty'></td>" +
+                      "<td class='bx-rpm-empty'></td>" +
+                      "<td class='bx-rpm-empty'></td>" +
+                      "<td class='bx-rpm-empty bx-rpm-gridfunction'></td>" +
+                  "</tr>"
+                )
+                .Render();
+}
+
+<script type="text/javascript">
+
+    var previewIds = [];
+
+    function clickDatastructure(id) {
+        if ($('#preview' + id).attr('preview') == 'true') {
+            $('#preview' + id).attr('preview', 'false');
+            $('#preview' + id).addClass('hidden');
+            $('#collapse' + id).addClass('bx-angle-double-down');
+            $('#collapse' + id).removeClass('bx-angle-double-up');
+            previewIds.splice(previewIds.indexOf(id), 1);
+        }
+        else {
+            loadPreview(id);
+            $('#preview' + id).attr('preview', 'true');
+            $('#preview' + id).removeClass('hidden');
+            $('#collapse' + id).addClass('bx-angle-double-up');
+            $('#collapse' + id).removeClass('bx-angle-double-down');
+            previewIds.push(id);
+        }
+        previewIds.sort();
+    }
+
+    function dataStructureResultGrid_onDataBinding(e) {
+
+        e.data = {
+            previewIds: previewIds
+        };
+    }
+
+    function dataStructureResultGrid_onDataBound(e) {
+        resetAllTelerikIconTitles();
+        for (i = 0; i < previewIds.length; i++) {
+            if ($('#preview' + previewIds[i]).attr('preview') == 'true') {
+                loadPreview(previewIds[i]);
+                $('#preview' + previewIds[i]).removeClass('hidden');
+                $('#collapse' + previewIds[i]).addClass('bx-angle-double-up');
+                $('#collapse' + previewIds[i]).removeClass('bx-angle-double-down');
+            }
+        }
+
+        for (i = 0; i < $('.bx-download').length; i++) {
+            id = $('.bx-download')[i].id;
+            if ($('#' + id).attr('structured') == 'false') {
+                $('#' + id).addClass('bx-disabled');
+                $('#' + id).removeAttr('href');
+            }
+        }
+    }
+
+    function dataStructurePreviewGrid_onDataBound(e) {
+        resetAllTelerikIconTitles();
+    }
+
+    function loadPreview(id) {
+        if ($('#content' + id).html() == "" || $('#content' + id).html() == null) {
+            var parametrs = '/?dataStructureId=' + id + '&structured=' + $('#preview' + id).attr('structured')
+            $.get('@Url.Action("_dataStructurePreviewBinding", "DataStructureSearch", new { area = "RPM"} )' + parametrs, function (data) {
+                $('#content' + id).html(data);
+            });
+        }
+    }
+
+</script>

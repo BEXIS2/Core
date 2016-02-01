@@ -81,9 +81,9 @@
                         </text>
                     )
                     .Title("Associated Data Types");
-                                columns.Bound(c => c.Unit.Description)
-                                                    .HtmlAttributes(new { @style ="max-width:500px" });
-                                columns.Template(
+                columns.Bound(c => c.Unit.Description)
+                                    .HtmlAttributes(new { @style ="max-width:500px" });
+                columns.Template(
                     @<text>
                             
                             @if (item.inUse)

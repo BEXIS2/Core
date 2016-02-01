@@ -295,7 +295,8 @@
 .fa-music:before {
   content: "\f001";
 }
-.fa-search:before {
+.fa-search:before,
+.bx-search:before {
   content: "\f002";
 }
 .fa-envelope-o:before {
