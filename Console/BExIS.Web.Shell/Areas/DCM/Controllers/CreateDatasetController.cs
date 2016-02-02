@@ -660,7 +660,11 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 int numberOfSMM = 1;
                 if (complexElement != null)
                 {
+                    Debug.WriteLine("XXXXXXXXXXXXXXXXXXXX");
+                    Debug.WriteLine(simpleMetadataAttributeModel.Source.Label); 
                     IEnumerable<XElement> childs = XmlUtility.GetChildren(complexElement).Where(e => e.Attribute("id").Value.Equals(simpleMetadataAttributeModel.Id.ToString()));
+
+
                     if (childs.Any())
                         numberOfSMM = childs.First().Elements().Count();
                 }

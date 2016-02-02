@@ -27,6 +27,11 @@ namespace BExIS.Dcm.ImportMetadataStructureWizard
 
         public static string XML_SCHEMA_MANAGER = "XML_SCHEMA_MANAGER";
         public static string XML_ELEMENT_LIST = "XML_ELEMENT_LIST";
+
+        public static string MAPPING_FILE_NAME_IMPORT = "MAPPING_FILE_NAME_IMPORT";
+        public static string MAPPING_FILE_NAME_EXPORT = "MAPPING_FILE_NAME_EXPORT";
+
+
         /// <summary>
         /// 
         /// </summary>

@@ -10,13 +10,14 @@ namespace BExIS.Xml.Models.Mapping
 {
     public class XmlMapper
     {
-        public int Id { get; set; }
+        public long Id { get; set; }
         public string Name { get; set; }
         public XmlMappingHeader Header { get; set; }
         public List<XmlMappingRoute> Routes { get; set; }
 
         public XmlMapper()
         {
+            Header = new XmlMappingHeader();
             Routes = new List<XmlMappingRoute>();
         }
 

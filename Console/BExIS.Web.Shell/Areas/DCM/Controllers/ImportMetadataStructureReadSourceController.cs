@@ -172,6 +172,11 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 }
             }
 
+
+            TaskManager.AddToBus(ImportMetadataStructureTaskManager.MAPPING_FILE_NAME_IMPORT, xmlSchemaManager.mappingFileNameImport);
+            TaskManager.AddToBus(ImportMetadataStructureTaskManager.MAPPING_FILE_NAME_EXPORT, xmlSchemaManager.mappingFileNameExport);
+
+
             model.StepInfo.notExecuted = false;
 
             if (model.ErrorList.Count == 0)

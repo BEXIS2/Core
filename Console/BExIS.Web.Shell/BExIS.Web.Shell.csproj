@@ -361,6 +361,7 @@
     <Compile Include="Areas\DDM\Models\ShowPrimaryDataModel.cs" />
     <Compile Include="Areas\DIM\Controllers\AdminController.cs" />
     <Compile Include="Areas\DIM\Controllers\HelpController.cs" />
+    <Compile Include="Areas\DIM\Controllers\ImportController.cs" />
     <Compile Include="Areas\DIM\DIMAreaRegistration.cs" />
     <Compile Include="Areas\DIM\Models\AdminModel.cs" />
     <Compile Include="Areas\DIM\Models\DatasetVersionModel.cs" />
@@ -609,6 +610,7 @@
     <Content Include="Areas\RPM\Views\DataStructureSearch\_dataStructuredStructurePreview.cshtml" />
     <Content Include="Areas\RPM\Views\DataStructureSearch\_datatructureSearchResult.cshtml" />
     <Content Include="Areas\RPM\Views\DataStructureEdit\Index.cshtml" />
+    <Content Include="Areas\DIM\Views\Import\Index.cshtml" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
@@ -1122,37 +1124,33 @@
       <Project>{b906a66a-4a09-4207-b590-655ee111ccf1}</Project>
       <Name>BExIS.Ext.Services</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Components\IO\BExIS.Io.Transform.Output\BExIS.Io.Transform.Output.csproj">
-      <Project>{455ec826-9a92-40ff-bd3b-388c288955ce}</Project>
-      <Name>BExIS.Io.Transform.Output</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Components\IO\BExIS.Io.Transform.Validation\BExIS.Io.Transform.Validation.csproj">
-      <Project>{c8a05313-b960-406e-92ec-c1e5b3f47fcd}</Project>
-      <Name>BExIS.Io.Transform.Validation</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Components\IO\BExIS.IO.Transform.Input\BExIS.IO.Transform.Input.csproj">
       <Project>{5c4c8570-a53b-4191-a414-de028aaaf36a}</Project>
-      <Name>BExIS.Io.Transform.Input</Name>
+      <Name>BExIS.IO.Transform.Input</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Components\IO\BExIS.Io.Transform.Validation\BExIS.Io.Transform.Validation.csproj">
+    <ProjectReference Include="..\..\Components\IO\BExIS.IO.Transform.Output\BExIS.IO.Transform.Output.csproj">
+      <Project>{455ec826-9a92-40ff-bd3b-388c288955ce}</Project>
+      <Name>BExIS.IO.Transform.Output</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Components\IO\BExIS.IO.Transform.Validation\BExIS.IO.Transform.Validation.csproj">
       <Project>{c8a05313-b960-406e-92ec-c1e5b3f47fcd}</Project>
-      <Name>BExIS.Io.Transform.Validation</Name>
+      <Name>BExIS.IO.Transform.Validation</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Components\IO\BExIS.IoTransform.Input\BExIS.Io.Transform.Input.csproj">
-      <Project>{5c4c8570-a53b-4191-a414-de028aaaf36a}</Project>
-      <Name>BExIS.Io.Transform.Input</Name>
+    <ProjectReference Include="..\..\Components\IO\BExIS.IO.Transform.Validation\BExIS.IO.Transform.Validation.csproj">
+      <Project>{c8a05313-b960-406e-92ec-c1e5b3f47fcd}</Project>
+      <Name>BExIS.IO.Transform.Validation</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Components\IO\BExIS.Io\BExIS.Io.csproj">
+    <ProjectReference Include="..\..\Components\IO\BExIS.IO\BExIS.IO.csproj">
       <Project>{e4795f06-20c2-4c4c-a720-9a79896384df}</Project>
-      <Name>BExIS.Io</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Components\XML\BExIS.Xml.Models\BExIS.Xml.Models.csproj">
-      <Project>{c0c9f0f2-9e65-448d-8000-d311db326460}</Project>
-      <Name>BExIS.Xml.Entities</Name>
+      <Name>BExIS.IO</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Components\XML\BExIS.Xml.Helpers\BExIS.Xml.Helpers.csproj">
       <Project>{252f7872-a69c-43a6-84b4-4d2abdbdd9ab}</Project>
-      <Name>BExIS.Xml.Services</Name>
+      <Name>BExIS.Xml.Helpers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Components\XML\BExIS.Xml.Models\BExIS.Xml.Models.csproj">
+      <Project>{c0c9f0f2-9e65-448d-8000-d311db326460}</Project>
+      <Name>BExIS.Xml.Models</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Modules\DCM\BExIS.Dcm.CreateDatasetWizard\BExIS.Dcm.CreateDatasetWizard.csproj">
       <Project>{93eeeda5-6d79-41a1-947b-0a3fc9e46abc}</Project>
@@ -1418,6 +1416,9 @@
       <Generator>GlobalResourceProxyGenerator</Generator>
       <LastGenOutput>EditorLocalization.de-DE.designer.cs</LastGenOutput>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

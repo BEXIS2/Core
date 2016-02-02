@@ -130,12 +130,63 @@ namespace BExIS.Xml.Helpers.Mapping
             #region xmlschema
 
             xmlSchemaManager = new XmlSchemaManager();
-            string schemaPath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), xmlMapper.Header.Schemas.First().Value);
-            xmlSchemaManager.Load(schemaPath, userName);
+
+            if (xmlMapper.Header.Schemas.Count > 0)
+            {
+                xmlSchemaManager = new XmlSchemaManager();
+                string schemaPath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), xmlMapper.Header.Schemas.First().Value);
+                xmlSchemaManager.Load(schemaPath, userName);
+            }
 
             #endregion
 
             return xmlMapper;
+        }
+
+        public XmlDocument Generate(XmlDocument metadataXml, long id)
+        {
+            #region abcd (metadata from bexis to abcd)
+
+            XmlDocument newMetadata = new XmlDocument();
+
+            newMetadata.AppendChild(newMetadata.CreateElement(xmlMapper.Header.Destination.Prefix, xmlMapper.Header.Destination.XPath, xmlMapper.Header.Destination.NamepsaceURI));
+            XmlNode root = newMetadata.DocumentElement;
+
+
+
+            // create nodes
+            newMetadata = mapNode(newMetadata, newMetadata.DocumentElement, metadataXml.DocumentElement);
+
+            // add required attributes
+            newMetadata = addAttributes(newMetadata, newMetadata.DocumentElement);
+
+            //add root attributes
+            foreach (KeyValuePair<string, string> attribute in xmlMapper.Header.Attributes)
+            {
+                XmlAttribute attr = newMetadata.CreateAttribute(attribute.Key);
+                attr.Value = attribute.Value;
+                root.Attributes.Append(attr);
+            }
+
+            //add root namespaces
+            foreach (KeyValuePair<string, string> package in xmlMapper.Header.Packages)
+            {
+                XmlAttribute attr = newMetadata.CreateAttribute(package.Key);
+                attr.Value = package.Value;
+                root.Attributes.Append(attr);
+            }
+
+            string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), "Metadata " + id + ".xml");
+
+            newMetadata.Save(path);
+            ValidationEventHandler eventHandler = new ValidationEventHandler(validationEventHandler);
+
+            // the following call to Validate succeeds.
+            //document.Validate(eventHandler);
+
+            #endregion
+
+            return newMetadata;
         }
 
         public string Export(XmlDocument metadataXml , long id)
@@ -146,7 +197,15 @@ namespace BExIS.Xml.Helpers.Mapping
             //newMetadata.Load(defaultFilePath);
             //XmlNode root = newMetadata.DocumentElement;
 
-            newMetadata.AppendChild(newMetadata.CreateElement(xmlMapper.Header.Destination.Prefix, xmlMapper.Header.Destination.XPath, xmlMapper.Header.Destination.NamepsaceURI));
+            if (!String.IsNullOrEmpty(xmlMapper.Header.Destination.XPath))
+            {
+                newMetadata.AppendChild(newMetadata.CreateElement(xmlMapper.Header.Destination.Prefix, xmlMapper.Header.Destination.XPath, xmlMapper.Header.Destination.NamepsaceURI));
+            }
+            else
+            {
+                newMetadata.AppendChild(newMetadata.CreateElement("root"));
+            }
+
             XmlNode root = newMetadata.DocumentElement;
 
             
@@ -259,7 +318,7 @@ namespace BExIS.Xml.Helpers.Mapping
                             XmlNode current = destinationNode;
 
                             List<string> temp = new List<string>();
-
+                            
                             while (!current.Name.Equals(route.Destination.ParentSequence))
                             {
                                 temp.Add(current.LocalName);
@@ -330,7 +389,7 @@ namespace BExIS.Xml.Helpers.Mapping
 
                                             if (newNode == null)
                                             {
-                                                newNode = XmlUtility.CreateNode(newName,destinationDoc);
+                                                newNode = XmlUtility.CreateNode(newName, destinationDoc);
                                                 addChild(parent, newNode);
                                             }
 
@@ -341,6 +400,11 @@ namespace BExIS.Xml.Helpers.Mapping
                                             addChild(parent, destinationNode);
                                         }
                                     }
+                                }
+                                else
+                                {
+                                    newCurrent.InnerText = destinationNode.InnerText;
+                                    addChild(parent, destinationNode);
                                 }
 
                                 destinationPNode = parent;
@@ -456,6 +520,10 @@ namespace BExIS.Xml.Helpers.Mapping
                     {
                         node.AppendChild(child);
                     }
+                }
+                else
+                {
+                    node.AppendChild(child);
                 }
 
 

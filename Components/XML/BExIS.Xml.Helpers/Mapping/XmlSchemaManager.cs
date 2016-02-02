@@ -11,12 +11,14 @@ using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
+using BExIS.Xml.Models.Mapping;
 using Vaiona.Utils.Cfg;
 
 namespace BExIS.Xml.Helpers.Mapping
 {
     public class XmlSchemaManager
     {
+        public string FileName { get; set; }
         public List<XmlSchemaComplexType> ComplexTypes { get; set; }
         public List<XmlSchemaComplexType> ComplexTypesWithSimpleTypesAsChildrens { get; set; }
         public List<XmlSchemaElement> Elements { get; set; }
@@ -29,14 +31,24 @@ namespace BExIS.Xml.Helpers.Mapping
         public List<MetadataAttribute> MetadataAttributes { get; set; }
         public Dictionary<string,List<Constraint>> ConvertedSimpleTypes { get; set; }
 
+
         private DataContainerManager dataContainerManager = new DataContainerManager();
         private MetadataPackageManager metadataPackageManager = new MetadataPackageManager();
         private MetadataAttributeManager metadataAttributeManager = new MetadataAttributeManager();
         private DataTypeManager dataTypeManager = new DataTypeManager();
         private UnitManager unitManager = new UnitManager();
 
-        private string SchemaName = ""; 
 
+        
+        private string SchemaName = ""; 
+        private string xsdFilePath = "";
+        private string xsdFileName = "";
+        private string newXsdFilePath = "";
+
+        public string mappingFileNameImport = "";
+        public string mappingFileNameExport = "";
+        private XmlMapper mappingFileInternalToExternal = new XmlMapper();
+        private XmlMapper mappingFileExternalToInternal = new XmlMapper();
 
 
         public XmlSchemaManager()
@@ -49,14 +61,39 @@ namespace BExIS.Xml.Helpers.Mapping
             MetadataAttributes = new List<MetadataAttribute>();
             ConvertedSimpleTypes = new Dictionary<string, List<Constraint>>();
             Groups = new List<XmlSchemaGroup>();
+            xsdFileName = "";
+            mappingFileInternalToExternal = new XmlMapper();
+            mappingFileExternalToInternal = new XmlMapper();
         }
         
+        public static bool MoveFile(string tempFile, string destinationPath)
+        {
+            if (File.Exists(tempFile))
+            {
+                File.Move(tempFile, destinationPath);
+
+                if (File.Exists(destinationPath))
+                {
+                    return true;
+                }
+                else return false;
+            }
+            else return false;
+        }
+
+        #region load schema
+
         /// <summary>
         /// Load Schema from path
         /// </summary>
         /// <param name="path"></param>
         public void Load(string path, string userName)
         {
+            xsdFilePath = path;
+            xsdFileName = path.Split('\\').Last();
+
+            FileName = xsdFileName;
+
             int countedSchemas = 0;
 
             XmlReaderSettings settings2 = new XmlReaderSettings();
@@ -65,7 +102,6 @@ namespace BExIS.Xml.Helpers.Mapping
             XmlReader xsd_file = XmlReader.Create(path, settings2);
             Schema = XmlSchema.Read(xsd_file, verifyErrors);
 
-
             countedSchemas = Schema.Includes.Count + 1;
 
             XmlSchema selectedSchema; 
@@ -73,6 +109,7 @@ namespace BExIS.Xml.Helpers.Mapping
             XmlSchemaSet schemaSet = new XmlSchemaSet();
             schemaSet.ValidationEventHandler += new ValidationEventHandler(verifyErrors);
             schemaSet.Add(Schema);
+
             schemaSet.Compile();
 
             if (schemaSet.Count < countedSchemas)
@@ -88,7 +125,7 @@ namespace BExIS.Xml.Helpers.Mapping
                             XmlReaderSettings settings = new XmlReaderSettings();
                             settings.DtdProcessing = DtdProcessing.Ignore;
 
-                            string dataPath = Path.Combine(AppConfiguration.DataPath,"Temp",userName,include.SchemaLocation.Split('/').Last());
+                            string dataPath = Path.Combine(AppConfiguration.DataPath, "Temp", userName, include.SchemaLocation.Split('/').Last());
 
                             XmlReader test = XmlReader.Create(dataPath, settings);
                             include.Schema = XmlSchema.Read(test, verifyErrors);
@@ -96,36 +133,6 @@ namespace BExIS.Xml.Helpers.Mapping
 
                         schemaSet.Add(include.Schema);
                     }
-
-                    //if (additional is XmlSchemaImport)
-                    //{
-                    //    XmlSchemaImport import = (XmlSchemaImport)additional;
-
-                    //    XmlReaderSettings settings = new XmlReaderSettings();
-                    //    settings.DtdProcessing = DtdProcessing.Ignore;
-
-                    //    XmlReader test = XmlReader.Create(import.SchemaLocation, settings);
-
-                    //    //XmlTextReader additionale_xsd_file = new XmlTextReader(import.SchemaLocation);
-
-
-                    //    XmlSchema additionalSchema = XmlSchema.Read(test, verifyErrors);
-                    //    //schemaSet.Add(additionalSchema);
-                    //    try
-                    //    {
-                    //        schemaSet.Add(import.Namespace, test);
-
-                    //    }
-                    //    catch (Exception ex)
-                    //    {
-                    //        Debug.WriteLine("--------------------------------------------");
-                    //        Debug.WriteLine("NameSpace : " + import.Namespace);
-                    //        Debug.WriteLine("SchemaLocation : " + import.SchemaLocation);
-                    //        Debug.WriteLine(ex.Message);
-                    //    }
-
-
-                    //}
                 }
             }
 
@@ -136,13 +143,11 @@ namespace BExIS.Xml.Helpers.Mapping
                 ComplexTypes.AddRange(GetAllComplexTypes(selectedSchema));
                 SimpleTypes.AddRange(GetAllSimpleTypes(selectedSchema));
                 Groups.AddRange(GetAllGroups(selectedSchema));
-
             }
 
             RefElementNames.AddRange(GetAllRefElementNames(Elements));
 
-           
-
+            xsd_file.Close();
         }
 
         public void Delete(string schemaName)
@@ -194,7 +199,7 @@ namespace BExIS.Xml.Helpers.Mapping
 
         private bool isComplexTypeOnlyWithSimpleTpesAsChildrens(XmlSchemaComplexType type)
         {
-            List<XmlSchemaElement> elements = XmlSchemaUtility.GetAllElements(type, false,Elements);
+            List<XmlSchemaElement> elements = XmlSchemaUtility.GetAllElements(type, false, Elements);
 
             foreach (XmlSchemaElement element in elements)
             {
@@ -316,7 +321,7 @@ namespace BExIS.Xml.Helpers.Mapping
                 XmlSchemaComplexType type = e.ElementSchemaType as XmlSchemaComplexType;
                 if (type != null)
                 {
-                    Debug.WriteLine("Element");
+                    ////Debug.Writeline("Element");
                 }
             }
 
@@ -401,7 +406,7 @@ namespace BExIS.Xml.Helpers.Mapping
 
             if (parent != null)
             {
-                Debug.WriteLine("********** CHILDREN fo ONE Node");
+                ////Debug.Writeline("********** CHILDREN fo ONE Node");
                 List<XmlSchemaElement> list = XmlSchemaUtility.GetAllElements(parent, false, Elements);
 
                 if (list.Where(e => e.Name.Equals(child.Name)).Count() > 0)
@@ -414,7 +419,7 @@ namespace BExIS.Xml.Helpers.Mapping
             }
             else
             {
-                Debug.WriteLine("PARENT = NULL ---> " + node.LocalName);
+                ////Debug.Writeline("PARENT = NULL ---> " + node.LocalName);
                 return 0;
             }
 
@@ -427,14 +432,16 @@ namespace BExIS.Xml.Helpers.Mapping
         {
             if (args.Severity == XmlSeverityType.Warning)
             {
-                Debug.WriteLine(args.Message);
+                //Debug.Writeline(args.Message);
             }
 
         }
 
+        #endregion 
+
         #region import To MetadatStructure
 
-        public Dictionary<string,List<Constraint>> ConvertSimpleTypes()
+        public Dictionary<string, List<Constraint>> ConvertSimpleTypes()
         {
             MetadataAttributeManager mam = new MetadataAttributeManager();
             //List<XmlSchemaElement> elementsWithSimpleType = this.GetAllElementsTypeIsSimpleType();
@@ -450,12 +457,38 @@ namespace BExIS.Xml.Helpers.Mapping
             return ConvertedSimpleTypes;
         }
 
-        #region metadataAttritbute
+        #region metadata structure
 
         public long GenerateMetadataStructure(string nameOfStartNode,string schemaName)
         {
             if (!String.IsNullOrEmpty(schemaName))
                 SchemaName = schemaName;
+
+            string rootElementName = nameOfStartNode;
+
+            newXsdFilePath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "Metadata", schemaName, FileName);
+
+            if (!File.Exists(newXsdFilePath))
+            {
+                checkDirectory(newXsdFilePath);
+                MoveFile(xsdFilePath, newXsdFilePath);
+            }
+
+            #region prepare mappingFiles
+
+                #region intern to extern
+                    // add schema to mappingfile
+                    mappingFileInternalToExternal.Header.AddToSchemas(schemaName, "Metadata/" + schemaName + "/" + FileName);
+                #endregion
+
+                #region extern to intern
+                    mappingFileExternalToInternal.Header.AddToDestination("Metadata");
+                    // id and name of metadatastructure fehlt
+
+                #endregion
+            #endregion
+
+
 
             //List<MetadataAttribute> metadataAttributes = new List<MetadataAttribute>();
             //metadataAttributes = GenerateAllMetadataAttributes();
@@ -493,14 +526,29 @@ namespace BExIS.Xml.Helpers.Mapping
                     if (obj is XmlSchemaElement)
                         root = (XmlSchemaElement)obj;
                 }
+
+                XmlSchemaElement rootElement = (XmlSchemaElement)root;
+                mappingFileInternalToExternal.Header.AddToDestination(rootElement.Name, rootElement.Name);
+
+
+                rootElementName = rootElement.Name;
+ 
             }
             else
             {
+                
+
                 root = Elements.Where(e => e.Name.ToLower().Equals(nameOfStartNode.ToLower())).FirstOrDefault();
                 if (root == null)
                 { 
                     root = Groups.Where(g => g.Name.ToLower().Equals(nameOfStartNode.ToLower())).FirstOrDefault();
                 }
+
+                if (nameOfStartNode != "")
+                {
+                    XmlSchemaElement rootElement = (XmlSchemaElement)root;
+                    mappingFileInternalToExternal.Header.AddToDestination(nameOfStartNode, rootElement.Name);
+            }
             }
 
                
@@ -511,6 +559,8 @@ namespace BExIS.Xml.Helpers.Mapping
 
                 if (XmlSchemaUtility.IsAllSimpleType(childrenOfRoot))
                 {
+                    #region root with only simple type childrens
+
                     XmlSchemaGroup rootAsGroup = (XmlSchemaGroup)root;
 
                     MetadataPackage package = getExistingMetadataPackage(rootAsGroup.Name);
@@ -518,22 +568,25 @@ namespace BExIS.Xml.Helpers.Mapping
 
                     if (test.MetadataPackageUsages.Where(p => p.MetadataPackage == package).Count() <= 0)
                     {
+                        string xpath = "Metadata/" + rootAsGroup.Name;
 
                         foreach (XmlSchemaElement child in childrenOfRoot)
                         {
-                            Debug.WriteLine("packageChild : " + child.Name);
-                            Debug.WriteLine("-->");
+                            //Debug.Writeline("packageChild : " + child.Name);
+                            //Debug.Writeline("-->");
 
                             if (XmlSchemaUtility.IsSimpleType(child))
                             {
-                                addMetadataAttributeToMetadataPackageUsage(package, child);
+                                addMetadataAttributeToMetadataPackageUsage(package, child, xpath, rootAsGroup.Name);
                             }
                             else
                             {
                                 List<string> parents = new List<string>();
                                 parents.Add(rootAsGroup.Name);
 
-                                MetadataCompoundAttribute compoundAttribute = get(child, parents);
+
+
+                                MetadataCompoundAttribute compoundAttribute = get(child, parents, xpath, rootAsGroup.Name);
 
                                 // add compound to package
                                 addUsageFromMetadataCompoundAttributeToPackage(package, compoundAttribute, child);
@@ -546,6 +599,7 @@ namespace BExIS.Xml.Helpers.Mapping
                         mdsManager.AddMetadataPackageUsage(test, package, rootAsGroup.Name, GetDescription(rootAsGroup.Annotation), 1, 1);
                     }
 
+                    #endregion
                 }
                 else
                 {
@@ -561,6 +615,7 @@ namespace BExIS.Xml.Helpers.Mapping
                     string rootNodePackage = "Basic";
                     string rootNodePackageDescription = "Attributes from the root node";
 
+
                     if (simpleElements.Count > 0)
                     {
                         MetadataPackage package = getExistingMetadataPackage(rootNodePackage); ;// = mdpManager.MetadataPackageRepo.Get(p => p.Name == rootNodePackage).FirstOrDefault();
@@ -573,7 +628,7 @@ namespace BExIS.Xml.Helpers.Mapping
                             {
                                 if (XmlSchemaUtility.IsSimpleType(child))
                                 {
-                                    addMetadataAttributeToMetadataPackageUsage(package, child);
+                                    addMetadataAttributeToMetadataPackageUsage(package, child,"Metadata/Basic", rootElementName);
                                 }
                             }
 
@@ -589,8 +644,14 @@ namespace BExIS.Xml.Helpers.Mapping
 
                     foreach (XmlSchemaElement element in otherElements)
                     {
-                        Debug.WriteLine("package : " + element.Name);
-                        Debug.WriteLine("--------------------------");
+                       //Debug.Writeline("package : " + element.Name);
+                        //Debug.Writeline("--------------------------");
+
+                        string typeName = GetTypeOfName(element.Name);
+                        string rootName = ((XmlSchemaElement)root).Name;
+
+                        string xpathInternal = "Metadata/" + element.Name+"/"+typeName;
+                        string xpathExternal = rootName+"/" + element.Name;
 
                         if (!XmlSchemaUtility.IsSimpleType(element))
                         {
@@ -608,19 +669,21 @@ namespace BExIS.Xml.Helpers.Mapping
 
                                     foreach (XmlSchemaElement child in childrens)
                                     {
-                                        Debug.WriteLine("packageChild : " + child.Name);
-                                        Debug.WriteLine("-->");
+                                       //Debug.Writeline("packageChild : " + child.Name);
+                                        //Debug.Writeline("-->");
 
                                         if (XmlSchemaUtility.IsSimpleType(child))
                                         {
-                                            addMetadataAttributeToMetadataPackageUsage(package, child);
+                                            addMetadataAttributeToMetadataPackageUsage(package, child, xpathInternal, xpathExternal);
                                         }
                                         else
                                         {
                                             List<string> parents = new List<string>();
                                             parents.Add(element.Name);
 
-                                            MetadataCompoundAttribute compoundAttribute = get(child, parents);
+
+
+                                            MetadataCompoundAttribute compoundAttribute = get(child, parents, xpathInternal, xpathExternal);
 
                                             // add compound to package
                                             addUsageFromMetadataCompoundAttributeToPackage(package, compoundAttribute, child);
@@ -653,14 +716,14 @@ namespace BExIS.Xml.Helpers.Mapping
                                 {
                                     if (XmlSchemaUtility.IsSimpleType(child))
                                     {
-                                        addMetadataAttributeToMetadataPackageUsage(package, child);
+                                        addMetadataAttributeToMetadataPackageUsage(package, child, xpathInternal, xpathExternal);
                                     }
                                     else
                                     {
                                         List<string> parents = new List<string>();
                                         parents.Add(element.Name);
 
-                                        MetadataCompoundAttribute compoundAttribute = get(child, parents);
+                                        MetadataCompoundAttribute compoundAttribute = get(child, parents, xpathInternal, xpathExternal);
 
                                         // add compound to package
                                         addUsageFromMetadataCompoundAttributeToPackage(package, compoundAttribute, child);
@@ -695,25 +758,39 @@ namespace BExIS.Xml.Helpers.Mapping
                 }
 
 
-            return test.Id;
+                #region Generate Mapping File
      
+                string internalMetadataStructrueName = schemaName;
+                mappingFileExternalToInternal.Id = test.Id;
+
+                //generate mapping file Xml Document
+                generateXmlMappingFile(mappingFileInternalToExternal, internalMetadataStructrueName, FileName);
+                generateXmlMappingFile(mappingFileExternalToInternal, FileName, internalMetadataStructrueName, 1);
+
+                #endregion
+
+                return test.Id;
         }
 
-        private MetadataCompoundAttribute get(XmlSchemaElement element, List<string> parents)
+        private MetadataCompoundAttribute get(XmlSchemaElement element, List<string> parents, string internalXPath, string externalXPath)
         {
 
-            Debug.WriteLine("element :" + element.Name);
+            //Debug.Writeline("element :" + element.Name);
 
             XmlSchemaComplexType ct = XmlSchemaUtility.GetComplextType(element);
 
             string nameOfType = "";
             if (ct.Name != null)
-                nameOfType = ct.Name + "Type";
+                nameOfType = ct.Name;
             else
-                nameOfType = element.Name + "Type";
+                nameOfType = GetTypeOfName(element.Name);
 
             MetadataCompoundAttribute metadataCompountAttr = getExistingMetadataCompoundAttribute(nameOfType);
+            string currentInternalXPath = internalXPath + "/" + element.Name + "/" + nameOfType;
+            string currentExternalXPath = externalXPath + "/" + element.Name;
+
             
+            // create and map
             if (metadataCompountAttr == null)
             {
                 if (ct.Name != null)
@@ -734,12 +811,15 @@ namespace BExIS.Xml.Helpers.Mapping
 
                     foreach (XmlSchemaElement child in childrens)
                     {
-                        Debug.WriteLine("child :" + child.Name);
+                        //Debug.Writeline("child :" + child.Name);
 
+                        // simple element
                         if (XmlSchemaUtility.IsSimpleType(child))
                         {
-                            metadataCompountAttr = addMetadataAttributeToMetadataCompoundAttribute(metadataCompountAttr, child);
+
+                            metadataCompountAttr = addMetadataAttributeToMetadataCompoundAttribute(metadataCompountAttr, child, currentInternalXPath, currentExternalXPath);
                         }
+                        //complex element
                         else
                         {
 
@@ -748,7 +828,7 @@ namespace BExIS.Xml.Helpers.Mapping
                             if (ct.Name == null || complexTypeOfChild.Name == null)
                             {
                                 //--> create compountAttribute
-                                MetadataCompoundAttribute compoundAttributeChild = get(child, parents);
+                                MetadataCompoundAttribute compoundAttributeChild = get(child, parents, currentInternalXPath, currentExternalXPath);
                                 // add compound to compount
                                 metadataCompountAttr = addUsageFromMetadataCompoundAttributeToMetadataCompoundAttribute(metadataCompountAttr, compoundAttributeChild, child);
                             }
@@ -759,7 +839,7 @@ namespace BExIS.Xml.Helpers.Mapping
                                     if (!ct.Name.Equals(complexTypeOfChild.Name))
                                     {
                                         //--> create compountAttribute
-                                        MetadataCompoundAttribute compoundAttributeChild = get(child, parents);
+                                        MetadataCompoundAttribute compoundAttributeChild = get(child, parents, currentInternalXPath, currentExternalXPath);
                                         // add compound to compount
                                         metadataCompountAttr = addUsageFromMetadataCompoundAttributeToMetadataCompoundAttribute(metadataCompountAttr, compoundAttributeChild, child);
                                     }
@@ -781,6 +861,52 @@ namespace BExIS.Xml.Helpers.Mapping
             
                 }
             }
+            //only map
+            else
+            { 
+                // if its there need to map
+                List<XmlSchemaElement> childrens = XmlSchemaUtility.GetAllElements(element, false, Elements);
+
+                if (!parents.Contains(element.Name))
+                {
+
+                    parents.Add(element.Name);
+
+                    foreach (XmlSchemaElement child in childrens)
+                    {
+                        //Debug.Writeline("child :" + child.Name);
+
+                        if (XmlSchemaUtility.IsSimpleType(child))
+                        {
+                            //add existing Simple elements to mappingFile
+                            addMetadataAttributeToMappingFile(metadataCompountAttr, child, currentInternalXPath, currentExternalXPath);
+                        }
+                        else
+                        {
+
+                            XmlSchemaComplexType complexTypeOfChild = XmlSchemaUtility.GetComplextType(child);
+
+                            if (ct.Name == null || complexTypeOfChild.Name == null)
+                            {
+                                MetadataCompoundAttribute compoundAttributeChild = get(child, parents, currentInternalXPath, currentExternalXPath);
+                            }
+                            else
+                            {
+                                if (ct.Name != null && complexTypeOfChild.Name != null)
+                                {
+                                    if (!ct.Name.Equals(complexTypeOfChild.Name))
+                                    {
+                                        MetadataCompoundAttribute compoundAttributeChild = get(child, parents, currentInternalXPath, currentExternalXPath);
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+                }
+
+                
+            }
 
 
             if(parents.Contains(element.Name))
@@ -791,15 +917,15 @@ namespace BExIS.Xml.Helpers.Mapping
             return metadataCompountAttr;
         }
 
-        private void addMetadataAttributesToMetadataPackageUsage(MetadataPackage packageUsage, List<XmlSchemaElement> elements)
+        private void addMetadataAttributesToMetadataPackageUsage(MetadataPackage packageUsage, List<XmlSchemaElement> elements, string internalXPath, string externalXPath)
         {
             for (int i = 0; i<elements.Count();i++)
             {
-                addMetadataAttributeToMetadataPackageUsage(packageUsage, elements.ElementAt(i));
+                addMetadataAttributeToMetadataPackageUsage(packageUsage, elements.ElementAt(i), internalXPath, externalXPath);
             }
         }
 
-        private void addMetadataAttributeToMetadataPackageUsage(MetadataPackage packageUsage, XmlSchemaElement element)
+        private void addMetadataAttributeToMetadataPackageUsage(MetadataPackage packageUsage, XmlSchemaElement element, string internalXPath, string externalXPath)
         {
                 MetadataAttribute attribute = createMetadataAttribute(element);
 
@@ -820,6 +946,14 @@ namespace BExIS.Xml.Helpers.Mapping
 
                     if (packageUsage.MetadataAttributeUsages.Where(p => p.MetadataAttribute == attribute).Count() <= 0)
                         metadataPackageManager.AddMetadataAtributeUsage(packageUsage, attribute, attribute.Name, attribute.Description, min, max);
+
+
+                    #region generate  MappingRoute
+
+                    addToExportMappingFile(mappingFileInternalToExternal, internalXPath, externalXPath, max, attribute.Name);
+                    addToImportMappingFile(mappingFileExternalToInternal, externalXPath , internalXPath, max, attribute.Name);
+
+                    #endregion
                 }
         }
 
@@ -872,17 +1006,17 @@ namespace BExIS.Xml.Helpers.Mapping
             return parent;
         }
 
-        private MetadataCompoundAttribute addMetadataAttributesToMetadataCompoundAttribute(MetadataCompoundAttribute compoundAttribute, List<XmlSchemaElement> elements)
+        private MetadataCompoundAttribute addMetadataAttributesToMetadataCompoundAttribute(MetadataCompoundAttribute compoundAttribute, List<XmlSchemaElement> elements, string internalXPath, string externalXPath)
         {
             for (int i = 0; i < elements.Count(); i++)
             {
-                addMetadataAttributeToMetadataCompoundAttribute(compoundAttribute, elements.ElementAt(i));
+                addMetadataAttributeToMetadataCompoundAttribute(compoundAttribute, elements.ElementAt(i), internalXPath, externalXPath);
             }
 
             return compoundAttribute;
         }
 
-        private MetadataCompoundAttribute addMetadataAttributeToMetadataCompoundAttribute(MetadataCompoundAttribute compoundAttribute, XmlSchemaElement element)
+        private MetadataCompoundAttribute addMetadataAttributeToMetadataCompoundAttribute(MetadataCompoundAttribute compoundAttribute, XmlSchemaElement element, string internalXPath, string externalXPath)
         {
                 MetadataAttribute attribute;
 
@@ -893,7 +1027,6 @@ namespace BExIS.Xml.Helpers.Mapping
                 }
                 else
                 {
-                    Debug.WriteLine(element.Name);
                     attribute = createMetadataAttribute(element);
                 }
               
@@ -920,6 +1053,13 @@ namespace BExIS.Xml.Helpers.Mapping
                         Member = attribute,
                     };
 
+                    #region generate  MappingRoute
+
+                    addToExportMappingFile(mappingFileInternalToExternal, internalXPath, externalXPath, element.MaxOccurs, attribute.Name);
+                    addToImportMappingFile(mappingFileExternalToInternal, externalXPath, internalXPath, element.MaxOccurs, attribute.Name);
+
+                    #endregion
+
                     if (compoundAttribute.MetadataNestedAttributeUsages.Where(n => n.Label.Equals(attribute.Name)).Count()==0)
                         compoundAttribute.MetadataNestedAttributeUsages.Add(u1);
                 }
@@ -931,6 +1071,10 @@ namespace BExIS.Xml.Helpers.Mapping
 
         private MetadataAttribute createMetadataAttribute(XmlSchemaElement element)
         {
+           //Debug.Writeline(element.Name);
+
+            MetadataAttribute temp=null;
+
             if (element.ElementSchemaType is XmlSchemaSimpleType)
             {
                 XmlSchemaSimpleType type = (XmlSchemaSimpleType)element.ElementSchemaType;
@@ -951,7 +1095,7 @@ namespace BExIS.Xml.Helpers.Mapping
                 if (noneunit == null)
                     unitManager.Create("None", "None", "If no unit is used.", null, MeasurementSystem.Unknown); // the null dimension should be replaced bz a proper valid one. Javad 11.06
 
-                MetadataAttribute temp = getExistingMetadataAttribute(name);// = metadataAttributeManager.MetadataAttributeRepo.Get().Where(m => m.Name.Equals(name)).FirstOrDefault();
+                temp = getExistingMetadataAttribute(name);// = metadataAttributeManager.MetadataAttributeRepo.Get().Where(m => m.Name.Equals(name)).FirstOrDefault();
 
                 if (temp == null)
                 {
@@ -964,6 +1108,8 @@ namespace BExIS.Xml.Helpers.Mapping
 
                     return metadataAttributeManager.Update(temp);
                 }
+
+                //Debug.Writeline(temp.Name);
 
                 return temp;
                 
@@ -992,7 +1138,7 @@ namespace BExIS.Xml.Helpers.Mapping
                     if (noneunit == null)
                         unitManager.Create("None", "None", "If no unit is used.", null, MeasurementSystem.Unknown); // null diemsion to be replaced
 
-                    MetadataAttribute temp = getExistingMetadataAttribute(name);// = metadataAttributeManager.MetadataAttributeRepo.Get().Where(m => m.Name.Equals(name)).FirstOrDefault();
+                    temp = getExistingMetadataAttribute(name);// = metadataAttributeManager.MetadataAttributeRepo.Get().Where(m => m.Name.Equals(name)).FirstOrDefault();
 
                     if (temp == null)
                     {
@@ -1012,6 +1158,8 @@ namespace BExIS.Xml.Helpers.Mapping
 
                         return metadataAttributeManager.Update(temp);
                     }
+
+                    //Debug.Writeline(temp.Name);
 
                     return temp;
                 }
@@ -1061,14 +1209,214 @@ namespace BExIS.Xml.Helpers.Mapping
             {
                 mca = new MetadataCompoundAttribute
                 {
-                    ShortName = element.Name + "Type",
-                    Name = element.Name + "Type",
+                    ShortName = GetTypeOfName(element.Name),
+                    Name = GetTypeOfName(element.Name),
                     Description = "",
                     DataType = dt1
                 };
             }
 
             return mca;
+        }
+
+        #endregion
+
+        #region mapping file
+
+        private XmlDocument generateXmlMappingFile(XmlMapper mapperInfos,string sourceName, string DestinationName,  int direction = 0)
+        {
+            XmlDocument mappingFile = new XmlDocument();
+
+            // create root
+            XmlNode root = XmlUtility.CreateNode("mapping", mappingFile);
+            root = XmlUtility.AddAttribute(root, "name", SchemaName, mappingFile);
+            mappingFile.AppendChild(root);
+
+            //  create header
+
+            XmlNode header = XmlUtility.CreateNode("header", mappingFile);
+            XmlMappingHeader xmlMapperheader = mapperInfos.Header;
+            
+                
+                // create destination
+                
+                XmlNode destination = XmlUtility.CreateNode("destination", mappingFile);
+
+                if (xmlMapperheader.Destination !=null)
+                {
+                    destination = XmlUtility.AddAttribute(destination, "namespaceUri", xmlMapperheader.Destination.NamepsaceURI, mappingFile);
+                    destination = XmlUtility.AddAttribute(destination, "prefix", xmlMapperheader.Destination.Prefix, mappingFile);
+                    destination = XmlUtility.AddAttribute(destination, "sequence", xmlMapperheader.Destination.ParentSequence, mappingFile);
+                    destination = XmlUtility.AddAttribute(destination, "xPath", xmlMapperheader.Destination.XPath, mappingFile);
+                }
+                header.AppendChild(destination);
+
+                
+                // create attributes
+                XmlNode attributes = XmlUtility.CreateNode("attributes", mappingFile);
+
+                if (mapperInfos.Header.Attributes.Count > 0)
+                {
+                    foreach (var attr in mapperInfos.Header.Attributes)
+                    {
+                        XmlNode attribute = XmlUtility.CreateNode("attribute", mappingFile);
+                        attribute = XmlUtility.AddAttribute(attribute, "name", attr.Key, mappingFile);
+                        attribute = XmlUtility.AddAttribute(attribute, "value", attr.Value, mappingFile);
+
+                        attributes.AppendChild(attribute);
+                    }
+                }
+
+                header.AppendChild(attributes);
+                 
+                // create packages
+                XmlNode packages = XmlUtility.CreateNode("packages", mappingFile);
+
+                if (mapperInfos.Header.Packages.Count > 0)
+                {
+                    foreach (var pack in mapperInfos.Header.Packages)
+                    {
+                        XmlNode package = XmlUtility.CreateNode("package", mappingFile);
+                        package = XmlUtility.AddAttribute(package, "abbreviation", pack.Key, mappingFile);
+                        package = XmlUtility.AddAttribute(package, "url", pack.Value, mappingFile);
+
+                        packages.AppendChild(package);
+                    }
+                }
+                header.AppendChild(packages);
+
+                // create schema 
+
+                if (mapperInfos.Header.Schemas.Count > 0)
+                {
+                    foreach (var s in mapperInfos.Header.Schemas)
+                    {
+                        XmlNode schema = XmlUtility.CreateNode("schema", mappingFile);
+                        schema = XmlUtility.AddAttribute(schema, "abbreviation", s.Key, mappingFile);
+                        schema = XmlUtility.AddAttribute(schema, "url", s.Value, mappingFile);
+
+                        header.AppendChild(schema);
+                    }
+                }
+
+             root.AppendChild(header);
+
+            // create routes
+
+            XmlNode routes = XmlUtility.CreateNode("routes", mappingFile);
+
+            if (mapperInfos.Routes.Count > 0)
+            {
+                foreach (XmlMappingRoute mapRoute in mapperInfos.Routes)
+                {
+                    // create route
+                    XmlNode route = XmlUtility.CreateNode("route", mappingFile);
+
+                    // create source
+                    XmlNode Source = XmlUtility.CreateNode("source", mappingFile);
+                    Source = XmlUtility.AddAttribute(Source, "xPath", mapRoute.Source.XPath, mappingFile);
+
+                    route.AppendChild(Source);
+                    // create destination
+                    XmlNode Destination = XmlUtility.CreateNode("destination", mappingFile);
+                    Destination = XmlUtility.AddAttribute(Destination, "xPath", mapRoute.Destination.XPath, mappingFile);
+                    Destination = XmlUtility.AddAttribute(Destination, "sequence", mapRoute.Destination.ParentSequence, mappingFile);
+
+                    route.AppendChild(Destination);
+                    routes.AppendChild(route);
+                }
+            }
+
+            root.AppendChild(routes);
+
+            if (direction == 0)
+            {
+                mappingFileNameExport = "MappingFile_intern_" + sourceName + "_to_extern_" + DestinationName +".xml";
+                mappingFile.Save(Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), mappingFileNameExport));
+            }
+            else
+            {
+                mappingFileNameImport = "MappingFile_extern_" + sourceName + "_to_intern_" + DestinationName + ".xml";
+                mappingFile.Save(Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), mappingFileNameImport));
+            }
+
+            
+
+            return mappingFile;
+        }
+
+        private void addMetadataAttributeToMappingFile(MetadataCompoundAttribute compoundAttribute, XmlSchemaElement element, string internalXPath, string externalXPath)
+        {
+
+                MetadataAttribute attribute;
+
+                if (metadataAttributeManager.MetadataAttributeRepo != null && 
+                        metadataAttributeManager.MetadataAttributeRepo.Get().Where(m => m.Name.Equals(element.Name)).Count() > 0)
+                {
+                    attribute = metadataAttributeManager.MetadataAttributeRepo.Get().Where(m => m.Name.Equals(element.Name)).First();
+                }
+                else
+                {
+                    attribute = createMetadataAttribute(element);
+                }
+
+                #region generate  MappingRoute
+
+                addToExportMappingFile(mappingFileInternalToExternal, internalXPath, externalXPath, element.MaxOccurs, attribute.Name);
+                addToImportMappingFile(mappingFileExternalToInternal, externalXPath, internalXPath, element.MaxOccurs, attribute.Name);
+
+                #endregion
+
+                //Debug.WriteLine("SimpleAttribute :");
+                //Debug.WriteLine("--- internal :" + childInternalXPath);
+                //Debug.WriteLine("--- external :" + childExternalXPath);
+                //Debug.WriteLine("--- sequence :" + element);
+        }
+
+        private XmlMapper addToImportMappingFile(XmlMapper mapper, string sourceXPath, string destinationXPath, decimal max, string name)
+        {
+            string parentExternalName = destinationXPath.Split('/').Last();
+            string childSourceXPath = sourceXPath + "/" + name; 
+            string childDestinationXPath = destinationXPath + "/" + name+ "/" + name;
+
+            XmlMappingRoute xmr = new XmlMappingRoute();
+
+            xmr.Source = new Source(childSourceXPath);
+
+            string sequence = parentExternalName;
+            if (max > 1)
+            {
+                sequence = name;
+            }
+
+            xmr.Destination = new Destination(childDestinationXPath, sequence);
+
+            mapper.Routes.Add(xmr);
+
+            return mapper;
+        }
+
+        private XmlMapper addToExportMappingFile(XmlMapper mapper, string sourceXPath, string destinationXPath, decimal max, string name)
+        {
+            string parentExternalName = destinationXPath.Split('/').Last();
+            string childSourceXPath = sourceXPath + "/" + name + "/" + name;
+            string childDestinationXPath = destinationXPath + "/" + name;
+
+            XmlMappingRoute xmr = new XmlMappingRoute();
+
+            xmr.Source = new Source(childSourceXPath);
+
+            string sequence = parentExternalName;
+            if (max > 1)
+            {
+                sequence = name;
+            }
+
+            xmr.Destination = new Destination(childDestinationXPath, sequence);
+
+            mapper.Routes.Add(xmr);
+
+            return mapper;
         }
 
         #endregion
@@ -1155,6 +1503,28 @@ namespace BExIS.Xml.Helpers.Mapping
             return description;
         }
   
+        private void checkDirectory(string filePath)
+        {
+            string path = getPathFromFilePath(filePath);
+
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+        }
+
+        private string getPathFromFilePath(string filepath)
+        {
+            List<string> temp = filepath.Split('\\').ToList();
+            temp.Remove(temp.Last());
+            return Path.Combine(temp.ToArray());
+        }
+
+        private string GetTypeOfName(string name)
+        {
+            return name + "Type";
+        }
+
         #endregion
 
         private List<Constraint> ConvertToConstraints(XmlSchemaObject restriction, MetadataAttribute attr)

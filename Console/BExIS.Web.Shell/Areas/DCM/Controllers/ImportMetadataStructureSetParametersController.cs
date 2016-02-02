@@ -151,9 +151,12 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             else
                 TaskManager.Bus.Add(ImportMetadataStructureTaskManager.DESCRIPTION_NODE, model.DescriptionNode);
 
+            string mappingFilePathImport = TaskManager.Bus[ImportMetadataStructureTaskManager.MAPPING_FILE_NAME_IMPORT].ToString();
+            string mappingFilePathExport = TaskManager.Bus[ImportMetadataStructureTaskManager.MAPPING_FILE_NAME_EXPORT].ToString();
+
             try
             {
-                StoreParametersToMetadataStruture(metadatstructureId, model.TitleNode, model.DescriptionNode);
+                StoreParametersToMetadataStruture(metadatstructureId, model.TitleNode, model.DescriptionNode, mappingFilePathImport, mappingFilePathExport);
             }
             catch (Exception ex)
             {
@@ -165,8 +168,14 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
       
         #region extra xdoc
-
-        private void StoreParametersToMetadataStruture(long id, string titlePath, string descriptionPath)
+        /// <summary>
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="titlePath"></param>
+        /// <param name="descriptionPath"></param>
+        /// <param name="mappingFilePath"></param>
+        /// <param name="direction"></param>
+        private void StoreParametersToMetadataStruture(long id, string titlePath, string descriptionPath, string mappingFilePathImport, string mappingFilePathExport)
         {
             MetadataStructureManager mdsManager = new MetadataStructureManager();
             MetadataStructure metadataStructure = mdsManager.Repo.Get(id);
@@ -182,6 +191,10 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             xmlDoc = AddReferenceToMetadatStructure(metadataStructure, "title", titlePath, "extra/nodeReferences/nodeRef", xmlDoc);
             // add Description
             xmlDoc = AddReferenceToMetadatStructure(metadataStructure, "description", descriptionPath, "extra/nodeReferences/nodeRef", xmlDoc);
+
+            // add mappingFilePath
+            xmlDoc = AddReferenceToMetadatStructure(metadataStructure, "mappingFileImport", mappingFilePathImport, "extra/convertReferences/convertRef", xmlDoc);
+            xmlDoc = AddReferenceToMetadatStructure(metadataStructure, "mappingFileExport", mappingFilePathExport, "extra/convertReferences/convertRef", xmlDoc);
 
 
             metadataStructure.Extra = xmlDoc;

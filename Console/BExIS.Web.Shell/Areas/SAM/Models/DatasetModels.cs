@@ -50,7 +50,11 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
             XElement temp = XmlUtility.GetXElementByAttribute("nodeRef", "name", "title", xDoc);
 
             string xpath = temp.Attribute("value").Value.ToString();
-            string title = dataset.Versions.Last().Metadata.SelectSingleNode(xpath).InnerText;
+            XmlNode node = dataset.Versions.Last().Metadata.SelectSingleNode(xpath);
+
+            string title = "";
+            if(node!=null)
+            title = dataset.Versions.Last().Metadata.SelectSingleNode(xpath).InnerText;
 
             return new DatasetGridRowModel()
             {
