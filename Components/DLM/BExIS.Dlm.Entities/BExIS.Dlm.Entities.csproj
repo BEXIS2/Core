@@ -102,6 +102,15 @@
     <Compile Include="MetadataStrcuture\MetadataSimpleAttribute.cs" />
     <Compile Include="MetadataStrcuture\MetadataStructure.cs" />
     <Compile Include="Metadata\Metadata.cs" />
+    <Compile Include="Party\Party.cs" />
+    <Compile Include="Party\PartyCustomAttribute.cs" />
+    <Compile Include="Party\PartyCustomAttributeValue.cs" />
+    <Compile Include="Party\PartyRelationship.cs" />
+    <Compile Include="Party\PartyRelationshipType.cs" />
+    <Compile Include="Party\PartyStatus.cs" />
+    <Compile Include="Party\PartyStatusType.cs" />
+    <Compile Include="Party\PartyType.cs" />
+    <Compile Include="Party\PartyTypePair.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />
@@ -110,6 +119,7 @@
     <None Include="DataStructure\DataStructure.cd" />
     <None Include="Data\Data.cd" />
     <None Include="MetadataStrcuture\MetadataStructure.cd" />
+    <None Include="Party\Party.cd" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

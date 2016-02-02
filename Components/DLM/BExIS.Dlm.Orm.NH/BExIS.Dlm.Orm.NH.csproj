@@ -197,6 +197,7 @@
   <ItemGroup>
     <Folder Include="Mappings\DB2Dialect\" />
     <Folder Include="Mappings\Default\NativeObjects\" />
+    <Folder Include="Mappings\Default\Party\" />
     <Folder Include="Mappings\Default\PostObjects\" />
     <Folder Include="Mappings\MsSql2008Dialect\" />
   </ItemGroup>
