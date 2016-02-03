@@ -108,6 +108,10 @@
       <HintPath>..\..\packages\Npgsql.2.2.5\lib\net45\Mono.Security.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.8.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="NHibernate, Version=4.0.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\NHibernate.4.0.4.4000\lib\net40\NHibernate.dll</HintPath>
@@ -119,6 +123,10 @@
     <Reference Include="PostSharp, Version=2.1.0.0, Culture=neutral, PublicKeyToken=b13fd38b8f9c99d7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Libraries\PostSharp\PostSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="saxon9he-api, Version=9.6.0.8, Culture=neutral, PublicKeyToken=e1fdd002d5083fe6, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Saxon-HE.9.6.0.8\lib\net40\saxon9he-api.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data.Linq" />
@@ -367,6 +375,11 @@
     <Compile Include="Areas\DIM\Models\DatasetVersionModel.cs" />
     <Compile Include="Areas\DIM\Models\MetadataStructureModel.cs" />
     <Compile Include="Areas\DIM\Models\ShowHelpModel.cs" />
+    <Compile Include="Areas\MSM\Controllers\TestController.cs" />
+    <Compile Include="Areas\MSM\Models\AddTextFieldModel.cs" />
+    <Compile Include="Areas\MSM\Models\TreePartialModel.cs" />
+    <Compile Include="Areas\MSM\Models\TestModel.cs" />
+    <Compile Include="Areas\MSM\MSMAreaRegistration.cs" />
     <Compile Include="Areas\RPM\Controllers\DataStructureEditController.cs" />
     <Compile Include="Areas\RPM\Controllers\HelpController.cs" />
     <Compile Include="Areas\RPM\Controllers\DataAttributeController.cs" />
@@ -512,6 +525,18 @@
     <Content Include="Areas\DDM\Scripts\ddm.js" />
     <Content Include="Areas\DIM\Images\DIM_UserGuide_files\image001.jpg" />
     <Content Include="Areas\DIM\Views\Help\UserGuides\DIM_UserGuide.htm" />
+    <Content Include="Areas\MSM\Resources\Scripts\angular-dragdrop.min.js" />
+    <Content Include="Areas\MSM\Resources\Scripts\angular-route.min.js" />
+    <Content Include="Areas\MSM\Resources\Scripts\angular.js" />
+    <Content Include="Areas\MSM\Resources\Scripts\jquery-linedtextarea.js" />
+    <Content Include="Areas\MSM\Resources\Scripts\angular.min.js" />
+    <Content Include="Areas\MSM\Resources\Scripts\module.js" />
+    <Content Include="Areas\MSM\Resources\Scripts\snippet.js" />
+    <Content Include="Areas\MSM\Resources\Scripts\tree-repeat.js" />
+    <Content Include="Areas\MSM\Resources\Scripts\zippy-directive.js" />
+    <Content Include="Areas\MSM\Resources\Stylesheets\jquery-linedtextarea.css" />
+    <Content Include="Areas\MSM\Resources\Stylesheets\xsd2htmlTree.xslt" />
+    <Content Include="Areas\MSM\Resources\Stylesheets\xsd2jsonTree.xslt" />
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image001.jpg" />
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image001.png" />
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image002.gif" />
@@ -611,6 +636,11 @@
     <Content Include="Areas\RPM\Views\DataStructureSearch\_datatructureSearchResult.cshtml" />
     <Content Include="Areas\RPM\Views\DataStructureEdit\Index.cshtml" />
     <Content Include="Areas\DIM\Views\Import\Index.cshtml" />
+    <Content Include="Areas\MSM\Views\Web.config" />
+    <Content Include="Areas\MSM\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\MSM\Views\Test\Index.cshtml" />
+    <Content Include="Areas\MSM\Views\Test\_TreePartial.cshtml" />
+    <Content Include="Areas\MSM\Views\Test\_AddTextField.cshtml" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
@@ -945,6 +975,7 @@
     <Folder Include="Areas\DCM\Views\Home\" />
     <Folder Include="Areas\DDM\Views\Shared\" />
     <Folder Include="Areas\DIM\Views\Shared\" />
+    <Folder Include="Areas\MSM\Views\Shared\" />
     <Folder Include="Areas\RPM\Views\Shared\" />
     <Folder Include="Areas\SAM\Views\Shared\" />
     <Folder Include="Areas\Site\Models\" />

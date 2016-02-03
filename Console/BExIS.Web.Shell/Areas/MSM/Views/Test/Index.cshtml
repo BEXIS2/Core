@@ -1,0 +1,176 @@
+﻿@using Telerik.Web.Mvc.UI
+@using BExIS.Web.Shell.Areas.MSM.Models
+
+
+
+@model BExIS.Web.Shell.Areas.MSM.Models.TestModel
+
+@{
+    ViewBag.Title = "XSD Mapping";
+   // string controller = "SimpleCtrl" + @Model.Left.TabTreeId;
+}
+
+
+<script>
+        
+    //$('body').attr('ng-app', 'treeRepeatApp');
+    
+
+    @*var App = angular.module('treeRepeatApp', ['sf.treeRepeat', 'support', 'ngDragDrop']);
+    App.controller("@controller", function ($scope) {
+            
+        $scope.treeData = {name:"file root",sequence: @Html.Raw(Model.Left.JsonTreeView)};
+         });*@
+   
+</script>
+<b>@Model.Name</b>
+
+@*<div ng-controller="SimpleCtrl">
+        <ul data-drop="true" ng-model='list4' jqyoui-droppable="{multiple:true}">
+            <li ng-repeat="item in list4 track by $index" ng-show="item.name" data-drag="true" data-jqyoui-options="{revert: 'invalid', helper: 'clone'}" 
+                ng-model="list4" 
+                jqyoui-draggable="{index: {{$index}},animate:true}">{{item.title}}</li>
+            <li class="placeholder" >Add your items here</li>
+        </ul>
+<pre>
+  {{list4 | json}}
+</pre>
+</div>
+ *@
+   
+@section LeftPane 
+{
+    @Html.Partial("_TreePartial", @Model.Left)
+
+}
+
+@section RightPane 
+{
+    @Html.Partial("_TreePartial", @Model.Right)
+
+}
+
+  
+<!--
+<link href="@Url.Content("~/Areas/MSM/Resources/Stylesheets/jquery-linedtextarea.css")" rel="stylesheet" type="text/css" />
+-->
+
+
+
+@*@using (Ajax.BeginForm("formData", "Test", new AjaxOptions { HttpMethod = "Post" })) {
+    <div id ='textFieldList' class="form-group">
+        @if (Model.TextFields != null && Model.TextFields.Count > 0) {
+            foreach (AddTextFieldModel t in Model.TextFields) {
+                Html.RenderPartial("_AddTextField", t);
+            }
+     }
+
+    </div>
+    <button type="submit" class="btn btn-default">Submit</button> 
+}
+@Ajax.ActionLink("Add", "addTextField",new Object{model=Model.TextFields,type="List"}, 
+                 new AjaxOptions { HttpMethod = "Post", InsertionMode = InsertionMode.InsertAfter, UpdateTargetId = "textFieldList"})
+
+<a href="#" id="ajaxPost">send model as json</a>
+
+<div id ='mainDiv'>
+
+  
+</div>*@
+@*@Html.Raw(Json.Encode(Model))*@
+
+
+
+
+@*<div ng-app="app" id="ng-app" ng-controller="AppCtrl"> 
+     <div ng-repeat="item in items">
+         <input type="text" placeholder="{{item.questionPlaceholder}}" ng-model="item.question">
+     </div>
+     <button ng-click="add()">New Item</button>
+</div>*@
+
+
+
+<script>
+    
+    
+
+    //angular.module('app', []).controller('AppCtrl', ['$scope', function ($scope) {
+    //    $scope.items = [{
+    //        question: "text",
+    //        questionPlaceholder: "Name"
+    //    }];
+
+    //    $scope.add = function () {
+    //        $scope.items.push({
+    //            question: "text",
+    //            questionPlaceholder: "Name"
+    //        });
+    //    };
+
+    //}]);
+
+</script>
+
+<script>
+
+    function appendTextField(data) {
+        alert("sdfdsf");
+        $('#textfieldList').append(data);
+    }
+
+
+    $(document).ready(function () {
+
+
+
+        var textFields = [
+            { Name: "text", XPath: '/test/text' },
+            { Name: "text2", XPath: '/test/text2' }
+        ];
+        var model = {
+
+            Name: "bla",
+            Left: {},
+            Right: {},
+            TextFields: [
+                            { Name: "text", XPath: "/test/text" },
+                            { Name: "text2", XPath: "/test/text2" }
+            ]
+        };
+        //textFields = JSON.stringify({ 'textFields': textFields });
+        //'{ "textFields":' + JSON.stringify(textFields) + '}'
+        $("#ajaxPost").on("click", function (e) {
+            //alert(JSON.stringify(model));
+            e.preventDefault();
+            $.ajax({
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'html',
+                type: 'POST',
+                url: '/MSM/test/formData',
+                data: '{ "model":' + JSON.stringify(model) + '}',
+                success: function (data) {
+                    $('#mainDiv').html(data);//append html
+                },
+                failure: function (response) {
+                    alert(response);
+                    $('#mainDiv').html(response);
+                }
+            });
+
+        });
+    });
+
+    //$(function () {
+
+    //    $(".lined").linedtextarea(
+    //        { selectedLine: 1 }
+    //    );
+    //    //$("#comment").linedtextarea();
+
+    //});
+
+
+</script>
+
+
