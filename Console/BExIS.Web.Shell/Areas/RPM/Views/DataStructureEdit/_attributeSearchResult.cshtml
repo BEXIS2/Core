@@ -1,0 +1,162 @@
+﻿@using Telerik.Web.Mvc.UI
+@using BExIS.Web.Shell.Areas.RPM.Models
+@model BExIS.Web.Shell.Areas.RPM.Models.AttributePreviewModel
+
+<table class="bx-rpm-attributeheader">
+    <tr>
+        <td class="bx-rpm-sort"><span onclick="javascript:clickFilter()">Filter <span id="filterCollapse" class="bx bx-angle-double-down"></span></span></td>
+        <td class="bx-rpm-sortdropdown">
+            Sort by
+            <select class="bx-dropdown bx-rpm-dropdown">
+                <option value="">no Sorting</option>
+                <option value="name,true">Name (ascending)</option>
+                <option value="name">Name (descending)</option>
+                <option value="id,true">Id (ascending)</option>
+                <option value="id">Id (descending)</option>
+                <option value="unit,true">Unit (ascending)</option>
+                <option value="unit">Unit (descending)</option>
+                <option value="datatype,true">Data Type (ascending)</option>
+                <option value="datatype">Data Type (descending)</option> 
+            </select>
+            <div class="t-arrow-down bx-rpm-dropdownArrow"></div>
+        </td>
+    </tr>
+    <tr>
+        <td class="bx-rpm-filter collapsed" colspan="2" id="filter" style="display:none;">
+            <div id="filterContainer" style="display:none;">
+                <h3 class="bx-rpm-loading"><span class="fa fa-spinner fa-pulse"></span> Loading Filters</h3>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div class="bx-rpm-attribute-container" id="#Results">
+    @foreach (AttributePreviewStruct aps in Model.AttributePreviews)
+    {
+        string Id = aps.Id + "_attribute";
+        <div class="bx-rpm-attribute-item @aps.Id" id="@Id">
+            <table>
+                <tr>
+                    <td class="bx-rpm-label"><label>Name</label></td>
+                    <td class="name bx-rpm-text">@aps.Name</td>
+                    <td class="bx-rpm-label" rowspan="2"><label>Description</label></td>
+                    <td class="description bx-rpm-text" rowspan="2">@aps.Description</td>
+                </tr>
+                <tr>
+                    <td class="bx-rpm-label"><label>Id</label></td>
+                    <td class="id bx-rpm-text">@aps.Id</td>
+                </tr>
+                <tr>
+                    <td class="bx-rpm-label"><label>Unit</label></td>
+                    <td class="unit bx-rpm-text">@aps.Unit</td>
+                    <td class="bx-rpm-label" rowspan="2"><label>Constraints</label></td>
+                    <td class="description bx-rpm-text" rowspan="2">
+                        @foreach(string s in aps.Constraints)
+                        {
+                            <p>@s</p>
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <td class="bx-rpm-label"><label>Data Type</label></td>
+                    <td class="datatype bx-rpm-text">@aps.DataType</td>
+                </tr>
+            </table>
+        </div>
+    }
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        resizeAttributeContainer(120);
+        initIsotope();
+    });
+    function initIsotope() {
+        // init Isotope
+        var $grid = $('.bx-rpm-attribute-container').isotope({
+            itemSelector: '.bx-rpm-attribute-item',
+            layoutMode: 'vertical',
+            transitionDuration: '1.0s',
+            getSortData: {
+                name: '.name',
+                id: '.id',
+                description: '.description',
+                unit: '.unit',
+                datatype: '.datatype'
+            }
+        });
+
+      // bind sort button click
+        $('.bx-rpm-sortdropdown').on('change', 'select', function () {
+            var sortValue = $(this).val().split(',');
+            if (sortValue[1] == 'true') {
+                $grid.isotope({ sortBy: sortValue[0], sortAscending: true});
+            }
+            else {
+                $grid.isotope({ sortBy: sortValue[0], sortAscending: false });
+            }
+            resizeAttributeContainer(120);
+        });    
+
+        $('.bx-rpm-filterContainer').on('click', '.bx-rpm-filterCheckbox', function () {
+            console.log('Click');
+            var filterValue = setFilter(this);
+            $grid.isotope({ filter: filterValue });
+            resizeAttributeContainer(120);
+        });
+    }
+
+    function clickFilter() {
+        if ($('#filter').hasClass('collapsed')) {
+            if ($('#filterContainer .bx-rpm-filterContainer').length == 0) {
+                loadFilter();
+            }
+            $('#filter').slideDown('slow');
+            $('#filterContainer').slideDown('slow');
+            $('#filter').removeClass('collapsed');
+            $('#filterCollapse').addClass('bx-angle-double-up');
+            $('#filterCollapse').removeClass('bx-angle-double-down');
+            
+        }
+        else {
+            $('#filter').slideUp('slow');
+            $('#filterContainer').slideUp('slow');
+            $('#filter').addClass('collapsed');
+            $('#filterCollapse').addClass('bx-angle-double-down');
+            $('#filterCollapse').removeClass('bx-angle-double-up');       
+        }
+        resizeAttributeContainer(600);
+    }
+
+    function loadFilter() {
+        $.get('@Url.Action("_attributeFilterBinding", "DataStructureEdit", new { area = "RPM"} )', function (data) {
+            $('#filterContainer').html(data);
+            initIsotope();
+        });
+    }
+
+    $(window).resize(function () {
+        setTimeout(function () {
+            $('.bx-rpm-attribute-container').height(getAttibuteContainerSize());
+        }, 120);
+    });
+
+    function resizeAttributeContainer(delay) {
+        setTimeout(function () {
+            //$('.bx-rpm-container').height($(window).height() - $('.bx-rpm-attributeheader').height() - 150);
+
+            if ($('.bx-rpm-attribute-container').height() < getAttibuteContainerSize()) {
+                $('.bx-rpm-attribute-container').animate({
+                    'height': getAttibuteContainerSize()
+                });
+            }
+            else {
+                $('.bx-rpm-attribute-container').height(getAttibuteContainerSize());
+            }
+        }, delay);
+    }
+
+    function getAttibuteContainerSize(){
+        return $(window).height() - $('.bx-rpm-attributeheader').height() - 150;
+    }
+</script>

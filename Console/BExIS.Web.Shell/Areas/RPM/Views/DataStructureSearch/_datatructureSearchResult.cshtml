@@ -36,12 +36,14 @@
                       "<td class='bx-rpm-result'><#= Description #></td>" +
                       "<td class='bx-rpm-result'><#= inUse #></td>" +
                       "<td class='bx-rpm-result bx-rpm-gridfunction'>" +
-                          "<a class='bx bx-grid-function bx-edit' href='/RPM/Home/showDataStructure?SelectedItem=<#= Id #>%2C<#= Structured #>'></a>" +
-                          "<a id='download<#= Id #>' class='bx bx-grid-function bx-download' structured='<#= Structured #>' href='/RPM/Home/downloadTemplate?id=<#= Id #>'></a>" +
+                          "<a class='bx bx-grid-function bx-edit' href='/RPM/DataStructureEdit?dataStructureId=<#= Id #>'></a>" +
+                          "<a id='<#= Id #>_download' class='bx bx-grid-function bx-download' structured='<#= Structured #>' href='/RPM/Home/downloadTemplate?id=<#= Id #>'></a>" +
                       "</td>" +
                   "</tr>" +
-                  "<tr class='bx-rpm-preview hidden' id='preview<#= Id #>' structured='<#= Structured #>' preview='<#= Preview #>'>" +
-                      "<td colspan='4' id='content<#= Id #>'></td>" +
+                  "<tr class='bx-rpm-preview hidden' id='<#= Id #>_preview' structured='<#= Structured #>' preview='<#= Preview #>'>" +
+                      "<td colspan='4' id='<#= Id #>_content'>" +
+                        "<h3 class='bx-rpm-loading'><span class='fa fa-spinner fa-pulse'></span> Loading Data Structure</h3>" +
+                      "</td>" +
                   "</tr>" +
                   "<tr>" +
                       "<td class='bx-rpm-empty'></td>" +
@@ -59,19 +61,21 @@
     var previewIds = [];
 
     function clickDatastructure(id) {
-        if ($('#preview' + id).attr('preview') == 'true') {
-            $('#preview' + id).attr('preview', 'false');
-            $('#preview' + id).addClass('hidden');
-            $('#collapse' + id).addClass('bx-angle-double-down');
-            $('#collapse' + id).removeClass('bx-angle-double-up');
+        if ($('#' + id + '_preview').attr('preview') == 'true') {
+            $('#' + id + '_preview').attr('preview', 'false');
+            $('#' + id + '_preview').addClass('hidden');
+            $('#' + id + '_collapse').addClass('bx-angle-double-down');
+            $('#' + id + '_collapse').removeClass('bx-angle-double-up');
             previewIds.splice(previewIds.indexOf(id), 1);
         }
         else {
-            loadPreview(id);
-            $('#preview' + id).attr('preview', 'true');
-            $('#preview' + id).removeClass('hidden');
-            $('#collapse' + id).addClass('bx-angle-double-up');
-            $('#collapse' + id).removeClass('bx-angle-double-down');
+            if ($('#' + id + '_preview #' + id +'_dataStructurePreviewGrid').length == 0) {
+                loadPreview(id);
+            }
+            $('#' + id + '_preview').attr('preview', 'true');
+            $('#' + id + '_preview').removeClass('hidden');
+            $('#' + id + '_collapse').addClass('bx-angle-double-up');
+            $('#' + id + '_collapse').removeClass('bx-angle-double-down');
             previewIds.push(id);
         }
         previewIds.sort();
@@ -87,16 +91,16 @@
     function dataStructureResultGrid_onDataBound(e) {
         resetAllTelerikIconTitles();
         for (i = 0; i < previewIds.length; i++) {
-            if ($('#preview' + previewIds[i]).attr('preview') == 'true') {
+            if ($('#' + previewIds[i] + 'preview').attr('preview') == 'true') {
                 loadPreview(previewIds[i]);
-                $('#preview' + previewIds[i]).removeClass('hidden');
-                $('#collapse' + previewIds[i]).addClass('bx-angle-double-up');
-                $('#collapse' + previewIds[i]).removeClass('bx-angle-double-down');
+                $('#' + previewIds[i] + '_preview' + previewIds[i]).removeClass('hidden');
+                $('#' + previewIds[i] + '_collapse' + previewIds[i]).addClass('bx-angle-double-up');
+                $('#' + previewIds[i] + '_collapse' + previewIds[i]).removeClass('bx-angle-double-down');
             }
         }
 
         for (i = 0; i < $('.bx-download').length; i++) {
-            id = $('.bx-download')[i].id;
+            var id = $('.bx-download')[i].id;
             if ($('#' + id).attr('structured') == 'false') {
                 $('#' + id).addClass('bx-disabled');
                 $('#' + id).removeAttr('href');
@@ -109,12 +113,10 @@
     }
 
     function loadPreview(id) {
-        if ($('#content' + id).html() == "" || $('#content' + id).html() == null) {
-            var parametrs = '/?dataStructureId=' + id + '&structured=' + $('#preview' + id).attr('structured')
-            $.get('@Url.Action("_dataStructurePreviewBinding", "DataStructureSearch", new { area = "RPM"} )' + parametrs, function (data) {
-                $('#content' + id).html(data);
-            });
-        }
+        var parametrs = '/?dataStructureId=' + id + '&structured=' + $('#' + id + '_preview').attr('structured')
+        $.get('@Url.Action("_dataStructurePreviewBinding", "DataStructureSearch", new { area = "RPM"} )' + parametrs, function (data) {
+            $('#' + id + '_content').html(data);
+        });
     }
 
 </script>

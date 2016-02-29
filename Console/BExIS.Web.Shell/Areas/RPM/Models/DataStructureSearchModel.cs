@@ -157,11 +157,10 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
 
         public DataStructureResultsModel fill(long[] previewIds, string saerchTerms)
         {
-            List<DataStructure> dataStructures = getStucturedDataStructures(saerchTerms);
             DataStructureResultStruct dataStructureResult = new DataStructureResultStruct();
 
 
-            foreach (DataStructure ds in dataStructures)
+            foreach (DataStructure ds in getStucturedDataStructures(saerchTerms))
             {
                 dataStructureResult = new DataStructureResultStruct();
                 dataStructureResult.Id = ds.Id;
@@ -179,9 +178,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
                 this.dataStructureResults.Add(dataStructureResult);
             }
 
-            dataStructures = getUnStucturedDataStructures(saerchTerms);
-
-            foreach (DataStructure ds in dataStructures)
+            foreach (DataStructure ds in getUnStucturedDataStructures(saerchTerms))
             {
                 dataStructureResult = new DataStructureResultStruct();
                 dataStructureResult.Id = ds.Id;

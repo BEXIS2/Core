@@ -5,9 +5,7 @@ using System.Text;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Subjects;
 using Vaiona.Entities.Common;
-/// <summary>
-/// 
-/// </summary>
+
 namespace BExIS.Security.Entities.Authentication
 {
     public class Authenticator : BaseEntity
