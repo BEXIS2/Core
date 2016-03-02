@@ -656,8 +656,8 @@ namespace BExIS.Xml.Helpers.Mapping
                         if (!XmlSchemaUtility.IsSimpleType(element))
                         {
                             #region complexType
-                            MetadataPackage package = getExistingMetadataPackage(element.Name);// = mdpManager.MetadataPackageRepo.Get(p => p.Name == element.Name).FirstOrDefault();
-                            if (package == null) package = mdpManager.Create(element.Name, GetDescription(element.Annotation), true);
+                            MetadataPackage package = getExistingMetadataPackage(typeName);// = mdpManager.MetadataPackageRepo.Get(p => p.Name == element.Name).FirstOrDefault();
+                            if (package == null) package = mdpManager.Create(typeName, GetDescription(element.Annotation), true);
 
                             // add package to structure
                             if (test.MetadataPackageUsages != null && test.MetadataPackageUsages.Where(p => p.Label.Equals(element.Name)).Count() > 0)
@@ -945,13 +945,13 @@ namespace BExIS.Xml.Helpers.Mapping
                         max = int.MaxValue;
 
                     if (packageUsage.MetadataAttributeUsages.Where(p => p.MetadataAttribute == attribute).Count() <= 0)
-                        metadataPackageManager.AddMetadataAtributeUsage(packageUsage, attribute, attribute.Name, attribute.Description, min, max);
+                        metadataPackageManager.AddMetadataAtributeUsage(packageUsage, attribute, element.Name, attribute.Description, min, max);
 
 
                     #region generate  MappingRoute
 
-                    addToExportMappingFile(mappingFileInternalToExternal, internalXPath, externalXPath, max, attribute.Name);
-                    addToImportMappingFile(mappingFileExternalToInternal, externalXPath , internalXPath, max, attribute.Name);
+                    addToExportMappingFile(mappingFileInternalToExternal, internalXPath, externalXPath, max, element.Name, attribute.Name);
+                    addToImportMappingFile(mappingFileExternalToInternal, externalXPath , internalXPath, max, element.Name, attribute.Name);
 
                     #endregion
                 }
@@ -1021,9 +1021,9 @@ namespace BExIS.Xml.Helpers.Mapping
                 MetadataAttribute attribute;
 
                 if (metadataAttributeManager.MetadataAttributeRepo != null && 
-                    getExistingMetadataAttribute(element.Name)!=null)
+                    getExistingMetadataAttribute(GetTypeOfName(element.Name))!=null)
                 {
-                    attribute = metadataAttributeManager.MetadataAttributeRepo.Get().Where(m => m.Name.Equals(element.Name)).First();
+                    attribute = metadataAttributeManager.MetadataAttributeRepo.Get().Where(m => m.Name.Equals(GetTypeOfName(element.Name))).First();
                 }
                 else
                 {
@@ -1045,7 +1045,7 @@ namespace BExIS.Xml.Helpers.Mapping
 
                     MetadataNestedAttributeUsage u1 = new MetadataNestedAttributeUsage()
                     {
-                        Label = attribute.Name,
+                        Label = element.Name,
                         Description = attribute.Description,
                         MinCardinality = min,
                         MaxCardinality = max,
@@ -1055,8 +1055,8 @@ namespace BExIS.Xml.Helpers.Mapping
 
                     #region generate  MappingRoute
 
-                    addToExportMappingFile(mappingFileInternalToExternal, internalXPath, externalXPath, element.MaxOccurs, attribute.Name);
-                    addToImportMappingFile(mappingFileExternalToInternal, externalXPath, internalXPath, element.MaxOccurs, attribute.Name);
+                    addToExportMappingFile(mappingFileInternalToExternal, internalXPath, externalXPath, element.MaxOccurs, element.Name, attribute.Name);
+                    addToImportMappingFile(mappingFileExternalToInternal, externalXPath, internalXPath, element.MaxOccurs, element.Name, attribute.Name);
 
                     #endregion
 
@@ -1079,7 +1079,7 @@ namespace BExIS.Xml.Helpers.Mapping
             {
                 XmlSchemaSimpleType type = (XmlSchemaSimpleType)element.ElementSchemaType;
 
-                string name = element.Name;
+                string name = GetTypeOfName(element.Name);
                 string description = "";
 
                 if (element.Annotation != null)
@@ -1351,7 +1351,7 @@ namespace BExIS.Xml.Helpers.Mapping
                 MetadataAttribute attribute;
 
                 if (metadataAttributeManager.MetadataAttributeRepo != null && 
-                        metadataAttributeManager.MetadataAttributeRepo.Get().Where(m => m.Name.Equals(element.Name)).Count() > 0)
+                        metadataAttributeManager.MetadataAttributeRepo.Get().Where(m => m.Name.Equals(GetTypeOfName(element.Name))).Count() > 0)
                 {
                     attribute = metadataAttributeManager.MetadataAttributeRepo.Get().Where(m => m.Name.Equals(element.Name)).First();
                 }
@@ -1362,8 +1362,8 @@ namespace BExIS.Xml.Helpers.Mapping
 
                 #region generate  MappingRoute
 
-                addToExportMappingFile(mappingFileInternalToExternal, internalXPath, externalXPath, element.MaxOccurs, attribute.Name);
-                addToImportMappingFile(mappingFileExternalToInternal, externalXPath, internalXPath, element.MaxOccurs, attribute.Name);
+                addToExportMappingFile(mappingFileInternalToExternal, internalXPath, externalXPath, element.MaxOccurs,element.Name, attribute.Name);
+                addToImportMappingFile(mappingFileExternalToInternal, externalXPath, internalXPath, element.MaxOccurs, element.Name, attribute.Name);
 
                 #endregion
 
@@ -1373,11 +1373,11 @@ namespace BExIS.Xml.Helpers.Mapping
                 //Debug.WriteLine("--- sequence :" + element);
         }
 
-        private XmlMapper addToImportMappingFile(XmlMapper mapper, string sourceXPath, string destinationXPath, decimal max, string name)
+        private XmlMapper addToImportMappingFile(XmlMapper mapper, string sourceXPath, string destinationXPath, decimal max, string name, string nameType)
         {
             string parentExternalName = destinationXPath.Split('/').Last();
             string childSourceXPath = sourceXPath + "/" + name; 
-            string childDestinationXPath = destinationXPath + "/" + name+ "/" + name;
+            string childDestinationXPath = destinationXPath + "/" + name+ "/" + nameType;
 
             XmlMappingRoute xmr = new XmlMappingRoute();
 
@@ -1396,10 +1396,10 @@ namespace BExIS.Xml.Helpers.Mapping
             return mapper;
         }
 
-        private XmlMapper addToExportMappingFile(XmlMapper mapper, string sourceXPath, string destinationXPath, decimal max, string name)
+        private XmlMapper addToExportMappingFile(XmlMapper mapper, string sourceXPath, string destinationXPath, decimal max, string name, string typeName)
         {
             string parentExternalName = destinationXPath.Split('/').Last();
-            string childSourceXPath = sourceXPath + "/" + name + "/" + name;
+            string childSourceXPath = sourceXPath + "/" + name + "/" + typeName;
             string childDestinationXPath = destinationXPath + "/" + name;
 
             XmlMappingRoute xmr = new XmlMappingRoute();

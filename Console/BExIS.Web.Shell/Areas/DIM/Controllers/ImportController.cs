@@ -50,7 +50,7 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
             // generate intern metadata 
             XmlDocument metadataResult = xmlMapperManager.Generate(metadataForImport,1);
 
-            // generate intern tempalte
+            // generate intern template
             XmlMetadataWriter xmlMetadatWriter = new XmlMetadataWriter(BExIS.Xml.Helpers.XmlNodeMode.xPath);
             XDocument metadataXml = xmlMetadatWriter.CreateMetadataXml(metadataStructureId);
             XmlDocument metadataXmlTemplate = XmlMetadataWriter.ToXmlDocument(metadataXml);
@@ -60,6 +60,7 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
             // create Dataset
 
             //load datastructure
+
             DataStructureManager dsm = new DataStructureManager();
             ResearchPlanManager rpm = new ResearchPlanManager();
             MetadataStructureManager msm = new MetadataStructureManager();

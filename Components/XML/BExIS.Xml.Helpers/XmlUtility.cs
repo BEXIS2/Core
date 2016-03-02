@@ -162,9 +162,7 @@ namespace BExIS.Xml.Helpers
             /// <returns></returns>
             public static IEnumerable<XElement> GetChildren(XElement source)
             {
-
                 return source.Nodes().OfType<XElement>();
-
             }
 
             /// <summary>
