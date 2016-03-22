@@ -61,6 +61,7 @@
     <Compile Include="Mapping\XmlSchemaManager.cs" />
     <Compile Include="XExtentsions.cs" />
     <Compile Include="XmlDatasetHelper.cs" />
+    <Compile Include="XmlMetadataImportHelper.cs" />
     <Compile Include="XmlMetadataWriter.cs" />
     <Compile Include="XmlSchemaUtility.cs" />
     <Compile Include="XmlUtility.cs" />
@@ -81,6 +82,9 @@
       <Project>{c0c9f0f2-9e65-448d-8000-d311db326460}</Project>
       <Name>BExIS.Xml.Models</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

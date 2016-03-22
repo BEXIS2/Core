@@ -593,7 +593,6 @@ namespace BExIS.Xml.Helpers
             }
         #endregion
 
-
         public XDocument Change(XDocument metadataXml, string firstXPath, string secondXPath)
         {
             this._tempXDoc = metadataXml;
@@ -619,7 +618,6 @@ namespace BExIS.Xml.Helpers
 
             return metadataXml;
         }
-
 
         #region update
 
@@ -711,6 +709,5 @@ namespace BExIS.Xml.Helpers
 
         #endregion
     }
-
 
 }
