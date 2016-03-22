@@ -1,0 +1,43 @@
+﻿@model BExIS.Web.Shell.Models.EntitySelectorModel
+@{ 
+    string title = "No Title";
+    if (!string.IsNullOrEmpty(Model.Title))
+    {
+        title = Model.Title;
+    }
+
+    string name = "NoName";
+    if (!string.IsNullOrEmpty(Model.Title))
+    {
+        name = Model.Title;
+    }
+
+    name += "Window";
+}
+
+
+@(Html.Telerik().Window()
+    .Name(name)
+    .Visible(false)
+    .Title(title)
+    .HtmlAttributes(new { @class = "bx-window" })
+    .Modal(true)
+    .Draggable(true)
+    .Buttons(buttons => buttons.Close())
+    .ClientEvents(e=>e.OnLoad("OnLoad"))
+    .Content(
+        @Html.Partial("_EntitySelectorView", Model).ToHtmlString())
+    )
+
+
+
+
+<script type="text/javascript">
+
+    function OnLoad()
+    {
+        var detailWindow = $("#"+'@name').data("tWindow");
+        detailWindow.center().open();
+    }
+
+</script>

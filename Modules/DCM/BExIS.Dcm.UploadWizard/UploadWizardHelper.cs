@@ -609,6 +609,7 @@ namespace BExIS.Dcm.UploadWizard
                         string pKey;
                         foreach (long dtId in currentIds)
                         {
+                            //XmlDocument xxx = datasetManager.DataTupleRepo.Query(dtId).FirstOrDefault().XmlVariableValues; 
                             dt = datasetManager.DataTupleRepo.Get(dtId); 
 
                             //pKey = getPrimaryKeysAsByteArray(dt, primaryKeys);

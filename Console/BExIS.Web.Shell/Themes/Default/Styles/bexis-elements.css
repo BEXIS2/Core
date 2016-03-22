@@ -133,6 +133,10 @@ button.t-state-disabled,
 	color:#afb0b1;
     cursor:not-allowed;
 }
+a.bx-grid-function {
+    margin-left:2px;
+    margin-right:2px;
+}
 
 input[type=radio].css-checkbox {
 	background: none;

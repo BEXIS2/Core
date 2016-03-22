@@ -1,0 +1,92 @@
+﻿@model BExIS.Web.Shell.Models.EntitySelectorModel
+@using System.Data;
+
+@{
+    ViewBag.Title = "";
+    int idIndex = -1;
+
+    if (!String.IsNullOrEmpty(Model.IDKey))
+    {
+        idIndex = Model.Data.Columns.IndexOf(Model.Data.Columns[Model.IDKey]);
+    }
+
+    object idX = null;
+}
+<div>
+    @if (String.IsNullOrEmpty(Model.IDKey))
+    {
+        <table>
+            <tr class="header">
+                @foreach (DataColumn c in Model.Data.Columns)
+                {
+                    <th>@c.ColumnName</th>
+                }
+            </tr>
+            @foreach (DataRow r in Model.Data.Rows)
+            {
+                <tr>
+                    @foreach (object o in r.ItemArray)
+                    {
+                        <td>@o</td>
+                    }
+                </tr>
+            }
+        </table>
+    }
+    else
+    {
+
+        @(Html.Telerik().Grid(Model.Data)
+                .Name("TestGrid")
+                .DataBinding(c => c.Ajax().OperationMode(GridOperationMode.Client))
+          .DataKeys(keys => keys
+            .Add(Model.IDKey)
+          )
+          .Selectable()
+          .Pageable()
+          .Filterable()
+          .Sortable()
+          .Pageable(paging =>
+                paging.PageSize(50, new int[] { 1, 2, 3, 10, 50 })
+                    .Total(Model.Data.Rows.Count)
+                    )
+          .ClientEvents(events =>
+            events.OnRowSelect("OnRowSelection"))
+        )
+
+    }
+</div>
+<div class="bx-footer">
+    @if (!String.IsNullOrEmpty(Model.Reciever.Action) &&
+                !String.IsNullOrEmpty(Model.Reciever.Controller) &&
+                !String.IsNullOrEmpty(Model.Reciever.Area))
+    {
+        @*@Html.ActionLink("Submit", Model.Reciever.Action, Model.Reciever.Controller, new {area = @Model.Reciever.Area, @id="submit", @class = "bx-button bx-disabled", @style = "float:left", disabled="disabled" })*@
+        <a id="submit" class="bx-button function bx-disabled" >submit</a>
+
+    }
+</div>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        resetAllTelerikIconTitles();
+        addTooltips();
+    });
+
+
+    function OnRowSelection(e)
+    {
+
+        var dataid = $(e.row).find("td")['@idIndex'].innerText;
+        console.log(dataid);
+
+        var link = "/"+'@Model.Reciever.Area'+"/"+ '@Model.Reciever.Controller'+ "/"+'@Model.Reciever.Action';
+        link += "?id=" + dataid;
+        console.log(link);
+        $('#submit').attr("href", link);
+        $('#submit').removeClass("bx-disabled");
+    }
+</script>
+
+

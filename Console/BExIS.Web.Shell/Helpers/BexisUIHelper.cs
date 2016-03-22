@@ -330,7 +330,6 @@ namespace BExIS.Web.Shell.Helpers
         }
     }
 
-
     public abstract class BexisTag : IBexistag
     {
         public Dictionary<BexisUITagType, Dictionary<string, object>> _tagDictionary;
