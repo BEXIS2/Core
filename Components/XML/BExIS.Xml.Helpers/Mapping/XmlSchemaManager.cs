@@ -644,8 +644,8 @@ namespace BExIS.Xml.Helpers.Mapping
 
                     foreach (XmlSchemaElement element in otherElements)
                     {
-                       //Debug.Writeline("package : " + element.Name);
-                        //Debug.Writeline("--------------------------");
+                        Debug.WriteLine("package : " + element.Name);
+                        Debug.WriteLine("--------------------------");
 
                         string typeName = GetTypeOfName(element.Name);
                         string rootName = ((XmlSchemaElement)root).Name;
@@ -775,7 +775,7 @@ namespace BExIS.Xml.Helpers.Mapping
         private MetadataCompoundAttribute get(XmlSchemaElement element, List<string> parents, string internalXPath, string externalXPath)
         {
 
-            //Debug.Writeline("element :" + element.Name);
+            Debug.WriteLine("element :" + element.Name);
 
             XmlSchemaComplexType ct = XmlSchemaUtility.GetComplextType(element);
 
@@ -811,7 +811,7 @@ namespace BExIS.Xml.Helpers.Mapping
 
                     foreach (XmlSchemaElement child in childrens)
                     {
-                        //Debug.Writeline("child :" + child.Name);
+                        Debug.WriteLine("child :" + child.Name);
 
                         // simple element
                         if (XmlSchemaUtility.IsSimpleType(child))
@@ -927,6 +927,7 @@ namespace BExIS.Xml.Helpers.Mapping
 
         private void addMetadataAttributeToMetadataPackageUsage(MetadataPackage packageUsage, XmlSchemaElement element, string internalXPath, string externalXPath)
         {
+
                 MetadataAttribute attribute = createMetadataAttribute(element);
 
                 if (attribute != null)
@@ -1071,8 +1072,7 @@ namespace BExIS.Xml.Helpers.Mapping
 
         private MetadataAttribute createMetadataAttribute(XmlSchemaElement element)
         {
-           //Debug.Writeline(element.Name);
-
+           
             MetadataAttribute temp=null;
 
             if (element.ElementSchemaType is XmlSchemaSimpleType)
@@ -1106,10 +1106,12 @@ namespace BExIS.Xml.Helpers.Mapping
                     if (constraints != null && constraints.Count() > 0)
                         temp.Constraints = constraints;
 
+                    Debug.WriteLine(temp.Name);
+
                     return metadataAttributeManager.Update(temp);
                 }
 
-                //Debug.Writeline(temp.Name);
+                //Debug.WriteLine(temp.Name);
 
                 return temp;
                 
@@ -1156,10 +1158,12 @@ namespace BExIS.Xml.Helpers.Mapping
                         if (constraints != null && constraints.Count() > 0)
                             temp.Constraints = constraints;
 
+                        Debug.WriteLine(temp.Name);
+
                         return metadataAttributeManager.Update(temp);
                     }
 
-                    //Debug.Writeline(temp.Name);
+                    //Debug.WriteLine(temp.Name);
 
                     return temp;
                 }
@@ -1198,7 +1202,7 @@ namespace BExIS.Xml.Helpers.Mapping
             // create a compoundAttribute
             int i = 0;
             MetadataCompoundAttribute mca = getExistingMetadataCompoundAttribute(element.Name + "Type"); ;// = metadataAttributeManager.MetadataCompoundAttributeRepo.Get(p => p.Name == element.Name+"Type").FirstOrDefault();
-            Debug.WriteLine("createMetadataCompoundAttribute" + i++);
+            //Debug.WriteLine("dataTypeManager.Repo.Get(" + dataTypeManager.Repo.Get().Count());
             DataType dt1 = dataTypeManager.Repo.Get(p => p.Name.Equals("String")).FirstOrDefault();
             if (dt1 == null)
             {
@@ -1449,12 +1453,15 @@ namespace BExIS.Xml.Helpers.Mapping
             {
                 TypeCode typeCode = ConvertStringToSystemType(dataTypeAsString);
 
-                DataType dataType = dataTypeManager.Repo.Get().Where(d => d.SystemType.Equals(typeCode.ToString()) && d.Name.Equals(typeCode.ToString())).FirstOrDefault();
+                DataType dataType = dataTypeManager.Repo.Query().Where(d => d.SystemType.Equals(typeCode.ToString()) && d.Name.Equals(typeCode.ToString())).FirstOrDefault();
 
                 if (dataType == null)
                 {
                     dataType = dataTypeManager.Create(typeCode.ToString(), typeCode.ToString(), typeCode);
+                    //Debug.WriteLine("NEW --- DATATYPE:    " + dataType.Name);
                 }
+                //Debug.WriteLine("DATATYPE:    "+dataType.Name);
+                //Debug.WriteLine("NR:    " + dataTypeManager.Repo.Get().Count());
 
                 return dataType;
             }

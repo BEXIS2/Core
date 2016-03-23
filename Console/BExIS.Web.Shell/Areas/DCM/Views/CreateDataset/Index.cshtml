@@ -53,7 +53,7 @@
                 </td>
                 <td>
                     <div id="datasetsContainer">
-                        @Ajax.ActionLink("ShowListOfDatasets", "ShowListOfDatasets", "CreateDataset", new RouteValueDictionary { { "area", "DCM" } },
+                        @Ajax.ActionLink("Select", "ShowListOfDatasets", "CreateDataset", new RouteValueDictionary { { "area", "DCM" } },
                             new AjaxOptions
                             {
                                 HttpMethod = "GET",
@@ -93,24 +93,22 @@
             </td>
             <td>
                 <div id="datastructuresContainer">
-                    @Ajax.ActionLink("ShowListOfDataStructures", "ShowListOfDataStructures", "CreateDataset", new RouteValueDictionary { { "area", "DCM" } },
+                    @Ajax.ActionLink("Select", "ShowListOfDataStructures", "CreateDataset", new RouteValueDictionary { { "area", "DCM" } },
                         new AjaxOptions
                         {
                             HttpMethod = "GET",
                             InsertionMode = InsertionMode.Replace,
-                            UpdateTargetId = "datastructuresContainer"
+                            UpdateTargetId = "datastructureWindowContainer"
                         },
                         new { @class = "t-button", @style = "float:right" })
-
-
-
                 </div>
+                <div id="datastructureWindowContainer"></div>
             </td>
         </tr>
         <tr>
             <td style="width:300px;">
                 @Html.LabelFor(m => m.SelectedMetadataStructureId) <span class="bx bx-required" title="Required"></span>
-        </td>
+            </td>
         <td>
             @if (Model.BlockMetadataStructureId)
             {
@@ -133,15 +131,16 @@
         </td>
             <td>
                 <div id="metadatastructuresContainer">
-                    @Ajax.ActionLink("ShowListOfMetadataStructures", "ShowListOfMetadataStructures", "CreateDataset", new RouteValueDictionary { { "area", "DCM" } },
+                    @Ajax.ActionLink("Select", "ShowListOfMetadataStructures", "CreateDataset", new RouteValueDictionary { { "area", "DCM" } },
                         new AjaxOptions
                         {
                             HttpMethod = "GET",
                             InsertionMode = InsertionMode.Replace,
-                            UpdateTargetId = "metadatastructuresContainer"
+                            UpdateTargetId = "metadatadatastructureWindowContainer"
                         },
                         new { @class = "t-button", @style = "float:right" })
                 </div>
+                <div id="metadatadatastructureWindowContainer"></div>
             </td>
     </tr>
 </table>

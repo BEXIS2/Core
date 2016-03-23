@@ -991,7 +991,6 @@
     <Folder Include="Areas\SAM\Views\Shared\" />
     <Folder Include="Areas\Site\Models\" />
     <Folder Include="Areas\Site\Views\Shared\" />
-    <Folder Include="Views\Shared\NewFolder1\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Home\About.cshtml" />
