@@ -68,6 +68,8 @@ namespace BExIS.Web.Shell
 
         protected void Application_Start()
         {
+			MvcHandler.DisableMvcResponseHeader = true;
+		
             init();
 
             AreaRegistration.RegisterAllAreas();
@@ -135,6 +137,14 @@ namespace BExIS.Web.Shell
             IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager();
             pManager.ShutdownConversation(); 
             IoCFactory.Container.ShutdownSessionLevelContainer();
+        }
+		
+		protected void Application_PreSendRequestHeaders()
+        {
+            Response.Headers.Remove("Server");
+            Response.Headers.Remove("X-AspNet-Version"); 
+            Response.Headers.Remove("X-AspNetMvc-Version");
+            Response.Headers.Remove("X-Powered-By");
         }
     }
 }
