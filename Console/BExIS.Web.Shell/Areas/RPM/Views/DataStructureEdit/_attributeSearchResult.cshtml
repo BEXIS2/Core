@@ -31,10 +31,27 @@
 </table>
 
 <div class="bx-rpm-attribute-container" id="#Results">
+    @{
+        string cssId = "";
+        string cssClass = "";
+        string Id = "";
+    }
     @foreach (AttributePreviewStruct aps in Model.AttributePreviews)
     {
-        string Id = aps.Id + "_attribute";
-        <div class="bx-rpm-attribute-item @aps.Id" id="@Id">
+        if(aps.isVariable)
+        {
+            cssId = aps.VariableId + "_variable";
+            cssClass = aps.AttributeId + " " + aps.VariableId + " bx-rpm-variable";
+            Id = aps.AttributeId + " / " + aps.isVariable;
+        }
+        else
+        {
+            cssId = aps.AttributeId + "_attribute";
+            cssClass = aps.AttributeId + " bx-rpm-attribute";
+            Id = aps.AttributeId.ToString();
+        }
+
+        <div class="bx-rpm-attribute-item @cssClass" id="@cssId">
             <table>
                 <tr>
                     <td class="bx-rpm-label"><label>Name</label></td>
@@ -44,22 +61,22 @@
                 </tr>
                 <tr>
                     <td class="bx-rpm-label"><label>Id</label></td>
-                    <td class="id bx-rpm-text">@aps.Id</td>
+                    <td class="id bx-rpm-text">@Id</td>
                 </tr>
                 <tr>
                     <td class="bx-rpm-label"><label>Unit</label></td>
                     <td class="unit bx-rpm-text">@aps.Unit</td>
-                    <td class="bx-rpm-label" rowspan="2"><label>Constraints</label></td>
-                    <td class="description bx-rpm-text" rowspan="2">
-                        @foreach(string s in aps.Constraints)
+                    <td class="bx-rpm-label" rowspan="2" id="last"><label>Constraints</label></td>
+                    <td class="description bx-rpm-text" rowspan="2" id="last">
+                        @foreach(KeyValuePair<long,string> c in aps.Constraints)
                         {
-                            <p>@s</p>
+                            <p>@c.Value</p>
                         }
                     </td>
                 </tr>
                 <tr>
-                    <td class="bx-rpm-label"><label>Data Type</label></td>
-                    <td class="datatype bx-rpm-text">@aps.DataType</td>
+                    <td class="bx-rpm-label" id="last"><label>Data Type</label></td>
+                    <td class="datatype bx-rpm-text" id="last">@aps.DataType</td>
                 </tr>
             </table>
         </div>
@@ -73,7 +90,7 @@
     });
     function initIsotope() {
         // init Isotope
-        var $grid = $('.bx-rpm-attribute-container').isotope({
+        var $attributeGrid = $('.bx-rpm-attribute-container').isotope({
             itemSelector: '.bx-rpm-attribute-item',
             layoutMode: 'vertical',
             transitionDuration: '1.0s',
@@ -90,10 +107,10 @@
         $('.bx-rpm-sortdropdown').on('change', 'select', function () {
             var sortValue = $(this).val().split(',');
             if (sortValue[1] == 'true') {
-                $grid.isotope({ sortBy: sortValue[0], sortAscending: true});
+                $attributeGrid.isotope({ sortBy: sortValue[0], sortAscending: true });
             }
             else {
-                $grid.isotope({ sortBy: sortValue[0], sortAscending: false });
+                $attributeGrid.isotope({ sortBy: sortValue[0], sortAscending: false });
             }
             resizeAttributeContainer(120);
         });    
@@ -101,7 +118,7 @@
         $('.bx-rpm-filterContainer').on('click', '.bx-rpm-filterCheckbox', function () {
             console.log('Click');
             var filterValue = setFilter(this);
-            $grid.isotope({ filter: filterValue });
+            $attributeGrid.isotope({ filter: filterValue });
             resizeAttributeContainer(120);
         });
     }

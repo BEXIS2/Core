@@ -54,6 +54,11 @@
     width: 75px;
 }
 
+.bx-rpm-resultGrid .bx-rpm-lock {
+    width: 63px;
+    text-align:center;
+}
+
 .bx-rpm-resultGrid .bx-rpm-title {
     font-weight:bold;
     cursor:pointer;
@@ -91,4 +96,8 @@
     width:100%;
     text-align:center; 
     vertical-align:middle;
+}
+
+.bx-rpm-result .bx-lock{
+    margin: 0px 3px 0px 0px;
 }

@@ -20,9 +20,14 @@
                 .Columns(columns =>
                 {
                     columns.Bound(c => c.Title);
+                    columns.Template(
+                    @<text>
+                    </text>
+                    )
+                    .Title("Locked")
+                    .HeaderHtmlAttributes(new { @class = "bx-rpm-lock" });
                     columns.Bound(c => c.Id);
                     columns.Bound(c => c.Description);
-                    columns.Bound(c => c.inUse);
                     columns.Template(
                     @<text>
                     </text>
@@ -30,24 +35,24 @@
                     .HeaderHtmlAttributes(new { @class = "bx-rpm-gridfunction" });
                 })
                 .ClientRowTemplate(
-                    "<tr>" +
+                    "<tr class='bx-rpm-datastructure-item' id='<#= Id #>' structured='<#= Structured #>' inuse='<#= inUse #>'>" +
                       "<td class='bx-rpm-result'><span class='bx-rpm-title' onclick='javascript:clickDatastructure(<#= Id #>)'><#= Title #><span id='collapse<#= Id #>' class='bx bx-angle-double-down'></span></span></td>" +
+                      "<td class='bx-rpm-result bx-rpm-lock'><span id='<#= Id #>_lock'></span></td>" +
                       "<td class='bx-rpm-result'><#= Id #></td>" +
                       "<td class='bx-rpm-result'><#= Description #></td>" +
-                      "<td class='bx-rpm-result'><#= inUse #></td>" +
                       "<td class='bx-rpm-result bx-rpm-gridfunction'>" +
                           "<a class='bx bx-grid-function bx-edit' href='/RPM/DataStructureEdit?dataStructureId=<#= Id #>'></a>" +
-                          "<a id='<#= Id #>_download' class='bx bx-grid-function bx-download' structured='<#= Structured #>' href='/RPM/Home/downloadTemplate?id=<#= Id #>'></a>" +
+                          "<a id='<#= Id #>_download' class='bx bx-grid-function bx-download' href='/RPM/Home/downloadTemplate?id=<#= Id #>'></a>" +
                       "</td>" +
                   "</tr>" +
-                  "<tr class='bx-rpm-preview hidden' id='<#= Id #>_preview' structured='<#= Structured #>' preview='<#= Preview #>'>" +
+                  "<tr class='bx-rpm-preview hidden' id='<#= Id #>_preview' preview='<#= Preview #>'>" +
                       "<td colspan='4' id='<#= Id #>_content'>" +
                         "<h3 class='bx-rpm-loading'><span class='fa fa-spinner fa-pulse'></span> Loading Data Structure</h3>" +
                       "</td>" +
                   "</tr>" +
                   "<tr>" +
                       "<td class='bx-rpm-empty'></td>" +
-                      "<td class='bx-rpm-empty'></td>" +
+                      "<td class='bx-rpm-empty bx-rpm-lock'></td>" +
                       "<td class='bx-rpm-empty'></td>" +
                       "<td class='bx-rpm-empty'></td>" +
                       "<td class='bx-rpm-empty bx-rpm-gridfunction'></td>" +
@@ -99,11 +104,14 @@
             }
         }
 
-        for (i = 0; i < $('.bx-download').length; i++) {
-            var id = $('.bx-download')[i].id;
+        for (i = 0; i < $('.bx-rpm-datastructure-item').length; i++) {
+            var id = $('.bx-rpm-datastructure-item')[i].id;
             if ($('#' + id).attr('structured') == 'false') {
-                $('#' + id).addClass('bx-disabled');
-                $('#' + id).removeAttr('href');
+                $('#' + id + '_download').addClass('bx-disabled');
+                $('#' + id + '_download').removeAttr('href');
+            }
+            if ($('#' + id).attr('inuse') == 'true') {
+                $('#' + id + '_lock').addClass('bx bx-lock');
             }
         }
     }
@@ -113,7 +121,7 @@
     }
 
     function loadPreview(id) {
-        var parametrs = '/?dataStructureId=' + id + '&structured=' + $('#' + id + '_preview').attr('structured')
+        var parametrs = '/?dataStructureId=' + id + '&structured=' + $('#' + id).attr('structured')
         $.get('@Url.Action("_dataStructurePreviewBinding", "DataStructureSearch", new { area = "RPM"} )' + parametrs, function (data) {
             $('#' + id + '_content').html(data);
         });

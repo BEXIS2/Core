@@ -27,6 +27,5 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
         {
             return PartialView("_dataStructure", new DataStructurePreviewModel().fill(dataStructureId));
         }
-
     }
 }

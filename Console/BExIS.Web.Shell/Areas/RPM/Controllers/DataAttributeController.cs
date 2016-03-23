@@ -174,7 +174,6 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
 
                             #endregion
-
                             DAM.UpdateDataAttribute(dataAttribute);
                         }
                     }

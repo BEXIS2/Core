@@ -14,49 +14,73 @@
             }
             @(Html.TextBoxFor(m => Model.Name, new { @class = "bx-rpm-headlinetextbox", @placeholder = "Data Structure Name" }))
     </h3>
-        @(Html.TextAreaFor(m => Model.Description, new { @class = "bx-rpm-headlinetextarea", @placeholder = "Data Structure Name" }))
+        @(Html.TextAreaFor(m => Model.Description, new { @class = "bx-rpm-headlinetextarea", @placeholder = "Data Structure Description" }))
 </div>
 <div class="bx-rpm-variable-container">
-    @foreach (AttributePreviewStruct v in Model.VariablePreviews)
+    @if (Model.VariablePreviews.Count > 0)
     {
-        string Id = v.Id + "_variable";
-        <div class="bx-rpm-variable-item" id="@Id">
-            <table>
-                <tr>
-                    <td class="bx-rpm-label"><label>Name</label></td>
-                    <td class="name bx-rpm-text">@v.Name</td>
-                    <td class="bx-rpm-label" rowspan="2"><label>Description</label></td>
-                    <td class="description bx-rpm-text" rowspan="2">@v.Description</td>
-                </tr>
-                <tr>
-                    <td class="bx-rpm-label"><label>Id</label></td>
-                    <td class="id bx-rpm-text">@v.Id</td>
-                </tr>
-                <tr>
-                    <td class="bx-rpm-label"><label>Unit</label></td>
-                    <td class="unit bx-rpm-text">@v.Unit</td>
-                    <td class="bx-rpm-label" rowspan="2"><label>Constraints</label></td>
-                    <td class="description bx-rpm-text" rowspan="2">
-                        @foreach (string s in v.Constraints)
-                        {
-                            <p>@s</p>
-                        }
-                    </td>
-                </tr>
-                <tr>
-                    <td class="bx-rpm-label"><label>Data Type</label></td>
-                    <td class="datatype bx-rpm-text">@v.DataType</td>
-                </tr>
-            </table>
+        <div class="bx-rpm-variable-drag-drop">
+            @foreach (AttributePreviewStruct v in Model.VariablePreviews)
+            {
+            string Id = v.VariableId + "_variable";
+            <div class="bx-rpm-variable-item" id="@Id">
+                <table>
+                    <tr>
+                        <td class="bx-rpm-label"><label>Name</label></td>
+                        <td class="name bx-rpm-text">@v.Name</td>
+                        <td class="bx-rpm-label" rowspan="2"><label>Description</label></td>
+                        <td class="description bx-rpm-text" rowspan="2">@v.Description</td>
+                    </tr>
+                    <tr>
+                        <td class="bx-rpm-label"><label>Id</label></td>
+                        <td class="id bx-rpm-text">@v.AttributeId / @v.VariableId</td>
+                    </tr>
+                    <tr>
+                        <td class="bx-rpm-label"><label>Unit</label></td>
+                        <td class="unit bx-rpm-text">@v.Unit</td>
+                        <td class="bx-rpm-label" rowspan="2" id="last"><label>Constraints</label></td>
+                        <td class="description bx-rpm-text" rowspan="2" id="last">
+                            @foreach (KeyValuePair<long, string> c in v.Constraints)
+                            {
+                                <p>@c.Value</p>
+                            }
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="bx-rpm-label" id="last"><label>Data Type</label></td>
+                        <td class="datatype bx-rpm-text" id="last">@v.DataType</td>
+                    </tr>
+                </table>
+            </div>
+            }
         </div>
+    }
+    else
+    {
+        <h3 id="placeholder">Drop Variables here</h3>
     }
 </div>
 
 <script type="text/javascript">
     $(function () {
         resizeVariableContainer(120);
+        initPackery();
     });
 
+    function initPackery() { 
+        var $variableGrid = $('.bx-rpm-variable-drag-drop').packery({
+            itemSelector: '.bx-rpm-variable-item',
+            columnWidth: 100,
+        });
+
+        // make all grid-items draggable
+        $variableGrid.find('.bx-rpm-variable-item').each(function (i, gridItem) {
+            var draggie = new Draggabilly(gridItem);
+            // bind drag events to Packery
+            $variableGrid.packery('bindDraggabillyEvents', draggie);
+        });
+    }
+    
     $(window).resize(function () {
         resizeVariableContainer(120)
     });

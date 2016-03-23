@@ -564,7 +564,9 @@
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image013.jpg" />
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image014.jpg" />
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image015.jpg" />
+    <Content Include="Areas\RPM\Scripts\draggabilly.pkgd.min.js" />
     <Content Include="Areas\RPM\Scripts\isotope.pkgd.min.js" />
+    <Content Include="Areas\RPM\Scripts\packery.pkgd.min.js" />
     <Content Include="Areas\RPM\Stylesheets\DataStructureEdit.css" />
     <Content Include="Areas\RPM\Stylesheets\DataStructureSearch.css" />
     <Content Include="Areas\RPM\Stylesheets\RPM.css" />
