@@ -31,6 +31,7 @@ namespace BExIS.Xml.Helpers.Mapping
         public List<MetadataAttribute> MetadataAttributes { get; set; }
         public Dictionary<string,List<Constraint>> ConvertedSimpleTypes { get; set; }
 
+        
 
         private DataContainerManager dataContainerManager = new DataContainerManager();
         private MetadataPackageManager metadataPackageManager = new MetadataPackageManager();
@@ -50,6 +51,9 @@ namespace BExIS.Xml.Helpers.Mapping
         private XmlMapper mappingFileInternalToExternal = new XmlMapper();
         private XmlMapper mappingFileExternalToInternal = new XmlMapper();
 
+        private Dictionary<long, string> createdAttributesDic { get; set; }
+        private Dictionary<long, string> createdPackagesDic { get; set; }
+        private Dictionary<long, string> createdCompoundsDic { get; set; }
 
         public XmlSchemaManager()
         {
@@ -64,6 +68,9 @@ namespace BExIS.Xml.Helpers.Mapping
             xsdFileName = "";
             mappingFileInternalToExternal = new XmlMapper();
             mappingFileExternalToInternal = new XmlMapper();
+            createdPackagesDic = new Dictionary<long, string>();
+            createdCompoundsDic = new Dictionary<long, string>();
+            createdAttributesDic = new Dictionary<long, string>();
         }
         
         public static bool MoveFile(string tempFile, string destinationPath)
@@ -208,7 +215,6 @@ namespace BExIS.Xml.Helpers.Mapping
                     return false;
                 }
             }
-
 
             return true;
         }
@@ -441,21 +447,6 @@ namespace BExIS.Xml.Helpers.Mapping
 
         #region import To MetadatStructure
 
-        public Dictionary<string, List<Constraint>> ConvertSimpleTypes()
-        {
-            MetadataAttributeManager mam = new MetadataAttributeManager();
-            //List<XmlSchemaElement> elementsWithSimpleType = this.GetAllElementsTypeIsSimpleType();
-           
-
-            //foreach(XmlSchemaElement element in elementsWithSimpleType)
-            //{
-                
-            //    //ConvertedSimplesTypes.Add(type.Name, ConvertToConstraints(type));   
-            //}
-
-
-            return ConvertedSimpleTypes;
-        }
 
         #region metadata structure
 
@@ -487,8 +478,6 @@ namespace BExIS.Xml.Helpers.Mapping
 
                 #endregion
             #endregion
-
-
 
             //List<MetadataAttribute> metadataAttributes = new List<MetadataAttribute>();
             //metadataAttributes = GenerateAllMetadataAttributes();
@@ -564,7 +553,11 @@ namespace BExIS.Xml.Helpers.Mapping
                     XmlSchemaGroup rootAsGroup = (XmlSchemaGroup)root;
 
                     MetadataPackage package = getExistingMetadataPackage(rootAsGroup.Name);
-                    if (package == null) package = mdpManager.Create(rootAsGroup.Name, GetDescription(rootAsGroup.Annotation), true);
+                    if (package == null)
+                    {
+                        package = mdpManager.Create(rootAsGroup.Name, GetDescription(rootAsGroup.Annotation), true);
+                        createdPackagesDic.Add(package.Id, package.Name);
+                    }
 
                     if (test.MetadataPackageUsages.Where(p => p.MetadataPackage == package).Count() <= 0)
                     {
@@ -583,8 +576,6 @@ namespace BExIS.Xml.Helpers.Mapping
                             {
                                 List<string> parents = new List<string>();
                                 parents.Add(rootAsGroup.Name);
-
-
 
                                 MetadataCompoundAttribute compoundAttribute = get(child, parents, xpath, rootAsGroup.Name);
 
@@ -615,12 +606,14 @@ namespace BExIS.Xml.Helpers.Mapping
                     string rootNodePackage = "Basic";
                     string rootNodePackageDescription = "Attributes from the root node";
 
-
                     if (simpleElements.Count > 0)
                     {
                         MetadataPackage package = getExistingMetadataPackage(rootNodePackage); ;// = mdpManager.MetadataPackageRepo.Get(p => p.Name == rootNodePackage).FirstOrDefault();
-                        if (package == null) package = mdpManager.Create(rootNodePackage, rootNodePackageDescription, true);
-
+                        if (package == null)
+                        {
+                            package = mdpManager.Create(rootNodePackage, rootNodePackageDescription, true);
+                            createdPackagesDic.Add(package.Id, package.Name);
+                        }   
                         if (test.MetadataPackageUsages.Where(p => p.MetadataPackage == package).Count() <= 0)
                         {
 
@@ -657,7 +650,11 @@ namespace BExIS.Xml.Helpers.Mapping
                         {
                             #region complexType
                             MetadataPackage package = getExistingMetadataPackage(typeName);// = mdpManager.MetadataPackageRepo.Get(p => p.Name == element.Name).FirstOrDefault();
-                            if (package == null) package = mdpManager.Create(typeName, GetDescription(element.Annotation), true);
+                            if (package == null)
+                            {
+                                package = mdpManager.Create(typeName, GetDescription(element.Annotation), true);
+                                createdPackagesDic.Add(package.Id, package.Name);
+                            }
 
                             // add package to structure
                             if (test.MetadataPackageUsages != null && test.MetadataPackageUsages.Where(p => p.Label.Equals(element.Name)).Count() > 0)
@@ -775,7 +772,7 @@ namespace BExIS.Xml.Helpers.Mapping
         private MetadataCompoundAttribute get(XmlSchemaElement element, List<string> parents, string internalXPath, string externalXPath)
         {
 
-            Debug.WriteLine("element :" + element.Name);
+            Debug.WriteLine("elementx :" + element.Name);
 
             XmlSchemaComplexType ct = XmlSchemaUtility.GetComplextType(element);
 
@@ -801,6 +798,8 @@ namespace BExIS.Xml.Helpers.Mapping
                 {
                     metadataCompountAttr = createMetadataCompoundAttribute(element);
                 }
+
+                
 
                 List<XmlSchemaElement> childrens = XmlSchemaUtility.GetAllElements(element, false, Elements);
 
@@ -848,7 +847,15 @@ namespace BExIS.Xml.Helpers.Mapping
                         }
 
                     }
+
+                    
                 }
+                else
+                {
+                    // add parent node
+
+                }
+
 
                 if (metadataAttributeManager.MetadataCompoundAttributeRepo.Get().Where(m => m.Name.Equals(metadataCompountAttr.Name)).Count() > 0)
                 {
@@ -856,10 +863,12 @@ namespace BExIS.Xml.Helpers.Mapping
 
                 }
                 else
-                { 
+                {
                     metadataCompountAttr = metadataAttributeManager.Create(metadataCompountAttr);
-            
+                    createdCompoundsDic.Add(metadataCompountAttr.Id, metadataCompountAttr.Name);
                 }
+
+
             }
             //only map
             else
@@ -909,10 +918,10 @@ namespace BExIS.Xml.Helpers.Mapping
             }
 
 
-            if(parents.Contains(element.Name))
-            {
-                parents.Remove(element.Name);
-            }
+            //if(parents.Contains(element.Name))
+            //{
+            //    parents.Remove(element.Name);
+            //}
 
             return metadataCompountAttr;
         }
@@ -1100,6 +1109,9 @@ namespace BExIS.Xml.Helpers.Mapping
                 if (temp == null)
                 {
                     temp = metadataAttributeManager.Create(name, name, description, false, false, "David Blaa", MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, noneunit, null, null, null, null);
+                    
+                    //add to dic for reuse of created attributes
+                    createdAttributesDic.Add(temp.Id, temp.Name);
 
                     //add constraints to the metadataAttribute
                     List<Constraint> constraints = ConvertToConstraints(type.Content, temp);
@@ -1145,6 +1157,9 @@ namespace BExIS.Xml.Helpers.Mapping
                     if (temp == null)
                     {
                         temp = metadataAttributeManager.Create(name, name, description, false, false, "David Blaa", MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, noneunit, null, null, null, null);
+
+                        //add to dic for reuse of created attributes
+                        createdAttributesDic.Add(temp.Id, temp.Name);
 
                         XmlSchemaSimpleContentRestriction simpleContentRestriction;
                         List<Constraint> constraints = new List<Constraint>();
@@ -1357,7 +1372,7 @@ namespace BExIS.Xml.Helpers.Mapping
                 if (metadataAttributeManager.MetadataAttributeRepo != null && 
                         metadataAttributeManager.MetadataAttributeRepo.Get().Where(m => m.Name.Equals(GetTypeOfName(element.Name))).Count() > 0)
                 {
-                    attribute = metadataAttributeManager.MetadataAttributeRepo.Get().Where(m => m.Name.Equals(element.Name)).First();
+                    attribute = metadataAttributeManager.MetadataAttributeRepo.Get().Where(m => m.Name.Equals(GetTypeOfName(element.Name))).First();
                 }
                 else
                 {
@@ -1429,20 +1444,33 @@ namespace BExIS.Xml.Helpers.Mapping
 
         private MetadataAttribute getExistingMetadataAttribute(string name)
         {
-            // TODO: need to implement; 
+            if (createdAttributesDic.ContainsValue(name))
+            {
+               long id = createdAttributesDic.Where(k => k.Value.Equals(name)).FirstOrDefault().Key;
+               return metadataAttributeManager.MetadataSimpleAttributeRepo.Get(id);
+
+            } 
 
             return null;
         }
 
         private MetadataCompoundAttribute getExistingMetadataCompoundAttribute(string name)
         {
-            // TODO: need to implement; 
+            if (createdCompoundsDic.ContainsValue(name))
+            {
+                long id = createdCompoundsDic.Where(k => k.Value.Equals(name)).FirstOrDefault().Key;
+                return metadataAttributeManager.MetadataCompoundAttributeRepo.Get(id);
+            }
             return null;
         }
 
         private MetadataPackage getExistingMetadataPackage(string name)
         {
-            // TODO: need to implement; 
+            if (createdPackagesDic.ContainsValue(name))
+            {
+                long id = createdPackagesDic.Where(k => k.Value.Equals(name)).FirstOrDefault().Key;
+                return metadataPackageManager.MetadataPackageRepo.Get(id);
+            }
             return null;
         }
 
