@@ -160,7 +160,7 @@ namespace BExIS.Dlm.Entities.Data
         /// <remarks></remarks>
         /// <seealso cref=""/>
         /// <param></param>       
-        public override void Materialize()
+        public override void Materialize(bool includeChildren = true)
         {
             base.Materialize();
             if(this.PriliminaryTuples != null)
@@ -173,7 +173,7 @@ namespace BExIS.Dlm.Entities.Data
         /// <remarks></remarks>
         /// <seealso cref=""/>
         /// <param></param>      
-        public override void Dematerialize()
+        public override void Dematerialize(bool includeChildren=true)
         {
             base.Dematerialize();
             if (this.PriliminaryTuples != null)
