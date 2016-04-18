@@ -66,8 +66,6 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
             if (Model.Name == "" | Model.Name == null)
             {
-                
-
                 Session["nameMsg"] = "invalid Name";
                 Session["Window"] = true;
                 return View("AttributeManager", new DataAttributeManagerModel(Model));
