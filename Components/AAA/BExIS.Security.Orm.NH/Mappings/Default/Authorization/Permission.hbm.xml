@@ -3,7 +3,7 @@
 
     <!-- Mapping BaseEntity properties -->
     <id name="Id" type="Int64">
-      <column name="Id" />
+      <column name="Id" index="idx_Permissions_id"/>
       <generator class="native" />
     </id>
 
@@ -16,7 +16,9 @@
     </property>
 
     <!-- Mapping Permission Associations -->
-    <property name="PermissionType" type="BExIS.Security.Entities.Objects.PermissionType, BExIS.Security.Entities" />
+    <property name="PermissionType" type="BExIS.Security.Entities.Objects.PermissionType, BExIS.Security.Entities" >
+      <column name="PermissionType" />
+    </property>
 
     <!-- Mapping Permission Associations -->
     <many-to-one name="Subject" column="SubjectRef" class="BExIS.Security.Entities.Subjects.Subject, BExIS.Security.Entities"/>

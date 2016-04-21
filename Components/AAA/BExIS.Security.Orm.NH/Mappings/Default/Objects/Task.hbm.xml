@@ -3,7 +3,7 @@
 
     <!-- Mapping BaseEntity properties -->
     <id name="Id" type="Int64">
-      <column name="Id" />
+      <column name="Id" index="idx_Tasks_id"/>
       <generator class="native" />
     </id>
 
@@ -15,9 +15,15 @@
       <column name="Extra" not-null="false" sql-type="xml" />
     </property>
 
-    <property name="AreaName" type="String" />
-    <property name="ControllerName" type="String" />
-    <property name="ActionName" type="String" />
+    <property name="AreaName" type="String" >
+      <column name="AreaName"/>
+    </property>
+    <property name="ControllerName" type="String" >
+      <column name="ControllerName"/>
+    </property>
+    <property name="ActionName" type="String" >
+      <column name="ActionName"/>
+    </property>
 
     <!-- Mapping Action Associations -->
     <many-to-one name="Feature" column="FeatureRef" class="BExIS.Security.Entities.Objects.Feature, BExIS.Security.Entities"/>

@@ -24,7 +24,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
             return new SecurityQuestionSelectListItemModel()
             {
                 Id = question.Id,
-                Question = question.Question
+                Question = question.Title
             };
         }
     }
