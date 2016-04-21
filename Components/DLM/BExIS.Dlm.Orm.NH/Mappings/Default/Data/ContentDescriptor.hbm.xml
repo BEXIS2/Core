@@ -3,7 +3,7 @@
     <!-- Mapping BaseEntity properties -->
     
     <id name="Id" type="Int64">
-      <column name="Id" />
+      <column name="Id" index="idx_ContentDescriptors_id"/>
       <generator class="native" />
     </id>
 
@@ -26,7 +26,7 @@
     </property>
 
     <property name="Name" type="String">
-      <column name="Name" />
+      <column name="Name" index="idx_ContentDescriptors_id"/>
     </property>
 
     <property name="URI" type="String">

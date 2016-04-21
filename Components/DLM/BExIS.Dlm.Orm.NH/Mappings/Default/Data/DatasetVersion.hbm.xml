@@ -7,7 +7,7 @@
   <class xmlns="urn:nhibernate-mapping-2.2" name="DatasetVersion" table="DatasetVersions">
     <!-- Mapping BaseEntity properties -->
     <id name="Id" type="Int64">
-      <column name="Id" />
+      <column name="Id" index="idx_DatasetVersions_id"/>
       <generator class="native" />
     </id>
 
@@ -72,11 +72,11 @@
     </property>
 
     <property name="Timestamp" type="DateTime">
-      <column name="Timestamp" />
+      <column name="Timestamp"  index="idx_DatasetVersions_timestamp"/>
     </property>
 
     <property name="Status" type="BExIS.Dlm.Entities.Data.DatasetVersionStatus, BExIS.Dlm.Entities">
-      <column name="Status" />
+      <column name="Status" index="idx_DatasetVersions_status" />
     </property>
 
     <property name="Metadata" type="System.Xml.XmlDocument, System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
