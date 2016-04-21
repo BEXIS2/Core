@@ -45,7 +45,7 @@ namespace BExIS.Web.Shell.Controllers
 
             //dm.DatasetRepo.LoadIfNot(ds.Tuples);
             ////dm.DatasetRepo.Get(
-            //LoggerFactory.LogCustom("Hi, I am a custom message!");
+            LoggerFactory.LogCustom("Hi, I am a custom message!");
             //LoggerFactory.LogData(id.ToString(), typeof(Dataset).Name, Vaiona.Entities.Logging.CrudState.Deleted);
             //LoggerFactory.LogDataRelation(id.ToString(), typeof(Dataset).Name, "20", typeof(DatasetVersion).Name, Vaiona.Entities.Logging.CrudState.Deleted);
 
