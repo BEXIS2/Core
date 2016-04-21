@@ -862,7 +862,7 @@ namespace BExIS.Dlm.Services.Data
             //,ICollection<ExtendedPropertyValue> extendedPropertyValues, ICollection<ContentDescriptor> contentDescriptors
             )
         {
-            workingCopyDatasetVersion.Dematerialize();
+            workingCopyDatasetVersion.Dematerialize(false);
             
             //preserve metadata and XmlExtendedPropertyValues for later use
             var workingCopyDatasetVersionId = workingCopyDatasetVersion.Id;
@@ -1065,45 +1065,152 @@ namespace BExIS.Dlm.Services.Data
 
             DatasetVersion editedVersion = applyTupleChanges(workingCopyDatasetVersion, ref tobeAdded, ref tobeDeleted, ref tobeEdited, createdTuples, editedTuples, deletedTuples, unchangedTuples);
 
-            using (IUnitOfWork uow = this.GetUnitOfWork())
+            #region main code
+            //using (IUnitOfWork uow = this.GetUnitOfWork())
+            //{
+            //    IRepository<DatasetVersion> repo = uow.GetRepository<DatasetVersion>();
+            //    IRepository<DataTupleVersion> tupleVersionRepo = uow.GetRepository<DataTupleVersion>();
+            //    IRepository<DataTuple> tupleRepo = uow.GetRepository<DataTuple>();
+
+            //    // depends on how applyTupleChanges adds the tuples to its PriliminaryTuples!
+            //    if (createdTuples != null)
+            //    {
+            //        foreach (DataTuple tuple in createdTuples)
+            //        {
+            //            tupleRepo.Put(tuple);
+            //        }
+            //    }
+
+            //    if (tobeAdded != null)
+            //    {
+            //        foreach (DataTupleVersion dtv in tobeAdded)
+            //        {
+            //            tupleVersionRepo.Put(dtv);
+            //        }
+            //    }
+            //    //foreach (var editedTuple in tobeEdited)
+            //    //{
+            //    //    editedTuple.VariableValues.ToList().ForEach(p => System.Diagnostics.Debug.Print(p.Value.ToString()));
+            //    //    System.Diagnostics.Debug.Print(editedTuple.XmlVariableValues.AsString());
+            //    //} 
+            //    if (tobeDeleted != null)
+            //    {
+            //    foreach (DataTuple tuple in tobeDeleted)
+            //    {
+            //        tupleRepo.Delete(tuple);
+            //    }
+            //    }
+            //    // check whether the changes to the latest version, which is changed in the applyTupleChanges , are committed too!
+            //    repo.Put(editedVersion);
+            //    uow.Commit();
+            //}
+            #endregion
+
+            #region <<------ experimental code ------>>
+            // Check the same scenario using stateless session/ BulkUnitOfWork
+            using (IUnitOfWork uow = this.GetBulkUnitOfWork())
             {
-                IRepository<DatasetVersion> repo = uow.GetRepository<DatasetVersion>();
                 IRepository<DataTupleVersion> tupleVersionRepo = uow.GetRepository<DataTupleVersion>();
                 IRepository<DataTuple> tupleRepo = uow.GetRepository<DataTuple>();
 
                 // depends on how applyTupleChanges adds the tuples to its PriliminaryTuples!
                 if (createdTuples != null)
                 {
-                    foreach (DataTuple tuple in createdTuples)
+                    int count = 0;
+                    int batchSize = uow.PersistenceManager.PreferredPushSize;// int.Parse(uow.PersistenceManager.GetProperty("adonet.batch_size")); //.GetProperty("default_batch_size"));
+                    List<DataTuple> processedTuples = new List<DataTuple>();
+                    for (int i = 0; i < createdTuples.Count; i++)
                     {
+                        DataTuple tuple = createdTuples.ElementAt(i);
+                        tuple.Dematerialize();
                         tupleRepo.Put(tuple);
+                        processedTuples.Add(tuple);
+                        count++;
+                        // flush and clear the session every BATCH_SIZE records
+                        if (count % batchSize == 0)
+                        {
+                            uow.ClearCache(true); //flushes one batch of tuples 
+                            processedTuples.ForEach(p => createdTuples.Remove(p));
+                            processedTuples.Clear();
+                            i = 0;
+                            GC.Collect();
+                        }
                     }
                 }
-
+                //if (tobeAdded != null)
+                //{
+                //    foreach (DataTupleVersion dtv in tobeAdded)
+                //    {
+                //        tupleVersionRepo.Put(dtv);
+                //    }
+                //}
                 if (tobeAdded != null)
                 {
-                foreach (DataTupleVersion dtv in tobeAdded)
-                {
-                    tupleVersionRepo.Put(dtv);
-                }
+                    int count = 0;
+                    int batchSize = uow.PersistenceManager.PreferredPushSize;// int.Parse(uow.PersistenceManager.GetProperty("adonet.batch_size")); //.GetProperty("default_batch_size"));
+                    List<DataTupleVersion> processedTuples = new List<DataTupleVersion>();
+                    for (int i = 0; i < tobeAdded.Count; i++)
+                    {
+                        DataTupleVersion tuple = tobeAdded.ElementAt(i);
+                        tupleVersionRepo.Put(tobeAdded);
+                        processedTuples.Add(tuple);
+                        count++;
+                        // flush and clear the session every BATCH_SIZE records
+                        if (count % batchSize == 0)
+                        {
+                            uow.ClearCache(true); //flushes one batch of tuples 
+                            processedTuples.ForEach(p => tobeAdded.Remove(p));
+                            processedTuples.Clear();
+                            i = 0;
+                            GC.Collect();
+                        }
+                    }
                 }
                 //foreach (var editedTuple in tobeEdited)
                 //{
                 //    editedTuple.VariableValues.ToList().ForEach(p => System.Diagnostics.Debug.Print(p.Value.ToString()));
                 //    System.Diagnostics.Debug.Print(editedTuple.XmlVariableValues.AsString());
                 //} 
+                //if (tobeDeleted != null)
+                //{
+                //    foreach (DataTuple tuple in tobeDeleted)
+                //    {
+                //        tupleRepo.Delete(tuple);
+                //    }
+                //}
                 if (tobeDeleted != null)
                 {
-                foreach (DataTuple tuple in tobeDeleted)
-                {
-                    tupleRepo.Delete(tuple);
-                }
+                    int count = 0;
+                    int batchSize = uow.PersistenceManager.PreferredPushSize;// int.Parse(uow.PersistenceManager.GetProperty("adonet.batch_size")); //.GetProperty("default_batch_size"));
+                    List<DataTuple> processedTuples = new List<DataTuple>();
+                    for (int i = 0; i < tobeDeleted.Count; i++)
+                    {
+                        DataTuple tuple = tobeDeleted.ElementAt(i);
+                        tupleRepo.Delete(tuple);
+                        processedTuples.Add(tuple);
+                        count++;
+                        // flush and clear the session every BATCH_SIZE records
+                        if (count % batchSize == 0)
+                        {
+                            uow.ClearCache(true); //flushes one batch of tuples 
+                            processedTuples.ForEach(p => tobeDeleted.Remove(p));
+                            processedTuples.Clear();
+                            i = 0;
+                            GC.Collect();
+                        }
+                    }
                 }
                 // check whether the changes to the latest version, which is changed in the applyTupleChanges , are committed too!
-                repo.Put(editedVersion);
                 uow.Commit();
             }
+            #endregion
 
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<DatasetVersion> repo = uow.GetRepository<DatasetVersion>();
+                repo.Put(editedVersion); // must be updated in a tracked session
+                uow.Commit();
+            }
             return (editedVersion);
         }
 
@@ -1215,9 +1322,19 @@ namespace BExIS.Dlm.Services.Data
         {
             // effective tuples of the latest checked in version are in DataTuples table but they belong to the latest and previous versions
             List<Int64> versionIds = getPreviousVersionIds(datasetVersion);
-            List<DataTuple> tuples = (versionIds == null || versionIds.Count() <= 0) ? new List<DataTuple>() : DataTupleRepo.Get(p => versionIds.Contains(p.DatasetVersion.Id)).ToList();
-            //Dictionary<string, object> parameters = new Dictionary<string, object>() { { "datasetVersionId", datasetVersion.Id } };
-            //List<DataTuple> tuples = DataTupleRepo.Get("getLatestCheckedInTuples", parameters).ToList();
+            List<DataTuple> tuples;
+            // experimental code
+            using (IUnitOfWork uow = this.GetBulkUnitOfWork())
+            {
+                IReadOnlyRepository<DataTuple> tuplesRepoTemp = uow.GetReadOnlyRepository<DataTuple>();
+                tuples = (versionIds == null || versionIds.Count() <= 0) ? 
+                    new List<DataTuple>() : 
+                    tuplesRepoTemp.Get(p => versionIds.Contains(p.DatasetVersion.Id)).ToList();
+            }
+
+            //List<DataTuple> tuples = (versionIds == null || versionIds.Count() <= 0) ? new List<DataTuple>() : DataTupleRepo.Get(p => versionIds.Contains(p.DatasetVersion.Id)).ToList();
+            ////Dictionary<string, object> parameters = new Dictionary<string, object>() { { "datasetVersionId", datasetVersion.Id } };
+            ////List<DataTuple> tuples = DataTupleRepo.Get("getLatestCheckedInTuples", parameters).ToList();
             return (tuples);
         }
 
