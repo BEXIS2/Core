@@ -3,7 +3,7 @@
     <!-- Mapping BaseEntity properties -->
     
     <id name="Id" type="Int64">
-      <column name="Id" />
+      <column name="Id" index="idx_Units_id"/>
       <generator class="native" />
     </id>
 
@@ -18,11 +18,11 @@
     <!-- Mapping Entity properties -->
     
     <property name="Name" type="String">
-      <column name="Name" />
+      <column name="Name" index="idx_Units_name"/>
     </property>
 
     <property name="Abbreviation" type="String">
-      <column name="Abbreviation" />
+      <column name="Abbreviation" index="idx_Units_abbreviation" />
     </property>
 
     <property name="Description" type="String">
@@ -30,7 +30,7 @@
     </property>
 
     <property name="MeasurementSystem" type="BExIS.Dlm.Entities.DataStructure.MeasurementSystem, BExIS.Dlm.Entities">
-      <column name="MeasurementSystem" />
+      <column name="MeasurementSystem" index="idx_Units_measurementSystem" />
     </property>
 
     <set name="ConversionsIamTheSource" cascade="none" inverse="true" lazy="false">

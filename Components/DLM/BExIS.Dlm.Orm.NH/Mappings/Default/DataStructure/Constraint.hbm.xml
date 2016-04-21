@@ -3,7 +3,7 @@
     <!-- Mapping BaseEntity properties -->
     
     <id name="Id" type="Int64">
-      <column name="Id" />
+      <column name="Id" index="idx_Constraints_id"/>
       <generator class="native" />
     </id>
 

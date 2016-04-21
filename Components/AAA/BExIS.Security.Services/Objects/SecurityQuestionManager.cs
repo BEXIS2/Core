@@ -26,7 +26,7 @@ namespace BExIS.Security.Services.Objects
         {
             SecurityQuestion securityQuestion = new SecurityQuestion()
             {
-                Question = question,
+                Title = question,
                 IsValid = isValid
             };
 

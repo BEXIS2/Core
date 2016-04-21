@@ -1,8 +1,8 @@
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.Administration">
   <class xmlns="urn:nhibernate-mapping-2.2" name="ResearchPlan" table="ResearchPlans">
     <!-- Mapping BaseEntity properties -->
-    <id name="Id" type="Int64">
-      <column name="Id" />
+    <id name="Id" type="Int64" >
+      <column name="Id" index="idx_ResearchPlans_id"/>
       <generator class="native" />
     </id>
 
@@ -19,7 +19,7 @@
     <!-- Mapping Dataset properties -->
     
     <property name="Title" type="string">
-      <column name="Title" />
+      <column name="Title" index="idx_ResearchPlans_title"/>
     </property>
 
     <property name="Description" type="string">

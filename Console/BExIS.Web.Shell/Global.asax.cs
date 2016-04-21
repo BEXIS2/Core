@@ -11,6 +11,8 @@ using Vaiona.Web.Mvc.Data;
 using Vaiona.Web.Mvc.Filters;
 using System.Web;
 using System;
+using System.Collections.Generic;
+using NHibernate;
 
 namespace BExIS.Web.Shell
 {
@@ -21,7 +23,7 @@ namespace BExIS.Web.Shell
     {
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
-            filters.Add(new PersistenceContextProviderAttribute());
+            filters.Add(new PersistenceContextProviderFilterAttribute());
 #if !DEBUG
             filters.Add(new AuthorizationDelegationFilter(new IsAuthorizedDelegate(AuthorizationDelegationImplementor.CheckAuthorization)));
 #endif
@@ -98,9 +100,8 @@ namespace BExIS.Web.Shell
 
         protected void Application_End()
         {
-            IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager();
-            
-           pManager.Shutdown(); // release all data access related resources!
+            IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager();            
+            pManager.Shutdown(); // release all data access related resources!
             IoCFactory.ShutdownContainer();
         }
 
@@ -114,11 +115,7 @@ namespace BExIS.Web.Shell
                     //intercept current route
                     HttpContextBase currentContext = new HttpContextWrapper(HttpContext.Current);
                     RouteData routeData = RouteTable.Routes.GetRouteData(currentContext);
-
-   
-
                     Response.Redirect("~/Home/SessionTimeout");
-
                     Response.Flush();
                     Response.End();
                 }
@@ -135,6 +132,21 @@ namespace BExIS.Web.Shell
             IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager();
             pManager.ShutdownConversation(); 
             IoCFactory.Container.ShutdownSessionLevelContainer();
+        }
+
+        protected virtual void Application_BeginRequest()
+        {            
+        }
+
+        /// <summary>
+        /// the function is called on any http request, which include static resources too! 
+        /// conversation management is done using the global filter  PersistenceContextProviderAttribute.      
+        /// </summary>
+        protected virtual void Application_EndRequest()
+        {
+            //var entityContext = HttpContext.Current.Items["NHibernateCurrentSessionFactory"] as IDictionary<ISessionFactory, Lazy<ISession>>;
+            //IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager();
+            //pManager.ShutdownConversation();
         }
     }
 }
