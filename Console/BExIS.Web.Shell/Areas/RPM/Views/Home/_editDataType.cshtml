@@ -1,8 +1,8 @@
 ﻿@using Telerik.Web.Mvc.UI
-@using BExIS.Dlm.Entities.DataStructure
-@using BExIS.Dlm.Services.DataStructure
 @using BExIS.Dlm.Services.TypeSystem
-@model BExIS.Dlm.Entities.DataStructure.DataType
+@using BExIS.IO.DataType.DisplayPattern
+@using BExIS.Web.Shell.Areas.RPM.Models
+@model BExIS.Web.Shell.Areas.RPM.Models.DataTypeModel
 
 @if(Model != null)
 {
@@ -10,14 +10,14 @@
     @using (Html.BeginForm("editDataType", "Home", new { area = "RPM" }))
     {
        @(Html.TextBox("parent", @HttpContext.Current.Request.RequestContext.RouteData.Values["action"].ToString(), new {@class = "hidden"}))
-       @(Html.TextBox("id", Model.Id, new {@class = "hidden"})) 
+       @(Html.TextBox("id", Model.dataType.Id, new {@class = "hidden"})) 
         <table class="bx-rpm-info">
             <tr id="name">
                 <td>
                     Name <span class="bx bx-required" title="Required"></span>
                 </td>
                 <td style="width:354px">
-                    @(Html.TextBoxFor(m => Model.Name, new {@class = "bx-input", @autofocus = "autofocus", @tabindex = 1}))
+                    @(Html.TextBoxFor(m => Model.dataType.Name, new {@class = "bx-input", @autofocus = "autofocus", @tabindex = 1}))
                 </td>
                 <td class="bx-errorMsg">@Session["nameMsg"]</td>
             </tr>
@@ -26,7 +26,7 @@
                     Description
                 </td>
                 <td>
-                    @(Html.TextBoxFor(m => Model.Description, new {@class = "bx-input", @tabindex = 2}))
+                    @(Html.TextBoxFor(m => Model.dataType.Description, new {@class = "bx-input", @tabindex = 2}))
                 </td>
             </tr>
             <tr>
@@ -38,7 +38,7 @@
                         <select class="bx-dropdown bx-rpm-dropdown" name="systemType" id="systemType" tabindex="3">
                             @foreach (DataTypeInfo item in DataTypeInfo.Types)
                             {
-                                if (Model.SystemType == item.Code.ToString())
+                                if (Model.dataType.SystemType == item.Code.ToString())
                                 {
                                     <option selected="selected" value="@item.Code" title="@item.Description">@item.DisplayName</option>
                                 }
@@ -50,6 +50,29 @@
                         </select>
                         <div class="t-arrow-down bx-rpm-dropdownArrow"></div>
                     </div>                   
+                </td>
+            </tr>
+            <tr class="hidden" id="pettern">
+                <td>
+                    Pattern
+                </td>
+                <td>
+                    <div style="width:354px">
+                        <select class="bx-dropdown bx-rpm-dropdown" name="pattern" id="pettern" tabindex="3">
+                            @foreach ( DataTypeDisplayPattern dtp in DataTypeDisplayPattern.Pattern.Where(p => p.Systemtype.Equals(DataTypeCode.DateTime)))
+                            {
+                                if (Model.pattern.Systemtype == dtp.Systemtype && Model.pattern.Name == dtp.Name && Model.pattern.StringPattern == dtp.StringPattern && Model.pattern.RegexPattern == dtp.RegexPattern)
+                                {
+                                    <option selected="selected" value="@dtp.Name" title="@dtp.StringPattern">@dtp.StringPattern</option>
+                                }
+                                else
+                                {
+                                    <option value="@dtp.Name" title="@dtp.StringPattern">@dtp.StringPattern</option>
+                                }
+                            }
+                        </select>
+                        <div class="t-arrow-down bx-rpm-dropdownArrow"></div>
+                    </div>
                 </td>
             </tr>
             <tr>
@@ -66,7 +89,7 @@
         </div>     
     }
     </div>
-    
+
     <script type="text/jscript">
 
         $('#systemType').change(function () {
@@ -77,8 +100,16 @@
                     $('#systemType')[0].title = $('#systemType option')[i].value;
                 }
             }
+            var dateTime = '@DataTypeInfo.Types.Where(p => p.Code.Equals(DataTypeCode.DateTime)).FirstOrDefault().DisplayName';
+            if ($('#systemType').val() == dateTime) {
+                $('#pettern').removeClass('hidden');
+            }
+            else
+            {
+                $('#pettern').addClass('hidden');
+            }
         })
-   
+
         $(document).ready(function () {
             for (var i = 0; i < $('#systemType option').length; i++)
             {
@@ -87,6 +118,13 @@
                     $('#note')[0].innerHTML = $('#systemType option')[i].title;
                     $('#systemType')[0].title = $('#systemType option')[i].value;
                 }
+            }
+            var dateTime = '@DataTypeInfo.Types.Where(p => p.Code.Equals(DataTypeCode.DateTime)).FirstOrDefault().DisplayName';
+            if ($('#systemType').val() == dateTime) {
+                $('#pettern').removeClass('hidden');
+            }
+            else {
+                $('#pettern').addClass('hidden');
             }
         })
     </script>

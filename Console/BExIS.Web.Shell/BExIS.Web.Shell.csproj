@@ -391,6 +391,7 @@
     <Compile Include="Areas\RPM\Models\DataStructureEditModel.cs" />
     <Compile Include="Areas\RPM\Models\DataStructureSearchModel.cs" />
     <Compile Include="Areas\RPM\Models\ConstraintModels.cs" />
+    <Compile Include="Areas\RPM\Models\DataTypeManagerModel.cs" />
     <Compile Include="Areas\RPM\Models\UnitManagerModel.cs" />
     <Compile Include="Areas\RPM\Models\DataAttributeModel.cs" />
     <Compile Include="Areas\RPM\Models\DataStructureDesignerModel.cs" />
@@ -1015,7 +1016,9 @@
     <Content Include="Views\Shared\EditorTemplates\Time.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="packages.config" />
+    <Content Include="packages.config">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Content Include="IoC.config">
@@ -1119,6 +1122,10 @@
     <Content Include="Areas\RPM\Views\Home\_showDataStructureInfo.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\ClassLibrary1\BExIS.IO.DataType.DisplayPattern.csproj">
+      <Project>{8b2ec2b0-6870-456b-be2d-b0fb4ea68d83}</Project>
+      <Name>BExIS.IO.DataType.DisplayPattern</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Components\AAA\BExIS.Security.Entities\BExIS.Security.Entities.csproj">
       <Project>{c230693b-d780-438b-b26c-82257642dd5c}</Project>
       <Name>BExIS.Security.Entities</Name>
