@@ -6,18 +6,18 @@
         title = Model.Title;
     }
 
-    string name = "NoName";
+    string windowName = "NoName";
     if (!string.IsNullOrEmpty(Model.Title))
     {
-        name = Model.Title;
+        windowName = Model.Title.Replace(" ",string.Empty);
     }
 
-    name += "Window";
+    windowName += "Window";
 }
 
 
 @(Html.Telerik().Window()
-    .Name(name)
+    .Name(windowName)
     .Visible(false)
     .Title(title)
     .HtmlAttributes(new { @class = "bx-window" })
@@ -34,10 +34,23 @@
 
 <script type="text/javascript">
 
-    function OnLoad()
-    {
-        var detailWindow = $("#"+'@name').data("tWindow");
-        detailWindow.center().open();
+    function OnLoad() {
+        var window = $(this).data('tWindow');
+        window.center().open();
     }
+
+    function OnClose() {
+        var window = $(this).data('tWindow');
+        window.center().close();
+
+    }
+
+    $(".submitEntitySelection")
+        .click(function() {
+            var name = '@windowName';
+            console.log("close window: " + name);
+            $('#' + name).data('tWindow').close();
+
+        });
 
 </script>

@@ -44,12 +44,12 @@ namespace BExIS.Xml.Helpers
             else return false;
         }
 
-        public static XmlNode GetXmlNodeByName(XmlNode parentNode, string name)
+        public static XmlNode GetXmlNodeByName(XmlNode parentNode, string name, bool recursiv=true)
         {
-            return getXmlNodeByName(parentNode, name);
+            return getXmlNodeByName(parentNode, name, recursiv);
         }
 
-        private static XmlNode getXmlNodeByName(XmlNode node, string name)
+        private static XmlNode getXmlNodeByName(XmlNode node, string name, bool recursiv = true)
         {
             if (node.LocalName.Equals(name))
                 return node;
@@ -60,8 +60,16 @@ namespace BExIS.Xml.Helpers
 
                     foreach (XmlNode child in node.ChildNodes)
                     {
-                        if (getXmlNodeByName(child, name) != null)
-                            return child;
+                        if (recursiv)
+                        {
+                            if (getXmlNodeByName(child, name) != null)
+                                return child;
+                        }
+                        else
+                        {
+                            if (child.LocalName.Equals(name))
+                                return node;
+                        }
                     }
 
 

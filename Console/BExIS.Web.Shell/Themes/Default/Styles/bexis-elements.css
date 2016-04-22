@@ -389,6 +389,7 @@ ul.bx-list-multi
 .t-window-content
 {
     background-color:#ebebeb;
+    max-width: 95vm;
 }
 
 .bx-window .bx-title

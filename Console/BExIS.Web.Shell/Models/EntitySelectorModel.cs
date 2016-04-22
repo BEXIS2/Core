@@ -11,6 +11,8 @@ namespace BExIS.Web.Shell.Models
     {
         public string Title { get; set; }
 
+        public string TargetId { get; set; }
+
         public DataTable Data { get; set; }
 
         public EntitySelectorModelAction DataSource { get; set; }

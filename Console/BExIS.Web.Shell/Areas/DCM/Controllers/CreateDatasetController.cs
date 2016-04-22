@@ -147,8 +147,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             return View("Index", Model);
         }
     
-
-
         public ActionResult StoreSelectedDatasetSetup(SetupModel model)
         {
             CreateDatasetTaskmanager TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
@@ -204,8 +202,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             return View("Index", model);
         }
-
-        
 
         [HttpPost]
         public ActionResult StoreSelectedDataset(long id)
@@ -275,6 +271,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 datasets,
                 new EntitySelectorModelAction("ShowListOfDatasetsReciever", "CreateDataset", "DCM"));
 
+            model.Title = "Select a dataset";
+
             return PartialView("_EntitySelectorInWindowView", model);
         }
 
@@ -293,6 +291,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                  datastructures,
                  new EntitySelectorModelAction("ShowListOfDataStructuresReciever", "CreateDataset", "DCM"));
 
+            model.Title = "Select a datastructure";
+
+
             return PartialView("_EntitySelectorInWindowView", model);
         }
 
@@ -310,6 +311,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                  metadataStructures,
                  new EntitySelectorModelAction("ShowListOfMetadataStructuresReciever", "CreateDataset", "DCM"));
 
+            model.Title = "Select a metadatasturcture";
 
             return PartialView("_EntitySelectorInWindowView", model);
         }
@@ -1034,8 +1036,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 int numberOfSMM = 1;
                 if (complexElement != null)
                 {
-                    Debug.WriteLine("XXXXXXXXXXXXXXXXXXXX");
-                    Debug.WriteLine(simpleMetadataAttributeModel.Source.Label); 
+                    //Debug.WriteLine("XXXXXXXXXXXXXXXXXXXX");
+                    //Debug.WriteLine(simpleMetadataAttributeModel.Source.Label); 
                     IEnumerable<XElement> childs = XmlUtility.GetChildren(complexElement).Where(e => e.Attribute("id").Value.Equals(simpleMetadataAttributeModel.Id.ToString()));
 
 
@@ -1054,10 +1056,10 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         if (simpleElement != null && !String.IsNullOrEmpty(simpleElement.Value))
                         {
                             simpleMetadataAttributeModel.Value = simpleElement.Value;
-                            Debug.WriteLine(xpath + "   :    " + simpleElement.Value);
+                            //Debug.WriteLine(xpath + "   :    " + simpleElement.Value);
                         }
-                        else
-                            Debug.WriteLine(xpath + "   :    NULL " + stepModelHelper.XPath);
+                        //else
+                            //Debug.WriteLine(xpath + "   :    NULL " + stepModelHelper.XPath);
                     }
                     else
                     {

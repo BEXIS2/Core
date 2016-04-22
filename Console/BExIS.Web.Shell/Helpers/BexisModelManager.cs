@@ -28,25 +28,27 @@ namespace BExIS.Web.Shell.Helpers
             return tmp;
         }
 
-        public static EntitySelectorModel LoadEntitySelectorModel<T>(this IList<T> data, EntitySelectorModelAction reciever, string idKey="Id", string onClick="")
+        public static EntitySelectorModel LoadEntitySelectorModel<T>(this IList<T> data, EntitySelectorModelAction reciever, string idKey="Id",string targetId="")
         {
             EntitySelectorModel tmp = new EntitySelectorModel();
 
             tmp.Data = BexisDataHelper.ToDataTable<T>(data);
             tmp.Reciever = reciever;
             tmp.IDKey = idKey;
+            tmp.TargetId = targetId;
 
             return tmp;
         }
 
-        public static EntitySelectorModel LoadEntitySelectorModel<T>(this IList<T> data, List<string> columns, EntitySelectorModelAction reciever, string idKey = "Id", string onClick = "")
+        public static EntitySelectorModel LoadEntitySelectorModel<T>(this IList<T> data, List<string> columns, EntitySelectorModelAction reciever, string idKey = "Id", string targetId = "")
         {
             EntitySelectorModel tmp = new EntitySelectorModel();
 
             tmp.Data = BexisDataHelper.ToDataTable<T>(data, columns);
             tmp.Reciever = reciever;
             tmp.IDKey = idKey;
- 
+            tmp.TargetId = targetId;
+
             return tmp;
         }
 

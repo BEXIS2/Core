@@ -29,8 +29,22 @@
     {
         <table>
             <tr>
-                <td style="width:300px;">
+                <td style="width: 300px;">
                     @Html.LabelFor(m => m.SelectedDatasetId)
+                </td>
+                <td style="width: 60px;">
+                    <div id="datasetsContainer">
+                        @Ajax.ActionLink("Select", "ShowListOfDatasets", "CreateDataset", new RouteValueDictionary { { "area", "DCM" } },
+                            new AjaxOptions
+                            {
+                                HttpMethod = "GET",
+                                InsertionMode = InsertionMode.Replace,
+                                UpdateTargetId = "datasetWindowContainer"
+                            },
+                            new { @class = "bx-button function", @style = "float:right" })
+                    </div>
+                    <div id="datasetWindowContainer"></div>
+                    @*@Html.Partial("_EnititySelectorView", BexisModelManager.LoadEntitySelectorModel<ListViewItem>(Model.DatasetViewList,"Id","myTest"))*@
                 </td>
                 <td>
                     @if (Model.BlockDatasetId)
@@ -51,25 +65,25 @@
                         @Html.ValidationMessageFor(m => m.SelectedDatasetId)
                     }
                 </td>
-                <td>
-                    <div id="datasetsContainer">
-                        @Ajax.ActionLink("Select", "ShowListOfDatasets", "CreateDataset", new RouteValueDictionary { { "area", "DCM" } },
-                            new AjaxOptions
-                            {
-                                HttpMethod = "GET",
-                                InsertionMode = InsertionMode.Replace,
-                                UpdateTargetId = "datasetWindowContainer"
-                            },
-                            new { @class = "t-button", @style = "float:right" })
-                    </div>
-                    <div id="datasetWindowContainer"></div>
-                    @*@Html.Partial("_EnititySelectorView", BexisModelManager.LoadEntitySelectorModel<ListViewItem>(Model.DatasetViewList,"Id","myTest"))*@
-                </td>
+                
             </tr>
             <tr>
-                <td style="width:300px;">
+                <td style="width: 300px;">
                     @Html.LabelFor(m => m.SelectedDataStructureId) <span class="bx bx-required" title="Required"></span>
-            </td>
+                </td>
+                <td style="width: 60px;">
+                    <div id="datastructuresContainer">
+                        @Ajax.ActionLink("Select", "ShowListOfDataStructures", "CreateDataset", new RouteValueDictionary { { "area", "DCM" } },
+                        new AjaxOptions
+                        {
+                            HttpMethod = "GET",
+                            InsertionMode = InsertionMode.Replace,
+                            UpdateTargetId = "datastructureWindowContainer"
+                        },
+                        new { @class = "bx-button function", @style = "float:right" })
+                    </div>
+                    <div id="datastructureWindowContainer"></div>
+                </td>
             <td>
                 @if (Model.BlockDatastructureId)
                 {
@@ -91,23 +105,24 @@
                     @Html.ValidationMessageFor(m => m.SelectedDataStructureId)
                 }
             </td>
-            <td>
-                <div id="datastructuresContainer">
-                    @Ajax.ActionLink("Select", "ShowListOfDataStructures", "CreateDataset", new RouteValueDictionary { { "area", "DCM" } },
+            
+        </tr>
+        <tr>
+            <td style="width: 300px;">
+                @Html.LabelFor(m => m.SelectedMetadataStructureId) <span class="bx bx-required" title="Required"></span>
+            </td>
+            <td style="width: 60px;">
+                <div id="metadatastructuresContainer">
+                    @Ajax.ActionLink("Select", "ShowListOfMetadataStructures", "CreateDataset", new RouteValueDictionary { { "area", "DCM" } },
                         new AjaxOptions
                         {
                             HttpMethod = "GET",
                             InsertionMode = InsertionMode.Replace,
-                            UpdateTargetId = "datastructureWindowContainer"
+                            UpdateTargetId = "metadatadatastructureWindowContainer"
                         },
-                        new { @class = "t-button", @style = "float:right" })
+                        new { @class = "bx-button function", @style = "float:right" })
                 </div>
-                <div id="datastructureWindowContainer"></div>
-            </td>
-        </tr>
-        <tr>
-            <td style="width:300px;">
-                @Html.LabelFor(m => m.SelectedMetadataStructureId) <span class="bx bx-required" title="Required"></span>
+                <div id="metadatadatastructureWindowContainer"></div>
             </td>
         <td>
             @if (Model.BlockMetadataStructureId)
@@ -129,19 +144,7 @@
                @Html.ValidationMessageFor(m => m.SelectedMetadataStructureId)
             }
         </td>
-            <td>
-                <div id="metadatastructuresContainer">
-                    @Ajax.ActionLink("Select", "ShowListOfMetadataStructures", "CreateDataset", new RouteValueDictionary { { "area", "DCM" } },
-                        new AjaxOptions
-                        {
-                            HttpMethod = "GET",
-                            InsertionMode = InsertionMode.Replace,
-                            UpdateTargetId = "metadatadatastructureWindowContainer"
-                        },
-                        new { @class = "t-button", @style = "float:right" })
-                </div>
-                <div id="metadatadatastructureWindowContainer"></div>
-            </td>
+        
     </tr>
 </table>
 

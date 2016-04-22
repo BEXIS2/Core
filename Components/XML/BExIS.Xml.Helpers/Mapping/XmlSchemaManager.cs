@@ -772,7 +772,7 @@ namespace BExIS.Xml.Helpers.Mapping
         private MetadataCompoundAttribute get(XmlSchemaElement element, List<string> parents, string internalXPath, string externalXPath)
         {
 
-            Debug.WriteLine("elementx :" + element.Name);
+            //Debug.WriteLine("elementx :" + element.Name);
 
             XmlSchemaComplexType ct = XmlSchemaUtility.GetComplextType(element);
 
@@ -810,7 +810,7 @@ namespace BExIS.Xml.Helpers.Mapping
 
                     foreach (XmlSchemaElement child in childrens)
                     {
-                        Debug.WriteLine("child :" + child.Name);
+                        //Debug.WriteLine("child :" + child.Name);
 
                         // simple element
                         if (XmlSchemaUtility.IsSimpleType(child))
@@ -1118,7 +1118,7 @@ namespace BExIS.Xml.Helpers.Mapping
                     if (constraints != null && constraints.Count() > 0)
                         temp.Constraints = constraints;
 
-                    Debug.WriteLine(temp.Name);
+                    //Debug.WriteLine(temp.Name);
 
                     return metadataAttributeManager.Update(temp);
                 }
@@ -1173,7 +1173,7 @@ namespace BExIS.Xml.Helpers.Mapping
                         if (constraints != null && constraints.Count() > 0)
                             temp.Constraints = constraints;
 
-                        Debug.WriteLine(temp.Name);
+                        //Debug.WriteLine(temp.Name);
 
                         return metadataAttributeManager.Update(temp);
                     }

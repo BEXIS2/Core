@@ -1,5 +1,8 @@
 ﻿@model BExIS.Web.Shell.Models.EntitySelectorModel
+@using System.CodeDom
 @using System.Data;
+@using BExIS.Dlm.Services.TypeSystem
+@using BExIS.IO.Transform.Validation.ValueCheck
 
 @{
     ViewBag.Title = "";
@@ -10,7 +13,36 @@
         idIndex = Model.Data.Columns.IndexOf(Model.Data.Columns[Model.IDKey]);
     }
 
+    string targetId = "";
+
+    if (!String.IsNullOrEmpty(Model.TargetId))
+    {
+        targetId = Model.TargetId;
+    }
+
     object idX = null;
+
+    string submitId = "submitTo";
+
+    if (!String.IsNullOrEmpty(Model.Title))
+    {
+        submitId += Model.Title.Replace(" ", string.Empty);
+    }
+
+
+    int width = 600;
+
+    if (Model.Data.Columns.Count > 1 && Model.Data.Columns.Count < 4)
+    {
+        width = Model.Data.Columns.Count*300;
+    }
+
+    if (Model.Data.Columns.Count > 4)
+    {
+        width = Model.Data.Columns.Count * 200;
+    }
+
+
 }
 <div>
     @if (String.IsNullOrEmpty(Model.IDKey))
@@ -38,22 +70,50 @@
 
         @(Html.Telerik().Grid(Model.Data)
                 .Name("TestGrid")
-                .DataBinding(c => c.Ajax().OperationMode(GridOperationMode.Client))
-          .DataKeys(keys => keys
-            .Add(Model.IDKey)
-          )
-          .Selectable()
-          .Pageable()
+              .DataBinding(c => c.Ajax().OperationMode(GridOperationMode.Client))
+              .DataKeys(keys => keys
+                .Add(Model.IDKey)
+              )
+              .Selectable()
+              .Pageable()
+
+          .Columns(columns =>
+          {
+              foreach (DataColumn dc in Model.Data.Columns)
+              {
+                  if (dc.DataType == typeof(int)
+                  || dc.DataType == typeof(Int32)
+                  || dc.DataType == typeof(Int64)
+                  || dc.DataType == typeof(Int16)
+                  || dc.DataType == typeof(long))
+                  {
+                      columns.Bound(dc.DataType, dc.ColumnName)
+                          .Width(70);
+                  }
+                  else
+                  {
+                      columns.Bound(dc.DataType, dc.ColumnName);
+                  }
+              }
+          })
+
           .Filterable()
           .Sortable()
+          .TableHtmlAttributes(new {
+              idIndex = @idIndex,
+              submitId = @submitId,
+              link = "/" + @Model.Reciever.Area + "/" + @Model.Reciever.Controller + "/" + @Model.Reciever.Action,
+              style="width:"+@width+"px;"
+              
+          })
           .Pageable(paging =>
                 paging.PageSize(50, new int[] { 1, 2, 3, 10, 50 })
                     .Total(Model.Data.Rows.Count)
                     )
           .ClientEvents(events =>
             events.OnRowSelect("OnRowSelection"))
-        )
 
+        )
     }
 </div>
 <div class="bx-footer">
@@ -61,9 +121,24 @@
                 !String.IsNullOrEmpty(Model.Reciever.Controller) &&
                 !String.IsNullOrEmpty(Model.Reciever.Area))
     {
-        @*@Html.ActionLink("Submit", Model.Reciever.Action, Model.Reciever.Controller, new {area = @Model.Reciever.Area, @id="submit", @class = "bx-button bx-disabled", @style = "float:left", disabled="disabled" })*@
-        <a id="submit" class="bx-button function bx-disabled" >submit</a>
 
+        if (String.IsNullOrEmpty(targetId))
+        {
+        <a id="@submitId" class="bx-button function bx-disabled submitEntitySelection">submit</a>
+        }
+        else
+        {
+            @Ajax.ActionLink("submit", @Model.Reciever.Action, @Model.Reciever.Controller, new { area = "DCM" },
+                             new AjaxOptions
+                             {
+                                 HttpMethod = "GET",
+                                 InsertionMode = InsertionMode.Replace,
+                                 UpdateTargetId = targetId                                
+
+                             },
+                             new { @class = "bx-button function bx-disabled submitEntitySelection", @id = @submitId })
+
+        }
     }
 </div>
 
@@ -75,18 +150,39 @@
     });
 
 
-    function OnRowSelection(e)
-    {
+    function OnRowSelection(e) {
 
-        var dataid = $(e.row).find("td")['@idIndex'].innerText;
-        console.log(dataid);
+        // get the DOM element which represents the clicked row
+        var row = e.row;
+        var table = $(row).closest("table");
+        var idIndex = table.attr("idindex");
+        var submitId = table.attr("submitid");
+        var link = table.attr("link");
+        var dataid = $(e.row).find("td")[idIndex].innerText;
 
-        var link = "/"+'@Model.Reciever.Area'+"/"+ '@Model.Reciever.Controller'+ "/"+'@Model.Reciever.Action';
+        console.log("submitbuttonid: "+submitId);
+
         link += "?id=" + dataid;
+
         console.log(link);
-        $('#submit').attr("href", link);
-        $('#submit').removeClass("bx-disabled");
+
+        $('#' + submitId).attr("href", link);
+        $('#' + submitId).removeClass("bx-disabled");
     }
+
 </script>
+<style type="text/css">
+
+#TestGrid table > tbody > tr:hover
+{
+    background-color: #eff7f6;
+}
+
+.t-state-selected
+{
+    background-color: #eff7f6;
+}
+
+</style>
 
 

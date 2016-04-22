@@ -444,7 +444,10 @@ Global
 		{F296CB14-3B71-40C9-89F7-F928BA2C7C5B} = {CD986786-CEA1-4C30-983E-169C33600BA6}
 		{AF3D9C1F-968A-46DD-86FB-6B45020DF4E3} = {CD986786-CEA1-4C30-983E-169C33600BA6}
 		{C48DCFC5-DF47-4486-A682-5C648F970318} = {CD986786-CEA1-4C30-983E-169C33600BA6}
+<<<<<<< Updated upstream
 		{51FF5302-9E12-4E91-AEC8-7651E25177AD} = {DA678167-8931-43BA-940F-B5A3C90985BB}
+=======
+>>>>>>> Stashed changes
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		EnterpriseLibraryConfigurationToolBinariesPath = packages\Unity.2.1.505.0\lib\NET35;packages\Unity.2.1.505.2\lib\NET35

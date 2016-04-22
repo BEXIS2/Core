@@ -32,25 +32,51 @@
         
         <div class="wizardStep_Content stepper">
             <table>
-                <tr>
-                    <td>
+                <tr >
+                    <td class="labelColumn">
                         @Html.LabelFor(m => m.TitleNode)
                     </td>
                     <td>
-                        @Html.DropDownListFor(m => m.TitleNode, new SelectList(Model.MetadataNodes, "XPath", "XPath"))
+                        <div id="titleSelectionContainer">
+                            @Ajax.ActionLink("Select", "ShowListOfMetadataNodesTitle", "ImportMetadataStructureSetParameters", new {area = "DCM"},
+                                new AjaxOptions
+                                {
+                                    HttpMethod = "GET",
+                                    InsertionMode = InsertionMode.Replace,
+                                    UpdateTargetId = "titleSelectionContainerWindow"
+                                },
+                                new {@class = "bx-button function"})
+                        </div>
+                        <div id="titleSelectionContainerWindow"></div>
+                    </td>
+                    <td>
+                        @Model.TitleNode
                     </td>
                 </tr>
                  <tr>
-                    <td>
+                    <td class="labelColumn">
                         @Html.LabelFor(m => m.DescriptionNode)
                     </td>
                      <td>
-                         @Html.DropDownListFor(m => m.DescriptionNode, new SelectList(Model.MetadataNodes, "XPath", "XPath"))
-                    </td>
+                         <div id="descriptionSelectionContainer">
+                             @Ajax.ActionLink("Select", "ShowListOfMetadataNodesDescription", "ImportMetadataStructureSetParameters", new {area = "DCM"},
+                                 new AjaxOptions
+                                 {
+                                     HttpMethod = "GET",
+                                     InsertionMode = InsertionMode.Replace,
+                                     UpdateTargetId = "descriptionSelectionContainerWindow"
+                                 },
+                                 new {@class = "bx-button function"})
+                         </div>
+                         <div id="descriptionSelectionContainerWindow"></div>
+                     </td>
+                     <td>
+                         @Model.DescriptionNode
+                     </td>
                 </tr>
             </table>
-            <br />
-            <button type="submit" value="Save" name="submit"  class="t-button " >save</button>
+            @*<br />
+            <button type="submit" value="Save" name="submit"  class="t-button " >save</button>*@
         </div>
     </div>
 
@@ -101,6 +127,12 @@
 
 }
 
+<style type="text/css">
+    .labelColumn {
+        width: 100px;
+    }
+
+</style>
 <script type="text/javascript">
 
     function OnSuccess() {
