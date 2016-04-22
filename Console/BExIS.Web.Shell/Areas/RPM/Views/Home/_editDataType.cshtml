@@ -61,9 +61,16 @@
                         <select class="bx-dropdown bx-rpm-dropdown" name="pattern" id="pettern" tabindex="3">
                             @foreach ( DataTypeDisplayPattern dtp in DataTypeDisplayPattern.Pattern.Where(p => p.Systemtype.Equals(DataTypeCode.DateTime)))
                             {
-                                if (Model.pattern.Systemtype == dtp.Systemtype && Model.pattern.Name == dtp.Name && Model.pattern.StringPattern == dtp.StringPattern && Model.pattern.RegexPattern == dtp.RegexPattern)
+                                if (Model.pattern != null)
                                 {
+                                    if (Model.pattern.Systemtype == dtp.Systemtype && Model.pattern.Name == dtp.Name && Model.pattern.StringPattern == dtp.StringPattern && Model.pattern.RegexPattern == dtp.RegexPattern)
+                                    {
                                     <option selected="selected" value="@dtp.Name" title="@dtp.StringPattern">@dtp.StringPattern</option>
+                                    }
+                                    else
+                                    {
+                                    <option value="@dtp.Name" title="@dtp.StringPattern">@dtp.StringPattern</option>
+                                    }
                                 }
                                 else
                                 {
