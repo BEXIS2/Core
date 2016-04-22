@@ -215,7 +215,14 @@ namespace BExIS.IO.Transform.Output
             {
                 VariableValue vv = dataTuple.VariableValues.Where(v => v.Variable.Id.Equals(vi.id)).FirstOrDefault();
                 if (vv.Value != null)
-                    value = vv.Value.ToString();
+                {
+                    string format = GetStringFormat(vv.Variable.DataAttribute.DataType);
+                    if (!string.IsNullOrEmpty(format))
+                    {
+                        value = GetFormatedValue(vv.Value, vv.Variable.DataAttribute.DataType, format);
+                    }
+                    else value = vv.Value.ToString();
+                }
                 // Add separator if this isn't the first value
                 if (!first)
                     builder.Append(AsciiHelper.GetSeperator(Delimeter));
