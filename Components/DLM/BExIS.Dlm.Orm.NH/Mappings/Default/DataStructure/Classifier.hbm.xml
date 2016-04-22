@@ -3,7 +3,7 @@
     <!-- Mapping BaseEntity properties -->
     
     <id name="Id" type="Int64">
-      <column name="Id" />
+      <column name="Id" index="idx_Clissifiers_id"/>
       <generator class="native" />
     </id>
 
@@ -18,7 +18,7 @@
     <!-- Mapping Entity properties -->
     
     <property name="Name" type="String" length="50" not-null="true" unique="true">
-      <column name="Name" />
+      <column name="Name" index="idx_Clissifiers_name"/>
     </property>
 
     <many-to-one name="Parent" class="Classifier" not-null="false" column="ParentRef"/>

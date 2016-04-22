@@ -9,7 +9,7 @@ namespace BExIS.Security.Entities.Objects
 {
     public class SecurityQuestion : BaseEntity
     {
-        public virtual string Question { get; set; }
+        public virtual string Title { get; set; }
         public virtual bool IsValid { get; set; }
 
         public virtual ICollection<User> Users { get; set; }
