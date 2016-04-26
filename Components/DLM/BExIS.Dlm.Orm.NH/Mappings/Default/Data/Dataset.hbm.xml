@@ -7,7 +7,7 @@
   <class xmlns="urn:nhibernate-mapping-2.2" name="Dataset" table="Datasets">
     <!-- Mapping BaseEntity properties -->
     <id name="Id" type="Int64">
-      <column name="Id" />
+      <column name="Id" index="idx_Datasets_id"/>
       <generator class="native" />
     </id>
 
@@ -68,11 +68,11 @@
     <!-- Mapping Dataset properties -->
 
     <property name="Status" type="BExIS.Dlm.Entities.Data.DatasetStatus, BExIS.Dlm.Entities">
-      <column name="Status"/>
+      <column name="Status" index="idx_ContentDescriptors_status"/>
     </property>
     
     <property name="LastCheckIOTimestamp" type="DateTime">
-      <column name="LastCheckIOTimestamp" />
+      <column name="LastCheckIOTimestamp" index="idx_ContentDescriptors_lastCheckIOTimestamp"/>
     </property>
     
     <property name="CheckOutUser" type="string">

@@ -2,7 +2,7 @@
   <class xmlns="urn:nhibernate-mapping-2.2" name="Authenticator" table="Authenticators" dynamic-update="true">
 
     <id name="Id" type="Int64">
-      <column name="Id" />
+      <column name="Id" index="idx_Authenticators_id"/>
       <generator class="native" />
     </id>
 
@@ -14,11 +14,21 @@
       <column name="Extra" not-null="false" sql-type="xml" />
     </property>
 
-    <property name="Name" type="String" />
-    <property name="AssemblyPath" type="String" />
-    <property name="ClassPath" type="String" />
-    <property name="ConnectionString" type="String" />
-    <property name="AuthenticatorType" type="BExIS.Security.Entities.Objects.AuthenticatorType, BExIs.Security.Entities" />
+    <property name="Name" type="String" >
+      <column name="Name" index="idx_Authenticators_name"/>
+    </property>
+    <property name="AssemblyPath" type="String" >
+      <column name="AssemblyPath" />
+    </property>
+    <property name="ClassPath" type="String" >
+      <column name="ClassPath" />
+    </property>
+    <property name="ConnectionString" type="String" >
+      <column name="ConnectionString" />
+    </property>
+    <property name="AuthenticatorType" type="BExIS.Security.Entities.Objects.AuthenticatorType, BExIs.Security.Entities" >
+      <column name="AuthenticatorType" index="idx_Authenticators_authenticatorType"/>
+    </property>
 
     <set name="Users" inverse="true" cascade="save-update" lazy="true">
       <key column="AuthenticatorRef"/>

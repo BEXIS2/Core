@@ -3,7 +3,7 @@
     <!-- Mapping BaseEntity properties -->
     
     <id name="Id" type="Int64">
-      <column name="Id" />
+      <column name="Id" index="idx_Globalizations_id" />
       <generator class="native" />
     </id>
 
@@ -18,11 +18,11 @@
     <!-- Mapping Entity properties -->
     
     <property name="CultureId" type="String">
-      <column name="CultureId" />
+      <column name="CultureId"  index="idx_Globalizations_cultureId"/>
     </property>
 
     <property name="DisplayName" type="String">
-      <column name="DisplayName" />
+      <column name="DisplayName" index="idx_Globalizations_displayName" />
     </property>
 
     <property name="Description" type="String">
