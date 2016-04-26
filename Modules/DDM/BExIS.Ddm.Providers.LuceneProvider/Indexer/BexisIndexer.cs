@@ -112,7 +112,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
 
         XmlDocument configXML;
 
-        private void configureBexisIndexing()
+        private void configureBexisIndexing(bool recreateIndex)
         {
             configXML = new XmlDocument();
             configXML.Load(FileHelper.ConfigFilePath);
@@ -123,7 +123,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
 
             PerFieldAnalyzerWrapper analyzer = new PerFieldAnalyzerWrapper(new BexisAnalyzer());
 
-            indexWriter = new IndexWriter(pathIndex, analyzer, true, IndexWriter.MaxFieldLength.UNLIMITED);
+            indexWriter = new IndexWriter(pathIndex, analyzer, recreateIndex, IndexWriter.MaxFieldLength.UNLIMITED);
             autoCompleteIndexWriter = new IndexWriter(autoCompleteIndex, new NGramAnalyzer(), true, IndexWriter.MaxFieldLength.UNLIMITED);
 
 
@@ -143,7 +143,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
         /// <seealso cref=""/>        
         public void Index()
         {
-            configureBexisIndexing();
+            configureBexisIndexing(true);
             // there is no need for the metadataAccess class anymore. Talked with David and deleted. 30.18.13. Javad/ compare to the previous version to see the deletions
             DatasetManager dm = new DatasetManager();
             IList<long> ids = dm.GetDatasetLatestIds();
@@ -482,7 +482,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
         {
             if (!isIndexConfigured)
             {
-                this.configureBexisIndexing();
+                this.configureBexisIndexing(false);
             }
             foreach (KeyValuePair<long, IndexingAction> pair in datasetsToIndex)
             {
@@ -514,16 +514,22 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             }
             indexWriter.Commit();
             autoCompleteIndexWriter.Commit();
+            BexisIndexSearcher.searcher = new IndexSearcher(indexWriter.GetReader());
+            BexisIndexSearcher.autoCompleteSearcher = new IndexSearcher(autoCompleteIndexWriter.GetReader());
+            autoCompleteIndexWriter.Dispose();
+            indexWriter.Dispose();
 
             BexisIndexSearcher.searcher = new IndexSearcher(indexWriter.GetReader());
             BexisIndexSearcher.autoCompleteSearcher = new IndexSearcher(autoCompleteIndexWriter.GetReader());
+            
         }
+
 
         public void updateSingleDatasetIndex(long datasetId, IndexingAction indAction)
         {
             if (!isIndexConfigured)
             {
-                this.configureBexisIndexing();
+                this.configureBexisIndexing(false);
             }
             DatasetManager dm = new DatasetManager();
             if (indAction == IndexingAction.CREATE)
@@ -552,9 +558,11 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
 
             indexWriter.Commit();
             autoCompleteIndexWriter.Commit();
-
             BexisIndexSearcher.searcher = new IndexSearcher(indexWriter.GetReader());
             BexisIndexSearcher.autoCompleteSearcher = new IndexSearcher(autoCompleteIndexWriter.GetReader());
+            indexWriter.Dispose();
+            autoCompleteIndexWriter.Dispose();
+
         }
 
 
@@ -583,8 +591,8 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
         /// <seealso cref=""/>        
         public void Dispose()
         {
-            indexWriter.Dispose();
-            autoCompleteIndexWriter.Dispose();
+             indexWriter.Dispose();
+           autoCompleteIndexWriter.Dispose();
         }
     }
     public enum IndexingAction { CREATE, UPDATE, DELETE }

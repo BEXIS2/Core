@@ -11,6 +11,7 @@ using System.Xml.Linq;
 using BExIS.Dcm.CreateDatasetWizard;
 using BExIS.Dcm.UploadWizard;
 using BExIS.Dcm.Wizard;
+using BExIS.Ddm.Providers.LuceneProvider.Indexer;
 using BExIS.Dlm.Entities.Administration;
 using BExIS.Dlm.Entities.Common;
 using BExIS.Dlm.Entities.Data;
@@ -1276,6 +1277,12 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                     dm.EditDatasetVersion(workingCopy, null, null, null);
                     dm.CheckInDataset(datasetId, "Metadata was submited.", GetUserNameOrDefault());
+
+                    //add to index
+                    // ToDo check which SearchProvider it is, default luceneprovider
+                    BexisIndexer bexisIndexer = new BexisIndexer();
+                    bexisIndexer.updateSingleDatasetIndex(datasetId, IndexingAction.CREATE);
+
                 }
 
                 return datasetId;
