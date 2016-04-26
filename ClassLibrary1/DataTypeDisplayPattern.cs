@@ -13,7 +13,7 @@ namespace BExIS.IO.DataType.DisplayPattern
     {
         private static List<DataTypeDisplayPattern> displayPattern = new List<DataTypeDisplayPattern>()
         {
-            new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "DateTime",      StringPattern = "MM.dd.yyyy hh:mm:ss",      RegexPattern = null},
+            new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "DateTime",      StringPattern = "MM-dd-yyyyThh:mm:ss",      RegexPattern = null},
             new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "Date",          StringPattern = "MM.dd.yyyy",               RegexPattern = null},
             new DataTypeDisplayPattern() {Systemtype = DataTypeCode.DateTime,   Name = "Time",          StringPattern = "hh:mm:ss",                 RegexPattern = null}
         };
