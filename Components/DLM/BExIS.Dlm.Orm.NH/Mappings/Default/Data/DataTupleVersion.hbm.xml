@@ -3,7 +3,7 @@
     <!-- Mapping BaseEntity properties -->
 
     <id name="Id" type="Int64">
-      <column name="Id" />
+      <column name="Id" index="idx_DataTupleVersions_id"/>
       <generator class="native" />
     </id>
 
@@ -26,7 +26,7 @@
     </property>
 
     <property name="Timestamp" type="DateTime">
-      <column name="Timestamp" />
+      <column name="Timestamp"  index="idx_DataTupleVersions_timestamp"/>
     </property>
 
     <property name="XmlVariableValues" type="System.Xml.XmlDocument, System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">

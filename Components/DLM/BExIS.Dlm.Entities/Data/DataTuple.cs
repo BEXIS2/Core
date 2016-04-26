@@ -177,7 +177,7 @@ namespace BExIS.Dlm.Entities.Data
         /// <remarks></remarks>
         /// <seealso cref=""/>
         /// <param>NA</param>   
-        public override void Materialize()
+        public override void Materialize(bool includeChildren = true)
         {
             base.Materialize();
             VariableValues.ToList().ForEach(p => p.Tuple = this);

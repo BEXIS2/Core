@@ -33,17 +33,19 @@ namespace BExIS.Web.Shell.Controllers
 
         //[RecordCall]
         //[LogExceptions]
-        //[Diagnose]
+        [Diagnose]
+        [MeasurePerformance]
         public ActionResult Index(Int64 id=0)
         {
             ViewBag.Title = PresentationModel.GetViewTitle("Test Page"); /*in the Vaiona.Web.Mvc.Models namespace*/ //String.Format("{0} {1} - {2}", AppConfiguration.ApplicationName, AppConfiguration.ApplicationVersion, "Test Page");
+
             //List<string> a = new List<string>() { "A", "B", "C" };
             //List<string> b = new List<string>() { "A", "B", "D" };
             //var ab = a.Union(b);
 
             //dm.DatasetRepo.LoadIfNot(ds.Tuples);
             ////dm.DatasetRepo.Get(
-            //LoggerFactory.LogCustom("Hi, I am a custom message!");
+            LoggerFactory.LogCustom("Hi, I am a custom message!");
             //LoggerFactory.LogData(id.ToString(), typeof(Dataset).Name, Vaiona.Entities.Logging.CrudState.Deleted);
             //LoggerFactory.LogDataRelation(id.ToString(), typeof(Dataset).Name, "20", typeof(DatasetVersion).Name, Vaiona.Entities.Logging.CrudState.Deleted);
 
@@ -58,7 +60,7 @@ namespace BExIS.Web.Shell.Controllers
             //getDataset();
             Int64 dsId = 0;
 
-            //dsId = createDatasetVersion();
+            dsId = createDatasetVersion();
             //editDatasetVersion(dsId);
             //deleteTupleFromDatasetVersion(dsId);
             //deleteDataset(dsId);
@@ -265,7 +267,7 @@ namespace BExIS.Web.Shell.Controllers
             MetadataStructureManager mdsManager = new MetadataStructureManager();
             MDS.MetadataStructure mds = mdsManager.Repo.Query().First();
 
-            Dataset ds = dm.CreateEmptyDataset(dsManager.StructuredDataStructureRepo.Get(3), rpManager.Repo.Get(1), mds);
+            Dataset ds = dm.CreateEmptyDataset(dsManager.StructuredDataStructureRepo.Get(1), rpManager.Repo.Get(1), mds);
 
             if (dm.IsDatasetCheckedOutFor(ds.Id, "Javad") || dm.CheckOutDataset(ds.Id, "Javad"))
             {
@@ -273,20 +275,31 @@ namespace BExIS.Web.Shell.Controllers
 
                 //DataTuple changed = dm.GetDatasetVersionEffectiveTuples(workingCopy).First();
                 //changed.VariableValues.First().Value = (new Random()).Next().ToString();
-                DataTuple dt = dm.DataTupleRepo.Get(214); // its sample data
-                DataTuple newDt = new DataTuple();
-                newDt.XmlAmendments = dt.XmlAmendments;
-                newDt.XmlVariableValues = dt.XmlVariableValues; // in normal cases, the VariableValues are set and then Dematerialize is called
-                newDt.Materialize();
-                newDt.OrderNo = 1;
-                //newDt.TupleAction = TupleAction.Created;//not required
-                //newDt.Timestamp = DateTime.UtcNow; //required? no, its set in the Edit
-                //newDt.DatasetVersion = workingCopy;//required? no, its set in the Edit
-
-                dm.EditDatasetVersion(workingCopy, new List<DataTuple>() { newDt }, null, null);
+                DataTuple dt = dm.DataTupleRepo.Get(1); // its sample data
+                List<DataTuple> tuples = new List<DataTuple>();
+                for (int i = 0; i < 10000; i++)
+                {
+                    DataTuple newDt = new DataTuple();
+                    newDt.XmlAmendments = dt.XmlAmendments;
+                    newDt.XmlVariableValues = dt.XmlVariableValues; // in normal cases, the VariableValues are set and then Dematerialize is called
+                    newDt.Materialize();
+                    newDt.OrderNo = i;
+                    //newDt.TupleAction = TupleAction.Created;//not required
+                    //newDt.Timestamp = DateTime.UtcNow; //required? no, its set in the Edit
+                    //newDt.DatasetVersion = workingCopy;//required? no, its set in the Edit
+                    tuples.Add(newDt);
+                }
+                dm.EditDatasetVersion(workingCopy, tuples, null, null);
                 dm.CheckInDataset(ds.Id, "for testing purposes", "Javad");
+                dm.DatasetVersionRepo.Evict();
+                dm.DataTupleRepo.Evict();
+                dm.DatasetRepo.Evict();
+                workingCopy.PriliminaryTuples.Clear();
+                workingCopy = null;
             }
-            return (ds.Id);
+            var dsId = ds.Id;
+            ds = null;
+            return (dsId);
         }
 
     //    private void createADataStructure()
