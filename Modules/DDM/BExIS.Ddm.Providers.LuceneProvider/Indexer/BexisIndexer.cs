@@ -33,6 +33,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
         private List<Property> AllProperties = new List<Property>();
         private List<Category> AllCategories = new List<Category>();
         private bool reIndex = false;
+        private bool isIndexConfigured = false;
         public List<XmlNode> facetXmlNodeList = new List<XmlNode>();
         public List<XmlNode> propertyXmlNodeList = new List<XmlNode>();
         public List<XmlNode> categoryXmlNodeList = new List<XmlNode>();
@@ -104,31 +105,25 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
         }
 
         private string luceneIndexPath = Path.Combine(FileHelper.IndexFolderPath, "BexisSearchIndex");
-        private string autoCompleteIndexPath = Path.Combine(FileHelper.IndexFolderPath,  "BexisAutoComplete");
+        private string autoCompleteIndexPath = Path.Combine(FileHelper.IndexFolderPath, "BexisAutoComplete");
 
         private IndexWriter indexWriter;
         private IndexWriter autoCompleteIndexWriter;
 
         XmlDocument configXML;
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>        
-        public void Index()
+        private void configureBexisIndexing(bool recreateIndex)
         {
             configXML = new XmlDocument();
             configXML.Load(FileHelper.ConfigFilePath);
 
-
-            this.LoadBeforeIndexing();
+            LoadBeforeIndexing();
             Lucene.Net.Store.Directory pathIndex = FSDirectory.Open(new DirectoryInfo(luceneIndexPath));
             Lucene.Net.Store.Directory autoCompleteIndex = FSDirectory.Open(new DirectoryInfo(autoCompleteIndexPath));
 
             PerFieldAnalyzerWrapper analyzer = new PerFieldAnalyzerWrapper(new BexisAnalyzer());
 
-            indexWriter = new IndexWriter(pathIndex, analyzer, true, IndexWriter.MaxFieldLength.UNLIMITED);
+            indexWriter = new IndexWriter(pathIndex, analyzer, recreateIndex, IndexWriter.MaxFieldLength.UNLIMITED);
             autoCompleteIndexWriter = new IndexWriter(autoCompleteIndex, new NGramAnalyzer(), true, IndexWriter.MaxFieldLength.UNLIMITED);
 
 
@@ -138,18 +133,26 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             }
             analyzer.AddAnalyzer("ng_all", new NGramAnalyzer());
 
+            isIndexConfigured = true;
+        }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
+        public void Index()
+        {
+            configureBexisIndexing(true);
             // there is no need for the metadataAccess class anymore. Talked with David and deleted. 30.18.13. Javad/ compare to the previous version to see the deletions
             DatasetManager dm = new DatasetManager();
             IList<long> ids = dm.GetDatasetLatestIds();
 
-
-
             foreach (var id in ids)
             {
                 //the values in the dictionary are already xml documents or null. Javad
-                    writeBexisIndex(id,dm.GetDatasetLatestMetadataVersion(id));
-                
+                writeBexisIndex(id, dm.GetDatasetLatestMetadataVersion(id));
+
             }
 
             indexWriter.Optimize();
@@ -161,6 +164,9 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                 autoCompleteIndexWriter.Dispose();
             }
         }
+
+
+
 
         /// <summary>
         /// 
@@ -377,7 +383,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                             writeAutoCompleteIndex(docId, "ng_all", pDataValue);
                         }
                     }
-                    
+
                 }
                 else
                 {
@@ -472,17 +478,93 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
-        public void updateIndex()
+        public void updateIndex(Dictionary<long, IndexingAction> datasetsToIndex)
         {
+            if (!isIndexConfigured)
+            {
+                this.configureBexisIndexing(false);
+            }
+            foreach (KeyValuePair<long, IndexingAction> pair in datasetsToIndex)
+            {
+                DatasetManager dm = new DatasetManager();
 
-            /*work to do includes
-             * try to see the situation where the remove "ng_all" is valid i.e. can it be possible for lucence to search like  *:any_free_text
-             * using the dataset id in the autocomplete , it is possible to remove the documents that are being autocompleted if they are no longer necesary
-             * the problem however is with synonym/term expansion search update - what to do? actually , there is no problem
-             * 
-            */
+                if (pair.Value == IndexingAction.CREATE)
+                {
+                    Query query = new TermQuery(new Term("doc_id", pair.Key.ToString()));
+                    TopDocs tds = BexisIndexSearcher.getIndexSearcher().Search(query, 1);
+
+                    if (tds.TotalHits < 1) { writeBexisIndex(pair.Key, dm.GetDatasetLatestMetadataVersion(pair.Key)); }
+                    else {
+                        indexWriter.DeleteDocuments(new Term("doc_id", pair.Key.ToString()));
+                        autoCompleteIndexWriter.DeleteDocuments(new Term("id", pair.Key.ToString()));
+                        writeBexisIndex(pair.Key, dm.GetDatasetLatestMetadataVersion(pair.Key));
+                    }
+                }
+                else if (pair.Value == IndexingAction.DELETE)
+                {
+                    indexWriter.DeleteDocuments(new Term("doc_id", pair.Key.ToString()));
+                    autoCompleteIndexWriter.DeleteDocuments(new Term("id", pair.Key.ToString()));
+                }
+                else if (pair.Value == IndexingAction.UPDATE)
+                {
+                    indexWriter.DeleteDocuments(new Term("doc_id", pair.Key.ToString()));
+                    autoCompleteIndexWriter.DeleteDocuments(new Term("id", pair.Key.ToString()));
+                    writeBexisIndex(pair.Key, dm.GetDatasetLatestMetadataVersion(pair.Key));
+                }
+            }
+            indexWriter.Commit();
+            autoCompleteIndexWriter.Commit();
+            BexisIndexSearcher.searcher = new IndexSearcher(indexWriter.GetReader());
+            BexisIndexSearcher.autoCompleteSearcher = new IndexSearcher(autoCompleteIndexWriter.GetReader());
+            autoCompleteIndexWriter.Dispose();
+            indexWriter.Dispose();
+
+            BexisIndexSearcher.searcher = new IndexSearcher(indexWriter.GetReader());
+            BexisIndexSearcher.autoCompleteSearcher = new IndexSearcher(autoCompleteIndexWriter.GetReader());
+            
+        }
+
+
+        public void updateSingleDatasetIndex(long datasetId, IndexingAction indAction)
+        {
+            if (!isIndexConfigured)
+            {
+                this.configureBexisIndexing(false);
+            }
+            DatasetManager dm = new DatasetManager();
+            if (indAction == IndexingAction.CREATE)
+            {
+                Query query = new TermQuery(new Term("doc_id", datasetId.ToString()));
+                TopDocs tds = BexisIndexSearcher.getIndexSearcher().Search(query, 1);
+
+                if (tds.TotalHits < 1) { writeBexisIndex(datasetId, dm.GetDatasetLatestMetadataVersion(datasetId)); }
+                else {
+                    indexWriter.DeleteDocuments(new Term("doc_id", datasetId.ToString()));
+                    autoCompleteIndexWriter.DeleteDocuments(new Term("id", datasetId.ToString()));
+                    writeBexisIndex(datasetId, dm.GetDatasetLatestMetadataVersion(datasetId));
+                }
+            }
+            else if (indAction == IndexingAction.DELETE)
+            {
+                indexWriter.DeleteDocuments(new Term("doc_id", datasetId.ToString()));
+                autoCompleteIndexWriter.DeleteDocuments(new Term("id", datasetId.ToString()));
+            }
+            else if (indAction == IndexingAction.UPDATE)
+            {
+                indexWriter.DeleteDocuments(new Term("doc_id", datasetId.ToString()));
+                autoCompleteIndexWriter.DeleteDocuments(new Term("id", datasetId.ToString()));
+                writeBexisIndex(datasetId, dm.GetDatasetLatestMetadataVersion(datasetId));
+            }
+
+            indexWriter.Commit();
+            autoCompleteIndexWriter.Commit();
+            BexisIndexSearcher.searcher = new IndexSearcher(indexWriter.GetReader());
+            BexisIndexSearcher.autoCompleteSearcher = new IndexSearcher(autoCompleteIndexWriter.GetReader());
+            indexWriter.Dispose();
+            autoCompleteIndexWriter.Dispose();
 
         }
+
 
         /// <summary>
         /// 
@@ -509,9 +591,10 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
         /// <seealso cref=""/>        
         public void Dispose()
         {
-            indexWriter.Dispose();
-            autoCompleteIndexWriter.Dispose();
+             indexWriter.Dispose();
+           autoCompleteIndexWriter.Dispose();
         }
     }
+    public enum IndexingAction { CREATE, UPDATE, DELETE }
 }
 

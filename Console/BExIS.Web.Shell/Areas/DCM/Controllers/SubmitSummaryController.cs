@@ -455,9 +455,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             return temp;
         }
 
-
-        //temporary solution: norman :FinishUpload2
         //[MeasurePerformance]
+        //temporary solution: norman :FinishUpload2
         public List<Error> FinishUpload(TaskManager taskManager)
         {
 

@@ -230,10 +230,10 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         {
                             if (datasetIDs.Contains(d.Id))
                             {
-                                temp.Add(new ListViewItem(d.Id, XmlDatasetHelper.GetInformation(dm.GetDatasetLatestVersion(d), AttributeNames.title)));                                                     
+                                temp.Add(new ListViewItem(d.Id, XmlDatasetHelper.GetInformation(dm.GetDatasetLatestVersion(d), AttributeNames.title)));
                             }
                         }
-                    } 
+                    }
 
                 }
                 else

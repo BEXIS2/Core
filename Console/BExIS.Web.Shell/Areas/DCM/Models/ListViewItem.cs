@@ -5,22 +5,16 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
     {
         public long Id { get; set; }
         public string Title { get; set; }
-        public string Description { get; set; }
 
-        public ListViewItem()
-        {
-            Id = 0;
-            Title = "";
-            Description = "";
-        }
-
-        public ListViewItem(long id, string title, string description="")
+        public ListViewItem(long id, string title)
         {
             Id = id;
             Title = title;
-            Description = description;
         }
 
-        
+        public ListViewItem()
+        {
+            // TODO: Complete member initialization
+        }
     }
 }
