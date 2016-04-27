@@ -1,0 +1,24 @@
+﻿@model BExIS.Web.Shell.Areas.Site.Models.PrivacyModel
+
+@using Vaiona.Web.Mvc;
+@using BExIS.Web.Shell.Areas.Site.Models;
+
+
+
+@{
+    ViewBag.Title = "Privacy Policy";
+    HtmlString content = new HtmlString(Model.content);
+}
+
+@section Information
+{
+    Whit this Privacy policy you was agree when you did your registration for the first time.
+    @*<p>
+        More information 
+        @Html.ActionLink("here", "Index", "Help", new { id = 0 }, new { @class = "bx-informationLink", title="go to help", target="_blank"})
+    </p>*@
+}
+
+
+@content
+
