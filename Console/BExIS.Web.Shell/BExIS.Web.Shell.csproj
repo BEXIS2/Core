@@ -431,7 +431,6 @@
     <Compile Include="Areas\Site\Controllers\PrivacyPolicyController.cs" />
     <Compile Include="Areas\Site\Models\ContactUsModel.cs" />
     <Compile Include="Areas\Site\Models\PrivacyModel.cs" />
-    <Compile Include="Areas\Site\Models\ShowFooterModel.cs" />
     <Compile Include="Areas\Site\Models\TermsModel.cs" />
     <Compile Include="Areas\Site\SiteAreaRegistration.cs" />
     <Compile Include="Areas\SAM\Controllers\UtilsController.cs" />
