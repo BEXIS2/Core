@@ -340,8 +340,6 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
                                     else
                                         dr["ID" + vv.Variable.Id.ToString()] = DateTime.MaxValue;
 
-                                    DateTime dtx = DateTime.Now;
-
                                 break;
                             }
                 

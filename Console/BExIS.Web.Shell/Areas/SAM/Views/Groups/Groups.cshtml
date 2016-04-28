@@ -165,7 +165,7 @@
     }
 
     function windowEdit_onSubmit() {
-        $.post('@Url.Action("SetMembership", "Groups")', { Groups: $("#gridMembership").data("tGrid").dataSource._data });
+        $.post('@Url.Action("SetMembership", "Groups")', { Users: $("#gridMembership").data("tGrid").dataSource._data });
     }
 
     function setMembership(value, id) {

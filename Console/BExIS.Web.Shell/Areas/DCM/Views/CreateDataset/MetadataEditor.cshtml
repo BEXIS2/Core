@@ -1,17 +1,10 @@
 ﻿@model MetadataEditorModel
 @using BExIS.Web.Shell.Areas.DCM.Models.CreateDataset
 @using BExIS.Web.Shell.Areas.DCM.Models.Metadata;
-@using System.Web.Configuration;
-
-@using Telerik.Web.Mvc.UI;
 @{
     string lockedClass = "";
     bool locked = false;
     bool editMode = false;
-
-    HttpRuntimeSection section = System.Configuration.ConfigurationManager.GetSection("system.web/httpRuntime") as HttpRuntimeSection;
-    int int_MaxRequestLength = section.MaxRequestLength;
-    int mbMax = int_MaxRequestLength / 1024;
 }
 
 @if (ViewData.Keys.Contains("Locked"))
@@ -43,23 +36,6 @@
                 <td><button onclick="edit()" class="bx-button function" >Edit</button></td>
             }
 
-            @if (!Model.Created && !locked)
-            {
-
-                @(Html.Telerik().Upload()
-                                .Name("SelectFileUploader")
-                                .Multiple(false)
-                                .ShowFileList(false)
-                                .HtmlAttributes(new { title = "Import from xml" })
-                                .ClientEvents(events => events
-                                   .OnSuccess("OnSuccess"))
-                                .Async(async => async
-                                    .Save("SelectFileProcess", "CreateDataset", new { area = "DCM" })
-                                    .AutoUpload(true))
-                )
-
-            }
-
             @if (Model.Created && Model.DatasetId != -1 && !@Model.FromEditMode)
             { 
 
@@ -77,6 +53,11 @@
     </table>
 
 </div>
+
+
+
+
+
 
 <div id="root">
 
@@ -101,63 +82,12 @@
 
 @section RightPane
 {
-    
+ 
     
 
 }
 </div>
 <script>
-
-    function SelectFileProcess_OnSelect(e) {
-        var file = e.files[0];
-        var maxsize = '@int_MaxRequestLength';
-        //if (file.extension != ".xlsm" && file.extension != ".csv" && file.extension != ".txt") {
-
-        if (!IsExtentionValid(file.extension)) {
-            alert("Only .xml files can be uploaded")
-            e.preventDefault();
-            return false;
-        }
-        else {
-
-            if (file.size > (maxsize * 1024)) {
-
-                alert("Max file : " + maxsize / 1024 + " MB is supported. Please contact your administrator to upload bigger files.");
-                e.preventDefault();
-                return false;
-            }
-        }
-    }
-
-    /*
-    Is Extention from selected file
-    in list of supported files
-    */
-    function IsExtentionValid(fileExtention)
-    {
-        var extListAsString = ".xml";
-        var extList = extListAsString.split(',');
-
-        for (var i = 0; i < extList.length; i++)
-        {
-            if (fileExtention.toLowerCase() == extList[i]) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    function OnSuccess()
-    {
-        //alert("on success");
-
-        $.get('@Url.Action("LoadExternalXml", "CreateDataset", new RouteValueDictionary { { "area", "DCM" } })', function (response) {
-            //alert("on success");
-
-            $('#MetadataEditor').replaceWith(response);
-        })
-    }
 
     function validate()
     {

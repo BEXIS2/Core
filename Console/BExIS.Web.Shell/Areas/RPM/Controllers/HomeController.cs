@@ -15,6 +15,7 @@ using Vaiona.Utils.Cfg;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
 using Vaiona.Web.Mvc.Models;
+using BExIS.IO.DataType.DisplayPattern;
 
 namespace BExIS.Web.Shell.Areas.RPM.Controllers
 {
@@ -1011,11 +1012,12 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             return View(datatypeList);
         }
 
-        public ActionResult editDataType(DataType Model, long id,string systemType, string parent)
+        public ActionResult editDataType(DataTypeModel Model, long id,string systemType,string pattern, string parent)
         {
             DataTypeManager dataTypeManager = new DataTypeManager();
             IList<DataType> DataTypeList = dataTypeManager.Repo.Get();
             TypeCode typecode = new TypeCode();
+            DataTypeDisplayPattern dateTimePettern = null;
 
 
             foreach (DataTypeCode tc in Enum.GetValues(typeof(DataTypeCode)))
@@ -1026,12 +1028,14 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                     break;
                 }
             }
+            if (typecode == TypeCode.DateTime)
+                dateTimePettern = DataTypeDisplayPattern.Pattern.Where(p => p.Systemtype.Equals(DataTypeCode.DateTime) && p.Name.Equals(pattern)).FirstOrDefault();
 
-            Model.Id = id;
-            Model.Name = cutSpaces(Model.Name);
-            Model.Description = cutSpaces(Model.Description);           
+            Model.dataType.Id = id;
+            Model.dataType.Name = cutSpaces(Model.dataType.Name);
+            Model.dataType.Description = cutSpaces(Model.dataType.Description);           
 
-            if (Model.Name == "" | Model.Name == null)
+            if (Model.dataType.Name == "" | Model.dataType.Name == null)
             {
                 Session["Window"] = true;
                 Session["nameMsg"] = "invalid name";
@@ -1039,13 +1043,28 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             }
             else
             {
-                bool nameExist = !(DataTypeList.Where(p => p.Name.ToLower().Equals(Model.Name.ToLower())).Count().Equals(0));
+                bool nameExist = !(DataTypeList.Where(p => p.Name.ToLower().Equals(Model.dataType.Name.ToLower())).Count().Equals(0));
+                DataType tempdataType = new DataType();
+                DataTypeDisplayPattern displayPattern = new DataTypeDisplayPattern();
 
-                if (Model.Id == 0)
+                if (Model.dataType.Id == 0)
                 {
                     if (!nameExist)
                     {
-                        DataType dt = dataTypeManager.Create(Model.Name, Model.Description, typecode);
+                        tempdataType = dataTypeManager.Create(Model.dataType.Name, Model.dataType.Description, typecode);
+                        if (dateTimePettern != null)
+                        {   
+                            XmlDocument xmlDoc = new XmlDocument();
+                            XmlNode xmlNode;
+                            xmlNode = xmlDoc.CreateNode(XmlNodeType.Element, "Extra", null);
+                            xmlDoc.AppendChild(xmlNode);
+                            xmlNode = xmlDoc.CreateNode(XmlNodeType.Element, "DisplayPattern", null);
+                            xmlNode.InnerXml = DataTypeDisplayPattern.Dematerialize(dateTimePettern).InnerXml;
+                            xmlDoc.DocumentElement.AppendChild(xmlNode);
+                            tempdataType.Extra = xmlDoc;
+
+                            dataTypeManager.Update(tempdataType);
+                        }
                     }
                     else
                     {
@@ -1056,19 +1075,54 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                 }
                 else
                 {
-                    DataType tempdataType = new DataType();
                     if(nameExist)
-                        tempdataType = DataTypeList.Where(p => cutSpaces(p.Name).ToLower().Equals(cutSpaces(Model.Name.ToLower()))).ToList().First();
+                        tempdataType = DataTypeList.Where(p => cutSpaces(p.Name).ToLower().Equals(cutSpaces(Model.dataType.Name.ToLower()))).ToList().First();
                     
-                    if (!nameExist || Model.Id == tempdataType.Id)
+                    if (!nameExist || Model.dataType.Id == tempdataType.Id)
                     {
                         DataType dataType = DataTypeList.Where(p => p.Id.Equals(id)).ToList().First();
                         if (!(dataType.DataContainers.Count() > 0))
                         {
                             DataTypeManager DTM = new DataTypeManager();
-                            dataType.Name = Model.Name;
-                            dataType.Description = Model.Description;
+                            dataType.Name = Model.dataType.Name;
+                            dataType.Description = Model.dataType.Description;
                             dataType.SystemType = typecode.ToString();
+
+
+                            XmlDocument xmlDoc = dataType.Extra as XmlDocument;
+                            XmlNode xmlNode;
+                            if (dateTimePettern != null)
+                            {
+                                if (xmlDoc == null)
+                                {
+                                    xmlDoc = new XmlDocument();
+                                    xmlNode = xmlDoc.CreateNode(XmlNodeType.Element, "Extra", null);
+                                    xmlDoc.AppendChild(xmlNode);
+                                }
+
+                                if (xmlDoc.GetElementsByTagName("DisplayPattern").Count > 0)
+                                {
+                                    xmlNode = xmlDoc.GetElementsByTagName("DisplayPattern").Item(0);
+                                    xmlNode.InnerXml = DataTypeDisplayPattern.Dematerialize(dateTimePettern).InnerXml;
+                                }
+                                else
+                                {
+                                    xmlNode = xmlDoc.CreateNode(XmlNodeType.Element, "DisplayPattern", null);
+                                    xmlNode.InnerXml = DataTypeDisplayPattern.Dematerialize(dateTimePettern).InnerXml;
+                                    xmlDoc.DocumentElement.AppendChild(xmlNode);
+                                }
+                                tempdataType.Extra = xmlDoc;
+                            }
+                            else
+                            {
+                                if (xmlDoc != null && xmlDoc.GetElementsByTagName("DisplayPattern").Count > 0)
+                                {
+                                    xmlNode = xmlNode = xmlDoc.GetElementsByTagName("DisplayPattern").Item(0);
+                                    xmlDoc.DocumentElement.RemoveChild(xmlNode);
+                                }
+                                tempdataType.Extra = xmlDoc;
+                            }
+
                             DTM.Update(dataType);
                         }
                     }
@@ -1082,7 +1136,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             }
            
             Session["Window"] = false;
-            Session["DataType"] = new DataType();
+            Session["DataType"] = new DataTypeModel();
             return RedirectToAction(parent);
         }
 
@@ -1091,18 +1145,14 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
             if (id != 0)
             {
-
-                DataTypeManager DTM = new DataTypeManager();
-                DataType dataType = DTM.Repo.Get(id);
-
                 Session["nameMsg"] = null;
-                Session["DataType"] = dataType;
+                Session["DataType"] = new DataTypeModel(id);
                 Session["Window"] = true;              
             }
             else
             {
                 Session["nameMsg"] = null;
-                Session["DataType"] = new DataType();
+                Session["DataType"] = new DataTypeModel();
                 Session["Window"] = true;
             }
             return RedirectToAction("DataTypeManager");

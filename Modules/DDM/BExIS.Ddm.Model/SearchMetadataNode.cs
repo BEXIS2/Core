@@ -13,24 +13,9 @@ namespace BExIS.Ddm.Model
 
         public SearchMetadataNode(string metadataStructureName, string xPath)
         {
-            MetadataStructureName = metadataStructureName;
-            XPath = xPath;
-            DisplayName = generateDisplayName(xPath);
-        }
-
-        private string generateDisplayName(string xPath)
-        {
-            string tmp = "";
-            string[] tempArray = xPath.Split('/');
-
-            for (int i = 1; i < tempArray.Length; i = i + 2)
-            {
-                tmp += "/" + tempArray[i];
-            }
-
-            tmp = tempArray[0] + tmp;
-
-            return tmp;
+            this.MetadataStructureName = metadataStructureName;
+            this.XPath = xPath;
+            this.DisplayName = "( " + metadataStructureName + " ) " + xPath;
         }
     }
 }

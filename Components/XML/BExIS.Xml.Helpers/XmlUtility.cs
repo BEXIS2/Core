@@ -44,12 +44,12 @@ namespace BExIS.Xml.Helpers
             else return false;
         }
 
-        public static XmlNode GetXmlNodeByName(XmlNode parentNode, string name, bool recursiv=true)
+        public static XmlNode GetXmlNodeByName(XmlNode parentNode, string name)
         {
-            return getXmlNodeByName(parentNode, name, recursiv);
+            return getXmlNodeByName(parentNode, name);
         }
 
-        private static XmlNode getXmlNodeByName(XmlNode node, string name, bool recursiv = true)
+        private static XmlNode getXmlNodeByName(XmlNode node, string name)
         {
             if (node.LocalName.Equals(name))
                 return node;
@@ -60,16 +60,8 @@ namespace BExIS.Xml.Helpers
 
                     foreach (XmlNode child in node.ChildNodes)
                     {
-                        if (recursiv)
-                        {
-                            if (getXmlNodeByName(child, name) != null)
-                                return child;
-                        }
-                        else
-                        {
-                            if (child.LocalName.Equals(name))
-                                return node;
-                        }
+                        if (getXmlNodeByName(child, name) != null)
+                            return child;
                     }
 
 
@@ -170,7 +162,9 @@ namespace BExIS.Xml.Helpers
             /// <returns></returns>
             public static IEnumerable<XElement> GetChildren(XElement source)
             {
+
                 return source.Nodes().OfType<XElement>();
+
             }
 
             /// <summary>

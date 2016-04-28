@@ -155,7 +155,7 @@ namespace BExIS.Xml.Helpers
                 {
                     //XElement x = element.Descendants().Where(e => e.Name.Equals(nestedUsage.Member.Name)).First();
                     XElement x = AddAndReturnAttribute(element, nestedUsage, 1);
-                    //Debug.WriteLine("ADDDDDDDD:            " + element.Name);
+                    Debug.WriteLine("ADDDDDDDD:            " + element.Name);
                     x = setChildren(x, nestedUsage);
                 }
             }
@@ -593,6 +593,7 @@ namespace BExIS.Xml.Helpers
             }
         #endregion
 
+
         public XDocument Change(XDocument metadataXml, string firstXPath, string secondXPath)
         {
             this._tempXDoc = metadataXml;
@@ -618,6 +619,7 @@ namespace BExIS.Xml.Helpers
 
             return metadataXml;
         }
+
 
         #region update
 
@@ -709,5 +711,6 @@ namespace BExIS.Xml.Helpers
 
         #endregion
     }
+
 
 }

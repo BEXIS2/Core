@@ -754,41 +754,49 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 case "String":
                     {
                         return Type.GetType("System.String");
+                        break;
                     }
 
                 case "Double":
                     {
                         return Type.GetType("System.Double");
+                        break;
                     }
 
                 case "Int16":
                     {
                         return Type.GetType("System.Int16");
+                        break;
                     }
 
                 case "Int32":
                     {
                         return Type.GetType("System.Int32");
+                        break;
                     }
 
                 case "Int64":
                     {
                         return Type.GetType("System.Int64");
+                        break;
                     }
 
                 case "Decimal":
                     {
                         return Type.GetType("System.Decimal");
+                        break;
                     }
 
                 case "DateTime":
                     {
                         return Type.GetType("System.DateTime");
+                        break;
                     }
 
                 default:
                     {
                         return Type.GetType("System.String");
+                        break;
                     }
             }
         }

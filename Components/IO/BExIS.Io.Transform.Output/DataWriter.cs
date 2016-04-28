@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using BExIS.IO.Transform.Validation.DSValidation;
 using BExIS.IO.Transform.Validation.Exceptions;
+using BExIS.IO.DataType.DisplayPattern;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.DataStructure;
 using Vaiona.Utils.Cfg;
@@ -14,8 +16,11 @@ using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.MetadataStructure;
 using System.Xml.Linq;
+using BExIS.Dlm.Services.TypeSystem;
 using BExIS.Xml.Helpers;
 using BExIS.Xml.Services;
+using DocumentFormat.OpenXml.Drawing;
+using Path = System.IO.Path;
 
 /// <summary>
 ///
@@ -349,5 +354,80 @@ namespace BExIS.IO.Transform.Output
             return source.Where(p => selected.Contains(p.Variable.Id.ToString())).ToList();
         }
 
+
+        protected string GetStringFormat(Dlm.Entities.DataStructure.DataType datatype)
+        {
+            DataTypeDisplayPattern ddp = DataTypeDisplayPattern.Materialize(datatype.Extra);
+            if (ddp != null)
+                return ddp.StringPattern;
+
+            return "";
+        }
+
+        protected string GetFormatedValue( object value, Dlm.Entities.DataStructure.DataType datatype, string format)
+        {
+            string tmp = value.ToString();
+
+            if (DataTypeUtility.IsTypeOf(value, datatype.SystemType))
+            {
+                //Type type = Type.GetType("System." + datatype.SystemType);
+
+                switch (DataTypeUtility.GetTypeCode(datatype.SystemType))
+                {
+                    case DataTypeCode.Int16:
+                    case DataTypeCode.Int32:
+                    case DataTypeCode.Int64:
+                    {
+                        Int64 newValue = Convert.ToInt64(tmp);
+                        return newValue.ToString(format);
+                    }
+
+                    case DataTypeCode.UInt16:
+                    case DataTypeCode.UInt32:
+                    case DataTypeCode.UInt64:
+                    {
+                        UInt64 newValue = Convert.ToUInt64(tmp);
+                        return newValue.ToString(format);
+                    }
+
+                    case DataTypeCode.Decimal:
+                    case DataTypeCode.Double:
+                    {
+                        Double newValue = Convert.ToDouble(tmp);
+                        return newValue.ToString(format);
+                    }
+
+                    case DataTypeCode.DateTime:
+                    {
+                            DateTime dateTime;
+
+                            if (DateTime.TryParse(tmp, out dateTime))
+                            {
+                                return dateTime.ToString(format);
+                            }
+
+                            if (DateTime.TryParse(tmp, new CultureInfo("de-DE", false), DateTimeStyles.None, out dateTime))
+                            {
+                                return dateTime.ToString(format);
+                            }
+
+                            if (DateTime.TryParse(tmp, new CultureInfo("en-US", false), DateTimeStyles.None, out dateTime))
+                            {
+                                return dateTime.ToString(format);
+                            }
+
+                            if (DateTime.TryParse(tmp, CultureInfo.InvariantCulture, DateTimeStyles.None, out dateTime))
+                            {
+                                return dateTime.ToString(format);
+                            }
+
+                            return tmp;
+ ;                   }
+                    default: return tmp;
+                }
+            }
+
+            return "";
+        }
     }
 }
