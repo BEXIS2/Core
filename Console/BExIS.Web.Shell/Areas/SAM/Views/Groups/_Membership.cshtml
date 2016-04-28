@@ -2,46 +2,46 @@
 @using Telerik.Web.Mvc.UI
 
 @(Html.Telerik().Grid<GroupMembershipGridRowModel>()
-                  .Name("gridMembership")
-                  .Columns(columns =>
-                  {
-                      columns.Bound(m => m.IsUserInGroup)
-                            .Template(@<text>
-                            @if (item.IsUserInGroup)
-                            {
-                                <input type='checkbox' onchange='setMembership(this.checked, @item.Id);' name='selectedUsers' value='@item.Id' checked='checked' ) />
-                            }
-                            else
-                            {
-                                <input type='checkbox' onchange='setMembership(this.checked, @item.Id);' name='selectedUsers' value='@item.Id' />
-                            }
-                            </text>)
-                .ClientTemplate("<input type='checkbox' onchange='setMembership(this.checked, <#= Id #>);' name='selectedUsers' value='<#= Id #>' <#= IsUserInGroup ? checked='checked' : '' #> />")
-                    .Title("Member")
-                    .Width(64)
-                    .Filterable(false)
-                    .HtmlAttributes(new { style = "text-align:center" });
-                      columns.Bound(m => m.Id)
-                            .ClientTemplate("<#= Id #>" + "<input type='hidden' name='Id' value='<#= Id #> />'")
-                            .Width(80);
-                      columns.Bound(m => m.UserName);
-                      columns.Bound(m => m.FullName);
-                      columns.Bound(m => m.Email);
-                  })
-                                                .ClientEvents(clientEvents =>
-                                                {
-                                                    clientEvents.OnDataBound("gridMembership_onDataBound");
-                                                })
-                                                  .DataBinding(dataBinding => dataBinding
-                                                      .Ajax()
-                                                      .OperationMode(GridOperationMode.Client)
-                                                      .Select("Membership_Select", "Groups", new { id = Model.GroupId, selectedGroups = (long[])ViewData["Users"] })
-                                                  )
-                                                  .Filterable()
-                                                    .Pageable(pageable =>
-                                                    {
-                                                        pageable.PageSize(10, new[] { 10, 20, 50, 100 });
-                                                        pageable.Style(GridPagerStyles.NextPreviousAndNumeric | GridPagerStyles.PageSizeDropDown);
-                                                        pageable.Position(GridPagerPosition.Both);
-                                                    })
-                                                  .Sortable())
+    .Name("gridMembership")
+    .Columns(columns =>
+    {
+        columns.Bound(m => m.IsUserInGroup)
+            .Template(@<text>
+                @if (item.IsUserInGroup)
+                {
+                    <input type='checkbox' onchange='setMembership(this.checked, @item.Id);' name='selectedUsers' value='@item.Id' checked='checked' />
+                }
+                else
+                {
+                    <input type='checkbox' onchange='setMembership(this.checked, @item.Id);' name='selectedUsers' value='@item.Id' />
+                }
+            </text>)
+            .ClientTemplate("<input type='checkbox' onchange='setMembership(this.checked, <#= Id #>);' name='selectedUsers' value='<#= Id #>' <#= IsUserInGroup ? checked='checked' : '' #> />")
+            .Title("Member")
+            .Width(64)
+            .Filterable(false)
+            .HtmlAttributes(new { style = "text-align:center" });
+        columns.Bound(m => m.Id)
+            .ClientTemplate("<#= Id #>" + "<input type='hidden' name='Id' value='<#= Id #> />'")
+            .Width(80);
+        columns.Bound(m => m.UserName);
+        columns.Bound(m => m.FullName);
+        columns.Bound(m => m.Email);
+    })
+                                  .ClientEvents(clientEvents =>
+                                  {
+                                      clientEvents.OnDataBound("gridMembership_onDataBound");
+                                  })
+                                    .DataBinding(dataBinding => dataBinding
+                                        .Ajax()
+                                        .OperationMode(GridOperationMode.Client)
+                                        .Select("Membership_Select", "Groups", new { id = Model.GroupId, selectedUsers = (long[])ViewData["Users"] })
+                                    )
+                                    .Filterable()
+                                      .Pageable(pageable =>
+                                      {
+                                          pageable.PageSize(10, new[] { 10, 20, 50, 100 });
+                                          pageable.Style(GridPagerStyles.NextPreviousAndNumeric | GridPagerStyles.PageSizeDropDown);
+                                          pageable.Position(GridPagerPosition.Both);
+                                      })
+                                    .Sortable())

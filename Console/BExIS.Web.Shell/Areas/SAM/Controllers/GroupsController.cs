@@ -73,14 +73,17 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
 
                 foreach (long userId in users)
                 {
-                    subjectManager.RemoveUserFromGroup(userId, @group.Id);
+                    subjectManager.RemoveUserFromGroup(userId, group.Id);
                 }
 
                 if (Session["Users"] != null)
                 {
                     foreach (GroupMembershipGridRowModel user in (GroupMembershipGridRowModel[]) Session["Users"])
                     {
-                        subjectManager.AddUserToGroup(user.Id, group.Id);
+                        if (user.IsUserInGroup)
+                        {
+                            subjectManager.AddUserToGroup(user.Id, group.Id);
+                        }
                     }
                 }
 
