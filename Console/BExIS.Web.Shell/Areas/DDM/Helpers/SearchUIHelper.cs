@@ -152,10 +152,12 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
             XmlDocument doc = new XmlDocument();
             doc = (XmlDocument)sds.Extra;
 
-            IEnumerable<XElement> orderList = XmlUtility.GetXElementByNodeName("variable", XmlUtility.ToXDocument(doc));
+            
 
-            if (dsVersionTuples != null && sds != null)
+            if (dsVersionTuples != null && sds != null && doc != null)
             {
+                IEnumerable<XElement> orderList = XmlUtility.GetXElementByNodeName("variable", XmlUtility.ToXDocument(doc));
+
                 foreach (XElement element in orderList)
                 {
                     var vu = sds.Variables.Where(v => v.Id.Equals(Convert.ToInt64(element.Value))).FirstOrDefault();

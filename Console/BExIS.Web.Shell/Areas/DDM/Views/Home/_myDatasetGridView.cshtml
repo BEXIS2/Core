@@ -43,69 +43,70 @@
             .EnableCustomBinding(true)
             .HtmlAttributes(new { @class = "result-grid" })
             .Columns(columns =>
+            {
+
+                for (int i = 0; i < Model.Columns.Count; i++)
                 {
-                    
-                    for (int i = 0; i < Model.Columns.Count; i++)
+                    DataColumn column = Model.Columns[i];
+                    if (DefaultHeaderList.Where(p => p.Name.Equals(column.ColumnName)).Count() > 0)
                     {
-                        DataColumn column = Model.Columns[i];
-                        if (DefaultHeaderList.Where(p => p.Name.Equals(column.ColumnName)).Count() > 0)
+
+                        string title;
+
+                        if (column.Caption == "")
                         {
-
-                            string title;
-
-                            if (column.Caption == "")
-                            {
-                                title = column.ColumnName;
-                            }
-                            else
-                            {
-                                title = column.Caption;
-                            }
-                            if (title == "ID")
-                            {
-                                columns.Bound(column.DataType, column.ColumnName)
-                                   .Title(title);
-                            }
-                            if (title == "Title")
-                            {
-                                columns.Bound(column.DataType, column.ColumnName)
-                                   .Title(title);
-                            }
-                            if (title == "Description")
-                            {
-                                columns.Bound(column.DataType, column.ColumnName)
-                                   .Title(title);
-                            }
-                            if (title == "View" | title == "Update" | title == "Delete" | title == "Download" | title == "Grant")
-                            {
-                                columns.Bound(column.DataType, column.ColumnName)
-                                   .Title(title)
-                                   .Filterable(false);
-                            }
-                            
-                                
+                            title = column.ColumnName;
                         }
                         else
                         {
-                            columns.Bound(column.DataType, column.ColumnName).Hidden()
-                                   .Title(column.Caption);
+                            title = column.Caption;
+                        }
+                        if (title == "ID")
+                        {
+                            columns.Bound(column.DataType, column.ColumnName)
+                               .Title(title);
+                        }
+                        if (title == "Title")
+                        {
+                            columns.Bound(column.DataType, column.ColumnName)
+                               .Title(title);
+                        }
+                        if (title == "Description")
+                        {
+                            columns.Bound(column.DataType, column.ColumnName)
+                               .Title(title);
+                        }
+                        if (title == "View" | title == "Update" | title == "Delete" | title == "Download" | title == "Grant")
+                        {
+                            columns.Bound(column.DataType, column.ColumnName)
+                               .Title(title)
+                               .Filterable(false);
+                        }
 
-                        }                       
-                        
+
                     }
-                    if (@Model.Columns.Count > 0)
+                    else
                     {
-                            columns.Bound("").Width(40).ClientTemplate(
-                            "<div class='searchResultFunctionDiv'>" +
-                                @Html.ActionLink(" ", "ShowData", "Data", new { area = "DDM", id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>" }, new { @class = "bx bx-grid-function bx-show", @id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>" }) +
-                             "</div>"
-                            )                            
-                            .Groupable(false)
-                            .Sortable(false)
-                            .Filterable(false);
+                        columns.Bound(column.DataType, column.ColumnName).Hidden()
+                               .Title(column.Caption);
+
                     }
 
-                })
+                }
+                if (@Model.Columns.Count > 0)
+                {
+                    columns.Bound("").Width(70).ClientTemplate(
+                    "<div class='searchResultFunctionDiv'>" +
+                        @Html.ActionLink(" ", "ShowData", "Data", new { area = "DDM", id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>" }, new { @class = "bx bx-grid-function bx-show", @id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>" }) +
+                        @Html.ActionLink(" ", "Index", "CreateDataset", new { area = "DCM", id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>", type = "DatasetId" }, new { @class = "bx bx-grid-function bx-copy", @id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>" }) +
+                     "</div>"
+                    )
+                    .Groupable(false)
+                    .Sortable(false)
+                    .Filterable(false);
+                }
+
+            })
 
             .ClientEvents(events => events
                         .OnComplete("onComplete")
@@ -113,7 +114,7 @@
                         .OnSubmitChanges("refreshGrid")
                         .OnRowDataBound("resultGrid_OnRowDataBound")
                         .OnDataBound("resetAllTelerikIconTitles")
-                        
+
                        )
             .Pageable(paging =>
                 paging

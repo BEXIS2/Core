@@ -8,6 +8,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Models.CreateDataset
 {
     public class SetupModel
     {
+        [Display(Name = "Dataset")]
+        public long SelectedDatasetId { get; set; }
+
         [Display(Name = "Metadata Structure")]
         [Required(ErrorMessage = "Please select a metadata structure.")]
         public long SelectedMetadataStructureId { get; set; }
@@ -20,13 +23,26 @@ namespace BExIS.Web.Shell.Areas.DCM.Models.CreateDataset
 
         public List<ListViewItem> DataStructureViewList { get; set; }
 
+        public List<ListViewItem> DatasetViewList { get; set; }
+
+        public bool BlockDatasetId { get; set; }
+        public bool BlockDatastructureId { get; set; }
+        public bool BlockMetadataStructureId { get; set; }
+
         public SetupModel()
         {
-            SelectedMetadataStructureId = 0;
+            SelectedMetadataStructureId = -1;
             MetadataStructureViewList = new List<ListViewItem>();
+            BlockMetadataStructureId = false;
 
-            SelectedDataStructureId = 0;
-            DataStructureViewList = new List<ListViewItem>(); 
+            SelectedDataStructureId = -1;
+            DataStructureViewList = new List<ListViewItem>();
+            BlockDatastructureId = false;
+
+
+            SelectedDatasetId = -1;
+            DatasetViewList = new List<ListViewItem>();
+            BlockDatasetId = false;
         }
     }
 }

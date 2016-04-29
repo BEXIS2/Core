@@ -848,7 +848,8 @@
   content: "\f0c4";
 }
 .fa-copy:before,
-.fa-files-o:before {
+.fa-files-o:before,
+.bx-copy:before {
   content: "\f0c5";
 }
 .fa-paperclip:before {

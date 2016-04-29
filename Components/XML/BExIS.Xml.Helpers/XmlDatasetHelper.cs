@@ -19,6 +19,21 @@ namespace BExIS.Xml.Services
         /// <param name="datasetVersion"></param>
         /// <param name="name"></param>
         /// <returns></returns>
+        public static string GetInformation(long datasetid, AttributeNames name)
+        {
+            DatasetManager dm = new DatasetManager();
+            Dataset dataset = dm.GetDataset(datasetid);
+            DatasetVersion datasetVersion = dm.GetDatasetLatestVersion(dataset);
+
+            return GetInformation(datasetVersion, name);
+        }
+
+        /// <summary>
+        /// returns a value of a metadata node
+        /// </summary>
+        /// <param name="datasetVersion"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public static string GetInformation(DatasetVersion datasetVersion, AttributeNames name)
         {
             // get MetadataStructure 
