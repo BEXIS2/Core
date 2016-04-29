@@ -747,56 +747,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             return temp;
         }
 
-
-        //public ActionResult StartProgress()
-        //{
-        //    var taskId = Guid.NewGuid();
-        //    tasks.Add(taskId, 0);
-
-        //    //Task.Factory.StartNew(() =>
-        //    //{
-        //    //    for (var i = 0; i <= 100; i++)
-        //    //    {
-        //    //        tasks[taskId] = i; // update task progress
-        //    //        Thread.Sleep(50); // simulate long running operation
-        //    //    }
-        //    //    tasks.Remove(taskId);
-        //    //});
-
-        //    return Json(taskId);
-        //}
-
-        //public ActionResult Progress(Guid id)
-        //{
-
-        //    TaskManager = (TaskManager)Session["TaskManager"];
-        //    int value = 0;
-        //    if (TaskManager.Bus.ContainsKey(TaskManager.CURRENTPACKAGE) &&
-        //        TaskManager.Bus.ContainsKey(TaskManager.CURRENTPACKAGESIZE) &&
-        //        TaskManager.Bus.ContainsKey(TaskManager.NUMBERSOFROWS)
-        //        )
-        //    {
-        //        int currentPackage = (int)TaskManager.Bus[TaskManager.CURRENTPACKAGE];
-        //        int currentPackageSize = (int)TaskManager.Bus[TaskManager.CURRENTPACKAGESIZE];
-        //        int numberOfRows = (int)TaskManager.Bus[TaskManager.NUMBERSOFROWS];
-
-        //        int currentRow = currentPackage * currentPackageSize;
-
-        //        value =   numberOfRows/currentRow;
-
-        //        if (currentPackage == currentPackageSize)
-        //        {
-        //            value = 100;
-        //        }
-
-        //    }
-
-
-
-        //    return Json(value);
-        //}
-
-
         #region private methods
 
         public string GetUserNameOrDefault()

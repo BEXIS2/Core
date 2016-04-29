@@ -33,7 +33,8 @@
         <tr>
             @if (locked && Model.EditRight)
             {
-                <td><button onclick="edit()" class="bx-button function" >Edit</button></td>
+                <td><button onclick="edit()" class="bx-button function">Edit</button>
+                @Html.ActionLink("Copy", "Index", "CreateDataset", new { area = "DCM", id = @Model.DatasetId, type = "DatasetId" }, new { @class = "bx-button function", @id = @Model.DatasetId })</td>
             }
 
             @if (Model.Created && Model.DatasetId != -1 && !@Model.FromEditMode)
