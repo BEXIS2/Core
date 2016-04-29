@@ -75,7 +75,7 @@ namespace BExIS.Web.Shell
 
             AreaRegistration.RegisterAllAreas();
 
-            GlobalFilters.Filters.Add(new SessionTimeoutFilterAttribute());
+            //GlobalFilters.Filters.Add(new SessionTimeoutFilterAttribute());
 
             RegisterGlobalFilters(GlobalFilters.Filters);
             RegisterRoutes(RouteTable.Routes);

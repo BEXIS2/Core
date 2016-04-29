@@ -24,7 +24,8 @@ namespace BExIS.Web.Shell.Controllers
 
         public ActionResult SessionTimeout()
         {
-            return View();
+            return View("");
         }
+
     }
 }

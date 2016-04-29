@@ -31,7 +31,7 @@ namespace BExIS.Web.Shell.Helpers
                     filterContext.Result = new RedirectToRouteResult(
                         new RouteValueDictionary {
                         { "Controller", "Home" },
-                        { "Action", "TimeoutRedirect" }
+                        { "Action", "SessionTimeout" }
                     });
                 }
             }
@@ -64,7 +64,7 @@ namespace BExIS.Web.Shell.Helpers
                     filterContext.Result = new RedirectToRouteResult(
                         new RouteValueDictionary {
                         { "Controller", "Home" },
-                        { "Action", "TimeoutRedirect" }
+                        { "Action", "SessionTimeout" }
                     });
                 }
             }
