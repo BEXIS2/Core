@@ -427,9 +427,11 @@
     <Compile Include="Areas\SAM\Models\UserModels.cs" />
     <Compile Include="Areas\SAM\SAMAreaRegistration.cs" />
     <Compile Include="Areas\Site\Controllers\ContactUsController.cs" />
+    <Compile Include="Areas\Site\Controllers\ImpressumController.cs" />
     <Compile Include="Areas\Site\Controllers\NavController.cs" />
     <Compile Include="Areas\Site\Controllers\PrivacyPolicyController.cs" />
     <Compile Include="Areas\Site\Models\ContactUsModel.cs" />
+    <Compile Include="Areas\Site\Models\ImpressumModel.cs" />
     <Compile Include="Areas\Site\Models\PrivacyModel.cs" />
     <Compile Include="Areas\Site\Models\TermsModel.cs" />
     <Compile Include="Areas\Site\SiteAreaRegistration.cs" />
@@ -593,6 +595,7 @@
     <Content Include="Areas\SAM\Views\Help\UserGuides\SAM_UserGuide.htm" />
     <Content Include="Areas\Site\Views\ContactUs\Contact_Us.htm" />
     <Content Include="Areas\Site\Views\FooterHelper\Logos\dfg_logo.gif" />
+    <Content Include="Areas\Site\Views\Impressum\Impressum.htm" />
     <Content Include="Areas\Site\Views\PrivacyPolicy\Bexis_Privacy_Policy.htm" />
     <Content Include="Content\bootstrap-combobox.css" />
     <Content Include="Content\bootstrap-theme.css" />
@@ -658,6 +661,7 @@
     <Content Include="Areas\Site\Views\PrivacyPolicy\Index.cshtml" />
     <Content Include="Areas\Site\Views\Shared\_Layout.cshtml" />
     <Content Include="Areas\Site\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\Site\Views\Impressum\Index.cshtml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
