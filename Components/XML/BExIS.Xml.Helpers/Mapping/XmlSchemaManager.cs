@@ -67,6 +67,9 @@ namespace BExIS.Xml.Helpers.Mapping
             xsdFileName = "";
             mappingFileInternalToExternal = new XmlMapper();
             mappingFileExternalToInternal = new XmlMapper();
+            createdAttributesDic = new Dictionary<long, string>();
+            createdCompoundsDic = new Dictionary<long, string>();
+            createdPackagesDic = new Dictionary<long, string>();
         }
         
         public static bool MoveFile(string tempFile, string destinationPath)
