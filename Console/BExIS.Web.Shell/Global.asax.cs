@@ -12,6 +12,7 @@ using Vaiona.Web.Mvc.Filters;
 using System.Web;
 using System;
 using System.Collections.Generic;
+using BExIS.Web.Shell.Helpers;
 using NHibernate;
 
 namespace BExIS.Web.Shell
@@ -73,6 +74,9 @@ namespace BExIS.Web.Shell
             init();
 
             AreaRegistration.RegisterAllAreas();
+
+            GlobalFilters.Filters.Add(new SessionTimeoutFilterAttribute());
+
             RegisterGlobalFilters(GlobalFilters.Filters);
             RegisterRoutes(RouteTable.Routes);
         }
@@ -107,20 +111,6 @@ namespace BExIS.Web.Shell
 
         protected void Session_Start()
         {
-            if (Context.Session.IsNewSession)
-            {
-                string sCookieHeader = Request.Headers["Cookie"];
-                if ((null != sCookieHeader) && (sCookieHeader.IndexOf("ASP.NET_SessionId") >= 0))
-                {
-                    //intercept current route
-                    HttpContextBase currentContext = new HttpContextWrapper(HttpContext.Current);
-                    RouteData routeData = RouteTable.Routes.GetRouteData(currentContext);
-                    Response.Redirect("~/Home/SessionTimeout");
-                    Response.Flush();
-                    Response.End();
-                }
-            }
-
             //set session culture using DefaultCulture key
             IoCFactory.Container.StartSessionLevelContainer();
             Session.ApplyCulture(AppConfiguration.DefaultCulture);
