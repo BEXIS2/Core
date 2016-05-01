@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Vaiona.Entities.Common;
 
 namespace BExIS.Dlm.Entities.Party
 {
@@ -10,7 +11,7 @@ namespace BExIS.Dlm.Entities.Party
     /// AND
     /// this.PartyRelationshipType.PartyTypePairs.AllowedAtrget MUST CONTAIN this.SecondParty.PartyRelationshipType
     /// </summary>
-    public class PartyRelationship
+    public class PartyRelationship: BaseEntity
     {
         #region Attributes
         public virtual string Title { get; set; }

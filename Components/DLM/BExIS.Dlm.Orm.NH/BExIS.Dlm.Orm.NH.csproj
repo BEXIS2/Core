@@ -190,6 +190,15 @@
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Mappings\Default\Party\Party.hbm.xml" />
+    <Content Include="Mappings\Default\Party\PartyCustomAttribute.hbm.xml" />
+    <Content Include="Mappings\Default\Party\PartyCustomAttributeValue.hbm.xml" />
+    <Content Include="Mappings\Default\Party\PartyRelationship.hbm.xml" />
+    <Content Include="Mappings\Default\Party\PartyRelationshipType.hbm.xml" />
+    <Content Include="Mappings\Default\Party\PartyStatus.hbm.xml" />
+    <Content Include="Mappings\Default\Party\PartyStatusType.hbm.xml" />
+    <Content Include="Mappings\Default\Party\PartyType.hbm.xml" />
+    <Content Include="Mappings\Default\Party\PartyTypePair.hbm.xml" />
     <Content Include="Mappings\PostgreSQL82Dialect\NativeObjects\Queries.hbm.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
@@ -198,7 +207,6 @@
   <ItemGroup>
     <Folder Include="Mappings\DB2Dialect\" />
     <Folder Include="Mappings\Default\NativeObjects\" />
-    <Folder Include="Mappings\Default\Party\" />
     <Folder Include="Mappings\Default\PostObjects\" />
     <Folder Include="Mappings\MsSql2008Dialect\" />
   </ItemGroup>
