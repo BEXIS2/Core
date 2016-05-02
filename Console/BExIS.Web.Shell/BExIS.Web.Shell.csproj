@@ -591,7 +591,7 @@
     <Content Include="Areas\SAM\Images\SAM_UserGuide_files\image013.jpg" />
     <Content Include="Areas\SAM\Views\Help\UserGuides\SAM_UserGuide.htm" />
     <Content Include="Areas\Site\Views\ContactUs\Contact_Us.htm" />
-    <Content Include="Areas\Site\Views\FooterHelper\Logos\dfg_logo.gif" />
+    <Content Include="Content\Images\dfg_logo.gif" />
     <Content Include="Areas\Site\Views\Impressum\Impressum.htm" />
     <Content Include="Areas\Site\Views\PrivacyPolicy\Bexis_Privacy_Policy.htm" />
     <Content Include="Content\bootstrap-combobox.css" />
@@ -607,6 +607,7 @@
     <Content Include="Content\Images\2.svg" />
     <Content Include="Content\Images\favicon.ico" />
     <Content Include="Content\Images\Logo_BEXIS_cmyk.svg" />
+    <Content Include="Content\Images\Logo_BEXIS_rgb_113x28.jpg" />
     <Content Include="Content\Images\Logo_BEXIS_rgb_2600x830.jpg" />
     <Content Include="Content\Images\Logo_BEXIS_rgb_2600x830.png" />
     <Content Include="Content\Images\Logo_BEXIS_rgb_377x94.jpg" />
@@ -1000,6 +1001,7 @@
     <Folder Include="Areas\MSM\Views\Shared\" />
     <Folder Include="Areas\RPM\Views\Shared\" />
     <Folder Include="Areas\SAM\Views\Shared\" />
+    <Folder Include="Areas\Site\Views\FooterHelper\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Home\About.cshtml" />
