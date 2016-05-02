@@ -62,11 +62,6 @@ namespace BExIS.Web.Shell
           //    new { controller = "Home", action = "Index" }
           //    , new[] { "BExIS.Web.Shell.Areas.RPM.Controllers" }
             //).DataTokens = new RouteValueDictionary(new { area = "RPM" });
-
-
-        
-
-
         }
 
         protected void Application_Start()
@@ -111,6 +106,23 @@ namespace BExIS.Web.Shell
 
         protected void Session_Start()
         {
+            if (Context.Session != null)
+            {
+                if (Context.Session.IsNewSession)
+                {
+                    string sCookieHeader = Request.Headers["Cookie"];
+                    if ((null != sCookieHeader) && (sCookieHeader.IndexOf("ASP.NET_SessionId") >= 0))
+                    {
+                        //intercept current route
+                        HttpContextBase currentContext = new HttpContextWrapper(HttpContext.Current);
+                        RouteData routeData = RouteTable.Routes.GetRouteData(currentContext);
+                        Response.Redirect("~/Home/SessionTimeout");
+                        Response.Flush();
+                        Response.End();
+                    }
+                }
+            }
+
             //set session culture using DefaultCulture key
             IoCFactory.Container.StartSessionLevelContainer();
             Session.ApplyCulture(AppConfiguration.DefaultCulture);

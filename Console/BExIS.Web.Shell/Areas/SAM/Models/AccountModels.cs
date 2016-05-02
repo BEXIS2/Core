@@ -46,6 +46,8 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
 
         public AuthenticatorSelectListModel AuthenticatorList { get; set; }
 
+        public bool TermsAndConditions { get; set; }
+
         public AccountRegisterModel()
         {
             SecurityQuestionList = new SecurityQuestionSelectListModel();

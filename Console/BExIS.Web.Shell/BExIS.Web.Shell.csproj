@@ -444,7 +444,6 @@
     </Compile>
     <Compile Include="Helpers\BExISDataHelper.cs" />
     <Compile Include="Helpers\BexisModelManager.cs" />
-    <Compile Include="Helpers\AuthenticationAttributes.cs" />
     <Compile Include="Helpers\BexisUIHelper.cs" />
     <Compile Include="Models\EntitySelectorModel.cs" />
     <Compile Include="Models\UiTestModel.cs" />
