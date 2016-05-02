@@ -134,6 +134,11 @@ button.t-state-disabled,
     cursor:not-allowed;
 }
 
+a.bx-grid-function {
+    margin-left:2px;
+    margin-right:2px;
+}
+
 input[type=radio].css-checkbox {
 	background: none;
 }
@@ -385,6 +390,7 @@ ul.bx-list-multi
 .t-window-content
 {
     background-color:#ebebeb;
+    max-width: 95vm;
 }
 
 .bx-window .bx-title

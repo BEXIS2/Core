@@ -132,12 +132,60 @@
 <script src="@Url.Content("~/Scripts/bexis_default.js")" type="text/javascript"></script>
 <script src="@Url.Content("~/Scripts/bexis-jquery-ui.js")" type="text/javascript"></script>
 <script type="text/javascript">
-    
-    $(document).ready(function ()
-    {
-        resetAllTelerikIconTitles();
-        addTooltips();
+
+    $(document)
+        .ready(function() {
+            resetAllTelerikIconTitles();
+            addTooltips();
+        });
+
+    $.ajax({
+        url: "/MyController/MyAction",
+        type: 'POST',
+        dataType: 'json',
+        data: jsonData,
+        contentType: 'application/json; charset=utf-8',
+        success: function(result) {
+            if (checkTimeout(result)) {
+                // There was no timeout, so continue processing...
+            }
+        },
+        error: function(result) {
+            if (checkTimeout(result)) {
+                // There was no timeout, so continue processing...
+            }
+        }
     });
 
+    function checkTimeout(data) {
+        var thereIsStillTime = true;
+
+        if (data) {
+            if (data.responseText) {
+                if ((data.responseText.indexOf("<title>Log On</title>") > -1) ||
+                (data.responseText.indexOf("<title>Object moved</title>") > -1) ||
+                (data.responseText === '"_Logon_"')) thereIsStillTime = false;
+            } else {
+                if (data == "_Logon_") thereIsStillTime = false;
+            }
+
+            if (!thereIsStillTime) {
+                window.location.href = "/Home/SessionTimeout";
+            }
+        } else {
+            $.ajax({
+                url: "/Home/CheckTimeout/",
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                async: false,
+                complete: function(result) {
+                    thereIsStillTime = checkTimeout(result);
+                }
+            });
+        }
+
+        return thereIsStillTime;
+    }
 
 </script>

@@ -200,13 +200,13 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             foreach (DataStructure datasStructure in dsm.StructuredDataStructureRepo.Get())
             {
                 title = datasStructure.Name;
-                temp.Add(new ListViewItem(datasStructure.Id, title));
+                temp.Add(new ListViewItem(datasStructure.Id, title, datasStructure.Description));
             }
 
             foreach (DataStructure datasStructure in dsm.UnStructuredDataStructureRepo.Get())
             {
                 title = datasStructure.Name;
-                temp.Add(new ListViewItem(datasStructure.Id, title));
+                temp.Add(new ListViewItem(datasStructure.Id, title, datasStructure.Description));
             }
 
 
@@ -223,7 +223,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             {
                 string title = researchPlan.Title;
 
-                temp.Add(new ListViewItem(researchPlan.Id, title));
+                temp.Add(new ListViewItem(researchPlan.Id, title, researchPlan.Description));
             }
 
             return temp.OrderBy(p => p.Title).ToList();
@@ -238,7 +238,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             {
                 string title = metadataStructure.Name;
 
-                temp.Add(new ListViewItem(metadataStructure.Id, title));
+                temp.Add(new ListViewItem(metadataStructure.Id, title, metadataStructure.Description));
             }
 
             return temp.OrderBy(p => p.Title).ToList();
