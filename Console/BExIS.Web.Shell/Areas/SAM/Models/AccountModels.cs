@@ -46,6 +46,9 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
 
         public AuthenticatorSelectListModel AuthenticatorList { get; set; }
 
+        [Range(typeof(bool), "true", "true", ErrorMessage = "You need to accept the terms and conditions!")]
+        public bool TermsAndConditions { get; set; }
+
         public AccountRegisterModel()
         {
             SecurityQuestionList = new SecurityQuestionSelectListModel();

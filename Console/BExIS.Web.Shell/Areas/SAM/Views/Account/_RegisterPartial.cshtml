@@ -82,8 +82,17 @@
                 @Html.LabelFor(m => m.SecurityAnswer)
             </td>
             <td>
-                @Html.TextBoxFor(m => m.SecurityAnswer, new { @class = "t-input bx-input" })
+                @Html.TextBoxFor(m => m.SecurityAnswer, new {@class = "t-input bx-input"})
                 @Html.ValidationMessageFor(m => m.SecurityAnswer)
+            </td>
+        </tr>
+        <tr>
+            <td>
+                @Html.LabelFor(m => m.TermsAndConditions)
+            </td>
+            <td>
+                @Html.CheckBoxFor(m => m.TermsAndConditions)
+                @Html.ValidationMessageFor(m => m.TermsAndConditions)
             </td>
         </tr>
     </table>
