@@ -11,6 +11,7 @@ using System.Xml.Linq;
 using BExIS.Dcm.CreateDatasetWizard;
 using BExIS.Dcm.UploadWizard;
 using BExIS.Dcm.Wizard;
+using BExIS.Ddm.Api;
 using BExIS.Ddm.Providers.LuceneProvider.Indexer;
 using BExIS.Dlm.Entities.Administration;
 using BExIS.Dlm.Entities.Common;
@@ -37,6 +38,7 @@ using BExIS.Xml.Helpers.Mapping;
 using BExIS.IO;
 using BExIS.Web.Shell.Models;
 using BExIS.Web.Shell.Helpers;
+using Vaiona.IoC;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
 {
@@ -1280,6 +1282,10 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 model = MetadataCompoundAttributeModel.ConvertToModel(parentStepModelHelper.Usage, number);
                 model.Number = position;
                 ((MetadataCompoundAttributeModel)model).ConvertMetadataAttributeModels(LoadUsage(parentStepModelHelper.Usage), metadataStructureId, newStep.Id);
+
+                //Update metadata xml
+                //add step to metadataxml
+                AddCompoundAttributeToXml(model.Source, model.Number, parentStepModelHelper.XPath);
             }
 
             if (u is MetadataPackageUsage)
@@ -1287,6 +1293,10 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 model = MetadataPackageModel.Convert(parentStepModelHelper.Usage, number);
                 model.Number = position;
                 ((MetadataPackageModel)model).ConvertMetadataAttributeModels(LoadUsage(parentStepModelHelper.Usage), metadataStructureId, newStep.Id);
+
+                //Update metadata xml
+                //add step to metadataxml
+                AddPackageToXml(model.Source, model.Number, parentStepModelHelper.XPath);
             }
 
             // create StepModel for new step
@@ -1306,14 +1316,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             // add stepmodel to dictionary
             AddStepModelhelper(newStepModelhelper);
 
-            //Update metadata xml
-            //add step to metadataxml
-            AddCompoundAttributeToXml(model.Source, model.Number, parentStepModelHelper.XPath);
-
-
-            
-
-            ////add stepModel to parentStepModel
+            //add stepModel to parentStepModel
             parentStepModelHelper.Childrens.Insert(newStepModelhelper.Number - 1, newStepModelhelper);
 
             //update childrens of the parent step based on number
@@ -1657,8 +1660,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                     //add to index
                     // ToDo check which SearchProvider it is, default luceneprovider
-                    BexisIndexer bexisIndexer = new BexisIndexer();
-                    bexisIndexer.updateSingleDatasetIndex(datasetId, IndexingAction.CREATE);
+                    ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+                    provider?.UpdateSingleDatasetIndex(datasetId, IndexingAction.CREATE);
 
                 }
 
