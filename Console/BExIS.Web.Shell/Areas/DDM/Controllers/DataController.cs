@@ -31,6 +31,7 @@ using BExIS.Security.Services.Subjects;
 using BExIS.Xml.Helpers;
 using BExIS.Xml.Services;
 using BExIS.Dlm.Services.MetadataStructure;
+using BExIS.Security.Entities.Subjects;
 using Vaiona.Logging.Aspects;
 using Vaiona.Web.Mvc.Models;
 
@@ -901,5 +902,30 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
         #endregion
 
+        #region Permissions
+
+        public ActionResult Subjects(long dataId)
+        {
+            ViewData["DataId"] = dataId;
+
+            return PartialView("_SubjectsPartial");
+        }
+
+        [GridAction]
+        public ActionResult Subjects_Select(long dataId)
+        {
+            EntityManager entityManager = new EntityManager();
+            PermissionManager permissionManager = new PermissionManager();
+            SubjectManager subjectManager = new SubjectManager();
+
+            List<DatasetPermissionGridRowModel> subjects = new List<DatasetPermissionGridRowModel>();
+
+            IQueryable<Subject> data = subjectManager.GetAllSubjects();
+            data.ToList().ForEach(s => subjects.Add(DatasetPermissionGridRowModel.Convert(dataId, entityManager.GetEntityById(1), s, permissionManager.GetAllRights(s.Id, 1, dataId).ToList())));
+
+            return View(new GridModel<DatasetPermissionGridRowModel> { Data = subjects });
+        }
+
+        #endregion
     }
 }

@@ -363,6 +363,7 @@
     <Compile Include="Areas\DDM\Helpers\GridHelper.cs" />
     <Compile Include="Areas\DDM\Helpers\helper.cs" />
     <Compile Include="Areas\DDM\Helpers\HtmlPrefixScopeExtentions.cs" />
+    <Compile Include="Areas\DDM\Models\DatasetPermissionModels.cs" />
     <Compile Include="Areas\DDM\Models\ShowDataModel.cs" />
     <Compile Include="Areas\DDM\Models\ShowHelpModel.cs" />
     <Compile Include="Areas\DDM\Models\ShowMetadataModel.cs" />
@@ -662,6 +663,7 @@
     <Content Include="Areas\Site\Views\Shared\_Layout.cshtml" />
     <Content Include="Areas\Site\Views\_ViewStart.cshtml" />
     <Content Include="Areas\Site\Views\Impressum\Index.cshtml" />
+    <Content Include="Areas\DDM\Views\Data\_SubjectsPartial.cshtml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
