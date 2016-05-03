@@ -90,6 +90,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider
             this.WorkingSearchModel = initWorking(); //init(WorkingSearchModel); // its better to make a clone form DefualtSearchModel than calling the function twice
             //this.DefaultSearchModel = Get(this.WorkingSearchModel.CriteriaComponent);
             this.WorkingSearchModel = Get(this.WorkingSearchModel.CriteriaComponent);
+           
         }
 
 
@@ -245,7 +246,24 @@ namespace BExIS.Ddm.Providers.LuceneProvider
 
             return this.WorkingSearchModel;
         }
-       
+
+        public void UpdateIndex(Dictionary<long, IndexingAction> datasetsToIndex)
+        {
+            BexisIndexer bexisIndexer = new BexisIndexer();
+            bexisIndexer.updateIndex(datasetsToIndex);
+
+            Reload();
+    
+        }
+
+        public void UpdateSingleDatasetIndex(long datasetId, IndexingAction indAction)
+        {
+            BexisIndexer bexisIndexer = new BexisIndexer();
+            bexisIndexer.updateSingleDatasetIndex(datasetId, indAction);
+
+            Reload();
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -380,6 +398,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider
                 bexisSearching = parser.Parse("*:*");
             }
         }
+
 
         #endregion
     }

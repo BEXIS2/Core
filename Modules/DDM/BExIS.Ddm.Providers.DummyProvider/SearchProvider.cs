@@ -239,11 +239,6 @@ namespace BExIS.Ddm.Providers.DummyProvider
             return this.WorkingSearchModel;
         }
 
-        #endregion
-
-
-        #region ISearchProvider Member
-
         /// <summary>
         /// 
         /// </summary>
@@ -255,6 +250,16 @@ namespace BExIS.Ddm.Providers.DummyProvider
         {
             this.WorkingSearchModel = Get(searchCriteria);
             this.WorkingSearchModel = UpdateFacets(searchCriteria);
+        }
+
+        public void UpdateIndex(Dictionary<long, IndexingAction> datasetsToIndex)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UpdateSingleDatasetIndex(long datasetId, IndexingAction indAction)
+        {
+            throw new NotImplementedException();
         }
 
         #endregion
