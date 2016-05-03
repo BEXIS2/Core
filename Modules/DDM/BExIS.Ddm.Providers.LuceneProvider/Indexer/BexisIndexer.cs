@@ -13,6 +13,7 @@ using Lucene.Net.Index;
 using Lucene.Net.Store;
 using System.Linq;
 using BExIS.Ddm.Api;
+using BExIS.Ddm.Providers.LuceneProvider.Config;
 using Lucene.Net.Search;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
@@ -516,6 +517,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             indexWriter.Commit();
             autoCompleteIndexWriter.Commit();
             BexisIndexSearcher.searcher = new IndexSearcher(indexWriter.GetReader());
+            BexisIndexSearcher._Reader = indexWriter.GetReader();
             BexisIndexSearcher.autoCompleteSearcher = new IndexSearcher(autoCompleteIndexWriter.GetReader());
             autoCompleteIndexWriter.Dispose();
             indexWriter.Dispose();
@@ -559,6 +561,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             indexWriter.Commit();
             autoCompleteIndexWriter.Commit();
             BexisIndexSearcher.searcher = new IndexSearcher(indexWriter.GetReader());
+            BexisIndexSearcher._Reader = indexWriter.GetReader();
             BexisIndexSearcher.autoCompleteSearcher = new IndexSearcher(autoCompleteIndexWriter.GetReader());
             indexWriter.Dispose();
             autoCompleteIndexWriter.Dispose();
