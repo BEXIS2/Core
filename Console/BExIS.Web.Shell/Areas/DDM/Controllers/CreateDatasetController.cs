@@ -914,6 +914,10 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 model = MetadataCompoundAttributeModel.ConvertToModel(parentStepModelHelper.Usage, number);
                 model.Number = position;
                 ((MetadataCompoundAttributeModel)model).ConvertMetadataAttributeModels(LoadUsage(parentStepModelHelper.Usage), metadataStructureId, newStep.Id);
+
+                //Update metadata xml
+                //add step to metadataxml
+                AddCompoundAttributeToXml(model.Source, model.Number, parentStepModelHelper.XPath);
             }
 
             if (u is MetadataPackageUsage)
@@ -921,6 +925,10 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 model = MetadataPackageModel.Convert(parentStepModelHelper.Usage, number);
                 model.Number = position;
                 ((MetadataPackageModel)model).ConvertMetadataAttributeModels(LoadUsage(parentStepModelHelper.Usage), metadataStructureId, newStep.Id);
+
+                //Update metadata xml
+                //add step to metadataxml
+                AddPackageToXml(model.Source, model.Number, parentStepModelHelper.XPath);
             }
 
             // create StepModel for new step
@@ -939,13 +947,6 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
             // add stepmodel to dictionary
             AddStepModelhelper(newStepModelhelper);
-
-            //Update metadata xml
-            //add step to metadataxml
-            AddCompoundAttributeToXml(model.Source, model.Number, parentStepModelHelper.XPath);
-
-
-            
 
             ////add stepModel to parentStepModel
             parentStepModelHelper.Childrens.Insert(newStepModelhelper.Number - 1, newStepModelhelper);
