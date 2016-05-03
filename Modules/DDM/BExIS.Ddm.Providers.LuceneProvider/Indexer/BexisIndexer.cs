@@ -12,6 +12,7 @@ using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using System.Linq;
+using BExIS.Ddm.Api;
 using Lucene.Net.Search;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
@@ -524,7 +525,6 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             
         }
 
-
         public void updateSingleDatasetIndex(long datasetId, IndexingAction indAction)
         {
             if (!isIndexConfigured)
@@ -595,6 +595,6 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
            autoCompleteIndexWriter.Dispose();
         }
     }
-    public enum IndexingAction { CREATE, UPDATE, DELETE }
+
 }
 
