@@ -28,15 +28,47 @@
                 tabs.Add()
                     .Text("Metadata")
                     .LoadContentFrom("LoadMetadata", "CreateDataset", new { area = "DDM", datasetId = @Model.Id, locked = true, created= false, fromEditMode = false, resetTaskManager = true });
-                
-                tabs.Add()
-                    .Text("Data Structure")
-                    .LoadContentFrom("ShowPreviewDataStructure", "Data", new { area = "DDM", datasetID = @Model.Id });
 
                 tabs.Add()
                     .Text("Primary Data")
                     .LoadContentFrom("ShowPrimaryData", "Data", new { area = "DDM", datasetID = @Model.Id })
                     .Enabled(@Model.ViewAccess);
+
+                tabs.Add()
+                    .Text("Data Structure")
+                    .LoadContentFrom("ShowPreviewDataStructure", "Data", new { area = "DDM", datasetID = @Model.Id });
+
+
+
+                tabs.Add()
+                    .Text("Dataset Permissions")
+                    .LoadContentFrom("Subjects", "Data", new {area = "DDM", dataId = @Model.Id });
+                //.Enabled(@Model.EditAccess);
             })
     )
 }
+
+<script type="text/javascript">
+
+    function existsRightType(rights, rightType) {
+        if (jQuery.inArray(rightType, rights) != -1) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    function setDataPermission(value, rightType, subjectId, dataId, entityId) {
+        if (value) {
+            $.post('@Url.Action("CreateDataPermission", "DataPermissions")', { DataId: dataId, EntityId: entityId, SubjectId: subjectId, RightType: rightType }, function (e) {
+                $("#Grid_Subjects .t-refresh").trigger('click');
+            });
+        } else {
+            $.post('@Url.Action("DeleteDataPermission", "DataPermissions")', { DataId: dataId, EntityId: entityId, SubjectId: subjectId, RightType: rightType }, function (e) {
+                $("#Grid_Subjects .t-refresh").trigger('click');
+            });
+        }
+    }
+
+</script>
