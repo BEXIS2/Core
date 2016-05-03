@@ -76,12 +76,19 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                 string mappingFilePathImport = TaskManager.Bus[ImportMetadataStructureTaskManager.MAPPING_FILE_NAME_IMPORT].ToString();
                 string mappingFilePathExport = TaskManager.Bus[ImportMetadataStructureTaskManager.MAPPING_FILE_NAME_EXPORT].ToString();
+                string title = TaskManager.Bus[ImportMetadataStructureTaskManager.TITLE_NODE].ToString();
+                string description = TaskManager.Bus[ImportMetadataStructureTaskManager.DESCRIPTION_NODE].ToString();
+                model.TitleNode = title;
+                model.DescriptionNode = description;
+
+                string titleXpath = GetMetadataNodes().First(p => p.DisplayName.Equals(title)).XPath;
+                string descriptionXpath = GetMetadataNodes().First(p => p.DisplayName.Equals(description)).XPath;
 
                 TaskManager.Current().SetValid(true);
 
                 try
                 {
-                    StoreParametersToMetadataStruture(id, model.TitleNode, model.DescriptionNode, mappingFilePathImport, mappingFilePathExport);
+                    StoreParametersToMetadataStruture(id, titleXpath, descriptionXpath, mappingFilePathImport, mappingFilePathExport);
                 }
                 catch (Exception ex)
                 {
@@ -220,7 +227,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             model.TitleNode = SelectedNode.DisplayName;
 
             if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.TITLE_NODE))
-                TaskManager.Bus[ImportMetadataStructureTaskManager.TITLE_NODE] = model.TitleNode;
+                TaskManager.Bus[ImportMetadataStructureTaskManager.TITLE_NODE] = SelectedNode.XPath; //model.TitleNode;
             else
                 TaskManager.Bus.Add(ImportMetadataStructureTaskManager.TITLE_NODE, model.TitleNode);
 
