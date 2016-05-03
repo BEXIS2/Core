@@ -110,7 +110,7 @@ namespace BExIS.Dcm.UploadWizard
         }
 
         //temporary solution: norman :GetSplitDatatuples2
-        public static Dictionary<string, List<DataTuple>> GetSplitDatatuples(DataTuple[] newDatatuples, List<long> primaryKeys, DatasetVersion workingCopy, ref List<long> datatuplesFromDatabaseIds)
+        public static Dictionary<string, List<DataTuple>> GetSplitDatatuples(List<DataTuple> newDatatuples, List<long> primaryKeys, DatasetVersion workingCopy, ref List<long> datatuplesFromDatabaseIds)
         {
 
             Dictionary<string, List<DataTuple>> data = new Dictionary<string, List<DataTuple>>();
