@@ -123,6 +123,59 @@ namespace BExIS.IO.Transform.Output
                 return null;
         }
 
+      
+        public string CreateFile(string filepath)
+        {
+            string dicrectoryPath = Path.GetDirectoryName(filepath);
+            createDicrectoriesIfNotExist(dicrectoryPath);
+
+            try
+            {
+                if (!File.Exists(filepath))
+                {
+                    File.Create(filepath).Close();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                string message = ex.Message.ToString();
+            }
+
+            return filepath;
+        }
+
+        public string CreateFile(string path, string filename)
+        {
+            createDicrectoriesIfNotExist(path);
+
+            string dataPath = Path.Combine(path, filename);
+
+            try
+            {
+                if (!File.Exists(dataPath))
+                {
+                    File.Create(dataPath).Close();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                string message = ex.Message.ToString();
+            }
+
+            return dataPath;
+        }
+
+        protected void createDicrectoriesIfNotExist(string path)
+        { 
+            // if folder not exist
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+        }
+
         /// <summary>
         /// Create the general store path under AppConfiguration.DataPath
         /// with filename

@@ -36,7 +36,7 @@
 
                 <tr>
                     <td>
-                        @Ajax.ActionLink("Generate", "GenerateMS",@Model.StepInfo.GetActionInfo.ControllerName,new RouteValueDictionary { { "area", "DCM" } },
+                        @Ajax.ActionLink("Generate", "GenerateMS",@Model.StepInfo.GetActionInfo.ControllerName,new {  area = "DCM"  },
                                          new AjaxOptions { HttpMethod = "GET", 
                                          InsertionMode = InsertionMode.Replace, 
                                          UpdateTargetId = @id,

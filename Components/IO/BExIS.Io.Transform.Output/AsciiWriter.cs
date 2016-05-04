@@ -52,8 +52,10 @@ namespace BExIS.IO.Transform.Output
             Delimeter = delimeter;
         }
 
+        
+
         /// <summary>
-        ///
+        /// return the filepath
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>

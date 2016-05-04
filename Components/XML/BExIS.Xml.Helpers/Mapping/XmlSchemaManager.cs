@@ -480,6 +480,8 @@ namespace BExIS.Xml.Helpers.Mapping
                 MoveFile(xsdFilePath, newXsdFilePath);
             }
 
+
+
             #region prepare mappingFiles
 
                 #region intern to extern
@@ -1544,7 +1546,7 @@ namespace BExIS.Xml.Helpers.Mapping
   
         private void checkDirectory(string filePath)
         {
-            string path = getPathFromFilePath(filePath);
+            string path = Path.GetDirectoryName(filePath);
 
             if (!Directory.Exists(path))
             {
@@ -1552,12 +1554,17 @@ namespace BExIS.Xml.Helpers.Mapping
             }
         }
 
-        private string getPathFromFilePath(string filepath)
-        {
-            List<string> temp = filepath.Split('\\').ToList();
-            temp.Remove(temp.Last());
-            return Path.Combine(temp.ToArray());
-        }
+        //private void checkDirectory(string filePath, StreamWriter logwriter)
+        //{
+        //    string path = Path.GetDirectoryName(filePath);
+        //    logwriter.WriteLine(path);
+        //    if (!Directory.Exists(path))
+        //    {
+        //        logwriter.WriteLine("no exist : " + path);
+        //        Directory.CreateDirectory(path);
+        //    }
+        //}
+
 
         private string GetTypeOfName(string name)
         {
