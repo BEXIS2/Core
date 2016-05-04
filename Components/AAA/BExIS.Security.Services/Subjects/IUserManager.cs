@@ -23,27 +23,27 @@ namespace BExIS.Security.Services.Subjects
 
         #region Methods
 
-        bool ActivateUser(string userName);
+        bool ActivateUser(string username);
 
-        bool ApproveUser(string userName);
+        bool ApproveUser(string username);
 
         bool ChangePassword(long id, string password);
 
         bool ChangeSecurityQuestionAndSecurityAnswer(long id, long securityQuestionId, string newPasswordAnswer);
 
-        User CreateUser(string userName, long authenticatorId);
+        User CreateUser(string username, long authenticatorId);
 
-        User CreateUser(string userName, string password, string fullName, string email, long securityQuestionId, string securityAnswer, long authenticatorId);
+        User CreateUser(string username, string password, string fullName, string email, long securityQuestionId, string securityAnswer, long authenticatorId);
 
         bool DeleteUserById(long id);
 
-        bool DeleteUserByName(string userName);
+        bool DeleteUserByName(string username);
 
         bool ExistsUserId(long id);
 
-        bool ExistsUserName(string userName);
+        bool ExistsUsername(string username);
 
-        bool ExistsUserNameWithAuthenticatorId(string userName, long authenticatorId);
+        bool ExistsUsernameWithAuthenticatorId(string username, long authenticatorId);
       
         IQueryable<User> GetAllUsers();
 
@@ -51,17 +51,17 @@ namespace BExIS.Security.Services.Subjects
 
         User GetUserById(long id, bool isOnline = false);
 
-        User GetUserByName(string userName, bool isOnline = false);
+        User GetUserByName(string username, bool isOnline = false);
 
-        string GetUserNameByEmail(string email);
+        string GetUsernameByEmail(string email);
 
-        string GetUserNameById(long id);
+        string GetUsernameById(long id);
       
         int GetUsersOnline();
 
-        User RegisterUser(string userName, string password, string fullName, string email, long securityQuestionId, string securityAnswer, long authenticatorId);
+        User RegisterUser(string username, string password, string fullName, string email, long securityQuestionId, string securityAnswer, long authenticatorId);
 
-        bool UnlockUser(string userName);
+        bool UnlockUser(string username);
 
         User UpdateUser(User user);
 

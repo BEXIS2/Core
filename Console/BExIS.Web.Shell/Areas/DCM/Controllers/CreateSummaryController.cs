@@ -179,12 +179,12 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     datasetId = ds.Id;
 
                     // add security
-                    if (GetUserNameOrDefault() != "DEFAULT")
+                    if (GetUsernameOrDefault() != "DEFAULT")
                     {
                         PermissionManager pm = new PermissionManager();
                         SubjectManager sm = new SubjectManager();
 
-                        BExIS.Security.Entities.Subjects.User user = sm.GetUserByName(GetUserNameOrDefault());
+                        BExIS.Security.Entities.Subjects.User user = sm.GetUserByName(GetUsernameOrDefault());
 
                         foreach (RightType rightType in Enum.GetValues(typeof(RightType)).Cast<RightType>())
                         {
@@ -200,7 +200,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                 TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
 
-                if (dm.IsDatasetCheckedOutFor(datasetId, GetUserNameOrDefault()) || dm.CheckOutDataset(datasetId, GetUserNameOrDefault()))
+                if (dm.IsDatasetCheckedOutFor(datasetId, GetUsernameOrDefault()) || dm.CheckOutDataset(datasetId, GetUsernameOrDefault()))
                 {
                     DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(datasetId);
 
@@ -216,7 +216,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                     dm.EditDatasetVersion(workingCopy, null, null, null);
 
-                    dm.CheckInDataset(datasetId, "Metadata was submited.", GetUserNameOrDefault());
+                    dm.CheckInDataset(datasetId, "Metadata was submited.", GetUsernameOrDefault());
                 }
             }
 
@@ -225,16 +225,16 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         #region helper
 
-        public string GetUserNameOrDefault()
+        public string GetUsernameOrDefault()
             {
-                string userName = string.Empty;
+                string username = string.Empty;
                 try
                 {
-                    userName = HttpContext.User.Identity.Name;
+                    username = HttpContext.User.Identity.Name;
                 }
                 catch { }
 
-                return !string.IsNullOrWhiteSpace(userName) ? userName : "DEFAULT";
+                return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
             }
         #endregion
 

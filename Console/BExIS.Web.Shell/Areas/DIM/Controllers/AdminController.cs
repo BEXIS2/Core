@@ -132,7 +132,7 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
 
                     xmlMapperManager = new XmlMapperManager();
 
-                    xmlMapperManager.Load(path_mapping_file, GetUserNameOrDefault());
+                    xmlMapperManager.Load(path_mapping_file, GetUsernameOrDefault());
 
                     return xmlMapperManager.Export(datasetVersion.Metadata, datasetVersion.Id);
             }
@@ -146,16 +146,16 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
 
         #region helper
 
-        public string GetUserNameOrDefault()
+        public string GetUsernameOrDefault()
         {
-            string userName = string.Empty;
+            string username = string.Empty;
             try
             {
-                userName = HttpContext.User.Identity.Name;
+                username = HttpContext.User.Identity.Name;
             }
             catch { }
 
-            return !string.IsNullOrWhiteSpace(userName) ? userName : "DEFAULT";
+            return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
         }
 
         private string getMappingFileName(DatasetVersion datasetVersion)

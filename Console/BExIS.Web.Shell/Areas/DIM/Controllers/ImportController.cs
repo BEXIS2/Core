@@ -67,7 +67,7 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
             DatasetManager dm = new DatasetManager();
             Dataset dataset = dm.CreateEmptyDataset(dsm.UnStructuredDataStructureRepo.Get(1), rpm.Repo.Get(1), msm.Repo.Get(3));
 
-            if (dm.IsDatasetCheckedOutFor(dataset.Id, GetUserNameOrDefault()) || dm.CheckOutDataset(dataset.Id, GetUserNameOrDefault()))
+            if (dm.IsDatasetCheckedOutFor(dataset.Id, GetUsernameOrDefault()) || dm.CheckOutDataset(dataset.Id, GetUsernameOrDefault()))
             {
                 DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(dataset.Id);
                 workingCopy.Metadata = completeMetadata;
@@ -76,15 +76,15 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
                 if (String.IsNullOrEmpty(title)) title = "No Title available.";
 
                 dm.EditDatasetVersion(workingCopy, null, null, null);
-                dm.CheckInDataset(dataset.Id, "Metadata was submited.", GetUserNameOrDefault());
+                dm.CheckInDataset(dataset.Id, "Metadata was submited.", GetUsernameOrDefault());
 
                 // add security
-                if (GetUserNameOrDefault() != "DEFAULT")
+                if (GetUsernameOrDefault() != "DEFAULT")
                 {
                     PermissionManager pm = new PermissionManager();
                     SubjectManager sm = new SubjectManager();
 
-                    BExIS.Security.Entities.Subjects.User user = sm.GetUserByName(GetUserNameOrDefault());
+                    BExIS.Security.Entities.Subjects.User user = sm.GetUserByName(GetUsernameOrDefault());
 
                     foreach (RightType rightType in Enum.GetValues(typeof(RightType)).Cast<RightType>())
                     {
@@ -102,16 +102,16 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
 
         // chekc if user exist
         // if true return usernamem otherwise "DEFAULT"
-        public string GetUserNameOrDefault()
+        public string GetUsernameOrDefault()
         {
-            string userName = string.Empty;
+            string username = string.Empty;
             try
             {
-                userName = HttpContext.User.Identity.Name;
+                username = HttpContext.User.Identity.Name;
             }
             catch { }
 
-            return !string.IsNullOrWhiteSpace(userName) ? userName : "DEFAULT";
+            return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
         }
 
         #endregion

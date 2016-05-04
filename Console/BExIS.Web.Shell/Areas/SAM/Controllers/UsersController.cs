@@ -29,7 +29,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
             if (ModelState.IsValid)
             {
                 SubjectManager subjectManager = new SubjectManager();
-                subjectManager.CreateUser(model.UserName, model.Password, model.FullName, model.Email, model.SecurityQuestionList.Id, model.SecurityAnswer, model.AuthenticatorList.Id);
+                subjectManager.CreateUser(model.Username, model.Password, model.FullName, model.Email, model.SecurityQuestionList.Id, model.SecurityAnswer, model.AuthenticatorList.Id);
 
                 return Json(new { success = true });
             }
@@ -159,11 +159,11 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
 
         #region Remote Validation
 
-        public JsonResult ValidateUserName(string userName, long id = 0)
+        public JsonResult ValidateUsername(string username, long id = 0)
         {
             SubjectManager subjectManager = new SubjectManager();
 
-            User user = subjectManager.GetUserByName(userName);
+            User user = subjectManager.GetUserByName(username);
 
             if (user == null)
             {
@@ -177,7 +177,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
                 }
                 else
                 {
-                    string error = String.Format(CultureInfo.InvariantCulture, "The user name already exists.", userName);
+                    string error = String.Format(CultureInfo.InvariantCulture, "The user name already exists.", username);
 
                     return Json(error, JsonRequestBehavior.AllowGet);
                 }
