@@ -251,12 +251,17 @@ namespace BExIS.Ddm.Providers.LuceneProvider
         {
             BexisIndexer bexisIndexer = new BexisIndexer();
             bexisIndexer.updateIndex(datasetsToIndex);
+
+            Reload();
+    
         }
 
         public void UpdateSingleDatasetIndex(long datasetId, IndexingAction indAction)
         {
             BexisIndexer bexisIndexer = new BexisIndexer();
             bexisIndexer.updateSingleDatasetIndex(datasetId, indAction);
+
+            Reload();
         }
 
         /// <summary>
