@@ -42,8 +42,8 @@
 
                 tabs.Add()
                     .Text("Dataset Permissions")
-                    .LoadContentFrom("Subjects", "Data", new {area = "DDM", dataId = @Model.Id });
-                //.Enabled(@Model.EditAccess);
+                    .LoadContentFrom("Subjects", "Data", new {area = "DDM", dataId = @Model.Id })
+                .Enabled(@Model.GrantAccess);
             })
     )
 }
