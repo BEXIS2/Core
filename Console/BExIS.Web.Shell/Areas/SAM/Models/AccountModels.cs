@@ -7,12 +7,12 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
 {
     public class AccountRegisterModel
     {
-        [Display(Name = "User Name")]
+        [Display(Name = "Username")]
         [RegularExpression("^[\\S]*$", ErrorMessage = "The user name must not contain spaces.")]
-        [Remote("ValidateUserName", "Account")]
+        [Remote("ValidateUsername", "Account")]
         [Required(AllowEmptyStrings = false)]
         [StringLength(64, ErrorMessage = "The user name must be {2} - {1} characters long.", MinimumLength = 3)]
-        public string UserName { get; set; }
+        public string Username { get; set; }
 
         [Display(Name = "Password")]
         [RegularExpression("^[\\S]*$", ErrorMessage = "The password must not contain spaces.")]
@@ -46,6 +46,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
 
         public AuthenticatorSelectListModel AuthenticatorList { get; set; }
 
+        [Display(Name = "Terms and Conditions")]
         [Range(typeof(bool), "true", "true", ErrorMessage = "You need to accept the terms and conditions!")]
         public bool TermsAndConditions { get; set; }
 
@@ -63,8 +64,8 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
 
         public long AuthenticatorId { get; set; }
 
-        [Display(Name = "User Name")]
-        public string UserName { get; set; }
+        [Display(Name = "Username")]
+        public string Username { get; set; }
 
         [Display(Name = "Password")]
         [RegularExpression("^[\\S]*$", ErrorMessage = "The password must not contain spaces.")]
@@ -108,7 +109,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
             return new MyAccountModel()
             {
                 UserId = user.Id,
-                UserName = user.Name,
+                Username = user.Name,
                 FullName = user.FullName,
                 Email = user.Email,
                 AuthenticatorId = user.Authenticator.Id,
@@ -120,8 +121,8 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
     public class AccountLogOnModel
     {
         [Required]
-        [Display(Name = "User name")]
-        public string UserName { get; set; }
+        [Display(Name = "Username")]
+        public string Username { get; set; }
 
         [Required]
         [DataType(DataType.Password)]
@@ -138,7 +139,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
 
     public class ChangePasswordModel
     {
-        public string UserName { get; set; }
+        public string Username { get; set; }
 
         public string SecurityQuestion { get; set; }
 
@@ -151,6 +152,6 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
 
     public class ResetPasswordModel
     {
-        public string UserName { get; set; }
+        public string Username { get; set; }
     }
 }

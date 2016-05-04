@@ -1,5 +1,19 @@
 @using Vaiona.Web.Mvc;
 
+<style>
+    img.desaturate 
+    {
+        filter: gray; /* IE6-9 */
+        filter: grayscale(1); /* Microsoft Edge and Firefox 35+ */
+        -webkit-filter: grayscale(1); /* Google Chrome, Safari 6+ & Opera 15+ */
+    }
+
+    img.desaturate:hover 
+    {
+        filter: none;
+        -webkit-filter: grayscale(0);
+    }
+</style>
 
 <div id="footer">
     <footer>
@@ -11,9 +25,11 @@
 
 
 
-        Powered by 
-        <br /><br/>
-        <img src="~/Content/Images/Logo_BEXIS_rgb_113x28.jpg" />
+        Powered by
+        <br/><br/>
+        <a href="http://bexis2.uni-jena.de" target="_blank">
+            <img src="~/Content/Images/Logo_BEXIS_rgb_113x28.jpg" class="desaturate"/>
+        </a>
 
         <br/><br/>
         @Html.ActionLink("Privacy Policy", "Index", "PrivacyPolicy", new { area = "Site" }, null),

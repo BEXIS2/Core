@@ -34,6 +34,7 @@ using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Security.Entities.Subjects;
 using Vaiona.Logging.Aspects;
 using Vaiona.Web.Mvc.Models;
+using BExIS.Security.Entities.Authorization;
 
 namespace BExIS.Web.Shell.Areas.DDM.Controllers
 {
@@ -72,6 +73,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 Id = id,
                 Title = title,
                 ViewAccess = permissionManager.HasUserDataAccess(HttpContext.User.Identity.Name, 1, id, RightType.View),
+                GrantAccess = permissionManager.HasUserDataAccess(HttpContext.User.Identity.Name, 1, id, RightType.Grant)
             };
 
 
@@ -924,6 +926,22 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             data.ToList().ForEach(s => subjects.Add(DatasetPermissionGridRowModel.Convert(dataId, entityManager.GetEntityById(1), s, permissionManager.GetAllRights(s.Id, 1, dataId).ToList())));
 
             return View(new GridModel<DatasetPermissionGridRowModel> { Data = subjects });
+        }
+
+        public DataPermission CreateDataPermission(long subjectId, long entityId, long dataId, int rightType)
+        {
+            PermissionManager permissionManager = new PermissionManager();
+
+            return permissionManager.CreateDataPermission(subjectId, entityId, dataId, (RightType)rightType);
+        }
+
+        public bool DeleteDataPermission(long subjectId, long entityId, long dataId, int rightType)
+        {
+            PermissionManager permissionManager = new PermissionManager();
+
+            permissionManager.DeleteDataPermission(subjectId, entityId, dataId, (RightType)rightType);
+
+            return true;
         }
 
         #endregion

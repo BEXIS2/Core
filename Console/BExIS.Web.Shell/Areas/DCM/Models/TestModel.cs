@@ -12,6 +12,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
         [Remote("RemoteTest", "SubmitSpecifyDataset")]
         [Required]
         [StringLength(50, ErrorMessage = "The user name must be {2} - {1} characters long.", MinimumLength = 3)]
-        public string UserName { get; set; }
+        public string Username { get; set; }
     }
 }

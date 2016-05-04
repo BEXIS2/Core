@@ -20,11 +20,11 @@
         </tr>
         <tr>
             <td>
-                @Html.LabelFor(m => m.UserName)
+                @Html.LabelFor(m => m.Username)
             </td>
             <td>
-                @Html.TextBoxFor(m => m.UserName, new { @class = "t-input bx-input" })
-                @Html.ValidationMessageFor(m => m.UserName)
+                @Html.TextBoxFor(m => m.Username, new { @class = "t-input bx-input" })
+                @Html.ValidationMessageFor(m => m.Username)
                 
             </td>
         </tr>
@@ -87,11 +87,9 @@
             </td>
         </tr>
         <tr>
-            <td>
-                @Html.LabelFor(m => m.TermsAndConditions)
-            </td>
-            <td>
+            <td colspan="2">
                 @Html.CheckBoxFor(m => m.TermsAndConditions)
+                I accept the Terms and Conditions.
                 @Html.ValidationMessageFor(m => m.TermsAndConditions)
             </td>
         </tr>

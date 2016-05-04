@@ -83,7 +83,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
     {
         public long Id { get; set; }
 
-        public string UserName { get; set; }
+        public string Username { get; set; }
 
         public string FullName { get; set; }
 
@@ -96,7 +96,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
             return new GroupMembershipGridRowModel()
             {
                 Id = user.Id,
-                UserName = user.Name,
+                Username = user.Name,
                 FullName = user.FullName,
                 Email = user.Email,
 

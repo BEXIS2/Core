@@ -42,8 +42,8 @@
 
                 tabs.Add()
                     .Text("Dataset Permissions")
-                    .LoadContentFrom("Subjects", "Data", new {area = "DDM", dataId = @Model.Id });
-                //.Enabled(@Model.EditAccess);
+                    .LoadContentFrom("Subjects", "Data", new {area = "DDM", dataId = @Model.Id })
+                .Enabled(@Model.GrantAccess);
             })
     )
 }
@@ -61,11 +61,11 @@
 
     function setDataPermission(value, rightType, subjectId, dataId, entityId) {
         if (value) {
-            $.post('@Url.Action("CreateDataPermission", "DataPermissions")', { DataId: dataId, EntityId: entityId, SubjectId: subjectId, RightType: rightType }, function (e) {
+            $.post('@Url.Action("CreateDataPermission", "Data")', { DataId: dataId, EntityId: entityId, SubjectId: subjectId, RightType: rightType }, function (e) {
                 $("#Grid_Subjects .t-refresh").trigger('click');
             });
         } else {
-            $.post('@Url.Action("DeleteDataPermission", "DataPermissions")', { DataId: dataId, EntityId: entityId, SubjectId: subjectId, RightType: rightType }, function (e) {
+            $.post('@Url.Action("DeleteDataPermission", "Data")', { DataId: dataId, EntityId: entityId, SubjectId: subjectId, RightType: rightType }, function (e) {
                 $("#Grid_Subjects .t-refresh").trigger('click');
             });
         }

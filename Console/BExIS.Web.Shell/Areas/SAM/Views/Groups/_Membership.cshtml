@@ -24,7 +24,7 @@
         columns.Bound(m => m.Id)
             .ClientTemplate("<#= Id #>" + "<input type='hidden' name='Id' value='<#= Id #> />'")
             .Width(80);
-        columns.Bound(m => m.UserName);
+        columns.Bound(m => m.Username);
         columns.Bound(m => m.FullName);
         columns.Bound(m => m.Email);
     })

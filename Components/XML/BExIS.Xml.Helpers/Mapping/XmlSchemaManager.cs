@@ -93,7 +93,7 @@ namespace BExIS.Xml.Helpers.Mapping
         /// Load Schema from path
         /// </summary>
         /// <param name="path"></param>
-        public void Load(string path, string userName)
+        public void Load(string path, string username)
         {
             xsdFilePath = path;
             xsdFileName = path.Split('\\').Last();
@@ -131,7 +131,7 @@ namespace BExIS.Xml.Helpers.Mapping
                             XmlReaderSettings settings = new XmlReaderSettings();
                             settings.DtdProcessing = DtdProcessing.Ignore;
 
-                            string dataPath = Path.Combine(AppConfiguration.DataPath, "Temp", userName, include.SchemaLocation.Split('/').Last());
+                            string dataPath = Path.Combine(AppConfiguration.DataPath, "Temp", username, include.SchemaLocation.Split('/').Last());
 
                             XmlReader test = XmlReader.Create(dataPath, settings);
                             include.Schema = XmlSchema.Read(test, verifyErrors);
@@ -479,6 +479,8 @@ namespace BExIS.Xml.Helpers.Mapping
                 checkDirectory(newXsdFilePath);
                 MoveFile(xsdFilePath, newXsdFilePath);
             }
+
+
 
             #region prepare mappingFiles
 
@@ -1544,7 +1546,7 @@ namespace BExIS.Xml.Helpers.Mapping
   
         private void checkDirectory(string filePath)
         {
-            string path = getPathFromFilePath(filePath);
+            string path = Path.GetDirectoryName(filePath);
 
             if (!Directory.Exists(path))
             {
@@ -1552,12 +1554,17 @@ namespace BExIS.Xml.Helpers.Mapping
             }
         }
 
-        private string getPathFromFilePath(string filepath)
-        {
-            List<string> temp = filepath.Split('\\').ToList();
-            temp.Remove(temp.Last());
-            return Path.Combine(temp.ToArray());
-        }
+        //private void checkDirectory(string filePath, StreamWriter logwriter)
+        //{
+        //    string path = Path.GetDirectoryName(filePath);
+        //    logwriter.WriteLine(path);
+        //    if (!Directory.Exists(path))
+        //    {
+        //        logwriter.WriteLine("no exist : " + path);
+        //        Directory.CreateDirectory(path);
+        //    }
+        //}
+
 
         private string GetTypeOfName(string name)
         {

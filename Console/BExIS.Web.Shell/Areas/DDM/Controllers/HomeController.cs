@@ -696,7 +696,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             foreach (long datasetId in datasetManager.GetDatasetLatestIds())
             {
                 //get permissions
-                List<int> rights = permissionManager.GetAllRights(subjectManager.GetUserByName(GetUserNameOrDefault()).Id, 1, datasetId).ToList();
+                List<int> rights = permissionManager.GetAllRights(subjectManager.GetUserByName(GetUsernameOrDefault()).Id, 1, datasetId).ToList();
 
                 if (rights.Count > 0)
                 {
@@ -795,16 +795,16 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
         // chekc if user exist
         // if true return usernamem otherwise "DEFAULT"
-        public string GetUserNameOrDefault()
+        public string GetUsernameOrDefault()
         {
-            string userName = string.Empty;
+            string username = string.Empty;
             try
             {
-                userName = HttpContext.User.Identity.Name;
+                username = HttpContext.User.Identity.Name;
             }
             catch { }
 
-            return !string.IsNullOrWhiteSpace(userName) ? userName : "DEFAULT";
+            return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
         }
 
         #endregion

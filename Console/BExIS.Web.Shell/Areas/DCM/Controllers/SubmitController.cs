@@ -190,16 +190,16 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             // chekc if user exist
             // if true return usernamem otherwise "DEFAULT"
-            public string GetUserNameOrDefault()
+            public string GetUsernameOrDefault()
             {
-                string userName = string.Empty;
+                string username = string.Empty;
                 try
                 {
-                    userName = HttpContext.User.Identity.Name;
+                    username = HttpContext.User.Identity.Name;
                 }
                 catch { }
 
-                return !string.IsNullOrWhiteSpace(userName) ? userName : "DEFAULT";
+                return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
             }
 
             public List<ListViewItem> LoadDatasetVersionViewList( DataStructureType dataStructureType)
@@ -208,7 +208,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 SubjectManager subjectManager = new SubjectManager();
 
                 // add security
-                ICollection<long> datasetIDs = permissionManager.GetAllDataIds(subjectManager.GetUserByName(GetUserNameOrDefault()).Id, 1, RightType.Update).ToList();
+                ICollection<long> datasetIDs = permissionManager.GetAllDataIds(subjectManager.GetUserByName(GetUsernameOrDefault()).Id, 1, RightType.Update).ToList();
 
                 DataStructureManager dataStructureManager = new DataStructureManager();
                 DatasetManager dm = new DatasetManager();

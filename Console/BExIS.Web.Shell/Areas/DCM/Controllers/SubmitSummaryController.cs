@@ -236,9 +236,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                                     ExcelReader reader = new ExcelReader();
 
                                     //schleife
-                                dm.CheckOutDatasetIfNot(ds.Id, GetUserNameOrDefault()); // there are cases, the dataset does not get checked out!!
-                                if (!dm.IsDatasetCheckedOutFor(ds.Id, GetUserNameOrDefault()))
-                                    throw new Exception(string.Format("Not able to checkout dataset '{0}' for  user '{1}'!", ds.Id, GetUserNameOrDefault()));
+                                dm.CheckOutDatasetIfNot(ds.Id, GetUsernameOrDefault()); // there are cases, the dataset does not get checked out!!
+                                if (!dm.IsDatasetCheckedOutFor(ds.Id, GetUsernameOrDefault()))
+                                    throw new Exception(string.Format("Not able to checkout dataset '{0}' for  user '{1}'!", ds.Id, GetUsernameOrDefault()));
 
                                 workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
 
@@ -323,7 +323,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                                 Stopwatch totalTime = Stopwatch.StartNew();
 
-                                if (dm.IsDatasetCheckedOutFor(ds.Id, GetUserNameOrDefault()) || dm.CheckOutDataset(ds.Id, GetUserNameOrDefault()))
+                                if (dm.IsDatasetCheckedOutFor(ds.Id, GetUsernameOrDefault()) || dm.CheckOutDataset(ds.Id, GetUsernameOrDefault()))
                                 {
                                     workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
                                     int packageSize = 100000;
@@ -409,7 +409,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                             //}
 
                             // ToDo: Get Comment from ui and users
-                            dm.CheckInDataset(ds.Id, "upload data from upload wizard", GetUserNameOrDefault());
+                            dm.CheckInDataset(ds.Id, "upload data from upload wizard", GetUsernameOrDefault());
 
                             // open the excel file and add data tuples
                             //AddDatatuplesToFile(ds.Id, sds.Id, path);
@@ -418,7 +418,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         {
 
                             temp.Add(new Error(ErrorType.Other, "Can not upload. : " + e.Message));
-                            dm.CheckInDataset(ds.Id, "checked in but no update on data tuples", GetUserNameOrDefault());
+                            dm.CheckInDataset(ds.Id, "checked in but no update on data tuples", GetUsernameOrDefault());
                         }
                         finally
                         { 
@@ -439,7 +439,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         dm.EditDatasetVersion(workingCopy, null, null, null);
 
                         // ToDo: Get Comment from ui and users
-                        dm.CheckInDataset(ds.Id, "upload unstructured data", GetUserNameOrDefault());
+                        dm.CheckInDataset(ds.Id, "upload unstructured data", GetUsernameOrDefault());
                     }
 
                 #endregion
@@ -528,9 +528,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                             ExcelReader reader = new ExcelReader();
 
                             //schleife
-                            dm.CheckOutDatasetIfNot(ds.Id, GetUserNameOrDefault()); // there are cases, the dataset does not get checked out!!
-                            if (!dm.IsDatasetCheckedOutFor(ds.Id, GetUserNameOrDefault()))
-                                throw new Exception(string.Format("Not able to checkout dataset '{0}' for  user '{1}'!", ds.Id, GetUserNameOrDefault()));
+                            dm.CheckOutDatasetIfNot(ds.Id, GetUsernameOrDefault()); // there are cases, the dataset does not get checked out!!
+                            if (!dm.IsDatasetCheckedOutFor(ds.Id, GetUsernameOrDefault()))
+                                throw new Exception(string.Format("Not able to checkout dataset '{0}' for  user '{1}'!", ds.Id, GetUsernameOrDefault()));
 
                             workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
 
@@ -619,7 +619,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                             Stopwatch totalTime = Stopwatch.StartNew();
 
-                            if (dm.IsDatasetCheckedOutFor(ds.Id, GetUserNameOrDefault()) || dm.CheckOutDataset(ds.Id, GetUserNameOrDefault()))
+                            if (dm.IsDatasetCheckedOutFor(ds.Id, GetUsernameOrDefault()) || dm.CheckOutDataset(ds.Id, GetUsernameOrDefault()))
                             {
                                 workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
                                 int packageSize = 100000;
@@ -705,7 +705,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         //}
 
                         // ToDo: Get Comment from ui and users
-                        dm.CheckInDataset(ds.Id, "upload data from upload wizard", GetUserNameOrDefault());
+                        dm.CheckInDataset(ds.Id, "upload data from upload wizard", GetUsernameOrDefault());
 
                         // open the excel file and add data tuples
                         //AddDatatuplesToFile(ds.Id, sds.Id, path);
@@ -714,7 +714,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     {
 
                         temp.Add(new Error(ErrorType.Other, "Can not upload. : " + e.Message));
-                        dm.CheckInDataset(ds.Id, "checked in but no update on data tuples", GetUserNameOrDefault());
+                        dm.CheckInDataset(ds.Id, "checked in but no update on data tuples", GetUsernameOrDefault());
                     }
                     finally
                     {
@@ -735,7 +735,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     dm.EditDatasetVersion(workingCopy, null, null, null);
 
                     // ToDo: Get Comment from ui and users
-                    dm.CheckInDataset(ds.Id, "upload unstructured data", GetUserNameOrDefault());
+                    dm.CheckInDataset(ds.Id, "upload unstructured data", GetUsernameOrDefault());
                 }
 
                 #endregion
@@ -753,16 +753,16 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         #region private methods
 
-        public string GetUserNameOrDefault()
+        public string GetUsernameOrDefault()
         {
-            string userName = string.Empty;
+            string username = string.Empty;
             try
             {
-                userName = HttpContext.User.Identity.Name;
+                username = HttpContext.User.Identity.Name;
             }
             catch { }
 
-            return !string.IsNullOrWhiteSpace(userName) ? userName : "DEFAULT";
+            return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
         }
 
         private string GenerateDownloadFile(DatasetVersion datasetVersion)
