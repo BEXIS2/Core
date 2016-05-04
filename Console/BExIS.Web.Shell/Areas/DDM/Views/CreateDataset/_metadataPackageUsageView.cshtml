@@ -47,8 +47,11 @@
             <table>
                 <tr>
                     <td>
-                        @if (Model.Model.MaxCardinality > 1 && Model.Model.StepInfo.Parent.Children.Count < Model.Model.MaxCardinality)
+                        @if (Model.Model.MaxCardinality > 1
+                            && Model.Model.StepInfo.Parent.Children.Count < Model.Model.MaxCardinality
+                            && Model.Model.Number == Model.Model.StepInfo.Parent.Children.Count)
                         {
+                            <b>1234</b>
                             <button id="@id_add" onclick="Add(this)" class="bx-function bx-add"/>
                         }
                         else

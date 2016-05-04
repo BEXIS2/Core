@@ -157,7 +157,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         model.ErrorList.Add(new Error(ErrorType.Other, "A Metadata structure must have a name."));
                     }
 
-                    //file.WriteLine("start load schema ");
                     xmlSchemaManager.Load(path, GetUserNameOrDefault());
                 }
                 catch (Exception ex)
@@ -171,9 +170,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 {
                     try
                     {
-                        //file.WriteLine("start generate schema ");
                         metadataStructureid = xmlSchemaManager.GenerateMetadataStructure(root, schemaName);
-                        //file.WriteLine(" finish generate schema ");
                     }
                     catch (Exception ex)
                     {
