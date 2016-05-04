@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Net;
 using System.Text.RegularExpressions;
 using BExIS.Web.Shell.Areas.Site.Models;
+using Vaiona.Web.Mvc.Models;
 
 namespace BExIS.Web.Shell.Areas.Site.Controllers
 {
@@ -18,6 +19,10 @@ namespace BExIS.Web.Shell.Areas.Site.Controllers
         // GET: Site/ContactUs
         public ActionResult Index()
         {
+            // This method of injecting content from an htm file to a view is problematic!!!
+            // It is used here and in the impressum, privacy policy, and potentially help!
+            // Talk to Javad to justify the reasons and possibly improve it. Javad 04.05.2016
+            ViewBag.Title = PresentationModel.GetViewTitle("Contact Us");
             string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Areas", "Site", "Views\\ContactUs\\Contact_Us.htm");
             ContactUsModel model = new ContactUsModel();
 
