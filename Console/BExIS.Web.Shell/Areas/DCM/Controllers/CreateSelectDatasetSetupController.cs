@@ -255,7 +255,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
 
 
-                if (dm.IsDatasetCheckedOutFor(datasetId, GetUserNameOrDefault()) || dm.CheckOutDataset(datasetId, GetUserNameOrDefault()))
+                if (dm.IsDatasetCheckedOutFor(datasetId, GetUsernameOrDefault()) || dm.CheckOutDataset(datasetId, GetUsernameOrDefault()))
                 {
 
                     DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(datasetId);
@@ -432,16 +432,16 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             
         // check if user exist
         // if true return usernamem otherwise "DEFAULT"
-        public string GetUserNameOrDefault()
+        public string GetUsernameOrDefault()
         {
-            string userName = string.Empty;
+            string username = string.Empty;
             try
             {
-                userName = HttpContext.User.Identity.Name;
+                username = HttpContext.User.Identity.Name;
             }
             catch { }
 
-            return !string.IsNullOrWhiteSpace(userName) ? userName : "DEFAULT";
+            return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
         }
 
         private SelectDatasetSetupModel GetDefaultModel()

@@ -252,8 +252,8 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             SubjectManager subjectManager = new SubjectManager();
 
 
-            if (GetUserNameOrDefault() !="DEFAULT")
-                Model.EditRight = permissionManager.HasUserDataAccess(subjectManager.GetUserByName(GetUserNameOrDefault()).Id, 1, datasetId, RightType.Update);
+            if (GetUsernameOrDefault() !="DEFAULT")
+                Model.EditRight = permissionManager.HasUserDataAccess(subjectManager.GetUserByName(GetUsernameOrDefault()).Id, 1, datasetId, RightType.Update);
 
             return PartialView("MetadataEditor", Model);
         }
@@ -1250,12 +1250,12 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                     datasetId = ds.Id;
 
                     // add security
-                    if (GetUserNameOrDefault() != "DEFAULT")
+                    if (GetUsernameOrDefault() != "DEFAULT")
                     {
                         PermissionManager pm = new PermissionManager();
                         SubjectManager sm = new SubjectManager();
 
-                        BExIS.Security.Entities.Subjects.User user = sm.GetUserByName(GetUserNameOrDefault());
+                        BExIS.Security.Entities.Subjects.User user = sm.GetUserByName(GetUsernameOrDefault());
 
                         foreach (RightType rightType in Enum.GetValues(typeof(RightType)).Cast<RightType>())
                         {
@@ -1271,7 +1271,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
                 TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
 
-                if (dm.IsDatasetCheckedOutFor(datasetId, GetUserNameOrDefault()) || dm.CheckOutDataset(datasetId, GetUserNameOrDefault()))
+                if (dm.IsDatasetCheckedOutFor(datasetId, GetUsernameOrDefault()) || dm.CheckOutDataset(datasetId, GetUsernameOrDefault()))
                 {
                     DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(datasetId);
 
@@ -1288,7 +1288,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                     TaskManager.AddToBus(CreateDatasetTaskmanager.DATASET_ID, datasetId);
 
                     dm.EditDatasetVersion(workingCopy, null, null, null);
-                    dm.CheckInDataset(datasetId, "Metadata was submited.", GetUserNameOrDefault());
+                    dm.CheckInDataset(datasetId, "Metadata was submited.", GetUsernameOrDefault());
                 }
 
                 return datasetId;
@@ -1851,16 +1851,16 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
         // chekc if user exist
         // if true return usernamem otherwise "DEFAULT"
-        public string GetUserNameOrDefault()
+        public string GetUsernameOrDefault()
         {
-            string userName = string.Empty;
+            string username = string.Empty;
             try
             {
-                userName = HttpContext.User.Identity.Name;
+                username = HttpContext.User.Identity.Name;
             }
             catch { }
 
-            return !string.IsNullOrWhiteSpace(userName) ? userName : "DEFAULT";
+            return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
         }
 
         private StepModelHelper AddStepModelhelper(StepModelHelper stepModelHelper)

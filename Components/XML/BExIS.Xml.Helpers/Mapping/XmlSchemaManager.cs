@@ -93,7 +93,7 @@ namespace BExIS.Xml.Helpers.Mapping
         /// Load Schema from path
         /// </summary>
         /// <param name="path"></param>
-        public void Load(string path, string userName)
+        public void Load(string path, string username)
         {
             xsdFilePath = path;
             xsdFileName = path.Split('\\').Last();
@@ -131,7 +131,7 @@ namespace BExIS.Xml.Helpers.Mapping
                             XmlReaderSettings settings = new XmlReaderSettings();
                             settings.DtdProcessing = DtdProcessing.Ignore;
 
-                            string dataPath = Path.Combine(AppConfiguration.DataPath, "Temp", userName, include.SchemaLocation.Split('/').Last());
+                            string dataPath = Path.Combine(AppConfiguration.DataPath, "Temp", username, include.SchemaLocation.Split('/').Last());
 
                             XmlReader test = XmlReader.Create(dataPath, settings);
                             include.Schema = XmlSchema.Read(test, verifyErrors);

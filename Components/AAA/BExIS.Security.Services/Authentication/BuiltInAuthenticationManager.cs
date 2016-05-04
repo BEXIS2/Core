@@ -12,11 +12,11 @@ namespace BExIS.Security.Services.Authentication
     {
         public BuiltInAuthenticationManager(string connectionString) { }
 
-        public bool ValidateUser(string userName, string password)
+        public bool ValidateUser(string username, string password)
         {
             SubjectManager subjectManager = new SubjectManager();
 
-            return subjectManager.ValidateUser(userName, password);
+            return subjectManager.ValidateUser(username, password);
         }
     }
 }

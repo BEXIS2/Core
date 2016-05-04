@@ -123,16 +123,16 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
 
                 #endregion AuthenticationManager
 
-                if (authenticationManager.ValidateUser(model.UserName, model.Password))
+                if (authenticationManager.ValidateUser(model.Username, model.Password))
                 {
                     SubjectManager subjectManager = new SubjectManager();
 
-                    if (!subjectManager.ExistsUserNameWithAuthenticatorId(model.UserName, model.AuthenticatorList.Id))
+                    if (!subjectManager.ExistsUsernameWithAuthenticatorId(model.Username, model.AuthenticatorList.Id))
                     {
-                        subjectManager.CreateUser(model.UserName, model.AuthenticatorList.Id);
+                        subjectManager.CreateUser(model.Username, model.AuthenticatorList.Id);
                     }
 
-                    FormsAuthentication.SetAuthCookie(model.UserName, false);
+                    FormsAuthentication.SetAuthCookie(model.Username, false);
 
                     return Json(new { success = true });
                 }
@@ -164,9 +164,9 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
             {
                 SubjectManager subjectManager = new SubjectManager();
 
-                User user = subjectManager.CreateUser(model.UserName, model.Password, model.FullName, model.Email, model.SecurityQuestionList.Id, model.SecurityAnswer, model.AuthenticatorList.Id);
+                User user = subjectManager.CreateUser(model.Username, model.Password, model.FullName, model.Email, model.SecurityQuestionList.Id, model.SecurityAnswer, model.AuthenticatorList.Id);
 
-                FormsAuthentication.SetAuthCookie(model.UserName, false);
+                FormsAuthentication.SetAuthCookie(model.Username, false);
                 return Json(new { success = true });
             }
 
@@ -200,11 +200,11 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
             }
         }
 
-        public JsonResult ValidateUserName(string userName, long id = 0)
+        public JsonResult ValidateUsername(string username, long id = 0)
         {
             SubjectManager subjectManager = new SubjectManager();
 
-            User user = subjectManager.GetUserByName(userName);
+            User user = subjectManager.GetUserByName(username);
 
             if (user == null)
             {
@@ -218,7 +218,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
                 }
                 else
                 {
-                    string error = String.Format(CultureInfo.InvariantCulture, "User name already exists.", userName);
+                    string error = String.Format(CultureInfo.InvariantCulture, "User name already exists.", username);
 
                     return Json(error, JsonRequestBehavior.AllowGet);
                 }
