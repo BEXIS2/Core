@@ -1,0 +1,34 @@
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Dlm.Entities" namespace="BExIS.Dlm.Entities.Party">
+  <class xmlns="urn:nhibernate-mapping-2.2" name="PartyTypePair" table="PartyTypePairs">
+    <!-- Mapping BaseEntity properties -->
+
+    <id name = "Id" type="Int64">
+      <column name = "Id" />
+      <generator class="native" />
+    </id>
+
+    <version name = "VersionNo" type="Int32">
+      <column name = "VersionNo" />
+    </version >
+
+    <property name="Extra" type="System.Xml.XmlDocument, System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+      <column name = "Extra" not-null="false" sql-type="xml" />
+    </property>
+
+    <!-- Mapping DataTuple properties -->
+    <property name="Title" type="string" >
+      <column name="Title"  />
+    </property>
+
+    <property name="Description" type="string" >
+      <column name="Description"  />
+    </property>
+
+    <many-to-one name="AlowedSource" class="BExIS.Dlm.Entities.Party.PartyType"  cascade="all" not-null="true" column="AlowedSourceRef"/>
+
+    <many-to-one name="AlowedTarget" class="BExIS.Dlm.Entities.Party.PartyType"  cascade="all" not-null="true" column="AlowedTargetRef"/>
+
+    <many-to-one name="PartyRelationshipType" class="BExIS.Dlm.Entities.Party.PartyType"  cascade="all" not-null="true" column="PartyRelationshipTypeRef"/>
+
+  </class>
+</hibernate-mapping>
