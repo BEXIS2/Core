@@ -31,6 +31,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
 
     public class SecurityQuestionSelectListModel
     {
+        [Required(ErrorMessage = "Please select a security question.")]
         public long Id { get; set; }
 
         public List<SecurityQuestionSelectListItemModel> SecurityQuestionList { get; set; }

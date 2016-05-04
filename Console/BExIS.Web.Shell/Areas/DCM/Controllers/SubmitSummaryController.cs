@@ -471,7 +471,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
 
                 //datatuple list
-                DataTuple[] rows;
+                List<DataTuple> rows = new List<DataTuple>();
 
                 DatasetManager dm = new DatasetManager();
                 Dataset ds = dm.GetDataset(id);
@@ -544,7 +544,10 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                                 // open file
                                 Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
-                                rows = reader.ReadFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), sds, (int)id, packageSize).ToArray();
+                                Stopwatch upload = Stopwatch.StartNew();
+                                rows = reader.ReadFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), sds, (int)id, packageSize);
+                                upload.Stop();
+                                Debug.WriteLine("ReadFile: " + counter + "  Time " + upload.Elapsed.TotalSeconds.ToString());
 
                                 if (reader.ErrorMessages.Count > 0)
                                 {
@@ -557,9 +560,10 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                                     {
                                         if (TaskManager.Bus[TaskManager.DATASET_STATUS].ToString().Equals("new"))
                                         {
-                                            //Stopwatch upload = Stopwatch.StartNew();
+                                            upload = Stopwatch.StartNew();
                                             dm.EditDatasetVersion(workingCopy, rows, null, null);
-                                            //Debug.WriteLine("Upload : " + counter + "  Time " + upload.Elapsed.TotalSeconds.ToString());
+                                            upload.Stop();
+                                            Debug.WriteLine("EditDatasetVersion: " + counter + "  Time " + upload.Elapsed.TotalSeconds.ToString());
                                             //Debug.WriteLine("----");
 
                                         }
@@ -629,7 +633,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                                     TaskManager.Bus[TaskManager.CURRENTPACKAGE] = counter;
 
                                     Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
-                                    rows = reader.ReadFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), (AsciiFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO], sds, id, packageSize).ToArray();
+                                    rows = reader.ReadFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), (AsciiFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO], sds, id, packageSize);
                                     Stream.Close();
 
                                     if (reader.ErrorMessages.Count > 0)

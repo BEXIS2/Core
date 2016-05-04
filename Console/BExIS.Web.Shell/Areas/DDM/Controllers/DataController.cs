@@ -72,6 +72,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 Id = id,
                 Title = title,
                 ViewAccess = permissionManager.HasUserDataAccess(HttpContext.User.Identity.Name, 1, id, RightType.View),
+                GrantAccess = permissionManager.HasUserDataAccess(HttpContext.User.Identity.Name, 1, id, RightType.Grant)
             };
 
 
