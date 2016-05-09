@@ -157,8 +157,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         model.ErrorList.Add(new Error(ErrorType.Other, "A Metadata structure must have a name."));
                     }
 
-                    //file.WriteLine("start load schema ");
-                    xmlSchemaManager.Load(path, GetUsernameOrDefault());
+                    xmlSchemaManager.Load(path, GetUserNameOrDefault());
                 }
                 catch (Exception ex)
                 {
@@ -171,9 +170,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 {
                     try
                     {
-                        //file.WriteLine("start generate schema ");
                         metadataStructureid = xmlSchemaManager.GenerateMetadataStructure(root, schemaName);
-                        //file.WriteLine(" finish generate schema ");
                     }
                     catch (Exception ex)
                     {
@@ -212,16 +209,16 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         // chekc if user exist
         // if true return usernamem otherwise "DEFAULT"
-        public string GetUsernameOrDefault()
+        public string GetUserNameOrDefault()
         {
-            string username = string.Empty;
+            string userName = string.Empty;
             try
             {
-                username = HttpContext.User.Identity.Name;
+                userName = HttpContext.User.Identity.Name;
             }
             catch { }
 
-            return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
+            return !string.IsNullOrWhiteSpace(userName) ? userName : "DEFAULT";
         }
     }
 }

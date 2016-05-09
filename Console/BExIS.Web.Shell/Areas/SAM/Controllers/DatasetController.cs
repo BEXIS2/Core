@@ -24,7 +24,7 @@ namespace BExIS.Web.Shell.Areas.Sam.Controllers
         /// <returns></returns>
         public ActionResult Index()
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Index");
+            ViewBag.Title = PresentationModel.GetViewTitle("Maintaining Datasets");
             return View();
         }
 

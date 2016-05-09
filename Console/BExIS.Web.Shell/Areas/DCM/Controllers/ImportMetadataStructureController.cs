@@ -26,7 +26,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         public ActionResult ImportMetadataStructureWizard()
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Import Metadata Structure ");
+            ViewBag.Title = PresentationModel.GetViewTitle("Import Metadata Structure");
 
             Session["TaskManager"] = null;
             if (TaskManager == null) TaskManager = (ImportMetadataStructureTaskManager)Session["TaskManager"];

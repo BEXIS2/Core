@@ -23,7 +23,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         public ActionResult Index()
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Push Big File ");
+            ViewBag.Title = PresentationModel.GetViewTitle("Push Big File");
 
             Session["Files"] = null;
             return View(LoadDefaultModel());
