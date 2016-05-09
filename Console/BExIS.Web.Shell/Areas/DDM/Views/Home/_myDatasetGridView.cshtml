@@ -3,6 +3,13 @@
 @using System.Data;
 @using BExIS.Dlm.Entities.DataStructure;
 
+@section Information
+{
+    <p>This table contains all datasets, created by you as a current logged on user. </p>
+    <p>By right clicking on the header, you can manage the visibility of columns. You can also use filtering or grouping to see the more operative informations.</p>
+    <p>To view more details of a dataset, click the "View Details" button available in each row.</p>   
+}
+
 @{
     int PageSize = 10;
     int CurrentPage = 1;
