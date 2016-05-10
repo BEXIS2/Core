@@ -367,6 +367,9 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
 
                     DatasetManager dm = new DatasetManager();
                     DatasetVersion dsv = dm.GetDatasetLatestVersion(id);
+                    // Javad: check if the dataset is "checked-in". If yes, then use the paging version of the GetDatasetVersionEffectiveTuples method
+                    // number of tuples for the for loop is also available via GetDatasetVersionEffectiveTupleCount
+                    // a proper fetch (page) size can be obtained by calling dm.PreferedBatchSize
                     List<AbstractTuple> dsVersionTuples = dm.GetDatasetVersionEffectiveTuples(dsv);
                     DataStructureManager dsm = new DataStructureManager();
                     StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(dsv.Dataset.DataStructure.Id);
