@@ -1346,10 +1346,22 @@ namespace BExIS.Dlm.Services.Data
         {
             // effective tuples of the latest checked in version are in DataTuples table but they belong to the latest and previous versions
             List<Int64> versionIds = getPreviousVersionIds(datasetVersion);
-            List<DataTuple> tuples = (versionIds == null || versionIds.Count() <= 0) ? new List<DataTuple>() :
-                            DataTupleRepo.Query(p => versionIds.Contains(p.DatasetVersion.Id))
-                            .Skip(pageNumber * pageSize).Take(pageSize)
+            List<DataTuple> tuples;
+            using (IUnitOfWork uow = this.GetBulkUnitOfWork())
+            {
+                IReadOnlyRepository<DataTuple> tuplesRepoTemp = uow.GetReadOnlyRepository<DataTuple>();
+                tuples = (versionIds == null || versionIds.Count() <= 0) ?
+                    new List<DataTuple>() :
+                    tuplesRepoTemp.Query(p => versionIds.Contains(p.DatasetVersion.Id))
+                            .Skip(pageNumber * pageSize)
+                            .Take(pageSize)
                             .ToList();
+            }
+
+            //tuples = (versionIds == null || versionIds.Count() <= 0) ? new List<DataTuple>() :
+            //                DataTupleRepo.Query(p => versionIds.Contains(p.DatasetVersion.Id))
+            //                .Skip(pageNumber * pageSize).Take(pageSize)
+            //                .ToList();
 
             //Dictionary<string, object> parameters = new Dictionary<string, object>() { { "datasetVersionId", datasetVersion.Id } };
             //List<DataTuple> tuples = DataTupleRepo.Get("getLatestCheckedInTuples", parameters).ToList();

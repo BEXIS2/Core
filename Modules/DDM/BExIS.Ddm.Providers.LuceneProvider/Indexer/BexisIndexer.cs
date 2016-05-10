@@ -187,9 +187,10 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                 {
                     foreach (var vv in tuple.VariableValues)
                     {
-                        if (vv.Variable != null)
+                        if (vv.VariableId >0)
                         {
-                            switch (vv.DataAttribute.DataType.SystemType)
+                            Variable varr = sds.Variables.Where(p => p.Id == vv.VariableId).SingleOrDefault();
+                            switch (varr.DataAttribute.DataType.SystemType)
                             {
                                 case "String":
                                     {
@@ -209,11 +210,12 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                     }
 
                 }
-                foreach (var vv in sds.Variables)
+                foreach (var variable in sds.Variables)
                 {
-                    generatedStrings.Add(vv.DataAttribute.Name);
-                    generatedStrings.Add(vv.Label);
-                    if (!string.IsNullOrEmpty(vv.DataAttribute.Description)) generatedStrings.Add(vv.DataAttribute.Description);
+                    generatedStrings.Add(variable.DataAttribute.Name);
+                    generatedStrings.Add(variable.Label);
+                    if (!string.IsNullOrEmpty(variable.DataAttribute.Description))
+                        generatedStrings.Add(variable.DataAttribute.Description);
                 }
 
                 return generatedStrings;
@@ -367,28 +369,33 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
 
                     DatasetManager dm = new DatasetManager();
                     DatasetVersion dsv = dm.GetDatasetLatestVersion(id);
+                    DataStructureManager dsm = new DataStructureManager();
+                    StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(dsv.Dataset.DataStructure.Id);
                     // Javad: check if the dataset is "checked-in". If yes, then use the paging version of the GetDatasetVersionEffectiveTuples method
                     // number of tuples for the for loop is also available via GetDatasetVersionEffectiveTupleCount
                     // a proper fetch (page) size can be obtained by calling dm.PreferedBatchSize
-                    List<AbstractTuple> dsVersionTuples = dm.GetDatasetVersionEffectiveTuples(dsv);
-                    DataStructureManager dsm = new DataStructureManager();
-                    StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(dsv.Dataset.DataStructure.Id);
-
-                    List<string> primaryDataStringToindex = generateStringFromTuples(dsVersionTuples, sds);
-                    if (primaryDataStringToindex != null)
+                    int fetchSize = dm.PreferedBatchSize;
+                    long tupleSize = dm.GetDatasetVersionEffectiveTupleCount(dsv);
+                    long noOfFetchs = tupleSize / fetchSize;
+                    for (int round = 0; round < noOfFetchs; round++)
                     {
-                        foreach (string pDataValue in primaryDataStringToindex) // Loop through List with foreach
+                        List<AbstractTuple> dsVersionTuples = dm.GetDatasetVersionEffectiveTuples(dsv,round, fetchSize);
+                        List<string> primaryDataStringToindex = generateStringFromTuples(dsVersionTuples, sds);
+                        if (primaryDataStringToindex != null)
                         {
-                            Field a = new Field("category_" + lucene_name, pDataValue, Lucene.Net.Documents.Field.Store.NO, toAnalyse);
-                            a.Boost = boosting;
-                            dataset.Add(a);
-                            dataset.Add(new Field("ng_" + lucene_name, pDataValue, Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.ANALYZED));
-                            dataset.Add(new Field("ng_all", pDataValue, Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.ANALYZED));
-                            writeAutoCompleteIndex(docId, lucene_name, pDataValue);
-                            writeAutoCompleteIndex(docId, "ng_all", pDataValue);
+                            foreach (string pDataValue in primaryDataStringToindex) // Loop through List with foreach
+                            {
+                                Field a = new Field("category_" + lucene_name, pDataValue, Lucene.Net.Documents.Field.Store.NO, toAnalyse);
+                                a.Boost = boosting;
+                                dataset.Add(a);
+                                dataset.Add(new Field("ng_" + lucene_name, pDataValue, Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.ANALYZED));
+                                dataset.Add(new Field("ng_all", pDataValue, Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.ANALYZED));
+                                writeAutoCompleteIndex(docId, lucene_name, pDataValue);
+                                writeAutoCompleteIndex(docId, "ng_all", pDataValue);
+                            }
                         }
+                        GC.Collect();
                     }
-
                 }
                 else
                 {
