@@ -69,7 +69,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             ShowDataModel model = new ShowDataModel()
             {
                 Id = id,
-                Title = "",
+                Title = title,
                 ViewAccess = permissionManager.HasUserDataAccess(HttpContext.User.Identity.Name, 1, id, RightType.View),
                 GrantAccess = permissionManager.HasUserDataAccess(HttpContext.User.Identity.Name, 1, id, RightType.Grant),
                 IsCheckedIn = dm.IsDatasetCheckedIn(id)?true:false
