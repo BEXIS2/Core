@@ -16,11 +16,11 @@
     </property>
 
     <!-- Mapping DataTuple properties -->
-    <property name="Name" type="string" >
+    <property name="Name" type="String" >
       <column name="Name"  />
     </property>
 
-    <property name="Description" type="string" >
+    <property name="Description" type="String" >
       <column name="Description"  />
     </property>
 
@@ -28,7 +28,7 @@
       <column name="DisplayOrder"  />
     </property>
     
-    <many-to-one name="PartyType" class="BExIS.Dlm.Entities.Party.PartyType"  cascade="all" not-null="true" column="PartyTypeRef"/>
+    <many-to-one name="PartyType" class="BExIS.Dlm.Entities.Party.PartyType" not-null="true" column="PartyTypeRef"/>
     
     <set name="Statuses" table="PartyStatuses" lazy="true">
       <key column="PartyStatusTypeRef"/>

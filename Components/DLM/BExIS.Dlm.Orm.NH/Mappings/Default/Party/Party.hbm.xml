@@ -16,15 +16,15 @@
     </property>
 
     <!-- Mapping DataTuple properties -->
-    <property name="Name" type="string" >
+    <property name="Name" type="String" >
       <column name="Name"  />
     </property>
 
-    <property name="Alias" type="string" >
+    <property name="Alias" type="String" >
       <column name="Alias"  />
     </property>
 
-    <property name="Description" type="string" >
+    <property name="Description" type="String" >
       <column name="Description"  />
     </property>
 
@@ -36,7 +36,7 @@
       <column name="EndDate"  />
     </property>
 
-    <many-to-one name="PartyType" class="BExIS.Dlm.Entities.Party.PartyType"  cascade="all" not-null="true" column="PartyTypeRef"/>
+    <many-to-one name="PartyType" class="BExIS.Dlm.Entities.Party.PartyType"  not-null="true" column="PartyTypeRef"/>
 
     <set name="CustomAttributeValues" table="PartyCustomAttributeValues" lazy="true">
       <key column="PartyRef"/>
@@ -47,8 +47,6 @@
       <key column="PartyRef"/>
       <one-to-many class="PartyStatus"/>
     </set>
-
-    <many-to-one name="CurrentStatus" class="BExIS.Dlm.Entities.Party.PartyStatus"  cascade="all" not-null="true" column="CurrentStatusRef"/>
-
+   
   </class>
 </hibernate-mapping>
