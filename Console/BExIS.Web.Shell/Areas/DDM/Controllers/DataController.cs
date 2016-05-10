@@ -53,8 +53,10 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
         public ActionResult ShowData(long id)
         {
            
-
             DatasetManager dm = new DatasetManager();
+            PermissionManager permissionManager = new PermissionManager();
+            SubjectManager subjectManager = new SubjectManager();
+
             DatasetVersion dsv = dm.GetDatasetLatestVersion(id);
 
             MetadataStructureManager msm = new MetadataStructureManager();
@@ -62,18 +64,15 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
             string title = XmlDatasetHelper.GetInformation(dsv, AttributeNames.title);
 
-            PermissionManager permissionManager = new PermissionManager();
-            SubjectManager subjectManager = new SubjectManager();
-
-            ViewBag.Title = PresentationModel.GetViewTitle("Show Data : "+title);
-
+            ViewBag.Title = PresentationModel.GetViewTitle("Show Data : " + title);
 
             ShowDataModel model = new ShowDataModel()
             {
                 Id = id,
-                Title = title,
+                Title = "",
                 ViewAccess = permissionManager.HasUserDataAccess(HttpContext.User.Identity.Name, 1, id, RightType.View),
-                GrantAccess = permissionManager.HasUserDataAccess(HttpContext.User.Identity.Name, 1, id, RightType.Grant)
+                GrantAccess = permissionManager.HasUserDataAccess(HttpContext.User.Identity.Name, 1, id, RightType.Grant),
+                IsCheckedIn = dm.IsDatasetCheckedIn(id)?true:false
             };
 
 

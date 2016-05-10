@@ -19,33 +19,41 @@
 
 @if(@Model != null)
 {
-    @(Html.Telerik().TabStrip()
-            .Name("ShowDataTabStrip")
-            .SelectedIndex(0)
-            .Items(tabs =>
-            {
+    if (Model.IsCheckedIn)
+    {
 
-                tabs.Add()
-                    .Text("Metadata")
-                    .LoadContentFrom("LoadMetadata", "CreateDataset", new { area = "DDM", datasetId = @Model.Id, locked = true, created= false, fromEditMode = false, resetTaskManager = true });
+        @(Html.Telerik().TabStrip()
+              .Name("ShowDataTabStrip")
+              .SelectedIndex(0)
+              .Items(tabs =>
+              {
 
-                tabs.Add()
-                    .Text("Primary Data")
-                    .LoadContentFrom("ShowPrimaryData", "Data", new { area = "DDM", datasetID = @Model.Id })
-                    .Enabled(@Model.ViewAccess);
+                  tabs.Add()
+                      .Text("Metadata")
+                      .LoadContentFrom("LoadMetadata", "CreateDataset", new {area = "DDM", datasetId = @Model.Id, locked = true, created = false, fromEditMode = false, resetTaskManager = true});
 
-                tabs.Add()
-                    .Text("Data Structure")
-                    .LoadContentFrom("ShowPreviewDataStructure", "Data", new { area = "DDM", datasetID = @Model.Id });
+                  tabs.Add()
+                      .Text("Primary Data")
+                      .LoadContentFrom("ShowPrimaryData", "Data", new {area = "DDM", datasetID = @Model.Id})
+                      .Enabled(@Model.ViewAccess);
+
+                  tabs.Add()
+                      .Text("Data Structure")
+                      .LoadContentFrom("ShowPreviewDataStructure", "Data", new {area = "DDM", datasetID = @Model.Id});
 
 
 
-                tabs.Add()
-                    .Text("Dataset Permissions")
-                    .LoadContentFrom("Subjects", "Data", new {area = "DDM", dataId = @Model.Id })
-                .Enabled(@Model.GrantAccess);
-            })
-    )
+                  tabs.Add()
+                      .Text("Dataset Permissions")
+                      .LoadContentFrom("Subjects", "Data", new {area = "DDM", dataId = @Model.Id})
+                      .Enabled(@Model.GrantAccess);
+              })
+              )
+    }
+    else
+    {
+        <p> Dataset : @Model.Title is not checked in. </p>
+    }
 }
 
 <script type="text/javascript">
