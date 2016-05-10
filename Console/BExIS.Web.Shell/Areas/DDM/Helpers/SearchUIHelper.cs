@@ -135,7 +135,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
                 {
                     DataTuple dataTuple = datasetManager.DataTupleRepo.Query(d =>d.Id.Equals(id)).FirstOrDefault();
                     dataTuple.Materialize();
-                    dt.Rows.Add(ConvertTupleIntoDataRow(dt, dataTuple));
+                    dt.Rows.Add(ConvertTupleIntoDataRow(dt, dataTuple, sds));
                 }
             }
 
@@ -232,7 +232,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
 
                 foreach (var tuple in dsVersionTuples)
                 {
-                     dt.Rows.Add(ConvertTupleIntoDataRow(dt,tuple));
+                     dt.Rows.Add(ConvertTupleIntoDataRow(dt,tuple, sds));
                 }
             }
 
@@ -248,30 +248,30 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
         /// <param name="dt"></param>
         /// <param name="t"></param>
         /// <returns></returns>
-        private static DataRow ConvertTupleIntoDataRow(DataTable dt, AbstractTuple t)
+        private static DataRow ConvertTupleIntoDataRow(DataTable dt, AbstractTuple t, StructuredDataStructure sts)
         {
 
             DataRow dr = dt.NewRow();
 
             foreach(var vv in t.VariableValues)
             {
-                if (vv.Variable != null)
+                if (vv.VariableId > 0)
                 {
                     string valueAsString="";
                     if (vv.Value == null)
                     {
-                        dr["ID" + vv.Variable.Id.ToString()] = DBNull.Value;
+                        dr["ID" + vv.VariableId.ToString()] = DBNull.Value;
                     }
                     else
                     {
                         valueAsString = vv.Value.ToString();
-                
-                        
-                        switch (vv.DataAttribute.DataType.SystemType)
+
+                        Variable varr = sts.Variables.Where(p => p.Id == vv.VariableId).SingleOrDefault();
+                        switch (varr.DataAttribute.DataType.SystemType)
                         { 
                             case "String":
                             {
-                                dr["ID" +vv.Variable.Id.ToString()] = valueAsString;
+                                dr["ID" +vv.VariableId.ToString()] = valueAsString;
                                 break;
                             }
 
@@ -279,9 +279,9 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
                             {
                                 double value;
                                 if (double.TryParse(valueAsString, out value))
-                                    dr["ID" + vv.Variable.Id.ToString()] = Convert.ToDouble(valueAsString);
+                                    dr["ID" + vv.VariableId.ToString()] = Convert.ToDouble(valueAsString);
                                 else
-                                    dr["ID" + vv.Variable.Id.ToString()] = -99999;//double.MaxValue;
+                                    dr["ID" + vv.VariableId.ToString()] = -99999;//double.MaxValue;
                                 break;
                             }
 
@@ -289,9 +289,9 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
                             {
                                 Int16 value;
                                 if(Int16.TryParse(valueAsString,out value))
-                                    dr["ID" + vv.Variable.Id.ToString()] = Convert.ToInt16(valueAsString);
+                                    dr["ID" + vv.VariableId.ToString()] = Convert.ToInt16(valueAsString);
                                 else
-                                    dr["ID" + vv.Variable.Id.ToString()] = Int16.MaxValue;
+                                    dr["ID" + vv.VariableId.ToString()] = Int16.MaxValue;
                                 break;
                             }
 
@@ -299,9 +299,9 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
                             {
                                 Int32 value;
                                 if(Int32.TryParse(valueAsString,out value))
-                                    dr["ID" + vv.Variable.Id.ToString()] = Convert.ToInt32(valueAsString);
+                                    dr["ID" + vv.VariableId.ToString()] = Convert.ToInt32(valueAsString);
                                 else
-                                    dr["ID" + vv.Variable.Id.ToString()] = Int32.MaxValue;
+                                    dr["ID" + vv.VariableId.ToString()] = Int32.MaxValue;
                                 break;
                             }
 
@@ -309,9 +309,9 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
                             {
                                 Int64 value;
                                 if(Int64.TryParse(valueAsString,out value))
-                                    dr["ID" + vv.Variable.Id.ToString()] = Convert.ToInt64(valueAsString);
+                                    dr["ID" + vv.VariableId.ToString()] = Convert.ToInt64(valueAsString);
                                 else
-                                    dr["ID" + vv.Variable.Id.ToString()] = Int64.MaxValue;
+                                    dr["ID" + vv.VariableId.ToString()] = Int64.MaxValue;
                                 break;
                             }
 
@@ -319,9 +319,9 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
                             {
                                 decimal value;
                                 if (decimal.TryParse(valueAsString, out value))
-                                    dr["ID" + vv.Variable.Id.ToString()] = Convert.ToDecimal(valueAsString);
+                                    dr["ID" + vv.VariableId.ToString()] = Convert.ToDecimal(valueAsString);
                                 else
-                                    dr["ID" + vv.Variable.Id.ToString()] = -99999;//decimal.MaxValue;
+                                    dr["ID" + vv.VariableId.ToString()] = -99999;//decimal.MaxValue;
                                 break;
                             }
 
@@ -329,18 +329,18 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
                             {
                                 decimal value;
                                 if (decimal.TryParse(valueAsString, out value))
-                                    dr["ID" + vv.Variable.Id.ToString()] = Convert.ToDecimal(valueAsString);
+                                    dr["ID" + vv.VariableId.ToString()] = Convert.ToDecimal(valueAsString);
                                 else
-                                    dr["ID" + vv.Variable.Id.ToString()] = -99999;
+                                    dr["ID" + vv.VariableId.ToString()] = -99999;
                                 break;
                             }
 
                             case "DateTime":
                             {
                                     if (!String.IsNullOrEmpty(valueAsString))
-                                        dr["ID"+vv.Variable.Id.ToString()] = Convert.ToDateTime(valueAsString, CultureInfo.InvariantCulture);
+                                        dr["ID"+vv.VariableId.ToString()] = Convert.ToDateTime(valueAsString, CultureInfo.InvariantCulture);
                                     else
-                                        dr["ID" + vv.Variable.Id.ToString()] = DateTime.MaxValue;
+                                        dr["ID" + vv.VariableId.ToString()] = DateTime.MaxValue;
 
                                 break;
                             }
@@ -348,9 +348,9 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
                             default:
                             {
                                 if (!String.IsNullOrEmpty(vv.Value.ToString()))
-                                    dr["ID"+vv.Variable.Id.ToString()] = valueAsString;
+                                    dr["ID"+vv.VariableId.ToString()] = valueAsString;
                                 else 
-                                    dr["ID" + vv.Variable.Id.ToString()] = DBNull.Value;
+                                    dr["ID" + vv.VariableId.ToString()] = DBNull.Value;
 
                                 break;
                             }
