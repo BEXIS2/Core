@@ -133,7 +133,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
 
                 foreach (var id in dsVersionTupleIds)
                 {
-                    DataTuple dataTuple = datasetManager.DataTupleRepo.Get(id);
+                    DataTuple dataTuple = datasetManager.DataTupleRepo.Query(d =>d.Id.Equals(id)).FirstOrDefault();
                     dataTuple.Materialize();
                     dt.Rows.Add(ConvertTupleIntoDataRow(dt, dataTuple));
                 }

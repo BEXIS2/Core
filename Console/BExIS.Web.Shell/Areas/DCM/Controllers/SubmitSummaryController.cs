@@ -694,21 +694,10 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                         #endregion
 
-                        // start download generator
-                        // filepath
-                        //string path = "";
-                        //if (workingCopy != null)
-                        //{
-                        //    path = GenerateDownloadFile(workingCopy);
-
-                        //    dm.EditDatasetVersion(workingCopy, null, null, null);
-                        //}
-
                         // ToDo: Get Comment from ui and users
+                        MoveAndSaveOriginalFileInContentDiscriptor(workingCopy);
                         dm.CheckInDataset(ds.Id, "upload data from upload wizard", GetUsernameOrDefault());
 
-                        // open the excel file and add data tuples
-                        //AddDatatuplesToFile(ds.Id, sds.Id, path);
                     }
                     catch (Exception e)
                     {
@@ -718,7 +707,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     }
                     finally
                     {
-
+                        
                     }
                 }
 
@@ -765,6 +754,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
         }
 
+        
+
         private string GenerateDownloadFile(DatasetVersion datasetVersion)
         {
 
@@ -780,44 +771,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             string ext = ".xlsm";// TaskManager.Bus[TaskManager.EXTENTION].ToString();
 
             ExcelWriter excelWriter = new ExcelWriter();
-
-            // Move Original File to its permanent location
-            String tempPath = TaskManager.Bus[TaskManager.FILEPATH].ToString();
-            string originalFileName = TaskManager.Bus[TaskManager.FILENAME].ToString();
-            string storePath = excelWriter.GetFullStorePathOriginalFile(datasetId, datasetVersion.Id, originalFileName);
-            string dynamicStorePath = excelWriter.GetDynamicStorePathOriginalFile(datasetId, datasetVersion.VersionNo, originalFileName);
-
-            //Why using the excel writer, isn't any function available in System.IO.File/ Directory, etc. Javad
-            FileHelper.MoveFile(tempPath, storePath);
-
-            //Register the original data as a resource of the current dataset version
-            ContentDescriptor originalDescriptor = new ContentDescriptor()
-            {
-                OrderNo = 1,
-                Name = "original",
-                MimeType = "application/xlsm",
-                URI = dynamicStorePath,
-                DatasetVersion = datasetVersion,
-            };
-
-            if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(originalDescriptor.Name)) > 0)
-            {   // remove the one contentdesciptor 
-                foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
-                {
-                    if (cd.Name == originalDescriptor.Name)
-                    {
-                        cd.URI = originalDescriptor.URI;
-                    }
-                }
-            }
-            else
-            {
-                // add current contentdesciptor to list
-                datasetVersion.ContentDescriptors.Add(originalDescriptor);
-            }
-
-
-
+            
             // create the generated file and determine its location
             string path = excelWriter.CreateFile(datasetId, datasetVersion.VersionNo, dataStructureId, title, ext);
             string dynamicPath = excelWriter.GetDynamicStorePath(datasetId, datasetVersion.VersionNo, title, ext);
@@ -891,6 +845,59 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             {
                 return "";
             }
+        }
+
+        private string MoveAndSaveOriginalFileInContentDiscriptor(DatasetVersion datasetVersion)
+        {
+            TaskManager TaskManager = (TaskManager)Session["TaskManager"];
+
+            //dataset id and data structure id are available via datasetVersion properties,why you are passing them via the BUS? Javad
+            long datasetId = Convert.ToInt64(TaskManager.Bus[TaskManager.DATASET_ID]);
+            long dataStructureId = Convert.ToInt64(TaskManager.Bus[TaskManager.DATASTRUCTURE_ID]);
+
+            DatasetManager datasetManager = new DatasetManager();
+
+            string title = TaskManager.Bus[TaskManager.DATASET_TITLE].ToString();
+            string ext = ".xlsm";// TaskManager.Bus[TaskManager.EXTENTION].ToString();
+
+            ExcelWriter excelWriter = new ExcelWriter();
+
+            // Move Original File to its permanent location
+            String tempPath = TaskManager.Bus[TaskManager.FILEPATH].ToString();
+            string originalFileName = TaskManager.Bus[TaskManager.FILENAME].ToString();
+            string storePath = excelWriter.GetFullStorePathOriginalFile(datasetId, datasetVersion.Id, originalFileName);
+            string dynamicStorePath = excelWriter.GetDynamicStorePathOriginalFile(datasetId, datasetVersion.VersionNo, originalFileName);
+
+            //Why using the excel writer, isn't any function available in System.IO.File/ Directory, etc. Javad
+            FileHelper.MoveFile(tempPath, storePath);
+
+            //Register the original data as a resource of the current dataset version
+            ContentDescriptor originalDescriptor = new ContentDescriptor()
+            {
+                OrderNo = 1,
+                Name = "original",
+                MimeType = "application/xlsm",
+                URI = dynamicStorePath,
+                DatasetVersion = datasetVersion,
+            };
+
+            if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(originalDescriptor.Name)) > 0)
+            {   // remove the one contentdesciptor 
+                foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
+                {
+                    if (cd.Name == originalDescriptor.Name)
+                    {
+                        cd.URI = originalDescriptor.URI;
+                    }
+                }
+            }
+            else
+            {
+                // add current contentdesciptor to list
+                datasetVersion.ContentDescriptors.Add(originalDescriptor);
+            }
+
+            return storePath;
         }
 
         private void AddDatatuplesToFile(long datasetId, long dataStructureId, string path)

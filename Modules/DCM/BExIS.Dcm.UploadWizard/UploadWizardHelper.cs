@@ -139,8 +139,8 @@ namespace BExIS.Dcm.UploadWizard
 
                     for (int i = 0; i < datatuplesFromDatabaseIds.Count; i++)
                     {
-
-                        sourceDt = datasetManager.DataTupleRepo.Get(datatuplesFromDatabaseIds.ElementAt(i));
+                        long id = datatuplesFromDatabaseIds.ElementAt(i);
+                        sourceDt = datasetManager.DataTupleRepo.Query( dt => dt.Id.Equals(id)).FirstOrDefault();
 
                         string keysValueSourceDatatuple = getPrimaryKeysAsStringFromXml(sourceDt, primaryKeys);
 
@@ -609,7 +609,7 @@ namespace BExIS.Dcm.UploadWizard
                         string pKey;
                         foreach (long dtId in currentIds)
                         {
-                            dt = datasetManager.DataTupleRepo.Get(dtId); 
+                            dt = datasetManager.DataTupleRepo.Query(d=>d.Id.Equals(dtId)).FirstOrDefault(); 
 
                             //pKey = getPrimaryKeysAsByteArray(dt, primaryKeys);
                             pKey = pKey = getPrimaryKeysAsStringFromXml(dt, primaryKeys);

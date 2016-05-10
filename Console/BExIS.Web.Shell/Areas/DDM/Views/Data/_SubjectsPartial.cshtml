@@ -44,14 +44,14 @@
     })
     .ClientEvents(events =>
     {
-        events.OnDataBound("onDataBound");
+        events.OnDataBound("Grid_Subjects_onDataBound");
     })
 )
 
 
 <script type="text/javascript">
 
-    function onDataBound()
+    function Grid_Subjects_onDataBound()
     {
         addTooltips();
         resetAllTelerikIconTitles();

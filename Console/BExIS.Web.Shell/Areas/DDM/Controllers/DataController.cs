@@ -40,15 +40,6 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 {
     public class DataController : Controller
     {
-        //
-        // GET: /DDM/Data/
-
-        public ActionResult Index()
-        {
-           
-            
-            return View();
-        }
 
         public ActionResult ShowData(long id)
         {
@@ -66,13 +57,15 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
             ViewBag.Title = PresentationModel.GetViewTitle("Show Data : " + title);
 
+            bool isCheckedIn = dm.IsDatasetCheckedIn(id);
+
             ShowDataModel model = new ShowDataModel()
             {
                 Id = id,
                 Title = title,
                 ViewAccess = permissionManager.HasUserDataAccess(HttpContext.User.Identity.Name, 1, id, RightType.View),
                 GrantAccess = permissionManager.HasUserDataAccess(HttpContext.User.Identity.Name, 1, id, RightType.Grant),
-                IsCheckedIn = dm.IsDatasetCheckedIn(id)?true:false
+                IsCheckedIn = isCheckedIn
             };
 
 
@@ -251,8 +244,10 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 DatasetManager dm = new DatasetManager();
                 DatasetVersion dsv = dm.GetDatasetLatestVersion(datasetID);
 
-
                 List<AbstractTuple> dataTuples = dm.GetDatasetVersionEffectiveTuples(dsv,command.Page-1,command.PageSize);
+                //List<AbstractTuple> dataTuples2 = dm.DataTupleRepo.Query(dt => dt.DatasetVersion.Equals(dsv))
+                //    .Skip((command.Page - 1)*command.PageSize)
+                //    .Take(command.PageSize).ToList();
 
                 Session["gridTotal"] = dm.GetDatasetVersionEffectiveTupleCount(dsv);
 

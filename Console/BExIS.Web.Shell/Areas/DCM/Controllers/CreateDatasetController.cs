@@ -2366,13 +2366,21 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             DatasetManager datasetManager = new DatasetManager();
             List<ListViewItem> temp = new List<ListViewItem>();
 
-            foreach (long id in pm.GetAllDataIds(subjectManager.GetUserByName(GetUsernameOrDefault()).Id, 1, RightType.Update))
+            //get all datasetsid where the current userer has access to
+            long userid = -1;
+            if (subjectManager.ExistsUsername(GetUsernameOrDefault()))
+                userid = subjectManager.GetUserByName(GetUsernameOrDefault()).Id;
+
+            if (userid != -1)
             {
+                foreach (long id in pm.GetAllDataIds(userid, 1, RightType.Update))
+                {
 
-                string title = XmlDatasetHelper.GetInformation(id, AttributeNames.title);
-                string description = XmlDatasetHelper.GetInformation(id, AttributeNames.description);
+                    string title = XmlDatasetHelper.GetInformation(id, AttributeNames.title);
+                    string description = XmlDatasetHelper.GetInformation(id, AttributeNames.description);
 
-                temp.Add(new ListViewItem(id, title, description));
+                    temp.Add(new ListViewItem(id, title, description));
+                }
             }
 
             return temp.OrderBy(p => p.Title).ToList();

@@ -155,7 +155,7 @@ namespace BExIS.IO.Transform.Output
             DatasetManager datasetManager = new DatasetManager();
             
             // I do not know where this function is called, but there is a chance that the id is referring to a tuple in a previous version, in that case, the tuple is not in the data tuples anymore. Javad
-            DataTuple dataTuple = datasetManager.DataTupleRepo.Get(id);
+            DataTuple dataTuple = datasetManager.DataTupleRepo.Query(d=>d.Id.Equals(id)).FirstOrDefault();
             dataTuple.Materialize();
 
             //StringBuilder builder = new StringBuilder();
