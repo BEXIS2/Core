@@ -275,7 +275,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 datasets,
                 new EntitySelectorModelAction("ShowListOfDatasetsReciever", "CreateDataset", "DCM"));
 
-            model.Title = "Select a dataset";
+            model.Title = "Select a Dataset";
 
             return PartialView("_EntitySelectorInWindowView", model);
         }
@@ -295,7 +295,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                  datastructures,
                  new EntitySelectorModelAction("ShowListOfDataStructuresReciever", "CreateDataset", "DCM"));
 
-            model.Title = "Select a datastructure";
+            model.Title = "Select a Data Structure";
 
 
             return PartialView("_EntitySelectorInWindowView", model);
@@ -315,7 +315,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                  metadataStructures,
                  new EntitySelectorModelAction("ShowListOfMetadataStructuresReciever", "CreateDataset", "DCM"));
 
-            model.Title = "Select a metadatasturcture";
+            model.Title = "Select a Metadata Structure";
 
             return PartialView("_EntitySelectorInWindowView", model);
         }
