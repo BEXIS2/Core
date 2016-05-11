@@ -361,22 +361,24 @@ namespace BExIS.IO.Transform.Output
         /// <param name="id"></param>
         /// <returns></returns>
         public String GetTitle(long id)
-        { 
-            DatasetVersion datasetVersion = DatasetManager.GetDatasetLatestVersion(id);
+        {
+            if (DatasetManager.IsDatasetCheckedIn(id))
+            {
 
-            // get MetadataStructure 
-            MetadataStructure metadataStructure = datasetVersion.Dataset.MetadataStructure;
-            XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)datasetVersion.Dataset.MetadataStructure.Extra);
-            XElement temp = XmlUtility.GetXElementByAttribute("nodeRef", "name", "title", xDoc);
+                DatasetVersion datasetVersion = DatasetManager.GetDatasetLatestVersion(id);
 
-            string xpath = temp.Attribute("value").Value.ToString();
-            string title = datasetVersion.Metadata.SelectSingleNode(xpath).InnerText;
+                // get MetadataStructure 
+                MetadataStructure metadataStructure = datasetVersion.Dataset.MetadataStructure;
+                XDocument xDoc = XmlUtility.ToXDocument((XmlDocument) datasetVersion.Dataset.MetadataStructure.Extra);
+                XElement temp = XmlUtility.GetXElementByAttribute("nodeRef", "name", "title", xDoc);
 
-            return title;
+                string xpath = temp.Attribute("value").Value.ToString();
+                string title = datasetVersion.Metadata.SelectSingleNode(xpath).InnerText;
 
-            DatasetManager datasetManager = new DatasetManager();
+                return title;
+            }
 
-            return XmlDatasetHelper.GetInformation(datasetManager.GetDatasetLatestVersion(id), AttributeNames.title);
+            return "NoTitleAvailable";
         }
 
         /// <summary>
@@ -406,7 +408,6 @@ namespace BExIS.IO.Transform.Output
         {
             return source.Where(p => selected.Contains(p.Variable.Id.ToString())).ToList();
         }
-
 
         protected string GetStringFormat(Dlm.Entities.DataStructure.DataType datatype)
         {

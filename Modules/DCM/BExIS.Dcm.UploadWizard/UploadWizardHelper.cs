@@ -585,8 +585,6 @@ namespace BExIS.Dcm.UploadWizard
                 Dataset dataset = datasetManager.GetDataset(datasetId);
                 DatasetVersion datasetVersion;
 
-
-
                 List<long> dataTupleIds = new List<long>();
 
                 if (datasetManager.IsDatasetCheckedIn(datasetId))

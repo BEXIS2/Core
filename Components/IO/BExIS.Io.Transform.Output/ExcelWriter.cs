@@ -374,7 +374,6 @@ namespace BExIS.IO.Transform.Output
                 row.AppendChild(cell);
             }
 
-
             return row;
         }
 

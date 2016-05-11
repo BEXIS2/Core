@@ -164,7 +164,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             model = LoadLists(model);
 
-            if (ModelState.IsValid)
+            if (ModelState.IsValid )
             {
                 TaskManager.AddToBus(CreateDatasetTaskmanager.METADATASTRUCTURE_ID, model.SelectedMetadataStructureId);
                 TaskManager.AddToBus(CreateDatasetTaskmanager.DATASTRUCTURE_ID, model.SelectedDataStructureId);
@@ -172,36 +172,46 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 // set datastructuretype
                 TaskManager.AddToBus(CreateDatasetTaskmanager.DATASTRUCTURE_TYPE, GetDataStructureType(model.SelectedDataStructureId));
 
-                //dataset is selected
-                if (model.SelectedDatasetId != 0 && model.SelectedDatasetId != -1)
+                if (dm.IsDatasetCheckedIn(model.SelectedDatasetId))
                 {
-                    DatasetVersion datasetVersion = dm.GetDatasetLatestVersion(model.SelectedDatasetId);
-                    TaskManager.AddToBus(CreateDatasetTaskmanager.RESEARCHPLAN_ID, datasetVersion.Dataset.ResearchPlan.Id);
-                    TaskManager.AddToBus(CreateDatasetTaskmanager.DATASET_TITLE, XmlDatasetHelper.GetInformation(datasetVersion, AttributeNames.title));
+                    //dataset is selected
+                    if (model.SelectedDatasetId != 0 && model.SelectedDatasetId != -1)
+                    {
 
-                    // set datastructuretype
-                    TaskManager.AddToBus(CreateDatasetTaskmanager.DATASTRUCTURE_TYPE, GetDataStructureType(model.SelectedDataStructureId));
+                        DatasetVersion datasetVersion = dm.GetDatasetLatestVersion(model.SelectedDatasetId);
+                        TaskManager.AddToBus(CreateDatasetTaskmanager.RESEARCHPLAN_ID,
+                            datasetVersion.Dataset.ResearchPlan.Id);
+                        TaskManager.AddToBus(CreateDatasetTaskmanager.DATASET_TITLE,
+                            XmlDatasetHelper.GetInformation(datasetVersion, AttributeNames.title));
+
+                        // set datastructuretype
+                        TaskManager.AddToBus(CreateDatasetTaskmanager.DATASTRUCTURE_TYPE,
+                            GetDataStructureType(model.SelectedDataStructureId));
+
+                        // set MetadataXml From selected existing Dataset
+                        XDocument metadata = XmlUtility.ToXDocument(datasetVersion.Metadata);
+                        SetXml(metadata);
+                    }
+                    else
+                    {
+                        ResearchPlanManager rpm = new ResearchPlanManager();
+                        TaskManager.AddToBus(CreateDatasetTaskmanager.RESEARCHPLAN_ID, rpm.Repo.Get().First().Id);
+                        // create MetadataTemplate based on the selected MetadatStructure
+                        CreateXml();
+                    }
+
+                    // generate all steps
+                    // one step for each complex type  in the metadata structure
+                    AdvanceTaskManager(model.SelectedMetadataStructureId);
 
 
-
-                    // set MetadataXml From selected existing Dataset
-                    XDocument metadata = XmlUtility.ToXDocument(datasetVersion.Metadata);
-                    SetXml(metadata);
+                    return RedirectToAction("StartMetadataEditor", "CreateDataset");
                 }
                 else
                 {
-                    ResearchPlanManager rpm = new ResearchPlanManager();
-                    TaskManager.AddToBus(CreateDatasetTaskmanager.RESEARCHPLAN_ID, rpm.Repo.Get().First().Id);
-                    // create MetadataTemplate based on the selected MetadatStructure
-                    CreateXml();
+                    ModelState.AddModelError(string.Empty, "Dataset is just in processing");
                 }
 
-                // generate all steps
-                // one step for each complex type  in the metadata structure
-                AdvanceTaskManager(model.SelectedMetadataStructureId);
-
-
-                return RedirectToAction("StartMetadataEditor","CreateDataset");
             }
 
             return View("Index", model);
@@ -418,66 +428,75 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                 // load metadatStructrue id
                 DatasetManager dm = new DatasetManager();
-                DatasetVersion dsv = dm.GetDatasetLatestVersion(datasetId);
 
-                TaskManager.AddToBus(CreateDatasetTaskmanager.METADATASTRUCTURE_ID, dsv.Dataset.MetadataStructure.Id);
-                TaskManager.AddToBus(CreateDatasetTaskmanager.RESEARCHPLAN_ID, dsv.Dataset.ResearchPlan.Id);
-                TaskManager.AddToBus(CreateDatasetTaskmanager.DATASTRUCTURE_ID, dsv.Dataset.DataStructure.Id);
-
-                if (newMetadata == null)
-                    TaskManager.AddToBus(CreateDatasetTaskmanager.METADATA_XML, XmlUtility.ToXDocument(dsv.Metadata));
-                else
-                    TaskManager.AddToBus(CreateDatasetTaskmanager.METADATA_XML, XmlUtility.ToXDocument(newMetadata));
-
-                TaskManager.AddToBus(CreateDatasetTaskmanager.DATASET_TITLE, XmlDatasetHelper.GetInformation(dsv, AttributeNames.title));
-
-                ResearchPlanManager rpm = new ResearchPlanManager();
-                TaskManager.AddToBus(CreateDatasetTaskmanager.RESEARCHPLAN_ID, rpm.Repo.Get().First().Id);
-
-                AdvanceTaskManagerBasedOnExistingMetadata(dsv.Dataset.MetadataStructure.Id);
-                //AdvanceTaskManager(dsv.Dataset.MetadataStructure.Id);
-
-
-                foreach (var stepInfo in TaskManager.StepInfos)
+                if (dm.IsDatasetCheckedIn(datasetId))
                 {
+                    DatasetVersion dsv = dm.GetDatasetLatestVersion(datasetId);
 
-                    StepModelHelper stepModelHelper = GetStepModelhelper(stepInfo.Id);
+                    TaskManager.AddToBus(CreateDatasetTaskmanager.METADATASTRUCTURE_ID, dsv.Dataset.MetadataStructure.Id);
+                    TaskManager.AddToBus(CreateDatasetTaskmanager.RESEARCHPLAN_ID, dsv.Dataset.ResearchPlan.Id);
+                    TaskManager.AddToBus(CreateDatasetTaskmanager.DATASTRUCTURE_ID, dsv.Dataset.DataStructure.Id);
 
-                    if (stepModelHelper.Model == null)
+                    if (newMetadata == null)
+                        TaskManager.AddToBus(CreateDatasetTaskmanager.METADATA_XML, XmlUtility.ToXDocument(dsv.Metadata));
+                    else
+                        TaskManager.AddToBus(CreateDatasetTaskmanager.METADATA_XML, XmlUtility.ToXDocument(newMetadata));
+
+                    TaskManager.AddToBus(CreateDatasetTaskmanager.DATASET_TITLE,
+                        XmlDatasetHelper.GetInformation(dsv, AttributeNames.title));
+
+                    ResearchPlanManager rpm = new ResearchPlanManager();
+                    TaskManager.AddToBus(CreateDatasetTaskmanager.RESEARCHPLAN_ID, rpm.Repo.Get().First().Id);
+
+                    AdvanceTaskManagerBasedOnExistingMetadata(dsv.Dataset.MetadataStructure.Id);
+                    //AdvanceTaskManager(dsv.Dataset.MetadataStructure.Id);
+
+
+                    foreach (var stepInfo in TaskManager.StepInfos)
                     {
-                        if (stepModelHelper.Usage is MetadataPackageUsage)
+
+                        StepModelHelper stepModelHelper = GetStepModelhelper(stepInfo.Id);
+
+                        if (stepModelHelper.Model == null)
                         {
-                            stepModelHelper.Model = CreatePackageModel(stepInfo.Id, false);
-                            if (stepModelHelper.Model.StepInfo.IsInstanze)
-                                LoadSimpleAttributesForModelFromXml(stepModelHelper);
+                            if (stepModelHelper.Usage is MetadataPackageUsage)
+                            {
+                                stepModelHelper.Model = CreatePackageModel(stepInfo.Id, false);
+                                if (stepModelHelper.Model.StepInfo.IsInstanze)
+                                    LoadSimpleAttributesForModelFromXml(stepModelHelper);
+                            }
+
+                            if (stepModelHelper.Usage is MetadataNestedAttributeUsage)
+                            {
+                                stepModelHelper.Model = CreateCompoundModel(stepInfo.Id, false);
+                                if (stepModelHelper.Model.StepInfo.IsInstanze)
+                                    LoadSimpleAttributesForModelFromXml(stepModelHelper);
+                            }
+
+                            getChildModelsHelper(stepModelHelper);
                         }
 
-                        if (stepModelHelper.Usage is MetadataNestedAttributeUsage)
-                        {
-                            stepModelHelper.Model = CreateCompoundModel(stepInfo.Id, false);
-                            if (stepModelHelper.Model.StepInfo.IsInstanze)
-                                LoadSimpleAttributesForModelFromXml(stepModelHelper);
-                        }
+                        stepInfoModelHelpers.Add(stepModelHelper);
 
-                        getChildModelsHelper(stepModelHelper);
                     }
 
-                    stepInfoModelHelpers.Add(stepModelHelper);
+                    if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATA_XML))
+                    {
+                        XDocument xMetadata = (XDocument) TaskManager.Bus[CreateDatasetTaskmanager.METADATA_XML];
 
+                        string title = XmlDatasetHelper.GetInformation(dsv, AttributeNames.title);
+                        if (String.IsNullOrEmpty(title)) title = "No Title available.";
+
+                        if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.DATASET_TITLE))
+                            Model.DatasetTitle = TaskManager.Bus[CreateDatasetTaskmanager.DATASET_TITLE].ToString();
+                        else
+                            Model.DatasetTitle = "No Title available.";
+
+                    }
                 }
-
-                if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATA_XML))
+                else
                 {
-                    XDocument xMetadata = (XDocument)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_XML];
-
-                    string title = XmlDatasetHelper.GetInformation(dsv, AttributeNames.title);
-                    if (String.IsNullOrEmpty(title)) title = "No Title available.";
-
-                    if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.DATASET_TITLE))
-                        Model.DatasetTitle = TaskManager.Bus[CreateDatasetTaskmanager.DATASET_TITLE].ToString();
-                    else
-                        Model.DatasetTitle = "No Title available.";
-
+                    ModelState.AddModelError(String.Empty, "Dataset is just in processing.");
                 }
             }
             else

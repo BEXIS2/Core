@@ -103,7 +103,8 @@ namespace BExIS.IO.Transform.Output
 
                 foreach (long id in dataTuplesIds)
                 {
-                    data.AppendLine(datatupleToRow(id));
+                    string newline = datatupleToRow(id);
+                    if(!String.IsNullOrEmpty(newline))data.AppendLine(newline);
                 }
 
 
@@ -158,6 +159,8 @@ namespace BExIS.IO.Transform.Output
             DataTuple dataTuple = datasetManager.DataTupleRepo.Query(d=>d.Id.Equals(id)).FirstOrDefault();
             dataTuple.Materialize();
 
+            #region ToDo David check the code inside
+
             //StringBuilder builder = new StringBuilder();
             //bool first = true;
             //string value = "";
@@ -197,6 +200,8 @@ namespace BExIS.IO.Transform.Output
             //    first = false;
             //}
 
+            #endregion
+
             return datatupleToRow(dataTuple);
         }
 
@@ -210,60 +215,36 @@ namespace BExIS.IO.Transform.Output
         private string datatupleToRow(AbstractTuple dataTuple)
         {
             StringBuilder builder = new StringBuilder();
+ 
             bool first = true;
             string value = "";
 
-            foreach (VariableIdentifier vi in this.VariableIdentifiers)
+            if (dataTuple.VariableValues.Count > 0)
             {
-                VariableValue vv = dataTuple.VariableValues.Where(v => v.Variable.Id.Equals(vi.id)).FirstOrDefault();
-                if (vv.Value != null)
+                foreach (VariableIdentifier vi in this.VariableIdentifiers)
                 {
-                    string format = GetStringFormat(vv.Variable.DataAttribute.DataType);
-                    if (!string.IsNullOrEmpty(format))
+                    VariableValue vv = dataTuple.VariableValues.Where(v => v.Variable.Id.Equals(vi.id)).FirstOrDefault();
+                    if (vv.Value != null)
                     {
-                        value = GetFormatedValue(vv.Value, vv.Variable.DataAttribute.DataType, format);
+                        string format = GetStringFormat(vv.Variable.DataAttribute.DataType);
+                        if (!string.IsNullOrEmpty(format))
+                        {
+                            value = GetFormatedValue(vv.Value, vv.Variable.DataAttribute.DataType, format);
+                        }
+                        else value = vv.Value.ToString();
                     }
-                    else value = vv.Value.ToString();
+                    // Add separator if this isn't the first value
+                    if (!first)
+                        builder.Append(AsciiHelper.GetSeperator(Delimeter));
+                    // Implement special handling for values that contain comma or quote
+                    // Enclose in quotes and double up any double quotes
+                    if (value.IndexOfAny(new char[] {'"', ','}) != -1)
+                        builder.AppendFormat("\"{0}\"", value.Replace("\"", "\"\""));
+                    else
+                        builder.Append(value);
+                    first = false;
                 }
-                // Add separator if this isn't the first value
-                if (!first)
-                    builder.Append(AsciiHelper.GetSeperator(Delimeter));
-                // Implement special handling for values that contain comma or quote
-                // Enclose in quotes and double up any double quotes
-                if (value.IndexOfAny(new char[] { '"', ',' }) != -1)
-                    builder.AppendFormat("\"{0}\"", value.Replace("\"", "\"\""));
-                else
-                    builder.Append(value);
-                first = false;
             }
-
-            //StringBuilder builder = new StringBuilder();
-            //bool first = true;
-
-            //List<VariableValue> variableValues = dataTuple.VariableValues.ToList();
-
-            //if (visibleColumns != null)
-            //{
-            //    variableValues = GetSubsetOfVariableValues(variableValues, visibleColumns);
-            //}
-
-            //foreach (VariableValue vv in variableValues)
-            //{
-            //    string value = "";
-            //    if (vv.Value != null)
-            //        value = vv.Value.ToString();
-            //    // Add separator if this isn't the first value
-            //    if (!first)
-            //        builder.Append(AsciiHelper.GetSeperator(Delimeter));
-            //    // Implement special handling for values that contain comma or quote
-            //    // Enclose in quotes and double up any double quotes
-            //    if (value.IndexOfAny(new char[] { '"', ',' }) != -1)
-            //        builder.AppendFormat("\"{0}\"", value.Replace("\"", "\"\""));
-            //    else
-            //        builder.Append(value);
-            //    first = false;
-            //}
-
             return builder.ToString();
         }
         

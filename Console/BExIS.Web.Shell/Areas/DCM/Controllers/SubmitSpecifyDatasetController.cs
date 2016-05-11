@@ -146,12 +146,20 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             else
             {
                 datasetId = Convert.ToInt64(id);
-                if (datasetManager.GetDatasetVersionEffectiveTupleCount(datasetManager.GetDatasetLatestVersion(datasetId)) > 0)
+                if (datasetManager.IsDatasetCheckedIn(datasetId))
+                {
+                    if (datasetManager.GetDatasetVersionEffectiveTupleCount(datasetManager.GetDatasetLatestVersion(datasetId)) > 0)
+                    {
+                        TaskManager.AddToBus("DatasetStatus", "edit");
+                    }
+                    else
+                        TaskManager.AddToBus("DatasetStatus", "new");
+                }
+                else
                 {
                     TaskManager.AddToBus("DatasetStatus", "edit");
                 }
-                else
-                    TaskManager.AddToBus("DatasetStatus", "new");
+                
             }
 
 

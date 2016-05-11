@@ -368,33 +368,41 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                     }
 
                     DatasetManager dm = new DatasetManager();
-                    DatasetVersion dsv = dm.GetDatasetLatestVersion(id);
-                    DataStructureManager dsm = new DataStructureManager();
-                    StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(dsv.Dataset.DataStructure.Id);
-                    // Javad: check if the dataset is "checked-in". If yes, then use the paging version of the GetDatasetVersionEffectiveTuples method
-                    // number of tuples for the for loop is also available via GetDatasetVersionEffectiveTupleCount
-                    // a proper fetch (page) size can be obtained by calling dm.PreferedBatchSize
-                    int fetchSize = dm.PreferedBatchSize;
-                    long tupleSize = dm.GetDatasetVersionEffectiveTupleCount(dsv);
-                    long noOfFetchs = tupleSize / fetchSize;
-                    for (int round = 0; round < noOfFetchs; round++)
+                    if (dm.IsDatasetCheckedIn(id))
                     {
-                        List<AbstractTuple> dsVersionTuples = dm.GetDatasetVersionEffectiveTuples(dsv,round, fetchSize);
-                        List<string> primaryDataStringToindex = generateStringFromTuples(dsVersionTuples, sds);
-                        if (primaryDataStringToindex != null)
+                        DatasetVersion dsv = dm.GetDatasetLatestVersion(id);
+                        DataStructureManager dsm = new DataStructureManager();
+                        StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(dsv.Dataset.DataStructure.Id);
+                        // Javad: check if the dataset is "checked-in". If yes, then use the paging version of the GetDatasetVersionEffectiveTuples method
+                        // number of tuples for the for loop is also available via GetDatasetVersionEffectiveTupleCount
+                        // a proper fetch (page) size can be obtained by calling dm.PreferedBatchSize
+                        int fetchSize = dm.PreferedBatchSize;
+                        long tupleSize = dm.GetDatasetVersionEffectiveTupleCount(dsv);
+                        long noOfFetchs = tupleSize/fetchSize;
+                        for (int round = 0; round < noOfFetchs; round++)
                         {
-                            foreach (string pDataValue in primaryDataStringToindex) // Loop through List with foreach
+                            List<AbstractTuple> dsVersionTuples = dm.GetDatasetVersionEffectiveTuples(dsv, round,
+                                fetchSize);
+                            List<string> primaryDataStringToindex = generateStringFromTuples(dsVersionTuples, sds);
+                            if (primaryDataStringToindex != null)
                             {
-                                Field a = new Field("category_" + lucene_name, pDataValue, Lucene.Net.Documents.Field.Store.NO, toAnalyse);
-                                a.Boost = boosting;
-                                dataset.Add(a);
-                                dataset.Add(new Field("ng_" + lucene_name, pDataValue, Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.ANALYZED));
-                                dataset.Add(new Field("ng_all", pDataValue, Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.ANALYZED));
-                                writeAutoCompleteIndex(docId, lucene_name, pDataValue);
-                                writeAutoCompleteIndex(docId, "ng_all", pDataValue);
+                                foreach (string pDataValue in primaryDataStringToindex)
+                                    // Loop through List with foreach
+                                {
+                                    Field a = new Field("category_" + lucene_name, pDataValue,
+                                        Lucene.Net.Documents.Field.Store.NO, toAnalyse);
+                                    a.Boost = boosting;
+                                    dataset.Add(a);
+                                    dataset.Add(new Field("ng_" + lucene_name, pDataValue,
+                                        Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.ANALYZED));
+                                    dataset.Add(new Field("ng_all", pDataValue, Lucene.Net.Documents.Field.Store.YES,
+                                        Lucene.Net.Documents.Field.Index.ANALYZED));
+                                    writeAutoCompleteIndex(docId, lucene_name, pDataValue);
+                                    writeAutoCompleteIndex(docId, "ng_all", pDataValue);
+                                }
                             }
+                            GC.Collect();
                         }
-                        GC.Collect();
                     }
                 }
                 else
