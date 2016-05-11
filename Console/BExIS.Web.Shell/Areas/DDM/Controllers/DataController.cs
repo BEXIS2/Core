@@ -204,8 +204,6 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
                 DatasetManager dm = new DatasetManager();
 
-                dm.CheckOutDataset(datasetID, "david");
-
                 if (dm.IsDatasetCheckedIn(datasetID))
                 {
                     DatasetVersion dsv = dm.GetDatasetLatestVersion(datasetID);
@@ -235,8 +233,6 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
                         Session["gridTotal"] = dm.GetDatasetVersionEffectiveTupleCount(dsv);
 
-                        dm.CheckInDataset(datasetID, "", "david");
-
                         return PartialView(ShowPrimaryDataModel.Convert(datasetID, title, sds, table, downloadAccess));
 
                         //return PartialView(new ShowPrimaryDataModel());
@@ -257,7 +253,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
                 return PartialView(null);
 
-        }
+            }
 
             #region server side
 
@@ -319,8 +315,6 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
                     try
                     {
-
-                    
 
                         DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
                         ExcelWriter writer = new ExcelWriter();
