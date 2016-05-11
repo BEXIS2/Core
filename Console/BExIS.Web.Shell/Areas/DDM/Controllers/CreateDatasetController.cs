@@ -83,7 +83,6 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
         public ActionResult StoreSelectedDatasetSetup(SetupModel model)
         {
             CreateDatasetTaskmanager TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
-            DatasetManager dm = new DatasetManager();
 
             if (model == null)
             {
@@ -98,49 +97,20 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 TaskManager.AddToBus(CreateDatasetTaskmanager.METADATASTRUCTURE_ID, model.SelectedMetadataStructureId);
                 TaskManager.AddToBus(CreateDatasetTaskmanager.DATASTRUCTURE_ID, model.SelectedDataStructureId);
 
+                ResearchPlanManager rpm = new ResearchPlanManager();
+                TaskManager.AddToBus(CreateDatasetTaskmanager.RESEARCHPLAN_ID, rpm.Repo.Get().First().Id);
+
                 // set datastructuretype
                 TaskManager.AddToBus(CreateDatasetTaskmanager.DATASTRUCTURE_TYPE, GetDataStructureType(model.SelectedDataStructureId));
-
-                //dataset is selected
-                if (model.SelectedDatasetId != 0 && model.SelectedDatasetId != -1)
-                {
-                    if (dm.IsDatasetCheckedIn(model.SelectedDatasetId))
-                    {
-                        DatasetVersion datasetVersion = dm.GetDatasetLatestVersion(model.SelectedDatasetId);
-                        TaskManager.AddToBus(CreateDatasetTaskmanager.RESEARCHPLAN_ID,
-                            datasetVersion.Dataset.ResearchPlan.Id);
-                        TaskManager.AddToBus(CreateDatasetTaskmanager.DATASET_TITLE,
-                            XmlDatasetHelper.GetInformation(datasetVersion, AttributeNames.title));
-
-                        // set datastructuretype
-                        TaskManager.AddToBus(CreateDatasetTaskmanager.DATASTRUCTURE_TYPE,
-                            GetDataStructureType(model.SelectedDataStructureId));
-
-                        // set MetadataXml From selected existing Dataset
-                        XDocument metadata = XmlUtility.ToXDocument(datasetVersion.Metadata);
-                        SetXml(metadata);
-                    }
-                    else
-                    {
-                        ModelState.AddModelError(string.Empty, "Dataset is just in processing");
-                    }
-                }
-                else
-                {
-                    ResearchPlanManager rpm = new ResearchPlanManager();
-                    TaskManager.AddToBus(CreateDatasetTaskmanager.RESEARCHPLAN_ID, rpm.Repo.Get().First().Id);
-                    // create MetadataTemplate based on the selected MetadatStructure
-                    CreateXml();
-                }
+                
+                // create MetadataTemplate based on the selected MetadatStructure
+                CreateXml();
 
                 // generate all steps
                 // one step for each complex type  in the metadata structure
                 AdvanceTaskManager(model.SelectedMetadataStructureId);
 
-
-                return RedirectToAction("StartMetadataEditor", "CreateDataset");
-
-
+                return RedirectToAction("StartMetadataEditor","CreateDataset");
             }
 
             return View("Index", model);
