@@ -172,12 +172,11 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 // set datastructuretype
                 TaskManager.AddToBus(CreateDatasetTaskmanager.DATASTRUCTURE_TYPE, GetDataStructureType(model.SelectedDataStructureId));
 
-                if (dm.IsDatasetCheckedIn(model.SelectedDatasetId))
+                //dataset is selected
+                if (model.SelectedDatasetId != 0 && model.SelectedDatasetId != -1)
                 {
-                    //dataset is selected
-                    if (model.SelectedDatasetId != 0 && model.SelectedDatasetId != -1)
+                    if (dm.IsDatasetCheckedIn(model.SelectedDatasetId))
                     {
-
                         DatasetVersion datasetVersion = dm.GetDatasetLatestVersion(model.SelectedDatasetId);
                         TaskManager.AddToBus(CreateDatasetTaskmanager.RESEARCHPLAN_ID,
                             datasetVersion.Dataset.ResearchPlan.Id);
@@ -194,23 +193,24 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     }
                     else
                     {
-                        ResearchPlanManager rpm = new ResearchPlanManager();
-                        TaskManager.AddToBus(CreateDatasetTaskmanager.RESEARCHPLAN_ID, rpm.Repo.Get().First().Id);
-                        // create MetadataTemplate based on the selected MetadatStructure
-                        CreateXml();
+                        ModelState.AddModelError(string.Empty, "Dataset is just in processing");
                     }
-
-                    // generate all steps
-                    // one step for each complex type  in the metadata structure
-                    AdvanceTaskManager(model.SelectedMetadataStructureId);
-
-
-                    return RedirectToAction("StartMetadataEditor", "CreateDataset");
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Dataset is just in processing");
+                    ResearchPlanManager rpm = new ResearchPlanManager();
+                    TaskManager.AddToBus(CreateDatasetTaskmanager.RESEARCHPLAN_ID, rpm.Repo.Get().First().Id);
+                    // create MetadataTemplate based on the selected MetadatStructure
+                    CreateXml();
                 }
+
+                // generate all steps
+                // one step for each complex type  in the metadata structure
+                AdvanceTaskManager(model.SelectedMetadataStructureId);
+
+
+                return RedirectToAction("StartMetadataEditor", "CreateDataset");
+
 
             }
 
