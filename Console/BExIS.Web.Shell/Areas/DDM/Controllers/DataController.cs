@@ -265,22 +265,29 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             //[MeasurePerformance]
             public ActionResult _CustomPrimaryDataBinding(GridCommand command, int datasetID)
             {
-
+                GridModel model = new GridModel();
                 Session["Filter"] = command;
-
                 DatasetManager dm = new DatasetManager();
-                DatasetVersion dsv = dm.GetDatasetLatestVersion(datasetID);
+                if (dm.IsDatasetCheckedIn(datasetID))
+                {
+                    DatasetVersion dsv = dm.GetDatasetLatestVersion(datasetID);
 
-                List<AbstractTuple> dataTuples = dm.GetDatasetVersionEffectiveTuples(dsv,command.Page-1,command.PageSize);
-                //List<AbstractTuple> dataTuples2 = dm.DataTupleRepo.Query(dt => dt.DatasetVersion.Equals(dsv))
-                //    .Skip((command.Page - 1)*command.PageSize)
-                //    .Take(command.PageSize).ToList();
+                    List<AbstractTuple> dataTuples = dm.GetDatasetVersionEffectiveTuples(dsv, command.Page - 1,
+                        command.PageSize);
+                    //List<AbstractTuple> dataTuples2 = dm.DataTupleRepo.Query(dt => dt.DatasetVersion.Equals(dsv))
+                    //    .Skip((command.Page - 1)*command.PageSize)
+                    //    .Take(command.PageSize).ToList();
 
-                Session["gridTotal"] = dm.GetDatasetVersionEffectiveTupleCount(dsv);
+                    Session["gridTotal"] = dm.GetDatasetVersionEffectiveTupleCount(dsv);
 
-                DataTable table = SearchUIHelper.ConvertPrimaryDataToDatatable(dsv, dataTuples);
-                GridModel model = new GridModel(table);
-                model.Total = Convert.ToInt32(Session["gridTotal"]);// (int)Session["gridTotal"];
+                    DataTable table = SearchUIHelper.ConvertPrimaryDataToDatatable(dsv, dataTuples);
+                    model = new GridModel(table);
+                    model.Total = Convert.ToInt32(Session["gridTotal"]); // (int)Session["gridTotal"];
+                }
+                else
+                {
+                    ModelState.AddModelError(String.Empty, "Dataset is just in processing.");
+                }
 
                 return View(model);
             }
@@ -309,25 +316,31 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                     string ext = ".xlsm";
 
                     DatasetManager datasetManager = new DatasetManager();
-                    DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
-                    ExcelWriter writer = new ExcelWriter();
 
-                    string title = getTitle(writer.GetTitle(id));
-                    
-                    string path = "";
-
-                    // if filter selected
-                    if (filterInUse())
+                    try
                     {
-                        #region generate a subset of a dataset
 
-                        // I have changed all the references to the class "DataTuple" into the class "AbstractTuple" to support previous versions' tuples too.
-                        //the AbstractTuple.TupleType indicates whether the tuple is original or comming from the history
-                        // if(datatuples.First().TupleType == DataTupleType.Original) ...
-                        List<AbstractTuple> datatuples = GetFilteredDataTuples(datasetVersion); 
+                    
+
+                        DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
+                        ExcelWriter writer = new ExcelWriter();
+
+                        string title = getTitle(writer.GetTitle(id));
+
+                        string path = "";
+
+                        // if filter selected
+                        if (filterInUse())
+                        {
+                            #region generate a subset of a dataset
+
+                            // I have changed all the references to the class "DataTuple" into the class "AbstractTuple" to support previous versions' tuples too.
+                            //the AbstractTuple.TupleType indicates whether the tuple is original or comming from the history
+                            // if(datatuples.First().TupleType == DataTupleType.Original) ...
+                            List<AbstractTuple> datatuples = GetFilteredDataTuples(datasetVersion);
 
                             if (Session["Columns"] != null)
-                                writer.VisibleColumns = (String[])Session["Columns"];
+                                writer.VisibleColumns = (String[]) Session["Columns"];
 
                             long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
 
@@ -336,22 +349,26 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                             writer.AddDataTuplesToTemplate(datatuples, path, datastuctureId);
 
                             return File(path, "application/xlsm", title + ext);
-                        #endregion
-                    }
 
-                    //filter not in use
-                    else
-                    {
-                        //excel allready exist
-                        if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals("generated")) > 0)
+                            #endregion
+                        }
+
+                        //filter not in use
+                        else
                         {
-                            #region FileStream exist
+                            //excel allready exist
+                            if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals("generated")) > 0)
+                            {
+                                #region FileStream exist
 
-                                ContentDescriptor contentdescriptor = datasetVersion.ContentDescriptors.Where(p => p.Name.Equals("generated")).FirstOrDefault();
+                                ContentDescriptor contentdescriptor =
+                                    datasetVersion.ContentDescriptors.Where(p => p.Name.Equals("generated"))
+                                        .FirstOrDefault();
                                 path = Path.Combine(AppConfiguration.DataPath, contentdescriptor.URI);
 
                                 long version = datasetVersion.Id;
-                                long versionNrGeneratedFile = Convert.ToInt64(contentdescriptor.URI.Split('\\').Last().Split('_')[1]);
+                                long versionNrGeneratedFile =
+                                    Convert.ToInt64(contentdescriptor.URI.Split('\\').Last().Split('_')[1]);
 
                                 // check if FileStream exist
                                 if (FileHelper.FileExist(path) && version == versionNrGeneratedFile)
@@ -362,117 +379,141 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                                 // if not generate
                                 else
                                 {
-                                    List<long> datatupleIds = datasetManager.GetDatasetVersionEffectiveTupleIds(datasetVersion);
+                                    List<long> datatupleIds =
+                                        datasetManager.GetDatasetVersionEffectiveTupleIds(datasetVersion);
                                     long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
-                                    path = generateDownloadFile(id, datasetVersion.Id, datastuctureId, title, ext, writer);
+                                    path = generateDownloadFile(id, datasetVersion.Id, datastuctureId, title, ext,
+                                        writer);
 
                                     storeGeneratedFilePathToContentDiscriptor(id, datasetVersion, title, ext, writer);
                                     writer.AddDataTuplesToTemplate(datatupleIds, path, datastuctureId);
 
-                                    return File(Path.Combine(AppConfiguration.DataPath, path), "application/xlsm", title + ext);
+                                    return File(Path.Combine(AppConfiguration.DataPath, path), "application/xlsm",
+                                        title + ext);
                                 }
 
-                            #endregion
-                        }
-                        // not exist needs to generated
-                        else
-                        {
-                            #region FileStream not exist
+                                #endregion
+                            }
+                            // not exist needs to generated
+                            else
+                            {
+                                #region FileStream not exist
 
-                                List<long> datatupleIds = datasetManager.GetDatasetVersionEffectiveTupleIds(datasetVersion);
+                                List<long> datatupleIds =
+                                    datasetManager.GetDatasetVersionEffectiveTupleIds(datasetVersion);
                                 long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
                                 path = generateDownloadFile(id, datasetVersion.Id, datastuctureId, title, ext, writer);
 
                                 storeGeneratedFilePathToContentDiscriptor(id, datasetVersion, title, ext, writer);
                                 writer.AddDataTuplesToTemplate(datatupleIds, path, datastuctureId);
 
-                                return File(Path.Combine(AppConfiguration.DataPath, path), "application/xlsm", title + ext);
+                                return File(Path.Combine(AppConfiguration.DataPath, path), "application/xlsm",
+                                    title + ext);
 
-                            #endregion
+                                #endregion
+                            }
+
                         }
 
-                    }
+
+
                 }
-                
-                public ActionResult DownloadAsCsvData(long id)
+                catch (Exception ex)
                 {
-                    string ext = ".csv";
 
-                    DatasetManager datasetManager = new DatasetManager();
-                    DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
-                    AsciiWriter writer = new AsciiWriter(TextSeperator.comma);
-                    string title = getTitle(writer.GetTitle(id));
-                    string path = "";
+                    throw ex;
+                }
 
-                    // if filter selected
-                    if (filterInUse())
+        }
+
+        public ActionResult DownloadAsCsvData(long id)
+        {
+            string ext = ".csv";
+
+            try
+            {
+                DatasetManager datasetManager = new DatasetManager();
+                DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
+                AsciiWriter writer = new AsciiWriter(TextSeperator.comma);
+                string title = getTitle(writer.GetTitle(id));
+                string path = "";
+
+                // if filter selected
+                if (filterInUse())
+                {
+                    #region generate a subset of a dataset
+                    List<AbstractTuple> datatuples = GetFilteredDataTuples(datasetVersion);
+
+                    long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
+
+                    path = generateDownloadFile(id, datasetVersion.Id, datastuctureId, title, ext, writer);
+
+                    if (Session["Columns"] != null)
+                        writer.VisibleColumns = (String[])Session["Columns"];
+
+                    writer.AddDataTuples(datatuples, path, datastuctureId);
+
+
+                    return File(path, "text/csv", title + ext);
+                    #endregion
+                }
+                else
+                {
+                    List<long> datatupleIds = datasetManager.GetDatasetVersionEffectiveTupleIds(datasetVersion);
+                    long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
+
+                    //csv allready exist
+                    if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals("generatedCSV")) > 0)
                     {
-                        #region generate a subset of a dataset
-                        List<AbstractTuple> datatuples = GetFilteredDataTuples(datasetVersion);
+                        #region FileStream exist
 
-                        long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
+                        ContentDescriptor contentdescriptor = datasetVersion.ContentDescriptors.Where(p => p.Name.Equals("generatedCSV")).FirstOrDefault();
+                        path = Path.Combine(AppConfiguration.DataPath, contentdescriptor.URI);
 
-                        path = generateDownloadFile(id, datasetVersion.Id, datastuctureId, title, ext, writer);
-
-                        if (Session["Columns"] != null)
-                            writer.VisibleColumns = (String[])Session["Columns"];
-
-                        writer.AddDataTuples(datatuples, path, datastuctureId);
-
-
-                        return File(path, "text/csv", title + ext);
-                        #endregion
-                    }
-                    else
-                    {
-                        List<long> datatupleIds = datasetManager.GetDatasetVersionEffectiveTupleIds(datasetVersion);
-                        long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
-
-                        //csv allready exist
-                        if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals("generatedCSV")) > 0)
+                        if (FileHelper.FileExist(path))
                         {
-                            #region FileStream exist
-
-                            ContentDescriptor contentdescriptor = datasetVersion.ContentDescriptors.Where(p => p.Name.Equals("generatedCSV")).FirstOrDefault();
-                            path = Path.Combine(AppConfiguration.DataPath, contentdescriptor.URI);
-
-                            if (FileHelper.FileExist(path))
-                            {
-                                return File(path, contentdescriptor.MimeType, title + ext);
-                            }
-                            else
-                            {
-                                
-                                path = generateDownloadFile(id, datasetVersion.Id, datastuctureId, title, ext ,writer);
-
-                                storeGeneratedFilePathToContentDiscriptor(id, datasetVersion, title, ext, writer);
-
-                                writer.AddDataTuples(datatupleIds, path, datastuctureId);
-
-                                return File(path, "text/csv", title + ".csv");
-                            }
-
-                            #endregion
-
+                            return File(path, contentdescriptor.MimeType, title + ext);
                         }
-                        // not exist needs to generated
                         else
                         {
-                            #region FileStream not exist
-
-                            path = generateDownloadFile(id, datasetVersion.Id, datastuctureId, title, ext, writer);
+                                
+                            path = generateDownloadFile(id, datasetVersion.Id, datastuctureId, title, ext ,writer);
 
                             storeGeneratedFilePathToContentDiscriptor(id, datasetVersion, title, ext, writer);
 
                             writer.AddDataTuples(datatupleIds, path, datastuctureId);
 
                             return File(path, "text/csv", title + ".csv");
-
-                            #endregion
                         }
-                    }
 
+                        #endregion
+
+                    }
+                    // not exist needs to generated
+                    else
+                    {
+                        #region FileStream not exist
+
+                        path = generateDownloadFile(id, datasetVersion.Id, datastuctureId, title, ext, writer);
+
+                        storeGeneratedFilePathToContentDiscriptor(id, datasetVersion, title, ext, writer);
+
+                        writer.AddDataTuples(datatupleIds, path, datastuctureId);
+
+                        return File(path, "text/csv", title + ".csv");
+
+                        #endregion
+                    }
                 }
+
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
+        }
 
                 public ActionResult DownloadAsTxtData(long id)
                 {
@@ -798,6 +839,10 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
                 public ActionResult DownloadAllFiles(long id)
                 {
+                    try
+                    {
+
+                    
                     DatasetManager datasetManager = new DatasetManager();
                     DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
 
@@ -832,8 +877,15 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
                     return File(zipPath, "application/zip", title + ".zip");
                 }
-            
-            #endregion
+                catch (Exception ex)
+                {
+
+                    throw ex;
+                }
+
+        }
+
+        #endregion
         #endregion
 
         #region datastructure
@@ -843,16 +895,24 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             {
                 long id = datasetID;
                 DatasetManager dm = new DatasetManager();
-                DatasetVersion ds = dm.GetDatasetLatestVersion(id);
-                if (ds != null)
+                if (dm.IsDatasetCheckedIn(id))
                 {
-                    DataStructureManager dsm = new DataStructureManager();
-                    StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(ds.Dataset.DataStructure.Id);
-                    dsm.StructuredDataStructureRepo.LoadIfNot(sds.Variables);
-                    //StructuredDataStructure sds = (StructuredDataStructure)(ds.Dataset.DataStructure.Self);
-                    DataTable table = SearchUIHelper.ConvertStructuredDataStructureToDataTable(sds);
+                    DatasetVersion ds = dm.GetDatasetLatestVersion(id);
+                    if (ds != null)
+                    {
+                        DataStructureManager dsm = new DataStructureManager();
+                        StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(ds.Dataset.DataStructure.Id);
+                        dsm.StructuredDataStructureRepo.LoadIfNot(sds.Variables);
+                        //StructuredDataStructure sds = (StructuredDataStructure)(ds.Dataset.DataStructure.Self);
+                        DataTable table = SearchUIHelper.ConvertStructuredDataStructureToDataTable(sds);
 
-                    return View(new GridModel(table));
+                        return View(new GridModel(table));
+                    }
+
+                }
+                else
+                {
+                    ModelState.AddModelError(String.Empty,"Dataset is just in processing.");
                 }
 
                 return View(new GridModel(new DataTable()));
@@ -861,19 +921,28 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             public ActionResult ShowPreviewDataStructure(long datasetID)
             {
                 DatasetManager dm = new DatasetManager();
-                DatasetVersion ds = dm.GetDatasetLatestVersion((long)datasetID);
-                DataStructureManager dsm = new DataStructureManager();
-                DataStructure dataStructure = dsm.AllTypesDataStructureRepo.Get(ds.Dataset.DataStructure.Id);
-        
+                try
+                {
+                    DatasetVersion ds = dm.GetDatasetLatestVersion(datasetID);
+                    DataStructureManager dsm = new DataStructureManager();
+                    DataStructure dataStructure = dsm.AllTypesDataStructureRepo.Get(ds.Dataset.DataStructure.Id);
 
-                long id = (long)datasetID;
 
-                Tuple<DataStructure, long> m = new Tuple<DataStructure, long>(
-                    dataStructure,
-                    id
-                   );
+                    long id = (long)datasetID;
 
-                return PartialView("_previewDatastructure", m);
+                    Tuple<DataStructure, long> m = new Tuple<DataStructure, long>(
+                        dataStructure,
+                        id
+                        );
+
+                    return PartialView("_previewDatastructure", m);
+                }
+                catch (Exception ex)
+                {
+                    
+                    throw ex;
+                }
+                   
             }
 
         #endregion
