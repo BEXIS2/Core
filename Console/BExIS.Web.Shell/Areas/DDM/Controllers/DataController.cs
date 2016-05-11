@@ -43,44 +43,54 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
         public ActionResult ShowData(long id)
         {
-           
+
             DatasetManager dm = new DatasetManager();
+
             PermissionManager permissionManager = new PermissionManager();
             SubjectManager subjectManager = new SubjectManager();
+            DatasetVersion dsv;
+            ShowDataModel model = new ShowDataModel();
 
-            DatasetVersion dsv = dm.GetDatasetLatestVersion(id);
+            string title = "";
 
-            MetadataStructureManager msm = new MetadataStructureManager();
-            dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
+            if (dm.IsDatasetCheckedIn(id))
+            {
+                dsv = dm.GetDatasetLatestVersion(id);
 
-            string title = XmlDatasetHelper.GetInformation(dsv, AttributeNames.title);
+                MetadataStructureManager msm = new MetadataStructureManager();
+                dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
 
-            ViewBag.Title = PresentationModel.GetViewTitle("Show Data : " + title);
+                title = XmlDatasetHelper.GetInformation(dsv, AttributeNames.title);
 
-            bool isCheckedIn = dm.IsDatasetCheckedIn(id);
+                ViewBag.Title = PresentationModel.GetViewTitle("Show Data : " + title);
 
-            ShowDataModel model = new ShowDataModel()
+            }
+            else
+            {
+                ModelState.AddModelError(string.Empty, "Dataset is just in processing.");
+            }
+
+            model = new ShowDataModel()
             {
                 Id = id,
                 Title = title,
                 ViewAccess = permissionManager.HasUserDataAccess(HttpContext.User.Identity.Name, 1, id, RightType.View),
-                GrantAccess = permissionManager.HasUserDataAccess(HttpContext.User.Identity.Name, 1, id, RightType.Grant),
-                IsCheckedIn = isCheckedIn
+                GrantAccess =
+                    permissionManager.HasUserDataAccess(HttpContext.User.Identity.Name, 1, id, RightType.Grant)
             };
-
 
             return View(model);
         }
 
         #region metadata
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <remarks></remarks>
-        /// <seealso cref=""/>
-        /// <param name="datasetID"></param>
-        /// <returns>model</returns>
+            /// <summary>
+            ///
+            /// </summary>
+            /// <remarks></remarks>
+            /// <seealso cref=""/>
+            /// <param name="datasetID"></param>
+            /// <returns>model</returns>
         public ActionResult ShowMetaData(long datasetID)
         {
             ShowMetadataModel model = new ShowMetadataModel();
@@ -191,46 +201,63 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 Session["Columns"] = null;
                 Session["DownloadFullDataset"] = false;
                 ViewData["DownloadOptions"] = null;
-         
 
                 DatasetManager dm = new DatasetManager();
-                DatasetVersion dsv = dm.GetDatasetLatestVersion(datasetID);
-                DataStructureManager dsm = new DataStructureManager();
 
-                StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(dsv.Dataset.DataStructure.Id);
-                DataStructure ds = dsm.AllTypesDataStructureRepo.Get(dsv.Dataset.DataStructure.Id);
+                dm.CheckOutDataset(datasetID, "david");
 
-                //permission download
-                PermissionManager permissionManager = new PermissionManager();
-                SubjectManager subjectManager = new SubjectManager();
-                
-                bool downloadAccess = permissionManager.HasUserDataAccess(HttpContext.User.Identity.Name, 1, datasetID, RightType.Download);
-
-                //TITLE
-                string title = XmlDatasetHelper.GetInformation(dsv, AttributeNames.title);
-
-                if (ds.Self.GetType() == typeof(StructuredDataStructure))
+                if (dm.IsDatasetCheckedIn(datasetID))
                 {
+                    DatasetVersion dsv = dm.GetDatasetLatestVersion(datasetID);
+                    DataStructureManager dsm = new DataStructureManager();
 
-                    List<AbstractTuple> dataTuples = dm.GetDatasetVersionEffectiveTuples(dsv,0,100);
-                    //List<AbstractTuple> dataTuples = dm.GetDatasetVersionEffectiveTuples(dsv);
 
-                    DataTable table = SearchUIHelper.ConvertPrimaryDataToDatatable(dsv, dataTuples);
+                    StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(dsv.Dataset.DataStructure.Id);
+                    DataStructure ds = dsm.AllTypesDataStructureRepo.Get(dsv.Dataset.DataStructure.Id);
 
-                    Session["gridTotal"] = dm.GetDatasetVersionEffectiveTupleCount(dsv);
+                    //permission download
+                    PermissionManager permissionManager = new PermissionManager();
+                    SubjectManager subjectManager = new SubjectManager();
 
-                    return PartialView(ShowPrimaryDataModel.Convert(datasetID, title, sds, table, downloadAccess));
+                    bool downloadAccess = permissionManager.HasUserDataAccess(HttpContext.User.Identity.Name, 1,
+                        datasetID, RightType.Download);
 
-                    //return PartialView(new ShowPrimaryDataModel());
+                    //TITLE
+                    string title = XmlDatasetHelper.GetInformation(dsv, AttributeNames.title);
+
+                    if (ds.Self.GetType() == typeof(StructuredDataStructure))
+                    {
+
+                        List<AbstractTuple> dataTuples = dm.GetDatasetVersionEffectiveTuples(dsv, 0, 100);
+                        //List<AbstractTuple> dataTuples = dm.GetDatasetVersionEffectiveTuples(dsv);
+
+                        DataTable table = SearchUIHelper.ConvertPrimaryDataToDatatable(dsv, dataTuples);
+
+                        Session["gridTotal"] = dm.GetDatasetVersionEffectiveTupleCount(dsv);
+
+                        dm.CheckInDataset(datasetID, "", "david");
+
+                        return PartialView(ShowPrimaryDataModel.Convert(datasetID, title, sds, table, downloadAccess));
+
+                        //return PartialView(new ShowPrimaryDataModel());
+                    }
+
+                    if (ds.Self.GetType() == typeof(UnStructuredDataStructure))
+                    {
+                        return
+                            PartialView(ShowPrimaryDataModel.Convert(datasetID, title, ds,
+                                SearchUIHelper.GetContantDescriptorFromKey(dsv, "unstructuredData"), downloadAccess));
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Dataset is just in processing.");
                 }
 
-                if (ds.Self.GetType() == typeof(UnStructuredDataStructure))
-                {
-                    return PartialView(ShowPrimaryDataModel.Convert(datasetID,title, ds, SearchUIHelper.GetContantDescriptorFromKey(dsv, "unstructuredData"),downloadAccess));
-                }
 
-                return null;
-            }
+                return PartialView(null);
+
+        }
 
             #region server side
 

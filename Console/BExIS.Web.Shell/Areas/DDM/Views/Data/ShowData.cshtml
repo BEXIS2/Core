@@ -19,7 +19,7 @@
 
 @if(@Model != null)
 {
-    if (Model.IsCheckedIn)
+    if (ViewData.ModelState.IsValid)
     {
 
         @(Html.Telerik().TabStrip()
@@ -52,7 +52,7 @@
     }
     else
     {
-        <p> Dataset : @Model.Title is just in processing. </p>
+        @Html.ValidationSummary(true);
     }
 }
 
