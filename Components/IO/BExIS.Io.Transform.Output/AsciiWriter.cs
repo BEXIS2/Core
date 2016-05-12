@@ -98,7 +98,6 @@ namespace BExIS.IO.Transform.Output
             if (File.Exists(filePath))
             {
                 StringBuilder data = new StringBuilder();
-
                 data.AppendLine(dataStructureToRow(dataStructureId));
 
                 foreach (long id in dataTuplesIds)
@@ -215,36 +214,43 @@ namespace BExIS.IO.Transform.Output
         private string datatupleToRow(AbstractTuple dataTuple)
         {
             StringBuilder builder = new StringBuilder();
- 
+            StructuredDataStructure sds = GetDataStructure();
+
             bool first = true;
             string value = "";
 
-            if (dataTuple.VariableValues.Count > 0)
+            foreach (VariableIdentifier vi in this.VariableIdentifiers)
             {
-                foreach (VariableIdentifier vi in this.VariableIdentifiers)
+                Variable variable = sds.Variables.Where(p => p.Id == vi.id).SingleOrDefault();
+
+                if (variable != null)
                 {
+                    Dlm.Entities.DataStructure.DataType dataType = variable.DataAttribute.DataType;
+
                     VariableValue vv = dataTuple.VariableValues.Where(v => v.Variable.Id.Equals(vi.id)).FirstOrDefault();
-                    if (vv.Value != null)
+
+                    if (vv !=null && vv.Value != null)
                     {
-                        string format = GetStringFormat(vv.Variable.DataAttribute.DataType);
+                        string format = GetStringFormat(dataType);
                         if (!string.IsNullOrEmpty(format))
                         {
-                            value = GetFormatedValue(vv.Value, vv.Variable.DataAttribute.DataType, format);
+                            value = GetFormatedValue(vv.Value, dataType, format);
                         }
                         else value = vv.Value.ToString();
                     }
-                    // Add separator if this isn't the first value
-                    if (!first)
-                        builder.Append(AsciiHelper.GetSeperator(Delimeter));
-                    // Implement special handling for values that contain comma or quote
-                    // Enclose in quotes and double up any double quotes
-                    if (value.IndexOfAny(new char[] {'"', ','}) != -1)
-                        builder.AppendFormat("\"{0}\"", value.Replace("\"", "\"\""));
-                    else
-                        builder.Append(value);
-                    first = false;
                 }
+                // Add separator if this isn't the first value
+                if (!first)
+                    builder.Append(AsciiHelper.GetSeperator(Delimeter));
+                // Implement special handling for values that contain comma or quote
+                // Enclose in quotes and double up any double quotes
+                if (value.IndexOfAny(new char[] {'"', ','}) != -1)
+                    builder.AppendFormat("\"{0}\"", value.Replace("\"", "\"\""));
+                else
+                    builder.Append(value);
+                first = false;
             }
+  
             return builder.ToString();
         }
         

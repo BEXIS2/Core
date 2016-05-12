@@ -305,11 +305,7 @@
       <DependentUpon>UploadLocalization.zh-CN.resx</DependentUpon>
     </Compile>
     <Compile Include="App_Start\RegisterClientValidationExtensions.cs" />
-    <Compile Include="Areas\DCM\Controllers\CreateController.cs" />
     <Compile Include="Areas\DCM\Controllers\CreateDatasetController.cs" />
-    <Compile Include="Areas\DCM\Controllers\CreateSetMetadataPackageController.cs" />
-    <Compile Include="Areas\DCM\Controllers\CreateSelectDatasetSetupController.cs" />
-    <Compile Include="Areas\DCM\Controllers\CreateSummaryController.cs" />
     <Compile Include="Areas\DCM\Controllers\DcmAdminController.cs" />
     <Compile Include="Areas\DCM\Controllers\HelpController.cs" />
     <Compile Include="Areas\DCM\Controllers\ImportMetadataStructureController.cs" />
@@ -1292,16 +1288,6 @@
     <Content Include="Areas\DDM\Views\Admin\ReIndexSearch.cshtml" />
     <Content Include="Areas\DCM\Views\Submit\FinishUpload.cshtml" />
     <Content Include="Areas\DCM\Views\Submit\Test.cshtml" />
-    <Content Include="Areas\DCM\Views\Create\Index.cshtml" />
-    <Content Include="Areas\DCM\Views\Create\CreateDataset.cshtml" />
-    <Content Include="Areas\DCM\Views\Create\_createWizardNav.cshtml" />
-    <Content Include="Areas\DCM\Views\Create\_taskListView.cshtml" />
-    <Content Include="Areas\DCM\Views\Create\FinishCreation.cshtml" />
-    <Content Include="Areas\DCM\Views\CreateSelectDatasetSetup\SelectDatasetSetup.cshtml" />
-    <Content Include="Areas\DCM\Views\CreateSetMetadataPackage\SetMetadataPackage.cshtml" />
-    <Content Include="Areas\DCM\Views\CreateSetMetadataPackage\_setMetadataAttribute.cshtml" />
-    <Content Include="Areas\DCM\Views\CreateSetMetadataPackage\_metadataPackage.cshtml" />
-    <Content Include="Areas\DCM\Views\CreateSummary\Summary.cshtml" />
     <Content Include="Areas\DCM\Views\DcmAdmin\CreateMetadataStructure.cshtml" />
     <Content Include="Areas\DCM\Views\DcmAdmin\Index.cshtml" />
     <Content Include="Areas\DCM\Views\Shared\_errorMessages.cshtml" />
@@ -1338,10 +1324,6 @@
     <Content Include="Areas\DCM\Views\ImportMetadataStructure\_wizardNav.cshtml" />
     <Content Include="Areas\DCM\Views\ImportMetadataStructureSetParameters\SetParameters.cshtml" />
     <Content Include="Areas\DCM\Views\SubmitDefinePrimaryKey\DefinePrimaryKey.cshtml" />
-    <Content Include="Areas\DCM\Views\CreateSetMetadataPackage\SetMetadataCompoundAttribute.cshtml" />
-    <Content Include="Areas\DCM\Views\CreateSetMetadataPackage\_setMetadataCompoundAttribute.cshtml" />
-    <Content Include="Areas\DCM\Views\CreateSetMetadataPackage\_setMetadataCompoundAttributeInstanz.cshtml" />
-    <Content Include="Areas\DCM\Views\CreateSetMetadataPackage\_setMetadataPackageInstanz.cshtml" />
     <Content Include="Areas\RPM\Views\Home\_dataStructureSaveAs.cshtml" />
     <Content Include="Areas\DDM\Views\Home\_myDatasetGridView.cshtml" />
     <Content Include="Areas\DDM\Views\Data\_showItem.cshtml" />
