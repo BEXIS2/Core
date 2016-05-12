@@ -75,6 +75,7 @@ namespace BExIS.IO.Transform.Output
             /// <seealso cref=""/>        
             protected List<List<string>> VariableIdentifierRows = new List<List<string>>();
 
+            protected StructuredDataStructure dataStructure = null;
         #endregion
 
         //managers
@@ -349,8 +350,18 @@ namespace BExIS.IO.Transform.Output
         /// <returns></returns>
         protected StructuredDataStructure GetDataStructure(long id)
         {
-            DataStructureManager dataStructureManager = new DataStructureManager();
-            return dataStructureManager.StructuredDataStructureRepo.Get(id);
+            if (dataStructure == null)
+            {
+                DataStructureManager dataStructureManager = new DataStructureManager();
+                dataStructure =  dataStructureManager.StructuredDataStructureRepo.Get(id);
+            }
+
+            return dataStructure;
+        }
+
+        protected StructuredDataStructure GetDataStructure()
+        {
+            return dataStructure;
         }
 
         /// <summary>
