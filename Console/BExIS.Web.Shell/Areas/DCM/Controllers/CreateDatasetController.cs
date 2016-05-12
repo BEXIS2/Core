@@ -1703,16 +1703,23 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 type = (BExIS.Dcm.UploadWizard.DataStructureType)TaskManager.Bus[CreateDatasetTaskmanager.DATASTRUCTURE_TYPE];
             }
 
+            long datasetid = 0;
+            // set parameters for upload process to pass it with the action
+            if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.DATASET_ID))
+            {
+                datasetid = Convert.ToInt64(TaskManager.Bus[CreateDatasetTaskmanager.DATASET_ID]);
+            }
 
             Session["CreateDatasetTaskmanager"] = null;
             TaskManager = null;
 
-            return RedirectToAction("UploadWizard", "Submit", new RouteValueDictionary { { "area", "DCM" }, { "type", type } });
+            return RedirectToAction("UploadWizard", "Submit", new { area = "DCM", type = type , datasetid = datasetid });
+  
         }
 
         public ActionResult ShowData(long id)
         {
-            return RedirectToAction("ShowData", "Data", new RouteValueDictionary { { "area", "DDM" }, { "id", id } });
+            return RedirectToAction("ShowData", "Data", new { area="DDM" , id = id } );
         }
 
         private DataStructureType GetDataStructureType(long id)

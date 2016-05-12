@@ -50,7 +50,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         #region Upload Wizard
 
-        public ActionResult UploadWizard(DataStructureType type)
+        public ActionResult UploadWizard(DataStructureType type, long datasetid=0)
         {
             ViewBag.Title = PresentationModel.GetViewTitle("Upload Data");
 
@@ -95,7 +95,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 Session["DatasetVersionViewList"] = LoadDatasetVersionViewList(type);
                 Session["DataStructureViewList"] = LoadDataStructureViewList(type);
                 Session["ResearchPlanViewList"] = LoadResearchPlanViewList();
-                
+
+                // setparameters
+                SetParametersToTaskmanager(datasetid);
             }
 
 
@@ -288,16 +290,52 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 return temp.OrderBy(p => p.Title).ToList();
             }
 
-            
-        #endregion
+            private void SetParametersToTaskmanager(long datasetId)
+            {
+                if (TaskManager == null)
+                {
+                    TaskManager = (TaskManager) Session["TaskManager"];
+                }
+
+                #region set dataset id & dataset title 
+
+                if (datasetId > 0)
+                {
+                    try
+                    {
+                        long datasetid = Convert.ToInt64(datasetId);
+                        TaskManager.AddToBus(TaskManager.DATASET_ID, datasetid);
+
+                        // get title
+                        DatasetManager dm = new DatasetManager();
+                        string title = "";
+                        // is checkedIn?
+                        if (dm.IsDatasetCheckedIn(datasetid))
+                        {
+                            title = XmlDatasetHelper.GetInformation(dm.GetDatasetLatestVersion(datasetid),
+                                AttributeNames.title);
+                        }
+
+                        TaskManager.AddToBus(TaskManager.DATASET_TITLE, title);
+                    }
+
+                    catch (Exception ex)
+                    {
+                        throw ex;
+                    }
+                }
+
+                #endregion
+
+            }
 
         #endregion
 
+        #endregion
 
         #region helper
 
         #endregion
-
 
     }
 

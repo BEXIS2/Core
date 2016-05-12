@@ -65,7 +65,7 @@
             { 
 
                 <td>You successfully created dataset: <br /><b>@Model.DatasetTitle</b></td>
-                <td>Please use the <b>@Html.ActionLink("Upload Data Wizard ", "StartUploadWizard", "CreateDataset", new RouteValueDictionary { { "area", "DCM" } }, new { title = "Link to upload wizard", @class="bx-link" })</b><br />
+                <td>Please use the <b>@Html.ActionLink("Upload Data Wizard ", "StartUploadWizard", "CreateDataset", new { area = "DCM"  }, new { title = "Link to upload wizard", @class="bx-link" })</b><br />
                     to add primary data to this dataset.</td>
 
                 if (@Model.DatasetId > 0)
