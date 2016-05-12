@@ -378,7 +378,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                         // a proper fetch (page) size can be obtained by calling dm.PreferedBatchSize
                         int fetchSize = dm.PreferedBatchSize;
                         long tupleSize = dm.GetDatasetVersionEffectiveTupleCount(dsv);
-                        long noOfFetchs = tupleSize/fetchSize;
+                        long noOfFetchs = tupleSize/fetchSize + 1;
                         for (int round = 0; round < noOfFetchs; round++)
                         {
                             List<AbstractTuple> dsVersionTuples = dm.GetDatasetVersionEffectiveTuples(dsv, round,

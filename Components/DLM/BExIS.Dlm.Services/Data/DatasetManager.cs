@@ -295,6 +295,7 @@ namespace BExIS.Dlm.Services.Data
             // this movement reduces the amount of tuples in the active tuples table and also marks the dataset as archived upon delete
             checkOutDataset(entity.Id, username, DateTime.UtcNow);
             var workingCopy = getDatasetWorkingCopy(entity.Id);
+            //This fetch and insert will be problematic on bigger datasets! try implement the logic without loading the tuples
             var tuples = getWorkingCopyTuples(workingCopy);
             workingCopy = editDatasetVersion(workingCopy, null, null, tuples, null); // deletes all the tuples from the active list and moves them to the history table
             checkInDataset(entity.Id, "Dataset is deleted", username, false);
@@ -331,52 +332,61 @@ namespace BExIS.Dlm.Services.Data
             this.DataTupleVerionRepo.Evict();
 
             Dataset entity = this.DatasetRepo.Get(datasetId);
-            
+
             if (entity == null)
                 return false;
 
-            List<Int64> versionIds = entity.Versions
+            IList<Int64> versionIds = entity.Versions
                            .Select(p => p.Id)
                            .ToList();
 
-            var tupleVersions = (versionIds == null || versionIds.Count() <= 0) ? null : DataTupleVerionRepo.Get(p => versionIds.Contains(p.DatasetVersion.Id));
-            var tuples = (versionIds == null || versionIds.Count() <= 0) ? null : DataTupleRepo.Get(p => versionIds.Contains(p.DatasetVersion.Id));
-            using (IUnitOfWork uow = this.GetUnitOfWork())
+            IList<Int64> tupleIds = (versionIds == null || versionIds.Count() <= 0) ? null : DataTupleRepo.Query(p => versionIds.Contains(p.DatasetVersion.Id)).Select(p=>p.Id).ToList();
+            IList<Int64> tupleVersionIds = (versionIds == null || versionIds.Count() <= 0) ? null : DataTupleVerionRepo.Query(p => versionIds.Contains(p.DatasetVersion.Id)).Select(p => p.Id).ToList();
+            string queryStr = "DELETE FROM {0} e WHERE e.Id IN (:idsList)";
+            //queryStr = "DELETE FROM {0} e WHERE e.Id IN (23, 24, 25)";
+
+            using (IUnitOfWork uow = this.GetBulkUnitOfWork())
             {
                 IRepository<Dataset> repo = uow.GetRepository<Dataset>();
-                IRepository<DataTupleVersion> repo2 = uow.GetRepository<DataTupleVersion>();
-                IRepository<DataTuple> repo3 = uow.GetRepository<DataTuple>();
-
-                if (tupleVersions != null)
+                IRepository<DataTupleVersion> tupleVersionRepo = uow.GetRepository<DataTupleVersion>();
+                IRepository<DatasetVersion> versionRepo = uow.GetRepository<DatasetVersion>();
+                IRepository<DataTuple> tuplesRepo = uow.GetRepository<DataTuple>();
+                if (tupleVersionIds != null && tupleVersionIds.Count > 0)
                 {
-                    foreach (var item in tupleVersions)
+                    long iternations = tupleVersionIds.Count / PreferedBatchSize + 1;
+                    for (int round = 0; round < iternations; round++)
                     {
-                        item.OriginalTuple = null;
-                        item.DatasetVersion = null;
-                        item.ActingDatasetVersion = null;
-                        repo2.Delete(item); // this is not a good solution as it loads all the tuple versions an then deletes them!! a generic solution for bulk delete without loading is needed
+                        Dictionary<string, object> parameters = new Dictionary<string, object>();
+                        parameters.Add("idsList", tupleVersionIds.Skip(round * PreferedBatchSize).Take(PreferedBatchSize).ToList());
+                        tupleVersionRepo.Execute(string.Format(queryStr, "DataTupleVersion"), parameters);
                     }
                 }
-                if (tuples != null)
+                if (tupleIds != null && tupleIds.Count > 0)
                 {
-                    foreach (var tuple in tuples)
+                    long iternations = tupleIds.Count / PreferedBatchSize + 1;
+                    for (int round = 0; round < iternations; round++)
                     {
-                        try
-                        {
-                            tuple.History.ToList().ForEach(p => p.OriginalTuple = null);
-                            tuple.History.Clear();
-                        }
-                        catch { }
-                        try
-                        {
-                            tuple.DatasetVersion.PriliminaryTuples.Remove(tuple);
-                            tuple.DatasetVersion = null;
-                        }
-                        catch { }
-                        repo3.Delete(tuple); // this is not a good solution as it loads all the tuple versions an then deletes them!! a generic solution for bulk delete without loading is needed
+                        Dictionary<string, object> parameters = new Dictionary<string, object>();
+                        parameters.Add("idsList", tupleIds.Skip(round*PreferedBatchSize).Take(PreferedBatchSize).ToList());
+                        tuplesRepo.Execute(string.Format(queryStr, "DataTuple"), parameters);
                     }
                 }
-                repo.Delete(entity);
+                if (versionIds != null && versionIds.Count > 0)
+                {
+                    long iternations = versionIds.Count / PreferedBatchSize + 1;
+                    for (int round = 0; round < iternations; round++)
+                    {
+                        Dictionary<string, object> parameters = new Dictionary<string, object>();
+                        parameters.Add("idsList", versionIds.Skip(round * PreferedBatchSize).Take(PreferedBatchSize).ToList());
+                        versionRepo.Execute(string.Format(queryStr, "DatasetVersion"), parameters);
+                    }
+                }
+                {
+                    Dictionary<string, object> parameters = new Dictionary<string, object>();
+                    parameters.Add("idsList", new List<Int64>() { entity.Id });
+                    repo.Execute(string.Format(queryStr, "Dataset"), parameters);
+                    //repo.Delete(entity);
+                }
                 uow.Commit();
             }
             // if any problem was detected during the commit, an exception will be thrown!
@@ -386,7 +396,7 @@ namespace BExIS.Dlm.Services.Data
         #endregion
 
         #region DatasetVersion
-        
+
         /// <summary>
         /// Each dataset may have more than one versions, each having their own data tuples. The data tuples of the latest version are kept in a separate collection,
         /// but the previous versions are scattered among the data tuple and historical tuple collections. The later is the place that acts as the place to keep record of
