@@ -163,8 +163,11 @@ namespace BExIS.Dlm.Entities.Data
         public override void Materialize(bool includeChildren = true)
         {
             base.Materialize();
-            if(this.PriliminaryTuples != null)
-                this.PriliminaryTuples.ToList().ForEach(p => p.Materialize());
+            if (includeChildren)
+            {
+                if (this.PriliminaryTuples != null)
+                    this.PriliminaryTuples.ToList().ForEach(p => p.Materialize());
+            }
         }
 
         /// <summary>
@@ -176,8 +179,11 @@ namespace BExIS.Dlm.Entities.Data
         public override void Dematerialize(bool includeChildren=true)
         {
             base.Dematerialize();
-            if (this.PriliminaryTuples != null)
-                this.PriliminaryTuples.ToList().ForEach(p => p.Dematerialize());            
+            if (includeChildren)
+            {
+                if (this.PriliminaryTuples != null)
+                    this.PriliminaryTuples.ToList().ForEach(p => p.Dematerialize());
+            }
         }
 
         #endregion

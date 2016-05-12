@@ -1116,7 +1116,7 @@ namespace BExIS.Dlm.Services.Data
                 IRepository<DataTuple> tupleRepo = uow.GetRepository<DataTuple>();
 
                 // depends on how applyTupleChanges adds the tuples to its PriliminaryTuples!
-                if (createdTuples != null)
+                if (createdTuples != null && createdTuples.Count >0)
                 {
                     int count = 0;
                     int batchSize = uow.PersistenceManager.PreferredPushSize;// int.Parse(uow.PersistenceManager.GetProperty("adonet.batch_size")); //.GetProperty("default_batch_size"));
@@ -1146,7 +1146,7 @@ namespace BExIS.Dlm.Services.Data
                 //        tupleVersionRepo.Put(dtv);
                 //    }
                 //}
-                if (tobeAdded != null)
+                if (tobeAdded != null && tobeAdded.Count > 0)
                 {
                     int count = 0;
                     int batchSize = uow.PersistenceManager.PreferredPushSize;// int.Parse(uow.PersistenceManager.GetProperty("adonet.batch_size")); //.GetProperty("default_batch_size"));
@@ -1180,7 +1180,7 @@ namespace BExIS.Dlm.Services.Data
                 //        tupleRepo.Delete(tuple);
                 //    }
                 //}
-                if (tobeDeleted != null)
+                if (tobeDeleted != null && tobeDeleted.Count > 0)
                 {
                     int count = 0;
                     int batchSize = uow.PersistenceManager.PreferredPushSize;// int.Parse(uow.PersistenceManager.GetProperty("adonet.batch_size")); //.GetProperty("default_batch_size"));

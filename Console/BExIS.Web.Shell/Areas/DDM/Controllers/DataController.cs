@@ -643,33 +643,36 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         // create the generated FileStream and determine its location
                         string dynamicPath = writer.GetDynamicStorePath(datasetId, datasetVersion.Id, title, ext);
                         //Register the generated data FileStream as a resource of the current dataset version
-                        ContentDescriptor generatedDescriptor = new ContentDescriptor()
-                        {
-                            OrderNo = 1,
-                            Name = name,
-                            MimeType = mimeType,
-                            URI = dynamicPath,
-                            DatasetVersion = datasetVersion,
-                        };
+                        //ContentDescriptor generatedDescriptor = new ContentDescriptor()
+                        //{
+                        //    OrderNo = 1,
+                        //    Name = name,
+                        //    MimeType = mimeType,
+                        //    URI = dynamicPath,
+                        //    DatasetVersion = datasetVersion,
+                        //};
 
-                        if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(generatedDescriptor.Name)) > 0)
+                        DatasetManager dm = new DatasetManager();
+                        if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(name)) > 0)
                         {   // remove the one contentdesciptor 
                             foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
                             {
-                                if (cd.Name == generatedDescriptor.Name)
+                                if (cd.Name == name)
                                 {
-                                    cd.URI = generatedDescriptor.URI;
+                                    cd.URI = dynamicPath;
+                                    dm.UpdateContentDescriptor(cd);
                                 }
                             }
                         }
                         else
                         {
                             // add current contentdesciptor to list
-                            datasetVersion.ContentDescriptors.Add(generatedDescriptor);
+                            //datasetVersion.ContentDescriptors.Add(generatedDescriptor);
+                            dm.CreateContentDescriptor(name, mimeType, dynamicPath, 1, datasetVersion);
                         }
 
-                        DatasetManager dm = new DatasetManager();
-                        dm.EditDatasetVersion(datasetVersion, null, null, null);
+                        //dm.EditDatasetVersion(datasetVersion, null, null, null);
+                        
                     }
                     
                     private List<AbstractTuple> GetFilteredDataTuples(DatasetVersion datasetVersion)
