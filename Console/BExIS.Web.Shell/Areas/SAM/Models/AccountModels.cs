@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Web.Mvc;
 using BExIS.Security.Entities.Subjects;
+using BExIS.Web.Shell.Areas.SAM.Helpers;
 using DataAnnotationsExtensions;
 
 namespace BExIS.Web.Shell.Areas.SAM.Models
@@ -47,12 +48,11 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
         public AuthenticatorSelectListModel AuthenticatorList { get; set; }
 
         [Display(Name = "Terms and Conditions")]
-        //[Range(typeof(bool), "true", "true", ErrorMessage = "You need to accept the terms and conditions!")]
+        [MustBeTrue(ErrorMessage = "Please Accept Privacy Policy")]
         public bool TermsAndConditions { get; set; }
 
         public AccountRegisterModel()
         {
-            TermsAndConditions = true;
             SecurityQuestionList = new SecurityQuestionSelectListModel();
             AuthenticatorList = new AuthenticatorSelectListModel(true);
         }
