@@ -45,7 +45,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
     public class CreateDatasetController : Controller
     {
         private CreateDatasetTaskmanager TaskManager;
-
+  
         #region Create a Dataset Setup Page
 
         //
@@ -368,7 +368,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         #endregion
 
         #region Load Metadata formular actions
-
 
         public ActionResult StartMetadataEditor()
         {
@@ -1582,7 +1581,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         #endregion
 
-        #region Submit And Create And Finish
+        #region Submit And Create And Finish And Cancel
 
         public ActionResult Submit()
         {
@@ -1740,6 +1739,38 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             return DataStructureType.Structured;
         }
 
+        public ActionResult Cancel()
+        {
+            //public ActionResult LoadMetadata(long datasetId, bool locked = false, bool created = false, bool fromEditMode = false, bool resetTaskManager = false, XmlDocument newMetadata = null)
+
+            TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
+            if (TaskManager != null)
+            {
+                DatasetManager dm = new DatasetManager();
+                long datasetid = -1;
+                bool resetTaskManager = true;
+                XmlDocument metadata = null;
+                bool editmode = false;
+                bool created = false;
+
+                if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.DATASET_ID))
+                {
+                    datasetid = Convert.ToInt64(TaskManager.Bus[CreateDatasetTaskmanager.DATASET_ID]);
+                }
+
+                if (datasetid > -1 && dm.IsDatasetCheckedIn(datasetid))
+                {
+                    metadata = dm.GetDatasetLatestMetadataVersion(datasetid);
+                    editmode = true;
+                    created = true;
+                }
+
+                return RedirectToAction("LoadMetadata", "CreateDataset", new { area = "DDM", datasetid = datasetid, created = created, fromEditMode = editmode, resetTaskManager = resetTaskManager, newMetadata = metadata });
+            }
+
+            return RedirectToAction("StartMetadataEditor", "CreateDataset");
+        }
+
         #endregion
 
         #region Validation
@@ -1842,97 +1873,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             return null;
 
         }
-
-        //[HttpPost]
-        //public JsonResult ValidateMetadataAttributeUsage(object value, int id, int parentid, string parentname, int number, int parentModelNumber, int parentStepId)
-        //{
-        //    TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
-        //    StepModelHelper stepModelHelper = GetStepModelhelper(parentStepId);
-
-        //    long ParentUsageId = stepModelHelper.Usage.Id;
-        //    BaseUsage parentUsage = LoadUsage(stepModelHelper.Usage);
-        //    int pNumber = stepModelHelper.Number;
-
-        //    BaseUsage metadataAttributeUsage = UsageHelper.GetChildren(parentUsage).Where(u => u.Id.Equals(id)).FirstOrDefault();
-
-        //    //UpdateXml
-        //    long metadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateDatasetTaskmanager.METADATASTRUCTURE_ID]);
-        //    MetadataAttributeModel model = MetadataAttributeModel.Convert(metadataAttributeUsage, parentUsage, metadataStructureId, parentModelNumber, stepModelHelper.StepId);
-        //    model.Value = value;
-        //    model.Number = number;
-
-        //    UpdateAttribute(parentUsage, parentModelNumber, metadataAttributeUsage, number, value);
-
-        //    if (stepModelHelper.Model.MetadataAttributeModels.Where(a => a.Id.Equals(id) && a.Number.Equals(number)).Count() > 0)
-        //    {
-        //        MetadataAttributeModel selectedMetadatAttributeModel = stepModelHelper.Model.MetadataAttributeModels.Where(a => a.Id.Equals(id) && a.Number.Equals(number)).FirstOrDefault();
-        //        // select the attributeModel and change the value
-        //        selectedMetadatAttributeModel.Value = model.Value;
-        //        selectedMetadatAttributeModel.Errors = validateAttribute(selectedMetadatAttributeModel);
-        //    }
-        //    else
-        //    {
-        //        stepModelHelper.Model.MetadataAttributeModels.Add(model);
-        //    }
-
-
-
-        //    return Json(true, JsonRequestBehavior.AllowGet);
-        //    return Json(true, JsonRequestBehavior.AllowGet);
-        //}
-
-        //public ActionResult ValidateStep()
-        //{
-        //    TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
-        //    int currentStepIndex = TaskManager.GetCurrentStepInfoIndex();
-
-        //    StepModelHelper stepModelHelper = GetStepModelhelper(parentStepId);
-
-        //    long usageId = stepModelHelper.Usage.Id;
-        //    BaseUsage usage = LoadUsage(stepModelHelper.Usage);
-        //    int number = stepModelHelper.Number;
-
-
-        //    List<Error> errors = validateStep(stepModelHelper.Model);
-
-        //    TaskManager.Current().notExecuted = false;
-
-        //    if (errors == null || errors.Count == 0)
-        //        TaskManager.Current().SetStatus(StepStatus.success);
-        //    else
-        //        TaskManager.Current().SetStatus(StepStatus.error);
-
-
-        //    if (TaskManager.IsRoot(TaskManager.Current().Parent.Parent))
-        //        return PartialView("_metadataPackageUsageView", CreatePackageModel(currentStepIndex, true));
-        //    else
-        //        return PartialView("_metadataCompoundAttributeView", CreateCompoundModel(currentStepIndex, true));
-
-        //}
-
-        //private void Validate(StepModelHelper stepModelHelper)
-        //{
-
-        //    TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
-
-        //    if (stepModelHelper != null)
-        //    {
-        //        List<Error> errors = validateStep(stepModelHelper.Model);
-
-        //        if (errors == null || errors.Count == 0)
-        //        {
-        //            TaskManager.Current().SetValid(true);
-        //            TaskManager.Current().SetStatus(StepStatus.success);
-        //            //UpdateXml(packageId);
-        //        }
-        //        else
-        //        {
-        //            stepModelHelper.Model.ErrorList = errors;
-        //            TaskManager.Current().SetValid(false);
-        //            TaskManager.Current().SetStatus(StepStatus.error);
-        //        }
-        //    }
-        //}
 
         private List<Error> validateStep(AbstractMetadataStepModel pModel)
         {

@@ -71,10 +71,17 @@
 
 </div>
 @if (!locked)
-{ 
+{
     <div class="bx-footer right">
-        <button onclick="validate()" class="bx-button function" >Validate</button>
-        <button onclick="submit()" class="bx-button action" >Submit</button>
+
+        <!-- only from editmode you have the option to reset-->
+        @if (@Model.FromEditMode)
+        {
+            <button onclick="cancel()" class="bx-button function" >Reset</button>
+        }
+        
+        <button onclick="validate()" class="bx-button function">Validate</button>
+        <button onclick="submit()" class="bx-button action">Submit</button>
     </div>
 }
 
@@ -92,6 +99,12 @@
     {
         $.get('@Url.Action("Validate", "CreateDataset", new RouteValueDictionary { { "area", "DCM" }})', function (response)
         {
+            $('#MetadataEditor').replaceWith(response);
+        })
+    }
+
+    function cancel() {
+        $.get('@Url.Action("Cancel", "CreateDataset", new RouteValueDictionary { { "area", "DCM" }})', function (response) {
             $('#MetadataEditor').replaceWith(response);
         })
     }
@@ -124,7 +137,7 @@
                     callSubmitAction();
                 }
             }
-        }) 
+        })
     }
 
     function callSubmitAction()

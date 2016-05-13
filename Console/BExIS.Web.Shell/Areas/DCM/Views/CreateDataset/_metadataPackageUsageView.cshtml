@@ -29,72 +29,74 @@
 
 <div id="@stepId" name="@Model.Usage.Label" number="@Model.Number" class="metadataPackageUsage">
 
+    <!--Header-->
     <div class="header">
         <div id="@id_label_container" class="labelContainer" onclick="showHideClick(this)">
-            <b>@Model.Usage.Label 
+            <b>
+                @Model.Usage.Label
 
-                @if (Model.Model.MaxCardinality > 1)
-                {
-                   <span>( @Model.Number )</span> 
-                }
+            @if (Model.Model.MaxCardinality > 1)
+            {
+                <span>( @Model.Number )</span>
+            }
 
-            </b>
-            <span id="@id_button_view"  class="bx bx-angle-double-up " ></span>
-        </div>
-        <div class="optionContainer">
-            @if (Model.Model.MaxCardinality > 1 && !locked)
+        </b>
+        <span id="@id_button_view" class="bx bx-angle-double-up "></span>
+    </div>
+    <div class="optionContainer">
+        @if (Model.Model.MaxCardinality > 1 && !locked)
             {
             <table>
                 <tr>
                     <td>
                         @if (Model.Model.MaxCardinality > 1
-                        && Model.Model.StepInfo.Parent.Children.Count < Model.Model.MaxCardinality
-                        && Model.Model.Number == Model.Model.StepInfo.Parent.Children.Count)
+                    && Model.Model.StepInfo.Parent.Children.Count < Model.Model.MaxCardinality
+                    && Model.Model.Number == Model.Model.StepInfo.Parent.Children.Count)
                         {
-                            <button id="@id_add" onclick="Add(this)" class="bx-function bx-add"/>
+                            <button id="@id_add" onclick="Add(this)" class="bx-function bx-add" title="Add" />
                         }
                         else
-                        { 
-                            <button id="@id_add" onclick="Add(this)" class="bx-function bx-add bx-disabled"/>
+                        {
+                            <button id="@id_add" onclick="Add(this)" class="bx-function bx-add bx-disabled" title="Add" />
                         }
                     </td>
                     <td>
                         @if (Model.Model.StepInfo.Parent.Children.Count > 1)
                         {
-                            <button id="@id_remove" onclick="Remove(this)" class="bx-function bx-delete" />
+                            <button id="@id_remove" onclick="Remove(this)" class="bx-function bx-delete" title="Remove" />
                         }
                         else
-                        { 
-                            <button class="bx-function bx-delete bx-disabled" />
-                        }
-                    </td>
-                     <td>
-                        @if (Model.Number < Model.Model.StepInfo.Parent.Children.Count)
                         {
-                            <button id="@id_down" class="bx-function bx-down" onclick="Down(this)" />
-                        }
-                        else
-                        { 
-                            <button class="bx-function bx-down bx-disabled" />
+                            <button class="bx-function bx-delete bx-disabled" title="Remove" />
                         }
                     </td>
                     <td>
-                        @if (Model.Number>1)
+                        @if (Model.Number < Model.Model.StepInfo.Parent.Children.Count)
                         {
-                            <button id="@id_up" class="bx-function bx-up" onclick="Up(this)" />
+                            <button id="@id_down" class="bx-function bx-down" onclick="Down(this)" title="Down" />
                         }
                         else
-                        { 
-                            <button class="bx-function bx-up bx-disabled" />
-                        
+                        {
+                            <button class="bx-function bx-down bx-disabled" title="Down" />
+                        }
+                    </td>
+                    <td>
+                        @if (Model.Number > 1)
+                        {
+                            <button id="@id_up" class="bx-function bx-up" onclick="Up(this)" title="Up" />
+                        }
+                        else
+                        {
+                            <button class="bx-function bx-up bx-disabled" title="Up" />
+
                         }
                     </td>
                 </tr>
             </table>
-            }
-        </div>
+        }
     </div>
-
+</div>  
+    <!--Content-->
     <div id="@id_container" class="contentContainer">
         @if (Model.Model.MetadataAttributeModels.Any())
         {   

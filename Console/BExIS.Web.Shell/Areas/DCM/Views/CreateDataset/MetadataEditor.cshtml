@@ -91,14 +91,19 @@
     if (element.Model is MetadataPackageModel)
     { 
 
-    @Html.Partial("_metadataPackageView", element)
-}
+        @Html.Partial("_metadataPackageView", element)
+    }
 }
 
 </div>
 @if (!locked)
 { 
     <div class="bx-footer right">
+        <!-- only from editmode you have the option to reset-->
+        @if (@Model.FromEditMode)
+        {
+            <button onclick="cancel()" class="bx-button function" >Reset</button>
+        }
         <button onclick="validate()" class="bx-button function" >Validate</button>
         <button onclick="submit()" class="bx-button action" >Submit</button>
     </div>
@@ -165,10 +170,22 @@
 
     function validate()
     {
-        $.get('@Url.Action("Validate", "CreateDataset", new RouteValueDictionary { { "area", "DCM" }})', function (response)
-        {
-            $('#MetadataEditor').replaceWith(response);
-        })
+        $.get('@Url.Action("Validate", "CreateDataset", new RouteValueDictionary { { "area", "DCM" }})',
+            function(response) {
+                $('#MetadataEditor').replaceWith(response);
+            })
+    }
+
+    function cancel() {
+
+        if (confirm('Are you sure you want reset the formular?')) {
+            $.get('@Url.Action("Cancel", "CreateDataset", new RouteValueDictionary {{"area", "DCM"}})',
+                function(response) {
+                    $('#MetadataEditor').replaceWith(response);
+                })
+        } else {
+            return false;
+        }
     }
 
     function edit()
