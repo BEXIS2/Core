@@ -36,6 +36,7 @@ using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Models;
 using BExIS.Xml.Helpers.Mapping;
 using BExIS.IO;
+using BExIS.Security.Services.Objects;
 using BExIS.Web.Shell.Models;
 using BExIS.Web.Shell.Helpers;
 using Vaiona.IoC;
@@ -512,12 +513,32 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             TaskManager.AddToBus(CreateDatasetTaskmanager.EDIT_MODE, fromEditMode);
             Model.FromEditMode = (bool)TaskManager.Bus[CreateDatasetTaskmanager.EDIT_MODE];
 
-            // set edit rigths
-            DatasetManager datasetManager = new DatasetManager();
-            PermissionManager permissionManager = new PermissionManager();
-            SubjectManager subjectManager = new SubjectManager();
+            #region security permissions and authorisations check
+                // set edit rigths
+                DatasetManager datasetManager = new DatasetManager();
+                PermissionManager permissionManager = new PermissionManager();
+                SubjectManager subjectManager = new SubjectManager();
+                Security.Services.Objects.TaskManager securityTaskManager = new Security.Services.Objects.TaskManager();
 
-            Model.EditRight = permissionManager.HasUserDataAccess(subjectManager.GetUserByName(GetUsernameOrDefault()).Id, 1, datasetId, RightType.Update);
+                bool hasAuthorizationRights = false;
+                bool hasAuthenticationRigths = false;
+                long userid = subjectManager.GetUserByName(GetUsernameOrDefault()).Id;
+                //User has Access to Features 
+                //Area DCM
+                //Controller "Create Dataset" 
+                //Action "*"
+                Task task = securityTaskManager.GetTask("DCM", "CreateDataset", "*");
+                if (task != null)
+                {
+                    hasAuthorizationRights = permissionManager.HasSubjectFeatureAccess(userid, task.Feature.Id);
+                }
+
+                hasAuthenticationRigths = permissionManager.HasUserDataAccess(userid, 1, datasetId, RightType.Update);
+
+                Model.EditRight = (hasAuthorizationRights && hasAuthenticationRigths);
+
+            #endregion
+
 
             return PartialView("MetadataEditor", Model);
         }

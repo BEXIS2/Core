@@ -256,14 +256,31 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             TaskManager.AddToBus(CreateDatasetTaskmanager.EDIT_MODE, fromEditMode);
             Model.FromEditMode = (bool)TaskManager.Bus[CreateDatasetTaskmanager.EDIT_MODE];
 
+            #region security permissions and authorisations check
             // set edit rigths
             DatasetManager datasetManager = new DatasetManager();
             PermissionManager permissionManager = new PermissionManager();
             SubjectManager subjectManager = new SubjectManager();
+            Security.Services.Objects.TaskManager securityTaskManager = new Security.Services.Objects.TaskManager();
 
+            bool hasAuthorizationRights = false;
+            bool hasAuthenticationRigths = false;
+            long userid = subjectManager.GetUserByName(GetUsernameOrDefault()).Id;
+            //User has Access to Features 
+            //Area DCM
+            //Controller "Create Dataset" 
+            //Action "*"
+            Task task = securityTaskManager.GetTask("DCM", "CreateDataset", "*");
+            if (task != null)
+            {
+                hasAuthorizationRights = permissionManager.HasSubjectFeatureAccess(userid, task.Feature.Id);
+            }
 
-            if (GetUsernameOrDefault() !="DEFAULT")
-                Model.EditRight = permissionManager.HasUserDataAccess(subjectManager.GetUserByName(GetUsernameOrDefault()).Id, 1, datasetId, RightType.Update);
+            hasAuthenticationRigths = permissionManager.HasUserDataAccess(userid, 1, datasetId, RightType.Update);
+
+            Model.EditRight = (hasAuthorizationRights && hasAuthenticationRigths);
+
+            #endregion
 
             return PartialView("MetadataEditor", Model);
         }
