@@ -104,8 +104,8 @@
                 {
                     columns.Bound("").Width(70).ClientTemplate(
                     "<div class='searchResultFunctionDiv'>" +
-                        @Html.ActionLink(" ", "ShowData", "Data", new { area = "DDM", id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>" }, new { @class = "bx bx-grid-function bx-show", @id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>" }) +
-                        @Html.ActionLink(" ", "Index", "CreateDataset", new { area = "DCM", id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>", type = "DatasetId" }, new { @class = "bx bx-grid-function bx-copy", @id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>" }) +
+                        @Html.ActionLink(" ", "ShowData", "Data", new { area = "DDM", id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>" }, new { @class = "bx bx-grid-function bx-show", @id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>", title = "View details" }) +
+                        @Html.ActionLink(" ", "Index", "CreateDataset", new { area = "DCM", id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>", type = "DatasetId" }, new { @class = "bx bx-grid-function bx-copy", @id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>", title = "Copy dataset" }) +
                      "</div>"
                     )
                     .Groupable(false)
