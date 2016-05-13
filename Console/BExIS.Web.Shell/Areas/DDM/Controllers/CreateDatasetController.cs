@@ -256,14 +256,31 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             TaskManager.AddToBus(CreateDatasetTaskmanager.EDIT_MODE, fromEditMode);
             Model.FromEditMode = (bool)TaskManager.Bus[CreateDatasetTaskmanager.EDIT_MODE];
 
+            #region security permissions and authorisations check
             // set edit rigths
             DatasetManager datasetManager = new DatasetManager();
             PermissionManager permissionManager = new PermissionManager();
             SubjectManager subjectManager = new SubjectManager();
+            Security.Services.Objects.TaskManager securityTaskManager = new Security.Services.Objects.TaskManager();
 
+            bool hasAuthorizationRights = false;
+            bool hasAuthenticationRigths = false;
+            long userid = subjectManager.GetUserByName(GetUsernameOrDefault()).Id;
+            //User has Access to Features 
+            //Area DCM
+            //Controller "Create Dataset" 
+            //Action "*"
+            Task task = securityTaskManager.GetTask("DCM", "CreateDataset", "*");
+            if (task != null)
+            {
+                hasAuthorizationRights = permissionManager.HasSubjectFeatureAccess(userid, task.Feature.Id);
+            }
 
-            if (GetUsernameOrDefault() !="DEFAULT")
-                Model.EditRight = permissionManager.HasUserDataAccess(subjectManager.GetUserByName(GetUsernameOrDefault()).Id, 1, datasetId, RightType.Update);
+            hasAuthenticationRigths = permissionManager.HasUserDataAccess(userid, 1, datasetId, RightType.Update);
+
+            Model.EditRight = (hasAuthorizationRights && hasAuthenticationRigths);
+
+            #endregion
 
             return PartialView("MetadataEditor", Model);
         }
@@ -1205,7 +1222,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
         #endregion
 
-        #region Submit And Create And Finish
+        #region Submit And Create And Finish And Cancel
 
         public ActionResult Submit()
         {
@@ -1348,6 +1365,38 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             }
 
             return DataStructureType.Structured;
+        }
+
+        public ActionResult Cancel()
+        {
+            //public ActionResult LoadMetadata(long datasetId, bool locked = false, bool created = false, bool fromEditMode = false, bool resetTaskManager = false, XmlDocument newMetadata = null)
+
+            TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
+            if (TaskManager != null)
+            {
+                DatasetManager dm = new DatasetManager();
+                long datasetid = -1;
+                bool resetTaskManager = true;
+                XmlDocument metadata = null;
+                bool editmode = false;
+                bool created = false;
+
+                if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.DATASET_ID))
+                {
+                    datasetid = Convert.ToInt64(TaskManager.Bus[CreateDatasetTaskmanager.DATASET_ID]);
+                }
+
+                if (datasetid > -1 && dm.IsDatasetCheckedIn(datasetid))
+                {
+                    metadata = dm.GetDatasetLatestMetadataVersion(datasetid);
+                    editmode = true;
+                    created = true;
+                }
+
+                return RedirectToAction("LoadMetadata", "CreateDataset", new { area = "DDM", datasetid = datasetid, created = created, fromEditMode = editmode, resetTaskManager = resetTaskManager, newMetadata = metadata });
+            }
+
+            return RedirectToAction("StartMetadataEditor", "CreateDataset");
         }
 
         #endregion
