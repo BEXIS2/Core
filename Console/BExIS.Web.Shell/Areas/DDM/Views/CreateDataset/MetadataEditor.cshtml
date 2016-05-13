@@ -77,7 +77,8 @@
         <!-- only from editmode you have the option to reset-->
         @if (@Model.FromEditMode)
         {
-            <button onclick="cancel()" class="bx-button function" >Reset</button>
+            <button onclick="cancel()" class="bx-button function">Cancel</button>
+            <button onclick="reset()" class="bx-button function">Reset</button>
         }
         
         <button onclick="validate()" class="bx-button function">Validate</button>
@@ -104,9 +105,27 @@
     }
 
     function cancel() {
-        $.get('@Url.Action("Cancel", "CreateDataset", new RouteValueDictionary { { "area", "DCM" }})', function (response) {
-            $('#MetadataEditor').replaceWith(response);
-        })
+
+        if (confirm('Are you sure you want cancel the metadata formular?')) {
+            $.get('@Url.Action("Cancel", "CreateDataset", new RouteValueDictionary {{"area", "DCM"}})',
+                function(response) {
+                    $('#MetadataEditor').replaceWith(response);
+                })
+        } else {
+            return false;
+        }
+    }
+
+    function reset() {
+
+        if (confirm('Are you sure you want reset the metadata formular?')) {
+            $.get('@Url.Action("Reset", "CreateDataset", new RouteValueDictionary {{"area", "DCM"}})',
+                function (response) {
+                    $('#MetadataEditor').replaceWith(response);
+                })
+        } else {
+            return false;
+        }
     }
 
     function edit()
