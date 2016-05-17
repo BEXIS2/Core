@@ -4,19 +4,14 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using BExIS.Dcm.ImportMetadataStructureWizard;
 using BExIS.Dcm.Wizard;
 using BExIS.Dlm.Services.MetadataStructure;
-using BExIS.IO;
-using BExIS.IO.Transform.Input;
-using BExIS.IO.Transform.Output;
 using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Web.Shell.Areas.DCM.Models.ImportMetadata;
 using BExIS.Xml.Helpers.Mapping;
-using Vaiona.Utils.Cfg;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
 {
@@ -41,6 +36,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             ReadSourceModel model = new ReadSourceModel(TaskManager.Current());
 
+            if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.IS_GENERATE))
+                model.IsGenerated = (bool)TaskManager.Bus[ImportMetadataStructureTaskManager.IS_GENERATE];
+
             if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.ROOT_NODE))
                 model.RootNode = TaskManager.Bus[ImportMetadataStructureTaskManager.ROOT_NODE].ToString();
 
@@ -63,7 +61,10 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 TaskManager.Current().SetStatus(StepStatus.success);
             }
             else
+            {
                 ModelState.AddModelError("", "Please click generate button.");
+            }
+            
 
             if (TaskManager.Current().IsValid())
             {
@@ -151,13 +152,19 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         model.ErrorList.Add(new Error(ErrorType.Other,
                             "A Metadata structure with this name already exist. Please choose a other name."));
                     }
-
+                    else
                     if (String.IsNullOrEmpty(schemaName))
                     {
                         model.ErrorList.Add(new Error(ErrorType.Other, "A Metadata structure must have a name."));
                     }
+                    else
+                        xmlSchemaManager.Load(path, GetUserNameOrDefault());
 
-                    xmlSchemaManager.Load(path, GetUserNameOrDefault());
+                    if (!String.IsNullOrEmpty(model.RootNode) && !xmlSchemaManager.Elements.Any(e => e.Name.Equals(model.RootNode)))
+                    {
+                        model.ErrorList.Add(new Error(ErrorType.Other, "Root node not exist"));
+                    }
+
                 }
                 catch (Exception ex)
                 {
@@ -191,6 +198,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                 if (model.ErrorList.Count == 0)
                 {
+                    model.IsGenerated = true;
+
                     if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.IS_GENERATE))
                         TaskManager.Bus[ImportMetadataStructureTaskManager.IS_GENERATE] = true;
                     else

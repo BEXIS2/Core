@@ -19,11 +19,14 @@ namespace BExIS.Web.Shell.Areas.DCM.Models.ImportMetadata
         [Display(Name = "Root node" ) ]
         public string RootNode { get; set; }
 
+        public bool IsGenerated { get; set; }
+
         public ReadSourceModel(StepInfo stepInfo)
         { 
             this.StepInfo = stepInfo;
             RootNode = "";
             SchemaName = "";
+            IsGenerated = false;
         }
     }
 }

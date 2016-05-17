@@ -45,8 +45,6 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
             return View(model);
         }
 
-
-
         public ActionResult LoadMetadataStructureTab(long Id)
         {
             #region load Model
@@ -71,7 +69,6 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
 
             return PartialView("_metadataStructureView",model);
         }
-
 
         public ActionResult ConvertSelectedDatasetVersion(string Id, string SelectedDatasetIds)
         {

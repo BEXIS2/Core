@@ -98,6 +98,11 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             }
             else
             {
+                //set existing parameter
+                if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.TITLE_NODE))
+                    model.TitleNode = TaskManager.Bus[ImportMetadataStructureTaskManager.TITLE_NODE].ToString();
+                if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.DESCRIPTION_NODE))
+                    model.DescriptionNode = TaskManager.Bus[ImportMetadataStructureTaskManager.DESCRIPTION_NODE].ToString();
 
                 TaskManager.Current().SetValid(false);
                 ModelState.AddModelError("", "Please select the missing field");
@@ -149,7 +154,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                    list.Add(
                      new SearchMetadataNode(title, XExtentsions.GetAbsoluteXPath(element).Substring(1))
                      );
-
                }
            }
 
