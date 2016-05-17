@@ -39,6 +39,7 @@ using BExIS.IO;
 using BExIS.Security.Services.Objects;
 using BExIS.Web.Shell.Models;
 using BExIS.Web.Shell.Helpers;
+using NHibernate.Cache.Entry;
 using Vaiona.IoC;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
@@ -300,7 +301,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         [HttpGet]
         public ActionResult ShowListOfDataStructures()
         {
-            List<ListViewItem> datastructures = LoadDataStructureViewList();
+            List<ListViewItemWithType> datastructures = LoadDataStructureViewList();
 
             EntitySelectorModel model = BexisModelManager.LoadEntitySelectorModel(
                  datastructures,
@@ -360,7 +361,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         private SetupModel LoadLists(SetupModel model)
         {
             if ((List<ListViewItem>)Session["MetadataStructureViewList"] != null) model.MetadataStructureViewList = (List<ListViewItem>)Session["MetadataStructureViewList"];
-            if ((List<ListViewItem>)Session["DataStructureViewList"] != null) model.DataStructureViewList = (List<ListViewItem>)Session["DataStructureViewList"];
+            if ((List<ListViewItemWithType>)Session["DataStructureViewList"] != null) model.DataStructureViewList = (List<ListViewItemWithType>)Session["DataStructureViewList"];
             if ((List<ListViewItem>)Session["DatasetViewList"] != null) model.DatasetViewList = (List<ListViewItem>)Session["DatasetViewList"];
 
             return model;
@@ -2363,16 +2364,26 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             return temp.OrderBy(p => p.Title).ToList();
         }
 
-        public List<ListViewItem> LoadDataStructureViewList()
+        public List<ListViewItemWithType> LoadDataStructureViewList()
         {
             DataStructureManager dsm = new DataStructureManager();
-            List<ListViewItem> temp = new List<ListViewItem>();
+            List<ListViewItemWithType> temp = new List<ListViewItemWithType>();
 
             foreach (DataStructure dataStructure in dsm.AllTypesDataStructureRepo.Get())
             {
                 string title = dataStructure.Name;
+                string type = "";
+                if (dataStructure is StructuredDataStructure)
+                {
+                    type = "structured";
+                }
 
-                temp.Add(new ListViewItem(dataStructure.Id, title, dataStructure.Description));
+                if (dataStructure is UnStructuredDataStructure)
+                {
+                    type = "unstructured";
+                }
+
+                temp.Add(new ListViewItemWithType(dataStructure.Id, title, dataStructure.Description, type));
             }
 
             return temp.OrderBy(p => p.Title).ToList();
