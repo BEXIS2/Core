@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using BExIS.Dlm.Entities.Data;
@@ -85,8 +86,18 @@ namespace BExIS.Web.Shell.Areas.Sam.Controllers
             DatasetManager dm = new DatasetManager();
             PermissionManager pm = new PermissionManager();
 
-            pm.DeleteDataPermissionsByEntity(1, id);
-            bool b = dm.PurgeDataset(id);
+            try
+            {
+                if (dm.PurgeDataset(id))
+                {
+                    pm.DeleteDataPermissionsByEntity(1, id);
+                }
+            }
+            catch (Exception e)
+            {
+                
+            }
+            
             return View();
         }
 
