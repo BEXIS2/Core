@@ -2452,8 +2452,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             return usage;
         }
 
-
-
         #endregion
 
         #region Load & Update advanced steps

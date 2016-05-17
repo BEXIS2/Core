@@ -35,6 +35,7 @@ Green 05  #eff7f6   brigth
 {
     /*text-transform:uppercase;*/
     color:#ff9700 !important;
+    cursor: pointer;
 }
 
 
@@ -44,6 +45,7 @@ Green 05  #eff7f6   brigth
 .t-in
 {
     color:#388670;
+    cursor: pointer;
 }
 
 
@@ -56,6 +58,7 @@ Green 05  #eff7f6   brigth
 .content .t-in::selection
 {
     font-weight:bold;
+    cursor: pointer;
 }
 
 
@@ -77,6 +80,7 @@ button,
 	border: none;
 	padding: 10px 20px 10px 20px;
 	font-size: inherit;
+    cursor: pointer;
 }
 
 button.small, 
