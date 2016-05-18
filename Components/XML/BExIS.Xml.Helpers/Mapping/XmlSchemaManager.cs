@@ -1169,7 +1169,7 @@ namespace BExIS.Xml.Helpers.Mapping
                 if (type.ContentModel is XmlSchemaSimpleContent)
                 {
 
-                    string name = element.Name;
+                    string name = GetTypeOfName(element.Name);
                     string description = "";
 
                     if (element.Annotation != null)

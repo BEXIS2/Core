@@ -599,6 +599,102 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 return PartialView("_myDatasetGridView", model);
         }
 
+        /// <summary>
+        /// create the model of My Dataset table
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref="_CustomMyDatasetBinding"/>
+        /// <param>NA</param>       
+        /// <returns>model</returns>
+        public ActionResult ShowMyDatasetsInFullPage()
+        {
+            ViewBag.Title = PresentationModel.GetViewTitle("Dashboard");
+
+            DataTable model = new DataTable();
+
+            ViewData["PageSize"] = 10;
+            ViewData["CurrentPage"] = 1;
+
+
+            #region header
+            List<HeaderItem> headerItems = new List<HeaderItem>();
+
+
+            HeaderItem headerItem = new HeaderItem()
+            {
+                Name = "ID",
+                DisplayName = "ID",
+                DataType = "Int64"
+            };
+            headerItems.Add(headerItem);
+
+            ViewData["Id"] = headerItem;
+
+            headerItem = new HeaderItem()
+            {
+                Name = "Title",
+                DisplayName = "Title",
+                DataType = "String"
+            };
+            headerItems.Add(headerItem);
+
+            headerItem = new HeaderItem()
+            {
+                Name = "Description",
+                DisplayName = "Description",
+                DataType = "String"
+            };
+            headerItems.Add(headerItem);
+
+            headerItem = new HeaderItem()
+            {
+                Name = "View",
+                DisplayName = "View",
+                DataType = "String"
+            };
+            headerItems.Add(headerItem);
+
+            headerItem = new HeaderItem()
+            {
+                Name = "Update",
+                DisplayName = "Update",
+                DataType = "String"
+            };
+            headerItems.Add(headerItem);
+
+            headerItem = new HeaderItem()
+            {
+                Name = "Delete",
+                DisplayName = "Delete",
+                DataType = "String"
+            };
+            headerItems.Add(headerItem);
+
+            headerItem = new HeaderItem()
+            {
+                Name = "Download",
+                DisplayName = "Download",
+                DataType = "String"
+            };
+            headerItems.Add(headerItem);
+
+            headerItem = new HeaderItem()
+            {
+                Name = "Grant",
+                DisplayName = "Grant",
+                DataType = "String"
+            };
+            headerItems.Add(headerItem);
+
+            ViewData["DefaultHeaderList"] = headerItems;
+
+            #endregion
+
+            model = CreateDataTable(headerItems);
+
+            return View("_myDatasetGridView", model);
+        }
+
         [GridAction]
         /// <summary>
         /// create a model to fill the table of My Dataset
