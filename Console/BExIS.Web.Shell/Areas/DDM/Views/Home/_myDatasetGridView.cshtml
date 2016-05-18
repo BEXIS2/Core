@@ -3,6 +3,13 @@
 @using System.Data;
 @using BExIS.Dlm.Entities.DataStructure;
 
+@section Information
+{
+    <p>This table contains all datasets, created by you as a current logged on user. </p>
+    <p>By right clicking on the header, you can manage the visibility of columns. You can also use filtering or grouping to see the more operative informations.</p>
+    <p>To view more details of a dataset, click the "View Details" button available in each row.</p>   
+}
+
 @{
     int PageSize = 10;
     int CurrentPage = 1;
@@ -97,8 +104,8 @@
                 {
                     columns.Bound("").Width(70).ClientTemplate(
                     "<div class='searchResultFunctionDiv'>" +
-                        @Html.ActionLink(" ", "ShowData", "Data", new { area = "DDM", id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>" }, new { @class = "bx bx-grid-function bx-show", @id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>" }) +
-                        @Html.ActionLink(" ", "Index", "CreateDataset", new { area = "DCM", id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>", type = "DatasetId" }, new { @class = "bx bx-grid-function bx-copy", @id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>" }) +
+                        @Html.ActionLink(" ", "ShowData", "Data", new { area = "DDM", id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>" }, new { @class = "bx bx-grid-function bx-show", @id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>", title = "View details" }) +
+                        @Html.ActionLink(" ", "Index", "CreateDataset", new { area = "DCM", id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>", type = "DatasetId" }, new { @class = "bx bx-grid-function bx-copy", @id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>", title = "Copy dataset" }) +
                      "</div>"
                     )
                     .Groupable(false)

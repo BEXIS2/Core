@@ -13,6 +13,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Models.CreateDataset
         public bool EditRight { get; set; }
         public bool Created { get; set; }
         public bool FromEditMode { get; set; }
+        public bool Changed { get; set; }
         public List<StepModelHelper> StepModelHelpers { get; set; }
 
         public MetadataEditorModel()
@@ -21,6 +22,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Models.CreateDataset
             DatasetTitle = "";
             Created = false;
             FromEditMode = false;
+            Changed = false;
         }
     }
 }

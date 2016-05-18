@@ -71,10 +71,18 @@
 
 </div>
 @if (!locked)
-{ 
+{
     <div class="bx-footer right">
-        <button onclick="validate()" class="bx-button function" >Validate</button>
-        <button onclick="submit()" class="bx-button action" >Submit</button>
+
+        <!-- only from editmode you have the option to reset-->
+        @if (@Model.FromEditMode)
+        {
+            <button onclick="cancel()" class="bx-button function">Cancel</button>
+            <button onclick="reset()" class="bx-button function">Reset</button>
+        }
+        
+        <button onclick="validate()" class="bx-button function">Validate</button>
+        <button onclick="submit()" class="bx-button action">Submit</button>
     </div>
 }
 
@@ -94,6 +102,30 @@
         {
             $('#MetadataEditor').replaceWith(response);
         })
+    }
+
+    function cancel() {
+
+        if (confirm('Are you sure you want cancel the metadata formular?')) {
+            $.get('@Url.Action("Cancel", "CreateDataset", new RouteValueDictionary {{"area", "DCM"}})',
+                function(response) {
+                    $('#MetadataEditor').replaceWith(response);
+                })
+        } else {
+            return false;
+        }
+    }
+
+    function reset() {
+
+        if (confirm('Are you sure you want reset the metadata formular?')) {
+            $.get('@Url.Action("Reset", "CreateDataset", new RouteValueDictionary {{"area", "DCM"}})',
+                function (response) {
+                    $('#MetadataEditor').replaceWith(response);
+                })
+        } else {
+            return false;
+        }
     }
 
     function edit()
@@ -124,7 +156,7 @@
                     callSubmitAction();
                 }
             }
-        }) 
+        })
     }
 
     function callSubmitAction()

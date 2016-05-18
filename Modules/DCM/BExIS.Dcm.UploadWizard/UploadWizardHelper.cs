@@ -110,7 +110,7 @@ namespace BExIS.Dcm.UploadWizard
         }
 
         //temporary solution: norman :GetSplitDatatuples2
-        public static Dictionary<string, List<DataTuple>> GetSplitDatatuples(DataTuple[] newDatatuples, List<long> primaryKeys, DatasetVersion workingCopy, ref List<long> datatuplesFromDatabaseIds)
+        public static Dictionary<string, List<DataTuple>> GetSplitDatatuples(List<DataTuple> newDatatuples, List<long> primaryKeys, DatasetVersion workingCopy, ref List<long> datatuplesFromDatabaseIds)
         {
 
             Dictionary<string, List<DataTuple>> data = new Dictionary<string, List<DataTuple>>();
@@ -139,8 +139,8 @@ namespace BExIS.Dcm.UploadWizard
 
                     for (int i = 0; i < datatuplesFromDatabaseIds.Count; i++)
                     {
-
-                        sourceDt = datasetManager.DataTupleRepo.Get(datatuplesFromDatabaseIds.ElementAt(i));
+                        long id = datatuplesFromDatabaseIds.ElementAt(i);
+                        sourceDt = datasetManager.DataTupleRepo.Query( dt => dt.Id.Equals(id)).FirstOrDefault();
 
                         string keysValueSourceDatatuple = getPrimaryKeysAsStringFromXml(sourceDt, primaryKeys);
 
@@ -585,8 +585,6 @@ namespace BExIS.Dcm.UploadWizard
                 Dataset dataset = datasetManager.GetDataset(datasetId);
                 DatasetVersion datasetVersion;
 
-
-
                 List<long> dataTupleIds = new List<long>();
 
                 if (datasetManager.IsDatasetCheckedIn(datasetId))
@@ -609,7 +607,7 @@ namespace BExIS.Dcm.UploadWizard
                         string pKey;
                         foreach (long dtId in currentIds)
                         {
-                            dt = datasetManager.DataTupleRepo.Get(dtId); 
+                            dt = datasetManager.DataTupleRepo.Query(d=>d.Id.Equals(dtId)).FirstOrDefault(); 
 
                             //pKey = getPrimaryKeysAsByteArray(dt, primaryKeys);
                             pKey = pKey = getPrimaryKeysAsStringFromXml(dt, primaryKeys);

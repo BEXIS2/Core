@@ -10,12 +10,14 @@ namespace BExIS.Ddm.Model
         public string MetadataStructureName { get; set; }
         public string XPath { get; set; }
         public string DisplayName { get; set; }
+        public string DisplayNameLong { get; set; }
 
         public SearchMetadataNode(string metadataStructureName, string xPath)
         {
             this.MetadataStructureName = metadataStructureName;
             this.XPath = xPath;
             DisplayName = generateDisplayName(xPath);
+            DisplayNameLong = "("+MetadataStructureName+") " + generateDisplayName(xPath);
         }
 
         private string generateDisplayName(string xPath)
@@ -25,12 +27,10 @@ namespace BExIS.Ddm.Model
 
             for (int i = 1; i < tempArray.Length; i = i + 2)
             {
-                tmp += "/" + tempArray[i];
+                tmp += tempArray[i]+"/" ;
             }
 
-            tmp = tempArray[0] + tmp;
-
-            return tmp;
+            return tmp.Remove(tmp.Length-1);
         }
     }
 }

@@ -64,11 +64,12 @@
             .ClientEvents(events => events
                     .OnSelect("Push_OnSelect")
                     .OnComplete("OnComplete")
+                    .OnRemove("Push_OnRemove")
                 ))
-    
-    <br />
-    <input type="submit" value="Push" class="bx-button function" />
-    
+
+    <br/>
+
+    <button id="push_submitBt" type="submit" value="Push" class="bx-button function bx-disabled" disabled="disabled" >Push</button>
 }
 
 @section LeftPane
@@ -79,23 +80,31 @@
 <script type="text/javascript">
 
     function Push_OnSelect(e) {
-
         var maxsize = '@int_MaxRequestLength';
+
+        if (e.files.length == 0) {
+            $('#push_submitBt').addClass("bx-disabled");
+            $('#push_submitBt').attr("disabled", "disabled");
+        } else {
+            $('#push_submitBt').removeClass("bx-disabled");
+            $('#push_submitBt').removeAttr("disabled");
+        }
 
         for (var i = 0; i < e.files.length; i = i + 1) {
 
             var file = e.files[i];
 
             if (!IsExtentionValid(file.extension)) {
-                alert("File : " +file.name +";\n"+ "Only " + '@fileExtListAsString' + "/n files can be uploaded")
+                alert("File : " + file.name + ";\n" + "Only " + '@fileExtListAsString' + "/n files can be uploaded")
                 e.preventDefault();
                 return false;
-            }
-            else {
+            } else {
 
                 if (file.size > (maxsize * 1024)) {
 
-                    alert("Max file : " + maxsize / 1024 + " MB is supported. Please contact your administrator to upload bigger files.");
+                    alert("Max file : " +
+                        maxsize / 1024 +
+                        " MB is supported. Please contact your administrator to upload bigger files.");
                     e.preventDefault();
                     return false;
                 }
@@ -103,14 +112,14 @@
         }
     }
 
-    function OnComplete()
-    {
-        $.post('@Url.Action("Reload","Push", new RouteValueDictionary { { "area", "DCM" } })', function (response) {
-            
-            $('#FileList').replaceWith(response);
-            
-            alert("the files start to send to the server. you get a email when its finished.");
-        })
+    function OnComplete() {
+        $.post('@Url.Action("Reload", "Push", new RouteValueDictionary {{"area", "DCM"}})',
+            function(response) {
+
+                $('#FileList').replaceWith(response);
+
+                alert("the files start to send to the server. you get a email when its finished.");
+            })
     }
 
     /*
@@ -128,6 +137,19 @@
         }
 
         return false;
+    }
+
+    function Push_OnRemove(e) {
+
+        var tmp = $(".t-upload .t-file");
+        if (tmp.length <= 1) {
+            $('#push_submitBt').addClass("bx-disabled");
+            $('#push_submitBt').attr("disabled", "disabled");
+
+        } else {
+            $('#push_submitBt').removeClass("bx-disabled");
+            $('#push_submitBt').removeAttr("disabled");
+        }
     }
 
 </script>

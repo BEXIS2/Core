@@ -41,7 +41,9 @@
         <tr>
             @if (locked && Model.EditRight)
             {
-                <td><button onclick="edit()" class="bx-button function" >Edit</button></td>
+                <td><button onclick="edit()" class="bx-button function">Edit</button>
+                @Html.ActionLink("Copy", "Index", "CreateDataset", new { area = "DCM", id = @Model.DatasetId, type = "DatasetId" }, new { @class = "bx-button function", @id = @Model.DatasetId })</td>
+
             }
 
             @if (!Model.Created && !locked)
@@ -65,7 +67,7 @@
             { 
 
                 <td>You successfully created dataset: <br /><b>@Model.DatasetTitle</b></td>
-                <td>Please use the <b>@Html.ActionLink("Upload Data Wizard ", "StartUploadWizard", "CreateDataset", new RouteValueDictionary { { "area", "DCM" } }, new { title = "Link to upload wizard", @class="bx-link" })</b><br />
+                <td>Please use the <b>@Html.ActionLink("Upload Data Wizard ", "StartUploadWizard", "CreateDataset", new { area = "DCM"  }, new { title = "Link to upload wizard", @class="bx-link" })</b><br />
                     to add primary data to this dataset.</td>
 
                 if (@Model.DatasetId > 0)
@@ -91,14 +93,20 @@
     if (element.Model is MetadataPackageModel)
     { 
 
-    @Html.Partial("_metadataPackageView", element)
-}
+        @Html.Partial("_metadataPackageView", element)
+    }
 }
 
 </div>
 @if (!locked)
 { 
     <div class="bx-footer right">
+        <!-- only from editmode you have the option to reset-->
+        @if (@Model.FromEditMode)
+        {
+            <button onclick="cancel()" class="bx-button function">Cancel</button>
+            <button onclick="reset()" class="bx-button function" >Reset</button>
+        }
         <button onclick="validate()" class="bx-button function" >Validate</button>
         <button onclick="submit()" class="bx-button action" >Submit</button>
     </div>
@@ -165,10 +173,34 @@
 
     function validate()
     {
-        $.get('@Url.Action("Validate", "CreateDataset", new RouteValueDictionary { { "area", "DCM" }})', function (response)
-        {
-            $('#MetadataEditor').replaceWith(response);
-        })
+        $.get('@Url.Action("Validate", "CreateDataset", new RouteValueDictionary { { "area", "DCM" }})',
+            function(response) {
+                $('#MetadataEditor').replaceWith(response);
+            })
+    }
+
+    function cancel() {
+
+        if (confirm('Are you sure you want cancel the metadata formular?')) {
+            $.get('@Url.Action("Cancel", "CreateDataset", new RouteValueDictionary {{"area", "DCM"}})',
+                function(response) {
+                    $('#MetadataEditor').replaceWith(response);
+                })
+        } else {
+            return false;
+        }
+    }
+
+    function reset() {
+
+        if (confirm('Are you sure you want reset the metadata formular?')) {
+            $.get('@Url.Action("Reset", "CreateDataset", new RouteValueDictionary {{"area", "DCM"}})',
+                function (response) {
+                    $('#MetadataEditor').replaceWith(response);
+                })
+        } else {
+            return false;
+        }
     }
 
     function edit()

@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Net;
 using System.Text.RegularExpressions;
 using BExIS.Web.Shell.Areas.Site.Models;
+using Vaiona.Web.Mvc.Models;
 
 namespace BExIS.Web.Shell.Areas.Site.Controllers
 {
@@ -18,6 +19,7 @@ namespace BExIS.Web.Shell.Areas.Site.Controllers
         // GET: Site/PrivacyPolicy
         public ActionResult Index()
         {
+            ViewBag.Title = PresentationModel.GetViewTitle("Imprint");
             string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Areas", "Site", "Views\\Impressum\\Impressum.htm");
             ImpressumModel model = new ImpressumModel();
 

@@ -21,7 +21,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Models.CreateDataset
 
         public List<ListViewItem> MetadataStructureViewList { get; set; }
 
-        public List<ListViewItem> DataStructureViewList { get; set; }
+        public List<ListViewItemWithType> DataStructureViewList { get; set; }
 
         public List<ListViewItem> DatasetViewList { get; set; }
 
@@ -36,7 +36,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Models.CreateDataset
             BlockMetadataStructureId = false;
 
             SelectedDataStructureId = -1;
-            DataStructureViewList = new List<ListViewItem>();
+            DataStructureViewList = new List<ListViewItemWithType>();
             BlockDatastructureId = false;
 
 

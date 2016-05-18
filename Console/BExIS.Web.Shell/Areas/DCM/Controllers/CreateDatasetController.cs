@@ -36,8 +36,10 @@ using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Models;
 using BExIS.Xml.Helpers.Mapping;
 using BExIS.IO;
+using BExIS.Security.Services.Objects;
 using BExIS.Web.Shell.Models;
 using BExIS.Web.Shell.Helpers;
+using NHibernate.Cache.Entry;
 using Vaiona.IoC;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
@@ -45,7 +47,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
     public class CreateDatasetController : Controller
     {
         private CreateDatasetTaskmanager TaskManager;
-
+  
         #region Create a Dataset Setup Page
 
         //
@@ -164,7 +166,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             model = LoadLists(model);
 
-            if (ModelState.IsValid)
+            if (ModelState.IsValid )
             {
                 TaskManager.AddToBus(CreateDatasetTaskmanager.METADATASTRUCTURE_ID, model.SelectedMetadataStructureId);
                 TaskManager.AddToBus(CreateDatasetTaskmanager.DATASTRUCTURE_ID, model.SelectedDataStructureId);
@@ -175,18 +177,26 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 //dataset is selected
                 if (model.SelectedDatasetId != 0 && model.SelectedDatasetId != -1)
                 {
-                    DatasetVersion datasetVersion = dm.GetDatasetLatestVersion(model.SelectedDatasetId);
-                    TaskManager.AddToBus(CreateDatasetTaskmanager.RESEARCHPLAN_ID, datasetVersion.Dataset.ResearchPlan.Id);
-                    TaskManager.AddToBus(CreateDatasetTaskmanager.DATASET_TITLE, XmlDatasetHelper.GetInformation(datasetVersion, AttributeNames.title));
+                    if (dm.IsDatasetCheckedIn(model.SelectedDatasetId))
+                    {
+                        DatasetVersion datasetVersion = dm.GetDatasetLatestVersion(model.SelectedDatasetId);
+                        TaskManager.AddToBus(CreateDatasetTaskmanager.RESEARCHPLAN_ID,
+                            datasetVersion.Dataset.ResearchPlan.Id);
+                        TaskManager.AddToBus(CreateDatasetTaskmanager.DATASET_TITLE,
+                            XmlDatasetHelper.GetInformation(datasetVersion, AttributeNames.title));
 
-                    // set datastructuretype
-                    TaskManager.AddToBus(CreateDatasetTaskmanager.DATASTRUCTURE_TYPE, GetDataStructureType(model.SelectedDataStructureId));
+                        // set datastructuretype
+                        TaskManager.AddToBus(CreateDatasetTaskmanager.DATASTRUCTURE_TYPE,
+                            GetDataStructureType(model.SelectedDataStructureId));
 
-
-
-                    // set MetadataXml From selected existing Dataset
-                    XDocument metadata = XmlUtility.ToXDocument(datasetVersion.Metadata);
-                    SetXml(metadata);
+                        // set MetadataXml From selected existing Dataset
+                        XDocument metadata = XmlUtility.ToXDocument(datasetVersion.Metadata);
+                        SetXml(metadata);
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "Dataset is just in processing");
+                    }
                 }
                 else
                 {
@@ -201,7 +211,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 AdvanceTaskManager(model.SelectedMetadataStructureId);
 
 
-                return RedirectToAction("StartMetadataEditor","CreateDataset");
+                return RedirectToAction("StartMetadataEditor", "CreateDataset");
+
+
             }
 
             return View("Index", model);
@@ -275,7 +287,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 datasets,
                 new EntitySelectorModelAction("ShowListOfDatasetsReciever", "CreateDataset", "DCM"));
 
-            model.Title = "Select a dataset";
+            model.Title = "Select a Dataset";
 
             return PartialView("_EntitySelectorInWindowView", model);
         }
@@ -289,13 +301,13 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         [HttpGet]
         public ActionResult ShowListOfDataStructures()
         {
-            List<ListViewItem> datastructures = LoadDataStructureViewList();
+            List<ListViewItemWithType> datastructures = LoadDataStructureViewList();
 
             EntitySelectorModel model = BexisModelManager.LoadEntitySelectorModel(
                  datastructures,
                  new EntitySelectorModelAction("ShowListOfDataStructuresReciever", "CreateDataset", "DCM"));
 
-            model.Title = "Select a datastructure";
+            model.Title = "Select a Data Structure";
 
 
             return PartialView("_EntitySelectorInWindowView", model);
@@ -315,7 +327,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                  metadataStructures,
                  new EntitySelectorModelAction("ShowListOfMetadataStructuresReciever", "CreateDataset", "DCM"));
 
-            model.Title = "Select a metadatasturcture";
+            model.Title = "Select a Metadata Structure";
 
             return PartialView("_EntitySelectorInWindowView", model);
         }
@@ -349,7 +361,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         private SetupModel LoadLists(SetupModel model)
         {
             if ((List<ListViewItem>)Session["MetadataStructureViewList"] != null) model.MetadataStructureViewList = (List<ListViewItem>)Session["MetadataStructureViewList"];
-            if ((List<ListViewItem>)Session["DataStructureViewList"] != null) model.DataStructureViewList = (List<ListViewItem>)Session["DataStructureViewList"];
+            if ((List<ListViewItemWithType>)Session["DataStructureViewList"] != null) model.DataStructureViewList = (List<ListViewItemWithType>)Session["DataStructureViewList"];
             if ((List<ListViewItem>)Session["DatasetViewList"] != null) model.DatasetViewList = (List<ListViewItem>)Session["DatasetViewList"];
 
             return model;
@@ -358,7 +370,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         #endregion
 
         #region Load Metadata formular actions
-
 
         public ActionResult StartMetadataEditor()
         {
@@ -418,66 +429,75 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                 // load metadatStructrue id
                 DatasetManager dm = new DatasetManager();
-                DatasetVersion dsv = dm.GetDatasetLatestVersion(datasetId);
 
-                TaskManager.AddToBus(CreateDatasetTaskmanager.METADATASTRUCTURE_ID, dsv.Dataset.MetadataStructure.Id);
-                TaskManager.AddToBus(CreateDatasetTaskmanager.RESEARCHPLAN_ID, dsv.Dataset.ResearchPlan.Id);
-                TaskManager.AddToBus(CreateDatasetTaskmanager.DATASTRUCTURE_ID, dsv.Dataset.DataStructure.Id);
-
-                if (newMetadata == null)
-                    TaskManager.AddToBus(CreateDatasetTaskmanager.METADATA_XML, XmlUtility.ToXDocument(dsv.Metadata));
-                else
-                    TaskManager.AddToBus(CreateDatasetTaskmanager.METADATA_XML, XmlUtility.ToXDocument(newMetadata));
-
-                TaskManager.AddToBus(CreateDatasetTaskmanager.DATASET_TITLE, XmlDatasetHelper.GetInformation(dsv, AttributeNames.title));
-
-                ResearchPlanManager rpm = new ResearchPlanManager();
-                TaskManager.AddToBus(CreateDatasetTaskmanager.RESEARCHPLAN_ID, rpm.Repo.Get().First().Id);
-
-                AdvanceTaskManagerBasedOnExistingMetadata(dsv.Dataset.MetadataStructure.Id);
-                //AdvanceTaskManager(dsv.Dataset.MetadataStructure.Id);
-
-
-                foreach (var stepInfo in TaskManager.StepInfos)
+                if (dm.IsDatasetCheckedIn(datasetId))
                 {
+                    DatasetVersion dsv = dm.GetDatasetLatestVersion(datasetId);
 
-                    StepModelHelper stepModelHelper = GetStepModelhelper(stepInfo.Id);
+                    TaskManager.AddToBus(CreateDatasetTaskmanager.METADATASTRUCTURE_ID, dsv.Dataset.MetadataStructure.Id);
+                    TaskManager.AddToBus(CreateDatasetTaskmanager.RESEARCHPLAN_ID, dsv.Dataset.ResearchPlan.Id);
+                    TaskManager.AddToBus(CreateDatasetTaskmanager.DATASTRUCTURE_ID, dsv.Dataset.DataStructure.Id);
 
-                    if (stepModelHelper.Model == null)
+                    if (newMetadata == null)
+                        TaskManager.AddToBus(CreateDatasetTaskmanager.METADATA_XML, XmlUtility.ToXDocument(dsv.Metadata));
+                    else
+                        TaskManager.AddToBus(CreateDatasetTaskmanager.METADATA_XML, XmlUtility.ToXDocument(newMetadata));
+
+                    TaskManager.AddToBus(CreateDatasetTaskmanager.DATASET_TITLE,
+                        XmlDatasetHelper.GetInformation(dsv, AttributeNames.title));
+
+                    ResearchPlanManager rpm = new ResearchPlanManager();
+                    TaskManager.AddToBus(CreateDatasetTaskmanager.RESEARCHPLAN_ID, rpm.Repo.Get().First().Id);
+
+                    AdvanceTaskManagerBasedOnExistingMetadata(dsv.Dataset.MetadataStructure.Id);
+                    //AdvanceTaskManager(dsv.Dataset.MetadataStructure.Id);
+
+
+                    foreach (var stepInfo in TaskManager.StepInfos)
                     {
-                        if (stepModelHelper.Usage is MetadataPackageUsage)
+
+                        StepModelHelper stepModelHelper = GetStepModelhelper(stepInfo.Id);
+
+                        if (stepModelHelper.Model == null)
                         {
-                            stepModelHelper.Model = CreatePackageModel(stepInfo.Id, false);
-                            if (stepModelHelper.Model.StepInfo.IsInstanze)
-                                LoadSimpleAttributesForModelFromXml(stepModelHelper);
+                            if (stepModelHelper.Usage is MetadataPackageUsage)
+                            {
+                                stepModelHelper.Model = CreatePackageModel(stepInfo.Id, false);
+                                if (stepModelHelper.Model.StepInfo.IsInstanze)
+                                    LoadSimpleAttributesForModelFromXml(stepModelHelper);
+                            }
+
+                            if (stepModelHelper.Usage is MetadataNestedAttributeUsage)
+                            {
+                                stepModelHelper.Model = CreateCompoundModel(stepInfo.Id, false);
+                                if (stepModelHelper.Model.StepInfo.IsInstanze)
+                                    LoadSimpleAttributesForModelFromXml(stepModelHelper);
+                            }
+
+                            getChildModelsHelper(stepModelHelper);
                         }
 
-                        if (stepModelHelper.Usage is MetadataNestedAttributeUsage)
-                        {
-                            stepModelHelper.Model = CreateCompoundModel(stepInfo.Id, false);
-                            if (stepModelHelper.Model.StepInfo.IsInstanze)
-                                LoadSimpleAttributesForModelFromXml(stepModelHelper);
-                        }
+                        stepInfoModelHelpers.Add(stepModelHelper);
 
-                        getChildModelsHelper(stepModelHelper);
                     }
 
-                    stepInfoModelHelpers.Add(stepModelHelper);
+                    if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATA_XML))
+                    {
+                        XDocument xMetadata = (XDocument) TaskManager.Bus[CreateDatasetTaskmanager.METADATA_XML];
 
+                        string title = XmlDatasetHelper.GetInformation(dsv, AttributeNames.title);
+                        if (String.IsNullOrEmpty(title)) title = "No Title available.";
+
+                        if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.DATASET_TITLE))
+                            Model.DatasetTitle = TaskManager.Bus[CreateDatasetTaskmanager.DATASET_TITLE].ToString();
+                        else
+                            Model.DatasetTitle = "No Title available.";
+
+                    }
                 }
-
-                if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATA_XML))
+                else
                 {
-                    XDocument xMetadata = (XDocument)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_XML];
-
-                    string title = XmlDatasetHelper.GetInformation(dsv, AttributeNames.title);
-                    if (String.IsNullOrEmpty(title)) title = "No Title available.";
-
-                    if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.DATASET_TITLE))
-                        Model.DatasetTitle = TaskManager.Bus[CreateDatasetTaskmanager.DATASET_TITLE].ToString();
-                    else
-                        Model.DatasetTitle = "No Title available.";
-
+                    ModelState.AddModelError(String.Empty, "Dataset is just in processing.");
                 }
             }
             else
@@ -494,12 +514,32 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             TaskManager.AddToBus(CreateDatasetTaskmanager.EDIT_MODE, fromEditMode);
             Model.FromEditMode = (bool)TaskManager.Bus[CreateDatasetTaskmanager.EDIT_MODE];
 
-            // set edit rigths
-            DatasetManager datasetManager = new DatasetManager();
-            PermissionManager permissionManager = new PermissionManager();
-            SubjectManager subjectManager = new SubjectManager();
+            #region security permissions and authorisations check
+                // set edit rigths
+                DatasetManager datasetManager = new DatasetManager();
+                PermissionManager permissionManager = new PermissionManager();
+                SubjectManager subjectManager = new SubjectManager();
+                Security.Services.Objects.TaskManager securityTaskManager = new Security.Services.Objects.TaskManager();
 
-            Model.EditRight = permissionManager.HasUserDataAccess(subjectManager.GetUserByName(GetUserNameOrDefault()).Id, 1, datasetId, RightType.Update);
+                bool hasAuthorizationRights = false;
+                bool hasAuthenticationRigths = false;
+                long userid = subjectManager.GetUserByName(GetUsernameOrDefault()).Id;
+                //User has Access to Features 
+                //Area DCM
+                //Controller "Create Dataset" 
+                //Action "*"
+                Task task = securityTaskManager.GetTask("DCM", "CreateDataset", "*");
+                if (task != null)
+                {
+                    hasAuthorizationRights = permissionManager.HasSubjectFeatureAccess(userid, task.Feature.Id);
+                }
+
+                hasAuthenticationRigths = permissionManager.HasUserDataAccess(userid, 1, datasetId, RightType.Update);
+
+                Model.EditRight = (hasAuthorizationRights && hasAuthenticationRigths);
+
+            #endregion
+
 
             return PartialView("MetadataEditor", Model);
         }
@@ -849,7 +889,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             {
                 //data/datasets/1/1/
                 string dataPath = AppConfiguration.DataPath; //Path.Combine(AppConfiguration.WorkspaceRootPath, "Data");
-                string storepath = Path.Combine(dataPath, "Temp", GetUserNameOrDefault());
+                string storepath = Path.Combine(dataPath, "Temp", GetUsernameOrDefault());
 
                 // if folder not exist
                 if (!Directory.Exists(storepath))
@@ -1563,7 +1603,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         #endregion
 
-        #region Submit And Create And Finish
+        #region Submit And Create And Finish And Cancel and Reset
 
         public ActionResult Submit()
         {
@@ -1592,7 +1632,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 && TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.RESEARCHPLAN_ID)
                 && TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATASTRUCTURE_ID))
             {
-                Dataset ds;
                 DatasetManager dm = new DatasetManager();
                 long datasetId = 0;
                 // for e new dataset
@@ -1614,16 +1653,16 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     MetadataStructureManager msm = new MetadataStructureManager();
                     MetadataStructure metadataStructure = msm.Repo.Get(metadataStructureId);
 
-                    ds = dm.CreateEmptyDataset(dataStructure, rp, metadataStructure);
+                    var ds = dm.CreateEmptyDataset(dataStructure, rp, metadataStructure);
                     datasetId = ds.Id;
 
                     // add security
-                    if (GetUserNameOrDefault() != "DEFAULT")
+                    if (GetUsernameOrDefault() != "DEFAULT")
                     {
                         PermissionManager pm = new PermissionManager();
                         SubjectManager sm = new SubjectManager();
 
-                        BExIS.Security.Entities.Subjects.User user = sm.GetUserByName(GetUserNameOrDefault());
+                        BExIS.Security.Entities.Subjects.User user = sm.GetUserByName(GetUsernameOrDefault());
 
                         foreach (RightType rightType in Enum.GetValues(typeof(RightType)).Cast<RightType>())
                         {
@@ -1639,7 +1678,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                 TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
 
-                if (dm.IsDatasetCheckedOutFor(datasetId, GetUserNameOrDefault()) || dm.CheckOutDataset(datasetId, GetUserNameOrDefault()))
+                if (dm.IsDatasetCheckedOutFor(datasetId, GetUsernameOrDefault()) || dm.CheckOutDataset(datasetId, GetUsernameOrDefault()))
                 {
                     DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(datasetId);
 
@@ -1656,7 +1695,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     TaskManager.AddToBus(CreateDatasetTaskmanager.DATASET_ID, datasetId);
 
                     dm.EditDatasetVersion(workingCopy, null, null, null);
-                    dm.CheckInDataset(datasetId, "Metadata was submited.", GetUserNameOrDefault());
+                    dm.CheckInDataset(datasetId, "Metadata was submited.", GetUsernameOrDefault());
 
                     //add to index
                     // ToDo check which SearchProvider it is, default luceneprovider
@@ -1684,16 +1723,23 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 type = (BExIS.Dcm.UploadWizard.DataStructureType)TaskManager.Bus[CreateDatasetTaskmanager.DATASTRUCTURE_TYPE];
             }
 
+            long datasetid = 0;
+            // set parameters for upload process to pass it with the action
+            if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.DATASET_ID))
+            {
+                datasetid = Convert.ToInt64(TaskManager.Bus[CreateDatasetTaskmanager.DATASET_ID]);
+            }
 
             Session["CreateDatasetTaskmanager"] = null;
             TaskManager = null;
 
-            return RedirectToAction("UploadWizard", "Submit", new RouteValueDictionary { { "area", "DCM" }, { "type", type } });
+            return RedirectToAction("UploadWizard", "Submit", new { area = "DCM", type = type , datasetid = datasetid });
+  
         }
 
         public ActionResult ShowData(long id)
         {
-            return RedirectToAction("ShowData", "Data", new RouteValueDictionary { { "area", "DDM" }, { "id", id } });
+            return RedirectToAction("ShowData", "Data", new { area="DDM" , id = id } );
         }
 
         private DataStructureType GetDataStructureType(long id)
@@ -1712,6 +1758,70 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             }
 
             return DataStructureType.Structured;
+        }
+
+        public ActionResult Cancel()
+        {
+            //public ActionResult LoadMetadata(long datasetId, bool locked = false, bool created = false, bool fromEditMode = false, bool resetTaskManager = false, XmlDocument newMetadata = null)
+
+            TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
+            if (TaskManager != null)
+            {
+                DatasetManager dm = new DatasetManager();
+                long datasetid = -1;
+                bool resetTaskManager = true;
+                XmlDocument metadata = null;
+                bool editmode = false;
+                bool created = false;
+
+                if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.DATASET_ID))
+                {
+                    datasetid = Convert.ToInt64(TaskManager.Bus[CreateDatasetTaskmanager.DATASET_ID]);
+                }
+
+                if (datasetid > -1 && dm.IsDatasetCheckedIn(datasetid))
+                {
+                    metadata = dm.GetDatasetLatestMetadataVersion(datasetid);
+                    editmode = true;
+                    created = true;
+                }
+
+                return RedirectToAction("LoadMetadata", "CreateDataset", new { area = "DDM", datasetid = datasetid, created = created, locked = true, fromEditMode = editmode, resetTaskManager = resetTaskManager, newMetadata = metadata });
+            }
+
+            return RedirectToAction("StartMetadataEditor", "CreateDataset");
+        }
+
+        public ActionResult Reset()
+        {
+            //public ActionResult LoadMetadata(long datasetId, bool locked = false, bool created = false, bool fromEditMode = false, bool resetTaskManager = false, XmlDocument newMetadata = null)
+
+            TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
+            if (TaskManager != null)
+            {
+                DatasetManager dm = new DatasetManager();
+                long datasetid = -1;
+                bool resetTaskManager = true;
+                XmlDocument metadata = null;
+                bool editmode = false;
+                bool created = false;
+
+                if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.DATASET_ID))
+                {
+                    datasetid = Convert.ToInt64(TaskManager.Bus[CreateDatasetTaskmanager.DATASET_ID]);
+                }
+
+                if (datasetid > -1 && dm.IsDatasetCheckedIn(datasetid))
+                {
+                    metadata = dm.GetDatasetLatestMetadataVersion(datasetid);
+                    editmode = true;
+                    created = true;
+                }
+
+                return RedirectToAction("LoadMetadata", "CreateDataset", new { area = "DDM", datasetid = datasetid, locked = false, created = created, fromEditMode = editmode, resetTaskManager = resetTaskManager, newMetadata = metadata });
+            }
+
+            return RedirectToAction("StartMetadataEditor", "CreateDataset");
         }
 
         #endregion
@@ -1816,97 +1926,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             return null;
 
         }
-
-        //[HttpPost]
-        //public JsonResult ValidateMetadataAttributeUsage(object value, int id, int parentid, string parentname, int number, int parentModelNumber, int parentStepId)
-        //{
-        //    TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
-        //    StepModelHelper stepModelHelper = GetStepModelhelper(parentStepId);
-
-        //    long ParentUsageId = stepModelHelper.Usage.Id;
-        //    BaseUsage parentUsage = LoadUsage(stepModelHelper.Usage);
-        //    int pNumber = stepModelHelper.Number;
-
-        //    BaseUsage metadataAttributeUsage = UsageHelper.GetChildren(parentUsage).Where(u => u.Id.Equals(id)).FirstOrDefault();
-
-        //    //UpdateXml
-        //    long metadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateDatasetTaskmanager.METADATASTRUCTURE_ID]);
-        //    MetadataAttributeModel model = MetadataAttributeModel.Convert(metadataAttributeUsage, parentUsage, metadataStructureId, parentModelNumber, stepModelHelper.StepId);
-        //    model.Value = value;
-        //    model.Number = number;
-
-        //    UpdateAttribute(parentUsage, parentModelNumber, metadataAttributeUsage, number, value);
-
-        //    if (stepModelHelper.Model.MetadataAttributeModels.Where(a => a.Id.Equals(id) && a.Number.Equals(number)).Count() > 0)
-        //    {
-        //        MetadataAttributeModel selectedMetadatAttributeModel = stepModelHelper.Model.MetadataAttributeModels.Where(a => a.Id.Equals(id) && a.Number.Equals(number)).FirstOrDefault();
-        //        // select the attributeModel and change the value
-        //        selectedMetadatAttributeModel.Value = model.Value;
-        //        selectedMetadatAttributeModel.Errors = validateAttribute(selectedMetadatAttributeModel);
-        //    }
-        //    else
-        //    {
-        //        stepModelHelper.Model.MetadataAttributeModels.Add(model);
-        //    }
-
-
-
-        //    return Json(true, JsonRequestBehavior.AllowGet);
-        //    return Json(true, JsonRequestBehavior.AllowGet);
-        //}
-
-        //public ActionResult ValidateStep()
-        //{
-        //    TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
-        //    int currentStepIndex = TaskManager.GetCurrentStepInfoIndex();
-
-        //    StepModelHelper stepModelHelper = GetStepModelhelper(parentStepId);
-
-        //    long usageId = stepModelHelper.Usage.Id;
-        //    BaseUsage usage = LoadUsage(stepModelHelper.Usage);
-        //    int number = stepModelHelper.Number;
-
-
-        //    List<Error> errors = validateStep(stepModelHelper.Model);
-
-        //    TaskManager.Current().notExecuted = false;
-
-        //    if (errors == null || errors.Count == 0)
-        //        TaskManager.Current().SetStatus(StepStatus.success);
-        //    else
-        //        TaskManager.Current().SetStatus(StepStatus.error);
-
-
-        //    if (TaskManager.IsRoot(TaskManager.Current().Parent.Parent))
-        //        return PartialView("_metadataPackageUsageView", CreatePackageModel(currentStepIndex, true));
-        //    else
-        //        return PartialView("_metadataCompoundAttributeView", CreateCompoundModel(currentStepIndex, true));
-
-        //}
-
-        //private void Validate(StepModelHelper stepModelHelper)
-        //{
-
-        //    TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
-
-        //    if (stepModelHelper != null)
-        //    {
-        //        List<Error> errors = validateStep(stepModelHelper.Model);
-
-        //        if (errors == null || errors.Count == 0)
-        //        {
-        //            TaskManager.Current().SetValid(true);
-        //            TaskManager.Current().SetStatus(StepStatus.success);
-        //            //UpdateXml(packageId);
-        //        }
-        //        else
-        //        {
-        //            stepModelHelper.Model.ErrorList = errors;
-        //            TaskManager.Current().SetValid(false);
-        //            TaskManager.Current().SetStatus(StepStatus.error);
-        //        }
-        //    }
-        //}
 
         private List<Error> validateStep(AbstractMetadataStepModel pModel)
         {
@@ -2225,16 +2244,16 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         // chekc if user exist
         // if true return usernamem otherwise "DEFAULT"
-        public string GetUserNameOrDefault()
+        public string GetUsernameOrDefault()
         {
-            string userName = string.Empty;
+            string username = string.Empty;
             try
             {
-                userName = HttpContext.User.Identity.Name;
+                username = HttpContext.User.Identity.Name;
             }
             catch { }
 
-            return !string.IsNullOrWhiteSpace(userName) ? userName : "DEFAULT";
+            return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
         }
 
         private StepModelHelper AddStepModelhelper(StepModelHelper stepModelHelper)
@@ -2344,16 +2363,26 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             return temp.OrderBy(p => p.Title).ToList();
         }
 
-        public List<ListViewItem> LoadDataStructureViewList()
+        public List<ListViewItemWithType> LoadDataStructureViewList()
         {
             DataStructureManager dsm = new DataStructureManager();
-            List<ListViewItem> temp = new List<ListViewItem>();
+            List<ListViewItemWithType> temp = new List<ListViewItemWithType>();
 
             foreach (DataStructure dataStructure in dsm.AllTypesDataStructureRepo.Get())
             {
                 string title = dataStructure.Name;
+                string type = "";
+                if (dataStructure is StructuredDataStructure)
+                {
+                    type = "structured";
+                }
 
-                temp.Add(new ListViewItem(dataStructure.Id, title, dataStructure.Description));
+                if (dataStructure is UnStructuredDataStructure)
+                {
+                    type = "unstructured";
+                }
+
+                temp.Add(new ListViewItemWithType(dataStructure.Id, title, dataStructure.Description, type));
             }
 
             return temp.OrderBy(p => p.Title).ToList();
@@ -2366,13 +2395,21 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             DatasetManager datasetManager = new DatasetManager();
             List<ListViewItem> temp = new List<ListViewItem>();
 
-            foreach (long id in pm.GetAllDataIds(subjectManager.GetUserByName(GetUserNameOrDefault()).Id, 1, RightType.Update))
+            //get all datasetsid where the current userer has access to
+            long userid = -1;
+            if (subjectManager.ExistsUsername(GetUsernameOrDefault()))
+                userid = subjectManager.GetUserByName(GetUsernameOrDefault()).Id;
+
+            if (userid != -1)
             {
+                foreach (long id in pm.GetAllDataIds(userid, 1, RightType.Update))
+                {
 
-                string title = XmlDatasetHelper.GetInformation(id, AttributeNames.title);
-                string description = XmlDatasetHelper.GetInformation(id, AttributeNames.description);
+                    string title = XmlDatasetHelper.GetInformation(id, AttributeNames.title);
+                    string description = XmlDatasetHelper.GetInformation(id, AttributeNames.description);
 
-                temp.Add(new ListViewItem(id, title, description));
+                    temp.Add(new ListViewItem(id, title, description));
+                }
             }
 
             return temp.OrderBy(p => p.Title).ToList();
@@ -2413,8 +2450,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             return usage;
         }
-
-
 
         #endregion
 

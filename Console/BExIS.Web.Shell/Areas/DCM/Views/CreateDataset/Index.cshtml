@@ -23,6 +23,7 @@
             @Html.ActionLink("here", "Index", "Help", new { id = 0 }, new { @class = "bx-informationLink", title = "go to help", target = "_blank" })
         </p>
     }
+    @Html.ValidationSummary(true)
 
     <p>Please provide the following information.</p>
     @using (Html.BeginForm("StoreSelectedDatasetSetup", "CreateDataset", new { area = "DCM" }, FormMethod.Post))

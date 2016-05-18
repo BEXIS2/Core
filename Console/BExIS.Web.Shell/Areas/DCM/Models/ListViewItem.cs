@@ -21,4 +21,22 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
             Description = description;
         }
     }
+
+    public class ListViewItemWithType:ListViewItem
+    {
+        public string Type { get; set; }
+
+        public ListViewItemWithType()
+        {
+            Type = "No Type";
+        }
+
+        public ListViewItemWithType(long id, string title, string description = "",string type = "")
+        {
+            Id = id;
+            Title = title;
+            Description = description;
+            Type = type;
+        }
+    }
 }

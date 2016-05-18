@@ -69,7 +69,7 @@
 					{
 						columns.Bound("").Width(40).ClientTemplate(
 						"<div class='searchResultFunctionDiv'>" +
-							@Html.ActionLink(" ", "ShowData", "Data", new { area = "DDM", id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>" }, new { @class = "bx bx-grid-function bx-show", @id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>" }) +
+							@Html.ActionLink(" ", "ShowData", "Data", new { area = "DDM", id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>" }, new { @class = "bx bx-grid-function bx-show", @id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>", title = "View details" }) +
 						 "</div>"
 						)
 						.Groupable(false)

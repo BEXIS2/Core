@@ -6,12 +6,14 @@
 
 
 @{
-    ViewBag.Title = "Contact Us";
+    //ViewBag.Title = "Contact Us";
     HtmlString content = new HtmlString(Model.content);
 }
 
 @section Information
 { 
+    BExIS++ support team stand ready to assist you with all of your technical questions: 
+<a href="mailto:bexis-support@uni-jena.de">bexis-support@uni-jena.de</a>
     @*<p>
             More information
             @Html.ActionLink("here", "Index", "Help", new { id = 0 }, new { @class = "bx-informationLink", title="go to help", target="_blank"})

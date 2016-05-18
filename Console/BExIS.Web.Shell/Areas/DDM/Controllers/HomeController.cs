@@ -696,31 +696,75 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             foreach (long datasetId in datasetManager.GetDatasetLatestIds())
             {
                 //get permissions
-                List<int> rights = permissionManager.GetAllRights(subjectManager.GetUserByName(GetUserNameOrDefault()).Id, 1, datasetId).ToList();
+                List<int> rights = permissionManager.GetAllRights(subjectManager.GetUserByName(GetUsernameOrDefault()).Id, 1, datasetId).ToList();
 
                 if (rights.Count > 0)
                 {
-                    DatasetVersion dsv = datasetManager.GetDatasetLatestVersion(datasetId);
-
-                    MetadataStructureManager msm = new MetadataStructureManager();
-                    dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
-
-                    string title = XmlDatasetHelper.GetInformation(dsv, AttributeNames.title);
-                    string description = XmlDatasetHelper.GetInformation(dsv, AttributeNames.description);
-
                     DataRow dataRow = model.NewRow();
                     Object[] rowArray = new Object[8];
 
-                    rowArray[0] = Convert.ToInt64(datasetId);
-                    rowArray[1] = title;
-                    rowArray[2] = description;
+                    if (datasetManager.IsDatasetCheckedIn(datasetId))
+                    {
+                        DatasetVersion dsv = datasetManager.GetDatasetLatestVersion(datasetId);
 
-                    if (rights.Contains(1)) { rowArray[3] = "✔"; } else { rowArray[3] = "✘"; }
-                    if (rights.Contains(2)) { rowArray[4] = "✔"; } else { rowArray[4] = "✘"; }
-                    if (rights.Contains(3)) { rowArray[5] = "✔"; } else { rowArray[5] = "✘"; }
-                    if (rights.Contains(4)) { rowArray[6] = "✔"; } else { rowArray[6] = "✘"; }
-                    if (rights.Contains(5)) { rowArray[7] = "✔"; } else { rowArray[7] = "✘"; }
+                        MetadataStructureManager msm = new MetadataStructureManager();
+                        dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
 
+                        string title = XmlDatasetHelper.GetInformation(dsv, AttributeNames.title);
+                        string description = XmlDatasetHelper.GetInformation(dsv, AttributeNames.description);
+
+                        rowArray[0] = Convert.ToInt64(datasetId);
+                        rowArray[1] = title;
+                        rowArray[2] = description;
+                    }
+                    else
+                    {
+                        rowArray[0] = Convert.ToInt64(datasetId);
+                        rowArray[1] = "";
+                        rowArray[2] = "Dataset is just in processing.";
+                    }
+
+                    if (rights.Contains(1))
+                    {
+                        rowArray[3] = "✔";
+                    }
+                    else
+                    {
+                        rowArray[3] = "✘";
+                    }
+                    if (rights.Contains(2))
+                    {
+                        rowArray[4] = "✔";
+                    }
+                    else
+                    {
+                        rowArray[4] = "✘";
+                    }
+                    if (rights.Contains(3))
+                    {
+                        rowArray[5] = "✔";
+                    }
+                    else
+                    {
+                        rowArray[5] = "✘";
+                    }
+                    if (rights.Contains(4))
+                    {
+                        rowArray[6] = "✔";
+                    }
+                    else
+                    {
+                        rowArray[6] = "✘";
+                    }
+                    if (rights.Contains(5))
+                    {
+                        rowArray[7] = "✔";
+                    }
+                    else
+                    {
+                        rowArray[7] = "✘";
+                    }
+                    
                     dataRow = model.NewRow();
                     dataRow.ItemArray = rowArray;
                     model.Rows.Add(dataRow);
@@ -795,16 +839,16 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
         // chekc if user exist
         // if true return usernamem otherwise "DEFAULT"
-        public string GetUserNameOrDefault()
+        public string GetUsernameOrDefault()
         {
-            string userName = string.Empty;
+            string username = string.Empty;
             try
             {
-                userName = HttpContext.User.Identity.Name;
+                username = HttpContext.User.Identity.Name;
             }
             catch { }
 
-            return !string.IsNullOrWhiteSpace(userName) ? userName : "DEFAULT";
+            return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
         }
 
         #endregion
