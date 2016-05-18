@@ -20,7 +20,7 @@
     .Name(windowName)
     .Visible(false)
     .Title(title)
-    .HtmlAttributes(new { @class = "bx-window" })
+    .HtmlAttributes(new { @class = "bx-window entityWindow" })
     .Modal(true)
     .Draggable(true)
     .Buttons(buttons => buttons.Close())
@@ -42,7 +42,8 @@
     function OnClose() {
         var window = $(this).data('tWindow');
         window.center().close();
-
+        alert($(this).html);
+        $(this).remove();
     }
 
     $(".submitEntitySelection")
