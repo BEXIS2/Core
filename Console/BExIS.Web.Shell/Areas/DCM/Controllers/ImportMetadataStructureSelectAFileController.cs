@@ -113,7 +113,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 catch (Exception ex)
                 {
                     ModelState.AddModelError("", ex.Message);
-                    model.ErrorList.Add(new Error(ErrorType.Other, "Can not find any dependent files to the selected schema."));
+                    model.ErrorList.Add(new Error(ErrorType.Other, "Can not find any dependent files to the selected schema. Please upload missing files to server and try it again."));
                     TaskManager.Current().SetValid(false);
                 }
 
@@ -174,8 +174,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 }
 
                 string path = Path.Combine(storepath, SelectFileUploader.FileName);
-
-
 
                 SelectFileUploader.SaveAs(path);
                 TaskManager.AddToBus(ImportMetadataStructureTaskManager.FILEPATH, path);

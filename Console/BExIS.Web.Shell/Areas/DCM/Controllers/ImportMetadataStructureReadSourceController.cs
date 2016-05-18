@@ -184,7 +184,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         xmlSchemaManager.Delete(schemaName);
                         ModelState.AddModelError("", ex.Message);
                         model.ErrorList.Add(new Error(ErrorType.Other, "Can not create metadatastructure."));
-                        throw ex;
                     }
                 }
 

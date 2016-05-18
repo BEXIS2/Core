@@ -1632,7 +1632,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 && TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.RESEARCHPLAN_ID)
                 && TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATASTRUCTURE_ID))
             {
-                Dataset ds;
                 DatasetManager dm = new DatasetManager();
                 long datasetId = 0;
                 // for e new dataset
@@ -1654,7 +1653,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     MetadataStructureManager msm = new MetadataStructureManager();
                     MetadataStructure metadataStructure = msm.Repo.Get(metadataStructureId);
 
-                    ds = dm.CreateEmptyDataset(dataStructure, rp, metadataStructure);
+                    var ds = dm.CreateEmptyDataset(dataStructure, rp, metadataStructure);
                     datasetId = ds.Id;
 
                     // add security

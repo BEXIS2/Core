@@ -54,6 +54,10 @@ namespace BExIS.Xml.Helpers.Mapping
         private Dictionary<long, string> createdPackagesDic { get; set; }
         private Dictionary<long, string> createdCompoundsDic { get; set; }
 
+        private string userName = "";
+        private string location = "";
+
+
         public XmlSchemaManager()
         {
             Elements = new List<XmlSchemaElement>();
@@ -95,6 +99,8 @@ namespace BExIS.Xml.Helpers.Mapping
         /// <param name="path"></param>
         public void Load(string path, string username)
         {
+            userName = username;
+
             xsdFilePath = path;
             xsdFileName = path.Split('\\').Last();
 
@@ -122,23 +128,7 @@ namespace BExIS.Xml.Helpers.Mapping
             {
                 foreach (XmlSchemaObject additional in Schema.Includes)
                 {
-                    if (additional is XmlSchemaInclude)
-                    {
-                        XmlSchemaInclude include = (XmlSchemaInclude)additional;
-
-                        if (include.Schema == null)
-                        {
-                            XmlReaderSettings settings = new XmlReaderSettings();
-                            settings.DtdProcessing = DtdProcessing.Ignore;
-
-                            string dataPath = Path.Combine(AppConfiguration.DataPath, "Temp", username, include.SchemaLocation.Split('/').Last());
-
-                            XmlReader test = XmlReader.Create(dataPath, settings);
-                            include.Schema = XmlSchema.Read(test, verifyErrors);
-                        }
-
-                        schemaSet.Add(include.Schema);
-                    }
+                    schemaSet = addToSchemaSet(additional, schemaSet);
                 }
             }
 
@@ -154,6 +144,39 @@ namespace BExIS.Xml.Helpers.Mapping
             RefElementNames.AddRange(GetAllRefElementNames(Elements));
 
             xsd_file.Close();
+        }
+
+        private XmlSchemaSet addToSchemaSet(XmlSchemaObject xmlSchemaObject, XmlSchemaSet xmlSchemaSet )
+        {
+            if (xmlSchemaObject is XmlSchemaInclude)
+            {
+                XmlSchemaInclude include = (XmlSchemaInclude)xmlSchemaObject;
+
+                if (include.Schema == null)
+                {
+                    XmlReaderSettings settings = new XmlReaderSettings();
+                    settings.DtdProcessing = DtdProcessing.Ignore;
+
+                    string dataPath = Path.Combine(AppConfiguration.DataPath, "Temp", userName, include.SchemaLocation.Split('/').Last());
+
+                    XmlReader test = XmlReader.Create(dataPath, settings);
+                    include.Schema = XmlSchema.Read(test, verifyErrors);
+                }
+
+                xmlSchemaSet.Add(include.Schema);
+                // if schema has included schemas
+                if (include.Schema.Includes.Count > 0)
+                {
+                    foreach (XmlSchemaObject additional in include.Schema.Includes)
+                    {
+                        addToSchemaSet(additional, xmlSchemaSet);
+                    }
+                }
+
+                return xmlSchemaSet;
+            }
+
+            return xmlSchemaSet;
         }
 
         public void Delete(string schemaName)
