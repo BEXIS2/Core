@@ -491,6 +491,7 @@
     <Content Include="Areas\DCM\Views\Help\UserGuides\DCM_UserGuide.htm" />
     <Content Include="Areas\DDM\Views\Help\UserGuides\DDM_UserGuide.htm" />
     <Content Include="Areas\DDM\Scripts\ddm.js" />
+    <Content Include="Areas\DIM\Images\DIM_UserGuide_files\image001.jpg" />
     <Content Include="Areas\DIM\Views\Help\UserGuides\DIM_UserGuide.htm" />
     <Content Include="Areas\MSM\Resources\Scripts\angular-dragdrop.min.js" />
     <Content Include="Areas\MSM\Resources\Scripts\angular-route.min.js" />
@@ -935,7 +936,6 @@
     <Folder Include="Areas\DCM\Views\Home\" />
     <Folder Include="Areas\DDM\Images\DDM_UserGuide_files\" />
     <Folder Include="Areas\DDM\Views\Shared\" />
-    <Folder Include="Areas\DIM\Images\DIM_UserGuide_files\" />
     <Folder Include="Areas\DIM\Views\Shared\" />
     <Folder Include="Areas\MSM\Views\Shared\" />
     <Folder Include="Areas\RPM\Views\Shared\" />
