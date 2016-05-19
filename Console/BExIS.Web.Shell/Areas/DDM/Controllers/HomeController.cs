@@ -251,12 +251,13 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
             SetParentOfSelectAbleCategories(parent);
 
-            var facet = provider.DefaultSearchModel.SearchComponent.Facets.Where(p => p.Name.Equals(parent, StringComparison.InvariantCulture)).FirstOrDefault();
+            var facet = provider.WorkingSearchModel.SearchComponent.Facets.Where(p => p.Name.Equals(parent, StringComparison.InvariantCulture)).FirstOrDefault();
+     
             SetParentOfSelectAbleCategories(parent);
 
            // List<Facet> sortedList = facet.Childrens.OrderBy(p => p.DisplayName).ToList();
 
-            SetSelectAbleCategoryList(facet.Childrens.OrderBy(p => p.Name.ToLower()).ToList());
+            SetSelectAbleCategoryList(facet.Childrens.Where(p=>p.Count > 0).OrderBy(p => p.Name.ToLower()).ToList());
 
             return PartialView("_windowCheckBoxList", provider.WorkingSearchModel);
         }
