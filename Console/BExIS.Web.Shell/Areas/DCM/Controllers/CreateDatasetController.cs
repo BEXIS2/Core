@@ -2404,11 +2404,13 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             {
                 foreach (long id in pm.GetAllDataIds(userid, 1, RightType.Update))
                 {
+                    if (datasetManager.IsDatasetCheckedIn(id))
+                    {
+                        string title = XmlDatasetHelper.GetInformation(id, AttributeNames.title);
+                        string description = XmlDatasetHelper.GetInformation(id, AttributeNames.description);
 
-                    string title = XmlDatasetHelper.GetInformation(id, AttributeNames.title);
-                    string description = XmlDatasetHelper.GetInformation(id, AttributeNames.description);
-
-                    temp.Add(new ListViewItem(id, title, description));
+                        temp.Add(new ListViewItem(id, title, description));
+                    }
                 }
             }
 

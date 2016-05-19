@@ -1,17 +1,24 @@
 ﻿@model MetadataEditorModel
+@using System.Web.Configuration
 @using BExIS.Web.Shell.Areas.DCM.Models.CreateDataset
 @using BExIS.Dlm.Entities.MetadataStructure;
 @{
     string lockedClass = "";
     bool locked = false;
     bool editMode = false;
+
+    HttpRuntimeSection section = System.Configuration.ConfigurationManager.GetSection("system.web/httpRuntime") as HttpRuntimeSection;
+    int int_MaxRequestLength = section.MaxRequestLength;
+    int mbMax = int_MaxRequestLength / 1024;
 }
+
 
 @if (ViewData.Keys.Contains("Locked"))
 {
     locked = (bool)ViewData["Locked"];
     lockedClass = "bx-disabled";
 }
+
 
 @section Information
 {
@@ -31,23 +38,42 @@
 <div>
     <table>
         <tr>
+            
             @if (locked && Model.EditRight)
             {
                 <td><button onclick="edit()" class="bx-button function">Edit</button>
-                @Html.ActionLink("Copy", "Index", "CreateDataset", new { area = "DCM", id = @Model.DatasetId, type = "DatasetId" }, new { @class = "bx-button function", @id = @Model.DatasetId })</td>
+                    @Html.ActionLink("Copy", "Index", "CreateDataset", new {area = "DCM", id = @Model.DatasetId, type = "DatasetId"}, new {@class = "bx-button function", @id = @Model.DatasetId})</td>
+            }
+
+            @if (!Model.Created && !locked)
+            {
+                <td>
+                    @(Html.Telerik().Upload()
+                          .Name("SelectFileUploader")
+                          .Multiple(false)
+                          .ShowFileList(false)
+                          .HtmlAttributes(new {title = "Import from xml"})
+                          .ClientEvents(events => events
+                              .OnSuccess("OnSuccess")
+                              .OnSelect("SelectFileProcess_OnSelect"))
+                          .Async(async => async
+                              .Save("SelectFileProcess", "CreateDataset", new {area = "DCM"})
+                              .AutoUpload(true))
+                          )
+                </td>
             }
 
             @if (Model.Created && Model.DatasetId != -1 && !@Model.FromEditMode)
-            { 
+            {
 
-                <td>You successfully created dataset: <br /><b>@Model.DatasetTitle</b></td>
-                <td>Please use the <b>@Html.ActionLink("Upload Data Wizard ", "StartUploadWizard", "CreateDataset", new RouteValueDictionary { { "area", "DCM" } }, new { title = "Link to upload wizard", @class="bx-link" })</b><br />
+                <td>You successfully created dataset: <br/><b>@Model.DatasetTitle</b></td>
+                <td>Please use the <b>@Html.ActionLink("Upload Data Wizard ", "StartUploadWizard", "CreateDataset", new RouteValueDictionary {{"area", "DCM"}}, new {title = "Link to upload wizard", @class = "bx-link"})</b><br/>
                     to add primary data to this dataset.</td>
 
                 if (@Model.DatasetId > 0)
-                { 
-                    <td>Or see your dataset here <b>@Html.ActionLink(@Model.DatasetTitle, "ShowData", "CreateDataset", new  {id = @Model.DatasetId }, new { title = "Link to your dataset.", @class="bx-link" })</b><br /></td>
-                    
+                {
+                    <td>Or see your dataset here <b>@Html.ActionLink(@Model.DatasetTitle, "ShowData", "CreateDataset", new {id = @Model.DatasetId}, new {title = "Link to your dataset.", @class = "bx-link"})</b><br/></td>
+
                 }
             }
         </tr>
@@ -95,6 +121,54 @@
 }
 </div>
 <script>
+
+    function SelectFileProcess_OnSelect(e) {
+        var file = e.files[0];
+        var maxsize = '@int_MaxRequestLength';
+
+        if (!IsExtentionValid(file.extension)) {
+            alert("Only .xml files can be uploaded");
+            e.preventDefault();
+            return false;
+        }
+        else {
+
+            if (file.size > (maxsize * 1024)) {
+
+                alert("Max file : " + maxsize / 1024 + " MB is supported. Please contact your administrator to upload bigger files.");
+                e.preventDefault();
+                return false;
+            }
+        }
+
+    }
+
+    /*
+    Is Extention from selected file
+    in list of supported files
+    */
+    function IsExtentionValid(fileExtention) {
+        var extListAsString = ".xml";
+        var extList = extListAsString.split(',');
+
+        for (var i = 0; i < extList.length; i++) {
+            if (fileExtention.toLowerCase() == extList[i]) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    function OnSuccess() {
+        //alert("on success");
+
+        $.get('@Url.Action("LoadExternalXml", "CreateDataset", new RouteValueDictionary { { "area", "DCM" } })', function (response) {
+            //alert("on success");
+
+            $('#MetadataEditor').replaceWith(response);
+        })
+    }
 
     function validate()
     {
