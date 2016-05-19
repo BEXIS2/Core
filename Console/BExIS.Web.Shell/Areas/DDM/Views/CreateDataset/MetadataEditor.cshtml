@@ -47,7 +47,7 @@
 
             @if (!Model.Created && !locked)
             {
-                <td>
+                <td style="width: 100px;">
                     @(Html.Telerik().Upload()
                           .Name("SelectFileUploader")
                           .Multiple(false)
@@ -60,6 +60,11 @@
                               .Save("SelectFileProcess", "CreateDataset", new {area = "DCM"})
                               .AutoUpload(true))
                           )
+                </td>
+                <td>
+                    <div id="preloader" style="display:none;">
+                        <img src="../../../../Themes/Default/Styles/Default/preloader.GIF" />
+                    </div>
                 </td>
             }
 
@@ -123,6 +128,9 @@
 <script>
 
     function SelectFileProcess_OnSelect(e) {
+
+        $("#preloader").show();
+
         var file = e.files[0];
         var maxsize = '@int_MaxRequestLength';
 
@@ -167,6 +175,7 @@
             //alert("on success");
 
             $('#MetadataEditor').replaceWith(response);
+            $("#preloader").hide();
         })
     }
 
