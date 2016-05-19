@@ -516,6 +516,8 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                 DSDM.GetDataStructureByID(id);
                 DataContainerManager dataAttributeManager = new DataContainerManager();
                 DSDM.dataAttributeList = dataAttributeManager.DataAttributeRepo.Get().ToList();
+
+                ViewBag.Title = PresentationModel.GetViewTitle("Add Variables to: " + DSDM.dataStructure.Name + " (Id: " + DSDM.dataStructure.Id + ")");
             }
                     
             if ((bool)Session["Window"] == false)
@@ -603,10 +605,8 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                 Session["selected"] = null;
                 return RedirectToAction("DataStructureDesigner");
             }
-            DataStructureDesignerModel DSDM = new DataStructureDesignerModel();
-            DSDM.GetDataStructureByID(dataStructure.Id);
             Session["selected"] = null;
-            return View("DataStructureDesigner", DSDM);
+            return RedirectToAction("showDataStructure", new { SelectedItem = id + ",True" });
         }
 
         public ActionResult deleteVariable(long id, long dataStructureId)
@@ -767,9 +767,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             }
             ds.Extra = doc;
             ds = dsm.UpdateStructuredDataStructure(ds);
-            DataStructureDesignerModel Model = new DataStructureDesignerModel();
-            Model.GetDataStructureByID(ds.Id);
-            return View("DataStructureDesigner", Model);
+            return RedirectToAction("showDataStructure", new { SelectedItem = dataStructureId + ",True" });
         }
 
         public ActionResult shiftVariableRight(long id, long dataStructureId)
@@ -807,14 +805,11 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             }
             ds.Extra = doc;
             ds = dsm.UpdateStructuredDataStructure(ds);
-            DataStructureDesignerModel Model = new DataStructureDesignerModel();
-            Model.GetDataStructureByID(ds.Id);
-            return View("DataStructureDesigner", Model);
+            return RedirectToAction("showDataStructure", new { SelectedItem = dataStructureId + ",True" });
         }
 
         public ActionResult openVariableWindow(long id, long dataStructureId)
         {
-
             DataStructureDesignerModel DSDM = new DataStructureDesignerModel();
             DSDM.GetDataStructureByID(dataStructureId);
 
