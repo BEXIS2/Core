@@ -24,10 +24,11 @@
 
     string submitId = "submitTo";
     string cancelId = "cancel";
+    string idAsString = Model.Title.Replace(" ", string.Empty);
     if (!String.IsNullOrEmpty(Model.Title))
     {
-        submitId += Model.Title.Replace(" ", string.Empty);
-        cancelId += Model.Title.Replace(" ", string.Empty);
+        submitId += idAsString;
+        cancelId += idAsString;
     }
 
 
@@ -73,7 +74,7 @@
     {
 
         @(Html.Telerik().Grid(Model.Data)
-                .Name("TestGrid")
+                .Name(@idAsString)
               .DataBinding(c => c.Ajax().OperationMode(GridOperationMode.Client))
               .DataKeys(keys => keys
                 .Add(Model.IDKey)
@@ -141,10 +142,10 @@
                              {
                                  HttpMethod = "GET",
                                  InsertionMode = InsertionMode.Replace,
-                                 UpdateTargetId = targetId                                
-
+                                 UpdateTargetId = targetId,
+                                 OnSuccess= "OnSucess()"
                              },
-                             new { @class = "bx-button function bx-disabled submitEntitySelection", @id = @submitId })
+                             new { @class = "bx-button action bx-disabled submitEntitySelection", @id = @submitId })
 
         }
     }
@@ -181,7 +182,20 @@
 
     function cancel(e) {
         var window = $(e).closest(".t-window").data('tWindow');
-        window.close();
+        if (window != null)
+        {
+            window.close();
+            $(e).closest(".t-window").remove();
+        }
+    }
+
+    function OnSucess() {
+        var window = $(".entityWindow").data('tWindow');
+        if (window != null)
+        {
+            window.close();
+            $(".entityWindow").remove();
+        }
     }
 
 </script>

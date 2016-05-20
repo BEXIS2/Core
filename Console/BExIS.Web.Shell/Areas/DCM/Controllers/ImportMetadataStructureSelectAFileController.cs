@@ -93,11 +93,36 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         {
                             model.ErrorList.Add(new Error(ErrorType.Other, "Cannot access FileStream on server."));
                         }
+
+
+                        try
+                        {
+                            LoadXSDSchema(GetUsernameOrDefault());
+                        }
+                        catch (Exception ex)
+                        {
+                            ModelState.AddModelError("", ex.Message);
+                            model.ErrorList.Add(new Error(ErrorType.Other, "Can not find any dependent files to the selected schema. Please upload missing files to server and try it again."));
+                            TaskManager.Current().SetValid(false);
+                        }
+
+
+
+                        if (TaskManager.Current().IsValid())
+                        {
+                            TaskManager.AddExecutedStep(TaskManager.Current());
+                            TaskManager.GoToNext();
+                            Session["TaskManager"] = TaskManager;
+                            ActionInfo actionInfo = TaskManager.Current().GetActionInfo;
+                            return RedirectToAction(actionInfo.ActionName, actionInfo.ControllerName, new RouteValueDictionary { { "area", actionInfo.AreaName }, { "index", TaskManager.GetCurrentStepInfoIndex() } });
+                        }
+
                     }
                     else
                     {
                         model.ErrorList.Add(new Error(ErrorType.Other, "File is not supported."));
                     }
+
 
 
                 }
@@ -106,27 +131,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     model.ErrorList.Add(new Error(ErrorType.Other, "No FileStream selected or submitted."));
                 }
 
-                try
-                {
-                    LoadXSDSchema(GetUsernameOrDefault());
-                }
-                catch (Exception ex)
-                {
-                    ModelState.AddModelError("", ex.Message);
-                    model.ErrorList.Add(new Error(ErrorType.Other, "Can not find any dependent files to the selected schema. Please upload missing files to server and try it again."));
-                    TaskManager.Current().SetValid(false);
-                }
-
-                
-
-                if (TaskManager.Current().IsValid())
-                {
-                    TaskManager.AddExecutedStep(TaskManager.Current());
-                    TaskManager.GoToNext();
-                    Session["TaskManager"] = TaskManager;
-                    ActionInfo actionInfo = TaskManager.Current().GetActionInfo;
-                    return RedirectToAction(actionInfo.ActionName, actionInfo.ControllerName, new RouteValueDictionary { { "area", actionInfo.AreaName }, { "index", TaskManager.GetCurrentStepInfoIndex() } });
-                }
             }
 
             model.serverFileList = GetServerFileList();

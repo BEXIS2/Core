@@ -1,11 +1,20 @@
 ﻿@model List<BExIS.IO.BasicFileInfo>
 
-<div id="FileList">
+<div id="FileList" class="bx-trunc-parent">
     <h4>Your Files</h4>
-    <div>
-            @foreach(BExIS.IO.BasicFileInfo x in Model)
-            {
-                <p>@Html.ActionLink(" ", "Delete","Push", new { area = "DCM", name = @x.Name, path = @x.Uri }, new { @class="bx-trash bx-function" }) @x.Name </p>
-            }
+    <div class="filecontainer">
+        @foreach (BExIS.IO.BasicFileInfo x in Model)
+        {
+            <p>@Html.ActionLink(" ", "Delete", "Push", new { area = "DCM", name = @x.Name, path = @x.Uri }, new { @class = "bx-trash bx-function" })  @x.Name</p>
+        }
     </div>
 </div>
+<style type="text/css">
+
+    .filecontainer
+    {
+        width: 100%;
+        overflow-x: hidden;
+    }
+
+</style>

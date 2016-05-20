@@ -48,18 +48,25 @@
 
             @if (!Model.Created && !locked)
             {
-
-                @(Html.Telerik().Upload()
-                                .Name("SelectFileUploader")
-                                .Multiple(false)
-                                .ShowFileList(false)
-                                .HtmlAttributes(new { title = "Import from xml" })
-                                .ClientEvents(events => events
-                                   .OnSuccess("OnSuccess"))
-                                .Async(async => async
-                                    .Save("SelectFileProcess", "CreateDataset", new { area = "DCM" })
-                                    .AutoUpload(true))
-                )
+                <td style="width: 100px">
+                    @(Html.Telerik().Upload()
+                          .Name("SelectFileUploader")
+                          .Multiple(false)
+                          .ShowFileList(false)
+                          .HtmlAttributes(new {title = "Import from xml"})
+                          .ClientEvents(events => events
+                              .OnSuccess("OnSuccess")
+                              .OnSelect("SelectFileProcess_OnSelect"))
+                          .Async(async => async
+                              .Save("SelectFileProcess", "CreateDataset", new {area = "DCM"})
+                              .AutoUpload(true))
+                          )
+                </td>
+                <td>
+                    <div id="preloader" style="display:none;">
+                        <img src="../../../../Themes/Default/Styles/Default/preloader.GIF" />
+                    </div>
+                </td>
 
             }
 
@@ -124,12 +131,14 @@
 
 
     function SelectFileProcess_OnSelect(e) {
+
+        $("#preloader").show();
+
         var file = e.files[0];
         var maxsize = '@int_MaxRequestLength';
-        //if (file.extension != ".xlsm" && file.extension != ".csv" && file.extension != ".txt") {
 
         if (!IsExtentionValid(file.extension)) {
-            alert("Only .xml files can be uploaded")
+            alert("Only .xml files can be uploaded");
             e.preventDefault();
             return false;
         }
@@ -142,6 +151,7 @@
                 return false;
             }
         }
+
     }
 
     /*
@@ -168,6 +178,8 @@
             //alert("on success");
 
             $('#MetadataEditor').replaceWith(response);
+
+            $("#preloader").hide();
         })
     }
 
