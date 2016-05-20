@@ -76,13 +76,10 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                 string mappingFilePathImport = TaskManager.Bus[ImportMetadataStructureTaskManager.MAPPING_FILE_NAME_IMPORT].ToString();
                 string mappingFilePathExport = TaskManager.Bus[ImportMetadataStructureTaskManager.MAPPING_FILE_NAME_EXPORT].ToString();
-                string title = TaskManager.Bus[ImportMetadataStructureTaskManager.TITLE_NODE].ToString();
-                string description = TaskManager.Bus[ImportMetadataStructureTaskManager.DESCRIPTION_NODE].ToString();
-                model.TitleNode = title;
-                model.DescriptionNode = description;
-
-                string titleXpath = GetMetadataNodes().First(p => p.DisplayName.Equals(title)).XPath;
-                string descriptionXpath = GetMetadataNodes().First(p => p.DisplayName.Equals(description)).XPath;
+                string titleXpath = TaskManager.Bus[ImportMetadataStructureTaskManager.TITLE_NODE].ToString();
+                string descriptionXpath = TaskManager.Bus[ImportMetadataStructureTaskManager.DESCRIPTION_NODE].ToString();
+                model.TitleNode = GetMetadataNodes().First(p => p.XPath.Equals(titleXpath)).DisplayName;
+                model.DescriptionNode = GetMetadataNodes().First(p => p.XPath.Equals(descriptionXpath)).DisplayName;
 
                 TaskManager.Current().SetValid(true);
 
@@ -100,9 +97,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             {
                 //set existing parameter
                 if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.TITLE_NODE))
-                    model.TitleNode = TaskManager.Bus[ImportMetadataStructureTaskManager.TITLE_NODE].ToString();
+                    model.TitleNode = GetMetadataNodes().First(p => p.XPath.Equals(TaskManager.Bus[ImportMetadataStructureTaskManager.TITLE_NODE].ToString())).DisplayName; ;
                 if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.DESCRIPTION_NODE))
-                    model.DescriptionNode = TaskManager.Bus[ImportMetadataStructureTaskManager.DESCRIPTION_NODE].ToString();
+                    model.DescriptionNode = GetMetadataNodes().First(p => p.XPath.Equals(TaskManager.Bus[ImportMetadataStructureTaskManager.DESCRIPTION_NODE].ToString())).DisplayName; ;
 
                 TaskManager.Current().SetValid(false);
                 ModelState.AddModelError("", "Please select the missing field");
@@ -230,13 +227,12 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             model.TitleNode = SelectedNode.DisplayName;
 
-            if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.TITLE_NODE))
-                TaskManager.Bus[ImportMetadataStructureTaskManager.TITLE_NODE] = SelectedNode.XPath; //model.TitleNode;
-            else
-                TaskManager.Bus.Add(ImportMetadataStructureTaskManager.TITLE_NODE, model.TitleNode);
+            TaskManager.AddToBus(ImportMetadataStructureTaskManager.TITLE_NODE, SelectedNode.XPath);
 
             if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.DESCRIPTION_NODE))
-                model.DescriptionNode = (string)TaskManager.Bus[ImportMetadataStructureTaskManager.DESCRIPTION_NODE];
+            {
+                model.DescriptionNode = GetDisplayName((string)TaskManager.Bus[ImportMetadataStructureTaskManager.DESCRIPTION_NODE]);
+            }
 
             return PartialView("SetParameters", model);
         }
@@ -274,13 +270,12 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             model.DescriptionNode = SelectedNode.DisplayName;
 
-            if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.DESCRIPTION_NODE))
-                model.DescriptionNode = (string)TaskManager.Bus[ImportMetadataStructureTaskManager.DESCRIPTION_NODE];
-            else
-                TaskManager.Bus.Add(ImportMetadataStructureTaskManager.DESCRIPTION_NODE, model.DescriptionNode);
+            TaskManager.AddToBus(ImportMetadataStructureTaskManager.DESCRIPTION_NODE, SelectedNode.XPath);
 
             if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.TITLE_NODE))
-                model.TitleNode = (string)TaskManager.Bus[ImportMetadataStructureTaskManager.TITLE_NODE];
+            {
+                model.TitleNode = GetDisplayName((string)TaskManager.Bus[ImportMetadataStructureTaskManager.TITLE_NODE]);
+            }
 
             return PartialView("SetParameters", model);
         }
@@ -295,6 +290,15 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             }
 
             return (List<SearchMetadataNode>)TaskManager.Bus[ImportMetadataStructureTaskManager.ALL_METADATA_NODES];
+        }
+
+        private string GetDisplayName(string xpath)
+        {
+            var searchMetadataNode = GetMetadataNodes().Where(n => n.XPath == xpath).FirstOrDefault();
+            if (searchMetadataNode != null)
+                return searchMetadataNode.DisplayName;
+
+            return "";
         }
 
         #region extra xdoc

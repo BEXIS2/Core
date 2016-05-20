@@ -32,7 +32,7 @@
 @using (Html.BeginForm("AddFacetsToSearch", "Home", new { area = "DDM" }))
 { 
     <div id="search_more">
-        <div class="bx-title">@title</div>  
+        @*<div class="bx-title">@title</div>*@  
        
         <div class="bx-content">
             
@@ -78,10 +78,9 @@
                </div>
         </div>
         <div id="search_winFooter" class="bx-footer right">
-
-            <button type="submit" class="bx-button action" value="add" name="button"@* onclick="Search_OnClickSubmit()"*@ >Submit</button>
-            <button id="all" type="button" class="bx-button action" value="all" name="button" onclick="Search_OnClickAll()" >All</button>
-            <button id="none" type="button" class="bx-button action" value="none" name="button" onclick="Search_OnClickNone()" >None</button>
+            <button id="none" type="button" class="bx-button function" value="none" name="button" onclick="Search_OnClickNone()">None</button>
+            <button id="all" type="button" class="bx-button function" value="all" name="button" onclick="Search_OnClickAll()">All</button>
+            <button type="submit" class="bx-button action" value="add" name="button" @* onclick="Search_OnClickSubmit()"*@>Submit</button>
         </div>
     </div>
 }

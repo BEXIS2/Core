@@ -107,5 +107,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         #endregion
 
+        public ActionResult FinishUpload()
+        {
+            return RedirectToAction("ShowMyDatasetsInFullPage", "Home", new {area = "DDM" });
+        }
     }
 }

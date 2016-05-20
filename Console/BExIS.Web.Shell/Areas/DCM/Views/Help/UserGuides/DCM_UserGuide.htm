@@ -1,1031 +1,1576 @@
 <html>
 
 <head>
-<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
-<meta name=Generator content="Microsoft Word 12 (filtered)">
-<style>
-<!--
- /* Font Definitions */
- @font-face
-	{font-family:Wingdings;
-	panose-1:5 0 0 0 0 0 0 0 0 0;}
-@font-face
-	{font-family:"Cambria Math";
-	panose-1:2 4 5 3 5 4 6 3 2 4;}
-@font-face
-	{font-family:Cambria;
-	panose-1:2 4 5 3 5 4 6 3 2 4;}
-@font-face
-	{font-family:Calibri;
-	panose-1:2 15 5 2 2 2 4 3 2 4;}
-@font-face
-	{font-family:Tahoma;
-	panose-1:2 11 6 4 3 5 4 4 2 4;}
-@font-face
-	{font-family:Verdana;
-	panose-1:2 11 6 4 3 5 4 4 2 4;}
- /* Style Definitions */
- p.MsoNormal, li.MsoNormal, div.MsoNormal
-	{margin-top:0cm;
-	margin-right:0cm;
-	margin-bottom:10.0pt;
-	margin-left:0cm;
-	line-height:115%;
-	font-size:11.0pt;
-	font-family:"Calibri","sans-serif";}
-h1
-	{mso-style-link:"Heading 1 Char";
-	margin-top:24.0pt;
-	margin-right:0cm;
-	margin-bottom:0cm;
-	margin-left:0cm;
-	margin-bottom:.0001pt;
-	line-height:115%;
-	page-break-after:avoid;
-	font-size:14.0pt;
-	font-family:"Cambria","serif";
-	color:#365F91;
-	font-weight:bold;}
-h2
-	{mso-style-link:"Heading 2 Char";
-	margin-top:10.0pt;
-	margin-right:0cm;
-	margin-bottom:0cm;
-	margin-left:0cm;
-	margin-bottom:.0001pt;
-	line-height:115%;
-	page-break-after:avoid;
-	font-size:13.0pt;
-	font-family:"Cambria","serif";
-	color:#4F81BD;
-	font-weight:bold;}
-h3
-	{mso-style-link:"Heading 3 Char";
-	margin-top:10.0pt;
-	margin-right:0cm;
-	margin-bottom:0cm;
-	margin-left:0cm;
-	margin-bottom:.0001pt;
-	line-height:115%;
-	page-break-after:avoid;
-	font-size:11.0pt;
-	font-family:"Cambria","serif";
-	color:#4F81BD;
-	font-weight:bold;}
-p.MsoToc1, li.MsoToc1, div.MsoToc1
-	{margin-top:0cm;
-	margin-right:0cm;
-	margin-bottom:5.0pt;
-	margin-left:0cm;
-	line-height:115%;
-	font-size:11.0pt;
-	font-family:"Calibri","sans-serif";}
-p.MsoToc2, li.MsoToc2, div.MsoToc2
-	{margin-top:0cm;
-	margin-right:0cm;
-	margin-bottom:5.0pt;
-	margin-left:11.0pt;
-	line-height:115%;
-	font-size:11.0pt;
-	font-family:"Calibri","sans-serif";}
-p.MsoToc3, li.MsoToc3, div.MsoToc3
-	{margin-top:0cm;
-	margin-right:0cm;
-	margin-bottom:5.0pt;
-	margin-left:22.0pt;
-	line-height:115%;
-	font-size:11.0pt;
-	font-family:"Calibri","sans-serif";}
-p.MsoFootnoteText, li.MsoFootnoteText, div.MsoFootnoteText
-	{mso-style-link:"Footnote Text Char";
-	margin:0cm;
-	margin-bottom:.0001pt;
-	font-size:10.0pt;
-	font-family:"Calibri","sans-serif";}
-p.MsoHeader, li.MsoHeader, div.MsoHeader
-	{mso-style-link:"Header Char";
-	margin:0cm;
-	margin-bottom:.0001pt;
-	font-size:11.0pt;
-	font-family:"Calibri","sans-serif";}
-p.MsoFooter, li.MsoFooter, div.MsoFooter
-	{mso-style-link:"Footer Char";
-	margin:0cm;
-	margin-bottom:.0001pt;
-	font-size:11.0pt;
-	font-family:"Calibri","sans-serif";}
-p.MsoCaption, li.MsoCaption, div.MsoCaption
-	{margin-top:0cm;
-	margin-right:0cm;
-	margin-bottom:10.0pt;
-	margin-left:0cm;
-	font-size:9.0pt;
-	font-family:"Calibri","sans-serif";
-	color:#4F81BD;
-	font-weight:bold;}
-span.MsoFootnoteReference
-	{font-family:"Times New Roman","serif";
-	vertical-align:super;}
-p.MsoTitle, li.MsoTitle, div.MsoTitle
-	{mso-style-link:"Title Char";
-	margin-top:0cm;
-	margin-right:0cm;
-	margin-bottom:15.0pt;
-	margin-left:0cm;
-	border:none;
-	padding:0cm;
-	font-size:26.0pt;
-	font-family:"Cambria","serif";
-	color:#17365D;
-	letter-spacing:.25pt;}
-p.MsoTitleCxSpFirst, li.MsoTitleCxSpFirst, div.MsoTitleCxSpFirst
-	{mso-style-link:"Title Char";
-	margin:0cm;
-	margin-bottom:.0001pt;
-	border:none;
-	padding:0cm;
-	font-size:26.0pt;
-	font-family:"Cambria","serif";
-	color:#17365D;
-	letter-spacing:.25pt;}
-p.MsoTitleCxSpMiddle, li.MsoTitleCxSpMiddle, div.MsoTitleCxSpMiddle
-	{mso-style-link:"Title Char";
-	margin:0cm;
-	margin-bottom:.0001pt;
-	border:none;
-	padding:0cm;
-	font-size:26.0pt;
-	font-family:"Cambria","serif";
-	color:#17365D;
-	letter-spacing:.25pt;}
-p.MsoTitleCxSpLast, li.MsoTitleCxSpLast, div.MsoTitleCxSpLast
-	{mso-style-link:"Title Char";
-	margin-top:0cm;
-	margin-right:0cm;
-	margin-bottom:15.0pt;
-	margin-left:0cm;
-	border:none;
-	padding:0cm;
-	font-size:26.0pt;
-	font-family:"Cambria","serif";
-	color:#17365D;
-	letter-spacing:.25pt;}
-p.MsoSubtitle, li.MsoSubtitle, div.MsoSubtitle
-	{mso-style-link:"Subtitle Char";
-	margin-top:0cm;
-	margin-right:0cm;
-	margin-bottom:10.0pt;
-	margin-left:0cm;
-	line-height:115%;
-	font-size:12.0pt;
-	font-family:"Cambria","serif";
-	color:#4F81BD;
-	letter-spacing:.75pt;
-	font-style:italic;}
-a:link, span.MsoHyperlink
-	{font-family:"Times New Roman","serif";
-	color:blue;
-	text-decoration:underline;}
-a:visited, span.MsoHyperlinkFollowed
-	{color:purple;
-	text-decoration:underline;}
-p
-	{margin-right:0cm;
-	margin-left:0cm;
-	font-size:12.0pt;
-	font-family:"Times New Roman","serif";}
-p.MsoAcetate, li.MsoAcetate, div.MsoAcetate
-	{mso-style-link:"Balloon Text Char";
-	margin:0cm;
-	margin-bottom:.0001pt;
-	font-size:8.0pt;
-	font-family:"Tahoma","sans-serif";}
-p.MsoNoSpacing, li.MsoNoSpacing, div.MsoNoSpacing
-	{margin:0cm;
-	margin-bottom:.0001pt;
-	font-size:11.0pt;
-	font-family:"Calibri","sans-serif";}
-p.MsoListParagraph, li.MsoListParagraph, div.MsoListParagraph
-	{margin-top:0cm;
-	margin-right:0cm;
-	margin-bottom:10.0pt;
-	margin-left:36.0pt;
-	line-height:115%;
-	font-size:11.0pt;
-	font-family:"Calibri","sans-serif";}
-p.MsoListParagraphCxSpFirst, li.MsoListParagraphCxSpFirst, div.MsoListParagraphCxSpFirst
-	{margin-top:0cm;
-	margin-right:0cm;
-	margin-bottom:0cm;
-	margin-left:36.0pt;
-	margin-bottom:.0001pt;
-	line-height:115%;
-	font-size:11.0pt;
-	font-family:"Calibri","sans-serif";}
-p.MsoListParagraphCxSpMiddle, li.MsoListParagraphCxSpMiddle, div.MsoListParagraphCxSpMiddle
-	{margin-top:0cm;
-	margin-right:0cm;
-	margin-bottom:0cm;
-	margin-left:36.0pt;
-	margin-bottom:.0001pt;
-	line-height:115%;
-	font-size:11.0pt;
-	font-family:"Calibri","sans-serif";}
-p.MsoListParagraphCxSpLast, li.MsoListParagraphCxSpLast, div.MsoListParagraphCxSpLast
-	{margin-top:0cm;
-	margin-right:0cm;
-	margin-bottom:10.0pt;
-	margin-left:36.0pt;
-	line-height:115%;
-	font-size:11.0pt;
-	font-family:"Calibri","sans-serif";}
-span.MsoSubtleEmphasis
-	{font-family:"Times New Roman","serif";
-	color:gray;
-	font-style:italic;}
-span.MsoIntenseEmphasis
-	{font-family:"Times New Roman","serif";
-	color:#4F81BD;
-	font-weight:bold;
-	font-style:italic;}
-p.MsoTocHeading, li.MsoTocHeading, div.MsoTocHeading
-	{margin-top:24.0pt;
-	margin-right:0cm;
-	margin-bottom:0cm;
-	margin-left:0cm;
-	margin-bottom:.0001pt;
-	line-height:115%;
-	page-break-after:avoid;
-	font-size:14.0pt;
-	font-family:"Cambria","serif";
-	color:#365F91;
-	font-weight:bold;}
-span.Heading1Char
-	{mso-style-name:"Heading 1 Char";
-	mso-style-link:"Heading 1";
-	font-family:"Cambria","serif";
-	color:#365F91;
-	font-weight:bold;}
-span.Heading2Char
-	{mso-style-name:"Heading 2 Char";
-	mso-style-link:"Heading 2";
-	font-family:"Cambria","serif";
-	color:#4F81BD;
-	font-weight:bold;}
-span.Heading3Char
-	{mso-style-name:"Heading 3 Char";
-	mso-style-link:"Heading 3";
-	font-family:"Cambria","serif";
-	color:#4F81BD;
-	font-weight:bold;}
-span.TitleChar
-	{mso-style-name:"Title Char";
-	mso-style-link:Title;
-	font-family:"Cambria","serif";
-	color:#17365D;
-	letter-spacing:.25pt;}
-span.BalloonTextChar
-	{mso-style-name:"Balloon Text Char";
-	mso-style-link:"Balloon Text";
-	font-family:"Tahoma","sans-serif";}
-span.HeaderChar
-	{mso-style-name:"Header Char";
-	mso-style-link:Header;
-	font-family:"Times New Roman","serif";}
-span.FooterChar
-	{mso-style-name:"Footer Char";
-	mso-style-link:Footer;
-	font-family:"Times New Roman","serif";}
-span.SubtitleChar
-	{mso-style-name:"Subtitle Char";
-	mso-style-link:Subtitle;
-	font-family:"Cambria","serif";
-	color:#4F81BD;
-	letter-spacing:.75pt;
-	font-style:italic;}
-span.apple-converted-space
-	{mso-style-name:apple-converted-space;
-	font-family:"Times New Roman","serif";}
-span.FootnoteTextChar
-	{mso-style-name:"Footnote Text Char";
-	mso-style-link:"Footnote Text";
-	font-family:"Times New Roman","serif";}
- /* Page Definitions */
- @page WordSection1
-	{size:595.3pt 841.9pt;
-	margin:70.85pt 70.85pt 2.0cm 70.85pt;}
-div.WordSection1
-	{page:WordSection1;}
- /* List Definitions */
- ol
-	{margin-bottom:0cm;}
-ul
-	{margin-bottom:0cm;}
--->
-</style>
+    <meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+    <meta name=Generator content="Microsoft Word 12 (filtered)">
+    <style>
+        <!--
+        /* Font Definitions */
+        @font-face {
+            font-family: Wingdings;
+            panose-1: 5 0 0 0 0 0 0 0 0 0;
+        }
+
+        @font-face {
+            font-family: "Cambria Math";
+            panose-1: 2 4 5 3 5 4 6 3 2 4;
+        }
+
+        @font-face {
+            font-family: Cambria;
+            panose-1: 2 4 5 3 5 4 6 3 2 4;
+        }
+
+        @font-face {
+            font-family: Calibri;
+            panose-1: 2 15 5 2 2 2 4 3 2 4;
+        }
+
+        @font-face {
+            font-family: Tahoma;
+            panose-1: 2 11 6 4 3 5 4 4 2 4;
+        }
+
+        @font-face {
+            font-family: Verdana;
+            panose-1: 2 11 6 4 3 5 4 4 2 4;
+        }
+        /* Style Definitions */
+        p.MsoNormal, li.MsoNormal, div.MsoNormal {
+            margin-top: 0cm;
+            margin-right: 0cm;
+            margin-bottom: 10.0pt;
+            margin-left: 0cm;
+            line-height: 115%;
+            font-size: 11.0pt;
+            font-family: "Calibri","sans-serif";
+        }
+
+        h1 {
+            mso-style-link: "Heading 1 Char";
+            margin-top: 24.0pt;
+            margin-right: 0cm;
+            margin-bottom: 0cm;
+            margin-left: 0cm;
+            margin-bottom: .0001pt;
+            line-height: 115%;
+            page-break-after: avoid;
+            font-size: 14.0pt;
+            font-family: "Cambria","serif";
+            color: #365F91;
+            font-weight: bold;
+        }
+
+        h2 {
+            mso-style-link: "Heading 2 Char";
+            margin-top: 10.0pt;
+            margin-right: 0cm;
+            margin-bottom: 0cm;
+            margin-left: 0cm;
+            margin-bottom: .0001pt;
+            line-height: 115%;
+            page-break-after: avoid;
+            font-size: 13.0pt;
+            font-family: "Cambria","serif";
+            color: #4F81BD;
+            font-weight: bold;
+        }
+
+        h3 {
+            mso-style-link: "Heading 3 Char";
+            margin-top: 10.0pt;
+            margin-right: 0cm;
+            margin-bottom: 0cm;
+            margin-left: 0cm;
+            margin-bottom: .0001pt;
+            line-height: 115%;
+            page-break-after: avoid;
+            font-size: 10.0pt;
+            font-family: "Cambria","serif";
+            color: #4F81BD;
+            font-weight: bold;
+        }
+
+        p.MsoToc1, li.MsoToc1, div.MsoToc1 {
+            margin-top: 0cm;
+            margin-right: 0cm;
+            margin-bottom: 5.0pt;
+            margin-left: 0cm;
+            line-height: 115%;
+            font-size: 11.0pt;
+            font-family: "Calibri","sans-serif";
+        }
+
+        p.MsoToc2, li.MsoToc2, div.MsoToc2 {
+            margin-top: 0cm;
+            margin-right: 0cm;
+            margin-bottom: 5.0pt;
+            margin-left: 11.0pt;
+            line-height: 115%;
+            font-size: 11.0pt;
+            font-family: "Calibri","sans-serif";
+        }
+
+        p.MsoToc3, li.MsoToc3, div.MsoToc3 {
+            margin-top: 0cm;
+            margin-right: 0cm;
+            margin-bottom: 5.0pt;
+            margin-left: 22.0pt;
+            line-height: 115%;
+            font-size: 11.0pt;
+            font-family: "Calibri","sans-serif";
+        }
+
+        p.MsoFootnoteText, li.MsoFootnoteText, div.MsoFootnoteText {
+            mso-style-link: "Footnote Text Char";
+            margin: 0cm;
+            margin-bottom: .0001pt;
+            font-size: 10.0pt;
+            font-family: "Calibri","sans-serif";
+        }
+
+        p.MsoHeader, li.MsoHeader, div.MsoHeader {
+            mso-style-link: "Header Char";
+            margin: 0cm;
+            margin-bottom: .0001pt;
+            font-size: 10.0pt;
+            font-family: "Calibri","sans-serif";
+        }
+
+        p.MsoFooter, li.MsoFooter, div.MsoFooter {
+            mso-style-link: "Footer Char";
+            margin: 0cm;
+            margin-bottom: .0001pt;
+            font-size: 10.0pt;
+            font-family: "Calibri","sans-serif";
+        }
+
+        p.MsoCaption, li.MsoCaption, div.MsoCaption {
+            margin-top: 0cm;
+            margin-right: 0cm;
+            margin-bottom: 10.0pt;
+            margin-left: 0cm;
+            font-size: 9.0pt;
+            font-family: "Calibri","sans-serif";
+            color: #4F81BD;
+            font-weight: bold;
+        }
+
+        span.MsoFootnoteReference {
+            font-family: "Times New Roman","serif";
+            vertical-align: super;
+        }
+
+        p.MsoTitle, li.MsoTitle, div.MsoTitle {
+            mso-style-link: "Title Char";
+            margin-top: 0cm;
+            margin-right: 0cm;
+            margin-bottom: 15.0pt;
+            margin-left: 0cm;
+            border: none;
+            padding: 0cm;
+            font-size: 26.0pt;
+            font-family: "Cambria","serif";
+            color: #17365D;
+            letter-spacing: .25pt;
+        }
+
+        p.MsoTitleCxSpFirst, li.MsoTitleCxSpFirst, div.MsoTitleCxSpFirst {
+            mso-style-link: "Title Char";
+            margin: 0cm;
+            margin-bottom: .0001pt;
+            border: none;
+            padding: 0cm;
+            font-size: 26.0pt;
+            font-family: "Cambria","serif";
+            color: #17365D;
+            letter-spacing: .25pt;
+        }
+
+        p.MsoTitleCxSpMiddle, li.MsoTitleCxSpMiddle, div.MsoTitleCxSpMiddle {
+            mso-style-link: "Title Char";
+            margin: 0cm;
+            margin-bottom: .0001pt;
+            border: none;
+            padding: 0cm;
+            font-size: 26.0pt;
+            font-family: "Cambria","serif";
+            color: #17365D;
+            letter-spacing: .25pt;
+        }
+
+        p.MsoTitleCxSpLast, li.MsoTitleCxSpLast, div.MsoTitleCxSpLast {
+            mso-style-link: "Title Char";
+            margin-top: 0cm;
+            margin-right: 0cm;
+            margin-bottom: 15.0pt;
+            margin-left: 0cm;
+            border: none;
+            padding: 0cm;
+            font-size: 26.0pt;
+            font-family: "Cambria","serif";
+            color: #17365D;
+            letter-spacing: .25pt;
+        }
+
+        p.MsoSubtitle, li.MsoSubtitle, div.MsoSubtitle {
+            mso-style-link: "Subtitle Char";
+            margin-top: 0cm;
+            margin-right: 0cm;
+            margin-bottom: 10.0pt;
+            margin-left: 0cm;
+            line-height: 115%;
+            font-size: 12.0pt;
+            font-family: "Cambria","serif";
+            color: #4F81BD;
+            letter-spacing: .75pt;
+            font-style: italic;
+        }
+
+        a:link, span.MsoHyperlink {
+            font-family: "Times New Roman","serif";
+            color: blue;
+            text-decoration: underline;
+        }
+
+        a:visited, span.MsoHyperlinkFollowed {
+            color: purple;
+            text-decoration: underline;
+        }
+
+        p {
+            margin-right: 0cm;
+            margin-left: 0cm;
+            font-size: 12.0pt;
+            font-family: "Times New Roman","serif";
+        }
+
+        pre {
+            mso-style-link: "HTML Preformatted Char";
+            margin: 0cm;
+            margin-bottom: .0001pt;
+            font-size: 10.0pt;
+            font-family: "Courier New";
+        }
+
+        p.MsoAcetate, li.MsoAcetate, div.MsoAcetate {
+            mso-style-link: "Balloon Text Char";
+            margin: 0cm;
+            margin-bottom: .0001pt;
+            font-size: 8.0pt;
+            font-family: "Tahoma","sans-serif";
+        }
+
+        p.MsoNoSpacing, li.MsoNoSpacing, div.MsoNoSpacing {
+            margin: 0cm;
+            margin-bottom: .0001pt;
+            font-size: 11.0pt;
+            font-family: "Calibri","sans-serif";
+        }
+
+        p.MsoListParagraph, li.MsoListParagraph, div.MsoListParagraph {
+            margin-top: 0cm;
+            margin-right: 0cm;
+            margin-bottom: 10.0pt;
+            margin-left: 36.0pt;
+            line-height: 115%;
+            font-size: 11.0pt;
+            font-family: "Calibri","sans-serif";
+        }
+
+        p.MsoListParagraphCxSpFirst, li.MsoListParagraphCxSpFirst, div.MsoListParagraphCxSpFirst {
+            margin-top: 0cm;
+            margin-right: 0cm;
+            margin-bottom: 0cm;
+            margin-left: 36.0pt;
+            margin-bottom: .0001pt;
+            line-height: 115%;
+            font-size: 11.0pt;
+            font-family: "Calibri","sans-serif";
+        }
+
+        p.MsoListParagraphCxSpMiddle, li.MsoListParagraphCxSpMiddle, div.MsoListParagraphCxSpMiddle {
+            margin-top: 0cm;
+            margin-right: 0cm;
+            margin-bottom: 0cm;
+            margin-left: 36.0pt;
+            margin-bottom: .0001pt;
+            line-height: 115%;
+            font-size: 11.0pt;
+            font-family: "Calibri","sans-serif";
+        }
+
+        p.MsoListParagraphCxSpLast, li.MsoListParagraphCxSpLast, div.MsoListParagraphCxSpLast {
+            margin-top: 0cm;
+            margin-right: 0cm;
+            margin-bottom: 10.0pt;
+            margin-left: 36.0pt;
+            line-height: 115%;
+            font-size: 11.0pt;
+            font-family: "Calibri","sans-serif";
+        }
+
+        span.MsoSubtleEmphasis {
+            font-family: "Times New Roman","serif";
+            color: gray;
+            font-style: italic;
+        }
+
+        span.MsoIntenseEmphasis {
+            font-family: "Times New Roman","serif";
+            color: #4F81BD;
+            font-weight: bold;
+            font-style: italic;
+        }
+
+        p.MsoTocHeading, li.MsoTocHeading, div.MsoTocHeading {
+            margin-top: 24.0pt;
+            margin-right: 0cm;
+            margin-bottom: 0cm;
+            margin-left: 0cm;
+            margin-bottom: .0001pt;
+            line-height: 115%;
+            page-break-after: avoid;
+            font-size: 14.0pt;
+            font-family: "Cambria","serif";
+            color: #365F91;
+            font-weight: bold;
+        }
+
+        span.Heading1Char {
+            mso-style-name: "Heading 1 Char";
+            mso-style-link: "Heading 1";
+            font-family: "Cambria","serif";
+            color: #365F91;
+            font-weight: bold;
+        }
+
+        span.Heading2Char {
+            mso-style-name: "Heading 2 Char";
+            mso-style-link: "Heading 2";
+            font-family: "Cambria","serif";
+            color: #4F81BD;
+            font-weight: bold;
+        }
+
+        span.Heading3Char {
+            mso-style-name: "Heading 3 Char";
+            mso-style-link: "Heading 3";
+            font-family: "Cambria","serif";
+            color: #4F81BD;
+            font-weight: bold;
+        }
+
+        span.TitleChar {
+            mso-style-name: "Title Char";
+            mso-style-link: Title;
+            font-family: "Cambria","serif";
+            color: #17365D;
+            letter-spacing: .25pt;
+        }
+
+        span.BalloonTextChar {
+            mso-style-name: "Balloon Text Char";
+            mso-style-link: "Balloon Text";
+            font-family: "Tahoma","sans-serif";
+        }
+
+        span.HeaderChar {
+            mso-style-name: "Header Char";
+            mso-style-link: Header;
+            font-family: "Times New Roman","serif";
+        }
+
+        span.FooterChar {
+            mso-style-name: "Footer Char";
+            mso-style-link: Footer;
+            font-family: "Times New Roman","serif";
+        }
+
+        span.SubtitleChar {
+            mso-style-name: "Subtitle Char";
+            mso-style-link: Subtitle;
+            font-family: "Cambria","serif";
+            color: #4F81BD;
+            letter-spacing: .75pt;
+            font-style: italic;
+        }
+
+        span.apple-converted-space {
+            mso-style-name: apple-converted-space;
+            font-family: "Times New Roman","serif";
+        }
+
+        span.FootnoteTextChar {
+            mso-style-name: "Footnote Text Char";
+            mso-style-link: "Footnote Text";
+            font-family: "Times New Roman","serif";
+        }
+
+        span.HTMLPreformattedChar {
+            mso-style-name: "HTML Preformatted Char";
+            mso-style-link: "HTML Preformatted";
+            font-family: "Courier New";
+        }
+        /* Page Definitions */
+        @page WordSection1 {
+            size: 595.3pt 841.9pt;
+            margin: 70.85pt 70.85pt 2.0cm 70.85pt;
+        }
+
+        div.WordSection1 {
+            page: WordSection1;
+        }
+        /* List Definitions */
+        ol {
+            margin-bottom: 0cm;
+        }
+
+        ul {
+            margin-bottom: 0cm;
+        }
+        -->
+    </style>
 
 </head>
 
 <body lang=EN-GB link=blue vlink=purple>
 
-<div class=WordSection1>
+    <div class=WordSection1>
 
-<div style='border:none;border-bottom:solid #4F81BD 1.0pt;padding:0cm 0cm 4.0pt 0cm'>
+        <div style='border:none;border-bottom:solid #4F81BD 1.0pt;padding:0cm 0cm 4.0pt 0cm'>
 
-<p class=MsoTitleCxSpFirst style='text-align:justify'><span lang=EN-US>BEXIS
-2.8.0 </span></p>
+            <p class=MsoTitleCxSpFirst style='text-align:justify'>
+                <span lang=EN-US>
+                    BEXIS
+                    2.9.0
+                </span>
+            </p>
 
-<p class=MsoTitleCxSpLast style='text-align:justify'><span lang=EN-US>Data
-Collection Module</span></p>
+            <p class=MsoTitleCxSpLast style='text-align:justify'>
+                <span lang=EN-US>
+                    Data
+                    Collection Module
+                </span>
+            </p>
 
-</div>
+        </div>
 
-<p class=MsoNormal style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
+        <p class=MsoNormal style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
 
-<p class=MsoSubtitle style='text-align:justify'><span lang=EN-US
-style='font-size:18.0pt;line-height:115%'>User Guide</span></p>
+        <p class=MsoSubtitle style='text-align:justify'>
+            <span lang=EN-US
+                  style='font-size:18.0pt;line-height:115%'>User Guide</span>
+        </p>
 
-<p class=MsoNormal style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
+        <p class=MsoNormal style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
 
-<p class=MsoNormal style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
+        <p class=MsoNormal style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
 
-<p class=MsoNoSpacing style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
+        <p class=MsoNoSpacing style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
 
-<p class=MsoNoSpacing style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
+        <p class=MsoNoSpacing style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
 
-<p class=MsoNoSpacing style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
+        <p class=MsoNoSpacing style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
 
-<p class=MsoNoSpacing style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
+        <p class=MsoNoSpacing style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
 
-<p class=MsoNoSpacing style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
+        <p class=MsoNoSpacing style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
 
-<p class=MsoNoSpacing style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
+        <p class=MsoNoSpacing style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
 
-<p class=MsoNoSpacing style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
+        <p class=MsoNoSpacing style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
 
-<p class=MsoNoSpacing style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
+        <p class=MsoNoSpacing style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
 
-<p class=MsoNoSpacing style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
+        <p class=MsoNoSpacing style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
 
-<p class=MsoNoSpacing style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
+        <p class=MsoNoSpacing style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
 
-<p class=MsoNoSpacing style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
+        <p class=MsoNoSpacing style='text-align:justify'>
+            <a name="_GoBack"></a><span lang=EN-US>&nbsp;</span>
+        </p>
 
-<p class=MsoNoSpacing style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
+        <p class=MsoNoSpacing style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
 
-<p class=MsoNoSpacing style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
+        <p class=MsoNoSpacing style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
 
-<p class=MsoNoSpacing style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
+        <p class=MsoNoSpacing style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
 
-<p class=MsoNoSpacing style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
+        <p class=MsoNoSpacing style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
 
-<p class=MsoNoSpacing style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
+        <p class=MsoNoSpacing style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
 
-<p class=MsoNoSpacing style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
+        <p class=MsoNoSpacing style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
 
-<p class=MsoNoSpacing style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
+        <p class=MsoNoSpacing style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
 
-<p class=MsoNoSpacing style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
+        <p class=MsoNoSpacing style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
 
-<p class=MsoNoSpacing style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
+        <p class=MsoNoSpacing style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
 
-<p class=MsoNoSpacing style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
+        <p class=MsoNoSpacing style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
 
-<p class=MsoNoSpacing style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
+        <p class=MsoNoSpacing style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
 
-<p class=MsoNoSpacing style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
+        <p class=MsoNoSpacing style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
 
-<p class=MsoNoSpacing style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
+        <p class=MsoNoSpacing style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
 
-<p class=MsoNoSpacing style='text-align:justify'><span
-class=MsoIntenseEmphasis><span lang=EN-US style='font-family:"Calibri","sans-serif"'>Authors</span></span></p>
+        <p class=MsoNoSpacing style='text-align:justify'>
+            <span class=MsoIntenseEmphasis><span lang=EN-US style='font-family:"Calibri","sans-serif"'>Authors</span></span>
+        </p>
 
-<p class=MsoNoSpacing style='text-align:justify'><span lang=EN-US>                <span
-class=MsoSubtleEmphasis><span style='font-family:"Calibri","sans-serif";
-font-style:normal'>Nafiseh Navabpour, Roman Gerlach, David Blaa</span></span></span></p>
+        <p class=MsoNoSpacing style='text-align:justify'>
+            <span lang=EN-US>
+                <span class=MsoSubtleEmphasis>
+                    <span style='font-family:"Calibri","sans-serif";
+font-style:normal'>Nafiseh Navabpour, Roman Gerlach, David Blaa</span>
+                </span>
+            </span>
+        </p>
 
-<p class=MsoNoSpacing style='text-align:justify'><span
-class=MsoIntenseEmphasis><span lang=EN-US style='font-family:"Calibri","sans-serif"'>&nbsp;</span></span></p>
-
-<p class=MsoNoSpacing style='text-align:justify'><span
-class=MsoIntenseEmphasis><span lang=EN-US style='font-family:"Calibri","sans-serif"'>Contact</span></span></p>
-
-<p class=MsoNoSpacing style='margin-left:35.4pt;text-align:justify'><span
-class=MsoSubtleEmphasis><span lang=EN-US style='font-family:"Calibri","sans-serif";
-font-style:normal'>Website:             </span></span><span lang=DE><a
-href="http://fusion.cs.uni-jena.de/bexis"><span lang=EN-US>http://fusion.cs.uni-jena.de/bexis</span></a></span></p>
-
-<p class=MsoNoSpacing style='margin-left:35.4pt;text-align:justify'><span
-class=MsoSubtleEmphasis><span lang=FR style='font-family:"Calibri","sans-serif";
-font-style:normal'>Email:                   bexis-support@uni-jena.de </span></span></p>
-
-<p class=MsoNoSpacing style='margin-left:35.4pt;text-align:justify'><span
-class=MsoSubtleEmphasis><span lang=FR style='font-family:"Calibri","sans-serif";
-font-style:normal'>Phone:                                +49-(0)3641-948968</span></span><span
-lang=FR> </span></p>
-
-<p class=MsoNoSpacing style='text-align:justify'><span lang=FR>&nbsp;</span></p>
-
-<p class=MsoNoSpacing style='text-align:justify'><span
-class=MsoIntenseEmphasis><span lang=EN-US style='font-family:"Calibri","sans-serif"'>Acknowledgement</span></span></p>
-
-<p class=MsoNoSpacing style='margin-left:35.45pt;text-align:justify;text-indent:
--35.45pt'><span lang=EN-US>                <span class=MsoSubtleEmphasis><span
-style='font-family:"Calibri","sans-serif";font-style:normal'>The development of
-the BEXIS 2 software would not be possible without the German Research
-Foundation (DFG) funding the BExIS++ project. BExIS++ is a collaboration of the
-Friedrich-Schiller-University Jena, Germany (Dept. of Computer Science, Dept.
-for Geography, Dept. of Ecology) and the Max-Planck-Institute for
-Biogeochemistry Jena, Germany.</span></span></span></p>
-
-<p class=MsoTocHeading><span lang=DE style='font-size:10.5pt;line-height:115%;
-font-family:"Arial","sans-serif";color:#222222;background:white'>Start Contents</span></span></p>
-
-<p class=MsoTocHeading><span lang=DE>Contents</span></p>
-
-<p class=MsoToc1><span lang=DE><a href="#_Toc434570840"><span lang=EN-US>1.</span><span
-style='color:windowtext;text-decoration:none'>      </span><span lang=EN-US>Overview</span><span
-style='color:windowtext;display:none;text-decoration:none'>.. </span><span
-style='color:windowtext;display:none;text-decoration:none'>3</span></a></span></p>
-
-<p class=MsoToc1><span lang=DE><a href="#_Toc434570841"><span lang=EN-US>2.</span><span
-style='color:windowtext;text-decoration:none'>      </span><span lang=EN-US>Create
-a new dataset</span><span style='color:windowtext;display:none;text-decoration:
-none'>. </span><span
-style='color:windowtext;display:none;text-decoration:none'>3</span></a></span></p>
-
-<p class=MsoToc2><span lang=DE><a href="#_Toc434570842"><span lang=EN-US>2.1
-Content</span><span style='color:windowtext;display:none;text-decoration:none'>. </span><span
-style='color:windowtext;display:none;text-decoration:none'>4</span></a></span></p>
-
-<p class=MsoToc2><span lang=DE><a href="#_Toc434570844"><span lang=EN-US>2.2
-Messages</span><span style='color:windowtext;display:none;text-decoration:none'>. </span><span
-style='color:windowtext;display:none;text-decoration:none'>5</span></a></span></p>
-
-<p class=MsoToc1><span lang=DE><a href="#_Toc434570845"><span lang=EN-US>3.</span><span
-style='color:windowtext;text-decoration:none'>      </span><span lang=EN-US>Upload
-Data</span><span style='color:windowtext;display:none;text-decoration:none'>. </span><span
-style='color:windowtext;display:none;text-decoration:none'>5</span></a></span></p>
-
-<p class=MsoToc2><span lang=DE><a href="#_Toc434570846"><span lang=EN-US>3.1.
-Structured Data</span><span style='color:windowtext;display:none;text-decoration:
-none'>. </span><span
-style='color:windowtext;display:none;text-decoration:none'>5</span></a></span></p>
-
-<p class=MsoToc3><span lang=DE><a href="#_Toc434570847"><span lang=EN-US>3.1.1.
-Select File</span><span style='color:windowtext;display:none;text-decoration:
-none'>. </span><span
-style='color:windowtext;display:none;text-decoration:none'>5</span></a></span><a
-name="_GoBack"></a></p>
-
-<p class=MsoToc3><span lang=DE><a href="#_Toc434570848"><span lang=EN-GB>3.1.2.
-Get File Information</span><span style='color:windowtext;display:none;
-text-decoration:none'>. </span><span
-style='color:windowtext;display:none;text-decoration:none'>6</span></a></span></p>
-
-<p class=MsoToc2><span lang=DE><a href="#_Toc434570849"><span lang=EN-US>3.2. </span><span
-lang=EN-GB>Specify Dataset</span><span style='color:windowtext;display:none;
-text-decoration:none'>. </span><span
-style='color:windowtext;display:none;text-decoration:none'>7</span></a></span></p>
-
-<p class=MsoToc2><span lang=DE><a href="#_Toc434570850"><span lang=EN-US>3.3. </span><span
-lang=EN-GB>Define Primary Key</span><span style='color:windowtext;display:none;
-text-decoration:none'>. </span><span
-style='color:windowtext;display:none;text-decoration:none'>7</span></a></span></p>
-
-<p class=MsoToc2><span lang=DE><a href="#_Toc434570851"><span lang=EN-US>3.4. </span><span
-lang=EN-GB>Validation</span><span style='color:windowtext;display:none;
-text-decoration:none'>. </span><span
-style='color:windowtext;display:none;text-decoration:none'>8</span></a></span></p>
-
-<p class=MsoToc2><span lang=DE><a href="#_Toc434570852"><span lang=EN-US>3.5. </span><span
-lang=EN-GB>Summary</span><span style='color:windowtext;display:none;text-decoration:
-none'>. </span><span
-style='color:windowtext;display:none;text-decoration:none'>8</span></a></span></p>
-
-<p class=MsoToc2><span lang=DE><a href="#_Toc434570853"><span lang=EN-US>3.6.
-Unstructured Data</span><span style='color:windowtext;display:none;text-decoration:
-none'>. </span><span
-style='color:windowtext;display:none;text-decoration:none'>9</span></a></span></p>
-
-<p class=MsoToc1><span lang=DE><a href="#_Toc434570854"><span lang=EN-US>4.</span><span
-style='color:windowtext;text-decoration:none'>      </span><span lang=EN-US>Push
-big files to server</span><span style='color:windowtext;display:none;
-text-decoration:none'>. </span><span
-style='color:windowtext;display:none;text-decoration:none'>9</span></a></span></p>
-
-<p class=MsoToc1><span lang=DE><a href="#_Toc434570855">5.<span
-style='color:windowtext;text-decoration:none'>      </span>Import metadata
-structure<span style='color:windowtext;display:none;text-decoration:none'>. </span><span
-style='color:windowtext;display:none;text-decoration:none'>10</span></a></span></p>
-
-<p class=MsoToc2><span lang=DE><a href="#_Toc434570856"><span lang=EN-US>5.1.</span><span
-style='color:windowtext;text-decoration:none'>       </span><span lang=EN-US>Select
-File</span><span style='color:windowtext;display:none;text-decoration:none'>. </span><span
-style='color:windowtext;display:none;text-decoration:none'>11</span></a></span></p>
-
-<p class=MsoToc2><span lang=DE><a href="#_Toc434570857"><span lang=EN-US>5.2.</span><span
-style='color:windowtext;text-decoration:none'>       </span><span lang=EN-US>Read
-Source</span><span style='color:windowtext;display:none;text-decoration:none'>. </span><span
-style='color:windowtext;display:none;text-decoration:none'>11</span></a></span></p>
-
-<p class=MsoToc2><span lang=DE><a href="#_Toc434570858"><span lang=EN-US>5.3.</span><span
-style='color:windowtext;text-decoration:none'>       </span><span lang=EN-US>Set
-Parameters</span><span style='color:windowtext;display:none;text-decoration:
-none'>. </span><span
-style='color:windowtext;display:none;text-decoration:none'>12</span></a></span></p>
-
-<p class=MsoToc2><span lang=DE><a href="#_Toc434570859"><span lang=EN-US>5.4.</span><span
-style='color:windowtext;text-decoration:none'>       </span><span lang=EN-US>Summary</span><span
-style='color:windowtext;display:none;text-decoration:none'>. </span><span
-style='color:windowtext;display:none;text-decoration:none'>13</span></a></span></p>
-
-<p class=MsoNormal><span lang=DE>&nbsp;</span></p>
-
-<span lang=DE style='font-size:11.0pt;line-height:115%;font-family:"Calibri","sans-serif"'><br
-clear=all style='page-break-before:always'>
+        <p class=MsoNoSpacing style='text-align:justify'>
+            <span class=MsoIntenseEmphasis><span lang=EN-US style='font-family:"Calibri","sans-serif"'>&nbsp;</span></span>
+        </p>
+
+        <p class=MsoNoSpacing style='text-align:justify'>
+            <span class=MsoIntenseEmphasis><span lang=EN-US style='font-family:"Calibri","sans-serif"'>Contact</span></span>
+        </p>
+
+        <p class=MsoNoSpacing style='margin-left:35.4pt;text-align:justify'>
+            <span class=MsoSubtleEmphasis>
+                <span lang=EN-US style='font-family:"Calibri","sans-serif";
+font-style:normal'>Website:</span>
+            </span><span lang=DE>
+                <a href="http://fusion.cs.uni-jena.de/bexis"><span lang=EN-US>http://fusion.cs.uni-jena.de/bexis</span></a>
+            </span>
+        </p>
+
+        <p class=MsoNoSpacing style='margin-left:35.4pt;text-align:justify'>
+            <span class=MsoSubtleEmphasis>
+                <span lang=FR style='font-family:"Calibri","sans-serif";
+font-style:normal'>Email:                   bexis-support@uni-jena.de</span>
+            </span>
+        </p>
+
+        <p class=MsoNoSpacing style='margin-left:35.4pt;text-align:justify'>
+            <span class=MsoSubtleEmphasis>
+                <span lang=FR style='font-family:"Calibri","sans-serif";
+font-style:normal'>Phone:                                +49-(0)3641-948968</span>
+            </span><span lang=FR></span>
+        </p>
+
+        <p class=MsoNoSpacing style='text-align:justify'><span lang=FR>&nbsp;</span></p>
+
+        <p class=MsoNoSpacing style='text-align:justify'>
+            <span class=MsoIntenseEmphasis><span lang=EN-US style='font-family:"Calibri","sans-serif"'>Acknowledgement</span></span>
+        </p>
+
+        <p class=MsoNoSpacing style='margin-left:35.45pt;text-align:justify;text-indent:
+-35.45pt'>
+            <span lang=EN-US>
+                <span class=MsoSubtleEmphasis>
+                    <span style='font-family:"Calibri","sans-serif";font-style:normal'>
+                        The development of
+                        the BEXIS 2 software would not be possible without the German Research
+                        Foundation (DFG) funding the BExIS++ project. BExIS++ is a collaboration of the
+                        Friedrich-Schiller-University Jena, Germany (Dept. of Computer Science, Dept.
+                        for Geography, Dept. of Ecology) and the Max-Planck-Institute for
+                        Biogeochemistry Jena, Germany.
+                    </span>
+                </span>
+            </span>
+        </p>
+
+        <p class=MsoNormal style='text-align:justify'><span lang=EN-US>Start Contents</span></p>
+
+        <p class=MsoTocHeading><span lang=DE>Data Collection Manual ToC</span></p>
+
+        <p class=MsoToc1>
+            <span lang=DE>
+                <a href="#_Toc434570840">
+                    <span lang=EN-US>1.</span><span style='color:windowtext;text-decoration:none'></span><span lang=EN-US>Overview</span><span style='color:windowtext;display:none;text-decoration:none'>..</span><span style='color:windowtext;display:none;text-decoration:none'>3</span>
+                </a>
+            </span>
+        </p>
+
+        <p class=MsoToc1>
+            <span lang=DE>
+                <a href="#_Toc434570841">
+                    <span lang=EN-US>2.</span><span style='color:windowtext;text-decoration:none'></span><span lang=EN-US>
+                        Create
+                        a new dataset
+                    </span><span style='color:windowtext;display:none;text-decoration:
+none'>.</span><span style='color:windowtext;display:none;text-decoration:none'>3</span>
+                </a>
+            </span>
+        </p>
+
+        <p class=MsoToc2>
+            <span lang=DE>
+                <a href="#_Toc434570842">
+                    <span lang=EN-US>
+                        2.1
+                        Content
+                    </span><span style='color:windowtext;display:none;text-decoration:none'>. </span><span style='color:windowtext;display:none;text-decoration:none'>4</span>
+                </a>
+            </span>
+        </p>
+
+        <p class=MsoToc2>
+            <span lang=DE>
+                <a href="#_Toc434570844">
+                    <span lang=EN-US>
+                        2.2
+                        Messages
+                    </span><span style='color:windowtext;display:none;text-decoration:none'>. </span><span style='color:windowtext;display:none;text-decoration:none'>5</span>
+                </a>
+            </span>
+        </p>
+
+        <p class=MsoToc1>
+            <span lang=DE>
+                <a href="#_Toc434570845">
+                    <span lang=EN-US>3.</span><span style='color:windowtext;text-decoration:none'></span><span lang=EN-US>
+                        Upload
+                        Data
+                    </span><span style='color:windowtext;display:none;text-decoration:none'>. </span><span style='color:windowtext;display:none;text-decoration:none'>5</span>
+                </a>
+            </span>
+        </p>
+
+        <p class=MsoToc2>
+            <span lang=DE>
+                <a href="#_Toc434570846">
+                    <span lang=EN-US>
+                        3.1.
+                        Structured Data
+                    </span><span style='color:windowtext;display:none;text-decoration:
+none'>.</span><span style='color:windowtext;display:none;text-decoration:none'>5</span>
+                </a>
+            </span>
+        </p>
+
+        <p class=MsoToc3>
+            <span lang=DE>
+                <a href="#_Toc434570847">
+                    <span lang=EN-US>
+                        3.1.1.
+                        Select File
+                    </span><span style='color:windowtext;display:none;text-decoration:
+none'>.</span><span style='color:windowtext;display:none;text-decoration:none'>5</span>
+                </a>
+            </span>
+        </p>
+
+        <p class=MsoToc3>
+            <span lang=DE>
+                <a href="#_Toc434570848">
+                    <span lang=EN-GB>
+                        3.1.2.
+                        Get File Information
+                    </span><span style='color:windowtext;display:none;
+text-decoration:none'>.</span><span style='color:windowtext;display:none;text-decoration:none'>6</span>
+                </a>
+            </span>
+        </p>
+
+        <p class=MsoToc2>
+            <span lang=DE>
+                <a href="#_Toc434570849">
+                    <span lang=EN-US>3.2. </span><span lang=EN-GB>Specify Dataset</span><span style='color:windowtext;display:none;
+text-decoration:none'>.</span><span style='color:windowtext;display:none;text-decoration:none'>7</span>
+                </a>
+            </span>
+        </p>
+
+        <p class=MsoToc2>
+            <span lang=DE>
+                <a href="#_Toc434570850">
+                    <span lang=EN-US>3.3. </span><span lang=EN-GB>Define Primary Key</span><span style='color:windowtext;display:none;
+text-decoration:none'>.</span><span style='color:windowtext;display:none;text-decoration:none'>7</span>
+                </a>
+            </span>
+        </p>
+
+        <p class=MsoToc2>
+            <span lang=DE>
+                <a href="#_Toc434570851">
+                    <span lang=EN-US>3.4. </span><span lang=EN-GB>Validation</span><span style='color:windowtext;display:none;
+text-decoration:none'>.</span><span style='color:windowtext;display:none;text-decoration:none'>8</span>
+                </a>
+            </span>
+        </p>
+
+        <p class=MsoToc2>
+            <span lang=DE>
+                <a href="#_Toc434570852">
+                    <span lang=EN-US>3.5. </span><span lang=EN-GB>Summary</span><span style='color:windowtext;display:none;text-decoration:
+none'>.</span><span style='color:windowtext;display:none;text-decoration:none'>8</span>
+                </a>
+            </span>
+        </p>
+
+        <p class=MsoToc2>
+            <span lang=DE>
+                <a href="#_Toc434570853">
+                    <span lang=EN-US>
+                        3.6.
+                        Unstructured Data
+                    </span><span style='color:windowtext;display:none;text-decoration:
+none'>.</span><span style='color:windowtext;display:none;text-decoration:none'>9</span>
+                </a>
+            </span>
+        </p>
+
+        <p class=MsoToc1>
+            <span lang=DE>
+                <a href="#_Toc434570854">
+                    <span lang=EN-US>4.</span><span style='color:windowtext;text-decoration:none'></span><span lang=EN-US>
+                        Push
+                        big files to server
+                    </span><span style='color:windowtext;display:none;
+text-decoration:none'>.</span><span style='color:windowtext;display:none;text-decoration:none'>9</span>
+                </a>
+            </span>
+        </p>
+
+        <p class=MsoToc1>
+            <span lang=DE>
+                <a href="#_Toc434570855">
+                    5.<span style='color:windowtext;text-decoration:none'></span>Import metadata
+                    structure<span style='color:windowtext;display:none;text-decoration:none'>. </span><span style='color:windowtext;display:none;text-decoration:none'>10</span>
+                </a>
+            </span>
+        </p>
+
+        <p class=MsoToc2>
+            <span lang=DE>
+                <a href="#_Toc434570856">
+                    <span lang=EN-US>5.1.</span><span style='color:windowtext;text-decoration:none'></span><span lang=EN-US>
+                        Select
+                        File
+                    </span><span style='color:windowtext;display:none;text-decoration:none'>. </span><span style='color:windowtext;display:none;text-decoration:none'>11</span>
+                </a>
+            </span>
+        </p>
+
+        <p class=MsoToc2>
+            <span lang=DE>
+                <a href="#_Toc434570857">
+                    <span lang=EN-US>5.2.</span><span style='color:windowtext;text-decoration:none'></span><span lang=EN-US>
+                        Read
+                        Source
+                    </span><span style='color:windowtext;display:none;text-decoration:none'>. </span><span style='color:windowtext;display:none;text-decoration:none'>11</span>
+                </a>
+            </span>
+        </p>
+
+        <p class=MsoToc2>
+            <span lang=DE>
+                <a href="#_Toc434570858">
+                    <span lang=EN-US>5.3.</span><span style='color:windowtext;text-decoration:none'></span><span lang=EN-US>
+                        Set
+                        Parameters
+                    </span><span style='color:windowtext;display:none;text-decoration:
+none'>.</span><span style='color:windowtext;display:none;text-decoration:none'>12</span>
+                </a>
+            </span>
+        </p>
+
+        <p class=MsoToc2>
+            <span lang=DE>
+                <a href="#_Toc434570859">
+                    <span lang=EN-US>5.4.</span><span style='color:windowtext;text-decoration:none'></span><span lang=EN-US>Summary</span><span style='color:windowtext;display:none;text-decoration:none'>.</span><span style='color:windowtext;display:none;text-decoration:none'>13</span>
+                </a>
+            </span>
+        </p>
+
+
+
+<span lang=DE>Start Context<br clear=all
+                                                             style='page-break-before:always'>
 </span>
 
-<p class=MsoNormal style='text-align:justify'><span lang=DE style='font-size:
-10.5pt;line-height:115%;font-family:"Arial","sans-serif";color:#222222;
-background:white'>Start Context</span></p>
-
-<h1 style='margin-left:18.0pt;text-align:justify;text-indent:-18.0pt'><a
-name="_Toc434570840"><span lang=EN-US>1.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span><span dir=LTR></span><span lang=EN-US>Overview</span></a><span
-lang=EN-US><br>
-<br>
-</span></h1>
-
-<p class=MsoNormal style='text-align:justify'><span lang=EN-US>The Data
-Collection Module provides tools to create new datasets, enter metadata, upload
-data to the system, and import </span><span lang=EN-US>metadata structures
-(i.e. schemas). There are three workflows available under the <b>Collect</b>
-tab and one in <b>Admin</b> tab: </span></p>
-
-<p class=MsoListParagraphCxSpFirst style='text-align:justify;text-indent:-18.0pt'><span
-lang=EN-US style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span><span dir=LTR></span><span lang=EN-US>Create a dataset (Collect)</span></p>
-
-<p class=MsoListParagraphCxSpMiddle style='text-align:justify;text-indent:-18.0pt'><span
-lang=EN-US style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span><span dir=LTR></span><span lang=EN-US>Upload data to a dataset (Collect)</span></p>
-
-<p class=MsoListParagraphCxSpMiddle style='text-align:justify;text-indent:-18.0pt'><span
-lang=EN-US style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span><span dir=LTR></span><span lang=EN-US>Push big files to server (Collect)</span></p>
-
-<p class=MsoListParagraphCxSpLast style='text-align:justify;text-indent:-18.0pt'><span
-lang=EN-US style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span><span dir=LTR></span><span lang=EN-US>Import metadata structure (Admin)</span></p>
-
-<h1 style='margin-left:18.0pt;text-align:justify;text-indent:-18.0pt'><a
-name="_Toc434570841"><span lang=EN-US>2.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span><span dir=LTR></span><span lang=EN-US>Create a new dataset</span></a></h1>
-
-<p class=MsoNormal style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
-
-<p class=MsoNormal style='text-align:justify'><span lang=EN-US>This wizard will
-assist you in creating a new dataset in BEXIS. The Wizard is very flexible and
-builds up differently depending on the selected Metadata structure. Therefore,
-we describe only the basic functions here. </span></p>
-
-<p class=MsoNormal style='text-align:justify'><span lang=EN-US>The first step
-is to generate an empty dataset based on your selection of the two  mandatory
-elements: data structure, and metadata structure. </span></p>
-
-<p class=MsoNormal style='text-align:justify'><span lang=EN-US>The next stage
-is determined by the selected metadata structure.</span></p>
-
-<p class=MsoNormal style='text-align:justify'><span lang=DE><img src="DCM_UserGuide_files/image007.jpg"></span></p>
-
-<p class=MsoNormal style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
-
-<h2 style='text-align:justify'><a name="_Toc434570842"><span lang=EN-US>2.1 Content</span></a></h2>
-
-<p class=MsoNormal style='text-align:justify'><span lang=EN-US>The content area
-in the center is where you enter metadata describing your dataset. The forms
-provided here may look different and contain different attributes depending on
-the metadata schema (structure) you have chosen in the first step. </span></p>
-
-<p class=MsoNormal style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
-
-<p class=MsoNormal style='text-align:justify'><img
-src="DCM_UserGuide_files/image008.jpg" align=left hspace=12><img src="DCM_UserGuide_files/image009.jpg" align=left hspace=12><img
-src="DCM_UserGuide_files/image010.jpg" align=left
-hspace=12>               </p>
-
-<p class=MsoNormal style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
-
-<p class=MsoNormal style='text-align:justify'><span lang=EN-US> </span></p>
-
-<p class=MsoNormal style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt'><span
-lang=EN-US>   </span><span lang=DE><img id="Picture 35"
-src="DCM_UserGuide_files/image011.gif"></span><span lang=EN-US>                          Required
-attributes<br>
-</span><span lang=DE><img
-src="DCM_UserGuide_files/image012.jpg"></span><span lang=EN-US>                      </span><span
-lang=EN-US>Add an attribute. </span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
-justify'><span lang=DE><img
-src="DCM_UserGuide_files/image013.jpg"></span><span lang=EN-US>                     Remove
-an attribute.</span></p>
-
-<p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt'><span
-lang=DE><img src="DCM_UserGuide_files/image014.jpg"></span><span
-lang=EN-US>           Change order of the attribute.<br>
-</span><span lang=DE><img
-src="DCM_UserGuide_files/image014.jpg"></span><span lang=EN-US>           activate
-/ deactivate<br>
-</span><span lang=DE><img
-src="DCM_UserGuide_files/image015.jpg"><img
-src="DCM_UserGuide_files/image016.jpg"></span><span lang=EN-US>                   expand
-/ collapse</span></p>
-
-<h2 style='text-align:justify'><span lang=EN-US>&nbsp;</span></h2>
-
-<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
-
-<p class=MsoNormal style='text-align:justify'><span lang=EN-US>On the Bottom,
-there is a button titled Validate to examine whether required attributes have
-been filled and whether the information complies with the business logic. The
-validation may also be triggered by using the submit.</span></p>
-
-<h2 style='text-align:justify'><img
-src="DCM_UserGuide_files/image017.jpg"><br clear=ALL>
-<a name="_Toc434570843"></a><a name="_Toc434570595"></a></h2>
-
-<table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=625
- style='width:468.45pt;border-collapse:collapse'>
- <tr style='height:6.05pt'>
-  <td width=170 valign=top style='width:127.6pt;padding:0cm 5.4pt 0cm 5.4pt;
-  height:6.05pt'>
-  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;line-height:
-  normal'><span lang=EN-US>&nbsp;</span></p>
-  </td>
-  <td width=454 valign=top style='width:340.85pt;padding:0cm 5.4pt 0cm 5.4pt;
-  height:6.05pt'>
-  <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
-  justify;line-height:normal'><span lang=EN-US>&nbsp;</span></p>
-  </td>
- </tr>
-</table>
-
-<b><span lang=EN-US style='font-size:13.0pt;line-height:115%;font-family:"Cambria","serif";
-color:#4F81BD'><br clear=all style='page-break-before:always'>
-</span></b>
-
-<h2 style='text-align:justify'><a name="_Toc434570844"><span lang=EN-US>2.2
-Messages</span></a></h2>
-
-<p class=MsoNormal><span lang=EN-US>When an input is faulty, the input field is
-highlighted in red. If you go with the mouse over the box, you get information
-about what is wrong.</span></p>
-
-<p class=MsoNormal><span lang=DE><img
-src="DCM_UserGuide_files/image018.jpg"></span></p>
-
-<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
-
-<h1 style='margin-left:18.0pt;text-align:justify;text-indent:-18.0pt'><a
-name="_Toc434570845"><span lang=EN-US>3.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span><span dir=LTR></span><span lang=EN-US>Upload Data</span></a></h1>
-
-<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
-
-<p class=MsoNormal><span lang=EN-US>To upload your data, please go to the <b>Update
-data to a dataset </b>tab<b> </b>under<b> Collect</b> tab. This wizard will
-assist you in uploading data into the BEXIS repository. A dataset can be
-structured or unstructured.</span></p>
-
-<p class=MsoNormal style='text-align:justify'><span lang=DE><img src="DCM_UserGuide_files/image019.jpg"></span></p>
-
-<h2><span lang=EN-US>&nbsp;</span></h2>
-
-<h2><a name="_Toc434570846"><span lang=EN-US>3.1. Structured Data</span></a></h2>
-
-<p class=MsoNormal style='text-align:justify'><span lang=EN-US>The term
-“structured data” is used for all datasets where there internal structure of
-the data is “known” to the system. For example, in a data table the header,
-which defines the columns (i.e. variables) is the structure of the data. Before
-uploading/importing data to the system the data structure needs to be created
-with the Data Structure Manager of the Data Planning module.</span></p>
-
-<h3><a name="_Toc434570847"><span lang=EN-US>3.1.1. Select File</span></a></h3>
-
-<p class=MsoNormal style='text-align:justify'><span lang=EN-US>In the first
-step an existing file containing your data needs to be selected. You can either
-select a file from your local computer or a file that has been uploaded to the
-server prior to starting the Upload Wizard. The second option is designed for
-files larger than 4 MB that may take several minutes to transfer. The wizard
-supports file formats of Microsoft Excel (*.xlsm) or ASCII (*.txt, *.csv).
-Microsoft Excel files are required to use a template created with the Data
-Planning Module (Plan) of BEXIS 2 (refer to Data Planning User Guide for more
-details). Once a file has been successfully selected, click the <b>Next</b>
-button and proceed to the next step.</span></p>
-
-<p class=MsoNormal style='text-align:justify'><span lang=DE><img src="DCM_UserGuide_files/image020.jpg"></span></p>
-
-<h3><a name="_Toc434570848">3.1.2. Get File Information</a> </h3>
-
-<p class=MsoNormal style='text-align:justify'><span lang=EN-US>For all
-Microsoft Excel files using a BEXIS 2 template the file information and data
-structure is automatically extracted and this step is omitted. Please refer to
-the Data Planning User Guide for more details on how to create such a template.</span></p>
-
-<p class=MsoNormal style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
-
-<p class=MsoNormal style='text-align:justify'><span lang=EN-US>For all ASCII
-files users need to provide information on the file structure and formatting. </span></p>
-
-<p class=MsoNormal style='text-align:justify'><span lang=EN-US>First, please
-choose a <b>separator</b> that is being used to separate data values from each
-other in your ASCII file. </span></p>
-
-<p class=MsoNormal style='text-align:justify'><span lang=EN-US>Depending on
-your language different punctuation is used for decimal values. Please choose
-the one present in your ASCII file.</span></p>
-
-<p class=MsoNormal style='text-align:justify'><span lang=EN-US>Next please
-specify whether the <b>orientation</b> of your data is column-wise or row-wise
-(see figure below).</span></p>
-
-<p class=MsoNormal style='text-align:justify'><span lang=DE><img id="Picture 3" src="DCM_UserGuide_files/image021.jpg"
-alt=ColumnWise.JPG><img id="Picture 6"
-src="DCM_UserGuide_files/image022.jpg" alt=RowWise.JPG></span></p>
-
-<p class=MsoNormal style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
-
-<p class=MsoNormal style='text-align:justify'><span lang=EN-US>Data sets may
-contain empty rows or columns on top or to the left before the header and the
-actual data values start. Please specify this offset in number of columns or
-rows. </span></p>
-
-<p class=MsoNormal style='text-align:justify'><span lang=EN-US>Further, your
-data file may contain a header defining variable names, types etc. The
-row/column where this header starts needs to be specified (see figure below).</span></p>
-
-<p class=MsoNormal style='text-align:justify'><span lang=DE><img id="Picture 10" src="DCM_UserGuide_files/image023.jpg"
-alt=Offset.JPG><img id="Picture 11"
-src="DCM_UserGuide_files/image024.jpg" alt=Variables.JPG></span></p>
-
-<p class=MsoNormal style='text-align:justify'><span lang=EN-US>Finally, the
-row/column where the actual data values start needs to be specified.</span></p>
-
-<p class=MsoNormal style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
-
-<p class=MsoNormal style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
-
-<p class=MsoNormal style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
-
-<h2 style='text-align:justify'><a name="_Toc434570849"><span lang=EN-US>3.2. </span></a>Specify
-Dataset</h2>
-
-<p class=MsoNormal style='text-align:justify'><span lang=EN-US>In BEXIS your
-data is stored and managed as part of a dataset. A dataset may contain one or
-more of your data files. But all data files within one dataset must be of the
-same data structure, i.e. the number of variables and their properties must be
-identical in each file. To upload your data to the system, please select one of
-the existing dataset from the dropdown list. </span></p>
-
-<p class=MsoNormal style='text-align:justify'><span lang=DE><img src="DCM_UserGuide_files/image025.jpg"></span></p>
-
-<p class=MsoNormal style='text-align:justify;page-break-after:avoid'><span
-lang=EN-US> </span></p>
-
-<h2 style='text-align:justify'><a name="_Toc434570850"><span lang=EN-US>3.3. </span></a>Define
-Primary Key</h2>
-
-<p class=MsoNormal style='text-align:justify'><span lang=EN-US>While adding
-data to an existing dataset you need to specify a unique identifier (e.g. primary
-key) for your dataset. If your dataset already contains a variable with such a
-key please select it. Otherwise a primary key can be created by combining
-available variables. Please click the <b>Check</b> button to verify whether the
-selected combination is unique. If you go back and change something in the process
-of uploading, you need to check the primary key again.</span></p>
-
-<p class=MsoNormal style='text-align:justify'><span lang=DE><img src="DCM_UserGuide_files/image026.jpg"></span></p>
-
-<p class=MsoNormal style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
-
-<h2 style='text-align:justify'><a name="_Toc434570851"><span lang=EN-US>3.4. </span></a>Validation</h2>
-
-<p class=MsoNormal style='text-align:justify'><span lang=EN-US>With this step,
-the selected data file is validated against the selected data structure. Both,
-the structure of the data (e.g. variable properties) and whether the data
-values fit to the specified structure (e.g. data type, value range) is
-evaluated. </span></p>
-
-<p class=MsoNormal style='text-align:justify'><span lang=EN-US>Click on <b>Validate</b>
-button to validate the data file.</span></p>
-
-<p class=MsoNormal style='text-align:justify'><span lang=EN-US>If you go back
-and change something in the process of uploading, you need to validate the file
-again.</span></p>
-
-<p class=MsoNormal style='text-align:justify'><span lang=DE><img src="DCM_UserGuide_files/image027.jpg"></span></p>
-
-<p class=MsoNormal style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
-
-<h2 style='text-align:justify'><a name="_Toc434570852"><span lang=EN-US>3.5. </span></a>Summary</h2>
-
-<p class=MsoNormal style='text-align:justify'><span lang=EN-US>With this final
-step a summary of your uploaded data file is provided. Please check the
-information and click the <b>Finish</b> button to confirm and finalize the
-upload. </span></p>
-
-<b><span lang=EN-US style='font-size:13.0pt;line-height:115%;font-family:"Cambria","serif";
-color:#4F81BD'><br clear=all style='page-break-before:always'>
-</span></b>
-
-<h2 style='text-align:justify'><a name="_Toc434570853"><span lang=EN-US>3.6.
-Unstructured Data</span></a></h2>
-
-<p class=MsoNormal style='text-align:justify'><span lang=EN-US>An unstructured
-data could be either selected from your local computer or could be a file that
-has been uploaded to the server. In the case of unstructured data, we do not read
-the contents of the data. We copy the files to the server and place them in
-relation to the dataset.  </span></p>
-
-<p style='text-align:justify;background:white'><span lang=EN-US
-style='font-size:11.0pt;font-family:"Calibri","sans-serif"'>BEXIS 2 application
-can support many file formats such as (*.avi) (*.csv) (*.doc) (*.docx) (*.gif)
-(*.jpg) (*.mp3) (*.mp4) (*.pdf) (*.png) (*.shp) (*.tif) (*.txt) (*.xls)
-(*.xlsm) (*.zip).</span></p>
-
-<p style='text-align:justify;background:white'><span lang=EN-US>The </span><span
-style='font-size:9.0pt;font-family:"Verdana","sans-serif";color:black'>Maximum
-acceptable file size up to now is: 1024 MB.</span></p>
-
-<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
-
-<p class=MsoNormal style='text-align:justify'><span lang=DE><img src="DCM_UserGuide_files/image028.jpg"></span></p>
-
-<p class=MsoNormal style='text-align:justify'><span lang=EN-US>After selecting
-an unstructured data, you need to specify a related dataset.</span></p>
-
-<h1 style='margin-left:18.0pt;text-align:justify;text-indent:-18.0pt'><a
-name="_Toc434570854"><span lang=EN-US>4.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span><span dir=LTR></span><span lang=EN-US>Push big files to server</span></a></h1>
-
-<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
-
-<p class=MsoNormal style='text-align:justify'><span lang=EN-US>Each user has a
-personal folder on the server where files are stored temporary. On this page
-you can see the uploaded files. You can delete each file by clicking on the X,
-or use these files later, when you want to upload data to a dataset.</span></p>
-
-<p class=MsoNormal style='text-align:justify'><span lang=DE><img src="DCM_UserGuide_files/image029.jpg"></span></p>
-
-<h1 style='margin-left:18.0pt;text-indent:-18.0pt'><a name="_Toc434570855"><span
-lang=DE>5.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span
-dir=LTR></span><span lang=DE>Import metadata structure</span></a></h1>
-
-<p class=MsoNormal><span lang=DE>&nbsp;</span></p>
-
-<p class=MsoNormal style='text-align:justify'><span lang=EN-US>Metadata
-structures (also called schemas or profiles) are typically created and imported
-by a data manager or administrator of the system. Thus this import function is
-available under<b> </b>the <b>Administration </b>tab<b> </b>in <b>Data Collection</b>.
-The wizard will assist you in importing your metadata structure into the BEXIS system.
- A metadata structure must be defined in a XSD schema file. </span></p>
-
-<p class=MsoNormal style='text-align:justify'><span lang=EN-US>When importing a
-metadata schema into BEXIS, each element of the XSD file(s) is analyzed for its
-type, name, annotations, attributes, data types, constraints etc.  . Based on
-this information a form is automatically being created. For example, if an
-element is of data type Date, a date picker UI component will be used in the
-form. Also all names and descriptions are used exactly as they are in the XSD
-file(s). </span></p>
-
-<p class=MsoNormal style='text-align:justify'><span lang=EN-US>NOTE: There are
-metadata standards available for almost any domain or type of data. It is good
-practice to follow one of them in order to ensure interoperability later on.
-However, although technical possible, most standards are very complex and
-should not be used as a whole. Users would just be overwhelmed and may need
-only a small selection of elements to describe their data. Standards are
-designed to cover a great range of use cases and data managers (in
-collaboration with their community) should make the effort in defining a set of
-feasible metadata elements in a profile (XSD file). </span></p>
-
-<p class=MsoNormal style='text-align:justify'><span lang=EN-US>IMPORTANT:
-Please check, whether the XSD schema files have any dependencies to other files.
-You can find the dependencies in the <b>import</b> or <b>include</b> tags.</span></p>
-
-<p class=MsoNormal><span lang=DE><img id="Grafik 2"
-src="DCM_UserGuide_files/image030.jpg"></span></p>
-
-<p class=MsoNormal><span lang=EN-US>The current BEXIS system requires all
-referenced files to be locally available on the server (no URL to external
-resource). So you may need to store all references first to a local folder,
-change the schema location path in every file (e.g. ./fileName.xsd) and then
-upload all files to the server. (<b>See 4</b>. Push files to server).</span></p>
-
-<p class=MsoNormal><span lang=DE><img id="Grafik 1"
-src="DCM_UserGuide_files/image031.jpg"></span></p>
-
-<p class=MsoNormal><span lang=DE><img id="Grafik 3"
-src="DCM_UserGuide_files/image032.jpg"></span></p>
-
-<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
-
-<span lang=EN-US style='font-size:11.0pt;line-height:115%;font-family:"Calibri","sans-serif"'><br
-clear=all style='page-break-before:always'>
-</span>
-
-<p class=MsoNormal><b><span lang=EN-US style='font-size:13.0pt;line-height:
-115%;font-family:"Cambria","serif";color:#4F81BD'>&nbsp;</span></b></p>
-
-<h2 style='margin-left:21.6pt;text-indent:-21.6pt'><span lang=EN-US>5.1.<span
-style='font:7.0pt "Times New Roman"'> </span></span><span dir=LTR></span><span
-lang=EN-US> <a name="_Toc434570856">Select File</a></span></h2>
-
-<p class=MsoNormal><span lang=EN-US>In the first step an existing file containing
-your data needs to be selected. You can either select a XSD file from your
-local computer or a file that has been uploaded to the server prior to starting
-the Wizard. You may use the “Push big data to server” function in the Collect
-menu to upload multiple related XSD files.</span><span lang=EN-US
-style='font-size:0pt;line-height:115%;font-family:"Times New Roman","serif";
-color:black;background:black;layout-grid-mode:line'> </span></p>
-
-<p class=MsoNormal><span style='font-size:0pt;line-height:115%;font-family:
-"Times New Roman","serif";color:black;background:black;layout-grid-mode:line'>&nbsp;</span></p>
-
-<p class=MsoNormal><span style='font-size:0pt;line-height:115%;font-family:
-"Times New Roman","serif";color:black;background:black;layout-grid-mode:line'><br>
-</span><span lang=DE><img
-src="DCM_UserGuide_files/image033.jpg"></span></p>
-
-<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
-
-<h2 style='margin-left:21.6pt;text-indent:-21.6pt'><span lang=EN-US>5.2.<span
-style='font:7.0pt "Times New Roman"'> </span></span><span dir=LTR></span><span
-lang=EN-US> <a name="_Toc434570857">Read Source</a></span></h2>
-
-<p class=MsoNormal><span lang=EN-US>Please specify a name (i.e. display name) for
-the new metadata structure. You may also enter a root node if only a part of
-the XSD is to be used (optional).</span></p>
-
-<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
-
-<p class=MsoNormal><span lang=DE><img
-src="DCM_UserGuide_files/image034.jpg"></span><span lang=DE> </span><span
-lang=EN-US><br>
-<br>
-</span><span lang=EN-US>To find the root node open the XSD Schema file and have
-a look on the element tags. In the example of ABCD it looks like this.</span></p>
-
-<p class=MsoNormal style='text-align:justify'><span lang=DE><img id="Grafik 18" src="DCM_UserGuide_files/image035.jpg"></span><span
-lang=EN-US><br>
-<br>
-If no root node is selected then the wizard will automatically select the first
-element which is a complex type. But it is also possible to define the element
-“DataSet” as root node and the metadata structure starts from this element. The
-Name of a metadata structure must be unique and the root node must exist.</span></p>
-
-<p class=MsoNormal><b><span lang=EN-US style='font-size:13.0pt;line-height:
-115%;font-family:"Cambria","serif";color:#4F81BD'>&nbsp;</span></b></p>
-
-<h2 style='margin-left:21.6pt;text-indent:-21.6pt'><span lang=EN-US>5.3.<span
-style='font:7.0pt "Times New Roman"'> </span></span><span dir=LTR></span><span
-lang=EN-US> <a name="_Toc434570858">Set Parameters</a></span></h2>
-
-<p class=MsoNormal style='text-align:justify'><span lang=EN-US>For the system
-to handle a dataset at least the title and a description is needed. In this
-step these two elements, which are typically available in all metadata
-structures, should be identified and made explicit to the system. </span></p>
-
-<p class=MsoNormal style='text-align:justify'><span lang=EN-US><br>
-</span><span lang=DE><img
-src="DCM_UserGuide_files/image036.jpg"></span></p>
-
-<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
-
-<span lang=EN-US style='font-size:11.0pt;line-height:115%;font-family:"Calibri","sans-serif"'><br
-clear=all style='page-break-before:always'>
-</span>
-
-<p class=MsoNormal><b><span lang=EN-US style='font-size:13.0pt;line-height:
-115%;font-family:"Cambria","serif";color:#4F81BD'>&nbsp;</span></b></p>
-
-<h2 style='margin-left:21.6pt;text-indent:-21.6pt'><span lang=EN-US>5.4.<span
-style='font:7.0pt "Times New Roman"'> </span></span><span dir=LTR></span><span
-lang=EN-US> <a name="_Toc434570859">Summary</a></span></h2>
-
-<p class=MsoNormal><span lang=EN-US>The Summary page is an overview about the
-created metadata structure.<br>
-<br>
-</span><span lang=DE><img
-src="DCM_UserGuide_files/image037.jpg"></span></p>
-
-<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
-
-<p class=MsoNormal style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
-
-</div>
+        <h1 style='margin-left:18.0pt;text-align:justify;text-indent:-18.0pt'>
+            <a name="_Toc434570840">
+                <span lang=EN-US>
+                    1.<span style='font:7.0pt "Times New Roman"'>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                    </span>
+                </span><span dir=LTR></span><span lang=EN-US>Overview</span>
+            </a>
+        </h1>
+
+        <p class=MsoNormal style='text-align:justify'>
+            <span lang=EN-US>
+                The Data
+                Collection Module provides tools to create new datasets, enter metadata, upload
+                data to the system, and import
+            </span><span lang=EN-US>
+                metadata structures
+                (i.e. schemas). There are three workflows available under the <b>Collect</b>
+                tab and one in the<b> Setup</b>:
+            </span>
+        </p>
+
+        <p class=MsoListParagraphCxSpFirst style='text-align:justify;text-indent:-18.0pt'>
+            <span lang=EN-US style='font-family:Symbol'>
+                ·<span style='font:7.0pt "Times New Roman"'>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </span>
+            </span><span dir=LTR></span><span lang=EN-US>Create a dataset (Collect)</span>
+        </p>
+
+        <p class=MsoListParagraphCxSpMiddle style='text-align:justify;text-indent:-18.0pt'>
+            <span lang=EN-US style='font-family:Symbol'>
+                ·<span style='font:7.0pt "Times New Roman"'>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </span>
+            </span><span dir=LTR></span><span lang=EN-US>Upload data to a dataset (Collect)</span>
+        </p>
+
+        <p class=MsoListParagraphCxSpMiddle style='text-align:justify;text-indent:-18.0pt'>
+            <span lang=EN-US style='font-family:Symbol'>
+                ·<span style='font:7.0pt "Times New Roman"'>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </span>
+            </span><span dir=LTR></span><span lang=EN-US>Push big files to server (Collect)</span>
+        </p>
+
+        <p class=MsoListParagraphCxSpLast style='text-align:justify;text-indent:-18.0pt'>
+            <span lang=EN-US style='font-family:Symbol'>
+                ·<span style='font:7.0pt "Times New Roman"'>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </span>
+            </span><span dir=LTR></span><span lang=EN-US>Import metadata structure (Setup)</span>
+        </p>
+
+        <h1 style='margin-left:18.0pt;text-align:justify;text-indent:-18.0pt'>
+            <a name="_Toc434570841">
+                <span lang=EN-US>
+                    2.<span style='font:7.0pt "Times New Roman"'>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                    </span>
+                </span><span dir=LTR></span><span lang=EN-US>Create a new dataset</span>
+            </a>
+        </h1>
+
+        <p class=MsoNormal style='text-align:justify'>
+            <span lang=EN-US>
+                This wizard will
+                assist you in creating a new dataset in BEXIS 2. The Wizard is very flexible
+                and builds up differently depending on the selected Metadata structure.
+                Therefore, we describe only the basic functions here.
+            </span>
+        </p>
+
+        <p class=MsoNormal style='text-align:justify'>
+            <span lang=EN-US>
+                The first step
+                is to generate an empty or a copy of an existing dataset based on your
+                selection of the two mandatory elements: data structure, and metadata
+                structure.
+            </span>
+        </p>
+
+        <p class=MsoNormal style='text-align:justify'>
+            <span lang=EN-US>
+                <img width=353
+                     height=215 src="DCM_UserGuide_files/image004.jpg">
+            </span>
+        </p>
+
+        <p class=MsoNormal style='text-align:justify'>
+            <span lang=EN-US>
+                The next stage
+                is determined by the selected metadata structure.
+            </span>
+        </p>
+
+        <p class=MsoNormal style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
+
+        <h2 style='text-align:justify'><a name="_Toc434570842"><span lang=EN-US>2.1 Content</span></a></h2>
+
+        <p class=MsoNormal style='text-align:justify'>
+            <img width=411 height=143
+                 src="DCM_UserGuide_files/image005.jpg" align=left hspace=12><span lang=EN-US>
+                The
+                content area in the center is where you enter metadata describing your dataset.
+                The forms provided here may look different and contain different attributes
+                depending on the metadata schema (structure) you have chosen in the first step.
+            </span>
+        </p>
+
+        <p class=MsoNormal style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
+
+        <p class=MsoNormal style='text-align:justify'>               </p>
+
+        <p class=MsoNormal style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
+
+        <p class=MsoNormal style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
+
+        <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt'>
+            <span lang=EN-US></span><span lang=DE>
+                <img width=8 height=7 id="Picture 35"
+                     src="DCM_UserGuide_files/image006.png">
+            </span><span lang=EN-US>
+                Required
+                attributes<br>
+            </span><span lang=DE>
+                <img width=31 height=29
+                     src="DCM_UserGuide_files/image007.jpg">
+            </span><span lang=EN-US>                     </span><span lang=EN-US>Add an attribute.</span>
+        </p>
+
+        <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt;text-align:
+justify'>
+            <span lang=DE>
+                <img width=31 height=31
+                     src="DCM_UserGuide_files/image008.jpg">
+            </span><span lang=EN-US>
+                Remove
+                an attribute.
+            </span>
+        </p>
+
+        <p class=MsoNormal style='margin-bottom:0cm;margin-bottom:.0001pt'>
+            <span lang=DE><img width=60 height=27 src="DCM_UserGuide_files/image009.png"></span><span lang=EN-US>Change order of the attribute.</span><span lang=EN-US>
+                <br>
+            </span><span lang=DE>
+                <img width=20 height=17
+                     src="DCM_UserGuide_files/image010.jpg"><img width=17 height=14
+                                                                 src="DCM_UserGuide_files/image011.jpg">
+            </span><span lang=EN-US>
+                expand
+                / collapse
+            </span>
+        </p>
+
+        <h2 style='text-align:justify'><span lang=EN-US>&nbsp;</span></h2>
+
+        <p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+        <p class=MsoNormal style='text-align:justify'>
+            <span lang=EN-US>
+                On the Bottom,
+                there is a button titled Validate to examine whether required attributes have
+                been filled and whether the information complies with the business logic. The
+                validation may also be triggered by using the Submit.
+            </span>
+        </p>
+
+        <p class=MsoNormal>
+            <a name="_Toc434570844">
+                <span lang=EN-US>
+                    You could edit a
+                    submitted dataset or make a copy of that by clicking on the Edit or Copy
+                    buttons.
+                </span>
+            </a>
+        </p>
+
+        <h2 style='text-align:justify'><span lang=EN-US>&nbsp;</span></h2>
+
+        <h2 style='text-align:justify'><span lang=EN-US>2.2 Messages</span></h2>
+
+        <p class=MsoNormal>
+            <span lang=EN-US>
+                When an input is faulty, the input field is
+                highlighted in red. If you go with the mouse over the box, you get information
+                about what is wrong.
+            </span>
+        </p>
+
+        <p class=MsoNormal>
+            <span lang=DE>
+                <img width=600 height=175
+                     src="DCM_UserGuide_files/image012.jpg">
+            </span>
+        </p>
+
+        <p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+        <h1 style='margin-left:18.0pt;text-align:justify;text-indent:-18.0pt'>
+            <a name="_Toc434570845">
+                <span lang=EN-US>
+                    3.<span style='font:7.0pt "Times New Roman"'>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                    </span>
+                </span><span dir=LTR></span><span lang=EN-US>Upload Data</span>
+            </a>
+        </h1>
+
+        <p class=MsoNormal>
+            <span lang=EN-US>
+                To upload your data, please go to the <b>
+                    Collect
+                    &gt; Update Data
+                </b>via main menu. This wizard will assist you in uploading
+                data into the BEXIS 2 repository. A dataset can be structured or unstructured.
+            </span>
+        </p>
+
+        <p class=MsoNormal style='text-align:justify'>
+            <span lang=DE>
+                <img width=604
+                     height=132 src="DCM_UserGuide_files/image013.jpg">
+            </span>
+        </p>
+
+        <h2><span lang=EN-US>&nbsp;</span></h2>
+
+        <h2><a name="_Toc434570846"><span lang=EN-US>3.1. Structured Data</span></a></h2>
+
+        <p class=MsoNormal style='text-align:justify'>
+            <span lang=EN-US>
+                The term
+                “structured data” is used for all datasets where there internal structure of
+                the data is “known” to the system. For example, in a data table the header,
+                which defines the columns (i.e. variables) is the structure of the data. Before
+                uploading/importing data to the system the data structure needs to be created
+                with the Data Structure Manager of the Data Planning module.
+            </span>
+        </p>
+
+        <h3><a name="_Toc434570847"><span lang=EN-US>3.1.1. Select File</span></a></h3>
+
+        <p class=MsoNormal style='text-align:justify'>
+            <span lang=EN-US>
+                In the first
+                step an existing file containing your data needs to be selected. You can either
+                select a file from your local computer or a file that has been uploaded to the
+                server prior to starting the Upload Wizard. The second option is designed for
+                files larger than 4 MB that may take several minutes to transfer. The wizard
+                supports file formats of Microsoft Excel (*.xlsm) or ASCII (*.txt, *.csv).
+                Microsoft Excel files are required to use a template created with the Data
+                Planning Module (Plan) of BEXIS 2 (refer to Data Planning User Guide for more
+                details). Once a file has been successfully selected, click the <b>Next</b>
+                button and proceed to the next step.
+            </span>
+        </p>
+
+        <p class=MsoNormal style='text-align:justify'>
+            <span lang=DE>
+                <img width=604
+                     height=328 src="DCM_UserGuide_files/image014.jpg">
+            </span>
+        </p>
+
+        <h3><a name="_Toc434570848">3.1.2. Get File Information</a> </h3>
+
+        <p class=MsoNormal style='text-align:justify'>
+            <span lang=EN-US>
+                For all
+                Microsoft Excel files using a BEXIS 2 template the file information and data
+                structure is automatically extracted and this step is omitted. Please refer to
+                the Data Planning User Guide for more details on how to create such a template.
+            </span>
+        </p>
+
+        <p class=MsoNormal style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
+
+        <p class=MsoNormal style='text-align:justify'>
+            <span lang=EN-US>
+                For all ASCII
+                files users need to provide information on the file structure and formatting.
+            </span>
+        </p>
+
+        <p class=MsoNormal style='text-align:justify'>
+            <span lang=EN-US>
+                First, please
+                choose a <b>separator</b> that is being used to separate data values from each
+                other in your ASCII file.
+            </span>
+        </p>
+
+        <p class=MsoNormal style='text-align:justify'>
+            <span lang=EN-US>
+                Depending on
+                your language different punctuation is used for decimal values. Please choose
+                the one present in your ASCII file.
+            </span>
+        </p>
+
+        <p class=MsoNormal style='text-align:justify'>
+            <span lang=EN-US>
+                Next please
+                specify whether the <b>orientation</b> of your data is column-wise or row-wise
+                (see figure below).
+            </span>
+        </p>
+
+        <p class=MsoNormal style='text-align:justify'>
+            <span lang=DE>
+                <img width=269
+                     height=108 id="Picture 3" src="DCM_UserGuide_files/image015.jpg"
+                     alt=ColumnWise.JPG><img width=298 height=122 id="Picture 6"
+                                             src="DCM_UserGuide_files/image016.jpg" alt=RowWise.JPG>
+            </span>
+        </p>
+
+        <p class=MsoNormal style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
+
+        <p class=MsoNormal style='text-align:justify'>
+            <span lang=EN-US>
+                Data sets may
+                contain empty rows or columns on top or to the left before the header and the
+                actual data values start. Please specify this offset in number of columns or
+                rows.
+            </span>
+        </p>
+
+        <p class=MsoNormal style='text-align:justify'>
+            <span lang=EN-US>
+                Further, your
+                data file may contain a header defining variable names, types etc. The
+                row/column where this header starts needs to be specified (see figure below).
+            </span>
+        </p>
+
+        <p class=MsoNormal style='text-align:justify'>
+            <span lang=DE>
+                <img width=278
+                     height=138 id="Picture 10" src="DCM_UserGuide_files/image017.jpg"
+                     alt=Offset.JPG><img width=307 height=128 id="Picture 11"
+                                         src="DCM_UserGuide_files/image018.jpg" alt=Variables.JPG>
+            </span>
+        </p>
+
+        <p class=MsoNormal style='text-align:justify'>
+            <span lang=EN-US>
+                Finally, the
+                row/column where the actual data values start needs to be specified.
+            </span>
+        </p>
+
+        <p class=MsoNormal style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
+
+        <p class=MsoNormal style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
+
+        <h2 style='text-align:justify'>
+            <a name="_Toc434570849"><span lang=EN-US>3.2. </span></a>Specify
+            Dataset
+        </h2>
+
+        <p class=MsoNormal style='text-align:justify'>
+            <span lang=EN-US>
+                In BEXIS 2 your
+                data is stored and managed as part of a dataset. A dataset may contain one or
+                more of your data files. But all data files within one dataset must be of the
+                same data structure, i.e. the number of variables and their properties must be
+                identical in each file. To upload your data to the system, please select one of
+                the existing dataset from the dropdown list.
+            </span>
+        </p>
+
+        <p class=MsoNormal style='text-align:justify'>
+            <span lang=DE>
+                <img width=604
+                     height=328 src="DCM_UserGuide_files/image019.jpg">
+            </span>
+        </p>
+
+        <p class=MsoNormal style='text-align:justify;page-break-after:avoid'>
+            <span lang=EN-US></span>
+        </p>
+
+        <h2 style='text-align:justify'>
+            <a name="_Toc434570850"><span lang=EN-US>3.3. </span></a>Define
+            Primary Key
+        </h2>
+
+        <p class=MsoNormal style='text-align:justify'>
+            <span lang=EN-US>
+                While adding
+                data to an existing dataset you need to specify a unique identifier (e.g. primary
+                key) for your dataset. If your dataset already contains a variable with such a
+                key please select it. Otherwise a primary key can be created by combining
+                available variables. Please click the <b>Check</b> button to verify whether the
+                selected combination is unique. If you go back and change something in the process
+                of uploading, you need to check the primary key again.
+            </span>
+        </p>
+
+        <p class=MsoNormal style='text-align:justify'>
+            <span lang=DE>
+                <img width=604
+                     height=328 src="DCM_UserGuide_files/image020.jpg">
+            </span>
+        </p>
+
+        <p class=MsoNormal style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
+
+        <h2 style='text-align:justify'><a name="_Toc434570851"><span lang=EN-US>3.4. </span></a>Validation</h2>
+
+        <p class=MsoNormal style='text-align:justify'>
+            <span lang=EN-US>
+                With this step,
+                the selected data file is validated against the selected data structure. Both,
+                the structure of the data (e.g. variable properties) and whether the data
+                values fit to the specified structure (e.g. data type, value range) is
+                evaluated.
+            </span>
+        </p>
+
+        <p class=MsoNormal style='text-align:justify'>
+            <span lang=EN-US>
+                Click on <b>Validate</b>
+                button to validate the data file.
+            </span>
+        </p>
+
+        <p class=MsoNormal style='text-align:justify'>
+            <span lang=EN-US>
+                If you go back
+                and change something in the process of uploading, you need to validate the file
+                again.
+            </span>
+        </p>
+
+        <p class=MsoNormal style='text-align:justify'>
+            <span lang=DE>
+                <img width=604
+                     height=328 src="DCM_UserGuide_files/image021.jpg">
+            </span>
+        </p>
+
+        <p class=MsoNormal style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
+
+        <h2 style='text-align:justify'><a name="_Toc434570852"><span lang=EN-US>3.5. </span></a>Summary</h2>
+
+        <p class=MsoNormal style='text-align:justify'>
+            <span lang=EN-US>
+                With this final
+                step a summary of your uploaded data file is provided. Please check the
+                information and click the <b>Finish</b> button to confirm and finalize the
+                upload.
+            </span>
+        </p>
+
+        <b>
+            <span lang=EN-US style='font-size:13.0pt;line-height:115%;font-family:"Cambria","serif";
+color:#4F81BD'>
+                <br clear=all style='page-break-before:always'>
+            </span>
+        </b>
+
+        <h2 style='text-align:justify'>
+            <a name="_Toc434570853">
+                <span lang=EN-US>
+                    3.6.
+                    Unstructured Data
+                </span>
+            </a>
+        </h2>
+
+        <p class=MsoNormal style='text-align:justify'>
+            <span lang=EN-US>
+                An unstructured
+                data could be either selected from your local computer or could be a file that
+                has been uploaded to the server. In the case of unstructured data, we do not read
+                the contents of the data. We copy the files to the server and place them in relation
+                to the dataset. 
+            </span>
+        </p>
+
+        <p style='text-align:justify;background:white'>
+            <span lang=EN-US
+                  style='font-size:11.0pt;font-family:"Calibri","sans-serif"'>
+                BEXIS 2 application
+                can support many file formats such as (*.avi) (*.bmp) (*.csv) (*.doc) (*.docx)
+                (*.gif) (*.jpg) (*.mp3) (*.mp4) (*.pdf) (*.png) (*.shp) (*.tif) (*.txt) (*.xls)
+                (*.xlsm) (*.xsd) (*.zip).
+            </span>
+        </p>
+
+        <p style='text-align:justify;background:white'>
+            <span lang=EN-US>The </span><span style='font-size:9.0pt;font-family:"Verdana","sans-serif";color:black'>
+                Maximum
+                acceptable file size up to now is: 1024 MB.
+            </span>
+        </p>
+
+        <p class=MsoNormal style='text-align:justify'>
+            <span lang=DE>
+                <img width=604
+                     height=328 src="DCM_UserGuide_files/image022.jpg">
+            </span>
+        </p>
+
+        <h1 style='margin-left:18.0pt;text-align:justify;text-indent:-18.0pt'>
+            <a name="_Toc434570854">
+                <span lang=EN-US>
+                    4.<span style='font:7.0pt "Times New Roman"'>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                    </span>
+                </span><span dir=LTR></span><span lang=EN-US>Push big files to server</span>
+            </a>
+        </h1>
+
+        <p class=MsoNormal style='text-align:justify'>
+            <span lang=EN-US>
+                Each user has a
+                personal folder on the server where files are stored temporary. On this page
+                you can see the uploaded files. You can delete each file by clicking on the X,
+                or use these files later, when you want to upload data to a dataset.
+            </span>
+        </p>
+
+        <p class=MsoNormal style='text-align:justify'>
+            <span lang=DE>
+                <img width=604
+                     height=203 src="DCM_UserGuide_files/image023.jpg">
+            </span>
+        </p>
+
+        <h1 style='margin-left:18.0pt;text-indent:-18.0pt'>
+            <a name="_Toc434570855">
+                <span lang=DE>5.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span dir=LTR></span><span lang=DE>Import metadata structure</span>
+            </a>
+        </h1>
+
+        <p class=MsoNormal><span lang=DE>&nbsp;</span></p>
+
+        <p class=MsoNormal style='text-align:justify'>
+            <span lang=EN-US>
+                Metadata
+                structures (also called schemas or profiles) are typically created and imported
+                by a data manager or administrator of the system. Thus this import function is
+                available under<b> </b>the <b>Setup &gt; Import metadata Structure</b>. The
+                wizard will assist you in importing your metadata structure into the BEXIS 2.  A
+                metadata structure must be defined in a XSD schema file.
+            </span>
+        </p>
+
+        <p class=MsoNormal style='text-align:justify'>
+            <span lang=EN-US>
+                When importing a
+                metadata schema into BEXIS 2, each element of the XSD file(s) is analyzed for
+                its type, name, annotations, attributes, data types, constraints etc.  Based on
+                this information a form is automatically being created. For example, if an
+                element is of data type Date, a date picker UI component will be used in the
+                form. Also all names and descriptions are used exactly as they are in the XSD
+                file(s).
+            </span>
+        </p>
+
+        <p class=MsoNormal style='text-align:justify'>
+            <span lang=EN-US>
+                NOTE: There are
+                metadata standards available for almost any domain or type of data. It is good
+                practice to follow one of them in order to ensure interoperability later on.
+                However, although technical possible, most standards are very complex and
+                should not be used as a whole. Users would just be overwhelmed and may need
+                only a small selection of elements to describe their data. Standards are
+                designed to cover a great range of use cases and data managers (in
+                collaboration with their community) should make the effort in defining a set of
+                feasible metadata elements in a profile (XSD file).
+            </span>
+        </p>
+
+        <p class=MsoNormal style='text-align:justify'>
+            <span lang=EN-US>
+                IMPORTANT:
+                Please check, whether the XSD schema files have any dependencies to other files.
+                You can find the dependencies in the <b>import</b> or <b>include</b> tags.
+            </span>
+        </p>
+
+        <p class=MsoNormal>
+            <span lang=DE>
+                <img width=530 height=65 id="Grafik 2"
+                     src="DCM_UserGuide_files/image024.png">
+            </span>
+        </p>
+
+        <p class=MsoNormal style='text-align:justify'>
+            <span lang=EN-US>
+                The current BEXIS 2
+                system requires all referenced files to be locally available on the server (no
+                URL to external resource). So you may need to store all references first to a
+                local folder, change the schema location path in every file (e.g. ./fileName.xsd)
+                and then upload all files to the server. (<b>See 4</b>. Push files to server).
+            </span>
+        </p>
+
+        <p class=MsoNormal>
+            <span lang=DE>
+                <img width=585 height=70 id="Grafik 1"
+                     src="DCM_UserGuide_files/image025.jpg">
+            </span>
+        </p>
+
+        <p class=MsoNormal>
+            <span lang=DE>
+                <img width=492 height=49 id="Grafik 3"
+                     src="DCM_UserGuide_files/image026.jpg">
+            </span>
+        </p>
+
+        <p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+        <span lang=EN-US style='font-size:11.0pt;line-height:115%;font-family:"Calibri","sans-serif"'>
+            <br clear=all style='page-break-before:always'>
+        </span>
+
+        <p class=MsoNormal>
+            <b>
+                <span lang=EN-US style='font-size:13.0pt;line-height:
+115%;font-family:"Cambria","serif";color:#4F81BD'>&nbsp;</span>
+            </b>
+        </p>
+
+        <h2 style='margin-left:21.6pt;text-indent:-21.6pt'>
+            <span lang=EN-US>
+                5.1.<span style='font:7.0pt "Times New Roman"'></span>
+            </span><span dir=LTR></span><span lang=EN-US><a name="_Toc434570856">Select File</a></span>
+        </h2>
+
+        <p class=MsoNormal style='text-align:justify'>
+            <span lang=EN-US>
+                In the first
+                step an existing file containing your data needs to be selected. You can either
+                select a XSD file from your local computer or a file that has been uploaded to
+                the server prior to starting the Wizard. You may use the “Push big data to
+                server” function in the Collect menu to upload multiple related XSD files.
+            </span>
+        </p>
+
+        <p class=MsoNormal style='text-align:justify'>
+            <span lang=EN-US
+                  style='color:red'>Note:</span><span lang=EN-US>
+                Please upload a valid XSD
+                structure. BEXIS 2 does not check this kind of validation.
+            </span>
+        </p>
+
+        <p class=MsoNormal>
+            <span lang=EN-US style='font-size:0pt;line-height:115%;
+font-family:"Times New Roman","serif";color:black;background:black;layout-grid-mode:
+line'>&nbsp;</span>
+        </p>
+
+        <p class=MsoNormal>
+            <span lang=EN-US style='font-size:0pt;line-height:115%;
+font-family:"Times New Roman","serif";color:black;background:black;layout-grid-mode:
+line'>
+                <br>
+            </span><span lang=DE>
+                <img width=604 height=283
+                     src="DCM_UserGuide_files/image027.jpg">
+            </span>
+        </p>
+
+        <p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+        <h2 style='margin-left:21.6pt;text-indent:-21.6pt'>
+            <span lang=EN-US>
+                5.2.<span style='font:7.0pt "Times New Roman"'></span>
+            </span><span dir=LTR></span><span lang=EN-US><a name="_Toc434570857">Read Source</a></span>
+        </h2>
+
+        <p class=MsoNormal>
+            <span lang=EN-US>
+                Please specify a name (i.e. display name) for
+                the new metadata structure. You may also enter a root node if only a part of
+                the XSD is to be used (optional).
+            </span>
+        </p>
+
+        <p class=MsoNormal>
+            <span lang=DE>
+                <img width=604 height=283
+                     src="DCM_UserGuide_files/image028.jpg">
+            </span><span lang=EN-US>
+                <br>
+                <br>
+            </span><span lang=EN-US>
+                To find the root node open the XSD Schema file and have
+                a look on the element tags. In the example of ABCD it looks like this.
+            </span>
+        </p>
+
+        <p class=MsoNormal style='text-align:justify'>
+            <span lang=DE>
+                <img width=490
+                     height=235 id="Grafik 18" src="DCM_UserGuide_files/image029.jpg">
+            </span><span lang=EN-US>
+                <br>
+                <br>
+                If no root node is selected then the wizard will automatically select the first
+                element which is a complex type. But it is also possible to define the element
+                “DataSet” as root node and the metadata structure starts from this element. The
+                Name of a metadata structure must be unique and the root node must exist.
+            </span>
+        </p>
+
+        <p class=MsoNormal>
+            <b>
+                <span lang=EN-US style='font-size:13.0pt;line-height:
+115%;font-family:"Cambria","serif";color:#4F81BD'>&nbsp;</span>
+            </b>
+        </p>
+
+        <h2 style='margin-left:21.6pt;text-indent:-21.6pt'>
+            <span lang=EN-US>
+                5.3.<span style='font:7.0pt "Times New Roman"'></span>
+            </span><span dir=LTR></span><span lang=EN-US><a name="_Toc434570858">Set Parameters</a></span>
+        </h2>
+
+        <p class=MsoNormal style='text-align:justify'>
+            <span lang=EN-US>
+                For the system
+                to handle a dataset at least the title and a description is needed. In this
+                step these two elements, which are typically available in all metadata
+                structures, should be identified and made explicit to the system.
+            </span>
+        </p>
+
+        <p class=MsoNormal style='text-align:justify'>
+            <span lang=EN-US>
+                <br>
+            </span><span lang=DE>
+                <img width=604 height=283
+                     src="DCM_UserGuide_files/image030.jpg">
+            </span>
+        </p>
+
+        <p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+        <span lang=EN-US style='font-size:11.0pt;line-height:115%;font-family:"Calibri","sans-serif"'>
+            <br clear=all style='page-break-before:always'>
+        </span>
+
+        <p class=MsoNormal>
+            <b>
+                <span lang=EN-US style='font-size:13.0pt;line-height:
+115%;font-family:"Cambria","serif";color:#4F81BD'>&nbsp;</span>
+            </b>
+        </p>
+
+        <h2 style='margin-left:21.6pt;text-indent:-21.6pt'>
+            <span lang=EN-US>
+                5.4.<span style='font:7.0pt "Times New Roman"'></span>
+            </span><span dir=LTR></span><span lang=EN-US><a name="_Toc434570859">Summary</a></span>
+        </h2>
+
+        <p class=MsoNormal>
+            <span lang=EN-US>
+                The Summary page is an overview about the
+                created metadata structure.<br>
+                <br>
+            </span><span lang=DE>
+                <img width=604 height=283
+                     src="DCM_UserGuide_files/image031.jpg">
+            </span>
+        </p>
+
+        <p class=MsoNormal style='text-align:justify'><span lang=EN-US>&nbsp;</span></p>
+
+    </div>
 
 </body>
 

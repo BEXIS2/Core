@@ -64,9 +64,9 @@
                            }
 
                            //Get Count from Facets
-                           int count = Model.Item2.Where(p => p.Name == facet.Name).FirstOrDefault().Count;
+                           Facet tmp = Model.Item1.SearchComponent.Facets.Where(p => p.Name == facet.Name).FirstOrDefault();
+                           int count = tmp.Childrens.Where(c => c.Count > 0).Count();
                    
-                           
                            if (item.Items.Count < count && count > 0)
                            {
                                TreeViewItem moreBt = new TreeViewItem();
@@ -78,6 +78,7 @@
                                moreBt.Checkable = false;
                                moreBt.LinkHtmlAttributes["title"] = "more";
                                moreBt.LinkHtmlAttributes["class"] = "t-item-more bx-more";
+                               moreBt.LinkHtmlAttributes["parentDisplayName"] = facet.DisplayName;
 
                                if (!item.Items.Contains(moreBt))
                                    item.Items
@@ -137,7 +138,10 @@
         // if it is a root node then a selection expand or collapse this tree element
         var selectedItem = treeView().getItemText(e.item);
         var selectedItemValue = treeView().getItemValue(e.item);
-            var parent = $(e.item.parentNode).closest('.t-item').find(':input[name*="Value"]').val();
+        var parent = $(e.item.parentNode).closest('.t-item').find(':input[name*="Value"]').val();
+        var tmp = $(e.item).find("span")[0];
+        var displayNameofParent = tmp.getAttribute("parentDisplayName");
+
             var detailWindow = $("#MoreWindow").data("tWindow");
             e.item.Selected = false;
 
@@ -148,7 +152,7 @@
 
                 $.post('@Url.Action("ShowMoreWindow", "Home", new RouteValueDictionary { { "area", "DDM" } })', { parent: parent }, function (response) {
                     $("#search_more").html(response);
-                    $("#MoreWindow .t-window-title")[0].innerText = "Change Selection : " + parent
+                    $("#MoreWindow .t-window-title")[0].innerText = "Change Selection : " + displayNameofParent;
 
                 })
 
@@ -189,12 +193,6 @@
             $("#searchTreeView").html(response);
             facets_disable();
 
-            if (false) {
-                alert('test');
-                $.post('@Url.Action("UpdateFacets", "Home", new RouteValueDictionary { { "area", "DDM" } })', {}, function (response) {
-                    $("#searchTreeView").html(response);
-                })
-            }
             $.post('@Url.Action("GetDataForBreadCrumbView", "Home", new RouteValueDictionary { { "area", "DDM" } })', {}, function (response) {
                 $("#breadCrumb").replaceWith(response);
             });
