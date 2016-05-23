@@ -200,6 +200,11 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
             }
         }
 
+        public JsonResult ValidateTermsAndConditions(bool accepted)
+        {
+            return accepted ? Json(true, JsonRequestBehavior.AllowGet) : Json(false, JsonRequestBehavior.AllowGet);
+        }
+
         public JsonResult ValidateUsername(string username, long id = 0)
         {
             SubjectManager subjectManager = new SubjectManager();
