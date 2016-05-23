@@ -36,14 +36,14 @@
       <column name="EndDate"  />
     </property>
 
-    <many-to-one name="PartyType" class="BExIS.Dlm.Entities.Party.PartyType"  not-null="true" column="PartyTypeRef"/>
+    <many-to-one name="PartyType" class="BExIS.Dlm.Entities.Party.PartyType"  not-null="true" column="PartyTypeRef"   />
 
-    <set name="CustomAttributeValues" table="PartyCustomAttributeValues" lazy="true">
+    <set name="CustomAttributeValues" table="PartyCustomAttributeValues" lazy="true" >
       <key column="PartyRef"/>
       <one-to-many class="PartyCustomAttributeValue"/>
     </set>
 
-    <set name="History" table="PartyStatuses" lazy="true">
+    <set name="History" table="PartyStatuses" lazy="true"   cascade="all" inverse="true">
       <key column="PartyRef"/>
       <one-to-many class="PartyStatus"/>
     </set>

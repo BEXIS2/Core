@@ -18,6 +18,7 @@ using Vaiona.Logging.Aspects;
 using Vaiona.Logging;
 using Vaiona.Utils.Cfg;
 
+
 namespace BExIS.Web.Shell.Controllers
 {
 #if DEBUG // it is designed just for testing and debugging purposes. For production versions, use release profile. Javad. 07.02.13
@@ -35,7 +36,7 @@ namespace BExIS.Web.Shell.Controllers
         //[LogExceptions]
         [Diagnose]
         [MeasurePerformance]
-        public ActionResult Index(Int64 id=0)
+        public ActionResult Index(Int64 id = 0)
         {
             ViewBag.Title = PresentationModel.GetViewTitle("Test Page"); /*in the Vaiona.Web.Mvc.Models namespace*/ //String.Format("{0} {1} - {2}", AppConfiguration.ApplicationName, AppConfiguration.ApplicationVersion, "Test Page");
 
@@ -58,9 +59,9 @@ namespace BExIS.Web.Shell.Controllers
             //bool b = a.ContainsExact("is");
             //testExtendedProperty();
             //getDataset();
-            Int64 dsId = 0;
+            // Int64 dsId = 0;
 
-            dsId = createDatasetVersion();
+            //    dsId = createDatasetVersion();
             //editDatasetVersion(dsId);
             //deleteTupleFromDatasetVersion(dsId);
             //deleteDataset(dsId);
@@ -75,8 +76,85 @@ namespace BExIS.Web.Shell.Controllers
             //getDataStructures();
             //return RedirectToAction("About");
             //createMetadataAttribute();
+
+            ////Create Two party 
+            Dlm.Services.Party.PartyManager partyManager = new Dlm.Services.Party.PartyManager();
+           /// Dlm.Services.Party.PartyRelationshipTypeManager pmr = new Dlm.Services.Party.PartyRelationshipTypeManager();
+            var parties = new List<Dlm.Entities.Party.Party>();
+            parties.Add(addTestParty());
+            parties.Add(addTestParty());
+            //update last test party
+            updateTestParty(parties.Last().Id);
+            ////deleteTestParty last test party
+            //deleteTestParty(parties.First());
+            ////Add custom attribute value
+            var customAttrVal = addTestPartyCustomAttributeValue(parties.Last(), addTestPartyCustomAttribute(parties.Last().PartyType));
+            removeTestPartyCustomAttributeValue(customAttrVal);
+            ////Add relation between two parties
+            var partyRel=addTestPartyRelationship(parties.First(), parties.Last());
+            removePartyRelationship(partyRel);
             return View();
         }
+        private Dlm.Entities.Party.Party addTestParty()
+        {
+            Dlm.Services.Party.PartyTypeManager ptm = new Dlm.Services.Party.PartyTypeManager();
+            Dlm.Services.Party.PartyManager pm = new Dlm.Services.Party.PartyManager();
+            var partyType = ptm.Create("partyTypeTest", "just for test", null);
+            var st = ptm.AddStatusType(partyType, "just created", "this is for test data", 0);
+            var party = pm.Create(partyType, "partyTest", "", "party created for test", null, null, st);
+            return party;
+
+        }
+        private void deleteTestParty(Dlm.Entities.Party.Party party)
+        {
+            Dlm.Services.Party.PartyManager pm = new Dlm.Services.Party.PartyManager();
+            pm.Delete(party);
+        }
+        private void deleteTestParty(List<Dlm.Entities.Party.Party> parties)
+        {
+            Dlm.Services.Party.PartyManager pm = new Dlm.Services.Party.PartyManager();
+            pm.Delete(parties);
+        }
+        private void updateTestParty(long id)
+        {
+            Dlm.Services.Party.PartyManager pm = new Dlm.Services.Party.PartyManager();
+            var party = pm.Repo.Get(id);
+            party.Description = "updated..";
+            pm.Update(party);
+        }
+        private Dlm.Entities.Party.PartyCustomAttribute addTestPartyCustomAttribute(Dlm.Entities.Party.PartyType partyType)
+        {
+            Dlm.Services.Party.PartyTypeManager ptm = new Dlm.Services.Party.PartyTypeManager();
+            return ptm.CreatePartyCustomAttribute(partyType, "string", "Name", "Name for test", 0);
+        }
+        private Dlm.Entities.Party.PartyCustomAttributeValue addTestPartyCustomAttributeValue(Dlm.Entities.Party.Party party, Dlm.Entities.Party.PartyCustomAttribute partyCustomAttr)
+        {
+            Dlm.Services.Party.PartyManager pm = new Dlm.Services.Party.PartyManager();
+            return pm.AddPartyCustomAttriuteValue(party, partyCustomAttr, "TestName");
+        }
+        private bool removeTestPartyCustomAttributeValue(Dlm.Entities.Party.PartyCustomAttributeValue partyCustomAttrVal)
+        {
+            Dlm.Services.Party.PartyManager pm = new Dlm.Services.Party.PartyManager();
+            return pm.RemovePartyCustomAttriuteValue(partyCustomAttrVal);
+        }
+     
+        private Dlm.Entities.Party.PartyRelationshipType addTestPartyRelationshipType()
+        {
+            Dlm.Services.Party.PartyRelationshipTypeManager pmr = new Dlm.Services.Party.PartyRelationshipTypeManager();
+            return pmr.Create("rel Type test", " ", false, 0, 0, null, null, "", "", null);
+        }
+        private Dlm.Entities.Party.PartyRelationship  addTestPartyRelationship(Dlm.Entities.Party.Party firstParty, Dlm.Entities.Party.Party secondParty)
+        {
+            Dlm.Services.Party.PartyManager pm = new Dlm.Services.Party.PartyManager();
+           return  pm.AddPartyRelationship(firstParty, secondParty, addTestPartyRelationshipType(), DateTime.Now, null, "test Rel", "test relationship", "ss");
+
+        }
+        private bool removePartyRelationship(Dlm.Entities.Party.PartyRelationship partyRelationship)
+        {
+            Dlm.Services.Party.PartyManager pm = new Dlm.Services.Party.PartyManager();
+            return pm.RemovePartyRelationship(partyRelationship);
+        }
+
 
         private void getDataStructures()
         {
@@ -123,7 +201,7 @@ namespace BExIS.Web.Shell.Controllers
             MetadataPackage p4 = mdpManager.MetadataPackageRepo.Get(p => p.Name == "P4").FirstOrDefault();
             if (p4 == null) p4 = mdpManager.Create("P4", "Sample Package 4", true);
 
-            if(s1.MetadataPackageUsages.Where(p=>p.MetadataPackage == p1).Count() <=0)
+            if (s1.MetadataPackageUsages.Where(p => p.MetadataPackage == p1).Count() <= 0)
                 mdsManager.AddMetadataPackageUsage(s1, p1, "P1 in S1", "", 0, 1);
 
             if (s1.MetadataPackageUsages.Where(p => p.MetadataPackage == p2).Count() <= 0)
@@ -151,12 +229,12 @@ namespace BExIS.Web.Shell.Controllers
             dcManager.AddConstraint(c2, attr);
             var v2 = c2.IsSatisfied("javad.chamanara@uni-jena.com");
 
-            List<DomainItem> items = new List<DomainItem>() { new DomainItem () {Key = "A", Value = "This is A" }, 
-                                                              new DomainItem () {Key = "B", Value = "This is B" }, 
-                                                              new DomainItem () {Key = "C", Value = "This is C" }, 
+            List<DomainItem> items = new List<DomainItem>() { new DomainItem () {Key = "A", Value = "This is A" },
+                                                              new DomainItem () {Key = "B", Value = "This is B" },
+                                                              new DomainItem () {Key = "C", Value = "This is C" },
                                                               new DomainItem () {Key = "D", Value = "This is D" },
                                                             };
-            var c3 = new DomainConstraint(ConstraintProviderSource.Internal, "", "en-US", "a simple domain validation constraint", false, null, null, null, items);            
+            var c3 = new DomainConstraint(ConstraintProviderSource.Internal, "", "en-US", "a simple domain validation constraint", false, null, null, null, items);
             dcManager.AddConstraint(c3, attr);
             var v3 = c3.IsSatisfied("A");
             v3 = c3.IsSatisfied("E");
@@ -164,20 +242,20 @@ namespace BExIS.Web.Shell.Controllers
             v3 = c3.IsSatisfied("A");
 
             var c4 = new ComparisonConstraint(ConstraintProviderSource.Internal, "", "en-US", "a comparison validation constraint", false, null, null, null
-                , ComparisonOperator.GreaterThanOrEqual, ComparisonTargetType.Value, "" , ComparisonOffsetType.Ratio, 1.25);            
+                , ComparisonOperator.GreaterThanOrEqual, ComparisonTargetType.Value, "", ComparisonOffsetType.Ratio, 1.25);
             dcManager.AddConstraint(c4, attr);
             var v4 = c4.IsSatisfied(14, 10);
-        
+
         }
 
         private void purgeAll()
         {
             DatasetManager dm = new DatasetManager();
-            foreach (var item in dm.DatasetRepo.Query().Select(p=>p.Id).ToList())
+            foreach (var item in dm.DatasetRepo.Query().Select(p => p.Id).ToList())
             {
                 dm.PurgeDataset(item);
             }
-            
+
         }
 
         private void purgeDataset(long dsId)
@@ -185,11 +263,11 @@ namespace BExIS.Web.Shell.Controllers
             DatasetManager dm = new DatasetManager();
             dm.PurgeDataset(dsId);
         }
-        
+
         private void getAllDatasetVersions()
         {
             DatasetManager dm = new DatasetManager();
-            List<Int64> ids = dm.DatasetRepo.Query().Select(p=>p.Id).ToList();
+            List<Int64> ids = dm.DatasetRepo.Query().Select(p => p.Id).ToList();
             var b = dm.GetDatasetLatestVersions();
             var a = dm.GetDatasetLatestVersions(ids);
             var c = dm.GetDatasetLatestMetadataVersions();
@@ -221,7 +299,7 @@ namespace BExIS.Web.Shell.Controllers
 
             //    AbstractTuple changed = dm.GetDatasetVersionEffectiveTuples(workingCopy).First();
             //    changed.VariableValues.First().Value = (new Random()).Next().ToString();
-                
+
             //    //DataTuple dt = dm.DataTupleRepo.Get(40);
             //    //DataTuple newDt = new DataTuple();
             //    //newDt.XmlAmendments = dt.XmlAmendments;
@@ -302,27 +380,27 @@ namespace BExIS.Web.Shell.Controllers
             return (dsId);
         }
 
-    //    private void createADataStructure()
-    //    {
-    //        DataStructureGenerator sdGen = new DataStructureGenerator();
-    //        StructuredDataStructure sds = sdGen.GenerateStructuredDataStructure();
-    //        DataContainerManager dcm = new DataContainerManager();
-    //        List<Parameter> pps = (from vari in sds.VariableUsages
-    //                                from pari in vari.DataAttribute.ParameterUsages
-    //                                select pari.Parameter).ToList();
-    //        if(sds.Indexer != null)
-    //            pps.Add(sds.Indexer);
-    //        pps = pps.Distinct().ToList();
-    //        foreach (var item in pps)
-    //{
-    //     dcm.CreateParameter(item.Name, 
-    //}
-            
+        //    private void createADataStructure()
+        //    {
+        //        DataStructureGenerator sdGen = new DataStructureGenerator();
+        //        StructuredDataStructure sds = sdGen.GenerateStructuredDataStructure();
+        //        DataContainerManager dcm = new DataContainerManager();
+        //        List<Parameter> pps = (from vari in sds.VariableUsages
+        //                                from pari in vari.DataAttribute.ParameterUsages
+        //                                select pari.Parameter).ToList();
+        //        if(sds.Indexer != null)
+        //            pps.Add(sds.Indexer);
+        //        pps = pps.Distinct().ToList();
+        //        foreach (var item in pps)
+        //{
+        //     dcm.CreateParameter(item.Name, 
+        //}
 
-    //        DataStructureManager dsm = new DataStructureManager();
-            
-    //        dsm.CreateStructuredDataStructure(
-    //    }
+
+        //        DataStructureManager dsm = new DataStructureManager();
+
+        //        dsm.CreateStructuredDataStructure(
+        //    }
         private void testExtendedProperty()
         {
             DatasetManager dm = new DatasetManager();
@@ -332,7 +410,7 @@ namespace BExIS.Web.Shell.Controllers
             StructuredDataStructure sds = (ds.DataStructure.Self as StructuredDataStructure);
             ExtendedProperty exp = null;
             try { exp = dcManager.ExtendedPropertyRepo.Get(1); }
-            catch {}
+            catch { }
             //if(exp == null)
             //    exp = dcManager.CreateExtendedProperty("Source", "the data provider", sds.VariableUsages.First().DataAttribute, null); // issue with session management
 
@@ -473,7 +551,7 @@ namespace BExIS.Web.Shell.Controllers
 
             um.DeleteConversionMethod(cm1);
             um.DeleteConversionMethod(new List<ConversionMethod>() { cm2, cm3 });
-                                    
+
             um.Delete(cm);
             um.Delete(new List<Unit>() { km, m });
         }
@@ -490,7 +568,7 @@ namespace BExIS.Web.Shell.Controllers
                 XmlPath = Server.MapPath("~/App_Data/data.xml"),
                 XsltPath = Server.MapPath("~/App_Data/view.xsl")
             };
- 
+
             return View(model);
         }
 
@@ -599,7 +677,7 @@ namespace BExIS.Web.Shell.Controllers
             //expected.Tuples.ForEach(p => p.Amendments.Clear());
             //expected.Tuples.ForEach(p => p.Materialize());
 
-        }               
+        }
 
         public void SimpleMatDematWithExport()
         {

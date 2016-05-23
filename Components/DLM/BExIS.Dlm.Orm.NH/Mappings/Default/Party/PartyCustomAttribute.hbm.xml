@@ -24,7 +24,7 @@
       <column name="Description"  />
     </property>
 
-    <property name="IsValueOptional" type="bool" >
+    <property name="IsValueOptional" type="yes_no" >
       <column name="IsValueOptional"  />
     </property>
 
@@ -38,7 +38,7 @@
 
     <many-to-one name="PartyType" class="BExIS.Dlm.Entities.Party.PartyType" not-null="true" column="PartyTypeRef"/>
 
-    <set name="CustomAttributeValues" table="PartyCustomAttributeValues" lazy="true">
+    <set name="CustomAttributeValues" table="PartyCustomAttributeValues" lazy="true" inverse="true">
       <key column="CustomAttributeRef"/>
       <one-to-many class="PartyCustomAttributeValue"/>
     </set>

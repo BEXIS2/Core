@@ -16,8 +16,10 @@ namespace BExIS.Dlm.Entities.Party
         #region Associations
         public virtual PartyType PartyType { get; set; }
         public virtual ICollection<PartyCustomAttributeValue> CustomAttributeValues { get; set; }
-        
-        public virtual ICollection<PartyStatus> History{ get; set; }
+
+        public virtual ICollection<PartyStatus> History { get; set; }
+        //Check late
+        //It should be filled by the last CustomAttributeValue from CustomAttributeValues
         public virtual PartyStatus CurrentStatus { get; set; }
 
         #endregion
