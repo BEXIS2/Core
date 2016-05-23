@@ -87,6 +87,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Helpers
 
             Feature f9 = featureManager.CreateFeature("Search", "Search", f1.Id);
 
+
             Feature f10 = featureManager.CreateFeature("Data Collection", "Data Collection", f1.Id);
             Feature f11 = featureManager.CreateFeature("Dataset Creation", "Dataset Creation", f10.Id);
             Feature f12 = featureManager.CreateFeature("Dataset Submission", "Dataset Submission", f10.Id);
@@ -96,8 +97,6 @@ namespace BExIS.Web.Shell.Areas.SAM.Helpers
             Feature f15 = featureManager.CreateFeature("Unit Manager", "Unit Manager", f13.Id);
 
             Feature f16 = featureManager.CreateFeature("Data Dissemination", "Data Dissemination", f1.Id);
-
-            
 
             Task t1 = taskManager.CreateTask("SAM", "Users", "*");
             t1.Feature = f3;
@@ -204,6 +203,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Helpers
             // Feature Permissions
             PermissionManager permissionManager = new PermissionManager();
             permissionManager.CreateFeaturePermission(g1.Id, f1.Id);
+            permissionManager.CreateFeaturePermission(everyone.Id, f9.Id);
 
             #endregion Security
         }

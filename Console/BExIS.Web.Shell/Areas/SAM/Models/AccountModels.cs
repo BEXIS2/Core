@@ -12,16 +12,16 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
         [RegularExpression("^[\\S]*$", ErrorMessage = "The user name must not contain spaces.")]
         [Remote("ValidateUsername", "Account")]
         [Required(AllowEmptyStrings = false)]
-        [StringLength(64, ErrorMessage = "The user name must be {2} - {1} characters long.", MinimumLength = 3)]
+        [StringLength(64, ErrorMessage = "The Username must be {2} - {1} characters long.", MinimumLength = 3)]
         public string Username { get; set; }
 
         [Display(Name = "Password")]
-        [RegularExpression("^[\\S]*$", ErrorMessage = "The password must not contain spaces.")]
+        [RegularExpression("^[\\S]*$", ErrorMessage = "The Password must not contain spaces.")]
         [Required]
         [StringLength(24, ErrorMessage = "The password must be {2} - {1} characters long.", MinimumLength = 6)]
         public string Password { get; set; }
 
-        [global::System.Web.Mvc.Compare("Password", ErrorMessage = "The password and confirmation do not match.")]
+        [global::System.Web.Mvc.Compare("Password", ErrorMessage = "The Password and Confirm Password do not match.")]
         [Display(Name = "Confirm Password")]
         [Required]
         public string ConfirmPassword { get; set; }
@@ -34,13 +34,13 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
         [Email]
         [Remote("ValidateEmail", "Account")]
         [Required]
-        [StringLength(250, ErrorMessage = "The email must be {2} - {1} characters long.", MinimumLength = 5)]
+        [StringLength(250, ErrorMessage = "The Email Address must be {2} - {1} characters long.", MinimumLength = 5)]
         public string Email { get; set; }
 
         [Display(Name = "Security Answer")]
-        [RegularExpression("^[^\\s]+(\\s+[^\\s]+)*", ErrorMessage = "The security answer must start and end with no space.")]
+        [RegularExpression("^[^\\s]+(\\s+[^\\s]+)*", ErrorMessage = "The Security Answer must start and end with no space.")]
         [Required]
-        [StringLength(50, ErrorMessage = "The security answer must be less than {1} characters long.")]
+        [StringLength(50, ErrorMessage = "The Security Answer must be less than {1} characters long.")]
         public string SecurityAnswer { get; set; }
 
         public SecurityQuestionSelectListModel SecurityQuestionList { get; set; }
@@ -69,11 +69,11 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
         public string Username { get; set; }
 
         [Display(Name = "Password")]
-        [RegularExpression("^[\\S]*$", ErrorMessage = "The password must not contain spaces.")]
-        [StringLength(24, ErrorMessage = "The password must be {2} - {1} characters long.", MinimumLength = 6)]
+        [RegularExpression("^[\\S]*$", ErrorMessage = "The Password must not contain spaces.")]
+        [StringLength(24, ErrorMessage = "The Password must be {2} - {1} characters long.", MinimumLength = 6)]
         public string Password { get; set; }
 
-        [global::System.Web.Mvc.Compare("Password", ErrorMessage = "The password and confirmation do not match.")]
+        [global::System.Web.Mvc.Compare("Password", ErrorMessage = "The Password and Confirm Password do not match.")]
         [Display(Name = "Confirm Password")]
         public string ConfirmPassword { get; set; }
 
@@ -89,8 +89,8 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
         public string Email { get; set; }
 
         [Display(Name = "Security Answer")]
-        [RegularExpression("^[^\\s]+(\\s+[^\\s]+)*", ErrorMessage = "The security answer must start and end with no space.")]
-        [StringLength(50, ErrorMessage = "The security answer must be less than {1} characters long.")]
+        [RegularExpression("^[^\\s]+(\\s+[^\\s]+)*", ErrorMessage = "The Security Answer must start and end with no space.")]
+        [StringLength(50, ErrorMessage = "The Security Answer must be less than {1} characters long.")]
         public string SecurityAnswer { get; set; }
 
         public long SecurityQuestionId { get; set; }
