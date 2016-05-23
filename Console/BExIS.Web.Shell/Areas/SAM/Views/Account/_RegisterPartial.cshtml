@@ -113,7 +113,7 @@
         if (data.success) {
             $('#Content_Register').empty();
             $('#Window_Register').data('tWindow').close();
-            location.reload();
+            window.top.location = "/Home/Index";
         }
     }
 </script>

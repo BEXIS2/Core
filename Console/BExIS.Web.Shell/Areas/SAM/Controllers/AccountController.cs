@@ -138,7 +138,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
                 }
                 else
                 {
-                    ModelState.AddModelError("", "The user name or password provided is incorrect.");
+                    ModelState.AddModelError("", "The Username or Password provided is incorrect.");
                 }
             }
 
