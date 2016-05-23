@@ -89,7 +89,10 @@
         <tr>
             <td colspan="2">
                 @Html.CheckBoxFor(m => m.TermsAndConditions)
-                I accept the Terms and Conditions.
+                I accept 
+                <a href="/Site/Terms/Index" title="See Terms and Conditions" target="_blank">Terms and Conditions</a>
+                and 
+                <a href="/Site/PrivacyPolicy/Index" title="See Privacy Policy" target="_blank">Privacy Policy</a>.
                 @Html.ValidationMessageFor(m => m.TermsAndConditions)
             </td>
         </tr>

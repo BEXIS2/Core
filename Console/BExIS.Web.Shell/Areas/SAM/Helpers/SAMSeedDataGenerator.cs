@@ -71,6 +71,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Helpers
             taskManager.CreateTask("Site", "ContactUs", "*");
             taskManager.CreateTask("Site", "Impressum", "*");
             taskManager.CreateTask("Site", "PrivacyPolicy", "*");
+            taskManager.CreateTask("Site", "Terms", "*");
 
             // Features
             FeatureManager featureManager = new FeatureManager();

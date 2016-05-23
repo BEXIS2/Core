@@ -48,7 +48,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
         public AuthenticatorSelectListModel AuthenticatorList { get; set; }
 
         [Display(Name = "Terms and Conditions")]
-        [MustBeTrue(ErrorMessage = "Please Accept Privacy Policy")]
+        [MustBeTrue(ErrorMessage = "Accept Terms and Conditions to continue.")]
         public bool TermsAndConditions { get; set; }
 
         public AccountRegisterModel()
