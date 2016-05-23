@@ -25,7 +25,7 @@ namespace BExIS.Web.Shell.Areas.Sam.Controllers
         /// <returns></returns>
         public ActionResult Index()
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Maintaining Datasets");
+            ViewBag.Title = PresentationModel.GetViewTitle("Maintain Datasets");
             return View();
         }
 
@@ -35,7 +35,7 @@ namespace BExIS.Web.Shell.Areas.Sam.Controllers
         /// <returns></returns>
         public ActionResult List()
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Datasets");
+            ViewBag.Title = PresentationModel.GetViewTitle("Maintain Datasets");
 
             DatasetManager dm = new DatasetManager();
             PermissionManager permissionManager = new PermissionManager();
