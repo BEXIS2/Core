@@ -48,7 +48,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
         public AuthenticatorSelectListModel AuthenticatorList { get; set; }
 
         [Display(Name = "Terms and Conditions")]
-        [MustBeTrue(ErrorMessage = "Accept Terms and Conditions to continue.")]
+        [MustBeTrue(ErrorMessage = "You must agree to the terms and conditions before register.")]
         public bool TermsAndConditions { get; set; }
 
         public AccountRegisterModel()
