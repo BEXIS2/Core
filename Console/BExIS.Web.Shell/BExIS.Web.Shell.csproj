@@ -542,7 +542,6 @@
     <Content Include="Areas\SAM\Images\SAM_UserGuide_files\image008.jpg" />
     <Content Include="Areas\SAM\Images\SAM_UserGuide_files\image009.jpg" />
     <Content Include="Areas\SAM\Images\SAM_UserGuide_files\image010.jpg" />
-    <Content Include="Areas\SAM\Images\SAM_UserGuide_files\image011.jpg" />
     <Content Include="Areas\SAM\Views\Help\UserGuides\SAM_UserGuide.htm" />
     <Content Include="Content\Images\dfg_logo.gif" />
     <Content Include="Content\bootstrap-combobox.css" />
