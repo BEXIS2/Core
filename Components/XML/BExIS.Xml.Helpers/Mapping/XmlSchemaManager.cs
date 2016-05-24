@@ -579,7 +579,7 @@ namespace BExIS.Xml.Helpers.Mapping
                 {
                     XmlSchemaElement rootElement = (XmlSchemaElement)root;
                     mappingFileInternalToExternal.Header.AddToDestination(nameOfStartNode, rootElement.Name);
-            }
+                }
             }
 
                
@@ -648,13 +648,15 @@ namespace BExIS.Xml.Helpers.Mapping
                     // get all simpleTypes 
                     // for the main package
                     List<XmlSchemaElement> simpleElements = XmlSchemaUtility.GetAllSimpleElements(packages);
-                    string rootNodePackage = "Basic";
+                    string rootNodePackageUsage = "Basic";
+                    string rootNodePackage = "BasicType";
+                   
                     string rootNodePackageDescription = "Attributes from the root node";
 
 
                     if (simpleElements.Count > 0)
                     {
-                        MetadataPackage package = getExistingMetadataPackage(rootNodePackage); ;// = mdpManager.MetadataPackageRepo.Get(p => p.Name == rootNodePackage).FirstOrDefault();
+                        MetadataPackage package = getExistingMetadataPackage(rootNodePackage);// = mdpManager.MetadataPackageRepo.Get(p => p.Name == rootNodePackage).FirstOrDefault();
                         if (package == null)
                         {
                             package = mdpManager.Create(rootNodePackage, rootNodePackageDescription, true);
@@ -668,11 +670,11 @@ namespace BExIS.Xml.Helpers.Mapping
                             {
                                 if (XmlSchemaUtility.IsSimpleType(child))
                                 {
-                                    addMetadataAttributeToMetadataPackageUsage(package, child,"Metadata/Basic", rootElementName);
+                                    addMetadataAttributeToMetadataPackageUsage(package, child,"Metadata/Basic/BasicType", rootElementName);
                                 }
                             }
 
-                            mdsManager.AddMetadataPackageUsage(test, package, rootNodePackage, rootNodePackageDescription, 1, 1);
+                            mdsManager.AddMetadataPackageUsage(test, package, rootNodePackageUsage, rootNodePackageDescription, 1, 1);
                         }
 
                     }

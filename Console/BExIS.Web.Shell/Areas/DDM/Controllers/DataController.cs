@@ -20,6 +20,7 @@ using Telerik.Web.Mvc.UI;
 using Vaiona.Utils.Cfg;
 using BExIS.IO;
 using System.IO.Compression;
+using System.Web.Helpers;
 using Ionic.Zip;
 using BExIS.Security.Services.Objects;
 using BExIS.Dlm.Entities.MetadataStructure;
@@ -80,6 +81,16 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             };
 
             return View(model);
+        }
+
+        public JsonResult IsDatasetCheckedIn(long id)
+        {
+            DatasetManager dm = new DatasetManager();
+
+            if (id != -1 && dm.IsDatasetCheckedIn(id))
+                return Json(true);
+            else
+                return Json(false);
         }
 
         #region metadata

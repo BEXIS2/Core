@@ -212,9 +212,9 @@ namespace BExIS.Ddm.Providers.LuceneProvider
 
             getQueryFromCriteria(searchCriteria);
             this.WorkingSearchModel.ResultComponent = BexisIndexSearcher.search(bexisSearching, SearchConfig.headerItemXmlNodeList);
+
             return this.WorkingSearchModel;
-            //return ResultObjectBuilder.ConvertListOfMetadataToSearchResultObject(MetadataReader.ListOfMetadata, pageSize, currentPage);
-            //return null;
+
         }
 
         /// <summary>
@@ -328,7 +328,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider
                             BooleanQuery bexisSearchingFacet = new BooleanQuery();
                             foreach (String value in sco.Values)
                             {
-                                String encodedValue = EncoderHelper.Encode(value);
+                                String encodedValue = value;
                                 Query query = new TermQuery(new Term(fieldName, encodedValue));
                                 bexisSearchingFacet.Add(query, Occur.SHOULD);
                             }
@@ -366,7 +366,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider
                                     }
                                     else
                                     {
-                                        String encodedValue = EncoderHelper.Encode(value);
+                                        String encodedValue = value;
                                         if (SearchConfig.getNumericProperties().Contains(sco.SearchComponent.Name.ToLower()))
                                         {
 

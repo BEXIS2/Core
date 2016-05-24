@@ -138,7 +138,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
                 }
                 else
                 {
-                    ModelState.AddModelError("", "The user name or password provided is incorrect.");
+                    ModelState.AddModelError("", "The Username or Password provided is incorrect.");
                 }
             }
 
@@ -198,6 +198,11 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
                     return Json(error, JsonRequestBehavior.AllowGet);
                 }
             }
+        }
+
+        public JsonResult ValidateTermsAndConditions(bool accepted)
+        {
+            return accepted ? Json(true, JsonRequestBehavior.AllowGet) : Json(false, JsonRequestBehavior.AllowGet);
         }
 
         public JsonResult ValidateUsername(string username, long id = 0)

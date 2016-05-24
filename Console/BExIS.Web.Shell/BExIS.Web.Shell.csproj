@@ -429,10 +429,7 @@
     <Compile Include="Areas\Site\Controllers\ImpressumController.cs" />
     <Compile Include="Areas\Site\Controllers\NavController.cs" />
     <Compile Include="Areas\Site\Controllers\PrivacyPolicyController.cs" />
-    <Compile Include="Areas\Site\Models\ContactUsModel.cs" />
-    <Compile Include="Areas\Site\Models\ImpressumModel.cs" />
-    <Compile Include="Areas\Site\Models\PrivacyModel.cs" />
-    <Compile Include="Areas\Site\Models\TermsModel.cs" />
+    <Compile Include="Areas\Site\Controllers\TermsController.cs" />
     <Compile Include="Areas\Site\SiteAreaRegistration.cs" />
     <Compile Include="Areas\SAM\Controllers\UtilsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -530,6 +527,7 @@
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image013.jpg" />
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image014.jpg" />
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image015.jpg" />
+    <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image016.jpg" />
     <Content Include="Areas\RPM\Scripts\jquery-1.10.1.min.js" />
     <Content Include="Areas\RPM\Stylesheets\DataStructureSearch.css" />
     <Content Include="Areas\RPM\Stylesheets\RPM.css" />
@@ -546,10 +544,7 @@
     <Content Include="Areas\SAM\Images\SAM_UserGuide_files\image010.jpg" />
     <Content Include="Areas\SAM\Images\SAM_UserGuide_files\image011.jpg" />
     <Content Include="Areas\SAM\Views\Help\UserGuides\SAM_UserGuide.htm" />
-    <Content Include="Areas\Site\Views\ContactUs\Contact_Us.htm" />
     <Content Include="Content\Images\dfg_logo.gif" />
-    <Content Include="Areas\Site\Views\Impressum\Impressum.htm" />
-    <Content Include="Areas\Site\Views\PrivacyPolicy\Bexis_Privacy_Policy.htm" />
     <Content Include="Content\bootstrap-combobox.css" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
@@ -617,6 +612,8 @@
     <Content Include="Areas\Site\Views\_ViewStart.cshtml" />
     <Content Include="Areas\Site\Views\Impressum\Index.cshtml" />
     <Content Include="Areas\DDM\Views\Data\_SubjectsPartial.cshtml" />
+    <Content Include="Areas\Site\Views\Terms\Index.cshtml" />
+    <None Include="Properties\PublishProfiles\BPP2907.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -960,7 +957,7 @@
     <Folder Include="Areas\MSM\Views\Shared\" />
     <Folder Include="Areas\RPM\Views\Shared\" />
     <Folder Include="Areas\SAM\Views\Shared\" />
-    <Folder Include="Areas\Site\Views\FooterHelper\" />
+    <Folder Include="Areas\Site\Models\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Home\About.cshtml" />

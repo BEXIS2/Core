@@ -32,7 +32,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
 
         public ActionResult Features()
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Feature Permissions");
+            ViewBag.Title = PresentationModel.GetViewTitle("Manage Features");
 
             FeatureManager featureManager = new FeatureManager();
 

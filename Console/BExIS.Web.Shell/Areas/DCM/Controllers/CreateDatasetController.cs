@@ -118,27 +118,38 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             ViewBag.Title = PresentationModel.GetViewTitle("...");
 
             if (TaskManager == null) TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
-
+            DatasetManager datasetManager = new DatasetManager();
             SetupModel Model = GetDefaultModel();
 
             //if id is set and its type dataset
             if (id != -1 && type.ToLower().Equals("datasetid"))
             {
-                DatasetManager datasetManager = new DatasetManager();
                 Dataset dataset = datasetManager.DatasetRepo.Get(id);
                 Model.SelectedDatasetId = id;
                 Model.SelectedMetadataStructureId = dataset.MetadataStructure.Id;
                 Model.SelectedDataStructureId = dataset.DataStructure.Id;
                 Model.BlockMetadataStructureId = true;
-                Model.BlockDatasetId = true;
+                Model.BlockDatasetId = false;
+
+                TaskManager.AddToBus(CreateDatasetTaskmanager.COPY_OF_DATASET_ID, id);
+
             }
 
             if (id != -1 && type.ToLower().Equals("metadatastructureid"))
             {
                 TaskManager.AddToBus(CreateDatasetTaskmanager.METADATASTRUCTURE_ID, id);
                 Model.SelectedMetadataStructureId = id;
+
                 if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.DATASTRUCTURE_ID))
                     Model.SelectedDataStructureId = Convert.ToInt64(TaskManager.Bus[CreateDatasetTaskmanager.DATASTRUCTURE_ID]);
+
+                if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.COPY_OF_DATASET_ID))
+                {
+                    Model.SelectedDatasetId = Convert.ToInt64(TaskManager.Bus[CreateDatasetTaskmanager.COPY_OF_DATASET_ID]);
+                    Dataset dataset = datasetManager.DatasetRepo.Get(Model.SelectedDatasetId);
+                    Model.BlockMetadataStructureId = true;
+                    Model.BlockDatasetId = false;
+                }
 
             }
 
@@ -146,8 +157,18 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             {
                 TaskManager.AddToBus(CreateDatasetTaskmanager.DATASTRUCTURE_ID, id);
                 Model.SelectedDataStructureId = id;
+
                 if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATASTRUCTURE_ID))
                     Model.SelectedMetadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateDatasetTaskmanager.METADATASTRUCTURE_ID]);
+
+                if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.COPY_OF_DATASET_ID))
+                {
+                    Model.SelectedDatasetId = Convert.ToInt64(TaskManager.Bus[CreateDatasetTaskmanager.COPY_OF_DATASET_ID]);
+
+                    Dataset dataset = datasetManager.DatasetRepo.Get(Model.SelectedDatasetId);
+                    Model.BlockMetadataStructureId = true;
+                    Model.BlockDatasetId = false;
+                }
             }
 
             return View("Index", Model);
@@ -250,6 +271,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 //add to Bus
                 TaskManager.AddToBus(CreateDatasetTaskmanager.DATASTRUCTURE_ID, dataset.DataStructure.Id);
                 TaskManager.AddToBus(CreateDatasetTaskmanager.METADATASTRUCTURE_ID, dataset.MetadataStructure.Id);
+                TaskManager.AddToBus(CreateDatasetTaskmanager.COPY_OF_DATASET_ID, dataset.Id);
             }
 
             return PartialView("Index", Model);
@@ -939,7 +961,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     xmlMapperManager.Load(path_mappingFile, "IDIV");
 
                     // generate intern metadata 
-                    XmlDocument metadataResult = xmlMapperManager.Generate(metadataForImport, 1);
+                    XmlDocument metadataResult = xmlMapperManager.Generate(metadataForImport, 1, true);
 
                     // generate intern template
                     XmlMetadataWriter xmlMetadatWriter = new XmlMetadataWriter(BExIS.Xml.Helpers.XmlNodeMode.xPath);
