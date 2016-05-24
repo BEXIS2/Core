@@ -613,6 +613,7 @@
     <Content Include="Areas\Site\Views\Impressum\Index.cshtml" />
     <Content Include="Areas\DDM\Views\Data\_SubjectsPartial.cshtml" />
     <Content Include="Areas\Site\Views\Terms\Index.cshtml" />
+    <None Include="Properties\PublishProfiles\BPP2907.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
