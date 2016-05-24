@@ -31,6 +31,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             ViewBag.Title = PresentationModel.GetViewTitle("Import Metadata Structure");
 
             Session["TaskManager"] = null;
+            TaskManager = null;
             if (TaskManager == null) TaskManager = (ImportMetadataStructureTaskManager)Session["TaskManager"];
 
             if (TaskManager == null)
