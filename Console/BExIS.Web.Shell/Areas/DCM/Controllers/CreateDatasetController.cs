@@ -961,7 +961,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     xmlMapperManager.Load(path_mappingFile, "IDIV");
 
                     // generate intern metadata 
-                    XmlDocument metadataResult = xmlMapperManager.Generate(metadataForImport, 1);
+                    XmlDocument metadataResult = xmlMapperManager.Generate(metadataForImport, 1, true);
 
                     // generate intern template
                     XmlMetadataWriter xmlMetadatWriter = new XmlMetadataWriter(BExIS.Xml.Helpers.XmlNodeMode.xPath);
