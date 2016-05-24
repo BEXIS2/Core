@@ -89,7 +89,8 @@
         <tr>
             <td colspan="2">
                 @Html.CheckBoxFor(m => m.TermsAndConditions)
-                I accept the Terms and Conditions.
+                I accept 
+                <a href="/Site/Terms/Index" title="See Terms and Conditions" target="_blank">Terms and Conditions</a>.
                 @Html.ValidationMessageFor(m => m.TermsAndConditions)
             </td>
         </tr>
@@ -112,7 +113,7 @@
         if (data.success) {
             $('#Content_Register').empty();
             $('#Window_Register').data('tWindow').close();
-            location.reload();
+            window.top.location = "/Home/Index";
         }
     }
 </script>

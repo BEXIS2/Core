@@ -2,8 +2,7 @@
 @using BExIS.Web.Shell.Areas.RPM.Models;
 
 @{
-    ViewBag.Title = "Data Planning Manual";
-    HtmlString index = new HtmlString(Model.Title);
+    HtmlString toc = new HtmlString(Model.Title);
     HtmlString content = new HtmlString(Model.Description);
 }
 
@@ -16,7 +15,15 @@
 
 @section LeftPane 
 {             
-    @index
+   <div class="toc">
+        @toc
+   </div>
+
+    <style>
+        .toc {
+            position: fixed;
+        }
+    </style>
 }
 
 

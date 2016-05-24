@@ -177,7 +177,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
                 }
                 else
                 {
-                    string error = String.Format(CultureInfo.InvariantCulture, "The user name already exists.", username);
+                    string error = String.Format(CultureInfo.InvariantCulture, "The Username exists already.", username);
 
                     return Json(error, JsonRequestBehavior.AllowGet);
                 }
@@ -202,7 +202,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
                 }
                 else
                 {
-                    string error = String.Format(CultureInfo.InvariantCulture, "The e-mail address already exists.", email);
+                    string error = String.Format(CultureInfo.InvariantCulture, "The Email Address exists already.", email);
 
                     return Json(error, JsonRequestBehavior.AllowGet);
                 }
