@@ -24,7 +24,7 @@
     .Modal(true)
     .Draggable(true)
     .Buttons(buttons => buttons.Close())
-    .ClientEvents(e=>e.OnLoad("OnLoad"))
+    .ClientEvents(e=>e.OnLoad("OnLoad") .OnClose("OnCloseX"))
     .Content(
         @Html.Partial("_EntitySelectorView", Model).ToHtmlString())
     )
@@ -39,11 +39,8 @@
         window.center().open();
     }
 
-    function OnClose() {
-        var window = $(this).data('tWindow');
-        window.center().close();
-        alert($(this).html);
-        $(this).remove();
+    function OnCloseX() {
+        $(".entityWindow").remove();
     }
 
     $(".submitEntitySelection")
