@@ -8,26 +8,26 @@
 
     string title = "No title";
     
-    if ((IEnumerable<Facet>)Session["SelectAbleCategories"] != null)
-    {
-        listOfAllFacets = ((IEnumerable<Facet>)Session["SelectAbleCategories"]).ToList();
-    
-        int numOfFacets = listOfAllFacets.Count;
-    
-        if (numOfFacets % 2 == 0)
+        if ((IEnumerable<Facet>)Session["SelectAbleCategories"] != null)
         {
-            rows = numOfFacets / 2;
-        }
-        else
-        {
-            rows = (numOfFacets / 2)+1;
-        }
-    }
+            listOfAllFacets = ((IEnumerable<Facet>)Session["SelectAbleCategories"]).ToList();
     
-     if (@Session["ParentOfSelectAbleCategories"] != null)
-     {
-         title = System.StringExtensions.Titleize(@Session["ParentOfSelectAbleCategories"].ToString());
-     }
+            int numOfFacets = listOfAllFacets.Count;
+    
+            if (numOfFacets % 2 == 0)
+            {
+                rows = numOfFacets / 2;
+            }
+            else
+            {
+                rows = (numOfFacets / 2)+1;
+            }
+        }
+    
+        if (@Session["ParentOfSelectAbleCategories"] != null)
+        {
+             title = System.StringExtensions.Titleize(@Session["ParentOfSelectAbleCategories"].ToString());
+        }
  }
 @using (Html.BeginForm("AddFacetsToSearch", "Home", new { area = "DDM" }))
 { 

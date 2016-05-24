@@ -86,7 +86,7 @@
                     <div id="datastructureWindowContainer"></div>
                 </td>
                 <td>
-                    @if (Model.BlockDatastructureId)
+                @if (Model.BlockDatastructureId)
                 {
                     string title = Model.DataStructureViewList.Where(ms => ms.Id.Equals(Model.SelectedDataStructureId)).FirstOrDefault().Title;
                         @Html.HiddenFor(m => m.SelectedDataStructureId)
@@ -114,14 +114,21 @@
                 </td>
                 <td style="width: 60px;">
                     <div id="metadatastructuresContainer">
-                        @Ajax.ActionLink("Select", "ShowListOfMetadataStructures", "CreateDataset", new RouteValueDictionary { { "area", "DCM" } },
-                        new AjaxOptions
+                        @if (Model.BlockMetadataStructureId)
                         {
-                            HttpMethod = "GET",
-                            InsertionMode = InsertionMode.Replace,
-                            UpdateTargetId = "metadatadatastructureWindowContainer"
-                        },
-                        new { @class = "bx-button function", @style = "float:right" })
+                            <button class="bx-button function bx-disabled" disabled="disabled">Select</button>
+                        }
+                        else
+                        {
+                            @Ajax.ActionLink("Select", "ShowListOfMetadataStructures", "CreateDataset", new RouteValueDictionary { { "area", "DCM" } },
+                                new AjaxOptions
+                                {
+                                    HttpMethod = "GET",
+                                    InsertionMode = InsertionMode.Replace,
+                                    UpdateTargetId = "metadatadatastructureWindowContainer"
+                                },
+                                new { @class = "bx-button function", @style = "float:right" })
+                        }
                     </div>
                     <div id="metadatadatastructureWindowContainer"></div>
                 </td>
