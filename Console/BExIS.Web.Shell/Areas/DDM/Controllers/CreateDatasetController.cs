@@ -46,6 +46,7 @@ using BExIS.Xml.Helpers;
 using BExIS.Xml.Services;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Models;
+using BExIS.Security.Entities.Subjects;
 
 namespace BExIS.Web.Shell.Areas.DDM.Controllers
 {
@@ -265,20 +266,32 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
             bool hasAuthorizationRights = false;
             bool hasAuthenticationRigths = false;
-            long userid = subjectManager.GetUserByName(GetUsernameOrDefault()).Id;
-            //User has Access to Features 
-            //Area DCM
-            //Controller "Create Dataset" 
-            //Action "*"
-            Task task = securityTaskManager.GetTask("DCM", "CreateDataset", "*");
-            if (task != null)
+
+            
+            User user = subjectManager.GetUserByName(GetUsernameOrDefault());
+            long userid = -1;
+            if (user != null)
             {
-                hasAuthorizationRights = permissionManager.HasSubjectFeatureAccess(userid, task.Feature.Id);
+                userid = subjectManager.GetUserByName(GetUsernameOrDefault()).Id;
+
+                //User has Access to Features 
+                //Area DCM
+                //Controller "Create Dataset" 
+                //Action "*"
+                Task task = securityTaskManager.GetTask("DCM", "CreateDataset", "*");
+                if (task != null)
+                {
+                    hasAuthorizationRights = permissionManager.HasSubjectFeatureAccess(userid, task.Feature.Id);
+                }
+
+                hasAuthenticationRigths = permissionManager.HasUserDataAccess(userid, 1, datasetId, RightType.Update);
+
+                Model.EditRight = (hasAuthorizationRights && hasAuthenticationRigths);
             }
-
-            hasAuthenticationRigths = permissionManager.HasUserDataAccess(userid, 1, datasetId, RightType.Update);
-
-            Model.EditRight = (hasAuthorizationRights && hasAuthenticationRigths);
+            else
+            {
+                Model.EditRight = false;
+            }
 
             #endregion
 
