@@ -29,7 +29,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
             if (ModelState.IsValid)
             {
                 SubjectManager subjectManager = new SubjectManager();
-                subjectManager.CreateUser(model.Username, model.Password, model.FullName, model.Email, model.SecurityQuestionList.Id, model.SecurityAnswer, model.AuthenticatorList.Id);
+                subjectManager.CreateUser(model.Username, model.Password, model.FullName, model.Email, model.SecurityQuestion, model.SecurityAnswer, model.AuthenticatorList.Id);
 
                 return Json(new { success = true });
             }
