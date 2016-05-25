@@ -9,7 +9,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
     public class AccountRegisterModel
     {
         [Display(Name = "Username")]
-        [RegularExpression("^[\\S]*$", ErrorMessage = "The user name must not contain spaces.")]
+        [RegularExpression("^[\\S]*$", ErrorMessage = "The Username must be without spaces.")]
         [Remote("ValidateUsername", "Account")]
         [Required(AllowEmptyStrings = false)]
         [StringLength(64, ErrorMessage = "The Username must be {2} - {1} characters long.", MinimumLength = 3)]
@@ -18,7 +18,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
         [Display(Name = "Password")]
         [RegularExpression("^[\\S]*$", ErrorMessage = "The Password must not contain spaces.")]
         [Required]
-        [StringLength(24, ErrorMessage = "The password must be {2} - {1} characters long.", MinimumLength = 6)]
+        [StringLength(24, ErrorMessage = "The Password must be {2} - {1} characters long.", MinimumLength = 6)]
         public string Password { get; set; }
 
         [global::System.Web.Mvc.Compare("Password", ErrorMessage = "The Password and Confirm Password do not match.")]
@@ -37,6 +37,10 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
         [StringLength(250, ErrorMessage = "The Email Address must be {2} - {1} characters long.", MinimumLength = 5)]
         public string Email { get; set; }
 
+        [Display(Name = "Security Question")]
+        [Required]
+        public long SecurityQuestion { get; set; }
+
         [Display(Name = "Security Answer")]
         [RegularExpression("^[^\\s]+(\\s+[^\\s]+)*", ErrorMessage = "The Security Answer must start and end with no space.")]
         [Required]
@@ -48,7 +52,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
         public AuthenticatorSelectListModel AuthenticatorList { get; set; }
 
         [Display(Name = "Terms and Conditions")]
-        [MustBeTrue(ErrorMessage = "You must agree to the terms and conditions before register.")]
+        [MustBeTrue(ErrorMessage = "You must agree to the Terms and Conditions before register.")]
         public bool TermsAndConditions { get; set; }
 
         public AccountRegisterModel()

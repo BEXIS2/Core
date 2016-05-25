@@ -164,7 +164,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
             {
                 SubjectManager subjectManager = new SubjectManager();
 
-                User user = subjectManager.CreateUser(model.Username, model.Password, model.FullName, model.Email, model.SecurityQuestionList.Id, model.SecurityAnswer, model.AuthenticatorList.Id);
+                User user = subjectManager.CreateUser(model.Username, model.Password, model.FullName, model.Email, model.SecurityQuestion, model.SecurityAnswer, model.AuthenticatorList.Id);
 
                 FormsAuthentication.SetAuthCookie(model.Username, false);
                 return Json(new { success = true });

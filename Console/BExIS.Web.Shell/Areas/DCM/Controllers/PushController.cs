@@ -53,6 +53,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         [HttpPost]
         public ActionResult ProcessSubmit(IEnumerable<HttpPostedFileBase> attachments)
         {
+            ViewBag.Title = PresentationModel.GetViewTitle("Push Big File");
             // The Name of the Upload component is "attachments"                            
             if (attachments != null)
             {

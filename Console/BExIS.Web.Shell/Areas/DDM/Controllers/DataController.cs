@@ -833,13 +833,14 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         Session["Filter"] = GridHelper.ConvertToGridCommand(filters, orders);
                     }
 
-                #endregion
+                   
+        #endregion
 
-            #endregion
+        #endregion
 
-            #region download FileStream
+        #region download FileStream
 
-                public ActionResult DownloadFile(string path,string mimeType)
+        public ActionResult DownloadFile(string path,string mimeType)
                 {
                     string title = path.Split('\\').Last();
                     return File(Path.Combine(AppConfiguration.DataPath, path),mimeType, title);
