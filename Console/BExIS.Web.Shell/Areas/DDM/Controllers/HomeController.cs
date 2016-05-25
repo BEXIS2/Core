@@ -117,6 +117,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
         [HttpPost]
         public ActionResult FilterByDropDownList(string SelectedFilter, string searchType)
         {
+            ViewBag.Title = PresentationModel.GetViewTitle("Search");
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
             SetFilterAC(SelectedFilter);
             
@@ -196,6 +197,8 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
         /// <returns></returns>
         public ActionResult OnSelectTreeViewItem(string SelectedItem, string Parent)
         {
+            ViewBag.Title = PresentationModel.GetViewTitle("Search");
+
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
             provider.WorkingSearchModel.UpdateSearchCriteria(Parent, SelectedItem, SearchComponentBaseType.Facet, true);
             provider.SearchAndUpdate(provider.WorkingSearchModel.CriteriaComponent);
@@ -211,6 +214,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
         [HttpPost]
         public ActionResult AddFacetsToSearch()
         {
+            ViewBag.Title = PresentationModel.GetViewTitle("Search");
 
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
 
@@ -277,6 +281,8 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
         /// <returns></returns>
         public ActionResult OnClickBreadCrumbItem(string value, string parent)
         {
+            ViewBag.Title = PresentationModel.GetViewTitle("Search");
+
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
 
             RemoveFromPropertiesDic(parent, value, provider.WorkingSearchModel.CriteriaComponent);
