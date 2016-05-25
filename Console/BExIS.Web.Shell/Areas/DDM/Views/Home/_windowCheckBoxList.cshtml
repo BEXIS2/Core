@@ -1,81 +1,131 @@
 ﻿@using BExIS.Ddm.Model;
+@using net.sf.saxon.functions
 @model SearchModel
 
 @{
     List<Facet> listOfAllFacets = new List<Facet>();
 
     int rows = 0;
-
     string title = "No title";
-    
-        if ((IEnumerable<Facet>)Session["SelectAbleCategories"] != null)
+    string row_width = "";
+    string colclass = "";
+
+
+    if ((IEnumerable<Facet>)Session["SelectAbleCategories"] != null)
+    {
+        listOfAllFacets = ((IEnumerable<Facet>)Session["SelectAbleCategories"]).ToList();
+
+        int numOfFacets = listOfAllFacets.Count;
+
+        if (numOfFacets <= 10)
         {
-            listOfAllFacets = ((IEnumerable<Facet>)Session["SelectAbleCategories"]).ToList();
-    
-            int numOfFacets = listOfAllFacets.Count;
-    
-            if (numOfFacets % 2 == 0)
-            {
-                rows = numOfFacets / 2;
-            }
-            else
-            {
-                rows = (numOfFacets / 2)+1;
-            }
+            row_width = 240*2+"px;";
+            colclass = "col-xs-6";
         }
-    
-        if (@Session["ParentOfSelectAbleCategories"] != null)
+        else if (numOfFacets > 10 && numOfFacets <= 20)
         {
-             title = System.StringExtensions.Titleize(@Session["ParentOfSelectAbleCategories"].ToString());
+            row_width = 240*3 + "px;";
+            colclass = "col-xs-4";
         }
+        else
+        if (numOfFacets > 20 && numOfFacets <= 60)
+        {
+            row_width = 240*4 + "px;";
+            colclass = "col-xs-3";
+        }
+        else
+        if (numOfFacets > 60)
+        {
+            row_width = 240 * 6 + "px;";
+            colclass = "col-xs-2";
+        }
+
+    }
+
+    if (@Session["ParentOfSelectAbleCategories"] != null)
+    {
+        title = System.StringExtensions.Titleize(@Session["ParentOfSelectAbleCategories"].ToString());
+    }
  }
 @using (Html.BeginForm("AddFacetsToSearch", "Home", new { area = "DDM" }))
 { 
-    <div id="search_more">
+    <div id="search_more" style="width: @row_width;">
         @*<div class="bx-title">@title</div>*@  
        
         <div class="bx-content">
-            
-                <div id="search_moreCheckBox">
+
+            <div id="search_moreCheckBox" class="row">
                 @if (listOfAllFacets != null)
                 {
                     if (listOfAllFacets.Count() > 0)
                     {
+                        foreach (var facet in listOfAllFacets)
+                        {
+                            int pos = listOfAllFacets.IndexOf(facet);
 
-                        <table>
+                            facet.Parent = Model.SearchComponent.GetFacet(@Session["ParentOfSelectAbleCategories"].ToString());
+
+                            string displayedName;
+
+                            if (facet.Name.Length > 23)
+                            {
+                                displayedName = System.StringExtensions.Truncate(facet.Name, 20);
+                            }
+                            else
+                            {
+                                displayedName = facet.Name;
+                            }
+
+                            <div title="@facet.Name.ToString()" class="@colclass" >@Html.CheckBox(pos.ToString(), @Model.CriteriaComponent.ContainsFacet(facet), new { text = @facet.Name.ToString() }) @Html.Label(@facet.Name.ToString(), displayedName)</div>
+
+                        }
+                    }
+                }
+
+
+
+    @*@if (listOfAllFacets != null)
+                {
+                    if (listOfAllFacets.Count() > 0)
+                    {
+                        int pos = 0;
+                        <table style="width:@t_width">
                             @for (int i = 0; i < rows; i++)
                             {
                                 <tr>
                             
                                 @{
-                                    for (int j = 0; j < 2; j++)
+
+                                    for (int j = 0; j < numberOfColumns; j++)
                                     {
-                                        int pos = 0;
-
-                                        if (j == 0) { pos = i; }
-                                        else { pos = i + rows; }
-
+                                        pos = ((i*numberOfColumns) + j);
                                         if (pos < listOfAllFacets.Count)
-                                        { 
+                                        {
                                             var facet = listOfAllFacets.ElementAt(pos);
                                             facet.Parent = Model.SearchComponent.GetFacet(@Session["ParentOfSelectAbleCategories"].ToString());
 
                                             string displayedName;
 
-                                            if (facet.Name.Length > 23) { displayedName = System.StringExtensions.Truncate(facet.Name,23); }
-                                            else { displayedName = facet.Name; }
-                                            
-                                            <td title="@facet.Name.ToString()">@Html.CheckBox(pos.ToString(), @Model.CriteriaComponent.ContainsFacet(facet), new { text = @facet.Name.ToString() })  @Html.Label(@facet.Name.ToString(), displayedName)</td>
-                                        }    
+                                            if (facet.Name.Length > 23)
+                                            {
+                                                displayedName = System.StringExtensions.Truncate(facet.Name, 23);
+                                            }
+                                            else
+                                            {
+                                                displayedName = facet.Name;
+                                            }
+
+                                            <td title="@facet.Name.ToString()" style="width: @c_width" pos="@pos">@Html.CheckBox(pos.ToString(), @Model.CriteriaComponent.ContainsFacet(facet), new {text = @facet.Name.ToString()}) @Html.Label(@facet.Name.ToString(), displayedName)</td>
+                                        }
                                     }
                                 }
                                 </tr>
                             }
                         </table>
                     }
-                }
-           
-               </div>
+                }*@
+
+                    </div>
         </div>
         <div id="search_winFooter" class="bx-footer right">
             <button id="none" type="button" class="bx-button function" value="none" name="button" onclick="Search_OnClickNone()">None</button>
