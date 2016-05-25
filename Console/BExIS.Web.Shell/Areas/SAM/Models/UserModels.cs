@@ -44,6 +44,10 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
         [StringLength(250, ErrorMessage = "The email must be {2} - {1} characters long.", MinimumLength = 5)]
         public string Email { get; set; }
 
+        [Display(Name = "Security Question")]
+        [Required]
+        public long SecurityQuestion { get; set; }
+
         [Display(Name = "Security Answer")]
         [RegularExpression("^[^\\s]+(\\s+[^\\s]+)*", ErrorMessage = "The security answer must start and end with no space.")]
         [Required]
