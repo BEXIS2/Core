@@ -117,7 +117,8 @@
                     .Style(pagerStyles)
                     )
           .ClientEvents(events =>
-            events.OnRowSelect("OnRowSelection"))
+            events.OnRowSelect("OnRowSelection")
+            .OnDataBound("OnDataBound"))
 
         )
     }
@@ -178,6 +179,12 @@
 
         $('#' + submitId).attr("href", link);
         $('#' + submitId).removeClass("bx-disabled");
+    }
+
+    function OnDataBound()
+    {
+        addTooltips();
+        resetAllTelerikIconTitles();
     }
 
     function cancel(e) {
