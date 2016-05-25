@@ -25,6 +25,7 @@ namespace BExIS.Web.Shell.Helpers
                 PropertyDescriptor prop = props[i];
                 table.Columns.Add(prop.Name, prop.PropertyType);
             }
+
             object[] values = new object[props.Count];
             foreach (T item in data)
             {
@@ -34,6 +35,12 @@ namespace BExIS.Web.Shell.Helpers
                 }
                 table.Rows.Add(values);
             }
+
+            if (table.Columns["Id"] != null)
+            {
+                table.Columns["Id"].SetOrdinal(0);
+            }
+
             return table;
         }
 

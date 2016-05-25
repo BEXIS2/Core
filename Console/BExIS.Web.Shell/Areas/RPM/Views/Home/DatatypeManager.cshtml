@@ -51,9 +51,9 @@
             .Filterable()           
             .Columns(columns =>
                 {
-                    
+                    columns.Bound(c => c.Id)
+                    .Width(100);
                     columns.Bound(c => c.Name);
-                    columns.Bound(c => c.Id);
                     columns.Bound(c => c.SystemType);
                     columns.Bound(c => c.Description);
                     columns.Template(
