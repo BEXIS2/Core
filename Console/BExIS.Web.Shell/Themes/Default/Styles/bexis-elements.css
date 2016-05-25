@@ -61,6 +61,9 @@ Green 05  #eff7f6   brigth
     cursor: pointer;
 }
 
+.bx-selection {
+   cursor: pointer !important;
+}
 
 
 button, 
@@ -409,11 +412,15 @@ ul.bx-list-multi
     padding: 10px;
 }
 
-.bx-footer,
+.bx-footer
+{
+    padding: 10px 5px;
+}
 .bx-window .bx-footer, .bx-window .bx-title
 {
-    padding: 10px 0;
+    padding: 10px 0px;
 }
+
 .bx-footer.left,
 .bx-window .bx-footer.left
 {
@@ -427,7 +434,7 @@ ul.bx-list-multi
 .bx-footer.center,
 .bx-window .bx-footer.center
 {
-    text-align:left;
+    text-align:center;
 }
 
 /*Required and Error*/
@@ -447,4 +454,13 @@ ul.bx-list-multi
 .bx-informationLink {
     color:#ff9700;
     font-weight:bold;
+}
+
+/*GRID*/
+.bx-selection-grid tr {
+    cursor: pointer;
+}
+
+.bx-selection-grid tr:hover {
+    background-color: #eff7f6;
 }

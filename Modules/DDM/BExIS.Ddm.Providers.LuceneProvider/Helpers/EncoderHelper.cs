@@ -26,15 +26,25 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Helpers
         /// <seealso cref=""/>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static string Encode(string value)
+        public static string Encode(string value, bool encodeSpace= false)
         {
-            if (SpecialCharactrersInValue(value))
-            {
-                return ReplaceSpecialCharacters(value);
+            string encodedValue = value;
 
-            }
+            encodedValue = "\"" + encodedValue + "\"";
 
-            return value;
+            //// has special characters
+            //if (SpecialCharactrersInValue(value))
+            //{
+            //    encodedValue = ReplaceSpecialCharacters(value);
+            //}
+
+            //// has whitespace
+            //if (encodeSpace)
+            //{
+            //    encodedValue = encodedValue.Replace(" ", @"\ ");
+            //}
+
+            return encodedValue;
         }
 
         /// <summary>
@@ -45,12 +55,11 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Helpers
         /// <seealso cref=""/>
         /// <param name="value"></param>    
         /// <returns></returns>
-        private static string ReplaceSpecialCharacters(string value)
+        private static string ReplaceSpecialCharacters(string value,bool encodeSpace= false)
         {
 
             foreach (string specailCharacter in specialCharacterArray)
             {
-             
                 if (value.Contains(specailCharacter)) value = value.Replace(specailCharacter, @"\" + specailCharacter);
             }
 

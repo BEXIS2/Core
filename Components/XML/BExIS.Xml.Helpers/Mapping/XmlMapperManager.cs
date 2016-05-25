@@ -22,6 +22,8 @@ namespace BExIS.Xml.Helpers.Mapping
 
         private XmlSchemaManager xmlSchemaManager;
 
+        private bool addAlsoEmptyNode = false;
+
         /// <summary>
         /// Load from mapping file
         /// create a XmlMapper
@@ -143,8 +145,10 @@ namespace BExIS.Xml.Helpers.Mapping
             return xmlMapper;
         }
 
-        public XmlDocument Generate(XmlDocument metadataXml, long id)
+        public XmlDocument Generate(XmlDocument metadataXml, long id,bool addEmptyNode = false)
         {
+            addAlsoEmptyNode = addEmptyNode;
+
             #region abcd (metadata from bexis to abcd)
 
             XmlDocument newMetadata = new XmlDocument();
@@ -284,7 +288,7 @@ namespace BExIS.Xml.Helpers.Mapping
             if (xmlMapper.SourceExist(sourceXPath))
             {
                 //check if there is text inside the source node
-                if (!sourceNode.InnerText.Equals(""))
+                if (!sourceNode.InnerText.Equals("") || addAlsoEmptyNode)
                 {
                     // get name of the destination node
                     string destinationTagName = route.GetDestinationTagNames();

@@ -90,7 +90,7 @@
                             {
                                 if (!Model.inUse)
                                 {
-                                    <td class="data @variableIds[j-1]">@Html.TextBox("varName", r.ItemArray.ToString(), new { @Value = r.ItemArray[j].ToString(), @tabindex = "5" })</td>
+                                    <td class="data @variableIds[j-1]">@Html.TextBox("varName", r.ItemArray.ToString(), new { @Value = r.ItemArray[j].ToString(), @tabindex = "5", onchange = "onChangeInput(this)" })</td>
                                 }
                                 else
                                 {
@@ -114,7 +114,7 @@
                                 if (!Model.inUse)
                                 {
                                     <td class="data @variableIds[j-1]">
-                                        <textarea id="varDesc" name="varDesc" tabindex = "5">@r.ItemArray[j].ToString()</textarea>
+                                        <textarea id="varDesc" onChange ="onChangeTextarea(this)" name="varDesc" tabindex = "5">@r.ItemArray[j].ToString()</textarea>
                                     </td>
                                 }
                                 else
@@ -154,7 +154,7 @@
                                         }
                                     }
 
-                                    <td class="data @variableIds[j-1]"><input id="optional" name="optional" type="checkbox" value="@temp.ItemArray[j]" class="checkBox" tabindex = "5"
+                                    <td class="data @variableIds[j-1]"><input id="optional" name="optional" type="checkbox" value="@temp.ItemArray[j]" class="checkBox" tabindex = "5" onchange = "onChangeCheckbox(this)"
                                     @if (Convert.ToBoolean(obj.ToString().ToLower()) == true)
                                     {
                                         <text>checked="checked"</text>
@@ -211,7 +211,7 @@
                             {
                                 if (!Model.inUse)
                                 {
-                                    <td class="data @variableIds[j-1]">@Html.DropDownList("varUnit", new SelectList(unitStructs.ElementAt(j-1),"Id","Name", unitId.ElementAt(j-1)), new { @tabindex = "5" })</td>
+                                    <td class="data @variableIds[j-1]">@Html.DropDownList("varUnit", new SelectList(unitStructs.ElementAt(j-1),"Id","Name", unitId.ElementAt(j-1)), new { @tabindex = "5", onchange = "onChangeTextareaSelect(this)" })</td>
                                 }
                                 else
                                 {
@@ -247,6 +247,35 @@
 </div>
 
 <script type="text/javascript" language="javascript">
+    function onChangeInput(input)
+    {
+        input.setAttribute('value', input.value);
+    }
+
+    function onChangeCheckbox(checkbox) {
+        if (checkbox.getAttribute('checked') == 'checked') {
+            checkbox.removeAttribute('checked');
+        }
+        else {
+            checkbox.setAttribute('checked', 'checked');
+        }
+    }
+
+    function onChangeTextarea(textarea) {
+        textarea.innerText = textarea.value;
+    }
+
+    function onChangeTextareaSelect(select) {
+        for (var i = 0; i < select.getElementsByTagName('option').length; i++) {
+            if (select.getElementsByTagName('option')[i].getAttribute('selected') == 'selected' && select.getElementsByTagName('option')[i].getAttribute('value') != select.value) {
+                select.getElementsByTagName('option')[i].removeAttribute('selected');
+            }
+            else if (select.getElementsByTagName('option')[i].getAttribute('selected') != 'selected' && select.getElementsByTagName('option')[i].getAttribute('value') == select.value) {
+                select.getElementsByTagName('option')[i].setAttribute('selected', 'selected');
+            }
+        }
+    }
+
     $(document).ready(function () {
         generateHeader($("#order").val().split(','))
     });
@@ -345,7 +374,7 @@
                 for (var k = 1; k < $('#DataStructureGrid tr')[i].getElementsByTagName('td').length; k++) {
                     if($('#DataStructureGrid tr')[i].getElementsByTagName('td')[k].classList.contains(order[j])) {
                         if ($('#DataStructureGrid tr')[i].classList.contains('bx-rpm-function')) {
-                            $('#DataStructureGrid tr')[i].getElementsByTagName('td')[k].innerHTML = order[j] + '?DataStructureId=' + $('#DataStructureId').val();
+                            $('#DataStructureGrid tr')[i].getElementsByTagName('td')[k].innerHTML = order[j] + '?DataStructureId=' + $('#DataStructureId').value;
                         }
                         tempRow = tempRow + $('#DataStructureGrid tr')[i].getElementsByTagName('td')[k].outerHTML;
                         break;
@@ -356,24 +385,4 @@
         }
         generateHeader(order);
     }
-
-    $('#DataStructureGrid input').change(function () {
-        this.setAttribute('value',this.value);
-    });
-
-    $('#DataStructureGrid textarea').change(function () {
-        this.innerText = this.value;
-    });
-
-    $('#DataStructureGrid select').change(function () {
-        for (var i = 0; i < this.getElementsByTagName('option').length; i++) {
-            if (this.getElementsByTagName('option')[i].getAttribute('selected') == 'selected' && this.getElementsByTagName('option')[i].getAttribute('value') != this.value) {
-                this.getElementsByTagName('option')[i].removeAttribute('selected');
-            }
-            else if (this.getElementsByTagName('option')[i].getAttribute('selected') != 'selected' && this.getElementsByTagName('option')[i].getAttribute('value') == this.value) {
-                this.getElementsByTagName('option')[i].setAttribute('selected', 'selected');
-            }
-        }
-    });
-
 </script>

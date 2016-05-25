@@ -51,9 +51,9 @@
             .Sortable()
             .Columns(columns =>
             {
-
+                columns.Bound(c => c.Unit.Id)
+                    .Width(100);
                 columns.Bound(c => c.Unit.Name);
-                columns.Bound(c => c.Unit.Id);
                 columns.Bound(c => c.Unit.Abbreviation);
                 columns.Bound(c => c.Unit.Dimension.Name).Title("Dimension Name");
                 columns.Bound(c => c.Unit.MeasurementSystem);

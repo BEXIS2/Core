@@ -41,6 +41,7 @@ using BExIS.Web.Shell.Models;
 using BExIS.Web.Shell.Helpers;
 using NHibernate.Cache.Entry;
 using Vaiona.IoC;
+using BExIS.Security.Entities.Subjects;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
 {
@@ -326,7 +327,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             List<ListViewItemWithType> datastructures = LoadDataStructureViewList();
 
             EntitySelectorModel model = BexisModelManager.LoadEntitySelectorModel(
-                 datastructures,
+                 datastructures, new List<string>{"Id", "Title","Description","Type"},
                  new EntitySelectorModelAction("ShowListOfDataStructuresReciever", "CreateDataset", "DCM"));
 
             model.Title = "Select a Data Structure";
@@ -545,20 +546,32 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                 bool hasAuthorizationRights = false;
                 bool hasAuthenticationRigths = false;
-                long userid = subjectManager.GetUserByName(GetUsernameOrDefault()).Id;
-                //User has Access to Features 
-                //Area DCM
-                //Controller "Create Dataset" 
-                //Action "*"
-                Task task = securityTaskManager.GetTask("DCM", "CreateDataset", "*");
-                if (task != null)
+
+                User user = subjectManager.GetUserByName(GetUsernameOrDefault());
+                long userid = -1;
+
+                if (user != null)
                 {
-                    hasAuthorizationRights = permissionManager.HasSubjectFeatureAccess(userid, task.Feature.Id);
+                    userid = subjectManager.GetUserByName(GetUsernameOrDefault()).Id;
+
+                    //User has Access to Features 
+                    //Area DCM
+                    //Controller "Create Dataset" 
+                    //Action "*"
+                    Task task = securityTaskManager.GetTask("DCM", "CreateDataset", "*");
+                    if (task != null)
+                    {
+                        hasAuthorizationRights = permissionManager.HasSubjectFeatureAccess(userid, task.Feature.Id);
+                    }
+
+                    hasAuthenticationRigths = permissionManager.HasUserDataAccess(userid, 1, datasetId, RightType.Update);
+
+                    Model.EditRight = (hasAuthorizationRights && hasAuthenticationRigths);
                 }
-
-                hasAuthenticationRigths = permissionManager.HasUserDataAccess(userid, 1, datasetId, RightType.Update);
-
-                Model.EditRight = (hasAuthorizationRights && hasAuthenticationRigths);
+                else
+                {
+                    Model.EditRight = false;
+                }
 
             #endregion
 
@@ -961,7 +974,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     xmlMapperManager.Load(path_mappingFile, "IDIV");
 
                     // generate intern metadata 
-                    XmlDocument metadataResult = xmlMapperManager.Generate(metadataForImport, 1);
+                    XmlDocument metadataResult = xmlMapperManager.Generate(metadataForImport, 1, true);
 
                     // generate intern template
                     XmlMetadataWriter xmlMetadatWriter = new XmlMetadataWriter(BExIS.Xml.Helpers.XmlNodeMode.xPath);
