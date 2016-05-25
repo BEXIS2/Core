@@ -327,7 +327,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             List<ListViewItemWithType> datastructures = LoadDataStructureViewList();
 
             EntitySelectorModel model = BexisModelManager.LoadEntitySelectorModel(
-                 datastructures,
+                 datastructures, new List<string>{"Id", "Title","Description","Type"},
                  new EntitySelectorModelAction("ShowListOfDataStructuresReciever", "CreateDataset", "DCM"));
 
             model.Title = "Select a Data Structure";
