@@ -61,6 +61,9 @@ Green 05  #eff7f6   brigth
     cursor: pointer;
 }
 
+.bx-selection {
+   cursor: pointer !important;
+}
 
 
 button, 
@@ -451,4 +454,13 @@ ul.bx-list-multi
 .bx-informationLink {
     color:#ff9700;
     font-weight:bold;
+}
+
+/*GRID*/
+.bx-selection-grid tr {
+    cursor: pointer;
+}
+
+.bx-selection-grid tr:hover {
+    background-color: #eff7f6;
 }
