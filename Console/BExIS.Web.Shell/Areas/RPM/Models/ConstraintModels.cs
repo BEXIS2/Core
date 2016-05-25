@@ -5,7 +5,6 @@ using System.Web;
 using BExIS.Dlm.Entities.DataStructure;
 using DataAnnotationsExtensions;
 using System.ComponentModel.DataAnnotations;
-using Foolproof;
 
 namespace BExIS.Web.Shell.Areas.RPM.Models
 {
