@@ -128,10 +128,6 @@
                         !String.IsNullOrEmpty(Model.Reciever.Controller) &&
                         !String.IsNullOrEmpty(Model.Reciever.Area))
     {
-
-        <a id="@cancelId" class="bx-button action" onclick="cancel(this)">Cancel</a>
-    
-
         if (String.IsNullOrEmpty(targetId))
         {
             <a id="@submitId" class="bx-button action bx-disabled submitEntitySelection">Select</a>
@@ -139,16 +135,18 @@
         else
         {
             @Ajax.ActionLink("Select", @Model.Reciever.Action, @Model.Reciever.Controller, new { area = "DCM" },
-                             new AjaxOptions
-                             {
-                                 HttpMethod = "GET",
-                                 InsertionMode = InsertionMode.Replace,
-                                 UpdateTargetId = targetId,
-                                 OnSuccess= "OnSucess()"
-                             },
-                             new { @class = "bx-button action bx-disabled submitEntitySelection", @id = @submitId })
+            new AjaxOptions
+            {
+                HttpMethod = "GET",
+                InsertionMode = InsertionMode.Replace,
+                UpdateTargetId = targetId,
+                OnSuccess= "OnSucess()"
+            },
+            new { @class = "bx-button action bx-disabled submitEntitySelection", @id = @submitId })
 
         }
+
+        <a id="@cancelId" class="bx-button action" onclick="cancel(this)">Cancel</a>
     }
 </div>
 
