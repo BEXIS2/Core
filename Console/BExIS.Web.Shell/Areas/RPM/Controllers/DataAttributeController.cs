@@ -188,7 +188,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             }
 
             Session["Window"] = false;
-            return View("AttributeManager", new DataAttributeManagerModel(Model));
+            return RedirectToAction("AttributeManager");
         }
 
         public ActionResult deletAttribute(long id, string name)
