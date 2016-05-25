@@ -106,24 +106,28 @@
 
 </div>
 @if (!locked)
-{ 
+{
     <div class="bx-footer right">
-        <!-- only from editmode you have the option to reset-->
-        @if (@Model.FromEditMode)
-        {
-            <button onclick="cancel()" class="bx-button function">Cancel</button>
-            <button onclick="reset()" class="bx-button function" >Reset</button>
-        }
-        <button onclick="validate()" class="bx-button function" >Validate</button>
-        <button onclick="submit()" class="bx-button action" >Submit</button>
+
+            <!-- only from editmode you have the option to reset-->
+            <button onclick="validate()" class="bx-button function" style="float: left;">Validate</button>
+            @if (@Model.FromEditMode)
+            {
+                <button onclick="reset()" class="bx-button function"  style="float: left;">Reset</button>
+            }
+
+            <button onclick="submit()" class="bx-button action">Submit</button>
+
+            @if (@Model.FromEditMode)
+            {
+                <button onclick="cancel()" class="bx-button action">Cancel</button>
+            }
     </div>
 }
 
-
 @section RightPane
 {
- 
-    
+
 
 }
 </div>

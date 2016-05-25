@@ -75,6 +75,7 @@
 
         @(Html.Telerik().Grid(Model.Data)
                 .Name(@idAsString)
+                .HtmlAttributes(new {@class= "bx-selection-grid" })
               .DataBinding(c => c.Ajax().OperationMode(GridOperationMode.Client))
               .DataKeys(keys => keys
                 .Add(Model.IDKey)
@@ -109,7 +110,6 @@
               submitId = @submitId,
               link = "/" + @Model.Reciever.Area + "/" + @Model.Reciever.Controller + "/" + @Model.Reciever.Action,
               style="width:"+@width+"px;"
-              
           })
           .Pageable(paging =>
                 paging.PageSize(10, new int[] { 5, 10, 50 })
@@ -117,7 +117,8 @@
                     .Style(pagerStyles)
                     )
           .ClientEvents(events =>
-            events.OnRowSelect("OnRowSelection"))
+            events.OnRowSelect("OnRowSelection")
+            .OnDataBound("OnDataBound"))
 
         )
     }
@@ -178,6 +179,12 @@
 
         $('#' + submitId).attr("href", link);
         $('#' + submitId).removeClass("bx-disabled");
+    }
+
+    function OnDataBound()
+    {
+        addTooltips();
+        resetAllTelerikIconTitles();
     }
 
     function cancel(e) {

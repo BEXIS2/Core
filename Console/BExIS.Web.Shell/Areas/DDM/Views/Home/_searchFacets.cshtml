@@ -77,7 +77,7 @@
                                moreBt.Selected = false;
                                moreBt.Checkable = false;
                                moreBt.LinkHtmlAttributes["title"] = "more";
-                               moreBt.LinkHtmlAttributes["class"] = "t-item-more bx-more";
+                               moreBt.LinkHtmlAttributes["class"] = "t-item-more bx-more bx-selection";
                                moreBt.LinkHtmlAttributes["parentDisplayName"] = facet.DisplayName;
 
                                if (!item.Items.Contains(moreBt))
@@ -95,7 +95,7 @@
     .Visible(false)
     .Title("Change selection")
     .HtmlAttributes(new { @class="bx-window" })
-    .Width(450)
+    .Width(600)
     .Modal(true)
     .Draggable(true)
     .ClientEvents(events => events
@@ -153,11 +153,9 @@
                 $.post('@Url.Action("ShowMoreWindow", "Home", new RouteValueDictionary { { "area", "DDM" } })', { parent: parent }, function (response) {
                     $("#search_more").html(response);
                     $("#MoreWindow .t-window-title")[0].innerText = "Change Selection : " + displayNameofParent;
-
+                    detailWindow.center().open();
                 })
 
-
-                detailWindow.center().open();
             }
 
 
