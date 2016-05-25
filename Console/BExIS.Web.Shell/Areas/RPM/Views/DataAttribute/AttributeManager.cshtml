@@ -47,9 +47,9 @@
             .Filterable()             
             .Columns(columns =>
                 {
-                    
-                    columns.Bound(c => c.Name);
-                    columns.Bound(c => c.Id);
+                    columns.Bound(c => c.Id)
+                    .Width(100);
+                    columns.Bound(c => c.Name);                    
                     columns.Bound(c => c.ShortName);
                     columns.Bound(c => c.Unit)
                         .Title("Unit");
