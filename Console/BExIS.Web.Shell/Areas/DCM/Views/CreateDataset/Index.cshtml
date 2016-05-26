@@ -18,6 +18,7 @@
     @section Information
     {
         This wizard will assist you in creating a new dataset. Please select a data structure and a metadata structure below.
+        Or select a dataset as template to use the metadata structure and the metadata from the selected dataset.
         <p>
             <a href="/DCM/Help/Index/#_Toc434570841" class = "bx-informationLink" title = "go to help" target="_blank">More</a>
         </p>
@@ -34,14 +35,14 @@
                 </td>
                 <td style="width: 60px;">
                     <div id="datasetsContainer">
-                        @Ajax.ActionLink("Select", "ShowListOfDatasets", "CreateDataset", new RouteValueDictionary { { "area", "DCM" } },
+                        @Ajax.ActionLink("Select", "ShowListOfDatasets", "CreateDataset", new { area="DCM" , title = "Select a Dataset as Template" } ,
                             new AjaxOptions
                             {
                                 HttpMethod = "GET",
                                 InsertionMode = InsertionMode.Replace,
                                 UpdateTargetId = "datasetWindowContainer"
                             },
-                            new { @class = "bx-button function", @style = "float:right" })
+                            new { @class = "bx-button function", @style = "float:right", title = "Select a Dataset as Template" })
                     </div>
                     <div id="datasetWindowContainer"></div>
                     @*@Html.Partial("_EnititySelectorView", BexisModelManager.LoadEntitySelectorModel<ListViewItem>(Model.DatasetViewList,"Id","myTest"))*@
@@ -58,6 +59,7 @@
                         @(Html.Telerik().DropDownList()
                                 .Name("SelectedDatasetId")
                                 .SelectedIndex(0)
+                                .HtmlAttributes(new { title= "Select a Dataset as Template" })
                                 .BindTo(new SelectList(DatasetsList, "Id", "Title", Model.SelectedDatasetId))
                                 .ClientEvents(events => events.OnChange("datasetChange"))
                         )
@@ -73,14 +75,14 @@
                 </td>
                 <td style="width: 60px;">
                     <div id="datastructuresContainer">
-                        @Ajax.ActionLink("Select", "ShowListOfDataStructures", "CreateDataset", new RouteValueDictionary { { "area", "DCM" } },
+                        @Ajax.ActionLink("Select", "ShowListOfDataStructures", "CreateDataset", new { area = "DCM"},
                         new AjaxOptions
                         {
                             HttpMethod = "GET",
                             InsertionMode = InsertionMode.Replace,
                             UpdateTargetId = "datastructureWindowContainer"
                         },
-                        new { @class = "bx-button function", @style = "float:right" })
+                        new { @class = "bx-button function", @style = "float:right", title = "Select a Data Structure" })
                     </div>
                     <div id="datastructureWindowContainer"></div>
                 </td>
@@ -95,7 +97,8 @@
                 {
                         @(Html.Telerik().DropDownList()
                                 .Name("SelectedDataStructureId")
-                                .Placeholder("Select, please")
+                                .Placeholder("Select")
+                                .HtmlAttributes(new { title = "Select a Data Structure" })
                                 .SelectedIndex(0)
                                 .ClientEvents(events => events.OnChange("onChange"))
                                 .BindTo(new SelectList(Model.DataStructureViewList, "Id", "Title", Model.SelectedDataStructureId))
@@ -119,14 +122,14 @@
                         }
                         else
                         {
-                            @Ajax.ActionLink("Select", "ShowListOfMetadataStructures", "CreateDataset", new RouteValueDictionary { { "area", "DCM" } },
+                            @Ajax.ActionLink("Select", "ShowListOfMetadataStructures", "CreateDataset", new { area = "DCM"},
                                 new AjaxOptions
                                 {
                                     HttpMethod = "GET",
                                     InsertionMode = InsertionMode.Replace,
                                     UpdateTargetId = "metadatadatastructureWindowContainer"
                                 },
-                                new { @class = "bx-button function", @style = "float:right" })
+                                new { @class = "bx-button function", @style = "float:right",title = "Select a Metadata Structure" })
                         }
                     </div>
                     <div id="metadatadatastructureWindowContainer"></div>
@@ -143,7 +146,8 @@
 
                         @(Html.Telerik().DropDownList()
                         .Name("SelectedMetadataStructureId")
-                        .Placeholder("Select, please")
+                        .Placeholder("Select")
+                        .HtmlAttributes(new { title = "Select a Metadata Structure" })
                         .SelectedIndex(0)
                         .BindTo(new SelectList(Model.MetadataStructureViewList, "Id", "Title", Model.SelectedMetadataStructureId))
                         .ClientEvents(e => e.OnChange("onChangeMetadataStructure"))

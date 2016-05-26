@@ -310,7 +310,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 datasets,
                 new EntitySelectorModelAction("ShowListOfDatasetsReciever", "CreateDataset", "DCM"));
 
-            model.Title = "Select a Dataset";
+            model.Title = "Select a Dataset as Template";
 
             return PartialView("_EntitySelectorInWindowView", model);
         }
