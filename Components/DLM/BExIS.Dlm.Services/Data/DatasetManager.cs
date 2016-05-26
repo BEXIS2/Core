@@ -59,7 +59,7 @@ namespace BExIS.Dlm.Services.Data
         /// Provides read-only querying and access to the tuples of dataset versions
         /// </summary>
         public IReadOnlyRepository<DataTuple> DataTupleRepo { get; private set; }
-        
+
         /// <summary>
         /// Provides read-only querying and access to the previously archived versions of data tuples
         /// </summary>
@@ -339,6 +339,9 @@ namespace BExIS.Dlm.Services.Data
             IList<Int64> versionIds = entity.Versions
                            .Select(p => p.Id)
                            .ToList();
+            IReadOnlyRepository<ContentDescriptor> ContentDescriptorRepoReadOnly = DatasetRepo.UnitOfWork.GetReadOnlyRepository<ContentDescriptor>();
+            IList<Int64> contentDescriptorIds = (versionIds == null || versionIds.Count() <= 0) ? null :
+                ContentDescriptorRepoReadOnly.Query(p => versionIds.Contains(p.DatasetVersion.Id)).Select(p => p.Id).ToList();
 
             IList<Int64> tupleIds = (versionIds == null || versionIds.Count() <= 0) ? null : DataTupleRepo.Query(p => versionIds.Contains(p.DatasetVersion.Id)).Select(p=>p.Id).ToList();
             IList<Int64> tupleVersionIds = (versionIds == null || versionIds.Count() <= 0) ? null : DataTupleVerionRepo.Query(p => versionIds.Contains(p.DatasetVersion.Id)).Select(p => p.Id).ToList();
@@ -351,6 +354,8 @@ namespace BExIS.Dlm.Services.Data
                 IRepository<DataTupleVersion> tupleVersionRepo = uow.GetRepository<DataTupleVersion>();
                 IRepository<DatasetVersion> versionRepo = uow.GetRepository<DatasetVersion>();
                 IRepository<DataTuple> tuplesRepo = uow.GetRepository<DataTuple>();
+                IRepository<ContentDescriptor> ContentDescriptorRepo = uow.GetRepository<ContentDescriptor>();
+
                 if (tupleVersionIds != null && tupleVersionIds.Count > 0)
                 {
                     long iternations = tupleVersionIds.Count / PreferedBatchSize + 1;
@@ -369,6 +374,16 @@ namespace BExIS.Dlm.Services.Data
                         Dictionary<string, object> parameters = new Dictionary<string, object>();
                         parameters.Add("idsList", tupleIds.Skip(round*PreferedBatchSize).Take(PreferedBatchSize).ToList());
                         tuplesRepo.Execute(string.Format(queryStr, "DataTuple"), parameters);
+                    }
+                }
+                if (contentDescriptorIds != null && contentDescriptorIds.Count > 0)
+                {
+                    long iternations = contentDescriptorIds.Count / PreferedBatchSize + 1;
+                    for (int round = 0; round < iternations; round++)
+                    {
+                        Dictionary<string, object> parameters = new Dictionary<string, object>();
+                        parameters.Add("idsList", contentDescriptorIds.Skip(round * PreferedBatchSize).Take(PreferedBatchSize).ToList());
+                        tuplesRepo.Execute(string.Format(queryStr, "ContentDescriptor"), parameters);
                     }
                 }
                 if (versionIds != null && versionIds.Count > 0)
