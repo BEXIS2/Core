@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Web.Mvc;
+using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Subjects;
+using BExIS.Security.Services.Authorization;
+using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Web.Shell.Areas.SAM.Models;
 using Telerik.Web.Mvc;
@@ -29,7 +32,15 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
             if (ModelState.IsValid)
             {
                 SubjectManager subjectManager = new SubjectManager();
-                subjectManager.CreateUser(model.Username, model.Password, model.FullName, model.Email, model.SecurityQuestion, model.SecurityAnswer, model.AuthenticatorList.Id);
+                User user = subjectManager.CreateUser(model.Username, model.Password, model.FullName, model.Email, model.SecurityQuestion, model.SecurityAnswer, model.AuthenticatorList.Id);
+
+                // Feature
+                FeatureManager featureManager = new FeatureManager();
+                Feature feature = featureManager.FeaturesRepo.Get(f => f.Name == "Search").FirstOrDefault();
+
+                // Permissions
+                PermissionManager permissionManager = new PermissionManager();
+                permissionManager.CreateFeaturePermission(user.Id, feature.Id);
 
                 return Json(new { success = true });
             }

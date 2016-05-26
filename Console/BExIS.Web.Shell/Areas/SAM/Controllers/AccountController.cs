@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Web.Mvc;
 using System.Web.Security;
 using BExIS.Security.Entities.Authentication;
+using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authentication;
+using BExIS.Security.Services.Authorization;
+using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Web.Shell.Areas.SAM.Models;
 using Vaiona.Web.Mvc.Models;
@@ -84,6 +88,8 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
 
         public ActionResult LogOn(string returnUrl)
         {
+            ViewBag.Title = PresentationModel.GetViewTitle("Home");
+
             if (Request.IsAuthenticated)
             {
                 return View("Error");
@@ -165,6 +171,14 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
                 SubjectManager subjectManager = new SubjectManager();
 
                 User user = subjectManager.CreateUser(model.Username, model.Password, model.FullName, model.Email, model.SecurityQuestion, model.SecurityAnswer, model.AuthenticatorList.Id);
+
+                // Feature
+                FeatureManager featureManager = new FeatureManager();
+                Feature feature = featureManager.FeaturesRepo.Get(f => f.Name == "Search").FirstOrDefault();
+
+                // Permissions
+                PermissionManager permissionManager = new PermissionManager();
+                permissionManager.CreateFeaturePermission(user.Id, feature.Id);
 
                 FormsAuthentication.SetAuthCookie(model.Username, false);
                 return Json(new { success = true });

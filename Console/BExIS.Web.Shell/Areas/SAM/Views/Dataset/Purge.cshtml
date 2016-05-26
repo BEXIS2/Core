@@ -7,6 +7,8 @@
     <a href="/SAM/Help/Index/#_Toc451422053" class="bx-informationLink" title="go to help" target="_blank">More</a>
 </p>
 }
-
-<h2>Dataset is deleted!</h2>
+@Html.ValidationSummary(true)
+@if (ViewData.ModelState.IsValid) {
+    <h2>Dataset was successfully purged!</h2>
+}
 @Html.ActionLink("Return to the list", "List", new { area = "Sam" })

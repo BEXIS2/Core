@@ -30,19 +30,17 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Helpers
         {
             string encodedValue = value;
 
-            encodedValue = "\"" + encodedValue + "\"";
+            // has special characters
+            if (SpecialCharactrersInValue(value))
+            {
+                encodedValue = ReplaceSpecialCharacters(value);
+            }
 
-            //// has special characters
-            //if (SpecialCharactrersInValue(value))
-            //{
-            //    encodedValue = ReplaceSpecialCharacters(value);
-            //}
-
-            //// has whitespace
-            //if (encodeSpace)
-            //{
-            //    encodedValue = encodedValue.Replace(" ", @"\ ");
-            //}
+            // has whitespace
+            if (encodeSpace)
+            {
+                encodedValue = encodedValue.Replace(" ", @"\ ");
+            }
 
             return encodedValue;
         }
