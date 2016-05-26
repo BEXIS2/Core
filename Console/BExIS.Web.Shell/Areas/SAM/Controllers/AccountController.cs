@@ -246,6 +246,8 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
 
         public string RenderRazorViewToString()
         {
+            ViewBag.Title = PresentationModel.GetViewTitle("Home");
+
             Controller controller = this;
             string viewName = "_LogOnPartial";
             AccountLogOnModel model = new AccountLogOnModel();
