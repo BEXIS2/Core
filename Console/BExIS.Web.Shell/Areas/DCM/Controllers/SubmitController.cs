@@ -230,9 +230,14 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                         foreach (Dataset d in sds.Datasets)
                         {
-                            if (datasetIDs.Contains(d.Id))
+                            if (dm.IsDatasetCheckedIn(d.Id))
                             {
-                                temp.Add(new ListViewItem(d.Id, XmlDatasetHelper.GetInformation(dm.GetDatasetLatestVersion(d), AttributeNames.title)));
+                                if (datasetIDs.Contains(d.Id))
+                                {
+                                    temp.Add(new ListViewItem(d.Id,
+                                        XmlDatasetHelper.GetInformation(dm.GetDatasetLatestVersion(d),
+                                            AttributeNames.title)));
+                                }
                             }
                         }
                     }
@@ -248,8 +253,12 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         {
                             if (datasetIDs.Contains(d.Id))
                             {
-                                DatasetVersion datasetVersion = dm.GetDatasetLatestVersion(d);
-                                temp.Add(new ListViewItem(d.Id, XmlDatasetHelper.GetInformation(datasetVersion, AttributeNames.title)));
+                                if (dm.IsDatasetCheckedIn(d.Id))
+                                {
+                                    DatasetVersion datasetVersion = dm.GetDatasetLatestVersion(d);
+                                    temp.Add(new ListViewItem(d.Id,
+                                        XmlDatasetHelper.GetInformation(datasetVersion, AttributeNames.title)));
+                                }
                             }
                         }
                     }
