@@ -453,37 +453,6 @@
     <DesignData Include="Db\Settings\PostgreSQL82Dialect.hibernate.cfg.xml">
       <SubType>Designer</SubType>
     </DesignData>
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image001.png" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image002.png" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image003.png" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image004.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image005.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image006.png" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image007.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image008.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image009.png" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image010.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image011.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image012.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image013.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image014.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image015.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image016.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image017.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image018.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image019.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image020.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image021.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image022.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image023.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image024.png" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image025.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image026.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image027.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image028.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image029.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image030.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image031.jpg" />
     <Content Include="Areas\DCM\Images\emptyPng.png" />
     <Content Include="Areas\DCM\Views\Help\UserGuides\DCM_UserGuide.htm" />
     <Content Include="Areas\DDM\Images\DDM_UserGuide_files\image001.gif" />
@@ -950,6 +919,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Areas\DCM\Images\DCM_UserGuide_files\" />
     <Folder Include="Areas\DCM\Models\Scripts\" />
     <Folder Include="Areas\DCM\Views\Home\" />
     <Folder Include="Areas\DDM\Views\Shared\" />
