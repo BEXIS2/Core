@@ -88,6 +88,8 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
 
         public ActionResult LogOn(string returnUrl)
         {
+            ViewBag.Title = PresentationModel.GetViewTitle("Home");
+
             if (Request.IsAuthenticated)
             {
                 return View("Error");
