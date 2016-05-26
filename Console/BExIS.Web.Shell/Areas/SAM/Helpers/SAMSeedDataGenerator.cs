@@ -204,7 +204,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Helpers
             // Feature Permissions
             PermissionManager permissionManager = new PermissionManager();
             permissionManager.CreateFeaturePermission(g1.Id, f1.Id);
-            permissionManager.CreateFeaturePermission(everyone.Id, f9.Id);
+            //permissionManager.CreateFeaturePermission(everyone.Id, f9.Id);
 
             #endregion Security
         }
