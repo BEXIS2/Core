@@ -1,5 +1,4 @@
-﻿using BExIS.Ext.Services;
-using System.IO;
+﻿using System.IO;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Vaiona.IoC;
@@ -8,11 +7,11 @@ using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Data;
-using Vaiona.Web.Mvc.Filters;
 using System.Web;
-using System;
-using System.Collections.Generic;
-using NHibernate;
+using Vaiona.Web.Mvc.Filters;
+using BExIS.Ext.Services;
+using Vaiona.MultiTenancy.Api;
+using Vaiona.Model.MTnt;
 
 namespace BExIS.Web.Shell
 {
@@ -75,6 +74,11 @@ namespace BExIS.Web.Shell
             AreaRegistration.RegisterAllAreas();
             RegisterGlobalFilters(GlobalFilters.Filters);
             RegisterRoutes(RouteTable.Routes);
+
+            ITenantResolver tenantResolver = IoCFactory.Container.Resolve<ITenantResolver>();
+            ITenantPathProvider pathProvider = new BExISTenantPathProvider(); // should be instantiated by the IoC. client app should provide the Path Ptovider based on its file and tenant structure
+            tenantResolver.Load(pathProvider);
+
         }
 
         private void init()
@@ -124,6 +128,10 @@ namespace BExIS.Web.Shell
             //set session culture using DefaultCulture key
             IoCFactory.Container.StartSessionLevelContainer();
             Session.ApplyCulture(AppConfiguration.DefaultCulture);
+
+            ITenantResolver tenantResolver = IoCFactory.Container.Resolve<ITenantResolver>();
+            Tenant tenant = tenantResolver.Resolve(this.Request);
+            this.Session.SetTenant(tenant);
         }
 
         protected void Session_End()
