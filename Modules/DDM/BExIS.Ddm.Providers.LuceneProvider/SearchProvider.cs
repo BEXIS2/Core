@@ -303,7 +303,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider
                             {
                                 String encodedValue = EncoderHelper.Encode(value);
                                 String newString = null;
-                              //string value = val.Replace(")", "").Replace("(", "");
+                                //string value = val.Replace(")", "").Replace("(", "");
                                 char[] delimiter = new char[] { ';', ' ', ',', '!', '.' };
                                 string[] parts = encodedValue.ToLower().Split(delimiter, StringSplitOptions.RemoveEmptyEntries);
                                 for (int i = 0; i < parts.Length; i++)
