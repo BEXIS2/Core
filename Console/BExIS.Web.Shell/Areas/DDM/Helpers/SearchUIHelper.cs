@@ -390,7 +390,9 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
             StructuredDataStructure datastructure = dsm.StructuredDataStructureRepo.Get(sds.Id);
             if (datastructure != null)
             {
-                foreach (Variable var in datastructure.Variables)
+                List<Variable> variables =  SortVariablesOnDatastructure(datastructure.Variables.ToList(), datastructure);
+
+                foreach (Variable var in variables)
                 {
                     Variable sdvu = dsm.VariableRepo.Get(var.Id);
 
@@ -460,6 +462,27 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
             }
 
             return fileList;
+        }
+
+
+        private static List<Variable> SortVariablesOnDatastructure(List<Variable> variables, DataStructure datastructure)
+        {
+            List<Variable> sortedVariables = new List<Variable>();
+
+            XmlDocument extra = new XmlDocument();
+            extra.LoadXml(datastructure.Extra.OuterXml);
+            IEnumerable<XElement> elements = XmlUtility.GetXElementByNodeName("variable", XmlUtility.ToXDocument(extra));
+
+            foreach (XElement element in elements)
+            {
+                long id = Convert.ToInt64(element.Value);
+                Variable var = variables.Where(v => v.Id.Equals(id)).FirstOrDefault();
+                if (var != null)
+                    sortedVariables.Add(var);
+            }
+
+
+            return sortedVariables;
         }
 
     }
