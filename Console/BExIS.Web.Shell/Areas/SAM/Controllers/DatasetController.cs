@@ -10,6 +10,8 @@ using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Subjects;
 using Vaiona.Web.Mvc.Models;
+using BExIS.Ddm.Api;
+using Vaiona.IoC;
 
 namespace BExIS.Web.Shell.Areas.Sam.Controllers
 {
@@ -68,9 +70,21 @@ namespace BExIS.Web.Shell.Areas.Sam.Controllers
             DatasetManager dm = new DatasetManager();
             PermissionManager pm = new PermissionManager();
 
-            pm.DeleteDataPermissionsByEntity(1, id);
-            bool b = dm.DeleteDataset(id, this.ControllerContext.HttpContext.User.Identity.Name, true);
-            return RedirectToAction("List");
+            try
+            {
+                if (dm.DeleteDataset(id, this.ControllerContext.HttpContext.User.Identity.Name, true))
+                {
+                    pm.DeleteDataPermissionsByEntity(1, id);
+                    ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+                    provider?.UpdateSingleDatasetIndex(id, IndexingAction.DELETE);
+                }
+            }
+            catch (Exception e)
+            {
+                ViewData.ModelState.AddModelError("", string.Format("Dataset {0} could not be deleted.", id));
+            }
+            return View();
+            //return RedirectToAction("List");
         }
 
         /// <summary>
@@ -91,13 +105,14 @@ namespace BExIS.Web.Shell.Areas.Sam.Controllers
                 if (dm.PurgeDataset(id))
                 {
                     pm.DeleteDataPermissionsByEntity(1, id);
+                    ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+                    provider?.UpdateSingleDatasetIndex(id, IndexingAction.DELETE);
                 }
             }
             catch (Exception e)
             {
                 ViewData.ModelState.AddModelError("", string.Format("Dataset {0} could not be purged.", id));
-            }
-            
+            }            
             return View();
         }
 
