@@ -26,7 +26,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Helpers
         /// <seealso cref=""/>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static string Encode(string value, bool encodeSpace= false)
+        public static string Encode(string value)
         {
             string encodedValue = value;
 
@@ -34,12 +34,6 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Helpers
             if (SpecialCharactrersInValue(value))
             {
                 encodedValue = ReplaceSpecialCharacters(value);
-            }
-
-            // has whitespace
-            if (encodeSpace)
-            {
-                encodedValue = encodedValue.Replace(" ", @"\ ");
             }
 
             return encodedValue;
