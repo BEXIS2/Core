@@ -19,6 +19,7 @@ namespace BExIS.Xml.Helpers.Mapping
     public class XmlSchemaManager
     {
         public string FileName { get; set; }
+        
         public List<XmlSchemaComplexType> ComplexTypes { get; set; }
         public List<XmlSchemaComplexType> ComplexTypesWithSimpleTypesAsChildrens { get; set; }
         public List<XmlSchemaElement> Elements { get; set; }
@@ -31,7 +32,7 @@ namespace BExIS.Xml.Helpers.Mapping
         public List<MetadataAttribute> MetadataAttributes { get; set; }
         public Dictionary<string,List<Constraint>> ConvertedSimpleTypes { get; set; }
 
-
+        private List<string> additionalFiles { get; set; }
         private DataContainerManager dataContainerManager = new DataContainerManager();
         private MetadataPackageManager metadataPackageManager = new MetadataPackageManager();
         private MetadataAttributeManager metadataAttributeManager = new MetadataAttributeManager();
@@ -69,6 +70,7 @@ namespace BExIS.Xml.Helpers.Mapping
             ConvertedSimpleTypes = new Dictionary<string, List<Constraint>>();
             Groups = new List<XmlSchemaGroup>();
             xsdFileName = "";
+            additionalFiles = new List<string>();
             mappingFileInternalToExternal = new XmlMapper();
             mappingFileExternalToInternal = new XmlMapper();
             createdAttributesDic = new Dictionary<long, string>();
@@ -158,12 +160,13 @@ namespace BExIS.Xml.Helpers.Mapping
                     settings.DtdProcessing = DtdProcessing.Ignore;
 
                     string dataPath = Path.Combine(AppConfiguration.DataPath, "Temp", userName, include.SchemaLocation.Split('/').Last());
-
+                    
                     XmlReader test = XmlReader.Create(dataPath, settings);
                     include.Schema = XmlSchema.Read(test, verifyErrors);
                 }
 
                 xmlSchemaSet.Add(include.Schema);
+                additionalFiles.Add(Path.GetFileName(include.Schema.SourceUri.ToString()));
                 // if schema has included schemas
                 if (include.Schema.Includes.Count > 0)
                 {
@@ -497,19 +500,34 @@ namespace BExIS.Xml.Helpers.Mapping
 
             newXsdFilePath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "Metadata", schemaName, FileName);
 
+           
+
             if (!File.Exists(newXsdFilePath))
             {
                 checkDirectory(newXsdFilePath);
                 MoveFile(xsdFilePath, newXsdFilePath);
             }
 
+            #region store additionaly xsds 
 
+            string tmpDestinationPath = Path.GetDirectoryName(newXsdFilePath);
+            string tmpSourcePath = Path.GetDirectoryName(xsdFilePath);
+
+            if (additionalFiles != null)
+            {
+                foreach (var filename in additionalFiles.Distinct())
+                {
+                    MoveFile(Path.Combine(tmpSourcePath, filename), Path.Combine(tmpDestinationPath, filename));
+                }
+            }
+
+            #endregion
 
             #region prepare mappingFiles
 
-                #region intern to extern
-                    // add schema to mappingfile
-                    mappingFileInternalToExternal.Header.AddToSchemas(schemaName, "Metadata/" + schemaName + "/" + FileName);
+            #region intern to extern
+            // add schema to mappingfile
+            mappingFileInternalToExternal.Header.AddToSchemas(schemaName, "Metadata/" + schemaName + "/" + FileName);
                 #endregion
 
                 #region extern to intern
@@ -518,8 +536,6 @@ namespace BExIS.Xml.Helpers.Mapping
 
                 #endregion
             #endregion
-
-
 
             //List<MetadataAttribute> metadataAttributes = new List<MetadataAttribute>();
             //metadataAttributes = GenerateAllMetadataAttributes();
