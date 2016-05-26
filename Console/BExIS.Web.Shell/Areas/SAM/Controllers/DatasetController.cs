@@ -43,7 +43,7 @@ namespace BExIS.Web.Shell.Areas.Sam.Controllers
 
             User user = subjectManager.GetUserByName(HttpContext.User.Identity.Name);
 
-            List<Dataset> datasets = dm.DatasetRepo.Query().ToList();
+            List<Dataset> datasets = dm.DatasetRepo.Query().OrderBy(p=>p.Id).ToList();
 
             List<long> datasetIds = new List<long>();
             if (user != null)
@@ -95,7 +95,7 @@ namespace BExIS.Web.Shell.Areas.Sam.Controllers
             }
             catch (Exception e)
             {
-                
+                ViewData.ModelState.AddModelError("", string.Format("Dataset {0} could not be purged.", id));
             }
             
             return View();
