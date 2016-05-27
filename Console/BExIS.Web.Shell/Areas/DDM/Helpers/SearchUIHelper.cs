@@ -469,20 +469,21 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
         {
             List<Variable> sortedVariables = new List<Variable>();
 
-            XmlDocument extra = new XmlDocument();
-            extra.LoadXml(datastructure.Extra.OuterXml);
-            IEnumerable<XElement> elements = XmlUtility.GetXElementByNodeName("variable", XmlUtility.ToXDocument(extra));
-
-            foreach (XElement element in elements)
+            if (datastructure.Extra != null && (datastructure.Extra as XmlDocument).GetElementsByTagName("order").Count != 0)
             {
-                long id = Convert.ToInt64(element.Value);
-                Variable var = variables.Where(v => v.Id.Equals(id)).FirstOrDefault();
-                if (var != null)
-                    sortedVariables.Add(var);
+                XmlDocument order = (datastructure.Extra as XmlDocument).GetElementsByTagName("order")[0] as XmlDocument;
+                IEnumerable<XElement> elements = XmlUtility.GetXElementByNodeName("variable", XmlUtility.ToXDocument(order));
+
+                foreach (XElement element in elements)
+                {
+                    long id = Convert.ToInt64(element.Value);
+                    Variable var = variables.Where(v => v.Id.Equals(id)).FirstOrDefault();
+                    if (var != null)
+                        sortedVariables.Add(var);
+                }
+                return sortedVariables;
             }
-
-
-            return sortedVariables;
+            return variables;
         }
 
     }
