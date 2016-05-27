@@ -369,7 +369,7 @@ namespace BExIS.Xml.Helpers.Mapping
                                         }
                                     }
 
-                                    if (foundNodeWithoutDestionationNode)
+                                    if ((temp.Count>=2 && foundNodeWithoutDestionationNode) || !foundNodeWithoutDestionationNode)
                                     {
                                         addChild(parent,newCurrent);
                                     }
