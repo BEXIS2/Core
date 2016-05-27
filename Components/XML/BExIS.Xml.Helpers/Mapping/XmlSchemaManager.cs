@@ -1455,7 +1455,7 @@ namespace BExIS.Xml.Helpers.Mapping
             string sequence = parentExternalName;
             if (max > 1)
             {
-                sequence = name;
+                sequence = nameType;
             }
 
             xmr.Destination = new Destination(childDestinationXPath, sequence);
