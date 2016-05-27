@@ -566,6 +566,9 @@
     <Content Include="Content\Images\Logo_BEXIS_rgb_377x94.png" />
     <Content Include="Content\Site.css" />
     <Content Include="Content\bootstrap-slider.min.css" />
+    <Content Include="css\font-awesome.css" />
+    <Content Include="css\font-awesome.min.css" />
+    <Content Include="fonts\fontawesome-webfont.svg" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Scripts\bexis-jquery-ui.js" />
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
@@ -614,7 +617,11 @@
     <Content Include="Areas\Site\Views\Impressum\Index.cshtml" />
     <Content Include="Areas\DDM\Views\Data\_SubjectsPartial.cshtml" />
     <Content Include="Areas\Site\Views\Terms\Index.cshtml" />
-    <Content Include="Areas\SAM\Views\Dataset\Delete.cshtml" />
+    <Content Include="fonts\FontAwesome.otf" />
+    <Content Include="fonts\fontawesome-webfont.woff2" />
+    <Content Include="fonts\fontawesome-webfont.woff" />
+    <Content Include="fonts\fontawesome-webfont.ttf" />
+    <Content Include="fonts\fontawesome-webfont.eot" />
     <None Include="Properties\PublishProfiles\BPP2907.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />

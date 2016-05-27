@@ -234,7 +234,8 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                             provider.deleteTemplate(DS.Id);
                             DS.Name = DSDM.dataStructure.Name;
                             DS.Description = DSDM.dataStructure.Description;
-                            saveOrder(order, DSDM.dataStructure.Id);
+                            if(order != null && order.Length > 0)
+                                saveOrder(order, DSDM.dataStructure.Id);
                             DS = DSM.UpdateStructuredDataStructure(DS);
                         }
                         else if (Request.Params["create"] == "saveAs")
