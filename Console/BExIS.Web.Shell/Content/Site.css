@@ -150,26 +150,33 @@ footer, #footer
     background-color:white;
     padding: 10px 0;
     text-align: center;
+    vertical-align: text-top;
     line-height: normal;
     margin: 0;
     font-size: .9em;
 }
 
+#footer td
+{
+    vertical-align: text-top;
+    width: 30%;
+}
+
 #footer a:link
 {
-    color: gray;
-    text-decoration: underline;
+    color: darkgray;
+    text-decoration:none;
 }
 
 #footer a:visited
 {
-    color: gray;
-    text-decoration: underline;
+    color: darkgray;
+    text-decoration: none;
 }
 
 #footer a:hover
 {
-    color: darkgray;
+    color: darkorange;
     text-decoration: none;
 }
 

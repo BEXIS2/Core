@@ -37,9 +37,8 @@
 {
     With this interface you are able to manage (e.g. create, edit, delete) units which may be needed to define data attributes. Units cannot be edited or deleted once they are associated with a data attribute (they become locked).
     <p>
-        More information 
-        @Html.ActionLink("here", "Index", "Help", new { id = 0 }, new { @class = "bx-informationLink", title="go to help", target="_blank"})
-    </p>
+    <a href="/RPM/Help/Index/#_Toc434570750" class="bx-informationLink" title="go to help" target="_blank">More</a>
+</p>
 }
 
 <div title="Create a new Unit" class="bx-rpm-buttons">
@@ -52,9 +51,9 @@
             .Sortable()
             .Columns(columns =>
             {
-
+                columns.Bound(c => c.Unit.Id)
+                    .Width(100);
                 columns.Bound(c => c.Unit.Name);
-                columns.Bound(c => c.Unit.Id);
                 columns.Bound(c => c.Unit.Abbreviation);
                 columns.Bound(c => c.Unit.Dimension.Name).Title("Dimension Name");
                 columns.Bound(c => c.Unit.MeasurementSystem);

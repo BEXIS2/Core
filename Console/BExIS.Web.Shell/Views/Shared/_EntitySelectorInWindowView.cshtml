@@ -20,11 +20,11 @@
     .Name(windowName)
     .Visible(false)
     .Title(title)
-    .HtmlAttributes(new { @class = "bx-window" })
+    .HtmlAttributes(new { @class = "bx-window entityWindow" })
     .Modal(true)
     .Draggable(true)
     .Buttons(buttons => buttons.Close())
-    .ClientEvents(e=>e.OnLoad("OnLoad"))
+    .ClientEvents(e=>e.OnLoad("OnLoad") .OnClose("OnCloseX"))
     .Content(
         @Html.Partial("_EntitySelectorView", Model).ToHtmlString())
     )
@@ -39,10 +39,8 @@
         window.center().open();
     }
 
-    function OnClose() {
-        var window = $(this).data('tWindow');
-        window.center().close();
-
+    function OnCloseX() {
+        $(".entityWindow").remove();
     }
 
     $(".submitEntitySelection")
@@ -50,7 +48,7 @@
             var name = '@windowName';
             console.log("close window: " + name);
             $('#' + name).data('tWindow').close();
-
         });
+
 
 </script>

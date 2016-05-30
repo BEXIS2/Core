@@ -23,10 +23,12 @@
     object idX = null;
 
     string submitId = "submitTo";
-
+    string cancelId = "cancel";
+    string idAsString = Model.Title.Replace(" ", string.Empty);
     if (!String.IsNullOrEmpty(Model.Title))
     {
-        submitId += Model.Title.Replace(" ", string.Empty);
+        submitId += idAsString;
+        cancelId += idAsString;
     }
 
 
@@ -42,6 +44,9 @@
         width = Model.Data.Columns.Count * 200;
     }
 
+    GridPagerStyles pagerStyles = GridPagerStyles.PageSizeDropDown;
+    pagerStyles |= GridPagerStyles.NextPreviousAndNumeric;
+    pagerStyles |= GridPagerStyles.Numeric;
 
 }
 <div>
@@ -69,7 +74,8 @@
     {
 
         @(Html.Telerik().Grid(Model.Data)
-                .Name("TestGrid")
+                .Name(@idAsString)
+                .HtmlAttributes(new {@class= "bx-selection-grid" })
               .DataBinding(c => c.Ajax().OperationMode(GridOperationMode.Client))
               .DataKeys(keys => keys
                 .Add(Model.IDKey)
@@ -104,50 +110,52 @@
               submitId = @submitId,
               link = "/" + @Model.Reciever.Area + "/" + @Model.Reciever.Controller + "/" + @Model.Reciever.Action,
               style="width:"+@width+"px;"
-              
           })
           .Pageable(paging =>
-                paging.PageSize(50, new int[] { 1, 2, 3, 10, 50 })
+                paging.PageSize(10, new int[] { 5, 10, 50 })
                     .Total(Model.Data.Rows.Count)
+                    .Style(pagerStyles)
                     )
           .ClientEvents(events =>
-            events.OnRowSelect("OnRowSelection"))
+            events.OnRowSelect("OnRowSelection")
+            .OnDataBound("OnDataBound"))
 
         )
     }
 </div>
-<div class="bx-footer">
+<div class="bx-footer right">
     @if (!String.IsNullOrEmpty(Model.Reciever.Action) &&
-                !String.IsNullOrEmpty(Model.Reciever.Controller) &&
-                !String.IsNullOrEmpty(Model.Reciever.Area))
+                        !String.IsNullOrEmpty(Model.Reciever.Controller) &&
+                        !String.IsNullOrEmpty(Model.Reciever.Area))
     {
-
         if (String.IsNullOrEmpty(targetId))
         {
-        <a id="@submitId" class="bx-button function bx-disabled submitEntitySelection">submit</a>
+            <a id="@submitId" class="bx-button action bx-disabled submitEntitySelection">Select</a>
         }
         else
         {
-            @Ajax.ActionLink("submit", @Model.Reciever.Action, @Model.Reciever.Controller, new { area = "DCM" },
-                             new AjaxOptions
-                             {
-                                 HttpMethod = "GET",
-                                 InsertionMode = InsertionMode.Replace,
-                                 UpdateTargetId = targetId                                
-
-                             },
-                             new { @class = "bx-button function bx-disabled submitEntitySelection", @id = @submitId })
+            @Ajax.ActionLink("Select", @Model.Reciever.Action, @Model.Reciever.Controller, new { area = "DCM" },
+            new AjaxOptions
+            {
+                HttpMethod = "GET",
+                InsertionMode = InsertionMode.Replace,
+                UpdateTargetId = targetId,
+                OnSuccess= "OnSucess()"
+            },
+            new { @class = "bx-button action bx-disabled submitEntitySelection", @id = @submitId })
 
         }
+
+        <a id="@cancelId" class="bx-button action" onclick="cancel(this)">Cancel</a>
     }
 </div>
-
 <script type="text/javascript">
 
-    $(document).ready(function () {
-        resetAllTelerikIconTitles();
-        addTooltips();
-    });
+    $(document)
+        .ready(function() {
+            resetAllTelerikIconTitles();
+            addTooltips();
+        });
 
 
     function OnRowSelection(e) {
@@ -160,7 +168,7 @@
         var link = table.attr("link");
         var dataid = $(e.row).find("td")[idIndex].innerText;
 
-        console.log("submitbuttonid: "+submitId);
+        console.log("submitbuttonid: " + submitId);
 
         link += "?id=" + dataid;
 
@@ -168,6 +176,30 @@
 
         $('#' + submitId).attr("href", link);
         $('#' + submitId).removeClass("bx-disabled");
+    }
+
+    function OnDataBound()
+    {
+        addTooltips();
+        resetAllTelerikIconTitles();
+    }
+
+    function cancel(e) {
+        var window = $(e).closest(".t-window").data('tWindow');
+        if (window != null)
+        {
+            window.close();
+            $(e).closest(".t-window").remove();
+        }
+    }
+
+    function OnSucess() {
+        var window = $(".entityWindow").data('tWindow');
+        if (window != null)
+        {
+            window.close();
+            $(".entityWindow").remove();
+        }
     }
 
 </script>
