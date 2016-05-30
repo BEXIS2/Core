@@ -23,7 +23,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         public ActionResult Index()
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Push Big File ");
+            ViewBag.Title = PresentationModel.GetViewTitle("Push Big File");
 
             Session["Files"] = null;
             return View(LoadDefaultModel());
@@ -53,6 +53,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         [HttpPost]
         public ActionResult ProcessSubmit(IEnumerable<HttpPostedFileBase> attachments)
         {
+            ViewBag.Title = PresentationModel.GetViewTitle("Push Big File");
             // The Name of the Upload component is "attachments"                            
             if (attachments != null)
             {
@@ -71,7 +72,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         {
             List<BasicFileInfo> fileList = new List<BasicFileInfo>();
   
-            string userDataPath = Path.Combine(AppConfiguration.DataPath, "Temp", GetUserNameOrDefault());
+            string userDataPath = Path.Combine(AppConfiguration.DataPath, "Temp", GetUsernameOrDefault());
 
             // if folder not exist
             if (!Directory.Exists(userDataPath))
@@ -95,16 +96,16 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         #region helper
             // chekc if user exist
             // if true return usernamem otherwise "DEFAULT"
-            private string GetUserNameOrDefault()
+            private string GetUsernameOrDefault()
             {
-                string userName = string.Empty;
+                string username = string.Empty;
                 try
                 {
-                    userName = HttpContext.User.Identity.Name;
+                    username = HttpContext.User.Identity.Name;
                 }
                 catch { }
 
-                return !string.IsNullOrWhiteSpace(userName) ? userName : "DEFAULT";
+                return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
             }
 
             public void uploadFiles(IEnumerable<HttpPostedFileBase> attachments)
@@ -119,7 +120,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     filemNames += fileName.ToString()+",";
 
                     string dataPath = AppConfiguration.DataPath;
-                    var destinationPath = Path.Combine(dataPath, "Temp", GetUserNameOrDefault(), fileName);
+                    var destinationPath = Path.Combine(dataPath, "Temp", GetUsernameOrDefault(), fileName);
 
                     Debug.WriteLine("contentlength :" + file.ContentLength);
 

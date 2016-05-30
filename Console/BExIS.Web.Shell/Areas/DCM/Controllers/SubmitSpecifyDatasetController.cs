@@ -51,12 +51,19 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             // jump back to this step
             // check if dataset selected
             if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_ID))
-                if (Convert.ToInt32(TaskManager.Bus[TaskManager.DATASET_ID]) > 0)
-                {
-                    model.DatasetTitle = TaskManager.Bus[TaskManager.DATASET_TITLE].ToString();
-                    model.SelectedDatasetId = Convert.ToInt32(TaskManager.Bus[TaskManager.DATASET_ID]);
-                }
+            {
+                long datasetId = Convert.ToInt64(TaskManager.Bus[TaskManager.DATASET_ID]);
 
+                if(datasetId > 0)
+                {
+                    // add title to model
+                    model.DatasetTitle = TaskManager.Bus[TaskManager.DATASET_TITLE].ToString();
+                    // add seleted dataset id to model
+                    model.SelectedDatasetId = Convert.ToInt32(TaskManager.Bus[TaskManager.DATASET_ID]);
+                    // add informations of dataset to Bus 
+                    addSelectedDatasetToBus(datasetId);
+                }
+            }
             model.StepInfo = TaskManager.Current();
             if ((List<ListViewItem>)Session["DatasetVersionViewList"] != null) model.DatasetsViewList = (List<ListViewItem>)Session["DatasetVersionViewList"];
 
@@ -127,55 +134,15 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             ChooseDatasetViewModel model = new ChooseDatasetViewModel();
 
-            TaskManager TaskManager = (TaskManager)Session["TaskManager"];
-
+            long datasetId = Convert.ToInt64(id);
             DatasetManager datasetManager = new DatasetManager();
-            long datasetId;
-
-            if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_STATUS))
-            {
-                if (TaskManager.Bus[TaskManager.DATASET_STATUS].Equals("new"))
-                {
-                    //long newid = Convert.ToInt64(TaskManager.Bus[TaskManager.DATASET_ID]);
-                    //datasetManager.PurgeDataset(newid);
-
-                }
-
-                TaskManager.Bus[TaskManager.DATASET_STATUS] = "edit";
-            }
-            else
-            {
-                datasetId = Convert.ToInt64(id);
-                if (datasetManager.GetDatasetVersionEffectiveTupleCount(datasetManager.GetDatasetLatestVersion(datasetId)) > 0)
-                {
-                    TaskManager.AddToBus("DatasetStatus", "edit");
-                }
-                else
-                    TaskManager.AddToBus("DatasetStatus", "new");
-            }
-
-
-            datasetId = Convert.ToInt64(id);
-
             Dataset dataset = datasetManager.GetDataset(datasetId);
 
             DatasetVersion datasetVersion;
 
             if(datasetManager.IsDatasetCheckedIn(datasetId))
             {
-              datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
-
-              TaskManager.AddToBus(TaskManager.DATASET_ID, datasetId);
-
-              //Add Metadata to Bus
-              //TITLE
-              TaskManager.AddToBus(TaskManager.DATASET_TITLE, XmlDatasetHelper.GetInformation(datasetVersion, AttributeNames.title));
-
-              ResearchPlanManager rpm = new ResearchPlanManager();
-              ResearchPlan rp = rpm.Repo.Get(datasetVersion.Dataset.ResearchPlan.Id);
-              TaskManager.AddToBus(TaskManager.RESEARCHPLAN_ID, rp.Id);
-              TaskManager.AddToBus(TaskManager.RESEARCHPLAN_TITLE, rp.Title);
-
+                addSelectedDatasetToBus(datasetId);
             }
             else
             {
@@ -202,16 +169,43 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         // chekc if user exist
         // if true return usernamem otherwise "DEFAULT"
-        public string GetUserNameOrDefault()
+        public string GetUsernameOrDefault()
         {
-            string userName = string.Empty;
+            string username = string.Empty;
             try
             {
-                userName = HttpContext.User.Identity.Name;
+                username = HttpContext.User.Identity.Name;
             }
             catch { }
 
-            return !string.IsNullOrWhiteSpace(userName) ? userName : "DEFAULT";
+            return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
+        }
+
+        private void addSelectedDatasetToBus(long datasetId)
+        {
+            TaskManager = (TaskManager)Session["TaskManager"];
+            DatasetManager datasetManager = new DatasetManager();
+
+            if (datasetManager.GetDatasetVersionEffectiveTupleCount(datasetManager.GetDatasetLatestVersion(datasetId)) > 0)
+            {
+                TaskManager.AddToBus("DatasetStatus", "edit");
+            }
+            else
+                TaskManager.AddToBus("DatasetStatus", "new");
+
+            DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
+
+            TaskManager.AddToBus(TaskManager.DATASET_ID, datasetId);
+
+            //Add Metadata to Bus
+            //TITLE
+            TaskManager.AddToBus(TaskManager.DATASET_TITLE, XmlDatasetHelper.GetInformation(datasetVersion, AttributeNames.title));
+
+            ResearchPlanManager rpm = new ResearchPlanManager();
+            ResearchPlan rp = rpm.Repo.Get(datasetVersion.Dataset.ResearchPlan.Id);
+            TaskManager.AddToBus(TaskManager.RESEARCHPLAN_ID, rp.Id);
+            TaskManager.AddToBus(TaskManager.RESEARCHPLAN_TITLE, rp.Title);
+
         }
 
         #endregion

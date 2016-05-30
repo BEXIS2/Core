@@ -10,6 +10,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Models
         public long Id { get; set; }
         public string Title { get; set; }
         public bool ViewAccess { get; set; }
-
+        public bool GrantAccess { get; set; }
+        public bool IsCheckedIn { get; set; }
     }
 }

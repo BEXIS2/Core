@@ -1,26 +1,27 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Web.Mvc;
 using BExIS.Security.Entities.Subjects;
+using BExIS.Web.Shell.Areas.SAM.Helpers;
 using DataAnnotationsExtensions;
 
 namespace BExIS.Web.Shell.Areas.SAM.Models
 {
     public class AccountRegisterModel
     {
-        [Display(Name = "User Name")]
-        [RegularExpression("^[\\S]*$", ErrorMessage = "The user name must not contain spaces.")]
-        [Remote("ValidateUserName", "Account")]
+        [Display(Name = "Username")]
+        [RegularExpression("^[\\S]*$", ErrorMessage = "The Username must be without spaces.")]
+        [Remote("ValidateUsername", "Account")]
         [Required(AllowEmptyStrings = false)]
-        [StringLength(64, ErrorMessage = "The user name must be {2} - {1} characters long.", MinimumLength = 3)]
-        public string UserName { get; set; }
+        [StringLength(64, ErrorMessage = "The Username must be {2} - {1} characters long.", MinimumLength = 3)]
+        public string Username { get; set; }
 
         [Display(Name = "Password")]
-        [RegularExpression("^[\\S]*$", ErrorMessage = "The password must not contain spaces.")]
+        [RegularExpression("^[\\S]*$", ErrorMessage = "The Password must not contain spaces.")]
         [Required]
-        [StringLength(24, ErrorMessage = "The password must be {2} - {1} characters long.", MinimumLength = 6)]
+        [StringLength(24, ErrorMessage = "The Password must be {2} - {1} characters long.", MinimumLength = 6)]
         public string Password { get; set; }
 
-        [global::System.Web.Mvc.Compare("Password", ErrorMessage = "The password and confirmation do not match.")]
+        [global::System.Web.Mvc.Compare("Password", ErrorMessage = "The Password and Confirm Password do not match.")]
         [Display(Name = "Confirm Password")]
         [Required]
         public string ConfirmPassword { get; set; }
@@ -33,18 +34,26 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
         [Email]
         [Remote("ValidateEmail", "Account")]
         [Required]
-        [StringLength(250, ErrorMessage = "The email must be {2} - {1} characters long.", MinimumLength = 5)]
+        [StringLength(250, ErrorMessage = "The Email Address must be {2} - {1} characters long.", MinimumLength = 5)]
         public string Email { get; set; }
 
-        [Display(Name = "Security Answer")]
-        [RegularExpression("^[^\\s]+(\\s+[^\\s]+)*", ErrorMessage = "The security answer must start and end with no space.")]
+        [Display(Name = "Security Question")]
         [Required]
-        [StringLength(50, ErrorMessage = "The security answer must be less than {1} characters long.")]
+        public long SecurityQuestion { get; set; }
+
+        [Display(Name = "Security Answer")]
+        [RegularExpression("^[^\\s]+(\\s+[^\\s]+)*", ErrorMessage = "The Security Answer must start and end with no space.")]
+        [Required]
+        [StringLength(50, ErrorMessage = "The Security Answer must be less than {1} characters long.")]
         public string SecurityAnswer { get; set; }
 
         public SecurityQuestionSelectListModel SecurityQuestionList { get; set; }
 
         public AuthenticatorSelectListModel AuthenticatorList { get; set; }
+
+        [Display(Name = "Terms and Conditions")]
+        [MustBeTrue(ErrorMessage = "You must agree to the Terms and Conditions before register.")]
+        public bool TermsAndConditions { get; set; }
 
         public AccountRegisterModel()
         {
@@ -60,15 +69,15 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
 
         public long AuthenticatorId { get; set; }
 
-        [Display(Name = "User Name")]
-        public string UserName { get; set; }
+        [Display(Name = "Username")]
+        public string Username { get; set; }
 
         [Display(Name = "Password")]
-        [RegularExpression("^[\\S]*$", ErrorMessage = "The password must not contain spaces.")]
-        [StringLength(24, ErrorMessage = "The password must be {2} - {1} characters long.", MinimumLength = 6)]
+        [RegularExpression("^[\\S]*$", ErrorMessage = "The Password must not contain spaces.")]
+        [StringLength(24, ErrorMessage = "The Password must be {2} - {1} characters long.", MinimumLength = 6)]
         public string Password { get; set; }
 
-        [global::System.Web.Mvc.Compare("Password", ErrorMessage = "The password and confirmation do not match.")]
+        [global::System.Web.Mvc.Compare("Password", ErrorMessage = "The Password and Confirm Password do not match.")]
         [Display(Name = "Confirm Password")]
         public string ConfirmPassword { get; set; }
 
@@ -84,8 +93,8 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
         public string Email { get; set; }
 
         [Display(Name = "Security Answer")]
-        [RegularExpression("^[^\\s]+(\\s+[^\\s]+)*", ErrorMessage = "The security answer must start and end with no space.")]
-        [StringLength(50, ErrorMessage = "The security answer must be less than {1} characters long.")]
+        [RegularExpression("^[^\\s]+(\\s+[^\\s]+)*", ErrorMessage = "The Security Answer must start and end with no space.")]
+        [StringLength(50, ErrorMessage = "The Security Answer must be less than {1} characters long.")]
         public string SecurityAnswer { get; set; }
 
         public long SecurityQuestionId { get; set; }
@@ -105,7 +114,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
             return new MyAccountModel()
             {
                 UserId = user.Id,
-                UserName = user.Name,
+                Username = user.Name,
                 FullName = user.FullName,
                 Email = user.Email,
                 AuthenticatorId = user.Authenticator.Id,
@@ -117,8 +126,8 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
     public class AccountLogOnModel
     {
         [Required]
-        [Display(Name = "User name")]
-        public string UserName { get; set; }
+        [Display(Name = "Username")]
+        public string Username { get; set; }
 
         [Required]
         [DataType(DataType.Password)]
@@ -135,7 +144,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
 
     public class ChangePasswordModel
     {
-        public string UserName { get; set; }
+        public string Username { get; set; }
 
         public string SecurityQuestion { get; set; }
 
@@ -148,6 +157,6 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
 
     public class ResetPasswordModel
     {
-        public string UserName { get; set; }
+        public string Username { get; set; }
     }
 }

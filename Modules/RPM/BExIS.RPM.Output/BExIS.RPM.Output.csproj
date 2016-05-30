@@ -69,6 +69,10 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\ClassLibrary1\BExIS.IO.DataType.DisplayPattern.csproj">
+      <Project>{8b2ec2b0-6870-456b-be2d-b0fb4ea68d83}</Project>
+      <Name>BExIS.IO.DataType.DisplayPattern</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Components\DLM\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
       <Project>{b4e7b1bf-01b4-40af-8d19-b8f362167261}</Project>
       <Name>BExIS.Dlm.Entities</Name>

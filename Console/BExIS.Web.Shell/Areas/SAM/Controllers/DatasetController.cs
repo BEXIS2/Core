@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using BExIS.Dlm.Entities.Data;
@@ -9,6 +10,8 @@ using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Subjects;
 using Vaiona.Web.Mvc.Models;
+using BExIS.Ddm.Api;
+using Vaiona.IoC;
 
 namespace BExIS.Web.Shell.Areas.Sam.Controllers
 {
@@ -24,7 +27,7 @@ namespace BExIS.Web.Shell.Areas.Sam.Controllers
         /// <returns></returns>
         public ActionResult Index()
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Index");
+            ViewBag.Title = PresentationModel.GetViewTitle("Maintain Datasets");
             return View();
         }
 
@@ -34,7 +37,7 @@ namespace BExIS.Web.Shell.Areas.Sam.Controllers
         /// <returns></returns>
         public ActionResult List()
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Datasets");
+            ViewBag.Title = PresentationModel.GetViewTitle("Maintain Datasets");
 
             DatasetManager dm = new DatasetManager();
             PermissionManager permissionManager = new PermissionManager();
@@ -42,7 +45,7 @@ namespace BExIS.Web.Shell.Areas.Sam.Controllers
 
             User user = subjectManager.GetUserByName(HttpContext.User.Identity.Name);
 
-            List<Dataset> datasets = dm.DatasetRepo.Query().ToList();
+            List<Dataset> datasets = dm.DatasetRepo.Query().OrderBy(p=>p.Id).ToList();
 
             List<long> datasetIds = new List<long>();
             if (user != null)
@@ -67,9 +70,21 @@ namespace BExIS.Web.Shell.Areas.Sam.Controllers
             DatasetManager dm = new DatasetManager();
             PermissionManager pm = new PermissionManager();
 
-            pm.DeleteDataPermissionsByEntity(1, id);
-            bool b = dm.DeleteDataset(id, this.ControllerContext.HttpContext.User.Identity.Name, true);
-            return RedirectToAction("List");
+            try
+            {
+                if (dm.DeleteDataset(id, this.ControllerContext.HttpContext.User.Identity.Name, true))
+                {
+                    pm.DeleteDataPermissionsByEntity(1, id);
+                    ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+                    provider?.UpdateSingleDatasetIndex(id, IndexingAction.DELETE);
+                }
+            }
+            catch (Exception e)
+            {
+                ViewData.ModelState.AddModelError("", string.Format("Dataset {0} could not be deleted.", id));
+            }
+            return View();
+            //return RedirectToAction("List");
         }
 
         /// <summary>
@@ -85,8 +100,19 @@ namespace BExIS.Web.Shell.Areas.Sam.Controllers
             DatasetManager dm = new DatasetManager();
             PermissionManager pm = new PermissionManager();
 
-            pm.DeleteDataPermissionsByEntity(1, id);
-            bool b = dm.PurgeDataset(id);
+            try
+            {
+                if (dm.PurgeDataset(id))
+                {
+                    pm.DeleteDataPermissionsByEntity(1, id);
+                    ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+                    provider?.UpdateSingleDatasetIndex(id, IndexingAction.DELETE);
+                }
+            }
+            catch (Exception e)
+            {
+                ViewData.ModelState.AddModelError("", string.Format("Dataset {0} could not be purged.", id));
+            }            
             return View();
         }
 

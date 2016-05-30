@@ -3,6 +3,13 @@
 @using System.Data;
 @using BExIS.Dlm.Entities.DataStructure;
 
+@section Information
+{
+    <p>This table contains all datasets, created by you as a current logged on user. </p>
+    <p>By right clicking on the header, you can manage the visibility of columns. You can also use filtering or grouping to see the more operative informations.</p>
+    <p>To view more details of a dataset, click the <strong>View details</strong> button available in each row.</p>   
+}
+
 @{
     int PageSize = 10;
     int CurrentPage = 1;
@@ -43,69 +50,69 @@
             .EnableCustomBinding(true)
             .HtmlAttributes(new { @class = "result-grid" })
             .Columns(columns =>
+            {
+
+                for (int i = 0; i < Model.Columns.Count; i++)
                 {
-                    
-                    for (int i = 0; i < Model.Columns.Count; i++)
+                    DataColumn column = Model.Columns[i];
+                    if (DefaultHeaderList.Where(p => p.Name.Equals(column.ColumnName)).Count() > 0)
                     {
-                        DataColumn column = Model.Columns[i];
-                        if (DefaultHeaderList.Where(p => p.Name.Equals(column.ColumnName)).Count() > 0)
+
+                        string title;
+
+                        if (column.Caption == "")
                         {
-
-                            string title;
-
-                            if (column.Caption == "")
-                            {
-                                title = column.ColumnName;
-                            }
-                            else
-                            {
-                                title = column.Caption;
-                            }
-                            if (title == "ID")
-                            {
-                                columns.Bound(column.DataType, column.ColumnName)
-                                   .Title(title);
-                            }
-                            if (title == "Title")
-                            {
-                                columns.Bound(column.DataType, column.ColumnName)
-                                   .Title(title);
-                            }
-                            if (title == "Description")
-                            {
-                                columns.Bound(column.DataType, column.ColumnName)
-                                   .Title(title);
-                            }
-                            if (title == "View" | title == "Update" | title == "Delete" | title == "Download" | title == "Grant")
-                            {
-                                columns.Bound(column.DataType, column.ColumnName)
-                                   .Title(title)
-                                   .Filterable(false);
-                            }
-                            
-                                
+                            title = column.ColumnName;
                         }
                         else
                         {
-                            columns.Bound(column.DataType, column.ColumnName).Hidden()
-                                   .Title(column.Caption);
-
-                        }                       
-                        
+                            title = column.Caption;
+                        }
+                        if (title == "ID")
+                        {
+                            columns.Bound(column.DataType, column.ColumnName)
+                               .Title(title);
+                        }
+                        if (title == "Title")
+                        {
+                            columns.Bound(column.DataType, column.ColumnName)
+                               .Title(title);
+                        }
+                        if (title == "Description")
+                        {
+                            columns.Bound(column.DataType, column.ColumnName)
+                               .Title(title);
+                        }
+                        if (title == "View" | title == "Update" | title == "Delete" | title == "Download" | title == "Grant")
+                        {
+                            columns.Bound(column.DataType, column.ColumnName)
+                               .Title(title)
+                               .Filterable(false);
+                        }
                     }
-                    if (@Model.Columns.Count > 0)
+                    else
                     {
-                            columns.Bound("").Width(40).ClientTemplate(
-                            "<div class='searchResultFunctionDiv'>" +
-                                @Html.ActionLink(" ", "ShowData", "Data", new { area = "DDM", id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>" }, new { @class = "bx bx-grid-function bx-show", @id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>" }) +
-                             "</div>"
-                            )                            
-                            .Groupable(false)
-                            .Sortable(false)
-                            .Filterable(false);
+                        columns.Bound(column.DataType, column.ColumnName).Hidden()
+                               .Title(column.Caption);
                     }
 
-                })
+                }
+                if (@Model.Columns.Count > 0)
+                {
+                    columns.Bound("").Width(70).ClientTemplate(
+                    "<div class='searchResultFunctionDiv'>" +
+                        "<a  id='<#= " + @Model.Columns[Id.Name].ColumnName + "#>' class = 'bx bx-grid-function bx-show' title = 'View details' onclick='onclickDataset(this)'></a>" +
+
+                        //@Html.ActionLink(" ", "ShowData", "Data", new { area = "DDM", id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>" }, new { @class = "bx bx-grid-function bx-show", @id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>", title = "View details" }) +
+                        @Html.ActionLink(" ", "Index", "CreateDataset", new { area = "DCM", id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>", type = "DatasetId" }, new { @class = "bx bx-grid-function bx-copy", @id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>", title = "Copy dataset" }) +
+                     "</div>"
+                    )
+                    .Groupable(false)
+                    .Sortable(false)
+                    .Filterable(false);
+                }
+
+            })
 
             .ClientEvents(events => events
                         .OnComplete("onComplete")
@@ -113,7 +120,7 @@
                         .OnSubmitChanges("refreshGrid")
                         .OnRowDataBound("resultGrid_OnRowDataBound")
                         .OnDataBound("resetAllTelerikIconTitles")
-                        
+
                        )
             .Pageable(paging =>
                 paging
@@ -153,6 +160,37 @@
     function onComplete() {
 
 
+    }
+
+    function onclickDataset(e) {
+
+        // checked
+        var id = e.getAttribute("id");
+
+
+        var data = {
+            id: id
+        }
+
+        $.ajax({
+            url: '/DDM/Data/IsDatasetCheckedIn',
+            type: 'POST',
+            data: JSON.stringify(data),
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            error: function (xhr) {
+                alert('Error: ' + xhr.statusText);
+
+            },
+            success: function (result) {
+                if (result) {
+                    window.top.location = "/DDM/Data/ShowData/" + id;
+                } else {
+
+                    alert("Dataset is locked. Please try again later.");
+                }
+            }
+        });
     }
 
 

@@ -1,0 +1,17 @@
+Preparing Help HTML file
+_________________________
+
+- Write help file in a word document.
+- Before starting the table of contents write: Start Contents
+- Before starting the content write: Start Context
+- Save the word document as a HTML file (select: "Web Page, Filtered" option)
+  Call it as one of this names:
+
+	1- DCM_UserGuide (DataCollection)
+	2- DDM_UsersGuide (SearchUI)
+	3- DIM_UserGuide (DataDissemination)
+	4- RPM_UserGuide (DataPlanning)
+	5- SAM_UserGuide (SystemAdministration)
+
+Copy and paste HTML file to the related Module in this path: "Views>Help>UserGuides"
+and folder of pictures to this path: "Images"

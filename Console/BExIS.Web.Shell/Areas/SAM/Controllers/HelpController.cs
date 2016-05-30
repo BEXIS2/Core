@@ -3,6 +3,7 @@ using System.IO;
 using System.Net;
 using System.Web.Mvc;
 using BExIS.Web.Shell.Areas.SAM.Models;
+using Vaiona.Web.Mvc.Models;
 
 namespace BExIS.Web.Shell.Areas.SAM.Controllers
 {
@@ -13,6 +14,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
 
         public ActionResult Index()
         {
+            ViewBag.Title = PresentationModel.GetViewTitle("Administration Manual");
             string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Areas", "SAM", "Views\\Help\\UserGuides\\SAM_UserGuide.htm");
             string imagePath = "/Areas/SAM/Images/";
 
