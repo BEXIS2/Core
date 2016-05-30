@@ -28,13 +28,15 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Helpers
         /// <returns></returns>
         public static string Encode(string value)
         {
+            string encodedValue = value;
+
+            // has special characters
             if (SpecialCharactrersInValue(value))
             {
-                return ReplaceSpecialCharacters(value);
-
+                encodedValue = ReplaceSpecialCharacters(value);
             }
 
-            return value;
+            return encodedValue;
         }
 
         /// <summary>
@@ -45,12 +47,11 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Helpers
         /// <seealso cref=""/>
         /// <param name="value"></param>    
         /// <returns></returns>
-        private static string ReplaceSpecialCharacters(string value)
+        private static string ReplaceSpecialCharacters(string value,bool encodeSpace= false)
         {
 
             foreach (string specailCharacter in specialCharacterArray)
             {
-             
                 if (value.Contains(specailCharacter)) value = value.Replace(specailCharacter, @"\" + specailCharacter);
             }
 

@@ -83,6 +83,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             
             public ActionResult Add()
             {
+                ViewBag.Title = PresentationModel.GetViewTitle("Manage Search");
                 List<SearchAttributeViewModel> searchAttributeList = (List<SearchAttributeViewModel>)Session["searchAttributeList"];
 
                 SearchAttributeViewModel sa = new SearchAttributeViewModel();
@@ -95,6 +96,8 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
             public ActionResult Edit(int id)
             {
+                ViewBag.Title = PresentationModel.GetViewTitle("Manage Search");
+
                 List<SearchAttributeViewModel> searchAttributeList = (List<SearchAttributeViewModel>)Session["searchAttributeList"];
 
                 ViewData["windowVisible"] = true;
@@ -105,6 +108,8 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
             public ActionResult Delete(int id)
             {
+                ViewBag.Title = PresentationModel.GetViewTitle("Manage Search");
+
                 List<SearchAttributeViewModel> searchAttributeList = (List<SearchAttributeViewModel>)Session["searchAttributeList"];
                 searchAttributeList.Remove(searchAttributeList.Where(p => p.id.Equals(id)).First());
                 Session["searchAttributeList"] = searchAttributeList;
@@ -204,6 +209,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
         public ActionResult ResetConfig()
         {
+            ViewBag.Title = PresentationModel.GetViewTitle("Manage Search");
             try
             {
                 ISearchDesigner sd = GetSearchDesigner();
@@ -222,6 +228,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
         public ActionResult ReloadConfig()
         {
+            ViewBag.Title = PresentationModel.GetViewTitle("Manage Search");
             ISearchDesigner sd = GetSearchDesigner();
             sd.Reload();
 
@@ -294,7 +301,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
         public ActionResult RefreshSearch()
         {
-
+            ViewBag.Title = PresentationModel.GetViewTitle("Manage Search");
             ISearchDesigner sd = GetSearchDesigner();
 
             bool success = false;

@@ -3,7 +3,7 @@
     <!-- Mapping BaseEntity properties -->
     
     <id name="Id" type="Int64">
-      <column name="Id" />
+      <column name="Id" index="idx_MetadataPackageUsages_id"/>
       <generator class="native" />
     </id>
 
@@ -26,7 +26,7 @@
     </property>
 
     <property name="Label" type="String">
-      <column name="Label" />
+      <column name="Label" index="idx_MetadataPackageUsages_label"/>
     </property>
 
     <property name="Description" type="String">

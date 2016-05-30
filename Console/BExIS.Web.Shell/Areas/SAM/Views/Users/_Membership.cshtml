@@ -9,11 +9,11 @@
             .Template(@<text>
                 @if(item.IsUserInGroup)
                 {
-                    <input type='checkbox' onchange='setMembership(this.checked, item.Id);' name='selectedGroups' value='item.Id' checked='checked' />
+                    <input type='checkbox' onchange='setMembership(this.checked, @item.Id);' name='selectedGroups' value='@item.Id' checked='checked' />
                 }
                 else
                 {
-                    <input type='checkbox' onchange='setMembership(this.checked, item.Id);' name='selectedGroups' value='item.Id' />
+                    <input type='checkbox' onchange='setMembership(this.checked, @item.Id);' name='selectedGroups' value='@item.Id' />
                 }
             </text>)
             .ClientTemplate("<input type='checkbox' onchange='setMembership(this.checked, <#= Id #>);' name='selectedGroups' value='<#= Id #>' <#= IsUserInGroup ? checked='checked' : '' #> />")

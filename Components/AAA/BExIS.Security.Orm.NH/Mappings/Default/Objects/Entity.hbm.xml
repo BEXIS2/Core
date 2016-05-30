@@ -3,7 +3,7 @@
 
     <!-- Mapping BaseEntity properties -->
     <id name="Id" type="Int64">
-      <column name="Id" />
+      <column name="Id" index="idx_Entities_id"/>
       <generator class="native" />
     </id>
 
@@ -15,9 +15,15 @@
       <column name="Extra" not-null="false" sql-type="xml" />
     </property>
 
-    <property name="Name" type="String" />
-    <property name="ClassPath" type="String" />
-    <property name="AssemblyPath" type="String" />
+    <property name="Name" type="String" >
+      <column name="Name" index="idx_Entities_name"/>
+    </property>
+    <property name="AssemblyPath" type="String" >
+      <column name="AssemblyPath" />
+    </property>
+    <property name="ClassPath" type="String" >
+      <column name="ClassPath" />
+    </property>
 
     <set name="DataPermissions" inverse="true" cascade="all-delete-orphan" lazy="true">
       <key column="EntityRef"/>

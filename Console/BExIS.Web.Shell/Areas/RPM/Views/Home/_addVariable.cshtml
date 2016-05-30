@@ -59,11 +59,12 @@ else
                     .Title("")
                     .Width(50)
                     .HtmlAttributes(new { style = "text-align:center; padding:0px;" });
-                    
+
 
                 //columns.Command(commands => commands.Select()).Title("Select");
+                columns.Bound(c => c.Id)
+                    .Width(100);
                 columns.Bound(c => c.Name);
-                columns.Bound(c => c.Id);
                 columns.Bound(c => c.ShortName);
                 columns.Bound(c => c.Description);
                 //columns.Bound(c => c.Classification.Name)

@@ -15,12 +15,12 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
 
     public class UserCreateModel
     {
-        [Display(Name = "User Name")]
+        [Display(Name = "Username")]
         [RegularExpression("^[\\S]*$", ErrorMessage = "The user name must not contain spaces.")]
-        [Remote("ValidateUserName", "Users")]
+        [Remote("ValidateUsername", "Users")]
         [Required]
         [StringLength(64, ErrorMessage = "The user name must be {2} - {1} characters long.", MinimumLength = 3)]
-        public string UserName { get; set; }
+        public string Username { get; set; }
 
         [Display(Name = "Password")]
         [RegularExpression("^[\\S]*$", ErrorMessage = "The password is invalid.")]
@@ -44,6 +44,10 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
         [StringLength(250, ErrorMessage = "The email must be {2} - {1} characters long.", MinimumLength = 5)]
         public string Email { get; set; }
 
+        [Display(Name = "Security Question")]
+        [Required]
+        public long SecurityQuestion { get; set; }
+
         [Display(Name = "Security Answer")]
         [RegularExpression("^[^\\s]+(\\s+[^\\s]+)*", ErrorMessage = "The security answer must start and end with no space.")]
         [Required]
@@ -66,7 +70,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
         public long UserId { get; set; }
 
         [Required]
-        public string UserName { get; set; }
+        public string Username { get; set; }
 
         [Required]
         public string FullName { get; set; }
@@ -95,7 +99,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
             return new UserEditModel()
             {
                 UserId = user.Id,
-                UserName = user.Name,
+                Username = user.Name,
                 FullName = user.FullName,
                 Email = user.Email,
 
@@ -110,7 +114,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
     {
         public long Id { get; set; }
 
-        public string UserName { get; set; }
+        public string Username { get; set; }
 
         public string FullName { get; set; }
 
@@ -127,7 +131,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
             return new UserGridRowModel()
             {
                 Id = user.Id,
-                UserName = user.Name,
+                Username = user.Name,
                 FullName = user.FullName,
                 Email = user.Email,
 

@@ -24,84 +24,86 @@
 
 
 @(Html.Telerik().Grid<System.Data.DataRow>()
-		.Name("resultGrid")
+        .Name("resultGrid")
 
-			.DataBinding(dataBinding => dataBinding
-				.Ajax()
-				.Select("_CustomBinding", "Home", new { area = "DDM" })
-			)
-			
-			.EnableCustomBinding(true)
-			.HtmlAttributes(new { @class = "result-grid" })
-			.Columns(columns =>
-				{
-					
-					
-					for (int i = 0; i < Model.Columns.Count; i++)
-					{
-						DataColumn column = Model.Columns[i];
-						if (DefaultHeaderList.Any(p => p.Name.Equals(column.ColumnName)))
-						{
+            .DataBinding(dataBinding => dataBinding
+                .Ajax()
+                .Select("_CustomBinding", "Home", new { area = "DDM" })
+            )
 
-							string title;
+            .EnableCustomBinding(true)
+            .HtmlAttributes(new { @class = "result-grid" })
+            .Columns(columns =>
+            {
 
-							if (column.Caption == "")
-							{
-								title = column.ColumnName;
-							}
-							else
-							{
-								title = column.Caption;
-							}
 
-						    columns.Bound(column.DataType, column.ColumnName)
-						        .Title(title);
-						}
-						else
-						{
-							columns.Bound(column.DataType, column.ColumnName).Hidden()
-								   .Title(column.Caption);
+                for (int i = 0; i < Model.Columns.Count; i++)
+                {
+                    DataColumn column = Model.Columns[i];
+                    if (DefaultHeaderList.Any(p => p.Name.Equals(column.ColumnName)))
+                    {
 
-						}
-					}
+                        string title;
 
-					if (@Model.Columns.Count > 0)
-					{
-						columns.Bound("").Width(40).ClientTemplate(
-						"<div class='searchResultFunctionDiv'>" +
-							@Html.ActionLink(" ", "ShowData", "Data", new { area = "DDM", id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>" }, new { @class = "bx bx-grid-function bx-show", @id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>" }) +
-						 "</div>"
-						)
-						.Groupable(false)
-						.Sortable(false)
-						.Filterable(false);
+                        if (column.Caption == "")
+                        {
+                            title = column.ColumnName;
+                        }
+                        else
+                        {
+                            title = column.Caption;
+                        }
 
-					}
+                        columns.Bound(column.DataType, column.ColumnName)
+                            .Title(title);
+                    }
+                    else
+                    {
+                        columns.Bound(column.DataType, column.ColumnName).Hidden()
+                               .Title(column.Caption);
 
-				})
+                    }
+                }
 
-			.ClientEvents(events => events
-						.OnComplete("onComplete")
-						.OnLoad("refreshGrid")
-						.OnSubmitChanges("refreshGrid")
-						.OnRowDataBound("resultGrid_OnRowDataBound")
-						.OnDataBound("onDataBound")
+                if (@Model.Columns.Count > 0)
+                {
+                    columns.Bound("").Width(40).ClientTemplate(
+                    "<div class='searchResultFunctionDiv'>" +
+                        "<a  id='<#= " + @Model.Columns[Id.Name].ColumnName +"#>' class = 'bx bx-grid-function bx-show' title = 'View details' onclick='onclickDataset(this)'></a>"+
+
+
+                     //@Html.ActionLink(" ", "ShowData", "Data", new { area = "DDM", id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>" }, new { @class = "bx bx-grid-function bx-show", @id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>", title = "View details"}) +
+                     "</div>"
+                    )
+                    .Groupable(false)
+                    .Sortable(false)
+                    .Filterable(false);
+                }
+
+            })
+
+            .ClientEvents(events => events
+                        .OnComplete("onComplete")
+                        .OnLoad("refreshGrid")
+                        .OnSubmitChanges("refreshGrid")
+                        .OnRowDataBound("resultGrid_OnRowDataBound")
+                        .OnDataBound("onDataBound")
                         .OnColumnShow("resultGrid_OnColumnChanged")
                         .OnColumnHide("resultGrid_OnColumnChanged")
-                        
-						)
-			.Pageable(paging =>
-				paging
-						.Style(pagerStyles)
-						.PageSize(PageSize)
-					.Position(GridPagerPosition.Both)
-						.PageTo(CurrentPage)
-					)
 
-			.Sortable()
-			.Filterable()
-			.ColumnContextMenu()
-			
+                        )
+            .Pageable(paging =>
+                paging
+                        .Style(pagerStyles)
+                        .PageSize(PageSize)
+                    .Position(GridPagerPosition.Both)
+                        .PageTo(CurrentPage)
+                    )
+
+            .Sortable()
+            .Filterable()
+            .ColumnContextMenu()
+
 
 )
 
@@ -137,6 +139,37 @@
 		//	}
 		//});
 
+	}
+
+	function onclickDataset(e) {
+
+        // checked
+	    var id = e.getAttribute("id");
+
+
+	    var data = {
+	        id: id
+        }
+
+	    $.ajax({
+	        url: '/DDM/Data/IsDatasetCheckedIn',
+	        type: 'POST',
+	        data: JSON.stringify(data),
+	        dataType: 'json',
+	        contentType: 'application/json; charset=utf-8',
+	        error: function (xhr) {
+	            alert('Error: ' + xhr.statusText);
+
+	        },
+	        success: function (result) {
+	            if (result) {
+	                window.top.location = "/DDM/Data/ShowData/" + id;
+	            } else {
+	                
+                    alert("Dataset is locked. Please try again later.");
+	            }
+	        }
+	    });
 	}
 
 

@@ -42,9 +42,9 @@ namespace BExIS.Security.Services.Subjects
             return SubjectsRepo.Query(s => s.IsSystemSubject == false);
         }
 
-        public bool AddUserToGroup(string userName, string groupName)
+        public bool AddUserToGroup(string username, string groupName)
         {
-            User user = GetUserByName(userName);
+            User user = GetUserByName(username);
             Group group = GetGroupByName(groupName);
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
@@ -178,9 +178,9 @@ namespace BExIS.Security.Services.Subjects
             return GroupsRepo.Get(id).Name;
         }
 
-        public IQueryable<Group> GetGroupsFromUserName(string userName)
+        public IQueryable<Group> GetGroupsFromUsername(string username)
         {
-            return GroupsRepo.Query(g => g.Users.Any(u => u.Name.ToLower() == userName.ToLower()));
+            return GroupsRepo.Query(g => g.Users.Any(u => u.Name.ToLower() == username.ToLower()));
         }
 
         public IQueryable<User> GetUsersFromGroupName(string groupName)
@@ -217,9 +217,9 @@ namespace BExIS.Security.Services.Subjects
             }
         }
 
-        public bool IsUserInGroup(string userName, string groupName)
+        public bool IsUserInGroup(string username, string groupName)
         {
-            if (GetUsersFromGroupName(groupName).Where(u => u.Name.ToLower() == userName.ToLower()).Count() == 1)
+            if (GetUsersFromGroupName(groupName).Where(u => u.Name.ToLower() == username.ToLower()).Count() == 1)
             {
                 return true;
             }
@@ -229,9 +229,9 @@ namespace BExIS.Security.Services.Subjects
             }
         }
 
-        public bool RemoveUserFromGroup(string userName, string groupName)
+        public bool RemoveUserFromGroup(string username, string groupName)
         {
-            User user = GetUserByName(userName);
+            User user = GetUserByName(username);
             Group group = GetGroupByName(groupName);
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
@@ -327,12 +327,12 @@ namespace BExIS.Security.Services.Subjects
             get { return 30; }
         }
 
-        public bool ActivateUser(string userName)
+        public bool ActivateUser(string username)
         {
             throw new NotImplementedException();
         }
 
-        public bool ApproveUser(string userName)
+        public bool ApproveUser(string username)
         {
             throw new NotImplementedException();
         }
@@ -371,11 +371,11 @@ namespace BExIS.Security.Services.Subjects
             return false;
         }
 
-        public User CreateUser(string userName, long authenticatorId)
+        public User CreateUser(string username, long authenticatorId)
         {
             User user = new User()
             {
-                Name = userName,
+                Name = username,
                 Authenticator = AuthenticatorsRepo.Get(authenticatorId),
 
                 LastActivityDate = DateTime.Now,
@@ -405,14 +405,14 @@ namespace BExIS.Security.Services.Subjects
             return (user);
         }
 
-        public User CreateUser(string userName, string password, string fullName, string email, long securityQuestionId, string securityAnswer, long authenticatorId)
+        public User CreateUser(string username, string password, string fullName, string email, long securityQuestionId, string securityAnswer, long authenticatorId)
         {
             string passwordSalt = generateSalt(SaltLength);
             string securityAnswerSalt = generateSalt(SaltLength);
 
             User user = new User()
             {
-                Name = userName,
+                Name = username,
                 FullName = fullName,
                 Email = email,
                 Password = hashSecurityProperty(password, passwordSalt),
@@ -482,9 +482,9 @@ namespace BExIS.Security.Services.Subjects
             return (false);
         }
 
-        public bool DeleteUserByName(string userName)
+        public bool DeleteUserByName(string username)
         {
-            User user = GetUserByName(userName);
+            User user = GetUserByName(username);
 
             if (user != null)
             {
@@ -515,14 +515,14 @@ namespace BExIS.Security.Services.Subjects
             return UsersRepo.Get(id) != null ? true : false;
         }
 
-        public bool ExistsUserName(string userName)
+        public bool ExistsUsername(string username)
         {
-            return UsersRepo.Get(u => u.Name.ToLower() == userName.ToLower()).Count == 1 ? true : false;
+            return UsersRepo.Get(u => u.Name.ToLower() == username.ToLower()).Count == 1 ? true : false;
         }
 
-        public bool ExistsUserNameWithAuthenticatorId(string userName, long authenticatorId)
+        public bool ExistsUsernameWithAuthenticatorId(string username, long authenticatorId)
         {
-            return UsersRepo.Get(u => u.Name.ToLower() == userName.ToLower() && u.Authenticator.Id == authenticatorId).Count == 1 ? true : false;
+            return UsersRepo.Get(u => u.Name.ToLower() == username.ToLower() && u.Authenticator.Id == authenticatorId).Count == 1 ? true : false;
         }
 
         private string generateSalt(int size)
@@ -571,9 +571,9 @@ namespace BExIS.Security.Services.Subjects
             }
         }
 
-        public User GetUserByName(string userName, bool isOnline = false)
+        public User GetUserByName(string username, bool isOnline = false)
         {
-            ICollection<User> users = UsersRepo.Query(u => u.Name.ToLower() == userName.ToLower()).ToArray();
+            ICollection<User> users = UsersRepo.Query(u => u.Name.ToLower() == username.ToLower()).ToArray();
 
             if (users.Count() == 1)
             {
@@ -599,12 +599,12 @@ namespace BExIS.Security.Services.Subjects
             }
         }
 
-        public string GetUserNameByEmail(string email)
+        public string GetUsernameByEmail(string email)
         {
             return UsersRepo.Get(u => u.Email.ToLower() == email.ToLower()).FirstOrDefault().Name;
         }
 
-        public string GetUserNameById(long id)
+        public string GetUsernameById(long id)
         {
             return UsersRepo.Get(id).Name;
         }
@@ -628,14 +628,14 @@ namespace BExIS.Security.Services.Subjects
             return Convert.ToBase64String(hash);
         }
 
-        public User RegisterUser(string userName, string password, string fullName, string email, long securityQuestionId, string securityAnswer, long authenticatorId)
+        public User RegisterUser(string username, string password, string fullName, string email, long securityQuestionId, string securityAnswer, long authenticatorId)
         {
             string passwordSalt = generateSalt(SaltLength);
             string securityAnswerSalt = generateSalt(SaltLength);
 
             User user = new User()
             {
-                Name = userName,
+                Name = username,
                 FullName = fullName,
                 Email = email,
                 Password = hashSecurityProperty(password, passwordSalt),
@@ -673,9 +673,9 @@ namespace BExIS.Security.Services.Subjects
             return (user);
         }
 
-        public bool ResetPassword(string userName, string securityAnswer, string password)
+        public bool ResetPassword(string username, string securityAnswer, string password)
         {
-            User user = GetUserByName(userName);
+            User user = GetUserByName(username);
 
             if (user != null)
             {
@@ -700,7 +700,7 @@ namespace BExIS.Security.Services.Subjects
             return false;
         }
 
-        public bool UnlockUser(string userName)
+        public bool UnlockUser(string username)
         {
             throw new NotImplementedException();
         }
@@ -812,11 +812,11 @@ namespace BExIS.Security.Services.Subjects
             return (user);
         }
 
-        public bool ValidateUser(string userName, string password)
+        public bool ValidateUser(string username, string password)
         {
             bool valid = false;
 
-            User user = GetUserByName(userName, true);
+            User user = GetUserByName(username, true);
 
             if (user != null)
             {

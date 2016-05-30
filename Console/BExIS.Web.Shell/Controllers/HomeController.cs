@@ -10,14 +10,7 @@ namespace BExIS.Web.Shell.Controllers
     {
         public ActionResult Index()
         {
-            if (Request.IsAuthenticated)
-            {
-                ViewBag.Title = PresentationModel.GetViewTitle("Dashboard");
-            }
-            else
-            {
-                ViewBag.Title = PresentationModel.GetViewTitle("Home"); 
-            }
+            ViewBag.Title = PresentationModel.GetViewTitle(Request.IsAuthenticated ? "Dashboard" : "Home");
 
             return View();
         }
@@ -26,5 +19,6 @@ namespace BExIS.Web.Shell.Controllers
         {
             return View();
         }
+
     }
 }

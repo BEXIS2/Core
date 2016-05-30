@@ -1,5 +1,15 @@
-﻿@{
-    ViewBag.Title = "Purge a Dataset";
+﻿@section Information
+{
+    This maintenance tool is meant for administrators only. All datasets are
+    listed with their internal ID, status, and the option to remove them
+    from the system. Use with care!
+    <p>
+        <a href="/SAM/Help/Index/#_Toc451422053" class="bx-informationLink" title="go to help" target="_blank">More</a>
+    </p>
 }
-
-<h2>Dataset is deleted!</h2> @Html.ActionLink("Return to the list", "List", "Dataset",new {area = "Sam"})
+@Html.ValidationSummary(true)
+@if (ViewData.ModelState.IsValid)
+{
+    <h2>Dataset was successfully deleted!</h2>
+}
+@Html.ActionLink("Return to the list", "List", new { area = "Sam" })

@@ -20,8 +20,8 @@
         <td class="bx-rpm-constrainValue">
             <div class="bx-rpm-container">
                 <div class="bx-rpm-text">@Html.LabelFor(m=>m.Min)</div>              
-                @Html.TextBoxFor(m=>m.Min, new { @class = "bx-rpm-midinput bx-input", @id = "range_min"})
-                <div class="bx-rpm-midinput bx-errorMsg">@Html.ValidationMessageFor(m => m.Min)</div>
+                @Html.TextBoxFor(m=>m.Min, new { @class = "bx-rpm-midinput bx-input", @id = "range_min", onkeyup = "onRangeChange()", onchange = "onRangeChange()" })
+                <div class="bx-rpm-midinput bx-errorMsg">@Html.ValidationMessageFor(m=> m.Min)</div>
             </div>
             <div class="bx-rpm-container" style="text-align: center;">
                 <div class="bx-rpm-text bx-rpm-include">@Html.Label("include")</div>
@@ -29,7 +29,7 @@
             </div>
             <div class="bx-rpm-container">
                 <div class="bx-rpm-text">@Html.LabelFor(m=>m.Max)</div>
-                @Html.TextBoxFor(m=>m.Max, new { @class = "bx-rpm-midinput bx-input", @id = "range_max"})
+                @Html.TextBoxFor(m=>m.Max, new { @class = "bx-rpm-midinput bx-input", @id = "range_max", onkeyup = "onRangeChange()", onchange = "onRangeChange()" })
                 <div class="bx-rpm-midinput bx-errorMsg">@Html.ValidationMessageFor(m => m.Max)</div>
             </div>
             <div class="bx-rpm-container" style="text-align: center;">
@@ -50,10 +50,29 @@
             </div>
         </td>
     </tr>
+    <tr id="errorMsg" class="hidden">
+        <td></td>
+        <td></td>
+        <td colspan="3" class="bx-errorMsg" id="errorMsgText"></td>
+    </tr>
 </table>
 }
 
 <script type="text/jscript">
+    $(document).ready(function () {
+        onRangeChange();
+    });
+
+    function onRangeChange() {
+        if (parseInt($('#range_min').val()) > parseInt($('#range_max').val())) {
+            $('#errorMsg').removeClass('hidden');
+            $('#errorMsgText')[0].innerText = 'Invalid Constraint Max must be greater/equals than Min.';
+        }
+        else if (parseInt($('#range_min').val()) <= parseInt($('#range_max').val())) {
+            $('#errorMsg').addClass('hidden');
+            $('#errorMsgText')[0].innerText = '';
+        }
+    }
 
     $('#rangeConstraint').change(function () {
 
@@ -83,6 +102,7 @@
         $.getJSON('/RPM/DataAttribute/getRangeConstraintFormalDescription/' + variables, function (data) {
             $('#range_FormalDescription').attr("title",data);
         });
+        onRangeChange();
     })
 
 </script>

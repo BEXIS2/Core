@@ -3,7 +3,7 @@
     <!-- Mapping BaseEntity properties -->
     
     <id name="Id" type="Int64">
-      <column name="Id" />
+      <column name="Id" index="idx_AggregateFunctions_id" />
       <generator class="native" />
     </id>
 
@@ -18,7 +18,7 @@
     <!-- Mapping entity properties -->
     
     <property name="Name" type="String">
-      <column name="Name" />
+      <column name="Name"  index="idx_AggregateFunctions_name"/>
     </property>
 
     <property name="Description" type="String">

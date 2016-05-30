@@ -3,7 +3,7 @@
 
     <!-- Mapping BaseEntity properties -->
     <id name="Id" type="Int64">
-      <column name="Id" />
+      <column name="Id" index="idx_Features_id"/>
       <generator class="native" />
     </id>
 
@@ -16,8 +16,12 @@
     </property>
 
     <!-- Mapping Feature Properties -->
-    <property name="Name" type="String" />
-    <property name="Description" type="String" />
+    <property name="Name" type="String" >
+      <column name="Name" index="idx_Features_name"/>
+    </property>
+    <property name="Description" type="String" >
+      <column name="Description" />
+    </property>
 
     <!-- Mapping Feature Associations -->
     <many-to-one name="Parent" column="ParentRef" class="Feature"/>

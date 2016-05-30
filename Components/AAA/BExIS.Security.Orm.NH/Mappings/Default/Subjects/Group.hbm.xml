@@ -2,7 +2,8 @@
   <joined-subclass xmlns="urn:nhibernate-mapping-2.2" name="Group" table="Groups" extends="Subject" dynamic-update="true">
 
     <!-- Mapping Subject Properties -->
-    <key column="Id" />
+    <key column="Id"/>
+    <!--An index should be on this field. E.g., index="idx_Groups_id"-->
 
     <!-- Role Entity Properties -->
     <property name="Description" type="String" />   
