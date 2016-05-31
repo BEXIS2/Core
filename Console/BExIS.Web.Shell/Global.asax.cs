@@ -8,10 +8,12 @@ using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Data;
 using System.Web;
-using Vaiona.Web.Mvc.Filters;
 using BExIS.Ext.Services;
 using Vaiona.MultiTenancy.Api;
 using Vaiona.Model.MTnt;
+using System.Web.Http;
+
+
 
 namespace BExIS.Web.Shell
 {
@@ -72,6 +74,8 @@ namespace BExIS.Web.Shell
             init();
 
             AreaRegistration.RegisterAllAreas();
+            GlobalConfiguration.Configure(WebApiConfig.Register);
+
             RegisterGlobalFilters(GlobalFilters.Filters);
             RegisterRoutes(RouteTable.Routes);
 

@@ -747,7 +747,10 @@ namespace BExIS.Dlm.Services.Data
                 var q1 = DatasetVersionRepo.Query(p =>
                         (p.Dataset.Status == DatasetStatus.CheckedIn || p.Dataset.Status == DatasetStatus.CheckedOut)
                         && (p.Status == DatasetVersionStatus.CheckedIn || p.Status == DatasetVersionStatus.CheckedOut)
-                    ).Select(p => p.Dataset.Id).Distinct();
+                    )
+                    .Select(p => p.Dataset.Id)
+                    .OrderBy(p=>p)
+                    .Distinct();
                 return (q1.ToList());
             }
             else //just the datasets that their latest version is checked-in
@@ -755,7 +758,10 @@ namespace BExIS.Dlm.Services.Data
                 var q1 = DatasetVersionRepo.Query(p =>
                         (p.Dataset.Status == DatasetStatus.CheckedIn || p.Dataset.Status == DatasetStatus.CheckedOut) // include checked in (latest) versions of currently checked out datasets
                         && (p.Status == DatasetVersionStatus.CheckedIn)
-                    ).Select(p => p.Dataset.Id).Distinct();
+                    )
+                    .Select(p => p.Dataset.Id)
+                    .OrderBy(p => p)
+                    .Distinct();
                 return (q1.ToList());
             }
 
@@ -780,7 +786,10 @@ namespace BExIS.Dlm.Services.Data
                 var q1 = DatasetVersionRepo.Query(p =>
                         (p.Dataset.Status == DatasetStatus.CheckedIn || p.Dataset.Status == DatasetStatus.CheckedOut)
                         && (p.Status == DatasetVersionStatus.CheckedIn || p.Status == DatasetVersionStatus.CheckedOut)
-                    ).Select(p => p.Id).Distinct();
+                    )
+                    .Select(p => p.Id)
+                    .OrderBy(p=>p)
+                    .Distinct();
                 return (q1.ToList());
             }
             else //just latest checked in versions
@@ -788,7 +797,10 @@ namespace BExIS.Dlm.Services.Data
                 var q1 = DatasetVersionRepo.Query(p =>
                         (p.Dataset.Status == DatasetStatus.CheckedIn || p.Dataset.Status == DatasetStatus.CheckedOut)
                         && (p.Status == DatasetVersionStatus.CheckedIn)
-                    ).Select(p => p.Id).Distinct();
+                    )
+                    .Select(p => p.Id)
+                    .OrderBy(p => p)
+                    .Distinct();
                 return (q1.ToList());
             }
         }
