@@ -390,7 +390,7 @@
     <Compile Include="Areas\DDM\Models\ShowMetadataModel.cs" />
     <Compile Include="Areas\DDM\Models\ShowPrimaryDataModel.cs" />
     <Compile Include="Areas\DIM\Controllers\AdminController.cs" />
-    <Compile Include="Areas\DIM\Controllers\DatasetsController.cs" />
+    <Compile Include="Areas\DIM\Controllers\DataController.cs" />
     <Compile Include="Areas\DIM\Controllers\HelpController.cs" />
     <Compile Include="Areas\DIM\Controllers\ImportController.cs" />
     <Compile Include="Areas\DIM\DIMAreaRegistration.cs" />
