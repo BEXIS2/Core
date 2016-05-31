@@ -155,7 +155,7 @@ namespace BExIS.Xml.Helpers
                 {
                     //XElement x = element.Descendants().Where(e => e.Name.Equals(nestedUsage.Member.Name)).First();
                     XElement x = AddAndReturnAttribute(element, nestedUsage, 1);
-                    Debug.WriteLine("ADDDDDDDD:            " + element.Name);
+                    //Debug.WriteLine("ADDDDDDDD:            " + element.Name);
                     x = setChildren(x, nestedUsage);
                 }
             }

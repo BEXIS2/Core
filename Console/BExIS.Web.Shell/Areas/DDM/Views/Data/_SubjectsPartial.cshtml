@@ -1,0 +1,60 @@
+﻿@using System
+@using System.Linq
+@using BExIS.Security.Entities.Objects
+@using Telerik.Web.Mvc.UI
+@model List<BExIS.Web.Shell.Areas.DDM.Models.DatasetPermissionGridRowModel>
+@(Html.Telerik().Grid(Model)
+    .Name("Grid_Subjects")
+    .DataKeys(keys =>
+    {
+        keys.Add(s => s.SubjectId);
+    })
+    .Columns(columns =>
+    {
+        foreach (RightType rightType in Enum.GetValues(typeof(RightType)).Cast<RightType>())
+        {
+            columns.Bound(m => m.Rights)
+                        .ClientTemplate("<input type='checkbox' onclick='setDataPermission(this.checked, " + (int)@rightType + ", <#= SubjectId #>, <#= DataId #>, <#= EntityId #>);' name='nothing' <#= existsRightType(Rights, " + (int)@rightType + ") ? checked='checked' : '' #> />")
+                               .Title(rightType.ToString())
+                               .Width(64)
+                               .Filterable(false)
+                               .Sortable(false)
+                               .HtmlAttributes(new { style = "text-align:center" });
+        }
+        columns.Bound(m => m.SubjectId);
+        columns.Bound(m => m.SubjectName);
+        columns.Bound(m => m.SubjectType);
+    })
+    .DataBinding(dataBinding => dataBinding
+        .Ajax()
+        .Select("Subjects_Select", "Data", new { dataId = (long)ViewData["DataId"] })
+    )
+    .Filterable()
+    .Sortable(sortable => sortable
+        .OrderBy(orderby => orderby
+            .Add(s => s.SubjectName)
+            .Ascending()
+        )
+    )
+    .Pageable(pageable =>
+    {
+        pageable.PageSize(10, new[] { 10, 20, 50, 100 });
+        pageable.Style(GridPagerStyles.NextPreviousAndNumeric | GridPagerStyles.PageSizeDropDown);
+        pageable.Position(GridPagerPosition.Both);
+    })
+    .ClientEvents(events =>
+    {
+        events.OnDataBound("Grid_Subjects_onDataBound");
+    })
+)
+
+
+<script type="text/javascript">
+
+    function Grid_Subjects_onDataBound()
+    {
+        addTooltips();
+        resetAllTelerikIconTitles();
+    }
+
+</script>

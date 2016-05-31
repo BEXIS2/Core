@@ -22,12 +22,14 @@ namespace BExIS.Xml.Helpers.Mapping
 
         private XmlSchemaManager xmlSchemaManager;
 
+        private bool addAlsoEmptyNode = false;
+
         /// <summary>
         /// Load from mapping file
         /// create a XmlMapper
         /// </summary>
         /// <returns></returns>
-        public XmlMapper Load(string mappingFilePath, string userName)
+        public XmlMapper Load(string mappingFilePath, string username)
         {
             xmlMapper = new XmlMapper();
 
@@ -135,7 +137,7 @@ namespace BExIS.Xml.Helpers.Mapping
             {
                 xmlSchemaManager = new XmlSchemaManager();
                 string schemaPath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), xmlMapper.Header.Schemas.First().Value);
-                xmlSchemaManager.Load(schemaPath, userName);
+                xmlSchemaManager.Load(schemaPath, username);
             }
 
             #endregion
@@ -143,8 +145,10 @@ namespace BExIS.Xml.Helpers.Mapping
             return xmlMapper;
         }
 
-        public XmlDocument Generate(XmlDocument metadataXml, long id)
+        public XmlDocument Generate(XmlDocument metadataXml, long id,bool addEmptyNode = false)
         {
+            addAlsoEmptyNode = addEmptyNode;
+
             #region abcd (metadata from bexis to abcd)
 
             XmlDocument newMetadata = new XmlDocument();
@@ -284,7 +288,7 @@ namespace BExIS.Xml.Helpers.Mapping
             if (xmlMapper.SourceExist(sourceXPath))
             {
                 //check if there is text inside the source node
-                if (!sourceNode.InnerText.Equals(""))
+                if (!sourceNode.InnerText.Equals("") || addAlsoEmptyNode)
                 {
                     // get name of the destination node
                     string destinationTagName = route.GetDestinationTagNames();
@@ -365,7 +369,7 @@ namespace BExIS.Xml.Helpers.Mapping
                                         }
                                     }
 
-                                    if (!foundNodeWithoutDestionationNode)
+                                    if ((temp.Count>=2 && foundNodeWithoutDestionationNode) || !foundNodeWithoutDestionationNode)
                                     {
                                         addChild(parent,newCurrent);
                                     }

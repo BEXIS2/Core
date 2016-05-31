@@ -263,8 +263,6 @@ namespace BExIS.Ddm.Providers.LuceneProvider
             bexisIndexer.Dispose();
         }
 
-
-
         private XmlElement SetAttributesToNode(XmlElement xmlElement, SearchAttribute sa)
         {
             

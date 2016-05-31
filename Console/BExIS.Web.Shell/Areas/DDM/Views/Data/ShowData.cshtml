@@ -7,10 +7,9 @@
     Show Data contains a detailed view on the metadata, the data structure
     and the primary data of a dataset. Depending on dataset permissions you
     may also edit the metadata or download the primary data from here.
-    <p>
-        More information 
-        @Html.ActionLink("here", "Index", "Help", new { id = 0 }, new { @class = "bx-informationLink", title="go to help", target="_blank"})
-    </p>
+   <p>
+    <a href="/DDM/Help/Index/#_Toc451435014" class="bx-informationLink" title="go to help" target="_blank">More</a>
+</p>
 
 }
 
@@ -19,24 +18,64 @@
 
 @if(@Model != null)
 {
-    @(Html.Telerik().TabStrip()
-            .Name("ShowDataTabStrip")
-            .SelectedIndex(0)
-            .Items(tabs =>
-            {
+    if (ViewData.ModelState.IsValid)
+    {
 
-                tabs.Add()
-                    .Text("Metadata")
-                    .LoadContentFrom("LoadMetadata", "CreateDataset", new { area = "DDM", datasetId = @Model.Id, locked = true, created= false, fromEditMode = false, resetTaskManager = true });
-                
-                tabs.Add()
-                    .Text("Data Structure")
-                    .LoadContentFrom("ShowPreviewDataStructure", "Data", new { area = "DDM", datasetID = @Model.Id });
+        @(Html.Telerik().TabStrip()
+              .Name("ShowDataTabStrip")
+              .SelectedIndex(0)
+              .Items(tabs =>
+              {
 
-                tabs.Add()
-                    .Text("Primary Data")
-                    .LoadContentFrom("ShowPrimaryData", "Data", new { area = "DDM", datasetID = @Model.Id })
-                    .Enabled(@Model.ViewAccess);
-            })
-    )
+                  tabs.Add()
+                      .Text("Metadata")
+                      .LoadContentFrom("LoadMetadata", "CreateDataset", new {area = "DDM", datasetId = @Model.Id, locked = true, created = false, fromEditMode = false, resetTaskManager = true});
+
+                  tabs.Add()
+                      .Text("Primary Data")
+                      .LoadContentFrom("ShowPrimaryData", "Data", new {area = "DDM", datasetID = @Model.Id})
+                      .Enabled(@Model.ViewAccess);
+
+                  tabs.Add()
+                      .Text("Data Structure")
+                      .LoadContentFrom("ShowPreviewDataStructure", "Data", new {area = "DDM", datasetID = @Model.Id});
+
+
+
+                  tabs.Add()
+                      .Text("Dataset Permissions")
+                      .LoadContentFrom("Subjects", "Data", new {area = "DDM", dataId = @Model.Id})
+                      .Enabled(@Model.GrantAccess);
+              })
+              )
+    }
+    else
+    {
+        @Html.ValidationSummary(true);
+    }
 }
+
+<script type="text/javascript">
+
+    function existsRightType(rights, rightType) {
+        if (jQuery.inArray(rightType, rights) != -1) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    function setDataPermission(value, rightType, subjectId, dataId, entityId) {
+        if (value) {
+            $.post('@Url.Action("CreateDataPermission", "Data")', { DataId: dataId, EntityId: entityId, SubjectId: subjectId, RightType: rightType }, function (e) {
+                $("#Grid_Subjects .t-refresh").trigger('click');
+            });
+        } else {
+            $.post('@Url.Action("DeleteDataPermission", "Data")', { DataId: dataId, EntityId: entityId, SubjectId: subjectId, RightType: rightType }, function (e) {
+                $("#Grid_Subjects .t-refresh").trigger('click');
+            });
+        }
+    }
+
+</script>

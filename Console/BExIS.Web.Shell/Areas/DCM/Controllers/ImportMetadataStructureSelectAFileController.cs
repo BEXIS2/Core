@@ -93,11 +93,36 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         {
                             model.ErrorList.Add(new Error(ErrorType.Other, "Cannot access FileStream on server."));
                         }
+
+
+                        try
+                        {
+                            LoadXSDSchema(GetUsernameOrDefault());
+                        }
+                        catch (Exception ex)
+                        {
+                            ModelState.AddModelError("", ex.Message);
+                            model.ErrorList.Add(new Error(ErrorType.Other, "Can not find any dependent files to the selected schema. Please upload missing files to server and try it again."));
+                            TaskManager.Current().SetValid(false);
+                        }
+
+
+
+                        if (TaskManager.Current().IsValid())
+                        {
+                            TaskManager.AddExecutedStep(TaskManager.Current());
+                            TaskManager.GoToNext();
+                            Session["TaskManager"] = TaskManager;
+                            ActionInfo actionInfo = TaskManager.Current().GetActionInfo;
+                            return RedirectToAction(actionInfo.ActionName, actionInfo.ControllerName, new RouteValueDictionary { { "area", actionInfo.AreaName }, { "index", TaskManager.GetCurrentStepInfoIndex() } });
+                        }
+
                     }
                     else
                     {
                         model.ErrorList.Add(new Error(ErrorType.Other, "File is not supported."));
                     }
+
 
 
                 }
@@ -106,27 +131,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     model.ErrorList.Add(new Error(ErrorType.Other, "No FileStream selected or submitted."));
                 }
 
-                try
-                {
-                    LoadXSDSchema(GetUserNameOrDefault());
-                }
-                catch (Exception ex)
-                {
-                    ModelState.AddModelError("", ex.Message);
-                    model.ErrorList.Add(new Error(ErrorType.Other, "Can not find any dependent files to the selected schema."));
-                    TaskManager.Current().SetValid(false);
-                }
-
-                
-
-                if (TaskManager.Current().IsValid())
-                {
-                    TaskManager.AddExecutedStep(TaskManager.Current());
-                    TaskManager.GoToNext();
-                    Session["TaskManager"] = TaskManager;
-                    ActionInfo actionInfo = TaskManager.Current().GetActionInfo;
-                    return RedirectToAction(actionInfo.ActionName, actionInfo.ControllerName, new RouteValueDictionary { { "area", actionInfo.AreaName }, { "index", TaskManager.GetCurrentStepInfoIndex() } });
-                }
             }
 
             model.serverFileList = GetServerFileList();
@@ -137,7 +141,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         #region private methods
 
-        private void LoadXSDSchema(string userName)
+        private void LoadXSDSchema(string username)
         {
             TaskManager = (ImportMetadataStructureTaskManager)Session["TaskManager"];
 
@@ -145,7 +149,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             //open schema
             XmlSchemaManager xmlSchemaManager = new XmlSchemaManager();
-            xmlSchemaManager.Load(path, userName);
+            xmlSchemaManager.Load(path, username);
              
             if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.XML_SCHEMA_MANAGER))
                 TaskManager.Bus[ImportMetadataStructureTaskManager.XML_SCHEMA_MANAGER] = xmlSchemaManager;
@@ -165,7 +169,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             {
                 //data/datasets/1/1/
                 string dataPath = AppConfiguration.DataPath; //Path.Combine(AppConfiguration.WorkspaceRootPath, "Data");
-                string storepath = Path.Combine(dataPath, "Temp", GetUserNameOrDefault());
+                string storepath = Path.Combine(dataPath, "Temp", GetUsernameOrDefault());
 
                 // if folder not exist
                 if (!Directory.Exists(storepath))
@@ -174,8 +178,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 }
 
                 string path = Path.Combine(storepath, SelectFileUploader.FileName);
-
-
 
                 SelectFileUploader.SaveAs(path);
                 TaskManager.AddToBus(ImportMetadataStructureTaskManager.FILEPATH, path);
@@ -203,7 +205,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                 //data/datasets/1/1/
                 string dataPath = AppConfiguration.DataPath; //Path.Combine(AppConfiguration.WorkspaceRootPath, "Data");
-                string path = Path.Combine(dataPath, "Temp", GetUserNameOrDefault(), fileName);
+                string path = Path.Combine(dataPath, "Temp", GetUsernameOrDefault(), fileName);
 
                 TaskManager.AddToBus(ImportMetadataStructureTaskManager.FILEPATH, path);
 
@@ -224,7 +226,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         private List<String> GetServerFileList()
         {
 
-            string userDataPath = Path.Combine(AppConfiguration.DataPath, "Temp", GetUserNameOrDefault());
+            string userDataPath = Path.Combine(AppConfiguration.DataPath, "Temp", GetUsernameOrDefault());
 
             // if folder not exist
             if (!Directory.Exists(userDataPath))
@@ -240,16 +242,16 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         // chekc if user exist
         // if true return usernamem otherwise "DEFAULT"
-        public string GetUserNameOrDefault()
+        public string GetUsernameOrDefault()
         {
-            string userName = string.Empty;
+            string username = string.Empty;
             try
             {
-                userName = HttpContext.User.Identity.Name;
+                username = HttpContext.User.Identity.Name;
             }
             catch { }
 
-            return !string.IsNullOrWhiteSpace(userName) ? userName : "DEFAULT";
+            return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
         }
 
         /// <summary>
