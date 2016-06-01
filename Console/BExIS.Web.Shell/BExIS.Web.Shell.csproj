@@ -448,6 +448,7 @@
     <Compile Include="Areas\SAM\Models\PermissionModel.cs" />
     <Compile Include="Areas\SAM\Models\SecurityQuestionModels.cs" />
     <Compile Include="Areas\SAM\Models\ShowHelpModel.cs" />
+    <Compile Include="Areas\SAM\Models\TenantModels.cs" />
     <Compile Include="Areas\SAM\Models\UserModels.cs" />
     <Compile Include="Areas\SAM\SAMAreaRegistration.cs" />
     <Compile Include="Areas\Site\Controllers\ContactUsController.cs" />
@@ -647,12 +648,14 @@
     <Content Include="fonts\fontawesome-webfont.woff" />
     <Content Include="fonts\fontawesome-webfont.ttf" />
     <Content Include="fonts\fontawesome-webfont.eot" />
+    <Content Include="Areas\SAM\Views\Tenants\_Create.cshtml" />
+    <Content Include="Areas\SAM\Views\Tenants\_Edit.cshtml" />
     <None Include="Properties\PublishProfiles\BPP2907.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
-    <Content Include="Areas\SAM\Views\Tenants\Index.cshtml" />
+    <Content Include="Areas\SAM\Views\Tenants\Tenants.cshtml" />
     <None Include="Properties\PublishProfiles\T1.pubxml" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
