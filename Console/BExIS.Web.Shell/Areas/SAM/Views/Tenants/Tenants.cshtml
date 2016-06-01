@@ -2,8 +2,11 @@
 @using Telerik.Web.Mvc.UI
 @model List<Vaiona.Model.MTnt.Tenant>
 
+
+<button type="button" class="bx-button function" onclick="tenantCreate_onClick()">Create Tenant</button>
+
 @(Html.Telerik().Grid(Model)
-    .Name("Grid_Tenants")
+    .Name("gridTenants")
     .DataKeys(keys =>
     {
         keys.Add(m => m.Id);
@@ -53,6 +56,48 @@
     {
         addTooltips();
         resetAllTelerikIconTitles();
+    }
+
+    // --------------------------------------------------
+    // CREATE
+    // --------------------------------------------------
+
+    function tenantCreate_onClick() {
+        $.ajax({
+            type: 'GET',
+            url: '@Url.Action("Create", "Tenants")',
+            dataType: 'html',
+            success: function (htmlData) {
+                var windowElement = $.telerik.window.create({
+                    title: "Create Tenant",
+                    html: "<div id='contentCreate' class='bx-window'>" + htmlData + "</div>",
+                    contentUrl: "",
+                    actions: ["Close"],
+                    modal: true,
+                    width: 500,
+                    height: 500,
+                    resizable: false,
+                    draggable: true,
+                    scrollable: false,
+                    onClose: function () {
+                        $("#windowCreate").data('tWindow').destroy();
+                        $("#gridTenants .t-refresh").trigger('click');
+                    }
+                });
+
+                windowElement.attr('id', 'windowCreate');
+                var window = $(windowElement).data('tWindow');
+                window.center().open();
+
+                resetAllTelerikIconTitles();
+            }
+        });
+    }
+
+    function tenantCreate_onSuccess(data) {
+        if (data.success) {
+            $('#windowCreate').data('tWindow').close();
+        }
     }
 
 </script>

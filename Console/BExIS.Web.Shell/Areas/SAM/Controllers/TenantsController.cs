@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using BExIS.Web.Shell.Areas.SAM.Models;
 using Vaiona.IoC;
 using Vaiona.MultiTenancy.Api;
 
@@ -22,7 +23,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
             ITenantResolver tenantResolver = IoCFactory.Container.Resolve<ITenantResolver>();
             tenantResolver.Load(new BExISTenantPathProvider());
 
-            return View(tenantResolver.Manifest);
+            return View("Tenants", tenantResolver.Manifest);
         }
 
         // GET: SAM/Tenants/<id>
@@ -95,9 +96,15 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
         /// </summary>
         /// <param name="package"></param>
         /// <returns></returns>
-        public ActionResult Create(object package)
+        public ActionResult Create()
         {
-            return View();
+            return PartialView("_Create", new TenantCreateModel());
+        }
+
+        [HttpPost]
+        public ActionResult Create(TenantCreateModel model)
+        {
+            return PartialView("_Create", model);
         }
 
         /// <summary>
