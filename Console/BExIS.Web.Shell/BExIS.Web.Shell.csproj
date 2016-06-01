@@ -407,9 +407,11 @@
     <Compile Include="Areas\RPM\Controllers\DataAttributeController.cs" />
     <Compile Include="Areas\RPM\Controllers\HomeController.cs" />
     <Compile Include="Areas\RPM\Controllers\DataStructureSearchController.cs" />
+    <Compile Include="Areas\RPM\Controllers\StructureController.cs" />
     <Compile Include="Areas\RPM\Controllers\UnitController.cs" />
     <Compile Include="Areas\RPM\Controllers\Helpers\HtmlPrefixScopeExtentions.cs" />
     <Compile Include="Areas\RPM\Controllers\Helpers\RPMSeedDataGenerator.cs" />
+    <Compile Include="Areas\RPM\Models\StructureModel.cs" />
     <Compile Include="Areas\RPM\Models\DataStructureEditModel.cs" />
     <Compile Include="Areas\RPM\Models\DataStructureSearchModel.cs" />
     <Compile Include="Areas\RPM\Models\ConstraintModels.cs" />

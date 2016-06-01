@@ -88,6 +88,48 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
             this.Structured = false;
             this.Preview = false;
         }
+
+        public DataStructureResultStruct(long dataStructureId)
+        {
+            DataStructureManager dataStructureManager = new DataStructureManager();
+            StructuredDataStructure structuredDataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataStructureId);
+            if (structuredDataStructure != null)
+            {
+                this.Id = structuredDataStructure.Id;
+                this.Title = structuredDataStructure.Name;
+                this.Description = structuredDataStructure.Description;
+
+                if (structuredDataStructure.Datasets != null && structuredDataStructure.Datasets.Count > 0)
+                    this.inUse = true;
+                else
+                    this.inUse = false;
+
+                this.Structured = true;
+                this.Preview = false;
+            }
+            else 
+            {
+                UnStructuredDataStructure unStructuredDataStructure = dataStructureManager.UnStructuredDataStructureRepo.Get(dataStructureId);
+                if (unStructuredDataStructure != null)
+                {
+                    this.Id = unStructuredDataStructure.Id;
+                    this.Title = unStructuredDataStructure.Name;
+                    this.Description = unStructuredDataStructure.Description;
+
+                    if (unStructuredDataStructure.Datasets != null && unStructuredDataStructure.Datasets.Count > 0)
+                        this.inUse = true;
+                    else
+                        this.inUse = false;
+
+                    this.Structured = false;
+                    this.Preview = false;
+                }
+                else
+                {
+                    new DataStructureResultStruct();
+                }
+            }
+        }
     }
 
     public class DataStructureResultsModel
@@ -214,4 +256,5 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
         }
     }
 }
+
     
