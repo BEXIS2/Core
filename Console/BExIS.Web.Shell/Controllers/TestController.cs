@@ -17,6 +17,8 @@ using BExIS.Security.Services.Authorization;
 using Vaiona.Logging.Aspects;
 using Vaiona.Logging;
 using Vaiona.Utils.Cfg;
+using Vaiona.Web.Extensions;
+using Vaiona.Model.MTnt;
 
 namespace BExIS.Web.Shell.Controllers
 {
@@ -33,10 +35,12 @@ namespace BExIS.Web.Shell.Controllers
 
         //[RecordCall]
         //[LogExceptions]
-        //[Diagnose]
-        public ActionResult Index(Int64 id=0)
+        [Diagnose]
+        [MeasurePerformance]
+        public ActionResult Index(Int64 id = 0)
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Test Page"); /*in the Vaiona.Web.Mvc.Models namespace*/ //String.Format("{0} {1} - {2}", AppConfiguration.ApplicationName, AppConfiguration.ApplicationVersion, "Test Page");
+            ViewBag.Title = PresentationModel.GetViewTitle("Test Page") + "-->" + Session.GetTenant().Id; /*in the Vaiona.Web.Mvc.Models namespace*/ //String.Format("{0} {1} - {2}", AppConfiguration.ApplicationName, AppConfiguration.ApplicationVersion, "Test Page");
+            testTenants();
             //List<string> a = new List<string>() { "A", "B", "C" };
             //List<string> b = new List<string>() { "A", "B", "D" };
             //var ab = a.Union(b);
@@ -74,6 +78,20 @@ namespace BExIS.Web.Shell.Controllers
             //return RedirectToAction("About");
             //createMetadataAttribute();
             return View();
+        }
+
+        private void testTenants()
+        {
+            Tenant t = Session.GetTenant();
+            string s = "test";
+            s = t.Id;
+            s = t.Logo;
+            s = t.LogoPath;
+            s = t.FavIconPath;
+            s = t.ThemePath;
+            s = t.PolicyFileNamePath;
+            s = t.ContactUsFileNamePath;
+            s = t.ImprintFileNamePath;
         }
 
         private void getDataStructures()
@@ -265,7 +283,7 @@ namespace BExIS.Web.Shell.Controllers
             MetadataStructureManager mdsManager = new MetadataStructureManager();
             MDS.MetadataStructure mds = mdsManager.Repo.Query().First();
 
-            Dataset ds = dm.CreateEmptyDataset(dsManager.StructuredDataStructureRepo.Get(3), rpManager.Repo.Get(1), mds);
+            Dataset ds = dm.CreateEmptyDataset(dsManager.StructuredDataStructureRepo.Get(1), rpManager.Repo.Get(1), mds);
 
             if (dm.IsDatasetCheckedOutFor(ds.Id, "Javad") || dm.CheckOutDataset(ds.Id, "Javad"))
             {
@@ -273,20 +291,31 @@ namespace BExIS.Web.Shell.Controllers
 
                 //DataTuple changed = dm.GetDatasetVersionEffectiveTuples(workingCopy).First();
                 //changed.VariableValues.First().Value = (new Random()).Next().ToString();
-                DataTuple dt = dm.DataTupleRepo.Get(214); // its sample data
-                DataTuple newDt = new DataTuple();
-                newDt.XmlAmendments = dt.XmlAmendments;
-                newDt.XmlVariableValues = dt.XmlVariableValues; // in normal cases, the VariableValues are set and then Dematerialize is called
-                newDt.Materialize();
-                newDt.OrderNo = 1;
-                //newDt.TupleAction = TupleAction.Created;//not required
-                //newDt.Timestamp = DateTime.UtcNow; //required? no, its set in the Edit
-                //newDt.DatasetVersion = workingCopy;//required? no, its set in the Edit
-
-                dm.EditDatasetVersion(workingCopy, new List<DataTuple>() { newDt }, null, null);
+                DataTuple dt = dm.DataTupleRepo.Get(1); // its sample data
+                List<DataTuple> tuples = new List<DataTuple>();
+                for (int i = 0; i < 10000; i++)
+                {
+                    DataTuple newDt = new DataTuple();
+                    newDt.XmlAmendments = dt.XmlAmendments;
+                    newDt.XmlVariableValues = dt.XmlVariableValues; // in normal cases, the VariableValues are set and then Dematerialize is called
+                    newDt.Materialize();
+                    newDt.OrderNo = i;
+                    //newDt.TupleAction = TupleAction.Created;//not required
+                    //newDt.Timestamp = DateTime.UtcNow; //required? no, its set in the Edit
+                    //newDt.DatasetVersion = workingCopy;//required? no, its set in the Edit
+                    tuples.Add(newDt);
+                }
+                dm.EditDatasetVersion(workingCopy, tuples, null, null);
                 dm.CheckInDataset(ds.Id, "for testing purposes", "Javad");
+                dm.DatasetVersionRepo.Evict();
+                dm.DataTupleRepo.Evict();
+                dm.DatasetRepo.Evict();
+                workingCopy.PriliminaryTuples.Clear();
+                workingCopy = null;
             }
-            return (ds.Id);
+            var dsId = ds.Id;
+            ds = null;
+            return (dsId);
         }
 
     //    private void createADataStructure()

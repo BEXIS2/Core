@@ -8,7 +8,7 @@ namespace BExIS.Security.Services.Subjects
 {
     public interface IGroupManager
     {
-        bool AddUserToGroup(string userName, string groupName);
+        bool AddUserToGroup(string username, string groupName);
 
         bool AddUserToGroup(long userId, long groupId);
 
@@ -30,7 +30,7 @@ namespace BExIS.Security.Services.Subjects
 
         string GetGroupNameById(long id);
 
-        IQueryable<Group> GetGroupsFromUserName(string userName);
+        IQueryable<Group> GetGroupsFromUsername(string username);
 
         IQueryable<User> GetUsersFromGroupName(string groupName);
 
@@ -38,11 +38,11 @@ namespace BExIS.Security.Services.Subjects
 
         bool IsGroupInUse(string groupName);
 
-        bool IsUserInGroup(string userName, string groupName);
+        bool IsUserInGroup(string username, string groupName);
 
         bool IsUserInGroup(long userId, long groupId);
 
-        bool RemoveUserFromGroup(string userName, string groupName);
+        bool RemoveUserFromGroup(string username, string groupName);
 
         bool RemoveUserFromGroup(long userId, long groupId);
 

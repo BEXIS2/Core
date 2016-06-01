@@ -3,33 +3,68 @@
 
     <!-- SUBJECT ATTRIBUTES -->
     <key column="Id" />
+      <!--An index should be on this field. E.g., index="idx_Users_id"-->
 
     <!-- USER ATTRIBUTES -->
-    <property name="Email" type="String" />
+    <property name="Email" type="String" >
+      <column name="Email" index="idx_Users_email"/>
+    </property>
+    <property name="FullName" type="String" >
+      <column name="FullName"/>
+    </property>
+    <property name="Password" type="String" >
+      <column name="Password"/>
+    </property>
+    <property name="PasswordSalt" type="String" >
+      <column name="PasswordSalt"/>
+    </property>
     
-    <property name="FullName" type="String" />
+    <property name="SecurityAnswer" type="String" >
+      <column name="SecurityAnswer"/>
+    </property>
+    <property name="SecurityAnswerSalt" type="String" >
+      <column name="SecurityAnswerSalt"/>
+    </property>
+    
+    <property name="RegistrationDate" type="DateTime" >
+      <column name="RegistrationDate"/>
+    </property>
+    <property name="LastActivityDate" type="DateTime" >
+      <column name="LastActivityDate"/>
+    </property>
+    <property name="LastLoginDate" type="DateTime" >
+      <column name="LastLoginDate"/>
+    </property>
+    <property name="LastLockOutDate" type="DateTime" >
+      <column name="LastLockOutDate"/>
+    </property>
+    <property name="LastPasswordChangeDate" type="DateTime" >
+      <column name="LastPasswordChangeDate"/>
+    </property>
 
-    <property name="Password" type="String" />
-    <property name="PasswordSalt" type="String" />
-    
-    <property name="SecurityAnswer" type="String" />
-    <property name="SecurityAnswerSalt" type="String" />
-    
-    <property name="RegistrationDate" type="DateTime" />
-    <property name="LastActivityDate" type="DateTime" />
-    <property name="LastLoginDate" type="DateTime" />
-    <property name="LastLockOutDate" type="DateTime" />
-    <property name="LastPasswordChangeDate" type="DateTime" />
+    <property name="IsApproved" type="yes_no" >
+      <column name="IsApproved" index="idx_Users_isApproved"/>
+    </property>
+    <property name="IsBlocked" type="yes_no" >
+      <column name="IsBlocked" index="idx_Users_isBlocked"/>
+    </property>
+    <property name="IsLockedOut" type="yes_no" >
+      <column name="IsLockedOut" index="idx_Users_isLockedOut"/>
+    </property>
 
-    <property name="IsApproved" type="yes_no" />
-    <property name="IsBlocked" type="yes_no" />
-    <property name="IsLockedOut" type="yes_no" />
-
-    <property name="PasswordFailureCount" type="Int32" />
-    <property name="SecurityAnswerFailureCount" type="Int32" />
+    <property name="PasswordFailureCount" type="Int32" >
+      <column name="PasswordFailureCount"/>
+    </property>
+    <property name="SecurityAnswerFailureCount" type="Int32" >
+      <column name="SecurityAnswerFailureCount"/>
+    </property>
     
-    <property name="LastPasswordFailureDate" type="DateTime" />
-    <property name="LastSecurityAnswerFailureDate" type="DateTime" />
+    <property name="LastPasswordFailureDate" type="DateTime" >
+      <column name="LastPasswordFailureDate"/>
+    </property>
+    <property name="LastSecurityAnswerFailureDate" type="DateTime" >
+      <column name="LastSecurityAnswerFailureDate"/>
+    </property>
 
     <!-- USER ASSOCIATIONS -->
     <many-to-one name="Authenticator" column="AuthenticatorRef" class="BExIS.Security.Entities.Authentication.Authenticator, BExIS.Security.Entities"/>

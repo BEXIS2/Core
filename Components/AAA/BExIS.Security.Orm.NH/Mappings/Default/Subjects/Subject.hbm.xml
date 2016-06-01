@@ -3,7 +3,7 @@
 
     <!-- Mapping BaseEntity properties -->
     <id name="Id" type="Int64">
-      <column name="Id" />
+      <column name="Id" index="idx_Sujects_id"/>
       <generator class="native" />
     </id>
 
@@ -16,9 +16,12 @@
     </property>
 
     <!-- Mapping Subject Properties -->
-    <property name="Name" type="String" />
-
-    <property name="IsSystemSubject" type="yes_no" />
+    <property name="Name" type="String">
+      <column name="Name" index="idx_Sujects_name"/>
+    </property>
+    <property name="IsSystemSubject" type="yes_no" >
+      <column name="IsSystemSubject"/>
+    </property>
 
     <!-- Mapping Subject Properties -->
     <set name="Permissions" cascade="all-delete-orphan" lazy="true">

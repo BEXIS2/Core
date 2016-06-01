@@ -149,5 +149,15 @@ $(".bx-list-multi >li").click(function ()
   
 
 
-
-
+/* jQuery Validation Extension - CheckBox */
+if (jQuery.validator) {
+    // Checkbox Validation
+    jQuery.validator.addMethod("checkrequired", function (value, element, params) {
+        var checked = false;
+        checked = $(element).is(':checked');
+        return checked;
+    }, '');
+    if (jQuery.validator.unobtrusive) {
+        jQuery.validator.unobtrusive.adapters.addBool("checkrequired");
+    }
+}

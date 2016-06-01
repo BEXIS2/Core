@@ -50,7 +50,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         #region Upload Wizard
 
-        public ActionResult UploadWizard(DataStructureType type)
+        public ActionResult UploadWizard(DataStructureType type, long datasetid=0)
         {
             ViewBag.Title = PresentationModel.GetViewTitle("Upload Data");
 
@@ -95,7 +95,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 Session["DatasetVersionViewList"] = LoadDatasetVersionViewList(type);
                 Session["DataStructureViewList"] = LoadDataStructureViewList(type);
                 Session["ResearchPlanViewList"] = LoadResearchPlanViewList();
-                
+
+                // setparameters
+                SetParametersToTaskmanager(datasetid);
             }
 
 
@@ -190,16 +192,16 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             // chekc if user exist
             // if true return usernamem otherwise "DEFAULT"
-            public string GetUserNameOrDefault()
+            public string GetUsernameOrDefault()
             {
-                string userName = string.Empty;
+                string username = string.Empty;
                 try
                 {
-                    userName = HttpContext.User.Identity.Name;
+                    username = HttpContext.User.Identity.Name;
                 }
                 catch { }
 
-                return !string.IsNullOrWhiteSpace(userName) ? userName : "DEFAULT";
+                return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
             }
 
             public List<ListViewItem> LoadDatasetVersionViewList( DataStructureType dataStructureType)
@@ -208,7 +210,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 SubjectManager subjectManager = new SubjectManager();
 
                 // add security
-                ICollection<long> datasetIDs = permissionManager.GetAllDataIds(subjectManager.GetUserByName(GetUserNameOrDefault()).Id, 1, RightType.Update).ToList();
+                ICollection<long> datasetIDs = permissionManager.GetAllDataIds(subjectManager.GetUserByName(GetUsernameOrDefault()).Id, 1, RightType.Update).ToList();
 
                 DataStructureManager dataStructureManager = new DataStructureManager();
                 DatasetManager dm = new DatasetManager();
@@ -228,9 +230,14 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                         foreach (Dataset d in sds.Datasets)
                         {
-                            if (datasetIDs.Contains(d.Id))
+                            if (dm.IsDatasetCheckedIn(d.Id))
                             {
-                                temp.Add(new ListViewItem(d.Id, XmlDatasetHelper.GetInformation(dm.GetDatasetLatestVersion(d), AttributeNames.title)));
+                                if (datasetIDs.Contains(d.Id))
+                                {
+                                    temp.Add(new ListViewItem(d.Id,
+                                        XmlDatasetHelper.GetInformation(dm.GetDatasetLatestVersion(d),
+                                            AttributeNames.title)));
+                                }
                             }
                         }
                     }
@@ -246,8 +253,12 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         {
                             if (datasetIDs.Contains(d.Id))
                             {
-                                DatasetVersion datasetVersion = dm.GetDatasetLatestVersion(d);
-                                temp.Add(new ListViewItem(d.Id, XmlDatasetHelper.GetInformation(datasetVersion, AttributeNames.title)));
+                                if (dm.IsDatasetCheckedIn(d.Id))
+                                {
+                                    DatasetVersion datasetVersion = dm.GetDatasetLatestVersion(d);
+                                    temp.Add(new ListViewItem(d.Id,
+                                        XmlDatasetHelper.GetInformation(datasetVersion, AttributeNames.title)));
+                                }
                             }
                         }
                     }
@@ -288,16 +299,52 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 return temp.OrderBy(p => p.Title).ToList();
             }
 
-            
-        #endregion
+            private void SetParametersToTaskmanager(long datasetId)
+            {
+                if (TaskManager == null)
+                {
+                    TaskManager = (TaskManager) Session["TaskManager"];
+                }
+
+                #region set dataset id & dataset title 
+
+                if (datasetId > 0)
+                {
+                    try
+                    {
+                        long datasetid = Convert.ToInt64(datasetId);
+                        TaskManager.AddToBus(TaskManager.DATASET_ID, datasetid);
+
+                        // get title
+                        DatasetManager dm = new DatasetManager();
+                        string title = "";
+                        // is checkedIn?
+                        if (dm.IsDatasetCheckedIn(datasetid))
+                        {
+                            title = XmlDatasetHelper.GetInformation(dm.GetDatasetLatestVersion(datasetid),
+                                AttributeNames.title);
+                        }
+
+                        TaskManager.AddToBus(TaskManager.DATASET_TITLE, title);
+                    }
+
+                    catch (Exception ex)
+                    {
+                        throw ex;
+                    }
+                }
+
+                #endregion
+
+            }
 
         #endregion
 
+        #endregion
 
         #region helper
 
         #endregion
-
 
     }
 

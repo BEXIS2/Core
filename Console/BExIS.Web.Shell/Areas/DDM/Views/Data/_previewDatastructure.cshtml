@@ -5,15 +5,28 @@
 @using BExIS.Web.Shell.Areas.DDM.Helpers;
 
 @{
-    
-    //Model.item1 = SearchResultPreview
-    //Model.item2 = DatasetId
-
     GridPagerStyles pagerStyles = GridPagerStyles.PageSizeDropDown;
     pagerStyles |= GridPagerStyles.NextPreviousAndNumeric;
     pagerStyles |= GridPagerStyles.Numeric;
 
 }
+
+
+<script type="text/javascript">
+    function dataStructureGrid_onDataBound()
+    {
+
+        resetAllTelerikIconTitles();
+
+        for (var i = 0; i < $(".bx-ddm-checkbox").length; i++)
+        {
+            if ($(".bx-ddm-checkbox")[i].getAttribute('value') == "True")
+            {
+                $(".bx-ddm-checkbox")[i].setAttribute('checked','checked')
+            }
+        }
+    }
+</script>
 
 
 @if (@Model.Item1 != null)
@@ -69,7 +82,9 @@
                     }
                     })
                     .ClientEvents(events => events
-                            .OnDataBound("onDataBound")
+                            .OnDataBound("" +
+                                         "dataStructureGrid_onDataBound" +
+                                         "")
                         )
 
                     .Pageable(paging =>
@@ -84,19 +99,4 @@
     }
 }
 
-<br />
 
-<script type="text/javascript">
-    function onDataBound()
-    {
-        resetAllTelerikIconTitles();
-
-        for (var i = 0; i < $(".bx-ddm-checkbox").length; i++)
-        {
-            if ($(".bx-ddm-checkbox")[i].getAttribute('value') == "True")
-            {
-                $(".bx-ddm-checkbox")[i].setAttribute('checked','checked')
-            }
-        }
-    }
-</script>

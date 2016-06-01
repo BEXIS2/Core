@@ -357,7 +357,7 @@ namespace BExIS.IO.Transform.Output
             row.RowIndex = Convert.ToUInt32(rowIndex);
 
 
-            DataTuple dataTuple = DatasetManager.DataTupleRepo.Get(dataTupleId);
+            DataTuple dataTuple = DatasetManager.DataTupleRepo.Query(d=>d.Id.Equals(dataTupleId)).FirstOrDefault();
             dataTuple.Materialize();
             
 
@@ -373,7 +373,6 @@ namespace BExIS.IO.Transform.Output
                 Cell cell = VariableValueToCell(variableValue, rowIndex, columnIndex);
                 row.AppendChild(cell);
             }
-
 
             return row;
         }

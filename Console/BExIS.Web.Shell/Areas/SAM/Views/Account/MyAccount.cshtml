@@ -51,11 +51,11 @@
         </tr>
         <tr>
             <td>
-                @Html.LabelFor(m => m.UserName)
+                @Html.LabelFor(m => m.Username)
             </td>
             <td>
-                @Html.TextBoxFor(m => m.UserName, new {@class = "t-input bx-input", disabled = "disabled"})
-                @Html.HiddenFor(m => m.UserName)
+                @Html.TextBoxFor(m => m.Username, new {@class = "t-input bx-input", disabled = "disabled"})
+                @Html.HiddenFor(m => m.Username)
             </td>
         </tr>
 
@@ -66,7 +66,7 @@
                     @Html.LabelFor(m => m.Password)
                 </td>
                 <td>
-                    @Html.PasswordFor(m => m.Password, new { @class = "t-input bx-input" })
+                    @Html.PasswordFor(m => m.Password, new { @class = "t-input bx-input", placeholder = "******" })
                     @Html.ValidationMessageFor(m => m.Password)
                 </td>
             </tr>
@@ -75,7 +75,7 @@
                     @Html.LabelFor(m => m.ConfirmPassword)
                 </td>
                 <td>
-                    @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "t-input bx-input" })
+                    @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "t-input bx-input", placeholder = "******" })
                     @Html.ValidationMessageFor(m => m.ConfirmPassword)
                 </td>
             </tr>
@@ -120,7 +120,7 @@
                     @Html.LabelFor(m => m.SecurityAnswer)
                 </td>
                 <td>
-                    @Html.TextBoxFor(m => m.SecurityAnswer, new { @class = "t-input bx-input" })
+                    @Html.TextBoxFor(m => m.SecurityAnswer, new { @class = "t-input bx-input", placeholder = "******" })
                     @Html.ValidationMessageFor(m => m.SecurityAnswer)
                 </td>
             </tr>
