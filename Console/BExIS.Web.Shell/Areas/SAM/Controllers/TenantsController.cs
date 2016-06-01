@@ -47,8 +47,10 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
         /// 2. It is not allowed to delete the DEFAULT tenant. If needed, another tenant must be set as the default, before deleting the chosen one.
         /// 3.There MUST at least one active tenant remain in the list after this operation.
         /// </remarks>
-        public ActionResult Delete(string id)
+        public ActionResult Unregister(string id)
         {
+            ITenantRegistrar tenantRegistrar = MultiTenantFactory.GetTenantRegistrar();
+            tenantRegistrar.Unregister(id);
             return View();
         }
 
@@ -60,6 +62,8 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
         /// <returns></returns>
         public ActionResult Activate(string id)
         {
+            ITenantRegistrar tenantRegistrar = MultiTenantFactory.GetTenantRegistrar();
+            tenantRegistrar.Activate(id);
             return View();
         }
 
@@ -72,11 +76,15 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
         /// <remarks>There MUST at least one active tenant remain in the list after this operation.</remarks>
         public ActionResult Inactivate(string id)
         {
+            ITenantRegistrar tenantRegistrar = MultiTenantFactory.GetTenantRegistrar();
+            tenantRegistrar.Inactivate(id);
             return View();
         }
 
         public ActionResult MakeDefault(string id)
         {
+            ITenantRegistrar tenantRegistrar = MultiTenantFactory.GetTenantRegistrar();
+            tenantRegistrar.MakeDefault(id);
             return View();
         }
 
