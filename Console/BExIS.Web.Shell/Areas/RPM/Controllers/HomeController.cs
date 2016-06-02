@@ -587,7 +587,9 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                                     while (dataStructure.Variables.Where(p => cutSpaces(p.Label).ToLower().Equals(cutSpaces(tempName).ToLower())).Count() > 0)
                                     {
                                         count++;
-                                        tempName = temp.Name + " (" + count + ")";                                            
+                                        //tempName = temp.Name + " (" + count + ")";   
+                                        //datatable columnnames not allowed special characters
+                                        tempName += count;
                                     }
                                     var = dataStructureManager.AddVariableUsage(dataStructure, temp, true,tempName, null, null, temp.Description, temp.Unit);
 
