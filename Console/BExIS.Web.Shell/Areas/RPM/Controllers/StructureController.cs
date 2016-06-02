@@ -17,9 +17,9 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
         }
 
         // GET: api/Structure/5
-        public dataStructure Get(int id)
+        public Structure Get(int id)
         {
-            return new dataStructure(id);
+            return new Structure(id);
         }
 
         // POST: api/Structure

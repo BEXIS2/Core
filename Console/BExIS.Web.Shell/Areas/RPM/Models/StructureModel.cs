@@ -4,34 +4,77 @@ using System.Collections.Generic;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.DataStructure;
 using System.Data;
+using BExIS.Dlm.Entities.Data;
+using BExIS.Dlm.Services.Data;
 
 namespace BExIS.Web.Shell.Areas.RPM.Models
 {
-    public class dataStructure
+    public class Structure
     {
 
         public long Id { get; set; }
+        public long DataStructureId { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
         public bool inUse { get; set; }
         public bool Structured { get; set; }
         public DataTable Variables { get; set; }
 
-        public dataStructure()
+        public Structure()
         {
-            DataStructureResultStruct dataStructureResultStruct = new DataStructureResultStruct();
-            this.Id = dataStructureResultStruct.Id;
-            this.Title = dataStructureResultStruct.Title;
-            this.Description = dataStructureResultStruct.Description;
-            this.inUse = dataStructureResultStruct.inUse;
-            this.Structured = dataStructureResultStruct.Structured;
-            this.Variables = new DataTable("Variables");
+            constructor();
         }
 
-        public dataStructure(long dataStructureId)
+        public Structure(long datasetId)
         {
-            DataStructureResultStruct dataStructureResultStruct = new DataStructureResultStruct(dataStructureId);
-            this.Id = dataStructureResultStruct.Id;
+            DatasetManager datasetManager = new DatasetManager();
+            if (datasetManager.DatasetRepo.Get(datasetId) != null)
+            {
+                this.DataStructureId = datasetManager.DatasetRepo.Get(datasetId).DataStructure.Id;
+                DataStructureResultStruct dataStructureResultStruct = new DataStructureResultStruct(DataStructureId);
+                this.Id = datasetManager.DatasetRepo.Get(datasetId).Id;
+                this.Title = dataStructureResultStruct.Title;
+                this.Description = dataStructureResultStruct.Description;
+                this.inUse = dataStructureResultStruct.inUse;
+                this.Structured = dataStructureResultStruct.Structured;
+                this.Variables = new DataTable("Variables");
+
+                this.Variables.Columns.Add("Id");
+                this.Variables.Columns.Add("Label");
+                this.Variables.Columns.Add("Description");
+                this.Variables.Columns.Add("isOptional");
+                this.Variables.Columns.Add("Unit");
+                this.Variables.Columns.Add("DataType");
+                this.Variables.Columns.Add("SystemType");
+
+                if (this.Structured == true)
+                {
+                    StructuredDataStructurePreviewModel structuredDataStructurePreviewModel = new StructuredDataStructurePreviewModel(DataStructureId);
+                    DataRow dataRow;
+                    foreach (VariablePreviewStruct vs in structuredDataStructurePreviewModel.VariablePreviews)
+                    {
+                        dataRow = this.Variables.NewRow();
+                        dataRow["Id"] = vs.Id;
+                        dataRow["Label"] = vs.Label;
+                        dataRow["Description"] = vs.Description;
+                        dataRow["isOptional"] = vs.isOptional;
+                        dataRow["Unit"] = vs.Unit;
+                        dataRow["DataType"] = vs.DataType;
+                        dataRow["SystemType"] = vs.SystemType;
+                        this.Variables.Rows.Add(dataRow);
+                    }
+                }
+            }
+            else
+            {
+                constructor();
+            }
+        }       
+
+        private void constructor()
+        {
+            DataStructureResultStruct dataStructureResultStruct = new DataStructureResultStruct();
+            this.Id = 0;
             this.Title = dataStructureResultStruct.Title;
             this.Description = dataStructureResultStruct.Description;
             this.inUse = dataStructureResultStruct.inUse;
@@ -39,28 +82,12 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
             this.Variables = new DataTable("Variables");
 
             this.Variables.Columns.Add("Id");
-            this.Variables.Columns.Add("Lable");
+            this.Variables.Columns.Add("Label");
             this.Variables.Columns.Add("Description");
             this.Variables.Columns.Add("isOptional");
             this.Variables.Columns.Add("Unit");
             this.Variables.Columns.Add("DataType");
-
-            if (this.Structured == true)
-            {
-                StructuredDataStructurePreviewModel structuredDataStructurePreviewModel = new StructuredDataStructurePreviewModel(dataStructureId);
-                DataRow dataRow;
-                foreach (VariablePreviewStruct vs in structuredDataStructurePreviewModel.VariablePreviews)
-                {
-                    dataRow = this.Variables.NewRow();
-                    dataRow["Id"] = vs.Id;
-                    dataRow["Lable"] = vs.Lable;
-                    dataRow["Description"] = vs.Description;
-                    dataRow["isOptional"] = vs.isOptional;
-                    dataRow["Unit"] = vs.Unit;
-                    dataRow["DataType"] = vs.DataType;
-                    this.Variables.Rows.Add(dataRow);
-                }
-            }
+            this.Variables.Columns.Add("SystemType");
         }
     }
 }
