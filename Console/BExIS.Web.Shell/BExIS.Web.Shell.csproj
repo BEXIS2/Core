@@ -434,6 +434,7 @@
     <Compile Include="Areas\SAM\Controllers\TenantsController.cs" />
     <Compile Include="Areas\SAM\Controllers\UsersController.cs" />
     <Compile Include="Areas\SAM\Helpers\Attributes.cs" />
+    <Compile Include="Areas\SAM\Helpers\HtmlHelperExtensions.cs" />
     <Compile Include="Areas\SAM\Helpers\SAMSeedDataGenerator.cs" />
     <Compile Include="Areas\SAM\Helpers\HtmlPrefixScopeExtensions.cs" />
     <Compile Include="Areas\SAM\Models\AccountModels.cs" />

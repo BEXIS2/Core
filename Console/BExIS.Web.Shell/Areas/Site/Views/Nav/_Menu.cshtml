@@ -1,5 +1,7 @@
 ﻿@using System
+@using BExIS.Web.Shell.Areas.SAM.Helpers
 @using Telerik.Web.Mvc.UI
+@using Vaiona.Web.Mvc
 
 @if (!Request.IsAuthenticated)
 {
@@ -21,9 +23,11 @@
                 <span class="icon-bar"></span>
             </button>
             <a href="@Url.Action("Index", "Home", new {area = ""})" class="navbar-brand">
-                <img alt="BExIS" style="height:40px; margin-top:-10px;" src="~/Content/Images/Bildmarke_BEXIS_cmyk.svg">
+                @Html.Brand(Html.GetTenant().LogoPath, Html.GetTenant().ShortName)
             </a>
         </div>
+
+        
 
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div id="navbarCollapse" class="collapse navbar-collapse">
