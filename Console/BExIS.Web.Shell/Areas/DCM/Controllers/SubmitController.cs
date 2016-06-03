@@ -236,7 +236,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                                 {
                                     temp.Add(new ListViewItem(d.Id,
                                         XmlDatasetHelper.GetInformation(dm.GetDatasetLatestVersion(d),
-                                            AttributeNames.title)));
+                                            NameAttributeValues.title)));
                                 }
                             }
                         }
@@ -257,7 +257,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                                 {
                                     DatasetVersion datasetVersion = dm.GetDatasetLatestVersion(d);
                                     temp.Add(new ListViewItem(d.Id,
-                                        XmlDatasetHelper.GetInformation(datasetVersion, AttributeNames.title)));
+                                        XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title)));
                                 }
                             }
                         }
@@ -322,7 +322,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         if (dm.IsDatasetCheckedIn(datasetid))
                         {
                             title = XmlDatasetHelper.GetInformation(dm.GetDatasetLatestVersion(datasetid),
-                                AttributeNames.title);
+                                NameAttributeValues.title);
                         }
 
                         TaskManager.AddToBus(TaskManager.DATASET_TITLE, title);

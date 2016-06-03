@@ -120,8 +120,10 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
         {
             DatasetManager datasetManager = new DatasetManager();
             DatasetVersion datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
+            MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
+            MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(datasetVersion.Dataset.Id);
 
-            string fileName = getMappingFileName(datasetVersion);
+            string fileName = getMappingFileName(datasetVersion, TransmissionType.mappingFileExport, metadataStructure.Name);
             string path_mapping_file = "";
             try
             {
@@ -155,13 +157,9 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
             return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
         }
 
-        private string getMappingFileName(DatasetVersion datasetVersion)
+        private string getMappingFileName(DatasetVersion datasetVersion, TransmissionType convertType, string name)
         {
-            // get MetadataStructure 
-            XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)datasetVersion.Dataset.MetadataStructure.Extra);
-            XElement temp = XmlUtility.GetXElementByAttribute("convertRef", "name", "mappingFileExport", xDoc);
-
-            return temp.Attribute("value").Value.ToString();
+            return XmlMetadataImportHelper.GetMappingFileName(datasetVersion.Dataset.MetadataStructure.Id, convertType, name);
         }
 
         private List<DatasetVersionModel> getDatasetVersionsDic(MetadataStructure metadataStructure, List<long> datasetVersionIds)
@@ -179,7 +177,7 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
                     {
                         DatasetVersionId = datasetVersion.Id,
                         DatasetId = datasetVersion.Dataset.Id,
-                        Title = XmlDatasetHelper.GetInformation(datasetVersion, AttributeNames.title),
+                        Title = XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title),
                         MetadataDownloadPath = ""
                     });
             }

@@ -55,7 +55,7 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
             DatasetManager dm = new DatasetManager();
             DatasetVersion version = dm.GetDatasetLatestVersion(id);
 
-            string title = XmlDatasetHelper.GetInformation(version, AttributeNames.title);
+            string title = XmlDatasetHelper.GetInformation(version, NameAttributeValues.title);
 
             // check the data sturcture type ...
             if (version.Dataset.DataStructure.Self is StructuredDataStructure)

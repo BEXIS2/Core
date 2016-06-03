@@ -61,7 +61,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 MetadataStructureManager msm = new MetadataStructureManager();
                 dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
 
-                title = XmlDatasetHelper.GetInformation(dsv, AttributeNames.title);
+                title = XmlDatasetHelper.GetInformation(dsv, NameAttributeValues.title);
 
                 ViewBag.Title = PresentationModel.GetViewTitle("Show Data : " + title);
 
@@ -115,8 +115,8 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
 
             //get title
-            model.Title = XmlDatasetHelper.GetInformation(dsv,AttributeNames.title);
-            model.Description = XmlDatasetHelper.GetInformation(dsv, AttributeNames.description);
+            model.Title = XmlDatasetHelper.GetInformation(dsv, NameAttributeValues.title);
+            model.Description = XmlDatasetHelper.GetInformation(dsv, NameAttributeValues.description);
 
             #region create table
             XDocument xDoc = XmlUtility.ToXDocument(dsv.Metadata);
@@ -232,7 +232,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         datasetID, RightType.Download);
 
                     //TITLE
-                    string title = XmlDatasetHelper.GetInformation(dsv, AttributeNames.title);
+                    string title = XmlDatasetHelper.GetInformation(dsv, NameAttributeValues.title);
 
                     if (ds.Self.GetType() == typeof(StructuredDataStructure))
                     {
@@ -629,7 +629,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                     datasetVersion.Dataset.MetadataStructure = msm.Repo.Get(datasetVersion.Dataset.MetadataStructure.Id);
 
                     //TITLE
-                    string title = XmlDatasetHelper.GetInformation(datasetVersion, AttributeNames.title);
+                    string title = XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title);
                      
                     string zipPath = Path.Combine(AppConfiguration.DataPath, "Datasets", id.ToString(),title + ".zip");
 

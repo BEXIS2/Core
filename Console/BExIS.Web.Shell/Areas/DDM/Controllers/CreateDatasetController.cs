@@ -187,7 +187,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                     TaskManager.AddToBus(CreateDatasetTaskmanager.METADATA_XML, XmlUtility.ToXDocument(dsv.Metadata));
 
                     TaskManager.AddToBus(CreateDatasetTaskmanager.DATASET_TITLE,
-                        XmlDatasetHelper.GetInformation(dsv, AttributeNames.title));
+                        XmlDatasetHelper.GetInformation(dsv, NameAttributeValues.title));
 
                     ResearchPlanManager rpm = new ResearchPlanManager();
                     TaskManager.AddToBus(CreateDatasetTaskmanager.RESEARCHPLAN_ID, rpm.Repo.Get().First().Id);
@@ -228,7 +228,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                     {
                         XDocument xMetadata = (XDocument) TaskManager.Bus[CreateDatasetTaskmanager.METADATA_XML];
 
-                        string title = XmlDatasetHelper.GetInformation(dsv, AttributeNames.title);
+                        string title = XmlDatasetHelper.GetInformation(dsv, NameAttributeValues.title);
                         if (String.IsNullOrEmpty(title)) title = "No Title available.";
 
                         if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.DATASET_TITLE))
@@ -1321,7 +1321,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         workingCopy.Metadata = XmlMetadataWriter.ToXmlDocument(xMetadata);
                     }
 
-                    string title = XmlDatasetHelper.GetInformation(workingCopy, AttributeNames.title);
+                    string title = XmlDatasetHelper.GetInformation(workingCopy, NameAttributeValues.title);
                     if(String.IsNullOrEmpty(title)) title = "No Title available.";
 
                     TaskManager.AddToBus(CreateDatasetTaskmanager.DATASET_TITLE, title );//workingCopy.Metadata.SelectNodes("Metadata/Description/Description/Title/Title")[0].InnerText);

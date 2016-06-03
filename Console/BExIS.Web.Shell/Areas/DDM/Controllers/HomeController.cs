@@ -813,8 +813,8 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         MetadataStructureManager msm = new MetadataStructureManager();
                         dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
 
-                        string title = XmlDatasetHelper.GetInformation(dsv, AttributeNames.title);
-                        string description = XmlDatasetHelper.GetInformation(dsv, AttributeNames.description);
+                        string title = XmlDatasetHelper.GetInformation(dsv, NameAttributeValues.title);
+                        string description = XmlDatasetHelper.GetInformation(dsv, NameAttributeValues.description);
 
                         rowArray[0] = Convert.ToInt64(datasetId);
                         rowArray[1] = title;

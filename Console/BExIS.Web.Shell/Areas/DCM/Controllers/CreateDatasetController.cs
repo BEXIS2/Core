@@ -205,7 +205,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         TaskManager.AddToBus(CreateDatasetTaskmanager.RESEARCHPLAN_ID,
                             datasetVersion.Dataset.ResearchPlan.Id);
                         TaskManager.AddToBus(CreateDatasetTaskmanager.DATASET_TITLE,
-                            XmlDatasetHelper.GetInformation(datasetVersion, AttributeNames.title));
+                            XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title));
 
                         // set datastructuretype
                         TaskManager.AddToBus(CreateDatasetTaskmanager.DATASTRUCTURE_TYPE,
@@ -467,7 +467,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         TaskManager.AddToBus(CreateDatasetTaskmanager.METADATA_XML, XmlUtility.ToXDocument(newMetadata));
 
                     TaskManager.AddToBus(CreateDatasetTaskmanager.DATASET_TITLE,
-                        XmlDatasetHelper.GetInformation(dsv, AttributeNames.title));
+                        XmlDatasetHelper.GetInformation(dsv, NameAttributeValues.title));
 
                     ResearchPlanManager rpm = new ResearchPlanManager();
                     TaskManager.AddToBus(CreateDatasetTaskmanager.RESEARCHPLAN_ID, rpm.Repo.Get().First().Id);
@@ -508,7 +508,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     {
                         XDocument xMetadata = (XDocument) TaskManager.Bus[CreateDatasetTaskmanager.METADATA_XML];
 
-                        string title = XmlDatasetHelper.GetInformation(dsv, AttributeNames.title);
+                        string title = XmlDatasetHelper.GetInformation(dsv, NameAttributeValues.title);
                         if (String.IsNullOrEmpty(title)) title = "No Title available.";
 
                         if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.DATASET_TITLE))
@@ -962,12 +962,12 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                     // metadataStructure DI
                     long metadataStructureId = (Int64)TaskManager.Bus[CreateDatasetTaskmanager.METADATASTRUCTURE_ID];
-                    //long datasetId = (Int64)TaskManager.Bus[CreateDatasetTaskmanager.DATASET_ID];
-
+                    MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
+                    string metadataStructrueName = metadataStructureManager.Repo.Get(metadataStructureId).Name;
 
 
                     // loadMapping file
-                    string path_mappingFile = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), XmlMetadataImportHelper.GetMappingFileName(metadataStructureId));
+                    string path_mappingFile = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), XmlMetadataImportHelper.GetMappingFileName(metadataStructureId, TransmissionType.mappingFileImport, metadataStructrueName));
 
                     // XML mapper + mapping file
                     XmlMapperManager xmlMapperManager = new XmlMapperManager();
@@ -1723,7 +1723,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         workingCopy.Metadata = XmlMetadataWriter.ToXmlDocument(xMetadata);
                     }
 
-                    string title = XmlDatasetHelper.GetInformation(workingCopy, AttributeNames.title);
+                    string title = XmlDatasetHelper.GetInformation(workingCopy, NameAttributeValues.title);
                     if(String.IsNullOrEmpty(title)) title = "No Title available.";
 
                     TaskManager.AddToBus(CreateDatasetTaskmanager.DATASET_TITLE, title );//workingCopy.Metadata.SelectNodes("Metadata/Description/Description/Title/Title")[0].InnerText);
@@ -2441,8 +2441,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 {
                     if (datasetManager.IsDatasetCheckedIn(id))
                     {
-                        string title = XmlDatasetHelper.GetInformation(id, AttributeNames.title);
-                        string description = XmlDatasetHelper.GetInformation(id, AttributeNames.description);
+                        string title = XmlDatasetHelper.GetInformation(id, NameAttributeValues.title);
+                        string description = XmlDatasetHelper.GetInformation(id, NameAttributeValues.description);
 
                         temp.Add(new ListViewItem(id, title, description));
                     }
