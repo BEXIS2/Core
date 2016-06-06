@@ -18,26 +18,53 @@ namespace BExIS.Dlm.Services.Party
             this.Repo = uow.GetReadOnlyRepository<PartyRelationshipType>();
         }
         #region PartyRelationshipType
-        public PartyRelationshipType Create(string title,string description, bool indicatesHierarchy,  int maxCardinality,
-            int minCardinality, PartyType partyTypePairAlowedSource, PartyType partyTypePairAlowedTarget, 
-            string partyTypePairTitle, string partyTypePairDescription, ICollection<PartyRelationship> partyRelationships)
+        /// <summary>
+        /// Creating PartyRelationshipType
+        /// because PartyRelationshipType should have PartyTypePairs,partyTypePair created in the same time of creating PartyRelationshipType
+        /// </summary>
+        /// <param name="title"></param>
+        /// <param name="description"></param>
+        /// <param name="indicatesHierarchy"></param>
+        /// <param name="maxCardinality"></param>
+        /// <param name="minCardinality"></param>
+        /// <param name="partyTypePairAlowedSource"></param>
+        /// <param name="partyTypePairAlowedTarget"></param>
+        /// <param name="partyTypePairTitle"></param>
+        /// <param name="partyTypePairDescription"></param>
+        /// <returns></returns>
+        public PartyRelationshipType Create(string title, string description, bool indicatesHierarchy, int maxCardinality,
+            int minCardinality, PartyType partyTypePairAlowedSource, PartyType partyTypePairAlowedTarget,
+            string partyTypePairTitle, string partyTypePairDescription)
         {
 
-            Contract.Requires(!string.IsNullOrWhiteSpace(title));
+            Contract.Requires(!string.IsNullOrWhiteSpace(title) && !string.IsNullOrWhiteSpace(partyTypePairTitle));
+            Contract.Requires(partyTypePairAlowedSource != null && partyTypePairAlowedSource.Id > 0);
+            Contract.Requires(partyTypePairAlowedTarget != null && partyTypePairAlowedTarget.Id > 0);
+            Contract.Ensures((Contract.Result<PartyRelationshipType>() != null && Contract.Result<PartyRelationshipType>().Id >= 0)
+                && (Contract.Result<PartyTypePair>() != null && Contract.Result<PartyTypePair>().Id >= 0));
             PartyRelationshipType entity = new PartyRelationshipType()
-            {                
-                 PartyRelationships=partyRelationships,
-                 Description= description,
-                IndicatesHierarchy= indicatesHierarchy,
-                MaxCardinality= maxCardinality,
-                MinCardinality= minCardinality,                
-                Title= title
+            {
+                Description = description,
+                IndicatesHierarchy = indicatesHierarchy,
+                MaxCardinality = maxCardinality,
+                MinCardinality = minCardinality,
+                Title = title
+            };
+            var partyTypeEntity = new PartyTypePair()
+            {
+                AlowedSource = partyTypePairAlowedSource,
+                AlowedTarget = partyTypePairAlowedTarget,
+                Description = partyTypePairDescription,
+                PartyRelationshipType = entity,
+                Title = partyTypePairTitle
             };
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<PartyRelationshipType> repo = uow.GetRepository<PartyRelationshipType>();
+                IRepository<PartyTypePair> repoPTP = uow.GetRepository<PartyTypePair>();
                 repo.Put(entity);
+                repoPTP.Put(partyTypeEntity);
                 uow.Commit();
             }
             return (entity);
@@ -51,17 +78,17 @@ namespace BExIS.Dlm.Services.Party
             {
                 IRepository<PartyRelationshipType> repoPR = uow.GetRepository<PartyRelationshipType>();
                 IRepository<PartyType> repoType = uow.GetRepository<PartyType>();
-               
+
                 var entity = repoPR.Reload(partyRelationType);
                 //If there is a relation between entity and a party we couldn't delete it
-                if (entity.PartyRelationships.Count()>0)
-                    return true;
+                if (entity.PartyRelationships.Count() > 0)
+                    throw new Exception("Delete fail. There is a relation between a party and PartyRelationshipType");
                 // remove all associations between the entity and AssociatedPairs
                 entity.AssociatedPairs.ToList().ForEach(item => item.PartyRelationshipType = null);
                 entity.AssociatedPairs.Clear();
 
                 repoPR.Delete(entity);
-                
+
                 uow.Commit();
             }
             return (true);
@@ -79,7 +106,7 @@ namespace BExIS.Dlm.Services.Party
                 {
                     var latest = repoPR.Reload(entity);
                     //If there is a relation between entity and a party we couldn't delete it
-                    if (entity.PartyRelationships.Count()>0)
+                    if (entity.PartyRelationships.Count() > 0)
                         throw new Exception("Delete fail. There is a relation between a party and PartyRelationshipType");
                     // remove all associations between the entity and AssociatedPairs
                     entity.AssociatedPairs.ToList().ForEach(item => item.PartyRelationshipType = null);
@@ -92,15 +119,20 @@ namespace BExIS.Dlm.Services.Party
         }
         #endregion
         #region PartyTypePair
-        public PartyTypePair AddPartyTypePair(PartyType alowedSource, PartyType alowedTarget,string description,
-            PartyRelationshipType partyRelationshipType,string title)
+        public PartyTypePair AddPartyTypePair(string title, PartyType alowedSource, PartyType alowedTarget, string description,
+            PartyRelationshipType partyRelationshipType)
         {
-            var entity = new PartyTypePair() {
-                AlowedSource= alowedSource,
-                AlowedTarget= alowedTarget,
-                Description=description,
-                PartyRelationshipType= partyRelationshipType,
-                Title=title
+            Contract.Requires(!string.IsNullOrEmpty(title));
+            Contract.Requires(alowedSource != null && alowedSource.Id > 0);
+            Contract.Requires(alowedTarget != null && alowedTarget.Id > 0);
+            Contract.Ensures(Contract.Result<PartyTypePair>() != null && Contract.Result<PartyTypePair>().Id >= 0);
+            var entity = new PartyTypePair()
+            {
+                AlowedSource = alowedSource,
+                AlowedTarget = alowedTarget,
+                Description = description,
+                PartyRelationshipType = partyRelationshipType,
+                Title = title
             };
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
@@ -110,10 +142,21 @@ namespace BExIS.Dlm.Services.Party
             }
             return (entity);
         }
-        
+        public PartyTypePair UpdatePartyTypePair(PartyTypePair entity)
+        {
+            Contract.Requires(entity != null && entity.Id > 0);
+            Contract.Ensures(Contract.Result<PartyTypePair>() != null && Contract.Result<PartyTypePair>().Id >= 0);
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<PartyTypePair> repo = uow.GetRepository<PartyTypePair>();
+                repo.Put(entity); // Merge is required here!!!!
+                uow.Commit();
+            }
+            return (entity);
+        }
         public bool RemovePartyTypePair(PartyTypePair partyTypePair)
         {
-            Contract.Requires(partyTypePair != null);
+            Contract.Requires(partyTypePair != null && partyTypePair.Id > 0);
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<PartyTypePair> repoPR = uow.GetRepository<PartyTypePair>();

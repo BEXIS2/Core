@@ -218,9 +218,9 @@ namespace BExIS.Dlm.Services.Party
             Contract.Requires(partyCustomAttribute.Id >= 0, "provided Custom Attribute entity must have a permanent ID");
             Contract.Requires(party != null);
             Contract.Requires(party.Id >= 0, "provided party entity must have a permanent ID");
+            Contract.Ensures(Contract.Result<PartyCustomAttributeValue>() != null && Contract.Result<PartyCustomAttributeValue>().Id >= 0);
             var entity = new PartyCustomAttributeValue()
             {
-
                 CustomAttribute = partyCustomAttribute,
                 Value = value
             };
@@ -269,6 +269,56 @@ namespace BExIS.Dlm.Services.Party
             }
             return (true);
         }
+        public PartyStatus AddPartyStatus(PartyX party, PartyStatusType partyStatusType, string description)
+        {
+            Contract.Requires(party != null);
+            Contract.Requires(partyStatusType != null);
+            Contract.Ensures(Contract.Result<PartyStatus>() != null && Contract.Result<PartyStatus>().Id >= 0);
+            var entity = new PartyStatus()
+            {
+                Description = description,
+                Party = party,
+                StatusType = partyStatusType,
+                Timestamp = DateTime.Now
+            };
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<PartyStatus> repoStatus = uow.GetRepository<PartyStatus>();
+                if (repoStatus.Get(item => item.StatusType == partyStatusType && item.Party == party).Count > 0)
+                    throw new Exception("This PartyStatus is already exist!");
+                repoStatus.Put(entity);
+                uow.Commit();
+            }
+            return (entity);
+        }
+        public bool RemovePartyStatus(PartyStatus entity)
+        {
+            Contract.Requires(entity != null && entity.Id >= 0);
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<PartyStatus> repo = uow.GetRepository<PartyStatus>();
+                entity = repo.Reload(entity);
+                repo.Delete(entity);
+                uow.Commit();
+            }
+            // if any problem was detected during the commit, an exception will be thrown!
+            return (true);
+        }
+        public bool RemovePartyStatus(IEnumerable<PartyStatus> entities)
+        {
+            Contract.Requires(entities != null);
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<PartyStatus> repo = uow.GetRepository<PartyStatus>();
+                foreach (var entity in entities)
+                {
+                    var latest = repo.Reload(entity);
+                    repo.Delete(latest);
+                }
+                uow.Commit();
+            }
+            return (true);
+        }        
         #endregion
     }
 }

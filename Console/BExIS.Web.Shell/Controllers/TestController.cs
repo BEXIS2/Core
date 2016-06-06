@@ -17,7 +17,7 @@ using BExIS.Security.Services.Authorization;
 using Vaiona.Logging.Aspects;
 using Vaiona.Logging;
 using Vaiona.Utils.Cfg;
-
+using BExIS.Dlm.Entities.Party;
 
 namespace BExIS.Web.Shell.Controllers
 {
@@ -76,45 +76,68 @@ namespace BExIS.Web.Shell.Controllers
             //getDataStructures();
             //return RedirectToAction("About");
             //createMetadataAttribute();
+            ObtainingMethodManager om = new ObtainingMethodManager();
+            
+            ////Test Party Type Manager
+            //Add Party Type
+            var partyType = addPartyType();
+            //removePartyType(partyType);
+            var partyStatusType = addPartyStatusType(partyType);
+            var cusAttr = addTestPartyCustomAttribute(partyType);
+            //removeTestPartyCustomAttribute(cusAttr);
+            // removePartyStatusType(partyStatusType);
 
-            ////Create Two party 
+            ////Create party 
             Dlm.Services.Party.PartyManager partyManager = new Dlm.Services.Party.PartyManager();
-           /// Dlm.Services.Party.PartyRelationshipTypeManager pmr = new Dlm.Services.Party.PartyRelationshipTypeManager();
+            /// Dlm.Services.Party.PartyRelationshipTypeManager pmr = new Dlm.Services.Party.PartyRelationshipTypeManager();
             var parties = new List<Dlm.Entities.Party.Party>();
-            parties.Add(addTestParty());
-            parties.Add(addTestParty());
-            //update last test party
+            parties.Add(addTestParty(partyType, partyStatusType));
+            parties.Add(addTestParty(partyType, partyStatusType));
+            ////update last test party
             updateTestParty(parties.Last().Id);
-            ////deleteTestParty last test party
-            //deleteTestParty(parties.First());
-            ////Add custom attribute value
-            var customAttrVal = addTestPartyCustomAttributeValue(parties.Last(), addTestPartyCustomAttribute(parties.Last().PartyType));
+            //////deleteTestParty last test party
+            ////deleteTestParty(parties.First());
+            //////Add custom attribute value
+            var customAttrVal = addTestPartyCustomAttributeValue(parties.First(), cusAttr);
             removeTestPartyCustomAttributeValue(customAttrVal);
-            ////Add relation between two parties
-            var partyRel=addTestPartyRelationship(parties.First(), parties.Last());
-            removePartyRelationship(partyRel);
+            // Create Party relationshiptype
+            //in the same time of creating partyrelationshiptype partyType pairs created and add to that
+            var partyReType = addTestPartyRelationshipType(partyType, addPartyType());
+          //removeTestPartyRelationshipType(partyReType);
+            //Add relation between two parties
+            var partyRel=addTestPartyRelationship(parties.First(), parties.Last(), partyReType);
+            
+            var partyPair = addTestPartyTypePair(partyType, addPartyType());
+           // removeTestPartyTypePair(partyPair);
+            var ps=addTestPartyStatus(parties.First());
+            //removeTestPartyStatus(ps);
+
             return View();
         }
-        private Dlm.Entities.Party.Party addTestParty()
+        #region PartyManager
+
+        #region party
+        private Dlm.Entities.Party.Party addTestParty(PartyType partyType, PartyStatusType st)
         {
-            Dlm.Services.Party.PartyTypeManager ptm = new Dlm.Services.Party.PartyTypeManager();
             Dlm.Services.Party.PartyManager pm = new Dlm.Services.Party.PartyManager();
-            var partyType = ptm.Create("partyTypeTest", "just for test", null);
-            var st = ptm.AddStatusType(partyType, "just created", "this is for test data", 0);
+
             var party = pm.Create(partyType, "partyTest", "", "party created for test", null, null, st);
             return party;
 
         }
+
         private void deleteTestParty(Dlm.Entities.Party.Party party)
         {
             Dlm.Services.Party.PartyManager pm = new Dlm.Services.Party.PartyManager();
             pm.Delete(party);
         }
+
         private void deleteTestParty(List<Dlm.Entities.Party.Party> parties)
         {
             Dlm.Services.Party.PartyManager pm = new Dlm.Services.Party.PartyManager();
             pm.Delete(parties);
         }
+
         private void updateTestParty(long id)
         {
             Dlm.Services.Party.PartyManager pm = new Dlm.Services.Party.PartyManager();
@@ -122,31 +145,29 @@ namespace BExIS.Web.Shell.Controllers
             party.Description = "updated..";
             pm.Update(party);
         }
-        private Dlm.Entities.Party.PartyCustomAttribute addTestPartyCustomAttribute(Dlm.Entities.Party.PartyType partyType)
+        #endregion
+
+        #region partyStatus
+        private Dlm.Entities.Party.PartyStatus addTestPartyStatus(Dlm.Entities.Party.Party party)
         {
+            Dlm.Services.Party.PartyManager pm = new Dlm.Services.Party.PartyManager();
             Dlm.Services.Party.PartyTypeManager ptm = new Dlm.Services.Party.PartyTypeManager();
-            return ptm.CreatePartyCustomAttribute(partyType, "string", "Name", "Name for test", 0);
+            var partyType = ptm.Create("partyTypeTest2", "just for test2", null);
+            var st = ptm.AddStatusType(partyType, "second try", "this is for test data", 0);
+            return pm.AddPartyStatus(party, st, "test");
         }
-        private Dlm.Entities.Party.PartyCustomAttributeValue addTestPartyCustomAttributeValue(Dlm.Entities.Party.Party party, Dlm.Entities.Party.PartyCustomAttribute partyCustomAttr)
+        private bool removeTestPartyStatus(Dlm.Entities.Party.PartyStatus partyStatus)
         {
             Dlm.Services.Party.PartyManager pm = new Dlm.Services.Party.PartyManager();
-            return pm.AddPartyCustomAttriuteValue(party, partyCustomAttr, "TestName");
+            return pm.RemovePartyStatus(partyStatus);
         }
-        private bool removeTestPartyCustomAttributeValue(Dlm.Entities.Party.PartyCustomAttributeValue partyCustomAttrVal)
+        #endregion
+
+        #region PartyRelationship
+        private Dlm.Entities.Party.PartyRelationship addTestPartyRelationship(Dlm.Entities.Party.Party firstParty, Dlm.Entities.Party.Party secondParty,PartyRelationshipType prt)
         {
             Dlm.Services.Party.PartyManager pm = new Dlm.Services.Party.PartyManager();
-            return pm.RemovePartyCustomAttriuteValue(partyCustomAttrVal);
-        }
-     
-        private Dlm.Entities.Party.PartyRelationshipType addTestPartyRelationshipType()
-        {
-            Dlm.Services.Party.PartyRelationshipTypeManager pmr = new Dlm.Services.Party.PartyRelationshipTypeManager();
-            return pmr.Create("rel Type test", " ", false, 0, 0, null, null, "", "", null);
-        }
-        private Dlm.Entities.Party.PartyRelationship  addTestPartyRelationship(Dlm.Entities.Party.Party firstParty, Dlm.Entities.Party.Party secondParty)
-        {
-            Dlm.Services.Party.PartyManager pm = new Dlm.Services.Party.PartyManager();
-           return  pm.AddPartyRelationship(firstParty, secondParty, addTestPartyRelationshipType(), DateTime.Now, null, "test Rel", "test relationship", "ss");
+            return pm.AddPartyRelationship(firstParty, secondParty, prt, DateTime.Now, null, "test Rel", "test relationship", "ss");
 
         }
         private bool removePartyRelationship(Dlm.Entities.Party.PartyRelationship partyRelationship)
@@ -154,7 +175,112 @@ namespace BExIS.Web.Shell.Controllers
             Dlm.Services.Party.PartyManager pm = new Dlm.Services.Party.PartyManager();
             return pm.RemovePartyRelationship(partyRelationship);
         }
+        #endregion
 
+
+        #region PartyCustomAttributeValue
+        private Dlm.Entities.Party.PartyCustomAttributeValue addTestPartyCustomAttributeValue(Dlm.Entities.Party.Party party, Dlm.Entities.Party.PartyCustomAttribute partyCustomAttr)
+        {
+            Dlm.Services.Party.PartyManager pm = new Dlm.Services.Party.PartyManager();
+            return pm.AddPartyCustomAttriuteValue(party, partyCustomAttr, "TestName");
+        }
+
+        private bool removeTestPartyCustomAttributeValue(Dlm.Entities.Party.PartyCustomAttributeValue partyCustomAttrVal)
+        {
+            Dlm.Services.Party.PartyManager pm = new Dlm.Services.Party.PartyManager();
+            return pm.RemovePartyCustomAttriuteValue(partyCustomAttrVal);
+        }
+        #endregion
+
+        #endregion
+
+        #region Party Type Manager
+        #region partyType
+
+        private Dlm.Entities.Party.PartyType addPartyType()
+        {
+            Dlm.Services.Party.PartyTypeManager ptm = new Dlm.Services.Party.PartyTypeManager();
+            return ptm.Create("partyTypeTest", "just for test", null);
+        }
+        private void removePartyType(PartyType partyType)
+        {
+            Dlm.Services.Party.PartyTypeManager ptm = new Dlm.Services.Party.PartyTypeManager();
+            ptm.Delete(partyType);
+        }
+        #endregion
+
+        #region addStatusType
+        private Dlm.Entities.Party.PartyStatusType addPartyStatusType(PartyType partyType)
+        {
+            Dlm.Services.Party.PartyTypeManager ptm = new Dlm.Services.Party.PartyTypeManager();
+            return ptm.AddStatusType(partyType, "just created", "this is for test data", 0);
+        }
+        private void removePartyStatusType(PartyStatusType partyStatusType)
+        {
+            Dlm.Services.Party.PartyTypeManager ptm = new Dlm.Services.Party.PartyTypeManager();
+            ptm.RemoveStatusType(partyStatusType);
+        }
+        #endregion
+
+        #region PartyCustomAttribute
+        private Dlm.Entities.Party.PartyCustomAttribute addTestPartyCustomAttribute(Dlm.Entities.Party.PartyType partyType)
+        {
+            Dlm.Services.Party.PartyTypeManager ptm = new Dlm.Services.Party.PartyTypeManager();
+            return ptm.CreatePartyCustomAttribute(partyType, "string", "Name", "Name for test", 0);
+        }
+
+
+        private bool removeTestPartyCustomAttribute(Dlm.Entities.Party.PartyCustomAttribute partyCustomAttr)
+        {
+            Dlm.Services.Party.PartyTypeManager pm = new Dlm.Services.Party.PartyTypeManager();
+            return pm.DeletePartyCustomAttribute(partyCustomAttr);
+        }
+
+
+
+        #endregion
+        #endregion
+
+        #region Party RelationshipType Manager
+        #region PartyRelationshipType
+        private Dlm.Entities.Party.PartyRelationshipType addTestPartyRelationshipType(PartyType alowedSource, PartyType alowedTarget)
+        {
+            Dlm.Services.Party.PartyRelationshipTypeManager pmr = new Dlm.Services.Party.PartyRelationshipTypeManager();
+            return pmr.Create("test", " ", false, 0, 0, alowedSource, alowedTarget, "", "");
+        }
+
+        private bool removeTestPartyRelationshipType(PartyRelationshipType partyRelationshipType)
+        {
+            Dlm.Services.Party.PartyRelationshipTypeManager pmr = new Dlm.Services.Party.PartyRelationshipTypeManager();
+            return pmr.Delete(partyRelationshipType);
+        }
+        private bool removeTestPartyRelationshipType(List<PartyRelationshipType> partyRelationshipType)
+        {
+            Dlm.Services.Party.PartyRelationshipTypeManager pmr = new Dlm.Services.Party.PartyRelationshipTypeManager();
+            return pmr.Delete(partyRelationshipType);
+        }
+        #endregion
+
+        #region  PartyTypePair
+        private Dlm.Entities.Party.PartyTypePair addTestPartyTypePair(PartyType alowedSource, PartyType alowedTarget)
+        {
+            Dlm.Services.Party.PartyRelationshipTypeManager pmr = new Dlm.Services.Party.PartyRelationshipTypeManager();
+            return pmr.AddPartyTypePair("TitleTest", alowedSource, alowedTarget, "rel Type test", null);
+        }
+
+        private bool removeTestPartyTypePair(PartyTypePair partyTypePair)
+        {
+            Dlm.Services.Party.PartyRelationshipTypeManager pmr = new Dlm.Services.Party.PartyRelationshipTypeManager();
+            return pmr.RemovePartyTypePair(partyTypePair);
+        }
+        private bool removeTestPartyTypePair(List<PartyTypePair> partyTypePairs)
+        {
+            Dlm.Services.Party.PartyRelationshipTypeManager pmr = new Dlm.Services.Party.PartyRelationshipTypeManager();
+            return pmr.RemovePartyTypePair(partyTypePairs);
+        }
+        #endregion
+
+        #endregion
 
         private void getDataStructures()
         {

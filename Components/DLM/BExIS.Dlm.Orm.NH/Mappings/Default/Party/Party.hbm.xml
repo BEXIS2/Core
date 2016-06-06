@@ -43,7 +43,7 @@
       <one-to-many class="PartyCustomAttributeValue"/>
     </set>
 
-    <set name="History" table="PartyStatuses" lazy="true"   cascade="all" inverse="true">
+    <set name="History" table="PartyStatuses" lazy="true" cascade="all" inverse="true">
       <key column="PartyRef"/>
       <one-to-many class="PartyStatus"/>
     </set>

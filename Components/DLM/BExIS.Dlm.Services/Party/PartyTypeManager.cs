@@ -21,19 +21,17 @@ namespace BExIS.Dlm.Services.Party
 
         #region PartyType
 
-        public PartyType Create(string title, string description, List<PartyStatusType> statusTypes=null)
+        public PartyType Create(string title, string description, List<PartyStatusType> statusTypes = null)
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(title));
             Contract.Requires(statusTypes != null && statusTypes.Count() > 0); // there should be at least one status defined for each party type
-           // Contract.Ensures(Contract.Result<PartyType>() != null && Contract.Result<PartyType>().Id >= 0);
-
+            Contract.Ensures(Contract.Result<PartyType>() != null && Contract.Result<PartyType>().Id >= 0);
             PartyType entity = new PartyType()
             {
                 Title = title,
                 Description = description,
-                StatusTypes = statusTypes,
+                StatusTypes = statusTypes
             };
-
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<PartyType> repo = uow.GetRepository<PartyType>();
@@ -47,7 +45,6 @@ namespace BExIS.Dlm.Services.Party
         {
             Contract.Requires(partyType != null);
             Contract.Requires(partyType.Id >= 0);
-
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<PartyType> repo = uow.GetRepository<PartyType>();
@@ -56,15 +53,11 @@ namespace BExIS.Dlm.Services.Party
                 partyType = repo.Reload(partyType);
                 // check whether the party type is used i party, status types are used in some statuses, and custom attributes too. if yes, the party type can ot bedeleted
                 if (
-                    (partyType.Parties!=null && partyType.Parties.Count()>0 )
-                    || (partyType.StatusTypes!=null && partyType.StatusTypes.Count(p => (p.Statuses!=null && p.Statuses.Count()>0))>0)
-                    || partyType.CustomAttributes!=null && partyType.CustomAttributes.Count(p => p.CustomAttributeValues.Count()>0)>0
+                    (partyType.Parties != null && partyType.Parties.Count() > 0)
+                    || (partyType.StatusTypes != null && partyType.StatusTypes.Count(p => (p.Statuses != null && p.Statuses.Count() > 0)) > 0)
+                    || partyType.CustomAttributes != null && partyType.CustomAttributes.Count(p => p.CustomAttributeValues.Count() > 0) > 0
                     )
-                {
                     throw new Exception("Delete fail. There are some data in another tables with this data type.");
-                }
-
-              
                 // delete the history
                 repoPST.Delete(partyType.StatusTypes);
                 repoCA.Delete(partyType.CustomAttributes);
@@ -76,12 +69,11 @@ namespace BExIS.Dlm.Services.Party
                 // the custmom attributes must be also deleted.
                 partyType.CustomAttributes.ToList().ForEach(a => a.PartyType = null);
                 partyType.CustomAttributes.Clear();
-
                 //delete the entity
                 repo.Delete(partyType);
-
                 // commit changes
                 uow.Commit();
+                partyType = null;
             }
             // if any problem was detected during the commit, an exception will be thrown!
             return (true);
@@ -102,19 +94,14 @@ namespace BExIS.Dlm.Services.Party
                     var partyType = repo.Reload(entity);
                     // check whether the party type is used i party, status types are used in some statuses, and custom attributes too. if yes, the party type can ot bedeleted
                     if (
-                        (partyType.Parties != null && partyType.Parties.Count()>0)
-                        || (partyType.StatusTypes != null && partyType.StatusTypes.Count(p => (p.Statuses != null && p.Statuses.Count()>0))>0)
-                        || partyType.CustomAttributes != null && partyType.CustomAttributes.Count(p => p.CustomAttributeValues.Count()>0)>0
+                        (partyType.Parties != null && partyType.Parties.Count() > 0)
+                        || (partyType.StatusTypes != null && partyType.StatusTypes.Count(p => (p.Statuses != null && p.Statuses.Count() > 0)) > 0)
+                        || partyType.CustomAttributes != null && partyType.CustomAttributes.Count(p => p.CustomAttributeValues.Count() > 0) > 0
                         )
-                    {
-                        throw new Exception("Delete fail. There are some data in another tables with this data type.");
-                    }
-
-
+                    throw new Exception("Delete fail. There are some data in another tables with this data type.");
                     // delete the history
                     repoPST.Delete(partyType.StatusTypes);
                     repoCA.Delete(partyType.CustomAttributes);
-
                     // remove all associations between the entity and its history items
                     // the status types must also be deleted, not just the association between them and the party type.
                     partyType.StatusTypes.ToList().ForEach(a => a.PartyType = null);
@@ -122,12 +109,12 @@ namespace BExIS.Dlm.Services.Party
                     // the custmom attributes must be also deleted.
                     partyType.CustomAttributes.ToList().ForEach(a => a.PartyType = null);
                     partyType.CustomAttributes.Clear();
-
                     //delete the entity
                     repo.Delete(partyType);
                 }
                 // commit changes
                 uow.Commit();
+
             }
             // if any problem was detected during the commit, an exception will be thrown!
             return (true);
@@ -135,22 +122,23 @@ namespace BExIS.Dlm.Services.Party
         #endregion
 
         #region PartyCustomAttribute
-        public PartyCustomAttribute CreatePartyCustomAttribute(PartyType partyType,string dataType, string name, string description, int displayOrder)
+        public PartyCustomAttribute CreatePartyCustomAttribute(PartyType partyType, string dataType, string name, string description, int displayOrder)
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(name));
             Contract.Requires(!string.IsNullOrWhiteSpace(description));
             Contract.Requires(partyType != null);
+            Contract.Ensures(Contract.Result<PartyCustomAttribute>() != null && Contract.Result<PartyCustomAttribute>().Id >= 0);
             var entity = new PartyCustomAttribute()
             {
                 DataType = dataType,
                 Description = description,
                 DisplayOrder = displayOrder,
-                PartyType= partyType,
+                PartyType = partyType,
                 Name = name
             };
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
-                IRepository<PartyCustomAttribute> repo = uow.GetRepository<PartyCustomAttribute>();              
+                IRepository<PartyCustomAttribute> repo = uow.GetRepository<PartyCustomAttribute>();
                 repo.Put(entity);
                 uow.Commit();
             }
@@ -210,7 +198,8 @@ namespace BExIS.Dlm.Services.Party
         {
             // reorder the other status types that confclict with the displayOrder passed here
             Contract.Requires(!string.IsNullOrWhiteSpace(name));
-            
+            Contract.Requires(partyType != null && partyType.Id > 0);
+            Contract.Ensures(Contract.Result<PartyStatusType>() != null && Contract.Result<PartyStatusType>().Id >= 0);
             var entity = new PartyStatusType()
             {
                 Description = description,
@@ -229,18 +218,44 @@ namespace BExIS.Dlm.Services.Party
 
         }
 
-        public void RemoveStatusType( PartyStatusType statusType)
+        public bool RemoveStatusType(PartyStatusType entity)
         {
-            // there should remain at least 1 status type attached to the party type after removal of the passed one
-
-            return;
+            Contract.Requires(entity != null && entity.Id >= 0);
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<PartyStatusType> repo = uow.GetRepository<PartyStatusType>();
+                var latest = repo.Reload(entity);
+                if (latest.Statuses.Count() > 0)
+                    throw new Exception("Delete failed!.\r\n There are some relevent party status to this entity.");
+                //delete the entity
+                repo.Delete(latest);
+                // commit changes
+                uow.Commit();
+            }
+            // if any problem was detected during the commit, an exception will be thrown!
+            return true;
         }
 
-        public void RemoveStatusType(List<PartyStatusType> statusType)
+        public bool RemoveStatusType(List<PartyStatusType> entities)
         {
-            // there should remain at least 1 status type attached to the party type after removal of the passed one
-
-            return;
+            Contract.Requires(entities != null);
+            Contract.Requires(Contract.ForAll(entities, (PartyStatusType e) => e != null));
+            Contract.Requires(Contract.ForAll(entities, (PartyStatusType e) => e.Id >= 0));
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<PartyStatusType> repo = uow.GetRepository<PartyStatusType>();
+                foreach (var entity in entities)
+                {
+                    var latest = repo.Reload(entity);
+                    if (latest.Statuses.Count() > 0)
+                        throw new Exception("Delete failed!.\r\n There are some relevent party status to this entity.");
+                    //delete the entity
+                    repo.Delete(latest);
+                }
+                // commit changes
+                uow.Commit();
+            }
+            return true;
         }
         #endregion
     }
