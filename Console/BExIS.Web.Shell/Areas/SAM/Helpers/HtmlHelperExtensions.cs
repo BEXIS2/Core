@@ -15,7 +15,24 @@ namespace BExIS.Web.Shell.Areas.SAM.Helpers
             string mime = MimeMapping.GetMimeMapping(path);
             
 
-            return new MvcHtmlString(string.Format("<image src='data:{0};charset=utf-8;base64, {1}' alt='{2}' style='height: 40px; margin-top: -10px;' />", mime, Convert.ToBase64String(image), name));
+            return new MvcHtmlString($"<image src='data:{mime};charset=utf-8;base64, {Convert.ToBase64String(image)}' alt='{name}' style='height: 40px; margin-top: -10px;' />");
+        }
+
+        public static MvcHtmlString Favicon(this HtmlHelper htmlHelper, string path)
+        {
+            byte[] image = File.ReadAllBytes(path);
+            string mime = MimeMapping.GetMimeMapping(path);
+
+            return new MvcHtmlString($"<link rel='shortcut icon' href='data:{mime};charset=utf-8;base64, {Convert.ToBase64String(image)}'/>");
+        }
+
+        public static MvcHtmlString RenderHtml(this HtmlHelper htmlHelper, string path)
+        {
+            var reader = new StreamReader(path);
+            var contents = reader.ReadToEnd();
+            reader.Close();
+
+            return new MvcHtmlString(contents);
         }
     }
 }
