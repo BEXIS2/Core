@@ -16,6 +16,7 @@ using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Xml.Services;
 using Vaiona.Web.Mvc.Models;
+using Vaiona.Web.Extensions;
 
 namespace BExIS.Web.Shell.Areas.DIM.Controllers
 {
@@ -30,7 +31,7 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
 
         public ActionResult Index()
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Export Metadata");
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Export Metadata", this.Session.GetTenant());
 
             AdminModel model = new AdminModel();
 

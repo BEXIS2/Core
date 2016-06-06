@@ -23,6 +23,7 @@ using System.Xml;
 using BExIS.Xml.Services;
 using BExIS.Dlm.Services.MetadataStructure;
 using Vaiona.Web.Mvc.Models;
+using Vaiona.Web.Extensions;
 
 namespace BExIS.Web.Shell.Areas.DDM.Controllers
 {
@@ -39,7 +40,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
         //[Authorize(Roles="Guest")]
         public ActionResult Index()
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Search");
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Search", this.Session.GetTenant());
 
             try
             {
@@ -75,7 +76,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
         [HttpPost]
         public ActionResult Index(string autoComplete, string FilterList, string searchType)
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Search");
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Search", this.Session.GetTenant());
 
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
 
@@ -117,7 +118,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
         [HttpPost]
         public ActionResult FilterByDropDownList(string SelectedFilter, string searchType)
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Search");
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Search", this.Session.GetTenant());
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
             SetFilterAC(SelectedFilter);
             
@@ -197,7 +198,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
         /// <returns></returns>
         public ActionResult OnSelectTreeViewItem(string SelectedItem, string Parent)
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Search");
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Search", this.Session.GetTenant());
 
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
             provider.WorkingSearchModel.UpdateSearchCriteria(Parent, SelectedItem, SearchComponentBaseType.Facet, true);
@@ -214,7 +215,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
         [HttpPost]
         public ActionResult AddFacetsToSearch()
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Search");
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Search", this.Session.GetTenant());
 
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
 
@@ -281,7 +282,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
         /// <returns></returns>
         public ActionResult OnClickBreadCrumbItem(string value, string parent)
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Search");
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Search", this.Session.GetTenant());
 
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
 
@@ -519,7 +520,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
         /// <returns>model</returns>
         public ActionResult ShowMyDatasets()
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Dashboard");
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Dashboard", this.Session.GetTenant());
 
                 DataTable model = new DataTable();
 
@@ -615,7 +616,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
         /// <returns>model</returns>
         public ActionResult ShowMyDatasetsInFullPage()
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Dashboard");
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Dashboard", this.Session.GetTenant());
 
             DataTable model = new DataTable();
 

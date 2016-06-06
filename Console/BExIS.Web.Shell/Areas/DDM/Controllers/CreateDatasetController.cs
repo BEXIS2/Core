@@ -47,6 +47,7 @@ using BExIS.Xml.Services;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Models;
 using BExIS.Security.Entities.Subjects;
+using Vaiona.Web.Extensions;
 
 namespace BExIS.Web.Shell.Areas.DDM.Controllers
 {
@@ -59,7 +60,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
         public ActionResult Index()
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Create Dataset");
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Create Dataset", this.Session.GetTenant());
 
             Session["CreateDatasetTaskmanager"] = null;
             if (TaskManager == null) TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
@@ -119,7 +120,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
         public ActionResult StartMetadataEditor()
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Create Dataset");
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Create Dataset", this.Session.GetTenant());
 
             TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
             List<StepModelHelper> stepInfoModelHelpers = new List<StepModelHelper>();
@@ -154,7 +155,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
         {
             bool loadFromExternal = resetTaskManager;
 
-            ViewBag.Title = PresentationModel.GetViewTitle("Create Dataset");
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Create Dataset", this.Session.GetTenant());
             ViewData["Locked"] = locked;
 
             TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
@@ -306,7 +307,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
         public ActionResult ReloadMetadataEditor()
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Create Dataset");
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Create Dataset", this.Session.GetTenant());
 
             TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
             List<StepModelHelper> stepInfoModelHelpers = new List<StepModelHelper>();

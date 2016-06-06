@@ -9,6 +9,7 @@ using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.DataStructure;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Models;
+using Vaiona.Web.Extensions;
 
 namespace BExIS.Web.Shell.Areas.RPM.Controllers
 {
@@ -24,7 +25,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
         public ActionResult UnitManager()
         {
-            ViewBag.Title = PresentationModel.GetViewTitle( "Manage Units");
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant( "Manage Units", this.Session.GetTenant());
             if (Session["Window"] == null)
                 Session["Window"] = false;
 
@@ -33,7 +34,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
         public ActionResult editUnit(EditUnitModel Model, string measurementSystem, long[] checkedRecords)
         {
-            ViewBag.Title = PresentationModel.GetViewTitle( "Manage Units");
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant( "Manage Units", this.Session.GetTenant());
 
             UnitManager unitManager = new UnitManager();
 
@@ -259,7 +260,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             if (id != 0)
             {               
                 Model = new UnitManagerModel(id);
-                ViewBag.Title = PresentationModel.GetViewTitle( "Edit Unit: " + Model.editUnitModel.Unit.Name + "(Id: " + Model.editUnitModel.Unit.Id + ")");
+                ViewBag.Title = PresentationModel.GetViewTitleForTenant( "Edit Unit: " + Model.editUnitModel.Unit.Name + "(Id: " + Model.editUnitModel.Unit.Id + ")", this.Session.GetTenant());
                 Session["nameMsg"] = null;
                 Session["abbrMsg"] = null;
                 Session["dataTypeMsg"] = null;
@@ -274,7 +275,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             }
             else
             {
-                ViewBag.Title = PresentationModel.GetViewTitle( "Create Unit");
+                ViewBag.Title = PresentationModel.GetViewTitleForTenant( "Create Unit", this.Session.GetTenant());
                 Model = new UnitManagerModel();
                 Session["nameMsg"] = null;
                 Session["abbrMsg"] = null;

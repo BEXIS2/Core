@@ -10,6 +10,7 @@ using BExIS.Dlm.Services.TypeSystem;
 using BExIS.Web.Shell.Areas.RPM.Models;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Models;
+using Vaiona.Web.Extensions;
 
 namespace BExIS.Web.Shell.Areas.RPM.Controllers
 {
@@ -33,7 +34,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
         public ActionResult AttributeManager(long dataStructureId = 0, bool showConstraints = false)
         {
-            ViewBag.Title = PresentationModel.GetViewTitle( "Manage Data Attributes");
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant( "Manage Data Attributes", this.Session.GetTenant());
             if (Session["Window"] == null)
                 Session["Window"] = false;
             if(dataStructureId == 0)
@@ -44,7 +45,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
         public ActionResult editAttribute(DataAttributeModel Model)
         {
-            ViewBag.Title = PresentationModel.GetViewTitle( "Manage Data Attributes");
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant( "Manage Data Attributes", this.Session.GetTenant());
             DataContainerManager dataAttributeManager = new DataContainerManager();
             IList<DataAttribute> DataAttributeList = dataAttributeManager.DataAttributeRepo.Get();
             long tempUnitId = Convert.ToInt64(Model.Unit.Id);

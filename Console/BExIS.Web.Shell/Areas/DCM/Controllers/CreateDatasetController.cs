@@ -42,6 +42,7 @@ using BExIS.Web.Shell.Helpers;
 using NHibernate.Cache.Entry;
 using Vaiona.IoC;
 using BExIS.Security.Entities.Subjects;
+using Vaiona.Web.Extensions;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
 {
@@ -62,7 +63,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         /// <returns></returns>
         public ActionResult Index(long id = -1, string type = "")
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Create Dataset");
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Create Dataset", this.Session.GetTenant());
 
             Session["CreateDatasetTaskmanager"] = null;
             if (TaskManager == null) TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
@@ -82,7 +83,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 //if id is set and its type dataset
                 if (id != -1 && type.ToLower().Equals("datasetid"))
                 {
-                    ViewBag.Title = PresentationModel.GetViewTitle("Copy Dataset");
+                    ViewBag.Title = PresentationModel.GetViewTitleForTenant("Copy Dataset", this.Session.GetTenant());
 
                     DatasetManager datasetManager = new DatasetManager();
                     Dataset dataset = datasetManager.DatasetRepo.Get(id);
@@ -95,13 +96,13 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                 if (id != -1 && type.ToLower().Equals("metadatastructureid"))
                 {
-                    ViewBag.Title = PresentationModel.GetViewTitle("Copy Dataset");
+                    ViewBag.Title = PresentationModel.GetViewTitleForTenant("Copy Dataset", this.Session.GetTenant());
                     Model.SelectedMetadataStructureId = id;
                 }
 
                 if (id != -1 && type.ToLower().Equals("datastructureid"))
                 {
-                    ViewBag.Title = PresentationModel.GetViewTitle("Copy Dataset");
+                    ViewBag.Title = PresentationModel.GetViewTitleForTenant("Copy Dataset", this.Session.GetTenant());
                     Model.SelectedDataStructureId = id;
                     if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATASTRUCTURE_ID))
                         Model.SelectedMetadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateDatasetTaskmanager.METADATASTRUCTURE_ID]);
@@ -116,7 +117,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         public ActionResult ReloadIndex(long id = -1, string type = "")
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("...");
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("...", this.Session.GetTenant());
 
             if (TaskManager == null) TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
             DatasetManager datasetManager = new DatasetManager();
@@ -396,7 +397,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         public ActionResult StartMetadataEditor()
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Create Dataset");
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Create Dataset", this.Session.GetTenant());
 
             TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
             List<StepModelHelper> stepInfoModelHelpers = new List<StepModelHelper>();
@@ -431,7 +432,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         {
             bool loadFromExternal = resetTaskManager;
 
-            ViewBag.Title = PresentationModel.GetViewTitle("Create Dataset");
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Create Dataset", this.Session.GetTenant());;
             ViewData["Locked"] = locked;
 
             TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
@@ -588,7 +589,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         public ActionResult ImportMetadata(long metadataStructureId)
         {
 
-            ViewBag.Title = PresentationModel.GetViewTitle("Create Dataset");
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Create Dataset", this.Session.GetTenant());
 
             TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
 
@@ -636,7 +637,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         public ActionResult ReloadMetadataEditor()
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Create Dataset");
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Create Dataset", this.Session.GetTenant());
 
             TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
             List<StepModelHelper> stepInfoModelHelpers = new List<StepModelHelper>();

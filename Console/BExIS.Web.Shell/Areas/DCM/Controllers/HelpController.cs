@@ -17,6 +17,7 @@ using System.Windows.Forms;
 using System.Net;
 using System.Text.RegularExpressions;
 using Vaiona.Web.Mvc.Models;
+using Vaiona.Web.Extensions;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
 {
@@ -27,7 +28,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         public ActionResult Index()
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Data Collection Manual");
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Data Collection Manual", this.Session.GetTenant());
 
             string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Areas", "DCM", "Views\\Help\\UserGuides\\DCM_UserGuide.htm");
             string imagePath = "/Areas/DCM/Images/";

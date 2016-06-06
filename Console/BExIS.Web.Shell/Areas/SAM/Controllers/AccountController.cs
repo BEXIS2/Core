@@ -14,6 +14,7 @@ using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Web.Shell.Areas.SAM.Models;
 using Vaiona.Web.Mvc.Models;
+using Vaiona.Web.Extensions;
 
 namespace BExIS.Web.Shell.Areas.SAM.Controllers
 {
@@ -37,7 +38,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
 
         public ActionResult MyAccount()
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("My Account");
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("My Account", this.Session.GetTenant());
 
             SubjectManager subjectManager = new SubjectManager();
             User user = subjectManager.GetUserByName(HttpContext.User.Identity.Name);
@@ -88,7 +89,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
 
         public ActionResult LogOn(string returnUrl)
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Home");
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Home", this.Session.GetTenant());
 
             if (Request.IsAuthenticated)
             {
