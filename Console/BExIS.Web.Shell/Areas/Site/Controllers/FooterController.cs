@@ -19,19 +19,19 @@ namespace BExIS.Web.Shell.Areas.Site.Controllers
         public ActionResult ContactUs()
         {
             ViewBag.Title = PresentationModel.GetViewTitle("Contact Us");
-            return View("Content", Session.GetTenant().ContactUsFileNamePath);
+            return View("Content", null, Session.GetTenant().ContactUsFileNamePath);
         }
 
         public ActionResult Imprint()
         {
             ViewBag.Title = PresentationModel.GetViewTitle("Imprint");
-            return View("Content", Session.GetTenant().ImprintFileNamePath);
+            return View("Content", null, Session.GetTenant().ImprintFileNamePath);
         }
 
         public ActionResult Policy()
         {
             ViewBag.Title = PresentationModel.GetViewTitle("Policy");
-            return View("Content", Session.GetTenant().PolicyFileNamePath);
+            return View("Content", null, Session.GetTenant().PolicyFileNamePath);
         }
     }
 }
