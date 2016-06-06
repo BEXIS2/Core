@@ -18,6 +18,15 @@ namespace BExIS.Web.Shell.Areas.SAM.Helpers
             return new MvcHtmlString($"<image src='data:{mime};charset=utf-8;base64, {Convert.ToBase64String(image)}' alt='{name}' style='height: 40px; margin-top: -10px;' />");
         }
 
+        public static MvcHtmlString Logo(this HtmlHelper htmlHelper, string path)
+        {
+            byte[] image = File.ReadAllBytes(path);
+            string mime = MimeMapping.GetMimeMapping(path);
+
+
+            return new MvcHtmlString($"<image src='data:{mime};charset=utf-8;base64, {Convert.ToBase64String(image)}' style='width: 300px;' />");
+        }
+
         public static MvcHtmlString Favicon(this HtmlHelper htmlHelper, string path)
         {
             byte[] image = File.ReadAllBytes(path);
