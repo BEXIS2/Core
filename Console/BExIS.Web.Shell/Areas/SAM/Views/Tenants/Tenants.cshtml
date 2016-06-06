@@ -26,6 +26,13 @@
         columns.Bound(m => m.SupportEmail)
             .Title("Contact")
             .Width(80);
+        columns.Template(@<text>
+        <button type="button" class="bx bx-grid-function bx-edit" onclick="tenantEdit_onClick(@item.Id)"></button>
+        <button type="button" class="bx bx-grid-function bx-trash" onclick="tenantDelete_onClick(@item.Id)"></button>
+        </text>)
+            .ClientTemplate("<button type=\"button\" class=\"bx bx-grid-function bx-edit\" onclick=\"userEdit_onClick(<#= Id #>);\" value=\"<#= Id #>\"></button>" +
+                            "<button type=\"button\" class=\"bx bx-grid-function bx-trash\" onclick=\"userDelete_onClick(<#= Id #>);\" value=\"<#= Id #>\"></button>")
+            .Width(70);
 
     })
     .DataBinding(dataBinding => dataBinding
@@ -52,52 +59,15 @@
 
 <script type="text/javascript">
 
-    function onDataBound()
-    {
+    function onDataBound() {
         addTooltips();
         resetAllTelerikIconTitles();
     }
 
-    // --------------------------------------------------
-    // CREATE
-    // --------------------------------------------------
-
-    function tenantCreate_onClick() {
-        $.ajax({
-            type: 'GET',
-            url: '@Url.Action("Create", "Tenants")',
-            dataType: 'html',
-            success: function (htmlData) {
-                var windowElement = $.telerik.window.create({
-                    title: "Create Tenant",
-                    html: "<div id='contentCreate' class='bx-window'>" + htmlData + "</div>",
-                    contentUrl: "",
-                    actions: ["Close"],
-                    modal: true,
-                    width: 500,
-                    height: 500,
-                    resizable: false,
-                    draggable: true,
-                    scrollable: false,
-                    onClose: function () {
-                        $("#windowCreate").data('tWindow').destroy();
-                        $("#gridTenants .t-refresh").trigger('click');
-                    }
-                });
-
-                windowElement.attr('id', 'windowCreate');
-                var window = $(windowElement).data('tWindow');
-                window.center().open();
-
-                resetAllTelerikIconTitles();
-            }
-        });
+    function tenantEdit_onClick(id) {
     }
-
-    function tenantCreate_onSuccess(data) {
-        if (data.success) {
-            $('#windowCreate').data('tWindow').close();
-        }
+    
+    function tenantDelete_onClick(id) {
     }
 
 </script>
