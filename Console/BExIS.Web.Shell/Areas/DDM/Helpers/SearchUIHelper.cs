@@ -51,7 +51,6 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
 
         public static DataTable ConvertPrimaryDataToDatatable(DatasetVersion dsv, IEnumerable<long> dsVersionTupleIds)
         {
-
             DataTable dt = new DataTable();
             dt.TableName = "Primary data table";
             DataStructureManager dsm = new DataStructureManager();
@@ -119,7 +118,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
 
 
                     if (vu.Parameters.Count > 0)
-        {
+                    {
                         foreach (var pu in vu.Parameters)
                         {
                             DataColumn col2 = dt.Columns.Add(pu.Label.Replace(" ", "")); // or DisplayName also

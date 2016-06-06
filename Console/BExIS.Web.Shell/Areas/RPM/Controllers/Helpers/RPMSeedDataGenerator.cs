@@ -13,6 +13,7 @@ using BExIS.Dlm.Services.Administration;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Xml.Helpers;
+using BExIS.Xml.Services;
 using Vaiona.Utils.Cfg;
 
 namespace BExIS.Web.Shell.Areas.RPM.Helpers
@@ -192,13 +193,12 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
             }
 
             // add title Node
-            xmlDoc = AddReferenceToMetadatStructure(eml, "title", "Metadata/Description/DescriptionEML/Title/Title", "extra/nodeReferences/nodeRef", xmlDoc);
+            xmlDoc = AddReferenceToMetadatStructure(eml, "title", "Metadata/Description/DescriptionEML/Title/Title","xpath", "extra/nodeReferences/nodeRef", xmlDoc);
             // add description
-            xmlDoc = AddReferenceToMetadatStructure(eml, "description", "Metadata/Description/DescriptionEML/AdditionalInformation/Information", "extra/nodeReferences/nodeRef", xmlDoc);
-
+            xmlDoc = AddReferenceToMetadatStructure(eml, "description", "Metadata/Description/DescriptionEML/AdditionalInformation/Information","xpath", "extra/nodeReferences/nodeRef", xmlDoc);
 
             // add ConvertReference Mapping file node
-            xmlDoc = AddReferenceToMetadatStructure(eml, "mappingFileExport", "mapping_eml.xml", "extra/convertReferences/convertRef", xmlDoc);
+            xmlDoc = AddReferenceToMetadatStructure(eml, "eml", "mapping_eml.xml", TransmissionType.mappingFileExport.ToString(), "extra/convertReferences/convertRef", xmlDoc);
 
             eml.Extra = xmlDoc;
             mdsManager.Update(eml);
@@ -519,6 +519,8 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
             #endregion
 
             #endregion
+
+
         }
 
         private static void createABCD()
@@ -543,13 +545,13 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
             }
 
             // add title Node
-            xmlDoc = AddReferenceToMetadatStructure(abcd, "title", "Metadata/Description/Description/Title/Title", "extra/nodeReferences/nodeRef", xmlDoc);
+            xmlDoc = AddReferenceToMetadatStructure(abcd, "title", "Metadata/Description/Description/Title/Title","xpath", "extra/nodeReferences/nodeRef", xmlDoc);
             // add Description
-            xmlDoc = AddReferenceToMetadatStructure(abcd, "description", "Metadata/Description/Description/Details/Details", "extra/nodeReferences/nodeRef", xmlDoc);
+            xmlDoc = AddReferenceToMetadatStructure(abcd, "description", "Metadata/Description/Description/Details/Details","xpath", "extra/nodeReferences/nodeRef", xmlDoc);
 
 
             // add ConvertReference Mapping file node
-            xmlDoc = AddReferenceToMetadatStructure(abcd, "mappingFileExport", "mapping_abcd.xml", "extra/convertReferences/convertRef", xmlDoc);
+            xmlDoc = AddReferenceToMetadatStructure(abcd, "abcd", "mapping_abcd.xml", TransmissionType.mappingFileExport.ToString(), "extra/convertReferences/convertRef", xmlDoc);
 
             abcd.Extra = xmlDoc;
             mdsManager.Update(abcd);
@@ -907,101 +909,13 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
 
         #region helper
 
-        private static XmlDocument AddReferenceToMetadatStructure(MetadataStructure metadataStructure, string nodeName, string nodePath, string destinationPath, XmlDocument xmlDoc)
+        private static XmlDocument AddReferenceToMetadatStructure(MetadataStructure metadataStructure, string nodeName, string nodePath,string nodeType, string destinationPath, XmlDocument xmlDoc)
         {
 
-            XmlDocument doc = xmlDoc;
-            XmlNode extra;
+            xmlDoc = XmlDatasetHelper.AddReferenceToXml(xmlDoc, nodeName, nodePath, nodeType, destinationPath);
 
-            if (doc.DocumentElement == null)
-            {
-                if (metadataStructure.Extra != null)
-                {
+            return xmlDoc;
 
-                    extra = ((XmlDocument)metadataStructure.Extra).DocumentElement;
-                }
-                else
-                {
-                    extra = doc.CreateElement("extra", "");
-                }
-
-                doc.AppendChild(extra);
-            }
-
-            XmlNode x = createMissingNodes(destinationPath, doc.DocumentElement, doc, nodeName);
-
-            //check attrviute of the xmlnode
-            if (x.Attributes.Count > 0)
-            {
-
-
-                foreach (XmlAttribute attr in x.Attributes)
-                {
-                    if (attr.Name == "name") attr.Value = nodeName;
-                    if (attr.Name == "value") attr.Value = nodePath;
-                }
-            }
-            else
-            {
-                XmlAttribute name = doc.CreateAttribute("name");
-                name.Value = nodeName;
-                XmlAttribute value = doc.CreateAttribute("value");
-                value.Value = nodePath;
-
-                x.Attributes.Append(name);
-                x.Attributes.Append(value);
-
-            }
-
-            return doc;
-
-        }
-
-        /// <summary>
-        /// Add missing node to the desitnation document
-        /// </summary>
-        /// <param name="destinationParentXPath"></param>
-        /// <param name="currentParentXPath"></param>
-        /// <param name="parentNode"></param>
-        /// <param name="doc"></param>
-        /// <returns></returns>
-        private static XmlNode createMissingNodes(string destinationParentXPath, XmlNode parentNode, XmlDocument doc, string name)
-        {
-            string dif = destinationParentXPath;
-
-            List<string> temp = dif.Split('/').ToList();
-            temp.RemoveAt(0);
-
-            XmlNode parentTemp = parentNode;
-
-            foreach (string s in temp)
-            {
-                if (XmlUtility.GetXmlNodeByName(parentTemp, s) == null)
-                {
-                    XmlNode t = XmlUtility.CreateNode(s, doc);
-
-                    parentTemp.AppendChild(t);
-                    parentTemp = t;
-                }
-                else
-                {
-                    XmlNode t = XmlUtility.GetXmlNodeByName(parentTemp, s);
-
-                    if (temp.Last().Equals(s))
-                    {
-                        if (!t.Attributes["name"].Equals(name))
-                        {
-                            t = XmlUtility.CreateNode(s, doc);
-                            parentTemp.AppendChild(t);
-                        }
-
-                    }
-
-                    parentTemp = t;
-                }
-            }
-
-            return parentTemp;
         }
 
         #endregion

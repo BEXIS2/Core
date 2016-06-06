@@ -8,8 +8,12 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
+using BExIS.Dlm.Entities.Data;
+using BExIS.Dlm.Services.Data;
+using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Xml.Models;
 using BExIS.Xml.Models.Mapping;
+using BExIS.Xml.Services;
 using Vaiona.Utils.Cfg;
 
 
@@ -193,7 +197,7 @@ namespace BExIS.Xml.Helpers.Mapping
             return newMetadata;
         }
 
-        public string Export(XmlDocument metadataXml , long id)
+        public string Export(XmlDocument metadataXml , long datasetVersionId)
         {
             #region abcd (metadata from bexis to abcd)
 
@@ -236,7 +240,7 @@ namespace BExIS.Xml.Helpers.Mapping
                 root.Attributes.Append(attr);
             }
 
-            string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), "Metadata " + id + ".xml");
+            string path = Path.Combine(AppConfiguration.DataPath, getStorePath(datasetVersionId));
 
             newMetadata.Save(path);
 
@@ -257,6 +261,72 @@ namespace BExIS.Xml.Helpers.Mapping
 
             return path;
         }
+
+        public XmlDocument Export(XmlDocument metadataXml, long datasetVersionId, bool save = false)
+        {
+            #region abcd (metadata from bexis to abcd)
+
+            XmlDocument newMetadata = new XmlDocument();
+            //newMetadata.Load(defaultFilePath);
+            //XmlNode root = newMetadata.DocumentElement;
+
+            if (!String.IsNullOrEmpty(xmlMapper.Header.Destination.XPath))
+            {
+                newMetadata.AppendChild(newMetadata.CreateElement(xmlMapper.Header.Destination.Prefix, xmlMapper.Header.Destination.XPath, xmlMapper.Header.Destination.NamepsaceURI));
+            }
+            else
+            {
+                newMetadata.AppendChild(newMetadata.CreateElement("root"));
+            }
+
+            XmlNode root = newMetadata.DocumentElement;
+
+
+
+            // create nodes
+            newMetadata = mapNode(newMetadata, newMetadata.DocumentElement, metadataXml.DocumentElement);
+
+            // add required attributes
+            newMetadata = addAttributes(newMetadata, newMetadata.DocumentElement);
+
+            //add root attributes
+            foreach (KeyValuePair<string, string> attribute in xmlMapper.Header.Attributes)
+            {
+                XmlAttribute attr = newMetadata.CreateAttribute(attribute.Key);
+                attr.Value = attribute.Value;
+                root.Attributes.Append(attr);
+            }
+
+            //add root namespaces
+            foreach (KeyValuePair<string, string> package in xmlMapper.Header.Packages)
+            {
+                XmlAttribute attr = newMetadata.CreateAttribute(package.Key);
+                attr.Value = package.Value;
+                root.Attributes.Append(attr);
+            }
+
+            string path = getStorePath(datasetVersionId);
+
+            newMetadata.Save(Path.Combine(AppConfiguration.DataPath, path));
+
+            //XmlReaderSettings settings = new XmlReaderSettings();
+            //settings.Schemas.Add(xmlSchemaManager.Schema);
+            //settings.ValidationType = ValidationType.Schema;
+
+            //XmlReader reader = XmlReader.Create(path, settings);
+            //XmlDocument document = new XmlDocument();
+            //document.Load(reader);
+
+            ValidationEventHandler eventHandler = new ValidationEventHandler(validationEventHandler);
+
+            // the following call to Validate succeeds.
+            //document.Validate(eventHandler);
+
+            #endregion
+
+            return newMetadata;
+        }
+
 
         private void validationEventHandler(object sender, ValidationEventArgs e)
         {
@@ -570,6 +640,22 @@ namespace BExIS.Xml.Helpers.Mapping
                 }
 
                 return parentTemp;
+        }
+
+        private string getStorePath(long datasetVersionId)
+        {
+            DatasetManager datasetManager = new DatasetManager();
+            DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetVersionId);
+
+            Dataset dataset = datasetManager.GetDataset(datasetVersionId);
+
+            MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
+            string md_title = metadataStructureManager.Repo.Get(dataset.MetadataStructure.Id).Name;
+
+            string path = IOHelper.GetDynamicStorePath(datasetVersionId, datasetVersion.Id,
+              XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title) + "_" + md_title, ".xml");
+
+            return path;
         }
     }
 }

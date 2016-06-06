@@ -278,7 +278,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
             datasets = new List<DatasetListElement>();
             foreach (var item in dm.GetDatasetLatestVersions(dataStructure.Id, true))
             {
-                datasetListElement = new DatasetListElement(item.Key, XmlDatasetHelper.GetInformation(item.Value, AttributeNames.title));
+                datasetListElement = new DatasetListElement(item.Key, XmlDatasetHelper.GetInformation(item.Value, NameAttributeValues.title));
                 datasets.Add(datasetListElement);
             }
         }

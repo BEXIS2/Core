@@ -500,8 +500,6 @@ namespace BExIS.Xml.Helpers.Mapping
 
             newXsdFilePath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "Metadata", schemaName, FileName);
 
-           
-
             if (!File.Exists(newXsdFilePath))
             {
                 checkDirectory(newXsdFilePath);
@@ -526,15 +524,16 @@ namespace BExIS.Xml.Helpers.Mapping
             #region prepare mappingFiles
 
             #region intern to extern
-            // add schema to mappingfile
-            mappingFileInternalToExternal.Header.AddToSchemas(schemaName, "Metadata/" + schemaName + "/" + FileName);
-                #endregion
+                // add schema to mappingfile
+                mappingFileInternalToExternal.Header.AddToSchemas(schemaName, "Metadata/" + schemaName + "/" + FileName);
+            #endregion
 
-                #region extern to intern
-                    mappingFileExternalToInternal.Header.AddToDestination("Metadata");
-                    // id and name of metadatastructure fehlt
+            #region extern to intern
+                mappingFileExternalToInternal.Header.AddToDestination("Metadata");
+                // id and name of metadatastructure fehlt
 
-                #endregion
+            #endregion
+
             #endregion
 
             //List<MetadataAttribute> metadataAttributes = new List<MetadataAttribute>();
@@ -1594,18 +1593,6 @@ namespace BExIS.Xml.Helpers.Mapping
                 Directory.CreateDirectory(path);
             }
         }
-
-        //private void checkDirectory(string filePath, StreamWriter logwriter)
-        //{
-        //    string path = Path.GetDirectoryName(filePath);
-        //    logwriter.WriteLine(path);
-        //    if (!Directory.Exists(path))
-        //    {
-        //        logwriter.WriteLine("no exist : " + path);
-        //        Directory.CreateDirectory(path);
-        //    }
-        //}
-
 
         private string GetTypeOfName(string name)
         {

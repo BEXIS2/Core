@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Net;
 using System.Text.RegularExpressions;
 using Vaiona.Web.Mvc.Models;
+using Vaiona.Web.Extensions;
 
 namespace BExIS.Web.Shell.Areas.Site.Controllers
 {
@@ -18,7 +19,7 @@ namespace BExIS.Web.Shell.Areas.Site.Controllers
         // GET: Site/PrivacyPolicy
         public ActionResult Index()
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Imprint");
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Imprint", this.Session.GetTenant());
             return View();
         }
 
