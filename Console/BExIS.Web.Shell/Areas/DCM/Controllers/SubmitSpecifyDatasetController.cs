@@ -199,7 +199,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             //Add Metadata to Bus
             //TITLE
-            TaskManager.AddToBus(TaskManager.DATASET_TITLE, XmlDatasetHelper.GetInformation(datasetVersion, AttributeNames.title));
+            TaskManager.AddToBus(TaskManager.DATASET_TITLE, XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title));
 
             ResearchPlanManager rpm = new ResearchPlanManager();
             ResearchPlan rp = rpm.Repo.Get(datasetVersion.Dataset.ResearchPlan.Id);

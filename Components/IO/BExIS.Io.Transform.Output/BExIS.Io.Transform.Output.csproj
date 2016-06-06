@@ -66,6 +66,7 @@
     <Compile Include="AsciiWriter.cs" />
     <Compile Include="DataWriter.cs" />
     <Compile Include="ExcelWriter.cs" />
+    <Compile Include="IOOutputDataManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
