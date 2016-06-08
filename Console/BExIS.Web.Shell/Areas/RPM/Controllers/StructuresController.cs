@@ -8,33 +8,34 @@ using BExIS.Web.Shell.Areas.RPM.Models;
 
 namespace BExIS.Web.Shell.Areas.RPM.Controllers
 {
-    public class StructureController : ApiController
+    public class StructuresController : ApiController
     {
-        // GET: api/Structure
+        // GET: api/Structures
         public IEnumerable<string> Get()
         {
             throw new HttpResponseException(HttpStatusCode.NotFound);
         }
 
-        // GET: api/Structure/5
+        // GET: api/Structures/5
         public Structure Get(int id)
         {
+            // The model object, Structure, can not have access to the services, or data
             return new Structure(id);
         }
 
-        // POST: api/Structure
+        // POST: api/Structures
         public void Post([FromBody]string value)
         {
             throw new HttpResponseException(HttpStatusCode.NotFound);
         }
 
-        // PUT: api/Structure/5
+        // PUT: api/Structures/5
         public void Put(int id, [FromBody]string value)
         {
             throw new HttpResponseException(HttpStatusCode.NotFound);
         }
 
-        // DELETE: api/Structure/5
+        // DELETE: api/Structures/5
         public void Delete(int id)
         {
             throw new HttpResponseException(HttpStatusCode.NotFound);
