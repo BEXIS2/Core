@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Web;
 using System.Web.Mvc;
+using System.Xml.Linq;
 
 namespace BExIS.Web.Shell.Areas.SAM.Helpers
 {
@@ -42,6 +44,19 @@ namespace BExIS.Web.Shell.Areas.SAM.Helpers
             reader.Close();
 
             return new MvcHtmlString(contents);
+        }
+
+        public static MvcHtmlString RenderExtendedMenu(this HtmlHelper htmlHelper, XElement xElement)
+        {
+            string menu = $"<a href='#' class='dropdown-toggle' data-toggle='dropdown' role='button' aria-haspopup='true' aria-expanded='false'>{xElement.Attribute("label").Value}<span class='caret'></span></a>";
+
+            string submenu = $"";
+            foreach (var child in xElement.Elements())
+            {
+                submenu += $"<li><a href='{child.Attribute("url").Value}' target='{child.Attribute("target").Value}'>{child.Attribute("label").Value}</a></li>";
+            }
+
+            return new MvcHtmlString("<li class='dropdown'>" + menu + "<ul class='dropdown-menu'>" + submenu + "</ul></li>");
         }
     }
 }
