@@ -12,6 +12,8 @@ using System.Web.Http;
 using BExIS.IO.Transform.Output;
 using System.Data;
 using BExIS.Xml.Services;
+using BExIS.Web.Shell.Areas.DIM.Models;
+using BExIS.Web.Shell.Areas.DIM.Models.Formatters;
 
 namespace BExIS.Web.Shell.Areas.DIM.Controllers
 {
@@ -43,13 +45,11 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
         /// 2: selection: is a logical expression that filters the tuples of the chosen dataset. The expression should have been written against the variables of the dataset only.
         /// logical operators, nesting, precedence, and SOME functions should be supported.
         /// </remarks>
-        public DataTable Get(int id)
+        public HttpResponseMessage Get(int id)
         {
-            string projection = this.Request.GetQueryNameValuePairs().FirstOrDefault(p => "projection".Equals(p.Key, StringComparison.InvariantCultureIgnoreCase)).Value;
-            string selection  = this.Request.GetQueryNameValuePairs().FirstOrDefault(p => "selection" .Equals(p.Key, StringComparison.InvariantCultureIgnoreCase)).Value;
+            string projection = this.Request.GetQueryNameValuePairs().FirstOrDefault(p => "header".Equals(p.Key, StringComparison.InvariantCultureIgnoreCase)).Value;
+            string selection  = this.Request.GetQueryNameValuePairs().FirstOrDefault(p => "filter" .Equals(p.Key, StringComparison.InvariantCultureIgnoreCase)).Value;
 
-            string mimiType = "text/csv";
-            
             IOOutputDataManager ioOutputDataManager = new IOOutputDataManager();
 
             DatasetManager dm = new DatasetManager();
@@ -66,22 +66,30 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
                 DataTable dt = IOOutputDataManager.ConvertPrimaryDataToDatatable(version,
                     dm.GetDatasetVersionEffectiveTupleIds(version), title, true);
 
-                if (!string.IsNullOrEmpty(projection))
-                {
-                    dt = IOOutputDataManager.ProjectionOnDataTable(dt, projection.Split(','));
-                }
-
                 if (!string.IsNullOrEmpty(selection))
                 {
                     dt = IOOutputDataManager.SelectionOnDataTable(dt, selection);
                 }
 
-                return dt;
+                if (!string.IsNullOrEmpty(projection))
+                {
+                    // make the header names upper case to make them case insensitive
+                    dt = IOOutputDataManager.ProjectionOnDataTable(dt, projection.ToUpper().Split(','));
+                }
+
+                DatasetModel model = new DatasetModel();
+                model.DataTable = dt;
+
+                var response = Request.CreateResponse();
+                response.Content = new ObjectContent(typeof(DatasetModel), model, new DatasetModelCsvFormatter(model.DataTable.TableName));
+                //set headers on the "response"
+                return response;
+
+                //return model;
 
             } else
             {
-                //return File(Path.Combine(AppConfiguration.DataPath, path), mimeType, title);
-                return null;
+                return Request.CreateResponse();
             }
         }
 

@@ -394,6 +394,7 @@
     <Compile Include="Areas\DIM\Controllers\MetadataController.cs" />
     <Compile Include="Areas\DIM\DIMAreaRegistration.cs" />
     <Compile Include="Areas\DIM\Models\AdminModel.cs" />
+    <Compile Include="Areas\DIM\Models\DatasetModel.cs" />
     <Compile Include="Areas\DIM\Models\DatasetVersionModel.cs" />
     <Compile Include="Areas\DIM\Models\DataTupleCsvFormatter.cs" />
     <Compile Include="Areas\DIM\Models\MetadataStructureModel.cs" />

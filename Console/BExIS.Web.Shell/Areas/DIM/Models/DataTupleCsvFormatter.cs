@@ -8,19 +8,42 @@ using System.Web;
 using System.IO;
 using System.Net.Http;
 using System.Text;
+using System.Data;
 
 namespace BExIS.Web.Shell.Areas.DIM.Models.Formatters
 {
     // used: http://www.asp.net/web-api/overview/formats-and-model-binding/media-formatters
-    // see: App_Start folder 0> WebApiConfi.cs
-    public class DataTupleCsvFormatter: BufferedMediaTypeFormatter
+    // see: App_Start folder -> WebApiConfi.cs
+    public class DatasetModelCsvFormatter: BufferedMediaTypeFormatter
     {
-        public DataTupleCsvFormatter()
+        public DatasetModelCsvFormatter()
         {
             SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/csv"));
 
             SupportedEncodings.Add(new UTF8Encoding(encoderShouldEmitUTF8Identifier: false));
             SupportedEncodings.Add(Encoding.GetEncoding("iso-8859-1"));
+        }
+
+        public DatasetModelCsvFormatter(MediaTypeMapping mediaTypeMapping)
+        : this()
+        {
+            MediaTypeMappings.Add(mediaTypeMapping);
+        }
+
+        private string fileName = "dataset";
+        public DatasetModelCsvFormatter(string fileName)
+        : this()
+        {
+            this.fileName = fileName;
+        }
+
+        public override void SetDefaultContentHeaders(Type type,
+            HttpContentHeaders headers, MediaTypeHeaderValue mediaType)
+        {
+            base.SetDefaultContentHeaders(type, headers, mediaType);
+            headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+            headers.ContentDisposition = new ContentDispositionHeaderValue("attachment");
+            headers.ContentDisposition.FileName = fileName + ".csv";
         }
 
         public override Boolean CanReadType(Type type)
@@ -30,63 +53,59 @@ namespace BExIS.Web.Shell.Areas.DIM.Models.Formatters
 
         public override Boolean CanWriteType(Type type)
         {
-            if (type == typeof(AbstractTuple))
+            if (type == typeof(DatasetModel))
             {
                 return true;
             }
-            else
-            {
-                Type enumerableType = typeof(IEnumerable<AbstractTuple>);
-                return enumerableType.IsAssignableFrom(type);
-            }
+            //else
+            //{
+            //    Type enumerableType = typeof(IEnumerable<AbstractTuple>);
+            //    return enumerableType.IsAssignableFrom(type);
+            //}
+            return false;
         }
 
         public override void WriteToStream(Type type, object value, Stream writeStream, HttpContent content)
         {
             Encoding effectiveEncoding = SelectCharacterEncoding(content.Headers);
+            DatasetModel model = (DatasetModel)value;
+            DataTable table = model.DataTable;
+            content.Headers.ContentDisposition.FileName = table.TableName + ".csv";
 
             using (var writer = new StreamWriter(writeStream, effectiveEncoding))
             {
-                var tuples = value as IEnumerable<AbstractTuple>;
-                // think of projection!?
-                List<string> columns = getProjection(tuples, content);
                 // write the header line
-                writeHeader(columns, writer);
+                writeHeader(table.Columns, writer);
 
-                if (tuples != null)
+                foreach (DataRow row in table.Rows)
                 {
-                    foreach (var tuple in tuples)
-                    {
-                        writeItem(tuple, writer);
-                    }
-                }
-                else
-                {
-                    var singleTuple = value as AbstractTuple;
-                    if (singleTuple == null)
-                    {
-                        throw new InvalidOperationException("Cannot serialize type");
-                    }
-                    writeItem(singleTuple, writer);
+                    writeItem(row, writer);
                 }
             }
         }
 
-        private void writeHeader(List<string> columns, StreamWriter writer)
+        private void writeHeader(DataColumnCollection columns, StreamWriter writer)
         {
-            throw new NotImplementedException();
+            string columnStr = "";
+            List<string> cols = new List<string>();
+            foreach (var item in columns)
+            {
+                cols.Add(item.ToString());
+            }
+            columnStr = string.Join(",", cols);
+            writer.WriteLine(columnStr);
         }
 
-        private List<string> getProjection(IEnumerable<AbstractTuple> tuples, HttpContent content)
+        private void writeItem(DataRow row, StreamWriter writer)
         {
-            // the projection may have been passed through the http context
-            throw new NotImplementedException();
-        }
-
-        private void writeItem(AbstractTuple tuple, StreamWriter writer)
-        {
-            writer.WriteLine("{0},{1},{2},{3}", escape(tuple.Id),
-                escape(tuple.VersionNo), escape(tuple.OrderNo), escape(tuple.TupleType)); // sample code only. change it freely.
+            string rowStr = "";
+            List<string> values = new List<string>();
+            foreach (DataColumn column in row.Table.Columns)
+            {
+                values.Add(escape(row[column].ToString()));
+            }
+            rowStr = string.Join(",", values);
+            writer.WriteLine(rowStr);
         }
 
         private static char[] specialChars = new char[] { ',', '\n', '\r', '"' };
