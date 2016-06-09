@@ -45,7 +45,12 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
         // HttpResponseMessage response = new HttpResponseMessage { Content = new StringContent(doc.innerXml, Encoding.UTF8,"application/xml") };
         public HttpResponseMessage Get(int id)
         {
-            string convertTo = this.Request.GetQueryNameValuePairs().FirstOrDefault(p => "format".Equals(p.Key, StringComparison.InvariantCultureIgnoreCase)).Value;
+            string convertTo = "";
+            try
+            {
+                convertTo = this.Request.GetQueryNameValuePairs().FirstOrDefault(p => "format".Equals(p.Key, StringComparison.InvariantCultureIgnoreCase)).Value;
+            }
+            catch (Exception ex) { }
 
             DatasetManager dm = new DatasetManager();
             DatasetVersion dsv = dm.GetDatasetLatestVersion(id);

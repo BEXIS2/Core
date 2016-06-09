@@ -649,6 +649,7 @@
     <Content Include="Areas\SAM\Views\Tenants\_Create.cshtml" />
     <Content Include="Areas\SAM\Views\Tenants\_Edit.cshtml" />
     <Content Include="Areas\Site\Views\Footer\Content.cshtml" />
+    <None Include="Properties\PublishProfiles\BPP290.pubxml" />
     <None Include="Properties\PublishProfiles\BPP2907.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
