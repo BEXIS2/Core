@@ -341,7 +341,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                             #region generate a subset of a dataset
                             //ToDo filter datatuples
 
-                            IOOutputDataManager ioOutputDataManager = new IOOutputDataManager();
+                            OutputDataManager ioOutputDataManager = new OutputDataManager();
                             path = ioOutputDataManager.GenerateExcelFile(id, title);
 
                             return File(path, "application/xlsm", title + ext);
@@ -352,8 +352,8 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         //filter not in use
                         else
                         {
-                            IOOutputDataManager ioOutputDataManager = new IOOutputDataManager();
-                            path = ioOutputDataManager.GenerateExcelFile(id, title);  
+                            OutputDataManager outputDataManager = new OutputDataManager();
+                            path = outputDataManager.GenerateExcelFile(id, title);  
 
                             return File(Path.Combine(AppConfiguration.DataPath, path), "application/xlsm", title + ext);
                         }
@@ -375,7 +375,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         DatasetManager datasetManager = new DatasetManager();
                         DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
                         AsciiWriter writer = new AsciiWriter(TextSeperator.comma);
-                        IOOutputDataManager ioOutputDataManager = new IOOutputDataManager();
+                        OutputDataManager ioOutputDataManager = new OutputDataManager();
                         string title = getTitle(writer.GetTitle(id));
                         string path = "";
 
@@ -420,7 +420,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         DatasetManager datasetManager = new DatasetManager();
                         DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
                         AsciiWriter writer = new AsciiWriter(TextSeperator.comma);
-                        IOOutputDataManager ioOutputDataManager = new IOOutputDataManager();
+                        OutputDataManager ioOutputDataManager = new OutputDataManager();
                         string title = getTitle(writer.GetTitle(id));
                         string path = "";
 

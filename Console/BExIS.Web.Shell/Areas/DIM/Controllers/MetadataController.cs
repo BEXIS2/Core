@@ -12,27 +12,28 @@ using BExIS.Dlm.Entities.Data;
 using BExIS.Xml.Helpers.Mapping;
 using Vaiona.Utils.Cfg;
 using System.Text;
+using BExIS.IO.Transform.Output;
 
 namespace BExIS.Web.Shell.Areas.DIM.Controllers
 {
     public class MetadataController : ApiController
     {
         // GET: api/Metadata
-        public IEnumerable<MatadataViewObject> Get()
+        public IEnumerable<MetadataViewObject> Get()
         {
             DatasetManager dm = new DatasetManager();
             var datasetIds = dm.GetDatasetLatestIds();
 
-            List<MatadataViewObject> tmp = new List<MatadataViewObject>();
+            List<MetadataViewObject> tmp = new List<MetadataViewObject>();
 
             foreach (var id in datasetIds)
             {
-                MatadataViewObject mvo = new MatadataViewObject();
+                MetadataViewObject mvo = new MetadataViewObject();
                 mvo.DatasetId = id;
                 
                 List<string> t = XmlDatasetHelper.GetAllExportInformation(id, TransmissionType.mappingFileExport, AttributeNames.name).ToList();
 
-                mvo.Export = t.ToArray();
+                mvo.ConvertTo = t.ToArray();
 
                 tmp.Add(mvo);
             }
@@ -61,15 +62,10 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
 
                 try
                 {
-                    string mappingFileName = XmlDatasetHelper.GetExportInformation(dsv, TransmissionType.mappingFileExport,convertTo);
-                    string pathMappingFile = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), mappingFileName);
+                    XmlDocument newXmlDoc = OutputMetadataManager.GetConvertedMetadata(id, TransmissionType.mappingFileExport,
+                        convertTo);
 
-                    XmlMapperManager xmlMapperManager = new XmlMapperManager();
-                    xmlMapperManager.Load(pathMappingFile, "exporttest");
-
-                    XmlDocument newXml = xmlMapperManager.Export(dsv.Metadata, dsv.Id, true);
-
-                    HttpResponseMessage response = new HttpResponseMessage { Content = new StringContent(newXml.InnerXml, Encoding.UTF8, "application/xml") };
+                    HttpResponseMessage response = new HttpResponseMessage { Content = new StringContent(newXmlDoc.InnerXml, Encoding.UTF8, "application/xml") };
 
                     return response;
                 }
@@ -97,9 +93,9 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
         }
     }
 
-    public class MatadataViewObject
+    public class MetadataViewObject
     {
         public long DatasetId { get; set; }
-        public string[] Export { get; set; }
+        public string[] ConvertTo { get; set; }
     }
 }
