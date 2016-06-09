@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Formatting;
 using System.Web.Http;
 
 namespace BExIS.Web.Shell
@@ -21,7 +22,8 @@ namespace BExIS.Web.Shell
 
         public static void ConfigureApis(HttpConfiguration config)
         {
-            config.Formatters.Add(new DataTupleCsvFormatter());
+            //config.Formatters.Insert(0, new DatasetModelCsvFormatter()); // should also work
+            config.Formatters.Insert(0,new DatasetModelCsvFormatter(new QueryStringMapping("format", "csv", "text/csv")));
         }
     }
 }

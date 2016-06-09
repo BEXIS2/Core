@@ -132,7 +132,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
         /// <remarks>
         /// 1. It is not allowed to delete an ACTIVE tenant. If needed, the chosen tenant must be inctivated first.
         /// 2. It is not allowed to delete the DEFAULT tenant. If needed, another tenant must be set as the default, before deleting the chosen one.
-        /// 3.There MUST at least one active tenant remain in the list after this operation.
+        /// 3.There MUST at least one active tenant remaining in the list after this operation.
         /// </remarks>
         public ActionResult Unregister(string id)
         {
