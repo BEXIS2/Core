@@ -66,7 +66,9 @@
     <Compile Include="AsciiWriter.cs" />
     <Compile Include="DataWriter.cs" />
     <Compile Include="ExcelWriter.cs" />
-    <Compile Include="IOOutputDataManager.cs" />
+    <Compile Include="OutputDatasetManager.cs" />
+    <Compile Include="OutputMetadataManager.cs" />
+    <Compile Include="OutputDataManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -89,6 +91,10 @@
     <ProjectReference Include="..\..\XML\BExIS.Xml.Helpers\BExIS.Xml.Helpers.csproj">
       <Project>{252f7872-a69c-43a6-84b4-4d2abdbdd9ab}</Project>
       <Name>BExIS.Xml.Helpers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\XML\BExIS.Xml.Models\BExIS.Xml.Models.csproj">
+      <Project>{C0C9F0F2-9E65-448D-8000-D311DB326460}</Project>
+      <Name>BExIS.Xml.Models</Name>
     </ProjectReference>
     <ProjectReference Include="..\BExIS.Io.Transform.Validation\BExIS.IO.Transform.Validation.csproj">
       <Project>{c8a05313-b960-406e-92ec-c1e5b3f47fcd}</Project>

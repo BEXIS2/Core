@@ -50,7 +50,7 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
 
             string mimiType = "text/csv";
             
-            IOOutputDataManager ioOutputDataManager = new IOOutputDataManager();
+            OutputDataManager ioOutputDataManager = new OutputDataManager();
 
             DatasetManager dm = new DatasetManager();
             DatasetVersion version = dm.GetDatasetLatestVersion(id);
@@ -63,17 +63,17 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
                 // apply selection and projection
                 var tuples = dm.GetDatasetVersionEffectiveTuples(version);
 
-                DataTable dt = IOOutputDataManager.ConvertPrimaryDataToDatatable(version,
+                DataTable dt = OutputDataManager.ConvertPrimaryDataToDatatable(version,
                     dm.GetDatasetVersionEffectiveTupleIds(version), title, true);
 
                 if (!string.IsNullOrEmpty(projection))
                 {
-                    dt = IOOutputDataManager.ProjectionOnDataTable(dt, projection.Split(','));
+                    dt = OutputDataManager.ProjectionOnDataTable(dt, projection.Split(','));
                 }
 
                 if (!string.IsNullOrEmpty(selection))
                 {
-                    dt = IOOutputDataManager.SelectionOnDataTable(dt, selection);
+                    dt = OutputDataManager.SelectionOnDataTable(dt, selection);
                 }
 
                 return dt;
