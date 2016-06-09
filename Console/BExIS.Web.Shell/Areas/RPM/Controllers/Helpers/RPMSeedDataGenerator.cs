@@ -49,12 +49,9 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
             {
                 string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("RPM"), "Seed", "DataTypes.xml");
                 XDocument xdoc = XDocument.Load(path);
-
                 IEnumerable<XElement> datatypesXElements = XmlUtility.GetXElementByNodeName("datatype", xdoc);
-
                 if (datatypesXElements.Count() > 0)
                 {
-
                     foreach (XElement xDatatype in datatypesXElements)
                     {
                         string name = xDatatype.Attribute("name").Value;

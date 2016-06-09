@@ -21,7 +21,8 @@ namespace BExIS.Web.Shell.Areas.RPM
                 new { action = "Index", id = UrlParameter.Optional }
             );
 
-            if(AppConfiguration.CreateDatabase) RPM.Helpers.RPMSeedDataGenerator.GenerateSeedData();
+            if(AppConfiguration.CreateDatabase)
+                RPM.Helpers.RPMSeedDataGenerator.GenerateSeedData();
 
         }
     }
