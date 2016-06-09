@@ -13,7 +13,7 @@ using BExIS.Dlm.Services.DataStructure;
 
 namespace BExIS.IO.Transform.Output
 {
-    public class IOOutputDataManager
+    public class OutputDataManager
     {
         #region export prepare files
 
@@ -533,17 +533,6 @@ namespace BExIS.IO.Transform.Output
 
             return newDt;
         }
-
-        #endregion
-
-        #region manager datatuples
-
-        //subset of columns of a datatuple
-
-        //filter by query of columns of a datatuple
-
-        // subset and filter
-
 
         #endregion
     }

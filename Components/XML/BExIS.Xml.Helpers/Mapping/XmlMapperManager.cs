@@ -645,12 +645,12 @@ namespace BExIS.Xml.Helpers.Mapping
         private string getStorePath(long datasetVersionId)
         {
             DatasetManager datasetManager = new DatasetManager();
-            DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetVersionId);
+            DatasetVersion datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
 
             Dataset dataset = datasetManager.GetDataset(datasetVersionId);
 
             MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
-            string md_title = metadataStructureManager.Repo.Get(dataset.MetadataStructure.Id).Name;
+            string md_title = metadataStructureManager.Repo.Get(datasetVersion.Dataset.MetadataStructure.Id).Name;
 
             string path = IOHelper.GetDynamicStorePath(datasetVersionId, datasetVersion.Id,
               XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title) + "_" + md_title, ".xml");

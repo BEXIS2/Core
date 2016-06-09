@@ -17,14 +17,6 @@
 
 <div id="footer">
     <footer>
-        @*@Html.RenderAuto("SysTime", new List<object>() { new Dictionary<string, object>() { { "format", "B" } } })
-            <br />
-            Copyright info
-            <br />
-            Version Info *@
-
-
-
         Powered by
         <br/><br/>
         <a href="http://bexis2.uni-jena.de" target="_blank">
@@ -32,10 +24,20 @@
         </a>
 
         <br/><br/>
-        @Html.ActionLink("Privacy Policy", "Index", "PrivacyPolicy", new { area = "Site" }, null),
-        @*<a href="http://bexis2.uni-jena.de/news/" target="_blank">Terms</a>*@
-        @Html.ActionLink("Contact Us", "Index", "ContactUs", new { area = "Site" }, null),
-        @Html.ActionLink("Imprint", "Index", "Impressum", new { area = "Site" }, null)
+        @if (!string.IsNullOrEmpty(Html.GetTenant().PolicyFileNamePath))
+        {
+            @Html.ActionLink("Privacy Policy", "Policy", "Footer", new { area = "Site" }, null)
+        }
+
+        @if (!string.IsNullOrEmpty(Html.GetTenant().ContactUsFileNamePath))
+        {
+            @Html.ActionLink("Contact Us", "ContactUs", "Footer", new { area = "Site" }, null)
+        }
+
+        @if (!string.IsNullOrEmpty(Html.GetTenant().ImprintFileNamePath))
+        {
+            @Html.ActionLink("Imprint", "Imprint", "Footer", new { area = "Site" }, null)
+        }
         <br />
     </footer>
 </div>
