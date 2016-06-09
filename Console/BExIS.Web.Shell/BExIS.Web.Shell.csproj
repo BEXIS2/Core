@@ -438,6 +438,7 @@
     <Compile Include="Areas\SAM\Controllers\TenantsController.cs" />
     <Compile Include="Areas\SAM\Controllers\UsersController.cs" />
     <Compile Include="Areas\SAM\Helpers\Attributes.cs" />
+    <Compile Include="Areas\SAM\Helpers\HtmlHelperExtensions.cs" />
     <Compile Include="Areas\SAM\Helpers\SAMSeedDataGenerator.cs" />
     <Compile Include="Areas\SAM\Helpers\HtmlPrefixScopeExtensions.cs" />
     <Compile Include="Areas\SAM\Models\AccountModels.cs" />
@@ -452,12 +453,11 @@
     <Compile Include="Areas\SAM\Models\PermissionModel.cs" />
     <Compile Include="Areas\SAM\Models\SecurityQuestionModels.cs" />
     <Compile Include="Areas\SAM\Models\ShowHelpModel.cs" />
+    <Compile Include="Areas\SAM\Models\TenantModels.cs" />
     <Compile Include="Areas\SAM\Models\UserModels.cs" />
     <Compile Include="Areas\SAM\SAMAreaRegistration.cs" />
-    <Compile Include="Areas\Site\Controllers\ContactUsController.cs" />
-    <Compile Include="Areas\Site\Controllers\ImpressumController.cs" />
+    <Compile Include="Areas\Site\Controllers\FooterController.cs" />
     <Compile Include="Areas\Site\Controllers\NavController.cs" />
-    <Compile Include="Areas\Site\Controllers\PrivacyPolicyController.cs" />
     <Compile Include="Areas\Site\Controllers\TermsController.cs" />
     <Compile Include="Areas\Site\SiteAreaRegistration.cs" />
     <Compile Include="Areas\SAM\Controllers\UtilsController.cs" />
@@ -639,11 +639,8 @@
     <Content Include="Areas\MSM\Views\Test\Index.cshtml" />
     <Content Include="Areas\MSM\Views\Test\_TreePartial.cshtml" />
     <Content Include="Areas\MSM\Views\Test\_AddTextField.cshtml" />
-    <Content Include="Areas\Site\Views\ContactUs\Index.cshtml" />
-    <Content Include="Areas\Site\Views\PrivacyPolicy\Index.cshtml" />
     <Content Include="Areas\Site\Views\Shared\_Layout.cshtml" />
     <Content Include="Areas\Site\Views\_ViewStart.cshtml" />
-    <Content Include="Areas\Site\Views\Impressum\Index.cshtml" />
     <Content Include="Areas\DDM\Views\Data\_SubjectsPartial.cshtml" />
     <Content Include="Areas\Site\Views\Terms\Index.cshtml" />
     <Content Include="fonts\FontAwesome.otf" />
@@ -651,6 +648,9 @@
     <Content Include="fonts\fontawesome-webfont.woff" />
     <Content Include="fonts\fontawesome-webfont.ttf" />
     <Content Include="fonts\fontawesome-webfont.eot" />
+    <Content Include="Areas\SAM\Views\Tenants\_Create.cshtml" />
+    <Content Include="Areas\SAM\Views\Tenants\_Edit.cshtml" />
+    <Content Include="Areas\Site\Views\Footer\Content.cshtml" />
     <None Include="Properties\PublishProfiles\BPP2907.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
