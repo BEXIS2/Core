@@ -471,7 +471,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
             
             XmlDocument extraXml = datastructure.Extra as XmlDocument;
 
-            if (datastructure.Extra != null && (datastructure.Extra as XmlDocument).GetElementsByTagName("order").Count != 0)
+            if (datastructure.Extra != null && extraXml.GetElementsByTagName("order").Count != 0)
             {
                 XmlNode orderNode = extraXml.GetElementsByTagName("order")[0];
                 XmlDocument order = new XmlDocument();
