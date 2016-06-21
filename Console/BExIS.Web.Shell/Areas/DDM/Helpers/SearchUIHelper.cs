@@ -468,10 +468,15 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
         private static List<Variable> SortVariablesOnDatastructure(List<Variable> variables, DataStructure datastructure)
         {
             List<Variable> sortedVariables = new List<Variable>();
+            
+            XmlDocument extraXml = datastructure.Extra as XmlDocument;
 
             if (datastructure.Extra != null && (datastructure.Extra as XmlDocument).GetElementsByTagName("order").Count != 0)
             {
-                XmlDocument order = (datastructure.Extra as XmlDocument).GetElementsByTagName("order")[0] as XmlDocument;
+                XmlNode orderNode = extraXml.GetElementsByTagName("order")[0];
+                XmlDocument order = new XmlDocument();
+                order.LoadXml(orderNode.OuterXml);
+                
                 IEnumerable<XElement> elements = XmlUtility.GetXElementByNodeName("variable", XmlUtility.ToXDocument(order));
 
                 foreach (XElement element in elements)
