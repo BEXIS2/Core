@@ -1,6 +1,7 @@
 ﻿@using System.Web.UI.WebControls
 @using Vaiona.Web.Mvc;
 @using BExIS.Web.Shell.Areas.DDM.Controllers;
+@using BExIS.Web.Shell.Areas.SAM.Helpers
 
 @section Information
 {    
@@ -14,7 +15,7 @@
     }
     else
     {
-        <p>Welcome to the BExIS 2.8.0</p>
+        <p>Welcome to the BExIS 2.9.0</p>
         <p>If you have any problems installing or using it please do not hesitate contacting us at: bexis-support@uni-jena.de</p>
         <p>This is a community driven open source project so we are looking forward to any feedback or inquiry about new features.</p>
     }
@@ -28,9 +29,7 @@
 else
 {
     <div style="text-align: center;">
-        <a href="http://fusion.cs.uni-jena.de/bexis">
-            <img src="~/Content/Images/Logo_BEXIS_cmyk.svg" width="300px" />
-        </a>
+        @Html.Logo(Html.GetTenant().GetResourcePath("BigLogo"))
     </div>
     <div style="text-align: center; margin-top: 24pt">
         <button class="t-button function" onclick="LogOn()">Log In</button>

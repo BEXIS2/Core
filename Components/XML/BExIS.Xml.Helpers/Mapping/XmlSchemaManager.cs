@@ -19,6 +19,7 @@ namespace BExIS.Xml.Helpers.Mapping
     public class XmlSchemaManager
     {
         public string FileName { get; set; }
+        
         public List<XmlSchemaComplexType> ComplexTypes { get; set; }
         public List<XmlSchemaComplexType> ComplexTypesWithSimpleTypesAsChildrens { get; set; }
         public List<XmlSchemaElement> Elements { get; set; }
@@ -31,7 +32,7 @@ namespace BExIS.Xml.Helpers.Mapping
         public List<MetadataAttribute> MetadataAttributes { get; set; }
         public Dictionary<string,List<Constraint>> ConvertedSimpleTypes { get; set; }
 
-
+        private List<string> additionalFiles { get; set; }
         private DataContainerManager dataContainerManager = new DataContainerManager();
         private MetadataPackageManager metadataPackageManager = new MetadataPackageManager();
         private MetadataAttributeManager metadataAttributeManager = new MetadataAttributeManager();
@@ -50,6 +51,13 @@ namespace BExIS.Xml.Helpers.Mapping
         private XmlMapper mappingFileInternalToExternal = new XmlMapper();
         private XmlMapper mappingFileExternalToInternal = new XmlMapper();
 
+        private Dictionary<long, string> createdAttributesDic { get; set; }
+        private Dictionary<long, string> createdPackagesDic { get; set; }
+        private Dictionary<long, string> createdCompoundsDic { get; set; }
+
+        private string userName = "";
+        private string location = "";
+
 
         public XmlSchemaManager()
         {
@@ -62,8 +70,12 @@ namespace BExIS.Xml.Helpers.Mapping
             ConvertedSimpleTypes = new Dictionary<string, List<Constraint>>();
             Groups = new List<XmlSchemaGroup>();
             xsdFileName = "";
+            additionalFiles = new List<string>();
             mappingFileInternalToExternal = new XmlMapper();
             mappingFileExternalToInternal = new XmlMapper();
+            createdAttributesDic = new Dictionary<long, string>();
+            createdCompoundsDic = new Dictionary<long, string>();
+            createdPackagesDic = new Dictionary<long, string>();
         }
         
         public static bool MoveFile(string tempFile, string destinationPath)
@@ -87,8 +99,10 @@ namespace BExIS.Xml.Helpers.Mapping
         /// Load Schema from path
         /// </summary>
         /// <param name="path"></param>
-        public void Load(string path, string userName)
+        public void Load(string path, string username)
         {
+            userName = username;
+
             xsdFilePath = path;
             xsdFileName = path.Split('\\').Last();
 
@@ -116,23 +130,7 @@ namespace BExIS.Xml.Helpers.Mapping
             {
                 foreach (XmlSchemaObject additional in Schema.Includes)
                 {
-                    if (additional is XmlSchemaInclude)
-                    {
-                        XmlSchemaInclude include = (XmlSchemaInclude)additional;
-
-                        if (include.Schema == null)
-                        {
-                            XmlReaderSettings settings = new XmlReaderSettings();
-                            settings.DtdProcessing = DtdProcessing.Ignore;
-
-                            string dataPath = Path.Combine(AppConfiguration.DataPath, "Temp", userName, include.SchemaLocation.Split('/').Last());
-
-                            XmlReader test = XmlReader.Create(dataPath, settings);
-                            include.Schema = XmlSchema.Read(test, verifyErrors);
-                        }
-
-                        schemaSet.Add(include.Schema);
-                    }
+                    schemaSet = addToSchemaSet(additional, schemaSet);
                 }
             }
 
@@ -148,6 +146,40 @@ namespace BExIS.Xml.Helpers.Mapping
             RefElementNames.AddRange(GetAllRefElementNames(Elements));
 
             xsd_file.Close();
+        }
+
+        private XmlSchemaSet addToSchemaSet(XmlSchemaObject xmlSchemaObject, XmlSchemaSet xmlSchemaSet )
+        {
+            if (xmlSchemaObject is XmlSchemaInclude)
+            {
+                XmlSchemaInclude include = (XmlSchemaInclude)xmlSchemaObject;
+
+                if (include.Schema == null)
+                {
+                    XmlReaderSettings settings = new XmlReaderSettings();
+                    settings.DtdProcessing = DtdProcessing.Ignore;
+
+                    string dataPath = Path.Combine(AppConfiguration.DataPath, "Temp", userName, include.SchemaLocation.Split('/').Last());
+                    
+                    XmlReader test = XmlReader.Create(dataPath, settings);
+                    include.Schema = XmlSchema.Read(test, verifyErrors);
+                }
+
+                xmlSchemaSet.Add(include.Schema);
+                additionalFiles.Add(Path.GetFileName(include.Schema.SourceUri.ToString()));
+                // if schema has included schemas
+                if (include.Schema.Includes.Count > 0)
+                {
+                    foreach (XmlSchemaObject additional in include.Schema.Includes)
+                    {
+                        addToSchemaSet(additional, xmlSchemaSet);
+                    }
+                }
+
+                return xmlSchemaSet;
+            }
+
+            return xmlSchemaSet;
         }
 
         public void Delete(string schemaName)
@@ -474,21 +506,35 @@ namespace BExIS.Xml.Helpers.Mapping
                 MoveFile(xsdFilePath, newXsdFilePath);
             }
 
-            #region prepare mappingFiles
+            #region store additionaly xsds 
 
-                #region intern to extern
-                    // add schema to mappingfile
-                    mappingFileInternalToExternal.Header.AddToSchemas(schemaName, "Metadata/" + schemaName + "/" + FileName);
-                #endregion
+            string tmpDestinationPath = Path.GetDirectoryName(newXsdFilePath);
+            string tmpSourcePath = Path.GetDirectoryName(xsdFilePath);
 
-                #region extern to intern
-                    mappingFileExternalToInternal.Header.AddToDestination("Metadata");
-                    // id and name of metadatastructure fehlt
+            if (additionalFiles != null)
+            {
+                foreach (var filename in additionalFiles.Distinct())
+                {
+                    MoveFile(Path.Combine(tmpSourcePath, filename), Path.Combine(tmpDestinationPath, filename));
+                }
+            }
 
-                #endregion
             #endregion
 
+            #region prepare mappingFiles
 
+            #region intern to extern
+                // add schema to mappingfile
+                mappingFileInternalToExternal.Header.AddToSchemas(schemaName, "Metadata/" + schemaName + "/" + FileName);
+            #endregion
+
+            #region extern to intern
+                mappingFileExternalToInternal.Header.AddToDestination("Metadata");
+                // id and name of metadatastructure fehlt
+
+            #endregion
+
+            #endregion
 
             //List<MetadataAttribute> metadataAttributes = new List<MetadataAttribute>();
             //metadataAttributes = GenerateAllMetadataAttributes();
@@ -548,7 +594,7 @@ namespace BExIS.Xml.Helpers.Mapping
                 {
                     XmlSchemaElement rootElement = (XmlSchemaElement)root;
                     mappingFileInternalToExternal.Header.AddToDestination(nameOfStartNode, rootElement.Name);
-            }
+                }
             }
 
                
@@ -564,7 +610,12 @@ namespace BExIS.Xml.Helpers.Mapping
                     XmlSchemaGroup rootAsGroup = (XmlSchemaGroup)root;
 
                     MetadataPackage package = getExistingMetadataPackage(rootAsGroup.Name);
-                    if (package == null) package = mdpManager.Create(rootAsGroup.Name, GetDescription(rootAsGroup.Annotation), true);
+
+                    if (package == null)
+                    {
+                        package = mdpManager.Create(rootAsGroup.Name, GetDescription(rootAsGroup.Annotation), true);
+                        createdPackagesDic.Add(package.Id, package.Name);
+                    }
 
                     if (test.MetadataPackageUsages.Where(p => p.MetadataPackage == package).Count() <= 0)
                     {
@@ -612,14 +663,20 @@ namespace BExIS.Xml.Helpers.Mapping
                     // get all simpleTypes 
                     // for the main package
                     List<XmlSchemaElement> simpleElements = XmlSchemaUtility.GetAllSimpleElements(packages);
-                    string rootNodePackage = "Basic";
+                    string rootNodePackageUsage = "Basic";
+                    string rootNodePackage = "BasicType";
+                   
                     string rootNodePackageDescription = "Attributes from the root node";
 
 
                     if (simpleElements.Count > 0)
                     {
-                        MetadataPackage package = getExistingMetadataPackage(rootNodePackage); ;// = mdpManager.MetadataPackageRepo.Get(p => p.Name == rootNodePackage).FirstOrDefault();
-                        if (package == null) package = mdpManager.Create(rootNodePackage, rootNodePackageDescription, true);
+                        MetadataPackage package = getExistingMetadataPackage(rootNodePackage);// = mdpManager.MetadataPackageRepo.Get(p => p.Name == rootNodePackage).FirstOrDefault();
+                        if (package == null)
+                        {
+                            package = mdpManager.Create(rootNodePackage, rootNodePackageDescription, true);
+                            createdPackagesDic.Add(package.Id, package.Name);
+                        }
 
                         if (test.MetadataPackageUsages.Where(p => p.MetadataPackage == package).Count() <= 0)
                         {
@@ -628,11 +685,11 @@ namespace BExIS.Xml.Helpers.Mapping
                             {
                                 if (XmlSchemaUtility.IsSimpleType(child))
                                 {
-                                    addMetadataAttributeToMetadataPackageUsage(package, child,"Metadata/Basic", rootElementName);
+                                    addMetadataAttributeToMetadataPackageUsage(package, child,"Metadata/Basic/BasicType", rootElementName);
                                 }
                             }
 
-                            mdsManager.AddMetadataPackageUsage(test, package, rootNodePackage, rootNodePackageDescription, 1, 1);
+                            mdsManager.AddMetadataPackageUsage(test, package, rootNodePackageUsage, rootNodePackageDescription, 1, 1);
                         }
 
                     }
@@ -657,8 +714,11 @@ namespace BExIS.Xml.Helpers.Mapping
                         {
                             #region complexType
                             MetadataPackage package = getExistingMetadataPackage(element.Name);// = mdpManager.MetadataPackageRepo.Get(p => p.Name == element.Name).FirstOrDefault();
-                            if (package == null) package = mdpManager.Create(element.Name, GetDescription(element.Annotation), true);
-
+                            if (package == null)
+                            {
+                                package = mdpManager.Create(typeName, GetDescription(element.Annotation), true);
+                                createdPackagesDic.Add(package.Id, package.Name);
+                            }
                             // add package to structure
                             if (test.MetadataPackageUsages != null && test.MetadataPackageUsages.Where(p => p.Label.Equals(element.Name)).Count() > 0)
                             {
@@ -858,7 +918,7 @@ namespace BExIS.Xml.Helpers.Mapping
                 else
                 { 
                     metadataCompountAttr = metadataAttributeManager.Create(metadataCompountAttr);
-            
+                    createdCompoundsDic.Add(metadataCompountAttr.Id, metadataCompountAttr.Name);
                 }
             }
             //only map
@@ -909,10 +969,10 @@ namespace BExIS.Xml.Helpers.Mapping
             }
 
 
-            if(parents.Contains(element.Name))
-            {
-                parents.Remove(element.Name);
-            }
+            //if(parents.Contains(element.Name))
+            //{
+            //    parents.Remove(element.Name);
+            //}
 
             return metadataCompountAttr;
         }
@@ -945,16 +1005,17 @@ namespace BExIS.Xml.Helpers.Mapping
                         max = int.MaxValue;
 
                     if (packageUsage.MetadataAttributeUsages.Where(p => p.MetadataAttribute == attribute).Count() <= 0)
-                        metadataPackageManager.AddMetadataAtributeUsage(packageUsage, attribute, attribute.Name, attribute.Description, min, max);
+                        metadataPackageManager.AddMetadataAtributeUsage(packageUsage, attribute, element.Name, attribute.Description, min, max);
 
 
-                    #region generate  MappingRoute
+                #region generate  MappingRoute
 
-                    addToExportMappingFile(mappingFileInternalToExternal, internalXPath, externalXPath, max, attribute.Name);
-                    addToImportMappingFile(mappingFileExternalToInternal, externalXPath , internalXPath, max, attribute.Name);
+                addToExportMappingFile(mappingFileInternalToExternal, internalXPath, externalXPath, max, element.Name, attribute.Name);
+                addToImportMappingFile(mappingFileExternalToInternal, externalXPath, internalXPath, max, element.Name, attribute.Name);
 
-                    #endregion
-                }
+
+                #endregion
+            }
         }
 
         private void addUsageFromMetadataCompoundAttributeToPackage(MetadataPackage package, MetadataCompoundAttribute compoundAttribute, XmlSchemaElement element)
@@ -1020,10 +1081,10 @@ namespace BExIS.Xml.Helpers.Mapping
         {
                 MetadataAttribute attribute;
 
-                if (metadataAttributeManager.MetadataAttributeRepo != null && 
-                    getExistingMetadataAttribute(element.Name)!=null)
+                if (metadataAttributeManager.MetadataAttributeRepo != null &&
+                    getExistingMetadataAttribute(GetTypeOfName(element.Name)) != null)
                 {
-                    attribute = metadataAttributeManager.MetadataAttributeRepo.Get().Where(m => m.Name.Equals(element.Name)).First();
+                    attribute = metadataAttributeManager.MetadataAttributeRepo.Get().Where(m => m.Name.Equals(GetTypeOfName(element.Name))).First();
                 }
                 else
                 {
@@ -1045,7 +1106,7 @@ namespace BExIS.Xml.Helpers.Mapping
 
                     MetadataNestedAttributeUsage u1 = new MetadataNestedAttributeUsage()
                     {
-                        Label = attribute.Name,
+                        Label = element.Name,
                         Description = attribute.Description,
                         MinCardinality = min,
                         MaxCardinality = max,
@@ -1053,14 +1114,15 @@ namespace BExIS.Xml.Helpers.Mapping
                         Member = attribute,
                     };
 
-                    #region generate  MappingRoute
+                #region generate  MappingRoute
 
-                    addToExportMappingFile(mappingFileInternalToExternal, internalXPath, externalXPath, element.MaxOccurs, attribute.Name);
-                    addToImportMappingFile(mappingFileExternalToInternal, externalXPath, internalXPath, element.MaxOccurs, attribute.Name);
+                addToExportMappingFile(mappingFileInternalToExternal, internalXPath, externalXPath, element.MaxOccurs, element.Name, attribute.Name);
+                addToImportMappingFile(mappingFileExternalToInternal, externalXPath, internalXPath, element.MaxOccurs, element.Name, attribute.Name);
 
-                    #endregion
 
-                    if (compoundAttribute.MetadataNestedAttributeUsages.Where(n => n.Label.Equals(attribute.Name)).Count()==0)
+                #endregion
+
+                if (compoundAttribute.MetadataNestedAttributeUsages.Where(n => n.Label.Equals(attribute.Name)).Count()==0)
                         compoundAttribute.MetadataNestedAttributeUsages.Add(u1);
                 }
 
@@ -1079,7 +1141,7 @@ namespace BExIS.Xml.Helpers.Mapping
             {
                 XmlSchemaSimpleType type = (XmlSchemaSimpleType)element.ElementSchemaType;
 
-                string name = element.Name;
+                string name = GetTypeOfName(element.Name);
                 string description = "";
 
                 if (element.Annotation != null)
@@ -1106,6 +1168,9 @@ namespace BExIS.Xml.Helpers.Mapping
                     if (constraints != null && constraints.Count() > 0)
                         temp.Constraints = constraints;
 
+                    //add to dic for reuse of created attributes
+                    createdAttributesDic.Add(temp.Id, temp.Name);
+
                     return metadataAttributeManager.Update(temp);
                 }
 
@@ -1121,7 +1186,7 @@ namespace BExIS.Xml.Helpers.Mapping
                 if (type.ContentModel is XmlSchemaSimpleContent)
                 {
 
-                    string name = element.Name;
+                    string name = GetTypeOfName(element.Name);
                     string description = "";
 
                     if (element.Annotation != null)
@@ -1143,6 +1208,9 @@ namespace BExIS.Xml.Helpers.Mapping
                     if (temp == null)
                     {
                         temp = metadataAttributeManager.Create(name, name, description, false, false, "David Blaa", MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, noneunit, null, null, null, null);
+
+                        //add to dic for reuse of created attributes
+                        createdAttributesDic.Add(temp.Id, temp.Name);
 
                         XmlSchemaSimpleContentRestriction simpleContentRestriction;
                         List<Constraint> constraints = new List<Constraint>();
@@ -1198,7 +1266,7 @@ namespace BExIS.Xml.Helpers.Mapping
             // create a compoundAttribute
             int i = 0;
             MetadataCompoundAttribute mca = getExistingMetadataCompoundAttribute(element.Name + "Type"); ;// = metadataAttributeManager.MetadataCompoundAttributeRepo.Get(p => p.Name == element.Name+"Type").FirstOrDefault();
-            Debug.WriteLine("createMetadataCompoundAttribute" + i++);
+            //Debug.WriteLine("createMetadataCompoundAttribute" + i++);
             DataType dt1 = dataTypeManager.Repo.Get(p => p.Name.Equals("String")).FirstOrDefault();
             if (dt1 == null)
             {
@@ -1350,10 +1418,10 @@ namespace BExIS.Xml.Helpers.Mapping
 
                 MetadataAttribute attribute;
 
-                if (metadataAttributeManager.MetadataAttributeRepo != null && 
-                        metadataAttributeManager.MetadataAttributeRepo.Get().Where(m => m.Name.Equals(element.Name)).Count() > 0)
+                if (metadataAttributeManager.MetadataAttributeRepo != null &&
+                        metadataAttributeManager.MetadataAttributeRepo.Get().Where(m => m.Name.Equals(GetTypeOfName(element.Name))).Count() > 0)
                 {
-                    attribute = metadataAttributeManager.MetadataAttributeRepo.Get().Where(m => m.Name.Equals(element.Name)).First();
+                    attribute = metadataAttributeManager.MetadataAttributeRepo.Get().Where(m => m.Name.Equals(GetTypeOfName(element.Name))).First();
                 }
                 else
                 {
@@ -1362,8 +1430,8 @@ namespace BExIS.Xml.Helpers.Mapping
 
                 #region generate  MappingRoute
 
-                addToExportMappingFile(mappingFileInternalToExternal, internalXPath, externalXPath, element.MaxOccurs, attribute.Name);
-                addToImportMappingFile(mappingFileExternalToInternal, externalXPath, internalXPath, element.MaxOccurs, attribute.Name);
+                addToExportMappingFile(mappingFileInternalToExternal, internalXPath, externalXPath, element.MaxOccurs, element.Name, attribute.Name);
+                addToImportMappingFile(mappingFileExternalToInternal, externalXPath, internalXPath, element.MaxOccurs, element.Name, attribute.Name);
 
                 #endregion
 
@@ -1373,11 +1441,11 @@ namespace BExIS.Xml.Helpers.Mapping
                 //Debug.WriteLine("--- sequence :" + element);
         }
 
-        private XmlMapper addToImportMappingFile(XmlMapper mapper, string sourceXPath, string destinationXPath, decimal max, string name)
+        private XmlMapper addToImportMappingFile(XmlMapper mapper, string sourceXPath, string destinationXPath, decimal max, string name, string nameType)
         {
             string parentExternalName = destinationXPath.Split('/').Last();
             string childSourceXPath = sourceXPath + "/" + name; 
-            string childDestinationXPath = destinationXPath + "/" + name+ "/" + name;
+            string childDestinationXPath = destinationXPath + "/" + name+ "/" + nameType;
 
             XmlMappingRoute xmr = new XmlMappingRoute();
 
@@ -1386,7 +1454,7 @@ namespace BExIS.Xml.Helpers.Mapping
             string sequence = parentExternalName;
             if (max > 1)
             {
-                sequence = name;
+                sequence = nameType;
             }
 
             xmr.Destination = new Destination(childDestinationXPath, sequence);
@@ -1396,10 +1464,10 @@ namespace BExIS.Xml.Helpers.Mapping
             return mapper;
         }
 
-        private XmlMapper addToExportMappingFile(XmlMapper mapper, string sourceXPath, string destinationXPath, decimal max, string name)
+        private XmlMapper addToExportMappingFile(XmlMapper mapper, string sourceXPath, string destinationXPath, decimal max, string name, string nameType)
         {
             string parentExternalName = destinationXPath.Split('/').Last();
-            string childSourceXPath = sourceXPath + "/" + name + "/" + name;
+            string childSourceXPath = sourceXPath + "/" + name + "/" + nameType;
             string childDestinationXPath = destinationXPath + "/" + name;
 
             XmlMappingRoute xmr = new XmlMappingRoute();
@@ -1425,20 +1493,33 @@ namespace BExIS.Xml.Helpers.Mapping
 
         private MetadataAttribute getExistingMetadataAttribute(string name)
         {
-            // TODO: need to implement; 
+            if (createdAttributesDic.ContainsValue(name))
+            {
+                long id = createdAttributesDic.Where(k => k.Value.Equals(name)).FirstOrDefault().Key;
+                return metadataAttributeManager.MetadataSimpleAttributeRepo.Get(id);
+
+            }
 
             return null;
         }
 
         private MetadataCompoundAttribute getExistingMetadataCompoundAttribute(string name)
         {
-            // TODO: need to implement; 
+            if (createdCompoundsDic.ContainsValue(name))
+            {
+                long id = createdCompoundsDic.Where(k => k.Value.Equals(name)).FirstOrDefault().Key;
+                return metadataAttributeManager.MetadataCompoundAttributeRepo.Get(id);
+            }
             return null;
         }
 
         private MetadataPackage getExistingMetadataPackage(string name)
         {
-            // TODO: need to implement; 
+            if (createdPackagesDic.ContainsValue(name))
+            {
+                long id = createdPackagesDic.Where(k => k.Value.Equals(name)).FirstOrDefault().Key;
+                return metadataPackageManager.MetadataPackageRepo.Get(id);
+            }
             return null;
         }
 
@@ -1449,7 +1530,7 @@ namespace BExIS.Xml.Helpers.Mapping
             {
                 TypeCode typeCode = ConvertStringToSystemType(dataTypeAsString);
 
-                DataType dataType = dataTypeManager.Repo.Get().Where(d => d.SystemType.Equals(typeCode.ToString()) && d.Name.Equals(typeCode.ToString())).FirstOrDefault();
+                DataType dataType = dataTypeManager.Repo.Query().Where(d => d.SystemType.Equals(typeCode.ToString()) && d.Name.Equals(typeCode.ToString())).FirstOrDefault();
 
                 if (dataType == null)
                 {
@@ -1505,19 +1586,12 @@ namespace BExIS.Xml.Helpers.Mapping
   
         private void checkDirectory(string filePath)
         {
-            string path = getPathFromFilePath(filePath);
+            string path = Path.GetDirectoryName(filePath);
 
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
             }
-        }
-
-        private string getPathFromFilePath(string filepath)
-        {
-            List<string> temp = filepath.Split('\\').ToList();
-            temp.Remove(temp.Last());
-            return Path.Combine(temp.ToArray());
         }
 
         private string GetTypeOfName(string name)

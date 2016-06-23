@@ -93,7 +93,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.Ext.Orm.NH", "Compone
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.Dlm.Test", "Components\DLM\BExIS.Dlm.Test\BExIS.Dlm.Test.csproj", "{51FF5302-9E12-4E91-AEC8-7651E25177AD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.IO.DataType.DisplayPattern", "ClassLibrary1\BExIS.IO.DataType.DisplayPattern.csproj", "{8B2EC2B0-6870-456B-BE2D-B0FB4EA68D83}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.IO.DataType.DisplayPattern", "Components\IO\BExIS.IO.DataType.DisplayPattern\BExIS.IO.DataType.DisplayPattern.csproj", "{8B2EC2B0-6870-456B-BE2D-B0FB4EA68D83}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -8,6 +8,7 @@ using BExIS.Security.Services.Subjects;
 using BExIS.Web.Shell.Areas.SAM.Models;
 using Telerik.Web.Mvc;
 using Vaiona.Web.Mvc.Models;
+using Vaiona.Web.Extensions;
 
 namespace BExIS.Web.Shell.Areas.SAM.Controllers
 {
@@ -26,7 +27,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
 
         public ActionResult Groups()
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Groups");
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Groups", this.Session.GetTenant());
             return View();
         }
 
@@ -73,14 +74,17 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
 
                 foreach (long userId in users)
                 {
-                    subjectManager.RemoveUserFromGroup(userId, @group.Id);
+                    subjectManager.RemoveUserFromGroup(userId, group.Id);
                 }
 
                 if (Session["Users"] != null)
                 {
                     foreach (GroupMembershipGridRowModel user in (GroupMembershipGridRowModel[]) Session["Users"])
                     {
-                        subjectManager.AddUserToGroup(user.Id, group.Id);
+                        if (user.IsUserInGroup)
+                        {
+                            subjectManager.AddUserToGroup(user.Id, group.Id);
+                        }
                     }
                 }
 

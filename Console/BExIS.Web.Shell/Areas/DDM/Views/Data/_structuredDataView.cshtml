@@ -42,7 +42,9 @@
 
     <p>Note: If you are the first one to download this dataset it may take a
         little longer, because the file has to be created.</p>
-
+<p>
+    <a href="/DCM/Help/Index/#_Toc451435014" class="bx-informationLink" title="go to help" target="_blank">More</a>
+</p>
 }
 <div id="downloadOptions" style="text-align:left;">
 
@@ -136,12 +138,12 @@
 
 
             .Pageable(paging =>
-                paging.PageSize(100,new int[]{10,20,50,100,500})
+                paging.PageSize(20,new int[]{10,20,50,100,500})
                     .Style(pagerStyles)
                     .Position(GridPagerPosition.Both)
                     .Total(total)
                     )
-.Sortable()
+//.Sortable()
 //.Filterable()
 //.ColumnContextMenu()
 //.Groupable()

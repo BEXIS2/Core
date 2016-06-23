@@ -5,8 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -15,16 +13,30 @@ namespace BExIS.Xml.Helpers
     public class XmlMetadataImportHelper
     {
 
-        public static string GetMappingFileName(long id)
+        public static string GetMappingFileName(long id, TransmissionType transmissionType, string name)
         {
             MetadataStructureManager msm = new MetadataStructureManager();
             MetadataStructure metadataStructure = msm.Repo.Get(id);
 
             // get MetadataStructure 
             XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)metadataStructure.Extra);
-            XElement temp = XmlUtility.GetXElementByAttribute(nodeNames.convertRef.ToString(), "name", "mappingFileImport", xDoc);
 
-            return temp.Attribute("value").Value.ToString();
+
+
+            List<XElement> tmpList =
+                XmlUtility.GetXElementsByAttribute(nodeNames.convertRef.ToString(), new Dictionary<string, string>()
+                {
+                    {AttributeNames.name.ToString(), name},
+                    {AttributeNames.type.ToString(), transmissionType.ToString()}
+
+                }, xDoc).ToList();
+
+            if (tmpList.Count >= 1)
+            {
+                return tmpList.FirstOrDefault().Attribute("value").Value.ToString();
+            }
+
+            return null;
         }
 
         #region update new xml metadata with a base template
@@ -122,7 +134,6 @@ namespace BExIS.Xml.Helpers
             }
             return doc;
         }
-
 
         #endregion
     }

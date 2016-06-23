@@ -331,7 +331,7 @@ namespace BExIS.Security.Services.Authorization
             return ExistsDataPermission(subjectIds, entityId, dataId, rightType);
         }
 
-        public bool HasUserDataAccess(string userName, long entityId, long dataId, RightType rightType)
+        public bool HasUserDataAccess(string username, long entityId, long dataId, RightType rightType)
         {
             Group everyone = GroupsRepo.Get(g => g.Name == "everyone").FirstOrDefault();
 
@@ -341,7 +341,7 @@ namespace BExIS.Security.Services.Authorization
             }
             else
             {
-                User user = UsersRepo.Get(u => u.Name.ToLower() == userName.ToLower()).FirstOrDefault();
+                User user = UsersRepo.Get(u => u.Name.ToLower() == username.ToLower()).FirstOrDefault();
 
                 if (user == null)
                 {
