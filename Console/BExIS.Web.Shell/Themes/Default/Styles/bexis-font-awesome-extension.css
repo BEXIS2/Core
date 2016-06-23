@@ -1812,10 +1812,12 @@
 .fa-lastfm-square:before {
   content: "\f203";
 }
-.fa-toggle-off:before {
+.fa-toggle-off:before,
+.bx-toggle-off:before {
   content: "\f204";
 }
-.fa-toggle-on:before {
+.fa-toggle-on:before,
+.bx-toggle-on:before {
   content: "\f205";
 }
 .fa-bicycle:before {

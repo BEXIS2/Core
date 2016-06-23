@@ -348,9 +348,6 @@
     <Compile Include="Areas\DCM\Models\CreateDataset\MetadataEditorModel.cs" />
     <Compile Include="Areas\DCM\Models\CreateDataset\SetupModel.cs" />
     <Compile Include="Areas\DCM\Models\CreateDataset\StepModelHelper.cs" />
-    <Compile Include="Areas\DCM\Models\Create\SelectDatasetSetupModel.cs" />
-    <Compile Include="Areas\DCM\Models\Create\CreateSummaryModel.cs" />
-    <Compile Include="Areas\DCM\Models\Create\StepModelHelper.cs" />
     <Compile Include="Areas\DCM\Models\FileInfoModel.cs" />
     <Compile Include="Areas\DCM\Models\FinishUploadModel.cs" />
     <Compile Include="Areas\DCM\Models\GetFileInformationModel.cs" />

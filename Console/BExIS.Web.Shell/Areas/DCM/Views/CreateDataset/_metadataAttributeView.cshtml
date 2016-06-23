@@ -60,18 +60,17 @@
     {
         <table>
             <tr>
+                <td class="metadataAttributeLabel">
+                    @if (Model.MinCardinality > 0)
+                    { 
+                        <b title="Required" style="color:red">*</b>
+                    }
 
-           
-            <td class="metadataAttributeLabel">
-                @if (Model.MinCardinality > 0)
-                { 
-                    <b title="Required" style="color:red">*</b>
-                }
-
-                <b title="@Model.Discription">@displayName</b>
-            </td>
-        
-            <td class="metadataAttributeInput">
+                    <b title="@Model.Discription">@displayName</b>
+                    
+                    @*Empty = @Model.IsEmpty.ToString();*@
+                </td>
+                <td class="metadataAttributeInput">
                     @if (Model.SystemType.Equals(TypeCode.String.ToString()))
                     {
                         if (Model.DataType.Equals("Text"))
