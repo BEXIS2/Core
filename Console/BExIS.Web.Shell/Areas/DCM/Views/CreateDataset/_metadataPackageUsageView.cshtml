@@ -18,7 +18,7 @@
 
     string lockedClass = "";
     bool locked = false;
-
+    bool hideOptional = false;
 }
 
 @if (ViewData.Keys.Contains("Locked"))
@@ -27,9 +27,14 @@
     lockedClass = "bx-disabled";
 }
 
+@if (ViewData.Keys.Contains("HideOptional"))
+{
+    hideOptional = (bool)ViewData["HideOptional"];
+}
 
 <div id="@stepId" name="@Model.Usage.Label" number="@Model.Number" class="metadataPackageUsage">
-
+@if (@Model != null && !(hideOptional && Model.IsEmpty() && locked))
+{
     <!--Header-->
     <div class="header">
         <div id="@id_label_container" class="labelContainer" onclick="showHideClick(this)">
@@ -43,14 +48,17 @@
 
 
             </b>
-            @*Activated = @Model.Activated;
-            Empty = @Model.IsEmpty();*@
+
+            @if (Model.Model.MinCardinality > 0)
+            {
+                <b title="Required" style="color: red">*</b>
+            }
 
             @if (Model.Activated)
             {
                 <span id="@id_button_view" class="bx bx-angle-double-up "></span>
             }
-    </div>
+        </div>
         <div class="optionContainer">
             @if (Model.Activated)
             {
@@ -107,45 +115,47 @@
 
                 if (Model.Model.MinCardinality == 0 && !locked)
                 {
-                    <button id="@id_activate" onclick="Activate(this)" class="bx-function bx-toggle-on" />
+                    <button id="@id_activate" onclick="Activate(this)" class="bx-function bx-toggle-on"/>
                 }
             }
             else
             {
                 if (Model.Model.MinCardinality == 0 && !locked)
                 {
-                    <button id="@id_activate" onclick="Activate(this)" class="bx-function bx-toggle-off" />
+                    <button id="@id_activate" onclick="Activate(this)" class="bx-function bx-toggle-off"/>
                 }
             }
         </div>
     </div>
 
-    @if (Model.Activated)
-    {
-        <!--Content-->
-        <div id="@id_container" class="contentContainer">
-            @if (Model.Model.MetadataAttributeModels.Any())
-            {
-                <div class="simpleAttributesContainer">
-                    @foreach (var element in Model.Model.MetadataAttributeModels)
-                    {
-                        @Html.Partial("_metadataAttributeView", element)
-                    }
-                </div>
-            }
+     if (Model.Activated)
+     {
+         <!--Content-->
+         <div id="@id_container" class="contentContainer">
+             @if (Model.Model.MetadataAttributeModels.Any())
+             {
+                 <div class="simpleAttributesContainer">
+                     @foreach (var element in Model.Model.MetadataAttributeModels)
+                     {
+                         @Html.Partial("_metadataAttributeView", element)
+                     }
+                 </div>
+             }
 
 
-            @if (Model.Childrens.Any())
-            {
-                <div class="complexAttributesContainer">
-                    @foreach (var element in Model.Childrens)
-                    {
-                        @Html.Partial("_metadataCompoundAttributeView", element)
-                    }
-                </div>
-            }
-        </div>
+             @if (Model.Childrens.Any())
+             {
+                 <div class="complexAttributesContainer">
+                     @foreach (var element in Model.Childrens)
+                     {
+                         @Html.Partial("_metadataCompoundAttributeView", element)
+                     }
+                 </div>
+             }
+         </div>
+     }
 }
+
 </div>
 
 <script type="text/javascript">

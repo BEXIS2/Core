@@ -398,6 +398,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         public ActionResult StartMetadataEditor()
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Create Dataset", this.Session.GetTenant());
+            ViewData["HideOptional"] = false;
 
             TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
             List<StepModelHelper> stepInfoModelHelpers = new List<StepModelHelper>();
@@ -434,6 +435,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Create Dataset", this.Session.GetTenant());;
             ViewData["Locked"] = locked;
+            ViewData["HideOptional"] = true;
 
             TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
             if (TaskManager == null)
@@ -462,7 +464,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     TaskManager.AddToBus(CreateDatasetTaskmanager.RESEARCHPLAN_ID, dsv.Dataset.ResearchPlan.Id);
                     TaskManager.AddToBus(CreateDatasetTaskmanager.DATASTRUCTURE_ID, dsv.Dataset.DataStructure.Id);
 
-                    if (newMetadata == null)
+                    if (newMetadata == null || newMetadata.DocumentElement == null)
                         TaskManager.AddToBus(CreateDatasetTaskmanager.METADATA_XML, XmlUtility.ToXDocument(dsv.Metadata));
                     else
                         TaskManager.AddToBus(CreateDatasetTaskmanager.METADATA_XML, XmlUtility.ToXDocument(newMetadata));
@@ -635,10 +637,12 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             return PartialView("MetadataEditor", Model);
         }
 
-        public ActionResult ReloadMetadataEditor()
+        public ActionResult ReloadMetadataEditor(bool locked = false, bool hidden = false)
         {
-            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Create Dataset", this.Session.GetTenant());
+            ViewData["Locked"] = locked;
+            ViewData["HideOptional"] = hidden ? false : true;
 
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Create Dataset", this.Session.GetTenant());
             TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
             List<StepModelHelper> stepInfoModelHelpers = new List<StepModelHelper>();
 
@@ -665,8 +669,56 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             MetadataEditorModel Model = new MetadataEditorModel();
             Model.StepModelHelpers = stepInfoModelHelpers;
 
+            #region security permissions and authorisations check
+            // set edit rigths
+            DatasetManager datasetManager = new DatasetManager();
+            PermissionManager permissionManager = new PermissionManager();
+            SubjectManager subjectManager = new SubjectManager();
+            Security.Services.Objects.TaskManager securityTaskManager = new Security.Services.Objects.TaskManager();
+
+            bool hasAuthorizationRights = false;
+            bool hasAuthenticationRigths = false;
+
+            User user = subjectManager.GetUserByName(GetUsernameOrDefault());
+            long userid = -1;
+            long datasetid = -1;
+
+            datasetid = TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.DATASET_ID)
+                ? Convert.ToInt64(TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.DATASET_ID))
+                : -1;
+
+            if (user != null)
+            {
+                userid = subjectManager.GetUserByName(GetUsernameOrDefault()).Id;
+
+                //User has Access to Features 
+                //Area DCM
+                //Controller "Create Dataset" 
+                //Action "*"
+                Task task = securityTaskManager.GetTask("DCM", "CreateDataset", "*");
+                if (task != null)
+                {
+                    hasAuthorizationRights = permissionManager.HasSubjectFeatureAccess(userid, task.Feature.Id);
+                }
+
+                hasAuthenticationRigths = permissionManager.HasUserDataAccess(userid, 1, datasetid, RightType.Update);
+
+                Model.EditRight = (hasAuthorizationRights && hasAuthenticationRigths);
+            }
+            else
+            {
+                Model.EditRight = false;
+            }
+
+            #endregion
+
 
             return PartialView("MetadataEditor", Model);
+        }
+
+        public ActionResult SwitchVisibilityOfOptionalElements(bool hidden)
+        {
+            return RedirectToAction("ReloadMetadataEditor", new { locked = true, hidden = hidden});
         }
 
         #endregion
@@ -789,14 +841,11 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                 stepModelHelperList.Add(stepModelHelper);
 
-                if (mpu.MinCardinality > 0)
-                {
+                si = LoadStepsBasedOnUsage(mpu, si, "Metadata//" + mpu.Label.Replace(" ", string.Empty) + "[1]", stepModelHelper);
+                TaskManager.Root.Children.Add(si);
 
-                    si = LoadStepsBasedOnUsage(mpu, si, "Metadata//" + mpu.Label.Replace(" ", string.Empty) + "[1]", stepModelHelper);
-                    TaskManager.Root.Children.Add(si);
+                TaskManager.Bus[CreateDatasetTaskmanager.METADATA_STEP_MODEL_HELPER] = stepModelHelperList;
 
-                    TaskManager.Bus[CreateDatasetTaskmanager.METADATA_STEP_MODEL_HELPER] = stepModelHelperList;
-                }
             }
 
             TaskManager.Bus[CreateDatasetTaskmanager.METADATA_STEP_MODEL_HELPER] = stepModelHelperList;
@@ -1160,7 +1209,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 int indexOfLastSameAttribute = tempList.IndexOf(tempList.Where(a => a.Id.Equals(item.Id)).Last());
                 tempList.Insert(indexOfLastSameAttribute + 1, item);
             }
-
 
             return stepModelHelper.Model;
         }
@@ -1883,7 +1931,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             if (TaskManager != null && TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATA_STEP_MODEL_HELPER))
             {
                 List<StepModelHelper> stepInfoModelHelpers = (List<StepModelHelper>)TaskManager.Bus[CreateDatasetTaskmanager.METADATA_STEP_MODEL_HELPER];
-                ValidateModels(stepInfoModelHelpers.Where(s=>s.Activated == true && s.IsParentActive()).ToList());
+                ValidateModels(stepInfoModelHelpers.Where(s=>s.Activated && s.IsParentActive()).ToList());
             }
 
 

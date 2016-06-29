@@ -29,7 +29,7 @@
 
                   tabs.Add()
                       .Text("Metadata")
-                      .LoadContentFrom("LoadMetadata", "CreateDataset", new {area = "DDM", datasetId = @Model.Id, locked = true, created = false, fromEditMode = false, resetTaskManager = true});
+                      .LoadContentFrom("LoadMetadata", "CreateDataset", new {area = "DCM", datasetId = @Model.Id, locked = true, created = false, fromEditMode = false, resetTaskManager = true});
 
                   tabs.Add()
                       .Text("Primary Data")

@@ -9,6 +9,9 @@
     string lockedClass = "";
     bool locked = false;
     bool editMode = false;
+    bool hideOptional = false;
+
+    string showAllClass = " bx-toggle-on";
 
     HttpRuntimeSection section = System.Configuration.ConfigurationManager.GetSection("system.web/httpRuntime") as HttpRuntimeSection;
     int int_MaxRequestLength = section.MaxRequestLength;
@@ -19,6 +22,13 @@
 {
     locked = (bool)ViewData["Locked"];
     lockedClass = "bx-disabled";
+}
+
+@if (ViewData.Keys.Contains("HideOptional"))
+{
+    hideOptional = (bool)ViewData["HideOptional"];
+
+    showAllClass = hideOptional ? " bx-toggle-off" : " bx-toggle-on";
 }
 
 @section Information
@@ -36,84 +46,91 @@
 
 <div id="MetadataEditor">
 
-<div>
-    <table>
-        <tr>
-            @if (locked && Model.EditRight)
+    <div>
+        <table>
+            <tr>
+                @if (locked && Model.EditRight)
             {
-                <td><button onclick="edit()" class="bx-button function">Edit</button>
-                @Html.ActionLink("Copy", "Index", "CreateDataset", new { area = "DCM", id = @Model.DatasetId, type = "DatasetId" }, new { @class = "bx-button function", @id = @Model.DatasetId })</td>
+                    <td>
+                        <button onclick="edit()" class="bx-button function">Edit</button>
+                        @Html.ActionLink("Copy", "Index", "CreateDataset", new { area = "DCM", id = @Model.DatasetId, type = "DatasetId" }, new { @class = "bx-button function", @id = @Model.DatasetId })
 
-            }
+                        <spane id="showAll" title="switch visibility of optional elements" onclick="switchVisibilityOfOptionalElements()" class="bx-function @showAllClass" style="font-size: 25px; height: 100%" />
 
-            @if (!Model.Created && !locked)
+                    </td>
+
+                }
+
+                @if (!Model.Created && !locked)
             {
-                <td style="width: 100px">
-                    @(Html.Telerik().Upload()
+                    <td style="width: 100px">
+                        @(Html.Telerik().Upload()
                           .Name("SelectFileUploader")
                           .Multiple(false)
                           .ShowFileList(false)
-                          .HtmlAttributes(new {title = "Import from xml"})
+                          .HtmlAttributes(new { title = "Import from xml" })
                           .ClientEvents(events => events
                               .OnSuccess("OnSuccess")
                               .OnSelect("SelectFileProcess_OnSelect"))
                           .Async(async => async
-                              .Save("SelectFileProcess", "CreateDataset", new {area = "DCM"})
+                              .Save("SelectFileProcess", "CreateDataset", new { area = "DCM" })
                               .AutoUpload(true))
-                          )
-                </td>
-                <td>
-                    <div id="preloader" style="display:none;">
-                        <img src="../../../../Themes/Default/Styles/Default/preloader.GIF" />
-                    </div>
-                </td>
+                        )
+                    </td>
+                    <td>
+                        <div id="preloader" style="display:none;">
+                            <img src="../../../../Themes/Default/Styles/Default/preloader.GIF" />
+                        </div>
+                    </td>
 
-            }
-
-            @if (Model.Created && Model.DatasetId != -1 && !@Model.FromEditMode)
-            { 
-
-                <td>You successfully created dataset: <br /><b>@Model.DatasetTitle</b></td>
-                <td>Please use the <b>@Html.ActionLink("Upload Data Wizard ", "StartUploadWizard", "CreateDataset", new { area = "DCM"  }, new { title = "Link to upload wizard", @class="bx-link" })</b><br />
-                    to add primary data to this dataset.</td>
-
-                if (@Model.DatasetId > 0)
-                { 
-                    <td>Or see your dataset here <b>@Html.ActionLink(@Model.DatasetTitle, "ShowData", "CreateDataset", new  {id = @Model.DatasetId }, new { title = "Link to your dataset.", @class="bx-link" })</b><br /></td>
-                    
                 }
+
+                @if (Model.Created && Model.DatasetId != -1 && !@Model.FromEditMode)
+                {
+
+                    <td>You successfully created dataset: <br /><b>@Model.DatasetTitle</b></td>
+                    <td>
+                        Please use the <b>@Html.ActionLink("Upload Data Wizard ", "StartUploadWizard", "CreateDataset", new { area = "DCM" }, new { title = "Link to upload wizard", @class = "bx-link" })</b><br />
+                        to add primary data to this dataset.
+                    </td>
+
+                    if (@Model.DatasetId > 0)
+                    {
+                        <td>Or see your dataset here <b>@Html.ActionLink(@Model.DatasetTitle, "ShowData", "CreateDataset", new { id = @Model.DatasetId }, new { title = "Link to your dataset.", @class = "bx-link" })</b><br /></td>
+
+                    }
+                }
+            </tr>
+        </table>
+
+    </div>
+
+
+
+
+
+
+    <div id="root">
+
+        @foreach (var element in Model.StepModelHelpers)
+        {
+            if (element.Model is MetadataPackageModel)
+            {
+
+                @Html.Partial("_metadataPackageView", element)
             }
-        </tr>
-    </table>
+        }
 
-</div>
-
-
-
-
-
-
-<div id="root">
-
-@foreach (var element in Model.StepModelHelpers)
-{
-    if (element.Model is MetadataPackageModel)
-    { 
-
-        @Html.Partial("_metadataPackageView", element)
-    }
-}
-
-</div>
-@if (!locked)
-{
-    <div class="bx-footer right">
+    </div>
+    @if (!locked)
+    {
+        <div class="bx-footer right">
 
             <!-- only from editmode you have the option to reset-->
             <button onclick="validate()" class="bx-button function" style="float: left;">Validate</button>
             @if (@Model.FromEditMode)
             {
-                <button onclick="reset()" class="bx-button function"  style="float: left;">Reset</button>
+                <button onclick="reset()" class="bx-button function" style="float: left;">Reset</button>
             }
 
             <button onclick="submit()" class="bx-button action">Submit</button>
@@ -122,16 +139,16 @@
             {
                 <button onclick="cancel()" class="bx-button action">Cancel</button>
             }
-    </div>
-}
+        </div>
+    }
 
-@section RightPane
+    @section RightPane
 {
 
 
-}
-</div>
-<script>
+    }
+
+    <script>
 
 
     function SelectFileProcess_OnSelect(e) {
@@ -145,12 +162,13 @@
             alert("Only .xml files can be uploaded");
             e.preventDefault();
             return false;
-        }
-        else {
+        } else {
 
             if (file.size > (maxsize * 1024)) {
 
-                alert("Max file : " + maxsize / 1024 + " MB is supported. Please contact your administrator to upload bigger files.");
+                alert("Max file : " +
+                    maxsize / 1024 +
+                    " MB is supported. Please contact your administrator to upload bigger files.");
                 e.preventDefault();
                 return false;
             }
@@ -178,18 +196,18 @@
     function OnSuccess() {
         //alert("on success");
 
-        $.get('@Url.Action("LoadExternalXml", "CreateDataset", new RouteValueDictionary { { "area", "DCM" } })', function (response) {
-            //alert("on success");
+        $.get('@Url.Action("LoadExternalXml", "CreateDataset", new RouteValueDictionary {{"area", "DCM"}})',
+            function(response) {
+                //alert("on success");
 
-            $('#MetadataEditor').replaceWith(response);
+                $('#MetadataEditor').replaceWith(response);
 
-            $("#preloader").hide();
-        })
+                $("#preloader").hide();
+            })
     }
 
-    function validate()
-    {
-        $.get('@Url.Action("Validate", "CreateDataset", new RouteValueDictionary { { "area", "DCM" }})',
+    function validate() {
+        $.get('@Url.Action("Validate", "CreateDataset", new RouteValueDictionary {{"area", "DCM"}})',
             function(response) {
                 $('#MetadataEditor').replaceWith(response);
             })
@@ -211,7 +229,7 @@
 
         if (confirm('Are you sure you want reset the metadata formular?')) {
             $.get('@Url.Action("Reset", "CreateDataset", new RouteValueDictionary {{"area", "DCM"}})',
-                function (response) {
+                function(response) {
                     $('#MetadataEditor').replaceWith(response);
                 })
         } else {
@@ -219,44 +237,50 @@
         }
     }
 
-    function edit()
-    {
-        $.get('@Url.Action("EditMetadata", "CreateDataset", new RouteValueDictionary {{ "area", "DCM" }, {"datasetId",@Model.DatasetId},{"locked" ,false},{"created" ,false}})', function (response)
-        {
-            $('#MetadataEditor').replaceWith(response);
-        })
+    function edit() {
+        $
+            .get('@Url.Action("EditMetadata", "CreateDataset", new RouteValueDictionary {{"area", "DCM"}, {"datasetId", @Model.DatasetId}, {"locked", false}, {"created", false}})',
+                function(response) {
+                    $('#MetadataEditor').replaceWith(response);
+                })
     }
 
 
-    function submit()
-    {
-        $.get('@Url.Action("Validate", "CreateDataset", new RouteValueDictionary { { "area", "DCM" } })', function (response)
-        {
-            $('#MetadataEditor').replaceWith(response);
+    function submit() {
+        $.get('@Url.Action("Validate", "CreateDataset", new RouteValueDictionary {{"area", "DCM"}})',
+            function(response) {
+                $('#MetadataEditor').replaceWith(response);
 
-            var errors = $('.bx-input-error');
+                var errors = $('.bx-input-error');
 
-            if (errors.length == 0)
-            {
-                callSubmitAction();
-            }
-            else
-            {
-                if (confirm('Metadata is not valid! \n Do you really want to save?'))
-                {
+                if (errors.length == 0) {
                     callSubmitAction();
+                } else {
+                    if (confirm('Metadata is not valid! \n Do you really want to save?')) {
+                        callSubmitAction();
+                    }
                 }
-            }
-        }) 
+            })
     }
 
-    function callSubmitAction()
-    {
-        $.get('@Url.Action("Submit", "CreateDataset", new RouteValueDictionary { { "area", "DCM" },{"editMode",@Model.FromEditMode}})', function (response)
-        {
-            $('#MetadataEditor').replaceWith(response);
-            $('html, body').animate({ scrollTop: 0 }, 'slow');
-        })
+    function callSubmitAction() {
+        $
+            .get('@Url.Action("Submit", "CreateDataset", new RouteValueDictionary {{"area", "DCM"}, {"editMode", @Model.FromEditMode}})',
+                function(response) {
+                    $('#MetadataEditor').replaceWith(response);
+                    $('html, body').animate({ scrollTop: 0 }, 'slow');
+                })
     }
 
-</script>
+    function switchVisibilityOfOptionalElements() {
+
+        var hidden = '@hideOptional';
+
+        $.get('@Url.Action("SwitchVisibilityOfOptionalElements", "CreateDataset", new RouteValueDictionary {{"area", "DCM"}})', { hidden: hidden },
+                function(response) {
+                    $('#MetadataEditor').replaceWith(response);
+                });
+    }
+
+    </script>
+</div>

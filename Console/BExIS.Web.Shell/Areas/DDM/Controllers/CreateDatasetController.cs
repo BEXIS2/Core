@@ -157,6 +157,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Create Dataset", this.Session.GetTenant());
             ViewData["Locked"] = locked;
+            ViewData["HideOptional"] = true;
 
             TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
             if (TaskManager == null)

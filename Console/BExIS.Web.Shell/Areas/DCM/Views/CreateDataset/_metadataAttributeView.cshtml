@@ -3,35 +3,40 @@
 @using BExIS.Web.Shell.Areas.DCM.Models
 @using Telerik.Web.Mvc.UI
 @{
-    string id = @Model.Id + "_" + @Model.Parent.Id + "_" + @Model.Number + "_" + @Model.ParentModelNumber + "_" + @Model.NumberOfSourceInPackage+"_"+@Model.ParentStepId;
+    string id = @Model.Id + "_" + @Model.Parent.Id + "_" + @Model.Number + "_" + @Model.ParentModelNumber + "_" + @Model.NumberOfSourceInPackage + "_" + @Model.ParentStepId;
     string idInput = id + "_Input";
     string idAdd = id + "_Add";
     string idRemove = id + "_Remove";
     string idUp = id + "_Up";
     string idDown = id + "_Down";
-
-
     string displayName = @Model.DisplayName;
-    DateTime defaultDate = DateTime.Today;
-
-    if (@Model.Number > 1)displayName += " " + @Model.Number;
 
     bool hasErrors = false;
     string errorMessage = "";
     string errorClass = "";
     string lockedClass = "";
     bool locked = false;
-    
-    
+    bool hideOptional = false;
 
-}   
+}
+
+@if (Model.Number > 1)
+{
+    displayName += " " + Model.Number;
+}
 
 @if (ViewData.Keys.Contains("Locked"))
 {
     locked = (bool)ViewData["Locked"];
     lockedClass = "bx-disabled";
 }
- 
+
+@if (ViewData.Keys.Contains("HideOptional"))
+{
+    hideOptional = (bool)ViewData["HideOptional"];
+}
+
+
 @if (Model.Errors != null && Model.Errors.Count() > 0)
 {
     hasErrors = true;
@@ -56,7 +61,7 @@
 <div id="@id" class="metadataAttributeContent" onload="metadataAttributeOnLoad(this)">
 
    
-    @if (@Model != null)
+    @if (@Model != null && !(hideOptional && Model.IsEmpty && (Model.MinCardinality==0) && locked))
     {
         <table>
             <tr>
@@ -244,13 +249,8 @@
                 </td>
             </tr>
         </table>
-        
-        
     }
-    else
-    { 
-        <b>null</b>
-    }
+
 </div> 
      
 
