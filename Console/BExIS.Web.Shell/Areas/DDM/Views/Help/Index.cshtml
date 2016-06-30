@@ -1,28 +1,34 @@
-﻿@model BExIS.Web.Shell.Areas.DDM.Models.ShowHelpModel
-@using BExIS.Web.Shell.Areas.DDM.Models;
-
-@{
-    HtmlString toc = new HtmlString(Model.Title);
-    HtmlString content = new HtmlString(Model.Description);
+@using Vaiona.Web.Mvc;
+@section leftPane{
+  <div class="toc">
+    <a href="#_Toc451435006">1. Search UI</a>
+<p></p>
+    <a href="#_Toc451435007">1.1. Categories </a>
+<p></p>
+    <a href="#_Toc451435008">1.2. Properties </a>
+<p></p>
+    <a href="#_Toc451435009">1.3. Free text search with Autocomplete</a>
+<p></p>
+    <a href="#_Toc451435010">1.4. Selected Filter</a>
+<p></p>
+    <a href="#_Toc451435011">1.5. Results</a>
+<p></p>
+    <a href="#_Toc451435012">2. Data Details</a>
+<p></p>
+    <a href="#_Toc451435013">2.1. Meta Data</a>
+<p></p>
+    <a href="#_Toc451435014">2.2. Primary Data</a>
+<p></p>
+    <a href="#_Toc451435015">2.3. Data Structure</a>
+<p></p>
+    <a href="#_Toc451435016">2.4. Dataset Permissions</a>
+<p></p>
+    <a href="#_Toc451435017">3. Search Manager</a>
+<p></p>
+  </div>
 }
-
-@section Information
-{
-    This guide will walk you through the basics of using search UI including how to manage search component.
-}
-
-@content
-
-@section LeftPane 
-{             
-    <div class="toc">
-    @toc
-</div>
-
 <style>
-    .toc {
-        position: fixed;
-    }
-</style>
+.toc {
+position: fixed;
 }
-
+</style>

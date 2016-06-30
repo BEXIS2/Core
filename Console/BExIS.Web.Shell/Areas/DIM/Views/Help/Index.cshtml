@@ -1,28 +1,12 @@
-﻿@model BExIS.Web.Shell.Areas.DIM.Models.ShowHelpModel
-@using BExIS.Web.Shell.Areas.DIM.Models;
-
-@{
-    HtmlString toc = new HtmlString(Model.Title);
-    HtmlString content = new HtmlString(Model.Description);
+@using Vaiona.Web.Mvc;
+@section leftPane{
+  <div class="toc">
+    <a href="#_Toc412649143">Overview</a>
+<p></p>
+  </div>
 }
-
-@section Information
-{
-    This guide will walk you through the basics of using data dissemination.
+<style>
+.toc {
+position: fixed;
 }
-
-@content
-
-@section LeftPane 
-{             
-   <div class="toc">
-        @toc
-    </div>
-
-    <style>
-        .toc {
-            position: fixed;
-        }
-    </style>
-}
-
+</style>
