@@ -1,27 +1,38 @@
-﻿@model BExIS.Web.Shell.Areas.SAM.Models.ShowHelpModel
-@using BExIS.Web.Shell.Areas.SAM.Models;
-
-@{
-    HtmlString toc = new HtmlString(Model.Title);
-    HtmlString content = new HtmlString(Model.Description);
+@using Vaiona.Web.Mvc;
+@section leftPane{
+  <div class="toc">
+    <a href="#_Toc451422040">1. Overview</a>
+<p></p>
+    <a href="#_Toc451422041">2. Account</a>
+<p></p>
+    <a href="#_Toc451422042">2.1. Registration</a>
+<p></p>
+    <a href="#_Toc451422043">2.2. LogOn</a>
+<p></p>
+    <a href="#_Toc451422044">3. Users</a>
+<p></p>
+    <a href="#_Toc451422045">3.1. Create a user</a>
+<p></p>
+    <a href="#_Toc451422046">3.2. Edit a user</a>
+<p></p>
+    <a href="#_Toc451422047">4. Groups</a>
+<p></p>
+    <a href="#_Toc451422048">4.1. Create a group</a>
+<p></p>
+    <a href="#_Toc451422049">4.2. Edit a group</a>
+<p></p>
+    <a href="#_Toc451422050">5. Permissions</a>
+<p></p>
+    <a href="#_Toc451422051">5.1. Features</a>
+<p></p>
+    <a href="#_Toc451422052">5.2. Datasets</a>
+<p></p>
+    <a href="#_Toc451422053">6. Maintenance</a>
+<p></p>
+  </div>
 }
-
-@section Information
-{
-    This guide will walk you through the basics of using administration parts including how to registrate or log on, how to manage users or groups and how to manage permissions.
+<style>
+.toc {
+position: fixed;
 }
-
-@content
-
-@section LeftPane
-{
-    <div class="toc">
-        @toc
-    </div>
-
-    <style>
-        .toc {
-            position: fixed;
-        }
-    </style>
-}
+</style>

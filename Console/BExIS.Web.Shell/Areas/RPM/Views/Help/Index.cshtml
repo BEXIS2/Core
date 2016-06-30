@@ -1,29 +1,26 @@
-@model BExIS.Web.Shell.Areas.RPM.Models.ShowHelpModel
-@using BExIS.Web.Shell.Areas.RPM.Models;
-
-@{
-    HtmlString toc = new HtmlString(Model.Title);
-    HtmlString content = new HtmlString(Model.Description);
+@using Vaiona.Web.Mvc;
+@section leftPane{
+  <div class="toc">
+    <a href="#_Toc434570748">1. Overview</a>
+<p></p>
+    <a href="#_Toc434570749">2. Data Type Manager</a>
+<p></p>
+    <a href="#_Toc434570750">3. Unit Manager</a>
+<p></p>
+    <a href="#_Toc434570751">4. Data Attribute Manager</a>
+<p></p>
+    <a href="#_Toc434570752">5. Data Structure Manager</a>
+<p></p>
+    <a href="#_Toc434570753">5.1. Create a Data Structure</a>
+<p></p>
+    <a href="#_Toc434570754">5.2. Add Variables</a>
+<p></p>
+    <a href="#_Toc434570755">5.3. Create a copy data structure</a>
+<p></p>
+  </div>
 }
-
-@section Information
-{
-    This guide will walk you through the basics of using data planning including how to manage data types, units, data attributes and also structured and unstructured data structures.
+<style>
+.toc {
+position: fixed;
 }
-
-@content
-
-@section LeftPane 
-{             
-   <div class="toc">
-        @toc
-   </div>
-
-    <style>
-        .toc {
-            position: fixed;
-        }
-    </style>
-}
-
-
+</style>
