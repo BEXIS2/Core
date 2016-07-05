@@ -5,14 +5,12 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using System.Web.Routing;
 using System.Xml;
 using System.Xml.Linq;
 using BExIS.Dcm.CreateDatasetWizard;
 using BExIS.Dcm.UploadWizard;
 using BExIS.Dcm.Wizard;
 using BExIS.Ddm.Api;
-using BExIS.Ddm.Providers.LuceneProvider.Indexer;
 using BExIS.Dlm.Entities.Administration;
 using BExIS.Dlm.Entities.Common;
 using BExIS.Dlm.Entities.Data;
@@ -36,12 +34,11 @@ using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Models;
 using BExIS.Xml.Helpers.Mapping;
 using BExIS.IO;
-using BExIS.Security.Services.Objects;
 using BExIS.Web.Shell.Models;
 using BExIS.Web.Shell.Helpers;
-using NHibernate.Cache.Entry;
 using Vaiona.IoC;
 using BExIS.Security.Entities.Subjects;
+using java.util.logging;
 using Vaiona.Web.Extensions;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
@@ -718,7 +715,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         public ActionResult SwitchVisibilityOfOptionalElements(bool hidden)
         {
-            return RedirectToAction("ReloadMetadataEditor", new { locked = true, hidden = hidden});
+            return RedirectToAction("ReloadMetadataEditor", new { locked = true, hidden});
         }
 
         #endregion
@@ -1431,6 +1428,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 Number = position,
                 Model = model,
                 XPath = xPath,
+                Level = parentStepModelHelper.Level +1
             };
 
             newStepModelhelper.Model.StepInfo = newStep;
@@ -1470,7 +1468,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             if (u is MetadataPackageUsage)
             {
-                return PartialView("_metadataPackageView", parentStepModelHelper);
+                return PartialView("_metadataCompoundAttributeView", parentStepModelHelper);
             }
 
             return null;
@@ -1514,7 +1512,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             }
             else if (u is MetadataPackageUsage)
             {
-                return PartialView("_metadataPackageView", stepModelHelper);
+                return PartialView("_metadataCompoundAttributeView", stepModelHelper);
             }
 
             return null;
@@ -1582,7 +1580,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             }
             else if (u is MetadataPackageUsage)
             {
-                return PartialView("_metadataPackageView", stepModelHelper);
+                return PartialView("_metadataCompoundAttributeView", stepModelHelper);
             }
 
             return null;
@@ -1650,7 +1648,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             }
             else if (u is MetadataPackageUsage)
             {
-                return PartialView("_metadataPackageView", stepModelHelper);
+                return PartialView("_metadataCompoundAttributeView", stepModelHelper);
             }
 
             return null;
@@ -1691,7 +1689,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             if (u is MetadataPackageUsage)
             {
-                return PartialView("_metadataPackageUsageView", stepModelHelper);
+                return PartialView("_metadataCompoundAttributeUsageView", stepModelHelper);
             }
 
             return null;

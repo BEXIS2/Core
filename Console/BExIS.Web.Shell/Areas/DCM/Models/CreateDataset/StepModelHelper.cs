@@ -11,7 +11,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Models.CreateDataset
         public int StepId { get; set; }
         public BaseUsage Usage { get; set; }
         public int Number { get; set; }
-        
+        public int Level { get; set; }
+
         public string XPath { get; set; }
         public List<StepModelHelper> Childrens { get; set; }
         public StepModelHelper Parent { get; set; }
@@ -37,6 +38,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Models.CreateDataset
             XPath = "";
             Childrens = new List<StepModelHelper>();
             Activated = SetActiveByPreload();
+            Level = 0;
         }
 
         public StepModelHelper(int stepId, int number, BaseUsage usage, string xpath, StepModelHelper parent)
@@ -47,6 +49,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Models.CreateDataset
             XPath = xpath;
             Childrens = new List<StepModelHelper>();
             Parent = parent;
+
+            if(parent != null)
+                Level = parent.Level + 1;
         }
 
         public string GetXPathFromSimpleAttribute(long id)
