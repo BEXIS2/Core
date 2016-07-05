@@ -50,7 +50,7 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
             string projection = this.Request.GetQueryNameValuePairs().FirstOrDefault(p => "header".Equals(p.Key, StringComparison.InvariantCultureIgnoreCase)).Value;
             string selection  = this.Request.GetQueryNameValuePairs().FirstOrDefault(p => "filter" .Equals(p.Key, StringComparison.InvariantCultureIgnoreCase)).Value;
 
-            IOOutputDataManager ioOutputDataManager = new IOOutputDataManager();
+            OutputDataManager ioOutputDataManager = new OutputDataManager();
 
             DatasetManager dm = new DatasetManager();
             DatasetVersion version = dm.GetDatasetLatestVersion(id);
@@ -63,18 +63,18 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
                 // apply selection and projection
                 var tuples = dm.GetDatasetVersionEffectiveTuples(version);
 
-                DataTable dt = IOOutputDataManager.ConvertPrimaryDataToDatatable(version,
+                DataTable dt = OutputDataManager.ConvertPrimaryDataToDatatable(version,
                     dm.GetDatasetVersionEffectiveTupleIds(version), title, true);
 
                 if (!string.IsNullOrEmpty(selection))
                 {
-                    dt = IOOutputDataManager.SelectionOnDataTable(dt, selection);
+                    dt = OutputDataManager.SelectionOnDataTable(dt, selection);
                 }
 
                 if (!string.IsNullOrEmpty(projection))
                 {
                     // make the header names upper case to make them case insensitive
-                    dt = IOOutputDataManager.ProjectionOnDataTable(dt, projection.ToUpper().Split(','));
+                    dt = OutputDataManager.ProjectionOnDataTable(dt, projection.ToUpper().Split(','));
                 }
 
                 DatasetModel model = new DatasetModel();
