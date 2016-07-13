@@ -95,6 +95,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.Dlm.Test", "Component
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.IO.DataType.DisplayPattern", "ClassLibrary1\BExIS.IO.DataType.DisplayPattern.csproj", "{8B2EC2B0-6870-456B-BE2D-B0FB4EA68D83}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BMM", "BMM", "{E8D1110E-4EF6-4DDE-93C3-3AE575EB1E4B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExISMigration", "Modules\BMM\BExISMigration\BExISMigration.csproj", "{3A573810-B9F9-4BDE-8504-01EF49DE0C20}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -418,6 +422,18 @@ Global
 		{8B2EC2B0-6870-456B-BE2D-B0FB4EA68D83}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{8B2EC2B0-6870-456B-BE2D-B0FB4EA68D83}.Release|x86.ActiveCfg = Release|Any CPU
 		{8B2EC2B0-6870-456B-BE2D-B0FB4EA68D83}.Release|x86.Build.0 = Release|Any CPU
+		{3A573810-B9F9-4BDE-8504-01EF49DE0C20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A573810-B9F9-4BDE-8504-01EF49DE0C20}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A573810-B9F9-4BDE-8504-01EF49DE0C20}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{3A573810-B9F9-4BDE-8504-01EF49DE0C20}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{3A573810-B9F9-4BDE-8504-01EF49DE0C20}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3A573810-B9F9-4BDE-8504-01EF49DE0C20}.Debug|x86.Build.0 = Debug|Any CPU
+		{3A573810-B9F9-4BDE-8504-01EF49DE0C20}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A573810-B9F9-4BDE-8504-01EF49DE0C20}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A573810-B9F9-4BDE-8504-01EF49DE0C20}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{3A573810-B9F9-4BDE-8504-01EF49DE0C20}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{3A573810-B9F9-4BDE-8504-01EF49DE0C20}.Release|x86.ActiveCfg = Release|Any CPU
+		{3A573810-B9F9-4BDE-8504-01EF49DE0C20}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -460,6 +476,8 @@ Global
 		{C48DCFC5-DF47-4486-A682-5C648F970318} = {CD986786-CEA1-4C30-983E-169C33600BA6}
 		{51FF5302-9E12-4E91-AEC8-7651E25177AD} = {DA678167-8931-43BA-940F-B5A3C90985BB}
 		{8B2EC2B0-6870-456B-BE2D-B0FB4EA68D83} = {A83D7DBD-986A-482F-A24C-EA581E3FD8F2}
+		{E8D1110E-4EF6-4DDE-93C3-3AE575EB1E4B} = {692AFF14-3A57-47D8-912F-093EC8F561C4}
+		{3A573810-B9F9-4BDE-8504-01EF49DE0C20} = {E8D1110E-4EF6-4DDE-93C3-3AE575EB1E4B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		EnterpriseLibraryConfigurationToolBinariesPath = packages\Unity.2.1.505.0\lib\NET35;packages\Unity.2.1.505.2\lib\NET35
