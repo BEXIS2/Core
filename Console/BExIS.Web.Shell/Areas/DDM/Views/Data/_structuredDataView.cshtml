@@ -115,7 +115,7 @@
                         title = column.Caption;
                     }
 
-                    DisplayFormatObject dfo = Model.DisplayFormats.Where(o=>o.Column.Equals(title)).SingleOrDefault();
+                    DisplayFormatObject dfo = Model.DisplayFormats.Where(o=>o.Column.Equals(title)).FirstOrDefault();
                     string format = "";
 
                     if (dfo != null && !string.IsNullOrEmpty(dfo.Format))
