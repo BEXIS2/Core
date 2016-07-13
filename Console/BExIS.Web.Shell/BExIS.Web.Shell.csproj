@@ -321,7 +321,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>UploadLocalization.zh-CN.resx</DependentUpon>
     </Compile>
-    <Compile Include="App_Start\RegisterClientValidationExtensions.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Areas\DCM\Controllers\CreateDatasetController.cs" />
     <Compile Include="Areas\DCM\Controllers\DcmAdminController.cs" />
@@ -401,6 +400,7 @@
     <Compile Include="Areas\MSM\Models\TreePartialModel.cs" />
     <Compile Include="Areas\MSM\Models\TestModel.cs" />
     <Compile Include="Areas\MSM\MSMAreaRegistration.cs" />
+    <Compile Include="Areas\RPM\Controllers\DataStructureIOController.cs" />
     <Compile Include="Areas\RPM\Controllers\DataStructureEditController.cs" />
     <Compile Include="Areas\RPM\Controllers\HelpController.cs" />
     <Compile Include="Areas\RPM\Controllers\DataAttributeController.cs" />
@@ -556,6 +556,7 @@
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image015.jpg" />
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image016.jpg" />
     <Content Include="Areas\RPM\Scripts\jquery-1.10.1.min.js" />
+    <Content Include="Areas\RPM\Stylesheets\DataStructureEdit.css" />
     <Content Include="Areas\RPM\Stylesheets\DataStructureSearch.css" />
     <Content Include="Areas\RPM\Stylesheets\RPM.css" />
     <Content Include="Areas\RPM\Views\Help\UserGuides\RPM_UserGuide.htm" />
@@ -645,6 +646,9 @@
     <Content Include="fonts\fontawesome-webfont.woff" />
     <Content Include="fonts\fontawesome-webfont.ttf" />
     <Content Include="fonts\fontawesome-webfont.eot" />
+    <Content Include="Areas\RPM\Views\DataStructureEdit\_attributeFilter.cshtml" />
+    <Content Include="Areas\RPM\Views\DataStructureEdit\_attributeSearchResult.cshtml" />
+    <Content Include="Areas\RPM\Views\DataStructureEdit\_dataStructure.cshtml" />
     <None Include="Properties\PublishProfiles\bexisconf.pubxml" />
     <Content Include="Areas\SAM\Views\Tenants\_Create.cshtml" />
     <Content Include="Areas\SAM\Views\Tenants\_Edit.cshtml" />

@@ -464,17 +464,20 @@ namespace BExIS.RPM.Output
                 return styleIndex.Where(p => p.Name.Equals("Text")).FirstOrDefault().Index;
             if (dataType.SystemType == DataTypeCode.DateTime.ToString())
             {
-                if (DataTypeDisplayPattern.Materialize(dataType.Extra).Name == "DateTimeIso" && DataTypeDisplayPattern.Materialize(dataType.Extra).Systemtype == DataTypeCode.DateTime)
+                if (dataType.Extra != null)
                 {
-                    return styleIndex.Where(p => p.Name.Equals("DateTime")).FirstOrDefault().Index;
-                }
-                if ((DataTypeDisplayPattern.Materialize(dataType.Extra).Name == "DateIso" || DataTypeDisplayPattern.Materialize(dataType.Extra).Name == "DateUs" || DataTypeDisplayPattern.Materialize(dataType.Extra).Name == "DateUk" || DataTypeDisplayPattern.Materialize(dataType.Extra).Name == "DateEu") && DataTypeDisplayPattern.Materialize(dataType.Extra).Systemtype == DataTypeCode.DateTime)
-                {
-                    return styleIndex.Where(p => p.Name.Equals("Date")).FirstOrDefault().Index;
-                }
-                if (DataTypeDisplayPattern.Materialize(dataType.Extra).Name == "Time" && DataTypeDisplayPattern.Materialize(dataType.Extra).Systemtype == DataTypeCode.DateTime)
-                {
-                    return styleIndex.Where(p => p.Name.Equals("Time")).FirstOrDefault().Index;
+                    if (DataTypeDisplayPattern.Materialize(dataType.Extra).Name == "DateTimeIso" && DataTypeDisplayPattern.Materialize(dataType.Extra).Systemtype == DataTypeCode.DateTime)
+                    {
+                        return styleIndex.Where(p => p.Name.Equals("DateTime")).FirstOrDefault().Index;
+                    }
+                    if ((DataTypeDisplayPattern.Materialize(dataType.Extra).Name == "DateIso" || DataTypeDisplayPattern.Materialize(dataType.Extra).Name == "DateUs" || DataTypeDisplayPattern.Materialize(dataType.Extra).Name == "DateUk" || DataTypeDisplayPattern.Materialize(dataType.Extra).Name == "DateEu") && DataTypeDisplayPattern.Materialize(dataType.Extra).Systemtype == DataTypeCode.DateTime)
+                    {
+                        return styleIndex.Where(p => p.Name.Equals("Date")).FirstOrDefault().Index;
+                    }
+                    if (DataTypeDisplayPattern.Materialize(dataType.Extra).Name == "Time" && DataTypeDisplayPattern.Materialize(dataType.Extra).Systemtype == DataTypeCode.DateTime)
+                    {
+                        return styleIndex.Where(p => p.Name.Equals("Time")).FirstOrDefault().Index;
+                    }
                 }
                 return styleIndex.Where(p => p.Name.Equals("DateTime")).FirstOrDefault().Index;
             }

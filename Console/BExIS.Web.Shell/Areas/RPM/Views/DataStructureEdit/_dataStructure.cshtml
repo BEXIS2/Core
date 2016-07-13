@@ -17,7 +17,7 @@
         @(Html.TextAreaFor(m => Model.Description, new { @class = "bx-rpm-headlinetextarea", @placeholder = "Data Structure Description" }))
 </div>
 <div class="bx-rpm-variable-container">
-    @if (Model.VariablePreviews.Count > 0)
+    @if (Model.VariablePreviews != null && Model.VariablePreviews.Count > 0)
     {
         <div class="bx-rpm-variable-drag-drop">
             @foreach (AttributePreviewStruct v in Model.VariablePreviews)

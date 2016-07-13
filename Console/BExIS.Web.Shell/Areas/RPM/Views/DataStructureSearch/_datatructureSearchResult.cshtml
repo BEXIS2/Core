@@ -36,13 +36,13 @@
                 })
                 .ClientRowTemplate(
                     "<tr class='bx-rpm-datastructure-item' id='<#= Id #>' structured='<#= Structured #>' inuse='<#= inUse #>'>" +
-                      "<td class='bx-rpm-result'><span class='bx-rpm-title' onclick='javascript:clickDatastructure(<#= Id #>)'><#= Title #><span id='collapse<#= Id #>' class='bx bx-angle-double-down'></span></span></td>" +
+                      "<td class='bx-rpm-result'><span class='bx-rpm-title' onclick='javascript:clickDatastructure(<#= Id #>)'><#= Title #><span id='<#= Id #>_collapse' class='bx bx-angle-double-down'></span></span></td>" +
                       "<td class='bx-rpm-result bx-rpm-lock'><span id='<#= Id #>_lock'></span></td>" +
                       "<td class='bx-rpm-result'><#= Id #></td>" +
                       "<td class='bx-rpm-result'><#= Description #></td>" +
                       "<td class='bx-rpm-result bx-rpm-gridfunction'>" +
                           "<a class='bx bx-grid-function bx-edit' href='/RPM/DataStructureEdit?dataStructureId=<#= Id #>'></a>" +
-                          "<a id='<#= Id #>_download' class='bx bx-grid-function bx-download' href='/RPM/Home/downloadTemplate?id=<#= Id #>'></a>" +
+                          "<a id='<#= Id #>_download' class='bx bx-grid-function bx-download' href='/RPM/DataStructureIO/downloadTemplate?id=<#= Id #>'></a>" +
                       "</td>" +
                   "</tr>" +
                   "<tr class='bx-rpm-preview hidden' id='<#= Id #>_preview' preview='<#= Preview #>'>" +
@@ -87,7 +87,6 @@
     }
 
     function dataStructureResultGrid_onDataBinding(e) {
-
         e.data = {
             previewIds: previewIds
         };
@@ -95,14 +94,6 @@
 
     function dataStructureResultGrid_onDataBound(e) {
         resetAllTelerikIconTitles();
-        for (i = 0; i < previewIds.length; i++) {
-            if ($('#' + previewIds[i] + 'preview').attr('preview') == 'true') {
-                loadPreview(previewIds[i]);
-                $('#' + previewIds[i] + '_preview' + previewIds[i]).removeClass('hidden');
-                $('#' + previewIds[i] + '_collapse' + previewIds[i]).addClass('bx-angle-double-up');
-                $('#' + previewIds[i] + '_collapse' + previewIds[i]).removeClass('bx-angle-double-down');
-            }
-        }
 
         for (i = 0; i < $('.bx-rpm-datastructure-item').length; i++) {
             var id = $('.bx-rpm-datastructure-item')[i].id;
@@ -112,6 +103,15 @@
             }
             if ($('#' + id).attr('inuse') == 'true') {
                 $('#' + id + '_lock').addClass('bx bx-lock');
+            }
+        }
+
+        for (i = 0; i < previewIds.length; i++) {
+            if ($('#' + previewIds[i] + '_preview').attr('preview') == 'true') {
+                loadPreview(previewIds[i]);
+                $('#' + previewIds[i] + '_preview').removeClass('hidden');
+                $('#' + previewIds[i] + '_collapse').addClass('bx-angle-double-up');
+                $('#' + previewIds[i] + '_collapse').removeClass('bx-angle-double-down');
             }
         }
     }
