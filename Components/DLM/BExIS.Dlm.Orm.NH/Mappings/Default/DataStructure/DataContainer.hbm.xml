@@ -3,7 +3,7 @@
     <!-- Mapping BaseEntity properties -->
     
     <id name="Id" type="Int64">
-      <column name="Id" />
+      <column name="Id" index="idx_DataContainers_id"/>
       <generator class="native" />
     </id>
 
@@ -64,11 +64,11 @@
     <!-- Mapping entity properties -->
     
     <property name="Name" type="String">
-      <column name="Name" />
+      <column name="Name" index="idx_DataContainers_name"/>
     </property>
 
     <property name="ShortName" type="String">
-      <column name="ShortName" />
+      <column name="ShortName" index="idx_DataContainers_shortName"/>
     </property>
 
     <property name="Description" type="String">
@@ -84,7 +84,7 @@
     </property>
 
     <property name="Scope" type="String">
-      <column name="Scope" />
+      <column name="Scope" index="idx_DataContainers_scope"/>
     </property>
 
     <property name="EntitySelectionPredicate" type="String">

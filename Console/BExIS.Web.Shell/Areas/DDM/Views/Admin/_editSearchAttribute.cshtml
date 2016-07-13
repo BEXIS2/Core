@@ -250,12 +250,14 @@
             </table>
     }
     </div>
+
+
     <div class="bx-footer right">
-       <button value="c" name="cancel"  class="bx-button action" >Cancel</button>
-       <button type="submit" value="Save" name="submit"  class="bx-button action" >Save</button>
+        <button type="submit" value="Save" name="submit" class="bx-button action">Save</button>
+        <button value="c" name="cancel" class="bx-button action" onclick="OnCancel()">Cancel</button>
     </div>
-   
-}
+        }
+
 
 
 <script type="text/javascript">
@@ -279,8 +281,7 @@
         return false;
     });
 
-    function OnCancel()
-    {
+    function OnCancel() {
         var window = $('#EditSearchAttribute').data('tWindow');
         window.close();
     }

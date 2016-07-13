@@ -23,6 +23,7 @@ using System.Xml;
 using BExIS.Xml.Services;
 using BExIS.Dlm.Services.MetadataStructure;
 using Vaiona.Web.Mvc.Models;
+using Vaiona.Web.Extensions;
 
 namespace BExIS.Web.Shell.Areas.DDM.Controllers
 {
@@ -39,7 +40,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
         //[Authorize(Roles="Guest")]
         public ActionResult Index()
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Search");
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Search", this.Session.GetTenant());
 
             try
             {
@@ -75,7 +76,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
         [HttpPost]
         public ActionResult Index(string autoComplete, string FilterList, string searchType)
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Search");
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Search", this.Session.GetTenant());
 
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
 
@@ -117,6 +118,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
         [HttpPost]
         public ActionResult FilterByDropDownList(string SelectedFilter, string searchType)
         {
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Search", this.Session.GetTenant());
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
             SetFilterAC(SelectedFilter);
             
@@ -196,6 +198,8 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
         /// <returns></returns>
         public ActionResult OnSelectTreeViewItem(string SelectedItem, string Parent)
         {
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Search", this.Session.GetTenant());
+
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
             provider.WorkingSearchModel.UpdateSearchCriteria(Parent, SelectedItem, SearchComponentBaseType.Facet, true);
             provider.SearchAndUpdate(provider.WorkingSearchModel.CriteriaComponent);
@@ -211,6 +215,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
         [HttpPost]
         public ActionResult AddFacetsToSearch()
         {
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Search", this.Session.GetTenant());
 
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
 
@@ -251,12 +256,13 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
             SetParentOfSelectAbleCategories(parent);
 
-            var facet = provider.DefaultSearchModel.SearchComponent.Facets.Where(p => p.Name.Equals(parent, StringComparison.InvariantCulture)).FirstOrDefault();
+            var facet = provider.WorkingSearchModel.SearchComponent.Facets.Where(p => p.Name.Equals(parent, StringComparison.InvariantCulture)).FirstOrDefault();
+     
             SetParentOfSelectAbleCategories(parent);
 
            // List<Facet> sortedList = facet.Childrens.OrderBy(p => p.DisplayName).ToList();
 
-            SetSelectAbleCategoryList(facet.Childrens.OrderBy(p => p.Name.ToLower()).ToList());
+            SetSelectAbleCategoryList(facet.Childrens.Where(p=>p.Count > 0).OrderBy(p => p.Name.ToLower()).ToList());
 
             return PartialView("_windowCheckBoxList", provider.WorkingSearchModel);
         }
@@ -276,6 +282,8 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
         /// <returns></returns>
         public ActionResult OnClickBreadCrumbItem(string value, string parent)
         {
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Search", this.Session.GetTenant());
+
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
 
             RemoveFromPropertiesDic(parent, value, provider.WorkingSearchModel.CriteriaComponent);
@@ -512,7 +520,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
         /// <returns>model</returns>
         public ActionResult ShowMyDatasets()
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Dashboard");
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Dashboard", this.Session.GetTenant());
 
                 DataTable model = new DataTable();
 
@@ -597,6 +605,102 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 model = CreateDataTable(headerItems);
 
                 return PartialView("_myDatasetGridView", model);
+        }
+
+        /// <summary>
+        /// create the model of My Dataset table
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref="_CustomMyDatasetBinding"/>
+        /// <param>NA</param>       
+        /// <returns>model</returns>
+        public ActionResult ShowMyDatasetsInFullPage()
+        {
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Dashboard", this.Session.GetTenant());
+
+            DataTable model = new DataTable();
+
+            ViewData["PageSize"] = 10;
+            ViewData["CurrentPage"] = 1;
+
+
+            #region header
+            List<HeaderItem> headerItems = new List<HeaderItem>();
+
+
+            HeaderItem headerItem = new HeaderItem()
+            {
+                Name = "ID",
+                DisplayName = "ID",
+                DataType = "Int64"
+            };
+            headerItems.Add(headerItem);
+
+            ViewData["Id"] = headerItem;
+
+            headerItem = new HeaderItem()
+            {
+                Name = "Title",
+                DisplayName = "Title",
+                DataType = "String"
+            };
+            headerItems.Add(headerItem);
+
+            headerItem = new HeaderItem()
+            {
+                Name = "Description",
+                DisplayName = "Description",
+                DataType = "String"
+            };
+            headerItems.Add(headerItem);
+
+            headerItem = new HeaderItem()
+            {
+                Name = "View",
+                DisplayName = "View",
+                DataType = "String"
+            };
+            headerItems.Add(headerItem);
+
+            headerItem = new HeaderItem()
+            {
+                Name = "Update",
+                DisplayName = "Update",
+                DataType = "String"
+            };
+            headerItems.Add(headerItem);
+
+            headerItem = new HeaderItem()
+            {
+                Name = "Delete",
+                DisplayName = "Delete",
+                DataType = "String"
+            };
+            headerItems.Add(headerItem);
+
+            headerItem = new HeaderItem()
+            {
+                Name = "Download",
+                DisplayName = "Download",
+                DataType = "String"
+            };
+            headerItems.Add(headerItem);
+
+            headerItem = new HeaderItem()
+            {
+                Name = "Grant",
+                DisplayName = "Grant",
+                DataType = "String"
+            };
+            headerItems.Add(headerItem);
+
+            ViewData["DefaultHeaderList"] = headerItems;
+
+            #endregion
+
+            model = CreateDataTable(headerItems);
+
+            return View("_myDatasetGridView", model);
         }
 
         [GridAction]
@@ -696,31 +800,75 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             foreach (long datasetId in datasetManager.GetDatasetLatestIds())
             {
                 //get permissions
-                List<int> rights = permissionManager.GetAllRights(subjectManager.GetUserByName(GetUserNameOrDefault()).Id, 1, datasetId).ToList();
+                List<int> rights = permissionManager.GetAllRights(subjectManager.GetUserByName(GetUsernameOrDefault()).Id, 1, datasetId).ToList();
 
                 if (rights.Count > 0)
                 {
-                    DatasetVersion dsv = datasetManager.GetDatasetLatestVersion(datasetId);
-
-                    MetadataStructureManager msm = new MetadataStructureManager();
-                    dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
-
-                    string title = XmlDatasetHelper.GetInformation(dsv, AttributeNames.title);
-                    string description = XmlDatasetHelper.GetInformation(dsv, AttributeNames.description);
-
                     DataRow dataRow = model.NewRow();
                     Object[] rowArray = new Object[8];
 
-                    rowArray[0] = Convert.ToInt64(datasetId);
-                    rowArray[1] = title;
-                    rowArray[2] = description;
+                    if (datasetManager.IsDatasetCheckedIn(datasetId))
+                    {
+                        DatasetVersion dsv = datasetManager.GetDatasetLatestVersion(datasetId);
 
-                    if (rights.Contains(1)) { rowArray[3] = "✔"; } else { rowArray[3] = "✘"; }
-                    if (rights.Contains(2)) { rowArray[4] = "✔"; } else { rowArray[4] = "✘"; }
-                    if (rights.Contains(3)) { rowArray[5] = "✔"; } else { rowArray[5] = "✘"; }
-                    if (rights.Contains(4)) { rowArray[6] = "✔"; } else { rowArray[6] = "✘"; }
-                    if (rights.Contains(5)) { rowArray[7] = "✔"; } else { rowArray[7] = "✘"; }
+                        MetadataStructureManager msm = new MetadataStructureManager();
+                        dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
 
+                        string title = XmlDatasetHelper.GetInformation(dsv, NameAttributeValues.title);
+                        string description = XmlDatasetHelper.GetInformation(dsv, NameAttributeValues.description);
+
+                        rowArray[0] = Convert.ToInt64(datasetId);
+                        rowArray[1] = title;
+                        rowArray[2] = description;
+                    }
+                    else
+                    {
+                        rowArray[0] = Convert.ToInt64(datasetId);
+                        rowArray[1] = "";
+                        rowArray[2] = "Dataset is just in processing.";
+                    }
+
+                    if (rights.Contains(1))
+                    {
+                        rowArray[3] = "✔";
+                    }
+                    else
+                    {
+                        rowArray[3] = "✘";
+                    }
+                    if (rights.Contains(2))
+                    {
+                        rowArray[4] = "✔";
+                    }
+                    else
+                    {
+                        rowArray[4] = "✘";
+                    }
+                    if (rights.Contains(3))
+                    {
+                        rowArray[5] = "✔";
+                    }
+                    else
+                    {
+                        rowArray[5] = "✘";
+                    }
+                    if (rights.Contains(4))
+                    {
+                        rowArray[6] = "✔";
+                    }
+                    else
+                    {
+                        rowArray[6] = "✘";
+                    }
+                    if (rights.Contains(5))
+                    {
+                        rowArray[7] = "✔";
+                    }
+                    else
+                    {
+                        rowArray[7] = "✘";
+                    }
+                    
                     dataRow = model.NewRow();
                     dataRow.ItemArray = rowArray;
                     model.Rows.Add(dataRow);
@@ -754,65 +902,57 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 case "String":
                     {
                         return Type.GetType("System.String");
-                        break;
                     }
 
                 case "Double":
                     {
                         return Type.GetType("System.Double");
-                        break;
                     }
 
                 case "Int16":
                     {
                         return Type.GetType("System.Int16");
-                        break;
                     }
 
                 case "Int32":
                     {
                         return Type.GetType("System.Int32");
-                        break;
                     }
 
                 case "Int64":
                     {
                         return Type.GetType("System.Int64");
-                        break;
                     }
 
                 case "Decimal":
                     {
                         return Type.GetType("System.Decimal");
-                        break;
                     }
 
                 case "DateTime":
                     {
                         return Type.GetType("System.DateTime");
-                        break;
                     }
 
                 default:
                     {
                         return Type.GetType("System.String");
-                        break;
                     }
             }
         }
 
         // chekc if user exist
         // if true return usernamem otherwise "DEFAULT"
-        public string GetUserNameOrDefault()
+        public string GetUsernameOrDefault()
         {
-            string userName = string.Empty;
+            string username = string.Empty;
             try
             {
-                userName = HttpContext.User.Identity.Name;
+                username = HttpContext.User.Identity.Name;
             }
             catch { }
 
-            return !string.IsNullOrWhiteSpace(userName) ? userName : "DEFAULT";
+            return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
         }
 
         #endregion

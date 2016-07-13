@@ -9,13 +9,13 @@
   <Comment CommentText="Its possible to remove the relationships between&#xD;&#xA;DatasetVersion &lt;-&gt; DataTuple&#xD;&#xA;DataTuple &lt;-&gt; DataTupleVersion&#xD;&#xA;from the application model but keep the FKs at the database.&#xD;&#xA;It eases the model management, but needs some (not so hard) changes in DatasetManager functions&#xD;&#xA;***** Also it seems there is no need to have timestamp on DataTupe and DataTupleVersion records as its easy to obtain it from the corresponding Version&#xD;&#xA;">
     <Position X="15.177" Y="5.677" Height="1.844" Width="3.929" />
   </Comment>
-  <Class Name="BExIS.Dlm.Entities.Data.Amendment">
-    <Position X="12" Y="4.5" Width="1.5" />
+  <Class Name="BExIS.Dlm.Entities.Data.Amendment" Collapsed="true">
+    <Position X="11.75" Y="5" Width="1.5" />
     <AssociationLine Name="Tuple" Type="BExIS.Dlm.Entities.Data.DataTuple" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="12.938" Y="5.497" />
-        <Point X="12.938" Y="6.971" />
-        <Point X="9.75" Y="6.971" />
+        <Point X="12.688" Y="5.691" />
+        <Point X="12.688" Y="6.058" />
+        <Point X="9.75" Y="6.058" />
       </Path>
     </AssociationLine>
     <TypeIdentifier>
@@ -27,11 +27,11 @@
     </ShowAsAssociation>
   </Class>
   <Class Name="BExIS.Dlm.Entities.Data.ContentDescriptor" Collapsed="true">
-    <Position X="8.25" Y="11.25" Width="1.75" />
+    <Position X="8.25" Y="10.5" Width="1.75" />
     <AssociationLine Name="DatasetVersion" Type="BExIS.Dlm.Entities.Data.DatasetVersion" ManuallyRouted="true" FixedFromPoint="true">
       <Path>
-        <Point X="9.5" Y="11.25" />
-        <Point X="9.5" Y="10.3" />
+        <Point X="9.5" Y="10.5" />
+        <Point X="9.5" Y="8.191" />
       </Path>
       <MemberNameLabel ManuallyPlaced="true">
         <Position X="-0.405" Y="0.533" />
@@ -45,21 +45,29 @@
       <Property Name="DatasetVersion" />
     </ShowAsAssociation>
   </Class>
-  <Class Name="BExIS.Dlm.Entities.Data.Dataset">
-    <Position X="4" Y="5.75" Width="2.5" />
+  <Class Name="BExIS.Dlm.Entities.Data.Dataset" Collapsed="true">
+    <Position X="4.75" Y="5.75" Width="2.5" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
+      <Compartment Name="Properties" Collapsed="true" />
     </Compartments>
+    <AssociationLine Name="Versions" Type="BExIS.Dlm.Entities.Data.DatasetVersion" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="6.906" Y="6.441" />
+        <Point X="6.906" Y="7.965" />
+        <Point X="8.25" Y="7.965" />
+      </Path>
+    </AssociationLine>
     <AssociationLine Name="Views" Type="BExIS.Dlm.Entities.DataStructure.DataView" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="4" Y="7.224" />
-        <Point X="3.625" Y="7.224" />
-        <Point X="3.625" Y="6.375" />
-        <Point X="2.5" Y="6.375" />
+        <Point X="4.75" Y="6.2" />
+        <Point X="4.375" Y="6.2" />
+        <Point X="4.375" Y="6.375" />
+        <Point X="3.25" Y="6.375" />
       </Path>
     </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AgQAAAAEAQCAAAAAAAAAAAAAAAAAAEEAAAAACAAAAAA=</HashCode>
+      <HashCode>AgQAAAAEAQAAAEAAAAAAAAAAAAAAAEEAAAAACAAAAAA=</HashCode>
       <FileName>Data\Dataset.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -70,38 +78,19 @@
       <Property Name="Views" />
     </ShowAsCollectionAssociation>
   </Class>
-  <Class Name="BExIS.Dlm.Entities.Data.DataTuple">
+  <Class Name="BExIS.Dlm.Entities.Data.DataTuple" Collapsed="true">
     <Position X="8.25" Y="5.75" Width="1.5" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
+      <Compartment Name="Properties" Collapsed="true" />
     </Compartments>
-    <AssociationLine Name="DatasetVersion" Type="BExIS.Dlm.Entities.Data.DatasetVersion">
-      <MemberNameLabel ManuallyPlaced="true">
-        <Position X="-1.182" Y="0.143" />
-      </MemberNameLabel>
-    </AssociationLine>
-    <AssociationLine Name="Amendments" Type="BExIS.Dlm.Entities.Data.Amendment" FixedFromPoint="true" FixedToPoint="true">
-      <Path>
-        <Point X="9.75" Y="6.36" />
-        <Point X="12.438" Y="6.36" />
-        <Point X="12.438" Y="5.497" />
-      </Path>
-    </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AIACAAAACAAAAAAAAAAiBAAAAAAAAAAAAAACEAAAAAI=</HashCode>
+      <HashCode>CAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAA=</HashCode>
       <FileName>Data\DataTuple.cs</FileName>
     </TypeIdentifier>
-    <ShowAsAssociation>
-      <Property Name="DatasetVersion" />
-    </ShowAsAssociation>
-    <ShowAsCollectionAssociation>
-      <Property Name="VariableValues" />
-      <Property Name="Amendments" />
-    </ShowAsCollectionAssociation>
-    <Lollipop Orientation="Left" Position="0.779" />
   </Class>
-  <Class Name="BExIS.Dlm.Entities.Data.DataValue">
-    <Position X="8.25" Y="0.5" Width="1.5" />
+  <Class Name="BExIS.Dlm.Entities.Data.DataValue" Collapsed="true">
+    <Position X="8.25" Y="2" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAgAIAAAAABAAAAAgAAEAAAA=</HashCode>
       <FileName>Data\DataValue.cs</FileName>
@@ -110,27 +99,30 @@
       <Property Name="ObtainingMethod" />
     </ShowAsAssociation>
   </Class>
-  <Class Name="BExIS.Dlm.Entities.Data.ExtendedPropertyValue">
-    <Position X="4.5" Y="2.75" Width="2" />
+  <Class Name="BExIS.Dlm.Entities.Data.ExtendedPropertyValue" Collapsed="true">
+    <Position X="4.5" Y="3.25" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAEAAAAAAAAAAAAgAAAAACAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Data\ExtendedPropertyValue.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="BExIS.Dlm.Entities.Data.ParameterValue">
-    <Position X="12" Y="2.75" Width="1.75" />
+  <Class Name="BExIS.Dlm.Entities.Data.ParameterValue" Collapsed="true">
+    <Position X="11.5" Y="3.25" Width="1.75" />
+    <Compartments>
+      <Compartment Name="Properties" Collapsed="true" />
+    </Compartments>
     <AssociationLine Name="DataAttribute" Type="BExIS.Dlm.Entities.DataStructure.DataAttribute" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="12" Y="3.688" />
-        <Point X="11.125" Y="3.688" />
-        <Point X="11.125" Y="4.5" />
+        <Point X="11.5" Y="3.873" />
+        <Point X="11.125" Y="3.873" />
+        <Point X="11.125" Y="5" />
       </Path>
       <MemberNameLabel ManuallyPlaced="true" ManuallySized="true">
-        <Position X="-0.856" Y="0.891" Height="0.182" Width="1.087" />
+        <Position X="-0.731" Y="0.574" Height="0.182" Width="1.087" />
       </MemberNameLabel>
     </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAgAAAAAgAEAAAAAEAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAgAAAAAgAEAAAAAAAAAQAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Data\ParameterValue.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -138,48 +130,57 @@
       <Property Name="DataAttribute" />
     </ShowAsAssociation>
   </Class>
-  <Class Name="BExIS.Dlm.Entities.Data.VariableValue">
-    <Position X="8.25" Y="2.75" Width="1.5" />
+  <Class Name="BExIS.Dlm.Entities.Data.VariableValue" Collapsed="true">
+    <Position X="8.25" Y="3.25" Width="1.5" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
+      <Compartment Name="Properties" Collapsed="true" />
     </Compartments>
     <AssociationLine Name="Tuple" Type="BExIS.Dlm.Entities.Data.DataTuple">
       <MemberNameLabel ManuallyPlaced="true">
         <Position X="-0.307" Y="0.185" />
       </MemberNameLabel>
     </AssociationLine>
+    <AssociationLine Name="ParameterValues" Type="BExIS.Dlm.Entities.Data.ParameterValue" FixedToPoint="true">
+      <Path>
+        <Point X="9.75" Y="3.644" />
+        <Point X="11.5" Y="3.644" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.143" Y="0.06" />
+      </MemberNameLabel>
+    </AssociationLine>
     <AssociationLine Name="DataAttribute" Type="BExIS.Dlm.Entities.DataStructure.DataAttribute" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="9.75" Y="3.747" />
-        <Point X="10.375" Y="3.747" />
-        <Point X="10.375" Y="4.5" />
+        <Point X="9.75" Y="3.748" />
+        <Point X="10.375" Y="3.748" />
+        <Point X="10.375" Y="5" />
       </Path>
       <MemberNameLabel ManuallyPlaced="true" ManuallySized="true">
-        <Position X="-0.45" Y="0.86" Height="0.182" Width="1.066" />
+        <Position X="-0.417" Y="0.443" Height="0.182" Width="1.066" />
       </MemberNameLabel>
     </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAAABABAAAAAAAAgAAAgAAAEAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAABABAAAAAAAAgAAAgAAAAAAAAAAAAAAQAAAAAAAA=</HashCode>
       <FileName>Data\VariableValue.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="Tuple" />
       <Property Name="DataAttribute" />
-      <Property Name="Usage" />
     </ShowAsAssociation>
     <ShowAsCollectionAssociation>
       <Property Name="ParameterValues" />
     </ShowAsCollectionAssociation>
   </Class>
   <Class Name="BExIS.Dlm.Entities.DataStructure.ObtainingMethod" Collapsed="true">
-    <Position X="3.75" Y="1" Width="1.5" />
+    <Position X="4.75" Y="2" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAgAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>DataStructure\ObtainingMethod.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="BExIS.Dlm.Entities.DataStructure.DataStructure">
-    <Position X="4.25" Y="8.5" Width="1.5" />
+  <Class Name="BExIS.Dlm.Entities.DataStructure.DataStructure" Collapsed="true">
+    <Position X="5" Y="7.5" Width="1.5" />
     <Compartments>
       <Compartment Name="Properties" Collapsed="true" />
     </Compartments>
@@ -197,14 +198,14 @@
     </ShowAsCollectionAssociation>
   </Class>
   <Class Name="BExIS.Dlm.Entities.DataStructure.DataView">
-    <Position X="0.5" Y="5.75" Width="2" />
+    <Position X="1.25" Y="5.75" Width="2" />
     <Compartments>
       <Compartment Name="Properties" Collapsed="true" />
     </Compartments>
     <AssociationLine Name="Dataset" Type="BExIS.Dlm.Entities.Data.Dataset" FixedFromPoint="true">
       <Path>
-        <Point X="2.5" Y="5.938" />
-        <Point X="4" Y="5.938" />
+        <Point X="3.25" Y="5.938" />
+        <Point X="4.75" Y="5.938" />
       </Path>
       <MemberNameLabel ManuallyPlaced="true">
         <Position X="0.143" Y="-0.182" />
@@ -221,13 +222,18 @@
       <Property Name="DataStructures" />
     </ShowAsCollectionAssociation>
   </Class>
-  <Class Name="BExIS.Dlm.Entities.Data.DatasetVersion">
-    <Position X="8.25" Y="9" Width="1.5" />
+  <Class Name="BExIS.Dlm.Entities.Data.DatasetVersion" Collapsed="true">
+    <Position X="8.25" Y="7.5" Width="1.5" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
       <Compartment Name="Properties" Collapsed="true" />
     </Compartments>
-    <AssociationLine Name="Dataset" Type="BExIS.Dlm.Entities.Data.Dataset">
+    <AssociationLine Name="Dataset" Type="BExIS.Dlm.Entities.Data.Dataset" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="8.25" Y="7.799" />
+        <Point X="7.109" Y="7.799" />
+        <Point X="7.109" Y="6.441" />
+      </Path>
       <MemberNameLabel ManuallyPlaced="true">
         <Position X="-0.776" Y="0.132" />
       </MemberNameLabel>
@@ -239,15 +245,15 @@
     </AssociationLine>
     <AssociationLine Name="ContentDescriptors" Type="BExIS.Dlm.Entities.Data.ContentDescriptor" FixedFromPoint="true">
       <Path>
-        <Point X="8.562" Y="10.3" />
-        <Point X="8.562" Y="11.25" />
+        <Point X="8.562" Y="8.191" />
+        <Point X="8.562" Y="10.5" />
       </Path>
       <MemberNameLabel ManuallyPlaced="true">
         <Position X="-0.349" Y="0.25" />
       </MemberNameLabel>
     </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AgACUABAAAKAAAAgIAACAAAACAAAAAAAAAAAAAAEAAA=</HashCode>
+      <HashCode>AgACUAAEAAIAAAAgIAACAAAACAAAAAAAAAAAAAAEAAA=</HashCode>
       <FileName>Data\DatasetVersion.cs</FileName>
       <NewMemberFileName>Data\Dataset.cs</NewMemberFileName>
     </TypeIdentifier>
@@ -261,34 +267,33 @@
     <Lollipop Orientation="Bottom" Position="1.3" />
   </Class>
   <Class Name="BExIS.Dlm.Entities.DataStructure.DataAttribute" Collapsed="true">
-    <Position X="10" Y="4.5" Width="1.5" />
+    <Position X="10" Y="5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAABAAQAAAAAACAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>DataStructure\DataAttribute.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="BExIS.Dlm.Entities.DataStructure.ParameterUsage" Collapsed="true">
-    <Position X="15.25" Y="2.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAEAAgAAAgAAAAAAAAAAAAAAAgAAAAAAAAAAA=</HashCode>
-      <FileName>DataStructure\Usage.cs</FileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="BExIS.Dlm.Entities.DataStructure.Variable" Collapsed="true">
     <Position X="4.75" Y="4.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAEAAAAAAgAAAAAAAAAAAAAEAgAIAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAgIAAAAAAAAAAAAEAAAIAAAAAAAAA=</HashCode>
       <FileName>DataStructure\Usage.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="BExIS.Dlm.Entities.Data.DataTupleVersion" Collapsed="true">
-    <Position X="11.75" Y="9.25" Width="1.5" />
+    <Position X="12" Y="7.5" Width="1.5" />
+    <AssociationLine Name="OriginalTuple" Type="BExIS.Dlm.Entities.Data.DataTuple" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="12.594" Y="7.5" />
+        <Point X="12.594" Y="6.263" />
+        <Point X="9.75" Y="6.263" />
+      </Path>
+    </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AIAAAAAEAAAAAAAAAAAiAAAAAAAAAAAAAAAAEAAAAAY=</HashCode>
+      <HashCode>CAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQ=</HashCode>
       <FileName>Data\DataTupleVersion.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
-      <Property Name="DatasetVersion" />
       <Property Name="ActingDatasetVersion" />
       <Property Name="OriginalTuple" />
     </ShowAsAssociation>

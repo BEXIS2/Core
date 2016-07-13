@@ -6,8 +6,8 @@
  * -------------------------- */
 @font-face {
   font-family: 'FontAwesome';
-  src: url('./awesome/fonts/fontawesome-webfont.eot?v=4.3.0');
-  src: url('./awesome/fonts/fontawesome-webfont.eot?#iefix&v=4.3.0') format('embedded-opentype'), url('./awesome/fonts/fontawesome-webfont.woff2?v=4.3.0') format('woff2'), url('./awesome/fonts/fontawesome-webfont.woff?v=4.3.0') format('woff'), url('./awesome/fonts/fontawesome-webfont.ttf?v=4.3.0') format('truetype'), url('./awesome/fonts/fontawesome-webfont.svg?v=4.3.0#fontawesomeregular') format('svg');
+  src: url('./awesome/fonts/fontawesome-webfont.eot?v=4.6.1');
+  src: url('./awesome/fonts/fontawesome-webfont.eot?#iefix&v=4.6.1') format('embedded-opentype'), url('./awesome/fonts/fontawesome-webfont.woff2?v=4.3.0') format('woff2'), url('./awesome/fonts/fontawesome-webfont.woff?v=4.3.0') format('woff'), url('./awesome/fonts/fontawesome-webfont.ttf?v=4.3.0') format('truetype'), url('./awesome/fonts/fontawesome-webfont.svg?v=4.3.0#fontawesomeregular') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -848,7 +848,8 @@
   content: "\f0c4";
 }
 .fa-copy:before,
-.fa-files-o:before {
+.fa-files-o:before,
+.bx-copy:before {
   content: "\f0c5";
 }
 .fa-paperclip:before {

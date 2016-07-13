@@ -1,19 +1,43 @@
 @using Vaiona.Web.Mvc;
 
+<style>
+    img.desaturate 
+    {
+        filter: gray; /* IE6-9 */
+        filter: grayscale(1); /* Microsoft Edge and Firefox 35+ */
+        -webkit-filter: grayscale(1); /* Google Chrome, Safari 6+ & Opera 15+ */
+    }
+
+    img.desaturate:hover 
+    {
+        filter: none;
+        -webkit-filter: grayscale(0);
+    }
+</style>
+
 <div id="footer">
     <footer>
-        @*@Html.RenderAuto("SysTime", new List<object>() { new Dictionary<string, object>() { { "format", "B" } } })
-        <br />
-        Copyright info
-        <br />
-        Version Info *@
+        Powered by
+        <br/><br/>
+        <a href="http://bexis2.uni-jena.de" target="_blank">
+            <img src="~/Content/Images/Logo_BEXIS_rgb_113x28.jpg" class="desaturate"/>
+        </a>
 
-        <a href="http://www.uni-jena.de" target="_blank">Friedrich-Schiller-University Jena, Germany</a>,
-        <br />
-        <p>BEXIS is being developed as part of the <a href="http://fusion.cs.uni-jena.de/bexis" target="_blank">BExIS++ Project</a>,
-            <br />
-            funded by the <a href="http://www.dfg.de/" target="_blank">German Research Foundation (DFG)</a>
-        </p>
+        <br/><br/>
+        @if (!string.IsNullOrEmpty(Html.GetTenant().PolicyFileNamePath))
+        {
+            @Html.ActionLink("Privacy Policy", "Policy", "Footer", new { area = "Site" }, null)
+        }
 
+        @if (!string.IsNullOrEmpty(Html.GetTenant().ContactUsFileNamePath))
+        {
+            @Html.ActionLink("Contact Us", "ContactUs", "Footer", new { area = "Site" }, null)
+        }
+
+        @if (!string.IsNullOrEmpty(Html.GetTenant().ImprintFileNamePath))
+        {
+            @Html.ActionLink("Imprint", "Imprint", "Footer", new { area = "Site" }, null)
+        }
+        <br />
     </footer>
 </div>

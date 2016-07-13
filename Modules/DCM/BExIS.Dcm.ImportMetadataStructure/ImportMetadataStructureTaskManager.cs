@@ -31,6 +31,8 @@ namespace BExIS.Dcm.ImportMetadataStructureWizard
         public static string MAPPING_FILE_NAME_IMPORT = "MAPPING_FILE_NAME_IMPORT";
         public static string MAPPING_FILE_NAME_EXPORT = "MAPPING_FILE_NAME_EXPORT";
 
+        public static string ALL_METADATA_NODES = "ALL_METADATA_NODES";
+
 
         /// <summary>
         /// 

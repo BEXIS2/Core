@@ -55,9 +55,11 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DataAnnotationsExtensions, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\DataAnnotationsExtensions.5.0.0.0\lib\net45\DataAnnotationsExtensions.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="DataAnnotationsExtensions">
+      <HintPath>..\..\packages\DataAnnotationsExtensions.1.1.0.0\lib\NETFramework40\DataAnnotationsExtensions.dll</HintPath>
+    </Reference>
+    <Reference Include="DataAnnotationsExtensions.ClientValidation">
+      <HintPath>..\..\packages\DataAnnotationsExtensions.MVC3.1.1.0.0\lib\NETFramework40\DataAnnotationsExtensions.ClientValidation.dll</HintPath>
     </Reference>
     <Reference Include="DocumentFormat.OpenXml">
       <HintPath>..\..\Libraries\DocumentFormat.OpenXml.dll</HintPath>
@@ -82,16 +84,16 @@
       <HintPath>..\..\Libraries\Ionic.Zip.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.Practices.Unity, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Unity.3.5.1404.0\lib\net45\Microsoft.Practices.Unity.dll</HintPath>
+    <Reference Include="Microsoft.Practices.Unity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=6d32ff45e0ccc69f, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Unity.4.0.1\lib\net45\Microsoft.Practices.Unity.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Practices.Unity.Configuration, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Unity.3.5.1404.0\lib\net45\Microsoft.Practices.Unity.Configuration.dll</HintPath>
+    <Reference Include="Microsoft.Practices.Unity.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=6d32ff45e0ccc69f, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Unity.4.0.1\lib\net45\Microsoft.Practices.Unity.Configuration.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Practices.Unity.RegistrationByConvention, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Unity.3.5.1404.0\lib\net45\Microsoft.Practices.Unity.RegistrationByConvention.dll</HintPath>
+    <Reference Include="Microsoft.Practices.Unity.RegistrationByConvention, Version=4.0.0.0, Culture=neutral, PublicKeyToken=6d32ff45e0ccc69f, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Unity.4.0.1\lib\net45\Microsoft.Practices.Unity.RegistrationByConvention.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -102,21 +104,21 @@
       <HintPath>..\..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Mono.Security, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Npgsql.2.2.5\lib\net45\Mono.Security.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.8.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="NHibernate, Version=4.0.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\NHibernate.4.0.4.4000\lib\net40\NHibernate.dll</HintPath>
     </Reference>
-    <Reference Include="Npgsql, Version=2.2.5.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Npgsql.2.2.5\lib\net45\Npgsql.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Npgsql, Version=3.1.1.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Npgsql.3.0.7\lib\net45\Npgsql.dll</HintPath>
+    </Reference>
+    <Reference Include="PostSharp, Version=2.1.0.0, Culture=neutral, PublicKeyToken=b13fd38b8f9c99d7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Libraries\PostSharp\PostSharp.dll</HintPath>
     </Reference>
     <Reference Include="saxon9he-api, Version=9.6.0.8, Culture=neutral, PublicKeyToken=e1fdd002d5083fe6, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Saxon-HE.9.6.0.8\lib\net40\saxon9he-api.dll</HintPath>
@@ -124,12 +126,26 @@
     </Reference>
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data.Linq" />
-    <Reference Include="System.Linq.Dynamic">
+    <Reference Include="System.Linq.Dynamic, Version=1.0.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\System.Linq.Dynamic.1.0.4\lib\net40\System.Linq.Dynamic.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Http, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.WebApi.Core.5.2.3\lib\net45\System.Web.Http.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.3\lib\net45\System.Web.Http.WebHost.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Web.Mvc, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -193,6 +209,14 @@
     <Reference Include="Vaiona.Model, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Libraries\Vaiona\Vaiona.Model.dll</HintPath>
+    </Reference>
+    <Reference Include="Vaiona.MultiTenancy.Api, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Libraries\Vaiona\Vaiona.MultiTenancy.Api.dll</HintPath>
+    </Reference>
+    <Reference Include="Vaiona.MultiTenancy.Services, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Libraries\Vaiona\Vaiona.MultiTenancy.Services.dll</HintPath>
     </Reference>
     <Reference Include="Vaiona.Persistence.Api, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -297,11 +321,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>UploadLocalization.zh-CN.resx</DependentUpon>
     </Compile>
-    <Compile Include="Areas\DCM\Controllers\CreateController.cs" />
+    <Compile Include="App_Start\RegisterClientValidationExtensions.cs" />
+    <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Areas\DCM\Controllers\CreateDatasetController.cs" />
-    <Compile Include="Areas\DCM\Controllers\CreateSetMetadataPackageController.cs" />
-    <Compile Include="Areas\DCM\Controllers\CreateSelectDatasetSetupController.cs" />
-    <Compile Include="Areas\DCM\Controllers\CreateSummaryController.cs" />
     <Compile Include="Areas\DCM\Controllers\DcmAdminController.cs" />
     <Compile Include="Areas\DCM\Controllers\HelpController.cs" />
     <Compile Include="Areas\DCM\Controllers\ImportMetadataStructureController.cs" />
@@ -356,16 +378,22 @@
     <Compile Include="Areas\DDM\Helpers\GridHelper.cs" />
     <Compile Include="Areas\DDM\Helpers\helper.cs" />
     <Compile Include="Areas\DDM\Helpers\HtmlPrefixScopeExtentions.cs" />
+    <Compile Include="Areas\DDM\Models\DatasetPermissionModels.cs" />
     <Compile Include="Areas\DDM\Models\ShowDataModel.cs" />
     <Compile Include="Areas\DDM\Models\ShowHelpModel.cs" />
     <Compile Include="Areas\DDM\Models\ShowMetadataModel.cs" />
     <Compile Include="Areas\DDM\Models\ShowPrimaryDataModel.cs" />
     <Compile Include="Areas\DIM\Controllers\AdminController.cs" />
+    <Compile Include="Areas\DIM\Controllers\DataController.cs" />
+    <Compile Include="Areas\DIM\Controllers\ExportGFBIOController.cs" />
     <Compile Include="Areas\DIM\Controllers\HelpController.cs" />
     <Compile Include="Areas\DIM\Controllers\ImportController.cs" />
+    <Compile Include="Areas\DIM\Controllers\MetadataController.cs" />
     <Compile Include="Areas\DIM\DIMAreaRegistration.cs" />
     <Compile Include="Areas\DIM\Models\AdminModel.cs" />
+    <Compile Include="Areas\DIM\Models\DatasetModel.cs" />
     <Compile Include="Areas\DIM\Models\DatasetVersionModel.cs" />
+    <Compile Include="Areas\DIM\Models\DataTupleCsvFormatter.cs" />
     <Compile Include="Areas\DIM\Models\MetadataStructureModel.cs" />
     <Compile Include="Areas\DIM\Models\ShowHelpModel.cs" />
     <Compile Include="Areas\MSM\Controllers\TestController.cs" />
@@ -378,12 +406,15 @@
     <Compile Include="Areas\RPM\Controllers\DataAttributeController.cs" />
     <Compile Include="Areas\RPM\Controllers\HomeController.cs" />
     <Compile Include="Areas\RPM\Controllers\DataStructureSearchController.cs" />
+    <Compile Include="Areas\RPM\Controllers\StructuresController.cs" />
     <Compile Include="Areas\RPM\Controllers\UnitController.cs" />
     <Compile Include="Areas\RPM\Controllers\Helpers\HtmlPrefixScopeExtentions.cs" />
     <Compile Include="Areas\RPM\Controllers\Helpers\RPMSeedDataGenerator.cs" />
+    <Compile Include="Areas\RPM\Models\StructureModel.cs" />
     <Compile Include="Areas\RPM\Models\DataStructureEditModel.cs" />
     <Compile Include="Areas\RPM\Models\DataStructureSearchModel.cs" />
     <Compile Include="Areas\RPM\Models\ConstraintModels.cs" />
+    <Compile Include="Areas\RPM\Models\DataTypeManagerModel.cs" />
     <Compile Include="Areas\RPM\Models\UnitManagerModel.cs" />
     <Compile Include="Areas\RPM\Models\DataAttributeModel.cs" />
     <Compile Include="Areas\RPM\Models\DataStructureDesignerModel.cs" />
@@ -401,7 +432,10 @@
     <Compile Include="Areas\SAM\Controllers\GroupsController.cs" />
     <Compile Include="Areas\SAM\Controllers\HelpController.cs" />
     <Compile Include="Areas\SAM\Controllers\DatasetController.cs" />
+    <Compile Include="Areas\SAM\Controllers\TenantsController.cs" />
     <Compile Include="Areas\SAM\Controllers\UsersController.cs" />
+    <Compile Include="Areas\SAM\Helpers\Attributes.cs" />
+    <Compile Include="Areas\SAM\Helpers\HtmlHelperExtensions.cs" />
     <Compile Include="Areas\SAM\Helpers\SAMSeedDataGenerator.cs" />
     <Compile Include="Areas\SAM\Helpers\HtmlPrefixScopeExtensions.cs" />
     <Compile Include="Areas\SAM\Models\AccountModels.cs" />
@@ -416,9 +450,12 @@
     <Compile Include="Areas\SAM\Models\PermissionModel.cs" />
     <Compile Include="Areas\SAM\Models\SecurityQuestionModels.cs" />
     <Compile Include="Areas\SAM\Models\ShowHelpModel.cs" />
+    <Compile Include="Areas\SAM\Models\TenantModels.cs" />
     <Compile Include="Areas\SAM\Models\UserModels.cs" />
     <Compile Include="Areas\SAM\SAMAreaRegistration.cs" />
+    <Compile Include="Areas\Site\Controllers\FooterController.cs" />
     <Compile Include="Areas\Site\Controllers\NavController.cs" />
+    <Compile Include="Areas\Site\Controllers\TermsController.cs" />
     <Compile Include="Areas\Site\SiteAreaRegistration.cs" />
     <Compile Include="Areas\SAM\Controllers\UtilsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -427,7 +464,10 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\BExISDataHelper.cs" />
+    <Compile Include="Helpers\BexisModelManager.cs" />
     <Compile Include="Helpers\BexisUIHelper.cs" />
+    <Compile Include="Models\EntitySelectorModel.cs" />
     <Compile Include="Models\UiTestModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -440,47 +480,30 @@
       <SubType>Designer</SubType>
     </DesignData>
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image001.png" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image002.gif" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image002.png" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image003.png" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image004.gif" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image004.png" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image005.png" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image006.gif" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image006.png" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image007.jpg" />
+    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image004.jpg" />
+    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image005.jpg" />
+    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image006.jpg" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image007.png" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image008.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image008.png" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image009.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image009.png" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image010.jpg" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image010.png" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image011.gif" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image011.png" />
+    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image011.jpg" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image012.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image012.png" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image013.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image013.png" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image014.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image014.png" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image015.jpg" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image016.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image016.png" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image017.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image017.png" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image018.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image018.png" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image019.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image019.png" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image020.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image020.png" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image021.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image021.png" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image022.jpg" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image023.jpg" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image024.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image025.jpg" />
+    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image025.png" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image026.jpg" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image027.jpg" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image028.jpg" />
@@ -488,32 +511,18 @@
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image030.jpg" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image031.jpg" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image032.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image033.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image033.png" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image034.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image034.png" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image035.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image036.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image037.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image038.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image039.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image040.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image041.jpg" />
     <Content Include="Areas\DCM\Images\emptyPng.png" />
     <Content Include="Areas\DCM\Views\Help\UserGuides\DCM_UserGuide.htm" />
     <Content Include="Areas\DDM\Images\DDM_UserGuide_files\image001.gif" />
-    <Content Include="Areas\DDM\Images\DDM_UserGuide_files\image001.png" />
-    <Content Include="Areas\DDM\Images\DDM_UserGuide_files\image002.gif" />
     <Content Include="Areas\DDM\Images\DDM_UserGuide_files\image002.jpg" />
-    <Content Include="Areas\DDM\Images\DDM_UserGuide_files\image002.png" />
     <Content Include="Areas\DDM\Images\DDM_UserGuide_files\image003.jpg" />
-    <Content Include="Areas\DDM\Images\DDM_UserGuide_files\image003.png" />
     <Content Include="Areas\DDM\Images\DDM_UserGuide_files\image004.gif" />
     <Content Include="Areas\DDM\Images\DDM_UserGuide_files\image005.jpg" />
     <Content Include="Areas\DDM\Images\DDM_UserGuide_files\image006.jpg" />
     <Content Include="Areas\DDM\Images\DDM_UserGuide_files\image007.jpg" />
     <Content Include="Areas\DDM\Images\DDM_UserGuide_files\image008.jpg" />
     <Content Include="Areas\DDM\Images\DDM_UserGuide_files\image009.jpg" />
+    <Content Include="Areas\DDM\Images\DDM_UserGuide_files\image010.jpg" />
     <Content Include="Areas\DDM\Views\Help\UserGuides\DDM_UserGuide.htm" />
     <Content Include="Areas\DDM\Scripts\ddm.js" />
     <Content Include="Areas\DIM\Images\DIM_UserGuide_files\image001.jpg" />
@@ -530,37 +539,23 @@
     <Content Include="Areas\MSM\Resources\Stylesheets\jquery-linedtextarea.css" />
     <Content Include="Areas\MSM\Resources\Stylesheets\xsd2htmlTree.xslt" />
     <Content Include="Areas\MSM\Resources\Stylesheets\xsd2jsonTree.xslt" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image001.jpg" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image001.png" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image002.gif" />
+    <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image001.gif" />
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image002.jpg" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image002.png" />
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image003.jpg" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image003.png" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image004.gif" />
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image004.jpg" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image004.png" />
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image005.jpg" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image005.png" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image006.gif" />
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image006.jpg" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image006.png" />
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image007.jpg" />
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image008.jpg" />
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image009.jpg" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image009.png" />
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image010.jpg" />
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image011.jpg" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image011.png" />
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image012.jpg" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image012.png" />
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image013.jpg" />
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image014.jpg" />
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image015.jpg" />
-    <Content Include="Areas\RPM\Scripts\draggabilly.pkgd.min.js" />
-    <Content Include="Areas\RPM\Scripts\isotope.pkgd.min.js" />
-    <Content Include="Areas\RPM\Scripts\packery.pkgd.min.js" />
-    <Content Include="Areas\RPM\Stylesheets\DataStructureEdit.css" />
+    <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image016.jpg" />
+    <Content Include="Areas\RPM\Scripts\jquery-1.10.1.min.js" />
     <Content Include="Areas\RPM\Stylesheets\DataStructureSearch.css" />
     <Content Include="Areas\RPM\Stylesheets\RPM.css" />
     <Content Include="Areas\RPM\Views\Help\UserGuides\RPM_UserGuide.htm" />
@@ -575,9 +570,9 @@
     <Content Include="Areas\SAM\Images\SAM_UserGuide_files\image009.jpg" />
     <Content Include="Areas\SAM\Images\SAM_UserGuide_files\image010.jpg" />
     <Content Include="Areas\SAM\Images\SAM_UserGuide_files\image011.jpg" />
-    <Content Include="Areas\SAM\Images\SAM_UserGuide_files\image012.jpg" />
-    <Content Include="Areas\SAM\Images\SAM_UserGuide_files\image013.jpg" />
     <Content Include="Areas\SAM\Views\Help\UserGuides\SAM_UserGuide.htm" />
+    <Content Include="Content\Images\dfg_logo.gif" />
+    <Content Include="Content\bootstrap-combobox.css" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
@@ -590,12 +585,16 @@
     <Content Include="Content\Images\2.svg" />
     <Content Include="Content\Images\favicon.ico" />
     <Content Include="Content\Images\Logo_BEXIS_cmyk.svg" />
+    <Content Include="Content\Images\Logo_BEXIS_rgb_113x28.jpg" />
     <Content Include="Content\Images\Logo_BEXIS_rgb_2600x830.jpg" />
     <Content Include="Content\Images\Logo_BEXIS_rgb_2600x830.png" />
     <Content Include="Content\Images\Logo_BEXIS_rgb_377x94.jpg" />
     <Content Include="Content\Images\Logo_BEXIS_rgb_377x94.png" />
     <Content Include="Content\Site.css" />
     <Content Include="Content\bootstrap-slider.min.css" />
+    <Content Include="css\font-awesome.css" />
+    <Content Include="css\font-awesome.min.css" />
+    <Content Include="fonts\fontawesome-webfont.svg" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Scripts\bexis-jquery-ui.js" />
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
@@ -637,9 +636,27 @@
     <Content Include="Areas\MSM\Views\Test\Index.cshtml" />
     <Content Include="Areas\MSM\Views\Test\_TreePartial.cshtml" />
     <Content Include="Areas\MSM\Views\Test\_AddTextField.cshtml" />
-    <Content Include="Areas\RPM\Views\DataStructureEdit\_attributeSearchResult.cshtml" />
-    <Content Include="Areas\RPM\Views\DataStructureEdit\_attributeFilter.cshtml" />
-    <Content Include="Areas\RPM\Views\DataStructureEdit\_dataStructure.cshtml" />
+    <Content Include="Areas\Site\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\Site\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\DDM\Views\Data\_SubjectsPartial.cshtml" />
+    <Content Include="Areas\Site\Views\Terms\Index.cshtml" />
+    <Content Include="fonts\FontAwesome.otf" />
+    <Content Include="fonts\fontawesome-webfont.woff2" />
+    <Content Include="fonts\fontawesome-webfont.woff" />
+    <Content Include="fonts\fontawesome-webfont.ttf" />
+    <Content Include="fonts\fontawesome-webfont.eot" />
+    <None Include="Properties\PublishProfiles\bexisconf.pubxml" />
+    <Content Include="Areas\SAM\Views\Tenants\_Create.cshtml" />
+    <Content Include="Areas\SAM\Views\Tenants\_Edit.cshtml" />
+    <Content Include="Areas\Site\Views\Footer\Content.cshtml" />
+    <None Include="Properties\PublishProfiles\BPP290.pubxml" />
+    <None Include="Properties\PublishProfiles\BPP2907.pubxml" />
+    <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="Scripts\jquery-1.10.2.js" />
+    <Content Include="Scripts\jquery-1.10.2.min.js" />
+    <Content Include="Scripts\jquery-1.10.2.min.map" />
+    <Content Include="Areas\SAM\Views\Tenants\Index.cshtml" />
+    <None Include="Properties\PublishProfiles\T1.pubxml" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
@@ -967,18 +984,20 @@
     <Content Include="Themes\Default\Partials\_Breadcrumb.cshtml" />
     <Content Include="Themes\Default\Partials\_Information.cshtml" />
     <Content Include="Views\Test\Index.cshtml" />
+    <Content Include="Views\Shared\_EntitySelectorInWindowView.cshtml" />
+    <Content Include="Views\Shared\_EntitySelectorView.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Areas\DCM\Models\Scripts\" />
     <Folder Include="Areas\DCM\Views\Home\" />
     <Folder Include="Areas\DDM\Views\Shared\" />
+    <Folder Include="Areas\DIM\Views\Api\" />
     <Folder Include="Areas\DIM\Views\Shared\" />
     <Folder Include="Areas\MSM\Views\Shared\" />
     <Folder Include="Areas\RPM\Views\Shared\" />
     <Folder Include="Areas\SAM\Views\Shared\" />
     <Folder Include="Areas\Site\Models\" />
-    <Folder Include="Areas\Site\Views\Shared\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Home\About.cshtml" />
@@ -1156,6 +1175,10 @@
       <Project>{b906a66a-4a09-4207-b590-655ee111ccf1}</Project>
       <Name>BExIS.Ext.Services</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Components\IO\BExIS.IO.DataType.DisplayPattern\BExIS.IO.DataType.DisplayPattern.csproj">
+      <Project>{8b2ec2b0-6870-456b-be2d-b0fb4ea68d83}</Project>
+      <Name>BExIS.IO.DataType.DisplayPattern</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Components\IO\BExIS.IO.Transform.Input\BExIS.IO.Transform.Input.csproj">
       <Project>{5c4c8570-a53b-4191-a414-de028aaaf36a}</Project>
       <Name>BExIS.IO.Transform.Input</Name>
@@ -1216,6 +1239,10 @@
       <Project>{fbe3101a-791a-4eab-9b8f-f6e071f8dbdc}</Project>
       <Name>BExIS.Ddm.Providers.LuceneProvider</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Modules\RPM\BExIS.RPM.Model\BExIS.RPM.Model.csproj">
+      <Project>{063b9e3f-e0dd-43fe-9910-5b1544b8b861}</Project>
+      <Name>BExIS.RPM.Model</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Modules\DDM\BExIS.Ddm.Api\BExIS.Ddm.Api.csproj">
       <Project>{8519eac6-fbf8-48b3-813f-e0b9d3cc4a52}</Project>
       <Name>BExIS.Ddm.Api</Name>
@@ -1253,16 +1280,6 @@
     <Content Include="Areas\DDM\Views\Admin\ReIndexSearch.cshtml" />
     <Content Include="Areas\DCM\Views\Submit\FinishUpload.cshtml" />
     <Content Include="Areas\DCM\Views\Submit\Test.cshtml" />
-    <Content Include="Areas\DCM\Views\Create\Index.cshtml" />
-    <Content Include="Areas\DCM\Views\Create\CreateDataset.cshtml" />
-    <Content Include="Areas\DCM\Views\Create\_createWizardNav.cshtml" />
-    <Content Include="Areas\DCM\Views\Create\_taskListView.cshtml" />
-    <Content Include="Areas\DCM\Views\Create\FinishCreation.cshtml" />
-    <Content Include="Areas\DCM\Views\CreateSelectDatasetSetup\SelectDatasetSetup.cshtml" />
-    <Content Include="Areas\DCM\Views\CreateSetMetadataPackage\SetMetadataPackage.cshtml" />
-    <Content Include="Areas\DCM\Views\CreateSetMetadataPackage\_setMetadataAttribute.cshtml" />
-    <Content Include="Areas\DCM\Views\CreateSetMetadataPackage\_metadataPackage.cshtml" />
-    <Content Include="Areas\DCM\Views\CreateSummary\Summary.cshtml" />
     <Content Include="Areas\DCM\Views\DcmAdmin\CreateMetadataStructure.cshtml" />
     <Content Include="Areas\DCM\Views\DcmAdmin\Index.cshtml" />
     <Content Include="Areas\DCM\Views\Shared\_errorMessages.cshtml" />
@@ -1299,10 +1316,6 @@
     <Content Include="Areas\DCM\Views\ImportMetadataStructure\_wizardNav.cshtml" />
     <Content Include="Areas\DCM\Views\ImportMetadataStructureSetParameters\SetParameters.cshtml" />
     <Content Include="Areas\DCM\Views\SubmitDefinePrimaryKey\DefinePrimaryKey.cshtml" />
-    <Content Include="Areas\DCM\Views\CreateSetMetadataPackage\SetMetadataCompoundAttribute.cshtml" />
-    <Content Include="Areas\DCM\Views\CreateSetMetadataPackage\_setMetadataCompoundAttribute.cshtml" />
-    <Content Include="Areas\DCM\Views\CreateSetMetadataPackage\_setMetadataCompoundAttributeInstanz.cshtml" />
-    <Content Include="Areas\DCM\Views\CreateSetMetadataPackage\_setMetadataPackageInstanz.cshtml" />
     <Content Include="Areas\RPM\Views\Home\_dataStructureSaveAs.cshtml" />
     <Content Include="Areas\DDM\Views\Home\_myDatasetGridView.cshtml" />
     <Content Include="Areas\DDM\Views\Data\_showItem.cshtml" />
@@ -1343,13 +1356,9 @@
     <None Include="Properties\PublishProfiles\2301.pubxml" />
     <None Include="Properties\PublishProfiles\2302.pubxml" />
     <None Include="Properties\PublishProfiles\2400.pubxml" />
-    <None Include="Properties\PublishProfiles\BEXIS2 DEV.pubxml" />
-    <None Include="Properties\PublishProfiles\BEXIS2.pubxml" />
     <None Include="Properties\PublishProfiles\BPP230.pubxml" />
     <Content Include="_AppStart.cshtml" />
-    <None Include="Properties\PublishProfiles\BPP2602.pubxml" />
     <Content Include="Views\Home\SessionTimeout.cshtml" />
-    <None Include="Properties\PublishProfiles\BPP270.pubxml" />
     <None Include="Properties\PublishProfiles\DDM_Test.pubxml" />
     <None Include="Properties\PublishProfiles\TestHelpMenu.pubxml">
       <SubType>Designer</SubType>
@@ -1468,12 +1477,11 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>False</UseIIS>
+          <UseIIS>True</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>5412</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>
-          </IISUrl>
+          <IISUrl>http://localhost:63530/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

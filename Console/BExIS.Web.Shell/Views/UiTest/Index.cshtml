@@ -2,6 +2,7 @@
 @using System.Data;
 @using BExIS.Ddm.Model;
 @using FluentBootstrap;
+@using BExIS.Web.Shell.Models;
 
 @model BExIS.Web.Shell.Models.UiTestModel
 
@@ -9,7 +10,7 @@
     ViewBag.Title = "title";
 
     #region client data
-    
+
     List<string> testList = new List<string>();
     testList.Add("David Blaa");
     testList.Add("Martin Hohmuth");
@@ -133,37 +134,44 @@
     });
 
     facets.Add(f1);
-    facets.Add(f2);   
-     
-      
-   #endregion      
-   
-   #endregion
+    facets.Add(f2);
 
+
+    #endregion
+
+    #endregion
 
     List<string> list = new List<string>();
     list.Add("1");
     list.Add("2");
     list.Add("3");
     list.Add("4");
+
+    List<string> comboboxList = new List<string>();
+    comboboxList.Add("Erfurt");
+    comboboxList.Add("Jena");
+    comboboxList.Add("Weimar");
+    comboboxList.Add("New New New New York");
+    comboboxList.Add("NewNewNewNewYork");
+    comboboxList.Add("12345678901234567890");
 }
 @*
-Color Overview
+    Color Overview
 
-White    #000000   brigth
-Gray 01  #f5f5f5
-Gray 02  #ebebeb
-Gray 03  #afb0b1
-Gray 04  #009cdf   dark // new 323232 
-Black    #ffffff
-Yellow   #ffbb52
-Orange   #ff9700
-Red      #f24c24
-Green 01  #388670   dark
-Green 02  #72b1a0
-Green 03  #bee1da
-Green 04  #d2e8e3
-Green 05  #eff7f6   brigth
+    White    #000000   brigth
+    Gray 01  #f5f5f5
+    Gray 02  #ebebeb
+    Gray 03  #afb0b1
+    Gray 04  #009cdf   dark // new 323232
+    Black    #ffffff
+    Yellow   #ffbb52
+    Orange   #ff9700
+    Red      #f24c24
+    Green 01  #388670   dark
+    Green 02  #72b1a0
+    Green 03  #bee1da
+    Green 04  #d2e8e3
+    Green 05  #eff7f6   brigth
 *@
 
 <h3>BEXIS UI COLOR OVERVIEW</h3>
@@ -197,29 +205,31 @@ Green 05  #eff7f6   brigth
     </table>
 
 </div>
-
+<h3>TEST EntitySelectorView</h3>
+<div>
+    @*@Html.Partial("_EnititySelectorView", BexisModelManager.LoadEntitySelectorModel<Facet>(facets, null));*@
+</div>
 
 <h3>BEXIS UI HELPER</h3>
 <div>
 
-@using(Html.BeginForm("sendForm", "UiTest"))
-{
-    
-    @Html.BexisUI().TextBox().Name("Name").Value(Model.Name).Icon("bx-info").Render()
-    @Html.ValidationMessageFor(m => m.Name)
-    <br />
+    @using (Html.BeginForm("sendForm", "UiTest"))
+    {
+        @Html.BexisUI().TextBox().Name("Name").Value(Model.Name).Icon("bx-info").Render()
+        @Html.ValidationMessageFor(m => m.Name)
+        <br />
 
-    @Html.BexisUI().Slider().Name("slider").Min(0).Max(1000).Value(100).Steps(10).Render();
+            @Html.BexisUI().Slider().Name("slider").Min(0).Max(1000).Value(100).Steps(10).Render();
 
-    <button class="bx-button" type="submit" >send</button>
-}
+        <button class="bx-button" type="submit">send</button>
+    }
 
 
-    
+
     @*@(Html.BexisUI().List()
-                    .Data(new SelectList(list))
-                    .Action("OnSelectTreeViewItem", "Home", new RouteValueDictionary { { "area", "DDM" }},"Id")
-                    .Render())*@
+        .Data(new SelectList(list))
+        .Action("OnSelectTreeViewItem", "Home", new RouteValueDictionary { { "area", "DDM" }},"Id")
+        .Render())*@
 
 </div>
 
@@ -242,26 +252,26 @@ Green 05  #eff7f6   brigth
                          .Name("FilterList")
                          .BindTo(new SelectList(testList))
                          .ClientEvents(e => e.OnChange("onChange"))
-                    )
+            )
 
         </td>
         <td>
             <div class="dropdown">
-              <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                Dropdown
-                <span class="bx-delete"></span>
-              </button>
-              <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                <li><a href="#">Action</a></li>
-                <li><a href="#">Another action</a></li>
-                <li><a href="#">Something else here</a></li>
-                <li><a href="#">Separated link</a></li>
-              </ul>
+                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    Dropdown
+                    <span class="bx-delete"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                    <li><a href="#">Action</a></li>
+                    <li><a href="#">Another action</a></li>
+                    <li><a href="#">Something else here</a></li>
+                    <li><a href="#">Separated link</a></li>
+                </ul>
             </div>
         </td>
 
-        <td >
-            
+        <td>
+
 
             @using (var dropdown = Html.Bootstrap().Dropdown("My Dropdown").Begin())
             {
@@ -273,6 +283,32 @@ Green 05  #eff7f6   brigth
                 @dropdown.DropdownLink("Google", "http://www.google.com")
             }
         </td>
+    </tr>
+    <tr>
+        <td>Combobox</td>
+        <td></td>
+        <td>
+            @(Html.Telerik().ComboBox()
+                        .Name("SelectedDatasetId")
+                        .Placeholder("New Dataset")
+                        .Filterable()
+                        .SelectedIndex(0)
+                        .HtmlAttributes(new { @class = "bx-dropdown" })
+                        .BindTo(new SelectList(comboboxList))
+            )
+        </td>
+        <td>
+            <select class="comboboxBootstrap">
+                <option></option>
+                <option value="PA">Pennsylvania</option>
+                <option value="CT">Connecticut</option>
+                <option value="NY">New York</option>
+                <option value="MD">Maryland</option>
+                <option value="VA">Virginia</option>
+            </select>
+
+        </td>
+        <td>...</td>
     </tr>
     <tr>
         <td>TextBox</td>
@@ -294,31 +330,28 @@ Green 05  #eff7f6   brigth
                                     filtering.MinimumChars(3);
 
                                 })
-                       )
+            )
         </td>
     </tr>
     <tr>
         <td>TextArea</td>
         <td> @Html.TextArea("test", "", new { @class = "bx-textarea" })</td>
-        <td>
-        </td>
+        <td></td>
     </tr>
     <tr>
         <td>Checkbox</td>
         <td> @Html.CheckBox("halligalli")</td>
-        <td>
-        </td>
+        <td></td>
     </tr>
     <tr>
         <td>RadioButton</td>
         <td> @Html.RadioButton("hallo", true) yes</td>
-        <td>
-        </td>
+        <td></td>
     </tr>
 </table>
 
 <div style="padding: 10px; width:800px;">
-   
+
     <table>
         <tr>
             <th>.bx-list</th>
@@ -342,7 +375,7 @@ Green 05  #eff7f6   brigth
                 </ul>
 
             </td>
-            <td> 
+            <td>
                 <ul class="bx-list-multi">
                     <li>
                         Auto (in use)
@@ -377,7 +410,7 @@ Green 05  #eff7f6   brigth
                 </ol>
 
             </td>
-            <td> 
+            <td>
                 <ol class="bx-list-multi">
                     <li>
                         Auto (in use)
@@ -395,15 +428,15 @@ Green 05  #eff7f6   brigth
             </td>
         </tr>
     </table>
-    
 
-   
+
+
 
 </div>
 
 <br />
 
-<div >
+<div>
     <p>click for the window</p>
     <button class="bx-button smaller" onclick="onSelect(this)">smallest</button>
     <button class="bx-button small" onclick="onSelect(this)">more</button>
@@ -412,20 +445,19 @@ Green 05  #eff7f6   brigth
 </div>
 
 <div id="alertDialog" title="Error ...." style="display:none">
-  <p>
-    Currently using <b>36% of your storage space</b>.
-  </p>
+    <p>
+        Currently using <b>36% of your storage space</b>.
+    </p>
 </div>
 
 <div id="messageDialog" title="Download complete" style="display:none">
-  <p>
-    Currently using <b>36% of your storage space</b>.
-  </p>
-  
+    <p>
+        Currently using <b>36% of your storage space</b>.
+    </p>
+
 </div>
 
-  @(Html.Telerik().Window()
-
+@(Html.Telerik().Window()
     .Name("MoreWindow")
     .Visible(false)
     .Title("More")
@@ -434,14 +466,14 @@ Green 05  #eff7f6   brigth
     .Draggable(true)
     .Buttons(buttons => buttons.Close())
     .Content(@<text>
-           <div class="bx-title"><h2>html vs telerik vs bootstrap</h2></div>
-           <div class="bx-content">
-               <div>
-                   asdkhahsdöfjh  ahsdk jfhkjsdhkhkajdhk ddh chnyxkjh fhwsa jdkach yjh fuidy disjykdh c myxbkjxdh asuie ui<br /> 
-                   sdghjhbxjnb< jb usjh daiu soasdi niasjhdf kjyh xjigh yiusdgh iaug kjb kxyjhx isueg ajsg isds 
-               </div>
-               <div>
-                    @(Html.Telerik().Grid(table)
+        <div class="bx-title"><h2>html vs telerik vs bootstrap</h2></div>
+        <div class="bx-content">
+            <div>
+                asdkhahsdöfjh  ahsdk jfhkjsdhkhkajdhk ddh chnyxkjh fhwsa jdkach yjh fuidy disjykdh c myxbkjxdh asuie ui<br />
+                sdghjhbxjnb< jb usjh daiu soasdi niasjhdf kjyh xjigh yiusdgh iaug kjb kxyjhx isueg ajsg isds
+            </div>
+            <div>
+                @(Html.Telerik().Grid(table)
                           .Name("TestGrid")
                           .Groupable()
                           .Pageable(pageable => pageable.Position(GridPagerPosition.Both))
@@ -451,13 +483,13 @@ Green 05  #eff7f6   brigth
                                 paging.PageSize(50, new int[] { 1, 2, 3, 10, 50 })
                                     .Total(table.Rows.Count)
                                     )
-                          )
-                </div>
-           </div>
-           <div class="bx-footer right">
-                <button class="bx-button action" onclick="onSelect(this)">more</button>
-                <button class="bx-button action" onclick="openAlertDialog()">alert</button>
-           </div>
+                )
+            </div>
+        </div>
+        <div class="bx-footer right">
+            <button class="bx-button action" onclick="onSelect(this)">more</button>
+            <button class="bx-button action" onclick="openAlertDialog()">alert</button>
+        </div>
     </text>
     )
 )
@@ -465,15 +497,15 @@ Green 05  #eff7f6   brigth
 <h3>Telerik UI Components</h3>
 
 <div style="padding: 10px">
-@(Html.Telerik().Upload()
+    @(Html.Telerik().Upload()
             .Name("attachments")
             .Multiple(true)
             .ShowFileList(true)
-            )
+    )
 </div>
 
 <div style="padding: 10px">
-@(Html.Telerik().TabStrip()
+    @(Html.Telerik().TabStrip()
             .Name("ShowDataTabStrip")
             .SelectedIndex(0)
             .Items(tabs =>
@@ -579,7 +611,8 @@ Green 05  #eff7f6   brigth
                 paging.PageSize(50, new int[] { 1, 2, 3, 10, 50 })
                     .Total(table.Rows.Count)
                     )
-          )
+
+    )
 </div>
 
 <b>table</b>
@@ -594,7 +627,7 @@ Green 05  #eff7f6   brigth
             }
         </tr>
         @foreach (DataRow r in table.Rows)
-        {
+            {
             <tr>
                 <td>
                     <button class="bx-grid-function bx-edit"></button>
@@ -620,7 +653,7 @@ Green 05  #eff7f6   brigth
             }
         </tr>
         @foreach (DataRow r in table.Rows)
-        {
+            {
             <tr>
                 <td>
                     <button class="bx-button smaller function">edit</button>
@@ -635,43 +668,85 @@ Green 05  #eff7f6   brigth
 
     </table>
 
-    
+
 
 </div>
 
+@if (Model.DataTable != null && Model.DataTable2 != null)
+{
+    <b>LIST of ENTITIES to Datatable</b>
+        <div style="padding: 10px">
+            <p>DATATABLE 1</p>
+            <table>
+                <tr class="header">
+                    @foreach (DataColumn c in Model.DataTable.Columns)
+                    {
+                        <th>@c.ColumnName</th>
+                    }
+                </tr>
+                @foreach (DataRow r in Model.DataTable.Rows)
+                {
+                    <tr>
+                        @foreach (object o in r.ItemArray)
+                        {
+                            <td>@o</td>
+                        }
+                    </tr>
+                }
+
+            </table>
+        </div>
+
+        <div style="padding: 10px">
+            <p>DATATABLE 2</p>
+            <table>
+                <tr class="header">
+                    @foreach (DataColumn c in Model.DataTable2.Columns)
+                    {
+                        <th>@c.ColumnName</th>
+                    }
+                </tr>
+                @foreach (DataRow r in Model.DataTable2.Rows)
+                {
+                    <tr>
+                        @foreach (object o in r.ItemArray)
+                        {
+                            <td>@o</td>
+                        }
+                    </tr>
+                }
+
+            </table>
+        </div>
+}
 <style>
     .slider-selection {
-	background: #BABABA;
-}
+        background: #BABABA;
+    }
 </style>
 
-   
+
 <script type="text/javascript">
-    
-    $(document).ready(function ()
-    {
-        resetAllTelerikIconTitles();
-    });
 
-    function onChange(e)
-    {
+        $(document).ready(function () {
+            resetAllTelerikIconTitles();
+        });
 
-    }
+        function onChange(e) {
 
-    function onSelect(e)
-    {
-        var detailWindow = $("#MoreWindow").data("tWindow");
-        detailWindow.center().open();
-    }
+        }
 
-    function openAlertDialog()
-    {
-        bx_openDialog("#alertDialog", "alert");
-    }
+        function onSelect(e) {
+            var detailWindow = $("#MoreWindow").data("tWindow");
+            detailWindow.center().open();
+        }
 
-    function openMessageDialog()
-    {
-        bx_openDialog("#messageDialog","message");
-    }
+        function openAlertDialog() {
+            bx_openDialog("#alertDialog", "alert");
+        }
+
+        function openMessageDialog() {
+            bx_openDialog("#messageDialog", "message");
+        }
 
 </script>

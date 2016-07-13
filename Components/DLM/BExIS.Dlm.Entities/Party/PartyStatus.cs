@@ -10,9 +10,9 @@ namespace BExIS.Dlm.Entities.Party
     public class PartyStatus: BaseEntity
     {
         #region Attributes
-        public DateTime Timestamp { get; set; }
-        public string Description { get; set; }
-        public XmlDocument ChangeLog { get; set; }
+        public virtual DateTime Timestamp { get; set; }
+        public virtual string Description { get; set; }
+        public virtual XmlDocument ChangeLog { get; set; }
         #endregion
 
         #region Associations

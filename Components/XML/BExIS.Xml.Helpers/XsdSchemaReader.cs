@@ -35,7 +35,6 @@ namespace BExIS.Xml.Helpers
         /// <seealso cref=""/>        
         public void Read()
         {
-
             string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "Metadata", "schema.xsd");
             //string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "Metadata", "ABCD", "ABCD_2.06.XSD");
             //string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "Metadata", "eml", "eml.xsd");
