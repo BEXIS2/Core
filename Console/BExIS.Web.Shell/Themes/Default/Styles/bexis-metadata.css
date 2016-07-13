@@ -93,7 +93,7 @@ Green 05  #eff7f6
 
 .metadataAttributeInput
 {
-    width:380px;
+    width: 380px;
     /*border:ridge 1px yellow;*/
 }
 
@@ -120,13 +120,21 @@ Green 05  #eff7f6
     margin:0px;
 }
 
+.metadata-activate-checkbox {
+    margin-top: 6px;  margin-left: 10px;
+    font-size: 16px;
+}
+
+.metadata-choice-container {
+    margin-top: 6px; 
+}
 
 /**Level**/
 .Metadata-Level-1 {
     border-left: #388670 10px solid;
+    border-bottom: #388670 4px solid;
     /*background-color: #388670;*/
-    border-top:2px solid white;
-
+    /*border-top:2px solid white;*/
 }
 
 .Metadata-Level-Header-1 {
@@ -135,43 +143,48 @@ Green 05  #eff7f6
     /*text-transform: uppercase;*/
 }
 
+/*72b1a0*/
 .Metadata-Level-3 {
-    border-left: #72b1a0 10px solid;
+    border-left: #bbddd9 10px solid;
+    border-bottom: #bbddd9 4px solid;
     /*background-color: #72b1a0;*/
-    border-top:2px solid white;
+    /*border-top:2px solid white;*/
 }
 
 .Metadata-Level-Header-3 {
     /*color: white;*/
-    background-color: #72b1a0;
+    background-color: #bbddd9;
     
 }
 
 .Metadata-Level-5 {
-    border-left: #bee1da 10px solid;
+    border-left: #cce5e2 10px solid;
+    border-bottom: #cce5e2 4px solid;
     /*background-color: #bee1da;*/
-    border-top:2px solid white;
+    /*border-top:2px solid white;*/
 }
 
 .Metadata-Level-Header-5 {
     /*color: white;*/
-    background-color: #bee1da;
+    background-color: #cce5e2;
 }
 
 .Metadata-Level-7 {
-    border-left: #d2e8e3 10px solid;
+    border-left: #ddeeec 10px solid;
+    border-bottom: #ddeeec 4px solid;
     /*background-color: #d2e8e3;*/
-    border-top:2px solid white;
+    /*border-top:2px solid white;*/
 
 }
 
 .Metadata-Level-Header-7 {
     /*color: white;*/
-    background-color: #d2e8e3;
+    background-color: #ddeeec;
 }
 
 .Metadata-Level-9 {
     border-left: #eff7f6 10px solid;
+    border-bottom: #eff7f6 4px solid;
 }
 
 .Metadata-Level-Header-9 {

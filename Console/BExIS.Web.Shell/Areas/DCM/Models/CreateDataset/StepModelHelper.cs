@@ -1,7 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Xml;
+using System.Xml.Linq;
 using BExIS.Dlm.Entities.Common;
 using BExIS.Web.Shell.Areas.DCM.Models.Metadata;
+using BExIS.Xml.Helpers;
 
 
 namespace BExIS.Web.Shell.Areas.DCM.Models.CreateDataset
@@ -18,6 +22,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Models.CreateDataset
         public StepModelHelper Parent { get; set; }
 
         public bool Activated { get; set; }
+        public bool Choice { get; set; }
 
         private AbstractMetadataStepModel _model;
 
@@ -49,8 +54,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Models.CreateDataset
             XPath = xpath;
             Childrens = new List<StepModelHelper>();
             Parent = parent;
+            Choice = IsChoice(usage);
 
-            if(parent != null)
+            if (parent != null)
                 Level = parent.Level + 1;
         }
 
@@ -94,6 +100,37 @@ namespace BExIS.Web.Shell.Areas.DCM.Models.CreateDataset
 
         }
 
+        public string DisplayName()
+        {
+            string displayName = "";
+
+            char tmp= ' ';
+
+            foreach (char letter in Usage.Label)
+            {
+                if (Usage.Label.First() == letter)
+                {
+                    tmp = letter;
+                    displayName += letter;
+                }
+                else
+                {
+                    if (Char.IsUpper(letter) && Char.IsLower(tmp))
+                    {
+                        displayName += " " + letter;
+                    }
+                    else
+                    {
+                        displayName += letter;
+                    }
+
+                    tmp = letter;
+                }
+            }
+
+            return displayName;
+        }
+
         private bool SetActiveByPreload()
         {
             if (Model != null && Model.MinCardinality > 0) Activated = true;
@@ -112,5 +149,19 @@ namespace BExIS.Web.Shell.Areas.DCM.Models.CreateDataset
             return false;
 
         }
+
+        private bool IsChoice(BaseUsage usage)
+        {
+            if (usage.Extra != null)
+            {
+                XmlDocument doc = usage.Extra as XmlDocument;
+                XElement element = XmlUtility.GetXElementByAttribute("type", "name", "choice", XmlUtility.ToXDocument(doc));
+                if (element != null) return true;
+            }
+
+            return false;
+        }
+
+
     }
 }

@@ -52,6 +52,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
                 }
         }
 
+        
+
         public static MetadataAttributeModel Convert(BaseUsage current , BaseUsage parent, long metadataStructureId, int packageModelNumber, long parentStepId)
         {
             MetadataAttribute metadataAttribute;

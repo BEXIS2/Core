@@ -3,13 +3,12 @@
 @using BExIS.Web.Shell.Areas.DCM.Models
 @using Telerik.Web.Mvc.UI
 @{
-    string id = @Model.Id + "_" + @Model.Parent.Id + "_" + @Model.Number + "_" + @Model.ParentModelNumber + "_" + @Model.NumberOfSourceInPackage + "_" + @Model.ParentStepId;
+    string id = Model.Id + "_" + Model.Parent.Id + "_" + Model.Number + "_" + Model.ParentModelNumber + "_" + Model.NumberOfSourceInPackage + "_" + Model.ParentStepId;
     string idInput = id + "_Input";
     string idAdd = id + "_Add";
     string idRemove = id + "_Remove";
     string idUp = id + "_Up";
     string idDown = id + "_Down";
-    string displayName = @Model.DisplayName;
 
     bool hasErrors = false;
     string errorMessage = "";
@@ -17,6 +16,31 @@
     string lockedClass = "";
     bool locked = false;
     bool hideOptional = false;
+
+    string displayName = "";
+    char tmp = ' ';
+
+    foreach (char letter in Model.DisplayName)
+    {
+        if (Model.DisplayName.First() == letter)
+        {
+            tmp = letter;
+            displayName += letter;
+        }
+        else
+        {
+            if (Char.IsUpper(letter) && Char.IsLower(tmp))
+            {
+                displayName += " " + letter;
+            }
+            else
+            {
+                displayName += letter;
+            }
+
+            tmp = letter;
+        }
+    }
 
 }
 
@@ -253,7 +277,6 @@
 
 </div> 
      
-
 <script type="text/javascript">
    
     function metadataAttributeOnLoad(e)

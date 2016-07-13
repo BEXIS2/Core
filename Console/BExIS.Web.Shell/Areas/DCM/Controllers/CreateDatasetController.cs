@@ -1695,6 +1695,58 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             return null;
         }
 
+        public ActionResult ActivateComplexUsageInAChoice(int parentid, int id)
+        {
+            TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
+
+            //TaskManager.SetCurrent(TaskManager.Get(parentStepId));
+
+            StepModelHelper stepModelHelper = GetStepModelhelper(id);
+            //StepModelHelper parentStepModelHelper = GetStepModelhelper(parentStepId);
+
+            BaseUsage u = LoadUsage(stepModelHelper.Usage);
+
+            bool active = stepModelHelper.Activated ? false : true;
+            stepModelHelper.Activated = active;
+            stepModelHelper.Parent.Activated = active;
+
+            var firstOrDefault = stepModelHelper.Childrens.FirstOrDefault();
+            if (firstOrDefault != null)
+                firstOrDefault.Activated = active;
+
+            StepModelHelper pStepModelHelper = GetStepModelhelper(stepModelHelper.Parent.StepId);
+            pStepModelHelper.Activated = active;
+
+            // update stepmodel to dictionary
+            //AddStepModelhelper(newStepModelhelper);
+
+            //update stepModel to parentStepModel
+            for (int i = 0; i < pStepModelHelper.Childrens.Count; i++)
+            {
+                StepModelHelper child = pStepModelHelper.Childrens.ElementAt(i);
+                StepModelHelper childStepModelHelper = GetStepModelhelper(child.StepId);
+                child.Activated = child.StepId.Equals(id);
+                childStepModelHelper.Activated = child.StepId.Equals(id);
+
+                var childOfChild = child.Childrens.FirstOrDefault();
+                if (childOfChild != null)
+                    childOfChild.Activated = child.StepId.Equals(id);
+            }
+
+
+            if (u is MetadataAttributeUsage || u is MetadataNestedAttributeUsage)
+            {
+                return PartialView("_metadataCompoundAttributeUsageView", pStepModelHelper);
+            }
+
+            if (u is MetadataPackageUsage)
+            {
+                return PartialView("_metadataCompoundAttributeUsageView", pStepModelHelper);
+            }
+
+            return null;
+        }
+
         #endregion
 
         #region Submit And Create And Finish And Cancel and Reset
