@@ -322,7 +322,7 @@ namespace BExISMigration
                 newRow["Id"] = getValue(i.ToString(), "A");
                 newRow["Name"] = getValue(i.ToString(), "B");
                 newRow["Syntax"] = getValue(i.ToString(), "C");
-                newRow["Description"] = "";
+                newRow["Description"] = getValue(i.ToString(), "D");    
                 mappedDimensions.Rows.Add(newRow);
             }
 

@@ -25,10 +25,6 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
 
         public static void GenerateSeedData()
         {
-            createResearchPlan();
-            createSeedDataTypes();
-            createSIUnits();
-
             //create seed data from xslx file
             MappingReader mappingReader = new MappingReader();
             AttributeCreator attributeCreator = new AttributeCreator();
@@ -57,8 +53,11 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
             // create read attributes in bpp
             attributeCreator.CreateAttributes(ref mappedAttributes);
 
-            //createEmlDatasetAdv();
-            //createABCD();
+            createResearchPlan();
+            createSeedDataTypes();
+            createSIUnits();
+            createEmlDatasetAdv();
+            createABCD();
         }
 
         private static void createResearchPlan()
@@ -174,13 +173,13 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
                     if (unit == null)
                     {
                         Dimension dim = new Dimension();
-                        if (unitManager.DimensionRepo.Get().Where(d => d.Name.Equals(dimension) && d.Specification.Equals(dimensionSpecification)).Count() == 0)
+                        if (unitManager.DimensionRepo.Get().Where(d => d.Name.ToLower().Equals(dimension.ToLower()) && d.Specification.Equals(dimensionSpecification)).Count() == 0)
                         {
                             dim = unitManager.Create(dimension, "", dimensionSpecification);
                         }
                         else
                         {
-                            dim = unitManager.DimensionRepo.Get().Where(d => d.Name.Equals(dimension)).FirstOrDefault();
+                            dim = unitManager.DimensionRepo.Get().Where(d => d.Name.ToLower().Equals(dimension.ToLower())).FirstOrDefault();
                         }
 
                         unit = unitManager.Create(name, abbrevation, description, dim, measurementSystemEnum); // null dimension should be replaced bz a proper Dimension object

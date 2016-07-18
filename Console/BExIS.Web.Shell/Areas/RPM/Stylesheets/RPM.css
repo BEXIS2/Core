@@ -273,3 +273,15 @@ width: 15px;
 .planingPartialDiv .t-numerictextbox .t-arrow-down {
     margin: 0px 0px 2px -8.4px;
 }
+
+.dimDesc {
+width:150px !important;
+}
+
+#Unit_input {
+width:400px;
+}
+
+#nameBox {
+width:200px;
+}
