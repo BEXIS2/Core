@@ -15,13 +15,13 @@ namespace BExIS.IO.Transform.Output
 {
     public class OutputMetadataManager
     {
-        public static XmlDocument GetConvertedMetadata(int datasetVersionId, TransmissionType type, string mappingName)
+        public static XmlDocument GetConvertedMetadata(long datasetId, TransmissionType type, string mappingName)
         {
             XmlDocument newXml;
             try
             {
                 DatasetManager datasetManager = new DatasetManager();
-                DatasetVersion datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
+                DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
 
                 string mappingFileName = XmlDatasetHelper.GetExportInformation(datasetVersion, type, mappingName);
                 string pathMappingFile = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), mappingFileName);

@@ -3,35 +3,64 @@
 @using BExIS.Web.Shell.Areas.DCM.Models
 @using Telerik.Web.Mvc.UI
 @{
-    string id = @Model.Id + "_" + @Model.Parent.Id + "_" + @Model.Number + "_" + @Model.ParentModelNumber + "_" + @Model.NumberOfSourceInPackage+"_"+@Model.ParentStepId;
+    string id = Model.Id + "_" + Model.Parent.Id + "_" + Model.Number + "_" + Model.ParentModelNumber + "_" + Model.NumberOfSourceInPackage + "_" + Model.ParentStepId;
     string idInput = id + "_Input";
     string idAdd = id + "_Add";
     string idRemove = id + "_Remove";
     string idUp = id + "_Up";
     string idDown = id + "_Down";
 
-
-    string displayName = @Model.DisplayName;
-    DateTime defaultDate = DateTime.Today;
-
-    if (@Model.Number > 1)displayName += " " + @Model.Number;
-
     bool hasErrors = false;
     string errorMessage = "";
     string errorClass = "";
     string lockedClass = "";
     bool locked = false;
-    
-    
+    bool hideOptional = false;
 
-}   
+    string displayName = "";
+    char tmp = ' ';
+
+    foreach (char letter in Model.DisplayName)
+    {
+        if (Model.DisplayName.First() == letter)
+        {
+            tmp = letter;
+            displayName += letter;
+        }
+        else
+        {
+            if (Char.IsUpper(letter) && Char.IsLower(tmp))
+            {
+                displayName += " " + letter;
+            }
+            else
+            {
+                displayName += letter;
+            }
+
+            tmp = letter;
+        }
+    }
+
+}
+
+@if (Model.Number > 1)
+{
+    displayName += " " + Model.Number;
+}
 
 @if (ViewData.Keys.Contains("Locked"))
 {
     locked = (bool)ViewData["Locked"];
     lockedClass = "bx-disabled";
 }
- 
+
+@if (ViewData.Keys.Contains("HideOptional"))
+{
+    hideOptional = (bool)ViewData["HideOptional"];
+}
+
+
 @if (Model.Errors != null && Model.Errors.Count() > 0)
 {
     hasErrors = true;
@@ -56,22 +85,21 @@
 <div id="@id" class="metadataAttributeContent" onload="metadataAttributeOnLoad(this)">
 
    
-    @if (@Model != null)
+    @if (@Model != null && !(hideOptional && Model.IsEmpty && (Model.MinCardinality==0) && locked))
     {
         <table>
             <tr>
+                <td class="metadataAttributeLabel">
+                    @if (Model.MinCardinality > 0)
+                    { 
+                        <b title="Required" style="color:red">*</b>
+                    }
 
-           
-            <td class="metadataAttributeLabel">
-                @if (Model.MinCardinality > 0)
-                { 
-                    <b title="Required" style="color:red">*</b>
-                }
-
-                <b title="@Model.Discription">@displayName</b>
-            </td>
-        
-            <td class="metadataAttributeInput">
+                    <b title="@Model.Discription">@displayName</b>
+                    
+                    @*Empty = @Model.IsEmpty.ToString();*@
+                </td>
+                <td class="metadataAttributeInput">
                     @if (Model.SystemType.Equals(TypeCode.String.ToString()))
                     {
                         if (Model.DataType.Equals("Text"))
@@ -245,16 +273,10 @@
                 </td>
             </tr>
         </table>
-        
-        
     }
-    else
-    { 
-        <b>null</b>
-    }
+
 </div> 
      
-
 <script type="text/javascript">
    
     function metadataAttributeOnLoad(e)

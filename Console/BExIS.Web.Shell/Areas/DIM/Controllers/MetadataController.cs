@@ -33,7 +33,7 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
                 
                 List<string> t = XmlDatasetHelper.GetAllExportInformation(id, TransmissionType.mappingFileExport, AttributeNames.name).ToList();
 
-                mvo.ConvertTo = t.ToArray();
+                mvo.Format = t.ToArray();
 
                 tmp.Add(mvo);
             }
@@ -45,7 +45,12 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
         // HttpResponseMessage response = new HttpResponseMessage { Content = new StringContent(doc.innerXml, Encoding.UTF8,"application/xml") };
         public HttpResponseMessage Get(int id)
         {
-            string convertTo = this.Request.GetQueryNameValuePairs().FirstOrDefault(p => "convertTo".Equals(p.Key, StringComparison.InvariantCultureIgnoreCase)).Value;
+            string convertTo = "";
+            try
+            {
+                convertTo = this.Request.GetQueryNameValuePairs().FirstOrDefault(p => "format".Equals(p.Key, StringComparison.InvariantCultureIgnoreCase)).Value;
+            }
+            catch (Exception ex) { }
 
             DatasetManager dm = new DatasetManager();
             DatasetVersion dsv = dm.GetDatasetLatestVersion(id);
@@ -96,6 +101,6 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
     public class MetadataViewObject
     {
         public long DatasetId { get; set; }
-        public string[] ConvertTo { get; set; }
+        public string[] Format { get; set; }
     }
 }

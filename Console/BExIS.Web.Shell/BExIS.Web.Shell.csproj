@@ -80,6 +80,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Iesi.Collections.4.0.1.4000\lib\net40\Iesi.Collections.dll</HintPath>
     </Reference>
+    <Reference Include="IKVM.OpenJDK.Util, Version=7.2.4630.5, Culture=neutral, PublicKeyToken=13235d27fcbfff58, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Saxon-HE.9.6.0.8\lib\net40\IKVM.OpenJDK.Util.dll</HintPath>
+    </Reference>
     <Reference Include="Ionic.Zip">
       <HintPath>..\..\Libraries\Ionic.Zip.dll</HintPath>
     </Reference>
@@ -348,9 +352,6 @@
     <Compile Include="Areas\DCM\Models\CreateDataset\MetadataEditorModel.cs" />
     <Compile Include="Areas\DCM\Models\CreateDataset\SetupModel.cs" />
     <Compile Include="Areas\DCM\Models\CreateDataset\StepModelHelper.cs" />
-    <Compile Include="Areas\DCM\Models\Create\SelectDatasetSetupModel.cs" />
-    <Compile Include="Areas\DCM\Models\Create\CreateSummaryModel.cs" />
-    <Compile Include="Areas\DCM\Models\Create\StepModelHelper.cs" />
     <Compile Include="Areas\DCM\Models\FileInfoModel.cs" />
     <Compile Include="Areas\DCM\Models\FinishUploadModel.cs" />
     <Compile Include="Areas\DCM\Models\GetFileInformationModel.cs" />
@@ -435,6 +436,7 @@
     <Compile Include="Areas\SAM\Controllers\TenantsController.cs" />
     <Compile Include="Areas\SAM\Controllers\UsersController.cs" />
     <Compile Include="Areas\SAM\Helpers\Attributes.cs" />
+    <Compile Include="Areas\SAM\Helpers\HtmlHelperExtensions.cs" />
     <Compile Include="Areas\SAM\Helpers\SAMSeedDataGenerator.cs" />
     <Compile Include="Areas\SAM\Helpers\HtmlPrefixScopeExtensions.cs" />
     <Compile Include="Areas\SAM\Models\AccountModels.cs" />
@@ -449,12 +451,11 @@
     <Compile Include="Areas\SAM\Models\PermissionModel.cs" />
     <Compile Include="Areas\SAM\Models\SecurityQuestionModels.cs" />
     <Compile Include="Areas\SAM\Models\ShowHelpModel.cs" />
+    <Compile Include="Areas\SAM\Models\TenantModels.cs" />
     <Compile Include="Areas\SAM\Models\UserModels.cs" />
     <Compile Include="Areas\SAM\SAMAreaRegistration.cs" />
-    <Compile Include="Areas\Site\Controllers\ContactUsController.cs" />
-    <Compile Include="Areas\Site\Controllers\ImpressumController.cs" />
+    <Compile Include="Areas\Site\Controllers\FooterController.cs" />
     <Compile Include="Areas\Site\Controllers\NavController.cs" />
-    <Compile Include="Areas\Site\Controllers\PrivacyPolicyController.cs" />
     <Compile Include="Areas\Site\Controllers\TermsController.cs" />
     <Compile Include="Areas\Site\SiteAreaRegistration.cs" />
     <Compile Include="Areas\SAM\Controllers\UtilsController.cs" />
@@ -636,11 +637,8 @@
     <Content Include="Areas\MSM\Views\Test\Index.cshtml" />
     <Content Include="Areas\MSM\Views\Test\_TreePartial.cshtml" />
     <Content Include="Areas\MSM\Views\Test\_AddTextField.cshtml" />
-    <Content Include="Areas\Site\Views\ContactUs\Index.cshtml" />
-    <Content Include="Areas\Site\Views\PrivacyPolicy\Index.cshtml" />
     <Content Include="Areas\Site\Views\Shared\_Layout.cshtml" />
     <Content Include="Areas\Site\Views\_ViewStart.cshtml" />
-    <Content Include="Areas\Site\Views\Impressum\Index.cshtml" />
     <Content Include="Areas\DDM\Views\Data\_SubjectsPartial.cshtml" />
     <Content Include="Areas\Site\Views\Terms\Index.cshtml" />
     <Content Include="fonts\FontAwesome.otf" />
@@ -649,6 +647,10 @@
     <Content Include="fonts\fontawesome-webfont.ttf" />
     <Content Include="fonts\fontawesome-webfont.eot" />
     <None Include="Properties\PublishProfiles\bexisconf.pubxml" />
+    <Content Include="Areas\SAM\Views\Tenants\_Create.cshtml" />
+    <Content Include="Areas\SAM\Views\Tenants\_Edit.cshtml" />
+    <Content Include="Areas\Site\Views\Footer\Content.cshtml" />
+    <None Include="Properties\PublishProfiles\BPP290.pubxml" />
     <None Include="Properties\PublishProfiles\BPP2907.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
@@ -661,6 +663,9 @@
     <Content Include="Scripts\jquery-2.1.4.min.js" />
     <Content Include="Scripts\jquery-migrate-1.2.1.js" />
     <Content Include="Scripts\jquery-migrate-1.2.1.min.js" />
+    <Content Include="Scripts\minimap\minimap.js" />
+    <Content Include="Scripts\minimap\minimap.min.css" />
+    <Content Include="Scripts\minimap\minimap.min.js" />
     <Content Include="Themes\Black\Styles\awesome\css\font-awesome.css" />
     <Content Include="Themes\Black\Styles\awesome\css\font-awesome.min.css" />
     <Content Include="Themes\Black\Styles\awesome\fonts\fontawesome-webfont.svg" />
@@ -988,7 +993,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Areas\DCM\Models\Scripts\" />
     <Folder Include="Areas\DCM\Views\Home\" />
     <Folder Include="Areas\DDM\Views\Shared\" />
     <Folder Include="Areas\DIM\Views\Api\" />

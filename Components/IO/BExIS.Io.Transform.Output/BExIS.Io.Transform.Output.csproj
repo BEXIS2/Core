@@ -88,6 +88,10 @@
       <Project>{252f7872-a69c-43a6-84b4-4d2abdbdd9ab}</Project>
       <Name>BExIS.Xml.Helpers</Name>
     </ProjectReference>
+    <ProjectReference Include="..\BExIS.IO.DataType.DisplayPattern\BExIS.IO.DataType.DisplayPattern.csproj">
+      <Project>{8b2ec2b0-6870-456b-be2d-b0fb4ea68d83}</Project>
+      <Name>BExIS.IO.DataType.DisplayPattern</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\XML\BExIS.Xml.Models\BExIS.Xml.Models.csproj">
       <Project>{C0C9F0F2-9E65-448D-8000-D311DB326460}</Project>
       <Name>BExIS.Xml.Models</Name>

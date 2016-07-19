@@ -23,7 +23,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Models.Metadata
         public MetadataCompoundAttributeModel()
         {
             MetadataAttributeModels = new List<MetadataAttributeModel>();
-
         }
 
         public static MetadataCompoundAttributeModel ConvertToModel(BaseUsage metadataAttributeUsage, int number)

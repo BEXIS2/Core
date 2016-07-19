@@ -12,6 +12,8 @@ using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Xml.Models.Mapping;
+using BExIS.Xml.Services;
+using NHibernate.Criterion;
 using Vaiona.Utils.Cfg;
 
 namespace BExIS.Xml.Helpers.Mapping
@@ -805,7 +807,21 @@ namespace BExIS.Xml.Helpers.Mapping
                                 else
                                     max = int.MaxValue;
 
-                                mdsManager.AddMetadataPackageUsage(test, package, element.Name, GetDescription(element.Annotation), min, max);
+                                //check if element is a choice
+                                if (!XmlSchemaUtility.IsChoiceType(element))
+                                {
+                                    
+                                    MetadataPackageUsage mpu = mdsManager.AddMetadataPackageUsage(test, package,
+                                        element.Name, GetDescription(element.Annotation), min, max);
+                                }
+                                else
+                                {
+                                    // if mpu is a choice, add a info to extra
+                                    MetadataPackageUsage mpu = mdsManager.AddMetadataPackageUsage(test, package,
+                                           element.Name, GetDescription(element.Annotation), min, max,
+                                           XmlDatasetHelper.AddReferenceToXml(new XmlDocument(), "choice", "true", "elementType", @"extra/type"));
+                                }
+
                             }
                             #endregion
                         }
@@ -968,12 +984,6 @@ namespace BExIS.Xml.Helpers.Mapping
                 
             }
 
-
-            //if(parents.Contains(element.Name))
-            //{
-            //    parents.Remove(element.Name);
-            //}
-
             return metadataCompountAttr;
         }
 
@@ -1059,9 +1069,23 @@ namespace BExIS.Xml.Helpers.Mapping
                     MaxCardinality = max,
                     Master = parent,
                     Member = compoundAttribute,
+
                 };
 
+                #region choice
+                //if element is a choise
+                XmlDocument extra = new XmlDocument();
+                    //check if element is a choice
+                    if (XmlSchemaUtility.IsChoiceType(element))
+                    {
+                        extra = XmlDatasetHelper.AddReferenceToXml(new XmlDocument(), "choice", "true", "elementType",@"extra/type");
+                    }
+
+                    if (extra.DocumentElement != null) usage.Extra = extra;
+                #endregion
+
                 parent.MetadataNestedAttributeUsages.Add(usage);
+
             }
 
             return parent;
@@ -1104,16 +1128,28 @@ namespace BExIS.Xml.Helpers.Mapping
                     else
                         max = int.MaxValue;
 
-                    MetadataNestedAttributeUsage u1 = new MetadataNestedAttributeUsage()
+                    #region choice
+                    //if element is a choise
+                    XmlDocument extra = new XmlDocument();
+                    //check if element is a choice
+                    if (XmlSchemaUtility.IsChoiceType(element))
                     {
-                        Label = element.Name,
-                        Description = attribute.Description,
-                        MinCardinality = min,
-                        MaxCardinality = max,
-                        Master = compoundAttribute,
-                        Member = attribute,
-                    };
+                        extra = XmlDatasetHelper.AddReferenceToXml(new XmlDocument(), "choice", "true", "elementType", @"extra/type");
+                    }
+                #endregion
 
+                MetadataNestedAttributeUsage u1 = new MetadataNestedAttributeUsage()
+                {
+                    Label = element.Name,
+                    Description = attribute.Description,
+                    MinCardinality = min,
+                    MaxCardinality = max,
+                    Master = compoundAttribute,
+                    Member = attribute
+                };
+
+                if (extra.DocumentElement != null) u1.Extra = extra;
+                    
                 #region generate  MappingRoute
 
                 addToExportMappingFile(mappingFileInternalToExternal, internalXPath, externalXPath, element.MaxOccurs, element.Name, attribute.Name);

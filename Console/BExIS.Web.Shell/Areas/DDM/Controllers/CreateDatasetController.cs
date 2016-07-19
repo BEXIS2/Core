@@ -157,6 +157,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Create Dataset", this.Session.GetTenant());
             ViewData["Locked"] = locked;
+            ViewData["HideOptional"] = true;
 
             TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
             if (TaskManager == null)
@@ -445,7 +446,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 };
 
                 TaskManager.StepInfos.Add(si);
-                StepModelHelper stepModelHelper = new StepModelHelper(si.Id, 1, mpu, "Metadata//" + mpu.Label.Replace(" ", string.Empty) + "[1]");
+                StepModelHelper stepModelHelper = new StepModelHelper(si.Id, 1, mpu, "Metadata//" + mpu.Label.Replace(" ", string.Empty) + "[1]", null);
 
                 stepModelHelperList.Add(stepModelHelper);
 
@@ -495,7 +496,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 };
 
                 TaskManager.StepInfos.Add(si);
-                StepModelHelper stepModelHelper = new StepModelHelper(si.Id, 1, mpu, "Metadata//" + mpu.Label.Replace(" ", string.Empty) + "[1]");
+                StepModelHelper stepModelHelper = new StepModelHelper(si.Id, 1, mpu, "Metadata//" + mpu.Label.Replace(" ", string.Empty) + "[1]", null);
 
                 stepModelHelperList.Add(stepModelHelper);
 
@@ -2198,7 +2199,8 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
                             if (TaskManager.Root.Children.Where(z => z.title.Equals(title)).Count() == 0)
                             {
-                                stepHelperModelList.Add(new StepModelHelper(s.Id, 1, usage, xPath));
+                                StepModelHelper p = GetStepModelhelper(current.Id);
+                                stepHelperModelList.Add(new StepModelHelper(s.Id, 1, usage, xPath,p));
                             }
 
                         }
@@ -2288,7 +2290,8 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         if (TaskManager.StepInfos.Where(z => z.Id.Equals(s.Id)).Count() == 0)
                         {
                             // MetadataPackageDic.Add(s.Id, u.Id);
-                            stepHelperModelList.Add(new StepModelHelper(s.Id, 1, u, xPath));
+                            StepModelHelper p = GetStepModelhelper(parent.Id);
+                            stepHelperModelList.Add(new StepModelHelper(s.Id, 1, u, xPath, p));
                         }
                     }
                     //}
@@ -2401,7 +2404,9 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
                             if (TaskManager.Root.Children.Where(z => z.title.Equals(title)).Count() == 0)
                             {
-                                stepHelperModelList.Add(new StepModelHelper(s.Id, counter, usage, xPath));
+                                StepModelHelper p = GetStepModelhelper(current.Id);
+
+                                stepHelperModelList.Add(new StepModelHelper(s.Id, counter, usage, xPath,p));
                                 //Debug.WriteLine(xPath + " : " + s.Id + " c:" + counter);
                             }
 
@@ -2493,7 +2498,8 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         if (TaskManager.StepInfos.Where(z => z.Id.Equals(s.Id)).Count() == 0)
                         {
                             // MetadataPackageDic.Add(s.Id, u.Id);
-                            stepHelperModelList.Add(new StepModelHelper(s.Id, 1, u, xPath));
+                            StepModelHelper p = GetStepModelhelper(parent.Id);
+                            stepHelperModelList.Add(new StepModelHelper(s.Id, 1, u, xPath, p));
                         }
                     }
                     //}
@@ -2582,8 +2588,8 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
                                 if (TaskManager.Root.Children.Where(z => z.Id.Equals(s.Id)).Count() == 0)
                                 {
-                                    StepModelHelper newStepModelHelper = new StepModelHelper(s.Id, counter, usage, xPath);
-
+                                    StepModelHelper p = GetStepModelhelper(current.Id);
+                                    StepModelHelper newStepModelHelper = new StepModelHelper(s.Id, counter, usage, xPath,p);
                                     stepHelperModelList.Add(newStepModelHelper);
                                 }
                             }//end if
@@ -2660,7 +2666,8 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
                         if (TaskManager.Root.Children.Where(z => z.title.Equals(s.title)).Count() == 0)
                         {
-                            stepHelperModelList.Add(new StepModelHelper(s.Id, 1, u, xPath));
+                            StepModelHelper p = GetStepModelhelper(parent.Id);
+                            stepHelperModelList.Add(new StepModelHelper(s.Id, 1, u, xPath,p));
                         }
                     }
 

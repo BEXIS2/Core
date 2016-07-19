@@ -12,7 +12,7 @@ using BExIS.Ext.Services;
 using Vaiona.MultiTenancy.Api;
 using Vaiona.Model.MTnt;
 using System.Web.Http;
-
+using Vaiona.Web.Mvc.Filters;
 
 
 namespace BExIS.Web.Shell
