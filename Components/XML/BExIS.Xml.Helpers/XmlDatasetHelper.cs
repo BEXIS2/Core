@@ -302,7 +302,7 @@ namespace BExIS.Xml.Services
     public enum NameAttributeValues
     {
         title,
-        description,
+        description
     }
 
     public enum AttributeNames
