@@ -509,15 +509,15 @@ namespace BExIS.IO.Transform.Output
 
         public static DataTable ProjectionOnDataTable(DataTable dt, string[] visibleColumns)
         {
-            for (int i = 0; i < dt.Columns.Count; i++)
+            List<DataColumn> columnTobeDeleted = new List<DataColumn>();
+            foreach (DataColumn column in dt.Columns)
             {
-                DataColumn dc = dt.Columns[i];
-                if (!visibleColumns.Contains(dc.Caption))
+                if (!visibleColumns.Contains(column.ColumnName.ToUpper()))
                 {
-                    dt.Columns.Remove(dc);
-                }
+                    columnTobeDeleted.Add(column);
+                }                
             }
-
+            columnTobeDeleted.ForEach(p=> dt.Columns.Remove(p));
             return dt;
         }
 

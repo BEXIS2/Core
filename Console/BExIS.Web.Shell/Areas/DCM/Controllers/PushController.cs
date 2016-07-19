@@ -13,6 +13,7 @@ using BExIS.IO;
 using BExIS.Web.Shell.Areas.DCM.Models.Push;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Models;
+using Vaiona.Web.Extensions;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
 {
@@ -23,7 +24,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         public ActionResult Index()
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Push Big File");
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Push Big File", this.Session.GetTenant());
 
             Session["Files"] = null;
             return View(LoadDefaultModel());
@@ -31,7 +32,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         public ActionResult Delete(string path)
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Push Big File");
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Push Big File", this.Session.GetTenant());
 
             FileHelper.Delete(path);
             return View("Index", LoadDefaultModel());
@@ -53,7 +54,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         [HttpPost]
         public ActionResult ProcessSubmit(IEnumerable<HttpPostedFileBase> attachments)
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Push Big File");
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Push Big File", this.Session.GetTenant());
             // The Name of the Upload component is "attachments"                            
             if (attachments != null)
             {

@@ -72,10 +72,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\ClassLibrary1\BExIS.IO.DataType.DisplayPattern.csproj">
-      <Project>{8b2ec2b0-6870-456b-be2d-b0fb4ea68d83}</Project>
-      <Name>BExIS.IO.DataType.DisplayPattern</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\Components\DLM\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
       <Project>{b4e7b1bf-01b4-40af-8d19-b8f362167261}</Project>
       <Name>BExIS.Dlm.Entities</Name>
@@ -95,6 +91,10 @@
     <ProjectReference Include="..\..\XML\BExIS.Xml.Models\BExIS.Xml.Models.csproj">
       <Project>{C0C9F0F2-9E65-448D-8000-D311DB326460}</Project>
       <Name>BExIS.Xml.Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BExIS.IO.DataType.DisplayPattern\BExIS.IO.DataType.DisplayPattern.csproj">
+      <Project>{8b2ec2b0-6870-456b-be2d-b0fb4ea68d83}</Project>
+      <Name>BExIS.IO.DataType.DisplayPattern</Name>
     </ProjectReference>
     <ProjectReference Include="..\BExIS.Io.Transform.Validation\BExIS.IO.Transform.Validation.csproj">
       <Project>{c8a05313-b960-406e-92ec-c1e5b3f47fcd}</Project>

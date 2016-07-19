@@ -36,6 +36,7 @@ using BExIS.Security.Entities.Subjects;
 using Vaiona.Logging.Aspects;
 using Vaiona.Web.Mvc.Models;
 using BExIS.Security.Entities.Authorization;
+using Vaiona.Web.Extensions;
 
 namespace BExIS.Web.Shell.Areas.DDM.Controllers
 {
@@ -63,7 +64,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
                 title = XmlDatasetHelper.GetInformation(dsv, NameAttributeValues.title);
 
-                ViewBag.Title = PresentationModel.GetViewTitle("Show Data : " + title);
+                ViewBag.Title = PresentationModel.GetViewTitleForTenant("Show Data : " + title, this.Session.GetTenant());
 
             }
             else
