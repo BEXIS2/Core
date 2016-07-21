@@ -25,29 +25,29 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
 
         public static void GenerateSeedData()
         {
-            //create seed data from xslx file
+            //create seed data from csv files
             MappingReader mappingReader = new MappingReader();
             AttributeCreator attributeCreator = new AttributeCreator();
             string filePath = AppConfiguration.GetModuleWorkspacePath("BMM");
 
-            // read data types from excel mapping file
+            // read data types from csv file
             DataTable mappedDataTypes = mappingReader.readDataTypes(filePath);
             // create read data types in bpp
             attributeCreator.CreateDataTypes(ref mappedDataTypes);
 
-            // read dimensions from excel mapping file
+            //// read dimensions from csv file
             DataTable mappedDimensions = mappingReader.readDimensions(filePath);
             // create dimensions in bpp
             attributeCreator.CreateDimensions(ref mappedDimensions);
 
-            // read units from excel mapping file
+            //// read units from csv file
             DataTable mappedUnits = mappingReader.readUnits(filePath, mappedDimensions);
             // create read units in bpp
             attributeCreator.CreateUnits(ref mappedUnits, mappedDataTypes);
 
-            // read attributes from excel mapping file
+            //// read attributes from csv file
             DataTable mappedAttributes = mappingReader.readAttributes(filePath, mappedUnits, mappedDataTypes);
-            // Speicher freigeben
+            // free memory
             mappedDataTypes.Clear();
             mappedDimensions.Clear();
             // create read attributes in bpp

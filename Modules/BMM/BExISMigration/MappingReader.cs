@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Office.Interop.Excel;
+using BExIS.IO.Transform;
+using BExIS.IO.Transform.Input;
+using System.IO;
 
 namespace BExISMigration
 {
@@ -97,6 +100,7 @@ namespace BExISMigration
             mappedVariables.Columns.Add("VarUnitId", typeof(long));
 
             excel_init(mappingFile, sheetName, startRow, ref endRow);
+
             for (long i = startRow; i < endRow; i++)
             {
                 System.Data.DataRow newRow = mappedVariables.NewRow();
@@ -193,13 +197,16 @@ namespace BExISMigration
         }
 
 
-        // read attributes from excel mapping file
+        /// <summary>
+        /// read attributes from csv file
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <param name="mappedUnits"></param>
+        /// <param name="mappedDataTypes"></param>
+        /// <returns></returns>
         public System.Data.DataTable readAttributes(string filePath, System.Data.DataTable mappedUnits, System.Data.DataTable mappedDataTypes)
         {
             string mappingFile = filePath + @"\variableMapping.xlsx";
-            string sheetName = "attributes";
-            long startRow = 5;
-            long endRow = startRow;
 
             System.Data.DataTable mappedAttributes = new System.Data.DataTable();
             mappedAttributes.Columns.Add("Name", typeof(string));
@@ -223,48 +230,55 @@ namespace BExISMigration
             mappedAttributes.Columns.Add("UnitId", typeof(long));
             mappedAttributes.Columns.Add("AttributeId", typeof(long));
 
-            excel_init(mappingFile, sheetName, startRow, ref endRow);
-            for (long i = startRow; i < endRow; i++)
+            StreamReader reader = new StreamReader(filePath + "\\attributes.csv");
+            string line = "";
+            //jump over the first row
+            line = reader.ReadLine();
+
+            while ((line = reader.ReadLine()) != null)
             {
+                // (char)59 = ';'
+                string[] vars = line.Split((char)59);
+
                 System.Data.DataRow newRow = mappedAttributes.NewRow();
-                newRow["Name"] = getValue(i.ToString(), "A");
-                newRow["ShortName"] = getValue(i.ToString(), "B");
-                newRow["Description"] = getValue(i.ToString(), "C");
-                newRow["IsMultipleValue"] = getValue(i.ToString(), "D");
-                newRow["IsBuiltIn"] = getValue(i.ToString(), "E");
-                newRow["Owner"] = getValue(i.ToString(), "F");
-                newRow["ContainerType"] = getValue(i.ToString(), "G");
-                newRow["MeasurementScale"] = getValue(i.ToString(), "H");
-                newRow["EntitySelectionPredicate"] = getValue(i.ToString(), "I");
-                newRow["Self"] = getValue(i.ToString(), "J");
-                string DataType = getValue(i.ToString(), "K");
+                newRow["Name"] = vars[0];
+                newRow["ShortName"] = vars[1];
+                newRow["Description"] = vars[2];
+                newRow["IsMultipleValue"] = vars[3];
+                newRow["IsBuiltIn"] = vars[4];
+                newRow["Owner"] = vars[5];
+                newRow["ContainerType"] = vars[6];
+                newRow["MeasurementScale"] = vars[7];
+                newRow["EntitySelectionPredicate"] = vars[8];
+                newRow["Self"] = vars[9];
+                string DataType = vars[10];
                 newRow["DataType"] = DataType;
-                string UnitAbbreviation = getValue(i.ToString(), "L");
+                string UnitAbbreviation = vars[11];
                 newRow["Unit"] = UnitAbbreviation;
-                newRow["Methodology"] = getValue(i.ToString(), "M");
-                newRow["Constraints"] = getValue(i.ToString(), "N");
-                newRow["ExtendedProperties"] = getValue(i.ToString(), "O");
-                newRow["GlobalizationInfos"] = getValue(i.ToString(), "P");
-                newRow["AggregateFunctions"] = getValue(i.ToString(), "Q");
+                newRow["Methodology"] = vars[12];
+                newRow["Constraints"] = vars[13];
+                newRow["ExtendedProperties"] = vars[14];
+                newRow["GlobalizationInfos"] = vars[15];
+                newRow["AggregateFunctions"] = vars[16];
                 // add DataTypesId and UnitId to the mappedAttributes Table
-                newRow["DataTypeId"] = Convert.ToInt64(mappedDataTypes.Select("Name = '" + DataType + "'").First<System.Data.DataRow>()["DataTypesId"]);
-                newRow["UnitId"] = Convert.ToInt64(mappedUnits.Select("Abbreviation = '" + UnitAbbreviation + "'").First<System.Data.DataRow>()["UnitId"]);
+                newRow["DataTypeId"] = Convert.ToInt64(mappedDataTypes.Select("Name = '" + DataType + "'").First()["DataTypesId"]);
+                newRow["UnitId"] = Convert.ToInt64(mappedUnits.Select("Abbreviation = '" + UnitAbbreviation + "'").First()["UnitId"]);
                 mappedAttributes.Rows.Add(newRow);
             }
-
-            newWorkbook.Close();
 
             return mappedAttributes;
         }
 
 
-        // read units from excel mapping file
+        /// <summary>
+        /// read units from csv file
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <param name="mappedDimensions"></param>
+        /// <returns></returns>
         public System.Data.DataTable readUnits(string filePath, System.Data.DataTable mappedDimensions)
         {
             string mappingFile = filePath + @"\variableMapping.xlsx";
-            string sheetName = "unitMapping";
-            long startRow = 5;
-            long endRow = startRow;
 
             System.Data.DataTable mappedUnits = new System.Data.DataTable();
             mappedUnits.Columns.Add("Name", typeof(string));
@@ -276,37 +290,41 @@ namespace BExISMigration
             mappedUnits.Columns.Add("DimensionId", typeof(long));
             mappedUnits.Columns.Add("UnitId", typeof(long));
 
+            StreamReader reader = new StreamReader(filePath + "\\units.csv");
 
-            excel_init(mappingFile, sheetName, startRow, ref endRow);
-            for (long i = startRow; i < endRow; i++)
+            string line = "";
+            //jump over the first row
+            line = reader.ReadLine();
+
+            while ((line = reader.ReadLine()) != null)
             {
+                // (char)59 = ';'
+                string[] vars = line.Split((char)59);
+
                 System.Data.DataRow newRow = mappedUnits.NewRow();
-                newRow["Name"] = getValue(i.ToString(), "A");
-                newRow["Abbreviation"] = getValue(i.ToString(), "B");
-                newRow["Description"] = getValue(i.ToString(), "C");
-                string DimensionName = getValue(i.ToString(), "D");
+                newRow["Name"] = vars[0];
+                newRow["Abbreviation"] = vars[1];
+                newRow["Description"] = vars[2];
+                string DimensionName = vars[3];
                 newRow["DimensionName"] = DimensionName;
-                newRow["MeasurementSystem"] = getValue(i.ToString(), "E");
-                newRow["DataTypes"] = getValue(i.ToString(), "F");
-                newRow["DimensionId"] = Convert.ToInt64(mappedDimensions.Select("Name = '" + DimensionName + "'").First<System.Data.DataRow>()["DimensionId"]);
+                newRow["MeasurementSystem"] = vars[4];
+                newRow["DataTypes"] = vars[5];
+                newRow["DimensionId"] = Convert.ToInt64(mappedDimensions.Select("Name = '" + DimensionName + "'").First()["DimensionId"]);
                 mappedUnits.Rows.Add(newRow);
             }
-
-            newWorkbook.Close();
 
             return mappedUnits;
         }
 
 
-
-
-        // read dimensions from excel mapping file
+        /// <summary>
+        /// read dimensions from csv file
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <returns></returns>
         public System.Data.DataTable readDimensions(string filePath)
         {
             string mappingFile = filePath + @"\variableMapping.xlsx";
-            string sheetName = "dimensions";
-            long startRow = 2;
-            long endRow = startRow;
 
             System.Data.DataTable mappedDimensions = new System.Data.DataTable();
             mappedDimensions.Columns.Add("Id", typeof(string));
@@ -315,30 +333,36 @@ namespace BExISMigration
             mappedDimensions.Columns.Add("Syntax", typeof(string));
             mappedDimensions.Columns.Add("DimensionId", typeof(long));
 
-            excel_init(mappingFile, sheetName, startRow, ref endRow);
-            for (long i = startRow; i < endRow; i++)
+            StreamReader reader = new StreamReader(filePath + "\\dimensions.csv");
+            string line = "";
+            //jump over the first row
+            line = reader.ReadLine();
+
+            while ((line = reader.ReadLine()) != null)
             {
+                // (char)59 = ';'
+                string[] vars = line.Split((char)59);
+
                 System.Data.DataRow newRow = mappedDimensions.NewRow();
-                newRow["Id"] = getValue(i.ToString(), "A");
-                newRow["Name"] = getValue(i.ToString(), "B");
-                newRow["Syntax"] = getValue(i.ToString(), "C");
-                newRow["Description"] = getValue(i.ToString(), "D");    
+                newRow["Id"] = vars[0];
+                newRow["Name"] = vars[1];
+                newRow["Syntax"] = vars[2];
+                newRow["Description"] = vars[3];
                 mappedDimensions.Rows.Add(newRow);
             }
-
-            newWorkbook.Close();
 
             return mappedDimensions;
         }
 
 
-        // read data types from excel mapping file
+        /// <summary>
+        /// Read data types from csv file
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <returns></returns>
         public System.Data.DataTable readDataTypes(string filePath)
         {
             string mappingFile = filePath + @"\variableMapping.xlsx";
-            string sheetName = "dataTypes";
-            long startRow = 5;
-            long endRow = startRow;
 
             System.Data.DataTable mappedDataTypes = new System.Data.DataTable();
             mappedDataTypes.Columns.Add("Name", typeof(string));
@@ -346,19 +370,25 @@ namespace BExISMigration
             mappedDataTypes.Columns.Add("SystemType", typeof(string));
             mappedDataTypes.Columns.Add("DataTypesId", typeof(long));
 
-            excel_init(mappingFile, sheetName, startRow, ref endRow);
-            for (long i = startRow; i < endRow; i++)
+            StreamReader reader = new StreamReader(filePath + "\\datatypes.csv");
+
+            string line = "";
+            //jump over the first row
+            line = reader.ReadLine();
+
+            while ((line = reader.ReadLine()) != null)
             {
+                // (char)59 = ';'
+                string[] vars = line.Split((char)59);
+
                 System.Data.DataRow newRow = mappedDataTypes.NewRow();
-                newRow["Name"] = getValue(i.ToString(), "A");
-                newRow["Description"] = getValue(i.ToString(), "B");
-                newRow["SystemType"] = getValue(i.ToString(), "C");
+                newRow["Name"] = vars[0];
+                newRow["Description"] = vars[1]; 
+                newRow["SystemType"] = vars[2]; 
                 mappedDataTypes.Rows.Add(newRow);
             }
-
-            newWorkbook.Close();
-
-            return mappedDataTypes;
+            
+          return mappedDataTypes;
         }
 
 
