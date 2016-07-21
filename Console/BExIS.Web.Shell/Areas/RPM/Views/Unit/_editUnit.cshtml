@@ -217,16 +217,27 @@ else
         $('#Unit_Dimension_Name').val($("#Unit_Dimension_Name_ComboBox-input").val());
 
         var dimensionArray = [@dimensionArray];
-        $('#Unit_Dimension_Specification').prop('disabled', false);
+       
         
-        for (var i = 0; i < dimensionArray.length; i++)
-        {
-            if (dimensionArray[i][0] == temp)
-            {
-                $('#Unit_Dimension_Specification').val(dimensionArray[i][1]);
-                $('#Unit_Dimension_Specification').prop('disabled', true);
-                $('#Unit_Dimension_Description').text(dimensionArray[i][2]);
+        if (temp != 0) {
+            for (var i = 0; i < dimensionArray.length; i++) {
+                if (dimensionArray[i][0] == temp) {
+                    $('#Unit_Dimension_Specification').val(dimensionArray[i][1]);
+                    $('#Unit_Dimension_Specification').prop('disabled', true);
+                    if (dimensionArray[i][2] != "" && dimensionArray[i][2] != null) {
+                        $('#Unit_Dimension_Description').text('for example ' + dimensionArray[i][2]);
+                    }
+                    else
+                    {
+                        $('#Unit_Dimension_Description').text('');
+                    }
+                }
             }
+        }
+        else {
+            $('#Unit_Dimension_Specification').val('');
+            $('#Unit_Dimension_Specification').prop('disabled', false);
+            $('#Unit_Dimension_Description').text('');
         }
     }
    
