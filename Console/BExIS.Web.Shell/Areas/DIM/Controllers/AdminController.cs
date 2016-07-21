@@ -134,7 +134,7 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
 
                     xmlMapperManager.Load(path_mapping_file, GetUsernameOrDefault());
 
-                    return xmlMapperManager.Export(datasetVersion.Metadata, datasetVersion.Id);
+                    return xmlMapperManager.Export(datasetVersion.Metadata,datasetVersion.Id, fileName);
             }
             catch(Exception ex)
             {

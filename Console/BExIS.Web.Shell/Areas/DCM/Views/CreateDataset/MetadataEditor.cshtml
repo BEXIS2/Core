@@ -62,14 +62,8 @@
 
                     @*<span id="showAll" title="switch visibility of optional elements" onclick="switchVisibilityOfOptionalElements()" class="bx-function @showAllClass" style="font-size: 25px; height: 100%" />*@
                     @Html.CheckBox("showAll", @hideOptional, new {OnChange = "switchVisibilityOfOptionalElements()", Name = "showAll", Id = "showAll"})
-                    @if (@hideOptional)
-                    {
-                        <b>show all optional</b>
-                    }
-                    else
-                    {
-                        <b>hide all optional</b>
-                    }
+
+                    <b>hide all optional</b>
 
                 </td>
 

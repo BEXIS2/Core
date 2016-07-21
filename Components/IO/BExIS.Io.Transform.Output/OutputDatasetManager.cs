@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -67,6 +68,11 @@ namespace BExIS.IO.Transform.Output
             string description = XmlDatasetHelper.GetInformation(datasetId, NameAttributeValues.description);
 
             return gfbioPangaeaFormularObject;
+        }
+
+        public static string GetDynamicDatasetStorePath(long datasetId, long datasetVersionOrderNr, string title, string extention)
+        {
+            return IoHelper.GetDynamicStorePath(datasetId, datasetVersionOrderNr, title, extention);
         }
 
     }

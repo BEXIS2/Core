@@ -104,6 +104,10 @@
       <Project>{c4ca0a99-0af3-4372-a9b7-b9073599bd8b}</Project>
       <Name>BExIS.Dlm.Services</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\IO\BExIS.IO\BExIS.IO.csproj">
+      <Project>{e4795f06-20c2-4c4c-a720-9a79896384df}</Project>
+      <Name>BExIS.IO</Name>
+    </ProjectReference>
     <ProjectReference Include="..\BExIS.Xml.Models\BExIS.Xml.Models.csproj">
       <Project>{c0c9f0f2-9e65-448d-8000-d311db326460}</Project>
       <Name>BExIS.Xml.Models</Name>
