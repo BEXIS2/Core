@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Microsoft.Office.Interop.Excel;
-using BExIS.IO.Transform;
-using BExIS.IO.Transform.Input;
+//using Microsoft.Office.Interop.Excel;
+//using BExIS.IO.Transform;
+//using BExIS.IO.Transform.Input;
 using System.IO;
 
 namespace BExISMigration
@@ -12,8 +12,8 @@ namespace BExISMigration
     public class MappingReader
     {
         private static Microsoft.Office.Interop.Excel.Application appExcel;
-        private static Workbook newWorkbook = null;
-        private static _Worksheet objsheet = null;
+        //private static Workbook newWorkbook = null;
+        //private static _Worksheet objsheet = null;
 
         // read variables from TSV (tab seperated values) mapping file
         public System.Data.DataTable readVariablesTSV(string filePath, System.Data.DataTable mappedAttributes, System.Data.DataTable mappedUnits)
@@ -80,121 +80,121 @@ namespace BExISMigration
 
 
         // read variables from XLSX mapping file for only one dataset
-        public System.Data.DataTable readVariables(string filePath, string dataSetID, System.Data.DataTable mappedAttributes, System.Data.DataTable mappedUnits)
-        {
-            string mappingFile = filePath + @"\variableMapping.xlsx";
-            string sheetName = "mapping";
-            long startRow = 2;
-            long endRow = startRow;
+        //public System.Data.DataTable readVariables(string filePath, string dataSetID, System.Data.DataTable mappedAttributes, System.Data.DataTable mappedUnits)
+        //{
+        //    string mappingFile = filePath + @"\variableMapping.xlsx";
+        //    string sheetName = "mapping";
+        //    long startRow = 2;
+        //    long endRow = startRow;
 
-            System.Data.DataTable mappedVariables = new System.Data.DataTable();
-            mappedVariables.Columns.Add("DatasetId", typeof(string));
-            mappedVariables.Columns.Add("Name", typeof(string));
-            mappedVariables.Columns.Add("Description", typeof(string));
-            mappedVariables.Columns.Add("Block", typeof(int));
-            mappedVariables.Columns.Add("Attribute", typeof(string));
-            mappedVariables.Columns.Add("Unit", typeof(string));
-            mappedVariables.Columns.Add("ConvFactor", typeof(string));
-            mappedVariables.Columns.Add("AttributeId", typeof(long));
-            mappedVariables.Columns.Add("UnitId", typeof(long));
-            mappedVariables.Columns.Add("VarUnitId", typeof(long));
+        //    System.Data.DataTable mappedVariables = new System.Data.DataTable();
+        //    mappedVariables.Columns.Add("DatasetId", typeof(string));
+        //    mappedVariables.Columns.Add("Name", typeof(string));
+        //    mappedVariables.Columns.Add("Description", typeof(string));
+        //    mappedVariables.Columns.Add("Block", typeof(int));
+        //    mappedVariables.Columns.Add("Attribute", typeof(string));
+        //    mappedVariables.Columns.Add("Unit", typeof(string));
+        //    mappedVariables.Columns.Add("ConvFactor", typeof(string));
+        //    mappedVariables.Columns.Add("AttributeId", typeof(long));
+        //    mappedVariables.Columns.Add("UnitId", typeof(long));
+        //    mappedVariables.Columns.Add("VarUnitId", typeof(long));
 
-            excel_init(mappingFile, sheetName, startRow, ref endRow);
+        //    excel_init(mappingFile, sheetName, startRow, ref endRow);
 
-            for (long i = startRow; i < endRow; i++)
-            {
-                System.Data.DataRow newRow = mappedVariables.NewRow();
-                if (getValue(i.ToString(), "A") == dataSetID)
-                {
-                    newRow["DatasetId"] = getValue(i.ToString(), "A");
-                    newRow["Name"] = getValue(i.ToString(), "B");
-                    newRow["Description"] = getValue(i.ToString(), "E");
-                    string AttributeShortName = getValue(i.ToString(), "F");
-                    newRow["Attribute"] = AttributeShortName;
-                    string variableUnit = getValue(i.ToString(), "G");
-                    newRow["Unit"] = variableUnit;
-                    newRow["ConvFactor"] = getValue(i.ToString(), "H");
-                    newRow["Block"] = int.Parse(getValue(i.ToString(), "I"));
-                    if (AttributeShortName.Length > 1) // if not mapped yet
-                    {
-                        // select related attribute as row from mappedAttributes Table
-                        System.Data.DataRow mappedAttributesRow = mappedAttributes.Select("ShortName = '" + AttributeShortName + "'").First<System.Data.DataRow>();
-                        // add related attributeId and unitId to the mappedVariables Table
-                        newRow["AttributeId"] = Convert.ToInt64(mappedAttributesRow["AttributeId"]);
-                        newRow["UnitId"] = Convert.ToInt64(mappedAttributesRow["UnitId"]);
-                    }
-                    if (variableUnit.Length > 0) // if dimensioned
-                    {
-                        // select related unit as row of mappedUnits
-                        System.Data.DataRow mappedUnitsRow = mappedUnits.Select("Abbreviation = '" + variableUnit + "'").First<System.Data.DataRow>();
-                        // add related UnitId of variable Unit to the mappedVariables Table
-                        newRow["VarUnitId"] = Convert.ToInt64(mappedUnitsRow["UnitId"]);
-                    }
-                    mappedVariables.Rows.Add(newRow);
-                }
-            }
+        //    for (long i = startRow; i < endRow; i++)
+        //    {
+        //        System.Data.DataRow newRow = mappedVariables.NewRow();
+        //        if (getValue(i.ToString(), "A") == dataSetID)
+        //        {
+        //            newRow["DatasetId"] = getValue(i.ToString(), "A");
+        //            newRow["Name"] = getValue(i.ToString(), "B");
+        //            newRow["Description"] = getValue(i.ToString(), "E");
+        //            string AttributeShortName = getValue(i.ToString(), "F");
+        //            newRow["Attribute"] = AttributeShortName;
+        //            string variableUnit = getValue(i.ToString(), "G");
+        //            newRow["Unit"] = variableUnit;
+        //            newRow["ConvFactor"] = getValue(i.ToString(), "H");
+        //            newRow["Block"] = int.Parse(getValue(i.ToString(), "I"));
+        //            if (AttributeShortName.Length > 1) // if not mapped yet
+        //            {
+        //                // select related attribute as row from mappedAttributes Table
+        //                System.Data.DataRow mappedAttributesRow = mappedAttributes.Select("ShortName = '" + AttributeShortName + "'").First<System.Data.DataRow>();
+        //                // add related attributeId and unitId to the mappedVariables Table
+        //                newRow["AttributeId"] = Convert.ToInt64(mappedAttributesRow["AttributeId"]);
+        //                newRow["UnitId"] = Convert.ToInt64(mappedAttributesRow["UnitId"]);
+        //            }
+        //            if (variableUnit.Length > 0) // if dimensioned
+        //            {
+        //                // select related unit as row of mappedUnits
+        //                System.Data.DataRow mappedUnitsRow = mappedUnits.Select("Abbreviation = '" + variableUnit + "'").First<System.Data.DataRow>();
+        //                // add related UnitId of variable Unit to the mappedVariables Table
+        //                newRow["VarUnitId"] = Convert.ToInt64(mappedUnitsRow["UnitId"]);
+        //            }
+        //            mappedVariables.Rows.Add(newRow);
+        //        }
+        //    }
 
-            newWorkbook.Close();
+        //    newWorkbook.Close();
 
-            return mappedVariables;
-        }
+        //    return mappedVariables;
+        //}
 
 
         // read variables from XLSX mapping file
-        public System.Data.DataTable readVariables(string filePath, System.Data.DataTable mappedAttributes, System.Data.DataTable mappedUnits)
-        {
-            string mappingFile = filePath + @"\variableMapping.xlsx";
-            string sheetName = "mapping";
-            long startRow = 2;
-            long endRow = startRow;
+        //public System.Data.DataTable readVariables(string filePath, System.Data.DataTable mappedAttributes, System.Data.DataTable mappedUnits)
+        //{
+        //    string mappingFile = filePath + @"\variableMapping.xlsx";
+        //    string sheetName = "mapping";
+        //    long startRow = 2;
+        //    long endRow = startRow;
 
-            System.Data.DataTable mappedVariables = new System.Data.DataTable();
-            mappedVariables.Columns.Add("DatasetId", typeof(string));
-            mappedVariables.Columns.Add("Name", typeof(string));
-            mappedVariables.Columns.Add("Description", typeof(string));
-            mappedVariables.Columns.Add("Block", typeof(int));
-            mappedVariables.Columns.Add("Attribute", typeof(string));
-            mappedVariables.Columns.Add("Unit", typeof(string));
-            mappedVariables.Columns.Add("ConvFactor", typeof(string));
-            mappedVariables.Columns.Add("AttributeId", typeof(long));
-            mappedVariables.Columns.Add("UnitId", typeof(long));
-            mappedVariables.Columns.Add("VarUnitId", typeof(long));
+        //    System.Data.DataTable mappedVariables = new System.Data.DataTable();
+        //    mappedVariables.Columns.Add("DatasetId", typeof(string));
+        //    mappedVariables.Columns.Add("Name", typeof(string));
+        //    mappedVariables.Columns.Add("Description", typeof(string));
+        //    mappedVariables.Columns.Add("Block", typeof(int));
+        //    mappedVariables.Columns.Add("Attribute", typeof(string));
+        //    mappedVariables.Columns.Add("Unit", typeof(string));
+        //    mappedVariables.Columns.Add("ConvFactor", typeof(string));
+        //    mappedVariables.Columns.Add("AttributeId", typeof(long));
+        //    mappedVariables.Columns.Add("UnitId", typeof(long));
+        //    mappedVariables.Columns.Add("VarUnitId", typeof(long));
 
-            excel_init(mappingFile, sheetName, startRow, ref endRow);
-            for (long i = startRow; i < endRow; i++)
-            {
-                System.Data.DataRow newRow = mappedVariables.NewRow();
-                newRow["DatasetId"] = getValue(i.ToString(), "A");
-                newRow["Name"] = getValue(i.ToString(), "B");
-                newRow["Description"] = getValue(i.ToString(), "E");
-                string AttributeShortName = getValue(i.ToString(), "F");
-                newRow["Attribute"] = AttributeShortName;
-                string variableUnit = getValue(i.ToString(), "G");
-                newRow["Unit"] = variableUnit;
-                newRow["ConvFactor"] = getValue(i.ToString(), "H");
-                newRow["Block"] = int.Parse(getValue(i.ToString(), "I"));
-                if (AttributeShortName.Length > 1) // if not mapped yet
-                {
-                    // select related attribute as row from mappedAttributes Table
-                    System.Data.DataRow mappedAttributesRow = mappedAttributes.Select("ShortName = '" + AttributeShortName + "'").First<System.Data.DataRow>();
-                    // add related attributeId and unitId to the mappedVariables Table
-                    newRow["AttributeId"] = Convert.ToInt64(mappedAttributesRow["AttributeId"]);
-                    newRow["UnitId"] = Convert.ToInt64(mappedAttributesRow["UnitId"]);
-                }
-                if (variableUnit.Length > 0) // if dimensioned
-                {
-                    // select related unit as row of mappedUnits
-                    System.Data.DataRow mappedUnitsRow = mappedUnits.Select("Abbreviation = '" + variableUnit + "'").First<System.Data.DataRow>();
-                    // add related UnitId of variable Unit to the mappedVariables Table
-                    newRow["VarUnitId"] = Convert.ToInt64(mappedUnitsRow["UnitId"]);
-                }
-                mappedVariables.Rows.Add(newRow);
-            }
+        //    excel_init(mappingFile, sheetName, startRow, ref endRow);
+        //    for (long i = startRow; i < endRow; i++)
+        //    {
+        //        System.Data.DataRow newRow = mappedVariables.NewRow();
+        //        newRow["DatasetId"] = getValue(i.ToString(), "A");
+        //        newRow["Name"] = getValue(i.ToString(), "B");
+        //        newRow["Description"] = getValue(i.ToString(), "E");
+        //        string AttributeShortName = getValue(i.ToString(), "F");
+        //        newRow["Attribute"] = AttributeShortName;
+        //        string variableUnit = getValue(i.ToString(), "G");
+        //        newRow["Unit"] = variableUnit;
+        //        newRow["ConvFactor"] = getValue(i.ToString(), "H");
+        //        newRow["Block"] = int.Parse(getValue(i.ToString(), "I"));
+        //        if (AttributeShortName.Length > 1) // if not mapped yet
+        //        {
+        //            // select related attribute as row from mappedAttributes Table
+        //            System.Data.DataRow mappedAttributesRow = mappedAttributes.Select("ShortName = '" + AttributeShortName + "'").First<System.Data.DataRow>();
+        //            // add related attributeId and unitId to the mappedVariables Table
+        //            newRow["AttributeId"] = Convert.ToInt64(mappedAttributesRow["AttributeId"]);
+        //            newRow["UnitId"] = Convert.ToInt64(mappedAttributesRow["UnitId"]);
+        //        }
+        //        if (variableUnit.Length > 0) // if dimensioned
+        //        {
+        //            // select related unit as row of mappedUnits
+        //            System.Data.DataRow mappedUnitsRow = mappedUnits.Select("Abbreviation = '" + variableUnit + "'").First<System.Data.DataRow>();
+        //            // add related UnitId of variable Unit to the mappedVariables Table
+        //            newRow["VarUnitId"] = Convert.ToInt64(mappedUnitsRow["UnitId"]);
+        //        }
+        //        mappedVariables.Rows.Add(newRow);
+        //    }
 
-            newWorkbook.Close();
+        //    newWorkbook.Close();
 
-            return mappedVariables;
-        }
+        //    return mappedVariables;
+        //}
 
 
         /// <summary>
@@ -229,41 +229,44 @@ namespace BExISMigration
             mappedAttributes.Columns.Add("DataTypeId", typeof(long));
             mappedAttributes.Columns.Add("UnitId", typeof(long));
             mappedAttributes.Columns.Add("AttributeId", typeof(long));
-
-            StreamReader reader = new StreamReader(filePath + "\\attributes.csv");
-            string line = "";
-            //jump over the first row
-            line = reader.ReadLine();
-
-            while ((line = reader.ReadLine()) != null)
+           
+            if(File.Exists(filePath + "\\attributes.csv") && File.Exists(filePath + "\\datatypes.csv") && File.Exists(filePath + "\\units.csv"))
             {
-                // (char)59 = ';'
-                string[] vars = line.Split((char)59);
+                StreamReader reader = new StreamReader(filePath + "\\attributes.csv");
+                string line = "";
+                //jump over the first row
+                line = reader.ReadLine();
 
-                System.Data.DataRow newRow = mappedAttributes.NewRow();
-                newRow["Name"] = vars[0];
-                newRow["ShortName"] = vars[1];
-                newRow["Description"] = vars[2];
-                newRow["IsMultipleValue"] = vars[3];
-                newRow["IsBuiltIn"] = vars[4];
-                newRow["Owner"] = vars[5];
-                newRow["ContainerType"] = vars[6];
-                newRow["MeasurementScale"] = vars[7];
-                newRow["EntitySelectionPredicate"] = vars[8];
-                newRow["Self"] = vars[9];
-                string DataType = vars[10];
-                newRow["DataType"] = DataType;
-                string UnitAbbreviation = vars[11];
-                newRow["Unit"] = UnitAbbreviation;
-                newRow["Methodology"] = vars[12];
-                newRow["Constraints"] = vars[13];
-                newRow["ExtendedProperties"] = vars[14];
-                newRow["GlobalizationInfos"] = vars[15];
-                newRow["AggregateFunctions"] = vars[16];
-                // add DataTypesId and UnitId to the mappedAttributes Table
-                newRow["DataTypeId"] = Convert.ToInt64(mappedDataTypes.Select("Name = '" + DataType + "'").First()["DataTypesId"]);
-                newRow["UnitId"] = Convert.ToInt64(mappedUnits.Select("Abbreviation = '" + UnitAbbreviation + "'").First()["UnitId"]);
-                mappedAttributes.Rows.Add(newRow);
+                while ((line = reader.ReadLine()) != null)
+                {
+                    // (char)59 = ';'
+                    string[] vars = line.Split((char)59);
+
+                    System.Data.DataRow newRow = mappedAttributes.NewRow();
+                    newRow["Name"] = vars[0];
+                    newRow["ShortName"] = vars[1];
+                    newRow["Description"] = vars[2];
+                    newRow["IsMultipleValue"] = vars[3];
+                    newRow["IsBuiltIn"] = vars[4];
+                    newRow["Owner"] = vars[5];
+                    newRow["ContainerType"] = vars[6];
+                    newRow["MeasurementScale"] = vars[7];
+                    newRow["EntitySelectionPredicate"] = vars[8];
+                    newRow["Self"] = vars[9];
+                    string DataType = vars[10];
+                    newRow["DataType"] = DataType;
+                    string UnitAbbreviation = vars[11];
+                    newRow["Unit"] = UnitAbbreviation;
+                    newRow["Methodology"] = vars[12];
+                    newRow["Constraints"] = vars[13];
+                    newRow["ExtendedProperties"] = vars[14];
+                    newRow["GlobalizationInfos"] = vars[15];
+                    newRow["AggregateFunctions"] = vars[16];
+                    // add DataTypesId and UnitId to the mappedAttributes Table
+                    newRow["DataTypeId"] = Convert.ToInt64(mappedDataTypes.Select("Name = '" + DataType + "'").First()["DataTypesId"]);
+                    newRow["UnitId"] = Convert.ToInt64(mappedUnits.Select("Abbreviation = '" + UnitAbbreviation + "'").First()["UnitId"]);
+                    mappedAttributes.Rows.Add(newRow);
+                }
             }
 
             return mappedAttributes;
@@ -290,29 +293,32 @@ namespace BExISMigration
             mappedUnits.Columns.Add("DimensionId", typeof(long));
             mappedUnits.Columns.Add("UnitId", typeof(long));
 
-            StreamReader reader = new StreamReader(filePath + "\\units.csv");
-
-            string line = "";
-            //jump over the first row
-            line = reader.ReadLine();
-
-            while ((line = reader.ReadLine()) != null)
+            if (File.Exists(filePath + "\\units.csv") && File.Exists(filePath + "\\dimensions.csv")) 
             {
-                // (char)59 = ';'
-                string[] vars = line.Split((char)59);
+                StreamReader reader = new StreamReader(filePath + "\\units.csv");
 
-                System.Data.DataRow newRow = mappedUnits.NewRow();
-                newRow["Name"] = vars[0];
-                newRow["Abbreviation"] = vars[1];
-                newRow["Description"] = vars[2];
-                string DimensionName = vars[3];
-                newRow["DimensionName"] = DimensionName;
-                newRow["MeasurementSystem"] = vars[4];
-                newRow["DataTypes"] = vars[5];
-                newRow["DimensionId"] = Convert.ToInt64(mappedDimensions.Select("Name = '" + DimensionName + "'").First()["DimensionId"]);
-                mappedUnits.Rows.Add(newRow);
+                string line = "";
+                //jump over the first row
+                line = reader.ReadLine();
+
+                while ((line = reader.ReadLine()) != null)
+                {
+                    // (char)59 = ';'
+                    string[] vars = line.Split((char)59);
+
+                    System.Data.DataRow newRow = mappedUnits.NewRow();
+                    newRow["Name"] = vars[0];
+                    newRow["Abbreviation"] = vars[1];
+                    newRow["Description"] = vars[2];
+                    string DimensionName = vars[3];
+                    newRow["DimensionName"] = DimensionName;
+                    newRow["MeasurementSystem"] = vars[4];
+                    newRow["DataTypes"] = vars[5];
+                    newRow["DimensionId"] = Convert.ToInt64(mappedDimensions.Select("Name = '" + DimensionName + "'").First()["DimensionId"]);
+                    mappedUnits.Rows.Add(newRow);
+                }
             }
-
+            
             return mappedUnits;
         }
 
@@ -333,22 +339,25 @@ namespace BExISMigration
             mappedDimensions.Columns.Add("Syntax", typeof(string));
             mappedDimensions.Columns.Add("DimensionId", typeof(long));
 
-            StreamReader reader = new StreamReader(filePath + "\\dimensions.csv");
-            string line = "";
-            //jump over the first row
-            line = reader.ReadLine();
-
-            while ((line = reader.ReadLine()) != null)
+            if (File.Exists(filePath + "\\dimensions.csv"))
             {
-                // (char)59 = ';'
-                string[] vars = line.Split((char)59);
+                StreamReader reader = new StreamReader(filePath + "\\dimensions.csv");
+                string line = "";
+                //jump over the first row
+                line = reader.ReadLine();
 
-                System.Data.DataRow newRow = mappedDimensions.NewRow();
-                newRow["Id"] = vars[0];
-                newRow["Name"] = vars[1];
-                newRow["Syntax"] = vars[2];
-                newRow["Description"] = vars[3];
-                mappedDimensions.Rows.Add(newRow);
+                while ((line = reader.ReadLine()) != null)
+                {
+                    // (char)59 = ';'
+                    string[] vars = line.Split((char)59);
+
+                    System.Data.DataRow newRow = mappedDimensions.NewRow();
+                    newRow["Id"] = vars[0];
+                    newRow["Name"] = vars[1];
+                    newRow["Syntax"] = vars[2];
+                    newRow["Description"] = vars[3];
+                    mappedDimensions.Rows.Add(newRow);
+                }
             }
 
             return mappedDimensions;
@@ -370,22 +379,26 @@ namespace BExISMigration
             mappedDataTypes.Columns.Add("SystemType", typeof(string));
             mappedDataTypes.Columns.Add("DataTypesId", typeof(long));
 
-            StreamReader reader = new StreamReader(filePath + "\\datatypes.csv");
-
-            string line = "";
-            //jump over the first row
-            line = reader.ReadLine();
-
-            while ((line = reader.ReadLine()) != null)
+            if (File.Exists(filePath + "\\datatypes.csv"))
             {
-                // (char)59 = ';'
-                string[] vars = line.Split((char)59);
 
-                System.Data.DataRow newRow = mappedDataTypes.NewRow();
-                newRow["Name"] = vars[0];
-                newRow["Description"] = vars[1]; 
-                newRow["SystemType"] = vars[2]; 
-                mappedDataTypes.Rows.Add(newRow);
+                StreamReader reader = new StreamReader(filePath + "\\datatypes.csv");
+
+                string line = "";
+                //jump over the first row
+                line = reader.ReadLine();
+
+                while ((line = reader.ReadLine()) != null)
+                {
+                    // (char)59 = ';'
+                    string[] vars = line.Split((char)59);
+
+                    System.Data.DataRow newRow = mappedDataTypes.NewRow();
+                    newRow["Name"] = vars[0];
+                    newRow["Description"] = vars[1];
+                    newRow["SystemType"] = vars[2];
+                    mappedDataTypes.Rows.Add(newRow);
+                }
             }
             
           return mappedDataTypes;
@@ -394,40 +407,40 @@ namespace BExISMigration
 
         //////////////////////////////////////////////////////////////////////////////////////////////////
         // helper methods
-        #region helper methods
+    //    #region helper methods
 
-        //Method to initialize opening Excel
-        static void excel_init(String path, string sheetName, long startRow, ref long endRow)
-        {
-            appExcel = new Microsoft.Office.Interop.Excel.Application();
+    //    //Method to initialize opening Excel
+    //    static void excel_init(String path, string sheetName, long startRow, ref long endRow)
+    //    {
+    //        appExcel = new Microsoft.Office.Interop.Excel.Application();
 
-            if (System.IO.File.Exists(path))
-            {
-                newWorkbook = appExcel.Workbooks.Open(path, true, true);
-                objsheet = (_Worksheet)appExcel.Sheets[sheetName];
-                string rangeCell = "A" + startRow.ToString();
-                Range range = objsheet.get_Range(rangeCell);
-                range = range.get_End(XlDirection.xlDown);
-                endRow = range.Row + 1;
-            }
-        }
+    //        if (System.IO.File.Exists(path))
+    //        {
+    //            newWorkbook = appExcel.Workbooks.Open(path, true, true);
+    //            objsheet = (_Worksheet)appExcel.Sheets[sheetName];
+    //            string rangeCell = "A" + startRow.ToString();
+    //            Range range = objsheet.get_Range(rangeCell);
+    //            range = range.get_End(XlDirection.xlDown);
+    //            endRow = range.Row + 1;
+    //        }
+    //    }
 
-        //Method to get a cell value
-        static string getValue(string rowId, string columId)
-        {
-            string cellname = columId + rowId;
-            string value = string.Empty;
-            try
-            {
-                value = objsheet.get_Range(cellname).get_Value().ToString();
-            }
-            catch
-            {
-                value = "";
-            }
-            return value;
-        }
+    //    //Method to get a cell value
+    //    static string getValue(string rowId, string columId)
+    //    {
+    //        string cellname = columId + rowId;
+    //        string value = string.Empty;
+    //        try
+    //        {
+    //            value = objsheet.get_Range(cellname).get_Value().ToString();
+    //        }
+    //        catch
+    //        {
+    //            value = "";
+    //        }
+    //        return value;
+    //    }
 
-        #endregion
+    //    #endregion
     }
 }
