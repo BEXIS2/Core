@@ -23,9 +23,11 @@ using Vaiona.Logging.Aspects;
 using BExIS.IO.Transform.Output;
 using NHibernate.Criterion;
 using System.IO;
+using System.Xml.Schema;
 using BExIS.IO;
 using Vaiona.Utils.Cfg;
 using Ionic.Zip;
+using Microsoft.Xml.XMLGen;
 
 namespace BExIS.Web.Shell.Controllers
 {
@@ -40,7 +42,34 @@ namespace BExIS.Web.Shell.Controllers
 
             model = DynamicListToDataTable();
 
+            //string filepath = @"D:\BEXIS APP\GIT\Code\Workspace\Modules\DCM\Metadata\Eml\eml.xsd";
+            //string destinationPath = @"D:\BEXIS APP\GIT\Code\Workspace\Modules\DCM\Metadata\Eml\test.xml";
+            //XmlReaderSettings settings2 = new XmlReaderSettings();
+            //settings2.DtdProcessing = DtdProcessing.Ignore;
+
+            //XmlSchema Schema = new XmlSchema();
+            //XmlReader xsd_file = XmlReader.Create(filepath, settings2);
+            //Schema = XmlSchema.Read(xsd_file, verifyErrors);
+
+            //XmlQualifiedName qname = new XmlQualifiedName("eml",
+            //               "eml://ecoinformatics.org/eml-2.1.1");
+
+            //XmlTextWriter textWriter = new XmlTextWriter(destinationPath, null);
+
+            //XmlSampleGenerator xsg = new XmlSampleGenerator(Schema,qname);
+            //xsg.WriteXml(textWriter);
+
+
             return View(model);
+        }
+
+        //event handler to manage the errors
+        private void verifyErrors(object sender, ValidationEventArgs args)
+        {
+            if (args.Severity == XmlSeverityType.Warning)
+            {
+                //Debug.Writeline(args.Message);
+            }
         }
 
         public ActionResult sendForm(UiTestModel model)
@@ -105,15 +134,20 @@ namespace BExIS.Web.Shell.Controllers
                     
                     odm.GenerateAsciiFile(testdatasetId, title, gfbio.PrimaryDataFormat);
                 }
-                string zipName = testdatasetId + "_" + dsv.Id + "_Dataset.zip";
-                string zipPath = Path.Combine(AppConfiguration.DataPath, "Datasets", testdatasetId.ToString(), zipName);
 
+                string zipName = pm.GetZipFileName(testdatasetId, dsv.Id);
+                string zipPath = pm.GetDirectoryPath(testdatasetId, gfbio);
+                string zipFilePath = Path.Combine(zipPath, zipName);
 
-                if (FileHelper.FileExist(zipPath))
+                FileHelper.CreateDicrectoriesIfNotExist(Path.GetDirectoryName(zipFilePath));
+
+                
+
+                if (FileHelper.FileExist(zipFilePath))
                 {
-                    if (FileHelper.WaitForFile(zipPath))
+                    if (FileHelper.WaitForFile(zipFilePath))
                     {
-                        FileHelper.Delete(zipPath);
+                        FileHelper.Delete(zipFilePath);
                     }
                 }
 
@@ -129,9 +163,7 @@ namespace BExIS.Web.Shell.Controllers
                         zip.AddFile(path, "");
                     }
                 }
-
-                zip.Save(zipPath);
-
+                zip.Save(zipFilePath);
             }
             else
             {

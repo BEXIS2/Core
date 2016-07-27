@@ -1,0 +1,36 @@
+﻿@model BExIS.Web.Shell.Areas.DDM.Models.DataRepoRequirentModel
+
+@{
+    bool IsActive = (Model.IsMetadataConvertable && Model.IsDataConvertable);
+}
+
+
+@if (Model.Exist)
+{
+    <span>Dataset with Id @Model.DatasetId and Version @Model.DatasetVersionId is prepared for @Model.DataRepository.Name.</span>
+}
+else
+{
+
+    <table style="width: 200px;">
+        <tr>
+            <td>Metadata</td>
+            <td style="width: 30px;">@Model.IsMetadataConvertable</td>
+        </tr>
+        <tr >
+            <td>Data</td>
+            <td style="width: 30px;">@Model.IsDataConvertable</td>
+        </tr>
+    </table>
+
+}
+
+
+@if (IsActive)
+{
+    @Html.ActionLink("Submit", "PrepareData", "Data", new { datasetId= @Model.DatasetId, datarepo = @Model.DataRepository.Name}, new { @class = "bx-button function"})
+}
+else
+{
+    <button class="bx-button function bx-disabled" disabled="disabled" >Select data repository to publish</button>
+}

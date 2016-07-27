@@ -253,6 +253,9 @@
       <HintPath>..\..\packages\Microsoft.AspNet.WebPages.WebData.3.2.3\lib\net45\WebMatrix.WebData.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="XmlSampleGenerator">
+      <HintPath>..\..\..\..\..\RDB\GIT\packages\Microsoft.Xml.XMLGen.1.0.0\lib\XmlSampleGenerator.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_GlobalResources\EditorLocalization.de-DE.designer.cs">
@@ -384,6 +387,7 @@
     <Compile Include="Areas\DDM\Models\ShowHelpModel.cs" />
     <Compile Include="Areas\DDM\Models\ShowMetadataModel.cs" />
     <Compile Include="Areas\DDM\Models\ShowPrimaryDataModel.cs" />
+    <Compile Include="Areas\DDM\Models\ShowPublishDataModel.cs" />
     <Compile Include="Areas\DIM\Controllers\AdminController.cs" />
     <Compile Include="Areas\DIM\Controllers\DataController.cs" />
     <Compile Include="Areas\DIM\Controllers\ExportGFBIOController.cs" />
@@ -646,6 +650,8 @@
     <Content Include="fonts\fontawesome-webfont.woff" />
     <Content Include="fonts\fontawesome-webfont.ttf" />
     <Content Include="fonts\fontawesome-webfont.eot" />
+    <Content Include="Areas\DDM\Views\Data\_showPublishDataView.cshtml" />
+    <Content Include="Areas\DDM\Views\Data\_dataRepositoryRequirementsView.cshtml" />
     <None Include="Properties\PublishProfiles\bexisconf.pubxml" />
     <Content Include="Areas\SAM\Views\Tenants\_Create.cshtml" />
     <Content Include="Areas\SAM\Views\Tenants\_Edit.cshtml" />

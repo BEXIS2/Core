@@ -1,0 +1,85 @@
+﻿@using BExIS.Dim.Entities
+@using Lucene.Net.Support
+@using System.Web.Mvc
+@model BExIS.Web.Shell.Areas.DDM.Models.ShowPublishDataModel
+
+@{
+    List<string> datarepolist = Model.DataRepositories.Select(d => d.Name).ToList();
+}
+
+<div class="row" style="min-height: 200px">
+    <div class="col-lg-8">
+        <table>
+            <tr>
+                <th>File</th>
+                <th>Data Repository</th>
+                <th>Status</th>
+            </tr>
+            @if (Model.RepoFilesDictionary.Count > 0)
+            {
+                foreach (var repo in Model.RepoFilesDictionary)
+                {
+                    List<string> files = Model.RepoFilesDictionary[repo.Key];
+                    <tr>
+                        @foreach (string file in files)
+                        {
+                            <td>
+                                @file
+                            </td>
+                            <td>
+                                @repo.Key
+                            </td>
+                            <td>
+                                no status available
+                            </td>
+                        }
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr><td>empty</td></tr>
+            }
+        </table>
+    </div>
+    <div id="publishingOptionsContainer" class="col-lg-4" style="text-align: -webkit-left;">
+
+        @(Html.Telerik().DropDownList()
+                    .Placeholder("Select")
+                    .Name("SelectDataRepository")
+                    .ClientEvents(events => events.OnChange("onSelectDataRepositoryDropDownChange"))
+                    .BindTo(new SelectList(datarepolist)))
+
+        <br />
+        <br/>
+
+        <div id="requirementsContainer">
+
+        </div>
+
+
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    $(document)
+        .ready(function() {
+            resetAllTelerikIconTitles();
+        });
+
+
+
+    function onSelectDataRepositoryDropDownChange(e) {
+
+
+        var datarepo = e.value;
+        var id = '@Model.DatasetId';
+
+        $.post('@Url.Action("LoadDataRepoRequiremnetView", "Data", new RouteValueDictionary { { "area", "DDM" } })', { datarepo: e.value, datasetid: id}, function (response) {
+            $("#requirementsContainer").html(response);
+        })
+
+    }
+
+</script>

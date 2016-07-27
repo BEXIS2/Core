@@ -50,6 +50,36 @@ namespace BExIS.Dim.Helpers
             return tmp;
         }
 
+        #region helper function
+
+        public string GetDirectoryPath(long datasetid, DataRepository dataRepository)
+        {
+            return Path.Combine(AppConfiguration.DataPath, "Datasets", datasetid.ToString(), "publish", dataRepository.Name);
+        }
+
+        public string GetZipFileName(long datasetid, long datasetVersionid)
+        {
+            return datasetid + "_" + datasetVersionid + "_Dataset.zip";
+        }
+
+        public bool Exist(long datasetid, long datasetVersionid, DataRepository dataRepository)
+        {
+            // check directory
+            string d = GetDirectoryPath(datasetid, dataRepository);
+            if (!Directory.Exists(d)) return false;
+
+            //check file
+            string file = GetZipFileName(datasetid, datasetVersionid);
+            string filePath = Path.Combine(d, file);
+
+            if (File.Exists(filePath)) return true;
+
+            return false;
+        }
+        
+        #endregion
+
+
 
     }
 }

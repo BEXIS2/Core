@@ -40,12 +40,14 @@
                       .Text("Data Structure")
                       .LoadContentFrom("ShowPreviewDataStructure", "Data", new {area = "DDM", datasetID = @Model.Id});
 
-
-
                   tabs.Add()
                       .Text("Dataset Permissions")
                       .LoadContentFrom("Subjects", "Data", new {area = "DDM", dataId = @Model.Id})
                       .Enabled(@Model.GrantAccess);
+
+                  tabs.Add()
+                      .Text("Publish")
+                      .LoadContentFrom("publishData", "Data", new {area = "DDM", datasetId = @Model.Id});
               })
               )
     }
