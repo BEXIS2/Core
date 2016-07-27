@@ -428,7 +428,8 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
 
 
             // add ConvertReference Mapping file node
-            xmlDoc = AddReferenceToMetadatStructure(eml, "mappingFile", "mapping_eml.xml", "extra/convertReferences/convertRef", xmlDoc);
+            xmlDoc = AddReferenceToMetadatStructure(eml, "mappingFileExport", "mapping_eml.xml", "extra/convertReferences/convertRef", xmlDoc);
+            xmlDoc = AddReferenceToMetadatStructure(eml, "mappingFileImport", "mapping_eml_import.xml", "extra/convertReferences/convertRef", xmlDoc);
 
             eml.Extra = xmlDoc;
             mdsManager.Update(eml);
@@ -779,7 +780,8 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
 
 
             // add ConvertReference Mapping file node
-            xmlDoc = AddReferenceToMetadatStructure(abcd, "mappingFile", "mapping_abcd.xml", "extra/convertReferences/convertRef", xmlDoc);
+            xmlDoc = AddReferenceToMetadatStructure(abcd, "mappingFileExport", "mapping_abcd.xml", "extra/convertReferences/convertRef", xmlDoc);
+            xmlDoc = AddReferenceToMetadatStructure(abcd, "mappingFileImport", "mapping_abcd_import.xml", "extra/convertReferences/convertRef", xmlDoc);
 
             abcd.Extra = xmlDoc;
             mdsManager.Update(abcd);

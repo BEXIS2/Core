@@ -1151,9 +1151,9 @@ namespace BExIS.Xml.Helpers.Mapping
                 DataType dataType = GetDataType(datatype);
 
                 //unit
-                Unit noneunit = unitManager.Repo.Get().Where(u => u.Name.Equals("None")).First();
+                Unit noneunit = unitManager.Repo.Get().Where(u => u.Name.ToLower().Equals("none")).First();
                 if (noneunit == null)
-                    unitManager.Create("None", "None", "If no unit is used.", null, MeasurementSystem.Unknown); // the null dimension should be replaced bz a proper valid one. Javad 11.06
+                    unitManager.Create("none", "none", "If no unit is used.", null, MeasurementSystem.Unknown); // the null dimension should be replaced bz a proper valid one. Javad 11.06
 
                 temp = getExistingMetadataAttribute(name);// = metadataAttributeManager.MetadataAttributeRepo.Get().Where(m => m.Name.Equals(name)).FirstOrDefault();
 

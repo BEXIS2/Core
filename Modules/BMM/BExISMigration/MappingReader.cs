@@ -11,7 +11,7 @@ namespace BExISMigration
 {
     public class MappingReader
     {
-        private static Microsoft.Office.Interop.Excel.Application appExcel;
+        //private static Microsoft.Office.Interop.Excel.Application appExcel;
         //private static Workbook newWorkbook = null;
         //private static _Worksheet objsheet = null;
 
