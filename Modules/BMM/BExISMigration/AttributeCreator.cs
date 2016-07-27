@@ -83,18 +83,21 @@ namespace BExISMigration
 
 
         // create read units in bpp
-        public void CreateUnits(ref DataTable mappedUnits, DataTable mappedDataTypes)
+        public void CreateUnits(ref DataTable mappedUnits)
         {
+            UnitManager unitManager = new UnitManager();
+            DataTypeManager dataTypeManger = new DataTypeManager();
+            Unit unit = new Unit();
+
             foreach (DataRow mapUnitsRow in mappedUnits.Rows)
             {
-                UnitManager unitManager = new UnitManager();
-                DataTypeManager dataTypeManger = new DataTypeManager();
-                Unit unit = new Unit();
-
                 // values of the unit
                 unit.Name = mapUnitsRow["Name"].ToString();
                 unit.Abbreviation = mapUnitsRow["Abbreviation"].ToString();
                 unit.Description = mapUnitsRow["Description"].ToString();
+
+                if (unit.Description.Length > 255)
+                    unit.Description = unit.Description.Substring(0, 255);
 
                 unit.Dimension = unitManager.DimensionRepo.Get(Convert.ToInt64(mapUnitsRow["DimensionId"]));
 
@@ -107,46 +110,45 @@ namespace BExISMigration
                     }
                 }
 
-                // get existing unit or create
-                Unit existU = unitManager.Repo.Get(u =>
-                    unit.Abbreviation.Equals(u.Abbreviation) &&
-                    unit.Dimension.Id.Equals(u.Dimension.Id)
-                    ).FirstOrDefault();
-                if (existU == null)
-                    unit = unitManager.Create(unit.Name, unit.Abbreviation, unit.Description, unit.Dimension, unit.MeasurementSystem);
-                else
-                    unit = existU;
-
                 // set data type to created unit or add data type to existing unit
-                List<string> Types = mapUnitsRow["DataTypes"].ToString().Split(' ').ToList<string>();
+                List<string> Types = mapUnitsRow["DataTypes"].ToString().Split(' ').Distinct().ToList();
 
-                List<DataType> newDataTypes = new List<DataType>();
-                foreach (string type in Types)
+                // get existing unit or create
+                Unit existU = unitManager.Repo.Get(u => u.Abbreviation.Equals(unit.Abbreviation)).FirstOrDefault();
+                if (existU == null)
                 {
-                    DataRow row = mappedDataTypes.Select("Name = '" + type + "'").First<DataRow>();
-                    newDataTypes.Add(dataTypeManger.Repo.Get(Convert.ToInt64(row["DataTypesId"])));
+                    unit = unitManager.Create(unit.Name, unit.Abbreviation, unit.Description, unit.Dimension, unit.MeasurementSystem);
+                    addDataTypes(unit.Id, Types);
                 }
-
-                // add bpp-dataTypes to the unit
-                List<DataType> existingDataTypes = unit.AssociatedDataTypes.ToList();
-                List<DataType> tobeAddedDataTypes = newDataTypes.Except(existingDataTypes).ToList();
-                if (tobeAddedDataTypes != null && tobeAddedDataTypes.Count() > 0)
+                else
                 {
-                    foreach (DataType dt in tobeAddedDataTypes)
-                    {
-                        if (!(unit.AssociatedDataTypes.Contains(dt)))
-                            unitManager.AddAssociatedDataType(unit, dt);
-                    }
+                    addDataTypes(existU.Id, Types);
                 }
-
                 // add unit-ID to the mappedUnits Table
                 mapUnitsRow["UnitId"] = unit.Id;
             }
         }
 
+        private void addDataTypes(long unitId, List<string> datatypeNames)
+        {
+            UnitManager unitManager = new UnitManager();
+            DataTypeManager dataTypeManger = new DataTypeManager();
 
-        // create dimensions in bpp
-        public void CreateDimensions(ref DataTable mappedDimensions)
+            Unit unit = unitManager.Repo.Get(unitId);
+            // add bpp-dataTypes to the unit
+
+            DataType dt = new DataType();
+            foreach (string type in datatypeNames)
+            {
+                dt = dataTypeManger.Repo.Get().Where(d => d.Name.ToLower().Equals(type.ToLower())).FirstOrDefault();
+                if (dt != null && !(unit.AssociatedDataTypes.Contains(dt)))
+                    unit.AssociatedDataTypes.Add(dt);
+            }
+            unitManager.Update(unit);
+        }
+
+    // create dimensions in bpp
+    public void CreateDimensions(ref DataTable mappedDimensions)
         {
             UnitManager unitManager = new UnitManager();
 
