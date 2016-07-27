@@ -74,7 +74,7 @@
             <td class="metadataAttributeInput">
                     @if (Model.SystemType.Equals(TypeCode.String.ToString()))
                     {
-                        if (Model.DataType.Equals("Text"))
+                        if (Model.DataType.ToLower().Equals("text"))
                         {
                             if (!locked)
                             {
@@ -99,7 +99,7 @@
 
                         }
 
-                        if (Model.DataType.Equals("String"))
+                        if (Model.DataType.ToLower().Equals("string"))
                         {
                             if (!locked)
                             {

@@ -146,6 +146,10 @@ table, tr {
     background-color:#ffffff;
 }
 
+#bx-rpm-dataAttributeGrid .t-grid-content{
+    overflow-y: scroll !important;
+}
+
 #bx-rpm-dataAttributeGrid .t-grid-content .t-numerictextbox .t-input{
     width:40px !important;
     text-align:left;

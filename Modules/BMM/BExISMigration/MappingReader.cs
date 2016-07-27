@@ -6,6 +6,8 @@ using Microsoft.Office.Interop.Excel;
 using BExIS.IO.Transform;
 using BExIS.IO.Transform.Input;
 using System.IO;
+using BExIS.Dlm.Services.DataStructure;
+using BExIS.Dlm.Entities.DataStructure;
 
 namespace BExISMigration
 {
@@ -204,7 +206,7 @@ namespace BExISMigration
         /// <param name="mappedUnits"></param>
         /// <param name="mappedDataTypes"></param>
         /// <returns></returns>
-        public System.Data.DataTable readAttributes(string filePath, System.Data.DataTable mappedUnits, System.Data.DataTable mappedDataTypes)
+        public System.Data.DataTable readAttributes(string filePath)
         {
             string mappingFile = filePath + @"\variableMapping.xlsx";
 
@@ -235,6 +237,9 @@ namespace BExISMigration
             //jump over the first row
             line = reader.ReadLine();
 
+            UnitManager unitManager = new UnitManager();
+            DataTypeManager dataTypeManager = new DataTypeManager();
+
             while ((line = reader.ReadLine()) != null)
             {
                 // (char)59 = ';'
@@ -261,8 +266,12 @@ namespace BExISMigration
                 newRow["GlobalizationInfos"] = vars[15];
                 newRow["AggregateFunctions"] = vars[16];
                 // add DataTypesId and UnitId to the mappedAttributes Table
-                newRow["DataTypeId"] = Convert.ToInt64(mappedDataTypes.Select("Name = '" + DataType + "'").First()["DataTypesId"]);
-                newRow["UnitId"] = Convert.ToInt64(mappedUnits.Select("Abbreviation = '" + UnitAbbreviation + "'").First()["UnitId"]);
+                newRow["DataTypeId"] = dataTypeManager.Repo.Get().Where(dt => dt.Name.ToLower().Equals(DataType.ToLower())).FirstOrDefault().Id;
+                Unit unit = unitManager.Repo.Get().Where(u => u.Abbreviation.Equals(UnitAbbreviation)).FirstOrDefault();
+                if (unit != null)
+                    newRow["UnitId"] = unitManager.Repo.Get().Where(u => u.Abbreviation.Equals(UnitAbbreviation)).FirstOrDefault().Id;
+                else
+                    newRow["UnitId"] = 1;
                 mappedAttributes.Rows.Add(newRow);
             }
 
@@ -276,7 +285,7 @@ namespace BExISMigration
         /// <param name="filePath"></param>
         /// <param name="mappedDimensions"></param>
         /// <returns></returns>
-        public System.Data.DataTable readUnits(string filePath, System.Data.DataTable mappedDimensions)
+        public System.Data.DataTable readUnits(string filePath)
         {
             string mappingFile = filePath + @"\variableMapping.xlsx";
 
@@ -292,9 +301,11 @@ namespace BExISMigration
 
             StreamReader reader = new StreamReader(filePath + "\\units.csv");
 
+            UnitManager unitmanager = new UnitManager();
             string line = "";
             //jump over the first row
             line = reader.ReadLine();
+            Dimension dim = new Dimension();
 
             while ((line = reader.ReadLine()) != null)
             {
@@ -309,7 +320,11 @@ namespace BExISMigration
                 newRow["DimensionName"] = DimensionName;
                 newRow["MeasurementSystem"] = vars[4];
                 newRow["DataTypes"] = vars[5];
-                newRow["DimensionId"] = Convert.ToInt64(mappedDimensions.Select("Name = '" + DimensionName + "'").First()["DimensionId"]);
+                dim = unitmanager.DimensionRepo.Get().Where(d => d.Name.ToLower().Equals(DimensionName.ToLower())).FirstOrDefault();
+                if(dim != null)
+                    newRow["DimensionId"] = dim.Id;
+                else
+                    newRow["DimensionId"] = 1;
                 mappedUnits.Rows.Add(newRow);
             }
 

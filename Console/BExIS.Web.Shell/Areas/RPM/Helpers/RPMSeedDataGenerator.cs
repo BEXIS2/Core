@@ -41,12 +41,12 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
             attributeCreator.CreateDimensions(ref mappedDimensions);
 
             //// read units from csv file
-            DataTable mappedUnits = mappingReader.readUnits(filePath, mappedDimensions);
+            DataTable mappedUnits = mappingReader.readUnits(filePath);
             // create read units in bpp
-            attributeCreator.CreateUnits(ref mappedUnits, mappedDataTypes);
+            attributeCreator.CreateUnits(ref mappedUnits);
 
             //// read attributes from csv file
-            DataTable mappedAttributes = mappingReader.readAttributes(filePath, mappedUnits, mappedDataTypes);
+            DataTable mappedAttributes = mappingReader.readAttributes(filePath);
             // free memory
             mappedDataTypes.Clear();
             mappedDimensions.Clear();
@@ -54,8 +54,8 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
             attributeCreator.CreateAttributes(ref mappedAttributes);
 
             createResearchPlan();
-            createSeedDataTypes();
-            createSIUnits();
+            //createSeedDataTypes();
+            //createSIUnits();
             createEmlDatasetAdv();
             createABCD();
         }
@@ -274,7 +274,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
         //    MetadataAttribute Title = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Title")).FirstOrDefault();
         //    if (Title == null)
         //    {
-        //        DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String")).FirstOrDefault();
+        //        DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
         //        Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
         //        Title = mdaManager.Create("Title", "Title", "Title", false, false, "David Blaa",
@@ -300,7 +300,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
         //    MetadataAttribute Name = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Name")).FirstOrDefault();
         //    if (Name == null)
         //    {
-        //        DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String")).FirstOrDefault();
+        //        DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
         //        Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
         //        Name = mdaManager.Create("Name", "Name", "first and last name", false, false, "David Blaa",
@@ -309,7 +309,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
 
         //    if (Name == null)
         //    {
-        //        DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String")).FirstOrDefault();
+        //        DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
         //        Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
         //        Name = mdaManager.Create("Name", "Name", "first and last name", false, false, "David Blaa",
@@ -343,7 +343,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
         //    MetadataAttribute DescriptionAttr = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Description")).FirstOrDefault();
         //    if (DescriptionAttr == null)
         //    {
-        //        DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String")).FirstOrDefault();
+        //        DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
         //        Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
         //        DescriptionAttr = mdaManager.Create("Description", "Description", "Description", false, false, "David Blaa",
@@ -353,7 +353,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
         //    MetadataAttribute Role = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Role")).FirstOrDefault();
         //    if (Role == null)
         //    {
-        //        DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String")).FirstOrDefault();
+        //        DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
         //        Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
         //        Role = mdaManager.Create("Role", "Role", "Role", false, false, "David Blaa",
@@ -364,7 +364,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
         //    {
         //        if (Title == null)
         //        {
-        //            DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String")).FirstOrDefault();
+        //            DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
         //            Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
         //            Title = mdaManager.Create("Title", "Title", "Title", false, false, "David Blaa",
@@ -500,7 +500,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
             MetadataAttribute Name = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Name")).FirstOrDefault();
             if (Name == null)
             {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String")).FirstOrDefault();
+                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
                 Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
                 Name = mdaManager.Create("Name", "Name", "first and last name", false, false, "David Blaa",
@@ -510,7 +510,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
             MetadataAttribute Title = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Title")).FirstOrDefault();
             if (Title == null)
             {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String")).FirstOrDefault();
+                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
                 Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
                 Title = mdaManager.Create("Title", "Title", "Title", false, false, "David Blaa",
@@ -530,7 +530,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
             MetadataAttribute Info = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Information")).FirstOrDefault();
             if (Info == null)
             {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.Equals("Text")).FirstOrDefault();
+                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("text")).FirstOrDefault();
                 Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
                 Info = mdaManager.Create("Information", "Information", "Information", false, false, "David Blaa",
@@ -581,7 +581,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
             Name = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Name")).FirstOrDefault();
             if (Name == null)
             {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String")).FirstOrDefault();
+                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
                 Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
                 Name = mdaManager.Create("Name", "Name", "first and last name", false, false, "David Blaa",
@@ -594,7 +594,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
 
             if (Name == null)
             {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String")).FirstOrDefault();
+                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
                 Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
                 Name = mdaManager.Create("Name", "Name", "first and last name", false, false, "David Blaa",
@@ -632,7 +632,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
             Name = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Name")).FirstOrDefault();
             if (Name == null)
             {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String")).FirstOrDefault();
+                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
                 Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
                 Name = mdaManager.Create("Name", "Name", "first and last name", false, false, "David Blaa",
@@ -642,7 +642,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
             MetadataAttribute RoleType = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("RoleType")).FirstOrDefault();
             if (RoleType == null)
             {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String")).FirstOrDefault();
+                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
                 Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
                 RoleType = mdaManager.Create("Role", "RoleType", "Use this field to describe the role the party played with respect to the resource. Some potential roles include technician, reviewer, principal investigator, and many others.", false, false, "David Blaa",
@@ -689,7 +689,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
             MetadataAttribute DescriptionAttr = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Description")).FirstOrDefault();
             if (DescriptionAttr == null)
             {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.Equals("Text")).FirstOrDefault();
+                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("text")).FirstOrDefault();
                 Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
                 DescriptionAttr = mdaManager.Create("Description", "Description", "Description", false, false, "David Blaa",
@@ -703,7 +703,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
             {
                 if (Title == null)
                 {
-                    DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String")).FirstOrDefault();
+                    DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
                     Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
                     Title = mdaManager.Create("Title", "Title", "Title", false, false, "David Blaa",
@@ -713,7 +713,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
                 RoleType = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("RoleType")).FirstOrDefault();
                 if (RoleType == null)
                 {
-                    DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String")).FirstOrDefault();
+                    DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
                     Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
                     RoleType = mdaManager.Create("Role", "RoleType", "Use this field to describe the role the party played with respect to the resource. Some potential roles include technician, reviewer, principal investigator, and many others.", false, false, "David Blaa",
@@ -833,7 +833,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
             MetadataAttribute Name = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Name")).FirstOrDefault();
             if (Name == null)
             {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String")).FirstOrDefault();
+                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
                 Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
                 Name = mdaManager.Create("Name", "Name", "first and last name", false, false, "David Blaa",
@@ -843,7 +843,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
             MetadataAttribute Email = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Email")).FirstOrDefault();
             if (Email == null)
             {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String")).FirstOrDefault();
+                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
                 Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
                 Email = mdaManager.Create("Email", "Email", "Email address", false, false, "David Blaa",
@@ -853,7 +853,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
             MetadataAttribute Address = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Address")).FirstOrDefault();
             if (Address == null)
             {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String")).FirstOrDefault();
+                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
                 Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
                 Address = mdaManager.Create("Address", "Address", "Address", false, false, "David Blaa",
@@ -863,7 +863,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
             MetadataAttribute Phone = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Phone")).FirstOrDefault();
             if (Phone == null)
             {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String")).FirstOrDefault();
+                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
                 Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
                 Phone = mdaManager.Create("Phone", "Phone", "Phone", false, false, "David Blaa",
@@ -901,7 +901,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
             MetadataAttribute Title = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Title")).FirstOrDefault();
             if (Title == null)
             {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String")).FirstOrDefault();
+                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
                 Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
                 Title = mdaManager.Create("Title", "Title", "Title", false, false, "David Blaa",
@@ -921,7 +921,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
             MetadataAttribute Details = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Details")).FirstOrDefault();
             if (Details == null)
             {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.Equals("Text")).FirstOrDefault();
+                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("text")).FirstOrDefault();
                 Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
                 Details = mdaManager.Create("Details", "Details", "Details", false, false, "David Blaa",
@@ -931,7 +931,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
             MetadataAttribute Coverage = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Coverage")).FirstOrDefault();
             if (Coverage == null)
             {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String")).FirstOrDefault();
+                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
                 Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
                 Coverage = mdaManager.Create("Coverage", "Coverage", "Coverage", false, false, "David Blaa",
@@ -941,7 +941,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
             MetadataAttribute URI = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("URI")).FirstOrDefault();
             if (URI == null)
             {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String")).FirstOrDefault();
+                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
                 Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
                 URI = mdaManager.Create("URI", "URI", "URI", false, false, "David Blaa",
@@ -984,7 +984,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
             MetadataAttribute Role = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Role")).FirstOrDefault();
             if (Role == null)
             {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String")).FirstOrDefault();
+                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string") && p.Name.ToLower().Equals("string")).FirstOrDefault();
                 Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
                 Role = mdaManager.Create("Role", "Role", "Role", false, false, "David Blaa",
@@ -1039,7 +1039,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
             MetadataAttribute TaxonomicTerm = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("TaxonomicTerm")).FirstOrDefault();
             if (TaxonomicTerm == null)
             {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String")).FirstOrDefault();
+                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
                 Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
                 TaxonomicTerm = mdaManager.Create("TaxonomicTerm", "TaxonomicTerm", "TaxonomicTerm", false, false, "David Blaa",
@@ -1049,7 +1049,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
             MetadataAttribute GeoEcologicalTerm = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("GeoEcologicalTerm")).FirstOrDefault();
             if (GeoEcologicalTerm == null)
             {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String")).FirstOrDefault();
+                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
                 Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
                 GeoEcologicalTerm = mdaManager.Create("GeoEcologicalTerm", "GeoEcologicalTerm", "GeoEcologicalTerm", false, false, "David Blaa",
@@ -1098,7 +1098,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
             MetadataAttribute Id = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Id")).FirstOrDefault();
             if (Id == null)
             {
-                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String")).FirstOrDefault();
+                DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
                 Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
                 Id = mdaManager.Create("Id", "Id", "Name or code of the data source", false, false, "David Blaa",
