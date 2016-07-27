@@ -423,6 +423,13 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             MetadataEditorModel Model = new MetadataEditorModel();
             Model.StepModelHelpers = stepInfoModelHelpers;
+            
+            //set import
+            if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATASTRUCTURE_ID))
+            {
+                long id = Convert.ToInt64(TaskManager.Bus[CreateDatasetTaskmanager.METADATASTRUCTURE_ID]);
+                Model.Import = IsImportAvavilableMD(id);
+            }
 
             return View("MetadataEditor", Model);
         }
@@ -532,6 +539,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             Model.DatasetId = datasetId;
             Model.StepModelHelpers = stepInfoModelHelpers;
             Model.Created = created;
+            Model.Import = IsImportAvavilable(datasetId);
 
             //FromCreateOrEditMode
             TaskManager.AddToBus(CreateDatasetTaskmanager.EDIT_MODE, fromEditMode);
@@ -630,6 +638,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             }
 
             Model.StepModelHelpers = stepInfoModelHelpers;
+            Model.Import = IsImportAvavilableMD(metadataStructureId);
 
             return PartialView("MetadataEditor", Model);
         }
@@ -663,7 +672,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             MetadataEditorModel Model = new MetadataEditorModel();
             Model.StepModelHelpers = stepInfoModelHelpers;
-
 
             return PartialView("MetadataEditor", Model);
         }
@@ -2487,6 +2495,37 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             return usage;
         }
+
+        private bool IsImportAvavilable(long datasetId)
+        {
+            //todo after release 2.9.1 and merge to dev change that code and use the XmlDatasetHelper exportinformations
+
+            DatasetManager dm = new DatasetManager();
+            Dataset d = dm.GetDataset(datasetId);
+            return IsImportAvavilableMD(d.MetadataStructure.Id);
+        }
+
+        private bool IsImportAvavilableMD(long metadataStructureId)
+        {
+            //todo after release 2.9.1 and merge to dev change that code and use the XmlDatasetHelper exportinformations
+
+            MetadataStructureManager MSM = new MetadataStructureManager();
+            MetadataStructure ms = MSM.Repo.Get(metadataStructureId);
+
+            if (ms.Extra != null)
+            {
+                XElement xE = XmlUtility.GetXElementByAttribute("convertRef", "name", "mappingFileImport",
+                    XmlUtility.ToXDocument((XmlDocument)ms.Extra));
+
+                if (xE == null) return false;
+
+
+                return true;
+            }
+
+            return false;
+        }
+
 
         #endregion
 

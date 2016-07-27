@@ -46,7 +46,7 @@
 
             }
 
-            @if (!Model.Created && !locked)
+            @if (!Model.Created && !locked && Model.Import)
             {
                 <td style="width: 100px">
                     @(Html.Telerik().Upload()
