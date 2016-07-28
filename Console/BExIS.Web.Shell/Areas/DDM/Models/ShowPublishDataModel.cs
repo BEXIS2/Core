@@ -11,17 +11,24 @@ namespace BExIS.Web.Shell.Areas.DDM.Models
         public List<DataRepository> DataRepositories;
         public long DatasetId;
 
-        public Dictionary<string, List<string>> RepoFilesDictionary;
+        public List<publishedFileModel> RepoFilesDictionary;
 
         public ShowPublishDataModel()
         {
             DataRepositories = new List<DataRepository>();
-            RepoFilesDictionary = new Dictionary<string, List<string>>();
+            RepoFilesDictionary = new List<publishedFileModel>();
             DatasetId = 0;
         }
 
     }
 
+    public class publishedFileModel
+    {
+        public long DatasetId { get; set; }
+        public long DatasetVersionId { get; set; }
+        public DateTime CreationDate { get; set; }
+        public DataRepository DataRepository { get; set; }
+    }
 
     public class DataRepoRequirentModel
     {

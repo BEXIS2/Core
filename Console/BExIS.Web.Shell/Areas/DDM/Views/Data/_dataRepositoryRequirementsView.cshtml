@@ -11,26 +11,15 @@
 }
 else
 {
+    if (!Model.IsMetadataConvertable)
+    {
+        <b>It is not possible to convert the metadata into the required standard. </b>
+    }
 
-    <table style="width: 200px;">
-        <tr>
-            <td>Metadata</td>
-            <td style="width: 30px;">@Model.IsMetadataConvertable</td>
-        </tr>
-        <tr >
-            <td>Data</td>
-            <td style="width: 30px;">@Model.IsDataConvertable</td>
-        </tr>
-    </table>
+    if (!Model.IsDataConvertable)
+    {
+        <b>It is not possible to convert the primary data in the required format.</b>
+    }
 
 }
 
-
-@if (IsActive)
-{
-    @Html.ActionLink("Submit", "PrepareData", "Data", new { datasetId= @Model.DatasetId, datarepo = @Model.DataRepository.Name}, new { @class = "bx-button function"})
-}
-else
-{
-    <button class="bx-button function bx-disabled" disabled="disabled" >Select data repository to publish</button>
-}

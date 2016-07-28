@@ -13,7 +13,6 @@
 
 }
 
-
 <h2>@Model.Title ( @Model.Id )</h2>
 
 @if(@Model != null)
@@ -58,6 +57,11 @@
 }
 
 <script type="text/javascript">
+
+
+    $(document).ready(function () {
+            resetAllTelerikIconTitles();
+        });
 
     function existsRightType(rights, rightType) {
         if (jQuery.inArray(rightType, rights) != -1) {

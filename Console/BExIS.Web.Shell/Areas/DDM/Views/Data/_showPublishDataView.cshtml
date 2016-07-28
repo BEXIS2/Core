@@ -7,33 +7,53 @@
     List<string> datarepolist = Model.DataRepositories.Select(d => d.Name).ToList();
 }
 
-<div class="row" style="min-height: 200px">
-    <div class="col-lg-8">
+
+<div id="publishContentContainer" style="min-height: 200px">
+    <div id="publishingOptionsContainer" style="text-align: -webkit-left;">
+
         <table>
             <tr>
-                <th>File</th>
-                <th>Data Repository</th>
+                <td style="width: 200px;">
+                    @(Html.Telerik().DropDownList()
+                               .Placeholder("Select")
+                               .Name("SelectDataRepository")
+                               .ClientEvents(events => events.OnChange("onSelectDataRepositoryDropDownChange"))
+                               .BindTo(new SelectList(datarepolist)))
+                </td>
+                <td>
+                    <button id="submitPublishBt" class="bx-button small function bx-disabled" onClick="onSubmitPublishBtClick(this)" disabled="disabled">Select data repository to publish</button>
+                </td>
+                <td>
+                    <span id="requirementsContainer">
+
+                    </span>
+                </td>
+            </tr>
+        </table>
+  
+    </div>
+
+    <div>
+        <table>
+            <tr>
+                <th>Dataset Id</th>
+                <th>Dataset Version Id</th>
+                <th>Creation Date</th>
+                <th>Datarepository</th>
                 <th>Status</th>
             </tr>
             @if (Model.RepoFilesDictionary.Count > 0)
             {
-                foreach (var repo in Model.RepoFilesDictionary)
+                foreach (var file in Model.RepoFilesDictionary)
                 {
-                    List<string> files = Model.RepoFilesDictionary[repo.Key];
                     <tr>
-                        @foreach (string file in files)
-                        {
-                            <td>
-                                @file
-                            </td>
-                            <td>
-                                @repo.Key
-                            </td>
-                            <td>
-                                no status available
-                            </td>
-                        }
+                        <td>@file.DatasetId</td>
+                        <td>@file.DatasetVersionId</td>
+                        <td>@file.CreationDate.ToLocalTime()</td>
+                        <td>@file.DataRepository.Name</td>
+                        <td>no status available</td>
                     </tr>
+                 
                 }
             }
             else
@@ -42,44 +62,85 @@
             }
         </table>
     </div>
-    <div id="publishingOptionsContainer" class="col-lg-4" style="text-align: -webkit-left;">
-
-        @(Html.Telerik().DropDownList()
-                    .Placeholder("Select")
-                    .Name("SelectDataRepository")
-                    .ClientEvents(events => events.OnChange("onSelectDataRepositoryDropDownChange"))
-                    .BindTo(new SelectList(datarepolist)))
-
-        <br />
-        <br/>
-
-        <div id="requirementsContainer">
-
-        </div>
 
 
-    </div>
+
+    <script type="text/javascript">
+
+        $(document)
+            .ready(function() {
+                resetAllTelerikIconTitles();
+            });
+
+
+        function onSelectDataRepositoryDropDownChange(e) {
+
+            var datarepo = e.value;
+            var id = '@Model.DatasetId';
+
+            $.post('@Url.Action("LoadDataRepoRequirementView", "Data", new RouteValueDictionary {{"area", "DDM"}})',
+                { datarepo: e.value, datasetid: id },
+                function(response) {
+                    $("#requirementsContainer").html(response);
+
+                    var jsonObject = {
+                        "datarepo": e.value,
+                        "datasetid": id
+                    };
+
+                    jQuery.ajax({
+                        type: "POST",
+                        url: "@Url.Action("CheckExportPossibility", "Data", new RouteValueDictionary {{"area", "DDM"}})",
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        data: JSON.stringify(jsonObject),
+                        success: function(data) {
+
+                            if (data) {
+
+                                $("#submitPublishBt").removeAttr("disabled");
+                                $("#submitPublishBt").removeClass("bx-disabled");
+                            } else {
+                                $("#submitPublishBt").attr("disabled", "disabled");
+                                $("#submitPublishBt").addClass("bx-disabled");
+                            }
+
+
+                        },
+                        failure: function(errMsg) {
+                            alert(errMsg);
+                        }
+                    });
+                })
+
+        }
+
+        function onSubmitPublishBtClick(e) {
+
+            var id = @Model.DatasetId;
+
+            //get selected value
+            var input = $(".t-dropdown .t-input").text();
+
+            $.post('@Url.Action("PrepareData", "Data", new RouteValueDictionary {{"area", "DDM"}})',
+                { datasetid: id, datarepo: input },
+                function(response) {
+                    alert(response);
+                    $("#publishContentContainer").replaceWith(response);
+                });
+
+
+        }
+    </script>
+    <style type="text/css">
+        
+        .t-content {
+            text-align:left
+        }
+
+        .t-state-active {
+            line-height:14pt
+        }
+
+    </style>
 </div>
-
-<script type="text/javascript">
-
-    $(document)
-        .ready(function() {
-            resetAllTelerikIconTitles();
-        });
-
-
-
-    function onSelectDataRepositoryDropDownChange(e) {
-
-
-        var datarepo = e.value;
-        var id = '@Model.DatasetId';
-
-        $.post('@Url.Action("LoadDataRepoRequiremnetView", "Data", new RouteValueDictionary { { "area", "DDM" } })', { datarepo: e.value, datasetid: id}, function (response) {
-            $("#requirementsContainer").html(response);
-        })
-
-    }
-
-</script>

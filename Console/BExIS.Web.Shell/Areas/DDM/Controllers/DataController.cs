@@ -813,7 +813,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
         #region publishing
 
-        public ActionResult publishData(long datasetId)
+        public ActionResult publishData(long datasetId, long datasetVersionId=-1)
         {
             PublishingManager publishingManager = new PublishingManager();
             publishingManager.Load();
@@ -822,27 +822,44 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             model.DataRepositories = publishingManager.DataRepositories;
             model.DatasetId = datasetId;
 
+            if (datasetVersionId == -1)
+            {
+                DatasetManager datasetManager = new DatasetManager();
+                datasetVersionId = datasetManager.GetDatasetLatestVersion(datasetId).Id;
+            }
+
+            //todo check if datasetversion id is correct
+
             foreach (DataRepository repo in publishingManager.DataRepositories)
             {
                 string path = publishingManager.GetDirectoryPath(datasetId, repo);
                 if (Directory.Exists(path))
                 {
                     string[] filepaths = Directory.GetFiles(path, "*.zip");
-                    List<string> files = new List<string>();
+
                     foreach (var filepath in filepaths)
                     {
-                        files.Add(Path.GetFileNameWithoutExtension(filepath));
 
+                            FileInfo fi = new FileInfo(filepath);
+
+                        var creationTime = fi.CreationTimeUtc;
+
+                        model.RepoFilesDictionary.Add(
+                            new publishedFileModel()
+                            {
+                                DatasetId = datasetId,
+                                DatasetVersionId = datasetVersionId,
+                                DataRepository = repo,
+                                CreationDate = creationTime
+                            });
                     }
-
-                    model.RepoFilesDictionary.Add(repo.Name, files);
                 }
             }
 
             return PartialView("_showPublishDataView", model);
         }
 
-        public ActionResult LoadDataRepoRequiremnetView(string datarepo, long datasetid)
+        public ActionResult LoadDataRepoRequirementView(string datarepo, long datasetid)
         {
             DataRepoRequirentModel model = new DataRepoRequirentModel();
             model.DatasetId = datasetid;
@@ -902,6 +919,72 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             return PartialView("_dataRepositoryRequirementsView", model);
         }
 
+        public JsonResult CheckExportPossibility(string datarepo, long datasetid)
+        {
+
+            bool isDataConvertable = false;
+            bool isMetadataConvertable = false;
+
+            //get datarepos
+            PublishingManager publishingManager = new PublishingManager();
+            publishingManager.Load();
+
+            // datasetversion
+            DatasetManager dm = new DatasetManager();
+            long version = dm.GetDatasetLatestVersion(datasetid).Id;
+
+            if (publishingManager.DataRepositories.Any(d => d.Name.Equals(datarepo)))
+            {
+                DataRepository dp =
+                    publishingManager.DataRepositories.Where(d => d.Name.Equals(datarepo)).FirstOrDefault();
+
+
+                if (publishingManager.Exist(datasetid, version, dp))
+                {
+                    //model.Exist = true;
+                }
+                else
+                {
+                    #region metadata
+
+                    // if no conversion is needed
+                    if (String.IsNullOrEmpty(dp.ReqiuredMetadataStandard))
+                    {
+                        //model.IsMetadataConvertable = true;
+                        isMetadataConvertable = true;
+                    }
+                    else
+                    {
+                        //if convertion check ist needed
+                        //get all export attr from metadata structure
+                        List<string> exportNames = XmlDatasetHelper.GetAllExportInformation(datasetid, TransmissionType.mappingFileExport, AttributeNames.name).ToList();
+                        if (exportNames.Contains(dp.ReqiuredMetadataStandard))
+                            isMetadataConvertable = true;
+
+                    }
+
+                    #endregion
+
+                    #region primary Data
+
+                    //todo need a check if the primary data is structured or not, if its unstructured also export should be possible
+                    
+
+                    if (dp.PrimaryDataFormat.ToLower().Contains("text/plain") ||
+                        dp.PrimaryDataFormat.ToLower().Contains("text/csv") ||
+                        dp.PrimaryDataFormat.ToLower().Contains("application/excel") ||
+                        String.IsNullOrEmpty(dp.PrimaryDataFormat))
+                    {
+                        isDataConvertable = true;
+                    }
+
+                    #endregion
+                }
+            }
+
+            return (isMetadataConvertable && isDataConvertable)?Json(true):Json(false);
+        }
+
         public ActionResult PrepareData(long datasetId, string datarepo)
         {
             PublishingManager publishingManager = new PublishingManager();
@@ -917,53 +1000,56 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 DataRepository dataRepository =
                     publishingManager.DataRepositories.Where(d => d.Name.Equals(datarepo)).FirstOrDefault();
 
-                OutputMetadataManager.GetConvertedMetadata(datasetId, TransmissionType.mappingFileExport,
-                    dataRepository.ReqiuredMetadataStandard);
-
-
-
-
-                // get primary data
-                // check the data sturcture type ...
-                if (datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
+                if (dataRepository != null)
                 {
-                    OutputDataManager odm = new OutputDataManager();
-                    // apply selection and projection
-
-                    string title = XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title);
-
-                    odm.GenerateAsciiFile(datasetId, title, dataRepository.PrimaryDataFormat);
-                }
-
-                string zipName = publishingManager.GetZipFileName(datasetId, datasetVersion.Id);
-                string zipPath = publishingManager.GetDirectoryPath(datasetId, dataRepository);
-                string zipFilePath = Path.Combine(zipPath, zipName);
-
-                FileHelper.CreateDicrectoriesIfNotExist(Path.GetDirectoryName(zipFilePath));
+                    OutputMetadataManager.GetConvertedMetadata(datasetId, TransmissionType.mappingFileExport,
+                        dataRepository.ReqiuredMetadataStandard);
 
 
 
-                if (FileHelper.FileExist(zipFilePath))
-                {
-                    if (FileHelper.WaitForFile(zipFilePath))
+
+                    // get primary data
+                    // check the data sturcture type ...
+                    if (datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
                     {
-                        FileHelper.Delete(zipFilePath);
+                        OutputDataManager odm = new OutputDataManager();
+                        // apply selection and projection
+
+                        string title = XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title);
+
+                        odm.GenerateAsciiFile(datasetId, title, dataRepository.PrimaryDataFormat);
                     }
-                }
 
-                ZipFile zip = new ZipFile();
+                    string zipName = publishingManager.GetZipFileName(datasetId, datasetVersion.Id);
+                    string zipPath = publishingManager.GetDirectoryPath(datasetId, dataRepository);
+                    string zipFilePath = Path.Combine(zipPath, zipName);
 
-                foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
-                {
-                    string path = Path.Combine(AppConfiguration.DataPath, cd.URI);
-                    string name = cd.URI.Split('\\').Last();
+                    FileHelper.CreateDicrectoriesIfNotExist(Path.GetDirectoryName(zipFilePath));
 
-                    if (FileHelper.FileExist(path))
+
+
+                    if (FileHelper.FileExist(zipFilePath))
                     {
-                        zip.AddFile(path, "");
+                        if (FileHelper.WaitForFile(zipFilePath))
+                        {
+                            FileHelper.Delete(zipFilePath);
+                        }
                     }
+
+                    ZipFile zip = new ZipFile();
+
+                    foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
+                    {
+                        string path = Path.Combine(AppConfiguration.DataPath, cd.URI);
+                        string name = cd.URI.Split('\\').Last();
+
+                        if (FileHelper.FileExist(path))
+                        {
+                            zip.AddFile(path, "");
+                        }
+                    }
+                    zip.Save(zipFilePath);
                 }
-                zip.Save(zipFilePath);
             }
 
             return RedirectToAction("publishData", new {datasetId});
