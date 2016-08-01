@@ -479,35 +479,6 @@
     <DesignData Include="Db\Settings\PostgreSQL82Dialect.hibernate.cfg.xml">
       <SubType>Designer</SubType>
     </DesignData>
-    <Content Include="Areas\DCM\Images\DCM_Index_images\DCM_Index_img1.png" />
-    <Content Include="Areas\DCM\Images\DCM_Index_images\DCM_Index_img10.png" />
-    <Content Include="Areas\DCM\Images\DCM_Index_images\DCM_Index_img11.png" />
-    <Content Include="Areas\DCM\Images\DCM_Index_images\DCM_Index_img12.png" />
-    <Content Include="Areas\DCM\Images\DCM_Index_images\DCM_Index_img13.jpeg" />
-    <Content Include="Areas\DCM\Images\DCM_Index_images\DCM_Index_img14.jpeg" />
-    <Content Include="Areas\DCM\Images\DCM_Index_images\DCM_Index_img15.jpeg" />
-    <Content Include="Areas\DCM\Images\DCM_Index_images\DCM_Index_img16.jpeg" />
-    <Content Include="Areas\DCM\Images\DCM_Index_images\DCM_Index_img17.png" />
-    <Content Include="Areas\DCM\Images\DCM_Index_images\DCM_Index_img18.png" />
-    <Content Include="Areas\DCM\Images\DCM_Index_images\DCM_Index_img19.png" />
-    <Content Include="Areas\DCM\Images\DCM_Index_images\DCM_Index_img2.jpeg" />
-    <Content Include="Areas\DCM\Images\DCM_Index_images\DCM_Index_img20.png" />
-    <Content Include="Areas\DCM\Images\DCM_Index_images\DCM_Index_img21.png" />
-    <Content Include="Areas\DCM\Images\DCM_Index_images\DCM_Index_img22.png" />
-    <Content Include="Areas\DCM\Images\DCM_Index_images\DCM_Index_img23.png" />
-    <Content Include="Areas\DCM\Images\DCM_Index_images\DCM_Index_img24.png" />
-    <Content Include="Areas\DCM\Images\DCM_Index_images\DCM_Index_img25.png" />
-    <Content Include="Areas\DCM\Images\DCM_Index_images\DCM_Index_img26.png" />
-    <Content Include="Areas\DCM\Images\DCM_Index_images\DCM_Index_img27.png" />
-    <Content Include="Areas\DCM\Images\DCM_Index_images\DCM_Index_img28.png" />
-    <Content Include="Areas\DCM\Images\DCM_Index_images\DCM_Index_img29.png" />
-    <Content Include="Areas\DCM\Images\DCM_Index_images\DCM_Index_img3.png" />
-    <Content Include="Areas\DCM\Images\DCM_Index_images\DCM_Index_img4.png" />
-    <Content Include="Areas\DCM\Images\DCM_Index_images\DCM_Index_img5.png" />
-    <Content Include="Areas\DCM\Images\DCM_Index_images\DCM_Index_img6.png" />
-    <Content Include="Areas\DCM\Images\DCM_Index_images\DCM_Index_img7.png" />
-    <Content Include="Areas\DCM\Images\DCM_Index_images\DCM_Index_img8.png" />
-    <Content Include="Areas\DCM\Images\DCM_Index_images\DCM_Index_img9.png" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image001.png" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image002.png" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image003.png" />
