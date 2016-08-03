@@ -155,15 +155,18 @@
                     
                     @if (Model.SystemType.Equals(TypeCode.Boolean.ToString()))
                     {
+ 
+                        bool value = (bool?)Model.Value ?? false;
+
                         if (!locked)
-                        { 
-                             @Html.CheckBox(Model.DisplayName, new { OnChange = "OnChange(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage });
+                        {
+                            @Html.CheckBox(Model.DisplayName,value, new { OnChange = "OnChange(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage });
                         }
                         else
-                        { 
-                             @Html.CheckBox(Model.DisplayName, new { OnChange = "OnChange(this)", disabled="disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage });
+                        {
+                            @Html.CheckBox(Model.DisplayName, value,  new { OnChange = "OnChange(this)", disabled="disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage });
                         }
-                           
+
                     }
 
                     @if (Model.SystemType.Equals(TypeCode.Int32.ToString()) ||
