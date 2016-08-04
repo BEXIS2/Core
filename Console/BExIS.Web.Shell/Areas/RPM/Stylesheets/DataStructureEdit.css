@@ -79,14 +79,51 @@
 
 .bx-rpm-variable-container .bx-rpm-label,
 .bx-rpm-attribute-container .bx-rpm-label {
-    width:15%;
     vertical-align:top;
+    text-align:center;
+}
+
+.bx-rpm-variable-container .bx-rpm-label.id,
+.bx-rpm-attribute-container .bx-rpm-label.id {
+    width:25px;
+}
+
+.bx-rpm-variable-container .bx-rpm-label.name,
+.bx-rpm-attribute-container .bx-rpm-label.name,
+.bx-rpm-variable-container .bx-rpm-label.unit,
+.bx-rpm-attribute-container .bx-rpm-label.unit {
+    width:50px;
+}
+
+.bx-rpm-variable-container .bx-rpm-label.datatype,
+.bx-rpm-attribute-container .bx-rpm-label.datatype {
+    width:80px;
 }
 
 .bx-rpm-variable-container .bx-rpm-text,
 .bx-rpm-attribute-container .bx-rpm-text {
-    width:35%;
     vertical-align:top;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.bx-rpm-variable-container .bx-rpm-text.id,
+.bx-rpm-attribute-container .bx-rpm-text.id {
+    width:50px;
+    text-align:center;
+}
+
+.bx-rpm-variable-container .bx-rpm-text.unit,
+.bx-rpm-attribute-container .bx-rpm-text.unit,
+.bx-rpm-variable-container .bx-rpm-text.datatype,
+.bx-rpm-attribute-container .bx-rpm-text.datatype {
+    
+    width:100px;
+}
+
+.bx-rpm-attribute-container .bx-rpm-select {
+    vertical-align:top;
+    width:20px;
 }
 
 .bx-rpm-variable-container #placeholder {

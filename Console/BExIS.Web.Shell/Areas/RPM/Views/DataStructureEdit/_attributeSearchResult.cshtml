@@ -54,30 +54,26 @@
         <div class="bx-rpm-attribute-item @cssClass" id="@cssId">
             <table>
                 <tr>
-                    <td class="bx-rpm-label"><label>Name</label></td>
-                    <td class="name bx-rpm-text">@aps.Name</td>
-                    <td class="bx-rpm-label" rowspan="2"><label>Description</label></td>
+                    <td class="bx-rpm-label id"><label>Id</label></td>
+                    <td class="id bx-rpm-text id">@Id</td>
+                    <td class="bx-rpm-label name"><label>Name</label></td>
+                    <td class="name bx-rpm-text name">@aps.Name</td>
+                    <td class="bx-rpm-label unit"><label>Unit</label></td>
+                    <td class="unit bx-rpm-text unit">@aps.Unit</td>
+                    <td class="bx-rpm-label datatype"><label>Data Type</label></td>
+                    <td class="datatype bx-rpm-text datatype">@aps.DataType</td>
+                    <td class="bx-rpm-select" rowspan="2" id="last">>></td>
+                </tr>
+                <tr class="hidden">
+                    <td class="bx-rpm-label"><label>Description</label></td>
                     <td class="description bx-rpm-text" rowspan="2">@aps.Description</td>
-                    <td class="bx-rpm-select" rowspan="4" id="last">>></td>
-                </tr>
-                <tr>
-                    <td class="bx-rpm-label"><label>Id</label></td>
-                    <td class="id bx-rpm-text">@Id</td>
-                </tr>
-                <tr>
-                    <td class="bx-rpm-label"><label>Unit</label></td>
-                    <td class="unit bx-rpm-text">@aps.Unit</td>
-                    <td class="bx-rpm-label" rowspan="2" id="last"><label>Constraints</label></td>
+                    <td class="bx-rpm-label" id="last"><label>Constraints</label></td>
                     <td class="description bx-rpm-text" rowspan="2" id="last">
                         @foreach(KeyValuePair<long,string> c in aps.Constraints)
                         {
                             <p>@c.Value</p>
                         }
                     </td>
-                </tr>
-                <tr>
-                    <td class="bx-rpm-label" id="last"><label>Data Type</label></td>
-                    <td class="datatype bx-rpm-text" id="last">@aps.DataType</td>
                 </tr>
             </table>
         </div>
