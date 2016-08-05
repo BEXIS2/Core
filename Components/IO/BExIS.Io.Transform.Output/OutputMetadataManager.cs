@@ -24,7 +24,7 @@ namespace BExIS.IO.Transform.Output
                 DatasetManager datasetManager = new DatasetManager();
                 DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
 
-                string mappingFileName = XmlDatasetHelper.GetExportInformation(datasetVersion, type, mappingName);
+                string mappingFileName = XmlDatasetHelper.GetTransmissionInformation(datasetVersion, type, mappingName);
                 string pathMappingFile = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), mappingFileName);
 
                 XmlMapperManager xmlMapperManager = new XmlMapperManager();

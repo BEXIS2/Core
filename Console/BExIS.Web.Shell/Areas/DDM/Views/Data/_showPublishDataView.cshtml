@@ -122,10 +122,12 @@
             //get selected value
             var input = $(".t-dropdown .t-input").text();
 
+            alert(input);
+
             $.post('@Url.Action("PrepareData", "Data", new RouteValueDictionary {{"area", "DDM"}})',
                 { datasetid: id, datarepo: input },
                 function(response) {
-                    alert(response);
+                    //alert(response);
                     $("#publishContentContainer").replaceWith(response);
                 });
 

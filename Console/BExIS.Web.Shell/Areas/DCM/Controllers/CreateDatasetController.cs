@@ -427,7 +427,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATASTRUCTURE_ID))
             {
                 long id = Convert.ToInt64(TaskManager.Bus[CreateDatasetTaskmanager.METADATASTRUCTURE_ID]);
-                Model.Import = IsImportAvavilableMD(id);
+                Model.Import = XmlDatasetHelper.HasMetadataStructureTransmission(id,TransmissionType.mappingFileImport);
             }
 
             return View("MetadataEditor", Model);
@@ -539,7 +539,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             Model.DatasetId = datasetId;
             Model.StepModelHelpers = stepInfoModelHelpers;
             Model.Created = created;
-            Model.Import = IsImportAvavilable(datasetId);
+            Model.Import = XmlDatasetHelper.HasTransmission(datasetId, TransmissionType.mappingFileImport);
 
             //FromCreateOrEditMode
             TaskManager.AddToBus(CreateDatasetTaskmanager.EDIT_MODE, fromEditMode);
@@ -638,7 +638,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             }
 
             Model.StepModelHelpers = stepInfoModelHelpers;
-            Model.Import = IsImportAvavilableMD(metadataStructureId);
+            Model.Import = XmlDatasetHelper.HasMetadataStructureTransmission(metadataStructureId, TransmissionType.mappingFileImport);
 
             return PartialView("MetadataEditor", Model);
         }
@@ -2426,26 +2426,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             return stepModelHelper;
         }
 
-        //private StepModelHelper UpdateStepModelhelper(StepModelHelper stepModelHelper)
-        //{
-        //    TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
-
-        //    if (TaskManager.Bus.ContainsKey(CreateDatasetTaskmanager.METADATA_STEP_MODEL_HELPER))
-        //    {
-        //        List<StepModelHelper> tmp =
-        //            (List<StepModelHelper>) TaskManager.Bus[CreateDatasetTaskmanager.METADATA_STEP_MODEL_HELPER];
-
-        //        StepModelHelper stepModelHelperTmp =
-        //            tmp.Where(s => s.StepId.Equals(stepModelHelper.StepId)).FirstOrDefault();
-        //        stepModelHelperTmp = stepModelHelper;
-
-
-        //        return stepModelHelper;
-        //    }
-
-        //    return stepModelHelper;
-        //}
-
         private StepModelHelper GetStepModelhelper(int stepId)
         {
             TaskManager = (CreateDatasetTaskmanager)Session["CreateDatasetTaskmanager"];
@@ -2629,37 +2609,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             return usage;
         }
-
-        private bool IsImportAvavilable(long datasetId)
-        {
-            //todo after release 2.9.1 and merge to dev change that code and use the XmlDatasetHelper exportinformations
-
-            DatasetManager dm = new DatasetManager();
-            Dataset d = dm.GetDataset(datasetId);
-            return IsImportAvavilableMD(d.MetadataStructure.Id);
-        }
-
-        private bool IsImportAvavilableMD(long metadataStructureId)
-        {
-            //todo after release 2.9.1 and merge to dev change that code and use the XmlDatasetHelper exportinformations
-
-            MetadataStructureManager MSM = new MetadataStructureManager();
-            MetadataStructure ms = MSM.Repo.Get(metadataStructureId);
-
-            if (ms.Extra != null)
-            {
-                XElement xE = XmlUtility.GetXElementByAttribute("convertRef", "name", "mappingFileImport",
-                    XmlUtility.ToXDocument((XmlDocument)ms.Extra));
-
-                if (xE == null) return false;
-
-
-                return true;
-            }
-
-            return false;
-        }
-
 
         #endregion
 

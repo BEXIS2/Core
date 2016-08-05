@@ -3,7 +3,11 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
@@ -31,7 +35,11 @@ using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Security.Entities.Subjects;
 using Vaiona.Web.Mvc.Models;
 using BExIS.Security.Entities.Authorization;
+using Newtonsoft.Json;
 using Vaiona.Web.Extensions;
+using System.Net;
+using System.Net;
+
 
 namespace BExIS.Web.Shell.Areas.DDM.Controllers
 {
@@ -896,7 +904,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                     {
                         //if convertion check ist needed
                         //get all export attr from metadata structure
-                        List<string> exportNames = XmlDatasetHelper.GetAllExportInformation(datasetid, TransmissionType.mappingFileExport,AttributeNames.name).ToList();
+                        List<string> exportNames = XmlDatasetHelper.GetAllTransmissionInformation(datasetid, TransmissionType.mappingFileExport,AttributeNames.name).ToList();
                         if (exportNames.Contains(dp.ReqiuredMetadataStandard)) model.IsMetadataConvertable = true;
                     }
 
@@ -957,7 +965,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                     {
                         //if convertion check ist needed
                         //get all export attr from metadata structure
-                        List<string> exportNames = XmlDatasetHelper.GetAllExportInformation(datasetid, TransmissionType.mappingFileExport, AttributeNames.name).ToList();
+                        List<string> exportNames = XmlDatasetHelper.GetAllTransmissionInformation(datasetid, TransmissionType.mappingFileExport, AttributeNames.name).ToList();
                         if (exportNames.Contains(dp.ReqiuredMetadataStandard))
                             isMetadataConvertable = true;
 
@@ -985,74 +993,113 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             return (isMetadataConvertable && isDataConvertable)?Json(true):Json(false);
         }
 
-        public ActionResult PrepareData(long datasetId, string datarepo)
+        public async Task <ActionResult> PrepareData(long datasetId, string datarepo)
         {
-            PublishingManager publishingManager = new PublishingManager();
-            publishingManager.Load();
+            //PublishingManager publishingManager = new PublishingManager();
+            //publishingManager.Load();
 
-            DatasetManager datasetManager = new DatasetManager();
+            //DatasetManager datasetManager = new DatasetManager();
 
-            if (datasetManager.IsDatasetCheckedIn(datasetId))
-            {
-                DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
+            //if (datasetManager.IsDatasetCheckedIn(datasetId))
+            //{
+            //    DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
 
-                // convert metadata
-                DataRepository dataRepository =
-                    publishingManager.DataRepositories.Where(d => d.Name.Equals(datarepo)).FirstOrDefault();
+            //    // convert metadata
+            //    DataRepository dataRepository =
+            //        publishingManager.DataRepositories.Where(d => d.Name.Equals(datarepo)).FirstOrDefault();
 
-                if (dataRepository != null)
-                {
-                    OutputMetadataManager.GetConvertedMetadata(datasetId, TransmissionType.mappingFileExport,
-                        dataRepository.ReqiuredMetadataStandard);
-
-
-
-
-                    // get primary data
-                    // check the data sturcture type ...
-                    if (datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
-                    {
-                        OutputDataManager odm = new OutputDataManager();
-                        // apply selection and projection
-
-                        string title = XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title);
-
-                        odm.GenerateAsciiFile(datasetId, title, dataRepository.PrimaryDataFormat);
-                    }
-
-                    string zipName = publishingManager.GetZipFileName(datasetId, datasetVersion.Id);
-                    string zipPath = publishingManager.GetDirectoryPath(datasetId, dataRepository);
-                    string zipFilePath = Path.Combine(zipPath, zipName);
-
-                    FileHelper.CreateDicrectoriesIfNotExist(Path.GetDirectoryName(zipFilePath));
+            //    if (dataRepository != null)
+            //    {
+            //        OutputMetadataManager.GetConvertedMetadata(datasetId, TransmissionType.mappingFileExport,
+            //            dataRepository.ReqiuredMetadataStandard);
 
 
 
-                    if (FileHelper.FileExist(zipFilePath))
-                    {
-                        if (FileHelper.WaitForFile(zipFilePath))
-                        {
-                            FileHelper.Delete(zipFilePath);
-                        }
-                    }
 
-                    ZipFile zip = new ZipFile();
+            //        // get primary data
+            //        // check the data sturcture type ...
+            //        if (datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
+            //        {
+            //            OutputDataManager odm = new OutputDataManager();
+            //            // apply selection and projection
 
-                    foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
-                    {
-                        string path = Path.Combine(AppConfiguration.DataPath, cd.URI);
-                        string name = cd.URI.Split('\\').Last();
+            //            string title = XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title);
 
-                        if (FileHelper.FileExist(path))
-                        {
-                            zip.AddFile(path, "");
-                        }
-                    }
-                    zip.Save(zipFilePath);
-                }
-            }
+            //            odm.GenerateAsciiFile(datasetId, title, dataRepository.PrimaryDataFormat);
+            //        }
+
+            //        string zipName = publishingManager.GetZipFileName(datasetId, datasetVersion.Id);
+            //        string zipPath = publishingManager.GetDirectoryPath(datasetId, dataRepository);
+            //        string zipFilePath = Path.Combine(zipPath, zipName);
+
+            //        FileHelper.CreateDicrectoriesIfNotExist(Path.GetDirectoryName(zipFilePath));
+
+
+
+            //        if (FileHelper.FileExist(zipFilePath))
+            //        {
+            //            if (FileHelper.WaitForFile(zipFilePath))
+            //            {
+            //                FileHelper.Delete(zipFilePath);
+            //            }
+            //        }
+
+            //        ZipFile zip = new ZipFile();
+
+            //        foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
+            //        {
+            //            string path = Path.Combine(AppConfiguration.DataPath, cd.URI);
+            //            string name = cd.URI.Split('\\').Last();
+
+            //            if (FileHelper.FileExist(path))
+            //            {
+            //                zip.AddFile(path, "");
+            //            }
+            //        }
+            //        zip.Save(zipFilePath);
+            //    }
+            //}
+
+            var product = await GetWSObject<object>();
+
 
             return RedirectToAction("publishData", new {datasetId});
+        }
+
+        public async Task<string> GetWSObject<T>()
+        {
+
+            string url =
+                @"http://gfbio-pub2.inf-bb.uni-jena.de:8080/api/jsonws/GFBioProject-portlet.researchobject/get-research-object-by-id/request-json/%5B%7B%22researchobjectid%22%3A3%20%7D%5D";
+
+            string returnValue = "";
+
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri(url);
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    //test@testerer.de:WSTest
+                    var byteArray = Encoding.ASCII.GetBytes("broker.agent@gfbio.org:AgentPhase2");
+
+                    // "basic "+ Convert.ToBase64String(byteArray)
+                    AuthenticationHeaderValue ahv = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+                    client.DefaultRequestHeaders.Authorization = ahv;
+
+
+                    HttpResponseMessage response = await client.GetAsync(url);
+                    response.EnsureSuccessStatusCode();
+                    returnValue = ((HttpResponseMessage)response).Content.ReadAsStringAsync().Result;
+                }
+                return returnValue;
+            }
+            catch (Exception e)
+            {
+                throw (e);
+            }
         }
 
         #endregion

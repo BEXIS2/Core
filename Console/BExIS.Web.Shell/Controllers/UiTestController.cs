@@ -119,7 +119,7 @@ namespace BExIS.Web.Shell.Controllers
             if (gfbio != null)
             {
                 formatname =
-                    XmlDatasetHelper.GetAllExportInformation(1, TransmissionType.mappingFileExport, AttributeNames.name)
+                    XmlDatasetHelper.GetAllTransmissionInformation(1, TransmissionType.mappingFileExport, AttributeNames.name)
                         .First();
                 OutputMetadataManager.GetConvertedMetadata(testdatasetId, TransmissionType.mappingFileExport,
                     formatname);
