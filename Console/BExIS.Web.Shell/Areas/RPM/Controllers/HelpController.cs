@@ -17,6 +17,7 @@ using System.Windows.Forms;
 using System.Net;
 using System.Text.RegularExpressions;
 using Vaiona.Web.Mvc.Models;
+using Vaiona.Web.Extensions;
 
 namespace BExIS.Web.Shell.Areas.RPM.Controllers
 {
@@ -27,7 +28,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
         public ActionResult Index()
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Data Planning Manual");
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Data Planning Manual", this.Session.GetTenant());
             string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Areas", "RPM", "Views\\Help\\UserGuides\\RPM_UserGuide.htm");
             string imagePath = "/Areas/RPM/Images/";
 

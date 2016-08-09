@@ -2,11 +2,18 @@
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using BExIS.IO.Transform.Output;
+using System.Data;
+using BExIS.Xml.Services;
+using BExIS.Web.Shell.Areas.DIM.Models;
+using BExIS.Web.Shell.Areas.DIM.Models.Formatters;
 
 namespace BExIS.Web.Shell.Areas.DIM.Controllers
 {
@@ -38,23 +45,51 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
         /// 2: selection: is a logical expression that filters the tuples of the chosen dataset. The expression should have been written against the variables of the dataset only.
         /// logical operators, nesting, precedence, and SOME functions should be supported.
         /// </remarks>
-        public IEnumerable<AbstractTuple> Get(int id)
+        public HttpResponseMessage Get(int id)
         {
-            string projection = this.Request.GetQueryNameValuePairs().FirstOrDefault(p => "projection".Equals(p.Key, StringComparison.InvariantCultureIgnoreCase)).Value;
-            string selection  = this.Request.GetQueryNameValuePairs().FirstOrDefault(p => "selection" .Equals(p.Key, StringComparison.InvariantCultureIgnoreCase)).Value;
+            string projection = this.Request.GetQueryNameValuePairs().FirstOrDefault(p => "header".Equals(p.Key, StringComparison.InvariantCultureIgnoreCase)).Value;
+            string selection  = this.Request.GetQueryNameValuePairs().FirstOrDefault(p => "filter" .Equals(p.Key, StringComparison.InvariantCultureIgnoreCase)).Value;
+
+            OutputDataManager ioOutputDataManager = new OutputDataManager();
 
             DatasetManager dm = new DatasetManager();
             DatasetVersion version = dm.GetDatasetLatestVersion(id);
+
+            string title = XmlDatasetHelper.GetInformation(version, NameAttributeValues.title);
+
             // check the data sturcture type ...
             if (version.Dataset.DataStructure.Self is StructuredDataStructure)
             {
                 // apply selection and projection
                 var tuples = dm.GetDatasetVersionEffectiveTuples(version);
-                return tuples;
+
+                DataTable dt = OutputDataManager.ConvertPrimaryDataToDatatable(version,
+                    dm.GetDatasetVersionEffectiveTupleIds(version), title, true);
+
+                if (!string.IsNullOrEmpty(selection))
+                {
+                    dt = OutputDataManager.SelectionOnDataTable(dt, selection);
+                }
+
+                if (!string.IsNullOrEmpty(projection))
+                {
+                    // make the header names upper case to make them case insensitive
+                    dt = OutputDataManager.ProjectionOnDataTable(dt, projection.ToUpper().Split(','));
+                }
+
+                DatasetModel model = new DatasetModel();
+                model.DataTable = dt;
+
+                var response = Request.CreateResponse();
+                response.Content = new ObjectContent(typeof(DatasetModel), model, new DatasetModelCsvFormatter(model.DataTable.TableName));
+                //set headers on the "response"
+                return response;
+
+                //return model;
+
             } else
             {
-                //return File(Path.Combine(AppConfiguration.DataPath, path), mimeType, title);
-                return null;
+                return Request.CreateResponse();
             }
         }
 

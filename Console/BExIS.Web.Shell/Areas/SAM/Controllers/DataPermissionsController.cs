@@ -12,6 +12,7 @@ using BExIS.Security.Services.Subjects;
 using BExIS.Web.Shell.Areas.SAM.Models;
 using Telerik.Web.Mvc;
 using Vaiona.Web.Mvc.Models;
+using Vaiona.Web.Extensions;
 
 namespace BExIS.Web.Shell.Areas.SAM.Controllers
 {
@@ -27,7 +28,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
 
         public ActionResult Data()
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Data Permissions");
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Data Permissions", this.Session.GetTenant());
 
             return View(new EntitySelectListModel());
         }

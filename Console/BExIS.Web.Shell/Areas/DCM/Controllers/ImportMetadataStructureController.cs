@@ -11,6 +11,7 @@ using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Models;
+using Vaiona.Web.Extensions;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
 {
@@ -28,7 +29,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         public ActionResult ImportMetadataStructureWizard()
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Import Metadata Structure");
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Import Metadata Structure", this.Session.GetTenant()); 
 
             Session["TaskManager"] = null;
             TaskManager = null;

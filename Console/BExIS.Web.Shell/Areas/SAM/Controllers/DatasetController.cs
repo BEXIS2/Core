@@ -12,6 +12,7 @@ using BExIS.Security.Services.Subjects;
 using Vaiona.Web.Mvc.Models;
 using BExIS.Ddm.Api;
 using Vaiona.IoC;
+using Vaiona.Web.Extensions;
 
 namespace BExIS.Web.Shell.Areas.Sam.Controllers
 {
@@ -27,7 +28,7 @@ namespace BExIS.Web.Shell.Areas.Sam.Controllers
         /// <returns></returns>
         public ActionResult Index()
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Maintain Datasets");
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Maintain Datasets", this.Session.GetTenant());
             return View();
         }
 
@@ -37,7 +38,7 @@ namespace BExIS.Web.Shell.Areas.Sam.Controllers
         /// <returns></returns>
         public ActionResult List()
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Maintain Datasets");
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Maintain Datasets", this.Session.GetTenant());
 
             DatasetManager dm = new DatasetManager();
             PermissionManager permissionManager = new PermissionManager();
@@ -95,7 +96,7 @@ namespace BExIS.Web.Shell.Areas.Sam.Controllers
         /// <returns></returns>
         public ActionResult Purge(long id)
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Purge");
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Purge", this.Session.GetTenant());
 
             DatasetManager dm = new DatasetManager();
             PermissionManager pm = new PermissionManager();
@@ -123,7 +124,7 @@ namespace BExIS.Web.Shell.Areas.Sam.Controllers
         /// <returns></returns>
         public ActionResult Versions(int id)
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Versions");
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Versions", this.Session.GetTenant());
             DatasetManager dm = new DatasetManager();
             List<DatasetVersion> versions = dm.DatasetVersionRepo.Query(p => p.Dataset.Id == id).OrderBy(p => p.Id).ToList();
             ViewBag.VersionId = id;
@@ -137,7 +138,7 @@ namespace BExIS.Web.Shell.Areas.Sam.Controllers
         /// <returns></returns>
         public ActionResult Version(int id)
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Version");
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Version", this.Session.GetTenant());
 
             DatasetManager dm = new DatasetManager();
             DatasetVersion version = dm.DatasetVersionRepo.Get(p => p.Id == id).First();
