@@ -31,14 +31,19 @@
 
     <div class="header">
         <div id="@id_label_container" class="labelContainer" onclick="showHideClick(this)">
-            <b>@Model.Usage.Label 
+            <b>@Model.Usage.Label
 
                 @if (Model.Model.MaxCardinality > 1)
                 {
-                   <span>( @Model.Number )</span> 
+                    <span>( @Model.Number )</span>
                 }
 
             </b>
+
+            @if (Model.Model.MinCardinality > 0)
+            {
+                <b title="Required" style="color:red">*</b>
+            }
             <span id="@id_button_view"  class="bx bx-angle-double-up " ></span>
         </div>
         <div class="optionContainer">

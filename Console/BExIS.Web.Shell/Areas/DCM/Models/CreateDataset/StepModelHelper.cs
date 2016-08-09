@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
+using System.Xml;
+using System.Xml.Linq;
 using BExIS.Dlm.Entities.Common;
 using BExIS.Web.Shell.Areas.DCM.Models.Metadata;
-using BExIS.IO.Transform.Validation.Exceptions;
+using BExIS.Xml.Helpers;
+
 
 namespace BExIS.Web.Shell.Areas.DCM.Models.CreateDataset
 {
@@ -13,10 +15,25 @@ namespace BExIS.Web.Shell.Areas.DCM.Models.CreateDataset
         public int StepId { get; set; }
         public BaseUsage Usage { get; set; }
         public int Number { get; set; }
-        public AbstractMetadataStepModel Model { get; set; }
+        public int Level { get; set; }
+
         public string XPath { get; set; }
         public List<StepModelHelper> Childrens { get; set; }
-        
+        public StepModelHelper Parent { get; set; }
+
+        public bool Activated { get; set; }
+        public bool Choice { get; set; }
+
+        private AbstractMetadataStepModel _model;
+
+        public AbstractMetadataStepModel Model {
+            get { return _model; }
+            set
+            {
+                _model = value;
+                Activated = SetActiveByPreload();
+            }
+        }
 
         public StepModelHelper()
         {
@@ -25,15 +42,22 @@ namespace BExIS.Web.Shell.Areas.DCM.Models.CreateDataset
             Number = 0;
             XPath = "";
             Childrens = new List<StepModelHelper>();
+            Activated = SetActiveByPreload();
+            Level = 0;
         }
 
-        public StepModelHelper(int stepId, int number, BaseUsage usage, string xpath)
+        public StepModelHelper(int stepId, int number, BaseUsage usage, string xpath, StepModelHelper parent)
         {
             StepId = stepId;
             Usage = usage;
             Number = number;
             XPath = xpath;
             Childrens = new List<StepModelHelper>();
+            Parent = parent;
+            Choice = IsChoice(usage);
+
+            if (parent != null)
+                Level = parent.Level + 1;
         }
 
         public string GetXPathFromSimpleAttribute(long id)
@@ -59,5 +83,85 @@ namespace BExIS.Web.Shell.Areas.DCM.Models.CreateDataset
 
             return "";
         }
+
+        public bool IsEmpty()
+        {
+            foreach (MetadataAttributeModel simpleAttr in Model.MetadataAttributeModels)
+            {
+                if (simpleAttr.IsEmpty != true) return false;
+            }
+
+            foreach (StepModelHelper smh in Childrens)
+            {
+                if (smh.IsEmpty() != true) return false;
+            }
+
+            return true;
+
+        }
+
+        public string DisplayName()
+        {
+            string displayName = "";
+
+            char tmp= ' ';
+
+            foreach (char letter in Usage.Label)
+            {
+                if (Usage.Label.First() == letter)
+                {
+                    tmp = letter;
+                    displayName += letter;
+                }
+                else
+                {
+                    if (Char.IsUpper(letter) && Char.IsLower(tmp))
+                    {
+                        displayName += " " + letter;
+                    }
+                    else
+                    {
+                        displayName += letter;
+                    }
+
+                    tmp = letter;
+                }
+            }
+
+            return displayName;
+        }
+
+        private bool SetActiveByPreload()
+        {
+            if (Model != null && Model.MinCardinality > 0) Activated = true;
+
+            return Activated;
+        }
+
+        public bool IsParentActive()
+        {
+            if (Parent == null)
+                return Activated;
+
+            if (Parent.Activated)
+                 return Parent.IsParentActive();
+
+            return false;
+
+        }
+
+        private bool IsChoice(BaseUsage usage)
+        {
+            if (usage.Extra != null)
+            {
+                XmlDocument doc = usage.Extra as XmlDocument;
+                XElement element = XmlUtility.GetXElementByAttribute("type", "name", "choice", XmlUtility.ToXDocument(doc));
+                if (element != null) return true;
+            }
+
+            return false;
+        }
+
+
     }
 }

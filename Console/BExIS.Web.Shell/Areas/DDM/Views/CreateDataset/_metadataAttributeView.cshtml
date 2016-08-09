@@ -74,7 +74,7 @@
             <td class="metadataAttributeInput">
                     @if (Model.SystemType.Equals(TypeCode.String.ToString()))
                     {
-                        if (Model.DataType.Equals("Text"))
+                        if (Model.DataType.ToLower().Equals("text"))
                         {
                             if (!locked)
                             {
@@ -99,7 +99,7 @@
 
                         }
 
-                        if (Model.DataType.Equals("String"))
+                        if (Model.DataType.ToLower().Equals("string"))
                         {
                             if (!locked)
                             {
@@ -127,13 +127,14 @@
                     
                     @if (Model.SystemType.Equals(TypeCode.Boolean.ToString()))
                     {
+                        bool value = (bool?)Model.Value ?? false;
                         if (!locked)
-                        { 
-                             @Html.CheckBox(Model.DisplayName, new { OnChange = "OnChange(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage });
+                        {
+                             @Html.CheckBox(Model.DisplayName, value, new { OnChange = "OnChange(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage });
                         }
                         else
                         { 
-                             @Html.CheckBox(Model.DisplayName, new { OnChange = "OnChange(this)", disabled="disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage });
+                             @Html.CheckBox(Model.DisplayName, value, new { OnChange = "OnChange(this)", disabled="disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage });
                         }
                            
                     }
