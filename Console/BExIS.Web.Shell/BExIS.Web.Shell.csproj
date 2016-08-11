@@ -409,8 +409,8 @@
     <Compile Include="Areas\RPM\Controllers\DataStructureSearchController.cs" />
     <Compile Include="Areas\RPM\Controllers\StructuresController.cs" />
     <Compile Include="Areas\RPM\Controllers\UnitController.cs" />
-    <Compile Include="Areas\RPM\Controllers\Helpers\HtmlPrefixScopeExtentions.cs" />
-    <Compile Include="Areas\RPM\Controllers\Helpers\RPMSeedDataGenerator.cs" />
+    <Compile Include="Areas\RPM\Helpers\HtmlPrefixScopeExtentions.cs" />
+    <Compile Include="Areas\RPM\Helpers\RPMSeedDataGenerator.cs" />
     <Compile Include="Areas\RPM\Models\StructureModel.cs" />
     <Compile Include="Areas\RPM\Models\DataStructureEditModel.cs" />
     <Compile Include="Areas\RPM\Models\DataStructureSearchModel.cs" />
@@ -1209,6 +1209,10 @@
     <ProjectReference Include="..\..\Components\XML\BExIS.Xml.Models\BExIS.Xml.Models.csproj">
       <Project>{c0c9f0f2-9e65-448d-8000-d311db326460}</Project>
       <Name>BExIS.Xml.Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Modules\BMM\BExISMigration\BExISMigration.csproj">
+      <Project>{3a573810-b9f9-4bde-8504-01ef49de0c20}</Project>
+      <Name>BExISMigration</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Modules\DCM\BExIS.Dcm.CreateDatasetWizard\BExIS.Dcm.CreateDatasetWizard.csproj">
       <Project>{93eeeda5-6d79-41a1-947b-0a3fc9e46abc}</Project>
