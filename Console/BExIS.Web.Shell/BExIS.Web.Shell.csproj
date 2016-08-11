@@ -411,8 +411,6 @@
     <Compile Include="Areas\RPM\Controllers\UnitController.cs" />
     <Compile Include="Areas\RPM\Helpers\HtmlPrefixScopeExtentions.cs" />
     <Compile Include="Areas\RPM\Helpers\RPMSeedDataGenerator.cs" />
-    <Compile Include="Areas\RPM\Controllers\Helpers\HtmlPrefixScopeExtentions.cs" />
-    <Compile Include="Areas\RPM\Controllers\Helpers\RPMSeedDataGenerator.cs" />
     <Compile Include="Areas\RPM\Models\StructureModel.cs" />
     <Compile Include="Areas\RPM\Models\DataStructureEditModel.cs" />
     <Compile Include="Areas\RPM\Models\DataStructureSearchModel.cs" />
