@@ -7,6 +7,7 @@ using BExIS.Web.Shell.Models;
 using System.Data;
 using System.ComponentModel;
 using System.Configuration;
+using System.Diagnostics;
 using System.Xml;
 using BExIS.Dim.Entities;
 using BExIS.Dim.Helpers;
@@ -23,11 +24,16 @@ using Vaiona.Logging.Aspects;
 using BExIS.IO.Transform.Output;
 using NHibernate.Criterion;
 using System.IO;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Threading.Tasks;
 using System.Xml.Schema;
 using BExIS.IO;
 using Vaiona.Utils.Cfg;
 using Ionic.Zip;
 using Microsoft.Xml.XMLGen;
+using Newtonsoft.Json.Linq;
 
 namespace BExIS.Web.Shell.Controllers
 {
@@ -42,25 +48,116 @@ namespace BExIS.Web.Shell.Controllers
 
             model = DynamicListToDataTable();
 
-            //string filepath = @"D:\BEXIS APP\GIT\Code\Workspace\Modules\DCM\Metadata\Eml\eml.xsd";
-            //string destinationPath = @"D:\BEXIS APP\GIT\Code\Workspace\Modules\DCM\Metadata\Eml\test.xml";
-            //XmlReaderSettings settings2 = new XmlReaderSettings();
-            //settings2.DtdProcessing = DtdProcessing.Ignore;
-
-            //XmlSchema Schema = new XmlSchema();
-            //XmlReader xsd_file = XmlReader.Create(filepath, settings2);
-            //Schema = XmlSchema.Read(xsd_file, verifyErrors);
-
-            //XmlQualifiedName qname = new XmlQualifiedName("eml",
-            //               "eml://ecoinformatics.org/eml-2.1.1");
-
-            //XmlTextWriter textWriter = new XmlTextWriter(destinationPath, null);
-
-            //XmlSampleGenerator xsg = new XmlSampleGenerator(Schema,qname);
-            //xsg.WriteXml(textWriter);
-
+            Debug.WriteLine("call a webservice from gfbio");
 
             return View(model);
+        }
+
+        public async Task<ActionResult> Call()
+        {
+            SubmissionManager submissionManager = new SubmissionManager();
+            submissionManager.Load();
+
+            DataRepository dataRepository =
+                submissionManager.DataRepositories.Where(d => d.Name.ToLower().Equals("gfbio")).FirstOrDefault();
+
+            GFBIOWebserviceManager gfbioWebserviceManager = new GFBIOWebserviceManager(dataRepository);
+            
+
+
+            Debug.WriteLine("call a webservice from gfbio");
+            Debug.WriteLine("GET");
+            Debug.WriteLine("-----------------------------------------------------------");
+
+            //research object id 201
+            //wieso als json ein array?
+            var p = await CallGFBIOWebservice(201, "get-research-object-by-id","researchobject", "[{\"researchobjectid\":201}]");
+            Debug.WriteLine(p);
+
+            p = await gfbioWebserviceManager.GetResearchObjectById(401);
+            Debug.WriteLine(p);
+
+            Debug.WriteLine("-----------------------------------------------------------");
+            //project id 201
+            p = await CallGFBIOWebservice(201, "get-project-by-id","project", "{\"projectid\":401}");
+            Debug.WriteLine(p);
+
+            //if (string.IsNullOrEmpty(p))
+            //{
+            //    Debug.WriteLine("Create");
+            //    Debug.WriteLine("-----------------------------------------------------------");
+            //    p =
+            //        await
+            //            CallGFBIOWebservice(201, "create-project", "project",
+            //                "{\"userid\":1,\"name\":\"bexis 2 test\",\"description\":\"test\"}");
+
+            //    Debug.WriteLine(p);
+            //}
+
+            //wieso als return json ein array?
+            // create research object 
+            // name, label, extendeddata (json), researchobjecttype (e.eg metadata schema)
+            //p = await CallGFBIOWebservice(201, "create-research-object", "researchobject", "[{\"name\":\"bexis 2 ro create\",\"label\":\"bexis 2 ro create\",\"extendeddata\":{},\"researchobjecttype\":\"metadata schema\"}]");
+            Debug.WriteLine(p);
+
+
+            UiTestModel model = new UiTestModel();
+            model = DynamicListToDataTable();
+
+            return View("Index",model);
+        }
+
+        public async Task<string> CallGFBIOWebservice(long id, string apiName,string entityName, string json)
+        {
+
+            string server =
+                @"http://gfbio-pub2.inf-bb.uni-jena.de:8080/api/jsonws/GFBioProject-portlet.";
+
+            string jsonRequest = @"request-json";
+
+
+            //string parameters = @"[{" + parametername + ":" + id + "}]";
+            //"[{\""+parametername+"\":"+id+"}]";
+            string parameters = json;
+
+            string url = server+ entityName+"/"+ apiName + "/" + jsonRequest + "/";
+
+            
+
+            Debug.WriteLine(url);
+            string returnValue = "";
+
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    //generate url
+
+                    client.BaseAddress = new Uri(url);
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    //test@testerer.de:WSTest
+                    var byteArray = Encoding.ASCII.GetBytes("broker.agent@gfbio.org:AgentPhase2");
+
+                    // "basic "+ Convert.ToBase64String(byteArray)
+                    AuthenticationHeaderValue ahv = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+                    client.DefaultRequestHeaders.Authorization = ahv;
+
+                    //http://gfbio-pub2.inf-bb.uni-jena.de:8080/api/jsonws/GFBioProject-portlet.researchobject/get-research-object-by-id/request-json/%5B%7B%22researchobjectid%22%3A3%20%7D%5D
+                    string requesturl = url + Server.UrlEncode(parameters);
+                    Debug.WriteLine(requesturl);
+                    Debug.WriteLine(Server.UrlEncode(parameters));
+                    HttpResponseMessage response = await client.GetAsync(requesturl);
+                    response.EnsureSuccessStatusCode();
+                    returnValue = ((HttpResponseMessage)response).Content.ReadAsStringAsync().Result;
+                }
+                return returnValue;
+            }
+            catch (Exception e)
+            {
+                throw (e);
+            }
         }
 
         //event handler to manage the errors
@@ -101,7 +198,7 @@ namespace BExIS.Web.Shell.Controllers
 
             model = DynamicListToDataTable();
 
-            PublishingManager pm = new PublishingManager();
+            SubmissionManager pm = new SubmissionManager();
             DatasetManager dm = new DatasetManager();
 
             pm.Load();

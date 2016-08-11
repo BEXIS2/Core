@@ -819,11 +819,11 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
         #endregion
 
-        #region publishing
+        #region submission
 
         public ActionResult publishData(long datasetId, long datasetVersionId=-1)
         {
-            PublishingManager publishingManager = new PublishingManager();
+            SubmissionManager publishingManager = new SubmissionManager();
             publishingManager.Load();
 
             ShowPublishDataModel model = new ShowPublishDataModel();
@@ -873,7 +873,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             model.DatasetId = datasetid;
 
             //get datarepos
-            PublishingManager publishingManager = new PublishingManager();
+            SubmissionManager publishingManager = new SubmissionManager();
             publishingManager.Load();
 
             // datasetversion
@@ -934,7 +934,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             bool isMetadataConvertable = false;
 
             //get datarepos
-            PublishingManager publishingManager = new PublishingManager();
+            SubmissionManager publishingManager = new SubmissionManager();
             publishingManager.Load();
 
             // datasetversion
@@ -995,72 +995,72 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
         public async Task <ActionResult> PrepareData(long datasetId, string datarepo)
         {
-            //PublishingManager publishingManager = new PublishingManager();
-            //publishingManager.Load();
+            SubmissionManager publishingManager = new SubmissionManager();
+            publishingManager.Load();
 
-            //DatasetManager datasetManager = new DatasetManager();
+            DatasetManager datasetManager = new DatasetManager();
 
-            //if (datasetManager.IsDatasetCheckedIn(datasetId))
-            //{
-            //    DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
+            if (datasetManager.IsDatasetCheckedIn(datasetId))
+            {
+                DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
 
-            //    // convert metadata
-            //    DataRepository dataRepository =
-            //        publishingManager.DataRepositories.Where(d => d.Name.Equals(datarepo)).FirstOrDefault();
+                // convert metadata
+                DataRepository dataRepository =
+                    publishingManager.DataRepositories.Where(d => d.Name.Equals(datarepo)).FirstOrDefault();
 
-            //    if (dataRepository != null)
-            //    {
-            //        OutputMetadataManager.GetConvertedMetadata(datasetId, TransmissionType.mappingFileExport,
-            //            dataRepository.ReqiuredMetadataStandard);
-
-
-
-
-            //        // get primary data
-            //        // check the data sturcture type ...
-            //        if (datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
-            //        {
-            //            OutputDataManager odm = new OutputDataManager();
-            //            // apply selection and projection
-
-            //            string title = XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title);
-
-            //            odm.GenerateAsciiFile(datasetId, title, dataRepository.PrimaryDataFormat);
-            //        }
-
-            //        string zipName = publishingManager.GetZipFileName(datasetId, datasetVersion.Id);
-            //        string zipPath = publishingManager.GetDirectoryPath(datasetId, dataRepository);
-            //        string zipFilePath = Path.Combine(zipPath, zipName);
-
-            //        FileHelper.CreateDicrectoriesIfNotExist(Path.GetDirectoryName(zipFilePath));
+                if (dataRepository != null)
+                {
+                    OutputMetadataManager.GetConvertedMetadata(datasetId, TransmissionType.mappingFileExport,
+                        dataRepository.ReqiuredMetadataStandard);
 
 
 
-            //        if (FileHelper.FileExist(zipFilePath))
-            //        {
-            //            if (FileHelper.WaitForFile(zipFilePath))
-            //            {
-            //                FileHelper.Delete(zipFilePath);
-            //            }
-            //        }
 
-            //        ZipFile zip = new ZipFile();
+                    // get primary data
+                    // check the data sturcture type ...
+                    if (datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
+                    {
+                        OutputDataManager odm = new OutputDataManager();
+                        // apply selection and projection
 
-            //        foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
-            //        {
-            //            string path = Path.Combine(AppConfiguration.DataPath, cd.URI);
-            //            string name = cd.URI.Split('\\').Last();
+                        string title = XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title);
 
-            //            if (FileHelper.FileExist(path))
-            //            {
-            //                zip.AddFile(path, "");
-            //            }
-            //        }
-            //        zip.Save(zipFilePath);
-            //    }
-            //}
+                        odm.GenerateAsciiFile(datasetId, title, dataRepository.PrimaryDataFormat);
+                    }
 
-            var product = await GetWSObject<object>();
+                    string zipName = publishingManager.GetZipFileName(datasetId, datasetVersion.Id);
+                    string zipPath = publishingManager.GetDirectoryPath(datasetId, dataRepository);
+                    string zipFilePath = Path.Combine(zipPath, zipName);
+
+                    FileHelper.CreateDicrectoriesIfNotExist(Path.GetDirectoryName(zipFilePath));
+
+
+
+                    if (FileHelper.FileExist(zipFilePath))
+                    {
+                        if (FileHelper.WaitForFile(zipFilePath))
+                        {
+                            FileHelper.Delete(zipFilePath);
+                        }
+                    }
+
+                    ZipFile zip = new ZipFile();
+
+                    foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
+                    {
+                        string path = Path.Combine(AppConfiguration.DataPath, cd.URI);
+                        string name = cd.URI.Split('\\').Last();
+
+                        if (FileHelper.FileExist(path))
+                        {
+                            zip.AddFile(path, "");
+                        }
+                    }
+                    zip.Save(zipFilePath);
+                }
+            }
+
+            //var product = await GetWSObject<object>();
 
 
             return RedirectToAction("publishData", new {datasetId});

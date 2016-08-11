@@ -9,14 +9,14 @@ using Vaiona.Utils.Cfg;
 
 namespace BExIS.Dim.Helpers
 {
-    public class PublishingManager
+    public class SubmissionManager
     {
-        private const string sourceFile = "publishingRequirements.xml";
+        private const string sourceFile = "submissionConfig.xml";
         private XmlDocument requirementXmlDocument = null;
 
         public List<DataRepository> DataRepositories;
 
-        public PublishingManager()
+        public SubmissionManager()
         {
             requirementXmlDocument = new XmlDocument();
             DataRepositories = new List<DataRepository>();
@@ -46,6 +46,9 @@ namespace BExIS.Dim.Helpers
             tmp.Name = XmlUtility.GetXmlNodeByName(node, "name").InnerText;
             tmp.ReqiuredMetadataStandard = XmlUtility.GetXmlNodeByName(node, "metadatastandard").InnerText;
             tmp.PrimaryDataFormat = XmlUtility.GetXmlNodeByName(node, "primarydataformat").InnerText;
+            tmp.Server = XmlUtility.GetXmlNodeByName(node, "server").InnerText;
+            tmp.User = XmlUtility.GetXmlNodeByName(node, "user").InnerText;
+            tmp.Password = XmlUtility.GetXmlNodeByName(node, "password").InnerText;
 
             return tmp;
         }

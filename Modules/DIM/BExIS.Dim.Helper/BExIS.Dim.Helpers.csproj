@@ -43,8 +43,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PublishingManager.cs" />
+    <Compile Include="BasicWebService.cs" />
+    <Compile Include="GFBIOWebserviceManager.cs" />
+    <Compile Include="SubmissionManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WebServiceHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Components\IO\BExIS.IO\BExIS.IO.csproj">
