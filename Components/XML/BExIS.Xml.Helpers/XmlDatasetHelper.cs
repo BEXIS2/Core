@@ -7,6 +7,7 @@ using System.Xml.Linq;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.Data;
+using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Xml.Helpers;
 
 namespace BExIS.Xml.Services
@@ -165,6 +166,41 @@ namespace BExIS.Xml.Services
             return string.Empty;
         }
 
+        //todo entity extention
+        public static string GetEntityType(long datasetid)
+        {
+            DatasetManager  datasetManager = new DatasetManager();
+            DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetid);
+
+            // get MetadataStructure 
+            if (datasetVersion != null)
+            {
+                XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)datasetVersion.Extra);
+                IEnumerable<XElement> temp = XmlUtility.GetXElementByNodeName(nodeNames.entity.ToString(),xDoc);
+
+                return temp.First().Attribute("Value").Value;
+            }
+            return string.Empty;
+        }
+
+        //todo entity extention
+        public static string GetEntityTypeFromMetadatStructure(long metadataStuctrueId)
+        {
+
+            MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
+            MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(metadataStuctrueId);
+
+            // get MetadataStructure 
+            if (metadataStructure != null)
+            {
+                XDocument xDoc = XmlUtility.ToXDocument((XmlDocument) metadataStructure.Extra);
+                IEnumerable<XElement> tmp = XmlUtility.GetXElementByNodeName(nodeNames.entity.ToString(), xDoc);
+                return tmp.First().Attribute("Value").Value;
+            }
+           
+
+            return string.Empty;
+        }
 
         /// <summary>
         /// returns a value of a metadata node
@@ -203,7 +239,7 @@ namespace BExIS.Xml.Services
 
         #region add
 
-        public static XmlDocument AddReferenceToXml(XmlDocument Source, string nodeName, string nodePath, string nodeType, string destinationPath)
+        public static XmlDocument AddReferenceToXml(XmlDocument Source, string nodeName, string nodeValue, string nodeType, string destinationPath)
         {
 
             //XmlDocument doc = new XmlDocument();
@@ -225,7 +261,7 @@ namespace BExIS.Xml.Services
                 foreach (XmlAttribute attr in x.Attributes)
                 {
                     if (attr.Name == "name") attr.Value = nodeName;
-                    if (attr.Name == "value") attr.Value = nodePath;
+                    if (attr.Name == "value") attr.Value = nodeValue;
                     if (attr.Name == "type") attr.Value = nodeType;
                 }
             }
@@ -234,7 +270,7 @@ namespace BExIS.Xml.Services
                 XmlAttribute name = Source.CreateAttribute("name");
                 name.Value = nodeName;
                 XmlAttribute value = Source.CreateAttribute("value");
-                value.Value = nodePath;
+                value.Value = nodeValue;
                 XmlAttribute type = Source.CreateAttribute("type");
                 type.Value = nodeType;
 
@@ -296,7 +332,8 @@ namespace BExIS.Xml.Services
     public enum nodeNames
     { 
         nodeRef,
-        convertRef
+        convertRef,
+        entity
     }
 
     public enum NameAttributeValues
@@ -314,7 +351,8 @@ namespace BExIS.Xml.Services
 
     public enum AttributeType
     {
-        xpath
+        xpath,
+        entity
     }
 
     public enum TransmissionType
