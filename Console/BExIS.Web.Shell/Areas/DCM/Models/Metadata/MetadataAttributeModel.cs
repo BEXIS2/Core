@@ -10,6 +10,7 @@ using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.IO.Transform.Validation.Exceptions;
+using DocumentFormat.OpenXml.Office2010.Excel;
 
 namespace BExIS.Web.Shell.Areas.DCM.Models
 {
@@ -38,11 +39,23 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
         public bool last = false;
         public bool first = false;
 
-        public object Value { get; set; }
+        public bool IsEmpty = true;
+
+        private object _value;
+
+        public object Value {
+                get { return _value; }
+                set
+                {
+                    _value = value;
+                    IsEmpty = global::System.Convert.ChangeType(_value, _value.GetType()) == null || String.IsNullOrEmpty(_value.ToString());
+                }
+        }
+
+        
 
         public static MetadataAttributeModel Convert(BaseUsage current , BaseUsage parent, long metadataStructureId, int packageModelNumber, long parentStepId)
         {
-            
             MetadataAttribute metadataAttribute;
             List<object> domainConstraintList = new List<object>();
             string constraintsDescription="";
@@ -145,5 +158,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
                     Errors = null
             };
         }
+
     }
 }

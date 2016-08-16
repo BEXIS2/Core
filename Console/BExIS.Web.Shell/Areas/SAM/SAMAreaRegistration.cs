@@ -1,4 +1,5 @@
-﻿using System.Web.Mvc;
+﻿using BExIS.Web.Shell.Areas.SAM.Helpers;
+using System.Web.Mvc;
 using System.Xml.Linq;
 using Vaiona.Utils.Cfg;
 
@@ -22,7 +23,8 @@ namespace BExIS.Web.Shell.Areas.Sam
                 new { action = "Index", id = UrlParameter.Optional }
             );
 
-            if (AppConfiguration.CreateDatabase) SAM.Helpers.SamSeedDataGenerator.GenerateSeedData();
+            if (AppConfiguration.CreateDatabase)
+                SamSeedDataGenerator.GenerateSeedData();
         }
 
         public XElement RegisterMenus(AreaRegistrationContext context)
