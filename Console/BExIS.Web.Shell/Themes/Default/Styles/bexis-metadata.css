@@ -28,8 +28,18 @@ Green 05  #eff7f6
 .header
 {
     padding:5px;
-    border-top:2px solid #afb0b1;
+    /*border-top:2px solid #afb0b1;*/
     height:auto;
+}
+
+.metadata-first
+{
+    border-top:2px solid #afb0b1;
+}
+
+.metadata-last
+{
+    border-bottom:2px solid #afb0b1;
 }
 
 .labelContainer
@@ -41,7 +51,7 @@ Green 05  #eff7f6
 
 .contentContainer
 {
-    margin-bottom:10px;
+    padding-bottom:0px;
 }
 
 .optionContainer
@@ -72,7 +82,7 @@ Green 05  #eff7f6
 {
     text-align:center;
     /*border:ridge 1px blue;*/
-    margin-bottom:30px;
+    margin-bottom: 0px;
 }
 
 .metadataAttributeLabel
@@ -83,7 +93,7 @@ Green 05  #eff7f6
 
 .metadataAttributeInput
 {
-    width:380px;
+    width: 380px;
     /*border:ridge 1px yellow;*/
 }
 
@@ -100,12 +110,84 @@ Green 05  #eff7f6
 
 .metadataCompountAttributeUsage
 {
-    padding:0 0 0px 20px;
+    margin:0 0 0px 0px;
 }
 
 
 .metadataAttributeContent
 {
     /*border:dotted 1px green;*/
-    margin:10px;
+    margin:0px;
+}
+
+.metadata-activate-checkbox {
+    margin-top: 6px;  margin-left: 10px;
+    font-size: 16px;
+}
+
+.metadata-choice-container {
+    margin-top: 6px; 
+}
+
+/**Level**/
+.Metadata-Level-1 {
+    border-left: #388670 10px solid;
+    border-bottom: #388670 4px solid;
+    /*background-color: #388670;*/
+    /*border-top:2px solid white;*/
+}
+
+.Metadata-Level-Header-1 {
+    color: white;
+    background-color: #388670;
+    /*text-transform: uppercase;*/
+}
+
+/*72b1a0*/
+.Metadata-Level-3 {
+    border-left: #bbddd9 10px solid;
+    border-bottom: #bbddd9 4px solid;
+    /*background-color: #72b1a0;*/
+    /*border-top:2px solid white;*/
+}
+
+.Metadata-Level-Header-3 {
+    /*color: white;*/
+    background-color: #bbddd9;
+    
+}
+
+.Metadata-Level-5 {
+    border-left: #cce5e2 10px solid;
+    border-bottom: #cce5e2 4px solid;
+    /*background-color: #bee1da;*/
+    /*border-top:2px solid white;*/
+}
+
+.Metadata-Level-Header-5 {
+    /*color: white;*/
+    background-color: #cce5e2;
+}
+
+.Metadata-Level-7 {
+    border-left: #ddeeec 10px solid;
+    border-bottom: #ddeeec 4px solid;
+    /*background-color: #d2e8e3;*/
+    /*border-top:2px solid white;*/
+
+}
+
+.Metadata-Level-Header-7 {
+    /*color: white;*/
+    background-color: #ddeeec;
+}
+
+.Metadata-Level-9 {
+    border-left: #eff7f6 10px solid;
+    border-bottom: #eff7f6 4px solid;
+}
+
+.Metadata-Level-Header-9 {
+    /*color: white;*/
+    background-color: #eff7f6;
 }
