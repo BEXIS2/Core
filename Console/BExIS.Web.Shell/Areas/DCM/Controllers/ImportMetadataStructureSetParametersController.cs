@@ -13,6 +13,7 @@ using BExIS.Dcm.Wizard;
 using BExIS.Ddm.Model;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
+using BExIS.Security.Services.Objects;
 using BExIS.Web.Shell.Areas.DCM.Models.ImportMetadata;
 using BExIS.Xml.Helpers;
 using BExIS.Web.Shell.Areas.DCM.Models;
@@ -333,19 +334,11 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         private List<string> GetEntityList()
         {
-            List<string> tmp = new List<string>();
+            EntityManager entityManager = new EntityManager();
 
-            string filePath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "EntityList.xml");
-            XDocument xdoc = XDocument.Load(filePath);
+            IEnumerable<string> tmp = entityManager.GetAllEntities().Select(e => e.ClassPath);
 
-            IEnumerable<XElement> entitiesXElements = XmlUtility.GetXElementByNodeName("entity", xdoc);
-
-            foreach (XElement x in entitiesXElements)
-            {
-                tmp.Add(x.Value);
-            }
-
-            return tmp;
+            return tmp.ToList();
         }
 
         private string GetDisplayName(string xpath)

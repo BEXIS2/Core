@@ -1,0 +1,272 @@
+﻿@model BExIS.Web.Shell.Areas.DCM.Models.CreateDataset.StepModelHelper
+@using System.Runtime.Remoting
+@using BExIS.Dcm.Wizard;
+
+@{
+    string stepId = @Model.StepId.ToString();
+    long parentStepId = @Model.Model.StepInfo.Parent.Id;
+    string parentTargetId = parentStepId.ToString();
+    string id_activate = @stepId + "_Activate";
+    string parentContentId = @Model.Model.StepInfo.Parent.Id + "_Content";
+    string id_add = @parentStepId + "_" + @Model.Number + "_Add";
+    string id_remove = @parentStepId + "_" + @Model.Number + "_Remove";
+    string id_up = @parentStepId + "_" + @Model.Number + "_Up";
+    string id_down = @parentStepId + "_" + @Model.Number + "_down";
+    string id_label_container = @parentStepId + "_" + @Model.Number + "_LabelContainer";
+    string id_button_view = @parentStepId + "_" + @Model.Number + "_ButtonView";
+    string id_container = @parentStepId + "_" + @Model.Number + "_Container";
+
+    string lockedClass = "";
+    bool locked = false;
+    bool hideOptional = false;
+}
+
+@if (ViewData.Keys.Contains("Locked"))
+{
+    locked = (bool)ViewData["Locked"];
+    lockedClass = "bx-disabled";
+}
+
+@if (ViewData.Keys.Contains("HideOptional"))
+{
+    hideOptional = (bool)ViewData["HideOptional"];
+}
+
+<div id="@stepId" name="@Model.Usage.Label" number="@Model.Number" class="metadataPackageUsage">
+
+@if (@Model != null && !(hideOptional && Model.IsEmpty() && locked))
+{
+    <!--Header-->
+    <div class="header">
+        <div id="@id_label_container" class="labelContainer" onclick="showHideClick(this)">
+            <b>
+                @Model.Usage.Label
+
+                @if (Model.Model.MaxCardinality > 1)
+                {
+                    <span>( @Model.Number )</span>
+                }
+
+
+            </b>
+
+            @if (Model.Model.MinCardinality > 0)
+            {
+                <b title="Required" style="color: red">*</b>
+            }
+
+            @if (Model.Activated)
+            {
+                <span id="@id_button_view" class="bx bx-angle-double-up "></span>
+            }
+        </div>
+        <div class="optionContainer">
+            @if (Model.Activated)
+            {
+                if (Model.Model.MaxCardinality > 1 && !locked)
+                {
+                    <table>
+                        <tr>
+                            <td>
+                                @if (Model.Model.MaxCardinality > 1
+                                     && Model.Model.StepInfo.Parent.Children.Count < Model.Model.MaxCardinality
+                                     && Model.Model.Number == Model.Model.StepInfo.Parent.Children.Count)
+                                {
+                                    <button id="@id_add" onclick="Add(this)" class="bx-function bx-add" title="Add"/>
+                                }
+                                else
+                                {
+                                    <button id="@id_add" onclick="Add(this)" class="bx-function bx-add bx-disabled" title="Add"/>
+                                }
+                            </td>
+                            <td>
+                                @if (Model.Model.StepInfo.Parent.Children.Count > 1)
+                                {
+                                    <button id="@id_remove" onclick="Remove(this)" class="bx-function bx-delete" title="Remove"/>
+                                }
+                                else
+                                {
+                                    <button class="bx-function bx-delete bx-disabled" title="Remove"/>
+                                }
+                            </td>
+                            <td>
+                                @if (Model.Number < Model.Model.StepInfo.Parent.Children.Count)
+                                {
+                                    <button id="@id_down" class="bx-function bx-down" onclick="Down(this)" title="Down"/>
+                                }
+                                else
+                                {
+                                    <button class="bx-function bx-down bx-disabled" title="Down"/>
+                                }
+                            </td>
+                            <td>
+                                @if (Model.Number > 1)
+                                {
+                                    <button id="@id_up" class="bx-function bx-up" onclick="Up(this)" title="Up"/>
+                                }
+                                else
+                                {
+                                    <button class="bx-function bx-up bx-disabled" title="Up"/>
+
+                                }
+                            </td>
+                        </tr>
+                    </table>
+                }
+            }
+
+        </div>
+    </div>
+
+    if (Model.Activated)
+    {
+        <!--Content-->
+        <div id="@id_container" class="contentContainer">
+            @if (Model.Model.MetadataAttributeModels.Any())
+            {
+                <div class="simpleAttributesContainer">
+                    @foreach (var element in Model.Model.MetadataAttributeModels)
+                    {
+                        @Html.Partial("_metadataAttributeView", element)
+                    }
+                </div>
+            }
+
+            <div class="complexAttributesContainer">
+                @foreach (var element in Model.Childrens)
+                {
+                    if (element.Model.MinCardinality > 0)
+                    {
+                        @Html.Partial("_metadataCompoundAttributeView", element)
+                    }
+                }
+            </div>
+
+            <div class="optionalOptionContainer">
+                @foreach (var element in Model.Childrens)
+                {
+                    if (element.Model.MinCardinality == 0)
+                    {
+                        string action = "Activate(" + element.StepId + ")";
+                        string id = element.StepId+"_OptionalCheckBox";
+
+                        @Html.CheckBox(id, element.Activated,new {OnChange= @action, @id = id});
+                        
+                        <b>@element.Model.DisplayName </b>
+                    }
+                }
+            </div>
+
+            <div class="optionalComplexAttributesContainer" >
+                @foreach (var x in Model.Childrens)
+                {
+                    if (x.Model.MinCardinality == 0)
+                    {
+                        string containerId = @x.StepId + "_optionalContainer";
+                        <div id="@containerId">
+                            @if (x.Activated)
+                            {
+                                @Html.Partial("_metadataCompoundAttributeView", x)
+                            }
+                        </div>
+                    }
+                }
+            </div>
+
+            
+        </div>
+    }
+
+}
+
+<script type="text/javascript">
+
+    $(document)
+        .ready(function() {
+            resetAllTelerikIconTitles();
+        });
+
+    function Add(e) {
+        var temp = e.id;
+        var parentId = temp.split("_")[0];
+        var number = temp.split("_")[1];
+
+        $.get('@Url.Action("AddComplexUsage", "CreateDataset", new RouteValueDictionary {{"area", "DCM"}})',
+            { parentStepId: parentId, number: number },
+            function(response) {
+                $('#' + parentId).replaceWith(response);
+            });
+    }
+
+    function Remove(e) {
+        var temp = e.id;
+        var parentId = temp.split("_")[0];
+        var number = temp.split("_")[1];
+
+        $.get('@Url.Action("RemoveComplexUsage", "CreateDataset", new RouteValueDictionary {{"area", "DCM"}})',
+            { parentStepId: parentId, number: number },
+            function(response) {
+                $('#' + parentId).replaceWith(response);
+            });
+    }
+
+    function Up(e) {
+        var temp = e.id;
+        var parentId = temp.split("_")[0];
+        var number = temp.split("_")[1];
+
+        $.get('@Url.Action("UpComplexUsage", "CreateDataset", new RouteValueDictionary {{"area", "DCM"}})',
+            { parentStepId: parentId, number: number },
+            function(response) {
+                $('#' + parentId).replaceWith(response);
+            });
+    }
+
+    function Down(e) {
+        var temp = e.id;
+        var parentId = temp.split("_")[0];
+        var number = temp.split("_")[1];
+
+        $.get('@Url.Action("DownComplexUsage", "CreateDataset", new RouteValueDictionary {{"area", "DCM"}})',
+            { parentStepId: parentId, number: number },
+            function(response) {
+                $('#' + parentId).replaceWith(response);
+            });
+    }
+
+    function Activate(e) {
+        ////alert(e);
+        var stepid = e;
+        var checkboxId = stepid + "_OptionalCheckBox";
+
+            $.get('@Url.Action("ActivateComplexUsage", "CreateDataset", new RouteValueDictionary {{"area", "DCM"}})',
+            {
+                id: stepid
+            },
+            function (response) {
+                //alert(response);
+                //alert('#' + stepid + "_Container");
+                //alert($('#' + checkboxId).is(':checked'));
+
+                if ($('#' + checkboxId).is(':checked')) {
+                    $('#' + stepid + "_optionalContainer").append(response);
+                } else {
+                    $('#' + stepid + "_optionalContainer").Empty();
+                }
+            });
+    }
+
+    function showHideClick(e) {
+        var temp = e.id;
+        var parentId = temp.split("_")[0];
+        var number = temp.split("_")[1];
+
+        var id = parentId + "_" + number + "_Container";
+        var buttonId = parentId + "_" + number + "_ButtonView";
+        $('#' + id).toggle();
+        $('#' + buttonId).toggleClass("bx-angle-double-up bx-angle-double-down");
+    }
+
+</script>
+
+</div>

@@ -54,6 +54,10 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             ShowDataModel model = new ShowDataModel();
 
             string title = "";
+            long metadataStructureId = -1;
+            long dataStructureId = -1;
+            long researchPlanId = 1;
+            XmlDocument metadata = new XmlDocument();
 
             if (dm.IsDatasetCheckedIn(id))
             {
@@ -63,6 +67,10 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
 
                 title = XmlDatasetHelper.GetInformation(dsv, NameAttributeValues.title);
+                metadataStructureId = dsv.Dataset.MetadataStructure.Id;
+                dataStructureId = dsv.Dataset.DataStructure.Id;
+                researchPlanId = dsv.Dataset.ResearchPlan.Id;
+                metadata = dsv.Metadata;
 
                 ViewBag.Title = PresentationModel.GetViewTitleForTenant("Show Data : " + title, this.Session.GetTenant());
 
@@ -76,10 +84,16 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             {
                 Id = id,
                 Title = title,
+                MetadataStructureId = metadataStructureId,
+                DataStructureId = dataStructureId,
+                ResearchPlanId = researchPlanId,
                 ViewAccess = permissionManager.HasUserDataAccess(HttpContext.User.Identity.Name, 1, id, RightType.View),
                 GrantAccess =
                     permissionManager.HasUserDataAccess(HttpContext.User.Identity.Name, 1, id, RightType.Grant)
             };
+
+            //set metadata in session
+            Session["ShowDataMetadata"] = metadata;
 
             return View(model);
         }

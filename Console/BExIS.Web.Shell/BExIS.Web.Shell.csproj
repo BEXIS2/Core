@@ -329,6 +329,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Areas\DCM\Controllers\CreateDatasetController.cs" />
     <Compile Include="Areas\DCM\Controllers\DcmAdminController.cs" />
+    <Compile Include="Areas\DCM\Controllers\FormController.cs" />
     <Compile Include="Areas\DCM\Controllers\HelpController.cs" />
     <Compile Include="Areas\DCM\Controllers\ImportMetadataStructureController.cs" />
     <Compile Include="Areas\DCM\Controllers\ImportMetadataStructureReadSourceController.cs" />
@@ -611,12 +612,12 @@
     <Content Include="Content\Images\Bildmarke_BEXIS_cmyk.ai" />
     <Content Include="Content\Images\Logo_BEXIS_cmyk.ai" />
     <Content Include="Areas\DCM\Views\CreateDataset\Index.cshtml" />
-    <Content Include="Areas\DCM\Views\CreateDataset\MetadataEditor.cshtml" />
-    <Content Include="Areas\DCM\Views\CreateDataset\_metadataAttributeView.cshtml" />
-    <Content Include="Areas\DCM\Views\CreateDataset\_metadataCompoundAttributeView.cshtml" />
-    <Content Include="Areas\DCM\Views\CreateDataset\_metadataPackageUsageView.cshtml" />
-    <Content Include="Areas\DCM\Views\CreateDataset\_metadataPackageView.cshtml" />
-    <Content Include="Areas\DCM\Views\CreateDataset\_metadataCompoundAttributeUsageView.cshtml" />
+    <Content Include="Areas\DCM\Views\Form\MetadataEditor.cshtml" />
+    <Content Include="Areas\DCM\Views\Form\_metadataAttributeView.cshtml" />
+    <Content Include="Areas\DCM\Views\Form\_metadataCompoundAttributeView.cshtml" />
+    <Content Include="Areas\DCM\Views\Form\_metadataPackageUsageView.cshtml" />
+    <Content Include="Areas\DCM\Views\Form\_metadataPackageView.cshtml" />
+    <Content Include="Areas\DCM\Views\Form\_metadataCompoundAttributeUsageView.cshtml" />
     <Content Include="Areas\SAM\Views\Users\_Membership.cshtml" />
     <Content Include="Areas\SAM\Views\Groups\_Membership.cshtml" />
     <Content Include="Areas\SAM\Views\Account\MyAccount.cshtml" />

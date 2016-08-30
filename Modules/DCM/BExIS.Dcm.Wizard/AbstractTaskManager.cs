@@ -331,6 +331,25 @@ namespace BExIS.Dcm.Wizard
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        public void UpdateBus(string key, object value)
+        {
+            if (!this.Bus.ContainsKey(key))
+            {
+                this.Bus.Add(key, value);
+            }
+            else
+            {
+                this.Bus[key] = value;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
         /// <param name="data"></param>
         public void AddToBus(object[] data)
         {
