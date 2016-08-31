@@ -81,7 +81,7 @@ namespace BExIS.Web.Shell.Controllers
             ////Test Party Type Manager
             //Add Party Type
             var partyType = addPartyType();
-            //removePartyType(partyType);
+           //removePartyType(partyType);
             var partyStatusType = addPartyStatusType(partyType);
             var cusAttr = addTestPartyCustomAttribute(partyType);
             //removeTestPartyCustomAttribute(cusAttr);
@@ -95,6 +95,7 @@ namespace BExIS.Web.Shell.Controllers
             parties.Add(addTestParty(partyType, partyStatusType));
             ////update last test party
             updateTestParty(parties.Last().Id);
+          
             //////deleteTestParty last test party
             ////deleteTestParty(parties.First());
             //////Add custom attribute value
@@ -102,15 +103,17 @@ namespace BExIS.Web.Shell.Controllers
             removeTestPartyCustomAttributeValue(customAttrVal);
             // Create Party relationshiptype
             //in the same time of creating partyrelationshiptype partyType pairs created and add to that
-            var partyReType = addTestPartyRelationshipType(partyType, addPartyType());
+            var partyReType = addTestPartyRelationshipType(partyType, partyType);
           //removeTestPartyRelationshipType(partyReType);
             //Add relation between two parties
             var partyRel=addTestPartyRelationship(parties.First(), parties.Last(), partyReType);
-            
-            var partyPair = addTestPartyTypePair(partyType, addPartyType());
+            // addTestPartyRelationship(parties.Last(), parties.First(), partyReType);
+            removePartyRelationship(partyRel);
+          var partyPair = addTestPartyTypePair(partyType, addPartyType());
            // removeTestPartyTypePair(partyPair);
             var ps=addTestPartyStatus(parties.First());
             //removeTestPartyStatus(ps);
+          //  deleteTestParty(parties.First());
 
             return View();
         }
@@ -156,18 +159,14 @@ namespace BExIS.Web.Shell.Controllers
             var st = ptm.AddStatusType(partyType, "second try", "this is for test data", 0);
             return pm.AddPartyStatus(party, st, "test");
         }
-        private bool removeTestPartyStatus(Dlm.Entities.Party.PartyStatus partyStatus)
-        {
-            Dlm.Services.Party.PartyManager pm = new Dlm.Services.Party.PartyManager();
-            return pm.RemovePartyStatus(partyStatus);
-        }
+        
         #endregion
 
         #region PartyRelationship
         private Dlm.Entities.Party.PartyRelationship addTestPartyRelationship(Dlm.Entities.Party.Party firstParty, Dlm.Entities.Party.Party secondParty,PartyRelationshipType prt)
         {
             Dlm.Services.Party.PartyManager pm = new Dlm.Services.Party.PartyManager();
-            return pm.AddPartyRelationship(firstParty, secondParty, prt, DateTime.Now, null, "test Rel", "test relationship", "ss");
+            return pm.AddPartyRelationship(firstParty, secondParty, prt, "test Rel", "test relationship",DateTime.Now);
 
         }
         private bool removePartyRelationship(Dlm.Entities.Party.PartyRelationship partyRelationship)
@@ -182,7 +181,13 @@ namespace BExIS.Web.Shell.Controllers
         private Dlm.Entities.Party.PartyCustomAttributeValue addTestPartyCustomAttributeValue(Dlm.Entities.Party.Party party, Dlm.Entities.Party.PartyCustomAttribute partyCustomAttr)
         {
             Dlm.Services.Party.PartyManager pm = new Dlm.Services.Party.PartyManager();
-            return pm.AddPartyCustomAttriuteValue(party, partyCustomAttr, "TestName");
+            pm.AddPartyCustomAttriuteValue(party, partyCustomAttr, "TestName");
+            Dictionary<PartyCustomAttribute, string> customAtts = new Dictionary<PartyCustomAttribute, string>();
+            customAtts.Add(partyCustomAttr, "Dic");
+            customAtts.Add(addTestPartyCustomAttribute(party.PartyType), "dic2");
+            customAtts.Add(addTestPartyCustomAttribute(party.PartyType), "dic3");
+            pm.AddPartyCustomAttriuteValue(party, customAtts);
+            return pm.AddPartyCustomAttriuteValue(party, partyCustomAttr, "TestName updated");
         }
 
         private bool removeTestPartyCustomAttributeValue(Dlm.Entities.Party.PartyCustomAttributeValue partyCustomAttrVal)
@@ -246,7 +251,7 @@ namespace BExIS.Web.Shell.Controllers
         private Dlm.Entities.Party.PartyRelationshipType addTestPartyRelationshipType(PartyType alowedSource, PartyType alowedTarget)
         {
             Dlm.Services.Party.PartyRelationshipTypeManager pmr = new Dlm.Services.Party.PartyRelationshipTypeManager();
-            return pmr.Create("test", " ", false, 0, 0, alowedSource, alowedTarget, "", "");
+            return pmr.Create("test", " ", false, 1, 1, alowedSource, alowedTarget, "", "");
         }
 
         private bool removeTestPartyRelationshipType(PartyRelationshipType partyRelationshipType)

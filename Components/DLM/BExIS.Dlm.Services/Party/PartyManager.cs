@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
+using Vaiona.Entities.Common;
 using Vaiona.Persistence.Api;
 using PartyX = BExIS.Dlm.Entities.Party.Party;
 
@@ -77,6 +78,7 @@ namespace BExIS.Dlm.Services.Party
             {
                 IRepository<PartyX> repo = uow.GetRepository<PartyX>();
                 IRepository<PartyStatus> repoCM = uow.GetRepository<PartyStatus>();
+                IRepository<PartyRelationship> repoRel = uow.GetRepository<PartyRelationship>();
                 var latest = repo.Reload(entity);
                 // remove all associations between the entity and its history items
                 repoCM.Delete(latest.History);
@@ -84,6 +86,12 @@ namespace BExIS.Dlm.Services.Party
                 {
                     entity.History.ToList().ForEach(a => a.Party = null);
                     entity.History.Clear();
+                }
+                //remove all relations
+                var relations = repoRel.Get(item => item.FirstParty.Id == entity.Id || item.SecondParty.Id == entity.Id);
+                foreach (var relation in relations)
+                {
+                    repoRel.Delete(relation);
                 }
                 //delete the entity
                 repo.Delete(latest);
@@ -121,8 +129,8 @@ namespace BExIS.Dlm.Services.Party
 
         public PartyX Update(PartyX entity)
         {
-            Contract.Requires(entity != null, "provided entity can not be null");
-            Contract.Requires(entity.Id >= 0, "provided entity must have a permanent ID");
+            Contract.Requires(entity != null, "Provided entity can not be null");
+            Contract.Requires(entity.Id >= 0, "Provided entity must have a permanent ID");
             Contract.Ensures(Contract.Result<PartyX>() != null && Contract.Result<PartyX>().Id >= 0, "No entity is persisted!");
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
@@ -137,16 +145,15 @@ namespace BExIS.Dlm.Services.Party
 
 
 
-
         #region PartyRelationship
         public PartyRelationship AddPartyRelationship(PartyX firstParty, PartyX secondParty, PartyRelationshipType partyRelationshipType,
-                                   DateTime? startDate, DateTime? endDate, string title, string description, string scope)
+                                    string title, string description, DateTime? startDate = null, DateTime? endDate = null, string scope = "")
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(title));
             Contract.Requires(firstParty != null);
-            Contract.Requires(firstParty.Id >= 0, "provided first entity must have a permanent ID");
+            Contract.Requires(firstParty.Id >= 0, "Provided first entity must have a permanent ID");
             Contract.Requires(secondParty != null);
-            Contract.Requires(secondParty.Id >= 0, "provided first entity must have a permanent ID");
+            Contract.Requires(secondParty.Id >= 0, "Provided first entity must have a permanent ID");
             Contract.Requires(partyRelationshipType != null && partyRelationshipType.Id > 0);
             Contract.Ensures(Contract.Result<PartyRelationship>() != null && Contract.Result<PartyRelationship>().Id >= 0);
             if (startDate == null)
@@ -167,39 +174,63 @@ namespace BExIS.Dlm.Services.Party
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<PartyRelationship> repoPR = uow.GetRepository<PartyRelationship>();
+                IRepository<PartyRelationshipType> repoRelType = uow.GetRepository<PartyRelationshipType>();
+                partyRelationshipType = repoRelType.Reload(partyRelationshipType);
                 //Check if there is another relationship
-                if (repoPR.Get(item => (item.PartyRelationshipType != null && item.PartyRelationshipType.Id == partyRelationshipType.Id)
+                var cnt = repoPR.Query(item => (item.PartyRelationshipType != null && item.PartyRelationshipType.Id == partyRelationshipType.Id)
                                         && (item.FirstParty != null && item.FirstParty.Id == firstParty.Id)
-                                         && (item.SecondParty != null && item.SecondParty.Id == secondParty.Id)).Count > 0)
-                    throw new Exception("This relationship is already exist in database.");
+                                         && (item.SecondParty != null && item.SecondParty.Id == secondParty.Id)).Count();
+                if (cnt > 0)
+                    PartyManager.ThrowException(entity, "This relationship is already exist in database.", ExceptionType.Add);
+                //Check maximun cardinality
+                if (partyRelationshipType.MaxCardinality <= partyRelationshipType.PartyRelationships.Count())
+                    PartyManager.ThrowException(entity, string.Format("Maximum relations for this type of relation is {0}.", partyRelationshipType.MaxCardinality), PartyManager.ExceptionType.Add);
+
+                //Check if there is a relevant party type pair
+                var alowedSource = partyRelationshipType.AssociatedPairs.FirstOrDefault(item => item.AlowedSource == firstParty.PartyType || item.AlowedSource == secondParty.PartyType);
+                var alowedTarget = partyRelationshipType.AssociatedPairs.FirstOrDefault(item => item.AlowedTarget == firstParty.PartyType || item.AlowedTarget == secondParty.PartyType);
+                if (alowedSource == null || alowedTarget == null)
+                    PartyManager.ThrowException(entity, string.Format("There is not relevant 'PartyTypePair' for these types of parties.", partyRelationshipType.MaxCardinality), PartyManager.ExceptionType.Add);
+
+                
+                partyRelationshipType.PartyRelationships.Add(entity);
                 repoPR.Put(entity);
                 uow.Commit();
             }
             return (entity);
         }
+
         public bool RemovePartyRelationship(PartyRelationship partyRelationship)
         {
             Contract.Requires(partyRelationship != null);
-            Contract.Requires(partyRelationship.Id >= 0, "provided entity must have a permanent ID"); 
+            Contract.Requires(partyRelationship.Id >= 0, "Provided entity must have a permanent ID");
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<PartyRelationship> repoPR = uow.GetRepository<PartyRelationship>();
+                partyRelationship = repoPR.Reload(partyRelationship);
+                if (partyRelationship.PartyRelationshipType.MinCardinality > (partyRelationship.PartyRelationshipType.PartyRelationships.Count() - 1))
+                    ThrowException(partyRelationship, String.Format("Atleast {0} party relation is required.", partyRelationship.PartyRelationshipType.MinCardinality), ExceptionType.Delete);
                 var entity = repoPR.Reload(partyRelationship);
                 repoPR.Delete(entity);
                 uow.Commit();
             }
             return (true);
         }
+
         public bool RemovePartyRelationship(IEnumerable<PartyRelationship> entities)
         {
             Contract.Requires(entities != null);
             Contract.Requires(Contract.ForAll(entities, (PartyRelationship e) => e != null));
             Contract.Requires(Contract.ForAll(entities, (PartyRelationship e) => e.Id >= 0));
+
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<PartyRelationship> repoPR = uow.GetRepository<PartyRelationship>();
+
                 foreach (var entity in entities)
                 {
+                    if (entity.PartyRelationshipType.MinCardinality > (entity.PartyRelationshipType.PartyRelationships.Count() - 1))
+                        ThrowException(entity, String.Format("Atleast {0} party relation is required.", entity.PartyRelationshipType.MinCardinality), ExceptionType.Delete, true);
                     var latest = repoPR.Reload(entity);
                     repoPR.Delete(latest);
                 }
@@ -215,10 +246,12 @@ namespace BExIS.Dlm.Services.Party
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(value));
             Contract.Requires(partyCustomAttribute != null);
-            Contract.Requires(partyCustomAttribute.Id >= 0, "provided Custom Attribute entity must have a permanent ID");
+            Contract.Requires(partyCustomAttribute.Id >= 0, "Provided Custom Attribute entity must have a permanent identifier.");
             Contract.Requires(party != null);
-            Contract.Requires(party.Id >= 0, "provided party entity must have a permanent ID");
+            Contract.Requires(party.Id >= 0, "Provided party entity must have a permanent ID");
+
             Contract.Ensures(Contract.Result<PartyCustomAttributeValue>() != null && Contract.Result<PartyCustomAttributeValue>().Id >= 0);
+
             var entity = new PartyCustomAttributeValue()
             {
                 CustomAttribute = partyCustomAttribute,
@@ -229,20 +262,70 @@ namespace BExIS.Dlm.Services.Party
                 IRepository<PartyX> repo = uow.GetRepository<PartyX>();
                 IRepository<PartyCustomAttributeValue> repoCAV = uow.GetRepository<PartyCustomAttributeValue>();
                 var partyEntity = repo.Reload(party);
-                //there is no attribute value when it created
+                //if there is no attribute value when it created
                 if (partyEntity.CustomAttributeValues == null)
                     partyEntity.CustomAttributeValues = new List<PartyCustomAttributeValue>();
-                partyEntity.CustomAttributeValues.Add(entity);
-                repoCAV.Put(entity);
+                //check if there is the same custom attribute for this party update it
+                var similarPartyCustomAttr = partyEntity.CustomAttributeValues.FirstOrDefault(item => item.CustomAttribute.Id == partyCustomAttribute.Id);
+                if (similarPartyCustomAttr != null)
+                {
+                    similarPartyCustomAttr.Value = value;
+                    entity = similarPartyCustomAttr;
+                }
+                else
+                {
+                    partyEntity.CustomAttributeValues.Add(entity);
+                    repoCAV.Put(entity);
+                }
                 uow.Commit();
             }
             return (entity);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="party"></param>
+        /// <param name="partyCustomAttributeValues"></param>
+        /// <returns></returns>
+        public IEnumerable<PartyCustomAttributeValue> AddPartyCustomAttriuteValue(PartyX party, Dictionary<PartyCustomAttribute, string> partyCustomAttributeValues)
+        {
+            Contract.Requires(partyCustomAttributeValues != null);
+            Contract.Requires(party != null);
+            Contract.Requires(party.Id >= 0, "Provided party entity must have a permanent ID");
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<PartyX> repo = uow.GetRepository<PartyX>();
+                IRepository<PartyCustomAttributeValue> repoCAV = uow.GetRepository<PartyCustomAttributeValue>();
+                party = repo.Reload(party);
+
+                foreach (var partyCustomAttributeValue in partyCustomAttributeValues)
+                {
+                    //check if there is the same custom attribute for this party update it
+                    var similarPartyCustomAttr = party.CustomAttributeValues.FirstOrDefault(item => item.CustomAttribute.Id == partyCustomAttributeValue.Key.Id);
+                    if (similarPartyCustomAttr != null)
+                        similarPartyCustomAttr.Value = partyCustomAttributeValue.Value;
+                    else
+                    {
+                        var entity = new PartyCustomAttributeValue()
+                        {
+                            CustomAttribute = partyCustomAttributeValue.Key,
+                            Value = partyCustomAttributeValue.Value
+                        };
+                        party.CustomAttributeValues.Add(entity);
+                        repoCAV.Put(entity);
+                    }
+                }
+                uow.Commit();
+            }
+            return party.CustomAttributeValues;
+        }
+
         public bool RemovePartyCustomAttriuteValue(PartyCustomAttributeValue partyCustomAttributeValue)
         {
             Contract.Requires(partyCustomAttributeValue != null);
-            Contract.Requires(partyCustomAttributeValue.Id >= 0, "provided entity must have a permanent ID");
+            Contract.Requires(partyCustomAttributeValue.Id >= 0, "Provided entity must have a permanent ID");
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<PartyCustomAttributeValue> repo = uow.GetRepository<PartyCustomAttributeValue>();
@@ -284,14 +367,21 @@ namespace BExIS.Dlm.Services.Party
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<PartyStatus> repoStatus = uow.GetRepository<PartyStatus>();
-                if (repoStatus.Get(item => item.StatusType == partyStatusType && item.Party == party).Count > 0)
-                    throw new Exception("This PartyStatus is already exist!");
+
                 repoStatus.Put(entity);
+                // The current status must get updated, too. dependes on the current status's update logic.
                 uow.Commit();
             }
             return (entity);
         }
-        public bool RemovePartyStatus(PartyStatus entity)
+
+        /// <summary>
+        /// There is no need to delete party status
+        /// 
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        protected bool RemovePartyStatus(PartyStatus entity)
         {
             Contract.Requires(entity != null && entity.Id >= 0);
             using (IUnitOfWork uow = this.GetUnitOfWork())
@@ -304,7 +394,13 @@ namespace BExIS.Dlm.Services.Party
             // if any problem was detected during the commit, an exception will be thrown!
             return (true);
         }
-        public bool RemovePartyStatus(IEnumerable<PartyStatus> entities)
+        /// <summary>
+        /// There is no need to delete party status
+        /// 
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        protected bool RemovePartyStatus(IEnumerable<PartyStatus> entities)
         {
             Contract.Requires(entities != null);
             using (IUnitOfWork uow = this.GetUnitOfWork())
@@ -318,7 +414,21 @@ namespace BExIS.Dlm.Services.Party
                 uow.Commit();
             }
             return (true);
-        }        
+        }
         #endregion
+
+        public static void ThrowException(object entityObj, string reason, ExceptionType exceptionType, bool GroupFailed = false)
+        {
+            var entity = (BaseEntity)entityObj;
+            throw new Exception(string.Format("{0} {1} (ID: {2}) failed. Reason: {3} . {4}", exceptionType.ToString(), entityObj.GetType().Name, entity.Id, reason, GroupFailed ? " All operations canceled" : ""));
+
+        }
+
+        public enum ExceptionType
+        {
+            Add = 0,
+            Edit = 1,
+            Delete = 2
+        }
     }
 }

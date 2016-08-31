@@ -8,6 +8,10 @@ namespace BExIS.Dlm.Entities.Party
 {
     public class PartyStatusType: BaseEntity
     {
+        public PartyStatusType()
+        {
+            Statuses = new List<PartyStatus>();
+        }
         #region Attributes
         public virtual string Name { get; set; }
         public virtual string Description { get; set; }

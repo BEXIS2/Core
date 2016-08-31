@@ -12,6 +12,7 @@ namespace BExIS.Dlm.Entities.Party
         public PartyCustomAttribute()
         {
             ValidValues = new List<Dictionary<string, string>>();
+            CustomAttributeValues = new List<PartyCustomAttributeValue>();
         }
 
         #region Attributes

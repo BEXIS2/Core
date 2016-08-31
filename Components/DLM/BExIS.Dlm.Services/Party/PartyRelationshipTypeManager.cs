@@ -42,6 +42,7 @@ namespace BExIS.Dlm.Services.Party
             Contract.Requires(partyTypePairAlowedTarget != null && partyTypePairAlowedTarget.Id > 0);
             Contract.Ensures((Contract.Result<PartyRelationshipType>() != null && Contract.Result<PartyRelationshipType>().Id >= 0)
                 && (Contract.Result<PartyTypePair>() != null && Contract.Result<PartyTypePair>().Id >= 0));
+
             PartyRelationshipType entity = new PartyRelationshipType()
             {
                 Description = description,
@@ -82,7 +83,7 @@ namespace BExIS.Dlm.Services.Party
                 var entity = repoPR.Reload(partyRelationType);
                 //If there is a relation between entity and a party we couldn't delete it
                 if (entity.PartyRelationships.Count() > 0)
-                    throw new Exception("Delete fail. There is a relation between a party and PartyRelationshipType");
+                    PartyManager.ThrowException(entity, "There are some relations between this 'PartyRelationshipType' and 'Party'", PartyManager.ExceptionType.Delete);
                 // remove all associations between the entity and AssociatedPairs
                 entity.AssociatedPairs.ToList().ForEach(item => item.PartyRelationshipType = null);
                 entity.AssociatedPairs.Clear();
@@ -107,7 +108,7 @@ namespace BExIS.Dlm.Services.Party
                     var latest = repoPR.Reload(entity);
                     //If there is a relation between entity and a party we couldn't delete it
                     if (entity.PartyRelationships.Count() > 0)
-                        throw new Exception("Delete fail. There is a relation between a party and PartyRelationshipType");
+                        PartyManager.ThrowException(entity, "There are some relations between this 'PartyRelationshipType' and 'Party'", PartyManager.ExceptionType.Delete,true);
                     // remove all associations between the entity and AssociatedPairs
                     entity.AssociatedPairs.ToList().ForEach(item => item.PartyRelationshipType = null);
                     entity.AssociatedPairs.Clear();
@@ -126,6 +127,7 @@ namespace BExIS.Dlm.Services.Party
             Contract.Requires(alowedSource != null && alowedSource.Id > 0);
             Contract.Requires(alowedTarget != null && alowedTarget.Id > 0);
             Contract.Ensures(Contract.Result<PartyTypePair>() != null && Contract.Result<PartyTypePair>().Id >= 0);
+
             var entity = new PartyTypePair()
             {
                 AlowedSource = alowedSource,
@@ -137,6 +139,11 @@ namespace BExIS.Dlm.Services.Party
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<PartyTypePair> repo = uow.GetRepository<PartyTypePair>();
+
+                //Is it usefull?
+                //var similarPartTypePair = repo.Get(item => item.AlowedSource == alowedSource && item.AlowedTarget == alowedTarget);
+                //if (similarPartTypePair.Any())
+                //    throw new Exception("Add party type pair failed.\r\nThere is already an entity with the same elements.");
                 repo.Put(entity);
                 uow.Commit();
             }
@@ -149,6 +156,10 @@ namespace BExIS.Dlm.Services.Party
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<PartyTypePair> repo = uow.GetRepository<PartyTypePair>();
+                //Is it usefull?
+                //var similarPartTypePair = repo.Get(item => item.Id!=entity.Id && (item.AlowedSource == entity.AlowedSource && item.AlowedTarget == entity.AlowedTarget));
+                //if (similarPartTypePair.Any())
+                //    throw new Exception("Update party type pair failed.\r\nThere is already an entity with the same elements.");
                 repo.Put(entity); // Merge is required here!!!!
                 uow.Commit();
             }
@@ -160,7 +171,11 @@ namespace BExIS.Dlm.Services.Party
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<PartyTypePair> repoPR = uow.GetRepository<PartyTypePair>();
+                IRepository<PartyRelationshipType> repoRel = uow.GetRepository<PartyRelationshipType>();
                 var entity = repoPR.Reload(partyTypePair);
+                if (repoRel.Get(item => item.AssociatedPairs.Contains(partyTypePair)).Count() > 0)
+                    PartyManager.ThrowException(entity,"There are some relations between this entity and 'PartyRelationshipType'.",PartyManager.ExceptionType.Delete);
+               
                 repoPR.Delete(entity);
                 uow.Commit();
             }
@@ -174,8 +189,12 @@ namespace BExIS.Dlm.Services.Party
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<PartyTypePair> repoPR = uow.GetRepository<PartyTypePair>();
+                IRepository<PartyRelationshipType> repoRel = uow.GetRepository<PartyRelationshipType>();
                 foreach (var entity in entities)
                 {
+                    if (repoRel.Get(item => item.AssociatedPairs.Contains(entity)).Count() > 0)
+                        PartyManager.ThrowException(entity, "There are some relations between this entity and 'PartyRelationshipType'.", PartyManager.ExceptionType.Delete,true);
+
                     var latest = repoPR.Reload(entity);
                     repoPR.Delete(latest);
                 }
