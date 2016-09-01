@@ -75,6 +75,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 Session["DataStructureViewList"] = LoadDataStructureViewList();
                 Session["DatasetViewList"] = LoadDatasetViewList();
 
+
+                setAdditionalFunctions();
+
                 //set Entity to TaskManager
                 TaskManager.AddToBus(CreateTaskmanager.ENTITY_CLASS_PATH,"BExIS.Dlm.Entities.Data.Dataset");
 
@@ -113,6 +116,32 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             }
 
             return View();
+        }
+
+        private void setAdditionalFunctions()
+        {
+            //set function actions of COPY, RESET,CANCEL,SUBMIT
+            ActionInfo copyAction = new ActionInfo();
+            copyAction.ActionName = "Copy";
+            copyAction.ControllerName = "CreateDataset";
+            copyAction.AreaName = "DCM";
+
+            ActionInfo resetAction = new ActionInfo();
+            resetAction.ActionName = "Reset";
+            resetAction.ControllerName = "CreateDataset";
+            resetAction.AreaName = "DCM";
+
+            ActionInfo cancelAction = new ActionInfo();
+            cancelAction.ActionName = "Cancel";
+            cancelAction.ControllerName = "CreateDataset";
+            cancelAction.AreaName = "DCM";
+
+            ActionInfo submitAction = new ActionInfo();
+            submitAction.ActionName = "Submit";
+            submitAction.ControllerName = "CreateDataset";
+            submitAction.AreaName = "DCM";
+
+
         }
 
         public ActionResult ReloadIndex(long id = -1, string type = "")
