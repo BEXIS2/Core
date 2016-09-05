@@ -8,6 +8,12 @@ namespace BExIS.Dlm.Entities.Party
 {
     public class PartyType : BaseEntity
     {
+        public PartyType()
+        {
+            Parties = new List<Party>();
+            CustomAttributes = new List<PartyCustomAttribute>();
+            StatusTypes = new List<PartyStatusType>();
+        }
         #region Attributes
         public virtual string Title { get; set; }
         public virtual string Description { get; set; }
