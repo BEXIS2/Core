@@ -134,7 +134,30 @@
 
                                 if (Model.DomainList.Count == 0)
                                 {
-                                    @Html.TextBoxFor(m => m.Value, new { OnChange = "OnChange(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input " + @errorClass })
+                                    string value = "";
+                                    if (@Model.Value != null)
+                                    {
+                                        value = @Model.Value.ToString();
+                                    }
+
+                                    @*@Html.TextBoxFor(m => m.Value, new { OnChange = "OnChange(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input " + @errorClass })*@
+                                    @(Html.Telerik().AutoComplete()
+                                            .Name(@idInput)
+                                            .Encode(false)
+                                            .Value(value)
+                                            .ClientEvents(events=>events.OnChange("OnChangeTextInput"))
+                                            .DataBinding(dataBinding => dataBinding
+                                                .Ajax().Select("_AutoCompleteAjaxLoading", "Form")
+                                                .Cache(false))
+
+                                            .Filterable(filtering =>
+                                            {
+                                                filtering.FilterMode(AutoCompleteFilterMode.Contains);
+                                                filtering.MinimumChars(3);
+
+                                            })
+                                    )
+
                                 }
                                 else
                                 {
@@ -292,36 +315,63 @@
 
     <script type="text/javascript">
 
-    function metadataAttributeOnLoad(e) {
-        if ('@hasErrors') {
-            $('#' + e.id + "_input").AddClass("bx-input-error");
+        function metadataAttributeOnLoad(e) {
+            if ('@hasErrors') {
+                $('#' + e.id + "_input").AddClass("bx-input-error");
+            }
         }
-    }
 
-    function OnChange(e) {
-        var substr = e.id.split('_');
-        var id = substr[0];
-        var parentid = substr[1];
-        var parentname = $("#" + e.id).attr("title");
-        var number = substr[2];
-        var ParentModelNumber = substr[3];
-        var ParentStepID = substr[5];
+        function OnChangeTextInput(e) {
 
-        var data = {
-            value: e.value,
-            id: id,
-            parentid: parentid,
-            parentname: parentname,
-            number: number,
-            parentModelNumber: ParentModelNumber,
-            ParentStepId: ParentStepID
-        };
+            var substr = e.target.id.split('_');
+            var id = substr[0];
+            var parentid = substr[1];
+            var parentname = $("#" + e.id).attr("title");
+            var number = substr[2];
+            var ParentModelNumber = substr[3];
+            var ParentStepID = substr[5];
 
-        //alert(parentid);
-        //alert(metadataStructureId);
-        //alert(ParentStepID);
-        //object value,  int id, int parentid,       string parentname,     int number, int parentModelNumber,                    int parentStepId)
-        $.post('@Url.Action("ValidateMetadataAttributeUsage", "Form", new RouteValueDictionary {{"area", "DCM"}})',
+            //alert(parentid);
+            //alert(metadataStructureId);
+            //alert(ParentStepID);
+            //object value,  int id, int parentid,       string parentname,     int number, int parentModelNumber,                    int parentStepId)
+            $.post('@Url.Action("ValidateMetadataAttributeUsage", "Form", new RouteValueDictionary {{"area", "DCM"}})',
+            {
+                value: e.value,
+                id: id,
+                parentid: parentid,
+                parentname: parentname,
+                number: number,
+                parentModelNumber: ParentModelNumber,
+                ParentStepId: ParentStepID
+            },
+            function (response) {
+                //alert(e.value);
+                //alert(response);
+                //var id = parentid;
+                var index = e.id.lastIndexOf("_");
+                var newId = e.id.substr(0, index);
+                //alert(newId);
+
+                //$("#" + newId).replaceWith(response);
+                //$("#" + newId).replaceWith(response);
+            })
+        }
+
+        function OnChange(e) {
+            var substr = e.id.split('_');
+            var id = substr[0];
+            var parentid = substr[1];
+            var parentname = $("#" + e.id).attr("title");
+            var number = substr[2];
+            var ParentModelNumber = substr[3];
+            var ParentStepID = substr[5];
+
+            //alert(parentid);
+            //alert(metadataStructureId);
+            //alert(ParentStepID);
+            //object value,  int id, int parentid,       string parentname,     int number, int parentModelNumber,                    int parentStepId)
+            $.post('@Url.Action("ValidateMetadataAttributeUsage", "Form", new RouteValueDictionary {{"area", "DCM"}})',
             {
                 value: e.value,
                 id: id,

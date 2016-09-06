@@ -9,6 +9,7 @@ using System.Xml.Linq;
 using BExIS.Dcm.CreateDatasetWizard;
 using BExIS.Dcm.UploadWizard;
 using BExIS.Dcm.Wizard;
+using BExIS.Ddm.Api;
 using BExIS.Dlm.Entities.Common;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
@@ -31,6 +32,7 @@ using BExIS.Xml.Helpers;
 using BExIS.Xml.Helpers.Mapping;
 using BExIS.Xml.Services;
 using NHibernate.Util;
+using Vaiona.IoC;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
@@ -2074,6 +2076,19 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         #endregion
 
         #region Attribute
+
+        /// <summary>
+        /// Is called when the user write a letter in Autocomplete User Component
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult _AutoCompleteAjaxLoading(string text, string id)
+        {
+            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+
+            return new JsonResult { Data = new SelectList(provider.GetTextBoxSearchValues(text,"all", "new", 10).SearchComponent.TextBoxSearchValues, "Value", "Name") };
+        }
 
         private StepModelHelper UpdateChildrens(StepModelHelper stepModelHelper)
         {
