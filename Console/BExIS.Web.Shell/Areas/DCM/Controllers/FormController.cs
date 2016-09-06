@@ -167,7 +167,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             TaskManager.AddToBus(CreateTaskmanager.EDIT_MODE, fromEditMode);
             Model.FromEditMode = (bool)TaskManager.Bus[CreateTaskmanager.EDIT_MODE];
 
-            Model.EditRight = hasUserEditRights();
+            Model.EditRight = hasUserEditRights(entityId);
 
             //set addtionaly functions 
             Model.Actions = getAddtionalActions();
@@ -306,7 +306,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             Model.FromEditMode = (bool)TaskManager.Bus[CreateTaskmanager.EDIT_MODE];
 
             // set edit rights
-            Model.EditRight = hasUserEditRights();
+            Model.EditRight = hasUserEditRights(entityId);
  
             //set addtionaly functions 
             Model.Actions = getAddtionalActions();
@@ -372,7 +372,16 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             Model.FromEditMode = edit;
             Model.Created = created;
 
-            Model.EditRight = hasUserEditRights()
+            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.ENTITY_ID))
+            {
+                long entityId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.ENTITY_ID]);
+                Model.EditRight = hasUserEditRights(entityId);
+            }
+            else
+            {
+                Model.EditRight = false;
+            }
+           
 
             ViewData["Locked"] = locked;
 
@@ -465,7 +474,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         }
 
         #endregion
-
 
         #region Import Metadata From external XML
 
@@ -2703,7 +2711,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         /// return true if user has edit rights
         /// </summary>
         /// <returns></returns>
-        private bool hasUserEditRights()
+        private bool hasUserEditRights(long entityId)
         {
             #region security permissions and authorisations check
             // set edit rigths

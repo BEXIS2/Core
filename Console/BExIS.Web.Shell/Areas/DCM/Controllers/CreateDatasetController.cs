@@ -118,39 +118,13 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             return View();
         }
 
-        private void setAdditionalFunctions()
-        {
-            TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
-
-            //set function actions of COPY, RESET,CANCEL,SUBMIT
-            ActionInfo copyAction = new ActionInfo();
-            copyAction.ActionName = "Index";
-            copyAction.ControllerName = "CreateDataset";
-            copyAction.AreaName = "DCM";
-
-            ActionInfo resetAction = new ActionInfo();
-            resetAction.ActionName = "Reset";
-            resetAction.ControllerName = "Form";
-            resetAction.AreaName = "DCM";
-
-            ActionInfo cancelAction = new ActionInfo();
-            cancelAction.ActionName = "Cancel";
-            cancelAction.ControllerName = "Form";
-            cancelAction.AreaName = "DCM";
-
-            ActionInfo submitAction = new ActionInfo();
-            submitAction.ActionName = "Submit";
-            submitAction.ControllerName = "CreateDataset";
-            submitAction.AreaName = "DCM";
-
-
-            TaskManager.Actions.Add(CreateTaskmanager.CANCEL_ACTION,cancelAction);
-            TaskManager.Actions.Add(CreateTaskmanager.COPY_ACTION,copyAction);
-            TaskManager.Actions.Add(CreateTaskmanager.RESET_ACTION,resetAction);
-            TaskManager.Actions.Add(CreateTaskmanager.SUBMIT_ACTION,submitAction);
-
-        }
-
+        /// <summary>
+        /// ReLoad the createDataset action with different parameter type options
+        /// type eg ("DataStructureId", "DatasetId", "MetadataStructureId")
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public ActionResult ReloadIndex(long id = -1, string type = "")
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("...", this.Session.GetTenant());
@@ -783,6 +757,39 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             }
 
             return temp.OrderBy(p => p.Title).ToList();
+        }
+
+        private void setAdditionalFunctions()
+        {
+            TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
+
+            //set function actions of COPY, RESET,CANCEL,SUBMIT
+            ActionInfo copyAction = new ActionInfo();
+            copyAction.ActionName = "Index";
+            copyAction.ControllerName = "CreateDataset";
+            copyAction.AreaName = "DCM";
+
+            ActionInfo resetAction = new ActionInfo();
+            resetAction.ActionName = "Reset";
+            resetAction.ControllerName = "Form";
+            resetAction.AreaName = "DCM";
+
+            ActionInfo cancelAction = new ActionInfo();
+            cancelAction.ActionName = "Cancel";
+            cancelAction.ControllerName = "Form";
+            cancelAction.AreaName = "DCM";
+
+            ActionInfo submitAction = new ActionInfo();
+            submitAction.ActionName = "Submit";
+            submitAction.ControllerName = "CreateDataset";
+            submitAction.AreaName = "DCM";
+
+
+            TaskManager.Actions.Add(CreateTaskmanager.CANCEL_ACTION, cancelAction);
+            TaskManager.Actions.Add(CreateTaskmanager.COPY_ACTION, copyAction);
+            TaskManager.Actions.Add(CreateTaskmanager.RESET_ACTION, resetAction);
+            TaskManager.Actions.Add(CreateTaskmanager.SUBMIT_ACTION, submitAction);
+
         }
 
         #endregion

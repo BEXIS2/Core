@@ -307,7 +307,7 @@
             var stepid = temp.split("_")[0];
             var active = $(e).hasClass("bx-dot-circle-o");
 
-            $.get('@Url.Action("ActivateComplexUsageInAChoice", "CreateDataset",  new RouteValueDictionary { { "area", "DCM" } })',
+            $.get('@Url.Action("ActivateComplexUsageInAChoice", "Form",  new RouteValueDictionary { { "area", "DCM" } })',
             {
                 parentid: stepid, id: v
             },
