@@ -42,6 +42,13 @@ namespace BExIS.Dcm.CreateDatasetWizard
         public static string EDIT_MODE = "EDIT_MODE";
         public static string FORM_STEPS_LOADED = "FORM_STEPS_LOADED";
 
+        // addtionally actionKeys
+        public static string CANCEL_ACTION = "CANCEL_ACTION";
+        public static string RESET_ACTION = "RESET_ACTION";
+        public static string COPY_ACTION = "COPY_ACTION";
+        public static string SUBMIT_ACTION = "SUBMIT_ACTION";
+
+
         public static string ERROR_DIC = "Error_Dic";
 
         private int MaxStepId;

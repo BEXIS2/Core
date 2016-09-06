@@ -110,9 +110,24 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     long id = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
                     Model.Import = IsImportAvavilable(id);
                 }
+
+
+                //set addtionaly functions 
+                Model.Actions = getAddtionalActions();
             }
 
             return View("MetadataEditor", Model);
+        }
+
+        private Dictionary<string,ActionInfo> getAddtionalActions()
+        {
+            CreateTaskmanager TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
+            if (TaskManager.Actions.Any())
+            {
+                return TaskManager.Actions;
+            }
+
+            return new Dictionary<string, ActionInfo>();
         }
 
         public ActionResult LoadMetadata(long entityId, bool locked = false, bool created = false, bool fromEditMode = false, bool resetTaskManager = false, XmlDocument newMetadata = null)
@@ -152,43 +167,10 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             TaskManager.AddToBus(CreateTaskmanager.EDIT_MODE, fromEditMode);
             Model.FromEditMode = (bool)TaskManager.Bus[CreateTaskmanager.EDIT_MODE];
 
-            #region security permissions and authorisations check
-            // set edit rigths
-            PermissionManager permissionManager = new PermissionManager();
-            SubjectManager subjectManager = new SubjectManager();
-            Security.Services.Objects.TaskManager securityTaskManager = new Security.Services.Objects.TaskManager();
+            Model.EditRight = hasUserEditRights();
 
-            bool hasAuthorizationRights = false;
-            bool hasAuthenticationRigths = false;
-
-            User user = subjectManager.GetUserByName(GetUsernameOrDefault());
-            long userid = -1;
-
-            if (user != null)
-            {
-                userid = subjectManager.GetUserByName(GetUsernameOrDefault()).Id;
-
-                //User has Access to Features 
-                //Area DCM
-                //Controller "Create Dataset" 
-                //Action "*"
-                Task task = securityTaskManager.GetTask("DCM", "CreateDataset", "*");
-                if (task != null)
-                {
-                    hasAuthorizationRights = permissionManager.HasSubjectFeatureAccess(userid, task.Feature.Id);
-                }
-
-                hasAuthenticationRigths = permissionManager.HasUserDataAccess(userid, 1, entityId, RightType.Update);
-
-                Model.EditRight = (hasAuthorizationRights && hasAuthenticationRigths);
-            }
-            else
-            {
-                Model.EditRight = false;
-            }
-
-            #endregion
-
+            //set addtionaly functions 
+            Model.Actions = getAddtionalActions();
 
             return PartialView("MetadataEditor", Model);
         }
@@ -323,42 +305,12 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             TaskManager.AddToBus(CreateTaskmanager.EDIT_MODE, false);
             Model.FromEditMode = (bool)TaskManager.Bus[CreateTaskmanager.EDIT_MODE];
 
-            #region security permissions and authorisations check
-            // set edit rigths
-            PermissionManager permissionManager = new PermissionManager();
-            SubjectManager subjectManager = new SubjectManager();
-            Security.Services.Objects.TaskManager securityTaskManager = new Security.Services.Objects.TaskManager();
+            // set edit rights
+            Model.EditRight = hasUserEditRights();
+ 
+            //set addtionaly functions 
+            Model.Actions = getAddtionalActions();
 
-            bool hasAuthorizationRights = false;
-            bool hasAuthenticationRigths = false;
-
-            User user = subjectManager.GetUserByName(GetUsernameOrDefault());
-            long userid = -1;
-
-            if (user != null)
-            {
-                userid = subjectManager.GetUserByName(GetUsernameOrDefault()).Id;
-
-                //User has Access to Features 
-                //Area DCM
-                //Controller "Create Dataset" 
-                //Action "*"
-                Task task = securityTaskManager.GetTask("DCM", "CreateDataset", "*");
-                if (task != null)
-                {
-                    hasAuthorizationRights = permissionManager.HasSubjectFeatureAccess(userid, task.Feature.Id);
-                }
-
-                hasAuthenticationRigths = permissionManager.HasUserDataAccess(userid, 1, entityId, RightType.Update);
-
-                Model.EditRight = (hasAuthorizationRights && hasAuthenticationRigths);
-            }
-            else
-            {
-                Model.EditRight = false;
-            }
-
-            #endregion
 
 
             return PartialView("MetadataEditor", Model);
@@ -369,7 +321,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             return RedirectToAction("LoadMetadata", "Form", new { entityId = datasetId, locked = false, created = false, fromEditMode = true });
         }
 
-        public ActionResult ImportMetadata(long metadataStructureId)
+        public ActionResult ImportMetadata(long metadataStructureId, bool edit = true, bool created = false, bool locked = false)
         {
 
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Create Dataset", this.Session.GetTenant());
@@ -415,6 +367,15 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             Model.StepModelHelpers = stepInfoModelHelpers;
             Model.Import = IsImportAvavilable(metadataStructureId);
+            //set addtionaly functions 
+            Model.Actions = getAddtionalActions();
+            Model.FromEditMode = edit;
+            Model.Created = created;
+
+            Model.EditRight = hasUserEditRights()
+
+            ViewData["Locked"] = locked;
+
 
             return PartialView("MetadataEditor", Model);
         }
@@ -492,7 +453,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             }
 
             #endregion
-
+            //set addtionaly functions 
+            Model.Actions = getAddtionalActions();
 
             return PartialView("MetadataEditor", Model);
         }
@@ -2429,6 +2391,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             BaseUsage metadataAttributeUsage = UsageHelper.GetChildren(parentUsage).Where(u => u.Id.Equals(id)).FirstOrDefault();
 
+            Path.Combine(AppConfiguration.GetModuleWorkspacePath("dcm"),"x","file.xml");
+
             //UpdateXml
             long metadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
             MetadataAttributeModel model = MetadataAttributeModel.Convert(metadataAttributeUsage, parentUsage, metadataStructureId, parentModelNumber, stepModelHelper.StepId);
@@ -2733,20 +2697,99 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         #endregion
 
+        #region Security
+
+        /// <summary>
+        /// return true if user has edit rights
+        /// </summary>
+        /// <returns></returns>
+        private bool hasUserEditRights()
+        {
+            #region security permissions and authorisations check
+            // set edit rigths
+            PermissionManager permissionManager = new PermissionManager();
+            SubjectManager subjectManager = new SubjectManager();
+            Security.Services.Objects.TaskManager securityTaskManager = new Security.Services.Objects.TaskManager();
+
+            bool hasAuthorizationRights = false;
+            bool hasAuthenticationRigths = false;
+
+            User user = subjectManager.GetUserByName(GetUsernameOrDefault());
+            long userid = -1;
+
+            if (user != null)
+            {
+                userid = subjectManager.GetUserByName(GetUsernameOrDefault()).Id;
+
+                //User has Access to Features 
+                //Area DCM
+                //Controller "Create Dataset" 
+                //Action "*"
+                Task task = securityTaskManager.GetTask("DCM", "CreateDataset", "*");
+                if (task != null)
+                {
+                    hasAuthorizationRights = permissionManager.HasSubjectFeatureAccess(userid, task.Feature.Id);
+                }
+
+                hasAuthenticationRigths = permissionManager.HasUserDataAccess(userid, 1, entityId, RightType.Update);
+
+                return (hasAuthorizationRights && hasAuthenticationRigths);
+            }
+            else
+            {
+               return false;
+            }
+
+            #endregion
+
+        }
+
+        #endregion
+
         #region overrideable Action
 
         public ActionResult Cancel()
         {
-            //public ActionResult LoadMetadataFromExternal(long entityId, string title, long metadatastructureId, long datastructureId=-1,long researchplanId=-1, string sessionKeyForMetadata="")
 
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
             if (TaskManager != null)
             {
                 DatasetManager dm = new DatasetManager();
                 long datasetid = -1;
+                long metadataStructureid = -1;
                 bool resetTaskManager = true;
                 XmlDocument metadata = null;
-                bool editmode = false;
+
+                if (TaskManager.Bus.ContainsKey(CreateTaskmanager.ENTITY_ID))
+                {
+                    datasetid = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.ENTITY_ID]);
+                }
+
+                if (datasetid > -1 && dm.IsDatasetCheckedIn(datasetid))
+                {
+                    Dataset dataset = dm.GetDataset(datasetid);
+                    metadataStructureid = dataset.MetadataStructure.Id;
+                    metadata = dm.GetDatasetLatestMetadataVersion(datasetid);
+                    TaskManager.UpdateBus(CreateTaskmanager.METADATA_XML, metadata);
+                }
+
+                return RedirectToAction("ImportMetadata", "Form", new { area = "DCM", metadataStructureId = metadataStructureid, edit = false , created = true, locked = true });
+            }
+
+            return RedirectToAction("StartMetadataEditor", "Form");
+        }
+
+        public ActionResult Reset()
+        {
+            TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
+            if (TaskManager != null)
+            {
+                DatasetManager dm = new DatasetManager();
+                long datasetid = -1;
+                long metadataStructureid = -1;
+                bool resetTaskManager = true;
+                XmlDocument metadata = null;
+                bool edit = true;
                 bool created = false;
 
                 if (TaskManager.Bus.ContainsKey(CreateTaskmanager.ENTITY_ID))
@@ -2756,74 +2799,13 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                 if (datasetid > -1 && dm.IsDatasetCheckedIn(datasetid))
                 {
+                    Dataset dataset = dm.GetDataset(datasetid);
+                    metadataStructureid = dataset.MetadataStructure.Id;
                     metadata = dm.GetDatasetLatestMetadataVersion(datasetid);
                     TaskManager.UpdateBus(CreateTaskmanager.METADATA_XML, metadata);
-                    editmode = true;
-                    created = true;
                 }
 
-                return RedirectToAction("LoadMetadata", "Form", new { area = "DCM", entityId = datasetid, created = created, locked = true, fromEditMode = editmode, resetTaskManager = resetTaskManager, newMetadata = metadata });
-            }
-
-            return RedirectToAction("StartMetadataEditor", "Form");
-        }
-
-        public ActionResult Reset()
-        {
-            //public ActionResult LoadMetadataFromExternal(long entityId, string title, long metadatastructureId, long datastructureId=-1,long researchplanId=-1, string sessionKeyForMetadata="")
-
-            TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
-            if (TaskManager != null)
-            {
-                string entityClassPath="";
-                long entityId=-1;
-
-                if (TaskManager.Bus.ContainsKey(CreateTaskmanager.ENTITY_ID))
-                {
-                    entityId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.ENTITY_ID]);
-                }
-
-                long metadatastructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
-                long datastructureId = -1;
-                long researchplanId = -1;
-
-                if (TaskManager.Bus.ContainsKey(CreateTaskmanager.DATASTRUCTURE_ID))
-                    datastructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.DATASTRUCTURE_ID]);
-                if (TaskManager.Bus.ContainsKey(CreateTaskmanager.RESEARCHPLAN_ID))
-                    researchplanId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.RESEARCHPLAN_ID]);
-
-
-
-                if (TaskManager.Bus.ContainsKey(CreateTaskmanager.ENTITY_CLASS_PATH))
-                    entityClassPath = TaskManager.Bus[CreateTaskmanager.ENTITY_CLASS_PATH].ToString();
-
-                bool ready = true;
-
-                // todo i case of entity "BExIS.Dlm.Entities.Data.Dataset" we need to have a check if the dataset is checked in later all enitities should support such functions over webapis
-                //if (entityClassPath.Equals("BExIS.Dlm.Entities.Data.Dataset"))
-                //{
-                    DatasetManager dm = new DatasetManager();
-                    //todo need a check if entity is in use
-                    if (dm.IsDatasetCheckedIn(entityId))
-                    {
- 
-                        bool resetTaskManager = true;
-                        bool editmode = false;
-                        bool created = false;
-
-                        XmlDocument metadata = dm.GetDatasetLatestMetadataVersion(entityId);
-                        Session["MetadataLatestVersion"] = metadata;
-                    }
-                //}
-                //else
-                //{
-                //    if (TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATA_XML))
-                //    {
-                //        Session["MetadataLatestVersion"] = (XmlDocument) TaskManager.Bus[CreateTaskmanager.METADATA_XML];
-                //    }
-                //}
-
-                return RedirectToAction("LoadMetadataFromExternal", "Form", new { area = "DCM", entityId, metadatastructureId, datastructureId, researchplanId, sessionKeyForMetadata = "MetadataLatestVersion" });
+                return RedirectToAction("ImportMetadata", "Form", new { area = "DCM", metadataStructureId = metadataStructureid, edit, created });
             }
 
             return RedirectToAction("StartMetadataEditor", "Form");

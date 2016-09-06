@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using BExIS.Dcm.Wizard;
 
 namespace BExIS.Web.Shell.Areas.DCM.Models.CreateDataset
 {
@@ -15,6 +16,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Models.CreateDataset
         public bool Changed { get; set; }
         public bool Import { get; set; }
         public List<StepModelHelper> StepModelHelpers { get; set; }
+        public Dictionary<string, ActionInfo> Actions { get; set; }
 
         public MetadataEditorModel()
         {
@@ -24,6 +26,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Models.CreateDataset
             FromEditMode = false;
             Changed = false;
             Import = false;
+            Actions = new Dictionary<string, ActionInfo>();
         }
     }
 }

@@ -229,7 +229,7 @@
             var number = temp.split("_")[1];
             //alert("compound");
 
-            $.get('@Url.Action("AddComplexUsage", "CreateDataset", new RouteValueDictionary {{"area", "DCM"}})',
+            $.get('@Url.Action("AddComplexUsage", "Form", new RouteValueDictionary {{"area", "DCM"}})',
                 { parentStepId: parentId, number: number },
                 function (response) {
                     $('#' + parentId).replaceWith(response);
@@ -243,7 +243,7 @@
             var parentId = temp.split("_")[0];
             var number = temp.split("_")[1];
 
-            $.get('@Url.Action("RemoveComplexUsage", "CreateDataset", new RouteValueDictionary {{"area", "DCM"}})',
+            $.get('@Url.Action("RemoveComplexUsage", "Form", new RouteValueDictionary {{"area", "DCM"}})',
                 { parentStepId: parentId, number: number },
                 function (response) {
                     $('#' + parentId).replaceWith(response);
@@ -256,7 +256,7 @@
             var parentId = temp.split("_")[0];
             var number = temp.split("_")[1];
 
-            $.get('@Url.Action("UpComplexUsage", "CreateDataset", new RouteValueDictionary {{"area", "DCM"}})',
+            $.get('@Url.Action("UpComplexUsage", "Form", new RouteValueDictionary {{"area", "DCM"}})',
                 { parentStepId: parentId, number: number },
                 function (response) {
                     $('#' + parentId).replaceWith(response);
@@ -269,7 +269,7 @@
             var parentId = temp.split("_")[0];
             var number = temp.split("_")[1];
 
-            $.get('@Url.Action("DownComplexUsage", "CreateDataset", new RouteValueDictionary {{"area", "DCM"}})',
+            $.get('@Url.Action("DownComplexUsage", "Form", new RouteValueDictionary {{"area", "DCM"}})',
                 { parentStepId: parentId, number: number },
                 function(response) {
                     $('#' + parentId).replaceWith(response);
@@ -282,7 +282,7 @@
             var stepid = temp.split("_")[0];
             var active = $(e).hasClass("bx-check-square-o");
 
-            $.get('@Url.Action("ActivateComplexUsage", "CreateDataset",  new RouteValueDictionary { { "area", "DCM" } })',
+            $.get('@Url.Action("ActivateComplexUsage", "Form",  new RouteValueDictionary { { "area", "DCM" } })',
             {
                 id : stepid
                 },

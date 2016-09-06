@@ -16,12 +16,14 @@ namespace BExIS.Dcm.Wizard
     /// <remarks></remarks>        
     public class AbstractTaskManager
     {
+   
         public List<StepInfo> StepInfos;
         public List<StepInfo> TaskInfos;
         protected StepInfo currentStepInfo;
         protected StepInfo prevStepInfo;
 
         public Dictionary<string, object> Bus = new Dictionary<string, object>();
+        public Dictionary<string, ActionInfo> Actions = new Dictionary<string, ActionInfo>();
 
         /// <summary>
         /// 

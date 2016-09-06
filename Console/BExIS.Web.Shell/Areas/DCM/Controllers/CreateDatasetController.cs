@@ -120,20 +120,22 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         private void setAdditionalFunctions()
         {
+            TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
+
             //set function actions of COPY, RESET,CANCEL,SUBMIT
             ActionInfo copyAction = new ActionInfo();
-            copyAction.ActionName = "Copy";
+            copyAction.ActionName = "Index";
             copyAction.ControllerName = "CreateDataset";
             copyAction.AreaName = "DCM";
 
             ActionInfo resetAction = new ActionInfo();
             resetAction.ActionName = "Reset";
-            resetAction.ControllerName = "CreateDataset";
+            resetAction.ControllerName = "Form";
             resetAction.AreaName = "DCM";
 
             ActionInfo cancelAction = new ActionInfo();
             cancelAction.ActionName = "Cancel";
-            cancelAction.ControllerName = "CreateDataset";
+            cancelAction.ControllerName = "Form";
             cancelAction.AreaName = "DCM";
 
             ActionInfo submitAction = new ActionInfo();
@@ -141,6 +143,11 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             submitAction.ControllerName = "CreateDataset";
             submitAction.AreaName = "DCM";
 
+
+            TaskManager.Actions.Add(CreateTaskmanager.CANCEL_ACTION,cancelAction);
+            TaskManager.Actions.Add(CreateTaskmanager.COPY_ACTION,copyAction);
+            TaskManager.Actions.Add(CreateTaskmanager.RESET_ACTION,resetAction);
+            TaskManager.Actions.Add(CreateTaskmanager.SUBMIT_ACTION,submitAction);
 
         }
 
@@ -662,6 +669,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     editmode = true;
                     created = true;
                 }
+
+              
 
                 return RedirectToAction("LoadMetadata", "Form", new { area = "DCM", entityId = datasetid, locked = false, created = created, fromEditMode = editmode, resetTaskManager = resetTaskManager, newMetadata = metadata });
             }
