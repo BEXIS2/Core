@@ -32,8 +32,10 @@ namespace BExIS.Xml.Services
         }
 
         /// <summary>
-        /// 
-        /// </summary>
+        /// Information in metadata is stored as xml
+        /// get back the vale of an attribute
+        /// e.g. title  = "dataset title"        
+        /// /// </summary>
         /// <param name="datasetVersion"></param>
         /// <param name="name"></param>
         /// <returns></returns>
@@ -62,9 +64,11 @@ namespace BExIS.Xml.Services
         }
 
         /// <summary>
-        /// returns a value of a metadata node
+        /// Information in metadata is stored as xml
+        /// get back the vale of an attribute
+        /// e.g. title  = "dataset title"        
         /// </summary>
-        /// <param name="datasetVersion"></param>
+        /// <param name="dataset"></param>
         /// <param name="name"></param>
         /// <returns></returns>
         public static string GetInformation(Dataset dataset, NameAttributeValues name)
@@ -74,6 +78,27 @@ namespace BExIS.Xml.Services
 
             return GetInformation(datasetVersion, name);
         }
+
+        /// <summary>
+        /// Information in metadata is stored as xml
+        /// get back the xpath of an attribute
+        /// e.g. title  = metadata/dataset/title
+        /// </summary>
+        /// <param name="metadataStructure"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static string GetInformationPath(MetadataStructure metadataStructure, NameAttributeValues name)
+        {
+
+                XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)metadataStructure.Extra);
+                XElement temp = XmlUtility.GetXElementByAttribute(nodeNames.nodeRef.ToString(), "name", name.ToString(),
+                    xDoc);
+
+                string xpath = temp.Attribute("value").Value.ToString();
+
+            return xpath;
+        }
+
 
         /// <summary>
         /// 
@@ -170,15 +195,12 @@ namespace BExIS.Xml.Services
         public static string GetEntityType(long datasetid)
         {
             DatasetManager  datasetManager = new DatasetManager();
-            DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetid);
+            Dataset dataset = datasetManager.GetDataset(datasetid);
 
             // get MetadataStructure 
-            if (datasetVersion != null)
+            if (dataset != null)
             {
-                XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)datasetVersion.Extra);
-                IEnumerable<XElement> temp = XmlUtility.GetXElementByNodeName(nodeNames.entity.ToString(),xDoc);
-
-                return temp.First().Attribute("Value").Value;
+                return GetEntityTypeFromMetadatStructure(dataset.MetadataStructure.Id);
             }
             return string.Empty;
         }
@@ -195,7 +217,8 @@ namespace BExIS.Xml.Services
             {
                 XDocument xDoc = XmlUtility.ToXDocument((XmlDocument) metadataStructure.Extra);
                 IEnumerable<XElement> tmp = XmlUtility.GetXElementByNodeName(nodeNames.entity.ToString(), xDoc);
-                return tmp.First().Attribute("Value").Value;
+                if(tmp.Any())
+                    return tmp.First().Attribute("Value").Value;
             }
            
 
@@ -333,7 +356,8 @@ namespace BExIS.Xml.Services
     { 
         nodeRef,
         convertRef,
-        entity
+        entity,
+        parameter
     }
 
     public enum NameAttributeValues
@@ -352,7 +376,8 @@ namespace BExIS.Xml.Services
     public enum AttributeType
     {
         xpath,
-        entity
+        entity,
+        parameter
     }
 
     public enum TransmissionType

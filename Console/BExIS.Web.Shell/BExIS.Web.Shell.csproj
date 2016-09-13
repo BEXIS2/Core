@@ -328,7 +328,6 @@
     <Compile Include="App_Start\RegisterClientValidationExtensions.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Areas\DCM\Controllers\CreateDatasetController.cs" />
-    <Compile Include="Areas\DCM\Controllers\DcmAdminController.cs" />
     <Compile Include="Areas\DCM\Controllers\FormController.cs" />
     <Compile Include="Areas\DCM\Controllers\HelpController.cs" />
     <Compile Include="Areas\DCM\Controllers\ImportMetadataStructureController.cs" />
@@ -336,6 +335,7 @@
     <Compile Include="Areas\DCM\Controllers\ImportMetadataStructureSelectAFileController.cs" />
     <Compile Include="Areas\DCM\Controllers\ImportMetadataStructureSetParametersController.cs" />
     <Compile Include="Areas\DCM\Controllers\ImportMetadataStructureSummaryController.cs" />
+    <Compile Include="Areas\DCM\Controllers\ManageMetadataStructureController.cs" />
     <Compile Include="Areas\DCM\Controllers\PushController.cs" />
     <Compile Include="Areas\DCM\Controllers\SubmitDefinePrimaryKeyController.cs" />
     <Compile Include="Areas\DCM\Controllers\SubmitGetFileInformationController.cs" />
@@ -365,6 +365,7 @@
     <Compile Include="Areas\DCM\Models\Metadata\MetadataCompoundAttributeModel.cs" />
     <Compile Include="Areas\DCM\Models\Metadata\MetadataInstanceModel.cs" />
     <Compile Include="Areas\DCM\Models\Metadata\MetadataPackageModel.cs" />
+    <Compile Include="Areas\DCM\Models\MetadataStructureManagerModel.cs" />
     <Compile Include="Areas\DCM\Models\PrimaryKeyViewModel.cs" />
     <Compile Include="Areas\DCM\Models\Push\SendBigFilesToServerModel.cs" />
     <Compile Include="Areas\DCM\Models\SelectFileViewModel.cs" />
@@ -647,6 +648,7 @@
     <Content Include="fonts\fontawesome-webfont.woff" />
     <Content Include="fonts\fontawesome-webfont.ttf" />
     <Content Include="fonts\fontawesome-webfont.eot" />
+    <Content Include="Areas\DCM\Views\ManageMetadataStructure\Index.cshtml" />
     <None Include="Properties\PublishProfiles\bexisconf.pubxml" />
     <Content Include="Areas\SAM\Views\Tenants\_Create.cshtml" />
     <Content Include="Areas\SAM\Views\Tenants\_Edit.cshtml" />
@@ -994,6 +996,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Areas\DCM\Views\DcmAdmin\" />
     <Folder Include="Areas\DCM\Views\Home\" />
     <Folder Include="Areas\DDM\Views\Shared\" />
     <Folder Include="Areas\DIM\Views\Api\" />
@@ -1288,8 +1291,6 @@
     <Content Include="Areas\DDM\Views\Admin\ReIndexSearch.cshtml" />
     <Content Include="Areas\DCM\Views\Submit\FinishUpload.cshtml" />
     <Content Include="Areas\DCM\Views\Submit\Test.cshtml" />
-    <Content Include="Areas\DCM\Views\DcmAdmin\CreateMetadataStructure.cshtml" />
-    <Content Include="Areas\DCM\Views\DcmAdmin\Index.cshtml" />
     <Content Include="Areas\DCM\Views\Shared\_errorMessages.cshtml" />
     <Content Include="Areas\DCM\Views\Submit\_selectDataStructureId.cshtml" />
     <Content Include="Areas\DCM\Views\SubmitSpecifyDataset\_selectADatasetId.cshtml" />

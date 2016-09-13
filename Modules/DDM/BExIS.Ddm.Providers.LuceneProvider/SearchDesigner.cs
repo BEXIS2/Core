@@ -140,7 +140,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider
             }
             
         }
-
+        //ToDo set this function to a other place because of reading a metadata structure ad create a list of all simple attribute with xpath and displayname is also important for other places as search designer
         public List<SearchMetadataNode> GetAllXPathsOfSimpleAttributes(long id)
         {
             List<SearchMetadataNode> list = new List<SearchMetadataNode>();
@@ -157,12 +157,11 @@ namespace BExIS.Ddm.Providers.LuceneProvider
                 List<XElement> elements = metadataXml.Root.Descendants().Where(e => e.HasElements.Equals(false)).ToList();
 
                 foreach (XElement element in elements)
-            {
+                {
                     list.Add(
-                      new SearchMetadataNode(title, XExtentsions.GetAbsoluteXPath(element).Substring(1))
-                      );
-
-            }
+                        new SearchMetadataNode(title, XExtentsions.GetAbsoluteXPath(element).Substring(1))
+                        );
+                }
 
             return list;
         }
