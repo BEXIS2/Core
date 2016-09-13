@@ -21,6 +21,7 @@ namespace BExIS.Dcm.ImportMetadataStructureWizard
         public static string ROOT_NODE = "ROOT_NODE";
         public static string TITLE_NODE = "TITLE_NODE";
         public static string DESCRIPTION_NODE = "DESCRIPTION_NODE";
+        public static string ENTITY_TYPE_NODE = "ENTITY_TYPE_NODE";
         public static string IS_GENERATE = "IS_GENERATE";
 
         public static string METADATASTRUCTURE_ID = "METADATASTRUCTURE_ID";

@@ -150,6 +150,8 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
             DatasetManager dm = new DatasetManager();
             IList<long> ids = dm.GetDatasetLatestIds();
 
+            //ToDo only enitities from type dataset should be indexed in this index
+
             foreach (var id in ids)
             {
                 //the values in the dictionary are already xml documents or null. Javad

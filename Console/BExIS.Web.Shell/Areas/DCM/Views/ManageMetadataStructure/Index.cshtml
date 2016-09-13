@@ -1,0 +1,34 @@
+﻿@using BExIS.Web.Shell.Areas.DCM.Models
+@using Telerik.Web.Mvc.UI
+@model BExIS.Web.Shell.Areas.DCM.Models.MetadataStructureManagerModel
+
+@(Html.Telerik().Grid<MetadataStructureModel>
+    ()
+    .Name("MetadataStructuresGrid")
+    .BindTo((IEnumerable<MetadataStructureModel>
+        )@Model.MetadataStructureModels)
+        .Pageable()
+        .Sortable()
+        .DataKeys(keys => { keys.Add(m => m.Id); })
+        .Editable(editing => editing.Mode(GridEditMode.InLine))
+        .DataBinding(dataBinding => dataBinding
+            //Ajax binding
+            .Ajax()
+                //Home.Index renders the grid initially
+                //.Select("IndexAjax", "Home")
+                //Home.Insert inserts a new data record
+                //.Insert("Insert", "Home")
+                //Home.Update updates an existing data record
+                .Update("Update", "ManageMetadataStructure")
+            //Home.Delete deletes an existing data record
+            //.Delete("Delete", "Home")
+        )
+        .Columns(columns =>
+        {
+            columns.Bound(c => c.Id);
+            columns.Bound(c => c.Name);
+
+            columns.Command(commands => commands
+                .Edit());
+        })
+        )
