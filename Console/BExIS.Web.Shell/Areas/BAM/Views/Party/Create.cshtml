@@ -1,0 +1,130 @@
+﻿@model BExIS.Web.Shell.Areas.BAM.Models.PartyModel
+@section Information
+{
+  
+}
+@{
+    bool hasErrors = false;
+    string errorMessage = "";
+    string errorClass = "";
+}
+@if (Model.Errors != null && Model.Errors.Count() > 0)
+{
+    hasErrors = true;
+}
+
+@if (hasErrors == true)
+{
+    errorClass = "bx-input-error";
+    foreach (var item in Model.Errors)
+    {
+        if (Model.Errors.First().Equals(item))
+        {
+            errorMessage = item.GetMessage();
+        }
+        else
+        {
+            errorMessage += ", " + item.GetMessage();
+        }
+    }
+}
+
+<p>Please provide the following information.</p>
+@using (Html.BeginForm("Create", "Party", new { area = "BAM" }, FormMethod.Post))
+{
+    <table>
+        <tr>
+            <td style="width:40px;"><b title="Required" style="color: red">*</b></td>
+            <td>
+                @Html.LabelFor(m => m.Party.Name)
+            </td>
+            <td>
+                @Html.TextBoxFor(m => m.Party.Name,new { Title = @errorMessage, @class = "bx-textarea " + @errorClass })
+                @Html.ValidationMessageFor(m => m.Party.Name)
+            </td>
+        </tr>
+        <tr>
+            <td><b title="Required" style="color: red">*</b></td>
+            <td style="width:300px;">
+                @Html.LabelFor(m => m.Party.PartyType)
+            </td>
+            <td>
+                @(Html.Telerik().DropDownList()
+                                    .Placeholder("Select, please")
+                                      .HtmlAttributes(new { Title = @errorMessage, @class = "bx-dropdown " + @errorClass })
+                                    .Name("Party.PartyType.Id")
+                                    .BindTo(new SelectList(Model.PartyTypeList, "Id", "Title",Model.Party.PartyType.Id))
+                                    .ClientEvents(events => events.OnChange("OnChangePartyType"))  )
+                @Html.ValidationMessageFor(m => m.Party.PartyType.Id)
+            </td>
+        </tr>
+        <tr>
+            <td><b title="Required" style="color: red">*</b></td>
+            <td>
+                @Html.LabelFor(m => m.Party.StartDate)
+            </td>
+            <td>
+                @Html.TextBoxFor(m => m.Party.StartDate)
+                @(Html.Telerik().DatePicker()
+                                .Name("StartDate")
+                                .ShowButton(true)
+                                .TodayButton("d")
+                                .OpenOnFocus(true)
+                                .Format("dd/MM/yyyy")
+                                 .HtmlAttributes(new { Title = @errorMessage, @class = "bx-textarea " + @errorClass })
+                                .ClientEvents(events => events
+                                    .OnChange("OnChangeDatePicker"))
+                )
+            </td>
+        </tr>
+        <tr>
+            <td><b title="Required" style="color: red">*</b></td>
+            <td>
+                @Html.LabelFor(m => m.Party.EndDate)
+            </td>
+            <td>
+                @Html.TextBoxFor(m => m.Party.EndDate)
+                @(Html.Telerik().DatePicker()
+                                .Name("EndDate")
+                                .ShowButton(true)
+                                .TodayButton("d")
+                                .OpenOnFocus(true)
+                                .Format("dd/MM/yyyy")
+                                 .HtmlAttributes(new { Title = @errorMessage, @class = "bx-textarea " + @errorClass })
+                                .ClientEvents(events => events
+                                    .OnChange("OnChangeDatePicker"))
+                )
+            </td>
+        </tr>
+        <tr>
+            <td><b title="Required" style="color: red">*</b></td>
+            <td>
+                @Html.LabelFor(m => m.Party.Description)
+            </td>
+            <td>
+                @Html.EditorFor(m => m.Party.Description,new { Title = @errorMessage, @class = "bx-textarea " + @errorClass })
+                @Html.ValidationMessageFor(m => m.Party.Description)
+            </td>
+        </tr>
+    </table>
+  
+        <br />
+        <div id="divPartyCustomAttr"></div>
+       
+        <br />
+        <button type="submit" value="Save" name="saveDataset" class="t-button" style="border:0px;">Create  Party</button>
+        }
+
+
+        <script type="text/javascript">
+
+            function OnChangePartyType(e)
+            {
+                var partyTypeId = e.value;
+                $('#divPartyCustomAttr').load('/BAM/Party/LoadPartyCustomAttr/' + partyTypeId);
+                @*$.get(@Html.ur, function (data) {
+                    $("#divPartyCustomAttr").replaceWith(data);
+                });*@
+            }
+
+        </script>

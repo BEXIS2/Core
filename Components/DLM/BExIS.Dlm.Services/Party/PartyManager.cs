@@ -3,8 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using System.Text;
-using Vaiona.Entities.Common;
+using BExIS.Ext.Model;
 using Vaiona.Persistence.Api;
 using PartyX = BExIS.Dlm.Entities.Party.Party;
 
@@ -15,7 +14,7 @@ namespace BExIS.Dlm.Services.Party
         #region Attributes
 
         public IReadOnlyRepository<PartyX> Repo { get; private set; }
-
+        public IReadOnlyRepository<PartyCustomAttributeValue> RepoCustomAttrValues { get; private set; }
         #endregion
 
         #region Ctors
@@ -24,6 +23,7 @@ namespace BExIS.Dlm.Services.Party
         {
             IUnitOfWork uow = this.GetUnitOfWork();
             this.Repo = uow.GetReadOnlyRepository<PartyX>();
+            RepoCustomAttrValues = uow.GetReadOnlyRepository<PartyCustomAttributeValue>();
         }
 
         #endregion
@@ -82,7 +82,7 @@ namespace BExIS.Dlm.Services.Party
                 var latest = repo.Reload(entity);
                 // remove all associations between the entity and its history items
                 repoCM.Delete(latest.History);
-                if (entity.History.Any())
+                if (entity.History.Count()>0)
                 {
                     entity.History.ToList().ForEach(a => a.Party = null);
                     entity.History.Clear();
@@ -138,6 +138,7 @@ namespace BExIS.Dlm.Services.Party
                 IRepository<PartyX> repo = uow.GetRepository<PartyX>();
                 repo.Put(entity); // Merge is required here!!!!
                 uow.Commit();
+                entity = repo.Reload(entity);
             }
             return (entity);
         }
@@ -181,16 +182,16 @@ namespace BExIS.Dlm.Services.Party
                                         && (item.FirstParty != null && item.FirstParty.Id == firstParty.Id)
                                          && (item.SecondParty != null && item.SecondParty.Id == secondParty.Id)).Count();
                 if (cnt > 0)
-                    PartyManager.ThrowException(entity, "This relationship is already exist in database.", ExceptionType.Add);
+                    BexisException.Throw(entity, "This relationship is already exist in database.", BexisException.ExceptionType.Add);
                 //Check maximun cardinality
                 if (partyRelationshipType.MaxCardinality <= partyRelationshipType.PartyRelationships.Count())
-                    PartyManager.ThrowException(entity, string.Format("Maximum relations for this type of relation is {0}.", partyRelationshipType.MaxCardinality), PartyManager.ExceptionType.Add);
+                    BexisException.Throw(entity, string.Format("Maximum relations for this type of relation is {0}.", partyRelationshipType.MaxCardinality), BexisException.ExceptionType.Add);
 
                 //Check if there is a relevant party type pair
                 var alowedSource = partyRelationshipType.AssociatedPairs.FirstOrDefault(item => item.AlowedSource == firstParty.PartyType || item.AlowedSource == secondParty.PartyType);
                 var alowedTarget = partyRelationshipType.AssociatedPairs.FirstOrDefault(item => item.AlowedTarget == firstParty.PartyType || item.AlowedTarget == secondParty.PartyType);
                 if (alowedSource == null || alowedTarget == null)
-                    PartyManager.ThrowException(entity, string.Format("There is not relevant 'PartyTypePair' for these types of parties.", partyRelationshipType.MaxCardinality), PartyManager.ExceptionType.Add);
+                    BexisException.Throw(entity, string.Format("There is not relevant 'PartyTypePair' for these types of parties.", partyRelationshipType.MaxCardinality), BexisException.ExceptionType.Add);
 
                 
                 partyRelationshipType.PartyRelationships.Add(entity);
@@ -209,7 +210,7 @@ namespace BExIS.Dlm.Services.Party
                 IRepository<PartyRelationship> repoPR = uow.GetRepository<PartyRelationship>();
                 partyRelationship = repoPR.Reload(partyRelationship);
                 if (partyRelationship.PartyRelationshipType.MinCardinality > (partyRelationship.PartyRelationshipType.PartyRelationships.Count() - 1))
-                    ThrowException(partyRelationship, String.Format("Atleast {0} party relation is required.", partyRelationship.PartyRelationshipType.MinCardinality), ExceptionType.Delete);
+                    BexisException.Throw(partyRelationship, String.Format("Atleast {0} party relation is required.", partyRelationship.PartyRelationshipType.MinCardinality), BexisException.ExceptionType.Delete);
                 var entity = repoPR.Reload(partyRelationship);
                 repoPR.Delete(entity);
                 uow.Commit();
@@ -230,7 +231,7 @@ namespace BExIS.Dlm.Services.Party
                 foreach (var entity in entities)
                 {
                     if (entity.PartyRelationshipType.MinCardinality > (entity.PartyRelationshipType.PartyRelationships.Count() - 1))
-                        ThrowException(entity, String.Format("Atleast {0} party relation is required.", entity.PartyRelationshipType.MinCardinality), ExceptionType.Delete, true);
+                        BexisException.Throw(entity, String.Format("Atleast {0} party relation is required.", entity.PartyRelationshipType.MinCardinality), BexisException.ExceptionType.Delete, true);
                     var latest = repoPR.Reload(entity);
                     repoPR.Delete(latest);
                 }
@@ -417,18 +418,6 @@ namespace BExIS.Dlm.Services.Party
         }
         #endregion
 
-        public static void ThrowException(object entityObj, string reason, ExceptionType exceptionType, bool GroupFailed = false)
-        {
-            var entity = (BaseEntity)entityObj;
-            throw new Exception(string.Format("{0} {1} (ID: {2}) failed. Reason: {3} . {4}", exceptionType.ToString(), entityObj.GetType().Name, entity.Id, reason, GroupFailed ? " All operations canceled" : ""));
-
-        }
-
-        public enum ExceptionType
-        {
-            Add = 0,
-            Edit = 1,
-            Delete = 2
-        }
+       
     }
 }

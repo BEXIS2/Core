@@ -18,6 +18,7 @@ namespace BExIS.Dlm.Entities.Party
         public Party()
         {
             CustomAttributeValues = new List<PartyCustomAttributeValue>();
+            PartyType = new PartyType();
             History = new List<PartyStatus>();
         }
         #region Associations

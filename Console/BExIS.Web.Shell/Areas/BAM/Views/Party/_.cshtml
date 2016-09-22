@@ -1,0 +1,29 @@
+﻿@model BExIS.Dlm.Entities.Party.Party
+
+@using Telerik.Web.Mvc.UI;
+
+@section Information
+{
+}
+
+
+<h2>@Model.Name ( @Model.Id )</h2>
+
+@if (@Model != null)
+{
+    @(Html.Telerik().TabStrip()
+            .Name("ShowDataTabStrip")
+            .SelectedIndex(0)
+            .Items(tabs =>
+            {
+
+                tabs.Add()
+                    .Text("Party")
+                    .LoadContentFrom("ShowParty", "Party", new { area = "DDM", datasetId = @Model.Id, locked = true, created = false, fromEditMode = false, resetTaskManager = true });
+
+               
+            })
+    )
+}
+
+

@@ -1,0 +1,36 @@
+﻿@model List<BExIS.Dlm.Entities.Party.PartyCustomAttribute>
+@{
+    ViewBag.Title = "_customAttributesView";
+    List<BExIS.Dlm.Entities.Party.PartyCustomAttributeValue> partyCustomAttributeValue =(List<BExIS.Dlm.Entities.Party.PartyCustomAttributeValue>) ViewBag.customAttrValues;
+}
+<table>
+    
+
+@foreach (var partyCustomAttr in Model)
+{
+    string partyCustomAttributeValueStr = "";
+   
+        if (partyCustomAttributeValue != null && partyCustomAttributeValue.Count()>0)
+        {
+            partyCustomAttributeValueStr = partyCustomAttributeValue.First(item=>item.CustomAttribute.Id== partyCustomAttr.Id).Value;
+        }
+    <tr>
+        <td  style="width:40px;"></td>
+        <td style="width:300px;">
+            <label>
+                @partyCustomAttr.Name
+            </label>
+        </td>
+        <td>
+            @if (!string.IsNullOrEmpty(Request.QueryString["readOnly"]) && Request.QueryString["readOnly"] == "true")
+            {
+                <span>@partyCustomAttributeValueStr</span>
+            }
+            else
+            {
+            <input type="text" name="partyCustomAttributes[@partyCustomAttr.Id]" value="@partyCustomAttributeValueStr" />
+            }
+        </td>
+    </tr>
+            }
+</table>
