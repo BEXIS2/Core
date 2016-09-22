@@ -26,10 +26,10 @@
 .bx-rpm-previewGrid .t-grid-content{
     background-color: #d2e8e3;
     max-height: 200px;
-    overflow-y:scroll;
     /*border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;*/
     margin:0px;
+    overflow-y: auto !important;
 }
 
 .bx-rpm-previewGrid .t-grid-bottom{
@@ -51,7 +51,7 @@
 }
 
 .bx-rpm-resultGrid .bx-rpm-gridfunction{
-    width: 75px;
+    width: 100px;
 }
 
 .bx-rpm-resultGrid .bx-rpm-lock {
@@ -61,6 +61,9 @@
 
 .bx-rpm-resultGrid .bx-rpm-title {
     font-weight:bold;
+}
+
+.bx-rpm-resultGrid .bx-rpm-title.clickable {
     cursor:pointer;
 }
 
@@ -98,6 +101,37 @@
     vertical-align:middle;
 }
 
+.bx-rpm-result.id {
+    width: 100px;
+}
+
 .bx-rpm-result .bx-lock{
     margin: 0px 3px 0px 0px;
+}
+
+.bx-rpm-dataStructure-buttons{
+    float:left;
+}
+
+.bx-rpm-createDataStructureContainer .bx-rpm-isSructured{
+    text-align: center;
+}
+
+.bx-rpm-createDataStructureContainer .bx-rpm-isSructured div {
+    width: calc(50% - 10px);
+    float: left;
+}
+
+.bx-rpm-createDataStructureContainer #message{
+    color: #f24c24;
+}
+
+.bx-rpm-createDataStructureContainer #buttons{
+    text-align:right;
+}
+
+.bx-rpm-message,
+.bx-rpm-message #buttons{
+    text-align:center;
+    margin: 5px;
 }

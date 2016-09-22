@@ -27,5 +27,14 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
         {
             return PartialView("_dataStructure", new DataStructurePreviewModel().fill(dataStructureId));
         }
+
+        public ActionResult _getVariableElement(long attributeId, string variableName)
+        {
+            AttributePreviewStruct variableElement = new AttributePreviewStruct().fill(attributeId);
+            variableElement.Name = variableName;
+            variableElement.isVariable = true;
+            variableElement.VariableId = 0;
+            return PartialView("_variableElement", variableElement);
+        }
     }
 }

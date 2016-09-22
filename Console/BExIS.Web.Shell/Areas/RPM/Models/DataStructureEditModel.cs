@@ -6,6 +6,11 @@ using BExIS.Dlm.Services.DataStructure;
 
 namespace BExIS.Web.Shell.Areas.RPM.Models
 {
+    public struct UnitStruct
+    {
+        public long Id { get; set; }
+        public string Name { get; set; }
+    }
     public class FilterValueStruct
     {
         public string Name { get; set; }
@@ -49,7 +54,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
 
             foreach (AttributePreviewStruct aps in attributePreviewModel.AttributePreviews)
             {
-                key = aps.Unit.ToLower().Replace(" ", "");
+                key = aps.Unit.Name.ToLower().Replace(" ", "");
                 value = new FilterValueStruct();
 
                 if (this.AttributeFilterDictionary["Unit"].Values.ContainsKey(key))
@@ -58,7 +63,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
                 }
                 else
                 {
-                    value.Name = aps.Unit;
+                    value.Name = aps.Unit.Name;
                     value.Appearance.Add(aps.AttributeId);
                     this.AttributeFilterDictionary["Unit"].Values.Add(key, value);
                 }
@@ -86,7 +91,8 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
         public long AttributeId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public string Unit { get; set; }
+        public UnitStruct Unit;
+        public List<UnitStruct> convertibleUnits;
         public string DataType { get; set; }
         public bool isVariable { get; set; }
         public long VariableId { get; set; }
@@ -98,11 +104,88 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
             this.AttributeId = 0;
             this.Name = "";
             this.Description = "";
-            this.Unit = "";
+            this.Unit = new UnitStruct();
+            this.convertibleUnits = new List<UnitStruct>();
             this.DataType = "";
             this.isVariable = false;
             this.VariableId = 0;
             this.Constraints = new Dictionary<long, string>();
+        }
+
+        public AttributePreviewStruct fill(long attributeId)
+        {
+            return this.fill(attributeId, true);
+        }
+
+        public AttributePreviewStruct fill(long attributeId, bool getConstraints)
+        {
+            DataContainerManager dataAttributeManager = new DataContainerManager();
+            DataAttribute DataAttribute = dataAttributeManager.DataAttributeRepo.Get(attributeId);
+            
+            return this.fill(DataAttribute);
+        }
+
+        public AttributePreviewStruct fill(DataAttribute dataAttribute)
+        {
+            return this.fill(dataAttribute, true);
+        }
+
+        public AttributePreviewStruct fill(DataAttribute dataAttribute, bool getConstraints)
+        {
+            this.AttributeId = dataAttribute.Id;
+            this.Name = dataAttribute.Name;
+            this.Description = dataAttribute.Description;
+            this.Unit.Id = dataAttribute.Unit.Id;
+            this.Unit.Name = dataAttribute.Unit.Name;
+            this.convertibleUnits = getUnitListByDimenstionAndDataType(dataAttribute.Unit.Dimension.Id, dataAttribute.DataType.Id);
+            this.DataType = dataAttribute.DataType.Name;
+            this.isVariable = false;
+            this.VariableId = 0;
+
+            if (getConstraints)
+            {
+                if (dataAttribute.Constraints != null)
+                {
+                    foreach (Constraint c in dataAttribute.Constraints)
+                    {
+                        c.Materialize();
+                        this.Constraints.Add(c.Id, c.FormalDescription);
+                    }
+                }
+            }
+            return this;
+        }
+
+        public List<UnitStruct> getUnitListByDimenstionAndDataType(long dimensionId, long dataTypeId)
+        {
+            List<UnitStruct> UnitStructs = new List<UnitStruct>();
+            UnitManager unitmanager = new UnitManager();
+            List<Unit> units = unitmanager.DimensionRepo.Get(dimensionId).Units.ToList();
+            UnitStruct tempUnitStruct = new UnitStruct();
+            foreach (Unit u in units)
+            {
+                if (u.Name.ToLower() != "none")
+                {
+                    foreach (DataType dt in u.AssociatedDataTypes)
+                    {
+                        if (dt.Id == dataTypeId)
+                        {
+                            tempUnitStruct.Id = u.Id;
+                            tempUnitStruct.Name = u.Name;
+                            UnitStructs.Add(tempUnitStruct);
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    tempUnitStruct.Id = u.Id;
+                    tempUnitStruct.Name = u.Name;
+                    UnitStructs.Add(tempUnitStruct);
+                }
+            }
+
+            return UnitStructs;
         }
     }
 
@@ -124,31 +207,10 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
         {
             this.AttributePreviews = new List<AttributePreviewStruct>();
             DataContainerManager dataAttributeManager = new DataContainerManager();
-            AttributePreviewStruct attributePreview;
 
             foreach (DataAttribute da in dataAttributeManager.DataAttributeRepo.Get().ToList())
-            {
-                attributePreview = new AttributePreviewStruct();
-                attributePreview.AttributeId = da.Id;
-                attributePreview.Name = da.Name;
-                attributePreview.Description = da.Description;
-                attributePreview.Unit = da.Unit.Name;
-                attributePreview.DataType = da.DataType.Name;
-                attributePreview.isVariable = false;
-                attributePreview.VariableId = 0;
-
-                if (getConstraints)
-                {
-                    if (da.Constraints != null)
-                    {
-                        foreach (Constraint c in da.Constraints)
-                        {
-                            c.Materialize();
-                            attributePreview.Constraints.Add(c.Id,c.FormalDescription);
-                        }
-                    }
-                }
-                this.AttributePreviews.Add(attributePreview);
+            {                
+                this.AttributePreviews.Add(new AttributePreviewStruct().fill(da, getConstraints));
             }
             return this;
         }
@@ -197,12 +259,9 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
 
                     foreach (Variable v in dataStructure.Variables)
                     {
-                        variablePreview = new AttributePreviewStruct();
-                        variablePreview.AttributeId = v.DataAttribute.Id;
-                        variablePreview.Name = v.Label;
+                        variablePreview = new AttributePreviewStruct().fill(v.DataAttribute);
                         variablePreview.Description = v.Description;
-                        variablePreview.Unit = v.Unit.Name;
-                        variablePreview.DataType = v.DataAttribute.DataType.Name;
+                        variablePreview.Name = v.Label;
                         variablePreview.isVariable = true;
                         variablePreview.VariableId = v.Id;
 

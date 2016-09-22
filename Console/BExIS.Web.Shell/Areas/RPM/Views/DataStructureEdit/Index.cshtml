@@ -23,10 +23,10 @@
     $(function () {
         $.get('@Url.Action("_attributeResultBinding", "DataStructureEdit", new { area = "RPM"} )', function (data) {
             $('#SearchResult').html(data);
-        });
 
-        $.get('@Url.Action("_dataStructureBinding", "DataStructureEdit", new { area = "RPM", dataStructureId = Model} )', function (data) {
-            $('#DataStructure').html(data);
+            $.get('@Url.Action("_dataStructureBinding", "DataStructureEdit", new { area = "RPM", dataStructureId = Model} )', function (data) {
+                $('#DataStructure').html(data);
+            });
         });
     });
 

@@ -291,6 +291,25 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
             return this;
         }
     }
+
+    public class DataStructureCreateModel
+    {
+        public long Id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public bool isSructured { get; set; }
+
+        public MessageModel DataStructureNameValidation { get; set; }
+
+        public DataStructureCreateModel()
+        {
+            this.Id = 0;
+            this.Name = "";
+            this.Description = "";
+            this.isSructured = true;
+            this.DataStructureNameValidation = new MessageModel();
+        }
+    }
 }
 
     

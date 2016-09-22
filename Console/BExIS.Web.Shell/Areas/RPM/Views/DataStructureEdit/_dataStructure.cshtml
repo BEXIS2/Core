@@ -17,86 +17,113 @@
         @(Html.TextAreaFor(m => Model.Description, new { @class = "bx-rpm-headlinetextarea", @placeholder = "Data Structure Description" }))
 </div>
 <div class="bx-rpm-variable-container">
-    @if (Model.VariablePreviews != null && Model.VariablePreviews.Count > 0)
-    {
-        <div class="bx-rpm-variable-drag-drop">
-            @foreach (AttributePreviewStruct v in Model.VariablePreviews)
+    <div class="bx-rpm-variable-drag-drop">
+        @if (Model.VariablePreviews != null && Model.VariablePreviews.Count > 0)
+        {
+            foreach (AttributePreviewStruct v in Model.VariablePreviews)
             {
-            string Id = v.VariableId + "_variable";
-            <div class="bx-rpm-variable-item" id="@Id">
-                <table>
-                    <tr>
-                        <td class="bx-rpm-label"><label>Name</label></td>
-                        <td class="name bx-rpm-text">@v.Name</td>
-                        <td class="bx-rpm-label" rowspan="2"><label>Description</label></td>
-                        <td class="description bx-rpm-text" rowspan="2">@v.Description</td>
-                    </tr>
-                    <tr>
-                        <td class="bx-rpm-label"><label>Id</label></td>
-                        <td class="id bx-rpm-text">@v.AttributeId / @v.VariableId</td>
-                    </tr>
-                    <tr>
-                        <td class="bx-rpm-label"><label>Unit</label></td>
-                        <td class="unit bx-rpm-text">@v.Unit</td>
-                        <td class="bx-rpm-label" rowspan="2" id="last"><label>Constraints</label></td>
-                        <td class="description bx-rpm-text" rowspan="2" id="last">
-                            @foreach (KeyValuePair<long, string> c in v.Constraints)
-                            {
-                                <p>@c.Value</p>
-                            }
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="bx-rpm-label" id="last"><label>Data Type</label></td>
-                        <td class="datatype bx-rpm-text" id="last">@v.DataType</td>
-                    </tr>
-                </table>
-            </div>
+                @Html.Partial("_variableElement", v)
             }
-        </div>
-    }
-    else
-    {
-        <h3 id="placeholder">Drop Variables here</h3>
-    }
+        }
+    </div>
+</div>
+<div class="bx-rpm-dataStructure-functions">
+    <button class = "bx-button action" id="Save">Save</button>
+    @Html.ActionLink("Cancel", "Index", "DataStructureEdit", new { id = Model.Id }, new { area = "RPM", @class = "bx-button action", @title = "Cancel" })
 </div>
 
-<script type="text/javascript">
-    $(function () {
-        resizeVariableContainer(120);
-        initPackery();
-    });
-
-    function initPackery() { 
-        var $variableGrid = $('.bx-rpm-variable-drag-drop').packery({
-            itemSelector: '.bx-rpm-variable-item',
-            columnWidth: 100,
+    <script type="text/javascript">
+        $(function () {
+            resizeVariableContainer(120);
+            initPackery();
         });
 
-        // make all grid-items draggable
-        $variableGrid.find('.bx-rpm-variable-item').each(function (i, gridItem) {
-            var draggie = new Draggabilly(gridItem);
-            // bind drag events to Packery
-            $variableGrid.packery('bindDraggabillyEvents', draggie);
+        function initPackery() {
+            var $variableGrid = $('.bx-rpm-variable-drag-drop').packery({
+                itemSelector: '.bx-rpm-variable-item',
+                transitionDuration: '1.0s',
+                columnWidth: 100,
+            });
+
+            $variableGrid.find('.bx-rpm-variable-item').each(function (i, gridItem) {
+                $variableGrid.packery('bindDraggabillyEvents', new Draggabilly(gridItem));
+            });
+
+            $variableGrid.on('click', '.bx-rpm-variable-item #variablecollapse', function () {
+                var variableElement = $(this).parents('.bx-rpm-variable-item');
+                var hiddenElements = variableElement.find('.hiddenelements');
+                if (hiddenElements.hasClass('hidden')) {
+                    $(this).removeClass('bx-angle-double-down');
+                    $(this).addClass('bx-angle-double-up');
+                }
+                else {
+                    $(this).removeClass('bx-angle-double-up');
+                    $(this).addClass('bx-angle-double-down');
+                }
+                hiddenElements.toggleClass('hidden');
+                $variableGrid.packery('layout');
+            });
+
+            $variableGrid.on('click', '.bx-rpm-variable-item #deletevariable', function () {
+                var variableElement = $(this).parents('.bx-rpm-variable-item');
+                $variableGrid.packery('remove', variableElement);
+                $variableGrid.packery('layout');
+            });
+
+            $('.bx-rpm-select').on('click', function () {
+                var variableName = ($(this).attr('name'));
+                var elems = $variableGrid.packery('getItemElements');
+                var isDuplicate = false;
+                var count = 0;
+                do {
+                    isDuplicate = false;
+                    count++;
+                    for (var i = 0; i < elems.length; i++) {
+                        if (variableName == $(elems[i]).find('#label').val()) {
+                            variableName = $(this).attr('name') + ' (' + count + ')';
+                            isDuplicate = true;
+                        }
+                    }
+                } while (isDuplicate)
+
+                var parameters = '/?attributeId=' + $(this).attr('value') + '&variableName=' + variableName;
+                $.get('@Url.Action("_getVariableElement", "DataStructureEdit", new { area = "RPM" } )' + parameters, function (data) {
+                    var $item = $(data)
+                    $variableGrid.append($item).packery('appended', $item);
+                    var elem = $variableGrid.find($item)[0];
+                    $variableGrid.packery('bindDraggabillyEvents', new Draggabilly(elem));
+                });
+                $variableGrid.packery('layout');
+            });
+
+            $('#Save').on('click', function () {
+                var elems = $variableGrid.packery('getItemElements');
+                for (var i = 0; i < elems.length; i++) {
+                    console.log($(elems[i]).find('#id').text());
+                    console.log($(elems[i]).find('#attrid').text());
+                    console.log($(elems[i]).find('#label').val());
+                    console.log($(elems[i]).find('#unit').val());
+                    console.log($(elems[i]).find('#description').val());
+                }
+            });
+        }
+
+        $(window).resize(function () {
+            resizeVariableContainer(120)
         });
-    }
-    
-    $(window).resize(function () {
-        resizeVariableContainer(120)
-    });
 
-    function resizeVariableContainer(delay) {
-        setTimeout(function () {
-            $('.bx-rpm-headlinetextbox').width(getHeadLineTextBoxSize());
-            $('.bx-rpm-variable-container').height(getVariableContainerSize());
-        }, delay);
-    }
+        function resizeVariableContainer(delay) {
+            setTimeout(function () {
+                $('.bx-rpm-headlinetextbox').width(getHeadLineTextBoxSize());
+                $('.bx-rpm-variable-container').height(getVariableContainerSize());
+            }, delay);
+        }
 
-    function getHeadLineTextBoxSize() {
-        return $('.bx-rpm-datastructureheader').width() - $('#headlineId').width() - 20;
-    }
+        function getHeadLineTextBoxSize() {
+            return $('.bx-rpm-datastructureheader').width() - $('#headlineId').width() - 20;
+        }
 
-    function getVariableContainerSize() {
-        return $(window).height() - $('.bx-rpm-datastructureheader').height() - 150;
-    }
-</script>
+        function getVariableContainerSize() {
+            return $(window).height() - $('.bx-rpm-datastructureheader').height() - 200;
+        }
+    </script>

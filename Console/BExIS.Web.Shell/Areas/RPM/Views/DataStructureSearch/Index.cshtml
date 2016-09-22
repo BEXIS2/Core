@@ -3,28 +3,75 @@
 
 <link href="@Url.Content("~/Areas/RPM/Stylesheets/DataStructureSearch.css")" rel="stylesheet" type="text/css" />
 
+<div class="bx-rpm-dataStructure-buttons">
+    <a id="createButton" class="bx-button small function" href="javascript:openCreateWindow()">Create Datastructue</a>
+</div>
+
 <div class="bx-rpm-searchBar">
-    @Html.TextBox("SearchBox", "", new { @class = "bx-input", onkeypress = "keypressed(this)" })
+    @Html.TextBox("SearchBox", "", new { @class = "bx-input" })
     <a id="SearchButton"class="bx bx-button small function bx-search" href="javascript:loadResults()"></a>
 </div>
 <div id="SearchResults">
-    @Html.Partial("_datatructureSearchResult")
+    @Html.Partial("_datatructureSearchResult", "")
 </div>
 
 <script type="text/javascript">
-    function keypressed(e) {
-        if (event.keyCode == 13)
-        {
-            loadResults();
-        }
+    $('.bx-rpm-searchBar #SearchBox').keypress(function (e) {
+            if (event.keyCode == 13) {
+        loadResults();
     }
+    });
 
     function loadResults() {
-        var parametrs = '/?searchTerms=' + $('#SearchBox').val();
-            $.get('@Url.Action("_dataStructureResultBinding", "DataStructureSearch", new { area = "RPM"} )' + parametrs, function (data) {
+        var parameters = '/?searchTerms=' + $('.bx-rpm-searchBar #SearchBox').val();
+            $.get('@Url.Action("_dataStructureResultBinding", "DataStructureSearch", new { area = "RPM"} )' + parameters, function (data) {
                 $('#SearchResults').html(data);
-            });
-        $('#SearchBox').val("");
+                $('.bx-rpm-searchBar #SearchBox').val("");
+        });
+        
     }
 
-</script>
+    function openCreateWindow(Id, Name, Description) {
+        var title = "Create DataStructure";
+        if (Id > 0)
+            title = "Edit DataStructure " + Name + ' (' + Id + ')';
+
+        $.ajax({
+            type: 'GET',
+            url: '@Url.Action("_createDataStructureBinding", "DataStructureSearch")',
+            dataType: 'html',
+            success: function (data) {
+                var windowElement = $.telerik.window.create({
+                    title: title,
+                    html: data,
+                    contentUrl: "",
+                    actions: ["Close"],
+                    modal: true,
+                    resizable: false,
+                    draggable: true,
+                    scrollable: false,
+                    onClose: function () {
+                        $("#windowCreate").data('tWindow').destroy();
+                        $("#bx-rpm-dataStructureResultGrid .t-refresh").trigger('click');
+                    }
+                });
+
+                windowElement.attr('id', 'windowCreate');
+                var window = $(windowElement).data('tWindow');
+                window.center().open();
+
+                if (Id > 0) {
+                    $('.bx-rpm-createDataStructureContainer #id').val(Id);
+                    $('.bx-rpm-createDataStructureContainer #name').val(Name);
+                    $('.bx-rpm-createDataStructureContainer #description').val(Description);
+                    $('.bx-rpm-createDataStructureContainer #isSructuredContainer').addClass('hidden');
+                    $('.bx-rpm-createDataStructureContainer #isSructured.false').attr('checked', true);
+                    $('.bx-rpm-createDataStructureContainer #isSructured.true').removeAttr('checked');
+                    $('.bx-rpm-createDataStructureContainer .bx-rpm-message').attr('value', false);
+                }
+
+                resetAllTelerikIconTitles();
+            }
+        });
+    }
+    </script>

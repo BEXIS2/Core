@@ -19,40 +19,34 @@
                 .Sortable()
                 .Columns(columns =>
                 {
+                    columns.Bound(c => c.Id)
+                        .Width(100);
                     columns.Bound(c => c.Title);
-                    columns.Template(
-                    @<text>
-                    </text>
-                    )
-                    .Title("Locked")
-                    .HeaderHtmlAttributes(new { @class = "bx-rpm-lock" });
-                    columns.Bound(c => c.Id);
                     columns.Bound(c => c.Description);
                     columns.Template(
                     @<text>
                     </text>
                     )
-                    .HeaderHtmlAttributes(new { @class = "bx-rpm-gridfunction" });
+                        .HeaderHtmlAttributes(new { @class = "bx-rpm-gridfunction" });
                 })
                 .ClientRowTemplate(
-                    "<tr class='bx-rpm-datastructure-item' id='<#= Id #>' structured='<#= Structured #>' inuse='<#= inUse #>'>" +
-                      "<td class='bx-rpm-result'><span class='bx-rpm-title' onclick='javascript:clickDatastructure(<#= Id #>)'><#= Title #><span id='<#= Id #>_collapse' class='bx bx-angle-double-down'></span></span></td>" +
-                      "<td class='bx-rpm-result bx-rpm-lock'><span id='<#= Id #>_lock'></span></td>" +
-                      "<td class='bx-rpm-result'><#= Id #></td>" +
+                    "<tr class='bx-rpm-datastructure-item' id='<#= Id #>' value='<#= Id #>, \"<#= Title #>\", \"<#= Description #>\", <#= inUse #>' structured='<#= Structured #>' inuse='<#= inUse #>'>" +
+                      "<td class='bx-rpm-result id'><#= Id #></td>" +
+                      "<td class='bx-rpm-result'><span class='bx-rpm-title clickable' id='<#= Id #>_title' onclick='javascript:clickDatastructure(<#= Id #>)'><#= Title #><span id='<#= Id #>_collapse' class='bx bx-angle-double-down'></span></span></td>" +
                       "<td class='bx-rpm-result'><#= Description #></td>" +
                       "<td class='bx-rpm-result bx-rpm-gridfunction'>" +
-                          "<a class='bx bx-grid-function bx-edit' href='/RPM/DataStructureEdit?dataStructureId=<#= Id #>'></a>" +
+                          "<a id='<#= Id #>_edit' class='bx bx-grid-function bx-edit' href='/RPM/DataStructureEdit?dataStructureId=<#= Id #>'></a>" +
                           "<a id='<#= Id #>_download' class='bx bx-grid-function bx-download' href='/RPM/DataStructureIO/downloadTemplate?id=<#= Id #>'></a>" +
+                          "<a id='<#= Id #>_delete' class='bx bx-grid-function bx-trash' href='javascript:openDelWindow(<#= Id #>, \"<#= Title #>\")'></a>" +
                       "</td>" +
                   "</tr>" +
-                  "<tr class='bx-rpm-preview hidden' id='<#= Id #>_preview' preview='<#= Preview #>'>" +
-                      "<td colspan='4' id='<#= Id #>_content'>" +
+                  "<tr class='bx-rpm-preview hidden' id ='<#= Id #>_preview' preview='<#= Preview #>'>" +
+                      "<td colspan='3' id='<#= Id #>_content'>" +
                         "<h3 class='bx-rpm-loading'><span class='fa fa-spinner fa-pulse'></span> Loading Data Structure</h3>" +
                       "</td>" +
                   "</tr>" +
                   "<tr>" +
                       "<td class='bx-rpm-empty'></td>" +
-                      "<td class='bx-rpm-empty bx-rpm-lock'></td>" +
                       "<td class='bx-rpm-empty'></td>" +
                       "<td class='bx-rpm-empty'></td>" +
                       "<td class='bx-rpm-empty bx-rpm-gridfunction'></td>" +
@@ -65,6 +59,7 @@
 
     var previewIds = [];
 
+    //open DataStructure preview
     function clickDatastructure(id) {
         if ($('#' + id + '_preview').attr('preview') == 'true') {
             $('#' + id + '_preview').attr('preview', 'false');
@@ -97,15 +92,23 @@
 
         for (i = 0; i < $('.bx-rpm-datastructure-item').length; i++) {
             var id = $('.bx-rpm-datastructure-item')[i].id;
+            //prepare UI for UnStructuredDataStructure
             if ($('#' + id).attr('structured') == 'false') {
                 $('#' + id + '_download').addClass('bx-disabled');
                 $('#' + id + '_download').removeAttr('href');
+                $('#' + id + '_edit').attr('href', 'javascript:openCreateWindow(' + $('.bx-rpm-datastructure-item')[i].getAttribute('value') + ')');
+                $('#' + id + '_title').removeAttr('onclick');
+                $('#' + id + '_title').removeClass('clickable');
+                $('#' + id + '_collapse').remove();
             }
+            //prepare UI for locked DataStructure
             if ($('#' + id).attr('inuse') == 'true') {
-                $('#' + id + '_lock').addClass('bx bx-lock');
+                $('#' + id + '_delete').addClass('bx-disabled');
+                $('#' + id + '_delete').removeAttr('href');
             }
         }
 
+        //prepare UI for DataStructure preview
         for (i = 0; i < previewIds.length; i++) {
             if ($('#' + previewIds[i] + '_preview').attr('preview') == 'true') {
                 loadPreview(previewIds[i]);
@@ -121,10 +124,62 @@
     }
 
     function loadPreview(id) {
-        var parametrs = '/?dataStructureId=' + id + '&structured=' + $('#' + id).attr('structured')
-        $.get('@Url.Action("_dataStructurePreviewBinding", "DataStructureSearch", new { area = "RPM"} )' + parametrs, function (data) {
+        var parameters = '/?dataStructureId=' + id + '&structured=' + $('#' + id).attr('structured');
+        $.get('@Url.Action("_dataStructurePreviewBinding", "DataStructureSearch", new { area = "RPM"} )' + parameters, function (data) {
             $('#' + id + '_content').html(data);
         });
+    }
+
+    function openDelWindow(id, name) {
+        var title = 'Delete DataStructure ' + name + ' (' + id + ')';
+        var parameters = '/?Id=' + id;
+
+        $.ajax({
+            type: 'GET',
+            url: '@Url.Action("_deleteDataStructureBinding", "DataStructureSearch")' + parameters,
+            dataType: 'html',
+            success: function (data) {
+                var windowElement = $.telerik.window.create({
+                    title: title,
+                    html: data,
+                    contentUrl: "",
+                    actions: ["Close"],
+                    modal: true,
+                    resizable: false,
+                    draggable: true,
+                    scrollable: false,
+                    onClose: function () {
+                        $("#windowDelete").data('tWindow').destroy();
+                        $("#bx-rpm-dataStructureResultGrid .t-refresh").trigger('click');
+                    }
+                });
+
+                windowElement.attr('id', 'windowDelete');
+                var window = $(windowElement).data('tWindow');
+                window.center().open();
+
+                resetAllTelerikIconTitles();
+            }
+        });
+    }
+
+    function deleteMessageCancel() {
+        $("#windowDelete").data('tWindow').destroy();
+        $("#bx-rpm-dataStructureResultGrid .t-refresh").trigger('click');
+    }
+
+    function deleteMessageYes(id) {
+        var parameters = '/?Id=' + id;
+        $.get('@Url.Action("deleteDataStructure", "DataStructureSearch")' + parameters, function (data) {
+            if ($(data).hasClass('bx-rpm-message') && $(data).attr('value').toLowerCase() == 'true') {
+                $(data).replaceWith('.bx-rpm-message #' + id);
+            }
+            else if ($(data).hasClass('bx-rpm-message') && $(data).attr('id') == 'deleted') {
+                $("#windowDelete").data('tWindow').destroy();
+                $("#bx-rpm-dataStructureResultGrid .t-refresh").trigger('click');
+            }
+        });
+
     }
 
 </script>

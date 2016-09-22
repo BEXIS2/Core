@@ -410,6 +410,7 @@
     <Compile Include="Areas\RPM\Controllers\UnitController.cs" />
     <Compile Include="Areas\RPM\Controllers\Helpers\HtmlPrefixScopeExtentions.cs" />
     <Compile Include="Areas\RPM\Controllers\Helpers\RPMSeedDataGenerator.cs" />
+    <Compile Include="Areas\RPM\Models\MessageModel.cs" />
     <Compile Include="Areas\RPM\Models\StructureModel.cs" />
     <Compile Include="Areas\RPM\Models\DataStructureEditModel.cs" />
     <Compile Include="Areas\RPM\Models\DataStructureSearchModel.cs" />
@@ -649,6 +650,10 @@
     <Content Include="Areas\RPM\Views\DataStructureEdit\_attributeFilter.cshtml" />
     <Content Include="Areas\RPM\Views\DataStructureEdit\_attributeSearchResult.cshtml" />
     <Content Include="Areas\RPM\Views\DataStructureEdit\_dataStructure.cshtml" />
+    <Content Include="Areas\RPM\Views\DataStructureEdit\_variableElement.cshtml" />
+    <Content Include="Areas\RPM\Views\DataStructureSearch\_createDataStructure.cshtml" />
+    <Content Include="Areas\RPM\Views\Shared\_message.cshtml" />
+    <Content Include="Areas\RPM\Views\Shared\_messageDelete.cshtml" />
     <None Include="Properties\PublishProfiles\bexisconf.pubxml" />
     <Content Include="Areas\SAM\Views\Tenants\_Create.cshtml" />
     <Content Include="Areas\SAM\Views\Tenants\_Edit.cshtml" />
@@ -999,7 +1004,6 @@
     <Folder Include="Areas\DIM\Views\Api\" />
     <Folder Include="Areas\DIM\Views\Shared\" />
     <Folder Include="Areas\MSM\Views\Shared\" />
-    <Folder Include="Areas\RPM\Views\Shared\" />
     <Folder Include="Areas\SAM\Views\Shared\" />
     <Folder Include="Areas\Site\Models\" />
   </ItemGroup>

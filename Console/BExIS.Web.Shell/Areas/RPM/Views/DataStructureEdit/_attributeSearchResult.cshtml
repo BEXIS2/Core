@@ -4,7 +4,13 @@
 
 <table class="bx-rpm-attributeheader">
     <tr>
-        <td class="bx-rpm-sort"><span onclick="javascript:clickFilter()">Filter <span id="filterCollapse" class="bx bx-angle-double-down"></span></span></td>
+        <td class="bx-rpm-sort">
+            <span class="bx-rpm-filterCollapse" onclick="javascript:clickFilter()">
+                Filter 
+                <span id="filterCollapse" class="bx bx-angle-double-down"></span>
+            </span>
+            <span class="bx-rpm-activefilter"></span>
+        </td>
         <td class="bx-rpm-sortdropdown">
             Sort by
             <select class="bx-dropdown bx-rpm-dropdown">
@@ -30,54 +36,60 @@
     </tr>
 </table>
 
-<div class="bx-rpm-attribute-container" id="#Results">
-    @{
-        string cssId = "";
-        string cssClass = "";
-        string Id = "";
-    }
-    @foreach (AttributePreviewStruct aps in Model.AttributePreviews)
-    {
-        if(aps.isVariable)
-        {
-            cssId = aps.VariableId + "_variable";
-            cssClass = aps.AttributeId + " " + aps.VariableId + " bx-rpm-variable";
-            Id = aps.AttributeId + " / " + aps.isVariable;
+<div class="bx-rpm-attribute-container" id="Results">
+    <div class="bx-rpm-attribute-drag-drop">
+        @{
+            string cssId = "";
+            string cssClass = "";
         }
-        else
-        {
-            cssId = aps.AttributeId + "_attribute";
+        @foreach (AttributePreviewStruct aps in Model.AttributePreviews)
+        {        
+            cssId = "attribute_" + aps.AttributeId;
             cssClass = aps.AttributeId + " bx-rpm-attribute";
-            Id = aps.AttributeId.ToString();
-        }
 
-        <div class="bx-rpm-attribute-item @cssClass" id="@cssId">
-            <table>
-                <tr>
-                    <td class="bx-rpm-label id"><label>Id</label></td>
-                    <td class="id bx-rpm-text id">@Id</td>
-                    <td class="bx-rpm-label name"><label>Name</label></td>
-                    <td class="name bx-rpm-text name">@aps.Name</td>
-                    <td class="bx-rpm-label unit"><label>Unit</label></td>
-                    <td class="unit bx-rpm-text unit">@aps.Unit</td>
-                    <td class="bx-rpm-label datatype"><label>Data Type</label></td>
-                    <td class="datatype bx-rpm-text datatype">@aps.DataType</td>
-                    <td class="bx-rpm-select" rowspan="2" id="last">>></td>
-                </tr>
-                <tr class="hidden">
-                    <td class="bx-rpm-label"><label>Description</label></td>
-                    <td class="description bx-rpm-text" rowspan="2">@aps.Description</td>
-                    <td class="bx-rpm-label" id="last"><label>Constraints</label></td>
-                    <td class="description bx-rpm-text" rowspan="2" id="last">
-                        @foreach(KeyValuePair<long,string> c in aps.Constraints)
-                        {
-                            <p>@c.Value</p>
-                        }
-                    </td>
-                </tr>
-            </table>
-        </div>
-    }
+            <div class="bx-rpm-attribute-item @cssClass" id="@cssId">
+                <table>
+                    <tr class="hidden">
+                        <td id="Id">@aps.AttributeId</td>
+                        <td id="Name">@aps.Name.ToLower()</td>
+                        <td id="Unit">@aps.Unit.Name.ToLower()</td>
+                        <td id="DataType">@aps.DataType.ToLower()</td>
+                    </tr>
+                    <tr>
+                        <td class="bx-rpm-label id"><label>Id</label></td>
+                        <td class="bx-rpm-text id" title="@aps.AttributeId">@aps.AttributeId</td>
+                        <td class="bx-rpm-label name"><label>Name</label></td>
+                        <td class="bx-rpm-text name" title="@aps.Name">@aps.Name</td>
+                        <td class="bx-rpm-label unit"><label>Unit</label></td>
+                        <td class="bx-rpm-text unit" title="@aps.Unit.Name">@aps.Unit.Name</td>
+                        <td class="bx-rpm-label datatype"><label>Data Type</label></td>
+                        <td class="bx-rpm-text datatype" title="@aps.DataType">@aps.DataType</td>
+                        <td class="bx-rpm-expand"><span id="attributecollapse" class="bx bx-angle-double-down"></span></td>
+                        <td class="bx-rpm-select" value="@aps.AttributeId" name="@aps.Name"><div class="bx bx-next"></div></td>
+                    </tr>
+                    <tr class="hidden hiddenelements">
+                        <td colspan="10">
+                            <label class="bx-rpm-label description">Description</label>
+                            <div class="bx-rpm-description">
+                                @aps.Description
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="hidden hiddenelements">
+                        <td colspan="10">
+                            <label class="bx-rpm-label constraints">Constraints</label>
+                            <div class="bx-rpm-constraints">
+                                @foreach (KeyValuePair<long, string> c in aps.Constraints)
+                                {
+                                    <p>@c.Value</p>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        }
+    </div>
 </div>
 
 <script type="text/javascript">
@@ -87,16 +99,21 @@
     });
     function initIsotope() {
         // init Isotope
-        var $attributeGrid = $('.bx-rpm-attribute-container').isotope({
+        var $attributeGrid = $('.bx-rpm-attribute-drag-drop').isotope({
             itemSelector: '.bx-rpm-attribute-item',
             layoutMode: 'vertical',
             transitionDuration: '1.0s',
             getSortData: {
-                name: '.name',
-                id: '.id',
+                name: '#Name',
+                id: '#Id parseInt',
                 description: '.description',
-                unit: '.unit',
-                datatype: '.datatype'
+                unit: '#Unit',
+                datatype: '#DataType',
+                category: '[data-category]',
+                weight: function (itemElem) {
+                    var weight = $(itemElem).find('.weight').text();
+                    return parseFloat(weight.replace(/[\(\)]/g, ''));
+                }
             }
         });
 
@@ -109,14 +126,62 @@
             else {
                 $attributeGrid.isotope({ sortBy: sortValue[0], sortAscending: false });
             }
-            resizeAttributeContainer(120);
-        });    
+        });
 
-        $('.bx-rpm-filterContainer').on('click', '.bx-rpm-filterCheckbox', function () {
-            console.log('Click');
+        $('#filterContainer').on('click', '.bx-rpm-filterCheckbox', function () {
             var filterValue = setFilter(this);
             $attributeGrid.isotope({ filter: filterValue });
-            resizeAttributeContainer(120);
+
+            var append = true;
+
+            for (var i = 0; i < $('.bx-rpm-activefilter .bx-button').length; i++) {
+                if ($('.bx-rpm-activefilter .bx-button')[i].getAttribute('value') == $(this).attr('id')) {
+                    $('.bx-rpm-activefilter .bx-button')[i].parentNode.removeChild($('.bx-rpm-activefilter .bx-button')[i]);
+                    append = false;
+                    break;
+                }
+            }
+
+            if (append) {
+                var filterItem = $(this).parents('.bx-rpm-filterItem')
+                var filterElement = $(document.createElement('button'));
+                filterElement.addClass('bx-button smaller');
+                filterElement.attr('id', 'removefilter')
+                filterElement.attr('value', $(this).attr('id'));
+                filterElement.text(filterItem.find('.bx-rpm-filterCheckboxLable').text().split(' ')[0]);
+
+                var filterRemove = $(document.createElement('span'));
+                filterRemove.addClass('bx fa-times bx-rpm-removefilter')
+                filterElement.append(filterRemove);
+                $('.bx-rpm-activefilter').append(filterElement);
+            }
+        });
+
+        $('.bx-rpm-activefilter').on('click', '.bx-rpm-removefilter', function () {
+            var filterElement = $(this).parents('#removefilter');
+            var filterValue = setFilter($('#' + filterElement.attr('value')));
+            $attributeGrid.isotope({ filter: filterValue });
+            filterElement.remove();
+        });
+
+        $('#resetFilter').on('click', function () {
+            var filterValue = resetFilter();
+            $attributeGrid.isotope({ filter: filterValue });
+        });
+
+        $attributeGrid.on('click', '.bx-rpm-attribute-item #attributecollapse', function () {
+            var attributeElement = $(this).parents('.bx-rpm-attribute-item');
+            var hiddenElements = attributeElement.find('.hiddenelements');
+            if (hiddenElements.hasClass('hidden')) {
+                $(this).removeClass('bx-angle-double-down');
+                $(this).addClass('bx-angle-double-up');
+            }
+            else {
+                $(this).removeClass('bx-angle-double-up');
+                $(this).addClass('bx-angle-double-down');
+            }
+            hiddenElements.toggleClass('hidden');
+            $attributeGrid.isotope('layout');
         });
     }
 
@@ -130,14 +195,14 @@
             $('#filter').removeClass('collapsed');
             $('#filterCollapse').addClass('bx-angle-double-up');
             $('#filterCollapse').removeClass('bx-angle-double-down');
-            
+
         }
         else {
             $('#filter').slideUp('slow');
             $('#filterContainer').slideUp('slow');
             $('#filter').addClass('collapsed');
             $('#filterCollapse').addClass('bx-angle-double-down');
-            $('#filterCollapse').removeClass('bx-angle-double-up');       
+            $('#filterCollapse').removeClass('bx-angle-double-up');
         }
         resizeAttributeContainer(600);
     }
@@ -145,7 +210,6 @@
     function loadFilter() {
         $.get('@Url.Action("_attributeFilterBinding", "DataStructureEdit", new { area = "RPM"} )', function (data) {
             $('#filterContainer').html(data);
-            initIsotope();
         });
     }
 

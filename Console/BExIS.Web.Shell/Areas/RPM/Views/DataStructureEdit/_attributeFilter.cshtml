@@ -44,17 +44,26 @@
 <script type="text/javascript">
 
     function setFilter(checkbox) {
-        var filter = [];
-
         if ($(checkbox).hasClass('checked')) {
             $(checkbox).removeClass('checked');
+            $(checkbox).removeAttr('checked');
         }
         else {
             $(checkbox).addClass('checked');
+            $(checkbox).attr('checked', 'checked');
         }
-        filter = setFilterArray(filter);
+        var filter = setFilterArray();
         disableCheckboxes(filter);
         return concatValues(filter);
+    }
+
+    function resetFilter() {
+        $('.checked').removeAttr('checked');
+        $('.checked').removeClass('checked');
+
+        var filter = setFilterArray();
+        disableCheckboxes(filter);
+        return filter;
     }
 
     function disableCheckboxes(filter) {
@@ -92,7 +101,8 @@
         }
     }
 
-    function setFilterArray(filter) {
+    function setFilterArray() {
+        var filter = [];
         if ($('.checked').length > 0) {
             if ($('.checked').length > 1) {
                 for (i = 0; i < $('.checked').length; i++) {
@@ -130,7 +140,7 @@
             }
         }
         else {
-            filter = [];
+            filter = "";
         }
         return filter;
     }

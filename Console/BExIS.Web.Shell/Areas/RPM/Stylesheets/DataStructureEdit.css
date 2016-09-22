@@ -3,13 +3,13 @@
 }
 
 #SearchResult {
-    width:calc(40% - 20px);
+    width:calc(50% - 20px);
     float:left;
     overflow-x:hidden; 
 }
 
 #DataStructure {
-    width:calc(60% - 20px); 
+    width:calc(50% - 20px); 
     float:right; 
     overflow-x:auto;
 }
@@ -36,8 +36,7 @@
 
 .bx-rpm-variable-item,
 .bx-rpm-attribute-item{
-    width:calc(100% - 6px);
-    z-index: 10000; 
+    width:calc(100% - 6px); 
 }
 
 .bx-rpm-variable-item,
@@ -47,13 +46,12 @@
     padding:5px;
 }
 
-.bx-rpm-attribute-item.bx-rpm-attribute{
-    background-color:#d2e8e3;
+.bx-rpm-attribute-item{
+   background-color:#f5f5f5;
 }
 
-.bx-rpm-attribute-item.bx-rpm-variable,
 .bx-rpm-variable-item {
-    background-color:#f5f5f5;
+    background-color:#d2e8e3;
 }
 
 .bx-rpm-variable-item td,
@@ -67,14 +65,19 @@
 
 .bx-rpm-attribute-item td,
 .bx-rpm-attribute-item table {
-    border-right: solid 4px #d2e8e3;
+    border-right: solid 4px #f5f5f5;
     border-bottom: #afb0b1 solid 1px;
 }
 
 .bx-rpm-variable-item td,
 .bx-rpm-variable-item table {
-    border-right: solid 4px #f5f5f5;
+    border-right: solid 4px #d2e8e3;
     border-bottom: #afb0b1 solid 1px;
+}
+
+.bx-rpm-variable-item select,
+.bx-rpm-variable-item input{
+    width:100%;
 }
 
 .bx-rpm-variable-container .bx-rpm-label,
@@ -86,6 +89,8 @@
 .bx-rpm-variable-container .bx-rpm-label.id,
 .bx-rpm-attribute-container .bx-rpm-label.id {
     width:25px;
+    max-width:25px;
+    min-width:25px;
 }
 
 .bx-rpm-variable-container .bx-rpm-label.name,
@@ -93,11 +98,24 @@
 .bx-rpm-variable-container .bx-rpm-label.unit,
 .bx-rpm-attribute-container .bx-rpm-label.unit {
     width:50px;
+    max-width:50px;
+    min-width:50px;
 }
 
 .bx-rpm-variable-container .bx-rpm-label.datatype,
 .bx-rpm-attribute-container .bx-rpm-label.datatype {
     width:80px;
+    max-width:80px;
+    min-width:80px;
+}
+
+.bx-rpm-variable-container .bx-rpm-label.description,
+.bx-rpm-attribute-container .bx-rpm-label.description, 
+.bx-rpm-variable-container .bx-rpm-label.constraints,
+.bx-rpm-attribute-container .bx-rpm-label.constraints{
+    width:85px;
+    max-width:85px;
+    min-width:85px;
 }
 
 .bx-rpm-variable-container .bx-rpm-text,
@@ -105,25 +123,60 @@
     vertical-align:top;
     white-space: nowrap;
     overflow: hidden;
+    max-width:50px;
+    min-width:50px;
+    
 }
 
 .bx-rpm-variable-container .bx-rpm-text.id,
 .bx-rpm-attribute-container .bx-rpm-text.id {
-    width:50px;
+    width:40px;
+    max-width:40px;
+    min-width:40px;
     text-align:center;
+}    
+
+.bx-rpm-variable-container .bx-rpm-text.name,
+.bx-rpm-attribute-container .bx-rpm-text.name,
+.bx-rpm-variable-container .bx-rpm-text.unit,
+.bx-rpm-attribute-container .bx-rpm-text.unit{    
+    max-width:105px;
+    min-width:105px;
 }
 
-.bx-rpm-variable-container .bx-rpm-text.unit,
-.bx-rpm-attribute-container .bx-rpm-text.unit,
 .bx-rpm-variable-container .bx-rpm-text.datatype,
 .bx-rpm-attribute-container .bx-rpm-text.datatype {
-    
-    width:100px;
+    width:70px;
+    max-width:70px;
+    min-width:70px;
 }
 
-.bx-rpm-attribute-container .bx-rpm-select {
+.bx-rpm-attribute-container .bx-rpm-select,
+.bx-rpm-attribute-container .bx-rpm-expand,
+.bx-rpm-variable-container .bx-rpm-delete,
+.bx-rpm-variable-container .bx-rpm-expand{
     vertical-align:top;
     width:20px;
+    max-width:20px;
+    min-width:20px;
+    text-align: center;
+}
+
+
+.bx-rpm-variable-container .bx-rpm-textarea.description{
+    width:calc(100% - 90px);
+    min-width:400px;
+    min-height:75px;
+    max-height:75px;
+    margin: 2px 0 2px 0;
+}
+
+.bx-rpm-attribute-container .bx-rpm-description,
+.bx-rpm-attribute-container .bx-rpm-constraints,
+.bx-rpm-variable-container .bx-rpm-constraints{
+    width:calc(100% - 90px);
+    min-width:400px;
+    float:right;
 }
 
 .bx-rpm-variable-container #placeholder {
@@ -132,12 +185,9 @@
     vertical-align: middle;
 }
 
+.bx-rpm-variable-container #last,
 .bx-rpm-attribute-container #last {
-    border-bottom: #d2e8e3 1px solid;
-}
-
-.bx-rpm-variable-container #last {
-    border-bottom: #f5f5f5 1px solid;
+    border-bottom: #afb0b1 1px solid;
 }
 
 .bx-rpm-filterContainer {
@@ -191,6 +241,14 @@
 
 .bx-rpm-sort span {
     cursor: pointer;
+}
+
+.bx-rpm-filterCollapse{
+    margin: 0 5px 0 0;
+}
+
+.bx-rpm-removefilter {
+    margin: 0 0 0 3px;
 }
 
 .bx-rpm-filter #filterContainer {
@@ -262,4 +320,8 @@
     width: 100%;
     height: 100px;
     resize: none;
+}
+
+.bx-rpm-dataStructure-functions{
+    margin-top: 10px;
 }
