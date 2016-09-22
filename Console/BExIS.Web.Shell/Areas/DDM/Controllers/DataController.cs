@@ -26,6 +26,8 @@ using BExIS.Security.Services.Objects;
 using BExIS.Dlm.Entities.MetadataStructure;
 using System.Xml;
 using System.Xml.Linq;
+using BExIS.Dcm.CreateDatasetWizard;
+using BExIS.Dcm.Wizard;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Subjects;
@@ -110,63 +112,64 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
         #region metadata
 
-            /// <summary>
-            ///
-            /// </summary>
-            /// <remarks></remarks>
-            /// <seealso cref=""/>
-            /// <param name="datasetID"></param>
-            /// <returns>model</returns>
-        public ActionResult ShowMetaData(long datasetID)
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="datasetID"></param>
+        /// <returns>model</returns>
+        public ActionResult ShowMetaData(long entityId, string title, long metadatastructureId, long datastructureId, long researchplanId, string sessionKeyForMetadata)
         {
-            ShowMetadataModel model = new ShowMetadataModel();
+            setAdditionalFunctions();
 
-            try
+            return RedirectToAction("LoadMetadataFromExternal", "Form", new
             {
-                DatasetManager dm = new DatasetManager();
-                DatasetVersion dsv = dm.GetDatasetLatestVersion(datasetID);
+                area = "DCM",
+                entityId,
+                title,
+                metadatastructureId,
+                datastructureId,
+                researchplanId,
+                sessionKeyForMetadata
+            });
 
-                MetadataStructureManager msm = new MetadataStructureManager();
-                dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
+        }
 
-            //get title
-            model.Title = XmlDatasetHelper.GetInformation(dsv, NameAttributeValues.title);
-            model.Description = XmlDatasetHelper.GetInformation(dsv, NameAttributeValues.description);
+        private void setAdditionalFunctions()
+        {
+            CreateTaskmanager TaskManager = new CreateTaskmanager();
 
-            #region create table
-            XDocument xDoc = XmlUtility.ToXDocument(dsv.Metadata);
+            Dictionary<string, ActionInfo> actions = new Dictionary<string, ActionInfo>();
 
-            //get a list of MetadataPackageUsages
-            IEnumerable<XElement> MetadataPackageUsageList = helper.GetElementsByAttribute(xDoc, "type", BExIS.Xml.Helpers.XmlNodeType.MetadataPackageUsage.ToString());
-                
-            //For Each MetadataPackageUsage
-            foreach (XElement packageUsage in MetadataPackageUsageList)
-            {
-                PackageUsageModel puElement = new PackageUsageModel();
-                puElement.Name = packageUsage.Attribute("name").Value;
+            //set function actions of COPY, RESET,CANCEL,SUBMIT
+            ActionInfo copyAction = new ActionInfo();
+            copyAction.ActionName = "Index";
+            copyAction.ControllerName = "CreateDataset";
+            copyAction.AreaName = "DCM";
 
-                // get childrens of
-                List<XElement> childrens = XmlUtility.GetChildren(packageUsage).ToList();
+            ActionInfo resetAction = new ActionInfo();
+            resetAction.ActionName = "Reset";
+            resetAction.ControllerName = "Form";
+            resetAction.AreaName = "DCM";
 
-                foreach (XElement child in childrens)
-                {
-                    puElement.Attributes.Add(
-                            GetModelFromElement(child)
-                        );
-                }
+            ActionInfo cancelAction = new ActionInfo();
+            cancelAction.ActionName = "Cancel";
+            cancelAction.ControllerName = "Form";
+            cancelAction.AreaName = "DCM";
 
-                model.PU.Add(puElement);
-            }
-            #endregion
-                
+            ActionInfo submitAction = new ActionInfo();
+            submitAction.ActionName = "Submit";
+            submitAction.ControllerName = "CreateDataset";
+            submitAction.AreaName = "DCM";
 
-            }
-            catch (Exception e)
-            {
-                ModelState.AddModelError(String.Empty, e.Message);
-            }
 
-            return PartialView(model);
+            TaskManager.Actions.Add(CreateTaskmanager.CANCEL_ACTION, cancelAction);
+            TaskManager.Actions.Add(CreateTaskmanager.COPY_ACTION, copyAction);
+            TaskManager.Actions.Add(CreateTaskmanager.RESET_ACTION, resetAction);
+            TaskManager.Actions.Add(CreateTaskmanager.SUBMIT_ACTION, submitAction);
+
+            Session["CreateDatasetTaskmanager"] = TaskManager;
         }
 
         private BaseModelElement GetModelFromElement(XElement element)

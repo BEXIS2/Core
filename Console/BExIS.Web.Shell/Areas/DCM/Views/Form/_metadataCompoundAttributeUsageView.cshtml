@@ -140,19 +140,22 @@
                         <div class="metadata-choice-container">
                             @foreach (var element in Model.Childrens)
                             {
+                                string choiceId = element.StepId + "_choice";
+
                                 if (element.Activated)
                                 {
-                                    <span id="@element.StepId" name="@id_choice" class="bx bx-dot-circle-o"></span>
+                                    <span id="@choiceId" name="@id_choice" class="bx bx-dot-circle-o"></span>
                                 }
                                 else
                                 {
-                                    <span id="@element.StepId" name="@id_choice" onclick="ActivateFromChoice(this)" class="bx bx-circle-o"></span>
+                                    <span id="@choiceId" name="@id_choice" onclick="ActivateFromChoice(this)" class="bx bx-circle-o"></span>
                                 }
 
                                 @element.DisplayName()
                             }
                         </div>
-                    }
+                            }
+                    
                 }
                 else
                 {
@@ -227,11 +230,13 @@
             var temp = e.id;
             var parentId = temp.split("_")[0];
             var number = temp.split("_")[1];
-            //alert("compound");
-
+      
+            //alert(e.id);
+            //alert(parentId);
             $.get('@Url.Action("AddComplexUsage", "Form", new RouteValueDictionary {{"area", "DCM"}})',
                 { parentStepId: parentId, number: number },
                 function (response) {
+                    //alert(parentId);
                     $('#' + parentId).replaceWith(response);
                     resetAllTelerikIconTitles();
                     bindMinimap();
@@ -301,8 +306,8 @@
        }
 
         function ActivateFromChoice(e) {
-
-            var v = e.id;
+            var tmp = e.id;
+            var v = tmp.split("_")[0];
             var temp = $(e).attr("name");
             var stepid = temp.split("_")[0];
             var active = $(e).hasClass("bx-dot-circle-o");
@@ -313,7 +318,7 @@
             },
 
             function (response) {
-
+                
                 $('#' + stepid).replaceWith(response);
 
                 if (!active)

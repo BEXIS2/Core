@@ -2,33 +2,106 @@
 @using Telerik.Web.Mvc.UI
 @model BExIS.Web.Shell.Areas.DCM.Models.MetadataStructureManagerModel
 
-@(Html.Telerik().Grid<MetadataStructureModel>
-    ()
-    .Name("MetadataStructuresGrid")
-    .BindTo((IEnumerable<MetadataStructureModel>
-        )@Model.MetadataStructureModels)
-        .Pageable()
-        .Sortable()
-        .DataKeys(keys => { keys.Add(m => m.Id); })
-        .Editable(editing => editing.Mode(GridEditMode.InLine))
-        .DataBinding(dataBinding => dataBinding
-            //Ajax binding
-            .Ajax()
-                //Home.Index renders the grid initially
-                //.Select("IndexAjax", "Home")
-                //Home.Insert inserts a new data record
-                //.Insert("Insert", "Home")
-                //Home.Update updates an existing data record
-                .Update("Update", "ManageMetadataStructure")
-            //Home.Delete deletes an existing data record
-            //.Delete("Delete", "Home")
-        )
-        .Columns(columns =>
-        {
-            columns.Bound(c => c.Id);
-            columns.Bound(c => c.Name);
+@Html.ActionLink("Import Metadata Stucture", "ImportMetadataStructureWizard", "ImportMetadataStructure",new {area="DCM"}, new {@class= "bx-button function" })
 
-            columns.Command(commands => commands
-                .Edit());
+@(Html.Telerik().Grid<MetadataStructureModel>
+      ()
+      .Name("metadataStructuresGrid")
+      .BindTo((IEnumerable<MetadataStructureModel>
+          ) @Model.MetadataStructureModels)
+      .Pageable()
+      .Sortable()
+      .DataKeys(keys => { keys.Add(m => m.Id); })
+      .Editable(editing => editing.Mode(GridEditMode.PopUp))
+      .DataBinding(dataBinding => dataBinding
+          .Ajax()
+      )
+
+      .Columns(columns =>
+      {
+          columns.Bound(c => c.Id).ReadOnly().Width(50);
+          columns.Bound(c => c.Name);
+          columns.Bound(c => c.EntityClassPath).EditorTemplateName("DropDown");
+          columns.Bound(c => c.TitleNode);
+          columns.Bound(c => c.DescriptionNode);
+          columns.Bound(c => c.Active).Width(80);
+          columns.Template(@<text>
+                               <button type="button" class="bx bx-grid-function bx-edit" onclick="metadataStructureEdit_onClick('@item.Name', @item.Id)" ></button>
+                               <button type="button" class="bx bx-grid-function bx-trash " onclick="metadataStructureDelete_onClick('@item.Id', @item.Id)"></button>
+                            </text>)
+                  .ClientTemplate("<button type=\"button\" class=\"bx bx-grid-function bx-edit\" onclick=\"userEdit_onClick(\'<#= Username #>\', <#= Id #>);\" value=\"<#= Id #>\"></button>" +
+                                  "<button type=\"button\" class=\"bx bx-grid-function bx-trash\" onclick=\"userDelete_onClick(\'<#= Username #>\', <#= Id #>);\" value=\"<#= Id #>\"></button>")
+                  .Width(70);
+
+      })
+        .ClientEvents(clientEvents =>
+        {
+            clientEvents.OnDataBound("metadataStructuresGrid_onDataBound");
         })
-        )
+)
+
+<script type="text/javascript">
+    function metadataStructuresGrid_onDataBound() {
+        resetAllTelerikIconTitles();
+        addTooltips();
+    }
+
+    function metadataStructureEdit_onClick(name, id) {
+
+        alert(id);
+        var windowId = "edit_" + id;
+        $.ajax({
+            type: 'GET',
+            url: '@Url.Action("Edit", "ManageMetadataStructure")',
+            data: { id: id },
+            dataType: 'html',
+            success: function (htmlData) {
+                var windowElement = $.telerik.window.create({
+                    title: "Edit MetadataStructure: " + name + " (Id: " + id + ")",
+                    html: "<div id='"+windowId+"' class='bx-window'>" + htmlData + "</div>",
+                    contentUrl: "",
+                    actions: ["Close"],
+                    modal: true,
+                    width: 500,
+                    height: 500,
+                    resizable: false,
+                    draggable: true,
+                    scrollable: false,
+                    onClose: function () {
+                        $("#windowEdit").data('tWindow').destroy();
+                        $("#metadataStructuresGrid .t-refresh").trigger('click');
+                    }
+                });
+
+                windowElement.attr('id', 'windowEdit');
+                var window = $(windowElement).data('tWindow');
+                window.center().open();
+
+                resetAllTelerikIconTitles();
+            }
+        });
+    }
+
+    function metadataStructureDelete_onClick(name, id) {
+        alert(id);
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("Delete", "ManageMetadataStructure")',
+            data: {id:id},
+            dataType: "json",
+            success: function (response) {
+
+                window.location.href = '@Html.ActionLink("Index","Index","ManageMetadataStructure")';
+
+                alert(response);
+            }
+        });
+    }
+
+    function OnSuccess() {
+
+        $("#windowEdit").data('tWindow').destroy();
+        $("#metadataStructuresGrid .t-refresh").trigger('click');
+    }
+
+</script>

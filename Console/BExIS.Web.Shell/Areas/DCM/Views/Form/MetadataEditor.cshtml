@@ -66,11 +66,6 @@
     #endregion
 
 }
-@section Scripts{
-    <script src="@Url.Content("~/Scripts/minimap/minimap.js")" type="text/javascript"></script>
-    <link href="@Url.Content("~/Scripts/minimap/minimap.min.css")" rel="stylesheet" type="text/css" />
-}
-
 
 @section Information
 {
@@ -156,7 +151,7 @@
 
 </div>
 
-    <div id="root" on>
+    <div id="root">
 
         @foreach (var element in Model.StepModelHelpers)
         {
@@ -193,11 +188,7 @@
         </div>
     }
 
-    @section RightPane
-    {
- 
 
-    }
 
     <script>
 
@@ -207,7 +198,7 @@
             });
 
         $("#showminimap")
-            .click(function () {
+            .click(function() {
 
                 bindMinimap();
             });
@@ -216,25 +207,48 @@
 
             if ($('#root').height() > ($(window).height()+200)) {
 
-                $(".miniregion").remove();
-                $(".minimap").remove();
+                if ($(".miniregion")) {
+                    $(".miniregion").remove();
+                }
 
-                var previewBody = $('#root').minimap(
-                {
-                    heightRatio: 0.6,
-                    widthRatio: 0.1,
-                    offsetHeightRatio: 0.18,
-                    offsetWidthRatio: 0.01,
-                    position: "right",
-                    touch: true,
-                    smoothScroll: true,
-                    smoothScrollDelay: 200
-                });
+                if ($(".minimap")) {
+                    $(".minimap").remove();
+                }
+                if ($('#root')) {
+
+                    var offset = getRatioHeight($('#root').position().top)+0.05;
+                   
+                    var previewBody = $('#root').minimap(
+                    {
+                        heightRatio: 0.6,
+                        widthRatio: 0.1,
+                        offsetHeightRatio: offset,
+                        offsetWidthRatio: 0.01,
+                        position: "right",
+                        touch: true,
+                        smoothScroll: true,
+                        smoothScrollDelay: 200
+                    });
+
+                    $('#MetadataEditor').css("width", "90%");
+                }
 
             } else {
-                $(".miniregion").remove();
-                $(".minimap").remove();
+
+                if ($(".miniregion")) {
+                    $(".miniregion").remove();
+                }
+
+                if ($(".minimap")) {
+                    $(".minimap").remove();
+                }
+
+                $('#MetadataEditor').css("width", "100%");
             }
+        }
+
+        function getRatioHeight(containerStart) {
+            return (containerStart / $(window).height());
         }
 
         function SelectFileProcess_OnSelect(e) {

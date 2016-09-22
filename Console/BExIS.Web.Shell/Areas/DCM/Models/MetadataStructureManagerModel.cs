@@ -39,8 +39,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
         public long Id { get; set; }
         public string Name { get; set; }
         public string EntityClassPath { get; set; }
-        public string TitlePath { get; set; }
-        public string DescriptionClassPath { get; set; }
+        public string TitleNode { get; set; }
+        public string DescriptionNode { get; set; }
         public bool Active { get; set; }
         public List<SearchMetadataNode> MetadataNodes { get; set; }
         public List<string> EnitiesClassPaths { get; set; }

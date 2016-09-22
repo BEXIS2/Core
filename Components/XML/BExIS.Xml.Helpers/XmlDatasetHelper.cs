@@ -9,6 +9,7 @@ using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Xml.Helpers;
+using NHibernate.Persister.Collection;
 
 namespace BExIS.Xml.Services
 {
@@ -191,6 +192,37 @@ namespace BExIS.Xml.Services
             return string.Empty;
         }
 
+        public static bool HasImportInformation(long metadataStructrueId)
+        {
+            // get MetadataStructure 
+            MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
+            MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(metadataStructrueId);
+
+            XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)metadataStructure.Extra);
+            IEnumerable<XElement> tmp = XmlUtility.GetXElementsByAttribute(nodeNames.convertRef.ToString(), AttributeNames.type.ToString(),
+                TransmissionType.mappingFileImport.ToString(), xDoc);
+
+            if (tmp.Any()) return true;
+
+            return false;
+        }
+
+        public static bool HasExportInformation(long metadataStructrueId)
+        {
+            // get MetadataStructure 
+            MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
+            MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(metadataStructrueId);
+
+            XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)metadataStructure.Extra);
+            IEnumerable<XElement> tmp = XmlUtility.GetXElementsByAttribute(nodeNames.convertRef.ToString(), AttributeNames.type.ToString(),
+                TransmissionType.mappingFileExport.ToString(), xDoc);
+
+            if (tmp.Any()) return true;
+
+            return false;
+
+        }
+
         //todo entity extention
         public static string GetEntityType(long datasetid)
         {
@@ -218,7 +250,7 @@ namespace BExIS.Xml.Services
                 XDocument xDoc = XmlUtility.ToXDocument((XmlDocument) metadataStructure.Extra);
                 IEnumerable<XElement> tmp = XmlUtility.GetXElementByNodeName(nodeNames.entity.ToString(), xDoc);
                 if(tmp.Any())
-                    return tmp.First().Attribute("Value").Value;
+                    return tmp.First().Attribute("value").Value;
             }
            
 
@@ -258,7 +290,35 @@ namespace BExIS.Xml.Services
             return null;
         }
 
+        public static bool IsActive(long metadataStructrueId)
+        {
+            // get MetadataStructure 
+            MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
+            MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(metadataStructrueId);
+
+            XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)metadataStructure.Extra);
+            XElement tmp = XmlUtility.GetXElementsByAttribute(nodeNames.parameter.ToString(), AttributeNames.name.ToString(),
+                NameAttributeValues.active.ToString(), xDoc).FirstOrDefault();
+
+            if (tmp != null)
+            {
+                try
+                {
+                    return Convert.ToBoolean(tmp.Attribute(AttributeNames.value.ToString()).Value);
+                }
+                catch (Exception)
+                {
+                    
+                    return false;
+                }
+            }
+
+            return false;
+        }
+
         #endregion
+
+        
 
         #region add
 
@@ -349,7 +409,7 @@ namespace BExIS.Xml.Services
 
         #endregion
 
-
+ 
     }
 
     public enum nodeNames
@@ -363,7 +423,8 @@ namespace BExIS.Xml.Services
     public enum NameAttributeValues
     {
         title,
-        description
+        description,
+        active
     }
 
     public enum AttributeNames

@@ -203,6 +203,9 @@ namespace BExIS.Web.Shell.Areas.SAM.Helpers
             t32.Feature = f8;
             taskManager.UpdateTask(t32);
 
+            Task t34 = taskManager.CreateTask("DCM", "Form", "*");
+            taskManager.UpdateTask(t34);
+
             // Feature Permissions
             PermissionManager permissionManager = new PermissionManager();
             permissionManager.CreateFeaturePermission(g1.Id, f1.Id);

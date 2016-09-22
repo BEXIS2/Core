@@ -649,6 +649,7 @@
     <Content Include="fonts\fontawesome-webfont.ttf" />
     <Content Include="fonts\fontawesome-webfont.eot" />
     <Content Include="Areas\DCM\Views\ManageMetadataStructure\Index.cshtml" />
+    <Content Include="Areas\DCM\Views\ManageMetadataStructure\_editMetadataStructureView.cshtml" />
     <None Include="Properties\PublishProfiles\bexisconf.pubxml" />
     <Content Include="Areas\SAM\Views\Tenants\_Create.cshtml" />
     <Content Include="Areas\SAM\Views\Tenants\_Edit.cshtml" />
@@ -993,10 +994,10 @@
     <Content Include="Views\Test\Index.cshtml" />
     <Content Include="Views\Shared\_EntitySelectorInWindowView.cshtml" />
     <Content Include="Views\Shared\_EntitySelectorView.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\DropDown.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Areas\DCM\Views\DcmAdmin\" />
     <Folder Include="Areas\DCM\Views\Home\" />
     <Folder Include="Areas\DDM\Views\Shared\" />
     <Folder Include="Areas\DIM\Views\Api\" />

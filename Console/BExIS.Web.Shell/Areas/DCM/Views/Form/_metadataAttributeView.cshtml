@@ -153,7 +153,7 @@
                                             .Filterable(filtering =>
                                             {
                                                 filtering.FilterMode(AutoCompleteFilterMode.Contains);
-                                                filtering.MinimumChars(3);
+                                                filtering.MinimumChars(2);
 
                                             })
                                     )
@@ -349,8 +349,9 @@
                 //alert(e.value);
                 //alert(response);
                 //var id = parentid;
-                var index = e.id.lastIndexOf("_");
-                var newId = e.id.substr(0, index);
+                //alert(e.id);
+                //var index = e.id.lastIndexOf("_");
+                //var newId = e.id.substr(0, index);
                 //alert(newId);
 
                 //$("#" + newId).replaceWith(response);
@@ -495,7 +496,7 @@
         var substr = e.target.id.split('_');
         var id = substr[0];
         var parentid = substr[1];
-        var parentname = e.target.attr("title");
+        var parentname = ""//e.target.attr("title");
         var metadataStructureId = substr[2];
         var number = substr[3];
         var ParentModelNumber = substr[4];
