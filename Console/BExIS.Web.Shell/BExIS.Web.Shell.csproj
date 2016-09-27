@@ -510,6 +510,7 @@
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img8.png" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img9.png" />
     <Content Include="Areas\DCM\Images\emptyPng.png" />
+    <Content Include="Areas\DCM\Views\Help\Informations.xml" />
     <Content Include="Areas\DDM\Images\DDM_UserGuide_files_images\DDM_UserGuide_files_img1.png" />
     <Content Include="Areas\DDM\Images\DDM_UserGuide_files_images\DDM_UserGuide_files_img10.png" />
     <Content Include="Areas\DDM\Images\DDM_UserGuide_files_images\DDM_UserGuide_files_img2.png" />
@@ -521,7 +522,9 @@
     <Content Include="Areas\DDM\Images\DDM_UserGuide_files_images\DDM_UserGuide_files_img8.png" />
     <Content Include="Areas\DDM\Images\DDM_UserGuide_files_images\DDM_UserGuide_files_img9.png" />
     <Content Include="Areas\DDM\Scripts\ddm.js" />
+    <Content Include="Areas\DDM\Views\Help\Informations.xml" />
     <Content Include="Areas\DIM\Images\DIM_UserGuide_files_images\DIM_UserGuide_files_img1.png" />
+    <Content Include="Areas\DIM\Views\Help\Informations.xml" />
     <Content Include="Areas\MSM\Resources\Scripts\angular-dragdrop.min.js" />
     <Content Include="Areas\MSM\Resources\Scripts\angular-route.min.js" />
     <Content Include="Areas\MSM\Resources\Scripts\angular.js" />
@@ -557,6 +560,7 @@
     <Content Include="Areas\RPM\Scripts\jquery-1.10.1.min.js" />
     <Content Include="Areas\RPM\Stylesheets\DataStructureSearch.css" />
     <Content Include="Areas\RPM\Stylesheets\RPM.css" />
+    <Content Include="Areas\RPM\Views\Help\Informations.xml" />
     <Content Include="Areas\SAM\Images\SAM_UserGuide_files_images\SAM_UserGuide_files_img1.png" />
     <Content Include="Areas\SAM\Images\SAM_UserGuide_files_images\SAM_UserGuide_files_img10.png" />
     <Content Include="Areas\SAM\Images\SAM_UserGuide_files_images\SAM_UserGuide_files_img11.png" />
@@ -568,6 +572,7 @@
     <Content Include="Areas\SAM\Images\SAM_UserGuide_files_images\SAM_UserGuide_files_img7.png" />
     <Content Include="Areas\SAM\Images\SAM_UserGuide_files_images\SAM_UserGuide_files_img8.png" />
     <Content Include="Areas\SAM\Images\SAM_UserGuide_files_images\SAM_UserGuide_files_img9.png" />
+    <Content Include="Areas\SAM\Views\Help\Informations.xml" />
     <Content Include="Content\Images\dfg_logo.gif" />
     <Content Include="Content\bootstrap-combobox.css" />
     <Content Include="Content\bootstrap-theme.css" />

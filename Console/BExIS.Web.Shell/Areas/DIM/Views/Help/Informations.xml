@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Informations>
+  <Information name="Admin">
+    <description>
+      On this page you are able to export metadata to a standard compliant XML file, i.e. ABCD or EML.<br />
+      <ul>
+        <li>Please select a metadata structure first (tab)</li>
+        <li>Select one or more datasets to export</li>
+        <li>Click the export button to create XML files</li>
+      </ul>
+    </description>
+    <more text="More" title="go to help" path="/DIM/Help/Index"/>
+  </Information>
+
+  <Information name="Help">
+    <description>
+      This guide will walk you through the basics of using data dissemination.
+    </description>
+    <more text="More" title="go to help" path=""/>
+  </Information>
+</Informations>
