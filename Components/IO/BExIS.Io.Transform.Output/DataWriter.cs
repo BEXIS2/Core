@@ -255,9 +255,7 @@ namespace BExIS.IO.Transform.Output
         /// <returns></returns>
         public string GetDynamicStorePath(long datasetId, long datasetVersionOrderNr, string title, string extention)
         {
-            string storePath = Path.Combine("Datasets", datasetId.ToString(), "DatasetVersions");
-
-            return Path.Combine(storePath, datasetId.ToString() + "_" + datasetVersionOrderNr.ToString() + "_" + title + extention);
+            return IOHelper.GetDynamicStorePath(datasetId, datasetVersionOrderNr, "data", extention);
         }
 
         /// <summary>

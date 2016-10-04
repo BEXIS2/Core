@@ -31,7 +31,7 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
                 MetadataViewObject mvo = new MetadataViewObject();
                 mvo.DatasetId = id;
                 
-                List<string> t = XmlDatasetHelper.GetAllExportInformation(id, TransmissionType.mappingFileExport, AttributeNames.name).ToList();
+                List<string> t = XmlDatasetHelper.GetAllTransmissionInformation(id, TransmissionType.mappingFileExport, AttributeNames.name).ToList();
 
                 mvo.Format = t.ToArray();
 

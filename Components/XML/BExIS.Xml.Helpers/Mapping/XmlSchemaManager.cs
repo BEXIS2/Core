@@ -1230,13 +1230,13 @@ namespace BExIS.Xml.Helpers.Mapping
                     }
                     //datatype
                     string datatype = type.Datatype.ValueType.Name;
-                    DataType dataType = GetDataType(datatype);
+                    DataType dataType = GetDataType(datatype.ToLower());
 
                     //unit
                     // it is the second time I am seeing this cose segment, would be good to factor it out to a function
-                    Unit noneunit = unitManager.Repo.Get().Where(u => u.Name.Equals("None")).First();
+                    Unit noneunit = unitManager.Repo.Get().Where(u => u.Name.ToLower().Equals("none")).FirstOrDefault();
                     if (noneunit == null)
-                        unitManager.Create("None", "None", "If no unit is used.", null, MeasurementSystem.Unknown); // null diemsion to be replaced
+                        unitManager.Create("none", "none", "If no unit is used.", null, MeasurementSystem.Unknown); // null diemsion to be replaced
 
                     temp = getExistingMetadataAttribute(name);// = metadataAttributeManager.MetadataAttributeRepo.Get().Where(m => m.Name.Equals(name)).FirstOrDefault();
 
@@ -1302,10 +1302,10 @@ namespace BExIS.Xml.Helpers.Mapping
             int i = 0;
             MetadataCompoundAttribute mca = getExistingMetadataCompoundAttribute(element.Name + "Type"); ;// = metadataAttributeManager.MetadataCompoundAttributeRepo.Get(p => p.Name == element.Name+"Type").FirstOrDefault();
             //Debug.WriteLine("createMetadataCompoundAttribute" + i++);
-            DataType dt1 = dataTypeManager.Repo.Get(p => p.Name.Equals("String")).FirstOrDefault();
+            DataType dt1 = dataTypeManager.Repo.Get(p => p.Name.ToLower().Equals("string")).FirstOrDefault();
             if (dt1 == null)
             {
-                dt1 = dataTypeManager.Create("String", "A test String", System.TypeCode.String);
+                dt1 = dataTypeManager.Create("string", "A test String", System.TypeCode.String);
             }
 
             if (mca == null)
@@ -1561,22 +1561,22 @@ namespace BExIS.Xml.Helpers.Mapping
         // vielleicht besser mit festen datatypes im system
         private DataType GetDataType(string dataTypeAsString)
         {
-            if (!dataTypeAsString.Equals("Object"))
+            if (!dataTypeAsString.ToLower().Equals("Object"))
             {
                 TypeCode typeCode = ConvertStringToSystemType(dataTypeAsString);
 
-                DataType dataType = dataTypeManager.Repo.Query().Where(d => d.SystemType.Equals(typeCode.ToString()) && d.Name.Equals(typeCode.ToString())).FirstOrDefault();
+                DataType dataType = dataTypeManager.Repo.Query().Where(d => d.SystemType.Equals(typeCode.ToString()) && d.Name.ToLower().Equals(typeCode.ToString().ToLower())).FirstOrDefault();
 
                 if (dataType == null)
                 {
-                    dataType = dataTypeManager.Create(typeCode.ToString(), typeCode.ToString(), typeCode);
+                    dataType = dataTypeManager.Create(typeCode.ToString().ToLower(), typeCode.ToString().ToLower(), typeCode);
                 }
 
                 return dataType;
             }
             else
             {
-                return GetDataType("String");
+                return GetDataType("string");
             }
         }
 
