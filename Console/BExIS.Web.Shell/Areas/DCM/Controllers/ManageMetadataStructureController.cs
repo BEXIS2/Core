@@ -12,6 +12,7 @@ using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Security.Services.Objects;
 using BExIS.Web.Shell.Areas.DCM.Models;
 using BExIS.Xml.Helpers;
+using BExIS.Xml.Helpers.Mapping;
 using BExIS.Xml.Services;
 using Telerik.Web.Mvc;
 
@@ -205,7 +206,25 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         {
             MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
             MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(id);
-            metadataStructureManager.Delete(metadataStructure);
+
+            try
+            {
+                // delete local files
+                if (XmlSchemaManager.Delete(metadataStructure))
+                {
+                    metadataStructureManager.Delete(metadataStructure);
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+
+            
+
+            // delete links from search index
+
+            
 
             if (metadataStructureManager.Repo.Get(id) == null) return Json(true);
 

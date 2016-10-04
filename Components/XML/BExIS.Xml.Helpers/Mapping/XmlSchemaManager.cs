@@ -1981,5 +1981,32 @@ namespace BExIS.Xml.Helpers.Mapping
         #endregion
 
         #endregion
+
+        #region delete Schema
+        /// <summary>
+        /// Delete all depending xsdFiles under the workspace
+        /// && all generated mapping files
+        /// </summary>
+        /// <param name="metadataStructure"></param>
+        /// <returns></returns>
+        public static bool Delete(MetadataStructure metadataStructure)
+        {
+            string directoryPath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "Metadata",
+                metadataStructure.Name);
+
+            // delete all mapping files
+            
+
+            // deleting all xsds
+            if(Directory.Exists(directoryPath))
+                Directory.Delete(directoryPath);
+
+            if (!Directory.Exists(directoryPath)) return true;
+
+            return false;
+        }
+
+
+        #endregion
     }
 }
