@@ -274,8 +274,26 @@ namespace BExIS.Xml.Services
             if (datasetVersion != null && datasetVersion.Dataset != null &&
                 datasetVersion.Dataset.MetadataStructure != null && datasetVersion.Metadata != null)
             {
-                MetadataStructure metadataStructure = datasetVersion.Dataset.MetadataStructure;
-                XDocument xDoc = XmlUtility.ToXDocument((XmlDocument) datasetVersion.Dataset.MetadataStructure.Extra);
+                return GetAllTransmissionInformationFromMetadataStructure(datasetVersion.Dataset.MetadataStructure.Id,
+                    type, returnType);
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// returns a List of all transmission nodes in the metadataStructure
+        /// </summary>
+        /// <param name="metadatastrutcureId"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static IEnumerable<string> GetAllTransmissionInformationFromMetadataStructure(long metadatastrutcureId, TransmissionType type,
+            AttributeNames returnType = AttributeNames.value)
+        {
+
+            MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
+            MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(metadatastrutcureId);
+
+                XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)metadataStructure.Extra);
                 IEnumerable<XElement> temp = XmlUtility.GetXElementsByAttribute(nodeNames.convertRef.ToString(), AttributeNames.type.ToString(),
                     type.ToString(), xDoc);
 
@@ -286,8 +304,6 @@ namespace BExIS.Xml.Services
                 }
 
                 return tmpList;
-            }
-            return null;
         }
 
         public static bool IsActive(long metadataStructrueId)

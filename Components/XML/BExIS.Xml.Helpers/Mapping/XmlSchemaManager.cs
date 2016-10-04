@@ -11,6 +11,7 @@ using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
+using BExIS.IO;
 using BExIS.Xml.Models.Mapping;
 using BExIS.Xml.Services;
 using NHibernate.Criterion;
@@ -1994,12 +1995,38 @@ namespace BExIS.Xml.Helpers.Mapping
             string directoryPath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "Metadata",
                 metadataStructure.Name);
 
+            string mappingFileDirectory = AppConfiguration.GetModuleWorkspacePath("DIM");
+
             // delete all mapping files
-            
+            // delete export mappings
+            List<string> mappingFilPaths =
+                XmlDatasetHelper.GetAllTransmissionInformationFromMetadataStructure(metadataStructure.Id,
+                    TransmissionType.mappingFileExport, AttributeNames.value).ToList();
+
+            if (mappingFilPaths.Count > 0)
+            {
+                foreach (var file in mappingFilPaths)
+                {
+                    FileHelper.Delete(Path.Combine(mappingFileDirectory,file));
+                }
+            }
+
+            // delete import mappings
+            mappingFilPaths =
+                XmlDatasetHelper.GetAllTransmissionInformationFromMetadataStructure(metadataStructure.Id,
+                    TransmissionType.mappingFileImport, AttributeNames.value).ToList();
+
+            if (mappingFilPaths.Count > 0)
+            {
+                foreach (var file in mappingFilPaths)
+                {
+                    FileHelper.Delete(Path.Combine(mappingFileDirectory, file));
+                }
+            }
 
             // deleting all xsds
-            if(Directory.Exists(directoryPath))
-                Directory.Delete(directoryPath);
+            if (Directory.Exists(directoryPath))
+                Directory.Delete(directoryPath,true);
 
             if (!Directory.Exists(directoryPath)) return true;
 
