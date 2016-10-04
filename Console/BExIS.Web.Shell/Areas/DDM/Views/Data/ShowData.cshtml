@@ -30,7 +30,7 @@
 
                   tabs.Add()
                       .Text("Metadata")
-                      .LoadContentFrom("LoadMetadata", "CreateDataset", new {area = "DCM", datasetId = @Model.Id, locked = true, created = false, fromEditMode = false, resetTaskManager = true});
+                      .LoadContentFrom("LoadMetadataFromExternal", "Form", new {area = "DCM", entityId = @Model.Id, title = @Model.Title, metadatastructureId = @Model.MetadataStructureId, datastructureId = @Model.DataStructureId, researchplanId = @Model.ResearchPlanId, sessionKeyForMetadata = "ShowDataMetadata" });
 
                   tabs.Add()
                       .Text("Primary Data")
