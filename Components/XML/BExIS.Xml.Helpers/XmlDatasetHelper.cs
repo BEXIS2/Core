@@ -107,13 +107,13 @@ namespace BExIS.Xml.Services
         /// <param name="datasetid"></param>
         /// <param name="type"></param>
         /// <returns></returns>
-        public static string GetExportInformation(long datasetid, TransmissionType type)
+        public static string GetTransmissionInformation(long datasetid, TransmissionType type)
         {
             DatasetManager dm = new DatasetManager();
             Dataset dataset = dm.GetDataset(datasetid);
             DatasetVersion datasetVersion = dm.GetDatasetLatestVersion(dataset);
 
-            return GetExportInformation(datasetVersion, type);
+            return GetTransmissionInformation(datasetVersion, type);
         }
 
         /// <summary>
@@ -123,7 +123,7 @@ namespace BExIS.Xml.Services
         /// <param name="type"></param>
         /// <param name="returnType"></param>
         /// <returns></returns>
-        public static string GetExportInformation(DatasetVersion datasetVersion, TransmissionType type,
+        public static string GetTransmissionInformation(DatasetVersion datasetVersion, TransmissionType type,
             AttributeNames returnType = AttributeNames.value)
         {
             // get MetadataStructure 
@@ -150,7 +150,7 @@ namespace BExIS.Xml.Services
         /// <param name="fieldValue"></param>
         /// <param name="returnType"></param>
         /// <returns></returns>
-        public static string GetExportInformation(DatasetVersion datasetVersion, AttributeNames field, string fieldValue,
+        public static string GetTransmissionInformation(DatasetVersion datasetVersion, AttributeNames field, string fieldValue,
             AttributeNames returnType = AttributeNames.value)
         {
             // get MetadataStructure 
@@ -169,7 +169,7 @@ namespace BExIS.Xml.Services
             return string.Empty;
         }
 
-        public static string GetExportInformation(DatasetVersion datasetVersion, TransmissionType type, string name,
+        public static string GetTransmissionInformation(DatasetVersion datasetVersion, TransmissionType type, string name,
             AttributeNames returnType = AttributeNames.value)
         {
             // get MetadataStructure 
@@ -263,7 +263,7 @@ namespace BExIS.Xml.Services
         /// <param name="datasetVersion"></param>
         /// <param name="name"></param>
         /// <returns></returns>
-        public static IEnumerable<string> GetAllExportInformation(long datasetid, TransmissionType type,
+        public static IEnumerable<string> GetAllTransmissionInformation(long datasetid, TransmissionType type,
             AttributeNames returnType = AttributeNames.value)
         {
             DatasetManager dm = new DatasetManager();
@@ -313,6 +313,46 @@ namespace BExIS.Xml.Services
                 }
             }
 
+            return false;
+        }
+
+        public static bool HasTransmission(long datasetid, TransmissionType type)
+        {
+            DatasetManager dm = new DatasetManager();
+            Dataset dataset = dm.GetDataset(datasetid);
+            DatasetVersion datasetVersion = dm.GetDatasetLatestVersion(dataset);
+
+            // get MetadataStructure 
+            if (datasetVersion != null && datasetVersion.Dataset != null &&
+                datasetVersion.Dataset.MetadataStructure != null && datasetVersion.Metadata != null)
+            {
+                MetadataStructure metadataStructure = datasetVersion.Dataset.MetadataStructure;
+                XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)datasetVersion.Dataset.MetadataStructure.Extra);
+                IEnumerable<XElement> temp = XmlUtility.GetXElementsByAttribute(nodeNames.convertRef.ToString(), AttributeNames.type.ToString(),
+                    type.ToString(), xDoc);
+
+                if (temp != null && temp.Any()) return true;
+
+            }
+            return false;
+        }
+
+        public static bool HasMetadataStructureTransmission(long metadataStructureId, TransmissionType type)
+        {
+            MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
+            MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(metadataStructureId);
+
+            // get MetadataStructure 
+            if (metadataStructure != null && metadataStructure.Extra != null)
+            {
+
+                XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)metadataStructure.Extra);
+                IEnumerable<XElement> temp = XmlUtility.GetXElementsByAttribute(nodeNames.convertRef.ToString(), AttributeNames.type.ToString(),
+                    type.ToString(), xDoc);
+
+                if (temp != null && temp.Any()) return true;
+
+            }
             return false;
         }
 

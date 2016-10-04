@@ -267,39 +267,42 @@ namespace BExIS.IO.Transform.Output
             StringBuilder builder = new StringBuilder();
             bool first = true;
 
-            List<Variable> variables = ds.Variables.ToList();
-
-            if (VisibleColumns != null)
+            if (ds.Variables != null && ds.Variables.Any())
             {
-                variables = GetSubsetOfVariables(ds.Variables.ToList(), VisibleColumns);
-            }
+                List<Variable> variables = ds.Variables.ToList();
 
-            variables = SortVariablesOnDatastructure(variables, ds);
+                if (VisibleColumns != null)
+                {
+                    variables = GetSubsetOfVariables(ds.Variables.ToList(), VisibleColumns);
+                }
 
-            foreach (Variable v in variables)
-            {
-                string value = v.Label.ToString();
-                // Add separator if this isn't the first value
-                if (!first)
-                    builder.Append(AsciiHelper.GetSeperator(Delimeter));
-                // Implement special handling for values that contain comma or quote
-                // Enclose in quotes and double up any double quotes
-                if (value.IndexOfAny(new char[] { '"', ',' }) != -1)
-                    builder.AppendFormat("\"{0}\"", value.Replace("\"", "\"\""));
-                else
-                    builder.Append(value);
-                first = false;
+                variables = SortVariablesOnDatastructure(variables, ds);
 
-                // add to variable identifiers
-                this.VariableIdentifiers.Add
-                (
-                    new VariableIdentifier
-                    {
-                        id = v.Id,
-                        name = v.Label,
-                        systemType = v.DataAttribute.DataType.SystemType
-                    }
-                );
+                foreach (Variable v in variables)
+                {
+                    string value = v.Label.ToString();
+                    // Add separator if this isn't the first value
+                    if (!first)
+                        builder.Append(AsciiHelper.GetSeperator(Delimeter));
+                    // Implement special handling for values that contain comma or quote
+                    // Enclose in quotes and double up any double quotes
+                    if (value.IndexOfAny(new char[] { '"', ',' }) != -1)
+                        builder.AppendFormat("\"{0}\"", value.Replace("\"", "\"\""));
+                    else
+                        builder.Append(value);
+                    first = false;
+
+                    // add to variable identifiers
+                    this.VariableIdentifiers.Add
+                        (
+                            new VariableIdentifier
+                            {
+                                id = v.Id,
+                                name = v.Label,
+                                systemType = v.DataAttribute.DataType.SystemType
+                            }
+                        );
+                }
             }
 
             return builder.ToString();
