@@ -32,6 +32,8 @@
 <p>Please provide the following information.</p>
 @using (Html.BeginForm("Edit", "Party", new { area = "BAM" }, FormMethod.Post))
 {
+    @Html.HiddenFor(m => m.Party.Id)
+    @Html.HiddenFor(m => m.Party.PartyType.Id)
     <table>
         <tr>
             <td style="width:40px;"><b title="Required" style="color: red">*</b></td>
@@ -49,13 +51,7 @@
                 @Html.LabelFor(m => m.Party.PartyType)
             </td>
             <td>
-                @(Html.Telerik().DropDownList()
-                                    .Placeholder("Select, please")
-                                      .HtmlAttributes(new { Title = @errorMessage, @class = "bx-dropdown " + @errorClass })
-                                    .Name("Party.PartyType.Id")
-                                    .BindTo(new SelectList(Model.PartyTypeList, "Id", "Title", Model.Party.PartyType.Id))
-                                    .ClientEvents(events => events.OnChange("OnChangePartyType"))  )
-                @Html.ValidationMessageFor(m => m.Party.PartyType.Id)
+                @Model.Party.PartyType.Title
             </td>
         </tr>
         <tr>
@@ -64,16 +60,13 @@
                 @Html.LabelFor(m => m.Party.StartDate)
             </td>
             <td>
-                @Html.TextBoxFor(m => m.Party.StartDate)
                 @(Html.Telerik().DatePicker()
-                                .Name("StartDate")
+                                .Name("Party.StartDate")
                                 .ShowButton(true)
                                 .TodayButton("d")
                                 .OpenOnFocus(true)
                                 .Format("dd/MM/yyyy")
-                                 .HtmlAttributes(new { Title = @errorMessage, @class = "bx-textarea " + @errorClass })
-                                .ClientEvents(events => events
-                                    .OnChange("OnChangeDatePicker"))
+                                 .HtmlAttributes(new { @style = "width:275px; " })
                 )
             </td>
         </tr>
@@ -83,17 +76,16 @@
                 @Html.LabelFor(m => m.Party.EndDate)
             </td>
             <td>
-                @Html.TextBoxFor(m => m.Party.EndDate)
                 @(Html.Telerik().DatePicker()
-                                .Name("EndDate")
+                                .Name("Party.EndDate")
                                 .ShowButton(true)
                                 .TodayButton("d")
                                 .OpenOnFocus(true)
                                 .Format("dd/MM/yyyy")
-                                 .HtmlAttributes(new { Title = @errorMessage, @class = "bx-textarea " + @errorClass })
-                                .ClientEvents(events => events
-                                    .OnChange("OnChangeDatePicker"))
-                )
+                                .HtmlAttributes(new { @style = "width:275px; " })
+                                
+                                )
+                
             </td>
         </tr>
         <tr>
@@ -112,7 +104,7 @@
     <div id="divPartyCustomAttr"></div>
 
     <br />
-    <button type="submit" value="Save" name="saveDataset" class="t-button" style="border:0px;">Create  Party</button>
+    <button type="submit" value="Save" name="saveDataset" class="t-button" style="border:0px;">Save</button>
 }
 
 

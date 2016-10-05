@@ -24,6 +24,10 @@
       <column name="Description"  />
     </property>
 
+    <property name="ValidValues" type="String" >
+      <column name="ValidValues"  />
+    </property>
+    
     <property name="IsValueOptional" type="yes_no" >
       <column name="IsValueOptional"  />
     </property>

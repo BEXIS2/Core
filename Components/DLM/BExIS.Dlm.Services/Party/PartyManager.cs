@@ -38,7 +38,7 @@ namespace BExIS.Dlm.Services.Party
             Contract.Ensures(Contract.Result<PartyX>() != null && Contract.Result<PartyX>().Id >= 0);
             if (startDate == null)
                 startDate = DateTime.MinValue;
-            if (endDate == null)
+            if (endDate == null || endDate==DateTime.MinValue)
                 endDate = DateTime.MaxValue;
             //Create a create status
             PartyStatus initialStatus = new PartyStatus();
@@ -56,11 +56,9 @@ namespace BExIS.Dlm.Services.Party
                 EndDate = endDate.Value,
                 CurrentStatus = initialStatus
             };
-            //if we set cascade to all in party mapping fileto save history at the same time of creating party
             initialStatus.Party = entity;
             entity.History = new List<PartyStatus>();
             entity.History.Add(initialStatus);
-
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<PartyX> repo = uow.GetRepository<PartyX>();
@@ -79,14 +77,18 @@ namespace BExIS.Dlm.Services.Party
                 IRepository<PartyX> repo = uow.GetRepository<PartyX>();
                 IRepository<PartyStatus> repoCM = uow.GetRepository<PartyStatus>();
                 IRepository<PartyRelationship> repoRel = uow.GetRepository<PartyRelationship>();
+                IRepository<PartyCustomAttributeValue> repoCustomeAttrVal= uow.GetRepository<PartyCustomAttributeValue>();
                 var latest = repo.Reload(entity);
                 // remove all associations between the entity and its history items
                 repoCM.Delete(latest.History);
-                if (entity.History.Count()>0)
+                if (latest.History.Count()>0)
                 {
-                    entity.History.ToList().ForEach(a => a.Party = null);
-                    entity.History.Clear();
+                    latest.History.ToList().ForEach(a => a.Party = null);
+                    latest.History.Clear();
                 }
+                //remove all 'CustomAttributeValues'
+                repoCustomeAttrVal.Delete(latest.CustomAttributeValues);
+                latest.CustomAttributeValues.Clear();
                 //remove all relations
                 var relations = repoRel.Get(item => item.FirstParty.Id == entity.Id || item.SecondParty.Id == entity.Id);
                 foreach (var relation in relations)
@@ -312,15 +314,34 @@ namespace BExIS.Dlm.Services.Party
                         var entity = new PartyCustomAttributeValue()
                         {
                             CustomAttribute = partyCustomAttributeValue.Key,
+                            Party=party,
                             Value = partyCustomAttributeValue.Value
                         };
-                        party.CustomAttributeValues.Add(entity);
+                       
                         repoCAV.Put(entity);
                     }
                 }
                 uow.Commit();
             }
             return party.CustomAttributeValues;
+        }
+
+        public PartyCustomAttributeValue UpdatePartyCustomAttriuteValue(PartyCustomAttribute partyCustomAttribute,PartyX party,string value)
+        {
+            Contract.Requires(partyCustomAttribute != null && party != null, "Provided entities can not be null");
+            Contract.Requires(partyCustomAttribute.Id >= 0 && party.Id >= 0, "Provided entitities must have a permanent ID");
+            Contract.Ensures(Contract.Result<PartyCustomAttributeValue>() != null && Contract.Result<PartyCustomAttributeValue>().Id >= 0, "No entity is persisted!");
+            var entity = new PartyCustomAttributeValue();
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<PartyCustomAttributeValue> repo = uow.GetRepository<PartyCustomAttributeValue>();
+                entity = repo.Get(item => item.Party.Id == party.Id && item.CustomAttribute.Id == partyCustomAttribute.Id).FirstOrDefault();
+                entity.Value = value;
+                repo.Put(entity); // Merge is required here!!!!
+                uow.Commit();
+                entity = repo.Reload(entity);
+            }
+            return (entity);
         }
 
         public bool RemovePartyCustomAttriuteValue(PartyCustomAttributeValue partyCustomAttributeValue)
@@ -336,6 +357,7 @@ namespace BExIS.Dlm.Services.Party
             }
             return (true);
         }
+
         public bool RemovePartyCustomAttriuteValue(IEnumerable<PartyCustomAttributeValue> entities)
         {
             Contract.Requires(entities != null);
@@ -353,6 +375,7 @@ namespace BExIS.Dlm.Services.Party
             }
             return (true);
         }
+
         public PartyStatus AddPartyStatus(PartyX party, PartyStatusType partyStatusType, string description)
         {
             Contract.Requires(party != null);

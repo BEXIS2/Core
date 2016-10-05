@@ -651,7 +651,6 @@
     <Content Include="Areas\MSM\Views\Test\_TreePartial.cshtml" />
     <Content Include="Areas\MSM\Views\Test\_AddTextField.cshtml" />
     <Content Include="Areas\BAM\Views\Party\Index.cshtml" />
-    <Content Include="Areas\BAM\Views\Party\_.cshtml" />
     <Content Include="Areas\BAM\Views\Party\Create.cshtml" />
     <Content Include="Areas\BAM\Views\web.config" />
     <Content Include="Areas\BAM\Views\_ViewStart.cshtml" />

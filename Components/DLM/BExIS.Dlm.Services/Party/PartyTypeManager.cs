@@ -146,7 +146,7 @@ namespace BExIS.Dlm.Services.Party
         #endregion
 
         #region PartyCustomAttribute
-        public PartyCustomAttribute CreatePartyCustomAttribute(PartyType partyType, string dataType, string name, string description, int? displayOrder = null)
+        public PartyCustomAttribute CreatePartyCustomAttribute(PartyType partyType, string dataType, string name, string description,string validValues,bool isValueOptional=true, int? displayOrder = null)
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(name));
             Contract.Requires(partyType != null);
@@ -155,9 +155,11 @@ namespace BExIS.Dlm.Services.Party
 
             var entity = new PartyCustomAttribute()
             {
-                DataType = dataType,
+                DataType = dataType.ToLower(),
                 Description = description,
                 PartyType = partyType,
+                ValidValues=validValues,
+                IsValueOptional=isValueOptional,
                 Name = name
             };
             using (IUnitOfWork uow = this.GetUnitOfWork())

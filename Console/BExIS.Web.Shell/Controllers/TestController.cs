@@ -231,7 +231,7 @@ namespace BExIS.Web.Shell.Controllers
         private Dlm.Entities.Party.PartyCustomAttribute addTestPartyCustomAttribute(Dlm.Entities.Party.PartyType partyType)
         {
             Dlm.Services.Party.PartyTypeManager ptm = new Dlm.Services.Party.PartyTypeManager();
-            return ptm.CreatePartyCustomAttribute(partyType, "string", "Name", "Name for test", 0);
+            return ptm.CreatePartyCustomAttribute(partyType, "string", "Name", "Name for test", "",true,0);
         }
 
 
