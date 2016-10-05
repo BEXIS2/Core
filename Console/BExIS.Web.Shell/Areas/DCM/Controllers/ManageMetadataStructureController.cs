@@ -39,6 +39,10 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 tmp.MetadataStructureModels.Add(convertToMetadataStructureModel(metadataStructure));
             }
 
+            if(tmp.MetadataStructureModels.Any())
+            {
+                tmp.MetadataStructureModels = tmp.MetadataStructureModels.OrderBy(m=>m.Id).ToList();
+            }
 
             return tmp;
         }
@@ -112,7 +116,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                             .FirstOrDefault()
                             .XPath;
 
-                    tmp = XmlUtility.GetXmlNodeByAttribute(xmlDocument.DocumentElement, nodeNames.nodeRef.ToString(), AttributeNames.name.ToString(), NameAttributeValues.title.ToString());
+                    tmp = XmlUtility.GetXmlNodeByAttribute(xmlDocument.DocumentElement, nodeNames.nodeRef.ToString(), AttributeNames.name.ToString(), NameAttributeValues.description.ToString());
                     tmp.Attributes[AttributeNames.value.ToString()].Value = descriptionXPath;
 
                     //set entity
@@ -135,8 +139,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                             metadataStructureModel.Active.ToString(), AttributeType.parameter.ToString(), "extra/parameters/parameter");
 
                     }
-
-
 
                     metadataStructure.Extra = xmlDocument;
                 }

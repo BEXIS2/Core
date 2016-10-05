@@ -223,40 +223,6 @@ namespace BExIS.Xml.Services
 
         }
 
-        //todo entity extention
-        public static string GetEntityType(long datasetid)
-        {
-            DatasetManager  datasetManager = new DatasetManager();
-            Dataset dataset = datasetManager.GetDataset(datasetid);
-
-            // get MetadataStructure 
-            if (dataset != null)
-            {
-                return GetEntityTypeFromMetadatStructure(dataset.MetadataStructure.Id);
-            }
-            return string.Empty;
-        }
-
-        //todo entity extention
-        public static string GetEntityTypeFromMetadatStructure(long metadataStuctrueId)
-        {
-
-            MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
-            MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(metadataStuctrueId);
-
-            // get MetadataStructure 
-            if (metadataStructure != null)
-            {
-                XDocument xDoc = XmlUtility.ToXDocument((XmlDocument) metadataStructure.Extra);
-                IEnumerable<XElement> tmp = XmlUtility.GetXElementByNodeName(nodeNames.entity.ToString(), xDoc);
-                if(tmp.Any())
-                    return tmp.First().Attribute("value").Value;
-            }
-           
-
-            return string.Empty;
-        }
-
         /// <summary>
         /// returns a value of a metadata node
         /// </summary>
@@ -372,9 +338,71 @@ namespace BExIS.Xml.Services
             return false;
         }
 
+
+        //todo entity extention
+        public static string GetEntityType(long datasetid)
+        {
+            DatasetManager datasetManager = new DatasetManager();
+            Dataset dataset = datasetManager.GetDataset(datasetid);
+
+            // get MetadataStructure 
+            if (dataset != null)
+            {
+                return GetEntityTypeFromMetadatStructure(dataset.MetadataStructure.Id);
+            }
+            return string.Empty;
+        }
+
+        //todo entity extention
+        public static string GetEntityTypeFromMetadatStructure(long metadataStuctrueId)
+        {
+
+            MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
+            MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(metadataStuctrueId);
+
+            // get MetadataStructure 
+            if (metadataStructure != null)
+            {
+                XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)metadataStructure.Extra);
+                IEnumerable<XElement> tmp = XmlUtility.GetXElementByNodeName(nodeNames.entity.ToString(), xDoc);
+                if (tmp.Any())
+                    return tmp.First().Attribute("value").Value;
+            }
+
+
+            return string.Empty;
+        }
+
+        //todo entity extention
+        public static bool HasEntityType(long metadataStuctrueId, string entityClassPath)
+        {
+            MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
+            MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(metadataStuctrueId);
+
+            // get MetadataStructure 
+            if (metadataStructure != null)
+            {
+                XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)metadataStructure.Extra);
+                IEnumerable<XElement> tmp = XmlUtility.GetXElementByNodeName(nodeNames.entity.ToString(), xDoc);
+                if (tmp.Any())
+                {
+                    foreach (var entity in tmp)
+                    {
+                        string tmpEntityClassPath = "";
+                        if (entity.HasAttributes && entity.Attribute("value")!= null)
+                            tmpEntityClassPath = entity.Attribute("value").Value.ToLower();
+
+                        if (tmpEntityClassPath.Equals(entityClassPath.ToLower())) return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+
         #endregion
 
-        
+
 
         #region add
 

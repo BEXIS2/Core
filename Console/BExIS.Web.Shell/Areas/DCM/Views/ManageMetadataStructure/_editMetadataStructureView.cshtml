@@ -11,7 +11,7 @@
     OnFailure = "OnFailure"
 }))
 {
-    <div id="metadataStructureFrom" class="bx-content" style="height:410px; overflow:auto">
+    <div id="metadataStructureFrom" class="bx-content" style="overflow:auto">
         <table>
             <tr>
                 <td>
@@ -37,7 +37,7 @@
                 </td>
                 <td>
                     @Html.DropDownListFor(m => m.EntityClassPath, new SelectList(Model.EnitiesClassPaths, Model.EntityClassPath), "Select")
-                    <label title="Search pattern to be used for this item.">?</label>
+                    <label title="Select an associated entity.">?</label>
                 </td>
             </tr>
             <tr>
@@ -46,7 +46,7 @@
                 </td>
                 <td>
                     @Html.DropDownListFor(m => m.TitleNode, new SelectList(Model.MetadataNodes, "DisplayName", "DisplayName", Model.TitleNode), "Select")
-                    <label title="Search pattern to be used for this item.">?</label>
+                    <label title="Select the node from the metadata structure that describes the title.">?</label>
                 </td>
             </tr>
             <tr>
@@ -55,7 +55,7 @@
                 </td>
                 <td>
                     @Html.DropDownListFor(m => m.DescriptionNode, new SelectList(Model.MetadataNodes, "DisplayName", "DisplayName", Model.DescriptionNode), "Select")
-                    <label title="Search pattern to be used for this item.">?</label>
+                    <label title="Select the node from the metadata structure that describes the description.">?</label>
                 </td>
             </tr>
             <tr>

@@ -48,26 +48,26 @@
 
     function metadataStructureEdit_onClick(name, id) {
 
-        alert(id);
+        //alert(id);
         var windowId = "edit_" + id;
         $.ajax({
             type: 'GET',
             url: '@Url.Action("Edit", "ManageMetadataStructure")',
             data: { id: id },
             dataType: 'html',
-            success: function (htmlData) {
+            success: function(htmlData) {
                 var windowElement = $.telerik.window.create({
                     title: "Edit MetadataStructure: " + name + " (Id: " + id + ")",
-                    html: "<div id='"+windowId+"' class='bx-window'>" + htmlData + "</div>",
+                    html: "<div id='" + windowId + "' class='bx-window'>" + htmlData + "</div>",
                     contentUrl: "",
                     actions: ["Close"],
                     modal: true,
                     width: 500,
-                    height: 500,
+                    height: 300,
                     resizable: false,
                     draggable: true,
                     scrollable: false,
-                    onClose: function () {
+                    onClose: function() {
                         $("#windowEdit").data('tWindow').destroy();
                         $("#metadataStructuresGrid .t-refresh").trigger('click');
                     }
@@ -83,19 +83,21 @@
     }
 
     function metadataStructureDelete_onClick(name, id) {
-        alert(id);
-        $.ajax({
-            type: "POST",
-            url: '@Url.Action("Delete", "ManageMetadataStructure")',
-            data: {id:id},
-            dataType: "json",
-            success: function (response) {
+        //alert(id);
+        if (confirm('Are you sure you want delete the metadata structure?')) {
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("Delete", "ManageMetadataStructure")',
+                data: {id:id},
+                dataType: "json",
+                success: function (response) {
 
-                window.location.href = '/DCM/ManageMetadataStructure';
+                    window.location.href = '/DCM/ManageMetadataStructure';
 
-                alert(response);
-            }
-        });
+                    //alert(response);
+                }
+            });
+        }
     }
 
     function OnSuccess() {

@@ -685,9 +685,13 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             foreach (MetadataStructure metadataStructure in msm.Repo.Get())
             {
-                string title = metadataStructure.Name;
+                if (XmlDatasetHelper.IsActive(metadataStructure.Id) && 
+                    XmlDatasetHelper.HasEntityType(metadataStructure.Id,"bexis.dlm.entities.data.dataset"))
+                {
+                    string title = metadataStructure.Name;
 
-                temp.Add(new ListViewItem(metadataStructure.Id, title, metadataStructure.Description));
+                    temp.Add(new ListViewItem(metadataStructure.Id, title, metadataStructure.Description));
+                }
             }
 
             return temp.OrderBy(p => p.Title).ToList();

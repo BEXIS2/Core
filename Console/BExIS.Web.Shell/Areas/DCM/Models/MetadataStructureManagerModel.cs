@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 using BExIS.Ddm.Model;
@@ -36,10 +38,17 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
      */
     public class MetadataStructureModel
     {
+        
         public long Id { get; set; }
         public string Name { get; set; }
+
+        [Display(Name = "Entity Class Path")]
         public string EntityClassPath { get; set; }
+
+        [Display(Name = "Title Reference")]
         public string TitleNode { get; set; }
+
+        [Display(Name = "Description Reference")]
         public string DescriptionNode { get; set; }
         public bool Active { get; set; }
         public List<SearchMetadataNode> MetadataNodes { get; set; }
