@@ -84,7 +84,6 @@
 
 <div id="@id" class="metadataAttributeContent" onload="metadataAttributeOnLoad(this)">
 
-
     @if (@Model != null && !(hideOptional && Model.IsEmpty && (Model.MinCardinality == 0) && locked))
     {
         <table>
@@ -102,13 +101,24 @@
                 <td class="metadataAttributeInput">
                     @if (Model.SystemType.Equals(TypeCode.String.ToString()))
                     {
-                        if (Model.DataType.ToLower().Equals("text"))
+
+                        if (Model.DataType.ToLower().Equals("text") ||
+                            (Model.DataType.ToLower().Equals("string") &&
+                            Model.Value!= null && Model.Value.ToString().Length>80))
                         {
                             if (!locked)
                             {
                                 if (Model.DomainList.Count == 0)
                                 {
-                                    @Html.TextAreaFor(m => m.Value, new { OnChange = "OnChange(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-textarea " + @errorClass })
+                                    @Html.TextAreaFor(m => m.Value,
+                                        new { OnChange = "OnChange(this)",
+                                            Name = @displayName,
+                                            Id = @idInput,
+                                            PackageId = @Model.Parent.Id,
+                                            Title = @errorMessage,
+                                            @class = "bx-textarea bx-metadataFormTextInput" + @errorClass,
+                                            onkeyup = "OnKeyUpTextArea(this)"
+                                        })
                                 }
                                 else
                                 {
@@ -122,12 +132,15 @@
                             }
                             else
                             {
-                                @Html.TextAreaFor(m => m.Value, new { OnChange = "OnChange(this)", disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-textarea " + @errorClass + " " + lockedClass })
+                                @Model.Value.ToString()@*@Html.TextAreaFor(m => m.Value, new { OnChange = "OnChange(this)", disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-textarea " + @errorClass + " " + lockedClass })*@
+
                             }
 
                         }
 
-                        if (Model.DataType.ToLower().Equals("string"))
+                        if (Model.DataType.ToLower().Equals("string") &&
+                            ((Model.Value != null && Model.Value.ToString().Length < 80) ||
+                            Model.Value==null))
                         {
                             if (!locked)
                             {
@@ -141,11 +154,14 @@
                                     }
 
                                     @*@Html.TextBoxFor(m => m.Value, new { OnChange = "OnChange(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input " + @errorClass })*@
+                                    
                                     @(Html.Telerik().AutoComplete()
                                             .Name(@idInput)
                                             .Encode(false)
                                             .Value(value)
-                                            .ClientEvents(events=>events.OnChange("OnChangeTextInput"))
+                                            .HtmlAttributes(new {@class= "bx-metadataFormTextInput "+@errorClass, title= @errorMessage, onKeyUp= "OnKeyUpTextInput(this)" })
+                                            .ClientEvents(events => events
+                                                .OnChange("OnChangeTextInput"))
                                             .DataBinding(dataBinding => dataBinding
                                                 .Ajax().Select("_AutoCompleteAjaxLoading", "Form")
                                                 .Cache(false))
@@ -171,9 +187,10 @@
                             }
                             else
                             {
-                                @Html.TextBoxFor(m => m.Value, new { OnChange = "OnChange(this)", disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input " + @errorClass + " " + lockedClass })
+                                @Model.Value.ToString()@*@Html.TextBoxFor(m => m.Value, new {OnChange = "OnChange(this)", disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input " + @errorClass + " " + lockedClass});*@
                             }
                         }
+
                     }
 
                     @if (Model.SystemType.Equals(TypeCode.Boolean.ToString()))
@@ -189,15 +206,13 @@
                             value = false;
                         }
 
-
-
                         if (!locked)
                         {
-                            @Html.CheckBox(Model.DisplayName, value, new { OnClick = "OnChangeCheckBox(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage });
+                            @Html.CheckBox(Model.DisplayName, value, new { OnClick = "OnChangeCheckBox(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage })
                         }
                         else
                         {
-                            @Html.CheckBox(Model.DisplayName, value, new { OnClick = "OnChangeCheckBox(this)", disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage });
+                            @Html.CheckBox(Model.DisplayName, value, new { OnClick = "OnChangeCheckBox(this)", disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage })
                         }
 
                     }
@@ -313,12 +328,102 @@
 
 
 
-    <script type="text/javascript">
+<script type="text/javascript">
+
+        $(document).ready(function () {
+            if ($('textarea') != null) {
+                autosize($('textarea'));
+            }
+        });
 
         function metadataAttributeOnLoad(e) {
             if ('@hasErrors') {
                 $('#' + e.id + "_input").AddClass("bx-input-error");
             }
+        }
+
+
+        function OnKeyUpTextInput(e) {
+            console.log("OnKeyDownTextInput");
+            console.log(e.id);
+            console.log(e.value.length);
+            console.log(e.value);
+
+       
+            var length = e.value.length;
+
+            if (length >= 60) {
+                console.log("start replace");
+                var textarea = inputToTextArea(e);
+                console.log(textarea);
+                $("#" + e.id).replaceWith(textarea);
+
+                //set focus
+                var tmp = $("#" + e.id).val();
+                $("#" + e.id).val('');
+                autosize($("#" + e.id));
+                $("#" + e.id).val(tmp);
+                $("#" + e.id).focus();
+
+               
+                console.log("done");
+            }
+        }
+
+        function inputToTextArea(input) {
+            //<input    id="310_161_1_1_1_286_Input" name="310_161_1_1_1_286_Input" onkeyup="OnKeyUpTextInput(this)"                   title="" class="t-widget t-autocomplete t-input bx-metadataFormTextInput"  type="text" value="dassssss" autocomplete="off">
+            //<textarea id="310_161_1_1_1_380_Input" name="Title"                   onchange="OnChange(this)" packageid="161"          title="" class="bx-textarea bx-metadataFormTextInput"                      cols="20" rows="2" style="overflow: hidden; word-wrap: break-word; resize: horizontal; height: 75px;">dassssssggggggggggggggggggggggggggggggggggggggggggggggggggggg</textarea>
+            var textarea = "<textarea " +
+                "id='" + $("#" + input.id).attr("id") + "'" +
+                "name='" + $("#" + input.id).attr("name") + "'" +
+                "onchange=\"OnChange(this)\"" +
+                "onkeyup= \"OnKeyUpTextArea(this)\""+
+                "title='" + $("#" + input.id).attr("title") + "'" +
+                "class=\"bx-textarea bx-metadataFormTextInput\"" +
+                "cols=\"2\" rows=\"2\">" + input.value + "</textarea>";
+
+            return textarea;
+        }
+
+
+        function OnKeyUpTextArea(e) {
+            console.log("OnKeyDownTextArea");
+            console.log(e.id);
+            console.log(e.value.length);
+            console.log(e.value);
+
+
+            var length = e.value.length;
+
+            if (length < 60) {
+                console.log("start replace");
+                var input = textareaToInput(e);
+                console.log(input);
+                $("#" + e.id).replaceWith(input);
+
+                //set focus
+                var tmp = $("#" + e.id).value;
+                $("#" + e.id).value='';
+                $("#" + e.id).value = tmp;
+                $("#" + e.id).focus();
+ 
+                console.log("done");
+            }
+        }
+
+        function textareaToInput(textarea) {
+            //<input    id="310_161_1_1_1_286_Input" name="310_161_1_1_1_286_Input" onkeyup="OnKeyUpTextInput(this)"                   title="" class="t-widget t-autocomplete t-input bx-metadataFormTextInput"  type="text" value="dassssss" autocomplete="off">
+            //<textarea id="310_161_1_1_1_380_Input" name="Title"                   onchange="OnChange(this)" packageid="161"          title="" class="bx-textarea bx-metadataFormTextInput"                      cols="20" rows="2" style="overflow: hidden; word-wrap: break-word; resize: horizontal; height: 75px;">dassssssggggggggggggggggggggggggggggggggggggggggggggggggggggg</textarea>
+            var input = "<input " +
+                "id='" + $("#" + textarea.id).attr("id") + "'" +
+                "name='" + $("#" + textarea.id).attr("name") + "'" +
+                "onkeyup=\"OnKeyUpTextInput(this)\"" +
+                "title='"+$("#" + textarea.id).attr("title")+"'" +
+                "class=\"t-widget t-autocomplete t-input bx-metadataFormTextInput \"" +
+                "value='" + $("#" + textarea.id).val() + "' " +
+                "autocomplete=\"off\"></input>";
+
+            return input;
         }
 
         function OnChangeTextInput(e) {
@@ -346,20 +451,24 @@
                 ParentStepId: ParentStepID
             },
             function (response) {
-                //alert(e.value);
-                //alert(response);
-                //var id = parentid;
-                //alert(e.id);
-                //var index = e.id.lastIndexOf("_");
-                //var newId = e.id.substr(0, index);
-                //alert(newId);
 
-                //$("#" + newId).replaceWith(response);
-                //$("#" + newId).replaceWith(response);
+                var id = e.target.id;
+                console.log("OnChangeTextInput");
+                console.log(id);
+
+                var index = id.lastIndexOf("_");
+                var newId = id.substr(0, index);
+                console.log(newId);
+
+                $("#" + newId).replaceWith(response);
             })
         }
 
-        function OnChange(e) {
+
+
+    function OnChange(e) {
+
+        console.log("OnChange");
             var substr = e.id.split('_');
             var id = substr[0];
             var parentid = substr[1];
@@ -385,7 +494,7 @@
             function(response) {
                 //alert(e.value);
                 //alert(response);
-                //var id = parentid;
+                console.log(parentid);
                 var index = e.id.lastIndexOf("_");
                 var newId = e.id.substr(0, index);
                 //alert(newId);
@@ -589,13 +698,6 @@
         var NumberOfSourceInPackage = substr[4];
         var ParentStepID = substr[5];
 
-        @*alert("AddClick -" +e.id +" - "+NumberOfSourceInPackage+" <= "+'@Model.Source.MaxCardinality');
-        alert("id -"+id);
-        alert("parentid -" + parentid);
-        alert("metadataStructureId -" + metadataStructureId);
-        alert("number -" + number);
-        alert("ParentModelNumber -" + ParentModelNumber);
-        alert("NumberOfSourceInPackage -" + NumberOfSourceInPackage);*@
 
         var maxcardinality = '@Model.Source.MaxCardinality';
 
@@ -614,7 +716,7 @@
                     //alert(id);
                     //alert(response);
                     $("#" + id).replaceWith(response);
-                })
+                });
         } else {
             alert("Maxium cardinality is reached.");
         }
@@ -655,9 +757,8 @@
                         },
                         function(response) {
 
-                            var id = ParentStepID;
-                            $("#" + id).replaceWith(response);
-                        })
+                            $("#" + ParentStepID).replaceWith(response);
+                        });
             } else {
                 alert("You are not able to remove elements.");
             }

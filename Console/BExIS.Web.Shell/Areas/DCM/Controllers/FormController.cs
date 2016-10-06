@@ -2461,7 +2461,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             List<Error> errors = new List<Error>();
             //optional check
-            if (aModel.MinCardinality > 0 && aModel.Value == null)
+            if (aModel.MinCardinality > 0 && (aModel.Value == null || String.IsNullOrEmpty(aModel.Value.ToString())))
                 errors.Add(new Error(ErrorType.MetadataAttribute, "is not optional", new object[] { aModel.DisplayName, aModel.Value, aModel.Number, aModel.ParentModelNumber, aModel.Parent.Label }));
             else
                 if (aModel.MinCardinality > 0 && String.IsNullOrEmpty(aModel.Value.ToString()))
