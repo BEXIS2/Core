@@ -33,7 +33,7 @@ namespace BExIS.Web.Shell.Areas.BAM.Helpers
             if(partyTypesNodeList.Count>0)
             foreach(XmlNode partyTypeNode in partyTypesNodeList[0].ChildNodes)
             {
-                var title = partyTypeNode.Name;
+                var title = partyTypeNode.Attributes["Name"].Value;
                 //If there is not such a party type
                 if (partyTypeManager.Repo.Get(item => item.Title == title).Count == 0)
                 {
@@ -46,7 +46,7 @@ namespace BExIS.Web.Shell.Areas.BAM.Helpers
                             var description = customAttrNode.Attributes["description"] == null ? "" : customAttrNode.Attributes["description"].Value;
                             var validValues = customAttrNode.Attributes["validValues"] == null ? "" : customAttrNode.Attributes["validValues"].Value;
                             var isValueOptional = customAttrNode.Attributes["isValueOptional"] == null ? true : Convert.ToBoolean( customAttrNode.Attributes["isValueOptional"].Value);
-                            partyTypeManager.CreatePartyCustomAttribute(partyType, customAttrType, customAttrNode.Name, description,validValues,isValueOptional);
+                            partyTypeManager.CreatePartyCustomAttribute(partyType, customAttrType, customAttrNode.Attributes["Name"].Value, description,validValues,isValueOptional);
                         }
                 }
                 //edit add other custom attr

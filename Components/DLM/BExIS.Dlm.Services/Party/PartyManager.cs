@@ -183,10 +183,10 @@ namespace BExIS.Dlm.Services.Party
                 var cnt = repoPR.Query(item => (item.PartyRelationshipType != null && item.PartyRelationshipType.Id == partyRelationshipType.Id)
                                         && (item.FirstParty != null && item.FirstParty.Id == firstParty.Id)
                                          && (item.SecondParty != null && item.SecondParty.Id == secondParty.Id)).Count();
-                if (cnt > 0)
-                    BexisException.Throw(entity, "This relationship is already exist in database.", BexisException.ExceptionType.Add);
+                //if ( > 0)
+                //    BexisException.Throw(entity, "This relationship is already exist in database.", BexisException.ExceptionType.Add);
                 //Check maximun cardinality
-                if (partyRelationshipType.MaxCardinality <= partyRelationshipType.PartyRelationships.Count())
+                if (partyRelationshipType.MaxCardinality <= cnt)
                     BexisException.Throw(entity, string.Format("Maximum relations for this type of relation is {0}.", partyRelationshipType.MaxCardinality), BexisException.ExceptionType.Add);
 
                 //Check if there is a relevant party type pair
@@ -211,7 +211,10 @@ namespace BExIS.Dlm.Services.Party
             {
                 IRepository<PartyRelationship> repoPR = uow.GetRepository<PartyRelationship>();
                 partyRelationship = repoPR.Reload(partyRelationship);
-                if (partyRelationship.PartyRelationshipType.MinCardinality > (partyRelationship.PartyRelationshipType.PartyRelationships.Count() - 1))
+                var cnt = repoPR.Query(item => (item.PartyRelationshipType != null && item.PartyRelationshipType.Id == partyRelationship.PartyRelationshipType.Id)
+                                      && (item.FirstParty != null && item.FirstParty.Id == partyRelationship.FirstParty.Id)
+                                       && (item.SecondParty != null && item.SecondParty.Id == partyRelationship.SecondParty.Id)).Count();
+                if (partyRelationship.PartyRelationshipType.MinCardinality >= cnt)
                     BexisException.Throw(partyRelationship, String.Format("Atleast {0} party relation is required.", partyRelationship.PartyRelationshipType.MinCardinality), BexisException.ExceptionType.Delete);
                 var entity = repoPR.Reload(partyRelationship);
                 repoPR.Delete(entity);
