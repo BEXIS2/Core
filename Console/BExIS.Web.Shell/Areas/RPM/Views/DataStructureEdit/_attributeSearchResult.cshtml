@@ -4,6 +4,9 @@
 
 <table class="bx-rpm-attributeheader">
     <tr>
+        <td colspan="2"><h2>Variable Templates</h2></td>
+    </tr>
+    <tr>
         <td class="bx-rpm-sort">
             <span class="bx-rpm-filterCollapse" onclick="javascript:clickFilter()">
                 Filter 
@@ -44,48 +47,62 @@
         }
         @foreach (AttributePreviewStruct aps in Model.AttributePreviews)
         {        
-            cssId = "attribute_" + aps.AttributeId;
-            cssClass = aps.AttributeId + " bx-rpm-attribute";
+            cssId = "attribute_" + aps.Id;
+            cssClass = aps.Id + " bx-rpm-attribute";
 
             <div class="bx-rpm-attribute-item @cssClass" id="@cssId">
                 <table>
                     <tr class="hidden">
-                        <td id="Id">@aps.AttributeId</td>
+                        <td id="Id">@aps.Id</td>
                         <td id="Name">@aps.Name.ToLower()</td>
                         <td id="Unit">@aps.Unit.Name.ToLower()</td>
                         <td id="DataType">@aps.DataType.ToLower()</td>
                     </tr>
                     <tr>
-                        <td class="bx-rpm-label id"><label>Id</label></td>
-                        <td class="bx-rpm-text id" title="@aps.AttributeId">@aps.AttributeId</td>
-                        <td class="bx-rpm-label name"><label>Name</label></td>
-                        <td class="bx-rpm-text name" title="@aps.Name">@aps.Name</td>
-                        <td class="bx-rpm-label unit"><label>Unit</label></td>
-                        <td class="bx-rpm-text unit" title="@aps.Unit.Name">@aps.Unit.Name</td>
-                        <td class="bx-rpm-label datatype"><label>Data Type</label></td>
-                        <td class="bx-rpm-text datatype" title="@aps.DataType">@aps.DataType</td>
+                        <td class="id">
+                            <div class="bx-rpm-label">Id</div>
+                            <div class="bx-rpm-text" title="@aps.Id">@aps.Id</div>
+                        </td>
+                        <td class="name">
+                            <div class="bx-rpm-label">Name</div>
+                            <div class="bx-rpm-text" title="@aps.Name">@aps.Name</div>
+                        </td>
+                        <td class="unit">
+                            <div class="bx-rpm-label">Unit</div>
+                            <div class="bx-rpm-text" title="@aps.Unit.Name">@aps.Unit.Name</div>
+                        </td>
+                        <td class="datatype">
+                            <div class="bx-rpm-label">Data Type</div>
+                            <div class="bx-rpm-text" title="@aps.DataType">@aps.DataType</div>
+                        </td>
                         <td class="bx-rpm-expand"><span id="attributecollapse" class="bx bx-angle-double-down"></span></td>
-                        <td class="bx-rpm-select" value="@aps.AttributeId" name="@aps.Name"><div class="bx bx-next"></div></td>
+                        <td class="bx-rpm-select" value="@aps.Id" name="@aps.Name"><span class="bx bx-next"></span></td>
                     </tr>
                     <tr class="hidden hiddenelements">
-                        <td colspan="10">
-                            <label class="bx-rpm-label description">Description</label>
-                            <div class="bx-rpm-description">
+                        <td colspan="6">
+                            <div class="bx-rpm-label">Description</div>
+                            <div class="bx-rpm-text">
                                 @aps.Description
                             </div>
                         </td>
                     </tr>
+
+                    @if(aps.Constraints.Count > 0)
+                    {
                     <tr class="hidden hiddenelements">
-                        <td colspan="10">
-                            <label class="bx-rpm-label constraints">Constraints</label>
-                            <div class="bx-rpm-constraints">
-                                @foreach (KeyValuePair<long, string> c in aps.Constraints)
-                                {
-                                    <p>@c.Value</p>
-                                }
+                        <td colspan="6">
+                            <div class="bx-rpm-label">Constraints</div>
+                            <div class="bx-rpm-text">
+                                <ul>
+                                    @foreach (KeyValuePair<long, string> c in aps.Constraints)
+                                    {
+                                        <li>@c.Value</li>
+                                    }
+                                </ul>
                             </div>
                         </td>
                     </tr>
+                    }
                 </table>
             </div>
         }
@@ -190,8 +207,7 @@
             if ($('#filterContainer .bx-rpm-filterContainer').length == 0) {
                 loadFilter();
             }
-            $('#filter').slideDown('slow');
-            $('#filterContainer').slideDown('slow');
+            $('#filter').slideDown('slow');          
             $('#filter').removeClass('collapsed');
             $('#filterCollapse').addClass('bx-angle-double-up');
             $('#filterCollapse').removeClass('bx-angle-double-down');
@@ -199,11 +215,11 @@
         }
         else {
             $('#filter').slideUp('slow');
-            $('#filterContainer').slideUp('slow');
             $('#filter').addClass('collapsed');
             $('#filterCollapse').addClass('bx-angle-double-down');
             $('#filterCollapse').removeClass('bx-angle-double-up');
         }
+        $('#filterContainer').slideToggle('slow');
         resizeAttributeContainer(600);
     }
 

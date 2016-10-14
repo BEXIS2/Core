@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.DataStructure;
+using BExIS.Web.Shell.Areas.RPM.Classes;
 
 namespace BExIS.Web.Shell.Areas.RPM.Models
 {
@@ -59,12 +60,12 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
 
                 if (this.AttributeFilterDictionary["Unit"].Values.ContainsKey(key))
                 {
-                    this.AttributeFilterDictionary["Unit"].Values[key].Appearance.Add(aps.AttributeId);
+                    this.AttributeFilterDictionary["Unit"].Values[key].Appearance.Add(aps.Id);
                 }
                 else
                 {
                     value.Name = aps.Unit.Name;
-                    value.Appearance.Add(aps.AttributeId);
+                    value.Appearance.Add(aps.Id);
                     this.AttributeFilterDictionary["Unit"].Values.Add(key, value);
                 }
 
@@ -73,12 +74,12 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
 
                 if (this.AttributeFilterDictionary["Data Type"].Values.ContainsKey(key))
                 {
-                    this.AttributeFilterDictionary["Data Type"].Values[key].Appearance.Add(aps.AttributeId);
+                    this.AttributeFilterDictionary["Data Type"].Values[key].Appearance.Add(aps.Id);
                 }
                 else
                 {
                     value.Name = aps.DataType;
-                    value.Appearance.Add(aps.AttributeId);
+                    value.Appearance.Add(aps.Id);
                     this.AttributeFilterDictionary["Data Type"].Values.Add(key, value);
                 }
             }
@@ -88,27 +89,21 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
 
     public class AttributePreviewStruct
     {
-        public long AttributeId { get; set; }
+        public long Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public UnitStruct Unit;
-        public List<UnitStruct> convertibleUnits;
         public string DataType { get; set; }
-        public bool isVariable { get; set; }
-        public long VariableId { get; set; }
-        public Dictionary<long,string> Constraints { get; set; }
+        public Dictionary<long, string> Constraints { get; set; }
 
 
         public AttributePreviewStruct()
         {
-            this.AttributeId = 0;
+            this.Id = 0;
             this.Name = "";
             this.Description = "";
             this.Unit = new UnitStruct();
-            this.convertibleUnits = new List<UnitStruct>();
             this.DataType = "";
-            this.isVariable = false;
-            this.VariableId = 0;
             this.Constraints = new Dictionary<long, string>();
         }
 
@@ -121,7 +116,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
         {
             DataContainerManager dataAttributeManager = new DataContainerManager();
             DataAttribute DataAttribute = dataAttributeManager.DataAttributeRepo.Get(attributeId);
-            
+
             return this.fill(DataAttribute);
         }
 
@@ -132,15 +127,12 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
 
         public AttributePreviewStruct fill(DataAttribute dataAttribute, bool getConstraints)
         {
-            this.AttributeId = dataAttribute.Id;
+            this.Id = dataAttribute.Id;
             this.Name = dataAttribute.Name;
             this.Description = dataAttribute.Description;
             this.Unit.Id = dataAttribute.Unit.Id;
             this.Unit.Name = dataAttribute.Unit.Name;
-            this.convertibleUnits = getUnitListByDimenstionAndDataType(dataAttribute.Unit.Dimension.Id, dataAttribute.DataType.Id);
             this.DataType = dataAttribute.DataType.Name;
-            this.isVariable = false;
-            this.VariableId = 0;
 
             if (getConstraints)
             {
@@ -153,6 +145,79 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
                     }
                 }
             }
+            return this;
+        }
+    }
+    public class VariablePreviewStruct : AttributePreviewStruct
+    {
+        public bool isOptional { get; set; }
+        public List<UnitStruct> convertibleUnits;
+        public AttributePreviewStruct Attribute;
+
+
+        public VariablePreviewStruct()
+        {
+            this.Id = 0;
+            this.Name = "";
+            this.Description = "";
+            this.isOptional = true;
+            this.Unit = new UnitStruct();
+            this.convertibleUnits = new List<UnitStruct>();
+            this.DataType = "";
+            this.Constraints = new Dictionary<long, string>();
+            this.Attribute = new AttributePreviewStruct();
+        }
+
+        public VariablePreviewStruct fill(long attributeId)
+        {
+            return this.fill(attributeId, true);
+        }
+
+        public VariablePreviewStruct fill(long attributeId, bool getConstraints)
+        {
+            DataContainerManager dataAttributeManager = new DataContainerManager();
+            DataAttribute dataAttribute = dataAttributeManager.DataAttributeRepo.Get(attributeId);
+            Variable variable = new Variable()
+            {
+                Label = dataAttribute.Name,
+                Description = dataAttribute.Description,
+                Unit = dataAttribute.Unit,
+                DataAttribute = dataAttribute
+            };
+
+            return this.fill(variable, getConstraints);
+        }
+
+        public VariablePreviewStruct fill(Variable variable)
+        {
+            return this.fill(variable, true);
+        }
+
+        public VariablePreviewStruct fill(Variable variable, bool getConstraints)
+        {
+            this.Id = variable.Id;
+            this.Name = variable.Label;
+            this.Description = variable.Description;
+            this.isOptional = variable.IsValueOptional;
+            this.Unit.Id = variable.Unit.Id;
+            this.Unit.Name = variable.Unit.Name;
+            this.convertibleUnits = getUnitListByDimenstionAndDataType(variable.Unit.Dimension.Id, variable.DataAttribute.DataType.Id);
+            this.DataType = variable.DataAttribute.DataType.Name;
+
+            if (getConstraints)
+            {
+                if (variable.DataAttribute.Constraints != null)
+                {
+                    foreach (Constraint c in variable.DataAttribute.Constraints)
+                    {
+                        c.Materialize();
+                        this.Constraints.Add(c.Id, c.FormalDescription);
+                    }
+                }
+            }
+
+            this.Attribute = Attribute.fill(variable.DataAttribute, false);
+
             return this;
         }
 
@@ -222,7 +287,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
         public string Name { get; set; }
         public string Description { get; set; }
         public bool inUse { get; set; }
-        public List<AttributePreviewStruct> VariablePreviews { get; set; }
+        public List<VariablePreviewStruct> VariablePreviews { get; set; }
 
         public DataStructurePreviewModel()
         {
@@ -230,7 +295,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
             this.Name = "";
             this.Description = "";
             this.inUse = false;
-            this.VariablePreviews = new List<AttributePreviewStruct>();
+            this.VariablePreviews = new List<VariablePreviewStruct>();
         }
 
         public DataStructurePreviewModel fill()
@@ -246,7 +311,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
                 if (dataStructureManager.StructuredDataStructureRepo.Get(dataStructureId) != null)
                 {
                     StructuredDataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataStructureId);
-                    AttributePreviewStruct variablePreview;
+                    VariablePreviewStruct variablePreview;
 
                     this.Id = dataStructure.Id;
                     this.Name = dataStructure.Name;
@@ -257,22 +322,9 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
                         this.inUse = true;
                     }
 
-                    foreach (Variable v in dataStructure.Variables)
+                    foreach (Variable v in DataStructureIO.getOrderedVariables(dataStructure))
                     {
-                        variablePreview = new AttributePreviewStruct().fill(v.DataAttribute);
-                        variablePreview.Description = v.Description;
-                        variablePreview.Name = v.Label;
-                        variablePreview.isVariable = true;
-                        variablePreview.VariableId = v.Id;
-
-                        if (v.DataAttribute.Constraints != null)
-                        {
-                            foreach (Constraint c in v.DataAttribute.Constraints)
-                            {
-                                c.Materialize();
-                                variablePreview.Constraints.Add(c.Id,c.FormalDescription);
-                            }
-                        }
+                        variablePreview = new VariablePreviewStruct().fill(v);
                         this.VariablePreviews.Add(variablePreview);
                     }
                 }
@@ -296,6 +348,26 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
             {
                 return new DataStructurePreviewModel();
             }
+        }
+    }
+
+    public class storeVariableStruct
+    {
+        public long Id { get; set; }
+        public long AttributeId { get; set; }
+        public string Lable { get; set; }
+        public string Description { get; set; }
+        public long UnitId { get; set; }
+        public bool isOptional { get; set; }
+
+        public storeVariableStruct()
+        {
+            this.Id = 0;
+            this.AttributeId = 0;
+            this.Lable = "";
+            this.Description = "";
+            this.UnitId = 0;
+            this.isOptional = true;
         }
     }
 }

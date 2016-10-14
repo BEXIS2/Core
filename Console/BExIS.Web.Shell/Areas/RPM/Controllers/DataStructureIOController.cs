@@ -10,6 +10,7 @@ using System.Xml;
 using System.Text.RegularExpressions;
 using System.IO;
 using Vaiona.Utils.Cfg;
+using System.Collections.Generic;
 
 namespace BExIS.Web.Shell.Areas.RPM.Controllers
 {
@@ -48,9 +49,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
                 return File(Path.Combine(AppConfiguration.DataPath, path), "application/xlsm", "Template_" + dataStructure.Id + "_" + filename + ".xlsm");
             }
-            DataStructureDesignerModel DSDM = new DataStructureDesignerModel();
-            DSDM.GetDataStructureByID(id);
-            return View("DataStructureDesigner", DSDM);
+            return null;
         }
     }
 }

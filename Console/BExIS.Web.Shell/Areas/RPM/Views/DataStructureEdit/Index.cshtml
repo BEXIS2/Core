@@ -2,6 +2,7 @@
 @using BExIS.Web.Shell.Areas.RPM.Models
 @model long
 
+<link href="@Url.Content("~/Areas/RPM/Stylesheets/DataStructure.css")" rel="stylesheet" type="text/css" />
 <link href="@Url.Content("~/Areas/RPM/Stylesheets/DataStructureEdit.css")" rel="stylesheet" type="text/css" />
 <script src="@Url.Content("~/Areas/RPM/Scripts/isotope.pkgd.min.js")"></script>
 <script src="@Url.Content("~/Areas/RPM/Scripts/packery.pkgd.min.js")"></script>
@@ -29,5 +30,34 @@
             });
         });
     });
+
+    function onCliclCheckbox(e) {
+        if (e.hasAttribute('checked'))
+            e.removeAttribute('checked');
+        else
+            e.setAttribute('checked', 'checked');
+    }
+
+    function createMessageWindow(data, title) {
+        var windowElement = $.telerik.window.create({
+            title: title,
+            html: data,
+            contentUrl: "",
+            actions: ["Close"],
+            modal: true,
+            resizable: false,
+            draggable: true,
+            scrollable: false,
+            onClose: function () {
+                $("#messageWindow").data('tWindow').destroy();
+            }
+        });
+
+        windowElement.attr('id', 'messageWindow');
+        var window = $(windowElement).data('tWindow');
+        window.center().open();
+
+        resetAllTelerikIconTitles();
+    }
 
 </script>

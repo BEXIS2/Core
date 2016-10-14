@@ -22,7 +22,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
 
         public static MessageModel validateDataStructureName(long Id, string Name, string cssId = "")
         {
-            if (Name == "" || string.IsNullOrEmpty(Name))
+            if (Name.Trim() == "" || string.IsNullOrEmpty(Name))
             {
                 return new MessageModel()
                 {
@@ -59,24 +59,105 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
         {
             DataStructureManager dataStructureManager = new DataStructureManager();
             DataStructure dataStructure = dataStructureManager.AllTypesDataStructureRepo.Get(Id);
-            if (dataStructure != null && dataStructure.Id == Id && dataStructure.Datasets.Count == 0)
+            return validateDataStructureDelete(Id, dataStructure);
+        }
+
+        public static MessageModel validateDataStructureDelete(long Id , DataStructure dataStructure)
+        {
+            if (dataStructure != null && dataStructure.Id != 0)
             {
-                return new MessageModel()
+                
+                if (dataStructure.Datasets.Count == 0)
                 {
-                    hasMessage = false,
-                    Message = "Are you sure you want to delete the Datastructure " + dataStructure.Name + " (" + Id + ").",
-                    CssId = Id.ToString()
-                };
+                    return new MessageModel()
+                    {
+                        hasMessage = false,
+                        Message = "Are you sure you want to delete the Datastructure " + dataStructure.Name + " (" + dataStructure.Id + ").",
+                        CssId = dataStructure.Id.ToString()
+                    };
+                }
+                else
+                {
+                    try
+                    {
+                        return new MessageModel()
+                        {
+                            hasMessage = true,
+                            Message = "Can't delete the Datastructure " + dataStructure.Name + " (" + dataStructure.Id + ").",
+                            CssId = dataStructure.Id.ToString()
+                        };
+                    }
+                    catch
+                    {
+                        return new MessageModel()
+                        {
+                            hasMessage = true,
+                            Message = "Something is wrong with Datastructure " + Id,
+                            CssId = "0"
+                        };
+                    }
+                }
             }
             else
             {
-                return new MessageModel()
-                {
-                    hasMessage = true,
-                    Message = "Can't delete the Datastructure " + dataStructure.Name + " (" + Id + ").",
-                    CssId = Id.ToString()
-                };
+                return new MessageModel();
             }
+        }
+
+        public static MessageModel validateDataStructureInUse(long Id)
+        {
+            DataStructureManager dataStructureManager = new DataStructureManager();
+            DataStructure dataStructure = dataStructureManager.AllTypesDataStructureRepo.Get(Id);
+            return validateDataStructureInUse(Id, dataStructure);
+        }
+
+        public static MessageModel validateDataStructureInUse(long Id, DataStructure dataStructure)
+        {
+            if (dataStructure != null && dataStructure.Id != 0)
+            {
+                if (dataStructure.Datasets.Count > 0)
+                {
+                    try
+                    {
+                        return new MessageModel()
+                        {
+                            hasMessage = true,
+                            Message = "Can't save Datastructure " + dataStructure.Name + " (" + Id + "), it's uesed by a Dataset.",
+                            CssId = "inUse"
+                        };
+                    }
+                    catch
+                    {
+                        return new MessageModel()
+                        {
+                            hasMessage = true,
+                            Message = "Something is wrong with Datastructure " + Id,
+                            CssId = "0"
+                        };
+                    }
+                }
+                else
+                {
+                    return new MessageModel();
+                }
+            }
+            else
+            {
+                if (Id == 0)
+                {
+                    return new MessageModel();
+                }
+                else
+                {
+                    return new MessageModel()
+                    {
+                        hasMessage = true,
+                        Message = "Can't store Variable for the Datastructure " + Id + ", it's uesed by a Dataset.",
+                        CssId = "0"
+                    };
+                }
+            }
+            
         }
     }
 }

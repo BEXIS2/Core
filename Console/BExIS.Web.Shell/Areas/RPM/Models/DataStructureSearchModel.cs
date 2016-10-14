@@ -6,10 +6,11 @@ using BExIS.Dlm.Services.DataStructure;
 using System.Xml;
 using BExIS.Xml.Helpers;
 using System.Xml.Linq;
+using BExIS.Web.Shell.Areas.RPM.Classes;
 
 namespace BExIS.Web.Shell.Areas.RPM.Models
 {
-    public class VariablePreviewStruct
+    public class VariablePreview
     {
         public long Id { get; set; }
         public string Label { get; set; }
@@ -19,7 +20,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
         public string DataType { get; set; }
         public string SystemType { get; set; }
 
-        public VariablePreviewStruct()
+        public VariablePreview()
         {
             this.Id = 0;
             this.Label = "";
@@ -33,16 +34,16 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
 
     public class StructuredDataStructurePreviewModel
     {
-        public List<VariablePreviewStruct> VariablePreviews { get; set; }
+        public List<VariablePreview> VariablePreviews { get; set; }
 
         public StructuredDataStructurePreviewModel()
         {
-            this.VariablePreviews = new List<VariablePreviewStruct>();
+            this.VariablePreviews = new List<VariablePreview>();
         }
 
         public StructuredDataStructurePreviewModel(long DataStructureId)
         {
-            this.VariablePreviews = new List<VariablePreviewStruct>();
+            this.VariablePreviews = new List<VariablePreview>();
             this.fill(DataStructureId);
         }
 
@@ -50,57 +51,24 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
         {
             DataStructureManager dataStructureManager = new DataStructureManager();
             StructuredDataStructure datastructure = dataStructureManager.StructuredDataStructureRepo.Get(dataStructureId);
-            VariablePreviewStruct variablePreview = new VariablePreviewStruct();
+            VariablePreview variablePreview = new VariablePreview();
 
             if (datastructure != null)
             {
-                XmlDocument extra = datastructure.Extra as XmlDocument;
-                XmlNode order = null;
+                foreach (Variable v in DataStructureIO.getOrderedVariables(datastructure))
+                {                    
+                    variablePreview = new VariablePreview();
+                    variablePreview.Id = v.Id;
+                    variablePreview.Label = v.Label;
+                    variablePreview.Description = v.Description;
+                    variablePreview.isOptional = v.IsValueOptional;
+                    variablePreview.Unit = v.Unit.Name;
+                    variablePreview.DataType = v.DataAttribute.DataType.Name;
+                    variablePreview.SystemType = v.DataAttribute.DataType.SystemType;
 
-                if (extra != null)
-                    order = extra.GetElementsByTagName("order")[0];
-
-                if (order != null)
-                {
-                    foreach (XmlNode element in order)
-                    {
-                        foreach (Variable v in datastructure.Variables)
-                        {
-                            if (Convert.ToInt64(element.InnerText) == v.Id)
-                            {
-                                variablePreview = new VariablePreviewStruct();
-                                variablePreview.Id = v.Id;
-                                variablePreview.Label = v.Label;
-                                variablePreview.Description = v.Description;
-                                variablePreview.isOptional = v.IsValueOptional;
-                                variablePreview.Unit = v.Unit.Name;
-                                variablePreview.DataType = v.DataAttribute.DataType.Name;
-                                variablePreview.SystemType = v.DataAttribute.DataType.SystemType;
-
-                                this.VariablePreviews.Add(variablePreview);
-                                break;
-                            }
-                        }
-                    }
-                    return this;
+                    this.VariablePreviews.Add(variablePreview);
                 }
-                else
-                {
-                    foreach (Variable v in datastructure.Variables)
-                    {                    
-                        variablePreview = new VariablePreviewStruct();
-                        variablePreview.Id = v.Id;
-                        variablePreview.Label = v.Label;
-                        variablePreview.Description = v.Description;
-                        variablePreview.isOptional = v.IsValueOptional;
-                        variablePreview.Unit = v.Unit.Name;
-                        variablePreview.DataType = v.DataAttribute.DataType.Name;
-                        variablePreview.SystemType = v.DataAttribute.DataType.SystemType;
-
-                        this.VariablePreviews.Add(variablePreview);
-                    }
-                    return this;
-                }
+                return this;
             }
             else
             {
@@ -298,8 +266,8 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
         public string Name { get; set; }
         public string Description { get; set; }
         public bool isSructured { get; set; }
-
-        public MessageModel DataStructureNameValidation { get; set; }
+        public bool inUse { get; set; }
+        public bool copy { get; set; }
 
         public DataStructureCreateModel()
         {
@@ -307,7 +275,8 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
             this.Name = "";
             this.Description = "";
             this.isSructured = true;
-            this.DataStructureNameValidation = new MessageModel();
+            this.inUse = false;
+            this.copy = false;
         }
     }
 }

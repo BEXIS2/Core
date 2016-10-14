@@ -112,26 +112,3 @@
 .bx-rpm-dataStructure-buttons{
     float:left;
 }
-
-.bx-rpm-createDataStructureContainer .bx-rpm-isSructured{
-    text-align: center;
-}
-
-.bx-rpm-createDataStructureContainer .bx-rpm-isSructured div {
-    width: calc(50% - 10px);
-    float: left;
-}
-
-.bx-rpm-createDataStructureContainer #message{
-    color: #f24c24;
-}
-
-.bx-rpm-createDataStructureContainer #buttons{
-    text-align:right;
-}
-
-.bx-rpm-message,
-.bx-rpm-message #buttons{
-    text-align:center;
-    margin: 5px;
-}

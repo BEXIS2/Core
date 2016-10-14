@@ -16,7 +16,7 @@
                     e.OnDataBound("dataStructureResultGrid_onDataBound");
                 })
                 .Filterable()
-                .Sortable()
+                .Sortable(sorting => sorting.OrderBy(sortOrder => sortOrder.Add(c => c.Title)))
                 .Columns(columns =>
                 {
                     columns.Bound(c => c.Id)
@@ -30,17 +30,18 @@
                         .HeaderHtmlAttributes(new { @class = "bx-rpm-gridfunction" });
                 })
                 .ClientRowTemplate(
-                    "<tr class='bx-rpm-datastructure-item' id='<#= Id #>' value='<#= Id #>, \"<#= Title #>\", \"<#= Description #>\", <#= inUse #>' structured='<#= Structured #>' inuse='<#= inUse #>'>" +
+                    "<tr class='bx-rpm-datastructure-item' id='<#= Id #>' value='<#= Id #>, \"<#= Title #>\", \"<#= Description #>\", <#= Structured #>, <#= inUse #>' structured='<#= Structured #>' inuse='<#= inUse #>'>" +
                       "<td class='bx-rpm-result id'><#= Id #></td>" +
                       "<td class='bx-rpm-result'><span class='bx-rpm-title clickable' id='<#= Id #>_title' onclick='javascript:clickDatastructure(<#= Id #>)'><#= Title #><span id='<#= Id #>_collapse' class='bx bx-angle-double-down'></span></span></td>" +
                       "<td class='bx-rpm-result'><#= Description #></td>" +
                       "<td class='bx-rpm-result bx-rpm-gridfunction'>" +
-                          "<a id='<#= Id #>_edit' class='bx bx-grid-function bx-edit' href='/RPM/DataStructureEdit?dataStructureId=<#= Id #>'></a>" +
+                          "<a id='<#= Id #>_edit' class='bx bx-grid-function bx-edit' href='/RPM/DataStructureEdit/?dataStructureId=<#= Id #>'></a>" +
                           "<a id='<#= Id #>_download' class='bx bx-grid-function bx-download' href='/RPM/DataStructureIO/downloadTemplate?id=<#= Id #>'></a>" +
-                          "<a id='<#= Id #>_delete' class='bx bx-grid-function bx-trash' href='javascript:openDelWindow(<#= Id #>, \"<#= Title #>\")'></a>" +
+                          "<a id='<#= Id #>_copy' class='bx bx-grid-function bx-copy' href='javascript:openCreateWindow(<#= Id #>, \"<#= Title #>\", \"<#= Description #>\", <#= Structured #>, <#= inUse #>, true)'></a>" +
+                          //"<a id='<#= Id #>_delete' class='bx bx-grid-function bx-trash' href='javascript:openDelWindow(<#= Id #>, \"<#= Title #>\")'></a>" +
                       "</td>" +
                   "</tr>" +
-                  "<tr class='bx-rpm-preview hidden' id ='<#= Id #>_preview' preview='<#= Preview #>'>" +
+                  "<tr class='bx-rpm-preview bx-rpm-hidden' id ='<#= Id #>_preview' preview='<#= Preview #>'>" +
                       "<td colspan='3' id='<#= Id #>_content'>" +
                         "<h3 class='bx-rpm-loading'><span class='fa fa-spinner fa-pulse'></span> Loading Data Structure</h3>" +
                       "</td>" +
@@ -63,9 +64,6 @@
     function clickDatastructure(id) {
         if ($('#' + id + '_preview').attr('preview') == 'true') {
             $('#' + id + '_preview').attr('preview', 'false');
-            $('#' + id + '_preview').addClass('hidden');
-            $('#' + id + '_collapse').addClass('bx-angle-double-down');
-            $('#' + id + '_collapse').removeClass('bx-angle-double-up');
             previewIds.splice(previewIds.indexOf(id), 1);
         }
         else {
@@ -73,11 +71,12 @@
                 loadPreview(id);
             }
             $('#' + id + '_preview').attr('preview', 'true');
-            $('#' + id + '_preview').removeClass('hidden');
-            $('#' + id + '_collapse').addClass('bx-angle-double-up');
-            $('#' + id + '_collapse').removeClass('bx-angle-double-down');
             previewIds.push(id);
+
         }
+        $('#' + id + '_collapse').toggleClass('bx-angle-double-down');
+        $('#' + id + '_collapse').toggleClass('bx-angle-double-up');
+        $('#' + id + '_preview').fadeToggle('fast');
         previewIds.sort();
     }
 
@@ -89,6 +88,7 @@
 
     function dataStructureResultGrid_onDataBound(e) {
         resetAllTelerikIconTitles();
+        addTooltips();
 
         for (i = 0; i < $('.bx-rpm-datastructure-item').length; i++) {
             var id = $('.bx-rpm-datastructure-item')[i].id;
@@ -96,31 +96,33 @@
             if ($('#' + id).attr('structured') == 'false') {
                 $('#' + id + '_download').addClass('bx-disabled');
                 $('#' + id + '_download').removeAttr('href');
-                $('#' + id + '_edit').attr('href', 'javascript:openCreateWindow(' + $('.bx-rpm-datastructure-item')[i].getAttribute('value') + ')');
+                $('#' + id + '_edit').attr('href', 'javascript:openCreateWindow(' + $('.bx-rpm-datastructure-item')[i].getAttribute('value') + ', false)');
                 $('#' + id + '_title').removeAttr('onclick');
                 $('#' + id + '_title').removeClass('clickable');
                 $('#' + id + '_collapse').remove();
             }
             //prepare UI for locked DataStructure
-            if ($('#' + id).attr('inuse') == 'true') {
-                $('#' + id + '_delete').addClass('bx-disabled');
-                $('#' + id + '_delete').removeAttr('href');
+            if ($('#' + id).attr('inuse') == 'true' && $('#' + id).attr('structured') == 'true') {
+                $('#' + id + '_edit').removeClass('bx-edit');
+                $('#' + id + '_edit').addClass('bx-show');
             }
         }
 
         //prepare UI for DataStructure preview
         for (i = 0; i < previewIds.length; i++) {
+
             if ($('#' + previewIds[i] + '_preview').attr('preview') == 'true') {
                 loadPreview(previewIds[i]);
-                $('#' + previewIds[i] + '_preview').removeClass('hidden');
-                $('#' + previewIds[i] + '_collapse').addClass('bx-angle-double-up');
-                $('#' + previewIds[i] + '_collapse').removeClass('bx-angle-double-down');
+                $('#' + previewIds[i] + '_preview').fadeToggle('fast');
+                $('#' + previewIds[i] + '_collapse').toggleClass('bx-angle-double-down');
+                $('#' + previewIds[i] + '_collapse').toggleClass('bx-angle-double-up');
             }
         }
     }
 
     function dataStructurePreviewGrid_onDataBound(e) {
         resetAllTelerikIconTitles();
+        addTooltips();
     }
 
     function loadPreview(id) {
@@ -130,56 +132,13 @@
         });
     }
 
-    function openDelWindow(id, name) {
-        var title = 'Delete DataStructure ' + name + ' (' + id + ')';
-        var parameters = '/?Id=' + id;
-
-        $.ajax({
-            type: 'GET',
-            url: '@Url.Action("_deleteDataStructureBinding", "DataStructureSearch")' + parameters,
-            dataType: 'html',
-            success: function (data) {
-                var windowElement = $.telerik.window.create({
-                    title: title,
-                    html: data,
-                    contentUrl: "",
-                    actions: ["Close"],
-                    modal: true,
-                    resizable: false,
-                    draggable: true,
-                    scrollable: false,
-                    onClose: function () {
-                        $("#windowDelete").data('tWindow').destroy();
-                        $("#bx-rpm-dataStructureResultGrid .t-refresh").trigger('click');
-                    }
-                });
-
-                windowElement.attr('id', 'windowDelete');
-                var window = $(windowElement).data('tWindow');
-                window.center().open();
-
-                resetAllTelerikIconTitles();
-            }
-        });
-    }
-
-    function deleteMessageCancel() {
-        $("#windowDelete").data('tWindow').destroy();
-        $("#bx-rpm-dataStructureResultGrid .t-refresh").trigger('click');
-    }
-
-    function deleteMessageYes(id) {
-        var parameters = '/?Id=' + id;
-        $.get('@Url.Action("deleteDataStructure", "DataStructureSearch")' + parameters, function (data) {
-            if ($(data).hasClass('bx-rpm-message') && $(data).attr('value').toLowerCase() == 'true') {
-                $(data).replaceWith('.bx-rpm-message #' + id);
-            }
-            else if ($(data).hasClass('bx-rpm-message') && $(data).attr('id') == 'deleted') {
-                $("#windowDelete").data('tWindow').destroy();
+    function copyDatastructure(id, name){
+        var parameters = '/?Id=' + id + '&Name=&isStructured=' + $('#' + id).attr('structured');
+        $.get('@Url.Action("_copyDataStructure", "DataStructureSearch", new { area = "RPM"} )' + parameters, function (data) {
+            console.log(data);
+            if ($(data).hasClass('bx-rpm-message') && $(data).attr('id') == 'redirect' || $(data).hasClass('bx-rpm-message') && $(data).attr('id') == 'refresh') {
                 $("#bx-rpm-dataStructureResultGrid .t-refresh").trigger('click');
             }
         });
-
     }
-
 </script>

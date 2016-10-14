@@ -69,7 +69,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
                 {
                     StructuredDataStructurePreviewModel structuredDataStructurePreviewModel = new StructuredDataStructurePreviewModel(DataStructureId);
                     DataRow dataRow;
-                    foreach (VariablePreviewStruct vs in structuredDataStructurePreviewModel.VariablePreviews)
+                    foreach (VariablePreview vs in structuredDataStructurePreviewModel.VariablePreviews)
                     {
                         dataRow = this.Variables.NewRow();
                         dataRow["Id"] = vs.Id;

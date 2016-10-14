@@ -400,6 +400,7 @@
     <Compile Include="Areas\MSM\Models\TreePartialModel.cs" />
     <Compile Include="Areas\MSM\Models\TestModel.cs" />
     <Compile Include="Areas\MSM\MSMAreaRegistration.cs" />
+    <Compile Include="Areas\RPM\Classes\DataStructureIO.cs" />
     <Compile Include="Areas\RPM\Controllers\DataStructureIOController.cs" />
     <Compile Include="Areas\RPM\Controllers\DataStructureEditController.cs" />
     <Compile Include="Areas\RPM\Controllers\HelpController.cs" />
@@ -557,6 +558,7 @@
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image015.jpg" />
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image016.jpg" />
     <Content Include="Areas\RPM\Scripts\jquery-1.10.1.min.js" />
+    <Content Include="Areas\RPM\Stylesheets\DataStructure.css" />
     <Content Include="Areas\RPM\Stylesheets\DataStructureEdit.css" />
     <Content Include="Areas\RPM\Stylesheets\DataStructureSearch.css" />
     <Content Include="Areas\RPM\Stylesheets\RPM.css" />
@@ -651,9 +653,9 @@
     <Content Include="Areas\RPM\Views\DataStructureEdit\_attributeSearchResult.cshtml" />
     <Content Include="Areas\RPM\Views\DataStructureEdit\_dataStructure.cshtml" />
     <Content Include="Areas\RPM\Views\DataStructureEdit\_variableElement.cshtml" />
-    <Content Include="Areas\RPM\Views\DataStructureSearch\_createDataStructure.cshtml" />
+    <Content Include="Areas\RPM\Views\Shared\_createDataStructure.cshtml" />
     <Content Include="Areas\RPM\Views\Shared\_message.cshtml" />
-    <Content Include="Areas\RPM\Views\Shared\_messageDelete.cshtml" />
+    <Content Include="Areas\RPM\Views\Shared\_messageWindow.cshtml" />
     <None Include="Properties\PublishProfiles\bexisconf.pubxml" />
     <Content Include="Areas\SAM\Views\Tenants\_Create.cshtml" />
     <Content Include="Areas\SAM\Views\Tenants\_Edit.cshtml" />

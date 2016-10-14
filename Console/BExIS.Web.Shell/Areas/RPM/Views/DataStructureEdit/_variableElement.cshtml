@@ -1,52 +1,88 @@
-﻿@model BExIS.Web.Shell.Areas.RPM.Models.AttributePreviewStruct
+﻿@model BExIS.Web.Shell.Areas.RPM.Models.VariablePreviewStruct
 
-@{
-    string Id = "variable_" + Model.Name.Replace("(", "").Replace(")","").Replace(' ', '_') + "_" + Model.AttributeId + "_" + Model.VariableId;
-}
-
-<div class="bx-rpm-variable-item" id="@Id">
+<div class="bx-rpm-variable-item" id="@Model.Id">
     <table>
         <tr>
-            <td class="bx-rpm-label id"><label>Id</label></td>
-            <td class="bx-rpm-text id">
-                <span id="id">@Model.VariableId</span>
-                <span class="hidden"id="attrid">@Model.AttributeId</span>
+            <td class="id">
+                <div class="bx-rpm-label">Id</div>
+                <div class="bx-rpm-text" id="varid">@Model.Id</div>
+                <div class="hidden" id="attrid">@Model.Attribute.Id</div>
             </td>
-            <td class="bx-rpm-label name"><label>Name</label></td>
-            <td class="bx-rpm-text name">
-                @Html.TextBox("Label", Model.Name, new { @id = "label" })
+            <td class="name">
+                <div class="bx-rpm-label">Name</div>
+                <div class="bx-rpm-text">@Html.TextBox("Label", Model.Name, new { @id = "varlabel" })</div>
             </td>
-            <td class="bx-rpm-label unit"><label>Unit</label></td>
-            <td class="bx-rpm-text unit">
-                @if (Model.convertibleUnits.Count > 1)
-                {
-                    @Html.DropDownList("Unit", new SelectList(Model.convertibleUnits, "ID", "Name", Model.Unit.Id), new { @id = "unit" })
-                }
-                else
-                {
-                    @Model.Unit.Name
-                    @Html.TextBox("Unit", Model.Unit.Id, new { @id = "unit", @class = "hidden"})
-                }
+            <td class="unit">
+                <div class="bx-rpm-label">Unit</div>
+                <div class="bx-rpm-text">
+                    @if (Model.convertibleUnits.Count > 1)
+                    {
+                        @Html.DropDownList("Unit", new SelectList(Model.convertibleUnits, "ID", "Name", Model.Unit.Id), new { @id = "varunit" })
+                    }
+                    else
+                    {
+                        @Model.Unit.Name
+                        @Html.TextBox("Unit", Model.Unit.Id, new { @id = "varunit", @class = "hidden" })
+                    }
+                </div>
             </td>
-            <td class="bx-rpm-label datatype"><label>Data Type</label></td>
-            <td class="bx-rpm-text datatype" id="datatype">@Model.DataType</td>
+            <td class="datatype">
+                <div class="bx-rpm-label">Data Type</div>
+                <div class="bx-rpm-text" id="vardatatype">@Model.DataType</div>
+            </td>
+            <td class="isoptional">
+                <div class="bx-rpm-label">Optional</div>
+                <div class="bx-rpm-text">@Html.CheckBox("varisotional", @Model.isOptional)</div>
+            </td>
             <td class="bx-rpm-delete"><span id="deletevariable" class="bx fa-trash-o"></span></td>
             <td class="bx-rpm-expand"><span id="variablecollapse" class="bx bx-angle-double-down"></span></td>
         </tr>
         <tr class="hidden hiddenelements">
-            <td colspan="10">
-                <label class="bx-rpm-label description">Description</label>
-                @Html.TextArea("Description", @Model.Description, new { @class= "bx-rpm-textarea description", @id = "description" })
+            <td colspan="7">
+                <div class="bx-rpm-label">Description</div>
+                <div class="bx-rpm-text">@Html.TextArea("Description", @Model.Description, new { @class = "bx-rpm-textarea description", @id = "vardescription" })</div>
             </td>
         </tr>
+        @if (Model.Constraints.Count > 0)
+        {
+            <tr class="hidden hiddenelements">
+                <td colspan="7">
+                    <div class="bx-rpm-label">Constraints</div>
+                    <div class="bx-rpm-text">
+                        <ul>
+                            @foreach (KeyValuePair<long, string> c in Model.Constraints)
+                            {
+                                <li>@c.Value</li>
+                            }
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+        }
         <tr class="hidden hiddenelements">
-            <td colspan="10">
-                <label class="bx-rpm-label constraints">Constraints</label>
-                <div class= "bx-rpm-constraints">
-                    @foreach (KeyValuePair<long, string> c in Model.Constraints)
-                    {
-                        <p>@c.Value</p>
-                    }
+            <td class="attrribute" colspan="7">
+                <div class="bx-rpm-label">Variable Template</div>
+                <div class="bx-rpm-attribute-item">
+                    <table>
+                        <tr>
+                            <td class="id">
+                                <div class="bx-rpm-label">Id</div>
+                                <div class="bx-rpm-text" title="@Model.Attribute.Id">@Model.Attribute.Id</div>
+                            </td>
+                            <td class="name">
+                                <div class="bx-rpm-label">Name</div>
+                                <div class="bx-rpm-text" title="@Model.Attribute.Name">@Model.Attribute.Name</div>
+                            </td>
+                            <td class="unit">
+                                <div class="bx-rpm-label">Unit</div>
+                                <div class="bx-rpm-text" title="@Model.Attribute.Unit.Name">@Model.Attribute.Unit.Name</div>
+                            </td>
+                            <td class="datatype">
+                                <div class="bx-rpm-label">Data Type</div>
+                                <div class="bx-rpm-text" title="@Model.Attribute.DataType">@Model.Attribute.DataType</div>
+                            </td>
+                        </tr>
+                    </table>
                 </div>
             </td>
         </tr>
