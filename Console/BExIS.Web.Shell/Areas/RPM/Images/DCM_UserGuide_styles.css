@@ -1,0 +1,41 @@
+body{ font-family:'Times New Roman'; font-size:1em; }
+p {padding:0;margin-top:0;margin-right:0;margin-bottom:0;margin-left:0;}
+ul, ol{ margin-top: 0; margin-bottom: 0; }
+.Normal{text-align:left;page-break-inside:auto;page-break-after:auto;page-break-before:auto;line-height:13.8pt;margin-top:0pt;margin-bottom:10pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;font-family:Calibri,'Times New Roman',Arial;font-size:11pt;}
+.Heading-1{text-align:left;page-break-inside:avoid;page-break-after:avoid;page-break-before:auto;line-height:13.8pt;margin-top:24pt;margin-bottom:0pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;color:#365F91;font-family:Cambria,'Times New Roman';font-size:14pt;font-weight:bold;}
+.Heading-2{text-align:left;page-break-inside:avoid;page-break-after:avoid;page-break-before:auto;line-height:13.8pt;margin-top:10pt;margin-bottom:0pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;color:#4F81BD;font-family:Cambria,'Times New Roman';font-size:13pt;font-weight:bold;}
+.Heading-3{text-align:left;page-break-inside:avoid;page-break-after:avoid;page-break-before:auto;line-height:13.8pt;margin-top:10pt;margin-bottom:0pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;color:#4F81BD;font-family:Cambria,'Times New Roman';font-size:10pt;font-weight:bold;}
+.Heading-4{text-align:left;page-break-inside:avoid;page-break-after:avoid;page-break-before:auto;line-height:13.8pt;margin-top:10pt;margin-bottom:0pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;color:#4F81BD;font-family:Cambria,'Times New Roman';font-size:10pt;font-weight:bold;font-style:italic;}
+.Heading-5{text-align:left;page-break-inside:avoid;page-break-after:avoid;page-break-before:auto;line-height:13.8pt;margin-top:10pt;margin-bottom:0pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;color:#243F60;font-family:Cambria,'Times New Roman';font-size:10pt;}
+.Default-Paragraph-Font{font-family:Calibri,'Times New Roman',Arial;}
+.Normal-Table{}
+.Überschrift-1-Zchn{color:#365F91;font-family:Cambria,'Times New Roman';font-size:14pt;font-weight:bold;}
+.Überschrift-2-Zchn{color:#4F81BD;font-family:Cambria,'Times New Roman';font-size:13pt;font-weight:bold;}
+.Überschrift-3-Zchn{color:#4F81BD;font-family:Cambria,'Times New Roman';font-weight:bold;}
+.Überschrift-4-Zchn{color:#4F81BD;font-family:Cambria,'Times New Roman';font-weight:bold;font-style:italic;}
+.Überschrift-5-Zchn{color:#243F60;font-family:Cambria,'Times New Roman';}
+.Balloon-Text{text-align:left;page-break-inside:auto;page-break-after:auto;page-break-before:auto;line-height:12pt;margin-top:0pt;margin-bottom:0pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;font-family:Tahoma,'Times New Roman';font-size:8pt;}
+.Sprechblasentext-Zchn{font-family:Tahoma;font-size:8pt;}
+.TOC-Heading{text-align:left;page-break-inside:avoid;page-break-after:avoid;page-break-before:auto;line-height:13.8pt;margin-top:24pt;margin-bottom:0pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;font-family:Calibri,'Times New Roman',Arial;font-size:14pt;font-weight:bold;}
+.TOC-1{text-align:left;page-break-inside:auto;page-break-after:auto;page-break-before:auto;line-height:13.8pt;margin-top:0pt;margin-bottom:5pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;font-family:Calibri,'Times New Roman',Arial;font-size:11pt;}
+.Hyperlink{color:#0000FF;font-family:'Times New Roman';text-decoration: underline;}
+.List-Paragraph{text-align:left;page-break-inside:auto;page-break-after:auto;page-break-before:auto;line-height:13.8pt;margin-top:0pt;margin-bottom:10pt;margin-left:36pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;font-family:Calibri,'Times New Roman',Arial;font-size:11pt;}
+.TOC-2{text-align:left;page-break-inside:auto;page-break-after:auto;page-break-before:auto;line-height:13.8pt;margin-top:0pt;margin-bottom:5pt;margin-left:11pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;font-family:Calibri,'Times New Roman',Arial;font-size:11pt;}
+.Title{text-align:left;page-break-inside:auto;page-break-after:auto;page-break-before:auto;line-height:12pt;margin-top:0pt;margin-bottom:15pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-color:#4F81BD;border-bottom-style:solid;border-bottom-width:1pt;padding-bottom:4pt;letter-spacing:0.25pt;color:#17365D;font-family:Cambria,'Times New Roman';font-size:26pt;}
+.Titel-Zchn{letter-spacing:0.25pt;color:#17365D;font-family:Cambria,'Times New Roman';font-size:26pt;}
+.No-Spacing{text-align:left;page-break-inside:auto;page-break-after:auto;page-break-before:auto;line-height:12pt;margin-top:0pt;margin-bottom:0pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;font-family:Calibri,'Times New Roman',Arial;font-size:11pt;}
+.Intense-Emphasis{color:#4F81BD;font-family:'Times New Roman';font-weight:bold;font-style:italic;}
+.Subtitle{text-align:left;page-break-inside:auto;page-break-after:auto;page-break-before:auto;line-height:13.8pt;margin-top:0pt;margin-bottom:10pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;letter-spacing:0.75pt;color:#4F81BD;font-family:Cambria,'Times New Roman';font-size:12pt;font-style:italic;}
+.Untertitel-Zchn{letter-spacing:0.75pt;color:#4F81BD;font-family:Cambria,'Times New Roman';font-size:12pt;font-style:italic;}
+.Header{text-align:left;page-break-inside:auto;page-break-after:auto;page-break-before:auto;line-height:12pt;margin-top:0pt;margin-bottom:0pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;font-family:'Times New Roman';font-size:10pt;}
+.Kopfzeile-Zchn{font-family:'Times New Roman';}
+.Footer{text-align:left;page-break-inside:auto;page-break-after:auto;page-break-before:auto;line-height:12pt;margin-top:0pt;margin-bottom:0pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;font-family:'Times New Roman';font-size:10pt;}
+.Fußzeile-Zchn{font-family:'Times New Roman';}
+.FollowedHyperlink{color:#800080;font-family:'Times New Roman';text-decoration: underline;}
+.Placeholder-Text{color:#808080;font-family:'Times New Roman';}
+.Table-Grid{}
+.Requirement-Level-1{text-align:left;page-break-inside:auto;page-break-after:auto;page-break-before:auto;line-height:12pt;margin-top:0pt;margin-bottom:0pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;color:#948A54;font-family:'Segoe UI','Times New Roman';font-size:10pt;font-weight:bold;}
+.Requirement-Level-1-Char{color:#948A54;font-family:'Segoe UI','Times New Roman';font-size:10pt;font-weight:bold;}
+.Requirement-Level-2{text-align:left;page-break-inside:auto;page-break-after:auto;page-break-before:auto;line-height:12pt;margin-top:0pt;margin-bottom:0pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;color:#365F91;font-family:'Segoe UI','Times New Roman';font-size:10pt;font-weight:bold;}
+.Requirement-Level-2-Char{color:#365F91;font-family:'Segoe UI','Times New Roman';font-size:10pt;font-weight:bold;}
+.Subtle-Emphasis{color:#808080;font-family:'Times New Roman';font-style:italic;}

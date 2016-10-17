@@ -12,6 +12,8 @@ using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Xml.Models.Mapping;
+using BExIS.Xml.Services;
+using NHibernate.Criterion;
 using Vaiona.Utils.Cfg;
 
 namespace BExIS.Xml.Helpers.Mapping
@@ -500,27 +502,6 @@ namespace BExIS.Xml.Helpers.Mapping
 
             newXsdFilePath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "Metadata", schemaName, FileName);
 
-            if (!File.Exists(newXsdFilePath))
-            {
-                checkDirectory(newXsdFilePath);
-                MoveFile(xsdFilePath, newXsdFilePath);
-            }
-
-            #region store additionaly xsds 
-
-            string tmpDestinationPath = Path.GetDirectoryName(newXsdFilePath);
-            string tmpSourcePath = Path.GetDirectoryName(xsdFilePath);
-
-            if (additionalFiles != null)
-            {
-                foreach (var filename in additionalFiles.Distinct())
-                {
-                    MoveFile(Path.Combine(tmpSourcePath, filename), Path.Combine(tmpDestinationPath, filename));
-                }
-            }
-
-            #endregion
-
             #region prepare mappingFiles
 
             #region intern to extern
@@ -805,7 +786,21 @@ namespace BExIS.Xml.Helpers.Mapping
                                 else
                                     max = int.MaxValue;
 
-                                mdsManager.AddMetadataPackageUsage(test, package, element.Name, GetDescription(element.Annotation), min, max);
+                                //check if element is a choice
+                                if (!XmlSchemaUtility.IsChoiceType(element))
+                                {
+                                    
+                                    MetadataPackageUsage mpu = mdsManager.AddMetadataPackageUsage(test, package,
+                                        element.Name, GetDescription(element.Annotation), min, max);
+                                }
+                                else
+                                {
+                                    // if mpu is a choice, add a info to extra
+                                    MetadataPackageUsage mpu = mdsManager.AddMetadataPackageUsage(test, package,
+                                           element.Name, GetDescription(element.Annotation), min, max,
+                                           XmlDatasetHelper.AddReferenceToXml(new XmlDocument(), "choice", "true", "elementType", @"extra/type"));
+                                }
+
                             }
                             #endregion
                         }
@@ -817,10 +812,30 @@ namespace BExIS.Xml.Helpers.Mapping
 
                 }
 
+                if (!File.Exists(newXsdFilePath))
+                {
+                    checkDirectory(newXsdFilePath);
+                    MoveFile(xsdFilePath, newXsdFilePath);
+                }
 
-                #region Generate Mapping File
-     
-                string internalMetadataStructrueName = schemaName;
+                #region store additionaly xsds 
+
+                string tmpDestinationPath = Path.GetDirectoryName(newXsdFilePath);
+                string tmpSourcePath = Path.GetDirectoryName(xsdFilePath);
+
+                if (additionalFiles != null)
+                {
+                    foreach (var filename in additionalFiles.Distinct())
+                    {
+                        MoveFile(Path.Combine(tmpSourcePath, filename), Path.Combine(tmpDestinationPath, filename));
+                    }
+                }
+
+                #endregion
+
+            #region Generate Mapping File
+
+            string internalMetadataStructrueName = schemaName;
                 mappingFileExternalToInternal.Id = test.Id;
 
                 //generate mapping file Xml Document
@@ -968,12 +983,6 @@ namespace BExIS.Xml.Helpers.Mapping
                 
             }
 
-
-            //if(parents.Contains(element.Name))
-            //{
-            //    parents.Remove(element.Name);
-            //}
-
             return metadataCompountAttr;
         }
 
@@ -1059,9 +1068,23 @@ namespace BExIS.Xml.Helpers.Mapping
                     MaxCardinality = max,
                     Master = parent,
                     Member = compoundAttribute,
+
                 };
 
+                #region choice
+                //if element is a choise
+                XmlDocument extra = new XmlDocument();
+                    //check if element is a choice
+                    if (XmlSchemaUtility.IsChoiceType(element))
+                    {
+                        extra = XmlDatasetHelper.AddReferenceToXml(new XmlDocument(), "choice", "true", "elementType",@"extra/type");
+                    }
+
+                    if (extra.DocumentElement != null) usage.Extra = extra;
+                #endregion
+
                 parent.MetadataNestedAttributeUsages.Add(usage);
+
             }
 
             return parent;
@@ -1104,16 +1127,28 @@ namespace BExIS.Xml.Helpers.Mapping
                     else
                         max = int.MaxValue;
 
-                    MetadataNestedAttributeUsage u1 = new MetadataNestedAttributeUsage()
+                    #region choice
+                    //if element is a choise
+                    XmlDocument extra = new XmlDocument();
+                    //check if element is a choice
+                    if (XmlSchemaUtility.IsChoiceType(element))
                     {
-                        Label = element.Name,
-                        Description = attribute.Description,
-                        MinCardinality = min,
-                        MaxCardinality = max,
-                        Master = compoundAttribute,
-                        Member = attribute,
-                    };
+                        extra = XmlDatasetHelper.AddReferenceToXml(new XmlDocument(), "choice", "true", "elementType", @"extra/type");
+                    }
+                #endregion
 
+                MetadataNestedAttributeUsage u1 = new MetadataNestedAttributeUsage()
+                {
+                    Label = element.Name,
+                    Description = attribute.Description,
+                    MinCardinality = min,
+                    MaxCardinality = max,
+                    Master = compoundAttribute,
+                    Member = attribute
+                };
+
+                if (extra.DocumentElement != null) u1.Extra = extra;
+                    
                 #region generate  MappingRoute
 
                 addToExportMappingFile(mappingFileInternalToExternal, internalXPath, externalXPath, element.MaxOccurs, element.Name, attribute.Name);
@@ -1153,9 +1188,9 @@ namespace BExIS.Xml.Helpers.Mapping
                 DataType dataType = GetDataType(datatype);
 
                 //unit
-                Unit noneunit = unitManager.Repo.Get().Where(u => u.Name.Equals("None")).First();
+                Unit noneunit = unitManager.Repo.Get().Where(u => u.Name.ToLower().Equals("none")).First();
                 if (noneunit == null)
-                    unitManager.Create("None", "None", "If no unit is used.", null, MeasurementSystem.Unknown); // the null dimension should be replaced bz a proper valid one. Javad 11.06
+                    unitManager.Create("none", "none", "If no unit is used.", null, MeasurementSystem.Unknown); // the null dimension should be replaced bz a proper valid one. Javad 11.06
 
                 temp = getExistingMetadataAttribute(name);// = metadataAttributeManager.MetadataAttributeRepo.Get().Where(m => m.Name.Equals(name)).FirstOrDefault();
 
@@ -1195,13 +1230,13 @@ namespace BExIS.Xml.Helpers.Mapping
                     }
                     //datatype
                     string datatype = type.Datatype.ValueType.Name;
-                    DataType dataType = GetDataType(datatype);
+                    DataType dataType = GetDataType(datatype.ToLower());
 
                     //unit
                     // it is the second time I am seeing this cose segment, would be good to factor it out to a function
-                    Unit noneunit = unitManager.Repo.Get().Where(u => u.Name.Equals("None")).First();
+                    Unit noneunit = unitManager.Repo.Get().Where(u => u.Name.ToLower().Equals("none")).FirstOrDefault();
                     if (noneunit == null)
-                        unitManager.Create("None", "None", "If no unit is used.", null, MeasurementSystem.Unknown); // null diemsion to be replaced
+                        unitManager.Create("none", "none", "If no unit is used.", null, MeasurementSystem.Unknown); // null diemsion to be replaced
 
                     temp = getExistingMetadataAttribute(name);// = metadataAttributeManager.MetadataAttributeRepo.Get().Where(m => m.Name.Equals(name)).FirstOrDefault();
 
@@ -1267,10 +1302,10 @@ namespace BExIS.Xml.Helpers.Mapping
             int i = 0;
             MetadataCompoundAttribute mca = getExistingMetadataCompoundAttribute(element.Name + "Type"); ;// = metadataAttributeManager.MetadataCompoundAttributeRepo.Get(p => p.Name == element.Name+"Type").FirstOrDefault();
             //Debug.WriteLine("createMetadataCompoundAttribute" + i++);
-            DataType dt1 = dataTypeManager.Repo.Get(p => p.Name.Equals("String")).FirstOrDefault();
+            DataType dt1 = dataTypeManager.Repo.Get(p => p.Name.ToLower().Equals("string")).FirstOrDefault();
             if (dt1 == null)
             {
-                dt1 = dataTypeManager.Create("String", "A test String", System.TypeCode.String);
+                dt1 = dataTypeManager.Create("string", "A test String", System.TypeCode.String);
             }
 
             if (mca == null)
@@ -1526,22 +1561,22 @@ namespace BExIS.Xml.Helpers.Mapping
         // vielleicht besser mit festen datatypes im system
         private DataType GetDataType(string dataTypeAsString)
         {
-            if (!dataTypeAsString.Equals("Object"))
+            if (!dataTypeAsString.ToLower().Equals("Object"))
             {
                 TypeCode typeCode = ConvertStringToSystemType(dataTypeAsString);
 
-                DataType dataType = dataTypeManager.Repo.Query().Where(d => d.SystemType.Equals(typeCode.ToString()) && d.Name.Equals(typeCode.ToString())).FirstOrDefault();
+                DataType dataType = dataTypeManager.Repo.Query().Where(d => d.SystemType.Equals(typeCode.ToString()) && d.Name.ToLower().Equals(typeCode.ToString().ToLower())).FirstOrDefault();
 
                 if (dataType == null)
                 {
-                    dataType = dataTypeManager.Create(typeCode.ToString(), typeCode.ToString(), typeCode);
+                    dataType = dataTypeManager.Create(typeCode.ToString().ToLower(), typeCode.ToString().ToLower(), typeCode);
                 }
 
                 return dataType;
             }
             else
             {
-                return GetDataType("String");
+                return GetDataType("string");
             }
         }
 

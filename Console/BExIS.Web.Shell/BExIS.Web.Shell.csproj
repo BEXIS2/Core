@@ -80,6 +80,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Iesi.Collections.4.0.1.4000\lib\net40\Iesi.Collections.dll</HintPath>
     </Reference>
+    <Reference Include="IKVM.OpenJDK.Util, Version=7.2.4630.5, Culture=neutral, PublicKeyToken=13235d27fcbfff58, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Saxon-HE.9.6.0.8\lib\net40\IKVM.OpenJDK.Util.dll</HintPath>
+    </Reference>
     <Reference Include="Ionic.Zip">
       <HintPath>..\..\Libraries\Ionic.Zip.dll</HintPath>
     </Reference>
@@ -249,6 +253,9 @@
       <HintPath>..\..\packages\Microsoft.AspNet.WebPages.WebData.3.2.3\lib\net45\WebMatrix.WebData.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="XmlSampleGenerator">
+      <HintPath>..\..\..\..\..\RDB\GIT\packages\Microsoft.Xml.XMLGen.1.0.0\lib\XmlSampleGenerator.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_GlobalResources\EditorLocalization.de-DE.designer.cs">
@@ -321,15 +328,17 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>UploadLocalization.zh-CN.resx</DependentUpon>
     </Compile>
+    <Compile Include="App_Start\RegisterClientValidationExtensions.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Areas\DCM\Controllers\CreateDatasetController.cs" />
-    <Compile Include="Areas\DCM\Controllers\DcmAdminController.cs" />
+    <Compile Include="Areas\DCM\Controllers\FormController.cs" />
     <Compile Include="Areas\DCM\Controllers\HelpController.cs" />
     <Compile Include="Areas\DCM\Controllers\ImportMetadataStructureController.cs" />
     <Compile Include="Areas\DCM\Controllers\ImportMetadataStructureReadSourceController.cs" />
     <Compile Include="Areas\DCM\Controllers\ImportMetadataStructureSelectAFileController.cs" />
     <Compile Include="Areas\DCM\Controllers\ImportMetadataStructureSetParametersController.cs" />
     <Compile Include="Areas\DCM\Controllers\ImportMetadataStructureSummaryController.cs" />
+    <Compile Include="Areas\DCM\Controllers\ManageMetadataStructureController.cs" />
     <Compile Include="Areas\DCM\Controllers\PushController.cs" />
     <Compile Include="Areas\DCM\Controllers\SubmitDefinePrimaryKeyController.cs" />
     <Compile Include="Areas\DCM\Controllers\SubmitGetFileInformationController.cs" />
@@ -347,9 +356,6 @@
     <Compile Include="Areas\DCM\Models\CreateDataset\MetadataEditorModel.cs" />
     <Compile Include="Areas\DCM\Models\CreateDataset\SetupModel.cs" />
     <Compile Include="Areas\DCM\Models\CreateDataset\StepModelHelper.cs" />
-    <Compile Include="Areas\DCM\Models\Create\SelectDatasetSetupModel.cs" />
-    <Compile Include="Areas\DCM\Models\Create\CreateSummaryModel.cs" />
-    <Compile Include="Areas\DCM\Models\Create\StepModelHelper.cs" />
     <Compile Include="Areas\DCM\Models\FileInfoModel.cs" />
     <Compile Include="Areas\DCM\Models\FinishUploadModel.cs" />
     <Compile Include="Areas\DCM\Models\GetFileInformationModel.cs" />
@@ -362,6 +368,7 @@
     <Compile Include="Areas\DCM\Models\Metadata\MetadataCompoundAttributeModel.cs" />
     <Compile Include="Areas\DCM\Models\Metadata\MetadataInstanceModel.cs" />
     <Compile Include="Areas\DCM\Models\Metadata\MetadataPackageModel.cs" />
+    <Compile Include="Areas\DCM\Models\MetadataStructureManagerModel.cs" />
     <Compile Include="Areas\DCM\Models\PrimaryKeyViewModel.cs" />
     <Compile Include="Areas\DCM\Models\Push\SendBigFilesToServerModel.cs" />
     <Compile Include="Areas\DCM\Models\SelectFileViewModel.cs" />
@@ -382,6 +389,7 @@
     <Compile Include="Areas\DDM\Models\ShowHelpModel.cs" />
     <Compile Include="Areas\DDM\Models\ShowMetadataModel.cs" />
     <Compile Include="Areas\DDM\Models\ShowPrimaryDataModel.cs" />
+    <Compile Include="Areas\DDM\Models\ShowPublishDataModel.cs" />
     <Compile Include="Areas\DIM\Controllers\AdminController.cs" />
     <Compile Include="Areas\DIM\Controllers\DataController.cs" />
     <Compile Include="Areas\DIM\Controllers\ExportGFBIOController.cs" />
@@ -400,8 +408,6 @@
     <Compile Include="Areas\MSM\Models\TreePartialModel.cs" />
     <Compile Include="Areas\MSM\Models\TestModel.cs" />
     <Compile Include="Areas\MSM\MSMAreaRegistration.cs" />
-    <Compile Include="Areas\RPM\Classes\DataStructureIO.cs" />
-    <Compile Include="Areas\RPM\Controllers\DataStructureIOController.cs" />
     <Compile Include="Areas\RPM\Controllers\DataStructureEditController.cs" />
     <Compile Include="Areas\RPM\Controllers\HelpController.cs" />
     <Compile Include="Areas\RPM\Controllers\DataAttributeController.cs" />
@@ -409,9 +415,8 @@
     <Compile Include="Areas\RPM\Controllers\DataStructureSearchController.cs" />
     <Compile Include="Areas\RPM\Controllers\StructuresController.cs" />
     <Compile Include="Areas\RPM\Controllers\UnitController.cs" />
-    <Compile Include="Areas\RPM\Controllers\Helpers\HtmlPrefixScopeExtentions.cs" />
-    <Compile Include="Areas\RPM\Controllers\Helpers\RPMSeedDataGenerator.cs" />
-    <Compile Include="Areas\RPM\Models\MessageModel.cs" />
+    <Compile Include="Areas\RPM\Helpers\HtmlPrefixScopeExtentions.cs" />
+    <Compile Include="Areas\RPM\Helpers\RPMSeedDataGenerator.cs" />
     <Compile Include="Areas\RPM\Models\StructureModel.cs" />
     <Compile Include="Areas\RPM\Models\DataStructureEditModel.cs" />
     <Compile Include="Areas\RPM\Models\DataStructureSearchModel.cs" />
@@ -481,54 +486,48 @@
     <DesignData Include="Db\Settings\PostgreSQL82Dialect.hibernate.cfg.xml">
       <SubType>Designer</SubType>
     </DesignData>
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image001.png" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image002.png" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image003.png" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image004.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image005.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image006.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image007.png" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image008.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image009.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image010.png" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image011.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image012.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image013.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image014.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image015.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image016.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image017.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image018.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image019.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image020.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image021.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image022.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image023.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image024.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image025.png" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image026.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image027.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image028.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image029.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image030.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image031.jpg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files\image032.jpg" />
+    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img1.png" />
+    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img10.png" />
+    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img11.png" />
+    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img12.png" />
+    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img13.jpeg" />
+    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img14.jpeg" />
+    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img15.jpeg" />
+    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img16.jpeg" />
+    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img17.png" />
+    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img18.png" />
+    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img19.png" />
+    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img2.jpeg" />
+    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img20.png" />
+    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img21.png" />
+    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img22.png" />
+    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img23.png" />
+    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img24.png" />
+    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img25.png" />
+    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img26.png" />
+    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img27.png" />
+    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img28.png" />
+    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img29.png" />
+    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img3.png" />
+    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img4.png" />
+    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img5.png" />
+    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img6.png" />
+    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img7.png" />
+    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img8.png" />
+    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img9.png" />
     <Content Include="Areas\DCM\Images\emptyPng.png" />
-    <Content Include="Areas\DCM\Views\Help\UserGuides\DCM_UserGuide.htm" />
-    <Content Include="Areas\DDM\Images\DDM_UserGuide_files\image001.gif" />
-    <Content Include="Areas\DDM\Images\DDM_UserGuide_files\image002.jpg" />
-    <Content Include="Areas\DDM\Images\DDM_UserGuide_files\image003.jpg" />
-    <Content Include="Areas\DDM\Images\DDM_UserGuide_files\image004.gif" />
-    <Content Include="Areas\DDM\Images\DDM_UserGuide_files\image005.jpg" />
-    <Content Include="Areas\DDM\Images\DDM_UserGuide_files\image006.jpg" />
-    <Content Include="Areas\DDM\Images\DDM_UserGuide_files\image007.jpg" />
-    <Content Include="Areas\DDM\Images\DDM_UserGuide_files\image008.jpg" />
-    <Content Include="Areas\DDM\Images\DDM_UserGuide_files\image009.jpg" />
-    <Content Include="Areas\DDM\Images\DDM_UserGuide_files\image010.jpg" />
-    <Content Include="Areas\DDM\Views\Help\UserGuides\DDM_UserGuide.htm" />
+    <Content Include="Areas\DDM\Images\DDM_UserGuide_files_images\DDM_UserGuide_files_img1.png" />
+    <Content Include="Areas\DDM\Images\DDM_UserGuide_files_images\DDM_UserGuide_files_img10.png" />
+    <Content Include="Areas\DDM\Images\DDM_UserGuide_files_images\DDM_UserGuide_files_img2.png" />
+    <Content Include="Areas\DDM\Images\DDM_UserGuide_files_images\DDM_UserGuide_files_img3.png" />
+    <Content Include="Areas\DDM\Images\DDM_UserGuide_files_images\DDM_UserGuide_files_img4.png" />
+    <Content Include="Areas\DDM\Images\DDM_UserGuide_files_images\DDM_UserGuide_files_img5.png" />
+    <Content Include="Areas\DDM\Images\DDM_UserGuide_files_images\DDM_UserGuide_files_img6.png" />
+    <Content Include="Areas\DDM\Images\DDM_UserGuide_files_images\DDM_UserGuide_files_img7.png" />
+    <Content Include="Areas\DDM\Images\DDM_UserGuide_files_images\DDM_UserGuide_files_img8.png" />
+    <Content Include="Areas\DDM\Images\DDM_UserGuide_files_images\DDM_UserGuide_files_img9.png" />
     <Content Include="Areas\DDM\Scripts\ddm.js" />
-    <Content Include="Areas\DIM\Images\DIM_UserGuide_files\image001.jpg" />
-    <Content Include="Areas\DIM\Views\Help\UserGuides\DIM_UserGuide.htm" />
+    <Content Include="Areas\DIM\Images\DIM_UserGuide_files_images\DIM_UserGuide_files_img1.png" />
     <Content Include="Areas\MSM\Resources\Scripts\angular-dragdrop.min.js" />
     <Content Include="Areas\MSM\Resources\Scripts\angular-route.min.js" />
     <Content Include="Areas\MSM\Resources\Scripts\angular.js" />
@@ -541,40 +540,40 @@
     <Content Include="Areas\MSM\Resources\Stylesheets\jquery-linedtextarea.css" />
     <Content Include="Areas\MSM\Resources\Stylesheets\xsd2htmlTree.xslt" />
     <Content Include="Areas\MSM\Resources\Stylesheets\xsd2jsonTree.xslt" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image001.gif" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image002.jpg" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image003.jpg" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image004.jpg" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image005.jpg" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image006.jpg" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image007.jpg" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image008.jpg" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image009.jpg" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image010.jpg" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image011.jpg" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image012.jpg" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image013.jpg" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image014.jpg" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image015.jpg" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files\image016.jpg" />
+    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img1.png" />
+    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img10.png" />
+    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img11.png" />
+    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img12.png" />
+    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img13.png" />
+    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img14.png" />
+    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img15.png" />
+    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img16.png" />
+    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img17.png" />
+    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img18.png" />
+    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img19.png" />
+    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img2.png" />
+    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img20.png" />
+    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img3.png" />
+    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img4.png" />
+    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img5.png" />
+    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img6.png" />
+    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img7.png" />
+    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img8.png" />
+    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img9.png" />
     <Content Include="Areas\RPM\Scripts\jquery-1.10.1.min.js" />
-    <Content Include="Areas\RPM\Stylesheets\DataStructure.css" />
-    <Content Include="Areas\RPM\Stylesheets\DataStructureEdit.css" />
     <Content Include="Areas\RPM\Stylesheets\DataStructureSearch.css" />
     <Content Include="Areas\RPM\Stylesheets\RPM.css" />
-    <Content Include="Areas\RPM\Views\Help\UserGuides\RPM_UserGuide.htm" />
-    <Content Include="Areas\SAM\Images\SAM_UserGuide_files\image001.jpg" />
-    <Content Include="Areas\SAM\Images\SAM_UserGuide_files\image002.jpg" />
-    <Content Include="Areas\SAM\Images\SAM_UserGuide_files\image003.jpg" />
-    <Content Include="Areas\SAM\Images\SAM_UserGuide_files\image004.jpg" />
-    <Content Include="Areas\SAM\Images\SAM_UserGuide_files\image005.jpg" />
-    <Content Include="Areas\SAM\Images\SAM_UserGuide_files\image006.jpg" />
-    <Content Include="Areas\SAM\Images\SAM_UserGuide_files\image007.jpg" />
-    <Content Include="Areas\SAM\Images\SAM_UserGuide_files\image008.jpg" />
-    <Content Include="Areas\SAM\Images\SAM_UserGuide_files\image009.jpg" />
-    <Content Include="Areas\SAM\Images\SAM_UserGuide_files\image010.jpg" />
-    <Content Include="Areas\SAM\Images\SAM_UserGuide_files\image011.jpg" />
-    <Content Include="Areas\SAM\Views\Help\UserGuides\SAM_UserGuide.htm" />
+    <Content Include="Areas\SAM\Images\SAM_UserGuide_files_images\SAM_UserGuide_files_img1.png" />
+    <Content Include="Areas\SAM\Images\SAM_UserGuide_files_images\SAM_UserGuide_files_img10.png" />
+    <Content Include="Areas\SAM\Images\SAM_UserGuide_files_images\SAM_UserGuide_files_img11.png" />
+    <Content Include="Areas\SAM\Images\SAM_UserGuide_files_images\SAM_UserGuide_files_img2.png" />
+    <Content Include="Areas\SAM\Images\SAM_UserGuide_files_images\SAM_UserGuide_files_img3.png" />
+    <Content Include="Areas\SAM\Images\SAM_UserGuide_files_images\SAM_UserGuide_files_img4.png" />
+    <Content Include="Areas\SAM\Images\SAM_UserGuide_files_images\SAM_UserGuide_files_img5.png" />
+    <Content Include="Areas\SAM\Images\SAM_UserGuide_files_images\SAM_UserGuide_files_img6.png" />
+    <Content Include="Areas\SAM\Images\SAM_UserGuide_files_images\SAM_UserGuide_files_img7.png" />
+    <Content Include="Areas\SAM\Images\SAM_UserGuide_files_images\SAM_UserGuide_files_img8.png" />
+    <Content Include="Areas\SAM\Images\SAM_UserGuide_files_images\SAM_UserGuide_files_img9.png" />
     <Content Include="Content\Images\dfg_logo.gif" />
     <Content Include="Content\bootstrap-combobox.css" />
     <Content Include="Content\bootstrap-theme.css" />
@@ -614,12 +613,12 @@
     <Content Include="Content\Images\Bildmarke_BEXIS_cmyk.ai" />
     <Content Include="Content\Images\Logo_BEXIS_cmyk.ai" />
     <Content Include="Areas\DCM\Views\CreateDataset\Index.cshtml" />
-    <Content Include="Areas\DCM\Views\CreateDataset\MetadataEditor.cshtml" />
-    <Content Include="Areas\DCM\Views\CreateDataset\_metadataAttributeView.cshtml" />
-    <Content Include="Areas\DCM\Views\CreateDataset\_metadataCompoundAttributeView.cshtml" />
-    <Content Include="Areas\DCM\Views\CreateDataset\_metadataPackageUsageView.cshtml" />
-    <Content Include="Areas\DCM\Views\CreateDataset\_metadataPackageView.cshtml" />
-    <Content Include="Areas\DCM\Views\CreateDataset\_metadataCompoundAttributeUsageView.cshtml" />
+    <Content Include="Areas\DCM\Views\Form\MetadataEditor.cshtml" />
+    <Content Include="Areas\DCM\Views\Form\_metadataAttributeView.cshtml" />
+    <Content Include="Areas\DCM\Views\Form\_metadataCompoundAttributeView.cshtml" />
+    <Content Include="Areas\DCM\Views\Form\_metadataPackageUsageView.cshtml" />
+    <Content Include="Areas\DCM\Views\Form\_metadataPackageView.cshtml" />
+    <Content Include="Areas\DCM\Views\Form\_metadataCompoundAttributeUsageView.cshtml" />
     <Content Include="Areas\SAM\Views\Users\_Membership.cshtml" />
     <Content Include="Areas\SAM\Views\Groups\_Membership.cshtml" />
     <Content Include="Areas\SAM\Views\Account\MyAccount.cshtml" />
@@ -649,13 +648,9 @@
     <Content Include="fonts\fontawesome-webfont.woff" />
     <Content Include="fonts\fontawesome-webfont.ttf" />
     <Content Include="fonts\fontawesome-webfont.eot" />
-    <Content Include="Areas\RPM\Views\DataStructureEdit\_attributeFilter.cshtml" />
-    <Content Include="Areas\RPM\Views\DataStructureEdit\_attributeSearchResult.cshtml" />
-    <Content Include="Areas\RPM\Views\DataStructureEdit\_dataStructure.cshtml" />
-    <Content Include="Areas\RPM\Views\DataStructureEdit\_variableElement.cshtml" />
-    <Content Include="Areas\RPM\Views\Shared\_createDataStructure.cshtml" />
-    <Content Include="Areas\RPM\Views\Shared\_message.cshtml" />
-    <Content Include="Areas\RPM\Views\Shared\_messageWindow.cshtml" />
+    <Content Include="Areas\DCM\Views\ManageMetadataStructure\Index.cshtml" />
+    <Content Include="Areas\DDM\Views\Data\_showPublishDataView.cshtml" />
+    <Content Include="Areas\DDM\Views\Data\_dataRepositoryRequirementsView.cshtml" />
     <None Include="Properties\PublishProfiles\bexisconf.pubxml" />
     <Content Include="Areas\SAM\Views\Tenants\_Create.cshtml" />
     <Content Include="Areas\SAM\Views\Tenants\_Edit.cshtml" />
@@ -673,6 +668,9 @@
     <Content Include="Scripts\jquery-2.1.4.min.js" />
     <Content Include="Scripts\jquery-migrate-1.2.1.js" />
     <Content Include="Scripts\jquery-migrate-1.2.1.min.js" />
+    <Content Include="Scripts\minimap\minimap.js" />
+    <Content Include="Scripts\minimap\minimap.min.css" />
+    <Content Include="Scripts\minimap\minimap.min.js" />
     <Content Include="Themes\Black\Styles\awesome\css\font-awesome.css" />
     <Content Include="Themes\Black\Styles\awesome\css\font-awesome.min.css" />
     <Content Include="Themes\Black\Styles\awesome\fonts\fontawesome-webfont.svg" />
@@ -1000,12 +998,13 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Areas\DCM\Models\Scripts\" />
+    <Folder Include="Areas\DCM\Views\DcmAdmin\" />
     <Folder Include="Areas\DCM\Views\Home\" />
     <Folder Include="Areas\DDM\Views\Shared\" />
     <Folder Include="Areas\DIM\Views\Api\" />
     <Folder Include="Areas\DIM\Views\Shared\" />
     <Folder Include="Areas\MSM\Views\Shared\" />
+    <Folder Include="Areas\RPM\Views\Shared\" />
     <Folder Include="Areas\SAM\Views\Shared\" />
     <Folder Include="Areas\Site\Models\" />
   </ItemGroup>
@@ -1217,6 +1216,10 @@
       <Project>{c0c9f0f2-9e65-448d-8000-d311db326460}</Project>
       <Name>BExIS.Xml.Models</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Modules\BMM\BExISMigration\BExISMigration.csproj">
+      <Project>{3a573810-b9f9-4bde-8504-01ef49de0c20}</Project>
+      <Name>BExISMigration</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Modules\DCM\BExIS.Dcm.CreateDatasetWizard\BExIS.Dcm.CreateDatasetWizard.csproj">
       <Project>{93eeeda5-6d79-41a1-947b-0a3fc9e46abc}</Project>
       <Name>BExIS.Dcm.CreateDatasetWizard</Name>
@@ -1248,6 +1251,14 @@
     <ProjectReference Include="..\..\Modules\DDM\BExIS.Ddm.Providers.LuceneProvider\BExIS.Ddm.Providers.LuceneProvider.csproj">
       <Project>{fbe3101a-791a-4eab-9b8f-f6e071f8dbdc}</Project>
       <Name>BExIS.Ddm.Providers.LuceneProvider</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Modules\DIM\BExIS.Dim.Entities\BExIS.Dim.Entities.csproj">
+      <Project>{34cad2a2-6928-458b-b8dc-af71d55f20cc}</Project>
+      <Name>BExIS.Dim.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Modules\DIM\BExIS.Dim.Helper\BExIS.Dim.Helpers.csproj">
+      <Project>{81ef18e8-dced-4980-96f9-e99124075b82}</Project>
+      <Name>BExIS.Dim.Helpers</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Modules\RPM\BExIS.RPM.Model\BExIS.RPM.Model.csproj">
       <Project>{063b9e3f-e0dd-43fe-9910-5b1544b8b861}</Project>
@@ -1290,8 +1301,6 @@
     <Content Include="Areas\DDM\Views\Admin\ReIndexSearch.cshtml" />
     <Content Include="Areas\DCM\Views\Submit\FinishUpload.cshtml" />
     <Content Include="Areas\DCM\Views\Submit\Test.cshtml" />
-    <Content Include="Areas\DCM\Views\DcmAdmin\CreateMetadataStructure.cshtml" />
-    <Content Include="Areas\DCM\Views\DcmAdmin\Index.cshtml" />
     <Content Include="Areas\DCM\Views\Shared\_errorMessages.cshtml" />
     <Content Include="Areas\DCM\Views\Submit\_selectDataStructureId.cshtml" />
     <Content Include="Areas\DCM\Views\SubmitSpecifyDataset\_selectADatasetId.cshtml" />
