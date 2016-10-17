@@ -328,7 +328,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>UploadLocalization.zh-CN.resx</DependentUpon>
     </Compile>
-    <Compile Include="App_Start\RegisterClientValidationExtensions.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Areas\DCM\Controllers\CreateDatasetController.cs" />
     <Compile Include="Areas\DCM\Controllers\FormController.cs" />
@@ -408,6 +407,7 @@
     <Compile Include="Areas\MSM\Models\TreePartialModel.cs" />
     <Compile Include="Areas\MSM\Models\TestModel.cs" />
     <Compile Include="Areas\MSM\MSMAreaRegistration.cs" />
+    <Compile Include="Areas\RPM\Classes\DataStructureIO.cs" />
     <Compile Include="Areas\RPM\Controllers\DataStructureEditController.cs" />
     <Compile Include="Areas\RPM\Controllers\HelpController.cs" />
     <Compile Include="Areas\RPM\Controllers\DataAttributeController.cs" />
@@ -417,6 +417,7 @@
     <Compile Include="Areas\RPM\Controllers\UnitController.cs" />
     <Compile Include="Areas\RPM\Helpers\HtmlPrefixScopeExtentions.cs" />
     <Compile Include="Areas\RPM\Helpers\RPMSeedDataGenerator.cs" />
+    <Compile Include="Areas\RPM\Models\MessageModel.cs" />
     <Compile Include="Areas\RPM\Models\StructureModel.cs" />
     <Compile Include="Areas\RPM\Models\DataStructureEditModel.cs" />
     <Compile Include="Areas\RPM\Models\DataStructureSearchModel.cs" />

@@ -288,11 +288,11 @@
             var edit = '<a area="RPM" class="bx bx-grid-function bx-edit" title = "Edit Variable &quot;' + $(".name #varName")[i].value + '&quot;" href="/RPM/Home/openVariableWindow/' + $(".bx-rpm-function .data")[i].innerHTML + '"></a>';
             var del = '<a area="RPM" class="bx bx-grid-function bx-trash" title = "Delete Variable &quot;' + $(".name #varName")[i].value + '&quot;" href="/RPM/Home/deleteVariable/' + $(".bx-rpm-function .data")[i].innerHTML + '" onclick = "return confirm(\'Are you sure you want to delete the Variable ' + $(".name #varName")[i].value + '?\')"></a>'
             var temp = $(".bx-rpm-function .data")[i].innerHTML.split('?');
-            var left = '<a area="RPM" class="bx bx-grid-function bx-previous" title = "Move Variabel &quot;' + $(".name #varName")[i].value + '&quot; to the left" href="#" onclick="shiftVariable(' + temp[0] + ', -1)"></a>';
-            var right = '<a area="RPM" class="bx bx-grid-function bx-next" title = "Move Variabel &quot;' + $(".name #varName")[i].value + '&quot; to the right" href="#" onclick="shiftVariable(' + temp[0] + ', 1)"></a>';
+            var left = '<a area="RPM" class="bx bx-grid-function bx-previous" title = "Move Variable &quot;' + $(".name #varName")[i].value + '&quot; to the left" href="#" onclick="shiftVariable(' + temp[0] + ', -1)"></a>';
+            var right = '<a area="RPM" class="bx bx-grid-function bx-next" title = "Move Variable &quot;' + $(".name #varName")[i].value + '&quot; to the right" href="#" onclick="shiftVariable(' + temp[0] + ', 1)"></a>';
 
-            var leftDisabled = '<div area="RPM" class="bx bx-grid-function bx-previous bx-disabled" title = "Move Variabel  &quot;' + $(".name #varName")[i].value + '&quot; to the left"></div>';
-            var rightDisabled = '<div area="RPM" class="bx bx-grid-function bx-next bx-disabled" title = "Move Variabel  &quot;' + $(".name #varName")[i].value + '&quot; to the right"></div>';
+            var leftDisabled = '<div area="RPM" class="bx bx-grid-function bx-previous bx-disabled" title = "Move Variable  &quot;' + $(".name #varName")[i].value + '&quot; to the left"></div>';
+            var rightDisabled = '<div area="RPM" class="bx bx-grid-function bx-next bx-disabled" title = "Move Variable  &quot;' + $(".name #varName")[i].value + '&quot; to the right"></div>';
 
             $(".bx-rpm-function .data")[i].innerHTML = del;
 
@@ -314,8 +314,8 @@
         for (var i = 0; i < $(".bx-rpm-locked .data").length; i++) {
             var editDisabled = '<div area="RPM" class="bx bx-grid-function bx-edit bx-disabled" title = "Edit Variable &quot;' + $(".name #varName")[i].value + '&quot;"></div>';
             var delDisabled = '<div area="RPM" class="bx bx-grid-function bx-trash bx-disabled" title = "Delete Variable &quot;' + $(".name #varName")[i].value + '&quot;"></div>';
-            var leftDisabled = '<div area="RPM" class="bx bx-grid-function bx-previous bx-disabled" title = "Move Variabel  &quot;' + $(".name #varName")[i].value + '&quot; to the left"></div>';
-            var rightDisabled = '<div area="RPM" class="bx bx-grid-function bx-next bx-disabled" title = "Move Variabel  &quot;' + $(".name #varName")[i].value + '&quot; to the right"></div>';
+            var leftDisabled = '<div area="RPM" class="bx bx-grid-function bx-previous bx-disabled" title = "Move Variable  &quot;' + $(".name #varName")[i].value + '&quot; to the left"></div>';
+            var rightDisabled = '<div area="RPM" class="bx bx-grid-function bx-next bx-disabled" title = "Move Variable  &quot;' + $(".name #varName")[i].value + '&quot; to the right"></div>';
 
             $(".bx-rpm-locked .data")[i].innerHTML = leftDisabled + editDisabled + delDisabled + rightDisabled;
         }

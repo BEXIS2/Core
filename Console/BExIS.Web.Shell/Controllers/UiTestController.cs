@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using BExIS.Web.Shell.Models;
 using System.Data;
-using System.ComponentModel;
-using System.Configuration;
 using System.Diagnostics;
 using System.Xml;
 using BExIS.Dim.Entities;
@@ -16,13 +13,8 @@ using BExIS.Dlm.Entities.Data;
 using BExIS.Web.Shell.Helpers;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Entities.MetadataStructure;
-using BExIS.Dlm.Services.MetadataStructure;
-using BExIS.Web.Shell.Areas.DIM.Controllers;
 using BExIS.Xml.Services;
-using Vaiona.Logging.Aspects;
 using BExIS.IO.Transform.Output;
-using NHibernate.Criterion;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -32,8 +24,6 @@ using System.Xml.Schema;
 using BExIS.IO;
 using Vaiona.Utils.Cfg;
 using Ionic.Zip;
-using Microsoft.Xml.XMLGen;
-using Newtonsoft.Json.Linq;
 
 namespace BExIS.Web.Shell.Controllers
 {
