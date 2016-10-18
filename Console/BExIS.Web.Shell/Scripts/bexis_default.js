@@ -34,7 +34,6 @@ function truncateTitle()
 	{
 
 		//$(this).trunk8();
-
 		//if (!$(this).attr("title") == true) { 
 		var n = $(".bx-trunc-parent").width()-90;
 		var text = $(this).text();
