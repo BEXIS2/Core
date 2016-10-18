@@ -33,10 +33,10 @@
             </tr>
             <tr>
                 <td>
-                    @(Html.LabelFor(m => m.EntityClassPath))<span class="bx bx-required" title="Required" />
+                    @(Html.LabelFor(m => m.Entity.ClassPath))<span class="bx bx-required" title="Required" />
                 </td>
                 <td>
-                    @Html.DropDownListFor(m => m.EntityClassPath, new SelectList(Model.EnitiesClassPaths, Model.EntityClassPath), "Select")
+                    @Html.DropDownListFor(m => m.Entity.ClassPath, new SelectList(Model.EntityClasses.Select(e=>e.ClassPath), Model.Entity.ClassPath), "Select")
                     <label title="Select an associated entity.">?</label>
                 </td>
             </tr>

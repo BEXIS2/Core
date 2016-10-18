@@ -9,11 +9,14 @@ using BExIS.Ddm.Model;
 using BExIS.Ddm.Providers.LuceneProvider;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
+using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Objects;
 using BExIS.Web.Shell.Areas.DCM.Models;
+using BExIS.Web.Shell.Models;
 using BExIS.Xml.Helpers;
 using BExIS.Xml.Helpers.Mapping;
 using BExIS.Xml.Services;
+using NHibernate.Util;
 using Telerik.Web.Mvc;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
@@ -30,7 +33,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         {
             MetadataStructureManagerModel tmp = new MetadataStructureManagerModel();
 
-           //load all metadatastructure
+            //load all metadatastructure
             MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
             IEnumerable<MetadataStructure> metadataStructures = metadataStructureManager.Repo.Get();
 
@@ -39,9 +42,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 tmp.MetadataStructureModels.Add(convertToMetadataStructureModel(metadataStructure));
             }
 
-            if(tmp.MetadataStructureModels.Any())
+            if (tmp.MetadataStructureModels.Any())
             {
-                tmp.MetadataStructureModels = tmp.MetadataStructureModels.OrderBy(m=>m.Id).ToList();
+                tmp.MetadataStructureModels = tmp.MetadataStructureModels.OrderBy(m => m.Id).ToList();
             }
 
             return tmp;
@@ -55,12 +58,17 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             metadataStructureModel.Id = metadataStructure.Id;
             metadataStructureModel.Name = metadataStructure.Name;
             metadataStructureModel.MetadataNodes = GetAllXPath(metadataStructure.Id);
+
             //get all informaions from xml
-            metadataStructureModel.EntityClassPath = XmlDatasetHelper.GetEntityTypeFromMetadatStructure(metadataStructure.Id);
+            metadataStructureModel.EntityClasses = GetEntityModelList();
+            string EntityClassPath = XmlDatasetHelper.GetEntityTypeFromMetadatStructure(metadataStructure.Id);
+            var entityModel = metadataStructureModel.EntityClasses.Where(e => e.ClassPath.Equals(EntityClassPath)).FirstOrDefault();
+            if (entityModel != null) metadataStructureModel.Entity = entityModel;
 
-            string xpath = XmlDatasetHelper.GetInformationPath(metadataStructure,NameAttributeValues.title);
+            string xpath = XmlDatasetHelper.GetInformationPath(metadataStructure, NameAttributeValues.title);
 
-            var searchMetadataNode = metadataStructureModel.MetadataNodes.Where(e => e.XPath.Equals(xpath)).FirstOrDefault();
+            var searchMetadataNode =
+                metadataStructureModel.MetadataNodes.Where(e => e.XPath.Equals(xpath)).FirstOrDefault();
             if (searchMetadataNode != null)
                 metadataStructureModel.TitleNode =
                     searchMetadataNode.DisplayName;
@@ -74,13 +82,14 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     firstOrDefault.DisplayName;
 
             metadataStructureModel.MetadataNodes = GetAllXPath(metadataStructureModel.Id);
-            metadataStructureModel.EnitiesClassPaths = GetEntityClassPathList();
+
             metadataStructureModel.Active = XmlDatasetHelper.IsActive(metadataStructure.Id);
 
             return metadataStructureModel;
         }
 
-        private MetadataStructure updateMetadataStructure(MetadataStructure metadataStructure, MetadataStructureModel metadataStructureModel)
+        private MetadataStructure updateMetadataStructure(MetadataStructure metadataStructure,
+            MetadataStructureModel metadataStructureModel)
         {
 
             if (metadataStructure.Id.Equals(metadataStructureModel.Id))
@@ -90,7 +99,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 if (metadataStructure.Extra != null)
                 {
                     XmlDocument xmlDocument = new XmlDocument();
-                    if (metadataStructure.Extra as XmlDocument!=null)
+                    if (metadataStructure.Extra as XmlDocument != null)
                         xmlDocument = metadataStructure.Extra as XmlDocument;
                     else
                     {
@@ -106,7 +115,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                             .FirstOrDefault()
                             .XPath;
 
-                    XmlNode tmp =  XmlUtility.GetXmlNodeByAttribute(xmlDocument.DocumentElement, nodeNames.nodeRef.ToString(), AttributeNames.name.ToString(), NameAttributeValues.title.ToString());
+                    XmlNode tmp = XmlUtility.GetXmlNodeByAttribute(xmlDocument.DocumentElement,
+                        nodeNames.nodeRef.ToString(), AttributeNames.name.ToString(),
+                        NameAttributeValues.title.ToString());
 
                     tmp.Attributes[AttributeNames.value.ToString()].Value = titleXPath;
 
@@ -116,34 +127,38 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                             .FirstOrDefault()
                             .XPath;
 
-                    tmp = XmlUtility.GetXmlNodeByAttribute(xmlDocument.DocumentElement, nodeNames.nodeRef.ToString(), AttributeNames.name.ToString(), NameAttributeValues.description.ToString());
+                    tmp = XmlUtility.GetXmlNodeByAttribute(xmlDocument.DocumentElement, nodeNames.nodeRef.ToString(),
+                        AttributeNames.name.ToString(), NameAttributeValues.description.ToString());
                     tmp.Attributes[AttributeNames.value.ToString()].Value = descriptionXPath;
 
                     //set entity
                     tmp = XmlUtility.GetXmlNodeByName(xmlDocument.DocumentElement, nodeNames.entity.ToString());
                     if (tmp != null)
-                        tmp.Attributes[AttributeNames.value.ToString()].Value = metadataStructureModel.EntityClassPath;
+                        tmp.Attributes[AttributeNames.value.ToString()].Value = metadataStructureModel.Entity.ClassPath;
                     else
                     {
                         xmlDocument = XmlDatasetHelper.AddReferenceToXml(xmlDocument, nodeNames.entity.ToString(),
-                            metadataStructureModel.EntityClassPath, AttributeType.entity.ToString(), "extra/entity");
+                            metadataStructureModel.Entity.ClassPath, AttributeType.entity.ToString(), "extra/entity");
                     }
 
                     //set active
-                    tmp = XmlUtility.GetXmlNodeByAttribute(xmlDocument.DocumentElement, nodeNames.parameter.ToString(), AttributeNames.name.ToString(), NameAttributeValues.active.ToString());
+                    tmp = XmlUtility.GetXmlNodeByAttribute(xmlDocument.DocumentElement, nodeNames.parameter.ToString(),
+                        AttributeNames.name.ToString(), NameAttributeValues.active.ToString());
                     if (tmp != null)
                         tmp.Attributes[AttributeNames.value.ToString()].Value = metadataStructureModel.Active.ToString();
                     else
                     {
-                        xmlDocument = XmlDatasetHelper.AddReferenceToXml(xmlDocument, NameAttributeValues.active.ToString(),
-                            metadataStructureModel.Active.ToString(), AttributeType.parameter.ToString(), "extra/parameters/parameter");
+                        xmlDocument = XmlDatasetHelper.AddReferenceToXml(xmlDocument,
+                            NameAttributeValues.active.ToString(),
+                            metadataStructureModel.Active.ToString(), AttributeType.parameter.ToString(),
+                            "extra/parameters/parameter");
 
                     }
 
                     metadataStructure.Extra = xmlDocument;
                 }
 
-                
+
             }
             return metadataStructure;
         }
@@ -159,11 +174,19 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             return searchDesigner.GetAllXPathsOfSimpleAttributes(metadatastructureId);
         }
 
-        private List<string> GetEntityClassPathList()
+        private List<EntityModel> GetEntityModelList()
         {
             EntityManager entityManager = new EntityManager();
 
-            IEnumerable<string> tmp = entityManager.GetAllEntities().Select(e => e.ClassPath);
+            List<EntityModel> tmp = new List<EntityModel>();
+            entityManager.GetAllEntities().ForEach(e=> tmp.Add(
+                    new EntityModel()
+                    {
+                        Name = e.Name,
+                        ClassPath = e.ClassPath
+                    }
+                )
+            );
 
             return tmp.ToList();
         }
@@ -187,7 +210,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                     return Json(ex.Message);
                 }
-              
+
                 return Json(true);
             }
 
@@ -222,11 +245,11 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 return Json(ex.Message);
             }
 
-            
+
 
             // delete links from search index
 
-            
+
 
             if (metadataStructureManager.Repo.Get(id) == null) return Json(true);
 

@@ -132,9 +132,14 @@
                             }
                             else
                             {
-                                @Model.Value.ToString()@*@Html.TextAreaFor(m => m.Value, new { OnChange = "OnChange(this)", disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-textarea " + @errorClass + " " + lockedClass })*@
-
+                                if (Model.Value != null)
+                                {
+                                    <span>@Model.Value.ToString()</span>
+                                } 
+                                @*@Html.TextAreaFor(m => m.Value, new { OnChange = "OnChange(this)", disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-textarea " + @errorClass + " " + lockedClass })*@
                             }
+
+                        
 
                         }
 
@@ -187,7 +192,11 @@
                             }
                             else
                             {
-                                @Model.Value.ToString()@*@Html.TextBoxFor(m => m.Value, new {OnChange = "OnChange(this)", disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input " + @errorClass + " " + lockedClass});*@
+                                if (Model.Value != null)
+                                {
+                                    <span>@Model.Value.ToString()</span>
+                                } 
+                                @*@Html.TextBoxFor(m => m.Value, new {OnChange = "OnChange(this)", disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input " + @errorClass + " " + lockedClass});*@
                             }
                         }
 
@@ -327,7 +336,6 @@
     }
 
 
-
 <script type="text/javascript">
 
         $(document).ready(function () {
@@ -341,8 +349,8 @@
                 $('#' + e.id + "_input").AddClass("bx-input-error");
             }
         }
-
-
+        
+        
         function OnKeyUpTextInput(e) {
             console.log("OnKeyDownTextInput");
             console.log(e.id);

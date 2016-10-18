@@ -374,6 +374,26 @@ namespace BExIS.Xml.Services
         }
 
         //todo entity extention
+        public static string GetEntityNameFromMetadatStructure(long metadataStuctrueId)
+        {
+
+            MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
+            MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(metadataStuctrueId);
+
+            // get MetadataStructure 
+            if (metadataStructure != null)
+            {
+                XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)metadataStructure.Extra);
+                IEnumerable<XElement> tmp = XmlUtility.GetXElementByNodeName(nodeNames.entity.ToString(), xDoc);
+                if (tmp.Any())
+                    return tmp.First().Attribute("name").Value;
+            }
+
+
+            return string.Empty;
+        }
+
+        //todo entity extention
         public static bool HasEntityType(long metadataStuctrueId, string entityClassPath)
         {
             MetadataStructureManager metadataStructureManager = new MetadataStructureManager();

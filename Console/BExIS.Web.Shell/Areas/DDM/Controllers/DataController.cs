@@ -41,7 +41,10 @@ using Newtonsoft.Json;
 using Vaiona.Web.Extensions;
 using System.Net;
 using System.Net;
+using System.Web.Script.Serialization;
 using System.Xml;
+using BExIS.Web.Shell.Areas.RPM.Controllers;
+using BExIS.Web.Shell.Areas.RPM.Models;
 
 
 namespace BExIS.Web.Shell.Areas.DDM.Controllers
@@ -1011,6 +1014,29 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             return (isMetadataConvertable && isDataConvertable)?Json(true):Json(false);
         }
 
+        public ActionResult DownloadZip(string datarepo ,long datasetid, long datasetversionid)
+        {
+            string path = "";
+
+            SubmissionManager publishingManager = new SubmissionManager();
+            publishingManager.Load();
+
+            DataRepository dataRepo =
+                publishingManager.DataRepositories.Where(repository => repository.Name.Equals(datarepo))
+                    .FirstOrDefault();
+
+            if (dataRepo != null)
+            {
+                string zipName = publishingManager.GetZipFileName(datasetid, datasetversionid);
+                string zipPath = publishingManager.GetDirectoryPath(datasetid, dataRepo);
+                string zipFilePath = Path.Combine(zipPath, zipName);
+
+                return File(zipFilePath, "application/zip", zipName);
+            }
+
+            return null;
+        }
+
         public async Task <ActionResult> PrepareData(long datasetId, string datarepo)
         {
             SubmissionManager publishingManager = new SubmissionManager();
@@ -1030,9 +1056,6 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 {
                     OutputMetadataManager.GetConvertedMetadata(datasetId, TransmissionType.mappingFileExport,
                         dataRepository.ReqiuredMetadataStandard);
-
-
-
 
                     // get primary data
                     // check the data sturcture type ...
@@ -1062,6 +1085,47 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         }
                     }
 
+                   
+
+                    // add datastructure
+                    //ToDo put that functiom to the outputDatatructureManager
+                    #region datatructure
+
+                    DataStructureManager dataStructureManager = new DataStructureManager();
+
+                    long dataStructureId = datasetVersion.Dataset.DataStructure.Id;
+                    DataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataStructureId);
+
+                    if (dataStructure != null)
+                    {
+                        // get datastructure as json
+                        //ToDo it is not allowed to call a action from a other controller, so we need to generate a function in the outputDatastructureManager of generating a structure 
+                        // -> its not solve right now, because of sturtcure is using also entities under rpm/models
+                        // we need to find a way to switch this functionality to the io libary an calling that from the api and here
+                        BExIS.Web.Shell.Areas.RPM.Controllers.StructuresController dataStructureApi = new StructuresController();
+
+                        try
+                        {
+                            string dynamicPathOfDS = "";
+                            dynamicPathOfDS = storeGeneratedFilePathToContentDiscriptor(datasetId, datasetVersion,
+                                "datastructure", ".txt");
+                            string datastructureFilePath = AsciiWriter.CreateFile(dynamicPathOfDS);
+                            Structure structure = dataStructureApi.Get(datasetId);
+
+                            string json = JsonConvert.SerializeObject(structure);
+
+                            AsciiWriter.AllTextToFile(datastructureFilePath, json);
+
+
+                        }
+                        catch (Exception ex)
+                        {
+                            throw ex;
+                        }
+                    }
+
+                    #endregion
+
                     ZipFile zip = new ZipFile();
 
                     foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
@@ -1074,6 +1138,27 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                             zip.AddFile(path, "");
                         }
                     }
+
+
+                    // add xsd of the metadata schema
+                    string xsdDirectoryPath = OutputMetadataManager.GetSchemaDirectoryPath(datasetId);
+                    if(Directory.Exists(xsdDirectoryPath))
+                        zip.AddDirectory(xsdDirectoryPath,"Schema");
+
+                    XmlDocument manifest = OutputDatasetManager.GenerateManifest(datasetId, datasetVersion.Id);
+
+                    if (manifest != null)
+                    {
+                        string dynamicManifestFilePath = OutputDatasetManager.GetDynamicDatasetStorePath(datasetId,
+                            datasetVersion.Id, "manifest", ".xml");
+                        string fullFilePath = Path.Combine(AppConfiguration.DataPath, dynamicManifestFilePath);
+
+                        manifest.Save(fullFilePath);
+                        zip.AddFile(fullFilePath,"");
+
+                    }
+
+
                     zip.Save(zipFilePath);
                 }
             }
@@ -1119,6 +1204,60 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 throw (e);
             }
         }
+
+        #endregion
+
+        #region helper
+
+
+        private static string storeGeneratedFilePathToContentDiscriptor(long datasetId, DatasetVersion datasetVersion, string title, string ext)
+        {
+
+            string name = "";
+            string mimeType = "";
+
+            if (ext.Contains("csv"))
+            {
+                name = "datastructure";
+                mimeType = "text/comma-separated-values";
+            }
+
+
+            // create the generated FileStream and determine its location
+            string dynamicPath = OutputDatasetManager.GetDynamicDatasetStorePath(datasetId, datasetVersion.Id, title, ext);
+            //Register the generated data FileStream as a resource of the current dataset version
+            //ContentDescriptor generatedDescriptor = new ContentDescriptor()
+            //{
+            //    OrderNo = 1,
+            //    Name = name,
+            //    MimeType = mimeType,
+            //    URI = dynamicPath,
+            //    DatasetVersion = datasetVersion,
+            //};
+
+            DatasetManager dm = new DatasetManager();
+            if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(name)) > 0)
+            {   // remove the one contentdesciptor 
+                foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
+                {
+                    if (cd.Name == name)
+                    {
+                        cd.URI = dynamicPath;
+                        dm.UpdateContentDescriptor(cd);
+                    }
+                }
+            }
+            else
+            {
+                // add current contentdesciptor to list
+                //datasetVersion.ContentDescriptors.Add(generatedDescriptor);
+                dm.CreateContentDescriptor(name, mimeType, dynamicPath, 1, datasetVersion);
+            }
+
+            //dm.EditDatasetVersion(datasetVersion, null, null, null);
+            return dynamicPath;
+        }
+
 
         #endregion
     }

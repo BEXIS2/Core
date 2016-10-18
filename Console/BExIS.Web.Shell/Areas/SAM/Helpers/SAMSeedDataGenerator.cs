@@ -18,7 +18,6 @@ namespace BExIS.Web.Shell.Areas.SAM.Helpers
         private static void createSecuritySeedData()
         {
 
-            //ToDo ADD Form Controller from DCM and set it public 
             #region Security
 
             // Authenticators

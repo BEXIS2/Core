@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 using BExIS.Ddm.Model;
+using BExIS.Security.Entities.Objects;
 
 namespace BExIS.Web.Shell.Areas.DCM.Models
 {
@@ -42,23 +43,39 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
         public long Id { get; set; }
         public string Name { get; set; }
 
-        [Display(Name = "Entity Class Path")]
-        public string EntityClassPath { get; set; }
+        public EntityModel Entity { get; set; }
 
         [Display(Name = "Title Reference")]
         public string TitleNode { get; set; }
 
         [Display(Name = "Description Reference")]
         public string DescriptionNode { get; set; }
+
+        public string Classification { get; set; }
+
         public bool Active { get; set; }
         public List<SearchMetadataNode> MetadataNodes { get; set; }
-        public List<string> EnitiesClassPaths { get; set; }
+        public List<EntityModel> EntityClasses { get; set; }
 
         public MetadataStructureModel()
         {
-            EnitiesClassPaths = new List<string>();
+            EntityClasses = new List<EntityModel>();
             MetadataNodes = new List<SearchMetadataNode>();
+            Entity = new EntityModel();
         }
 
+    }
+
+    public class EntityModel
+    {
+        [Display(Name = "Entity Name")]
+        public string Name { get; set; }
+        public string ClassPath { get; set; }
+
+        public EntityModel()
+        {
+            Name = "";
+            ClassPath = "";
+        }
     }
 }
