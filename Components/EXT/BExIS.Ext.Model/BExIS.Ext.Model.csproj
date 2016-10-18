@@ -48,6 +48,9 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="Vaiona.Entities">
+      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Entities.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DB\BuildNumberSorter.cs" />
@@ -58,6 +61,7 @@
     <Compile Include="DB\IVersionInfoProvider.cs" />
     <Compile Include="DB\Migration.cs" />
     <Compile Include="DB\MigrationDescriptor.cs" />
+    <Compile Include="Exception\BexisException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

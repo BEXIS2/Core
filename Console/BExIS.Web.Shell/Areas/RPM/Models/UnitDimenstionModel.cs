@@ -7,12 +7,6 @@ using BExIS.Dlm.Entities.DataStructure;
 
 namespace BExIS.Web.Shell.Areas.RPM.Models
 {
-    public struct UnitStruct
-    {
-        public long Id {get; set;}
-        public string Name {get; set;}
-    }
-
     public class UnitDimenstionModel
     {
         UnitManager unitmanager = new UnitManager();

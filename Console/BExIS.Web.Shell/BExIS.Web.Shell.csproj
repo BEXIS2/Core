@@ -76,6 +76,10 @@
       <HintPath>..\..\packages\HtmlAgilityPack.1.4.9\lib\Net45\HtmlAgilityPack.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="IBM.Data.DB2, Version=9.7.4.4, Culture=neutral, PublicKeyToken=7c307b91aa13d208, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Libraries\IBM.Data.DB2.dll</HintPath>
+    </Reference>
     <Reference Include="Iesi.Collections, Version=4.0.0.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Iesi.Collections.4.0.1.4000\lib\net40\Iesi.Collections.dll</HintPath>
@@ -253,6 +257,9 @@
       <HintPath>..\..\packages\Microsoft.AspNet.WebPages.WebData.3.2.3\lib\net45\WebMatrix.WebData.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="XmlSampleGenerator">
+      <HintPath>..\..\..\..\..\RDB\GIT\packages\Microsoft.Xml.XMLGen.1.0.0\lib\XmlSampleGenerator.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_GlobalResources\EditorLocalization.de-DE.designer.cs">
@@ -325,7 +332,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>UploadLocalization.zh-CN.resx</DependentUpon>
     </Compile>
-    <Compile Include="App_Start\RegisterClientValidationExtensions.cs" />
+    <Compile Include="Areas\BAM\BAMAreaRegistration.cs" />
+    <Compile Include="Areas\BAM\Helpers\BAMSeedDataGenerator.cs" />
+    <Compile Include="Areas\BAM\Models\PartyCustomAttributeValueModel.cs" />
+    <Compile Include="Areas\BAM\Models\PartyModel.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Areas\DCM\Controllers\CreateDatasetController.cs" />
     <Compile Include="Areas\DCM\Controllers\FormController.cs" />
@@ -378,6 +388,7 @@
     <Compile Include="Areas\DDM\Controllers\CreateDatasetController.cs" />
     <Compile Include="Areas\DDM\Controllers\DataController.cs" />
     <Compile Include="Areas\DDM\Controllers\HelpController.cs" />
+    <Compile Include="Areas\BAM\Controllers\PartyController.cs" />
     <Compile Include="Areas\DDM\Helpers\GridHelper.cs" />
     <Compile Include="Areas\DDM\Helpers\helper.cs" />
     <Compile Include="Areas\DDM\Helpers\HtmlPrefixScopeExtentions.cs" />
@@ -386,6 +397,7 @@
     <Compile Include="Areas\DDM\Models\ShowHelpModel.cs" />
     <Compile Include="Areas\DDM\Models\ShowMetadataModel.cs" />
     <Compile Include="Areas\DDM\Models\ShowPrimaryDataModel.cs" />
+    <Compile Include="Areas\DDM\Models\ShowPublishDataModel.cs" />
     <Compile Include="Areas\DIM\Controllers\AdminController.cs" />
     <Compile Include="Areas\DIM\Controllers\DataController.cs" />
     <Compile Include="Areas\DIM\Controllers\ExportGFBIOController.cs" />
@@ -404,6 +416,7 @@
     <Compile Include="Areas\MSM\Models\TreePartialModel.cs" />
     <Compile Include="Areas\MSM\Models\TestModel.cs" />
     <Compile Include="Areas\MSM\MSMAreaRegistration.cs" />
+    <Compile Include="Areas\RPM\Classes\DataStructureIO.cs" />
     <Compile Include="Areas\RPM\Controllers\DataStructureEditController.cs" />
     <Compile Include="Areas\RPM\Controllers\HelpController.cs" />
     <Compile Include="Areas\RPM\Controllers\DataAttributeController.cs" />
@@ -413,6 +426,7 @@
     <Compile Include="Areas\RPM\Controllers\UnitController.cs" />
     <Compile Include="Areas\RPM\Helpers\HtmlPrefixScopeExtentions.cs" />
     <Compile Include="Areas\RPM\Helpers\RPMSeedDataGenerator.cs" />
+    <Compile Include="Areas\RPM\Models\MessageModel.cs" />
     <Compile Include="Areas\RPM\Models\StructureModel.cs" />
     <Compile Include="Areas\RPM\Models\DataStructureEditModel.cs" />
     <Compile Include="Areas\RPM\Models\DataStructureSearchModel.cs" />
@@ -645,6 +659,8 @@
     <Content Include="fonts\fontawesome-webfont.ttf" />
     <Content Include="fonts\fontawesome-webfont.eot" />
     <Content Include="Areas\DCM\Views\ManageMetadataStructure\Index.cshtml" />
+    <Content Include="Areas\DDM\Views\Data\_showPublishDataView.cshtml" />
+    <Content Include="Areas\DDM\Views\Data\_dataRepositoryRequirementsView.cshtml" />
     <None Include="Properties\PublishProfiles\bexisconf.pubxml" />
     <Content Include="Areas\SAM\Views\Tenants\_Create.cshtml" />
     <Content Include="Areas\SAM\Views\Tenants\_Edit.cshtml" />
@@ -657,6 +673,14 @@
     <Content Include="Scripts\jquery-1.10.2.min.map" />
     <Content Include="Areas\SAM\Views\Tenants\Index.cshtml" />
     <None Include="Properties\PublishProfiles\T1.pubxml" />
+    <Content Include="Areas\BAM\Views\Party\Index.cshtml" />
+    <Content Include="Areas\BAM\Views\Party\Create.cshtml" />
+    <Content Include="Areas\BAM\Views\web.config" />
+    <Content Include="Areas\BAM\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\BAM\Views\Party\_customAttributesView.cshtml" />
+    <Content Include="Areas\BAM\Views\Party\Edit.cshtml" />
+    <Content Include="Areas\BAM\Views\Party\View.cshtml" />
+    <Content Include="Areas\BAM\Views\Party\DeleteConfirm.cshtml" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
@@ -992,6 +1016,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Areas\BAM\Views\Shared\" />
     <Folder Include="Areas\DCM\Views\DcmAdmin\" />
     <Folder Include="Areas\DCM\Views\Home\" />
     <Folder Include="Areas\DDM\Views\Shared\" />
@@ -1245,6 +1270,14 @@
     <ProjectReference Include="..\..\Modules\DDM\BExIS.Ddm.Providers.LuceneProvider\BExIS.Ddm.Providers.LuceneProvider.csproj">
       <Project>{fbe3101a-791a-4eab-9b8f-f6e071f8dbdc}</Project>
       <Name>BExIS.Ddm.Providers.LuceneProvider</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Modules\DIM\BExIS.Dim.Entities\BExIS.Dim.Entities.csproj">
+      <Project>{34cad2a2-6928-458b-b8dc-af71d55f20cc}</Project>
+      <Name>BExIS.Dim.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Modules\DIM\BExIS.Dim.Helper\BExIS.Dim.Helpers.csproj">
+      <Project>{81ef18e8-dced-4980-96f9-e99124075b82}</Project>
+      <Name>BExIS.Dim.Helpers</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Modules\RPM\BExIS.RPM.Model\BExIS.RPM.Model.csproj">
       <Project>{063b9e3f-e0dd-43fe-9910-5b1544b8b861}</Project>

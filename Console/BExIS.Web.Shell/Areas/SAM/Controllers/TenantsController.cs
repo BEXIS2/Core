@@ -190,6 +190,14 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
         [HttpPost]
         public ActionResult Create(TenantCreateModel model)
         {
+            // The model must contain a zip file.
+            // check the zip file for validity
+            // copy the zip (as a zip) file into the workspace's temp folder and provide the path
+            string zipFolder = "";
+            // provide the filename and the folder to the Register function. the file name must be the tenant id
+            string tenantId = "the file name";
+            ITenantRegistrar tenantRegistrar = MultiTenantFactory.GetTenantRegistrar();
+            tenantRegistrar.Register(tenantId, zipFolder);
             return PartialView("_Create", model);
         }
 

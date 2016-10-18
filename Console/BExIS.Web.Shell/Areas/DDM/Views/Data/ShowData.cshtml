@@ -15,7 +15,6 @@
 
 }
 
-
 <h2>@Model.Title ( @Model.Id )</h2>
 
 @if(@Model != null)
@@ -42,12 +41,14 @@
                       .Text("Data Structure")
                       .LoadContentFrom("ShowPreviewDataStructure", "Data", new {area = "DDM", datasetID = @Model.Id});
 
-
-
                   tabs.Add()
                       .Text("Dataset Permissions")
                       .LoadContentFrom("Subjects", "Data", new {area = "DDM", dataId = @Model.Id})
                       .Enabled(@Model.GrantAccess);
+
+                  tabs.Add()
+                      .Text("Publish")
+                      .LoadContentFrom("publishData", "Data", new {area = "DDM", datasetId = @Model.Id});
               })
               )
     }
@@ -58,6 +59,11 @@
 }
 
 <script type="text/javascript">
+
+
+    $(document).ready(function () {
+            resetAllTelerikIconTitles();
+        });
 
     function existsRightType(rights, rightType) {
         if (jQuery.inArray(rightType, rights) != -1) {

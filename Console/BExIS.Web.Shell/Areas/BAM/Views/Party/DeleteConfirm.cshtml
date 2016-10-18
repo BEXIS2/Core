@@ -1,0 +1,21 @@
+﻿
+@section Information
+{
+
+}
+<p>Are you sure that you want to delete this party?</p>
+<div id="divPartyDetail"></div>
+@using (Html.BeginForm("Delete", "Party", new {area = "BAM" }, FormMethod.Post))
+{
+    <input type="hidden" value="@ViewBag.partyId" name="Party.Id" id="Id" />
+    <button type="submit" value="Delete" name="deleteParty" class="t-button" style="border:0px;">Delete</button>
+}
+<script type="text/javascript">
+
+  
+    @if (((int)ViewBag.partyId)!=0)
+    {
+       @Html.Raw("$('#divPartyDetail').load('/BAM/Party/ViewPartyDetail/" + ViewBag.partyId + "');");
+    }
+
+</script>

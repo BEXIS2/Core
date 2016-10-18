@@ -51,6 +51,14 @@ namespace BExIS.IO
             return null;
         }
 
+        public static void CreateDicrectoriesIfNotExist(string directoryPath)
+        {
+            // if folder not exist
+            if (!Directory.Exists(directoryPath))
+            {
+                Directory.CreateDirectory(directoryPath);
+            }
+        }
 
         public static bool Delete(string file)
         {
