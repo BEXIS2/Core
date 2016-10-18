@@ -26,4 +26,6 @@ namespace BExIS.Ddm.Api
         bool IsPrimaryDataIncluded();
 
     }
+
+    public enum IndexingAction { CREATE, UPDATE, DELETE }
 }

@@ -8,6 +8,6 @@ namespace BExIS.Security.Services.Authentication
 {
     public interface IAuthenticationManager
     {
-        bool ValidateUser(string userName, string password);
+        bool ValidateUser(string username, string password);
     }
 }

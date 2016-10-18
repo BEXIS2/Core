@@ -1,4 +1,5 @@
-﻿using BExIS.Ddm.Model;
+﻿using System.Collections.Generic;
+using BExIS.Ddm.Model;
 
 /// <summary>
 ///
@@ -94,6 +95,18 @@ namespace BExIS.Ddm.Api
         /// <param name="searchCriteria"></param>
         void SearchAndUpdate(SearchCriteria searchCriteria);
 
+        /// <summary>
+        /// Update a list of datasets to the index
+        /// </summary>
+        /// <param name="datasetsToIndex"></param>
+        void UpdateIndex(Dictionary<long, IndexingAction> datasetsToIndex);
+
+        /// <summary>
+        /// Update single Dataset to to the index
+        /// </summary>
+        /// <param name="datasetId"></param>
+        /// <param name="indAction"></param>
+        void UpdateSingleDatasetIndex(long datasetId, IndexingAction indAction);
 
 
         void Reload();

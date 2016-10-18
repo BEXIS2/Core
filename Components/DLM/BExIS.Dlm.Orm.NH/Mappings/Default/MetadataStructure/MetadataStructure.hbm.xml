@@ -3,7 +3,7 @@
     <!-- Mapping BaseEntity properties -->
     
     <id name="Id" type="Int64">
-      <column name="Id" />
+      <column name="Id" index="idx_MetadataStructures_id"/>
       <generator class="native" />
     </id>
 
@@ -62,7 +62,7 @@
     <!-- Mapping Entity properties -->
 
     <property name="Name" type="string">
-      <column name="Name" />
+      <column name="Name" index="idx_MetadataStructures_name"/>
     </property>
 
     <property name="Description" type="string">

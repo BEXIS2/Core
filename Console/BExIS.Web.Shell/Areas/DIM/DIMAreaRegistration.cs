@@ -1,4 +1,5 @@
 ﻿using System.Web.Mvc;
+using System.Xml.Linq;
 
 namespace BExIS.Web.Shell.Areas.DIM
 {
@@ -20,5 +21,19 @@ namespace BExIS.Web.Shell.Areas.DIM
                 new { action = "Index", id = UrlParameter.Optional }
             );
         }
-}
+
+        public XElement RegisterMenus(AreaRegistrationContext context)
+        {
+            XElement moduleNode = new XElement(this.AreaName);
+            XElement export = new XElement("Export");
+                export.SetAttributeValue("Parent", "Settings");
+                export.SetAttributeValue("Label", "Export Metadata");
+                export.SetAttributeValue("Area", "dim");
+                export.SetAttributeValue("Controller", "Admin");
+                export.SetAttributeValue("Action", "Index");
+            moduleNode.Add(export);
+            return moduleNode;
+        }
+
     }
+}

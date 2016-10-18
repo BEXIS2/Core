@@ -1,5 +1,4 @@
-﻿using BExIS.Ext.Services;
-using System.IO;
+﻿using System.IO;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Vaiona.IoC;
@@ -8,11 +7,13 @@ using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Data;
-using Vaiona.Web.Mvc.Filters;
 using System.Web;
-using System;
-using System.Collections.Generic;
-using NHibernate;
+using BExIS.Ext.Services;
+using Vaiona.MultiTenancy.Api;
+using Vaiona.Model.MTnt;
+using System.Web.Http;
+using Vaiona.Web.Mvc.Filters;
+
 
 namespace BExIS.Web.Shell
 {
@@ -23,9 +24,9 @@ namespace BExIS.Web.Shell
     {
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
-            filters.Add(new PersistenceContextProviderAttribute());
+            filters.Add(new PersistenceContextProviderFilterAttribute());
 #if !DEBUG
-            filters.Add(new AuthorizationDelegationFilter(new IsAuthorizedDelegate(AuthorizationDelegationImplementor.CheckAuthorization)));
+            filters.Add(new Vaiona.Web.Mvc.Filters.AuthorizationDelegationFilter(new Vaiona.Web.Mvc.Filters.IsAuthorizedDelegate(AuthorizationDelegationImplementor.CheckAuthorization)));
 #endif
             filters.Add(new HandleErrorAttribute());
         }
@@ -61,20 +62,27 @@ namespace BExIS.Web.Shell
           //    new { controller = "Home", action = "Index" }
           //    , new[] { "BExIS.Web.Shell.Areas.RPM.Controllers" }
             //).DataTokens = new RouteValueDictionary(new { area = "RPM" });
-
-
-        
-
-
         }
 
         protected void Application_Start()
         {
+			MvcHandler.DisableMvcResponseHeader = true;
+		
             init();
 
             AreaRegistration.RegisterAllAreas();
+            GlobalConfiguration.Configure(WebApiConfig.Register);
+
+
+            //GlobalFilters.Filters.Add(new SessionTimeoutFilterAttribute());
+
             RegisterGlobalFilters(GlobalFilters.Filters);
             RegisterRoutes(RouteTable.Routes);
+
+            ITenantResolver tenantResolver = IoCFactory.Container.Resolve<ITenantResolver>();
+            ITenantPathProvider pathProvider = new BExISTenantPathProvider(); // should be instantiated by the IoC. client app should provide the Path Ptovider based on its file and tenant structure
+            tenantResolver.Load(pathProvider);
+
         }
 
         private void init()
@@ -107,23 +115,30 @@ namespace BExIS.Web.Shell
 
         protected void Session_Start()
         {
-            if (Context.Session.IsNewSession)
+            if (Context.Session != null)
             {
-                string sCookieHeader = Request.Headers["Cookie"];
-                if ((null != sCookieHeader) && (sCookieHeader.IndexOf("ASP.NET_SessionId") >= 0))
+                if (Context.Session.IsNewSession)
                 {
-                    //intercept current route
-                    HttpContextBase currentContext = new HttpContextWrapper(HttpContext.Current);
-                    RouteData routeData = RouteTable.Routes.GetRouteData(currentContext);
-                    Response.Redirect("~/Home/SessionTimeout");
-                    Response.Flush();
-                    Response.End();
+                    string sCookieHeader = Request.Headers["Cookie"];
+                    if ((null != sCookieHeader) && (sCookieHeader.IndexOf("ASP.NET_SessionId") >= 0))
+                    {
+                        //intercept current route
+                        HttpContextBase currentContext = new HttpContextWrapper(HttpContext.Current);
+                        RouteData routeData = RouteTable.Routes.GetRouteData(currentContext);
+                        Response.Redirect("~/Home/SessionTimeout");
+                        Response.Flush();
+                        Response.End();
+                    }
                 }
             }
 
             //set session culture using DefaultCulture key
             IoCFactory.Container.StartSessionLevelContainer();
             Session.ApplyCulture(AppConfiguration.DefaultCulture);
+
+            ITenantResolver tenantResolver = IoCFactory.Container.Resolve<ITenantResolver>();
+            Tenant tenant = tenantResolver.Resolve(this.Request);
+            this.Session.SetTenant(tenant);
         }
 
         protected void Session_End()
@@ -147,6 +162,14 @@ namespace BExIS.Web.Shell
             //var entityContext = HttpContext.Current.Items["NHibernateCurrentSessionFactory"] as IDictionary<ISessionFactory, Lazy<ISession>>;
             //IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager();
             //pManager.ShutdownConversation();
+        }
+		
+		protected void Application_PreSendRequestHeaders()
+        {
+            Response.Headers.Remove("Server");
+            Response.Headers.Remove("X-AspNet-Version"); 
+            Response.Headers.Remove("X-AspNetMvc-Version");
+            Response.Headers.Remove("X-Powered-By");
         }
     }
 }

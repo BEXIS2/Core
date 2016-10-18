@@ -3,6 +3,7 @@
 @using BExIS.Dlm.Services.DataStructure
 @using System
 @using System.Text.RegularExpressions
+@using BExIS.Web.Shell.Areas.RPM.Models
 @model List<BExIS.Dlm.Entities.DataStructure.DataType>
 
 @*<header>*@
@@ -17,25 +18,24 @@
 {
     With this interface you are able to manage (e.g. create, edit, delete) data types which are required to define units and data attributes. Data types cannot be edited or deleted once they are associated with a unit (they become locked).
     <p>
-        More information 
-        @Html.ActionLink("here", "Index", "Help", new { id = 0 }, new { @class = "bx-informationLink", title="go to help", target="_blank"})
-    </p>
+    <a href="/RPM/Help/Index/#_Toc434570749" class="bx-informationLink" title="go to help" target="_blank">More</a>
+</p>
 }
 
 @{
-    DataType dataType = (DataType)Session["DataType"];
+    DataTypeModel dataTypeModel = (DataTypeModel)Session["DataType"];
     string windowName = "Create Data Type";
 
-    if(dataType != null)
+    if(dataTypeModel != null)
     {
-        if (!string.IsNullOrEmpty(dataType.Name))
+        if (!string.IsNullOrEmpty(dataTypeModel.dataType.Name))
         {
-            windowName = "Edit Data Type: " + dataType.Name + " (Id: " + dataType.Id + ")";
+            windowName = "Edit Data Type: " + dataTypeModel.dataType.Name + " (Id: " + dataTypeModel.dataType.Id + ")";
         }
     }
     else
     {
-        dataType = new DataType();
+        dataTypeModel = new DataTypeModel();
     }
 }
 
@@ -51,9 +51,9 @@
             .Filterable()           
             .Columns(columns =>
                 {
-                    
+                    columns.Bound(c => c.Id)
+                    .Width(100);
                     columns.Bound(c => c.Name);
-                    columns.Bound(c => c.Id);
                     columns.Bound(c => c.SystemType);
                     columns.Bound(c => c.Description);
                     columns.Template(
@@ -76,7 +76,7 @@
                     ).Width(70)
                         .ClientTemplate(
                             @Html.ActionLink(" ", "openDataTypeWindow", "Home", new { id = "<#= id #>" }, new { @class = "bx bx-grid-function bx-edit" }).ToHtmlString() +
-                            @Html.ActionLink(" ", "deletDataType", "Home", new { id = "<#= id #>", dataType.Name }, new { @class = "bx bx-grid-function bx-trash", onclick = "return confirm('Are you sure you want to delete the Data Type " + dataType.Name + " ?')" }).ToHtmlString()
+                            @Html.ActionLink(" ", "deletDataType", "Home", new { id = "<#= id #>", dataTypeModel.dataType.Name }, new { @class = "bx bx-grid-function bx-trash", onclick = "return confirm('Are you sure you want to delete the Data Type " + dataTypeModel.dataType.Name + " ?')" }).ToHtmlString()
                         );
                 })
                 .ClientEvents(events=>events.OnDataBound("onDataBound"))
@@ -89,7 +89,7 @@
                             .Draggable(true)
                             .Modal(true)
                             .Content(@<text>
-                                        @Html.Partial("_editDataType", dataType)
+                                        @Html.Partial("_editDataType", dataTypeModel)
                                         </text>)
                             .Render()
                             ;

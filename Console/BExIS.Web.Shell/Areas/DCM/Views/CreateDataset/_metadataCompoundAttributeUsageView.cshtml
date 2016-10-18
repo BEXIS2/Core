@@ -45,13 +45,15 @@
             <table>
                 <tr>
                     <td>
-                        @if (Model.Model.MaxCardinality > 1 && Model.Model.StepInfo.Parent.Children.Count < Model.Model.MaxCardinality)
+                        @if (Model.Model.MaxCardinality > 1
+                        && Model.Model.StepInfo.Parent.Children.Count < Model.Model.MaxCardinality
+                        && Model.Model.Number == Model.Model.StepInfo.Parent.Children.Count)
                         {
-                            <button id="@id_add" onclick="Add(this)" class="bx-function bx-add"/>
+                            <button id = "@id_add" onclick = "Add(this)" class="bx-function bx-add"/>
                         }
                         else
-                        { 
-                            <button id="@id_add" onclick="Add(this)" class="bx-function bx-add bx-disabled"/>
+                        {
+                            <button id = "@id_add" onclick="Add(this)" class="bx-function bx-add bx-disabled"/>
                         }
                     </td>
                     <td>

@@ -17,6 +17,8 @@ using BExIS.Security.Services.Authorization;
 using Vaiona.Logging.Aspects;
 using Vaiona.Logging;
 using Vaiona.Utils.Cfg;
+using Vaiona.Web.Extensions;
+using Vaiona.Model.MTnt;
 using BExIS.Dlm.Entities.Party;
 
 namespace BExIS.Web.Shell.Controllers
@@ -38,8 +40,8 @@ namespace BExIS.Web.Shell.Controllers
         [MeasurePerformance]
         public ActionResult Index(Int64 id = 0)
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Test Page"); /*in the Vaiona.Web.Mvc.Models namespace*/ //String.Format("{0} {1} - {2}", AppConfiguration.ApplicationName, AppConfiguration.ApplicationVersion, "Test Page");
-
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Test Page", this.Session.GetTenant()); /*in the Vaiona.Web.Mvc.Models namespace*/ //String.Format("{0} {1} - {2}", AppConfiguration.ApplicationName, AppConfiguration.ApplicationVersion, "Test Page");
+            testTenants();
             //List<string> a = new List<string>() { "A", "B", "C" };
             //List<string> b = new List<string>() { "A", "B", "D" };
             //var ab = a.Union(b);

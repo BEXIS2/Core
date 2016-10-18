@@ -19,11 +19,11 @@
         </tr>
         <tr>
             <td>
-                @Html.LabelFor(m => m.UserName)
+                @Html.LabelFor(m => m.Username)
             </td>
             <td>
-                @Html.TextBoxFor(m => m.UserName, new { @class = "t-input bx-input" })
-                @Html.ValidationMessageFor(m => m.UserName)
+                @Html.TextBoxFor(m => m.Username, new { @class = "t-input bx-input" })
+                @Html.ValidationMessageFor(m => m.Username)
             </td>
         </tr>
         <tr>
@@ -67,12 +67,12 @@
                 @Html.Label("Security Question")
             </td>
             <td>
-                @(Html.Telerik().DropDownListFor(m => m.SecurityQuestionList.Id)
+                @(Html.Telerik().DropDownListFor(m => m.SecurityQuestion)
                     .Placeholder("--- SELECT ---")
                     .HtmlAttributes(new { style = "width:372px; padding-left: 2px;", @class = "t-input bx-input" })
                     .DropDownHtmlAttributes(new { style = "width:auto;" })
                     .BindTo(new SelectList(Model.SecurityQuestionList.SecurityQuestionList, "Id", "Question")))
-                @Html.ValidationMessageFor(m => m.SecurityQuestionList.Id)
+                @Html.ValidationMessageFor(m => m.SecurityQuestion)
             </td>
         </tr>
         <tr>
