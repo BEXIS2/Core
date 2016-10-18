@@ -1,4 +1,5 @@
 ﻿using BExIS.Dlm.Entities.Party;
+using BExIS.Ext.Model;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
@@ -83,7 +84,7 @@ namespace BExIS.Dlm.Services.Party
                 var entity = repoPR.Reload(partyRelationType);
                 //If there is a relation between entity and a party we couldn't delete it
                 if (entity.PartyRelationships.Count() > 0)
-                    PartyManager.ThrowException(entity, "There are some relations between this 'PartyRelationshipType' and 'Party'", PartyManager.ExceptionType.Delete);
+                    BexisException.Throw(entity, "There are some relations between this 'PartyRelationshipType' and 'Party'", BexisException.ExceptionType.Delete);
                 // remove all associations between the entity and AssociatedPairs
                 entity.AssociatedPairs.ToList().ForEach(item => item.PartyRelationshipType = null);
                 entity.AssociatedPairs.Clear();
@@ -108,7 +109,7 @@ namespace BExIS.Dlm.Services.Party
                     var latest = repoPR.Reload(entity);
                     //If there is a relation between entity and a party we couldn't delete it
                     if (entity.PartyRelationships.Count() > 0)
-                        PartyManager.ThrowException(entity, "There are some relations between this 'PartyRelationshipType' and 'Party'", PartyManager.ExceptionType.Delete,true);
+                        BexisException.Throw(entity, "There are some relations between this 'PartyRelationshipType' and 'Party'", BexisException.ExceptionType.Delete,true);
                     // remove all associations between the entity and AssociatedPairs
                     entity.AssociatedPairs.ToList().ForEach(item => item.PartyRelationshipType = null);
                     entity.AssociatedPairs.Clear();
@@ -174,7 +175,7 @@ namespace BExIS.Dlm.Services.Party
                 IRepository<PartyRelationshipType> repoRel = uow.GetRepository<PartyRelationshipType>();
                 var entity = repoPR.Reload(partyTypePair);
                 if (repoRel.Get(item => item.AssociatedPairs.Contains(partyTypePair)).Count() > 0)
-                    PartyManager.ThrowException(entity,"There are some relations between this entity and 'PartyRelationshipType'.",PartyManager.ExceptionType.Delete);
+                    BexisException.Throw(entity,"There are some relations between this entity and 'PartyRelationshipType'.",BexisException.ExceptionType.Delete);
                
                 repoPR.Delete(entity);
                 uow.Commit();
@@ -193,7 +194,7 @@ namespace BExIS.Dlm.Services.Party
                 foreach (var entity in entities)
                 {
                     if (repoRel.Get(item => item.AssociatedPairs.Contains(entity)).Count() > 0)
-                        PartyManager.ThrowException(entity, "There are some relations between this entity and 'PartyRelationshipType'.", PartyManager.ExceptionType.Delete,true);
+                        BexisException.Throw(entity, "There are some relations between this entity and 'PartyRelationshipType'.", BexisException.ExceptionType.Delete,true);
 
                     var latest = repoPR.Reload(entity);
                     repoPR.Delete(latest);

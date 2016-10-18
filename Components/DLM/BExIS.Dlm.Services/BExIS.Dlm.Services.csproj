@@ -155,6 +155,10 @@
     <Compile Include="TypeSystem\DataTypeUtility.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\EXT\BExIS.Ext.Model\BExIS.Ext.Model.csproj">
+      <Project>{f296cb14-3b71-40c9-89f7-f928ba2c7c5b}</Project>
+      <Name>BExIS.Ext.Model</Name>
+    </ProjectReference>
     <ProjectReference Include="..\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
       <Project>{b4e7b1bf-01b4-40af-8d19-b8f362167261}</Project>
       <Name>BExIS.Dlm.Entities</Name>
