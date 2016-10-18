@@ -332,7 +332,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>UploadLocalization.zh-CN.resx</DependentUpon>
     </Compile>
-    <Compile Include="App_Start\RegisterClientValidationExtensions.cs" />
     <Compile Include="Areas\BAM\BAMAreaRegistration.cs" />
     <Compile Include="Areas\BAM\Helpers\BAMSeedDataGenerator.cs" />
     <Compile Include="Areas\BAM\Models\PartyCustomAttributeValueModel.cs" />
