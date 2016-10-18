@@ -7,14 +7,13 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Vaiona.Persistence.Api;
+using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
 
 namespace BExIS.Web.Shell.Areas.BAM.Controllers
 {
     public class PartyController : Controller
     {
-
-        
         public ActionResult Index()
         {
             PartyManager partyManager = new PartyManager();
@@ -24,8 +23,9 @@ namespace BExIS.Web.Shell.Areas.BAM.Controllers
 
        public ActionResult Create()
         {
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Create Part", this.Session.GetTenant());
+
             PartyTypeManager partyTypeManager = new PartyTypeManager();
-            ViewBag.Title = PresentationModel.GetViewTitle("Create Party");
             var model = new PartyModel();
             model.PartyTypeList = partyTypeManager.Repo.Get().ToList();
             return View(model);
@@ -52,9 +52,10 @@ namespace BExIS.Web.Shell.Areas.BAM.Controllers
 
         public ActionResult Edit(int id)
         {
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Edit Party", this.Session.GetTenant());
+
             PartyManager partyManager = new PartyManager();
             PartyTypeManager partyTypeManager = new PartyTypeManager();
-            ViewBag.Title = PresentationModel.GetViewTitle("Edit Party");
             var model = new PartyModel();
             model.PartyTypeList = partyTypeManager.Repo.Get().ToList();
             model.Party = partyManager.Repo.Get(id);
@@ -90,9 +91,10 @@ namespace BExIS.Web.Shell.Areas.BAM.Controllers
 
         public ActionResult View(int id)
         {
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("View Party", this.Session.GetTenant());
+
             PartyManager partyManager = new PartyManager();
             PartyTypeManager partyTypeManager = new PartyTypeManager();
-            ViewBag.Title = PresentationModel.GetViewTitle("View Party");
             var model = new PartyModel();
             model.PartyTypeList = partyTypeManager.Repo.Get().ToList();
             model.Party = partyManager.Repo.Get(id);
@@ -102,9 +104,10 @@ namespace BExIS.Web.Shell.Areas.BAM.Controllers
 
         public ActionResult ViewPartyDetail(int id)
         {
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("View Party", this.Session.GetTenant());
+
             PartyManager partyManager = new PartyManager();
             PartyTypeManager partyTypeManager = new PartyTypeManager();
-            ViewBag.Title = PresentationModel.GetViewTitle("View Party");
             var model = new PartyModel();
             model.PartyTypeList = partyTypeManager.Repo.Get().ToList();
             model.Party = partyManager.Repo.Get(id);
@@ -113,7 +116,8 @@ namespace BExIS.Web.Shell.Areas.BAM.Controllers
 
         public ActionResult DeleteConfirm(int id)
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Delete Party");
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Delete Party", this.Session.GetTenant());
+
             ViewBag.partyId = id;
             return View();
         }
