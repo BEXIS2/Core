@@ -34,7 +34,7 @@
       <one-to-many class="PartyCustomAttribute"/>
     </set>
 
-    <set name="StatusTypes" table="PartyStatusTypes" lazy="true">
+    <set name="StatusTypes" table="PartyStatusTypes" lazy="true"  cascade="all" inverse="true">
       <key column="PartyTypeRef"/>
       <one-to-many class="PartyStatusType"/>
     </set>

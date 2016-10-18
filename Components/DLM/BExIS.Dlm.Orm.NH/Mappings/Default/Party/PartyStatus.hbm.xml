@@ -28,9 +28,9 @@
       <column name="ChangeLog" sql-type="xml"   />
     </property>
 
-    <many-to-one name="StatusType" class="BExIS.Dlm.Entities.Party.PartyStatusType" not-null="true" column="PartyStatusTypeRef"/>
+    <many-to-one name="StatusType" class="BExIS.Dlm.Entities.Party.PartyStatusType" not-null="true" column="PartyStatusTypeRef" />
 
-    <many-to-one name="Party" class="BExIS.Dlm.Entities.Party.Party" not-null="true" column="PartyRef"/>
+    <many-to-one name="Party" class="BExIS.Dlm.Entities.Party.Party" not-null="true" column="PartyRef" />
 
   </class>
 </hibernate-mapping>
