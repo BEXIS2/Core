@@ -5,6 +5,14 @@ using DataAnnotationsExtensions;
 
 namespace BExIS.Web.Shell.Areas.SAM.Models
 {
+    public class CreateUserModel
+    {
+        public string ConfirmPassword { get; set; }
+        public string Password { get; set; }
+        public string Username { get; set; }
+    }
+
+
     public class UserChangePasswordModel
     {
         public long UserId { get; set; }

@@ -464,6 +464,7 @@
     <Compile Include="Areas\SAM\Models\FeaturePermissionModels.cs" />
     <Compile Include="Areas\SAM\Models\GroupModels.cs" />
     <Compile Include="Areas\SAM\Models\InfoModels.cs" />
+    <Compile Include="Areas\SAM\Models\PartyModels.cs" />
     <Compile Include="Areas\SAM\Models\PermissionModel.cs" />
     <Compile Include="Areas\SAM\Models\SecurityQuestionModels.cs" />
     <Compile Include="Areas\SAM\Models\ShowHelpModel.cs" />

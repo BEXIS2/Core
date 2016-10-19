@@ -6,6 +6,18 @@ using DataAnnotationsExtensions;
 
 namespace BExIS.Web.Shell.Areas.SAM.Models
 {
+    public class RegisterAccountModel
+    {
+        public CreateUserModel User { get; set; }
+        public CreatePartyModel Party { get; set; }
+
+        public RegisterAccountModel()
+        {
+            Party = new CreatePartyModel();
+            User = new CreateUserModel();
+        }
+    }
+
     public class AccountRegisterModel
     {
         [Display(Name = "Username")]

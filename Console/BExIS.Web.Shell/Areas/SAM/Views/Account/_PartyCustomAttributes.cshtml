@@ -1,0 +1,42 @@
+﻿@model BExIS.Web.Shell.Areas.SAM.Models.CreatePartyModel
+
+@foreach (var partyCustomAttribute in Model.PartyCustomAttributes.OrderBy(item => item.DisplayOrder))
+{
+    <tr>
+        <td style="width:40px;">@Html.Raw((!partyCustomAttribute.IsValueOptional ? "<b title='Required' style='color: red'>*</b>" : ""))</td>
+        <td style="width:300px;">
+            <label>
+                @partyCustomAttribute.Name
+            </label>
+        </td>
+        <td>
+            @if (!string.IsNullOrEmpty(Request.QueryString["readOnly"]) && Request.QueryString["readOnly"] == "true")
+                {
+                <span>@partyCustomAttribute.Value</span>
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(partyCustomAttribute.ValidValues))
+                {
+                    <select name="partyCustomAttributeValues[@partyCustomAttribute.Id]">
+                        @foreach (var option in partyCustomAttribute.ValidValues.Split(','))
+                        {
+                            <option value="@option" @(partyCustomAttribute.Value == @option ? "selected='selected'" : "")>@option</option>
+                        }
+
+                    </select>
+                }
+                else if (partyCustomAttribute.DataType == "bool" || partyCustomAttribute.DataType == "boolean")
+                {
+                    <input type="radio" name="partyCustomAttributeValues[@partyCustomAttribute.Id]" @(partyCustomAttribute.Value == "true" ? "checked" : "") value="true" /><label>True</label>
+                        <input type="radio" name="partyCustomAttributeValues[@partyCustomAttribute.Id]" @(partyCustomAttribute.Value == "false" ? "checked" : "") value="false" /><label>False</label>
+                }
+                else
+                {
+                    <input type="text" name="partyCustomAttributeValues[@partyCustomAttribute.Id]" value="@partyCustomAttribute.Value" />
+
+                }
+            }
+        </td>
+    </tr>
+}
