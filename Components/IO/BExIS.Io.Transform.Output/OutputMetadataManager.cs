@@ -74,6 +74,28 @@ namespace BExIS.IO.Transform.Output
             return String.Empty;
         }
 
+        public static string GetSchemaDirectoryPathFromMetadataStructure(long metadataStructureId)
+        {
+            try
+            {
+                MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
+                MetadataStructure metadataStructure =
+                    metadataStructureManager.Repo.Get(metadataStructureId);
+
+                string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "Metadata",
+                    metadataStructure.Name);
+
+                if (!String.IsNullOrEmpty(path) && Directory.Exists(path))
+                    return path;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            return String.Empty;
+        }
+
         private static void storeGeneratedFilePathToContentDiscriptor(long datasetId, DatasetVersion datasetVersion, string title, string ext)
         {
 

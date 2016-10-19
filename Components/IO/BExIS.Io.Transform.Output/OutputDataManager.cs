@@ -46,11 +46,10 @@ namespace BExIS.IO.Transform.Output
             
             string path = "";
 
-            List<long> datatupleIds = datasetManager.GetDatasetVersionEffectiveTupleIds(datasetVersion);
-            long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
+            
 
             //ascii allready exist
-            if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals("c")) > 0)
+            if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(contentDescriptorTitle)) > 0)
             {
                 #region FileStream exist
 
@@ -63,6 +62,8 @@ namespace BExIS.IO.Transform.Output
                 }
                 else
                 {
+                    List<long> datatupleIds = datasetManager.GetDatasetVersionEffectiveTupleIds(datasetVersion);
+                    long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
 
                     path = generateDownloadFile(id, datasetVersion.Id, datastuctureId, "Data", ext, writer);
 
@@ -80,6 +81,9 @@ namespace BExIS.IO.Transform.Output
             else
             {
                 #region FileStream not exist
+
+                List<long> datatupleIds = datasetManager.GetDatasetVersionEffectiveTupleIds(datasetVersion);
+                long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
 
                 path = generateDownloadFile(id, datasetVersion.Id, datastuctureId, "data", ext, writer);
 
@@ -357,13 +361,14 @@ namespace BExIS.IO.Transform.Output
                     }
                 }
 
-                DatasetManager datasetManager = new DatasetManager();
 
                 foreach (var id in dsVersionTupleIds)
                 {
+                    DatasetManager datasetManager = new DatasetManager();
                     DataTuple dataTuple = datasetManager.DataTupleRepo.Query(d => d.Id.Equals(id)).FirstOrDefault();
                     dataTuple.Materialize();
                     dt.Rows.Add(ConvertTupleIntoDataRow(dt, dataTuple, sds, true));
+                    //dataTuple.Dematerialize();
                 }
             }
 
@@ -381,9 +386,6 @@ namespace BExIS.IO.Transform.Output
         /// <returns></returns>
         private static DataRow ConvertTupleIntoDataRow(DataTable dt, AbstractTuple t, StructuredDataStructure sts, bool useLabelsAsColumnName = false)
         {
-
-
-
             DataRow dr = dt.NewRow();
             string columnName = "";
             foreach (var vv in t.VariableValues)

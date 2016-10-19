@@ -51,9 +51,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
         [Display(Name = "Description Reference")]
         public string DescriptionNode { get; set; }
 
-        public string Classification { get; set; }
-
         public bool Active { get; set; }
+        public bool HasSchema { get; set; }
         public List<SearchMetadataNode> MetadataNodes { get; set; }
         public List<EntityModel> EntityClasses { get; set; }
 
@@ -62,6 +61,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
             EntityClasses = new List<EntityModel>();
             MetadataNodes = new List<SearchMetadataNode>();
             Entity = new EntityModel();
+            HasSchema = false;
         }
 
     }

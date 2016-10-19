@@ -24,20 +24,26 @@
           columns.Bound(c => c.Name);
           columns.Bound(c => c.Entity.Name);
           columns.Bound(c => c.Entity.ClassPath).Hidden(true);
-          columns.Bound(c => c.Classification);
           columns.Bound(c => c.TitleNode);
           columns.Bound(c => c.DescriptionNode);
           columns.Bound(c => c.Active).Width(85);
           columns.Template(@<text>
-                               <button type="button" class="bx bx-grid-function bx-edit" onclick="metadataStructureEdit_onClick('@item.Name', @item.Id)" ></button>
-                               <button type="button" class="bx bx-grid-function bx-trash" onclick="metadataStructureDelete_onClick('@item.Id', @item.Id)"></button>
+                               @{
+                                   string className = item.HasSchema ? "" : "bx-disabled";
+                                   string disabled = item.HasSchema ? "" : "disabled = disabled";
+                               }
+
+                               <button type="button" class="bx bx-grid-function bx-edit" onclick="metadataStructureEdit_onClick('@item.Name', @item.Id)" title="Edit @item.Name"></button>
+                               <button type="button" class="bx bx-grid-function bx-trash" onclick="metadataStructureDelete_onClick('@item.Id', @item.Id)"title="Delete @item.Name"></button>
+                               @Html.ActionLink(" ", "DownloadSchema", "ManageMetadataStructure", new {id = @item.Id}, new {@class = "bx bx-grid-function bx-download "+className, title = "Download xsd schema", disabled })
                             </text>)
-                  .ClientTemplate("<button type=\"button\" class=\"bx bx-grid-function bx-edit\" onclick=\"userEdit_onClick(\'<#= Username #>\', <#= Id #>);\" value=\"<#= Id #>\"></button>" +
-                                  "<button type=\"button\" class=\"bx bx-grid-function bx-trash\" onclick=\"userDelete_onClick(\'<#= Username #>\', <#= Id #>);\" value=\"<#= Id #>\"></button>")
-                  .Width(70);
+                  .ClientTemplate("<button type=\"button\" class=\"bx bx-grid-function bx-edit\" onclick=\"userEdit_onClick(\'<#= Username #>\', <#= Id #>);\" value=\"<#= Id #>\" title=\"Edit <#= Id #>\"></button>" +
+                                  "<button type=\"button\" class=\"bx bx-grid-function bx-trash\" onclick=\"userDelete_onClick(\'<#= Username #>\', <#= Id #>);\" value=\"<#= Id #>\" title=\"Delete <#= Id #>\" ></button>" +
+                                  "@Html.ActionLink(\"hallo\", \"DownloadSchema\", \"ManageMetadataStructure\", new { id = <#= Id #> }, new { @class = \"bx bx-grid-function bx-download\", title=\"Download xsd schema\" })")
+                  .Width(100);
 
       })
-      
+
       .Filterable()
       .Sortable()
         .ClientEvents(clientEvents =>
@@ -105,6 +111,8 @@
             });
         }
     }
+
+
 
     function OnSuccess() {
 

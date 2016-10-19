@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -9,6 +10,7 @@ using BExIS.Ddm.Model;
 using BExIS.Ddm.Providers.LuceneProvider;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
+using BExIS.IO.Transform.Output;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Objects;
 using BExIS.Web.Shell.Areas.DCM.Models;
@@ -16,8 +18,13 @@ using BExIS.Web.Shell.Models;
 using BExIS.Xml.Helpers;
 using BExIS.Xml.Helpers.Mapping;
 using BExIS.Xml.Services;
+using Ionic.Zip;
+using NHibernate.Loader.Custom;
 using NHibernate.Util;
 using Telerik.Web.Mvc;
+using Vaiona.Utils.Cfg;
+using Vaiona.Web.Extensions;
+using Vaiona.Web.Mvc.Models;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
 {
@@ -26,6 +33,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         // GET: DCM/ManageMetadataStructure
         public ActionResult Index()
         {
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Manage Metadata Structure", this.Session.GetTenant());
+
+
             return View(GetDefaultModel());
         }
 
@@ -75,6 +85,13 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             xpath = XmlDatasetHelper.GetInformationPath(metadataStructure,
                 NameAttributeValues.description);
+
+            //check if xsd exist
+            string schemapath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "Metadata",
+                metadataStructure.Name);
+
+            if (Directory.Exists(schemapath) && Directory.GetFiles(schemapath).Length > 0)
+                metadataStructureModel.HasSchema = true;
 
             var firstOrDefault = metadataStructureModel.MetadataNodes.Where(e => e.XPath.Equals(xpath)).FirstOrDefault();
             if (firstOrDefault != null)
@@ -179,7 +196,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             EntityManager entityManager = new EntityManager();
 
             List<EntityModel> tmp = new List<EntityModel>();
-            entityManager.GetAllEntities().ForEach(e=> tmp.Add(
+            entityManager.GetAllEntities().Where(e=>e.UseMetadata).ForEach(e=> tmp.Add(
                     new EntityModel()
                     {
                         Name = e.Name,
@@ -255,5 +272,27 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             return Json(false);
         }
+
+        public ActionResult DownloadSchema(long id)
+        {
+            MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
+            MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(id);
+            string name = metadataStructure.Name;
+
+            string path = OutputMetadataManager.GetSchemaDirectoryPathFromMetadataStructure(id);
+
+            ZipFile zip = new ZipFile();
+            if (Directory.Exists(path))
+                zip.AddDirectory(path);
+
+            MemoryStream stream = new MemoryStream();
+            zip.Save(stream);
+            stream.Position = 0;
+            var result = new FileStreamResult(stream, "application/zip")
+            { FileDownloadName = name+".zip" };
+
+            return result;
+        }
+
     }
 }

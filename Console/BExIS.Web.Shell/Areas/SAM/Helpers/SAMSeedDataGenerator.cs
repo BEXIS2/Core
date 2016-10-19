@@ -44,7 +44,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Helpers
             // Entities
             EntityManager entityManager = new EntityManager();
 
-            entityManager.CreateEntity("Dataset", "BExIS.Dlm.Entities.Data.Dataset", "BExIS.Dlm.Entities");
+            entityManager.CreateEntity("Dataset", "BExIS.Dlm.Entities.Data.Dataset", "BExIS.Dlm.Entities",true,true);
 
             // Subjects
             SubjectManager subjectManager = new SubjectManager();
