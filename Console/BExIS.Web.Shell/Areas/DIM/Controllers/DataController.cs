@@ -19,10 +19,11 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
 {
     /// <summary>
     /// This class is designed as a Web API to allow various client tools request datasets or a view on data sets and get the result in 
-    /// XML, JSON, or CSV formats.
+    /// either of XML, JSON, or CSV formats.
     /// The design follows the RESTFull pattern mentioned in http://www.asp.net/web-api/overview/older-versions/creating-a-web-api-that-supports-crud-operations
-    /// CSV formatter is implements in the DataTupleCsvFormatter class in the Models folder. The formatter is registered in the WebApiConfig as an automatic formatter,
-    /// so if the clinet sets the request's Mime type to text/csv, this formatter will be automatically engaged. text/xml and text/json return XML and JSON content accordingly
+    /// CSV formatter is implemented in the DataTupleCsvFormatter class in the Models folder.
+    /// The formatter is registered in the WebApiConfig as an automatic formatter, so if the clinet sets the request's Mime type to text/csv, this formatter will be automatically engaged.
+    /// text/xml and text/json return XML and JSON content accordingly.
     /// </summary>
     public class DataController : ApiController
     {
@@ -112,7 +113,7 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
             throw new HttpResponseException(HttpStatusCode.NotFound);
         }
 
-        // PUT: api/Datasets/5
+        // PUT: api/data/5
         /// <summary>
         /// Updates an existing dataset
         /// </summary>

@@ -1,0 +1,256 @@
+﻿@using Telerik.Web.Mvc.UI
+@using BExIS.Web.Shell.Areas.RPM.Models
+@model BExIS.Web.Shell.Areas.RPM.Models.AttributePreviewModel
+
+<table class="bx-rpm-attributeheader">
+    <tr>
+        <td colspan="2"><h2>Variable Templates</h2></td>
+    </tr>
+    <tr>
+        <td class="bx-rpm-sort">
+            <span class="bx-rpm-filterCollapse" onclick="javascript:clickFilter()">
+                Filter 
+                <span id="filterCollapse" class="bx bx-angle-double-down"></span>
+            </span>
+            <span class="bx-rpm-activefilter"></span>
+        </td>
+        <td class="bx-rpm-sortdropdown">
+            Sort by
+            <select class="bx-dropdown bx-rpm-dropdown">
+                <option value="">no Sorting</option>
+                <option value="name,true">Name (ascending)</option>
+                <option value="name">Name (descending)</option>
+                <option value="id,true">Id (ascending)</option>
+                <option value="id">Id (descending)</option>
+                <option value="unit,true">Unit (ascending)</option>
+                <option value="unit">Unit (descending)</option>
+                <option value="datatype,true">Data Type (ascending)</option>
+                <option value="datatype">Data Type (descending)</option> 
+            </select>
+            <div class="t-arrow-down bx-rpm-dropdownArrow"></div>
+        </td>
+    </tr>
+    <tr>
+        <td class="bx-rpm-filter collapsed" colspan="2" id="filter" style="display:none;">
+            <div id="filterContainer" style="display:none;">
+                <h3 class="bx-rpm-loading"><span class="fa fa-spinner fa-pulse"></span> Loading Filters</h3>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div class="bx-rpm-attribute-container" id="Results">
+    <div class="bx-rpm-attribute-drag-drop">
+        @{
+            string cssId = "";
+            string cssClass = "";
+        }
+        @foreach (AttributePreviewStruct aps in Model.AttributePreviews)
+        {        
+            cssId = "attribute_" + aps.Id;
+            cssClass = aps.Id + " bx-rpm-attribute";
+
+            <div class="bx-rpm-attribute-item @cssClass" id="@cssId">
+                <table>
+                    <tr class="hidden">
+                        <td id="Id">@aps.Id</td>
+                        <td id="Name">@aps.Name.ToLower()</td>
+                        <td id="Unit">@aps.Unit.Name.ToLower()</td>
+                        <td id="DataType">@aps.DataType.ToLower()</td>
+                    </tr>
+                    <tr>
+                        <td class="id">
+                            <div class="bx-rpm-label">Id</div>
+                            <div class="bx-rpm-text" title="@aps.Id">@aps.Id</div>
+                        </td>
+                        <td class="name">
+                            <div class="bx-rpm-label">Name</div>
+                            <div class="bx-rpm-text" title="@aps.Name">@aps.Name</div>
+                        </td>
+                        <td class="unit">
+                            <div class="bx-rpm-label">Unit</div>
+                            <div class="bx-rpm-text" title="@aps.Unit.Name">@aps.Unit.Name</div>
+                        </td>
+                        <td class="datatype">
+                            <div class="bx-rpm-label">Data Type</div>
+                            <div class="bx-rpm-text" title="@aps.DataType">@aps.DataType</div>
+                        </td>
+                        <td class="bx-rpm-expand"><span id="attributecollapse" class="bx bx-angle-double-down"></span></td>
+                        <td class="bx-rpm-select" value="@aps.Id" name="@aps.Name"><span class="bx bx-next"></span></td>
+                    </tr>
+                    <tr class="hidden hiddenelements">
+                        <td colspan="6">
+                            <div class="bx-rpm-label">Description</div>
+                            <div class="bx-rpm-text">
+                                @aps.Description
+                            </div>
+                        </td>
+                    </tr>
+
+                    @if(aps.Constraints.Count > 0)
+                    {
+                    <tr class="hidden hiddenelements">
+                        <td colspan="6">
+                            <div class="bx-rpm-label">Constraints</div>
+                            <div class="bx-rpm-text">
+                                <ul>
+                                    @foreach (KeyValuePair<long, string> c in aps.Constraints)
+                                    {
+                                        <li>@c.Value</li>
+                                    }
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                    }
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        resizeAttributeContainer(120);
+        initIsotope();
+    });
+    function initIsotope() {
+        // init Isotope
+        var $attributeGrid = $('.bx-rpm-attribute-drag-drop').isotope({
+            itemSelector: '.bx-rpm-attribute-item',
+            layoutMode: 'vertical',
+            transitionDuration: '1.0s',
+            getSortData: {
+                name: '#Name',
+                id: '#Id parseInt',
+                description: '.description',
+                unit: '#Unit',
+                datatype: '#DataType',
+                category: '[data-category]',
+                weight: function (itemElem) {
+                    var weight = $(itemElem).find('.weight').text();
+                    return parseFloat(weight.replace(/[\(\)]/g, ''));
+                }
+            }
+        });
+
+      // bind sort button click
+        $('.bx-rpm-sortdropdown').on('change', 'select', function () {
+            var sortValue = $(this).val().split(',');
+            if (sortValue[1] == 'true') {
+                $attributeGrid.isotope({ sortBy: sortValue[0], sortAscending: true });
+            }
+            else {
+                $attributeGrid.isotope({ sortBy: sortValue[0], sortAscending: false });
+            }
+        });
+
+        $('#filterContainer').on('click', '.bx-rpm-filterCheckbox', function () {
+            var filterValue = setFilter(this);
+            $attributeGrid.isotope({ filter: filterValue });
+
+            var append = true;
+
+            for (var i = 0; i < $('.bx-rpm-activefilter .bx-button').length; i++) {
+                if ($('.bx-rpm-activefilter .bx-button')[i].getAttribute('value') == $(this).attr('id')) {
+                    $('.bx-rpm-activefilter .bx-button')[i].parentNode.removeChild($('.bx-rpm-activefilter .bx-button')[i]);
+                    append = false;
+                    break;
+                }
+            }
+
+            if (append) {
+                var filterItem = $(this).parents('.bx-rpm-filterItem')
+                var filterElement = $(document.createElement('button'));
+                filterElement.addClass('bx-button smaller');
+                filterElement.attr('id', 'removefilter')
+                filterElement.attr('value', $(this).attr('id'));
+                filterElement.text(filterItem.find('.bx-rpm-filterCheckboxLable').text().split(' ')[0]);
+
+                var filterRemove = $(document.createElement('span'));
+                filterRemove.addClass('bx fa-times bx-rpm-removefilter')
+                filterElement.append(filterRemove);
+                $('.bx-rpm-activefilter').append(filterElement);
+            }
+        });
+
+        $('.bx-rpm-activefilter').on('click', '.bx-rpm-removefilter', function () {
+            var filterElement = $(this).parents('#removefilter');
+            var filterValue = setFilter($('#' + filterElement.attr('value')));
+            $attributeGrid.isotope({ filter: filterValue });
+            filterElement.remove();
+        });
+
+        $('#resetFilter').on('click', function () {
+            var filterValue = resetFilter();
+            $attributeGrid.isotope({ filter: filterValue });
+        });
+
+        $attributeGrid.on('click', '.bx-rpm-attribute-item #attributecollapse', function () {
+            var attributeElement = $(this).parents('.bx-rpm-attribute-item');
+            var hiddenElements = attributeElement.find('.hiddenelements');
+            if (hiddenElements.hasClass('hidden')) {
+                $(this).removeClass('bx-angle-double-down');
+                $(this).addClass('bx-angle-double-up');
+            }
+            else {
+                $(this).removeClass('bx-angle-double-up');
+                $(this).addClass('bx-angle-double-down');
+            }
+            hiddenElements.toggleClass('hidden');
+            $attributeGrid.isotope('layout');
+        });
+    }
+
+    function clickFilter() {
+        if ($('#filter').hasClass('collapsed')) {
+            if ($('#filterContainer .bx-rpm-filterContainer').length == 0) {
+                loadFilter();
+            }
+            $('#filter').slideDown('slow');          
+            $('#filter').removeClass('collapsed');
+            $('#filterCollapse').addClass('bx-angle-double-up');
+            $('#filterCollapse').removeClass('bx-angle-double-down');
+
+        }
+        else {
+            $('#filter').slideUp('slow');
+            $('#filter').addClass('collapsed');
+            $('#filterCollapse').addClass('bx-angle-double-down');
+            $('#filterCollapse').removeClass('bx-angle-double-up');
+        }
+        $('#filterContainer').slideToggle('slow');
+        resizeAttributeContainer(600);
+    }
+
+    function loadFilter() {
+        $.get('@Url.Action("_attributeFilterBinding", "DataStructureEdit", new { area = "RPM"} )', function (data) {
+            $('#filterContainer').html(data);
+        });
+    }
+
+    $(window).resize(function () {
+        setTimeout(function () {
+            $('.bx-rpm-attribute-container').height(getAttibuteContainerSize());
+        }, 120);
+    });
+
+    function resizeAttributeContainer(delay) {
+        setTimeout(function () {
+            //$('.bx-rpm-container').height($(window).height() - $('.bx-rpm-attributeheader').height() - 150);
+
+            if ($('.bx-rpm-attribute-container').height() < getAttibuteContainerSize()) {
+                $('.bx-rpm-attribute-container').animate({
+                    'height': getAttibuteContainerSize()
+                });
+            }
+            else {
+                $('.bx-rpm-attribute-container').height(getAttibuteContainerSize());
+            }
+        }, delay);
+    }
+
+    function getAttibuteContainerSize(){
+        return $(window).height() - $('.bx-rpm-attributeheader').height() - 150;
+    }
+</script>

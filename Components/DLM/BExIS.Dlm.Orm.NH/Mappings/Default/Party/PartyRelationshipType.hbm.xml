@@ -24,7 +24,7 @@
       <column name="Description"  />
     </property>
 
-    <property name="IndicatesHierarchy" type="Boolean" >
+    <property name="IndicatesHierarchy" type="yes_no" >
       <column name="IndicatesHierarchy"  />
     </property>
 
