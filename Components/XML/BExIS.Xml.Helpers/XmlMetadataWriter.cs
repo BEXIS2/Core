@@ -153,9 +153,11 @@ namespace BExIS.Xml.Helpers
 
                 foreach (MetadataNestedAttributeUsage nestedUsage in mca.MetadataNestedAttributeUsages)
                 {
+                    Debug.WriteLine("MetadataCompoundAttribute:            " + element.Name);
+                    Debug.WriteLine("*************************:            " + element.Name);
                     //XElement x = element.Descendants().Where(e => e.Name.Equals(nestedUsage.Member.Name)).First();
                     XElement x = AddAndReturnAttribute(element, nestedUsage, 1);
-                    //Debug.WriteLine("ADDDDDDDD:            " + element.Name);
+                    
                     x = setChildren(x, nestedUsage);
                 }
             }
@@ -426,8 +428,11 @@ namespace BExIS.Xml.Helpers
                     element.SetAttributeValue("number", number);
                     role.Add(element);
                     current.Add(role);
+                    
+                    Debug.WriteLine("Element:            " + element.Name);
 
-                    return element;
+
+                return element;
 
                 }
                 else

@@ -1874,7 +1874,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                 XDocument metadataXml = xmlMetadatWriter.CreateMetadataXml(Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]));
 
-                // locat path
+                //local path
                 //string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "metadataTemp.Xml");
 
                 TaskManager.AddToBus(CreateTaskmanager.METADATA_XML, metadataXml);
