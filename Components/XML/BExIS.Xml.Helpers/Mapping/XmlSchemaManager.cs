@@ -11,6 +11,7 @@ using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
+using BExIS.IO;
 using BExIS.Xml.Models.Mapping;
 using BExIS.Xml.Services;
 using NHibernate.Criterion;
@@ -1234,7 +1235,7 @@ namespace BExIS.Xml.Helpers.Mapping
 
                     //unit
                     // it is the second time I am seeing this cose segment, would be good to factor it out to a function
-                    Unit noneunit = unitManager.Repo.Get().Where(u => u.Name.ToLower().Equals("none")).FirstOrDefault();
+                    Unit noneunit = unitManager.Repo.Get().Where(u => u.Name.Equals("none")).First();
                     if (noneunit == null)
                         unitManager.Create("none", "none", "If no unit is used.", null, MeasurementSystem.Unknown); // null diemsion to be replaced
 
@@ -1979,6 +1980,59 @@ namespace BExIS.Xml.Helpers.Mapping
         }
 
         #endregion
+
+        #endregion
+
+        #region delete Schema
+        /// <summary>
+        /// Delete all depending xsdFiles under the workspace
+        /// && all generated mapping files
+        /// </summary>
+        /// <param name="metadataStructure"></param>
+        /// <returns></returns>
+        public static bool Delete(MetadataStructure metadataStructure)
+        {
+            string directoryPath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "Metadata",
+                metadataStructure.Name);
+
+            string mappingFileDirectory = AppConfiguration.GetModuleWorkspacePath("DIM");
+
+            // delete all mapping files
+            // delete export mappings
+            List<string> mappingFilPaths =
+                XmlDatasetHelper.GetAllTransmissionInformationFromMetadataStructure(metadataStructure.Id,
+                    TransmissionType.mappingFileExport, AttributeNames.value).ToList();
+
+            if (mappingFilPaths.Count > 0)
+            {
+                foreach (var file in mappingFilPaths)
+                {
+                    FileHelper.Delete(Path.Combine(mappingFileDirectory,file));
+                }
+            }
+
+            // delete import mappings
+            mappingFilPaths =
+                XmlDatasetHelper.GetAllTransmissionInformationFromMetadataStructure(metadataStructure.Id,
+                    TransmissionType.mappingFileImport, AttributeNames.value).ToList();
+
+            if (mappingFilPaths.Count > 0)
+            {
+                foreach (var file in mappingFilPaths)
+                {
+                    FileHelper.Delete(Path.Combine(mappingFileDirectory, file));
+                }
+            }
+
+            // deleting all xsds
+            if (Directory.Exists(directoryPath))
+                Directory.Delete(directoryPath,true);
+
+            if (!Directory.Exists(directoryPath)) return true;
+
+            return false;
+        }
+
 
         #endregion
     }

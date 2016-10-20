@@ -14,6 +14,11 @@ namespace BExIS.Dlm.Entities.Party
     /// </summary>
     public class PartyRelationshipType: BaseEntity
     {
+        public PartyRelationshipType()
+        {
+            PartyRelationships = new List<PartyRelationship>();
+            AssociatedPairs = new List<PartyTypePair>();
+        }
         #region Attributes
         public virtual string Title { get; set; }
         public virtual string Description { get; set; }

@@ -18,7 +18,6 @@ namespace BExIS.Web.Shell.Areas.SAM.Helpers
         private static void createSecuritySeedData()
         {
 
-            //ToDo ADD Form Controller from DCM and set it public 
             #region Security
 
             // Authenticators
@@ -45,7 +44,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Helpers
             // Entities
             EntityManager entityManager = new EntityManager();
 
-            entityManager.CreateEntity("Dataset", "BExIS.Dlm.Entities.Data.Dataset", "BExIS.Dlm.Entities");
+            entityManager.CreateEntity("Dataset", "BExIS.Dlm.Entities.Data.Dataset", "BExIS.Dlm.Entities",true,true);
 
             // Subjects
             SubjectManager subjectManager = new SubjectManager();
@@ -202,6 +201,9 @@ namespace BExIS.Web.Shell.Areas.SAM.Helpers
             Task t32 = taskManager.CreateTask("SAM", "Dataset", "*");
             t32.Feature = f8;
             taskManager.UpdateTask(t32);
+
+            Task t34 = taskManager.CreateTask("DCM", "Form", "*");
+            taskManager.UpdateTask(t34);
 
             // Feature Permissions
             PermissionManager permissionManager = new PermissionManager();

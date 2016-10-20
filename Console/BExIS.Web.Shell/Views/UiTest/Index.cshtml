@@ -206,6 +206,14 @@
 
 </div>
 <h3>TEST EntitySelectorView</h3>
+
+<div>
+    <h1>JQuery AutoSize</h1>
+
+    @Html.TextArea("myTextarea");
+</div>
+
+
 <div>
     @*@Html.Partial("_EnititySelectorView", BexisModelManager.LoadEntitySelectorModel<Facet>(facets, null));*@
 </div>
@@ -728,25 +736,26 @@
 
 <script type="text/javascript">
 
-        $(document).ready(function () {
-            resetAllTelerikIconTitles();
-        });
+    $(document).ready(function () {
+        resetAllTelerikIconTitles();
+        autosize($('textarea'));
+    });
 
-        function onChange(e) {
+    function onChange(e) {
 
-        }
+    }
 
-        function onSelect(e) {
-            var detailWindow = $("#MoreWindow").data("tWindow");
-            detailWindow.center().open();
-        }
+    function onSelect(e) {
+        var detailWindow = $("#MoreWindow").data("tWindow");
+        detailWindow.center().open();
+    }
 
-        function openAlertDialog() {
-            bx_openDialog("#alertDialog", "alert");
-        }
+    function openAlertDialog() {
+        bx_openDialog("#alertDialog", "alert");
+    }
 
-        function openMessageDialog() {
-            bx_openDialog("#messageDialog", "message");
-        }
+    function openMessageDialog() {
+        bx_openDialog("#messageDialog", "message");
+    }
 
 </script>

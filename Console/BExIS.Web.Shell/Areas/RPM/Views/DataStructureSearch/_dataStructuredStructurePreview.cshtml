@@ -5,8 +5,8 @@
 
 
 @{
-    Html.Telerik().Grid<VariablePreviewStruct>()
-        .Name("dataStructurePreviewGrid" + Model)
+    Html.Telerik().Grid<VariablePreview>()
+        .Name(Model + "_dataStructurePreviewGrid")
         .HtmlAttributes(new { @class = "bx-rpm-previewGrid" })
         .DataBinding(dataBinding => dataBinding
             .Ajax()
