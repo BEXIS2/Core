@@ -23,11 +23,11 @@
 <script type="text/javascript">
     $(function () {
         $.get('@Url.Action("_attributeResultBinding", "DataStructureEdit", new { area = "RPM"} )', function (data) {
-            $('#SearchResult').html(data);
+            $('#SearchResult').html(data);           
+        });
 
-            $.get('@Url.Action("_dataStructureBinding", "DataStructureEdit", new { area = "RPM", dataStructureId = Model} )', function (data) {
-                $('#DataStructure').html(data);
-            });
+        $.get('@Url.Action("_dataStructureBinding", "DataStructureEdit", new { area = "RPM", dataStructureId = Model} )', function (data) {
+            $('#DataStructure').html(data);
         });
     });
 
@@ -38,7 +38,7 @@
             e.setAttribute('checked', 'checked');
     }
 
-    function createMessageWindow(data, title) {
+    function createMessageWindow(data, title, type, id) {
         var windowElement = $.telerik.window.create({
             title: title,
             html: data,
@@ -54,10 +54,72 @@
         });
 
         windowElement.attr('id', 'messageWindow');
+        windowElement.attr('type', type);
+        windowElement.attr('value', id);
         var window = $(windowElement).data('tWindow');
         window.center().open();
 
         resetAllTelerikIconTitles();
+    }
+
+    function messageWindowCancel(id) {
+        if ($("#messageWindow").attr('type')) {
+            if ($("#messageWindow").attr('type').toLowerCase() == 'datastructure') {
+                if ($("#messageWindow").length > 0) {
+                    $("#messageWindow").data('tWindow').destroy();
+                }
+                if ($("#windowCreate").length > 0) {
+                    $("#windowCreate").fadeToggle('fast');
+                }
+                if (id == "" || id == 0) {
+                    window.location.href = "/RPM/DataStructureSearch";
+                }
+                else {
+                    lock();
+                }
+            }
+            else if ($("#messageWindow").attr('type').toLowerCase() == 'dataattribure') {
+                if (id == "" || id == 0) {
+                    $('#attribute_' + $('#messageWindow').attr('value') + ' #removeattribute').trigger('click');
+                }
+                $("#messageWindow").data('tWindow').destroy();
+            }
+        }
+        else {
+            $("#messageWindow").data('tWindow').destroy();
+        }
+    }
+
+    function messageWindowYes(id) {
+        var parameters = '/?Id=' + id;
+        if ($("#messageWindow").attr('type').toLowerCase() == 'datastructure') {
+            $.get('@Url.Action("deleteDataStructure", "DataStructureEdit")' + parameters, function (data) {
+                if ($(data).hasClass('bx-rpm-message') && $(data).attr('value').toLowerCase() == 'true') {
+                    $(data).replaceWith('.bx-rpm-message #' + id);
+                }
+                else if ($(data).hasClass('bx-rpm-message') && $(data).attr('id') == 'deleted') {
+                    if ($("#messageWindow").length > 0) {
+                        $("#messageWindow").data('tWindow').destroy();
+                    }
+                    if ($("#windowCreate").length > 0) {
+                        $("#windowCreate").fadeToggle('fast');
+                    }
+                    window.location.href = "/RPM/DataStructureSearch";
+                }
+            });
+        }
+        else if ($("#messageWindow").attr('type').toLowerCase() == 'dataattribure') {
+            $.get('@Url.Action("deleteDataAttribute", "DataStructureEdit")' + parameters, function (data) {
+                if ($(data).hasClass('bx-rpm-message') && $(data).attr('value').toLowerCase() == 'true') {
+                    $(data).replaceWith('.bx-rpm-message #' + id);
+                }
+                else if ($(data).hasClass('bx-rpm-message') && $(data).attr('id') == 'deleted') {
+                    $('.bx-rpm-attribute-functions #removeattribute').attr('value', $('#messageWindow').attr('value'));
+                    $('.bx-rpm-attribute-functions #removeattribute').trigger('click');
+                    $("#messageWindow").data('tWindow').destroy();
+                }
+            });
+        }
     }
 
 </script>

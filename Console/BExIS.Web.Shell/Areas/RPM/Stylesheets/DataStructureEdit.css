@@ -96,13 +96,6 @@
     max-height:75px;
 }
 
-
-.bx-rpm-attribute-container .bx-rpm-label,
-.bx-rpm-variable-container .bx-rpm-label{
-    font-size: 8pt;
-    margin:0;
-}
-
 .bx-rpm-attribute-container .bx-rpm-text,
 .bx-rpm-variable-container .bx-rpm-text{
     margin:0px;
@@ -154,6 +147,7 @@
 
 .bx-rpm-attribute-container .bx-rpm-select,
 .bx-rpm-attribute-container .bx-rpm-expand,
+.bx-rpm-attribute-container .bx-rpm-delete,
 .bx-rpm-variable-container .bx-rpm-delete,
 .bx-rpm-variable-container .bx-rpm-expand{
     vertical-align:middle;
@@ -199,14 +193,20 @@
     border-spacing:0px;
 }
 
+.bx-rpm-selectdropdown .bx-dropdown,
 .bx-rpm-sortdropdown .bx-dropdown {
     width:200px;
-    height:25px;
+    height:30px;
     z-index:10;
     position:relative;
     margin: 0px 0px 3px 0px;
 }
 
+.bx-rpm-selectdropdown .bx-dropdown{
+    width:372px;
+}
+
+.bx-rpm-selectdropdown .t-arrow-down.bx-rpm-dropdownArrow,
 .bx-rpm-sortdropdown .t-arrow-down.bx-rpm-dropdownArrow {
     position:relative;
     right: 23px;
@@ -311,6 +311,8 @@
     resize: none;
 }
 
+.bx-rpm-attribute-functions,
 .bx-rpm-dataStructure-functions{
     margin-top: 10px;
+    text-align:right;
 }

@@ -7,7 +7,7 @@ using BExIS.Web.Shell.Areas.RPM.Classes;
 
 namespace BExIS.Web.Shell.Areas.RPM.Models
 {
-    public struct UnitStruct
+    public struct ItemStruct
     {
         public long Id { get; set; }
         public string Name { get; set; }
@@ -83,6 +83,10 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
                     this.AttributeFilterDictionary["Data Type"].Values.Add(key, value);
                 }
             }
+            foreach (KeyValuePair<string, AttributeFilterStruct> kv in this.AttributeFilterDictionary)
+            {
+                kv.Value.Values = kv.Value.Values.OrderBy(v => v.Value.Name).ToDictionary(v => v.Key, v => v.Value);
+            }
             return this;
         }
     }
@@ -92,9 +96,10 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
         public long Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public UnitStruct Unit;
+        public ItemStruct Unit;
         public string DataType { get; set; }
         public Dictionary<long, string> Constraints { get; set; }
+        public bool inUse { get; set; }
 
 
         public AttributePreviewStruct()
@@ -102,9 +107,10 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
             this.Id = 0;
             this.Name = "";
             this.Description = "";
-            this.Unit = new UnitStruct();
+            this.Unit = new ItemStruct();
             this.DataType = "";
             this.Constraints = new Dictionary<long, string>();
+            this.inUse = false;
         }
 
         public AttributePreviewStruct fill(long attributeId)
@@ -117,7 +123,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
             DataContainerManager dataAttributeManager = new DataContainerManager();
             DataAttribute DataAttribute = dataAttributeManager.DataAttributeRepo.Get(attributeId);
 
-            return this.fill(DataAttribute);
+            return this.fill(DataAttribute, getConstraints);
         }
 
         public AttributePreviewStruct fill(DataAttribute dataAttribute)
@@ -145,14 +151,20 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
                     }
                 }
             }
+
+            if (dataAttribute.UsagesAsVariable.Count > 0)
+                this.inUse = true;
+            else
+                this.inUse = false;
+
             return this;
         }
     }
     public class VariablePreviewStruct : AttributePreviewStruct
     {
         public bool isOptional { get; set; }
-        public List<UnitStruct> convertibleUnits;
-        public AttributePreviewStruct Attribute;
+        public List<ItemStruct> convertibleUnits { get; set; }
+        public AttributePreviewStruct Attribute { get; set; }
 
 
         public VariablePreviewStruct()
@@ -161,11 +173,12 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
             this.Name = "";
             this.Description = "";
             this.isOptional = true;
-            this.Unit = new UnitStruct();
-            this.convertibleUnits = new List<UnitStruct>();
+            this.Unit = new ItemStruct();
+            this.convertibleUnits = new List<ItemStruct>();
             this.DataType = "";
             this.Constraints = new Dictionary<long, string>();
             this.Attribute = new AttributePreviewStruct();
+            this.inUse = false;
         }
 
         public VariablePreviewStruct fill(long attributeId)
@@ -221,12 +234,12 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
             return this;
         }
 
-        public List<UnitStruct> getUnitListByDimenstionAndDataType(long dimensionId, long dataTypeId)
+        public List<ItemStruct> getUnitListByDimenstionAndDataType(long dimensionId, long dataTypeId)
         {
-            List<UnitStruct> UnitStructs = new List<UnitStruct>();
+            List<ItemStruct> UnitStructs = new List<ItemStruct>();
             UnitManager unitmanager = new UnitManager();
             List<Unit> units = unitmanager.DimensionRepo.Get(dimensionId).Units.ToList();
-            UnitStruct tempUnitStruct = new UnitStruct();
+            ItemStruct tempUnitStruct = new ItemStruct();
             foreach (Unit u in units)
             {
                 if (u.Name.ToLower() != "none")
@@ -253,6 +266,38 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
             return UnitStructs;
         }
     }
+
+    public class AttributeEditStruct:AttributePreviewStruct
+    {
+        public ItemStruct DataType { get; set; }
+        public List<ItemStruct> Units { get; set; }
+        public List<ItemStruct> DataTypes { get; set; }
+
+        public AttributeEditStruct()
+        {
+            this.Id = 0;
+            this.Name = "";
+            this.Description = "";
+            this.Unit = new ItemStruct();
+            this.DataType = new ItemStruct();
+            this.Constraints = new Dictionary<long, string>();
+            this.inUse = false;
+            this.Units = new List<ItemStruct>();
+            this.DataTypes = new List<ItemStruct>();
+
+            foreach (Unit u in new UnitManager().Repo.Get())
+            {
+                this.Units.Add(new ItemStruct()
+                {
+                    Name = u.Name,
+                    Id = u.Id
+                });
+            }
+
+            this.Units = this.Units.OrderBy(u=>u.Name).ToList();
+        }
+    }
+
 
     public class AttributePreviewModel
     {

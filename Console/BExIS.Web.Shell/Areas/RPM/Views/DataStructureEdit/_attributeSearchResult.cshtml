@@ -18,14 +18,14 @@
             Sort by
             <select class="bx-dropdown bx-rpm-dropdown">
                 <option value="">no Sorting</option>
-                <option value="name,true">Name (ascending)</option>
-                <option value="name">Name (descending)</option>
-                <option value="id,true">Id (ascending)</option>
-                <option value="id">Id (descending)</option>
-                <option value="unit,true">Unit (ascending)</option>
-                <option value="unit">Unit (descending)</option>
-                <option value="datatype,true">Data Type (ascending)</option>
-                <option value="datatype">Data Type (descending)</option> 
+                <option class="name" value="name,true">Name &uArr;</option>
+                <option class="name" value="name,false">Name &dArr;</option>
+                <option class="id" value="id,true">Id &uArr;</option>
+                <option class="id" value="id,false">Id &dArr;</option>
+                <option class="unit" value="unit,true">Unit &uArr;</option>
+                <option class="unit" value="unit,false">Unit &dArr;</option>
+                <option class="datatype" value="datatype,true">Data Type &uArr;</option>
+                <option class="datatype" value="datatype,false">Data Type &dArr;</option>
             </select>
             <div class="t-arrow-down bx-rpm-dropdownArrow"></div>
         </td>
@@ -41,75 +41,21 @@
 
 <div class="bx-rpm-attribute-container" id="Results">
     <div class="bx-rpm-attribute-drag-drop">
-        @{
-            string cssId = "";
-            string cssClass = "";
-        }
         @foreach (AttributePreviewStruct aps in Model.AttributePreviews)
         {        
-            cssId = "attribute_" + aps.Id;
-            cssClass = aps.Id + " bx-rpm-attribute";
-
-            <div class="bx-rpm-attribute-item @cssClass" id="@cssId">
-                <table>
-                    <tr class="hidden">
-                        <td id="Id">@aps.Id</td>
-                        <td id="Name">@aps.Name.ToLower()</td>
-                        <td id="Unit">@aps.Unit.Name.ToLower()</td>
-                        <td id="DataType">@aps.DataType.ToLower()</td>
-                    </tr>
-                    <tr>
-                        <td class="id">
-                            <div class="bx-rpm-label">Id</div>
-                            <div class="bx-rpm-text" title="@aps.Id">@aps.Id</div>
-                        </td>
-                        <td class="name">
-                            <div class="bx-rpm-label">Name</div>
-                            <div class="bx-rpm-text" title="@aps.Name">@aps.Name</div>
-                        </td>
-                        <td class="unit">
-                            <div class="bx-rpm-label">Unit</div>
-                            <div class="bx-rpm-text" title="@aps.Unit.Name">@aps.Unit.Name</div>
-                        </td>
-                        <td class="datatype">
-                            <div class="bx-rpm-label">Data Type</div>
-                            <div class="bx-rpm-text" title="@aps.DataType">@aps.DataType</div>
-                        </td>
-                        <td class="bx-rpm-expand"><span id="attributecollapse" class="bx bx-angle-double-down"></span></td>
-                        <td class="bx-rpm-select" value="@aps.Id" name="@aps.Name"><span class="bx bx-next"></span></td>
-                    </tr>
-                    <tr class="hidden hiddenelements">
-                        <td colspan="6">
-                            <div class="bx-rpm-label">Description</div>
-                            <div class="bx-rpm-text">
-                                @aps.Description
-                            </div>
-                        </td>
-                    </tr>
-
-                    @if(aps.Constraints.Count > 0)
-                    {
-                    <tr class="hidden hiddenelements">
-                        <td colspan="6">
-                            <div class="bx-rpm-label">Constraints</div>
-                            <div class="bx-rpm-text">
-                                <ul>
-                                    @foreach (KeyValuePair<long, string> c in aps.Constraints)
-                                    {
-                                        <li>@c.Value</li>
-                                    }
-                                </ul>
-                            </div>
-                        </td>
-                    </tr>
-                    }
-                </table>
-            </div>
+            @Html.Partial("_attributeElement", aps)
         }
     </div>
 </div>
+<div class="bx-rpm-attribute-functions">
+    <button class="bx-button action" id="createAttribute" onclick="javascript:openAttrWindow(0)">Create Variable Template</button>
+    <button class="hidden" id="addAttribute" value="0">Add Variable Template to List</button>
+    <button class="hidden" id="removeattribute" value="0">remove Variable Template to List</button>
+</div>
 
 <script type="text/javascript">
+    var filterIds = [];
+
     $(function () {
         resizeAttributeContainer(120);
         initIsotope();
@@ -137,15 +83,27 @@
       // bind sort button click
         $('.bx-rpm-sortdropdown').on('change', 'select', function () {
             var sortValue = $(this).val().split(',');
-            if (sortValue[1] == 'true') {
-                $attributeGrid.isotope({ sortBy: sortValue[0], sortAscending: true });
-            }
-            else {
-                $attributeGrid.isotope({ sortBy: sortValue[0], sortAscending: false });
-            }
+            $attributeGrid.isotope({ sortBy: sortValue[0], sortAscending: (sortValue[1] == 'true') });
+            //$(this).find('.' + sortValue[0]).toggle();
+
         });
 
         $('#filterContainer').on('click', '.bx-rpm-filterCheckbox', function () {
+            if ($(this).hasClass('checked')) {
+                filterIds.splice(filterIds.indexOf($(this).attr('id')));
+            }
+            else {
+                var check = true;
+                for (i in filterIds) {
+                    if (filterIds[i] == $(this).attr('id')) {
+                        check = false;
+                        break;
+                    }
+                }
+
+                if (check)
+                    filterIds.push($(this).attr('id'));
+            }
             var filterValue = setFilter(this);
             $attributeGrid.isotope({ filter: filterValue });
 
@@ -165,7 +123,7 @@
                 filterElement.addClass('bx-button smaller');
                 filterElement.attr('id', 'removefilter')
                 filterElement.attr('value', $(this).attr('id'));
-                filterElement.text(filterItem.find('.bx-rpm-filterCheckboxLable').text().split(' ')[0]);
+                filterElement.text(filterItem.find('.bx-rpm-filterCheckboxLable').text().split('(')[0]);
 
                 var filterRemove = $(document.createElement('span'));
                 filterRemove.addClass('bx fa-times bx-rpm-removefilter')
@@ -186,28 +144,52 @@
             $attributeGrid.isotope({ filter: filterValue });
         });
 
-        $attributeGrid.on('click', '.bx-rpm-attribute-item #attributecollapse', function () {
+        $attributeGrid.on('click', '.bx-rpm-attribute-item .bx-rpm-expand', function () {
             var attributeElement = $(this).parents('.bx-rpm-attribute-item');
             var hiddenElements = attributeElement.find('.hiddenelements');
             if (hiddenElements.hasClass('hidden')) {
-                $(this).removeClass('bx-angle-double-down');
-                $(this).addClass('bx-angle-double-up');
+                $(this).find('#attributecollapse').removeClass('bx-angle-double-down');
+                $(this).find('#attributecollapse').addClass('bx-angle-double-up');
             }
             else {
-                $(this).removeClass('bx-angle-double-up');
-                $(this).addClass('bx-angle-double-down');
+                $(this).find('#attributecollapse').removeClass('bx-angle-double-up');
+                $(this).find('#attributecollapse').addClass('bx-angle-double-down');
             }
             hiddenElements.toggleClass('hidden');
             $attributeGrid.isotope('layout');
         });
+
+        $('.bx-rpm-attribute-functions #removeattribute').on('click', function () {
+            var attrId = $('.bx-rpm-attribute-functions #removeattribute').attr('value');
+            var attributeElement = $('.bx-rpm-attribute-container #attribute_' + attrId);
+            $attributeGrid.isotope('remove', attributeElement);
+            $attributeGrid.isotope('layout');
+        });
+
+        $('.bx-rpm-attribute-functions #addAttribute').on('click', function () {
+            var attrId = $('.bx-rpm-attribute-functions #addAttribute').attr('value');
+            var parameters = '/?attributeId=' + attrId;
+            $.get('@Url.Action("_getAttributeElement", "DataStructureEdit", new { area = "RPM" } )' + parameters, function (data) {
+                if ($(data).hasClass('bx-rpm-message')) {
+                    createMessageWindow(data, 'Add Variable Template '+ attrId, 'dataattribure', attrId);
+                }
+                else {
+                    $item = $(data);
+                    $attributeGrid.append($item).isotope('appended', $item);
+                    loadFilter();
+                    $('.bx-rpm-sortdropdown .bx-rpm-dropdown').val('id,false').change();
+                }
+            });
+            $attributeGrid.isotope('layout');
+        });
+
+
     }
 
     function clickFilter() {
         if ($('#filter').hasClass('collapsed')) {
-            if ($('#filterContainer .bx-rpm-filterContainer').length == 0) {
-                loadFilter();
-            }
-            $('#filter').slideDown('slow');          
+            loadFilter();
+            $('#filter').slideDown('slow');
             $('#filter').removeClass('collapsed');
             $('#filterCollapse').addClass('bx-angle-double-up');
             $('#filterCollapse').removeClass('bx-angle-double-down');
@@ -225,7 +207,11 @@
 
     function loadFilter() {
         $.get('@Url.Action("_attributeFilterBinding", "DataStructureEdit", new { area = "RPM"} )', function (data) {
+            $('.bx-rpm-activefilter .bx-rpm-removefilter').trigger('click');
             $('#filterContainer').html(data);
+            for (i in filterIds) {
+                $('.bx-rpm-filterContainer #' + filterIds[i]).trigger('click');
+            }
         });
     }
 
@@ -237,20 +223,65 @@
 
     function resizeAttributeContainer(delay) {
         setTimeout(function () {
-            //$('.bx-rpm-container').height($(window).height() - $('.bx-rpm-attributeheader').height() - 150);
-
-            if ($('.bx-rpm-attribute-container').height() < getAttibuteContainerSize()) {
-                $('.bx-rpm-attribute-container').animate({
-                    'height': getAttibuteContainerSize()
-                });
-            }
-            else {
-                $('.bx-rpm-attribute-container').height(getAttibuteContainerSize());
-            }
+            $('.bx-rpm-attribute-container').animate({
+                'height': getAttibuteContainerSize()
+            });           
         }, delay);
     }
 
     function getAttibuteContainerSize(){
-        return $(window).height() - $('.bx-rpm-attributeheader').height() - 150;
+        return $(window).height() - $('.bx-rpm-attributeheader').height() - $('.bx-rpm-attribute-functions').height() - 150;
+    }
+
+    function openAttrDelWindow(id, name, type) {
+        var parameters = '/?Id=' + id;
+
+        $.ajax({
+            type: 'GET',
+            url: '@Url.Action("_deleteDataAttributeBinding", "DataStructureEdit")' + parameters,
+            dataType: 'html',
+            success: function (data) {
+                createMessageWindow(data, 'Delete DataStructure ' + name + ' (' + id + ')', type, id);
+            }
+        });
+    }
+
+
+    function openAttrWindow(id) {
+        var parameters = '/?attributeId=' + id;
+        var title = 'Create Variable Template'
+        $.ajax({
+            type: 'GET',
+            url: '@Url.Action("_createAttributeBinding", "DataStructureEdit")' + parameters,
+            dataType: 'html',
+            success: function (data) {
+                var windowElement = $.telerik.window.create({
+                    title: title,
+                    html: data,
+                    contentUrl: "",
+                    actions: ["Close"],
+                    modal: true,
+                    resizable: false,
+                    draggable: true,
+                    scrollable: false,
+                    onClose: function () {
+                        $("#createAttributeWindow").data('tWindow').destroy();
+                    }
+                });
+
+                windowElement.attr('id', 'createAttributeWindow');
+                var window = $(windowElement).data('tWindow');
+                window.center().open();
+
+                resetAllTelerikIconTitles();
+            }
+        });
+    }
+
+    function addVariable(id,name){
+        if ($('.bx-rpm-dataStructure-functions').length > 0) {
+            $('.bx-rpm-dataStructure-functions #addVariableButton').attr('value', id + ',' + name);
+            $('.bx-rpm-dataStructure-functions #addVariableButton').trigger('click');
+        }
     }
 </script>

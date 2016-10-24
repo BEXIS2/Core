@@ -14,6 +14,7 @@
     margin: 5px;
 }
 
+.bx-errorMsg,
 .bx-rpm-error{
     color: #f24c24;
     font-size:10pt;
@@ -36,6 +37,51 @@
     float: left;
 }
 
+.bx-rpm-createAttributeContainer #buttons,
 .bx-rpm-createDataStructureContainer #buttons{
     text-align:right;
+}
+
+.bx-rpm-constrainTable .bx-rpm-label,
+.bx-rpm-attribute-container .bx-rpm-label,
+.bx-rpm-variable-container .bx-rpm-label{
+    font-size: 8pt;
+    margin:0;
+}
+
+.bx-rpm-constrainTable .bx-rpm-constrainlabel{
+    width:65px;
+}
+
+.bx-rpm-constrainTable input{
+    width:507px;
+}
+
+.bx-rpm-constrainTable input[type="checkbox"]{
+    width:30px;
+}
+
+.bx-rpm-constrainTable #domain_desc,
+.bx-rpm-constrainTable #pattern_desc,
+.bx-rpm-constrainTable #range_desc,
+.bx-rpm-constrainTable #range_min,
+.bx-rpm-constrainTable #range_max{
+    width:200px;
+}
+
+.bx-rpm-constrainTable .bx-rpm-container{
+    float:left;
+    margin:0 5px 0 5px;
+    vertical-align:middle;
+}
+
+.bx-rpm-constrainTable .bx-rpm-container.bx-rpm-checkbox{
+    text-align:center;
+}
+
+.bx-rpm-constrainTable .bx-info{
+    text-align:center;
+    vertical-align:middle;
+    margin-top:20px;
+    cursor:help !important;
 }

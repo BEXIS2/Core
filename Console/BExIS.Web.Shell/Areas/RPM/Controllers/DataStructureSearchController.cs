@@ -70,16 +70,16 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             return PartialView("_messageWindow", MessageModel.validateDataStructureDelete(Id));
         }
 
-        public ActionResult createDataStructure(long Id, string Name, bool isStructured, string Description = "", string cssId = "")
+        public ActionResult createDataStructure(long Id, string Name, bool isStructured, string Description = "", string cssId = "", bool inUse = false)
         {
-            MessageModel DataStructureValidation = storeDataStructure(Id, Name.Trim(), isStructured, Description.Trim(), cssId);
+            MessageModel DataStructureValidation = storeDataStructure(Id, Name.Trim(), isStructured, Description.Trim(), cssId, inUse);
             return PartialView("_message", DataStructureValidation);
         }
 
-        public MessageModel storeDataStructure(long Id, string Name, bool isStructured, string Description ="", string cssId = "")
+        public MessageModel storeDataStructure(long Id, string Name, bool isStructured, string Description ="", string cssId = "", bool inUse = false)
         {
             MessageModel DataStructureValidation = MessageModel.validateDataStructureInUse(Id);
-            if (DataStructureValidation.hasMessage)
+            if (DataStructureValidation.hasMessage && inUse == false)
             {
                 return DataStructureValidation;
             }

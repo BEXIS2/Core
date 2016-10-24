@@ -87,7 +87,7 @@
             }
             else
             {
-                <button class="bx-button small action" id="deleteButton" onclick="javascript:openDelWindow(@Model.Id,'@Model.Name')">Delete</button>
+                <button class="bx-button small action" id="deleteButton" onclick="javascript:openDelWindow(@Model.Id,'@Model.Name','datastructure')">Delete</button>
             }
         }
         <button class="bx-button small action" id="cancelButton">Cancel</button>
@@ -98,9 +98,10 @@
     var inUse = @Model.inUse.ToString().ToLower();
 
     $('.bx-rpm-createDataStructureContainer #saveButton').click(function () {
-        var parameters = '/?Id=' + $('.bx-rpm-createDataStructureContainer #id').val() + '&Name=' + $('.bx-rpm-createDataStructureContainer #name').val() + '&Description=' + $('.bx-rpm-createDataStructureContainer #description').val() + '&isStructured=' + $('.bx-rpm-createDataStructureContainer #isSructured:checked').val() + '&cssId=message';
+        var cssId = 'message';
+        var parameters = '/?Id=' + $('.bx-rpm-createDataStructureContainer #id').val() + '&Name=' + $('.bx-rpm-createDataStructureContainer #name').val() + '&Description=' + $('.bx-rpm-createDataStructureContainer #description').val() + '&isStructured=' + $('.bx-rpm-createDataStructureContainer #isSructured:checked').val() + '&cssId=' + cssId + '&inUse=' + inUse;
         $.get('@Url.Action(Action, "DataStructureSearch", new { area = "RPM"} )' + parameters, function (data) {
-            if ($(data).hasClass('bx-rpm-message') && $(data).attr('id') == 'message') {
+            if ($(data).hasClass('bx-rpm-message') && $(data).attr('id') == cssId) {
                 $(data).replaceAll('.bx-rpm-createDataStructureContainer #' + $(data).attr('id'));
                 showmessage($(data).attr('value').toLowerCase());
             }
@@ -147,7 +148,7 @@
         var parameters = '/?Id=' + $('.bx-rpm-createDataStructureContainer #id').attr('validationId') + '&Name=' + $('.bx-rpm-createDataStructureContainer #name').val() + '&cssId=' + cssId;
         $.get('@Url.Action("_validateDataStructureName", "DataStructureSearch", new { area = "RPM"} )' + parameters, function (data) {
             $(data).replaceAll('.bx-rpm-createDataStructureContainer #' + cssId);
-            console.log(data);
+
             createWondowShowmessage();
         });
     }
@@ -177,7 +178,7 @@
         }
     }
 
-    function openDelWindow(id, name) {
+    function openDelWindow(id, name, type) {
         if ($("#windowCreate")) {
             $("#windowCreate").fadeToggle('fast');
         }
@@ -188,7 +189,7 @@
             url: '@Url.Action("_deleteDataStructureBinding", "DataStructureSearch")' + parameters,
             dataType: 'html',
             success: function (data) {
-                createMessageWindow(data, 'Delete DataStructure ' + name + ' (' + id + ')');
+                createMessageWindow(data, 'Delete DataStructure ' + name + ' (' + id + ')', type, id);
             }
         });
     }

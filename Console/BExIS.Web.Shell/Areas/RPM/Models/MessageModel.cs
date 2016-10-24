@@ -100,7 +100,12 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
             }
             else
             {
-                return new MessageModel();
+                return new MessageModel()
+                {
+                    hasMessage = true,
+                    Message = "Something is wrong with Datastructure " + Id,
+                    CssId = "0"
+                };
             }
         }
 
@@ -158,6 +163,149 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
                 }
             }
             
+        }
+
+        public static MessageModel validateAttributeDelete(long Id)
+        {
+            DataAttribute dataAttribute = new DataContainerManager().DataAttributeRepo.Get(Id);
+            return validateAttributeDelete(Id, dataAttribute);
+        }
+
+        public static MessageModel validateAttributeDelete(long Id, DataAttribute dataAttribute)
+        {
+            if (dataAttribute != null && dataAttribute.Id != 0)
+            {
+
+                if (dataAttribute.UsagesAsVariable.Count == 0)
+                {
+                    return new MessageModel()
+                    {
+                        hasMessage = false,
+                        Message = "Are you sure you want to delete the Variable Temlate " + dataAttribute.Name + " (" + dataAttribute.Id + ").",
+                        CssId = dataAttribute.Id.ToString()
+                    };
+                }
+                else
+                {
+                    try
+                    {
+                        return new MessageModel()
+                        {
+                            hasMessage = true,
+                            Message = "Can't delete the Variable Temlate " + dataAttribute.Name + " (" + dataAttribute.Id + ").",
+                            CssId = dataAttribute.Id.ToString()
+                        };
+                    }
+                    catch
+                    {
+                        return new MessageModel()
+                        {
+                            hasMessage = true,
+                            Message = "Something is wrong with Variable Temlate " + Id,
+                            CssId = "0"
+                        };
+                    }
+                }
+            }
+            else
+            {
+                return new MessageModel()
+                {
+                    hasMessage = true,
+                    Message = "Something is wrong with Variable Temlate " + Id,
+                    CssId = "0"
+                };
+            }
+        }
+
+        public static MessageModel validateAttributeName(long Id, string Name, string cssId = "")
+        {
+            if (Name.Trim() == "" || string.IsNullOrEmpty(Name))
+            {
+                return new MessageModel()
+                {
+                    hasMessage = true,
+                    Message = "The Name field is required.",
+                    CssId = cssId
+                };
+            }
+            else
+            {
+                List<DataAttribute> dataAttributes = new DataContainerManager().DataAttributeRepo.Get().ToList();
+  
+                foreach (DataAttribute da in dataAttributes)
+                {
+                    if (Id != da.Id)
+                    {
+                        if (da.Name.Trim().ToLower() == Name.Trim().ToLower())
+                        {
+                            return new MessageModel()
+                            {
+                                hasMessage = true,
+                                Message = "A Variable Template with same Name already exists.",
+                                CssId = cssId
+                            };
+                        }
+                    }
+                }
+            }
+            return new MessageModel() { CssId = cssId };
+        }
+
+        public static MessageModel validateAttributeInUse(long Id)
+        {
+            DataContainerManager dataAttributeManager = new DataContainerManager();
+            DataAttribute dataAttribute = dataAttributeManager.DataAttributeRepo.Get(Id);
+            return validateAttributeInUse(Id, dataAttribute);
+        }
+
+        public static MessageModel validateAttributeInUse(long Id, DataAttribute dataAttribute)
+        {
+            if (dataAttribute != null && dataAttribute.Id != 0)
+            {
+                if (dataAttribute.UsagesAsVariable.Count > 0)
+                {
+                    try
+                    {
+                        return new MessageModel()
+                        {
+                            hasMessage = true,
+                            Message = "Can't save Variable Template " + dataAttribute.Name + " (" + Id + "), it's uesed by a Data Structure.",
+                            CssId = "inUse"
+                        };
+                    }
+                    catch
+                    {
+                        return new MessageModel()
+                        {
+                            hasMessage = true,
+                            Message = "Something is wrong with Variable Template " + Id,
+                            CssId = "0"
+                        };
+                    }
+                }
+                else
+                {
+                    return new MessageModel();
+                }
+            }
+            else
+            {
+                if (Id == 0)
+                {
+                    return new MessageModel();
+                }
+                else
+                {
+                    return new MessageModel()
+                    {
+                        hasMessage = true,
+                        Message = "Can't save Variable Template " + Id + ", it's uesed by a Data Structure.",
+                        CssId = "0"
+                    };
+                }
+            }
+
         }
     }
 }

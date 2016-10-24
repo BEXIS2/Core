@@ -15,7 +15,6 @@
                     e.OnDataBinding("dataStructureResultGrid_onDataBinding");
                     e.OnDataBound("dataStructureResultGrid_onDataBound");
                 })
-                .Filterable()
                 .Sortable(sorting => sorting.OrderBy(sortOrder => sortOrder.Add(c => c.Title)))
                 .Columns(columns =>
                 {
@@ -23,12 +22,11 @@
                         .Width(100);
                     columns.Bound(c => c.Title);
                     columns.Bound(c => c.Description);
-                    columns.Template(
-                    @<text>
-                    </text>
-                    )
+                    columns.Bound(c => c.Structured)
+                        .Filterable(false)
                         .HeaderHtmlAttributes(new { @class = "bx-rpm-gridfunction" });
                 })
+                .Filterable()
                 .ClientRowTemplate(
                     "<tr class='bx-rpm-datastructure-item' id='<#= Id #>' value='<#= Id #>, \"<#= Title #>\", \"<#= Description #>\", <#= Structured #>, <#= inUse #>' structured='<#= Structured #>' inuse='<#= inUse #>'>" +
                       "<td class='bx-rpm-result id'><#= Id #></td>" +
@@ -102,7 +100,7 @@
                 $('#' + id + '_collapse').remove();
             }
             //prepare UI for locked DataStructure
-            if ($('#' + id).attr('inuse') == 'true' && $('#' + id).attr('structured') == 'true') {
+            if ($('#' + id).attr('inuse') == 'true') {
                 $('#' + id + '_edit').removeClass('bx-edit');
                 $('#' + id + '_edit').addClass('bx-show');
             }
@@ -135,7 +133,6 @@
     function copyDatastructure(id, name){
         var parameters = '/?Id=' + id + '&Name=&isStructured=' + $('#' + id).attr('structured');
         $.get('@Url.Action("_copyDataStructure", "DataStructureSearch", new { area = "RPM"} )' + parameters, function (data) {
-            console.log(data);
             if ($(data).hasClass('bx-rpm-message') && $(data).attr('id') == 'redirect' || $(data).hasClass('bx-rpm-message') && $(data).attr('id') == 'refresh') {
                 $("#bx-rpm-dataStructureResultGrid .t-refresh").trigger('click');
             }
