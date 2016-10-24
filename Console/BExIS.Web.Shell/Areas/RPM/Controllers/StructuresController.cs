@@ -17,7 +17,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
         }
 
         // GET: api/Structures/5
-        public Structure Get(int id)
+        public Structure Get(long id)
         {
             // The model object, Structure, can not have access to the services, or data
             return new Structure(id);

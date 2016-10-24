@@ -36,24 +36,23 @@
     <div>
         <table>
             <tr>
-                <th>Dataset Id</th>
-                <th>Dataset Version Id</th>
+                <th style="width: 60px;">Version</th>
                 <th>Creation Date</th>
                 <th>Datarepository</th>
                 <th>Status</th>
+                <th style="width: 30px;"></th>
             </tr>
             @if (Model.RepoFilesDictionary.Count > 0)
             {
                 foreach (var file in Model.RepoFilesDictionary)
                 {
                     <tr>
-                        <td>@file.DatasetId</td>
                         <td>@file.DatasetVersionId</td>
                         <td>@file.CreationDate.ToLocalTime()</td>
                         <td>@file.DataRepository.Name</td>
                         <td>no status available</td>
+                        <td>@Html.ActionLink(" ","DownloadZip","Data", new { datarepo = file.DataRepository.Name, datasetid = file.DatasetId, datasetversionid = file.DatasetVersionId}, new {@class="bx bx-grid-function bx-download", title="Download"})</td>
                     </tr>
-                 
                 }
             }
             else

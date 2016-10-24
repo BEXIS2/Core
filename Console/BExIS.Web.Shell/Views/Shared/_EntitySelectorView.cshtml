@@ -166,7 +166,7 @@
         var idIndex = table.attr("idindex");
         var submitId = table.attr("submitid");
         var link = table.attr("link");
-        var dataid = $(e.row).find("td")[idIndex].innerText;
+        var dataid = $(e.row).find("td")[idIndex].innerHTML;
 
         console.log("submitbuttonid: " + submitId);
 

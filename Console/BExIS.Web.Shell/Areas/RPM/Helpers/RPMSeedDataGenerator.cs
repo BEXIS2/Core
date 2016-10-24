@@ -17,7 +17,9 @@ using BExIS.Xml.Services;
 using Vaiona.Utils.Cfg;
 using System.Data;
 using BExIS.Web.Shell.Areas.DCM.Controllers;
+using BExIS.Xml.Helpers.Mapping;
 using BExISMigration;
+using Remotion.Linq.Parsing;
 
 namespace BExIS.Web.Shell.Areas.RPM.Helpers
 {
@@ -57,8 +59,12 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
             createResearchPlan();
             //createSeedDataTypes();
             //createSIUnits();
-            createEmlDatasetAdv();
-            createABCD();
+            //createEmlDatasetAdv();
+            //createABCD();
+
+
+            ImportSchema("Basic ABCD", "ABCD_2.06.XSD","Dataset","BExIS.Dlm.Entities.Data.Dataset");
+            //ImportSchema("Basic Eml", "eml.xsd","dataset","BExIS.Dlm.Entities.Data.Dataset");
         }
 
         private static void createResearchPlan()
@@ -70,138 +76,196 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
 
         }
 
-        private static void createSeedDataTypes()
-        {
-            DataTypeManager dataTypeManager = new DataTypeManager();
-            DataType dataType;
+        #region old seed data
+        //private static void createSeedDataTypes()
+        //{
+        //    DataTypeManager dataTypeManager = new DataTypeManager();
+        //    DataType dataType;
 
-            try
-            {
-                string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("RPM"), "Seed", "DataTypes.xml");
-                XDocument xdoc = XDocument.Load(path);
+        //    try
+        //    {
+        //        string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("RPM"), "Seed", "DataTypes.xml");
+        //        XDocument xdoc = XDocument.Load(path);
 
-                IEnumerable<XElement> datatypesXElements = XmlUtility.GetXElementByNodeName("datatype", xdoc);
+        //        IEnumerable<XElement> datatypesXElements = XmlUtility.GetXElementByNodeName("datatype", xdoc);
 
-                if (datatypesXElements.Count() > 0)
-                {
+        //        if (datatypesXElements.Count() > 0)
+        //        {
 
-                    foreach (XElement xDatatype in datatypesXElements)
-                    {
-                        string name = xDatatype.Attribute("name").Value;
-                        string description = xDatatype.Attribute("description").Value;
-                        string systemtype = xDatatype.Attribute("typeCode").Value;
+        //            foreach (XElement xDatatype in datatypesXElements)
+        //            {
+        //                string name = xDatatype.Attribute("name").Value;
+        //                string description = xDatatype.Attribute("description").Value;
+        //                string systemtype = xDatatype.Attribute("typeCode").Value;
 
-                        TypeCode systemType = TypeCode.String;
+        //                TypeCode systemType = TypeCode.String;
 
-                        foreach (TypeCode type in Enum.GetValues(typeof(TypeCode)))
-                        {
-                            if (type.ToString().Equals(systemtype))
-                            {
-                                systemType = type;
-                            }
-                        }
+        //                foreach (TypeCode type in Enum.GetValues(typeof(TypeCode)))
+        //                {
+        //                    if (type.ToString().Equals(systemtype))
+        //                    {
+        //                        systemType = type;
+        //                    }
+        //                }
 
-                        dataType = dataTypeManager.Repo.Get().Where(d => d.Name.Equals(name)).FirstOrDefault();
+        //                dataType = dataTypeManager.Repo.Get().Where(d => d.Name.Equals(name)).FirstOrDefault();
 
-                        if (dataType == null)
-                        {
-                            dataTypeManager.Create(name, description, systemType);
-                        }
+        //                if (dataType == null)
+        //                {
+        //                    dataTypeManager.Create(name, description, systemType);
+        //                }
 
-                    }
-                }
+        //            }
+        //        }
 
-            }
-            catch (Exception ex)
-            {
+        //    }
+        //    catch (Exception ex)
+        //    {
 
-            }
+        //    }
 
-        }
+        //}
 
-        private static void createSIUnits()
-        {
-            DataTypeManager dataTypeManager = new DataTypeManager();
+        //private static void createSIUnits()
+        //{
+        //    DataTypeManager dataTypeManager = new DataTypeManager();
 
-            UnitManager unitManager = new UnitManager();
-            Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
-
-
-            Dimension dimNone = new Dimension();
-            dimNone.Name = "Dimensionless";
-
-            if (unitManager.DimensionRepo.Get(d => d.Name.Equals("None")) == null)
-            {
-                if (unit == null)
-                    unitManager.Create("None", "None", "If no unit is used.", dimNone, MeasurementSystem.Unknown);
-                // null dimension should be replaced
-            }
-            try
-            {
-                string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("RPM"), "Seed", "Units.xml");
-                XDocument xdoc = XDocument.Load(path);
-
-                IEnumerable<XElement> unitsXElements = XmlUtility.GetXElementByNodeName("unit", xdoc);
-
-                foreach (XElement xUnit in unitsXElements)
-                {
-                    string name = xUnit.Attribute("name").Value;
-                    string abbrevation = xUnit.Attribute("abbrevation").Value;
-                    string mesurementSystem = xUnit.Attribute("mesurementSystem").Value;
-                    string dimension = xUnit.Attribute("dimension").Value;
-                    string dimensionSpecification = xUnit.Attribute("dimensionSpecification").Value;
-                    string description = xUnit.Attribute("description").Value;
-                    string[] associatedDataTypes = xUnit.Attribute("associatedDataTypes").Value.Split(',');
-
-                    MeasurementSystem measurementSystemEnum = MeasurementSystem.Unknown;
-
-                    foreach (MeasurementSystem msCheck in Enum.GetValues(typeof(MeasurementSystem)))
-                    {
-                        if (msCheck.ToString().Equals(mesurementSystem))
-                        {
-                            measurementSystemEnum = msCheck;
-                        }
-                    }
+        //    UnitManager unitManager = new UnitManager();
+        //    Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
 
-                    if (description.Length > 250)
-                    {
-                        description = description.Substring(0, 250) + "...";
-                    }
+        //    Dimension dimNone = new Dimension();
+        //    dimNone.Name = "Dimensionless";
 
-                    unit = unitManager.Repo.Get(p => p.Name.Equals(name)).FirstOrDefault();
+        //    if (unitManager.DimensionRepo.Get(d => d.Name.Equals("None")) == null)
+        //    {
+        //        if (unit == null)
+        //            unitManager.Create("None", "None", "If no unit is used.", dimNone, MeasurementSystem.Unknown);
+        //        // null dimension should be replaced
+        //    }
+        //    try
+        //    {
+        //        string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("RPM"), "Seed", "Units.xml");
+        //        XDocument xdoc = XDocument.Load(path);
 
-                    if (unit == null)
-                    {
-                        Dimension dim = new Dimension();
-                        if (unitManager.DimensionRepo.Get().Where(d => d.Name.ToLower().Equals(dimension.ToLower()) && d.Specification.Equals(dimensionSpecification)).Count() == 0)
-                        {
-                            dim = unitManager.Create(dimension, "", dimensionSpecification);
-                        }
-                        else
-                        {
-                            dim = unitManager.DimensionRepo.Get().Where(d => d.Name.ToLower().Equals(dimension.ToLower())).FirstOrDefault();
-                        }
+        //        IEnumerable<XElement> unitsXElements = XmlUtility.GetXElementByNodeName("unit", xdoc);
 
-                        unit = unitManager.Create(name, abbrevation, description, dim, measurementSystemEnum); // null dimension should be replaced bz a proper Dimension object
+        //        foreach (XElement xUnit in unitsXElements)
+        //        {
+        //            string name = xUnit.Attribute("name").Value;
+        //            string abbrevation = xUnit.Attribute("abbrevation").Value;
+        //            string mesurementSystem = xUnit.Attribute("mesurementSystem").Value;
+        //            string dimension = xUnit.Attribute("dimension").Value;
+        //            string dimensionSpecification = xUnit.Attribute("dimensionSpecification").Value;
+        //            string description = xUnit.Attribute("description").Value;
+        //            string[] associatedDataTypes = xUnit.Attribute("associatedDataTypes").Value.Split(',');
 
-                        foreach (string dtName in associatedDataTypes)
-                        {
-                            DataType dt = dataTypeManager.Repo.Get().Where(d => d.Name.Equals(dtName)).FirstOrDefault();
-                            if (dt != null)
-                                unit.AssociatedDataTypes.Add(dt);
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message);
-            }
+        //            MeasurementSystem measurementSystemEnum = MeasurementSystem.Unknown;
 
-        }
+        //            foreach (MeasurementSystem msCheck in Enum.GetValues(typeof(MeasurementSystem)))
+        //            {
+        //                if (msCheck.ToString().Equals(mesurementSystem))
+        //                {
+        //                    measurementSystemEnum = msCheck;
+        //                }
+        //            }
+
+
+        //            if (description.Length > 250)
+        //            {
+        //                description = description.Substring(0, 250) + "...";
+        //            }
+
+        //            unit = unitManager.Repo.Get(p => p.Name.Equals(name)).FirstOrDefault();
+
+        //            if (unit == null)
+        //            {
+        //                Dimension dim = new Dimension();
+        //                if (unitManager.DimensionRepo.Get().Where(d => d.Name.ToLower().Equals(dimension.ToLower()) && d.Specification.Equals(dimensionSpecification)).Count() == 0)
+        //                {
+        //                    dim = unitManager.Create(dimension, "", dimensionSpecification);
+        //                }
+        //                else
+        //                {
+        //                    dim = unitManager.DimensionRepo.Get().Where(d => d.Name.ToLower().Equals(dimension.ToLower())).FirstOrDefault();
+        //                }
+
+        //                unit = unitManager.Create(name, abbrevation, description, dim, measurementSystemEnum); // null dimension should be replaced bz a proper Dimension object
+
+        //                foreach (string dtName in associatedDataTypes)
+        //                {
+        //                    DataType dt = dataTypeManager.Repo.Get().Where(d => d.Name.Equals(dtName)).FirstOrDefault();
+        //                    if (dt != null)
+        //                        unit.AssociatedDataTypes.Add(dt);
+        //                }
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Debug.WriteLine(ex.Message);
+        //    }
+
+        //}
+        #endregion
 
         #region METADATA
+
+        private static void ImportSchema(string name, string filename, string root, string entity)
+        {
+            long metadataStructureid = 0;
+            string schemaName = name;
+
+            string filepath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "Metadata", name,
+                filename);
+
+            XmlSchemaManager xmlSchemaManager = new XmlSchemaManager();
+
+            //load
+            try
+            {
+                xmlSchemaManager.Load(filepath, "application");
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            //generate
+            try
+            {
+                metadataStructureid = xmlSchemaManager.GenerateMetadataStructure("Dataset", schemaName);
+            }
+            catch (Exception ex)
+            {
+                xmlSchemaManager.Delete(schemaName);
+            }
+
+            try
+            {
+                //set parameters
+                string titleXPath = "";
+                string descriptionXpath = "";
+                string mappingFileImport = xmlSchemaManager.mappingFileNameImport;
+                string mappingFileExport = xmlSchemaManager.mappingFileNameExport;
+
+                StoreParametersToMetadataStruture(
+                    metadataStructureid,
+                    titleXPath,
+                    descriptionXpath,
+                    entity,
+                    mappingFileImport,
+                    mappingFileExport);
+            }
+            catch(Exception ex)
+            {
+
+                throw ex;
+            }
+            
+
+        }
+
 
         private static void createEmlDatasetAdv()
         {
@@ -949,6 +1013,56 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
             return xmlDoc;
 
         }
+
+        #region extra xdoc
+        /// <summary>
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="titlePath"></param>
+        /// <param name="descriptionPath"></param>
+        /// <param name="mappingFilePath"></param>
+        /// <param name="direction"></param>
+        private static void StoreParametersToMetadataStruture(long id, string titlePath, string descriptionPath, string entity, string mappingFilePathImport, string mappingFilePathExport)
+        {
+            MetadataStructureManager mdsManager = new MetadataStructureManager();
+            MetadataStructure metadataStructure = mdsManager.Repo.Get(id);
+
+            XmlDocument xmlDoc = new XmlDocument();
+
+            if (metadataStructure.Extra != null)
+            {
+                xmlDoc = (XmlDocument)metadataStructure.Extra;
+            }
+
+            // add title Node
+            xmlDoc = AddReferenceToMetadatStructure("title", titlePath, AttributeType.xpath.ToString(), "extra/nodeReferences/nodeRef", xmlDoc);
+            // add Description
+            xmlDoc = AddReferenceToMetadatStructure("description", descriptionPath, AttributeType.xpath.ToString(), "extra/nodeReferences/nodeRef", xmlDoc);
+
+            xmlDoc = AddReferenceToMetadatStructure("entity", entity, AttributeType.entity.ToString(), "extra/entity", xmlDoc);
+
+            // add mappingFilePath
+            xmlDoc = AddReferenceToMetadatStructure(metadataStructure.Name, mappingFilePathImport, "mappingFileImport", "extra/convertReferences/convertRef", xmlDoc);
+            xmlDoc = AddReferenceToMetadatStructure(metadataStructure.Name, mappingFilePathExport, "mappingFileExport", "extra/convertReferences/convertRef", xmlDoc);
+
+            //set active
+            xmlDoc = AddReferenceToMetadatStructure(NameAttributeValues.active.ToString(), true.ToString(), AttributeType.parameter.ToString(), "extra/parameters/parameter", xmlDoc);
+
+            metadataStructure.Extra = xmlDoc;
+            mdsManager.Update(metadataStructure);
+
+        }
+
+        private static XmlDocument AddReferenceToMetadatStructure(string nodeName, string nodePath, string nodeType, string destinationPath, XmlDocument xmlDoc)
+        {
+
+            XmlDocument doc = XmlDatasetHelper.AddReferenceToXml(xmlDoc, nodeName, nodePath, nodeType, destinationPath);
+
+            return doc;
+
+        }
+
+        #endregion
 
         #endregion
 

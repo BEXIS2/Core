@@ -1,0 +1,109 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Information>
+  <Information name="Error">
+    <description>
+      <p>In the case of any problems with authorization, please contact with your administrator.</p>
+    </description>
+    <more text="More" title="go to help" path=""/>
+  </Information>
+  <Information name="LogOn">
+    <description>
+      <p>Welcome to the BExIS 2.9.0</p>
+      <p>If you have any problems installing or using it please do not hesitate contacting us at: bexis-support@uni-jena.de</p>
+      <p>This is a community driven open source project so we are looking forward to any feedback or inquiry about new features.</p>
+    </description>
+    <more text="More" title="go to help" path=""/>
+  </Information>
+  <Information name="MyAccount">
+    <description>
+      <p>This page summarizes your personal account information. Furthermore, you are able to edit that data, but there are two important facts you should be aware of:</p>
+      <ol
+        <li>
+          Password Change - You need to enter both, <i>Password</i> and <i>Confirm Password</i>.
+        </li>
+        <li>
+          Security Question/Answer - You need to enter both, <i>Security Question</i> and <i>Security Answer</i>.
+        </li>
+      </ol>
+      <p>Otherwise, the abovementioned properties aren't changed. </p>
+    </description>
+    <more text="More" title="go to help" path=""/>
+  </Information>
+
+  <Information name="DataPermissions">
+    <description>
+      Here you are able to manage how users (or groups) have access to individual datasets.
+      Please select a dataset in the table below and specify who should have permissions to Information, update, delete, download data, or who is able to grant access to other users (Note: metadata is always free).
+      Ticking the checkboxes "public access" in the upper table will make a dataset accessible without authentification (public access to primary data). Please use with care!
+      By default only the creator of a dataset (in the system) has full access, all other permissions are not set, which means access is denied.
+      Grants for individual users rule out higher level settings for groups.
+      Please note that any change will take effect immediately without further confirmation or save/submit action.
+    </description>
+    <more text="More" title="go to help" path="/SAM/Help/Index/#_Toc451422050"/>
+  </Information>
+
+  <Information name="Dataset">
+    <description>
+      With this interface you are able to see a list of Datasets. In this list you can see the status of each dataset and some useful actions for the maintenance of a dataset.
+    </description>
+    <more text="More" title="go to help" path="/SAM/Help/Index/#_Toc451422053"/>
+  </Information>
+  <Information name="DatasetList">
+    <description>
+      This maintenance tool is meant for administrators only. All datasets are listed with their internal ID, status, and the option to remove them from the system. Use with care!
+    </description>
+    <more text="More" title="go to help" path="/SAM/Help/Index/#_Toc451422053"/>
+  </Information>
+  <Information name="DatasetPurge">
+    <description>
+      This maintenance tool is meant for administrators only. All datasets are listed with their internal ID, status, and the option to remove them from the system. Use with care!
+    </description>
+    <more text="More" title="go to help" path="/SAM/Help/Index/#_Toc451422053"/>
+  </Information>
+  <Information name="DatasetVersion">
+    <description>
+      This maintenance tool is meant for administrators only. All datasets are listed with their internal ID, status, and the option to remove them from the system. Use with care!
+    </description>
+    <more text="More" title="go to help" path="/SAM/Help/Index/#_Toc451422053"/>
+  </Information>
+  <Information name="DatasetVersions">
+    <description>
+      This maintenance tool is meant for administrators only. All datasets are listed with their internal ID, status, and the option to remove them from the system. Use with care!
+    </description>
+    <more text="More" title="go to help" path="/SAM/Help/Index/#_Toc451422053"/>
+  </Information>
+
+  <Information name="FeaturePermissions">
+    <description>
+      Here you are able to manage how users (or groups) have access to individual system features or entire modules.
+      Please click on the name in the tree structure on left to Information individual permissions.
+      Ticking the checkboxes in the navigation tree will make a feature accessible without authentification (public access).
+      Please use with care!
+      By default feature permissions are not set, which means access is denied unless access permissions are explicitly granted or inherited from an upper level feature (e.g. module).
+      Individual grants on features rule out higher level settings. Effective permissions are shown in the first column of the table.
+      Please note that any change will take effect immediately without further confirmation or save/submit action.
+    </description>
+    <more text="More" title="go to help" path="/SAM/Help/Index/#_Toc451422051"/>
+  </Information>
+
+  <Information name="Groups">
+    <description>
+      With this interface you are able to manage groups. New groups can be added with the "Create" button. Existing groups can be edited (properties, members, delete) using the "Edit" button.
+    </description>
+    <more text="More" title="go to help" path="/SAM/Help/Index/#_Toc451422047"/>
+  </Information>
+
+  <Information name="Help">
+    <description>
+      This guide will walk you through the basics of using administration parts including how to registrate or log on, how to manage users or groups and how to manage permissions.
+    </description>
+    <more text="More" title="go to help" path=""/>
+  </Information>
+
+  <Information name="Users">
+    <description>
+      With this interface you are able to manage users. New users can be added with the "Create" button. Existing users can be edited (properties, memberships, delete) through the "Edit" button.
+    </description>
+    <more text="More" title="go to help" path="/SAM/Help/Index/#_Toc451422044"/>
+  </Information>
+</Information>

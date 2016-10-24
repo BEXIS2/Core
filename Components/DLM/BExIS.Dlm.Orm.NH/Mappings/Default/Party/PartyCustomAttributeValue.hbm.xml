@@ -22,5 +22,7 @@
 
     <many-to-one name="CustomAttribute" class="BExIS.Dlm.Entities.Party.PartyCustomAttribute" not-null="true" column="CustomAttributeRef"/>
 
+    <many-to-one name="Party" class="BExIS.Dlm.Entities.Party.Party" cascade="all" column="PartyRef" />
+
   </class>
 </hibernate-mapping>

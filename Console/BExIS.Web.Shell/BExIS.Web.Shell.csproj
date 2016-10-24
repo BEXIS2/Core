@@ -76,6 +76,10 @@
       <HintPath>..\..\packages\HtmlAgilityPack.1.4.9\lib\Net45\HtmlAgilityPack.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="IBM.Data.DB2, Version=9.7.4.4, Culture=neutral, PublicKeyToken=7c307b91aa13d208, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Libraries\IBM.Data.DB2.dll</HintPath>
+    </Reference>
     <Reference Include="Iesi.Collections, Version=4.0.0.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Iesi.Collections.4.0.1.4000\lib\net40\Iesi.Collections.dll</HintPath>
@@ -328,6 +332,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>UploadLocalization.zh-CN.resx</DependentUpon>
     </Compile>
+    <Compile Include="Areas\BAM\BAMAreaRegistration.cs" />
+    <Compile Include="Areas\BAM\Helpers\BAMSeedDataGenerator.cs" />
+    <Compile Include="Areas\BAM\Models\PartyCustomAttributeValueModel.cs" />
+    <Compile Include="Areas\BAM\Models\PartyModel.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Areas\DCM\Controllers\CreateDatasetController.cs" />
     <Compile Include="Areas\DCM\Controllers\FormController.cs" />
@@ -380,6 +388,7 @@
     <Compile Include="Areas\DDM\Controllers\CreateDatasetController.cs" />
     <Compile Include="Areas\DDM\Controllers\DataController.cs" />
     <Compile Include="Areas\DDM\Controllers\HelpController.cs" />
+    <Compile Include="Areas\BAM\Controllers\PartyController.cs" />
     <Compile Include="Areas\DDM\Helpers\GridHelper.cs" />
     <Compile Include="Areas\DDM\Helpers\helper.cs" />
     <Compile Include="Areas\DDM\Helpers\HtmlPrefixScopeExtentions.cs" />
@@ -518,6 +527,7 @@
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img8.png" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img9.png" />
     <Content Include="Areas\DCM\Images\emptyPng.png" />
+    <Content Include="Areas\DCM\Views\Help\Informations.xml" />
     <Content Include="Areas\DDM\Images\DDM_UserGuide_files_images\DDM_UserGuide_files_img1.png" />
     <Content Include="Areas\DDM\Images\DDM_UserGuide_files_images\DDM_UserGuide_files_img10.png" />
     <Content Include="Areas\DDM\Images\DDM_UserGuide_files_images\DDM_UserGuide_files_img2.png" />
@@ -529,7 +539,9 @@
     <Content Include="Areas\DDM\Images\DDM_UserGuide_files_images\DDM_UserGuide_files_img8.png" />
     <Content Include="Areas\DDM\Images\DDM_UserGuide_files_images\DDM_UserGuide_files_img9.png" />
     <Content Include="Areas\DDM\Scripts\ddm.js" />
+    <Content Include="Areas\DDM\Views\Help\Informations.xml" />
     <Content Include="Areas\DIM\Images\DIM_UserGuide_files_images\DIM_UserGuide_files_img1.png" />
+    <Content Include="Areas\DIM\Views\Help\Informations.xml" />
     <Content Include="Areas\MSM\Resources\Scripts\angular-dragdrop.min.js" />
     <Content Include="Areas\MSM\Resources\Scripts\angular-route.min.js" />
     <Content Include="Areas\MSM\Resources\Scripts\angular.js" />
@@ -569,6 +581,7 @@
     <Content Include="Areas\RPM\Stylesheets\DataStructureEdit.css" />
     <Content Include="Areas\RPM\Stylesheets\DataStructureSearch.css" />
     <Content Include="Areas\RPM\Stylesheets\RPM.css" />
+    <Content Include="Areas\RPM\Views\Help\Informations.xml" />
     <Content Include="Areas\SAM\Images\SAM_UserGuide_files_images\SAM_UserGuide_files_img1.png" />
     <Content Include="Areas\SAM\Images\SAM_UserGuide_files_images\SAM_UserGuide_files_img10.png" />
     <Content Include="Areas\SAM\Images\SAM_UserGuide_files_images\SAM_UserGuide_files_img11.png" />
@@ -580,6 +593,7 @@
     <Content Include="Areas\SAM\Images\SAM_UserGuide_files_images\SAM_UserGuide_files_img7.png" />
     <Content Include="Areas\SAM\Images\SAM_UserGuide_files_images\SAM_UserGuide_files_img8.png" />
     <Content Include="Areas\SAM\Images\SAM_UserGuide_files_images\SAM_UserGuide_files_img9.png" />
+    <Content Include="Areas\SAM\Views\Help\Informations.xml" />
     <Content Include="Content\Images\dfg_logo.gif" />
     <Content Include="Content\bootstrap-combobox.css" />
     <Content Include="Content\bootstrap-theme.css" />
@@ -605,6 +619,8 @@
     <Content Include="css\font-awesome.min.css" />
     <Content Include="fonts\fontawesome-webfont.svg" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Scripts\autosize\autosize.js" />
+    <Content Include="Scripts\autosize\autosize.min.js" />
     <Content Include="Scripts\bexis-jquery-ui.js" />
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
@@ -674,11 +690,20 @@
     <None Include="Properties\PublishProfiles\BPP290.pubxml" />
     <None Include="Properties\PublishProfiles\BPP2907.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="Scripts\DCM\Form.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
     <Content Include="Areas\SAM\Views\Tenants\Index.cshtml" />
     <None Include="Properties\PublishProfiles\T1.pubxml" />
+    <Content Include="Areas\BAM\Views\Party\Index.cshtml" />
+    <Content Include="Areas\BAM\Views\Party\Create.cshtml" />
+    <Content Include="Areas\BAM\Views\web.config" />
+    <Content Include="Areas\BAM\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\BAM\Views\Party\_customAttributesView.cshtml" />
+    <Content Include="Areas\BAM\Views\Party\Edit.cshtml" />
+    <Content Include="Areas\BAM\Views\Party\View.cshtml" />
+    <Content Include="Areas\BAM\Views\Party\DeleteConfirm.cshtml" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
@@ -1011,9 +1036,11 @@
     <Content Include="Views\Test\Index.cshtml" />
     <Content Include="Views\Shared\_EntitySelectorInWindowView.cshtml" />
     <Content Include="Views\Shared\_EntitySelectorView.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\DropDown.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Areas\BAM\Views\Shared\" />
     <Folder Include="Areas\DCM\Views\DcmAdmin\" />
     <Folder Include="Areas\DCM\Views\Home\" />
     <Folder Include="Areas\DDM\Views\Shared\" />

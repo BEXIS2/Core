@@ -90,10 +90,14 @@ Green 05  #eff7f6
     text-align:right;
     
 }
+.bx-metadataFormTextInput {
+    width: 490px;
+    max-width: 490px;
+}
 
 .metadataAttributeInput
 {
-    width: 380px;
+    width: 500px;
     /*border:ridge 1px yellow;*/
 }
 

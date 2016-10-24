@@ -33,8 +33,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         public ActionResult Delete(string path)
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Push Big File", this.Session.GetTenant());
-
             FileHelper.Delete(path);
+
             return View("Index", LoadDefaultModel());
         }
 

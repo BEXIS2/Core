@@ -1036,7 +1036,7 @@ namespace BExIS.Dlm.Services.Data
             {
                 tuples = getHistoricTuples(datasetVersion);
             }
-            tuples.ForEach(p => p.Materialize());
+            //tuples.ForEach(p => p.Materialize());
             return (tuples);
         }
 

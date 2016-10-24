@@ -137,7 +137,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             bool loadFromExternal = resetTaskManager;
             long metadataStructureId = -1;
 
-            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Create Dataset", this.Session.GetTenant()); ;
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Create Dataset", this.Session.GetTenant());
             ViewData["Locked"] = locked;
             ViewData["HideOptional"] = true;
 
@@ -177,7 +177,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             return PartialView("MetadataEditor", Model);
         }
 
-        public ActionResult LoadMetadataFromExternal(long entityId, string title, long metadatastructureId, long datastructureId=-1,long researchplanId=-1, string sessionKeyForMetadata="")
+        public ActionResult LoadMetadataFromExternal(long entityId, string title, long metadatastructureId, long datastructureId=-1,long researchplanId=-1, string sessionKeyForMetadata="", bool resetTaskManager = false)
         {
             bool loadFromExternal = true;
             long metadataStructureId = -1;
@@ -192,11 +192,11 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             ViewData["HideOptional"] = true;
 
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
-            //if (TaskManager == null)
-            //{
+            if (TaskManager == null || resetTaskManager)
+            {
                 TaskManager = new CreateTaskmanager();
-                //loadFromExternal = true;
-            //}
+ 
+            }
 
             List<StepModelHelper> stepInfoModelHelpers = new List<StepModelHelper>();
             MetadataEditorModel Model = new MetadataEditorModel();
@@ -204,7 +204,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             if (loadFromExternal)
             {
                 string entityClassPath = "";
-                TaskManager = new CreateTaskmanager();
+                //TaskManager = new CreateTaskmanager();
                 Session["CreateDatasetTaskmanager"] = TaskManager;
                 TaskManager.AddToBus(CreateTaskmanager.ENTITY_ID, entityId);
 
@@ -755,6 +755,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             {
                 model = MetadataCompoundAttributeModel.ConvertToModel(parentStepModelHelper.Usage, number);
                 model.Number = position;
+                
                 ((MetadataCompoundAttributeModel)model).ConvertMetadataAttributeModels(LoadUsage(parentStepModelHelper.Usage), metadataStructureId, newStep.Id);
 
                 //Update metadata xml
@@ -781,7 +782,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 Number = position,
                 Model = model,
                 XPath = xPath,
-                Level = parentStepModelHelper.Level + 1
+                Level = parentStepModelHelper.Level + 1,
+                Activated = true
             };
 
             newStepModelhelper.Model.StepInfo = newStep;
@@ -1020,10 +1022,13 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             bool active = stepModelHelper.Activated ? false : true;
             stepModelHelper.Activated = active;
-            stepModelHelper.Parent.Activated = active;
-            StepModelHelper pStepModelHelper = GetStepModelhelper(stepModelHelper.Parent.StepId);
-            pStepModelHelper.Activated = active;
-
+            //stepModelHelper.Parent.Activated = active;
+            if (stepModelHelper.Parent != null)
+            {
+                StepModelHelper pStepModelHelper = GetStepModelhelper(stepModelHelper.Parent.StepId);
+                if (pStepModelHelper != null)
+                    pStepModelHelper.Activated = active;
+            }
             // update stepmodel to dictionary
             //AddStepModelhelper(newStepModelhelper);
 
@@ -1869,7 +1874,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                 XDocument metadataXml = xmlMetadatWriter.CreateMetadataXml(Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]));
 
-                // locat path
+                //local path
                 //string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "metadataTemp.Xml");
 
                 TaskManager.AddToBus(CreateTaskmanager.METADATA_XML, metadataXml);
@@ -2053,25 +2058,15 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         private bool IsImportAvavilable(long metadataStructureId)
         {
-            //todo after release 2.9.1 and merge to dev change that code and use the XmlDatasetHelper exportinformations
-
-            MetadataStructureManager MSM = new MetadataStructureManager();
-            MetadataStructure ms = MSM.Repo.Get(metadataStructureId);
-
-            if (ms.Extra != null)
-            {
-                XElement xE = XmlUtility.GetXElementByAttribute("convertRef", "name", "mappingFileImport",
-                    XmlUtility.ToXDocument((XmlDocument)ms.Extra));
-
-                if (xE == null) return false;
-
-
-                return true;
-            }
-
-            return false;
+            return XmlDatasetHelper.HasExportInformation(metadataStructureId);
         }
 
+        private void setStepModelActive(StepModelHelper model)
+        {
+            model.Activated = true;
+            if (model.Parent != null)
+                setStepModelActive(model.Parent);
+        }
 
         #endregion
 
@@ -2080,11 +2075,10 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         /// <summary>
         /// Is called when the user write a letter in Autocomplete User Component
         /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
         [HttpPost]
         public ActionResult _AutoCompleteAjaxLoading(string text, string id)
         {
+            
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
 
             return new JsonResult { Data = new SelectList(provider.GetTextBoxSearchValues(text,"all", "new", 10).SearchComponent.TextBoxSearchValues, "Value", "Name") };
@@ -2414,7 +2408,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             BaseUsage metadataAttributeUsage = UsageHelper.GetChildren(parentUsage).Where(u => u.Id.Equals(id)).FirstOrDefault();
 
-            Path.Combine(AppConfiguration.GetModuleWorkspacePath("dcm"),"x","file.xml");
+            //Path.Combine(AppConfiguration.GetModuleWorkspacePath("dcm"),"x","file.xml");
 
             //UpdateXml
             long metadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
@@ -2467,7 +2461,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             List<Error> errors = new List<Error>();
             //optional check
-            if (aModel.MinCardinality > 0 && aModel.Value == null)
+            if (aModel.MinCardinality > 0 && (aModel.Value == null || String.IsNullOrEmpty(aModel.Value.ToString())))
                 errors.Add(new Error(ErrorType.MetadataAttribute, "is not optional", new object[] { aModel.DisplayName, aModel.Value, aModel.Number, aModel.ParentModelNumber, aModel.Parent.Label }));
             else
                 if (aModel.MinCardinality > 0 && String.IsNullOrEmpty(aModel.Value.ToString()))
@@ -2691,7 +2685,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         if (simpleElement != null && !String.IsNullOrEmpty(simpleElement.Value))
                         {
                             simpleMetadataAttributeModel.Value = simpleElement.Value;
-                            //Debug.WriteLine(xpath + "   :    " + simpleElement.Value);
+                            // if at least on item has a value, the parent should be activated
+                            setStepModelActive(stepModelHelper);
                         }
 
                     }
