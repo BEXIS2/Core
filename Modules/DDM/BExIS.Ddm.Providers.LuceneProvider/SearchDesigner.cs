@@ -140,6 +140,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider
             }
             
         }
+
         //ToDo set this function to a other place because of reading a metadata structure ad create a list of all simple attribute with xpath and displayname is also important for other places as search designer
         public List<SearchMetadataNode> GetAllXPathsOfSimpleAttributes(long id)
         {

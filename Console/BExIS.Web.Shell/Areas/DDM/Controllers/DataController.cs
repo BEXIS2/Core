@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
 using System.Text.RegularExpressions;
-using System.Web;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
@@ -19,13 +20,14 @@ using Telerik.Web.Mvc;
 using Telerik.Web.Mvc.UI;
 using Vaiona.Utils.Cfg;
 using BExIS.IO;
-using System.IO.Compression;
-using System.Web.Helpers;
 using Ionic.Zip;
 using BExIS.Security.Services.Objects;
-using BExIS.Dlm.Entities.MetadataStructure;
-using System.Xml;
 using System.Xml.Linq;
+using BExIS.Dcm.CreateDatasetWizard;
+using BExIS.Dcm.Wizard;
+using BExIS.Dim.Entities;
+using BExIS.Dim.Helpers;
+using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Subjects;
@@ -33,10 +35,17 @@ using BExIS.Xml.Helpers;
 using BExIS.Xml.Services;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Security.Entities.Subjects;
-using Vaiona.Logging.Aspects;
 using Vaiona.Web.Mvc.Models;
 using BExIS.Security.Entities.Authorization;
+using Newtonsoft.Json;
 using Vaiona.Web.Extensions;
+using System.Net;
+using System.Net;
+using System.Web.Script.Serialization;
+using System.Xml;
+using BExIS.Web.Shell.Areas.RPM.Controllers;
+using BExIS.Web.Shell.Areas.RPM.Models;
+
 
 namespace BExIS.Web.Shell.Areas.DDM.Controllers
 {
@@ -110,63 +119,64 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
         #region metadata
 
-            /// <summary>
-            ///
-            /// </summary>
-            /// <remarks></remarks>
-            /// <seealso cref=""/>
-            /// <param name="datasetID"></param>
-            /// <returns>model</returns>
-        public ActionResult ShowMetaData(long datasetID)
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="datasetID"></param>
+        /// <returns>model</returns>
+        public ActionResult ShowMetaData(long entityId, string title, long metadatastructureId, long datastructureId, long researchplanId, string sessionKeyForMetadata)
         {
-            ShowMetadataModel model = new ShowMetadataModel();
+            setAdditionalFunctions();
 
-            try
+            return RedirectToAction("LoadMetadataFromExternal", "Form", new
             {
-                DatasetManager dm = new DatasetManager();
-                DatasetVersion dsv = dm.GetDatasetLatestVersion(datasetID);
+                area = "DCM",
+                entityId,
+                title,
+                metadatastructureId,
+                datastructureId,
+                researchplanId,
+                sessionKeyForMetadata
+            });
 
-                MetadataStructureManager msm = new MetadataStructureManager();
-                dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
+        }
 
-            //get title
-            model.Title = XmlDatasetHelper.GetInformation(dsv, NameAttributeValues.title);
-            model.Description = XmlDatasetHelper.GetInformation(dsv, NameAttributeValues.description);
+        private void setAdditionalFunctions()
+        {
+            CreateTaskmanager TaskManager = new CreateTaskmanager();
 
-            #region create table
-            XDocument xDoc = XmlUtility.ToXDocument(dsv.Metadata);
+            Dictionary<string, ActionInfo> actions = new Dictionary<string, ActionInfo>();
 
-            //get a list of MetadataPackageUsages
-            IEnumerable<XElement> MetadataPackageUsageList = helper.GetElementsByAttribute(xDoc, "type", BExIS.Xml.Helpers.XmlNodeType.MetadataPackageUsage.ToString());
-                
-            //For Each MetadataPackageUsage
-            foreach (XElement packageUsage in MetadataPackageUsageList)
-            {
-                PackageUsageModel puElement = new PackageUsageModel();
-                puElement.Name = packageUsage.Attribute("name").Value;
+            //set function actions of COPY, RESET,CANCEL,SUBMIT
+            ActionInfo copyAction = new ActionInfo();
+            copyAction.ActionName = "Index";
+            copyAction.ControllerName = "CreateDataset";
+            copyAction.AreaName = "DCM";
 
-                // get childrens of
-                List<XElement> childrens = XmlUtility.GetChildren(packageUsage).ToList();
+            ActionInfo resetAction = new ActionInfo();
+            resetAction.ActionName = "Reset";
+            resetAction.ControllerName = "Form";
+            resetAction.AreaName = "DCM";
 
-                foreach (XElement child in childrens)
-                {
-                    puElement.Attributes.Add(
-                            GetModelFromElement(child)
-                        );
-                }
+            ActionInfo cancelAction = new ActionInfo();
+            cancelAction.ActionName = "Cancel";
+            cancelAction.ControllerName = "Form";
+            cancelAction.AreaName = "DCM";
 
-                model.PU.Add(puElement);
-            }
-            #endregion
-                
+            ActionInfo submitAction = new ActionInfo();
+            submitAction.ActionName = "Submit";
+            submitAction.ControllerName = "CreateDataset";
+            submitAction.AreaName = "DCM";
 
-            }
-            catch (Exception e)
-            {
-                ModelState.AddModelError(String.Empty, e.Message);
-            }
 
-            return PartialView(model);
+            TaskManager.Actions.Add(CreateTaskmanager.CANCEL_ACTION, cancelAction);
+            TaskManager.Actions.Add(CreateTaskmanager.COPY_ACTION, copyAction);
+            TaskManager.Actions.Add(CreateTaskmanager.RESET_ACTION, resetAction);
+            TaskManager.Actions.Add(CreateTaskmanager.SUBMIT_ACTION, submitAction);
+
+            Session["CreateDatasetTaskmanager"] = TaskManager;
         }
 
         private BaseModelElement GetModelFromElement(XElement element)
@@ -632,50 +642,50 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
         }
 
         public ActionResult DownloadAllFiles(long id)
-                {
-                    try
-                    {
+        {
+            try
+            {
 
                     
-                    DatasetManager datasetManager = new DatasetManager();
-                    DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
+                DatasetManager datasetManager = new DatasetManager();
+                DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
 
-                    MetadataStructureManager msm = new MetadataStructureManager();
-                    datasetVersion.Dataset.MetadataStructure = msm.Repo.Get(datasetVersion.Dataset.MetadataStructure.Id);
+                MetadataStructureManager msm = new MetadataStructureManager();
+                datasetVersion.Dataset.MetadataStructure = msm.Repo.Get(datasetVersion.Dataset.MetadataStructure.Id);
 
-                    //TITLE
-                    string title = XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title);
+                //TITLE
+                string title = XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title);
                      
-                    string zipPath = Path.Combine(AppConfiguration.DataPath, "Datasets", id.ToString(),title + ".zip");
+                string zipPath = Path.Combine(AppConfiguration.DataPath, "Datasets", id.ToString(),title + ".zip");
 
             
-                    if (FileHelper.FileExist(zipPath))
-                    {
-                        if (FileHelper.WaitForFile(zipPath))
-                        {
-                            FileHelper.Delete(zipPath);
-                        }
-                    }
-
-                    ZipFile zip = new ZipFile();
-
-                    foreach( ContentDescriptor cd in datasetVersion.ContentDescriptors)
-                    {
-                        string path = Path.Combine(AppConfiguration.DataPath,cd.URI);
-                        string name = cd.URI.Split('\\').Last();
-
-                        zip.AddFile(path, "");      
-                    }
-
-                    zip.Save(zipPath);
-
-                    return File(zipPath, "application/zip", title + ".zip");
-                }
-                catch (Exception ex)
+                if (FileHelper.FileExist(zipPath))
                 {
-
-                    throw ex;
+                    if (FileHelper.WaitForFile(zipPath))
+                    {
+                        FileHelper.Delete(zipPath);
+                    }
                 }
+
+                ZipFile zip = new ZipFile();
+
+                foreach( ContentDescriptor cd in datasetVersion.ContentDescriptors)
+                {
+                    string path = Path.Combine(AppConfiguration.DataPath,cd.URI);
+                    string name = cd.URI.Split('\\').Last();
+
+                    zip.AddFile(path, "");      
+                }
+
+                zip.Save(zipPath);
+
+                return File(zipPath, "application/zip", title + ".zip");
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
 
         }
 
@@ -827,6 +837,427 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
             return true;
         }
+
+        #endregion
+
+        #region submission
+
+        public ActionResult publishData(long datasetId, long datasetVersionId=-1)
+        {
+            SubmissionManager publishingManager = new SubmissionManager();
+            publishingManager.Load();
+
+            ShowPublishDataModel model = new ShowPublishDataModel();
+            model.DataRepositories = publishingManager.DataRepositories;
+            model.DatasetId = datasetId;
+
+            if (datasetVersionId == -1)
+            {
+                DatasetManager datasetManager = new DatasetManager();
+                datasetVersionId = datasetManager.GetDatasetLatestVersion(datasetId).Id;
+            }
+
+            //todo check if datasetversion id is correct
+
+            foreach (DataRepository repo in publishingManager.DataRepositories)
+            {
+                string path = publishingManager.GetDirectoryPath(datasetId, repo);
+                if (Directory.Exists(path))
+                {
+                    string[] filepaths = Directory.GetFiles(path, "*.zip");
+
+                    foreach (var filepath in filepaths)
+                    {
+
+                            FileInfo fi = new FileInfo(filepath);
+
+                        var creationTime = fi.CreationTimeUtc;
+
+                        model.RepoFilesDictionary.Add(
+                            new publishedFileModel()
+                            {
+                                DatasetId = datasetId,
+                                DatasetVersionId = datasetVersionId,
+                                DataRepository = repo,
+                                CreationDate = creationTime
+                            });
+                    }
+                }
+            }
+
+            return PartialView("_showPublishDataView", model);
+        }
+
+        public ActionResult LoadDataRepoRequirementView(string datarepo, long datasetid)
+        {
+            DataRepoRequirentModel model = new DataRepoRequirentModel();
+            model.DatasetId = datasetid;
+
+            //get datarepos
+            SubmissionManager publishingManager = new SubmissionManager();
+            publishingManager.Load();
+
+            // datasetversion
+            DatasetManager dm = new DatasetManager();
+            long version = dm.GetDatasetLatestVersion(datasetid).Id;
+            model.DatasetVersionId = version;
+            if (publishingManager.DataRepositories.Any(d => d.Name.Equals(datarepo)))
+            {
+                DataRepository dp =
+                    publishingManager.DataRepositories.Where(d => d.Name.Equals(datarepo)).FirstOrDefault();
+
+                if (dp != null) model.DataRepository = dp;
+
+                if (publishingManager.Exist(datasetid, version, dp))
+                {
+                    model.Exist = true;
+                }
+                else
+                {
+                    #region metadata
+
+                    // if no conversion is needed
+                    if (String.IsNullOrEmpty(dp.ReqiuredMetadataStandard))
+                    {
+                        model.IsMetadataConvertable = true;
+                    }
+                    else
+                    {
+                        //if convertion check ist needed
+                        //get all export attr from metadata structure
+                        List<string> exportNames = XmlDatasetHelper.GetAllTransmissionInformation(datasetid, TransmissionType.mappingFileExport,AttributeNames.name).ToList();
+                        if (exportNames.Contains(dp.ReqiuredMetadataStandard)) model.IsMetadataConvertable = true;
+                    }
+
+                    #endregion
+
+                    #region primary Data
+
+                    if (dp.PrimaryDataFormat.ToLower().Contains("text/plain") ||
+                        dp.PrimaryDataFormat.ToLower().Contains("text/csv") ||
+                        dp.PrimaryDataFormat.ToLower().Contains("application/excel") ||
+                        String.IsNullOrEmpty(dp.PrimaryDataFormat))
+                    {
+                        model.IsDataConvertable = true;
+                    }
+
+                        #endregion
+                }
+            }
+
+            return PartialView("_dataRepositoryRequirementsView", model);
+        }
+
+        public JsonResult CheckExportPossibility(string datarepo, long datasetid)
+        {
+
+            bool isDataConvertable = false;
+            bool isMetadataConvertable = false;
+
+            //get datarepos
+            SubmissionManager publishingManager = new SubmissionManager();
+            publishingManager.Load();
+
+            // datasetversion
+            DatasetManager dm = new DatasetManager();
+            long version = dm.GetDatasetLatestVersion(datasetid).Id;
+
+            if (publishingManager.DataRepositories.Any(d => d.Name.Equals(datarepo)))
+            {
+                DataRepository dp =
+                    publishingManager.DataRepositories.Where(d => d.Name.Equals(datarepo)).FirstOrDefault();
+
+
+                if (publishingManager.Exist(datasetid, version, dp))
+                {
+                    //model.Exist = true;
+                }
+                else
+                {
+                    #region metadata
+
+                    // if no conversion is needed
+                    if (String.IsNullOrEmpty(dp.ReqiuredMetadataStandard))
+                    {
+                        //model.IsMetadataConvertable = true;
+                        isMetadataConvertable = true;
+                    }
+                    else
+                    {
+                        //if convertion check ist needed
+                        //get all export attr from metadata structure
+                        List<string> exportNames = XmlDatasetHelper.GetAllTransmissionInformation(datasetid, TransmissionType.mappingFileExport, AttributeNames.name).ToList();
+                        if (exportNames.Contains(dp.ReqiuredMetadataStandard))
+                            isMetadataConvertable = true;
+
+                    }
+
+                    #endregion
+
+                    #region primary Data
+
+                    //todo need a check if the primary data is structured or not, if its unstructured also export should be possible
+                    
+
+                    if (dp.PrimaryDataFormat.ToLower().Contains("text/plain") ||
+                        dp.PrimaryDataFormat.ToLower().Contains("text/csv") ||
+                        dp.PrimaryDataFormat.ToLower().Contains("application/excel") ||
+                        String.IsNullOrEmpty(dp.PrimaryDataFormat))
+                    {
+                        isDataConvertable = true;
+                    }
+
+                    #endregion
+                }
+            }
+
+            return (isMetadataConvertable && isDataConvertable)?Json(true):Json(false);
+        }
+
+        public ActionResult DownloadZip(string datarepo ,long datasetid, long datasetversionid)
+        {
+            string path = "";
+
+            SubmissionManager publishingManager = new SubmissionManager();
+            publishingManager.Load();
+
+            DataRepository dataRepo =
+                publishingManager.DataRepositories.Where(repository => repository.Name.Equals(datarepo))
+                    .FirstOrDefault();
+
+            if (dataRepo != null)
+            {
+                string zipName = publishingManager.GetZipFileName(datasetid, datasetversionid);
+                string zipPath = publishingManager.GetDirectoryPath(datasetid, dataRepo);
+                string zipFilePath = Path.Combine(zipPath, zipName);
+
+                return File(zipFilePath, "application/zip", zipName);
+            }
+
+            return null;
+        }
+
+        public async Task <ActionResult> PrepareData(long datasetId, string datarepo)
+        {
+            SubmissionManager publishingManager = new SubmissionManager();
+            publishingManager.Load();
+
+            DatasetManager datasetManager = new DatasetManager();
+
+            if (datasetManager.IsDatasetCheckedIn(datasetId))
+            {
+                DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
+
+                // convert metadata
+                DataRepository dataRepository =
+                    publishingManager.DataRepositories.Where(d => d.Name.Equals(datarepo)).FirstOrDefault();
+
+                if (dataRepository != null)
+                {
+                    OutputMetadataManager.GetConvertedMetadata(datasetId, TransmissionType.mappingFileExport,
+                        dataRepository.ReqiuredMetadataStandard);
+
+                    // get primary data
+                    // check the data sturcture type ...
+                    if (datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure)
+                    {
+                        OutputDataManager odm = new OutputDataManager();
+                        // apply selection and projection
+
+                        string title = XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title);
+
+                        odm.GenerateAsciiFile(datasetId, title, dataRepository.PrimaryDataFormat);
+                    }
+
+                    string zipName = publishingManager.GetZipFileName(datasetId, datasetVersion.Id);
+                    string zipPath = publishingManager.GetDirectoryPath(datasetId, dataRepository);
+                    string zipFilePath = Path.Combine(zipPath, zipName);
+
+                    FileHelper.CreateDicrectoriesIfNotExist(Path.GetDirectoryName(zipFilePath));
+
+
+
+                    if (FileHelper.FileExist(zipFilePath))
+                    {
+                        if (FileHelper.WaitForFile(zipFilePath))
+                        {
+                            FileHelper.Delete(zipFilePath);
+                        }
+                    }
+
+                   
+
+                    // add datastructure
+                    //ToDo put that functiom to the outputDatatructureManager
+                    #region datatructure
+
+                    DataStructureManager dataStructureManager = new DataStructureManager();
+
+                    long dataStructureId = datasetVersion.Dataset.DataStructure.Id;
+                    DataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataStructureId);
+
+                    if (dataStructure != null)
+                    {
+                        // get datastructure as json
+                        //ToDo it is not allowed to call a action from a other controller, so we need to generate a function in the outputDatastructureManager of generating a structure 
+                        // -> its not solve right now, because of sturtcure is using also entities under rpm/models
+                        // we need to find a way to switch this functionality to the io libary an calling that from the api and here
+                        BExIS.Web.Shell.Areas.RPM.Controllers.StructuresController dataStructureApi = new StructuresController();
+
+                        try
+                        {
+                            string dynamicPathOfDS = "";
+                            dynamicPathOfDS = storeGeneratedFilePathToContentDiscriptor(datasetId, datasetVersion,
+                                "datastructure", ".txt");
+                            string datastructureFilePath = AsciiWriter.CreateFile(dynamicPathOfDS);
+                            Structure structure = dataStructureApi.Get(datasetId);
+
+                            string json = JsonConvert.SerializeObject(structure);
+
+                            AsciiWriter.AllTextToFile(datastructureFilePath, json);
+
+
+                        }
+                        catch (Exception ex)
+                        {
+                            throw ex;
+                        }
+                    }
+
+                    #endregion
+
+                    ZipFile zip = new ZipFile();
+
+                    foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
+                    {
+                        string path = Path.Combine(AppConfiguration.DataPath, cd.URI);
+                        string name = cd.URI.Split('\\').Last();
+
+                        if (FileHelper.FileExist(path))
+                        {
+                            zip.AddFile(path, "");
+                        }
+                    }
+
+
+                    // add xsd of the metadata schema
+                    string xsdDirectoryPath = OutputMetadataManager.GetSchemaDirectoryPath(datasetId);
+                    if(Directory.Exists(xsdDirectoryPath))
+                        zip.AddDirectory(xsdDirectoryPath,"Schema");
+
+                    XmlDocument manifest = OutputDatasetManager.GenerateManifest(datasetId, datasetVersion.Id);
+
+                    if (manifest != null)
+                    {
+                        string dynamicManifestFilePath = OutputDatasetManager.GetDynamicDatasetStorePath(datasetId,
+                            datasetVersion.Id, "manifest", ".xml");
+                        string fullFilePath = Path.Combine(AppConfiguration.DataPath, dynamicManifestFilePath);
+
+                        manifest.Save(fullFilePath);
+                        zip.AddFile(fullFilePath,"");
+
+                    }
+
+
+                    zip.Save(zipFilePath);
+                }
+            }
+
+            //var product = await GetWSObject<object>();
+
+
+            return RedirectToAction("publishData", new {datasetId});
+        }
+
+        public async Task<string> GetWSObject<T>()
+        {
+
+            string url =
+                @"http://gfbio-pub2.inf-bb.uni-jena.de:8080/api/jsonws/GFBioProject-portlet.researchobject/get-research-object-by-id/request-json/%5B%7B%22researchobjectid%22%3A3%20%7D%5D";
+
+            string returnValue = "";
+
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri(url);
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    //test@testerer.de:WSTest
+                    var byteArray = Encoding.ASCII.GetBytes("broker.agent@gfbio.org:AgentPhase2");
+
+                    // "basic "+ Convert.ToBase64String(byteArray)
+                    AuthenticationHeaderValue ahv = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+                    client.DefaultRequestHeaders.Authorization = ahv;
+
+
+                    HttpResponseMessage response = await client.GetAsync(url);
+                    response.EnsureSuccessStatusCode();
+                    returnValue = ((HttpResponseMessage)response).Content.ReadAsStringAsync().Result;
+                }
+                return returnValue;
+            }
+            catch (Exception e)
+            {
+                throw (e);
+            }
+        }
+
+        #endregion
+
+        #region helper
+
+
+        private static string storeGeneratedFilePathToContentDiscriptor(long datasetId, DatasetVersion datasetVersion, string title, string ext)
+        {
+
+            string name = "";
+            string mimeType = "";
+
+            if (ext.Contains("csv"))
+            {
+                name = "datastructure";
+                mimeType = "text/comma-separated-values";
+            }
+
+
+            // create the generated FileStream and determine its location
+            string dynamicPath = OutputDatasetManager.GetDynamicDatasetStorePath(datasetId, datasetVersion.Id, title, ext);
+            //Register the generated data FileStream as a resource of the current dataset version
+            //ContentDescriptor generatedDescriptor = new ContentDescriptor()
+            //{
+            //    OrderNo = 1,
+            //    Name = name,
+            //    MimeType = mimeType,
+            //    URI = dynamicPath,
+            //    DatasetVersion = datasetVersion,
+            //};
+
+            DatasetManager dm = new DatasetManager();
+            if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(name)) > 0)
+            {   // remove the one contentdesciptor 
+                foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
+                {
+                    if (cd.Name == name)
+                    {
+                        cd.URI = dynamicPath;
+                        dm.UpdateContentDescriptor(cd);
+                    }
+                }
+            }
+            else
+            {
+                // add current contentdesciptor to list
+                //datasetVersion.ContentDescriptors.Add(generatedDescriptor);
+                dm.CreateContentDescriptor(name, mimeType, dynamicPath, 1, datasetVersion);
+            }
+
+            //dm.EditDatasetVersion(datasetVersion, null, null, null);
+            return dynamicPath;
+        }
+
 
         #endregion
     }

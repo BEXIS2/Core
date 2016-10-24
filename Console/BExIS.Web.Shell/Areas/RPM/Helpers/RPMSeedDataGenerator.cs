@@ -17,7 +17,9 @@ using BExIS.Xml.Services;
 using Vaiona.Utils.Cfg;
 using System.Data;
 using BExIS.Web.Shell.Areas.DCM.Controllers;
+using BExIS.Xml.Helpers.Mapping;
 using BExISMigration;
+using Remotion.Linq.Parsing;
 
 namespace BExIS.Web.Shell.Areas.RPM.Helpers
 {
@@ -57,8 +59,12 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
             createResearchPlan();
             //createSeedDataTypes();
             //createSIUnits();
-            createEmlDatasetAdv();
-            createABCD();
+            //createEmlDatasetAdv();
+            //createABCD();
+
+
+            ImportSchema("Basic ABCD", "ABCD_2.06.XSD","Dataset","BExIS.Dlm.Entities.Data.Dataset");
+            //ImportSchema("Basic Eml", "eml.xsd","dataset","BExIS.Dlm.Entities.Data.Dataset");
         }
 
         private static void createResearchPlan()
@@ -70,336 +76,196 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
 
         }
 
-        private static void createSeedDataTypes()
-        {
-            DataTypeManager dataTypeManager = new DataTypeManager();
-            DataType dataType;
+        #region old seed data
+        //private static void createSeedDataTypes()
+        //{
+        //    DataTypeManager dataTypeManager = new DataTypeManager();
+        //    DataType dataType;
 
-            try
-            {
-                string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("RPM"), "Seed", "DataTypes.xml");
-                XDocument xdoc = XDocument.Load(path);
+        //    try
+        //    {
+        //        string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("RPM"), "Seed", "DataTypes.xml");
+        //        XDocument xdoc = XDocument.Load(path);
 
-                IEnumerable<XElement> datatypesXElements = XmlUtility.GetXElementByNodeName("datatype", xdoc);
+        //        IEnumerable<XElement> datatypesXElements = XmlUtility.GetXElementByNodeName("datatype", xdoc);
 
-                if (datatypesXElements.Count() > 0)
-                {
+        //        if (datatypesXElements.Count() > 0)
+        //        {
 
-                    foreach (XElement xDatatype in datatypesXElements)
-                    {
-                        string name = xDatatype.Attribute("name").Value;
-                        string description = xDatatype.Attribute("description").Value;
-                        string systemtype = xDatatype.Attribute("typeCode").Value;
+        //            foreach (XElement xDatatype in datatypesXElements)
+        //            {
+        //                string name = xDatatype.Attribute("name").Value;
+        //                string description = xDatatype.Attribute("description").Value;
+        //                string systemtype = xDatatype.Attribute("typeCode").Value;
 
-                        TypeCode systemType = TypeCode.String;
+        //                TypeCode systemType = TypeCode.String;
 
-                        foreach (TypeCode type in Enum.GetValues(typeof(TypeCode)))
-                        {
-                            if (type.ToString().Equals(systemtype))
-                            {
-                                systemType = type;
-                            }
-                        }
+        //                foreach (TypeCode type in Enum.GetValues(typeof(TypeCode)))
+        //                {
+        //                    if (type.ToString().Equals(systemtype))
+        //                    {
+        //                        systemType = type;
+        //                    }
+        //                }
 
-                        dataType = dataTypeManager.Repo.Get().Where(d => d.Name.Equals(name)).FirstOrDefault();
+        //                dataType = dataTypeManager.Repo.Get().Where(d => d.Name.Equals(name)).FirstOrDefault();
 
-                        if (dataType == null)
-                        {
-                            dataTypeManager.Create(name, description, systemType);
-                        }
+        //                if (dataType == null)
+        //                {
+        //                    dataTypeManager.Create(name, description, systemType);
+        //                }
 
-                    }
-                }
+        //            }
+        //        }
 
-            }
-            catch (Exception ex)
-            {
+        //    }
+        //    catch (Exception ex)
+        //    {
 
-            }
+        //    }
 
-        }
+        //}
 
-        private static void createSIUnits()
-        {
-            DataTypeManager dataTypeManager = new DataTypeManager();
+        //private static void createSIUnits()
+        //{
+        //    DataTypeManager dataTypeManager = new DataTypeManager();
 
-            UnitManager unitManager = new UnitManager();
-            Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
-
-
-            Dimension dimNone = new Dimension();
-            dimNone.Name = "Dimensionless";
-
-            if (unitManager.DimensionRepo.Get(d => d.Name.Equals("None")) == null)
-            {
-                if (unit == null)
-                    unitManager.Create("None", "None", "If no unit is used.", dimNone, MeasurementSystem.Unknown);
-                // null dimension should be replaced
-            }
-            try
-            {
-                string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("RPM"), "Seed", "Units.xml");
-                XDocument xdoc = XDocument.Load(path);
-
-                IEnumerable<XElement> unitsXElements = XmlUtility.GetXElementByNodeName("unit", xdoc);
-
-                foreach (XElement xUnit in unitsXElements)
-                {
-                    string name = xUnit.Attribute("name").Value;
-                    string abbrevation = xUnit.Attribute("abbrevation").Value;
-                    string mesurementSystem = xUnit.Attribute("mesurementSystem").Value;
-                    string dimension = xUnit.Attribute("dimension").Value;
-                    string dimensionSpecification = xUnit.Attribute("dimensionSpecification").Value;
-                    string description = xUnit.Attribute("description").Value;
-                    string[] associatedDataTypes = xUnit.Attribute("associatedDataTypes").Value.Split(',');
-
-                    MeasurementSystem measurementSystemEnum = MeasurementSystem.Unknown;
-
-                    foreach (MeasurementSystem msCheck in Enum.GetValues(typeof(MeasurementSystem)))
-                    {
-                        if (msCheck.ToString().Equals(mesurementSystem))
-                        {
-                            measurementSystemEnum = msCheck;
-                        }
-                    }
+        //    UnitManager unitManager = new UnitManager();
+        //    Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
 
 
-                    if (description.Length > 250)
-                    {
-                        description = description.Substring(0, 250) + "...";
-                    }
+        //    Dimension dimNone = new Dimension();
+        //    dimNone.Name = "Dimensionless";
 
-                    unit = unitManager.Repo.Get(p => p.Name.Equals(name)).FirstOrDefault();
+        //    if (unitManager.DimensionRepo.Get(d => d.Name.Equals("None")) == null)
+        //    {
+        //        if (unit == null)
+        //            unitManager.Create("None", "None", "If no unit is used.", dimNone, MeasurementSystem.Unknown);
+        //        // null dimension should be replaced
+        //    }
+        //    try
+        //    {
+        //        string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("RPM"), "Seed", "Units.xml");
+        //        XDocument xdoc = XDocument.Load(path);
 
-                    if (unit == null)
-                    {
-                        Dimension dim = new Dimension();
-                        if (unitManager.DimensionRepo.Get().Where(d => d.Name.ToLower().Equals(dimension.ToLower()) && d.Specification.Equals(dimensionSpecification)).Count() == 0)
-                        {
-                            dim = unitManager.Create(dimension, "", dimensionSpecification);
-                        }
-                        else
-                        {
-                            dim = unitManager.DimensionRepo.Get().Where(d => d.Name.ToLower().Equals(dimension.ToLower())).FirstOrDefault();
-                        }
+        //        IEnumerable<XElement> unitsXElements = XmlUtility.GetXElementByNodeName("unit", xdoc);
 
-                        unit = unitManager.Create(name, abbrevation, description, dim, measurementSystemEnum); // null dimension should be replaced bz a proper Dimension object
+        //        foreach (XElement xUnit in unitsXElements)
+        //        {
+        //            string name = xUnit.Attribute("name").Value;
+        //            string abbrevation = xUnit.Attribute("abbrevation").Value;
+        //            string mesurementSystem = xUnit.Attribute("mesurementSystem").Value;
+        //            string dimension = xUnit.Attribute("dimension").Value;
+        //            string dimensionSpecification = xUnit.Attribute("dimensionSpecification").Value;
+        //            string description = xUnit.Attribute("description").Value;
+        //            string[] associatedDataTypes = xUnit.Attribute("associatedDataTypes").Value.Split(',');
 
-                        foreach (string dtName in associatedDataTypes)
-                        {
-                            DataType dt = dataTypeManager.Repo.Get().Where(d => d.Name.Equals(dtName)).FirstOrDefault();
-                            if (dt != null)
-                                unit.AssociatedDataTypes.Add(dt);
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message);
-            }
+        //            MeasurementSystem measurementSystemEnum = MeasurementSystem.Unknown;
 
-        }
+        //            foreach (MeasurementSystem msCheck in Enum.GetValues(typeof(MeasurementSystem)))
+        //            {
+        //                if (msCheck.ToString().Equals(mesurementSystem))
+        //                {
+        //                    measurementSystemEnum = msCheck;
+        //                }
+        //            }
+
+
+        //            if (description.Length > 250)
+        //            {
+        //                description = description.Substring(0, 250) + "...";
+        //            }
+
+        //            unit = unitManager.Repo.Get(p => p.Name.Equals(name)).FirstOrDefault();
+
+        //            if (unit == null)
+        //            {
+        //                Dimension dim = new Dimension();
+        //                if (unitManager.DimensionRepo.Get().Where(d => d.Name.ToLower().Equals(dimension.ToLower()) && d.Specification.Equals(dimensionSpecification)).Count() == 0)
+        //                {
+        //                    dim = unitManager.Create(dimension, "", dimensionSpecification);
+        //                }
+        //                else
+        //                {
+        //                    dim = unitManager.DimensionRepo.Get().Where(d => d.Name.ToLower().Equals(dimension.ToLower())).FirstOrDefault();
+        //                }
+
+        //                unit = unitManager.Create(name, abbrevation, description, dim, measurementSystemEnum); // null dimension should be replaced bz a proper Dimension object
+
+        //                foreach (string dtName in associatedDataTypes)
+        //                {
+        //                    DataType dt = dataTypeManager.Repo.Get().Where(d => d.Name.Equals(dtName)).FirstOrDefault();
+        //                    if (dt != null)
+        //                        unit.AssociatedDataTypes.Add(dt);
+        //                }
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Debug.WriteLine(ex.Message);
+        //    }
+
+        //}
+        #endregion
 
         #region METADATA
 
-        //private static void CreateEmlBasic()
-        //{
-        //    MetadataStructureManager mdsManager = new MetadataStructureManager();
-        //    MetadataPackageManager mdpManager = new MetadataPackageManager();
-        //    MetadataAttributeManager mdaManager = new MetadataAttributeManager();
+        private static void ImportSchema(string name, string filename, string root, string entity)
+        {
+            long metadataStructureid = 0;
+            string schemaName = name;
 
-        //    DataTypeManager dataTypeManager = new DataTypeManager();
-        //    UnitManager unitManager = new UnitManager();
+            string filepath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "Metadata", name,
+                filename);
 
-        //    MetadataStructure abcd = mdsManager.Repo.Get(p => p.Name == "ABCD").FirstOrDefault();
-        //    if (abcd == null) abcd = mdsManager.Create("ABCD", "This is the ABCD structure", "", "", null);
+            XmlSchemaManager xmlSchemaManager = new XmlSchemaManager();
 
-        //    MetadataStructure eml = mdsManager.Repo.Get(p => p.Name == "EML").FirstOrDefault();
+            //load
+            try
+            {
+                xmlSchemaManager.Load(filepath, "application");
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
 
-        //    if (eml == null) eml = mdsManager.Create("EML", "This is the EML structure", "", "", null);
+            //generate
+            try
+            {
+                metadataStructureid = xmlSchemaManager.GenerateMetadataStructure("Dataset", schemaName);
+            }
+            catch (Exception ex)
+            {
+                xmlSchemaManager.Delete(schemaName);
+            }
 
-        //    XmlDocument xmlDoc = new XmlDocument();
+            try
+            {
+                //set parameters
+                string titleXPath = "";
+                string descriptionXpath = "";
+                string mappingFileImport = xmlSchemaManager.mappingFileNameImport;
+                string mappingFileExport = xmlSchemaManager.mappingFileNameExport;
 
-        //    if (eml.Extra != null)
-        //    {
-        //        xmlDoc = (XmlDocument)eml.Extra;
-        //    }
+                StoreParametersToMetadataStruture(
+                    metadataStructureid,
+                    titleXPath,
+                    descriptionXpath,
+                    entity,
+                    mappingFileImport,
+                    mappingFileExport);
+            }
+            catch(Exception ex)
+            {
 
-        //    // add title Node
-        //    xmlDoc = AddReferenceToMetadatStructure(eml, "title", "Metadata/Description/DescriptionEML/Title/Title", "extra/nodeReferences/nodeRef", xmlDoc);
+                throw ex;
+            }
+            
 
-        //    // add ConvertReference Mapping file node
-        //    xmlDoc = AddReferenceToMetadatStructure(eml, "mappingFile", "mapping_eml.xml", "extra/convertReferences/convertRef", xmlDoc);
+        }
 
-        //    eml.Extra = xmlDoc;
-        //    mdsManager.Update(eml);
-
-        //    //package Description for title
-        //    MetadataPackage DescEml = mdpManager.MetadataPackageRepo.Get(p => p.Name == "DescriptionEML").FirstOrDefault();
-        //    if (DescEml == null) DescEml = mdpManager.Create("DescriptionEML", "DescriptionEML", true);
-
-        //    //package PersonEML ( Creator / Contact)
-        //    MetadataPackage personEml = mdpManager.MetadataPackageRepo.Get(p => p.Name == "PersonEML").FirstOrDefault();
-        //    if (personEml == null) personEml = mdpManager.Create("PersonEML", "PersonEML", true);
-
-        //    //package PersonEML ( Creator / Contact)
-        //    MetadataPackage projectEml = mdpManager.MetadataPackageRepo.Get(p => p.Name == "ProjectEML").FirstOrDefault();
-        //    if (projectEml == null) projectEml = mdpManager.Create("ProjectEML", "PersonEML", true);
-
-        //    // add package to structure
-        //    if (eml.MetadataPackageUsages != null && eml.MetadataPackageUsages.Count > 0)
-        //    {
-        //        if (eml.MetadataPackageUsages.Where(p => p.MetadataPackage == DescEml).Count() <= 0)
-        //            mdsManager.AddMetadataPackageUsage(eml, DescEml, "Description", "", 1, 1);
-
-        //        if (eml.MetadataPackageUsages.Where(p => p.MetadataPackage == personEml).Count() <= 0)
-        //            mdsManager.AddMetadataPackageUsage(eml, personEml, "Creator", "", 1, 5);
-
-        //        if (eml.MetadataPackageUsages.Where(p => p.MetadataPackage == personEml).Count() <= 0)
-        //            mdsManager.AddMetadataPackageUsage(eml, personEml, "Contact", "", 1, 5);
-
-        //        if (eml.MetadataPackageUsages.Where(p => p.MetadataPackage == projectEml).Count() <= 0)
-        //            mdsManager.AddMetadataPackageUsage(eml, projectEml, "Project", "", 1, 1);
-        //    }
-        //    else
-        //    {
-        //        mdsManager.AddMetadataPackageUsage(eml, DescEml, "Description", "", 1, 1);
-        //        mdsManager.AddMetadataPackageUsage(eml, personEml, "Creator", "", 1, 5);
-        //        mdsManager.AddMetadataPackageUsage(eml, personEml, "Contact", "", 1, 5);
-        //        mdsManager.AddMetadataPackageUsage(eml, projectEml, "Project", "", 1, 1);
-        //    }
-
-        //    #region Description EML
-
-        //    MetadataAttribute Title = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Title")).FirstOrDefault();
-        //    if (Title == null)
-        //    {
-        //        DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
-        //        Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
-
-        //        Title = mdaManager.Create("Title", "Title", "Title", false, false, "David Blaa",
-        //                MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
-        //    }
-
-        //    if (DescEml.MetadataAttributeUsages != null & DescEml.MetadataAttributeUsages.Count > 0)
-        //    {
-        //        // add metadataAttributes to packages
-        //        if (DescEml.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Title).Count() <= 0)
-        //            mdpManager.AddMetadataAtributeUsage(DescEml, Title, "Title", 1, 1);
-
-        //    }
-        //    else
-        //    {
-        //        mdpManager.AddMetadataAtributeUsage(DescEml, Title, "Title", 1, 1);
-        //    }
-
-        //    #endregion
-
-        //    #region Peronal EML
-
-        //    MetadataAttribute Name = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Name")).FirstOrDefault();
-        //    if (Name == null)
-        //    {
-        //        DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
-        //        Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
-
-        //        Name = mdaManager.Create("Name", "Name", "first and last name", false, false, "David Blaa",
-        //                MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
-        //    }
-
-        //    if (Name == null)
-        //    {
-        //        DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
-        //        Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
-
-        //        Name = mdaManager.Create("Name", "Name", "first and last name", false, false, "David Blaa",
-        //                MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
-        //    }
-
-        //    if (personEml.MetadataAttributeUsages != null & personEml.MetadataAttributeUsages.Count > 0)
-        //    {
-        //        // add metadataAttributes to packages
-        //        if (personEml.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Name).Count() <= 0)
-        //            mdpManager.AddMetadataAtributeUsage(personEml, Name, "Given name", 1, 1);
-
-        //        if (personEml.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Name).Count() <= 0)
-        //            mdpManager.AddMetadataAtributeUsage(personEml, Name, "Sur name", 1, 1);
-
-        //        if (personEml.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Name).Count() <= 0)
-        //            mdpManager.AddMetadataAtributeUsage(personEml, Name, "Organization", 1, 1);
-
-        //    }
-        //    else
-        //    {
-        //        mdpManager.AddMetadataAtributeUsage(personEml, Name, "Given name", 1, 1);
-        //        mdpManager.AddMetadataAtributeUsage(personEml, Name, "Sur name", 1, 1);
-        //        mdpManager.AddMetadataAtributeUsage(personEml, Name, "Organization", 1, 1);
-        //    }
-
-        //    #endregion
-
-        //    #region Project Eml
-
-        //    MetadataAttribute DescriptionAttr = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Description")).FirstOrDefault();
-        //    if (DescriptionAttr == null)
-        //    {
-        //        DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
-        //        Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
-
-        //        DescriptionAttr = mdaManager.Create("Description", "Description", "Description", false, false, "David Blaa",
-        //                MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
-        //    }
-
-        //    MetadataAttribute Role = mdaManager.MetadataAttributeRepo.Get(p => p.Name.Equals("Role")).FirstOrDefault();
-        //    if (Role == null)
-        //    {
-        //        DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
-        //        Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
-
-        //        Role = mdaManager.Create("Role", "Role", "Role", false, false, "David Blaa",
-        //                MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
-        //    }
-
-        //    if (projectEml.MetadataAttributeUsages != null & projectEml.MetadataAttributeUsages.Count > 0)
-        //    {
-        //        if (Title == null)
-        //        {
-        //            DataType dataType = dataTypeManager.Repo.Get(p => p.SystemType.Equals("String") && p.Name.ToLower().Equals("string")).FirstOrDefault();
-        //            Unit unit = unitManager.Repo.Get(p => p.Name.Equals("None")).FirstOrDefault();
-
-        //            Title = mdaManager.Create("Title", "Title", "Title", false, false, "David Blaa",
-        //                    MeasurementScale.Categorial, DataContainerType.ValueType, "", dataType, unit, null, null, null, null);
-        //        }
-
-        //        // add metadataAttributes to packages
-        //        if (projectEml.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Title).Count() <= 0)
-        //            mdpManager.AddMetadataAtributeUsage(projectEml, Title, "Title", 0, 1);
-
-        //        if (projectEml.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Name).Count() <= 0)
-        //            mdpManager.AddMetadataAtributeUsage(projectEml, Name, "Personnel given name", 0, 1);
-
-        //        if (projectEml.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Name).Count() <= 0)
-        //            mdpManager.AddMetadataAtributeUsage(projectEml, Name, "Personnel sur name", 0, 1);
-
-        //        if (projectEml.MetadataAttributeUsages.Where(p => p.MetadataAttribute == Role).Count() <= 0)
-        //            mdpManager.AddMetadataAtributeUsage(projectEml, Role, "Role", 0, 1);
-
-        //        if (projectEml.MetadataAttributeUsages.Where(p => p.MetadataAttribute == DescriptionAttr).Count() <= 0)
-        //            mdpManager.AddMetadataAtributeUsage(projectEml, DescriptionAttr, "Project description", 0, 1);
-
-        //    }
-        //    else
-        //    {
-        //        mdpManager.AddMetadataAtributeUsage(projectEml, Title, "Title", 0, 1);
-        //        mdpManager.AddMetadataAtributeUsage(projectEml, Name, "Personnel given name", 0, 1);
-        //        mdpManager.AddMetadataAtributeUsage(projectEml, Name, "Personnel sur name", 0, 1);
-        //        mdpManager.AddMetadataAtributeUsage(projectEml, Role, "Role", 0, 1);
-        //        mdpManager.AddMetadataAtributeUsage(projectEml, DescriptionAttr, "Project description", 0, 1);
-        //    }
-
-        //    #endregion
-        //}
 
         private static void createEmlDatasetAdv()
         {
@@ -1147,6 +1013,56 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
             return xmlDoc;
 
         }
+
+        #region extra xdoc
+        /// <summary>
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="titlePath"></param>
+        /// <param name="descriptionPath"></param>
+        /// <param name="mappingFilePath"></param>
+        /// <param name="direction"></param>
+        private static void StoreParametersToMetadataStruture(long id, string titlePath, string descriptionPath, string entity, string mappingFilePathImport, string mappingFilePathExport)
+        {
+            MetadataStructureManager mdsManager = new MetadataStructureManager();
+            MetadataStructure metadataStructure = mdsManager.Repo.Get(id);
+
+            XmlDocument xmlDoc = new XmlDocument();
+
+            if (metadataStructure.Extra != null)
+            {
+                xmlDoc = (XmlDocument)metadataStructure.Extra;
+            }
+
+            // add title Node
+            xmlDoc = AddReferenceToMetadatStructure("title", titlePath, AttributeType.xpath.ToString(), "extra/nodeReferences/nodeRef", xmlDoc);
+            // add Description
+            xmlDoc = AddReferenceToMetadatStructure("description", descriptionPath, AttributeType.xpath.ToString(), "extra/nodeReferences/nodeRef", xmlDoc);
+
+            xmlDoc = AddReferenceToMetadatStructure("entity", entity, AttributeType.entity.ToString(), "extra/entity", xmlDoc);
+
+            // add mappingFilePath
+            xmlDoc = AddReferenceToMetadatStructure(metadataStructure.Name, mappingFilePathImport, "mappingFileImport", "extra/convertReferences/convertRef", xmlDoc);
+            xmlDoc = AddReferenceToMetadatStructure(metadataStructure.Name, mappingFilePathExport, "mappingFileExport", "extra/convertReferences/convertRef", xmlDoc);
+
+            //set active
+            xmlDoc = AddReferenceToMetadatStructure(NameAttributeValues.active.ToString(), true.ToString(), AttributeType.parameter.ToString(), "extra/parameters/parameter", xmlDoc);
+
+            metadataStructure.Extra = xmlDoc;
+            mdsManager.Update(metadataStructure);
+
+        }
+
+        private static XmlDocument AddReferenceToMetadatStructure(string nodeName, string nodePath, string nodeType, string destinationPath, XmlDocument xmlDoc)
+        {
+
+            XmlDocument doc = XmlDatasetHelper.AddReferenceToXml(xmlDoc, nodeName, nodePath, nodeType, destinationPath);
+
+            return doc;
+
+        }
+
+        #endregion
 
         #endregion
 

@@ -1,0 +1,195 @@
+﻿@using BExIS.Web.Shell.Areas.RPM.Models
+@model DataStructureCreateModel
+
+@{
+    string Action = "";
+    long validationId = 0;
+    if (Model.copy)
+    {
+        if (Model.Id > 0)
+        {
+            Action = "copyDataStructure";
+        }
+        else
+        {
+            Action = "createDataStructure";
+        }
+        validationId = 0;
+    }
+    else
+    {
+        Action = "createDataStructure";
+        validationId = Model.Id;
+    }
+}
+
+<div class="bx-rpm-createDataStructureContainer" id="createDataStructureContainer">
+    @Html.Hidden("id", Model.Id, new { @id = "id", @validationId = validationId })
+    <table>
+        <tr>
+            <td>
+                Name
+            </td>
+            <td>
+                <div title="The name will be used for a new Data Structure">@Html.TextBox("Name", Model.Name, new { @class = "bx-input", @id = "name" })</div>
+                <div class="hidden bx-rpm-error" id="messageContainer"><span id="message" class="bx-rpm-message" value="none"></span></div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Description
+            </td>
+            <td>
+                @Html.TextArea("Description", Model.Description, new { @class = "bx-input", @id = "description" })
+            </td>
+        </tr>
+        <tr id="isSructuredContainer">
+            <td>
+                Data Format
+            </td>
+            <td class="bx-rpm-isSructured">
+                @if (Model.Id > 0 || Model.inUse)
+                {
+                    if (!Model.isSructured)
+                    {
+                        <div>Tabular @Html.RadioButton("isSructured", true, new { @class = "true", @disabled = "true" })</div>
+                                <div>File @Html.RadioButton("isSructured", false, new { @class = "false", @checked = "true", @disabled = "true" })</div>
+                    }
+                    else
+                    {
+                        <div>Tabular @Html.RadioButton("isSructured", true, new { @class = "true", @checked = "true", @disabled = "true" })</div>
+                                <div>File @Html.RadioButton("isSructured", false, new { @class = "false", @disabled = "true" })</div>
+                    }
+                }
+                else
+                {
+                    if (!Model.isSructured)
+                    {
+                        <div>Tabular @Html.RadioButton("isSructured", true, new { @class = "true" })</div>
+                            <div>File @Html.RadioButton("isSructured", false, new { @class = "false", @checked = "true" })</div>
+                    }
+                    else
+                    {
+                        <div>Tabular @Html.RadioButton("isSructured", true, new { @class = "true", @checked = "true" })</div>
+                            <div>File @Html.RadioButton("isSructured", false, new { @class = "false" })</div>
+                    }
+                }
+            </td>
+        </tr>
+    </table>
+    <div id="buttons">
+        <button class="bx-button small action bx-disabled" id="saveButton" disabled="true">Save</button>
+        @if (Model.Id > 0 && !Model.copy)
+        {
+            if (Model.inUse)
+            {
+                <button class="bx-button small action bx-disabled" id="deleteButton" disabled="true">Delete</button>
+            }
+            else
+            {
+                <button class="bx-button small action" id="deleteButton" onclick="javascript:openDelWindow(@Model.Id,'@Model.Name')">Delete</button>
+            }
+        }
+        <button class="bx-button small action" id="cancelButton">Cancel</button>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var inUse = @Model.inUse.ToString().ToLower();
+
+    $('.bx-rpm-createDataStructureContainer #saveButton').click(function () {
+        var parameters = '/?Id=' + $('.bx-rpm-createDataStructureContainer #id').val() + '&Name=' + $('.bx-rpm-createDataStructureContainer #name').val() + '&Description=' + $('.bx-rpm-createDataStructureContainer #description').val() + '&isStructured=' + $('.bx-rpm-createDataStructureContainer #isSructured:checked').val() + '&cssId=message';
+        $.get('@Url.Action(Action, "DataStructureSearch", new { area = "RPM"} )' + parameters, function (data) {
+            if ($(data).hasClass('bx-rpm-message') && $(data).attr('id') == 'message') {
+                $(data).replaceAll('.bx-rpm-createDataStructureContainer #' + $(data).attr('id'));
+                showmessage($(data).attr('value').toLowerCase());
+            }
+            else if ($(data).hasClass('bx-rpm-message') && $(data).attr('id') == 'redirect') {
+                if( $('.bx-rpm-createDataStructureContainer #id').val() == '0' && inUse) {
+                    if( $('.bx-rpm-dataStructure-container').length > 0){
+                        $('.bx-rpm-dataStructure-functions #storeVariablesButton').attr('value', $(data).text())
+                        $('.bx-rpm-dataStructure-functions #storeVariablesButton').trigger('click');
+                    }
+                }
+                else{
+                    window.location.href = "/RPM/DataStructureEdit?dataStructureId=" + $(data).text();
+                }
+            }
+            else if ($(data).hasClass('bx-rpm-message') && $(data).attr('id') == 'refresh') {
+                $("#windowCreate").data('tWindow').destroy();
+                $("#bx-rpm-dataStructureResultGrid .t-refresh").trigger('click');
+            }
+        });
+    });
+
+    $('.bx-rpm-createDataStructureContainer #cancelButton').click(function () {
+        $("#windowCreate").data('tWindow').destroy();
+        $("#bx-rpm-dataStructureResultGrid .t-refresh").trigger('click');
+    });
+
+    $('.bx-rpm-createDataStructureContainer #name').keyup(function () {
+        createWondowValidateName('message');
+    });
+
+    $('.bx-rpm-createDataStructureContainer #name').change(function () {
+        createWondowValidateName('message');
+    });
+
+    $('.bx-rpm-createDataStructureContainer #description').keyup(function () {
+        createWondowShowmessage();
+    });
+
+    $('.bx-rpm-createDataStructureContainer #description').change(function () {
+        createWondowShowmessage();
+    });
+
+    function createWondowValidateName(cssId) {
+        var parameters = '/?Id=' + $('.bx-rpm-createDataStructureContainer #id').attr('validationId') + '&Name=' + $('.bx-rpm-createDataStructureContainer #name').val() + '&cssId=' + cssId;
+        $.get('@Url.Action("_validateDataStructureName", "DataStructureSearch", new { area = "RPM"} )' + parameters, function (data) {
+            $(data).replaceAll('.bx-rpm-createDataStructureContainer #' + cssId);
+            console.log(data);
+            createWondowShowmessage();
+        });
+    }
+
+    function createWondowShowmessage() {
+        var hasMessage = false;
+        for (var i = 0; i < $('.bx-rpm-createDataStructureContainer .bx-rpm-message').length; i++) {
+            if ($('.bx-rpm-createDataStructureContainer .bx-rpm-message')[i].getAttribute('value').toLowerCase() == 'true') {
+                hasMessage = true;
+                break;
+            }
+            if ($('.bx-rpm-createDataStructureContainer .bx-rpm-message')[i].getAttribute('value').toLowerCase() == 'none') {
+                hasMessage = 'none';
+                break;
+            }
+        }
+
+        if (hasMessage == true) {
+            $('.bx-rpm-createDataStructureContainer #saveButton').attr('disabled', 'disabled');
+            $(".bx-rpm-createDataStructureContainer #messageContainer").removeClass('hidden');
+            $('.bx-rpm-createDataStructureContainer #saveButton').addClass('bx-disabled');
+        }
+        else if(hasMessage == false){
+            $('.bx-rpm-createDataStructureContainer #saveButton').removeAttr('disabled');
+            $(".bx-rpm-createDataStructureContainer #messageContainer").addClass('hidden');
+            $('.bx-rpm-createDataStructureContainer #saveButton').removeClass('bx-disabled');
+        }
+    }
+
+    function openDelWindow(id, name) {
+        if ($("#windowCreate")) {
+            $("#windowCreate").fadeToggle('fast');
+        }
+        var parameters = '/?Id=' + id;
+
+        $.ajax({
+            type: 'GET',
+            url: '@Url.Action("_deleteDataStructureBinding", "DataStructureSearch")' + parameters,
+            dataType: 'html',
+            success: function (data) {
+                createMessageWindow(data, 'Delete DataStructure ' + name + ' (' + id + ')');
+            }
+        });
+    }
+</script>

@@ -1,0 +1,41 @@
+﻿.bx-rpm-message,
+.bx-rpm-message #buttons{
+    text-align:center;
+    margin: 5px;
+}
+
+.bx-rpm-hidden {
+    display: none;
+}
+
+.bx-rpm-message,
+.bx-rpm-message #buttons{
+    text-align:center;
+    margin: 5px;
+}
+
+.bx-rpm-error{
+    color: #f24c24;
+    font-size:10pt;
+}
+
+.bx-disabled{
+    cursor: not-allowed !important;
+}
+
+.bx-disabled span{
+    color:#afb0b1;
+}
+
+.bx-rpm-createDataStructureContainer .bx-rpm-isSructured{
+    text-align: center;
+}
+
+.bx-rpm-createDataStructureContainer .bx-rpm-isSructured div {
+    width: calc(50% - 10px);
+    float: left;
+}
+
+.bx-rpm-createDataStructureContainer #buttons{
+    text-align:right;
+}

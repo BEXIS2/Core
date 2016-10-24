@@ -10,6 +10,7 @@ using System.Data;
 using System.Globalization;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.DataStructure;
+using BExIS.Xml.Helpers;
 
 namespace BExIS.IO.Transform.Output
 {
@@ -45,11 +46,10 @@ namespace BExIS.IO.Transform.Output
             
             string path = "";
 
-            List<long> datatupleIds = datasetManager.GetDatasetVersionEffectiveTupleIds(datasetVersion);
-            long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
+            
 
             //ascii allready exist
-            if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals("c")) > 0)
+            if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(contentDescriptorTitle)) > 0)
             {
                 #region FileStream exist
 
@@ -62,10 +62,12 @@ namespace BExIS.IO.Transform.Output
                 }
                 else
                 {
+                    List<long> datatupleIds = datasetManager.GetDatasetVersionEffectiveTupleIds(datasetVersion);
+                    long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
 
-                    path = generateDownloadFile(id, datasetVersion.Id, datastuctureId, title, ext, writer);
+                    path = generateDownloadFile(id, datasetVersion.Id, datastuctureId, "Data", ext, writer);
 
-                    storeGeneratedFilePathToContentDiscriptor(id, datasetVersion, title, ext, writer);
+                    storeGeneratedFilePathToContentDiscriptor(id, datasetVersion,ext);
 
                     writer.AddDataTuples(datatupleIds, path, datastuctureId);
 
@@ -80,9 +82,12 @@ namespace BExIS.IO.Transform.Output
             {
                 #region FileStream not exist
 
-                path = generateDownloadFile(id, datasetVersion.Id, datastuctureId, title, ext, writer);
+                List<long> datatupleIds = datasetManager.GetDatasetVersionEffectiveTupleIds(datasetVersion);
+                long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
 
-                storeGeneratedFilePathToContentDiscriptor(id, datasetVersion, title, ext, writer);
+                path = generateDownloadFile(id, datasetVersion.Id, datastuctureId, "data", ext, writer);
+
+                storeGeneratedFilePathToContentDiscriptor(id, datasetVersion, ext);
 
                 writer.AddDataTuples(datatupleIds, path, datastuctureId);
 
@@ -105,7 +110,7 @@ namespace BExIS.IO.Transform.Output
 
             long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
 
-            path = generateDownloadFile(id, datasetVersion.Id, datastuctureId, title, ext, writer);
+            path = generateDownloadFile(id, datasetVersion.Id, datastuctureId, "data", ext, writer);
 
             if (visibleColumns != null)
                 writer.VisibleColumns = visibleColumns;
@@ -157,7 +162,7 @@ namespace BExIS.IO.Transform.Output
                     path = generateDownloadFile(id, datasetVersion.Id, datastuctureId, title, ext,
                         writer);
 
-                    storeGeneratedFilePathToContentDiscriptor(id, datasetVersion, title, ext, writer);
+                    storeGeneratedFilePathToContentDiscriptor(id, datasetVersion, ext);
                     writer.AddDataTuplesToTemplate(datatupleIds, path, datastuctureId);
 
                     return path;
@@ -173,9 +178,9 @@ namespace BExIS.IO.Transform.Output
                 List<long> datatupleIds =
                     datasetManager.GetDatasetVersionEffectiveTupleIds(datasetVersion);
                 long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
-                path = generateDownloadFile(id, datasetVersion.Id, datastuctureId, title, ext, writer);
+                path = generateDownloadFile(id, datasetVersion.Id, datastuctureId, "data", ext, writer);
 
-                storeGeneratedFilePathToContentDiscriptor(id, datasetVersion, title, ext, writer);
+                storeGeneratedFilePathToContentDiscriptor(id, datasetVersion, ext);
                 writer.AddDataTuplesToTemplate(datatupleIds, path, datastuctureId);
 
                 return path;
@@ -191,19 +196,19 @@ namespace BExIS.IO.Transform.Output
             if (ext.Equals(".csv") || ext.Equals(".txt"))
             {
                 AsciiWriter asciiwriter = (AsciiWriter)writer;
-                return asciiwriter.CreateFile(id, datasetVersionOrderNo, dataStructureId, title, ext);
+                return asciiwriter.CreateFile(id, datasetVersionOrderNo, dataStructureId, "data", ext);
             }
             else
             if (ext.Equals(".xlsm"))
             {
                 ExcelWriter excelwriter = (ExcelWriter)writer;
-                return excelwriter.CreateFile(id, datasetVersionOrderNo, dataStructureId, title, ext);
+                return excelwriter.CreateFile(id, datasetVersionOrderNo, dataStructureId, "data", ext);
             }
 
             return "";
         }
 
-        private void storeGeneratedFilePathToContentDiscriptor(long datasetId, DatasetVersion datasetVersion, string title, string ext, DataWriter writer)
+        private void storeGeneratedFilePathToContentDiscriptor(long datasetId, DatasetVersion datasetVersion, string ext)
         {
 
             string name = "";
@@ -228,7 +233,7 @@ namespace BExIS.IO.Transform.Output
             }
 
             // create the generated FileStream and determine its location
-            string dynamicPath = writer.GetDynamicStorePath(datasetId, datasetVersion.Id, title, ext);
+            string dynamicPath = IOHelper.GetDynamicStorePath(datasetId, datasetVersion.Id, "data", ext);
             //Register the generated data FileStream as a resource of the current dataset version
             //ContentDescriptor generatedDescriptor = new ContentDescriptor()
             //{
@@ -356,13 +361,14 @@ namespace BExIS.IO.Transform.Output
                     }
                 }
 
-                DatasetManager datasetManager = new DatasetManager();
 
                 foreach (var id in dsVersionTupleIds)
                 {
+                    DatasetManager datasetManager = new DatasetManager();
                     DataTuple dataTuple = datasetManager.DataTupleRepo.Query(d => d.Id.Equals(id)).FirstOrDefault();
                     dataTuple.Materialize();
                     dt.Rows.Add(ConvertTupleIntoDataRow(dt, dataTuple, sds, true));
+                    //dataTuple.Dematerialize();
                 }
             }
 
@@ -380,9 +386,6 @@ namespace BExIS.IO.Transform.Output
         /// <returns></returns>
         private static DataRow ConvertTupleIntoDataRow(DataTable dt, AbstractTuple t, StructuredDataStructure sts, bool useLabelsAsColumnName = false)
         {
-
-
-
             DataRow dr = dt.NewRow();
             string columnName = "";
             foreach (var vv in t.VariableValues)

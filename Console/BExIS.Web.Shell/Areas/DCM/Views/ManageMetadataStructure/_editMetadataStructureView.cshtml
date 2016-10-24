@@ -1,0 +1,114 @@
+﻿@model BExIS.Web.Shell.Areas.DCM.Models.MetadataStructureModel
+
+
+
+
+@using (Ajax.BeginForm("Save", "ManageMetadataStructure", new AjaxOptions
+{
+    HttpMethod = "Post",
+    UpdateTargetId = "metadataStructureForm",
+    OnSuccess = "OnSuccess",
+    OnFailure = "OnFailure"
+}))
+{
+    <div id="metadataStructureFrom" class="bx-content" style="overflow:auto">
+        <table>
+            <tr>
+                <td>
+                    <label>Id</label>
+                    @(Html.HiddenFor(m => m.Id))
+                </td>
+                <td>
+                    @Html.TextBoxFor(m => m.Id, new {@disabled = "disabled"})
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @(Html.LabelFor(m => m.Name))<span class="bx bx-required" title="Required"/>
+                </td>
+                <td>
+                    @(Html.TextBoxFor(m => m.Name, new {@class = "t-input", title = "Display name of the item in the search user interface."}))
+                    @Html.ValidationMessageFor(m => m.Name)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @(Html.LabelFor(m => m.Entity.ClassPath))<span class="bx bx-required" title="Required" />
+                </td>
+                <td>
+                    @Html.DropDownListFor(m => m.Entity.ClassPath, new SelectList(Model.EntityClasses.Select(e=>e.ClassPath), Model.Entity.ClassPath), "Select")
+                    <label title="Select an associated entity.">?</label>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @(Html.LabelFor(m => m.TitleNode))<span class="bx bx-required" title="Required" />
+                </td>
+                <td>
+                    @Html.DropDownListFor(m => m.TitleNode, new SelectList(Model.MetadataNodes, "DisplayName", "DisplayName", Model.TitleNode), "Select")
+                    <label title="Select the node from the metadata structure that describes the title.">?</label>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @(Html.LabelFor(m => m.DescriptionNode))<span class="bx bx-required" title="Required" />
+                </td>
+                <td>
+                    @Html.DropDownListFor(m => m.DescriptionNode, new SelectList(Model.MetadataNodes, "DisplayName", "DisplayName", Model.DescriptionNode), "Select")
+                    <label title="Select the node from the metadata structure that describes the description.">?</label>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @(Html.LabelFor(m => m.Active))
+                </td>
+                <td>
+                    @Html.CheckBoxFor(m => m.Active, new { title = "Tick if the metadata structure item should be visible load." })
+                </td>
+            </tr>
+        </table>
+
+
+</div>
+<div class="bx-footer right">
+    <button type="submit" value="Save" name="submit" class="bx-button action">Save</button>
+    <button type="button" value="c" name="cancel" class="bx-button action" onclick="OnCancel()">Cancel</button>
+</div>
+}
+
+<script type="text/javascript">
+
+    function OnSuccess() {
+
+        $("#windowEdit").data('tWindow').destroy();
+        //$("#metadataStructuresGrid .t-refresh").trigger('click');
+        window.location.replace('@Url.Action("Index", "ManageMetadataStructure", new RouteValueDictionary { { "area", "DCM" } })');
+    }
+
+    function OnFailure(response) {
+        alert("failed");
+    }
+
+    function OnCancel() {
+        //alert("oncancel");
+
+        $("#windowEdit").data('tWindow').destroy();
+        $("#metadataStructuresGrid .t-refresh").trigger('click');
+    }
+</script>
+
+<style type="text/css">
+
+    #metadataStructureFrom table, 
+    #metadataStructureFrom td, 
+    #metadataStructureFrom tr {
+        border: none;
+    }
+
+    .t-window-content
+    {
+        height: auto !important;
+        width: auto !important;
+    }
+
+</style>

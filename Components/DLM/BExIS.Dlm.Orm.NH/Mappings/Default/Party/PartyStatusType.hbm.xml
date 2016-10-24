@@ -30,7 +30,7 @@
     
     <many-to-one name="PartyType" class="BExIS.Dlm.Entities.Party.PartyType" not-null="true" column="PartyTypeRef"/>
     
-    <set name="Statuses" table="PartyStatuses" lazy="true">
+    <set name="Statuses" table="PartyStatuses" lazy="true" >
       <key column="PartyStatusTypeRef"/>
       <one-to-many class="PartyStatus"/>
     </set>
