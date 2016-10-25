@@ -6,6 +6,7 @@ $(document).ready(function () {
     if ($('textarea') != null) {
         autosize($('textarea'));
     }
+
     resetAllTelerikIconTitles();
 });
 
@@ -23,7 +24,7 @@ function OnKeyUpTextInput(e) {
        
     var length = e.value.length;
 
-    if (length >= 60) {
+    if (length >= 80) {
         console.log("start replace");
         var textarea = inputToTextArea(e);
         console.log(textarea);
@@ -35,8 +36,7 @@ function OnKeyUpTextInput(e) {
         autosize($("#" + e.id));
         $("#" + e.id).val(tmp);
         $("#" + e.id).focus();
-
-               
+      
         console.log("done");
     }
 }
@@ -50,7 +50,7 @@ function inputToTextArea(input) {
         "onchange=\"OnChange(this)\"" +
         "onkeyup= \"OnKeyUpTextArea(this)\""+
         "title='" + $("#" + input.id).attr("title") + "'" +
-        "class=\"bx-textarea bx-metadataFormTextInput\"" +
+        "class=\"bx-textarea bx-metadataFormTextInput \"" +
         "cols=\"2\" rows=\"2\">" + input.value + "</textarea>";
 
     return textarea;
@@ -65,7 +65,7 @@ function OnKeyUpTextArea(e) {
 
     var length = e.value.length;
 
-    if (length < 60) {
+    if (length < 80) {
         console.log("start replace");
         var input = textareaToInput(e);
         console.log(input);
@@ -78,6 +78,8 @@ function OnKeyUpTextArea(e) {
         $("#" + e.id).focus();
  
         console.log("done");
+
+        autosize($('textarea'));
     }
 }
 
@@ -131,6 +133,8 @@ function OnChangeTextInput(e) {
         console.log(newId);
 
         $("#" + newId).replaceWith(response);
+        alert("test");
+        autosize($('textarea'));
     })
 }
 
@@ -144,8 +148,6 @@ function OnChange(e) {
     var number = substr[2];
     var ParentModelNumber = substr[3];
     var ParentStepID = substr[5];
-
-
 
     //alert(parentid);
     //alert(metadataStructureId);
@@ -161,7 +163,9 @@ function OnChange(e) {
             parentModelNumber: ParentModelNumber,
             ParentStepId: ParentStepID
         },
-        function(response) {
+        function (response) {
+
+            console.log("replace boy");
             //alert(e.value);
             //alert(response);
             console.log(parentid);
@@ -170,6 +174,10 @@ function OnChange(e) {
             //alert(newId);
 
             $("#" + newId).replaceWith(response);
+            console.log("replace boy 2");
+            if ($('textarea') != null) {
+                autosize($('textarea'));
+            }
         });
 
 }

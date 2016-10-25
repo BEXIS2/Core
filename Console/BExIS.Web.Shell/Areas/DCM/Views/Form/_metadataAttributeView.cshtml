@@ -104,7 +104,7 @@
 
                         if (Model.DataType.ToLower().Equals("text") ||
                             (Model.DataType.ToLower().Equals("string") &&
-                            Model.Value!= null && Model.Value.ToString().Length>80))
+                            Model.Value!= null && Model.Value.ToString().Length>=80))
                         {
                             if (!locked)
                             {
@@ -116,7 +116,7 @@
                                             Id = @idInput,
                                             PackageId = @Model.Parent.Id,
                                             Title = @errorMessage,
-                                            @class = "bx-textarea bx-metadataFormTextInput" + @errorClass,
+                                            @class = "bx-textarea bx-metadataFormTextInput " + @errorClass,
                                             onkeyup = "OnKeyUpTextArea(this)"
                                         })
                                 }
@@ -336,4 +336,3 @@
     }
 
 </div>
- 
