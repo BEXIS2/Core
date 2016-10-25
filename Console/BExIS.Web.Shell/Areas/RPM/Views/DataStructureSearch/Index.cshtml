@@ -44,8 +44,11 @@
             scrollable: false,
             onClose: function () {
                 $("#messageWindow").data('tWindow').destroy();
-                if ($("#bx-rpm-dataStructureResultGrid")) {
+                if ($("#bx-rpm-dataStructureResultGrid").lenth > 0) {
                     $("#bx-rpm-dataStructureResultGrid .t-refresh").trigger('click');
+                }
+                if ($("#windowCreate").length > 0) {
+                    $("#windowCreate").toggle('fast');
                 }
             }
         });
@@ -61,10 +64,9 @@
 
     function messageWindowCancel(Id) {
         if ($("#messageWindow").length > 0) {
-            $("#messageWindow").data('tWindow').destroy();
+            $("#messageWindow").data('tWindow').close();
         }
         if ($("#windowCreate").length > 0) {
-            $("#windowCreate").fadeToggle('fast');
             if (Id == "" || Id == 0) {
                 $("#windowCreate").data('tWindow').destroy();
             }
