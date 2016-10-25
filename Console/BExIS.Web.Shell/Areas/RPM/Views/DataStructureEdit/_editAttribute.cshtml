@@ -84,23 +84,24 @@
         $('.bx-rpm-createAttributeContainer #openconstraints').toggleClass('bx-angle-double-down');
         $('.bx-rpm-createAttributeContainer #openconstraints').toggleClass('bx-angle-double-up');
         if(!($('.bx-rpm-createAttributeContainer .bx-rpm-rangeConstraint').hasClass('loaded') && $('.bx-rpm-createAttributeContainer .bx-rpm-patternConstraint').hasClass('loaded') && $('.bx-rpm-createAttributeContainer .bx-rpm-domainConstraint').hasClass('loaded'))){
-            var parameters = '';
-            $.get('@Url.Action("_getRangeConstraint", "DataStructureEdit", new { area = "RPM"} )' + parameters, function (data) {
+            $.get('@Url.Action("_getRangeConstraint", "DataStructureEdit", new { area = "RPM"} )', function (data) {
                 $('.bx-rpm-createAttributeContainer .bx-rpm-rangeConstraint').html(data);
                 $('.bx-rpm-createAttributeContainer .bx-rpm-rangeConstraint').addClass('loaded');
-                $.get('@Url.Action("_getPatternConstraint", "DataStructureEdit", new { area = "RPM"} )' + parameters, function (data) {
+                $.get('@Url.Action("_getPatternConstraint", "DataStructureEdit", new { area = "RPM"} )', function (data) {
                     $('.bx-rpm-createAttributeContainer .bx-rpm-patternConstraint').html(data);
                     $('.bx-rpm-createAttributeContainer .bx-rpm-patternConstraint').addClass('loaded');
-                    $.get('@Url.Action("_getDomainConstraint", "DataStructureEdit", new { area = "RPM"} )' + parameters, function (data) {
+                    $.get('@Url.Action("_getDomainConstraint", "DataStructureEdit", new { area = "RPM"} )', function (data) {
                         $('.bx-rpm-createAttributeContainer .bx-rpm-domainConstraint').html(data);
                         $('.bx-rpm-createAttributeContainer .bx-rpm-domainConstraint').addClass('loaded');
-                        $('.bx-rpm-createAttributeContainer #constraints').toggle('slow');
+                        $('.bx-rpm-createAttributeContainer #constraints').toggle();
+                        $('#createAttributeWindow').data('tWindow').center();
                     });
                 });
             });
         }
         else{
-            $('.bx-rpm-createAttributeContainer #constraints').toggle('slow');
+            $('.bx-rpm-createAttributeContainer #constraints').toggle();
+            $('#createAttributeWindow').data('tWindow').center();
         }
     }
 

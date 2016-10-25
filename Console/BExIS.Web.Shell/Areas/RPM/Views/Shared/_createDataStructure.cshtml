@@ -179,8 +179,8 @@
     }
 
     function openDelWindow(id, name, type) {
-        if ($("#windowCreate")) {
-            $("#windowCreate").fadeToggle('fast');
+        if ($("#windowCreate").length > 0) {
+            $("#windowCreate").toggle('fast');
         }
         var parameters = '/?Id=' + id;
 
