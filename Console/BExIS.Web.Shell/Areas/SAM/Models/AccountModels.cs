@@ -1,5 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Web.Mvc;
+using BExIS.Dlm.Entities.Party;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Web.Shell.Areas.SAM.Helpers;
 using DataAnnotationsExtensions;
@@ -8,12 +10,12 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
 {
     public class RegisterAccountModel
     {
+        public long PartyTypeId { get; set; }
         public CreateUserModel User { get; set; }
-        public CreatePartyModel Party { get; set; }
 
         public RegisterAccountModel()
         {
-            Party = new CreatePartyModel();
+            PartyTypeId = 1;
             User = new CreateUserModel();
         }
     }

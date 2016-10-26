@@ -18,6 +18,11 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
         }
     }
 
+    public class PartyCustomAttributesModel
+    {
+        
+    }
+
     public class PartyCustomAttributeModel
     {
         public virtual string DataType { get; set; }

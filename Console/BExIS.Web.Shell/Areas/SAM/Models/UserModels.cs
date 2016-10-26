@@ -7,9 +7,16 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
 {
     public class CreateUserModel
     {
+        public AuthenticatorSelectListModel AuthenticatorList { get; set; }
         public string ConfirmPassword { get; set; }
         public string Password { get; set; }
+        public bool TermsAndConditions { get; set; }                     
         public string Username { get; set; }
+
+        public CreateUserModel()
+        {
+            AuthenticatorList = new AuthenticatorSelectListModel(true);
+        }
     }
 
 

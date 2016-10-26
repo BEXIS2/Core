@@ -1,39 +1,50 @@
-﻿@model BExIS.Web.Shell.Areas.SAM.Models.CreatePartyModel
+﻿@model List<BExIS.Dlm.Entities.Party.PartyCustomAttribute>
+@{
+    List<BExIS.Dlm.Entities.Party.PartyCustomAttributeValue> partyCustomAttributeValues = (List<BExIS.Dlm.Entities.Party.PartyCustomAttributeValue>)ViewBag.customAttrValues;
+}
 
-@foreach (var partyCustomAttribute in Model.PartyCustomAttributes.OrderBy(item => item.DisplayOrder))
+@foreach (var partyCustomAttr in Model.OrderBy(item => item.DisplayOrder))
 {
+    string partyCustomAttributeValueStr = "";
+
+    if (partyCustomAttributeValues != null && partyCustomAttributeValues.Any())
+    {
+        var partyCustomAttributeValue = partyCustomAttributeValues.FirstOrDefault(item => item.CustomAttribute.Id == partyCustomAttr.Id);
+        if (partyCustomAttributeValue != null)
+        { partyCustomAttributeValueStr = partyCustomAttributeValues.FirstOrDefault(item => item.CustomAttribute.Id == partyCustomAttr.Id).Value; }
+    }
     <tr>
-        <td style="width:40px;">@Html.Raw((!partyCustomAttribute.IsValueOptional ? "<b title='Required' style='color: red'>*</b>" : ""))</td>
+        <td style="width:40px;">@Html.Raw((!partyCustomAttr.IsValueOptional ? "<b title='Required' style='color: red'>*</b>" : ""))</td>
         <td style="width:300px;">
             <label>
-                @partyCustomAttribute.Name
+                @partyCustomAttr.Name
             </label>
         </td>
         <td>
             @if (!string.IsNullOrEmpty(Request.QueryString["readOnly"]) && Request.QueryString["readOnly"] == "true")
                 {
-                <span>@partyCustomAttribute.Value</span>
+                <span>@partyCustomAttributeValueStr</span>
             }
             else
             {
-                if (!string.IsNullOrEmpty(partyCustomAttribute.ValidValues))
+                if (!string.IsNullOrEmpty(partyCustomAttr.ValidValues))
                 {
-                    <select name="partyCustomAttributeValues[@partyCustomAttribute.Id]">
-                        @foreach (var option in partyCustomAttribute.ValidValues.Split(','))
+                    <select name="partyCustomAttributeValues[@partyCustomAttr.Id]">
+                        @foreach (var option in partyCustomAttr.ValidValues.Split(','))
                         {
-                            <option value="@option" @(partyCustomAttribute.Value == @option ? "selected='selected'" : "")>@option</option>
+                            <option value="@option" @(partyCustomAttributeValueStr == @option ? "selected='selected'" : "")>@option</option>
                         }
 
                     </select>
                 }
-                else if (partyCustomAttribute.DataType == "bool" || partyCustomAttribute.DataType == "boolean")
+                else if (partyCustomAttr.DataType == "bool" || partyCustomAttr.DataType == "boolean")
                 {
-                    <input type="radio" name="partyCustomAttributeValues[@partyCustomAttribute.Id]" @(partyCustomAttribute.Value == "true" ? "checked" : "") value="true" /><label>True</label>
-                        <input type="radio" name="partyCustomAttributeValues[@partyCustomAttribute.Id]" @(partyCustomAttribute.Value == "false" ? "checked" : "") value="false" /><label>False</label>
+                    <input type="radio" name="partyCustomAttributeValues[@partyCustomAttr.Id]" @(partyCustomAttributeValueStr == "true" ? "checked" : "") value="true" /><label>True</label>
+                        <input type="radio" name="partyCustomAttributeValues[@partyCustomAttr.Id]" @(partyCustomAttributeValueStr == "false" ? "checked" : "") value="false" /><label>False</label>
                 }
                 else
                 {
-                    <input type="text" name="partyCustomAttributeValues[@partyCustomAttribute.Id]" value="@partyCustomAttribute.Value" />
+                    <input type="text" name="partyCustomAttributeValues[@partyCustomAttr.Id]" value="@partyCustomAttributeValueStr" />
 
                 }
             }

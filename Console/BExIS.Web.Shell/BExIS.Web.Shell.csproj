@@ -662,6 +662,7 @@
     <Content Include="Areas\DCM\Views\ManageMetadataStructure\Index.cshtml" />
     <Content Include="Areas\DDM\Views\Data\_showPublishDataView.cshtml" />
     <Content Include="Areas\DDM\Views\Data\_dataRepositoryRequirementsView.cshtml" />
+    <Content Include="Areas\SAM\Views\Account\_PartyCustomAttributes.cshtml" />
     <None Include="Properties\PublishProfiles\bexisconf.pubxml" />
     <Content Include="Areas\SAM\Views\Tenants\_Create.cshtml" />
     <Content Include="Areas\SAM\Views\Tenants\_Edit.cshtml" />
