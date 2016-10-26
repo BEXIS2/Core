@@ -24,7 +24,7 @@ function OnKeyUpTextInput(e) {
        
     var length = e.value.length;
 
-    if (length >= 80) {
+    if (length >= 60) {
         console.log("start replace");
         var textarea = inputToTextArea(e);
         console.log(textarea);
@@ -57,18 +57,18 @@ function inputToTextArea(input) {
 }
 
 function OnKeyUpTextArea(e) {
-    console.log("OnKeyDownTextArea");
-    console.log(e.id);
-    console.log(e.value.length);
-    console.log(e.value);
+    //console.log("OnKeyDownTextArea");
+    //console.log(e.id);
+    //console.log(e.value.length);
+    //console.log(e.value);
 
 
     var length = e.value.length;
 
-    if (length < 80) {
-        console.log("start replace");
+    if (length < 60) {
+        //console.log("start replace");
         var input = textareaToInput(e);
-        console.log(input);
+        //console.log(input);
         $("#" + e.id).replaceWith(input);
 
         //set focus
@@ -77,7 +77,7 @@ function OnKeyUpTextArea(e) {
         $("#" + e.id).value = tmp;
         $("#" + e.id).focus();
  
-        console.log("done");
+        //console.log("done");
 
         autosize($('textarea'));
     }
@@ -125,22 +125,22 @@ function OnChangeTextInput(e) {
     function (response) {
 
         var id = e.target.id;
-        console.log("OnChangeTextInput");
-        console.log(id);
+        //console.log("OnChangeTextInput");
+        //console.log(id);
 
         var index = id.lastIndexOf("_");
         var newId = id.substr(0, index);
-        console.log(newId);
+        //console.log(newId);
 
         $("#" + newId).replaceWith(response);
-        alert("test");
+        //alert("test");
         autosize($('textarea'));
     })
 }
 
 function OnChange(e) {
 
-    console.log("OnChange");
+    //console.log("OnChange");
     var substr = e.id.split('_');
     var id = substr[0];
     var parentid = substr[1];
@@ -164,17 +164,11 @@ function OnChange(e) {
             ParentStepId: ParentStepID
         },
         function (response) {
-
-            console.log("replace boy");
-            //alert(e.value);
-            //alert(response);
-            console.log(parentid);
+   
             var index = e.id.lastIndexOf("_");
             var newId = e.id.substr(0, index);
-            //alert(newId);
 
             $("#" + newId).replaceWith(response);
-            console.log("replace boy 2");
             if ($('textarea') != null) {
                 autosize($('textarea'));
             }

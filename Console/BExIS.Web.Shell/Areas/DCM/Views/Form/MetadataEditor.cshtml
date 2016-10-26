@@ -7,7 +7,13 @@
 
 @using Telerik.Web.Mvc.UI;
 
+
+
 @{
+
+    <script src="@Url.Content("~/Scripts/DCM/Form.js")" type="text/javascript"></script>
+
+
     string lockedClass = "";
     bool locked = false;
     bool editMode = false;
@@ -17,18 +23,18 @@
 
     HttpRuntimeSection section = System.Configuration.ConfigurationManager.GetSection("system.web/httpRuntime") as HttpRuntimeSection;
     int int_MaxRequestLength = section.MaxRequestLength;
-    int mbMax = int_MaxRequestLength/1024;
+    int mbMax = int_MaxRequestLength / 1024;
 
 
     if (ViewData.Keys.Contains("Locked"))
     {
-        locked = (bool) ViewData["Locked"];
+        locked = (bool)ViewData["Locked"];
         lockedClass = "bx-disabled";
     }
 
     if (ViewData.Keys.Contains("HideOptional"))
     {
-        hideOptional = (bool) ViewData["HideOptional"];
+        hideOptional = (bool)ViewData["HideOptional"];
 
         showAllClass = hideOptional ? " bx-toggle-off" : " bx-toggle-on";
     }
@@ -67,10 +73,6 @@
 
 }
 
-@section Scripts
-{
-    <script src="@Url.Content("~/Scripts/DCM/Form.js")" type="text/javascript"></script>
-}
 
 @section Information
 {
@@ -222,7 +224,7 @@
                 }
                 if ($('#root')) {
 
-                    var offset = getRatioHeight($('#root').position().top)+0.05;
+                    var offset = 0;//getRatioHeight($('#root').position().top)+0.05;
                    
                     var previewBody = $('#root').minimap(
                     {
@@ -237,10 +239,10 @@
                         
                     });
 
-                    $(".minimap").css("z-index", "100");
-                    $(".miniregion").css("z-index", "100");
+                    $(".minimap").css("z-index", "1000");
+                    $(".miniregion").css("z-index", "1000");
 
-                    $('#MetadataEditor').css("width", "90%");
+                    $('#MetadataEditor').css("width", "89.5%");
                 }
 
             } else {

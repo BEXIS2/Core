@@ -15,6 +15,12 @@
 
 }
 
+@{
+    <script src="@Url.Content("~/Scripts/DCM/Form.js")" type="text/javascript"></script>
+}
+
+
+
 <h2>@Model.Title ( @Model.Id )</h2>
 
 @if(@Model != null)
@@ -30,8 +36,8 @@
 
                   tabs.Add()
                       .Text("Metadata")
-                      .LoadContentFrom("ShowMetadata", "Data", new { area = "DDM", entityId = @Model.Id, title = @Model.Title, metadatastructureId = @Model.MetadataStructureId, datastructureId = @Model.DataStructureId, researchplanId = @Model.ResearchPlanId, sessionKeyForMetadata = "ShowDataMetadata" });
-
+                      .LoadContentFrom("ShowMetadata", "Data", new {area = "DDM", entityId = @Model.Id, title = @Model.Title, metadatastructureId = @Model.MetadataStructureId, datastructureId = @Model.DataStructureId, researchplanId = @Model.ResearchPlanId, sessionKeyForMetadata = "ShowDataMetadata"});
+                      
                   tabs.Add()
                       .Text("Primary Data")
                       .LoadContentFrom("ShowPrimaryData", "Data", new {area = "DDM", datasetID = @Model.Id})
@@ -50,6 +56,7 @@
                       .Text("Publish")
                       .LoadContentFrom("publishData", "Data", new {area = "DDM", datasetId = @Model.Id});
               })
+              .ClientEvents(e=>e.OnSelect("OnSelectShowDataTabStrip"))
               )
     }
     else
@@ -83,6 +90,17 @@
             $.post('@Url.Action("DeleteDataPermission", "Data")', { DataId: dataId, EntityId: entityId, SubjectId: subjectId, RightType: rightType }, function (e) {
                 $("#Grid_Subjects .t-refresh").trigger('click');
             });
+        }
+    }
+
+    function OnSelectShowDataTabStrip() {
+        
+        if ($(".miniregion")) {
+            $(".miniregion").remove();
+        }
+
+        if ($(".minimap")) {
+            $(".minimap").remove();
         }
     }
 
