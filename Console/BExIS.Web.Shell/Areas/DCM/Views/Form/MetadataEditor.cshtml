@@ -158,7 +158,7 @@
 
 </div>
 
-    <div id="root">
+    <div id="root" style="background-color:white">
 
         @foreach (var element in Model.StepModelHelpers)
         {
@@ -200,8 +200,21 @@
     <script>
 
         $(document)
-            .ready(function() {
-                bindMinimap();
+            .ready(function () {
+
+                setTimeout(function () {
+                    //alert("r");
+                    bindMinimap();
+                }, 120);
+ 
+            });
+
+        $(window)
+            .resize(function () {
+                setTimeout(function () {
+                    //alert("r");
+                    bindMinimap();
+                },120);
                
             });
 
@@ -213,7 +226,7 @@
 
         function bindMinimap() {
 
-            if ($('#root').height() > ($(window).height()+200)) {
+            //if (($('#root').height()+200) > ($(window).height())) {
 
                 if ($(".miniregion")) {
                     $(".miniregion").remove();
@@ -224,14 +237,20 @@
                 }
                 if ($('#root')) {
 
-                    var offset = 0;//getRatioHeight($('#root').position().top)+0.05;
-                   
+                    var offset = getRatioHeight($('#root').position().top);
+
+                    var hRatio = 1- $(window).height() / $('#root').height();
+                    if (hRatio <= 0) {
+                        hRatio = 0.1;
+                    }
+                    
+      
                     var previewBody = $('#root').minimap(
                     {
-                        heightRatio: 0.6,
-                        widthRatio: 0.1,
+                        heightRatio: hRatio,
+                        widthRatio: 0.095,
                         offsetHeightRatio: offset,
-                        offsetWidthRatio: 0.01,
+                        offsetWidthRatio: 0.02,
                         position: "right",
                         touch: true,
                         smoothScroll: true,
@@ -242,21 +261,21 @@
                     $(".minimap").css("z-index", "1000");
                     $(".miniregion").css("z-index", "1000");
 
-                    $('#MetadataEditor').css("width", "89.5%");
+                    $('#MetadataEditor').css("width", "89%");
                 }
 
-            } else {
+            //} else {
 
-                if ($(".miniregion")) {
-                    $(".miniregion").remove();
-                }
+            //    if ($(".miniregion")) {
+            //        $(".miniregion").remove();
+            //    }
 
-                if ($(".minimap")) {
-                    $(".minimap").remove();
-                }
+            //    if ($(".minimap")) {
+            //        $(".minimap").remove();
+            //    }
 
-                $('#MetadataEditor').css("width", "100%");
-            }
+            //    $('#MetadataEditor').css("width", "100%");
+            //}
         }
 
         function getRatioHeight(containerStart) {

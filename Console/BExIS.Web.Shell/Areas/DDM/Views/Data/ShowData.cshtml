@@ -36,8 +36,9 @@
 
                   tabs.Add()
                       .Text("Metadata")
-                      .LoadContentFrom("ShowMetadata", "Data", new {area = "DDM", entityId = @Model.Id, title = @Model.Title, metadatastructureId = @Model.MetadataStructureId, datastructureId = @Model.DataStructureId, researchplanId = @Model.ResearchPlanId, sessionKeyForMetadata = "ShowDataMetadata"});
-                      
+                      .LoadContentFrom("ShowMetadata", "Data", new {area = "DDM", entityId = @Model.Id, title = @Model.Title, metadatastructureId = @Model.MetadataStructureId, datastructureId = @Model.DataStructureId, researchplanId = @Model.ResearchPlanId, sessionKeyForMetadata = "ShowDataMetadata"})
+                      .HtmlAttributes(new { id = "metadata"}) ;
+
                   tabs.Add()
                       .Text("Primary Data")
                       .LoadContentFrom("ShowPrimaryData", "Data", new {area = "DDM", datasetID = @Model.Id})
@@ -93,8 +94,13 @@
         }
     }
 
-    function OnSelectShowDataTabStrip() {
-        
+    function OnSelectShowDataTabStrip(e) {
+
+
+        console.log($(e.target).find(".t-state-active").html());
+        console.log(e.target.id);
+
+
         if ($(".miniregion")) {
             $(".miniregion").remove();
         }
