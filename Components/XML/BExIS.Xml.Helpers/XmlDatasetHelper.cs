@@ -259,17 +259,26 @@ namespace BExIS.Xml.Services
             MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
             MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(metadatastrutcureId);
 
+            List<string> tmpList = new List<string>();
+
+            try
+            {
                 XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)metadataStructure.Extra);
                 IEnumerable<XElement> temp = XmlUtility.GetXElementsByAttribute(nodeNames.convertRef.ToString(), AttributeNames.type.ToString(),
                     type.ToString(), xDoc);
-
-                List<string> tmpList = new List<string>();
+                
                 foreach (var element in temp)
                 {
                     tmpList.Add(element.Attribute(returnType.ToString()).Value);
                 }
+            }
+            catch (Exception)
+            {
 
-                return tmpList;
+                return new List<string>();
+            }
+
+            return tmpList;
         }
 
         public static bool IsActive(long metadataStructrueId)

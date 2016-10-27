@@ -104,9 +104,11 @@
                 dataType: "json",
                 success: function (response) {
 
-                    window.location.href = '/DCM/ManageMetadataStructure';
-
-                    //alert(response);
+                    if (response) {
+                        window.location.href = '/DCM/ManageMetadataStructure';
+                    } else {
+                        alert("The metadata structure is not deleted!");
+                    }
                 }
             });
         }
