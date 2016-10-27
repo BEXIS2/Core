@@ -56,8 +56,8 @@
     var inUse = @Model.inUse.ToString().ToLower();
     var speed = 6, timer;
     var startpos = 0;
-    var offsetX = 0;
-    var offsetY = 0;
+    var offsetX = -1;
+    var offsetY = -1;
     var elemWidth = 0;
     var isInUp = false;
     var isInDown = false;
@@ -89,41 +89,50 @@
 
     $(document).mousemove( function(e) {
         if($('.bx-rpm-variable-item.is-dragging').length > 0){
-            $('.bx-rpm-variable-item.is-dragging').css({'top':e.pageY - offsetY,'left':e.pageX - offsetX, 'width':elemWidth });
-            isInUp = scroll($('.bx-rpm-dataStructure-container .bx-rpm-scrollup'), e, isInUp);
-            isInDown = scroll($('.bx-rpm-dataStructure-container .bx-rpm-scrolldown'), e, isInDown);          
+            $('.bx-rpm-variable-item.is-dragging').offset({
+                top: e.pageY - offsetY,
+                left: e.pageX - offsetX
+            });
+            $('.bx-rpm-variable-item.is-dragging').width(elemWidth);
+            //isInUp = scroll($('.bx-rpm-dataStructure-container .bx-rpm-scrollup'), e, isInUp);
+            //isInDown = scroll($('.bx-rpm-dataStructure-container .bx-rpm-scrolldown'), e, isInDown);          
         }
     });
 
-    function scroll(scroller, e , isIn){
-        if((e.pageY > scroller.position().top && e.pageY < scroller.position().top + scroller.height()) && (e.pageX > scroller.position().left && e.pageX < scroller.position().left + scroller.width())){
-            if(!isIn){
-                isIn = true;
-                $(scroller).trigger('mouseenter');
-            }
-        }
-        else{
-            if(isIn){
-                isIn = false;
-                $(scroller).trigger('mouseleave');
-            }
-        }
-        return isIn;
-    }
+    //function scroll(scroller, e , isIn){
+    //    if((e.pageY > scroller.position().top && e.pageY < scroller.position().top + scroller.height()) && (e.pageX > scroller.position().left && e.pageX < scroller.position().left + scroller.width())){
+    //        if(!isIn){
+    //            isIn = true;
+    //            $(scroller).trigger('mouseenter');
+    //        }
+    //    }
+    //    else{
+    //        if(isIn){
+    //            isIn = false;
+    //            $(scroller).trigger('mouseleave');
+    //        }
+    //    }
+    //    return isIn;
+    //}
 
 
     $('.bx-rpm-variable-item').mousedown(function(e){
-        offsetX = e.pageX  - ($(this).position().left + $('.bx-rpm-variable-drag-drop').position().left);
-        offsetY = e.pageY - ($(this).position().top + $('.bx-rpm-variable-drag-drop').position().top);
+        //offsetX = e.pageX  - ($(this).position().left + $('.bx-rpm-variable-drag-drop').position().left);
+        //offsetY = e.pageY - ($(this).position().top + $('.bx-rpm-variable-drag-drop').position().top);
         elemWidth = $(this).width();
+        $(this).offset({
+            top: e.pageY - offsetY,
+            left: e.pageX - offsetX
+        });
+        $(this).width(elemWidth);
         //$(this).css({'top':e.pageY - elementheight/2,'left':e.pageX - elementwidth/2, 'width':elementwidth});
         var div = $('#variableContainer');
         startpos = div.scrollTop();
     });
 
     $(document).mouseup(function(e){
-        offsetX = 0;
-        offsetY = 0;
+        //offsetX = 0;
+        //offsetY = 0;
         $('.bx-rpm-variable-item').width('');
         var div = $('#variableContainer');
         startpos = div.scrollTop();
