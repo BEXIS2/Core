@@ -119,7 +119,7 @@
     $('.bx-rpm-variable-item').mousedown(function(e){
         //offsetX = e.pageX  - ($(this).position().left + $('.bx-rpm-variable-drag-drop').position().left);
         //offsetY = e.pageY - ($(this).position().top + $('.bx-rpm-variable-drag-drop').position().top);
-        elemWidth = $(this).width();
+        elemWidth = $('.bx-rpm-variable-drag-drop').width() - 6;
         $(this).offset({
             top: e.pageY - offsetY,
             left: e.pageX - offsetX
