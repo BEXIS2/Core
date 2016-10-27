@@ -20,8 +20,8 @@
             </tr>
         </table>
     </div>
-
-    <div class="bx-rpm-variable-container" id="variableContainer">
+    <div class="bx-rpm-scrollup bx fa-chevron-up"></div>
+    <div class="bx-rpm-variable-container" id="variableContainer">     
         <div class="bx-rpm-variable-drag-drop">
             @if (Model.VariablePreviews != null && Model.VariablePreviews.Count > 0)
             {
@@ -32,10 +32,11 @@
             }
         </div>
     </div>
+    <div class="bx-rpm-scrolldown bx fa-chevron-down"></div>
     <div class="bx-rpm-dataStructure-functions">
         <button class="bx-button action" id="saveButton">Save</button>
         <button class="bx-button action" id="saveAsButton" title="Creates a full editable Copy of the Data Structure">Save as</button>
-        @Html.ActionLink("Download Ecxel Tamplate", "downloadTemplate", "DataStructureIO", new { @id = Model.Id }, new { area = "RPM", @class = "bx-button action", @title = "Cancel" })
+        @Html.ActionLink("Download Excel Template", "downloadTemplate", "DataStructureIO", new { @id = Model.Id }, new { area = "RPM", @class = "bx-button action", @title = "Cancel" })
         @if (Model.inUse)
         {
             <button class="bx-button action bx-disabled" id="deleteButton" disabled="disabled" title="Can't delete Data Struture, it's used by a Dataset">Delete</button>
@@ -53,6 +54,13 @@
 <script type="text/javascript">
     var messageCheck = false;
     var inUse = @Model.inUse.ToString().ToLower();
+    var speed = 6, timer;
+    var startpos = 0;
+    var offsetX = 0;
+    var offsetY = 0;
+    var elemWidth = 0;
+    var isInUp = false;
+    var isInDown = false;
 
     $(function () {
         resizeVariableContainer(120);
@@ -61,7 +69,7 @@
 
         if(inUse){
             lock();
-        }
+        } 
     });
 
     function lock(){
@@ -79,21 +87,97 @@
         $('.bx-rpm-attribute-item .bx-rpm-select').attr('title',"Can't add Variable Data, Structure is used by a Dataset");
     }
 
+    $(document).mousemove( function(e) {
+        if($('.bx-rpm-variable-item.is-dragging').length > 0){
+            $('.bx-rpm-variable-item.is-dragging').css({'top':e.pageY - offsetY,'left':e.pageX - offsetX, 'width':elemWidth });
+            isInUp = scroll($('.bx-rpm-dataStructure-container .bx-rpm-scrollup'), e, isInUp);
+            isInDown = scroll($('.bx-rpm-dataStructure-container .bx-rpm-scrolldown'), e, isInDown);          
+        }
+    });
+
+    function scroll(scroller, e , isIn){
+        if((e.pageY > scroller.position().top && e.pageY < scroller.position().top + scroller.height()) && (e.pageX > scroller.position().left && e.pageX < scroller.position().left + scroller.width())){
+            if(!isIn){
+                isIn = true;
+                $(scroller).trigger('mouseenter');
+                console.log(isIn);
+            }
+        }
+        else{
+            if(isIn){
+                isIn = false;
+                $(scroller).trigger('mouseleave');
+                console.log(isIn);
+            }
+        }
+        return isIn;
+    }
+
+
+    $('.bx-rpm-variable-item').mousedown(function(e){
+        offsetX = e.pageX  - ($(this).position().left + $('.bx-rpm-variable-drag-drop').position().left);
+        offsetY = e.pageY - ($(this).position().top + $('.bx-rpm-variable-drag-drop').position().top);
+        elemWidth = $(this).width();
+        //$(this).css({'top':e.pageY - elementheight/2,'left':e.pageX - elementwidth/2, 'width':elementwidth});
+        var div = $('#variableContainer');
+        startpos = div.scrollTop();
+    });
+
+    $(document).mouseup(function(e){
+        offsetX = 0;
+        offsetY = 0;
+        $('.bx-rpm-variable-item').width('');
+        var div = $('#variableContainer');
+        startpos = div.scrollTop();
+    });
 
     function initPackery() {
         var $variableGrid = $('.bx-rpm-variable-drag-drop').packery({
             itemSelector: '.bx-rpm-variable-item',
-            transitionDuration: '1.0s',
+            transitionDuration: '0.5s',
             columnWidth: 100,
         });
 
         if(!inUse){
-            $variableGrid.find('.bx-rpm-variable-item').each(function (i, $item) {
-                $variableGrid.packery('bindDraggabillyEvents', new Draggabilly($item));
+
+            $variableGrid.find('.bx-rpm-variable-item').each(function (i, item) {
+                $variableGrid.packery('bindDraggabillyEvents', new Draggabilly(item));
             });
 
+            $(".bx-rpm-scrollup").hover(function (e) {
+                var div = $('#variableContainer');
+                (function startscrolling(){
+                    timer = setTimeout(function () {
+                        var pos = div.scrollTop();
+                        div.scrollTop(pos -= speed);
+                        $variableGrid.packery('setScrollOffset', 0, startpos - pos);
+                        startscrolling();
+                    }, 100);
+                })();
+            },
+        function () {
+            clearTimeout(timer);
+            speed = 6;
+        });
+
+            $(".bx-rpm-scrolldown").hover(function () {
+                var div = $('#variableContainer');
+                (function startscrolling(){
+                    timer = setTimeout(function () {
+                        var pos = div.scrollTop();
+                        div.scrollTop(pos += speed);
+                        $variableGrid.packery('setScrollOffset', 0, startpos - pos);
+                        startscrolling();
+                    }, 100);
+                })();
+            },
+               function () {
+                   clearTimeout(timer);
+                   speed = 6;
+               });
+
             $('.bx-rpm-dataStructure-functions #addVariableButton').on('click', function() {
-                var value = $('.bx-rpm-dataStructure-functions #addVariableButton').attr('value').split(',')
+                var value = $(this).attr('value').split(',')
                 var variableName = value[1];
                 var attrId = value[0];
                 var elems = $variableGrid.packery('getItemElements');
@@ -102,8 +186,8 @@
                 do {
                     isDuplicate = false;
                     count++;
-                    for (var i = 0; i < elems.length; i++) {
-                        if (variableName == $(elems[i]).find('#varlabel').val()) {
+                    for (var i in elems) {
+                        if (variableName.toLowerCase() == $(elems[i]).find('#varlabel').val().toLowerCase()) {
                             variableName = value[1] + ' (' + count + ')';
                             isDuplicate = true;
                         }
@@ -295,7 +379,7 @@
     }
 
     function getVariableContainerSize() {
-        return $(window).height() - $('.bx-rpm-datastructureheader').height() - $('.bx-rpm-dataStructure-functions').height() - 150;
+        return $(window).height() - $('.navbar').height() - $('.bx-rpm-datastructureheader').height() - $('.bx-rpm-dataStructure-functions').height() - $('.bx-rpm-dataStructure-container .bx-rpm-scrollup').height() - $('.bx-rpm-dataStructure-container .bx-rpm-scrolldown').height() - 95;
     }
 
     function openDelWindow(id, name, type) {
