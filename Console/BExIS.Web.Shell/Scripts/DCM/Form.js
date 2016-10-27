@@ -1,5 +1,68 @@
 ﻿
 /******************************************
+ ********* FORM    ************************
+ ******************************************/
+
+function bindMinimap() {
+
+    //if (($('#root').height()+200) > ($(window).height())) {
+
+    if ($(".miniregion")) {
+        $(".miniregion").remove();
+    }
+
+    if ($(".minimap")) {
+        $(".minimap").remove();
+    }
+    if ($('#root')) {
+
+        var offset = getRatioHeight($('#root').position().top);
+
+        var hRatio = 1 - $(window).height() / $('#root').height();
+        if (hRatio <= 0) {
+            hRatio = 0.1;
+        }
+
+        var previewBody = $('#root').minimap(
+        {
+            heightRatio: hRatio,
+            widthRatio: 0.095,
+            offsetHeightRatio: offset,
+            offsetWidthRatio: 0.02,
+            position: "right",
+            touch: true,
+            smoothScroll: true,
+            smoothScrollDelay: 200
+        });
+
+        $(".minimap").css("z-index", "1000");
+        $(".miniregion").css("z-index", "1000");
+
+        $('#MetadataEditor').css("width", "89%");
+    }
+
+
+
+    //} else {
+
+    //    if ($(".miniregion")) {
+    //        $(".miniregion").remove();
+    //    }
+
+    //    if ($(".minimap")) {
+    //        $(".minimap").remove();
+    //    }
+
+    //    $('#MetadataEditor').css("width", "100%");
+    //}
+    }
+
+
+function getRatioHeight(containerStart) {
+    return (containerStart / $(window).height());
+}
+
+/******************************************
  ********* ATTIBUTE************************
  ******************************************/
 $(document).ready(function () {
