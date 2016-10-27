@@ -87,7 +87,7 @@
         $('.bx-rpm-attribute-item .bx-rpm-select').attr('title',"Can't add Variable Data, Structure is used by a Dataset");
     }
 
-    $(document).mousemove( function(e) {
+    $(window).mousemove( function(e) {
         if($('.bx-rpm-variable-item.is-dragging').length > 0){
             $('.bx-rpm-variable-item.is-dragging').offset({
                 top: e.pageY - offsetY,
@@ -116,15 +116,17 @@
     //}
 
 
-    $('.bx-rpm-variable-item').mousedown(function(e){
+    $('.bx-rpm-variable-drag-drop').mousedown(function(e){
         //offsetX = e.pageX  - ($(this).position().left + $('.bx-rpm-variable-drag-drop').position().left);
         //offsetY = e.pageY - ($(this).position().top + $('.bx-rpm-variable-drag-drop').position().top);
         elemWidth = $('.bx-rpm-variable-drag-drop').width() - 6;
-        $(this).offset({
+        console.log(elemWidth);
+        $('.bx-rpm-variable-item.is-pointer-down').offset({
             top: e.pageY - offsetY,
             left: e.pageX - offsetX
         });
-        $(this).width(elemWidth);
+        console.log(elemWidth);
+        $('.bx-rpm-variable-item.is-pointer-down').width(elemWidth);
         //$(this).css({'top':e.pageY - elementheight/2,'left':e.pageX - elementwidth/2, 'width':elementwidth});
         var div = $('#variableContainer');
         startpos = div.scrollTop();
