@@ -100,14 +100,12 @@
             if(!isIn){
                 isIn = true;
                 $(scroller).trigger('mouseenter');
-                console.log(isIn);
             }
         }
         else{
             if(isIn){
                 isIn = false;
                 $(scroller).trigger('mouseleave');
-                console.log(isIn);
             }
         }
         return isIn;
