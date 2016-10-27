@@ -46,8 +46,9 @@
                         @(Html.Telerik().DropDownList()
                               .Placeholder("Select")
                               .Name("Entity")
+                              .HtmlAttributes(new {style="width:300px"})
                               .ClientEvents(events => events.OnChange("OnChangeDropDown"))
-                              .BindTo(new SelectList(Model.Entities, Model.EntityType, Model.EntityType)))
+                              .BindTo(new SelectList(Model.Entities, Model.EntityType)))
 
                     </td>
                     <td></td>

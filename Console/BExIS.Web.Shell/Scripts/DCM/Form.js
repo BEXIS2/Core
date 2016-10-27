@@ -1,11 +1,75 @@
 ﻿
 /******************************************
+ ********* FORM    ************************
+ ******************************************/
+
+function bindMinimap() {
+
+    //if (($('#root').height()+200) > ($(window).height())) {
+
+    if ($(".miniregion")) {
+        $(".miniregion").remove();
+    }
+
+    if ($(".minimap")) {
+        $(".minimap").remove();
+    }
+    if ($('#root')) {
+
+        var offset = getRatioHeight($('#root').position().top);
+
+        var hRatio = 1 - $(window).height() / $('#root').height();
+        if (hRatio <= 0) {
+            hRatio = 0.1;
+        }
+
+        var previewBody = $('#root').minimap(
+        {
+            heightRatio: hRatio,
+            widthRatio: 0.095,
+            offsetHeightRatio: offset,
+            offsetWidthRatio: 0.02,
+            position: "right",
+            touch: true,
+            smoothScroll: true,
+            smoothScrollDelay: 200
+        });
+
+        $(".minimap").css("z-index", "1000");
+        $(".miniregion").css("z-index", "1000");
+
+        $('#MetadataEditor').css("width", "89%");
+    }
+
+
+
+    //} else {
+
+    //    if ($(".miniregion")) {
+    //        $(".miniregion").remove();
+    //    }
+
+    //    if ($(".minimap")) {
+    //        $(".minimap").remove();
+    //    }
+
+    //    $('#MetadataEditor').css("width", "100%");
+    //}
+    }
+
+
+function getRatioHeight(containerStart) {
+    return (containerStart / $(window).height());
+}
+
+/******************************************
  ********* ATTIBUTE************************
  ******************************************/
 $(document).ready(function () {
     if ($('textarea') != null) {
         autosize($('textarea'));
     }
+
     resetAllTelerikIconTitles();
 });
 
@@ -35,8 +99,7 @@ function OnKeyUpTextInput(e) {
         autosize($("#" + e.id));
         $("#" + e.id).val(tmp);
         $("#" + e.id).focus();
-
-               
+      
         console.log("done");
     }
 }
@@ -50,25 +113,25 @@ function inputToTextArea(input) {
         "onchange=\"OnChange(this)\"" +
         "onkeyup= \"OnKeyUpTextArea(this)\""+
         "title='" + $("#" + input.id).attr("title") + "'" +
-        "class=\"bx-textarea bx-metadataFormTextInput\"" +
+        "class=\"bx-textarea bx-metadataFormTextInput \"" +
         "cols=\"2\" rows=\"2\">" + input.value + "</textarea>";
 
     return textarea;
 }
 
 function OnKeyUpTextArea(e) {
-    console.log("OnKeyDownTextArea");
-    console.log(e.id);
-    console.log(e.value.length);
-    console.log(e.value);
+    //console.log("OnKeyDownTextArea");
+    //console.log(e.id);
+    //console.log(e.value.length);
+    //console.log(e.value);
 
 
     var length = e.value.length;
 
     if (length < 60) {
-        console.log("start replace");
+        //console.log("start replace");
         var input = textareaToInput(e);
-        console.log(input);
+        //console.log(input);
         $("#" + e.id).replaceWith(input);
 
         //set focus
@@ -77,7 +140,9 @@ function OnKeyUpTextArea(e) {
         $("#" + e.id).value = tmp;
         $("#" + e.id).focus();
  
-        console.log("done");
+        //console.log("done");
+
+        autosize($('textarea'));
     }
 }
 
@@ -123,20 +188,22 @@ function OnChangeTextInput(e) {
     function (response) {
 
         var id = e.target.id;
-        console.log("OnChangeTextInput");
-        console.log(id);
+        //console.log("OnChangeTextInput");
+        //console.log(id);
 
         var index = id.lastIndexOf("_");
         var newId = id.substr(0, index);
-        console.log(newId);
+        //console.log(newId);
 
         $("#" + newId).replaceWith(response);
+        //alert("test");
+        autosize($('textarea'));
     })
 }
 
 function OnChange(e) {
 
-    console.log("OnChange");
+    //console.log("OnChange");
     var substr = e.id.split('_');
     var id = substr[0];
     var parentid = substr[1];
@@ -144,8 +211,6 @@ function OnChange(e) {
     var number = substr[2];
     var ParentModelNumber = substr[3];
     var ParentStepID = substr[5];
-
-
 
     //alert(parentid);
     //alert(metadataStructureId);
@@ -161,15 +226,15 @@ function OnChange(e) {
             parentModelNumber: ParentModelNumber,
             ParentStepId: ParentStepID
         },
-        function(response) {
-            //alert(e.value);
-            //alert(response);
-            console.log(parentid);
+        function (response) {
+   
             var index = e.id.lastIndexOf("_");
             var newId = e.id.substr(0, index);
-            //alert(newId);
 
             $("#" + newId).replaceWith(response);
+            if ($('textarea') != null) {
+                autosize($('textarea'));
+            }
         });
 
 }

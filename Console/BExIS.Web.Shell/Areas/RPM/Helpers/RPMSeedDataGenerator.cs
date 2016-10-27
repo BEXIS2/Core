@@ -244,8 +244,8 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
             try
             {
                 //set parameters
-                string titleXPath = "";
-                string descriptionXpath = "";
+                string titleXPath = "Metadata/Metadata/MetadataType/Description/DescriptionType/Representation/MetadataDescriptionRepr/Title/TitleType";
+                string descriptionXpath = "Metadata/Metadata/MetadataType/Description/DescriptionType/Representation/MetadataDescriptionRepr/Details/DetailsType";
                 string mappingFileImport = xmlSchemaManager.mappingFileNameImport;
                 string mappingFileExport = xmlSchemaManager.mappingFileNameExport;
 

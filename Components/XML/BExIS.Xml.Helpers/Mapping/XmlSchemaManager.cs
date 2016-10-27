@@ -1705,12 +1705,12 @@ namespace BExIS.Xml.Helpers.Mapping
 
             #region pattern constraints
 
-                if (facet is XmlSchemaWhiteSpaceFacet)
-                {
-                    XmlSchemaWhiteSpaceFacet defFacet = (XmlSchemaWhiteSpaceFacet)facet;
+                //if (facet is XmlSchemaWhiteSpaceFacet)
+                //{
+                //    XmlSchemaWhiteSpaceFacet defFacet = (XmlSchemaWhiteSpaceFacet)facet;
 
-                    return GetPatternConstraint(" ", GetDescription(defFacet.Annotation), true, attr);
-                }
+                //    return GetPatternConstraint(" ", GetDescription(defFacet.Annotation), true, attr);
+                //}
 
                 if (facet is XmlSchemaPatternFacet)
                 {
