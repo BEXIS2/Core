@@ -2,42 +2,43 @@
 @using BExIS.Web.Shell.Areas.RPM.Models
 @model BExIS.Web.Shell.Areas.RPM.Models.AttributePreviewModel
 
-<table class="bx-rpm-attributeheader">
-    <tr>
-        <td colspan="2"><h2>Variable Templates</h2></td>
-    </tr>
-    <tr>
-        <td class="bx-rpm-sort">
-            <span class="bx-rpm-filterCollapse" onclick="javascript:clickFilter()">
-                Filter 
-                <span id="filterCollapse" class="bx bx-angle-double-down"></span>
-            </span>
-            <span class="bx-rpm-activefilter"></span>
-        </td>
-        <td class="bx-rpm-sortdropdown">
-            Sort by
-            <select class="bx-dropdown bx-rpm-dropdown">
-                <option value="">no Sorting</option>
-                <option class="name" value="name,true">Name &uArr;</option>
-                <option class="name" value="name,false">Name &dArr;</option>
-                <option class="id" value="id,true">Id &uArr;</option>
-                <option class="id" value="id,false">Id &dArr;</option>
-                <option class="unit" value="unit,true">Unit &uArr;</option>
-                <option class="unit" value="unit,false">Unit &dArr;</option>
-                <option class="datatype" value="datatype,true">Data Type &uArr;</option>
-                <option class="datatype" value="datatype,false">Data Type &dArr;</option>
-            </select>
-            <div class="t-arrow-down bx-rpm-dropdownArrow"></div>
-        </td>
-    </tr>
-    <tr>
-        <td class="bx-rpm-filter collapsed" colspan="2" id="filter" style="display:none;">
-            <div id="filterContainer" style="display:none;">
-                <h3 class="bx-rpm-loading"><span class="fa fa-spinner fa-pulse"></span> Loading Filters</h3>
-            </div>
-        </td>
-    </tr>
-</table>
+<div class="bx-rpm-attributeheader">
+    <table>
+        <tr>
+            <td colspan="2"><h2>Variable Templates</h2></td>
+        </tr>
+        <tr>
+            <td class="bx-rpm-sort">
+                <span class="bx-rpm-filterCollapse" onclick="javascript:clickFilter()">
+                    Filter
+                    <span id="filterCollapse" class="bx bx-angle-double-down"></span>
+                </span>
+                <span class="bx-rpm-activefilter"></span>
+            </td>
+            <td class="bx-rpm-sortdropdown">
+                Sort by
+                <select class="bx-dropdown bx-rpm-dropdown">
+                    <option value="">no Sorting</option>
+                    <option class="name" value="name,true">Name &uArr;</option>
+                    <option class="name" value="name,false">Name &dArr;</option>
+                    <option class="id" value="id,true">Id &uArr;</option>
+                    <option class="id" value="id,false">Id &dArr;</option>
+                    <option class="unit" value="unit,true">Unit &uArr;</option>
+                    <option class="unit" value="unit,false">Unit &dArr;</option>
+                    <option class="datatype" value="datatype,true">Data Type &uArr;</option>
+                    <option class="datatype" value="datatype,false">Data Type &dArr;</option>
+                </select>
+                <div class="t-arrow-down bx-rpm-dropdownArrow"></div>
+            </td>
+        </tr>
+    </table>
+
+    <div class="bx-rpm-filter collapsed" id="filter" style="display:none;">
+        <div id="filterContainer" style="display:none;">
+            <h3 class="bx-rpm-loading"><span class="fa fa-spinner fa-pulse"></span> Loading Filters</h3>
+        </div>
+    </div>
+</div>
 
 <div class="bx-rpm-attribute-container" id="Results">
     <div class="bx-rpm-attribute-drag-drop">
@@ -65,7 +66,7 @@
         var $attributeGrid = $('.bx-rpm-attribute-drag-drop').isotope({
             itemSelector: '.bx-rpm-attribute-item',
             layoutMode: 'vertical',
-            transitionDuration: '1.0s',
+            transitionDuration: '0.5s',
             getSortData: {
                 name: '#Name',
                 id: '#Id parseInt',
@@ -119,7 +120,7 @@
 
             if (append) {
                 var filterItem = $(this).parents('.bx-rpm-filterItem')
-                var filterElement = $(document.createElement('button'));
+                var filterElement = $(document.createElement('div'));
                 filterElement.addClass('bx-button smaller');
                 filterElement.attr('id', 'removefilter')
                 filterElement.attr('value', $(this).attr('id'));
@@ -135,6 +136,7 @@
         $('.bx-rpm-activefilter').on('click', '.bx-rpm-removefilter', function () {
             var filterElement = $(this).parents('#removefilter');
             var filterValue = setFilter($('#' + filterElement.attr('value')));
+            filterIds.splice(filterIds.indexOf(filterElement.attr('value')));
             $attributeGrid.isotope({ filter: filterValue });
             filterElement.remove();
         });
@@ -193,7 +195,6 @@
             $('#filter').removeClass('collapsed');
             $('#filterCollapse').addClass('bx-angle-double-up');
             $('#filterCollapse').removeClass('bx-angle-double-down');
-
         }
         else {
             $('#filter').slideUp('slow');
@@ -207,10 +208,14 @@
 
     function loadFilter() {
         $.get('@Url.Action("_attributeFilterBinding", "DataStructureEdit", new { area = "RPM"} )', function (data) {
+            var temp = [];
+            for (i in filterIds) {
+                  temp.push(filterIds[i]);
+            }
             $('.bx-rpm-activefilter .bx-rpm-removefilter').trigger('click');
             $('#filterContainer').html(data);
-            for (i in filterIds) {
-                $('.bx-rpm-filterContainer #' + filterIds[i]).trigger('click');
+            for (i in temp) {
+                $('.bx-rpm-filterContainer #' + temp[i]).trigger('click');
             }
         });
     }
@@ -230,7 +235,7 @@
     }
 
     function getAttibuteContainerSize(){
-        return $(window).height() - $('.bx-rpm-attributeheader').height() - $('.bx-rpm-attribute-functions').height() - 150;
+        return $(window).height() - $('.navbar').height() - $('.bx-rpm-attributeheader').height() - $('.bx-rpm-attribute-functions').height() - 85;
     }
 
     function openAttrDelWindow(id, name, type) {
