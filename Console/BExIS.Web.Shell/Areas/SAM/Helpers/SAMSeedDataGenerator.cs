@@ -182,7 +182,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Helpers
             t24.Feature = f18;
             taskManager.UpdateTask(t24);
             Task t25 = taskManager.CreateTask("RPM", "Unit", "*");
-            t25.Feature = f18;
+            t25.Feature = f13;
             taskManager.UpdateTask(t25);
 
             Task t26 = taskManager.CreateTask("DIM", "Admin", "*");

@@ -1,4 +1,24 @@
 ﻿
+$(document).ready(function () {
+    if ($('textarea') != null) {
+        autosize($('textarea'));
+    }
+    //setTabIndex();
+    resetAllTelerikIconTitles();
+});
+
+function setTabIndex() {
+
+    var list = $(".metadataAttributeInput .t-input");
+    console.log(list);
+    for (var i = 0; i < list.length ; i++) {
+        var input = list[i];
+        console.log(input);
+        $(input).attr("tabindex", i);
+    }
+}
+
+
 /******************************************
  ********* FORM    ************************
  ******************************************/
@@ -65,13 +85,6 @@ function getRatioHeight(containerStart) {
 /******************************************
  ********* ATTIBUTE************************
  ******************************************/
-$(document).ready(function () {
-    if ($('textarea') != null) {
-        autosize($('textarea'));
-    }
-
-    resetAllTelerikIconTitles();
-});
 
 function metadataAttributeOnLoad(e, hasErrors) {
     if (hasErrors)

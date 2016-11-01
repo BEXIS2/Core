@@ -54,7 +54,7 @@
                         string title = Model.DatasetViewList.Where(ms => ms.Id.Equals(Model.SelectedDatasetId)).FirstOrDefault().Title;
                         @Html.HiddenFor(m => m.SelectedDatasetId)
                         @Html.Label(title)
-                        ;
+                        
                     }
                     else
                     {
@@ -65,8 +65,6 @@
                               .BindTo(new SelectList(DatasetsList, "Id", "Title", Model.SelectedDatasetId))
                               .ClientEvents(events => events.OnChange("datasetChange"))
                               )
-
-
                     }
                 </td>
                 <td>
