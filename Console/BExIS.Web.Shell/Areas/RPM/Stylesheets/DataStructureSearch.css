@@ -99,6 +99,11 @@
     margin: 0px 3px 0px 0px;
 }
 
+.bx-rpm-result.bx-rpm-structured{
+    text-align:center;
+    color: #565655;
+}
+
 .bx-rpm-dataStructure-buttons{
     float:left;
     text-align:left;
