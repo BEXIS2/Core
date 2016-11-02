@@ -35,13 +35,12 @@ function truncateTitle()
 
 		//$(this).trunk8();
 		//if (!$(this).attr("title") == true) { 
-		var n = $(".bx-trunc-parent").width()-90;
+		var n = $(".bx-trunc-parent").width();
 		var text = $(this).text();
 
 		//Link Breiter als/ oder gleich breit Container
 		if ($(this).width() >= n)
 		{
-
 			$(this).width(n);
 
 			//get text from title or text
@@ -57,9 +56,8 @@ function truncateTitle()
 				fill: "..." + ntLast
 			});
 
-
 		}
-			//Link kürzer als Container
+	    //Link kürzer als Container
 		else if (text.indexOf(".") != -1 || text == '' || text == null)
 		{
 

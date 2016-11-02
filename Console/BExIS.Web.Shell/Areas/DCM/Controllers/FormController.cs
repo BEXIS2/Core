@@ -741,8 +741,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             };
 
             string xPath = parentStepModelHelper.XPath + "//" + UsageHelper.GetNameOfType(u) + "[" + position + "]";
-
-            newStep.Children = GetChildrenSteps(u, newStep, xPath, parentStepModelHelper);
+           
+            
 
             // add to parent stepId
             parentStepModelHelper.Model.StepInfo.Children.Add(newStep);
@@ -782,13 +782,15 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 Number = position,
                 Model = model,
                 XPath = xPath,
-                Level = parentStepModelHelper.Level + 1,
+                Level = parentStepModelHelper.Level+1,
                 Activated = true
             };
 
+            newStep.Children = GetChildrenSteps(u, newStep, xPath, newStepModelhelper);
             newStepModelhelper.Model.StepInfo = newStep;
             newStepModelhelper = getChildModelsHelper(newStepModelhelper);
 
+            
 
             // add stepmodel to dictionary
             AddStepModelhelper(newStepModelhelper);
@@ -1703,7 +1705,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     }
 
                     childStepModelHelper = getChildModelsHelper(childStepModelHelper);
-
                     stepModelHelper.Childrens.Add(childStepModelHelper);
                 }
             }
