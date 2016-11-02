@@ -7,6 +7,8 @@ using BExIS.Web.Shell.Areas.RPM.Models;
 using BExIS.RPM.Output;
 using BExIS.Web.Shell.Areas.RPM.Classes;
 using System.Collections.Generic;
+using Vaiona.Web.Mvc.Models;
+using Vaiona.Web.Extensions;
 
 namespace BExIS.Web.Shell.Areas.RPM.Controllers
 {
@@ -14,6 +16,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
     {
         public ActionResult Index()
         {
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Data Structure Search", this.Session.GetTenant());
             return View();
         }
 

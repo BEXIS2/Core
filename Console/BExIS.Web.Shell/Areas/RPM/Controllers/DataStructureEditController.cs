@@ -11,6 +11,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Collections.Generic;
 using Vaiona.Utils.Cfg;
+using Vaiona.Web.Extensions;
+using Vaiona.Web.Mvc.Models;
 
 namespace BExIS.Web.Shell.Areas.RPM.Controllers
 {
@@ -18,6 +20,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
     {
         public ActionResult Index(long DataStructureId = 0)
         {
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Data Structure Edit", this.Session.GetTenant());
             if (DataStructureId != 0)
                 return View(DataStructureId);
             else

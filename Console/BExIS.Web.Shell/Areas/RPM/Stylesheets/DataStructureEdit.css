@@ -335,6 +335,8 @@
     margin: 0;
     padding: 0;
     border: solid 1px #afb0b1;
+    background-color: #ebebeb;
+    color: #afb0b1;
 }
 .bx-rpm-dataStructure-container .bx-rpm-scrollup{
     
@@ -344,7 +346,6 @@
 }
 
 .bx-rpm-variable-item.is-dragging {
-    position:fixed !important;
     transform: translate3d(0, 0, 0) !important;
     z-index: 2;
 }

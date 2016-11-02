@@ -20,7 +20,7 @@
             </tr>
         </table>
     </div>
-    <div class="bx-rpm-scrollup bx fa-chevron-up"></div>
+    <div class="bx-rpm-scrollup bx t-arrow-up"></div>
     <div class="bx-rpm-variable-container" id="variableContainer">     
         <div class="bx-rpm-variable-drag-drop">
             @if (Model.VariablePreviews != null && Model.VariablePreviews.Count > 0)
@@ -32,7 +32,7 @@
             }
         </div>
     </div>
-    <div class="bx-rpm-scrolldown bx fa-chevron-down"></div>
+    <div class="bx-rpm-scrolldown bx t-arrow-down"></div>
     <div class="bx-rpm-dataStructure-functions">
         <button class="bx-button action" id="saveButton">Save</button>
         <button class="bx-button action" id="saveAsButton" title="Creates a full editable Copy of the Data Structure">Save as</button>
@@ -54,13 +54,11 @@
 <script type="text/javascript">
     var messageCheck = false;
     var inUse = @Model.inUse.ToString().ToLower();
-    var speed = 6, timer;
+    var speed = 5, timer;
     var startpos = 0;
-    var offsetX = -1;
-    var offsetY = -1;
+    var offsetX = 0;
+    var offsetY = 0;
     var elemWidth = 0;
-    var isInUp = false;
-    var isInDown = false;
 
     $(function () {
         resizeVariableContainer(120);
@@ -87,59 +85,6 @@
         $('.bx-rpm-attribute-item .bx-rpm-select').attr('title',"Can't add Variable Data, Structure is used by a Dataset");
     }
 
-    $(window).mousemove( function(e) {
-        if($('.bx-rpm-variable-item.is-dragging').length > 0){
-            $('.bx-rpm-variable-item.is-dragging').offset({
-                top: e.pageY - offsetY,
-                left: e.pageX - offsetX
-            });
-            $('.bx-rpm-variable-item.is-dragging').width(elemWidth);
-            //isInUp = scroll($('.bx-rpm-dataStructure-container .bx-rpm-scrollup'), e, isInUp);
-            //isInDown = scroll($('.bx-rpm-dataStructure-container .bx-rpm-scrolldown'), e, isInDown);          
-        }
-    });
-
-    //function scroll(scroller, e , isIn){
-    //    if((e.pageY > scroller.position().top && e.pageY < scroller.position().top + scroller.height()) && (e.pageX > scroller.position().left && e.pageX < scroller.position().left + scroller.width())){
-    //        if(!isIn){
-    //            isIn = true;
-    //            $(scroller).trigger('mouseenter');
-    //        }
-    //    }
-    //    else{
-    //        if(isIn){
-    //            isIn = false;
-    //            $(scroller).trigger('mouseleave');
-    //        }
-    //    }
-    //    return isIn;
-    //}
-
-
-    $('.bx-rpm-variable-drag-drop').mousedown(function(e){
-        //offsetX = e.pageX  - ($(this).position().left + $('.bx-rpm-variable-drag-drop').position().left);
-        //offsetY = e.pageY - ($(this).position().top + $('.bx-rpm-variable-drag-drop').position().top);
-        elemWidth = $('.bx-rpm-variable-drag-drop').width() - 6;
-        console.log(elemWidth);
-        $('.bx-rpm-variable-item.is-pointer-down').offset({
-            top: e.pageY - offsetY,
-            left: e.pageX - offsetX
-        });
-        console.log(elemWidth);
-        $('.bx-rpm-variable-item.is-pointer-down').width(elemWidth);
-        //$(this).css({'top':e.pageY - elementheight/2,'left':e.pageX - elementwidth/2, 'width':elementwidth});
-        var div = $('#variableContainer');
-        startpos = div.scrollTop();
-    });
-
-    $(document).mouseup(function(e){
-        //offsetX = 0;
-        //offsetY = 0;
-        $('.bx-rpm-variable-item').width('');
-        var div = $('#variableContainer');
-        startpos = div.scrollTop();
-    });
-
     function initPackery() {
         var $variableGrid = $('.bx-rpm-variable-drag-drop').packery({
             itemSelector: '.bx-rpm-variable-item',
@@ -148,9 +93,46 @@
         });
 
         if(!inUse){
-
             $variableGrid.find('.bx-rpm-variable-item').each(function (i, item) {
                 $variableGrid.packery('bindDraggabillyEvents', new Draggabilly(item));
+            });
+
+            $('.bx-rpm-variable-drag-drop').mousedown(function(e){
+                offsetX = e.pageX  - (parseInt($('.bx-rpm-variable-item.is-pointer-down').position().left) + parseInt($('.bx-rpm-variable-drag-drop').position().left) + 4);
+                offsetY = -2;
+                elemWidth = $('.bx-rpm-variable-drag-drop').innerWidth() - 18;
+                var div = $('#variableContainer');
+                startpos = div.scrollTop();
+            });
+
+            $(window).mousemove( function(e) {
+                if($('.bx-rpm-variable-item.is-dragging').length > 0){
+                    $('.bx-rpm-variable-item.is-dragging').offset({
+                        top: e.pageY - offsetY,
+                        left: e.pageX - offsetX
+                    });
+                    $('.bx-rpm-variable-item.is-dragging').width(elemWidth);
+                    $('.bx-rpm-variable-item.is-dragging').css({'position': 'fixed'});
+                }
+            });
+
+            $(document).mouseup(function(e){
+                offsetX = 0;
+                offsetY = 0;
+                $('.bx-rpm-variable-item').width('');
+                $('.bx-rpm-variable-item').css({'position': 'absolute'});
+                var div = $('#variableContainer');
+                startpos = div.scrollTop();
+                $variableGrid.packery('layout');
+            });
+
+            $('#variableContainer').scroll(function (e){
+                var div = $('#variableContainer');
+                var pos = div.scrollTop();
+                if(pos > $('.bx-rpm-variable-drag-drop').height()-$('#variableContainer').height()){
+                    div.scrollTop($('.bx-rpm-variable-drag-drop').height()-$('#variableContainer').height());
+                }
+                $variableGrid.packery('setScrollOffset', 0, startpos - pos);
             });
 
             $(".bx-rpm-scrollup").hover(function (e) {
@@ -158,15 +140,18 @@
                 (function startscrolling(){
                     timer = setTimeout(function () {
                         var pos = div.scrollTop();
-                        div.scrollTop(pos -= speed);
-                        $variableGrid.packery('setScrollOffset', 0, startpos - pos);
-                        startscrolling();
+                        if(pos > 0){
+                            div.scrollTop(pos -= speed);
+                            if(speed < 30)
+                                speed++;
+                            startscrolling();
+                        }
                     }, 100);
                 })();
             },
         function () {
             clearTimeout(timer);
-            speed = 6;
+            speed = 5;
         });
 
             $(".bx-rpm-scrolldown").hover(function () {
@@ -174,15 +159,18 @@
                 (function startscrolling(){
                     timer = setTimeout(function () {
                         var pos = div.scrollTop();
-                        div.scrollTop(pos += speed);
-                        $variableGrid.packery('setScrollOffset', 0, startpos - pos);
-                        startscrolling();
+                        if(pos < $('.bx-rpm-variable-drag-drop').height()-$('#variableContainer').height()){
+                            div.scrollTop(pos += speed);
+                            if(speed < 30)
+                                speed++;
+                            startscrolling();
+                        }
                     }, 100);
                 })();
             },
                function () {
                    clearTimeout(timer);
-                   speed = 6;
+                   speed = 5;
                });
 
             $('.bx-rpm-dataStructure-functions #addVariableButton').on('click', function() {
