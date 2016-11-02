@@ -248,7 +248,10 @@
                         }
                         else
                         {
-                            @Html.TextBoxFor(m => m.Value, new { OnChange = "OnChange(this)", disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input " + @errorClass + " " + lockedClass })
+                            if (Model.Value != null)
+                            {
+                                <span>@Model.Value.ToString()</span>
+                            } //@Html.TextBoxFor(m => m.Value, new { OnChange = "OnChange(this)", disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input " + @errorClass + " " + lockedClass })
                         }
                     }
 
@@ -293,7 +296,11 @@
                         }
                         else
                         {
-                            @Html.TextBoxFor(m => m.Value, new { OnChange = "OnChange(this)", disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input " + @errorClass })
+                            if (Model.Value != null)
+                            {
+                                <span>@Model.Value.ToString()</span>
+                            }
+                            @*@Html.TextBoxFor(m => m.Value, new { OnChange = "OnChange(this)", disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input " + @errorClass })*@
                         }
                     }
                 </td>
