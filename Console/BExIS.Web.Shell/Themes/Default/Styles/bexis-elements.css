@@ -469,3 +469,9 @@ ul.bx-list-multi
 .bx-selection-grid tr:hover {
     background-color: #eff7f6;
 }
+
+/**GENERAL*/
+
+.bx-mouse-pointer:hover {
+    cursor: pointer;
+}
