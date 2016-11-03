@@ -20,7 +20,7 @@
             </tr>
         </table>
     </div>
-    <div class="bx-rpm-scrollup bx t-arrow-up"></div>
+    <div class="bx-rpm-scrollup bx t-arrow-up"/>
     <div class="bx-rpm-variable-container" id="variableContainer">     
         <div class="bx-rpm-variable-drag-drop">
             @if (Model.VariablePreviews != null && Model.VariablePreviews.Count > 0)
@@ -32,7 +32,7 @@
             }
         </div>
     </div>
-    <div class="bx-rpm-scrolldown bx t-arrow-down"></div>
+    <div class="bx-rpm-scrolldown bx t-arrow-down"/>
     <div class="bx-rpm-dataStructure-functions">
         <button class="bx-button action" id="saveButton">Save</button>
         <button class="bx-button action" id="saveAsButton" title="Creates a full editable Copy of the Data Structure">Save as</button>
@@ -59,6 +59,7 @@
     var offsetX = 0;
     var offsetY = 0;
     var elemWidth = 0;
+    var moved = false;
 
     $(function () {
         resizeVariableContainer(120);
@@ -85,6 +86,12 @@
         $('.bx-rpm-attribute-item .bx-rpm-select').attr('title',"Can't add Variable Data, Structure is used by a Dataset");
     }
 
+    $( ".bx-rpm-variable-item input" ).focusin(function() {
+        var temp = $(this).val();
+        $(this).val('');
+        $(this).val(temp);
+    });
+
     function initPackery() {
         var $variableGrid = $('.bx-rpm-variable-drag-drop').packery({
             itemSelector: '.bx-rpm-variable-item',
@@ -94,15 +101,18 @@
 
         if(!inUse){
             $variableGrid.find('.bx-rpm-variable-item').each(function (i, item) {
-                $variableGrid.packery('bindDraggabillyEvents', new Draggabilly(item));
+                $variableGrid.packery('bindDraggabillyEvents', new Draggabilly( item ));
             });
 
             $('.bx-rpm-variable-drag-drop').mousedown(function(e){
-                offsetX = e.pageX  - (parseInt($('.bx-rpm-variable-item.is-pointer-down').position().left) + parseInt($('.bx-rpm-variable-drag-drop').position().left) + 4);
-                offsetY = -2;
-                elemWidth = $('.bx-rpm-variable-drag-drop').innerWidth() - 18;
-                var div = $('#variableContainer');
-                startpos = div.scrollTop();
+                if($('.bx-rpm-variable-item.is-pointer-down').length > 0){
+                    offsetX = e.pageX  - (parseInt($('.bx-rpm-variable-item.is-pointer-down').position().left) + parseInt($('.bx-rpm-variable-drag-drop').position().left) + 4);
+                    offsetY = -2;
+                    moved = false;
+                    elemWidth = $('.bx-rpm-variable-drag-drop').innerWidth() - 18;
+                    var div = $('#variableContainer');
+                    startpos = div.scrollTop();
+                }
             });
 
             $(window).mousemove( function(e) {
@@ -111,14 +121,20 @@
                         top: e.pageY - offsetY,
                         left: e.pageX - offsetX
                     });
-                    $('.bx-rpm-variable-item.is-dragging').width(elemWidth);
                     $('.bx-rpm-variable-item.is-dragging').css({'position': 'fixed'});
+                    if(!moved){
+                        console.log(moved);
+                        moved = true;
+                        $('.bx-rpm-variable-item.is-dragging').width(elemWidth);
+                        $('.bx-rpm-variable-item.is-dragging select').blur();          
+                    }
                 }
             });
 
-            $(document).mouseup(function(e){
+            $(window).mouseup(function(e){
                 offsetX = 0;
                 offsetY = 0;
+                moved = false;
                 $('.bx-rpm-variable-item').width('');
                 $('.bx-rpm-variable-item').css({'position': 'absolute'});
                 var div = $('#variableContainer');

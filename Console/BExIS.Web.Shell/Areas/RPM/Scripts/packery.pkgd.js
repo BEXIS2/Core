@@ -1818,7 +1818,7 @@ proto.dispatchEvent = function( type, event, args ) {
  * @param {Element} elem
  */
 proto.ignore = function( elem ) {
-  var item = this.getItem( elem );
+  var item = this.getItem(elem);
   if ( item ) {
     item.isIgnored = true;
   }

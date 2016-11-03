@@ -14,6 +14,9 @@
     float:right; 
     overflow-x:auto;
 }
+.bx-rpm-dataStructure-container{
+    border-spacing:0;
+}
 
 .bx-rpm-attribute-container,
 .bx-rpm-variable-container,
@@ -23,17 +26,25 @@
     border:solid 1px #afb0b1;
 }
 
+.bx-rpm-dataStructure-container .bx-rpm-scrollup,
+.bx-rpm-dataStructure-container .bx-rpm-scrolldown,
+.bx-rpm-variable-container{
+    border-top:none;
+    border-bottom:none;
+    margin:0;
+    padding:0;
+}
+
 .bx-rpm-filterContainer {
     border-bottom:none;
 }
 
-.bx-rpm-variable-container,
 .bx-rpm-attribute-container,
 .bx-rpm-attributeheader,
 .bx-rpm-sort,
 .bx-rpm-filter .bx-rpm-filterCategory label {
     width:100%;
-    padding:0px;
+    padding:0;
 }
 
 .bx-rpm-variable-item,
@@ -160,6 +171,7 @@
     min-width:20px;
     max-width:20px;
     text-align: center;
+    cursor:pointer;
 }
 
 .bx-rpm-attribute-container .bx-rpm-select {
@@ -286,10 +298,16 @@
     overflow:hidden;
 }
 
+.bx-rpm-datastructureheader td,
+.bx-rpm-datastructureheader tr,
+.bx-rpm-datastructureheader table {
+    border:none ;
+    border-width:0px;
+}
+
 .bx-rpm-datastructureheader tr,
 .bx-rpm-datastructureheader table {
     width:100%;
-    border-width:0px;
 }
 
 .bx-rpm-datastructureheader .bx-rpm-label{
@@ -332,17 +350,17 @@
 .bx-rpm-dataStructure-container .bx-rpm-scrolldown{
     width:100%;
     text-align:center;
-    margin: 0;
-    padding: 0;
     border: solid 1px #afb0b1;
     background-color: #ebebeb;
-    color: #afb0b1;
+    color: #565655;
+    display:block;
 }
 .bx-rpm-dataStructure-container .bx-rpm-scrollup{
-    
+    border-bottom:none;
 }
 
 .bx-rpm-dataStructure-container .bx-rpm-scrolldown {
+    border-top:none;
 }
 
 .bx-rpm-variable-item.is-dragging {
