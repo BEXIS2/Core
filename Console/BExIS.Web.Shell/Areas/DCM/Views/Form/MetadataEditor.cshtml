@@ -98,7 +98,7 @@
 
                     @if (copy.IsComplete())
                     {
-                        @Html.ActionLink("Copy", copy.ActionName, copy.ControllerName, new { area = copy.AreaName, id = @Model.DatasetId, type = "DatasetId" }, new { @class = "bx-button function", @id = @Model.DatasetId })
+                        @Html.ActionLink("Copy", copy.ActionName, copy.ControllerName, new {area = copy.AreaName, id = @Model.DatasetId, type = "DatasetId"}, new {@class = "bx-button function", @id = @Model.DatasetId})
                     }
 
                     @Html.CheckBox("showAll", @hideOptional, new {OnChange = "switchVisibilityOfOptionalElements()", Name = "showAll", Id = "showAll"})
@@ -136,7 +136,7 @@
                         <img src="../../../../Themes/Default/Styles/Default/preloader.GIF"/>
                     </div>
                 </td>
-
+                
             }
 
             @if (Model.Created && Model.DatasetId != -1 && !@Model.FromEditMode)
@@ -185,7 +185,7 @@
 
             @if (@submit.IsComplete())
             {
-                <button onclick="submit()" class="bx-button action">Submit</button>
+                <button onclick="submit()" class="bx-button action">Save</button>
             }
 
             @if (@Model.FromEditMode && @cancel.IsComplete())
