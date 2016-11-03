@@ -30,13 +30,13 @@ function resetAllTelerikIconTitles()
 /*Truncate Title*/
 function truncateTitle()
 {
-	
+    console.log("on document ready");
 	$('.bx-trunc-child').each(function ()
 	{
 
 		//$(this).trunk8();
 		//if (!$(this).attr("title") == true) { 
-		var n = $(".bx-trunc-parent").width();
+		var n = $(".bx-trunc-parent").width()-90;
 		var text = $(this).text();
 
 		//Link Breiter als/ oder gleich breit Container
