@@ -2492,6 +2492,12 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             }
 
+            //// dataset title node should be check if its exit or not
+            //if (errors.Count == 0 && aModel.DataType.ToLower().Contains("string"))
+            //{
+            //    XmlReader reader =;
+            //}
+
 
             if (errors.Count == 0)
                 return null;
