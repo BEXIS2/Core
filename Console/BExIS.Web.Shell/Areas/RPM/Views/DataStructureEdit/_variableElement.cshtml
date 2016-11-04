@@ -17,7 +17,7 @@
                 <div class="bx-rpm-text">
                     @if (Model.convertibleUnits.Count > 1)
                     {
-                        @Html.DropDownList("Unit", new SelectList(Model.convertibleUnits, "ID", "Name", Model.Unit.Id), new { @id = "varunit_" + Model.Unit.Id, @class= "varunit" })
+                        @Html.DropDownList("Unit_" + Model.Id + "_" + DateTime.Now.Ticks.ToString(), new SelectList(Model.convertibleUnits, "ID", "Name", Model.Unit.Id), new { @id = "varunit" })
                     }
                     else
                     {

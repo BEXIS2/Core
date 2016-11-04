@@ -163,11 +163,14 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                         svs.Description = "";
 
                     variable = dataStructure.Variables.Where(v => v.Id == svs.Id).FirstOrDefault();
-                    variable.Label = svs.Lable.Trim();
-                    variable.Description = svs.Description.Trim();
-                    variable.Unit = new UnitManager().Repo.Get(svs.UnitId);
-                    variable.DataAttribute = new DataContainerManager().DataAttributeRepo.Get(svs.AttributeId);
-                    variable.IsValueOptional = svs.isOptional;
+                    if (variable != null)
+                    {
+                        variable.Label = svs.Lable.Trim();
+                        variable.Description = svs.Description.Trim();
+                        variable.Unit = new UnitManager().Repo.Get(svs.UnitId);
+                        variable.DataAttribute = new DataContainerManager().DataAttributeRepo.Get(svs.AttributeId);
+                        variable.IsValueOptional = svs.isOptional;
+                    }
                 }
 
                 dataStructure = dataStructureManager.UpdateStructuredDataStructure(dataStructure);
