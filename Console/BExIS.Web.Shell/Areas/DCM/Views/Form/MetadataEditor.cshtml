@@ -122,13 +122,14 @@
                           .Name("SelectFileUploader")
                           .Multiple(false)
                           .ShowFileList(false)
-                          .HtmlAttributes(new {title = "Import from xml"})
+                          .HtmlAttributes(new {title = "Import from xml", accept=".xml"})
                           .ClientEvents(events => events
                               .OnSuccess("OnSuccess")
                               .OnSelect("SelectFileProcess_OnSelect"))
                           .Async(async => async
                               .Save("SelectFileProcess", "Form", new {area = "DCM"})
                               .AutoUpload(true))
+                            
                           )
                 </td>
                 <td>
