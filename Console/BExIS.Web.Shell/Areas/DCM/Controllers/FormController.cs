@@ -550,7 +550,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     XDocument metadataXml = xmlMetadatWriter.CreateMetadataXml(metadataStructureId);
                     XmlDocument metadataXmlTemplate = XmlMetadataWriter.ToXmlDocument(metadataXml);
 
-                    XmlDocument completeMetadata = XmlMetadataImportHelper.FillInXmlAttributes(metadataResult, metadataXmlTemplate);
+                    XmlDocument completeMetadata = XmlMetadataImportHelper.FillInXmlValues(metadataResult, metadataXmlTemplate);
 
                     TaskManager.AddToBus(CreateTaskmanager.METADATA_XML, completeMetadata);
 
