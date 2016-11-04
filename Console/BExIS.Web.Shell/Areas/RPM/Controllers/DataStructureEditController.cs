@@ -455,7 +455,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             DataContainerManager dcManager = new DataContainerManager();
             DataAttribute dataAttribute = dcManager.DataAttributeRepo.Get(constraintModel.AttributeId);
 
-            if (constraintModel.MatchingPhrase != "")
+            if (constraintModel.MatchingPhrase != null && constraintModel.MatchingPhrase != "")
             {
                 if (constraintModel.Id == 0)
                 {

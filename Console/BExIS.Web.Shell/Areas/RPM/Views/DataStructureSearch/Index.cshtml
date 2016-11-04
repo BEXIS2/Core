@@ -24,7 +24,8 @@
     });
 
     function loadResults() {
-        var parameters = '/?searchTerms=' + $('.bx-rpm-searchBar #SearchBox').val();
+        var parameters = encodeURI('/?searchTerms=' + $('.bx-rpm-searchBar #SearchBox').val());
+        parameters = parameters.replace('#', '%23');
             $.get('@Url.Action("_dataStructureResultBinding", "DataStructureSearch", new { area = "RPM"} )' + parameters, function (data) {
                 $('#SearchResults').html(data);
                 $('.bx-rpm-searchBar #SearchBox').val("");
@@ -77,7 +78,8 @@
     }
 
     function messageWindowYes(id) {
-        var parameters = '/?Id=' + id;
+        var parameters = encodeURI('/?Id=' + id);
+        parameters = parameters.replace('#', '%23');
         $.get('@Url.Action("deleteDataStructure", "DataStructureEdit")' + parameters, function (data) {
             if ($(data).hasClass('bx-rpm-message') && $(data).attr('value').toLowerCase() == 'true') {
                 $(data).replaceWith('.bx-rpm-message #' + id);
@@ -99,7 +101,8 @@
 
     function openCreateWindow(Id, Name, Description, isSructured, inUse, copy) {
         var title = "Create DataStructure";
-        var parameters = "";
+        var parameters = encodeURI("");
+        parameters = parameters.replace('#', '%23');
         if (Id > 0) {
             if (copy == true) {
                 title = "Copy DataStructure " + Name + ' (' + Id + ')';

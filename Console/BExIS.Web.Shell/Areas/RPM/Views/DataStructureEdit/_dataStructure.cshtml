@@ -65,6 +65,7 @@
         resizeVariableContainer(120);
         initPackery();
         addTooltips();
+        setFocus();
 
         if(inUse){
             lock();
@@ -83,14 +84,24 @@
         $('.bx-rpm-variable-item .bx-rpm-delete').attr('title',"Can't delete Variable Data, Structure is used by a Dataset");
         $('.bx-rpm-attribute-item .bx-rpm-select').attr('disabled','true');
         $('.bx-rpm-attribute-item .bx-rpm-select').addClass('bx-disabled');
+        $('.bx-rpm-attribute-item .bx-rpm-select span').attr('disabled','true');
+        $('.bx-rpm-attribute-item .bx-rpm-select span').addClass('bx-disabled');
         $('.bx-rpm-attribute-item .bx-rpm-select').attr('title',"Can't add Variable Data, Structure is used by a Dataset");
     }
 
-    $( ".bx-rpm-variable-item input" ).focusin(function() {
-        var temp = $(this).val();
-        $(this).val('');
-        $(this).val(temp);
-    });
+    function setFocus(){
+        $( ".bx-rpm-variable-item input" ).focusin(function() {
+            var temp = $(this).val();
+            $(this).val('');
+            $(this).val(temp);
+        });
+
+        $( ".bx-rpm-variable-item textarea" ).focusin(function() {
+            var temp = $(this).val();
+            $(this).val('');
+            $(this).val(temp);
+        });
+    }
 
     function initPackery() {
         var $variableGrid = $('.bx-rpm-variable-drag-drop').packery({
@@ -153,6 +164,7 @@
 
             $(".bx-rpm-scrollup").hover(function (e) {
                 var div = $('#variableContainer');
+                $('.bx-rpm-variable-item select').blur();
                 (function startscrolling(){
                     timer = setTimeout(function () {
                         var pos = div.scrollTop();
@@ -172,6 +184,7 @@
 
             $(".bx-rpm-scrolldown").hover(function () {
                 var div = $('#variableContainer');
+                $('.bx-rpm-variable-item select').blur();
                 (function startscrolling(){
                     timer = setTimeout(function () {
                         var pos = div.scrollTop();
@@ -207,7 +220,8 @@
                     }
                 } while (isDuplicate)
 
-                var parameters = '/?attributeId=' + attrId + '&variableName=' + variableName;
+                var parameters = encodeURI('/?attributeId=' + attrId + '&variableName=' + variableName);
+                parameters = parameters.replace('#', '%23');
                 $.get('@Url.Action("_getVariableElement", "DataStructureEdit", new { area = "RPM" } )' + parameters, function (data) {
                     if ($(data).hasClass('bx-rpm-message')) {
                         createMessageWindow(data, 'Add Variable ' + variableName + ' (' + attrId + ')', 'dataattribure', attrId);
@@ -218,8 +232,9 @@
                         var elem = $variableGrid.find($item)[0];
                         $variableGrid.packery('bindDraggabillyEvents', new Draggabilly(elem));
                     }
+                    $variableGrid.packery('layout');
+                    setFocus();
                 });
-                $variableGrid.packery('layout');
             });
 
             $variableGrid.on('click', '.bx-rpm-variable-item #deletevariable', function () {
@@ -256,7 +271,8 @@
 
         $('.bx-rpm-dataStructure-functions #saveButton').on('click', function () {
             var cssId = 'message';
-            var parameters = '/?Id=' + $('.bx-rpm-datastructureheader #id').val() + '&Name=' + $('.bx-rpm-datastructureheader #name').val() + '&Description=' + $('.bx-rpm-datastructureheader #description').val() + '&isStructured=true&cssId=' + cssId + '&inUse=' + inUse;
+            var parameters = encodeURI('/?Id=' + $('.bx-rpm-datastructureheader #id').val() + '&Name=' + $('.bx-rpm-datastructureheader #name').val() + '&Description=' + $('.bx-rpm-datastructureheader #description').val() + '&isStructured=true&cssId=' + cssId + '&inUse=' + inUse);
+            parameters = parameters.replace('#', '%23');
             $.get('@Url.Action("createDataStructure", "DataStructureSearch", new { area = "RPM"} )' + parameters, function (data) {
                 if ($(data).hasClass('bx-rpm-message')) {
                     if($(data).attr('id') == cssId){
@@ -305,7 +321,6 @@
                         Id: $(elems[i]).find('#varid').text('0');
                     }
                     storeVariables($(data).text(), true);
-                    window.location.href = "/RPM/DataStructureEdit?dataStructureId=" + $(data).text();
                 }
             });
         }
@@ -319,7 +334,7 @@
                     AttributeId: $(elems[i]).find('#attrid').text(),
                     Lable: $(elems[i]).find('#varlabel').val(),
                     Description: $(elems[i]).find('#vardescription').val(),
-                    UnitId: $(elems[i]).find('#varunit').val(),
+                    UnitId: $(elems[i]).find('.varunit').val(),
                     isOptional: $(elems[i]).find('#varisotional').is(':checked')
                 };
                 variables.push(variable);
@@ -350,8 +365,11 @@
                     if(!reload) {
                         loadVariables(id);
                     }
+                    else{
+                        window.location.href = "/RPM/DataStructureEdit?dataStructureId=" + id;
+                    }
                 },
-                async: true,
+                async: false,
                 processData: false
             });
         }
@@ -371,6 +389,7 @@
                     $variableGrid.packery('bindDraggabillyEvents', new Draggabilly($item));
                 });
                 $variableGrid.packery('layout');
+                setFocus();
                 if(inUse){
                     lock();
                 }
@@ -396,8 +415,8 @@
     }
 
     function openDelWindow(id, name, type) {
-        var parameters = '/?Id=' + id;
-
+        var parameters = encodeURI('/?Id=' + id);
+        parameters = parameters.replace('#', '%23');
         $.ajax({
             type: 'GET',
             url: '@Url.Action("_deleteDataStructureBinding", "DataStructureSearch")' + parameters,
@@ -408,16 +427,17 @@
         });
     }
 
-    $('.bx-rpm-datastructureheader #name').keyup(function () {
-        validateName('message');
-    });
+    //$('.bx-rpm-datastructureheader #name').keyup(function () {
+    //    validateName('message');
+    //});
 
     $('.bx-rpm-datastructureheader #name').change(function () {
         validateName('message');
     });
 
     function validateName(id) {
-        var parameters = '/?Id=' + $('.bx-rpm-datastructureheader #id').val() + '&Name=' + $('.bx-rpm-datastructureheader #name').val() + '&cssId=' + id;
+        var parameters = encodeURI('/?Id=' + $('.bx-rpm-datastructureheader #id').val() + '&Name=' + $('.bx-rpm-datastructureheader #name').val() + '&cssId=' + id);
+        parameters = parameters.replace('#', '%23');
         $.get('@Url.Action("_validateDataStructureName", "DataStructureSearch", new { area = "RPM"} )' + parameters, function (data) {
             $(data).replaceAll('.bx-rpm-datastructureheader #' + id);
             showmessage();
@@ -454,8 +474,8 @@
 
     function openCopyWindow(Id, Name, Description, isSructured, inUse, copy, message) {
         var title = "Save DataStructure " + Name + " ("+ Id +") as";
-        var parameters = "";
-        parameters = '/?Id=' + Id + '&Name=' + Name + '&Description=' + Description + '&isSructured=' + isSructured + '&inUse=' + inUse + '&copy=' + copy;
+        var parameters = encodeURI('/?Id=' + Id + '&Name=' + Name + '&Description=' + Description + '&isSructured=' + isSructured + '&inUse=' + inUse + '&copy=' + copy);
+        parameters = parameters.replace('#', '%23');
         $.ajax({
             type: 'GET',
             url: '@Url.Action("_createDataStructureBinding", "DataStructureSearch")' + parameters,

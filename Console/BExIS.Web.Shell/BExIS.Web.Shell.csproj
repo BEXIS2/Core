@@ -588,6 +588,7 @@
     <Content Include="Areas\RPM\Scripts\draggabilly.pkgd.js" />
     <Content Include="Areas\RPM\Scripts\draggabilly.pkgd.min.js" />
     <Content Include="Areas\RPM\Scripts\isotope.pkgd.min.js" />
+    <Content Include="Areas\RPM\Scripts\packery.pkgd.bexis.min.js" />
     <Content Include="Areas\RPM\Scripts\packery.pkgd.js" />
     <Content Include="Areas\RPM\Scripts\packery.pkgd.min.js" />
     <Content Include="Areas\RPM\Stylesheets\DataStructure.css" />

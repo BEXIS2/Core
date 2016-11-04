@@ -4,8 +4,19 @@
     margin: 5px;
 }
 
+.bx-rpm-text {
+    overflow-x:hidden;
+    text-overflow:ellipsis;
+}
+
 .bx-rpm-hidden {
     display: none;
+}
+
+select.bx-disabled{
+    color: #565655;
+    background-color: #f5f5f5;
+    border-color: #565655;
 }
 
 .bx-rpm-message,

@@ -105,17 +105,17 @@
         }
     }
 
-    $('.bx-rpm-createAttributeContainer #name').keyup(function () {
-        createAttrWondowValidateName('message');
-    });
+    //$('.bx-rpm-createAttributeContainer #name').keyup(function () {
+    //    createAttrWondowValidateName('message');
+    //});
 
     $('.bx-rpm-createAttributeContainer #name').change(function () {
         createAttrWondowValidateName('message');
     });
 
-    $('.bx-rpm-createAttributeContainer #description').keyup(function () {
-        createAttrWondowShowmessage()
-    });
+    //$('.bx-rpm-createAttributeContainer #description').keyup(function () {
+    //    createAttrWondowShowmessage()
+    //});
 
     $('.bx-rpm-createAttributeContainer #description').change(function () {
         createAttrWondowShowmessage()
@@ -130,7 +130,8 @@
     });
 
     function createAttrWondowValidateName(cssId) {
-        var parameters = '/?Id=' + $('.bx-rpm-createAttributeContainer #id').val() + '&Name=' + $('.bx-rpm-createAttributeContainer #name').val() + '&cssId=' + cssId;
+        var parameters = encodeURI('/?Id=' + $('.bx-rpm-createAttributeContainer #id').val() + '&Name=' + $('.bx-rpm-createAttributeContainer #name').val() + '&cssId=' + cssId);
+        parameters = parameters.replace('#','%23');
         $.get('@Url.Action("_validateAttributeName", "DataStructureEdit", new { area = "RPM"} )' + parameters, function (data) {
             $(data).replaceAll('.bx-rpm-createAttributeContainer #' + cssId);
             createAttrWondowShowmessage();
@@ -164,7 +165,9 @@
 
     $('.bx-rpm-createAttributeContainer #saveButton').click(function () {
         var cssId = 'message';
-        var parameters = '/?Id=' + $('.bx-rpm-createAttributeContainer #id').val() + '&Name=' + $('.bx-rpm-createAttributeContainer #name').val() + '&Description=' + $('.bx-rpm-createAttributeContainer #description').val() + '&unitId=' + $('.bx-rpm-createAttributeContainer #unit').val() + '&dataTypeId=' + $('.bx-rpm-createAttributeContainer #dataType').val() + '&cssId=' + cssId + '&inUse=' + inUse;
+        var parameters = encodeURI('/?Id=' + $('.bx-rpm-createAttributeContainer #id').val() + '&Name=' + $('.bx-rpm-createAttributeContainer #name').val() + '&Description=' + $('.bx-rpm-createAttributeContainer #description').val() + '&unitId=' + $('.bx-rpm-createAttributeContainer #unit').val() + '&dataTypeId=' + $('.bx-rpm-createAttributeContainer #dataType').val() + '&cssId=' + cssId + '&inUse=' + inUse);
+        parameters = parameters.replace('#','%23');
+        console.log(parameters);
         $.get('@Url.Action("createAtttribute", "DataStructureEdit", new { area = "RPM"} )' + parameters, function (data) {
             if ($(data).hasClass('bx-rpm-message') && $(data).attr('id') == cssId) {
                 $(data).replaceAll('.bx-rpm-createAttributeContainer #' + $(data).attr('id'));
@@ -184,7 +187,8 @@
     });
 
     function changeUnit() {
-        var parameters = '/?unitId=' + $('.bx-rpm-createAttributeContainer #unit').val();
+        var parameters = encodeURI('/?unitId=' + $('.bx-rpm-createAttributeContainer #unit').val());
+        parameters = parameters.replace('#','%23');
         $.get('@Url.Action("_getDataTypes", "DataStructureEdit", new { area = "RPM"} )' + parameters, function (data) {
             $('.bx-rpm-createAttributeContainer .bx-rpm-selectdropdown.datatype').html($(data));
         });
