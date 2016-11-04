@@ -125,7 +125,8 @@
                           .HtmlAttributes(new {title = "Import from xml", accept=".xml"})
                           .ClientEvents(events => events
                               .OnSuccess("OnSuccess")
-                              .OnSelect("SelectFileProcess_OnSelect"))
+                              .OnSelect("SelectFileProcess_OnSelect")
+                              .OnLoad("SelectFileUploader_OnLoad"))
                           .Async(async => async
                               .Save("SelectFileProcess", "Form", new {area = "DCM"})
                               .AutoUpload(true))
@@ -201,31 +202,33 @@
     <script>
 
         $(document)
-            .ready(function () {
+            .ready(function() {
 
-                setTimeout(function () {
-                    //alert("r");
-                    bindMinimap();
-                }, 120);
- 
+                setTimeout(function() {
+                        //alert("r");
+                        bindMinimap();
+                    },
+                    120);
+
             });
 
         $(window)
-            .resize(function () {
-                setTimeout(function () {
-                    //alert("r");
-                    bindMinimap();
-                },120);
-               
+            .resize(function() {
+                setTimeout(function() {
+                        //alert("r");
+                        bindMinimap();
+                    },
+                    120);
+
             });
 
-            $("#showminimap")
-                .click(function() {
+        $("#showminimap")
+            .click(function() {
 
-                    bindMinimap();
+                bindMinimap();
             });
 
-        function SelectFileProcess_OnSelect(e) {
+    function SelectFileProcess_OnSelect(e) {
 
             $("#preloader").show();
 
@@ -248,6 +251,10 @@
             }
         }
 
+        }
+
+    function SelectFileUploader_OnLoad() {
+        $(".t-upload-button span").text("Import");
     }
 
     /*
