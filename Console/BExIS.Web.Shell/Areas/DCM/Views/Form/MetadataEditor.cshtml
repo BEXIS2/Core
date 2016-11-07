@@ -98,7 +98,7 @@
 
                     @if (copy.IsComplete())
                     {
-                        @Html.ActionLink("Copy", copy.ActionName, copy.ControllerName, new { area = copy.AreaName, id = @Model.DatasetId, type = "DatasetId" }, new { @class = "bx-button function", @id = @Model.DatasetId })
+                        @Html.ActionLink("Copy", copy.ActionName, copy.ControllerName, new {area = copy.AreaName, id = @Model.DatasetId, type = "DatasetId"}, new {@class = "bx-button function", @id = @Model.DatasetId})
                     }
 
                     @Html.CheckBox("showAll", @hideOptional, new {OnChange = "switchVisibilityOfOptionalElements()", Name = "showAll", Id = "showAll"})
@@ -122,13 +122,15 @@
                           .Name("SelectFileUploader")
                           .Multiple(false)
                           .ShowFileList(false)
-                          .HtmlAttributes(new {title = "Import from xml"})
+                          .HtmlAttributes(new {title = "Import from xml", accept=".xml"})
                           .ClientEvents(events => events
                               .OnSuccess("OnSuccess")
-                              .OnSelect("SelectFileProcess_OnSelect"))
+                              .OnSelect("SelectFileProcess_OnSelect")
+                              .OnLoad("SelectFileUploader_OnLoad"))
                           .Async(async => async
                               .Save("SelectFileProcess", "Form", new {area = "DCM"})
                               .AutoUpload(true))
+                            
                           )
                 </td>
                 <td>
@@ -136,7 +138,7 @@
                         <img src="../../../../Themes/Default/Styles/Default/preloader.GIF"/>
                     </div>
                 </td>
-
+                
             }
 
             @if (Model.Created && Model.DatasetId != -1 && !@Model.FromEditMode)
@@ -185,7 +187,7 @@
 
             @if (@submit.IsComplete())
             {
-                <button onclick="submit()" class="bx-button action">Submit</button>
+                <button onclick="submit()" class="bx-button action">Save</button>
             }
 
             @if (@Model.FromEditMode && @cancel.IsComplete())
@@ -200,31 +202,33 @@
     <script>
 
         $(document)
-            .ready(function () {
+            .ready(function() {
 
-                setTimeout(function () {
-                    //alert("r");
-                    bindMinimap();
-                }, 120);
- 
+                setTimeout(function() {
+                        //alert("r");
+                        bindMinimap();
+                    },
+                    120);
+
             });
 
         $(window)
-            .resize(function () {
-                setTimeout(function () {
-                    //alert("r");
-                    bindMinimap();
-                },120);
-               
+            .resize(function() {
+                setTimeout(function() {
+                        //alert("r");
+                        bindMinimap();
+                    },
+                    120);
+
             });
 
-            $("#showminimap")
-                .click(function() {
+        $("#showminimap")
+            .click(function() {
 
-                    bindMinimap();
+                bindMinimap();
             });
 
-        function SelectFileProcess_OnSelect(e) {
+    function SelectFileProcess_OnSelect(e) {
 
             $("#preloader").show();
 
@@ -247,6 +251,10 @@
             }
         }
 
+        }
+
+    function SelectFileUploader_OnLoad() {
+        $(".t-upload-button span").text("Import");
     }
 
     /*

@@ -8,6 +8,12 @@
             <td colspan="2"><h2>Variable Templates</h2></td>
         </tr>
         <tr>
+            <td class="bx-rpm-searchBar">
+                @Html.TextBox("SearchBox", "", new { @class = "bx-input" })
+                <a class="bx bx-button function bx-search"></a>
+            </td>
+        </tr>
+        <tr>
             <td class="bx-rpm-sort">
                 <span class="bx-rpm-filterCollapse" onclick="javascript:clickFilter()">
                     Filter
@@ -61,6 +67,7 @@
         resizeAttributeContainer(120);
         initIsotope();
     });
+
     function initIsotope() {
         // init Isotope
         var $attributeGrid = $('.bx-rpm-attribute-drag-drop').isotope({
@@ -89,6 +96,55 @@
 
         });
 
+        $('.bx-rpm-attributeheader .bx-rpm-searchBar #SearchBox').keypress(function (e) {
+            if (event.keyCode == 13) {
+                $('.bx-rpm-attributeheader a.bx-search').trigger('click');
+            }
+        });
+
+        $('.bx-rpm-attributeheader .bx-search').click(function (e) {
+            $('.bx-rpm-attributeheader .bx-rpm-searchBar #SearchBox').val($('.bx-rpm-attributeheader .bx-rpm-searchBar #SearchBox').val().trim());
+            var terms = $('.bx-rpm-attributeheader .bx-rpm-searchBar #SearchBox').val().split(' ');
+            var elems = $('.bx-rpm-attribute-item');
+            var ids = [];
+            var filterValue = '';
+            if (trems.length > 0 && terms[0] != '') {
+                for (var j = 0; j < terms.length; j++) {
+                    terms[j] = terms[j].toLowerCase();
+                    var temp = [];
+                    for (var i = 0; i < elems.length; i++) {
+                        var id = $(elems[i]).find('.id .bx-rpm-text').text();
+                        if ($(elems[i]).find('.name .bx-rpm-text').text().toLowerCase().indexOf(terms[j]) >= 0 && temp.indexOf(id) < 0) {
+                            temp.push(id);
+                        }
+                        else if ($(elems[i]).find('.description .bx-rpm-text').text().toLowerCase().indexOf(terms[j]) >= 0 && temp.indexOf(id) < 0) {
+                            temp.push(id);
+                        }
+                        else if ($(elems[i]).find('.unit .bx-rpm-text').text().toLowerCase().indexOf(terms[j]) >= 0 && temp.indexOf(id) < 0) {
+                            temp.push(id);
+                        }
+                    }
+                    if (ids.length == 0) {
+                        ids = temp.slice();
+                    }
+                    else {
+                        var tempIds = [];
+                        for (var i = 0; i < ids.length; i++) {
+                            if (temp.indexOf(ids[i]) >= 0) {
+                                tempIds.push(ids[i]);
+                            }
+                        }
+                        ids = tempIds.slice();
+                        if (ids.length == 0) {
+                            ids.push("0");
+                        }
+                    }
+                }
+            }
+            filterValue = concatValues(ids);
+            $attributeGrid.isotope({ filter: filterValue });
+        });
+
         $('#filterContainer').on('click', '.bx-rpm-filterCheckbox', function () {
             if ($(this).hasClass('checked')) {
                 filterIds.splice(filterIds.indexOf($(this).attr('id')));
@@ -106,6 +162,7 @@
                     filterIds.push($(this).attr('id'));
             }
             var filterValue = setFilter(this);
+            console.log(filterValue);
             $attributeGrid.isotope({ filter: filterValue });
 
             var append = true;
@@ -170,7 +227,8 @@
 
         $('.bx-rpm-attribute-functions #addAttribute').on('click', function () {
             var attrId = $('.bx-rpm-attribute-functions #addAttribute').attr('value');
-            var parameters = '/?attributeId=' + attrId;
+            var parameters = encodeURI('/?attributeId=' + attrId);
+            parameters = parameters.replace('#', '%23');
             $.get('@Url.Action("_getAttributeElement", "DataStructureEdit", new { area = "RPM" } )' + parameters, function (data) {
                 if ($(data).hasClass('bx-rpm-message')) {
                     createMessageWindow(data, 'Add Variable Template '+ attrId, 'dataattribure', attrId);
@@ -235,12 +293,12 @@
     }
 
     function getAttibuteContainerSize(){
-        return $(window).height() - $('.navbar').height() - $('.bx-rpm-attributeheader').height() - $('.bx-rpm-attribute-functions').height() - 85;
+        return $(window).height() - $('.navbar').height() - $('.bx-rpm-attributeheader').height() - $('.bx-rpm-attribute-functions').height() - 95;
     }
 
     function openAttrDelWindow(id, name, type) {
-        var parameters = '/?Id=' + id;
-
+        var parameters = encodeURI('/?Id=' + id);
+        parameters = parameters.replace('#', '%23');
         $.ajax({
             type: 'GET',
             url: '@Url.Action("_deleteDataAttributeBinding", "DataStructureEdit")' + parameters,
@@ -253,7 +311,8 @@
 
 
     function openAttrWindow(id) {
-        var parameters = '/?attributeId=' + id;
+        var parameters = encodeURI('/?attributeId=' + id);
+        parameters = parameters.replace('#', '%23');
         var title = 'Create Variable Template'
         $.ajax({
             type: 'GET',

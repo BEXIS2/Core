@@ -34,8 +34,6 @@
             .HtmlAttributes(new { @class = "result-grid" })
             .Columns(columns =>
             {
-
-
                 for (int i = 0; i < Model.Columns.Count; i++)
                 {
                     DataColumn column = Model.Columns[i];
@@ -109,11 +107,12 @@
 
 <script type="text/javascript">
 
-	$('document').ready(function () {
+    $('document')
+        .ready(function() {
 
-		$('.t-filter').attr("title", "Filter");
+            $('.t-filter').attr("title", "Filter");
 
-	})
+        });
 
 	function resultGrid_OnColumnChanged(e)
 	{
@@ -191,12 +190,7 @@
 		/*overflow:auto;*/
 	}
 
-	#resultGrid .t-status,
-	#resultGrid .t-status-text
-	{
-	 
-	}
-
+	
 	#resultGrid .searchResultFunctionDiv
 	{
 

@@ -3,6 +3,7 @@ $(document).ready(function ()
 {
 	resetAllTelerikIconTitles();
 	truncateTitle();
+	console.log("on document ready");
 
 });
 
@@ -29,7 +30,7 @@ function resetAllTelerikIconTitles()
 /*Truncate Title*/
 function truncateTitle()
 {
-	
+    console.log("on document ready");
 	$('.bx-trunc-child').each(function ()
 	{
 
@@ -41,7 +42,6 @@ function truncateTitle()
 		//Link Breiter als/ oder gleich breit Container
 		if ($(this).width() >= n)
 		{
-
 			$(this).width(n);
 
 			//get text from title or text
@@ -57,9 +57,8 @@ function truncateTitle()
 				fill: "..." + ntLast
 			});
 
-
 		}
-			//Link kürzer als Container
+	    //Link kürzer als Container
 		else if (text.indexOf(".") != -1 || text == '' || text == null)
 		{
 
@@ -116,6 +115,60 @@ function addTooltips() {
         $this.attr("title", text);
     });
 }
+
+/**
+ * TELERIK EXTENTIONS
+ */
+
+
+$(".t-grid").load(function () {
+
+    $(".t-grid th").each(function () {
+
+        var element = $(this);
+        var div = $(document.createElement("div"));
+        div.addClass("bx-header-title");
+        div.css({ "overflow": "hidden", "text-overflow": "ellipsis", "float": "left" });
+
+        var filter = element.find(".t-grid-filter");
+        filter.css("float", "right");
+
+
+        div.width((element.innerWidth() - filter.outerWidth() - 5));
+
+        var a = element.find("a");
+        div.html(a);
+
+        element.prepend(div);
+
+
+    });
+});
+
+$(".t-grid").change(function () {
+
+    $(".t-grid th").each(function () {
+
+        var element = $(this);
+        var div = $(document.createElement("div"));
+        div.addClass("bx-header-title");
+        div.css({ "overflow": "hidden", "text-overflow": "ellipsis", "float": "left" });
+
+        var filter = element.find(".t-grid-filter");
+        filter.css("float", "right");
+
+
+        div.width((element.innerWidth() - filter.outerWidth() - 5));
+
+        var a = element.find("a");
+        div.html(a);
+
+        element.prepend(div);
+
+
+    });
+});
+
 
 
 /*List*/

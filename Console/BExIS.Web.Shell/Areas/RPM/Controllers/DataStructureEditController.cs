@@ -11,6 +11,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Collections.Generic;
 using Vaiona.Utils.Cfg;
+using Vaiona.Web.Extensions;
+using Vaiona.Web.Mvc.Models;
 
 namespace BExIS.Web.Shell.Areas.RPM.Controllers
 {
@@ -18,6 +20,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
     {
         public ActionResult Index(long DataStructureId = 0)
         {
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Data Structure Edit", this.Session.GetTenant());
             if (DataStructureId != 0)
                 return View(DataStructureId);
             else
@@ -160,11 +163,14 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                         svs.Description = "";
 
                     variable = dataStructure.Variables.Where(v => v.Id == svs.Id).FirstOrDefault();
-                    variable.Label = svs.Lable.Trim();
-                    variable.Description = svs.Description.Trim();
-                    variable.Unit = new UnitManager().Repo.Get(svs.UnitId);
-                    variable.DataAttribute = new DataContainerManager().DataAttributeRepo.Get(svs.AttributeId);
-                    variable.IsValueOptional = svs.isOptional;
+                    if (variable != null)
+                    {
+                        variable.Label = svs.Lable.Trim();
+                        variable.Description = svs.Description.Trim();
+                        variable.Unit = new UnitManager().Repo.Get(svs.UnitId);
+                        variable.DataAttribute = new DataContainerManager().DataAttributeRepo.Get(svs.AttributeId);
+                        variable.IsValueOptional = svs.isOptional;
+                    }
                 }
 
                 dataStructure = dataStructureManager.UpdateStructuredDataStructure(dataStructure);
@@ -452,7 +458,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             DataContainerManager dcManager = new DataContainerManager();
             DataAttribute dataAttribute = dcManager.DataAttributeRepo.Get(constraintModel.AttributeId);
 
-            if (constraintModel.MatchingPhrase != "")
+            if (constraintModel.MatchingPhrase != null && constraintModel.MatchingPhrase != "")
             {
                 if (constraintModel.Id == 0)
                 {
