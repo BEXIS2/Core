@@ -42,7 +42,7 @@ namespace BExIS.IO.Transform.Output
 
             DatasetManager datasetManager = new DatasetManager();
             DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
-            AsciiWriter writer = new AsciiWriter(TextSeperator.comma);
+            AsciiWriter writer = new AsciiWriter(TextSeperator.tab);
             
             string path = "";
 
