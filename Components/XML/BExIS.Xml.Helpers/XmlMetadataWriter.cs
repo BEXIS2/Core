@@ -517,24 +517,26 @@ namespace BExIS.Xml.Helpers
             /// <param name="attributeUsage"></param>
             /// <param name="number"></param>
             /// <returns></returns>
-            public XDocument AddAttribute(XDocument metadataXml, BaseUsage parentUsage, int packageNumber, BaseUsage attributeUsage, int number, string parentTypeName, string attributeTypeName, string attributeId)
+            public XDocument AddAttribute(XDocument metadataXml, BaseUsage attributeUsage, int number, string attributeTypeName, string attributeId, string parentXPath)
             {
                 _tempXDoc = metadataXml;
 
-                XElement packageRole = Get(parentUsage.Label, parentUsage.Id);
-                if (packageNumber == 0)
-                { 
-                    packageNumber = 1;
-                }
-                XElement package = Get(parentTypeName, packageNumber, packageRole);
+                XElement role = Get(parentXPath);
 
-                XElement role = Get(attributeUsage.Label, package);
-                if (role == null)
-                {
-                    role = CreateXElement(attributeUsage.Label, XmlNodeType.MetadataAttributeUsage);
-                    if (_mode.Equals(XmlNodeMode.xPath)) role.SetAttributeValue("name", attributeUsage.Label);
-                    role.SetAttributeValue("id", attributeUsage.Id.ToString());
-                }
+                //XElement packageRole = Get(parentUsage.Label, parentUsage.Id);
+                //if (packageNumber == 0)
+                //{ 
+                //    packageNumber = 1;
+                //}
+                //XElement package = Get(parentTypeName, packageNumber, packageRole);
+
+                //XElement role = Get(attributeUsage.Label, package);
+                //if (role == null)
+                //{
+                //    role = CreateXElement(attributeUsage.Label, XmlNodeType.MetadataAttributeUsage);
+                //    if (_mode.Equals(XmlNodeMode.xPath)) role.SetAttributeValue("name", attributeUsage.Label);
+                //    role.SetAttributeValue("id", attributeUsage.Id.ToString());
+                //}
 
                 XElement element = CreateXElement(attributeTypeName, XmlNodeType.MetadataAttribute);
 
@@ -543,7 +545,7 @@ namespace BExIS.Xml.Helpers
                 element.SetAttributeValue("id", attributeId);
                 element.SetAttributeValue("number", number);
 
-                if (!Exist(attributeTypeName, number, package))
+                if (!Exist(attributeTypeName, number, role))
                 {
                     role = UpdateNumberOfSameElements(role, element, attributeTypeName, number);
                 }
@@ -566,13 +568,11 @@ namespace BExIS.Xml.Helpers
             /// <param name="attributeUsage"></param>
             /// <param name="number"></param>
             /// <returns></returns>
-            public XDocument RemoveAttribute(XDocument metadataXml, BaseUsage parentUsage, int packageNumber, BaseUsage attributeUsage, int number, string parentTypeName, string attributeName)
+            public XDocument RemoveAttribute(XDocument metadataXml, BaseUsage attributeUsage, int number, string attributeName, string parentXPath)
             {
                 _tempXDoc = metadataXml;
 
-                XElement packageRole = Get(parentUsage.Label, parentUsage.Id);
-                XElement package = Get(parentTypeName, packageNumber, packageRole);
-                XElement role = Get(attributeUsage.Label, package);
+                XElement role = Get(parentXPath);
                 if (role != null)
                 {
                     if (Exist(attributeName, number, role))
@@ -640,35 +640,52 @@ namespace BExIS.Xml.Helpers
             /// <param name="number"></param>
             /// <param name="value"></param>
             /// <returns></returns>
-            public XDocument Update(XDocument metadataXml, BaseUsage packageUsage, int packageNumber, BaseUsage attributeUsage, int number, object value, string parentName, string attributeTypeName )
+            public XDocument Update(XDocument metadataXml, BaseUsage attributeUsage, int number, object value, string attributeTypeName, string parentXpath )
             {
                 _tempXDoc = metadataXml;
 
-                //exist packageRole
-                if (Exist(packageUsage.Label, packageUsage.Id))
+
+                XElement parent = Get(parentXpath);
+
+                if (parent != null)
                 {
-                    XElement packageRole = Get(packageUsage.Label, packageUsage.Id);
-
-                    //exist package
-                    if (Exist(parentName, packageNumber, packageRole))
+                    //attribute role exist
+                    if (Exist(attributeUsage.Label, parent))
                     {
-                        XElement package = Get(parentName, packageNumber, packageRole);
-
-                        //attribute role exist
-                        if (Exist(attributeUsage.Label, package))
+                        XElement attributeRole = Get(attributeUsage.Label, parent);
+                        if (attributeRole != null)
                         {
-                            XElement attributeRole = Get(attributeUsage.Label, package);
-                            if (attributeRole != null)
-                            {
-                                XElement attribute = Get(attributeTypeName, number, attributeRole);
-                                attribute.SetValue(value.ToString());
-                            }
+                            XElement attribute = Get(attributeTypeName, number, attributeRole);
+                            attribute.SetValue(value.ToString());
                         }
                     }
                 }
 
+            //exist packageRole
+            //if (Exist(packageUsage.Label, packageUsage.Id))
+            //{
+            //    XElement packageRole = Get(parentXpath);//Get(packageUsage.Label, packageUsage.Id);
 
-                return _tempXDoc;
+            //    //exist package
+            //    if (Exist(parentName, packageNumber, packageRole))
+            //    {
+            //        XElement package = Get(parentXpath);
+
+            //        //attribute role exist
+            //        if (Exist(attributeUsage.Label, package))
+            //        {
+            //            XElement attributeRole = Get(attributeUsage.Label, package);
+            //            if (attributeRole != null)
+            //            {
+            //                XElement attribute = Get(attributeTypeName, number, attributeRole);
+            //                attribute.SetValue(value.ToString());
+            //            }
+            //        }
+            //    }
+            //}
+
+
+            return _tempXDoc;
             }
             
             /// <summary>
