@@ -2,6 +2,9 @@
     overflow-y:hidden;
 }
 
+h2{
+    margin-top:0;
+}
 
 #SearchResult {
     width:calc(45% - 20px);
@@ -73,7 +76,7 @@
 .bx-rpm-attribute-item table {
     margin:0px;
     padding:3px 0px 3px 0px;
-    background-color:transparent;   
+    background-color:transparent;  
 }
 
 .bx-rpm-variable-item td,
@@ -112,7 +115,6 @@
 .bx-rpm-variable-container .bx-rpm-text{
     margin:0px;
     padding:0px 0px 0px 5px;
-    overflow-x:hidden;
 }
 
 .bx-rpm-attribute-container .id .bx-rpm-text,
@@ -137,6 +139,7 @@
 .bx-rpm-attribute-container .bx-rpm-attribute-item .name,
 .bx-rpm-variable-container .bx-rpm-variable-item .name {
     min-width:100px;
+    max-width:100px;
 }
 
 .bx-rpm-attribute-container .bx-rpm-attribute-item .name .bx-rpm-text{

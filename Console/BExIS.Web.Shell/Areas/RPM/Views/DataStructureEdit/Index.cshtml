@@ -5,8 +5,17 @@
 <link href="@Url.Content("~/Areas/RPM/Stylesheets/DataStructure.css")" rel="stylesheet" type="text/css" />
 <link href="@Url.Content("~/Areas/RPM/Stylesheets/DataStructureEdit.css")" rel="stylesheet" type="text/css" />
 <script src="@Url.Content("~/Areas/RPM/Scripts/isotope.pkgd.min.js")"></script>
-<script src="@Url.Content("~/Areas/RPM/Scripts/packery.pkgd.js")"></script>
+<script src="@Url.Content("~/Areas/RPM/Scripts/packery.pkgd.bexis.min.js")"></script>
 <script src="@Url.Content("~/Areas/RPM/Scripts/draggabilly.pkgd.min.js")"></script>
+
+@section Information
+{
+    he Data Structure Manager is a tool to create, modify and delete Data Structures. Data Structures contain Variables, which are specific instances of Data Attributes.
+    It is possible to create Data Structures for structured data (Excel tables, CSV-Files ...) and for unstructured data (images, videos ...).
+    <p>
+        <a href="/RPM/Help/Index/#_Toc434570753" class="bx-informationLink" title="go to help" target="_blank">More</a>
+    </p>
+}
 
 <div id="SearchResult">
     <h3 class="bx-rpm-loading"><span class="fa fa-spinner fa-pulse"></span> Loading Variables</h3>
@@ -23,12 +32,11 @@
 <script type="text/javascript">
     $(function () {
         $.get('@Url.Action("_attributeResultBinding", "DataStructureEdit", new { area = "RPM"} )', function (data) {
-            $('#SearchResult').html(data);           
-        });
-
-        $.get('@Url.Action("_dataStructureBinding", "DataStructureEdit", new { area = "RPM", dataStructureId = Model} )', function (data) {
-            $('#DataStructure').html(data);
-        });
+            $('#SearchResult').html(data);
+            $.get('@Url.Action("_dataStructureBinding", "DataStructureEdit", new { area = "RPM", dataStructureId = Model} )', function (data) {
+                $('#DataStructure').html(data);
+            });
+        });     
     });
 
     function onCliclCheckbox(e) {
@@ -91,7 +99,8 @@
     }
 
     function messageWindowYes(id) {
-        var parameters = '/?Id=' + id;
+        var parameters = encodeURI('/?Id=' + id);
+        parameters = parameters.replace('#', '%23');
         if ($("#messageWindow").attr('type').toLowerCase() == 'datastructure') {
             $.get('@Url.Action("deleteDataStructure", "DataStructureEdit")' + parameters, function (data) {
                 if ($(data).hasClass('bx-rpm-message') && $(data).attr('value').toLowerCase() == 'true') {
@@ -122,4 +131,16 @@
         }
     }
 
+    function concatValues(obj) {
+        var value = '';
+        for (var prop in obj) {
+            if (prop == 0) {
+                value = '.' + obj[prop];
+            }
+            else {
+                value += ', .' + obj[prop];
+            }
+        }
+        return value;
+    }
 </script>

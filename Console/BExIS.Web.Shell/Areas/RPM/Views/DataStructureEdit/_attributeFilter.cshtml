@@ -153,17 +153,4 @@
         }
         return false;
     }
-
-    function concatValues(obj) {
-        var value = '';
-        for (var prop in obj) {
-            if (prop == 0) {
-                value = '.' + obj[prop];
-            }
-            else {
-                value += ', .' + obj[prop];
-            }
-        }
-        return value;
-    }
 </script>
