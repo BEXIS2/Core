@@ -23,7 +23,14 @@ function setTabIndex() {
  ********* FORM    ************************
  ******************************************/
 
-function bindMinimap() {
+$(window).scroll(function () {
+
+    bindMinimap($(document).scrollTop());
+
+});
+
+
+function bindMinimap(top) {
 
     //if (($('#root').height()+200) > ($(window).height())) {
 
@@ -35,13 +42,30 @@ function bindMinimap() {
         $(".minimap").remove();
     }
     if ($('#root')) {
-
+        var menubar = $(".navbar").height() + 20;
         var offset = getRatioHeight($('#root').position().top);
+        if (top != null && top > 0) {
+            if (top + menubar < $('#root').position().top) {
+                var pos = $('#root').position().top - top;
+                offset = getRatioHeight(pos);
+            } else {
+                
+                console.log("menu : "+menubar);
+                offset = getRatioHeight(menubar);
+            }
 
-        var hRatio = 1 - $(window).height() / $('#root').height();
+            console.log("scroll position : " + top);
+            console.log("scroll position : " + $('#root').position().top);
+
+        }
+
+
+        var hWindow = $(window).height()-100;
+        var hRatio = 1 - hWindow / $('#root').height();
         if (hRatio <= 0) {
             hRatio = 0.1;
         }
+        //console.log("hRatio : " + hRatio);
 
         var previewBody = $('#root').minimap(
         {
@@ -55,7 +79,7 @@ function bindMinimap() {
             smoothScrollDelay: 200
         });
 
-        $(".minimap").css("z-index", "1000");
+        $(".minimap").css("z-index", "999");
         $(".miniregion").css("z-index", "1000");
 
         $('#MetadataEditor').css("width", "89%");
