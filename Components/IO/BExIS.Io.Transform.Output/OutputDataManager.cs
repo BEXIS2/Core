@@ -50,7 +50,7 @@ namespace BExIS.IO.Transform.Output
             
 
             //ascii allready exist
-            if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(contentDescriptorTitle) && p.DatasetVersion.Id.Equals(datasetVersion.Id)) > 0)
+            if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(contentDescriptorTitle) && p.URI.Contains(datasetVersion.Id.ToString())) > 0)
             {
                 #region FileStream exist
 
@@ -135,7 +135,7 @@ namespace BExIS.IO.Transform.Output
             string path = "";
 
             //excel allready exist
-            if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals("generated")) > 0)
+            if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals("generated") && p.URI.Contains(datasetVersion.Id.ToString())) > 0)
             {
                 #region FileStream exist
 
