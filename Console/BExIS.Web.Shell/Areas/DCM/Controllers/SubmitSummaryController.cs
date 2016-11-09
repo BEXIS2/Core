@@ -18,6 +18,7 @@ using BExIS.Dlm.Services.DataStructure;
 using BExIS.Web.Shell.Areas.DCM.Models;
 using System.Threading.Tasks;
 using System.Threading;
+using NHibernate.Util;
 using Vaiona.Logging.Aspects;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
@@ -533,6 +534,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                                 throw new Exception(string.Format("Not able to checkout dataset '{0}' for  user '{1}'!", ds.Id, GetUsernameOrDefault()));
 
                             workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
+                            //workingCopy.ContentDescriptors = new List<ContentDescriptor>();
 
 
                             do
@@ -693,6 +695,39 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         }
 
                         #endregion
+
+                        #region contentdescriptors
+
+                        //remove all contentdescriptors from the old version 
+                        //generatedTXT
+                        if (workingCopy.ContentDescriptors.Any(c => c.Name.Equals("generatedTXT")))
+                        {
+                            ContentDescriptor tmp =
+                                workingCopy.ContentDescriptors.Where(c => c.Name.Equals("generatedTXT"))
+                                    .FirstOrDefault();
+                            dm.DeleteContentDescriptor(tmp);
+                        }
+
+                        //generatedCSV
+                        if (workingCopy.ContentDescriptors.Any(c => c.Name.Equals("generatedCSV")))
+                        {
+                            ContentDescriptor tmp =
+                                workingCopy.ContentDescriptors.Where(c => c.Name.Equals("generatedCSV"))
+                                    .FirstOrDefault();
+                            dm.DeleteContentDescriptor(tmp);
+                        }
+                        //generated
+                        if (workingCopy.ContentDescriptors.Any(c => c.Name.Equals("generated")))
+                        {
+                            ContentDescriptor tmp =
+                                workingCopy.ContentDescriptors.Where(c => c.Name.Equals("generated"))
+                                    .FirstOrDefault();
+                            dm.DeleteContentDescriptor(tmp);
+                        }
+
+
+                        #endregion
+
 
                         // ToDo: Get Comment from ui and users
                         MoveAndSaveOriginalFileInContentDiscriptor(workingCopy);

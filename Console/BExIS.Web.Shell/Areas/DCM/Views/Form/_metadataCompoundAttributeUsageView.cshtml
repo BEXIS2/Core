@@ -23,8 +23,16 @@
     bool locked = false;
     bool hideOptional = false;
 
-    string styleClass = "Metadata-Level-" + Model.Level;
-    string headerClass = "Metadata-Level-Header-" + Model.Level;
+
+    string lvl = Model.Level.ToString();
+    if (Model.Level >= 9)
+    {
+        lvl = "9";
+    }
+
+
+    string styleClass = "Metadata-Level-" + lvl;
+    string headerClass = "Metadata-Level-Header-" + lvl;
 
     if (ViewData.Keys.Contains("Locked"))
     {

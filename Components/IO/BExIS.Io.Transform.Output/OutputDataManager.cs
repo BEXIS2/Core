@@ -42,6 +42,7 @@ namespace BExIS.IO.Transform.Output
 
             DatasetManager datasetManager = new DatasetManager();
             DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
+            long datasetVersionId = datasetVersion.Id;
             AsciiWriter writer = new AsciiWriter(TextSeperator.tab);
             
             string path = "";
@@ -49,7 +50,7 @@ namespace BExIS.IO.Transform.Output
             
 
             //ascii allready exist
-            if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(contentDescriptorTitle)) > 0)
+            if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(contentDescriptorTitle) && p.DatasetVersion.Id.Equals(datasetVersion.Id)) > 0)
             {
                 #region FileStream exist
 
