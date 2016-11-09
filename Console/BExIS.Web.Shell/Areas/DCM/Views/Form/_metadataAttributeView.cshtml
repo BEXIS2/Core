@@ -116,7 +116,7 @@
                                             Id = @idInput,
                                             PackageId = @Model.Parent.Id,
                                             Title = @errorMessage,
-                                            @class = "bx-textarea bx-metadataFormTextInput " + @errorClass,
+                                            @class = "bx-input bx-metadataFormTextInput " + @errorClass,
                                             onkeyup = "OnKeyUpTextArea(this)"
                                         })
                                 }
@@ -132,7 +132,7 @@
                             }
                             else
                             {
-                                @Html.TextAreaFor(m => m.Value, new {disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-textarea bx-metadataFormTextInput " + @errorClass + " " + lockedClass })
+                                @Html.TextAreaFor(m => m.Value, new {disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input bx-metadataFormTextInput " + @errorClass + " " + lockedClass })
                             }
 
                         
@@ -194,7 +194,7 @@
                                         @Model.Value.ToString()
                                     }
                                 </div>*@
-                                @Html.TextBoxFor(m => m.Value, new { disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-textarea bx-metadataFormTextInput " + @errorClass + " " + lockedClass })
+                                @Html.TextBoxFor(m => m.Value, new { disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input bx-metadataFormTextInput " + @errorClass + " " + lockedClass })
 
                             }
                         }
