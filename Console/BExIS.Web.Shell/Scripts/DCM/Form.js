@@ -24,13 +24,15 @@ function setTabIndex() {
  ******************************************/
 
 $(window).scroll(function () {
-
-    bindMinimap($(document).scrollTop());
-
+    var postion = $(document).scrollTop();
+    if (postion<300)
+        bindMinimap();
 });
 
 
-function bindMinimap(top) {
+function bindMinimap() {
+
+    var scrollpostion = $(document).scrollTop();
 
     //if (($('#root').height()+200) > ($(window).height())) {
 
@@ -44,9 +46,9 @@ function bindMinimap(top) {
     if ($('#root')) {
         var menubar = $(".navbar").height() + 20;
         var offset = getRatioHeight($('#root').position().top);
-        if (top != null && top > 0) {
-            if (top + menubar < $('#root').position().top) {
-                var pos = $('#root').position().top - top;
+        if (scrollpostion != null && scrollpostion > 0) {
+            if (scrollpostion + menubar < $('#root').position().top) {
+                var pos = $('#root').position().top - scrollpostion;
                 offset = getRatioHeight(pos);
             } else {
                 
@@ -54,8 +56,8 @@ function bindMinimap(top) {
                 offset = getRatioHeight(menubar);
             }
 
-            console.log("scroll position : " + top);
-            console.log("scroll position : " + $('#root').position().top);
+            //console.log("scroll position : " + scrollpostion);
+            //console.log("scroll position : " + $('#root').position().top);
 
         }
 
@@ -99,7 +101,7 @@ function bindMinimap(top) {
 
     //    $('#MetadataEditor').css("width", "100%");
     //}
-    }
+}
 
 
 function getRatioHeight(containerStart) {
