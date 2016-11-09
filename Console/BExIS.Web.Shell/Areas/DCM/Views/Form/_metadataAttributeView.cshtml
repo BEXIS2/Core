@@ -132,11 +132,7 @@
                             }
                             else
                             {
-                                if (Model.Value != null)
-                                {
-                                    <span>@Model.Value.ToString()</span>
-                                } 
-                                @*@Html.TextAreaFor(m => m.Value, new { OnChange = "OnChange(this)", disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-textarea " + @errorClass + " " + lockedClass })*@
+                                @Html.TextAreaFor(m => m.Value, new {disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-textarea bx-metadataFormTextInput " + @errorClass + " " + lockedClass })
                             }
 
                         
@@ -192,10 +188,14 @@
                             }
                             else
                             {
-                                if (Model.Value != null)
-                                {
-                                    <span>@Model.Value.ToString()</span>
-                                } 
+                                @*<div class="bx-input bx-metadataFormTextInput" style="vertical-align: middle" >
+                                    @if (Model.Value != null)
+                                    {
+                                        @Model.Value.ToString()
+                                    }
+                                </div>*@
+                                @Html.TextBoxFor(m => m.Value, new { disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-textarea bx-metadataFormTextInput " + @errorClass + " " + lockedClass })
+
                             }
                         }
 
@@ -247,10 +247,8 @@
                         }
                         else
                         {
-                            if (Model.Value != null)
-                            {
-                                <span>@Model.Value.ToString()</span>
-                            } 
+
+                            @Html.TextBoxFor(m => m.Value, new { disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input bx-metadataFormTextInput " + @errorClass + " " + lockedClass })
                         }
                     }
 
@@ -295,10 +293,7 @@
                         }
                         else
                         {
-                            if (Model.Value != null)
-                            {
-                                <span>@Model.Value.ToString()</span>
-                            }
+                            @Html.TextBoxFor(m => m.Value, new { disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input bx-metadataFormTextInput " + @errorClass + " " + lockedClass })
                         }
                     }
                 </td>
