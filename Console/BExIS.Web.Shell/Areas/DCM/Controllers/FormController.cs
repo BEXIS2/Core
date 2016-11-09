@@ -48,7 +48,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         public ActionResult StartMetadataEditor()
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Create Dataset", this.Session.GetTenant());
-            ViewData["HideOptional"] = false;
+            ViewData["ShowOptional"] = false;
 
             MetadataEditorModel Model = new MetadataEditorModel();
 
@@ -139,7 +139,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Create Dataset", this.Session.GetTenant());
             ViewData["Locked"] = locked;
-            ViewData["HideOptional"] = true;
+            ViewData["ShowOptional"] = false;
 
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
             if (TaskManager == null)
@@ -196,7 +196,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Create Dataset", this.Session.GetTenant()); ;
             ViewData["Locked"] = true;
-            ViewData["HideOptional"] = true;
+            ViewData["ShowOptional"] = false;
 
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
             if (TaskManager == null || resetTaskManager)
@@ -401,10 +401,10 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             return PartialView("MetadataEditor", Model);
         }
 
-        public ActionResult ReloadMetadataEditor(bool locked = false, bool hidden = false)
+        public ActionResult ReloadMetadataEditor(bool locked = false, bool show = false)
         {
             ViewData["Locked"] = locked;
-            ViewData["HideOptional"] = hidden ? false : true;
+            ViewData["ShowOptional"] = show;
 
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Create Dataset", this.Session.GetTenant());
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
@@ -480,9 +480,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             return PartialView("MetadataEditor", Model);
         }
 
-        public ActionResult SwitchVisibilityOfOptionalElements(bool hidden)
+        public ActionResult SwitchVisibilityOfOptionalElements(bool show)
         {
-            return RedirectToAction("ReloadMetadataEditor", new { locked = true, hidden });
+            return RedirectToAction("ReloadMetadataEditor", new { locked = true, show = !show });
         }
 
         #endregion

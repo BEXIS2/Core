@@ -15,7 +15,7 @@
     string errorClass = "";
     string lockedClass = "";
     bool locked = false;
-    bool hideOptional = false;
+    bool showOptional = false;
 
     string displayName = "";
     char tmp = ' ';
@@ -55,9 +55,9 @@
     lockedClass = "bx-disabled";
 }
 
-@if (ViewData.Keys.Contains("HideOptional"))
+@if (ViewData.Keys.Contains("ShowOptional"))
 {
-    hideOptional = (bool)ViewData["HideOptional"];
+    showOptional = (bool)ViewData["ShowOptional"];
 }
 
 
@@ -84,7 +84,7 @@
 
 <div id="@id" class="metadataAttributeContent" onload="metadataAttributeOnLoad(this, @hasErrors)">
 
-    @if (@Model != null && !(hideOptional && Model.IsEmpty && (Model.MinCardinality == 0) && locked))
+    @if (@Model != null && !(!showOptional && Model.IsEmpty && (Model.MinCardinality == 0) && locked))
     {
         <table>
             <tr>
