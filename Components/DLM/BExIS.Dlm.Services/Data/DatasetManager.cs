@@ -2259,7 +2259,17 @@ namespace BExIS.Dlm.Services.Data
             {
                 IRepository<ContentDescriptor> repo = uow.GetRepository<ContentDescriptor>();
 
-                entity = repo.Reload(entity);
+                //repo.Evict(entity);
+                //entity = repo.Reload(entity);
+                // Javad: There is a problem with relaoding the entity, which is:
+                // when the entity is reloaded, another onject of it is created, which is different that the one attached to the DatasetVersion.
+                // They have the same PK, but diffect HashCode, hence NH complains about having more than one object in session(s).
+                // To be sure the entity is object equial to the one in the ContentDescriptors list, the follwing statement should work.
+                entity.DatasetVersion.ContentDescriptors.Remove(entity);
+                // The follwoing line should not be needed, if entity is the same object as in the list
+                //entity.DatasetVersion.ContentDescriptors.Remove(
+                //        entity.DatasetVersion.ContentDescriptors.FirstOrDefault(p => p.Id.Equals(entity.Id))
+                //    );
                 entity.DatasetVersion = null;
 
                 repo.Delete(entity);
@@ -2288,6 +2298,7 @@ namespace BExIS.Dlm.Services.Data
                 foreach (var entity in entities)
                 {
                     var latest = repo.Reload(entity);
+                    entity.DatasetVersion.ContentDescriptors.Remove(entity);
                     latest.DatasetVersion = null;
 
                     repo.Delete(latest);
