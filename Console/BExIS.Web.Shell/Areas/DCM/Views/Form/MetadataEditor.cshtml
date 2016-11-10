@@ -17,7 +17,7 @@
     string lockedClass = "";
     bool locked = false;
     bool editMode = false;
-    bool hideOptional = false;
+    bool showOptional = false;
 
     string showAllClass = " bx-toggle-on";
 
@@ -32,11 +32,10 @@
         lockedClass = "bx-disabled";
     }
 
-    if (ViewData.Keys.Contains("HideOptional"))
+    if (ViewData.Keys.Contains("ShowOptional"))
     {
-        hideOptional = (bool)ViewData["HideOptional"];
-
-        showAllClass = hideOptional ? " bx-toggle-off" : " bx-toggle-on";
+        showOptional = (bool)ViewData["ShowOptional"];
+        showAllClass = showOptional ? " bx-toggle-on" : " bx-toggle-off";
     }
 
     #region set actions
@@ -87,7 +86,7 @@
 }
 
 
-<div id="MetadataEditor">
+<div id="MetadataEditor" style="width:89%">
 <div>
     <table>
         <tr>
@@ -101,15 +100,9 @@
                         @Html.ActionLink("Copy", copy.ActionName, copy.ControllerName, new {area = copy.AreaName, id = @Model.DatasetId, type = "DatasetId"}, new {@class = "bx-button function", @id = @Model.DatasetId})
                     }
 
-                    @Html.CheckBox("showAll", @hideOptional, new {OnChange = "switchVisibilityOfOptionalElements()", Name = "showAll", Id = "showAll"})
-                    @if (@hideOptional)
-                    {
-                        <b>show all optional</b>
-                    }
-                    else
-                    {
-                        <b>hide all optional</b>
-                    }
+                    @Html.CheckBox("showAll", @showOptional, new {OnChange = "switchVisibilityOfOptionalElements()", Name = "showAll", Id = "showAll"})
+
+                    <b>show all fields</b>
 
                 </td>
 
@@ -355,11 +348,11 @@
                 })
     }
 
-    function switchVisibilityOfOptionalElements() {
+        function switchVisibilityOfOptionalElements(e) {
 
-        var hidden = '@hideOptional';
+        var show = '@showOptional';
 
-        $.get('@Url.Action("SwitchVisibilityOfOptionalElements", "Form", new RouteValueDictionary {{"area", "DCM"}})', { hidden: hidden },
+        $.get('@Url.Action("SwitchVisibilityOfOptionalElements", "Form", new RouteValueDictionary {{"area", "DCM"}})', { show: show },
                 function(response) {
                     $('#MetadataEditor').replaceWith(response);
                 });

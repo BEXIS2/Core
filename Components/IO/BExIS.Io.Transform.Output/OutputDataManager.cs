@@ -42,14 +42,15 @@ namespace BExIS.IO.Transform.Output
 
             DatasetManager datasetManager = new DatasetManager();
             DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
-            AsciiWriter writer = new AsciiWriter(TextSeperator.comma);
+            long datasetVersionId = datasetVersion.Id;
+            AsciiWriter writer = new AsciiWriter(TextSeperator.tab);
             
             string path = "";
 
             
 
             //ascii allready exist
-            if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(contentDescriptorTitle)) > 0)
+            if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(contentDescriptorTitle) && p.URI.Contains(datasetVersion.Id.ToString())) > 0)
             {
                 #region FileStream exist
 
@@ -134,7 +135,7 @@ namespace BExIS.IO.Transform.Output
             string path = "";
 
             //excel allready exist
-            if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals("generated")) > 0)
+            if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals("generated") && p.URI.Contains(datasetVersion.Id.ToString())) > 0)
             {
                 #region FileStream exist
 

@@ -23,7 +23,16 @@ function setTabIndex() {
  ********* FORM    ************************
  ******************************************/
 
+$(window).scroll(function () {
+    var postion = $(document).scrollTop();
+    if (postion<300)
+        bindMinimap();
+});
+
+
 function bindMinimap() {
+
+    var scrollpostion = $(document).scrollTop();
 
     //if (($('#root').height()+200) > ($(window).height())) {
 
@@ -35,13 +44,30 @@ function bindMinimap() {
         $(".minimap").remove();
     }
     if ($('#root')) {
-
+        var menubar = $(".navbar").height() + 20;
         var offset = getRatioHeight($('#root').position().top);
+        if (scrollpostion != null && scrollpostion > 0) {
+            if (scrollpostion + menubar < $('#root').position().top) {
+                var pos = $('#root').position().top - scrollpostion;
+                offset = getRatioHeight(pos);
+            } else {
+                
+                console.log("menu : "+menubar);
+                offset = getRatioHeight(menubar);
+            }
 
-        var hRatio = 1 - $(window).height() / $('#root').height();
+            //console.log("scroll position : " + scrollpostion);
+            //console.log("scroll position : " + $('#root').position().top);
+
+        }
+
+
+        var hWindow = $(window).height()-100;
+        var hRatio = 1 - hWindow / $('#root').height();
         if (hRatio <= 0) {
             hRatio = 0.1;
         }
+        //console.log("hRatio : " + hRatio);
 
         var previewBody = $('#root').minimap(
         {
@@ -55,7 +81,7 @@ function bindMinimap() {
             smoothScrollDelay: 200
         });
 
-        $(".minimap").css("z-index", "1000");
+        $(".minimap").css("z-index", "999");
         $(".miniregion").css("z-index", "1000");
 
         $('#MetadataEditor').css("width", "89%");
@@ -75,7 +101,7 @@ function bindMinimap() {
 
     //    $('#MetadataEditor').css("width", "100%");
     //}
-    }
+}
 
 
 function getRatioHeight(containerStart) {

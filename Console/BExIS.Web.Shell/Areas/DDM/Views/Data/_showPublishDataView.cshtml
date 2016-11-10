@@ -17,11 +17,12 @@
                     @(Html.Telerik().DropDownList()
                                .Placeholder("Select")
                                .Name("SelectDataRepository")
+                               .HtmlAttributes(new {title= "Select a repository for publishing this dataset" })
                                .ClientEvents(events => events.OnChange("onSelectDataRepositoryDropDownChange"))
                                .BindTo(new SelectList(datarepolist)))
                 </td>
                 <td>
-                    <button id="submitPublishBt" class="bx-button small function bx-disabled" onClick="onSubmitPublishBtClick(this)" disabled="disabled">Select data repository to publish</button>
+                    <button id="submitPublishBt" class="bx-button small function bx-disabled" onClick="onSubmitPublishBtClick(this)" disabled="disabled" title="Prepare Publication Package (NOTE: there is currently no direct submission in place)">Publish</button>
                 </td>
                 <td>
                     <span id="requirementsContainer">
@@ -38,7 +39,7 @@
             <tr>
                 <th style="width: 60px;">Version</th>
                 <th>Creation Date</th>
-                <th>Datarepository</th>
+                <th>Data Repository</th>
                 <th>Status</th>
                 <th style="width: 30px;"></th>
             </tr>

@@ -596,6 +596,17 @@ div.t-numerictextbox{display:inline-block;*display:inline;zoom:1;position:relati
     width:100%;
 }
 
+.t-datepicker-calendar {
+    overflow-x: hidden;
+}
+
+.t-datepicker-calendar th,
+.t-datepicker-calendar td
+{
+    border-right: none 0;
+    padding: 10px;
+}
+
 
 
 

@@ -6,7 +6,7 @@
 
 @(Html.Telerik().DropDownList()
     .Name("DatasetIds_DropDownList")
-    .BindTo(new SelectList(Model, "Id", "Title"))
+    .BindTo(new SelectList(Model, "Id", "DisplayName"))
     .HtmlAttributes( new { style = "width:100%; white-space:nowrap;" })
 
   )  
