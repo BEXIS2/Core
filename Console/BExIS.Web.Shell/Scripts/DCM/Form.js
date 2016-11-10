@@ -38,23 +38,23 @@ $(window)
     });
 
 
-function bindMinimap() {
+function bindMinimap(create) {
 
     var scrollpostion = $(document).scrollTop();
 
         //if (($('#root').height()+200) > ($(window).height())) {
 
-        if ($(".miniregion")) {
-            $(".miniregion").remove();
-        }
+        //if ($(".miniregion")) {
+        //    $(".miniregion").remove();
+        //}
 
-        if ($(".minimap")) {
-            $(".minimap").remove();
-        }
+        //if ($(".minimap")) {
+        //    $(".minimap").remove();
+        //}
 
         var menubar = $(".navbar").height() + 20;
 
-        var offset = getRatioHeight($('body').position().top + menubar);
+        var offset = getRatioHeight($('#root').position().top);
 
         if (scrollpostion != null && scrollpostion > 0) {
 
@@ -79,48 +79,62 @@ function bindMinimap() {
         //console.log(hWindow + " + " + hFooter + " + " + topContainer + " + " + hContainer);
 
         var hRatio = 1 - hWindow / hContainer;
+
         if (hRatio <= 0) {
             hRatio = 0.1;
         }
 
-        if($(".minimap").length > 0);
-        {
 
+        if ($(".minimap").length == 0) {
+            var previewBody = $('#root')
+                .minimap(
+                {
+                    heightRatio: hRatio,
+                    widthRatio: 0.095,
+                    offsetHeightRatio: offset,
+                    offsetWidthRatio: 0.02,
+                    position: "right",
+                    touch: true,
+                    smoothScroll: false,
+                    smoothScrollDelay: 100
+                });
+        } else {
+
+            if (create) {
+
+                if ($(".miniregion")) {
+                    $(".miniregion").remove();
+                }
+
+                if ($(".minimap")) {
+                    $(".minimap").remove();
+                }
+
+                var previewBody = $('#root')
+                   .minimap(
+                   {
+                       heightRatio: hRatio,
+                       widthRatio: 0.095,
+                       offsetHeightRatio: offset,
+                       offsetWidthRatio: 0.02,
+                       position: "right",
+                       touch: true,
+                       smoothScroll: false,
+                       smoothScrollDelay: 100
+                   });
+            }
+
+            console.log("exist");
         }
-        else
-        {
-        }
-    var previewBody = $('#root')
-            .minimap(
-            {
-                heightRatio: hRatio,
-                widthRatio: 0.095,
-                offsetHeightRatio: offset,
-                offsetWidthRatio: 0.02,
-                position: "right",
-                touch: true,
-                smoothScroll: false,
-                smoothScrollDelay: 100
-            });
+
 
         $(".minimap").css("z-index", "999");
         $(".miniregion").css("z-index", "1000");
 
         $('#MetadataEditor').css("width", "89%");
-        console.log("generate");
+      
  
-    //} else {
-
-    //    if ($(".miniregion")) {
-    //        $(".miniregion").remove();
-    //    }
-
-    //    if ($(".minimap")) {
-    //        $(".minimap").remove();
-    //    }
-
-    //    $('#MetadataEditor').css("width", "100%");
-    //}
+  
 }
 
 
@@ -642,7 +656,7 @@ function Add(e) {
             //alert(parentId);
             $('#' + parentId).replaceWith(response);
             resetAllTelerikIconTitles();
-            bindMinimap();
+            bindMinimap(true);
         })
 }
 
@@ -655,7 +669,7 @@ function Remove(e) {
         { parentStepId: parentId, number: number },
         function (response) {
             $('#' + parentId).replaceWith(response);
-            bindMinimap();
+            bindMinimap(true);
         })
 }
 
@@ -668,7 +682,7 @@ function Up(e) {
         { parentStepId: parentId, number: number },
         function (response) {
             $('#' + parentId).replaceWith(response);
-            bindMinimap();
+            bindMinimap(true);
         })
 }
 
@@ -681,7 +695,7 @@ function Down(e) {
         { parentStepId: parentId, number: number },
         function(response) {
             $('#' + parentId).replaceWith(response);
-            bindMinimap();
+            bindMinimap(true);
         })
 }
 
@@ -704,7 +718,7 @@ function Activate(e) {
             }
 
             resetAllTelerikIconTitles();
-            bindMinimap();
+            bindMinimap(true);
         });
 
     
@@ -734,7 +748,7 @@ function ActivateFromChoice(e) {
         }
 
         resetAllTelerikIconTitles();
-        bindMinimap();
+        bindMinimap(true);
     });
 }
 
@@ -747,5 +761,5 @@ function showHideClick(e) {
     var buttonId = parentId + "_" + number + "_ButtonView";
     $('#' + id).toggle();
     $('#' + buttonId).toggleClass("bx-angle-double-up bx-angle-double-down");
-    bindMinimap();
+    bindMinimap(true);
 }
