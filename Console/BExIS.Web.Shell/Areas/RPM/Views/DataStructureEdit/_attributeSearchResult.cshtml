@@ -8,9 +8,12 @@
             <td colspan="2"><h2>Variable Templates</h2></td>
         </tr>
         <tr>
-            <td class="bx-rpm-searchBar">
-                @Html.TextBox("SearchBox", "", new { @class = "bx-input" })
-                <a class="bx bx-button function bx-search"></a>
+            <td class="bx-rpm-search" colspan="2">
+                <div class="bx-rpm-searchBar">
+                    @Html.TextBox("SearchBox", "", new { @class = "bx-input" })
+                    <div class="bx bx-button function bx-search"></div>
+                    <div class="bx-rpm-resetSearch"><a onclick="javascript:resetSearch()">reset Search</a></div>
+                </div>
             </td>
         </tr>
         <tr>
@@ -23,16 +26,16 @@
             </td>
             <td class="bx-rpm-sortdropdown">
                 Sort by
-                <select class="bx-dropdown bx-rpm-dropdown">
+                <select class="bx-dropdown bx-rpm-dropdown" >
                     <option value="">no Sorting</option>
-                    <option class="name" value="name,true">Name &uArr;</option>
-                    <option class="name" value="name,false">Name &dArr;</option>
-                    <option class="id" value="id,true">Id &uArr;</option>
-                    <option class="id" value="id,false">Id &dArr;</option>
-                    <option class="unit" value="unit,true">Unit &uArr;</option>
-                    <option class="unit" value="unit,false">Unit &dArr;</option>
-                    <option class="datatype" value="datatype,true">Data Type &uArr;</option>
-                    <option class="datatype" value="datatype,false">Data Type &dArr;</option>
+                    <option class="name" value="name,true">Name &#xf106;</option>
+                    <option class="name" value="name,false">Name &#xf107;</option>
+                    <option class="id" value="id,true">Id &#xf106;</option>
+                    <option class="id" value="id,false">Id &#xf107;</option>
+                    <option class="unit" value="unit,true">Unit &#xf106;</option>
+                    <option class="unit" value="unit,false">Unit &#xf107;</option>
+                    <option class="datatype" value="datatype,true">Data Type &#xf106;</option>
+                    <option class="datatype" value="datatype,false">Data Type &#xf107;</option>
                 </select>
                 <div class="t-arrow-down bx-rpm-dropdownArrow"></div>
             </td>
@@ -62,6 +65,8 @@
 
 <script type="text/javascript">
     var filterIds = [];
+    var searchFilter = [];
+    var filter = [];
 
     $(function () {
         resizeAttributeContainer(120);
@@ -97,8 +102,10 @@
         });
 
         $('.bx-rpm-attributeheader .bx-rpm-searchBar #SearchBox').keypress(function (e) {
-            if (event.keyCode == 13) {
-                $('.bx-rpm-attributeheader a.bx-search').trigger('click');
+            console.log(e.keyCode);
+            if (e.keyCode == 13) {
+                console.log('click');
+                $('.bx-rpm-attributeheader .bx-search').trigger('click');
             }
         });
 
@@ -106,9 +113,8 @@
             $('.bx-rpm-attributeheader .bx-rpm-searchBar #SearchBox').val($('.bx-rpm-attributeheader .bx-rpm-searchBar #SearchBox').val().trim());
             var terms = $('.bx-rpm-attributeheader .bx-rpm-searchBar #SearchBox').val().split(' ');
             var elems = $('.bx-rpm-attribute-item');
-            var ids = [];
             var filterValue = '';
-            if (trems.length > 0 && terms[0] != '') {
+            if (terms.length > 0 && terms[0] != '') {
                 for (var j = 0; j < terms.length; j++) {
                     terms[j] = terms[j].toLowerCase();
                     var temp = [];
@@ -124,26 +130,65 @@
                             temp.push(id);
                         }
                     }
-                    if (ids.length == 0) {
-                        ids = temp.slice();
+                    if (searchFilter.length == 0) {
+                        searchFilter = temp.slice();
                     }
                     else {
-                        var tempIds = [];
-                        for (var i = 0; i < ids.length; i++) {
-                            if (temp.indexOf(ids[i]) >= 0) {
-                                tempIds.push(ids[i]);
+                        var tempFilter = [];
+                        for (var i = 0; i < searchFilter.length; i++) {
+                            if (temp.indexOf(searchFilter[i]) >= 0) {
+                                tempFilter.push(searchFilter[i]);
                             }
                         }
-                        ids = tempIds.slice();
-                        if (ids.length == 0) {
-                            ids.push("0");
-                        }
+                        searchFilter = tempFilter.slice();
+                    }
+                    if (searchFilter.length == 0) {
+                        searchFilter.push("0");
                     }
                 }
             }
-            filterValue = concatValues(ids);
-            $attributeGrid.isotope({ filter: filterValue });
+            else {
+                searchFilter = [];
+            }
+            activateFilter();
         });
+
+        function activateFilter() {
+            var filterValue = [];
+            if (searchFilter.length == 0 && filter.length == 0) {
+                filterValue = [];
+            }
+            else if (searchFilter.length == 0) {
+                filterValue = filter.slice();
+            }
+            else if (filter.length == 0) {
+                filterValue = searchFilter.slice();
+            }
+            else {
+                if (filter.length < searchFilter.length) {
+                    for (var i = 0; i < filter.length; i++) {
+                        if (searchFilter.indexOf(filter[i]) >= 0) {
+                            filterValue.push(filter[i]);
+                        }
+                    }
+                }
+                else {
+                    for (var i = 0; i < searchFilter.length; i++) {
+                        if (filter.indexOf(searchFilter[i]) >= 0) {
+                            filterValue.push(searchFilter[i]);
+                        }
+                    }
+                }
+                if (filterValue.length == 0) {
+                    filterValue.push("0");
+                }
+            }
+            if ($('.bx-rpm-filterContainer').length > 0) {
+                disableCheckboxes(filterValue);
+            }
+            console.log(filterValue);
+            $attributeGrid.isotope({ filter: concatValues(filterValue) });
+        }
 
         $('#filterContainer').on('click', '.bx-rpm-filterCheckbox', function () {
             if ($(this).hasClass('checked')) {
@@ -161,9 +206,8 @@
                 if (check)
                     filterIds.push($(this).attr('id'));
             }
-            var filterValue = setFilter(this);
-            console.log(filterValue);
-            $attributeGrid.isotope({ filter: filterValue });
+            filter = setFilter(this);
+            activateFilter();
 
             var append = true;
 
@@ -178,13 +222,13 @@
             if (append) {
                 var filterItem = $(this).parents('.bx-rpm-filterItem')
                 var filterElement = $(document.createElement('div'));
-                filterElement.addClass('bx-button smaller');
+                filterElement.addClass('bx-button smaller bx-disabled');
                 filterElement.attr('id', 'removefilter')
                 filterElement.attr('value', $(this).attr('id'));
                 filterElement.text(filterItem.find('.bx-rpm-filterCheckboxLable').text().split('(')[0]);
 
                 var filterRemove = $(document.createElement('span'));
-                filterRemove.addClass('bx fa-times bx-rpm-removefilter')
+                filterRemove.addClass('bx fa-times bx-rpm-removefilter bx-button smaller')
                 filterElement.append(filterRemove);
                 $('.bx-rpm-activefilter').append(filterElement);
             }
@@ -192,15 +236,10 @@
 
         $('.bx-rpm-activefilter').on('click', '.bx-rpm-removefilter', function () {
             var filterElement = $(this).parents('#removefilter');
-            var filterValue = setFilter($('#' + filterElement.attr('value')));
+            filter = setFilter($('#' + filterElement.attr('value')));
             filterIds.splice(filterIds.indexOf(filterElement.attr('value')));
-            $attributeGrid.isotope({ filter: filterValue });
+            activateFilter();
             filterElement.remove();
-        });
-
-        $('#resetFilter').on('click', function () {
-            var filterValue = resetFilter();
-            $attributeGrid.isotope({ filter: filterValue });
         });
 
         $attributeGrid.on('click', '.bx-rpm-attribute-item .bx-rpm-expand', function () {
@@ -246,6 +285,11 @@
 
     }
 
+    function resetSearch() {
+        $('.bx-rpm-attributeheader .bx-rpm-searchBar #SearchBox').val('');
+        $('.bx-rpm-attributeheader .bx-search').trigger('click');
+    }
+
     function clickFilter() {
         if ($('#filter').hasClass('collapsed')) {
             loadFilter();
@@ -275,6 +319,7 @@
             for (i in temp) {
                 $('.bx-rpm-filterContainer #' + temp[i]).trigger('click');
             }
+            $('.bx-rpm-attributeheader .bx-search').trigger('click');
         });
     }
 
