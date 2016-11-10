@@ -1,10 +1,15 @@
-﻿
-$(document).ready(function () {
+﻿var minimapOriginalTop = 0;
+$(document).ready(function (e) {
     if ($('textarea') != null) {
+        console.log(e);
         autosize($('textarea'));
     }
     //setTabIndex();
     resetAllTelerikIconTitles();
+
+
+  
+
 });
 
 function setTabIndex() {
@@ -22,37 +27,43 @@ function setTabIndex() {
 /******************************************
  ********* FORM    ************************
  ******************************************/
+$(window)
+    .scroll(function () {
 
-$(window).scroll(function () {
-    var postion = $(document).scrollTop();
-    if (postion<300)
-        bindMinimap();
-});
+        //var hContainer = $('#root').position().top;
+        //var scrollpostion = $(document).scrollTop();
+        //var hMenubar = $(".navbar").height() + 20;
+        //if(scrollpostion-100<hContainer)
+            bindMinimap();
+    });
 
 
 function bindMinimap() {
 
     var scrollpostion = $(document).scrollTop();
 
-    //if (($('#root').height()+200) > ($(window).height())) {
+        //if (($('#root').height()+200) > ($(window).height())) {
 
-    if ($(".miniregion")) {
-        $(".miniregion").remove();
-    }
+        if ($(".miniregion")) {
+            $(".miniregion").remove();
+        }
 
-    if ($(".minimap")) {
-        $(".minimap").remove();
-    }
-    if ($('#root')) {
+        if ($(".minimap")) {
+            $(".minimap").remove();
+        }
+
         var menubar = $(".navbar").height() + 20;
-        var offset = getRatioHeight($('#root').position().top);
+
+        var offset = getRatioHeight($('body').position().top + menubar);
+
         if (scrollpostion != null && scrollpostion > 0) {
+
             if (scrollpostion + menubar < $('#root').position().top) {
                 var pos = $('#root').position().top - scrollpostion;
                 offset = getRatioHeight(pos);
             } else {
                 
-                console.log("menu : "+menubar);
+                //console.log("menu : "+menubar);
                 offset = getRatioHeight(menubar);
             }
 
@@ -61,34 +72,43 @@ function bindMinimap() {
 
         }
 
+        var topContainer = $('#root').position().top;
+        var hFooter = $("#footer").height();
+        var hContainer = $('#root').height();
+        var hWindow = $(window).height() - 100;
+        //console.log(hWindow + " + " + hFooter + " + " + topContainer + " + " + hContainer);
 
-        var hWindow = $(window).height()-100;
-        var hRatio = 1 - hWindow / $('#root').height();
+        var hRatio = 1 - hWindow / hContainer;
         if (hRatio <= 0) {
             hRatio = 0.1;
         }
-        //console.log("hRatio : " + hRatio);
 
-        var previewBody = $('#root').minimap(
+        if($(".minimap").length > 0);
         {
-            heightRatio: hRatio,
-            widthRatio: 0.095,
-            offsetHeightRatio: offset,
-            offsetWidthRatio: 0.02,
-            position: "right",
-            touch: true,
-            smoothScroll: true,
-            smoothScrollDelay: 200
-        });
+
+        }
+        else
+        {
+        }
+    var previewBody = $('#root')
+            .minimap(
+            {
+                heightRatio: hRatio,
+                widthRatio: 0.095,
+                offsetHeightRatio: offset,
+                offsetWidthRatio: 0.02,
+                position: "right",
+                touch: true,
+                smoothScroll: false,
+                smoothScrollDelay: 100
+            });
 
         $(".minimap").css("z-index", "999");
         $(".miniregion").css("z-index", "1000");
 
         $('#MetadataEditor').css("width", "89%");
-    }
-
-
-
+        console.log("generate");
+ 
     //} else {
 
     //    if ($(".miniregion")) {
@@ -116,12 +136,13 @@ function metadataAttributeOnLoad(e, hasErrors) {
     if (hasErrors)
         $('#' + e.id + "_input").AddClass("bx-input-error");
 }
-               
+
+
 function OnKeyUpTextInput(e) {
     console.log("OnKeyDownTextInput");
-    console.log(e.id);
-    console.log(e.value.length);
-    console.log(e.value);
+    //console.log(e.id);
+    //console.log(e.value.length);
+    //console.log(e.value);
 
        
     var length = e.value.length;

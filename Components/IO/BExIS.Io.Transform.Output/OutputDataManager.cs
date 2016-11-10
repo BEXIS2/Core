@@ -22,6 +22,7 @@ namespace BExIS.IO.Transform.Output
         {
             string contentDescriptorTitle = "";
             string ext = "";
+            TextSeperator textSeperator = TextSeperator.semicolon;
 
             switch (mimeType)
             {
@@ -29,12 +30,14 @@ namespace BExIS.IO.Transform.Output
                 {
                         contentDescriptorTitle = "generatedCSV";
                         ext = ".csv";
+                        textSeperator = TextSeperator.semicolon;
                         break;
                 }
                 default:
                 {
                         contentDescriptorTitle = "generatedTXT";
                         ext = ".txt";
+                        textSeperator = TextSeperator.tab;
                         break;
                 }
             }
@@ -43,7 +46,7 @@ namespace BExIS.IO.Transform.Output
             DatasetManager datasetManager = new DatasetManager();
             DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
             long datasetVersionId = datasetVersion.Id;
-            AsciiWriter writer = new AsciiWriter(TextSeperator.tab);
+            AsciiWriter writer = new AsciiWriter(textSeperator);
             
             string path = "";
 

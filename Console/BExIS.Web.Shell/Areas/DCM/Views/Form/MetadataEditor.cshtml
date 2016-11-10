@@ -209,7 +209,8 @@
             .resize(function() {
                 setTimeout(function() {
                         //alert("r");
-                        bindMinimap();
+
+                    bindMinimap();
                     },
                     120);
 
@@ -228,21 +229,21 @@
             var file = e.files[0];
             var maxsize = '@int_MaxRequestLength';
 
-        if (!IsExtentionValid(file.extension)) {
-            alert("Only .xml files can be uploaded");
-            e.preventDefault();
-            return false;
-        } else {
-
-            if (file.size > (maxsize * 1024)) {
-
-                alert("Max file : " +
-                    maxsize / 1024 +
-                    " MB is supported. Please contact your administrator to upload bigger files.");
+            if (!IsExtentionValid(file.extension)) {
+                alert("Only .xml files can be uploaded");
                 e.preventDefault();
                 return false;
+            } else {
+
+                if (file.size > (maxsize * 1024)) {
+
+                    alert("Max file : " +
+                        maxsize / 1024 +
+                        " MB is supported. Please contact your administrator to upload bigger files.");
+                    e.preventDefault();
+                    return false;
+                }
             }
-        }
 
         }
 

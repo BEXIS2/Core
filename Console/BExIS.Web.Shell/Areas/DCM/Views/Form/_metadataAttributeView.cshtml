@@ -117,7 +117,8 @@
                                             PackageId = @Model.Parent.Id,
                                             Title = @errorMessage,
                                             @class = "bx-input bx-metadataFormTextInput " + @errorClass,
-                                            onkeyup = "OnKeyUpTextArea(this)"
+                                            onkeyup = "OnKeyUpTextArea(this)",
+                                            OnLoad = "OnKeyUpTextInput(this)"
                                         })
                                 }
                                 else
@@ -132,7 +133,9 @@
                             }
                             else
                             {
-                                @Html.TextAreaFor(m => m.Value, new {disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input bx-metadataFormTextInput " + @errorClass + " " + lockedClass })
+
+                                @Html.TextAreaFor(m => m.Value, new { disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input bx-metadataFormTextInput " + @errorClass + " " + lockedClass })
+
                             }
 
                         
