@@ -872,12 +872,19 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                             FileInfo fi = new FileInfo(filepath);
 
                         var creationTime = fi.CreationTimeUtc;
+                        var tmpFileNameSplit = fi.Name.Split('_');
+                        long version = 0;
+                        if (tmpFileNameSplit != null && tmpFileNameSplit.Length > 0)
+                        {
+                            string versionAsString = tmpFileNameSplit[1];
+                            version = Convert.ToInt64(versionAsString);
+                        }
 
                         model.RepoFilesDictionary.Add(
                             new publishedFileModel()
                             {
                                 DatasetId = datasetId,
-                                DatasetVersionId = datasetVersionId,
+                                DatasetVersionId = version,
                                 DataRepository = repo,
                                 CreationDate = creationTime
                             });

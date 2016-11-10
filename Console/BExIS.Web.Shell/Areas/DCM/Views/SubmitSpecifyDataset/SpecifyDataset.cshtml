@@ -34,7 +34,7 @@
             <table>
 
                 <tr><td>
-                    @Html.DropDownListFor(m => m.SelectedDatasetId, new SelectList(Model.DatasetsViewList,"Id","Title",selectedListeViewitem),"Select")
+                    @Html.DropDownListFor(m => m.SelectedDatasetId, new SelectList(Model.DatasetsViewList,"Id","DisplayName",selectedListeViewitem),"Select")
                 
     
                 </td><td>Select an existing dataset to attach your file with.</td></tr>

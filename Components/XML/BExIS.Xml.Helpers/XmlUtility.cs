@@ -252,7 +252,20 @@ namespace BExIS.Xml.Helpers
             /// <seealso cref=""/>
             /// <param name="name"></param>
             /// <returns></returns>
-            public static XElement GetXElementByAttribute(string nodeName, string attrName, string value, XElement Parent)
+            public static IEnumerable<XElement> GetXElementsByAttribute(string nodeName, string attrName, string value, XElement parent)
+            {
+                string name = nodeName.Replace(" ", "");
+                return parent.Descendants(name).Where(p => p.Attribute(attrName) != null && p.Attribute(attrName).Value.Equals(value));
+            }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static XElement GetXElementByAttribute(string nodeName, string attrName, string value, XElement Parent)
             {
                 string name = nodeName.Replace(" ", "");
                 return Parent.Descendants(name).FirstOrDefault(p => p.Attribute(attrName) != null && p.Attribute(attrName).Value.Equals(value));
@@ -284,7 +297,6 @@ namespace BExIS.Xml.Helpers
                 return elements;
             }
 
-
             /// <summary>
             /// 
             /// </summary>
@@ -292,7 +304,34 @@ namespace BExIS.Xml.Helpers
             /// <seealso cref=""/>
             /// <param name="name"></param>
             /// <returns></returns>
-            public static XElement GetXElementByXPath(string xpath, XDocument xDoc)
+            public static IEnumerable<XElement> GetXElementsByAttribute(string nodeName, Dictionary<string, string> AttrValueDic, XDocument xDoc, string parentXPath)
+            {
+                string name = nodeName.Replace(" ", "");
+                IEnumerable<XElement> elements = new List<XElement>();
+                XElement parent = GetXElementByXPath(parentXPath,xDoc);    
+
+                foreach (KeyValuePair<string, string> keyValuePair in AttrValueDic)
+                {
+                    IEnumerable<XElement> newElements = GetXElementsByAttribute(nodeName, keyValuePair.Key, keyValuePair.Value, parent);
+
+                    if (elements.Count() > 0)
+                        elements = elements.Intersect(newElements);
+                    else
+                        elements = newElements;
+
+                }
+
+                return elements;
+            }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static XElement GetXElementByXPath(string xpath, XDocument xDoc)
             {
                 return xDoc.XPathSelectElement(xpath.Replace(" ",string.Empty));
             }
