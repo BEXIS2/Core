@@ -80,11 +80,6 @@
     border-bottom:2px #000000;
 }
 
-.bx-rpm-searchBar {
-    float:right;
-    text-align:right;
-}
-
 .bx-rpm-loading {
     width:100%;
     text-align:center; 
@@ -108,6 +103,7 @@
     float:left;
     text-align:left;
 }
+
 .bx-rpm-searchBar,
 .bx-rpm-dataStructure-buttons {
     margin: 0 0 10px 0;
