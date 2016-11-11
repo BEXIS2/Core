@@ -275,8 +275,7 @@
                 else {
                     $item = $(data);
                     $attributeGrid.append($item).isotope('appended', $item);
-                    loadFilter();
-                    $('.bx-rpm-sortdropdown .bx-rpm-dropdown').val('id,false').change();
+                    scrollDown($('.bx-rpm-attribute-container'), $('.bx-rpm-attribute-drag-drop'));
                 }
             });
             $attributeGrid.isotope('layout');
