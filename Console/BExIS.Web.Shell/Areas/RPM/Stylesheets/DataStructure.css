@@ -96,3 +96,15 @@ select.bx-disabled{
     margin-top:20px;
     cursor:help !important;
 }
+
+.bx-rpm-searchBar {
+    float:right;
+    text-align:right;
+    display: inline-block;
+}
+
+.bx-rpm-resetSearch {
+    text-align:right;
+    font-size:8pt;
+    cursor:pointer;
+}
