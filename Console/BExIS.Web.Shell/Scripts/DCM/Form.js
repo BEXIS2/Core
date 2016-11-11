@@ -37,7 +37,7 @@ $(window)
             bindMinimap();
     });
 
-
+var originalMinimapTop = 0;
 function bindMinimap(create) {
 
     var scrollpostion = $(document).scrollTop();
@@ -96,8 +96,15 @@ function bindMinimap(create) {
                     position: "right",
                     touch: true,
                     smoothScroll: false,
-                    smoothScrollDelay: 100
+                    smoothScrollDelay: 100,
+                    onPreviewChange: function () {
+                        console.log("change");
+                    }
                 });
+
+            var x = $(".minimap").css("top");
+            originalMinimapTop = x.split("px");
+
         } else {
 
             if (create) {
@@ -111,18 +118,45 @@ function bindMinimap(create) {
                 }
 
                 var previewBody = $('#root')
-                   .minimap(
-                   {
-                       heightRatio: hRatio,
-                       widthRatio: 0.095,
-                       offsetHeightRatio: offset,
-                       offsetWidthRatio: 0.02,
-                       position: "right",
-                       touch: true,
-                       smoothScroll: false,
-                       smoothScrollDelay: 100
-                   });
+                    .minimap(
+                    {
+                        heightRatio: hRatio,
+                        widthRatio: 0.095,
+                        offsetHeightRatio: offset,
+                        offsetWidthRatio: 0.02,
+                        position: "right",
+                        touch: true,
+                        smoothScroll: false,
+                        smoothScrollDelay: 100,
+                        onPreviewChange: function () {
+                            console.log("change");
+                        }
+                    });
+
+                var x = $(".minimap").css("top");
+                originalMinimapTop = x.split("px");
+
+            } else {
+
+                console.log(originalMinimapTop + " : " + scrollpostion);
+
+                if ((topContainer - scrollpostion) + 1000 > menubar) {
+
+                    var scrollmax = topContainer - menubar;
+                    if ((topContainer - scrollpostion) > menubar) {
+                        scrollmax = scrollpostion;
+                    }
+
+                    var positionMinimap = parseInt(originalMinimapTop) - parseInt(scrollmax);
+                    var positionMiniRegion = $(".miniregion").position().top - parseInt(scrollpostion);
+                    //
+                    //console.log(position);
+                    $(".minimap").css("top", positionMinimap);
+                    $(".miniregion").css("top", positionMiniRegion);
+                }
+
             }
+
 
             console.log("exist");
         }
