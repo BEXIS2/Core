@@ -1,8 +1,23 @@
-﻿
-$(document).ready(function () {
-    if ($('textarea') != null) {
-        autosize($('textarea'));
-    }
+﻿var minimapOriginalTop = 0;
+$(document).ready(function (e) {
+
+
+    setTimeout(
+      function () {
+          //do something special
+          console.log("doc ready before autosize");
+          console.log($('textarea'));
+          if ($('textarea') != null) {
+
+              $($('textarea')).each(function (index, element) {
+                  // element == this
+                  autosize($(this));
+                  console.log("done autosize");
+              });
+          }
+      }, 10);
+
+    
     //setTabIndex();
     resetAllTelerikIconTitles();
 });
@@ -22,37 +37,44 @@ function setTabIndex() {
 /******************************************
  ********* FORM    ************************
  ******************************************/
+$(window)
+    .scroll(function () {
 
-$(window).scroll(function () {
-    var postion = $(document).scrollTop();
-    if (postion<300)
-        bindMinimap();
-});
+        //var hContainer = $('#root').position().top;
+        //var scrollpostion = $(document).scrollTop();
+        //var hMenubar = $(".navbar").height() + 20;
+        //if(scrollpostion-100<hContainer)
+            bindMinimap();
+    });
 
-
-function bindMinimap() {
+var originalMinimapTop = 0;
+var positionMiniRegion = 0;
+function bindMinimap(create) {
 
     var scrollpostion = $(document).scrollTop();
 
-    //if (($('#root').height()+200) > ($(window).height())) {
+        //if (($('#root').height()+200) > ($(window).height())) {
 
-    if ($(".miniregion")) {
-        $(".miniregion").remove();
-    }
+        if ($(".miniregion")) {
+            $(".miniregion").remove();
+        }
 
-    if ($(".minimap")) {
-        $(".minimap").remove();
-    }
-    if ($('#root')) {
+        if ($(".minimap")) {
+            $(".minimap").remove();
+        }
+
         var menubar = $(".navbar").height() + 20;
+
         var offset = getRatioHeight($('#root').position().top);
+
         if (scrollpostion != null && scrollpostion > 0) {
+
             if (scrollpostion + menubar < $('#root').position().top) {
                 var pos = $('#root').position().top - scrollpostion;
                 offset = getRatioHeight(pos);
             } else {
                 
-                console.log("menu : "+menubar);
+                //console.log("menu : "+menubar);
                 offset = getRatioHeight(menubar);
             }
 
@@ -61,46 +83,111 @@ function bindMinimap() {
 
         }
 
+        var topContainer = $('#root').position().top;
+        var hFooter = $("#footer").height();
+        var hContainer = $('#root').height();
+        var hWindow = $(window).height() - 100;
+        //console.log(hWindow + " + " + hFooter + " + " + topContainer + " + " + hContainer);
 
-        var hWindow = $(window).height()-100;
-        var hRatio = 1 - hWindow / $('#root').height();
+        var hRatio = 1 - hWindow / hContainer;
+
         if (hRatio <= 0) {
             hRatio = 0.1;
         }
-        //console.log("hRatio : " + hRatio);
 
-        var previewBody = $('#root').minimap(
-        {
-            heightRatio: hRatio,
-            widthRatio: 0.095,
-            offsetHeightRatio: offset,
-            offsetWidthRatio: 0.02,
-            position: "right",
-            touch: true,
-            smoothScroll: true,
-            smoothScrollDelay: 200
-        });
+
+        if ($(".minimap").length == 0) {
+            var previewBody = $('#root')
+                .minimap(
+                {
+                    heightRatio: hRatio,
+                    widthRatio: 0.095,
+                    offsetHeightRatio: offset,
+                    offsetWidthRatio: 0.02,
+                    position: "right",
+                    touch: true,
+                    smoothScroll: false,
+                    smoothScrollDelay: 100
+                });
+
+            var x = $(".minimap").css("top");
+            originalMinimapTop = x.split("px");
+            console.log("create");
+
+
+        } else {
+
+            if (create) {
+
+                if ($(".miniregion")) {
+                    $(".miniregion").remove();
+                }
+
+                if ($(".minimap")) {
+                    $(".minimap").remove();
+                }
+
+                var previewBody = $('#root')
+                    .minimap(
+                    {
+                        heightRatio: hRatio,
+                        widthRatio: 0.095,
+                        offsetHeightRatio: offset,
+                        offsetWidthRatio: 0.02,
+                        position: "right",
+                        touch: true,
+                        smoothScroll: false,
+                        smoothScrollDelay: 100,
+                    });
+
+                var x = $(".minimap").css("top");
+                originalMinimapTop = x.split("px");
+                console.log("create");
+
+
+            } else {
+
+                //console.log(originalMinimapTop + " : " + scrollpostion);
+
+                if ((topContainer - scrollpostion) + 1000 > menubar) {
+
+                    var scrollmax = topContainer - menubar;
+                    if ((topContainer - scrollpostion) > menubar) {
+                        scrollmax = scrollpostion;
+                    }
+
+                    var positionMinimap = parseInt(originalMinimapTop) - parseInt(scrollmax);
+                    var positionMiniRegion = $(".miniregion").position().top - parseInt(scrollpostion);
+                    //
+                    //console.log(position);
+                    $(".minimap").css("top", positionMinimap);
+                    $(".miniregion").css("top", positionMiniRegion);
+                    //console.log("----");
+
+                    //console.log(positionMiniRegion);
+                    //console.log($(".miniregion").css("top"));
+                    console.log("updated");
+                }
+
+            }
+
+            if (positionMiniRegion > 0) {
+                $(".miniregion").css("top", positionMiniRegion);
+                console.log("updated region");
+            }
+
+
+            console.log("exist");
+        }
+
 
         $(".minimap").css("z-index", "999");
         $(".miniregion").css("z-index", "1000");
 
         $('#MetadataEditor').css("width", "89%");
-    }
-
-
-
-    //} else {
-
-    //    if ($(".miniregion")) {
-    //        $(".miniregion").remove();
-    //    }
-
-    //    if ($(".minimap")) {
-    //        $(".minimap").remove();
-    //    }
-
-    //    $('#MetadataEditor').css("width", "100%");
-    //}
+      
+ 
+  
 }
 
 
@@ -116,12 +203,13 @@ function metadataAttributeOnLoad(e, hasErrors) {
     if (hasErrors)
         $('#' + e.id + "_input").AddClass("bx-input-error");
 }
-               
+
+
 function OnKeyUpTextInput(e) {
     console.log("OnKeyDownTextInput");
-    console.log(e.id);
-    console.log(e.value.length);
-    console.log(e.value);
+    //console.log(e.id);
+    //console.log(e.value.length);
+    //console.log(e.value);
 
        
     var length = e.value.length;
@@ -621,7 +709,7 @@ function Add(e) {
             //alert(parentId);
             $('#' + parentId).replaceWith(response);
             resetAllTelerikIconTitles();
-            bindMinimap();
+            bindMinimap(true);
         })
 }
 
@@ -634,7 +722,7 @@ function Remove(e) {
         { parentStepId: parentId, number: number },
         function (response) {
             $('#' + parentId).replaceWith(response);
-            bindMinimap();
+            bindMinimap(true);
         })
 }
 
@@ -647,7 +735,7 @@ function Up(e) {
         { parentStepId: parentId, number: number },
         function (response) {
             $('#' + parentId).replaceWith(response);
-            bindMinimap();
+            bindMinimap(true);
         })
 }
 
@@ -660,7 +748,7 @@ function Down(e) {
         { parentStepId: parentId, number: number },
         function(response) {
             $('#' + parentId).replaceWith(response);
-            bindMinimap();
+            bindMinimap(true);
         })
 }
 
@@ -683,7 +771,7 @@ function Activate(e) {
             }
 
             resetAllTelerikIconTitles();
-            bindMinimap();
+            bindMinimap(true);
         });
 
     
@@ -713,7 +801,7 @@ function ActivateFromChoice(e) {
         }
 
         resetAllTelerikIconTitles();
-        bindMinimap();
+        bindMinimap(true);
     });
 }
 
@@ -726,5 +814,5 @@ function showHideClick(e) {
     var buttonId = parentId + "_" + number + "_ButtonView";
     $('#' + id).toggle();
     $('#' + buttonId).toggleClass("bx-angle-double-up bx-angle-double-down");
-    bindMinimap();
+    bindMinimap(true);
 }

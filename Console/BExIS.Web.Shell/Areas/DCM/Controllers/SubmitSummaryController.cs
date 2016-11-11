@@ -698,32 +698,32 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                         #region contentdescriptors
 
-                        ////remove all contentdescriptors from the old version 
-                        ////generatedTXT
-                        //if (workingCopy.ContentDescriptors.Any(c => c.Name.Equals("generatedTXT")))
-                        //{
-                        //    ContentDescriptor tmp =
-                        //        workingCopy.ContentDescriptors.Where(c => c.Name.Equals("generatedTXT"))
-                        //            .FirstOrDefault();
-                        //    dm.DeleteContentDescriptor(tmp);
-                        //}
+                        //remove all contentdescriptors from the old version 
+                        //generatedTXT
+                        if (workingCopy.ContentDescriptors.Any(c => c.Name.Equals("generatedTXT")))
+                        {
+                            ContentDescriptor tmp =
+                                workingCopy.ContentDescriptors.Where(c => c.Name.Equals("generatedTXT"))
+                                    .FirstOrDefault();
+                            dm.DeleteContentDescriptor(tmp);
+                        }
 
-                        ////generatedCSV
-                        //if (workingCopy.ContentDescriptors.Any(c => c.Name.Equals("generatedCSV")))
-                        //{
-                        //    ContentDescriptor tmp =
-                        //        workingCopy.ContentDescriptors.Where(c => c.Name.Equals("generatedCSV"))
-                        //            .FirstOrDefault();
-                        //    dm.DeleteContentDescriptor(tmp);
-                        //}
-                        ////generated
-                        //if (workingCopy.ContentDescriptors.Any(c => c.Name.Equals("generated")))
-                        //{
-                        //    ContentDescriptor tmp =
-                        //        workingCopy.ContentDescriptors.Where(c => c.Name.Equals("generated"))
-                        //            .FirstOrDefault();
-                        //    dm.DeleteContentDescriptor(tmp);
-                        //}
+                        //generatedCSV
+                        if (workingCopy.ContentDescriptors.Any(c => c.Name.Equals("generatedCSV")))
+                        {
+                            ContentDescriptor tmp =
+                                workingCopy.ContentDescriptors.Where(c => c.Name.Equals("generatedCSV"))
+                                    .FirstOrDefault();
+                            dm.DeleteContentDescriptor(tmp);
+                        }
+                        //generated
+                        if (workingCopy.ContentDescriptors.Any(c => c.Name.Equals("generated")))
+                        {
+                            ContentDescriptor tmp =
+                                workingCopy.ContentDescriptors.Where(c => c.Name.Equals("generated"))
+                                    .FirstOrDefault();
+                            dm.DeleteContentDescriptor(tmp);
+                        }
 
 
                         #endregion
