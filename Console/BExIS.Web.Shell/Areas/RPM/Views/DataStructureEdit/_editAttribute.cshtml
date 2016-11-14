@@ -67,7 +67,7 @@
 </table>
 
     <div class="bx-rpm-submit bx-rpm-buttons" id="buttons">
-        <button name="create" class="bx-button action bx-disabled" disabled="disabled"  id="saveButton">Save</button>
+        <button name="create" class="bx-button action"  id="saveButton">Save</button>
         <button name="cancel" class="bx-button action" id="cancelButton" onclick="javascript:$('#createAttributeWindow').data('tWindow').destroy();">Cancel</button>
     </div>  
 </div>  
@@ -130,7 +130,7 @@
     });
 
     function createAttrWondowValidateName(cssId) {
-        var parameters = encodeURI('/?Id=' + $('.bx-rpm-createAttributeContainer #id').val() + '&Name=' + $('.bx-rpm-createAttributeContainer #name').val() + '&cssId=' + cssId);
+        var parameters = encodeURI('/?Id=' + $('.bx-rpm-createAttributeContainer #id').val() + '&Name=' + encodeURIComponent($('.bx-rpm-createAttributeContainer #name').val()) + '&cssId=' + cssId);
         parameters = parameters.replace('#','%23');
         $.get('@Url.Action("_validateAttributeName", "DataStructureEdit", new { area = "RPM"} )' + parameters, function (data) {
             $(data).replaceAll('.bx-rpm-createAttributeContainer #' + cssId);
@@ -152,26 +152,25 @@
         }
 
         if (hasMessage == true) {
-            $('.bx-rpm-createAttributeContainer #saveButton').attr('disabled', 'disabled');
+            //$('.bx-rpm-createAttributeContainer #saveButton').attr('disabled', 'disabled');
             $(".bx-rpm-createAttributeContainer #messageContainer").removeClass('hidden');
-            $('.bx-rpm-createAttributeContainer #saveButton').addClass('bx-disabled');
+            //$('.bx-rpm-createAttributeContainer #saveButton').addClass('bx-disabled');
         }
         else if(hasMessage == false){
-            $('.bx-rpm-createAttributeContainer #saveButton').removeAttr('disabled');
+            //$('.bx-rpm-createAttributeContainer #saveButton').removeAttr('disabled');
             $(".bx-rpm-createAttributeContainer #messageContainer").addClass('hidden');
-            $('.bx-rpm-createAttributeContainer #saveButton').removeClass('bx-disabled');
+            //$('.bx-rpm-createAttributeContainer #saveButton').removeClass('bx-disabled');
         }
     }
 
     $('.bx-rpm-createAttributeContainer #saveButton').click(function () {
         var cssId = 'message';
-        var parameters = encodeURI('/?Id=' + $('.bx-rpm-createAttributeContainer #id').val() + '&Name=' + $('.bx-rpm-createAttributeContainer #name').val() + '&Description=' + $('.bx-rpm-createAttributeContainer #description').val() + '&unitId=' + $('.bx-rpm-createAttributeContainer #unit').val() + '&dataTypeId=' + $('.bx-rpm-createAttributeContainer #dataType').val() + '&cssId=' + cssId + '&inUse=' + inUse);
+        var parameters = encodeURI('/?Id=' + $('.bx-rpm-createAttributeContainer #id').val() + '&Name=' + encodeURIComponent($('.bx-rpm-createAttributeContainer #name').val()) + '&Description=' + encodeURIComponent($('.bx-rpm-createAttributeContainer #description').val()) + '&unitId=' + $('.bx-rpm-createAttributeContainer #unit').val() + '&dataTypeId=' + $('.bx-rpm-createAttributeContainer #dataType').val() + '&cssId=' + cssId + '&inUse=' + inUse);
         parameters = parameters.replace('#','%23');
-        console.log(parameters);
         $.get('@Url.Action("createAtttribute", "DataStructureEdit", new { area = "RPM"} )' + parameters, function (data) {
             if ($(data).hasClass('bx-rpm-message') && $(data).attr('id') == cssId) {
                 $(data).replaceAll('.bx-rpm-createAttributeContainer #' + $(data).attr('id'));
-                showmessage($(data).attr('value').toLowerCase());
+                createAttrWondowShowmessage($(data).attr('value').toLowerCase());
             }
             else if ($(data).hasClass('bx-rpm-message') && $(data).attr('id') == 'refresh') {
                 storeRangeConstraint($(data).text());
@@ -188,7 +187,6 @@
 
     function changeUnit() {
         var parameters = encodeURI('/?unitId=' + $('.bx-rpm-createAttributeContainer #unit').val());
-        parameters = parameters.replace('#','%23');
         $.get('@Url.Action("_getDataTypes", "DataStructureEdit", new { area = "RPM"} )' + parameters, function (data) {
             $('.bx-rpm-createAttributeContainer .bx-rpm-selectdropdown.datatype').html($(data));
         });
@@ -336,10 +334,10 @@
                 dataType: 'json',
                 contentType: 'application/json; charset=utf-8',
                 error: function (xhr) {
-                    console.log(xhr);
+                    
                 },
                 success: function (result) {
-                    console.log(result);
+                    
                 },
                 async: false,
                 processData: false
@@ -364,10 +362,10 @@
                 dataType: 'json',
                 contentType: 'application/json; charset=utf-8',
                 error: function (xhr) {
-                    console.log(xhr);
+                    
                 },
                 success: function (result) {
-                    console.log(result);
+                    
                 },
                 async: false,
                 processData: false
@@ -392,10 +390,10 @@
                 dataType: 'json',
                 contentType: 'application/json; charset=utf-8',
                 error: function (xhr) {
-                    console.log(xhr);
+                    
                 },
                 success: function (result) {
-                    console.log(result);
+                    
                 },
                 async: false,
                 processData: false

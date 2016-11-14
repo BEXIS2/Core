@@ -116,13 +116,11 @@
                 if (id == "" || id == 0) {
                     window.location.href = "/RPM/DataStructureSearch";
                 }
-                else {
-                    lock();
-                }
             }
             else if ($("#messageWindow").attr('type').toLowerCase() == 'dataattribure') {
                 if (id == "" || id == 0) {
-                    $('#attribute_' + $('#messageWindow').attr('value') + ' #removeattribute').trigger('click');
+                    $('.bx-rpm-attribute-functions #removeattribute').attr('value', $('#messageWindow').attr('value'))
+                    $('.bx-rpm-attribute-functions #removeattribute').trigger('click');
                 }
                 $("#messageWindow").data('tWindow').destroy();
             }
@@ -134,7 +132,6 @@
 
     function messageWindowYes(id) {
         var parameters = encodeURI('/?Id=' + id);
-        parameters = parameters.replace('#', '%23');
         if ($("#messageWindow").attr('type').toLowerCase() == 'datastructure') {
             $.get('@Url.Action("deleteDataStructure", "DataStructureEdit")' + parameters, function (data) {
                 if ($(data).hasClass('bx-rpm-message') && $(data).attr('value').toLowerCase() == 'true') {

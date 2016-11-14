@@ -43,9 +43,9 @@
         }
         else
         {
-            <button class="bx-button action" id="deleteButton" onclick="javascript:openDelWindow(@Model.Id,'@Model.Name', 'datastructure')">Delete</button>
+            <button class="bx-button action" id="deleteButton" onclick="javascript:openDelWindow(@Model.Id,'@Server.UrlEncode(Model.Name)', 'datastructure')">Delete</button>
         }
-        @Html.ActionLink("Cancel", "Index", "DataStructureEdit", new { DataStructureId = Model.Id }, new { area = "RPM", @class = "bx-button action", @title = "Cancel" })
+        @Html.ActionLink("Cancel", "Index", "DataStructureSearch", new { DataStructureId = Model.Id }, new { area = "RPM", @class = "bx-button action", @title = "Cancel" })
         <button class="hidden" id="storeVariablesButton" value="@Model.Id">Store Variables</button>
         <button class="hidden" id="addVariableButton" value="0,''">Add Variable</button>
     </div>
@@ -205,28 +205,30 @@
                 var value = $(this).attr('value').split(',')
                 var variableName = value[1];
                 var attrId = value[0];
-                var elems = $variableGrid.packery('getItemElements');
-                var isDuplicate = false;
-                var count = 0;
-                do {
-                    isDuplicate = false;
-                    count++;
-                    for (var i in elems) {
-                        if (variableName.toLowerCase() == $(elems[i]).find('#varlabel').val().toLowerCase()) {
-                            variableName = value[1] + ' (' + count + ')';
-                            isDuplicate = true;
-                        }
-                    }
-                } while (isDuplicate)
 
-                var parameters = encodeURI('/?attributeId=' + attrId + '&variableName=' + variableName);
-                parameters = parameters.replace('#', '%23');
+                var parameters = encodeURI('/?attributeId=' + attrId + '&variableName=' + encodeURIComponent(variableName));
                 $.get('@Url.Action("_getVariableElement", "DataStructureEdit", new { area = "RPM" } )' + parameters, function (data) {
                     if ($(data).hasClass('bx-rpm-message')) {
                         createMessageWindow(data, 'Add Variable ' + variableName + ' (' + attrId + ')', 'dataattribure', attrId);
                     }
                     else {
                         var $item = $(data)
+                        var elems = $variableGrid.packery('getItemElements');
+                        var attrName = $item.find('#varlabel').val();
+                        var variableName = $item.find('#varlabel').val();
+                        var isDuplicate = false;
+                        var count = 0;
+                        do {
+                            isDuplicate = false;
+                            count++;
+                            for (var i in elems) {
+                                if (variableName.toLowerCase() == $(elems[i]).find('#varlabel').val().toLowerCase()) {
+                                    variableName = attrName + ' (' + count + ')';
+                                    isDuplicate = true;
+                                }
+                            }
+                        } while (isDuplicate)
+                        $item.find('#varlabel').val(variableName);
                         $variableGrid.append($item).packery('appended', $item);
                         var elem = $variableGrid.find($item)[0];
                         $variableGrid.packery('bindDraggabillyEvents', new Draggabilly(elem));
@@ -271,8 +273,7 @@
 
         $('.bx-rpm-dataStructure-functions #saveButton').on('click', function () {
             var cssId = 'message';
-            var parameters = encodeURI('/?Id=' + $('.bx-rpm-datastructureheader #id').val() + '&Name=' + $('.bx-rpm-datastructureheader #name').val() + '&Description=' + $('.bx-rpm-datastructureheader #description').val() + '&isStructured=true&cssId=' + cssId + '&inUse=' + inUse);
-            parameters = parameters.replace('#', '%23');
+            var parameters = encodeURI('/?Id=' + $('.bx-rpm-datastructureheader #id').val() + '&Name=' + encodeURIComponent($('.bx-rpm-datastructureheader #name').val()) + '&Description=' + encodeURIComponent($('.bx-rpm-datastructureheader #description').val()) + '&isStructured=true&cssId=' + cssId + '&inUse=' + inUse);
             $.get('@Url.Action("createDataStructure", "DataStructureSearch", new { area = "RPM"} )' + parameters, function (data) {
                 if ($(data).hasClass('bx-rpm-message')) {
                     if($(data).attr('id') == cssId){
@@ -310,7 +311,7 @@
 
         function saveAs(name, description) {
             var cssId = 'message';
-            parameters = '/?Id=0&Name=' + name + '&Description=' + description + '&isStructured=true&cssId=' + cssId + '&inUse=' + inUse ;
+            parameters = '/?Id=0&Name=' + encodeURIComponent(name) + '&Description=' + encodeURIComponent(description) + '&isStructured=true&cssId=' + cssId + '&inUse=' + inUse ;
             $.get('@Url.Action("createDataStructure", "DataStructureSearch", new { area = "RPM"} )' + parameters, function (data) {
                 if ($(data).hasClass('bx-rpm-message') && $(data).attr('id') == cssId) {
                     openCopyWindow(0, $('.bx-rpm-datastructureheader #name').val(), $('.bx-rpm-datastructureheader #description').val(), true, true, false, data);
@@ -357,7 +358,7 @@
                 },
                 success: function (result) {
                     if (result.hasMessage) {
-                        parameters = '/?message=' + result.Message + '&hasMessage=' + result.hasMessage + '&cssId=' + result.CssId;
+                        parameters = '/?message=' + encodeURIComponent(result.Message) + '&hasMessage=' + result.hasMessage + '&cssId=' + result.CssId;
                         $.get('@Url.Action("getMessageWindow", "DataStructureEdit", new { area = "RPM"} )' + parameters, function (data) {
                             createMessageWindow(data,'Store Variables');
                         });
@@ -415,8 +416,8 @@
     }
 
     function openDelWindow(id, name, type) {
+        name = decodeURIComponent(name);
         var parameters = encodeURI('/?Id=' + id);
-        parameters = parameters.replace('#', '%23');
         $.ajax({
             type: 'GET',
             url: '@Url.Action("_deleteDataStructureBinding", "DataStructureSearch")' + parameters,
@@ -436,8 +437,7 @@
     });
 
     function validateName(id) {
-        var parameters = encodeURI('/?Id=' + $('.bx-rpm-datastructureheader #id').val() + '&Name=' + $('.bx-rpm-datastructureheader #name').val() + '&cssId=' + id);
-        parameters = parameters.replace('#', '%23');
+        var parameters = encodeURI('/?Id=' + $('.bx-rpm-datastructureheader #id').val() + '&Name=' + encodeURIComponent($('.bx-rpm-datastructureheader #name').val()) + '&cssId=' + id);
         $.get('@Url.Action("_validateDataStructureName", "DataStructureSearch", new { area = "RPM"} )' + parameters, function (data) {
             $(data).replaceAll('.bx-rpm-datastructureheader #' + id);
             showmessage();
@@ -474,8 +474,7 @@
 
     function openCopyWindow(Id, Name, Description, isSructured, inUse, copy, message) {
         var title = "Save DataStructure " + Name + " ("+ Id +") as";
-        var parameters = encodeURI('/?Id=' + Id + '&Name=' + Name + '&Description=' + Description + '&isSructured=' + isSructured + '&inUse=' + inUse + '&copy=' + copy);
-        parameters = parameters.replace('#', '%23');
+        var parameters = encodeURI('/?Id=' + Id + '&Name=' + encodeURIComponent(Name) + '&Description=' + encodeURIComponent(Description) + '&isSructured=' + isSructured + '&inUse=' + inUse + '&copy=' + copy);
         $.ajax({
             type: 'GET',
             url: '@Url.Action("_createDataStructureBinding", "DataStructureSearch")' + parameters,
