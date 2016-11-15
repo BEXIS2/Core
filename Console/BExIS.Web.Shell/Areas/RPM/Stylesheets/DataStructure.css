@@ -5,6 +5,7 @@
 }
 
 .bx-rpm-text {
+    white-space: nowrap;
     overflow-x:hidden;
     text-overflow:ellipsis;
 }
@@ -107,4 +108,43 @@ select.bx-disabled{
     text-align:right;
     font-size:8pt;
     cursor:pointer;
+}
+
+.bx-rpm-option,
+.bx-rpm-options div{   
+    padding: 1px 3px 1px 3px;
+}
+
+.bx-rpm-option,
+.bx-rpm-options {
+    border: solid 1px #000000;
+    background-color: #ffffff;
+}
+
+.bx-rpm-options{
+    border-color:#afb0b1;
+    border-top-color:#000000;
+    position:fixed;
+    z-index:10;
+}
+
+.bx-rpm-option{
+    white-space: nowrap;
+    max-height: 18pt;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.bx-rpm-options div:hover{
+    background-color: #ff9700;
+    color: #ffffff;
+}
+
+.bx-rpm-option-arrow{
+    height: 0px;
+    position: relative;
+    float:right;
+    top: -18px;
+    right: 6px;
+    cursor:default;
 }

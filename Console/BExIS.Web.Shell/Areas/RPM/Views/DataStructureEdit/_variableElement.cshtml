@@ -1,4 +1,5 @@
-﻿@model BExIS.Web.Shell.Areas.RPM.Models.VariablePreviewStruct
+﻿@using BExIS.Web.Shell.Areas.RPM.Models
+@model BExIS.Web.Shell.Areas.RPM.Models.VariablePreviewStruct
 
 <div class="bx-rpm-variable-item" id="@Model.Id">
     <table>
@@ -17,11 +18,21 @@
                 <div class="bx-rpm-text">
                     @if (Model.convertibleUnits.Count > 1)
                     {
-                        @Html.DropDownList("Unit_" + Model.Id + "_" + DateTime.Now.Ticks.ToString(), new SelectList(Model.convertibleUnits, "ID", "Name", Model.Unit.Id), new { @id = "varunit" })
+                        <div class="bx-rpm-unit-select">
+                            @Html.TextBox("Unit", Model.Unit.Id, new { @id = "varunit", @class = "hidden bx-rpm-value" })
+                            <div class ="bx-rpm-option" onclick="javascript:openDropdown(this)">@Model.Unit.Name</div>
+                            <div class="bx bx-rpm-option-arrow t-arrow-down" onclick="javascript:openDropdown(this)"/>
+                            <div class="bx-rpm-options" style="display:none">
+                                @foreach (ItemStruct item in Model.convertibleUnits)
+                                {
+                                    <div value="@item.Id" onclick="javascript:closeDropdown(this)">@item.Name</div>
+                                }
+                            </div>
+                        </div>
                     }
                     else
                     {
-                        @Model.Unit.Name
+                            @Model.Unit.Name
                         @Html.TextBox("Unit", Model.Unit.Id, new { @id = "varunit", @class = "hidden" })
                     }
                 </div>
@@ -36,6 +47,10 @@
             </td>
             <td class="bx-rpm-delete"><span id="deletevariable" class="bx fa-trash-o"></span></td>
             <td class="bx-rpm-expand"><span id="variablecollapse" class="bx bx-angle-double-down"></span></td>
+        </tr>
+        <tr class="bx-rpm-error hidden">
+            <td></td>
+            <td class="bx-rpm-message" colspan="6"></td>
         </tr>
         <tr class="hidden hiddenelements">
             <td colspan="7">

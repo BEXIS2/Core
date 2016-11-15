@@ -108,7 +108,7 @@
         $.get('@Url.Action(Action, "DataStructureSearch", new { area = "RPM"} )' + parameters, function (data) {
             if ($(data).hasClass('bx-rpm-message') && $(data).attr('id') == cssId) {
                 $(data).replaceAll('.bx-rpm-createDataStructureContainer #' + $(data).attr('id'));
-                createWondowShowmessage($(data).attr('value').toLowerCase());
+                createWondowShowmessage();
             }
             else if ($(data).hasClass('bx-rpm-message') && $(data).attr('id') == 'redirect') {
                 if( $('.bx-rpm-createDataStructureContainer #id').val() == '0' && inUse) {
@@ -137,17 +137,17 @@
     //    createWondowValidateName('message');
     //});
 
-    $('.bx-rpm-createDataStructureContainer #name').change(function () {
-        createWondowValidateName('message');
-    });
+    //$('.bx-rpm-createDataStructureContainer #name').change(function () {
+    //    createWondowValidateName('message');
+    //});
 
     //$('.bx-rpm-createDataStructureContainer #description').keyup(function () {
     //    createWondowShowmessage();
     //});
 
-    $('.bx-rpm-createDataStructureContainer #description').change(function () {
-        createWondowShowmessage();
-    });
+    //$('.bx-rpm-createDataStructureContainer #description').change(function () {
+    //    createWondowShowmessage();
+    //});
 
     function createWondowValidateName(cssId) {
         var parameters = encodeURI('/?Id=' + $('.bx-rpm-createDataStructureContainer #id').attr('validationId') + '&Name=' + encodeURIComponent($('.bx-rpm-createDataStructureContainer #name').val()) + '&cssId=' + cssId);
