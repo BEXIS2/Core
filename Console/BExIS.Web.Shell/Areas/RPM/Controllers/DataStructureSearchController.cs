@@ -23,6 +23,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
         [GridAction]
         public ActionResult _dataStructureResultGridBinding(long[] previewIds, string searchTerms)
         {
+            searchTerms = Server.UrlDecode(searchTerms);
             return View(new GridModel(new DataStructureResultsModel(previewIds, searchTerms).dataStructureResults));
         }
 
@@ -44,6 +45,8 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
         public ActionResult _createDataStructureBinding(long Id, string Name, string Description, bool isSructured, bool inUse, bool copy)
         {
+            Name = Server.UrlDecode(Name);
+            Description = Server.UrlDecode(Description);
             MessageModel DataStructureValidation = MessageModel.validateDataStructureInUse(Id);
             if (DataStructureValidation.hasMessage && DataStructureValidation.CssId == "0")
                 return PartialView("_messageWindow", DataStructureValidation);        
@@ -75,12 +78,16 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
         public ActionResult createDataStructure(long Id, string Name, bool isStructured, string Description = "", string cssId = "", bool inUse = false)
         {
+            Name = Server.UrlDecode(Name);
+            Description = Server.UrlDecode(Description);
             MessageModel DataStructureValidation = storeDataStructure(Id, Name.Trim(), isStructured, Description.Trim(), cssId, inUse);
             return PartialView("_message", DataStructureValidation);
         }
 
         public MessageModel storeDataStructure(long Id, string Name, bool isStructured, string Description ="", string cssId = "", bool inUse = false)
         {
+            Name = Server.UrlDecode(Name);
+            Description = Server.UrlDecode(Description);
             MessageModel DataStructureValidation = MessageModel.validateDataStructureInUse(Id);
             if (DataStructureValidation.hasMessage && inUse == false)
             {
@@ -155,11 +162,14 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
         public ActionResult _validateDataStructureName(long Id, string Name , string cssId)
         {
+            Name = Server.UrlDecode(Name);
             return PartialView("_message", MessageModel.validateDataStructureName(Id, Name, cssId));
         }
 
         public ActionResult copyDataStructure(long Id, bool isStructured, string Name = "" , string Description = "", string cssId = "")
         {
+            Name = Server.UrlDecode(Name);
+            Description = Server.UrlDecode(Description);
             DataStructureManager dataStructureManager = new DataStructureManager();
 
             if (!isStructured)

@@ -18,7 +18,7 @@
 </div>
 <div class="bx-rpm-searchBar">
     @Html.TextBox("SearchBox", "", new { @class = "bx-input" })
-    <div class="bx bx-button function bx-search" href="javascript:loadResults()"></div>
+    <div class="bx bx-button function bx-search" onclick="javascript:loadResults()"></div>
     <div class="bx-rpm-resetSearch"><a onclick="javascript:resetSearch()">reset Search</a></div>
 </div>
 
@@ -40,8 +40,7 @@
 
     function loadResults() {
         $('.bx-rpm-searchBar #SearchBox').val($('.bx-rpm-searchBar #SearchBox').val().trim());
-        var parameters = encodeURI('/?searchTerms=' + $('.bx-rpm-searchBar #SearchBox').val());
-        parameters = parameters.replace('#', '%23');
+        var parameters = encodeURI('/?searchTerms=' + encodeURIComponent($('.bx-rpm-searchBar #SearchBox').val()));
             $.get('@Url.Action("_dataStructureResultBinding", "DataStructureSearch", new { area = "RPM"} )' + parameters, function (data) {
                 $('#SearchResults').html(data);
         });
@@ -49,6 +48,7 @@
     }
 
     function createMessageWindow(data, title, type, id) {
+        title = decodeURIComponent(title);
         var windowElement = $.telerik.window.create({
             title: title,
             html: data,
@@ -94,7 +94,6 @@
 
     function messageWindowYes(id) {
         var parameters = encodeURI('/?Id=' + id);
-        parameters = parameters.replace('#', '%23');
         $.get('@Url.Action("deleteDataStructure", "DataStructureEdit")' + parameters, function (data) {
             if ($(data).hasClass('bx-rpm-message') && $(data).attr('value').toLowerCase() == 'true') {
                 $(data).replaceWith('.bx-rpm-message #' + id);
@@ -115,9 +114,9 @@
     }
 
     function openCreateWindow(Id, Name, Description, isSructured, inUse, copy) {
+        Name = unescape(Name);
+        Description = unescape(Description);
         var title = "Create DataStructure";
-        var parameters = encodeURI("");
-        parameters = parameters.replace('#', '%23');
         if (Id > 0) {
             if (copy == true) {
                 title = "Copy DataStructure " + Name + ' (' + Id + ')';
@@ -126,7 +125,7 @@
                 title = "Edit DataStructure " + Name + ' (' + Id + ')';
             }
         }
-        parameters = '/?Id=' + Id + '&Name=' + Name + '&Description=' + Description + '&isSructured=' + isSructured + '&inUse=' + inUse + '&copy=' + copy;
+        var parameters = encodeURI('/?Id=' + Id + '&Name=' + encodeURIComponent(Name) + '&Description=' + encodeURIComponent(Description) + '&isSructured=' + isSructured + '&inUse=' + inUse + '&copy=' + copy);
         $.ajax({
             type: 'GET',
             url: '@Url.Action("_createDataStructureBinding", "DataStructureSearch")' + parameters,
