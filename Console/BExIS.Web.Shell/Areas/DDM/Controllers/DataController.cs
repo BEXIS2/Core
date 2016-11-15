@@ -45,6 +45,7 @@ using System.Web.Script.Serialization;
 using System.Xml;
 using BExIS.Web.Shell.Areas.RPM.Controllers;
 using BExIS.Web.Shell.Areas.RPM.Models;
+using Vaiona.Logging.Aspects;
 
 
 namespace BExIS.Web.Shell.Areas.DDM.Controllers

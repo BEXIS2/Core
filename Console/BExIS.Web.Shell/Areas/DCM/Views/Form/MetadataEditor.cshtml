@@ -90,14 +90,17 @@
 <div>
     <table>
         <tr>
-            @if (locked && Model.EditRight)
+            @if (locked)
             {
                 <td>
-                    <button onclick="edit()" class="bx-button function">Edit</button>
-
-                    @if (copy.IsComplete())
+                    @if (Model.EditRight)
                     {
-                        @Html.ActionLink("Copy", copy.ActionName, copy.ControllerName, new {area = copy.AreaName, id = @Model.DatasetId, type = "DatasetId"}, new {@class = "bx-button function", @id = @Model.DatasetId})
+                        <button onclick="edit()" class="bx-button function">Edit</button>
+
+                         if (copy.IsComplete())
+                         {
+                             @Html.ActionLink("Copy", copy.ActionName, copy.ControllerName, new {area = copy.AreaName, id = @Model.DatasetId, type = "DatasetId"}, new {@class = "bx-button function", @id = @Model.DatasetId})
+                         }
                     }
 
                     @Html.CheckBox("showAll", @showOptional, new {OnChange = "switchVisibilityOfOptionalElements()", Name = "showAll", Id = "showAll"})
@@ -356,6 +359,7 @@
         $.get('@Url.Action("SwitchVisibilityOfOptionalElements", "Form", new RouteValueDictionary {{"area", "DCM"}})', { show: show },
                 function(response) {
                     $('#MetadataEditor').replaceWith(response);
+                    bindMinimap(true);
                 });
     }
 

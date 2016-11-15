@@ -5,14 +5,14 @@ $(document).ready(function (e) {
     setTimeout(
       function () {
           //do something special
-          console.log("doc ready before autosize");
-          console.log($('textarea'));
+          //console.log("doc ready before autosize");
+          //console.log($('textarea'));
           if ($('textarea') != null) {
 
               $($('textarea')).each(function (index, element) {
                   // element == this
                   autosize($(this));
-                  console.log("done autosize");
+                  //console.log("done autosize");
               });
           }
       }, 10);
@@ -28,7 +28,7 @@ function setTabIndex() {
     console.log(list);
     for (var i = 0; i < list.length ; i++) {
         var input = list[i];
-        console.log(input);
+        //console.log(input);
         $(input).attr("tabindex", i);
     }
 }
@@ -112,7 +112,7 @@ function bindMinimap(create) {
 
             var x = $(".minimap").css("top");
             originalMinimapTop = x.split("px");
-            console.log("create");
+            //console.log("create");
 
 
         } else {
@@ -142,7 +142,7 @@ function bindMinimap(create) {
 
                 var x = $(".minimap").css("top");
                 originalMinimapTop = x.split("px");
-                console.log("create");
+                //console.log("create");
 
 
             } else {
@@ -166,18 +166,18 @@ function bindMinimap(create) {
 
                     //console.log(positionMiniRegion);
                     //console.log($(".miniregion").css("top"));
-                    console.log("updated");
+                    //console.log("updated");
                 }
 
             }
 
             if (positionMiniRegion > 0) {
                 $(".miniregion").css("top", positionMiniRegion);
-                console.log("updated region");
+                //console.log("updated region");
             }
 
 
-            console.log("exist");
+            //console.log("exist");
         }
 
 

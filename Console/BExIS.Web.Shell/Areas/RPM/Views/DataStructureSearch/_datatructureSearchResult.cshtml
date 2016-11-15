@@ -32,16 +32,15 @@
     })
     .Filterable()
     .ClientRowTemplate(
-        "<tr class='bx-rpm-datastructure-item' id='<#= Id #>' value='<#= Id #>, \"<#= Title #>\", \"<#= Description #>\", <#= Structured #>, <#= inUse #>' structured='<#= Structured #>' inuse='<#= inUse #>'>" +
+        "<tr class='bx-rpm-datastructure-item' id='<#= Id #>' structured='<#= Structured #>' inuse='<#= inUse #>'>" +
         "<td class='bx-rpm-result id'><#= Id #></td>" +
         "<td class='bx-rpm-result'><span class='bx-rpm-title clickable' id='<#= Id #>_title' onclick='javascript:clickDatastructure(<#= Id #>)'><#= Title #><span id='<#= Id #>_collapse' class='bx bx-angle-double-down'></span></span></td>" +
-        "<td class='bx-rpm-result'><#= Description #></td>" +
+        "<td class='bx-rpm-result class='bx-rpm-description'><#= Description #></td>" +
         "<td class='bx-rpm-result bx-rpm-structured'><span class='bx' id='<#= Id #>_structured'></span></td>" +
         "<td class='bx-rpm-result bx-rpm-gridfunction'>" +
             "<a id='<#= Id #>_edit' class='bx bx-grid-function bx-edit' href='/RPM/DataStructureEdit/?dataStructureId=<#= Id #>'></a>" +
             "<a id='<#= Id #>_download' class='bx bx-grid-function bx-download' href='/RPM/DataStructureIO/downloadTemplate?id=<#= Id #>'></a>" +
-            "<a id='<#= Id #>_copy' class='bx bx-grid-function bx-copy' href='javascript:openCreateWindow(<#= Id #>, \"<#= Title #>\", \"<#= Description #>\", <#= Structured #>, <#= inUse #>, true)'></a>" +
-        //"<a id='<#= Id #>_delete' class='bx bx-grid-function bx-trash' href='javascript:openDelWindow(<#= Id #>, \"<#= Title #>\")'></a>" +
+            "<a id='<#= Id #>_copy' class='bx bx-grid-function bx-copy'></a>" +
         "</td>" +
     "</tr>" +
     "<tr class='bx-rpm-preview bx-rpm-hidden' id ='<#= Id #>_preview' preview='<#= Preview #>'>" +
@@ -97,6 +96,11 @@
 
         for (i = 0; i < $('.bx-rpm-datastructure-item').length; i++) {
             var id = $('.bx-rpm-datastructure-item')[i].id;
+            var name = encodeURIComponent(escape($('#' + id).find('.bx-rpm-title').text()));
+            var description = encodeURIComponent(escape($('#' + id).find('.bx-rpm-description').text()));
+            var parameters = id + ", '" + name + "', '" + description + "', " + $('#' + id).attr('structured') + ', ' + $('#' + id).attr('inUse') + ', true';
+            $('#' + id + '_copy').attr('href', 'javascript:openCreateWindow(' + parameters + ')');
+
             if ($('#' + id).attr('structured') == 'true')
                 $('#' + id + '_structured').addClass('fa-check');
             //prepare UI for UnStructuredDataStructure
@@ -104,7 +108,8 @@
                 $('#' + id + '_structured').addClass('fa-minus');
                 $('#' + id + '_download').addClass('bx-disabled');
                 $('#' + id + '_download').removeAttr('href');
-                $('#' + id + '_edit').attr('href', 'javascript:openCreateWindow(' + $('.bx-rpm-datastructure-item')[i].getAttribute('value') + ', false)');
+                parameters = id + ", '" + name + "', '" + description + "', " + $('#' + id).attr('structured') + ', ' + $('#' + id).attr('inUse') + ', false';
+                $('#' + id + '_edit').attr('href', 'javascript:openCreateWindow(' + parameters + ')');
                 $('#' + id + '_title').removeAttr('onclick');
                 $('#' + id + '_title').removeClass('clickable');
                 $('#' + id + '_collapse').remove();

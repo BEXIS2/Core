@@ -2412,6 +2412,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         [HttpPost]
         public ActionResult ValidateMetadataAttributeUsage(string value, int id, int parentid, string parentname, int number, int parentModelNumber, int parentStepId)
         {
+            //delete all white spaces from start and end
+            value = value.Trim();
+
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
             StepModelHelper stepModelHelper = GetStepModelhelper(parentStepId);
 

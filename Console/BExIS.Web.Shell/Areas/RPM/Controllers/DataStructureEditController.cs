@@ -21,7 +21,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
         public ActionResult Index(long DataStructureId = 0)
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Data Structure Edit", this.Session.GetTenant());
-            if (DataStructureId != 0)
+            if (DataStructureId != 0 && new DataStructureManager().StructuredDataStructureRepo.Get(DataStructureId) != null)
                 return View(DataStructureId);
             else
                 return RedirectToAction("Index", "DataStructureSearch");
@@ -44,6 +44,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
         public ActionResult _getVariableElement(long attributeId, string variableName)
         {
+            variableName = Server.UrlDecode(variableName);
             MessageModel validateVariable = MessageModel.validateAttributeDelete(attributeId);
             if (validateVariable.hasMessage && validateVariable.CssId == "0")
             {
@@ -59,6 +60,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
         public ActionResult _getAttributeElement(long attributeId, string variableName)
         {
+            variableName = Server.UrlDecode(variableName);
             MessageModel validateAttribute = MessageModel.validateAttributeDelete(attributeId);
             if (validateAttribute.hasMessage && validateAttribute.CssId == "0")
             {
@@ -217,6 +219,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
         public ActionResult getMessageWindow(string message,bool hasMessage, string cssId)
         {
+            message = Server.UrlDecode(message);
             return PartialView("_messageWindow", new MessageModel()
             {
                 Message = message,
@@ -232,17 +235,22 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
         public ActionResult _validateAttributeName(long Id, string Name, string cssId)
         {
+            Name = Server.UrlDecode(Name);
             return PartialView("_message", MessageModel.validateAttributeName(Id, Name, cssId));
         }
 
         public ActionResult createAtttribute(long Id, string Name, long unitId, long dataTypeId, string Description = "", string cssId = "", bool inUse = false)
         {
+            Name = Server.UrlDecode(Name);
+            Description = Server.UrlDecode(Description);
             MessageModel AttributeValidation = storeAtttribute(Id, Name.Trim(), unitId, dataTypeId, Description.Trim(), cssId, inUse);
             return PartialView("_message", AttributeValidation);
         }
 
         public MessageModel storeAtttribute(long Id, string Name, long unitId, long dataTypeId, string Description = "", string cssId = "", bool inUse = false)
         {
+            Name = Server.UrlDecode(Name);
+            Description = Server.UrlDecode(Description);
             MessageModel DataStructureValidation = MessageModel.validateAttributeInUse(Id);
             if (DataStructureValidation.hasMessage && inUse == false)
             {
