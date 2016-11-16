@@ -62,6 +62,7 @@
                   tabs.Add()
                       .Text("Publish")
                       .LoadContentFrom("publishData", "Data", new {area = "DDM", datasetId = @Model.Id})
+                      .Enabled(@Model.ViewAccess)
                       .HtmlAttributes(new { id = "prepare" });
                   
               })
