@@ -39,12 +39,16 @@
         });     
     });
 
-    function scrollDown(outerDiv, innerDiv) {
-        if (!innerDiv) {
+    function scrollDown(outerDiv, innerDiv, stopPos) {
+        if (innerDiv == null) 
             innerDiv = outerDiv;
-        }
+        
+        if (stopPos == null)
+            stopPos = innerDiv.height() - outerDiv.height();
+
         var pos = outerDiv.scrollTop();
-        if (pos < innerDiv.height() - outerDiv.height()) {
+        console.log(pos + '<' + stopPos)
+        if (pos < stopPos) {
             setTimeout(function () {
                 outerDiv.scrollTop(pos += speed);
                 speed += 15;
@@ -56,16 +60,20 @@
         }
     }
 
-    function scrollUp(outerDiv, innerDiv) {
-        if (!innerDiv) {
+    function scrollUp(outerDiv, innerDiv, stopPos) {
+        if (!innerDiv == null) 
             innerDiv = outerDiv;
-        }
+        
+        if (stopPos == null)
+            stopPos = 0;
+
+
         var pos = outerDiv.scrollTop();
-        if (pos < 0) {
+        if (pos > 0) {
             setTimeout(function () {
-                outerDiv.scrollTop(pos += speed);
-                speed -= 15;
-                scrollDown(outerDiv, innerDiv);
+                outerDiv.scrollTop(pos -= speed);
+                speed += 15;
+                scrollUp(outerDiv, innerDiv);
             }, 1);
         }
         else {
