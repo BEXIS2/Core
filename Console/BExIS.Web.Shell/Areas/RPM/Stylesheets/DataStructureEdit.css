@@ -62,6 +62,12 @@ h2{
     padding:5px;
 }
 
+.bx-rpm-variable-item .bx-rpm-message,
+.bx-rpm-attribute-item.bx-rpm-message {
+    text-align:left;
+    padding: 5px;
+}
+
 .bx-rpm-attribute-item{
    background-color:#f5f5f5;
 }
@@ -82,21 +88,28 @@ h2{
 .bx-rpm-variable-item td,
 .bx-rpm-variable-item table {
     border-right: solid 4px #d2e8e3;
-    border-bottom: #afb0b1 solid 1px;
+    border-bottom: #afb0b1 solid 0px;
 }
 
 .bx-rpm-attribute-item td,
 .bx-rpm-attribute-item table {
     border-right: solid 4px #f5f5f5;
-    border-bottom: #afb0b1 solid 1px;
+    border-bottom: #afb0b1 solid 0px;
 }
 
+.bx-rpm-variable-item .bx-rpm-unit-select,
 .bx-rpm-datastructureheader .bx-input,
 .bx-rpm-variable-item textarea,
 .bx-rpm-variable-item select,
 .bx-rpm-variable-item input{
     width:100%;
     min-width:100px;
+}
+
+.bx-rpm-variable-item .bx-rpm-unit-select{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .bx-rpm-variable-item input[type="checkbox"]{

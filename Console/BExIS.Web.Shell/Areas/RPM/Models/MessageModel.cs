@@ -56,7 +56,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
                             return new MessageModel()
                             {
                                 hasMessage = true,
-                                Message = "A Datastructure with same Name already exists.",
+                                Message = "A Data Structure with same Name already exists.",
                                 CssId = cssId
                             };
                         }
