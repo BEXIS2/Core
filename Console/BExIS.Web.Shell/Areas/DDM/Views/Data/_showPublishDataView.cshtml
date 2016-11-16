@@ -13,19 +13,25 @@
 
         <table>
             <tr>
-                <td style="width: 200px;">
+                <td style="width: 100px;">
                     @(Html.Telerik().DropDownList()
-                               .Placeholder("Select")
-                               .Name("SelectDataRepository")
-                               .HtmlAttributes(new {title= "Select a repository for publishing this dataset" })
-                               .ClientEvents(events => events.OnChange("onSelectDataRepositoryDropDownChange"))
-                               .BindTo(new SelectList(datarepolist)))
+                          .Placeholder("Select")
+                          .Name("SelectDataRepository")
+                          .HtmlAttributes(new {title = "Select a repository for publishing this dataset"})
+                          .ClientEvents(events => events.OnChange("onSelectDataRepositoryDropDownChange"))
+                          .BindTo(new SelectList(datarepolist)))
                 </td>
-                <td>
+                <td style="width: 50px;">
+                    <div id="preloader" style="display:none;">
+                        <img src="../../../../Themes/Default/Styles/Default/preloader.GIF" />
+                    </div>
+                </td>
+                <td style="width: 100px;">
                     <button id="submitPublishBt" class="bx-button small function bx-disabled" onClick="onSubmitPublishBtClick(this)" disabled="disabled" title="Prepare Publication Package (NOTE: there is currently no direct submission in place)">Publish</button>
                 </td>
+                
                 <td>
-                    <span id="requirementsContainer">
+                    <span id="requirementsContainer" style="color: red">
 
                     </span>
                 </td>
@@ -117,6 +123,8 @@
 
         function onSubmitPublishBtClick(e) {
 
+            $("#preloader").show();
+
             var id = @Model.DatasetId;
 
             //get selected value
@@ -129,6 +137,8 @@
                 function(response) {
                     //alert(response);
                     $("#publishContentContainer").replaceWith(response);
+                    $("#preloader").hide();
+
                 });
 
 
