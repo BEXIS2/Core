@@ -93,15 +93,40 @@
             @if (locked)
             {
                 <td>
-                    @if (Model.EditRight)
+                    @if (Model.EditRight && Model.EditAccessRight)
                     {
                         <button onclick="edit()" class="bx-button function">Edit</button>
 
-                         if (copy.IsComplete())
-                         {
-                             @Html.ActionLink("Copy", copy.ActionName, copy.ControllerName, new {area = copy.AreaName, id = @Model.DatasetId, type = "DatasetId"}, new {@class = "bx-button function", @id = @Model.DatasetId})
-                         }
+                        if (copy.IsComplete())
+                        {
+                            @Html.ActionLink("Copy", copy.ActionName, copy.ControllerName, new {area = copy.AreaName, id = @Model.DatasetId, type = "DatasetId"}, new {@class = "bx-button function", @id = @Model.DatasetId})
+                        }
                     }
+                    else
+                    {
+                        string tooltip = "";
+
+                        if (!Model.EditRight)
+                        {
+                            tooltip += " You do not have permission to edit or copy this dataset.";
+                        }
+
+                        if (!Model.EditAccessRight)
+                        {
+                            tooltip += " You do not have permission for this function.";
+                        }
+
+                        if ((!Model.EditAccessRight && !Model.EditRight) == false)
+                        {
+                            <button onclick="edit()" class="bx-button function bx-disabled" disabled="disabled" title="@tooltip">Edit</button>
+
+                            if (copy.IsComplete())
+                            {
+                                @Html.ActionLink("Copy", copy.ActionName, copy.ControllerName, new { area = copy.AreaName, id = @Model.DatasetId, type = "DatasetId" }, new { @class = "bx-button function bx-disabled", @id = @Model.DatasetId, disabled = "disabled", title = @tooltip })
+                            }
+                        }
+                    }
+
 
                     @Html.CheckBox("showAll", @showOptional, new {OnChange = "switchVisibilityOfOptionalElements()", Name = "showAll", Id = "showAll"})
 
