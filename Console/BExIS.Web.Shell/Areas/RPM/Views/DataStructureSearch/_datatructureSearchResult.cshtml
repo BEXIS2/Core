@@ -24,6 +24,7 @@
         columns.Bound(c => c.Description);
         columns.Bound(c => c.Structured)
         .Filterable(false)
+        .Title("Tabular")
         .HeaderHtmlAttributes(new { @class = "bx-rpm-gridfunction" });
         columns.Template(
         @<text>
@@ -103,9 +104,9 @@
 
             if ($('#' + id).attr('structured') == 'true')
                 $('#' + id + '_structured').addClass('fa-check');
+
             //prepare UI for UnStructuredDataStructure
             if ($('#' + id).attr('structured') == 'false') {
-                $('#' + id + '_structured').addClass('fa-minus');
                 $('#' + id + '_download').addClass('bx-disabled');
                 $('#' + id + '_download').removeAttr('href');
                 parameters = id + ", '" + name + "', '" + description + "', " + $('#' + id).attr('structured') + ', ' + $('#' + id).attr('inUse') + ', false';
