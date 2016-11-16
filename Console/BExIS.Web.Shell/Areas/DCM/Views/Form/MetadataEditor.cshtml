@@ -336,7 +336,7 @@
                 if (errors.length == 0) {
                     callSubmitAction();
                 } else {
-                    if (confirm('Metadata is not valid! \n Do you really want to save?')) {
+                    if (confirm('Warning: Some fields are not complete or contain entries that do not meet the requirements. Press OK to save anyways and resume later.')) {
                         callSubmitAction();
                     }
                 }
