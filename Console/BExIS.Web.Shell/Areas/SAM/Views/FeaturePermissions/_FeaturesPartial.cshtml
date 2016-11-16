@@ -3,49 +3,46 @@
 @model System.Collections.Generic.IEnumerable<BExIS.Web.Shell.Areas.SAM.Models.FeatureTreeViewModel>
 
 
-<div class="">
-    @(Html.Telerik().TreeView()
-          .Name("TreeView_Features")
-          .HtmlAttributes(new {@class= "bx-trunc-parent"})
-          .ShowCheckBox(true)
-          .BindTo(Model, mappings =>
-          {
-          mappings.For<FeatureTreeViewModel>(binding => binding
 
-                  .ItemDataBound((item, feature) =>
-                  {
-                      item.Text = feature.FeatureName;
-                      item.Value = feature.Id.ToString();
-                      item.Checked = feature.IsFeatureInEveryoneGroup;
-                      item.LinkHtmlAttributes["title"] = "Select " + feature.FeatureName + " to manage the corresponding feature permissions on the right.";
+@(Html.Telerik().TreeView()
+        .Name("TreeView_Features")
+        .ShowCheckBox(true)
+        .BindTo(Model, mappings =>
+        {
+            mappings.For<FeatureTreeViewModel>(binding => binding
 
-                      if (item.Parent != null)
-                      {
-                          item.LinkHtmlAttributes["class"] = "bx-trunc-child ";
-                      }
-                  })
-                  .Children(feature => feature.Children));
-          })
-          .ClientEvents(events => events
-              .OnSelect("OnSelect")
-              .OnChecked("OnChecked")
+                .ItemDataBound((item, feature) =>
+                {
+                    item.Text = feature.FeatureName;
+                    item.Value = feature.Id.ToString();
+                    item.Checked = feature.IsFeatureInEveryoneGroup;
+                    item.LinkHtmlAttributes["title"] = "Select " + feature.FeatureName + " to manage the corresponding feature permissions on the right.";
+                })
+                .Children(feature => feature.Children));
+        })
+        .ClientEvents(events => events
+            .OnSelect("OnSelect")
+            .OnChecked("OnChecked")
 
-          )
+        )
 
-          .ExpandAll(true)
-          )
-</div>
-
-<script type="text/javascript" src="/Scripts/trunk8.js"></script>
+        .ExpandAll(true)
+        )
 
 <script type="text/javascript">
     
     $("#TreeView_Features").ready(function () {
+        //truncateTitle();
+        //$("#TreeView_Features").find("div").each(function() {
+            
 
-        truncateTitle();
-
+        //})
     });
 
+
+    $("#TreeView_Features li div").click(function (e) {
+        $(e.target).find(".t-in").trigger("click");
+    })
 
     function GetTreeView() {
         return $('#TreeView_Features').data('tTreeView');
@@ -100,73 +97,56 @@
     $(":checkbox").attr("title", "Checked \t -> \t public feature \nUnchecked \t -> \t NOT public feature");
 </script>
 
-    <style type="text/css">
-            #TreeView_Features .t-item {
-                padding-right: 0;
+<style type="text/css">
+    
+    #TreeView_Features .t-minus {
+        padding-top: 2px;
+    }
 
-            }
+    #TreeView_Features .t-item {
+        padding-right: 0;
 
-            #TreeView_Features span:hover {
-                font-weight: normal;
-            }
+    }
 
-            #TreeView_Features div {
-                padding-left: 0;
-                padding-top: 2px;
-                padding-bottom: 2px;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
+    #TreeView_Features span:hover {
+        font-weight: normal;
+    }
 
-            #TreeView_Features div span {
-                padding-right: 0;
-            }
+    #TreeView_Features div {
+        padding-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
 
 
-            #TreeView_Features div:hover,
-            #TreeView_Features .bx-selected,
-            #TreeView_Features span.t-state-selected {
-                background-color: #d2e8e3;
-                font-weight: normal;
-            }
+    }
 
-            #TreeView_Features .t-item li {
-                padding-top: 0;
-                padding-bottom: 0;
-                padding-left: 15px;
-            }
+    #TreeView_Features div span {
+        max-width: 180px;
+        padding-right: 0;
+        white-space: nowrap !important;
+        overflow: hidden  !important;
+        text-overflow: ellipsis !important;
+    }
 
 
-            #TreeView_Features li {
-                padding-left: 5px;
-                padding-right: 0;
-                overflow-x: hidden;
-            }
-/*
-        #TreeView_Features .t-item-child {
-            width: 100% !important;
-            padding-left: 0;
-            padding-right: 0;
-            color: #black;
-        }
+    #TreeView_Features div:hover,
+    #TreeView_Features .bx-selected,
+    #TreeView_Features span.t-state-selected {
+        background-color: #d2e8e3;
+        font-weight: normal;
+    }
 
-        #TreeView_Features .t-item-child:hover {
-            font-weight: normal;
-            width: 100% !important;
-            padding-left: 0;
-            padding-right: 0;
-            color: black;
-        }
+    #TreeView_Features .t-item li {
+        padding-top: 0;
+        padding-bottom: 0;
+        padding-left: 15px;
+    }
 
-        #TreeView_Features .t-item-child.t-state-selected {
-            font-weight: normal;
-            width: 100% !important;
-            padding-left: 0;
-            padding-right: 0;
-            color: black !important;
-        }
 
-        #TreeView_Features .t-item.t-last {
-            padding-bottom: 5px;
-        }*/
-    </style>
+    #TreeView_Features li {
+        padding-left: 25px;
+        padding-right: 0;
+        overflow-x: hidden;
+    }
+
+</style>

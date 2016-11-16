@@ -852,6 +852,15 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             model.DataRepositories = publishingManager.DataRepositories;
             model.DatasetId = datasetId;
 
+            // 
+            PermissionManager permissionManager = new PermissionManager();
+            SubjectManager subjectManager = new SubjectManager();
+
+            model.DownloadRights = permissionManager.HasUserDataAccess(HttpContext.User.Identity.Name, 1,
+                datasetId, RightType.Download);
+            model.EditRights = permissionManager.HasUserDataAccess(HttpContext.User.Identity.Name, 1,
+                datasetId, RightType.Download);
+
             if (datasetVersionId == -1)
             {
                 DatasetManager datasetManager = new DatasetManager();

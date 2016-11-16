@@ -177,6 +177,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             Model.FromEditMode = (bool)TaskManager.Bus[CreateTaskmanager.EDIT_MODE];
 
             Model.EditRight = hasUserEditRights(entityId);
+            Model.EditAccessRight = hasUserEditAccessRights(entityId);
 
             //set addtionaly functions 
             Model.Actions = getAddtionalActions();
@@ -319,7 +320,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             // set edit rights
             Model.EditRight = hasUserEditRights(entityId);
- 
+            Model.EditAccessRight = hasUserEditAccessRights(entityId);
+
             //set addtionaly functions 
             Model.Actions = getAddtionalActions();
 
@@ -388,10 +390,13 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             {
                 long entityId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.ENTITY_ID]);
                 Model.EditRight = hasUserEditRights(entityId);
+                Model.EditAccessRight = hasUserEditAccessRights(entityId);
+
             }
             else
             {
                 Model.EditRight = false;
+                Model.EditAccessRight = false;
             }
            
 
@@ -2752,8 +2757,41 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             SubjectManager subjectManager = new SubjectManager();
             Security.Services.Objects.TaskManager securityTaskManager = new Security.Services.Objects.TaskManager();
 
-            bool hasAuthorizationRights = false;
             bool hasAuthenticationRigths = false;
+
+            User user = subjectManager.GetUserByName(GetUsernameOrDefault());
+            long userid = -1;
+
+            if (user != null)
+            {
+                userid = subjectManager.GetUserByName(GetUsernameOrDefault()).Id;
+
+                hasAuthenticationRigths = permissionManager.HasUserDataAccess(userid, 1, entityId, RightType.Update);
+
+                return (hasAuthenticationRigths);
+            }
+            else
+            {
+               return false;
+            }
+
+            #endregion
+
+        }
+
+        /// <summary>
+        /// return true if user has edit rights
+        /// </summary>
+        /// <returns></returns>
+        private bool hasUserEditAccessRights(long entityId)
+        {
+            #region security permissions and authorisations check
+            // set edit rigths
+            PermissionManager permissionManager = new PermissionManager();
+            SubjectManager subjectManager = new SubjectManager();
+            Security.Services.Objects.TaskManager securityTaskManager = new Security.Services.Objects.TaskManager();
+
+            bool hasAuthorizationRights = false;
 
             User user = subjectManager.GetUserByName(GetUsernameOrDefault());
             long userid = -1;
@@ -2772,13 +2810,11 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     hasAuthorizationRights = permissionManager.HasSubjectFeatureAccess(userid, task.Feature.Id);
                 }
 
-                hasAuthenticationRigths = permissionManager.HasUserDataAccess(userid, 1, entityId, RightType.Update);
-
-                return (hasAuthorizationRights && hasAuthenticationRigths);
+                return (hasAuthorizationRights);
             }
             else
             {
-               return false;
+                return false;
             }
 
             #endregion
