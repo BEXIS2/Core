@@ -455,28 +455,20 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 ? Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.ENTITY_ID])
                 : -1;
 
-            if (user != null)
+            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.ENTITY_ID))
             {
-                userid = subjectManager.GetUserByName(GetUsernameOrDefault()).Id;
+                entityId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.ENTITY_ID]);
+                Model.EditRight = hasUserEditRights(entityId);
+                Model.EditAccessRight = hasUserEditAccessRights(entityId);
 
-                //User has Access to Features 
-                //Area DCM
-                //Controller "Create Dataset" 
-                //Action "*"
-                Task task = securityTaskManager.GetTask("DCM", "CreateDataset", "*");
-                if (task != null)
-                {
-                    hasAuthorizationRights = permissionManager.HasSubjectFeatureAccess(userid, task.Feature.Id);
-                }
-
-                hasAuthenticationRigths = permissionManager.HasUserDataAccess(userid, 1, entityId, RightType.Update);
-
-                Model.EditRight = (hasAuthorizationRights && hasAuthenticationRigths);
             }
             else
             {
                 Model.EditRight = false;
+                Model.EditAccessRight = false;
             }
+
+            Model.FromEditMode = true;
 
             #endregion
             //set addtionaly functions 
