@@ -116,13 +116,13 @@
     function openCreateWindow(Id, Name, Description, isSructured, inUse, copy) {
         Name = unescape(Name);
         Description = unescape(Description);
-        var title = "Create DataStructure";
+        var title = "Create Data Structure";
         if (Id > 0) {
             if (copy == true) {
-                title = "Copy DataStructure " + Name + ' (' + Id + ')';
+                title = "Copy Data Structure " + Name + ' (' + Id + ')';
             }
             else {
-                title = "Edit DataStructure " + Name + ' (' + Id + ')';
+                title = "Edit Data Structure " + Name + ' (' + Id + ')';
             }
         }
         var parameters = encodeURI('/?Id=' + Id + '&Name=' + encodeURIComponent(Name) + '&Description=' + encodeURIComponent(Description) + '&isSructured=' + isSructured + '&inUse=' + inUse + '&copy=' + copy);
