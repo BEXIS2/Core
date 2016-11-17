@@ -1,4 +1,4 @@
-(function (a, n) {
+(function(a, n) {
     var h = {
         TAB: 9,
         ENTER: 13,
@@ -45,7 +45,7 @@
             q.eq(p - 1).after(o)
         }
     }
-    b.grid = function (p, w) {
+    b.grid = function(p, w) {
         var q = this;
         this.element = p;
         this.groups = [];
@@ -54,7 +54,7 @@
         this.groupBy = "";
         this.orderBy = "";
         a.extend(this, w);
-        this.sorted = a.grep(this.columns, function (C) {
+        this.sorted = a.grep(this.columns, function(C) {
             return C.order
         });
         this.$tbody = a("> .t-grid-content > table > tbody", p);
@@ -89,7 +89,7 @@
                 a("> .t-grid-content", p).css("width", "auto");
                 var A = a("> .t-grid-content > table", p);
                 A.css("table-layout", "auto");
-                window.setTimeout(function () {
+                window.setTimeout(function() {
                     A.css("table-layout", "fixed")
                 }, 1)
             } else {
@@ -102,7 +102,7 @@
                     x.css("border-width", 0)
                 }
             }
-            a("> .t-grid-content", p).bind("scroll", function () {
+            a("> .t-grid-content", p).bind("scroll", function() {
                 if (q.pageOnScroll) {
                     var C = this.scrollTop + this.clientHeight;
                     if (C === this.scrollHeight && q.currentPage < q.totalPages() && !q._pagingInProgress) {
@@ -116,14 +116,14 @@
         if (this.rowTemplate) {
             this.rowTemplate = m(this.rowTemplate)
         }
-        this.$tbody.delegate(".t-hierarchy-cell .t-plus, .t-hierarchy-cell .t-minus", "click", b.stopAll(function (F) {
+        this.$tbody.delegate(".t-hierarchy-cell .t-plus, .t-hierarchy-cell .t-minus", "click", b.stopAll(function(F) {
             var C = a(F.target);
             var G = C.hasClass("t-plus");
             C.toggleClass("t-minus", G).toggleClass("t-plus", !G);
             var D = C.closest("tr.t-master-row");
             if (this.detail && !D.next().hasClass("t-detail-row")) {
                 var E = 0;
-                a.each(this.columns, function () {
+                a.each(this.columns, function() {
                     if (!this.hidden) {
                         E++
                     }
@@ -139,22 +139,22 @@
         this.$pager = a("> .t-grid-pager .t-pager", p);
         var o = new b.dropDown({
             effects: b.fx.slide.defaults(),
-            onClick: a.proxy(function (C) {
+            onClick: a.proxy(function(C) {
                 this.changePageSize(a(C.item).text());
                 o.close()
             }, this)
         });
-        a(p).delegate(".t-button", "click", a.proxy(function (C) {
+        a(p).delegate(".t-button", "click", a.proxy(function(C) {
             this._command(C)
         }, this));
         o.dataBind(w.pageSizesInDropDown || []);
-        a(document.documentElement).bind("mousedown", function (C) {
+        a(document.documentElement).bind("mousedown", function(C) {
             var D = o.$element[0];
             if (!a.contains(D, C.target)) {
                 o.close()
             }
         });
-        this.$pager.delegate(".t-state-disabled", "click", b.preventDefault).delegate(".t-link:not(.t-state-disabled)", "mouseenter", b.hover).delegate(".t-link:not(.t-state-disabled)", "mouseleave", b.leave).delegate("input[type=text]", "keydown", a.proxy(this.pagerKeyDown, this)).delegate(".t-page-size .t-dropdown-wrap", "click", function () {
+        this.$pager.delegate(".t-state-disabled", "click", b.preventDefault).delegate(".t-link:not(.t-state-disabled)", "mouseenter", b.hover).delegate(".t-link:not(.t-state-disabled)", "mouseleave", b.leave).delegate("input[type=text]", "keydown", a.proxy(this.pagerKeyDown, this)).delegate(".t-page-size .t-dropdown-wrap", "click", function() {
             var C = a(this);
             o.open({
                 offset: C.offset(),
@@ -166,18 +166,18 @@
         a("> .t-grid-pager", p).delegate(".t-refresh", "click", a.proxy(this.refreshClick, this));
         a(p).delegate(".t-button", "hover", b.preventDefault);
         if (this.sort) {
-            this.$header.delegate("a.t-link", "hover", function () {
+            this.$header.delegate("a.t-link", "hover", function() {
                 a(this).toggleClass("t-state-hover")
             })
         }
         var v = "tr:not(.t-grouping-row,.t-detail-row,.t-no-data,.t-group-footer,:has(>.t-edit-container))";
         if (this.selectable) {
             var B = this.$tbody[0];
-            this.$tbody.delegate(v, "click", function (C) {
+            this.$tbody.delegate(v, "click", function(C) {
                 if (this.parentNode == B) {
                     q.rowClick(C)
                 }
-            }).delegate(v, "hover", function (C) {
+            }).delegate(v, "hover", function(C) {
                 if (this.parentNode == B) {
                     if (C.type == "mouseenter") {
                         a(this).addClass("t-state-hover")
@@ -228,14 +228,14 @@
         }
     };
     b.grid.prototype = {
-        initializeNavigation: function () {
+        initializeNavigation: function() {
             var r = this,
                 o = a(r.element).attr("tabIndex", 0),
                 p = "keydown",
                 q = a.proxy(r._keyDown, r);
             r._initNavigationMouseEvents();
             o.bind({
-                focus: function (t) {
+                focus: function(t) {
                     var s = r.current();
                     if (s) {
                         s.addClass(g)
@@ -247,13 +247,13 @@
                         }
                     }
                 },
-                focusin: function (s) {
+                focusin: function(s) {
                     var t = a(s.target).closest("td");
                     if (t.parent().hasClass("t-grid-new-row")) {
                         r.current(t)
                     }
                 },
-                focusout: function () {
+                focusout: function() {
                     if (r._current) {
                         r._current.removeClass(g)
                     }
@@ -261,17 +261,17 @@
                 keydown: q
             });
             if (r.editing && r.editing.mode == "PopUp") {
-                o.bind("edit", function (s) {
+                o.bind("edit", function(s) {
                     a(s.form).bind(p, q)
                 });
                 a("#" + r.formId() + ":visible").bind(p, q)
             }
             if (r.pageOnScroll) {
-                o.bind("dataBinding", function () {
+                o.bind("dataBinding", function() {
                     var t = r.current(),
                         u = t ? t.parent().index(k) - 1 : 0,
                         s = t ? t.index() : 0;
-                    o.one("dataBound", function () {
+                    o.one("dataBound", function() {
                         var v = r.$tbody.find(k);
                         r._focusGridElement();
                         if (r._current) {
@@ -282,16 +282,16 @@
                 })
             }
         },
-        _onCommand: function (o) {
+        _onCommand: function(o) {
             if (o.row) {
                 o.dataItem = this.dataItem(o.row)
             }
             return b.trigger(this.element, "command", o)
         },
-        _onComplete: function (o) {
+        _onComplete: function(o) {
             return b.trigger(this.element, "complete", o)
         },
-        _command: function (q) {
+        _command: function(q) {
             var p = a(q.currentTarget);
             var r = p.closest(".t-grid")[0];
             if (p.is(".t-ajax") && r == this.element) {
@@ -310,7 +310,7 @@
                 a.ajax(this.ajaxOptions({
                     url: p.attr("href"),
                     data: o.data || {},
-                    success: a.proxy(function (t) {
+                    success: a.proxy(function(t) {
                         try {
                             t = eval("(" + t + ")")
                         } catch (u) {
@@ -327,7 +327,7 @@
                 }))
             }
         },
-        _keyDown: function (u) {
+        _keyDown: function(u) {
             var F = this,
                 w = a(F.element),
                 E = F.$tbody,
@@ -358,7 +358,7 @@
             if (o) {
                 if (B && h.PAGEDOWN == A) {
                     if (!F.pageOnScroll) {
-                        w.one(t, function () {
+                        w.one(t, function() {
                             s(w.find(f));
                             F._focusGridElement()
                         })
@@ -370,7 +370,7 @@
                 } else {
                     if (B && h.PAGEUP == A) {
                         if (!F.pageOnScroll) {
-                            w.one(t, function () {
+                            w.one(t, function() {
                                 s(w.find(f));
                                 F._focusGridElement()
                             });
@@ -440,7 +440,7 @@
                 u.stopPropagation()
             }
         },
-        _handleEditing: function (r) {
+        _handleEditing: function(r) {
             var I = this,
                 C = r.keyCode,
                 G = r.shiftKey,
@@ -477,7 +477,7 @@
                         if (p.is(s)) {
                             I.saveCell(p[0])
                         } else {
-                            E.find(s).each(function () {
+                            E.find(s).each(function() {
                                 I.saveCell(this)
                             });
                             I.editCell(p[0])
@@ -487,7 +487,7 @@
                         }
                     } else {
                         if (x) {
-                            t.one("dataBound", function () {
+                            t.one("dataBound", function() {
                                 var K = a(this).data("tGrid");
                                 K._current = K.$tbody.children().eq(F).find(d).eq(0);
                                 v()
@@ -512,7 +512,7 @@
                     }
                 } else {
                     if (z) {
-                        H.find(s).each(function () {
+                        H.find(s).each(function() {
                             I.saveCell(this)
                         });
                         I.editCell(p[0])
@@ -572,7 +572,7 @@
                         q(D);
                         if (I.keyboardNavigation.editOnTab && D.length) {
                             I.editCell(D[0]);
-                            setTimeout(function () {
+                            setTimeout(function() {
                                 if (D.hasClass("t-grid-edit-cell")) {
                                     D.find(u).focus()
                                 }
@@ -584,7 +584,7 @@
             }
             return w
         },
-        _initNavigationMouseEvents: function () {
+        _initNavigationMouseEvents: function() {
             var y = this,
                 x = y.$tbody,
                 v = k + d,
@@ -594,7 +594,7 @@
                 q, w, r, t = ".t-grid-edit-row",
                 u = ":button,a,:input,a>.t-icon";
             if (o.msie) {
-                x.delegate(v, p, function (z) {
+                x.delegate(v, p, function(z) {
                     w = a(z.target), r = a(z.currentTarget), q = y._current;
                     if (r.closest("tbody")[0] !== x[0]) {
                         return
@@ -615,7 +615,7 @@
                     }
                 })
             } else {
-                x.delegate(v, s, function (z) {
+                x.delegate(v, s, function(z) {
                     w = a(z.target), r = a(z.currentTarget), q = y._current;
                     if (r.closest("tbody")[0] !== x[0]) {
                         return
@@ -633,7 +633,7 @@
                 })
             }
         },
-        _clearInputSelection: function (p) {
+        _clearInputSelection: function(p) {
             if (!p || a(p).is(":checkbox, :radio")) {
                 return
             }
@@ -645,14 +645,14 @@
                 q.select()
             }
         },
-        _focusGridElement: function () {
+        _focusGridElement: function() {
             var o = a.browser;
             if (o.msie && parseInt(o.version) < 9) {
                 a("body", document).focus()
             }
             this.element.focus()
         },
-        current: function (p) {
+        current: function(p) {
             var q = this,
                 o = q._current;
             if (p !== n && p.length) {
@@ -668,7 +668,7 @@
                 return q._current
             }
         },
-        _scrollTo: function (s) {
+        _scrollTo: function(s) {
             var p = this.$tbody.closest("div.t-grid-content")[0];
             if (!s || !p) {
                 return
@@ -680,11 +680,11 @@
                 o = u + t;
             p.scrollTop = r > u ? u : o > (r + q) ? o - q : r
         },
-        _isRightScrollBar: function () {
+        _isRightScrollBar: function() {
             var o = 536;
             return (a.browser.webkit && parseInt(a.browser.version, 10) < o) || (a.browser.mozilla && parseInt(a.browser.version, 10) < 2)
         },
-        _transformParams: function (o) {
+        _transformParams: function(o) {
             var t = this,
                 s = t._isServerOperation(),
                 r = {},
@@ -707,7 +707,7 @@
                     r[t.queryString.groupBy] = t.groupBy
                 }
                 if (o.aggregates && o.aggregates.length) {
-                    r.aggregates = a.map(t.columns, function (u) {
+                    r.aggregates = a.map(t.columns, function(u) {
                         if (u.aggregates) {
                             return u.member + "-" + u.aggregates.join("-")
                         }
@@ -729,13 +729,13 @@
             }
             return r
         },
-        _dataSourceOptions: function () {
+        _dataSourceOptions: function() {
             var u = this,
                 s = this.pageSize > 0,
                 r, p = u.data || [],
                 t = u._isServerOperation(),
-                o = a.map(u.columns || [], function (v) {
-                    return a.map(v.aggregates || [], function (w) {
+                o = a.map(u.columns || [], function(v) {
+                    return a.map(v.aggregates || [], function(w) {
                         return {
                             field: v.member,
                             aggregate: w
@@ -743,7 +743,7 @@
                     })
                 }),
                 q = {
-                    translateGroup: function (v) {
+                    translateGroup: function(v) {
                         return {
                             value: v.Key,
                             hasSubgroups: v.HasSubgroups,
@@ -751,19 +751,19 @@
                             items: v.HasSubgroups ? a.map(v.Items, a.proxy(this.translateGroup, this)) : v.Items
                         }
                     },
-                    flatGroups: function (v) {
+                    flatGroups: function(v) {
                         if (v.HasSubgroups) {
                             return this.flatGroups(v.Items)
                         }
                         return v.Items
                     },
-                    convert: function (v) {
+                    convert: function(v) {
                         return v.d || v
                     },
-                    mergeChanges: function (v, D, x) {
+                    mergeChanges: function(v, D, x) {
                         var z, A, C, B = [],
                             y, w = u.dataSource;
-                        a.each(x, function (F, E) {
+                        a.each(x, function(F, E) {
                             for (A = 0, C = v.length; A < C; A++) {
                                 if (E === w.id(v[A])) {
                                     v.splice(A, 1);
@@ -771,7 +771,7 @@
                                 }
                             }
                         });
-                        a.each(D, function (E, F) {
+                        a.each(D, function(E, F) {
                             z = w.id(this);
                             y = false;
                             for (A = 0, C = v.length; A < C; A++) {
@@ -787,7 +787,7 @@
                         });
                         return v.concat(B)
                     },
-                    data: function (w) {
+                    data: function(w) {
                         var x = u.dataSource,
                             v = x.data(),
                             z = x.page() - 1,
@@ -806,18 +806,18 @@
                         }
                         return w
                     },
-                    total: function (v) {
+                    total: function(v) {
                         if (v) {
                             v = this.convert(v);
                             return !a.isArray(v) ? v.total || v.Total || 0 : v.length
                         }
                         return 0
                     },
-                    groups: function (v) {
+                    groups: function(v) {
                         v = this.data(v);
                         return a.map(v, a.proxy(this.translateGroup, this))
                     },
-                    aggregates: function (v) {
+                    aggregates: function(v) {
                         v = this.convert(v);
                         return v.aggregates || {}
                     }
@@ -831,30 +831,30 @@
                 page: s ? u.currentPage : n,
                 pageSize: s ? u.pageSize : n,
                 aggregates: u.aggregates || o,
-                error: a.proxy(function (v) {
+                error: a.proxy(function(v) {
                     var x = v[0],
                         w = v[1];
                     if (b.ajaxError(this.element, "error", x, w)) {
                         return
                     }
                 }, this),
-                group: a.map(u.groups || [], function (v) {
+                group: a.map(u.groups || [], function(v) {
                     return {
                         field: v.member,
                         dir: v.order,
                         aggregates: o
                     }
                 }),
-                sort: a.map(u.sorted, function (v) {
+                sort: a.map(u.sorted, function(v) {
                     return {
                         field: v.member,
                         dir: v.order
                     }
                 }),
-                filter: a.map(a.grep(u.columns, function (v) {
+                filter: a.map(a.grep(u.columns, function(v) {
                     return v.filters
-                }), function (v) {
-                    return a.map(v.filters, function (x) {
+                }), function(v) {
+                    return a.map(v.filters, function(x) {
                         var y = x.filters,
                             A, B, C;
                         if (y) {
@@ -895,7 +895,7 @@
                         read: {
                             type: "POST",
                             dataType: "text",
-                            dataFilter: function (v, w) {
+                            dataFilter: function(v, w) {
                                 v = eval("(" + v.replace(j, "new Date($1)") + ")");
                                 u._onComplete({
                                     name: "dataBinding",
@@ -922,7 +922,7 @@
             }
             return r
         },
-        _dataSource: function () {
+        _dataSource: function() {
             var q = this,
                 p = q._dataSourceOptions(),
                 o = p.data;
@@ -932,14 +932,14 @@
             }
             q.dataSource.bind("change", a.proxy(q._dataChange, q))
         },
-        _convertInitialData: function (o) {
+        _convertInitialData: function(o) {
             var t = this;
             if (!t._isServerOperation() && o && o.length) {
                 t.dataSource.read();
                 var u = t.dataSource.view();
                 if (u.length && u[0].hasSubgroups != n) {
                     var s = [],
-                        p = function (v) {
+                        p = function(v) {
                             if (v.hasSubgroups) {
                                 return p(v.items)
                             }
@@ -954,16 +954,16 @@
                 }
             }
         },
-        _mapAggregates: function (o) {
+        _mapAggregates: function(o) {
             var q = {};
             for (var p in o) {
-                q[p.replace(/^\w/, function (r) {
+                q[p.replace(/^\w/, function(r) {
                     return r.toUpperCase()
                 })] = o[p]
             }
             return q
         },
-        rowClick: function (q) {
+        rowClick: function(q) {
             var p = a(q.target);
             if (!p.is(":button,a,.t-delete,input,select,textarea,option,a>.t-icon")) {
                 q.stopPropagation();
@@ -973,21 +973,21 @@
                 })
             }
         },
-        $rows: function () {
+        $rows: function() {
             return this.$tbody.find("> tr:not(.t-grouping-row,.t-detail-row)")
         },
-        expandRow: function (o) {
+        expandRow: function(o) {
             a(o).find("> td .t-plus, > td .t-expand").click()
         },
-        collapseRow: function (o) {
+        collapseRow: function(o) {
             a(o).find("> td .t-minus, > td .t-collapse").click()
         },
-        headerClick: function (o) {
+        headerClick: function(o) {
             o.preventDefault();
             this.toggleOrder(this.$columns().index(a(o.target).closest("th")));
             this.sort(this.sortExpr())
         },
-        refreshClick: function (o, p) {
+        refreshClick: function(o, p) {
             if (a(p).is(".t-loading")) {
                 return
             }
@@ -999,35 +999,35 @@
                 this.ajaxRequest()
             }
         },
-        sort: function (o) {
+        sort: function(o) {
             this.orderBy = o;
             this.ajaxRequest()
         },
-        columnFromTitle: function (p) {
+        columnFromTitle: function(p) {
             p = a.trim(p);
-            var o = a.grep(this.$columns(), function (q) {
+            var o = a.grep(this.$columns(), function(q) {
                 return a.trim(a(q).text()) == p
             })[0];
             if (o) {
                 return this.columns[this.$columns().index(o)]
             }
-            return a.grep(this.columns, function (q) {
+            return a.grep(this.columns, function(q) {
                 return q.title == p
             })[0]
         },
-        columnFromMember: function (p) {
-            var o = a.grep(this.columns, function (q) {
+        columnFromMember: function(p) {
+            var o = a.grep(this.columns, function(q) {
                 return q.member == p
             })[0];
             if (!o) {
-                o = a.grep(this.columns, function (q) {
+                o = a.grep(this.columns, function(q) {
                     var r = "." + q.member;
                     return p.substr(p.length - r.length) == r
                 })[0]
             }
             return o
         },
-        toggleOrder: function (o) {
+        toggleOrder: function(o) {
             o = typeof o == "number" ? this.columns[o] : o;
             var p = "asc";
             if (o.order == "asc") {
@@ -1044,7 +1044,7 @@
             o.order = p;
             var q = a.inArray(o, this.sorted);
             if (this.sortMode == "single" && q < 0) {
-                a.each(this.sorted, function () {
+                a.each(this.sorted, function() {
                     this.order = null
                 });
                 this.sorted = []
@@ -1056,12 +1056,12 @@
                 this.sorted.splice(q, 1)
             }
         },
-        sortExpr: function () {
-            return a.map(this.sorted, function (o) {
+        sortExpr: function() {
+            return a.map(this.sorted, function(o) {
                 return o.member + "-" + o.order
             }).join("~")
         },
-        pagerKeyDown: function (o) {
+        pagerKeyDown: function(o) {
             if (o.keyCode == 13) {
                 var p = this.sanitizePage(a(o.target).val());
                 if (p != this.currentPage) {
@@ -1072,13 +1072,13 @@
                 o.preventDefault()
             }
         },
-        isAjax: function () {
+        isAjax: function() {
             return this.ajax || this.ws || this.onDataBinding
         },
-        url: function (o) {
+        url: function(o) {
             return (this.ajax || this.ws)[o]
         },
-        pagerClick: function (p) {
+        pagerClick: function(p) {
             p.preventDefault();
             var o = a(p.target).closest(".t-link");
             var s = this.currentPage;
@@ -1112,7 +1112,7 @@
             }
             this.pageTo(isFinite(s) ? s : this.currentPage)
         },
-        changePageSize: function (p) {
+        changePageSize: function(p) {
             var o = parseInt(p, 10);
             if (isNaN(o) || o < 1) {
                 return this.pageSize
@@ -1126,7 +1126,7 @@
                 this.serverRequest()
             }
         },
-        pageTo: function (o) {
+        pageTo: function(o) {
             this.currentPage = o;
             if (this.isAjax()) {
                 this.ajaxRequest()
@@ -1134,7 +1134,7 @@
                 this.serverRequest()
             }
         },
-        _dataChange: function () {
+        _dataChange: function() {
             var p = this.dataSource;
             if (!this._clientBindingInProgress) {
                 this.total = p.total()
@@ -1148,7 +1148,7 @@
             this._current = null;
             this._populate(o)
         },
-        _populate: function (o) {
+        _populate: function(o) {
             this.data = [];
             this.bindTo(o);
             this.bindFooter();
@@ -1157,20 +1157,20 @@
             b.trigger(this.element, "dataBound");
             b.trigger(this.element, "repaint")
         },
-        ajaxOptions: function (o) {
+        ajaxOptions: function(o) {
             var p = {
                 type: "POST",
                 dataType: "text",
-                dataFilter: function (r, s) {
+                dataFilter: function(r, s) {
                     return r.replace(j, "new Date($1)")
                 },
-                error: a.proxy(function (s, r) {
+                error: a.proxy(function(s, r) {
                     if (b.ajaxError(this.element, "error", s, r)) {
                         return
                     }
                 }, this),
                 complete: a.proxy(this.hideBusy, this),
-                success: a.proxy(function (r, t, u) {
+                success: a.proxy(function(r, t, u) {
                     try {
                         r = eval("(" + r + ")")
                     } catch (s) {
@@ -1188,10 +1188,10 @@
                     r = r.d || r;
                     if (o.hasErrors && o.hasErrors(r)) {
                         if (!b.trigger(this.element, "error", {
-                            XMLHttpRequest: u,
-                            textStatus: "modelstateerror",
-                            modelState: r.modelState
-                        })) {
+                                XMLHttpRequest: u,
+                                textStatus: "modelstateerror",
+                                modelState: r.modelState
+                            })) {
                             o.displayErrors(r)
                         }
                         return
@@ -1208,7 +1208,7 @@
                 q[this.queryString.filter] = (this.filterBy || "").replace(/\"/g, '\\"')
             }
             q[this.queryString.orderBy] = this.orderBy || "";
-            q[this.queryString.aggregates] = a.map(this.columns, function (r) {
+            q[this.queryString.aggregates] = a.map(this.columns, function(r) {
                 if (r.aggregates) {
                     return r.member + "-" + r.aggregates.join("-")
                 }
@@ -1219,32 +1219,32 @@
             }
             return p
         },
-        showBusy: function () {
-            this.busyTimeout = setTimeout(a.proxy(function () {
+        showBusy: function() {
+            this.busyTimeout = setTimeout(a.proxy(function() {
                 a("> .t-grid-pager .t-status .t-icon", this.element).addClass("t-loading")
             }, this), 100)
         },
-        hideBusy: function () {
+        hideBusy: function() {
             clearTimeout(this.busyTimeout);
             a("> .t-grid-pager .t-status .t-icon", this.element).removeClass("t-loading")
         },
-        serverRequest: function () {
+        serverRequest: function() {
             if (this.operationMode === "client") {
                 this.ajaxRequest()
             } else {
                 location.href = b.formatString(unescape(this.urlFormat), this.currentPage, this.orderBy || "~", this.groupBy || "~", encodeURIComponent(this.filterBy) || "~", this.pageSize || "~")
             }
         },
-        _isServerOperation: function () {
+        _isServerOperation: function() {
             return this.operationMode !== "client"
         },
-        ajaxRequest: function (o) {
+        ajaxRequest: function(o) {
             var u = this,
                 t = u.pageSize > 0,
                 s = u.pageSize,
                 q = u.currentPage,
-                p = a.map(u.columns, function (v) {
-                    return a.map(v.aggregates || [], function (w) {
+                p = a.map(u.columns, function(v) {
+                    return a.map(v.aggregates || [], function(w) {
                         return {
                             field: v.member,
                             aggregate: w
@@ -1258,7 +1258,7 @@
             var r = {
                 page: q,
                 sortedColumns: u.sorted,
-                filteredColumns: a.grep(u.columns, function (v) {
+                filteredColumns: a.grep(u.columns, function(v) {
                     return v.filters
                 })
             };
@@ -1277,18 +1277,18 @@
             u.dataSource.query(a.extend({
                 page: q,
                 pageSize: t ? s : n,
-                sort: a.map(u.sorted, function (v) {
+                sort: a.map(u.sorted, function(v) {
                     return {
                         field: v.member,
                         dir: v.order
                     }
                 }),
-                filter: a.map(a.grep(u.columns, function (v) {
+                filter: a.map(a.grep(u.columns, function(v) {
                     return v.filters
-                }), function (v) {
+                }), function(v) {
                     return u._translateFilterExpr(v, v.filters || [])
                 }),
-                group: a.map(u.groups, function (v) {
+                group: a.map(u.groups, function(v) {
                     return {
                         field: v.member,
                         dir: v.order,
@@ -1298,9 +1298,9 @@
                 aggregates: p
             }, a.extend({}, r.data, o)))
         },
-        _translateFilterExpr: function (o, p) {
+        _translateFilterExpr: function(o, p) {
             var q = this;
-            return a.map(p, function (s) {
+            return a.map(p, function(s) {
                 if (s.filters) {
                     return {
                         logic: s.logic,
@@ -1334,23 +1334,23 @@
                 }
             })
         },
-        valueFor: function (o) {
+        valueFor: function(o) {
             if (o.type == "Date") {
                 return new Function("data", "var value = data." + o.member + '; if (!value) return null; return value instanceof Date? value : new Date(parseInt(value.replace(/\\/Date\\((.*?)\\)\\//, "$1")));')
             }
             return new Function("data", "return data" + (o.member ? "." + o.member : "") + ";")
         },
-        displayFor: function (p) {
+        displayFor: function(p) {
             var s = this.localization,
                 r = this;
             if (p.commands) {
-                var o = a.map(p.commands, function (u) {
+                var o = a.map(p.commands, function(u) {
                     return b.grid.ButtonBuilder.create(a.extend({
                         text: s[u.name]
                     }, u))
                 });
-                return function (u) {
-                    return a.map(o, function (v) {
+                return function(u) {
+                    return a.map(o, function(v) {
                         return v.build(a.extend({}, u, {
                             __page: r.currentPage,
                             __orderBy: r.orderBy || "",
@@ -1361,10 +1361,10 @@
                 }
             }
             if (!p.template) {
-                var t = p.value || function () {
+                var t = p.value || function() {
                     return ""
                 };
-                var q = t = !p.data ? t : function (u) {
+                var q = t = !p.data ? t : function(u) {
                     var w = p.value(u),
                         y = p.data,
                         z = "",
@@ -1377,25 +1377,25 @@
                     return z
                 };
                 if (p.format || p.type == "Date") {
-                    t = function (u) {
+                    t = function(u) {
                         var v = q(u);
                         return v == null ? "" : b.formatString(p.format || "{0:G}", v)
                     }
                 }
-                return p.encoded === false ? t : function (u) {
+                return p.encoded === false ? t : function(u) {
                     return e(t(u))
                 }
             }
             return m(p.template)
         },
-        insertFor: function (o) {
+        insertFor: function(o) {
             return this.displayFor(o)
         },
-        editFor: function (o) {
+        editFor: function(o) {
             return this.displayFor(o)
         },
-        initializeColumns: function () {
-            a.each(this.columns, a.proxy(function (q, r) {
+        initializeColumns: function() {
+            a.each(this.columns, a.proxy(function(q, r) {
                 if (r.member !== n) {
                     r.value = this.valueFor(r)
                 } else {
@@ -1441,7 +1441,7 @@
                 this.displayDetails = m(this.detail.template)
             }
         },
-        bindData: function (r, u, t) {
+        bindData: function(r, u, t) {
             Array.prototype.push.apply(this.data, r);
             var s = this.pageOnScroll ? r.length : Math.min(this.pageSize, r.length);
             var p = this.columns.length;
@@ -1469,16 +1469,16 @@
                 u.cat("</tr>")
             }
         },
-        normalizeColumns: function () { },
-        dataItem: function (o) {
+        normalizeColumns: function() {},
+        dataItem: function(o) {
             return (this.data || [])[this.$tbody.find("> tr:not(.t-grouping-row,.t-detail-row,.t-grid-new-row,.t-group-footer)").index(a(o))]
         },
-        _colspan: function () {
-            return this.groups.length + a.grep(this.columns, function (o) {
+        _colspan: function() {
+            return this.groups.length + a.grep(this.columns, function(o) {
                 return !o.hidden
             }).length + (this.detail ? 1 : 0)
         },
-        bindTo: function (p) {
+        bindTo: function(p) {
             var q = new b.stringBuilder();
             var o = this._colspan();
             if (p && p.length) {
@@ -1495,7 +1495,7 @@
             }
             this.$tbody.html(q.string());
             if (this.onRowDataBound) {
-                var t = jQuery.grep(this.$tbody[0].rows, function (u) {
+                var t = jQuery.grep(this.$tbody[0].rows, function(u) {
                     return !a(u).is(".t-grouping-row, .t-group-footer, .t-footer-template")
                 });
                 for (var r = 0, s = this.data.length; r < s; r++) {
@@ -1506,26 +1506,26 @@
                 }
             }
         },
-        updatePager: function () {
+        updatePager: function() {
             var r = this.totalPages(this.total);
             var o = this.currentPage;
             var q = this.pageSize;
             this.$pager.find(".t-arrow-next").parent().add(this.$pager.find(".t-arrow-last").parent()).toggleClass("t-state-disabled", o >= r).removeClass("t-state-hover");
             this.$pager.find(".t-arrow-prev").parent().add(this.$pager.find(".t-arrow-first").parent()).toggleClass("t-state-disabled", o == 1).removeClass("t-state-hover");
             var p = this.localization;
-            this.$pager.find(".t-page-i-of-n").each(function () {
+            this.$pager.find(".t-page-i-of-n").each(function() {
                 this.innerHTML = new b.stringBuilder().cat(p.page).cat('<input type="text" value="').cat(o).cat('" /> ').cat(b.formatString(p.pageOf, r)).string()
             });
-            this.$pager.find(".t-page-size").each(function () {
+            this.$pager.find(".t-page-size").each(function() {
                 var s = '<div style="width: 50px;" class="t-dropdown t-header"><div class="t-dropdown-wrap t-state-default"><span class="t-input">' + q + '</span><span class="t-select"><span class="t-icon t-arrow-down">select</span></span></div></div>';
                 this.innerHTML = s
             });
-            this.$pager.find(".t-numeric").each(a.proxy(function (t, s) {
+            this.$pager.find(".t-numeric").each(a.proxy(function(t, s) {
                 this.numericPager(s, o, r)
             }, this));
             this.$pager.parent().find(".t-status-text").text(b.formatString(p.displayingItems, this.firstItemInPage(), this.lastItemInPage(), this.total))
         },
-        numericPager: function (t, o, w) {
+        numericPager: function(t, o, w) {
             var q = 10;
             var r = 1;
             if (o > q) {
@@ -1548,14 +1548,14 @@
             if (p < w) {
                 u.cat('<a class="t-link">...</a>')
             }
-            t.innerHTML = u.string();
+            t.innerHTML = u.string()
         },
-        $columns: function () {
+        $columns: function() {
             return this.$header.find("th:not(.t-hierarchy-cell,.t-group-cell)")
         },
-        updateSorting: function () {
+        updateSorting: function() {
             this.sorted = [];
-            a.each(this.orderBy.split("~"), a.proxy(function (o, q) {
+            a.each(this.orderBy.split("~"), a.proxy(function(o, q) {
                 var r = q.split("-");
                 var p = this.columnFromMember(r[0]);
                 if (p) {
@@ -1563,11 +1563,9 @@
                     this.sorted.push(p)
                 }
             }, this));
-            this.$columns().each(a.proxy(function (s, r) {
+            this.$columns().each(a.proxy(function(s, r) {
                 var q = this.columns[s].order;
-                //var p = a(r).children("a.t-link");
-                var p = a(r).find("a.t-link");
-                console.log(a(r));
+                var p = a(r).children("a.t-link");
                 var o = p.children(".t-icon");
                 if (!q) {
                     o.hide()
@@ -1579,30 +1577,30 @@
                 }
             }, this))
         },
-        sanitizePage: function (p) {
+        sanitizePage: function(p) {
             var o = parseInt(p, 10);
             if (isNaN(o) || o < 1) {
                 return this.currentPage
             }
             return Math.min(o, this.totalPages())
         },
-        totalPages: function () {
+        totalPages: function() {
             return Math.ceil(this.total / this.pageSize)
         },
-        firstItemInPage: function () {
+        firstItemInPage: function() {
             var o = this;
             return o.total > 0 ? o.pageOnScroll ? 1 : (o.currentPage - 1) * o.pageSize + 1 : 0
         },
-        lastItemInPage: function () {
+        lastItemInPage: function() {
             return Math.min(this.currentPage * this.pageSize, this.total)
         },
-        dataBind: function (o) {
+        dataBind: function(o) {
             var p = this;
             if (!p.dataSource) {
                 p._dataSource()
             } else {
                 if (o && o.length) {
-                    p.dataSource._group = a.map(p.groups, function (q) {
+                    p.dataSource._group = a.map(p.groups, function(q) {
                         return {
                             field: q.member,
                             dir: q.order,
@@ -1618,7 +1616,7 @@
                 p._clientBindingInProgress = false
             }
         },
-        bindFooter: function () {
+        bindFooter: function() {
             var r = this,
                 o = r.$footer.find("td:not(.t-group-cell,.t-hierarchy-cell)"),
                 p = r.aggregates,
@@ -1629,13 +1627,13 @@
                     Max: 0,
                     Min: 0
                 };
-            a.each(r.columns, function (s) {
+            a.each(r.columns, function(s) {
                 if (this.footer) {
                     o.eq(s).html(this.footer(r._mapAggregates(p[this.member] || q)))
                 }
             })
         },
-        rebind: function (o) {
+        rebind: function(o) {
             var p = this;
             p.sorted = [];
             p.orderBy = "";
@@ -1646,7 +1644,7 @@
             if (p.clearHeader) {
                 p.clearHeader()
             }
-            a.each(p.columns, function () {
+            a.each(p.columns, function() {
                 this.order = null;
                 this.filters = null
             });
@@ -1660,7 +1658,7 @@
             }
             p.ajaxRequest(o)
         },
-        hideColumn: function (s) {
+        hideColumn: function(s) {
             var E = this,
                 u = E.columns,
                 t, r, F, v, B = E.$tbody.children("tr"),
@@ -1673,7 +1671,7 @@
             } else {
                 s = E.columnFromMember(s)
             }
-            t = a.inArray(s, a.grep(u, function (G) {
+            t = a.inArray(s, a.grep(u, function(G) {
                 return !G.hidden
             }));
             if (t < 0 || !s) {
@@ -1728,7 +1726,7 @@
             }
             if (y) {
                 C.css("display", "inline-table");
-                setTimeout(function () {
+                setTimeout(function() {
                     C.css("display", "table")
                 }, 1)
             }
@@ -1746,7 +1744,7 @@
             s.attr = o;
             b.trigger(E.element, "repaint")
         },
-        showColumn: function (q) {
+        showColumn: function(q) {
             var z = this,
                 r, s = z.columns,
                 p, w = z.$tbody.children("tr"),
@@ -1815,24 +1813,24 @@
             }
             b.trigger(z.element, "repaint")
         },
-        initializeContextMenu: function () {
+        initializeContextMenu: function() {
             var u = this,
                 r, q = b.fx.slide.defaults(),
-                p = a.grep(u.columns, function (v) {
+                p = a.grep(u.columns, function(v) {
                     return v.title !== "" && v.includeInContextMenu !== false
                 }),
                 s = u.element.id + "_contextMenu",
                 t, o;
-            a(document).bind("mouseup", function (v) {
+            a(document).bind("mouseup", function(v) {
                 if (t && v.which != 3 && a(v.target).closest("#" + s).length == 0) {
                     b.fx.rewind(q, t.find(".t-group"), {
                         direction: "bottom"
-                    }, function () {
+                    }, function() {
                         t.remove()
                     })
                 }
             });
-            u.$header.closest(".t-grid-header").bind("contextmenu", function (v) {
+            u.$header.closest(".t-grid-header").bind("contextmenu", function(v) {
                 if (t && t.is(":visible")) {
                     b.fx.rewind(q, t.find(".t-group"), {
                         direction: "bottom"
@@ -1841,11 +1839,11 @@
                 }
                 r = new b.stringBuilder();
                 r.cat('<div class="t-animation-container t-menu t-menu-context" id="' + s + '" style="display:none">').cat('<ul class="t-group">');
-                a.each(p, function () {
+                a.each(p, function() {
                     r.cat('<li class="t-item"><label class="t-link">').cat('<input type="checkbox" data-field="' + a.inArray(this, u.columns) + '"').catIf(' checked="checked"', !this.hidden).cat("/>").cat(this.title).cat("</label></li>")
                 });
                 r.cat("</ul></div>");
-                t = a(r.string()).delegate("[type=checkbox]", "change", function () {
+                t = a(r.string()).delegate("[type=checkbox]", "change", function() {
                     var w = a(this),
                         x, y = w.data("field");
                     if (w.is(":checked")) {
@@ -1879,7 +1877,7 @@
             })
         }
     };
-    b.grid.ButtonBuilder = function (p) {
+    b.grid.ButtonBuilder = function(p) {
         var o = b.splitClassesFromAttr(p.attr);
         this.classNames = ["t-button"];
         var q = o.classes;
@@ -1893,18 +1891,18 @@
         if (p.ajax) {
             this.classNames.push("t-ajax")
         }
-        this.url = p.url ? m(unescape(p.url)) : function () {
+        this.url = p.url ? m(unescape(p.url)) : function() {
             return "#"
         };
-        this.content = function () {
+        this.content = function() {
             return p.text || ""
         };
-        this.build = function (r) {
+        this.build = function(r) {
             return '<a href="' + this.url(r) + '" class="' + this.classNames.join(" ") + '" ' + (p.attr || "") + ">" + this.content() + "</a>"
         }
     };
-    b.grid.ButtonBuilder.create = function (o) {
-        return new (c[o.buttonType])(o)
+    b.grid.ButtonBuilder.create = function(o) {
+        return new(c[o.buttonType])(o)
     };
 
     function l(r, q) {
@@ -1914,21 +1912,21 @@
         p = p ? " " + p : "";
         return '<span class="t-icon t-' + r + p + '"' + (s ? s : "") + "></span>"
     }
-    b.grid.ImageButtonBuilder = function (o) {
+    b.grid.ImageButtonBuilder = function(o) {
         b.grid.ButtonBuilder.call(this, o);
         this.classNames.push("t-button-icon");
-        this.content = function () {
+        this.content = function() {
             return l(o.name, o.imageAttr)
         }
     };
-    b.grid.ImageTextButtonBuilder = function (o) {
+    b.grid.ImageTextButtonBuilder = function(o) {
         b.grid.ButtonBuilder.call(this, o);
         this.classNames.push("t-button-icontext");
-        this.content = function () {
+        this.content = function() {
             return l(o.name, o.imageAttr) + o.text
         }
     };
-    b.grid.BareImageButtonBuilder = function (o, p) {
+    b.grid.BareImageButtonBuilder = function(o, p) {
         b.grid.ImageButtonBuilder.call(this, o, p);
         this.classNames.push("t-button-icon", "t-button-bare")
     };
@@ -1938,14 +1936,14 @@
         Image: b.grid.ImageButtonBuilder,
         BareImage: b.grid.BareImageButtonBuilder
     };
-    a.fn.tGrid = function (o) {
+    a.fn.tGrid = function(o) {
         return b.create(this, {
             name: "tGrid",
-            init: function (p, q) {
+            init: function(p, q) {
                 return new b.grid(p, q)
             },
             options: o,
-            success: function (p) {
+            success: function(p) {
                 if (p.$tbody.find("> tr.t-no-data").length) {
                     p.ajaxRequest()
                 }
