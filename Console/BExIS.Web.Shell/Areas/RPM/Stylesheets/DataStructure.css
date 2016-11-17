@@ -119,6 +119,7 @@ select.bx-disabled{
 .bx-rpm-options {
     border: solid 1px #000000;
     background-color: #ffffff;
+    cursor:default;
 }
 
 .bx-rpm-options{
@@ -132,7 +133,7 @@ select.bx-disabled{
     white-space: nowrap;
     max-height: 18pt;
     overflow: hidden;
-    text-overflow: ellipsis;
+    text-overflow: ellipsis; 
 }
 
 .bx-rpm-options div:hover{

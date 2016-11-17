@@ -5,9 +5,7 @@
 <div class="bx-rpm-attributeheader">
     <table>
         <tr>
-            <td colspan="2"><h2>Variable Templates</h2></td>
-        </tr>
-        <tr>
+            <td><h2>Variable Templates</h2></td>
             <td class="bx-rpm-search" colspan="2">
                 <div class="bx-rpm-searchBar">
                     @Html.TextBox("SearchBox", "", new { @class = "bx-input" })
@@ -16,6 +14,8 @@
                 </div>
             </td>
         </tr>
+    </table>
+    <table>
         <tr>
             <td class="bx-rpm-sort">
                 <span class="bx-rpm-filterCollapse" onclick="javascript:clickFilter()">
@@ -126,6 +126,12 @@
                             temp.push(id);
                         }
                         else if ($(elems[i]).find('.unit .bx-rpm-text').text().toLowerCase().indexOf(terms[j]) >= 0 && temp.indexOf(id) < 0) {
+                            temp.push(id);
+                        }
+                        else if ($(elems[i]).find('.datatype .bx-rpm-text').text().toLowerCase().indexOf(terms[j]) >= 0 && temp.indexOf(id) < 0) {
+                            temp.push(id);
+                        }
+                        else if ($(elems[i]).find('.id .bx-rpm-text').text().toLowerCase().indexOf(terms[j]) >= 0 && temp.indexOf(id) < 0) {
                             temp.push(id);
                         }
                     }
