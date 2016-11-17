@@ -27,6 +27,7 @@ using Vaiona.Web.Mvc.Models;
 using BExIS.Web.Shell.Models;
 using BExIS.Web.Shell.Helpers;
 using Vaiona.IoC;
+using Vaiona.Logging;
 using Vaiona.Web.Extensions;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
@@ -521,6 +522,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     // ToDo check which SearchProvider it is, default luceneprovider
                     ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
                     provider?.UpdateSingleDatasetIndex(datasetId, IndexingAction.CREATE);
+
+                    LoggerFactory.LogData(datasetId.ToString(), typeof(Dataset).Name, Vaiona.Entities.Logging.CrudState.Created);
 
                 }
 
