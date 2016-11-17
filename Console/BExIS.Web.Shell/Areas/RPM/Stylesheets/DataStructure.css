@@ -132,7 +132,7 @@
 .bx-rpm-option{
     white-space: nowrap;
     max-height: 18pt;
-    padding-right:12px;
+    padding-right:16px;
     overflow: hidden;
     text-overflow: ellipsis; 
 }
