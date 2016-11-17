@@ -265,8 +265,6 @@ $(".t-grid").change(function () {
     });
 });
 
-
-
 /*List*/
 
 $(".bx-list > li").click(function ()
@@ -295,6 +293,24 @@ $(".bx-list-multi >li").click(function ()
 	}
 });
   
+
+/**************************
+ * *******PRELOADER********/
+
+$.fn.extend({
+
+    preloader: function (h) {
+
+
+        var html = '<div style = "height:' +
+            h +
+            'px;"><h3><span style="font-size:30px;" class="preloader fa fa-spinner fa-pulse"></span> Loading...</h3></div>';
+
+        $(this).html(html);
+
+        return this;
+    }
+})
 
 
 /* jQuery Validation Extension - CheckBox */

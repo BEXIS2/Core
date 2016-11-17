@@ -451,9 +451,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             long userid = -1;
             long entityId = -1;
 
-            entityId = TaskManager.Bus.ContainsKey(CreateTaskmanager.ENTITY_ID)
-                ? Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.ENTITY_ID])
-                : -1;
+        
 
             if (TaskManager.Bus.ContainsKey(CreateTaskmanager.ENTITY_ID))
             {
@@ -469,6 +467,12 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             }
 
             Model.FromEditMode = true;
+
+            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATASTRUCTURE_ID))
+            {
+                long metadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
+                Model.Import = IsImportAvavilable(metadataStructureId);
+            }
 
             #endregion
             //set addtionaly functions 

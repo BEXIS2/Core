@@ -122,7 +122,7 @@
 
                             if (copy.IsComplete())
                             {
-                                @Html.ActionLink("Copy", copy.ActionName, copy.ControllerName, new { area = copy.AreaName, id = @Model.DatasetId, type = "DatasetId" }, new { @class = "bx-button function bx-disabled", @id = @Model.DatasetId, disabled = "disabled", title = @tooltip })
+                                @Html.ActionLink("Copy", copy.ActionName, copy.ControllerName, new {area = copy.AreaName, id = @Model.DatasetId, type = "DatasetId"}, new {@class = "bx-button function bx-disabled", @id = @Model.DatasetId, disabled = "disabled", title = @tooltip})
                             }
                         }
                     }
@@ -133,8 +133,10 @@
                     <b>show all fields</b>
 
                 </td>
+                
 
             }
+
 
             @if (!Model.Created && !locked && Model.Import)
             {
@@ -154,13 +156,12 @@
                             
                           )
                 </td>
-                <td>
-                    <div id="preloader" style="display: none;">
-                        <img src="../../../../Themes/Default/Styles/Default/preloader.GIF"/>
-                    </div>
-                </td>
-                
             }
+
+
+            <td id="form_message_container_Column" style="text-align: right">
+                <span id="form_message"></span>
+            </td>
 
             @if (Model.Created && Model.DatasetId != -1 && !@Model.FromEditMode)
             {
@@ -211,7 +212,6 @@
                 <button onclick="submit()" class="bx-button action">Save</button>
             }
 
-
             @if (@Model.FromEditMode)
             {
                 <button onclick="cancel()" class="bx-button action">Cancel</button>
@@ -253,7 +253,8 @@ $("#showminimap")
 
 function SelectFileProcess_OnSelect(e) {
 
-        $("#preloader").show();
+        $("#root").preloader(300);
+
 
         var file = e.files[0];
         var maxsize = '@int_MaxRequestLength';
@@ -305,20 +306,31 @@ function OnSuccess() {
             //alert("on success");
 
             $('#MetadataEditor').replaceWith(response);
-
-            $("#preloader").hide();
         })
 }
 
 function validate() {
 
-    $("#preloader").show();
+    $('#root').preloader(300);
 
     $.get('@Url.Action("Validate", "Form", new RouteValueDictionary {{"area", "DCM"}})',
-        function(response) {
+        function (response) {
+
             $('#MetadataEditor').replaceWith(response);
-            $("#preloader").hide();
-        })
+            $('html, body').animate({ scrollTop: 0 }, 'slow');
+
+            var errors = $('.bx-input-error');
+
+            if (errors.length > 0) {
+                $("#form_message")
+                    .text("The metadata you entered is either not complete or does not comply to the metadata standard. Check the fields marked in red for more details.");
+                $("#form_message").css("color", "#f24c24");
+
+            } else {
+                $("#form_message").text("Validation successful");
+                $("#form_message").css("color", "#388670");
+            }
+        });
 }
 
 function cancel() {
@@ -346,8 +358,7 @@ function reset() {
 }
 
 function edit() {
-    $
-        .get('@Url.Action("EditMetadata", "Form", new RouteValueDictionary {{"area", "DCM"}, {"datasetId", @Model.DatasetId}, {"locked", false}, {"created", false}})',
+    $.get('@Url.Action("EditMetadata", "Form", new RouteValueDictionary {{"area", "DCM"}, {"datasetId", @Model.DatasetId}, {"locked", false}, {"created", false}})',
             function(response) {
                 $('#MetadataEditor').replaceWith(response);
             })
@@ -392,6 +403,22 @@ function callSubmitAction() {
                 bindMinimap(true);
             });
 }
+
+
+
+//$.fn.extend({
+        
+//    preloader : function (h) {
+
+//        var html = '<div style = "height:' +
+//            h +
+//            'px;"><h3><span style="font-size:30px;" class="preloader fa fa-spinner fa-pulse"></span>Loading...</h3></div>';
+
+//        $(this).html(html);
+
+//        return this;
+//    }
+//})
 
 </script>
 </div>
