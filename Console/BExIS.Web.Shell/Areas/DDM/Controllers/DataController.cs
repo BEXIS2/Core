@@ -45,6 +45,7 @@ using System.Web.Script.Serialization;
 using System.Xml;
 using BExIS.Web.Shell.Areas.RPM.Controllers;
 using BExIS.Web.Shell.Areas.RPM.Models;
+using Vaiona.Logging;
 using Vaiona.Logging.Aspects;
 
 
@@ -360,6 +361,9 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
                         string path = "";
 
+                        string message = string.Format("dataset {0} version {1} was downloaded as excel.", id,
+                                                                datasetVersion.Id);
+
                         // if filter selected
                         if (filterInUse())
                         {
@@ -368,6 +372,8 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
                             OutputDataManager ioOutputDataManager = new OutputDataManager();
                             path = ioOutputDataManager.GenerateExcelFile(id, title);
+
+                            LoggerFactory.LogCustom(message);
 
                             return File(path, "application/xlsm", title + ext);
 
@@ -378,7 +384,8 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         else
                         {
                             OutputDataManager outputDataManager = new OutputDataManager();
-                            path = outputDataManager.GenerateExcelFile(id, title);  
+                            path = outputDataManager.GenerateExcelFile(id, title);
+                            LoggerFactory.LogCustom(message);
 
                             return File(Path.Combine(AppConfiguration.DataPath, path), "application/xlsm", title + ext);
                         }
@@ -403,7 +410,8 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         OutputDataManager ioOutputDataManager = new OutputDataManager();
                         string title = getTitle(writer.GetTitle(id));
                         string path = "";
-
+                        string message = string.Format("dataset {0} version {1} was downloaded as csv.", id,
+                                                                datasetVersion.Id);
                         // if filter selected
                         if (filterInUse())
                         {
@@ -417,12 +425,16 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
                             path = ioOutputDataManager.GenerateAsciiFile(id, title,"text/csv",visibleColumns);
 
+                            LoggerFactory.LogCustom(message);
+
                             return File(path, "text/csv", title + ext);
                             #endregion
                         }
                         else
                         {
                             path = ioOutputDataManager.GenerateAsciiFile(id, title, "text/csv");
+
+                            LoggerFactory.LogCustom(message);
 
                             return File(path, "text/csv", title + ".csv");
                         }
@@ -442,12 +454,17 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
                     try
                     {
+                        
+
                         DatasetManager datasetManager = new DatasetManager();
                         DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
                         AsciiWriter writer = new AsciiWriter(TextSeperator.comma);
                         OutputDataManager ioOutputDataManager = new OutputDataManager();
                         string title = getTitle(writer.GetTitle(id));
                         string path = "";
+
+                        string message = string.Format("dataset {0} version {1} was downloaded as txt.", id,
+                                                        datasetVersion.Id);
 
                         // if filter selected
                         if (filterInUse())
@@ -462,12 +479,18 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
                             path = ioOutputDataManager.GenerateAsciiFile(id, title, "text/plain", visibleColumns);
 
+                            LoggerFactory.LogCustom(message);
+
                             return File(path, "text/csv", title + ext);
+
                             #endregion
                         }
                         else
                         {
                             path = ioOutputDataManager.GenerateAsciiFile(id, title, "text/plain");
+
+                            
+                            LoggerFactory.LogCustom(message);
 
                             return File(path, "text/plain", title + ".txt");
                         }
@@ -639,6 +662,9 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
         public ActionResult DownloadFile(string path,string mimeType)
         {
             string title = path.Split('\\').Last();
+            string message = string.Format("file was downloaded");
+            LoggerFactory.LogCustom(message);
+
             return File(Path.Combine(AppConfiguration.DataPath, path),mimeType, title);
         }
 
@@ -679,6 +705,11 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 }
 
                 zip.Save(zipPath);
+
+                string message = string.Format("all files from dataset {0} version {1} was downloaded.", datasetVersion.Dataset.Id,
+                        datasetVersion.Id);
+                LoggerFactory.LogCustom(message);
+
 
                 return File(zipPath, "application/zip", title + ".zip");
             }
@@ -1048,6 +1079,10 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 string zipPath = publishingManager.GetDirectoryPath(datasetid, dataRepo);
                 string zipFilePath = Path.Combine(zipPath, zipName);
 
+                string message = string.Format("published dataset {0} version {1} for repository {2} was downloaded.", datasetid,
+                        datasetversionid, datarepo);
+                LoggerFactory.LogCustom(message);
+
                 return File(zipFilePath, "application/zip", zipName);
             }
 
@@ -1174,6 +1209,10 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         zip.AddFile(fullFilePath,"");
 
                     }
+
+                    string message = string.Format("dataset {0} version {1} was published for repository {2}", datasetId,
+                        datasetVersion.Id, dataRepository.Name);
+                    LoggerFactory.LogCustom(message);
 
 
                     zip.Save(zipFilePath);
