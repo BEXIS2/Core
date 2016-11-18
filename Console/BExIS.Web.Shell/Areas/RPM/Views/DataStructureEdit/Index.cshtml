@@ -39,6 +39,48 @@
         });     
     });
 
+    function scrollDown(outerDiv, innerDiv, stopPos) {
+        if (innerDiv == null) 
+            innerDiv = outerDiv;
+        
+        if (stopPos == null)
+            stopPos = innerDiv.height() - outerDiv.height();
+
+        var pos = outerDiv.scrollTop();
+        console.log(pos + '<' + stopPos)
+        if (pos < stopPos) {
+            setTimeout(function () {
+                outerDiv.scrollTop(pos += speed);
+                speed += 15;
+                scrollDown(outerDiv, innerDiv);
+            }, 1);
+        }
+        else {
+            speed = 5;
+        }
+    }
+
+    function scrollUp(outerDiv, innerDiv, stopPos) {
+        if (!innerDiv == null) 
+            innerDiv = outerDiv;
+        
+        if (stopPos == null)
+            stopPos = 0;
+
+
+        var pos = outerDiv.scrollTop();
+        if (pos > 0) {
+            setTimeout(function () {
+                outerDiv.scrollTop(pos -= speed);
+                speed += 15;
+                scrollUp(outerDiv, innerDiv);
+            }, 1);
+        }
+        else {
+            speed = 5;
+        }
+    }
+
     function onCliclCheckbox(e) {
         if (e.hasAttribute('checked'))
             e.removeAttribute('checked');
@@ -82,13 +124,11 @@
                 if (id == "" || id == 0) {
                     window.location.href = "/RPM/DataStructureSearch";
                 }
-                else {
-                    lock();
-                }
             }
             else if ($("#messageWindow").attr('type').toLowerCase() == 'dataattribure') {
                 if (id == "" || id == 0) {
-                    $('#attribute_' + $('#messageWindow').attr('value') + ' #removeattribute').trigger('click');
+                    $('.bx-rpm-attribute-functions #removeattribute').attr('value', $('#messageWindow').attr('value'))
+                    $('.bx-rpm-attribute-functions #removeattribute').trigger('click');
                 }
                 $("#messageWindow").data('tWindow').destroy();
             }
@@ -100,7 +140,6 @@
 
     function messageWindowYes(id) {
         var parameters = encodeURI('/?Id=' + id);
-        parameters = parameters.replace('#', '%23');
         if ($("#messageWindow").attr('type').toLowerCase() == 'datastructure') {
             $.get('@Url.Action("deleteDataStructure", "DataStructureEdit")' + parameters, function (data) {
                 if ($(data).hasClass('bx-rpm-message') && $(data).attr('value').toLowerCase() == 'true') {

@@ -3,7 +3,7 @@ $(document).ready(function ()
 {
 	resetAllTelerikIconTitles();
 	truncateTitle();
-	console.log("on document ready");
+	//console.log("on document ready");
 
 });
 
@@ -30,19 +30,28 @@ function resetAllTelerikIconTitles()
 /*Truncate Title*/
 function truncateTitle()
 {
-    console.log("on document ready");
 	$('.bx-trunc-child').each(function ()
 	{
 
 		//$(this).trunk8();
 		//if (!$(this).attr("title") == true) { 
-		var n = $(".bx-trunc-parent").width()-90;
+		var n = $(".bx-trunc-parent").width()-60;
 		var text = $(this).text();
 
+		
+
 		//Link Breiter als/ oder gleich breit Container
-		if ($(this).width() >= n)
-		{
+		if ($(this).width() >= n) {
+		    
+		    //console.log("start truncate xxx");
+		    //console.log(this);
+		    //console.log("text:" + text);
+		    //console.log("n :" + n);
+		    //console.log("$(this).width() :" + $(this).width());
+
 			$(this).width(n);
+
+			//console.log("new .width() :" + $(this).width());
 
 			//get text from title or text
 			if ($(this).attr("title") != null)
@@ -51,11 +60,17 @@ function truncateTitle()
 				t = $(this).text();
 
 			var nt = t.split(" ");
+
+			//console.log("nt :" + nt);
 			var ntLast = nt.pop();
-			$(this).trunk8(
-			{
-				fill: "..." + ntLast
-			});
+			//console.log("ntLast :" + ntLast);
+		    $(this).trunk8(
+		    {
+		        fill: "..." + ntLast
+		    });
+
+		    //console.log("new text:" + $(this).text());
+
 
 		}
 	    //Link kürzer als Container
@@ -137,13 +152,92 @@ $(".t-grid").load(function () {
         div.width((element.innerWidth() - filter.outerWidth() - 5));
 
         var a = element.find("a");
-        div.html(a);
+        //var arrow = element.find("span");
+        //console.log(arrow);
+        //a.append(arrow);
+        div.append(a);
 
         element.prepend(div);
 
 
     });
 });
+
+$(".t-grid th").click(function (e) {
+
+    //var element = e.currentTarget;
+
+    //var arrow = $(element).find("span")[0];
+    //console.log(arrow);
+
+    //var hasDownClass = $(arrow).hasClass("t-arrow-down");
+    //var hasUpClass = $(arrow).hasClass("t-arrow-up");
+    //var display = $(arrow).css("display");
+
+    //console.log(hasDownClass);
+    //console.log(display);
+
+    //if ((hasDownClass && display.length == 0) ||
+    //    (hasDownClass && display == "inline-block")
+    //    ||
+    //    (!hasDownClass && display == "none")
+    //    ||
+    //    (!hasDownClass && display.length == 0)) {
+
+    //    $(arrow).removeClass();
+    //    $(arrow).addClass("t-icon");
+    //    $(arrow).addClass("t-arrow-up");
+    //    $(arrow).attr("display", "inline-block");
+    //    console.log("1");
+
+    //} else 
+    //if ((hasDownClass && display.length == 0) ||
+    //    (hasDownClass && display == "none")) {
+
+    //    $(arrow).removeClass();
+    //    $(arrow).addClass("t-icon");
+    //    $(arrow).addClass("t-arrow-down");
+    //    $(arrow).attr("display", "inline-block");
+    //    console.log("2");
+
+    //}
+    //else
+    //if (hasUpClass) {
+
+    //    $(arrow).removeClass();
+    //    $(arrow).addClass("t-icon");
+    //    $(arrow).addClass("t-arrow-down");
+    //    $(arrow).attr("display", "none");
+    //    console.log("3");
+
+    //}
+
+    //console.log(arrow);
+
+
+    //if (orderBy.indexOf("desc")>0) {
+
+    //    $(arrow).removeClass();
+    //    $(arrow).addClass("t-icon");
+    //    $(arrow).addClass("t-icon t-arrow-up");
+    //    console.log("desc");
+    //}
+    //else
+    //    if (orderBy.indexOf("asc") > 0) {
+
+    //    $(arrow).removeClass();
+    //    $(arrow).addClass("t-icon");
+    //    $(arrow).addClass("t-icon t-arrow-up");
+    //    console.log("asc");
+    //}
+    //else
+    //{
+    //    $(arrow).removeClass();
+    //    $(arrow).addClass("t-icon");
+    //    $(arrow).addClass("t-icon t-arrow-down");
+    //    console.log("---");
+    //}
+})
 
 $(".t-grid").change(function () {
 
@@ -157,19 +251,19 @@ $(".t-grid").change(function () {
         var filter = element.find(".t-grid-filter");
         filter.css("float", "right");
 
-
         div.width((element.innerWidth() - filter.outerWidth() - 5));
 
         var a = element.find("a");
-        div.html(a);
+        //var arrow = element.find("span");
+        //console.log(arrow);
+        //a.append(arrow);
+        div.append(a);
 
         element.prepend(div);
 
 
     });
 });
-
-
 
 /*List*/
 
@@ -199,6 +293,60 @@ $(".bx-list-multi >li").click(function ()
 	}
 });
   
+
+/**************************
+ * *******PRELOADER********/
+
+$.fn.extend({
+
+    preloader: function (fontsize, text, height) {
+
+        console.log(text);
+        console.log(height);
+        console.log(fontsize);
+        typeof value === "undefined"
+        if (typeof text === "undefined") {
+            text = "Loading...";
+        }
+
+        if (typeof height === "undefined" || height===0) {
+            height = "auto";
+        }
+
+        if (typeof fontsize === "undefined") {
+            fontsize = 10;
+        }
+
+        console.log(text);
+        console.log(height);
+        console.log(fontsize);
+
+        var loader = document.createElement('span');
+        console.log(loader);
+        $(loader).css("font-size", fontsize);
+        $(loader).css("padding", 5);
+        $(loader).addClass("fa fa-spinner fa-pulse");
+            
+
+
+        //    '<span style="font-size:'+fontsize+'px;" ' +
+        //'class="preloader fa fa-spinner fa-pulse"></span> '+text+
+
+        var div = document.createElement('div');
+
+        $(div).append(loader);
+        $(div).append(text);
+
+        $(div).css("font-size", fontsize);
+        $(div).css("height", height);
+
+        console.log(div);
+
+        $(this).html(div);
+
+        return this;
+    }
+})
 
 
 /* jQuery Validation Extension - CheckBox */

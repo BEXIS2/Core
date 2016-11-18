@@ -58,18 +58,20 @@ namespace BExIS.Xml.Helpers
             foreach (XmlNode node in root.ChildNodes)
             {
                 Debug.WriteLine(node.Name);///////////////////////////////////////////////////////////////////////////
-                if (node.HasChildNodes)
+                if (!node.HasChildNodes)
                 {
-                    if (node.NodeType == System.Xml.XmlNodeType.Element)
+                    if (node.NodeType == System.Xml.XmlNodeType.Text)
                     {
-                        string xpath = XmlUtility.GetXPathToNode(node);
+                        string xpath = XmlUtility.GetXPathToNode(node.ParentNode);
                         string value = node.Value;
-                        if (value != null) ;
-                        XmlNode tmpNode = doc.SelectSingleNode(xpath);
-
-                        if (tmpNode != null && tmpNode.NodeType == System.Xml.XmlNodeType.Element && value != null)
+                        if (value != null)
                         {
-                            tmpNode.Value = value;
+                            XmlNode tmpNode = doc.SelectSingleNode(xpath);
+
+                            if (tmpNode != null && value != null)
+                            {
+                                tmpNode.InnerText = value;
+                            }
                         }
                     }
                     else
@@ -77,6 +79,10 @@ namespace BExIS.Xml.Helpers
                         setValues(node, doc); // next level recursively
                     }
                     
+                }
+                else
+                {
+                    setValues(node, doc); // next level recursively
                 }
             }
         }

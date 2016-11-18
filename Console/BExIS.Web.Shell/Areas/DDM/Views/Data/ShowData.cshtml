@@ -31,7 +31,7 @@
         @(Html.Telerik().TabStrip()
               .Name("ShowDataTabStrip")
               .SelectedIndex(0)
-           
+              
               .Items(tabs =>
               {
 
@@ -39,6 +39,7 @@
                       .Text("Metadata")
                       .LoadContentFrom("ShowMetadata", "Data", new {area = "DDM", entityId = @Model.Id, title = @Model.Title, metadatastructureId = @Model.MetadataStructureId, datastructureId = @Model.DataStructureId, researchplanId = @Model.ResearchPlanId, sessionKeyForMetadata = "ShowDataMetadata"})
                       .HtmlAttributes(new { id = "metadata"});
+                      
 
                   tabs.Add()
                       .Text("Primary Data")
@@ -62,6 +63,7 @@
                   tabs.Add()
                       .Text("Publish")
                       .LoadContentFrom("publishData", "Data", new {area = "DDM", datasetId = @Model.Id})
+                      .Enabled(@Model.ViewAccess)
                       .HtmlAttributes(new { id = "prepare" });
                   
               })
@@ -104,9 +106,7 @@
 
     function OnSelectShowDataTabStrip(e) {
 
-        
         console.log(e.item.id);
-    
 
         if (e.item.id == "metadata") {
 

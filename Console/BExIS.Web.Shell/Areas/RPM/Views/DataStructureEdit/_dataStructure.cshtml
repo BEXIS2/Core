@@ -33,29 +33,35 @@
         </div>
     </div>
     <div class="bx-rpm-scrolldown bx t-arrow-down"/>
-    <div class="bx-rpm-dataStructure-functions">
-        <button class="bx-button action" id="saveButton">Save</button>
-        <button class="bx-button action" id="saveAsButton" title="Creates a full editable Copy of the Data Structure">Save as</button>
-        @Html.ActionLink("Download Excel Template", "downloadTemplate", "DataStructureIO", new { @id = Model.Id }, new { area = "RPM", @class = "bx-button action", @title = "Cancel" })
-        @if (Model.inUse)
-        {
-            <button class="bx-button action bx-disabled" id="deleteButton" disabled="disabled" title="Can't delete Data Struture, it's used by a Dataset">Delete</button>
-        }
-        else
-        {
-            <button class="bx-button action" id="deleteButton" onclick="javascript:openDelWindow(@Model.Id,'@Model.Name', 'datastructure')">Delete</button>
-        }
-        @Html.ActionLink("Cancel", "Index", "DataStructureEdit", new { DataStructureId = Model.Id }, new { area = "RPM", @class = "bx-button action", @title = "Cancel" })
-        <button class="hidden" id="storeVariablesButton" value="@Model.Id">Store Variables</button>
-        <button class="hidden" id="addVariableButton" value="0,''">Add Variable</button>
-    </div>
+    <table class="bx-rpm-dataStructure-functions">
+        <tr>
+            <td>
+                @Html.ActionLink("Download Excel Template", "downloadTemplate", "DataStructureIO", new { @id = Model.Id }, new { area = "RPM", @class = "bx-button action", @title = "Cancel" })
+                @if (Model.inUse)
+                {
+                    <button class="bx-button action bx-disabled" id="deleteButton" disabled="disabled" title="Can't delete Data Struture, it's used by a Dataset">Delete</button>
+                }
+                else
+                {
+                    <button class="bx-button action" id="deleteButton" onclick="javascript:openDelWindow(@Model.Id,'@Server.UrlEncode(Model.Name)', 'datastructure')">Delete</button>
+                }
+                <button class="hidden" id="storeVariablesButton" value="@Model.Id">Store Variables</button>
+                <button class="hidden" id="addVariableButton" value="0,''">Add Variable</button>
+            </td>
+            <td style="text-align: right">
+                <button class="bx-button action" id="saveButton">Save</button>
+                <button class="bx-button action" id="saveAsButton" title="Creates a full editable Copy of the Data Structure">Save as</button>
+                @Html.ActionLink("Cancel", "Index", "DataStructureSearch", new { DataStructureId = Model.Id }, new { area = "RPM", @class = "bx-button action", @title = "Cancel" })
+            </td>
+        </tr>
+    </table>
 </div>
 
 <script type="text/javascript">
     var messageCheck = false;
-    var inUse = @Model.inUse.ToString().ToLower();
-    var speed = 5, timer;
+    var dataStruktureInUse = @Model.inUse.ToString().ToLower();
     var startpos = 0;
+    var speed = 5, timer;
     var offsetX = 0;
     var offsetY = 0;
     var elemWidth = 0;
@@ -67,18 +73,17 @@
         addTooltips();
         setFocus();
 
-        if(inUse){
+        if(dataStruktureInUse){
             lock();
-        } 
+        }
     });
 
     function lock(){
         $('.bx-rpm-variable-item .bx-rpm-text input').attr('disabled','true');
         $('.bx-rpm-variable-item .bx-rpm-text input').addClass('bx-disabled');
         $('.bx-rpm-variable-item .bx-rpm-text input').attr('title',"Can't edit Variable, Data Structure is used by a Dataset");
-        $('.bx-rpm-variable-item .bx-rpm-text select').attr('disabled','true');
-        $('.bx-rpm-variable-item .bx-rpm-text select').addClass('bx-disabled');
-        $('.bx-rpm-variable-item .bx-rpm-text select').attr('title',"Can't edit Variable, Data Structure is used by a Dataset");
+        disableAllDropdown();
+        $('.bx-rpm-variable-item .bx-rpm-text .bx-rpm-option').attr('title',"Can't edit Variable, Data Structure is used by a Dataset");
         $('.bx-rpm-variable-item .bx-rpm-delete').attr('disabled','true');
         $('.bx-rpm-variable-item .bx-rpm-delete').addClass('bx-disabled');
         $('.bx-rpm-variable-item .bx-rpm-delete').attr('title',"Can't delete Variable Data, Structure is used by a Dataset");
@@ -101,6 +106,14 @@
             $(this).val('');
             $(this).val(temp);
         });
+
+        $( ".bx-rpm-variable-item input" ).dblclick(function() {
+            $(this).select();
+        });
+
+        $( ".bx-rpm-variable-item textarea" ).dblclick(function() {
+            $(this).select();
+        });
     }
 
     function initPackery() {
@@ -110,7 +123,7 @@
             columnWidth: 100,
         });
 
-        if(!inUse){
+        if(!dataStruktureInUse){
             $variableGrid.find('.bx-rpm-variable-item').each(function (i, item) {
                 $variableGrid.packery('bindDraggabillyEvents', new Draggabilly( item ));
             });
@@ -134,10 +147,9 @@
                     });
                     $('.bx-rpm-variable-item.is-dragging').css({'position': 'fixed'});
                     if(!moved){
-                        console.log(moved);
                         moved = true;
                         $('.bx-rpm-variable-item.is-dragging').width(elemWidth);
-                        $('.bx-rpm-variable-item.is-dragging select').blur();          
+                        closeAllDropdown();          
                     }
                 }
             });
@@ -160,6 +172,7 @@
                     div.scrollTop($('.bx-rpm-variable-drag-drop').height()-$('#variableContainer').height());
                 }
                 $variableGrid.packery('setScrollOffset', 0, startpos - pos);
+                closeAllDropdown();
             });
 
             $(".bx-rpm-scrollup").hover(function (e) {
@@ -177,10 +190,10 @@
                     }, 100);
                 })();
             },
-        function () {
-            clearTimeout(timer);
-            speed = 5;
-        });
+            function () {
+                clearTimeout(timer);
+                var speed = 5;
+            });
 
             $(".bx-rpm-scrolldown").hover(function () {
                 var div = $('#variableContainer');
@@ -188,7 +201,7 @@
                 (function startscrolling(){
                     timer = setTimeout(function () {
                         var pos = div.scrollTop();
-                        if(pos < $('.bx-rpm-variable-drag-drop').height()-$('#variableContainer').height()){
+                        if(pos < $('.bx-rpm-variable-drag-drop').height()-div.height()){
                             div.scrollTop(pos += speed);
                             if(speed < 30)
                                 speed++;
@@ -197,43 +210,53 @@
                     }, 100);
                 })();
             },
-               function () {
-                   clearTimeout(timer);
-                   speed = 5;
-               });
+            function () {
+                clearTimeout(timer);
+                var speed = 5;
+            });
 
             $('.bx-rpm-dataStructure-functions #addVariableButton').on('click', function() {
                 var value = $(this).attr('value').split(',')
-                var variableName = value[1];
                 var attrId = value[0];
-                var elems = $variableGrid.packery('getItemElements');
-                var isDuplicate = false;
-                var count = 0;
-                do {
-                    isDuplicate = false;
-                    count++;
-                    for (var i in elems) {
-                        if (variableName.toLowerCase() == $(elems[i]).find('#varlabel').val().toLowerCase()) {
-                            variableName = value[1] + ' (' + count + ')';
-                            isDuplicate = true;
-                        }
-                    }
-                } while (isDuplicate)
+                var variableName = '';
+                for(var i = 1; i < value.length; i++){
+                    if(i < value.length-1)
+                        variableName += value[i] + ',';
+                    else
+                        variableName += value[i];
+                }
 
-                var parameters = encodeURI('/?attributeId=' + attrId + '&variableName=' + variableName);
-                parameters = parameters.replace('#', '%23');
+                var parameters = encodeURI('/?attributeId=' + attrId + '&variableName=' + encodeURIComponent(variableName));
                 $.get('@Url.Action("_getVariableElement", "DataStructureEdit", new { area = "RPM" } )' + parameters, function (data) {
                     if ($(data).hasClass('bx-rpm-message')) {
                         createMessageWindow(data, 'Add Variable ' + variableName + ' (' + attrId + ')', 'dataattribure', attrId);
                     }
                     else {
                         var $item = $(data)
+                        var elems = $variableGrid.packery('getItemElements');
+                        var attrName = $item.find('#varlabel').val();
+                        var variableName = $item.find('#varlabel').val();
+                        var isDuplicate = false;
+                        var count = 0;
+                        do {
+                            isDuplicate = false;
+                            count++;
+                            for (var i in elems) {
+                                if (variableName.toLowerCase() == $(elems[i]).find('#varlabel').val().toLowerCase()) {
+                                    variableName = attrName + ' (' + count + ')';
+                                    isDuplicate = true;
+                                }
+                            }
+                        } while (isDuplicate)
+                        $item.find('#varunit').val($item.find('#varunit').attr('value'));
+                        $item.find('#varlabel').val(variableName);
                         $variableGrid.append($item).packery('appended', $item);
                         var elem = $variableGrid.find($item)[0];
                         $variableGrid.packery('bindDraggabillyEvents', new Draggabilly(elem));
                     }
                     $variableGrid.packery('layout');
                     setFocus();
+                    scrollDown($('#variableContainer'), $('.bx-rpm-variable-drag-drop'));
                 });
             });
 
@@ -270,38 +293,48 @@
         });
 
         $('.bx-rpm-dataStructure-functions #saveButton').on('click', function () {
-            var cssId = 'message';
-            var parameters = encodeURI('/?Id=' + $('.bx-rpm-datastructureheader #id').val() + '&Name=' + $('.bx-rpm-datastructureheader #name').val() + '&Description=' + $('.bx-rpm-datastructureheader #description').val() + '&isStructured=true&cssId=' + cssId + '&inUse=' + inUse);
-            parameters = parameters.replace('#', '%23');
-            $.get('@Url.Action("createDataStructure", "DataStructureSearch", new { area = "RPM"} )' + parameters, function (data) {
-                if ($(data).hasClass('bx-rpm-message')) {
-                    if($(data).attr('id') == cssId){
-                        $(data).replaceAll('.bx-rpm-createDataStructureContainer #' + $(data).attr('id'));
-                        showmessage($(data).attr('value').toLowerCase());
-                    }
-                    else if($(data).attr('id') == '0') {
-                        saveAs($('.bx-rpm-datastructureheader #name').val(), $('.bx-rpm-datastructureheader #description').val());
-                    }
-                    else if($(data).attr('id') == 'inUse') {
-                        lock();
-                        if(!inUse) {
-                            openCopyWindow(0, $('.bx-rpm-datastructureheader #name').val(), $('.bx-rpm-datastructureheader #description').val(), true, true, false, data);
+            validateName('message');
+            if(checkDuplicates()){
+                var cssId = 'message';
+                var parameters = encodeURI('/?Id=' + $('.bx-rpm-datastructureheader #id').val() + '&Name=' + encodeURIComponent($('.bx-rpm-datastructureheader #name').val()) + '&Description=' + encodeURIComponent($('.bx-rpm-datastructureheader #description').val()) + '&isStructured=true&cssId=' + cssId + '&inUse=' + dataStruktureInUse);
+                $.get('@Url.Action("createDataStructure", "DataStructureSearch", new { area = "RPM"} )' + parameters, function (data) {
+                    if ($(data).hasClass('bx-rpm-message')) {
+                        if($(data).attr('id') == cssId){
+                            $(data).replaceAll('.bx-rpm-datastructureheader #' + $(data).attr('id'));
+                            
+                            var title = "Save Data Structure " + $('.bx-rpm-datastructureheader #name').val() + " ("+ $('.bx-rpm-datastructureheader #id').val() +")";
+                            var message = "Can't save Data Structure because a Data tructure with same Name already exists.";
+                            parameters = '/?message=' + encodeURIComponent(message) + '&hasMessage=true&cssId=warning';
+                            $.get('@Url.Action("getMessageWindow", "DataStructureEdit", new { area = "RPM"} )' + parameters, function (data) {
+                                createMessageWindow(data ,title);
+                                $variableGrid.packery('layout');
+                            });
+                            showmessage();
                         }
-                        else {
-                            loadVariables($('.bx-rpm-datastructureheader #id').val());
+                        else if($(data).attr('id') == '0') {
+                            saveAs($('.bx-rpm-datastructureheader #name').val(), $('.bx-rpm-datastructureheader #description').val());
                         }
+                        else if($(data).attr('id') == 'inUse') {
+                            lock();
+                            if(!dataStruktureInUse) {
+                                openCopyWindow(0, $('.bx-rpm-datastructureheader #name').val(), $('.bx-rpm-datastructureheader #description').val(), true, true, false, data);
+                            }
+                            else {
+                                loadVariables($('.bx-rpm-datastructureheader #id').val());
+                            }
 
-                    }
-                    else if ($(data).attr('id') == 'redirect') {
-                        if(!inUse){
-                            storeVariables($(data).text());
                         }
-                        else{
-                            loadVariables($('.bx-rpm-datastructureheader #id').val());
+                        else if ($(data).attr('id') == 'redirect') {
+                            if(!dataStruktureInUse){
+                                storeVariables($(data).text());
+                            }
+                            else{
+                                loadVariables($('.bx-rpm-datastructureheader #id').val());
+                            }
                         }
                     }
-                }
-            });
+                });
+            }
         });
 
         $('.bx-rpm-dataStructure-functions #saveAsButton').on('click', function () {
@@ -309,20 +342,23 @@
         });
 
         function saveAs(name, description) {
-            var cssId = 'message';
-            parameters = '/?Id=0&Name=' + name + '&Description=' + description + '&isStructured=true&cssId=' + cssId + '&inUse=' + inUse ;
-            $.get('@Url.Action("createDataStructure", "DataStructureSearch", new { area = "RPM"} )' + parameters, function (data) {
-                if ($(data).hasClass('bx-rpm-message') && $(data).attr('id') == cssId) {
-                    openCopyWindow(0, $('.bx-rpm-datastructureheader #name').val(), $('.bx-rpm-datastructureheader #description').val(), true, true, false, data);
-                }
-                else if ($(data).hasClass('bx-rpm-message') && $(data).attr('id') == 'redirect') {
-                    var elems = $variableGrid.packery('getItemElements');
-                    for (var i = 0; i < elems.length; i++) {
-                        Id: $(elems[i]).find('#varid').text('0');
+            validateName('message');
+            if(checkDuplicates()){
+                var cssId = 'message';
+                parameters = '/?Id=0&Name=' + encodeURIComponent(name) + '&Description=' + encodeURIComponent(description) + '&isStructured=true&cssId=' + cssId + '&inUse=' + dataStruktureInUse ;
+                $.get('@Url.Action("createDataStructure", "DataStructureSearch", new { area = "RPM"} )' + parameters, function (data) {
+                    if ($(data).hasClass('bx-rpm-message') && $(data).attr('id') == cssId) {
+                        openCopyWindow(0, $('.bx-rpm-datastructureheader #name').val(), $('.bx-rpm-datastructureheader #description').val(), true, true, false, data);
                     }
-                    storeVariables($(data).text(), true);
-                }
-            });
+                    else if ($(data).hasClass('bx-rpm-message') && $(data).attr('id') == 'redirect') {
+                        var elems = $variableGrid.packery('getItemElements');
+                        for (var i = 0; i < elems.length; i++) {
+                            Id: $(elems[i]).find('#varid').text('0');
+                        }
+                        storeVariables($(data).text(), true);
+                    }
+                });
+            }
         }
 
         function storeVariables(id, reload) {
@@ -341,7 +377,7 @@
             }
 
             $('#DataStructure .bx-rpm-variable-drag-drop').html(
-                '<h3 class="bx-rpm-loading"><span class="fa fa-spinner fa-pulse"></span> Saveing Data Structure<span>' + id + '</span></h3>'
+                '<h3 style="position: absolute; left: 0px; top: '+ ($('#variableContainer').scrollTop()+$('#variableContainer').height()/2) +'px;" class="bx-rpm-loading"><span class="fa fa-spinner fa-pulse"></span> Saveing Data Structure<span>' + id + '</span></h3>'
             );
 
             variables = { variables: variables };
@@ -357,7 +393,7 @@
                 },
                 success: function (result) {
                     if (result.hasMessage) {
-                        parameters = '/?message=' + result.Message + '&hasMessage=' + result.hasMessage + '&cssId=' + result.CssId;
+                        parameters = '/?message=' + encodeURIComponent(result.Message) + '&hasMessage=' + result.hasMessage + '&cssId=' + result.CssId;
                         $.get('@Url.Action("getMessageWindow", "DataStructureEdit", new { area = "RPM"} )' + parameters, function (data) {
                             createMessageWindow(data,'Store Variables');
                         });
@@ -390,11 +426,36 @@
                 });
                 $variableGrid.packery('layout');
                 setFocus();
-                if(inUse){
+                if(dataStruktureInUse){
+                    console.log('loadVariables lock');
                     lock();
                 }
 
             });
+        }
+
+        function checkDuplicates(){
+            var elems = $variableGrid.packery('getItemElements');
+            var check = true;
+            for (var i = 0; i < elems.length; i++) {
+                for (var j = 0; j < elems.length; j++){
+                    if(i != j && $(elems[i]).find('#varlabel').val().trim() == $(elems[j]).find('#varlabel').val().trim()){
+                        $(elems[i]).find('.bx-rpm-error').removeClass('hidden');
+                        $(elems[i]).find('.bx-rpm-message').text('Variable Name must be unique. Duplicate Variable '+ $(elems[j]).find('#varid').text());
+                        check = false;
+                    }
+                }
+            }
+            if(!check){
+                var title = "Save Data Structure " + $('.bx-rpm-datastructureheader #name').val() + " ("+ $('.bx-rpm-datastructureheader #id').val() +")";
+                var message = "Can't save Data Structure because of duplicate Variable Names";
+                parameters = '/?message=' + encodeURIComponent(message) + '&hasMessage=true&cssId=warning';
+                $.get('@Url.Action("getMessageWindow", "DataStructureEdit", new { area = "RPM"} )' + parameters, function (data) {
+                    createMessageWindow(data ,title);
+                    $variableGrid.packery('layout');
+                });              
+            }
+            return check;
         }
     }
 
@@ -404,19 +465,21 @@
 
     function resizeVariableContainer(delay) {
         setTimeout(function () {
+            closeAllDropdown();
             $('.bx-rpm-variable-container').height(getVariableContainerSize());
-            var width = $('.bx-rpm-datastructureheader').width() - $($('.bx-rpm-datastructureheader .bx-rpm-label')[0]).outerWidth() - ($('.bx-rpm-datastructureheader textarea').outerWidth() - $('.bx-rpm-datastructureheader textarea').width());
-            $('.bx-rpm-datastructureheader textarea').attr('style', 'width:' + width + 'px; max-width:' + width + 'px;');
+            var width = $('.bx-rpm-datastructureheader').outerWidth() - $($('.bx-rpm-datastructureheader .bx-rpm-label')[0]).outerWidth() - ($('.bx-rpm-datastructureheader input').outerWidth() - $('.bx-rpm-datastructureheader input').width());
+            $('.bx-rpm-datastructureheader input').attr('style', 'width:' + width + 'px; max-width:' + width + 'px;');
+            $('.bx-rpm-datastructureheader textarea').attr('style', 'width:' + width + 'px; max-width:' + width + 'px;');       
         }, delay);
     }
 
     function getVariableContainerSize() {
-        return $(window).height() - $('.navbar').height() - $('.bx-rpm-datastructureheader').height() - $('.bx-rpm-dataStructure-functions').height() - $('.bx-rpm-dataStructure-container .bx-rpm-scrollup').height() - $('.bx-rpm-dataStructure-container .bx-rpm-scrolldown').height() - 95;
+        return $(window).height() - $('.navbar').height() - $('.bx-rpm-datastructureheader').height() - $('.bx-rpm-dataStructure-functions').height() - $('.bx-rpm-dataStructure-container .bx-rpm-scrollup').height() - $('.bx-rpm-dataStructure-container .bx-rpm-scrolldown').height() - $('#footer').outerHeight() - 95;
     }
 
     function openDelWindow(id, name, type) {
+        name = decodeURIComponent(name);
         var parameters = encodeURI('/?Id=' + id);
-        parameters = parameters.replace('#', '%23');
         $.ajax({
             type: 'GET',
             url: '@Url.Action("_deleteDataStructureBinding", "DataStructureSearch")' + parameters,
@@ -431,13 +494,12 @@
     //    validateName('message');
     //});
 
-    $('.bx-rpm-datastructureheader #name').change(function () {
-        validateName('message');
-    });
+    //$('.bx-rpm-datastructureheader #name').change(function () {
+    //    validateName('message');
+    //});
 
     function validateName(id) {
-        var parameters = encodeURI('/?Id=' + $('.bx-rpm-datastructureheader #id').val() + '&Name=' + $('.bx-rpm-datastructureheader #name').val() + '&cssId=' + id);
-        parameters = parameters.replace('#', '%23');
+        var parameters = encodeURI('/?Id=' + $('.bx-rpm-datastructureheader #id').val() + '&Name=' + encodeURIComponent($('.bx-rpm-datastructureheader #name').val()) + '&cssId=' + id);
         $.get('@Url.Action("_validateDataStructureName", "DataStructureSearch", new { area = "RPM"} )' + parameters, function (data) {
             $(data).replaceAll('.bx-rpm-datastructureheader #' + id);
             showmessage();
@@ -457,14 +519,14 @@
             }
         }
         if (hasMessage == true) {
-            $('.bx-rpm-dataStructure-functions #saveButton').attr('disabled', 'disabled');
+            //$('.bx-rpm-dataStructure-functions #saveButton').attr('disabled', 'disabled');
             $(".bx-rpm-datastructureheader #messageContainer").removeClass('hidden');
-            $('.bx-rpm-dataStructure-functions #saveButton').addClass('bx-disabled');
+            //$('.bx-rpm-dataStructure-functions #saveButton').addClass('bx-disabled');
         }
         else if(hasMessage == false){
-            $('.bx-rpm-dataStructure-functions #saveButton').removeAttr('disabled');
+            //$('.bx-rpm-dataStructure-functions #saveButton').removeAttr('disabled');
             $(".bx-rpm-datastructureheader #messageContainer").addClass('hidden');
-            $('.bx-rpm-dataStructure-functions #saveButton').removeClass('bx-disabled');
+            //$('.bx-rpm-dataStructure-functions #saveButton').removeClass('bx-disabled');
         }
         if (messageCheck != hasMessage) {
             messageCheck = hasMessage;
@@ -472,10 +534,9 @@
         }
     }
 
-    function openCopyWindow(Id, Name, Description, isSructured, inUse, copy, message) {
-        var title = "Save DataStructure " + Name + " ("+ Id +") as";
-        var parameters = encodeURI('/?Id=' + Id + '&Name=' + Name + '&Description=' + Description + '&isSructured=' + isSructured + '&inUse=' + inUse + '&copy=' + copy);
-        parameters = parameters.replace('#', '%23');
+    function openCopyWindow(Id, Name, Description, isSructured, dataStruktureInUse, copy, message) {
+        var title = "Save Data Structure " + Name + " ("+ $('.bx-rpm-datastructureheader #id').val() +") as";
+        var parameters = encodeURI('/?Id=' + Id + '&Name=' + encodeURIComponent(Name) + '&Description=' + encodeURIComponent(Description) + '&isSructured=' + isSructured + '&inUse=' + dataStruktureInUse + '&copy=' + copy);
         $.ajax({
             type: 'GET',
             url: '@Url.Action("_createDataStructureBinding", "DataStructureSearch")' + parameters,
@@ -508,5 +569,51 @@
                 resetAllTelerikIconTitles();
             }
         });
+    }
+
+    function openDropdown (elem){
+        var items = $('.bx-rpm-options');
+        var dropDown = $(elem).parent().find('.bx-rpm-option');
+        //console.log($(items[i]).parent().find('.bx-rpm-option') != dropDown);
+        //for(var i = 0; i < items.length; i++){
+        //    if($(items[i]).parent().find('.bx-rpm-option') != dropDown && $(items[i]).css('display') != 'none'){
+        //        $(items[i]).css('display', 'none');
+        //    }
+        //}
+        $(dropDown).parent().find('.bx-rpm-options').slideToggle('fast');
+        var offset = $(dropDown).parents('.bx-rpm-variable-item').position().top + $(dropDown).parents('.bx-rpm-variable-item').find('.unit').outerHeight() + $(dropDown).parents('.bx-rpm-variable-item').find('.unit').css('border-top-width') + $('#variableContainer').position().top - $('#variableContainer').scrollTop() - $(window).scrollTop();
+        $(dropDown).parent().find('.bx-rpm-options').css('top', offset);
+        $(dropDown).parent().find('.bx-rpm-options').css('min-width', $(dropDown).outerWidth());
+    }
+
+    function closeDropdown(option){
+        $(option).parent().parent().find('.bx-rpm-option').attr('value', $(option).attr('value'));
+        $(option).parent().parent().find('.bx-rpm-value').val($(option).attr('value'));
+        $(option).parent().parent().find('.bx-rpm-option').text($(option).text());
+        $(option).parent().parent().find('.bx-rpm-options').slideToggle('fast');
+    }
+
+    $(window).scroll(function (){
+        closeAllDropdown();
+    });
+
+    $(window).click(function (e){
+        if(!$(e.target).hasClass('bx-rpm-option') && !$(e.target).hasClass('bx-rpm-options') && !$(e.target).hasClass('bx-rpm-option-arrow'))
+            closeAllDropdown();
+    });
+
+    function closeAllDropdown(){
+        var items = $('.bx-rpm-options');
+        for(var i = 0; i < items.length; i++){
+            if($(items[i]).css('display') != 'none'){
+                $(items[i]).css('display', 'none');
+            }
+        }
+    }
+
+    function disableAllDropdown(){
+        $('.bx-rpm-option').removeAttr('onclick');
+        $('.bx-rpm-option').addClass('bx-disabled');
+        $('.bx-rpm-option-arrow').addClass('bx-disabled');
     }
 </script>

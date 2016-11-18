@@ -24,14 +24,16 @@ using System.Xml.Schema;
 using BExIS.IO;
 using Vaiona.Utils.Cfg;
 using Ionic.Zip;
+using Vaiona.Logging.Aspects;
 
 namespace BExIS.Web.Shell.Controllers
 {
     public class UiTestController : Controller
     {
-        //
-        // GET: /UiTest/
-
+        //[RecordCall]
+        //[LogExceptions]
+        //[Diagnose]
+        //[MeasurePerformance]
         public ActionResult Index()
         {
             UiTestModel model = new UiTestModel();

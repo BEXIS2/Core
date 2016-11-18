@@ -62,9 +62,9 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
             bool inUse = false;
             if (unit.Name.ToLower() == "none")
                 inUse = true;
-            else if (dataAttributeManager.DataAttributeRepo.Get().Where(d => d.Unit.Id.Equals(unit.Id)).Count() > 0)
+            else if (dataAttributeManager.DataAttributeRepo.Query(d => d.Unit.Id.Equals(unit.Id)).Count() > 0)
                 inUse = true;
-            else if (dataStructureManager.VariableRepo.Get().Where(d => d.Unit.Id.Equals(unit.Id)).Count() > 0)
+            else if (dataStructureManager.VariableRepo.Query(d => d.Unit.Id.Equals(unit.Id)).Count() > 0)
                 inUse = true;
             return inUse;
         }

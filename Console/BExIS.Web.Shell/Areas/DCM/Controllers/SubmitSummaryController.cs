@@ -19,6 +19,7 @@ using BExIS.Web.Shell.Areas.DCM.Models;
 using System.Threading.Tasks;
 using System.Threading;
 using NHibernate.Util;
+using Vaiona.Logging;
 using Vaiona.Logging.Aspects;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
@@ -165,7 +166,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         }
 
         // original version of finishupload
-        //[MeasurePerformance]
+        [MeasurePerformance]
         public List<Error> FinishUpload2(TaskManager taskManager)
         {
 
@@ -412,10 +413,10 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                             // ToDo: Get Comment from ui and users
                             dm.CheckInDataset(ds.Id, "upload data from upload wizard", GetUsernameOrDefault());
 
-                            // open the excel file and add data tuples
-                            //AddDatatuplesToFile(ds.Id, sds.Id, path);
-                        }
-                        catch (Exception e)
+                            LoggerFactory.LogData(id.ToString(), typeof(Dataset).Name, Vaiona.Entities.Logging.CrudState.Updated);
+
+                    }
+                    catch (Exception e)
                         {
 
                             temp.Add(new Error(ErrorType.Other, "Can not upload. : " + e.Message));
@@ -456,7 +457,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             return temp;
         }
 
-        //[MeasurePerformance]
+        [MeasurePerformance]
         //temporary solution: norman :FinishUpload2
         public List<Error> FinishUpload(TaskManager taskManager)
         {

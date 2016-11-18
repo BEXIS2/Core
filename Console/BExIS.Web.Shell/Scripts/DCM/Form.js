@@ -1,15 +1,25 @@
 ﻿var minimapOriginalTop = 0;
 $(document).ready(function (e) {
-    if ($('textarea') != null) {
-        console.log(e);
-        autosize($('textarea'));
-    }
+
+
+    setTimeout(
+      function () {
+          //do something special
+          //console.log("doc ready before autosize");
+          //console.log($('textarea'));
+          if ($('textarea') != null) {
+
+              $($('textarea')).each(function (index, element) {
+                  // element == this
+                  autosize($(this));
+                  //console.log("done autosize");
+              });
+          }
+      }, 10);
+
+    
     //setTabIndex();
     resetAllTelerikIconTitles();
-
-
-  
-
 });
 
 function setTabIndex() {
@@ -18,7 +28,7 @@ function setTabIndex() {
     console.log(list);
     for (var i = 0; i < list.length ; i++) {
         var input = list[i];
-        console.log(input);
+        //console.log(input);
         $(input).attr("tabindex", i);
     }
 }
@@ -38,19 +48,20 @@ $(window)
     });
 
 var originalMinimapTop = 0;
+var positionMiniRegion = 0;
 function bindMinimap(create) {
 
     var scrollpostion = $(document).scrollTop();
 
         //if (($('#root').height()+200) > ($(window).height())) {
 
-        //if ($(".miniregion")) {
-        //    $(".miniregion").remove();
-        //}
+        if ($(".miniregion")) {
+            $(".miniregion").remove();
+        }
 
-        //if ($(".minimap")) {
-        //    $(".minimap").remove();
-        //}
+        if ($(".minimap")) {
+            $(".minimap").remove();
+        }
 
         var menubar = $(".navbar").height() + 20;
 
@@ -96,14 +107,13 @@ function bindMinimap(create) {
                     position: "right",
                     touch: true,
                     smoothScroll: false,
-                    smoothScrollDelay: 100,
-                    onPreviewChange: function () {
-                        console.log("change");
-                    }
+                    smoothScrollDelay: 100
                 });
 
             var x = $(".minimap").css("top");
             originalMinimapTop = x.split("px");
+            //console.log("create");
+
 
         } else {
 
@@ -128,17 +138,16 @@ function bindMinimap(create) {
                         touch: true,
                         smoothScroll: false,
                         smoothScrollDelay: 100,
-                        onPreviewChange: function () {
-                            console.log("change");
-                        }
                     });
 
                 var x = $(".minimap").css("top");
                 originalMinimapTop = x.split("px");
+                //console.log("create");
+
 
             } else {
 
-                console.log(originalMinimapTop + " : " + scrollpostion);
+                //console.log(originalMinimapTop + " : " + scrollpostion);
 
                 if ((topContainer - scrollpostion) + 1000 > menubar) {
 
@@ -153,12 +162,22 @@ function bindMinimap(create) {
                     //console.log(position);
                     $(".minimap").css("top", positionMinimap);
                     $(".miniregion").css("top", positionMiniRegion);
+                    //console.log("----");
+
+                    //console.log(positionMiniRegion);
+                    //console.log($(".miniregion").css("top"));
+                    //console.log("updated");
                 }
 
             }
 
+            if (positionMiniRegion > 0) {
+                $(".miniregion").css("top", positionMiniRegion);
+                //console.log("updated region");
+            }
 
-            console.log("exist");
+
+            //console.log("exist");
         }
 
 
