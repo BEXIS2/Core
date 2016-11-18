@@ -937,10 +937,12 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         private void AddDatatuplesToFile(long datasetId, long dataStructureId, string path)
         {
-            List<long> tempDataTuplesIds = GetDataTuples(datasetId);
+            DatasetManager datasetManager = new DatasetManager();
+            DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);            
+            List<long> tempDataTuplesIds = datasetManager.GetDatasetVersionEffectiveTupleIds(datasetVersion);
 
             ExcelWriter excelWriter = new ExcelWriter();
-            excelWriter.AddDataTuplesToTemplate(tempDataTuplesIds, path, dataStructureId);
+            excelWriter.AddDataTuplesToTemplate(datasetManager, tempDataTuplesIds, path, dataStructureId);
         }
 
         private List<long> GetDataTuples(long datasetId)

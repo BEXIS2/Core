@@ -157,20 +157,19 @@ namespace BExIS.IO.Transform.Output
         /// <param name="filePath">Path of the excel template file</param>
         /// <param name="dataStructureId">Id of datastructure</param>
         /// <returns>List of Errors or null</returns>
-        public List<Error> AddDataTuples(List<long> dataTuplesIds, string filePath, long dataStructureId)
+        public List<Error> AddDataTuples(DatasetManager datasetManager,List<long> dataTuplesIds, string filePath, long dataStructureId)
         {
             if (File.Exists(filePath))
             {
                 StringBuilder data = new StringBuilder();
                 data.AppendLine(dataStructureToRow(dataStructureId));
 
-                foreach (long id in dataTuplesIds)
+                DataTupleIterator tupleIterator = new DataTupleIterator(dataTuplesIds, datasetManager);
+                foreach (var tuple in tupleIterator)
                 {
-                    string newline = datatupleToRow(id);
-                    if(!String.IsNullOrEmpty(newline))data.AppendLine(newline);
+                    string newline = datatupleToRow(tuple);
+                    if (!String.IsNullOrEmpty(newline)) data.AppendLine(newline);
                 }
-
-
                 File.WriteAllText(filePath, data.ToString());
             }
 
