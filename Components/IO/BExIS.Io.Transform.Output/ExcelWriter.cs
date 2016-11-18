@@ -538,8 +538,10 @@ namespace BExIS.IO.Transform.Output
 
                     try
                     {
+
                         SpreadsheetDocument dataStructureFile = SpreadsheetDocument.Open(dataStructureFilePath, true);
-                        SpreadsheetDocument dataFile = SpreadsheetDocument.Create(dataPath, dataStructureFile.DocumentType);
+                        SpreadsheetDocument dataFile = SpreadsheetDocument.Create(dataPath,
+                            dataStructureFile.DocumentType);
 
                         foreach (OpenXmlPart part in dataStructureFile.GetPartsOfType<OpenXmlPart>())
                         {
@@ -549,7 +551,7 @@ namespace BExIS.IO.Transform.Output
                         dataFile.WorkbookPart.Workbook.Save();
                         dataStructureFile.Dispose();
                         dataFile.Dispose();
-
+            
                     }
                     catch (Exception ex)
                     {
