@@ -139,27 +139,22 @@ function addTooltips() {
 $(".t-grid").load(function () {
 
     $(".t-grid th").each(function () {
-
         var element = $(this);
-        var div = $(document.createElement("div"));
-        div.addClass("bx-header-title");
-        div.css({ "overflow": "hidden", "text-overflow": "ellipsis", "float": "left" });
+        var div;
+        if (element.find(".bx-header-title").length > 0) {
+            div = element.find(".bx-header-title");
+        }
+        else {
+            div = $(document.createElement("div"));
+            div.addClass("bx-header-title");
+            div.css({ "overflow": "hidden", "text-overflow": "ellipsis", "float": "left" });
+            div.append(element.find("a"));
+            element.prepend(div);
+        }
 
         var filter = element.find(".t-grid-filter");
         filter.css("float", "right");
-
-
         div.width((element.innerWidth() - filter.outerWidth() - 5));
-
-        var a = element.find("a");
-        //var arrow = element.find("span");
-        //console.log(arrow);
-        //a.append(arrow);
-        div.append(a);
-
-        element.prepend(div);
-
-
     });
 });
 

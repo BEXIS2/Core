@@ -120,6 +120,7 @@
                 $('#' + id + '_edit').removeClass('bx-edit');
                 $('#' + id + '_edit').addClass('bx-show');
             }
+            $(".t-grid").trigger('load');
         }
 
         //prepare UI for DataStructure preview
@@ -137,13 +138,15 @@
     function dataStructurePreviewGrid_onDataBound(e) {
         resetAllTelerikIconTitles();
         addTooltips();
+        $(this).parent().find('.bx-rpm-loading').remove();
+        $(this).toggle();
         $('#bx-rpm-dataStructureResultGrid .bx-rpm-preview td').removeAttr('title');
     }
 
     function loadPreview(id) {
         var parameters = '/?dataStructureId=' + id + '&structured=' + $('#' + id).attr('structured');
         $.get('@Url.Action("_dataStructurePreviewBinding", "DataStructureSearch", new { area = "RPM"} )' + parameters, function (data) {
-            $('#' + id + '_content').html(data);
+            $('#' + id + '_content').append(data);
         });
     }
 
