@@ -21,6 +21,7 @@ using BExIS.Xml.Helpers;
 using BExIS.Xml.Services;
 using DocumentFormat.OpenXml.Drawing;
 using Path = System.IO.Path;
+using BExIS.RPM.Output;
 
 /// <summary>
 ///
@@ -329,7 +330,15 @@ namespace BExIS.IO.Transform.Output
                 foreach (XmlNode x in resource)
                 {
                     if (x.Attributes.GetNamedItem("Type").Value == "Excel")
-                        path = x.Attributes.GetNamedItem("Path").Value;
+                        if (File.Exists(x.Attributes.GetNamedItem("Path").Value))
+                        {
+                            path = x.Attributes.GetNamedItem("Path").Value;
+                        }
+                        else
+                        {
+                            ExcelTemplateProvider provider = new ExcelTemplateProvider("BExISppTemplate_Clean.xlsm");
+                            path = provider.CreateTemplate(dataStructure);
+                        }
                 }
 
 

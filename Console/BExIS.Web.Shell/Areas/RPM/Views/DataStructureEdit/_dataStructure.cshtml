@@ -33,7 +33,7 @@
         </div>
     </div>
     <div class="bx-rpm-scrolldown bx t-arrow-down"/>
-    <table class="bx-rpm-dataStructure-functions">
+    <table class="bx-rpm-dataStructure-functions bx-footer left">
         <tr>
             <td>
                 @Html.ActionLink("Download Excel Template", "downloadTemplate", "DataStructureIO", new { @id = Model.Id }, new { area = "RPM", @class = "bx-button action", @title = "Cancel" })
@@ -48,7 +48,7 @@
                 <button class="hidden" id="storeVariablesButton" value="@Model.Id">Store Variables</button>
                 <button class="hidden" id="addVariableButton" value="0,''">Add Variable</button>
             </td>
-            <td style="text-align: right">
+            <td class="bx-footer right">
                 <button class="bx-button action" id="saveButton">Save</button>
                 <button class="bx-button action" id="saveAsButton" title="Creates a full editable Copy of the Data Structure">Save as</button>
                 @Html.ActionLink("Cancel", "Index", "DataStructureSearch", new { DataStructureId = Model.Id }, new { area = "RPM", @class = "bx-button action", @title = "Cancel" })
