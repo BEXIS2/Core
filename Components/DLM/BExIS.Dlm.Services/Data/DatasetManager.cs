@@ -33,7 +33,7 @@ namespace BExIS.Dlm.Services.Data
             this.PreferedBatchSize = uow.PersistenceManager.PreferredPushSize;
             this.DatasetRepo = uow.GetReadOnlyRepository<Dataset>();
             this.DatasetVersionRepo = uow.GetReadOnlyRepository<DatasetVersion>();
-            this.DataTupleRepo = uow.GetReadOnlyRepository<DataTuple>();
+            this.DataTupleRepo = uow.GetReadOnlyRepository<DataTuple>(CacheMode.Ignore);
             this.DataTupleVerionRepo = uow.GetReadOnlyRepository<DataTupleVersion>();
             this.ExtendedPropertyValueRepo = uow.GetReadOnlyRepository<ExtendedPropertyValue>();
             this.VariableValueRepo = uow.GetReadOnlyRepository<VariableValue>();
@@ -1412,25 +1412,31 @@ namespace BExIS.Dlm.Services.Data
             // effective tuples of the latest checked in version are in DataTuples table but they belong to the latest and previous versions
             List<Int64> versionIds = getPreviousVersionIds(datasetVersion);
             List<DataTuple> tuples;
-            using (IUnitOfWork uow = this.GetBulkUnitOfWork())
+            try
             {
-                IReadOnlyRepository<DataTuple> tuplesRepoTemp = uow.GetReadOnlyRepository<DataTuple>();
-                tuples = (versionIds == null || versionIds.Count() <= 0) ?
-                    new List<DataTuple>() :
-                    tuplesRepoTemp.Query(p => versionIds.Contains(p.DatasetVersion.Id))
-                            .Skip(pageNumber * pageSize)
-                            .Take(pageSize)
-                            .ToList();
+                using (IUnitOfWork uow = this.GetBulkUnitOfWork())
+                {
+                    IReadOnlyRepository<DataTuple> tuplesRepoTemp = uow.GetReadOnlyRepository<DataTuple>();
+                    tuples = (versionIds == null || versionIds.Count() <= 0) ?
+                        new List<DataTuple>() :
+                        tuplesRepoTemp.Query(p => versionIds.Contains(p.DatasetVersion.Id))
+                                .Skip(pageNumber * pageSize)
+                                .Take(pageSize)
+                                .ToList();
+                }
+
+                //tuples = (versionIds == null || versionIds.Count() <= 0) ? new List<DataTuple>() :
+                //                DataTupleRepo.Query(p => versionIds.Contains(p.DatasetVersion.Id))
+                //                .Skip(pageNumber * pageSize).Take(pageSize)
+                //                .ToList();
+
+                //Dictionary<string, object> parameters = new Dictionary<string, object>() { { "datasetVersionId", datasetVersion.Id } };
+                //List<DataTuple> tuples = DataTupleRepo.Get("getLatestCheckedInTuples", parameters).ToList();
+                return (tuples);
+            } catch  (Exception ex)
+            {
+                return null;
             }
-
-            //tuples = (versionIds == null || versionIds.Count() <= 0) ? new List<DataTuple>() :
-            //                DataTupleRepo.Query(p => versionIds.Contains(p.DatasetVersion.Id))
-            //                .Skip(pageNumber * pageSize).Take(pageSize)
-            //                .ToList();
-
-            //Dictionary<string, object> parameters = new Dictionary<string, object>() { { "datasetVersionId", datasetVersion.Id } };
-            //List<DataTuple> tuples = DataTupleRepo.Get("getLatestCheckedInTuples", parameters).ToList();
-            return (tuples);
         }
 
         private List<Int64> getPrimaryTupleIds(DatasetVersion datasetVersion)
@@ -1439,7 +1445,7 @@ namespace BExIS.Dlm.Services.Data
             List<Int64> versionIds = getPreviousVersionIds(datasetVersion);
             List<Int64> tuples = (versionIds == null || versionIds.Count() <= 0) ? 
                                         new List<Int64>() 
-                                        : DataTupleRepo.Get(p => versionIds.Contains(p.DatasetVersion.Id)).Select(p=> p.Id)
+                                        : DataTupleRepo.Query(p => versionIds.Contains(p.DatasetVersion.Id)).Select(p=> p.Id)
                                                        .ToList();
             return (tuples);
         }
@@ -1486,7 +1492,7 @@ namespace BExIS.Dlm.Services.Data
             // effective tuples of the working copy are similar to latest checked in version. They are in DataTuples table but they belong to the latest and previous versions
             List<Int64> versionIds = getPreviousVersionIds(datasetVersion);
             List<DataTuple> tuples = (versionIds == null || versionIds.Count() <= 0) ? new List<DataTuple>() :
-                DataTupleRepo.Get(p => versionIds.Contains(((DataTuple)p).DatasetVersion.Id))
+                DataTupleRepo.Query(p => versionIds.Contains(((DataTuple)p).DatasetVersion.Id))
                         .Skip(pageNumber*pageSize).Take(pageSize)
                         .ToList();
             return (tuples);
@@ -1496,7 +1502,12 @@ namespace BExIS.Dlm.Services.Data
         {
             // effective tuples of the working copy are similar to latest checked in version. They are in DataTuples table but they belong to the latest and previous versions
             List<Int64> versionIds = getPreviousVersionIds(datasetVersion);
-            List<Int64> tuples = (versionIds == null || versionIds.Count() <= 0) ? new List<Int64>() : DataTupleRepo.Get(p => versionIds.Contains(((DataTuple)p).DatasetVersion.Id)).Select(p => p.Id).ToList();
+            List<Int64> tuples = (versionIds == null || versionIds.Count() <= 0) ? 
+                new List<Int64>() : 
+                DataTupleRepo
+                    .Query(p => versionIds.Contains(((DataTuple)p).DatasetVersion.Id))
+                    .Select(p => p.Id)
+                    .ToList();
             return (tuples);
         }
 
@@ -1633,10 +1644,62 @@ namespace BExIS.Dlm.Services.Data
 
                     repo.Put(ds);
                     uow.Commit();
+                    // when everything is OK, check if a materialized view is created for the datsets, if yes: refresh it to the lateset changes
+                    // if not: try creating a materialized view and refresh it
+                    // This only works for the latest versions of datasets, so any function that returns the lateset versions' tuples, must use the materialized views
+                    updateMaterializedView(datasetId);
                 }
             }
         }
 
+        private void updateMaterializedView(long datasetId)
+        {
+            if (!existsMaterializedView(datasetId))
+                createMaterializedView(datasetId);
+            refreshMaterializedView(datasetId);
+        }
+
+        private void createMaterializedView(long datasetId)
+        {
+            //Session session = (Session)em.getDelegate();
+            //SessionFactoryImplementor sfi = (SessionFactoryImplementor)session.getSessionFactory();
+            //ConnectionProvider cp = sfi.getConnectionProvider();
+            //Connection connection = cp.getConnection();
+            //Statement statement = connection.createStatement();
+            // get the sql from the DB dialcet, change the view name to "mv_dataset_<datasetId>"
+            //Query query = em.createNativeQuery(sql);
+            //query.executeUpdate();
+        }
+
+        private void refreshMaterializedView(long datasetId)
+        {
+            // refresh query is also native, goes to dialact specific query files, getNamedQuery, ...
+            //String sql = "refresh materialized view mv_all_operations; refresh materialized view mv_all_members;";
+            //createNativeQuery(sql).executeUpdate();
+            
+            //// by calling addSynchronizedEntityClass method we inform hibernate that any Person  
+            //// persistent object should be synchronized with database before invoking query  
+            //session.createSQLQuery("{call DBMS_MVIEW.REFRESH('PERSON_AGGREGATE')}")
+            //    .addSynchronizedEntityClass(Person.class).executeUpdate();
+    }
+
+        private bool existsMaterializedView(long datasetId)
+        {
+            // sql query to check whether the view exists...
+            return false;
+        }
+
+        /// <summary>
+        /// used by the purge dunction, and maybe delete funtion too.
+        /// </summary>
+        /// <param name="datasetId"></param>
+        /// <returns></returns>
+        private bool dropMaterializedView(long datasetId)
+        {
+            // sql query to check whether the view exists...
+            return false;
+        }
+        
         // in some cases maybe another attribute of the user is used like its ID, email or the IP address
         private string getUserIdentifier(string username)
         {

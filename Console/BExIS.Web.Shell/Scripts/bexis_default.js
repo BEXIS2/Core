@@ -301,10 +301,10 @@ $.fn.extend({
 
     preloader: function (fontsize, text, height) {
 
-        console.log(text);
-        console.log(height);
-        console.log(fontsize);
-        typeof value === "undefined"
+        //console.log(text);
+        //console.log(height);
+        //console.log(fontsize);
+
         if (typeof text === "undefined") {
             text = "Loading...";
         }
@@ -317,17 +317,16 @@ $.fn.extend({
             fontsize = 10;
         }
 
-        console.log(text);
-        console.log(height);
-        console.log(fontsize);
+        //console.log(text);
+        //console.log(height);
+        //console.log(fontsize);
 
         var loader = document.createElement('span');
         console.log(loader);
+
         $(loader).css("font-size", fontsize);
         $(loader).css("padding", 5);
         $(loader).addClass("fa fa-spinner fa-pulse");
-            
-
 
         //    '<span style="font-size:'+fontsize+'px;" ' +
         //'class="preloader fa fa-spinner fa-pulse"></span> '+text+
@@ -337,8 +336,11 @@ $.fn.extend({
         $(div).append(loader);
         $(div).append(text);
 
+        $(div).addClass("preloader");
+
         $(div).css("font-size", fontsize);
         $(div).css("height", height);
+        $(div).css("padding", 2);
 
         console.log(div);
 

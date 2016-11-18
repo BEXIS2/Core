@@ -38,7 +38,7 @@ namespace BExIS.IO.Transform.Output
                 string title = XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title);
 
                 // store in content descriptor
-                storeGeneratedFilePathToContentDiscriptor(datasetId, datasetVersion, "metadata_"+ mappingName, ".xml");
+                storeGeneratedFilePathToContentDiscriptor(datasetId, datasetVersion, "metadata", ".xml");
 
             }
             catch (Exception ex)

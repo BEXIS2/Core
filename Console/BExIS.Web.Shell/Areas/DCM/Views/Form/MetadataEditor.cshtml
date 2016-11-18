@@ -253,7 +253,7 @@ $("#showminimap")
 
 function SelectFileProcess_OnSelect(e) {
 
-        $("#root").preloader(300);
+        $("#root").preloader(20, "Import selected xml file.",300);
 
 
         var file = e.files[0];
@@ -311,7 +311,7 @@ function OnSuccess() {
 
 function validate() {
 
-    $('#root').preloader(300);
+    $("#root").preloader(20, "Is validating",300);
 
     $.get('@Url.Action("Validate", "Form", new RouteValueDictionary {{"area", "DCM"}})',
         function (response) {

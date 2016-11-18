@@ -63,9 +63,7 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
             {
                 // apply selection and projection
                 //var tuples = dm.GetDatasetVersionEffectiveTuples(version);
-
-                DataTable dt = OutputDataManager.ConvertPrimaryDataToDatatable(version,
-                    dm.GetDatasetVersionEffectiveTupleIds(version), title, true);
+                DataTable dt = OutputDataManager.ConvertPrimaryDataToDatatable(dm, version, title, true);
 
                 if (!string.IsNullOrEmpty(selection))
                 {
