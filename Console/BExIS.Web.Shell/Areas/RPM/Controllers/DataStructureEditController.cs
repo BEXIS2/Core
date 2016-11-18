@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
+using Vaiona.Logging;
 
 namespace BExIS.Web.Shell.Areas.RPM.Controllers
 {
@@ -92,11 +93,13 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                         dataStructureManager.RemoveVariableUsage(v);
                     }
                     dataStructureManager.DeleteStructuredDataStructure(dataStructure);
+                    LoggerFactory.LogData(dataStructure.Id.ToString(), typeof(DataStructure).Name, Vaiona.Entities.Logging.CrudState.Deleted);
                 }
                 else
                 {
                     UnStructuredDataStructure dataStructure = dataStructureManager.UnStructuredDataStructureRepo.Get(Id);
                     dataStructureManager.DeleteUnStructuredDataStructure(dataStructure);
+                    LoggerFactory.LogData(dataStructure.Id.ToString(), typeof(DataStructure).Name, Vaiona.Entities.Logging.CrudState.Deleted);
                 }
                 return PartialView("_message", new MessageModel()
                 {
@@ -185,6 +188,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                     dataStructureManager.RemoveVariableUsage(v);
                 }
             }
+            LoggerFactory.LogCustom("Variables for Data Structure " + Id + " stored.");
             return Json(returnObject, JsonRequestBehavior.AllowGet);
         }
 

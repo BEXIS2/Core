@@ -13,7 +13,7 @@
                 Name <span class="bx bx-required" title="Required"></span>
             </td>
             <td>
-                <div title="The name will be used for a new Variable Template">@Html.TextBox("Name", Model.Name, new { @class = "bx-input", @id = "name" })</div>
+                <div title="The name will be used for a new Variable Template">@Html.TextBox("Name", Model.Name, new { @class = "bx-input", @id = "name", @autofocus = "true" })</div>
                 <div class="hidden bx-rpm-error" id="messageContainer"><span id="message" class="bx-rpm-message" value="none"></span></div>
             </td>
         </tr>

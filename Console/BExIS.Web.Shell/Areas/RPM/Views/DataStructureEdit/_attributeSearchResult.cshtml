@@ -279,6 +279,8 @@
                     $item = $(data);
                     $attributeGrid.append($item).isotope('appended', $item);
                     scrollDown($('.bx-rpm-attribute-container'), $('.bx-rpm-attribute-drag-drop'));
+                    loadFilter();
+                    $('.bx-rpm-attributeheader .bx-search').trigger('click');
                 }
             });
             $attributeGrid.isotope('layout');
