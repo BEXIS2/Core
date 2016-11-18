@@ -299,14 +299,50 @@ $(".bx-list-multi >li").click(function ()
 
 $.fn.extend({
 
-    preloader: function (h) {
+    preloader: function (fontsize, text, height) {
+
+        console.log(text);
+        console.log(height);
+        console.log(fontsize);
+        typeof value === "undefined"
+        if (typeof text === "undefined") {
+            text = "Loading...";
+        }
+
+        if (typeof height === "undefined" || height===0) {
+            height = "auto";
+        }
+
+        if (typeof fontsize === "undefined") {
+            fontsize = 10;
+        }
+
+        console.log(text);
+        console.log(height);
+        console.log(fontsize);
+
+        var loader = document.createElement('span');
+        console.log(loader);
+        $(loader).css("font-size", fontsize);
+        $(loader).css("padding", 5);
+        $(loader).addClass("fa fa-spinner fa-pulse");
+            
 
 
-        var html = '<div style = "height:' +
-            h +
-            'px;"><h3><span style="font-size:30px;" class="preloader fa fa-spinner fa-pulse"></span> Loading...</h3></div>';
+        //    '<span style="font-size:'+fontsize+'px;" ' +
+        //'class="preloader fa fa-spinner fa-pulse"></span> '+text+
 
-        $(this).html(html);
+        var div = document.createElement('div');
+
+        $(div).append(loader);
+        $(div).append(text);
+
+        $(div).css("font-size", fontsize);
+        $(div).css("height", height);
+
+        console.log(div);
+
+        $(this).html(div);
 
         return this;
     }

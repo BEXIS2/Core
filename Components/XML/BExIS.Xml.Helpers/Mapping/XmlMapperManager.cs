@@ -243,6 +243,9 @@ namespace BExIS.Xml.Helpers.Mapping
 
             string path = Path.Combine(AppConfiguration.DataPath, getStorePath(datasetVersionId, exportTo));
 
+            string dircectory = Path.GetDirectoryName(path);
+            FileHelper.CreateDicrectoriesIfNotExist(dircectory);
+
             newMetadata.Save(path);
 
             //XmlReaderSettings settings = new XmlReaderSettings();
@@ -656,7 +659,7 @@ namespace BExIS.Xml.Helpers.Mapping
             MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
             string md_title = metadataStructureManager.Repo.Get(datasetVersion.Dataset.MetadataStructure.Id).Name;
 
-            string path = IOHelper.GetDynamicStorePath(datasetVersion.Dataset.Id, datasetVersionId,"metadata_"+ exportTo, ".xml");
+            string path = IOHelper.GetDynamicStorePath(datasetVersion.Dataset.Id, datasetVersionId,"metadata", ".xml");
 
             return path;
         }
