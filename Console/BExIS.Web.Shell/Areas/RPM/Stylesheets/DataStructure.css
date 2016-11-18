@@ -14,10 +14,11 @@
     display: none;
 }
 
-select.bx-disabled{
-    color: #565655;
-    background-color: #f5f5f5;
-    border-color: #565655;
+.bx-rpm-option-arrow.bx-disabled,
+.bx-rpm-option.bx-disabled{
+    color: #565655 !important;
+    background-color: #f5f5f5 !important;
+    border-color: #565655 !important;
 }
 
 .bx-rpm-message,
@@ -124,7 +125,6 @@ select.bx-disabled{
 
 .bx-rpm-options{
     border-color:#afb0b1;
-    border-top-color:#000000;
     position:fixed;
     z-index:10;
 }
@@ -132,6 +132,7 @@ select.bx-disabled{
 .bx-rpm-option{
     white-space: nowrap;
     max-height: 18pt;
+    padding-right:16px;
     overflow: hidden;
     text-overflow: ellipsis; 
 }

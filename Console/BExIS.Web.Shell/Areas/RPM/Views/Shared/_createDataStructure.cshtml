@@ -77,25 +77,31 @@
             </td>
         </tr>
     </table>
-    <div id="buttons">
-        <button class="bx-button small action" id="saveButton">Save</button>
-        @if (Model.Id > 0 && !Model.copy)
-        {
-            if (Model.inUse)
-            {
-                <button class="bx-button small action bx-disabled" id="deleteButton" disabled="true">Delete</button>
-            }
-            else
-            {
-                <button class="bx-button small action" id="deleteButton" onclick="javascript:openDelWindow(@Model.Id,'@Server.UrlEncode(Model.Name)','datastructure')">Delete</button>
-            }
-        }
-        <button class="bx-button small action" id="cancelButton">Cancel</button>
-    </div>
+        <table id="buttons">
+            <tr>
+                <td style="text-align:left;">
+                    @if (Model.Id > 0 && !Model.copy)
+                    {
+                        if (Model.inUse)
+                        {
+                            <button class="bx-button action bx-disabled" id="deleteButton" disabled="true">Delete</button>
+                        }
+                        else
+                        {
+                            <button class="bx-button action" id="deleteButton" onclick="javascript:openDelWindow(@Model.Id,'@Server.UrlEncode(Model.Name)','datastructure')">Delete</button>
+                        }
+                    }
+                </td>
+                <td style="text-align:right;">
+                    <button class="bx-button action" id="saveButton">Save</button>
+                    <button class="bx-button action" id="cancelButton">Cancel</button>
+                </td>
+            </tr>
+        </table>   
 </div>
 
 <script type="text/javascript">
-    var inUse = @Model.inUse.ToString().ToLower();
+    var createDataStructureInUse = @Model.inUse.ToString().ToLower();
 
     $(function () {
         $('.bx-rpm-createDataStructureContainer #name').val(decodeURIComponent($('.bx-rpm-createDataStructureContainer #name').val()));
@@ -104,14 +110,14 @@
 
     $('.bx-rpm-createDataStructureContainer #saveButton').click(function () {
         var cssId = 'message';
-        var parameters = '/?Id=' + $('.bx-rpm-createDataStructureContainer #id').val() + '&Name=' + encodeURIComponent($('.bx-rpm-createDataStructureContainer #name').val()) + '&Description=' + encodeURIComponent($('.bx-rpm-createDataStructureContainer #description').val()) + '&isStructured=' + $('.bx-rpm-createDataStructureContainer #isSructured:checked').val() + '&cssId=' + cssId + '&inUse=' + inUse;
+        var parameters = '/?Id=' + $('.bx-rpm-createDataStructureContainer #id').val() + '&Name=' + encodeURIComponent($('.bx-rpm-createDataStructureContainer #name').val()) + '&Description=' + encodeURIComponent($('.bx-rpm-createDataStructureContainer #description').val()) + '&isStructured=' + $('.bx-rpm-createDataStructureContainer #isSructured:checked').val() + '&cssId=' + cssId + '&inUse=' + createDataStructureInUse;
         $.get('@Url.Action(Action, "DataStructureSearch", new { area = "RPM"} )' + parameters, function (data) {
             if ($(data).hasClass('bx-rpm-message') && $(data).attr('id') == cssId) {
                 $(data).replaceAll('.bx-rpm-createDataStructureContainer #' + $(data).attr('id'));
                 createWondowShowmessage();
             }
             else if ($(data).hasClass('bx-rpm-message') && $(data).attr('id') == 'redirect') {
-                if( $('.bx-rpm-createDataStructureContainer #id').val() == '0' && inUse) {
+                if( $('.bx-rpm-createDataStructureContainer #id').val() == '0' && createDataStructureInUse) {
                     if( $('.bx-rpm-dataStructure-container').length > 0){
                         $('.bx-rpm-dataStructure-functions #storeVariablesButton').attr('value', $(data).text())
                         $('.bx-rpm-dataStructure-functions #storeVariablesButton').trigger('click');
@@ -130,7 +136,8 @@
 
     $('.bx-rpm-createDataStructureContainer #cancelButton').click(function () {
         $("#windowCreate").data('tWindow').destroy();
-        $("#bx-rpm-dataStructureResultGrid .t-refresh").trigger('click');
+        if($("#bx-rpm-dataStructureResultGrid").lenght >0)
+            $("#bx-rpm-dataStructureResultGrid .t-refresh").trigger('click');
     });
 
     //$('.bx-rpm-createDataStructureContainer #name').keyup(function () {
