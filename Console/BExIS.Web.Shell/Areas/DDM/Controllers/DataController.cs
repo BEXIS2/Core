@@ -976,6 +976,9 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         if (exportNames.Contains(dp.ReqiuredMetadataStandard)) model.IsMetadataConvertable = true;
                     }
 
+                    // Validate
+                    model.IsMetadataValid = OutputMetadataManager.IsValideAgainstSchema(datasetid, TransmissionType.mappingFileExport, datarepo);
+
                     #endregion
 
                     #region primary Data
@@ -1000,6 +1003,8 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
             bool isDataConvertable = false;
             bool isMetadataConvertable = false;
+            bool isMetadataValid = false;
+            bool exist = false;
 
             //get datarepos
             SubmissionManager publishingManager = new SubmissionManager();
@@ -1018,6 +1023,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 if (publishingManager.Exist(datasetid, version, dp))
                 {
                     //model.Exist = true;
+                    exist = true;
                 }
                 else
                 {
@@ -1028,6 +1034,9 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                     {
                         //model.IsMetadataConvertable = true;
                         isMetadataConvertable = true;
+
+                        // Validate
+                        isMetadataValid = OutputMetadataManager.IsValideAgainstSchema(datasetid, TransmissionType.mappingFileExport, datarepo);
                     }
                     else
                     {
@@ -1037,6 +1046,8 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         if (exportNames.Contains(dp.ReqiuredMetadataStandard))
                             isMetadataConvertable = true;
 
+                        isMetadataValid = OutputMetadataManager.IsValideAgainstSchema(datasetid, TransmissionType.mappingFileExport, datarepo);
+
                     }
 
                     #endregion
@@ -1044,7 +1055,6 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                     #region primary Data
 
                     //todo need a check if the primary data is structured or not, if its unstructured also export should be possible
-                    
 
                     if (dp.PrimaryDataFormat.ToLower().Contains("text/plain") ||
                         dp.PrimaryDataFormat.ToLower().Contains("text/csv") ||
@@ -1058,7 +1068,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 }
             }
 
-            return (isMetadataConvertable && isDataConvertable)?Json(true):Json(false);
+            return Json(new { isMetadataConvertable = isMetadataConvertable, isDataConvertable = isDataConvertable, isMetadataValid = isMetadataValid, Exist = exist }); 
         }
 
         public ActionResult DownloadZip(string datarepo ,long datasetid, long datasetversionid)

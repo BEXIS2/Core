@@ -19,6 +19,21 @@ namespace BExIS.IO.Transform.Output
 {
     public class OutputMetadataManager
     {
+        public static bool IsValideAgainstSchema(long datasetId, TransmissionType type, string mappingName)
+        {
+
+            DatasetManager datasetManager = new DatasetManager();
+            DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
+
+            string mappingFileName = XmlDatasetHelper.GetTransmissionInformation(datasetVersion, type, mappingName);
+            string pathMappingFile = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), mappingFileName);
+
+            XmlMapperManager xmlMapperManager = new XmlMapperManager(TransactionDirection.InternToExtern);
+            xmlMapperManager.Load(pathMappingFile, "exporttest");
+
+            return xmlMapperManager.Validate(datasetVersion.Metadata);
+        }
+
         public static XmlDocument GetConvertedMetadata(long datasetId, TransmissionType type, string mappingName)
         {
             XmlDocument newXml;
