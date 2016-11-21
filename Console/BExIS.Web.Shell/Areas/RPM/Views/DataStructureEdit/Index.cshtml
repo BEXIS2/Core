@@ -30,6 +30,8 @@
 </div>
 
 <script type="text/javascript">
+    var heightX = 80;
+
     $(function () {
         $.get('@Url.Action("_attributeResultBinding", "DataStructureEdit", new { area = "RPM"} )', function (data) {
             $('#SearchResult').html(data);

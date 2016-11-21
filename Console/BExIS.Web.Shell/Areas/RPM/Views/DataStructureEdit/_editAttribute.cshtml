@@ -50,6 +50,8 @@
                 @Html.Partial("_dataTypeDropdown", Model.DataTypes)
             </td>
         </tr>
+    </table>
+    <table>
         <tr>
             <td colspan="4" class="bx-rpm-container">
                 <h4><a class="bx-link" href="javascript:clickConstraints()">Constraints <span class="bx bx-angle-double-down" id="openconstraints"></span></a></h4>
@@ -66,7 +68,7 @@
         </tr>
 </table>
 
-    <div class="bx-rpm-submit bx-rpm-buttons bx-footer left" id="buttons">
+    <div class="bx-rpm-buttons bx-footer left" id="buttons">
         <button name="create" class="bx-button action"  id="saveButton">Save</button>
         <button name="cancel" class="bx-button action" id="cancelButton" onclick="javascript:$('#createAttributeWindow').data('tWindow').destroy();">Cancel</button>
     </div>  

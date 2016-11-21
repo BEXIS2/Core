@@ -126,7 +126,6 @@
 .bx-rpm-options{
     border-color:#afb0b1;
     position:fixed;
-    z-index:10;
 }
 
 .bx-rpm-option{
@@ -149,4 +148,17 @@
     top: -18px;
     right: 6px;
     cursor:default;
+}
+
+.bx-footer table,
+.bx-footer tr,
+.bx-footer td{
+    margin: 0px;
+    padding:0px;
+    border: none;
+}
+
+.bx-footer#buttons{
+    background-color:#ebebeb;
+    margin:3px 0px 3px 0px !important;
 }

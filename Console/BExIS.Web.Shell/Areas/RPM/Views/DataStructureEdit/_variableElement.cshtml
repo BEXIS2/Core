@@ -1,5 +1,12 @@
 ﻿@using BExIS.Web.Shell.Areas.RPM.Models
+@using System
 @model BExIS.Web.Shell.Areas.RPM.Models.VariablePreviewStruct
+
+@{
+    Random random = new Random(Convert.ToInt32(Model.Id));
+    int rand = random.Next(0, 32000);
+    long id = Convert.ToInt64(DateTime.Now.Ticks) + rand;
+ }
 
 <div class="bx-rpm-variable-item" id="@Model.Id">
     <table>
@@ -18,7 +25,7 @@
                 <div class="bx-rpm-text">
                     @if (Model.convertibleUnits.Count > 1)
                     {
-                        <div class="bx-rpm-unit-select">
+                        <div class="bx-rpm-unit-select" id="@id">
                             @Html.TextBox("Unit", Model.Unit.Id, new { @id = "varunit", @class = "hidden bx-rpm-value" })
                             <div class ="bx-rpm-option" onclick="javascript:openDropdown(this)">@Model.Unit.Name</div>
                             <div class="bx bx-rpm-option-arrow t-arrow-down" onclick="javascript: $(this).parent().find('.bx-rpm-option').trigger('click')"/>

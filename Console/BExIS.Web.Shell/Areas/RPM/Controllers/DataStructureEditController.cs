@@ -498,7 +498,9 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
         {
             DataContainerManager dcManager = new DataContainerManager();
             DataAttribute dataAttribute = dcManager.DataAttributeRepo.Get(constraintModel.AttributeId);
-            List<DomainItem> items = createDomainItems(constraintModel.Terms.Trim());
+            List<DomainItem> items = new List<DomainItem>();
+            if (constraintModel.Terms != null && constraintModel.Terms.Trim() != "")
+                createDomainItems(constraintModel.Terms.Trim());
 
             if (items.Count > 0)
             {
