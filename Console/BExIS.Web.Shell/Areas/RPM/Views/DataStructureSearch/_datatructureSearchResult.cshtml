@@ -39,9 +39,9 @@
         "<td class='bx-rpm-result bx-rpm-description'><#= Description #></td>" +
         "<td class='bx-rpm-result bx-rpm-structured'><span class='bx' id='<#= Id #>_structured'></span></td>" +
         "<td class='bx-rpm-result bx-rpm-gridfunction'>" +
-            "<a id='<#= Id #>_edit' class='bx bx-grid-function bx-edit' href='/RPM/DataStructureEdit/?dataStructureId=<#= Id #>'></a>" +
-            "<a id='<#= Id #>_download' class='bx bx-grid-function bx-download' href='/RPM/DataStructureIO/downloadTemplate?id=<#= Id #>'></a>" +
-            "<a id='<#= Id #>_copy' class='bx bx-grid-function bx-copy'></a>" +
+            "<a id='<#= Id #>_edit' title='Edit Data Structure' class='bx bx-grid-function bx-edit' href='/RPM/DataStructureEdit/?dataStructureId=<#= Id #>'></a>" +
+            "<a id='<#= Id #>_download' title='Download Template' class='bx bx-grid-function bx-download' href='/RPM/DataStructureIO/downloadTemplate?id=<#= Id #>'></a>" +
+            "<a id='<#= Id #>_copy' title='Copy Data Structure' class='bx bx-grid-function bx-copy'></a>" +
         "</td>" +
     "</tr>" +
     "<tr class='bx-rpm-preview bx-rpm-hidden' id ='<#= Id #>_preview' preview='<#= Preview #>'>" +
@@ -120,6 +120,7 @@
                 $('#' + id + '_edit').removeClass('bx-edit');
                 $('#' + id + '_edit').addClass('bx-show');
             }
+            $(".t-grid").trigger('load');
         }
 
         //prepare UI for DataStructure preview
@@ -137,13 +138,15 @@
     function dataStructurePreviewGrid_onDataBound(e) {
         resetAllTelerikIconTitles();
         addTooltips();
+        $(this).parent().find('.bx-rpm-loading').remove();
+        $(this).toggle();
         $('#bx-rpm-dataStructureResultGrid .bx-rpm-preview td').removeAttr('title');
     }
 
     function loadPreview(id) {
         var parameters = '/?dataStructureId=' + id + '&structured=' + $('#' + id).attr('structured');
         $.get('@Url.Action("_dataStructurePreviewBinding", "DataStructureSearch", new { area = "RPM"} )' + parameters, function (data) {
-            $('#' + id + '_content').html(data);
+            $('#' + id + '_content').append(data);
         });
     }
 

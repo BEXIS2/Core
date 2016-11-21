@@ -372,7 +372,6 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
                             OutputDataManager ioOutputDataManager = new OutputDataManager();
                             path = ioOutputDataManager.GenerateExcelFile(id, title);
-
                             LoggerFactory.LogCustom(message);
 
                             return File(path, "application/xlsm", title + ext);
@@ -384,7 +383,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         else
                         {
                             OutputDataManager outputDataManager = new OutputDataManager();
-                            path = outputDataManager.GenerateExcelFile(id, title);
+                            path = outputDataManager.GenerateExcelFile(id, title);                            
                             LoggerFactory.LogCustom(message);
 
                             return File(Path.Combine(AppConfiguration.DataPath, path), "application/xlsm", title + ext);

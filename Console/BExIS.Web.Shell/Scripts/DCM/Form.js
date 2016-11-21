@@ -44,7 +44,7 @@ $(window)
         //var scrollpostion = $(document).scrollTop();
         //var hMenubar = $(".navbar").height() + 20;
         //if(scrollpostion-100<hContainer)
-            bindMinimap();
+        bindMinimap();
     });
 
 var originalMinimapTop = 0;
@@ -55,13 +55,13 @@ function bindMinimap(create) {
 
         //if (($('#root').height()+200) > ($(window).height())) {
 
-        if ($(".miniregion")) {
-            $(".miniregion").remove();
-        }
+        //if ($(".miniregion")) {
+        //    $(".miniregion").remove();
+        //}
 
-        if ($(".minimap")) {
-            $(".minimap").remove();
-        }
+        //if ($(".minimap")) {
+        //    $(".minimap").remove();
+        //}
 
         var menubar = $(".navbar").height() + 20;
 
@@ -86,7 +86,7 @@ function bindMinimap(create) {
         var topContainer = $('#root').position().top;
         var hFooter = $("#footer").height();
         var hContainer = $('#root').height();
-        var hWindow = $(window).height() - 100;
+        var hWindow = $(window).height() - 150;
         //console.log(hWindow + " + " + hFooter + " + " + topContainer + " + " + hContainer);
 
         var hRatio = 1 - hWindow / hContainer;
@@ -95,7 +95,7 @@ function bindMinimap(create) {
             hRatio = 0.1;
         }
 
-
+        console.log($(".minimap").length);
         if ($(".minimap").length == 0) {
             var previewBody = $('#root')
                 .minimap(

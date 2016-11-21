@@ -127,11 +127,18 @@
 
                     </div>
         </div>
-        <div id="search_winFooter" class="bx-footer right">
-            <button id="none" type="button" class="bx-button function" value="none" name="button" onclick="Search_OnClickNone()">None</button>
-            <button id="all" type="button" class="bx-button function" value="all" name="button" onclick="Search_OnClickAll()">All</button>
-            <button type="submit" class="bx-button action" value="add" name="button" @* onclick="Search_OnClickSubmit()"*@>Submit</button>
-        </div>
+        <table id="search_winFooter">
+            <tr>
+                <td class="bx-footer left">
+                    <button id="none" type="button" class="bx-button function" value="none" name="button" onclick="Search_OnClickNone()">None</button>
+                    <button id="all" type="button" class="bx-button function" value="all" name="button" onclick="Search_OnClickAll()">All</button>
+                </td>
+                <td class="bx-footer right">
+                    <button type="submit" class="bx-button action" value="add" name="button" @* onclick="Search_OnClickSubmit()"*@>OK</button>
+                    <span class="bx-button action" value="cancel" name="button" onclick="$('#MoreWindow').data('tWindow').close()">Cancel</span>
+                </td>
+            </tr>
+        </table>
     </div>
 }
 
