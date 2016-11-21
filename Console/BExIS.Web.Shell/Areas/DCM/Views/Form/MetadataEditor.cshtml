@@ -133,7 +133,7 @@
                     <b>show all fields</b>
 
                 </td>
-                
+               
 
             }
 
@@ -251,7 +251,9 @@ $("#showminimap")
         bindMinimap();
     });
 
+
 function SelectFileProcess_OnSelect(e) {
+
 
         $("#root").preloader(20, "Import selected xml file.",300);
 
@@ -303,9 +305,18 @@ function OnSuccess() {
 
     $.get('@Url.Action("LoadExternalXml", "Form", new RouteValueDictionary {{"area", "DCM"}})',
         function(response) {
-            //alert("on success");
+            console.log(response);
+            if (response != "") {
+                $('MetadataEditor').replaceWith(response);
+            } else {
 
-            $('#MetadataEditor').replaceWith(response);
+                $("#root").removePreloader();
+
+                $("#form_message")
+                    .text("The xml file you have selected, was not valid against the metadata structure.");
+                $("#form_message").css("color", "#f24c24");
+
+            }
         })
 }
 

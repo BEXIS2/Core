@@ -21,12 +21,25 @@ using Vaiona.Utils.Cfg;
 
 namespace BExIS.Xml.Helpers.Mapping
 {
+    public enum TransactionDirection
+    {
+        InternToExtern,
+        ExternToIntern
+    }
+
     public class XmlMapperManager
     {
         public XmlMapper xmlMapper;
         public XmlDocument mappingFile;
 
+        public TransactionDirection TransactionDirection = TransactionDirection.ExternToIntern;
+
         private XmlSchemaManager xmlSchemaManager;
+
+        public XmlMapperManager(TransactionDirection transactionDirection)
+        {
+            this.TransactionDirection = transactionDirection;
+        }
 
         private bool addAlsoEmptyNode = false;
 
@@ -289,7 +302,6 @@ namespace BExIS.Xml.Helpers.Mapping
             XmlNode root = newMetadata.DocumentElement;
 
 
-
             // create nodes
             newMetadata = mapNode(newMetadata, newMetadata.DocumentElement, metadataXml.DocumentElement);
 
@@ -337,6 +349,16 @@ namespace BExIS.Xml.Helpers.Mapping
             return newMetadata;
         }
 
+        public bool Validate(XmlDocument doc)
+        {
+            XDocument xdoc = XmlUtility.ToXDocument(doc);
+            string msg = "";
+            xdoc.Validate(this.xmlSchemaManager.SchemaSet, (o, e) => {
+                msg += e.Message + Environment.NewLine;
+            });
+
+            return msg == "";
+        }
 
         private void validationEventHandler(object sender, ValidationEventArgs e)
         {
@@ -378,14 +400,18 @@ namespace BExIS.Xml.Helpers.Mapping
                 // X\XType\Y\F
                 string destinationXMppingFilePath = route.GetDestinationXPath();
 
-                //ToDo checkif the way to map is intern to extern or extern to intern
-                // X[1]\XType[2]\Y[1]\yType[4]\F[1]\yType[2]
-                string destinationXPath = mapDestinationPathFromSourcePathWithIndex(sourceXPath, destinationXMppingFilePath);
+                    //ToDo checkif the way to map is intern to extern or extern to intern
+                    // X[1]\XType[2]\Y[1]\yType[4]\F[1]\yType[2]
+                string destinationXPath = "";
 
+                if (this.TransactionDirection == TransactionDirection.ExternToIntern)
+                    destinationXPath = mapExternPathToInternPathWithIndex(sourceXPath, destinationXMppingFilePath);
+                else
+                    destinationXPath = mapInternPathToExternPathWithIndex(sourceXPath, destinationXMppingFilePath);
 
                 // create xmlnode in document
                 XmlNode destinationNode = XmlUtility.GenerateNodeFromXPath(destinationDoc, destinationDoc as XmlNode,
-                    destinationXPath); //XmlUtility.CreateNode(destinationTagName, destinationDoc);
+                destinationXPath); //XmlUtility.CreateNode(destinationTagName, destinationDoc);
                 destinationNode.InnerText = sourceNode.InnerText;
                 
                     //if (type == element), get content
@@ -408,7 +434,6 @@ namespace BExIS.Xml.Helpers.Mapping
             {
                 foreach (XmlNode childNode in sourceNode.ChildNodes)
                 {
-
                     destinationDoc = mapNode(destinationDoc, destinationPNode, childNode);
                 }
             }
@@ -422,7 +447,7 @@ namespace BExIS.Xml.Helpers.Mapping
             return destinationDoc;
         }
 
-        private string mapDestinationPathFromSourcePathWithIndex(string source, string destination)
+        private string mapExternPathToInternPathWithIndex(string source, string destination)
         {
             string destinationPathWithIndex = "";
             // load the xpath from source node
@@ -470,6 +495,57 @@ namespace BExIS.Xml.Helpers.Mapping
             Array.Reverse(destinationSplit);
 
             // XFType[2]\F[1]\yType[4]\Y[1]\XType[2]\x[1]
+            return String.Join("/", destinationSplit); ;
+        }
+
+        private string mapInternPathToExternPathWithIndex(string source, string destination)
+        {
+            //SOURCE
+            // X[1]\XType[2]\Y[1]\yType[4]\F[1]\FType[2]\
+            //DESTINATION
+            // x[1]\y[2]\f[1]
+
+            string[] sourceSplitWidthIndex = source.Split('/');
+
+            // XFType[2]\F[1]\yType[4]\Y[1]\XType[2]\x[1]
+            Array.Reverse(sourceSplitWidthIndex);
+
+            string[] destinationSplit = destination.Split('/');
+
+            // XFType\F\yType\Y\XType\x
+            Array.Reverse(destinationSplit);
+            int j = 0;
+            for (int i = 0; i < sourceSplitWidthIndex.Length; i++)
+            {
+
+                string tmp = sourceSplitWidthIndex[i];
+
+                if (tmp.Contains("["))
+                {
+                    string tmpIndex = tmp.Split('[')[1];
+                    string index = tmpIndex.Remove(tmpIndex.IndexOf(']'));
+
+                    //set to destination array
+
+                    //set j
+                    if (i == 0) j = 0;
+                    else if (i == 1) j = i + 1;
+                    else j = i / 2;
+
+                    if (destinationSplit.Length >= j)
+                    {
+                        string destinationTemp = destinationSplit[j];
+                        destinationSplit[j] = destinationTemp + "[" + index + "]";
+                        ////set parent
+                        //string destinationTempParent = destinationSplit[j + 1];
+                        //destinationSplit[j + 1] = destinationTempParent + "[" + 1 + "]";
+                    }
+                }
+            }
+
+            Array.Reverse(destinationSplit);
+
+            // f[1]\y[2]\x[1]
             return String.Join("/", destinationSplit); ;
         }
 
@@ -534,7 +610,7 @@ namespace BExIS.Xml.Helpers.Mapping
         //                    XmlNode current = destinationNode;
 
         //                    List<string> temp = new List<string>();
-                            
+
         //                    while (!current.Name.Equals(route.Destination.ParentSequence))
         //                    {
         //                        temp.Add(current.LocalName);
@@ -643,7 +719,7 @@ namespace BExIS.Xml.Helpers.Mapping
         //    {
         //        foreach (XmlNode childNode in sourceNode.ChildNodes)
         //        {
-                   
+
         //           destinationDoc = mapNode(destinationDoc, destinationPNode, childNode);
         //        }
         //    }

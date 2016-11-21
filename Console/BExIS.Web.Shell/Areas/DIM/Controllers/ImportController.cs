@@ -47,7 +47,7 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
             string path_mappingFile = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), XmlMetadataImportHelper.GetMappingFileName(metadataStructureId, TransmissionType.mappingFileImport, metadataStructrueName));
 
             // XML mapper + mapping file
-            XmlMapperManager xmlMapperManager = new XmlMapperManager();
+            XmlMapperManager xmlMapperManager = new XmlMapperManager(TransactionDirection.InternToExtern);
             xmlMapperManager.Load(path_mappingFile, "IDIV");
             
             // generate intern metadata 

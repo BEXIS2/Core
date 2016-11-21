@@ -30,6 +30,7 @@ namespace BExIS.Xml.Helpers.Mapping
         public List<XmlSchemaGroup> Groups { get; set; }
         public List<string> RefElementNames { get; set; }
         public XmlSchema Schema;
+        public XmlSchemaSet SchemaSet;
 
         //Contraits of system
         public List<MetadataAttribute> MetadataAttributes { get; set; }
@@ -147,7 +148,7 @@ namespace BExIS.Xml.Helpers.Mapping
             }
 
             RefElementNames.AddRange(GetAllRefElementNames(Elements));
-
+            SchemaSet = schemaSet;
             xsd_file.Close();
         }
 
@@ -512,7 +513,9 @@ namespace BExIS.Xml.Helpers.Mapping
 
             #region extern to intern
                 mappingFileExternalToInternal.Header.AddToDestination("Metadata");
-                // id and name of metadatastructure fehlt
+                mappingFileExternalToInternal.Header.AddToSchemas(schemaName, "Metadata/" + schemaName + "/" + FileName);
+
+            // id and name of metadatastructure fehlt
 
             #endregion
 

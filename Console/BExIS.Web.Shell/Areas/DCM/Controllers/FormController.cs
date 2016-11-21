@@ -6,6 +6,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Xml;
 using System.Xml.Linq;
+using System.Xml.Schema;
 using BExIS.Dcm.CreateDatasetWizard;
 using BExIS.Dcm.UploadWizard;
 using BExIS.Dcm.Wizard;
@@ -545,29 +546,35 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
                     string metadataStructrueName = metadataStructureManager.Repo.Get(metadataStructureId).Name;
 
-
                     // loadMapping file
                     string path_mappingFile = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), XmlMetadataImportHelper.GetMappingFileName(metadataStructureId, TransmissionType.mappingFileImport, metadataStructrueName));
 
                     // XML mapper + mapping file
-                    XmlMapperManager xmlMapperManager = new XmlMapperManager();
+                    XmlMapperManager xmlMapperManager = new XmlMapperManager(TransactionDirection.ExternToIntern);
                     xmlMapperManager.Load(path_mappingFile, "IDIV");
 
-                    // generate intern metadata 
-                    XmlDocument metadataResult = xmlMapperManager.Generate(metadataForImport, 1, true);
+                    //Validate 
+                    if (xmlMapperManager.Validate(metadataForImport))
+                    {
+                        // generate intern metadata 
+                        XmlDocument metadataResult = xmlMapperManager.Generate(metadataForImport, 1, true);
 
-                    // generate intern template
-                    XmlMetadataWriter xmlMetadatWriter = new XmlMetadataWriter(BExIS.Xml.Helpers.XmlNodeMode.xPath);
-                    XDocument metadataXml = xmlMetadatWriter.CreateMetadataXml(metadataStructureId, XmlUtility.ToXDocument(metadataResult));
-                    XmlDocument metadataXmlTemplate = XmlMetadataWriter.ToXmlDocument(metadataXml);
+                        // generate intern template
+                        XmlMetadataWriter xmlMetadatWriter = new XmlMetadataWriter(BExIS.Xml.Helpers.XmlNodeMode.xPath);
+                        XDocument metadataXml = xmlMetadatWriter.CreateMetadataXml(metadataStructureId,
+                            XmlUtility.ToXDocument(metadataResult));
+                        XmlDocument metadataXmlTemplate = XmlMetadataWriter.ToXmlDocument(metadataXml);
 
-                    XmlDocument completeMetadata = XmlMetadataImportHelper.FillInXmlValues(metadataResult, metadataXmlTemplate);
+                        XmlDocument completeMetadata = XmlMetadataImportHelper.FillInXmlValues(metadataResult,
+                            metadataXmlTemplate);
 
-                    TaskManager.AddToBus(CreateTaskmanager.METADATA_XML, completeMetadata);
+                        TaskManager.AddToBus(CreateTaskmanager.METADATA_XML, completeMetadata);
 
 
-                    //LoadMetadata(long datasetId, bool locked= false, bool created= false, bool fromEditMode = false, bool resetTaskManager = false, XmlDocument newMetadata=null)
-                    return RedirectToAction("ImportMetadata", "Form", new { metadataStructureId = metadataStructureId });
+                        //LoadMetadata(long datasetId, bool locked= false, bool created= false, bool fromEditMode = false, bool resetTaskManager = false, XmlDocument newMetadata=null)
+                        return RedirectToAction("ImportMetadata", "Form",
+                            new {metadataStructureId = metadataStructureId});
+                    }
                 }
             }
 

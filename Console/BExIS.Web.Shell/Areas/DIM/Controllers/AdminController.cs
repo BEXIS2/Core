@@ -24,7 +24,7 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
     {
 
         private List<long> datasetVersionIds = new List<long>();
-        private XmlMapperManager xmlMapperManager = new XmlMapperManager();
+        private XmlMapperManager xmlMapperManager = new XmlMapperManager(TransactionDirection.InternToExtern);
         
         //
         // GET: /DIM/Admin/
@@ -130,7 +130,7 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
             {
                     path_mapping_file = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), fileName);
 
-                    xmlMapperManager = new XmlMapperManager();
+                    xmlMapperManager = new XmlMapperManager(TransactionDirection.InternToExtern);
 
                     xmlMapperManager.Load(path_mapping_file, GetUsernameOrDefault());
 

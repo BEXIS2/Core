@@ -30,7 +30,7 @@ namespace BExIS.IO.Transform.Output
                 string mappingFileName = XmlDatasetHelper.GetTransmissionInformation(datasetVersion, type, mappingName);
                 string pathMappingFile = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), mappingFileName);
 
-                XmlMapperManager xmlMapperManager = new XmlMapperManager();
+                XmlMapperManager xmlMapperManager = new XmlMapperManager(TransactionDirection.InternToExtern);
                 xmlMapperManager.Load(pathMappingFile, "exporttest");
 
                 newXml = xmlMapperManager.Export(datasetVersion.Metadata, datasetVersion.Id, mappingName, true);

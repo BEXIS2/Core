@@ -293,8 +293,7 @@ $(".bx-list-multi >li").click(function ()
  * *******PRELOADER********/
 
 $.fn.extend({
-
-    preloader: function (fontsize, text, height) {
+    preloader: function(fontsize, text, height) {
 
         //console.log(text);
         //console.log(height);
@@ -304,7 +303,7 @@ $.fn.extend({
             text = "Loading...";
         }
 
-        if (typeof height === "undefined" || height===0) {
+        if (typeof height === "undefined" || height === 0) {
             height = "auto";
         }
 
@@ -339,11 +338,20 @@ $.fn.extend({
 
         console.log(div);
 
-        $(this).html(div);
+        $(this).children().hide();
+
+        $(this).append(div);
 
         return this;
+    },
+
+    removePreloader: function () {
+
+        $(".preloader").remove();
+        $(this).children().show();
+        return this;
     }
-})
+});
 
 
 /* jQuery Validation Extension - CheckBox */
