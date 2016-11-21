@@ -36,7 +36,7 @@
     <table class="bx-rpm-dataStructure-functions bx-footer left">
         <tr>
             <td>
-                @Html.ActionLink("Download Excel Template", "downloadTemplate", "DataStructureIO", new { @id = Model.Id }, new { area = "RPM", @class = "bx-button action", @title = "Cancel" })
+                @Html.ActionLink("Download Excel Template", "downloadTemplate", "DataStructureIO", new { @id = Model.Id }, new { area = "RPM", @class = "bx-button action" })
                 @if (Model.inUse)
                 {
                     <button class="bx-button action bx-disabled" id="deleteButton" disabled="disabled" title="Can't delete Data Struture, it's used by a Dataset">Delete</button>
@@ -66,6 +66,7 @@
     var offsetY = 0;
     var elemWidth = 0;
     var moved = false;
+    var changed = false;
 
     $(function () {
         resizeVariableContainer(120);
@@ -76,6 +77,14 @@
         if(dataStruktureInUse){
             lock();
         }
+
+        $( ".bx-rpm-datastructureheader input" ).change(function() {
+            changed = true;
+        });
+
+        $( ".bx-rpm-datastructureheader textarea" ).change(function() {
+            changed = true;
+        });
     });
 
     function lock(){
@@ -113,6 +122,14 @@
 
         $( ".bx-rpm-variable-item textarea" ).dblclick(function() {
             $(this).select();
+        });
+
+        $( ".bx-rpm-variable-item input" ).change(function() {
+            changed = true;
+        });
+
+        $( ".bx-rpm-variable-item textarea" ).change(function() {
+            changed = true;
         });
     }
 
@@ -398,6 +415,7 @@
                             createMessageWindow(data,'Store Variables');
                         });
                     }
+                    changed = false;
                     if(!reload) {
                         loadVariables(id);
                     }
@@ -616,4 +634,9 @@
         $('.bx-rpm-option').addClass('bx-disabled');
         $('.bx-rpm-option-arrow').addClass('bx-disabled');
     }
+
+    $(window).on('beforeunload', function(){
+        if(changed)
+            return 'You have unsaved changes!';
+    });
 </script>
