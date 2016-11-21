@@ -15,6 +15,7 @@ using BExIS.IO;
 using BExIS.Xml.Models;
 using BExIS.Xml.Models.Mapping;
 using BExIS.Xml.Services;
+using NHibernate.Persister.Collection;
 using Vaiona.Utils.Cfg;
 
 
@@ -162,9 +163,11 @@ namespace BExIS.Xml.Helpers.Mapping
             XmlNode root = newMetadata.DocumentElement;
 
 
-
             // create nodes
             newMetadata = mapNode(newMetadata, newMetadata.DocumentElement, metadataXml.DocumentElement);
+
+
+           
 
             // add required attributes
             newMetadata = addAttributes(newMetadata, newMetadata.DocumentElement);
@@ -349,171 +352,304 @@ namespace BExIS.Xml.Helpers.Mapping
 
         }
 
-        // add content from nodes from source to destination
         private XmlDocument mapNode(XmlDocument destinationDoc, XmlNode destinationParentNode, XmlNode sourceNode)
         {
-
+            try
+            {
+                
             // load the xpath from source node
-            string sourceXPath = XmlUtility.GetXPathToNode(sourceNode);
+            // x[1]\y[2]\f[1]
+            string sourceXPath = XmlUtility.GetDirectXPathToNode(sourceNode);
+            // x\y\f
+            string sourceXMppingFilePath = XmlUtility.GetXPathToNode(sourceNode);
 
             //load route from mappingFile of the source node
-            XmlMappingRoute route = xmlMapper.GetRoute(sourceXPath);
+            XmlMappingRoute route = xmlMapper.GetRoute(sourceXMppingFilePath);
 
             XmlNode destinationPNode = destinationParentNode;
 
             // check if this source xpath is mapped in the xmlMapper
-            if (xmlMapper.SourceExist(sourceXPath))
+            if (xmlMapper.SourceExist(sourceXMppingFilePath))
             {
-                //check if there is text inside the source node
-                if (!sourceNode.InnerText.Equals("") || addAlsoEmptyNode)
-                {
-                    // get name of the destination node
-                    string destinationTagName = route.GetDestinationTagNames();
+                // get name of the destination node            
+                string destinationTagName = route.GetDestinationTagNames();
 
-                    // get xpath of the destination node
-                    string destinationXPath = route.GetDestinationXPath();
+                // get xpath of the destination node
+                // X\XType\Y\F
+                string destinationXMppingFilePath = route.GetDestinationXPath();
 
-                    // create xmlnode in document
-                    XmlNode destinationNode = XmlUtility.CreateNode(destinationTagName, destinationDoc);
+                //ToDo checkif the way to map is intern to extern or extern to intern
+                // X[1]\XType[2]\Y[1]\yType[4]\F[1]\yType[2]
+                string destinationXPath = mapDestinationPathFromSourcePathWithIndex(sourceXPath, destinationXMppingFilePath);
 
+
+                // create xmlnode in document
+                XmlNode destinationNode = XmlUtility.GenerateNodeFromXPath(destinationDoc, destinationDoc as XmlNode,
+                    destinationXPath); //XmlUtility.CreateNode(destinationTagName, destinationDoc);
+                destinationNode.InnerText = sourceNode.InnerText;
+                
                     //if (type == element), get content
-                    if (xmlMapper.IsSourceElement(sourceXPath))
-                    {
-                        destinationNode.InnerText = sourceNode.InnerText;
-                    }
-
-                    //check if nodes in destination not exist, create them
-                    string destinationParentXPath = route.GetDestinationParentXPath();
-                    string currentParentXPath = XmlUtility.GetXPathToNode(destinationParentNode);
-                    if (currentParentXPath != destinationParentXPath)
-                    {
-                        destinationParentNode = createMissingNodes(destinationParentXPath, currentParentXPath, destinationParentNode, destinationDoc);
-                    }
-
-                    //if destinationNode exist , it must be e sequence
-                    if (XmlUtility.ExistAsChild(destinationParentNode, destinationNode))
-                    {
-                        #region child exist
-                            //get parent sequence or sequence below
-                            XmlNode parent = destinationParentNode;
-                            XmlNode current = destinationNode;
-
-                            List<string> temp = new List<string>();
-                            
-                            while (!current.Name.Equals(route.Destination.ParentSequence))
-                            {
-                                temp.Add(current.LocalName);
-                                current = parent;
-                                parent = parent.ParentNode;
-                            }
-
-                            // is current a sequence?
-                            if (current.Name.Equals(route.Destination.ParentSequence))
-                            {
-                                XmlNode newCurrent = XmlUtility.CreateNode(current.LocalName, destinationDoc);
-
-                                //destinatenode exits in every child of the parent?
-                                if(parent.ChildNodes.Count>0)
-                                {
-                                    bool foundNodeWithoutDestionationNode = false;
-
-                                    foreach (XmlNode child in parent.ChildNodes)
-                                    {
-                                        if (route.Destination.XPath.Contains(child.Name))
-                                        {
-                                            //if destination node not exits
-                                            if (XmlUtility.GetXmlNodeByName(child, destinationTagName) == null)
-                                            {
-                                                newCurrent = child;
-                                                foundNodeWithoutDestionationNode = true;
-                                            }
-                                            else
-                                            {
-                                                if(sourceNode.Attributes.Count>0 )
-                                                {
-                                                    if (sourceNode.Attributes["number"] != null)
-                                                    {
-                                                        int number = Convert.ToInt32(sourceNode.Attributes["number"].Value);
-                                                        if (number > 1)
-                                                        {
-                                                            foundNodeWithoutDestionationNode = true;
-                                                        }
-
-                                                    }
-                                                }
-                                            }
-
-                                        }
-                                    }
-
-                                    if ((temp.Count>=2 && foundNodeWithoutDestionationNode) || !foundNodeWithoutDestionationNode)
-                                    {
-                                        addChild(parent,newCurrent);
-                                    }
-                                }
-                                else
-                                {
-                                    addChild(parent, newCurrent);
-                                }
-
-                                temp.Reverse();
-
-                                if (temp.Count > 0)
-                                {
-                                    parent = newCurrent;
-                                    //add child ToString parent which is a sequence
-                                    foreach (string newName in temp)
-                                    {
-                                        if (!temp.Last().Equals(newName))
-                                        {
-                                            XmlNode newNode = XmlUtility.GetXmlNodeByName(parent, newName);
-
-                                            if (newNode == null)
-                                            {
-                                                newNode = XmlUtility.CreateNode(newName, destinationDoc);
-                                                addChild(parent, newNode);
-                                            }
-
-                                            parent = newNode;
-                                        }
-                                        else
-                                        {
-                                            addChild(parent, destinationNode);
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    newCurrent.InnerText = destinationNode.InnerText;
-                                    addChild(parent, destinationNode);
-                                }
-
-                                destinationPNode = parent;
-                            }
-                            else
-                                destinationPNode = current;
-
-                        #endregion
-                    }
-                    else
-                    {
-                        addChild(destinationParentNode,destinationNode);
-                        destinationPNode = destinationNode;
-                    }
-
+                if (xmlMapper.IsSourceElement(sourceXPath))
+                {
+                    
                 }
+
+
+
+                //destinationParentNode = createMissingNodes(destinationParentXPath, currentParentXPath, destinationParentNode, destinationDoc);
+
+                ////check if nodes in destination not exist, create them
+                //string destinationParentXPath = route.GetDestinationParentXPath();
+                //string currentParentXPath = XmlUtility.GetDirectXPathToNode(destinationParentNode);
+
             }
 
             if (sourceNode.HasChildNodes)
             {
                 foreach (XmlNode childNode in sourceNode.ChildNodes)
                 {
-                   destinationDoc = mapNode(destinationDoc, destinationPNode, childNode);
+
+                    destinationDoc = mapNode(destinationDoc, destinationPNode, childNode);
                 }
+            }
+
+            }
+            catch (Exception exception)
+            {
+                  Debug.WriteLine(exception.Message);
             }
 
             return destinationDoc;
         }
+
+        private string mapDestinationPathFromSourcePathWithIndex(string source, string destination)
+        {
+            string destinationPathWithIndex = "";
+            // load the xpath from source node
+            // x[1]\y[2]\f[1]
+            // X[1]\XType[2]\Y[1]\yType[4]\F[1]\FType[2]\
+
+            string[] sourceSplitWidthIndex = source.Split('/');
+
+            // f[1]\y[2]\x[1]
+            Array.Reverse(sourceSplitWidthIndex);
+
+            string[] destinationSplit = destination.Split('/');
+    
+            // XFType\F\yType\Y\XType\x
+            Array.Reverse(destinationSplit);
+            int j =0;
+            for (int i = 0; i < sourceSplitWidthIndex.Length; i++)
+            {
+
+                string tmp = sourceSplitWidthIndex[i];
+
+                if (tmp.Contains("["))
+                {
+                    string tmpIndex = tmp.Split('[')[1];
+                    string index = tmpIndex.Remove(tmpIndex.IndexOf(']'));
+
+                    //set to destination array
+
+                    //set j
+                    if (i == 0) j = 0;
+                    else if(i == 1) j = i + 1;
+                    else j = i * 2;
+
+                    if (destinationSplit.Length >= j)
+                    {
+                        string destinationTemp = destinationSplit[j];
+                        destinationSplit[j] = destinationTemp + "[" + index + "]";
+                        //set parent
+                        string destinationTempParent = destinationSplit[j+1];
+                        destinationSplit[j+1] = destinationTempParent + "[" + 1 + "]";
+                    }
+                }
+            }
+
+            Array.Reverse(destinationSplit);
+
+            // XFType[2]\F[1]\yType[4]\Y[1]\XType[2]\x[1]
+            return String.Join("/", destinationSplit); ;
+        }
+
+        // add content from nodes from source to destination
+        //private XmlDocument mapNodeOld(XmlDocument destinationDoc, XmlNode destinationParentNode, XmlNode sourceNode)
+        //{
+
+
+
+        //    // load the xpath from source node
+        //    // x[1]\y[2]\f[1]
+        //    string sourceXPath = XmlUtility.GetDirectXPathToNode(sourceNode);
+        //    // x\y\f
+        //    string sourceXMppingFilePath = XmlUtility.GetXPathToNode(sourceNode);
+
+        //    //load route from mappingFile of the source node
+        //    XmlMappingRoute route = xmlMapper.GetRoute(sourceXMppingFilePath);
+
+        //    XmlNode destinationPNode = destinationParentNode;
+
+        //    // check if this source xpath is mapped in the xmlMapper
+        //    if (xmlMapper.SourceExist(sourceXMppingFilePath))
+        //    {
+        //        //check if there is text inside the source node
+        //        if (!sourceNode.InnerText.Equals("") || addAlsoEmptyNode)
+        //        {
+        //            // get name of the destination node            
+        //            string destinationTagName = route.GetDestinationTagNames();
+
+        //            // get xpath of the destination node
+        //            // X\Y\F
+        //            string destinationXMppingFilePath = route.GetDestinationXPath();
+        //            // X[1]\XType[2]\Y[1]\yType[4]\F[1]\yType[2]
+        //            string destinationXPath; //XmlUtility.GetDirectXPathToNode(sourceNode);
+
+
+
+
+        //            // create xmlnode in document
+        //            XmlNode destinationNode = XmlUtility.CreateNode(destinationTagName, destinationDoc);
+
+        //            //if (type == element), get content
+        //            if (xmlMapper.IsSourceElement(sourceXPath))
+        //            {
+        //                destinationNode.InnerText = sourceNode.InnerText;
+        //            }
+
+        //            //check if nodes in destination not exist, create them
+        //            string destinationParentXPath = route.GetDestinationParentXPath();
+        //            string currentParentXPath = XmlUtility.GetDirectXPathToNode(destinationParentNode);
+        //            if (currentParentXPath != destinationParentXPath)
+        //            {
+        //                destinationParentNode = createMissingNodes(destinationParentXPath, currentParentXPath, destinationParentNode, destinationDoc);
+        //            }
+
+        //            //if destinationNode exist , it must be e sequence
+        //            if (XmlUtility.ExistAsChild(destinationParentNode, destinationNode))
+        //            {
+        //                #region child exist
+        //                    //get parent sequence or sequence below
+        //                    XmlNode parent = destinationParentNode;
+        //                    XmlNode current = destinationNode;
+
+        //                    List<string> temp = new List<string>();
+                            
+        //                    while (!current.Name.Equals(route.Destination.ParentSequence))
+        //                    {
+        //                        temp.Add(current.LocalName);
+        //                        current = parent;
+        //                        parent = parent.ParentNode;
+        //                    }
+
+        //                    // is current a sequence?
+        //                    if (current.Name.Equals(route.Destination.ParentSequence))
+        //                    {
+        //                        XmlNode newCurrent = XmlUtility.CreateNode(current.LocalName, destinationDoc);
+
+        //                        //destinatenode exits in every child of the parent?
+        //                        if(parent.ChildNodes.Count>0)
+        //                        {
+        //                            bool foundNodeWithoutDestionationNode = false;
+
+        //                            foreach (XmlNode child in parent.ChildNodes)
+        //                            {
+        //                                if (route.Destination.XPath.Contains(child.Name))
+        //                                {
+        //                                    //if destination node not exits
+        //                                    if (XmlUtility.GetXmlNodeByName(child, destinationTagName) == null)
+        //                                    {
+        //                                        newCurrent = child;
+        //                                        foundNodeWithoutDestionationNode = true;
+        //                                    }
+        //                                    else
+        //                                    {
+        //                                        if(sourceNode.Attributes.Count>0 )
+        //                                        {
+        //                                            if (sourceNode.Attributes["number"] != null)
+        //                                            {
+        //                                                int number = Convert.ToInt32(sourceNode.Attributes["number"].Value);
+        //                                                if (number > 1)
+        //                                                {
+        //                                                    foundNodeWithoutDestionationNode = true;
+        //                                                }
+
+        //                                            }
+        //                                        }
+        //                                    }
+
+        //                                }
+        //                            }
+
+        //                            if ((temp.Count>=2 && foundNodeWithoutDestionationNode) || !foundNodeWithoutDestionationNode)
+        //                            {
+        //                                addChild(parent,newCurrent);
+        //                            }
+        //                        }
+        //                        else
+        //                        {
+        //                            addChild(parent, newCurrent);
+        //                        }
+
+        //                        temp.Reverse();
+
+        //                        if (temp.Count > 0)
+        //                        {
+        //                            parent = newCurrent;
+        //                            //add child ToString parent which is a sequence
+        //                            foreach (string newName in temp)
+        //                            {
+        //                                if (!temp.Last().Equals(newName))
+        //                                {
+        //                                    XmlNode newNode = XmlUtility.GetXmlNodeByName(parent, newName);
+
+        //                                    if (newNode == null)
+        //                                    {
+        //                                        newNode = XmlUtility.CreateNode(newName, destinationDoc);
+        //                                        addChild(parent, newNode);
+        //                                    }
+
+        //                                    parent = newNode;
+        //                                }
+        //                                else
+        //                                {
+        //                                    addChild(parent, destinationNode);
+        //                                }
+        //                            }
+        //                        }
+        //                        else
+        //                        {
+        //                            newCurrent.InnerText = destinationNode.InnerText;
+        //                            addChild(parent, destinationNode);
+        //                        }
+
+        //                        destinationPNode = parent;
+        //                    }
+        //                    else
+        //                        destinationPNode = current;
+
+        //                #endregion
+        //            }
+        //            else
+        //            {
+        //                addChild(destinationParentNode,destinationNode);
+        //                destinationPNode = destinationNode;
+        //            }
+
+        //        }
+        //    }
+
+        //    if (sourceNode.HasChildNodes)
+        //    {
+        //        foreach (XmlNode childNode in sourceNode.ChildNodes)
+        //        {
+                   
+        //           destinationDoc = mapNode(destinationDoc, destinationPNode, childNode);
+        //        }
+        //    }
+
+        //    return destinationDoc;
+        //}
 
         // add required attributes
         private XmlDocument addAttributes(XmlDocument doc, XmlNode parentNode)
@@ -623,19 +759,20 @@ namespace BExIS.Xml.Helpers.Mapping
         /// <returns></returns>
         private XmlNode createMissingNodes(string destinationParentXPath, string currentParentXPath, XmlNode parentNode, XmlDocument doc)
         {
-                string dif = destinationParentXPath.Substring(currentParentXPath.Length);
+            string dif = destinationParentXPath.Substring(currentParentXPath.Length);
 
-                List<string> temp =  dif.Split('/').ToList();
-                temp.RemoveAt(0);
+            List<string> temp =  dif.Split('/').ToList();
+            temp.RemoveAt(0);
 
-                XmlNode parentTemp = parentNode;
+            XmlNode parentTemp = parentNode;
 
-                foreach (string s in temp)
-                {
+            foreach (string s in temp)
+            {
+
                     if (XmlUtility.GetXmlNodeByName(parentTemp, s) == null)
                     {
                         XmlNode t = XmlUtility.CreateNode(s, doc);
-         
+
                         addChild(parentTemp, t);
                         parentTemp = t;
                     }
@@ -644,10 +781,14 @@ namespace BExIS.Xml.Helpers.Mapping
                         XmlNode t = XmlUtility.GetXmlNodeByName(parentTemp, s);
                         parentTemp = t;
                     }
-                }
 
-                return parentTemp;
+            }
+
+            return parentTemp;
         }
+
+       
+
 
         private string getStorePath(long datasetVersionId,string exportTo)
         {

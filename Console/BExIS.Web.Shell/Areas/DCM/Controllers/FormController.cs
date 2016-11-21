@@ -558,7 +558,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                     // generate intern template
                     XmlMetadataWriter xmlMetadatWriter = new XmlMetadataWriter(BExIS.Xml.Helpers.XmlNodeMode.xPath);
-                    XDocument metadataXml = xmlMetadatWriter.CreateMetadataXml(metadataStructureId);
+                    XDocument metadataXml = xmlMetadatWriter.CreateMetadataXml(metadataStructureId, XmlUtility.ToXDocument(metadataResult));
                     XmlDocument metadataXmlTemplate = XmlMetadataWriter.ToXmlDocument(metadataXml);
 
                     XmlDocument completeMetadata = XmlMetadataImportHelper.FillInXmlValues(metadataResult, metadataXmlTemplate);
