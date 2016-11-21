@@ -492,7 +492,7 @@
     }
 
     function getVariableContainerSize() {
-        return $(window).height() - $('.navbar').height() - $('.bx-rpm-datastructureheader').height() - $('.bx-rpm-dataStructure-functions').height() - $('.bx-rpm-dataStructure-container .bx-rpm-scrollup').height() - $('.bx-rpm-dataStructure-container .bx-rpm-scrolldown').height() - $('#footer').outerHeight() - 95;
+        return $(window).height() - $('.navbar').outerHeight() - $('.bx-rpm-datastructureheader').outerHeight() - $('.bx-rpm-dataStructure-functions').outerHeight() - $('.bx-rpm-dataStructure-container .bx-rpm-scrollup').outerHeight() - $('.bx-rpm-dataStructure-container .bx-rpm-scrolldown').outerHeight() - $('#footer').outerHeight() - heightX;
     }
 
     function openDelWindow(id, name, type) {
@@ -591,17 +591,22 @@
 
     function openDropdown (elem){
         var items = $('.bx-rpm-options');
-        var dropDown = $(elem).parent().find('.bx-rpm-option');
-        //console.log($(items[i]).parent().find('.bx-rpm-option') != dropDown);
-        //for(var i = 0; i < items.length; i++){
-        //    if($(items[i]).parent().find('.bx-rpm-option') != dropDown && $(items[i]).css('display') != 'none'){
-        //        $(items[i]).css('display', 'none');
-        //    }
-        //}
-        $(dropDown).parent().find('.bx-rpm-options').slideToggle('fast');
-        var offset = $(dropDown).parents('.bx-rpm-variable-item').position().top + $(dropDown).parents('.bx-rpm-variable-item').find('.unit').outerHeight() + $(dropDown).parents('.bx-rpm-variable-item').find('.unit').css('border-top-width') + $('#variableContainer').position().top - $('#variableContainer').scrollTop() - $(window).scrollTop();
-        $(dropDown).parent().find('.bx-rpm-options').css('top', offset);
-        $(dropDown).parent().find('.bx-rpm-options').css('min-width', $(dropDown).outerWidth());
+        var dropDown = $(elem).parent();
+        var offset;
+        for(var i = 0; i < items.length; i++){
+            if($(items[i]).parent().attr('id') == dropDown.attr('id') && $(items[i]).css('display') == 'none'){
+                console.log($(items[i]).parent().attr('id') + '==' + dropDown.attr('id'));
+                $(items[i]).parent().find('.bx-rpm-options').css('z-index', '10');
+                $(items[i]).parent().find('.bx-rpm-options').slideToggle('fast');
+                offset = $(dropDown).parents('.bx-rpm-variable-item').position().top + $(dropDown).parents('.bx-rpm-variable-item').innerHeight() + $('#variableContainer').position().top - $('#variableContainer').scrollTop() - $(window).scrollTop() - 6;
+                $(dropDown).find('.bx-rpm-options').css('top', offset);
+                $(dropDown).find('.bx-rpm-options').css('min-width', $(dropDown).outerWidth());
+            }
+            else if($(items[i]).css('display') != 'none'){
+                $(items[i]).parent().find('.bx-rpm-options').css('z-index', '9');
+                $(items[i]).parent().find('.bx-rpm-options').slideToggle('fast');
+            }
+        }       
     }
 
     function closeDropdown(option){

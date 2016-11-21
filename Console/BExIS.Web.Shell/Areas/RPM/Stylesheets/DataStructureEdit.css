@@ -372,6 +372,10 @@ h2{
     text-align:left;
 }
 
+.bx-rpm-attribute-functions.bx-footer {
+    padding:0px !important;
+}
+
 .bx-rpm-dataStructure-container .bx-rpm-scrollup,
 .bx-rpm-dataStructure-container .bx-rpm-scrolldown{
     width:100%;
@@ -410,4 +414,8 @@ h2{
     position:relative;
     top:-7px; 
     left: 3px;   
+}
+
+.bx-rpm-createAttributeContainer table.bx-rpm-info{
+    max-width:476px;
 }
