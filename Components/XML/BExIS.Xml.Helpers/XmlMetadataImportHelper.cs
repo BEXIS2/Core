@@ -62,7 +62,7 @@ namespace BExIS.Xml.Helpers
                 {
                     if (node.NodeType == System.Xml.XmlNodeType.Text)
                     {
-                        string xpath = XmlUtility.GetXPathToNode(node.ParentNode);
+                        string xpath = XmlUtility.GetDirectXPathToNode(node.ParentNode);
                         string value = node.Value;
                         if (value != null)
                         {

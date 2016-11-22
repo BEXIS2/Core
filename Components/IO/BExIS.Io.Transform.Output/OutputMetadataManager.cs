@@ -19,7 +19,24 @@ namespace BExIS.IO.Transform.Output
 {
     public class OutputMetadataManager
     {
-        public static XmlDocument GetConvertedMetadata(long datasetId, TransmissionType type, string mappingName)
+        public static string IsValideAgainstSchema(long datasetId, TransmissionType type, string mappingName)
+        {
+
+            DatasetManager datasetManager = new DatasetManager();
+            DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
+
+            string mappingFileName = XmlDatasetHelper.GetTransmissionInformation(datasetVersion, type, mappingName);
+            string pathMappingFile = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), mappingFileName);
+
+            XmlMapperManager xmlMapperManager = new XmlMapperManager(TransactionDirection.InternToExtern);
+            xmlMapperManager.Load(pathMappingFile, "exporttest");
+
+            XmlDocument tmp = GetConvertedMetadata(datasetId, type, mappingName, false);
+
+            return xmlMapperManager.Validate(tmp);
+        }
+
+        public static XmlDocument GetConvertedMetadata(long datasetId, TransmissionType type, string mappingName, bool storing = true)
         {
             XmlDocument newXml;
             try
@@ -30,7 +47,7 @@ namespace BExIS.IO.Transform.Output
                 string mappingFileName = XmlDatasetHelper.GetTransmissionInformation(datasetVersion, type, mappingName);
                 string pathMappingFile = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), mappingFileName);
 
-                XmlMapperManager xmlMapperManager = new XmlMapperManager();
+                XmlMapperManager xmlMapperManager = new XmlMapperManager(TransactionDirection.InternToExtern);
                 xmlMapperManager.Load(pathMappingFile, "exporttest");
 
                 newXml = xmlMapperManager.Export(datasetVersion.Metadata, datasetVersion.Id, mappingName, true);
@@ -38,7 +55,7 @@ namespace BExIS.IO.Transform.Output
                 string title = XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title);
 
                 // store in content descriptor
-                storeGeneratedFilePathToContentDiscriptor(datasetId, datasetVersion, "metadata", ".xml");
+                if(storing)storeGeneratedFilePathToContentDiscriptor(datasetId, datasetVersion, "metadata", ".xml");
 
             }
             catch (Exception ex)

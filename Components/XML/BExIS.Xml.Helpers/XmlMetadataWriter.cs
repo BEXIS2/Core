@@ -63,7 +63,7 @@ namespace BExIS.Xml.Helpers
         /// <seealso cref=""/>
         /// <param name="metadataStructureId"></param>
         /// <returns></returns>
-        public XDocument CreateMetadataXml(long metadataStructureId)
+        public XDocument CreateMetadataXml(long metadataStructureId, XDocument importXml=null)
         {
             metadataStructure = metadataStructureManager.Repo.Get(metadataStructureId);
             List<MetadataPackageUsage> packages = metadataStructureManager.GetEffectivePackages(metadataStructureId).ToList();
@@ -120,17 +120,19 @@ namespace BExIS.Xml.Helpers
                     attribute.SetAttributeValue("id", mau.MetadataAttribute.Id.ToString());
                     attribute.SetAttributeValue("number", "1");
 
-                    attribute = setChildren(attribute, mau);
+                    string xpath = attributeRole.GetAbsoluteXPath() + attribute.GetAbsoluteXPath();
 
                     attributeRole.Add(attribute);
 
+                    setChildren(attribute,  mau, importXml);
+                   
                 }
             }
 
             return doc;
         }
 
-        private XElement setChildren(XElement element, BaseUsage usage)
+        private XElement setChildren(XElement element, BaseUsage usage, XDocument importDocument = null)
         {
             MetadataAttribute metadataAttribute;
 
@@ -156,9 +158,52 @@ namespace BExIS.Xml.Helpers
                     //Debug.WriteLine("MetadataCompoundAttribute:            " + element.Name);
                     //Debug.WriteLine("*************************:            " + element.Name);
                     //XElement x = element.Descendants().Where(e => e.Name.Equals(nestedUsage.Member.Name)).First();
-                    XElement x = AddAndReturnAttribute(element, nestedUsage, 1);
+
+                    if (importDocument != null)
+                    {
+                        string parentPath = element.GetAbsoluteXPathWithIndex();
+
+                        string usagePath = parentPath + "/" + nestedUsage.Label; 
+                            //+"/"+ nestedUsage.Member.Name;
+
+                        XElement usageElement = importDocument.XPathSelectElement(usagePath);
+
+                        if (usageElement != null && usageElement.HasElements)
+                        {
+                            int num = usageElement.Elements().Count();
+                            //importDocument.XPathSelectElements(childPath).Count();
+                            //num = XmlUtility.ToXmlDocument(importDocument).SelectNodes(childPath).Count;
+
+                            List<XElement> typeList = new List<XElement>();
+                            if (num == 0)
+                            {
+                                typeList = AddAndReturnAttribute(element, nestedUsage, 1, 1);
+                                //x = setChildren(x, nestedUsage, importDocument);
+                            }
+                            else
+                            {
+                                typeList = AddAndReturnAttribute(element, nestedUsage, 1, num);
+                            }
+
+                            foreach (var type in typeList)
+                            {
+                                setChildren(type, nestedUsage, importDocument);
+                            }
+                        }
+                        else
+                        {
+                            Debug.WriteLine("NULL OR EMPTY:------> "+ usagePath);
+                        }
+
+                    }
+                    else
+                    {
+                        List<XElement> typeList = new List<XElement>();
+
+                            typeList = AddAndReturnAttribute(element, nestedUsage, 1, 1);
+                            setChildren(typeList.FirstOrDefault(), nestedUsage, importDocument);
+                    }
                     
-                    x = setChildren(x, nestedUsage);
                 }
             }
 
@@ -387,8 +432,10 @@ namespace BExIS.Xml.Helpers
             /// <param name="attributeUsage"></param>
             /// <param name="number"></param>
             /// <returns></returns>
-            private XElement AddAndReturnAttribute(XElement current, BaseUsage attributeUsage, int number)
+            private List<XElement> AddAndReturnAttribute(XElement current, BaseUsage attributeUsage, int number, int countOfTypes)
             {
+                List<XElement> tmp = new List<XElement>();
+
                 string typeName = "";
                 string id = "";
                 string roleId = "";
@@ -420,19 +467,24 @@ namespace BExIS.Xml.Helpers
                         role.SetAttributeValue("id", attributeUsage.Id.ToString());
                     }
 
-                    XElement element = CreateXElement(typeName, XmlNodeType.MetadataAttribute);
+                    for (int i = 0; i < countOfTypes; i++)
+                    {
+                        XElement element = CreateXElement(typeName, XmlNodeType.MetadataAttribute);
 
-                    if (_mode.Equals(XmlNodeMode.xPath)) element.SetAttributeValue("name", typeName);
-                    element.SetAttributeValue("roleId", roleId);
-                    element.SetAttributeValue("id", id);
-                    element.SetAttributeValue("number", number);
-                    role.Add(element);
+                        if (_mode.Equals(XmlNodeMode.xPath)) element.SetAttributeValue("name", typeName);
+                        element.SetAttributeValue("roleId", roleId);
+                        element.SetAttributeValue("id", id);
+                        element.SetAttributeValue("number", i+1);
+                        role.Add(element);
+
+                        tmp.Add(element);
+                    }
+
+                   
                     current.Add(role);
-                    
-                    //Debug.WriteLine("Element:            " + element.Name);
+                //Debug.WriteLine("Element:            " + element.Name);
 
-
-                return element;
+                return tmp;
 
                 }
                 else

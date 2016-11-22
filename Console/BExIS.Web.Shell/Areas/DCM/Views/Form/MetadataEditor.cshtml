@@ -133,7 +133,7 @@
                     <b>show all fields</b>
 
                 </td>
-                
+               
 
             }
 
@@ -251,10 +251,11 @@ $("#showminimap")
         bindMinimap();
     });
 
+
 function SelectFileProcess_OnSelect(e) {
 
-        $("#root").preloader(20, "Import selected xml file.",300);
 
+        $("#root").preloader(20, "Import selected xml file.",300);
 
         var file = e.files[0];
         var maxsize = '@int_MaxRequestLength';
@@ -303,9 +304,25 @@ function OnSuccess() {
 
     $.get('@Url.Action("LoadExternalXml", "Form", new RouteValueDictionary {{"area", "DCM"}})',
         function(response) {
-            //alert("on success");
+            
+            if (response.indexOf("error") > 0) {
 
-            $('#MetadataEditor').replaceWith(response);
+                $('#MetadataEditor').replaceWith(response);
+                
+                bindMinimap();
+            } else {
+                console.log("loaded");
+
+                $("#root").removePreloader();
+
+                $("#form_message")
+                    .text("The xml file you have selected, was not valid against the metadata structure. " + response);
+                $("#form_message").css("color", "#f24c24");
+                bindMinimap();
+                
+            }
+
+           
         })
 }
 
@@ -330,6 +347,8 @@ function validate() {
                 $("#form_message").text("Validation successful");
                 $("#form_message").css("color", "#388670");
             }
+
+            bindMinimap();
         });
 }
 
@@ -339,6 +358,7 @@ function cancel() {
         $.get('@Url.Action(@cancel.ActionName, @cancel.ControllerName, new RouteValueDictionary {{"area", @cancel.AreaName}})',
             function(response) {
                 $('#MetadataEditor').replaceWith(response);
+                bindMinimap();
             })
     } else {
         return false;
@@ -351,6 +371,7 @@ function reset() {
         $.get('@Url.Action(@reset.ActionName, @reset.ControllerName, new RouteValueDictionary {{"area", @reset.AreaName}})',
             function(response) {
                 $('#MetadataEditor').replaceWith(response);
+
             })
     } else {
         return false;
@@ -361,6 +382,7 @@ function edit() {
     $.get('@Url.Action("EditMetadata", "Form", new RouteValueDictionary {{"area", "DCM"}, {"datasetId", @Model.DatasetId}, {"locked", false}, {"created", false}})',
             function(response) {
                 $('#MetadataEditor').replaceWith(response);
+      
             })
 }
 
@@ -385,15 +407,14 @@ function submit() {
 }
 
 function callSubmitAction() {
-    $
-        .get('@Url.Action(@submit.ActionName, @submit.ControllerName, new RouteValueDictionary {{"area", @submit.AreaName}, {"editMode", @Model.FromEditMode}})',
+    $.get('@Url.Action(@submit.ActionName, @submit.ControllerName, new RouteValueDictionary {{"area", @submit.AreaName}, {"editMode", @Model.FromEditMode}})',
             function(response) {
                 $('#MetadataEditor').replaceWith(response);
                 $('html, body').animate({ scrollTop: 0 }, 'slow');
             })
 }
 
-    function switchVisibilityOfOptionalElements(e) {
+function switchVisibilityOfOptionalElements(e) {
 
     var show = '@showOptional';
 
@@ -403,7 +424,6 @@ function callSubmitAction() {
                 bindMinimap(true);
             });
 }
-
 
 
 </script>

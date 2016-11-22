@@ -41,11 +41,13 @@ namespace BExIS.Web.Shell.Areas.DDM.Models
         public DataRepository DataRepository;
         public bool Exist;
         public bool IsMetadataConvertable { get; set; }
+        public string metadataValidMessage { get; set; }
         public bool IsDataConvertable { get; set; }
 
         public DataRepoRequirentModel()
         {
             IsMetadataConvertable = false;
+            metadataValidMessage = "";
             IsDataConvertable = false;
             DatasetId = 0;
             DatasetVersionId = 0;

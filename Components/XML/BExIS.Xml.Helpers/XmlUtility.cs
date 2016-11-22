@@ -24,6 +24,42 @@ namespace BExIS.Xml.Helpers
                 return xPath + "/" + node.LocalName;
         }
 
+        public static string GetDirectXPathToNode(XmlNode node)
+        {
+            if (node.ParentNode == null && node.NodeType.Equals(System.Xml.XmlNodeType.Document))
+                return "";
+
+            string xPath = GetDirectXPathToNode(node.ParentNode);
+            if (xPath == "")
+                return node.LocalName;
+            else
+            {
+
+                int index = 1;
+                string nodeName = node.Name;
+                List<XmlNode> tmpChilds = new List<XmlNode>();
+
+                // finde same childs
+                if (node.ParentNode != null && node.ParentNode.ChildNodes.Count > 1)
+                {
+                    for (int i = 0;i<node.ParentNode.ChildNodes.Count;i++)
+                    {
+                        XmlNode tmpNode = node.ParentNode.ChildNodes[i];
+                        if (tmpNode.Name.Equals(node.Name))
+                            tmpChilds.Add(tmpNode);
+                    }
+                }
+
+                if (tmpChilds.Count > 0)
+                {
+                    index = tmpChilds.IndexOf(node)+1;
+                }
+
+
+                return xPath + "/" + node.LocalName + "[" + index  + "]";
+            }
+        }
+
         /// <summary>
         /// return true if the childnode is existing
         /// in the parent node
@@ -114,6 +150,54 @@ namespace BExIS.Xml.Helpers
         {
             //doc.DocumentElement.NamespaceURI
             return doc.CreateElement(nodeName);
+        }
+
+        public static XmlNode GenerateNodeFromXPath(XmlDocument doc, XmlNode parent, string xpath)
+        {
+            // grab the next node name in the xpath; or return parent if empty
+            string[] partsOfXPath = xpath.Trim('/').Split('/');
+
+            if (partsOfXPath.Length == 0)
+                return parent;
+
+            string nextNodeInXPath = partsOfXPath[0];
+            if (string.IsNullOrEmpty(nextNodeInXPath))
+                return parent;
+
+
+            // get or create the node from the name
+            
+            int index = 1;
+            string nodeName = nextNodeInXPath;
+            if (nextNodeInXPath.Contains("["))
+            {
+                string[] tmp = nextNodeInXPath.Split('[');
+                nodeName = tmp[0];
+                index = Int32.Parse(tmp[1].Remove(tmp[1].IndexOf("]")));
+
+            }
+
+            XmlNodeList nodes = parent.SelectNodes(nodeName);
+
+            XmlNode node = nodes[index-1];
+
+            if (node == null)
+            {
+                if (nextNodeInXPath.StartsWith("@"))
+                {
+                    XmlAttribute anode = doc.CreateAttribute(nextNodeInXPath.Substring(1));
+                    node = parent.Attributes.Append(anode);
+                }
+                else
+                {
+                    node = parent.AppendChild(doc.CreateElement(nodeName));
+
+                }
+            }
+
+            // rejoin the remainder of the array as an xpath expression and recurse
+            string rest = String.Join("/", partsOfXPath, 1, partsOfXPath.Length - 1);
+            return GenerateNodeFromXPath(doc, node, rest);
         }
 
         /// <summary>

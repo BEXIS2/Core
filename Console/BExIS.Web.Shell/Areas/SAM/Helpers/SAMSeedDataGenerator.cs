@@ -80,34 +80,38 @@ namespace BExIS.Web.Shell.Areas.SAM.Helpers
             // Features
             FeatureManager featureManager = new FeatureManager();
             Feature f1 = featureManager.CreateFeature("BExIS", "BExIS");
-            Feature f2 = featureManager.CreateFeature("Administration", "Administration", f1.Id);
+            Feature f9 = featureManager.CreateFeature("Search", "Search", f1.Id);
 
-            #region admin
+            #region Data Planning
 
-            Feature f3 = featureManager.CreateFeature("Users Management", "Users Management", f2.Id);
-            Feature f4 = featureManager.CreateFeature("Groups Management", "Groups Management", f2.Id);
-            Feature f5 = featureManager.CreateFeature("Data Management", "Data Management", f2.Id);
-            Feature f6 = featureManager.CreateFeature("Feature Management", "Feature Management", f2.Id);
-            Feature f7 = featureManager.CreateFeature("Search", "Search", f2.Id);
-            Feature f18 = featureManager.CreateFeature("Data Structure Management", "Data Structure Management", f2.Id);
-            Feature f8 = featureManager.CreateFeature("Dataset Maintenance", "Dataset Maintenance", f2.Id);
-            Feature f17 = featureManager.CreateFeature("Data Collection", "Data Collection", f2.Id);
+            Feature f18 = featureManager.CreateFeature("Data Planning Management", "Data Planning Management", f1.Id);
+            Feature f13 = featureManager.CreateFeature("Datastructure Management", "Datastructure Management", f18.Id);
 
             #endregion
 
-            #region BEXIS
+            #region Data Dissemination
 
-            Feature f9 = featureManager.CreateFeature("Search", "Search", f1.Id);
-            Feature f10 = featureManager.CreateFeature("Data Collection", "Data Collection", f1.Id);
-            Feature f13 = featureManager.CreateFeature("Research Plan", "Research Plan", f1.Id);
             Feature f16 = featureManager.CreateFeature("Data Dissemination", "Data Dissemination", f1.Id);
 
             #endregion
 
             #region Data Collection
 
+            Feature f10 = featureManager.CreateFeature("Data Collection", "Data Collection", f1.Id);
             Feature f11 = featureManager.CreateFeature("Dataset Creation", "Dataset Creation", f10.Id);
             Feature f12 = featureManager.CreateFeature("Dataset Submission", "Dataset Submission", f10.Id);
+            Feature f17 = featureManager.CreateFeature("Metadata Management", "Metadata Management", f10.Id);
+            #endregion
+            
+            #region admin
+
+            Feature f2 = featureManager.CreateFeature("Administration", "Administration", f1.Id);
+            Feature f3 = featureManager.CreateFeature("Users Management", "Users Management", f2.Id);
+            Feature f4 = featureManager.CreateFeature("Groups Management", "Groups Management", f2.Id);
+            Feature f6 = featureManager.CreateFeature("Feature Management", "Feature Management", f2.Id);
+            Feature f5 = featureManager.CreateFeature("Data Management", "Data Management", f2.Id);
+            Feature f7 = featureManager.CreateFeature("Search Management", "Search Management", f2.Id);
+            Feature f8 = featureManager.CreateFeature("Dataset Maintenance", "Dataset Maintenance", f2.Id);
 
             #endregion
 
@@ -182,7 +186,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Helpers
             t24.Feature = f18;
             taskManager.UpdateTask(t24);
             Task t25 = taskManager.CreateTask("RPM", "Unit", "*");
-            t25.Feature = f13;
+            t25.Feature = f18;
             taskManager.UpdateTask(t25);
 
             Task t26 = taskManager.CreateTask("DIM", "Admin", "*");
