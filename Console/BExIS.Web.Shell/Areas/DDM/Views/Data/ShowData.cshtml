@@ -31,44 +31,43 @@
         @(Html.Telerik().TabStrip()
               .Name("ShowDataTabStrip")
               .SelectedIndex(0)
-              
+
               .Items(tabs =>
               {
 
                   tabs.Add()
                       .Text("Metadata")
                       .LoadContentFrom("ShowMetadata", "Data", new {area = "DDM", entityId = @Model.Id, title = @Model.Title, metadatastructureId = @Model.MetadataStructureId, datastructureId = @Model.DataStructureId, researchplanId = @Model.ResearchPlanId, sessionKeyForMetadata = "ShowDataMetadata"})
-                      .HtmlAttributes(new { id = "metadata"});
-                      
+                      .HtmlAttributes(new {id = "metadata"});
+
 
                   tabs.Add()
                       .Text("Primary Data")
                       .LoadContentFrom("ShowPrimaryData", "Data", new {area = "DDM", datasetID = @Model.Id})
                       .Enabled(@Model.ViewAccess)
-                      .HtmlAttributes(new { id = "primarydata" });
+                      .HtmlAttributes(new {id = "primarydata"});
 
                   tabs.Add()
                       .Text("Data Structure")
                       .LoadContentFrom("ShowPreviewDataStructure", "Data", new {area = "DDM", datasetID = @Model.Id})
-                      .HtmlAttributes(new { id = "datastructure" });
+                      .HtmlAttributes(new {id = "datastructure"});
 
 
                   tabs.Add()
                       .Text("Dataset Permissions")
                       .LoadContentFrom("Subjects", "Data", new {area = "DDM", dataId = @Model.Id})
                       .Enabled(@Model.GrantAccess)
-                      .HtmlAttributes(new { id = "datapermissions" });
+                      .HtmlAttributes(new {id = "datapermissions"});
 
 
                   tabs.Add()
                       .Text("Publish")
                       .LoadContentFrom("publishData", "Data", new {area = "DDM", datasetId = @Model.Id})
                       .Enabled(@Model.ViewAccess)
-                      .HtmlAttributes(new { id = "prepare" });
-                  
+                      .HtmlAttributes(new {id = "prepare"});
+
               })
-              .ClientEvents(e=>e.OnSelect("OnSelectShowDataTabStrip"))
-              )
+              .ClientEvents(e => e.OnSelect("OnSelectShowDataTabStrip")))
     }
     else
     {
@@ -98,9 +97,11 @@
                 $("#Grid_Subjects .t-refresh").trigger('click');
             });
         } else {
-            $.post('@Url.Action("DeleteDataPermission", "Data")', { DataId: dataId, EntityId: entityId, SubjectId: subjectId, RightType: rightType }, function (e) {
-                $("#Grid_Subjects .t-refresh").trigger('click');
-            });
+            $.post('@Url.Action("DeleteDataPermission", "Data")',
+                { DataId: dataId, EntityId: entityId, SubjectId: subjectId, RightType: rightType },
+                function(e) {
+                    $("#Grid_Subjects .t-refresh").trigger('click');
+                });
         }
     }
 
@@ -122,5 +123,6 @@
             console.log("hide map");
         }
     }
+
 
 </script>

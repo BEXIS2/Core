@@ -86,7 +86,7 @@
 }
 
 
-<div id="MetadataEditor" style="width:89%">
+<div id="MetadataEditor" style="width: 89%">
 <div>
     <table>
         <tr>
@@ -133,7 +133,7 @@
                     <b>show all fields</b>
 
                 </td>
-               
+
 
             }
 
@@ -145,7 +145,7 @@
                           .Name("SelectFileUploader")
                           .Multiple(false)
                           .ShowFileList(false)
-                          .HtmlAttributes(new {title = "Import from xml", accept=".xml"})
+                          .HtmlAttributes(new {title = "Import from xml", accept = ".xml"})
                           .ClientEvents(events => events
                               .OnSuccess("OnSuccess")
                               .OnSelect("SelectFileProcess_OnSelect")
@@ -161,7 +161,11 @@
 
             <td id="form_message_container_Column" style="text-align: right">
                 <span id="form_message"></span>
+                <div id="preloader_cotainer">
+                    <script type="text/javascript"> $("#preloader_cotainer").preloader(20,"Loading metadata...")</script>
+                </div>
             </td>
+            
 
             @if (Model.Created && Model.DatasetId != -1 && !@Model.FromEditMode)
             {
@@ -182,80 +186,80 @@
 
 </div>
 
-    <div id="root" style="background-color:white">
+<div id="root" style="background-color: white">
 
-        @foreach (var element in Model.StepModelHelpers)
-        {
-            if (element.Model is MetadataPackageModel)
-            {
-                <div style="width: 100%; height: 1px; background-color: white"></div>
-                @Html.Partial("_metadataCompoundAttributeView", element)
-            }
-        }
-
-    </div>
-
-    @if (!locked)
+    @foreach (var element in Model.StepModelHelpers)
     {
-        <div class="bx-footer right">
+        if (element.Model is MetadataPackageModel)
+        {
+            <div style="width: 100%; height: 1px; background-color: white"></div>
+            @Html.Partial("_metadataCompoundAttributeView", element)
+        }
+    }
 
-            <!-- only from editmode you have the option to reset-->
-            <button onclick="validate()" class="bx-button function" style="float: left;">Validate</button>
+</div>
 
-            @*@if (@Model.FromEditMode)
+@if (!locked)
+{
+    <div class="bx-footer right">
+
+        <!-- only from editmode you have the option to reset-->
+        <button onclick="validate()" class="bx-button function" style="float: left;">Validate</button>
+
+        @*@if (@Model.FromEditMode)
             {
                 <button onclick="reset()" class="bx-button function" style="float: left;">Reset</button>
             }*@
 
-            @if (@submit.IsComplete())
-            {
-                <button onclick="submit()" class="bx-button action">Save</button>
-            }
+        @if (@submit.IsComplete())
+        {
+            <button onclick="submit()" class="bx-button action">Save</button>
+        }
 
-            @if (@Model.FromEditMode)
-            {
-                <button onclick="cancel()" class="bx-button action">Cancel</button>
-            }
-        </div>
-    }
+        @if (@Model.FromEditMode)
+        {
+            <button onclick="cancel()" class="bx-button action">Cancel</button>
+        }
+    </div>
+}
 
 
 
 <script>
 
-$("#MetadataEditor")
-    .ready(function() {
+    $("#MetadataEditor")
+        .ready(function() {
 
-        setTimeout(function() {
-                //alert("r");
+            setTimeout(function() {
+                    //alert("r");
                 bindMinimap();
-            },
-            120);
+                    $("#preloader_cotainer").removePreloader();
+                },
+                120);
+        });
 
-    });
+    $(window)
+        .resize(function() {
+            setTimeout(function() {
+                    //alert("r");
 
-$(window)
-    .resize(function() {
-        setTimeout(function() {
-                //alert("r");
+                    bindMinimap();
+                },
+                120);
+
+        });
+
+    $("#showminimap")
+        .click(function() {
 
             bindMinimap();
-            },
-            120);
-
-    });
-
-$("#showminimap")
-    .click(function() {
-
-        bindMinimap();
-    });
+        });
 
 
-function SelectFileProcess_OnSelect(e) {
+    function SelectFileProcess_OnSelect(e) {
 
 
-        $("#root").preloader(20, "Import selected xml file.",300);
+        $("#root").preloader(20, "Import selected xml file.", 300);
 
         var file = e.files[0];
         var maxsize = '@int_MaxRequestLength';
@@ -278,9 +282,9 @@ function SelectFileProcess_OnSelect(e) {
 
     }
 
-function SelectFileUploader_OnLoad() {
-    $(".t-upload-button span").text("Import");
-}
+    function SelectFileUploader_OnLoad() {
+        $(".t-upload-button span").text("Import");
+    }
 
 /*
 Is Extention from selected file
@@ -303,131 +307,138 @@ function OnSuccess() {
     //alert("on success");
 
     $.get('@Url.Action("LoadExternalXml", "Form", new RouteValueDictionary {{"area", "DCM"}})',
-        function(response) {
-            
-            if (response.indexOf("error") > 0) {
+            function(response) {
 
-                $('#MetadataEditor').replaceWith(response);
-                bindMinimap(true);
- 
+                if (response.indexOf("error") > 0) {
 
-            } else {
-                console.log("loaded");
-
-                $("#root").removePreloader();
-
-                $("#form_message")
-                    .text("The xml file you have selected, was not valid against the metadata structure. " + response);
-                $("#form_message").css("color", "#f24c24");
-                bindMinimap();
-                
-            }
-
-           
-        })
-}
-
-function validate() {
-
-    $("#root").preloader(20, "Is validating",300);
-
-    $.get('@Url.Action("Validate", "Form", new RouteValueDictionary {{"area", "DCM"}})',
-        function (response) {
-
-            $('#MetadataEditor').replaceWith(response);
-            $('html, body').animate({ scrollTop: 0 }, 'slow');
-
-            var errors = $('.bx-input-error');
-
-            if (errors.length > 0) {
-                $("#form_message")
-                    .text("The metadata you entered is either not complete or does not comply to the metadata standard. Check the fields marked in red for more details.");
-                $("#form_message").css("color", "#f24c24");
-
-            } else {
-                $("#form_message").text("Validation successful");
-                $("#form_message").css("color", "#388670");
-            }
-
-            bindMinimap(true);
-        });
-}
-
-function cancel() {
-
-    if (confirm('Are you sure you want to leave the form? All changes will be lost.')) {
-        $.get('@Url.Action(@cancel.ActionName, @cancel.ControllerName, new RouteValueDictionary {{"area", @cancel.AreaName}})',
-                function (response) {
                     $('#MetadataEditor').replaceWith(response);
                     bindMinimap(true);
-                    $('html, body').animate({ scrollTop: 0 }, 'slow');
-                });
-    } else {
-        return false;
+
+
+                } else {
+                    console.log("loaded");
+
+                    $("#root").removePreloader();
+
+                    $("#form_message")
+                        .text("The xml file you have selected, was not valid against the metadata structure. " +
+                            response);
+                    $("#form_message").css("color", "#f24c24");
+                    bindMinimap();
+
+                }
+
+
+            })
     }
-}
 
-function reset() {
+    function validate() {
 
-    if (confirm('Are you sure? All changes will be lost.')) {
-        $.get('@Url.Action(@reset.ActionName, @reset.ControllerName, new RouteValueDictionary {{"area", @reset.AreaName}})',
+        $("#root").preloader(20, "Is validating", 300);
+
+        $.get('@Url.Action("Validate", "Form", new RouteValueDictionary {{"area", "DCM"}})',
+            function(response) {
+
+                $('#MetadataEditor').replaceWith(response);
+                $('html, body').animate({ scrollTop: 0 }, 'slow');
+
+                var errors = $('.bx-input-error');
+
+                if (errors.length > 0) {
+                    $("#form_message")
+                        .text("The metadata you entered is either not complete or does not comply to the metadata standard. Check the fields marked in red for more details.");
+                    $("#form_message").css("color", "#f24c24");
+
+                } else {
+                    $("#form_message").text("Validation successful");
+                    $("#form_message").css("color", "#388670");
+                }
+
+                bindMinimap(true);
+            });
+    }
+
+    function cancel() {
+
+        if (confirm('Are you sure you want to leave the form? All changes will be lost.')) {
+            $
+                .get('@Url.Action(@cancel.ActionName, @cancel.ControllerName, new RouteValueDictionary {{"area", @cancel.AreaName}})',
+                    function(response) {
+                        $('#MetadataEditor').replaceWith(response);
+                        bindMinimap(true);
+                        $('html, body').animate({ scrollTop: 0 }, 'slow');
+                    });
+        } else {
+            return false;
+        }
+    }
+
+    function reset() {
+
+        if (confirm('Are you sure? All changes will be lost.')) {
+            $
+                .get('@Url.Action(@reset.ActionName, @reset.ControllerName, new RouteValueDictionary {{"area", @reset.AreaName}})',
+                    function(response) {
+                        $('#MetadataEditor').replaceWith(response);
+                        bindMinimap(true);
+                        $('html, body').animate({ scrollTop: 0 }, 'slow');
+                    });
+        } else {
+            return false;
+        }
+    }
+
+    function edit() {
+        $
+            .get('@Url.Action("EditMetadata", "Form", new RouteValueDictionary {{"area", "DCM"}, {"datasetId", @Model.DatasetId}, {"locked", false}, {"created", false}})',
                 function(response) {
                     $('#MetadataEditor').replaceWith(response);
                     bindMinimap(true);
-                    $('html, body').animate({ scrollTop: 0 }, 'slow');
-                });
-    } else {
-        return false;
+                })
     }
-}
 
-function edit() {
-    $.get('@Url.Action("EditMetadata", "Form", new RouteValueDictionary {{"area", "DCM"}, {"datasetId", @Model.DatasetId}, {"locked", false}, {"created", false}})',
+
+    function submit() {
+
+
+        $.get('@Url.Action("Validate", "Form", new RouteValueDictionary {{"area", "DCM"}})',
             function(response) {
                 $('#MetadataEditor').replaceWith(response);
                 bindMinimap(true);
-            })
-}
+                var errors = $('.bx-input-error');
 
-
-function submit() {
-
-
-    $.get('@Url.Action("Validate", "Form", new RouteValueDictionary {{"area", "DCM"}})',
-        function(response) {
-            $('#MetadataEditor').replaceWith(response);
-            bindMinimap(true);
-            var errors = $('.bx-input-error');
-
-            if (errors.length == 0) {
-                callSubmitAction();
-            } else {
-                if (confirm('Warning: Some fields are not complete or contain entries that do not meet the requirements. Press OK to save anyways and resume later.')) {
+                if (errors.length == 0) {
                     callSubmitAction();
+                } else {
+                    if (
+                        confirm('Warning: Some fields are not complete or contain entries that do not meet the requirements. Press OK to save anyways and resume later.')) {
+                        callSubmitAction();
+                    }
                 }
-            }
-        })
-}
-
-function callSubmitAction() {
-    $.get('@Url.Action(@submit.ActionName, @submit.ControllerName, new RouteValueDictionary {{"area", @submit.AreaName}, {"editMode", @Model.FromEditMode}})',
-            function(response) {
-                $('#MetadataEditor').replaceWith(response);
-                $('html, body').animate({ scrollTop: 0 }, 'slow');
-                bindMinimap(true);
             })
-}
+    }
 
-function switchVisibilityOfOptionalElements(e) {
+    function callSubmitAction() {
+        $
+            .get('@Url.Action(@submit.ActionName, @submit.ControllerName, new RouteValueDictionary {{"area", @submit.AreaName}, {"editMode", @Model.FromEditMode}})',
+                function(response) {
+                    $('#MetadataEditor').replaceWith(response);
+                    $('html, body').animate({ scrollTop: 0 }, 'slow');
+                    bindMinimap(true);
+                })
+    }
 
-    var show = '@showOptional';
+    function switchVisibilityOfOptionalElements(e) {
 
-    $.get('@Url.Action("SwitchVisibilityOfOptionalElements", "Form", new RouteValueDictionary {{"area", "DCM"}})', { show: show },
+        var show = '@showOptional';
+
+        $.get('@Url.Action("SwitchVisibilityOfOptionalElements", "Form", new RouteValueDictionary {{"area", "DCM"}})',
+            { show: show },
             function(response) {
                 $('#MetadataEditor').replaceWith(response);
                 bindMinimap(true);
             });
-}
+    }
 
 
 </script>

@@ -3,86 +3,7 @@
 @{
     List<string> datarepolist = Model.DataRepositories.Select(d => d.Name).ToList();
 }
-
-
-<div id="publishContentContainer" style="min-height: 200px">
-    <div id="publishingOptionsContainer" style="text-align: -webkit-left;">
-
-
-        @if (Model.EditRights)
-        {
-
-            <table>
-                <tr>
-                    <td style="width: 100px;">
-                        @(Html.Telerik().DropDownList()
-                              .Placeholder("Select")
-                              .Name("SelectDataRepository")
-                              .HtmlAttributes(new {title = "Select a repository for publishing this dataset"})
-                              .ClientEvents(events => events.OnChange("onSelectDataRepositoryDropDownChange"))
-                              .BindTo(new SelectList(datarepolist)))
-                    </td>
-                    <td style="width: 50px;">
-                        <div id="preloader" style="display: none;">
-                            <img src="../../../../Themes/Default/Styles/Default/preloader.GIF"/>
-                        </div>
-                    </td>
-                    <td style="width: 100px;">
-                        <button id="submitPublishBt" class="bx-button small function bx-disabled" onClick="onSubmitPublishBtClick(this)" disabled="disabled" title="Prepare Publication Package (NOTE: there is currently no direct submission in place)">Publish</button>
-                    </td>
-
-                    <td style="text-align: right">
-                        <span id="requirementsContainer" >
-                      
-                        </span>
-                    </td>
-                </tr>
-            </table>
-        }
-  
-    </div>
-
-    <div>
-        <table>
-            <tr>
-                <th style="width: 60px;">Version</th>
-                <th>Creation Date</th>
-                <th>Data Repository</th>
-                <th>Status</th>
-                <th style="width: 30px;"></th>
-            </tr>
-            @if (Model.RepoFilesDictionary.Count > 0)
-            {
-                foreach (var file in Model.RepoFilesDictionary)
-                {
-                    <tr>
-                        <td>@file.DatasetVersionId</td>
-                        <td>@file.CreationDate.ToLocalTime()</td>
-                        <td>@file.DataRepository.Name</td>
-                        <td>no status available</td>
-                        <td>
-                            @if (Model.DownloadRights)
-                            {
-                                @Html.ActionLink(" ", "DownloadZip", "Data", new {datarepo = file.DataRepository.Name, datasetid = file.DatasetId, datasetversionid = file.DatasetVersionId}, new {@class = "bx bx-grid-function bx-download", title = "Download"})
-                            }
-                            else
-                            {
-                                <a class="bx bx-grid-function bx-download bx-disabled" disabled="disabled" title="You do not have permission to download this dataset."></a>
-                            }
-                        </td>
-                    </tr>
-                }
-            }
-            else
-            {
-                <tr><td>empty</td></tr>
-            }
-        </table>
-    </div>
-
-
-
-    <script type="text/javascript">
+<script type="text/javascript">
 
         $(document)
             .ready(function() {
@@ -118,7 +39,7 @@
                             var isDataConvertable = data.isDataConvertable;
                             var exist  = data.Exist;
 
-                    
+
                             if (isMetadataConvertable && typeof metadataValidMessage==="undefined" && isDataConvertable) {
 
                                 console.log("ok");
@@ -168,7 +89,7 @@
 
         function onSubmitPublishBtClick(e) {
 
-            $("#preloader").show();
+            $("#preloader").preloader(14,"Publishing data...");
 
             var id = @Model.DatasetId;
 
@@ -182,13 +103,91 @@
                 function(response) {
                     //alert(response);
                     $("#publishContentContainer").replaceWith(response);
-                    $("#preloader").hide();
+                    $("#preloader").removePreloader();
 
                 });
 
 
         }
-    </script>
+</script>
+
+<div id="publishContentContainer" style="min-height: 200px">
+    <div id="publishingOptionsContainer" style="text-align: -webkit-left;">
+
+
+        @if (Model.EditRights)
+        {
+
+            <table>
+                <tr>
+                    <td style="width: 100px;">
+                        @(Html.Telerik().DropDownList()
+                              .Placeholder("Select")
+                              .Name("SelectDataRepository")
+                              .HtmlAttributes(new {title = "Select a repository for publishing this dataset"})
+                              .ClientEvents(events => events.OnChange("onSelectDataRepositoryDropDownChange"))
+                              .BindTo(new SelectList(datarepolist)))
+                    </td>
+
+                    <td style="width: 100px;">
+                        <button id="submitPublishBt" class="bx-button small function bx-disabled" onClick="onSubmitPublishBtClick(this)" disabled="disabled" title="Prepare Publication Package (NOTE: there is currently no direct submission in place)">Publish</button>
+                    </td>
+
+                    <td style="text-align: right">
+                        <span id="requirementsContainer" >
+                      
+                        </span>
+                        <div id="preloader">
+
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        }
+  
+    </div>
+
+    <div>
+        <table>
+            <tr>
+                <th style="width: 60px;">Version</th>
+                <th>Creation Date</th>
+                <th>Data Repository</th>
+                <th>Status</th>
+                <th style="width: 30px;"></th>
+            </tr>
+            @if (Model.RepoFilesDictionary.Count > 0)
+            {
+                foreach (var file in Model.RepoFilesDictionary)
+                {
+                    <tr>
+                        <td>@file.DatasetVersionId</td>
+                        <td>@file.CreationDate.ToLocalTime()</td>
+                        <td>@file.DataRepository.Name</td>
+                        <td>no status available</td>
+                        <td>
+                            @if (Model.DownloadRights)
+                            {
+                                @Html.ActionLink(" ", "DownloadZip", "Data", new {datarepo = file.DataRepository.Name, datasetid = file.DatasetId, datasetversionid = file.DatasetVersionId}, new {@class = "bx bx-grid-function bx-download", title = "Download"})
+                            }
+                            else
+                            {
+                                <a class="bx bx-grid-function bx-download bx-disabled" disabled="disabled" title="You do not have permission to download this dataset."></a>
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr><td>empty</td></tr>
+            }
+        </table>
+    </div>
+
+
+
+    
     <style type="text/css">
         
         .t-content {
