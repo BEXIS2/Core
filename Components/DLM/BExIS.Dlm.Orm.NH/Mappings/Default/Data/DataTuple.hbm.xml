@@ -40,12 +40,12 @@
     <many-to-one class="DatasetVersion" name="DatasetVersion" column="DatasetVersionRef">      
     </many-to-one>
 
-    <set cascade="save-update" name="History" inverse="true" lazy="true" order-by="OriginalTupleRef">
+    <!--<set cascade="save-update" name="History" inverse="true" lazy="true" order-by="OriginalTupleRef">
       <key>
         <column name="OriginalTupleRef" />
       </key>
       <one-to-many class="DataTupleVersion" />
-    </set>
+    </set>-->
 
   </class>
 
