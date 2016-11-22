@@ -416,6 +416,17 @@ h2{
     left: 3px;   
 }
 
+.bx-rpm-createAttributeContainer {
+    background-color:#ffffff;
+}
+
+.bx-rpm-createAttributeContainer .bx-rpm-constrainTable,
+.bx-rpm-createAttributeContainer .bx-rpm-constrainTable table,
+.bx-rpm-createAttributeContainer .bx-rpm-constrainTable tr,
+.bx-rpm-createAttributeContainer .bx-rpm-constrainTable td{
+    border:none;
+}
+
 .bx-rpm-createAttributeContainer table.bx-rpm-info{
     max-width:476px;
 }
