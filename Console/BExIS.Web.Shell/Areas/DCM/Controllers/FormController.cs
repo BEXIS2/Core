@@ -392,12 +392,14 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 long entityId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.ENTITY_ID]);
                 Model.EditRight = hasUserEditRights(entityId);
                 Model.EditAccessRight = hasUserEditAccessRights(entityId);
+                //Model.DatasetId = entityId;
 
             }
             else
             {
                 Model.EditRight = false;
                 Model.EditAccessRight = false;
+                Model.DatasetId = -1;
             }
            
 

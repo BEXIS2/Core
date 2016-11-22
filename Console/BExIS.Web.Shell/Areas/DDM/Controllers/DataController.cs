@@ -153,7 +153,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
             //set function actions of COPY, RESET,CANCEL,SUBMIT
             ActionInfo copyAction = new ActionInfo();
-            copyAction.ActionName = "Index";
+            copyAction.ActionName = "Copy";
             copyAction.ControllerName = "CreateDataset";
             copyAction.AreaName = "DCM";
 
