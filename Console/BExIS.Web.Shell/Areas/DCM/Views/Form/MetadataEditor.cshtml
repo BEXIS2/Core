@@ -308,8 +308,9 @@ function OnSuccess() {
             if (response.indexOf("error") > 0) {
 
                 $('#MetadataEditor').replaceWith(response);
-                
-                bindMinimap();
+                bindMinimap(true);
+ 
+
             } else {
                 console.log("loaded");
 
@@ -348,7 +349,7 @@ function validate() {
                 $("#form_message").css("color", "#388670");
             }
 
-            bindMinimap();
+            bindMinimap(true);
         });
 }
 
@@ -358,7 +359,7 @@ function cancel() {
         $.get('@Url.Action(@cancel.ActionName, @cancel.ControllerName, new RouteValueDictionary {{"area", @cancel.AreaName}})',
             function(response) {
                 $('#MetadataEditor').replaceWith(response);
-                bindMinimap();
+                bindMinimap(true);
             })
     } else {
         return false;
@@ -371,6 +372,7 @@ function reset() {
         $.get('@Url.Action(@reset.ActionName, @reset.ControllerName, new RouteValueDictionary {{"area", @reset.AreaName}})',
             function(response) {
                 $('#MetadataEditor').replaceWith(response);
+                bindMinimap(true);
 
             })
     } else {
@@ -382,7 +384,7 @@ function edit() {
     $.get('@Url.Action("EditMetadata", "Form", new RouteValueDictionary {{"area", "DCM"}, {"datasetId", @Model.DatasetId}, {"locked", false}, {"created", false}})',
             function(response) {
                 $('#MetadataEditor').replaceWith(response);
-      
+                bindMinimap(true);
             })
 }
 
@@ -393,7 +395,7 @@ function submit() {
     $.get('@Url.Action("Validate", "Form", new RouteValueDictionary {{"area", "DCM"}})',
         function(response) {
             $('#MetadataEditor').replaceWith(response);
-
+            bindMinimap(true);
             var errors = $('.bx-input-error');
 
             if (errors.length == 0) {
@@ -411,6 +413,7 @@ function callSubmitAction() {
             function(response) {
                 $('#MetadataEditor').replaceWith(response);
                 $('html, body').animate({ scrollTop: 0 }, 'slow');
+                bindMinimap(true);
             })
 }
 
