@@ -500,7 +500,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             DataAttribute dataAttribute = dcManager.DataAttributeRepo.Get(constraintModel.AttributeId);
             List<DomainItem> items = new List<DomainItem>();
             if (constraintModel.Terms != null && constraintModel.Terms.Trim() != "")
-                createDomainItems(constraintModel.Terms.Trim());
+                items = createDomainItems(constraintModel.Terms.Trim());
 
             if (items.Count > 0)
             {
