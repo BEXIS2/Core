@@ -31,10 +31,10 @@
                         <button id="submitPublishBt" class="bx-button small function bx-disabled" onClick="onSubmitPublishBtClick(this)" disabled="disabled" title="Prepare Publication Package (NOTE: there is currently no direct submission in place)">Publish</button>
                     </td>
 
-                    <td>
-                        <span id="requirementsContainer" style="color: red">
-
-                    </span>
+                    <td style="text-align: right">
+                        <span id="requirementsContainer" >
+                      
+                        </span>
                     </td>
                 </tr>
             </table>
@@ -113,13 +113,47 @@
                         data: JSON.stringify(jsonObject),
                         success: function(data) {
 
-                            if (data) {
+                            var isMetadataConvertable = data.isMetadataConvertable;
+                            var metadataValidMessage = data.isMetadataValid;
+                            var isDataConvertable = data.isDataConvertable;
+                            var exist  = data.Exist;
+
+                    
+                            if (isMetadataConvertable && typeof metadataValidMessage==="undefined" && isDataConvertable) {
+
+                                console.log("ok");
 
                                 $("#submitPublishBt").removeAttr("disabled");
                                 $("#submitPublishBt").removeClass("bx-disabled");
+
                             } else {
-                                $("#submitPublishBt").attr("disabled", "disabled");
-                                $("#submitPublishBt").addClass("bx-disabled");
+
+                                console.log("failure");
+
+
+                                if(!exist)
+                                {
+                                    $("#submitPublishBt").attr("disabled", "disabled");
+                                    $("#submitPublishBt").addClass("bx-disabled");
+
+                                    var message = "";
+
+                                    if (!isMetadataConvertable) {
+                                        message += "Metadata is not convertable. ";
+                                    }
+
+                                    if (typeof metadataValidMessage!=="undefined") {
+                                        message += metadataValidMessage;
+                                    }
+
+                                    if (!isDataConvertable) {
+                                        message += "Data is not convertable. ";
+                                    }
+
+                                    $("#requirementsContainer").text(message);
+                                    $("#requirementsContainer").css("color", "#f24c24");
+                                }
+
                             }
 
 

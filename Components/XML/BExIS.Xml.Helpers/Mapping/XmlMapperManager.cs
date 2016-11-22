@@ -175,12 +175,8 @@ namespace BExIS.Xml.Helpers.Mapping
             newMetadata.AppendChild(newMetadata.CreateElement(xmlMapper.Header.Destination.Prefix, xmlMapper.Header.Destination.XPath, xmlMapper.Header.Destination.NamepsaceURI));
             XmlNode root = newMetadata.DocumentElement;
 
-
             // create nodes
             newMetadata = mapNode(newMetadata, newMetadata.DocumentElement, metadataXml.DocumentElement);
-
-
-           
 
             // add required attributes
             newMetadata = addAttributes(newMetadata, newMetadata.DocumentElement);
@@ -349,7 +345,7 @@ namespace BExIS.Xml.Helpers.Mapping
             return newMetadata;
         }
 
-        public bool Validate(XmlDocument doc)
+        public string Validate(XmlDocument doc)
         {
             XDocument xdoc = XmlUtility.ToXDocument(doc);
             string msg = "";
@@ -357,7 +353,7 @@ namespace BExIS.Xml.Helpers.Mapping
                 msg += e.Message + Environment.NewLine;
             });
 
-            return msg == "";
+            return msg;
         }
 
         private void validationEventHandler(object sender, ValidationEventArgs e)
@@ -393,40 +389,44 @@ namespace BExIS.Xml.Helpers.Mapping
             // check if this source xpath is mapped in the xmlMapper
             if (xmlMapper.SourceExist(sourceXMppingFilePath))
             {
-                // get name of the destination node            
-                string destinationTagName = route.GetDestinationTagNames();
 
-                // get xpath of the destination node
-                // X\XType\Y\F
-                string destinationXMppingFilePath = route.GetDestinationXPath();
+                if (!string.IsNullOrEmpty(sourceNode.InnerText) || addAlsoEmptyNode)
+                {
+                    // get name of the destination node            
+                    string destinationTagName = route.GetDestinationTagNames();
+
+                    // get xpath of the destination node
+                    // X\XType\Y\F
+                    string destinationXMppingFilePath = route.GetDestinationXPath();
 
                     //ToDo checkif the way to map is intern to extern or extern to intern
                     // X[1]\XType[2]\Y[1]\yType[4]\F[1]\yType[2]
-                string destinationXPath = "";
+                    string destinationXPath = "";
 
-                if (this.TransactionDirection == TransactionDirection.ExternToIntern)
-                    destinationXPath = mapExternPathToInternPathWithIndex(sourceXPath, destinationXMppingFilePath);
-                else
-                    destinationXPath = mapInternPathToExternPathWithIndex(sourceXPath, destinationXMppingFilePath);
+                    if (this.TransactionDirection == TransactionDirection.ExternToIntern)
+                        destinationXPath = mapExternPathToInternPathWithIndex(sourceXPath, destinationXMppingFilePath);
+                    else
+                        destinationXPath = mapInternPathToExternPathWithIndex(sourceXPath, destinationXMppingFilePath);
 
-                // create xmlnode in document
-                XmlNode destinationNode = XmlUtility.GenerateNodeFromXPath(destinationDoc, destinationDoc as XmlNode,
-                destinationXPath); //XmlUtility.CreateNode(destinationTagName, destinationDoc);
-                destinationNode.InnerText = sourceNode.InnerText;
-                
+                    // create xmlnode in document
+                    XmlNode destinationNode = XmlUtility.GenerateNodeFromXPath(destinationDoc, destinationDoc as XmlNode,
+                        destinationXPath); //XmlUtility.CreateNode(destinationTagName, destinationDoc);
+                    destinationNode.InnerText = sourceNode.InnerText;
+
                     //if (type == element), get content
-                if (xmlMapper.IsSourceElement(sourceXPath))
-                {
-                    
+                    if (xmlMapper.IsSourceElement(sourceXPath))
+                    {
+
+                    }
+
+
+
+                    //destinationParentNode = createMissingNodes(destinationParentXPath, currentParentXPath, destinationParentNode, destinationDoc);
+
+                    ////check if nodes in destination not exist, create them
+                    //string destinationParentXPath = route.GetDestinationParentXPath();
+                    //string currentParentXPath = XmlUtility.GetDirectXPathToNode(destinationParentNode);
                 }
-
-
-
-                //destinationParentNode = createMissingNodes(destinationParentXPath, currentParentXPath, destinationParentNode, destinationDoc);
-
-                ////check if nodes in destination not exist, create them
-                //string destinationParentXPath = route.GetDestinationParentXPath();
-                //string currentParentXPath = XmlUtility.GetDirectXPathToNode(destinationParentNode);
 
             }
 
