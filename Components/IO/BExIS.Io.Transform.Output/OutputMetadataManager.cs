@@ -19,7 +19,7 @@ namespace BExIS.IO.Transform.Output
 {
     public class OutputMetadataManager
     {
-        public static bool IsValideAgainstSchema(long datasetId, TransmissionType type, string mappingName)
+        public static string IsValideAgainstSchema(long datasetId, TransmissionType type, string mappingName)
         {
 
             DatasetManager datasetManager = new DatasetManager();
@@ -31,10 +31,12 @@ namespace BExIS.IO.Transform.Output
             XmlMapperManager xmlMapperManager = new XmlMapperManager(TransactionDirection.InternToExtern);
             xmlMapperManager.Load(pathMappingFile, "exporttest");
 
-            return xmlMapperManager.Validate(datasetVersion.Metadata);
+            XmlDocument tmp = GetConvertedMetadata(datasetId, type, mappingName, false);
+
+            return xmlMapperManager.Validate(tmp);
         }
 
-        public static XmlDocument GetConvertedMetadata(long datasetId, TransmissionType type, string mappingName)
+        public static XmlDocument GetConvertedMetadata(long datasetId, TransmissionType type, string mappingName, bool storing = true)
         {
             XmlDocument newXml;
             try
@@ -53,7 +55,7 @@ namespace BExIS.IO.Transform.Output
                 string title = XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title);
 
                 // store in content descriptor
-                storeGeneratedFilePathToContentDiscriptor(datasetId, datasetVersion, "metadata", ".xml");
+                if(storing)storeGeneratedFilePathToContentDiscriptor(datasetId, datasetVersion, "metadata", ".xml");
 
             }
             catch (Exception ex)

@@ -977,7 +977,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                     }
 
                     // Validate
-                    model.IsMetadataValid = OutputMetadataManager.IsValideAgainstSchema(datasetid, TransmissionType.mappingFileExport, datarepo);
+                    model.metadataValidMessage = OutputMetadataManager.IsValideAgainstSchema(datasetid, TransmissionType.mappingFileExport, datarepo);
 
                     #endregion
 
@@ -1003,7 +1003,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
             bool isDataConvertable = false;
             bool isMetadataConvertable = false;
-            bool isMetadataValid = false;
+            string metadataValidMeesage = "";
             bool exist = false;
 
             //get datarepos
@@ -1036,7 +1036,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         isMetadataConvertable = true;
 
                         // Validate
-                        isMetadataValid = OutputMetadataManager.IsValideAgainstSchema(datasetid, TransmissionType.mappingFileExport, datarepo);
+                        metadataValidMeesage = OutputMetadataManager.IsValideAgainstSchema(datasetid, TransmissionType.mappingFileExport, datarepo);
                     }
                     else
                     {
@@ -1046,7 +1046,8 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         if (exportNames.Contains(dp.ReqiuredMetadataStandard))
                             isMetadataConvertable = true;
 
-                        isMetadataValid = OutputMetadataManager.IsValideAgainstSchema(datasetid, TransmissionType.mappingFileExport, datarepo);
+                        metadataValidMeesage = OutputMetadataManager.IsValideAgainstSchema(datasetid,
+                            TransmissionType.mappingFileExport, datarepo);
 
                     }
 
@@ -1068,7 +1069,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 }
             }
 
-            return Json(new { isMetadataConvertable = isMetadataConvertable, isDataConvertable = isDataConvertable, isMetadataValid = isMetadataValid, Exist = exist }); 
+            return Json(new { isMetadataConvertable = isMetadataConvertable, isDataConvertable = isDataConvertable, metadataValidMeesage = metadataValidMeesage, Exist = exist }); 
         }
 
         public ActionResult DownloadZip(string datarepo ,long datasetid, long datasetversionid)

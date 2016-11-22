@@ -526,12 +526,16 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         public ActionResult LoadExternalXml()
         {
+            string validationMessage = "";
+
             if (TaskManager == null) TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
 
             if (TaskManager != null &&
                 TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATASTRUCTURE_ID) &&
                 TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATA_IMPORT_XML_FILEPATH))
             {
+
+                
 
                 //xml metadata for import
                 string metadataForImportPath = (string)TaskManager.Bus[CreateTaskmanager.METADATA_IMPORT_XML_FILEPATH];
@@ -553,8 +557,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     XmlMapperManager xmlMapperManager = new XmlMapperManager(TransactionDirection.ExternToIntern);
                     xmlMapperManager.Load(path_mappingFile, "IDIV");
 
+                    validationMessage = xmlMapperManager.Validate(metadataForImport);
                     //Validate 
-                    if (xmlMapperManager.Validate(metadataForImport))
+                    if (String.IsNullOrEmpty(validationMessage))
                     {
                         // generate intern metadata 
                         XmlDocument metadataResult = xmlMapperManager.Generate(metadataForImport, 1, true);
@@ -578,7 +583,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 }
             }
 
-            return null;
+            return Content("Error Message :"+validationMessage);
         }
 
         #endregion

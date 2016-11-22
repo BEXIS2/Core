@@ -114,17 +114,22 @@
                         success: function(data) {
 
                             var isMetadataConvertable = data.isMetadataConvertable;
-                            var isMetadataValid = data.isMetadataValid;
+                            var metadataValidMessage = data.isMetadataValid;
                             var isDataConvertable = data.isDataConvertable;
                             var exist  = data.Exist;
 
+                    
+                            if (isMetadataConvertable && typeof metadataValidMessage==="undefined" && isDataConvertable) {
 
-                            if (isMetadataConvertable && isMetadataValid && isDataConvertable) {
+                                console.log("ok");
 
                                 $("#submitPublishBt").removeAttr("disabled");
                                 $("#submitPublishBt").removeClass("bx-disabled");
 
                             } else {
+
+                                console.log("failure");
+
 
                                 if(!exist)
                                 {
@@ -137,8 +142,8 @@
                                         message += "Metadata is not convertable. ";
                                     }
 
-                                    if (!isMetadataValid) {
-                                        message += "Metadata is not valid. ";
+                                    if (typeof metadataValidMessage!=="undefined") {
+                                        message += metadataValidMessage;
                                     }
 
                                     if (!isDataConvertable) {

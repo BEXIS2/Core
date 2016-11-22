@@ -257,7 +257,6 @@ function SelectFileProcess_OnSelect(e) {
 
         $("#root").preloader(20, "Import selected xml file.",300);
 
-
         var file = e.files[0];
         var maxsize = '@int_MaxRequestLength';
 
@@ -306,21 +305,24 @@ function OnSuccess() {
     $.get('@Url.Action("LoadExternalXml", "Form", new RouteValueDictionary {{"area", "DCM"}})',
         function(response) {
             
-            if (response.length>0) {
-                console.log("start replace");
+            if (response.indexOf("error") > 0) {
+
                 $('#MetadataEditor').replaceWith(response);
-                console.log("replaced");
+                
+                bindMinimap();
             } else {
                 console.log("loaded");
 
                 $("#root").removePreloader();
 
                 $("#form_message")
-                    .text("The xml file you have selected, was not valid against the metadata structure.");
+                    .text("The xml file you have selected, was not valid against the metadata structure. " + response);
                 $("#form_message").css("color", "#f24c24");
-
                 bindMinimap();
+                
             }
+
+           
         })
 }
 
@@ -405,8 +407,7 @@ function submit() {
 }
 
 function callSubmitAction() {
-    $
-        .get('@Url.Action(@submit.ActionName, @submit.ControllerName, new RouteValueDictionary {{"area", @submit.AreaName}, {"editMode", @Model.FromEditMode}})',
+    $.get('@Url.Action(@submit.ActionName, @submit.ControllerName, new RouteValueDictionary {{"area", @submit.AreaName}, {"editMode", @Model.FromEditMode}})',
             function(response) {
                 $('#MetadataEditor').replaceWith(response);
                 $('html, body').animate({ scrollTop: 0 }, 'slow');
@@ -423,7 +424,6 @@ function switchVisibilityOfOptionalElements(e) {
                 bindMinimap(true);
             });
 }
-
 
 
 </script>
