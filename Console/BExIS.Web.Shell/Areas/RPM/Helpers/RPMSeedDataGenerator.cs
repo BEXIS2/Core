@@ -63,7 +63,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
             //createABCD();
 
 
-            ImportSchema("Basic ABCD", "ABCD_2.06.XSD","Dataset","BExIS.Dlm.Entities.Data.Dataset");
+            //ImportSchema("Basic ABCD", "ABCD_2.06.XSD","Dataset","BExIS.Dlm.Entities.Data.Dataset");
             //ImportSchema("Basic Eml", "eml.xsd","dataset","BExIS.Dlm.Entities.Data.Dataset");
         }
 

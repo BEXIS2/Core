@@ -212,6 +212,8 @@ namespace BExIS.Xml.Helpers.Mapping
 
         public string Export(XmlDocument metadataXml , long datasetVersionId, string exportTo)
         {
+            addAlsoEmptyNode = false;
+
             #region abcd (metadata from bexis to abcd)
 
             XmlDocument newMetadata = new XmlDocument();
@@ -280,6 +282,8 @@ namespace BExIS.Xml.Helpers.Mapping
 
         public XmlDocument Export(XmlDocument metadataXml, long datasetVersionId,string exportTo, bool save = false)
         {
+            addAlsoEmptyNode = false;
+
             #region abcd (metadata from bexis to abcd)
 
             XmlDocument newMetadata = new XmlDocument();
@@ -324,6 +328,7 @@ namespace BExIS.Xml.Helpers.Mapping
             string fullpath = Path.Combine(AppConfiguration.DataPath, path);
 
             FileHelper.CreateDicrectoriesIfNotExist(Path.GetDirectoryName(fullpath));
+
 
             newMetadata.Save(fullpath);
 
@@ -515,7 +520,7 @@ namespace BExIS.Xml.Helpers.Mapping
             // XFType\F\yType\Y\XType\x
             Array.Reverse(destinationSplit);
             int j = 0;
-            for (int i = 0; i < sourceSplitWidthIndex.Length; i++)
+            for (int i = 0; i < sourceSplitWidthIndex.Length; i=i+2)
             {
 
                 string tmp = sourceSplitWidthIndex[i];
