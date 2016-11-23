@@ -681,6 +681,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
                 //TITLE
                 string title = XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title);
+                title = String.IsNullOrEmpty(title) ? "unknown" : title;
                      
                 string zipPath = Path.Combine(AppConfiguration.DataPath, "Datasets", id.ToString(),title + ".zip");
 
