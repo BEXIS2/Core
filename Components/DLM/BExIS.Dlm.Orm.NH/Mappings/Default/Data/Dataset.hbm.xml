@@ -71,8 +71,8 @@
       <column name="Status" index="idx_ContentDescriptors_status"/>
     </property>
     
-    <property name="LastCheckIOTimestamp" type="DateTime">
-      <column name="LastCheckIOTimestamp" index="idx_ContentDescriptors_lastCheckIOTimestamp"/>
+    <property name="LastCheckIOTimestamp" type="Timestamp">
+      <column name="LastCheckIOTimestamp" index="idx_ContentDescriptors_lastCheckIOTimestamp" />
     </property>
     
     <property name="CheckOutUser" type="string">
