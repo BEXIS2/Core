@@ -962,7 +962,7 @@ namespace BExIS.Dlm.Services.Data
         /// <param name="unchangedTuples">to be removed</param>
         /// <returns>The working copy having the changes applied on it.</returns>
         public DatasetVersion EditDatasetVersion(DatasetVersion workingCopyDatasetVersion,
-            ICollection<DataTuple> createdTuples, ICollection<DataTuple> editedTuples, ICollection<long> deletedTuples, ICollection<DataTuple> unchangedTuples = null
+            List<DataTuple> createdTuples, ICollection<DataTuple> editedTuples, ICollection<long> deletedTuples, ICollection<DataTuple> unchangedTuples = null
             //,ICollection<ExtendedPropertyValue> extendedPropertyValues, ICollection<ContentDescriptor> contentDescriptors
             )
         {
@@ -1155,7 +1155,7 @@ namespace BExIS.Dlm.Services.Data
         }
 
         //[MeasurePerformance]
-        private DatasetVersion editDatasetVersion(DatasetVersion workingCopyDatasetVersion, ICollection<DataTuple> createdTuples, ICollection<DataTuple> editedTuples, ICollection<long> deletedTuples, ICollection<DataTuple> unchangedTuples)
+        private DatasetVersion editDatasetVersion(DatasetVersion workingCopyDatasetVersion, List<DataTuple> createdTuples, ICollection<DataTuple> editedTuples, ICollection<long> deletedTuples, ICollection<DataTuple> unchangedTuples)
         {
             Contract.Requires(workingCopyDatasetVersion.Dataset != null && workingCopyDatasetVersion.Dataset.Id >= 0);
             Contract.Requires(workingCopyDatasetVersion.Dataset.Status == DatasetStatus.CheckedOut);
@@ -1220,34 +1220,22 @@ namespace BExIS.Dlm.Services.Data
                 // depends on how applyTupleChanges adds the tuples to its PriliminaryTuples!
                 if (createdTuples != null && createdTuples.Count >0)
                 {
-                    int count = 0;
-                    int batchSize = uow.PersistenceManager.PreferredPushSize;// int.Parse(uow.PersistenceManager.GetProperty("adonet.batch_size")); //.GetProperty("default_batch_size"));
-                    List<DataTuple> processedTuples = new List<DataTuple>();
-                    for (int i = 0; i < createdTuples.Count; i++)
+                    int batchSize = uow.PersistenceManager.PreferredPushSize;
+                    List<DataTuple> processedTuples = null;
+                    long iterations = createdTuples.Count / batchSize;
+                    if (iterations * batchSize < createdTuples.Count)
+                        iterations++;
+                    for (int round = 0; round < iterations; round++)
                     {
-                        DataTuple tuple = createdTuples.ElementAt(i);
-                        tuple.Dematerialize();
-                        tupleRepo.Put(tuple);
-                        processedTuples.Add(tuple);
-                        count++;
-                        // flush and clear the session every BATCH_SIZE records
-                        if (count % batchSize == 0)
-                        {
-                            uow.ClearCache(true); //flushes one batch of tuples 
-                            processedTuples.ForEach(p => createdTuples.Remove(p));
-                            processedTuples.Clear();
-                            i = 0;
-                            GC.Collect();
-                        }
+                        processedTuples = createdTuples.Skip(round * batchSize).Take(batchSize).ToList();
+                        processedTuples.ForEach(tuple => tuple.Dematerialize());
+                        tupleRepo.Put(processedTuples);
+                        uow.ClearCache(true); //flushes one batch of the tuples to the DB
+                        processedTuples.Clear();
+                        GC.Collect();
                     }
                 }
-                //if (tobeAdded != null)
-                //{
-                //    foreach (DataTupleVersion dtv in tobeAdded)
-                //    {
-                //        tupleVersionRepo.Put(dtv);
-                //    }
-                //}
+
                 if (tobeAdded != null && tobeAdded.Count > 0)
                 {
                     int batchSize = uow.PersistenceManager.PreferredPushSize;
@@ -1269,13 +1257,6 @@ namespace BExIS.Dlm.Services.Data
                 //    editedTuple.VariableValues.ToList().ForEach(p => System.Diagnostics.Debug.Print(p.Value.ToString()));
                 //    System.Diagnostics.Debug.Print(editedTuple.XmlVariableValues.AsString());
                 //} 
-                //if (tobeDeleted != null)
-                //{
-                //    foreach (DataTuple tuple in tobeDeleted)
-                //    {
-                //        tupleRepo.Delete(tuple);
-                //    }
-                //}
                 if (tobeDeleted != null && tobeDeleted.Count > 0)
                 {
                     int batchSize = uow.PersistenceManager.PreferredPushSize;
@@ -1795,12 +1776,6 @@ namespace BExIS.Dlm.Services.Data
             , ref List<DataTupleVersion> tupleVersionsTobeAdded, ref List<DataTuple> tuplesTobeDeleted, ref List<DataTuple> tuplesTobeEdited
             , ICollection<DataTuple> createdTuples, ICollection<DataTuple> editedTuples, ICollection<long> deletedTuples, ICollection<DataTuple> unchangedTuples = null)
         {
-#if DEBUG
-            //measureVersionSize(workingCopyVersion.PriliminaryTuples == null ? 0 : workingCopyVersion.PriliminaryTuples.Count()
-            //    , createdTuples == null ? 0 : createdTuples.Count()
-            //    , deletedTuples == null ? 0 : deletedTuples.Count()
-            //    , editedTuples  == null ? 0 : editedTuples.Count());
-#endif
             // do nothing with unchanged for now
             #region Process Newly Created Tuples
 
@@ -1821,7 +1796,7 @@ namespace BExIS.Dlm.Services.Data
                 //});
                 foreach (var item in createdTuples)
                 {
-                    item.Dematerialize();
+                    //item.Dematerialize();
                     // commented for the performance testing purpose. see the efects and uncomment if needed-> workingCopyVersion.PriliminaryTuples.Add(item);
                     item.DatasetVersion = workingCopyVersion;
                     item.TupleAction = TupleAction.Created;
@@ -1992,20 +1967,6 @@ namespace BExIS.Dlm.Services.Data
             return (workingCopyVersion);
         }
 
-#if DEBUG
-        //[Diagnose]
-        private void measureVersionSize(int currentTuples, int tobeAdded, int tobeDelected, int tobeEdited)
-        {
-            // do nothing, this is a performance counting point, which is automatically recorded in the debug mode.
-        }
-
-        //[Diagnose]
-        private void measureTupleSize(int p1, string p2)
-        {
-            // do nothing, 
-        }
-
-#endif
         #endregion
 
         #region DataTuple
