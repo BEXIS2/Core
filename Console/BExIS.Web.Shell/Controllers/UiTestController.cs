@@ -46,7 +46,7 @@ namespace BExIS.Web.Shell.Controllers
             return View(model);
         }
 
-        public ActionResult XSDValidation()
+        public ActionResult XSDtest()
         {
             string pathXsd = "G:/schema.xsd"; 
             string pathXml = "G:/test.xml";
@@ -54,28 +54,21 @@ namespace BExIS.Web.Shell.Controllers
 
             try
             {
+                XmlDocument doc = new XmlDocument();
 
-                XmlReaderSettings settings2 = new XmlReaderSettings();
-                settings2.DtdProcessing = DtdProcessing.Ignore;
-                
-                XmlReader xsd_file = XmlReader.Create(pathXsd,settings2);
-                Schema = XmlSchema.Read(xsd_file, verifyErrors);
+                if (FileHelper.FileExist("pathXml"))
+                    FileHelper.Delete(pathXml);
 
-  
-                XmlReaderSettings settings = new XmlReaderSettings();
-                settings.Schemas.Add(Schema);
-                settings.ValidationType = ValidationType.Schema;
-                settings.ValidationEventHandler += new ValidationEventHandler(ValidationEventHandler);
+                XmlNode root = doc.CreateElement("xyz");
+                XmlAttribute rootAttr = doc.CreateAttribute("xmlns");
+                rootAttr.Value = "abc";
+                if (root.Attributes != null) root.Attributes.Append(rootAttr);
 
-                XmlReader reader = XmlReader.Create(pathXml, settings);
+                XmlDeclaration declaration = doc.CreateXmlDeclaration("1.0", "utf-8", null);
+                doc.AppendChild(declaration);
 
-                while (reader.Read())
-                {
-                }
-
-
-
-
+                doc.AppendChild(root);
+                doc.Save(pathXml);
             }
             catch (Exception ex)
             {
@@ -88,20 +81,6 @@ namespace BExIS.Web.Shell.Controllers
 
 
             return View("Index",model);
-        }
-
-        private void ValidationEventHandler(object sender, ValidationEventArgs e)
-        {
-            switch (e.Severity)
-            {
-                case XmlSeverityType.Error:
-                    Console.WriteLine("Error: {0}", e.Message);
-                    break;
-                case XmlSeverityType.Warning:
-                    Console.WriteLine("Warning {0}", e.Message);
-                    break;
-            }
-
         }
 
         public async Task<ActionResult> Call()

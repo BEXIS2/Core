@@ -170,7 +170,8 @@ namespace BExIS.Xml.Helpers.Mapping
             #region abcd (metadata from bexis to abcd)
 
             XmlDocument newMetadata = new XmlDocument();
-            newMetadata.CreateXmlDeclaration("1.0", "utf-8", null);
+            XmlDeclaration declaration = newMetadata.CreateXmlDeclaration("1.0", "utf-8", null);
+            newMetadata.AppendChild(declaration);
 
             newMetadata.AppendChild(newMetadata.CreateElement(xmlMapper.Header.Destination.Prefix, xmlMapper.Header.Destination.XPath, xmlMapper.Header.Destination.NamepsaceURI));
             XmlNode root = newMetadata.DocumentElement;
@@ -268,7 +269,8 @@ namespace BExIS.Xml.Helpers.Mapping
             string dircectory = Path.GetDirectoryName(path);
             FileHelper.CreateDicrectoriesIfNotExist(dircectory);
 
-            newMetadata.CreateXmlDeclaration("1.0", "utf-8", null);
+            XmlDeclaration declaration = newMetadata.CreateXmlDeclaration("1.0", "utf-8", null);
+            newMetadata.AppendChild(declaration);
 
             newMetadata.Save(path);
 
@@ -329,7 +331,8 @@ namespace BExIS.Xml.Helpers.Mapping
 
             FileHelper.CreateDicrectoriesIfNotExist(Path.GetDirectoryName(fullpath));
 
-            newMetadata.CreateXmlDeclaration("1.0", "utf-8", null);
+            XmlDeclaration declaration = newMetadata.CreateXmlDeclaration("1.0", "utf-8", null);
+            newMetadata.AppendChild(declaration);
             newMetadata.Save(fullpath);
 
 
