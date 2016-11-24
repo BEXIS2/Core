@@ -357,7 +357,7 @@ namespace BExIS.IO.Transform.Input
             // different value lenght
             else
             {
-                Error e = new Error(ErrorType.Other, "Error in DataReader Validate Row. Number of Values different as number of variables");
+                Error e = new Error(ErrorType.Other, "Number of Values different as number of variables");
                 errors.Add(e);
 
             }
