@@ -221,6 +221,8 @@ namespace BExIS.Xml.Helpers.Mapping
             #region abcd (metadata from bexis to abcd)
 
             XmlDocument newMetadata = new XmlDocument();
+            XmlDeclaration declaration = newMetadata.CreateXmlDeclaration("1.0", "utf-8", null);
+            newMetadata.AppendChild(declaration);
             //newMetadata.Load(defaultFilePath);
             //XmlNode root = newMetadata.DocumentElement;
 
@@ -234,8 +236,8 @@ namespace BExIS.Xml.Helpers.Mapping
             }
 
             XmlNode root = newMetadata.DocumentElement;
+            
 
-   
 
             // create nodes
             newMetadata = mapNode(newMetadata, newMetadata.DocumentElement, metadataXml.DocumentElement);
@@ -269,9 +271,6 @@ namespace BExIS.Xml.Helpers.Mapping
             string dircectory = Path.GetDirectoryName(path);
             FileHelper.CreateDicrectoriesIfNotExist(dircectory);
 
-            XmlDeclaration declaration = newMetadata.CreateXmlDeclaration("1.0", "utf-8", null);
-            newMetadata.AppendChild(declaration);
-
             newMetadata.Save(path);
 
             #endregion
@@ -286,6 +285,9 @@ namespace BExIS.Xml.Helpers.Mapping
             #region abcd (metadata from bexis to abcd)
 
             XmlDocument newMetadata = new XmlDocument();
+
+            XmlDeclaration declaration = newMetadata.CreateXmlDeclaration("1.0", "utf-8", null);
+            newMetadata.AppendChild(declaration);
             //newMetadata.CreateXmlDeclaration("1.0", "utf-8", null);
             //newMetadata.Load(defaultFilePath);
             //XmlNode root = newMetadata.DocumentElement;
@@ -331,8 +333,6 @@ namespace BExIS.Xml.Helpers.Mapping
 
             FileHelper.CreateDicrectoriesIfNotExist(Path.GetDirectoryName(fullpath));
 
-            XmlDeclaration declaration = newMetadata.CreateXmlDeclaration("1.0", "utf-8", null);
-            newMetadata.AppendChild(declaration);
             newMetadata.Save(fullpath);
 
 
