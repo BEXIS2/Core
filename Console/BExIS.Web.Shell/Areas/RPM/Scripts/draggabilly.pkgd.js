@@ -976,7 +976,6 @@ proto._dragStart = function( event, pointer ) {
 };
 
 proto.dragStart = function (event, pointer) {
-    console.log('start');
   this.emitEvent( 'dragStart', [ event, pointer ] );
 };
 
@@ -991,7 +990,6 @@ proto._dragMove = function( event, pointer, moveVector ) {
 };
 
 proto.dragMove = function( event, pointer, moveVector ) {
-    console.log('move');
     event.preventDefault();
   this.emitEvent( 'dragMove', [ event, pointer, moveVector ] );
 };
