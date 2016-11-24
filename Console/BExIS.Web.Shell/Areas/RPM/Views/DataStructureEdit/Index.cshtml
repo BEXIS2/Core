@@ -49,7 +49,6 @@
             stopPos = innerDiv.height() - outerDiv.height();
 
         var pos = outerDiv.scrollTop();
-        console.log(pos + '<' + stopPos)
         if (pos < stopPos) {
             setTimeout(function () {
                 outerDiv.scrollTop(pos += speed);
