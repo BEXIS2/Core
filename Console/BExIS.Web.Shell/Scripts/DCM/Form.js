@@ -57,6 +57,8 @@ function bindMinimap(create) {
        
     var hRatio = 1 - hWindow / hContainer;
 
+    if (hRatio > 0) hRatio = 0;
+
     if ($(".minimap").length === 0 || create) {
         var offset = getRatioHeight(menubar);
 
