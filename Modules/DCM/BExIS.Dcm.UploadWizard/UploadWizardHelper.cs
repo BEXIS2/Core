@@ -110,7 +110,7 @@ namespace BExIS.Dcm.UploadWizard
         }
 
         //temporary solution: norman :GetSplitDatatuples2
-        public static Dictionary<string, List<DataTuple>> GetSplitDatatuples(List<DataTuple> newDatatuples, List<long> primaryKeys, DatasetVersion workingCopy, ref List<long> datatuplesFromDatabaseIds)
+        public static Dictionary<string, List<DataTuple>> GetSplitDatatuples(List<DataTuple> incomingDatatuples, List<long> primaryKeys, DatasetVersion workingCopy, ref List<long> datatuplesFromDatabaseIds)
         {
             Dictionary<string, List<DataTuple>> data = new Dictionary<string, List<DataTuple>>();
             Dictionary<string, DataTuple> newDtList = new Dictionary<string, DataTuple>();
@@ -126,9 +126,10 @@ namespace BExIS.Dcm.UploadWizard
                 if (existingTuple == null || existingTuple.Id < 0) // it is unlikely to happen, but just to reinforce it.
                     continue;
                 // iterating over the in-memory newDataTuples is faster
-                for (int counter = 0; counter < newDatatuples.Count(); counter++)
+                for (int counter = 0; counter < incomingDatatuples.Count(); counter++)
+                //foreach (var incomingTuple in newDatatuples)
                 {
-                    DataTuple incomingTuple = newDatatuples[counter];
+                    DataTuple incomingTuple = incomingDatatuples[counter];
                     if (!IsEmpty(incomingTuple))
                     {
                         // we first assume that any incoming tuple is new, and then try to check if it is not.
@@ -150,13 +151,18 @@ namespace BExIS.Dcm.UploadWizard
                                 if (!editDtList.ContainsKey(keysValueNewDataTuple))
                                 {
                                     // apply the changes to the exisiting one and register is an edited tuple
-                                    editDtList.Add(keysValueNewDataTuple, Merge(incomingTuple, (DataTuple)existingTuple)); 
+                                    editDtList.Add(keysValueNewDataTuple, Merge(incomingTuple, (DataTuple)existingTuple));
+                                    // remove the current incoming item to shorten the list for the next round
+                                    incomingDatatuples.RemoveAt(counter);
                                 }                                                              
                                 // the decision is made, hence break the inner loop
                                 break;
                             }
                             else // the incoming tuple is found in the BD, but introduces no change., hence no action is needed.
-                            { // DO NOTHING
+                            {
+                                // remove the incoming tuple from the list and from the new ones.
+                                newDtList.Remove(keysValueNewDataTuple);
+                                incomingDatatuples.RemoveAt(counter);
                             }
                         }
                         else // the incoming tuple does not match the PK, so it should be a new tuple, which is already added to the list.

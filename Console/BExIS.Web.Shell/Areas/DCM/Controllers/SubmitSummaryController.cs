@@ -468,6 +468,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             //datatuple list
             List<DataTuple> rows = new List<DataTuple>();
             Dataset ds  = null;
+            bool inputWasAltered = false;
 
             if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_ID) && TaskManager.Bus.ContainsKey(TaskManager.DATASTRUCTURE_ID))
             {
@@ -626,7 +627,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                             if (dm.IsDatasetCheckedOutFor(ds.Id, GetUsernameOrDefault()) || dm.CheckOutDataset(ds.Id, GetUsernameOrDefault()))
                             {
                                 workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
-                                int packageSize = 100000;
+                                int packageSize = 5;
                                 TaskManager.Bus[TaskManager.CURRENTPACKAGESIZE] = packageSize;
                                 //schleife
                                 int counter = 0;
@@ -634,6 +635,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                                 do
                                 {
                                     counter++;
+                                    inputWasAltered = false;
                                     TaskManager.Bus[TaskManager.CURRENTPACKAGE] = counter;
 
                                     Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
@@ -666,6 +668,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                                                 //Dictionary<string, List<DataTuple>> splittedDatatuples = new Dictionary<string, List<AbstractTuple>>();
                                                 var splittedDatatuples = UploadWizardHelper.GetSplitDatatuples(rows, (List<long>)TaskManager.Bus[TaskManager.PRIMARY_KEYS], workingCopy, ref datatupleFromDatabaseIds);
                                                 dm.EditDatasetVersion(workingCopy, splittedDatatuples["new"], splittedDatatuples["edit"], null);
+                                                inputWasAltered = true;
                                             }
                                         }
                                     }
@@ -676,13 +679,14 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                                             Dictionary<string, List<DataTuple>> splittedDatatuples = new Dictionary<string, List<DataTuple>>();
                                             splittedDatatuples = UploadWizardHelper.GetSplitDatatuples(rows, (List<long>)TaskManager.Bus[TaskManager.PRIMARY_KEYS], workingCopy, ref datatupleFromDatabaseIds);
                                             dm.EditDatasetVersion(workingCopy, splittedDatatuples["new"], splittedDatatuples["edit"], null);
+                                            inputWasAltered = true;
                                         }
                                     }
 
                                         dbTimer.Stop();
                                         Debug.WriteLine(" db time" + dbTimer.Elapsed.TotalSeconds.ToString());
 
-                                } while (rows.Count() > 0);
+                                } while (rows.Count() > 0 || inputWasAltered == true);
 
 
 
