@@ -87,7 +87,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             foreach(FileInfo info in  dirInfo.GetFiles())
             {
-                fileList.Add(new BasicFileInfo(info.FullName, ""));
+                fileList.Add(new BasicFileInfo(info.FullName, "","", info.Extension,info.Length));
             }
 
             return fileList;

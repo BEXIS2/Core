@@ -56,7 +56,6 @@ namespace BExIS.Xml.Helpers.Mapping
             mappingFile.Load(mappingFilePath);
 
             XmlNode root = mappingFile.DocumentElement;
-
             #region get id and name of standard
 
             XmlNode mapping = mappingFile.GetElementsByTagName(XmlMapperTags.mapping.ToString())[0];
@@ -171,9 +170,14 @@ namespace BExIS.Xml.Helpers.Mapping
             #region abcd (metadata from bexis to abcd)
 
             XmlDocument newMetadata = new XmlDocument();
+            newMetadata.CreateXmlDeclaration("1.0", "utf-8", null);
 
             newMetadata.AppendChild(newMetadata.CreateElement(xmlMapper.Header.Destination.Prefix, xmlMapper.Header.Destination.XPath, xmlMapper.Header.Destination.NamepsaceURI));
             XmlNode root = newMetadata.DocumentElement;
+
+            XmlAttribute rootAttr = newMetadata.CreateAttribute("xmlns");
+            rootAttr.Value = xmlSchemaManager.Schema.TargetNamespace;
+            root.Attributes.Append(rootAttr);
 
             // create nodes
             newMetadata = mapNode(newMetadata, newMetadata.DocumentElement, metadataXml.DocumentElement);
@@ -200,8 +204,7 @@ namespace BExIS.Xml.Helpers.Mapping
             string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), "Metadata " + id + ".xml");
 
             newMetadata.Save(path);
-            ValidationEventHandler eventHandler = new ValidationEventHandler(validationEventHandler);
-
+   
             // the following call to Validate succeeds.
             //document.Validate(eventHandler);
 
@@ -212,6 +215,8 @@ namespace BExIS.Xml.Helpers.Mapping
 
         public string Export(XmlDocument metadataXml , long datasetVersionId, string exportTo)
         {
+            addAlsoEmptyNode = false;
+
             #region abcd (metadata from bexis to abcd)
 
             XmlDocument newMetadata = new XmlDocument();
@@ -229,7 +234,7 @@ namespace BExIS.Xml.Helpers.Mapping
 
             XmlNode root = newMetadata.DocumentElement;
 
-            
+   
 
             // create nodes
             newMetadata = mapNode(newMetadata, newMetadata.DocumentElement, metadataXml.DocumentElement);
@@ -245,8 +250,13 @@ namespace BExIS.Xml.Helpers.Mapping
                 root.Attributes.Append(attr);
             }
 
+            XmlAttribute rootAttr = newMetadata.CreateAttribute("xmlns");
+            rootAttr.Value = xmlSchemaManager.Schema.TargetNamespace;
+            root.Attributes.Append(rootAttr);
+
+
             //add root namespaces
-            foreach( KeyValuePair<string,string> package  in xmlMapper.Header.Packages )
+            foreach ( KeyValuePair<string,string> package  in xmlMapper.Header.Packages )
             {
                 XmlAttribute attr = newMetadata.CreateAttribute(package.Key);
                 attr.Value = package.Value;
@@ -258,20 +268,9 @@ namespace BExIS.Xml.Helpers.Mapping
             string dircectory = Path.GetDirectoryName(path);
             FileHelper.CreateDicrectoriesIfNotExist(dircectory);
 
+            newMetadata.CreateXmlDeclaration("1.0", "utf-8", null);
+
             newMetadata.Save(path);
-
-            //XmlReaderSettings settings = new XmlReaderSettings();
-            //settings.Schemas.Add(xmlSchemaManager.Schema);
-            //settings.ValidationType = ValidationType.Schema;
-
-            //XmlReader reader = XmlReader.Create(path, settings);
-            //XmlDocument document = new XmlDocument();
-            //document.Load(reader);
-
-            ValidationEventHandler eventHandler = new ValidationEventHandler(validationEventHandler);
-
-            // the following call to Validate succeeds.
-            //document.Validate(eventHandler);
 
             #endregion
 
@@ -280,9 +279,12 @@ namespace BExIS.Xml.Helpers.Mapping
 
         public XmlDocument Export(XmlDocument metadataXml, long datasetVersionId,string exportTo, bool save = false)
         {
+            addAlsoEmptyNode = false;
+
             #region abcd (metadata from bexis to abcd)
 
             XmlDocument newMetadata = new XmlDocument();
+            //newMetadata.CreateXmlDeclaration("1.0", "utf-8", null);
             //newMetadata.Load(defaultFilePath);
             //XmlNode root = newMetadata.DocumentElement;
 
@@ -296,7 +298,9 @@ namespace BExIS.Xml.Helpers.Mapping
             }
 
             XmlNode root = newMetadata.DocumentElement;
-
+            XmlAttribute rootAttr = newMetadata.CreateAttribute("xmlns");
+            rootAttr.Value = xmlSchemaManager.Schema.TargetNamespace;
+            root.Attributes.Append(rootAttr);
 
             // create nodes
             newMetadata = mapNode(newMetadata, newMetadata.DocumentElement, metadataXml.DocumentElement);
@@ -325,20 +329,9 @@ namespace BExIS.Xml.Helpers.Mapping
 
             FileHelper.CreateDicrectoriesIfNotExist(Path.GetDirectoryName(fullpath));
 
+            newMetadata.CreateXmlDeclaration("1.0", "utf-8", null);
             newMetadata.Save(fullpath);
 
-            //XmlReaderSettings settings = new XmlReaderSettings();
-            //settings.Schemas.Add(xmlSchemaManager.Schema);
-            //settings.ValidationType = ValidationType.Schema;
-
-            //XmlReader reader = XmlReader.Create(path, settings);
-            //XmlDocument document = new XmlDocument();
-            //document.Load(reader);
-
-            ValidationEventHandler eventHandler = new ValidationEventHandler(validationEventHandler);
-
-            // the following call to Validate succeeds.
-            //document.Validate(eventHandler);
 
             #endregion
 
@@ -347,27 +340,20 @@ namespace BExIS.Xml.Helpers.Mapping
 
         public string Validate(XmlDocument doc)
         {
-            XDocument xdoc = XmlUtility.ToXDocument(doc);
+
             string msg = "";
-            xdoc.Validate(this.xmlSchemaManager.SchemaSet, (o, e) => {
-                msg += e.Message + Environment.NewLine;
-            });
-
-            return msg;
-        }
-
-        private void validationEventHandler(object sender, ValidationEventArgs e)
-        {
-            switch (e.Severity)
+  
+            try
             {
-                case XmlSeverityType.Error:
-                    Debug.WriteLine("Error: {0}", e.Message);
-                    break;
-                case XmlSeverityType.Warning:
-                    Debug.WriteLine("Warning {0}", e.Message);
-                    break;
+                doc.Schemas = this.xmlSchemaManager.SchemaSet;
+                doc.Validate(null);
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
             }
 
+            return msg;
         }
 
         private XmlDocument mapNode(XmlDocument destinationDoc, XmlNode destinationParentNode, XmlNode sourceNode)
@@ -515,7 +501,7 @@ namespace BExIS.Xml.Helpers.Mapping
             // XFType\F\yType\Y\XType\x
             Array.Reverse(destinationSplit);
             int j = 0;
-            for (int i = 0; i < sourceSplitWidthIndex.Length; i++)
+            for (int i = 0; i < sourceSplitWidthIndex.Length; i=i+2)
             {
 
                 string tmp = sourceSplitWidthIndex[i];
@@ -876,7 +862,12 @@ namespace BExIS.Xml.Helpers.Mapping
             MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
             string md_title = metadataStructureManager.Repo.Get(datasetVersion.Dataset.MetadataStructure.Id).Name;
 
-            string path = IOHelper.GetDynamicStorePath(datasetVersion.Dataset.Id, datasetVersionId,"metadata", ".xml");
+            string path;
+
+            if (string.IsNullOrEmpty(exportTo) || exportTo.ToLower().Equals("generic"))
+                path = IOHelper.GetDynamicStorePath(datasetVersion.Dataset.Id, datasetVersionId,"metadata", ".xml");
+            else
+                path = IOHelper.GetDynamicStorePath(datasetVersion.Dataset.Id, datasetVersionId, "metadata_"+ exportTo, ".xml");
 
             return path;
         }

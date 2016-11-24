@@ -883,8 +883,8 @@ namespace BExIS.Xml.Helpers.Mapping
 
                 List<XmlSchemaElement> childrens = XmlSchemaUtility.GetAllElements(element, false, Elements);
 
-                if (!parents.Contains(element.Name))
-                {
+                //if (!parents.Contains(element.Name))
+                //{
 
                     parents.Add(element.Name);
 
@@ -896,7 +896,8 @@ namespace BExIS.Xml.Helpers.Mapping
                         if (XmlSchemaUtility.IsSimpleType(child))
                         {
 
-                            metadataCompountAttr = addMetadataAttributeToMetadataCompoundAttribute(metadataCompountAttr, child, currentInternalXPath, currentExternalXPath);
+                            metadataCompountAttr = addMetadataAttributeToMetadataCompoundAttribute(
+                                metadataCompountAttr, child, currentInternalXPath, currentExternalXPath);
                         }
                         //complex element
                         else
@@ -907,9 +908,12 @@ namespace BExIS.Xml.Helpers.Mapping
                             if (ct.Name == null || complexTypeOfChild.Name == null)
                             {
                                 //--> create compountAttribute
-                                MetadataCompoundAttribute compoundAttributeChild = get(child, parents, currentInternalXPath, currentExternalXPath);
+                                MetadataCompoundAttribute compoundAttributeChild = get(child, parents,
+                                    currentInternalXPath, currentExternalXPath);
                                 // add compound to compount
-                                metadataCompountAttr = addUsageFromMetadataCompoundAttributeToMetadataCompoundAttribute(metadataCompountAttr, compoundAttributeChild, child);
+                                metadataCompountAttr =
+                                    addUsageFromMetadataCompoundAttributeToMetadataCompoundAttribute(
+                                        metadataCompountAttr, compoundAttributeChild, child);
                             }
                             else
                             {
@@ -918,16 +922,64 @@ namespace BExIS.Xml.Helpers.Mapping
                                     if (!ct.Name.Equals(complexTypeOfChild.Name))
                                     {
                                         //--> create compountAttribute
-                                        MetadataCompoundAttribute compoundAttributeChild = get(child, parents, currentInternalXPath, currentExternalXPath);
+                                        MetadataCompoundAttribute compoundAttributeChild = get(child, parents,
+                                            currentInternalXPath, currentExternalXPath);
                                         // add compound to compount
-                                        metadataCompountAttr = addUsageFromMetadataCompoundAttributeToMetadataCompoundAttribute(metadataCompountAttr, compoundAttributeChild, child);
+                                        metadataCompountAttr =
+                                            addUsageFromMetadataCompoundAttributeToMetadataCompoundAttribute(
+                                                metadataCompountAttr, compoundAttributeChild, child);
                                     }
                                 }
                             }
                         }
 
                     }
-                }
+                //}
+                //else
+                //{
+                //    //add existinfiles childres to mapping file
+                //    foreach (XmlSchemaElement child in childrens)
+                //    {
+
+                //        // simple element
+                //        if (XmlSchemaUtility.IsSimpleType(child))
+                //        {
+                //            MetadataAttribute attribute;
+
+                //            if (metadataAttributeManager.MetadataAttributeRepo != null &&
+                //                getExistingMetadataAttribute(GetTypeOfName(element.Name)) != null)
+                //            {
+                //                attribute = metadataAttributeManager.MetadataAttributeRepo.Get().Where(m => m.Name.Equals(GetTypeOfName(element.Name))).First();
+                //            }
+                //            else
+                //            {
+                //                attribute = createMetadataAttribute(element);
+                //            }
+
+                //            addToExportMappingFile(mappingFileInternalToExternal, internalXPath, externalXPath, element.MaxOccurs, element.Name, attribute.Name);
+                //            addToImportMappingFile(mappingFileExternalToInternal, externalXPath, internalXPath, element.MaxOccurs, element.Name, attribute.Name);
+                //        }
+                //        ////complex element
+                //        //else
+                //        //{
+
+                //        //    XmlSchemaComplexType complexTypeOfChild = XmlSchemaUtility.GetComplextType(child);
+
+                //        //    if (ct.Name != null && complexTypeOfChild.Name != null)
+                //        //    {
+                //        //        if (!ct.Name.Equals(complexTypeOfChild.Name))
+                //        //        {
+                //        //            //--> create compountAttribute
+                //        //            MetadataCompoundAttribute compoundAttributeChild = get(child, parents,
+                //        //                currentInternalXPath, currentExternalXPath);
+                //        //        }
+                //        //    }
+                            
+                //        //}
+
+                //    }
+
+                //}
 
                 if (metadataAttributeManager.MetadataCompoundAttributeRepo.Get().Where(m => m.Name.Equals(metadataCompountAttr.Name)).Count() > 0)
                 {
@@ -1169,6 +1221,8 @@ namespace BExIS.Xml.Helpers.Mapping
 
             return compoundAttribute;
         }
+
+      
 
         private MetadataAttribute createMetadataAttribute(XmlSchemaElement element)
         {

@@ -21,19 +21,38 @@ namespace BExIS.IO.Transform.Output
     {
         public static string IsValideAgainstSchema(long datasetId, TransmissionType type, string mappingName)
         {
+            try
+            {
+                DatasetManager datasetManager = new DatasetManager();
+                DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
 
-            DatasetManager datasetManager = new DatasetManager();
-            DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
+                string mappingFileName = XmlDatasetHelper.GetTransmissionInformation(datasetVersion, type, mappingName);
+                string pathMappingFile = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), mappingFileName);
 
-            string mappingFileName = XmlDatasetHelper.GetTransmissionInformation(datasetVersion, type, mappingName);
-            string pathMappingFile = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), mappingFileName);
+                XmlMapperManager xmlMapperManager = new XmlMapperManager(TransactionDirection.InternToExtern);
+                xmlMapperManager.Load(pathMappingFile, "exporttest");
 
-            XmlMapperManager xmlMapperManager = new XmlMapperManager(TransactionDirection.InternToExtern);
-            xmlMapperManager.Load(pathMappingFile, "exporttest");
+                XmlDocument tmp = GetConvertedMetadata(datasetId, type, mappingName, false);
 
-            XmlDocument tmp = GetConvertedMetadata(datasetId, type, mappingName, false);
+                string path = Path.Combine(AppConfiguration.DataPath, "Temp", "System", "convertedMetadata.xml");
 
-            return xmlMapperManager.Validate(tmp);
+                if (FileHelper.FileExist(path))
+                    FileHelper.Delete(path);
+
+                FileHelper.CreateDicrectoriesIfNotExist(Path.GetDirectoryName(path));
+
+                tmp.Save(path);
+                XmlDocument metadataForImport = new XmlDocument();
+                metadataForImport.Load(path);
+
+                return xmlMapperManager.Validate(metadataForImport);
+            }
+            catch (Exception ex)
+            {
+
+                return ex.Message;
+            }
+           
         }
 
         public static XmlDocument GetConvertedMetadata(long datasetId, TransmissionType type, string mappingName, bool storing = true)
@@ -55,7 +74,14 @@ namespace BExIS.IO.Transform.Output
                 string title = XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title);
 
                 // store in content descriptor
-                if(storing)storeGeneratedFilePathToContentDiscriptor(datasetId, datasetVersion, "metadata", ".xml");
+                if (storing)
+                {
+                    if(String.IsNullOrEmpty(mappingName) || mappingName.ToLower() == "generic")
+                        storeGeneratedFilePathToContentDiscriptor(datasetId, datasetVersion, "metadata", ".xml");
+                    else
+                        storeGeneratedFilePathToContentDiscriptor(datasetId, datasetVersion, "metadata_"+ mappingName, ".xml");
+
+                }
 
             }
             catch (Exception ex)
