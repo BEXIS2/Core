@@ -74,7 +74,14 @@ namespace BExIS.IO.Transform.Output
                 string title = XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title);
 
                 // store in content descriptor
-                if(storing)storeGeneratedFilePathToContentDiscriptor(datasetId, datasetVersion, "metadata_"+ mappingName, ".xml");
+                if (storing)
+                {
+                    if(String.IsNullOrEmpty(mappingName) || mappingName.ToLower() == "generic")
+                        storeGeneratedFilePathToContentDiscriptor(datasetId, datasetVersion, "metadata", ".xml");
+                    else
+                        storeGeneratedFilePathToContentDiscriptor(datasetId, datasetVersion, "metadata_"+ mappingName, ".xml");
+
+                }
 
             }
             catch (Exception ex)

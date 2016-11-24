@@ -220,7 +220,6 @@ namespace BExIS.Xml.Helpers.Mapping
             #region abcd (metadata from bexis to abcd)
 
             XmlDocument newMetadata = new XmlDocument();
-            newMetadata.CreateXmlDeclaration("1.0", "utf-8", null);
             //newMetadata.Load(defaultFilePath);
             //XmlNode root = newMetadata.DocumentElement;
 
@@ -269,6 +268,8 @@ namespace BExIS.Xml.Helpers.Mapping
             string dircectory = Path.GetDirectoryName(path);
             FileHelper.CreateDicrectoriesIfNotExist(dircectory);
 
+            newMetadata.CreateXmlDeclaration("1.0", "utf-8", null);
+
             newMetadata.Save(path);
 
             #endregion
@@ -283,7 +284,7 @@ namespace BExIS.Xml.Helpers.Mapping
             #region abcd (metadata from bexis to abcd)
 
             XmlDocument newMetadata = new XmlDocument();
-            newMetadata.CreateXmlDeclaration("1.0", "utf-8", null);
+            //newMetadata.CreateXmlDeclaration("1.0", "utf-8", null);
             //newMetadata.Load(defaultFilePath);
             //XmlNode root = newMetadata.DocumentElement;
 
@@ -328,7 +329,7 @@ namespace BExIS.Xml.Helpers.Mapping
 
             FileHelper.CreateDicrectoriesIfNotExist(Path.GetDirectoryName(fullpath));
 
-
+            newMetadata.CreateXmlDeclaration("1.0", "utf-8", null);
             newMetadata.Save(fullpath);
 
 
@@ -861,7 +862,12 @@ namespace BExIS.Xml.Helpers.Mapping
             MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
             string md_title = metadataStructureManager.Repo.Get(datasetVersion.Dataset.MetadataStructure.Id).Name;
 
-            string path = IOHelper.GetDynamicStorePath(datasetVersion.Dataset.Id, datasetVersionId,"metadata", ".xml");
+            string path;
+
+            if (string.IsNullOrEmpty(exportTo) || exportTo.ToLower().Equals("generic"))
+                path = IOHelper.GetDynamicStorePath(datasetVersion.Dataset.Id, datasetVersionId,"metadata", ".xml");
+            else
+                path = IOHelper.GetDynamicStorePath(datasetVersion.Dataset.Id, datasetVersionId, "metadata_"+ exportTo, ".xml");
 
             return path;
         }
