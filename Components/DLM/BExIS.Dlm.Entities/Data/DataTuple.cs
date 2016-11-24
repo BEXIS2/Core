@@ -136,7 +136,7 @@ namespace BExIS.Dlm.Entities.Data
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
-        public virtual ICollection<DataTupleVersion> History { get; set; }
+        //public virtual ICollection<DataTupleVersion> History { get; set; }
 
         #endregion      
 
@@ -168,7 +168,7 @@ namespace BExIS.Dlm.Entities.Data
             //XmlAmendments = new XmlDocument();
             VariableValues = new List<VariableValue>();
             Amendments = new List<Amendment>();
-            History = new List<DataTupleVersion>();
+            //History = new List<DataTupleVersion>();
         }
 
         /// <summary>

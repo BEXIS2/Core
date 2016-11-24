@@ -14,7 +14,7 @@ namespace BExIS.Dlm.Services.Data
         DatasetManager datasetManager;
         bool materialize = true;
         int preferedBatchSize = 1;
-        long iternations = 0;
+        long iterations = 0;
         public DataTupleIterator(List<long> tupleIds, DatasetManager datasetManager, bool materialize = true)
         {
             this.tupleIds = tupleIds;
@@ -23,14 +23,14 @@ namespace BExIS.Dlm.Services.Data
             preferedBatchSize = datasetManager.PreferedBatchSize;
             if (tupleIds != null && tupleIds.Count > 0)
             {
-                iternations = tupleIds.Count / preferedBatchSize;
-                if (iternations * preferedBatchSize < tupleIds.Count)
-                    iternations++;
+                iterations = tupleIds.Count / preferedBatchSize;
+                if (iterations * preferedBatchSize < tupleIds.Count)
+                    iterations++;
             }
         }
         public IEnumerator<AbstractTuple> GetEnumerator()
         {
-            for (int round = 0; round < iternations; round++)
+            for (int round = 0; round < iterations; round++)
             {
                 datasetManager.DataTupleRepo.Evict();
                 if (tupleIds.Skip(round * preferedBatchSize).Take(preferedBatchSize).Count() > 0)
@@ -61,11 +61,11 @@ namespace BExIS.Dlm.Services.Data
             int preferedBatchSize = datasetManager.PreferedBatchSize;
             if (tupleIds != null && tupleIds.Count > 0)
             {
-                long iternations = tupleIds.Count / preferedBatchSize;
-                if (iternations * preferedBatchSize < tupleIds.Count)
-                    iternations++;
+                long iterations = tupleIds.Count / preferedBatchSize;
+                if (iterations * preferedBatchSize < tupleIds.Count)
+                    iterations++;
 
-                for (int round = 0; round < iternations; round++)
+                for (int round = 0; round < iterations; round++)
                 {
                     datasetManager.DataTupleRepo.Evict();
                     if (tupleIds.Skip(round * preferedBatchSize).Take(preferedBatchSize).Count() > 0)

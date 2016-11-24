@@ -181,7 +181,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                
 
                 //datatuple list
-                DataTuple[] rows;
+                List<DataTuple> rows;
 
                 DatasetManager dm = new DatasetManager();
                 Dataset ds = dm.GetDataset(id);
@@ -254,7 +254,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                                     // open file
                                     Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
-                                    rows = reader.ReadFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), sds, (int)id, packageSize).ToArray();
+                                    rows = reader.ReadFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), sds, (int)id, packageSize);
 
                                     if (reader.ErrorMessages.Count > 0)
                                     {
@@ -339,7 +339,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                                     TaskManager.Bus[TaskManager.CURRENTPACKAGE] = counter;
 
                                         Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
-                                    rows = reader.ReadFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), (AsciiFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO], sds, id, packageSize).ToArray();
+                                    rows = reader.ReadFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), (AsciiFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO], sds, id, packageSize);
                                         Stream.Close();
 
                                         if (reader.ErrorMessages.Count > 0)
@@ -463,6 +463,11 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         {
 
             List<Error> temp = new List<Error>();
+            DatasetManager dm = new DatasetManager();
+            DatasetVersion workingCopy = new DatasetVersion();
+            //datatuple list
+            List<DataTuple> rows = new List<DataTuple>();
+            Dataset ds  = null;
 
             if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_ID) && TaskManager.Bus.ContainsKey(TaskManager.DATASTRUCTURE_ID))
             {
@@ -471,13 +476,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 DataStructureManager dsm = new DataStructureManager();
                 long iddsd = Convert.ToInt32(TaskManager.Bus[TaskManager.DATASTRUCTURE_ID]);
 
+                ds = dm.GetDataset(id);
 
-                //datatuple list
-                List<DataTuple> rows = new List<DataTuple>();
 
-                DatasetManager dm = new DatasetManager();
-                Dataset ds = dm.GetDataset(id);
-                DatasetVersion workingCopy = new DatasetVersion();
 
                 #region Progress Informations
 
@@ -641,45 +642,45 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                                     if (reader.ErrorMessages.Count > 0)
                                     {
-                                        //model.ErrorList = reader.errorMessages;
-                                    }
-                                    else
-                                    {
-                                        //model.Validated = true;
-                                        Stopwatch dbTimer = Stopwatch.StartNew();
-
-                                        if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_STATUS))
+                                        foreach (var err in reader.ErrorMessages)
                                         {
-                                            if (TaskManager.Bus[TaskManager.DATASET_STATUS].ToString().Equals("new"))
-                                            {
-
-                                                dm.EditDatasetVersion(workingCopy, rows, null, null);
-                                            }
-
-                                            if (TaskManager.Bus[TaskManager.DATASET_STATUS].ToString().Equals("edit"))
-                                            {
-                                                if (rows.Count() > 0)
-                                                {
-                                                    Dictionary<string, List<DataTuple>> splittedDatatuples = new Dictionary<string, List<DataTuple>>();
-                                                    splittedDatatuples = UploadWizardHelper.GetSplitDatatuples(rows, (List<long>)TaskManager.Bus[TaskManager.PRIMARY_KEYS], workingCopy, ref datatupleFromDatabaseIds);
-                                                    dm.EditDatasetVersion(workingCopy, splittedDatatuples["new"], splittedDatatuples["edit"], null);
-                                                }
-                                            }
+                                            temp.Add(new Error(ErrorType.Dataset, err.GetMessage()));
                                         }
-                                        else
+                                        //return temp;
+                                    }
+                                    //model.Validated = true;
+                                    Stopwatch dbTimer = Stopwatch.StartNew();
+
+                                    if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_STATUS))
+                                    {
+                                        if (TaskManager.Bus[TaskManager.DATASET_STATUS].ToString().Equals("new"))
+                                        {
+
+                                            dm.EditDatasetVersion(workingCopy, rows, null, null);
+                                        }
+
+                                        if (TaskManager.Bus[TaskManager.DATASET_STATUS].ToString().Equals("edit"))
                                         {
                                             if (rows.Count() > 0)
                                             {
-                                                Dictionary<string, List<DataTuple>> splittedDatatuples = new Dictionary<string, List<DataTuple>>();
-                                                splittedDatatuples = UploadWizardHelper.GetSplitDatatuples(rows, (List<long>)TaskManager.Bus[TaskManager.PRIMARY_KEYS], workingCopy, ref datatupleFromDatabaseIds);
+                                                //Dictionary<string, List<DataTuple>> splittedDatatuples = new Dictionary<string, List<AbstractTuple>>();
+                                                var splittedDatatuples = UploadWizardHelper.GetSplitDatatuples(rows, (List<long>)TaskManager.Bus[TaskManager.PRIMARY_KEYS], workingCopy, ref datatupleFromDatabaseIds);
                                                 dm.EditDatasetVersion(workingCopy, splittedDatatuples["new"], splittedDatatuples["edit"], null);
                                             }
                                         }
+                                    }
+                                    else
+                                    {
+                                        if (rows.Count() > 0)
+                                        {
+                                            Dictionary<string, List<DataTuple>> splittedDatatuples = new Dictionary<string, List<DataTuple>>();
+                                            splittedDatatuples = UploadWizardHelper.GetSplitDatatuples(rows, (List<long>)TaskManager.Bus[TaskManager.PRIMARY_KEYS], workingCopy, ref datatupleFromDatabaseIds);
+                                            dm.EditDatasetVersion(workingCopy, splittedDatatuples["new"], splittedDatatuples["edit"], null);
+                                        }
+                                    }
 
                                         dbTimer.Stop();
                                         Debug.WriteLine(" db time" + dbTimer.Elapsed.TotalSeconds.ToString());
-
-                                    }
 
                                 } while (rows.Count() > 0);
 
@@ -739,7 +740,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     {
 
                         temp.Add(new Error(ErrorType.Other, "Can not upload. : " + e.Message));
-                        dm.CheckInDataset(ds.Id, "checked in but no update on data tuples", GetUsernameOrDefault());
                     }
                     finally
                     {
@@ -773,6 +773,14 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 temp.Add(new Error(ErrorType.Dataset, "Dataset is not selected."));
             }
 
+            if (temp.Count <= 0)
+            {
+                dm.CheckInDataset(ds.Id, "checked in but no update on data tuples", GetUsernameOrDefault());
+            }
+            else
+            {
+                dm.UndoCheckoutDataset(ds.Id, GetUsernameOrDefault());
+            }
             return temp;
         }
 
