@@ -21,8 +21,18 @@
 
 
 
-<h2>@Model.Title ( @Model.Id )</h2>
-
+<div>
+    <table>
+        <tr>
+            <td>
+                <h2>@Model.Title ( @Model.Id )</h2>
+            </td>
+            <td>
+                <div id="preloaderContainer" />
+            </td>
+        </tr>
+    </table>
+</div>
 @if(@Model != null)
 {
     if (ViewData.ModelState.IsValid)
@@ -30,40 +40,41 @@
 
         @(Html.Telerik().TabStrip()
               .Name("ShowDataTabStrip")
-              .SelectedIndex(0)
-
+              .SelectedIndex(0)     
               .Items(tabs =>
               {
 
                   tabs.Add()
                       .Text("Metadata")
                       .LoadContentFrom("ShowMetadata", "Data", new {area = "DDM", entityId = @Model.Id, title = @Model.Title, metadatastructureId = @Model.MetadataStructureId, datastructureId = @Model.DataStructureId, researchplanId = @Model.ResearchPlanId, sessionKeyForMetadata = "ShowDataMetadata"})
-                      .HtmlAttributes(new {id = "metadata"});
-
+                      .HtmlAttributes(new {id = "metadata"})
+                      .Enabled(false);
 
                   tabs.Add()
                       .Text("Primary Data")
                       .LoadContentFrom("ShowPrimaryData", "Data", new {area = "DDM", datasetID = @Model.Id})
                       .Enabled(@Model.ViewAccess)
-                      .HtmlAttributes(new {id = "primarydata"});
+                      .HtmlAttributes(new {id = "primarydata"})
+                      .Enabled(false);
 
                   tabs.Add()
                       .Text("Data Structure")
                       .LoadContentFrom("ShowPreviewDataStructure", "Data", new {area = "DDM", datasetID = @Model.Id})
-                      .HtmlAttributes(new {id = "datastructure"});
+                      .HtmlAttributes(new {id = "datastructure"})
+                      .Enabled(false);
 
 
                   tabs.Add()
                       .Text("Dataset Permissions")
                       .LoadContentFrom("Subjects", "Data", new {area = "DDM", dataId = @Model.Id})
-                      .Enabled(@Model.GrantAccess)
+                      .Enabled(false)
                       .HtmlAttributes(new {id = "datapermissions"});
 
 
                   tabs.Add()
                       .Text("Publish")
                       .LoadContentFrom("publishData", "Data", new {area = "DDM", datasetId = @Model.Id})
-                      .Enabled(@Model.ViewAccess)
+                      .Enabled(false)
                       .HtmlAttributes(new {id = "prepare"});
 
               })
@@ -78,51 +89,87 @@
 <script type="text/javascript">
 
 
-    $(document).ready(function () {
-            resetAllTelerikIconTitles();
-        });
 
-    function existsRightType(rights, rightType) {
-        if (jQuery.inArray(rightType, rights) != -1) {
-            return true;
+
+$("#MetadataEditor").ready(function() {
+            
+
+});
+
+$(document).ready(function () {
+
+    $("#preloaderContainer").preloader(20, "Loading...");
+    resetAllTelerikIconTitles();
+
+    $(document).bind("MetadataFormIsReady", function () {
+        //alert("m is ready");
+        var viewAccess = '@Model.ViewAccess';
+        var grantAccess = '@Model.GrantAccess';
+
+        var tabStrip = $(".t-tabstrip");
+        //console.log(tabStrip);
+        //console.log(viewAccess);
+        //console.log(grantAccess);
+
+
+        $("li#datastructure").removeClass("t-state-disabled");
+        //console.log($(tabStrip).find("li #datastructure"));
+
+        if (viewAccess === "True") {
+            $("li#primarydata").removeClass("t-state-disabled");
+            $("li#prepare").removeClass("t-state-disabled");
         }
-        else {
-            return false;
+
+        if (grantAccess === "True") {
+            $(tabStrip).find("li#datapermissions").removeClass("t-state-disabled");
         }
+
+        //console.log($("li", tabStrip.element));
+        var items = $("li", tabStrip.element);
+        //console.log(items);
+        //tabStrip.enable(items);
+
+        $("#preloaderContainer").removePreloader();
+    });
+
+});
+
+
+function existsRightType(rights, rightType) {
+    if (jQuery.inArray(rightType, rights) != -1) {
+        return true;
     }
+    else {
+        return false;
+    }
+}
 
-    function setDataPermission(value, rightType, subjectId, dataId, entityId) {
-        if (value) {
-            $.post('@Url.Action("CreateDataPermission", "Data")', { DataId: dataId, EntityId: entityId, SubjectId: subjectId, RightType: rightType }, function (e) {
+function setDataPermission(value, rightType, subjectId, dataId, entityId) {
+    if (value) {
+        $.post('@Url.Action("CreateDataPermission", "Data")', { DataId: dataId, EntityId: entityId, SubjectId: subjectId, RightType: rightType }, function (e) {
+            $("#Grid_Subjects .t-refresh").trigger('click');
+        });
+    } else {
+        $.post('@Url.Action("DeleteDataPermission", "Data")',
+            { DataId: dataId, EntityId: entityId, SubjectId: subjectId, RightType: rightType },
+            function(e) {
                 $("#Grid_Subjects .t-refresh").trigger('click');
             });
-        } else {
-            $.post('@Url.Action("DeleteDataPermission", "Data")',
-                { DataId: dataId, EntityId: entityId, SubjectId: subjectId, RightType: rightType },
-                function(e) {
-                    $("#Grid_Subjects .t-refresh").trigger('click');
-                });
-        }
     }
+}
 
-    function OnSelectShowDataTabStrip(e) {
+function OnSelectShowDataTabStrip(e) {
 
-        console.log(e.item.id);
 
         if (e.item.id == "metadata") {
-
             $(".miniregion").show();
             $(".minimap").show();
-
-            console.log("show map");
 
         } else {
 
             $(".miniregion").hide();
             $(".minimap").hide();
-            console.log("hide map");
         }
     }
-
 
 </script>

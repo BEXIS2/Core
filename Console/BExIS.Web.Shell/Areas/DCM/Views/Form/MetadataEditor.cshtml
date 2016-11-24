@@ -236,6 +236,9 @@
                     $("#preloader_cotainer").removePreloader();
                 },
                 120);
+            //alert("start triggering");
+            $(document).trigger("MetadataFormIsReady");
+
         });
 
     $(window)
@@ -256,7 +259,7 @@
         });
 
 
-    function SelectFileProcess_OnSelect(e) {
+function SelectFileProcess_OnSelect(e) {
 
 
         $("#root").preloader(20, "Import selected xml file.", 300);

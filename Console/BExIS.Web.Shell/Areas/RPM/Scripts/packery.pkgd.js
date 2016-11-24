@@ -3146,7 +3146,6 @@ var SCROLL_OFFSET_Y = 0;
 proto.setScrollOffset = function (x,y) {
     SCROLL_OFFSET_X = x;
     SCROLL_OFFSET_Y = y;
-    //console.log('offset x: ' + SCROLL_OFFSET_X + ', y: ' + SCROLL_OFFSET_Y);
 };
 /**
  * handle an item drag start event
@@ -3303,8 +3302,6 @@ proto.itemDragMove = function( elem, x, y) {
 
   x -= this.size.paddingLeft + SCROLL_OFFSET_X;
   y -= this.size.paddingTop + SCROLL_OFFSET_Y;
-
-  //console.log('pos x: ' + x + ', y: ' + y);
 
   var _this = this;
   function onDrag() {
