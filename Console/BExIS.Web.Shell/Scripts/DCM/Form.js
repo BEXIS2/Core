@@ -37,66 +37,42 @@ function setTabIndex() {
 /******************************************
  ********* FORM    ************************
  ******************************************/
-$(window)
-    .scroll(function () {
+$(window).scroll(function () {
 
         //var hContainer = $('#root').position().top;
         //var scrollpostion = $(document).scrollTop();
         //var hMenubar = $(".navbar").height() + 20;
-        //if(scrollpostion-100<hContainer)
+    //if(scrollpostion-100<hContainer)
+   
+        //console.log("scrol");
         bindMinimap();
     });
 
 var originalMinimapTop = 0;
-var positionMiniRegion = 0;
+var originalMiniRegionTop = 0;
 function bindMinimap(create) {
 
     var scrollpostion = $(document).scrollTop();
+    var topContainer = $('#root').position().top;
+    var menubar = $(".navbar").height() + 20;
 
-        //if (($('#root').height()+200) > ($(window).height())) {
+    var hContainer = $('#root').height();
+    var hWindow = $(window).height();
 
-        //if ($(".miniregion")) {
-        //    $(".miniregion").remove();
-        //}
+       
+    var hRatio = 1 - hWindow / hContainer;
 
-        //if ($(".minimap")) {
-        //    $(".minimap").remove();
-        //}
+    if ($(".minimap").length === 0 || create) {
+        var offset = getRatioHeight(menubar);
 
-        var menubar = $(".navbar").height() + 20;
-
-        var offset = getRatioHeight($('#root').position().top);
-
-        if (scrollpostion != null && scrollpostion > 0) {
-
-            if (scrollpostion + menubar < $('#root').position().top) {
-                var pos = $('#root').position().top - scrollpostion;
-                offset = getRatioHeight(pos);
-            } else {
-                
-                //console.log("menu : "+menubar);
-                offset = getRatioHeight(menubar);
+            if ($(".miniregion")) {
+                $(".miniregion").remove();
             }
 
-            //console.log("scroll position : " + scrollpostion);
-            //console.log("scroll position : " + $('#root').position().top);
+            if ($(".minimap")) {
+                $(".minimap").remove();
+            }
 
-        }
-
-        var topContainer = $('#root').position().top;
-        var hFooter = $("#footer").height();
-        var hContainer = $('#root').height();
-        var hWindow = $(window).height() - 150;
-        //console.log(hWindow + " + " + hFooter + " + " + topContainer + " + " + hContainer);
-
-        var hRatio = 1 - hWindow / hContainer;
-
-        if (hRatio <= 0) {
-            hRatio = 0.1;
-        }
-
-        console.log($(".minimap").length);
-        if ($(".minimap").length == 0) {
             var previewBody = $('#root')
                 .minimap(
                 {
@@ -110,84 +86,44 @@ function bindMinimap(create) {
                     smoothScrollDelay: 100
                 });
 
-            var x = $(".minimap").css("top");
-            originalMinimapTop = x.split("px");
-            //console.log("create");
-
-
-        } else {
-
-            if (create) {
-
-                if ($(".miniregion")) {
-                    $(".miniregion").remove();
-                }
-
-                if ($(".minimap")) {
-                    $(".minimap").remove();
-                }
-
-                var previewBody = $('#root')
-                    .minimap(
-                    {
-                        heightRatio: hRatio,
-                        widthRatio: 0.095,
-                        offsetHeightRatio: offset,
-                        offsetWidthRatio: 0.02,
-                        position: "right",
-                        touch: true,
-                        smoothScroll: false,
-                        smoothScrollDelay: 100,
-                    });
-
                 var x = $(".minimap").css("top");
-                originalMinimapTop = x.split("px");
-                //console.log("create");
-
-
-            } else {
-
-                //console.log(originalMinimapTop + " : " + scrollpostion);
-
-                if ((topContainer - scrollpostion) + 1000 > menubar) {
-
-                    var scrollmax = topContainer - menubar;
-                    if ((topContainer - scrollpostion) > menubar) {
-                        scrollmax = scrollpostion;
-                    }
-
-                    var positionMinimap = parseInt(originalMinimapTop) - parseInt(scrollmax);
-                    var positionMiniRegion = $(".miniregion").position().top - parseInt(scrollpostion);
-                    //
-                    //console.log(position);
-                    $(".minimap").css("top", positionMinimap);
-                    $(".miniregion").css("top", positionMiniRegion);
-                    //console.log("----");
-
-                    //console.log(positionMiniRegion);
-                    //console.log($(".miniregion").css("top"));
-                    //console.log("updated");
-                }
-
-            }
-
-            if (positionMiniRegion > 0) {
-                $(".miniregion").css("top", positionMiniRegion);
-                //console.log("updated region");
-            }
-
-
-            //console.log("exist");
+                originalMinimapTop = parseInt(x.split("px"));
+                originalMiniRegionTop = $(".miniregion").position().top;
+                    
+                $(".minimap").css("top", originalMinimapTop + (topContainer - menubar));
+                //$(".miniregion").css("top", originalMiniRegionTop + (topContainer - menubar));
+                    
+                console.log("created");
         }
+            
+            
 
+    var scrollmax = (topContainer - menubar) - scrollpostion;
+    console.log(topContainer);
+    console.log(menubar);
+    console.log(scrollpostion);
+    console.log(scrollmax);
+    console.log(originalMinimapTop);
 
-        $(".minimap").css("z-index", "999");
-        $(".miniregion").css("z-index", "1000");
+    if ((topContainer - scrollpostion) <= menubar) {
+        scrollmax = 0;
+        console.log("setty");
+    } else {
 
-        $('#MetadataEditor').css("width", "89%");
-      
- 
-  
+        setTimeout(function () {
+            $(".miniregion").css("top", originalMiniRegionTop + (topContainer - menubar));
+        },10);
+
+    }
+    console.log(scrollmax);
+            
+    ////var miniregionoffset = topContainer - originalMiniRegionTop;
+    var positionMinimap = parseInt(originalMinimapTop) + parseInt(scrollmax);
+
+    $(".minimap").css("top", positionMinimap);
+
+   
+
 }
 
 

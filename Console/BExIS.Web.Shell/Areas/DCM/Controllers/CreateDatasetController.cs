@@ -643,14 +643,31 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             return RedirectToAction("StartMetadataEditor", "Form");
         }
 
-        #endregion
+        public ActionResult Copy()
+        {
+            TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
+            if (TaskManager != null)
+            {
+                if (TaskManager.Bus.ContainsKey(CreateTaskmanager.ENTITY_ID))
+                {
+                    long datasetid = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.ENTITY_ID]);
+
+                    return RedirectToAction("Index", "CreateDataset", new { id = datasetid, type = "DatasetId" });
+
+                }
+            }
+            //Index(long id = -1, string type = "")
+            return RedirectToAction("Index", "CreateDataset", new { id = -1, type = "DatasetId" });
+        }
 
         #endregion
 
-        #region Helper
+            #endregion
 
-        // chekc if user exist
-        // if true return usernamem otherwise "DEFAULT"
+            #region Helper
+
+            // chekc if user exist
+            // if true return usernamem otherwise "DEFAULT"
         public string GetUsernameOrDefault()
         {
             string username = string.Empty;
@@ -760,7 +777,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             //set function actions of COPY, RESET,CANCEL,SUBMIT
             ActionInfo copyAction = new ActionInfo();
-            copyAction.ActionName = "Index";
+            copyAction.ActionName = "Copy";
             copyAction.ControllerName = "CreateDataset";
             copyAction.AreaName = "DCM";
 

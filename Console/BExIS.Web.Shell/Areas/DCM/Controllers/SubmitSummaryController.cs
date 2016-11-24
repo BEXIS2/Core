@@ -860,12 +860,14 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 //Why using the excel writer, isn't any function available in System.IO.File/ Directory, etc. Javad
                 FileHelper.MoveFile(tempPath, storePath);
 
+                string mimeType = MimeMapping.GetMimeMapping(originalFileName);
+
                 //Register the original data as a resource of the current dataset version
                 ContentDescriptor originalDescriptor = new ContentDescriptor()
                 {
                     OrderNo = 1,
                     Name = "unstructuredData",
-                    MimeType = extention,
+                    MimeType = mimeType,
                     URI = dynamicStorePath,
                     DatasetVersion = datasetVersion,
                 };

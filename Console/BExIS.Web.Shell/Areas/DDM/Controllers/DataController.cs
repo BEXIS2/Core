@@ -153,7 +153,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
             //set function actions of COPY, RESET,CANCEL,SUBMIT
             ActionInfo copyAction = new ActionInfo();
-            copyAction.ActionName = "Index";
+            copyAction.ActionName = "Copy";
             copyAction.ControllerName = "CreateDataset";
             copyAction.AreaName = "DCM";
 
@@ -681,6 +681,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
                 //TITLE
                 string title = XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title);
+                title = String.IsNullOrEmpty(title) ? "unknown" : title;
                      
                 string zipPath = Path.Combine(AppConfiguration.DataPath, "Datasets", id.ToString(),title + ".zip");
 
