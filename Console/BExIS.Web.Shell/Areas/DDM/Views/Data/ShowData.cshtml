@@ -160,20 +160,15 @@ function setDataPermission(value, rightType, subjectId, dataId, entityId) {
 
 function OnSelectShowDataTabStrip(e) {
 
-        console.log(e.item.id);
 
         if (e.item.id == "metadata") {
-
             $(".miniregion").show();
             $(".minimap").show();
-
-            console.log("show map");
 
         } else {
 
             $(".miniregion").hide();
             $(".minimap").hide();
-            console.log("hide map");
         }
     }
 

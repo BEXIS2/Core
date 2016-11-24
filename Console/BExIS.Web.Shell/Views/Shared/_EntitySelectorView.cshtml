@@ -168,11 +168,11 @@
         var link = table.attr("link");
         var dataid = $(e.row).find("td")[idIndex].innerHTML;
 
-        console.log("submitbuttonid: " + submitId);
+        //console.log("submitbuttonid: " + submitId);
 
         link += "?id=" + dataid;
 
-        console.log(link);
+        //console.log(link);
 
         $('#' + submitId).attr("href", link);
         $('#' + submitId).removeClass("bx-disabled");
