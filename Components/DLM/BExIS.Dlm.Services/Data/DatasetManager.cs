@@ -348,17 +348,9 @@ namespace BExIS.Dlm.Services.Data
             if (entity == null)
                 return false;
 
-            IList<Int64> versionIds = entity.Versions
+            IList<Int64> versionIds = this.DatasetVersionRepo.Query(p=>p.Dataset.Id == datasetId)
                            .Select(p => p.Id)
                            .ToList();
-            IReadOnlyRepository<ContentDescriptor> ContentDescriptorRepoReadOnly = DatasetRepo.UnitOfWork.GetReadOnlyRepository<ContentDescriptor>();
-            IList<Int64> contentDescriptorIds = (versionIds == null || versionIds.Count() <= 0) ? null :
-                ContentDescriptorRepoReadOnly.Query(p => versionIds.Contains(p.DatasetVersion.Id)).Select(p => p.Id).ToList();
-
-            IList<Int64> tupleIds = (versionIds == null || versionIds.Count() <= 0) ? null : DataTupleRepo.Query(p => versionIds.Contains(p.DatasetVersion.Id)).Select(p=>p.Id).ToList();
-            IList<Int64> tupleVersionIds = (versionIds == null || versionIds.Count() <= 0) ? null : DataTupleVerionRepo.Query(p => versionIds.Contains(p.DatasetVersion.Id)).Select(p => p.Id).ToList();
-            //string queryStr = "DELETE FROM {0} e WHERE e.Id IN (:idsList)";
-            //queryStr = "DELETE FROM {0} e WHERE e.Id IN (23, 24, 25)";
 
             using (IUnitOfWork uow = this.GetBulkUnitOfWork())
             {
@@ -369,6 +361,10 @@ namespace BExIS.Dlm.Services.Data
                 IRepository<ContentDescriptor> ContentDescriptorRepo = uow.GetRepository<ContentDescriptor>();
 
                 #region Delete tupleVersionIds
+                IList<Int64> tupleVersionIds = (versionIds == null || versionIds.Count() <= 0) ? null : 
+                    DataTupleVerionRepo.Query(p => versionIds.Contains(p.DatasetVersion.Id))
+                                            .Select(p => p.Id)
+                                            .ToList();
                 if (tupleVersionIds != null && tupleVersionIds.Count > 0)
                 {
                     long iternations = tupleVersionIds.Count / PreferedBatchSize;
@@ -395,6 +391,10 @@ namespace BExIS.Dlm.Services.Data
                 #endregion
 
                 #region Delete tupleIds
+                IList<Int64> tupleIds = (versionIds == null || versionIds.Count() <= 0) ? null : 
+                    DataTupleRepo.Query(p => versionIds.Contains(p.DatasetVersion.Id))
+                                    .Select(p => p.Id)
+                                    .ToList();
                 if (tupleIds != null && tupleIds.Count > 0)
                 {
                     long iternations = tupleIds.Count / PreferedBatchSize;
@@ -416,6 +416,8 @@ namespace BExIS.Dlm.Services.Data
                 #endregion
 
                 #region Delete content descriptors
+                IList<Int64> contentDescriptorIds = (versionIds == null || versionIds.Count() <= 0) ? null :
+                    ContentDescriptorRepo.Query(p => versionIds.Contains(p.DatasetVersion.Id)).Select(p => p.Id).ToList();
                 if (contentDescriptorIds != null && contentDescriptorIds.Count > 0)
                 {
                     long iternations = contentDescriptorIds.Count / PreferedBatchSize;
@@ -473,6 +475,146 @@ namespace BExIS.Dlm.Services.Data
             return (true);
         }
 
+        public bool PurgeDataset(Int64 datasetId, bool forced) // forced is not used, it is just an indicator for now
+        {
+            // this varient create smaller units of work and commits changes as the purging progresses. So the dataset is in a wrong state during this operation
+            Contract.Requires(datasetId >= 0);
+
+            // Attention: when create and purge or delete tuple are called in one run (one http request) the is a problem with removal of tuples/ version/ dataset because having some references!!!
+            // but if they are called on a single dataset in 2 different http requests, there is no problem!?
+            // perhaps the NH session is not flushed completely or has some references to the objects in the caches, as the session end function is not called yet! this is why an Evict before purge is required!
+
+            this.DatasetRepo.Evict();
+            this.DatasetVersionRepo.Evict();
+            this.DataTupleRepo.Evict();
+            this.DataTupleVerionRepo.Evict();
+
+            Dataset entity = this.DatasetRepo.Get(datasetId);
+
+            if (entity == null)
+                return false;
+
+            IList<Int64> versionIds = this.DatasetVersionRepo.Query(p => p.Dataset.Id == datasetId)
+                           .Select(p => p.Id)
+                           .ToList();
+
+            #region Delete tupleVersionIds
+            IList<Int64> tupleVersionIds = (versionIds == null || versionIds.Count() <= 0) ? null : DataTupleVerionRepo.Query(p => versionIds.Contains(p.DatasetVersion.Id)).Select(p => p.Id).ToList();
+            if (tupleVersionIds != null && tupleVersionIds.Count > 0)
+            {
+                long iternations = tupleVersionIds.Count / PreferedBatchSize;
+                // when the number of columns is not a an exact multiply of the batch size, an additional iteration is needed to purge the last batch of the tuples.
+                if (iternations * PreferedBatchSize < tupleVersionIds.Count)
+                    iternations++;
+
+                for (int round = 0; round < iternations; round++)
+                {
+                    // Guards the call to the Execute funtion in cases that there is no more record to purge.
+                    // An unusual but possible case is when the number of tuples is an exact multiply of the PreferredBatchSize.
+                    // In this case, the last round's Take function takes no Id and the idsList parameter is empty, which causes the ORM
+                    // to generate an invalid DB query.
+                    var currentItems = tupleVersionIds.Skip(round * PreferedBatchSize).Take(PreferedBatchSize);
+                    if (currentItems.Count() > 0)
+                    {
+                        using (IUnitOfWork uow = this.GetBulkUnitOfWork())
+                        {
+                            IRepository<DataTupleVersion> tupleVersionRepo = uow.GetRepository<DataTupleVersion>();
+                            tupleVersionRepo.Delete(currentItems.ToList());
+                            uow.Commit();
+                        }
+                    }
+                }
+            }
+            #endregion
+
+            #region Delete tupleIds
+            IList<Int64> tupleIds = (versionIds == null || versionIds.Count() <= 0) ? null : DataTupleRepo.Query(p => versionIds.Contains(p.DatasetVersion.Id)).Select(p => p.Id).ToList();
+            if (tupleIds != null && tupleIds.Count > 0)
+            {
+                long iternations = tupleIds.Count / PreferedBatchSize;
+                if (iternations * PreferedBatchSize < tupleIds.Count)
+                    iternations++;
+
+                for (int round = 0; round < iternations; round++)
+                {
+                    var currentItems = tupleIds.Skip(round * PreferedBatchSize).Take(PreferedBatchSize);
+                    if (currentItems.Count() > 0)
+                    {
+                        using (IUnitOfWork uow = this.GetBulkUnitOfWork())
+                        {
+                            IRepository<DataTuple> tuplesRepo = uow.GetRepository<DataTuple>();
+                            tuplesRepo.Delete(currentItems.ToList());
+                            uow.Commit();
+                        }
+                    }
+                }
+            }
+            #endregion
+
+            #region Delete content descriptors
+            IReadOnlyRepository<ContentDescriptor> ContentDescriptorRepoReadOnly = DatasetRepo.UnitOfWork.GetReadOnlyRepository<ContentDescriptor>();
+            IList<Int64> contentDescriptorIds = (versionIds == null || versionIds.Count() <= 0) ? null :
+                ContentDescriptorRepoReadOnly.Query(p => versionIds.Contains(p.DatasetVersion.Id)).Select(p => p.Id).ToList();
+            if (contentDescriptorIds != null && contentDescriptorIds.Count > 0)
+            {
+                long iternations = contentDescriptorIds.Count / PreferedBatchSize;
+                if (iternations * PreferedBatchSize < contentDescriptorIds.Count)
+                    iternations++;
+
+                for (int round = 0; round < iternations; round++)
+                {
+                    var currentItems = contentDescriptorIds.Skip(round * PreferedBatchSize).Take(PreferedBatchSize);
+                    if (currentItems.Count() > 0)
+                    {
+                        using (IUnitOfWork uow = this.GetBulkUnitOfWork())
+                        {
+                            IRepository<ContentDescriptor> ContentDescriptorRepo = uow.GetRepository<ContentDescriptor>();
+                            ContentDescriptorRepo.Delete(currentItems.ToList());
+                            uow.Commit();
+                        }
+                    }
+                }
+            }
+            #endregion
+
+            #region Delete versions
+            if (versionIds != null && versionIds.Count > 0)
+            {
+                long iternations = versionIds.Count / PreferedBatchSize;
+                if (iternations * PreferedBatchSize < versionIds.Count)
+                    iternations++;
+                for (int round = 0; round < iternations; round++)
+                {
+                    var currentItems = versionIds.Skip(round * PreferedBatchSize).Take(PreferedBatchSize);
+                    if (currentItems.Count() > 0)
+                    {
+                        using (IUnitOfWork uow = this.GetBulkUnitOfWork())
+                        {
+                            IRepository<DatasetVersion> versionRepo = uow.GetRepository<DatasetVersion>();
+                            versionRepo.Delete(currentItems.ToList());
+                            uow.Commit();
+                        }
+                    }
+                }
+            }
+            #endregion
+
+            #region Delete the dataset
+            {
+                //repo.Delete(entity);
+                var currentItems = new List<Int64>() { entity.Id };
+                using (IUnitOfWork uow = this.GetBulkUnitOfWork())
+                {
+                    IRepository<Dataset> repo = uow.GetRepository<Dataset>();
+                    repo.Delete(currentItems);
+                    uow.Commit();
+                }
+            }
+            #endregion
+
+            // if any problem was detected during the commit, an exception will be thrown!
+            return (true);
+        }
         #endregion
 
         #region DatasetVersion

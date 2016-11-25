@@ -96,6 +96,10 @@ namespace BExIS.Web.Shell.Areas.Sam.Controllers
                         ViewData.ModelState.AddModelError("", string.Format("Dataset {0} was deleted, but it is still indexed for searching. You need to reindex the search via the managemnet console.", id));
                     }
                 }
+                else
+                {
+                    ViewData.ModelState.AddModelError("", string.Format("Dataset {0} could not be deleted. Details: Internal system error!", id));
+                }
             }
             catch (Exception ex)
             {
@@ -114,34 +118,50 @@ namespace BExIS.Web.Shell.Areas.Sam.Controllers
         public ActionResult Purge(long id)
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Purge", this.Session.GetTenant());
+            bool itsFine = false;
+            DatasetManager dm = new DatasetManager();
             try
             {
-                DatasetManager dm = new DatasetManager();
                 if (dm.PurgeDataset(id))
                 {
-                    try
-                    {
-                        PermissionManager pm = new PermissionManager();
-                        pm.DeleteDataPermissionsByEntity(1, id);
-                    }
-                    catch
-                    {
-                        ViewData.ModelState.AddModelError("", string.Format("Dataset {0} was purged, but its permissions were not altered. You need to remove them manually from the data permission management.", id));
-                    }
-                    try
-                    {
-                        ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
-                        provider?.UpdateSingleDatasetIndex(id, IndexingAction.DELETE);
-                    }
-                    catch
-                    {
-                        ViewData.ModelState.AddModelError("", string.Format("Dataset {0} was purged, but it is still indexed for searching. You need to reindex the search via the managemnet console.", id));
-                    }
+                    itsFine = true;
                 }
             }
             catch (Exception ex)
             {
-                ViewData.ModelState.AddModelError("", string.Format("Dataset {0} could not be purged. Details: {1}", id, ex.Message));
+                try // give it another try
+                {
+                    if (dm.PurgeDataset(id, true))
+                    {
+                        itsFine = true;
+                    }
+                }
+                catch (Exception exx)
+                {
+                    ViewData.ModelState.AddModelError("", string.Format("Dataset {0} could not be purged. Details: {1}, see also: {2}", id, exx.Message, ex.Message));
+                }
+            }
+
+            if (itsFine)
+            {
+                try
+                {
+                    PermissionManager pm = new PermissionManager();
+                    pm.DeleteDataPermissionsByEntity(1, id);
+                }
+                catch
+                {
+                    ViewData.ModelState.AddModelError("", string.Format("Dataset {0} was purged, but its permissions were not altered. You need to remove them manually from the data permission management.", id));
+                }
+                try
+                {
+                    ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+                    provider?.UpdateSingleDatasetIndex(id, IndexingAction.DELETE);
+                }
+                catch
+                {
+                    ViewData.ModelState.AddModelError("", string.Format("Dataset {0} was purged, but it is still indexed for searching. You need to reindex the search via the managemnet console.", id));
+                }
             }
             return View();
         }
