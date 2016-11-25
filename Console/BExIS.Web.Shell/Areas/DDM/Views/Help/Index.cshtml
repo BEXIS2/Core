@@ -4,85 +4,133 @@
     This guide will walk you through the basics of using search UI including how to manage search component.
 }
 @section leftPane{
-  <div class="toc">
-      <p style="font-weight:bold">Search UI ToC</p>
-      <br/>
-    <a href="#_Toc451435006">1. Search UI</a>
-<p></p>
-    <a href="#_Toc451435007">&emsp;1.1. Categories </a>
-<p></p>
-    <a href="#_Toc451435008">&emsp;1.2. Properties </a>
-<p></p>
-    <a href="#_Toc451435009">&emsp;1.3. Free text search with Autocomplete</a>
-<p></p>
-    <a href="#_Toc451435010">&emsp;1.4. Selected Filter</a>
-<p></p>
-    <a href="#_Toc451435011">&emsp;1.5. Results</a>
-<p></p>
-    <a href="#_Toc451435012">2. Data Details</a>
-<p></p>
-    <a href="#_Toc451435013">&emsp;2.1. Meta Data</a>
-<p></p>
-    <a href="#_Toc451435014">&emsp;2.2. Primary Data</a>
-<p></p>
-    <a href="#_Toc451435015">&emsp;2.3. Data Structure</a>
-<p></p>
-    <a href="#_Toc451435016">&emsp;2.4. Dataset Permissions</a>
-<p></p>
-    <a href="#_Toc451435017">3. Search Manager</a>
-<p></p>
-  </div>
+    <div class="toc">
+        <p style="font-weight:bold">Search UI ToC</p>
+        <br />
+        <a href="#_Toc451435006">1. Search UI</a>
+        <p></p>
+        <a href="#_Toc451435007">&emsp;1.1. Categories </a>
+        <p></p>
+        <a href="#_Toc451435008">&emsp;1.2. Properties </a>
+        <p></p>
+        <a href="#_Toc451435009">&emsp;1.3. Free text search with Autocomplete</a>
+        <p></p>
+        <a href="#_Toc451435010">&emsp;1.4. Selected Filter</a>
+        <p></p>
+        <a href="#_Toc451435011">&emsp;1.5. Results</a>
+        <p></p>
+        <a href="#_Toc451435012">2. Data Details</a>
+        <p></p>
+        <a href="#_Toc451435013">&emsp;2.1. Meta Data</a>
+        <p></p>
+        <a href="#_Toc451435014">&emsp;2.2. Primary Data</a>
+        <p></p>
+        <a href="#_Toc451435015">&emsp;2.3. Data Structure</a>
+        <p></p>
+        <a href="#_Toc451435016">&emsp;2.4. Dataset Permissions</a>
+        <p></p>
+        <a href="#_Toc451435017">3. Search Manager</a>
+        <p></p>
+    </div>
 }
 <style>
-.toc {
-position: fixed;
-}
+    .toc {
+        position: fixed;
+    }
 </style>
 <p><span>&#xa0;</span></p>
 <p><span>&#xa0;</span></p>
-<br/><p><span>&#xa0;</span></p><br/>
-<p class="Heading-1"><a id="_Toc451435006"><span>1</span><span>. </span><span>Search UI</span></a></p>
+<br /><p><span>&#xa0;</span></p><br />
+<p class="Heading-1">
+    <a id="_Toc451435006">
+<p><span>&#xa0;</span></p><br />
+<p><span>&#xa0;</span></p><br />
+<span>1</span><span>. </span><span>Search UI</span></a></p>
 <p><span>Search UI contains some parts to make search easier. In this way, you are able to look for all details of datasets, but not for the uploaded data. You can control the search UI via search manager explained in section 3.</span></p>
-<p style="text-align:justify;page-break-inside:auto;page-break-after:auto;page-break-before:auto;line-height:13.8pt;margin-top:0pt;margin-bottom:10pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;"><img src="~/Areas/DDM/Images/DDM_UserGuide_files_images\DDM_UserGuide_files_img1.png" width="605" height="318" alt="img1" /><br/><span style="font-family:Calibri,Arial;font-size:11pt;">&#xa0;</span></p>
-<p class="Heading-2"><a id="_Toc451435007"><span>1.1. </span><span>Categories</span></a><span> </span></p>
+<p style="text-align:justify;page-break-inside:auto;page-break-after:auto;page-break-before:auto;line-height:13.8pt;margin-top:0pt;margin-bottom:10pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;"><img src="~/Areas/DDM/Images/DDM_UserGuide_files_images\DDM_UserGuide_files_img1.png" width="605" height="318" alt="img1" /><br /><span style="font-family:Calibri,Arial;font-size:11pt;">&#xa0;</span></p>
+<p class="Heading-2">
+    <a id="_Toc451435007">
+<p><span>&#xa0;</span></p><br />
+<p><span>&#xa0;</span></p><br />
+<span>1.1. </span><span>Categories</span></a><span> </span></p>
 <p><span>Categories are defined by number </span><span>1 in</span><span> the image above. </span><span>The main nodes like “Project Name” are based on nodes in the metadata. The elements are values in the metadata from a main node and can be used to restrict the current selection. The numbers next to the elements and main nodes show the number of existing data sets in the database. This list changes according to the current selection. After selection the results and the facets updated. With the “more” button it is possible to select more than on</span><span>e</span><span> element at the same time.</span></p>
 <p><span>&#xa0;</span></p>
-<p class="Heading-2"><a id="_Toc451435008"><span>1.2. </span><span>Properties</span></a><span> </span></p>
+<p class="Heading-2">
+    <a id="_Toc451435008">
+<p><span>&#xa0;</span></p><br />
+<p><span>&#xa0;</span></p><br />
+<span>1.2. </span><span>Properties</span></a><span> </span></p>
 <p><span>Number </span><span>2 in</span><span> the image above is related with properties. </span><span>In this section there are predefined UI Components like dropdown, radio button or slider to filter the data. There is only one possible choice for every component. After selection the results and the facets are updated accordingly. </span></p>
 <p><span>&#xa0;</span></p>
-<p class="Heading-2"><a id="_Toc451435009"><span>1.3. </span><span>Free text search with Autocomplete</span></a></p>
+<p class="Heading-2">
+    <a id="_Toc451435009">
+<p><span>&#xa0;</span></p><br />
+<p><span>&#xa0;</span></p><br />
+<span>1.3. </span><span>Free text search with Autocomplete</span></a></p>
 <p><span>The free text search</span><span>, number </span><span>3 in</span><span> the image above,</span><span> works as in any common search engine</span><span>.</span><span> It includes Autocomplete where words or phrases are being predicted once three letters or figures are entered. It supports also different languages.</span></p>
 <p><span>&#xa0;</span></p>
-<p class="Heading-2"><a id="_Toc451435010"><span>1.4. </span><span>Selected Filter</span></a></p>
+<p class="Heading-2">
+    <a id="_Toc451435010">
+<p><span>&#xa0;</span></p><br />
+<p><span>&#xa0;</span></p><br />
+<span>1.4. </span><span>Selected Filter</span></a></p>
 <p><span>You can find selected filter part by number </span><span>4 in</span><span> the image above. </span><span>Every filter applied from section 1</span><span>.1</span><span>-</span><span>1.</span><span>3 is displayed here. Filters can be deselected just by clicking on it. In point 1 by the categories you are able to select more than one option to a category. If there are more than 2 you will see only the category. Click on the category and a window will open to define your selection for this category.</span></p>
 <p><span>&#xa0;</span></p>
-<p class="Heading-2"><a id="_Toc451435011"><span>1.5. </span><span>Results</span></a></p>
+<p class="Heading-2">
+    <a id="_Toc451435011">
+<p><span>&#xa0;</span></p><br />
+<p><span>&#xa0;</span></p><br />
+<span>1.5. </span><span>Results</span></a></p>
 <p><span>The matching results are displayed in a table or in the list view. It marks by number </span><span>5 in</span><span> the image above. B</span><span>asic functions</span><span> like sorting, filtering, paging are available in the table header. By right clicking on the header, you can change visibility of columns.</span></p>
 <p><span>T</span><span>he details button opens the det</span><span>ailed view of the selected data</span><span>set</span><span>.</span></p>
 <p><span>&#xa0;</span></p>
-<p class="Heading-1"><a id="_Toc451435012"><span>2. Data Details</span></a></p>
+<p class="Heading-1">
+    <a id="_Toc451435012">
+<p><span>&#xa0;</span></p><br />
+<p><span>&#xa0;</span></p><br />
+<span>2. Data Details</span></a></p>
 <p><span>About each dataset created in the </span><span>BEXIS</span><span> 2</span><span>, you can find a detail contains Meta Data, </span><span>Primary Data, Data Structure, and Dataset Permissions </span><span>explain later.</span></p>
 <p><span>&#xa0;</span></p>
-<p class="Heading-2"><a id="_Toc451435013"><span>2.1. </span><span>Meta</span><span> Data</span></a></p>
+<p class="Heading-2">
+    <a id="_Toc451435013">
+<p><span>&#xa0;</span></p><br />
+<p><span>&#xa0;</span></p><br />
+<span>2.1. </span><span>Meta</span><span> Data</span></a></p>
 <p><span>On this </span><span>tab</span><span> you have access to the </span><span>Meta</span><span> data of the selected datasets.</span><span> You are able edit this dataset or make a copy of that.</span></p>
-<p style="text-align:justify;page-break-inside:auto;page-break-after:auto;page-break-before:auto;line-height:13.8pt;margin-top:0pt;margin-bottom:10pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;"><img src="~/Areas/DDM/Images/DDM_UserGuide_files_images\DDM_UserGuide_files_img2.png" width="604" height="254" alt="img2" /><br/><span style="font-family:Calibri,Arial;font-size:11pt;">&#xa0;</span></p>
-<p class="Heading-2"><a id="_Toc451435014"><span>2.</span><span>2</span><span>. </span><span>Primary Data</span></a></p>
+<p style="text-align:justify;page-break-inside:auto;page-break-after:auto;page-break-before:auto;line-height:13.8pt;margin-top:0pt;margin-bottom:10pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;"><img src="~/Areas/DDM/Images/DDM_UserGuide_files_images\DDM_UserGuide_files_img2.png" width="604" height="254" alt="img2" /><br /><span style="font-family:Calibri,Arial;font-size:11pt;">&#xa0;</span></p>
+<p class="Heading-2">
+    <a id="_Toc451435014">
+<p><span>&#xa0;</span></p><br />
+<p><span>&#xa0;</span></p><br />
+<span>2.</span><span>2</span><span>. </span><span>Primary Data</span></a></p>
 <p><span>On this tab you have access to the </span><span>primary data of the selected dataset</span><span>.</span><span> You can download selected data in an Excel file, comma separated in a CSV file, or tab separated in a TXT file.</span></p>
-<p style="text-align:justify;page-break-inside:auto;page-break-after:auto;page-break-before:auto;line-height:13.8pt;margin-top:0pt;margin-bottom:10pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;"><img src="~/Areas/DDM/Images/DDM_UserGuide_files_images\DDM_UserGuide_files_img3.png" width="604" height="259" alt="img3" /><br/><span style="border:0px;position:absolute;z-index:1;margin-left:160,05pt;"><img src="DDM_UserGuide_files_images\DDM_UserGuide_files_img4.png" width="144" height="13" alt="img4" /></span><span style="font-family:Calibri,Arial;font-size:11pt;font-weight:bold;">&#xa0;</span></p>
+<p style="text-align:justify;page-break-inside:auto;page-break-after:auto;page-break-before:auto;line-height:13.8pt;margin-top:0pt;margin-bottom:10pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;"><img src="~/Areas/DDM/Images/DDM_UserGuide_files_images\DDM_UserGuide_files_img3.png" width="604" height="259" alt="img3" /><br /><span style="border:0px;position:absolute;z-index:1;margin-left:160,05pt;"><img src="DDM_UserGuide_files_images\DDM_UserGuide_files_img4.png" width="144" height="13" alt="img4" /></span><span style="font-family:Calibri,Arial;font-size:11pt;font-weight:bold;">&#xa0;</span></p>
 <p><span>&#xa0;</span></p>
-<p class="Heading-2"><a id="_Toc451435015"><span>2.3. </span><span>Data Structure</span></a></p>
+<p class="Heading-2">
+    <a id="_Toc451435015">
+<p><span>&#xa0;</span></p><br />
+<p><span>&#xa0;</span></p><br />
+<span>2.3. </span><span>Data Structure</span></a></p>
 <p><span>On this tab you have access to the </span><span>data</span><span> </span><span>structure</span><span> of the selected datasets.</span></p>
 <p><span>&#xa0;</span></p>
-<p class="Heading-2"><a id="_Toc451435016"><span>2.</span><span>4</span><span>. Dataset Permissions</span></a></p>
-<p style="text-align:left;page-break-inside:auto;page-break-after:auto;page-break-before:auto;line-height:13.8pt;margin-top:0pt;margin-bottom:10pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;"><span style="font-family:Calibri,Arial;font-size:11pt;">On this tab you have access to the Dataset Permission</span><a id="_GoBack" /><span style="font-family:Calibri,Arial;font-size:11pt;">s Manager</span><span style="font-family:Calibri,Arial;font-size:11pt;">.</span><br style='clear:both;page-break-before:always'/><img src="~/Areas/DDM/Images/DDM_UserGuide_files_images\DDM_UserGuide_files_img5.png" width="604" height="297" alt="img5" /><br/></p>
+<p class="Heading-2">
+    <a id="_Toc451435016">
+<p><span>&#xa0;</span></p><br />
+<p><span>&#xa0;</span></p><br />
+<span>2.</span><span>4</span><span>. Dataset Permissions</span></a></p>
+<p style="text-align:left;page-break-inside:auto;page-break-after:auto;page-break-before:auto;line-height:13.8pt;margin-top:0pt;margin-bottom:10pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;"><span style="font-family:Calibri,Arial;font-size:11pt;">On this tab you have access to the Dataset Permission</span><a id="_GoBack" /><span style="font-family:Calibri,Arial;font-size:11pt;">s Manager</span><span style="font-family:Calibri,Arial;font-size:11pt;">.</span><br style='clear:both;page-break-before:always' /><img src="~/Areas/DDM/Images/DDM_UserGuide_files_images\DDM_UserGuide_files_img5.png" width="604" height="297" alt="img5" /><br /></p>
 <p><span>&#xa0;</span></p>
-<p class="Heading-1"><a id="_Toc451435017"><span>3. Search Manager</span></a></p>
+<p class="Heading-1">
+    <a id="_Toc451435017">
+<p><span>&#xa0;</span></p><br />
+<p><span>&#xa0;</span></p><br />
+<span>3. Search Manager</span></a></p>
 <p><span>With the help of the search manager, you can make search UI more operative. </span><span>This part is available from </span><span>Setup &gt; Manage search</span><span>. </span></p>
 <p><span>You need to click on the Refresh Search button, to make the search result effective.</span></p>
-<p style="text-align:left;page-break-inside:auto;page-break-after:auto;page-break-before:auto;line-height:13.8pt;margin-top:0pt;margin-bottom:10pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;"><img src="~/Areas/DDM/Images/DDM_UserGuide_files_images\DDM_UserGuide_files_img6.png" width="604" height="377" alt="img6" /><br/><span style="font-family:Calibri,Arial;font-size:11pt;">&#xa0;</span></p>
+<p style="text-align:left;page-break-inside:auto;page-break-after:auto;page-break-before:auto;line-height:13.8pt;margin-top:0pt;margin-bottom:10pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;"><img src="~/Areas/DDM/Images/DDM_UserGuide_files_images\DDM_UserGuide_files_img6.png" width="604" height="377" alt="img6" /><br /><span style="font-family:Calibri,Arial;font-size:11pt;">&#xa0;</span></p>
 <p>You can use <img src="~/Areas/DDM/Images/DDM_UserGuide_files_images\DDM_UserGuide_files_img7.png" width="25" height="25" alt="img7" /> for edit and <img src="DDM_UserGuide_files_images\DDM_UserGuide_files_img8.png" width="25" height="25" alt="img8" /> for delete a search component.<span style="font-family:Calibri,Arial;font-size:11pt;"> </span></p>
 <p><span>To add a new search component, click on the </span><span>Create Search Attribute</span><span> button.</span><span> </span><span>The configuration files consist of one element – the field element, and several attributes. The element represent each lucene field and its attribute are used to configure indexing, searching, and display. </span><span>Take mouse over each question mark near by a field and you can see the help information.</span></p>
-<p style="text-align:left;page-break-inside:auto;page-break-after:auto;page-break-before:auto;line-height:13.8pt;margin-top:0pt;margin-bottom:10pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;"><img src="~/Areas/DDM/Images/DDM_UserGuide_files_images\DDM_UserGuide_files_img9.png" width="604" height="410" alt="img9" /><br/><span style="font-family:Calibri;font-size:11pt;">&#xa0;</span></p>
+<p style="text-align:left;page-break-inside:auto;page-break-after:auto;page-break-before:auto;line-height:13.8pt;margin-top:0pt;margin-bottom:10pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;"><img src="~/Areas/DDM/Images/DDM_UserGuide_files_images\DDM_UserGuide_files_img9.png" width="604" height="410" alt="img9" /><br /><span style="font-family:Calibri;font-size:11pt;">&#xa0;</span></p>
 <p><span>We, therefore, go through each of the elements attributes of the configuration file.</span></p>
 <p><span>Display Name</span><span>: This is the name which is displayed in the search UI for the field.</span></p>
 <p><span>Source Name</span><span>: This is the name of the field in the lucene index</span><span>.</span></p>
