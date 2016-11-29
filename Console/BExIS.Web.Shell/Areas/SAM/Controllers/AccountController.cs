@@ -15,6 +15,7 @@ using BExIS.Security.Services.Subjects;
 using BExIS.Web.Shell.Areas.SAM.Models;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Extensions;
+using Vaiona.Logging;
 
 namespace BExIS.Web.Shell.Areas.SAM.Controllers
 {
@@ -172,6 +173,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
                 SubjectManager subjectManager = new SubjectManager();
 
                 User user = subjectManager.CreateUser(model.Username, model.Password, model.FullName, model.Email, model.SecurityQuestion, model.SecurityAnswer, model.AuthenticatorList.Id);
+                LoggerFactory.LogData(user.Id.ToString(), typeof(User).Name, Vaiona.Entities.Logging.CrudState.Created);
 
                 // Feature
                 FeatureManager featureManager = new FeatureManager();
