@@ -1334,7 +1334,7 @@ namespace BExIS.Xml.Helpers.Mapping
              // create a compoundAttribute
             MetadataCompoundAttribute mca = getExistingMetadataCompoundAttribute(complexType.Name);// = metadataAttributeManager.MetadataCompoundAttributeRepo.Get(p => p.Name == complexType.Name).FirstOrDefault();
 
-            DataType dt1 = dataTypeManager.Repo.Get(p => p.Name.Equals("String")).FirstOrDefault();
+            DataType dt1 = dataTypeManager.Repo.Get(p => p.Name.ToLower().Equals("string")).FirstOrDefault();
             if (dt1 == null)
             {
                 dt1 = dataTypeManager.Create("String", "A test String", System.TypeCode.String);

@@ -39,7 +39,6 @@ function setTabIndex() {
  ******************************************/
 
 $(window).scroll(function () {
-
         bindMinimap();
 });
 
@@ -53,20 +52,16 @@ function bindMinimap(create) {
 
     var hContainer = $('#root').height();
     var hWindow = $(window).height();
-    
        
     var hRatio = 1 - hWindow / hContainer;
+
+    if (hRatio <= 0) hRatio = 0.1;
 
     if ($(".minimap").length === 0 || create) {
         var offset = getRatioHeight(menubar);
 
-            if ($(".miniregion")) {
-                $(".miniregion").remove();
-            }
-
-            if ($(".minimap")) {
-                $(".minimap").remove();
-            }
+        $(".miniregion").remove();
+        $(".minimap").remove();
 
             var previewBody = $('#root')
                 .minimap(

@@ -41,7 +41,11 @@
                 }
 
              <br />
-             <p><button id="checkButton" title="Check selected variables form primary key" class="function" >Check</button>....</p>
+            <p>
+                <button id="checkButton" title="Check selected variables form primary key" class="function">Check</button>
+                <button id="none" type="button" class="bx-button function" value="none" name="button" onclick="DefinePrimaryKey_OnClickNone()">None</button>
+                <button id="all" type="button" class="bx-button function" value="all" name="button" onclick="DefinePrimaryKey_OnClickAll()">All</button>
+            </p>
              
         </div>
     </div>
@@ -102,6 +106,15 @@
 
 <script type="text/javascript">
 
+    function DefinePrimaryKey_OnClickAll() {
+        $("#Step4").find("input:checkbox")
+                                .attr("checked", true);
+    }
+
+    function DefinePrimaryKey_OnClickNone() {
+        $("#Step4").find("input:checkbox")
+                                    .attr("checked", false);
+        }
 
     $('#checkButton').click(function () {
 

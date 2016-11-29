@@ -41,6 +41,7 @@ namespace BExIS.Web.Shell.Controllers
         public ActionResult Index(Int64 id = 0)
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Test Page", this.Session.GetTenant()); /*in the Vaiona.Web.Mvc.Models namespace*/ //String.Format("{0} {1} - {2}", AppConfiguration.ApplicationName, AppConfiguration.ApplicationVersion, "Test Page");
+            createDataset();
             //removeContentDescriptor();
             //testTenants();
             //List<string> a = new List<string>() { "A", "B", "C" };
@@ -491,6 +492,19 @@ namespace BExIS.Web.Shell.Controllers
             //}
         }
 
+        private Dataset createDataset()
+        {
+
+            DataStructureManager dsManager = new DataStructureManager();
+            ResearchPlanManager rpManager = new ResearchPlanManager();
+            DatasetManager dm = new DatasetManager();
+
+            MetadataStructureManager mdsManager = new MetadataStructureManager();
+            MDS.MetadataStructure mds = mdsManager.Repo.Query().First();
+
+            Dataset ds = dm.CreateEmptyDataset(dsManager.StructuredDataStructureRepo.Get(1), rpManager.Repo.Get(1), mds);
+            return ds;
+        }
         /// <summary>
         /// create a new dataset, check it out to create the first version, add a tuple to it.
         /// </summary>
