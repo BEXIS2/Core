@@ -39,8 +39,6 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
     {
         public long Id { get; set; }
 
-        public int Version { get; set; }
-
         public string Title { get; set; }
 
         public bool IsPublic { get; set; }
@@ -50,7 +48,6 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
             return new DatasetGridRowModel()
             {
                 Id = datasetVersion.Dataset.Id,
-                Version = datasetVersion.VersionNo,
                 Title = XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title),
                 IsPublic = isPublic
             };
