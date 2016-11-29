@@ -159,16 +159,14 @@ function setDataPermission(value, rightType, subjectId, dataId, entityId) {
 }
 
 function OnSelectShowDataTabStrip(e) {
-
-
         if (e.item.id == "metadata") {
-            $(".miniregion").show();
-            $(".minimap").show();
-
-        } else {
-
-            $(".miniregion").hide();
-            $(".minimap").hide();
+            setTimeout(function () {
+                bindMinimap(true);
+            },120);
+        } 
+        else {
+            $(".miniregion").remove();
+            $(".minimap").remove();
         }
     }
 

@@ -4,59 +4,63 @@
     This guide will walk you through the basics of data collection including how to upload data and how to import a metadata structure.
 }
 @section leftPane{
-  <div class="toc">
+<div class="toc">
     <p style="font-weight:bold">Data Collection ToC</p>
-    <br/>
+    <br />
 
     <a href="#_Toc452035183">1. Overview</a>
-<p></p>
+    <p></p>
     <a href="#_Toc452035184">2. Create a new dataset</a>
-<p></p>
+    <p></p>
     <a href="#_Toc452035185">&emsp;  2.1 Copy an existing Dataset</a>
-<p></p>
+    <p></p>
     <a href="#_Toc452035186">&emsp;  2.2 Content</a>
-<p></p>
+    <p></p>
     <a href="#_Toc452035187">&emsp;  2.3 Messages</a>
-<p></p>
+    <p></p>
     <a href="#_Toc452035188">3. Upload Data</a>
-<p></p>
+    <p></p>
     <a href="#_Toc452035189">&emsp;  3.1. Structured Data</a>
-<p></p>
+    <p></p>
     <a href="#_Toc452035190">&emsp;&emsp;    3.1.1. Select File</a>
-<p></p>
+    <p></p>
     <a href="#_Toc452035191">&emsp;&emsp;    3.1.2. Get File Information </a>
-<p></p>
-    <a href="#_Toc452035192">&emsp;  3.2. Choose Dataset</a>
-<p></p>
+    <p></p>
+    <a href="#_Toc452035192">&emsp;  3.2. Specify Dataset</a>
+    <p></p>
     <a href="#_Toc452035193">&emsp;  3.3. Define Primary Key</a>
-<p></p>
+    <p></p>
     <a href="#_Toc452035194">&emsp;  3.4. Validation</a>
-<p></p>
+    <p></p>
     <a href="#_Toc452035195">&emsp;  3.5. Summary</a>
-<p></p>
+    <p></p>
     <a href="#_Toc452035196">&emsp;  3.6. Unstructured Data</a>
-<p></p>
+    <p></p>
     <a href="#_Toc452035197">4. Push big files to server</a>
-<p></p>
+    <p></p>
     <a href="#_Toc452035198">5. Import metadata structure</a>
-<p></p>
+    <p></p>
     <a href="#_Toc452035199">&emsp;  5.1. Select File</a>
-<p></p>
+    <p></p>
     <a href="#_Toc452035200">&emsp;  5.2. Read Source</a>
-<p></p>
+    <p></p>
     <a href="#_Toc452035201">&emsp;  5.3. Set Parameters</a>
-<p></p>
+    <p></p>
     <a href="#_Toc452035202">&emsp;  5.4. Summary</a>
-<p></p>
-  </div>
+    <p></p>
+</div>
 }
 <style>
-.toc {
-position: fixed;
-}
+    .toc {
+        position: fixed;
+    }
 </style>
 <p><span> </span></p>
-<p class="Heading-1"><span>&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;</span><a id="_Toc452035183"><br/><span>1. Overview</span></a></p>
+<p class="Heading-1">
+    <a id="_Toc452035183">
+<p><span>&#xa0;</span></p><br />
+<p><span>&#xa0;</span></p><br />
+<br /><span>1. Overview</span></a></p>
 <p><span>The Data Collection Module provides tools to create new datasets, enter metadata, upload data to the system, and import </span><span>metadata structures (i.e. schemas)</span><span>. There are </span><span>three workflows</span><span> </span><span>available under t</span><span>he </span><span>Collect</span><span> tab</span><span> and one in</span><span> </span><span>the</span><span> Setup</span><span>: </span></p>
 <p class="List-Paragraph"><span>&#183;</span><span>&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;</span><span>Create </span><span>a </span><span>dataset</span><span> </span><span>(</span><span>Collect)</span></p>
 <p class="List-Paragraph"><span>&#183;</span><span>&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;</span><span>Upload data to a dataset</span><span> </span><span>(</span><span>Collect)</span></p>
@@ -64,110 +68,190 @@ position: fixed;
 <p class="List-Paragraph"><span>&#183;</span><span>&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;</span><span>Import metadata structure </span><span>(</span><span>Setup</span><span>)</span></p>
 <p class="List-Paragraph"><span>&#xa0;</span></p>
 <p class="List-Paragraph"><span>&#xa0;</span></p>
-<p class="Heading-1"><span>&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;</span><a id="_Toc452035184"><span>2. Create a new dataset</span></a></p>
+<p class="Heading-1">
+    <a id="_Toc452035184">
+<p><span>&#xa0;</span></p><br />
+<p><span>&#xa0;</span></p><br />
+<span>2. Create a new dataset</span></a></p>
 <p><span>This wizard will assist you in </span><span>creating a new dataset in </span><span>BEx</span><span>IS</span><span>++</span><span>.</span><span> T</span><span>he Wizard is very flexible and builds up differently depending on the selected Metadata structure. Therefore, we </span><span>describe</span><span> only the basic functions here.</span><span> </span></p>
 <p><span>The f</span><span>irst s</span><span>tep is to generate an </span><span>empty</span><span> or a </span><span>copy of an existing dataset</span><span> </span><span>based on your selection of the </span><span>two</span><span> mandatory elements: </span><span>data str</span><span>ucture, and metadata structure. </span></p>
-<p style="text-align:justify;page-break-inside:auto;page-break-after:auto;page-break-before:auto;line-height:12pt;margin-top:5pt;margin-bottom:5pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;"><img src="~/Areas/DCM/Images/DCM_UserGuide_files_images\DCM_UserGuide_files_img1.png" width="353" height="215" alt="img1" /><br/><span style="font-family:Calibri,Arial;font-size:11pt;">&#xa0;</span></p>
+<p style="text-align:justify;page-break-inside:auto;page-break-after:auto;page-break-before:auto;line-height:12pt;margin-top:5pt;margin-bottom:5pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;"><img src="~/Areas/DCM/Images/DCM_UserGuide_files_images\DCM_UserGuide_files_img1.png" width="353" height="215" alt="img1" /><br /><span style="font-family:Calibri,Arial;font-size:11pt;">&#xa0;</span></p>
 <p><span>The next stage is determined by the selected metadata structure.</span></p>
 <p><span>&#xa0;</span></p>
-<p class="Heading-2"><a id="_Toc452035185"><span>2.1 Copy an existing Dataset</span></a></p>
+<p class="Heading-2">
+    <a id="_Toc452035185">
+<p><span>&#xa0;</span></p><br />
+<p><span>&#xa0;</span></p><br />
+<span>2.1 Copy an existing Dataset</span></a></p>
 <p class="No-Spacing"><span>By using Select button, you can choose a Dataset to make a copy of it. Related to the </span><span>Dataset, you can choose a Data S</span><span>tructure, but </span><span>t</span><span>here </span><span>is only one related Metadata Structure.</span></p>
 <p class="No-Spacing"><span>You are able to use predefined content or change fields as you want.</span></p>
-<p class="No-Spacing" style="text-align:left;page-break-inside:auto;page-break-after:auto;page-break-before:auto;line-height:12pt;margin-top:5pt;margin-bottom:5pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;"><img src="~/Areas/DCM/Images/DCM_UserGuide_files_images\DCM_UserGuide_files_img2.jpeg" width="604" height="176" alt="img2" /><br/><span style="font-family:Calibri,Arial;font-size:11pt;">&#xa0;</span></p>
+<p class="No-Spacing" style="text-align:left;page-break-inside:auto;page-break-after:auto;page-break-before:auto;line-height:12pt;margin-top:5pt;margin-bottom:5pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;"><img src="~/Areas/DCM/Images/DCM_UserGuide_files_images\DCM_UserGuide_files_img2.jpeg" width="604" height="176" alt="img2" /><br /><span style="font-family:Calibri,Arial;font-size:11pt;">&#xa0;</span></p>
 <p><span>&#xa0;</span></p>
-<p class="Heading-2"><a id="_Toc452035186"><span>2.2</span><span> </span><span>Content</span></a></p>
-<p style="text-align:justify;page-break-inside:auto;page-break-after:auto;page-break-before:auto;line-height:12pt;margin-top:5pt;margin-bottom:5pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;"><img src="~/Areas/DCM/Images/DCM_UserGuide_files_images\DCM_UserGuide_files_img3.png" width="411" height="143" alt="img3" /><span style="font-family:Calibri,Arial;font-size:11pt;">The content</span><span style="font-family:Calibri,Arial;font-size:11pt;"> area in the center is where you enter metadata describing your dataset. The forms provided here may look different and contain different attributes depending on the metadata schema (structure) you have chosen in the first step. </span></p>
+<p class="Heading-2">
+    <a id="_Toc452035186">
+<p><span>&#xa0;</span></p><br />
+<p><span>&#xa0;</span></p><br />
+<span>2.2</span><span> </span><span>Content</span></a></p>
+<p style="text-align:justify;page-break-inside:auto;page-break-after:auto;page-break-before:auto;line-height:12pt;margin-top:5pt;margin-bottom:5pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;"><span style="font-family:Calibri,Arial;font-size:11pt;">The content</span><span style="font-family:Calibri,Arial;font-size:11pt;"> area in the center is where you enter metadata describing your dataset. The forms provided here may look different and contain different attributes depending on the metadata schema (structure) you have chosen in the first step. </span></p>
 <p><span>&#xa0;</span></p>
+<img src="~/Areas/DCM/Images/DCM_UserGuide_files_images\DCM_UserGuide_files_img3.png" width="711" height="143" alt="img3" />
 <p><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
 <p><span>&#xa0;</span></p>
 <p><span>&#xa0;</span></p>
-<p style="text-align:left;page-break-inside:auto;page-break-after:auto;page-break-before:auto;line-height:12pt;margin-top:5pt;margin-bottom:5pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;"><span style="font-family:Calibri,Arial;font-size:11pt;">&nbsp;&nbsp;&nbsp;</span><img src="~/Areas/DCM/Images/DCM_UserGuide_files_images\DCM_UserGuide_files_img4.png" width="9" height="10" alt="img4" /><br/><span style="font-family:Calibri,Arial;font-size:11pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-family:Calibri,Arial;font-size:11pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-family:Calibri,Arial;font-size:11pt;">Required</span><span style="font-family:Calibri,Arial;font-size:11pt;"> a</span><span style="font-family:Calibri,Arial;font-size:11pt;">ttributes</span><br/><img src="DCM_UserGuide_files_images\DCM_UserGuide_files_img5.png" width="31" height="29" alt="img5" /><br/><span style="font-family:Calibri,Arial;font-size:11pt;"> </span><span style="font-family:Calibri,Arial;font-size:11pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-family:Calibri,Arial;font-size:11pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-family:Calibri,Arial;font-size:11pt;">Add an attribute. </span></p>
-<p style="text-align:justify;page-break-inside:auto;page-break-after:auto;page-break-before:auto;line-height:12pt;margin-top:5pt;margin-bottom:5pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;"><img src="~/Areas/DCM/Images/DCM_UserGuide_files_images\DCM_UserGuide_files_img6.png" width="31" height="31" alt="img6" /><br/><span style="font-family:Calibri,Arial;font-size:11pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-family:Calibri,Arial;font-size:11pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-family:Calibri,Arial;font-size:11pt;">Remove an attribute.</span></p>
-<p style="text-align:left;page-break-inside:auto;page-break-after:auto;page-break-before:auto;line-height:12pt;margin-top:5pt;margin-bottom:5pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;"><img src="~/Areas/DCM/Images/DCM_UserGuide_files_images\DCM_UserGuide_files_img7.png" width="60" height="27" alt="img7" /><br/><span style="font-family:Calibri,Arial;font-size:11pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-family:Calibri,Arial;font-size:11pt;">Change order of the attribute.</span><br/><img src="DCM_UserGuide_files_images\DCM_UserGuide_files_img8.png" width="20" height="17" alt="img8" /><br/><img src="DCM_UserGuide_files_images\DCM_UserGuide_files_img9.png" width="17" height="14" alt="img9" /><br/><span style="font-family:Calibri,Arial;font-size:11pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-family:Calibri,Arial;font-size:11pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-family:Calibri,Arial;font-size:11pt;">expand / collapse</span></p>
-<p class="Heading-2"><a id="_Toc452035187"><span>2.3</span><span> Messages</span></a></p>
+<p ><span style="font-family:Calibri,Arial;font-size:11pt;">&nbsp;&nbsp;&nbsp;</span><img src="~/Areas/DCM/Images/DCM_UserGuide_files_images\DCM_UserGuide_files_img4.png" width="9" height="10" alt="img4" /><span style="font-family:Calibri,Arial;font-size:11pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-family:Calibri,Arial;font-size:11pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-family:Calibri,Arial;font-size:11pt;">Required</span><span style="font-family:Calibri,Arial;font-size:11pt;"> a</span><span style="font-family:Calibri,Arial;font-size:11pt;">ttributes</span><br /><img src="~/Areas/DCM/Images/DCM_UserGuide_files_images\DCM_UserGuide_files_img5.png" width="31" height="29" alt="img5" /><span style="font-family:Calibri,Arial;font-size:11pt;"> </span><span style="font-family:Calibri,Arial;font-size:11pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-family:Calibri,Arial;font-size:11pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-family:Calibri,Arial;font-size:11pt;">Add an attribute. </span></p>
+<p ><img src="~/Areas/DCM/Images/DCM_UserGuide_files_images\DCM_UserGuide_files_img6.png" width="31" height="31" alt="img6" /><span style="font-family:Calibri,Arial;font-size:11pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-family:Calibri,Arial;font-size:11pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-family:Calibri,Arial;font-size:11pt;">Remove an attribute.</span></p>
+<p ><img src="~/Areas/DCM/Images/DCM_UserGuide_files_images\DCM_UserGuide_files_img7.png" width="60" height="27" alt="img7" /><span style="font-family:Calibri,Arial;font-size:11pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-family:Calibri,Arial;font-size:11pt;">Change order of the attribute.</span><br /><img src="~/Areas/DCM/Images/DCM_UserGuide_files_images\DCM_UserGuide_files_img8.png" width="20" height="17" alt="img8" /><img src="~/Areas/DCM/Images/DCM_UserGuide_files_images\DCM_UserGuide_files_img9.png" width="17" height="14" alt="img9" /><span style="font-family:Calibri,Arial;font-size:11pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-family:Calibri,Arial;font-size:11pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-family:Calibri,Arial;font-size:11pt;">expand / collapse</span></p>
+<p class="Heading-2">
+    <a id="_Toc452035187">
+<p><span>&#xa0;</span></p><br />
+<p><span>&#xa0;</span></p><br />
+<span>2.3</span><span> Messages</span></a></p>
 <p><span>When an input is faulty, the inp</span><span>ut field is highlighted in red. </span><span>If you go with the mouse over the box, you get information about what is wrong.</span></p>
-<p style="text-align:left;page-break-inside:auto;page-break-after:auto;page-break-before:auto;line-height:12pt;margin-top:5pt;margin-bottom:5pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;"><img src="~/Areas/DCM/Images/DCM_UserGuide_files_images\DCM_UserGuide_files_img10.png" width="600" height="175" alt="img10" /><br/><span style="font-family:Calibri,Arial;font-size:11pt;">&#xa0;</span></p>
+<p style="text-align:left;page-break-inside:auto;page-break-after:auto;page-break-before:auto;line-height:12pt;margin-top:5pt;margin-bottom:5pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;"><img src="~/Areas/DCM/Images/DCM_UserGuide_files_images\DCM_UserGuide_files_img10.jpg" width="600" height="175" alt="img10" /><br /><span style="font-family:Calibri,Arial;font-size:11pt;">&#xa0;</span></p>
 <p><span>&#xa0;</span></p>
-<p class="Heading-1"><span>&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;</span><a id="_Toc452035188"><span>3. Upload Data</span></a></p>
+<p class="Heading-1">
+    <a id="_Toc452035188">
+<p><span>&#xa0;</span></p><br />
+<p><span>&#xa0;</span></p><br />
+<span>3. Upload Data</span></a></p>
 <p><span>To upload your data, please go to the </span><span>Collect &gt; Update D</span><span>ata</span><span> </span><span>via main menu</span><span>.</span><span> </span><span>This wizard will assist you in uploading data into the </span><span>BEx</span><span>IS</span><span>++</span><span> repository. </span><span>A dataset can be structured or unstructured</span><span>.</span></p>
-<p style="text-align:justify;page-break-inside:auto;page-break-after:auto;page-break-before:auto;line-height:12pt;margin-top:5pt;margin-bottom:5pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;"><img src="~/Areas/DCM/Images/DCM_UserGuide_files_images\DCM_UserGuide_files_img11.png" width="604" height="132" alt="img11" /><br/><span style="font-family:Calibri,Arial;font-size:11pt;font-weight:bold;">&#xa0;</span></p>
-<p class="Heading-2"><a id="_Toc452035189"><span>3.1. Structured Data</span></a></p>
+<p ><img src="~/Areas/DCM/Images/DCM_UserGuide_files_images\DCM_UserGuide_files_img11.png" width="604" height="132" alt="img11" /><br /><span style="font-family:Calibri,Arial;font-size:11pt;font-weight:bold;">&#xa0;</span></p>
+<p class="Heading-2">
+    <a id="_Toc452035189">
+<p><span>&#xa0;</span></p><br />
+<p><span>&#xa0;</span></p><br />
+<span>3.1. Structured Data</span></a></p>
 <p><span>The term “structured data” is used for all datasets where there internal structure of the data is “known” to the system. For example, in a data table the header, which defines the columns (i.e. </span><span>variables) is the structure of the data. Before uploading/importing data to the system the data structure needs to be created with the Data Structure Manager of the Data Planning module.</span></p>
 <p><span>&#xa0;</span></p>
-<p class="Heading-3"><a id="_Toc452035190"><span>3.1.1. Select File</span></a></p>
+<p class="Heading-3">
+    <a id="_Toc452035190">
+<p><span>&#xa0;</span></p><br />
+<p><span>&#xa0;</span></p><br />
+<span>3.1.1. Select File</span></a></p>
 <p><span>In t</span><span>he first step </span><span>an existing file</span><span> </span><span>containing your data needs to be </span><span>select</span><span>ed</span><span>. </span><span>You can either select a file from your local computer or a file that has been uploaded to the server prior to starting the Upload Wizard. The second option is designed for files larger than 4 MB that may take several minutes to transfer. The</span><span> wizard support</span><span>s</span><span> file format</span><span>s of</span><span> Microsoft Excel (*.xlsm) or ASCII (*.txt, *.csv). Microsoft Excel</span><span> files are required to use a template created with the Data Planning Module (Plan) of </span><span>BEXIS</span><span> 2 (refer to Data Planning User Guide for more details). Once a file has been successfully selected, c</span><span>lick </span><span>the</span><span> </span><span>Next</span><span> button and </span><span>proceed</span><span> to </span><span>the </span><span>next step.</span></p>
-<p style="text-align:justify;page-break-inside:auto;page-break-after:auto;page-break-before:auto;line-height:12pt;margin-top:5pt;margin-bottom:5pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;"><img src="~/Areas/DCM/Images/DCM_UserGuide_files_images\DCM_UserGuide_files_img12.png" width="604" height="328" alt="img12" /><br/><span style="font-family:Calibri,Arial;font-size:11pt;">&#xa0;</span></p>
+<p ><img src="~/Areas/DCM/Images/DCM_UserGuide_files_images\DCM_UserGuide_files_img12.png" width="604" height="328" alt="img12" /><br /><span style="font-family:Calibri,Arial;font-size:11pt;">&#xa0;</span></p>
 <p><span>&#xa0;</span></p>
-<p class="Heading-3"><a id="_Toc452035191"><span>3.1.2. Get File Information</span></a><span> </span></p>
-<p><span>For all Microsoft Excel files using a </span><span>BE</span><span>x</span><span>IS</span><span>++</span><span> template the file information and data structure is automatically extracted and this step is omitted. Please refer to the Data Planning User Guide for more details on how to create such a template.</span></p>
+<p class="Heading-3">
+    <a id="_Toc452035191">
+<p><span>&#xa0;</span></p><br />
+<p><span>&#xa0;</span></p><br />
+<span>3.1.2. Get File Information</span></a><span> </span></p>
+<p><span>For all Microsoft Excel files using a BExIS++ template the file information and data structure is automatically extracted and this step is omitted. Please refer to the Data Planning User Guide for more details on how to create such a template.</span></p>
 <p><span>&#xa0;</span></p>
 <p><span>For all </span><span>ASCII file</span><span>s users need to provide information on the file structure and formatting. </span></p>
 <p><span>First, please choose a </span><span>separator</span><span> that is being used to separate data values from each other in your ASCII file. </span></p>
 <p><span>Depending on your language different punctuation is used for decimal values. Please choose the one present in your ASCII file.</span></p>
 <p><span>Next please specify whether the </span><span>orientation</span><span> of your data is </span><span>column</span><span>-</span><span>wise</span><span> or </span><span>row</span><span>-</span><span>wise</span><span> (see figure below).</span></p>
-<p style="text-align:justify;page-break-inside:auto;page-break-after:auto;page-break-before:auto;line-height:12pt;margin-top:5pt;margin-bottom:5pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;"><img src="~/Areas/DCM/Images/DCM_UserGuide_files_images\DCM_UserGuide_files_img13.jpeg" width="269" height="108" alt="ColumnWise.JPG" /><br/><img src="DCM_UserGuide_files_images\DCM_UserGuide_files_img14.jpeg" width="298" height="122" alt="RowWise.JPG" /><br/><span style="font-family:Calibri,Arial;font-size:11pt;">&#xa0;</span></p>
+<p ><img src="~/Areas/DCM/Images/DCM_UserGuide_files_images\DCM_UserGuide_files_img13.jpeg" width="269" height="108" alt="ColumnWise.JPG" /><span style="font-family:Calibri,Arial;font-size:11pt;">&#xa0;&#xa0;&#xa0;&#xa0;</span><img src="~/Areas/DCM/Images/DCM_UserGuide_files_images\DCM_UserGuide_files_img14.jpeg" width="298" height="122" alt="RowWise.JPG" /><br /><span style="font-family:Calibri,Arial;font-size:11pt;">&#xa0;</span></p>
 <p><span>&#xa0;</span></p>
 <p><span>Data sets may contain empty rows or columns on top or to the left before the header and the actual data values start. Please specify this </span><span>offset</span><span> in number of columns or rows.</span><span> </span></p>
 <p><span>Further, your data file may contain a header defining v</span><span>ariable</span><span> names, types etc. The row/column where this header starts needs to be specified (see figure below).</span></p>
-<p style="text-align:justify;page-break-inside:auto;page-break-after:auto;page-break-before:auto;line-height:12pt;margin-top:5pt;margin-bottom:5pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;"><img src="~/Areas/DCM/Images/DCM_UserGuide_files_images\DCM_UserGuide_files_img15.jpeg" width="278" height="138" alt="Offset.JPG" /><br/><img src="DCM_UserGuide_files_images\DCM_UserGuide_files_img16.jpeg" width="307" height="128" alt="Variables.JPG" /><br/><span style="font-family:Calibri,Arial;font-size:11pt;">&#xa0;</span></p>
+<p ><img src="~/Areas/DCM/Images/DCM_UserGuide_files_images\DCM_UserGuide_files_img15.jpeg" width="278" height="138" alt="Offset.JPG" /><span style="font-family:Calibri,Arial;font-size:11pt;">&#xa0;&#xa0;&#xa0;&#xa0;</span><img src="~/Areas/DCM/Images/DCM_UserGuide_files_images\DCM_UserGuide_files_img16.jpeg" width="307" height="128" alt="Variables.JPG" /><br /><span style="font-family:Calibri,Arial;font-size:11pt;">&#xa0;</span></p>
 <p><span>Finally, </span><span>the row/column where the actual data values start needs to be specified.</span></p>
 <p><span>&#xa0;</span></p>
 <p><span>&#xa0;</span></p>
-<p class="Heading-2"><a id="_Toc452035192"><span>3.2. Choose Dataset</span></a></p>
-<p><span>In </span><span>BEx</span><span>IS</span><span>++</span><span> your data is stored and managed as part of a dataset. A dataset may contain one or more of your data files. But all data files within one dataset must be of the same data structure, i.e. the number of variables and their properties must be identical in each file. </span><span>To upload your data to the system, please select one of the existing dataset from the dropdown list. </span></p>
-<p style="text-align:justify;page-break-inside:auto;page-break-after:auto;page-break-before:auto;line-height:12pt;margin-top:5pt;margin-bottom:5pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;"><img src="~/Areas/DCM/Images/DCM_UserGuide_files_images\DCM_UserGuide_files_img17.png" width="604" height="328" alt="img17" /><br/><span style="font-family:Calibri,Arial;font-size:11pt;">&#xa0;</span></p>
+<p class="Heading-2">
+    <a id="_Toc452035192">
+<p><span>&#xa0;</span></p><br />
+<p><span>&#xa0;</span></p><br />
+<span>3.2. Specify Dataset</span></a></p>
+<p><span>In BExIS++ your data is stored and managed as part of a dataset. A dataset may contain one or more of your data files. But all data files within one dataset must be of the same data structure, i.e. the number of variables and their properties must be identical in each file. 
+    To upload your data to the system, please select one of the existing dataset from the dropdown list. </span></p>
+<p ><img src="~/Areas/DCM/Images/DCM_UserGuide_files_images\DCM_UserGuide_files_img17.png" width="604" height="328" alt="img17" /><br /></p>
 <p><span> </span></p>
-<p class="Heading-2"><a id="_Toc452035193"><span>3.3. Define Primary Key</span></a></p>
-<p><span>While adding data to an existing dataset </span><span>you need to </span><span>specify</span><span> a </span><span>unique identifier (e.g. </span><span>primary key</span><span>)</span><span> for your dataset. </span><span>If your dataset already contains a variable with such a key please select it. Otherwise a </span><span>primary key </span><span>can be</span><span> </span><span>created by combining available </span><span>variables. </span><span>Please click the </span><span>Check</span><span> button to verify whether the selected combination is unique</span><span>.</span><span> I</span><span>f you go back and change something in the proc</span><span>ess of uploading, you need to ch</span><span>eck the primary key again.</span></p>
-<p style="text-align:justify;page-break-inside:auto;page-break-after:auto;page-break-before:auto;line-height:12pt;margin-top:5pt;margin-bottom:5pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;"><img src="~/Areas/DCM/Images/DCM_UserGuide_files_images\DCM_UserGuide_files_img18.png" width="604" height="328" alt="img18" /><br/><span style="font-family:Calibri,Arial;font-size:11pt;">&#xa0;</span></p>
+<p class="Heading-2">
+    <a id="_Toc452035193">
+<p><span>&#xa0;</span></p><br />
+<p><span>&#xa0;</span></p><br />
+<span>3.3. Define Primary Key</span></a></p>
+<p><span>While adding data to an existing dataset you need to specify a unique identifier (e.g. primary key) for your dataset. If your dataset already contains a variable with such a key please select it. Otherwise a primary key can becreated by combining available variables. 
+    Please click the Check button to verify whether the selected combination is unique. If you go back and change something in the process of uploading, you need to check the primary key again.</span></p>
+<p ><img src="~/Areas/DCM/Images/DCM_UserGuide_files_images\DCM_UserGuide_files_img18.png" width="604" height="328" alt="img18" /><br /><span style="font-family:Calibri,Arial;font-size:11pt;">&#xa0;</span></p>
 <p><span>&#xa0;</span></p>
-<p class="Heading-2"><a id="_Toc452035194"><span>3.4. Validation</span></a></p>
+<p class="Heading-2">
+    <a id="_Toc452035194">
+<p><span>&#xa0;</span></p><br />
+<p><span>&#xa0;</span></p><br />
+<span>3.4. Validation</span></a></p>
 <p><span>With this step, the selected data file is validated against the selected data structure. Both, the structure of the data (e.g. variable properties) and whether the data values fit to the specified structure (e.g. data type, value range) is evaluated. </span></p>
 <p><span>Click on </span><span>Validate</span><span> button to validate the data file.</span></p>
 <p><span>I</span><span>f you go back and change something in the process of uploading, you need to validate the file again.</span></p>
-<p style="text-align:justify;page-break-inside:auto;page-break-after:auto;page-break-before:auto;line-height:12pt;margin-top:5pt;margin-bottom:5pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;"><img src="~/Areas/DCM/Images/DCM_UserGuide_files_images\DCM_UserGuide_files_img19.png" width="604" height="328" alt="img19" /><br/><span style="font-family:Calibri,Arial;font-size:11pt;">&#xa0;</span></p>
+<p ><img src="~/Areas/DCM/Images/DCM_UserGuide_files_images\DCM_UserGuide_files_img19.png" width="604" height="328" alt="img19" /><br /><span style="font-family:Calibri,Arial;font-size:11pt;">&#xa0;</span></p>
 <p><span>&#xa0;</span></p>
-<p class="Heading-2"><a id="_Toc452035195"><span>3.5. Summary</span></a></p>
+<p class="Heading-2">
+    <a id="_Toc452035195">
+<p><span>&#xa0;</span></p><br />
+<p><span>&#xa0;</span></p><br />
+<span>3.5. Summary</span></a></p>
 <p><span>With this final step a summary of your uploaded data file is provided. Please check the information and click the </span><span>Finish</span><span> button to confirm and finalize the upload. </span></p>
-<br/><p class="Heading-2"><a id="_Toc452035196"><span>3.6. Unstructured Data</span></a></p><br/>
+<br /><p class="Heading-2">
+    <a id="_Toc452035196">
+<p><span>&#xa0;</span></p><br />
+<p><span>&#xa0;</span></p><br />
+<span>3.6. Unstructured Data</span></a></p><br />
 <p><span>An unstructured data could be either selected from your local computer or could be a file that has been uploaded to the server. </span><span>In the case of unstructured data, we do not re</span><span>ad the contents of the data. </span><span>We copy the files to the server and place them in relation to the dataset</span><span>.  </span></p>
 <p class="Normal--Web-"><span>BEXIS</span><span> 2 application can support many file formats such as </span><span>(*.avi) (*.bmp) (*.csv) (*.doc) (*.docx) (*.gif) (*.jpg) (*.mp3) (*.mp4) (*.pdf) (*.png) (*.shp) (*.tif) (*.txt) (*.xls) (*.xlsm) (*.xsd) (*.zip)</span><span>.</span></p>
 <p class="Normal--Web-"><span>The </span><span>Maximum acceptable file size up to now is: 1024 MB.</span></p>
-<p style="text-align:justify;page-break-inside:auto;page-break-after:auto;page-break-before:auto;line-height:12pt;margin-top:5pt;margin-bottom:5pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;"><img src="~/Areas/DCM/Images/DCM_UserGuide_files_images\DCM_UserGuide_files_img20.png" width="604" height="328" alt="img20" /><br/><span style="font-family:Calibri,Arial;font-size:11pt;">&#xa0;</span></p>
+<p ><img src="~/Areas/DCM/Images/DCM_UserGuide_files_images\DCM_UserGuide_files_img20.png" width="604" height="328" alt="img20" /><br /><span style="font-family:Calibri,Arial;font-size:11pt;">&#xa0;</span></p>
 <p><span>&#xa0;</span></p>
-<p class="Heading-1"><a id="_Toc452035197"><span>4. Push big files to server</span></a></p>
+<p class="Heading-1">
+    <a id="_Toc452035197">
+<p><span>&#xa0;</span></p><br />
+<p><span>&#xa0;</span></p><br />
+<span>4. Push big files to server</span></a></p>
 <p><span>Each user has </span><span>a personal </span><span>folder on the se</span><span>rver where files are stored temporary. </span><span>On this page you can see the uploaded files</span><span>. You can delete each file by clicking on the X, or use these files later, when you want to upload data to a dataset.</span></p>
-<p style="text-align:justify;page-break-inside:auto;page-break-after:auto;page-break-before:auto;line-height:12pt;margin-top:5pt;margin-bottom:5pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;"><img src="~/Areas/DCM/Images/DCM_UserGuide_files_images\DCM_UserGuide_files_img21.png" width="604" height="203" alt="img21" /><br/><span style="font-family:Calibri,Arial;font-size:11pt;">&#xa0;</span></p>
+<p ><img src="~/Areas/DCM/Images/DCM_UserGuide_files_images\DCM_UserGuide_files_img21.png" width="604" height="203" alt="img21" /><br /><span style="font-family:Calibri,Arial;font-size:11pt;">&#xa0;</span></p>
 <p><span>&#xa0;</span></p>
-<p><span>&#xa0;</span></p>
-<p class="Heading-1"><a id="_Toc452035198"><span>5. Import metadata structure</span></a></p>
-<p><span>&#xa0;</span></p>
+<p><span>&#xa0;</span></p><br />
+<p class="Heading-1">
+    <a id="_Toc452035198">
+<p><span>&#xa0;</span></p><br />
+<p><span>&#xa0;</span></p><br />
+<span>5. Import metadata structure</span></a></p>
 <p><span>Metadata structures (</span><span>also called</span><span> schemas or</span><span> profiles)</span><span> </span><span>are typically created and imported by a data manager or administrator of the system. Thus this import function is available</span><span> </span><span>under</span><span> </span><span>the </span><span>Setup &gt; Import metadata Structure</span><span>.</span><span> </span><span>Th</span><span>e</span><span> wizard will assist you in </span><span>importing</span><span> </span><span>your metadata structure</span><span> into the </span><span>BEx</span><span>IS</span><span>++.</span><span> </span><span> A metadata structure must be defined in a XSD schema file. </span></p>
 <p><span>When importing a metadata schema into </span><span>BEx</span><span>IS</span><span>++</span><span>, each element of the XSD file(s) is analyzed for its type, name, annotations, attributes</span><span>, data types, constraints etc.  </span><span>Based on this information a form is automatically being created. For example, if an element is of data type Date, a date picker UI component will be used in the form. Also all names and descriptions are used exactly as they are in the XSD file(s). </span></p>
 <p><span>NOTE: There are metadata standards available for almost any domain or type of data. It is good practice to follow one of them in order to ensure interoperability later on. However, although technical possible, most standards are very complex and should not be used as a whole. Users would just be overwhelmed and may need only a small selection of elements to describe their data. Standards are designed to cover a great range of use cases and data managers (in collaboration with their community) should make the effort in defining a set of feasible metadata elements in a profile (XSD file). </span></p>
 <p><span>IMPORTANT: Please check, whether the XSD schema </span><span>file</span><span>s</span><span> have </span><span>any </span><span>dependencies to other files</span><span>. You can find the </span><span>dependencies</span><span> in the </span><span>import</span><span> or </span><span>include</span><span> tags.</span></p>
-<p style="text-align:left;page-break-inside:auto;page-break-after:auto;page-break-before:auto;line-height:12pt;margin-top:5pt;margin-bottom:5pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;"><img src="~/Areas/DCM/Images/DCM_UserGuide_files_images\DCM_UserGuide_files_img22.png" width="530" height="65" alt="img22" /><br/><span style="font-family:Calibri,Arial;font-size:11pt;">&#xa0;</span></p>
+<p style="text-align:left;page-break-inside:auto;page-break-after:auto;page-break-before:auto;line-height:12pt;margin-top:5pt;margin-bottom:5pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;"><img src="~/Areas/DCM/Images/DCM_UserGuide_files_images\DCM_UserGuide_files_img22.png" width="530" height="65" alt="img22" /><br /><span style="font-family:Calibri,Arial;font-size:11pt;">&#xa0;</span></p>
 <p><span>The current </span><span>BE</span><span>x</span><span>IS</span><span>++</span><span> system requires all referenced files to be locally available on the server (no URL to external resource). So you may need to store all references first to a local folder, change the schema location path in </span><span>every</span><span> </span><span>file </span><span>(e.g. </span><span>./fileName.xsd</span><span>)</span><span> an</span><span>d then</span><span> upload</span><span> all files</span><span> to the server. (</span><span>See 4</span><span>. Push files to server).</span></p>
-<p style="text-align:left;page-break-inside:auto;page-break-after:auto;page-break-before:auto;line-height:12pt;margin-top:5pt;margin-bottom:5pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;"><img src="~/Areas/DCM/Images/DCM_UserGuide_files_images\DCM_UserGuide_files_img23.png" width="585" height="70" alt="img23" /><br/><span style="font-family:Calibri,Arial;font-size:11pt;">&#xa0;</span></p>
-<p style="text-align:left;page-break-inside:auto;page-break-after:auto;page-break-before:auto;line-height:12pt;margin-top:5pt;margin-bottom:5pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;"><img src="~/Areas/DCM/Images/DCM_UserGuide_files_images\DCM_UserGuide_files_img24.png" width="492" height="49" alt="img24" /><br/><span style="font-family:Calibri,Arial;font-size:11pt;">&#xa0;</span></p>
+<p ><img src="~/Areas/DCM/Images/DCM_UserGuide_files_images\DCM_UserGuide_files_img23.png" width="585" height="70" alt="img23" /><br /><span style="font-family:Calibri,Arial;font-size:11pt;">&#xa0;</span></p>
+<p ><img src="~/Areas/DCM/Images/DCM_UserGuide_files_images\DCM_UserGuide_files_img24.png" width="492" height="49" alt="img24" /><br /><span style="font-family:Calibri,Arial;font-size:11pt;">&#xa0;</span></p>
 <p><span>&#xa0;</span></p>
-<br/><p><span>&#xa0;</span></p><br/>
-<p class="Heading-2"><a id="_Toc452035199"><span>5.1. Select File</span></a></p>
+<br /><p><span>&#xa0;</span></p><br />
+<p class="Heading-2">
+    <a id="_Toc452035199">
+<p><span>&#xa0;</span></p><br />
+<p><span>&#xa0;</span></p><br />
+<span>5.1. Select File</span></a></p>
 <p><span>In t</span><span>he first step </span><span>an existing file</span><span> </span><span>containing your data needs to be </span><span>select</span><span>ed</span><span>. </span><span>You can either select a XSD file from your local computer or a file that has been uploaded to the server prior to starting the Wizard. You may use the “Push big data to server” function in the Collect menu to up</span><span>load multiple related XSD files.</span></p>
 <p><span>Note:</span><span> Please upload a valid XSD structure. BExIS++ does not check this kind of validation.</span></p>
 <p><span>&#xa0;</span></p>
-<br/><p style="text-align:left;page-break-inside:auto;page-break-after:auto;page-break-before:auto;line-height:12pt;margin-top:5pt;margin-bottom:5pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;"><img src="~/Areas/DCM/Images/DCM_UserGuide_files_images\DCM_UserGuide_files_img25.png" width="604" height="283" alt="img25" /><br/><span style="font-family:Calibri,Arial;font-size:11pt;">&#xa0;</span></p><br/>
+<br /><p ><img src="~/Areas/DCM/Images/DCM_UserGuide_files_images\DCM_UserGuide_files_img25.png" width="604" height="283" alt="img25" /><br /><span style="font-family:Calibri,Arial;font-size:11pt;">&#xa0;</span></p><br />
 <p><span>&#xa0;</span></p>
-<p class="Heading-2"><a id="_Toc452035200"><span>5.2. Read Source</span></a></p>
+<p class="Heading-2">
+    <a id="_Toc452035200">
+<p><span>&#xa0;</span></p><br />
+<p><span>&#xa0;</span></p><br />
+<span>5.2. Read Source</span></a></p>
 <p><span>Please specify a name </span><span>(i.e. display name) </span><span>for the new metadata structure. You may also enter a root node if only a part of the XSD is to be used (optional).</span></p>
-<p style="text-align:left;page-break-inside:auto;page-break-after:auto;page-break-before:auto;line-height:12pt;margin-top:5pt;margin-bottom:5pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;"><img src="~/Areas/DCM/Images/DCM_UserGuide_files_images\DCM_UserGuide_files_img26.png" width="604" height="283" alt="img26" /><br/><br/><br/><span style="font-family:Calibri,Arial;font-size:11pt;">To</span><span style="font-family:Calibri,Arial;font-size:11pt;"> find the root node open the XSD</span><span style="font-family:Calibri,Arial;font-size:11pt;"> Schema file and hav</span><span style="font-family:Calibri,Arial;font-size:11pt;">e</span><span style="font-family:Calibri,Arial;font-size:11pt;"> a look on the element tags.</span><span style="font-family:Calibri,Arial;font-size:11pt;"> In the example of ABCD it looks like this.</span></p>
-<p style="text-align:justify;page-break-inside:auto;page-break-after:auto;page-break-before:auto;line-height:12pt;margin-top:5pt;margin-bottom:5pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;"><img src="~/Areas/DCM/Images/DCM_UserGuide_files_images\DCM_UserGuide_files_img27.png" width="490" height="234" alt="img27" /><br/><br/><br/><span style="font-family:Calibri,Arial;font-size:11pt;">If no root node is selected then the wizard will automatically select the first element which is a complex type. But it is also possible to define the element “DataSet” as root node and the metadata structure starts from this element. The Name of a metadata structure must be unique and the root node must exist.</span></p>
+<p ><img src="~/Areas/DCM/Images/DCM_UserGuide_files_images\DCM_UserGuide_files_img26.png" width="604" height="283" alt="img26" /><br /><br /><br />
+<p>To find the root node open the XSD Schema file and have a look on the element tags. In the example of ABCD it looks like this.</p>
+<p ><img src="~/Areas/DCM/Images/DCM_UserGuide_files_images\DCM_UserGuide_files_img27.png" width="490" height="234" alt="img27" /><br /><br /><br />
+<p><span>If no root node is selected then the wizard will automatically select the first element which is a complex type. But it is also possible to define the element “DataSet” as root node and the metadata structure starts from this element. The Name of a metadata structure must be unique and the root node must exist.</span></p>
 <p><span>&#xa0;</span></p>
-<p class="Heading-2"><a id="_Toc452035201"><span>5.3. Set Parameters</span></a></p>
+<p class="Heading-2">
+    <a id="_Toc452035201">
+<p><span>&#xa0;</span></p><br />
+<p><span>&#xa0;</span></p><br />
+<span>5.3. Set Parameters</span></a></p>
 <p><span>For the </span><span>system</span><span> to handle a dataset at least the title and a description is needed. In this step these two elements, which are typically available in all metadata structures, should be identified and made explicit to the system. </span></p>
-<br/><p style="text-align:justify;page-break-inside:auto;page-break-after:auto;page-break-before:auto;line-height:12pt;margin-top:5pt;margin-bottom:5pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;"><img src="~/Areas/DCM/Images/DCM_UserGuide_files_images\DCM_UserGuide_files_img28.png" width="604" height="283" alt="img28" /><br/><span style="font-family:Calibri,Arial;font-size:11pt;">&#xa0;</span></p><br/>
+<br /><p ><img src="~/Areas/DCM/Images/DCM_UserGuide_files_images\DCM_UserGuide_files_img28.png" width="604" height="283" alt="img28" /><br /></p><br />
 <p><span>&#xa0;</span></p>
-<br/><p><span>&#xa0;</span></p><br/>
-<p class="Heading-2"><a id="_Toc452035202"><span>5.4. Summary</span></a></p>
-<p style="text-align:left;page-break-inside:auto;page-break-after:auto;page-break-before:auto;line-height:12pt;margin-top:5pt;margin-bottom:5pt;margin-left:0pt;text-indent:0pt;border-top-style: none;border-left-style: none;border-right-style: none;border-bottom-style: none;"><span style="font-family:Calibri,Arial;font-size:11pt;">The Summary page is an overview about the created metadata structure.</span><br/><br/><img src="~/Areas/DCM/Images/DCM_UserGuide_files_images\DCM_UserGuide_files_img29.png" width="604" height="283" alt="img29" /><br/></p>
+<br /><p><span>&#xa0;</span></p><br />
+<p class="Heading-2">
+    <a id="_Toc452035202">
+<p><span>&#xa0;</span></p><br />
+<p><span>&#xa0;</span></p><br />
+<span>5.4. Summary</span></a></p>
+<p ><span >The Summary page is an overview about the created metadata structure.</span><br /><br /><img src="~/Areas/DCM/Images/DCM_UserGuide_files_images\DCM_UserGuide_files_img29.jpeg" width="604" height="283" alt="img29" /><br /></p>
 <p><span>&#xa0;</span></p>

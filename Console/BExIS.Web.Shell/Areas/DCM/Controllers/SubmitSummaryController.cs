@@ -478,8 +478,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 long iddsd = Convert.ToInt32(TaskManager.Bus[TaskManager.DATASTRUCTURE_ID]);
 
                 ds = dm.GetDataset(id);
-
-
+                // Javad: Please check if the dataset does exists!!
 
                 #region Progress Informations
 
@@ -627,7 +626,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                             if (dm.IsDatasetCheckedOutFor(ds.Id, GetUsernameOrDefault()) || dm.CheckOutDataset(ds.Id, GetUsernameOrDefault()))
                             {
                                 workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
-                                int packageSize = 5;
+                                int packageSize = 100000;
                                 TaskManager.Bus[TaskManager.CURRENTPACKAGESIZE] = packageSize;
                                 //schleife
                                 int counter = 0;
@@ -757,14 +756,17 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                 if (TaskManager.Bus.ContainsKey(TaskManager.DATASTRUCTURE_TYPE) && TaskManager.Bus[TaskManager.DATASTRUCTURE_TYPE].Equals(DataStructureType.Unstructured))
                 {
+                    // checkout the dataset, apply the changes, and check it in.
+                    if (dm.IsDatasetCheckedOutFor(ds.Id, GetUsernameOrDefault()) || dm.CheckOutDataset(ds.Id, GetUsernameOrDefault()))
+                    {
+                        workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
+                        SaveFileInContentDiscriptor(workingCopy);
 
-                    workingCopy = dm.GetDatasetLatestVersion(ds.Id);
-                    SaveFileInContentDiscriptor(workingCopy);
+                        dm.EditDatasetVersion(workingCopy, null, null, null);
 
-                    dm.EditDatasetVersion(workingCopy, null, null, null);
-
-                    // ToDo: Get Comment from ui and users
-                    dm.CheckInDataset(ds.Id, "upload unstructured data", GetUsernameOrDefault());
+                        // ToDo: Get Comment from ui and users
+                        dm.CheckInDataset(ds.Id, "upload unstructured data", GetUsernameOrDefault());
+                    }
                 }
 
                 #endregion

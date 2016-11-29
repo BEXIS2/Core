@@ -99,7 +99,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Helpers
 
             Feature f10 = featureManager.CreateFeature("Data Collection", "Data Collection", f1.Id);
             Feature f11 = featureManager.CreateFeature("Dataset Creation", "Dataset Creation", f10.Id);
-            Feature f12 = featureManager.CreateFeature("Dataset Submission", "Dataset Submission", f10.Id);
+            Feature f12 = featureManager.CreateFeature("Dataset Upload", "Dataset Upload", f10.Id);
             Feature f17 = featureManager.CreateFeature("Metadata Management", "Metadata Management", f10.Id);
             #endregion
             
@@ -108,8 +108,8 @@ namespace BExIS.Web.Shell.Areas.SAM.Helpers
             Feature f2 = featureManager.CreateFeature("Administration", "Administration", f1.Id);
             Feature f3 = featureManager.CreateFeature("Users Management", "Users Management", f2.Id);
             Feature f4 = featureManager.CreateFeature("Groups Management", "Groups Management", f2.Id);
-            Feature f6 = featureManager.CreateFeature("Feature Management", "Feature Management", f2.Id);
-            Feature f5 = featureManager.CreateFeature("Data Management", "Data Management", f2.Id);
+            Feature f6 = featureManager.CreateFeature("Feature Permissions", "Feature Permissions", f2.Id);
+            Feature f5 = featureManager.CreateFeature("Data Permissions", "Data Permissions", f2.Id);
             Feature f7 = featureManager.CreateFeature("Search Management", "Search Management", f2.Id);
             Feature f8 = featureManager.CreateFeature("Dataset Maintenance", "Dataset Maintenance", f2.Id);
 
