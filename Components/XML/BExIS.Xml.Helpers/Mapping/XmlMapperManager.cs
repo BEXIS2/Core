@@ -226,21 +226,19 @@ namespace BExIS.Xml.Helpers.Mapping
             //newMetadata.Load(defaultFilePath);
             //XmlNode root = newMetadata.DocumentElement;
 
-            if (!String.IsNullOrEmpty(xmlMapper.Header.Destination.XPath))
-            {
-                newMetadata.AppendChild(newMetadata.CreateElement(xmlMapper.Header.Destination.Prefix, xmlMapper.Header.Destination.XPath, xmlMapper.Header.Destination.NamepsaceURI));
-            }
-            else
-            {
-                newMetadata.AppendChild(newMetadata.CreateElement("root"));
-            }
+            //if (!String.IsNullOrEmpty(xmlMapper.Header.Destination.XPath))
+            //{
+            //    newMetadata.AppendChild(newMetadata.CreateElement(xmlMapper.Header.Destination.Prefix, xmlMapper.Header.Destination.XPath, xmlMapper.Header.Destination.NamepsaceURI));
+            //}
+            //else
+            //{
+            //    newMetadata.AppendChild(newMetadata.CreateElement("root"));
+            //}
 
             XmlNode root = newMetadata.DocumentElement;
-            
-
 
             // create nodes
-            newMetadata = mapNode(newMetadata, newMetadata.DocumentElement, metadataXml.DocumentElement);
+            newMetadata = mapNode(newMetadata, null, metadataXml.DocumentElement);
 
             // add required attributes
             newMetadata = addAttributes(newMetadata, newMetadata.DocumentElement);
@@ -286,31 +284,35 @@ namespace BExIS.Xml.Helpers.Mapping
 
             XmlDocument newMetadata = new XmlDocument();
 
+            //add declaration
             XmlDeclaration declaration = newMetadata.CreateXmlDeclaration("1.0", "utf-8", null);
             newMetadata.AppendChild(declaration);
             //newMetadata.CreateXmlDeclaration("1.0", "utf-8", null);
             //newMetadata.Load(defaultFilePath);
             //XmlNode root = newMetadata.DocumentElement;
 
-            if (!String.IsNullOrEmpty(xmlMapper.Header.Destination.XPath))
-            {
-                newMetadata.AppendChild(newMetadata.CreateElement(xmlMapper.Header.Destination.Prefix, xmlMapper.Header.Destination.XPath, xmlMapper.Header.Destination.NamepsaceURI));
-            }
-            else
-            {
-                newMetadata.AppendChild(newMetadata.CreateElement("root"));
-            }
+            //if (!String.IsNullOrEmpty(xmlMapper.Header.Destination.XPath))
+            //{
+            //    newMetadata.AppendChild(newMetadata.CreateElement(xmlMapper.Header.Destination.Prefix, xmlMapper.Header.Destination.XPath, xmlMapper.Header.Destination.NamepsaceURI));
+            //}
+            //else
+            //{
+            //    newMetadata.AppendChild(newMetadata.CreateElement("root"));
+            //}
+
+           
+
+            // create nodes
+            newMetadata = mapNode(newMetadata, null, metadataXml.DocumentElement);
+
+            // add required attributes
+            newMetadata = addAttributes(newMetadata, newMetadata.DocumentElement);
+
 
             XmlNode root = newMetadata.DocumentElement;
             XmlAttribute rootAttr = newMetadata.CreateAttribute("xmlns");
             rootAttr.Value = xmlSchemaManager.Schema.TargetNamespace;
             root.Attributes.Append(rootAttr);
-
-            // create nodes
-            newMetadata = mapNode(newMetadata, newMetadata.DocumentElement, metadataXml.DocumentElement);
-
-            // add required attributes
-            newMetadata = addAttributes(newMetadata, newMetadata.DocumentElement);
 
             //add root attributes
             foreach (KeyValuePair<string, string> attribute in xmlMapper.Header.Attributes)
@@ -470,7 +472,7 @@ namespace BExIS.Xml.Helpers.Mapping
                     else if(i == 1) j = i + 1;
                     else j = i * 2;
 
-                    if (destinationSplit.Length >= j)
+                    if (destinationSplit.Length > j+1)
                     {
                         string destinationTemp = destinationSplit[j];
                         destinationSplit[j] = destinationTemp + "[" + index + "]";
@@ -743,24 +745,41 @@ namespace BExIS.Xml.Helpers.Mapping
         {
             foreach (XmlSchemaAttribute attribute in attributes)
             {
-                if (attribute.Name != null )//&& attribute.DefaultValue!=null)
+                string attrName = "";
+                attrName = String.IsNullOrEmpty(attribute.Name) ? "" : attribute.Name;
+
+                if (String.IsNullOrEmpty(attribute.Name))
                 {
-                    XmlAttribute attr = doc.CreateAttribute(attribute.Name);
-                    if (attribute.Name.Equals("language"))
+                    attrName = String.IsNullOrEmpty(attribute.QualifiedName.Name) ? attrName : attribute.QualifiedName.Name;
+                }
+
+                if (!String.IsNullOrEmpty(attrName))//&& attribute.DefaultValue!=null)
+                {
+                    XmlAttribute attr = doc.CreateAttribute(attrName);
+                    if (attrName.Equals("language"))
                     {
                         attr.InnerXml = "en";
-                        node.Attributes.Append(attr);
                     }
                     else
                     {
                         if (attribute.DefaultValue != null)
                         {
                             attr.InnerXml = attribute.DefaultValue;
-                            node.Attributes.Append(attr);
                         }
+                        else
+                        {
+                            XmlSchemaAttribute tmp =
+                                xmlSchemaManager.Attributes.Where(a => a.Name.Equals(attrName)).FirstOrDefault();
+
+                            if (tmp != null)
+                                attr.InnerXml = tmp.DefaultValue;
+
+                        }
+
                     }
 
-                    
+                    node.Attributes.Append(attr);
+
                 }
             }
 
@@ -851,9 +870,6 @@ namespace BExIS.Xml.Helpers.Mapping
 
             return parentTemp;
         }
-
-       
-
 
         private string getStorePath(long datasetVersionId,string exportTo)
         {

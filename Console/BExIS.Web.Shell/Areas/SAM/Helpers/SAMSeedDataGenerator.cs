@@ -194,23 +194,23 @@ namespace BExIS.Web.Shell.Areas.SAM.Helpers
             taskManager.UpdateTask(t26);
 
             Task t27 = taskManager.CreateTask("DCM", "ImportMetadataStructure", "*");
-            t27.Feature = f16;
+            t27.Feature = f17;
             taskManager.UpdateTask(t27);
 
             Task t28 = taskManager.CreateTask("DCM", "ImportMetadataStructureReadSource", "*");
-            t28.Feature = f16;
+            t28.Feature = f17;
             taskManager.UpdateTask(t28);
 
             Task t29 = taskManager.CreateTask("DCM", "ImportMetadataStructureSelectAFile", "*");
-            t29.Feature = f16;
+            t29.Feature = f17;
             taskManager.UpdateTask(t29);
 
             Task t30 = taskManager.CreateTask("DCM", "ImportMetadataStructureSetParameters", "*");
-            t30.Feature = f16;
+            t30.Feature = f17;
             taskManager.UpdateTask(t30);
 
             Task t31 = taskManager.CreateTask("DCM", "ImportMetadataStructureSummary", "*");
-            t31.Feature = f16;
+            t31.Feature = f17;
             taskManager.UpdateTask(t31);
 
             Task t32 = taskManager.CreateTask("SAM", "Dataset", "*");

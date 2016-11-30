@@ -2439,11 +2439,24 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             BaseUsage metadataAttributeUsage = UsageHelper.GetChildren(parentUsage).Where(u => u.Id.Equals(id)).FirstOrDefault();
 
+            
+
             //Path.Combine(AppConfiguration.GetModuleWorkspacePath("dcm"),"x","file.xml");
 
             //UpdateXml
             long metadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
             MetadataAttributeModel model = MetadataAttributeModel.Convert(metadataAttributeUsage, parentUsage, metadataStructureId, parentModelNumber, stepModelHelper.StepId);
+
+            //check if datatype is a datetime then check display pattern and manipulate the incoming string
+            if(model.SystemType.Equals(typeof(DateTime).Name))
+            {
+                if (!string.IsNullOrEmpty(model.DisplayPattern))
+                {
+                    DateTime dt = DateTime.Parse(value);
+                    value = dt.ToString(model.DisplayPattern);
+                }
+            }
+      
             model.Value = value;
             model.Number = number;
 
