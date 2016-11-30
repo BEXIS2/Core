@@ -46,10 +46,11 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
             SubjectManager subjectManager = new SubjectManager();
 
             // DATA
-            IQueryable<Dataset> data = datasetManager.DatasetRepo.Query();
+            //var ids = datasetManager.GetDatasetLatestIds();
+            List<DatasetVersion> data = datasetManager.GetDatasetLatestVersions(); // .GetDatasetLatestVersions(ids);
 
             List<DatasetGridRowModel> datasets = new List<DatasetGridRowModel>();
-            data.ToList().ForEach(d => datasets.Add(DatasetGridRowModel.Convert(d, permissionManager.ExistsDataPermission(subjectManager.GetGroupByName("everyone").Id, 1, d.Id, RightType.View))));
+            data.ForEach(d => datasets.Add(DatasetGridRowModel.Convert(d, permissionManager.ExistsDataPermission(subjectManager.GetGroupByName("everyone").Id, 1, d.Id, RightType.View))));
 
             return View(new GridModel<DatasetGridRowModel> { Data = datasets });
         }

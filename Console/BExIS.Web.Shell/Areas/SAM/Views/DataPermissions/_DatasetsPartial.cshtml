@@ -1,5 +1,4 @@
-﻿@using System.Collections.Generic
-@using BExIS.Web.Shell.Areas.SAM.Models
+﻿@using BExIS.Web.Shell.Areas.SAM.Models
 @using Telerik.Web.Mvc.UI
 
 @(Html.Telerik().Grid(new List<DatasetGridRowModel>())
@@ -18,7 +17,6 @@
                    .HtmlAttributes(new { style = "text-align:center" });
             columns.Bound(d => d.Id);
             columns.Bound(d => d.Title);
-            columns.Bound(d => d.Version);
         })
         .DataBinding(dataBinding => dataBinding
                 .Ajax()
