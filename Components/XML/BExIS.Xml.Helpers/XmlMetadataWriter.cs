@@ -167,6 +167,7 @@ namespace BExIS.Xml.Helpers
                             //+"/"+ nestedUsage.Member.Name;
 
                         XElement usageElement = importDocument.XPathSelectElement(usagePath);
+                        List<XElement> typeList = new List<XElement>();
 
                         if (usageElement != null && usageElement.HasElements)
                         {
@@ -174,7 +175,6 @@ namespace BExIS.Xml.Helpers
                             //importDocument.XPathSelectElements(childPath).Count();
                             //num = XmlUtility.ToXmlDocument(importDocument).SelectNodes(childPath).Count;
 
-                            List<XElement> typeList = new List<XElement>();
                             if (num == 0)
                             {
                                 typeList = AddAndReturnAttribute(element, nestedUsage, 1, 1);
@@ -185,14 +185,18 @@ namespace BExIS.Xml.Helpers
                                 typeList = AddAndReturnAttribute(element, nestedUsage, 1, num);
                             }
 
-                            foreach (var type in typeList)
-                            {
-                                setChildren(type, nestedUsage, importDocument);
-                            }
+                            
                         }
                         else
                         {
                             Debug.WriteLine("NULL OR EMPTY:------> "+ usagePath);
+                            
+                            typeList = AddAndReturnAttribute(element, nestedUsage, 1, 1);
+                        }
+
+                        foreach (var type in typeList)
+                        {
+                            setChildren(type, nestedUsage, importDocument);
                         }
 
                     }
