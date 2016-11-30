@@ -337,17 +337,12 @@
                                 openCopyWindow(0, $('.bx-rpm-datastructureheader #name').val(), $('.bx-rpm-datastructureheader #description').val(), true, true, false, data);
                             }
                             else {
-                                loadVariables($('.bx-rpm-datastructureheader #id').val());
+                                storeVariables($(data).text());
                             }
 
                         }
-                        else if ($(data).attr('id') == 'redirect') {
-                            if(!dataStruktureInUse){
-                                storeVariables($(data).text());
-                            }
-                            else{
-                                loadVariables($('.bx-rpm-datastructureheader #id').val());
-                            }
+                        else {
+                            storeVariables($(data).text());                                   
                         }
                     }
                 });

@@ -119,6 +119,14 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             MessageModel messageModel = MessageModel.validateDataStructureInUse(dataStructure.Id, dataStructure);
             if (messageModel.hasMessage)
             {
+                foreach (Variable v in dataStructure.Variables)
+                {
+                    if (variables.Select(svs => svs.Id).ToList().Contains(v.Id))
+                    { 
+                        v.Description = variables.Where(svs => svs.Id == v.Id).FirstOrDefault().Description;
+                        dataStructure = dataStructureManager.UpdateStructuredDataStructure(dataStructure);
+                    }
+                }
                 return PartialView("_messageWindow", messageModel);
             }
 
