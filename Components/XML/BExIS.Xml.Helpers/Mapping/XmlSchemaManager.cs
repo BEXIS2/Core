@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Emit;
+using System.Runtime.Remoting;
 using System.Text;
 using System.Xml;
 using System.Xml.Schema;
@@ -28,6 +30,7 @@ namespace BExIS.Xml.Helpers.Mapping
         public List<XmlSchemaElement> Elements { get; set; }
         public List<XmlSchemaSimpleType> SimpleTypes { get; set; }
         public List<XmlSchemaGroup> Groups { get; set; }
+        public List<XmlSchemaAttribute> Attributes { get; set; }
         public List<string> RefElementNames { get; set; }
         public XmlSchema Schema;
         public XmlSchemaSet SchemaSet;
@@ -73,6 +76,7 @@ namespace BExIS.Xml.Helpers.Mapping
             MetadataAttributes = new List<MetadataAttribute>();
             ConvertedSimpleTypes = new Dictionary<string, List<Constraint>>();
             Groups = new List<XmlSchemaGroup>();
+            Attributes = new List<XmlSchemaAttribute>();
             xsdFileName = "";
             additionalFiles = new List<string>();
             mappingFileInternalToExternal = new XmlMapper();
@@ -145,6 +149,7 @@ namespace BExIS.Xml.Helpers.Mapping
                 ComplexTypes.AddRange(GetAllComplexTypes(selectedSchema));
                 SimpleTypes.AddRange(GetAllSimpleTypes(selectedSchema));
                 Groups.AddRange(GetAllGroups(selectedSchema));
+                Attributes.AddRange(GetAllAttributes(selectedSchema));
             }
 
             RefElementNames.AddRange(GetAllRefElementNames(Elements));
@@ -267,6 +272,16 @@ namespace BExIS.Xml.Helpers.Mapping
         private List<XmlSchemaSimpleType> GetAllSimpleTypes(XmlSchema schema)
         {
             return XmlSchemaUtility.GetAllSimpleTypes(schema);
+        }
+
+        /// <summary>
+        /// Return a list of all elements in the schema
+        /// </summary>
+        /// <param name="schema"></param>
+        /// <returns></returns>
+        private List<XmlSchemaAttribute> GetAllAttributes(XmlSchema schema)
+        {
+            return XmlSchemaUtility.GetAllAttributes(schema);
         }
 
         /// <summary>
@@ -428,6 +443,7 @@ namespace BExIS.Xml.Helpers.Mapping
                         { 
                             XmlSchemaAttribute attr = (XmlSchemaAttribute)obj;
                             listOfAttributes.Add(attr);
+
                         }
                     }
                 }
@@ -536,38 +552,42 @@ namespace BExIS.Xml.Helpers.Mapping
 
             
             XmlSchemaObject root = new XmlSchemaElement();
+            string xpathFromRoot = "";
+
+
+            int count = 0;
+            foreach(XmlSchemaObject obj in Schema.Items)
+            {
+                if (obj is XmlSchemaElement)
+                {
+                    count++;
+                    if (count > 1)
+                    {
+                        throw new Exception("Root node is not able to declare");
+                    }
+                }
+            }
+
+            foreach(XmlSchemaObject obj in Schema.Items)
+            {
+                if (obj is XmlSchemaElement)
+                    root = (XmlSchemaElement)obj;
+            }
+
 
             if (String.IsNullOrEmpty(nameOfStartNode))
             {
-                int count = 0;
-                foreach(XmlSchemaObject obj in Schema.Items)
-                {
-                    if (obj is XmlSchemaElement)
-                    {
-                        count++;
-                        if (count > 1)
-                        {
-                            throw new Exception("Root node is not able to declare");
-                        }
-                    }
-                }
-
-                foreach(XmlSchemaObject obj in Schema.Items)
-                {
-                    if (obj is XmlSchemaElement)
-                        root = (XmlSchemaElement)obj;
-                }
-
                 XmlSchemaElement rootElement = (XmlSchemaElement)root;
                 mappingFileInternalToExternal.Header.AddToDestination(rootElement.Name, rootElement.Name);
 
-
                 rootElementName = rootElement.Name;
- 
+                xpathFromRoot = rootElementName;
             }
             else
             {
-                
+                //XXX finde path from rootnode the defined root node
+                //XPath in mapping file needs to be complete based on the original xsd
+                xpathFromRoot = findPathFromRoot((XmlSchemaElement)root, nameOfStartNode, "");
 
                 root = Elements.Where(e => e.Name.ToLower().Equals(nameOfStartNode.ToLower())).FirstOrDefault();
                 if (root == null)
@@ -670,7 +690,7 @@ namespace BExIS.Xml.Helpers.Mapping
                             {
                                 if (XmlSchemaUtility.IsSimpleType(child))
                                 {
-                                    addMetadataAttributeToMetadataPackageUsage(package, child,"Metadata/Basic/BasicType", rootElementName);
+                                    addMetadataAttributeToMetadataPackageUsage(package, child,"Metadata/Basic/BasicType", xpathFromRoot);
                                 }
                             }
 
@@ -693,7 +713,7 @@ namespace BExIS.Xml.Helpers.Mapping
                         string rootName = ((XmlSchemaElement)root).Name;
 
                         string xpathInternal = "Metadata/" + element.Name+"/"+typeName;
-                        string xpathExternal = rootName+"/" + element.Name;
+                        string xpathExternal = xpathFromRoot+"/" + element.Name;
 
                         if (!XmlSchemaUtility.IsSimpleType(element))
                         {
@@ -849,6 +869,30 @@ namespace BExIS.Xml.Helpers.Mapping
                 #endregion
 
                 return test.Id;
+        }
+
+        private string findPathFromRoot(XmlSchemaElement element, string name,string path)
+        {
+            path = String.IsNullOrEmpty(path)? element.Name : path + "/" + element.Name;
+
+            if (element.Name.ToLower().Equals(name.ToLower())) return path;
+
+            List<XmlSchemaElement> childrens = XmlSchemaUtility.GetAllElements(element, false, Elements);
+
+            foreach (var child in childrens)
+            {
+                if (!XmlSchemaUtility.IsSimpleType(child))
+                {
+                    string tmp = findPathFromRoot(child, name, path);
+                    if (!String.IsNullOrEmpty(tmp))
+                    {
+                        path = tmp;
+                        break;
+                    }
+                }
+            }
+
+            return path;
         }
 
         private MetadataCompoundAttribute get(XmlSchemaElement element, List<string> parents, string internalXPath, string externalXPath)
