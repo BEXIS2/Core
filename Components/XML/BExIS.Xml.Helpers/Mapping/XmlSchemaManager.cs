@@ -13,6 +13,7 @@ using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
+using BExIS.Dlm.Services.TypeSystem;
 using BExIS.IO;
 using BExIS.Xml.Models.Mapping;
 using BExIS.Xml.Services;
@@ -927,103 +928,54 @@ namespace BExIS.Xml.Helpers.Mapping
 
                 List<XmlSchemaElement> childrens = XmlSchemaUtility.GetAllElements(element, false, Elements);
 
-                //if (!parents.Contains(element.Name))
-                //{
+                parents.Add(element.Name);
 
-                    parents.Add(element.Name);
+                foreach (XmlSchemaElement child in childrens)
+                {
+                    //Debug.Writeline("child :" + child.Name);
 
-                    foreach (XmlSchemaElement child in childrens)
+                    // simple element
+                    if (XmlSchemaUtility.IsSimpleType(child))
                     {
-                        //Debug.Writeline("child :" + child.Name);
 
-                        // simple element
-                        if (XmlSchemaUtility.IsSimpleType(child))
+                        metadataCompountAttr = addMetadataAttributeToMetadataCompoundAttribute(
+                            metadataCompountAttr, child, currentInternalXPath, currentExternalXPath);
+                    }
+                    //complex element
+                    else
+                    {
+
+                        XmlSchemaComplexType complexTypeOfChild = XmlSchemaUtility.GetComplextType(child);
+
+                        if (ct.Name == null || complexTypeOfChild.Name == null)
                         {
-
-                            metadataCompountAttr = addMetadataAttributeToMetadataCompoundAttribute(
-                                metadataCompountAttr, child, currentInternalXPath, currentExternalXPath);
+                            //--> create compountAttribute
+                            MetadataCompoundAttribute compoundAttributeChild = get(child, parents,
+                                currentInternalXPath, currentExternalXPath);
+                            // add compound to compount
+                            metadataCompountAttr =
+                                addUsageFromMetadataCompoundAttributeToMetadataCompoundAttribute(
+                                    metadataCompountAttr, compoundAttributeChild, child);
                         }
-                        //complex element
                         else
                         {
-
-                            XmlSchemaComplexType complexTypeOfChild = XmlSchemaUtility.GetComplextType(child);
-
-                            if (ct.Name == null || complexTypeOfChild.Name == null)
+                            if (ct.Name != null && complexTypeOfChild.Name != null)
                             {
-                                //--> create compountAttribute
-                                MetadataCompoundAttribute compoundAttributeChild = get(child, parents,
-                                    currentInternalXPath, currentExternalXPath);
-                                // add compound to compount
-                                metadataCompountAttr =
-                                    addUsageFromMetadataCompoundAttributeToMetadataCompoundAttribute(
-                                        metadataCompountAttr, compoundAttributeChild, child);
-                            }
-                            else
-                            {
-                                if (ct.Name != null && complexTypeOfChild.Name != null)
+                                if (!ct.Name.Equals(complexTypeOfChild.Name))
                                 {
-                                    if (!ct.Name.Equals(complexTypeOfChild.Name))
-                                    {
-                                        //--> create compountAttribute
-                                        MetadataCompoundAttribute compoundAttributeChild = get(child, parents,
-                                            currentInternalXPath, currentExternalXPath);
-                                        // add compound to compount
-                                        metadataCompountAttr =
-                                            addUsageFromMetadataCompoundAttributeToMetadataCompoundAttribute(
-                                                metadataCompountAttr, compoundAttributeChild, child);
-                                    }
+                                    //--> create compountAttribute
+                                    MetadataCompoundAttribute compoundAttributeChild = get(child, parents,
+                                        currentInternalXPath, currentExternalXPath);
+                                    // add compound to compount
+                                    metadataCompountAttr =
+                                        addUsageFromMetadataCompoundAttributeToMetadataCompoundAttribute(
+                                            metadataCompountAttr, compoundAttributeChild, child);
                                 }
                             }
                         }
-
                     }
-                //}
-                //else
-                //{
-                //    //add existinfiles childres to mapping file
-                //    foreach (XmlSchemaElement child in childrens)
-                //    {
 
-                //        // simple element
-                //        if (XmlSchemaUtility.IsSimpleType(child))
-                //        {
-                //            MetadataAttribute attribute;
-
-                //            if (metadataAttributeManager.MetadataAttributeRepo != null &&
-                //                getExistingMetadataAttribute(GetTypeOfName(element.Name)) != null)
-                //            {
-                //                attribute = metadataAttributeManager.MetadataAttributeRepo.Get().Where(m => m.Name.Equals(GetTypeOfName(element.Name))).First();
-                //            }
-                //            else
-                //            {
-                //                attribute = createMetadataAttribute(element);
-                //            }
-
-                //            addToExportMappingFile(mappingFileInternalToExternal, internalXPath, externalXPath, element.MaxOccurs, element.Name, attribute.Name);
-                //            addToImportMappingFile(mappingFileExternalToInternal, externalXPath, internalXPath, element.MaxOccurs, element.Name, attribute.Name);
-                //        }
-                //        ////complex element
-                //        //else
-                //        //{
-
-                //        //    XmlSchemaComplexType complexTypeOfChild = XmlSchemaUtility.GetComplextType(child);
-
-                //        //    if (ct.Name != null && complexTypeOfChild.Name != null)
-                //        //    {
-                //        //        if (!ct.Name.Equals(complexTypeOfChild.Name))
-                //        //        {
-                //        //            //--> create compountAttribute
-                //        //            MetadataCompoundAttribute compoundAttributeChild = get(child, parents,
-                //        //                currentInternalXPath, currentExternalXPath);
-                //        //        }
-                //        //    }
-                            
-                //        //}
-
-                //    }
-
-                //}
+                }
 
                 if (metadataAttributeManager.MetadataCompoundAttributeRepo.Get().Where(m => m.Name.Equals(metadataCompountAttr.Name)).Count() > 0)
                 {
@@ -1042,44 +994,40 @@ namespace BExIS.Xml.Helpers.Mapping
                 // if its there need to map
                 List<XmlSchemaElement> childrens = XmlSchemaUtility.GetAllElements(element, false, Elements);
 
-                if (!parents.Contains(element.Name))
+
+                parents.Add(element.Name);
+
+                foreach (XmlSchemaElement child in childrens)
                 {
+                    //Debug.Writeline("child :" + child.Name);
 
-                    parents.Add(element.Name);
-
-                    foreach (XmlSchemaElement child in childrens)
+                    if (XmlSchemaUtility.IsSimpleType(child))
                     {
-                        //Debug.Writeline("child :" + child.Name);
+                        //add existing Simple elements to mappingFile
+                        addMetadataAttributeToMappingFile(metadataCompountAttr, child, currentInternalXPath, currentExternalXPath);
+                    }
+                    else
+                    {
 
-                        if (XmlSchemaUtility.IsSimpleType(child))
+                        XmlSchemaComplexType complexTypeOfChild = XmlSchemaUtility.GetComplextType(child);
+
+                        if (ct.Name == null || complexTypeOfChild.Name == null)
                         {
-                            //add existing Simple elements to mappingFile
-                            addMetadataAttributeToMappingFile(metadataCompountAttr, child, currentInternalXPath, currentExternalXPath);
+                            MetadataCompoundAttribute compoundAttributeChild = get(child, parents, currentInternalXPath, currentExternalXPath);
                         }
                         else
                         {
-
-                            XmlSchemaComplexType complexTypeOfChild = XmlSchemaUtility.GetComplextType(child);
-
-                            if (ct.Name == null || complexTypeOfChild.Name == null)
+                            if (ct.Name != null && complexTypeOfChild.Name != null)
                             {
-                                MetadataCompoundAttribute compoundAttributeChild = get(child, parents, currentInternalXPath, currentExternalXPath);
-                            }
-                            else
-                            {
-                                if (ct.Name != null && complexTypeOfChild.Name != null)
+                                if (!ct.Name.Equals(complexTypeOfChild.Name))
                                 {
-                                    if (!ct.Name.Equals(complexTypeOfChild.Name))
-                                    {
-                                        MetadataCompoundAttribute compoundAttributeChild = get(child, parents, currentInternalXPath, currentExternalXPath);
-                                    }
+                                    MetadataCompoundAttribute compoundAttributeChild = get(child, parents, currentInternalXPath, currentExternalXPath);
                                 }
                             }
                         }
-
                     }
-                }
 
+                }
                 
             }
 
@@ -1287,7 +1235,8 @@ namespace BExIS.Xml.Helpers.Mapping
                 }
                 //datatype
                 string datatype = type.Datatype.ValueType.Name;
-                DataType dataType = GetDataType(datatype);
+                string typeCodename = type.Datatype.TypeCode.ToString();
+                DataType dataType = GetDataType(datatype, typeCodename);
 
                 //unit
                 Unit noneunit = unitManager.Repo.Get().Where(u => u.Name.ToLower().Equals("none")).First();
@@ -1332,7 +1281,8 @@ namespace BExIS.Xml.Helpers.Mapping
                     }
                     //datatype
                     string datatype = type.Datatype.ValueType.Name;
-                    DataType dataType = GetDataType(datatype.ToLower());
+                    string typeCodename = type.Datatype.TypeCode.ToString();
+                    DataType dataType = GetDataType(datatype, typeCodename);
 
                     //unit
                     // it is the second time I am seeing this cose segment, would be good to factor it out to a function
@@ -1661,24 +1611,41 @@ namespace BExIS.Xml.Helpers.Mapping
         }
 
         // vielleicht besser mit festen datatypes im system
-        private DataType GetDataType(string dataTypeAsString)
+        private DataType GetDataType(string dataTypeAsString, string typeCodeName)
         {
             if (!dataTypeAsString.ToLower().Equals("Object"))
             {
                 TypeCode typeCode = ConvertStringToSystemType(dataTypeAsString);
-
-                DataType dataType = dataTypeManager.Repo.Query().Where(d => d.SystemType.Equals(typeCode.ToString()) && d.Name.ToLower().Equals(typeCode.ToString().ToLower())).FirstOrDefault();
+                DataType dataType = null;
+                // if datatime - need to check typeCodeName for date, time , datetime
+                if (dataTypeAsString.Equals(TypeCode.DateTime.ToString()))
+                {
+                    dataType =
+                        dataTypeManager.Repo.Query()
+                            .Where(
+                                d => d.SystemType.Equals(typeCode.ToString()) && d.Name.ToLower().Equals(typeCodeName.ToLower()))
+                            .FirstOrDefault();
+                }
+                else
+                    dataType =
+                        dataTypeManager.Repo.Query()
+                            .Where(
+                                d =>
+                                    d.SystemType.Equals(typeCode.ToString()) &&
+                                    d.Name.ToLower().Equals(typeCode.ToString().ToLower()))
+                            .FirstOrDefault();
 
                 if (dataType == null)
                 {
-                    dataType = dataTypeManager.Create(typeCode.ToString().ToLower(), typeCode.ToString().ToLower(), typeCode);
+                    dataType = dataTypeManager.Create(typeCode.ToString().ToLower(), typeCode.ToString().ToLower(),
+                        typeCode);
                 }
 
                 return dataType;
             }
             else
             {
-                return GetDataType("string");
+                return GetDataType("string","");
             }
         }
 
