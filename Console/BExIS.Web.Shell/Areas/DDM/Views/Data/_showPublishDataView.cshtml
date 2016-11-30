@@ -19,7 +19,7 @@
             $.post('@Url.Action("LoadDataRepoRequirementView", "Data", new RouteValueDictionary {{"area", "DDM"}})',
                 { datarepo: e.value, datasetid: id },
                 function(response) {
-                    $("#requirementsContainer").html(response);
+                    //$("#requirementsContainer").html(response);
 
                     var jsonObject = {
                         "datarepo": e.value,
@@ -34,8 +34,10 @@
                         data: JSON.stringify(jsonObject),
                         success: function(data) {
 
+                            console.log(data);
+
                             var isMetadataConvertable = data.isMetadataConvertable;
-                            var metadataValidMessage = data.isMetadataValid;
+                            var metadataValidMessage = data.metadataValidMessage;
                             var isDataConvertable = data.isDataConvertable;
                             var exist  = data.Exist;
 
@@ -43,14 +45,28 @@
                             if (isMetadataConvertable && typeof metadataValidMessage==="undefined" && isDataConvertable) {
 
                                 console.log("ok");
+                                console.log(isMetadataConvertable);
+                                console.log(metadataValidMessage);
+                                console.log(isDataConvertable);
+
+
 
                                 $("#submitPublishBt").removeAttr("disabled");
                                 $("#submitPublishBt").removeClass("bx-disabled");
 
-                            } else {
+                            } else if (isMetadataConvertable && typeof metadataValidMessage!=="undefined" && isDataConvertable) {
+                                
+                                if (typeof metadataValidMessage!=="undefined") {
+                                    alert(metadataValidMessage);
+                                    $("#submitPublishBt").removeAttr("disabled");
+                                    $("#submitPublishBt").removeClass("bx-disabled");
+                                }
+
+                            }
+                            else
+                            {
 
                                 console.log("failure");
-
 
                                 if(!exist)
                                 {
@@ -64,7 +80,7 @@
                                     }
 
                                     if (typeof metadataValidMessage!=="undefined") {
-                                        message += metadataValidMessage;
+                                        message+=metadataValidMessage;
                                     }
 
                                     if (!isDataConvertable) {
@@ -134,7 +150,7 @@
                     </td>
 
                     <td style="text-align: right">
-                        <span id="requirementsContainer" >
+                        <span id="requirementsContainer"  style="color:#f24c24">
                       
                         </span>
                         <div id="preloader">

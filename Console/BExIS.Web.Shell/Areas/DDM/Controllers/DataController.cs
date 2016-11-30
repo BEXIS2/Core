@@ -1004,7 +1004,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
             bool isDataConvertable = false;
             bool isMetadataConvertable = false;
-            string metadataValidMeesage = "";
+            string metadataValidMessage = "";
             bool exist = false;
 
             //get datarepos
@@ -1037,7 +1037,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         isMetadataConvertable = true;
 
                         // Validate
-                        metadataValidMeesage = OutputMetadataManager.IsValideAgainstSchema(datasetid, TransmissionType.mappingFileExport, datarepo);
+                        metadataValidMessage = OutputMetadataManager.IsValideAgainstSchema(datasetid, TransmissionType.mappingFileExport, datarepo);
                     }
                     else
                     {
@@ -1047,7 +1047,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         if (exportNames.Contains(dp.ReqiuredMetadataStandard))
                             isMetadataConvertable = true;
 
-                        metadataValidMeesage = OutputMetadataManager.IsValideAgainstSchema(datasetid,
+                        metadataValidMessage = OutputMetadataManager.IsValideAgainstSchema(datasetid,
                             TransmissionType.mappingFileExport, datarepo);
 
                     }
@@ -1070,7 +1070,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 }
             }
 
-            return Json(new { isMetadataConvertable = isMetadataConvertable, isDataConvertable = isDataConvertable, metadataValidMeesage = metadataValidMeesage, Exist = exist }); 
+            return Json(new { isMetadataConvertable = isMetadataConvertable, isDataConvertable = isDataConvertable, metadataValidMessage = metadataValidMessage, Exist = exist }); 
         }
 
         public ActionResult DownloadZip(string datarepo ,long datasetid, long datasetversionid)
