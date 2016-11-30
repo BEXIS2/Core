@@ -526,7 +526,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             return Content("");
         }
 
-        public ActionResult LoadExternalXml()
+        public ActionResult ValidateExternalXml()
         {
             string validationMessage = "";
 
@@ -537,7 +537,43 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATA_IMPORT_XML_FILEPATH))
             {
 
-                
+                //xml metadata for import
+                string metadataForImportPath = (string)TaskManager.Bus[CreateTaskmanager.METADATA_IMPORT_XML_FILEPATH];
+
+                if (FileHelper.FileExist(metadataForImportPath))
+                {
+                    XmlDocument metadataForImport = new XmlDocument();
+                    metadataForImport.Load(metadataForImportPath);
+
+                    // metadataStructure DI
+                    long metadataStructureId = (Int64)TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID];
+                    MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
+                    string metadataStructrueName = metadataStructureManager.Repo.Get(metadataStructureId).Name;
+
+                    // loadMapping file
+                    string path_mappingFile = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), XmlMetadataImportHelper.GetMappingFileName(metadataStructureId, TransmissionType.mappingFileImport, metadataStructrueName));
+
+                    // XML mapper + mapping file
+                    XmlMapperManager xmlMapperManager = new XmlMapperManager(TransactionDirection.ExternToIntern);
+                    xmlMapperManager.Load(path_mappingFile, "IDIV");
+
+                    validationMessage = xmlMapperManager.Validate(metadataForImport);
+                }
+            }
+
+            return Content(validationMessage);
+        }
+
+        public ActionResult LoadExternalXml()
+        {
+            string validationMessage = "";
+
+            if (TaskManager == null) TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
+
+            if (TaskManager != null &&
+                TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATASTRUCTURE_ID) &&
+                TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATA_IMPORT_XML_FILEPATH))
+            {
 
                 //xml metadata for import
                 string metadataForImportPath = (string)TaskManager.Bus[CreateTaskmanager.METADATA_IMPORT_XML_FILEPATH];
@@ -563,6 +599,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     //Validate 
                     if (String.IsNullOrEmpty(validationMessage))
                     {
+
+                    }
                         // generate intern metadata 
                         XmlDocument metadataResult = xmlMapperManager.Generate(metadataForImport, 1, true);
 
@@ -581,7 +619,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         //LoadMetadata(long datasetId, bool locked= false, bool created= false, bool fromEditMode = false, bool resetTaskManager = false, XmlDocument newMetadata=null)
                         return RedirectToAction("ImportMetadata", "Form",
                             new {metadataStructureId = metadataStructureId});
-                    }
+                    
                 }
             }
 

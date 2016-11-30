@@ -309,7 +309,23 @@ function IsExtentionValid(fileExtention) {
 function OnSuccess() {
     //alert("on success");
 
-    $.get('@Url.Action("LoadExternalXml", "Form", new RouteValueDictionary {{"area", "DCM"}})',
+
+    $.get('@Url.Action("ValidateExternalXml", "Form", new RouteValueDictionary {{"area", "DCM"}})',
+        function(response) {
+
+            if (response.length > 0) {
+                if (confirm('Warning:' + response + " Press OK if you want to import an invalid xml document.")) {
+                    loadExternalXml();
+                }
+            } else {
+                loadExternalXml();
+            }
+        });
+}
+
+    function loadExternalXml() {
+
+        $.get('@Url.Action("LoadExternalXml", "Form", new RouteValueDictionary {{"area", "DCM"}})',
             function(response) {
 
                 if (response.indexOf("error") > 0) {
@@ -332,7 +348,7 @@ function OnSuccess() {
                 }
 
 
-            })
+            });
     }
 
     function validate() {
