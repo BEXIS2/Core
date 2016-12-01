@@ -538,7 +538,6 @@
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img7.png" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img8.png" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img9.png" />
-    <Content Include="Areas\DCM\Images\emptyPng.png" />
     <Content Include="Areas\DCM\Views\Help\Informations.xml" />
     <Content Include="Areas\DDM\Images\DDM_UserGuide_files_images\DDM_UserGuide_files_img1.png" />
     <Content Include="Areas\DDM\Images\DDM_UserGuide_files_images\DDM_UserGuide_files_img10.png" />
@@ -566,7 +565,6 @@
     <Content Include="Areas\MSM\Resources\Stylesheets\jquery-linedtextarea.css" />
     <Content Include="Areas\MSM\Resources\Stylesheets\xsd2htmlTree.xslt" />
     <Content Include="Areas\MSM\Resources\Stylesheets\xsd2jsonTree.xslt" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img1.png" />
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img10.png" />
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img11.png" />
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img12.png" />
@@ -693,6 +691,7 @@
     <Content Include="Areas\RPM\Views\DataStructureEdit\_dataTypeDropdown.cshtml" />
     <Content Include="Areas\DCM\Views\ManageMetadataStructure\_editMetadataStructureView.cshtml" />
     <Content Include="Areas\DDM\Views\Data\_fileSizeView.cshtml" />
+    <Content Include="Areas\SAM\Views\Dataset\Delete.cshtml" />
     <None Include="Properties\PublishProfiles\BEXIS 2.10.pubxml" />
     <None Include="Properties\PublishProfiles\bexis2 Release2.10.pubxml" />
     <None Include="Properties\PublishProfiles\BEXIS2.pubxml" />
@@ -700,6 +699,7 @@
     <Content Include="Areas\SAM\Views\Tenants\_Create.cshtml" />
     <Content Include="Areas\SAM\Views\Tenants\_Edit.cshtml" />
     <Content Include="Areas\Site\Views\Footer\Content.cshtml" />
+    <None Include="Properties\PublishProfiles\BPP Publish.pubxml" />
     <None Include="Properties\PublishProfiles\BPP21005.pubxml" />
     <None Include="Properties\PublishProfiles\BPP290.pubxml" />
     <None Include="Properties\PublishProfiles\BPP2907.pubxml" />
