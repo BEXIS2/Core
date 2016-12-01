@@ -154,6 +154,7 @@ $(".t-grid").load(function () {
 
         var filter = element.find(".t-grid-filter");
         filter.css("float", "right");
+        filter.css("margin-top", "2px");
         div.width((element.innerWidth() - filter.outerWidth() - 5));
     });
 });
@@ -246,7 +247,7 @@ $(".t-grid").change(function () {
         var filter = element.find(".t-grid-filter");
         filter.css("float", "right");
 
-        div.width((element.innerWidth() - filter.outerWidth() - 5));
+        div.width((element.innerWidth() - filter.outerWidth()-5));
 
         var a = element.find("a");
         //var arrow = element.find("span");
