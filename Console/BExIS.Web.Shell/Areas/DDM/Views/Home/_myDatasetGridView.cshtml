@@ -155,6 +155,7 @@
                 obj[i].textContent = jQuery.trim(obj[i].textContent).substring(0, 50).trim(this) + "...";
             }
         });
+        $(".t-grid").trigger('load');
     }
 
     function onComplete() {
