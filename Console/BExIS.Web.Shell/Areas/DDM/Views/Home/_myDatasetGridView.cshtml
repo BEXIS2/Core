@@ -119,7 +119,7 @@
                         .OnLoad("refreshGrid")
                         .OnSubmitChanges("refreshGrid")
                         .OnRowDataBound("resultGrid_OnRowDataBound")
-                        .OnDataBound("resetAllTelerikIconTitles")
+                        .OnDataBound("resultGrid_onDataBound")
 
                        )
             .Pageable(paging =>
@@ -143,6 +143,13 @@
         resetAllTelerikIconTitles();
     })
 
+    function resultGrid_onDataBound() {
+
+        resetAllTelerikIconTitles();
+
+        $(".t-grid").trigger('load');
+    }
+
     function resultGrid_OnRowDataBound(e) {
 
         //alert(e.item);
@@ -155,7 +162,6 @@
                 obj[i].textContent = jQuery.trim(obj[i].textContent).substring(0, 50).trim(this) + "...";
             }
         });
-        $(".t-grid").trigger('load');
     }
 
     function onComplete() {
