@@ -4,8 +4,21 @@
     margin: 5px;
 }
 
+.bx-rpm-text {
+    white-space: nowrap;
+    overflow-x:hidden;
+    text-overflow:ellipsis;
+}
+
 .bx-rpm-hidden {
     display: none;
+}
+
+.bx-rpm-option-arrow.bx-disabled,
+.bx-rpm-option.bx-disabled{
+    color: #565655 !important;
+    background-color: #f5f5f5 !important;
+    border-color: #565655 !important;
 }
 
 .bx-rpm-message,
@@ -84,4 +97,68 @@
     vertical-align:middle;
     margin-top:20px;
     cursor:help !important;
+}
+
+.bx-rpm-searchBar {
+    float:right;
+    text-align:right;
+    display: inline-block;
+}
+
+.bx-rpm-resetSearch {
+    text-align:right;
+    font-size:8pt;
+    cursor:pointer;
+}
+
+.bx-rpm-option,
+.bx-rpm-options div{   
+    padding: 1px 3px 1px 3px;
+}
+
+.bx-rpm-option,
+.bx-rpm-options {
+    border: solid 1px #000000;
+    background-color: #ffffff;
+    cursor:default;
+}
+
+.bx-rpm-options{
+    border-color:#afb0b1;
+    position:fixed;
+}
+
+.bx-rpm-option{
+    white-space: nowrap;
+    max-height: 18pt;
+    padding-right:16px;
+    overflow: hidden;
+    text-overflow: ellipsis; 
+}
+
+.bx-rpm-options div:hover{
+    background-color: #ff9700;
+    color: #ffffff;
+}
+
+.bx-rpm-option-arrow{
+    height: 0px;
+    position: relative;
+    float:right;
+    top: -18px;
+    right: 6px;
+    cursor:default;
+}
+
+.bx-footer table,
+.bx-footer tr,
+.bx-footer td{
+    margin: 0px;
+    padding:0px;
+    border: none;
+}
+
+.bx-footer#buttons{
+    background-color:#ebebeb;
+    margin:3px 0px 3px 0px !important;
 }

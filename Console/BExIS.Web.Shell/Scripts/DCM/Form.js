@@ -1,32 +1,148 @@
-﻿
+﻿var minimapOriginalTop = 0;
+$(document).ready(function (e) {
+
+
+    setTimeout(
+      function () {
+          //do something special
+          //console.log("doc ready before autosize");
+          //console.log($('textarea'));
+          if ($('textarea') != null) {
+
+              $($('textarea')).each(function (index, element) {
+                  // element == this
+                  autosize($(this));
+                  //console.log("done autosize");
+              });
+          }
+      }, 10);
+
+    
+    //setTabIndex();
+    resetAllTelerikIconTitles();
+});
+
+function setTabIndex() {
+
+    var list = $(".metadataAttributeInput .t-input");
+    //console.log(list);
+    for (var i = 0; i < list.length ; i++) {
+        var input = list[i];
+        //console.log(input);
+        $(input).attr("tabindex", i);
+    }
+}
+
+
+/******************************************
+ ********* FORM    ************************
+ ******************************************/
+
+$(window).scroll(function () {
+        bindMinimap();
+});
+
+var originalMinimapTop = 0;
+var originalMiniRegionTop = 0;
+function bindMinimap(create) {
+
+    var scrollpostion = $(document).scrollTop();
+    var topContainer = $('#root').position().top;
+    var menubar = $(".navbar").height() + 20;
+
+    var hContainer = $('#root').height();
+    var hWindow = $(window).height();
+       
+    var hRatio = 1 - hWindow / hContainer;
+
+    if (hRatio <= 0) hRatio = 0.1;
+
+    if ($(".minimap").length === 0 || create) {
+        var offset = getRatioHeight(menubar);
+
+        $(".miniregion").remove();
+        $(".minimap").remove();
+
+            var previewBody = $('#root')
+                .minimap(
+                {
+                    heightRatio: hRatio,
+                    widthRatio: 0.095,
+                    offsetHeightRatio: offset,
+                    offsetWidthRatio: 0.02,
+                    position: "right",
+                    touch: true,
+                    smoothScroll: false,
+                    smoothScrollDelay: 100
+                });
+                var x = $(".minimap").css("top");
+                originalMinimapTop = parseInt(x.split("px"));
+                originalMiniRegionTop = $(".miniregion").position().top;
+                    
+                $(".minimap").css("top", originalMinimapTop + (topContainer - menubar));
+                //$(".miniregion").css("top", originalMiniRegionTop + (topContainer - menubar));
+                    
+                //console.log("created");
+        }
+            
+            
+
+    var scrollmax = (topContainer - menubar) - scrollpostion;
+    //console.log(topContainer);
+    //console.log(menubar);
+    //console.log(scrollpostion);
+    //console.log(scrollmax);
+    //console.log(originalMinimapTop);
+
+    if ((topContainer - scrollpostion) <= menubar) {
+        scrollmax = 0;
+        //console.log("setty");
+        $(".miniregion").removeClass("hidden");
+    } else {
+
+        $(".miniregion").addClass("hidden");
+        //$(".miniregion").css("top", originalMiniRegionTop + (topContainer - menubar));
+
+    }
+    //console.log(scrollmax);
+            
+    ////var miniregionoffset = topContainer - originalMiniRegionTop;
+    var positionMinimap = parseInt(originalMinimapTop) + parseInt(scrollmax);
+
+    $(".minimap").css("top", positionMinimap);
+
+   
+
+}
+
+
+function getRatioHeight(containerStart) {
+    return (containerStart / $(window).height());
+}
+
 /******************************************
  ********* ATTIBUTE************************
  ******************************************/
-$(document).ready(function () {
-    if ($('textarea') != null) {
-        autosize($('textarea'));
-    }
-    resetAllTelerikIconTitles();
-});
 
 function metadataAttributeOnLoad(e, hasErrors) {
     if (hasErrors)
         $('#' + e.id + "_input").AddClass("bx-input-error");
 }
-               
+
+
 function OnKeyUpTextInput(e) {
     console.log("OnKeyDownTextInput");
-    console.log(e.id);
-    console.log(e.value.length);
-    console.log(e.value);
+    //console.log(e.id);
+    //console.log(e.value.length);
+    //console.log(e.value);
 
        
     var length = e.value.length;
 
     if (length >= 60) {
-        console.log("start replace");
+        //console.log("start replace");
         var textarea = inputToTextArea(e);
-        console.log(textarea);
+        //console.log(textarea);
         $("#" + e.id).replaceWith(textarea);
 
         //set focus
@@ -35,9 +151,8 @@ function OnKeyUpTextInput(e) {
         autosize($("#" + e.id));
         $("#" + e.id).val(tmp);
         $("#" + e.id).focus();
-
-               
-        console.log("done");
+      
+        //console.log("done");
     }
 }
 
@@ -50,25 +165,25 @@ function inputToTextArea(input) {
         "onchange=\"OnChange(this)\"" +
         "onkeyup= \"OnKeyUpTextArea(this)\""+
         "title='" + $("#" + input.id).attr("title") + "'" +
-        "class=\"bx-textarea bx-metadataFormTextInput\"" +
+        "class=\"bx-textarea bx-metadataFormTextInput \"" +
         "cols=\"2\" rows=\"2\">" + input.value + "</textarea>";
 
     return textarea;
 }
 
 function OnKeyUpTextArea(e) {
-    console.log("OnKeyDownTextArea");
-    console.log(e.id);
-    console.log(e.value.length);
-    console.log(e.value);
+    //console.log("OnKeyDownTextArea");
+    //console.log(e.id);
+    //console.log(e.value.length);
+    //console.log(e.value);
 
 
     var length = e.value.length;
 
     if (length < 60) {
-        console.log("start replace");
+        //console.log("start replace");
         var input = textareaToInput(e);
-        console.log(input);
+        //console.log(input);
         $("#" + e.id).replaceWith(input);
 
         //set focus
@@ -77,7 +192,9 @@ function OnKeyUpTextArea(e) {
         $("#" + e.id).value = tmp;
         $("#" + e.id).focus();
  
-        console.log("done");
+        //console.log("done");
+
+        autosize($('textarea'));
     }
 }
 
@@ -123,20 +240,22 @@ function OnChangeTextInput(e) {
     function (response) {
 
         var id = e.target.id;
-        console.log("OnChangeTextInput");
-        console.log(id);
+        //console.log("OnChangeTextInput");
+        //console.log(id);
 
         var index = id.lastIndexOf("_");
         var newId = id.substr(0, index);
-        console.log(newId);
+        //console.log(newId);
 
         $("#" + newId).replaceWith(response);
+        //alert("test");
+        autosize($('textarea'));
     })
 }
 
 function OnChange(e) {
 
-    console.log("OnChange");
+    //console.log("OnChange");
     var substr = e.id.split('_');
     var id = substr[0];
     var parentid = substr[1];
@@ -144,8 +263,6 @@ function OnChange(e) {
     var number = substr[2];
     var ParentModelNumber = substr[3];
     var ParentStepID = substr[5];
-
-
 
     //alert(parentid);
     //alert(metadataStructureId);
@@ -161,15 +278,15 @@ function OnChange(e) {
             parentModelNumber: ParentModelNumber,
             ParentStepId: ParentStepID
         },
-        function(response) {
-            //alert(e.value);
-            //alert(response);
-            console.log(parentid);
+        function (response) {
+   
             var index = e.id.lastIndexOf("_");
             var newId = e.id.substr(0, index);
-            //alert(newId);
 
             $("#" + newId).replaceWith(response);
+            if ($('textarea') != null) {
+                autosize($('textarea'));
+            }
         });
 
 }
@@ -517,7 +634,7 @@ function Add(e) {
             //alert(parentId);
             $('#' + parentId).replaceWith(response);
             resetAllTelerikIconTitles();
-            bindMinimap();
+            bindMinimap(true);
         })
 }
 
@@ -530,7 +647,7 @@ function Remove(e) {
         { parentStepId: parentId, number: number },
         function (response) {
             $('#' + parentId).replaceWith(response);
-            bindMinimap();
+            bindMinimap(true);
         })
 }
 
@@ -543,7 +660,7 @@ function Up(e) {
         { parentStepId: parentId, number: number },
         function (response) {
             $('#' + parentId).replaceWith(response);
-            bindMinimap();
+            bindMinimap(true);
         })
 }
 
@@ -556,7 +673,7 @@ function Down(e) {
         { parentStepId: parentId, number: number },
         function(response) {
             $('#' + parentId).replaceWith(response);
-            bindMinimap();
+            bindMinimap(true);
         })
 }
 
@@ -579,7 +696,7 @@ function Activate(e) {
             }
 
             resetAllTelerikIconTitles();
-            bindMinimap();
+            bindMinimap(true);
         });
 
     
@@ -609,7 +726,7 @@ function ActivateFromChoice(e) {
         }
 
         resetAllTelerikIconTitles();
-        bindMinimap();
+        bindMinimap(true);
     });
 }
 
@@ -622,5 +739,5 @@ function showHideClick(e) {
     var buttonId = parentId + "_" + number + "_ButtonView";
     $('#' + id).toggle();
     $('#' + buttonId).toggleClass("bx-angle-double-up bx-angle-double-down");
-    bindMinimap();
+    bindMinimap(true);
 }

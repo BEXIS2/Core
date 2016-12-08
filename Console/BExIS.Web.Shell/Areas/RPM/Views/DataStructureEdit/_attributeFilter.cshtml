@@ -52,29 +52,19 @@
             $(checkbox).addClass('checked');
             $(checkbox).attr('checked', 'checked');
         }
-        var filter = setFilterArray();
-        disableCheckboxes(filter);
-        return concatValues(filter);
+        disableCheckboxes(setFilterArray());
+        return setFilterArray();
     }
 
-    function resetFilter() {
-        $('.checked').removeAttr('checked');
-        $('.checked').removeClass('checked');
-
-        var filter = setFilterArray();
-        disableCheckboxes(filter);
-        return filter;
-    }
-
-    function disableCheckboxes(filter) {
+    function disableCheckboxes(tempFilter) {
         for (i = 0; i < $('.bx-rpm-filterCheckbox').length; i++) {
             var id = $('.bx-rpm-filterCheckbox')[i].getAttribute('id');
             var appearance = $('#' + id).attr('appearance').split(' ');
             var count = 0;
 
-            if (filter.length > 0) {
-                for (j in filter) {
-                    if (inArray(filter[j], appearance)) {
+            if (tempFilter.length > 0) {
+                for (j in tempFilter) {
+                    if (inArray(tempFilter[j], appearance)) {
                         count++;
                     }
                 }
@@ -102,7 +92,7 @@
     }
 
     function setFilterArray() {
-        var filter = [];
+        var tempFilter = [];
         if ($('.checked').length > 0) {
             if ($('.checked').length > 1) {
                 for (i = 0; i < $('.checked').length; i++) {
@@ -120,29 +110,29 @@
                     var offsetAppearance = $('#' + offsetId).attr('appearance').split(' ');
                     for (j in appearance) {
                         if (inArray(appearance[j], offsetAppearance)) {
-                            if (!inArray(appearance[j], filter)) {
-                                filter.push(appearance[j]);
-                                filter.sort();
+                            if (!inArray(appearance[j], tempFilter)) {
+                                tempFilter.push(appearance[j]);
+                                tempFilter.sort();
                             }
                         }
                         else {
-                            if (inArray(appearance[j], filter)) {
-                                filter.splice(filter.indexOf(appearance[j]), 1);
-                                filter.sort();
+                            if (inArray(appearance[j], tempFilter)) {
+                                tempFilter.splice(tempFilter.indexOf(appearance[j]), 1);
+                                tempFilter.sort();
                             }
                         }
                     }
                 }
             }
             else {
-                filter = $('.checked').attr('appearance').split(' ');
-                filter.sort();
+                tempFilter = $('.checked').attr('appearance').split(' ');
+                tempFilter.sort();
             }
         }
         else {
-            filter = "";
+            tempFilter = "";
         }
-        return filter;
+        return tempFilter;
     }
 
     function inArray(value, array) {
@@ -152,18 +142,5 @@
             }
         }
         return false;
-    }
-
-    function concatValues(obj) {
-        var value = '';
-        for (var prop in obj) {
-            if (prop == 0) {
-                value = '.' + obj[prop];
-            }
-            else {
-                value += ', .' + obj[prop];
-            }
-        }
-        return value;
     }
 </script>

@@ -1,5 +1,6 @@
 ﻿using System;
 using BExIS.Dlm.Entities.DataStructure;
+using System.Xml.Serialization;
 
 /// <summary>
 ///
@@ -26,6 +27,7 @@ namespace BExIS.Dlm.Entities.Data
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
+        [XmlIgnoreAttribute]
         public DateTime SamplingTime { get; set; }
 
         /// <summary>
@@ -33,6 +35,7 @@ namespace BExIS.Dlm.Entities.Data
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
+        [XmlIgnoreAttribute]
         public DateTime ResultTime { get; set; }
 
         /// <summary>
@@ -40,6 +43,7 @@ namespace BExIS.Dlm.Entities.Data
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
+        [XmlIgnoreAttribute]
         public ObtainingMethod ObtainingMethod { get; set; }
 
         /// <summary>
@@ -47,6 +51,7 @@ namespace BExIS.Dlm.Entities.Data
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
+        [XmlIgnoreAttribute]
         public string Note { get; set; }
 
         #endregion

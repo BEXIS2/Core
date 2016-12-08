@@ -13,7 +13,7 @@
                 Name <span class="bx bx-required" title="Required"></span>
             </td>
             <td>
-                <div title="The name will be used for a new Variable Template">@Html.TextBox("Name", Model.Name, new { @class = "bx-input", @id = "name" })</div>
+                <div title="The name will be used for a new Variable Template">@Html.TextBox("Name", Model.Name, new { @class = "bx-input", @id = "name", @autofocus = "true" })</div>
                 <div class="hidden bx-rpm-error" id="messageContainer"><span id="message" class="bx-rpm-message" value="none"></span></div>
             </td>
         </tr>
@@ -50,6 +50,8 @@
                 @Html.Partial("_dataTypeDropdown", Model.DataTypes)
             </td>
         </tr>
+    </table>
+    <table>
         <tr>
             <td colspan="4" class="bx-rpm-container">
                 <h4><a class="bx-link" href="javascript:clickConstraints()">Constraints <span class="bx bx-angle-double-down" id="openconstraints"></span></a></h4>
@@ -66,8 +68,8 @@
         </tr>
 </table>
 
-    <div class="bx-rpm-submit bx-rpm-buttons" id="buttons">
-        <button name="create" class="bx-button action bx-disabled" disabled="disabled"  id="saveButton">Save</button>
+    <div class="bx-rpm-buttons bx-footer left" id="buttons">
+        <button name="create" class="bx-button action"  id="saveButton">Save</button>
         <button name="cancel" class="bx-button action" id="cancelButton" onclick="javascript:$('#createAttributeWindow').data('tWindow').destroy();">Cancel</button>
     </div>  
 </div>  
@@ -84,52 +86,54 @@
         $('.bx-rpm-createAttributeContainer #openconstraints').toggleClass('bx-angle-double-down');
         $('.bx-rpm-createAttributeContainer #openconstraints').toggleClass('bx-angle-double-up');
         if(!($('.bx-rpm-createAttributeContainer .bx-rpm-rangeConstraint').hasClass('loaded') && $('.bx-rpm-createAttributeContainer .bx-rpm-patternConstraint').hasClass('loaded') && $('.bx-rpm-createAttributeContainer .bx-rpm-domainConstraint').hasClass('loaded'))){
-            var parameters = '';
-            $.get('@Url.Action("_getRangeConstraint", "DataStructureEdit", new { area = "RPM"} )' + parameters, function (data) {
+            $.get('@Url.Action("_getRangeConstraint", "DataStructureEdit", new { area = "RPM"} )', function (data) {
                 $('.bx-rpm-createAttributeContainer .bx-rpm-rangeConstraint').html(data);
                 $('.bx-rpm-createAttributeContainer .bx-rpm-rangeConstraint').addClass('loaded');
-                $.get('@Url.Action("_getPatternConstraint", "DataStructureEdit", new { area = "RPM"} )' + parameters, function (data) {
+                $.get('@Url.Action("_getPatternConstraint", "DataStructureEdit", new { area = "RPM"} )', function (data) {
                     $('.bx-rpm-createAttributeContainer .bx-rpm-patternConstraint').html(data);
                     $('.bx-rpm-createAttributeContainer .bx-rpm-patternConstraint').addClass('loaded');
-                    $.get('@Url.Action("_getDomainConstraint", "DataStructureEdit", new { area = "RPM"} )' + parameters, function (data) {
+                    $.get('@Url.Action("_getDomainConstraint", "DataStructureEdit", new { area = "RPM"} )', function (data) {
                         $('.bx-rpm-createAttributeContainer .bx-rpm-domainConstraint').html(data);
                         $('.bx-rpm-createAttributeContainer .bx-rpm-domainConstraint').addClass('loaded');
-                        $('.bx-rpm-createAttributeContainer #constraints').toggle('slow');
+                        $('.bx-rpm-createAttributeContainer #constraints').toggle();
+                        $('#createAttributeWindow').data('tWindow').center();
                     });
                 });
             });
         }
         else{
-            $('.bx-rpm-createAttributeContainer #constraints').toggle('slow');
+            $('.bx-rpm-createAttributeContainer #constraints').toggle();
+            $('#createAttributeWindow').data('tWindow').center();
         }
     }
 
-    $('.bx-rpm-createAttributeContainer #name').keyup(function () {
-        createAttrWondowValidateName('message');
-    });
+    //$('.bx-rpm-createAttributeContainer #name').keyup(function () {
+    //    createAttrWondowValidateName('message');
+    //});
 
-    $('.bx-rpm-createAttributeContainer #name').change(function () {
-        createAttrWondowValidateName('message');
-    });
+    //$('.bx-rpm-createAttributeContainer #name').change(function () {
+    //    createAttrWondowValidateName('message');
+    //});
 
-    $('.bx-rpm-createAttributeContainer #description').keyup(function () {
-        createAttrWondowShowmessage()
-    });
+    //$('.bx-rpm-createAttributeContainer #description').keyup(function () {
+    //    createAttrWondowShowmessage()
+    //});
 
-    $('.bx-rpm-createAttributeContainer #description').change(function () {
-        createAttrWondowShowmessage()
-    });
+    //$('.bx-rpm-createAttributeContainer #description').change(function () {
+    //    createAttrWondowShowmessage()
+    //});
 
-    $('.bx-rpm-createAttributeContainer #unit').change(function () {
-        createAttrWondowShowmessage()
-    });
+    //$('.bx-rpm-createAttributeContainer #unit').change(function () {
+    //    createAttrWondowShowmessage()
+    //});
 
-    $('.bx-rpm-createAttributeContainer #dataType').change(function () {
-        createAttrWondowShowmessage()
-    });
+    //$('.bx-rpm-createAttributeContainer #dataType').change(function () {
+    //    createAttrWondowShowmessage()
+    //});
 
     function createAttrWondowValidateName(cssId) {
-        var parameters = '/?Id=' + $('.bx-rpm-createAttributeContainer #id').val() + '&Name=' + $('.bx-rpm-createAttributeContainer #name').val() + '&cssId=' + cssId;
+        var parameters = encodeURI('/?Id=' + $('.bx-rpm-createAttributeContainer #id').val() + '&Name=' + encodeURIComponent($('.bx-rpm-createAttributeContainer #name').val()) + '&cssId=' + cssId);
+        parameters = parameters.replace('#','%23');
         $.get('@Url.Action("_validateAttributeName", "DataStructureEdit", new { area = "RPM"} )' + parameters, function (data) {
             $(data).replaceAll('.bx-rpm-createAttributeContainer #' + cssId);
             createAttrWondowShowmessage();
@@ -150,24 +154,25 @@
         }
 
         if (hasMessage == true) {
-            $('.bx-rpm-createAttributeContainer #saveButton').attr('disabled', 'disabled');
+            //$('.bx-rpm-createAttributeContainer #saveButton').attr('disabled', 'disabled');
             $(".bx-rpm-createAttributeContainer #messageContainer").removeClass('hidden');
-            $('.bx-rpm-createAttributeContainer #saveButton').addClass('bx-disabled');
+            //$('.bx-rpm-createAttributeContainer #saveButton').addClass('bx-disabled');
         }
         else if(hasMessage == false){
-            $('.bx-rpm-createAttributeContainer #saveButton').removeAttr('disabled');
+            //$('.bx-rpm-createAttributeContainer #saveButton').removeAttr('disabled');
             $(".bx-rpm-createAttributeContainer #messageContainer").addClass('hidden');
-            $('.bx-rpm-createAttributeContainer #saveButton').removeClass('bx-disabled');
+            //$('.bx-rpm-createAttributeContainer #saveButton').removeClass('bx-disabled');
         }
     }
 
     $('.bx-rpm-createAttributeContainer #saveButton').click(function () {
         var cssId = 'message';
-        var parameters = '/?Id=' + $('.bx-rpm-createAttributeContainer #id').val() + '&Name=' + $('.bx-rpm-createAttributeContainer #name').val() + '&Description=' + $('.bx-rpm-createAttributeContainer #description').val() + '&unitId=' + $('.bx-rpm-createAttributeContainer #unit').val() + '&dataTypeId=' + $('.bx-rpm-createAttributeContainer #dataType').val() + '&cssId=' + cssId + '&inUse=' + inUse;
+        var parameters = encodeURI('/?Id=' + $('.bx-rpm-createAttributeContainer #id').val() + '&Name=' + encodeURIComponent($('.bx-rpm-createAttributeContainer #name').val()) + '&Description=' + encodeURIComponent($('.bx-rpm-createAttributeContainer #description').val()) + '&unitId=' + $('.bx-rpm-createAttributeContainer #unit').val() + '&dataTypeId=' + $('.bx-rpm-createAttributeContainer #dataType').val() + '&cssId=' + cssId + '&inUse=' + inUse);
+        parameters = parameters.replace('#','%23');
         $.get('@Url.Action("createAtttribute", "DataStructureEdit", new { area = "RPM"} )' + parameters, function (data) {
             if ($(data).hasClass('bx-rpm-message') && $(data).attr('id') == cssId) {
                 $(data).replaceAll('.bx-rpm-createAttributeContainer #' + $(data).attr('id'));
-                showmessage($(data).attr('value').toLowerCase());
+                createAttrWondowShowmessage($(data).attr('value').toLowerCase());
             }
             else if ($(data).hasClass('bx-rpm-message') && $(data).attr('id') == 'refresh') {
                 storeRangeConstraint($(data).text());
@@ -183,7 +188,7 @@
     });
 
     function changeUnit() {
-        var parameters = '/?unitId=' + $('.bx-rpm-createAttributeContainer #unit').val();
+        var parameters = encodeURI('/?unitId=' + $('.bx-rpm-createAttributeContainer #unit').val());
         $.get('@Url.Action("_getDataTypes", "DataStructureEdit", new { area = "RPM"} )' + parameters, function (data) {
             $('.bx-rpm-createAttributeContainer .bx-rpm-selectdropdown.datatype').html($(data));
         });
@@ -331,10 +336,10 @@
                 dataType: 'json',
                 contentType: 'application/json; charset=utf-8',
                 error: function (xhr) {
-                    console.log(xhr);
+                    
                 },
                 success: function (result) {
-                    console.log(result);
+                    
                 },
                 async: false,
                 processData: false
@@ -359,10 +364,10 @@
                 dataType: 'json',
                 contentType: 'application/json; charset=utf-8',
                 error: function (xhr) {
-                    console.log(xhr);
+                    
                 },
                 success: function (result) {
-                    console.log(result);
+                    
                 },
                 async: false,
                 processData: false
@@ -387,10 +392,10 @@
                 dataType: 'json',
                 contentType: 'application/json; charset=utf-8',
                 error: function (xhr) {
-                    console.log(xhr);
+                    
                 },
                 success: function (result) {
-                    console.log(result);
+                    
                 },
                 async: false,
                 processData: false

@@ -18,30 +18,30 @@
     </div>
 </div>
 
-<div style="text-align:left; padding:5px 0;">
-    @if(@Model.ExportIsAvailable == true ){
-        <button id="@convert_id" type="button" class="bx-button function" value="Convert" name="button" onclick="dim_OnClickConvert(this)" >Export</button>
-    }
-    else
-    {
-        <button id="@convert_id" type="button" class="bx-button bx-disabled " value="Convert" name="button" onclick="dim_OnClickConvert(this)" disabled="disabled">Export</button>
-    }
-</div>
-    
-<div id="@preloader_id" style="display:none; overflow:auto" >
-     <img src="../../../../Themes/Default/Styles/Default/preloader.GIF" />
-</div>
-
+    <div style="text-align: left; padding: 5px 0;">
+        @if (@Model.ExportIsAvailable == true)
+        {
+            <button id="@convert_id" type="button" class="bx-button function" value="Convert" name="button" onclick="dim_OnClickConvert(this)">Export</button>
+        }
+        else
+        {
+            <button id="@convert_id" type="button" class="bx-button bx-disabled " value="Convert" name="button" onclick="dim_OnClickConvert(this)" disabled="disabled">Export</button>
+        }
+    </div>
 
     @(Html.Telerik().Grid(Model.DatasetVersions)
             .Name("datasetversionsConvertGrid")
             .HtmlAttributes(new { @class = "convert-grid" })
             .Filterable()
-            .Pageable(paging => paging.Position(GridPagerPosition.Both))
-            
+            .Pageable(paging => paging
+                .PageSize(20, new int[] { 10, 20, 50, 100, 500 })
+                .Position(GridPagerPosition.Both)
+                .PageTo(1))
+                
+
             .Columns(columns =>
             {
-                columns.Template(
+            columns.Template(
                     @<text>
                         <input id="@item.DatasetVersionId" name="checkedDatasetVersion" type="checkbox" value="@item.DatasetVersionId " title="checkedDatasetVersion" class="checkBox" />
                     </text>
@@ -62,11 +62,14 @@
                         .Filterable(true);
                 columns.Template(
                     @<text>
-                        @if (item.MetadataDownloadPath != "")
-                        { 
-                            @Html.ActionLink(" ", "Download", "Admin", new { path = @item.MetadataDownloadPath }, new { area = "DIM", @class="bx bx-grid-function bx-download" });
-                        }
-                    </text>
+                        <div class="download-button" style="padding: 0;">
+                            @if (item.MetadataDownloadPath != "")
+                                            {
+                                @Html.ActionLink(" ", "Download", "Admin", new { path = @item.MetadataDownloadPath }, new { area = "DIM", @class = "bx bx-grid-function bx-download", style="margin:0;" })
+                            }
+                        </div>
+
+                     </text>
 
                     ).Title("Download Link");
 
@@ -119,17 +122,15 @@
                     selectedDatasetIds = this.id;
                 else
                     selectedDatasetIds += "," + this.id;
+
+                $(this).closest("tr").find(".download-button").preloader(12, "Converting dataset " + this.id);
             }
         })
 
-        //alert(selectedDatasetIds);
 
-        var preloaderId = "preloader_" + idString;
-        $('#' + preloaderId).show();
 
         $.post('@Url.Action("ConvertSelectedDatasetVersion", "Admin", new { area="DIM"})', { Id: id, SelectedDatasetIds: selectedDatasetIds }, function (e) {
             $("#" + idString).html(e);
-            $('#' + preloaderId).hide();
         });
 
     }
@@ -149,7 +150,6 @@
             $("#" + id).find("input:checkbox")
                        .attr("checked", true);
         }
-
     }
 
 

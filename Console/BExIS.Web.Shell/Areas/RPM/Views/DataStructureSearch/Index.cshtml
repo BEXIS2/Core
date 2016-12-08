@@ -4,12 +4,22 @@
 <link href="@Url.Content("~/Areas/RPM/Stylesheets/DataStructure.css")" rel="stylesheet" type="text/css" />
 <link href="@Url.Content("~/Areas/RPM/Stylesheets/DataStructureSearch.css")" rel="stylesheet" type="text/css" />
 
+@section Information
+{
+    The Data Structure Manager is a tool to create, modify and delete Data Structures. Data Structures contain Variables, which are specific instances of Data Attributes.
+    It is possible to create Data Structures for structured data (Excel tables, CSV-Files ...) and for unstructured data (images, videos ...).
+    <p>
+        <a href="/RPM/Help/Index/#_Toc434570753" class="bx-informationLink" title="go to help" target="_blank">More</a>
+    </p>
+}
+
 <div class="bx-rpm-dataStructure-buttons">
-    <a id="createButton" class="bx-button function" href="javascript:openCreateWindow(0, '', '', false, false, false)">Create Datastructue</a>
+    <a id="createButton" class="bx-button function" href="javascript:openCreateWindow(0, '', '', false, false, false)">Create Data Structure</a>
 </div>
 <div class="bx-rpm-searchBar">
     @Html.TextBox("SearchBox", "", new { @class = "bx-input" })
-    <a class="bx bx-button function bx-search" href="javascript:loadResults()"></a>
+    <div class="bx bx-button function bx-search" onclick="javascript:loadResults()"></div>
+    <div class="bx-rpm-resetSearch"><a onclick="javascript:resetSearch()">reset Search</a></div>
 </div>
 
 <div id="SearchResults">
@@ -18,21 +28,27 @@
 
 <script type="text/javascript">
     $('.bx-rpm-searchBar #SearchBox').keypress(function (e) {
-            if (event.keyCode == 13) {
-        loadResults();
-    }
+        if (e.keyCode == 13) {
+            loadResults();
+        }
     });
 
+    function resetSearch() {
+        $('.bx-rpm-searchBar #SearchBox').val('');
+        loadResults();
+    }
+
     function loadResults() {
-        var parameters = '/?searchTerms=' + $('.bx-rpm-searchBar #SearchBox').val();
+        $('.bx-rpm-searchBar #SearchBox').val($('.bx-rpm-searchBar #SearchBox').val().trim());
+        var parameters = encodeURI('/?searchTerms=' + encodeURIComponent($('.bx-rpm-searchBar #SearchBox').val()));
             $.get('@Url.Action("_dataStructureResultBinding", "DataStructureSearch", new { area = "RPM"} )' + parameters, function (data) {
                 $('#SearchResults').html(data);
-                $('.bx-rpm-searchBar #SearchBox').val("");
         });
 
     }
 
     function createMessageWindow(data, title, type, id) {
+        title = decodeURIComponent(title);
         var windowElement = $.telerik.window.create({
             title: title,
             html: data,
@@ -44,8 +60,11 @@
             scrollable: false,
             onClose: function () {
                 $("#messageWindow").data('tWindow').destroy();
-                if ($("#bx-rpm-dataStructureResultGrid")) {
+                if ($("#bx-rpm-dataStructureResultGrid").lenth > 0) {
                     $("#bx-rpm-dataStructureResultGrid .t-refresh").trigger('click');
+                }
+                if ($("#windowCreate").length > 0) {
+                    $("#windowCreate").toggle('fast');
                 }
             }
         });
@@ -61,10 +80,9 @@
 
     function messageWindowCancel(Id) {
         if ($("#messageWindow").length > 0) {
-            $("#messageWindow").data('tWindow').destroy();
+            $("#messageWindow").data('tWindow').close();
         }
         if ($("#windowCreate").length > 0) {
-            $("#windowCreate").fadeToggle('fast');
             if (Id == "" || Id == 0) {
                 $("#windowCreate").data('tWindow').destroy();
             }
@@ -75,7 +93,7 @@
     }
 
     function messageWindowYes(id) {
-        var parameters = '/?Id=' + id;
+        var parameters = encodeURI('/?Id=' + id);
         $.get('@Url.Action("deleteDataStructure", "DataStructureEdit")' + parameters, function (data) {
             if ($(data).hasClass('bx-rpm-message') && $(data).attr('value').toLowerCase() == 'true') {
                 $(data).replaceWith('.bx-rpm-message #' + id);
@@ -96,17 +114,18 @@
     }
 
     function openCreateWindow(Id, Name, Description, isSructured, inUse, copy) {
-        var title = "Create DataStructure";
-        var parameters = "";
+        Name = unescape(Name);
+        Description = unescape(Description);
+        var title = "Create Data Structure";
         if (Id > 0) {
             if (copy == true) {
-                title = "Copy DataStructure " + Name + ' (' + Id + ')';
+                title = "Copy Data Structure " + Name + ' (' + Id + ')';
             }
             else {
-                title = "Edit DataStructure " + Name + ' (' + Id + ')';
+                title = "Edit Data Structure " + Name + ' (' + Id + ')';
             }
         }
-        parameters = '/?Id=' + Id + '&Name=' + Name + '&Description=' + Description + '&isSructured=' + isSructured + '&inUse=' + inUse + '&copy=' + copy;
+        var parameters = encodeURI('/?Id=' + Id + '&Name=' + encodeURIComponent(Name) + '&Description=' + encodeURIComponent(Description) + '&isSructured=' + isSructured + '&inUse=' + inUse + '&copy=' + copy);
         $.ajax({
             type: 'GET',
             url: '@Url.Action("_createDataStructureBinding", "DataStructureSearch")' + parameters,

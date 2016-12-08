@@ -1,5 +1,4 @@
 ﻿@model MetadataAttributeModel
-@using System
 @using BExIS.Web.Shell.Areas.DCM.Models
 @using Telerik.Web.Mvc.UI
 @{
@@ -15,7 +14,7 @@
     string errorClass = "";
     string lockedClass = "";
     bool locked = false;
-    bool hideOptional = false;
+    bool showOptional = false;
 
     string displayName = "";
     char tmp = ' ';
@@ -55,9 +54,9 @@
     lockedClass = "bx-disabled";
 }
 
-@if (ViewData.Keys.Contains("HideOptional"))
+@if (ViewData.Keys.Contains("ShowOptional"))
 {
-    hideOptional = (bool)ViewData["HideOptional"];
+    showOptional = (bool)ViewData["ShowOptional"];
 }
 
 
@@ -84,14 +83,14 @@
 
 <div id="@id" class="metadataAttributeContent" onload="metadataAttributeOnLoad(this, @hasErrors)">
 
-    @if (@Model != null && !(hideOptional && Model.IsEmpty && (Model.MinCardinality == 0) && locked))
+    @if (@Model != null && !(!showOptional && Model.IsEmpty && (Model.MinCardinality == 0) && locked))
     {
         <table>
             <tr>
                 <td class="metadataAttributeLabel">
                     @if (Model.MinCardinality > 0)
                     {
-                        <b title="Required" style="color:red">*</b>
+                        <b title="This field is required" style="color:red">*</b>
                     }
 
                     <b title="@Model.Discription">@displayName</b>
@@ -104,7 +103,7 @@
 
                         if (Model.DataType.ToLower().Equals("text") ||
                             (Model.DataType.ToLower().Equals("string") &&
-                            Model.Value!= null && Model.Value.ToString().Length>80))
+                            Model.Value!= null && Model.Value.ToString().Length>=60))
                         {
                             if (!locked)
                             {
@@ -116,8 +115,9 @@
                                             Id = @idInput,
                                             PackageId = @Model.Parent.Id,
                                             Title = @errorMessage,
-                                            @class = "bx-textarea bx-metadataFormTextInput" + @errorClass,
-                                            onkeyup = "OnKeyUpTextArea(this)"
+                                            @class = "bx-input bx-metadataFormTextInput " + @errorClass,
+                                            onkeyup = "OnKeyUpTextArea(this)",
+                                            OnLoad = "OnKeyUpTextInput(this)"
                                         })
                                 }
                                 else
@@ -132,11 +132,9 @@
                             }
                             else
                             {
-                                if (Model.Value != null)
-                                {
-                                    <span>@Model.Value.ToString()</span>
-                                } 
-                                @*@Html.TextAreaFor(m => m.Value, new { OnChange = "OnChange(this)", disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-textarea " + @errorClass + " " + lockedClass })*@
+
+                                @Html.TextAreaFor(m => m.Value, new { disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input bx-metadataFormTextInput " + @errorClass + " " + lockedClass })
+
                             }
 
                         
@@ -192,11 +190,14 @@
                             }
                             else
                             {
-                                if (Model.Value != null)
-                                {
-                                    <span>@Model.Value.ToString()</span>
-                                } 
-                                @*@Html.TextBoxFor(m => m.Value, new {OnChange = "OnChange(this)", disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input " + @errorClass + " " + lockedClass});*@
+                                @*<div class="bx-input bx-metadataFormTextInput" style="vertical-align: middle" >
+                                    @if (Model.Value != null)
+                                    {
+                                        @Model.Value.ToString()
+                                    }
+                                </div>*@
+                                @Html.TextBoxFor(m => m.Value, new { disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input bx-metadataFormTextInput " + @errorClass + " " + lockedClass })
+
                             }
                         }
 
@@ -243,12 +244,13 @@
                                                     .Value(value)
                                                     .ClientEvents(events => events
                                                     .OnChange("OnChangeNumbers"))
-                                                    .InputHtmlAttributes(new { PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input " + @errorClass })
+                                                    .InputHtmlAttributes(new { PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input bx-metadataFormTextInput " + @errorClass })
                             )
                         }
                         else
                         {
-                            @Html.TextBoxFor(m => m.Value, new { OnChange = "OnChange(this)", disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input " + @errorClass + " " + lockedClass })
+
+                            @Html.TextBoxFor(m => m.Value, new { disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input bx-metadataFormTextInput " + @errorClass + " " + lockedClass })
                         }
                     }
 
@@ -257,11 +259,11 @@
                     {
                         if (!locked)
                         {
-                            @Html.TextBoxFor(m => m.Value, new { OnChange = "OnChange(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input " + @errorClass })
+                            @Html.TextBoxFor(m => m.Value, new { OnChange = "OnChange(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input bx-metadataFormTextInput " + @errorClass })
                         }
                         else
                         {
-                            @Html.TextBoxFor(m => m.Value, new { OnChange = "OnChange(this)", disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input " + @errorClass })
+                            @Html.TextBoxFor(m => m.Value, new { OnChange = "OnChange(this)", disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input bx-metadataFormTextInput " + @errorClass })
                         }
                     }
 
@@ -279,13 +281,19 @@
                             {
                                 value = "";//@defaultDate.ToString();
                             }
+                            string format = Model.DisplayPattern;
+
+                            if (string.IsNullOrEmpty(format))
+                            {
+                                format = "yyy-MM-dd";
+                            }
 
                             @(Html.Telerik().DatePicker()
                                 .Name(@idInput)
                                 .ShowButton(true)
                                 .TodayButton("d")
                                 .OpenOnFocus(true)
-                                .Format("dd/MM/yyyy")
+                                .Format(format)
                                 .Value(value)
                                 .ClientEvents(events => events
                                     .OnChange("OnChangeDatePicker"))
@@ -293,7 +301,7 @@
                         }
                         else
                         {
-                            @Html.TextBoxFor(m => m.Value, new { OnChange = "OnChange(this)", disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input " + @errorClass })
+                            @Html.TextBoxFor(m => m.Value, new { disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input bx-metadataFormTextInput " + @errorClass + " " + lockedClass })
                         }
                     }
                 </td>
@@ -336,4 +344,3 @@
     }
 
 </div>
- 

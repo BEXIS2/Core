@@ -31,17 +31,17 @@
             </td>
             @*@if (Model.inUse)
             {
-                <td class="bx-rpm-delete bx-disabled hidden"><span id="deleteattribute" class="bx fa-trash-o" disabled="true"></span></td>
+                <td class="bx-rpm-delete bx-disabled"><span id="deleteattribute" class="bx fa-trash-o" disabled="true"></span></td>
             }
             else
             {
                 <td class="bx-rpm-delete" onclick="javascript:openAttrDelWindow(@Model.Id,'@Model.Name', 'dataattribure')"><span id="deleteattribute" class="bx fa-trash-o"></span></td>
             }*@
-            <td class="bx-rpm-expand"><span id="attributecollapse" class="bx bx-angle-double-down"></span></td>
-            <td class="bx-rpm-select" onclick="javascript:addVariable(@Model.Id,'@Model.Name')"><span class="bx bx-next"></span></td>
+            <td class="bx-rpm-expand" title="Show Details"><span id="attributecollapse" class="bx bx-angle-double-down"></span></td>
+            <td class="bx-rpm-select" title="Add Variable" onclick="javascript:addVariable(@Model.Id,'@Model.Name')"><span class="bx bx-next bx-button function small"></span></td>
         </tr>
         <tr class="hidden hiddenelements">
-            <td colspan="7">
+            <td colspan="7" class="description">
                 <div class="bx-rpm-label">Description</div>
                 <div class="bx-rpm-text">
                     @Model.Description

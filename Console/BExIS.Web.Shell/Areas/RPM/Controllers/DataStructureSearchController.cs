@@ -7,6 +7,9 @@ using BExIS.Web.Shell.Areas.RPM.Models;
 using BExIS.RPM.Output;
 using BExIS.Web.Shell.Areas.RPM.Classes;
 using System.Collections.Generic;
+using Vaiona.Web.Mvc.Models;
+using Vaiona.Web.Extensions;
+using Vaiona.Logging;
 
 namespace BExIS.Web.Shell.Areas.RPM.Controllers
 {
@@ -14,12 +17,14 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
     {
         public ActionResult Index()
         {
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Data Structure Search", this.Session.GetTenant());
             return View();
         }
 
         [GridAction]
         public ActionResult _dataStructureResultGridBinding(long[] previewIds, string searchTerms)
         {
+            searchTerms = Server.UrlDecode(searchTerms);
             return View(new GridModel(new DataStructureResultsModel(previewIds, searchTerms).dataStructureResults));
         }
 
@@ -41,6 +46,8 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
         public ActionResult _createDataStructureBinding(long Id, string Name, string Description, bool isSructured, bool inUse, bool copy)
         {
+            Name = Server.UrlDecode(Name);
+            Description = Server.UrlDecode(Description);
             MessageModel DataStructureValidation = MessageModel.validateDataStructureInUse(Id);
             if (DataStructureValidation.hasMessage && DataStructureValidation.CssId == "0")
                 return PartialView("_messageWindow", DataStructureValidation);        
@@ -72,12 +79,16 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
         public ActionResult createDataStructure(long Id, string Name, bool isStructured, string Description = "", string cssId = "", bool inUse = false)
         {
+            Name = Server.UrlDecode(Name);
+            Description = Server.UrlDecode(Description);
             MessageModel DataStructureValidation = storeDataStructure(Id, Name.Trim(), isStructured, Description.Trim(), cssId, inUse);
             return PartialView("_message", DataStructureValidation);
         }
 
         public MessageModel storeDataStructure(long Id, string Name, bool isStructured, string Description ="", string cssId = "", bool inUse = false)
         {
+            Name = Server.UrlDecode(Name);
+            Description = Server.UrlDecode(Description);
             MessageModel DataStructureValidation = MessageModel.validateDataStructureInUse(Id);
             if (DataStructureValidation.hasMessage && inUse == false)
             {
@@ -99,6 +110,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                         if (Id == 0)
                         {
                             dataStructure = dataStructureManager.CreateStructuredDataStructure(Name.Trim(), Description.Trim(), null, null, DataStructureCategory.Generic);
+                            LoggerFactory.LogData(dataStructure.Id.ToString(), typeof(DataStructure).Name, Vaiona.Entities.Logging.CrudState.Created);
                             return new MessageModel()
                             {
                                 Message = dataStructure.Id.ToString(),
@@ -112,6 +124,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                             StructuredDataStructure.Name = Name;
                             StructuredDataStructure.Description = Description;
                             dataStructure = dataStructureManager.UpdateStructuredDataStructure(StructuredDataStructure);
+                            LoggerFactory.LogData(dataStructure.Id.ToString(), typeof(DataStructure).Name, Vaiona.Entities.Logging.CrudState.Created);
                             return new MessageModel()
                             {
                                 Message = Id.ToString(),
@@ -125,6 +138,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                         if (Id == 0)
                         {
                             dataStructure = dataStructureManager.CreateUnStructuredDataStructure(Name.Trim(), Description.Trim());
+                            LoggerFactory.LogData(dataStructure.Id.ToString(), typeof(DataStructure).Name, Vaiona.Entities.Logging.CrudState.Created);
                             return new MessageModel()
                             {
                                 Message = "refresh DataStructureResultGrid",
@@ -138,6 +152,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                             unStructuredDataStructure.Name = Name;
                             unStructuredDataStructure.Description = Description;
                             dataStructure = dataStructureManager.UpdateUnStructuredDataStructure(unStructuredDataStructure);
+                            LoggerFactory.LogData(dataStructure.Id.ToString(), typeof(DataStructure).Name, Vaiona.Entities.Logging.CrudState.Created);
                             return new MessageModel()
                             {
                                 Message = "refresh DataStructureResultGrid",
@@ -152,11 +167,14 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
         public ActionResult _validateDataStructureName(long Id, string Name , string cssId)
         {
+            Name = Server.UrlDecode(Name);
             return PartialView("_message", MessageModel.validateDataStructureName(Id, Name, cssId));
         }
 
         public ActionResult copyDataStructure(long Id, bool isStructured, string Name = "" , string Description = "", string cssId = "")
         {
+            Name = Server.UrlDecode(Name);
+            Description = Server.UrlDecode(Description);
             DataStructureManager dataStructureManager = new DataStructureManager();
 
             if (!isStructured)
@@ -172,8 +190,8 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                     if (Description == "" && dataStructure.Description != null)
                     {
                         Description = dataStructure.Description;
-                    }  
-                         
+                    }
+                    LoggerFactory.LogCustom("Copy Data Structure" + Id);
                     return createDataStructure(0, Name.Trim(), isStructured, Description.Trim(), cssId);
                 }
             }
@@ -206,6 +224,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                         }
                         DataStructureIO.setVariableOrder(dataStructureCopy, order);
                     }
+                    LoggerFactory.LogCustom("Copy Data Structure" + Id);
                     return PartialView("_message", messageModel);
                 }
             }

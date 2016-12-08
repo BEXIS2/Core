@@ -34,7 +34,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
         public ActionResult AttributeManager(long dataStructureId = 0, bool showConstraints = false)
         {
-            ViewBag.Title = PresentationModel.GetViewTitleForTenant( "Manage Data Attributes", this.Session.GetTenant());
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Manage Variable Templates", this.Session.GetTenant());
             if (Session["Window"] == null)
                 Session["Window"] = false;
             if(dataStructureId == 0)

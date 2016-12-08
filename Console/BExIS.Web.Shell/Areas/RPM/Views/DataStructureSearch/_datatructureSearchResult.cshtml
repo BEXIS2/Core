@@ -4,54 +4,61 @@
 @model string
 
 @{Html.Telerik().Grid<DataStructureResultStruct>()
-                .Name("bx-rpm-dataStructureResultGrid")
-                .HtmlAttributes(new { @class = "bx-rpm-resultGrid" })
-                .DataBinding(dataBinding => dataBinding
-                    .Ajax()
-                    .Select("_dataStructureResultGridBinding", "DataStructureSearch", new { area = "RPM", searchTerms = Model })
-                )
-                .ClientEvents(e =>
-                {
-                    e.OnDataBinding("dataStructureResultGrid_onDataBinding");
-                    e.OnDataBound("dataStructureResultGrid_onDataBound");
-                })
-                .Sortable(sorting => sorting.OrderBy(sortOrder => sortOrder.Add(c => c.Title)))
-                .Columns(columns =>
-                {
-                    columns.Bound(c => c.Id)
-                        .Width(100);
-                    columns.Bound(c => c.Title);
-                    columns.Bound(c => c.Description);
-                    columns.Bound(c => c.Structured)
-                        .Filterable(false)
-                        .HeaderHtmlAttributes(new { @class = "bx-rpm-gridfunction" });
-                })
-                .Filterable()
-                .ClientRowTemplate(
-                    "<tr class='bx-rpm-datastructure-item' id='<#= Id #>' value='<#= Id #>, \"<#= Title #>\", \"<#= Description #>\", <#= Structured #>, <#= inUse #>' structured='<#= Structured #>' inuse='<#= inUse #>'>" +
-                      "<td class='bx-rpm-result id'><#= Id #></td>" +
-                      "<td class='bx-rpm-result'><span class='bx-rpm-title clickable' id='<#= Id #>_title' onclick='javascript:clickDatastructure(<#= Id #>)'><#= Title #><span id='<#= Id #>_collapse' class='bx bx-angle-double-down'></span></span></td>" +
-                      "<td class='bx-rpm-result'><#= Description #></td>" +
-                      "<td class='bx-rpm-result bx-rpm-gridfunction'>" +
-                          "<a id='<#= Id #>_edit' class='bx bx-grid-function bx-edit' href='/RPM/DataStructureEdit/?dataStructureId=<#= Id #>'></a>" +
-                          "<a id='<#= Id #>_download' class='bx bx-grid-function bx-download' href='/RPM/DataStructureIO/downloadTemplate?id=<#= Id #>'></a>" +
-                          "<a id='<#= Id #>_copy' class='bx bx-grid-function bx-copy' href='javascript:openCreateWindow(<#= Id #>, \"<#= Title #>\", \"<#= Description #>\", <#= Structured #>, <#= inUse #>, true)'></a>" +
-                          //"<a id='<#= Id #>_delete' class='bx bx-grid-function bx-trash' href='javascript:openDelWindow(<#= Id #>, \"<#= Title #>\")'></a>" +
-                      "</td>" +
-                  "</tr>" +
-                  "<tr class='bx-rpm-preview bx-rpm-hidden' id ='<#= Id #>_preview' preview='<#= Preview #>'>" +
-                      "<td colspan='3' id='<#= Id #>_content'>" +
-                        "<h3 class='bx-rpm-loading'><span class='fa fa-spinner fa-pulse'></span> Loading Data Structure</h3>" +
-                      "</td>" +
-                  "</tr>" +
-                  "<tr>" +
-                      "<td class='bx-rpm-empty'></td>" +
-                      "<td class='bx-rpm-empty'></td>" +
-                      "<td class='bx-rpm-empty'></td>" +
-                      "<td class='bx-rpm-empty bx-rpm-gridfunction'></td>" +
-                  "</tr>"
-                )
-                .Render();
+    .Name("bx-rpm-dataStructureResultGrid")
+    .HtmlAttributes(new { @class = "bx-rpm-resultGrid" })
+    .DataBinding(dataBinding => dataBinding
+        .Ajax()
+        .Select("_dataStructureResultGridBinding", "DataStructureSearch", new { area = "RPM", searchTerms = Model })
+    )
+    .ClientEvents(e =>
+    {
+        e.OnDataBinding("dataStructureResultGrid_onDataBinding");
+        e.OnDataBound("dataStructureResultGrid_onDataBound");
+    })
+    .Sortable(sorting => sorting.OrderBy(sortOrder => sortOrder.Add(c => c.Title)))
+    .Columns(columns =>
+    {
+        columns.Bound(c => c.Id)
+    .Width(100);
+        columns.Bound(c => c.Title);
+        columns.Bound(c => c.Description);
+        columns.Bound(c => c.Structured)
+        .Filterable(false)
+        .Title("Tabular")
+        .HeaderHtmlAttributes(new { @class = "bx-rpm-gridfunction" });
+        columns.Template(
+        @<text>
+        </text>)
+    .HeaderHtmlAttributes(new { @class = "bx-rpm-gridfunction" });
+    })
+    .Filterable()
+    .ClientRowTemplate(
+        "<tr class='bx-rpm-datastructure-item' id='<#= Id #>' structured='<#= Structured #>' inuse='<#= inUse #>'>" +
+        "<td class='bx-rpm-result id'><#= Id #></td>" +
+        "<td class='bx-rpm-result'><span class='bx-rpm-title clickable' id='<#= Id #>_title' onclick='javascript:clickDatastructure(<#= Id #>)'><#= Title #><span id='<#= Id #>_collapse' class='bx bx-angle-double-down'></span></span></td>" +
+        "<td class='bx-rpm-result bx-rpm-description'><#= Description #></td>" +
+        "<td class='bx-rpm-result bx-rpm-structured'><span class='bx' id='<#= Id #>_structured'></span></td>" +
+        "<td class='bx-rpm-result bx-rpm-gridfunction'>" +
+            "<a id='<#= Id #>_edit' title='Edit Data Structure' class='bx bx-grid-function bx-edit' href='/RPM/DataStructureEdit/?dataStructureId=<#= Id #>'></a>" +
+            "<a id='<#= Id #>_download' title='Download Template' class='bx bx-grid-function bx-download' href='/RPM/DataStructureIO/downloadTemplate?id=<#= Id #>'></a>" +
+            "<a id='<#= Id #>_copy' title='Copy Data Structure' class='bx bx-grid-function bx-copy'></a>" +
+        "</td>" +
+    "</tr>" +
+    "<tr class='bx-rpm-preview bx-rpm-hidden' id ='<#= Id #>_preview' preview='<#= Preview #>'>" +
+        "<td class='bx-rpm-empty'></td>" +
+        "<td colspan='3' id='<#= Id #>_content'>" +
+            "<h3 class='bx-rpm-loading'><span class='fa fa-spinner fa-pulse'></span> Loading Data Structure</h3>" +
+        "</td>" +
+    "</tr>" +
+    "<tr>" +
+        "<td class='bx-rpm-empty'></td>" +
+        "<td class='bx-rpm-empty'></td>" +
+        "<td class='bx-rpm-empty'></td>" +
+        "<td class='bx-rpm-empty'></td>" +
+        "<td class='bx-rpm-empty bx-rpm-gridfunction'></td>" +
+    "</tr>"
+    )
+    .Render();
 }
 
 <script type="text/javascript">
@@ -90,11 +97,20 @@
 
         for (i = 0; i < $('.bx-rpm-datastructure-item').length; i++) {
             var id = $('.bx-rpm-datastructure-item')[i].id;
+            var name = encodeURIComponent(escape($('#' + id).find('.bx-rpm-title').text()));
+            var description = encodeURIComponent(escape($('#' + id).find('.bx-rpm-description').text()));
+            var parameters = id + ", '" + name + "', '" + description + "', " + $('#' + id).attr('structured') + ', ' + $('#' + id).attr('inUse') + ', true';
+            $('#' + id + '_copy').attr('href', 'javascript:openCreateWindow(' + parameters + ')');
+
+            if ($('#' + id).attr('structured') == 'true')
+                $('#' + id + '_structured').addClass('fa-check');
+
             //prepare UI for UnStructuredDataStructure
             if ($('#' + id).attr('structured') == 'false') {
                 $('#' + id + '_download').addClass('bx-disabled');
                 $('#' + id + '_download').removeAttr('href');
-                $('#' + id + '_edit').attr('href', 'javascript:openCreateWindow(' + $('.bx-rpm-datastructure-item')[i].getAttribute('value') + ', false)');
+                parameters = id + ", '" + name + "', '" + description + "', " + $('#' + id).attr('structured') + ', ' + $('#' + id).attr('inUse') + ', false';
+                $('#' + id + '_edit').attr('href', 'javascript:openCreateWindow(' + parameters + ')');
                 $('#' + id + '_title').removeAttr('onclick');
                 $('#' + id + '_title').removeClass('clickable');
                 $('#' + id + '_collapse').remove();
@@ -104,6 +120,7 @@
                 $('#' + id + '_edit').removeClass('bx-edit');
                 $('#' + id + '_edit').addClass('bx-show');
             }
+            $(".t-grid").trigger('load');
         }
 
         //prepare UI for DataStructure preview
@@ -121,12 +138,15 @@
     function dataStructurePreviewGrid_onDataBound(e) {
         resetAllTelerikIconTitles();
         addTooltips();
+        $(this).parent().find('.bx-rpm-loading').remove();
+        $(this).toggle();
+        $('#bx-rpm-dataStructureResultGrid .bx-rpm-preview td').removeAttr('title');
     }
 
     function loadPreview(id) {
         var parameters = '/?dataStructureId=' + id + '&structured=' + $('#' + id).attr('structured');
         $.get('@Url.Action("_dataStructurePreviewBinding", "DataStructureSearch", new { area = "RPM"} )' + parameters, function (data) {
-            $('#' + id + '_content').html(data);
+            $('#' + id + '_content').append(data);
         });
     }
 

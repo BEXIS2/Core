@@ -45,6 +45,8 @@ using System.Web.Script.Serialization;
 using System.Xml;
 using BExIS.Web.Shell.Areas.RPM.Controllers;
 using BExIS.Web.Shell.Areas.RPM.Models;
+using Vaiona.Logging;
+using Vaiona.Logging.Aspects;
 
 
 namespace BExIS.Web.Shell.Areas.DDM.Controllers
@@ -151,7 +153,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
             //set function actions of COPY, RESET,CANCEL,SUBMIT
             ActionInfo copyAction = new ActionInfo();
-            copyAction.ActionName = "Index";
+            copyAction.ActionName = "Copy";
             copyAction.ControllerName = "CreateDataset";
             copyAction.AreaName = "DCM";
 
@@ -359,6 +361,9 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
                         string path = "";
 
+                        string message = string.Format("dataset {0} version {1} was downloaded as excel.", id,
+                                                                datasetVersion.Id);
+
                         // if filter selected
                         if (filterInUse())
                         {
@@ -367,6 +372,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
                             OutputDataManager ioOutputDataManager = new OutputDataManager();
                             path = ioOutputDataManager.GenerateExcelFile(id, title);
+                            LoggerFactory.LogCustom(message);
 
                             return File(path, "application/xlsm", title + ext);
 
@@ -377,7 +383,8 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         else
                         {
                             OutputDataManager outputDataManager = new OutputDataManager();
-                            path = outputDataManager.GenerateExcelFile(id, title);  
+                            path = outputDataManager.GenerateExcelFile(id, title);                            
+                            LoggerFactory.LogCustom(message);
 
                             return File(Path.Combine(AppConfiguration.DataPath, path), "application/xlsm", title + ext);
                         }
@@ -402,7 +409,8 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         OutputDataManager ioOutputDataManager = new OutputDataManager();
                         string title = getTitle(writer.GetTitle(id));
                         string path = "";
-
+                        string message = string.Format("dataset {0} version {1} was downloaded as csv.", id,
+                                                                datasetVersion.Id);
                         // if filter selected
                         if (filterInUse())
                         {
@@ -416,12 +424,16 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
                             path = ioOutputDataManager.GenerateAsciiFile(id, title,"text/csv",visibleColumns);
 
+                            LoggerFactory.LogCustom(message);
+
                             return File(path, "text/csv", title + ext);
                             #endregion
                         }
                         else
                         {
                             path = ioOutputDataManager.GenerateAsciiFile(id, title, "text/csv");
+
+                            LoggerFactory.LogCustom(message);
 
                             return File(path, "text/csv", title + ".csv");
                         }
@@ -441,12 +453,17 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
                     try
                     {
+                        
+
                         DatasetManager datasetManager = new DatasetManager();
                         DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
                         AsciiWriter writer = new AsciiWriter(TextSeperator.comma);
                         OutputDataManager ioOutputDataManager = new OutputDataManager();
                         string title = getTitle(writer.GetTitle(id));
                         string path = "";
+
+                        string message = string.Format("dataset {0} version {1} was downloaded as txt.", id,
+                                                        datasetVersion.Id);
 
                         // if filter selected
                         if (filterInUse())
@@ -461,12 +478,18 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
                             path = ioOutputDataManager.GenerateAsciiFile(id, title, "text/plain", visibleColumns);
 
+                            LoggerFactory.LogCustom(message);
+
                             return File(path, "text/csv", title + ext);
+
                             #endregion
                         }
                         else
                         {
                             path = ioOutputDataManager.GenerateAsciiFile(id, title, "text/plain");
+
+                            
+                            LoggerFactory.LogCustom(message);
 
                             return File(path, "text/plain", title + ".txt");
                         }
@@ -638,6 +661,9 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
         public ActionResult DownloadFile(string path,string mimeType)
         {
             string title = path.Split('\\').Last();
+            string message = string.Format("file was downloaded");
+            LoggerFactory.LogCustom(message);
+
             return File(Path.Combine(AppConfiguration.DataPath, path),mimeType, title);
         }
 
@@ -655,6 +681,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
                 //TITLE
                 string title = XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title);
+                title = String.IsNullOrEmpty(title) ? "unknown" : title;
                      
                 string zipPath = Path.Combine(AppConfiguration.DataPath, "Datasets", id.ToString(),title + ".zip");
 
@@ -678,6 +705,11 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 }
 
                 zip.Save(zipPath);
+
+                string message = string.Format("all files from dataset {0} version {1} was downloaded.", datasetVersion.Dataset.Id,
+                        datasetVersion.Id);
+                LoggerFactory.LogCustom(message);
+
 
                 return File(zipPath, "application/zip", title + ".zip");
             }
@@ -851,6 +883,15 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             model.DataRepositories = publishingManager.DataRepositories;
             model.DatasetId = datasetId;
 
+            // 
+            PermissionManager permissionManager = new PermissionManager();
+            SubjectManager subjectManager = new SubjectManager();
+
+            model.DownloadRights = permissionManager.HasUserDataAccess(HttpContext.User.Identity.Name, 1,
+                datasetId, RightType.Download);
+            model.EditRights = permissionManager.HasUserDataAccess(HttpContext.User.Identity.Name, 1,
+                datasetId, RightType.Download);
+
             if (datasetVersionId == -1)
             {
                 DatasetManager datasetManager = new DatasetManager();
@@ -872,12 +913,19 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                             FileInfo fi = new FileInfo(filepath);
 
                         var creationTime = fi.CreationTimeUtc;
+                        var tmpFileNameSplit = fi.Name.Split('_');
+                        long version = 0;
+                        if (tmpFileNameSplit != null && tmpFileNameSplit.Length > 0)
+                        {
+                            string versionAsString = tmpFileNameSplit[1];
+                            version = Convert.ToInt64(versionAsString);
+                        }
 
                         model.RepoFilesDictionary.Add(
                             new publishedFileModel()
                             {
                                 DatasetId = datasetId,
-                                DatasetVersionId = datasetVersionId,
+                                DatasetVersionId = version,
                                 DataRepository = repo,
                                 CreationDate = creationTime
                             });
@@ -929,6 +977,9 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         if (exportNames.Contains(dp.ReqiuredMetadataStandard)) model.IsMetadataConvertable = true;
                     }
 
+                    // Validate
+                    model.metadataValidMessage = OutputMetadataManager.IsValideAgainstSchema(datasetid, TransmissionType.mappingFileExport, datarepo);
+
                     #endregion
 
                     #region primary Data
@@ -953,6 +1004,8 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
             bool isDataConvertable = false;
             bool isMetadataConvertable = false;
+            string metadataValidMessage = "";
+            bool exist = false;
 
             //get datarepos
             SubmissionManager publishingManager = new SubmissionManager();
@@ -971,6 +1024,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 if (publishingManager.Exist(datasetid, version, dp))
                 {
                     //model.Exist = true;
+                    exist = true;
                 }
                 else
                 {
@@ -981,6 +1035,9 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                     {
                         //model.IsMetadataConvertable = true;
                         isMetadataConvertable = true;
+
+                        // Validate
+                        metadataValidMessage = OutputMetadataManager.IsValideAgainstSchema(datasetid, TransmissionType.mappingFileExport, datarepo);
                     }
                     else
                     {
@@ -990,6 +1047,9 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         if (exportNames.Contains(dp.ReqiuredMetadataStandard))
                             isMetadataConvertable = true;
 
+                        metadataValidMessage = OutputMetadataManager.IsValideAgainstSchema(datasetid,
+                            TransmissionType.mappingFileExport, datarepo);
+
                     }
 
                     #endregion
@@ -997,7 +1057,6 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                     #region primary Data
 
                     //todo need a check if the primary data is structured or not, if its unstructured also export should be possible
-                    
 
                     if (dp.PrimaryDataFormat.ToLower().Contains("text/plain") ||
                         dp.PrimaryDataFormat.ToLower().Contains("text/csv") ||
@@ -1011,7 +1070,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 }
             }
 
-            return (isMetadataConvertable && isDataConvertable)?Json(true):Json(false);
+            return Json(new { isMetadataConvertable = isMetadataConvertable, isDataConvertable = isDataConvertable, metadataValidMessage = metadataValidMessage, Exist = exist }); 
         }
 
         public ActionResult DownloadZip(string datarepo ,long datasetid, long datasetversionid)
@@ -1030,6 +1089,10 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 string zipName = publishingManager.GetZipFileName(datasetid, datasetversionid);
                 string zipPath = publishingManager.GetDirectoryPath(datasetid, dataRepo);
                 string zipFilePath = Path.Combine(zipPath, zipName);
+
+                string message = string.Format("published dataset {0} version {1} for repository {2} was downloaded.", datasetid,
+                        datasetversionid, datarepo);
+                LoggerFactory.LogCustom(message);
 
                 return File(zipFilePath, "application/zip", zipName);
             }
@@ -1157,6 +1220,10 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         zip.AddFile(fullFilePath,"");
 
                     }
+
+                    string message = string.Format("dataset {0} version {1} was published for repository {2}", datasetId,
+                        datasetVersion.Id, dataRepository.Name);
+                    LoggerFactory.LogCustom(message);
 
 
                     zip.Save(zipFilePath);

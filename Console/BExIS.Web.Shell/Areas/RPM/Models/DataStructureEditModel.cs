@@ -208,6 +208,11 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
 
         public VariablePreviewStruct fill(Variable variable, bool getConstraints)
         {
+            variable.Unit = variable.Unit ?? new Unit();
+            variable.Unit.Dimension = variable.Unit.Dimension ?? new Dimension();
+            variable.DataAttribute = variable.DataAttribute ?? new DataAttribute();
+            variable.DataAttribute.DataType = variable.DataAttribute.DataType ?? new DataType();
+
             this.Id = variable.Id;
             this.Name = variable.Label;
             this.Description = variable.Description;
@@ -238,7 +243,10 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
         {
             List<ItemStruct> UnitStructs = new List<ItemStruct>();
             UnitManager unitmanager = new UnitManager();
-            List<Unit> units = unitmanager.DimensionRepo.Get(dimensionId).Units.ToList();
+            List<Unit> units = new List<Unit>();
+            if(unitmanager.DimensionRepo.Get(dimensionId) != null)
+                units = unitmanager.DimensionRepo.Get(dimensionId).Units.ToList();
+
             ItemStruct tempUnitStruct = new ItemStruct();
             foreach (Unit u in units)
             {

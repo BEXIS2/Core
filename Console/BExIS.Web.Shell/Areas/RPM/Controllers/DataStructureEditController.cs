@@ -11,6 +11,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Collections.Generic;
 using Vaiona.Utils.Cfg;
+using Vaiona.Web.Extensions;
+using Vaiona.Web.Mvc.Models;
+using Vaiona.Logging;
 
 namespace BExIS.Web.Shell.Areas.RPM.Controllers
 {
@@ -18,7 +21,8 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
     {
         public ActionResult Index(long DataStructureId = 0)
         {
-            if (DataStructureId != 0)
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Data Structure Edit", this.Session.GetTenant());
+            if (DataStructureId != 0 && new DataStructureManager().StructuredDataStructureRepo.Get(DataStructureId) != null)
                 return View(DataStructureId);
             else
                 return RedirectToAction("Index", "DataStructureSearch");
@@ -41,6 +45,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
         public ActionResult _getVariableElement(long attributeId, string variableName)
         {
+            variableName = Server.UrlDecode(variableName);
             MessageModel validateVariable = MessageModel.validateAttributeDelete(attributeId);
             if (validateVariable.hasMessage && validateVariable.CssId == "0")
             {
@@ -56,6 +61,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
         public ActionResult _getAttributeElement(long attributeId, string variableName)
         {
+            variableName = Server.UrlDecode(variableName);
             MessageModel validateAttribute = MessageModel.validateAttributeDelete(attributeId);
             if (validateAttribute.hasMessage && validateAttribute.CssId == "0")
             {
@@ -87,11 +93,13 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                         dataStructureManager.RemoveVariableUsage(v);
                     }
                     dataStructureManager.DeleteStructuredDataStructure(dataStructure);
+                    LoggerFactory.LogData(dataStructure.Id.ToString(), typeof(DataStructure).Name, Vaiona.Entities.Logging.CrudState.Deleted);
                 }
                 else
                 {
                     UnStructuredDataStructure dataStructure = dataStructureManager.UnStructuredDataStructureRepo.Get(Id);
                     dataStructureManager.DeleteUnStructuredDataStructure(dataStructure);
+                    LoggerFactory.LogData(dataStructure.Id.ToString(), typeof(DataStructure).Name, Vaiona.Entities.Logging.CrudState.Deleted);
                 }
                 return PartialView("_message", new MessageModel()
                 {
@@ -111,6 +119,14 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             MessageModel messageModel = MessageModel.validateDataStructureInUse(dataStructure.Id, dataStructure);
             if (messageModel.hasMessage)
             {
+                foreach (Variable v in dataStructure.Variables)
+                {
+                    if (variables.Select(svs => svs.Id).ToList().Contains(v.Id))
+                    { 
+                        v.Description = variables.Where(svs => svs.Id == v.Id).FirstOrDefault().Description;
+                        dataStructure = dataStructureManager.UpdateStructuredDataStructure(dataStructure);
+                    }
+                }
                 return PartialView("_messageWindow", messageModel);
             }
 
@@ -160,11 +176,14 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                         svs.Description = "";
 
                     variable = dataStructure.Variables.Where(v => v.Id == svs.Id).FirstOrDefault();
-                    variable.Label = svs.Lable.Trim();
-                    variable.Description = svs.Description.Trim();
-                    variable.Unit = new UnitManager().Repo.Get(svs.UnitId);
-                    variable.DataAttribute = new DataContainerManager().DataAttributeRepo.Get(svs.AttributeId);
-                    variable.IsValueOptional = svs.isOptional;
+                    if (variable != null)
+                    {
+                        variable.Label = svs.Lable.Trim();
+                        variable.Description = svs.Description.Trim();
+                        variable.Unit = new UnitManager().Repo.Get(svs.UnitId);
+                        variable.DataAttribute = new DataContainerManager().DataAttributeRepo.Get(svs.AttributeId);
+                        variable.IsValueOptional = svs.isOptional;
+                    }
                 }
 
                 dataStructure = dataStructureManager.UpdateStructuredDataStructure(dataStructure);
@@ -177,6 +196,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                     dataStructureManager.RemoveVariableUsage(v);
                 }
             }
+            LoggerFactory.LogCustom("Variables for Data Structure " + Id + " stored.");
             return Json(returnObject, JsonRequestBehavior.AllowGet);
         }
 
@@ -211,6 +231,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
         public ActionResult getMessageWindow(string message,bool hasMessage, string cssId)
         {
+            message = Server.UrlDecode(message);
             return PartialView("_messageWindow", new MessageModel()
             {
                 Message = message,
@@ -226,17 +247,22 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 
         public ActionResult _validateAttributeName(long Id, string Name, string cssId)
         {
+            Name = Server.UrlDecode(Name);
             return PartialView("_message", MessageModel.validateAttributeName(Id, Name, cssId));
         }
 
         public ActionResult createAtttribute(long Id, string Name, long unitId, long dataTypeId, string Description = "", string cssId = "", bool inUse = false)
         {
+            Name = Server.UrlDecode(Name);
+            Description = Server.UrlDecode(Description);
             MessageModel AttributeValidation = storeAtttribute(Id, Name.Trim(), unitId, dataTypeId, Description.Trim(), cssId, inUse);
             return PartialView("_message", AttributeValidation);
         }
 
         public MessageModel storeAtttribute(long Id, string Name, long unitId, long dataTypeId, string Description = "", string cssId = "", bool inUse = false)
         {
+            Name = Server.UrlDecode(Name);
+            Description = Server.UrlDecode(Description);
             MessageModel DataStructureValidation = MessageModel.validateAttributeInUse(Id);
             if (DataStructureValidation.hasMessage && inUse == false)
             {
@@ -452,7 +478,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
             DataContainerManager dcManager = new DataContainerManager();
             DataAttribute dataAttribute = dcManager.DataAttributeRepo.Get(constraintModel.AttributeId);
 
-            if (constraintModel.MatchingPhrase != "")
+            if (constraintModel.MatchingPhrase != null && constraintModel.MatchingPhrase != "")
             {
                 if (constraintModel.Id == 0)
                 {
@@ -480,7 +506,9 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
         {
             DataContainerManager dcManager = new DataContainerManager();
             DataAttribute dataAttribute = dcManager.DataAttributeRepo.Get(constraintModel.AttributeId);
-            List<DomainItem> items = createDomainItems(constraintModel.Terms.Trim());
+            List<DomainItem> items = new List<DomainItem>();
+            if (constraintModel.Terms != null && constraintModel.Terms.Trim() != "")
+                items = createDomainItems(constraintModel.Terms.Trim());
 
             if (items.Count > 0)
             {

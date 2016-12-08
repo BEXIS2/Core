@@ -54,10 +54,11 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             }
 
             if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.TITLE_NODE))
-                model.TitleNode = TaskManager.Bus[ImportMetadataStructureTaskManager.TITLE_NODE].ToString();
+                model.TitleNode = GetDisplayName((string) TaskManager.Bus[ImportMetadataStructureTaskManager.TITLE_NODE]);
 
             if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.DESCRIPTION_NODE))
-                model.DescriptionNode = TaskManager.Bus[ImportMetadataStructureTaskManager.DESCRIPTION_NODE].ToString();
+                model.DescriptionNode =
+                    GetDisplayName((string) TaskManager.Bus[ImportMetadataStructureTaskManager.DESCRIPTION_NODE]);
             if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.ENTITY_TYPE_NODE))
                 model.EntityType = TaskManager.Bus[ImportMetadataStructureTaskManager.ENTITY_TYPE_NODE].ToString();
 
