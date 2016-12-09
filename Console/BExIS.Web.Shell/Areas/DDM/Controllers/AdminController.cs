@@ -122,7 +122,6 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 return View("SearchDesigner", (List<SearchAttributeViewModel>)Session["searchAttributeList"]);
             }
 
-
             public ActionResult Save(SearchAttributeViewModel model)
             {
                 if (ModelState.IsValid)

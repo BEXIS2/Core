@@ -12,5 +12,10 @@ namespace BExIS.Web.Shell.Areas.DIM.Models
     public class DatasetModel
     {
         public DataTable DataTable { get; set; }
+
+        public DatasetModel()
+        {
+            DataTable = new DataTable("empty");
+        }
     }
 }

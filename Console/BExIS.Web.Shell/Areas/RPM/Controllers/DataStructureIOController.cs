@@ -16,7 +16,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
 {
     public class DataStructureIOController : Controller
     {
-        public ActionResult downloadTemplate(long id)
+        public FileResult downloadTemplate(long id)
         {
             if (id != 0)
             {
@@ -24,32 +24,35 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                 StructuredDataStructure dataStructure = new StructuredDataStructure();
                 dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(id);
 
-                ExcelTemplateProvider provider = new ExcelTemplateProvider("BExISppTemplate_Clean.xlsm");
-                provider.CreateTemplate(dataStructure);
-                string path = "";
-
-                XmlNode resources = dataStructure.TemplatePaths.FirstChild;
-
-                XmlNodeList resource = resources.ChildNodes;
-
-                foreach (XmlNode x in resource)
+                if (dataStructure != null)
                 {
-                    if (x.Attributes.GetNamedItem("Type").Value == "Excel")
-                        path = x.Attributes.GetNamedItem("Path").Value;
+                    ExcelTemplateProvider provider = new ExcelTemplateProvider("BExISppTemplate_Clean.xlsm");
+                    provider.CreateTemplate(dataStructure);
+                    string path = "";
 
+                    XmlNode resources = dataStructure.TemplatePaths.FirstChild;
+
+                    XmlNodeList resource = resources.ChildNodes;
+
+                    foreach (XmlNode x in resource)
+                    {
+                        if (x.Attributes.GetNamedItem("Type").Value == "Excel")
+                            path = x.Attributes.GetNamedItem("Path").Value;
+
+                    }
+                    string rgxPattern = "[<>?\":|\\\\/*]";
+                    string rgxReplace = "-";
+                    Regex rgx = new Regex(rgxPattern);
+
+                    string filename = rgx.Replace(dataStructure.Name, rgxReplace);
+
+                    if (filename.Length > 50)
+                        filename = filename.Substring(0, 50);
+
+                    return File(Path.Combine(AppConfiguration.DataPath, path), "application/xlsm", "Template_" + dataStructure.Id + "_" + filename + ".xlsm");
                 }
-                string rgxPattern = "[<>?\":|\\\\/*]";
-                string rgxReplace = "-";
-                Regex rgx = new Regex(rgxPattern);
-
-                string filename = rgx.Replace(dataStructure.Name, rgxReplace);
-
-                if (filename.Length > 50)
-                    filename = filename.Substring(0, 50);
-
-                return File(Path.Combine(AppConfiguration.DataPath, path), "application/xlsm", "Template_" + dataStructure.Id + "_" + filename + ".xlsm");
             }
-            return null;
+            return File(Path.Combine(AppConfiguration.GetModuleWorkspacePath("RPM"), "Template", "BExISppTemplate_Clean.xlsm"), "application/xlsm", "Template_" + id + "_No_Data_Structure.xlsm");
         }
     }
 }

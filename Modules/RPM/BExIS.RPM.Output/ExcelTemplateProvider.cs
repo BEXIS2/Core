@@ -132,7 +132,7 @@ namespace BExIS.RPM.Output
             return orderedVariables;
             }
             
-        public void CreateTemplate(StructuredDataStructure dataStructure)
+        public string CreateTemplate(StructuredDataStructure dataStructure)
         {
             DataStructureManager dataStructureManager = new DataStructureManager();
             List<Variable> variables = getOrderedVariables(dataStructure);
@@ -153,6 +153,7 @@ namespace BExIS.RPM.Output
             dataStructure.TemplatePaths = resources;
             dataStructureManager.UpdateStructuredDataStructure(dataStructure);
 
+            return Path.Combine(path, filename);
         }
 
         /// <summary>

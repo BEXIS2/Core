@@ -3,6 +3,7 @@ using System.Xml;
 using System.Xml.Linq;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Xml.Helpers;
+using BExIS.Xml.Services;
 
 namespace BExIS.Web.Shell.Areas.SAM.Models
 {
@@ -38,29 +39,16 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
     {
         public long Id { get; set; }
 
-        public int Version { get; set; }
-
         public string Title { get; set; }
 
         public bool IsPublic { get; set; }
 
-        public static DatasetGridRowModel Convert(Dataset dataset, bool isPublic)
+        public static DatasetGridRowModel Convert(DatasetVersion datasetVersion, bool isPublic)
         {
-            XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)dataset.MetadataStructure.Extra);
-            XElement temp = XmlUtility.GetXElementByAttribute("nodeRef", "name", "title", xDoc);
-
-            string xpath = temp.Attribute("value").Value.ToString();
-            XmlNode node = dataset.Versions.Last().Metadata.SelectSingleNode(xpath);
-
-            string title = "";
-            if(node!=null)
-            title = dataset.Versions.Last().Metadata.SelectSingleNode(xpath).InnerText;
-
             return new DatasetGridRowModel()
             {
-                Id = dataset.Id,
-                Version = dataset.VersionNo,
-                Title = title,
+                Id = datasetVersion.Dataset.Id,
+                Title = XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title),
                 IsPublic = isPublic
             };
         }

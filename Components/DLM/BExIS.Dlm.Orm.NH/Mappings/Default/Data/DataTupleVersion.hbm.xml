@@ -25,7 +25,7 @@
       <column name="TupleAction" />
     </property>
 
-    <property name="Timestamp" type="DateTime">
+    <property name="Timestamp" type="Timestamp">
       <column name="Timestamp"  index="idx_DataTupleVersions_timestamp"/>
     </property>
 

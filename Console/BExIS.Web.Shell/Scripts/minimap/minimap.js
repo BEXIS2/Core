@@ -281,7 +281,7 @@ SOFTWARE.
 
         var onClickHandler = function(e) {
             scrollTop(e);
-            mousedown= false;
+            mousedown = false;
         };
 
         var onMousedownHandler = function(e) {

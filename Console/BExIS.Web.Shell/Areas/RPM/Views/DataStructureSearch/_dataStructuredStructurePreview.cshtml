@@ -7,7 +7,7 @@
 @{
     Html.Telerik().Grid<VariablePreview>()
         .Name(Model + "_dataStructurePreviewGrid")
-        .HtmlAttributes(new { @class = "bx-rpm-previewGrid" })
+        .HtmlAttributes(new { @class = "bx-rpm-previewGrid", @style="display:none;"})
         .DataBinding(dataBinding => dataBinding
             .Ajax()
             .Select("_dataStructurePreviewGridBinding", "DataStructureSearch", new { area = "RPM", datastructureId = Model })

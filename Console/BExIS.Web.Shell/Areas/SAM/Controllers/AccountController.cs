@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Web.Mvc;
 using System.Web.Security;
-using BExIS.Dlm.Entities.Party;
-using BExIS.Dlm.Services.Party;
 using BExIS.Security.Entities.Authentication;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Subjects;
@@ -18,6 +15,7 @@ using BExIS.Security.Services.Subjects;
 using BExIS.Web.Shell.Areas.SAM.Models;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Extensions;
+using Vaiona.Logging;
 
 namespace BExIS.Web.Shell.Areas.SAM.Controllers
 {
@@ -164,17 +162,18 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
 
         public ActionResult Register()
         {
-            return PartialView("_RegisterPartial", new RegisterAccountModel());
+            return PartialView("_RegisterPartial", new AccountRegisterModel());
         }
 
         [HttpPost]
-        public ActionResult Register(RegisterAccountModel model, Dictionary<string, string> partyCustomAttributeValues)
+        public ActionResult Register(AccountRegisterModel model)
         {
             if (ModelState.IsValid)
             {
                 SubjectManager subjectManager = new SubjectManager();
 
-                User user = subjectManager.CreateUser(model.User.Username, model.User.Password, "", "", 1, "", model.User.AuthenticatorList.Id);
+                User user = subjectManager.CreateUser(model.Username, model.Password, model.FullName, model.Email, model.SecurityQuestion, model.SecurityAnswer, model.AuthenticatorList.Id);
+                LoggerFactory.LogData(user.Id.ToString(), typeof(User).Name, Vaiona.Entities.Logging.CrudState.Created);
 
                 // Feature
                 FeatureManager featureManager = new FeatureManager();
@@ -184,28 +183,11 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
                 PermissionManager permissionManager = new PermissionManager();
                 permissionManager.CreateFeaturePermission(user.Id, feature.Id);
 
-                FormsAuthentication.SetAuthCookie(model.User.Username, false);
+                FormsAuthentication.SetAuthCookie(model.Username, false);
                 return Json(new { success = true });
             }
 
             return PartialView("_RegisterPartial", model);
-        }
-
-        public ActionResult GetPartyCustomAttributes(int id)
-        {
-            long partyId = 0;
-            var partyIdStr = HttpContext.Request.Params["partyId"];
-            if (long.TryParse(partyIdStr, out partyId))
-            {
-                PartyManager pm = new PartyManager();
-                ViewBag.customAttrValues = pm.Repo.Get(partyId).CustomAttributeValues.ToList();
-            }
-            var customAttrList = new List<PartyCustomAttribute>();
-            PartyTypeManager partyTypeManager = new PartyTypeManager();
-            var partyType = partyTypeManager.Repo.Get(item => item.Id == id);
-            if (partyType != null)
-                customAttrList = partyType.First().CustomAttributes.ToList();
-            return PartialView("_PartyCustomAttributes", customAttrList);
         }
 
         #region Validation

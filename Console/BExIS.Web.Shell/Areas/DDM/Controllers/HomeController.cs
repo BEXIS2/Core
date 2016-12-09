@@ -793,11 +793,15 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
             model = CreateDataTable(headerItems);
 
+
             DatasetManager datasetManager = new DatasetManager();
             PermissionManager permissionManager = new PermissionManager();
             SubjectManager subjectManager = new SubjectManager();
 
-            foreach (long datasetId in datasetManager.GetDatasetLatestIds())
+            List<long> gridCommands = datasetManager.GetDatasetLatestIds();
+            gridCommands.Skip(Convert.ToInt16(ViewData["CurrentPage"])).Take(Convert.ToInt16(ViewData["PageSize"]));
+
+            foreach (long datasetId in gridCommands)
             {
                 //get permissions
                 List<int> rights = permissionManager.GetAllRights(subjectManager.GetUserByName(GetUsernameOrDefault()).Id, 1, datasetId).ToList();
