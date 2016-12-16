@@ -5,8 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -15,19 +13,79 @@ namespace BExIS.Xml.Helpers
     public class XmlMetadataImportHelper
     {
 
-        public static string GetMappingFileName(long id)
+        public static string GetMappingFileName(long id, TransmissionType transmissionType, string name)
         {
             MetadataStructureManager msm = new MetadataStructureManager();
             MetadataStructure metadataStructure = msm.Repo.Get(id);
 
             // get MetadataStructure 
             XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)metadataStructure.Extra);
-            XElement temp = XmlUtility.GetXElementByAttribute(nodeNames.convertRef.ToString(), "name", "mappingFileImport", xDoc);
 
-            return temp.Attribute("value").Value.ToString();
+
+
+            List<XElement> tmpList =
+                XmlUtility.GetXElementsByAttribute(nodeNames.convertRef.ToString(), new Dictionary<string, string>()
+                {
+                    {AttributeNames.name.ToString(), name},
+                    {AttributeNames.type.ToString(), transmissionType.ToString()}
+
+                }, xDoc).ToList();
+
+            if (tmpList.Count >= 1)
+            {
+                return tmpList.FirstOrDefault().Attribute("value").Value.ToString();
+            }
+
+            return null;
         }
 
         #region update new xml metadata with a base template
+
+        public static XmlDocument FillInXmlValues(XmlDocument source, XmlDocument destination)
+        {
+            // add missing nodes
+            //doc = manipulate(doc);
+
+            // add the xml attributes
+            setValues(source, destination);
+
+            return destination;
+        }
+
+        // rekursive Funktion
+        private static void setValues(XmlNode root, XmlDocument doc)
+        {
+            foreach (XmlNode node in root.ChildNodes)
+            {
+                Debug.WriteLine(node.Name);///////////////////////////////////////////////////////////////////////////
+                if (!node.HasChildNodes)
+                {
+                    if (node.NodeType == System.Xml.XmlNodeType.Text)
+                    {
+                        string xpath = XmlUtility.GetDirectXPathToNode(node.ParentNode);
+                        string value = node.Value;
+                        if (value != null)
+                        {
+                            XmlNode tmpNode = doc.SelectSingleNode(xpath);
+
+                            if (tmpNode != null && value != null)
+                            {
+                                tmpNode.InnerText = value;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        setValues(node, doc); // next level recursively
+                    }
+                    
+                }
+                else
+                {
+                    setValues(node, doc); // next level recursively
+                }
+            }
+        }
 
         public static XmlDocument FillInXmlAttributes(XmlDocument metadataXml, XmlDocument metadataXmlTemplate)
         {
@@ -122,7 +180,6 @@ namespace BExIS.Xml.Helpers
             }
             return doc;
         }
-
 
         #endregion
     }

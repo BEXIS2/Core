@@ -14,6 +14,7 @@ using Telerik.Web.Mvc;
 using Telerik.Web.Mvc.UI;
 using Vaiona.IoC;
 using Vaiona.Web.Mvc.Models;
+using Vaiona.Web.Extensions;
 
 namespace BExIS.Web.Shell.Areas.DDM.Controllers
 {
@@ -33,7 +34,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
         public ActionResult SearchDesigner()
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Manage Search");
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Manage Search", this.Session.GetTenant());
 
             try
             {
@@ -83,7 +84,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             
             public ActionResult Add()
             {
-                ViewBag.Title = PresentationModel.GetViewTitle("Manage Search");
+                ViewBag.Title = PresentationModel.GetViewTitleForTenant("Manage Search", this.Session.GetTenant());
                 List<SearchAttributeViewModel> searchAttributeList = (List<SearchAttributeViewModel>)Session["searchAttributeList"];
 
                 SearchAttributeViewModel sa = new SearchAttributeViewModel();
@@ -96,7 +97,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
             public ActionResult Edit(int id)
             {
-                ViewBag.Title = PresentationModel.GetViewTitle("Manage Search");
+                ViewBag.Title = PresentationModel.GetViewTitleForTenant("Manage Search", this.Session.GetTenant());
 
                 List<SearchAttributeViewModel> searchAttributeList = (List<SearchAttributeViewModel>)Session["searchAttributeList"];
 
@@ -108,7 +109,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
             public ActionResult Delete(int id)
             {
-                ViewBag.Title = PresentationModel.GetViewTitle("Manage Search");
+                ViewBag.Title = PresentationModel.GetViewTitleForTenant("Manage Search", this.Session.GetTenant());
 
                 List<SearchAttributeViewModel> searchAttributeList = (List<SearchAttributeViewModel>)Session["searchAttributeList"];
                 searchAttributeList.Remove(searchAttributeList.Where(p => p.id.Equals(id)).First());
@@ -120,7 +121,6 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
                 return View("SearchDesigner", (List<SearchAttributeViewModel>)Session["searchAttributeList"]);
             }
-
 
             public ActionResult Save(SearchAttributeViewModel model)
             {
@@ -209,7 +209,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
         public ActionResult ResetConfig()
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Manage Search");
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Manage Search", this.Session.GetTenant());
             try
             {
                 ISearchDesigner sd = GetSearchDesigner();
@@ -228,7 +228,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
         public ActionResult ReloadConfig()
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Manage Search");
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Manage Search", this.Session.GetTenant());
             ISearchDesigner sd = GetSearchDesigner();
             sd.Reload();
 
@@ -301,7 +301,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
         public ActionResult RefreshSearch()
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Manage Search");
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Manage Search", this.Session.GetTenant());
             ISearchDesigner sd = GetSearchDesigner();
 
             bool success = false;

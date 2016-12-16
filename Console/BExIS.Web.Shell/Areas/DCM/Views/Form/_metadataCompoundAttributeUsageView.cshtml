@@ -1,0 +1,231 @@
+﻿@model BExIS.Web.Shell.Areas.DCM.Models.CreateDataset.StepModelHelper
+@using BExIS.Dcm.Wizard;
+@using Telerik.Web.Mvc.Extensions
+
+@{
+    string stepId = Model.StepId.ToString();
+    long parentStepId = Model.Model.StepInfo.Parent.Id;
+    string parentTargetId = parentStepId.ToString();
+
+    string parentContentId = Model.Model.StepInfo.Parent.Id + "_Content";
+    string id_add = parentStepId + "_" + Model.Number + "_Add";
+    string id_choice = stepId + "_Choice";
+    string id_choice_container = stepId + "_ChoiceContainer";
+    string id_activate = stepId + "_Activate";
+    string id_remove = parentStepId + "_" + Model.Number + "_Remove";
+    string id_up = parentStepId + "_" + Model.Number + "_Up";
+    string id_down = parentStepId + "_" + Model.Number + "_down";
+    string id_label_container = parentStepId + "_" + Model.Number + "_LabelContainer";
+    string id_button_view = parentStepId + "_" + Model.Number + "_ButtonView";
+    string id_container = parentStepId + "_" + Model.Number + "_Container";
+
+    string lockedClass = "";
+    bool locked = false;
+    bool hideOptional = false;
+
+
+    string lvl = Model.Level.ToString();
+    if (Model.Level >= 9)
+    {
+        lvl = "9";
+    }
+
+
+    string styleClass = "Metadata-Level-" + lvl;
+    string headerClass = "Metadata-Level-Header-" + lvl;
+
+    if (ViewData.Keys.Contains("Locked"))
+    {
+        locked = (bool)ViewData["Locked"];
+        lockedClass = "bx-disabled";
+    }
+
+    if (ViewData.Keys.Contains("HideOptional"))
+    {
+        hideOptional = (bool)ViewData["HideOptional"];
+    }
+
+}
+
+
+
+<div id="@stepId" name="@Model.Usage.Label" number="@Model.Number" class="metadataCompountAttributeUsage @styleClass">
+    @if (@Model != null && !(hideOptional && Model.IsEmpty() && locked))
+    {
+
+        <div class="header @headerClass ">
+            <div id="@id_label_container" class="labelContainer" onclick="showHideClick(this)">
+                <b>
+                    @Model.DisplayName()
+
+                    @if (Model.Model.MaxCardinality > 1)
+                    {
+                        <span>( @Model.Number )</span>
+                    }
+
+                </b>
+
+                @if (Model.Model.MinCardinality > 0)
+                {
+                    <b title="Required" style="color: red">*</b>
+                }
+
+                @if (Model.Activated)
+                {
+                    <span id="@id_button_view" class="bx bx-angle-double-up "></span>
+                }
+            </div>
+
+            <div class="optionContainer">
+                @if (Model.Activated)
+                {
+                    if (!Model.Choice)
+                    {
+                        <table>
+                            <tr>
+                                @if (Model.Model.MaxCardinality > 1 && !locked)
+                                {
+                                    <td>
+                                        @if (Model.Model.MaxCardinality > 1
+                                             && Model.Model.StepInfo.Parent.Children.Count < Model.Model.MaxCardinality
+                                             && Model.Model.Number == Model.Model.StepInfo.Parent.Children.Count)
+                                        {
+                                            <button id="@id_add" onclick="Add(this)" class="bx-function bx-add"/>
+                                        }
+                                        else
+                                        {
+                                            <button id="@id_add" onclick="Add(this)" disabled="disabled" class="bx-function bx-add bx-disabled"/>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (Model.Model.StepInfo.Parent.Children.Count > 1)
+                                        {
+                                            <button id="@id_remove" onclick="Remove(this)" class="bx-function bx-delete"/>
+                                        }
+                                        else
+                                        {
+                                            <button class="bx-function bx-delete bx-disabled"/>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (Model.Number < Model.Model.StepInfo.Parent.Children.Count)
+                                        {
+                                            <button id="@id_down" class="bx-function bx-down" onclick="Down(this)"/>
+                                        }
+                                        else
+                                        {
+                                            <button class="bx-function bx-down bx-disabled"/>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (Model.Number > 1)
+                                        {
+                                            <button id="@id_up" class="bx-function bx-up" onclick="Up(this)"/>
+                                        }
+                                        else
+                                        {
+                                            <button class="bx-function bx-up bx-disabled"/>
+
+                                        }
+                                    </td>
+
+                                }
+
+
+                                <td>
+                                    @if (Model.Model.MinCardinality == 0 && !locked)
+                                    {
+                                        <div class="metadata-activate-checkbox">
+                                            <span id="@id_activate" onclick="Activate(this)" class="bx bx-check-square-o bx-mouse-pointer" />
+                                        </div>
+                                    }
+                                </td>
+                            </tr>
+                        </table>
+                    }
+                    else
+                    {
+                        <div class="metadata-choice-container">
+                            @foreach (var element in Model.Childrens)
+                            {
+                                string choiceId = element.StepId + "_choice";
+
+                                if (element.Activated)
+                                {
+                                    <span id="@choiceId" name="@id_choice" class="bx bx-dot-circle-o bx-mouse-pointer"></span>
+                                }
+                                else
+                                {
+                                    <span id="@choiceId" name="@id_choice" onclick="ActivateFromChoice(this)" class="bx bx-circle-o bx-mouse-choice bx-mouse-pointer"></span>
+                                }
+
+                                @element.DisplayName()
+                            }
+                        </div>
+                    }
+
+                }
+                else
+                {
+                    if (Model.Model.MinCardinality == 0 && !locked)
+                    {
+                        <table>
+                            <tr>
+                                <td>
+
+                                    <div class="metadata-activate-checkbox">
+                                        <span id="@id_activate" onclick="Activate(this)" class="bx bx-square-o bx-mouse-pointer" />
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+
+                    }
+                }
+
+
+            </div>
+
+        </div>
+        if (Model.Activated)
+        {
+            <div id="@id_container" class="contentContainer">
+
+                @if (Model.Choice)
+                {
+                    <div id="choiceContainer" class="complexAttributesContainer">
+                        @foreach (var element in Model.Childrens)
+                        {
+                            if (element.Activated)
+                            {
+                                @Html.Partial("_metadataCompoundAttributeView", element)
+                            }
+                        }
+                    </div>
+                }
+                else
+                {
+                    if (Model.Model.MetadataAttributeModels.Any())
+                    {
+                        <div class="simpleAttributesContainer">
+                            @foreach (var element in Model.Model.MetadataAttributeModels)
+                            {
+                                @Html.Partial("_metadataAttributeView", element)
+                            }
+                        </div>
+                    }
+
+                    <div class="complexAttributesContainer">
+                        @foreach (var element in Model.Childrens)
+                        {
+                            <div style="width: 100%; height: 1px; background-color: white"></div>
+                            @Html.Partial("_metadataCompoundAttributeView", element)
+
+                        }
+                    </div>
+                }
+            </div>
+        }
+    }
+
+</div>

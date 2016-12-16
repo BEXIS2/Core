@@ -5,6 +5,8 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using BExIS.IO;
+using NHibernate.Util;
 
 namespace BExIS.Xml.Helpers
 {
@@ -20,6 +22,42 @@ namespace BExIS.Xml.Helpers
                 return node.LocalName;
             else
                 return xPath + "/" + node.LocalName;
+        }
+
+        public static string GetDirectXPathToNode(XmlNode node)
+        {
+            if (node.ParentNode == null && node.NodeType.Equals(System.Xml.XmlNodeType.Document))
+                return "";
+
+            string xPath = GetDirectXPathToNode(node.ParentNode);
+            if (xPath == "")
+                return node.LocalName;
+            else
+            {
+
+                int index = 1;
+                string nodeName = node.Name;
+                List<XmlNode> tmpChilds = new List<XmlNode>();
+
+                // finde same childs
+                if (node.ParentNode != null && node.ParentNode.ChildNodes.Count > 1)
+                {
+                    for (int i = 0;i<node.ParentNode.ChildNodes.Count;i++)
+                    {
+                        XmlNode tmpNode = node.ParentNode.ChildNodes[i];
+                        if (tmpNode.Name.Equals(node.Name))
+                            tmpChilds.Add(tmpNode);
+                    }
+                }
+
+                if (tmpChilds.Count > 0)
+                {
+                    index = tmpChilds.IndexOf(node)+1;
+                }
+
+
+                return xPath + "/" + node.LocalName + "[" + index  + "]";
+            }
         }
 
         /// <summary>
@@ -79,10 +117,87 @@ namespace BExIS.Xml.Helpers
             return null;
         }
 
+        public static XmlNode GetXmlNodeByAttribute(XmlNode parentNode, string name, string attrName, string attrValue)
+        {
+            return getXmlNodeByAttribute(parentNode,name,attrName,attrValue);
+        }
+
+        private static XmlNode getXmlNodeByAttribute(XmlNode node, string name, string attrName, string attrValue)
+        {
+            if (node.LocalName.Equals(name) && 
+                node.Attributes.Any() && 
+                node.Attributes[attrName]!=null &&
+                node.Attributes[attrName].Value.Equals(attrValue))
+            {
+                return node;
+            }
+            else
+            {
+                if (node.HasChildNodes)
+                {
+                    foreach (XmlNode child in node.ChildNodes)
+                    {
+                         XmlNode tmp = getXmlNodeByAttribute(child, name, attrName, attrValue);
+                        if (tmp != null) return tmp;
+                    }
+                }
+            }
+
+            return null;
+        }
+
         public static XmlNode CreateNode(string nodeName, XmlDocument doc)
         {
             //doc.DocumentElement.NamespaceURI
             return doc.CreateElement(nodeName);
+        }
+
+        public static XmlNode GenerateNodeFromXPath(XmlDocument doc, XmlNode parent, string xpath)
+        {
+            // grab the next node name in the xpath; or return parent if empty
+            string[] partsOfXPath = xpath.Trim('/').Split('/');
+
+            if (partsOfXPath.Length == 0)
+                return parent;
+
+            string nextNodeInXPath = partsOfXPath[0];
+            if (string.IsNullOrEmpty(nextNodeInXPath))
+                return parent;
+
+
+            // get or create the node from the name
+            
+            int index = 1;
+            string nodeName = nextNodeInXPath;
+            if (nextNodeInXPath.Contains("["))
+            {
+                string[] tmp = nextNodeInXPath.Split('[');
+                nodeName = tmp[0];
+                index = Int32.Parse(tmp[1].Remove(tmp[1].IndexOf("]")));
+
+            }
+
+            XmlNodeList nodes = parent.SelectNodes(nodeName);
+
+            XmlNode node = nodes[index-1];
+
+            if (node == null)
+            {
+                if (nextNodeInXPath.StartsWith("@"))
+                {
+                    XmlAttribute anode = doc.CreateAttribute(nextNodeInXPath.Substring(1));
+                    node = parent.Attributes.Append(anode);
+                }
+                else
+                {
+                    node = parent.AppendChild(doc.CreateElement(nodeName));
+
+                }
+            }
+
+            // rejoin the remainder of the array as an xpath expression and recurse
+            string rest = String.Join("/", partsOfXPath, 1, partsOfXPath.Length - 1);
+            return GenerateNodeFromXPath(doc, node, rest);
         }
 
         /// <summary>
@@ -198,8 +313,8 @@ namespace BExIS.Xml.Helpers
             public static XElement GetXElementByAttribute(string nodeName, string attrName, string value, XDocument xDoc)
             {
                 string name = nodeName.Replace(" ","");
-                return xDoc.Root.Descendants(name).Where(p => p.Attribute(attrName).Value.Equals(value)).FirstOrDefault();
-            }
+                return xDoc.Root.Descendants(name).FirstOrDefault(p => p.Attribute(attrName) != null && p.Attribute(attrName).Value.Equals(value));
+        }
 
             /// <summary>
             /// 
@@ -211,7 +326,7 @@ namespace BExIS.Xml.Helpers
             public static IEnumerable<XElement> GetXElementsByAttribute(string nodeName, string attrName, string value, XDocument xDoc)
             {
                 string name = nodeName.Replace(" ", "");
-                return xDoc.Root.Descendants(name).Where(p => p.Attribute(attrName).Value.Equals(value));
+                return xDoc.Root.Descendants(name).Where(p => p.Attribute(attrName) != null &&  p.Attribute(attrName).Value.Equals(value));
             }
 
             /// <summary>
@@ -221,10 +336,23 @@ namespace BExIS.Xml.Helpers
             /// <seealso cref=""/>
             /// <param name="name"></param>
             /// <returns></returns>
-            public static XElement GetXElementByAttribute(string nodeName, string attrName, string value, XElement Parent)
+            public static IEnumerable<XElement> GetXElementsByAttribute(string nodeName, string attrName, string value, XElement parent)
             {
                 string name = nodeName.Replace(" ", "");
-                return Parent.Descendants(name).Where(p => p.Attribute(attrName).Value.Equals(value)).FirstOrDefault();
+                return parent.Descendants(name).Where(p => p.Attribute(attrName) != null && p.Attribute(attrName).Value.Equals(value));
+            }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static XElement GetXElementByAttribute(string nodeName, string attrName, string value, XElement Parent)
+            {
+                string name = nodeName.Replace(" ", "");
+                return Parent.Descendants(name).FirstOrDefault(p => p.Attribute(attrName) != null && p.Attribute(attrName).Value.Equals(value));
             }
 
             /// <summary>
@@ -253,7 +381,6 @@ namespace BExIS.Xml.Helpers
                 return elements;
             }
 
-
             /// <summary>
             /// 
             /// </summary>
@@ -261,7 +388,34 @@ namespace BExIS.Xml.Helpers
             /// <seealso cref=""/>
             /// <param name="name"></param>
             /// <returns></returns>
-            public static XElement GetXElementByXPath(string xpath, XDocument xDoc)
+            public static IEnumerable<XElement> GetXElementsByAttribute(string nodeName, Dictionary<string, string> AttrValueDic, XDocument xDoc, string parentXPath)
+            {
+                string name = nodeName.Replace(" ", "");
+                IEnumerable<XElement> elements = new List<XElement>();
+                XElement parent = GetXElementByXPath(parentXPath,xDoc);    
+
+                foreach (KeyValuePair<string, string> keyValuePair in AttrValueDic)
+                {
+                    IEnumerable<XElement> newElements = GetXElementsByAttribute(nodeName, keyValuePair.Key, keyValuePair.Value, parent);
+
+                    if (elements.Count() > 0)
+                        elements = elements.Intersect(newElements);
+                    else
+                        elements = newElements;
+
+                }
+
+                return elements;
+            }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static XElement GetXElementByXPath(string xpath, XDocument xDoc)
             {
                 return xDoc.XPathSelectElement(xpath.Replace(" ",string.Empty));
             }

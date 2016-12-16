@@ -119,7 +119,7 @@
                         .OnLoad("refreshGrid")
                         .OnSubmitChanges("refreshGrid")
                         .OnRowDataBound("resultGrid_OnRowDataBound")
-                        .OnDataBound("resetAllTelerikIconTitles")
+                        .OnDataBound("resultGrid_onDataBound")
 
                        )
             .Pageable(paging =>
@@ -142,6 +142,13 @@
         $('.t-filter').attr("title", "Filter");
         resetAllTelerikIconTitles();
     })
+
+    function resultGrid_onDataBound() {
+
+        resetAllTelerikIconTitles();
+
+        $(".t-grid").trigger('load');
+    }
 
     function resultGrid_OnRowDataBound(e) {
 
@@ -196,7 +203,7 @@
 
     function refreshGrid() {
         //$(".t-grid .t-refresh").trigger('click');
-        $(".t-grid .t-refresh").trigger('click');
+        //$(".t-grid .t-refresh").trigger('click');
         /*alert("GridRefresh");*/
     }
 

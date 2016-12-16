@@ -16,6 +16,7 @@ using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Xml.Services;
 using Vaiona.Web.Mvc.Models;
+using Vaiona.Web.Extensions;
 
 namespace BExIS.Web.Shell.Areas.DIM.Controllers
 {
@@ -23,14 +24,14 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
     {
 
         private List<long> datasetVersionIds = new List<long>();
-        private XmlMapperManager xmlMapperManager = new XmlMapperManager();
+        private XmlMapperManager xmlMapperManager = new XmlMapperManager(TransactionDirection.InternToExtern);
         
         //
         // GET: /DIM/Admin/
 
         public ActionResult Index()
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Export Metadata");
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Export Metadata", this.Session.GetTenant());
 
             AdminModel model = new AdminModel();
 
@@ -120,22 +121,24 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
         {
             DatasetManager datasetManager = new DatasetManager();
             DatasetVersion datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
+            MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
+            MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(datasetVersion.Dataset.MetadataStructure.Id);
 
-            string fileName = getMappingFileName(datasetVersion);
+            string fileName = getMappingFileName(datasetVersion, TransmissionType.mappingFileExport, metadataStructure.Name);
             string path_mapping_file = "";
             try
             {
                     path_mapping_file = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), fileName);
 
-                    xmlMapperManager = new XmlMapperManager();
+                    xmlMapperManager = new XmlMapperManager(TransactionDirection.InternToExtern);
 
                     xmlMapperManager.Load(path_mapping_file, GetUsernameOrDefault());
 
-                    return xmlMapperManager.Export(datasetVersion.Metadata, datasetVersion.Id);
+                    return xmlMapperManager.Export(datasetVersion.Metadata,datasetVersion.Id, fileName);
             }
             catch(Exception ex)
             {
-                return "";
+                return ex.Message;
             }
 
             return "";
@@ -155,13 +158,9 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
             return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
         }
 
-        private string getMappingFileName(DatasetVersion datasetVersion)
+        private string getMappingFileName(DatasetVersion datasetVersion, TransmissionType convertType, string name)
         {
-            // get MetadataStructure 
-            XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)datasetVersion.Dataset.MetadataStructure.Extra);
-            XElement temp = XmlUtility.GetXElementByAttribute("convertRef", "name", "mappingFileExport", xDoc);
-
-            return temp.Attribute("value").Value.ToString();
+            return XmlMetadataImportHelper.GetMappingFileName(datasetVersion.Dataset.MetadataStructure.Id, convertType, name);
         }
 
         private List<DatasetVersionModel> getDatasetVersionsDic(MetadataStructure metadataStructure, List<long> datasetVersionIds)
@@ -170,18 +169,23 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
             DatasetManager datasetManager = new DatasetManager();
 
             // gets all the dataset versions that their Id is in the datasetVersionIds and they are using a specific metadata structure as indicated by metadataStructure parameter
-            var q = datasetManager.DatasetVersionRepo.Get(p => datasetVersionIds.Contains(p.Id) && p.Dataset.MetadataStructure.Id.Equals(metadataStructure.Id)).Distinct();
+            var q = datasetManager.DatasetVersionRepo.Get(p => datasetVersionIds.Contains(p.Id) && 
+                                                          p.Dataset.MetadataStructure.Id.Equals(metadataStructure.Id)).Distinct();
+
 
             foreach (DatasetVersion datasetVersion in q)
             {
-                datasetVersions.Add(
-                    new DatasetVersionModel
-                    {
-                        DatasetVersionId = datasetVersion.Id,
-                        DatasetId = datasetVersion.Dataset.Id,
-                        Title = XmlDatasetHelper.GetInformation(datasetVersion, AttributeNames.title),
-                        MetadataDownloadPath = ""
-                    });
+                if (datasetManager.IsDatasetCheckedIn(datasetVersion.Dataset.Id))
+                {
+                    datasetVersions.Add(
+                        new DatasetVersionModel
+                        {
+                            DatasetVersionId = datasetVersion.Id,
+                            DatasetId = datasetVersion.Dataset.Id,
+                            Title = XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title),
+                            MetadataDownloadPath = ""
+                        });
+                }
             }
             return datasetVersions;
         }

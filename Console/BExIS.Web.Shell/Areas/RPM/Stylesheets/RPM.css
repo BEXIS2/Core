@@ -1,5 +1,5 @@
 ﻿/*partial Views*/
- .bx-rpm-constraint .bx-rpm-addDomainItem{
+ /*.bx-rpm-constraint .bx-rpm-addDomainItem{
     float:left;
 }
 
@@ -11,7 +11,7 @@
 #pattern_FormalDescription,
 #range_FormalDescription {
     cursor:default;
-}
+}*/
 
 .t-status, .t-refresh{
 display:none !important;
@@ -26,10 +26,10 @@ display:none !important;
     text-align:right;
 }
 
- .bx-rpm-checkbox
+ /*.bx-rpm-checkbox
 {
     width:13px !important;
-}
+}*/
 
 .bx-rpm-constraints
 {
@@ -146,6 +146,10 @@ table, tr {
     background-color:#ffffff;
 }
 
+#bx-rpm-dataAttributeGrid .t-grid-content{
+    overflow-y: scroll !important;
+}
+
 #bx-rpm-dataAttributeGrid .t-grid-content .t-numerictextbox .t-input{
     width:40px !important;
     text-align:left;
@@ -160,7 +164,7 @@ border-radius: 3px;
 width: 150px;
 }*/
 
- .bx-rpm-constrainlabel,  .bx-rpm-negated {
+ /*.bx-rpm-constrainlabel,  .bx-rpm-negated {
 width: 60px;
 
 }
@@ -170,9 +174,9 @@ width: 60px;
     align-content:center;
 }
 
-/*.bx-rpm-constrainValue {
+.bx-rpm-constrainValue {
 width:456px;
-}*/
+}
 
 .bx-rpm-constrainValue input {
 width:348px;
@@ -194,7 +198,7 @@ width:153px;
 .bx-rpm-constrainValue .bx-rpm-container {
 float:left;
 margin-right:5px;
-}
+}*/
 
 textarea {
 max-width: 600px;
@@ -254,13 +258,13 @@ border-radius: 3px;
 width: 15px;
 }
 
-#range_FormalDescription, #domain_FormalDescription, #pattern_FormalDescription{
+/*#range_FormalDescription, #domain_FormalDescription, #pattern_FormalDescription{
     margin-top:26px;
  }
 
 #domain_FormalDescription, #pattern_FormalDescription {
     margin-left:34px;
-}
+}*/
 
 .planingPartialDiv .t-numerictextbox .t-formatted-value {
     padding: 2px 0px 0px 8px;
@@ -272,4 +276,16 @@ width: 15px;
 
 .planingPartialDiv .t-numerictextbox .t-arrow-down {
     margin: 0px 0px 2px -8.4px;
+}
+
+.dimDesc {
+width:150px !important;
+}
+
+#Unit_input {
+width:400px;
+}
+
+#nameBox {
+width:200px;
 }

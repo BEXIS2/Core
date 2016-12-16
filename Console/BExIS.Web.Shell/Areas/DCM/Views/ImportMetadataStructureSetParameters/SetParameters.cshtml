@@ -5,7 +5,13 @@
 @using BExIS.Web.Shell.Areas.DCM.Models;
 
 @{
-    
+    int index = 0;
+
+
+    if (!String.IsNullOrEmpty(Model.EntityType))
+    {
+        index = Model.Entities.IndexOf(Model.EntityType);
+    }
 
 }
 
@@ -34,18 +40,33 @@
             <table>
                 <tr>
                     <td class="labelColumn">
+                        @Html.LabelFor(m => m.EntityType)
+                    </td>
+                    <td>
+                        @(Html.Telerik().DropDownList()
+                              .Placeholder("Select")
+                              .Name("Entity")
+                              .HtmlAttributes(new {style="width:300px"})
+                              .ClientEvents(events => events.OnChange("OnChangeDropDown"))
+                              .BindTo(new SelectList(Model.Entities, Model.EntityType)))
+
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="labelColumn">
                         @Html.LabelFor(m => m.TitleNode)
                     </td>
                     <td>
                         <div id="titleSelectionContainer">
-                            @Ajax.ActionLink("Select", "ShowListOfMetadataNodesTitle", "ImportMetadataStructureSetParameters", new { area = "DCM" },
+                            @Ajax.ActionLink("Select", "ShowListOfMetadataNodesTitle", "ImportMetadataStructureSetParameters", new {area = "DCM"},
                                 new AjaxOptions
                                 {
                                     HttpMethod = "GET",
                                     InsertionMode = InsertionMode.Replace,
                                     UpdateTargetId = "titleSelectionContainerWindow"
                                 },
-                                new { @class = "bx-button function" })
+                                new {@class = "bx-button function"})
                         </div>
                         <div id="titleSelectionContainerWindow"></div>
                     </td>
@@ -59,14 +80,14 @@
                     </td>
                     <td>
                         <div id="descriptionSelectionContainer">
-                            @Ajax.ActionLink("Select", "ShowListOfMetadataNodesDescription", "ImportMetadataStructureSetParameters", new { area = "DCM" },
-                                 new AjaxOptions
-                                 {
-                                     HttpMethod = "GET",
-                                     InsertionMode = InsertionMode.Replace,
-                                     UpdateTargetId = "descriptionSelectionContainerWindow"
-                                 },
-                                 new { @class = "bx-button function" })
+                            @Ajax.ActionLink("Select", "ShowListOfMetadataNodesDescription", "ImportMetadataStructureSetParameters", new {area = "DCM"},
+                                new AjaxOptions
+                                {
+                                    HttpMethod = "GET",
+                                    InsertionMode = InsertionMode.Replace,
+                                    UpdateTargetId = "descriptionSelectionContainerWindow"
+                                },
+                                new {@class = "bx-button function"})
                         </div>
                         <div id="descriptionSelectionContainerWindow"></div>
                     </td>
@@ -134,6 +155,19 @@
 </style>
 
 <script type="text/javascript">
+
+    $(document)
+        .ready(function () {
+            resetAllTelerikIconTitles();
+        });
+
+    function OnChangeDropDown(e) {
+
+        $.post('@Url.Action("SetEntityName", "ImportMetadataStructureSetParameters", new RouteValueDictionary { { "area", "DCM" } })',
+                { name: e.value },
+                function(response) {
+       });
+    }
 
     function OnSuccess() {
      

@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Vaiona.Entities.Common;
 
 namespace BExIS.Dlm.Entities.Party
 {
-    public class PartyTypePair
+    public class PartyTypePair:BaseEntity
     {
         #region Attributes
-        public string Title { get; set; }
-        public string Description { get; set; }
+        public virtual string Title { get; set; }
+        public virtual string Description { get; set; }
         #endregion
 
         #region Associations

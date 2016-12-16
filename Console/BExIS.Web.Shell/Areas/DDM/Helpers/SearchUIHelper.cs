@@ -51,7 +51,6 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
 
         public static DataTable ConvertPrimaryDataToDatatable(DatasetVersion dsv, IEnumerable<long> dsVersionTupleIds)
         {
-
             DataTable dt = new DataTable();
             dt.TableName = "Primary data table";
             DataStructureManager dsm = new DataStructureManager();
@@ -119,7 +118,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
 
 
                     if (vu.Parameters.Count > 0)
-        {
+                    {
                         foreach (var pu in vu.Parameters)
                         {
                             DataColumn col2 = dt.Columns.Add(pu.Label.Replace(" ", "")); // or DisplayName also
@@ -469,9 +468,14 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
         {
             List<Variable> sortedVariables = new List<Variable>();
 
+            XmlDocument extraXml = datastructure.Extra as XmlDocument;
+
             if (datastructure.Extra != null && (datastructure.Extra as XmlDocument).GetElementsByTagName("order").Count != 0)
             {
-                XmlDocument order = (datastructure.Extra as XmlDocument).GetElementsByTagName("order")[0] as XmlDocument;
+                XmlNode orderNode = extraXml.GetElementsByTagName("order")[0];
+                XmlDocument order = new XmlDocument();
+                order.LoadXml(orderNode.OuterXml);
+
                 IEnumerable<XElement> elements = XmlUtility.GetXElementByNodeName("variable", XmlUtility.ToXDocument(order));
 
                 foreach (XElement element in elements)

@@ -17,13 +17,18 @@ namespace BExIS.Web.Shell.Areas.DCM.Models.ImportMetadata
         [Display(Name = "Description node")]
         public string DescriptionNode { get; set; }
 
+        [Display(Name = "Entity Type")]
+        public string EntityType { get; set; }
+
         public List<SearchMetadataNode> MetadataNodes { get; set; }
+        public List<string> Entities { get; set; }
 
         public ParametersModel()
         {
             TitleNode = "";
             DescriptionNode = "";
             MetadataNodes = new List<SearchMetadataNode>();
+            Entities = new List<string>();
         }
     }
 }

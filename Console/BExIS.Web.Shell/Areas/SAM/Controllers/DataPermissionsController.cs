@@ -12,6 +12,7 @@ using BExIS.Security.Services.Subjects;
 using BExIS.Web.Shell.Areas.SAM.Models;
 using Telerik.Web.Mvc;
 using Vaiona.Web.Mvc.Models;
+using Vaiona.Web.Extensions;
 
 namespace BExIS.Web.Shell.Areas.SAM.Controllers
 {
@@ -27,7 +28,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
 
         public ActionResult Data()
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Data Permissions");
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Data Permissions", this.Session.GetTenant());
 
             return View(new EntitySelectListModel());
         }
@@ -45,10 +46,11 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
             SubjectManager subjectManager = new SubjectManager();
 
             // DATA
-            IQueryable<Dataset> data = datasetManager.DatasetRepo.Query();
+            //var ids = datasetManager.GetDatasetLatestIds();
+            List<DatasetVersion> data = datasetManager.GetDatasetLatestVersions(); // .GetDatasetLatestVersions(ids);
 
             List<DatasetGridRowModel> datasets = new List<DatasetGridRowModel>();
-            data.ToList().ForEach(d => datasets.Add(DatasetGridRowModel.Convert(d, permissionManager.ExistsDataPermission(subjectManager.GetGroupByName("everyone").Id, 1, d.Id, RightType.View))));
+            data.ForEach(d => datasets.Add(DatasetGridRowModel.Convert(d, permissionManager.ExistsDataPermission(subjectManager.GetGroupByName("everyone").Id, 1, d.Id, RightType.View))));
 
             return View(new GridModel<DatasetGridRowModel> { Data = datasets });
         }

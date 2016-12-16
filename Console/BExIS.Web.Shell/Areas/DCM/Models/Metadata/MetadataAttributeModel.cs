@@ -9,7 +9,9 @@ using BExIS.Dlm.Entities.Common;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
+using BExIS.IO.DataType.DisplayPattern;
 using BExIS.IO.Transform.Validation.Exceptions;
+using DocumentFormat.OpenXml.Office2010.Excel;
 
 namespace BExIS.Web.Shell.Areas.DCM.Models
 {
@@ -29,6 +31,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
         public int MaxCardinality { get; set; }
         public String DataType { get; set; }
         public String SystemType { get; set; }
+        public string DisplayPattern { get; set; }
         public int NumberOfSourceInPackage { get; set; }
         public List<object> DomainList { get; set; }
         public List<Error> Errors { get; set; }
@@ -38,11 +41,23 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
         public bool last = false;
         public bool first = false;
 
-        public object Value { get; set; }
+        public bool IsEmpty = true;
+
+        private object _value;
+
+        public object Value {
+                get { return _value; }
+                set
+                {
+                    _value = value;
+                    IsEmpty = global::System.Convert.ChangeType(_value, _value.GetType()) == null || String.IsNullOrEmpty(_value.ToString());
+                }
+        }
+
+        
 
         public static MetadataAttributeModel Convert(BaseUsage current , BaseUsage parent, long metadataStructureId, int packageModelNumber, long parentStepId)
         {
-            
             MetadataAttribute metadataAttribute;
             List<object> domainConstraintList = new List<object>();
             string constraintsDescription="";
@@ -69,6 +84,10 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
                     else constraintsDescription = String.Format("{0}\n{1}", constraintsDescription, c.FormalDescription);
                 }
             }
+            //load displayPattern
+            DataTypeDisplayPattern dtdp = DataTypeDisplayPattern.Materialize(metadataAttribute.DataType.Extra);
+            string displayPattern="";
+            if(dtdp !=null) displayPattern = dtdp.StringPattern;
 
             return new MetadataAttributeModel
             {
@@ -83,6 +102,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
                 ConstraintDescription = constraintsDescription,
                 DataType = metadataAttribute.DataType.Name,
                 SystemType = metadataAttribute.DataType.SystemType,
+                DisplayPattern = displayPattern,
                 MinCardinality = current.MinCardinality,
                 MaxCardinality = current.MaxCardinality,
                 NumberOfSourceInPackage = 1,
@@ -145,5 +165,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
                     Errors = null
             };
         }
+
     }
 }

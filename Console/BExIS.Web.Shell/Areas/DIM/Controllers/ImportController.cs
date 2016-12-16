@@ -40,11 +40,14 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
             // metadataStructure DI
             long metadataStructureId = 3;
 
+            MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
+            string metadataStructrueName = metadataStructureManager.Repo.Get(metadataStructureId).Name;
+
             // loadMapping file
-            string path_mappingFile = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), XmlMetadataImportHelper.GetMappingFileName(metadataStructureId));
+            string path_mappingFile = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), XmlMetadataImportHelper.GetMappingFileName(metadataStructureId, TransmissionType.mappingFileImport, metadataStructrueName));
 
             // XML mapper + mapping file
-            XmlMapperManager xmlMapperManager = new XmlMapperManager();
+            XmlMapperManager xmlMapperManager = new XmlMapperManager(TransactionDirection.InternToExtern);
             xmlMapperManager.Load(path_mappingFile, "IDIV");
             
             // generate intern metadata 
@@ -72,7 +75,7 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
                 DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(dataset.Id);
                 workingCopy.Metadata = completeMetadata;
 
-                string title = XmlDatasetHelper.GetInformation(workingCopy, AttributeNames.title);
+                string title = XmlDatasetHelper.GetInformation(workingCopy, NameAttributeValues.title);
                 if (String.IsNullOrEmpty(title)) title = "No Title available.";
 
                 dm.EditDatasetVersion(workingCopy, null, null, null);

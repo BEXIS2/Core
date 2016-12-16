@@ -39,7 +39,7 @@
         columns.Bound(u => u.IsBlocked);
         columns.Bound(u => u.IsLockedOut);
         columns.Template(@<text>
-            <button type="button" class="bx bx-grid-function bx-edit" onclick="userEdit_onClick('@item.Username', @item.Id);"></button>
+            <button type="button" class="bx bx-grid-function bx-edit" onclick="userEdit_onClick('@item.Username', @item.Id)"></button>
             <button type="button" class="bx bx-grid-function bx-trash" onclick="userDelete_onClick('@item.Username', @item.Id)"></button>
         </text>)
             .ClientTemplate("<button type=\"button\" class=\"bx bx-grid-function bx-edit\" onclick=\"userEdit_onClick(\'<#= Username #>\', <#= Id #>);\" value=\"<#= Id #>\"></button>" +

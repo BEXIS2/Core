@@ -1,0 +1,464 @@
+﻿@model MetadataEditorModel
+@using BExIS.Web.Shell.Areas.DCM.Models.CreateDataset
+@using BExIS.Web.Shell.Areas.DCM.Models.Metadata;
+@using System.Web.Configuration;
+@using BExIS.Dcm.CreateDatasetWizard
+@using BExIS.Dcm.Wizard
+
+@using Telerik.Web.Mvc.UI;
+
+
+
+@{
+
+    <script src="@Url.Content("~/Scripts/DCM/Form.js")" type="text/javascript"></script>
+
+
+    string lockedClass = "";
+    bool locked = false;
+    bool editMode = false;
+    bool showOptional = false;
+
+    string showAllClass = " bx-toggle-on";
+
+    HttpRuntimeSection section = System.Configuration.ConfigurationManager.GetSection("system.web/httpRuntime") as HttpRuntimeSection;
+    int int_MaxRequestLength = section.MaxRequestLength;
+    int mbMax = int_MaxRequestLength / 1024;
+
+
+    if (ViewData.Keys.Contains("Locked"))
+    {
+        locked = (bool)ViewData["Locked"];
+        lockedClass = "bx-disabled";
+    }
+
+    if (ViewData.Keys.Contains("ShowOptional"))
+    {
+        showOptional = (bool)ViewData["ShowOptional"];
+        showAllClass = showOptional ? " bx-toggle-on" : " bx-toggle-off";
+    }
+
+    #region set actions
+
+    ActionInfo copy = new ActionInfo();
+
+    if (Model.Actions.ContainsKey(CreateTaskmanager.COPY_ACTION))
+    {
+        copy = Model.Actions[CreateTaskmanager.COPY_ACTION];
+    }
+
+    ActionInfo submit = new ActionInfo();
+
+    if (Model.Actions.ContainsKey(CreateTaskmanager.SUBMIT_ACTION))
+    {
+        submit = Model.Actions[CreateTaskmanager.SUBMIT_ACTION];
+    }
+
+    ActionInfo cancel = new ActionInfo();
+
+    if (Model.Actions.ContainsKey(CreateTaskmanager.CANCEL_ACTION))
+    {
+        cancel = Model.Actions[CreateTaskmanager.CANCEL_ACTION];
+    }
+
+    ActionInfo reset = new ActionInfo();
+
+    if (Model.Actions.ContainsKey(CreateTaskmanager.RESET_ACTION))
+    {
+        reset = Model.Actions[CreateTaskmanager.RESET_ACTION];
+    }
+
+    #endregion
+
+}
+
+
+@section Information
+{
+    <p>Here you can enter metadata for your new dataset. The form varies according to the metadata structure you selected in the first step.
+    Mandatory fields are indicated with an red asterisk.</p>
+    <p>You can add, remove, or re-order elements (e.g. multiple Creators) using the buttons at the right.</p>
+
+    <p>
+        More information 
+        @Html.ActionLink("here", "Index", "Help", new { id = 0 }, new { @class = "bx-informationLink", title="go to help", target="_blank"})
+    </p>
+}
+
+
+<div id="MetadataEditor" style="width: 89%">
+<div>
+    <table>
+        <tr>
+            @if (locked)
+            {
+                <td>
+                    @if (Model.EditRight && Model.EditAccessRight)
+                    {
+                        <button onclick="edit()" class="bx-button function">Edit</button>
+
+                        if (copy.IsComplete())
+                        {
+                            @Html.ActionLink("Copy", copy.ActionName, copy.ControllerName, new {area = copy.AreaName, id = @Model.DatasetId, type = "DatasetId"}, new {@class = "bx-button function", @id = @Model.DatasetId})
+                        }
+                    }
+                    else
+                    {
+                        string tooltip = "";
+
+                        if (!Model.EditRight)
+                        {
+                            tooltip += " You do not have permission to edit or copy this dataset.";
+                        }
+
+                        if (!Model.EditAccessRight)
+                        {
+                            tooltip += " You do not have permission for this function.";
+                        }
+
+                        if ((!Model.EditAccessRight && !Model.EditRight) == false)
+                        {
+                            <button onclick="edit()" class="bx-button function bx-disabled" disabled="disabled" title="@tooltip">Edit</button>
+
+                            if (copy.IsComplete())
+                            {
+                                @Html.ActionLink("Copy", copy.ActionName, copy.ControllerName, new {area = copy.AreaName, id = @Model.DatasetId, type = "DatasetId"}, new {@class = "bx-button function bx-disabled", @id = @Model.DatasetId, disabled = "disabled", title = @tooltip})
+                            }
+                        }
+                    }
+
+
+                    @Html.CheckBox("showAll", @showOptional, new {OnChange = "switchVisibilityOfOptionalElements()", Name = "showAll", Id = "showAll"})
+
+                    <b>show all fields</b>
+
+                </td>
+
+
+            }
+
+
+            @if (!Model.Created && !locked && Model.Import)
+            {
+                <td style="width: 100px">
+                    @(Html.Telerik().Upload()
+                          .Name("SelectFileUploader")
+                          .Multiple(false)
+                          .ShowFileList(false)
+                          .HtmlAttributes(new {title = "Import from xml", accept = ".xml"})
+                          .ClientEvents(events => events
+                              .OnSuccess("OnSuccess")
+                              .OnSelect("SelectFileProcess_OnSelect")
+                              .OnLoad("SelectFileUploader_OnLoad"))
+                          .Async(async => async
+                              .Save("SelectFileProcess", "Form", new {area = "DCM"})
+                              .AutoUpload(true))
+                            
+                          )
+                </td>
+            }
+
+
+            <td id="form_message_container_Column" style="text-align: right">
+                <span id="form_message"></span>
+                <div id="preloader_cotainer">
+                    <script type="text/javascript"> $("#preloader_cotainer").preloader(20,"Loading metadata...")</script>
+                </div>
+            </td>
+            
+
+            @if (Model.Created && Model.DatasetId != -1 && !@Model.FromEditMode)
+            {
+
+                <td>You successfully created dataset: <br/><b>@Model.DatasetTitle</b></td>
+                <td>
+                    Please use the <b>@Html.ActionLink("Upload Data Wizard ", "StartUploadWizard", "CreateDataset", new {area = "DCM"}, new {title = "Link to upload wizard", @class = "bx-link"})</b><br/>
+                    to add primary data to this dataset.
+                </td>
+
+                if (@Model.DatasetId > 0)
+                {
+                    <td>Or see your dataset here <b>@Html.ActionLink(@Model.DatasetTitle, "ShowData", "CreateDataset", new {id = @Model.DatasetId}, new {title = "Link to your dataset.", @class = "bx-link"})</b><br/></td>
+                }
+            }
+        </tr>
+    </table>
+
+</div>
+
+<div id="root" style="background-color: white">
+
+    @foreach (var element in Model.StepModelHelpers)
+    {
+        if (element.Model is MetadataPackageModel)
+        {
+            <div style="width: 100%; height: 1px; background-color: white"></div>
+            @Html.Partial("_metadataCompoundAttributeView", element)
+        }
+    }
+
+</div>
+
+@if (!locked)
+{
+    <div class="bx-footer right">
+
+        <!-- only from editmode you have the option to reset-->
+        <button onclick="validate()" class="bx-button function" style="float: left;">Validate</button>
+
+        @*@if (@Model.FromEditMode)
+            {
+                <button onclick="reset()" class="bx-button function" style="float: left;">Reset</button>
+            }*@
+
+        @if (@submit.IsComplete())
+        {
+            <button onclick="submit()" class="bx-button action">Save</button>
+        }
+
+        @if (@Model.FromEditMode)
+        {
+            <button onclick="cancel()" class="bx-button action">Cancel</button>
+        }
+    </div>
+}
+
+
+
+<script>
+
+    $("#MetadataEditor")
+        .ready(function() {
+
+            setTimeout(function() {
+                    //alert("r");
+                bindMinimap();
+                    $("#preloader_cotainer").removePreloader();
+                },
+                120);
+            //alert("start triggering");
+            $(document).trigger("MetadataFormIsReady");
+
+        });
+
+    $(window)
+        .resize(function() {
+            setTimeout(function() {
+                    //alert("r");
+
+                    bindMinimap();
+                },
+                120);
+
+        });
+
+    $("#showminimap")
+        .click(function() {
+
+            bindMinimap();
+        });
+
+
+function SelectFileProcess_OnSelect(e) {
+
+
+        $("#root").preloader(20, "Import selected xml file.", 300);
+
+        var file = e.files[0];
+        var maxsize = '@int_MaxRequestLength';
+
+        if (!IsExtentionValid(file.extension)) {
+            alert("Only .xml files can be uploaded");
+            e.preventDefault();
+            return false;
+        } else {
+
+            if (file.size > (maxsize * 1024)) {
+
+                alert("Max file : " +
+                    maxsize / 1024 +
+                    " MB is supported. Please contact your administrator to upload bigger files.");
+                e.preventDefault();
+                return false;
+            }
+        }
+
+    }
+
+    function SelectFileUploader_OnLoad() {
+        $(".t-upload-button span").text("Import");
+    }
+
+/*
+Is Extention from selected file
+in list of supported files
+*/
+function IsExtentionValid(fileExtention) {
+    var extListAsString = ".xml";
+    var extList = extListAsString.split(',');
+
+    for (var i = 0; i < extList.length; i++) {
+        if (fileExtention.toLowerCase() == extList[i]) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function OnSuccess() {
+    //alert("on success");
+
+
+    $.get('@Url.Action("ValidateExternalXml", "Form", new RouteValueDictionary {{"area", "DCM"}})',
+        function(response) {
+
+            if (response.length > 0) {
+                if (confirm('Warning:' + response + " Press OK if you want to import an invalid xml document.")) {
+                    loadExternalXml();
+                }
+            } else {
+                loadExternalXml();
+            }
+        });
+}
+
+    function loadExternalXml() {
+
+        $.get('@Url.Action("LoadExternalXml", "Form", new RouteValueDictionary {{"area", "DCM"}})',
+            function(response) {
+
+                if (response.indexOf("error") > 0) {
+
+                    $('#MetadataEditor').replaceWith(response);
+                    bindMinimap(true);
+
+
+                } else {
+                    console.log("loaded");
+
+                    $("#root").removePreloader();
+
+                    $("#form_message")
+                        .text("The xml file you have selected, was not valid against the metadata structure. " +
+                            response);
+                    $("#form_message").css("color", "#f24c24");
+                    bindMinimap();
+
+                }
+
+
+            });
+    }
+
+    function validate() {
+
+        $("#root").preloader(20, "Is validating", 300);
+
+        $.get('@Url.Action("Validate", "Form", new RouteValueDictionary {{"area", "DCM"}})',
+            function(response) {
+
+                $('#MetadataEditor').replaceWith(response);
+                $('html, body').animate({ scrollTop: 0 }, 'slow');
+
+                var errors = $('.bx-input-error');
+
+                if (errors.length > 0) {
+                    $("#form_message")
+                        .text("The metadata you entered is either not complete or does not comply to the metadata standard. Check the fields marked in red for more details.");
+                    $("#form_message").css("color", "#f24c24");
+
+                } else {
+                    $("#form_message").text("Validation successful");
+                    $("#form_message").css("color", "#388670");
+                }
+
+                bindMinimap(true);
+            });
+    }
+
+    function cancel() {
+
+        if (confirm('Are you sure you want to leave the form? All changes will be lost.')) {
+            $
+                .get('@Url.Action(@cancel.ActionName, @cancel.ControllerName, new RouteValueDictionary {{"area", @cancel.AreaName}})',
+                    function(response) {
+                        $('#MetadataEditor').replaceWith(response);
+                        bindMinimap(true);
+                        $('html, body').animate({ scrollTop: 0 }, 'slow');
+                    });
+        } else {
+            return false;
+        }
+    }
+
+    function reset() {
+
+        if (confirm('Are you sure? All changes will be lost.')) {
+            $
+                .get('@Url.Action(@reset.ActionName, @reset.ControllerName, new RouteValueDictionary {{"area", @reset.AreaName}})',
+                    function(response) {
+                        $('#MetadataEditor').replaceWith(response);
+                        bindMinimap(true);
+                        $('html, body').animate({ scrollTop: 0 }, 'slow');
+                    });
+        } else {
+            return false;
+        }
+    }
+
+    function edit() {
+        $
+            .get('@Url.Action("EditMetadata", "Form", new RouteValueDictionary {{"area", "DCM"}, {"datasetId", @Model.DatasetId}, {"locked", false}, {"created", false}})',
+                function(response) {
+                    $('#MetadataEditor').replaceWith(response);
+                    bindMinimap(true);
+                })
+    }
+
+
+    function submit() {
+
+
+        $.get('@Url.Action("Validate", "Form", new RouteValueDictionary {{"area", "DCM"}})',
+            function(response) {
+                $('#MetadataEditor').replaceWith(response);
+                bindMinimap(true);
+                var errors = $('.bx-input-error');
+
+                if (errors.length == 0) {
+                    callSubmitAction();
+                } else {
+                    if (
+                        confirm('Warning: Some fields are not complete or contain entries that do not meet the requirements. Press OK to save anyways and resume later.')) {
+                        callSubmitAction();
+                    }
+                }
+            })
+    }
+
+    function callSubmitAction() {
+        $
+            .get('@Url.Action(@submit.ActionName, @submit.ControllerName, new RouteValueDictionary {{"area", @submit.AreaName}, {"editMode", @Model.FromEditMode}})',
+                function(response) {
+                    $('#MetadataEditor').replaceWith(response);
+                    $('html, body').animate({ scrollTop: 0 }, 'slow');
+                    bindMinimap(true);
+                })
+    }
+
+    function switchVisibilityOfOptionalElements(e) {
+
+        var show = '@showOptional';
+
+        $.get('@Url.Action("SwitchVisibilityOfOptionalElements", "Form", new RouteValueDictionary {{"area", "DCM"}})',
+            { show: show },
+            function(response) {
+                $('#MetadataEditor').replaceWith(response);
+                bindMinimap(true);
+            });
+    }
+
+
+</script>
+</div>
