@@ -32,6 +32,34 @@ namespace BExIS.IO
 
         }
 
+        public static FileStream Create(string path)
+        {
+            if (Directory.Exists(path))
+            {
+                // if folder not exist
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+            }
+
+            if (!File.Exists(path))
+            {
+                return File.Create(path);
+            }
+
+            return null;
+        }
+
+        public static void CreateDicrectoriesIfNotExist(string directoryPath)
+        {
+            // if folder not exist
+            if (!Directory.Exists(directoryPath))
+            {
+                Directory.CreateDirectory(directoryPath);
+            }
+        }
+
         public static bool Delete(string file)
         {
             if (File.Exists(file))

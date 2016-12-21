@@ -1,25 +1,5 @@
-﻿@using Vaiona.Utils.Cfg;
+﻿@using Vaiona.Web.Mvc;
 @using Microsoft.Web.Helpers;
 @{
-    Layout = "~/Views/Shared/_Layout.cshtml"; // built-in layout
-    if (IsPost && !string.IsNullOrWhiteSpace(Request["Theme"]))
-    {
-        Themes.CurrentTheme = Request["Theme"];
-        Session["CurrentTheme"] = Themes.CurrentTheme;
-    }
-    else if (Session["CurrentTheme"] != null)
-    {
-        Themes.CurrentTheme = Session["CurrentTheme"] as string;
-    }
-    string layoutFileName = string.Concat(AppConfiguration.ActiveLayoutName, ".cshtml");
-    layoutFileName = Themes.GetResourcePath("Layouts", layoutFileName); // Auto fallback to DefaultTheme
-    if (!string.IsNullOrWhiteSpace(layoutFileName))
-    {
-        Layout = layoutFileName;
-    }
+    Layout = Html.GetLayoutName();
 }
-@*
-@{
-    Layout = "~/Views/Shared/_Layout.cshtml";
-}
-*@

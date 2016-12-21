@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Web.Mvc;
 using System.Collections.Generic;
 using Vaiona.Web.Mvc.Models;
+using Vaiona.Web.Extensions;
 
 namespace BExIS.Web.Shell.Controllers
 {
@@ -10,14 +11,7 @@ namespace BExIS.Web.Shell.Controllers
     {
         public ActionResult Index()
         {
-            if (Request.IsAuthenticated)
-            {
-                ViewBag.Title = PresentationModel.GetViewTitle("Dashboard");
-            }
-            else
-            {
-                ViewBag.Title = PresentationModel.GetViewTitle("Home"); 
-            }
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant(Request.IsAuthenticated ? "Dashboard" : "Home", this.Session.GetTenant());
 
             return View();
         }
@@ -26,5 +20,6 @@ namespace BExIS.Web.Shell.Controllers
         {
             return View();
         }
+
     }
 }

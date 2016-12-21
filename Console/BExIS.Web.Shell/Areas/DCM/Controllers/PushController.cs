@@ -13,6 +13,7 @@ using BExIS.IO;
 using BExIS.Web.Shell.Areas.DCM.Models.Push;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Models;
+using Vaiona.Web.Extensions;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
 {
@@ -23,7 +24,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         public ActionResult Index()
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Push Big File ");
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Push Big File", this.Session.GetTenant());
 
             Session["Files"] = null;
             return View(LoadDefaultModel());
@@ -31,9 +32,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         public ActionResult Delete(string path)
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Push Big File");
-
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Push Big File", this.Session.GetTenant());
             FileHelper.Delete(path);
+
             return View("Index", LoadDefaultModel());
         }
 
@@ -53,6 +54,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         [HttpPost]
         public ActionResult ProcessSubmit(IEnumerable<HttpPostedFileBase> attachments)
         {
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Push Big File", this.Session.GetTenant());
             // The Name of the Upload component is "attachments"                            
             if (attachments != null)
             {
@@ -71,7 +73,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         {
             List<BasicFileInfo> fileList = new List<BasicFileInfo>();
   
-            string userDataPath = Path.Combine(AppConfiguration.DataPath, "Temp", GetUserNameOrDefault());
+            string userDataPath = Path.Combine(AppConfiguration.DataPath, "Temp", GetUsernameOrDefault());
 
             // if folder not exist
             if (!Directory.Exists(userDataPath))
@@ -85,7 +87,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             foreach(FileInfo info in  dirInfo.GetFiles())
             {
-                fileList.Add(new BasicFileInfo(info.FullName, ""));
+                fileList.Add(new BasicFileInfo(info.Name,info.FullName,"", info.Extension,info.Length));
             }
 
             return fileList;
@@ -95,16 +97,16 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         #region helper
             // chekc if user exist
             // if true return usernamem otherwise "DEFAULT"
-            private string GetUserNameOrDefault()
+            private string GetUsernameOrDefault()
             {
-                string userName = string.Empty;
+                string username = string.Empty;
                 try
                 {
-                    userName = HttpContext.User.Identity.Name;
+                    username = HttpContext.User.Identity.Name;
                 }
                 catch { }
 
-                return !string.IsNullOrWhiteSpace(userName) ? userName : "DEFAULT";
+                return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
             }
 
             public void uploadFiles(IEnumerable<HttpPostedFileBase> attachments)
@@ -119,7 +121,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     filemNames += fileName.ToString()+",";
 
                     string dataPath = AppConfiguration.DataPath;
-                    var destinationPath = Path.Combine(dataPath, "Temp", GetUserNameOrDefault(), fileName);
+                    var destinationPath = Path.Combine(dataPath, "Temp", GetUsernameOrDefault(), fileName);
 
                     Debug.WriteLine("contentlength :" + file.ContentLength);
 

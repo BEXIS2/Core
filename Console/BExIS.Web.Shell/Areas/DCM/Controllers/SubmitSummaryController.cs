@@ -18,6 +18,8 @@ using BExIS.Dlm.Services.DataStructure;
 using BExIS.Web.Shell.Areas.DCM.Models;
 using System.Threading.Tasks;
 using System.Threading;
+using NHibernate.Util;
+using Vaiona.Logging;
 using Vaiona.Logging.Aspects;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
@@ -164,7 +166,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         }
 
         // original version of finishupload
-        //[MeasurePerformance]
+        [MeasurePerformance]
         public List<Error> FinishUpload2(TaskManager taskManager)
         {
 
@@ -179,7 +181,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                
 
                 //datatuple list
-                DataTuple[] rows;
+                List<DataTuple> rows;
 
                 DatasetManager dm = new DatasetManager();
                 Dataset ds = dm.GetDataset(id);
@@ -236,9 +238,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                                     ExcelReader reader = new ExcelReader();
 
                                     //schleife
-                                dm.CheckOutDatasetIfNot(ds.Id, GetUserNameOrDefault()); // there are cases, the dataset does not get checked out!!
-                                if (!dm.IsDatasetCheckedOutFor(ds.Id, GetUserNameOrDefault()))
-                                    throw new Exception(string.Format("Not able to checkout dataset '{0}' for  user '{1}'!", ds.Id, GetUserNameOrDefault()));
+                                dm.CheckOutDatasetIfNot(ds.Id, GetUsernameOrDefault()); // there are cases, the dataset does not get checked out!!
+                                if (!dm.IsDatasetCheckedOutFor(ds.Id, GetUsernameOrDefault()))
+                                    throw new Exception(string.Format("Not able to checkout dataset '{0}' for  user '{1}'!", ds.Id, GetUsernameOrDefault()));
 
                                 workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
 
@@ -252,7 +254,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                                     // open file
                                     Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
-                                    rows = reader.ReadFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), sds, (int)id, packageSize).ToArray();
+                                    rows = reader.ReadFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), sds, (int)id, packageSize);
 
                                     if (reader.ErrorMessages.Count > 0)
                                     {
@@ -323,7 +325,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                                 Stopwatch totalTime = Stopwatch.StartNew();
 
-                                if (dm.IsDatasetCheckedOutFor(ds.Id, GetUserNameOrDefault()) || dm.CheckOutDataset(ds.Id, GetUserNameOrDefault()))
+                                if (dm.IsDatasetCheckedOutFor(ds.Id, GetUsernameOrDefault()) || dm.CheckOutDataset(ds.Id, GetUsernameOrDefault()))
                                 {
                                     workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
                                     int packageSize = 100000;
@@ -337,7 +339,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                                     TaskManager.Bus[TaskManager.CURRENTPACKAGE] = counter;
 
                                         Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
-                                    rows = reader.ReadFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), (AsciiFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO], sds, id, packageSize).ToArray();
+                                    rows = reader.ReadFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), (AsciiFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO], sds, id, packageSize);
                                         Stream.Close();
 
                                         if (reader.ErrorMessages.Count > 0)
@@ -409,16 +411,16 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                             //}
 
                             // ToDo: Get Comment from ui and users
-                            dm.CheckInDataset(ds.Id, "upload data from upload wizard", GetUserNameOrDefault());
+                            dm.CheckInDataset(ds.Id, "upload data from upload wizard", GetUsernameOrDefault());
 
-                            // open the excel file and add data tuples
-                            //AddDatatuplesToFile(ds.Id, sds.Id, path);
-                        }
-                        catch (Exception e)
+                            LoggerFactory.LogData(id.ToString(), typeof(Dataset).Name, Vaiona.Entities.Logging.CrudState.Updated);
+
+                    }
+                    catch (Exception e)
                         {
 
                             temp.Add(new Error(ErrorType.Other, "Can not upload. : " + e.Message));
-                            dm.CheckInDataset(ds.Id, "checked in but no update on data tuples", GetUserNameOrDefault());
+                            dm.CheckInDataset(ds.Id, "checked in but no update on data tuples", GetUsernameOrDefault());
                         }
                         finally
                         { 
@@ -439,7 +441,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         dm.EditDatasetVersion(workingCopy, null, null, null);
 
                         // ToDo: Get Comment from ui and users
-                        dm.CheckInDataset(ds.Id, "upload unstructured data", GetUserNameOrDefault());
+                        dm.CheckInDataset(ds.Id, "upload unstructured data", GetUsernameOrDefault());
                     }
 
                 #endregion
@@ -455,12 +457,18 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             return temp;
         }
 
-        //[MeasurePerformance]
+        [MeasurePerformance]
         //temporary solution: norman :FinishUpload2
         public List<Error> FinishUpload(TaskManager taskManager)
         {
 
             List<Error> temp = new List<Error>();
+            DatasetManager dm = new DatasetManager();
+            DatasetVersion workingCopy = new DatasetVersion();
+            //datatuple list
+            List<DataTuple> rows = new List<DataTuple>();
+            Dataset ds  = null;
+            bool inputWasAltered = false;
 
             if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_ID) && TaskManager.Bus.ContainsKey(TaskManager.DATASTRUCTURE_ID))
             {
@@ -469,13 +477,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 DataStructureManager dsm = new DataStructureManager();
                 long iddsd = Convert.ToInt32(TaskManager.Bus[TaskManager.DATASTRUCTURE_ID]);
 
-
-                //datatuple list
-                DataTuple[] rows;
-
-                DatasetManager dm = new DatasetManager();
-                Dataset ds = dm.GetDataset(id);
-                DatasetVersion workingCopy = new DatasetVersion();
+                ds = dm.GetDataset(id);
+                // Javad: Please check if the dataset does exists!!
 
                 #region Progress Informations
 
@@ -528,11 +531,12 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                             ExcelReader reader = new ExcelReader();
 
                             //schleife
-                            dm.CheckOutDatasetIfNot(ds.Id, GetUserNameOrDefault()); // there are cases, the dataset does not get checked out!!
-                            if (!dm.IsDatasetCheckedOutFor(ds.Id, GetUserNameOrDefault()))
-                                throw new Exception(string.Format("Not able to checkout dataset '{0}' for  user '{1}'!", ds.Id, GetUserNameOrDefault()));
+                            dm.CheckOutDatasetIfNot(ds.Id, GetUsernameOrDefault()); // there are cases, the dataset does not get checked out!!
+                            if (!dm.IsDatasetCheckedOutFor(ds.Id, GetUsernameOrDefault()))
+                                throw new Exception(string.Format("Not able to checkout dataset '{0}' for  user '{1}'!", ds.Id, GetUsernameOrDefault()));
 
                             workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
+                            //workingCopy.ContentDescriptors = new List<ContentDescriptor>();
 
 
                             do
@@ -544,7 +548,10 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                                 // open file
                                 Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
-                                rows = reader.ReadFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), sds, (int)id, packageSize).ToArray();
+                                Stopwatch upload = Stopwatch.StartNew();
+                                rows = reader.ReadFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), sds, (int)id, packageSize);
+                                upload.Stop();
+                                Debug.WriteLine("ReadFile: " + counter + "  Time " + upload.Elapsed.TotalSeconds.ToString());
 
                                 if (reader.ErrorMessages.Count > 0)
                                 {
@@ -557,9 +564,10 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                                     {
                                         if (TaskManager.Bus[TaskManager.DATASET_STATUS].ToString().Equals("new"))
                                         {
-                                            //Stopwatch upload = Stopwatch.StartNew();
+                                            upload = Stopwatch.StartNew();
                                             dm.EditDatasetVersion(workingCopy, rows, null, null);
-                                            //Debug.WriteLine("Upload : " + counter + "  Time " + upload.Elapsed.TotalSeconds.ToString());
+                                            upload.Stop();
+                                            Debug.WriteLine("EditDatasetVersion: " + counter + "  Time " + upload.Elapsed.TotalSeconds.ToString());
                                             //Debug.WriteLine("----");
 
                                         }
@@ -615,7 +623,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                             Stopwatch totalTime = Stopwatch.StartNew();
 
-                            if (dm.IsDatasetCheckedOutFor(ds.Id, GetUserNameOrDefault()) || dm.CheckOutDataset(ds.Id, GetUserNameOrDefault()))
+                            if (dm.IsDatasetCheckedOutFor(ds.Id, GetUsernameOrDefault()) || dm.CheckOutDataset(ds.Id, GetUsernameOrDefault()))
                             {
                                 workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
                                 int packageSize = 100000;
@@ -626,55 +634,58 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                                 do
                                 {
                                     counter++;
+                                    inputWasAltered = false;
                                     TaskManager.Bus[TaskManager.CURRENTPACKAGE] = counter;
 
                                     Stream = reader.Open(TaskManager.Bus[TaskManager.FILEPATH].ToString());
-                                    rows = reader.ReadFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), (AsciiFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO], sds, id, packageSize).ToArray();
+                                    rows = reader.ReadFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), (AsciiFileReaderInfo)TaskManager.Bus[TaskManager.FILE_READER_INFO], sds, id, packageSize);
                                     Stream.Close();
 
                                     if (reader.ErrorMessages.Count > 0)
                                     {
-                                        //model.ErrorList = reader.errorMessages;
-                                    }
-                                    else
-                                    {
-                                        //model.Validated = true;
-                                        Stopwatch dbTimer = Stopwatch.StartNew();
-
-                                        if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_STATUS))
+                                        foreach (var err in reader.ErrorMessages)
                                         {
-                                            if (TaskManager.Bus[TaskManager.DATASET_STATUS].ToString().Equals("new"))
-                                            {
-
-                                                dm.EditDatasetVersion(workingCopy, rows, null, null);
-                                            }
-
-                                            if (TaskManager.Bus[TaskManager.DATASET_STATUS].ToString().Equals("edit"))
-                                            {
-                                                if (rows.Count() > 0)
-                                                {
-                                                    Dictionary<string, List<DataTuple>> splittedDatatuples = new Dictionary<string, List<DataTuple>>();
-                                                    splittedDatatuples = UploadWizardHelper.GetSplitDatatuples(rows, (List<long>)TaskManager.Bus[TaskManager.PRIMARY_KEYS], workingCopy, ref datatupleFromDatabaseIds);
-                                                    dm.EditDatasetVersion(workingCopy, splittedDatatuples["new"], splittedDatatuples["edit"], null);
-                                                }
-                                            }
+                                            temp.Add(new Error(ErrorType.Dataset, err.GetMessage()));
                                         }
-                                        else
+                                        //return temp;
+                                    }
+                                    //model.Validated = true;
+                                    Stopwatch dbTimer = Stopwatch.StartNew();
+
+                                    if (TaskManager.Bus.ContainsKey(TaskManager.DATASET_STATUS))
+                                    {
+                                        if (TaskManager.Bus[TaskManager.DATASET_STATUS].ToString().Equals("new"))
+                                        {
+
+                                            dm.EditDatasetVersion(workingCopy, rows, null, null);
+                                        }
+
+                                        if (TaskManager.Bus[TaskManager.DATASET_STATUS].ToString().Equals("edit"))
                                         {
                                             if (rows.Count() > 0)
                                             {
-                                                Dictionary<string, List<DataTuple>> splittedDatatuples = new Dictionary<string, List<DataTuple>>();
-                                                splittedDatatuples = UploadWizardHelper.GetSplitDatatuples(rows, (List<long>)TaskManager.Bus[TaskManager.PRIMARY_KEYS], workingCopy, ref datatupleFromDatabaseIds);
+                                                //Dictionary<string, List<DataTuple>> splittedDatatuples = new Dictionary<string, List<AbstractTuple>>();
+                                                var splittedDatatuples = UploadWizardHelper.GetSplitDatatuples(rows, (List<long>)TaskManager.Bus[TaskManager.PRIMARY_KEYS], workingCopy, ref datatupleFromDatabaseIds);
                                                 dm.EditDatasetVersion(workingCopy, splittedDatatuples["new"], splittedDatatuples["edit"], null);
+                                                inputWasAltered = true;
                                             }
                                         }
+                                    }
+                                    else
+                                    {
+                                        if (rows.Count() > 0)
+                                        {
+                                            Dictionary<string, List<DataTuple>> splittedDatatuples = new Dictionary<string, List<DataTuple>>();
+                                            splittedDatatuples = UploadWizardHelper.GetSplitDatatuples(rows, (List<long>)TaskManager.Bus[TaskManager.PRIMARY_KEYS], workingCopy, ref datatupleFromDatabaseIds);
+                                            dm.EditDatasetVersion(workingCopy, splittedDatatuples["new"], splittedDatatuples["edit"], null);
+                                            inputWasAltered = true;
+                                        }
+                                    }
 
                                         dbTimer.Stop();
                                         Debug.WriteLine(" db time" + dbTimer.Elapsed.TotalSeconds.ToString());
 
-                                    }
-
-                                } while (rows.Count() > 0);
+                                } while (rows.Count() > 0 || inputWasAltered == true);
 
 
 
@@ -690,31 +701,52 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                         #endregion
 
-                        // start download generator
-                        // filepath
-                        //string path = "";
-                        //if (workingCopy != null)
-                        //{
-                        //    path = GenerateDownloadFile(workingCopy);
+                        #region contentdescriptors
 
-                        //    dm.EditDatasetVersion(workingCopy, null, null, null);
-                        //}
+                        //remove all contentdescriptors from the old version 
+                        //generatedTXT
+                        if (workingCopy.ContentDescriptors.Any(c => c.Name.Equals("generatedTXT")))
+                        {
+                            ContentDescriptor tmp =
+                                workingCopy.ContentDescriptors.Where(c => c.Name.Equals("generatedTXT"))
+                                    .FirstOrDefault();
+                            dm.DeleteContentDescriptor(tmp);
+                        }
+
+                        //generatedCSV
+                        if (workingCopy.ContentDescriptors.Any(c => c.Name.Equals("generatedCSV")))
+                        {
+                            ContentDescriptor tmp =
+                                workingCopy.ContentDescriptors.Where(c => c.Name.Equals("generatedCSV"))
+                                    .FirstOrDefault();
+                            dm.DeleteContentDescriptor(tmp);
+                        }
+                        //generated
+                        if (workingCopy.ContentDescriptors.Any(c => c.Name.Equals("generated")))
+                        {
+                            ContentDescriptor tmp =
+                                workingCopy.ContentDescriptors.Where(c => c.Name.Equals("generated"))
+                                    .FirstOrDefault();
+                            dm.DeleteContentDescriptor(tmp);
+                        }
+
+
+                        #endregion
+
 
                         // ToDo: Get Comment from ui and users
-                        dm.CheckInDataset(ds.Id, "upload data from upload wizard", GetUserNameOrDefault());
+                        MoveAndSaveOriginalFileInContentDiscriptor(workingCopy);
+                        dm.CheckInDataset(ds.Id, "upload data from upload wizard", GetUsernameOrDefault());
 
-                        // open the excel file and add data tuples
-                        //AddDatatuplesToFile(ds.Id, sds.Id, path);
                     }
                     catch (Exception e)
                     {
 
                         temp.Add(new Error(ErrorType.Other, "Can not upload. : " + e.Message));
-                        dm.CheckInDataset(ds.Id, "checked in but no update on data tuples", GetUserNameOrDefault());
                     }
                     finally
                     {
-
+                        
                     }
                 }
 
@@ -724,14 +756,17 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                 if (TaskManager.Bus.ContainsKey(TaskManager.DATASTRUCTURE_TYPE) && TaskManager.Bus[TaskManager.DATASTRUCTURE_TYPE].Equals(DataStructureType.Unstructured))
                 {
+                    // checkout the dataset, apply the changes, and check it in.
+                    if (dm.IsDatasetCheckedOutFor(ds.Id, GetUsernameOrDefault()) || dm.CheckOutDataset(ds.Id, GetUsernameOrDefault()))
+                    {
+                        workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
+                        SaveFileInContentDiscriptor(workingCopy);
 
-                    workingCopy = dm.GetDatasetLatestVersion(ds.Id);
-                    SaveFileInContentDiscriptor(workingCopy);
+                        dm.EditDatasetVersion(workingCopy, null, null, null);
 
-                    dm.EditDatasetVersion(workingCopy, null, null, null);
-
-                    // ToDo: Get Comment from ui and users
-                    dm.CheckInDataset(ds.Id, "upload unstructured data", GetUserNameOrDefault());
+                        // ToDo: Get Comment from ui and users
+                        dm.CheckInDataset(ds.Id, "upload unstructured data", GetUsernameOrDefault());
+                    }
                 }
 
                 #endregion
@@ -744,72 +779,32 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 temp.Add(new Error(ErrorType.Dataset, "Dataset is not selected."));
             }
 
+            if (temp.Count <= 0)
+            {
+                dm.CheckInDataset(ds.Id, "checked in but no update on data tuples", GetUsernameOrDefault());
+            }
+            else
+            {
+                dm.UndoCheckoutDataset(ds.Id, GetUsernameOrDefault());
+            }
             return temp;
         }
 
-
-        //public ActionResult StartProgress()
-        //{
-        //    var taskId = Guid.NewGuid();
-        //    tasks.Add(taskId, 0);
-
-        //    //Task.Factory.StartNew(() =>
-        //    //{
-        //    //    for (var i = 0; i <= 100; i++)
-        //    //    {
-        //    //        tasks[taskId] = i; // update task progress
-        //    //        Thread.Sleep(50); // simulate long running operation
-        //    //    }
-        //    //    tasks.Remove(taskId);
-        //    //});
-
-        //    return Json(taskId);
-        //}
-
-        //public ActionResult Progress(Guid id)
-        //{
-
-        //    TaskManager = (TaskManager)Session["TaskManager"];
-        //    int value = 0;
-        //    if (TaskManager.Bus.ContainsKey(TaskManager.CURRENTPACKAGE) &&
-        //        TaskManager.Bus.ContainsKey(TaskManager.CURRENTPACKAGESIZE) &&
-        //        TaskManager.Bus.ContainsKey(TaskManager.NUMBERSOFROWS)
-        //        )
-        //    {
-        //        int currentPackage = (int)TaskManager.Bus[TaskManager.CURRENTPACKAGE];
-        //        int currentPackageSize = (int)TaskManager.Bus[TaskManager.CURRENTPACKAGESIZE];
-        //        int numberOfRows = (int)TaskManager.Bus[TaskManager.NUMBERSOFROWS];
-
-        //        int currentRow = currentPackage * currentPackageSize;
-
-        //        value =   numberOfRows/currentRow;
-
-        //        if (currentPackage == currentPackageSize)
-        //        {
-        //            value = 100;
-        //        }
-
-        //    }
-
-
-
-        //    return Json(value);
-        //}
-
-
         #region private methods
 
-        public string GetUserNameOrDefault()
+        public string GetUsernameOrDefault()
         {
-            string userName = string.Empty;
+            string username = string.Empty;
             try
             {
-                userName = HttpContext.User.Identity.Name;
+                username = HttpContext.User.Identity.Name;
             }
             catch { }
 
-            return !string.IsNullOrWhiteSpace(userName) ? userName : "DEFAULT";
+            return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
         }
+
+        
 
         private string GenerateDownloadFile(DatasetVersion datasetVersion)
         {
@@ -826,44 +821,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             string ext = ".xlsm";// TaskManager.Bus[TaskManager.EXTENTION].ToString();
 
             ExcelWriter excelWriter = new ExcelWriter();
-
-            // Move Original File to its permanent location
-            String tempPath = TaskManager.Bus[TaskManager.FILEPATH].ToString();
-            string originalFileName = TaskManager.Bus[TaskManager.FILENAME].ToString();
-            string storePath = excelWriter.GetFullStorePathOriginalFile(datasetId, datasetVersion.Id, originalFileName);
-            string dynamicStorePath = excelWriter.GetDynamicStorePathOriginalFile(datasetId, datasetVersion.VersionNo, originalFileName);
-
-            //Why using the excel writer, isn't any function available in System.IO.File/ Directory, etc. Javad
-            FileHelper.MoveFile(tempPath, storePath);
-
-            //Register the original data as a resource of the current dataset version
-            ContentDescriptor originalDescriptor = new ContentDescriptor()
-            {
-                OrderNo = 1,
-                Name = "original",
-                MimeType = "application/xlsm",
-                URI = dynamicStorePath,
-                DatasetVersion = datasetVersion,
-            };
-
-            if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(originalDescriptor.Name)) > 0)
-            {   // remove the one contentdesciptor 
-                foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
-                {
-                    if (cd.Name == originalDescriptor.Name)
-                    {
-                        cd.URI = originalDescriptor.URI;
-                    }
-                }
-            }
-            else
-            {
-                // add current contentdesciptor to list
-                datasetVersion.ContentDescriptors.Add(originalDescriptor);
-            }
-
-
-
+            
             // create the generated file and determine its location
             string path = excelWriter.CreateFile(datasetId, datasetVersion.VersionNo, dataStructureId, title, ext);
             string dynamicPath = excelWriter.GetDynamicStorePath(datasetId, datasetVersion.VersionNo, title, ext);
@@ -916,12 +874,14 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 //Why using the excel writer, isn't any function available in System.IO.File/ Directory, etc. Javad
                 FileHelper.MoveFile(tempPath, storePath);
 
+                string mimeType = MimeMapping.GetMimeMapping(originalFileName);
+
                 //Register the original data as a resource of the current dataset version
                 ContentDescriptor originalDescriptor = new ContentDescriptor()
                 {
                     OrderNo = 1,
                     Name = "unstructuredData",
-                    MimeType = extention,
+                    MimeType = mimeType,
                     URI = dynamicStorePath,
                     DatasetVersion = datasetVersion,
                 };
@@ -939,12 +899,67 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             }
         }
 
-        private void AddDatatuplesToFile(long datasetId, long dataStructureId, string path)
+        private string MoveAndSaveOriginalFileInContentDiscriptor(DatasetVersion datasetVersion)
         {
-            List<long> tempDataTuplesIds = GetDataTuples(datasetId);
+            TaskManager TaskManager = (TaskManager)Session["TaskManager"];
+
+            //dataset id and data structure id are available via datasetVersion properties,why you are passing them via the BUS? Javad
+            long datasetId = Convert.ToInt64(TaskManager.Bus[TaskManager.DATASET_ID]);
+            long dataStructureId = Convert.ToInt64(TaskManager.Bus[TaskManager.DATASTRUCTURE_ID]);
+
+            DatasetManager datasetManager = new DatasetManager();
+
+            string title = TaskManager.Bus[TaskManager.DATASET_TITLE].ToString();
+            string ext = ".xlsm";// TaskManager.Bus[TaskManager.EXTENTION].ToString();
 
             ExcelWriter excelWriter = new ExcelWriter();
-            excelWriter.AddDataTuplesToTemplate(tempDataTuplesIds, path, dataStructureId);
+
+            // Move Original File to its permanent location
+            String tempPath = TaskManager.Bus[TaskManager.FILEPATH].ToString();
+            string originalFileName = TaskManager.Bus[TaskManager.FILENAME].ToString();
+            string storePath = excelWriter.GetFullStorePathOriginalFile(datasetId, datasetVersion.Id, originalFileName);
+            string dynamicStorePath = excelWriter.GetDynamicStorePathOriginalFile(datasetId, datasetVersion.VersionNo, originalFileName);
+
+            //Why using the excel writer, isn't any function available in System.IO.File/ Directory, etc. Javad
+            FileHelper.MoveFile(tempPath, storePath);
+
+            //Register the original data as a resource of the current dataset version
+            ContentDescriptor originalDescriptor = new ContentDescriptor()
+            {
+                OrderNo = 1,
+                Name = "original",
+                MimeType = "application/xlsm",
+                URI = dynamicStorePath,
+                DatasetVersion = datasetVersion,
+            };
+
+            if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(originalDescriptor.Name)) > 0)
+            {   // remove the one contentdesciptor 
+                foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
+                {
+                    if (cd.Name == originalDescriptor.Name)
+                    {
+                        cd.URI = originalDescriptor.URI;
+                    }
+                }
+            }
+            else
+            {
+                // add current contentdesciptor to list
+                datasetVersion.ContentDescriptors.Add(originalDescriptor);
+            }
+
+            return storePath;
+        }
+
+        private void AddDatatuplesToFile(long datasetId, long dataStructureId, string path)
+        {
+            DatasetManager datasetManager = new DatasetManager();
+            DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);            
+            List<long> tempDataTuplesIds = datasetManager.GetDatasetVersionEffectiveTupleIds(datasetVersion);
+
+            ExcelWriter excelWriter = new ExcelWriter();
+            excelWriter.AddDataTuplesToTemplate(datasetManager, tempDataTuplesIds, path, dataStructureId);
         }
 
         private List<long> GetDataTuples(long datasetId)

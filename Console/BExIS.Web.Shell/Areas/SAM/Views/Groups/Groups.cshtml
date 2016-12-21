@@ -19,8 +19,7 @@
 {
     With this interface you are able to manage groups. New groups can be added with the "Create" button. Existing groups can be edited (properties, members, delete) using the "Edit" button.
     <p>
-        More information 
-        @Html.ActionLink("here", "Index", "Help", new { id = 0 }, new { @class = "bx-informationLink", title="go to help", target="_blank"})
+    <a href="/SAM/Help/Index/#_Toc451422047" class="bx-informationLink" title="go to help" target="_blank">More</a>
     </p>
 }
 
@@ -165,7 +164,7 @@
     }
 
     function windowEdit_onSubmit() {
-        $.post('@Url.Action("SetMembership", "Groups")', { Groups: $("#gridMembership").data("tGrid").dataSource._data });
+        $.post('@Url.Action("SetMembership", "Groups")', { Users: $("#gridMembership").data("tGrid").dataSource._data });
     }
 
     function setMembership(value, id) {
@@ -180,7 +179,7 @@
     }
 
     function groupDelete_onClick(groupName, id) {
-        var result = confirm('Are you sure you want to delete this user (UserName:' + groupName + ', Id:' + id + ')?');
+        var result = confirm('Are you sure you want to delete this user (Group Name:' + groupName + ', Id:' + id + ')?');
 
         if (result) {
             $.post('@Url.Action("Delete", "Groups")', { Id: id }, function (e) {

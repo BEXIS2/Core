@@ -20,7 +20,7 @@ Green 05  #eff7f6 brigth
 */
 
 /*GENERAL*/
-.t-link {text-decoration: none}
+.t-link {text-decoration: none; cursor: pointer;}
 .t-animation-container{background :transparent none repeat scroll 0 0; overflow:hidden}
 .t-animation-container, .t-animation-container .t-popup
 {
@@ -94,6 +94,7 @@ Green 05  #eff7f6 brigth
 .t-group-indicator .t-link {
 	margin:0 2px 0 2px; 
 	/*font-family: Arial*/
+    cursor: pointer;
 }
 
 .t-group-indicator .t-link, .t-group-delete
@@ -148,6 +149,7 @@ Green 05  #eff7f6 brigth
 {
     width:100%;
     text-align:left;
+    cursor: pointer;
 }
 .t-pager .t-page-size .t-dropdown
 {
@@ -592,6 +594,17 @@ div.t-numerictextbox{display:inline-block;*display:inline;zoom:1;position:relati
 .t-datepicker .t-picker-wrap .t-input
 {
     width:100%;
+}
+
+.t-datepicker-calendar {
+    overflow-x: hidden;
+}
+
+.t-datepicker-calendar th,
+.t-datepicker-calendar td
+{
+    border-right: none 0;
+    padding: 10px;
 }
 
 

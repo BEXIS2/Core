@@ -1,15 +1,21 @@
 ﻿using System;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Web.Mvc;
 using System.Web.Security;
 using BExIS.Security.Entities.Authentication;
+using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authentication;
+using BExIS.Security.Services.Authorization;
+using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Web.Shell.Areas.SAM.Models;
 using Vaiona.Web.Mvc.Models;
+using Vaiona.Web.Extensions;
+using Vaiona.Logging;
 
 namespace BExIS.Web.Shell.Areas.SAM.Controllers
 {
@@ -33,7 +39,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
 
         public ActionResult MyAccount()
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("My Account");
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("My Account", this.Session.GetTenant());
 
             SubjectManager subjectManager = new SubjectManager();
             User user = subjectManager.GetUserByName(HttpContext.User.Identity.Name);
@@ -84,6 +90,8 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
 
         public ActionResult LogOn(string returnUrl)
         {
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Home", this.Session.GetTenant());
+
             if (Request.IsAuthenticated)
             {
                 return View("Error");
@@ -123,22 +131,22 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
 
                 #endregion AuthenticationManager
 
-                if (authenticationManager.ValidateUser(model.UserName, model.Password))
+                if (authenticationManager.ValidateUser(model.Username, model.Password))
                 {
                     SubjectManager subjectManager = new SubjectManager();
 
-                    if (!subjectManager.ExistsUserNameWithAuthenticatorId(model.UserName, model.AuthenticatorList.Id))
+                    if (!subjectManager.ExistsUsernameWithAuthenticatorId(model.Username, model.AuthenticatorList.Id))
                     {
-                        subjectManager.CreateUser(model.UserName, model.AuthenticatorList.Id);
+                        subjectManager.CreateUser(model.Username, model.AuthenticatorList.Id);
                     }
 
-                    FormsAuthentication.SetAuthCookie(model.UserName, false);
+                    FormsAuthentication.SetAuthCookie(model.Username, false);
 
                     return Json(new { success = true });
                 }
                 else
                 {
-                    ModelState.AddModelError("", "The user name or password provided is incorrect.");
+                    ModelState.AddModelError("", "The Username or Password provided is incorrect.");
                 }
             }
 
@@ -164,9 +172,18 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
             {
                 SubjectManager subjectManager = new SubjectManager();
 
-                User user = subjectManager.CreateUser(model.UserName, model.Password, model.FullName, model.Email, model.SecurityQuestionList.Id, model.SecurityAnswer, model.AuthenticatorList.Id);
+                User user = subjectManager.CreateUser(model.Username, model.Password, model.FullName, model.Email, model.SecurityQuestion, model.SecurityAnswer, model.AuthenticatorList.Id);
+                LoggerFactory.LogData(user.Id.ToString(), typeof(User).Name, Vaiona.Entities.Logging.CrudState.Created);
 
-                FormsAuthentication.SetAuthCookie(model.UserName, false);
+                // Feature
+                FeatureManager featureManager = new FeatureManager();
+                Feature feature = featureManager.FeaturesRepo.Get(f => f.Name == "Search").FirstOrDefault();
+
+                // Permissions
+                PermissionManager permissionManager = new PermissionManager();
+                permissionManager.CreateFeaturePermission(user.Id, feature.Id);
+
+                FormsAuthentication.SetAuthCookie(model.Username, false);
                 return Json(new { success = true });
             }
 
@@ -200,11 +217,16 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
             }
         }
 
-        public JsonResult ValidateUserName(string userName, long id = 0)
+        public JsonResult ValidateTermsAndConditions(bool accepted)
+        {
+            return accepted ? Json(true, JsonRequestBehavior.AllowGet) : Json(false, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult ValidateUsername(string username, long id = 0)
         {
             SubjectManager subjectManager = new SubjectManager();
 
-            User user = subjectManager.GetUserByName(userName);
+            User user = subjectManager.GetUserByName(username);
 
             if (user == null)
             {
@@ -218,7 +240,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Controllers
                 }
                 else
                 {
-                    string error = String.Format(CultureInfo.InvariantCulture, "User name already exists.", userName);
+                    string error = String.Format(CultureInfo.InvariantCulture, "User name already exists.", username);
 
                     return Json(error, JsonRequestBehavior.AllowGet);
                 }

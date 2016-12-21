@@ -12,7 +12,7 @@ namespace BExIS.Ext.Services
 {    
     public static class AuthorizationDelegationImplementor
     {
-        public static void CheckAuthorization(string areaName, string controllerName, string actionName, string userName, bool isAuthenticated)
+        public static void CheckAuthorization(string areaName, string controllerName, string actionName, string username, bool isAuthenticated)
         {
             // validate the call using the extensibility information (modules, tasks, actions, etc)
             // Call security authorization api utilizing the IoC, Singleton lifetime
@@ -33,7 +33,7 @@ namespace BExIS.Ext.Services
 
                     if (!permissionManager.ExistsFeaturePermission(subjectManager.GetGroupByName("everyone").Id, task.Feature.Id))
                     {
-                        User user = subjectManager.GetUserByName(userName);
+                        User user = subjectManager.GetUserByName(username);
 
                         if (user != null)
                         {

@@ -217,7 +217,9 @@ namespace BExIS.Security.Services.Authorization
 
         public bool DeleteDataPermissionsByEntity(long entityId, long dataId)
         {
-            List<DataPermission>dataPermissions = GetDataPermissionsFromEntity(entityId, dataId).ToList();
+            var dataPermissions = GetDataPermissionsFromEntity(entityId, dataId)
+                                    //.Select(p=>p.Id) // if uncommented, uses another repository Delete method!
+                                    .ToList();
 
             if (dataPermissions != null)
             {
@@ -331,7 +333,7 @@ namespace BExIS.Security.Services.Authorization
             return ExistsDataPermission(subjectIds, entityId, dataId, rightType);
         }
 
-        public bool HasUserDataAccess(string userName, long entityId, long dataId, RightType rightType)
+        public bool HasUserDataAccess(string username, long entityId, long dataId, RightType rightType)
         {
             Group everyone = GroupsRepo.Get(g => g.Name == "everyone").FirstOrDefault();
 
@@ -341,7 +343,7 @@ namespace BExIS.Security.Services.Authorization
             }
             else
             {
-                User user = UsersRepo.Get(u => u.Name.ToLower() == userName.ToLower()).FirstOrDefault();
+                User user = UsersRepo.Get(u => u.Name.ToLower() == username.ToLower()).FirstOrDefault();
 
                 if (user == null)
                 {

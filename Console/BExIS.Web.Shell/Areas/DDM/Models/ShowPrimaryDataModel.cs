@@ -8,6 +8,7 @@ using BExIS.Dlm.Entities.Data;
 using Vaiona.Utils.Cfg;
 using System.IO;
 using BExIS.IO;
+using BExIS.IO.DataType.DisplayPattern;
 
 
 namespace BExIS.Web.Shell.Areas.DDM.Models
@@ -28,6 +29,8 @@ namespace BExIS.Web.Shell.Areas.DDM.Models
 
         public List<object> CompareValuesOfDataTypes { get; set; }
 
+        public List<DisplayFormatObject> DisplayFormats { get; set; }
+
         public bool DownloadAccess { get; set; }
 
         public static ShowPrimaryDataModel Convert(long datasetId, string title, DataStructure dataStructure, DataTable data, bool downloadAccess)
@@ -40,6 +43,8 @@ namespace BExIS.Web.Shell.Areas.DDM.Models
             model.DatasetTitle = title;
             model.CompareValuesOfDataTypes = CompareValues();
             model.DownloadAccess = downloadAccess;
+            model.DisplayFormats = getDisplayFormatObjects(dataStructure as StructuredDataStructure);
+
 
             return model;
         }
@@ -64,10 +69,17 @@ namespace BExIS.Web.Shell.Areas.DDM.Models
 
             foreach (ContentDescriptor cd in cds)
             {
-                
-                list.Add(
-                    new BasicFileInfo(cd.URI, cd.MimeType)
-                    );
+
+                string filePath = Path.Combine(AppConfiguration.DataPath, cd.URI);
+
+                if (cd.Name.Equals("unstructuredData") && FileHelper.FileExist(filePath))
+                {
+                    FileInfo fileInfo = new FileInfo(filePath);
+
+                    list.Add(
+                        new BasicFileInfo(fileInfo.Name, cd.URI, cd.MimeType, fileInfo.Extension, fileInfo.Length)
+                        );
+                }
             }
 
             return list;
@@ -97,6 +109,50 @@ namespace BExIS.Web.Shell.Areas.DDM.Models
             return values;
         }
 
+        private static List<DisplayFormatObject> getDisplayFormatObjects(StructuredDataStructure dataStructure)
+        {
+            List<DisplayFormatObject> tmp = new List<DisplayFormatObject>();
+
+            foreach (var variable in  dataStructure.Variables)
+            {
+                string format = "";
+                string unit = "";
+                string column = variable.Label;
+
+                DataType dt = variable.DataAttribute.DataType;
+
+                // add display pattern to DisplayFormatObject;
+                DataTypeDisplayPattern ddp = DataTypeDisplayPattern.Materialize(dt.Extra);
+                if (ddp != null)
+                {
+                    format = ddp.StringPattern;
+                }
+
+                // add unit abbr if exist do DisplayFormatObject 
+                // first variable, second dataattribute
+
+                if (variable.Unit != null && !string.IsNullOrEmpty(variable.Unit.Abbreviation))
+                {
+                    unit = variable.Unit.Abbreviation;
+                }
+                else
+                {
+                    if (variable.DataAttribute.Unit != null &&
+                        !string.IsNullOrEmpty(variable.DataAttribute.Unit.Abbreviation) &&
+                        !variable.DataAttribute.Unit.Name.Equals("None"))
+                    {
+                        unit = variable.DataAttribute.Unit.Abbreviation;
+                    }
+                }
+                
+                if(!string.IsNullOrEmpty(column) && (!string.IsNullOrEmpty(format) || !string.IsNullOrEmpty(unit)) )
+                    tmp.Add(new DisplayFormatObject(column,format,unit));
+
+            }
+
+
+            return tmp;
+        }
     }
 
     public enum DataStructureType
@@ -105,5 +161,17 @@ namespace BExIS.Web.Shell.Areas.DDM.Models
         Unstructured
     }
 
+    public class DisplayFormatObject
+    {
+        public string Format { get; set; }
+        public string Unit { get; set; }
+        public string Column { get; set; }
 
+        public DisplayFormatObject(string column, string format, string unit)
+        {
+            Column = column;
+            Format = format;
+            Unit = unit;
+        }
+    }
 }

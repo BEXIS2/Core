@@ -68,7 +68,7 @@ namespace BExIS.IO.Transform.Output
         /// <param name="filePath">Path of the excel template file</param>
         /// <param name="dataStructureId">Id of datastructure</param>
         /// <returns>List of Errors or null</returns>
-        public List<Error> AddDataTuplesToTemplate(List<long> dataTuplesIds, string filePath, long dataStructureId )
+        public List<Error> AddDataTuplesToTemplate(DatasetManager datasetManager, List<long> dataTuplesIds, string filePath, long dataStructureId )
         {
             if (File.Exists(filePath))
             {
@@ -118,7 +118,7 @@ namespace BExIS.IO.Transform.Output
                 this.VariableIdentifiers = getVariableIdentifiers(worksheetPart, this.areaOfVariables.StartRow, this.areaOfVariables.EndRow);
 
 
-                AddRows(worksheetPart, this.areaOfData.StartRow, this.areaOfData.EndRow, dataTuplesIds);
+                AddRows(worksheetPart, this.areaOfData.StartRow, this.areaOfData.EndRow, dataTuplesIds, datasetManager);
 
                 // set data area
 
@@ -264,18 +264,17 @@ namespace BExIS.IO.Transform.Output
         /// <param name="startRow"></param>
         /// <param name="endRow"></param>
         /// <param name="dataTuplesIds"></param>
-        protected void AddRows(WorksheetPart worksheetPart, int startRow, int endRow, List<long> dataTuplesIds)
+        protected void AddRows(WorksheetPart worksheetPart, int startRow, int endRow, List<long> dataTuplesIds, DatasetManager datasetManager)
         {
             Worksheet worksheet = worksheetPart.Worksheet;
             SheetData sheetData = worksheet.GetFirstChild<SheetData>();
 
             int rowIndex = endRow;
-            //add row
-            foreach (long id in dataTuplesIds)
+            DataTupleIterator tupleIterator = new DataTupleIterator(dataTuplesIds, datasetManager);
+            foreach (var tuple in tupleIterator)
             {
- 
                 // convert datatuple to row and add it to sheetdata
-                Row row = DatatupleToRow(id,rowIndex);
+                Row row = DatatupleToRow(tuple, rowIndex);
 
                 bool empty = true;
                 foreach (Cell c in row.Elements<Cell>().ToList())
@@ -290,11 +289,10 @@ namespace BExIS.IO.Transform.Output
                 if (!empty)
                 {
                     sheetData.Append(row);
-                    if(!id.Equals(dataTuplesIds.Last()))
+                    if (!tuple.Id.Equals(dataTuplesIds.Last()))
                         rowIndex++;
                 }
             }
-
             numOfDataRows = rowIndex;
 
         }
@@ -357,7 +355,7 @@ namespace BExIS.IO.Transform.Output
             row.RowIndex = Convert.ToUInt32(rowIndex);
 
 
-            DataTuple dataTuple = DatasetManager.DataTupleRepo.Get(dataTupleId);
+            DataTuple dataTuple = DatasetManager.DataTupleRepo.Query(d=>d.Id.Equals(dataTupleId)).FirstOrDefault();
             dataTuple.Materialize();
             
 
@@ -374,7 +372,6 @@ namespace BExIS.IO.Transform.Output
                 row.AppendChild(cell);
             }
 
-
             return row;
         }
 
@@ -386,7 +383,7 @@ namespace BExIS.IO.Transform.Output
         /// <param name="dataTuple">Datatuple to convert</param>
         /// <param name="rowIndex">Position of the Row</param>
         /// <returns></returns>
-        protected Row DatatupleToRow(DataTuple dataTuple, int rowIndex)
+        protected Row DatatupleToRow(AbstractTuple dataTuple, int rowIndex)
         {
             Row row = new Row();
             row.RowIndex = Convert.ToUInt32(rowIndex);
@@ -539,8 +536,10 @@ namespace BExIS.IO.Transform.Output
 
                     try
                     {
+
                         SpreadsheetDocument dataStructureFile = SpreadsheetDocument.Open(dataStructureFilePath, true);
-                        SpreadsheetDocument dataFile = SpreadsheetDocument.Create(dataPath, dataStructureFile.DocumentType);
+                        SpreadsheetDocument dataFile = SpreadsheetDocument.Create(dataPath,
+                            dataStructureFile.DocumentType);
 
                         foreach (OpenXmlPart part in dataStructureFile.GetPartsOfType<OpenXmlPart>())
                         {
@@ -550,7 +549,7 @@ namespace BExIS.IO.Transform.Output
                         dataFile.WorkbookPart.Workbook.Save();
                         dataStructureFile.Dispose();
                         dataFile.Dispose();
-
+            
                     }
                     catch (Exception ex)
                     {

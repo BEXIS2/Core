@@ -3,7 +3,7 @@ White    #000000
 Gray 01  #f5f5f5
 Gray 02  #ebebeb
 Gray 03  #afb0b1
-Gray 04  #009cdf
+Gray 04  #009cdf _> 323232
 Black    #ffffff
 Yellow   #ffbb52
 Orange   #ff9700
@@ -28,8 +28,18 @@ Green 05  #eff7f6
 .header
 {
     padding:5px;
-    border-top:2px solid #afb0b1;
+    /*border-top:2px solid #afb0b1;*/
     height:auto;
+}
+
+.metadata-first
+{
+    border-top:2px solid #afb0b1;
+}
+
+.metadata-last
+{
+    border-bottom:2px solid #afb0b1;
 }
 
 .labelContainer
@@ -41,7 +51,7 @@ Green 05  #eff7f6
 
 .contentContainer
 {
-    margin-bottom:10px;
+    padding-bottom:0px;
 }
 
 .optionContainer
@@ -72,7 +82,7 @@ Green 05  #eff7f6
 {
     text-align:center;
     /*border:ridge 1px blue;*/
-    margin-bottom:30px;
+    margin-bottom: 0px;
 }
 
 .metadataAttributeLabel
@@ -80,10 +90,14 @@ Green 05  #eff7f6
     text-align:right;
     
 }
+.bx-metadataFormTextInput {
+    width: 490px;
+    max-width: 490px;
+}
 
 .metadataAttributeInput
 {
-    width:380px;
+    width: 500px;
     /*border:ridge 1px yellow;*/
 }
 
@@ -100,12 +114,94 @@ Green 05  #eff7f6
 
 .metadataCompountAttributeUsage
 {
-    padding:0 0 0px 20px;
+    margin:0 0 0px 0px;
 }
 
 
 .metadataAttributeContent
 {
     /*border:dotted 1px green;*/
-    margin:10px;
+    margin:0px;
+}
+
+.metadata-activate-checkbox {
+    margin-top: 6px;  margin-left: 10px;
+    font-size: 16px;
+}
+
+.metadata-choice-container {
+    margin-top: 6px; 
+}
+
+
+/**DISABLED*/
+input:disabled, textarea:disabled, .bx-input.bx-disabled, .bx-textarea.bx-disabled, .t-autocomplete.bx-disabled {
+    border-color: #afb0b1;
+}
+
+/**Level**/
+.Metadata-Level-1 {
+    border-left: #BEE1DA 10px solid;
+    border-bottom: #BEE1DA 4px solid;
+}
+
+.Metadata-Level-Header-1 {
+    color: black;
+    background-color: #BEE1DA;
+}
+
+/*72b1a0*/
+.Metadata-Level-3 {
+    border-left: #CDE7E2 10px solid;
+    border-bottom: #CDE7E2 4px solid;
+    /*background-color: #72b1a0;*/
+    /*border-top:2px solid white;*/
+}
+
+.Metadata-Level-Header-3 {
+    /*color: white;*/
+    background-color: #CDE7E2;
+    
+}
+
+.Metadata-Level-5 {
+    border-left: #DCEDEA 10px solid;
+    border-bottom: #DCEDEA 4px solid;
+    /*background-color: #bee1da;*/
+    /*border-top:2px solid white;*/
+}
+
+.Metadata-Level-Header-5 {
+    /*color: white;*/
+    background-color: #DCEDEA;
+}
+
+.Metadata-Level-7 {
+    border-left: #EBF3F2 10px solid;
+    border-bottom: #EBF3F2 4px solid;
+    /*background-color: #d2e8e3;*/
+    /*border-top:2px solid white;*/
+
+}
+
+.Metadata-Level-Header-7 {
+    /*color: white;*/
+    background-color: #EBF3F2;
+}
+
+.Metadata-Level-9 {
+    border-left: #FAFAFA 10px solid;
+    border-bottom: #FAFAFA 4px solid;
+}
+
+.Metadata-Level-Header-9 {
+    /*color: white;*/
+    background-color: #FAFAFA;
+}
+
+
+/***Preloader*/
+#root .preloader {
+    text-align: center;
+    vertical-align: middle;
 }

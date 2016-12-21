@@ -101,10 +101,10 @@ namespace BExIS.Security.Services.Authentication
         /// <summary>
         /// Authenticate a user against a AD server
         /// </summary>
-        /// <param name="userName">username to check</param>
+        /// <param name="username">username to check</param>
         /// <param name="password">password of the user</param>
         /// <returns></returns>
-        public bool ValidateUser(string userName, string password)
+        public bool ValidateUser(string username, string password)
         {
             try
             {
@@ -118,7 +118,7 @@ namespace BExIS.Security.Services.Authentication
                 ldap.AuthType = AuthType.Basic;
                 SearchRequest searchRequest = new SearchRequest(
                        baseDn,
-                       string.Format(CultureInfo.InvariantCulture, "{0}={1}", authUid, userName),
+                       string.Format(CultureInfo.InvariantCulture, "{0}={1}", authUid, username),
                        SearchScope.Subtree
                 );
 

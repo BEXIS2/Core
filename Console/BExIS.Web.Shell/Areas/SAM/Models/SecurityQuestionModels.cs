@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Web.UI.WebControls;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Objects;
 
@@ -8,8 +9,6 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
 {
     public class SecurityQuestionCreateModel
     {
-        [Required]
-        [Display(Name = "Security Question")]
         public string Question { get; set; }
     }
 
@@ -31,8 +30,6 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
 
     public class SecurityQuestionSelectListModel
     {
-        public long Id { get; set; }
-
         public List<SecurityQuestionSelectListItemModel> SecurityQuestionList { get; set; }
 
         public SecurityQuestionSelectListModel()

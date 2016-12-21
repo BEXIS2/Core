@@ -9,11 +9,12 @@
 
 @*<header>*@
     <link href="@Url.Content("~/Areas/RPM/Stylesheets/RPM.css")" rel="stylesheet" type="text/css" />  
+    <link href="@Url.Content("~/Areas/RPM/Stylesheets/DataStructure.css")" rel="stylesheet" type="text/css" />
 @*</header> *@
 
 @{
     string[] temp;
-    string windowName = "Create Data Attribute";
+    string windowName = "Create Variable Template";
 
 
     if (Model.DataAttributeModel.Id != 0)
@@ -33,14 +34,13 @@
 
 @section Information
 {
-    With this interface you are able to manage (e.g. create, edit, delete) data attributes which may be used as variables in data structures (a variable is an instance of an attribute). Data attributes cannot be edited or deleted once they are associated with a data structure (they become locked).
+    With this interface you are able to manage (e.g. create, edit, delete) Variable Templates which may be used as variables in data structures (a variable is an instance of an attribute). Data attributes cannot be edited or deleted once they are associated with a data structure (they become locked).
     <p>
-        More information 
-        @Html.ActionLink("here", "Index", "Help", new { id = 0 }, new { @class = "bx-informationLink", title="go to help", target="_blank"})
-    </p>
+    <a href="/RPM/Help/Index/#_Toc434570751" class="bx-informationLink" title="go to help" target="_blank">More</a>
+</p>
 }
 <div class="bx-rpm-buttons">
-    @Html.ActionLink("Create Data Attribute", "openAttributeWindow", "DataAttribute", new { id = 0 }, new { @class = "bx-button function" })
+    @Html.ActionLink("Create Variable Template", "openAttributeWindow", "DataAttribute", new { id = 0 }, new { @class = "bx-button function" })
 </div>
     @(Html.Telerik().Grid(Model.DataAttributeStructs)    
             .Name("bx-rpm-attributeGrid")
@@ -48,9 +48,9 @@
             .Filterable()             
             .Columns(columns =>
                 {
-                    
-                    columns.Bound(c => c.Name);
-                    columns.Bound(c => c.Id);
+                    columns.Bound(c => c.Id)
+                    .Width(100);
+                    columns.Bound(c => c.Name);                    
                     columns.Bound(c => c.ShortName);
                     columns.Bound(c => c.Unit)
                         .Title("Unit");

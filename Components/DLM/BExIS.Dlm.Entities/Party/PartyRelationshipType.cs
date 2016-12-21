@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Vaiona.Entities.Common;
 
 namespace BExIS.Dlm.Entities.Party
 {
@@ -11,26 +12,31 @@ namespace BExIS.Dlm.Entities.Party
     /// The type of the organizations allowed to be HOLD are determined by the PartyRelationshipType, ...
     /// PartyRelationshipType can have cardinality to restrict the number of allowed 2nd parties IN RELATIONSHIP with any given 1st party.
     /// </summary>
-    public class PartyRelationshipType
+    public class PartyRelationshipType: BaseEntity
     {
+        public PartyRelationshipType()
+        {
+            PartyRelationships = new List<PartyRelationship>();
+            AssociatedPairs = new List<PartyTypePair>();
+        }
         #region Attributes
-        public string Title { get; set; }
-        public string Description { get; set; }
-        
+        public virtual string Title { get; set; }
+        public virtual string Description { get; set; }
+
         /// <summary>
         /// If true, the the source party type is considered to be the parent of the target party type, hence the same for the associated parties in the linked relationship
         /// </summary>
-        public Boolean IndicatesHierarchy { get; set; }
-        
+        public virtual Boolean IndicatesHierarchy { get; set; }
+
         /// <summary>
         /// Minimum numbers of parties of the target type that must be asscoated to a party of the source type
         /// </summary>
-        public int MinCardinality { get; set; }
+        public virtual int MinCardinality { get; set; }
 
         /// <summary>
         /// Maximum numbers of parties of the target type that can be asscoated to a party of the source type
         /// </summary>
-        public int MaxCardinality { get; set; }
+        public virtual int MaxCardinality { get; set; }
         #endregion
 
         #region Associations

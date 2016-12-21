@@ -3,41 +3,47 @@ using System.Linq;
 using System.Collections.Generic;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.DataStructure;
+using System.Xml;
+using BExIS.Xml.Helpers;
+using System.Xml.Linq;
+using BExIS.Web.Shell.Areas.RPM.Classes;
 
 namespace BExIS.Web.Shell.Areas.RPM.Models
 {
-    public class VariablePreviewStruct
+    public class VariablePreview
     {
         public long Id { get; set; }
-        public string Lable { get; set; }
+        public string Label { get; set; }
         public string Description { get; set; }
         public bool isOptional { get; set; }
         public string Unit { get; set; }
         public string DataType { get; set; }
+        public string SystemType { get; set; }
 
-        public VariablePreviewStruct()
+        public VariablePreview()
         {
             this.Id = 0;
-            this.Lable = "";
+            this.Label = "";
             this.Description = "";
             this.isOptional = false;
             this.Unit = "";
             this.DataType = "";
+            this.SystemType = "";
         }
     }
 
     public class StructuredDataStructurePreviewModel
     {
-        public List<VariablePreviewStruct> VariablePreviews { get; set; }
+        public List<VariablePreview> VariablePreviews { get; set; }
 
         public StructuredDataStructurePreviewModel()
         {
-            this.VariablePreviews = new List<VariablePreviewStruct>();
+            this.VariablePreviews = new List<VariablePreview>();
         }
 
         public StructuredDataStructurePreviewModel(long DataStructureId)
         {
-            this.VariablePreviews = new List<VariablePreviewStruct>();
+            this.VariablePreviews = new List<VariablePreview>();
             this.fill(DataStructureId);
         }
 
@@ -45,19 +51,24 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
         {
             DataStructureManager dataStructureManager = new DataStructureManager();
             StructuredDataStructure datastructure = dataStructureManager.StructuredDataStructureRepo.Get(dataStructureId);
-            VariablePreviewStruct variablePreview = new VariablePreviewStruct();
+            VariablePreview variablePreview = new VariablePreview();
 
             if (datastructure != null)
             {
-                foreach (Variable v in datastructure.Variables)
+                foreach (Variable v in DataStructureIO.getOrderedVariables(datastructure))
                 {
-                    variablePreview = new VariablePreviewStruct();
+                    v.Unit = v.Unit ?? new Unit();
+                    v.DataAttribute = v.DataAttribute ?? new DataAttribute();
+                    v.DataAttribute.DataType = v.DataAttribute.DataType ?? new DataType();
+
+                    variablePreview = new VariablePreview();
                     variablePreview.Id = v.Id;
-                    variablePreview.Lable = v.Label;
+                    variablePreview.Label = v.Label;
                     variablePreview.Description = v.Description;
                     variablePreview.isOptional = v.IsValueOptional;
                     variablePreview.Unit = v.Unit.Name;
                     variablePreview.DataType = v.DataAttribute.DataType.Name;
+                    variablePreview.SystemType = v.DataAttribute.DataType.SystemType;
 
                     this.VariablePreviews.Add(variablePreview);
                 }
@@ -87,6 +98,48 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
             this.inUse = false;
             this.Structured = false;
             this.Preview = false;
+        }
+
+        public DataStructureResultStruct(long dataStructureId)
+        {
+            DataStructureManager dataStructureManager = new DataStructureManager();
+            StructuredDataStructure structuredDataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataStructureId);
+            if (structuredDataStructure != null)
+            {
+                this.Id = structuredDataStructure.Id;
+                this.Title = structuredDataStructure.Name;
+                this.Description = structuredDataStructure.Description;
+
+                if (structuredDataStructure.Datasets != null && structuredDataStructure.Datasets.Count > 0)
+                    this.inUse = true;
+                else
+                    this.inUse = false;
+
+                this.Structured = true;
+                this.Preview = false;
+            }
+            else 
+            {
+                UnStructuredDataStructure unStructuredDataStructure = dataStructureManager.UnStructuredDataStructureRepo.Get(dataStructureId);
+                if (unStructuredDataStructure != null)
+                {
+                    this.Id = unStructuredDataStructure.Id;
+                    this.Title = unStructuredDataStructure.Name;
+                    this.Description = unStructuredDataStructure.Description;
+
+                    if (unStructuredDataStructure.Datasets != null && unStructuredDataStructure.Datasets.Count > 0)
+                        this.inUse = true;
+                    else
+                        this.inUse = false;
+
+                    this.Structured = false;
+                    this.Preview = false;
+                }
+                else
+                {
+                    new DataStructureResultStruct();
+                }
+            }
         }
     }
 
@@ -157,11 +210,10 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
 
         public DataStructureResultsModel fill(long[] previewIds, string saerchTerms)
         {
-            List<DataStructure> dataStructures = getStucturedDataStructures(saerchTerms);
             DataStructureResultStruct dataStructureResult = new DataStructureResultStruct();
 
 
-            foreach (DataStructure ds in dataStructures)
+            foreach (DataStructure ds in getStucturedDataStructures(saerchTerms))
             {
                 dataStructureResult = new DataStructureResultStruct();
                 dataStructureResult.Id = ds.Id;
@@ -179,9 +231,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
                 this.dataStructureResults.Add(dataStructureResult);
             }
 
-            dataStructures = getUnStucturedDataStructures(saerchTerms);
-
-            foreach (DataStructure ds in dataStructures)
+            foreach (DataStructure ds in getUnStucturedDataStructures(saerchTerms))
             {
                 dataStructureResult = new DataStructureResultStruct();
                 dataStructureResult.Id = ds.Id;
@@ -213,5 +263,26 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
             return this;
         }
     }
+
+    public class DataStructureCreateModel
+    {
+        public long Id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public bool isSructured { get; set; }
+        public bool inUse { get; set; }
+        public bool copy { get; set; }
+
+        public DataStructureCreateModel()
+        {
+            this.Id = 0;
+            this.Name = "";
+            this.Description = "";
+            this.isSructured = true;
+            this.inUse = false;
+            this.copy = false;
+        }
+    }
 }
+
     

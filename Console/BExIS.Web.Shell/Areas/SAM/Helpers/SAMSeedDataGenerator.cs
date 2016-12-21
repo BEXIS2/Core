@@ -17,6 +17,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Helpers
 
         private static void createSecuritySeedData()
         {
+
             #region Security
 
             // Authenticators
@@ -43,7 +44,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Helpers
             // Entities
             EntityManager entityManager = new EntityManager();
 
-            entityManager.CreateEntity("Dataset", "BExIS.Dlm.Entities.Data.Dataset", "BExIS.Dlm.Entities");
+            entityManager.CreateEntity("Dataset", "BExIS.Dlm.Entities.Data.Dataset", "BExIS.Dlm.Entities",true,true);
 
             // Subjects
             SubjectManager subjectManager = new SubjectManager();
@@ -68,33 +69,51 @@ namespace BExIS.Web.Shell.Areas.SAM.Helpers
             taskManager.CreateTask("DIM", "Help", "*");
             taskManager.CreateTask("RPM", "Help", "*");
             taskManager.CreateTask("SAM", "Help", "*");
+            taskManager.CreateTask("Site", "ContactUs", "*");
+            taskManager.CreateTask("Site", "Impressum", "*");
+            taskManager.CreateTask("Site", "PrivacyPolicy", "*");
+            taskManager.CreateTask("Site", "Terms", "*");
+
+            //generic form for metadata
+            taskManager.CreateTask("DCM", "Form", "*");
 
             // Features
             FeatureManager featureManager = new FeatureManager();
             Feature f1 = featureManager.CreateFeature("BExIS", "BExIS");
+            Feature f9 = featureManager.CreateFeature("Search", "Search", f1.Id);
+
+            #region Data Planning
+
+            Feature f18 = featureManager.CreateFeature("Data Planning Management", "Data Planning Management", f1.Id);
+            Feature f13 = featureManager.CreateFeature("Datastructure Management", "Datastructure Management", f18.Id);
+
+            #endregion
+
+            #region Data Dissemination
+
+            Feature f16 = featureManager.CreateFeature("Data Dissemination", "Data Dissemination", f1.Id);
+
+            #endregion
+
+            #region Data Collection
+
+            Feature f10 = featureManager.CreateFeature("Data Collection", "Data Collection", f1.Id);
+            Feature f11 = featureManager.CreateFeature("Dataset Creation", "Dataset Creation", f10.Id);
+            Feature f12 = featureManager.CreateFeature("Dataset Upload", "Dataset Upload", f10.Id);
+            Feature f17 = featureManager.CreateFeature("Metadata Management", "Metadata Management", f10.Id);
+            #endregion
+            
+            #region admin
 
             Feature f2 = featureManager.CreateFeature("Administration", "Administration", f1.Id);
             Feature f3 = featureManager.CreateFeature("Users Management", "Users Management", f2.Id);
             Feature f4 = featureManager.CreateFeature("Groups Management", "Groups Management", f2.Id);
-            Feature f5 = featureManager.CreateFeature("Data Management", "Data Management", f2.Id);
-            Feature f6 = featureManager.CreateFeature("Feature Management", "Feature Management", f2.Id);
-            Feature f7 = featureManager.CreateFeature("Search", "Search", f2.Id);
+            Feature f6 = featureManager.CreateFeature("Feature Permissions", "Feature Permissions", f2.Id);
+            Feature f5 = featureManager.CreateFeature("Data Permissions", "Data Permissions", f2.Id);
+            Feature f7 = featureManager.CreateFeature("Search Management", "Search Management", f2.Id);
             Feature f8 = featureManager.CreateFeature("Dataset Maintenance", "Dataset Maintenance", f2.Id);
-            Feature f17 = featureManager.CreateFeature("Data Collection", "Data Collection", f2.Id);
 
-            Feature f9 = featureManager.CreateFeature("Search", "Search", f1.Id);
-
-            Feature f10 = featureManager.CreateFeature("Data Collection", "Data Collection", f1.Id);
-            Feature f11 = featureManager.CreateFeature("Dataset Creation", "Dataset Creation", f10.Id);
-            Feature f12 = featureManager.CreateFeature("Dataset Submission", "Dataset Submission", f10.Id);
-
-            Feature f13 = featureManager.CreateFeature("Research Plan", "Research Plan", f1.Id);
-            Feature f14 = featureManager.CreateFeature("Data Attribute Manager", "Data Attribute Manager", f13.Id);
-            Feature f15 = featureManager.CreateFeature("Unit Manager", "Unit Manager", f13.Id);
-
-            Feature f16 = featureManager.CreateFeature("Data Dissemination", "Data Dissemination", f1.Id);
-
-            
+            #endregion
 
             Task t1 = taskManager.CreateTask("SAM", "Users", "*");
             t1.Feature = f3;
@@ -161,13 +180,13 @@ namespace BExIS.Web.Shell.Areas.SAM.Helpers
             taskManager.UpdateTask(t22);
 
             Task t23 = taskManager.CreateTask("RPM", "Home", "*");
-            t23.Feature = f13;
+            t23.Feature = f18;
             taskManager.UpdateTask(t23);
             Task t24 = taskManager.CreateTask("RPM", "DataAttribute", "*");
-            t24.Feature = f14;
+            t24.Feature = f18;
             taskManager.UpdateTask(t24);
             Task t25 = taskManager.CreateTask("RPM", "Unit", "*");
-            t25.Feature = f15;
+            t25.Feature = f18;
             taskManager.UpdateTask(t25);
 
             Task t26 = taskManager.CreateTask("DIM", "Admin", "*");
@@ -175,32 +194,49 @@ namespace BExIS.Web.Shell.Areas.SAM.Helpers
             taskManager.UpdateTask(t26);
 
             Task t27 = taskManager.CreateTask("DCM", "ImportMetadataStructure", "*");
-            t27.Feature = f15;
+            t27.Feature = f17;
             taskManager.UpdateTask(t27);
 
             Task t28 = taskManager.CreateTask("DCM", "ImportMetadataStructureReadSource", "*");
-            t28.Feature = f15;
+            t28.Feature = f17;
             taskManager.UpdateTask(t28);
 
             Task t29 = taskManager.CreateTask("DCM", "ImportMetadataStructureSelectAFile", "*");
-            t29.Feature = f15;
+            t29.Feature = f17;
             taskManager.UpdateTask(t29);
 
             Task t30 = taskManager.CreateTask("DCM", "ImportMetadataStructureSetParameters", "*");
-            t30.Feature = f15;
+            t30.Feature = f17;
             taskManager.UpdateTask(t30);
 
             Task t31 = taskManager.CreateTask("DCM", "ImportMetadataStructureSummary", "*");
-            t31.Feature = f15;
+            t31.Feature = f17;
             taskManager.UpdateTask(t31);
 
             Task t32 = taskManager.CreateTask("SAM", "Dataset", "*");
             t32.Feature = f8;
             taskManager.UpdateTask(t32);
 
+            Task t35 = taskManager.CreateTask("RPM", "DataStructureSearch", "*");
+            t35.Feature = f13;
+            taskManager.UpdateTask(t35);
+
+            Task t36 = taskManager.CreateTask("RPM", "DataStructureEdit", "*");
+            t36.Feature = f13;
+            taskManager.UpdateTask(t36);
+
+            Task t37 = taskManager.CreateTask("RPM", "DataStructureIO", "*");
+            t37.Feature = f13;
+            taskManager.UpdateTask(t37);
+
+            Task t38 = taskManager.CreateTask("DCM", "ManageMetadataStructure", "*");
+            t38.Feature = f17;
+            taskManager.UpdateTask(t38);
+
             // Feature Permissions
             PermissionManager permissionManager = new PermissionManager();
             permissionManager.CreateFeaturePermission(g1.Id, f1.Id);
+            //permissionManager.CreateFeaturePermission(everyone.Id, f9.Id);
 
             #endregion Security
         }

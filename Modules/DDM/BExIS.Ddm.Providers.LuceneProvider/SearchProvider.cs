@@ -90,6 +90,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider
             this.WorkingSearchModel = initWorking(); //init(WorkingSearchModel); // its better to make a clone form DefualtSearchModel than calling the function twice
             //this.DefaultSearchModel = Get(this.WorkingSearchModel.CriteriaComponent);
             this.WorkingSearchModel = Get(this.WorkingSearchModel.CriteriaComponent);
+           
         }
 
 
@@ -211,9 +212,9 @@ namespace BExIS.Ddm.Providers.LuceneProvider
 
             getQueryFromCriteria(searchCriteria);
             this.WorkingSearchModel.ResultComponent = BexisIndexSearcher.search(bexisSearching, SearchConfig.headerItemXmlNodeList);
+
             return this.WorkingSearchModel;
-            //return ResultObjectBuilder.ConvertListOfMetadataToSearchResultObject(MetadataReader.ListOfMetadata, pageSize, currentPage);
-            //return null;
+
         }
 
         /// <summary>
@@ -245,7 +246,24 @@ namespace BExIS.Ddm.Providers.LuceneProvider
 
             return this.WorkingSearchModel;
         }
-       
+
+        public void UpdateIndex(Dictionary<long, IndexingAction> datasetsToIndex)
+        {
+            BexisIndexer bexisIndexer = new BexisIndexer();
+            bexisIndexer.updateIndex(datasetsToIndex);
+
+            Reload();
+    
+        }
+
+        public void UpdateSingleDatasetIndex(long datasetId, IndexingAction indAction)
+        {
+            BexisIndexer bexisIndexer = new BexisIndexer();
+            bexisIndexer.updateSingleDatasetIndex(datasetId, indAction);
+
+            Reload();
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -285,7 +303,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider
                             {
                                 String encodedValue = EncoderHelper.Encode(value);
                                 String newString = null;
-                              //string value = val.Replace(")", "").Replace("(", "");
+                                //string value = val.Replace(")", "").Replace("(", "");
                                 char[] delimiter = new char[] { ';', ' ', ',', '!', '.' };
                                 string[] parts = encodedValue.ToLower().Split(delimiter, StringSplitOptions.RemoveEmptyEntries);
                                 for (int i = 0; i < parts.Length; i++)
@@ -310,7 +328,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider
                             BooleanQuery bexisSearchingFacet = new BooleanQuery();
                             foreach (String value in sco.Values)
                             {
-                                String encodedValue = EncoderHelper.Encode(value);
+                                String encodedValue = value;
                                 Query query = new TermQuery(new Term(fieldName, encodedValue));
                                 bexisSearchingFacet.Add(query, Occur.SHOULD);
                             }
@@ -348,7 +366,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider
                                     }
                                     else
                                     {
-                                        String encodedValue = EncoderHelper.Encode(value);
+                                        String encodedValue = value;
                                         if (SearchConfig.getNumericProperties().Contains(sco.SearchComponent.Name.ToLower()))
                                         {
 
@@ -380,6 +398,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider
                 bexisSearching = parser.Parse("*:*");
             }
         }
+
 
         #endregion
     }

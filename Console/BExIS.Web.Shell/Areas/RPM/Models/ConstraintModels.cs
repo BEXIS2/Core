@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using BExIS.Dlm.Entities.DataStructure;
+using DataAnnotationsExtensions;
+using System.ComponentModel.DataAnnotations;
 
 namespace BExIS.Web.Shell.Areas.RPM.Models
 {
@@ -18,6 +20,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
     public class RangeConstraintModel:ConstraintModel
     {
         public double Min { get; set; }
+        //[GreaterThan("Min")]
         public double Max { get; set; }
         public bool MinInclude { get; set; }
         public bool MaxInclude { get; set; }

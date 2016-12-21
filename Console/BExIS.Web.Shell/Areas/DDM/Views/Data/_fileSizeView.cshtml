@@ -1,0 +1,56 @@
+﻿@using ikvm.extensions
+@model double
+
+@{
+    int length = Model.ToString().Length;
+    double convertedSize = 0;
+    string unit;
+
+    switch (length)
+    {
+        case 1:
+        case 2:
+        case 3:
+            {
+                //display byte
+                convertedSize = Model;
+                unit = "Byte";
+                break;
+            }
+
+
+        case 4:
+        case 5:
+        case 6:
+            {
+                //display kilobyte
+                convertedSize = Model / 1024;
+                unit = "kB";
+                break;
+            }
+
+        case 7:
+        case 8:
+        case 9:
+            {
+                //display megabyte
+                convertedSize = (Model/ 1024)/1024;
+                unit = "MB";
+                break;
+            }
+        default:
+            {
+                //display giga byte
+                //display megabyte
+                convertedSize = ((Model / 1024) / 1024)/1024;
+                unit = "GB";
+                break;
+            }
+    }
+
+
+}
+
+@String.Format("{0:0.000}", @convertedSize) @unit
+
+

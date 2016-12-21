@@ -99,7 +99,7 @@ namespace BExIS.Dcm.UploadWizard
     /// 
     /// </summary>
     public enum DataStructureType
-    { 
+    {
         Structured,
         Unstructured
     }

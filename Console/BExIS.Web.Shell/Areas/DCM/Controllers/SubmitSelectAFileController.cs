@@ -200,7 +200,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             {
                 //data/datasets/1/1/
                 string dataPath = AppConfiguration.DataPath; //Path.Combine(AppConfiguration.WorkspaceRootPath, "Data");
-                string storepath = Path.Combine(dataPath, "Temp", GetUserNameOrDefault());
+                string storepath = Path.Combine(dataPath, "Temp", GetUsernameOrDefault());
 
                 // if folder not exist
                 if (!Directory.Exists(storepath))
@@ -236,7 +236,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                 //data/datasets/1/1/
                 string dataPath = AppConfiguration.DataPath; //Path.Combine(AppConfiguration.WorkspaceRootPath, "Data");
-                string path = Path.Combine(dataPath, "Temp", GetUserNameOrDefault(), fileName);
+                string path = Path.Combine(dataPath, "Temp", GetUsernameOrDefault(), fileName);
 
                 TaskManager.AddToBus(TaskManager.FILEPATH, path);
 
@@ -257,7 +257,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         private List<String> GetServerFileList()
         {
 
-            string userDataPath = Path.Combine(AppConfiguration.DataPath, "Temp", GetUserNameOrDefault());
+            string userDataPath = Path.Combine(AppConfiguration.DataPath, "Temp", GetUsernameOrDefault());
 
             // if folder not exist
             if (!Directory.Exists(userDataPath))
@@ -273,16 +273,16 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         // chekc if user exist
         // if true return usernamem otherwise "DEFAULT"
-        public string GetUserNameOrDefault()
+        public string GetUsernameOrDefault()
         {
-            string userName = string.Empty;
+            string username = string.Empty;
             try
             {
-                userName = HttpContext.User.Identity.Name;
+                username = HttpContext.User.Identity.Name;
             }
             catch { }
 
-            return !string.IsNullOrWhiteSpace(userName) ? userName : "DEFAULT";
+            return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
         }
 
         /// <summary>

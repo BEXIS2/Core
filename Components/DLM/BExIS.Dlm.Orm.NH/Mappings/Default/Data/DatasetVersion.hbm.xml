@@ -71,7 +71,7 @@
       <column name="ChangeDescription" />
     </property>
 
-    <property name="Timestamp" type="DateTime">
+    <property name="Timestamp" type="Timestamp">
       <column name="Timestamp"  index="idx_DatasetVersions_timestamp"/>
     </property>
 
