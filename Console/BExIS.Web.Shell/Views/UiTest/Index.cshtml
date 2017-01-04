@@ -653,9 +653,21 @@
 </div>
 <b>table</b>
 <div style="padding: 10px">
-    <table>
+    <table style="overflow-x: scroll">
         <tr class="header">
             <th>Functions</th>
+            @foreach (DataColumn c in table.Columns)
+            {
+                <th>@c.ColumnName</th>
+            }
+            @foreach (DataColumn c in table.Columns)
+            {
+                <th>@c.ColumnName</th>
+            }
+            @foreach (DataColumn c in table.Columns)
+            {
+                <th>@c.ColumnName</th>
+            }
             @foreach (DataColumn c in table.Columns)
             {
                 <th>@c.ColumnName</th>
@@ -668,6 +680,18 @@
                     <button class="bx-button smaller function">edit</button>
                     <button class="bx-button smaller function">delete</button>
                 </td>
+                @foreach (object o in r.ItemArray)
+                {
+                    <td>@o</td>
+                }
+                @foreach (object o in r.ItemArray)
+                {
+                    <td>@o</td>
+                }
+                @foreach (object o in r.ItemArray)
+                {
+                    <td>@o</td>
+                }
                 @foreach (object o in r.ItemArray)
                 {
                     <td>@o</td>
