@@ -1,19 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using BExIS.Dim.Entities;
 using System.IO;
-using System.Linq;
-using System.Net.Mime;
-using System.Runtime.Remoting.Channels;
-using System.Security.AccessControl;
-using System.Text;
 using System.Threading.Tasks;
-using BExIS.Dim.Entities;
-using System.Web;
 
 
 namespace BExIS.Dim.Helpers
 {
-    public class GFBIOWebserviceManager:BasicWebService
+    public class GFBIOWebserviceManager : BasicWebService
     {
         public DataRepository DataRepo { get; set; }
 
@@ -55,7 +47,7 @@ namespace BExIS.Dim.Helpers
             string json = "[{\"" + parameterName + "\":" + id + "}]";
             encodedParameters = WebServiceHelper.Encode(json);
 
-            string url = Path.Combine(DataRepo.Server, pathToApi + entityName, functionName, addtionalPath);
+            string url = DataRepo.Server + "//" + pathToApi + entityName + "//" + functionName + "//" + addtionalPath;
 
             return await BasicWebService.Call(url, DataRepo.User, DataRepo.Password, encodedParameters);
         }

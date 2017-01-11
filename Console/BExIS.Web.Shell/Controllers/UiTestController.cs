@@ -1,31 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web.Mvc;
+﻿using BExIS.Dim.Entities;
+using BExIS.Dim.Helpers;
+using BExIS.Dlm.Entities.Data;
+using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Services.Data;
+using BExIS.Dlm.Services.DataStructure;
+using BExIS.IO;
+using BExIS.IO.Transform.Output;
+using BExIS.Web.Shell.Helpers;
 using BExIS.Web.Shell.Models;
+using BExIS.Xml.Services;
+using Ionic.Zip;
+using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
-using System.Xml;
-using BExIS.Dim.Entities;
-using BExIS.Dim.Helpers;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Web.Shell.Helpers;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Xml.Services;
-using BExIS.IO.Transform.Output;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Mvc;
+using System.Xml;
 using System.Xml.Schema;
-using System.Xml.XPath;
-using BExIS.IO;
 using Vaiona.Utils.Cfg;
-using Ionic.Zip;
-using Vaiona.Logging.Aspects;
 
 namespace BExIS.Web.Shell.Controllers
 {
@@ -48,7 +46,7 @@ namespace BExIS.Web.Shell.Controllers
 
         public ActionResult XSDtest()
         {
-            string pathXsd = "G:/schema.xsd"; 
+            string pathXsd = "G:/schema.xsd";
             string pathXml = "G:/test.xml";
             XmlSchema Schema;
 
@@ -74,17 +72,18 @@ namespace BExIS.Web.Shell.Controllers
             {
                 Console.WriteLine(ex.Message);
             }
-        
+
 
 
             UiTestModel model = new UiTestModel();
 
 
-            return View("Index",model);
+            return View("Index", model);
         }
 
         public async Task<ActionResult> Call()
         {
+
             SubmissionManager submissionManager = new SubmissionManager();
             submissionManager.Load();
 
@@ -92,7 +91,7 @@ namespace BExIS.Web.Shell.Controllers
                 submissionManager.DataRepositories.Where(d => d.Name.ToLower().Equals("gfbio")).FirstOrDefault();
 
             GFBIOWebserviceManager gfbioWebserviceManager = new GFBIOWebserviceManager(dataRepository);
-            
+
 
 
             Debug.WriteLine("call a webservice from gfbio");
@@ -101,28 +100,30 @@ namespace BExIS.Web.Shell.Controllers
 
             //research object id 201
             //wieso als json ein array?
-            var p = await CallGFBIOWebservice(201, "get-research-object-by-id","researchobject", "[{\"researchobjectid\":201}]");
+            var p = await CallGFBIOWebservice(2102, "get-research-object-by-id", "researchobject", "[{\"researchobjectid\":2102}]");
             Debug.WriteLine(p);
 
-            p = await gfbioWebserviceManager.GetResearchObjectById(401);
+            p = await gfbioWebserviceManager.GetResearchObjectById(2102);
             Debug.WriteLine(p);
 
             Debug.WriteLine("-----------------------------------------------------------");
             //project id 201
-            p = await CallGFBIOWebservice(201, "get-project-by-id","project", "{\"projectid\":401}");
+            p = await CallGFBIOWebservice(201, "get-project-by-id", "project", "{\"projectid\":201}");
             Debug.WriteLine(p);
+            if (string.IsNullOrEmpty(p))
+            {
+                Debug.WriteLine("Create");
+                Debug.WriteLine("-----------------------------------------------------------");
 
-            //if (string.IsNullOrEmpty(p))
-            //{
-            //    Debug.WriteLine("Create");
-            //    Debug.WriteLine("-----------------------------------------------------------");
-            //    p =
-            //        await
-            //            CallGFBIOWebservice(201, "create-project", "project",
-            //                "{\"userid\":1,\"name\":\"bexis 2 test\",\"description\":\"test\"}");
 
-            //    Debug.WriteLine(p);
-            //}
+
+                p =
+                    await
+                        CallGFBIOWebservice(201, "create-project", "project",
+                            "{\"userid\":1,\"name\":\"bexis 2 test\",\"description\":\"test\"}");
+
+                Debug.WriteLine(p);
+            }
 
             //wieso als return json ein array?
             // create research object 
@@ -134,14 +135,14 @@ namespace BExIS.Web.Shell.Controllers
             UiTestModel model = new UiTestModel();
             model = DynamicListToDataTable();
 
-            return View("Index",model);
+            return View("Index", model);
         }
 
-        public async Task<string> CallGFBIOWebservice(long id, string apiName,string entityName, string json)
+        public async Task<string> CallGFBIOWebservice(long id, string apiName, string entityName, string json)
         {
 
             string server =
-                @"http://gfbio-pub2.inf-bb.uni-jena.de:8080/api/jsonws/GFBioProject-portlet.";
+                @"http://gfbio-dev1.inf-bb.uni-jena.de:8080/api/jsonws/GFBioProject-portlet.";
 
             string jsonRequest = @"request-json";
 
@@ -150,9 +151,9 @@ namespace BExIS.Web.Shell.Controllers
             //"[{\""+parametername+"\":"+id+"}]";
             string parameters = json;
 
-            string url = server+ entityName+"/"+ apiName + "/" + jsonRequest + "/";
+            string url = server + entityName + "/" + apiName + "/" + jsonRequest + "/";
 
-            
+
 
             Debug.WriteLine(url);
             string returnValue = "";
@@ -168,13 +169,13 @@ namespace BExIS.Web.Shell.Controllers
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
                     //test@testerer.de:WSTest
-                    var byteArray = Encoding.ASCII.GetBytes("broker.agent@gfbio.org:AgentPhase2");
+                    var byteArray = Encoding.ASCII.GetBytes("dblaa@bgc-jena.mpg.de:1mpi4bgc");
 
                     // "basic "+ Convert.ToBase64String(byteArray)
                     AuthenticationHeaderValue ahv = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
                     client.DefaultRequestHeaders.Authorization = ahv;
 
-                    //http://gfbio-pub2.inf-bb.uni-jena.de:8080/api/jsonws/GFBioProject-portlet.researchobject/get-research-object-by-id/request-json/%5B%7B%22researchobjectid%22%3A3%20%7D%5D
+                    //http://gfbio-dev1.inf-bb.uni-jena.de:8080/api/jsonws/GFBioProject-portlet.researchobject/get-research-object-by-id/request-json/%5B%7B%22researchobjectid%22%3A3%20%7D%5D
                     string requesturl = url + Server.UrlEncode(parameters);
                     Debug.WriteLine(requesturl);
                     Debug.WriteLine(Server.UrlEncode(parameters));
@@ -258,7 +259,7 @@ namespace BExIS.Web.Shell.Controllers
                 {
                     OutputDataManager odm = new OutputDataManager();
                     // apply selection and projection
-                    
+
                     odm.GenerateAsciiFile(testdatasetId, title, gfbio.PrimaryDataFormat);
                 }
 
@@ -268,7 +269,7 @@ namespace BExIS.Web.Shell.Controllers
 
                 FileHelper.CreateDicrectoriesIfNotExist(Path.GetDirectoryName(zipFilePath));
 
-                
+
 
                 if (FileHelper.FileExist(zipFilePath))
                 {
@@ -298,7 +299,7 @@ namespace BExIS.Web.Shell.Controllers
             }
 
 
-            
+
 
             return View("Index", model);
         }

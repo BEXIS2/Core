@@ -1,18 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using System.Web;
 
 namespace BExIS.Dim.Helpers
 {
     public class BasicWebService
     {
-        public static async Task<string> Call(string url, string user,string password, string parameters="")
+        public static async Task<string> Call(string url, string user, string password, string parameters = "")
         {
             string returnValue = "";
 
@@ -22,12 +19,14 @@ namespace BExIS.Dim.Helpers
                 {
                     //generate url
 
+                    Debug.WriteLine(url);
+
                     client.BaseAddress = new Uri(url);
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
                     //test@testerer.de:WSTest
-                    var byteArray = Encoding.ASCII.GetBytes(user+":"+password);
+                    var byteArray = Encoding.ASCII.GetBytes(user + ":" + password);
 
                     // "basic "+ Convert.ToBase64String(byteArray)
                     AuthenticationHeaderValue ahv = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
@@ -35,6 +34,8 @@ namespace BExIS.Dim.Helpers
 
                     string requesturl = url + parameters;
                     HttpResponseMessage response = await client.GetAsync(requesturl);
+                    Debug.WriteLine(requesturl);
+                    //Debug.WriteLine(Server.UrlEncode(parameters));
                     response.EnsureSuccessStatusCode();
                     returnValue = ((HttpResponseMessage)response).Content.ReadAsStringAsync().Result;
                 }
