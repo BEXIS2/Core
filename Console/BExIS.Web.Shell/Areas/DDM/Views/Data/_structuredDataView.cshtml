@@ -49,13 +49,18 @@
 <div id="downloadOptions" style="text-align:left;">
 
     @if (Model.DownloadAccess && Model.Data != null && Model.Data.Rows.Count > 0)
-    { 
-		   @Html.ActionLink("Download Excel", "DownloadAsExcelData", "Data", new { id = @Model.DatasetId }, new { area = "DDM", @class = "bx-button function", title = "Xlsx download" })
+    {
 
-		   @Html.ActionLink("Download Comma Separated", "DownloadAsCsvData", "Data", new { id = @Model.DatasetId }, new { area = "DDM", @class = "bx-button function", title = "Csv download" })
+          <button id="downloadExcelButton" class="bx-button function" title="Xlsx download" onclick="downloadExcel(@Model.DatasetId)">Download Excel</button>
+          <button id="downloadCsvButton"   class="bx-button function" title="Csv download" onclick="downloadCsv(@Model.DatasetId)">Download Comma Separated</button>
+          <button id="downloadTxtButton"   class="bx-button function" title="Text download" onclick="downloadText(@Model.DatasetId)">Download Tab Separated</button>
 
-		   @Html.ActionLink("Download Tab Separated", "DownloadAsTxtData", "Data", new { id = @Model.DatasetId }, new { area = "DDM", @class = "bx-button function", title = "Text download" })
-		  
+		   @*@Html.ActionLink("Download Excel", "DownloadAsExcelData", "Data", new { id = @Model.DatasetId }, new { area = "DDM", @class = "bx-button function", title = "Xlsx download", onclick= "$('#preloaderContainer').preloader(20,'Download excel file' )" })
+
+		   @Html.ActionLink("Download Comma Separated", "DownloadAsCsvData", "Data", new { id = @Model.DatasetId }, new { area = "DDM", @class = "bx-button function", title = "Csv download", onclick = "$('#preloaderContainer').preloader(20,'Download csv file' )" })
+
+		   @Html.ActionLink("Download Tab Separated", "DownloadAsTxtData", "Data", new { id = @Model.DatasetId }, new { area = "DDM", @class = "bx-button function", title = "Text download", onclick = "$('#preloaderContainer').preloader(20,'Download txt file' )" })*@
+
 		  @* @Html.CheckBox("DownLoadFullDataset", new { text = "Download full dataset", @id = "fullDatasetDownload" }) @Html.Label("Download full dataset")*@
     }
     else
@@ -78,7 +83,8 @@
                >Download Tab Separated</button>
            @*<input type="checkbox"  disabled="disabled" >Download full dataset</input>*@
     }
-    
+
+    <span id="preloaderContainer" style="float: right" ></span>
 </div>
 <br />
 @(Html.Telerik().Grid(Model.Data)
@@ -138,7 +144,7 @@
 
 
             .Pageable(paging =>
-                paging.PageSize(20,new int[]{10,20,50,100,500})
+                paging.PageSize(100,new int[]{10,20,50,100,500})
                     .Style(pagerStyles)
                     .Position(GridPagerPosition.Both)
                     .Total(total)
@@ -157,7 +163,7 @@
 
 
     $(document).ready(function(){
-    
+
         OnDataBound();
     })
 
@@ -198,48 +204,104 @@
 	    OnDataBound();
 	})*@
 
-	    resetAllTelerikIconTitles();
-	    addTooltips();
+        resetAllTelerikIconTitles();
+        addTooltips();
 
-	}
+    }
 
-    function OnDataBound()
-    {
+    function OnDataBound() {
         addTooltips();
         resetAllTelerikIconTitles();
 
         var compareValuesString = '@compareValues'
         var compareValuesArray = compareValuesString.split(",")
 
-        $("#PrimaryDataResultGrid td").each(function () {
+        $("#PrimaryDataResultGrid td")
+            .each(function() {
 
-            for (var i = 0; i < compareValuesArray.length; i = i + 1) {
+                for (var i = 0; i < compareValuesArray.length; i = i + 1) {
 
-                if (this.innerHTML == compareValuesArray[i]) {
-                   this.innerHTML = " ";
+                    if (this.innerHTML == compareValuesArray[i]) {
+                        this.innerHTML = " ";
+                    }
                 }
-            }
-        })
+            })
 
-        $("#PrimaryDataResultGrid .t-grouping-row .t-reset").each(function () {
+        $("#PrimaryDataResultGrid .t-grouping-row .t-reset")
+            .each(function() {
 
-            var valueArray = this.innerHTML.split(": ");
-            //alert(valueArray);
-            var value =  valueArray[valueArray.length-1];
+                var valueArray = this.innerHTML.split(": ");
+                //alert(valueArray);
+                var value = valueArray[valueArray.length - 1];
 
-            //alert(value);
-            for (var i = 0; i < compareValuesArray.length; i = i + 1) {
+                //alert(value);
+                for (var i = 0; i < compareValuesArray.length; i = i + 1) {
 
-                if (value == compareValuesArray[i]) {
+                    if (value == compareValuesArray[i]) {
 
-                    var newValue = valueArray[0] + ": ";
-                    this.innerHTML = newValue;
+                        var newValue = valueArray[0] + ": ";
+                        this.innerHTML = newValue;
+                    }
                 }
-            }
 
-        })
+            })
 
     }
+
+    function downloadExcel(id) {
+
+        $("#preloaderContainer").preloader(20, "Download excel file...");
+        //"DownloadAsExcelData", "Data", new { id = @Model.DatasetId }
+        $.ajax({
+            url: '@Url.Action("DownloadAsExcelData", "Data", new { id = @Model.DatasetId })',
+            contentType: 'application/json; charset=utf-8',
+            datatype: 'json',
+            type: "GET",
+            success: function(e) {
+                window.location = '@Url.Action("DownloadAsExcelData", "Data", new { id = @Model.DatasetId })';
+
+                $("#preloaderContainer").removePreloader();
+            }
+        })}
+
+    function downloadCsv(id) {
+
+        $("#preloaderContainer").preloader(20, "Download csv file...");
+        //"DownloadAsExcelData", "Data", new { id = @Model.DatasetId }
+        $.ajax({
+            url: '@Url.Action("DownloadAsCsvData", "Data", new { id = @Model.DatasetId })',
+            contentType: 'application/json; charset=utf-8',
+            datatype: 'json',
+            type: "GET",
+            success: function (e) {
+                window.location = '@Url.Action("DownloadAsCsvData", "Data", new { id = @Model.DatasetId })';
+
+                $("#preloaderContainer").removePreloader();
+            }
+        })
+    }
+
+    function downloadText(id) {
+
+        $("#preloaderContainer").preloader(20, "Download txt file...");
+        //"DownloadAsExcelData", "Data", new { id = @Model.DatasetId }
+        $.ajax({
+            url: '@Url.Action("DownloadAsTxtData", "Data", new { id = @Model.DatasetId })',
+            contentType: 'application/json; charset=utf-8',
+            datatype: 'json',
+            type: "GET",
+            success: function (e) {
+                window.location = '@Url.Action("DownloadAsTxtData", "Data", new { id = @Model.DatasetId })';
+
+                $("#preloaderContainer").removePreloader();
+            }
+        })
+    }
+
+    //function onDownloadEnd(e) {
+    //    console.log(e);
+    //    $("#preloaderContainer").removePreloader();
+    //}
 
 </script>
 

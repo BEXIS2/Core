@@ -54,10 +54,11 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             }
 
             if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.TITLE_NODE))
-                model.TitleNode = TaskManager.Bus[ImportMetadataStructureTaskManager.TITLE_NODE].ToString();
+                model.TitleNode = GetDisplayName((string) TaskManager.Bus[ImportMetadataStructureTaskManager.TITLE_NODE]);
 
             if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.DESCRIPTION_NODE))
-                model.DescriptionNode = TaskManager.Bus[ImportMetadataStructureTaskManager.DESCRIPTION_NODE].ToString();
+                model.DescriptionNode =
+                    GetDisplayName((string) TaskManager.Bus[ImportMetadataStructureTaskManager.DESCRIPTION_NODE]);
             if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.ENTITY_TYPE_NODE))
                 model.EntityType = TaskManager.Bus[ImportMetadataStructureTaskManager.ENTITY_TYPE_NODE].ToString();
 
@@ -380,6 +381,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             // add mappingFilePath
             xmlDoc = AddReferenceToMetadatStructure(metadataStructure.Name, mappingFilePathImport, "mappingFileImport", "extra/convertReferences/convertRef", xmlDoc);
             xmlDoc = AddReferenceToMetadatStructure(metadataStructure.Name, mappingFilePathExport, "mappingFileExport", "extra/convertReferences/convertRef", xmlDoc);
+
+            //set active
+            xmlDoc = AddReferenceToMetadatStructure(NameAttributeValues.active.ToString(), true.ToString(), AttributeType.parameter.ToString(), "extra/parameters/parameter", xmlDoc);
 
             metadataStructure.Extra = xmlDoc;
             mdsManager.Update(metadataStructure);

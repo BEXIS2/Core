@@ -52,7 +52,8 @@
                 {
                     <td style="color: red">@(item.Status.ToString())</td>
                     <td>
-                        @Html.ActionLink("Versions", "Versions", new { id = item.Id, area = "Sam" }) | @Html.ActionLink("Purge", "Purge", new { id = item.Id, area = "Sam" })
+                        @*@Html.ActionLink("Versions", "Versions", new { id = item.Id, area = "Sam" }) |*@ 
+                        @Html.ActionLink("Purge", "Purge", new { id = item.Id, area = "Sam" })
                     </td>
                 }
             }

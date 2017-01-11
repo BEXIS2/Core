@@ -34,6 +34,7 @@
     <MvcProjectUpgradeChecked>true</MvcProjectUpgradeChecked>
     <TargetFrameworkProfile />
     <UseGlobalApplicationHostFile />
+    <DontImportPostSharp>True</DontImportPostSharp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -55,6 +56,18 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AjaxMin, Version=4.84.4790.14405, Culture=neutral, PublicKeyToken=21ef50ce11b5d80f, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\AjaxMin.4.84.4790.14417\lib\net40\AjaxMin.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Cassette, Version=2.4.2.13844, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Cassette.2.4.2\lib\net40-client\Cassette.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Cassette.Views, Version=2.4.2.13844, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Cassette.Views.2.4.2\lib\net40\Cassette.Views.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="DataAnnotationsExtensions">
       <HintPath>..\..\packages\DataAnnotationsExtensions.1.1.0.0\lib\NETFramework40\DataAnnotationsExtensions.dll</HintPath>
     </Reference>
@@ -75,6 +88,10 @@
     <Reference Include="HtmlAgilityPack, Version=1.4.9.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\HtmlAgilityPack.1.4.9\lib\Net45\HtmlAgilityPack.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="IBM.Data.DB2, Version=9.7.4.4, Culture=neutral, PublicKeyToken=7c307b91aa13d208, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Libraries\IBM.Data.DB2.dll</HintPath>
     </Reference>
     <Reference Include="Iesi.Collections, Version=4.0.0.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -120,9 +137,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Npgsql.3.0.7\lib\net45\Npgsql.dll</HintPath>
     </Reference>
-    <Reference Include="PostSharp, Version=2.1.0.0, Culture=neutral, PublicKeyToken=b13fd38b8f9c99d7, processorArchitecture=MSIL">
+    <Reference Include="PostSharp, Version=4.3.19.0, Culture=neutral, PublicKeyToken=b13fd38b8f9c99d7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Libraries\PostSharp\PostSharp.dll</HintPath>
+      <HintPath>..\..\packages\PostSharp.4.3.19\lib\net35-client\PostSharp.dll</HintPath>
     </Reference>
     <Reference Include="saxon9he-api, Version=9.6.0.8, Culture=neutral, PublicKeyToken=e1fdd002d5083fe6, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Saxon-HE.9.6.0.8\lib\net40\saxon9he-api.dll</HintPath>
@@ -328,7 +345,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>UploadLocalization.zh-CN.resx</DependentUpon>
     </Compile>
-    <Compile Include="App_Start\RegisterClientValidationExtensions.cs" />
+    <Compile Include="Areas\BAM\BAMAreaRegistration.cs" />
+    <Compile Include="Areas\BAM\Helpers\BAMSeedDataGenerator.cs" />
+    <Compile Include="Areas\BAM\Models\PartyCustomAttributeValueModel.cs" />
+    <Compile Include="Areas\BAM\Models\PartyModel.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Areas\DCM\Controllers\CreateDatasetController.cs" />
     <Compile Include="Areas\DCM\Controllers\FormController.cs" />
@@ -378,9 +398,9 @@
     <Compile Include="Areas\DCM\Models\UploadWizardParameters.cs" />
     <Compile Include="Areas\DCM\Models\ValidationModel.cs" />
     <Compile Include="Areas\DDM\Controllers\AdminController.cs" />
-    <Compile Include="Areas\DDM\Controllers\CreateDatasetController.cs" />
     <Compile Include="Areas\DDM\Controllers\DataController.cs" />
     <Compile Include="Areas\DDM\Controllers\HelpController.cs" />
+    <Compile Include="Areas\BAM\Controllers\PartyController.cs" />
     <Compile Include="Areas\DDM\Helpers\GridHelper.cs" />
     <Compile Include="Areas\DDM\Helpers\helper.cs" />
     <Compile Include="Areas\DDM\Helpers\HtmlPrefixScopeExtentions.cs" />
@@ -408,25 +428,28 @@
     <Compile Include="Areas\MSM\Models\TreePartialModel.cs" />
     <Compile Include="Areas\MSM\Models\TestModel.cs" />
     <Compile Include="Areas\MSM\MSMAreaRegistration.cs" />
+    <Compile Include="Areas\RPM\Classes\DataStructureIO.cs" />
     <Compile Include="Areas\RPM\Controllers\DataStructureEditController.cs" />
+    <Compile Include="Areas\RPM\Controllers\DataStructureIOController.cs" />
     <Compile Include="Areas\RPM\Controllers\HelpController.cs" />
-    <Compile Include="Areas\RPM\Controllers\DataAttributeController.cs" />
-    <Compile Include="Areas\RPM\Controllers\HomeController.cs" />
+    <Compile Include="Areas\RPM\Controllers\Legacy\DataAttributeController.cs" />
+    <Compile Include="Areas\RPM\Controllers\Legacy\HomeController.cs" />
     <Compile Include="Areas\RPM\Controllers\DataStructureSearchController.cs" />
     <Compile Include="Areas\RPM\Controllers\StructuresController.cs" />
-    <Compile Include="Areas\RPM\Controllers\UnitController.cs" />
+    <Compile Include="Areas\RPM\Controllers\Legacy\UnitController.cs" />
     <Compile Include="Areas\RPM\Helpers\HtmlPrefixScopeExtentions.cs" />
     <Compile Include="Areas\RPM\Helpers\RPMSeedDataGenerator.cs" />
+    <Compile Include="Areas\RPM\Models\MessageModel.cs" />
     <Compile Include="Areas\RPM\Models\StructureModel.cs" />
     <Compile Include="Areas\RPM\Models\DataStructureEditModel.cs" />
     <Compile Include="Areas\RPM\Models\DataStructureSearchModel.cs" />
     <Compile Include="Areas\RPM\Models\ConstraintModels.cs" />
-    <Compile Include="Areas\RPM\Models\DataTypeManagerModel.cs" />
-    <Compile Include="Areas\RPM\Models\UnitManagerModel.cs" />
-    <Compile Include="Areas\RPM\Models\DataAttributeModel.cs" />
-    <Compile Include="Areas\RPM\Models\DataStructureDesignerModel.cs" />
-    <Compile Include="Areas\RPM\Models\DataStructureTreeModel.cs" />
-    <Compile Include="Areas\RPM\Models\UnitDimenstionModel.cs" />
+    <Compile Include="Areas\RPM\Models\Legacy\DataTypeManagerModel.cs" />
+    <Compile Include="Areas\RPM\Models\Legacy\UnitManagerModel.cs" />
+    <Compile Include="Areas\RPM\Models\Legacy\DataAttributeModel.cs" />
+    <Compile Include="Areas\RPM\Models\Legacy\DataStructureDesignerModel.cs" />
+    <Compile Include="Areas\RPM\Models\Legacy\DataStructureTreeModel.cs" />
+    <Compile Include="Areas\RPM\Models\Legacy\UnitDimenstionModel.cs" />
     <Compile Include="Areas\RPM\Models\ShowHelpModel.cs" />
     <Compile Include="Areas\RPM\RPMAreaRegistration.cs" />
     <Compile Include="Areas\DDM\Controllers\HomeController.cs" />
@@ -515,7 +538,7 @@
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img7.png" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img8.png" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img9.png" />
-    <Content Include="Areas\DCM\Images\emptyPng.png" />
+    <Content Include="Areas\DCM\Views\Help\Informations.xml" />
     <Content Include="Areas\DDM\Images\DDM_UserGuide_files_images\DDM_UserGuide_files_img1.png" />
     <Content Include="Areas\DDM\Images\DDM_UserGuide_files_images\DDM_UserGuide_files_img10.png" />
     <Content Include="Areas\DDM\Images\DDM_UserGuide_files_images\DDM_UserGuide_files_img2.png" />
@@ -527,7 +550,9 @@
     <Content Include="Areas\DDM\Images\DDM_UserGuide_files_images\DDM_UserGuide_files_img8.png" />
     <Content Include="Areas\DDM\Images\DDM_UserGuide_files_images\DDM_UserGuide_files_img9.png" />
     <Content Include="Areas\DDM\Scripts\ddm.js" />
+    <Content Include="Areas\DDM\Views\Help\Informations.xml" />
     <Content Include="Areas\DIM\Images\DIM_UserGuide_files_images\DIM_UserGuide_files_img1.png" />
+    <Content Include="Areas\DIM\Views\Help\Informations.xml" />
     <Content Include="Areas\MSM\Resources\Scripts\angular-dragdrop.min.js" />
     <Content Include="Areas\MSM\Resources\Scripts\angular-route.min.js" />
     <Content Include="Areas\MSM\Resources\Scripts\angular.js" />
@@ -540,7 +565,6 @@
     <Content Include="Areas\MSM\Resources\Stylesheets\jquery-linedtextarea.css" />
     <Content Include="Areas\MSM\Resources\Stylesheets\xsd2htmlTree.xslt" />
     <Content Include="Areas\MSM\Resources\Stylesheets\xsd2jsonTree.xslt" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img1.png" />
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img10.png" />
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img11.png" />
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img12.png" />
@@ -560,9 +584,17 @@
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img7.png" />
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img8.png" />
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img9.png" />
-    <Content Include="Areas\RPM\Scripts\jquery-1.10.1.min.js" />
+    <Content Include="Areas\RPM\Scripts\draggabilly.pkgd.js" />
+    <Content Include="Areas\RPM\Scripts\draggabilly.pkgd.min.js" />
+    <Content Include="Areas\RPM\Scripts\isotope.pkgd.min.js" />
+    <Content Include="Areas\RPM\Scripts\packery.pkgd.bexis.min.js" />
+    <Content Include="Areas\RPM\Scripts\packery.pkgd.js" />
+    <Content Include="Areas\RPM\Scripts\packery.pkgd.min.js" />
+    <Content Include="Areas\RPM\Stylesheets\DataStructure.css" />
+    <Content Include="Areas\RPM\Stylesheets\DataStructureEdit.css" />
     <Content Include="Areas\RPM\Stylesheets\DataStructureSearch.css" />
     <Content Include="Areas\RPM\Stylesheets\RPM.css" />
+    <Content Include="Areas\RPM\Views\Help\Informations.xml" />
     <Content Include="Areas\SAM\Images\SAM_UserGuide_files_images\SAM_UserGuide_files_img1.png" />
     <Content Include="Areas\SAM\Images\SAM_UserGuide_files_images\SAM_UserGuide_files_img10.png" />
     <Content Include="Areas\SAM\Images\SAM_UserGuide_files_images\SAM_UserGuide_files_img11.png" />
@@ -574,6 +606,7 @@
     <Content Include="Areas\SAM\Images\SAM_UserGuide_files_images\SAM_UserGuide_files_img7.png" />
     <Content Include="Areas\SAM\Images\SAM_UserGuide_files_images\SAM_UserGuide_files_img8.png" />
     <Content Include="Areas\SAM\Images\SAM_UserGuide_files_images\SAM_UserGuide_files_img9.png" />
+    <Content Include="Areas\SAM\Views\Help\Informations.xml" />
     <Content Include="Content\Images\dfg_logo.gif" />
     <Content Include="Content\bootstrap-combobox.css" />
     <Content Include="Content\bootstrap-theme.css" />
@@ -599,6 +632,8 @@
     <Content Include="css\font-awesome.min.css" />
     <Content Include="fonts\fontawesome-webfont.svg" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Scripts\autosize\autosize.js" />
+    <Content Include="Scripts\autosize\autosize.min.js" />
     <Content Include="Scripts\bexis-jquery-ui.js" />
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
@@ -622,13 +657,6 @@
     <Content Include="Areas\SAM\Views\Users\_Membership.cshtml" />
     <Content Include="Areas\SAM\Views\Groups\_Membership.cshtml" />
     <Content Include="Areas\SAM\Views\Account\MyAccount.cshtml" />
-    <Content Include="Areas\DDM\Views\CreateDataset\_metadataAttributeView.cshtml" />
-    <Content Include="Areas\DDM\Views\CreateDataset\_metadataCompoundAttributeUsageView.cshtml" />
-    <Content Include="Areas\DDM\Views\CreateDataset\_metadataCompoundAttributeView.cshtml" />
-    <Content Include="Areas\DDM\Views\CreateDataset\_metadataPackageUsageView.cshtml" />
-    <Content Include="Areas\DDM\Views\CreateDataset\_metadataPackageView.cshtml" />
-    <Content Include="Areas\DDM\Views\CreateDataset\Index.cshtml" />
-    <Content Include="Areas\DDM\Views\CreateDataset\MetadataEditor.cshtml" />
     <Content Include="Areas\RPM\Views\DataStructureSearch\Index.cshtml" />
     <Content Include="Areas\RPM\Views\DataStructureSearch\_dataStructuredStructurePreview.cshtml" />
     <Content Include="Areas\RPM\Views\DataStructureSearch\_datatructureSearchResult.cshtml" />
@@ -651,18 +679,45 @@
     <Content Include="Areas\DCM\Views\ManageMetadataStructure\Index.cshtml" />
     <Content Include="Areas\DDM\Views\Data\_showPublishDataView.cshtml" />
     <Content Include="Areas\DDM\Views\Data\_dataRepositoryRequirementsView.cshtml" />
+    <Content Include="Areas\RPM\Views\DataStructureEdit\_attributeFilter.cshtml" />
+    <Content Include="Areas\RPM\Views\DataStructureEdit\_attributeSearchResult.cshtml" />
+    <Content Include="Areas\RPM\Views\DataStructureEdit\_dataStructure.cshtml" />
+    <Content Include="Areas\RPM\Views\DataStructureEdit\_variableElement.cshtml" />
+    <Content Include="Areas\RPM\Views\Shared\_createDataStructure.cshtml" />
+    <Content Include="Areas\RPM\Views\Shared\_message.cshtml" />
+    <Content Include="Areas\RPM\Views\Shared\_messageWindow.cshtml" />
+    <Content Include="Areas\RPM\Views\DataStructureEdit\_editAttribute.cshtml" />
+    <Content Include="Areas\RPM\Views\DataStructureEdit\_attributeElement.cshtml" />
+    <Content Include="Areas\RPM\Views\DataStructureEdit\_dataTypeDropdown.cshtml" />
+    <Content Include="Areas\DCM\Views\ManageMetadataStructure\_editMetadataStructureView.cshtml" />
+    <Content Include="Areas\DDM\Views\Data\_fileSizeView.cshtml" />
+    <Content Include="Areas\SAM\Views\Dataset\Delete.cshtml" />
+    <None Include="Properties\PublishProfiles\BEXIS 2.10.pubxml" />
+    <None Include="Properties\PublishProfiles\bexis2 Release2.10.pubxml" />
+    <None Include="Properties\PublishProfiles\BEXIS2.pubxml" />
     <None Include="Properties\PublishProfiles\bexisconf.pubxml" />
     <Content Include="Areas\SAM\Views\Tenants\_Create.cshtml" />
     <Content Include="Areas\SAM\Views\Tenants\_Edit.cshtml" />
     <Content Include="Areas\Site\Views\Footer\Content.cshtml" />
+    <None Include="Properties\PublishProfiles\BPP Publish.pubxml" />
+    <None Include="Properties\PublishProfiles\BPP21005.pubxml" />
     <None Include="Properties\PublishProfiles\BPP290.pubxml" />
     <None Include="Properties\PublishProfiles\BPP2907.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="Scripts\DCM\Form.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
     <Content Include="Areas\SAM\Views\Tenants\Index.cshtml" />
     <None Include="Properties\PublishProfiles\T1.pubxml" />
+    <Content Include="Areas\BAM\Views\Party\Index.cshtml" />
+    <Content Include="Areas\BAM\Views\Party\Create.cshtml" />
+    <Content Include="Areas\BAM\Views\web.config" />
+    <Content Include="Areas\BAM\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\BAM\Views\Party\_customAttributesView.cshtml" />
+    <Content Include="Areas\BAM\Views\Party\Edit.cshtml" />
+    <Content Include="Areas\BAM\Views\Party\View.cshtml" />
+    <Content Include="Areas\BAM\Views\Party\DeleteConfirm.cshtml" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
@@ -995,16 +1050,18 @@
     <Content Include="Views\Test\Index.cshtml" />
     <Content Include="Views\Shared\_EntitySelectorInWindowView.cshtml" />
     <Content Include="Views\Shared\_EntitySelectorView.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\DropDown.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\TreeViewItem.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Areas\BAM\Views\Shared\" />
     <Folder Include="Areas\DCM\Views\DcmAdmin\" />
     <Folder Include="Areas\DCM\Views\Home\" />
     <Folder Include="Areas\DDM\Views\Shared\" />
     <Folder Include="Areas\DIM\Views\Api\" />
     <Folder Include="Areas\DIM\Views\Shared\" />
     <Folder Include="Areas\MSM\Views\Shared\" />
-    <Folder Include="Areas\RPM\Views\Shared\" />
     <Folder Include="Areas\SAM\Views\Shared\" />
     <Folder Include="Areas\Site\Models\" />
   </ItemGroup>
@@ -1345,11 +1402,11 @@
     <Content Include="Areas\DDM\Views\Help\Index.cshtml" />
     <Content Include="Areas\DIM\Views\Help\Index.cshtml" />
     <Content Include="Areas\RPM\Views\DataAttribute\AttributeManager.cshtml" />
-    <Content Include="Areas\RPM\Views\DataAttribute\_domainConstraintView.cshtml" />
+    <Content Include="Areas\RPM\Views\Shared\_domainConstraintView.cshtml" />
     <Content Include="Areas\RPM\Views\DataAttribute\_domainItemView.cshtml" />
     <Content Include="Areas\RPM\Views\DataAttribute\_editAttribute.cshtml" />
-    <Content Include="Areas\RPM\Views\DataAttribute\_patternConstraintView.cshtml" />
-    <Content Include="Areas\RPM\Views\DataAttribute\_rangeConstraintView.cshtml" />
+    <Content Include="Areas\RPM\Views\Shared\_patternConstraintView.cshtml" />
+    <Content Include="Areas\RPM\Views\Shared\_rangeConstraintView.cshtml" />
     <Content Include="Areas\SAM\Views\Account\Error.cshtml" />
     <Content Include="Areas\SAM\Views\Account\LogOn.cshtml" />
     <Content Include="Areas\SAM\Views\Account\_LogOnPartial.cshtml" />
@@ -1511,9 +1568,15 @@
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup>
-    <PostBuildEvent>C:\Windows\System32\xcopy "$(ProjectDir)Db\Settings" "$(SolutionDir)Workspace\General\Db\Settings" /E /C /Y /I
-rmdir /S /Q  "$(SolutionDir)Workspace\Components\Vaiona"
-C:\Windows\System32\xcopy "$(SolutionDir)Libraries\Vaiona\Workspace\Components\Vaiona" "$(SolutionDir)Workspace\Components\Vaiona\" /E /C /Y /I</PostBuildEvent>
+    <PostBuildEvent>rmdir /S /Q  "$(SolutionDir)Console\Workspace\General\Db\Settings"
+C:\Windows\System32\xcopy "$(ProjectDir)Db\Settings" "$(SolutionDir)Console\Workspace\General\Db\Settings" /E /C /Y /I
+rmdir /S /Q  "$(SolutionDir)Console\Workspace\Components\Vaiona"
+C:\Windows\System32\xcopy "$(SolutionDir)Libraries\Vaiona\Workspace\Components\Vaiona" "$(SolutionDir)Console\Workspace\Components\Vaiona\" /E /C /Y /I</PostBuildEvent>
   </PropertyGroup>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Import Project="..\..\packages\PostSharp.4.3.19\tools\PostSharp.targets" Condition="Exists('..\..\packages\PostSharp.4.3.19\tools\PostSharp.targets')" />
+  <Target Name="EnsurePostSharpImported" BeforeTargets="BeforeBuild" Condition="'$(PostSharp30Imported)' == ''">
+    <Error Condition="!Exists('..\..\packages\PostSharp.4.3.19\tools\PostSharp.targets')" Text="This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://www.postsharp.net/links/nuget-restore." />
+    <Error Condition="Exists('..\..\packages\PostSharp.4.3.19\tools\PostSharp.targets')" Text="The build restored NuGet packages. Build the project again to include these packages in the build. For more information, see http://www.postsharp.net/links/nuget-restore." />
+  </Target>
 </Project>

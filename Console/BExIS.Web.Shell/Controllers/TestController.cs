@@ -19,6 +19,7 @@ using Vaiona.Logging;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Model.MTnt;
+using BExIS.Dlm.Entities.Party;
 
 namespace BExIS.Web.Shell.Controllers
 {
@@ -35,12 +36,14 @@ namespace BExIS.Web.Shell.Controllers
 
         //[RecordCall]
         //[LogExceptions]
-        [Diagnose]
-        [MeasurePerformance]
+        //[Diagnose]
+        //[MeasurePerformance]
         public ActionResult Index(Int64 id = 0)
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Test Page", this.Session.GetTenant()); /*in the Vaiona.Web.Mvc.Models namespace*/ //String.Format("{0} {1} - {2}", AppConfiguration.ApplicationName, AppConfiguration.ApplicationVersion, "Test Page");
-            testTenants();
+            createDataset();
+            //removeContentDescriptor();
+            //testTenants();
             //List<string> a = new List<string>() { "A", "B", "C" };
             //List<string> b = new List<string>() { "A", "B", "D" };
             //var ab = a.Union(b);
@@ -60,9 +63,9 @@ namespace BExIS.Web.Shell.Controllers
             //bool b = a.ContainsExact("is");
             //testExtendedProperty();
             //getDataset();
-            Int64 dsId = 0;
+            // Int64 dsId = 0;
 
-            //dsId = createDatasetVersion();
+            //    dsId = createDatasetVersion();
             //editDatasetVersion(dsId);
             //deleteTupleFromDatasetVersion(dsId);
             //deleteDataset(dsId);
@@ -77,21 +80,240 @@ namespace BExIS.Web.Shell.Controllers
             //getDataStructures();
             //return RedirectToAction("About");
             //createMetadataAttribute();
+            //ObtainingMethodManager om = new ObtainingMethodManager();
+
+            //////Test Party Type Manager
+            ////Add Party Type
+            //var partyType = addPartyType();
+            ////removePartyType(partyType);
+            //var partyStatusType = addPartyStatusType(partyType);
+            //var cusAttr = addTestPartyCustomAttribute(partyType);
+            ////removeTestPartyCustomAttribute(cusAttr);
+            //// removePartyStatusType(partyStatusType);
+
+            //////Create party 
+            //Dlm.Services.Party.PartyManager partyManager = new Dlm.Services.Party.PartyManager();
+            ///// Dlm.Services.Party.PartyRelationshipTypeManager pmr = new Dlm.Services.Party.PartyRelationshipTypeManager();
+            //var parties = new List<Dlm.Entities.Party.Party>();
+            //parties.Add(addTestParty(partyType, partyStatusType));
+            //parties.Add(addTestParty(partyType, partyStatusType));
+            //////update last test party
+            //updateTestParty(parties.Last().Id);
+
+            //////////deleteTestParty last test party
+            ////////deleteTestParty(parties.First());
+            //////////Add custom attribute value
+            ////var customAttrVal = addTestPartyCustomAttributeValue(parties.First(), cusAttr);
+            ////removeTestPartyCustomAttributeValue(customAttrVal);
+            ////// Create Party relationshiptype
+            //////in the same time of creating partyrelationshiptype partyType pairs created and add to that
+            //var partyReType = addTestPartyRelationshipType(partyType, partyType);
+            ////removeTestPartyRelationshipType(partyReType);
+            ////Add relation between two parties
+            ////The other relation are for testing minimum and maximum cardinaity
+            //var partyRel = addTestPartyRelationship(parties.First(), parties.Last(), partyReType);
+            //// var partyRel2=addTestPartyRelationship(parties.First(), parties.Last(), partyReType);
+            //// var partyRel3=addTestPartyRelationship(parties.First(), parties.Last(), partyReType);
+            //// addTestPartyRelationship(parties.Last(), parties.First(), partyReType);
+            //removePartyRelationship(partyRel);
+            //// removePartyRelationship(partyRel2);
+            ////removePartyRelationship(partyRel3);
+            //var partyPair = addTestPartyTypePair(partyType, addPartyType());
+            //// removeTestPartyTypePair(partyPair);
+            //var ps = addTestPartyStatus(parties.First());
+            ////removeTestPartyStatus(ps);
+            ////  deleteTestParty(parties.First());
+
             return View();
         }
+     
+        #region PartyManager
 
-        private void testTenants()
+        #region party
+        private Dlm.Entities.Party.Party addTestParty(PartyType partyType, PartyStatusType st)
         {
-            Tenant t = Session.GetTenant();
-            string s = "test";
-            s = t.Id;
-            s = t.Logo;
-            s = t.LogoPath;
-            s = t.FavIconPath;
-            s = t.ThemePath;
-            s = t.PolicyFileNamePath;
-            s = t.ContactUsFileNamePath;
-            s = t.ImprintFileNamePath;
+            Dlm.Services.Party.PartyManager pm = new Dlm.Services.Party.PartyManager();
+
+            var party = pm.Create(partyType, "partyTest", "", "party created for test", null, null, st);
+            return party;
+
+        }
+
+        private void deleteTestParty(Dlm.Entities.Party.Party party)
+        {
+            Dlm.Services.Party.PartyManager pm = new Dlm.Services.Party.PartyManager();
+            pm.Delete(party);
+        }
+
+        private void deleteTestParty(List<Dlm.Entities.Party.Party> parties)
+        {
+            Dlm.Services.Party.PartyManager pm = new Dlm.Services.Party.PartyManager();
+            pm.Delete(parties);
+        }
+
+        private void updateTestParty(long id)
+        {
+            Dlm.Services.Party.PartyManager pm = new Dlm.Services.Party.PartyManager();
+            var party = pm.Repo.Get(id);
+            party.Description = "updated..";
+            pm.Update(party);
+        }
+        #endregion
+
+        #region partyStatus
+        private Dlm.Entities.Party.PartyStatus addTestPartyStatus(Dlm.Entities.Party.Party party)
+        {
+            Dlm.Services.Party.PartyManager pm = new Dlm.Services.Party.PartyManager();
+            Dlm.Services.Party.PartyTypeManager ptm = new Dlm.Services.Party.PartyTypeManager();
+            var partyType = ptm.Create("partyTypeTest2", "just for test2", null);
+            var st = ptm.AddStatusType(partyType, "second try", "this is for test data", 0);
+            return pm.AddPartyStatus(party, st, "test");
+        }
+
+        #endregion
+
+        #region PartyRelationship
+        private Dlm.Entities.Party.PartyRelationship addTestPartyRelationship(Dlm.Entities.Party.Party firstParty, Dlm.Entities.Party.Party secondParty, PartyRelationshipType prt)
+        {
+            Dlm.Services.Party.PartyManager pm = new Dlm.Services.Party.PartyManager();
+            return pm.AddPartyRelationship(firstParty, secondParty, prt, "test Rel", "test relationship", DateTime.Now);
+
+        }
+        private bool removePartyRelationship(Dlm.Entities.Party.PartyRelationship partyRelationship)
+        {
+            Dlm.Services.Party.PartyManager pm = new Dlm.Services.Party.PartyManager();
+            return pm.RemovePartyRelationship(partyRelationship);
+        }
+        #endregion
+
+
+        #region PartyCustomAttributeValue
+        private Dlm.Entities.Party.PartyCustomAttributeValue addTestPartyCustomAttributeValue(Dlm.Entities.Party.Party party, Dlm.Entities.Party.PartyCustomAttribute partyCustomAttr)
+        {
+            Dlm.Services.Party.PartyManager pm = new Dlm.Services.Party.PartyManager();
+            pm.AddPartyCustomAttriuteValue(party, partyCustomAttr, "TestName");
+            Dictionary<PartyCustomAttribute, string> customAtts = new Dictionary<PartyCustomAttribute, string>();
+            customAtts.Add(partyCustomAttr, "Dic");
+            customAtts.Add(addTestPartyCustomAttribute(party.PartyType), "dic2");
+            customAtts.Add(addTestPartyCustomAttribute(party.PartyType), "dic3");
+            pm.AddPartyCustomAttriuteValue(party, customAtts);
+            return pm.AddPartyCustomAttriuteValue(party, partyCustomAttr, "TestName updated");
+        }
+
+        private bool removeTestPartyCustomAttributeValue(Dlm.Entities.Party.PartyCustomAttributeValue partyCustomAttrVal)
+        {
+            Dlm.Services.Party.PartyManager pm = new Dlm.Services.Party.PartyManager();
+            return pm.RemovePartyCustomAttriuteValue(partyCustomAttrVal);
+        }
+        #endregion
+
+        #endregion
+
+        #region Party Type Manager
+        #region partyType
+
+        private Dlm.Entities.Party.PartyType addPartyType()
+        {
+            Dlm.Services.Party.PartyTypeManager ptm = new Dlm.Services.Party.PartyTypeManager();
+            return ptm.Create("partyTypeTest", "just for test", null);
+        }
+        private void removePartyType(PartyType partyType)
+        {
+            Dlm.Services.Party.PartyTypeManager ptm = new Dlm.Services.Party.PartyTypeManager();
+            ptm.Delete(partyType);
+        }
+        #endregion
+
+        #region addStatusType
+        private Dlm.Entities.Party.PartyStatusType addPartyStatusType(PartyType partyType)
+        {
+            Dlm.Services.Party.PartyTypeManager ptm = new Dlm.Services.Party.PartyTypeManager();
+            return ptm.AddStatusType(partyType, "just created", "this is for test data", 0);
+        }
+        private void removePartyStatusType(PartyStatusType partyStatusType)
+        {
+            Dlm.Services.Party.PartyTypeManager ptm = new Dlm.Services.Party.PartyTypeManager();
+            ptm.RemoveStatusType(partyStatusType);
+        }
+        #endregion
+
+        #region PartyCustomAttribute
+        private Dlm.Entities.Party.PartyCustomAttribute addTestPartyCustomAttribute(Dlm.Entities.Party.PartyType partyType)
+        {
+            Dlm.Services.Party.PartyTypeManager ptm = new Dlm.Services.Party.PartyTypeManager();
+            return ptm.CreatePartyCustomAttribute(partyType, "string", "Name", "Name for test", "", true, 0);
+        }
+
+
+        private bool removeTestPartyCustomAttribute(Dlm.Entities.Party.PartyCustomAttribute partyCustomAttr)
+        {
+            Dlm.Services.Party.PartyTypeManager pm = new Dlm.Services.Party.PartyTypeManager();
+            return pm.DeletePartyCustomAttribute(partyCustomAttr);
+        }
+
+
+
+        #endregion
+        #endregion
+
+        #region Party RelationshipType Manager
+        #region PartyRelationshipType
+        private Dlm.Entities.Party.PartyRelationshipType addTestPartyRelationshipType(PartyType alowedSource, PartyType alowedTarget)
+        {
+            Dlm.Services.Party.PartyRelationshipTypeManager pmr = new Dlm.Services.Party.PartyRelationshipTypeManager();
+            return pmr.Create("test", " ", false, 3, 2, alowedSource, alowedTarget, "", "");
+        }
+
+        private bool removeTestPartyRelationshipType(PartyRelationshipType partyRelationshipType)
+        {
+            Dlm.Services.Party.PartyRelationshipTypeManager pmr = new Dlm.Services.Party.PartyRelationshipTypeManager();
+            return pmr.Delete(partyRelationshipType);
+        }
+        private bool removeTestPartyRelationshipType(List<PartyRelationshipType> partyRelationshipType)
+        {
+            Dlm.Services.Party.PartyRelationshipTypeManager pmr = new Dlm.Services.Party.PartyRelationshipTypeManager();
+            return pmr.Delete(partyRelationshipType);
+        }
+        #endregion
+
+        #region  PartyTypePair
+        private Dlm.Entities.Party.PartyTypePair addTestPartyTypePair(PartyType alowedSource, PartyType alowedTarget)
+        {
+            Dlm.Services.Party.PartyRelationshipTypeManager pmr = new Dlm.Services.Party.PartyRelationshipTypeManager();
+            return pmr.AddPartyTypePair("TitleTest", alowedSource, alowedTarget, "rel Type test", null);
+        }
+
+        private bool removeTestPartyTypePair(PartyTypePair partyTypePair)
+        {
+            Dlm.Services.Party.PartyRelationshipTypeManager pmr = new Dlm.Services.Party.PartyRelationshipTypeManager();
+            return pmr.RemovePartyTypePair(partyTypePair);
+        }
+        private bool removeTestPartyTypePair(List<PartyTypePair> partyTypePairs)
+        {
+            Dlm.Services.Party.PartyRelationshipTypeManager pmr = new Dlm.Services.Party.PartyRelationshipTypeManager();
+            return pmr.RemovePartyTypePair(partyTypePairs);
+        }
+        #endregion
+
+        #endregion
+
+        private void removeContentDescriptor()
+        {
+            DatasetManager dm = new DatasetManager();
+            Dataset dataset = dm.GetDataset(1);
+            // check if the dataset is in the checked-in status
+            DatasetVersion dsVersion = dm.GetDatasetLatestVersion(dataset);
+            if(dsVersion.ContentDescriptors.Count(p => p.Name.Equals("generated")) > 0)
+            {
+                dm.CheckOutDataset(1, "admin");
+                dsVersion = dm.GetDatasetWorkingCopy(1);
+                //dm.EditDatasetVersion(dsVersion, null, null, null, null);
+                // The descriptor to be deleted must be object equal to the one in the list. The following command does the job.
+                // The condition can be different, but the item should be taken from the list, and any other instance must be released, by setting them to NULL.
+                var cd = dsVersion.ContentDescriptors.FirstOrDefault(p => p.Name.Equals("generated"));
+                dm.DeleteContentDescriptor(cd);
+                dm.CheckInDataset(1, "removed content descriptor:" + cd.Name, "admin");
+            }
         }
 
         private void getDataStructures()
@@ -139,7 +361,7 @@ namespace BExIS.Web.Shell.Controllers
             MetadataPackage p4 = mdpManager.MetadataPackageRepo.Get(p => p.Name == "P4").FirstOrDefault();
             if (p4 == null) p4 = mdpManager.Create("P4", "Sample Package 4", true);
 
-            if(s1.MetadataPackageUsages.Where(p=>p.MetadataPackage == p1).Count() <=0)
+            if (s1.MetadataPackageUsages.Where(p => p.MetadataPackage == p1).Count() <= 0)
                 mdsManager.AddMetadataPackageUsage(s1, p1, "P1 in S1", "", 0, 1);
 
             if (s1.MetadataPackageUsages.Where(p => p.MetadataPackage == p2).Count() <= 0)
@@ -167,12 +389,12 @@ namespace BExIS.Web.Shell.Controllers
             dcManager.AddConstraint(c2, attr);
             var v2 = c2.IsSatisfied("javad.chamanara@uni-jena.com");
 
-            List<DomainItem> items = new List<DomainItem>() { new DomainItem () {Key = "A", Value = "This is A" }, 
-                                                              new DomainItem () {Key = "B", Value = "This is B" }, 
-                                                              new DomainItem () {Key = "C", Value = "This is C" }, 
+            List<DomainItem> items = new List<DomainItem>() { new DomainItem () {Key = "A", Value = "This is A" },
+                                                              new DomainItem () {Key = "B", Value = "This is B" },
+                                                              new DomainItem () {Key = "C", Value = "This is C" },
                                                               new DomainItem () {Key = "D", Value = "This is D" },
                                                             };
-            var c3 = new DomainConstraint(ConstraintProviderSource.Internal, "", "en-US", "a simple domain validation constraint", false, null, null, null, items);            
+            var c3 = new DomainConstraint(ConstraintProviderSource.Internal, "", "en-US", "a simple domain validation constraint", false, null, null, null, items);
             dcManager.AddConstraint(c3, attr);
             var v3 = c3.IsSatisfied("A");
             v3 = c3.IsSatisfied("E");
@@ -180,20 +402,20 @@ namespace BExIS.Web.Shell.Controllers
             v3 = c3.IsSatisfied("A");
 
             var c4 = new ComparisonConstraint(ConstraintProviderSource.Internal, "", "en-US", "a comparison validation constraint", false, null, null, null
-                , ComparisonOperator.GreaterThanOrEqual, ComparisonTargetType.Value, "" , ComparisonOffsetType.Ratio, 1.25);            
+                , ComparisonOperator.GreaterThanOrEqual, ComparisonTargetType.Value, "", ComparisonOffsetType.Ratio, 1.25);
             dcManager.AddConstraint(c4, attr);
             var v4 = c4.IsSatisfied(14, 10);
-        
+
         }
 
         private void purgeAll()
         {
             DatasetManager dm = new DatasetManager();
-            foreach (var item in dm.DatasetRepo.Query().Select(p=>p.Id).ToList())
+            foreach (var item in dm.DatasetRepo.Query().Select(p => p.Id).ToList())
             {
                 dm.PurgeDataset(item);
             }
-            
+
         }
 
         private void purgeDataset(long dsId)
@@ -201,11 +423,11 @@ namespace BExIS.Web.Shell.Controllers
             DatasetManager dm = new DatasetManager();
             dm.PurgeDataset(dsId);
         }
-        
+
         private void getAllDatasetVersions()
         {
             DatasetManager dm = new DatasetManager();
-            List<Int64> ids = dm.DatasetRepo.Query().Select(p=>p.Id).ToList();
+            List<Int64> ids = dm.DatasetRepo.Query().Select(p => p.Id).ToList();
             var b = dm.GetDatasetLatestVersions();
             var a = dm.GetDatasetLatestVersions(ids);
             var c = dm.GetDatasetLatestMetadataVersions();
@@ -237,7 +459,7 @@ namespace BExIS.Web.Shell.Controllers
 
             //    AbstractTuple changed = dm.GetDatasetVersionEffectiveTuples(workingCopy).First();
             //    changed.VariableValues.First().Value = (new Random()).Next().ToString();
-                
+
             //    //DataTuple dt = dm.DataTupleRepo.Get(40);
             //    //DataTuple newDt = new DataTuple();
             //    //newDt.XmlAmendments = dt.XmlAmendments;
@@ -270,6 +492,19 @@ namespace BExIS.Web.Shell.Controllers
             //}
         }
 
+        private Dataset createDataset()
+        {
+
+            DataStructureManager dsManager = new DataStructureManager();
+            ResearchPlanManager rpManager = new ResearchPlanManager();
+            DatasetManager dm = new DatasetManager();
+
+            MetadataStructureManager mdsManager = new MetadataStructureManager();
+            MDS.MetadataStructure mds = mdsManager.Repo.Query().First();
+
+            Dataset ds = dm.CreateEmptyDataset(dsManager.StructuredDataStructureRepo.Get(1), rpManager.Repo.Get(1), mds);
+            return ds;
+        }
         /// <summary>
         /// create a new dataset, check it out to create the first version, add a tuple to it.
         /// </summary>
@@ -318,27 +553,27 @@ namespace BExIS.Web.Shell.Controllers
             return (dsId);
         }
 
-    //    private void createADataStructure()
-    //    {
-    //        DataStructureGenerator sdGen = new DataStructureGenerator();
-    //        StructuredDataStructure sds = sdGen.GenerateStructuredDataStructure();
-    //        DataContainerManager dcm = new DataContainerManager();
-    //        List<Parameter> pps = (from vari in sds.VariableUsages
-    //                                from pari in vari.DataAttribute.ParameterUsages
-    //                                select pari.Parameter).ToList();
-    //        if(sds.Indexer != null)
-    //            pps.Add(sds.Indexer);
-    //        pps = pps.Distinct().ToList();
-    //        foreach (var item in pps)
-    //{
-    //     dcm.CreateParameter(item.Name, 
-    //}
-            
+        //    private void createADataStructure()
+        //    {
+        //        DataStructureGenerator sdGen = new DataStructureGenerator();
+        //        StructuredDataStructure sds = sdGen.GenerateStructuredDataStructure();
+        //        DataContainerManager dcm = new DataContainerManager();
+        //        List<Parameter> pps = (from vari in sds.VariableUsages
+        //                                from pari in vari.DataAttribute.ParameterUsages
+        //                                select pari.Parameter).ToList();
+        //        if(sds.Indexer != null)
+        //            pps.Add(sds.Indexer);
+        //        pps = pps.Distinct().ToList();
+        //        foreach (var item in pps)
+        //{
+        //     dcm.CreateParameter(item.Name, 
+        //}
 
-    //        DataStructureManager dsm = new DataStructureManager();
-            
-    //        dsm.CreateStructuredDataStructure(
-    //    }
+
+        //        DataStructureManager dsm = new DataStructureManager();
+
+        //        dsm.CreateStructuredDataStructure(
+        //    }
         private void testExtendedProperty()
         {
             DatasetManager dm = new DatasetManager();
@@ -348,7 +583,7 @@ namespace BExIS.Web.Shell.Controllers
             StructuredDataStructure sds = (ds.DataStructure.Self as StructuredDataStructure);
             ExtendedProperty exp = null;
             try { exp = dcManager.ExtendedPropertyRepo.Get(1); }
-            catch {}
+            catch { }
             //if(exp == null)
             //    exp = dcManager.CreateExtendedProperty("Source", "the data provider", sds.VariableUsages.First().DataAttribute, null); // issue with session management
 
@@ -489,7 +724,7 @@ namespace BExIS.Web.Shell.Controllers
 
             um.DeleteConversionMethod(cm1);
             um.DeleteConversionMethod(new List<ConversionMethod>() { cm2, cm3 });
-                                    
+
             um.Delete(cm);
             um.Delete(new List<Unit>() { km, m });
         }
@@ -506,7 +741,7 @@ namespace BExIS.Web.Shell.Controllers
                 XmlPath = Server.MapPath("~/App_Data/data.xml"),
                 XsltPath = Server.MapPath("~/App_Data/view.xsl")
             };
- 
+
             return View(model);
         }
 
@@ -615,7 +850,7 @@ namespace BExIS.Web.Shell.Controllers
             //expected.Tuples.ForEach(p => p.Amendments.Clear());
             //expected.Tuples.ForEach(p => p.Materialize());
 
-        }               
+        }
 
         public void SimpleMatDematWithExport()
         {

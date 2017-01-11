@@ -217,7 +217,9 @@ namespace BExIS.Security.Services.Authorization
 
         public bool DeleteDataPermissionsByEntity(long entityId, long dataId)
         {
-            List<DataPermission>dataPermissions = GetDataPermissionsFromEntity(entityId, dataId).ToList();
+            var dataPermissions = GetDataPermissionsFromEntity(entityId, dataId)
+                                    //.Select(p=>p.Id) // if uncommented, uses another repository Delete method!
+                                    .ToList();
 
             if (dataPermissions != null)
             {

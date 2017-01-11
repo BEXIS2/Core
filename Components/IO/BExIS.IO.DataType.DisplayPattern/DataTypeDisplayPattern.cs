@@ -56,11 +56,11 @@ namespace BExIS.IO.DataType.DisplayPattern
             return xmlDoc.DocumentElement;
         }
 
-        public static DataTypeDisplayPattern Materialize(XmlNode dataTypeDisplayPattern)
+        public static DataTypeDisplayPattern Materialize(XmlNode extra)
         {
-            if (dataTypeDisplayPattern != null)
+            if (extra != null)
             {
-                XmlDocument xmlDoc = dataTypeDisplayPattern as XmlDocument;
+                XmlDocument xmlDoc = extra as XmlDocument;
                 XmlNode xmlNode;
 
                 DataTypeDisplayPattern displayPattern = new DataTypeDisplayPattern();

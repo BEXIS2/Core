@@ -1,5 +1,4 @@
 ﻿@model MetadataAttributeModel
-@using System
 @using BExIS.Web.Shell.Areas.DCM.Models
 @using Telerik.Web.Mvc.UI
 @{
@@ -15,7 +14,7 @@
     string errorClass = "";
     string lockedClass = "";
     bool locked = false;
-    bool hideOptional = false;
+    bool showOptional = false;
 
     string displayName = "";
     char tmp = ' ';
@@ -55,9 +54,9 @@
     lockedClass = "bx-disabled";
 }
 
-@if (ViewData.Keys.Contains("HideOptional"))
+@if (ViewData.Keys.Contains("ShowOptional"))
 {
-    hideOptional = (bool)ViewData["HideOptional"];
+    showOptional = (bool)ViewData["ShowOptional"];
 }
 
 
@@ -82,17 +81,16 @@
     }
 }
 
-<div id="@id" class="metadataAttributeContent" onload="metadataAttributeOnLoad(this)">
+<div id="@id" class="metadataAttributeContent" onload="metadataAttributeOnLoad(this, @hasErrors)">
 
-
-    @if (@Model != null && !(hideOptional && Model.IsEmpty && (Model.MinCardinality == 0) && locked))
+    @if (@Model != null && !(!showOptional && Model.IsEmpty && (Model.MinCardinality == 0) && locked))
     {
         <table>
             <tr>
                 <td class="metadataAttributeLabel">
                     @if (Model.MinCardinality > 0)
                     {
-                        <b title="Required" style="color:red">*</b>
+                        <b title="This field is required" style="color:red">*</b>
                     }
 
                     <b title="@Model.Discription">@displayName</b>
@@ -102,13 +100,25 @@
                 <td class="metadataAttributeInput">
                     @if (Model.SystemType.Equals(TypeCode.String.ToString()))
                     {
-                        if (Model.DataType.ToLower().Equals("text"))
+
+                        if (Model.DataType.ToLower().Equals("text") ||
+                            (Model.DataType.ToLower().Equals("string") &&
+                            Model.Value!= null && Model.Value.ToString().Length>=60))
                         {
                             if (!locked)
                             {
                                 if (Model.DomainList.Count == 0)
                                 {
-                                    @Html.TextAreaFor(m => m.Value, new { OnChange = "OnChange(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-textarea " + @errorClass })
+                                    @Html.TextAreaFor(m => m.Value,
+                                        new { OnChange = "OnChange(this)",
+                                            Name = @displayName,
+                                            Id = @idInput,
+                                            PackageId = @Model.Parent.Id,
+                                            Title = @errorMessage,
+                                            @class = "bx-input bx-metadataFormTextInput " + @errorClass,
+                                            onkeyup = "OnKeyUpTextArea(this)",
+                                            OnLoad = "OnKeyUpTextInput(this)"
+                                        })
                                 }
                                 else
                                 {
@@ -122,12 +132,18 @@
                             }
                             else
                             {
-                                @Html.TextAreaFor(m => m.Value, new { OnChange = "OnChange(this)", disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-textarea " + @errorClass + " " + lockedClass })
+
+                                @Html.TextAreaFor(m => m.Value, new { disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input bx-metadataFormTextInput " + @errorClass + " " + lockedClass })
+
                             }
+
+                        
 
                         }
 
-                        if (Model.DataType.ToLower().Equals("string"))
+                        if (Model.DataType.ToLower().Equals("string") &&
+                            ((Model.Value != null && Model.Value.ToString().Length < 80) ||
+                            Model.Value==null))
                         {
                             if (!locked)
                             {
@@ -141,11 +157,14 @@
                                     }
 
                                     @*@Html.TextBoxFor(m => m.Value, new { OnChange = "OnChange(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input " + @errorClass })*@
+                                    
                                     @(Html.Telerik().AutoComplete()
                                             .Name(@idInput)
                                             .Encode(false)
                                             .Value(value)
-                                            .ClientEvents(events=>events.OnChange("OnChangeTextInput"))
+                                            .HtmlAttributes(new {@class= "bx-metadataFormTextInput "+@errorClass, title= @errorMessage, onKeyUp= "OnKeyUpTextInput(this)" })
+                                            .ClientEvents(events => events
+                                                .OnChange("OnChangeTextInput"))
                                             .DataBinding(dataBinding => dataBinding
                                                 .Ajax().Select("_AutoCompleteAjaxLoading", "Form")
                                                 .Cache(false))
@@ -153,7 +172,7 @@
                                             .Filterable(filtering =>
                                             {
                                                 filtering.FilterMode(AutoCompleteFilterMode.Contains);
-                                                filtering.MinimumChars(3);
+                                                filtering.MinimumChars(2);
 
                                             })
                                     )
@@ -171,9 +190,17 @@
                             }
                             else
                             {
-                                @Html.TextBoxFor(m => m.Value, new { OnChange = "OnChange(this)", disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input " + @errorClass + " " + lockedClass })
+                                @*<div class="bx-input bx-metadataFormTextInput" style="vertical-align: middle" >
+                                    @if (Model.Value != null)
+                                    {
+                                        @Model.Value.ToString()
+                                    }
+                                </div>*@
+                                @Html.TextBoxFor(m => m.Value, new { disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input bx-metadataFormTextInput " + @errorClass + " " + lockedClass })
+
                             }
                         }
+
                     }
 
                     @if (Model.SystemType.Equals(TypeCode.Boolean.ToString()))
@@ -189,15 +216,13 @@
                             value = false;
                         }
 
-
-
                         if (!locked)
                         {
-                            @Html.CheckBox(Model.DisplayName, value, new { OnClick = "OnChangeCheckBox(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage });
+                            @Html.CheckBox(Model.DisplayName, value, new { OnClick = "OnChangeCheckBox(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage })
                         }
                         else
                         {
-                            @Html.CheckBox(Model.DisplayName, value, new { OnClick = "OnChangeCheckBox(this)", disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage });
+                            @Html.CheckBox(Model.DisplayName, value, new { OnClick = "OnChangeCheckBox(this)", disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage })
                         }
 
                     }
@@ -219,12 +244,13 @@
                                                     .Value(value)
                                                     .ClientEvents(events => events
                                                     .OnChange("OnChangeNumbers"))
-                                                    .InputHtmlAttributes(new { PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input " + @errorClass })
+                                                    .InputHtmlAttributes(new { PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input bx-metadataFormTextInput " + @errorClass })
                             )
                         }
                         else
                         {
-                            @Html.TextBoxFor(m => m.Value, new { OnChange = "OnChange(this)", disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input " + @errorClass + " " + lockedClass })
+
+                            @Html.TextBoxFor(m => m.Value, new { disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input bx-metadataFormTextInput " + @errorClass + " " + lockedClass })
                         }
                     }
 
@@ -233,11 +259,11 @@
                     {
                         if (!locked)
                         {
-                            @Html.TextBoxFor(m => m.Value, new { OnChange = "OnChange(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input " + @errorClass })
+                            @Html.TextBoxFor(m => m.Value, new { OnChange = "OnChange(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input bx-metadataFormTextInput " + @errorClass })
                         }
                         else
                         {
-                            @Html.TextBoxFor(m => m.Value, new { OnChange = "OnChange(this)", disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input " + @errorClass })
+                            @Html.TextBoxFor(m => m.Value, new { OnChange = "OnChange(this)", disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input bx-metadataFormTextInput " + @errorClass })
                         }
                     }
 
@@ -255,13 +281,19 @@
                             {
                                 value = "";//@defaultDate.ToString();
                             }
+                            string format = Model.DisplayPattern;
+
+                            if (string.IsNullOrEmpty(format))
+                            {
+                                format = "yyy-MM-dd";
+                            }
 
                             @(Html.Telerik().DatePicker()
                                 .Name(@idInput)
                                 .ShowButton(true)
                                 .TodayButton("d")
                                 .OpenOnFocus(true)
-                                .Format("dd/MM/yyyy")
+                                .Format(format)
                                 .Value(value)
                                 .ClientEvents(events => events
                                     .OnChange("OnChangeDatePicker"))
@@ -269,7 +301,7 @@
                         }
                         else
                         {
-                            @Html.TextBoxFor(m => m.Value, new { OnChange = "OnChange(this)", disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input " + @errorClass })
+                            @Html.TextBoxFor(m => m.Value, new { disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input bx-metadataFormTextInput " + @errorClass + " " + lockedClass })
                         }
                     }
                 </td>
@@ -279,7 +311,7 @@
                     {
                         <table id="attributeOptionTable">
                             <tr>
-                                <td><button id="@idAdd" type="button" value="Add" name="Add" class="bx-function bx-add" onclick="OnClickAdd(this)"></button></td>
+                                <td><button id="@idAdd" type="button" value="Add" name="Add" class="bx-function bx-add" onclick="OnClickAdd(this, @Model.MaxCardinality)"></button></td>
                                 <td><button id="@idRemove" type="button" value="Remove" name="Remove" class="bx-function bx-delete" onclick="OnClickRemove(this)"></button></td>
                                 <td>
                                     @if (!Model.last)
@@ -311,425 +343,4 @@
         </table>
     }
 
-
-
-    <script type="text/javascript">
-
-        function metadataAttributeOnLoad(e) {
-            if ('@hasErrors') {
-                $('#' + e.id + "_input").AddClass("bx-input-error");
-            }
-        }
-
-        function OnChangeTextInput(e) {
-
-            var substr = e.target.id.split('_');
-            var id = substr[0];
-            var parentid = substr[1];
-            var parentname = $("#" + e.id).attr("title");
-            var number = substr[2];
-            var ParentModelNumber = substr[3];
-            var ParentStepID = substr[5];
-
-            //alert(parentid);
-            //alert(metadataStructureId);
-            //alert(ParentStepID);
-            //object value,  int id, int parentid,       string parentname,     int number, int parentModelNumber,                    int parentStepId)
-            $.post('@Url.Action("ValidateMetadataAttributeUsage", "Form", new RouteValueDictionary {{"area", "DCM"}})',
-            {
-                value: e.value,
-                id: id,
-                parentid: parentid,
-                parentname: parentname,
-                number: number,
-                parentModelNumber: ParentModelNumber,
-                ParentStepId: ParentStepID
-            },
-            function (response) {
-                //alert(e.value);
-                //alert(response);
-                //var id = parentid;
-                var index = e.id.lastIndexOf("_");
-                var newId = e.id.substr(0, index);
-                //alert(newId);
-
-                //$("#" + newId).replaceWith(response);
-                //$("#" + newId).replaceWith(response);
-            })
-        }
-
-        function OnChange(e) {
-            var substr = e.id.split('_');
-            var id = substr[0];
-            var parentid = substr[1];
-            var parentname = $("#" + e.id).attr("title");
-            var number = substr[2];
-            var ParentModelNumber = substr[3];
-            var ParentStepID = substr[5];
-
-            //alert(parentid);
-            //alert(metadataStructureId);
-            //alert(ParentStepID);
-            //object value,  int id, int parentid,       string parentname,     int number, int parentModelNumber,                    int parentStepId)
-            $.post('@Url.Action("ValidateMetadataAttributeUsage", "Form", new RouteValueDictionary {{"area", "DCM"}})',
-            {
-                value: e.value,
-                id: id,
-                parentid: parentid,
-                parentname: parentname,
-                number: number,
-                parentModelNumber: ParentModelNumber,
-                ParentStepId: ParentStepID
-            },
-            function(response) {
-                //alert(e.value);
-                //alert(response);
-                //var id = parentid;
-                var index = e.id.lastIndexOf("_");
-                var newId = e.id.substr(0, index);
-                //alert(newId);
-
-                $("#" + newId).replaceWith(response);
-            })
-
-    }
-
-    function OnChangeCheckBox(e) {
-            var substr = e.id.split('_');
-            var id = substr[0];
-            var parentid = substr[1];
-            var parentname = $("#" + e.id).attr("title");
-            var number = substr[2];
-            var ParentModelNumber = substr[3];
-            var ParentStepID = substr[5];
-
-            var value;
-
-            if ($("#" + e.id).attr('checked')) {
-                value = true;
-            } else {
-                value = false;
-            }
-
-            var data = {
-                value: e.value,
-                id: id,
-                parentid: parentid,
-                parentname: parentname,
-                number: number,
-                parentModelNumber: ParentModelNumber,
-                ParentStepId: ParentStepID
-            };
-
-            //alert(parentid);
-            //alert(metadataStructureId);
-            //alert(ParentStepID);
-            //object value,  int id, int parentid,       string parentname,     int number, int parentModelNumber,                    int parentStepId)
-            $.post('@Url.Action("ValidateMetadataAttributeUsage", "Form", new RouteValueDictionary {{"area", "DCM"}})',
-                {
-                    value: value,
-                    id: id,
-                    parentid: parentid,
-                    parentname: parentname,
-                    number: number,
-                    parentModelNumber: ParentModelNumber,
-                    ParentStepId: ParentStepID
-                },
-                function (response) {
-                    //alert(e.value);
-                    //alert(response);
-                    //var id = parentid;
-                    var index = e.id.lastIndexOf("_");
-                    var newId = e.id.substr(0, index);
-                    //alert(newId);
-
-                    $("#" + newId).replaceWith(response);
-                })
-
-        }
-
-    function OnChangeDropDown(e) {
-        var substr = e.target.id.split('_');
-        var id = substr[0];
-        var parentid = substr[1];
-        var parentname = $("#" + e.id).attr("title");
-        var number = substr[2];
-        var ParentModelNumber = substr[3];
-        var ParentStepID = substr[5];
-
-        var data = {
-            value: e.value,
-            id: id,
-            parentid: parentid,
-            parentname: parentname,
-            number: number,
-            parentModelNumber: ParentModelNumber,
-            ParentStepId: ParentStepID
-        };
-
-        @*  alert(id);
-        alert('@id');*@
-        //alert(parentid);
-        //alert(metadataStructureId);
-        //alert(ParentStepID);
-        //object value,  int id, int parentid,       string parentname,     int number, int parentModelNumber,                    int parentStepId)
-        $.post('@Url.Action("ValidateMetadataAttributeUsage", "Form", new RouteValueDictionary {{"area", "DCM"}})',
-            {
-                value: e.value,
-                id: id,
-                parentid: parentid,
-                parentname: parentname,
-                number: number,
-                parentModelNumber: ParentModelNumber,
-                ParentStepId: ParentStepID
-            },
-            function(response) {
-
-            })
-
-
-    }
-
-    function OnChangeNumbers(e) {
-
-        var substr = e.target.id.split('_');
-        var id = substr[0];
-        var parentid = substr[1];
-        var parentname = e.target.attr("title");
-        var metadataStructureId = substr[2];
-        var number = substr[3];
-        var ParentModelNumber = substr[4];
-        var ParentStepID = substr[5];
-
-
-        var data = {
-            value: e.target.value,
-            id: id,
-            parentid: parentid,
-            parentname: parentname,
-            number: number,
-            ParentModelNumber: ParentModelNumber,
-            ParentStepId: ParentStepID
-        };
-
-        //alert(id);
-        //alert(parentid);
-        //alert(metadataStructureId);
-        //alert(number);
-
-        $.ajax({
-            url: '/DCM/Form/ValidateMetadataAttributeUsage',
-            type: 'POST',
-            data: JSON.stringify(data),
-            dataType: 'json',
-            contentType: 'application/json; charset=utf-8',
-            error: function(xhr) {
-                //alert('Error: ' + xhr.statusText);
-            },
-            success: function(result) {
-                //alert("success");
-            },
-            async: true,
-            processData: false
-        });
-    }
-
-    function OnChangeDatePicker(e) {
-
-
-        var substr = e.target.id.split('_');
-        var id = substr[0];
-        var parentid = substr[1];
-        var parentname = $("#" + e.id).attr("title");
-        //var metadataStructureId = substr[2];
-        var number = substr[2];
-        var ParentModelNumber = substr[3];
-        var ParentStepID = substr[5];
-
-        var data = {
-            value: e.value,
-            id: id,
-            parentid: parentid,
-            parentname: parentname,
-            number: number,
-            ParentModelNumber: ParentModelNumber,
-            ParentStepId: ParentStepID
-        };
-
-        //alert(id);
-        //alert(parentid);
-        //alert(metadataStructureId);
-        //alert(number);
-
-        $.ajax({
-            url: '/DCM/Form/ValidateMetadataAttributeUsage',
-            type: 'POST',
-            data: JSON.stringify(data),
-            dataType: 'json',
-            contentType: 'application/json; charset=utf-8',
-            error: function(xhr) {
-                //alert('Error: ' + xhr.statusText);
-            },
-            success: function(result) {
-                //alert("success");
-            },
-            async: true,
-            processData: false
-        });
-    }
-
-    function OnClickAdd(e) {
-
-        var substr = e.id.split('_');
-        var id = substr[0];
-        var parentid = substr[1];
-        var number = substr[2];
-        var ParentModelNumber = substr[3];
-        var NumberOfSourceInPackage = substr[4];
-        var ParentStepID = substr[5];
-
-        @*alert("AddClick -" +e.id +" - "+NumberOfSourceInPackage+" <= "+'@Model.Source.MaxCardinality');
-        alert("id -"+id);
-        alert("parentid -" + parentid);
-        alert("metadataStructureId -" + metadataStructureId);
-        alert("number -" + number);
-        alert("ParentModelNumber -" + ParentModelNumber);
-        alert("NumberOfSourceInPackage -" + NumberOfSourceInPackage);*@
-
-        var maxcardinality = '@Model.Source.MaxCardinality';
-
-        if (NumberOfSourceInPackage <= parseInt(maxcardinality)) {
-            $.post('@Url.Action("AddMetadataAttributeUsage", "Form", new RouteValueDictionary {{"area", "DCM"}})',
-                {
-                    id: id,
-                    parentid: parentid,
-                    number: number,
-                    parentModelNumber: ParentModelNumber,
-                    ParentStepId: ParentStepID
-                },
-                function(response) {
-
-                    var id = ParentStepID;
-                    //alert(id);
-                    //alert(response);
-                    $("#" + id).replaceWith(response);
-                })
-        } else {
-            alert("Maxium cardinality is reached.");
-        }
-    }
-
-    function OnClickRemove(e) {
-
-        var value = $("#" + e.id).closest(".ValueClass").value;
-
-        if (value != "") {
-
-            var substr = e.id.split('_');
-            var id = substr[0];
-            var parentid = substr[1];
-            var number = substr[2];
-            var ParentModelNumber = substr[3];
-            var NumberOfSourceInPackage = substr[4];
-            var ParentStepID = substr[5];
-
-
-            if (NumberOfSourceInPackage > 1) {
-                var data = {
-                    value: value,
-                    id: id,
-                    parentid: parentid,
-                    number: number,
-                    ParentModelNumber: ParentModelNumber
-                };
-
-                $
-                    .post('@Url.Action("RemoveMetadataAttributeUsage", "Form", new RouteValueDictionary {{"area", "DCM"}})',
-                        {
-                            id: id,
-                            parentid: parentid,
-                            number: number,
-                            parentModelNumber: ParentModelNumber,
-                            ParentStepId: ParentStepID
-                        },
-                        function(response) {
-
-                            var id = ParentStepID;
-                            $("#" + id).replaceWith(response);
-                        })
-            } else {
-                alert("You are not able to remove elements.");
-            }
-        }
-    }
-
-    function OnClickUp(e) {
-        //alert(value);
-        var value = $("#" + e.id).closest(".ValueClass").value;
-        if (value != "") {
-
-            var substr = e.id.split('_');
-            var id = substr[0];
-            var parentid = substr[1];
-            var number = substr[2];
-            var ParentModelNumber = substr[3];
-            var ParentStepID = substr[5];
-
-
-            $.post('@Url.Action("UpMetadataAttributeUsage", "Form", new RouteValueDictionary {{"area", "DCM"}})',
-                {
-                    id: id,
-                    parentid: parentid,
-                    number: number,
-                    ParentModelNumber: ParentModelNumber,
-                    ParentStepId: ParentStepID
-                },
-                function(response) {
-
-                    var id = ParentStepID;
-                    $("#" + id).replaceWith(response);
-                });
-
-        }
-    }
-
-    function OnClickDown(e) {
-        //alert(value);
-        var value = $("#" + e.id).closest(".ValueClass").value;
-        if (value != "") {
-
-            var substr = e.id.split('_');
-            var id = substr[0];
-            var parentid = substr[1];
-            var number = substr[2];
-            var ParentModelNumber = substr[3];
-            var ParentStepID = substr[5];
-
-            var data = {
-                value: value,
-                id: id,
-                parentid: parentid,
-                number: number,
-                ParentModelNumber: ParentModelNumber
-            };
-
-            $.post('@Url.Action("DownMetadataAttributeUsage", "Form", new RouteValueDictionary {{"area", "DCM"}})',
-                {
-                    id: id,
-                    parentid: parentid,
-                    number: number,
-                    ParentModelNumber: ParentModelNumber,
-                    ParentStepId: ParentStepID
-                },
-                function(response) {
-
-                    var id = ParentStepID;
-                    $("#" + id).replaceWith(response);
-                })
-
-        }
-    }
-
-    </script>
 </div>
- 

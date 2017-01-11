@@ -27,6 +27,7 @@ using Vaiona.Web.Mvc.Models;
 using BExIS.Web.Shell.Models;
 using BExIS.Web.Shell.Helpers;
 using Vaiona.IoC;
+using Vaiona.Logging;
 using Vaiona.Web.Extensions;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
@@ -522,6 +523,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
                     provider?.UpdateSingleDatasetIndex(datasetId, IndexingAction.CREATE);
 
+                    LoggerFactory.LogData(datasetId.ToString(), typeof(Dataset).Name, Vaiona.Entities.Logging.CrudState.Created);
+
                 }
 
                 return datasetId;
@@ -640,14 +643,31 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             return RedirectToAction("StartMetadataEditor", "Form");
         }
 
-        #endregion
+        public ActionResult Copy()
+        {
+            TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
+            if (TaskManager != null)
+            {
+                if (TaskManager.Bus.ContainsKey(CreateTaskmanager.ENTITY_ID))
+                {
+                    long datasetid = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.ENTITY_ID]);
+
+                    return RedirectToAction("Index", "CreateDataset", new { id = datasetid, type = "DatasetId" });
+
+                }
+            }
+            //Index(long id = -1, string type = "")
+            return RedirectToAction("Index", "CreateDataset", new { id = -1, type = "DatasetId" });
+        }
 
         #endregion
 
-        #region Helper
+            #endregion
 
-        // chekc if user exist
-        // if true return usernamem otherwise "DEFAULT"
+            #region Helper
+
+            // chekc if user exist
+            // if true return usernamem otherwise "DEFAULT"
         public string GetUsernameOrDefault()
         {
             string username = string.Empty;
@@ -685,9 +705,13 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             foreach (MetadataStructure metadataStructure in msm.Repo.Get())
             {
-                string title = metadataStructure.Name;
+                if (XmlDatasetHelper.IsActive(metadataStructure.Id) && 
+                    XmlDatasetHelper.HasEntityType(metadataStructure.Id,"bexis.dlm.entities.data.dataset"))
+                {
+                    string title = metadataStructure.Name;
 
-                temp.Add(new ListViewItem(metadataStructure.Id, title, metadataStructure.Description));
+                    temp.Add(new ListViewItem(metadataStructure.Id, title, metadataStructure.Description));
+                }
             }
 
             return temp.OrderBy(p => p.Title).ToList();
@@ -753,7 +777,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             //set function actions of COPY, RESET,CANCEL,SUBMIT
             ActionInfo copyAction = new ActionInfo();
-            copyAction.ActionName = "Index";
+            copyAction.ActionName = "Copy";
             copyAction.ControllerName = "CreateDataset";
             copyAction.AreaName = "DCM";
 

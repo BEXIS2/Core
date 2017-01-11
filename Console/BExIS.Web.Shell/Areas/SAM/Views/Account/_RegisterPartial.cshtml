@@ -97,17 +97,18 @@
     </table>
 
     <div class="bx-footer right">
-        <button type="reset" style="float:left" class="bx-button action">Reset</button>
+        <button type="reset" style="float:left" class="bx-button action" onclick="$(this).resetValidation()">Reset</button>
         <button type="submit" class="bx-button action">Create</button>
         <button type="button" class="bx-button action" onclick="Window_Register_Cancel()">Cancel</button>
     </div>
 }
 
 <script type="text/javascript">
-    $(document).ready(function () {
-        $.validator.unobtrusive.parse("#Content_Register");
-        resetAllTelerikIconTitles();
-    });
+    $(document)
+        .ready(function() {
+            $.validator.unobtrusive.parse("#Content_Register");
+            resetAllTelerikIconTitles();
+        });
 
     function onSuccess(data) {
         if (data.success) {
@@ -116,4 +117,31 @@
             window.top.location = "/Home/Index";
         }
     }
+
+    function onReset() {
+        console.log("start reset");
+        $("#Content_Register input").clearErrors();
+    }
+
+    $.fn.resetValidation = function () {
+
+        var $form = this.closest('form');
+
+        //reset jQuery Validate's internals
+        $form.validate().resetForm();
+
+        //reset unobtrusive validation summary, if it exists
+        $form.find("[data-valmsg-summary=true]")
+            .removeClass("validation-summary-errors")
+            .addClass("validation-summary-valid")
+            .find("ul").empty();
+
+        //reset unobtrusive field level, if it exists
+        $form.find("[data-valmsg-replace]")
+            .removeClass("field-validation-error")
+            .addClass("field-validation-valid")
+            .empty();
+
+        return $form;
+    };
 </script>

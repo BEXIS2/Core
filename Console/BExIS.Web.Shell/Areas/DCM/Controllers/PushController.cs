@@ -33,8 +33,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         public ActionResult Delete(string path)
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Push Big File", this.Session.GetTenant());
-
             FileHelper.Delete(path);
+
             return View("Index", LoadDefaultModel());
         }
 
@@ -87,7 +87,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             foreach(FileInfo info in  dirInfo.GetFiles())
             {
-                fileList.Add(new BasicFileInfo(info.FullName, ""));
+                fileList.Add(new BasicFileInfo(info.Name,info.FullName,"", info.Extension,info.Length));
             }
 
             return fileList;
