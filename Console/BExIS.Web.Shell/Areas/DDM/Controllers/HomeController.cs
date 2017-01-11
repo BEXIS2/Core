@@ -20,8 +20,8 @@ using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Subjects;
 using BExIS.Security.Entities.Objects;
 using System.Xml;
-using BExIS.Xml.Services;
 using BExIS.Dlm.Services.MetadataStructure;
+using BExIS.Xml.Helpers;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Extensions;
 

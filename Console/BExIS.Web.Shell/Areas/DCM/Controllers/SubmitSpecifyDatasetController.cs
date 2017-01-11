@@ -22,7 +22,6 @@ using Vaiona.Utils.Cfg;
 using BExIS.Web.Shell.Areas.DCM.Models.Metadata;
 using System.Xml.Linq;
 using BExIS.Xml.Helpers;
-using BExIS.Xml.Services;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
 {

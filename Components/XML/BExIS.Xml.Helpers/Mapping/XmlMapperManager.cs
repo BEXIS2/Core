@@ -14,7 +14,6 @@ using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.IO;
 using BExIS.Xml.Models;
 using BExIS.Xml.Models.Mapping;
-using BExIS.Xml.Services;
 using NHibernate.Persister.Collection;
 using Vaiona.Utils.Cfg;
 

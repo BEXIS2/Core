@@ -27,7 +27,6 @@ using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Subjects;
 using System.Xml.Linq;
 using BExIS.Xml.Helpers;
-using BExIS.Xml.Services;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Extensions;
 

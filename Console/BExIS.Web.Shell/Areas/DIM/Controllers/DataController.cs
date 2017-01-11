@@ -11,9 +11,9 @@ using System.Net.Http;
 using System.Web.Http;
 using BExIS.IO.Transform.Output;
 using System.Data;
-using BExIS.Xml.Services;
 using BExIS.Web.Shell.Areas.DIM.Models;
 using BExIS.Web.Shell.Areas.DIM.Models.Formatters;
+using BExIS.Xml.Helpers;
 
 namespace BExIS.Web.Shell.Areas.DIM.Controllers
 {

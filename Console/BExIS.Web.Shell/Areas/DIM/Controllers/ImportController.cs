@@ -19,7 +19,6 @@ using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Subjects;
 using BExIS.Xml.Helpers;
 using BExIS.Xml.Helpers.Mapping;
-using BExIS.Xml.Services;
 using Vaiona.Utils.Cfg;
 
 namespace BExIS.Web.Shell.Areas.DIM.Controllers

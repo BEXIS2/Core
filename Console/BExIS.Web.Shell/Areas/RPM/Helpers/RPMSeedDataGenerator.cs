@@ -13,7 +13,6 @@ using BExIS.Dlm.Services.Administration;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Xml.Helpers;
-using BExIS.Xml.Services;
 using Vaiona.Utils.Cfg;
 using System.Data;
 using BExIS.Web.Shell.Areas.DCM.Controllers;

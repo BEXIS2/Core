@@ -10,7 +10,6 @@ using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Xml.Helpers;
-using BExIS.Xml.Services;
 
 namespace BExIS.IO.Transform.Output
 {

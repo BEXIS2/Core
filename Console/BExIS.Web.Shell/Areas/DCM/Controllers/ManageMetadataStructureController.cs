@@ -17,7 +17,6 @@ using BExIS.Web.Shell.Areas.DCM.Models;
 using BExIS.Web.Shell.Models;
 using BExIS.Xml.Helpers;
 using BExIS.Xml.Helpers.Mapping;
-using BExIS.Xml.Services;
 using Ionic.Zip;
 using NHibernate.Loader.Custom;
 using NHibernate.Util;

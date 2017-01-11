@@ -9,9 +9,9 @@ using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Entities.MetadataStructure;
 using System.Xml.Linq;
-using BExIS.Xml.Services;
-
 using BExIS.Web.Shell.Areas.RPM.Models;
+using BExIS.Xml.Helpers;
+using XmlNodeType = System.Xml.XmlNodeType;
 
 /// <summary>
 ///

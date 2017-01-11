@@ -168,18 +168,91 @@
 <script type="text/javascript">
 
 
-    $(document).ready(function(){
+    $(document)
+        .ready(function() {
 
-        OnDataBound();
-    })
+            OnDataBound();
+            //setColumns();
+        });
 
-	$("#fullDatasetDownload").change(function () {
-			var subset = $('#fullDatasetDownload').is(":checked");
+    function setColumns() {
 
-			$.post('@Url.Action("SetFullDatasetDownload", "Data", new RouteValueDictionary { { "area", "DDM" } })', { subset: subset }, function (response) {
+        var headers = $('#PrimaryDataResultGrid tr > th');
 
-		})
-	});
+        for (var i = 0; i < headers.length; i++) {
+
+            var header = headers[i];
+            var cells = $('#PrimaryDataResultGrid tr > td:nth-child(' + i+1 + ')');
+            var headerValueLength = $(header).text().length;
+
+            console.log("********"+$(header).text()+"*************" + i);
+            var maxColumnlength = 0;
+            console.log("headerValueLength" + headerValueLength);
+            console.log("************************" + i);
+            console.log("cells" + cells.length);
+            for (var j = 0; j < cells.length; j++) {
+
+                var cell = cells[j];
+                var cellValueLength = $(cell).text().length;
+                
+                console.log("cellValue" + $(cell).text() + "        cellValueLength" + cellValueLength);
+      
+                if (cellValueLength > maxColumnlength) {
+                    maxColumnlength = cellValueLength;
+                   
+                }
+
+            }
+            console.log("************************" + i);
+            console.log("maxColumnlength" + maxColumnlength);
+            if (headerValueLength > maxColumnlength) {
+                console.log("HEADER BIGGER");
+                var x = headerValueLength / maxColumnlength;
+                if (x > 3) {
+
+                    var newWidth = maxColumnlength * 2;
+                    console.log("change width to: " + newWidth);
+                    //console.log("************************"+i);
+                    //console.log("header > Columns");
+                    //console.log("header " + i + " length : " + headerValueLength);
+                    //console.log("change width to: " + newWidth);
+
+                    //change th
+                    $(header).css("white-space", "nowrap");
+                    $(header).css("max-width", newWidth);
+                }
+            }
+
+            if (headerValueLength < maxColumnlength) {
+                console.log("CELL BIGGER");
+                var y = maxColumnlength / headerValueLength;
+                if (y > 3) {
+
+                    var newWidth2 = headerValueLength * 2;
+
+                    //console.log("************************"+i);
+                    //console.log("header > Columns");
+                    //console.log("header " + i + " length : " + headerValueLength);
+                    //console.log("change width to: " + newWidth2);
+
+                    //change th
+                    $(header).css("white-space", "nowrap");
+                    $(header).css("max-width", newWidth2);
+                }
+            }
+        }
+    }
+
+    $("#fullDatasetDownload")
+        .change(function() {
+            var subset = $('#fullDatasetDownload').is(":checked");
+
+            $.post('@Url.Action("SetFullDatasetDownload", "Data", new RouteValueDictionary {{"area", "DDM"}})',
+                { subset: subset },
+                function(response) {
+
+                });
+        });
 
 	function PrimaryDataResultGrid_OnLoad(e) {
 		$('.t-grid .t-status').hide();
@@ -321,12 +394,16 @@
         width: auto;
     }
 
-    .manyVariables td,.manyVariables th  {
+    /*.manyVariables td,.manyVariables th  {
         
-        /*white-space: normal;
-        overflow-x: visible;*/
-        /*overflow: visible;*/
+        max-width: 400px;
+      
     }
+
+    .manyVariables td{
+        max-width: 400px;
+        white-space: normal;
+    }*/
 
 	.primaryDataResultGrid .t-grid-content
 	{

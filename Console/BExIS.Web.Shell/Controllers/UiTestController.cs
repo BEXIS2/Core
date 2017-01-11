@@ -1,31 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web.Mvc;
+﻿using BExIS.Dim.Entities;
+using BExIS.Dim.Helpers;
+using BExIS.Dlm.Entities.Data;
+using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Services.Data;
+using BExIS.Dlm.Services.DataStructure;
+using BExIS.IO;
+using BExIS.IO.Transform.Output;
+using BExIS.Web.Shell.Helpers;
 using BExIS.Web.Shell.Models;
+using BExIS.Xml.Helpers;
+using Ionic.Zip;
+using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
-using System.Xml;
-using BExIS.Dim.Entities;
-using BExIS.Dim.Helpers;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Web.Shell.Helpers;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Xml.Services;
-using BExIS.IO.Transform.Output;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Mvc;
+using System.Xml;
 using System.Xml.Schema;
-using System.Xml.XPath;
-using BExIS.IO;
 using Vaiona.Utils.Cfg;
-using Ionic.Zip;
-using Vaiona.Logging.Aspects;
 
 namespace BExIS.Web.Shell.Controllers
 {
@@ -48,7 +46,7 @@ namespace BExIS.Web.Shell.Controllers
 
         public ActionResult XSDtest()
         {
-            string pathXsd = "G:/schema.xsd"; 
+            string pathXsd = "G:/schema.xsd";
             string pathXml = "G:/test.xml";
             XmlSchema Schema;
 
@@ -74,13 +72,13 @@ namespace BExIS.Web.Shell.Controllers
             {
                 Console.WriteLine(ex.Message);
             }
-        
+
 
 
             UiTestModel model = new UiTestModel();
 
 
-            return View("Index",model);
+            return View("Index", model);
         }
 
         public async Task<ActionResult> Call()
@@ -92,7 +90,7 @@ namespace BExIS.Web.Shell.Controllers
                 submissionManager.DataRepositories.Where(d => d.Name.ToLower().Equals("gfbio")).FirstOrDefault();
 
             GFBIOWebserviceManager gfbioWebserviceManager = new GFBIOWebserviceManager(dataRepository);
-            
+
 
 
             Debug.WriteLine("call a webservice from gfbio");
@@ -101,7 +99,7 @@ namespace BExIS.Web.Shell.Controllers
 
             //research object id 201
             //wieso als json ein array?
-            var p = await CallGFBIOWebservice(201, "get-research-object-by-id","researchobject", "[{\"researchobjectid\":201}]");
+            var p = await CallGFBIOWebservice(201, "get-research-object-by-id", "researchobject", "[{\"researchobjectid\":201}]");
             Debug.WriteLine(p);
 
             p = await gfbioWebserviceManager.GetResearchObjectById(401);
@@ -109,7 +107,7 @@ namespace BExIS.Web.Shell.Controllers
 
             Debug.WriteLine("-----------------------------------------------------------");
             //project id 201
-            p = await CallGFBIOWebservice(201, "get-project-by-id","project", "{\"projectid\":401}");
+            p = await CallGFBIOWebservice(201, "get-project-by-id", "project", "{\"projectid\":401}");
             Debug.WriteLine(p);
 
             //if (string.IsNullOrEmpty(p))
@@ -134,10 +132,10 @@ namespace BExIS.Web.Shell.Controllers
             UiTestModel model = new UiTestModel();
             model = DynamicListToDataTable();
 
-            return View("Index",model);
+            return View("Index", model);
         }
 
-        public async Task<string> CallGFBIOWebservice(long id, string apiName,string entityName, string json)
+        public async Task<string> CallGFBIOWebservice(long id, string apiName, string entityName, string json)
         {
 
             string server =
@@ -150,9 +148,9 @@ namespace BExIS.Web.Shell.Controllers
             //"[{\""+parametername+"\":"+id+"}]";
             string parameters = json;
 
-            string url = server+ entityName+"/"+ apiName + "/" + jsonRequest + "/";
+            string url = server + entityName + "/" + apiName + "/" + jsonRequest + "/";
 
-            
+
 
             Debug.WriteLine(url);
             string returnValue = "";
@@ -258,7 +256,7 @@ namespace BExIS.Web.Shell.Controllers
                 {
                     OutputDataManager odm = new OutputDataManager();
                     // apply selection and projection
-                    
+
                     odm.GenerateAsciiFile(testdatasetId, title, gfbio.PrimaryDataFormat);
                 }
 
@@ -268,7 +266,7 @@ namespace BExIS.Web.Shell.Controllers
 
                 FileHelper.CreateDicrectoriesIfNotExist(Path.GetDirectoryName(zipFilePath));
 
-                
+
 
                 if (FileHelper.FileExist(zipFilePath))
                 {
@@ -298,7 +296,7 @@ namespace BExIS.Web.Shell.Controllers
             }
 
 
-            
+
 
             return View("Index", model);
         }

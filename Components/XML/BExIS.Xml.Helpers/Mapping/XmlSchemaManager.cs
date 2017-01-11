@@ -16,7 +16,6 @@ using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Dlm.Services.TypeSystem;
 using BExIS.IO;
 using BExIS.Xml.Models.Mapping;
-using BExIS.Xml.Services;
 using NHibernate.Criterion;
 using Vaiona.Utils.Cfg;
 
