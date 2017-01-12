@@ -1,14 +1,10 @@
-﻿using System;
+﻿using BExIS.Ddm.Model;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using BExIS.Ddm.Model;
 
 namespace BExIS.Web.Shell.Areas.DCM.Models.ImportMetadata
 {
-    public class ParametersModel:AbstractStepModel
+    public class ParametersModel : AbstractStepModel
     {
 
         [Display(Name = "Title node")]
@@ -20,6 +16,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Models.ImportMetadata
         [Display(Name = "Entity Type")]
         public string EntityType { get; set; }
 
+        [Display(Name = "SystemNodes")]
+        public Dictionary<string, string> SystemNodes { get; set; }
+
         public List<SearchMetadataNode> MetadataNodes { get; set; }
         public List<string> Entities { get; set; }
 
@@ -29,6 +28,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Models.ImportMetadata
             DescriptionNode = "";
             MetadataNodes = new List<SearchMetadataNode>();
             Entities = new List<string>();
+            SystemNodes = new Dictionary<string, string>(); ;
         }
     }
 }

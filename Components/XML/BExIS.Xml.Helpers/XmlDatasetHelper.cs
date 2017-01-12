@@ -14,8 +14,6 @@ namespace BExIS.Xml.Helpers
     {
         #region get
 
-
-
         /// <summary>
         /// 
         /// </summary>
@@ -427,10 +425,57 @@ namespace BExIS.Xml.Helpers
             return false;
         }
 
+        #region SystemReferences
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="datasetid"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static string GetSystemInformation(long datasetid, SystemNameAttributeValues name)
+        {
+            DatasetManager dm = new DatasetManager();
+            Dataset dataset = dm.GetDataset(datasetid);
+            DatasetVersion datasetVersion = dm.GetDatasetLatestVersion(dataset);
+
+            return GetSystemInformation(datasetVersion, name);
+        }
+
+        /// <summary>
+        /// Information in metadata is stored as xml
+        /// get back the vale of an attribute
+        /// e.g. title  = "dataset title"        
+        /// /// </summary>
+        /// <param name="datasetVersion"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static string GetSystemInformation(DatasetVersion datasetVersion, SystemNameAttributeValues name)
+        {
+            // get MetadataStructure 
+            if (datasetVersion != null && datasetVersion.Dataset != null &&
+            datasetVersion.Dataset.MetadataStructure != null && datasetVersion.Metadata != null)
+            {
+                MetadataStructure metadataStructure = datasetVersion.Dataset.MetadataStructure;
+                XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)datasetVersion.Dataset.MetadataStructure.Extra);
+                XElement temp = XmlUtility.GetXElementByAttribute(nodeNames.systemRef.ToString(), "name", name.ToString(),
+                    xDoc);
+
+                string xpath = temp.Attribute("value").Value.ToString();
+
+                XmlNode node = datasetVersion.Metadata.SelectSingleNode(xpath);
+
+                string title = "";
+                if (node != null)
+                    title = datasetVersion.Metadata.SelectSingleNode(xpath).InnerText;
+
+                return title;
+            }
+            return string.Empty;
+        }
 
         #endregion
-
-
+        #endregion
 
         #region add
 
@@ -479,6 +524,90 @@ namespace BExIS.Xml.Helpers
 
         }
 
+        public static XmlDocument AddSystemReferenceToXml(XmlDocument Source, SystemNameAttributeValues nodeName, string nodeValue)
+        {
+
+            //XmlDocument doc = new XmlDocument();
+            XmlNode extra;
+            if (Source != null)
+            {
+                if (Source.DocumentElement == null)
+                {
+                    extra = Source.CreateElement("extra", "");
+                    Source.AppendChild(extra);
+                }
+            }
+
+            XmlNode x = createMissingNodes("extra/systemReferences/systemRef", Source.DocumentElement, Source, "systemReference");
+
+            //check attrviute of the xmlnode
+            if (x.Attributes.Count > 0)
+            {
+                foreach (XmlAttribute attr in x.Attributes)
+                {
+                    if (attr.Name == "name") attr.Value = nodeName.ToString();
+                    if (attr.Name == "value") attr.Value = nodeValue;
+                    if (attr.Name == "type") attr.Value = "xPath";
+                    if (attr.Name == "mode") attr.Value = getMode(nodeName).ToString();
+                    if (attr.Name == "infoFrom") attr.Value = getInfoFrom(nodeName).ToString();
+                }
+            }
+            else
+            {
+                XmlAttribute name = Source.CreateAttribute("name");
+                name.Value = nodeName.ToString();
+                XmlAttribute value = Source.CreateAttribute("value");
+                value.Value = nodeValue;
+                XmlAttribute type = Source.CreateAttribute("type");
+                type.Value = "xPath";
+                XmlAttribute mode = Source.CreateAttribute("mode");
+                mode.Value = getMode(nodeName).ToString();
+                XmlAttribute infoFrom = Source.CreateAttribute("infoFrom");
+                infoFrom.Value = getInfoFrom(nodeName).ToString();
+
+                x.Attributes.Append(name);
+                x.Attributes.Append(value);
+                x.Attributes.Append(type);
+                x.Attributes.Append(mode);
+                x.Attributes.Append(infoFrom);
+
+            }
+
+            return Source;
+
+        }
+
+        private static SystemMode getMode(SystemNameAttributeValues name)
+        {
+            if (name.Equals(SystemNameAttributeValues.Id) ||
+                name.Equals(SystemNameAttributeValues.CreationDate))
+                return SystemMode.create;
+
+            if (name.Equals(SystemNameAttributeValues.VersionNr) ||
+                name.Equals(SystemNameAttributeValues.LastDateModified))
+                return SystemMode.update;
+
+            return SystemMode.create;
+        }
+
+        private static SystemInfoFrom getInfoFrom(SystemNameAttributeValues name)
+        {
+            if (name.Equals(SystemNameAttributeValues.Id))
+                return SystemInfoFrom.DatasetId;
+
+            if (name.Equals(SystemNameAttributeValues.VersionNr))
+                return SystemInfoFrom.VersionNumber;
+
+            if (name.Equals(SystemNameAttributeValues.CreationDate))
+                return SystemInfoFrom.DateNow;
+
+            if (name.Equals(SystemNameAttributeValues.LastDateModified))
+                return SystemInfoFrom.DateNow;
+
+
+            return SystemInfoFrom.DatasetId;
+        }
+
         private static XmlNode createMissingNodes(string destinationParentXPath, XmlNode parentNode, XmlDocument doc,
             string name)
         {
@@ -521,7 +650,6 @@ namespace BExIS.Xml.Helpers
 
         #endregion
 
-
     }
 
     public enum nodeNames
@@ -529,7 +657,8 @@ namespace BExIS.Xml.Helpers
         nodeRef,
         convertRef,
         entity,
-        parameter
+        parameter,
+        systemRef
     }
 
     public enum NameAttributeValues

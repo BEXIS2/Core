@@ -1,8 +1,6 @@
 ﻿@model BExIS.Web.Shell.Models.EntitySelectorModel
-@using System.CodeDom
 @using System.Data;
-@using BExIS.Dlm.Services.TypeSystem
-@using BExIS.IO.Transform.Validation.ValueCheck
+@using Newtonsoft.Json
 
 @{
     ViewBag.Title = "";
@@ -48,6 +46,8 @@
     pagerStyles |= GridPagerStyles.NextPreviousAndNumeric;
     pagerStyles |= GridPagerStyles.Numeric;
 
+
+    string parameters = JsonConvert.SerializeObject(@Model.Parameters);
 }
 <div>
     @if (String.IsNullOrEmpty(Model.IDKey))
@@ -134,15 +134,16 @@
         }
         else
         {
-            @Ajax.ActionLink("Select", @Model.Reciever.Action, @Model.Reciever.Controller, new { area = "DCM" },
+            @Ajax.ActionLink("Select", @Model.Reciever.Action, @Model.Reciever.Controller, new { area = "DCM", parameters=@parameters},
             new AjaxOptions
             {
-                HttpMethod = "GET",
+                HttpMethod = "POST",
                 InsertionMode = InsertionMode.Replace,
                 UpdateTargetId = targetId,
                 OnSuccess= "OnSucess()"
             },
-            new { @class = "bx-button action bx-disabled submitEntitySelection", @id = @submitId })
+            new { @class = "bx-button action bx-disabled submitEntitySelection", @id = @submitId
+            });
 
         }
 
@@ -168,13 +169,16 @@
         var link = table.attr("link");
         var dataid = $(e.row).find("td")[idIndex].innerHTML;
 
-        //console.log("submitbuttonid: " + submitId);
 
-        link += "?id=" + dataid;
+        var submitEntitySelection = $('#' + submitId).attr("href");
+        console.log("-->" + submitEntitySelection);
 
-        //console.log(link);
+        console.log('@parameters');
+        submitEntitySelection += "&id=" + dataid;
 
-        $('#' + submitId).attr("href", link);
+        console.log(submitEntitySelection);
+
+        $('#' + submitId).attr("href", submitEntitySelection);
         $('#' + submitId).removeClass("bx-disabled");
     }
 
