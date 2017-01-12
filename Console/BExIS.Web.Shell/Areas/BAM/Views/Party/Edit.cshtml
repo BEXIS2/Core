@@ -4,6 +4,11 @@
 
 }
 @{
+    bool addRelationship = true;
+    if (Request.QueryString["addRelationship"] != null)
+    { addRelationship = true; }
+    else
+    { addRelationship = (bool)ViewBag.RelationTabAsDefault; }
     bool hasErrors = false;
     string errorMessage = "";
     string errorClass = "";
@@ -28,103 +33,112 @@
         }
     }
 }
-
-<p>Please provide the following information.</p>
 @using (Html.BeginForm("Edit", "Party", new { area = "BAM" }, FormMethod.Post))
 {
     @Html.HiddenFor(m => m.Party.Id)
     @Html.HiddenFor(m => m.Party.PartyType.Id)
-    <table>
-        <tr>
-            <td style="width:40px;"><b title="Required" style="color: red">*</b></td>
-            <td>
-                @Html.LabelFor(m => m.Party.Name)
-            </td>
-            <td>
-                @Html.TextBoxFor(m => m.Party.Name, new { Title = @errorMessage, @class = "bx-textarea " + @errorClass })
-                @Html.ValidationMessageFor(m => m.Party.Name)
-            </td>
-        </tr>
-        <tr>
-            <td><b title="Required" style="color: red">*</b></td>
-            <td style="width:300px;">
-                @Html.LabelFor(m => m.Party.PartyType)
-            </td>
-            <td>
-                @Model.Party.PartyType.Title
-            </td>
-        </tr>
-        <tr>
-            <td><b title="Required" style="color: red">*</b></td>
-            <td>
-                @Html.LabelFor(m => m.Party.StartDate)
-            </td>
-            <td>
-                @(Html.Telerik().DatePicker()
-                                .Name("Party.StartDate")
-                                .ShowButton(true)
-                                .TodayButton("d")
-                                .OpenOnFocus(true)
-                                .Format("dd/MM/yyyy")
-                                 .HtmlAttributes(new { @style = "width:275px; " })
-                )
-            </td>
-        </tr>
-        <tr>
-            <td><b title="Required" style="color: red">*</b></td>
-            <td>
-                @Html.LabelFor(m => m.Party.EndDate)
-            </td>
-            <td>
-                @(Html.Telerik().DatePicker()
-                                .Name("Party.EndDate")
-                                .ShowButton(true)
-                                .TodayButton("d")
-                                .OpenOnFocus(true)
-                                .Format("dd/MM/yyyy")
+
+    @(Html.Telerik().TabStrip()
+            .Name("ShowDataTabStrip")
+            .SelectedIndex(addRelationship ? 2 : 0).ClientEvents(events => events.OnSelect("tabSelected"))
+            .Items(tabs =>
+            {
+
+            tabs.Add()
+                    .Text("Party").Content(@<text>
+                    <table>
+                        <tr>
+                            <td style="width:40px;"><b title="Required" style="color: red">*</b></td>
+                            <td>
+                                @Html.LabelFor(m => m.Party.Name)
+                            </td>
+                            <td>
+                                @Html.TextBoxFor(m => m.Party.Name, new { Title = @errorMessage, @class = "bx-textarea " + @errorClass })
+                                @Html.ValidationMessageFor(m => m.Party.Name)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><b title="Required" style="color: red">*</b></td>
+                            <td style="width:300px;">
+                                @Html.LabelFor(m => m.Party.PartyType)
+                            </td>
+                            <td>
+                                @Model.Party.PartyType.Title
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><b title="Required" style="color: red">*</b></td>
+                            <td>
+                                @Html.LabelFor(m => m.Party.StartDate)
+                            </td>
+                            <td>
+                                @(Html.Telerik().DatePickerFor(m => m.Party.StartDate)
                                 .HtmlAttributes(new { @style = "width:275px; " })
-                                
                                 )
-                
-            </td>
-        </tr>
-        <tr>
-            <td><b title="Required" style="color: red">*</b></td>
-            <td>
-                @Html.LabelFor(m => m.Party.Description)
-            </td>
-            <td>
-                @Html.EditorFor(m => m.Party.Description, new { Title = @errorMessage, @class = "bx-textarea " + @errorClass })
-                @Html.ValidationMessageFor(m => m.Party.Description)
-            </td>
-        </tr>
-    </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><b title="Required" style="color: red">*</b></td>
+                            <td>
+                                @Html.LabelFor(m => m.Party.EndDate)
+                            </td>
+                            <td>
+                                @(Html.Telerik().DatePickerFor(m => m.Party.EndDate).HtmlAttributes(new { @style = "width:275px; " }))
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><b title="Required" style="color: red">*</b></td>
+                            <td>
+                                @Html.LabelFor(m => m.Party.Description)
+                            </td>
+                            <td>
+                                @Html.EditorFor(m => m.Party.Description, new { Title = @errorMessage, @class = "bx-textarea " + @errorClass })
+                                @Html.ValidationMessageFor(m => m.Party.Description)
+                            </td>
+                        </tr>
+                    </table>
+                    </text>);
+                tabs.Add().Text("Custom Attributes").Content(@<text>
+                        <div id="divPartyCustomAttr"></div>
+                </text>);
 
-    <br />
-    <div id="divPartyCustomAttr"></div>
+                tabs.Add().Text("Relationships").Content(@<text>
+                    @Html.Partial("_partyRelationshipTypesView", Model)
 
-    <br />
-    <button type="submit" value="Save" name="saveDataset" class="t-button" style="border:0px;">Save</button>
+                </text>);
+            })
+    )
+    <div id="divSubmitButtons" style="background-color: rgb(245, 245, 245); margin-top: -2px;">
+        <button type="submit" value="Save" name="saveDataset" class="t-button" style="border:0px;">Save</button>
+    </div>
 }
 
 
+
+<div id="divPartyRelation">
+
+</div>
 <script type="text/javascript">
 
-    function OnChangePartyType(e)
+
+    var partyTypeId=@Model.Party.PartyType.Id;
+    $('#divPartyCustomAttr').load('/BAM/Party/LoadPartyCustomAttr/' + partyTypeId+'?partyId='+@Model.Party.Id, function (response, status, xhr) {
+
+        if (status == "error") {
+            $('#divPartyCustomAttr').html("")
+            alert(response);
+        }
+        $('#imgPartyCustomeAttrLoading').hide();
+    });
+    function tabSelected(tab)
     {
-        var  partyTypeId= e.value;
-        var lastPartyTypeId=@Model.Party.PartyType.Id;
-        if(lastPartyTypeId==partyTypeId)
-            //should load party custom values
-            $('#divPartyCustomAttr').load('/BAM/Party/LoadPartyCustomAttr/' + partyTypeId+"?partyId="+@Model.Party.Id);
+        if($(tab.item).text()=="Relationships")
+            $("#divSubmitButtons").hide();
         else
-            $('#divPartyCustomAttr').load('/BAM/Party/LoadPartyCustomAttr/' + partyTypeId);
+            $("#divSubmitButtons").show();
 
-
-    }  
-    @if (Model.Party.PartyType.Id != 0)
-    {
-       @Html.Raw("OnChangePartyType( {value: " + Model.Party.PartyType.Id + "});");
     }
 
+
 </script>
+

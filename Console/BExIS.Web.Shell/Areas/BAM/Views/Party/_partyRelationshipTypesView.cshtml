@@ -1,0 +1,116 @@
+﻿@model BExIS.Web.Shell.Areas.BAM.Models.PartyModel
+@{
+    var actionName = ViewContext.RouteData.GetRequiredString("action").ToLower();
+    var readOnly = (actionName == "view" || actionName== "viewpartydetail");
+}
+@(Html.Telerik().Grid(Model.PartyRelationships)
+            .Name("PartyRelationshipsGrid")
+            .Sortable()
+            .Filterable()
+            .Columns(columns =>
+            {
+            columns.Bound(c => c.Title);
+
+            columns.Bound(c => c.FirstParty.Name).Title("First Party");
+            columns.Bound(c => c.SecondParty.Name).Title("Second Party");
+            columns.Bound(c => c.StartDate);
+            columns.Bound(c => c.EndDate);
+            columns.Bound(c => c.Description);
+            columns.Bound(c => c.PartyRelationshipType.Title).Title("Realtionship Type Title");
+            columns.Template(
+                @<text>
+
+                    <div>
+@if (!readOnly)
+{
+                        <a class="bx bx-grid-function bx-trash " style="cursor:pointer" onclick="deletePartyRelationship(@item.Id)" title="Delete Party &quot;@item.Title&quot;"> </a>
+                        <a class="bx bx-grid-function bx-edit " style="cursor:pointer" onclick="editPartyRelationship(@item.Id)" title="Edit Party &quot;@item.Title&quot;"> </a>
+} <a class="bx bx-grid-function bx-show " style="cursor:pointer" onclick="viewPartyRelationship(@item.Id)" title="View Party &quot;@item.Title&quot;"> </a>
+  </div>
+
+                </text>
+                        );
+            }))
+@if (!readOnly)
+{
+    <div title="Create a new party relation" class="bx-rpm-buttons">
+        <a class="t-button function" id="AddPartyRelation" style="cursor:pointer">Create party relation</a>
+    </div>
+}
+<div id="dialog"></div>
+<div style="position:absolute; left:calc(50% - 508px); top:15%;">
+    @{ Html.Telerik().Window().Name("PartyRelationWindow")
+                                            .Title("New party relation")                                            
+                                            .ClientEvents(events => events.OnLoad("closePartyRelationWindow"))
+                                            .Draggable(true)
+                                            .Modal(true)
+                                            .Visible(true).Content("").Render();
+    }
+</div>
+<script>
+    function closePartyRelationWindow() {
+        var partyWindow = $("#PartyRelationWindow").data("t-window");
+        partyWindow.close();
+    }
+
+    $(document).ready(function () {
+        $("#AddPartyRelation").bind("click", function () {
+            var partyWindow = $("#PartyRelationWindow").data("t-window");
+            $.get( "/BAM/Party/LoadPartyRelationshipType/"+@Model.Party.PartyType.Id+"?partyId="+@Model.Party.Id, function( data ) {               
+                partyWindow.content(data);
+                partyWindow.center();
+                partyWindow.open();
+                partyWindow.center();
+                $("#PartyRelationWindowPartyId").val(@Model.Party.Id);
+            });
+         
+        });
+    });
+
+
+    function deletePartyRelationship(id) {
+        var result = confirm("Are you sure that you want to delete this party relationship?");
+        if (result) {
+            $.ajax({
+                url: '/BAM/Party/DeletePartyRelationship/' + id,
+                type: 'POST',
+
+                error: function (xhr) {
+                    alert('Error: ' + xhr.statusText);
+                },
+                success: function (result) {
+                    if(result=='successfull')
+                        window.location.href = window.location.pathname+"?"+$.param({'addRelationship':'true'});
+                    else
+                        alert(result);
+                },
+                async: true,
+                processData: false
+            });
+        }
+    }
+    function editPartyRelationship(id) {
+        var partyWindow = $("#PartyRelationWindow").data("t-window");
+        $.get( "/BAM/Party/LoadPartyRelationship/"+id, function( data ) {
+            partyWindow.title("Edit party relation");
+            partyWindow.content(data);
+            partyWindow.center();
+            partyWindow.open();
+            partyWindow.center();
+            
+        });
+
+    }
+    function viewPartyRelationship(id) {
+        var partyWindow = $("#PartyRelationWindow").data("t-window");
+        $.get( "/BAM/Party/LoadPartyRelationship/"+id+"?viewMode=true", function( data ) {
+            partyWindow.title("View party relation");
+            partyWindow.content(data);
+            partyWindow.center();
+            partyWindow.open();
+            partyWindow.center();
+            
+        });
+    }
+
+</script>

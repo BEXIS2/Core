@@ -23,6 +23,8 @@ namespace BExIS.Dlm.Entities.Party
         public virtual ICollection<Party> Parties { get; set; }
         public virtual ICollection<PartyCustomAttribute> CustomAttributes { get; set; }
         public virtual ICollection<PartyStatusType> StatusTypes { get; set; }
+        public virtual ICollection<PartyTypePair> PartyTypePairSources { get; set; }
+        public virtual ICollection<PartyTypePair> PartyTypePairTargets { get; set; }
         #endregion
     }
 }

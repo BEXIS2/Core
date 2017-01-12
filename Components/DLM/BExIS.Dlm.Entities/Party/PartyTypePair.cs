@@ -8,6 +8,7 @@ namespace BExIS.Dlm.Entities.Party
 {
     public class PartyTypePair:BaseEntity
     {
+     
         #region Attributes
         public virtual string Title { get; set; }
         public virtual string Description { get; set; }

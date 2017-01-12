@@ -189,6 +189,28 @@ namespace BExIS.Dlm.Services.Party
             return (entity);
         }
 
+        public PartyCustomAttribute UpdatePartyCustomAttribute(PartyCustomAttribute partyCustomAttribute)
+        {
+            Contract.Requires(partyCustomAttribute != null, "Provided entities can not be null");
+            Contract.Requires(partyCustomAttribute.Id >= 0, "Provided entitities must have a permanent ID");
+            Contract.Ensures(Contract.Result<PartyCustomAttribute>() != null && Contract.Result<PartyCustomAttribute>().Id >= 0);
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<PartyCustomAttribute> repo = uow.GetRepository<PartyCustomAttribute>();
+                //Name is unique for PartyCustomAttribute with the same party type
+                if (partyCustomAttribute.PartyType.CustomAttributes.Where(item=>item.Name==partyCustomAttribute.Name && item.Id!=partyCustomAttribute.Id).Count()>0)
+                    BexisException.Throw(partyCustomAttribute, "This name for this type of 'PartyCustomAttribute' is already exist.", BexisException.ExceptionType.Add);
+                //Calculate displayorder
+                //if find the same displayOrder then it pushes the other items with the same displayOrder or greater than
+                if (partyCustomAttribute.PartyType.CustomAttributes.FirstOrDefault(item => item.DisplayOrder == partyCustomAttribute.DisplayOrder && partyCustomAttribute.Id != item.Id) != null)
+                    partyCustomAttribute.PartyType.CustomAttributes.Where(item => item.DisplayOrder >= partyCustomAttribute.DisplayOrder && partyCustomAttribute.Id != item.Id)
+                        .ToList().ForEach(item => item.DisplayOrder = item.DisplayOrder + 1);
+                repo.Put(partyCustomAttribute);
+                uow.Commit();
+            }
+            return (partyCustomAttribute);
+        }
+
         public bool DeletePartyCustomAttribute(PartyCustomAttribute entity)
         {
             Contract.Requires(entity != null);

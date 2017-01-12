@@ -20,7 +20,8 @@ namespace BExIS.Web.Shell.Areas.BAM
                 "BAM/{controller}/{action}/{id}",
                 new { action = "Index", id = UrlParameter.Optional }
             );
-            if (AppConfiguration.CreateDatabase) BAM.Helpers.BAMSeedDataGenerator.GenerateSeedData();
+           if (AppConfiguration.CreateDatabase)
+                Helpers.BAMSeedDataGenerator.GenerateSeedData();
         }
     }
 }

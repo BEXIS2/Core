@@ -1,0 +1,27 @@
+﻿@model List<BExIS.Dlm.Entities.Party.PartyTypePair>
+
+
+<p>Party Relationship types:</p>
+<hr />
+
+<table>
+
+    @foreach (var partyTypePair in Model)
+            {
+        <tr>
+            <td style="width:300px;">
+
+                <label>
+                    <b> @partyTypePair.PartyRelationshipType.Title</b>
+                </label>
+            </td>
+            <td>
+@(Html.Telerik().DropDownList()
+                            .Placeholder("--- SELECT ---")                              
+                                    .Name("Party.Id")
+                                    .BindTo(new SelectList(partyTypePair.AlowedTarget.Parties, "Id", "Title"))
+                                    .ClientEvents(events => events.OnChange("EnableAdd"))  )
+            </td>
+        </tr>
+    }
+</table>

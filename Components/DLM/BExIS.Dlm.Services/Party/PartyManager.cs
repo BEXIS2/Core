@@ -15,6 +15,7 @@ namespace BExIS.Dlm.Services.Party
 
         public IReadOnlyRepository<PartyX> Repo { get; private set; }
         public IReadOnlyRepository<PartyCustomAttributeValue> RepoCustomAttrValues { get; private set; }
+        public IReadOnlyRepository<PartyRelationship> RepoPartyRelationships { get; private set; }
         #endregion
 
         #region Ctors
@@ -24,6 +25,7 @@ namespace BExIS.Dlm.Services.Party
             IUnitOfWork uow = this.GetUnitOfWork();
             this.Repo = uow.GetReadOnlyRepository<PartyX>();
             RepoCustomAttrValues = uow.GetReadOnlyRepository<PartyCustomAttributeValue>();
+            RepoPartyRelationships = uow.GetReadOnlyRepository<PartyRelationship>();
         }
 
         #endregion
@@ -104,6 +106,8 @@ namespace BExIS.Dlm.Services.Party
             return (true);
         }
 
+       
+
         public bool Delete(IEnumerable<PartyX> entities)
         {
             Contract.Requires(entities != null);
@@ -179,12 +183,9 @@ namespace BExIS.Dlm.Services.Party
                 IRepository<PartyRelationship> repoPR = uow.GetRepository<PartyRelationship>();
                 IRepository<PartyRelationshipType> repoRelType = uow.GetRepository<PartyRelationshipType>();
                 partyRelationshipType = repoRelType.Reload(partyRelationshipType);
-                //Check if there is another relationship
                 var cnt = repoPR.Query(item => (item.PartyRelationshipType != null && item.PartyRelationshipType.Id == partyRelationshipType.Id)
                                         && (item.FirstParty != null && item.FirstParty.Id == firstParty.Id)
                                          && (item.SecondParty != null && item.SecondParty.Id == secondParty.Id)).Count();
-                //if ( > 0)
-                //    BexisException.Throw(entity, "This relationship is already exist in database.", BexisException.ExceptionType.Add);
                 //Check maximun cardinality
                 if (partyRelationshipType.MaxCardinality <= cnt)
                     BexisException.Throw(entity, string.Format("Maximum relations for this type of relation is {0}.", partyRelationshipType.MaxCardinality), BexisException.ExceptionType.Add);
@@ -201,6 +202,28 @@ namespace BExIS.Dlm.Services.Party
                 uow.Commit();
             }
             return (entity);
+        }
+
+
+        public Boolean UpdatePartyRelationship(long id, string title, string description, DateTime startDate, DateTime endDate, string scope)
+        {
+            Contract.Requires(!string.IsNullOrEmpty(title), "Title can not be empty");
+            Contract.Requires(id >= 0, "a permanent ID is required.");
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<PartyRelationship> repo = uow.GetRepository<PartyRelationship>();
+                var entity = repo.Get(id);
+                entity.Title = title;
+                entity.Description = description;
+                entity.StartDate = startDate;
+                entity.EndDate = endDate;
+                entity.Scope = scope;
+                repo.Put(entity);
+                uow.Commit();
+                entity = repo.Reload(entity);
+            }
+            return true;
         }
 
         public bool RemovePartyRelationship(PartyRelationship partyRelationship)
@@ -288,6 +311,7 @@ namespace BExIS.Dlm.Services.Party
             return (entity);
         }
 
+       
         /// <summary>
         /// 
         /// </summary>
@@ -328,8 +352,8 @@ namespace BExIS.Dlm.Services.Party
             }
             return party.CustomAttributeValues;
         }
+        public PartyCustomAttributeValue UpdatePartyCustomAttriuteValue(PartyCustomAttribute partyCustomAttribute, PartyX party, string value)
 
-        public PartyCustomAttributeValue UpdatePartyCustomAttriuteValue(PartyCustomAttribute partyCustomAttribute,PartyX party,string value)
         {
             Contract.Requires(partyCustomAttribute != null && party != null, "Provided entities can not be null");
             Contract.Requires(partyCustomAttribute.Id >= 0 && party.Id >= 0, "Provided entitities must have a permanent ID");
@@ -345,7 +369,9 @@ namespace BExIS.Dlm.Services.Party
                 entity = repo.Reload(entity);
             }
             return (entity);
+
         }
+
 
         public bool RemovePartyCustomAttriuteValue(PartyCustomAttributeValue partyCustomAttributeValue)
         {

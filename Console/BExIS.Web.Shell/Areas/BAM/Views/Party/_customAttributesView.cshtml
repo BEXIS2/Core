@@ -4,8 +4,6 @@
     List<BExIS.Dlm.Entities.Party.PartyCustomAttributeValue> partyCustomAttributeValues = (List<BExIS.Dlm.Entities.Party.PartyCustomAttributeValue>)ViewBag.customAttrValues;
 }
 
-<p>Custom Attributes:</p>
-<hr />
 <table>
   
     @foreach (var partyCustomAttr in Model.OrderBy(item=>item.DisplayOrder))
@@ -49,8 +47,8 @@
                     }
                     else
                     {
-                        <input type="text" name="partyCustomAttributeValues[@partyCustomAttr.Id]" value="@partyCustomAttributeValueStr" />
-                       
+                        <input type="text" id="partyCustomAttributeValues[@partyCustomAttr.Id]" name="partyCustomAttributeValues[@partyCustomAttr.Id]" value="@partyCustomAttributeValueStr" @(!partyCustomAttr.IsValueOptional ? Html.Raw("data-val=\"true\" data-val-required=\"This field is required.\""): Html.Raw("")) />
+                                            @Html.ValidationMessage("partyCustomAttributeValues[" + @partyCustomAttr.Id + "]");
                     }
                 }
             </td>

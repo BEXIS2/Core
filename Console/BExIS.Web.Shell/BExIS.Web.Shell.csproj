@@ -658,6 +658,10 @@
     <Content Include="Areas\BAM\Views\Party\Edit.cshtml" />
     <Content Include="Areas\BAM\Views\Party\View.cshtml" />
     <Content Include="Areas\BAM\Views\Party\DeleteConfirm.cshtml" />
+    <Content Include="Areas\BAM\Views\Party\_partyRelationshipTypeView.cshtml" />
+    <Content Include="Areas\BAM\Views\Party\PartyRelationshipTypManager.cshtml" />
+    <Content Include="Areas\BAM\Views\Party\_partyRelationshipTypesView.cshtml" />
+    <Content Include="Areas\BAM\Views\Party\_partyRelationshipEditView.cshtml" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />

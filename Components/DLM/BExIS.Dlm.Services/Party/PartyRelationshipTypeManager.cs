@@ -13,10 +13,12 @@ namespace BExIS.Dlm.Services.Party
     public class PartyRelationshipTypeManager
     {
         public IReadOnlyRepository<PartyRelationshipType> Repo { get; private set; }
+        public IReadOnlyRepository<PartyTypePair> RepoPartyTypePair { get; private set; }
         public PartyRelationshipTypeManager()
         {
             IUnitOfWork uow = this.GetUnitOfWork();
-            this.Repo = uow.GetReadOnlyRepository<PartyRelationshipType>();
+            Repo = uow.GetReadOnlyRepository<PartyRelationshipType>();
+            RepoPartyTypePair = uow.GetReadOnlyRepository<PartyTypePair>();
         }
         #region PartyRelationshipType
         /// <summary>
@@ -70,6 +72,29 @@ namespace BExIS.Dlm.Services.Party
                 uow.Commit();
             }
             return (entity);
+        }
+        public PartyRelationshipType Update(long id, string title, string description, bool indicatesHierarchy, int maxCardinality,
+           int minCardinality)
+        {
+            Contract.Requires(id > 0);
+            Contract.Requires(!string.IsNullOrWhiteSpace(title));
+            Contract.Ensures((Contract.Result<PartyRelationshipType>() != null && Contract.Result<PartyRelationshipType>().Id >= 0));
+            var entity = new PartyRelationshipType();
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<PartyRelationshipType> repo = uow.GetRepository<PartyRelationshipType>();
+                entity = repo.Get(id);
+                if (entity == null)
+                    BexisException.Throw(null, "PartyRelationshipType not found", BexisException.ExceptionType.Edit);
+                entity.Title = title;
+                entity.Description = description;
+                entity.IndicatesHierarchy = indicatesHierarchy;
+                entity.MaxCardinality = maxCardinality;
+                entity.MinCardinality = minCardinality;
+                repo.Put(entity);
+                uow.Commit();
+            }
+            return entity;            
         }
 
         public bool Delete(PartyRelationshipType partyRelationType)
@@ -140,28 +165,32 @@ namespace BExIS.Dlm.Services.Party
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<PartyTypePair> repo = uow.GetRepository<PartyTypePair>();
-
-                //Is it usefull?
-                //var similarPartTypePair = repo.Get(item => item.AlowedSource == alowedSource && item.AlowedTarget == alowedTarget);
-                //if (similarPartTypePair.Any())
-                //    throw new Exception("Add party type pair failed.\r\nThere is already an entity with the same elements.");
                 repo.Put(entity);
                 uow.Commit();
             }
             return (entity);
         }
-        public PartyTypePair UpdatePartyTypePair(PartyTypePair entity)
+        public PartyTypePair UpdatePartyTypePair(long id, string title, PartyType alowedSource, PartyType alowedTarget, string description,
+            PartyRelationshipType partyRelationshipType)
         {
-            Contract.Requires(entity != null && entity.Id > 0);
+            Contract.Requires(id >0);
+            Contract.Requires(!string.IsNullOrEmpty(title));
+            Contract.Requires(alowedSource != null && alowedSource.Id > 0);
+            Contract.Requires(alowedTarget != null && alowedTarget.Id > 0);
             Contract.Ensures(Contract.Result<PartyTypePair>() != null && Contract.Result<PartyTypePair>().Id >= 0);
+            var entity = new PartyTypePair();
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<PartyTypePair> repo = uow.GetRepository<PartyTypePair>();
-                //Is it usefull?
-                //var similarPartTypePair = repo.Get(item => item.Id!=entity.Id && (item.AlowedSource == entity.AlowedSource && item.AlowedTarget == entity.AlowedTarget));
-                //if (similarPartTypePair.Any())
-                //    throw new Exception("Update party type pair failed.\r\nThere is already an entity with the same elements.");
-                repo.Put(entity); // Merge is required here!!!!
+                entity = repo.Get(id);
+                if (entity == null)
+                    BexisException.Throw(null, "PartyTypePair not found", BexisException.ExceptionType.Edit);
+                entity.AlowedSource = alowedSource;
+                entity.AlowedTarget = alowedTarget;
+                entity.Description = description;
+                entity.PartyRelationshipType = partyRelationshipType;
+                entity.Title = title;               
+                repo.Put(entity);
                 uow.Commit();
             }
             return (entity);

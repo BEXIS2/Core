@@ -161,7 +161,7 @@
       </MemberNameLabel>
     </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAAAAIAAAAAgAEAAAAAAAAAAAAAAAAAAACAAAAAIAAA=</HashCode>
+      <HashCode>AAAAAIEAAAAgAEAAAAAAAAAAAAAAAQAAACAAAAAIAAA=</HashCode>
       <FileName>Party\PartyType.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
@@ -226,7 +226,7 @@
       <Property Name="PartyRelationships" />
     </ShowAsCollectionAssociation>
   </Class>
-  <Class Name="BExIS.Dlm.Entities.Party.PartyRelationship" Collapsed="true">
+  <Class Name="BExIS.Dlm.Entities.Party.PartyRelationship">
     <Position X="6.5" Y="7.25" Width="1.5" />
     <AssociationLine Name="PartyRelationshipType" Type="BExIS.Dlm.Entities.Party.PartyRelationshipType">
       <MemberNameLabel ManuallyPlaced="true">
@@ -235,11 +235,12 @@
     </AssociationLine>
     <AssociationLine Name="FirstParty" Type="BExIS.Dlm.Entities.Party.Party" FixedFromPoint="true">
       <Path>
-        <Point X="8" Y="7.688" />
-        <Point X="12.5" Y="7.688" />
+        <Point X="8" Y="8.519" />
+        <Point X="13.281" Y="8.519" />
+        <Point X="13.281" Y="7.941" />
       </Path>
       <MemberNameLabel ManuallyPlaced="true">
-        <Position X="0.37" Y="-0.086" />
+        <Position X="-0.086" Y="0.37" />
       </MemberNameLabel>
     </AssociationLine>
     <AssociationLine Name="SecondParty" Type="BExIS.Dlm.Entities.Party.Party">
