@@ -1,26 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using System.Xml;
-using System.Xml.Linq;
-using BExIS.Ddm.Model;
+﻿using BExIS.Ddm.Model;
 using BExIS.Ddm.Providers.LuceneProvider;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.IO.Transform.Output;
-using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Objects;
 using BExIS.Web.Shell.Areas.DCM.Models;
-using BExIS.Web.Shell.Models;
 using BExIS.Xml.Helpers;
 using BExIS.Xml.Helpers.Mapping;
 using Ionic.Zip;
-using NHibernate.Loader.Custom;
 using NHibernate.Util;
-using Telerik.Web.Mvc;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Web.Mvc;
+using System.Xml;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
@@ -55,6 +49,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             {
                 tmp.MetadataStructureModels = tmp.MetadataStructureModels.OrderBy(m => m.Id).ToList();
             }
+
 
             return tmp;
         }
@@ -106,8 +101,12 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 metadataStructureModel.MetadataNodes = GetAllXPath(metadataStructureModel.Id);
 
                 metadataStructureModel.Active = XmlDatasetHelper.IsActive(metadataStructure.Id);
+
+                //load system nodes
+                metadataStructureModel.SystemNodes = GetSystemNodes(metadataStructureModel.Id, metadataStructureModel.MetadataNodes);
+
             }
-            catch(Exception exception)
+            catch (Exception exception)
             {
                 metadataStructureModel = new MetadataStructureModel();
                 metadataStructureModel.Id = metadataStructure.Id;
@@ -186,6 +185,42 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                     }
 
+
+                    //set systemNodes
+                    if (metadataStructureModel.SystemNodes.Count > 0)
+                    {
+                        foreach (var systemNode in metadataStructureModel.SystemNodes)
+                        {
+                            string key = systemNode.Key;
+
+                            tmp = XmlUtility.GetXmlNodeByAttribute(xmlDocument.DocumentElement, nodeNames.systemRef.ToString(),
+                            AttributeNames.name.ToString(), key);
+
+                            string xpath = metadataStructureModel.MetadataNodes
+                                .Where(e => e.DisplayName.Equals(systemNode.Value))
+                                .FirstOrDefault()
+                                .XPath;
+
+                            if (tmp != null)
+                            {
+                                tmp.Attributes[AttributeNames.value.ToString()].Value = xpath;
+                            }
+                            else
+                            {
+
+                                SystemNameAttributeValues systemName = (SystemNameAttributeValues)Enum.Parse(typeof(SystemNameAttributeValues), systemNode.Key);
+
+                                xmlDocument = XmlDatasetHelper.AddSystemReferenceToXml(xmlDocument,
+                                    systemName, xpath);
+                            }
+
+                        }
+
+
+
+
+                    }
+
                     metadataStructure.Extra = xmlDocument;
                 }
 
@@ -210,16 +245,33 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             EntityManager entityManager = new EntityManager();
 
             List<EntityModel> tmp = new List<EntityModel>();
-            entityManager.GetAllEntities().Where(e=>e.UseMetadata).ForEach(e=> tmp.Add(
-                    new EntityModel()
-                    {
-                        Name = e.Name,
-                        ClassPath = e.ClassPath
-                    }
-                )
+            entityManager.GetAllEntities().Where(e => e.UseMetadata).ForEach(e => tmp.Add(
+                      new EntityModel()
+                      {
+                          Name = e.Name,
+                          ClassPath = e.ClassPath
+                      }
+                  )
             );
 
             return tmp.ToList();
+        }
+
+        private Dictionary<string, string> GetSystemNodes(long metadatastructureId, List<SearchMetadataNode> MetadataNodes)
+        {
+            Dictionary<string, string> tmp = new Dictionary<string, string>();
+
+            foreach (SystemNameAttributeValues value in Enum.GetValues(typeof(SystemNameAttributeValues)))
+            {
+                string xpath = XmlDatasetHelper.GetSystemInformationPath(metadatastructureId, value);
+
+                var searchMetadataNode = MetadataNodes.Where(e => e.XPath.Equals(xpath)).FirstOrDefault();
+                if (searchMetadataNode != null)
+                    tmp.Add(value.ToString(), searchMetadataNode.DisplayName);
+                else tmp.Add(value.ToString(), "");
+            }
+
+            return tmp;
         }
 
         #endregion
@@ -303,7 +355,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             zip.Save(stream);
             stream.Position = 0;
             var result = new FileStreamResult(stream, "application/zip")
-            { FileDownloadName = name+".zip" };
+            { FileDownloadName = name + ".zip" };
 
             return result;
         }

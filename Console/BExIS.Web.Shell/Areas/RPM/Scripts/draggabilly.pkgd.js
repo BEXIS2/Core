@@ -157,8 +157,6 @@ return jQueryBridget;
  */
 
 /*jshint browser: true, strict: true, undef: true, unused: true */
-/*global define: false, module: false, console: false */
-
 ( function( window, factory ) {
   
 

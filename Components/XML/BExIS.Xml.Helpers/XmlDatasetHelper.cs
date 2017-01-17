@@ -427,54 +427,130 @@ namespace BExIS.Xml.Helpers
 
         #region SystemReferences
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="datasetid"></param>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        public static string GetSystemInformation(long datasetid, SystemNameAttributeValues name)
+        public static string GetSystemInformationPath(long metadatastructureId, SystemNameAttributeValues name)
         {
-            DatasetManager dm = new DatasetManager();
-            Dataset dataset = dm.GetDataset(datasetid);
-            DatasetVersion datasetVersion = dm.GetDatasetLatestVersion(dataset);
+            MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
+            MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(metadatastructureId);
 
-            return GetSystemInformation(datasetVersion, name);
+            XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)metadataStructure.Extra);
+            XElement temp = XmlUtility.GetXElementByAttribute(nodeNames.systemRef.ToString(), "name", name.ToString(),
+                xDoc);
+
+            string xpath = "";
+            if (temp != null)
+                xpath = temp.Attribute("value").Value.ToString();
+
+            return xpath;
         }
 
         /// <summary>
-        /// Information in metadata is stored as xml
-        /// get back the vale of an attribute
-        /// e.g. title  = "dataset title"        
-        /// /// </summary>
-        /// <param name="datasetVersion"></param>
-        /// <param name="name"></param>
+        /// Return a List of all xpaths in a metadata structure
+        /// where system references existing
+        /// </summary>
+        /// <param name="metadatastructureId"></param>
         /// <returns></returns>
-        public static string GetSystemInformation(DatasetVersion datasetVersion, SystemNameAttributeValues name)
+        public static List<string> GetSystemReferenceXPaths(long metadatastructureId)
         {
-            // get MetadataStructure 
-            if (datasetVersion != null && datasetVersion.Dataset != null &&
-            datasetVersion.Dataset.MetadataStructure != null && datasetVersion.Metadata != null)
+            List<string> tmp = new List<string>();
+
+            MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
+            MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(metadatastructureId);
+
+            XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)metadataStructure.Extra);
+            IEnumerable<XElement> tempNodes = XmlUtility.GetXElementByNodeName(nodeNames.systemRef.ToString(), xDoc);
+
+            foreach (var tempNode in tempNodes)
             {
-                MetadataStructure metadataStructure = datasetVersion.Dataset.MetadataStructure;
-                XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)datasetVersion.Dataset.MetadataStructure.Extra);
-                XElement temp = XmlUtility.GetXElementByAttribute(nodeNames.systemRef.ToString(), "name", name.ToString(),
-                    xDoc);
-
-                string xpath = temp.Attribute("value").Value.ToString();
-
-                XmlNode node = datasetVersion.Metadata.SelectSingleNode(xpath);
-
-                string title = "";
-                if (node != null)
-                    title = datasetVersion.Metadata.SelectSingleNode(xpath).InnerText;
-
-                return title;
+                tmp.Add(tempNode.Attribute("value").Value);
             }
-            return string.Empty;
+
+            return tmp;
+        }
+        /// <summary>
+        /// Update the conent in a metadata xml document
+        /// based on the system refenreces of the metadata structure
+        /// </summary>
+        /// <param name="metadataStructureId"></param>
+        /// <param name="metadata"></param>
+        /// <param name="mode"></param>
+        /// <returns></returns>
+        public static XmlDocument UpdateSystemInformationsInMetadata(long metadataStructureId, XmlDocument metadata,
+            SystemMode mode, long datasetId, long datasetVersionId)
+        {
+
+            MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
+            MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(metadataStructureId);
+
+            XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)metadataStructure.Extra);
+
+            IEnumerable<XElement> tempNodes = null;
+            // create -> all infor need to set
+            if (mode.Equals(SystemMode.create))
+            {
+                //get all system ref from extra xml
+                tempNodes = XmlUtility.GetXElementByNodeName(nodeNames.systemRef.ToString(), xDoc);
+
+            }
+            else
+            {
+
+                if (mode.Equals(SystemMode.update))
+                {
+                    tempNodes = XmlUtility.GetXElementsByAttribute(nodeNames.systemRef.ToString(), SystemAttributeNames.mode.ToString(), SystemMode.update.ToString(), xDoc);
+                }
+
+            }
+
+            if (tempNodes != null)
+            {
+                XmlElement tmp;
+                foreach (var tempnode in tempNodes)
+                {
+                    string infoFrom = tempnode.Attribute(SystemAttributeNames.infoFrom.ToString()).Value;
+                    string xpath = tempnode.Attribute(AttributeNames.value.ToString()).Value;
+                    tmp = (XmlElement)metadata.SelectSingleNode(xpath);
+
+
+                    SystemInfoFrom selectedEnum = (SystemInfoFrom)Enum.Parse(typeof(SystemInfoFrom), infoFrom);
+
+                    if (tmp != null)
+                    {
+                        switch (selectedEnum)
+                        {
+                            case SystemInfoFrom.DatasetId:
+                                {
+                                    tmp.InnerText = datasetId.ToString();
+                                    break;
+                                }
+                            case SystemInfoFrom.DateNow:
+                                {
+                                    tmp.InnerText = DateTime.Now.ToString();
+                                    break;
+                                }
+                            case SystemInfoFrom.VersionNumber:
+                                {
+                                    tmp.InnerText = datasetVersionId.ToString();
+                                    break;
+                                }
+                            default:
+                                break;
+
+
+                        }
+                    }
+
+                }
+            }
+
+
+
+            return metadata;
         }
 
         #endregion
+
+
+
         #endregion
 
         #region add
@@ -715,6 +791,15 @@ namespace BExIS.Xml.Helpers
     #endregion
 
     #region SystemReference
+
+    public enum SystemAttributeNames
+    {
+        name,
+        value,
+        type,
+        mode,
+        infoFrom
+    }
 
     public enum SystemNameAttributeValues
     {

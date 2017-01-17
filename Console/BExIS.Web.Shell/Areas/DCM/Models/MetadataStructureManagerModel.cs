@@ -1,11 +1,6 @@
-﻿using System;
+﻿using BExIS.Ddm.Model;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
-using BExIS.Ddm.Model;
-using BExIS.Security.Entities.Objects;
 
 namespace BExIS.Web.Shell.Areas.DCM.Models
 {
@@ -39,7 +34,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
      */
     public class MetadataStructureModel
     {
-        
+
         public long Id { get; set; }
         public string Name { get; set; }
 
@@ -56,12 +51,15 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
         public List<SearchMetadataNode> MetadataNodes { get; set; }
         public List<EntityModel> EntityClasses { get; set; }
 
+        public Dictionary<string, string> SystemNodes { get; set; }
+
         public MetadataStructureModel()
         {
             EntityClasses = new List<EntityModel>();
             MetadataNodes = new List<SearchMetadataNode>();
             Entity = new EntityModel();
             HasSchema = false;
+            SystemNodes = new Dictionary<string, string>();
         }
 
     }

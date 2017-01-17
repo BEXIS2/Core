@@ -42,8 +42,7 @@ using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
 
-
-namespace BExIS.Web.Shell.Areas.Controllers
+namespace BExIS.Web.Shell.Areas.DDM.Controllers
 {
     public class DataController : Controller
     {

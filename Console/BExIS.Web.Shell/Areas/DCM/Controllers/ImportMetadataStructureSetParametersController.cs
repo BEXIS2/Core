@@ -505,9 +505,10 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             foreach (KeyValuePair<string, string> kvp in systemParameters)
             {
-
                 SystemNameAttributeValues name = (SystemNameAttributeValues)Enum.Parse(typeof(SystemNameAttributeValues), kvp.Key);
-                xmlDoc = XmlDatasetHelper.AddSystemReferenceToXml(xmlDoc, name, kvp.Value);
+                SearchMetadataNode SelectedNode = GetMetadataNodes().Where(s => s.DisplayName.Equals(kvp.Value)).FirstOrDefault();
+                if (SelectedNode != null)
+                    xmlDoc = XmlDatasetHelper.AddSystemReferenceToXml(xmlDoc, name, SelectedNode.XPath);
 
             }
 
