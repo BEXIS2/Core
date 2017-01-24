@@ -1,10 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Web.Mvc;
 using BExIS.Security.Entities.Subjects;
-using BExIS.Web.Shell.Areas.SAM.Helpers;
-using DataAnnotationsExtensions;
+using BExIS.Modules.Sam.UI.Helpers;
 
-namespace BExIS.Web.Shell.Areas.SAM.Models
+namespace BExIS.Modules.Sam.UI.Models
 {
     public class AccountRegisterModel
     {
@@ -31,7 +30,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
         public string FullName { get; set; }
 
         [Display(Name = "Email Address")]
-        [Email]
+        [EmailAddress]
         [Remote("ValidateEmail", "Account")]
         [Required]
         [StringLength(250, ErrorMessage = "The Email Address must be {2} - {1} characters long.", MinimumLength = 5)]
@@ -86,7 +85,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
         public string FullName { get; set; }
 
         [Display(Name = "Email Address")]
-        [Email]
+        [EmailAddress]
         [Remote("ValidateEmail", "Account", AdditionalFields = "UserId")]
         [Required]
         [StringLength(250, ErrorMessage = "The email must be {2} - {1} characters long.", MinimumLength = 5)]

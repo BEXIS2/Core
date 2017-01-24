@@ -1,4 +1,4 @@
-﻿@model BExIS.Web.Shell.Areas.SAM.Models.GroupCreateModel
+﻿@model BExIS.Modules.Sam.UI.Models.GroupCreateModel
 @using (Ajax.BeginForm("Create", "Groups", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "contentCreate", OnSuccess = "groupCreate_onSuccess" }))
 {
     @Html.ValidationSummary(true)

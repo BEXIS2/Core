@@ -6,7 +6,7 @@ using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
 
-namespace BExIS.Web.Shell.Areas.SAM.Helpers
+namespace BExIS.Modules.Sam.UI.Helpers
 {
     public class SamSeedDataGenerator
     {

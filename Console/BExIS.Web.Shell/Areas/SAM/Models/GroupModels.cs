@@ -2,7 +2,7 @@
 using System.Web.Mvc;
 using BExIS.Security.Entities.Subjects;
 
-namespace BExIS.Web.Shell.Areas.SAM.Models
+namespace BExIS.Modules.Sam.UI.Models
 {
     public class GroupCreateModel
     {
