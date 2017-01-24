@@ -12,8 +12,8 @@ using BExIS.Ext.Services;
 using Vaiona.MultiTenancy.Api;
 using Vaiona.Model.MTnt;
 using System.Web.Http;
-using Vaiona.Web.Mvc.Filters;
-
+using System;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Web.Shell
 {
@@ -69,10 +69,10 @@ namespace BExIS.Web.Shell
 			MvcHandler.DisableMvcResponseHeader = true;
 		
             init();
-
+            // Area Registration should be removed when modularity is in place
             AreaRegistration.RegisterAllAreas();
             GlobalConfiguration.Configure(WebApiConfig.Register);
-
+            loadModules();
 
             //GlobalFilters.Filters.Add(new SessionTimeoutFilterAttribute());
 
@@ -83,31 +83,33 @@ namespace BExIS.Web.Shell
             ITenantPathProvider pathProvider = new BExISTenantPathProvider(); // should be instantiated by the IoC. client app should provide the Path Ptovider based on its file and tenant structure
             tenantResolver.Load(pathProvider);
 
+
         }
 
         private void init()
         {
             IoCFactory.StartContainer(Path.Combine(AppConfiguration.AppRoot, "IoC.config"), "DefaultContainer"); // use AppConfig to access the app root folder
-            loadModules();
             IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager(); // just to prepare data access environment
             pManager.Configure(AppConfiguration.DefaultApplicationConnection.ConnectionString, AppConfiguration.DatabaseDialect, "Default", AppConfiguration.ShowQueries);
             if (AppConfiguration.CreateDatabase)
-                pManager.ExportSchema();                
+                pManager.ExportSchema();
             pManager.Start();
-            //pManager.UpdateSchema(true, true); // seems NH has dropped the support for schema update!
-#if DEBUG
-            //HibernatingRhinos.Profiler.Appender.NHibernate.NHibernateProfiler.Initialize();
-            //just for testing purposes
-#endif
-       }
+            ////pManager.UpdateSchema(true, true); // seems NH has dropped the support for schema update!
+        }
 
         private void loadModules()
         {
-            ModuleManager.LoadModules(); // it does nothing yet, implement it!
+            // at the time of this call, the PluginInitilizer has already loaded the plug-ins
+            ModuleBootstrapper.Initialize();
+            AppDomain.CurrentDomain.AssemblyResolve += ModuleBootstrapper.ResolveCurrentDomainAssembly;
+            ModuleBootstrapper.StartModules();
+            // the following line should be merged to the PluginManager
+            //ModuleManager.LoadModules(); // it does nothing yet, implement it!
         }
 
         protected void Application_End()
         {
+            ModuleBootstrapper.ShutdownModules();
             IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager();            
             pManager.Shutdown(); // release all data access related resources!
             IoCFactory.ShutdownContainer();

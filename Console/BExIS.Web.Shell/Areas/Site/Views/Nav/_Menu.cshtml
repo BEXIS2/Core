@@ -1,5 +1,5 @@
 ﻿@using System
-@using BExIS.Web.Shell.Areas.SAM.Helpers
+@using BExIS.Utils.WebHelpers
 @using Telerik.Web.Mvc.UI
 @using Vaiona.Web.Mvc
 
@@ -107,7 +107,7 @@
                         <li role="separator" class="divider"></li>
                         <li>@Html.ActionLink("Export Metadata", "Index", "Admin", new {area = "DIM"}, null)</li>
                         <li role="separator" class="divider"></li>
-                        <li>@Html.ActionLink("Maintain Datasets", "Index", "Dataset", new {area = "SAM"}, null)</li>
+                        <li>@Html.ActionLink("Maintain Datasets", "Index", "Datasets", new {area = "SAM"}, null)</li>
                     </ul>
                 </li>
             </ul>
