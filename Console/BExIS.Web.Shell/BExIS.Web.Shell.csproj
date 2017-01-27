@@ -428,11 +428,9 @@
     <Compile Include="Areas\DDM\Helpers\SearchUIHelper.cs" />
     <Compile Include="Areas\DDM\Models\SearchAttributeViewModel.cs" />
     <Compile Include="Areas\DDM\SearchAreaRegistration.cs" />
-    <Compile Include="Areas\Site\Controllers\FooterController.cs" />
-    <Compile Include="Areas\Site\Controllers\NavController.cs" />
-    <Compile Include="Areas\Site\Controllers\TermsController.cs" />
-    <Compile Include="Areas\Site\SiteAreaRegistration.cs" />
+    <Compile Include="Controllers\FooterController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\TermsController.cs" />
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Controllers\UiTestController.cs" />
     <Compile Include="Global.asax.cs">
@@ -595,16 +593,13 @@
     <Content Include="Areas\MSM\Views\Test\Index.cshtml" />
     <Content Include="Areas\MSM\Views\Test\_TreePartial.cshtml" />
     <Content Include="Areas\MSM\Views\Test\_AddTextField.cshtml" />
-    <Content Include="Areas\Site\Views\Shared\_Layout.cshtml" />
-    <Content Include="Areas\Site\Views\_ViewStart.cshtml" />
     <Content Include="Areas\DDM\Views\Data\_SubjectsPartial.cshtml" />
-    <Content Include="Areas\Site\Views\Terms\Index.cshtml" />
     <Content Include="fonts\FontAwesome.otf" />
     <Content Include="fonts\fontawesome-webfont.woff2" />
     <Content Include="fonts\fontawesome-webfont.woff" />
     <Content Include="fonts\fontawesome-webfont.ttf" />
     <Content Include="fonts\fontawesome-webfont.eot" />
-    <Content Include="Areas\Site\Views\Footer\Content.cshtml" />
+    <Content Include="Views\Footer\Content.cshtml" />
     <None Include="Properties\PublishProfiles\Shell Publish.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
@@ -940,6 +935,8 @@
     <Content Include="Views\Test\Index.cshtml" />
     <Content Include="Views\Shared\_EntitySelectorInWindowView.cshtml" />
     <Content Include="Views\Shared\_EntitySelectorView.cshtml" />
+    <Content Include="Themes\Default\Partials\_Menu.cshtml" />
+    <Content Include="Views\Terms\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -950,7 +947,6 @@
     <Folder Include="Areas\DIM\Views\Shared\" />
     <Folder Include="Areas\MSM\Views\Shared\" />
     <Folder Include="Areas\RPM\Views\Shared\" />
-    <Folder Include="Areas\Site\Models\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Home\About.cshtml" />
@@ -1002,12 +998,6 @@
     <Content Include="Themes\Web.config">
       <SubType>Designer</SubType>
     </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\Site\Views\Web.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\Site\Views\Nav\_Menu.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Themes\Default\Partials\_ThemeSelector.cshtml" />

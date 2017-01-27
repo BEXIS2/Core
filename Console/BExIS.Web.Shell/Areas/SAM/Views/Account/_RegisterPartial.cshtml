@@ -90,7 +90,8 @@
             <td colspan="2">
                 @Html.CheckBoxFor(m => m.TermsAndConditions)
                 I accept 
-                <a href="/Site/Terms/Index" title="See Terms and Conditions" target="_blank">Terms and Conditions</a>.
+                @*<a href="/Site/Terms/Index" title="See Terms and Conditions" target="_blank">Terms and Conditions</a>.*@
+                <a href="@Url.Action("index", "terms", new { area = "" }, null)" title="See Terms and Conditions" target="_blank">Terms and Conditions</a>.
                 @Html.ValidationMessageFor(m => m.TermsAndConditions)
             </td>
         </tr>

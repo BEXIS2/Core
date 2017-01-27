@@ -60,7 +60,7 @@ namespace BExIS.Modules.Sam.UI.Helpers
             TaskManager taskManager = new TaskManager();
 
             taskManager.CreateTask("SAM", "Account", "*");
-            taskManager.CreateTask("Site", "Nav", "*");
+            taskManager.CreateTask("Shell", "Nav", "*");
             taskManager.CreateTask("Shell", "Home", "*");
             taskManager.CreateTask("System", "Utils", "*");
             taskManager.CreateTask("DCM", "Help", "*");
@@ -68,10 +68,10 @@ namespace BExIS.Modules.Sam.UI.Helpers
             taskManager.CreateTask("DIM", "Help", "*");
             taskManager.CreateTask("RPM", "Help", "*");
             taskManager.CreateTask("SAM", "Help", "*");
-            taskManager.CreateTask("Site", "ContactUs", "*");
-            taskManager.CreateTask("Site", "Impressum", "*");
-            taskManager.CreateTask("Site", "PrivacyPolicy", "*");
-            taskManager.CreateTask("Site", "Terms", "*");
+            taskManager.CreateTask("Shell", "ContactUs", "*");
+            taskManager.CreateTask("Shell", "Impressum", "*");
+            taskManager.CreateTask("Shell", "PrivacyPolicy", "*");
+            //taskManager.CreateTask("Shell", "Terms", "*");
 
             // Features
             FeatureManager featureManager = new FeatureManager();

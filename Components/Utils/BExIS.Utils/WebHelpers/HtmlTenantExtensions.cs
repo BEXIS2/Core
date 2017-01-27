@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Web;
 using System.Web.Mvc;
 using System.Xml.Linq;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Utils.WebHelpers
 {
@@ -56,6 +57,14 @@ namespace BExIS.Utils.WebHelpers
             }
 
             return new MvcHtmlString("<li class='dropdown'>" + menu + "<ul class='dropdown-menu'>" + submenu + "</ul></li>");
+        }
+    }
+
+    public static class HtmlNavigationExtensions
+    {
+        public static XElement ExportTree(this HtmlHelper htmlHelper)
+        {
+            return ModuleManager.ExportTree;
         }
     }
 }

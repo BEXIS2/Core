@@ -6,11 +6,11 @@ using System.Web.Mvc;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
 
-namespace BExIS.Web.Shell.Areas.Site.Controllers
+namespace BExIS.Web.Shell.Controllers
 {
     public class FooterController : Controller
     {
-        // GET: Site/Footer
+        // GET: footer
         public ActionResult Index()
         {
             return View();

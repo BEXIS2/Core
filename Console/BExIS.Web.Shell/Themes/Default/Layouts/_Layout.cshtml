@@ -3,6 +3,7 @@
 @using Microsoft.Web.Helpers;
 @using Telerik.Web.Mvc.UI;
 @using Vaiona.Web.Mvc;
+@using Vaiona.Web.Mvc.Modularity;
 
 
 <!DOCTYPE html>
@@ -69,17 +70,18 @@
 
 <body>
     <div id="informationContainer">
+        @*pass the ModuleManger.ExportTree to the layout's menu view, it must be populated by now!*@
         @Html.RenderAuto("Menu")
 
-        <div class="container-fluid" style="background-color: black; color: white; position: fixed; width: 100%; z-index: 1336">
-            <a href="#information" data-toggle="collapse" style="color: white">@ViewBag.Title <i class="fa fa-angle-double-down"></i></a>
-            <div class="collapse" id="information">
-                <div class="container" style="padding: 0pt 48pt 24pt 48pt; text-align: justify;">
-                    @RenderSection("Information", false)
-                </div>
+    <div class="container-fluid" style="background-color: black; color: white; position: fixed; width: 100%; z-index: 1336">
+        <a href="#information" data-toggle="collapse" style="color: white">@ViewBag.Title <i class="fa fa-angle-double-down"></i></a>
+        <div class="collapse" id="information">
+            <div class="container" style="padding: 0pt 48pt 24pt 48pt; text-align: justify;">
+                @RenderSection("Information", false)
             </div>
         </div>
     </div>
+</div>
 
     @*<div class="container-fluid">
         @Html.RenderAuto("Breadcrumb")
