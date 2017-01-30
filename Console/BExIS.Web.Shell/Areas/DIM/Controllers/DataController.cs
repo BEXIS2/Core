@@ -62,10 +62,8 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
             if (version.Dataset.DataStructure.Self is StructuredDataStructure)
             {
                 // apply selection and projection
-                var tuples = dm.GetDatasetVersionEffectiveTuples(version);
-
-                DataTable dt = OutputDataManager.ConvertPrimaryDataToDatatable(version,
-                    dm.GetDatasetVersionEffectiveTupleIds(version), title, true);
+                //var tuples = dm.GetDatasetVersionEffectiveTuples(version);
+                DataTable dt = OutputDataManager.ConvertPrimaryDataToDatatable(dm, version, title, true);
 
                 if (!string.IsNullOrEmpty(selection))
                 {
@@ -83,6 +81,8 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
 
                 var response = Request.CreateResponse();
                 response.Content = new ObjectContent(typeof(DatasetModel), model, new DatasetModelCsvFormatter(model.DataTable.TableName));
+                
+                
                 //set headers on the "response"
                 return response;
 

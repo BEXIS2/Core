@@ -36,11 +36,13 @@ namespace BExIS.Web.Shell.Controllers
 
         //[RecordCall]
         //[LogExceptions]
-        [Diagnose]
-        [MeasurePerformance]
+        //[Diagnose]
+        //[MeasurePerformance]
         public ActionResult Index(Int64 id = 0)
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Test Page", this.Session.GetTenant()); /*in the Vaiona.Web.Mvc.Models namespace*/ //String.Format("{0} {1} - {2}", AppConfiguration.ApplicationName, AppConfiguration.ApplicationVersion, "Test Page");
+            createDataset();
+            //removeContentDescriptor();
             //testTenants();
             //List<string> a = new List<string>() { "A", "B", "C" };
             //List<string> b = new List<string>() { "A", "B", "D" };
@@ -78,52 +80,53 @@ namespace BExIS.Web.Shell.Controllers
             //getDataStructures();
             //return RedirectToAction("About");
             //createMetadataAttribute();
-            ObtainingMethodManager om = new ObtainingMethodManager();
+            //ObtainingMethodManager om = new ObtainingMethodManager();
 
-            ////Test Party Type Manager
-            //Add Party Type
-            var partyType = addPartyType();
-            //removePartyType(partyType);
-            var partyStatusType = addPartyStatusType(partyType);
-            var cusAttr = addTestPartyCustomAttribute(partyType);
-            //removeTestPartyCustomAttribute(cusAttr);
-            // removePartyStatusType(partyStatusType);
+            //////Test Party Type Manager
+            ////Add Party Type
+            //var partyType = addPartyType();
+            ////removePartyType(partyType);
+            //var partyStatusType = addPartyStatusType(partyType);
+            //var cusAttr = addTestPartyCustomAttribute(partyType);
+            ////removeTestPartyCustomAttribute(cusAttr);
+            //// removePartyStatusType(partyStatusType);
 
-            ////Create party 
-            Dlm.Services.Party.PartyManager partyManager = new Dlm.Services.Party.PartyManager();
-            /// Dlm.Services.Party.PartyRelationshipTypeManager pmr = new Dlm.Services.Party.PartyRelationshipTypeManager();
-            var parties = new List<Dlm.Entities.Party.Party>();
-            parties.Add(addTestParty(partyType, partyStatusType));
-            parties.Add(addTestParty(partyType, partyStatusType));
-            ////update last test party
-            updateTestParty(parties.Last().Id);
+            //////Create party 
+            //Dlm.Services.Party.PartyManager partyManager = new Dlm.Services.Party.PartyManager();
+            ///// Dlm.Services.Party.PartyRelationshipTypeManager pmr = new Dlm.Services.Party.PartyRelationshipTypeManager();
+            //var parties = new List<Dlm.Entities.Party.Party>();
+            //parties.Add(addTestParty(partyType, partyStatusType));
+            //parties.Add(addTestParty(partyType, partyStatusType));
+            //////update last test party
+            //updateTestParty(parties.Last().Id);
 
-            ////////deleteTestParty last test party
-            //////deleteTestParty(parties.First());
-            ////////Add custom attribute value
-            //var customAttrVal = addTestPartyCustomAttributeValue(parties.First(), cusAttr);
-            //removeTestPartyCustomAttributeValue(customAttrVal);
-            //// Create Party relationshiptype
-            ////in the same time of creating partyrelationshiptype partyType pairs created and add to that
-            var partyReType = addTestPartyRelationshipType(partyType, partyType);
-            //removeTestPartyRelationshipType(partyReType);
-            //Add relation between two parties
-            //The other relation are for testing minimum and maximum cardinaity
-            var partyRel = addTestPartyRelationship(parties.First(), parties.Last(), partyReType);
-            // var partyRel2=addTestPartyRelationship(parties.First(), parties.Last(), partyReType);
-            // var partyRel3=addTestPartyRelationship(parties.First(), parties.Last(), partyReType);
-            // addTestPartyRelationship(parties.Last(), parties.First(), partyReType);
-            removePartyRelationship(partyRel);
-            // removePartyRelationship(partyRel2);
-            //removePartyRelationship(partyRel3);
-            var partyPair = addTestPartyTypePair(partyType, addPartyType());
-            // removeTestPartyTypePair(partyPair);
-            var ps = addTestPartyStatus(parties.First());
-            //removeTestPartyStatus(ps);
-            //  deleteTestParty(parties.First());
+            //////////deleteTestParty last test party
+            ////////deleteTestParty(parties.First());
+            //////////Add custom attribute value
+            ////var customAttrVal = addTestPartyCustomAttributeValue(parties.First(), cusAttr);
+            ////removeTestPartyCustomAttributeValue(customAttrVal);
+            ////// Create Party relationshiptype
+            //////in the same time of creating partyrelationshiptype partyType pairs created and add to that
+            //var partyReType = addTestPartyRelationshipType(partyType, partyType);
+            ////removeTestPartyRelationshipType(partyReType);
+            ////Add relation between two parties
+            ////The other relation are for testing minimum and maximum cardinaity
+            //var partyRel = addTestPartyRelationship(parties.First(), parties.Last(), partyReType);
+            //// var partyRel2=addTestPartyRelationship(parties.First(), parties.Last(), partyReType);
+            //// var partyRel3=addTestPartyRelationship(parties.First(), parties.Last(), partyReType);
+            //// addTestPartyRelationship(parties.Last(), parties.First(), partyReType);
+            //removePartyRelationship(partyRel);
+            //// removePartyRelationship(partyRel2);
+            ////removePartyRelationship(partyRel3);
+            //var partyPair = addTestPartyTypePair(partyType, addPartyType());
+            //// removeTestPartyTypePair(partyPair);
+            //var ps = addTestPartyStatus(parties.First());
+            ////removeTestPartyStatus(ps);
+            ////  deleteTestParty(parties.First());
 
             return View();
         }
+     
         #region PartyManager
 
         #region party
@@ -293,6 +296,25 @@ namespace BExIS.Web.Shell.Controllers
         #endregion
 
         #endregion
+
+        private void removeContentDescriptor()
+        {
+            DatasetManager dm = new DatasetManager();
+            Dataset dataset = dm.GetDataset(1);
+            // check if the dataset is in the checked-in status
+            DatasetVersion dsVersion = dm.GetDatasetLatestVersion(dataset);
+            if(dsVersion.ContentDescriptors.Count(p => p.Name.Equals("generated")) > 0)
+            {
+                dm.CheckOutDataset(1, "admin");
+                dsVersion = dm.GetDatasetWorkingCopy(1);
+                //dm.EditDatasetVersion(dsVersion, null, null, null, null);
+                // The descriptor to be deleted must be object equal to the one in the list. The following command does the job.
+                // The condition can be different, but the item should be taken from the list, and any other instance must be released, by setting them to NULL.
+                var cd = dsVersion.ContentDescriptors.FirstOrDefault(p => p.Name.Equals("generated"));
+                dm.DeleteContentDescriptor(cd);
+                dm.CheckInDataset(1, "removed content descriptor:" + cd.Name, "admin");
+            }
+        }
 
         private void getDataStructures()
         {
@@ -470,6 +492,19 @@ namespace BExIS.Web.Shell.Controllers
             //}
         }
 
+        private Dataset createDataset()
+        {
+
+            DataStructureManager dsManager = new DataStructureManager();
+            ResearchPlanManager rpManager = new ResearchPlanManager();
+            DatasetManager dm = new DatasetManager();
+
+            MetadataStructureManager mdsManager = new MetadataStructureManager();
+            MDS.MetadataStructure mds = mdsManager.Repo.Query().First();
+
+            Dataset ds = dm.CreateEmptyDataset(dsManager.StructuredDataStructureRepo.Get(1), rpManager.Repo.Get(1), mds);
+            return ds;
+        }
         /// <summary>
         /// create a new dataset, check it out to create the first version, add a tuple to it.
         /// </summary>

@@ -8,7 +8,7 @@ namespace BExIS.Security.Services.Objects
 {
     public interface IEntityManager
     {
-        Entity CreateEntity(string name, string classPath, string assemblyPath);
+        Entity CreateEntity(string name, string classPath, string assemblyPath, bool secureable, bool useMetadata);
 
         bool DeleteEntityById(long id);
 

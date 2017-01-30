@@ -11,6 +11,8 @@ using BExIS.Dlm.Services.Data;
 using BExIS.IO.Transform.Validation.DSValidation;
 using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Xml.Helpers;
+using DocumentFormat.OpenXml.Drawing.Charts;
+using Vaiona.Utils.Cfg;
 
 /// <summary>
 ///
@@ -52,8 +54,70 @@ namespace BExIS.IO.Transform.Output
             Delimeter = delimeter;
         }
 
-        
+        #region generic
 
+        public static string CreateFile(string filepath)
+        {
+            string dataPath = Path.Combine(AppConfiguration.DataPath,filepath);
+
+            try
+            {
+                if (!File.Exists(dataPath))
+                {
+                    File.Create(dataPath).Close();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                string message = ex.Message.ToString();
+            }
+
+            return dataPath;
+        }
+
+        public static bool AllTextToFile(string filepath, string text)
+        {
+            try
+            {
+                File.WriteAllText(filepath, text);
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public string GenerateCsv(DataTable datatable, string fullpath)
+        {
+            string file = Path.GetFileName(fullpath);
+            string ext = Path.GetExtension(fullpath);
+
+            #region create
+
+            try
+            {
+                if (!File.Exists(fullpath))
+                {
+                    File.Create(fullpath).Close();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                string message = ex.Message.ToString();
+            }
+
+            #endregion
+
+            return fullpath;
+        }
+
+        #endregion
+
+        #region bexis internal usage
         /// <summary>
         /// return the filepath
         /// </summary>
@@ -93,20 +157,19 @@ namespace BExIS.IO.Transform.Output
         /// <param name="filePath">Path of the excel template file</param>
         /// <param name="dataStructureId">Id of datastructure</param>
         /// <returns>List of Errors or null</returns>
-        public List<Error> AddDataTuples(List<long> dataTuplesIds, string filePath, long dataStructureId)
+        public List<Error> AddDataTuples(DatasetManager datasetManager,List<long> dataTuplesIds, string filePath, long dataStructureId)
         {
             if (File.Exists(filePath))
             {
                 StringBuilder data = new StringBuilder();
                 data.AppendLine(dataStructureToRow(dataStructureId));
 
-                foreach (long id in dataTuplesIds)
+                DataTupleIterator tupleIterator = new DataTupleIterator(dataTuplesIds, datasetManager);
+                foreach (var tuple in tupleIterator)
                 {
-                    string newline = datatupleToRow(id);
-                    if(!String.IsNullOrEmpty(newline))data.AppendLine(newline);
+                    string newline = datatupleToRow(tuple);
+                    if (!String.IsNullOrEmpty(newline)) data.AppendLine(newline);
                 }
-
-
                 File.WriteAllText(filePath, data.ToString());
             }
 
@@ -328,7 +391,8 @@ namespace BExIS.IO.Transform.Output
             return sortedVariables;
         }
 
-        
+        #endregion
+
     }
 
 

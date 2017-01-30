@@ -33,7 +33,10 @@ else
                     Type
                 </th>
                 <th>
-                    Description
+                    Extention
+                </th>
+                <th>
+                    File size
                 </th>
                 <th>
 
@@ -49,10 +52,14 @@ else
                          @cd.Name
                     </td>
                     <td>
-                         @cd.MimeType
+                        @cd.MimeType
                     </td>
                     <td>
-                        
+                        @cd.Extention
+                    </td>
+                    <td>
+                        @Html.Partial("_fileSizeView",cd.FileSize)
+    
                     </td>
                     <td style="width:30px;">
                         @if (Model.DownloadAccess)

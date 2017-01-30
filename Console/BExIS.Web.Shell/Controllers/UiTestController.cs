@@ -21,17 +21,20 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Schema;
+using System.Xml.XPath;
 using BExIS.IO;
 using Vaiona.Utils.Cfg;
 using Ionic.Zip;
+using Vaiona.Logging.Aspects;
 
 namespace BExIS.Web.Shell.Controllers
 {
     public class UiTestController : Controller
     {
-        //
-        // GET: /UiTest/
-
+        //[RecordCall]
+        //[LogExceptions]
+        //[Diagnose]
+        //[MeasurePerformance]
         public ActionResult Index()
         {
             UiTestModel model = new UiTestModel();
@@ -41,6 +44,43 @@ namespace BExIS.Web.Shell.Controllers
             Debug.WriteLine("call a webservice from gfbio");
 
             return View(model);
+        }
+
+        public ActionResult XSDtest()
+        {
+            string pathXsd = "G:/schema.xsd"; 
+            string pathXml = "G:/test.xml";
+            XmlSchema Schema;
+
+            try
+            {
+                XmlDocument doc = new XmlDocument();
+
+                if (FileHelper.FileExist("pathXml"))
+                    FileHelper.Delete(pathXml);
+
+                XmlNode root = doc.CreateElement("xyz");
+                XmlAttribute rootAttr = doc.CreateAttribute("xmlns");
+                rootAttr.Value = "abc";
+                if (root.Attributes != null) root.Attributes.Append(rootAttr);
+
+                XmlDeclaration declaration = doc.CreateXmlDeclaration("1.0", "utf-8", null);
+                doc.AppendChild(declaration);
+
+                doc.AppendChild(root);
+                doc.Save(pathXml);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        
+
+
+            UiTestModel model = new UiTestModel();
+
+
+            return View("Index",model);
         }
 
         public async Task<ActionResult> Call()

@@ -21,6 +21,7 @@ using BExIS.Xml.Helpers;
 using BExIS.Xml.Services;
 using DocumentFormat.OpenXml.Drawing;
 using Path = System.IO.Path;
+using BExIS.RPM.Output;
 
 /// <summary>
 ///
@@ -318,6 +319,7 @@ namespace BExIS.IO.Transform.Output
             string dataStructureTitle = dataStructure.Name;
             // load datastructure from db an get the filepath from this object
 
+            ExcelTemplateProvider provider = new ExcelTemplateProvider("BExISppTemplate_Clean.xlsm");
             string path = "";
 
             if (dataStructure.TemplatePaths != null)
@@ -329,14 +331,20 @@ namespace BExIS.IO.Transform.Output
                 foreach (XmlNode x in resource)
                 {
                     if (x.Attributes.GetNamedItem("Type").Value == "Excel")
-                        path = x.Attributes.GetNamedItem("Path").Value;
+                        if (File.Exists(x.Attributes.GetNamedItem("Path").Value))
+                        {
+                            path = x.Attributes.GetNamedItem("Path").Value;
+                        }
+                        else
+                        {
+                            path = provider.CreateTemplate(dataStructure);
+                        }
                 }
-
-
                 //string dataPath = AppConfiguration.DataPath; //Path.Combine(AppConfiguration.WorkspaceRootPath, "Data");
                 return Path.Combine(AppConfiguration.DataPath, path);
-            }
-            return "";
+            }          
+            path = provider.CreateTemplate(dataStructure);
+            return Path.Combine(AppConfiguration.DataPath, path);
         }
 
         /// <summary>

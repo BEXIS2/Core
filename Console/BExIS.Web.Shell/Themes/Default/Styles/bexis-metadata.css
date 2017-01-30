@@ -3,7 +3,7 @@ White    #000000
 Gray 01  #f5f5f5
 Gray 02  #ebebeb
 Gray 03  #afb0b1
-Gray 04  #009cdf
+Gray 04  #009cdf _> 323232
 Black    #ffffff
 Yellow   #ffbb52
 Orange   #ff9700
@@ -90,10 +90,14 @@ Green 05  #eff7f6
     text-align:right;
     
 }
+.bx-metadataFormTextInput {
+    width: 490px;
+    max-width: 490px;
+}
 
 .metadataAttributeInput
 {
-    width: 380px;
+    width: 500px;
     /*border:ridge 1px yellow;*/
 }
 
@@ -129,49 +133,52 @@ Green 05  #eff7f6
     margin-top: 6px; 
 }
 
+
+/**DISABLED*/
+input:disabled, textarea:disabled, .bx-input.bx-disabled, .bx-textarea.bx-disabled, .t-autocomplete.bx-disabled {
+    border-color: #afb0b1;
+}
+
 /**Level**/
 .Metadata-Level-1 {
-    border-left: #388670 10px solid;
-    border-bottom: #388670 4px solid;
-    /*background-color: #388670;*/
-    /*border-top:2px solid white;*/
+    border-left: #BEE1DA 10px solid;
+    border-bottom: #BEE1DA 4px solid;
 }
 
 .Metadata-Level-Header-1 {
-    color: white;
-    background-color: #388670;
-    /*text-transform: uppercase;*/
+    color: black;
+    background-color: #BEE1DA;
 }
 
 /*72b1a0*/
 .Metadata-Level-3 {
-    border-left: #bbddd9 10px solid;
-    border-bottom: #bbddd9 4px solid;
+    border-left: #CDE7E2 10px solid;
+    border-bottom: #CDE7E2 4px solid;
     /*background-color: #72b1a0;*/
     /*border-top:2px solid white;*/
 }
 
 .Metadata-Level-Header-3 {
     /*color: white;*/
-    background-color: #bbddd9;
+    background-color: #CDE7E2;
     
 }
 
 .Metadata-Level-5 {
-    border-left: #cce5e2 10px solid;
-    border-bottom: #cce5e2 4px solid;
+    border-left: #DCEDEA 10px solid;
+    border-bottom: #DCEDEA 4px solid;
     /*background-color: #bee1da;*/
     /*border-top:2px solid white;*/
 }
 
 .Metadata-Level-Header-5 {
     /*color: white;*/
-    background-color: #cce5e2;
+    background-color: #DCEDEA;
 }
 
 .Metadata-Level-7 {
-    border-left: #ddeeec 10px solid;
-    border-bottom: #ddeeec 4px solid;
+    border-left: #EBF3F2 10px solid;
+    border-bottom: #EBF3F2 4px solid;
     /*background-color: #d2e8e3;*/
     /*border-top:2px solid white;*/
 
@@ -179,15 +186,22 @@ Green 05  #eff7f6
 
 .Metadata-Level-Header-7 {
     /*color: white;*/
-    background-color: #ddeeec;
+    background-color: #EBF3F2;
 }
 
 .Metadata-Level-9 {
-    border-left: #eff7f6 10px solid;
-    border-bottom: #eff7f6 4px solid;
+    border-left: #FAFAFA 10px solid;
+    border-bottom: #FAFAFA 4px solid;
 }
 
 .Metadata-Level-Header-9 {
     /*color: white;*/
-    background-color: #eff7f6;
+    background-color: #FAFAFA;
+}
+
+
+/***Preloader*/
+#root .preloader {
+    text-align: center;
+    vertical-align: middle;
 }

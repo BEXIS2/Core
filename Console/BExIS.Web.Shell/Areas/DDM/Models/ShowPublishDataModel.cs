@@ -10,6 +10,8 @@ namespace BExIS.Web.Shell.Areas.DDM.Models
     {
         public List<DataRepository> DataRepositories;
         public long DatasetId;
+        public bool EditRights;
+        public bool DownloadRights;
 
         public List<publishedFileModel> RepoFilesDictionary;
 
@@ -18,6 +20,8 @@ namespace BExIS.Web.Shell.Areas.DDM.Models
             DataRepositories = new List<DataRepository>();
             RepoFilesDictionary = new List<publishedFileModel>();
             DatasetId = 0;
+            EditRights = false;
+            DownloadRights = false;
         }
 
     }
@@ -37,11 +41,13 @@ namespace BExIS.Web.Shell.Areas.DDM.Models
         public DataRepository DataRepository;
         public bool Exist;
         public bool IsMetadataConvertable { get; set; }
+        public string metadataValidMessage { get; set; }
         public bool IsDataConvertable { get; set; }
 
         public DataRepoRequirentModel()
         {
             IsMetadataConvertable = false;
+            metadataValidMessage = "";
             IsDataConvertable = false;
             DatasetId = 0;
             DatasetVersionId = 0;

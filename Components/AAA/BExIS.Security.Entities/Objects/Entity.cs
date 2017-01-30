@@ -16,6 +16,9 @@ namespace BExIS.Security.Entities.Objects
         public virtual string AssemblyPath { get; set; }
         public virtual string ClassPath { get; set; }
 
+        public virtual bool Securable { get; set; }
+        public virtual bool UseMetadata { get; set; }
+
         #endregion
 
         #region Associations

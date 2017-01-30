@@ -22,6 +22,7 @@ namespace BExIS.IO.Transform.Output
         {
             string contentDescriptorTitle = "";
             string ext = "";
+            TextSeperator textSeperator = TextSeperator.semicolon;
 
             switch (mimeType)
             {
@@ -29,12 +30,14 @@ namespace BExIS.IO.Transform.Output
                 {
                         contentDescriptorTitle = "generatedCSV";
                         ext = ".csv";
+                        textSeperator = TextSeperator.semicolon;
                         break;
                 }
                 default:
                 {
                         contentDescriptorTitle = "generatedTXT";
                         ext = ".txt";
+                        textSeperator = TextSeperator.tab;
                         break;
                 }
             }
@@ -42,15 +45,15 @@ namespace BExIS.IO.Transform.Output
 
             DatasetManager datasetManager = new DatasetManager();
             DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
-            AsciiWriter writer = new AsciiWriter(TextSeperator.comma);
+            long datasetVersionId = datasetVersion.Id;
+            AsciiWriter writer = new AsciiWriter(textSeperator);
             
             string path = "";
 
-            List<long> datatupleIds = datasetManager.GetDatasetVersionEffectiveTupleIds(datasetVersion);
-            long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
+            
 
             //ascii allready exist
-            if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals("c")) > 0)
+            if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(contentDescriptorTitle) && p.URI.Contains(datasetVersion.Id.ToString())) > 0)
             {
                 #region FileStream exist
 
@@ -63,12 +66,14 @@ namespace BExIS.IO.Transform.Output
                 }
                 else
                 {
+                    List<long> datatupleIds = datasetManager.GetDatasetVersionEffectiveTupleIds(datasetVersion);
+                    long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
 
                     path = generateDownloadFile(id, datasetVersion.Id, datastuctureId, "Data", ext, writer);
 
                     storeGeneratedFilePathToContentDiscriptor(id, datasetVersion,ext);
 
-                    writer.AddDataTuples(datatupleIds, path, datastuctureId);
+                    writer.AddDataTuples(datasetManager, datatupleIds, path, datastuctureId);
 
                     return path;
                 }
@@ -81,11 +86,14 @@ namespace BExIS.IO.Transform.Output
             {
                 #region FileStream not exist
 
+                List<long> datatupleIds = datasetManager.GetDatasetVersionEffectiveTupleIds(datasetVersion);
+                long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
+
                 path = generateDownloadFile(id, datasetVersion.Id, datastuctureId, "data", ext, writer);
 
                 storeGeneratedFilePathToContentDiscriptor(id, datasetVersion, ext);
 
-                writer.AddDataTuples(datatupleIds, path, datastuctureId);
+                writer.AddDataTuples(datasetManager, datatupleIds, path, datastuctureId);
 
                 return path;
 
@@ -102,7 +110,10 @@ namespace BExIS.IO.Transform.Output
             DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
             AsciiWriter writer = new AsciiWriter(TextSeperator.comma);
 
-            List<AbstractTuple> datatuples = new List<AbstractTuple>(); //GetFilteredDataTuples(datasetVersion);
+            // Javad: It is better to have a list of tuple IDs and pass it to the AddDataTuples method. 
+            // This method is using a special iterator to reduce the number of queries. 18.11.2016
+
+            List<long> datatuples = new List<long>(); //GetFilteredDataTuples(datasetVersion);
 
             long datastuctureId = datasetVersion.Dataset.DataStructure.Id;
 
@@ -111,7 +122,7 @@ namespace BExIS.IO.Transform.Output
             if (visibleColumns != null)
                 writer.VisibleColumns = visibleColumns;
 
-            writer.AddDataTuples(datatuples, path, datastuctureId);
+            writer.AddDataTuples(datasetManager, datatuples, path, datastuctureId);
 
             return path;
         }
@@ -130,7 +141,7 @@ namespace BExIS.IO.Transform.Output
             string path = "";
 
             //excel allready exist
-            if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals("generated")) > 0)
+            if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals("generated") && p.URI.Contains(datasetVersion.Id.ToString())) > 0)
             {
                 #region FileStream exist
 
@@ -159,7 +170,7 @@ namespace BExIS.IO.Transform.Output
                         writer);
 
                     storeGeneratedFilePathToContentDiscriptor(id, datasetVersion, ext);
-                    writer.AddDataTuplesToTemplate(datatupleIds, path, datastuctureId);
+                    writer.AddDataTuplesToTemplate(datasetManager, datatupleIds, path, datastuctureId);
 
                     return path;
                 }
@@ -177,7 +188,7 @@ namespace BExIS.IO.Transform.Output
                 path = generateDownloadFile(id, datasetVersion.Id, datastuctureId, "data", ext, writer);
 
                 storeGeneratedFilePathToContentDiscriptor(id, datasetVersion, ext);
-                writer.AddDataTuplesToTemplate(datatupleIds, path, datastuctureId);
+                writer.AddDataTuplesToTemplate(datasetManager, datatupleIds, path, datastuctureId);
 
                 return path;
 
@@ -267,7 +278,8 @@ namespace BExIS.IO.Transform.Output
 
         #region datatable
 
-        public static DataTable ConvertPrimaryDataToDatatable(DatasetVersion dsv, IEnumerable<long> dsVersionTupleIds,string tableName="", bool useLabelsAsColumnNames=false)
+        //[MeasurePerformance]
+        public static DataTable ConvertPrimaryDataToDatatable(DatasetManager datasetManager, DatasetVersion datasetVersion, string tableName="", bool useLabelsAsColumnNames=false)
         {
             DataTable dt = new DataTable();
             if (string.IsNullOrEmpty(tableName))
@@ -275,99 +287,104 @@ namespace BExIS.IO.Transform.Output
             else
                 dt.TableName = tableName;
             DataStructureManager dsm = new DataStructureManager();
-            StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(dsv.Dataset.DataStructure.Id);
+            StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(datasetVersion.Dataset.DataStructure.Id);
+            var tupleIds = datasetManager.GetDatasetVersionEffectiveTupleIds(datasetVersion);
 
-            if (dsVersionTupleIds != null && sds != null)
+            if (tupleIds != null && tupleIds.Count > 0 && sds != null)
             {
-                foreach (var vu in sds.Variables)
-                {
-                    DataColumn col = null;
-                    if (useLabelsAsColumnNames)
-                    {
-                        col = dt.Columns.Add(vu.Label);
-                    }
-                    else
-                    {
-                        col = dt.Columns.Add("ID" + vu.Id.ToString()); // or DisplayName also
-                    }
-                    
-                    col.Caption = vu.Label;
-
-                    switch (vu.DataAttribute.DataType.SystemType)
-                    {
-                        case "String":
-                            {
-                                col.DataType = Type.GetType("System.String");
-                                break;
-                            }
-
-                        case "Double":
-                            {
-                                col.DataType = Type.GetType("System.Double");
-                                break;
-                            }
-
-                        case "Int16":
-                            {
-                                col.DataType = Type.GetType("System.Int16");
-                                break;
-                            }
-
-                        case "Int32":
-                            {
-                                col.DataType = Type.GetType("System.Int32");
-                                break;
-                            }
-
-                        case "Int64":
-                            {
-                                col.DataType = Type.GetType("System.Int64");
-                                break;
-                            }
-
-                        case "Decimal":
-                            {
-                                col.DataType = Type.GetType("System.Decimal");
-                                break;
-                            }
-
-                        case "DateTime":
-                            {
-                                col.DataType = Type.GetType("System.DateTime");
-                                break;
-                            }
-
-                        default:
-                            {
-                                col.DataType = Type.GetType("System.String");
-                                break;
-                            }
-                    }
-
-
-
-                    if (vu.Parameters.Count > 0)
-                    {
-                        foreach (var pu in vu.Parameters)
-                        {
-                            DataColumn col2 = dt.Columns.Add(pu.Label.Replace(" ", "")); // or DisplayName also
-                            col2.Caption = pu.Label;
-
-                        }
-                    }
-                }
-
-                DatasetManager datasetManager = new DatasetManager();
-
-                foreach (var id in dsVersionTupleIds)
-                {
-                    DataTuple dataTuple = datasetManager.DataTupleRepo.Query(d => d.Id.Equals(id)).FirstOrDefault();
-                    dataTuple.Materialize();
-                    dt.Rows.Add(ConvertTupleIntoDataRow(dt, dataTuple, sds, true));
-                }
+                buildTheHeader(sds, useLabelsAsColumnNames, dt);
+                buildTheBody(datasetManager, tupleIds, dt, sds);
             }
 
             return dt;
+        }
+
+        private static void buildTheBody(DatasetManager datasetManager, List<long> tupleIds, DataTable dt, StructuredDataStructure sds)
+        {
+            DataTupleIterator tupleIterator = new DataTupleIterator(tupleIds, datasetManager);
+            foreach (var tuple in tupleIterator)
+            {
+                dt.Rows.Add(ConvertTupleIntoDataRow(dt, tuple, sds, true));
+            }
+        }
+
+        private static void buildTheHeader(StructuredDataStructure sds, bool useLabelsAsColumnNames, DataTable dt)
+        {
+            foreach (var vu in sds.Variables)
+            {
+                DataColumn col = null;
+                if (useLabelsAsColumnNames)
+                {
+                    col = dt.Columns.Add(vu.Label);
+                }
+                else
+                {
+                    col = dt.Columns.Add("ID" + vu.Id.ToString()); // or DisplayName also
+                }
+
+                col.Caption = vu.Label;
+
+                switch (vu.DataAttribute.DataType.SystemType)
+                {
+                    case "String":
+                        {
+                            col.DataType = Type.GetType("System.String");
+                            break;
+                        }
+
+                    case "Double":
+                        {
+                            col.DataType = Type.GetType("System.Double");
+                            break;
+                        }
+
+                    case "Int16":
+                        {
+                            col.DataType = Type.GetType("System.Int16");
+                            break;
+                        }
+
+                    case "Int32":
+                        {
+                            col.DataType = Type.GetType("System.Int32");
+                            break;
+                        }
+
+                    case "Int64":
+                        {
+                            col.DataType = Type.GetType("System.Int64");
+                            break;
+                        }
+
+                    case "Decimal":
+                        {
+                            col.DataType = Type.GetType("System.Decimal");
+                            break;
+                        }
+
+                    case "DateTime":
+                        {
+                            col.DataType = Type.GetType("System.DateTime");
+                            break;
+                        }
+
+                    default:
+                        {
+                            col.DataType = Type.GetType("System.String");
+                            break;
+                        }
+                }
+
+                if (vu.Parameters.Count > 0)
+                {
+                    foreach (var pu in vu.Parameters)
+                    {
+                        DataColumn col2 = dt.Columns.Add(pu.Label.Replace(" ", "")); // or DisplayName also
+                        col2.Caption = pu.Label;
+
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -381,9 +398,6 @@ namespace BExIS.IO.Transform.Output
         /// <returns></returns>
         private static DataRow ConvertTupleIntoDataRow(DataTable dt, AbstractTuple t, StructuredDataStructure sts, bool useLabelsAsColumnName = false)
         {
-
-
-
             DataRow dr = dt.NewRow();
             string columnName = "";
             foreach (var vv in t.VariableValues)

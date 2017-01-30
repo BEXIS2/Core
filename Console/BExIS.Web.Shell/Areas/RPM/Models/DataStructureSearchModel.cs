@@ -56,7 +56,11 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
             if (datastructure != null)
             {
                 foreach (Variable v in DataStructureIO.getOrderedVariables(datastructure))
-                {                    
+                {
+                    v.Unit = v.Unit ?? new Unit();
+                    v.DataAttribute = v.DataAttribute ?? new DataAttribute();
+                    v.DataAttribute.DataType = v.DataAttribute.DataType ?? new DataType();
+
                     variablePreview = new VariablePreview();
                     variablePreview.Id = v.Id;
                     variablePreview.Label = v.Label;

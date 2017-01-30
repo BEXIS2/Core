@@ -67,6 +67,7 @@
     <Compile Include="DataWriter.cs" />
     <Compile Include="ExcelWriter.cs" />
     <Compile Include="OutputDatasetManager.cs" />
+    <Compile Include="OutputDataStructureManager.cs" />
     <Compile Include="OutputMetadataManager.cs" />
     <Compile Include="OutputDataManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
