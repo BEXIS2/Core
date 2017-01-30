@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Xml;
 using BExIS.Dlm.Entities.MetadataStructure;
 using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
@@ -216,7 +217,7 @@ namespace BExIS.Dlm.Services.MetadataStructure
             return (result);
         }
 
-        public MetadataPackageUsage AddMetadataPackageUsage(MDS.MetadataStructure structure, MetadataPackage package, string label, string description, int minCardinality, int maxCardinality)
+        public MetadataPackageUsage AddMetadataPackageUsage(MDS.MetadataStructure structure, MetadataPackage package, string label, string description, int minCardinality, int maxCardinality, XmlDocument extra = null)
         {
             Contract.Requires(package != null && package.Id >= 0);
             Contract.Requires(structure != null && structure.Id >= 0);
@@ -245,6 +246,7 @@ namespace BExIS.Dlm.Services.MetadataStructure
                 Description = description,
                 MinCardinality = minCardinality,
                 MaxCardinality = maxCardinality,
+                Extra = extra
             };
             structure.MetadataPackageUsages.Add(usage);
             package.UsedIn.Add(usage);

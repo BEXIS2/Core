@@ -8,7 +8,7 @@ namespace BExIS.Dlm.Entities.Party
 {
     public class Party : BaseEntity
     {
-
+        
         public virtual string Name { get; set; }
         public virtual string Alias { get; set; }
         public virtual string Description { get; set; }
@@ -18,6 +18,7 @@ namespace BExIS.Dlm.Entities.Party
         public Party()
         {
             CustomAttributeValues = new List<PartyCustomAttributeValue>();
+            PartyType = new PartyType();
             History = new List<PartyStatus>();
         }
         #region Associations

@@ -11,7 +11,7 @@ namespace BExIS.Dlm.Entities.Party
     {
         public PartyCustomAttribute()
         {
-            ValidValues = new List<Dictionary<string, string>>();
+           
             CustomAttributeValues = new List<PartyCustomAttributeValue>();
         }
 
@@ -23,8 +23,8 @@ namespace BExIS.Dlm.Entities.Party
         public virtual string DataType { get; set; } // the type of value. mainly used for UI rendering and validation purposes
         // restricts the vlaues allowed at the corresponding attribute's values. dictionary is chosen to have internal code/ UI friendly names.
         // empty list means no restriction.
-        [XmlIgnore]
-        public virtual List<Dictionary<string, string>> ValidValues { get; set; } 
+        
+        public virtual string ValidValues { get; set; } 
         #endregion
 
         #region Associations

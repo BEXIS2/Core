@@ -11,6 +11,7 @@ using System.Xml.Schema;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.MetadataStructure;
+using BExIS.IO;
 using BExIS.Xml.Models;
 using BExIS.Xml.Models.Mapping;
 using BExIS.Xml.Services;
@@ -197,7 +198,7 @@ namespace BExIS.Xml.Helpers.Mapping
             return newMetadata;
         }
 
-        public string Export(XmlDocument metadataXml , long datasetVersionId)
+        public string Export(XmlDocument metadataXml , long datasetVersionId, string exportTo)
         {
             #region abcd (metadata from bexis to abcd)
 
@@ -240,7 +241,7 @@ namespace BExIS.Xml.Helpers.Mapping
                 root.Attributes.Append(attr);
             }
 
-            string path = Path.Combine(AppConfiguration.DataPath, getStorePath(datasetVersionId));
+            string path = Path.Combine(AppConfiguration.DataPath, getStorePath(datasetVersionId, exportTo));
 
             newMetadata.Save(path);
 
@@ -262,7 +263,7 @@ namespace BExIS.Xml.Helpers.Mapping
             return path;
         }
 
-        public XmlDocument Export(XmlDocument metadataXml, long datasetVersionId, bool save = false)
+        public XmlDocument Export(XmlDocument metadataXml, long datasetVersionId,string exportTo, bool save = false)
         {
             #region abcd (metadata from bexis to abcd)
 
@@ -305,9 +306,12 @@ namespace BExIS.Xml.Helpers.Mapping
                 root.Attributes.Append(attr);
             }
 
-            string path = getStorePath(datasetVersionId);
+            string path = getStorePath(datasetVersionId, exportTo);
+            string fullpath = Path.Combine(AppConfiguration.DataPath, path);
 
-            newMetadata.Save(Path.Combine(AppConfiguration.DataPath, path));
+            FileHelper.CreateDicrectoriesIfNotExist(Path.GetDirectoryName(fullpath));
+
+            newMetadata.Save(fullpath);
 
             //XmlReaderSettings settings = new XmlReaderSettings();
             //settings.Schemas.Add(xmlSchemaManager.Schema);
@@ -642,7 +646,7 @@ namespace BExIS.Xml.Helpers.Mapping
                 return parentTemp;
         }
 
-        private string getStorePath(long datasetVersionId)
+        private string getStorePath(long datasetVersionId,string exportTo)
         {
             DatasetManager datasetManager = new DatasetManager();
             DatasetVersion datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
@@ -652,8 +656,7 @@ namespace BExIS.Xml.Helpers.Mapping
             MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
             string md_title = metadataStructureManager.Repo.Get(datasetVersion.Dataset.MetadataStructure.Id).Name;
 
-            string path = IOHelper.GetDynamicStorePath(datasetVersionId, datasetVersion.Id,
-              XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title) + "_" + md_title, ".xml");
+            string path = IOHelper.GetDynamicStorePath(datasetVersion.Dataset.Id, datasetVersionId,"metadata_"+ exportTo, ".xml");
 
             return path;
         }
