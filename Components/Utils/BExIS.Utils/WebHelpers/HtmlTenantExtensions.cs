@@ -1,11 +1,8 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Web;
 using System.Web.Mvc;
 using System.Xml.Linq;
-using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Utils.WebHelpers
 {
@@ -60,11 +57,4 @@ namespace BExIS.Utils.WebHelpers
         }
     }
 
-    public static class HtmlNavigationExtensions
-    {
-        public static XElement ExportTree(this HtmlHelper htmlHelper)
-        {
-            return ModuleManager.ExportTree;
-        }
-    }
 }

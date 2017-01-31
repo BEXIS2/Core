@@ -646,6 +646,14 @@
     <Content Include="Areas\RPM\Views\DataStructureEdit\_dataTypeDropdown.cshtml" />
     <Content Include="Areas\DCM\Views\ManageMetadataStructure\_editMetadataStructureView.cshtml" />
     <Content Include="Areas\DDM\Views\Data\_fileSizeView.cshtml" />
+    <Content Include="Areas\BAM\Views\Party\Create.cshtml" />
+    <Content Include="Areas\BAM\Views\Party\DeleteConfirm.cshtml" />
+    <Content Include="Areas\BAM\Views\Party\Edit.cshtml" />
+    <Content Include="Areas\BAM\Views\Party\Index.cshtml" />
+    <Content Include="Areas\BAM\Views\Party\View.cshtml" />
+    <Content Include="Areas\BAM\Views\Party\_customAttributesView.cshtml" />
+    <Content Include="Areas\BAM\Views\web.config" />
+    <Content Include="Areas\BAM\Views\_ViewStart.cshtml" />
     <None Include="Properties\PublishProfiles\BPP Publish.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\DCM\Form.js" />
@@ -999,7 +1007,6 @@
     <Folder Include="Areas\DIM\Views\Api\" />
     <Folder Include="Areas\DIM\Views\Shared\" />
     <Folder Include="Areas\MSM\Views\Shared\" />
-    <Folder Include="Areas\RPM\Views\Shared\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Home\About.cshtml" />
