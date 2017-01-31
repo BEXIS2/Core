@@ -45,7 +45,24 @@ namespace BExIS.Xml.Helpers
             return simpleTypes;
         }
 
-    
+        /// <summary>
+        /// Get all simple types from the schema.
+        /// </summary>
+        /// <param name="schema"></param>
+        /// <returns></returns>
+        public static List<XmlSchemaAttribute> GetAllAttributes(XmlSchema schema)
+        {
+            List<XmlSchemaAttribute> attributes = new List<XmlSchemaAttribute>();
+
+            foreach (XmlSchemaObject item in schema.Items)
+            {
+                if (item is XmlSchemaAttribute) attributes.Add((XmlSchemaAttribute)item);
+            }
+
+            return attributes;
+        }
+
+
         /// <summary>
         /// Get all elements from the schema.
         /// </summary>
@@ -390,6 +407,56 @@ namespace BExIS.Xml.Helpers
                     return true;
             }
 
+            return false;
+        }
+
+        /// <summary>
+        /// return true if a Element is a Choice
+        /// </summary>
+        /// <param name="element"></param>
+        /// <returns></returns>
+        public static bool IsChoiceType(XmlSchemaElement element)
+        {
+            if (element.ElementSchemaType is XmlSchemaComplexType)
+            {
+                XmlSchemaComplexType ct = element.ElementSchemaType as XmlSchemaComplexType;
+
+                if (ct != null)
+                {
+                    #region choice
+                    // check if it is e choice
+                    XmlSchemaChoice choice = ct.ContentTypeParticle as XmlSchemaChoice;
+                    if (choice != null)
+                    {
+                        return true;
+                    }
+                    #endregion
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// return true if a Element is a Choice
+        /// </summary>
+        /// <param name="element"></param>
+        /// <returns></returns>
+        public static bool IsChoiceType(XmlSchemaComplexType complexType)
+        {
+
+            if (complexType != null)
+            {
+                #region choice
+                // check if it is e choice
+                XmlSchemaChoice choice = complexType.ContentTypeParticle as XmlSchemaChoice;
+                if (choice != null)
+                {
+                    return true;
+                }
+                #endregion
+            }
+     
             return false;
         }
 

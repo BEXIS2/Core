@@ -18,7 +18,6 @@
                    .HtmlAttributes(new { style = "text-align:center" });
             columns.Bound(d => d.Id);
             columns.Bound(d => d.Title);
-            columns.Bound(d => d.Version);
         })
         .DataBinding(dataBinding => dataBinding
                 .Ajax()

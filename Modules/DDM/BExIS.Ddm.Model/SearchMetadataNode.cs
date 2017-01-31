@@ -5,6 +5,7 @@ using System.Text;
 
 namespace BExIS.Ddm.Model
 {
+    //ToDo set this enitiy to a other place because of reading a metadata structure ad create a list of all simple attribute with xpath and displayname is also important for other places as search designer
     public class SearchMetadataNode
     {
         public string MetadataStructureName { get; set; }

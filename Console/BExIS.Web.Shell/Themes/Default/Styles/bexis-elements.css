@@ -144,6 +144,11 @@ button.t-state-disabled,
 a.bx-grid-function {
     margin-left:2px;
     margin-right:2px;
+    cursor: pointer;
+}
+
+.t-grid-filter {
+     cursor: pointer;
 }
 
 input[type=radio].css-checkbox {
@@ -463,4 +468,10 @@ ul.bx-list-multi
 
 .bx-selection-grid tr:hover {
     background-color: #eff7f6;
+}
+
+/**GENERAL*/
+
+.bx-mouse-pointer:hover {
+    cursor: pointer;
 }

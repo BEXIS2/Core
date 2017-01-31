@@ -41,6 +41,52 @@ namespace BExIS.Xml.Helpers
 
         #region update new xml metadata with a base template
 
+        public static XmlDocument FillInXmlValues(XmlDocument source, XmlDocument destination)
+        {
+            // add missing nodes
+            //doc = manipulate(doc);
+
+            // add the xml attributes
+            setValues(source, destination);
+
+            return destination;
+        }
+
+        // rekursive Funktion
+        private static void setValues(XmlNode root, XmlDocument doc)
+        {
+            foreach (XmlNode node in root.ChildNodes)
+            {
+                Debug.WriteLine(node.Name);///////////////////////////////////////////////////////////////////////////
+                if (!node.HasChildNodes)
+                {
+                    if (node.NodeType == System.Xml.XmlNodeType.Text)
+                    {
+                        string xpath = XmlUtility.GetDirectXPathToNode(node.ParentNode);
+                        string value = node.Value;
+                        if (value != null)
+                        {
+                            XmlNode tmpNode = doc.SelectSingleNode(xpath);
+
+                            if (tmpNode != null && value != null)
+                            {
+                                tmpNode.InnerText = value;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        setValues(node, doc); // next level recursively
+                    }
+                    
+                }
+                else
+                {
+                    setValues(node, doc); // next level recursively
+                }
+            }
+        }
+
         public static XmlDocument FillInXmlAttributes(XmlDocument metadataXml, XmlDocument metadataXmlTemplate)
         {
             // add missing nodes

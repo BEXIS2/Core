@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -12,12 +13,14 @@ using BExIS.Dcm.Wizard;
 using BExIS.Ddm.Model;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
+using BExIS.Security.Services.Objects;
 using BExIS.Web.Shell.Areas.DCM.Models.ImportMetadata;
 using BExIS.Xml.Helpers;
 using BExIS.Web.Shell.Areas.DCM.Models;
 using BExIS.Web.Shell.Models;
 using BExIS.Web.Shell.Helpers;
 using BExIS.Xml.Services;
+using Vaiona.Utils.Cfg;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
 {
@@ -43,6 +46,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     TaskManager.SetCurrent(index);
 
                 model.MetadataNodes = GetMetadataNodes();
+                model.Entities = GetEntityList();
             }
             else
             {
@@ -50,11 +54,13 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             }
 
             if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.TITLE_NODE))
-                model.TitleNode = TaskManager.Bus[ImportMetadataStructureTaskManager.TITLE_NODE].ToString();
+                model.TitleNode = GetDisplayName((string) TaskManager.Bus[ImportMetadataStructureTaskManager.TITLE_NODE]);
 
             if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.DESCRIPTION_NODE))
-                model.DescriptionNode = TaskManager.Bus[ImportMetadataStructureTaskManager.DESCRIPTION_NODE].ToString();
-
+                model.DescriptionNode =
+                    GetDisplayName((string) TaskManager.Bus[ImportMetadataStructureTaskManager.DESCRIPTION_NODE]);
+            if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.ENTITY_TYPE_NODE))
+                model.EntityType = TaskManager.Bus[ImportMetadataStructureTaskManager.ENTITY_TYPE_NODE].ToString();
 
             model.StepInfo = TaskManager.Current();
             model.StepInfo.notExecuted = true;
@@ -71,7 +77,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             model.StepInfo = TaskManager.Current();
 
             if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.TITLE_NODE)
-                && TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.DESCRIPTION_NODE))
+                && TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.DESCRIPTION_NODE)
+                && TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.ENTITY_TYPE_NODE))
             {
                 long id = Convert.ToInt64((TaskManager.Bus[ImportMetadataStructureTaskManager.METADATASTRUCTURE_ID]));
 
@@ -79,14 +86,16 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 string mappingFilePathExport = TaskManager.Bus[ImportMetadataStructureTaskManager.MAPPING_FILE_NAME_EXPORT].ToString();
                 string titleXpath = TaskManager.Bus[ImportMetadataStructureTaskManager.TITLE_NODE].ToString();
                 string descriptionXpath = TaskManager.Bus[ImportMetadataStructureTaskManager.DESCRIPTION_NODE].ToString();
+                string entity = TaskManager.Bus[ImportMetadataStructureTaskManager.ENTITY_TYPE_NODE].ToString();
                 model.TitleNode = GetMetadataNodes().First(p => p.XPath.Equals(titleXpath)).DisplayName;
                 model.DescriptionNode = GetMetadataNodes().First(p => p.XPath.Equals(descriptionXpath)).DisplayName;
+                model.EntityType = TaskManager.Bus[ImportMetadataStructureTaskManager.ENTITY_TYPE_NODE].ToString();
 
                 TaskManager.Current().SetValid(true);
 
                 try
                 {
-                    StoreParametersToMetadataStruture(id, titleXpath, descriptionXpath, mappingFilePathImport, mappingFilePathExport);
+                    StoreParametersToMetadataStruture(id, titleXpath,  descriptionXpath, entity, mappingFilePathImport, mappingFilePathExport);
                 }
                 catch (Exception ex)
                 {
@@ -179,12 +188,17 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             else
                 TaskManager.Bus.Add(ImportMetadataStructureTaskManager.DESCRIPTION_NODE, model.DescriptionNode);
 
+            if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.ENTITY_TYPE_NODE))
+                TaskManager.Bus[ImportMetadataStructureTaskManager.ENTITY_TYPE_NODE] = model.EntityType;
+            else
+                TaskManager.Bus.Add(ImportMetadataStructureTaskManager.ENTITY_TYPE_NODE, model.EntityType);
+
             string mappingFilePathImport = TaskManager.Bus[ImportMetadataStructureTaskManager.MAPPING_FILE_NAME_IMPORT].ToString();
             string mappingFilePathExport = TaskManager.Bus[ImportMetadataStructureTaskManager.MAPPING_FILE_NAME_EXPORT].ToString();
 
             try
             {
-                StoreParametersToMetadataStruture(metadatstructureId, model.TitleNode, model.DescriptionNode, mappingFilePathImport, mappingFilePathExport);
+                StoreParametersToMetadataStruture(metadatstructureId, model.TitleNode, model.EntityType, model.DescriptionNode, mappingFilePathImport, mappingFilePathExport);
             }
             catch (Exception ex)
             {
@@ -228,11 +242,18 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             model.TitleNode = SelectedNode.DisplayName;
 
+            model.Entities = GetEntityList();
+
             TaskManager.AddToBus(ImportMetadataStructureTaskManager.TITLE_NODE, SelectedNode.XPath);
 
             if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.DESCRIPTION_NODE))
             {
                 model.DescriptionNode = GetDisplayName((string)TaskManager.Bus[ImportMetadataStructureTaskManager.DESCRIPTION_NODE]);
+            }
+
+            if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.ENTITY_TYPE_NODE))
+            {
+                model.EntityType = TaskManager.Bus[ImportMetadataStructureTaskManager.ENTITY_TYPE_NODE].ToString();
             }
 
             return PartialView("SetParameters", model);
@@ -271,6 +292,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             model.DescriptionNode = SelectedNode.DisplayName;
 
+            model.Entities = GetEntityList();
+
             TaskManager.AddToBus(ImportMetadataStructureTaskManager.DESCRIPTION_NODE, SelectedNode.XPath);
 
             if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.TITLE_NODE))
@@ -278,7 +301,24 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 model.TitleNode = GetDisplayName((string)TaskManager.Bus[ImportMetadataStructureTaskManager.TITLE_NODE]);
             }
 
+            if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.ENTITY_TYPE_NODE))
+            {
+                model.EntityType = TaskManager.Bus[ImportMetadataStructureTaskManager.ENTITY_TYPE_NODE].ToString();
+            }
+
             return PartialView("SetParameters", model);
+        }
+
+        public ActionResult SetEntityName(string name)
+        {
+            TaskManager = (ImportMetadataStructureTaskManager)Session["TaskManager"];
+
+            if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.ENTITY_TYPE_NODE))
+                TaskManager.Bus[ImportMetadataStructureTaskManager.ENTITY_TYPE_NODE] = name;
+            else
+                TaskManager.Bus.Add(ImportMetadataStructureTaskManager.ENTITY_TYPE_NODE, name);
+
+            return null;
         }
 
         private List<SearchMetadataNode> GetMetadataNodes()
@@ -291,6 +331,15 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             }
 
             return (List<SearchMetadataNode>)TaskManager.Bus[ImportMetadataStructureTaskManager.ALL_METADATA_NODES];
+        }
+
+        private List<string> GetEntityList()
+        {
+            EntityManager entityManager = new EntityManager();
+
+            IEnumerable<string> tmp = entityManager.GetAllEntities().Select(e => e.ClassPath);
+
+            return tmp.ToList();
         }
 
         private string GetDisplayName(string xpath)
@@ -310,7 +359,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         /// <param name="descriptionPath"></param>
         /// <param name="mappingFilePath"></param>
         /// <param name="direction"></param>
-        private void StoreParametersToMetadataStruture(long id, string titlePath, string descriptionPath, string mappingFilePathImport, string mappingFilePathExport)
+        private void StoreParametersToMetadataStruture(long id, string titlePath, string descriptionPath,string entity, string mappingFilePathImport, string mappingFilePathExport)
         {
             MetadataStructureManager mdsManager = new MetadataStructureManager();
             MetadataStructure metadataStructure = mdsManager.Repo.Get(id);
@@ -327,9 +376,14 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             // add Description
             xmlDoc = AddReferenceToMetadatStructure("description", descriptionPath, AttributeType.xpath.ToString(), "extra/nodeReferences/nodeRef", xmlDoc);
 
+            xmlDoc = AddReferenceToMetadatStructure("entity", entity, AttributeType.entity.ToString(), "extra/entity", xmlDoc);
+
             // add mappingFilePath
             xmlDoc = AddReferenceToMetadatStructure(metadataStructure.Name, mappingFilePathImport, "mappingFileImport", "extra/convertReferences/convertRef", xmlDoc);
             xmlDoc = AddReferenceToMetadatStructure(metadataStructure.Name, mappingFilePathExport, "mappingFileExport", "extra/convertReferences/convertRef", xmlDoc);
+
+            //set active
+            xmlDoc = AddReferenceToMetadatStructure(NameAttributeValues.active.ToString(), true.ToString(), AttributeType.parameter.ToString(), "extra/parameters/parameter", xmlDoc);
 
             metadataStructure.Extra = xmlDoc;
             mdsManager.Update(metadataStructure);

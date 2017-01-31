@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.MetadataStructure;
+using BExIS.Xml.Helpers;
 using BExIS.Xml.Services;
 
 namespace BExIS.IO.Transform.Output
@@ -69,6 +72,30 @@ namespace BExIS.IO.Transform.Output
             return gfbioPangaeaFormularObject;
         }
 
+        public static string GetDynamicDatasetStorePath(long datasetId, long datasetVersionOrderNr, string title, string extention)
+        {
+            return IoHelper.GetDynamicStorePath(datasetId, datasetVersionOrderNr, title, extention);
+        }
+
+        public static XmlDocument GenerateManifest(long datasetId, long versionId)
+        {
+            XmlDocument root = new XmlDocument();
+            XmlNode manifest = XmlUtility.CreateNode("manifest", root);
+
+            XmlElement elem = root.CreateElement("datasetId");
+            elem.InnerText = datasetId.ToString();
+            manifest.AppendChild(elem);
+
+            elem = root.CreateElement("datasetversionid");
+            elem.InnerText = versionId.ToString();
+            manifest.AppendChild(elem);
+
+            elem = root.CreateElement("generationtime");
+            elem.InnerText = DateTime.UtcNow.ToString();
+            manifest.AppendChild(elem);
+            root.AppendChild(manifest);
+            return root;
+        }
     }
 
     public class OutputFormularObject

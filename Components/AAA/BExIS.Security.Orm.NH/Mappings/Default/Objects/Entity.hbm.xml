@@ -24,7 +24,15 @@
     <property name="ClassPath" type="String" >
       <column name="ClassPath" />
     </property>
+    
+    <property name="Securable" type="Boolean" >
+      <column name="Securable" default="false" />
+    </property>
 
+    <property name="UseMetadata" type="Boolean" >
+      <column name="UseMetadata" default="false" />
+    </property>
+    
     <set name="DataPermissions" inverse="true" cascade="all-delete-orphan" lazy="true">
       <key column="EntityRef"/>
       <one-to-many class="BExIS.Security.Entities.Authorization.DataPermission, BExIS.Security.Entities" />

@@ -18,13 +18,15 @@ namespace BExIS.Security.Services.Objects
 
         public IReadOnlyRepository<Entity> EntitiesRepo { get; private set; }
 
-        public Entity CreateEntity(string name, string classPath, string assemblyPath)
+        public Entity CreateEntity(string name, string classPath, string assemblyPath, bool isSecureable = false, bool useWithMetadata = false)
         {
             Entity entity = new Entity()
             {
                 Name = name,
                 ClassPath = classPath,
-                AssemblyPath = assemblyPath
+                AssemblyPath = assemblyPath,
+                Securable = isSecureable,
+                UseMetadata = useWithMetadata,
             };
 
             using (IUnitOfWork uow = this.GetUnitOfWork())

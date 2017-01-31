@@ -37,7 +37,7 @@
 @using (Html.BeginForm("editAttribute", "DataAttribute", new { area = "RPM" }))
 {
    @(Html.HiddenFor(m=>m.Id, new {@class = "hidden"})) 
-    <table class="bx-rpm-info" style="width: 955px;">
+    <table class="bx-rpm-info">
         <tr>
             <td id="name" style="width:120px">
                 Name <span class="bx bx-required" title="Required"></span>
@@ -144,6 +144,85 @@
 </div>
     
 <script type="text/jscript">
+    $(document).ready(function () {
+        onRangeChange();
+    });
+
+    function onRangeChange() {
+        if ($('#range_min').val() > $('#range_max').val()) {
+            $('.bx-rpm-constrainTable #errorMsg').removeClass('hidden');
+            $('.bx-rpm-constrainTable #errorMsgText').text('Invalid Constraint Max must be greater/equals than Min.');
+        }
+        else if (parseInt($('#range_min').val()) <= parseInt($('#range_max').val())) {
+            $('.bx-rpm-constrainTable #errorMsg').addClass('hidden');
+            $('.bx-rpm-constrainTable #errorMsgText').text('');
+        }
+    }
+
+    $('#rangeConstraint').change(function () {
+
+        if ($('#range_invert').is(":checked")) {
+            $('#range_invert').val(true);
+        }
+        else
+        {
+            $('#range_invert').val(false);
+        }
+
+        if ($('#range_mininclude').is(":checked")) {
+            $('#range_mininclude').val(true);
+        }
+        else {
+            $('#range_mininclude').val(false);
+        }
+
+        if ($('#range_maxinclude').is(":checked")) {
+            $('#range_maxinclude').val(true);
+        }
+        else {
+            $('#range_maxinclude').val(false)
+        }
+        var variables = '?invert=' + $('#range_invert').val() + '&min=' + $('#range_min').val() + '&max=' + $('#range_max').val() + '&mininclude=' + $('#range_mininclude').val() + '&maxinclude=' + $('#range_maxinclude').val();
+
+        $.getJSON('/RPM/DataAttribute/getRangeConstraintFormalDescription/' + variables, function (data) {
+            $('#range_FormalDescription').attr("title",data);
+        });
+        onRangeChange();
+    })
+
+    $('#patternConstraint').change(function () {
+
+        if ($('#pattern_invert').is(":checked")) {
+            $('#pattern_invert').val(true)
+        }
+        else
+        {
+            $('#pattern_invert').val(false)
+        }
+
+        var variables = '?invert=' + $('#pattern_invert').val() + '&phrase=' + $('#pattern_phrase').val();
+
+        $.getJSON('/RPM/DataAttribute/getPatternConstraintFormalDescription/' + variables, function (data) {
+            $('#pattern_FormalDescription').attr("title", data);
+        });
+    })
+
+    $('#domainConstraint').change(function () {
+
+        if ($('#domain_invert').is(":checked")) {
+            $('#domain_invert').val(true)
+        }
+        else
+        {
+            $('#domain_invert').val(false)
+        }
+
+        var variables = '?invert=' + $('#domain_invert').val() + '&Terms=' + $('#domain_terms').val();
+
+        $.getJSON('/RPM/DataAttribute/getDomainConstraintFormalDescription/' + variables, function (data) {
+            $('#domain_FormalDescription').attr("title", data);
+        });
+    })
     
     function restRange(item)
     {

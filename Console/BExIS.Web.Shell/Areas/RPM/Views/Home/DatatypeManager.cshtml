@@ -4,6 +4,7 @@
 @using System
 @using System.Text.RegularExpressions
 @using BExIS.Web.Shell.Areas.RPM.Models
+@using BExIS.IO.DataType.DisplayPattern
 @model List<BExIS.Dlm.Entities.DataStructure.DataType>
 
 @*<header>*@
@@ -45,18 +46,27 @@
     @Html.ActionLink("Create Data Type", "openDataTypeWindow", "Home", new { id = 0 }, new { @class = "bx-button function" })
 </div>
 
-    @(Html.Telerik().Grid(Model)    
+    @(Html.Telerik().Grid(Model)
             .Name("bx-rpm-dataTypeGrid")
             .Sortable()
-            .Filterable()           
+            .Filterable()
             .Columns(columns =>
-                {
-                    columns.Bound(c => c.Id)
-                    .Width(100);
-                    columns.Bound(c => c.Name);
-                    columns.Bound(c => c.SystemType);
-                    columns.Bound(c => c.Description);
-                    columns.Template(
+            {
+            columns.Bound(c => c.Id)
+            .Width(100);
+            columns.Bound(c => c.Name);
+            columns.Bound(c => c.SystemType);
+            columns.Template(
+                @<text>
+                    @if (DataTypeDisplayPattern.Materialize(item.Extra) != null)
+                    {
+                        <span>@DataTypeDisplayPattern.Materialize(item.Extra).StringPattern</span>
+                    }
+                </text>
+            )
+            .Title("Display Pattern");
+            columns.Bound(c => c.Description);
+            columns.Template(
                         @<text>
                             @if(!(item.DataContainers.Count > 0))
                             {
