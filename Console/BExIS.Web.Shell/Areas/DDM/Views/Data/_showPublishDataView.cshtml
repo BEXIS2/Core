@@ -49,13 +49,11 @@
                                 console.log(metadataValidMessage);
                                 console.log(isDataConvertable);
 
-
-
                                 $("#submitPublishBt").removeAttr("disabled");
                                 $("#submitPublishBt").removeClass("bx-disabled");
 
                             } else if (isMetadataConvertable && typeof metadataValidMessage!=="undefined" && isDataConvertable) {
-                                
+
                                 if (typeof metadataValidMessage!=="undefined") {
                                     alert(metadataValidMessage);
                                     $("#submitPublishBt").removeAttr("disabled");
@@ -120,6 +118,23 @@
                     //alert(response);
                     $("#publishContentContainer").replaceWith(response);
                     $("#preloader").removePreloader();
+
+                });
+
+            $.post('@Url.Action("SendDataToDataRepo", "Data", new RouteValueDictionary {{"area", "DDM"}})',
+                { datasetid: id, datarepo: input },
+                function(response) {
+
+                    var obj = jQuery.parseJSON(response);
+                    //alert(response);
+                    //$("#publishContentContainer").replaceWith(response);
+                    //$("#preloader").removePreloader();
+                    var message = $("#requirementsContainer").text();
+                    
+                    var htmltext = "<p>"+message+"</p><p><b>"+obj.exception+"</b><br/>"+ obj.message+"</p>";
+
+                    $("#requirementsContainer").html(htmltext);
+                    $("#requirementsContainer").css("color", "#f24c24");
 
                 });
 

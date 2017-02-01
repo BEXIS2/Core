@@ -1,10 +1,9 @@
-﻿using System;
+﻿using BExIS.Dim.Entities;
+using BExIS.IO;
+using BExIS.Xml.Helpers;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
-using BExIS.Dim.Entities;
-using BExIS.IO;
-using BExIS.Xml.Helpers;
 using Vaiona.Utils.Cfg;
 
 namespace BExIS.Dim.Helpers
@@ -24,7 +23,7 @@ namespace BExIS.Dim.Helpers
 
         public void Load()
         {
-            string filepath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"),sourceFile);
+            string filepath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), sourceFile);
 
             if (FileHelper.FileExist(filepath))
             {
@@ -60,6 +59,11 @@ namespace BExIS.Dim.Helpers
             return Path.Combine(AppConfiguration.DataPath, "Datasets", datasetid.ToString(), "publish", dataRepository.Name);
         }
 
+        public string GetDynamicDirectoryPath(long datasetid, DataRepository dataRepository)
+        {
+            return Path.Combine("Datasets", datasetid.ToString(), "publish", dataRepository.Name);
+        }
+
         public string GetZipFileName(long datasetid, long datasetVersionid)
         {
             return datasetid + "_" + datasetVersionid + "_Dataset.zip";
@@ -79,7 +83,7 @@ namespace BExIS.Dim.Helpers
 
             return false;
         }
-        
+
         #endregion
 
 

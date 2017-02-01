@@ -1,5 +1,8 @@
 ﻿using BExIS.Dim.Entities;
+using BExIS.Dim.Entities.Publication;
 using BExIS.Dim.Helpers;
+using BExIS.Dim.Helpers.GFBIO;
+using BExIS.Dim.Services;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
@@ -21,6 +24,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using System.Web.Script.Serialization;
 using System.Xml;
 using System.Xml.Schema;
 using Vaiona.Utils.Cfg;
@@ -90,47 +94,65 @@ namespace BExIS.Web.Shell.Controllers
             DataRepository dataRepository =
                 submissionManager.DataRepositories.Where(d => d.Name.ToLower().Equals("gfbio")).FirstOrDefault();
 
-            GFBIOWebserviceManager gfbioWebserviceManager = new GFBIOWebserviceManager(dataRepository);
+            Broker broker = new Broker();
+            broker.Name = "gfbio";
+            broker.UserName = "dblaa@bgc-jena.mpg.de";
+            broker.Password = "1mpi4bg";
+            broker.PrimaryDataFormat = "text/csv";
+            broker.Server = "https://gfbio-dev1.inf-bb.uni-jena.de:8080";
 
+            GFBIOWebserviceManager gfbioWebserviceManager = new GFBIOWebserviceManager(broker);
 
+            //get user by email
+            var user = await gfbioWebserviceManager.GetUserByEmail("dblaa@bgc-jena.mpg.de");
+            GFBIOUser gfbiouser = new JavaScriptSerializer().Deserialize<GFBIOUser>(user);
+            Debug.WriteLine(user);
 
-            Debug.WriteLine("call a webservice from gfbio");
-            Debug.WriteLine("GET");
-            Debug.WriteLine("-----------------------------------------------------------");
-
-            //research object id 201
-            //wieso als json ein array?
-            var p = await CallGFBIOWebservice(2102, "get-research-object-by-id", "researchobject", "[{\"researchobjectid\":2102}]");
-            Debug.WriteLine(p);
-
-            p = await gfbioWebserviceManager.GetResearchObjectById(2102);
-            Debug.WriteLine(p);
-
-            Debug.WriteLine("-----------------------------------------------------------");
-            //project id 201
-            p = await CallGFBIOWebservice(201, "get-project-by-id", "project", "{\"projectid\":201}");
-            Debug.WriteLine(p);
-            if (string.IsNullOrEmpty(p))
+            if (gfbiouser.userid == 0)
             {
-                Debug.WriteLine("Create");
-                Debug.WriteLine("-----------------------------------------------------------");
-
-
-
-                p =
-                    await
-                        CallGFBIOWebservice(201, "create-project", "project",
-                            "{\"userid\":1,\"name\":\"bexis 2 test\",\"description\":\"test\"}");
-
-                Debug.WriteLine(p);
+                GFBIOException exception = new JavaScriptSerializer().Deserialize<GFBIOException>(user);
+                Debug.WriteLine(exception);
             }
 
-            //wieso als return json ein array?
-            // create research object 
-            // name, label, extendeddata (json), researchobjecttype (e.eg metadata schema)
-            //p = await CallGFBIOWebservice(201, "create-research-object", "researchobject", "[{\"name\":\"bexis 2 ro create\",\"label\":\"bexis 2 ro create\",\"extendeddata\":{},\"researchobjecttype\":\"metadata schema\"}]");
-            Debug.WriteLine(p);
+            //send false email by email
+            user = await gfbioWebserviceManager.GetUserByEmail("xxx@cccc.x");
+            gfbiouser = new JavaScriptSerializer().Deserialize<GFBIOUser>(user);
+            if (gfbiouser.userid == 0)
+            {
+                GFBIOException exception = new JavaScriptSerializer().Deserialize<GFBIOException>(user);
+                Debug.WriteLine(exception);
+            }
 
+
+
+            Debug.WriteLine(user);
+
+            //get-project-by-id
+            var project = await gfbioWebserviceManager.GetProjectById(201);
+            GFBIOProject gfbioproject = new JavaScriptSerializer().Deserialize<GFBIOProject>(project);
+            Debug.WriteLine(gfbioproject);
+
+
+            //get - research - object - by - id
+            var researchObject = await gfbioWebserviceManager.GetResearchObjectById(2001);
+            Debug.WriteLine(researchObject);
+
+            //create-project
+            var newProject = await gfbioWebserviceManager.CreateProject(16297, "MyBexisProject", "MyBexisProject Description");
+            gfbioproject = new JavaScriptSerializer().Deserialize<GFBIOProject>(newProject);
+            Debug.WriteLine(newProject);
+
+
+            string jsonResearchObject = "[" +
+                                        "{ \"description\":\"information':'minimal information\",  \"name\":\"example 1\", \"researchobjecttype\":\"test\", \"submitterid\":1592616297},"
+                                        + "{ \"description\":\"information':'it will create a error\", \"name\":\"example 2\", \"wrongparameter\":\"wrong parameter\"},"
+                                        + "{ \"authornames\":[\"John Uploader\", \"Jane Researcher\"], \"brokerobjectid\":42, \"description\":\"information':'maximal\", \"extendeddata\":\"{'informations':'all information'}\", \"label\":\"ex 03\", \"licenselabel\":\"CC0\", \"metadatalabel\":\"Darwin Core\",\"name\":\"example 3\", \"parentresearchobjectid\":1, \"projectid\":2, \"researchobjecttype\":\"test\", \"submitterid\":15926}]";
+
+            //create - research - object
+            var newResearchObject = gfbioWebserviceManager.CreateResearchObject(gfbiouser.userid, "bexis ro 2", "description", "ro type", "{lalala}",
+                new string[] { "david", "marcel" });
+
+            Debug.WriteLine(newResearchObject);
 
             UiTestModel model = new UiTestModel();
             model = DynamicListToDataTable();
@@ -138,17 +160,13 @@ namespace BExIS.Web.Shell.Controllers
             return View("Index", model);
         }
 
-        public async Task<string> CallGFBIOWebservice(long id, string apiName, string entityName, string json)
+        public async Task<string> CallGFBIOWebservice(string apiName, string entityName, string json, string jsonRequest)
         {
 
             string server =
                 @"http://gfbio-dev1.inf-bb.uni-jena.de:8080/api/jsonws/GFBioProject-portlet.";
 
-            string jsonRequest = @"request-json";
-
-
-            //string parameters = @"[{" + parametername + ":" + id + "}]";
-            //"[{\""+parametername+"\":"+id+"}]";
+            //string jsonRequest = @"request-json";
             string parameters = json;
 
             string url = server + entityName + "/" + apiName + "/" + jsonRequest + "/";
@@ -163,7 +181,6 @@ namespace BExIS.Web.Shell.Controllers
                 using (var client = new HttpClient())
                 {
                     //generate url
-
                     client.BaseAddress = new Uri(url);
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -175,10 +192,9 @@ namespace BExIS.Web.Shell.Controllers
                     AuthenticationHeaderValue ahv = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
                     client.DefaultRequestHeaders.Authorization = ahv;
 
-                    //http://gfbio-dev1.inf-bb.uni-jena.de:8080/api/jsonws/GFBioProject-portlet.researchobject/get-research-object-by-id/request-json/%5B%7B%22researchobjectid%22%3A3%20%7D%5D
-                    string requesturl = url + Server.UrlEncode(parameters);
+                    string requesturl = url + WebServiceHelper.Encode(parameters);
                     Debug.WriteLine(requesturl);
-                    Debug.WriteLine(Server.UrlEncode(parameters));
+                    Debug.WriteLine(WebServiceHelper.Encode(parameters));
                     HttpResponseMessage response = await client.GetAsync(requesturl);
                     response.EnsureSuccessStatusCode();
                     returnValue = ((HttpResponseMessage)response).Content.ReadAsStringAsync().Result;
@@ -190,6 +206,45 @@ namespace BExIS.Web.Shell.Controllers
                 throw (e);
             }
         }
+
+
+        public ActionResult publicationTest()
+        {
+            //get datasetversion 
+            DatasetManager datasetManager = new DatasetManager();
+
+            DatasetVersion dsv = datasetManager.GetDatasetLatestVersion(1);
+
+            //publicationtest
+
+            PublicationManager publicationManager = new PublicationManager();
+
+
+            //create broker
+            Broker broker = publicationManager.CreateBroker("Broker 1", "ServerUrl", "dave", "1234", "", "text/csv");
+
+            //create Repository
+            Repository Repo = publicationManager.CreateRepository("Repo 1", "Url", broker);
+
+            //create Publication
+            Publication p = publicationManager.CreatePublication(dsv, broker, "ROJ 1", 1, "filepath");
+
+            //update Publication
+            p.Repository = Repo;
+            publicationManager.UpdatePublication(p);
+
+
+            publicationManager.DeletePublication(p);
+            publicationManager.DeleteBroker(broker);
+            publicationManager.DeleteRepository(Repo);
+
+
+            UiTestModel model = new UiTestModel();
+
+            model = DynamicListToDataTable();
+            return View("Index", model);
+        }
+
 
         //event handler to manage the errors
         private void verifyErrors(object sender, ValidationEventArgs args)

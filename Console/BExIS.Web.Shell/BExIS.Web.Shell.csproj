@@ -1317,6 +1317,10 @@
       <Project>{81ef18e8-dced-4980-96f9-e99124075b82}</Project>
       <Name>BExIS.Dim.Helpers</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Modules\DIM\BExIS.Dim.Services\BExIS.Dim.Services.csproj">
+      <Project>{cac933a2-6849-4c61-82b4-cbf4052210cc}</Project>
+      <Name>BExIS.Dim.Services</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Modules\RPM\BExIS.RPM.Model\BExIS.RPM.Model.csproj">
       <Project>{063b9e3f-e0dd-43fe-9910-5b1544b8b861}</Project>
       <Name>BExIS.RPM.Model</Name>
