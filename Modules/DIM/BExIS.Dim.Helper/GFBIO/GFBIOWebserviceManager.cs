@@ -149,7 +149,7 @@ namespace BExIS.Dim.Helpers.GFBIO
             string json = "[{\"userid\":" + submitterid + "," +
                           "\"name\":\"" + name + "\"," +
                           "\"description\":\"" + description + "\"," +
-                          "\"extendeddata\":" + extendedData + "," +
+                          "\"extendeddata\":{" + extendedData + "}," +
                           "\"researchobjecttype\":\"" + researchobjecttype + "\"}]";
             //"," +
             //"\"authornames\":[" + string.Join(",", authornames) + "]}";

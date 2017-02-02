@@ -8,16 +8,12 @@ using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.IO;
-using BExIS.IO.Transform.Output;
 using BExIS.Web.Shell.Helpers;
 using BExIS.Web.Shell.Models;
-using BExIS.Xml.Services;
-using Ionic.Zip;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -27,7 +23,6 @@ using System.Web.Mvc;
 using System.Web.Script.Serialization;
 using System.Xml;
 using System.Xml.Schema;
-using Vaiona.Utils.Cfg;
 
 namespace BExIS.Web.Shell.Controllers
 {
@@ -284,74 +279,74 @@ namespace BExIS.Web.Shell.Controllers
 
             model = DynamicListToDataTable();
 
-            SubmissionManager pm = new SubmissionManager();
-            DatasetManager dm = new DatasetManager();
+            //SubmissionManager pm = new SubmissionManager();
+            //DatasetManager dm = new DatasetManager();
 
-            pm.Load();
+            //pm.Load();
 
-            DataRepository gfbio = pm.DataRepositories.Where(d => d.Name.ToLower().Equals("gfbio")).FirstOrDefault();
+            //DataRepository gfbio = pm.DataRepositories.Where(d => d.Name.ToLower().Equals("gfbio")).FirstOrDefault();
 
-            // get metadata
-            long testdatasetId = 1;
-            string formatname = "";
-            XmlDocument newXmlDoc;
-            DatasetVersion dsv = dm.GetDatasetLatestVersion(testdatasetId);
-            string title = XmlDatasetHelper.GetInformation(dsv, NameAttributeValues.title);
-
-
-            if (gfbio != null)
-            {
-                formatname =
-                    XmlDatasetHelper.GetAllTransmissionInformation(1, TransmissionType.mappingFileExport, AttributeNames.name)
-                        .First();
-                OutputMetadataManager.GetConvertedMetadata(testdatasetId, TransmissionType.mappingFileExport,
-                    formatname);
+            //// get metadata
+            //long testdatasetId = 1;
+            //string formatname = "";
+            //XmlDocument newXmlDoc;
+            //DatasetVersion dsv = dm.GetDatasetLatestVersion(testdatasetId);
+            //string title = XmlDatasetHelper.GetInformation(dsv, NameAttributeValues.title);
 
 
-                // get primary data
-                // check the data sturcture type ...
-                if (dsv.Dataset.DataStructure.Self is StructuredDataStructure)
-                {
-                    OutputDataManager odm = new OutputDataManager();
-                    // apply selection and projection
-
-                    odm.GenerateAsciiFile(testdatasetId, title, gfbio.PrimaryDataFormat);
-                }
-
-                string zipName = pm.GetZipFileName(testdatasetId, dsv.Id);
-                string zipPath = pm.GetDirectoryPath(testdatasetId, gfbio);
-                string zipFilePath = Path.Combine(zipPath, zipName);
-
-                FileHelper.CreateDicrectoriesIfNotExist(Path.GetDirectoryName(zipFilePath));
+            //if (gfbio != null)
+            //{
+            //    formatname =
+            //        XmlDatasetHelper.GetAllTransmissionInformation(1, TransmissionType.mappingFileExport, AttributeNames.name)
+            //            .First();
+            //    OutputMetadataManager.GetConvertedMetadata(testdatasetId, TransmissionType.mappingFileExport,
+            //        formatname);
 
 
+            //    // get primary data
+            //    // check the data sturcture type ...
+            //    if (dsv.Dataset.DataStructure.Self is StructuredDataStructure)
+            //    {
+            //        OutputDataManager odm = new OutputDataManager();
+            //        // apply selection and projection
 
-                if (FileHelper.FileExist(zipFilePath))
-                {
-                    if (FileHelper.WaitForFile(zipFilePath))
-                    {
-                        FileHelper.Delete(zipFilePath);
-                    }
-                }
+            //        odm.GenerateAsciiFile(testdatasetId, title, gfbio.PrimaryDataFormat);
+            //    }
 
-                ZipFile zip = new ZipFile();
+            //    string zipName = pm.GetZipFileName(testdatasetId, dsv.Id);
+            //    string zipPath = pm.GetDirectoryPath(testdatasetId, gfbio);
+            //    string zipFilePath = Path.Combine(zipPath, zipName);
 
-                foreach (ContentDescriptor cd in dsv.ContentDescriptors)
-                {
-                    string path = Path.Combine(AppConfiguration.DataPath, cd.URI);
-                    string name = cd.URI.Split('\\').Last();
+            //    FileHelper.CreateDicrectoriesIfNotExist(Path.GetDirectoryName(zipFilePath));
 
-                    if (FileHelper.FileExist(path))
-                    {
-                        zip.AddFile(path, "");
-                    }
-                }
-                zip.Save(zipFilePath);
-            }
-            else
-            {
-                newXmlDoc = dsv.Metadata;
-            }
+
+
+            //    if (FileHelper.FileExist(zipFilePath))
+            //    {
+            //        if (FileHelper.WaitForFile(zipFilePath))
+            //        {
+            //            FileHelper.Delete(zipFilePath);
+            //        }
+            //    }
+
+            //    ZipFile zip = new ZipFile();
+
+            //    foreach (ContentDescriptor cd in dsv.ContentDescriptors)
+            //    {
+            //        string path = Path.Combine(AppConfiguration.DataPath, cd.URI);
+            //        string name = cd.URI.Split('\\').Last();
+
+            //        if (FileHelper.FileExist(path))
+            //        {
+            //            zip.AddFile(path, "");
+            //        }
+            //    }
+            //    zip.Save(zipFilePath);
+            //}
+            //else
+            //{
+            //    newXmlDoc = dsv.Metadata;
+            //}
 
 
 

@@ -1,6 +1,7 @@
 ﻿using BExIS.Dim.Entities.Publication;
 using BExIS.Dlm.Entities.Data;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using Vaiona.Persistence.Api;
 
@@ -48,6 +49,17 @@ namespace BExIS.Dim.Services
             Publication p = PublicationRepo.Get(Id);
 
             return (p);
+        }
+
+        /// <summary>
+        /// Retrieves all publication object <paramref name="Id"/> from the database.
+        /// </summary>
+        /// <param name="Id">The identifier of the publication.</param>
+        /// <returns>The semi-populated publication entity if exists, or null.</returns>
+        /// <remarks>The object based attributes of the entity that are persisted as XML are not populated by default. In order to fully populate the entity, call the <see cref="Materialize"/> method.</remarks>
+        public IEnumerable<Publication> GetPublication()
+        {
+            return PublicationRepo.Get();
         }
 
         /// <summary>
@@ -125,6 +137,11 @@ namespace BExIS.Dim.Services
         #endregion
 
         #region broker
+
+        public IEnumerable<Broker> GetBroker()
+        {
+            return BrokerRepo.Get();
+        }
 
         /// <summary>
         /// Retrieves the broker object having identifier <paramref name="Id"/> from the database.
@@ -213,6 +230,11 @@ namespace BExIS.Dim.Services
         #endregion
 
         #region repository
+
+        public IEnumerable<Repository> GetRepository()
+        {
+            return RepositoryRepo.Get();
+        }
 
         /// <summary>
         /// Retrieves the repository object having identifier <paramref name="Id"/> from the database.

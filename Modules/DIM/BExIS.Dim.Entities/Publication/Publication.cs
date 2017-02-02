@@ -13,6 +13,11 @@ namespace BExIS.Dim.Entities.Publication
     {
         #region Attributes
 
+        //ToDO Add DOI to the class
+        ///// <summary>
+        ///// DOI of a object from a Broker
+        ///// </summary>
+        //public virtual long DOI { get; set; }
         /// <summary>
         /// Id of a object from a Broker
         /// </summary>
