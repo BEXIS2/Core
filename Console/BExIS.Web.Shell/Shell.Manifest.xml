@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Manifest moduleId="Shell" displayName="BEXIS" version="2.10.0" builtin="true">
+  <Description>
+    Research Data Management Platform
+  </Description>
+  <Dependencies>
+  </Dependencies>
+  <Exports>
+    <!--tag: menubar, lunchbar, settings, api-->
+    <!-- . is the root of each menu category. menu categories are represended by tags-->
+    <!--order is at each tag, in document and catalog order, when order is eqaul-->
+    <!--icons should be provided by the modules in the /content/icons folder-->
+    <!-- Area can not be set here, it will be done automatically to prevent cross-referencing-->
+    <Export tag="menubar" id="menubarRoot" order="0"
+            title="" description="" icon=""
+            controller="" action=""
+            extends="."
+            />
+    <!--<Export tag="menubar" id="dashboard" order="1"
+            title="Dashboard" description="Quick Access to User Area" icon=""
+            controller="home" action="index"
+            extends="./menubarRoot"
+            />-->
+
+    <Export tag="menubar" id="dashboard2" order="1"
+            title="Dashboard" description="Quick Access to User Area" icon=""
+            controller="home" action="index"
+            extends="./menubarRoot/dashboard"
+            />
+
+    <Export tag="settings" id="settingsRoot" order="0"
+            title="" description="" icon=""
+            controller="" action=""
+            extends="."
+            />
+    <Export tag="settings" id="settings" order="1"
+            title="Settings" description="Settings, configuration, and Management" icon="settings.icon"
+            controller="" action=""
+            extends="./settingsRoot"
+            />
+
+    <Export tag="lunchbar" id="lunchbarRoot" order="0"
+            title="" description="" icon=""
+            controller="" action=""
+            extends="."
+            />
+    <Export tag="lunchbar" id="help" order="1"
+            title="Help" description="Help" icon=""
+            controller="" action=""
+            extends="./lunchbarRoot" 
+            />
+    
+    <Export tag="api" id="apiRoot" order="0"
+            title="" description="" icon=""
+            controller="" action=""
+            extends="."
+            />
+  </Exports>
+</Manifest>

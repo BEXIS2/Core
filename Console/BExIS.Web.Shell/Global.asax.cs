@@ -69,11 +69,11 @@ namespace BExIS.Web.Shell
 			MvcHandler.DisableMvcResponseHeader = true;
 		
             init();
-            // Area Registration should be removed when modularity is in place
-            AreaRegistration.RegisterAllAreas();
+            ModuleManager.RegisterShell(Path.Combine(AppConfiguration.AppRoot, "Shell.Manifest.xml")); // this should be called before RegisterAllAreas
+            AreaRegistration.RegisterAllAreas(); // this is the starting point of geting modules registered
             GlobalConfiguration.Configure(WebApiConfig.Register);
             loadModules();
-
+            ModuleManager.BuildExportTree();
             //GlobalFilters.Filters.Add(new SessionTimeoutFilterAttribute());
 
             RegisterGlobalFilters(GlobalFilters.Filters);
@@ -103,8 +103,6 @@ namespace BExIS.Web.Shell
             ModuleBootstrapper.Initialize();
             AppDomain.CurrentDomain.AssemblyResolve += ModuleBootstrapper.ResolveCurrentDomainAssembly;
             ModuleBootstrapper.StartModules();
-            // the following line should be merged to the PluginManager
-            //ModuleManager.LoadModules(); // it does nothing yet, implement it!
         }
 
         protected void Application_End()
