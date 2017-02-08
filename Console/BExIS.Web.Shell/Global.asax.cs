@@ -93,6 +93,8 @@ namespace BExIS.Web.Shell
             pManager.Configure(AppConfiguration.DefaultApplicationConnection.ConnectionString, AppConfiguration.DatabaseDialect, "Default", AppConfiguration.ShowQueries);
             if (AppConfiguration.CreateDatabase)
                 pManager.ExportSchema();
+            // enumerate modules and check if they need to export their schema. catalog/module/installed=true/false
+            // the init function may need to be executed after area registration
             pManager.Start();
             ////pManager.UpdateSchema(true, true); // seems NH has dropped the support for schema update!
         }

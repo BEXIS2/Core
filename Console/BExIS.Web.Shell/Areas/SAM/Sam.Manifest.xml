@@ -15,7 +15,7 @@
             controller="Subjets" action="Index" argument="user"
             extends="./settingsRoot"
             />
-    <Export tag="menubar" id="dstList" 
+    <Export tag="menubar" id="dstList" order="1"
             title="List Datasets" description="List datasets and their status" icon=""
             controller="Datasets" action="Index"
             extends="./menubarRoot/collect" 

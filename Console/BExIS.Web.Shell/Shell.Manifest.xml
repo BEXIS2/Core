@@ -11,7 +11,7 @@
     <!--order is at each tag, in document and catalog order, when order is eqaul-->
     <!--icons should be provided by the modules in the /content/icons folder-->
     <!-- Area can not be set here, it will be done automatically to prevent cross-referencing-->
-    <Export tag="menubar" id="menubarRoot" order="0"
+    <Export tag="menubar" id="menubarRoot" order="1"
             title="" description="" icon=""
             controller="" action=""
             extends="."
@@ -22,24 +22,19 @@
             extends="./menubarRoot"
             />-->
 
-    <Export tag="menubar" id="dashboard2" order="1"
+    <Export tag="menubar" id="dashboard" order="1"
             title="Dashboard" description="Quick Access to User Area" icon=""
             controller="home" action="index"
-            extends="./menubarRoot/dashboard"
+            extends="./menubarRoot"
             />
 
-    <Export tag="settings" id="settingsRoot" order="0"
-            title="" description="" icon=""
-            controller="" action=""
-            extends="."
-            />
-    <Export tag="settings" id="settings" order="1"
-            title="Settings" description="Settings, configuration, and Management" icon="settings.icon"
-            controller="" action=""
-            extends="./settingsRoot"
+    <Export tag="menubar" id="dummyMenu" order="2"
+            title="List Datasets" description="Delete me from the Shell" icon=""
+            controller="Dummy" action="Index"
+            extends="./menubarRoot/collect"
             />
 
-    <Export tag="lunchbar" id="lunchbarRoot" order="0"
+    <Export tag="lunchbar" id="lunchbarRoot" order="2"
             title="" description="" icon=""
             controller="" action=""
             extends="."
@@ -49,8 +44,20 @@
             controller="" action=""
             extends="./lunchbarRoot" 
             />
-    
-    <Export tag="api" id="apiRoot" order="0"
+
+    <!--<Export tag="settings" id="settingsRoot" order="2"
+            title="" description="" icon=""
+            controller="" action=""
+            extends="."
+            />-->
+
+    <Export tag="settings" id="settingsRoot" order=""
+            title="Settings" description="Settings, configuration, and Management" icon="settings.icon"
+            controller="" action=""
+            extends="."
+            />
+
+    <Export tag="api" id="apiRoot" order="4"
             title="" description="" icon=""
             controller="" action=""
             extends="."
