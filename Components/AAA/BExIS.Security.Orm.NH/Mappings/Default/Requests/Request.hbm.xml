@@ -1,0 +1,30 @@
+﻿<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Security.Entities" namespace="BExIS.Security.Entities.Requests">
+  <class xmlns="urn:nhibernate-mapping-2.2" name="Request" table="Requests" dynamic-update="true">
+
+    <!-- Mapping BaseEntity properties -->
+    <id name="Id" type="Int64">
+      <column name="Id" index="idx_Entities_id"/>
+      <generator class="native" />
+    </id>
+
+    <version name="VersionNo" type="Int32">
+      <column name="VersionNo" />
+    </version>
+
+    <property name="Extra" type="System.Xml.XmlDocument, System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+      <column name="Extra" not-null="false" sql-type="xml" />
+    </property>
+
+    <many-to-one name="Applicant" column="ApplicantRef" class="BExIS.Security.Entities.Subjects.User, BExIS.Security.Entities"/>
+    <set name="Decisions" inverse="true" cascade="all-delete-orphan" lazy="true">
+      <key column="RequestRef"/>
+      <one-to-many class="BExIS.Security.Entities.Requests.Decision, BExIS.Security.Entities" />
+    </set>
+    <many-to-one name="Entity" column="EntityRef" class="BExIS.Security.Entities.Objects.Entity, BExIS.Security.Entities"/>
+    <property name="RequestDate" type="DateTime"/>
+    <property name="RequestStatus" type="BExIS.Security.Entities.Requests.RequestStatus, BExIS.Security.Entities" />
+    <property name="Value" type="Int64"/>
+
+  </class>
+
+</hibernate-mapping>
