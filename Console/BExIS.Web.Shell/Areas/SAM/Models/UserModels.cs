@@ -1,9 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Web.Mvc;
 using BExIS.Security.Entities.Subjects;
-using DataAnnotationsExtensions;
 
-namespace BExIS.Web.Shell.Areas.SAM.Models
+namespace BExIS.Modules.Sam.UI.Models
 {
     public class CreateUserModel
     {
@@ -53,7 +52,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
         public string FullName { get; set; }
 
         [Display(Name = "Email Address")]
-        [Email]
+        [EmailAddress]
         [Remote("ValidateEmail", "Users")]
         [Required]
         [StringLength(250, ErrorMessage = "The email must be {2} - {1} characters long.", MinimumLength = 5)]
@@ -91,7 +90,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
         public string FullName { get; set; }
 
         [Required]
-        [Email]
+        [EmailAddress]
         public string Email { get; set; }
 
         public string Password { get; set; }

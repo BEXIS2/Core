@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Manifest moduleId="SAM" displayName="System Administration Module" version="1.0.1" builtin="true">
+  <Description>
+    SAM provides the features to allow users (normally administrators) to configure different aspects of the application and module functions.
+    It gives the user information about the application and database version, registered modules and their versions. 
+    Also un/installation, and in/activation of the modules is done by here. 
+    SAM also manages system features such as users, groups, permission, and dataset backup and maintenance.
+  </Description>
+  <Dependencies>
+    <Dependency moduleId="dcm" version="*.*.*" />
+  </Dependencies>
+  <Exports>
+    <!--tag: menubar, launchbar, settings, api-->
+    <!-- . is the root of each menu category. menu categories are represended by tags-->
+    <!--order is at each tag, in document and catalog order, when order is eqaul-->
+    <Export tag="settings" id="usrList" order="1"
+            title="List Users" description="List Only users without groups" 
+            controller="Subjets" action="Index" argument="user"
+            extends="."
+            />
+    <Export tag="menubar" id="dstList" 
+            title="List Datasets" description="List datasets and their status" 
+            controller="Datasets" action="Index"
+            extends="./collect" 
+            />
+    <Export tag="api" id="tntList"
+            title="List Tenants" description="List tenants and their status"
+            controller="Tenants" action="Index"
+            extends="."
+            />
+  </Exports>
+</Manifest>
