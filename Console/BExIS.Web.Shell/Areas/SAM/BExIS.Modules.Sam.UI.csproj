@@ -162,7 +162,9 @@
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\Site.css" />
-    <Content Include="Sam.Manifest.xml" />
+    <Content Include="Sam.Manifest.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Scripts\ai.0.22.19-build00125.js" />
     <Content Include="Scripts\ai.0.22.19-build00125.min.js" />
     <Content Include="Scripts\bootstrap.js" />
@@ -180,9 +182,6 @@
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\_references.js" />
-    <Content Include="Views\Help\UserGuides\SAM_UserGuide.htm" />
-    <Content Include="Views\Help\UserGuides\SecuritySystem_UsersGuide.htm" />
-    <Content Include="Views\Help\UserGuides\SystemAdministration_UserGuide.htm" />
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Datasets\Index.cshtml" />
