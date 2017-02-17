@@ -1,9 +1,9 @@
-﻿using System;
+﻿using BExIS.Dlm.Entities.MetadataStructure;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Xml;
-using BExIS.Dlm.Entities.MetadataStructure;
 using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
 using MDS = BExIS.Dlm.Entities.MetadataStructure;
@@ -32,7 +32,7 @@ namespace BExIS.Dlm.Services.MetadataStructure
 
         public List<MetadataPackageUsage> GetEffectivePackages(MDS.MetadataStructure structure)
         {
-            return GetEffectivePackages(structure.Id);            
+            return GetEffectivePackages(structure.Id);
         }
 
         public List<MetadataPackageUsage> GetEffectivePackages(Int64 structureId)
@@ -140,7 +140,7 @@ namespace BExIS.Dlm.Services.MetadataStructure
                 repo.Put(entity); // Merge is required here!!!!
                 uow.Commit();
             }
-            return (entity);    
+            return (entity);
         }
 
         #endregion
