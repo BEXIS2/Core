@@ -415,12 +415,16 @@
     <Compile Include="Areas\DIM\Controllers\ExportGFBIOController.cs" />
     <Compile Include="Areas\DIM\Controllers\HelpController.cs" />
     <Compile Include="Areas\DIM\Controllers\ImportController.cs" />
+    <Compile Include="Areas\DIM\Controllers\MappingController.cs" />
     <Compile Include="Areas\DIM\Controllers\MetadataController.cs" />
     <Compile Include="Areas\DIM\DIMAreaRegistration.cs" />
+    <Compile Include="Areas\DIM\Helper\MappingHelper.cs" />
     <Compile Include="Areas\DIM\Models\AdminModel.cs" />
     <Compile Include="Areas\DIM\Models\DatasetModel.cs" />
     <Compile Include="Areas\DIM\Models\DatasetVersionModel.cs" />
     <Compile Include="Areas\DIM\Models\DataTupleCsvFormatter.cs" />
+    <Compile Include="Areas\DIM\Models\Mapping\LinkElementModels.cs" />
+    <Compile Include="Areas\DIM\Models\Mapping\MappingModel.cs" />
     <Compile Include="Areas\DIM\Models\MetadataStructureModel.cs" />
     <Compile Include="Areas\DIM\Models\ShowHelpModel.cs" />
     <Compile Include="Areas\MSM\Controllers\TestController.cs" />
@@ -692,6 +696,12 @@
     <Content Include="Areas\DCM\Views\ManageMetadataStructure\_editMetadataStructureView.cshtml" />
     <Content Include="Areas\DDM\Views\Data\_fileSizeView.cshtml" />
     <Content Include="Areas\SAM\Views\Dataset\Delete.cshtml" />
+    <Content Include="Areas\DIM\Views\Mapping\Index.cshtml" />
+    <Content Include="Areas\DIM\Views\Mapping\LinkElementContainer.cshtml" />
+    <Content Include="Areas\DIM\Views\Mapping\LinkElement.cshtml" />
+    <Content Include="Areas\DIM\Views\Mapping\LinkElemenRoot.cshtml" />
+    <Content Include="Areas\DIM\Views\Mapping\Mapping.cshtml" />
+    <Content Include="Areas\DIM\Views\Mapping\MappingLinkElement.cshtml" />
     <None Include="Properties\PublishProfiles\BEXIS 2.10.pubxml" />
     <None Include="Properties\PublishProfiles\bexis2 Release2.10.pubxml" />
     <None Include="Properties\PublishProfiles\BEXIS2.pubxml" />
@@ -705,6 +715,9 @@
     <None Include="Properties\PublishProfiles\BPP2907.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\DCM\Form.js" />
+    <Content Include="Scripts\DIM\bexis.dim.mapping.js" />
+    <Content Include="Scripts\DIM\isotope.pkgd.min.js" />
+    <Content Include="Scripts\DIM\jsPlumb-2.2.8-min.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
@@ -815,6 +828,7 @@
     <Content Include="Themes\Default\Styles\bexis-elements.css" />
     <Content Include="Themes\Default\Styles\Copy of telerik.default.min.css" />
     <Content Include="Themes\Default\Styles\Default\editor.png" />
+    <Content Include="Themes\Default\Styles\DIM\bexis-dim.css" />
     <Content Include="Themes\Default\Styles\emptyPng.png" />
     <Content Include="Themes\Default\Styles\Default\imagebrowser.png" />
     <Content Include="Themes\Default\Styles\Default\infoicon.png" />

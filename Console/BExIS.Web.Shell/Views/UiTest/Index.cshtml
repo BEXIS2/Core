@@ -5,7 +5,7 @@
 @using BExIS.Web.Shell.Models;
 
 @model BExIS.Web.Shell.Models.UiTestModel
-
+<script src="@Url.Content("~/Scripts/DIM/jsPlumb-2.2.8-min.js")"></script>
 @{
     ViewBag.Title = "title";
 
@@ -206,6 +206,100 @@
     </table>
 
 </div>
+
+
+<h3>TEST Connectors</h3>
+
+<div id="connectorContainer">
+
+
+    <table><tr><td>
+
+        <div class="source" style="border: 1px solid; height: 30px; width: 50%;">Source</div>
+        <div class="source" style="border: 1px solid; height: 30px; width: 50%;">Source</div>
+        <div class="source" style="border: 1px solid; height: 30px; width: 50%;">Source</div>
+        <div class="source" style="border: 1px solid; height: 30px; width: 50%;">Source</div>
+
+    </td><td>
+        <div class="target" style="border: 1px solid; height: 30px; width: 50%">Target</div>
+        <div class="target" style="border: 1px solid; height: 30px; width: 50%">Target</div>
+        <div class="target" style="border: 1px solid; height: 30px; width: 50%">Target</div>
+        <div class="target" style="border: 1px solid; height: 30px; width: 50%">Target</div>
+    </td></tr></table>
+
+    <h3>ohne table container</h3>
+
+    <div>
+
+        <div class="source" style="border: 1px solid; height: 30px; width: 50%;">Source</div>
+        <div class="source" style="border: 1px solid; height: 30px; width: 50%;">Source</div>
+        <div class="source" style="border: 1px solid; height: 30px; width: 50%;">Source</div>
+        <div class="source" style="border: 1px solid; height: 30px; width: 50%;">Source</div>
+    </div>
+    <div style="float: right">
+        <div class="target" style="border: 1px solid; height: 30px; width: 50%">Target</div>
+        <div class="target" style="border: 1px solid; height: 30px; width: 50%">Target</div>
+        <div class="target" style="border: 1px solid; height: 30px; width: 50%">Target</div>
+        <div class="target" style="border: 1px solid; height: 30px; width: 50%">Target</div>
+
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    jsPlumb.ready(function() {
+        console.log("init jsplumb");
+
+        var instance = window.instance = jsPlumb.getInstance({
+            // drag options
+            //DragOptions: { cursor: "pointer", zIndex: 2000 },
+            //// default to a gradient stroke from blue to green.
+            //PaintStyle: {
+            //    gradient: {
+            //        stops: [
+            //            [0, "#0d78bc"],
+            //            [1, "#558822"]
+            //        ]
+            //    },
+            //    stroke: "#558822",
+            //    strokeWidth: 10
+            //},
+            Container: "connectorContainer"
+        });
+
+        // suspend drawing and initialise.
+        instance.batch(function() {
+
+            //set source
+            // get the list of ".le-mapping-simple-selector-source" elements.            
+            var simpleSources = jsPlumb.getSelector(".source");
+            console.log(simpleSources);
+            instance.makeSource(simpleSources,
+            {
+                anchor: "Right",
+                endpoint: ["Dot", { radius: 3, cssClass: "green" }]
+            });
+
+
+            //set targets
+            // get the list of ".le-mapping-simple-selector-source" elements.            
+            var simpleTargets = jsPlumb.getSelector(".target");
+            console.log(simpleTargets);
+
+            instance.makeTarget(simpleTargets,
+            {
+                anchor: "Left",
+                endpoint: ["Dot", { radius: 1, cssClass: "green" }]
+            });
+
+        });
+        jsPlumb.fire("jsPlumbDemoLoaded", instance);
+})
+</script>
+
+
+
+
 <h3>TEST EntitySelectorView</h3>
 
 <div>

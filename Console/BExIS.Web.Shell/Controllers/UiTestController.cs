@@ -1,4 +1,5 @@
 ﻿using BExIS.Dim.Entities;
+using BExIS.Dim.Entities.Mapping;
 using BExIS.Dim.Entities.Publication;
 using BExIS.Dim.Helpers;
 using BExIS.Dim.Helpers.GFBIO;
@@ -144,10 +145,10 @@ namespace BExIS.Web.Shell.Controllers
                                         + "{ \"authornames\":[\"John Uploader\", \"Jane Researcher\"], \"brokerobjectid\":42, \"description\":\"information':'maximal\", \"extendeddata\":\"{'informations':'all information'}\", \"label\":\"ex 03\", \"licenselabel\":\"CC0\", \"metadatalabel\":\"Darwin Core\",\"name\":\"example 3\", \"parentresearchobjectid\":1, \"projectid\":2, \"researchobjecttype\":\"test\", \"submitterid\":15926}]";
 
             //create - research - object
-            var newResearchObject = gfbioWebserviceManager.CreateResearchObject(gfbiouser.userid, "bexis ro 2", "description", "ro type", "{lalala}",
-                new string[] { "david", "marcel" });
+            //var newResearchObject = gfbioWebserviceManager.CreateResearchObject(gfbiouser.userid, "bexis ro 2", "description", "ro type", "{lalala}",
+            //    new string[] { "david", "marcel" });
 
-            Debug.WriteLine(newResearchObject);
+            //Debug.WriteLine(newResearchObject);
 
             UiTestModel model = new UiTestModel();
             model = DynamicListToDataTable();
@@ -354,5 +355,38 @@ namespace BExIS.Web.Shell.Controllers
             return View("Index", model);
         }
 
+
+        public ActionResult MappingTest()
+        {
+
+            //create Linkelements
+
+            MappingManager mappingManager = new MappingManager();
+
+            LinkElement source = mappingManager.CreateLinkElement(
+                1, LinkElementType.MetadataStructure, "myMDS"
+                , ""
+                );
+
+            LinkElement target = mappingManager.CreateLinkElement(
+                1, LinkElementType.System, "System"
+                , ""
+                );
+
+            Mapping m = mappingManager.CreateMapping(source, target, null);
+
+            mappingManager.DeleteMapping(m);
+            mappingManager.DeleteLinkElement(source);
+            mappingManager.DeleteLinkElement(target);
+
+
+
+
+            UiTestModel model = new UiTestModel();
+            model = DynamicListToDataTable();
+
+
+            return View("Index", model);
+        }
     }
 }

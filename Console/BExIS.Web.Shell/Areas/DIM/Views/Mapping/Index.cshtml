@@ -1,0 +1,55 @@
+﻿@using BExIS.Web.Shell.Areas.DIM.Models.Mapping
+@model BExIS.Web.Shell.Areas.DIM.Models.Mapping.MappingMainModel
+
+@section Scripts{
+
+    <link href="@Url.Content(Themes.GetResourcePath("Styles/DIM","bexis-dim.css"))" rel="stylesheet" type="text/css" />
+    <script src="@Url.Content("~/Scripts/DIM/bexis.dim.mapping.js")"></script>
+    <script src="@Url.Content("~/Scripts/DIM/isotope.pkgd.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/DIM/jsPlumb-2.2.8-min.js")"></script>
+}
+
+
+<div id="DIM_MappingContainer">
+
+    @section LeftPane
+    {
+        @if (Model.Source != null)
+        {
+            @Html.Partial("LinkElemenRoot", Model.Source)
+        }
+    }
+
+    <div id="dim-mapping-middle" class="middle">
+
+        @foreach (var map in @Model.ParentMappings)
+        {
+            @Html.Partial("Mapping", map)
+        }
+
+        <div id="newMapContainer">
+            @Html.Partial("Mapping", new MappingModel())
+        </div>
+    </div>
+
+    @section RightPane
+    {
+        @if (Model.Target != null)
+        {
+            @Html.Partial("LinkElemenRoot", Model.Target)
+        }
+    }
+
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+
+        //set height for middle
+        //$(".dim-Container")
+        //    .each(function() {
+        //        $(this).height(getContainerSize());
+        //    });
+
+    })
+</script>

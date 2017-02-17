@@ -1,0 +1,134 @@
+﻿/*MAINPAGE*/
+
+.dim-Container {
+    /*overflow-y: scroll;
+    position: fixed;*/
+}
+
+
+.mapping-container {
+
+    border: 1px solid #afb0b1;
+    margin: 5px;
+    padding: 5px;
+    width:calc(100% - 15px); 
+}
+
+
+.le-root-search .bx-input {
+    width: 100%;
+}
+.le-container {
+    height: auto;
+    border: 1px solid #afb0b1; 
+    margin: 5px 0;
+    background-color: #d2e8e3;
+}
+.le-container-header,
+.le-root-header {
+    padding:5px;
+    font-size: 11pt;
+    font-weight: bold;
+   
+   
+}
+
+.le-simple {
+    width:calc(100% - 6px); 
+    border: 1px solid #afb0b1; 
+    margin: 1px 3px 1px 3px;
+    padding:5px;
+    background-color:#f5f5f5;
+}
+
+.le-simple-header {
+    font-weight: bold;
+    overflow-x: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    margin: 0;
+}
+
+.le-simple-header-td {
+    max-width: 1px;
+}
+
+.le-simple-path {
+    font-size: 8pt;
+    word-spacing: -1px;
+}
+
+.le-simple-selector-container {
+    width: 30px;
+}
+
+.le-simple table,
+.le-simple tr,
+.le-simple td {
+    background-color:#f5f5f5;
+    border: none;
+    margin: 0;
+}
+
+
+.mapping_container {
+    border: 1px solid #afb0b1;
+}
+
+.mapping_container_source,
+.mapping_container_target {
+   
+}
+
+.le-mapping-container-header {
+    font-weight: bold;
+    width: 100%; 
+    margin: 5px;
+    vertical-align: middle;
+    height: 30px;
+}
+
+.le-mapping-container-header-label {
+    font-size: 14pt;
+    font-weight: bold;
+    padding: 0;
+    overflow-x: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    height: 30px;
+}
+.le-mapping-container-header .bx-delete {
+
+}
+
+.mapping-options {
+    width: 100%;
+    text-align: right;
+}
+
+#newMapContainer .mapping-settings {
+    display:none
+}
+
+#emptySourceContainer,
+#emptyTargetContainer {
+    height: 50px;
+}
+
+
+/*  JSPLUMB*/
+.aLabel {
+    background-color: white;
+    padding: 0.4em;
+    font: 12px sans-serif;
+    color: #444;
+    z-index: 21;
+    border: 1px dotted gray;
+    opacity: 0.8;
+    cursor: pointer;
+}
+
+.dim-mapping-anchor {
+    background-color: green;
+}
+

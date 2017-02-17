@@ -1,0 +1,76 @@
+﻿@model BExIS.Web.Shell.Areas.DIM.Models.Mapping.MappingModel
+@{
+    string id = "mapping_container_" + Model.Id;
+    bool created = false;
+    if (Model.Id > 0)
+    {
+        created = true;
+    }
+
+}
+
+
+
+<div id="@id" class="mapping-container">
+
+    <div class="row">
+        <div  class="mapping_container_child mapping_container_source col-md-4">
+
+            @if (Model.Source != null)
+            {
+                @Html.Partial("MappingLinkElement", Model.Source)
+            }
+            else
+            {
+                <div id="emptySourceContainer">
+                    <b>SOURCE</b>
+                </div>
+            }
+        </div>
+
+        <div class="mapping_container_child mapping_container_target col-md-offset-4  col-md-4">
+            @if (Model.Target != null)
+            {
+                @Html.Partial("MappingLinkElement", Model.Target)
+            }
+            else
+            {
+                <div id="emptyTargetContainer">
+                    <b>TARGET</b>
+                </div>
+            }
+        </div>
+
+    </div>
+
+    <div class="mapping-settings">
+        <div class="row">
+            <div class="mapping_container_transformation col-12">
+
+            </div>
+        </div>
+        <div class="row">
+            <div class="mapping-options col-xs-1">
+                @if (created == false)
+                {
+                    <button class="createButton bx-button action" onclick="createMapping(this)">Create</button>
+                }
+                else
+                {
+                    <button class="saveButton bx-button action">Save</button>
+                    <button class="saveButton bx-button action" onclick="deleteMapping(this)">Delete</button>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+
+        initJSPLUMB('@id');
+
+    })
+    
+
+</script>
