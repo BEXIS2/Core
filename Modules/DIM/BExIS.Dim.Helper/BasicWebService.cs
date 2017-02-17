@@ -25,6 +25,7 @@ namespace BExIS.Dim.Helpers
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
+
                     //test@testerer.de:WSTest
                     var byteArray = Encoding.ASCII.GetBytes(user + ":" + password);
 

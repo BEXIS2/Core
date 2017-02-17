@@ -139,15 +139,16 @@ namespace BExIS.Dim.Helpers.GFBIO
         /// <param name="researchobjecttype"></param>
         /// <param name="authornames"></param>
         /// <returns></returns>
-        public async Task<string> CreateResearchObject(long submitterid, string name, string description, string researchobjecttype, string extendedData, string[] authornames)
+        public async Task<string> CreateResearchObject(long userid, long projectid, string name, string description, string researchobjecttype, string extendedData, string[] authornames)
         {
             string functionName = "create-research-object";
             string entityName = "researchobject";
 
             string url = Broker.Server + "/" + pathToApi + entityName + "/" + functionName + "/" + addtionalPath + "/";
 
-            string json = "[{\"userid\":" + submitterid + "," +
+            string json = "[{\"userid\":" + userid + "," +
                           "\"name\":\"" + name + "\"," +
+                          "\"projectid\":" + projectid + "," +
                           "\"description\":\"" + description + "\"," +
                           "\"extendeddata\":{" + extendedData + "}," +
                           "\"researchobjecttype\":\"" + researchobjecttype + "\"}]";

@@ -1342,17 +1342,25 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
                             var projects = new JavaScriptSerializer().Deserialize<List<GFBIOProject>>(projectJsonResult);
 
+                            GFBIOProject gbfioProject = new GFBIOProject();
+
                             if (!projects.Any(p => p.name.Equals(projectName)))
                             {
                                 string createProjectJsonResult = await gfbioWebserviceManager.CreateProject(
                                     gfbioUser.userid, projectName, projectDescription);
 
-                                gfbioException =
-                                    new JavaScriptSerializer().Deserialize<GFBIOException>(createProjectJsonResult);
+                                gbfioProject =
+                                    new JavaScriptSerializer().Deserialize<GFBIOProject>(createProjectJsonResult);
 
                                 //if (!String.IsNullOrEmpty(gfbioException.exception))
                                 //return Json(createProjectJsonResult);
                             }
+                            else
+                            {
+                                gbfioProject = projects.Where(p => p.name.Equals(projectName)).FirstOrDefault();
+
+                            }
+
 
 
                             string name = XmlDatasetHelper.GetInformation(datasetId, NameAttributeValues.title);
@@ -1366,14 +1374,15 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                                 TransmissionType.mappingFileExport,
                                 broker.MetadataFormat);
 
-                            //string extendedDataAsJSON = JsonConvert.SerializeXmlNode(metadataExportFormat);
+                            string extendedDataAsJSON = JsonConvert.SerializeXmlNode(metadataExportFormat);
 
                             string roJsonResult = await gfbioWebserviceManager.CreateResearchObject(
                                 gfbioUser.userid,
+                                gbfioProject.projectid,
                                 name,
                                 description,
                                 "Dataset",
-                                "",
+                                extendedDataAsJSON,
                                 null
                                 );
 
@@ -1418,7 +1427,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 }
 
 
-                if (datarepo.Equals("generic"))
+                if (datarepo.ToLower().Equals("generic"))
                 {
                     Broker broker =
                         publicationManager.BrokerRepo.Get()
