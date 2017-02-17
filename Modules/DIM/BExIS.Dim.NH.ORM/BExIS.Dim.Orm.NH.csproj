@@ -49,6 +49,12 @@
     <Folder Include="Mappings\PostgreSQL82Dialect\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Mappings\Default\Mapping\LinkElement.hbm.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Mappings\Default\Mapping\LinkElementTypes.hbm.xml" />
+    <Content Include="Mappings\Default\Mapping\Mapping.hbm.xml" />
+    <Content Include="Mappings\Default\Mapping\TransformationRule.hbm.xml" />
     <Content Include="Mappings\Default\Publication\Broker.hbm.xml">
       <SubType>Designer</SubType>
     </Content>
