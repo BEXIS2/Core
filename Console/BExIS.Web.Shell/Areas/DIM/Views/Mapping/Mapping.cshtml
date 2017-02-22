@@ -1,4 +1,5 @@
-﻿@model BExIS.Web.Shell.Areas.DIM.Models.Mapping.MappingModel
+﻿@using BExIS.Web.Shell.Areas.DIM.Models.Mapping
+@model BExIS.Web.Shell.Areas.DIM.Models.Mapping.ComplexMappingModel
 @{
     string id = "mapping_container_" + Model.Id;
     bool created = false;
@@ -14,7 +15,7 @@
 <div id="@id" class="mapping-container">
 
     <div class="row">
-        <div  class="mapping_container_child mapping_container_source col-md-4">
+        <div class="mapping_container_child mapping_container_source col-md-4">
 
             @if (Model.Source != null)
             {
@@ -40,6 +41,17 @@
                 </div>
             }
         </div>
+    </div>
+
+    <div class="mapping-container-hidden-mappings" style="display: none">
+
+        @foreach (SimpleMappingModel simpleMappingModel in Model.SimpleMappings)
+        {
+            string sourceId = simpleMappingModel.Source.Type + "_" + simpleMappingModel.Source.ElementId + "_" + @simpleMappingModel.Source.Position + "_" + @simpleMappingModel.Source.Name + "_MappingSimpleLinkElement";
+            string targetId = simpleMappingModel.Target.Type + "_" + simpleMappingModel.Target.ElementId + "_" + @simpleMappingModel.Target.Position + "_" + @simpleMappingModel.Target.Name + "_MappingSimpleLinkElement";
+
+            <span id="@simpleMappingModel.Id" class="mapping-container-simple-hidden-mapping" targetId="@targetId" sourceId="@sourceId"></span>
+        }
 
     </div>
 
@@ -53,24 +65,26 @@
             <div class="mapping-options col-xs-1">
                 @if (created == false)
                 {
-                    <button class="createButton bx-button action" onclick="createMapping(this)">Create</button>
+                    <button class="createButton bx-button action" onclick="saveMapping(this,true)">Create</button>
                 }
                 else
                 {
-                    <button class="saveButton bx-button action">Save</button>
-                    <button class="saveButton bx-button action" onclick="deleteMapping(this)">Delete</button>
+                    <button class="saveButton bx-button action bx-disabled" disabled="disabled" onclick="saveMapping(this,false)">Save</button>
+                    <button class="deleteButton bx-button action" onclick="deleteMapping(this)">Delete</button>
                 }
             </div>
         </div>
     </div>
+
+
+    <script type="text/javascript">
+        $(document)
+            .ready(function () {
+
+                initJSPLUMB('@id');
+
+            })
+
+
+    </script>
 </div>
-
-<script type="text/javascript">
-    $(document).ready(function() {
-
-        initJSPLUMB('@id');
-
-    })
-    
-
-</script>

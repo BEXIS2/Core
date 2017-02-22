@@ -702,6 +702,8 @@
     <Content Include="Areas\DIM\Views\Mapping\LinkElemenRoot.cshtml" />
     <Content Include="Areas\DIM\Views\Mapping\Mapping.cshtml" />
     <Content Include="Areas\DIM\Views\Mapping\MappingLinkElement.cshtml" />
+    <Content Include="Areas\DIM\Views\Mapping\MappingSimpleLinkElement.cshtml" />
+    <Content Include="Areas\DIM\Views\Mapping\Mappings.cshtml" />
     <None Include="Properties\PublishProfiles\BEXIS 2.10.pubxml" />
     <None Include="Properties\PublishProfiles\bexis2 Release2.10.pubxml" />
     <None Include="Properties\PublishProfiles\BEXIS2.pubxml" />

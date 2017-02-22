@@ -1,0 +1,17 @@
+﻿@using BExIS.Web.Shell.Areas.DIM.Models.Mapping
+@model List<BExIS.Web.Shell.Areas.DIM.Models.Mapping.ComplexMappingModel>
+
+<div id="dim-mapping-middle" class="middle">
+
+
+
+    @foreach (var map in @Model)
+    {
+        @Html.Partial("Mapping", map)
+    }
+
+    <div id="newMapContainer">
+        @Html.Partial("Mapping", new ComplexMappingModel())
+    </div>
+</div>
+

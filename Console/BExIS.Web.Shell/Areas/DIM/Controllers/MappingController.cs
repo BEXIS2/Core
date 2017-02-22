@@ -12,29 +12,117 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
     public class MappingController : Controller
     {
         // GET: DIM/Mapping
-        public ActionResult Index()
+        public ActionResult Index(long sourceId = 1, long targetId = 0, LinkElementType type = LinkElementType.System)
         {
             MappingMainModel model = new MappingMainModel();
 
             // load from mds example
-            model.Source = MappingHelper.LoadFromMetadataStructure(2, LinkElementPostion.Source);
-            //model.Target = MappingHelper.LoadFromMetadataStructure(3, LinkElementPostion.Target);
-            model.Target = MappingHelper.LoadfromSystem(LinkElementPostion.Target);
+            model.Source = MappingHelper.LoadFromMetadataStructure(sourceId, LinkElementPostion.Source);
 
-            List<long> sourceListElementIds = model.Source.LinkElements.Where(m => m.Id > 0).Select(m => m.Id).ToList();
-            List<long> targetListElementIds = model.Target.LinkElements.Where(m => m.Id > 0).Select(m => m.Id).ToList();
 
-            if (sourceListElementIds.Any() && targetListElementIds.Any())
+            switch (type)
             {
-                model.ParentMappings = MappingHelper.LoadMappings(
-                model.Source.ElementId, model.Source.Type, sourceListElementIds,
-                model.Target.ElementId, model.Target.Type, targetListElementIds);
+                case LinkElementType.System:
+                    {
+                        model.Target = MappingHelper.LoadfromSystem(LinkElementPostion.Target);
+                        model.TargetList = MappingHelper.LoadTargetList(sourceId);
+                        break;
+                    }
+                case LinkElementType.MetadataStructure:
+                    {
+                        model.Target = MappingHelper.LoadFromMetadataStructure(targetId, LinkElementPostion.Target);
+
+                        break;
+                    }
+            }
+            if (model.Source != null && model.Target != null)
+            {
+                List<long> sourceListElementIds = new List<long>();
+                if (model.Source != null && model.Source.LinkElements.Any())
+                    sourceListElementIds = model.Source.LinkElements.Select(le => le.Id).ToList();
+
+                List<long> targetListElementIds = new List<long>();
+                if (model.Target != null && model.Target.LinkElements.Any())
+                    targetListElementIds = model.Target.LinkElements.Select(le => le.Id).ToList();
+
+
+                if (sourceListElementIds.Any() && targetListElementIds.Any())
+                {
+                    model.ParentMappings = MappingHelper.LoadMappings(
+                        model.Source.ElementId, model.Source.Type, sourceListElementIds,
+                        model.Target.ElementId, model.Target.Type, targetListElementIds);
+                }
+            }
+
+            return View(model);
+        }
+
+        public ActionResult ReloadTarget(long sourceId = 1, long targetId = 0, LinkElementType type = LinkElementType.System)
+        {
+            LinkElementRootModel model = null;
+
+            switch (type)
+            {
+                case LinkElementType.System:
+                    {
+                        model = MappingHelper.LoadfromSystem(LinkElementPostion.Target);
+
+                        break;
+                    }
+                case LinkElementType.MetadataStructure:
+                    {
+                        model = MappingHelper.LoadFromMetadataStructure(targetId, LinkElementPostion.Target);
+                        break;
+                    }
+            }
+
+            return PartialView("LinkElemenRoot", model);
+        }
+
+        public ActionResult ReloadMapping(long sourceId = 1, long targetId = 0, LinkElementType type = LinkElementType.System)
+        {
+            List<ComplexMappingModel> model = new List<ComplexMappingModel>();
+
+            // load from mds example
+            LinkElementRootModel source = MappingHelper.LoadFromMetadataStructure(sourceId, LinkElementPostion.Source);
+            LinkElementRootModel target = null;
+            switch (type)
+            {
+                case LinkElementType.System:
+                    {
+                        target = MappingHelper.LoadfromSystem(LinkElementPostion.Target);
+
+                        break;
+                    }
+                case LinkElementType.MetadataStructure:
+                    {
+                        target = MappingHelper.LoadFromMetadataStructure(targetId, LinkElementPostion.Target);
+                        break;
+                    }
+            }
+
+            if (target != null)
+            {
+
+                List<long> sourceListElementIds =
+                    source.LinkElements.Where(m => m.Id > 0 && m.Complexity.Equals(LinkElementComplexity.Complex))
+                        .Select(m => m.Id)
+                        .ToList();
+                List<long> targetListElementIds =
+                    target.LinkElements.Where(m => m.Id > 0 && m.Complexity.Equals(LinkElementComplexity.Complex))
+                        .Select(m => m.Id)
+                        .ToList();
+
+                if (sourceListElementIds.Any() && targetListElementIds.Any())
+                {
+                    model = MappingHelper.LoadMappings(
+                        source.ElementId, source.Type, sourceListElementIds,
+                        target.ElementId, target.Type, targetListElementIds);
+                }
             }
 
 
-
-
-            return View(model);
+            return PartialView("Mappings", model);
         }
 
 
@@ -45,11 +133,13 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
             return PartialView("MappingLinkElement", linkElementModel);
         }
 
-        public ActionResult SaveMapping(MappingModel model)
+        public ActionResult SaveMapping(ComplexMappingModel model)
         {
             MappingManager mappingManager = new MappingManager();
             //save link element if not exits
             //source 
+
+            #region save or update RootMapping
 
             //create source Parents if not exist
             LinkElement sourceParent = MappingHelper.CreateIfNotExistLinkElement(model.Source.Parent);
@@ -58,9 +148,11 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
             LinkElement targetParent = MappingHelper.CreateIfNotExistLinkElement(model.Target.Parent);
 
             //create root mapping if not exist
-            Mapping rootMapping = MappingHelper.CreateIfNotExistMapping(sourceParent, targetParent, null);
+            Mapping rootMapping = MappingHelper.CreateIfNotExistMapping(sourceParent, targetParent, 0, null);
 
+            #endregion
 
+            #region save or update complex mapping
             LinkElement source;
             LinkElement target;
 
@@ -77,9 +169,17 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
             model.Target = MappingHelper.LoadChildren(model.Target);
 
             //save mapping
-            Mapping mapping = MappingHelper.CreateIfNotExistMapping(source, target, null);
+            Mapping mapping = MappingHelper.CreateIfNotExistMapping(source, target, 1, null);
             model.Id = mapping.Id;
 
+            #endregion
+
+            #region create or update simple mapping
+
+            MappingHelper.UpdateSimpleMappings(source.Id, target.Id, model.SimpleMappings);
+
+
+            #endregion
 
             //load all mappings
             return PartialView("Mapping", model);
@@ -87,15 +187,16 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
 
         public ActionResult LoadEmptyMapping()
         {
-            return PartialView("Mapping", new MappingModel());
+            return PartialView("Mapping", new ComplexMappingModel());
         }
 
         public JsonResult DeleteMapping(long id)
         {
             try
             {
-                MappingManager mappingManager = new MappingManager();
-                mappingManager.DeleteMapping(id);
+                MappingHelper.DeleteMapping(id);
+
+                //ToDo delete also all simple mappings that are belonging to the complex mapping
 
                 return Json(true);
             }

@@ -39,6 +39,10 @@
       <column name="Type" />
     </property>
 
+    <property name="Complexity" type="BExIS.Dim.Entities.Mapping.LinkElementComplexity, BExIS.Dim.Entities ">
+      <column name="Complexity" />
+    </property>
+
    
     <!-- Associations -->
 

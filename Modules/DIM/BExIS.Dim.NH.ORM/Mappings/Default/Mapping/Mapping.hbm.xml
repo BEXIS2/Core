@@ -17,6 +17,10 @@
 
     <!-- Associations -->
 
+    <property name="Level" type="Int64">
+      <column name="Level" />
+    </property>
+
     <many-to-one class="BExIS.Dim.Entities.Mapping.LinkElement" name="Source" column="SourceRef">
     </many-to-one>
     <many-to-one class="BExIS.Dim.Entities.Mapping.LinkElement" name="Target" column="TargetRef">

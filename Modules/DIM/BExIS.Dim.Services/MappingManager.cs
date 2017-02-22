@@ -48,10 +48,10 @@ namespace BExIS.Dim.Services
 
         public LinkElement GetLinkElement(long elementid, LinkElementType type)
         {
-            return LinkElementRepo.Get().FirstOrDefault(le => le.Id.Equals(elementid) && le.Type.Equals(type));
+            return LinkElementRepo.Get().FirstOrDefault(le => le.ElementId.Equals(elementid) && le.Type.Equals(type));
         }
 
-        public LinkElement CreateLinkElement(long elementId, LinkElementType type, string name, string xpath,
+        public LinkElement CreateLinkElement(long elementId, LinkElementType type, LinkElementComplexity complexity, string name, string xpath,
             bool isSequence = false, long parentId = -1)
         {
             Contract.Requires(elementId >= 0);
@@ -67,7 +67,8 @@ namespace BExIS.Dim.Services
                 Name = name,
                 XPath = xpath,
                 IsSequence = isSequence,
-                Parent = parent
+                Parent = parent,
+                Complexity = complexity
             };
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
@@ -114,10 +115,12 @@ namespace BExIS.Dim.Services
         public Mapping CreateMapping(
             long source_elementId,
             LinkElementType source_type,
+            LinkElementComplexity source_complexity,
             string source_name,
             string source_xpath,
             long target_elementId,
             LinkElementType target_type,
+            LinkElementComplexity target_complexity,
             string target_name,
             string target_xpath,
             bool source_isSequence = false,
@@ -130,6 +133,7 @@ namespace BExIS.Dim.Services
             LinkElement source = CreateLinkElement(
                 source_elementId,
                 source_type,
+                source_complexity,
                 source_name,
                 source_xpath,
                 source_isSequence,
@@ -139,6 +143,7 @@ namespace BExIS.Dim.Services
             LinkElement target = CreateLinkElement(
                 target_elementId,
                 target_type,
+                target_complexity,
                 target_name,
                 target_xpath,
                 target_isSequence,
@@ -162,13 +167,14 @@ namespace BExIS.Dim.Services
 
         }
 
-        public Mapping CreateMapping(LinkElement source, LinkElement target, TransformationRule rule)
+        public Mapping CreateMapping(LinkElement source, LinkElement target, long level, TransformationRule rule)
         {
             Mapping mapping = new Mapping();
 
             mapping.Source = source;
             mapping.Target = target;
             mapping.TransformationRule = rule;
+            mapping.Level = level;
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {

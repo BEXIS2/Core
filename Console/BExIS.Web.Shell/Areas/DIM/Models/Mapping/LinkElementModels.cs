@@ -8,11 +8,26 @@ namespace BExIS.Web.Shell.Areas.DIM.Models.Mapping
     {
         public LinkElementRootModel Source { get; set; }
         public LinkElementRootModel Target { get; set; }
-        public List<MappingModel> ParentMappings { get; set; }
+        public List<ComplexMappingModel> ParentMappings { get; set; }
+        public List<LinkElementRootListItem> TargetList { get; set; }
 
         public MappingMainModel()
         {
-            ParentMappings = new List<MappingModel>();
+            ParentMappings = new List<ComplexMappingModel>();
+        }
+
+    }
+
+    public class LinkElementRootListItem
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+
+        public LinkElementRootListItem(long elementId, string name, LinkElementType type)
+        {
+            Id = elementId + "_" + type;
+            Name = name + " (" + type + ")";
+
         }
 
     }

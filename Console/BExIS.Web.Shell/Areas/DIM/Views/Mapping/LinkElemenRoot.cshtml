@@ -1,4 +1,5 @@
-﻿@using Telerik.Web.Mvc.UI
+﻿@using BExIS.Web.Shell.Areas.DIM.Models.Mapping
+@using Telerik.Web.Mvc.UI
 @model BExIS.Web.Shell.Areas.DIM.Models.Mapping.LinkElementRootModel
 @{
     string searchId = "le-root-search-filter-" + Model.Position;
@@ -16,7 +17,7 @@
     </div>
 
     <div class="le-root-header">
-        @Model.Type : @Model.Name
+        <b> @Model.Type : @Model.Name</b>
     </div>
 
     <div class="le-root-search">

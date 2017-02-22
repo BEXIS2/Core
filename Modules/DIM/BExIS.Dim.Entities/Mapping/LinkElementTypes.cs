@@ -2,8 +2,8 @@
 {
     public enum Key
     {
-        Title,
-        Description
+        Title = 1,
+        Description = 2
     }
 
     public enum LinkElementComplexity
