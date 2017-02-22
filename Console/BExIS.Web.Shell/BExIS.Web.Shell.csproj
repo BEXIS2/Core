@@ -418,12 +418,16 @@
     <Compile Include="Areas\DIM\Controllers\ExportGFBIOController.cs" />
     <Compile Include="Areas\DIM\Controllers\HelpController.cs" />
     <Compile Include="Areas\DIM\Controllers\ImportController.cs" />
+    <Compile Include="Areas\DIM\Controllers\MappingController.cs" />
     <Compile Include="Areas\DIM\Controllers\MetadataController.cs" />
     <Compile Include="Areas\DIM\DIMAreaRegistration.cs" />
+    <Compile Include="Areas\DIM\Helper\MappingHelper.cs" />
     <Compile Include="Areas\DIM\Models\AdminModel.cs" />
     <Compile Include="Areas\DIM\Models\DatasetModel.cs" />
     <Compile Include="Areas\DIM\Models\DatasetVersionModel.cs" />
     <Compile Include="Areas\DIM\Models\DataTupleCsvFormatter.cs" />
+    <Compile Include="Areas\DIM\Models\Mapping\LinkElementModels.cs" />
+    <Compile Include="Areas\DIM\Models\Mapping\MappingModel.cs" />
     <Compile Include="Areas\DIM\Models\MetadataStructureModel.cs" />
     <Compile Include="Areas\DIM\Models\ShowHelpModel.cs" />
     <Compile Include="Areas\MSM\Controllers\TestController.cs" />
@@ -646,6 +650,22 @@
     <Content Include="Areas\RPM\Views\DataStructureEdit\_dataTypeDropdown.cshtml" />
     <Content Include="Areas\DCM\Views\ManageMetadataStructure\_editMetadataStructureView.cshtml" />
     <Content Include="Areas\DDM\Views\Data\_fileSizeView.cshtml" />
+    <Content Include="Areas\SAM\Views\Dataset\Delete.cshtml" />
+    <Content Include="Areas\DIM\Views\Mapping\Index.cshtml" />
+    <Content Include="Areas\DIM\Views\Mapping\LinkElementContainer.cshtml" />
+    <Content Include="Areas\DIM\Views\Mapping\LinkElement.cshtml" />
+    <Content Include="Areas\DIM\Views\Mapping\LinkElemenRoot.cshtml" />
+    <Content Include="Areas\DIM\Views\Mapping\Mapping.cshtml" />
+    <Content Include="Areas\DIM\Views\Mapping\MappingLinkElement.cshtml" />
+    <Content Include="Areas\DIM\Views\Mapping\MappingSimpleLinkElement.cshtml" />
+    <Content Include="Areas\DIM\Views\Mapping\Mappings.cshtml" />
+    <None Include="Properties\PublishProfiles\BEXIS 2.10.pubxml" />
+    <None Include="Properties\PublishProfiles\bexis2 Release2.10.pubxml" />
+    <None Include="Properties\PublishProfiles\BEXIS2.pubxml" />
+    <None Include="Properties\PublishProfiles\bexisconf.pubxml" />
+    <Content Include="Areas\SAM\Views\Tenants\_Create.cshtml" />
+    <Content Include="Areas\SAM\Views\Tenants\_Edit.cshtml" />
+    <Content Include="Areas\Site\Views\Footer\Content.cshtml" />
     <Content Include="Areas\BAM\Views\Party\Create.cshtml" />
     <Content Include="Areas\BAM\Views\Party\DeleteConfirm.cshtml" />
     <Content Include="Areas\BAM\Views\Party\Edit.cshtml" />
@@ -657,6 +677,9 @@
     <None Include="Properties\PublishProfiles\BPP Publish.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\DCM\Form.js" />
+    <Content Include="Scripts\DIM\bexis.dim.mapping.js" />
+    <Content Include="Scripts\DIM\isotope.pkgd.min.js" />
+    <Content Include="Scripts\DIM\jsPlumb-2.2.8-min.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
@@ -759,6 +782,7 @@
     <Content Include="Themes\Default\Styles\bexis-elements.css" />
     <Content Include="Themes\Default\Styles\Copy of telerik.default.min.css" />
     <Content Include="Themes\Default\Styles\Default\editor.png" />
+    <Content Include="Themes\Default\Styles\DIM\bexis-dim.css" />
     <Content Include="Themes\Default\Styles\emptyPng.png" />
     <Content Include="Themes\Default\Styles\Default\imagebrowser.png" />
     <Content Include="Themes\Default\Styles\Default\infoicon.png" />
@@ -1255,6 +1279,10 @@
     <ProjectReference Include="..\..\Modules\DIM\BExIS.Dim.Helper\BExIS.Dim.Helpers.csproj">
       <Project>{81ef18e8-dced-4980-96f9-e99124075b82}</Project>
       <Name>BExIS.Dim.Helpers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Modules\DIM\BExIS.Dim.Services\BExIS.Dim.Services.csproj">
+      <Project>{cac933a2-6849-4c61-82b4-cbf4052210cc}</Project>
+      <Name>BExIS.Dim.Services</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Modules\RPM\BExIS.RPM.Model\BExIS.RPM.Model.csproj">
       <Project>{063b9e3f-e0dd-43fe-9910-5b1544b8b861}</Project>

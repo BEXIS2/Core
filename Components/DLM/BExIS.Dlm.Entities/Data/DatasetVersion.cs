@@ -120,7 +120,7 @@ namespace BExIS.Dlm.Entities.Data
         #region Methods
 
         ///it is here for the automatic object creation by the persistence layer. Programmers SHOULD use the other constructor that takes a Dataset as a parameter
-        
+
         /// <summary>
         ///
         /// </summary>
@@ -141,7 +141,7 @@ namespace BExIS.Dlm.Entities.Data
         /// <remarks></remarks>
         /// <seealso cref=""/>
         /// <param name="dataset"></param>
-        public DatasetVersion(Dataset   dataset): this()
+        public DatasetVersion(Dataset dataset) : this()
         {
             this.Dataset = dataset;
             //if (this.Dataset.DataStructure is UnStructuredDataStructure)
@@ -176,7 +176,7 @@ namespace BExIS.Dlm.Entities.Data
         /// <remarks></remarks>
         /// <seealso cref=""/>
         /// <param></param>      
-        public override void Dematerialize(bool includeChildren=true)
+        public override void Dematerialize(bool includeChildren = true)
         {
             base.Dematerialize();
             if (includeChildren)
@@ -189,5 +189,5 @@ namespace BExIS.Dlm.Entities.Data
         #endregion
     }
 
-   
+
 }
