@@ -5,15 +5,16 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using BExIS.Security.Services.Subjects;
-using BExIS.Web.Shell.Areas.SAM.Models;
+using BExIS.Modules.Sam.UI.Models;
 using Telerik.Web.Mvc;
 using Vaiona.IoC;
 using Vaiona.Model.MTnt;
 using Vaiona.MultiTenancy.Api;
+using Vaiona.MultiTenancy.Services;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
 
-namespace BExIS.Web.Shell.Areas.SAM.Controllers
+namespace BExIS.Modules.Sam.UI.Controllers
 {
     public class TenantsController : Controller
     {

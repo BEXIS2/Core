@@ -5,6 +5,7 @@ using System.Linq;
 using BExIS.Dlm.Entities.DataStructure;
 using Vaiona.Persistence.Api;
 using DS = BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Entities.Data;
 
 namespace BExIS.Dlm.Services.DataStructure
 {
@@ -96,11 +97,23 @@ namespace BExIS.Dlm.Services.DataStructure
         {
             Contract.Requires(entity != null);
             Contract.Requires(entity.Id >= 0);
+            IReadOnlyRepository<Dataset> datasetRepo = this.GetUnitOfWork().GetReadOnlyRepository<Dataset>();
+            if (datasetRepo.Query(p => p.DataStructure.Id == entity.Id).Count() > 0)
+                throw new Exception(string.Format("Data structure {0} is used by datasets. Deletion Failed", entity.Id));
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
-                IRepository<StructuredDataStructure> repo = uow.GetRepository<StructuredDataStructure>();
+                // delete associated variables and thier parameters
+                IRepository<Variable> variableRepo = uow.GetRepository<Variable>();
+                IRepository<Parameter> paramRepo = uow.GetRepository<Parameter>();
+                foreach (var usage in entity.Variables)
+                {
+                    variableRepo.Delete(usage);
+                    paramRepo.Delete(usage.Parameters.ToList());
 
+                }
+                //uow.Commit(); //  should not be needed
+                IRepository<StructuredDataStructure> repo = uow.GetRepository<StructuredDataStructure>();
                 entity = repo.Reload(entity);
                 repo.Delete(entity);
 
@@ -126,10 +139,27 @@ namespace BExIS.Dlm.Services.DataStructure
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<StructuredDataStructure> repo = uow.GetRepository<StructuredDataStructure>();
+                IReadOnlyRepository<Dataset> datasetRepo = this.GetUnitOfWork().GetReadOnlyRepository<Dataset>();
+                IRepository<Variable> variableRepo = uow.GetRepository<Variable>();
+                IRepository<Parameter> paramRepo = uow.GetRepository<Parameter>();
 
                 foreach (var entity in entities)
                 {
                     var latest = repo.Reload(entity);
+                    if (datasetRepo.Query(p => p.DataStructure.Id == latest.Id).Count() > 0)
+                    {
+                        uow.Ignore();
+                        throw new Exception(string.Format("Data structure {0} is used by datasets. Deletion Failed", entity.Id));
+                    }
+
+                    // delete associated variables and thier parameters
+                    foreach (var usage in latest.Variables)
+                    {
+                        variableRepo.Delete(usage);
+                        paramRepo.Delete(usage.Parameters.ToList());
+                    }
+                    //uow.Commit(); //  should not be needed
+
                     repo.Delete(latest);
                 }
                 uow.Commit();

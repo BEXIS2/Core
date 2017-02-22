@@ -4,7 +4,6 @@ using System.Linq;
 using System.Web;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Subjects;
-using BExIS.Web.Shell.Areas.SAM.Models;
 
 namespace BExIS.Web.Shell.Areas.DDM.Models
 {

@@ -259,6 +259,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Libraries\Vaiona\Vaiona.Web.Mvc.dll</HintPath>
     </Reference>
+    <Reference Include="Vaiona.Web.Mvc.Modularity">
+      <HintPath>..\..\Libraries\Vaiona\Vaiona.Web.Mvc.Modularity.dll</HintPath>
+    </Reference>
     <Reference Include="WebActivator">
       <HintPath>..\..\packages\WebActivator.1.2.0.0\lib\NETFramework40\WebActivator.dll</HintPath>
     </Reference>
@@ -460,39 +463,9 @@
     <Compile Include="Areas\DDM\Helpers\SearchUIHelper.cs" />
     <Compile Include="Areas\DDM\Models\SearchAttributeViewModel.cs" />
     <Compile Include="Areas\DDM\SearchAreaRegistration.cs" />
-    <Compile Include="Areas\SAM\Controllers\AccountController.cs" />
-    <Compile Include="Areas\SAM\Controllers\DataPermissionsController.cs" />
-    <Compile Include="Areas\SAM\Controllers\FeaturePermissionsController.cs" />
-    <Compile Include="Areas\SAM\Controllers\GroupsController.cs" />
-    <Compile Include="Areas\SAM\Controllers\HelpController.cs" />
-    <Compile Include="Areas\SAM\Controllers\DatasetController.cs" />
-    <Compile Include="Areas\SAM\Controllers\TenantsController.cs" />
-    <Compile Include="Areas\SAM\Controllers\UsersController.cs" />
-    <Compile Include="Areas\SAM\Helpers\Attributes.cs" />
-    <Compile Include="Areas\SAM\Helpers\HtmlHelperExtensions.cs" />
-    <Compile Include="Areas\SAM\Helpers\SAMSeedDataGenerator.cs" />
-    <Compile Include="Areas\SAM\Helpers\HtmlPrefixScopeExtensions.cs" />
-    <Compile Include="Areas\SAM\Models\AccountModels.cs" />
-    <Compile Include="Areas\SAM\Models\AuthenticatorModels.cs" />
-    <Compile Include="Areas\SAM\Models\DataPermissionModels.cs" />
-    <Compile Include="Areas\SAM\Models\DatasetModels.cs" />
-    <Compile Include="Areas\SAM\Models\EntityModel.cs" />
-    <Compile Include="Areas\SAM\Models\FeatureModels.cs" />
-    <Compile Include="Areas\SAM\Models\FeaturePermissionModels.cs" />
-    <Compile Include="Areas\SAM\Models\GroupModels.cs" />
-    <Compile Include="Areas\SAM\Models\InfoModels.cs" />
-    <Compile Include="Areas\SAM\Models\PermissionModel.cs" />
-    <Compile Include="Areas\SAM\Models\SecurityQuestionModels.cs" />
-    <Compile Include="Areas\SAM\Models\ShowHelpModel.cs" />
-    <Compile Include="Areas\SAM\Models\TenantModels.cs" />
-    <Compile Include="Areas\SAM\Models\UserModels.cs" />
-    <Compile Include="Areas\SAM\SAMAreaRegistration.cs" />
-    <Compile Include="Areas\Site\Controllers\FooterController.cs" />
-    <Compile Include="Areas\Site\Controllers\NavController.cs" />
-    <Compile Include="Areas\Site\Controllers\TermsController.cs" />
-    <Compile Include="Areas\Site\SiteAreaRegistration.cs" />
-    <Compile Include="Areas\SAM\Controllers\UtilsController.cs" />
+    <Compile Include="Controllers\FooterController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\TermsController.cs" />
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Controllers\UiTestController.cs" />
     <Compile Include="Global.asax.cs">
@@ -599,18 +572,6 @@
     <Content Include="Areas\RPM\Stylesheets\DataStructureSearch.css" />
     <Content Include="Areas\RPM\Stylesheets\RPM.css" />
     <Content Include="Areas\RPM\Views\Help\Informations.xml" />
-    <Content Include="Areas\SAM\Images\SAM_UserGuide_files_images\SAM_UserGuide_files_img1.png" />
-    <Content Include="Areas\SAM\Images\SAM_UserGuide_files_images\SAM_UserGuide_files_img10.png" />
-    <Content Include="Areas\SAM\Images\SAM_UserGuide_files_images\SAM_UserGuide_files_img11.png" />
-    <Content Include="Areas\SAM\Images\SAM_UserGuide_files_images\SAM_UserGuide_files_img2.png" />
-    <Content Include="Areas\SAM\Images\SAM_UserGuide_files_images\SAM_UserGuide_files_img3.png" />
-    <Content Include="Areas\SAM\Images\SAM_UserGuide_files_images\SAM_UserGuide_files_img4.png" />
-    <Content Include="Areas\SAM\Images\SAM_UserGuide_files_images\SAM_UserGuide_files_img5.png" />
-    <Content Include="Areas\SAM\Images\SAM_UserGuide_files_images\SAM_UserGuide_files_img6.png" />
-    <Content Include="Areas\SAM\Images\SAM_UserGuide_files_images\SAM_UserGuide_files_img7.png" />
-    <Content Include="Areas\SAM\Images\SAM_UserGuide_files_images\SAM_UserGuide_files_img8.png" />
-    <Content Include="Areas\SAM\Images\SAM_UserGuide_files_images\SAM_UserGuide_files_img9.png" />
-    <Content Include="Areas\SAM\Views\Help\Informations.xml" />
     <Content Include="Content\Images\dfg_logo.gif" />
     <Content Include="Content\bootstrap-combobox.css" />
     <Content Include="Content\bootstrap-theme.css" />
@@ -658,9 +619,6 @@
     <Content Include="Areas\DCM\Views\Form\_metadataPackageUsageView.cshtml" />
     <Content Include="Areas\DCM\Views\Form\_metadataPackageView.cshtml" />
     <Content Include="Areas\DCM\Views\Form\_metadataCompoundAttributeUsageView.cshtml" />
-    <Content Include="Areas\SAM\Views\Users\_Membership.cshtml" />
-    <Content Include="Areas\SAM\Views\Groups\_Membership.cshtml" />
-    <Content Include="Areas\SAM\Views\Account\MyAccount.cshtml" />
     <Content Include="Areas\RPM\Views\DataStructureSearch\Index.cshtml" />
     <Content Include="Areas\RPM\Views\DataStructureSearch\_dataStructuredStructurePreview.cshtml" />
     <Content Include="Areas\RPM\Views\DataStructureSearch\_datatructureSearchResult.cshtml" />
@@ -671,10 +629,7 @@
     <Content Include="Areas\MSM\Views\Test\Index.cshtml" />
     <Content Include="Areas\MSM\Views\Test\_TreePartial.cshtml" />
     <Content Include="Areas\MSM\Views\Test\_AddTextField.cshtml" />
-    <Content Include="Areas\Site\Views\Shared\_Layout.cshtml" />
-    <Content Include="Areas\Site\Views\_ViewStart.cshtml" />
     <Content Include="Areas\DDM\Views\Data\_SubjectsPartial.cshtml" />
-    <Content Include="Areas\Site\Views\Terms\Index.cshtml" />
     <Content Include="fonts\FontAwesome.otf" />
     <Content Include="fonts\fontawesome-webfont.woff2" />
     <Content Include="fonts\fontawesome-webfont.woff" />
@@ -711,10 +666,15 @@
     <Content Include="Areas\SAM\Views\Tenants\_Create.cshtml" />
     <Content Include="Areas\SAM\Views\Tenants\_Edit.cshtml" />
     <Content Include="Areas\Site\Views\Footer\Content.cshtml" />
+    <Content Include="Areas\BAM\Views\Party\Create.cshtml" />
+    <Content Include="Areas\BAM\Views\Party\DeleteConfirm.cshtml" />
+    <Content Include="Areas\BAM\Views\Party\Edit.cshtml" />
+    <Content Include="Areas\BAM\Views\Party\Index.cshtml" />
+    <Content Include="Areas\BAM\Views\Party\View.cshtml" />
+    <Content Include="Areas\BAM\Views\Party\_customAttributesView.cshtml" />
+    <Content Include="Areas\BAM\Views\web.config" />
+    <Content Include="Areas\BAM\Views\_ViewStart.cshtml" />
     <None Include="Properties\PublishProfiles\BPP Publish.pubxml" />
-    <None Include="Properties\PublishProfiles\BPP21005.pubxml" />
-    <None Include="Properties\PublishProfiles\BPP290.pubxml" />
-    <None Include="Properties\PublishProfiles\BPP2907.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\DCM\Form.js" />
     <Content Include="Scripts\DIM\bexis.dim.mapping.js" />
@@ -723,16 +683,7 @@
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
-    <Content Include="Areas\SAM\Views\Tenants\Index.cshtml" />
     <None Include="Properties\PublishProfiles\T1.pubxml" />
-    <Content Include="Areas\BAM\Views\Party\Index.cshtml" />
-    <Content Include="Areas\BAM\Views\Party\Create.cshtml" />
-    <Content Include="Areas\BAM\Views\web.config" />
-    <Content Include="Areas\BAM\Views\_ViewStart.cshtml" />
-    <Content Include="Areas\BAM\Views\Party\_customAttributesView.cshtml" />
-    <Content Include="Areas\BAM\Views\Party\Edit.cshtml" />
-    <Content Include="Areas\BAM\Views\Party\View.cshtml" />
-    <Content Include="Areas\BAM\Views\Party\DeleteConfirm.cshtml" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.4.js" />
     <Content Include="Scripts\jquery-2.1.4.min.js" />
@@ -741,6 +692,7 @@
     <Content Include="Scripts\minimap\minimap.js" />
     <Content Include="Scripts\minimap\minimap.min.css" />
     <Content Include="Scripts\minimap\minimap.min.js" />
+    <Content Include="Shell.Manifest.xml" />
     <Content Include="Themes\Black\Styles\awesome\css\font-awesome.css" />
     <Content Include="Themes\Black\Styles\awesome\css\font-awesome.min.css" />
     <Content Include="Themes\Black\Styles\awesome\fonts\fontawesome-webfont.svg" />
@@ -1068,6 +1020,8 @@
     <Content Include="Views\Shared\_EntitySelectorView.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\DropDown.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\TreeViewItem.cshtml" />
+    <Content Include="Themes\Default\Partials\_Menu.cshtml" />
+    <Content Include="Views\Terms\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1078,8 +1032,6 @@
     <Folder Include="Areas\DIM\Views\Api\" />
     <Folder Include="Areas\DIM\Views\Shared\" />
     <Folder Include="Areas\MSM\Views\Shared\" />
-    <Folder Include="Areas\SAM\Views\Shared\" />
-    <Folder Include="Areas\Site\Models\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Home\About.cshtml" />
@@ -1115,9 +1067,9 @@
     <Content Include="Views\Shared\EditorTemplates\Time.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="packages.config">
+    <None Include="packages.config">
       <SubType>Designer</SubType>
-    </Content>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="IoC.config">
@@ -1131,15 +1083,6 @@
     <Content Include="Themes\Web.config">
       <SubType>Designer</SubType>
     </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\SAM\Views\Utils\_ServerTime.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\Site\Views\Web.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\Site\Views\Nav\_Menu.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Themes\Default\Partials\_ThemeSelector.cshtml" />
@@ -1254,7 +1197,7 @@
       <Name>BExIS.Dlm.Services</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Components\EXT\BExIS.Ext.Services\BExIS.Ext.Services.csproj">
-      <Project>{b906a66a-4a09-4207-b590-655ee111ccf1}</Project>
+      <Project>{B906A66A-4A09-4207-B590-655EE111CCF1}</Project>
       <Name>BExIS.Ext.Services</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Components\IO\BExIS.IO.DataType.DisplayPattern\BExIS.IO.DataType.DisplayPattern.csproj">
@@ -1280,6 +1223,10 @@
     <ProjectReference Include="..\..\Components\IO\BExIS.IO\BExIS.IO.csproj">
       <Project>{e4795f06-20c2-4c4c-a720-9a79896384df}</Project>
       <Name>BExIS.IO</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Components\Utils\BExIS.Utils\BExIS.Utils.csproj">
+      <Project>{782b71c1-707f-4ab1-80e9-90d2880635b4}</Project>
+      <Name>BExIS.Utils</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Components\XML\BExIS.Xml.Helpers\BExIS.Xml.Helpers.csproj">
       <Project>{252f7872-a69c-43a6-84b4-4d2abdbdd9ab}</Project>
@@ -1381,15 +1328,6 @@
     <Content Include="Areas\DCM\Views\Shared\_errorMessages.cshtml" />
     <Content Include="Areas\DCM\Views\Submit\_selectDataStructureId.cshtml" />
     <Content Include="Areas\DCM\Views\SubmitSpecifyDataset\_selectADatasetId.cshtml" />
-    <Content Include="Areas\SAM\Views\Web.config">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Areas\SAM\Views\Dataset\Index.cshtml" />
-    <Content Include="Areas\SAM\Views\_ViewStart.cshtml" />
-    <Content Include="Areas\SAM\Views\Dataset\Purge.cshtml" />
-    <Content Include="Areas\SAM\Views\Dataset\List.cshtml" />
-    <Content Include="Areas\SAM\Views\Dataset\Versions.cshtml" />
-    <Content Include="Areas\SAM\Views\Dataset\Version.cshtml" />
     <Content Include="Areas\DDM\Views\Data\_previewDatastructure.cshtml" />
     <Content Include="Areas\DDM\Views\Data\_unstructuredDataView.cshtml" />
     <Content Include="Areas\DDM\Views\Data\_structuredDataView.cshtml" />
@@ -1416,7 +1354,6 @@
     <Content Include="Areas\DDM\Views\Home\_myDatasetGridView.cshtml" />
     <Content Include="Areas\DDM\Views\Data\_showItem.cshtml" />
     <Content Include="Areas\DCM\Views\Shared\_summaryErrorMessages.cshtml" />
-    <Content Include="Areas\SAM\Views\Help\Index.cshtml" />
     <Content Include="Areas\DCM\Views\Help\Index.cshtml" />
     <Content Include="Areas\RPM\Views\Help\Index.cshtml" />
     <Content Include="Areas\DDM\Views\Help\Index.cshtml" />
@@ -1427,38 +1364,13 @@
     <Content Include="Areas\RPM\Views\DataAttribute\_editAttribute.cshtml" />
     <Content Include="Areas\RPM\Views\Shared\_patternConstraintView.cshtml" />
     <Content Include="Areas\RPM\Views\Shared\_rangeConstraintView.cshtml" />
-    <Content Include="Areas\SAM\Views\Account\Error.cshtml" />
-    <Content Include="Areas\SAM\Views\Account\LogOn.cshtml" />
-    <Content Include="Areas\SAM\Views\Account\_LogOnPartial.cshtml" />
-    <Content Include="Areas\SAM\Views\Account\_RegisterPartial.cshtml" />
-    <Content Include="Areas\SAM\Views\DataPermissions\Data.cshtml" />
-    <Content Include="Areas\SAM\Views\DataPermissions\_DatasetsPartial.cshtml" />
-    <Content Include="Areas\SAM\Views\DataPermissions\_SubjectsPartial.cshtml" />
-    <Content Include="Areas\SAM\Views\FeaturePermissions\Features.cshtml" />
-    <Content Include="Areas\SAM\Views\FeaturePermissions\_FeaturesPartial.cshtml" />
-    <Content Include="Areas\SAM\Views\FeaturePermissions\_SubjectsPartial.cshtml" />
-    <Content Include="Areas\SAM\Views\Groups\Groups.cshtml" />
-    <Content Include="Areas\SAM\Views\Groups\_CreatePartial.cshtml" />
-    <Content Include="Areas\SAM\Views\Groups\_EditPartial.cshtml" />
-    <Content Include="Areas\SAM\Views\Users\Users.cshtml" />
-    <Content Include="Areas\SAM\Views\Users\_CreatePartial.cshtml" />
-    <Content Include="Areas\SAM\Views\Users\_EditPartial.cshtml" />
     <Content Include="Themes\Default\Styles\awesome\fonts\fontawesome-webfont.woff2" />
     <Content Include="Themes\Default\Styles\awesome\fonts\fontawesome-webfont.woff" />
     <Content Include="Themes\Default\Styles\awesome\fonts\fontawesome-webfont.ttf" />
     <Content Include="Themes\Default\Styles\awesome\fonts\fontawesome-webfont.eot" />
     <Content Include="Themes\Default\Styles\awesome\fonts\FontAwesome.otf" />
-    <None Include="Properties\PublishProfiles\2230.pubxml" />
-    <None Include="Properties\PublishProfiles\2301.pubxml" />
-    <None Include="Properties\PublishProfiles\2302.pubxml" />
-    <None Include="Properties\PublishProfiles\2400.pubxml" />
-    <None Include="Properties\PublishProfiles\BPP230.pubxml" />
     <Content Include="_AppStart.cshtml" />
     <Content Include="Views\Home\SessionTimeout.cshtml" />
-    <None Include="Properties\PublishProfiles\DDM_Test.pubxml" />
-    <None Include="Properties\PublishProfiles\TestHelpMenu.pubxml">
-      <SubType>Designer</SubType>
-    </None>
     <Content Include="Views\UiTest\Index.cshtml" />
     <Content Include="Themes\Black\Styles\awesome\fonts\fontawesome-webfont.eot" />
     <Content Include="Themes\Black\Styles\awesome\fonts\fontawesome-webfont.ttf" />

@@ -3,7 +3,7 @@ using System.Linq;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Objects;
 
-namespace BExIS.Web.Shell.Areas.SAM.Models
+namespace BExIS.Modules.Sam.UI.Models
 {
     public class EntityItemModel
     {

@@ -1,4 +1,11 @@
-@using Vaiona.Web.Mvc;
+@model BExIS.Modules.Sam.UI.Models.ShowHelpModel
+@using BExIS.Modules.Sam.UI.Models;
+
+@{
+    HtmlString toc = new HtmlString(Model.Title);
+    HtmlString content = new HtmlString(Model.Description);
+}
+
 @section Information
 {
     This guide will walk you through the basics of using search UI including how to manage search component.
