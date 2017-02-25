@@ -59,6 +59,11 @@
         <div class="row">
             <div class="mapping_container_transformation col-12">
 
+                @foreach (SimpleMappingModel simpleMappingModel in Model.SimpleMappings)
+                {
+                    @Html.Partial("TransformationRule", simpleMappingModel)
+                }
+
             </div>
         </div>
         <div class="row">

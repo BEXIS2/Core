@@ -80,7 +80,7 @@ namespace BExIS.Web.Shell.Areas.DIM.Helper
                     LinkElementType.MetadataStructure,
                     metadataStructure.Name, "Metadata",
                     rootModelType,
-                    LinkElementComplexity.Complex,
+                    LinkElementComplexity.Complex, "",
                     metadataStructure.Description);
 
 
@@ -159,6 +159,8 @@ namespace BExIS.Web.Shell.Areas.DIM.Helper
             xPath = parentXpath + "/" + usageName.Replace(" ", string.Empty) + "/" + typeName;
 
             long linkElementId = 0;
+            string mask = "";
+
             LinkElement linkElement =
                 mappingManager.LinkElementRepo.Get()
                     .FirstOrDefault(le => le.ElementId.Equals(usage.Id) && le.Type.Equals(type));
@@ -166,13 +168,14 @@ namespace BExIS.Web.Shell.Areas.DIM.Helper
             if (linkElement != null)
             {
                 linkElementId = linkElement.Id;
+                mask = linkElement.Mask;
             }
 
 
             LinkElementModel LEModel = new LinkElementModel(
                 linkElementId,
                 usage.Id,
-                type, usage.Label, xPath, rootModel.Position, complexity, usage.Description);
+                type, usage.Label, xPath, rootModel.Position, complexity, mask, usage.Description);
             rootModel.LinkElements.Add(LEModel);
 
             LEModel.Parent = parent;
@@ -181,6 +184,7 @@ namespace BExIS.Web.Shell.Areas.DIM.Helper
             if (addTypeAsLinkElement)
             {
                 linkElementId = 0;
+
                 linkElement =
                     mappingManager.LinkElementRepo.Get()
                         .FirstOrDefault(le => le.ElementId.Equals(typeId) && le.Type.Equals(LinkElementType.ComplexMetadataAttribute));
@@ -188,6 +192,7 @@ namespace BExIS.Web.Shell.Areas.DIM.Helper
                 if (linkElement != null)
                 {
                     linkElementId = linkElement.Id;
+                    mask = linkElement.Mask;
                 }
 
                 LEModel = new LinkElementModel(
@@ -198,6 +203,7 @@ namespace BExIS.Web.Shell.Areas.DIM.Helper
                     "",
                     rootModel.Position,
                     complexity,
+                    mask,
                     typeDescription);
 
                 LEModel.Parent = parent;
@@ -273,11 +279,12 @@ namespace BExIS.Web.Shell.Areas.DIM.Helper
             foreach (Key value in Key.GetValues(typeof(Key)))
             {
                 long linkElementId = GetId((int)value, LinkElementType.Key);
+                string mask = GetMask((int)value, LinkElementType.Key);
 
                 LinkElementModel LEModel = new LinkElementModel(
                         linkElementId,
                         (int)value,
-                        LinkElementType.Key, value.ToString(), "", model.Position, LinkElementComplexity.Simple, "");
+                        LinkElementType.Key, value.ToString(), "", model.Position, LinkElementComplexity.Simple, mask, "");
 
                 LEModel.Parent = LEParent;
 
@@ -299,11 +306,12 @@ namespace BExIS.Web.Shell.Areas.DIM.Helper
             MappingManager mappingManager = new MappingManager();
 
             long linkElementId = GetId(partyType.Id, LinkElementType.PartyType);
+            string mask = GetMask(partyType.Id, LinkElementType.PartyType);
 
             LinkElementModel LEModel = new LinkElementModel(
                         linkElementId,
                         partyType.Id,
-                        LinkElementType.PartyType, partyType.Title, "", rootModel.Position, LinkElementComplexity.Complex, partyType.Description);
+                        LinkElementType.PartyType, partyType.Title, "", rootModel.Position, LinkElementComplexity.Complex, mask, partyType.Description);
 
             LEModel.Parent = parent;
 
@@ -320,11 +328,12 @@ namespace BExIS.Web.Shell.Areas.DIM.Helper
             foreach (var partyCustomType in partyType.CustomAttributes)
             {
                 long linkElementId = GetId(partyCustomType.Id, LinkElementType.PartyCustomType);
+                string mask = GetMask(partyCustomType.Id, LinkElementType.PartyCustomType);
 
                 LinkElementModel LEModel = new LinkElementModel(
                             linkElementId,
                             partyCustomType.Id,
-                            LinkElementType.PartyCustomType, partyCustomType.Name, partyType.Title + "/" + partyCustomType.Name, rootModel.Position, LinkElementComplexity.Simple, partyCustomType.Description);
+                            LinkElementType.PartyCustomType, partyCustomType.Name, partyType.Title + "/" + partyCustomType.Name, rootModel.Position, LinkElementComplexity.Simple, mask, partyCustomType.Description);
                 LEModel.Parent = parent;
 
                 tmp.Add(LEModel);
@@ -464,7 +473,7 @@ namespace BExIS.Web.Shell.Areas.DIM.Helper
                     new LinkElementModel(
                         0,
                         attr.Id,
-                        LinkElementType.PartyCustomType, attr.Name, "", model.Position, LinkElementComplexity.Simple, attr.Description)
+                        LinkElementType.PartyCustomType, attr.Name, "", model.Position, LinkElementComplexity.Simple, "", attr.Description)
                     );
             }
 
@@ -496,7 +505,7 @@ namespace BExIS.Web.Shell.Areas.DIM.Helper
                         new LinkElementModel(
                             0,
                             attr.Id,
-                            type, attr.Label, "", model.Position, complexity, attr.Description)
+                            type, attr.Label, "", model.Position, complexity, "", attr.Description)
                         );
             }
 
@@ -599,7 +608,8 @@ namespace BExIS.Web.Shell.Areas.DIM.Helper
                         model.Type,
                         model.Complexity,
                         model.Name,
-                        model.XPath
+                        model.XPath,
+                        model.Mask
                         );
         }
 
@@ -613,6 +623,7 @@ namespace BExIS.Web.Shell.Areas.DIM.Helper
                         model.Complexity,
                         model.Name,
                         model.XPath,
+                        model.Mask,
                         false,
                         parentId
                         );
@@ -661,7 +672,25 @@ namespace BExIS.Web.Shell.Areas.DIM.Helper
                      m.Target.Id.Equals(target.Id) &&
                      m.Level.Equals(level));
             if (mapping == null)
-                mapping = mappingManager.CreateMapping(source, target, level, null);
+            {
+                if (rule.Id == 0 && rule.RegEx != null)
+                {
+                    rule = mappingManager.CreateTransformationRule(rule.RegEx);
+                }
+
+                mapping = mappingManager.CreateMapping(source, target, level, rule);
+            }
+            else
+            {
+                if (rule != null)
+                {
+                    rule = mappingManager.UpdateTransformationRule(rule.Id, rule.RegEx);
+
+                    mapping.TransformationRule = rule;
+                    mappingManager.UpdateMapping(mapping);
+                }
+            }
+
 
             return mapping;
         }
@@ -714,13 +743,30 @@ namespace BExIS.Web.Shell.Areas.DIM.Helper
                 LinkElement simpleMappingSource = MappingHelper.CreateIfNotExistLinkElement(sm.Source, sourceId);
                 LinkElement simpleMappingTarget = MappingHelper.CreateIfNotExistLinkElement(sm.Target, targetId);
 
+                if (sm.Target.Mask != null)
+                    simpleMappingTarget = mappingManager.UpdateLinkElement(simpleMappingTarget.Id, sm.Target.Mask);
+
+
+                TransformationRule transformationRule = new TransformationRule(sm.TransformationRule.Id, sm.TransformationRule.RegEx);
+
+
                 Mapping simplemapping = MappingHelper.CreateIfNotExistMapping(simpleMappingSource, simpleMappingTarget, 2, null);
+
+                if (transformationRule != null)
+                {
+                    transformationRule = mappingManager.UpdateTransformationRule(transformationRule.Id, transformationRule.RegEx);
+
+                    simplemapping.TransformationRule = transformationRule;
+                    mappingManager.UpdateMapping(simplemapping);
+                }
+
                 sm.Id = simplemapping.Id;
 
             }
 
             return false;
         }
+
 
         public static bool DeleteMapping(long id, bool recursive = true)
         {
@@ -800,6 +846,24 @@ namespace BExIS.Web.Shell.Areas.DIM.Helper
             }
 
             return linkElementId;
+        }
+
+        public static string GetMask(long elementId, LinkElementType type)
+        {
+            MappingManager mappingManager = new MappingManager();
+
+            string mask = "";
+
+            LinkElement linkElement =
+                mappingManager.LinkElementRepo.Get()
+                    .FirstOrDefault(le => le.ElementId.Equals(elementId) && le.Type.Equals(type));
+
+            if (linkElement != null)
+            {
+                mask = linkElement.Mask;
+            }
+
+            return mask;
         }
 
         /// <summary>

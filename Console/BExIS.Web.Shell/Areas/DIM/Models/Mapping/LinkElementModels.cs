@@ -80,6 +80,7 @@ namespace BExIS.Web.Shell.Areas.DIM.Models.Mapping
         public String XPath { get; set; }
         public LinkElementPostion Position { get; set; }
         public LinkElementComplexity Complexity { get; set; }
+        public string Mask { get; set; }
 
         public List<LinkElementModel> Children { get; set; }
         public LinkElementModel Parent { get; set; }
@@ -94,6 +95,7 @@ namespace BExIS.Web.Shell.Areas.DIM.Models.Mapping
             Children = new List<LinkElementModel>();
             Parent = null;
             Complexity = LinkElementComplexity.None;
+            Mask = "";
         }
 
         public LinkElementModel(
@@ -104,6 +106,7 @@ namespace BExIS.Web.Shell.Areas.DIM.Models.Mapping
             string xpath,
             LinkElementPostion position,
             LinkElementComplexity complexity,
+            string mask,
             string description = ""
             )
         {
@@ -116,6 +119,7 @@ namespace BExIS.Web.Shell.Areas.DIM.Models.Mapping
             Position = position;
             Children = new List<LinkElementModel>();
             Complexity = complexity;
+            Mask = mask;
         }
     }
 
@@ -123,6 +127,12 @@ namespace BExIS.Web.Shell.Areas.DIM.Models.Mapping
     {
         public long Id { get; set; }
         public string RegEx { get; set; }
+
+        public TransformationRuleModel()
+        {
+            Id = 0;
+            RegEx = "";
+        }
     }
 
 

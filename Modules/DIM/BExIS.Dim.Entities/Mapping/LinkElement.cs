@@ -16,6 +16,7 @@ namespace BExIS.Dim.Entities.Mapping
         public virtual bool IsSequence { get; set; }
         public virtual LinkElementType Type { get; set; }
         public virtual LinkElementComplexity Complexity { get; set; }
+        public virtual string Mask { get; set; }
 
 
         #endregion
