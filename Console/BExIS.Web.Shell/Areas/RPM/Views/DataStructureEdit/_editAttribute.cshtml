@@ -16,6 +16,7 @@
                 <div title="The name will be used for a new Variable Template">@Html.TextBox("Name", Model.Name, new { @class = "bx-input", @id = "name", @autofocus = "true" })</div>
                 <div class="hidden bx-rpm-error" id="messageContainer"><span id="message" class="bx-rpm-message" value="none"></span></div>
             </td>
+            <td class="bx-rpm-function"></td>
         </tr>
         <tr>
             <td style="vertical-align:top;width:90px">
@@ -24,6 +25,7 @@
             <td style="vertical-align:top;">
                 @Html.TextArea("Description", Model.Description, new { @class = "bx-input", @id = "description" })
             </td>
+            <td class="bx-rpm-function"></td>
         </tr>
         @*<tr id="shortname">
             <td style="width:120px">
@@ -37,18 +39,26 @@
             <td>
                 Unit
             </td>
-            <td class="bx-rpm-selectdropdown unit">
-                @Html.DropDownList("unit", new SelectList(Model.Units, "Id", "Name", Model.Units.Where(u=>u.Name.ToLower().Equals("none")).FirstOrDefault().Id), new { @id = "unit", @class = "bx-dropdown bx-rpm-dropdown", @onchange= "javascript:changeUnit()" })
-                <span class="t-arrow-down bx-rpm-dropdownArrow"/>
+            <td class="unit">
+                <div class="bx-rpm-selectdropdown">
+                    @Html.Partial("_dropdown", Model.Units)
+                </div>
+                <div class="bx-rpm-partial" style="display:none;">
+                    @Html.Partial("_editUnit", new EditUnitStruct())
+                </div>
+            </td>
+            <td class="bx-rpm-function" style="vertical-align:top">
+                <div class="bx-function bx-add" id="addUnit"></div>
             </td>
         </tr>
         <tr>
             <td>
                 Data Type
             </td>
-            <td class="bx-rpm-selectdropdown datatype">
-                @Html.Partial("_dataTypeDropdown", Model.DataTypes)
+            <td class="datatype bx-rpm-selectdropdown">
+                @Html.Partial("_dropdown", Model.DataTypes)
             </td>
+            <td class="bx-rpm-function"></td>
         </tr>
     </table>
     <table>
@@ -78,7 +88,16 @@
     var inUse = @Model.inUse.ToString().ToLower();
 
     $(function () {
-        changeUnit();
+        var options = $('.bx-rpm-createAttributeContainer .unit .bx-rpm-selectdropdown #select option');
+        for(var i = 0; i < options.length; i++){
+            if($(options[i]).text().toLowerCase() == 'none'){
+                var select = $('.bx-rpm-createAttributeContainer .unit .bx-rpm-selectdropdown #select');
+                select.val($(options[i]).attr('value')).change();
+                var parameters = encodeURI('/?unitId=' + select.val());
+                unitChange(parameters);
+                break;
+            }
+        }
         $('.bx-rpm-createAttributeContainer #constraints').toggle();
     });
 
@@ -164,10 +183,16 @@
             //$('.bx-rpm-createAttributeContainer #saveButton').removeClass('bx-disabled');
         }
     }
+    $('.bx-rpm-function #addUnit').click(function () {
+        $('.unit .bx-rpm-selectdropdown').toggle();
+        $('.unit .bx-rpm-partial').toggle();
+        $('.bx-rpm-function #addUnit').toggleClass('bx-add');
+        $('.bx-rpm-function #addUnit').toggleClass('bx-close');
+    });
 
     $('.bx-rpm-createAttributeContainer #saveButton').click(function () {
         var cssId = 'message';
-        var parameters = encodeURI('/?Id=' + $('.bx-rpm-createAttributeContainer #id').val() + '&Name=' + encodeURIComponent($('.bx-rpm-createAttributeContainer #name').val()) + '&Description=' + encodeURIComponent($('.bx-rpm-createAttributeContainer #description').val()) + '&unitId=' + $('.bx-rpm-createAttributeContainer #unit').val() + '&dataTypeId=' + $('.bx-rpm-createAttributeContainer #dataType').val() + '&cssId=' + cssId + '&inUse=' + inUse);
+        var parameters = encodeURI('/?Id=' + $('.bx-rpm-createAttributeContainer #id').val() + '&Name=' + encodeURIComponent($('.bx-rpm-createAttributeContainer #name').val()) + '&Description=' + encodeURIComponent($('.bx-rpm-createAttributeContainer #description').val()) + '&unitId=' + $('.bx-rpm-createAttributeContainer .unit .bx-rpm-selectdropdown #select').val() + '&dataTypeId=' + $('.bx-rpm-createAttributeContainer .datatype.bx-rpm-selectdropdown #select').val() + '&cssId=' + cssId + '&inUse=' + inUse);
         parameters = parameters.replace('#','%23');
         $.get('@Url.Action("createAtttribute", "DataStructureEdit", new { area = "RPM"} )' + parameters, function (data) {
             if ($(data).hasClass('bx-rpm-message') && $(data).attr('id') == cssId) {
@@ -187,10 +212,14 @@
         });
     });
 
-    function changeUnit() {
-        var parameters = encodeURI('/?unitId=' + $('.bx-rpm-createAttributeContainer #unit').val());
+    $('.bx-rpm-createAttributeContainer .unit .bx-rpm-selectdropdown #select').change(function() {
+        var parameters = encodeURI('/?unitId=' + $(this).val());
+        unitChange(parameters);
+    });
+
+    function unitChange(parameters){
         $.get('@Url.Action("_getDataTypes", "DataStructureEdit", new { area = "RPM"} )' + parameters, function (data) {
-            $('.bx-rpm-createAttributeContainer .bx-rpm-selectdropdown.datatype').html($(data));
+            $('.bx-rpm-createAttributeContainer .datatype.bx-rpm-selectdropdown').html($(data));
         });
     }
 
@@ -210,7 +239,7 @@
             $('.bx-rpm-rangeConstraint #errorMsg').removeAttr('value');
             $('.bx-rpm-rangeConstraint #errorMsgText').text('');
         }
-        
+
 
         var invert = false;
         var mininclude = true;
@@ -336,10 +365,10 @@
                 dataType: 'json',
                 contentType: 'application/json; charset=utf-8',
                 error: function (xhr) {
-                    
+
                 },
                 success: function (result) {
-                    
+
                 },
                 async: false,
                 processData: false
@@ -364,10 +393,10 @@
                 dataType: 'json',
                 contentType: 'application/json; charset=utf-8',
                 error: function (xhr) {
-                    
+
                 },
                 success: function (result) {
-                    
+
                 },
                 async: false,
                 processData: false
@@ -392,10 +421,10 @@
                 dataType: 'json',
                 contentType: 'application/json; charset=utf-8',
                 error: function (xhr) {
-                    
+
                 },
                 success: function (result) {
-                    
+
                 },
                 async: false,
                 processData: false

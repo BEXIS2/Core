@@ -1,0 +1,46 @@
+﻿@using Telerik.Web.Mvc.UI
+@using System.Linq;
+@using BExIS.Dlm.Entities.DataStructure
+@using BExIS.Web.Shell.Areas.RPM.Models
+
+@model BExIS.Web.Shell.Areas.RPM.Models.EditUnitStruct
+
+<div class="bx-rpm-createAttributeContainer">
+   @(Html.HiddenFor(m=>m.Id, new {@class = "hidden", @id = "id"})) 
+    <table class="bx-rpm-info">
+        <tr>
+            <td>
+                Name <span class="bx bx-required" title="Required"></span>
+            </td>
+            <td>
+                <div title="The name will be used for a new Unit">@Html.TextBox("Name", Model.Name, new { @class = "bx-input", @id = "name", @autofocus = "true" })</div>
+                <div class="hidden bx-rpm-error" id="messageContainer"><span id="message" class="bx-rpm-message" value="none"></span></div>
+            </td>
+            <td class="bx-rpm-function"></td>
+        </tr>
+        <tr>
+            <td style="vertical-align:top;width:90px">
+                Description
+            </td>
+            <td style="vertical-align:top;">
+                @Html.TextArea("Description", Model.Description, new { @class = "bx-input", @id = "description" })
+            </td>
+            <td class="bx-rpm-function"></td>
+        </tr>
+        <tr>
+            <td>
+                Data Types
+            </td>
+            <td class="bx-rpm-selectdropdown datatypes">
+            </td>
+            <td class="bx-rpm-function"></td>
+        </tr>
+    </table>
+    <div class="bx-rpm-buttons bx-footer left" id="buttons">
+        <button name="create" class="bx-button action"  id="saveButton">Save</button>
+        <button name="cancel" class="bx-button action" id="cancelButton" onclick="javascript:$('#createAttributeWindow').data('tWindow').destroy();">Cancel</button>
+    </div>  
+</div>  
+
+<script type="text/javascript">
+</script>

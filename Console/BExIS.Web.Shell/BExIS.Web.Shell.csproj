@@ -688,10 +688,11 @@
     <Content Include="Areas\RPM\Views\Shared\_messageWindow.cshtml" />
     <Content Include="Areas\RPM\Views\DataStructureEdit\_editAttribute.cshtml" />
     <Content Include="Areas\RPM\Views\DataStructureEdit\_attributeElement.cshtml" />
-    <Content Include="Areas\RPM\Views\DataStructureEdit\_dataTypeDropdown.cshtml" />
+    <Content Include="Areas\RPM\Views\DataStructureEdit\_dropdown.cshtml" />
     <Content Include="Areas\DCM\Views\ManageMetadataStructure\_editMetadataStructureView.cshtml" />
     <Content Include="Areas\DDM\Views\Data\_fileSizeView.cshtml" />
     <Content Include="Areas\SAM\Views\Dataset\Delete.cshtml" />
+    <Content Include="Areas\RPM\Views\DataStructureEdit\_editUnit.cshtml" />
     <None Include="Properties\PublishProfiles\BEXIS 2.10.pubxml" />
     <None Include="Properties\PublishProfiles\bexis2 Release2.10.pubxml" />
     <None Include="Properties\PublishProfiles\BEXIS2.pubxml" />

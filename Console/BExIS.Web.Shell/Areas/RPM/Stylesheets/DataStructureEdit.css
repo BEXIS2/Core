@@ -428,5 +428,9 @@ h2{
 }
 
 .bx-rpm-createAttributeContainer table.bx-rpm-info{
-    max-width:476px;
+    max-width:510px;
+}
+
+.bx-rpm-createAttributeContainer table.bx-rpm-info td.bx-rpm-function{
+    width:24px;
 }
