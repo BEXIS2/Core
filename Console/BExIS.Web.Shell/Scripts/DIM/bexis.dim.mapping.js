@@ -13,13 +13,15 @@ $(window)
     });
 
 function iconClick(e) {
-    //console.log(e);
+    console.log("CLICK");
     $(e).toggleClass("bx-angle-double-down bx-angle-double-up");
     var container = $(e).parents(".le-container");
     //console.log(container);
     
     $(container).find(".le-container-content").slideToggle();
 
+
+    reloadAllConnections();
 };
 
 function iconTransformtionRuleClick(e) {
@@ -30,6 +32,7 @@ function iconTransformtionRuleClick(e) {
 
     $(container).find(".mapping-container-transformation-rule-content").slideToggle();
 
+    reloadAllConnections();
 };
 
 function leSimpleSelectorClick(e) {
@@ -84,7 +87,7 @@ function leSimpleSelectorClick(e) {
                 changeAddFunctionOnSameSide("Target");
             }
 
-            
+            reloadAllConnections();
         },
         error: function(data) { alert("error") }
 
@@ -112,7 +115,6 @@ function changeAddFunctionOnSameSide(key) {
         $("#newMapContainer .mapping-settings").show();
         //$(deleteBt).hide();
         initJSPLUMB("mapping_container_0");
-        reloadAllConnections();
     } else {
         //$(deleteBt).show();
     }
@@ -148,6 +150,8 @@ function deleteComplexMappingElement(e) {
             $("#newMapContainer .mapping-settings").hide();
         }
     }
+
+    reloadAllConnections();
 }
 
 function createRootElement(info) {
@@ -350,15 +354,17 @@ function saveMapping(e, create) {
                     $('#dim-mapping-middle #newMapContainer').append(response);
 
 
-                    changeAddFunctionOnSameSide("Target");
-                    changeAddFunctionOnSameSide("Source");
+                  
 
                     //console.log("RESET ALL CONNECTIONS");
                     reloadAllConnections();
                 });
 
-            
+            changeAddFunctionOnSameSide("Target");
+            changeAddFunctionOnSameSide("Source");
             updateSaveOptions($(parent).attr("id"), false);
+
+           
 
         },
         error: function (data) { alert("error") }
@@ -395,7 +401,6 @@ function deleteMapping(e) {
 
         });
 }
-
 
 function updateParentConnection(conn, parentId, jsPlumbInstance) {
 
@@ -494,29 +499,8 @@ function removeParentFromConnections(parentId) {
     }
 }
 
-
-/**
- * Call this function when the connections need to set new because of postion
- * arrangements of the containers
- * @returns {} 
- */
-function reloadAllConnections() {
-
-    //jsPlumb.repaintEverything();
-
-    //console.log("RELOAD CONNECTIONS");
-    //console.log(connections);
-
-    //for (var i = 0; i < connections.length; i++)
-    //{
-    //    var existParent = connections[i];
-    //    var instance = existParent.jsPlumbInstance;
-    //    var c = instance.repaintEverything();
-    //}
-}
-
 function getInstance(parentid) {
-    
+
     var instance = window.instance = jsPlumb.getInstance({
 
         ConnectionOverlays: [
@@ -558,6 +542,58 @@ function getInstance(parentid) {
     return instance;
 
 }
+
+
+/**
+ * Call this function when the connections need to set new because of postion
+ * arrangements of the containers
+ * @returns {} 
+ */
+function reloadAllConnections() {
+
+    //jsPlumb.repaintEverything();
+
+    console.log("RELOAD CONNECTIONS");
+    //console.log(connections);
+
+    // go to each parent
+    for (var i = 0; i < connections.length; i++)
+    {
+       
+        var existParent = connections[i];
+        var instance = existParent.jsPlumbInstance;
+
+        instance.repaintEverything();
+
+        //go to each connection that exits
+        //for (var j = 0; j < existParent.connections.length; j++) {
+        //    var currentConn = existParent.connections[j];
+        //    console.log("conn : "+j);
+        //    console.log(currentConn);
+
+        //    ////remove conn
+        //    var source = currentConn.source;
+        //    var target = currentConn.target;
+        //    console.log(source);
+        //    console.log(target);
+
+            
+
+        //    //if (source != null && target != null) {
+        //    //    //set con
+        //    //    //instance.connect({
+        //    //    //    source: source,
+        //    //    //    target: target,
+        //    //    //    type: "basic"
+        //    //    //});
+        //    //}
+
+
+        //}
+
+    }
+}
+
 
 function initJSPLUMB(parentid) {
 

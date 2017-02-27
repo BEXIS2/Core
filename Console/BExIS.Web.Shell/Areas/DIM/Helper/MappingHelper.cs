@@ -557,13 +557,27 @@ namespace BExIS.Web.Shell.Areas.DIM.Helper
             LinkElementModel sourceModel = CreateLinkElementModel(source, LinkElementPostion.Source);
             LinkElementModel targetModel = CreateLinkElementModel(target, LinkElementPostion.Target);
 
+            TransformationRuleModel transformationRuleModel = null;
+
+
+            if (mapping.TransformationRule != null)
+            {
+                transformationRuleModel = new TransformationRuleModel();
+                transformationRuleModel.Id = mapping.TransformationRule.Id;
+                transformationRuleModel.RegEx = mapping.TransformationRule.RegEx;
+            }
+            else
+            {
+                transformationRuleModel = new TransformationRuleModel();
+            }
             //ToDo Load Rules
 
             return new SimpleMappingModel()
             {
                 Id = mapping.Id,
                 Source = sourceModel,
-                Target = targetModel
+                Target = targetModel,
+                TransformationRule = transformationRuleModel
             };
         }
 
@@ -579,7 +593,9 @@ namespace BExIS.Web.Shell.Areas.DIM.Helper
                 Name = le.Name,
                 Position = position,
                 Type = le.Type,
-                Complexity = le.Complexity
+                Complexity = le.Complexity,
+                Mask = le.Mask
+
             };
 
         }
@@ -673,7 +689,7 @@ namespace BExIS.Web.Shell.Areas.DIM.Helper
                      m.Level.Equals(level));
             if (mapping == null)
             {
-                if (rule.Id == 0 && rule.RegEx != null)
+                if (rule != null && rule.Id == 0 && rule.RegEx != null)
                 {
                     rule = mappingManager.CreateTransformationRule(rule.RegEx);
                 }

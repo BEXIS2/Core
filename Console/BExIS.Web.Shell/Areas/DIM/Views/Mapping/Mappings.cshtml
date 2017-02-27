@@ -8,7 +8,7 @@
         @Html.Partial("Mapping", new ComplexMappingModel())
     </div>
 
-    @foreach (var map in @Model)
+    @foreach (var map in @Model.OrderByDescending(m=>m.Id))
     {
         @Html.Partial("Mapping", map)
     }
