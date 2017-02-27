@@ -9,7 +9,7 @@ namespace BExIS.Web.Shell.Areas.DIM.Models.Mapping
         public LinkElementRootModel Source { get; set; }
         public LinkElementRootModel Target { get; set; }
         public List<ComplexMappingModel> ParentMappings { get; set; }
-        public List<LinkElementRootListItem> TargetList { get; set; }
+        public List<LinkElementRootListItem> SelectionList { get; set; }
 
         public MappingMainModel()
         {

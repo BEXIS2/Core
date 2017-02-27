@@ -565,32 +565,6 @@ function reloadAllConnections() {
 
         instance.repaintEverything();
 
-        //go to each connection that exits
-        //for (var j = 0; j < existParent.connections.length; j++) {
-        //    var currentConn = existParent.connections[j];
-        //    console.log("conn : "+j);
-        //    console.log(currentConn);
-
-        //    ////remove conn
-        //    var source = currentConn.source;
-        //    var target = currentConn.target;
-        //    console.log(source);
-        //    console.log(target);
-
-            
-
-        //    //if (source != null && target != null) {
-        //    //    //set con
-        //    //    //instance.connect({
-        //    //    //    source: source,
-        //    //    //    target: target,
-        //    //    //    type: "basic"
-        //    //    //});
-        //    //}
-
-
-        //}
-
     }
 }
 
