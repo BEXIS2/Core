@@ -22,5 +22,10 @@ namespace BExIS.Web.Shell.Areas.DIM.Models.Mapping
     public class SimpleMappingModel : MappingModel
     {
         public TransformationRuleModel TransformationRule { get; set; }
+
+        public SimpleMappingModel()
+        {
+            TransformationRule = new TransformationRuleModel();
+        }
     }
 }

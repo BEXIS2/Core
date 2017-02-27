@@ -43,6 +43,10 @@
       <column name="Complexity" />
     </property>
 
+    <property name="Mask" type="string">
+      <column name="Mask" />
+    </property>
+
    
     <!-- Associations -->
 

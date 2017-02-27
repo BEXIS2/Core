@@ -6,12 +6,19 @@
 }
 
 
-.mapping-container {
+.mapping-container{
 
     border: 1px solid #afb0b1;
     margin: 5px;
     padding: 5px;
     width:calc(100% - 15px); 
+}
+.mapping-container-transformation-rule{
+
+    border: 1px solid #afb0b1;
+    margin: 20px;
+    padding: 10px;
+    width:calc(100% - 45px); 
 }
 
 

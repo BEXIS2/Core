@@ -364,13 +364,13 @@ namespace BExIS.Web.Shell.Controllers
             MappingManager mappingManager = new MappingManager();
 
             LinkElement source = mappingManager.CreateLinkElement(
-                1, LinkElementType.MetadataStructure, LinkElementComplexity.Complex, "myMDS"
+                1, LinkElementType.MetadataStructure, LinkElementComplexity.Complex, "myMDS", ""
                 , ""
                 );
 
             LinkElement target = mappingManager.CreateLinkElement(
                 1, LinkElementType.System, LinkElementComplexity.Complex, "System"
-                , ""
+                , "", ""
                 );
 
             Mapping m = mappingManager.CreateMapping(source, target, 1, null);

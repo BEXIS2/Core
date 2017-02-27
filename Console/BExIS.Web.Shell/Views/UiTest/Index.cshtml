@@ -207,219 +207,256 @@
 
 </div>
 
+<h3>REGEX TEST</h3>
 
-<h3>TEST Connectors</h3>
+<div id="regex">
 
-<div id="connectorContainer">
-
-
-    <table><tr><td>
-
-        <div class="source" style="border: 1px solid; height: 30px; width: 50%;">Source</div>
-        <div class="source" style="border: 1px solid; height: 30px; width: 50%;">Source</div>
-        <div class="source" style="border: 1px solid; height: 30px; width: 50%;">Source</div>
-        <div class="source" style="border: 1px solid; height: 30px; width: 50%;">Source</div>
-
-    </td><td>
-        <div class="target" style="border: 1px solid; height: 30px; width: 50%">Target</div>
-        <div class="target" style="border: 1px solid; height: 30px; width: 50%">Target</div>
-        <div class="target" style="border: 1px solid; height: 30px; width: 50%">Target</div>
-        <div class="target" style="border: 1px solid; height: 30px; width: 50%">Target</div>
-    </td></tr></table>
-
-    <h3>ohne table container</h3>
-
-    <div>
-
-        <div class="source" style="border: 1px solid; height: 30px; width: 50%;">Source</div>
-        <div class="source" style="border: 1px solid; height: 30px; width: 50%;">Source</div>
-        <div class="source" style="border: 1px solid; height: 30px; width: 50%;">Source</div>
-        <div class="source" style="border: 1px solid; height: 30px; width: 50%;">Source</div>
-    </div>
-    <div style="float: right">
-        <div class="target" style="border: 1px solid; height: 30px; width: 50%">Target</div>
-        <div class="target" style="border: 1px solid; height: 30px; width: 50%">Target</div>
-        <div class="target" style="border: 1px solid; height: 30px; width: 50%">Target</div>
-        <div class="target" style="border: 1px solid; height: 30px; width: 50%">Target</div>
-
+    @Html.TextArea("RegExValue");
+    @Html.TextArea("RegexPattern");
+    <div id="RegExResult">
+        see console
     </div>
 
 </div>
-
 <script type="text/javascript">
-    jsPlumb.ready(function() {
-        console.log("init jsplumb");
+    
+    $("#RegExValue").change(function() {
 
-        var instance = window.instance = jsPlumb.getInstance({
-            // drag options
-            //DragOptions: { cursor: "pointer", zIndex: 2000 },
-            //// default to a gradient stroke from blue to green.
-            //PaintStyle: {
-            //    gradient: {
-            //        stops: [
-            //            [0, "#0d78bc"],
-            //            [1, "#558822"]
-            //        ]
-            //    },
-            //    stroke: "#558822",
-            //    strokeWidth: 10
-            //},
-            Container: "connectorContainer"
-        });
+        var tmpString = $(this).val();
 
-        // suspend drawing and initialise.
-        instance.batch(function() {
+        var exp = $("#RegexPattern").val();
 
-            //set source
-            // get the list of ".le-mapping-simple-selector-source" elements.            
-            var simpleSources = jsPlumb.getSelector(".source");
-            console.log(simpleSources);
-            instance.makeSource(simpleSources,
-            {
-                anchor: "Right",
-                endpoint: ["Dot", { radius: 3, cssClass: "green" }]
-            });
+        var result = tmpString.match(exp);
+
+        console.log("input: " + tmpString);
+        console.log("regex: " + exp);
+        console.log("result: " + result);
+        console.log(result);
+        console.log(result[1]);
+
+    })
 
 
-            //set targets
-            // get the list of ".le-mapping-simple-selector-source" elements.            
-            var simpleTargets = jsPlumb.getSelector(".target");
-            console.log(simpleTargets);
-
-            instance.makeTarget(simpleTargets,
-            {
-                anchor: "Left",
-                endpoint: ["Dot", { radius: 1, cssClass: "green" }]
-            });
-
-        });
-        jsPlumb.fire("jsPlumbDemoLoaded", instance);
-})
 </script>
 
 
+<h3>TEST Connectors</h3>
+
+    <div id="connectorContainer">
 
 
-<h3>TEST EntitySelectorView</h3>
+        <table>
+            <tr>
+                <td>
 
-<div>
-    <h1>JQuery AutoSize</h1>
+                    <div class="source" style="border: 1px solid; height: 30px; width: 50%;">Source</div>
+                    <div class="source" style="border: 1px solid; height: 30px; width: 50%;">Source</div>
+                    <div class="source" style="border: 1px solid; height: 30px; width: 50%;">Source</div>
+                    <div class="source" style="border: 1px solid; height: 30px; width: 50%;">Source</div>
 
-    @Html.TextArea("myTextarea");
-</div>
+                </td>
+                <td>
+                    <div class="target" style="border: 1px solid; height: 30px; width: 50%">Target</div>
+                    <div class="target" style="border: 1px solid; height: 30px; width: 50%">Target</div>
+                    <div class="target" style="border: 1px solid; height: 30px; width: 50%">Target</div>
+                    <div class="target" style="border: 1px solid; height: 30px; width: 50%">Target</div>
+                </td>
+            </tr>
+        </table>
+
+        <h3>ohne table container</h3>
+
+        <div>
+
+            <div class="source" style="border: 1px solid; height: 30px; width: 50%;">Source</div>
+            <div class="source" style="border: 1px solid; height: 30px; width: 50%;">Source</div>
+            <div class="source" style="border: 1px solid; height: 30px; width: 50%;">Source</div>
+            <div class="source" style="border: 1px solid; height: 30px; width: 50%;">Source</div>
+        </div>
+        <div style="float: right">
+            <div class="target" style="border: 1px solid; height: 30px; width: 50%">Target</div>
+            <div class="target" style="border: 1px solid; height: 30px; width: 50%">Target</div>
+            <div class="target" style="border: 1px solid; height: 30px; width: 50%">Target</div>
+            <div class="target" style="border: 1px solid; height: 30px; width: 50%">Target</div>
+
+        </div>
+
+    </div>
+
+    <script type="text/javascript">
+        jsPlumb.ready(function () {
+            console.log("init jsplumb");
+
+            var instance = window.instance = jsPlumb.getInstance({
+                // drag options
+                //DragOptions: { cursor: "pointer", zIndex: 2000 },
+                //// default to a gradient stroke from blue to green.
+                //PaintStyle: {
+                //    gradient: {
+                //        stops: [
+                //            [0, "#0d78bc"],
+                //            [1, "#558822"]
+                //        ]
+                //    },
+                //    stroke: "#558822",
+                //    strokeWidth: 10
+                //},
+                Container: "connectorContainer"
+            });
+
+            // suspend drawing and initialise.
+            instance.batch(function () {
+
+                //set source
+                // get the list of ".le-mapping-simple-selector-source" elements.
+                var simpleSources = jsPlumb.getSelector(".source");
+                console.log(simpleSources);
+                instance.makeSource(simpleSources,
+                {
+                    anchor: "Right",
+                    endpoint: ["Dot", { radius: 3, cssClass: "green" }]
+                });
 
 
-<div>
-    @*@Html.Partial("_EnititySelectorView", BexisModelManager.LoadEntitySelectorModel<Facet>(facets, null));*@
-</div>
+                //set targets
+                // get the list of ".le-mapping-simple-selector-source" elements.
+                var simpleTargets = jsPlumb.getSelector(".target");
+                console.log(simpleTargets);
 
-<h3>BEXIS UI HELPER</h3>
-<div>
+                instance.makeTarget(simpleTargets,
+                {
+                    anchor: "Left",
+                    endpoint: ["Dot", { radius: 1, cssClass: "green" }]
+                });
 
-    @using (Html.BeginForm("sendForm", "UiTest"))
-    {
-        @Html.BexisUI().TextBox().Name("Name").Value(Model.Name).Icon("bx-info").Render()
-        @Html.ValidationMessageFor(m => m.Name)
-        <br />
+            });
+            jsPlumb.fire("jsPlumbDemoLoaded", instance);
+        })
+    </script>
+
+
+
+
+    <h3>TEST EntitySelectorView</h3>
+
+    <div>
+        <h1>JQuery AutoSize</h1>
+
+        @Html.TextArea("myTextarea");
+    </div>
+
+
+    <div>
+        @*@Html.Partial("_EnititySelectorView", BexisModelManager.LoadEntitySelectorModel<Facet>(facets, null));*@
+    </div>
+
+    <h3>BEXIS UI HELPER</h3>
+    <div>
+
+        @using (Html.BeginForm("sendForm", "UiTest"))
+        {
+            @Html.BexisUI().TextBox().Name("Name").Value(Model.Name).Icon("bx-info").Render()
+            @Html.ValidationMessageFor(m => m.Name)
+            <br />
 
             @Html.BexisUI().Slider().Name("slider").Min(0).Max(1000).Value(100).Steps(10).Render();
 
-        <button class="bx-button" type="submit">send</button>
-    }
+            <button class="bx-button" type="submit">send</button>
+        }
 
 
 
-    @*@(Html.BexisUI().List()
-        .Data(new SelectList(list))
-        .Action("OnSelectTreeViewItem", "Home", new RouteValueDictionary { { "area", "DDM" }},"Id")
-        .Render())*@
+        @*@(Html.BexisUI().List()
+            .Data(new SelectList(list))
+            .Action("OnSelectTreeViewItem", "Home", new RouteValueDictionary { { "area", "DDM" }},"Id")
+            .Render())*@
 
-</div>
+    </div>
 
 
-<h3>html vs telerik vs bootstrap</h3>
-<table>
-    <thead></thead>
-    <tr>
-        <th></th>
-        <th>HTML</th>
-        <th>Telerik</th>
-        <th>Bootstrap</th>
-        <th>Fluent Bootstrap</th>
-    </tr>
-    <tr>
-        <td>Dropdown</td>
-        <td>@Html.DropDownList("test", new SelectList(testList), new { @class = "bx-dropdown" })</td>
-        <td>
-            @(Html.Telerik().DropDownList()
+    <h3>html vs telerik vs bootstrap</h3>
+    <table>
+        <thead></thead>
+        <tr>
+            <th></th>
+            <th>HTML</th>
+            <th>Telerik</th>
+            <th>Bootstrap</th>
+            <th>Fluent Bootstrap</th>
+        </tr>
+        <tr>
+            <td>Dropdown</td>
+            <td>@Html.DropDownList("test", new SelectList(testList), new { @class = "bx-dropdown" })</td>
+            <td>
+                @(Html.Telerik().DropDownList()
                          .Name("FilterList")
                          .BindTo(new SelectList(testList))
                          .ClientEvents(e => e.OnChange("onChange"))
-            )
+                )
 
-        </td>
-        <td>
-            <div class="dropdown">
-                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                    Dropdown
-                    <span class="bx-delete"></span>
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                    <li><a href="#">Action</a></li>
-                    <li><a href="#">Another action</a></li>
-                    <li><a href="#">Something else here</a></li>
-                    <li><a href="#">Separated link</a></li>
-                </ul>
-            </div>
-        </td>
+            </td>
+            <td>
+                <div class="dropdown">
+                    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        Dropdown
+                        <span class="bx-delete"></span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                        <li><a href="#">Action</a></li>
+                        <li><a href="#">Another action</a></li>
+                        <li><a href="#">Something else here</a></li>
+                        <li><a href="#">Separated link</a></li>
+                    </ul>
+                </div>
+            </td>
 
-        <td>
+            <td>
 
 
-            @using (var dropdown = Html.Bootstrap().Dropdown("My Dropdown").Begin())
+                @using (var dropdown = Html.Bootstrap().Dropdown("My Dropdown").Begin())
             {
-                @dropdown.DropdownLink("Action", "/Action")
-                @dropdown.DropdownHeader("Header")
-                @dropdown.DropdownLink("Another Action", "/AnotherAction").SetState(TextState.Primary)
-                @dropdown.DropdownLink("Disabled Link", "/Disabled").SetDisabled()
-                @dropdown.DropdownDivider()
-                @dropdown.DropdownLink("Google", "http://www.google.com")
-            }
-        </td>
-    </tr>
-    <tr>
-        <td>Combobox</td>
-        <td></td>
-        <td>
-            @(Html.Telerik().ComboBox()
+                    @dropdown.DropdownLink("Action", "/Action")
+                    @dropdown.DropdownHeader("Header")
+                    @dropdown.DropdownLink("Another Action", "/AnotherAction").SetState(TextState.Primary)
+                    @dropdown.DropdownLink("Disabled Link", "/Disabled").SetDisabled()
+                    @dropdown.DropdownDivider()
+                    @dropdown.DropdownLink("Google", "http://www.google.com")
+                }
+            </td>
+        </tr>
+        <tr>
+            <td>Combobox</td>
+            <td></td>
+            <td>
+                @(Html.Telerik().ComboBox()
                         .Name("SelectedDatasetId")
                         .Placeholder("New Dataset")
                         .Filterable()
                         .SelectedIndex(0)
                         .HtmlAttributes(new { @class = "bx-dropdown" })
                         .BindTo(new SelectList(comboboxList))
-            )
-        </td>
-        <td>
-            <select class="comboboxBootstrap">
-                <option></option>
-                <option value="PA">Pennsylvania</option>
-                <option value="CT">Connecticut</option>
-                <option value="NY">New York</option>
-                <option value="MD">Maryland</option>
-                <option value="VA">Virginia</option>
-            </select>
+                )
+            </td>
+            <td>
+                <select class="comboboxBootstrap">
+                    <option></option>
+                    <option value="PA">Pennsylvania</option>
+                    <option value="CT">Connecticut</option>
+                    <option value="NY">New York</option>
+                    <option value="MD">Maryland</option>
+                    <option value="VA">Virginia</option>
+                </select>
 
-        </td>
-        <td>...</td>
-    </tr>
-    <tr>
-        <td>TextBox</td>
-        <td> @Html.TextBox("test", "", new { @class = "bx-input" })</td>
-        <td>
-            autocomplete
+            </td>
+            <td>...</td>
+        </tr>
+        <tr>
+            <td>TextBox</td>
+            <td> @Html.TextBox("test", "", new { @class = "bx-input" })</td>
+            <td>
+                autocomplete
 
-            @(Html.Telerik().AutoComplete()
+                @(Html.Telerik().AutoComplete()
                                 .Name("autoComplete")
                                 .Encode(false)
 
@@ -433,134 +470,134 @@
                                     filtering.MinimumChars(3);
 
                                 })
-            )
-        </td>
-    </tr>
-    <tr>
-        <td>TextArea</td>
-        <td> @Html.TextArea("test", "", new { @class = "bx-textarea" })</td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>Checkbox</td>
-        <td> @Html.CheckBox("halligalli")</td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>RadioButton</td>
-        <td> @Html.RadioButton("hallo", true) yes</td>
-        <td></td>
-    </tr>
-</table>
-
-<div style="padding: 10px; width:800px;">
-
-    <table>
-        <tr>
-            <th>.bx-list</th>
-            <th>.bx-list-multi</th>
-        </tr>
-        <tr>
-            <td>
-                <ul class="bx-list">
-                    <li>
-                        Auto (in use)
-                    </li>
-                    <li>
-                        List of Names (in use)
-                    </li>
-                    <li>
-                        MD sample datastructure
-                    </li>
-                    <li>
-                        MD sample datastructure1
-                    </li>
-                </ul>
-
-            </td>
-            <td>
-                <ul class="bx-list-multi">
-                    <li>
-                        Auto (in use)
-                    </li>
-                    <li>
-                        List of Names (in use)
-                    </li>
-                    <li>
-                        MD sample datastructure
-                    </li>
-                    <li>
-                        MD sample datastructure1
-                    </li>
-                </ul>
+                )
             </td>
         </tr>
         <tr>
-            <td>
-                <ol class="bx-list">
-                    <li>
-                        Auto (in use)
-                    </li>
-                    <li>
-                        List of Names (in use)
-                    </li>
-                    <li>
-                        MD sample datastructure
-                    </li>
-                    <li>
-                        MD sample datastructure1
-                    </li>
-                </ol>
-
-            </td>
-            <td>
-                <ol class="bx-list-multi">
-                    <li>
-                        Auto (in use)
-                    </li>
-                    <li>
-                        List of Names (in use)
-                    </li>
-                    <li>
-                        MD sample datastructure
-                    </li>
-                    <li>
-                        MD sample datastructure1
-                    </li>
-                </ol>
-            </td>
+            <td>TextArea</td>
+            <td> @Html.TextArea("test", "", new { @class = "bx-textarea" })</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Checkbox</td>
+            <td> @Html.CheckBox("halligalli")</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>RadioButton</td>
+            <td> @Html.RadioButton("hallo", true) yes</td>
+            <td></td>
         </tr>
     </table>
 
+    <div style="padding: 10px; width:800px;">
+
+        <table>
+            <tr>
+                <th>.bx-list</th>
+                <th>.bx-list-multi</th>
+            </tr>
+            <tr>
+                <td>
+                    <ul class="bx-list">
+                        <li>
+                            Auto (in use)
+                        </li>
+                        <li>
+                            List of Names (in use)
+                        </li>
+                        <li>
+                            MD sample datastructure
+                        </li>
+                        <li>
+                            MD sample datastructure1
+                        </li>
+                    </ul>
+
+                </td>
+                <td>
+                    <ul class="bx-list-multi">
+                        <li>
+                            Auto (in use)
+                        </li>
+                        <li>
+                            List of Names (in use)
+                        </li>
+                        <li>
+                            MD sample datastructure
+                        </li>
+                        <li>
+                            MD sample datastructure1
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <ol class="bx-list">
+                        <li>
+                            Auto (in use)
+                        </li>
+                        <li>
+                            List of Names (in use)
+                        </li>
+                        <li>
+                            MD sample datastructure
+                        </li>
+                        <li>
+                            MD sample datastructure1
+                        </li>
+                    </ol>
+
+                </td>
+                <td>
+                    <ol class="bx-list-multi">
+                        <li>
+                            Auto (in use)
+                        </li>
+                        <li>
+                            List of Names (in use)
+                        </li>
+                        <li>
+                            MD sample datastructure
+                        </li>
+                        <li>
+                            MD sample datastructure1
+                        </li>
+                    </ol>
+                </td>
+            </tr>
+        </table>
 
 
 
-</div>
 
-<br />
+    </div>
 
-<div>
-    <p>click for the window</p>
-    <button class="bx-button smaller" onclick="onSelect(this)">smallest</button>
-    <button class="bx-button small" onclick="onSelect(this)">more</button>
-    <button class="bx-button" onclick="openAlertDialog()">alert</button>
-    <button class="bx-button" onclick="openMessageDialog()">message</button>
-</div>
+    <br />
 
-<div id="alertDialog" title="Error ...." style="display:none">
-    <p>
-        Currently using <b>36% of your storage space</b>.
-    </p>
-</div>
+    <div>
+        <p>click for the window</p>
+        <button class="bx-button smaller" onclick="onSelect(this)">smallest</button>
+        <button class="bx-button small" onclick="onSelect(this)">more</button>
+        <button class="bx-button" onclick="openAlertDialog()">alert</button>
+        <button class="bx-button" onclick="openMessageDialog()">message</button>
+    </div>
 
-<div id="messageDialog" title="Download complete" style="display:none">
-    <p>
-        Currently using <b>36% of your storage space</b>.
-    </p>
+    <div id="alertDialog" title="Error ...." style="display:none">
+        <p>
+            Currently using <b>36% of your storage space</b>.
+        </p>
+    </div>
 
-</div>
+    <div id="messageDialog" title="Download complete" style="display:none">
+        <p>
+            Currently using <b>36% of your storage space</b>.
+        </p>
 
-@(Html.Telerik().Window()
+    </div>
+
+    @(Html.Telerik().Window()
     .Name("MoreWindow")
     .Visible(false)
     .Title("More")
@@ -595,20 +632,20 @@
         </div>
     </text>
     )
-)
+    )
 
-<h3>Telerik UI Components</h3>
+    <h3>Telerik UI Components</h3>
 
-<div style="padding: 10px">
-    @(Html.Telerik().Upload()
+    <div style="padding: 10px">
+        @(Html.Telerik().Upload()
             .Name("attachments")
             .Multiple(true)
             .ShowFileList(true)
-    )
-</div>
+        )
+    </div>
 
-<div style="padding: 10px">
-    @(Html.Telerik().TabStrip()
+    <div style="padding: 10px">
+        @(Html.Telerik().TabStrip()
             .Name("ShowDataTabStrip")
             .SelectedIndex(0)
             .Items(tabs =>
@@ -628,11 +665,11 @@
                     .Text("Primary Data")
                     .Content("10101010101");
             })
-    )
-</div>
+        )
+    </div>
 
-<div style="padding: 10px">
-    @(Html.Telerik().TreeView()
+    <div style="padding: 10px">
+        @(Html.Telerik().TreeView()
        .Name("TreeView")
        .ShowCheckBox(true)
        .ExpandAll(true)
@@ -700,11 +737,11 @@
                            }
                        }
           ))
-</div>
+    </div>
 
-<b>telerik table</b>
-<div style="padding: 10px">
-    @(Html.Telerik().Grid(table)
+    <b>telerik table</b>
+    <div style="padding: 10px">
+        @(Html.Telerik().Grid(table)
           .Name("TestGrid")
           .Groupable()
           .Pageable()
@@ -715,69 +752,69 @@
                     .Total(table.Rows.Count)
                     )
 
-    )
-</div>
+        )
+    </div>
 
-<b>table</b>
-<div style="padding: 10px">
-    <table>
-        <tr class="header">
+    <b>table</b>
+    <div style="padding: 10px">
+        <table>
+            <tr class="header">
 
-            <th>Functions</th>
-            @foreach (DataColumn c in table.Columns)
+                <th>Functions</th>
+                @foreach (DataColumn c in table.Columns)
             {
-                <th>@c.ColumnName</th>
-            }
-        </tr>
-        @foreach (DataRow r in table.Rows)
-            {
-            <tr>
-                <td>
-                    <button class="bx-grid-function bx-edit"></button>
-                    <button class="bx-grid-function bx-trash"></button>
-                </td>
-                @foreach (object o in r.ItemArray)
-                {
-                    <td>@o</td>
+                    <th>@c.ColumnName</th>
                 }
             </tr>
-        }
-
-    </table>
-</div>
-<b>table</b>
-<div style="padding: 10px">
-    <table>
-        <tr class="header">
-            <th>Functions</th>
-            @foreach (DataColumn c in table.Columns)
+            @foreach (DataRow r in table.Rows)
             {
-                <th>@c.ColumnName</th>
-            }
-        </tr>
-        @foreach (DataRow r in table.Rows)
-            {
-            <tr>
-                <td>
-                    <button class="bx-button smaller function">edit</button>
-                    <button class="bx-button smaller function">delete</button>
-                </td>
-                @foreach (object o in r.ItemArray)
+                <tr>
+                    <td>
+                        <button class="bx-grid-function bx-edit"></button>
+                        <button class="bx-grid-function bx-trash"></button>
+                    </td>
+                    @foreach (object o in r.ItemArray)
                 {
-                    <td>@o</td>
+                        <td>@o</td>
+                    }
+                </tr>
+            }
+
+        </table>
+    </div>
+    <b>table</b>
+    <div style="padding: 10px">
+        <table>
+            <tr class="header">
+                <th>Functions</th>
+                @foreach (DataColumn c in table.Columns)
+            {
+                    <th>@c.ColumnName</th>
                 }
             </tr>
-        }
+            @foreach (DataRow r in table.Rows)
+            {
+                <tr>
+                    <td>
+                        <button class="bx-button smaller function">edit</button>
+                        <button class="bx-button smaller function">delete</button>
+                    </td>
+                    @foreach (object o in r.ItemArray)
+                {
+                        <td>@o</td>
+                    }
+                </tr>
+            }
 
-    </table>
+        </table>
 
 
 
-</div>
+    </div>
 
-@if (Model.DataTable != null && Model.DataTable2 != null)
-{
-    <b>LIST of ENTITIES to Datatable</b>
+    @if (Model.DataTable != null && Model.DataTable2 != null)
+    {
+        <b>LIST of ENTITIES to Datatable</b>
         <div style="padding: 10px">
             <p>DATATABLE 1</p>
             <table>
@@ -821,36 +858,36 @@
 
             </table>
         </div>
-}
-<style>
-    .slider-selection {
-        background: #BABABA;
     }
-</style>
+    <style>
+        .slider-selection {
+            background: #BABABA;
+        }
+    </style>
 
 
-<script type="text/javascript">
+    <script type="text/javascript">
 
-    $(document).ready(function () {
-        resetAllTelerikIconTitles();
-        autosize($('textarea'));
-    });
+        $(document).ready(function () {
+            resetAllTelerikIconTitles();
+            autosize($('textarea'));
+        });
 
-    function onChange(e) {
+        function onChange(e) {
 
-    }
+        }
 
-    function onSelect(e) {
-        var detailWindow = $("#MoreWindow").data("tWindow");
-        detailWindow.center().open();
-    }
+        function onSelect(e) {
+            var detailWindow = $("#MoreWindow").data("tWindow");
+            detailWindow.center().open();
+        }
 
-    function openAlertDialog() {
-        bx_openDialog("#alertDialog", "alert");
-    }
+        function openAlertDialog() {
+            bx_openDialog("#alertDialog", "alert");
+        }
 
-    function openMessageDialog() {
-        bx_openDialog("#messageDialog", "message");
-    }
+        function openMessageDialog() {
+            bx_openDialog("#messageDialog", "message");
+        }
 
-</script>
+    </script>

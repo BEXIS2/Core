@@ -13,6 +13,7 @@ namespace BExIS.Dim.Services
             IUnitOfWork uow = this.GetUnitOfWork();
             this.LinkElementRepo = uow.GetReadOnlyRepository<LinkElement>();
             this.MappingRepo = uow.GetReadOnlyRepository<Mapping>();
+            this.TransformationRuleRepo = uow.GetReadOnlyRepository<TransformationRule>();
 
         }
 
@@ -21,6 +22,7 @@ namespace BExIS.Dim.Services
         // provide read only repos for the whole aggregate area
         public IReadOnlyRepository<LinkElement> LinkElementRepo { get; private set; }
         public IReadOnlyRepository<Mapping> MappingRepo { get; private set; }
+        public IReadOnlyRepository<TransformationRule> TransformationRuleRepo { get; private set; }
 
         #endregion
 
@@ -51,7 +53,7 @@ namespace BExIS.Dim.Services
             return LinkElementRepo.Get().FirstOrDefault(le => le.ElementId.Equals(elementid) && le.Type.Equals(type));
         }
 
-        public LinkElement CreateLinkElement(long elementId, LinkElementType type, LinkElementComplexity complexity, string name, string xpath,
+        public LinkElement CreateLinkElement(long elementId, LinkElementType type, LinkElementComplexity complexity, string name, string xpath, string mask,
             bool isSequence = false, long parentId = -1)
         {
             Contract.Requires(elementId >= 0);
@@ -68,7 +70,8 @@ namespace BExIS.Dim.Services
                 XPath = xpath,
                 IsSequence = isSequence,
                 Parent = parent,
-                Complexity = complexity
+                Complexity = complexity,
+                Mask = mask
             };
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
@@ -96,6 +99,25 @@ namespace BExIS.Dim.Services
             }
             // if any problem was detected during the commit, an exception will be thrown!
             return (true);
+        }
+
+        public LinkElement UpdateLinkElement(long id, string mask)
+        {
+            var linkElement = this.LinkElementRepo.Get(id);
+
+            if (linkElement != null)
+            {
+                linkElement.Mask = mask;
+
+                using (IUnitOfWork uow = this.GetUnitOfWork())
+                {
+                    IRepository<LinkElement> repo = uow.GetRepository<LinkElement>();
+                    repo.Put(linkElement);
+                    uow.Commit();
+                }
+            }
+
+            return (linkElement);
         }
 
         #endregion
@@ -136,6 +158,7 @@ namespace BExIS.Dim.Services
                 source_complexity,
                 source_name,
                 source_xpath,
+                "",
                 source_isSequence,
                 source_parentId
                 );
@@ -145,7 +168,7 @@ namespace BExIS.Dim.Services
                 target_type,
                 target_complexity,
                 target_name,
-                target_xpath,
+                target_xpath, "",
                 target_isSequence,
                 target_parentId
                 );
@@ -175,6 +198,21 @@ namespace BExIS.Dim.Services
             mapping.Target = target;
             mapping.TransformationRule = rule;
             mapping.Level = level;
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<Mapping> repo = uow.GetRepository<Mapping>();
+                repo.Put(mapping);
+                uow.Commit();
+            }
+
+            return (mapping);
+
+        }
+
+        public Mapping UpdateMapping(Mapping mapping)
+        {
+            Contract.Requires(mapping != null);
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
@@ -220,6 +258,46 @@ namespace BExIS.Dim.Services
             }
             // if any problem was detected during the commit, an exception will be thrown!
             return (true);
+        }
+
+        #endregion
+
+        #region Transformation Rule
+
+        public TransformationRule CreateTransformationRule(string regex)
+        {
+            var transformationRule = new TransformationRule()
+            {
+                RegEx = regex,
+            };
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<TransformationRule> repo = uow.GetRepository<TransformationRule>();
+                repo.Put(transformationRule);
+                uow.Commit();
+            }
+
+            return (transformationRule);
+        }
+
+        public TransformationRule UpdateTransformationRule(long id, string regex)
+        {
+            var transformationRule = this.TransformationRuleRepo.Get(id);
+
+            if (transformationRule == null)
+                transformationRule = CreateTransformationRule(regex);
+            else
+                transformationRule.RegEx = regex;
+
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<TransformationRule> repo = uow.GetRepository<TransformationRule>();
+                repo.Put(transformationRule);
+                uow.Commit();
+            }
+
+            return (transformationRule);
         }
 
         #endregion

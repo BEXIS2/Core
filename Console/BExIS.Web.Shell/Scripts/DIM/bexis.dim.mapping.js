@@ -1,11 +1,38 @@
-﻿function iconClick(e) {
-    console.log(e);
+﻿
+var connections = [];
+var connectionParent = {};
+
+
+$(window)
+    .resize(function () {
+        setTimeout(function() {
+                reloadAllConnections();
+            },
+            100);
+
+    });
+
+function iconClick(e) {
+    console.log("CLICK");
     $(e).toggleClass("bx-angle-double-down bx-angle-double-up");
     var container = $(e).parents(".le-container");
-    console.log(container);
+    //console.log(container);
     
     $(container).find(".le-container-content").slideToggle();
 
+
+    reloadAllConnections();
+};
+
+function iconTransformtionRuleClick(e) {
+    //console.log(e);
+    $(e).toggleClass("bx-angle-double-down bx-angle-double-up");
+    var container = $(e).parents(".mapping-container-transformation-rule")[0];
+    //console.log(container);
+
+    $(container).find(".mapping-container-transformation-rule-content").slideToggle();
+
+    reloadAllConnections();
 };
 
 function leSimpleSelectorClick(e) {
@@ -36,7 +63,7 @@ function leSimpleSelectorClick(e) {
             "XPath":xpath
         }
 
-        console.log(le);
+        //console.log(le);
 
     $.ajax({
         type: "POST",
@@ -46,7 +73,7 @@ function leSimpleSelectorClick(e) {
         data: JSON.stringify(le),
         success: function(data) {
 
-            console.log("type : "+type);
+            //console.log("type : "+type);
             if (position.toLowerCase() === "source") {
                 $("#emptySourceContainer").replaceWith(data);
 
@@ -60,7 +87,7 @@ function leSimpleSelectorClick(e) {
                 changeAddFunctionOnSameSide("Target");
             }
 
-
+            reloadAllConnections();
         },
         error: function(data) { alert("error") }
 
@@ -68,10 +95,6 @@ function leSimpleSelectorClick(e) {
     });
 };
 
-function deactivateBts() {
-    
-
-}
 
 function changeAddFunctionOnSameSide(key) {
 
@@ -100,7 +123,7 @@ function changeAddFunctionOnSameSide(key) {
 function deleteComplexMappingElement(e) {
 
     var parent = $(e).parents(".mapping_container_child")[0];
-    console.log(parent);
+    //console.log(parent);
 
     if ($(parent).hasClass("mapping_container_source")) {
 
@@ -127,6 +150,8 @@ function deleteComplexMappingElement(e) {
             $("#newMapContainer .mapping-settings").hide();
         }
     }
+
+    reloadAllConnections();
 }
 
 function createRootElement(info) {
@@ -161,6 +186,8 @@ function createElement(info, element) {
     var position = $(info).find("#Position").text();
     var name = $(info).find("#Name").text();
     var complexity = $(info).find("#Complexity").text();
+    var mask = $(info).find("#Mask").text();
+
 
     var obj =
     {
@@ -170,7 +197,27 @@ function createElement(info, element) {
         "Type": type,
         "Position": position,
         "Complexity": complexity,
-        "Parent": element
+        "Parent": element,
+        "Mask": mask
+    }
+
+    console.log("LINK ELEMENT");
+    console.log(obj);
+    
+
+    return obj;
+}
+
+function createTransformationRule(id, regexPattern) {
+
+    /**
+     * public long Id { get; set; }
+        public string RegEx { get; set; }
+     */
+    var obj =
+    {
+        "Id": id,
+        "RegEx": regexPattern
     }
 
     return obj;
@@ -194,12 +241,39 @@ function createSimpleMapping(conn, sourceParent,targetParent) {
     var sourceObj = createElement(sourceInfo, sourceParent);
     var targetObj = createElement(targetInfo, targetParent);
 
+    // get Mask
+
+    var trId = 0;
+    var regexPattern = "";
+    var mask="";
+
+    //get rull based on conn
+    var rule = findRuleFromConn(conn);
+    console.log("RULE");
+    console.log(rule);
+
+    var ruleId = $(rule).attr("id");
+    console.log(ruleId);
+   
+
+    regexPattern = $("#" + ruleId).find("#RegExPattern").val();
+    console.log(regexPattern);
+    var transformationRuleObj = createTransformationRule(trId, regexPattern);
+
+    mask = $("#" + ruleId).find("#Mask").val();
+    targetObj.Mask = mask;
+
+    
+
+    console.log(transformationRuleObj);
+
     //var parent = $(source).parents(".mapping-container")[0];
 
     var obj =
     {
         "Source": sourceObj,
-        "Target": targetObj
+        "Target": targetObj,
+        "TransformationRule":transformationRuleObj
     }
 
     return obj;
@@ -210,7 +284,6 @@ function saveMapping(e, create) {
     //console.log(e);
     var parent = $(e).parents(".mapping-container")[0];
     //console.log(parent);
-
 
     //get Root source
     var rootInfo = $("#le-root-source").find(".le-root-info")[0];
@@ -273,20 +346,25 @@ function saveMapping(e, create) {
             $(parent).remove();
             $('#dim-mapping-middle').append(data);
 
-            if (create) {
-
             //create empty
             $.get("/DIM/Mapping/LoadEmptyMapping",
                 function(response) {
+                    $('#dim-mapping-middle #newMapContainer').remove();
+                    $('#dim-mapping-middle').prepend("<div id='newMapContainer'></div>");
                     $('#dim-mapping-middle #newMapContainer').append(response);
-                    changeAddFunctionOnSameSide("Target");
-                    changeAddFunctionOnSameSide("Source");
 
-                    //resetAllConnections();
+
+                  
+
+                    //console.log("RESET ALL CONNECTIONS");
+                    reloadAllConnections();
                 });
-            }
 
+            changeAddFunctionOnSameSide("Target");
+            changeAddFunctionOnSameSide("Source");
             updateSaveOptions($(parent).attr("id"), false);
+
+           
 
         },
         error: function (data) { alert("error") }
@@ -310,6 +388,13 @@ function deleteMapping(e) {
 
             if (response === true) {
                 $(parent).remove();
+
+                //console.log("RESET ALL CONNECTIONS");
+                //console.log("CONNECTIONS BEFORE DELETE MAPPINGS from GLOBAL Connections");
+                //console.log(connections);
+                removeParentFromConnections($(parent).attr("id"));
+                reloadAllConnections();
+
             } else {
                 alert(response);
             };
@@ -317,10 +402,7 @@ function deleteMapping(e) {
         });
 }
 
-var connections = [];
-var connectionParent = {};
-
-function updateParentConnection(conn, parentId) {
+function updateParentConnection(conn, parentId, jsPlumbInstance) {
 
     var exist = false;
 
@@ -336,7 +418,8 @@ function updateParentConnection(conn, parentId) {
 
         connectionParent = {
             id: parentId,
-            connections:[]
+            connections: [],
+            jsPlumbInstance: jsPlumbInstance
         }
         connectionParent.connections.push(conn);
 
@@ -362,6 +445,7 @@ function removeParentConnection(conn, parentId) {
             if (idx != -1) {
                 console.log("remove");
                 existParent.connections.splice(idx, 1);
+                console.log(existParent.connections);
                 break;
             }
         }
@@ -369,11 +453,11 @@ function removeParentConnection(conn, parentId) {
  
 }
 
-function updateConnections(conn, remove, parentId) {
+function updateConnections(conn, remove, parentId, jsPlumbInstance) {
 
    if (!remove) {
 
-        updateParentConnection(conn, parentId);
+       updateParentConnection(conn, parentId, jsPlumbInstance);
 
     }
     else {
@@ -385,73 +469,139 @@ function updateConnections(conn, remove, parentId) {
         updateSaveOptions(parentId, true);
     } else {
         updateSaveOptions(parentId, false);
-    }
-    console.log(connections.length);
+   }
+
+   console.log(connections);
+   console.log(connections.length);
 }
 
-function resetAllConnections() {
+function removeParentFromConnections(parentId) {
 
-    //delete all connections
-    console.log("RESET");
-    console.log(connections.length);
+
+    console.log("INSIDE DELETE ");
+    console.log("parentid: "+parentId);
+
+    //console.log("------------------------------");
+    //console.log(connections);
+    var deleteIndex = -1;
+
+    for (var i = 0; i < connections.length; i++) {
+        var existParent = connections[i];
+        if (existParent.id === parentId) {
+            deleteIndex = i;
+        }
+    }
+    console.log(deleteIndex);
+    if (deleteIndex > -1) {
+
+        connections.splice(deleteIndex,1);
+
+    }
+}
+
+function getInstance(parentid) {
+
+    var instance = window.instance = jsPlumb.getInstance({
+
+        ConnectionOverlays: [
+           ["Arrow", {
+               location: 1,
+               visible: true,
+               width: 11,
+               length: 11,
+               id: "ARROW"
+
+           }],
+           ["Label", {
+
+               id: "label",
+               cssClass: "aLabel",
+               events: {
+                   tap: function (e) { }
+               },
+               text: "test"
+           }]
+        ],
+        Connector: "StateMachine",
+        // drag options
+        //DragOptions: { cursor: "pointer", zIndex: 2000 },
+        //// default to a gradient stroke from blue to green.
+        //PaintStyle: {
+        //    gradient: {
+        //        stops: [
+        //            [0, "#0d78bc"],
+        //            [1, "#558822"]
+        //        ]
+        //    },
+        //    stroke: "#558822",
+        //    strokeWidth: 10
+        //},
+        Container: parentid
+    });
+
+    return instance;
+
+}
+
+
+/**
+ * Call this function when the connections need to set new because of postion
+ * arrangements of the containers
+ * @returns {} 
+ */
+function reloadAllConnections() {
+
+    //jsPlumb.repaintEverything();
+
+    console.log("RELOAD CONNECTIONS");
+    //console.log(connections);
+
+    // go to each parent
     for (var i = 0; i < connections.length; i++)
     {
+       
         var existParent = connections[i];
-        console.log(existParent);
-        var id = existParent.id;
+        var instance = existParent.jsPlumbInstance;
 
-        //jsPlumb.empty(id);
+        instance.repaintEverything();
 
-        //set all conncetions
-        //initJSPLUMB(id);
+        //go to each connection that exits
+        //for (var j = 0; j < existParent.connections.length; j++) {
+        //    var currentConn = existParent.connections[j];
+        //    console.log("conn : "+j);
+        //    console.log(currentConn);
+
+        //    ////remove conn
+        //    var source = currentConn.source;
+        //    var target = currentConn.target;
+        //    console.log(source);
+        //    console.log(target);
+
+            
+
+        //    //if (source != null && target != null) {
+        //    //    //set con
+        //    //    //instance.connect({
+        //    //    //    source: source,
+        //    //    //    target: target,
+        //    //    //    type: "basic"
+        //    //    //});
+        //    //}
+
+
+        //}
+
     }
 }
+
 
 function initJSPLUMB(parentid) {
 
     jsPlumb.ready(function() {
-        console.log("init jsplumb");
+        //console.log("init jsplumb");
 
-        var instance = window.instance = jsPlumb.getInstance({
-
-            ConnectionOverlays: [
-               ["Arrow", {
-                   location: 1,
-                   visible: true,
-                   width: 11,
-                   length: 11,
-                   id: "ARROW",
-                   events: {
-                       click: function () { alert("you clicked on the arrow overlay") }
-                   }
-               }],
-               ["Label", {
-                   
-                   id: "label",
-                   cssClass: "aLabel",
-                   events: {
-                       tap: function () { alert("hey"); }
-                   },
-                   text:"test"
-               }]
-                ],
-            Connector: "StateMachine",
-            // drag options
-            //DragOptions: { cursor: "pointer", zIndex: 2000 },
-            //// default to a gradient stroke from blue to green.
-            //PaintStyle: {
-            //    gradient: {
-            //        stops: [
-            //            [0, "#0d78bc"],
-            //            [1, "#558822"]
-            //        ]
-            //    },
-            //    stroke: "#558822",
-            //    strokeWidth: 10
-            //},
-            Container: parentid
-        });
-
+        var instance = window.instance = getInstance(parentid);
+        console.log(instance);
 
         var init = function (connection) {
             connection.getOverlay("label").setLabel("Select");
@@ -464,24 +614,35 @@ function initJSPLUMB(parentid) {
 
             // bind to connection/connectionDetached events, and update the list of connections on screen.
             instance.bind("connection", function (info, originalEvent) {
-                    
-                updateConnections(info.connection, false, parentid);
+                //console.log("connection");
+
+                //console.log(info);
+                //console.log(instance);
+
+                updateConnections(info.connection, false, parentid, instance);
             });
 
             instance.bind("connectionDetached", function (info, originalEvent) {
-                console.log("connectionDetached");
+                //console.log("connectionDetached");
 
-                updateConnections(info.connection, true, parentid);
+                updateConnections(info.connection, true, parentid, instance);
             });
 
             instance.bind("connectionMoved", function (info, originalEvent) {
-                console.log("connectionMoved");
+                //console.log("connectionMoved");
                 //  only remove here, because a 'connection' event is also fired.
                 // in a future release of jsplumb this extra connection event will not
                 // be fired.
-                updateConnections(info.connection, true, parentid);
+                updateConnections(info.connection, true, parentid, instance);
             });
 
+
+            instance.bind("click", function (component, originalEvent) {
+                
+                //hide/Show TransformationRules
+                changeViewOfTransformationRule(component);
+
+            });
 
             //set source
             // get the list of ".le-mapping-simple-selector-source" elements.            
@@ -517,18 +678,68 @@ function initJSPLUMB(parentid) {
 
         });
 
-        jsPlumb.fire("jsPlumbDemoLoaded", instance);
+        //jsPlumb.fire("jsPlumbDemoLoaded", instance);
     });
 };
+
+function changeViewOfTransformationRule(conn) {
+
+    var rule = findRuleFromConn(conn);
+    console.log($(rule));
+    $(rule).find(".toogle-icon").trigger("click");
+}
+
+function findRuleFromConn(conn) {
+    var sourceContainer = $("#" + conn.sourceId)[0];
+    var source = $(sourceContainer).find(".le-mapping-simple-element")[0];
+    var connSoureId = $(source).attr("id");
+
+    var targetContainer = $("#" + conn.targetId)[0];
+    var target = $(targetContainer).find(".le-mapping-simple-element")[0];
+    var connTargetId = $(target).attr("id");
+
+    console.log(conn);
+    connSoureId = connSoureId.replace("_MappingSimpleLinkElement", "");
+    connTargetId = connTargetId.replace("_MappingSimpleLinkElement", "");
+
+    console.log("FIND RULE");
+    console.log(conn);
+
+    //mapping_container_transformation
+    var mapcontainer = $(sourceContainer).parents(".mapping-container")[0];
+    var map_transformation_container = $(mapcontainer).find(".mapping-container-transformation-rule");
+
+    var x = null;
+
+    map_transformation_container.each(function () {
+
+        var ruleSourceId = $(this).attr("sourceId").replace("_TransformationRuleItem", "");
+        var ruleTargetId = $(this).attr("targetId").replace("_TransformationRuleItem", "");
+
+        console.log(connSoureId);
+        console.log(connTargetId);
+        console.log(ruleSourceId);
+        console.log(ruleTargetId);
+        if (ruleSourceId === connSoureId && ruleTargetId === connTargetId) {
+            console.log("match");
+            console.log(this);
+
+            x = this;
+        }
+
+    });
+
+    return x;
+}
 
 function addConnections(jsPlumbInstance, parentid) {
 
 
     var parent = $("#" + parentid);
     var simpleMappings = parent.find(".mapping-container-simple-hidden-mapping");
-    console.log("add connections *********************");
+    //console.log("add connections *********************");
 
-    console.log(simpleMappings);
+    //console.log(simpleMappings);
 
     for (var i = 0; i < simpleMappings.length; i++) {
 
@@ -559,21 +770,14 @@ function getContainerSize(){
 }
 
 function connectionsChanged(parentId) {
-    
-    var allConnections = [];
 
-    for (var i = 0; i < connections.length; i++) {
-        var existParent = connections[i];
-        if (existParent.id === parentId) {
-            allConnections = existParent.connections;
-            //console.log(allConnections);
-        }
-    }
+    var newConn = countAllNewConnections(parentId);
+    var deletedConn = countAllDeletedConnections(parentId);
 
-    var parent = $("#" + parentId);
-    var startConnectionsList = $(parent).find(".mapping-container-simple-hidden-mapping");
+    //console.log(newConn);
+    //console.log(deletedConn);
 
-    if (allConnections.length == startConnectionsList.length) {
+    if (newConn === 0 && deletedConn === 0) {
         return false;
     }
 
@@ -640,11 +844,87 @@ function countAllNewConnections(parentId) {
     return allNewConnections.length;
 }
 
+function countAllDeletedConnections(parentId) {
+
+    //console.log("+++++++++++++++++++++++++++++++++++");
+    //console.log("countAllDeletedConnections");
+
+    var allDeletedConnections = [];
+    var allConnections = [];
+
+    for (var i = 0; i < connections.length; i++) {
+        var existParent = connections[i];
+        if (existParent.id === parentId) {
+            allConnections = existParent.connections;
+            //console.log(allConnections);
+        }
+    }
+
+    var parent = $("#" + parentId);
+    var startConnectionsList = $(parent).find(".mapping-container-simple-hidden-mapping");
+    //console.log(startConnectionsList);
+
+
+    
+    for (var j = 0; j < startConnectionsList.length; j++) {
+        var startConn = startConnectionsList[j];
+
+
+        var startConnSoureId = $(startConn).attr("sourceId");
+        var startConnTargetId = $(startConn).attr("targetId");
+
+        var newConn;
+
+        var isIn = false;
+
+        for (var l = 0; l < allConnections.length; l++) {
+
+            newConn = allConnections[l];
+
+            var targetContainer = $("#" + newConn.targetId)[0];
+            var target = $(targetContainer).find(".le-mapping-simple-element")[0];
+            var newConnTargetId = $(target).attr("id");
+
+            var sourceContainer = $("#" + newConn.sourceId)[0];
+            var source = $(sourceContainer).find(".le-mapping-simple-element")[0];
+            var newConnSoureId = $(source).attr("id");
+
+            //console.log("--------1------");
+
+            //console.log(newConnSoureId);
+            //console.log(newConnTargetId);
+            //console.log("---------------");
+            //console.log(startConnSoureId);
+            //console.log(startConnTargetId);
+
+            if (newConnSoureId === startConnSoureId && newConnTargetId === startConnTargetId) {
+                isIn = true;
+            }
+        }
+
+        //console.log("round finished");
+        //console.log(isIn);
+
+        if (!isIn) {
+            //console.log(newConn);
+            if (newConn != null) {
+                allDeletedConnections.push(newConn);
+            }
+        }
+
+        //console.log("after add to delete list");
+        //console.log(allDeletedConnections);
+    }
+   
+
+    return allDeletedConnections.length;
+}
+
 function updateSaveOptions(parentId, activate) {
 
     var saveBt = $("#" + parentId).find(".saveButton")[0];
 
-    if (activate) {
+    if (true) {
         $(saveBt).removeAttr("disabled");
         $(saveBt).removeClass("bx-disabled");
     } else {
