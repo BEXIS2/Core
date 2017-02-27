@@ -25,13 +25,13 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
                 case LinkElementType.System:
                     {
                         model.Target = MappingHelper.LoadfromSystem(LinkElementPostion.Target);
-                        model.TargetList = MappingHelper.LoadTargetList(sourceId);
+                        model.SelectionList = MappingHelper.LoadSelectionList();
                         break;
                     }
                 case LinkElementType.MetadataStructure:
                     {
                         model.Target = MappingHelper.LoadFromMetadataStructure(targetId, LinkElementPostion.Target);
-
+                        model.SelectionList = MappingHelper.LoadSelectionList();
                         break;
                     }
             }
@@ -60,21 +60,26 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
             return View(model);
         }
 
-        public ActionResult ReloadTarget(long sourceId = 1, long targetId = 0, LinkElementType type = LinkElementType.System)
+        public ActionResult ReloadTarget(long sourceId = 1, long targetId = 0, LinkElementType sourceType = LinkElementType.System, LinkElementType targetType = LinkElementType.System, LinkElementPostion position = LinkElementPostion.Target)
         {
             LinkElementRootModel model = null;
+
+
+            long id = position.Equals(LinkElementPostion.Source) ? sourceId : targetId;
+            LinkElementType type = position.Equals(LinkElementPostion.Source) ? sourceType : targetType;
+
 
             switch (type)
             {
                 case LinkElementType.System:
                     {
-                        model = MappingHelper.LoadfromSystem(LinkElementPostion.Target);
+                        model = MappingHelper.LoadfromSystem(position);
 
                         break;
                     }
                 case LinkElementType.MetadataStructure:
                     {
-                        model = MappingHelper.LoadFromMetadataStructure(targetId, LinkElementPostion.Target);
+                        model = MappingHelper.LoadFromMetadataStructure(id, position);
                         break;
                     }
             }
@@ -82,14 +87,30 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
             return PartialView("LinkElemenRoot", model);
         }
 
-        public ActionResult ReloadMapping(long sourceId = 1, long targetId = 0, LinkElementType type = LinkElementType.System)
+        public ActionResult ReloadMapping(long sourceId = 1, long targetId = 0, LinkElementType sourceType = LinkElementType.System, LinkElementType targetType = LinkElementType.System, LinkElementPostion position = LinkElementPostion.Target)
         {
             List<ComplexMappingModel> model = new List<ComplexMappingModel>();
 
             // load from mds example
-            LinkElementRootModel source = MappingHelper.LoadFromMetadataStructure(sourceId, LinkElementPostion.Source);
+            LinkElementRootModel source = null;
+
+            switch (sourceType)
+            {
+                case LinkElementType.System:
+                    {
+                        source = MappingHelper.LoadfromSystem(LinkElementPostion.Source);
+
+                        break;
+                    }
+                case LinkElementType.MetadataStructure:
+                    {
+                        source = MappingHelper.LoadFromMetadataStructure(targetId, LinkElementPostion.Source);
+                        break;
+                    }
+            }
+
             LinkElementRootModel target = null;
-            switch (type)
+            switch (targetType)
             {
                 case LinkElementType.System:
                     {

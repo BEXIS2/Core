@@ -14,6 +14,16 @@
 
     @section LeftPane
     {
+        <span>
+            @(Html.Telerik().DropDownList()
+                                .Name("SelectSource")
+                                .Placeholder("Select")
+                                .HtmlAttributes(new { @class = "bx-dropdown", style = "width:100%;" })
+                                .ClientEvents(events => events.OnChange("onChangeSourceDropDown"))
+                                .BindTo(new SelectList(Model.SelectionList, "Id", "Name", Model.Source.ElementId + "_" + Model.Source.Type)))
+
+        </span>
+
         @if (Model.Source != null)
         {
             @Html.Partial("LinkElemenRoot", Model.Source)
@@ -31,8 +41,8 @@
                             .Name("SelectTarget")
                             .Placeholder("Select")
                             .HtmlAttributes(new { @class = "bx-dropdown", style="width:100%;" })
-                            .ClientEvents(events => events.OnChange("onChangeDropDown"))
-                            .BindTo(new SelectList(Model.TargetList,"Id","Name", Model.Target.ElementId+"_"+ Model.Target.Type)))
+                            .ClientEvents(events => events.OnChange("onChangeTargetDropDown"))
+                            .BindTo(new SelectList(Model.SelectionList,"Id","Name", Model.Target.ElementId+"_"+ Model.Target.Type)))
 
         </span>
 
@@ -46,7 +56,7 @@
 
 <script type="text/javascript">
 
-    function onChangeDropDown(e) {
+    function onChangeTargetDropDown(e) {
         var substr = e.value;
         var id = substr.split("_")[0];
         var type = substr.split("_")[1];
@@ -57,26 +67,68 @@
         var source = $("#le-root-source");
         console.log(source);
         var sourceId = $(source).attr("id").split("_")[1];
+        var sourceInfo = $(source).find(".le-root-info")[0];
+        var sourceType = $(sourceInfo).find("#Type").text();
+
 
         //long sourceId, long targetId = 0, LinkElementType type = LinkElementType.System
         var sendData =
         {
             "sourceId": sourceId,
             "targetId": id,
-            "type": type
+            "sourceType": sourceType,
+            "targetType": type,
+            "position":"Target"
         }
 
         $("#le-root-target").preloader(12,"Loading Target");
 
         $("#dim-mapping-middle").preloader(12,"Loading Mappings");
 
-        reloadTarget("le-root-target", sendData);
+        reloadSite("le-root-target", sendData);
 
         reloadMapping("dim-mapping-middle", sendData);
 
     }
 
-    function reloadTarget(id,senddata) {
+    function onChangeSourceDropDown(e) {
+
+        var substr = e.value;
+        var id = substr.split("_")[0];
+        var type = substr.split("_")[1];
+        console.log(substr);
+        console.log(type);
+        console.log(id);
+
+        var target = $("#le-root-target");
+        console.log(target);
+        var targetId = $(target).attr("id").split("_")[1];
+        var targetInfo = $(target).find(".le-root-info")[0];
+        var targetType = $(targetInfo).find("#Type").text();
+
+
+        //long sourceId, long targetId = 0, LinkElementType type = LinkElementType.System
+        var sendData =
+        {
+            "sourceId": id,
+            "targetId": targetId,
+            "sourceType": type,
+            "targetType": targetType,
+            "position": "Source"
+
+        }
+
+        $("#le-root-source").preloader(12, "Loading Source");
+
+        $("#dim-mapping-middle").preloader(12, "Loading Mappings");
+
+        reloadSite("le-root-source", sendData);
+
+        reloadMapping("dim-mapping-middle", sendData);
+
+    }
+
+    function reloadSite(id,senddata) {
         $.ajax({
             type: "POST",
             url: "/DIM/Mapping/ReloadTarget",

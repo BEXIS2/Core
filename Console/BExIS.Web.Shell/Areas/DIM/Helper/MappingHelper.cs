@@ -17,7 +17,7 @@ namespace BExIS.Web.Shell.Areas.DIM.Helper
     {
         #region load rootList
 
-        public static List<LinkElementRootListItem> LoadTargetList(long metadataStructureId)
+        public static List<LinkElementRootListItem> LoadSelectionList()
         {
             List<LinkElementRootListItem> tmp = new List<LinkElementRootListItem>();
 
@@ -33,16 +33,13 @@ namespace BExIS.Web.Shell.Areas.DIM.Helper
 
             foreach (var metadataStructure in metadataStructures)
             {
-                if (!metadataStructure.Id.Equals(metadataStructureId))
-                {
-                    li = new LinkElementRootListItem(
-                        metadataStructure.Id,
-                        metadataStructure.Name,
-                        LinkElementType.MetadataStructure
-                        );
+                li = new LinkElementRootListItem(
+                    metadataStructure.Id,
+                    metadataStructure.Name,
+                    LinkElementType.MetadataStructure
+                    );
 
-                    tmp.Add(li);
-                }
+                tmp.Add(li);
             }
 
 
