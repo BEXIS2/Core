@@ -78,16 +78,18 @@ function leSimpleSelectorClick(e) {
                 $("#emptySourceContainer").replaceWith(data);
 
                 //deactivacte all source add icons
-                changeAddFunctionOnSameSide("Source");
+                disableAddicons("Source");
 
             } else {
                 $("#emptyTargetContainer").replaceWith(data);
 
                 //deactivacte all source add icons
-                changeAddFunctionOnSameSide("Target");
+                disableAddicons("Target");
             }
 
             reloadAllConnections();
+
+            updateSaveOptionOnNewContainer();
         },
         error: function(data) { alert("error") }
 
@@ -95,25 +97,44 @@ function leSimpleSelectorClick(e) {
     });
 };
 
-
-function changeAddFunctionOnSameSide(key) {
-
+function disableAddicons(key) {
+    
     $("." + key)
         .find(".le-simple-selector")
-        .each(function() {
+        .each(function () {
             //console.log(this);
-            $(this).toggleClass("bx-disabled function");
+            $(this).addClass("bx-disabled");
+            $(this).removeClass("function");
 
-            if ($(this).attr("disabled")) {
-                $(this).removeAttr("disabled");
-            } else {
+            if (!$(this).attr("disabled")) {
                 $(this).attr("disabled", "disabled");
             }
         });
 
+}
+
+function enableAddicons(key) {
+
+    $("." + key)
+        .find(".le-simple-selector")
+        .each(function () {
+            //console.log(this);
+            $(this).removeClass("bx-disabled");
+            $(this).addClass("function");
+
+            $(this).removeAttr("disabled");
+
+        });
+
+}
+
+
+function updateSaveOptionOnNewContainer() {
+
     if ($("#emptySourceContainer").length === 0 && $("#emptyTargetContainer").length === 0) {
         $("#newMapContainer .mapping-settings").show();
         //$(deleteBt).hide();
+
         initJSPLUMB("mapping_container_0");
     } else {
         //$(deleteBt).show();
@@ -131,7 +152,8 @@ function deleteComplexMappingElement(e) {
         $(parent).find(".le-mapping-complex").remove();
         $(parent).append("<div id='emptySourceContainer'> <b>SOURCE</b></div>");
 
-        changeAddFunctionOnSameSide("Source");
+        enableAddicons("Source");
+
 
         if ($("#emptySourceContainer").length !== 0 || $("#emptyTargetContainer").length !== 0) {
             $("#newMapContainer .mapping-settings").hide();
@@ -144,7 +166,8 @@ function deleteComplexMappingElement(e) {
         //add Target
         $(parent).append("<div id='emptyTargetContainer'> <b>Target</b></div>");
 
-        changeAddFunctionOnSameSide("Target");
+        enableAddicons("Target");
+    
 
         if ($("#emptySourceContainer").length !== 0 || $("#emptyTargetContainer").length !== 0) {
             $("#newMapContainer .mapping-settings").hide();
@@ -152,6 +175,7 @@ function deleteComplexMappingElement(e) {
     }
 
     reloadAllConnections();
+    updateSaveOptionOnNewContainer();
 }
 
 function createRootElement(info) {
@@ -360,8 +384,9 @@ function saveMapping(e, create) {
                     reloadAllConnections();
                 });
 
-            changeAddFunctionOnSameSide("Target");
-            changeAddFunctionOnSameSide("Source");
+            enableAddicons("Target");
+            enableAddicons("Source");
+            updateSaveOptionOnNewContainer();
             updateSaveOptions($(parent).attr("id"), false);
 
            
@@ -394,6 +419,10 @@ function deleteMapping(e) {
                 //console.log(connections);
                 removeParentFromConnections($(parent).attr("id"));
                 reloadAllConnections();
+
+                enableAddicons("Target");
+                enableAddicons("Source");
+                updateSaveOptionOnNewContainer();
 
             } else {
                 alert(response);
