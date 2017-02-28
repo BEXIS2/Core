@@ -69,10 +69,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Helpers
             taskManager.CreateTask("DIM", "Help", "*");
             taskManager.CreateTask("RPM", "Help", "*");
             taskManager.CreateTask("SAM", "Help", "*");
-            taskManager.CreateTask("Site", "ContactUs", "*");
-            taskManager.CreateTask("Site", "Impressum", "*");
-            taskManager.CreateTask("Site", "PrivacyPolicy", "*");
-            taskManager.CreateTask("Site", "Terms", "*");
+            taskManager.CreateTask("Site", "Footer", "*");
 
             //generic form for metadata
             taskManager.CreateTask("DCM", "Form", "*");
