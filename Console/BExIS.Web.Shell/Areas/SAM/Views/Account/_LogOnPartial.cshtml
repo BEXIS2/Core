@@ -1,5 +1,5 @@
 ﻿@using Telerik.Web.Mvc.UI
-@model BExIS.Web.Shell.Areas.SAM.Models.AccountLogOnModel
+@model BExIS.Modules.Sam.UI.Models.AccountLogOnModel
 @using (Ajax.BeginForm("LogOn", "Account", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "Content_LogOn", OnSuccess = "onSuccess" }))
 {
     @Html.ValidationSummary(true)

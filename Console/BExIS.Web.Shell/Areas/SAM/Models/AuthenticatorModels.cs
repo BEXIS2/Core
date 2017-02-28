@@ -3,7 +3,7 @@ using System.Linq;
 using BExIS.Security.Entities.Authentication;
 using BExIS.Security.Services.Authentication;
 
-namespace BExIS.Web.Shell.Areas.SAM.Models
+namespace BExIS.Modules.Sam.UI.Models
 {
     public class AuthenticatorCreateModel
     {

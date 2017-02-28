@@ -5,7 +5,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace BExIS.Web.Shell.Areas.SAM.Helpers
+namespace BExIS.Modules.Sam.UI.Helpers
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
     public class MustBeTrueAttribute : ValidationAttribute, IClientValidatable
