@@ -5,7 +5,7 @@ using BExIS.Dlm.Entities.Data;
 using BExIS.Xml.Helpers;
 using BExIS.Xml.Services;
 
-namespace BExIS.Web.Shell.Areas.SAM.Models
+namespace BExIS.Modules.Sam.UI.Models
 {
     public class DatasetModels
     {

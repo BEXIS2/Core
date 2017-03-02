@@ -1,12 +1,13 @@
-﻿using System;
+﻿using BExIS.Dlm.Entities.MetadataStructure;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Xml;
-using BExIS.Dlm.Entities.MetadataStructure;
 using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
 using MDS = BExIS.Dlm.Entities.MetadataStructure;
+using BExIS.Dlm.Entities.Data;
 
 namespace BExIS.Dlm.Services.MetadataStructure
 {
@@ -32,7 +33,7 @@ namespace BExIS.Dlm.Services.MetadataStructure
 
         public List<MetadataPackageUsage> GetEffectivePackages(MDS.MetadataStructure structure)
         {
-            return GetEffectivePackages(structure.Id);            
+            return GetEffectivePackages(structure.Id);
         }
 
         public List<MetadataPackageUsage> GetEffectivePackages(Int64 structureId)
@@ -94,11 +95,12 @@ namespace BExIS.Dlm.Services.MetadataStructure
         {
             Contract.Requires(entity != null);
             Contract.Requires(entity.Id >= 0);
-
+            IReadOnlyRepository<Dataset> datasetRepo = this.GetUnitOfWork().GetReadOnlyRepository<Dataset>();
+            if (datasetRepo.Query(p => p.MetadataStructure.Id == entity.Id).Count() > 0)
+                throw new Exception(string.Format("Metadata structure {0} is used by datasets. Deletion Failed", entity.Id));
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<MDS.MetadataStructure> repo = uow.GetRepository<MDS.MetadataStructure>();
-
                 entity = repo.Reload(entity);
                 repo.Delete(entity);
 
@@ -116,9 +118,14 @@ namespace BExIS.Dlm.Services.MetadataStructure
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<MDS.MetadataStructure> repo = uow.GetRepository<MDS.MetadataStructure>();
-
+                IReadOnlyRepository<Dataset> datasetRepo = this.GetUnitOfWork().GetReadOnlyRepository<Dataset>();
                 foreach (var entity in entities)
                 {
+                    if (datasetRepo.Query(p => p.MetadataStructure.Id == entity.Id).Count() > 0)
+                    {
+                        uow.Ignore();
+                        throw new Exception(string.Format("Metadata structure {0} is used by datasets. Deletion Failed", entity.Id));
+                    }
                     var latest = repo.Reload(entity);
                     repo.Delete(latest);
                 }
@@ -140,7 +147,7 @@ namespace BExIS.Dlm.Services.MetadataStructure
                 repo.Put(entity); // Merge is required here!!!!
                 uow.Commit();
             }
-            return (entity);    
+            return (entity);
         }
 
         #endregion

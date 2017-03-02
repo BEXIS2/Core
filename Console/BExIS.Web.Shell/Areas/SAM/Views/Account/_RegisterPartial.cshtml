@@ -1,7 +1,5 @@
 ﻿@using Telerik.Web.Mvc.UI
-@using Vaiona.Web.Mvc;
-
-@model BExIS.Web.Shell.Areas.SAM.Models.AccountRegisterModel
+@model BExIS.Modules.Sam.UI.Models.AccountRegisterModel
 
 @using (Ajax.BeginForm("Register", "Account", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "Content_Register", OnSuccess = "onSuccess" }))
 {
@@ -92,12 +90,9 @@
             <td colspan="2">
                 @Html.CheckBoxFor(m => m.TermsAndConditions)
                 I accept 
-                @if (!string.IsNullOrEmpty(Html.GetTenant().PolicyFileNamePath))
-                {
-                    @Html.ActionLink("Terms and Conditions", "Policy", "Footer", new { area = "Site" }, null)
-                }
-                @*<a href="/Site/Terms/Index" title="See Terms and Conditions" target="_blank">Terms and Conditions</a>.
-                @Html.ValidationMessageFor(m => m.TermsAndConditions)*@
+                @*<a href="/Site/Terms/Index" title="See Terms and Conditions" target="_blank">Terms and Conditions</a>.*@
+                <a href="@Url.Action("index", "terms", new { area = "" }, null)" title="See Terms and Conditions" target="_blank">Terms and Conditions</a>.
+                @Html.ValidationMessageFor(m => m.TermsAndConditions)
             </td>
         </tr>
     </table>
