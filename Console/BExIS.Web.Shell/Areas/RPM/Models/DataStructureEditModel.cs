@@ -247,7 +247,6 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
             if (unitmanager.DimensionRepo.Get(dimensionId) != null)
                 units = unitmanager.DimensionRepo.Get(dimensionId).Units.ToList();
 
-            ItemStruct tempUnitStruct = new ItemStruct();
             foreach (Unit u in units)
             {
                 if (u.Name.ToLower() != "none")
@@ -256,18 +255,22 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
                     {
                         if (dt.Id == dataTypeId)
                         {
-                            tempUnitStruct.Id = u.Id;
-                            tempUnitStruct.Name = u.Name;
-                            UnitStructs.Add(tempUnitStruct);
+                            UnitStructs.Add(new ItemStruct()
+                            {
+                                Name = u.Name,
+                                Id = u.Id
+                            });
                             break;
                         }
                     }
                 }
                 else
                 {
-                    tempUnitStruct.Id = u.Id;
-                    tempUnitStruct.Name = u.Name;
-                    UnitStructs.Add(tempUnitStruct);
+                    UnitStructs.Add(new ItemStruct()
+                    {
+                        Name = u.Name,
+                        Id = u.Id
+                    });
                 }
             }
 
@@ -444,6 +447,28 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
             this.Description = "";
             this.DimensionId = 0;
             this.MeasurementSystem = "";
+
+            this.DataTypeList = new List<ItemStruct>();
+
+            foreach (DataType dt in new DataTypeManager().Repo.Get())
+            {
+                this.DataTypeList.Add(new ItemStruct()
+                {
+                    Name = dt.Name,
+                    Id = dt.Id
+                });
+            }
+
+            this.DimensionList = new List<ItemStruct>();
+
+            foreach (Dimension dim in new UnitManager().DimensionRepo.Get())
+            {
+                this.DimensionList.Add(new ItemStruct()
+                {
+                    Name = dim.Name,
+                    Id = dim.Id
+                });
+            }
         }
     }
 

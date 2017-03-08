@@ -51,7 +51,7 @@
                 <div class="bx-function bx-add" id="addUnit"></div>
             </td>
         </tr>
-        <tr>
+        <tr id="datatype">
             <td>
                 Data Type
             </td>
@@ -186,8 +186,10 @@
     $('.bx-rpm-function #addUnit').click(function () {
         $('.unit .bx-rpm-selectdropdown').toggle();
         $('.unit .bx-rpm-partial').toggle();
+        $('#datatype').toggle();
         $('.bx-rpm-function #addUnit').toggleClass('bx-add');
         $('.bx-rpm-function #addUnit').toggleClass('bx-close');
+        $('#createAttributeWindow').data('tWindow').center();
     });
 
     $('.bx-rpm-createAttributeContainer #saveButton').click(function () {
