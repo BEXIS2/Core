@@ -1,7 +1,7 @@
 ﻿@model BExIS.Web.Shell.Areas.DDM.Models.ShowPublishDataModel
 
 @{
-    List<string> datarepolist = Model.DataRepositories.Select(d => d.Name).ToList();
+    List<string> datarepolist = Model.Brokers;
 }
 <script type="text/javascript">
 
@@ -21,6 +21,7 @@
                 function(response) {
                     //$("#requirementsContainer").html(response);
 
+
                     var jsonObject = {
                         "datarepo": e.value,
                         "datasetid": id
@@ -39,37 +40,36 @@
                             var isMetadataConvertable = data.isMetadataConvertable;
                             var metadataValidMessage = data.metadataValidMessage;
                             var isDataConvertable = data.isDataConvertable;
-                            var exist  = data.Exist;
+                            var exist = data.Exist;
 
 
-                            if (isMetadataConvertable && typeof metadataValidMessage==="undefined" && isDataConvertable) {
+                            if (isMetadataConvertable &&
+                                typeof metadataValidMessage === "undefined" &&
+                                isDataConvertable) {
 
                                 console.log("ok");
                                 console.log(isMetadataConvertable);
                                 console.log(metadataValidMessage);
                                 console.log(isDataConvertable);
 
-
-
                                 $("#submitPublishBt").removeAttr("disabled");
                                 $("#submitPublishBt").removeClass("bx-disabled");
 
-                            } else if (isMetadataConvertable && typeof metadataValidMessage!=="undefined" && isDataConvertable) {
-                                
-                                if (typeof metadataValidMessage!=="undefined") {
+                            } else if (isMetadataConvertable &&
+                                typeof metadataValidMessage !== "undefined" &&
+                                isDataConvertable) {
+
+                                if (typeof metadataValidMessage !== "undefined") {
                                     alert(metadataValidMessage);
                                     $("#submitPublishBt").removeAttr("disabled");
                                     $("#submitPublishBt").removeClass("bx-disabled");
                                 }
 
-                            }
-                            else
-                            {
+                            } else {
 
                                 console.log("failure");
 
-                                if(!exist)
-                                {
+                                if (!exist) {
                                     $("#submitPublishBt").attr("disabled", "disabled");
                                     $("#submitPublishBt").addClass("bx-disabled");
 
@@ -79,8 +79,8 @@
                                         message += "Metadata is not convertable. ";
                                     }
 
-                                    if (typeof metadataValidMessage!=="undefined") {
-                                        message+=metadataValidMessage;
+                                    if (typeof metadataValidMessage !== "undefined") {
+                                        message += metadataValidMessage;
                                     }
 
                                     if (!isDataConvertable) {
@@ -105,7 +105,7 @@
 
         function onSubmitPublishBtClick(e) {
 
-            $("#preloader").preloader(14,"Publishing data...");
+            $("#preloader").preloader(14, "Publishing data...");
 
             var id = @Model.DatasetId;
 
@@ -113,18 +113,55 @@
             var input = $(".t-dropdown .t-input").text();
 
             //alert(input);
+            prepareData(id, input);
+ 
+        }
 
-            $.post('@Url.Action("PrepareData", "Data", new RouteValueDictionary {{"area", "DDM"}})',
+    function prepareData(id,input) {
+
+        $.post('@Url.Action("PrepareData", "Data", new RouteValueDictionary {{"area", "DDM"}})',
                 { datasetid: id, datarepo: input },
                 function(response) {
                     //alert(response);
                     $("#publishContentContainer").replaceWith(response);
-                    $("#preloader").removePreloader();
+
+                    sendDataToDataRepo(id, input);
 
                 });
+    }
+
+    function sendDataToDataRepo(id,input) {
+
+        $.post('@Url.Action("SendDataToDataRepo", "Data", new RouteValueDictionary {{"area", "DDM"}})',
+            { datasetid: id, datarepo: input },
+            function(response) {
 
 
-        }
+                if(response !== "true")
+                {
+                    var obj = jQuery.parseJSON(response);
+                    var message = $("#requirementsContainer").text();
+
+                    var htmltext = "<p>" + message + "</p><p><br/>" + response + "</p>";
+
+                    $("#requirementsContainer").html(htmltext);
+                    $("#requirementsContainer").css("color", "#f24c24");
+
+                    $("#preloader").removePreloader();
+                }
+
+                //reload site
+                $.post('@Url.Action("publishData", "Data", new RouteValueDictionary {{"area", "DDM"}})',
+                    { datasetid: id },
+                    function(site) {
+                        $("#publishContentContainer").replaceWith(site);
+                        $("#requirementsContainer").html(htmltext);
+                        $("#requirementsContainer").css("color", "#f24c24");
+
+                        $("#preloader").removePreloader();
+                    });
+            });
+    }
 </script>
 
 <div id="publishContentContainer" style="min-height: 200px">
@@ -167,24 +204,25 @@
         <table>
             <tr>
                 <th style="width: 60px;">Version</th>
+                <th>Broker</th>
                 <th>Creation Date</th>
-                <th>Data Repository</th>
                 <th>Status</th>
                 <th style="width: 30px;"></th>
             </tr>
-            @if (Model.RepoFilesDictionary.Count > 0)
+            @if (Model.Publications.Count > 0)
             {
-                foreach (var file in Model.RepoFilesDictionary)
+                foreach (var publication in Model.Publications)
                 {
                     <tr>
-                        <td>@file.DatasetVersionId</td>
-                        <td>@file.CreationDate.ToLocalTime()</td>
-                        <td>@file.DataRepository.Name</td>
-                        <td>no status available</td>
+                        <td>@publication.DatasetVersionId</td>
+                        <td>@publication.Broker</td>
+                        <td>@publication.CreationDate.ToLocalTime()</td>
+                        <td>@publication.Status</td>
+
                         <td>
                             @if (Model.DownloadRights)
                             {
-                                @Html.ActionLink(" ", "DownloadZip", "Data", new {datarepo = file.DataRepository.Name, datasetid = file.DatasetId, datasetversionid = file.DatasetVersionId}, new {@class = "bx bx-grid-function bx-download", title = "Download"})
+                                @Html.ActionLink(" ", "DownloadZip", "Data", new {datarepo = publication.Broker, datasetversionid = publication.DatasetVersionId}, new {@class = "bx bx-grid-function bx-download", title = "Download"})
                             }
                             else
                             {

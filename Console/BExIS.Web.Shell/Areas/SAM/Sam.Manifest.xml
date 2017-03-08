@@ -10,23 +10,20 @@
     <Dependency moduleId="dcm" version="*.*.*" />
   </Dependencies>
   <Exports>
-    <!--tag: menubar, launchbar, settings, api-->
-    <!-- . is the root of each menu category. menu categories are represended by tags-->
-    <!--order is at each tag, in document and catalog order, when order is eqaul-->
     <Export tag="settings" id="usrList" order="1"
-            title="List Users" description="List Only users without groups" 
+            title="List Users" description="List Only users without groups" icon=""
             controller="Subjets" action="Index" argument="user"
-            extends="."
+            extends="./settingsRoot"
             />
-    <Export tag="menubar" id="dstList" 
-            title="List Datasets" description="List datasets and their status" 
+    <Export tag="menubar" id="dstList" order="1"
+            title="List Datasets" description="List datasets and their status" icon=""
             controller="Datasets" action="Index"
-            extends="./collect" 
+            extends="./menubarRoot/collect" 
             />
     <Export tag="api" id="tntList"
-            title="List Tenants" description="List tenants and their status"
+            title="List Tenants" description="List tenants and their status" icon=""
             controller="Tenants" action="Index"
-            extends="."
+            extends="./apiRoot"
             />
   </Exports>
 </Manifest>

@@ -69,10 +69,7 @@ namespace BExIS.Modules.Sam.UI.Helpers
             taskManager.CreateTask("DIM", "Help", "*");
             taskManager.CreateTask("RPM", "Help", "*");
             taskManager.CreateTask("SAM", "Help", "*");
-            taskManager.CreateTask("Shell", "ContactUs", "*");
-            taskManager.CreateTask("Shell", "Impressum", "*");
-            taskManager.CreateTask("Shell", "PrivacyPolicy", "*");
-            //taskManager.CreateTask("Shell", "Terms", "*");
+            taskManager.CreateTask("Site", "Footer", "*");
 
             //generic form for metadata
             taskManager.CreateTask("DCM", "Form", "*");

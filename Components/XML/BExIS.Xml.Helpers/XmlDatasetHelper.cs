@@ -431,8 +431,6 @@ namespace BExIS.Xml.Services
 
         #endregion
 
-
-
         #region add
 
         public static XmlDocument AddReferenceToXml(XmlDocument Source, string nodeName, string nodeValue, string nodeType, string destinationPath)
