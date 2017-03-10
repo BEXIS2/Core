@@ -29,7 +29,7 @@ namespace BExIS.Utils.WebHelpers
                         menuBar += $"<li><a href='/{child.Attribute("area").Value}/{child.Attribute("controller").Value}/{child.Attribute("action").Value}'>{child.Attribute("title").Value}</a></li>";
                     }
 
-                    menuBar += "</ul></li>";
+                    menuBar += $"</ul></li>";
                 }
                 else
                 {
@@ -38,6 +38,24 @@ namespace BExIS.Utils.WebHelpers
             }
 
             return new MvcHtmlString(menuBar);
+        }
+
+        public static MvcHtmlString LunchBar(this HtmlHelper htmlHelper)
+        {
+            return new MvcHtmlString("");
+        }
+
+        public static MvcHtmlString Settings(this HtmlHelper htmlHelper)
+        {
+            var settings = "";
+            var settingsRoot = ModuleManager.ExportTree.GetElement("settingsRoot");
+
+            foreach (var child in settingsRoot.Elements())
+            {
+                settings += $"<li><a href='/{child.Attribute("area").Value}/{child.Attribute("controller").Value}/{child.Attribute("action").Value}'>{child.Attribute("title").Value}</a></li>";
+            }
+
+            return new MvcHtmlString($"<li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown' role='button' aria-haspopup='true' aria-expanded='false'><i class='fa fa-cog'></i></a><ul class='dropdown-menu'>" + settings + $"</ul></li>");
         }
 
         public static XElement GetElement(this XElement menuTree, string id)
