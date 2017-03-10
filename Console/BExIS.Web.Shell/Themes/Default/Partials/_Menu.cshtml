@@ -35,27 +35,9 @@
 
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div id="navbarCollapse" class="collapse navbar-collapse">
+            @*menubar*@
             <ul class="nav navbar-nav">
-                <li>@Html.ActionLink("Dashboard", "Index", "Home", new {area = ""}, null)</li>
-                <li>@Html.ActionLink("Search", "Index", "Home", new {area = "DDM"}, null)</li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Plan<span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        <li>@Html.ActionLink("Manage Data Structures", "DataStructureDesigner", "Home", new {area = "RPM"}, null)</li>
-                        <li>@Html.ActionLink("Manage Data Attributes", "AttributeManager", "DataAttribute", new {area = "RPM"}, null)</li>
-                        <li>@Html.ActionLink("Manage Units", "UnitManager", "Unit", new {area = "RPM"}, null)</li>
-                        <li>@Html.ActionLink("Manage Data Types", "DataTypeManager", "Home", new {area = "RPM"}, null)</li>
-
-                    </ul>
-                </li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Collect<span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        <li>@Html.ActionLink("Create Dataset", "Index", "CreateDataset", new {area = "DCM"}, null)</li>
-                        <li>@Html.ActionLink("Upload Data", "Index", "Submit", new {area = "DCM"}, null)</li>
-                        <li>@Html.ActionLink("Push Big File", "Index", "Push", new {area = "DCM"}, null)</li>
-                    </ul>
-                </li>
+                @Html.MenuBar()
             </ul>
 
             <ul class="nav navbar-nav navbar-right">
