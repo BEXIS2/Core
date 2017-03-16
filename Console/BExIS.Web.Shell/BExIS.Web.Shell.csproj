@@ -1346,6 +1346,10 @@
       <Project>{abc877e0-e3de-4472-a199-1728e88fa5a1}</Project>
       <Name>BExIS.RPM.Output</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Modules\RPM\BExIS.RPM.SeedData\BExIS.RPM.SeedData.csproj">
+      <Project>{7f586cf7-dde0-43c1-bbb9-377d19bbb1e5}</Project>
+      <Name>BExIS.RPM.SeedData</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\DDM\Views\Admin\SearchDesigner.cshtml" />
