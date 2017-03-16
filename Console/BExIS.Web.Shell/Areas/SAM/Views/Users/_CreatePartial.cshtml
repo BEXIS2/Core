@@ -1,5 +1,5 @@
 ﻿@using Telerik.Web.Mvc.UI
-@model BExIS.Web.Shell.Areas.SAM.Models.UserCreateModel
+@model BExIS.Modules.Sam.UI.Models.UserCreateModel
 @using (Ajax.BeginForm("Create", "Users", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "contentCreate", OnSuccess = "userCreate_onSuccess" }))
 {
     @Html.ValidationSummary(true)

@@ -6,7 +6,7 @@ using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
 
-namespace BExIS.Web.Shell.Areas.SAM.Helpers
+namespace BExIS.Modules.Sam.UI.Helpers
 {
     public class SamSeedDataGenerator
     {
@@ -61,7 +61,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Helpers
             TaskManager taskManager = new TaskManager();
 
             taskManager.CreateTask("SAM", "Account", "*");
-            taskManager.CreateTask("Site", "Nav", "*");
+            taskManager.CreateTask("Shell", "Nav", "*");
             taskManager.CreateTask("Shell", "Home", "*");
             taskManager.CreateTask("System", "Utils", "*");
             taskManager.CreateTask("DCM", "Help", "*");
@@ -69,10 +69,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Helpers
             taskManager.CreateTask("DIM", "Help", "*");
             taskManager.CreateTask("RPM", "Help", "*");
             taskManager.CreateTask("SAM", "Help", "*");
-            taskManager.CreateTask("Site", "ContactUs", "*");
-            taskManager.CreateTask("Site", "Impressum", "*");
-            taskManager.CreateTask("Site", "PrivacyPolicy", "*");
-            taskManager.CreateTask("Site", "Terms", "*");
+            taskManager.CreateTask("Site", "Footer", "*");
 
             //generic form for metadata
             taskManager.CreateTask("DCM", "Form", "*");

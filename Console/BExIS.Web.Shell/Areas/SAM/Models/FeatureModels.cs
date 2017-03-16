@@ -3,9 +3,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web.Mvc;
 using BExIS.Security.Entities.Objects;
-using BExIS.Web.Shell.Areas.SAM.Controllers;
+using BExIS.Modules.Sam.UI.Controllers;
 
-namespace BExIS.Web.Shell.Areas.SAM.Models
+namespace BExIS.Modules.Sam.UI.Models
 {
     public class FeatureModel
     {

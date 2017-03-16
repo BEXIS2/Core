@@ -2,11 +2,11 @@
 using System.IO;
 using System.Net;
 using System.Web.Mvc;
-using BExIS.Web.Shell.Areas.SAM.Models;
+using BExIS.Modules.Sam.UI.Models;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Extensions;
 
-namespace BExIS.Web.Shell.Areas.SAM.Controllers
+namespace BExIS.Modules.Sam.UI.Controllers
 {
     public class HelpController : Controller
     {

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Web;
 using Vaiona.Model.MTnt;
 
-namespace BExIS.Web.Shell.Areas.SAM.Models
+namespace BExIS.Modules.Sam.UI.Models
 {
     public class TenantCreateModel
     {
