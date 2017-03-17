@@ -1,0 +1,5 @@
+﻿@using BExIS.Web.Shell.Areas.RPM.Models
+@model List<ItemStruct>
+
+@Html.DropDownList("select", new SelectList(Model, "Id", "Name"), new {@class = "bx-dropdown bx-rpm-dropdown" })
+<span class="t-arrow-down bx-rpm-dropdownArrow" />

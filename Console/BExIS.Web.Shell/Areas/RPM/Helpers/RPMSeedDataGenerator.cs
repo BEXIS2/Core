@@ -18,7 +18,7 @@ using Vaiona.Utils.Cfg;
 using System.Data;
 using BExIS.Web.Shell.Areas.DCM.Controllers;
 using BExIS.Xml.Helpers.Mapping;
-using BExISMigration;
+using BExIS.RPM.SeedData;
 using Remotion.Linq.Parsing;
 
 namespace BExIS.Web.Shell.Areas.RPM.Helpers
@@ -31,7 +31,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Helpers
             //create seed data from csv files
             MappingReader mappingReader = new MappingReader();
             AttributeCreator attributeCreator = new AttributeCreator();
-            string filePath = AppConfiguration.GetModuleWorkspacePath("BMM");
+            string filePath = AppConfiguration.GetModuleWorkspacePath("RPM");
 
             // read data types from csv file
             DataTable mappedDataTypes = mappingReader.readDataTypes(filePath);

@@ -30,7 +30,7 @@
 
     <Export tag="menubar" id="dummyMenu" order="2"
             title="List Datasets" description="Delete me from the Shell" icon=""
-            controller="Dummy" action="Index"
+            controller="dummy" action="index"
             extends="./menubarRoot/collect"
             />
 
