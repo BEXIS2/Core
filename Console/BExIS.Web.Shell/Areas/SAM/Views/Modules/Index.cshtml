@@ -8,9 +8,10 @@
     .DataKeys(keys =>
     {
         keys.Add(m => m.Id);
-    })
+    })    
     .Columns(columns =>
     {
+        columns.Bound(s => s.Order).Width(100);
         columns.Bound(s => s.Id).Width(100);
         columns.Bound(s => s.Version).Width(100);
         columns.Bound(m => m.Description);
@@ -50,7 +51,7 @@
     })
     .Sortable(sortable => sortable
         .OrderBy(orderby => orderby
-            .Add(m => m.Id)
+            .Add(m => m.Order)
             .Ascending()
         )
     )

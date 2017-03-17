@@ -50,13 +50,14 @@ namespace BExIS.Web.Shell
 
             initIoC();
             GlobalConfiguration.Configure(WebApiConfig.Register);
-            initModules();
+            AppDomain.CurrentDomain.AssemblyResolve += ModuleManager.ResolveCurrentDomainAssembly;
             initPersistence();
+            initModules();
             RegisterGlobalFilters(GlobalFilters.Filters);
             RegisterRoutes(RouteTable.Routes);
 
             initTenancy();
-            ModuleBootstrapper.StartModules();
+            ModuleManager.StartModules();
         }
 
         private void initTenancy()
@@ -74,10 +75,9 @@ namespace BExIS.Web.Shell
         private void initModules()
         {
             ModuleManager.RegisterShell(Path.Combine(AppConfiguration.AppRoot, "Shell.Manifest.xml")); // this should be called before RegisterAllAreas
-            AreaRegistration.RegisterAllAreas(); // this is the starting point of geting modules registered
+            AreaRegistration.RegisterAllAreas(GlobalConfiguration.Configuration); // this is the starting point of geting modules registered
             // at the time of this call, the PluginInitilizer has already loaded the plug-ins
             ModuleBootstrapper.Initialize();
-            AppDomain.CurrentDomain.AssemblyResolve += ModuleBootstrapper.ResolveCurrentDomainAssembly;
             ModuleManager.BuildExportTree();
         }
 
@@ -111,7 +111,7 @@ namespace BExIS.Web.Shell
 
         protected void Application_End()
         {
-            ModuleBootstrapper.ShutdownModules();
+            ModuleManager.ShutdownModules();
             IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager();            
             pManager.Shutdown(); // release all data access related resources!
             IoCFactory.ShutdownContainer();

@@ -4,7 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Web;
 
-namespace BExIS.Web.Shell.Areas.DIM.Models
+namespace BExIS.Modules.Dim.UI.Models
 {
     /// <summary>
     /// It is only a wrapper around the DataTable class to provide a specific name for Result formatting in MVC pipeline.

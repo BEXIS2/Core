@@ -1,17 +1,16 @@
-﻿using BExIS.Dcm.CreateDatasetWizard;
-using BExIS.Dim.Entities.Mapping;
+﻿using BExIS.Dim.Entities.Mapping;
 using BExIS.Dim.Services;
 using BExIS.Dlm.Entities.Common;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Entities.Party;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Dlm.Services.Party;
-using BExIS.Web.Shell.Areas.DIM.Models.Mapping;
+using BExIS.Modules.Dim.UI.Models.Mapping;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace BExIS.Web.Shell.Areas.DIM.Helper
+namespace BExIS.Modules.Dim.UI.Helper
 {
     public class MappingHelper
     {
@@ -217,7 +216,10 @@ namespace BExIS.Web.Shell.Areas.DIM.Helper
             //Debug.WriteLine("1: " + LEModel.Name + " " + LEModel.Type);
 
             //check childrens
-            List<BaseUsage> childrenUsages = UsageHelper.GetChildren(usage);
+            // this line calls to the DCM module. JAVAD.
+            //List<BaseUsage> childrenUsages = UsageHelper.GetChildren(usage);
+            // please remove the following line, after you fixed the call to DCM
+            List<BaseUsage> childrenUsages = new List<BaseUsage>();
             if (childrenUsages.Count > 0)
             {
                 foreach (BaseUsage childUsage in childrenUsages)

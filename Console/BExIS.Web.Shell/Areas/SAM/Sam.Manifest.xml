@@ -6,6 +6,9 @@
     Also un/installation, and in/activation of the modules is done by here. 
     SAM also manages system features such as users, groups, permission, and dataset backup and maintenance.
   </Description>
+  <Assemblies>
+    <Assembly fullName="" role=""/>
+  </Assemblies>
   <Dependencies>
     <Dependency moduleId="dcm" version="*.*.*" />
   </Dependencies>

@@ -3,7 +3,7 @@ using BExIS.IO.Transform.Output;
 using System.Collections.Generic;
 using System.Web.Http;
 
-namespace BExIS.Web.Shell.Areas.DIM.Controllers
+namespace BExIS.Modules.Dim.UI.Controllers
 {
     public class ExportGFBIOController : ApiController
     {
