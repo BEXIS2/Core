@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace BExIS.Web.Shell.Areas.DIM.Models
+namespace BExIS.Modules.Dim.UI.Models
 {
     public class MetadataStructureModel
     {

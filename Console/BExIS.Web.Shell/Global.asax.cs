@@ -35,20 +35,6 @@ namespace BExIS.Web.Shell
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
-            //routes.MapRoute(
-            //    "DDM", //Landing page
-            //    "",
-            //    new { area = "DDM", controller = "Home", action = "Index" }
-            //    , new[] { "BExIS.Web.Shell.Areas.DDM.Controllers" }
-            //).DataTokens["UseNamespaceFallback"] = false;
-
-            //routes.MapRoute(
-            //   "Home",
-            //   "Home",
-            //   new { controller = "Home", action = "Index" }
-            //   , new[] { "BExIS.Web.Shell.Controllers" }
-            //);
-
             routes.MapRoute(
                "Default", // Route name
                "{controller}/{action}/{id}", // URL with parameters
@@ -56,60 +42,76 @@ namespace BExIS.Web.Shell
                , new[] { "BExIS.Web.Shell.Controllers" } // to prevent conflict between root controllers and area controllers that have same names
            );
 
-          //  routes.MapRoute(
-          //    "RPM",
-          //    "RPM/{controller}/{action}/{id}",
-          //    new { controller = "Home", action = "Index" }
-          //    , new[] { "BExIS.Web.Shell.Areas.RPM.Controllers" }
-            //).DataTokens = new RouteValueDictionary(new { area = "RPM" });
         }
 
         protected void Application_Start()
         {
 			MvcHandler.DisableMvcResponseHeader = true;
-		
-            init();
-            ModuleManager.RegisterShell(Path.Combine(AppConfiguration.AppRoot, "Shell.Manifest.xml")); // this should be called before RegisterAllAreas
-            AreaRegistration.RegisterAllAreas(); // this is the starting point of geting modules registered
-            GlobalConfiguration.Configure(WebApiConfig.Register);
-            loadModules();
-            ModuleManager.BuildExportTree();
-            //GlobalFilters.Filters.Add(new SessionTimeoutFilterAttribute());
 
+            initIoC();
+            GlobalConfiguration.Configure(WebApiConfig.Register);
+            AppDomain.CurrentDomain.AssemblyResolve += ModuleManager.ResolveCurrentDomainAssembly;
+            initPersistence();
+            initModules();
             RegisterGlobalFilters(GlobalFilters.Filters);
             RegisterRoutes(RouteTable.Routes);
 
+            initTenancy();
+            ModuleManager.StartModules();
+        }
+
+        private void initTenancy()
+        {
             ITenantResolver tenantResolver = IoCFactory.Container.Resolve<ITenantResolver>();
             ITenantPathProvider pathProvider = new BExISTenantPathProvider(); // should be instantiated by the IoC. client app should provide the Path Ptovider based on its file and tenant structure
             tenantResolver.Load(pathProvider);
-
-
         }
 
-        private void init()
+        private void initIoC()
         {
             IoCFactory.StartContainer(Path.Combine(AppConfiguration.AppRoot, "IoC.config"), "DefaultContainer"); // use AppConfig to access the app root folder
+        }
+
+        private void initModules()
+        {
+            ModuleManager.RegisterShell(Path.Combine(AppConfiguration.AppRoot, "Shell.Manifest.xml")); // this should be called before RegisterAllAreas
+            AreaRegistration.RegisterAllAreas(GlobalConfiguration.Configuration); // this is the starting point of geting modules registered
+            // at the time of this call, the PluginInitilizer has already loaded the plug-ins
+            ModuleBootstrapper.Initialize();
+            ModuleManager.BuildExportTree();
+        }
+
+        private void initPersistence()
+        {
             IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager(); // just to prepare data access environment
             pManager.Configure(AppConfiguration.DefaultApplicationConnection.ConnectionString, AppConfiguration.DatabaseDialect, "Default", AppConfiguration.ShowQueries);
             if (AppConfiguration.CreateDatabase)
                 pManager.ExportSchema();
-            // enumerate modules and check if they need to export their schema. catalog/module/installed=true/false
-            // the init function may need to be executed after area registration
+            // if there are pending modules, their schema (if exists) must be applied.
+            else if (ModuleManager.HasPendingInstallation())
+            {
+                pManager.UpdateSchema(true, true);
+            }
             pManager.Start();
-            ////pManager.UpdateSchema(true, true); // seems NH has dropped the support for schema update!
-        }
 
-        private void loadModules()
-        {
-            // at the time of this call, the PluginInitilizer has already loaded the plug-ins
-            ModuleBootstrapper.Initialize();
-            AppDomain.CurrentDomain.AssemblyResolve += ModuleBootstrapper.ResolveCurrentDomainAssembly;
-            ModuleBootstrapper.StartModules();
+            if (ModuleManager.HasPendingInstallation())
+            {
+                // For security reasons, pending modules go to the "inactive" status after schema export. 
+                // An administrator can endable them via the management console
+                foreach (var moduleId in ModuleManager.PendingModules())
+                {
+                    // The install method of the plugin is called once and only once.
+                    // It generates the seed data and other module specific initializations
+                    ModuleManager.GetModuleInfo(moduleId).Plugin.Install();
+                    ModuleManager.Disable(moduleId);
+                }
+            }
+
         }
 
         protected void Application_End()
         {
-            ModuleBootstrapper.ShutdownModules();
+            ModuleManager.ShutdownModules();
             IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager();            
             pManager.Shutdown(); // release all data access related resources!
             IoCFactory.ShutdownContainer();
@@ -145,7 +147,6 @@ namespace BExIS.Web.Shell
 
         protected void Session_End()
         {
-            //IoCContainer container = Session["SessionLevelContainer"] as IoCContainer;
             IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager();
             pManager.ShutdownConversation(); 
             IoCFactory.Container.ShutdownSessionLevelContainer();

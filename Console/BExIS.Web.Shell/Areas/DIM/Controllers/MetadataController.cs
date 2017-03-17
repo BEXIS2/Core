@@ -10,11 +10,10 @@ using BExIS.Xml.Services;
 using System.IO;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Xml.Helpers.Mapping;
-using Vaiona.Utils.Cfg;
 using System.Text;
 using BExIS.IO.Transform.Output;
 
-namespace BExIS.Web.Shell.Areas.DIM.Controllers
+namespace BExIS.Modules.Dim.UI.Controllers
 {
     public class MetadataController : ApiController
     {

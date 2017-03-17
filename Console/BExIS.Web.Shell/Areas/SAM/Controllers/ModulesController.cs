@@ -5,6 +5,7 @@ using Telerik.Web.Mvc;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Mvc.Modularity;
+using System.Linq;
 
 namespace BExIS.Modules.Sam.UI.Controllers
 {
@@ -27,7 +28,9 @@ namespace BExIS.Modules.Sam.UI.Controllers
         {
             // load 
             List<ModuleGridRowModel> modules = new List<ModuleGridRowModel>();
-            foreach (var item in ModuleManager.Catalog.Elements("Module"))
+            var q = ModuleManager.Catalog.Elements("Module")
+                        .OrderBy(p => int.Parse(p.Attribute("order").Value));                    
+            foreach (var item in q)
             {
                 ModuleGridRowModel row = new ModuleGridRowModel()
                 {
@@ -41,7 +44,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 row.Description = moduleInfo.Manifest.Description;
                 row.Version = moduleInfo.Manifest.Version;
                 row.Loaded = moduleInfo.Plugin != null;
-
+                row.Order = int.Parse(item.Attribute("order").Value);
                 modules.Add(row);
             }
 

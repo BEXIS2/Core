@@ -111,6 +111,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.Dim.Orm.NH", "Modules
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.Dim.Services", "Modules\DIM\BExIS.Dim.Services\BExIS.Dim.Services.csproj", "{CAC933A2-6849-4C61-82B4-CBF4052210CC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.Modules.Dim.UI", "Console\BExIS.Web.Shell\Areas\DIM\BExIS.Modules.Dim.UI.csproj", "{9BFFFD11-03C6-47DF-9CC9-F458A9A49377}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -518,18 +520,18 @@ Global
 		{CAC933A2-6849-4C61-82B4-CBF4052210CC}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{CAC933A2-6849-4C61-82B4-CBF4052210CC}.Release|x86.ActiveCfg = Release|Any CPU
 		{CAC933A2-6849-4C61-82B4-CBF4052210CC}.Release|x86.Build.0 = Release|Any CPU
-		{7F586CF7-DDE0-43C1-BBB9-377D19BBB1E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7F586CF7-DDE0-43C1-BBB9-377D19BBB1E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7F586CF7-DDE0-43C1-BBB9-377D19BBB1E5}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{7F586CF7-DDE0-43C1-BBB9-377D19BBB1E5}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{7F586CF7-DDE0-43C1-BBB9-377D19BBB1E5}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{7F586CF7-DDE0-43C1-BBB9-377D19BBB1E5}.Debug|x86.Build.0 = Debug|Any CPU
-		{7F586CF7-DDE0-43C1-BBB9-377D19BBB1E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7F586CF7-DDE0-43C1-BBB9-377D19BBB1E5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7F586CF7-DDE0-43C1-BBB9-377D19BBB1E5}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{7F586CF7-DDE0-43C1-BBB9-377D19BBB1E5}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{7F586CF7-DDE0-43C1-BBB9-377D19BBB1E5}.Release|x86.ActiveCfg = Release|Any CPU
-		{7F586CF7-DDE0-43C1-BBB9-377D19BBB1E5}.Release|x86.Build.0 = Release|Any CPU
+		{9BFFFD11-03C6-47DF-9CC9-F458A9A49377}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9BFFFD11-03C6-47DF-9CC9-F458A9A49377}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9BFFFD11-03C6-47DF-9CC9-F458A9A49377}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{9BFFFD11-03C6-47DF-9CC9-F458A9A49377}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{9BFFFD11-03C6-47DF-9CC9-F458A9A49377}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9BFFFD11-03C6-47DF-9CC9-F458A9A49377}.Debug|x86.Build.0 = Debug|Any CPU
+		{9BFFFD11-03C6-47DF-9CC9-F458A9A49377}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9BFFFD11-03C6-47DF-9CC9-F458A9A49377}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9BFFFD11-03C6-47DF-9CC9-F458A9A49377}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{9BFFFD11-03C6-47DF-9CC9-F458A9A49377}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{9BFFFD11-03C6-47DF-9CC9-F458A9A49377}.Release|x86.ActiveCfg = Release|Any CPU
+		{9BFFFD11-03C6-47DF-9CC9-F458A9A49377}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -583,7 +585,7 @@ Global
 		{3A573810-B9F9-4BDE-8504-01EF49DE0C20} = {E8D1110E-4EF6-4DDE-93C3-3AE575EB1E4B}
 		{224E53EC-9B13-4627-8CA9-EDEABC7987D6} = {F3354AC7-CDA1-44E2-8E85-8DB532ED8C75}
 		{CAC933A2-6849-4C61-82B4-CBF4052210CC} = {F3354AC7-CDA1-44E2-8E85-8DB532ED8C75}
-		{7F586CF7-DDE0-43C1-BBB9-377D19BBB1E5} = {3FECE534-E021-47D1-8ABA-05A238D20A83}
+		{9BFFFD11-03C6-47DF-9CC9-F458A9A49377} = {F3354AC7-CDA1-44E2-8E85-8DB532ED8C75}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		EnterpriseLibraryConfigurationToolBinariesPath = packages\Unity.2.1.505.0\lib\NET35;packages\Unity.2.1.505.2\lib\NET35
