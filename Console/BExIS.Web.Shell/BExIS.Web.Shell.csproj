@@ -427,6 +427,8 @@
     <Compile Include="Areas\RPM\Controllers\Legacy\UnitController.cs" />
     <Compile Include="Areas\RPM\Helpers\HtmlPrefixScopeExtentions.cs" />
     <Compile Include="Areas\RPM\Helpers\RPMSeedDataGenerator.cs" />
+    <Compile Include="Areas\RPM\Helpers\SeedData\AttributeCreator.cs" />
+    <Compile Include="Areas\RPM\Helpers\SeedData\MappingReader.cs" />
     <Compile Include="Areas\RPM\Models\MessageModel.cs" />
     <Compile Include="Areas\RPM\Models\StructureModel.cs" />
     <Compile Include="Areas\RPM\Models\DataStructureEditModel.cs" />

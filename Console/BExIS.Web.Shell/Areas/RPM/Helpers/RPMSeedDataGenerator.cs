@@ -18,8 +18,8 @@ using Vaiona.Utils.Cfg;
 using System.Data;
 using BExIS.Web.Shell.Areas.DCM.Controllers;
 using BExIS.Xml.Helpers.Mapping;
-using BExIS.RPM.SeedData;
 using Remotion.Linq.Parsing;
+using BExIS.Web.Shell.Areas.RPM.Helpers.SeedData;
 
 namespace BExIS.Web.Shell.Areas.RPM.Helpers
 {
