@@ -153,7 +153,6 @@
     <Compile Include="Models\ModuleGridRowModel.cs" />
     <Compile Include="Models\PermissionModel.cs" />
     <Compile Include="Models\SecurityQuestionModels.cs" />
-    <Compile Include="Models\ShowHelpModel.cs" />
     <Compile Include="Models\TenantModels.cs" />
     <Compile Include="Models\UserModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
