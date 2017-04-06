@@ -51,11 +51,11 @@ namespace BExIS.Web.Shell
             initIoC();
             GlobalConfiguration.Configure(WebApiConfig.Register);
             AppDomain.CurrentDomain.AssemblyResolve += ModuleManager.ResolveCurrentDomainAssembly;
-            initPersistence();
             initModules();
+            initPersistence();
             RegisterGlobalFilters(GlobalFilters.Filters);
             RegisterRoutes(RouteTable.Routes);
-
+            ModuleManager.BuildExportTree();
             initTenancy();
             ModuleManager.StartModules();
         }
@@ -77,8 +77,7 @@ namespace BExIS.Web.Shell
             ModuleManager.RegisterShell(Path.Combine(AppConfiguration.AppRoot, "Shell.Manifest.xml")); // this should be called before RegisterAllAreas
             AreaRegistration.RegisterAllAreas(GlobalConfiguration.Configuration); // this is the starting point of geting modules registered
             // at the time of this call, the PluginInitilizer has already loaded the plug-ins
-            ModuleBootstrapper.Initialize();
-            ModuleManager.BuildExportTree();
+            //ModuleBootstrapper.Initialize();
         }
 
         private void initPersistence()
@@ -87,15 +86,16 @@ namespace BExIS.Web.Shell
             pManager.Configure(AppConfiguration.DefaultApplicationConnection.ConnectionString, AppConfiguration.DatabaseDialect, "Default", AppConfiguration.ShowQueries);
             if (AppConfiguration.CreateDatabase)
                 pManager.ExportSchema();
-            // if there are pending modules, their schema (if exists) must be applied.
-            else if (ModuleManager.HasPendingInstallation())
-            {
-                pManager.UpdateSchema(true, true);
-            }
             pManager.Start();
-
+            // if there are pending modules, their schema (if exists) must be applied.
             if (ModuleManager.HasPendingInstallation())
             {
+                try
+                {
+                    pManager.UpdateSchema();
+                }
+                catch(Exception ex)
+                { }
                 // For security reasons, pending modules go to the "inactive" status after schema export. 
                 // An administrator can endable them via the management console
                 foreach (var moduleId in ModuleManager.PendingModules())
@@ -106,7 +106,6 @@ namespace BExIS.Web.Shell
                     ModuleManager.Disable(moduleId);
                 }
             }
-
         }
 
         protected void Application_End()
