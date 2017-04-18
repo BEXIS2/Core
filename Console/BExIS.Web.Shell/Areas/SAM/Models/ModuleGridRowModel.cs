@@ -8,6 +8,9 @@ namespace BExIS.Modules.Sam.UI.Models
 {
     public class ModuleGridRowModel
     {
+        [Display(Name = "Order")]
+        public int Order { get; set; }
+
         public string Id { get; set; }
         [Display(Name = "Is Active")]
         public bool Status { get; set; }

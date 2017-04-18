@@ -1,5 +1,4 @@
-﻿using BExIS.Web.Shell.Areas.DIM.Models.Formatters;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Formatting;
@@ -22,8 +21,6 @@ namespace BExIS.Web.Shell
 
         public static void ConfigureApis(HttpConfiguration config)
         {
-            //config.Formatters.Insert(0, new DatasetModelCsvFormatter()); // should also work
-            config.Formatters.Insert(0,new DatasetModelCsvFormatter(new QueryStringMapping("format", "csv", "text/csv")));
         }
     }
 }

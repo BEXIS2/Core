@@ -1,6 +1,6 @@
 ﻿@using BExIS.Dim.Entities.Mapping
-@using BExIS.Web.Shell.Areas.DIM.Models.Mapping
-@model BExIS.Web.Shell.Areas.DIM.Models.Mapping.LinkElementModel
+@using BExIS.Modules.Dim.UI.Models.Mapping
+@model LinkElementModel
 @{
     string selectorClass = "le-mapping-simple-selector-" + @Model.Position.ToString().ToLower();
     string id = Model.Type + "_" + Model.ElementId + "_" + @Model.Position + "_" + @Model.Name;
