@@ -1,19 +1,21 @@
-﻿using System;
+﻿using BExIS.Security.Entities.Subjects;
+using Microsoft.AspNet.Identity;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using BExIS.Security.Entities.Objects;
 using Vaiona.Entities.Common;
 
 namespace BExIS.Security.Entities.Authorization
 {
-    public class Role : BaseEntity
+    public class Role : BaseEntity, IRole<long>
     {
-        #region Attributes
-
-        public virtual string Name { get; set; }
         public virtual string Description { get; set; }
+        public virtual string Name { get; set; }
+        public virtual ICollection<Rule> Rules { get; set; }
+        public virtual ICollection<Subject> Subjects { get; set; }
 
-        #endregion
+        public Role()
+        {
+            Rules = new List<Rule>();
+            Subjects = new List<Subject>();
+        }
     }
 }

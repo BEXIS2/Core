@@ -1,25 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using BExIS.Security.Entities.Objects;
-using BExIS.Security.Entities.Subjects;
+﻿using BExIS.Security.Entities.Subjects;
 using Vaiona.Entities.Common;
 
 namespace BExIS.Security.Entities.Authorization
 {
     public abstract class Permission : BaseEntity
     {
-        #region Attributes
-
         public virtual PermissionType PermissionType { get; set; }
-
-        #endregion
-
-        #region Associations
-
+        public virtual short Rights { get; set; }
         public virtual Subject Subject { get; set; }
+    }
 
-        #endregion
+    public enum PermissionType
+    {
+        Deny = 0,
+        Grant = 1
+    }
+
+    public enum RightType
+    {
+        Read = 0,
+        Write = 1,
+        Delete = 2,
+        Grant = 3
     }
 }
