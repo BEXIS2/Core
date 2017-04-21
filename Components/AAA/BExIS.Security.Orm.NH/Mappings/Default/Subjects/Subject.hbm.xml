@@ -1,9 +1,7 @@
 ﻿<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Security.Entities" namespace="BExIS.Security.Entities.Subjects">
   <class xmlns="urn:nhibernate-mapping-2.2" name="Subject" table="Subjects" dynamic-update="true">
 
-    <!-- Mapping BaseEntity properties -->
     <id name="Id" type="Int64">
-      <column name="Id" index="idx_Sujects_id"/>
       <generator class="native" />
     </id>
 
@@ -15,18 +13,14 @@
       <column name="Extra" not-null="false" sql-type="xml" />
     </property>
 
-    <!-- Mapping Subject Properties -->
-    <property name="Name" type="String">
-      <column name="Name" index="idx_Sujects_name"/>
-    </property>
-    <property name="IsSystemSubject" type="yes_no" >
-      <column name="IsSystemSubject"/>
-    </property>
-
-    <!-- Mapping Subject Properties -->
+    <property name="Name" type="string" />
     <set name="Permissions" cascade="all-delete-orphan" lazy="true">
       <key column="SubjectRef"/>
       <one-to-many class="BExIS.Security.Entities.Authorization.Permission, BExIS.Security.Entities" />
+    </set>
+    <set name="Roles" table="Subjects_Roles" cascade="all" lazy="true">
+      <key column="SubjectRef"/>
+      <many-to-many column="RolesRef" class="BExIS.Security.Entities.Authorization.Role, BExIS.Security.Entities"/>
     </set>
 
   </class>

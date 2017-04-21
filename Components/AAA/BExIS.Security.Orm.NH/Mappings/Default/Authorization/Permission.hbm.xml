@@ -1,7 +1,6 @@
 ﻿<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Security.Entities" namespace="BExIS.Security.Entities.Authorization">
   <class xmlns="urn:nhibernate-mapping-2.2" name="Permission" table="Permissions" dynamic-update="true">
 
-    <!-- Mapping BaseEntity properties -->
     <id name="Id" type="Int64">
       <column name="Id" index="idx_Permissions_id"/>
       <generator class="native" />
@@ -15,12 +14,8 @@
       <column name="Extra" not-null="false" sql-type="xml" />
     </property>
 
-    <!-- Mapping Permission Associations -->
-    <property name="PermissionType" type="BExIS.Security.Entities.Objects.PermissionType, BExIS.Security.Entities" >
-      <column name="PermissionType" />
-    </property>
+    <property name="PermissionType" type="BExIS.Security.Entities.Authorization.PermissionType, BExIS.Security.Entities" />
 
-    <!-- Mapping Permission Associations -->
     <many-to-one name="Subject" column="SubjectRef" class="BExIS.Security.Entities.Subjects.Subject, BExIS.Security.Entities"/>
 
   </class>

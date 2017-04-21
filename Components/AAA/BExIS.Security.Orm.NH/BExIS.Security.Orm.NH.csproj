@@ -54,47 +54,26 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Mappings\DB2Dialect\" />
-    <Folder Include="Mappings\Default\Base\" />
-    <Folder Include="Mappings\Default\NativeObjects\" />
-    <Folder Include="Mappings\Default\PostObjects\" />
-    <Folder Include="Mappings\Default\Security\" />
-    <Folder Include="Mappings\PostgreSQL82Dialect\" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Mappings\Default\Objects\Feature.hbm.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Mappings\Default\Objects\Task.hbm.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Mappings\Default\Subjects\Subject.hbm.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Mappings\Default\Subjects\User.hbm.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Mappings\Default\Subjects\Group.hbm.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Mappings\Default\Authentication\Authenticator.hbm.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Mappings\Default\Authorization\DataPermission.hbm.xml">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Mappings\Default\Objects\Entity.hbm.xml" />
-    <EmbeddedResource Include="Mappings\Default\Authorization\FeaturePermission.hbm.xml" />
-    <EmbeddedResource Include="Mappings\Default\Authorization\Permission.hbm.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Mappings\Default\Objects\SecurityQuestion.hbm.xml" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Mappings\Default\Authentication\Login.hbm.xml" />
+    <Content Include="Mappings\Default\Authorization\EntityPermission.hbm.xml" />
+    <Content Include="Mappings\Default\Authorization\FeaturePermission.hbm.xml" />
+    <Content Include="Mappings\Default\Authorization\Permission.hbm.xml" />
+    <Content Include="Mappings\Default\Authorization\Role.hbm.xml" />
+    <Content Include="Mappings\Default\Authorization\Rule.hbm.xml" />
+    <Content Include="Mappings\Default\Objects\Entity.hbm.xml" />
+    <Content Include="Mappings\Default\Objects\Feature.hbm.xml" />
+    <Content Include="Mappings\Default\Objects\Workflow.hbm.xml" />
+    <Content Include="Mappings\Default\Requests\Decision.hbm.xml" />
+    <Content Include="Mappings\Default\Requests\EntityRequest.hbm.xml" />
+    <Content Include="Mappings\Default\Requests\Request.hbm.xml" />
+    <Content Include="Mappings\Default\Subjects\Group.hbm.xml" />
+    <Content Include="Mappings\Default\Subjects\Subject.hbm.xml" />
+    <Content Include="Mappings\Default\Subjects\User.hbm.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
