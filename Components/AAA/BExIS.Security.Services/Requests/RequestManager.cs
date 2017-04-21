@@ -1,6 +1,7 @@
 ﻿using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Requests;
 using BExIS.Security.Entities.Subjects;
+using System;
 using Vaiona.Entities.Common;
 using Vaiona.Persistence.Api;
 
@@ -27,19 +28,12 @@ namespace BExIS.Security.Services.Requests
 
         public Request CreateRequest(User applicant, BaseEntity entity)
         {
-            // Entity
-
-
-            Request request = new Request()
-            {
-                Applicant = applicant,
-                Entity = 
-            };
+            throw new NotImplementedException();
         }
 
         public bool DeleteRequest(long id)
         {
-
+            throw new NotImplementedException();
         }
     }
 }
