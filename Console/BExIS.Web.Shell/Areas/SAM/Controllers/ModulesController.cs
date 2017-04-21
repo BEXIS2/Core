@@ -6,6 +6,10 @@ using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Mvc.Modularity;
 using System.Linq;
+using System.Web;
+using System.IO;
+using Vaiona.Utils.Cfg;
+using System;
 
 namespace BExIS.Modules.Sam.UI.Controllers
 {
@@ -56,28 +60,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
         {
         }
 
-        //private bool IsDeletable(string id)
-        //{
-        //    ITenantResolver tenantResolver = IoCFactory.Container.Resolve<ITenantResolver>();
-        //    tenantResolver.Load(new BExISTenantPathProvider());
-
-        //    // Get tenant
-        //    Tenant tenant = tenantResolver.Manifest.Where(x => x.Id.Equals(id)).FirstOrDefault();
-
-        //    if (!tenant.IsDefault && tenant.Status == TenantStatus.Inactive)
-        //    {
-        //        // Get all tenants
-        //        List<Tenant> tenants = tenantResolver.Manifest;
-
-        //        if (tenants.Select(x => x.IsDefault || x.Status == TenantStatus.Active && x.Id != id).Count() >= 1)
-        //        {
-        //            return true;
-        //        }
-        //    }
-
-        //    return false;
-        //}
-
         public ActionResult Edit(string id)
         {
             return PartialView("_Edit", null);
@@ -96,11 +78,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
             return View();
         }
 
-        public ActionResult Unregister(string id)
-        {
-            return View();
-        }
-
         public ActionResult Activate(string id)
         {
             ModuleManager.Enable(id);
@@ -114,15 +91,79 @@ namespace BExIS.Modules.Sam.UI.Controllers
         }
 
 
-        public ActionResult Create()
+        //public ActionResult Install()
+        //{
+        //    return PartialView("_Create", null);
+        //}
+
+
+
+        /// <summary>
+        /// Installs a module from its zipped bundle.
+        /// </summary>
+        /// <param name="moduleZip">The zipped bundle containg the binaries, views, workspace, and manifest.</param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult Install(HttpPostedFileBase moduleZip)
         {
-            return PartialView("_Create", null);
+            string moduleName = "";
+            string moduleVersion = "";
+            string path = "";
+            try
+            {
+                /// 1: Acquire the bundle, check if the same bundle is installing? if yes, return an error
+                if (moduleZip == null || moduleZip.ContentLength <= 0)
+                    throw new System.Exception(string.Format("The submited file is not valid. Operation aborted."));
+
+                var fileName = Path.GetFileName(moduleZip.FileName);
+                moduleName = fileName.Substring(0, fileName.IndexOf("."));
+                moduleVersion = fileName.Substring(fileName.IndexOf(".") + 1, (fileName.LastIndexOf(".") - fileName.IndexOf(".") - 1));
+
+                path = Path.Combine(AppConfiguration.WorkspaceModulesRoot, "installing");
+                if (!Directory.Exists(path))
+                    Directory.CreateDirectory(path);
+                path = Path.Combine(path, fileName);
+                if (System.IO.File.Exists(path)) // the module is being installed from another session
+                {
+                    throw new Exception(string.Format("Bundle {0} is being installed from another session or a previous installation attempt has failed. Operation aborted.", fileName));
+                }
+                /// 2: Save the bundle in the "installing" folder for further processing.
+                moduleZip.SaveAs(path);
+
+                /// 3: Validate the bundle
+                validateBundle(moduleName, moduleVersion, path); // throws exception on validation issues
+
+                /// 4: Distribute the content of the bundle to proper places
+                /// 5: Register the module in the modules catalog
+                /// 6: Delete the zipped bundle any any temprorary file.folder created during installation
+                /// 7: Prepare and communicate messages to the user
+            }
+            catch (Exception ex)
+            {
+                this.ModelState.AddModelError("", ex.Message);
+            }
+            finally // in any case clean up the installing folder and whatever else...
+            {
+                cleanUpInstallation(moduleName, moduleVersion, path); // expect empty parameters
+            }
+            // redirect back to the index action to show the form once again and the list of installed modules
+            // it also carries model errors; they should be shown on top of the submit area.
+            return RedirectToAction("Index");
         }
 
-        [HttpPost]
-        public ActionResult Create(object model)
+        private void cleanUpInstallation(object moduleName, object moduleVersion, object path)
         {
-            return PartialView("_Create", model);
+            throw new NotImplementedException();
+        }
+
+        private void validateBundle(string moduleName, string moduleVersion, string path)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ActionResult Uninstall(string id)
+        {
+            return View();
         }
 
         public ActionResult Download(string id)

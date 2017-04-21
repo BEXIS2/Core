@@ -17,6 +17,11 @@ namespace BExIS.Modules.Sam.UI.Helpers
 
         private static void createSecuritySeedData()
         {
+            // Javad: 
+            // 1) all the create operations should check for existence of the record
+            // 2) failure on creating any record should rollback the whole seed data generation. It is one transaction.
+            // 3) failues should throw an exception with enough information to pin point the root cause
+            // 4) only seed data related to the functions of this modules should be genereated here.
 
             #region Security
 
