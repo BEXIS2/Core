@@ -16,10 +16,8 @@
     <property name="Description" type="String" />
     <property name="Name" type="String" />
     <set name="Subjects" table="Subjects_Roles" cascade="save-update" inverse="true" lazy="true">
-      <key column="RolesRef"/>
-      <many-to-many column="SubjectRef" class="BExIS.Security.Entities.Subjects.Subject, BExIS.Security.Entities"/>
+      <key column="RolesRef" />
+      <many-to-many column="SubjectRef" class="BExIS.Security.Entities.Subjects.Subject, BExIS.Security.Entities" />
     </set>
-
   </class>
-
 </hibernate-mapping>

@@ -1,10 +1,6 @@
-﻿using System;
-using System.IO;
-using System.Net;
-using System.Web.Mvc;
-using BExIS.Modules.Sam.UI.Models;
-using Vaiona.Web.Mvc.Models;
+﻿using System.Web.Mvc;
 using Vaiona.Web.Extensions;
+using Vaiona.Web.Mvc.Models;
 
 namespace BExIS.Modules.Sam.UI.Controllers
 {
@@ -17,7 +13,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Administration Manual", this.Session.GetTenant());
             return View();
-
         }
     }
 }

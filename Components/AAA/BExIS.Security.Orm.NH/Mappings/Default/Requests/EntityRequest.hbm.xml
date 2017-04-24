@@ -3,9 +3,7 @@
 
     <key column="Id" />
 
-    <many-to-one name="Entity" column="EntityRef" class="BExIS.Security.Entities.Objects.Entity, BExIS.Security.Entities"/>
+    <many-to-one name="Entity" column="EntityRef" class="BExIS.Security.Entities.Objects.Entity, BExIS.Security.Entities" />
     <property name="Key" type="Int64" />
-
   </joined-subclass>
-
 </hibernate-mapping>

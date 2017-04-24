@@ -14,21 +14,19 @@
     </property>
 
     <set name="Children" inverse="true" cascade="save-update" lazy="true">
-      <key column="ParentRef"/>
+      <key column="ParentRef" />
       <one-to-many class="BExIS.Security.Entities.Objects.Feature, BExIS.Security.Entities" />
     </set>
     <property name="Description" type="String" />
     <property name="Name" type="String" />
-    <many-to-one name="Parent" column="ParentRef" class="BExIS.Security.Entities.Objects.Feature, BExIS.Security.Entities"/>
+    <many-to-one name="Parent" column="ParentRef" class="BExIS.Security.Entities.Objects.Feature, BExIS.Security.Entities" />
     <set name="Permissions" inverse="true" cascade="save-update" lazy="true">
-      <key column="FeatureRef"/>
+      <key column="FeatureRef" />
       <one-to-many class="BExIS.Security.Entities.Authorization.FeaturePermission, BExIS.Security.Entities" />
     </set>
     <set name="Workflows" inverse="true" cascade="save-update" lazy="true">
-      <key column="FeatureRef"/>
+      <key column="FeatureRef" />
       <one-to-many class="BExIS.Security.Entities.Objects.Workflow, BExIS.Security.Entities" />
     </set>
-
   </class>
-
 </hibernate-mapping>

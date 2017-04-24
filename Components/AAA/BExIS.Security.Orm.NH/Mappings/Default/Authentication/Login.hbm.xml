@@ -15,8 +15,6 @@
 
     <property name="LoginProvider" type="String" />
     <property name="ProviderKey" type="String" />
-    <many-to-one name="User" column="UserRef" class="BExIS.Security.Entities.Subjects.User, BExIS.Security.Entities"/>
-
+    <many-to-one name="User" column="UserRef" class="BExIS.Security.Entities.Subjects.User, BExIS.Security.Entities" />
   </class>
-
 </hibernate-mapping>

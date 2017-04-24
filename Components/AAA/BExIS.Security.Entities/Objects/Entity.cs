@@ -7,6 +7,11 @@ namespace BExIS.Security.Entities.Objects
 {
     public class Entity : BaseEntity
     {
+        public Entity()
+        {
+            Permissions = new List<EntityPermission>();
+        }
+
         public virtual string AssemblyPath { get; set; }
         public virtual string ClassPath { get; set; }
         public virtual string Name { get; set; }
@@ -18,10 +23,5 @@ namespace BExIS.Security.Entities.Objects
 
         [Obsolete]
         public virtual bool UseMetadata { get; set; }
-
-        public Entity()
-        {
-            Permissions = new List<EntityPermission>();
-        }
     }
 }

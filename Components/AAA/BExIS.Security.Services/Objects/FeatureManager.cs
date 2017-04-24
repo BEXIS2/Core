@@ -6,8 +6,6 @@ namespace BExIS.Security.Services.Objects
 {
     public class FeatureManager
     {
-        public IReadOnlyRepository<Feature> FeatureRepository { get; }
-
         public FeatureManager()
         {
             var uow = this.GetUnitOfWork();
@@ -16,18 +14,9 @@ namespace BExIS.Security.Services.Objects
         }
 
         public IQueryable<Feature> Entities => FeatureRepository.Query();
+        public IReadOnlyRepository<Feature> FeatureRepository { get; }
 
         public void Create(Feature feature)
-        {
-            using (var uow = this.GetUnitOfWork())
-            {
-                var featureRepository = uow.GetRepository<Feature>();
-                featureRepository.Put(feature);
-                uow.Commit();
-            }
-        }
-
-        public void Update(Feature feature)
         {
             using (var uow = this.GetUnitOfWork())
             {
@@ -50,6 +39,16 @@ namespace BExIS.Security.Services.Objects
         public Feature FindByIdAsync(long featureId)
         {
             return FeatureRepository.Get(featureId);
+        }
+
+        public void Update(Feature feature)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var featureRepository = uow.GetRepository<Feature>();
+                featureRepository.Put(feature);
+                uow.Commit();
+            }
         }
     }
 }

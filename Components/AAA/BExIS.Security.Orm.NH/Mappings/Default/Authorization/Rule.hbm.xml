@@ -13,8 +13,6 @@
       <column name="Extra" not-null="false" sql-type="xml" />
     </property>
 
-    <many-to-one name="Role" column="RoleRef" class="BExIS.Security.Entities.Authorization.Role, BExIS.Security.Entities"/>
-
+    <many-to-one name="Role" column="RoleRef" class="BExIS.Security.Entities.Authorization.Role, BExIS.Security.Entities" />
   </class>
-
 </hibernate-mapping>

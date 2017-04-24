@@ -12,11 +12,9 @@
     <property name="Extra" type="System.Xml.XmlDocument, System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
       <column name="Extra" not-null="false" sql-type="xml" />
     </property>
-    
+
     <property name="Description" type="String" />
     <property name="Name" type="String" />
-    <many-to-one name="Feature" column="FeatureRef" class="BExIS.Security.Entities.Objects.Feature, BExIS.Security.Entities"/>
-    
+    <many-to-one name="Feature" column="FeatureRef" class="BExIS.Security.Entities.Objects.Feature, BExIS.Security.Entities" />
   </class>
-
 </hibernate-mapping>

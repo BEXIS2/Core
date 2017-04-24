@@ -9,13 +9,13 @@
     <property name="Email" type="String" />
     <property name="EmailConfirmed" type="yes_no" />
     <set name="Groups" table="Users_Groups" cascade="all" lazy="true">
-      <key column="UserRef"/>
-      <many-to-many column="GroupRef" class="BExIS.Security.Entities.Subjects.Group, BExIS.Security.Entities"/>
+      <key column="UserRef" />
+      <many-to-many column="GroupRef" class="BExIS.Security.Entities.Subjects.Group, BExIS.Security.Entities" />
     </set>
     <property name="LockoutEnabled" type="yes_no" />
     <property name="LockoutEndDate" type="DateTime" />
     <set name="Logins" cascade="all" lazy="true">
-      <key column="UserRef"/>
+      <key column="UserRef" />
       <one-to-many class="BExIS.Security.Entities.Authentication.Login, BExIS.Security.Entities" />
     </set>
     <property name="Password" type="string" />
@@ -23,7 +23,5 @@
     <property name="PhoneNumberConfirmed" type="yes_no" />
     <property name="SecurityStamp" type="string" />
     <property name="TwoFactorEnabled" type="yes_no" />
-    
   </joined-subclass>
-
 </hibernate-mapping>

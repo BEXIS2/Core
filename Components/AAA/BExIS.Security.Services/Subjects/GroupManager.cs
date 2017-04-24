@@ -7,9 +7,6 @@ namespace BExIS.Security.Services.Subjects
 {
     public class GroupManager
     {
-        public IReadOnlyRepository<Group> GroupRepository { get; }
-        public IReadOnlyRepository<Role> RoleRepository { get; }
-
         public GroupManager()
         {
             var uow = this.GetUnitOfWork();
@@ -18,7 +15,9 @@ namespace BExIS.Security.Services.Subjects
             RoleRepository = uow.GetReadOnlyRepository<Role>();
         }
 
+        public IReadOnlyRepository<Group> GroupRepository { get; }
         public IQueryable<Group> Groups => GroupRepository.Query();
+        public IReadOnlyRepository<Role> RoleRepository { get; }
 
         public void AddToRole(Group group, string roleName)
         {
@@ -27,22 +26,6 @@ namespace BExIS.Security.Services.Subjects
         }
 
         public void Create(Group group)
-        {
-            using (var uow = this.GetUnitOfWork())
-            {
-                var groupRepository = uow.GetRepository<Group>();
-                groupRepository.Put(group);
-                uow.Commit();
-            }
-        }
-
-        public void RemoveFromRole(Group group, string roleName)
-        {
-            group.Roles.Remove(RoleRepository.Query(m => m.Name.ToLowerInvariant() == roleName.ToLowerInvariant()).FirstOrDefault());
-            Update(group);
-        }
-
-        public void Update(Group group)
         {
             using (var uow = this.GetUnitOfWork())
             {
@@ -70,6 +53,22 @@ namespace BExIS.Security.Services.Subjects
         public Group FindByNameAsync(string groupName)
         {
             return GroupRepository.Query(m => m.Name.ToLowerInvariant() == groupName.ToLowerInvariant()).FirstOrDefault();
+        }
+
+        public void RemoveFromRole(Group group, string roleName)
+        {
+            group.Roles.Remove(RoleRepository.Query(m => m.Name.ToLowerInvariant() == roleName.ToLowerInvariant()).FirstOrDefault());
+            Update(group);
+        }
+
+        public void Update(Group group)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var groupRepository = uow.GetRepository<Group>();
+                groupRepository.Put(group);
+                uow.Commit();
+            }
         }
     }
 }

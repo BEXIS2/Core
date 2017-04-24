@@ -6,14 +6,6 @@ namespace BExIS.Security.Entities.Objects
 {
     public class Feature : BaseEntity
     {
-        public virtual ICollection<Feature> Children { get; set; }
-        public virtual string Description { get; set; }
-        public virtual string Name { get; set; }
-        public virtual Feature Parent { get; set; }
-        public virtual ICollection<FeaturePermission> Permissions { get; set; }
-        public virtual ICollection<Workflow> Workflows { get; set; }
-
-
         public Feature()
         {
             Children = new List<Feature>();
@@ -34,5 +26,12 @@ namespace BExIS.Security.Entities.Objects
                 return ancestors;
             }
         }
+
+        public virtual ICollection<Feature> Children { get; set; }
+        public virtual string Description { get; set; }
+        public virtual string Name { get; set; }
+        public virtual Feature Parent { get; set; }
+        public virtual ICollection<FeaturePermission> Permissions { get; set; }
+        public virtual ICollection<Workflow> Workflows { get; set; }
     }
 }

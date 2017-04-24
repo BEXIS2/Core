@@ -6,8 +6,6 @@ namespace BExIS.Security.Services.Objects
 {
     public class EntityManager
     {
-        public IReadOnlyRepository<Entity> EntityRepository { get; }
-
         public EntityManager()
         {
             var uow = this.GetUnitOfWork();
@@ -16,18 +14,9 @@ namespace BExIS.Security.Services.Objects
         }
 
         public IQueryable<Entity> Entities => EntityRepository.Query();
+        public IReadOnlyRepository<Entity> EntityRepository { get; }
 
         public void Create(Entity entity)
-        {
-            using (var uow = this.GetUnitOfWork())
-            {
-                var entityRepository = uow.GetRepository<Entity>();
-                entityRepository.Put(entity);
-                uow.Commit();
-            }
-        }
-
-        public void Update(Entity entity)
         {
             using (var uow = this.GetUnitOfWork())
             {
@@ -55,6 +44,16 @@ namespace BExIS.Security.Services.Objects
         public Entity FindByNameAsync(string entityName)
         {
             return EntityRepository.Query(m => m.Name.ToLowerInvariant() == entityName.ToLowerInvariant()).FirstOrDefault();
+        }
+
+        public void Update(Entity entity)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var entityRepository = uow.GetRepository<Entity>();
+                entityRepository.Put(entity);
+                uow.Commit();
+            }
         }
     }
 }

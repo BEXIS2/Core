@@ -7,15 +7,15 @@ namespace BExIS.Security.Entities.Authorization
 {
     public class Role : BaseEntity, IRole<long>
     {
-        public virtual string Description { get; set; }
-        public virtual string Name { get; set; }
-        public virtual ICollection<Rule> Rules { get; set; }
-        public virtual ICollection<Subject> Subjects { get; set; }
-
         public Role()
         {
             Rules = new List<Rule>();
             Subjects = new List<Subject>();
         }
+
+        public virtual string Description { get; set; }
+        public virtual string Name { get; set; }
+        public virtual ICollection<Rule> Rules { get; set; }
+        public virtual ICollection<Subject> Subjects { get; set; }
     }
 }

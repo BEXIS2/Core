@@ -12,7 +12,6 @@
             // BUG: seed data creation is not working because of the changes that were done in the entities and services.
             // TODO: reimplement the seed data creation method.
 
-
             //#region Security
 
             //// Authenticators

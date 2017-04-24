@@ -6,8 +6,6 @@ namespace BExIS.Security.Services.Authorization
 {
     public class FeaturePermissionManager
     {
-        public IReadOnlyRepository<FeaturePermission> FeaturePermissionRepository { get; private set; }
-
         public FeaturePermissionManager()
         {
             var uow = this.GetUnitOfWork();
@@ -15,19 +13,10 @@ namespace BExIS.Security.Services.Authorization
             FeaturePermissionRepository = uow.GetReadOnlyRepository<FeaturePermission>();
         }
 
+        public IReadOnlyRepository<FeaturePermission> FeaturePermissionRepository { get; private set; }
         public IQueryable<FeaturePermission> FeaturePermissions => FeaturePermissionRepository.Query();
 
         public void Create(FeaturePermission featurePermission)
-        {
-            using (var uow = this.GetUnitOfWork())
-            {
-                var featurePermissionRepository = uow.GetRepository<FeaturePermission>();
-                featurePermissionRepository.Put(featurePermission);
-                uow.Commit();
-            }
-        }
-
-        public void Update(FeaturePermission featurePermission)
         {
             using (var uow = this.GetUnitOfWork())
             {
@@ -43,6 +32,16 @@ namespace BExIS.Security.Services.Authorization
             {
                 var featurePermissionRepository = uow.GetRepository<FeaturePermission>();
                 featurePermissionRepository.Delete(featurePermission);
+                uow.Commit();
+            }
+        }
+
+        public void Update(FeaturePermission featurePermission)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var featurePermissionRepository = uow.GetRepository<FeaturePermission>();
+                featurePermissionRepository.Put(featurePermission);
                 uow.Commit();
             }
         }

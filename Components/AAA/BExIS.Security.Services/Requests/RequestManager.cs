@@ -15,7 +15,6 @@ namespace BExIS.Security.Services.Requests
 
             EntityRepository = uow.GetReadOnlyRepository<Entity>();
             UserRepository = uow.GetReadOnlyRepository<User>();
-
         }
 
         #region Data Readers
@@ -24,7 +23,7 @@ namespace BExIS.Security.Services.Requests
         public IReadOnlyRepository<Request> RequestRepository { get; private set; }
         public IReadOnlyRepository<User> UserRepository { get; private set; }
 
-        #endregion
+        #endregion Data Readers
 
         public Request CreateRequest(User applicant, BaseEntity entity)
         {
