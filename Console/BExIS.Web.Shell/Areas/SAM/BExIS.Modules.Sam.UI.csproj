@@ -130,7 +130,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\DataPermissionsController.cs" />
     <Compile Include="Controllers\DatasetsController.cs" />
     <Compile Include="Controllers\FeaturePermissionsController.cs" />
@@ -141,7 +140,6 @@
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Helpers\Attributes.cs" />
     <Compile Include="Helpers\SAMSeedDataGenerator.cs" />
-    <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\AuthenticatorModels.cs" />
     <Compile Include="Models\DataPermissionModels.cs" />
     <Compile Include="Models\DatasetModels.cs" />
@@ -191,11 +189,6 @@
     <Content Include="Views\Datasets\Version.cshtml" />
     <Content Include="Views\Datasets\Versions.cshtml" />
     <Content Include="Views\Datasets\Delete.cshtml" />
-    <Content Include="Views\Account\Error.cshtml" />
-    <Content Include="Views\Account\LogOn.cshtml" />
-    <Content Include="Views\Account\MyAccount.cshtml" />
-    <Content Include="Views\Account\_LogOnPartial.cshtml" />
-    <Content Include="Views\Account\_RegisterPartial.cshtml" />
     <Content Include="Views\DataPermissions\Data.cshtml" />
     <Content Include="Views\DataPermissions\_DatasetsPartial.cshtml" />
     <Content Include="Views\DataPermissions\_SubjectsPartial.cshtml" />
