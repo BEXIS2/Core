@@ -17,161 +17,161 @@ using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Web.Shell
 {
-    // Note: For instructions on enabling IIS6 or IIS7 classic mode, 
-    // visit http://go.microsoft.com/?LinkId=9394801
+	// Note: For instructions on enabling IIS6 or IIS7 classic mode, 
+	// visit http://go.microsoft.com/?LinkId=9394801
 
-    public class MvcApplication : System.Web.HttpApplication
-    {
-        public static void RegisterGlobalFilters(GlobalFilterCollection filters)
-        {
-            filters.Add(new PersistenceContextProviderFilterAttribute());
+	public class MvcApplication : System.Web.HttpApplication
+	{
+		public static void RegisterGlobalFilters(GlobalFilterCollection filters)
+		{
+			filters.Add(new PersistenceContextProviderFilterAttribute());
 #if !DEBUG
-            filters.Add(new Vaiona.Web.Mvc.Filters.AuthorizationDelegationFilter(new Vaiona.Web.Mvc.Filters.IsAuthorizedDelegate(AuthorizationDelegationImplementor.CheckAuthorization)));
+			filters.Add(new Vaiona.Web.Mvc.Filters.AuthorizationDelegationFilter(new Vaiona.Web.Mvc.Filters.IsAuthorizedDelegate(AuthorizationDelegationImplementor.CheckAuthorization)));
 #endif
-            filters.Add(new HandleErrorAttribute());
-        }
+			filters.Add(new HandleErrorAttribute());
+		}
 
-        public static void RegisterRoutes(RouteCollection routes)
-        {
-            routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
+		public static void RegisterRoutes(RouteCollection routes)
+		{
+			routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
-            routes.MapRoute(
-               "Default", // Route name
-               "{controller}/{action}/{id}", // URL with parameters
-               new { controller = "Home", action = "Index", id = UrlParameter.Optional } // Parameter defaults
-               , new[] { "BExIS.Web.Shell.Controllers" } // to prevent conflict between root controllers and area controllers that have same names
-           );
+			routes.MapRoute(
+			   "Default", // Route name
+			   "{controller}/{action}/{id}", // URL with parameters
+			   new { controller = "Home", action = "Index", id = UrlParameter.Optional } // Parameter defaults
+			   , new[] { "BExIS.Web.Shell.Controllers" } // to prevent conflict between root controllers and area controllers that have same names
+		   );
 
-        }
+		}
 
-        protected void Application_Start()
-        {
+		protected void Application_Start()
+		{
 			MvcHandler.DisableMvcResponseHeader = true;
 
-            initIoC();
-            GlobalConfiguration.Configure(WebApiConfig.Register);
-            AppDomain.CurrentDomain.AssemblyResolve += ModuleManager.ResolveCurrentDomainAssembly;
-            initModules();
-            initPersistence();
-            RegisterGlobalFilters(GlobalFilters.Filters);
-            RegisterRoutes(RouteTable.Routes);
-            ModuleManager.BuildExportTree();
-            initTenancy();
-            ModuleManager.StartModules();
-        }
+			initIoC();
+			GlobalConfiguration.Configure(WebApiConfig.Register);
+			AppDomain.CurrentDomain.AssemblyResolve += ModuleManager.ResolveCurrentDomainAssembly;
+			initModules();
+			initPersistence();
+			RegisterGlobalFilters(GlobalFilters.Filters);
+			RegisterRoutes(RouteTable.Routes);
+			ModuleManager.BuildExportTree();
+			initTenancy();
+			ModuleManager.StartModules();
+		}
 
-        private void initTenancy()
-        {
-            ITenantResolver tenantResolver = IoCFactory.Container.Resolve<ITenantResolver>();
-            ITenantPathProvider pathProvider = new BExISTenantPathProvider(); // should be instantiated by the IoC. client app should provide the Path Ptovider based on its file and tenant structure
-            tenantResolver.Load(pathProvider);
-        }
+		private void initTenancy()
+		{
+			ITenantResolver tenantResolver = IoCFactory.Container.Resolve<ITenantResolver>();
+			ITenantPathProvider pathProvider = new BExISTenantPathProvider(); // should be instantiated by the IoC. client app should provide the Path Ptovider based on its file and tenant structure
+			tenantResolver.Load(pathProvider);
+		}
 
-        private void initIoC()
-        {
-            IoCFactory.StartContainer(Path.Combine(AppConfiguration.AppRoot, "IoC.config"), "DefaultContainer"); // use AppConfig to access the app root folder
-        }
+		private void initIoC()
+		{
+			IoCFactory.StartContainer(Path.Combine(AppConfiguration.AppRoot, "IoC.config"), "DefaultContainer"); // use AppConfig to access the app root folder
+		}
 
-        private void initModules()
-        {
-            ModuleManager.RegisterShell(Path.Combine(AppConfiguration.AppRoot, "Shell.Manifest.xml")); // this should be called before RegisterAllAreas
-            AreaRegistration.RegisterAllAreas(GlobalConfiguration.Configuration); // this is the starting point of geting modules registered
-            // at the time of this call, the PluginInitilizer has already loaded the plug-ins
-            //ModuleBootstrapper.Initialize();
-        }
+		private void initModules()
+		{
+			ModuleManager.RegisterShell(Path.Combine(AppConfiguration.AppRoot, "Shell.Manifest.xml")); // this should be called before RegisterAllAreas
+			AreaRegistration.RegisterAllAreas(GlobalConfiguration.Configuration); // this is the starting point of geting modules registered
+			// at the time of this call, the PluginInitilizer has already loaded the plug-ins
+			//ModuleBootstrapper.Initialize();
+		}
 
-        private void initPersistence()
-        {
-            IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager(); // just to prepare data access environment
-            pManager.Configure(AppConfiguration.DefaultApplicationConnection.ConnectionString, AppConfiguration.DatabaseDialect, "Default", AppConfiguration.ShowQueries);
-            if (AppConfiguration.CreateDatabase)
-                pManager.ExportSchema();
-            pManager.Start();
-            // if there are pending modules, their schema (if exists) must be applied.
-            if (ModuleManager.HasPendingInstallation())
-            {
-                try
-                {
-                    pManager.UpdateSchema();
-                }
-                catch(Exception ex)
-                { }
-                // For security reasons, pending modules go to the "inactive" status after schema export. 
-                // An administrator can endable them via the management console
-                foreach (var moduleId in ModuleManager.PendingModules())
-                {
-                    // The install method of the plugin is called once and only once.
-                    // It generates the seed data and other module specific initializations
-                    ModuleManager.GetModuleInfo(moduleId).Plugin.Install();
-                    ModuleManager.Disable(moduleId);
-                }
-            }
-        }
+		private void initPersistence()
+		{
+			IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager(); // just to prepare data access environment
+			pManager.Configure(AppConfiguration.DefaultApplicationConnection.ConnectionString, AppConfiguration.DatabaseDialect, "Default", AppConfiguration.ShowQueries);
+			if (AppConfiguration.CreateDatabase)
+				pManager.ExportSchema();
+			pManager.Start();
+			// if there are pending modules, their schema (if exists) must be applied.
+			if (ModuleManager.HasPendingInstallation())
+			{
+				try
+				{
+					pManager.UpdateSchema();
+				}
+				catch(Exception ex)
+				{ }
+				// For security reasons, pending modules go to the "inactive" status after schema export. 
+				// An administrator can endable them via the management console
+				foreach (var moduleId in ModuleManager.PendingModules())
+				{
+					// The install method of the plugin is called once and only once.
+					// It generates the seed data and other module specific initializations
+					ModuleManager.GetModuleInfo(moduleId).Plugin.Install();
+					ModuleManager.Disable(moduleId);
+				}
+			}
+		}
 
-        protected void Application_End()
-        {
-            ModuleManager.ShutdownModules();
-            IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager();            
-            pManager.Shutdown(); // release all data access related resources!
-            IoCFactory.ShutdownContainer();
-        }
+		protected void Application_End()
+		{
+			ModuleManager.ShutdownModules();
+			IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager();            
+			pManager.Shutdown(); // release all data access related resources!
+			IoCFactory.ShutdownContainer();
+		}
 
-        protected void Session_Start()
-        {
-            if (Context.Session != null)
-            {
-                if (Context.Session.IsNewSession)
-                {
-                    string sCookieHeader = Request.Headers["Cookie"];
-                    if ((null != sCookieHeader) && (sCookieHeader.IndexOf("ASP.NET_SessionId") >= 0))
-                    {
-                        //intercept current route
-                        HttpContextBase currentContext = new HttpContextWrapper(HttpContext.Current);
-                        RouteData routeData = RouteTable.Routes.GetRouteData(currentContext);
-                        Response.Redirect("~/Home/SessionTimeout");
-                        Response.Flush();
-                        Response.End();
-                    }
-                }
-            }
+		protected void Session_Start()
+		{
+			if (Context.Session != null)
+			{
+				if (Context.Session.IsNewSession)
+				{
+					string sCookieHeader = Request.Headers["Cookie"];
+					if ((null != sCookieHeader) && (sCookieHeader.IndexOf("ASP.NET_SessionId") >= 0))
+					{
+						//intercept current route
+						HttpContextBase currentContext = new HttpContextWrapper(HttpContext.Current);
+						RouteData routeData = RouteTable.Routes.GetRouteData(currentContext);
+						Response.Redirect("~/Home/SessionTimeout");
+						Response.Flush();
+						Response.End();
+					}
+				}
+			}
 
-            //set session culture using DefaultCulture key
-            IoCFactory.Container.StartSessionLevelContainer();
-            Session.ApplyCulture(AppConfiguration.DefaultCulture);
+			//set session culture using DefaultCulture key
+			IoCFactory.Container.StartSessionLevelContainer();
+			Session.ApplyCulture(AppConfiguration.DefaultCulture);
 
-            ITenantResolver tenantResolver = IoCFactory.Container.Resolve<ITenantResolver>();
-            Tenant tenant = tenantResolver.Resolve(this.Request);
-            this.Session.SetTenant(tenant);
-        }
+			ITenantResolver tenantResolver = IoCFactory.Container.Resolve<ITenantResolver>();
+			Tenant tenant = tenantResolver.Resolve(this.Request);
+			this.Session.SetTenant(tenant);
+		}
 
-        protected void Session_End()
-        {
-            IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager();
-            pManager.ShutdownConversation(); 
-            IoCFactory.Container.ShutdownSessionLevelContainer();
-        }
+		protected void Session_End()
+		{
+			IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager();
+			pManager.ShutdownConversation(); 
+			IoCFactory.Container.ShutdownSessionLevelContainer();
+		}
 
-        protected virtual void Application_BeginRequest()
-        {            
-        }
+		protected virtual void Application_BeginRequest()
+		{            
+		}
 
-        /// <summary>
-        /// the function is called on any http request, which include static resources too! 
-        /// conversation management is done using the global filter  PersistenceContextProviderAttribute.      
-        /// </summary>
-        protected virtual void Application_EndRequest()
-        {
-            //var entityContext = HttpContext.Current.Items["NHibernateCurrentSessionFactory"] as IDictionary<ISessionFactory, Lazy<ISession>>;
-            //IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager();
-            //pManager.ShutdownConversation();
-        }
+		/// <summary>
+		/// the function is called on any http request, which include static resources too! 
+		/// conversation management is done using the global filter  PersistenceContextProviderAttribute.      
+		/// </summary>
+		protected virtual void Application_EndRequest()
+		{
+			//var entityContext = HttpContext.Current.Items["NHibernateCurrentSessionFactory"] as IDictionary<ISessionFactory, Lazy<ISession>>;
+			//IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager();
+			//pManager.ShutdownConversation();
+		}
 		
 		protected void Application_PreSendRequestHeaders()
-        {
-            Response.Headers.Remove("Server");
-            Response.Headers.Remove("X-AspNet-Version"); 
-            Response.Headers.Remove("X-AspNetMvc-Version");
-            Response.Headers.Remove("X-Powered-By");
-        }
-    }
+		{
+			Response.Headers.Remove("Server");
+			Response.Headers.Remove("X-AspNet-Version"); 
+			Response.Headers.Remove("X-AspNetMvc-Version");
+			Response.Headers.Remove("X-Powered-By");
+		}
+	}
 }
