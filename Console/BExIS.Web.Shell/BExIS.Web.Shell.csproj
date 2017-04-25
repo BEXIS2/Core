@@ -1021,6 +1021,7 @@
     <Content Include="Views\Account\VerifyCode.cshtml" />
     <Content Include="Views\Account\_ExternalSignIns.cshtml" />
     <Content Include="Views\Account\_RemoveAccount.cshtml" />
+    <Content Include="Credentials.config" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

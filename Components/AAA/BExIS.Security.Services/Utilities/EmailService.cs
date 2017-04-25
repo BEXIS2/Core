@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNet.Identity;
 using System;
+using System.Configuration;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Mail;
@@ -15,18 +16,18 @@ namespace BExIS.Security.Services.Utilities
         {
             _smtp = new SmtpClient()
             {
-                Host = "smtp.sparkpostmail.com",
+                Host = "smtp.uni-jena.de",
                 Port = 587,
                 EnableSsl = true,
-                Credentials = new NetworkCredential(
-                    "SMTP_Injection", "d0d8887db944fda40063c8d959f9532711fd8230"
-                )
+                Credentials =
+                    new NetworkCredential(ConfigurationManager.AppSettings["EmailAccount"],
+                        ConfigurationManager.AppSettings["EmailPassword"])
             };
         }
 
         public async Task SendAsync(IdentityMessage message)
         {
-            var from = new MailAddress("testing@sparkpostbox.com");
+            var from = new MailAddress("bexis2@uni-jena.de");
 
             var to = new MailAddress(message.Destination);
             var mail = new MailMessage(from, to)
@@ -44,10 +45,6 @@ namespace BExIS.Security.Services.Utilities
             {
                 Trace.TraceError(ex.Message + " SparkPost probably not configured correctly.");
             }
-        }
-
-        public void SendNotification(IdentityMessage message)
-        {
         }
     }
 }
