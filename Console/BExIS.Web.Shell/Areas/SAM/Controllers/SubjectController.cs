@@ -1,5 +1,8 @@
 ﻿using BExIS.Modules.Sam.UI.Models;
-using System;
+using BExIS.Security.Entities.Subjects;
+using BExIS.Security.Services.Subjects;
+using System.Collections.Generic;
+using System.Linq;
 using System.Web.Mvc;
 using Telerik.Web.Mvc;
 
@@ -14,7 +17,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
         [ValidateAntiForgeryToken]
         [HttpPost]
-        public ActionResult CreateGroup(CreateGroupModel model)
+        public ActionResult CreateGroup(GroupCreationModel model)
         {
             return View(model);
         }
@@ -26,20 +29,30 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
         [ValidateAntiForgeryToken]
         [HttpPost]
-        public ActionResult CreateUser(CreateUserModel model)
+        public ActionResult CreateUser(UserCreationModel model)
         {
             return View(model);
         }
 
         public ActionResult Index()
         {
+            GroupManager groupManager = new GroupManager();
+
+            for (int i = 0; i < 1000; i++)
+            {
+                groupManager.Create(new Group() { Name = $"Group_{i}" });
+            }
+
             return View();
         }
 
         [GridAction]
-        public ActionResult Subjects_Select()
+        public ActionResult Subjects_Select(GridActionAttribute filters)
         {
-            throw new NotImplementedException();
+            SubjectManager subjectManager = new SubjectManager();
+            List<SubjectGridRowModel> subjects = subjectManager.Subjects.Select(s => SubjectGridRowModel.Convert(s)).ToList();
+
+            return View(new GridModel<SubjectGridRowModel> { Data = subjects });
         }
     }
 }

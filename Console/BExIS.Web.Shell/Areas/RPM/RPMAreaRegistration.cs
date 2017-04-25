@@ -22,7 +22,9 @@ namespace BExIS.Web.Shell.Areas.RPM
                 new { action = "Index", id = UrlParameter.Optional }
             );
 
-            if (AppConfiguration.CreateDatabase) RPM.Helpers.RPMSeedDataGenerator.GenerateSeedData();
+            // TODO: refactor
+            // BUG:
+            //if (AppConfiguration.CreateDatabase) RPM.Helpers.RPMSeedDataGenerator.GenerateSeedData();
 
             // manage Seed data
             string seedDataOption = ConfigurationManager.AppSettings["UpdateSeedData"];
@@ -31,7 +33,5 @@ namespace BExIS.Web.Shell.Areas.RPM
                 RPM.Helpers.RPMSeedDataGenerator.GenerateSeedData();
             }
         }
-
     }
-    
 }
