@@ -14,13 +14,12 @@ namespace BExIS.Web.Shell.Controllers
 {
     public class AccountController : Controller
     {
-        private IAuthenticationManager AuthenticationManager => HttpContext.GetOwinContext().Authentication;
-
         private const string XsrfKey = "XsrfId";
+        private IAuthenticationManager AuthenticationManager => HttpContext.GetOwinContext().Authentication;
 
         public async Task<ActionResult> ConfirmEmail(long userId, string code)
         {
-            if (userId == null || code == null)
+            if (userId > 0 || code == null)
             {
                 return View("Error");
             }
@@ -52,10 +51,13 @@ namespace BExIS.Web.Shell.Controllers
             {
                 case SignInStatus.Success:
                     return RedirectToLocal(returnUrl);
+
                 case SignInStatus.LockedOut:
                     return View("Lockout");
+
                 case SignInStatus.RequiresVerification:
                     return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = false });
+
                 case SignInStatus.Failure:
                 default:
                     // If the user does not have an account, then prompt the user to create an account
@@ -69,7 +71,7 @@ namespace BExIS.Web.Shell.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ExternalSignInConfirmation(ExternalSignInConfirmationModel model, string returnUrl)
         {
-            // TODO: Refactor 
+            // TODO: Refactor
             //if (User.Identity.IsAuthenticated)
             //{
             //    return RedirectToAction("Index", "Manage");
@@ -146,18 +148,6 @@ namespace BExIS.Web.Shell.Controllers
             return View();
         }
 
-        private ActionResult RedirectToLocal(string returnUrl)
-        {
-            if (Url.IsLocalUrl(returnUrl))
-            {
-                return Redirect(returnUrl);
-            }
-            else
-            {
-                return RedirectToAction("Index", "Home");
-            }
-        }
-
         public ActionResult ResetPassword(string code)
         {
             return code == null ? View("Error") : View();
@@ -230,16 +220,6 @@ namespace BExIS.Web.Shell.Controllers
             });
         }
 
-        private async Task<string> SendEmailConfirmationTokenAsync(long userId, string subject)
-        {
-            var userManager = new UserManager(new UserStore());
-            var code = await userManager.GenerateEmailConfirmationTokenAsync(userId);
-            var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = userId, code = code }, protocol: Request.Url.Scheme);
-            await userManager.SendEmailAsync(userId, subject, "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
-
-            return callbackUrl;
-        }
-
         public ActionResult SignIn(string returnUrl)
         {
             ViewBag.ReturnUrl = returnUrl;
@@ -265,7 +245,7 @@ namespace BExIS.Web.Shell.Controllers
                 {
                     var callbackUrl = await SendEmailConfirmationTokenAsync(user.Id, "Confirm your account-Resend");
 
-                    // Uncomment to debug locally  
+                    // Uncomment to debug locally
                     ViewBag.Link = callbackUrl;
                     ViewBag.errorMessage = "You must have a confirmed email to log on. "
                                          + "The confirmation token has been resent to your email account.";
@@ -281,10 +261,13 @@ namespace BExIS.Web.Shell.Controllers
             {
                 case SignInStatus.Success:
                     return RedirectToLocal(returnUrl);
+
                 case SignInStatus.LockedOut:
                     return View("Lockout");
+
                 case SignInStatus.RequiresVerification:
                     return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
+
                 case SignInStatus.Failure:
                 default:
                     ModelState.AddModelError("", "Invalid login attempt.");
@@ -299,7 +282,6 @@ namespace BExIS.Web.Shell.Controllers
             AuthenticationManager.SignOut();
             return RedirectToAction("Index", "Home");
         }
-
 
         public ActionResult SignUp()
         {
@@ -325,7 +307,6 @@ namespace BExIS.Web.Shell.Controllers
 
                 var callbackUrl = await SendEmailConfirmationTokenAsync(user.Id, "Confirm your account");
 
-
                 ViewBag.Message = "Check your email and confirm your account, you must be confirmed "
                                   + "before you can log in.";
 
@@ -339,6 +320,36 @@ namespace BExIS.Web.Shell.Controllers
 
             // If we got this far, something failed, redisplay form
             return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> VerifyCode(VerifyCodeModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            // The following code protects for brute force attacks against the two factor codes.
+            // If a user enters incorrect codes for a specified amount of time then the user account
+            // will be locked out for a specified amount of time.
+            // You can configure the account lockout settings in IdentityConfig
+            var signInManager = new SignInManager(new UserManager(new UserStore()), AuthenticationManager);
+            var result = await signInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent: model.RememberMe, rememberBrowser: model.RememberBrowser);
+            switch (result)
+            {
+                case SignInStatus.Success:
+                    return RedirectToLocal(model.ReturnUrl);
+
+                case SignInStatus.LockedOut:
+                    return View("Lockout");
+
+                case SignInStatus.Failure:
+                default:
+                    ModelState.AddModelError("", "Invalid code.");
+                    return View(model);
+            }
         }
 
         public async Task<ActionResult> VerifyCode(string provider, string returnUrl, bool rememberMe)
@@ -360,32 +371,26 @@ namespace BExIS.Web.Shell.Controllers
             return View(new VerifyCodeModel { Provider = provider, ReturnUrl = returnUrl, RememberMe = rememberMe });
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> VerifyCode(VerifyCodeModel model)
+        private ActionResult RedirectToLocal(string returnUrl)
         {
-            if (!ModelState.IsValid)
+            if (Url.IsLocalUrl(returnUrl))
             {
-                return View(model);
+                return Redirect(returnUrl);
             }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
+        }
 
-            // The following code protects for brute force attacks against the two factor codes. 
-            // If a user enters incorrect codes for a specified amount of time then the user account 
-            // will be locked out for a specified amount of time. 
-            // You can configure the account lockout settings in IdentityConfig
-            var signInManager = new SignInManager(new UserManager(new UserStore()), AuthenticationManager);
-            var result = await signInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent: model.RememberMe, rememberBrowser: model.RememberBrowser);
-            switch (result)
-            {
-                case SignInStatus.Success:
-                    return RedirectToLocal(model.ReturnUrl);
-                case SignInStatus.LockedOut:
-                    return View("Lockout");
-                case SignInStatus.Failure:
-                default:
-                    ModelState.AddModelError("", "Invalid code.");
-                    return View(model);
-            }
+        private async Task<string> SendEmailConfirmationTokenAsync(long userId, string subject)
+        {
+            var userManager = new UserManager(new UserStore());
+            var code = await userManager.GenerateEmailConfirmationTokenAsync(userId);
+            var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = userId, code = code }, protocol: Request.Url.Scheme);
+            await userManager.SendEmailAsync(userId, subject, "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+
+            return callbackUrl;
         }
 
         #region Helpers
