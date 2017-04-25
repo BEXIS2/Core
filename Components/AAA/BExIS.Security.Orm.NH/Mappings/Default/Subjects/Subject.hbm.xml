@@ -15,14 +15,12 @@
 
     <property name="Name" type="string" />
     <set name="Permissions" cascade="all-delete-orphan" lazy="true">
-      <key column="SubjectRef"/>
+      <key column="SubjectRef" />
       <one-to-many class="BExIS.Security.Entities.Authorization.Permission, BExIS.Security.Entities" />
     </set>
     <set name="Roles" table="Subjects_Roles" cascade="all" lazy="true">
-      <key column="SubjectRef"/>
-      <many-to-many column="RolesRef" class="BExIS.Security.Entities.Authorization.Role, BExIS.Security.Entities"/>
+      <key column="SubjectRef" />
+      <many-to-many column="RolesRef" class="BExIS.Security.Entities.Authorization.Role, BExIS.Security.Entities" />
     </set>
-
   </class>
-
 </hibernate-mapping>

@@ -255,3 +255,5 @@ paket-files/
 .idea/
 *.sln.iml
 
+# SPECIFIC
+/Console/BExIS.Web.Shell/Credentials.config

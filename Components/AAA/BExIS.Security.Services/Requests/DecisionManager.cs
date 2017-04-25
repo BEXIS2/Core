@@ -6,8 +6,6 @@ namespace BExIS.Security.Services.Requests
 {
     public class DecisionManager
     {
-        public IReadOnlyRepository<Decision> DecisionRepository { get; }
-
         public DecisionManager()
         {
             var uow = this.GetUnitOfWork();
@@ -15,19 +13,10 @@ namespace BExIS.Security.Services.Requests
             DecisionRepository = uow.GetReadOnlyRepository<Decision>();
         }
 
+        public IReadOnlyRepository<Decision> DecisionRepository { get; }
         public IQueryable<Decision> Decisions => DecisionRepository.Query();
 
         public void Create(Decision decision)
-        {
-            using (var uow = this.GetUnitOfWork())
-            {
-                var decisionRepository = uow.GetRepository<Decision>();
-                decisionRepository.Put(decision);
-                uow.Commit();
-            }
-        }
-
-        public void Update(Decision decision)
         {
             using (var uow = this.GetUnitOfWork())
             {
@@ -50,6 +39,16 @@ namespace BExIS.Security.Services.Requests
         public Decision FindByIdAsync(long decisionId)
         {
             return DecisionRepository.Get(decisionId);
+        }
+
+        public void Update(Decision decision)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var decisionRepository = uow.GetRepository<Decision>();
+                decisionRepository.Put(decision);
+                uow.Commit();
+            }
         }
     }
 }

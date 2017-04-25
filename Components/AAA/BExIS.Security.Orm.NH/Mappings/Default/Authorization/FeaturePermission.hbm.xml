@@ -3,8 +3,6 @@
 
     <key column="Id" />
 
-    <many-to-one name="Feature" column="FeatureRef" class="BExIS.Security.Entities.Objects.Feature, BExIS.Security.Entities"/>
-
+    <many-to-one name="Feature" column="FeatureRef" class="BExIS.Security.Entities.Objects.Feature, BExIS.Security.Entities" />
   </joined-subclass>
-
 </hibernate-mapping>

@@ -7,6 +7,12 @@ namespace BExIS.Security.Entities.Subjects
 {
     public class User : Subject, IUser<long>
     {
+        public User()
+        {
+            Groups = new List<Group>();
+            Logins = new List<Login>();
+        }
+
         public virtual int AccessFailedCount { get; set; }
         public virtual string Email { get; set; }
         public virtual bool EmailConfirmed { get; set; }
@@ -24,12 +30,6 @@ namespace BExIS.Security.Entities.Subjects
         {
             get { return Name; }
             set { Name = value; }
-        }
-
-        public User()
-        {
-            Groups = new List<Group>();
-            Logins = new List<Login>();
         }
     }
 }

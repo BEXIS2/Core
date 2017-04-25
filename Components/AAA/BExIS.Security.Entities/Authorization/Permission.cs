@@ -3,13 +3,6 @@ using Vaiona.Entities.Common;
 
 namespace BExIS.Security.Entities.Authorization
 {
-    public abstract class Permission : BaseEntity
-    {
-        public virtual PermissionType PermissionType { get; set; }
-        public virtual short Rights { get; set; }
-        public virtual Subject Subject { get; set; }
-    }
-
     public enum PermissionType
     {
         Deny = 0,
@@ -22,5 +15,12 @@ namespace BExIS.Security.Entities.Authorization
         Write = 1,
         Delete = 2,
         Grant = 3
+    }
+
+    public abstract class Permission : BaseEntity
+    {
+        public virtual PermissionType PermissionType { get; set; }
+        public virtual short Rights { get; set; }
+        public virtual Subject Subject { get; set; }
     }
 }

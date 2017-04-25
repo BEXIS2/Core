@@ -13,11 +13,9 @@
       <column name="Extra" not-null="false" sql-type="xml" />
     </property>
 
-    <property name="DecisionDate" type="DateTime"/>
-    <many-to-one name="DecisionMaker" column="DecisionMakerRef" class="BExIS.Security.Entities.Subjects.User, BExIS.Security.Entities"/>
+    <property name="DecisionDate" type="DateTime" />
+    <many-to-one name="DecisionMaker" column="DecisionMakerRef" class="BExIS.Security.Entities.Subjects.User, BExIS.Security.Entities" />
     <property name="Status" type="BExIS.Security.Entities.Requests.DecisionStatus, BExIS.Security.Entities" />
-    <many-to-one name="Request" column="RequestRef" class="BExIS.Security.Entities.Requests.Request, BExIS.Security.Entities"/>
-
+    <many-to-one name="Request" column="RequestRef" class="BExIS.Security.Entities.Requests.Request, BExIS.Security.Entities" />
   </class>
-
 </hibernate-mapping>

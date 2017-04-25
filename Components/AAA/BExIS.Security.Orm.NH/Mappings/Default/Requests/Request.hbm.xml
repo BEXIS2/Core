@@ -14,13 +14,11 @@
     </property>
 
     <set name="Decisions" inverse="true" cascade="all-delete-orphan" lazy="true">
-      <key column="RequestRef"/>
+      <key column="RequestRef" />
       <one-to-many class="BExIS.Security.Entities.Requests.Decision, BExIS.Security.Entities" />
     </set>
-    <property name="RequestDate" type="DateTime"/>
-    <many-to-one name="Requester" column="RequesterRef" class="BExIS.Security.Entities.Subjects.User, BExIS.Security.Entities"/>
+    <property name="RequestDate" type="DateTime" />
+    <many-to-one name="Requester" column="RequesterRef" class="BExIS.Security.Entities.Subjects.User, BExIS.Security.Entities" />
     <property name="Status" type="BExIS.Security.Entities.Requests.RequestStatus, BExIS.Security.Entities" />
-
   </class>
-
 </hibernate-mapping>

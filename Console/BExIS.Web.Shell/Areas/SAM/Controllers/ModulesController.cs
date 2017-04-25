@@ -1,16 +1,67 @@
 ﻿using BExIS.Modules.Sam.UI.Models;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web.Mvc;
 using Telerik.Web.Mvc;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Mvc.Modularity;
-using System.Linq;
 
 namespace BExIS.Modules.Sam.UI.Controllers
 {
     public class ModulesController : Controller
     {
+        public ActionResult Activate(string id)
+        {
+            ModuleManager.Enable(id);
+            return View("Index");
+        }
+
+        public ActionResult Create()
+        {
+            return PartialView("_Create", null);
+        }
+
+        [HttpPost]
+        public ActionResult Create(object model)
+        {
+            return PartialView("_Create", model);
+        }
+
+        [HttpPost]
+        public void Delete(string id)
+        {
+        }
+
+        public ActionResult Details(string id)
+        {
+            return View();
+        }
+
+        public ActionResult Download(string id)
+        {
+            return View();
+        }
+
+        public ActionResult Edit(string id)
+        {
+            return PartialView("_Edit", null);
+        }
+
+        //    return false;
+        //}
+        [HttpPost]
+        public ActionResult Edit(object model)
+        {
+            return Json(new { success = true });
+        }
+
+        public ActionResult Inactivate(string id)
+        {
+            ModuleManager.Disable(id);
+            return View("Index");
+        }
+
         // GET: SAM/Tenants
         /// <summary>
         /// List all the registered tenants with thier status, etc.
@@ -26,10 +77,10 @@ namespace BExIS.Modules.Sam.UI.Controllers
         [GridAction]
         public ActionResult Modules_Select()
         {
-            // load 
+            // load
             List<ModuleGridRowModel> modules = new List<ModuleGridRowModel>();
             var q = ModuleManager.Catalog.Elements("Module")
-                        .OrderBy(p => int.Parse(p.Attribute("order").Value));                    
+                        .OrderBy(p => int.Parse(p.Attribute("order").Value));
             foreach (var item in q)
             {
                 ModuleGridRowModel row = new ModuleGridRowModel()
@@ -38,9 +89,9 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     Status = ModuleManager.IsActive(item),
                 };
                 var moduleInfo = ModuleManager.GetModuleInfo(row.Id);
-                                //pm.ModuleInfos
-                                //.Where(p => p.Manifest.Name.Equals(row.Id, StringComparison.InvariantCultureIgnoreCase))
-                                //.First();
+                //pm.ModuleInfos
+                //.Where(p => p.Manifest.Name.Equals(row.Id, StringComparison.InvariantCultureIgnoreCase))
+                //.First();
                 row.Description = moduleInfo.Manifest.Description;
                 row.Version = moduleInfo.Manifest.Version;
                 row.Loaded = moduleInfo.Plugin != null;
@@ -49,11 +100,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
             }
 
             return View(new GridModel<ModuleGridRowModel> { Data = modules });
-        }
-
-        [HttpPost]
-        public void Delete(string id)
-        {
         }
 
         //private bool IsDeletable(string id)
@@ -74,61 +120,9 @@ namespace BExIS.Modules.Sam.UI.Controllers
         //            return true;
         //        }
         //    }
-
-        //    return false;
-        //}
-
-        public ActionResult Edit(string id)
-        {
-            return PartialView("_Edit", null);
-        }
-
-        [HttpPost]
-        public ActionResult Edit(object model)
-        {
-            return Json(new { success = true });
-        }
-
-
-
-        public ActionResult Details(string id)
-        {
-            return View();
-        }
-
         public ActionResult Unregister(string id)
         {
             return View();
         }
-
-        public ActionResult Activate(string id)
-        {
-            ModuleManager.Enable(id);
-            return View("Index");
-        }
-
-        public ActionResult Inactivate(string id)
-        {
-            ModuleManager.Disable(id);
-            return View("Index");
-        }
-
-
-        public ActionResult Create()
-        {
-            return PartialView("_Create", null);
-        }
-
-        [HttpPost]
-        public ActionResult Create(object model)
-        {
-            return PartialView("_Create", model);
-        }
-
-        public ActionResult Download(string id)
-        {
-            return View();
-        }
-
     }
 }

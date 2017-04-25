@@ -8,7 +8,7 @@
     .DataKeys(keys =>
     {
         keys.Add(m => m.Id);
-    })    
+    })
     .Columns(columns =>
     {
         columns.Bound(s => s.Order).Width(100);
@@ -27,7 +27,7 @@
             {
                 <button type="button" class="bx bx-grid-function bx-edit" onclick="moduleEdit_onClick('@item.Id', '@item.Id')"></button>
                 <button type="button" class="bx bx-grid-function bx-trash" disabled="disabled" onclick="moduleDelete_onClick('@item.Id', '@item.Id')"></button>
-            }   
+            }
             </text>)
             .ClientTemplate("<button type=\"button\" class=\"bx bx-grid-function bx-edit\" onclick=\"moduleEdit_onClick(\'<#= Id #>\', \'<#= Id #>\');\" value=\"<#= Id #>\"></button>" +
                             "<button type=\"button\" class=\"bx bx-grid-function bx-trash\" onclick=\"moduleDelete_onClick(\'<#= Id #>\', \'<#= Id #>\');\" value=\"<#= Id #>\" <#= true ? disabled='' : 'disabled' #> ></button>")
@@ -107,7 +107,7 @@
     function windowEdit_onCancel() {
         $('#windowEdit').data('tWindow').close();
     }
-    
+
     function moduleDelete_onClick(shortName, id) {
         var result = confirm('Are you sure you want to delete this module (Username:' + shortName + ', Id:' + id + ')?');
 
@@ -117,6 +117,4 @@
             });
         }
     }
-
 </script>
-

@@ -9,10 +9,6 @@ namespace BExIS.Security.Services.Authorization
 {
     public class EntityPermissionManager
     {
-        public IReadOnlyRepository<EntityPermission> EntityPermissionRepository { get; private set; }
-        public IReadOnlyRepository<Entity> EntityRepository { get; private set; }
-        public IReadOnlyRepository<Subject> SubjectRepository { get; private set; }
-
         public EntityPermissionManager()
         {
             var uow = this.GetUnitOfWork();
@@ -22,7 +18,10 @@ namespace BExIS.Security.Services.Authorization
             SubjectRepository = uow.GetReadOnlyRepository<Subject>();
         }
 
+        public IReadOnlyRepository<EntityPermission> EntityPermissionRepository { get; private set; }
         public IQueryable<EntityPermission> EntityPermissions => EntityPermissionRepository.Query();
+        public IReadOnlyRepository<Entity> EntityRepository { get; private set; }
+        public IReadOnlyRepository<Subject> SubjectRepository { get; private set; }
 
         public void Create(EntityPermission entityPermission)
         {
@@ -30,6 +29,16 @@ namespace BExIS.Security.Services.Authorization
             {
                 var entityPermissionRepository = uow.GetRepository<EntityPermission>();
                 entityPermissionRepository.Put(entityPermission);
+                uow.Commit();
+            }
+        }
+
+        public void Delete(EntityPermission entityPermission)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var entityPermissionRepository = uow.GetRepository<EntityPermission>();
+                entityPermissionRepository.Delete(entityPermission);
                 uow.Commit();
             }
         }
@@ -53,16 +62,6 @@ namespace BExIS.Security.Services.Authorization
             {
                 var entityPermissionRepository = uow.GetRepository<EntityPermission>();
                 entityPermissionRepository.Put(entityPermission);
-                uow.Commit();
-            }
-        }
-
-        public void Delete(EntityPermission entityPermission)
-        {
-            using (var uow = this.GetUnitOfWork())
-            {
-                var entityPermissionRepository = uow.GetRepository<EntityPermission>();
-                entityPermissionRepository.Delete(entityPermission);
                 uow.Commit();
             }
         }

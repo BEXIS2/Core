@@ -1,14 +1,12 @@
 ﻿<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Security.Entities" namespace="BExIS.Security.Entities.Subjects">
   <joined-subclass xmlns="urn:nhibernate-mapping-2.2" name="Group" table="Groups" extends="Subject" dynamic-update="true">
 
-    <key column="Id"/>
+    <key column="Id" />
 
     <property name="Description" type="String" />
     <set name="Users" table="Users_Groups" cascade="save-update" inverse="true" lazy="true">
-      <key column="GroupRef"/>
-      <many-to-many column="UserRef" class="BExIS.Security.Entities.Subjects.User, BExIS.Security.Entities"/>
+      <key column="GroupRef" />
+      <many-to-many column="UserRef" class="BExIS.Security.Entities.Subjects.User, BExIS.Security.Entities" />
     </set>
-
   </joined-subclass>
-
 </hibernate-mapping>
