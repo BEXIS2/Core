@@ -178,6 +178,7 @@
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="Views\User\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -188,7 +189,6 @@
   <ItemGroup>
     <Folder Include="Views\Group\" />
     <Folder Include="Views\Shared\" />
-    <Folder Include="Views\User\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
