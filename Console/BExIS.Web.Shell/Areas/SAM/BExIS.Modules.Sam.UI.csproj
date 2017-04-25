@@ -131,19 +131,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controllers\GroupController.cs" />
     <Compile Include="Controllers\HelpController.cs" />
     <Compile Include="Controllers\ModulesController.cs" />
+    <Compile Include="Controllers\PermissionController.cs" />
     <Compile Include="Controllers\SubjectController.cs" />
     <Compile Include="Controllers\TenantsController.cs" />
-    <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Helpers\Attributes.cs" />
     <Compile Include="Helpers\SAMSeedDataGenerator.cs" />
-    <Compile Include="Models\GroupModels.cs" />
     <Compile Include="Models\InfoModels.cs" />
     <Compile Include="Models\ModuleGridRowModel.cs" />
+    <Compile Include="Models\PermissionModels.cs" />
+    <Compile Include="Models\SubjectModels.cs" />
     <Compile Include="Models\TenantModels.cs" />
-    <Compile Include="Models\UserModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SamModule.cs" />
   </ItemGroup>
@@ -181,9 +180,8 @@
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Views\User\Index.cshtml" />
-    <Content Include="Views\User\Create.cshtml" />
-    <Content Include="Views\User\Edit.cshtml" />
+    <Content Include="Views\Subject\Index.cshtml" />
+    <Content Include="Views\Subject\CreateUser.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -192,9 +190,8 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Views\Group\" />
+    <Folder Include="Views\Permission\" />
     <Folder Include="Views\Shared\" />
-    <Folder Include="Views\Subject\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
