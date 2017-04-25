@@ -36,12 +36,17 @@ namespace BExIS.Security.Services.Objects
             }
         }
 
-        public Entity FindByIdAsync(long entityId)
+        public Entity FindByClassPath(string classPath)
+        {
+            return EntityRepository.Query(m => m.ClassPath.ToLowerInvariant() == classPath.ToLowerInvariant()).FirstOrDefault();
+        }
+
+        public Entity FindById(long entityId)
         {
             return EntityRepository.Get(entityId);
         }
 
-        public Entity FindByNameAsync(string entityName)
+        public Entity FindByName(string entityName)
         {
             return EntityRepository.Query(m => m.Name.ToLowerInvariant() == entityName.ToLowerInvariant()).FirstOrDefault();
         }

@@ -36,7 +36,7 @@ namespace BExIS.Security.Services.Objects
             }
         }
 
-        public Feature FindByIdAsync(long featureId)
+        public Feature FindById(long featureId)
         {
             return FeatureRepository.Get(featureId);
         }

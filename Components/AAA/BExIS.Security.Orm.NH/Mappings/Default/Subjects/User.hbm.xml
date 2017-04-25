@@ -1,10 +1,5 @@
 ﻿<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Security.Entities" namespace="BExIS.Security.Entities.Subjects">
-  <joined-subclass xmlns="urn:nhibernate-mapping-2.2" name="User" table="Users" extends="Subject" dynamic-update="true">
-
-    <!-- SUBJECT ATTRIBUTES -->
-    <key column="Id" />
-      <!--An index should be on this field. E.g., index="idx_Users_id"-->
-
+  <union-subclass xmlns="urn:nhibernate-mapping-2.2" name="User" table="Users" extends="Subject" dynamic-update="true">
     <property name="AccessFailedCount" type="Int32" />
     <property name="Email" type="String" />
     <property name="EmailConfirmed" type="yes_no" />
@@ -23,5 +18,5 @@
     <property name="PhoneNumberConfirmed" type="yes_no" />
     <property name="SecurityStamp" type="string" />
     <property name="TwoFactorEnabled" type="yes_no" />
-  </joined-subclass>
+  </union-subclass>
 </hibernate-mapping>
