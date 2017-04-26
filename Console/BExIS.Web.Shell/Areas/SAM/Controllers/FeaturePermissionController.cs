@@ -17,8 +17,8 @@ namespace BExIS.Modules.Sam.UI.Controllers
         [GridAction]
         public ActionResult Subjects_Select(GridActionAttribute filters)
         {
-            FeaturePermissionManager featurePermissionManager = new FeaturePermissionManager();
-            List<FeaturePermissionGridRowModel> featurePermissions = featurePermissionManager.FeaturePermissions.Select(f => FeaturePermissionGridRowModel.Convert(f)).ToList();
+            var featurePermissionManager = new FeaturePermissionManager();
+            var featurePermissions = featurePermissionManager.FeaturePermissions.Select(f => FeaturePermissionGridRowModel.Convert(f)).ToList();
 
             return View(new GridModel<FeaturePermissionGridRowModel> { Data = featurePermissions });
         }

@@ -78,12 +78,12 @@ namespace BExIS.Modules.Sam.UI.Controllers
         public ActionResult Modules_Select()
         {
             // load
-            List<ModuleGridRowModel> modules = new List<ModuleGridRowModel>();
+            var modules = new List<ModuleGridRowModel>();
             var q = ModuleManager.Catalog.Elements("Module")
                         .OrderBy(p => int.Parse(p.Attribute("order").Value));
             foreach (var item in q)
             {
-                ModuleGridRowModel row = new ModuleGridRowModel()
+                var row = new ModuleGridRowModel()
                 {
                     Id = item.Attribute("id").Value,
                     Status = ModuleManager.IsActive(item),

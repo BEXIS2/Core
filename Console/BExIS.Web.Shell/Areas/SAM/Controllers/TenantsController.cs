@@ -22,7 +22,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
         /// <returns></returns>
         public ActionResult Activate(string id)
         {
-            ITenantRegistrar tenantRegistrar = MultiTenantFactory.GetTenantRegistrar();
+            var tenantRegistrar = MultiTenantFactory.GetTenantRegistrar();
             tenantRegistrar.Activate(id);
             return View();
         }
@@ -45,10 +45,10 @@ namespace BExIS.Modules.Sam.UI.Controllers
             // The model must contain a zip file.
             // check the zip file for validity
             // copy the zip (as a zip) file into the workspace's temp folder and provide the path
-            string zipFolder = "";
+            var zipFolder = "";
             // provide the filename and the folder to the Register function. the file name must be the tenant id
-            string tenantId = "the file name";
-            ITenantRegistrar tenantRegistrar = MultiTenantFactory.GetTenantRegistrar();
+            var tenantId = "the file name";
+            var tenantRegistrar = MultiTenantFactory.GetTenantRegistrar();
             tenantRegistrar.Register(tenantId, zipFolder);
             return PartialView("_Create", model);
         }
@@ -58,7 +58,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
         {
             if (IsDeletable(id))
             {
-                ITenantRegistrar tenantRegistrar = MultiTenantFactory.GetTenantRegistrar();
+                var tenantRegistrar = MultiTenantFactory.GetTenantRegistrar();
                 tenantRegistrar.Unregister(id);
             }
         }
@@ -87,9 +87,9 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
         public ActionResult Edit(string id)
         {
-            ITenantResolver tenantResolver = IoCFactory.Container.Resolve<ITenantResolver>();
+            var tenantResolver = IoCFactory.Container.Resolve<ITenantResolver>();
             tenantResolver.Load(new BExISTenantPathProvider());
-            Tenant tenant = tenantResolver.Manifest.Where(x => x.Id.Equals(id)).FirstOrDefault();
+            var tenant = tenantResolver.Manifest.Where(x => x.Id.Equals(id)).FirstOrDefault();
 
             return PartialView("_Edit", TenantEditModel.Convert(tenant));
         }
@@ -97,7 +97,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
         [HttpPost]
         public ActionResult Edit(TenantEditModel model)
         {
-            ITenantRegistrar tenantRegistrar = MultiTenantFactory.GetTenantRegistrar();
+            var tenantRegistrar = MultiTenantFactory.GetTenantRegistrar();
 
             // Make tenant to be the default!
             if (model.IsDefault)
@@ -126,7 +126,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
         /// <remarks>There MUST at least one active tenant remain in the list after this operation.</remarks>
         public ActionResult Inactivate(string id)
         {
-            ITenantRegistrar tenantRegistrar = MultiTenantFactory.GetTenantRegistrar();
+            var tenantRegistrar = MultiTenantFactory.GetTenantRegistrar();
             tenantRegistrar.Inactivate(id);
             return View();
         }
@@ -145,7 +145,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
         public ActionResult MakeDefault(string id)
         {
-            ITenantRegistrar tenantRegistrar = MultiTenantFactory.GetTenantRegistrar();
+            var tenantRegistrar = MultiTenantFactory.GetTenantRegistrar();
             tenantRegistrar.MakeDefault(id);
             return View();
         }
@@ -153,14 +153,14 @@ namespace BExIS.Modules.Sam.UI.Controllers
         [GridAction]
         public ActionResult Tenants_Select()
         {
-            ITenantResolver tenantResolver = IoCFactory.Container.Resolve<ITenantResolver>();
+            var tenantResolver = IoCFactory.Container.Resolve<ITenantResolver>();
             tenantResolver.Load(new BExISTenantPathProvider());
 
-            List<TenantGridRowModel> tenants = new List<TenantGridRowModel>();
+            var tenants = new List<TenantGridRowModel>();
 
-            for (int i = 0; i < tenantResolver.Manifest.Count(); i++)
+            for (var i = 0; i < tenantResolver.Manifest.Count(); i++)
             {
-                Tenant t = tenantResolver.Manifest.ElementAt(i);
+                var t = tenantResolver.Manifest.ElementAt(i);
                 tenants.Add(TenantGridRowModel.Convert(t, IsDeletable(t.Id)));
             }
 
@@ -180,23 +180,23 @@ namespace BExIS.Modules.Sam.UI.Controllers
         /// </remarks>
         public ActionResult Unregister(string id)
         {
-            ITenantRegistrar tenantRegistrar = MultiTenantFactory.GetTenantRegistrar();
+            var tenantRegistrar = MultiTenantFactory.GetTenantRegistrar();
             tenantRegistrar.Unregister(id);
             return View();
         }
 
         private bool IsDeletable(string id)
         {
-            ITenantResolver tenantResolver = IoCFactory.Container.Resolve<ITenantResolver>();
+            var tenantResolver = IoCFactory.Container.Resolve<ITenantResolver>();
             tenantResolver.Load(new BExISTenantPathProvider());
 
             // Get tenant
-            Tenant tenant = tenantResolver.Manifest.Where(x => x.Id.Equals(id)).FirstOrDefault();
+            var tenant = tenantResolver.Manifest.Where(x => x.Id.Equals(id)).FirstOrDefault();
 
             if (!tenant.IsDefault && tenant.Status == TenantStatus.Inactive)
             {
                 // Get all tenants
-                List<Tenant> tenants = tenantResolver.Manifest;
+                var tenants = tenantResolver.Manifest;
 
                 if (tenants.Select(x => x.IsDefault || x.Status == TenantStatus.Active && x.Id != id).Count() >= 1)
                 {
