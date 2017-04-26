@@ -1,6 +1,6 @@
 ﻿@using BExIS.Modules.Sam.UI.Models
 @using Telerik.Web.Mvc.UI
-@model List<SubjectGridRowModel>
+@model List<GroupGridRowModel>
 
 <style>
     .t-window-content {
@@ -21,39 +21,30 @@
     </p>
 }
 
-<button type="button" class="bx-button function" onclick="gridSubjects_onCreate()">Create Subject</button>
+<button type="button" class="bx-button function" onclick="userCreate_onClick()">Create User</button>
 
-@(Html.Telerik().Grid<SubjectGridRowModel>()
-    .Name("gridSubjects")
+@(Html.Telerik().Grid<GroupGridRowModel>()
+    .Name("gridGroups")
     .Columns(columns =>
     {
-        columns.Bound(u => u.Id);
-        columns.Bound(u => u.Name);
-        columns.Template(@<text>
-        <button type="button" class="bx bx-grid-function bx-edit" onclick="gridSubjects_onUpdate(@item.Id)"></button>
-        <button type="button" class="bx bx-grid-function bx-trash" onclick="gridSubjects_onDelete(@item.Id)"></button>
-        </text>)
-            .ClientTemplate("<button type=\"button\" class=\"bx bx-grid-function bx-edit\" onclick=\"gridSubjects_onUpdate(<#= Id #>);\" value=\"<#= Id #>\"></button>" +
-                            "<button type=\"button\" class=\"bx bx-grid-function bx-trash\" onclick=\"gridSubjects_onDelete(<#= Id #>);\" value=\"<#= Id #>\"></button>")
-            .Width(70);
+        columns.Bound(g => g.Id);
+        columns.Bound(g => g.GroupName);
+        columns.Bound(g => g.Description);
     })
-        .ClientEvents(clientEvents =>
-        {
-            clientEvents.OnDataBound("gridSubjects_onDataBound");
-        })
-        .DataBinding(dataBinding => dataBinding
-            .Ajax()
-            .OperationMode(GridOperationMode.Server)
-            .Select("Subjects_Select", "Subject")
-        )
-        .Filterable()
-        .Pageable(pageable =>
-        {
-            pageable.PageSize(10, new[] { 10, 20, 50, 100 });
-            pageable.Style(GridPagerStyles.NextPreviousAndNumeric | GridPagerStyles.PageSizeDropDown);
-            pageable.Position(GridPagerPosition.Both);
-        })
-        .Sortable())
+    .DataBinding(dataBinding => dataBinding
+        .Ajax()
+        .OperationMode(GridOperationMode.Server)
+        .Select("Groups_Select", "Group")
+    )
+    .Filterable()
+    .Pageable(pageable =>
+    {
+        pageable.PageSize(10, new[] { 10, 20, 50, 100 });
+        pageable.Style(GridPagerStyles.NextPreviousAndNumeric | GridPagerStyles.PageSizeDropDown);
+        pageable.Position(GridPagerPosition.Both);
+    })
+    .Sortable()
+)
 
 <script type="text/javascript">
 
@@ -66,7 +57,7 @@
     // CREATE
     // --------------------------------------------------
 
-    function gridSubjects_onCreate() {
+    function userCreate_onClick() {
         $.ajax({
             type: 'GET',
             url: '@Url.Action("Create", "Users")',
@@ -109,10 +100,10 @@
     }
 
     // --------------------------------------------------
-    // UPDATE
+    // EDIT
     // --------------------------------------------------
 
-    function gridSubjects_onUpdate(id) {
+    function userEdit_onClick(username, id) {
         $.ajax({
             type: 'GET',
             url: '@Url.Action("Edit", "Users")',
@@ -175,11 +166,7 @@
         }
     }
 
-    // --------------------------------------------------
-    // DELETE
-    // --------------------------------------------------
-
-    function gridSubjects_onDelete(id) {
+    function userDelete_onClick(username, id) {
         var result = confirm('Are you sure you want to delete this user (Username:' + username + ', Id:' + id + ')?');
 
         if (result) {

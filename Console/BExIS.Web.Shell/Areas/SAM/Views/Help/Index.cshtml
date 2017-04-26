@@ -2,38 +2,50 @@
 @using BExIS.Modules.Sam.UI.Models;
 
 @{
-    HtmlString toc = new HtmlString(Model.Title);
-    HtmlString content = new HtmlString(Model.Description);
+    var toc = new HtmlString(Model.Title);
+    var content = new HtmlString(Model.Description);
 }
 
 @section Information
 {
-This guide will walk you through the basics of using search UI including how to manage search component.
+    This guide will walk you through the basics of using search UI including how to manage search component.
 }
 @section leftPane{
-  <div class="toc">
-  <p style = "font-weight:bold" > Administration ToC </p>
-  <br />
-<p></p>    <a href="#_TocTop">1 Overview</a>
-<p></p>    <a href="#_Toc468259067">2 Account</a>
-<p></p>    <a href="#_Toc468259068">&nbsp;&nbsp;2.1 Registration</a>
-<p></p>    <a href="#_Toc468259069">&nbsp;&nbsp; 2.2 LogOn</a>
-<p></p>    <a href="#_Toc468259070">3 Users</a>
-<p></p>    <a href="#_Toc468259071">&nbsp;&nbsp;3.1 Create a user</a>
-<p></p>    <a href="#_Toc468259072">&nbsp;&nbsp;3.2 Edit a user</a>
-<p></p>    <a href="#_Toc468259073">4 Groups</a>
-<p></p>    <a href="#_Toc468259074">&nbsp;&nbsp;4.1 Create a group</a>
-<p></p>    <a href="#_Toc468259075">&nbsp;&nbsp;4.2 Edit a group</a>
-<p></p>    <a href="#_Toc468259076">5 Permissions</a>
-<p></p>    <a href="#_Toc468259077">&nbsp;&nbsp;5.1 Features</a>
-<p></p>    <a href="#_Toc468259078">&nbsp;&nbsp;5.2 Datasets</a>
-<p></p>    <a href="#_Toc468259079">6 Maintenance</a>
-  </div>
+    <div class="toc">
+        <p style="font-weight:bold"> Administration ToC </p>
+        <br />
+        <p></p>    <a href="#_TocTop">1 Overview</a>
+        <p></p>    <a href="#_Toc468259067">2 Account</a>
+        <p></p>    <a href="#_Toc468259068">&nbsp;&nbsp;2.1 Registration</a>
+        <p></p>    <a href="#_Toc468259069">&nbsp;&nbsp; 2.2 LogOn</a>
+        <p></p>    <a href="#_Toc468259070">3 Users</a>
+        <p></p>    <a href="#_Toc468259071">&nbsp;&nbsp;3.1 Create a user</a>
+        <p></p>    <a href="#_Toc468259072">&nbsp;&nbsp;3.2 Edit a user</a>
+        <p></p>    <a href="#_Toc468259073">4 Groups</a>
+        <p></p>    <a href="#_Toc468259074">&nbsp;&nbsp;4.1 Create a group</a>
+        <p></p>    <a href="#_Toc468259075">&nbsp;&nbsp;4.2 Edit a group</a>
+        <p></p>    <a href="#_Toc468259076">5 Permissions</a>
+        <p></p>    <a href="#_Toc468259077">&nbsp;&nbsp;5.1 Features</a>
+        <p></p>    <a href="#_Toc468259078">&nbsp;&nbsp;5.2 Datasets</a>
+        <p></p>    <a href="#_Toc468259079">6 Maintenance</a>
+    </div>
 }
 <style>
-.toc { position: fixed; top:100px; }
-.scrollable { overflow: auto; height: 750px; }
-:target:before { content: ""; display: block; height: 100px; }
+    .toc {
+        position: fixed;
+        top: 100px;
+    }
+
+    .scrollable {
+        overflow: auto;
+        height: 750px;
+    }
+
+    :target:before {
+        content: "";
+        display: block;
+        height: 100px;
+    }
 </style>
 <p><span>&#xa0;</span></p>
 <p><span>&#xa0;</span></p>
@@ -50,76 +62,78 @@ This guide will walk you through the basics of using search UI including how to 
 <p><span>&#xa0;</span></p>
 <p class="Heading-2"><a id="_Toc468259068"><span>2.1 </span><span>Registration</span></a></p>
 <p><span>&#xa0;</span></p>
-</div><div class="Section1"><p><span>First press </span><span>Register</span><span>&nbsp;</span><span>button</span><span>. </span><span>You have to complete</span><span>&nbsp;all fields and </span><span>accept the Terms and Conditions</span><span>&nbsp;before you press </span><span>Create</span><span>, otherwise the registration will fail. Furthermore, the system supports you with different validation messages if any information is not valid.</span><span>&nbsp;</span></p>
-<p><span>&#xa0;</span></p>
-</div><div class="Section2"><p><img src="~/Areas/SAM/Images/help\help_img1.png" width="626" height="459" alt="img1" /><span>&#xa0;</span></p>
-<p><span>&#xa0;</span></p>
-<p class="Heading-2"><a id="_Toc468259069"><span>2.2 LogOn</span></a></p>
-<p><span>First press </span><span>Log I</span><span>n</span><span>&nbsp;</span><span>button</span><span>. The system redirects y</span><span>ou to the logon form</span><span>&nbsp;and you have to enter your account credentials (user name and password). If the logon is successful, you will see</span><span>&nbsp;</span><span>a short welcome message instead of </span><span>[ LogOn ]</span><span>. Otherwise, the system will notify you about the status and reason why the logon was not successful.</span><span>&nbsp;</span></p>
-<p><img src="~/Areas/SAM/Images/help\help_img2.png" width="627" height="436" alt="img2" /><span>&#xa0;</span></p>
-<p class="Heading-1"><span>&#xa0;</span></p>
-<p class="Heading-1"><a id="_Toc468259070"><span>3 Users</span></a></p>
-<p><span>Caution! </span><span>This part of the system is secured. You may </span><span>not </span><span>have access to it.</span><span>&nbsp;</span></p>
-<p><span>BEXIS 2</span><span>&nbsp;provides different features for </span><span>managing</span><span>&nbsp;users. </span><span>These are typically available to system administrators only. </span><span>Each of them is described in more detail in one of the following subsections.</span><span>&nbsp;</span></p>
-<p><img src="~/Areas/SAM/Images/help\help_img3.png" width="626" height="205" alt="img3" /><span>&#xa0;</span></p>
-<p class="Heading-2"><a id="_Toc468259071"><span>3.1 Create a user</span></a></p>
-<p><span>In addition to the </span><span>self-registration procedure</span><span>, </span><span>user accounts may also be created by an administrator</span><span>. T</span><span>his</span><span>&nbsp;feature</span><span>&nbsp;is available</span><span>&nbsp;</span><span>from</span><span>&nbsp;</span><span>Setup</span><span>&nbsp;> </span><span>Manage </span><span>Users</span><span>. Please </span><span>press the </span><span>Create</span><span>&nbsp;button. A modal window will pop up that contains the user creation form. Similar to the </span><span>self-registration</span><span>, </span><span>the system</span><span>&nbsp;supports you with validation </span><span>on all </span><span>information </span><span>entered</span><span>.</span></p>
-<p><img src="~/Areas/SAM/Images/help\help_img4.png" width="626" height="459" alt="img4" /><span>&#xa0;</span></p>
-<p><span>&#xa0;</span></p>
-<p class="Heading-2"><a id="_Toc468259072"><span>3.2 Edit a user</span></a></p>
-<p><span>Within </span><span>BEXIS 2</span><span>&nbsp;you </span><span>are able </span><span>to display and modify user information. For security and usability reasons, the system allows modification only for certain parts of the user information. Please go to </span><span>Setup</span><span>&nbsp;> </span><span>Manage </span><span>Users</span><span>&nbsp;and press the </span><span>Edit</span><span>&nbsp;button of the </span><span>respective</span><span>&nbsp;user. </span><span>You are now able to alter</span><span>&nbsp;the user information.</span><span>&nbsp;Changes are committed to the system when you press</span><span>&nbsp;the </span><span>Save</span><span>&nbsp;button. </span></p>
-<p><span>For any given user </span><span>membership</span><span>s to certain groups need to be specified via </span><span>the tab </span><span>Membership</span><span>.</span></p>
-<p><span>You can change the status easily by (un)select the corresponding checkbox.</span></p>
-<p><img src="~/Areas/SAM/Images/help\help_img5.png" width="628" height="378" alt="img5" /><span>&#xa0;</span></p>
-<p><span>&#xa0;</span></p>
-<p class="Heading-1"><a id="_Toc468259073"><span>4 Groups</span></a></p>
-<p><span>Caution! </span><span>This part of the system is secured. You may </span><span>not </span><span>have access to it.</span></p>
-<p><span>BEXIS 2</span><span>&nbsp;provides different features for the </span><span>managing groups</span><span>. </span><span>They are typically available to system administrators only.</span><span>&nbsp;Each of them is described in more detail in the following subsections.</span></p>
-<p><img src="~/Areas/SAM/Images/help\help_img6.png" width="626" height="203" alt="img6" /><span>&#xa0;</span></p>
-<p class="Heading-2"><a id="_Toc468259074"><span>4.1 Create a group</span></a></p>
-<p><span>T</span><span>his</span><span>&nbsp;feature</span><span>&nbsp;is available</span><span>&nbsp;</span><span>from</span><span>&nbsp;</span><span>Setup </span><span>&gt; </span><span>Manage </span><span>Group</span><span>s</span><span>. Please press the </span><span>Create</span><span>&nbsp;button. A modal window will pop up that contains th</span><span>e group creation form</span><span>. </span><span>The system </span><span>supports </span><span>you with validation </span><span>on all </span><span>information </span><span>entered.</span></p>
-<p><img src="~/Areas/SAM/Images/help\help_img7.png" width="448" height="239" alt="img7" /><span>&#xa0;</span></p>
-<p><span>&#xa0;</span></p>
-<p class="Heading-2"><a id="_Toc468259075"><span>4.2 Edit a group</span></a></p>
-<p><span>Within </span><span>BEXIS 2</span><span>&nbsp;you </span><span>are able to display and modify group</span><span>&nbsp;information. Please go to </span><span>Setup</span><span>&nbsp;> </span><span>Manage </span><span>Group</span><span>s</span><span>&nbsp;and press the </span><span>Edit</span><span>&nbsp;button of the </span><span>respective</span><span>&nbsp;</span><span>group</span><span>. </span><span>You are now able to alter the group</span><span>&nbsp;information.</span><span>&nbsp;Changes are committed to the system once you pressed</span><span>&nbsp;the </span><span>Save</span><span>&nbsp;button. </span></p>
-<p><span>For any given user </span><span>membership</span><span>s to certain group need to be specified via </span><span>the tab </span><span>Membership</span><span>.</span></p>
-<p><span>You can change the status easily by (un)select the corresponding checkbox.</span></p>
-<p><img src="~/Areas/SAM/Images/help\help_img8.png" width="520" height="294" alt="img8" /><span>&#xa0;</span></p>
-<p><span>&#xa0;</span></p>
-<p class="Heading-1"><a id="_Toc468259076"><span>5 Permissions</span></a></p>
-<p><span>Caution! </span><span>This part of the system is secured. You may </span><span>not </span><span>have access to it.</span></p>
-<p><span>Permission is a rule that contains certain security regulations. In general, it is possible to set a rule on both, users and groups.</span></p>
-<p><span>The security system of </span><span>BEXIS 2</span><span>&nbsp;distinguishes between two types of permissions. On the one hand, there are feature permissions, which allow or prohibit the access to well-defined and delimited areas of the application. This type of permissions is working on functional objects (e.g. actions that should be performed) – so called </span><span>Features</span><span>. On the other hand, data permissions provide the ability to protect real data (e.g. datasets, research plans and so on). </span></p>
-<p><span>&#xa0;</span></p>
-<p class="Heading-2"><a id="_Toc468259077"><span>5.1 Features</span></a></p>
-<p><span>To be able to modify features, </span><span>Please go to</span><span>&nbsp;</span><span>Setup</span><span>&nbsp;> </span><span>Manage </span><span>Features</span><span>. This will bring up a page with a tree on the left side</span><span>.</span><span>&nbsp;</span></p>
-<p><span>Selecting a checkbox in </span><span>the navigation tree (e.g. Search) will make that feature accessible without authentication (public access). Please use with care! </span><span>&nbsp;</span></p>
-<p><span>By clicking a feature name (a node in the tree), the system will show a table on the right side (see below). This table contains all subjects (users and groups) and their feature permission status. You may grant or deny permissions for individual users or groups using the radio buttons. If a permission is not explicitly set (i.e None) </span><span>permissions are inherited from up level features. Inherited permissions are shown in the first column as effective permissions.</span><span>&nbsp;</span></p>
-<p><img src="~/Areas/SAM/Images/help\help_img9.png" width="626" height="339" alt="img9" /><span>&#xa0;</span></p>
-<p><span>&#xa0;</span></p>
-<p class="Heading-2"><a id="_Toc468259078"><span>5.2 Datasets</span></a></p>
-<p><span class="hps">The security system of </span><span class="hps">BEXIS 2</span><span class="hps">&nbsp;is working on both, functional (features) and non-functional (dataset) items. </span><span>Please go to</span><span>&nbsp;</span><span>Setup</span><span>&nbsp;> </span><span>Manage Data Permissions</span><span>&nbsp;if you like to manage access to datasets.</span><span>&nbsp;</span></p>
-<p><span>By selecting a dataset (i.e. a row in the table), the system will show a second table </span><span class="hps">underneath the</span><span class="short-text">&nbsp;</span><span class="hps">first one</span><span>, which contains all subjects (users and groups) and their different data permission statuses regarding the selected dataset. </span><span>On this page, you are also able to alter the different kinds of data permissions for a selected dataset.</span><span>&nbsp;</span></p>
-<p><span>Selecting the checkbox in the first column (i.e. IsPublic) will allow public access to that dataset without any authentication.</span></p>
-<p><span>&#xa0;</span></p>
-<p><img src="~/Areas/SAM/Images/help\help_img10.png" width="626" height="292" alt="img10" /><span>&#xa0;</span></p>
-<p><span>&#xa0;</span></p>
-<p><span>In general, the system works on six different data permission types:</span></p>
-<p class="List-Paragraph"><span>&#183;</span><span>&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;</span><span>Create: </span><span>allow</span><span>/deny creating a dataset</span></p>
-<p class="List-Paragraph"><span>&#183;</span><span>&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;</span><span>View</span><span>: allow/deny view access to primary data</span></p>
-<p class="List-Paragraph"><span>&#183;</span><span>&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;</span><span>Update</span><span>: allow/deny manipulation (upload and update) of primary data</span></p>
-<p class="List-Paragraph"><span>&#183;</span><span>&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;</span><span>Delete</span><span>:</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span>allow/deny deletion of the whole dataset</span></p>
-<p class="List-Paragraph"><span>&#183;</span><span>&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;</span><span>Download</span><span>: allow/deny downloading primary data</span></p>
-<p class="List-Paragraph"><span>&#183;</span><span>&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;</span><span>Grant</span><span>: allow/deny to give permission to other users or groups</span></p>
-<p><span>&#xa0;</span></p>
-<p class="Heading-1"><a id="_Toc468259079"><span>6 Maintenance</span></a></p>
-<p><span>At the dataset maintenance, you are able to see a list of Datasets. </span></p>
-<p><span>You can find this list via menu in </span><span>Setup</span><span>&nbsp;> Maintain Datasets</span><span>. In this list you can see the status of each dataset and some useful actions for the maintenance of a dataset.</span></p>
-<p><img src="~/Areas/SAM/Images/help\help_img11.png" width="627" height="146" alt="img11" /><span>&#xa0;</span></p>
-<p><span>There are two ways to delete a dataset: </span></p>
-<p><span>Delete: </span><span>this function tags a dataset to exclude it from nearly all features of the system (e.g. search). But the dataset itself will stay inside the database. So later on you are able to recover the dataset - if needed.</span></p>
-<p><span>Purge:</span><span>&nbsp;the dataset will be removed from the system at all (incl. removal of data permissions, metadata and primary data). There is no way to rollback that action.</span></p>
-<p><span>Note that if you purge a dataset, you cannot recover it at all.</span></p>
-<p><span>&#xa0;</span></p>
+</div><div class="Section1">
+    <p><span>First press </span><span>Register</span><span>&nbsp;</span><span>button</span><span>. </span><span>You have to complete</span><span>&nbsp;all fields and </span><span>accept the Terms and Conditions</span><span>&nbsp;before you press </span><span>Create</span><span>, otherwise the registration will fail. Furthermore, the system supports you with different validation messages if any information is not valid.</span><span>&nbsp;</span></p>
+    <p><span>&#xa0;</span></p>
+</div><div class="Section2">
+    <p><img src="~/Areas/SAM/Images/help\help_img1.png" width="626" height="459" alt="img1" /><span>&#xa0;</span></p>
+    <p><span>&#xa0;</span></p>
+    <p class="Heading-2"><a id="_Toc468259069"><span>2.2 LogOn</span></a></p>
+    <p><span>First press </span><span>Log I</span><span>n</span><span>&nbsp;</span><span>button</span><span>. The system redirects y</span><span>ou to the logon form</span><span>&nbsp;and you have to enter your account credentials (user name and password). If the logon is successful, you will see</span><span>&nbsp;</span><span>a short welcome message instead of </span><span>[ LogOn ]</span><span>. Otherwise, the system will notify you about the status and reason why the logon was not successful.</span><span>&nbsp;</span></p>
+    <p><img src="~/Areas/SAM/Images/help\help_img2.png" width="627" height="436" alt="img2" /><span>&#xa0;</span></p>
+    <p class="Heading-1"><span>&#xa0;</span></p>
+    <p class="Heading-1"><a id="_Toc468259070"><span>3 Users</span></a></p>
+    <p><span>Caution! </span><span>This part of the system is secured. You may </span><span>not </span><span>have access to it.</span><span>&nbsp;</span></p>
+    <p><span>BEXIS 2</span><span>&nbsp;provides different features for </span><span>managing</span><span>&nbsp;users. </span><span>These are typically available to system administrators only. </span><span>Each of them is described in more detail in one of the following subsections.</span><span>&nbsp;</span></p>
+    <p><img src="~/Areas/SAM/Images/help\help_img3.png" width="626" height="205" alt="img3" /><span>&#xa0;</span></p>
+    <p class="Heading-2"><a id="_Toc468259071"><span>3.1 Create a user</span></a></p>
+    <p><span>In addition to the </span><span>self-registration procedure</span><span>, </span><span>user accounts may also be created by an administrator</span><span>. T</span><span>his</span><span>&nbsp;feature</span><span>&nbsp;is available</span><span>&nbsp;</span><span>from</span><span>&nbsp;</span><span>Setup</span><span>&nbsp;> </span><span>Manage </span><span>Users</span><span>. Please </span><span>press the </span><span>Create</span><span>&nbsp;button. A modal window will pop up that contains the user creation form. Similar to the </span><span>self-registration</span><span>, </span><span>the system</span><span>&nbsp;supports you with validation </span><span>on all </span><span>information </span><span>entered</span><span>.</span></p>
+    <p><img src="~/Areas/SAM/Images/help\help_img4.png" width="626" height="459" alt="img4" /><span>&#xa0;</span></p>
+    <p><span>&#xa0;</span></p>
+    <p class="Heading-2"><a id="_Toc468259072"><span>3.2 Edit a user</span></a></p>
+    <p><span>Within </span><span>BEXIS 2</span><span>&nbsp;you </span><span>are able </span><span>to display and modify user information. For security and usability reasons, the system allows modification only for certain parts of the user information. Please go to </span><span>Setup</span><span>&nbsp;> </span><span>Manage </span><span>Users</span><span>&nbsp;and press the </span><span>Edit</span><span>&nbsp;button of the </span><span>respective</span><span>&nbsp;user. </span><span>You are now able to alter</span><span>&nbsp;the user information.</span><span>&nbsp;Changes are committed to the system when you press</span><span>&nbsp;the </span><span>Save</span><span>&nbsp;button. </span></p>
+    <p><span>For any given user </span><span>membership</span><span>s to certain groups need to be specified via </span><span>the tab </span><span>Membership</span><span>.</span></p>
+    <p><span>You can change the status easily by (un)select the corresponding checkbox.</span></p>
+    <p><img src="~/Areas/SAM/Images/help\help_img5.png" width="628" height="378" alt="img5" /><span>&#xa0;</span></p>
+    <p><span>&#xa0;</span></p>
+    <p class="Heading-1"><a id="_Toc468259073"><span>4 Groups</span></a></p>
+    <p><span>Caution! </span><span>This part of the system is secured. You may </span><span>not </span><span>have access to it.</span></p>
+    <p><span>BEXIS 2</span><span>&nbsp;provides different features for the </span><span>managing groups</span><span>. </span><span>They are typically available to system administrators only.</span><span>&nbsp;Each of them is described in more detail in the following subsections.</span></p>
+    <p><img src="~/Areas/SAM/Images/help\help_img6.png" width="626" height="203" alt="img6" /><span>&#xa0;</span></p>
+    <p class="Heading-2"><a id="_Toc468259074"><span>4.1 Create a group</span></a></p>
+    <p><span>T</span><span>his</span><span>&nbsp;feature</span><span>&nbsp;is available</span><span>&nbsp;</span><span>from</span><span>&nbsp;</span><span>Setup </span><span>&gt; </span><span>Manage </span><span>Group</span><span>s</span><span>. Please press the </span><span>Create</span><span>&nbsp;button. A modal window will pop up that contains th</span><span>e group creation form</span><span>. </span><span>The system </span><span>supports </span><span>you with validation </span><span>on all </span><span>information </span><span>entered.</span></p>
+    <p><img src="~/Areas/SAM/Images/help\help_img7.png" width="448" height="239" alt="img7" /><span>&#xa0;</span></p>
+    <p><span>&#xa0;</span></p>
+    <p class="Heading-2"><a id="_Toc468259075"><span>4.2 Edit a group</span></a></p>
+    <p><span>Within </span><span>BEXIS 2</span><span>&nbsp;you </span><span>are able to display and modify group</span><span>&nbsp;information. Please go to </span><span>Setup</span><span>&nbsp;> </span><span>Manage </span><span>Group</span><span>s</span><span>&nbsp;and press the </span><span>Edit</span><span>&nbsp;button of the </span><span>respective</span><span>&nbsp;</span><span>group</span><span>. </span><span>You are now able to alter the group</span><span>&nbsp;information.</span><span>&nbsp;Changes are committed to the system once you pressed</span><span>&nbsp;the </span><span>Save</span><span>&nbsp;button. </span></p>
+    <p><span>For any given user </span><span>membership</span><span>s to certain group need to be specified via </span><span>the tab </span><span>Membership</span><span>.</span></p>
+    <p><span>You can change the status easily by (un)select the corresponding checkbox.</span></p>
+    <p><img src="~/Areas/SAM/Images/help\help_img8.png" width="520" height="294" alt="img8" /><span>&#xa0;</span></p>
+    <p><span>&#xa0;</span></p>
+    <p class="Heading-1"><a id="_Toc468259076"><span>5 Permissions</span></a></p>
+    <p><span>Caution! </span><span>This part of the system is secured. You may </span><span>not </span><span>have access to it.</span></p>
+    <p><span>Permission is a rule that contains certain security regulations. In general, it is possible to set a rule on both, users and groups.</span></p>
+    <p><span>The security system of </span><span>BEXIS 2</span><span>&nbsp;distinguishes between two types of permissions. On the one hand, there are feature permissions, which allow or prohibit the access to well-defined and delimited areas of the application. This type of permissions is working on functional objects (e.g. actions that should be performed) – so called </span><span>Features</span><span>. On the other hand, data permissions provide the ability to protect real data (e.g. datasets, research plans and so on). </span></p>
+    <p><span>&#xa0;</span></p>
+    <p class="Heading-2"><a id="_Toc468259077"><span>5.1 Features</span></a></p>
+    <p><span>To be able to modify features, </span><span>Please go to</span><span>&nbsp;</span><span>Setup</span><span>&nbsp;> </span><span>Manage </span><span>Features</span><span>. This will bring up a page with a tree on the left side</span><span>.</span><span>&nbsp;</span></p>
+    <p><span>Selecting a checkbox in </span><span>the navigation tree (e.g. Search) will make that feature accessible without authentication (public access). Please use with care! </span><span>&nbsp;</span></p>
+    <p><span>By clicking a feature name (a node in the tree), the system will show a table on the right side (see below). This table contains all subjects (users and groups) and their feature permission status. You may grant or deny permissions for individual users or groups using the radio buttons. If a permission is not explicitly set (i.e None) </span><span>permissions are inherited from up level features. Inherited permissions are shown in the first column as effective permissions.</span><span>&nbsp;</span></p>
+    <p><img src="~/Areas/SAM/Images/help\help_img9.png" width="626" height="339" alt="img9" /><span>&#xa0;</span></p>
+    <p><span>&#xa0;</span></p>
+    <p class="Heading-2"><a id="_Toc468259078"><span>5.2 Datasets</span></a></p>
+    <p><span class="hps">The security system of </span><span class="hps">BEXIS 2</span><span class="hps">&nbsp;is working on both, functional (features) and non-functional (dataset) items. </span><span>Please go to</span><span>&nbsp;</span><span>Setup</span><span>&nbsp;> </span><span>Manage Data Permissions</span><span>&nbsp;if you like to manage access to datasets.</span><span>&nbsp;</span></p>
+    <p><span>By selecting a dataset (i.e. a row in the table), the system will show a second table </span><span class="hps">underneath the</span><span class="short-text">&nbsp;</span><span class="hps">first one</span><span>, which contains all subjects (users and groups) and their different data permission statuses regarding the selected dataset. </span><span>On this page, you are also able to alter the different kinds of data permissions for a selected dataset.</span><span>&nbsp;</span></p>
+    <p><span>Selecting the checkbox in the first column (i.e. IsPublic) will allow public access to that dataset without any authentication.</span></p>
+    <p><span>&#xa0;</span></p>
+    <p><img src="~/Areas/SAM/Images/help\help_img10.png" width="626" height="292" alt="img10" /><span>&#xa0;</span></p>
+    <p><span>&#xa0;</span></p>
+    <p><span>In general, the system works on six different data permission types:</span></p>
+    <p class="List-Paragraph"><span>&#183;</span><span>&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;</span><span>Create: </span><span>allow</span><span>/deny creating a dataset</span></p>
+    <p class="List-Paragraph"><span>&#183;</span><span>&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;</span><span>View</span><span>: allow/deny view access to primary data</span></p>
+    <p class="List-Paragraph"><span>&#183;</span><span>&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;</span><span>Update</span><span>: allow/deny manipulation (upload and update) of primary data</span></p>
+    <p class="List-Paragraph"><span>&#183;</span><span>&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;</span><span>Delete</span><span>:</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span>allow/deny deletion of the whole dataset</span></p>
+    <p class="List-Paragraph"><span>&#183;</span><span>&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;</span><span>Download</span><span>: allow/deny downloading primary data</span></p>
+    <p class="List-Paragraph"><span>&#183;</span><span>&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;</span><span>Grant</span><span>: allow/deny to give permission to other users or groups</span></p>
+    <p><span>&#xa0;</span></p>
+    <p class="Heading-1"><a id="_Toc468259079"><span>6 Maintenance</span></a></p>
+    <p><span>At the dataset maintenance, you are able to see a list of Datasets. </span></p>
+    <p><span>You can find this list via menu in </span><span>Setup</span><span>&nbsp;> Maintain Datasets</span><span>. In this list you can see the status of each dataset and some useful actions for the maintenance of a dataset.</span></p>
+    <p><img src="~/Areas/SAM/Images/help\help_img11.png" width="627" height="146" alt="img11" /><span>&#xa0;</span></p>
+    <p><span>There are two ways to delete a dataset: </span></p>
+    <p><span>Delete: </span><span>this function tags a dataset to exclude it from nearly all features of the system (e.g. search). But the dataset itself will stay inside the database. So later on you are able to recover the dataset - if needed.</span></p>
+    <p><span>Purge:</span><span>&nbsp;the dataset will be removed from the system at all (incl. removal of data permissions, metadata and primary data). There is no way to rollback that action.</span></p>
+    <p><span>Note that if you purge a dataset, you cannot recover it at all.</span></p>
+    <p><span>&#xa0;</span></p>
 
-<p class="Footer"><span>&#xa0;</span></p>
+    <p class="Footer"><span>&#xa0;</span></p>
