@@ -25,6 +25,28 @@ namespace BExIS.Security.Services.Utilities
             };
         }
 
+        public void Send(IdentityMessage message)
+        {
+            var from = new MailAddress("bexis2@uni-jena.de");
+
+            var to = new MailAddress(message.Destination);
+            var mail = new MailMessage(from, to)
+            {
+                Body = message.Body,
+                IsBodyHtml = true,
+                Subject = message.Subject
+            };
+
+            try
+            {
+                _smtp.Send(mail);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError(ex.Message + " SparkPost probably not configured correctly.");
+            }
+        }
+
         public async Task SendAsync(IdentityMessage message)
         {
             var from = new MailAddress("bexis2@uni-jena.de");
