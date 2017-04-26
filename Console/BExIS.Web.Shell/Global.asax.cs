@@ -14,6 +14,7 @@ using Vaiona.Model.MTnt;
 using System.Web.Http;
 using System;
 using Vaiona.Web.Mvc.Modularity;
+using Vaiona.Logging;
 
 namespace BExIS.Web.Shell
 {
@@ -102,8 +103,15 @@ namespace BExIS.Web.Shell
                 {
                     // The install method of the plugin is called once and only once.
                     // It generates the seed data and other module specific initializations
-                    ModuleManager.GetModuleInfo(moduleId).Plugin.Install();
-                    ModuleManager.Disable(moduleId);
+                    try
+                    {
+                        ModuleManager.GetModuleInfo(moduleId).Plugin.Install();
+                        ModuleManager.Disable(moduleId);
+                    }
+                    catch(Exception ex)
+                    {
+                        LoggerFactory.LogCustom(string.Format("Error installing module {0}. {1}", moduleId, ex.Message));
+                    }
                 }
             }
         }
