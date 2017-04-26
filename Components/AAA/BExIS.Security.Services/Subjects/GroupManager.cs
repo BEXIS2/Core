@@ -15,9 +15,9 @@ namespace BExIS.Security.Services.Subjects
             RoleRepository = uow.GetReadOnlyRepository<Role>();
         }
 
-        public IReadOnlyRepository<Group> GroupRepository { get; }
         public IQueryable<Group> Groups => GroupRepository.Query();
-        public IReadOnlyRepository<Role> RoleRepository { get; }
+        private IReadOnlyRepository<Group> GroupRepository { get; }
+        private IReadOnlyRepository<Role> RoleRepository { get; }
 
         public void AddToRole(Group group, string roleName)
         {

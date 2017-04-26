@@ -67,6 +67,7 @@
     <Compile Include="Authorization\Role.cs" />
     <Compile Include="Authorization\Rule.cs" />
     <Compile Include="Notifications\EmailNotification.cs" />
+    <Compile Include="Notifications\Message.cs" />
     <Compile Include="Notifications\Notification.cs" />
     <Compile Include="Objects\Entity.cs" />
     <Compile Include="Objects\Feature.cs" />

@@ -5,7 +5,9 @@ using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Subjects;
+using BExIS.Security.Services.Utilities;
 using BExIS.Xml.Services;
+using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -32,6 +34,9 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
         public ActionResult Index()
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Search", this.Session.GetTenant());
+
+            var emailService = new EmailService();
+            emailService.Send(new IdentityMessage() { Body = $"Hallo, <p> die Uhrzeit ist: {DateTime.Now} </p>", Subject = "Grüße von BExIS", Destination = "bexis-support@uni-jena.de" });
 
             try
             {
