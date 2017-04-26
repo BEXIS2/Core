@@ -2,7 +2,10 @@
 
 namespace BExIS.Security.Entities.Notifications
 {
-    public abstract class Notification : BaseEntity
+    public class Notification : BaseEntity
     {
+        public virtual string Body { get; set; }
+        public virtual string Destination { get; set; }
+        public virtual string Subject { get; set; }
     }
 }
