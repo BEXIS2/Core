@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BExIS.Modules.Sam.UI.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -10,6 +11,12 @@ namespace BExIS.Modules.Sam.UI
     {
         public SamModule(): base("SAM")
         {
+        }
+
+        public override void Install()
+        {
+            base.Install();
+            SamSeedDataGenerator.GenerateSeedData();
         }
     }
 }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using BExIS.Dlm.Entities.MetadataStructure;
 
-namespace BExIS.Web.Shell.Areas.DIM.Models
+namespace BExIS.Modules.Dim.UI.Models
 {
     public class AdminModel
     {
