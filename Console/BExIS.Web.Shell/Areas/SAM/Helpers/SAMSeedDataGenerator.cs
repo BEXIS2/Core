@@ -66,6 +66,10 @@ namespace BExIS.Modules.Sam.UI.Helpers
             TaskManager taskManager = new TaskManager();
 
             taskManager.CreateTask("SAM", "Account", "*");
+            taskManager.CreateTask("SAM", "Modules", "*");
+            taskManager.CreateTask("SAM", "Tenants", "*");
+            taskManager.CreateTask("SAM", "Help", "*");
+
             taskManager.CreateTask("Shell", "Nav", "*");
             taskManager.CreateTask("Shell", "Home", "*");
             taskManager.CreateTask("System", "Utils", "*");
@@ -73,8 +77,7 @@ namespace BExIS.Modules.Sam.UI.Helpers
             taskManager.CreateTask("DDM", "Help", "*");
             taskManager.CreateTask("DIM", "Help", "*");
             taskManager.CreateTask("RPM", "Help", "*");
-            taskManager.CreateTask("SAM", "Help", "*");
-            taskManager.CreateTask("Site", "Footer", "*");
+            //taskManager.CreateTask("Site", "Footer", "*");
 
             //generic form for metadata
             taskManager.CreateTask("DCM", "Form", "*");
