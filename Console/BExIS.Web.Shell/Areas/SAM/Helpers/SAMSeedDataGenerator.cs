@@ -17,6 +17,11 @@ namespace BExIS.Modules.Sam.UI.Helpers
 
         private static void createSecuritySeedData()
         {
+            // Javad: 
+            // 1) all the create operations should check for existence of the record
+            // 2) failure on creating any record should rollback the whole seed data generation. It is one transaction.
+            // 3) failues should throw an exception with enough information to pin point the root cause
+            // 4) only seed data related to the functions of this modules should be genereated here.
 
             #region Security
 
@@ -61,6 +66,10 @@ namespace BExIS.Modules.Sam.UI.Helpers
             TaskManager taskManager = new TaskManager();
 
             taskManager.CreateTask("SAM", "Account", "*");
+            taskManager.CreateTask("SAM", "Modules", "*");
+            taskManager.CreateTask("SAM", "Tenants", "*");
+            taskManager.CreateTask("SAM", "Help", "*");
+
             taskManager.CreateTask("Shell", "Nav", "*");
             taskManager.CreateTask("Shell", "Home", "*");
             taskManager.CreateTask("System", "Utils", "*");
@@ -68,8 +77,7 @@ namespace BExIS.Modules.Sam.UI.Helpers
             taskManager.CreateTask("DDM", "Help", "*");
             taskManager.CreateTask("DIM", "Help", "*");
             taskManager.CreateTask("RPM", "Help", "*");
-            taskManager.CreateTask("SAM", "Help", "*");
-            taskManager.CreateTask("Site", "Footer", "*");
+            //taskManager.CreateTask("Site", "Footer", "*");
 
             //generic form for metadata
             taskManager.CreateTask("DCM", "Form", "*");
