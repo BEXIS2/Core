@@ -11,8 +11,8 @@ namespace BExIS.Modules.Sam.UI.Controllers
 {
     public class GroupController : Controller
     {
-        [GridAction]
-        public ActionResult Groups_Select(GridState model)
+        [GridAction(EnableCustomBinding = true)]
+        public ActionResult Groups_Select(GridCommand command)
         {
             var groupManager = new GroupManager();
 
@@ -50,13 +50,13 @@ namespace BExIS.Modules.Sam.UI.Controllers
         // GET: Group
         public ActionResult Index()
         {
-            //var groupManager = new GroupManager();
+            var groupManager = new GroupManager();
             //for (int i = 0; i < 1000; i++)
             //{
             //    groupManager.Create(new Group() { Name = $"Gruppe{i}" });
             //}
 
-            return View();
+            return View(groupManager.Groups.ToGroupGridRowModel().ToList());
         }
     }
 }

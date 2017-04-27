@@ -25,9 +25,9 @@
       })
       .DataBinding(dataBinding => dataBinding
           .Ajax()
-          .OperationMode(GridOperationMode.Server)
           .Select("Groups_Select", "Group")
       )
+      .EnableCustomBinding(true)
       .Filterable()
       .Pageable(p =>
       {
