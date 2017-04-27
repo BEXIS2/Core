@@ -1,7 +1,26 @@
 ﻿using BExIS.Security.Entities.Subjects;
+using System;
+using System.Linq;
+using System.Linq.Expressions;
 
 namespace BExIS.Modules.Sam.UI.Models
 {
+    public static class GroupExtensions
+    {
+        public static IQueryable<GroupGridRowModel> ToGroupGridRowModel(this IQueryable<Group> source)
+        {
+            Expression<Func<Group, GroupGridRowModel>> conversion = g =>
+                new GroupGridRowModel()
+                {
+                    Description = g.Description,
+                    GroupName = g.Name,
+                    Id = g.Id
+                };
+
+            return source.Select(conversion);
+        }
+    }
+
     public class GroupGridRowModel
     {
         public string Description { get; set; }
