@@ -15,7 +15,7 @@
     }
 </style>
 
-@(Html.Telerik().Grid<GroupGridRowModel>()
+@(Html.Telerik().Grid(Model.Data)
       .Name("gridGroups")
       .Columns(columns =>
       {
@@ -29,8 +29,5 @@
       )
       .EnableCustomBinding(true)
       .Filterable()
-      .Pageable(p =>
-      {
-          p.Total(Model.Total);
-      })
+      .Pageable(settings => settings.Total(Model.Total))
       .Sortable())
