@@ -3,7 +3,7 @@
 
 @* Check a switch to see weather module installation is enabled. If not show a message *@
 @{
-    bool canInstallModules = false;
+    bool canInstallModules = true;
     if (canInstallModules)
     {
         using (Html.BeginForm("install", "modules", FormMethod.Post, new { enctype = "multipart/form-data" }))
