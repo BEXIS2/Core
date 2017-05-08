@@ -1,4 +1,5 @@
 ﻿using BExIS.Security.Entities.Objects;
+using System.Collections.Generic;
 using System.Linq;
 using Vaiona.Persistence.Api;
 
@@ -39,6 +40,11 @@ namespace BExIS.Security.Services.Objects
         public Feature FindById(long featureId)
         {
             return FeatureRepository.Get(featureId);
+        }
+
+        public List<Feature> FindRoots()
+        {
+            return FeatureRepository.Query(f => f.Parent == null).ToList();
         }
 
         public void Update(Feature feature)
