@@ -196,6 +196,14 @@
     <Content Include="Views\FeaturePermission\Index.cshtml" />
     <Content Include="Views\Group\Index.cshtml" />
     <Content Include="Views\User\Index.cshtml" />
+    <Content Include="Views\FeaturePermission\_Features.cshtml" />
+    <Content Include="Views\Group\Create.cshtml" />
+    <Content Include="Views\User\Delete.cshtml" />
+    <Content Include="Views\Group\Delete.cshtml" />
+    <Content Include="Views\User\Create.cshtml" />
+    <Content Include="Views\EntityPermission\_Entities.cshtml" />
+    <Content Include="Views\EntityPermission\_Subjects.cshtml" />
+    <Content Include="Views\FeaturePermission\_Subjects.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

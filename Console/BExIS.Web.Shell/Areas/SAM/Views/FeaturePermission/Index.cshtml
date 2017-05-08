@@ -1,7 +1,12 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "Index";
 }
 
 <h2>Index</h2>
 
+@section LeftPane
+{
+    @Html.Partial("_Features")
+}
+
+<div id="subjects"></div>

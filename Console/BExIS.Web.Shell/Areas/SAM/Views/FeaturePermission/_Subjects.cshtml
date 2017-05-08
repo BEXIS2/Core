@@ -1,0 +1,20 @@
+﻿@using Telerik.Web.Mvc.UI
+
+@(Html.Telerik().TabStrip()
+    .Name("tabStripSubjects")
+    .SelectedIndex(0)
+    .Items(tabs =>
+    {
+        tabs.Add()
+        .Text("Users")
+        .Content(@<text>
+            <h4>nutzer</h4>
+        </text>);
+
+        tabs.Add()
+        .Text("Groups")
+        .Content(@<text>
+            <h4>gruppen</h4>
+        </text>);
+    })
+)
