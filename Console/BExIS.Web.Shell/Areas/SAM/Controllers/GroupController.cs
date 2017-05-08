@@ -1,7 +1,5 @@
 ﻿using BExIS.Modules.Sam.UI.Models;
-using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
-using System;
 using System.Linq;
 using System.Linq.Dynamic;
 using System.Web.Mvc;
@@ -17,17 +15,21 @@ namespace BExIS.Modules.Sam.UI.Controllers
         {
             var groupManager = new GroupManager();
 
-            groupManager.Create(new Group() { Name = $"Group{DateTime.Now}" });
-
             // Source + Transformation - Data
             var groups = groupManager.Groups.ToGroupGridRowModel();
-            var total = groups.Count();
+
+            // Filtering
+            var filtered = groups.Where(ExpressionBuilder.Expression<GroupGridRowModel>(command.FilterDescriptors));
+            var total = filtered.Count();
+
+            // Sorting
+            var sorted = (IQueryable<GroupGridRowModel>)filtered.Sort(command.SortDescriptors);
 
             // Paging
-            groups = groups.Skip((command.Page - 1) * command.PageSize)
+            var paged = sorted.Skip((command.Page - 1) * command.PageSize)
                 .Take(command.PageSize);
 
-            return View(new GridModel<GroupGridRowModel> { Data = groups.ToList(), Total = total });
+            return View(new GridModel<GroupGridRowModel> { Data = paged.ToList(), Total = total });
         }
 
         public ActionResult Index()
