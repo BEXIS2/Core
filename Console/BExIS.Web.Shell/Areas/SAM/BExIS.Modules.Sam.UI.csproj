@@ -195,6 +195,7 @@
     <Content Include="Views\EntityPermission\Index.cshtml" />
     <Content Include="Views\FeaturePermission\Index.cshtml" />
     <Content Include="Views\Group\Index.cshtml" />
+    <Content Include="Views\User\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -204,7 +205,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\Shared\" />
-    <Folder Include="Views\User\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

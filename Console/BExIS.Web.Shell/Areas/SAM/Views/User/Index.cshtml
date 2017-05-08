@@ -2,19 +2,19 @@
 @using Telerik.Web.Mvc
 @using Telerik.Web.Mvc.UI
 
-@model GridModel<GroupGridRowModel>
+@model GridModel<UserGridRowModel>
 
 @(Html.Telerik().Grid(Model.Data)
       .Name("gridGroups")
       .Columns(columns =>
       {
-          columns.Bound(g => g.Id);
-          columns.Bound(g => g.GroupName);
-          columns.Bound(g => g.Description);
+          columns.Bound(u => u.Id);
+          columns.Bound(u => u.UserName);
+          columns.Bound(u => u.Email);
       })
       .DataBinding(dataBinding => dataBinding
           .Ajax()
-          .Select("Groups_Select", "Group")
+          .Select("Users_Select", "User")
       )
       .EnableCustomBinding(true)
       .Filterable()
