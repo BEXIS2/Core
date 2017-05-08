@@ -9,6 +9,38 @@ namespace BExIS.Modules.Sam.UI.Controllers
 {
     public class UserController : Controller
     {
+        public ActionResult Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult Create(CreateUserModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                RedirectToAction("Index");
+            }
+
+            return View();
+        }
+
+        public ActionResult Delete(long id)
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult Delete(DeleteUserModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                RedirectToAction("Index");
+            }
+
+            return View();
+        }
+
         public ActionResult Index()
         {
             return View(new GridModel<UserGridRowModel>());

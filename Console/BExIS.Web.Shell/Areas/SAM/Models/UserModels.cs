@@ -21,6 +21,14 @@ namespace BExIS.Modules.Sam.UI.Models
         }
     }
 
+    public class CreateUserModel
+    {
+    }
+
+    public class DeleteUserModel
+    {
+    }
+
     public class UserGridRowModel
     {
         public string Email { get; set; }

@@ -4,19 +4,65 @@
 
 @model GridModel<GroupGridRowModel>
 
+@section Information
+{
+    With this interface you are able to manage groups. New groups can be added with the "Create" button. Existing groups can be edited (properties, members, delete) using the "Edit" button.
+    <p>
+        <a href="/SAM/Help/Index/#_Toc451422047" class="bx-informationLink" title="go to help" target="_blank">More</a>
+    </p>
+}
+
+@Html.ActionLink("Create Group", "Create", "Group", null, new { @class = "bx-button function" })
+
 @(Html.Telerik().Grid(Model.Data)
-      .Name("gridGroups")
-      .Columns(columns =>
-      {
-          columns.Bound(g => g.Id);
-          columns.Bound(g => g.GroupName);
-          columns.Bound(g => g.Description);
-      })
-      .DataBinding(dataBinding => dataBinding
-          .Ajax()
-          .Select("Groups_Select", "Group")
-      )
-      .EnableCustomBinding(true)
-      .Filterable()
-      .Pageable(settings => settings.Total(Model.Total))
+    .Name("gridGroups")
+    .Columns(columns =>
+    {
+        columns.Bound(g => g.Id);
+        columns.Bound(g => g.GroupName);
+        columns.Bound(g => g.Description);
+        columns.Template(@<text>
+        <button type="button" class="bx bx-grid-function bx-edit" onclick="editGroup(@item.Id)"></button>
+        <button type="button" class="bx bx-grid-function bx-trash" onclick="deleteGroup(@item.Id)"></button>
+        </text>)
+          .ClientTemplate("<button type=\"button\" class=\"bx bx-grid-function bx-edit\" onclick=\"editGroup(<#= Id #>);\" value=\"<#= Id #>\"></button>" +
+                          "<button type=\"button\" class=\"bx bx-grid-function bx-trash\" onclick=\"deleteGroup(<#= Id #>);\" value=\"<#= Id #>\"></button>")
+          .Width(70);
+    })
+    .ClientEvents(events =>
+    {
+        events.OnDataBound("onDataBound");
+    })
+    .DataBinding(dataBinding => dataBinding
+        .Ajax()
+        .Select("Groups_Select", "Group")
+    )
+    .EnableCustomBinding(true)
+    .Filterable()
+    .Pageable(pageable =>
+    {
+        pageable.Total(Model.Total);
+        pageable.PageSize(10, new[] { 10, 20, 50, 100 });
+        pageable.Style(GridPagerStyles.NextPreviousAndNumeric | GridPagerStyles.PageSizeDropDown);
+        pageable.Position(GridPagerPosition.Both);
+    })
       .Sortable())
+
+<script type="text/javascript">
+    function createGroup() {
+
+    }
+
+    function editGroup(id) {
+
+    }
+
+    function deleteGroup(id) {
+
+    }
+
+    function onDataBound() {
+        addTooltips();
+        resetAllTelerikIconTitles();
+    }
+</script>

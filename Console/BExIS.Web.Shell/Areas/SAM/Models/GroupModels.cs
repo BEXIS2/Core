@@ -1,5 +1,6 @@
 ﻿using BExIS.Security.Entities.Subjects;
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -19,6 +20,18 @@ namespace BExIS.Modules.Sam.UI.Models
 
             return source.Select(conversion);
         }
+    }
+
+    public class CreateGroupModel
+    {
+        public string Description { get; set; }
+
+        [Required]
+        public string GroupName { get; set; }
+    }
+
+    public class DeleteGroupModel
+    {
     }
 
     public class GroupGridRowModel

@@ -1,4 +1,5 @@
 ﻿using BExIS.Modules.Sam.UI.Models;
+using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
 using System.Linq;
 using System.Linq.Dynamic;
@@ -10,6 +11,38 @@ namespace BExIS.Modules.Sam.UI.Controllers
 {
     public class GroupController : Controller
     {
+        public ActionResult Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult Create(CreateGroupModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                return RedirectToAction("Index");
+            }
+
+            return View();
+        }
+
+        public ActionResult Delete(long id)
+        {
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public ActionResult Delete(DeleteGroupModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                return RedirectToAction("Index");
+            }
+
+            return View();
+        }
+
         [GridAction(EnableCustomBinding = true)]
         public ActionResult Groups_Select(GridCommand command)
         {
@@ -34,6 +67,12 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
         public ActionResult Index()
         {
+            var groupManager = new GroupManager();
+            for (int i = 0; i < 100; i++)
+            {
+                groupManager.Create(new Group() { Name = $"Group {i}", Description = $"Description of Group {i}" });
+            }
+
             return View(new GridModel<GroupGridRowModel>());
         }
     }
