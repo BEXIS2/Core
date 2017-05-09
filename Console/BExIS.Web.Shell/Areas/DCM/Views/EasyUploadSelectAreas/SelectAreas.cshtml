@@ -1,0 +1,257 @@
+﻿@model BExIS.Web.Shell.Areas.DCM.Models.SelectAreasModel
+@using Telerik.Web.Mvc.UI;
+@using Telerik.Web.Mvc.Resources;
+@using BExIS.Web.Shell.Areas.DCM.Models;
+
+<script src="@Url.Content("~/Scripts/handsontable/handsontable.full.js")"></script>
+<link rel="stylesheet" media="screen" href="@Url.Content("~/Scripts/handsontable/handsontable.full.css")">
+
+
+<style>
+    .areaSelect {
+        padding: 5px 10px;
+    }
+
+    #setSelectedHeaderArea {
+        background: #660705 none repeat scroll 0 0 !important;
+    }
+
+    #setSelectDataArea {
+        background: #380566 none repeat scroll 0 0 !important;
+    }
+
+    .headerMarking {
+        background-color: rgba(40,3,2,0.5) !important;
+    }
+
+    .dataMarking {
+        background-color: rgba(22,2,40,0.5) !important;
+    }
+</style>
+
+
+<script>
+    var hot = null;
+    var currentButton = null;
+
+
+    $(document).ready(function () {
+
+        function resetRenderer(instance, td, row, col, prop, value, cellProperties) {
+            Handsontable.renderers.TextRenderer.apply(this, arguments);
+
+            cellProperties.editor = false;
+
+            if(!jQuery.isEmptyObject(currentButton) && currentButton == "reset") {
+                if($(td).hasClass("dataMarking")) {
+                    cellProperties.className = "";
+                }
+                if($(td).hasClass("headerMarking")) {
+                    cellProperties.className = "";
+                }
+            }
+
+            return td;
+        }
+
+
+        var container = document.getElementById('handsonExcelTable');
+        var hot = new Handsontable(container, {
+            data: @Html.Raw(Model.JsonTableData),
+            rowHeaders: true,
+            colHeaders: true,
+            contextMenu: false,
+            width: 800,
+            height: 400,
+            outsideClickDeselects: false,
+            /*autoRowSize: true,*/
+            cells: function(row, col, prop) {
+                var cellProperties = {};
+                cellProperties.renderer = resetRenderer;
+                return cellProperties;
+            }
+        });
+        hot.render();
+
+        var selectedHeaderArea = $('#HeaderSelection').val();
+        if(selectedHeaderArea.length > 0) {
+            hot.selectCell(JSON.parse(selectedHeaderArea));
+        }
+
+
+        $('#setSelectDataArea').click(function() {
+            currentButton = "data";
+            var selected = hot.getSelected();
+
+            if(!jQuery.isEmptyObject(selected)) {
+
+                // check if selection is from right bottom to left top and reverse it
+                if(selected[2] <= selected[0] && selected[3] <= selected[1]) {
+                    selected = reverseArea(selected);
+                }
+
+                // set the css class for all selected cells
+                for(i = selected[0]; i <= selected[2]; i++) {
+                    for(j = selected[1]; j <= selected[3]; j++) {
+                        var cell = hot.getCellMeta(i,j, true);
+                        cell.className = 'dataMarking';
+                    }
+                }
+
+                // render table again
+                hot.render();
+
+                // save selection area
+                $('#DataSelection').val(JSON.stringify(selected));
+                currentButton = null;
+
+                // push selection to the server
+                $.post('@Url.Action("SelectedAreaToBus", "EasyUploadSelectAreas", new RouteValueDictionary { { "area", "DCM" } })', { dataArea: JSON.stringify(selected) }, function (response) { });
+            }
+        });
+
+        $('#setSelectedHeaderArea').click(function() {
+            currentButton = "header";
+            var selected = hot.getSelected();
+            if(!jQuery.isEmptyObject(selected)) {
+
+                // check if selection is from right bottom to left top and reverse it
+                if(selected[2] <= selected[0] && selected[3] <= selected[1]) {
+                    selected = reverseArea(selected);
+                }
+
+                // set the css class for all selected cells
+                for(i = selected[0]; i <= selected[2]; i++) {
+                    for(j = selected[1]; j <= selected[3]; j++) {
+                        var cell = hot.getCellMeta(i,j, true);
+                        cell.className = 'headerMarking';
+
+                    }
+                }
+
+                // render table again
+                hot.render();
+
+                // save selection area
+                $('#HeaderSelection').val(JSON.stringify(selected));
+                currentButton = null;
+
+                // push selection to the server
+                $.post('@Url.Action("SelectedAreaToBus", "EasyUploadSelectAreas", new RouteValueDictionary { { "area", "DCM" } })', { headerArea: JSON.stringify(selected) }, function (response) { });
+            }
+        });
+
+        $('#setSelectReset').click(function() {
+            currentButton = "reset";
+
+            $('#HeaderSelection').val("");
+            $('#DataSelection').val("");
+
+            $.post('@Url.Action("SelectedAreaToBus", "EasyUploadSelectAreas", new RouteValueDictionary { { "area", "DCM" } })', { dataArea: "", headerArea: "" }, function (response) {});
+
+            hot.render();
+
+            currentButton = "null";
+        });
+
+        if($('#HeaderSelection').val().length > 0) {
+            var array =  $.parseJSON($('#HeaderSelection').val());
+
+            for(i = array[0]; i <= array[2]; i++) {
+                for(j = array[1]; j <= array[3]; j++) {
+                    var cell = hot.getCellMeta(i,j, true);
+                    cell.className = 'headerMarking';
+
+                }
+            }
+            hot.render();
+        }
+
+        if($('#DataSelection').val().length > 0) {
+            var array =  $.parseJSON($('#DataSelection').val());
+
+            for(i = array[0]; i <= array[2]; i++) {
+                for(j = array[1]; j <= array[3]; j++) {
+                    var cell = hot.getCellMeta(i,j, true);
+                    cell.className = 'dataMarking';
+
+                }
+            }
+            hot.render();
+        }
+
+    });
+
+    function reverseArea(selected) {
+        var startCol = selected[3];
+        var startRow = selected[2];
+        var endCol = selected[1];
+        var endRow = selected[0]
+
+        return [startRow, startCol, endRow, endCol];
+    }
+</script>
+
+<div id="Step3" class="uploadWizardStep">
+
+    <div class="uploadWizardStep_Main">
+        <div class="uploadWizardStep_Header stepper">
+            <h3>@Model.StepInfo.title</h3>
+        </div>
+
+        <div class="uploadWizardStep_Description stepper">
+            <p>Please mark your header and data area</p>
+        </div>
+
+        <div class="uploadWizardStep_Content stepper">
+            <input type="button" class="t-button action areaSelect" id="setSelectedHeaderArea" value="Header" />
+            <input type="hidden" name="HeaderSelection" id="HeaderSelection" value="@Html.Raw(Model.HeaderArea)" />
+
+            <input type="button" class="t-button action areaSelect" id="setSelectDataArea" value="Data" />
+            <input type="hidden" name="DataSelection" id="DataSelection" value="@Html.Raw(Model.DataArea)" />
+
+            <input type="button" class="t-button action areaSelect" id="setSelectReset" value="Reset" />
+            <div id="handsonExcelTable"></div>
+        </div>
+
+        <div class="uploadWizardStep_Error stepper">
+            @if (Model != null)
+            {
+                if (Model.ErrorList != null)
+                {
+                    if (Model.ErrorList.Count == 0)
+                    {
+
+
+                    }
+                    else
+                    {
+                        <ul>
+                            @foreach (BExIS.IO.Transform.Validation.Exceptions.Error s in @Model.ErrorList)
+                            {
+                                <li>@s.ToString()</li>
+                            }
+                        </ul>
+
+                    }
+                }
+
+            }
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+
+    $("#setSelectedHeaderArea").click(function () {
+        if ($(this).val() != null && $(this).val() != '') {
+            SelectedSheetFormat = $(this).val();
+
+
+        }
+    })
+
+
+</script>

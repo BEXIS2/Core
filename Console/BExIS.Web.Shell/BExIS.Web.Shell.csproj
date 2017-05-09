@@ -80,6 +80,10 @@
     <Reference Include="DocumentFormat.OpenXml">
       <HintPath>..\..\Libraries\DocumentFormat.OpenXml.dll</HintPath>
     </Reference>
+    <Reference Include="EPPlus, Version=4.1.0.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\EPPlus.4.1.0\lib\net40\EPPlus.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="FluentBootstrap, Version=3.3.5.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\FluentBootstrap.3.3.5.1\lib\net40\FluentBootstrap.dll</HintPath>
       <Private>True</Private>
@@ -357,6 +361,13 @@
     <Compile Include="Areas\BAM\Models\PartyModel.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Areas\DCM\Controllers\CreateDatasetController.cs" />
+    <Compile Include="Areas\DCM\Controllers\EasyUploadController.cs" />
+    <Compile Include="Areas\DCM\Controllers\EasyUploadSelectAFileController.cs" />
+    <Compile Include="Areas\DCM\Controllers\EasyUploadSelectAreasController.cs" />
+    <Compile Include="Areas\DCM\Controllers\EasyUploadSheetDataStructureController.cs" />
+    <Compile Include="Areas\DCM\Controllers\EasyUploadSheetSelectMetaDataController.cs" />
+    <Compile Include="Areas\DCM\Controllers\EasyUploadSummaryController.cs" />
+    <Compile Include="Areas\DCM\Controllers\EasyUploadVerificationController.cs" />
     <Compile Include="Areas\DCM\Controllers\FormController.cs" />
     <Compile Include="Areas\DCM\Controllers\HelpController.cs" />
     <Compile Include="Areas\DCM\Controllers\ImportMetadataStructureController.cs" />
@@ -375,6 +386,10 @@
     <Compile Include="Areas\DCM\Controllers\SubmitValidationController.cs" />
     <Compile Include="Areas\DCM\DCMAreaRegistration.cs" />
     <Compile Include="Areas\DCM\Helpers\DCMSeedDataGenerator.cs" />
+    <Compile Include="Areas\DCM\Helpers\JsonTableGenerator.cs" />
+    <Compile Include="Areas\DCM\Helpers\EasyUploadFileReaderInfo.cs" />
+    <Compile Include="Areas\DCM\Helpers\SheetArea.cs" />
+    <Compile Include="Areas\DCM\Helpers\SheetFormat.cs" />
     <Compile Include="Areas\DCM\Helpers\UploadUtility.cs" />
     <Compile Include="Areas\DCM\Models\AbstractStepModel.cs" />
     <Compile Include="Areas\DCM\Models\ChooseDatasetViewModel.cs" />
@@ -382,6 +397,7 @@
     <Compile Include="Areas\DCM\Models\CreateDataset\MetadataEditorModel.cs" />
     <Compile Include="Areas\DCM\Models\CreateDataset\SetupModel.cs" />
     <Compile Include="Areas\DCM\Models\CreateDataset\StepModelHelper.cs" />
+    <Compile Include="Areas\DCM\Models\EasyUploadSummaryModel.cs" />
     <Compile Include="Areas\DCM\Models\FileInfoModel.cs" />
     <Compile Include="Areas\DCM\Models\FinishUploadModel.cs" />
     <Compile Include="Areas\DCM\Models\GetFileInformationModel.cs" />
@@ -397,7 +413,11 @@
     <Compile Include="Areas\DCM\Models\MetadataStructureManagerModel.cs" />
     <Compile Include="Areas\DCM\Models\PrimaryKeyViewModel.cs" />
     <Compile Include="Areas\DCM\Models\Push\SendBigFilesToServerModel.cs" />
+    <Compile Include="Areas\DCM\Models\SelectAreasModel.cs" />
     <Compile Include="Areas\DCM\Models\SelectFileViewModel.cs" />
+    <Compile Include="Areas\DCM\Models\SelectMetaDataModel.cs" />
+    <Compile Include="Areas\DCM\Models\SelectSheetFormatModel.cs" />
+    <Compile Include="Areas\DCM\Models\SelectVerificationModel.cs" />
     <Compile Include="Areas\DCM\Models\ShowHelpModel.cs" />
     <Compile Include="Areas\DCM\Models\SummaryModel.cs" />
     <Compile Include="Areas\DCM\Models\TestModel.cs" />
@@ -469,6 +489,9 @@
     <DesignData Include="Db\Settings\PostgreSQL82Dialect.hibernate.cfg.xml">
       <SubType>Designer</SubType>
     </DesignData>
+    <Content Include="Areas\DCM\Images\DCM_SelectFileStructure\left-right.png" />
+    <Content Include="Areas\DCM\Images\DCM_SelectFileStructure\matrix.png" />
+    <Content Include="Areas\DCM\Images\DCM_SelectFileStructure\top-down.png" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img1.png" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img10.png" />
     <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img11.png" />
@@ -541,6 +564,10 @@
     <Content Include="Areas\RPM\Stylesheets\DataStructureSearch.css" />
     <Content Include="Areas\RPM\Stylesheets\RPM.css" />
     <Content Include="Areas\RPM\Views\Help\Informations.xml" />
+    <Content Include="Content\handsontable\handsontable.css" />
+    <Content Include="Content\handsontable\handsontable.full.css" />
+    <Content Include="Content\handsontable\handsontable.full.min.css" />
+    <Content Include="Content\handsontable\handsontable.min.css" />
     <Content Include="Content\Images\dfg_logo.gif" />
     <Content Include="Content\bootstrap-combobox.css" />
     <Content Include="Content\bootstrap-theme.css" />
@@ -613,6 +640,15 @@
     <Content Include="Areas\RPM\Views\DataStructureEdit\_dataTypeDropdown.cshtml" />
     <Content Include="Areas\DCM\Views\ManageMetadataStructure\_editMetadataStructureView.cshtml" />
     <Content Include="Areas\DDM\Views\Data\_fileSizeView.cshtml" />
+    <Content Include="Areas\DCM\Views\EasyUpload\UploadWizard.cshtml" />
+    <Content Include="Areas\DCM\Views\EasyUpload\_uploadWizardNav.cshtml" />
+    <Content Include="Areas\DCM\Views\EasyUpload\_taskListView.cshtml" />
+    <Content Include="Areas\DCM\Views\EasyUploadSelectAFile\SelectAFile.cshtml" />
+    <Content Include="Areas\DCM\Views\EasyUploadSheetSelectMetaData\SheetSelectMetaData.cshtml" />
+    <Content Include="Areas\DCM\Views\EasyUploadSheetDataStructure\SheetDataStructure.cshtml" />
+    <Content Include="Areas\DCM\Views\EasyUploadSelectAreas\SelectAreas.cshtml" />
+    <Content Include="Areas\DCM\Views\EasyUploadVerification\Verification.cshtml" />
+    <Content Include="Areas\DCM\Views\EasyUploadSummary\EasyUploadSummary.cshtml" />
     <None Include="Properties\PublishProfiles\BEXIS 2.10.pubxml" />
     <None Include="Properties\PublishProfiles\bexis2 Release2.10.pubxml" />
     <None Include="Properties\PublishProfiles\BEXIS2.pubxml" />
@@ -631,6 +667,10 @@
     <Content Include="Scripts\DIM\bexis.dim.mapping.js" />
     <Content Include="Scripts\DIM\isotope.pkgd.min.js" />
     <Content Include="Scripts\DIM\jsPlumb-2.2.8-min.js" />
+    <Content Include="Scripts\handsontable\handsontable.full.js" />
+    <Content Include="Scripts\handsontable\handsontable.full.min.js" />
+    <Content Include="Scripts\handsontable\handsontable.js" />
+    <Content Include="Scripts\handsontable\handsontable.min.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
@@ -973,6 +1013,7 @@
     <Content Include="Views\Shared\EditorTemplates\TreeViewItem.cshtml" />
     <Content Include="Themes\Default\Partials\_Menu.cshtml" />
     <Content Include="Views\Terms\Index.cshtml" />
+    <Content Include="Scripts\README.md" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

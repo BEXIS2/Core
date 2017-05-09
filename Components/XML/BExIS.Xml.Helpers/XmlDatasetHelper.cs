@@ -520,7 +520,33 @@ namespace BExIS.Xml.Services
 
         #endregion
 
- 
+        #region set
+
+        /// <summary>
+        /// Sets the value of the node of the XmlDocument xmlDoc specified by the parameter "name" to the given value
+        /// </summary>
+        /// <param name="datasetVersion"></param>
+        /// <param name="xmlDoc"></param>
+        /// <param name="name"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static XmlDocument SetInformation(DatasetVersion datasetVersion, XmlDocument xmlDoc, NameAttributeValues name, string value)
+        {
+            // get MetadataStructure 
+            if (datasetVersion != null && datasetVersion.Dataset != null && datasetVersion.Dataset.MetadataStructure != null && datasetVersion.Metadata != null)
+            {
+                MetadataStructure metadataStructure = datasetVersion.Dataset.MetadataStructure;
+                XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)datasetVersion.Dataset.MetadataStructure.Extra);
+                XElement temp = XmlUtility.GetXElementByAttribute(nodeNames.nodeRef.ToString(), "name", name.ToString(), xDoc);
+
+                string xpath = temp.Attribute("value").Value.ToString();
+                xmlDoc.SelectSingleNode(xpath).InnerText = value;
+                return xmlDoc;
+            }
+            return null;
+        }
+
+        #endregion
     }
 
     public enum nodeNames

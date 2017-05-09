@@ -38,6 +38,8 @@
             @*menubar*@
             <ul class="nav navbar-nav">
                 @Html.MenuBar()
+                <!--For testing-->
+                @Html.ActionLink("Upload", "Index", "Submit", new { area = "DCM" }, null)
             </ul>
 
             <ul class="nav navbar-nav navbar-right">
