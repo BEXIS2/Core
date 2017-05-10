@@ -384,7 +384,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
 
             #region excel reader
-            /*
+            
             if (TaskManager.Bus[EasyUploadTaskManager.EXTENTION].ToString().Equals(".xls") ||
                 TaskManager.Bus[EasyUploadTaskManager.EXTENTION].ToString().Equals(".xlsx"))
             {
@@ -456,7 +456,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     mod.Add(vi);
                 }
                 reader.modifySubmitedVariableIdentifiers(mod);
-                rows = reader.ReadFile(Stream, TaskManager.Bus[EasyUploadTaskManager.FILENAME].ToString(), fri, sds, (int)datasetId, true);
+                rows = reader.ReadFile(Stream, TaskManager.Bus[EasyUploadTaskManager.FILENAME].ToString(), fri, sds, (int)datasetId);
 
                 List<Error> ValidationErrors = ValidateRows(rows);
                 if (ValidationErrors.Count == 0)
@@ -470,7 +470,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                 Stream.Close();
             }
-            */
+            
             #endregion
 
 
@@ -510,6 +510,58 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             return (str);
         }
 
+        /*
+         * Uses a DataTypeCheck to determin, wether the selected datatypes are suitable
+         * */
+        private List<Error> ValidateRows(DataTuple[] rows)
+        {
+            List<Error> ErrorList = new List<Error>();
+            List<Tuple<int, string, UnitInfo>> MappedHeaders = (List<Tuple<int, string, UnitInfo>>)TaskManager.Bus[TaskManager.VERIFICATION_MAPPEDHEADERUNITS];
+            Tuple<int, string, UnitInfo>[] MappedHeadersArray = MappedHeaders.ToArray();
+            DataTypeManager dtm = new DataTypeManager();
+
+
+            foreach (DataTuple dt in rows)
+            {
+                long id = dt.Id;
+                VariableValue[] variableValues = dt.VariableValues.ToArray();
+                for (int i = 0; i < variableValues.Length; i++)
+                {
+                    VariableValue vv = variableValues[i];
+                    Tuple<int, string, UnitInfo> mappedHeader = MappedHeaders.Where(t => t.Item1 == i).FirstOrDefault();
+
+                    DataType datatype = dtm.Repo.Get(mappedHeader.Item3.SelectedDataTypeId);
+                    string datatypeName = datatype.SystemType;
+
+                    DataTypeCheck dtc;
+                    // TODO: make it nicer!
+                    double DummyValue = 0;
+                    if (Double.TryParse(vv.Value.ToString(), out DummyValue))
+                    {
+                        if (vv.Value.ToString().Contains("."))
+                        {
+                            dtc = new DataTypeCheck(vv.Value.ToString(), datatypeName, DecimalCharacter.point);
+                        }
+                        else
+                        {
+                            dtc = new DataTypeCheck(vv.Value.ToString(), datatypeName, DecimalCharacter.comma);
+                        }
+                    }
+                    else
+                    {
+                        dtc = new DataTypeCheck(vv.Value.ToString(), datatypeName, DecimalCharacter.point);
+                    }
+
+                    var ValidationResult = dtc.Execute(vv.Value.ToString(), i);
+                    if (ValidationResult is Error)
+                    {
+                        ErrorList.Add((Error)ValidationResult);
+                    }
+                }
+
+            }
+            return ErrorList;
+        }
 
 
         #endregion
