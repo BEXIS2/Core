@@ -78,6 +78,39 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             return View((EasyUploadTaskManager)Session["TaskManager"]);
         }
 
+        [HttpGet]
+        public ActionResult FinishUpload()
+        {
+            TaskManager = (EasyUploadTaskManager)Session["TaskManager"];
+            //TaskManager.SetCurrent(null);
+
+
+            FinishUploadModel finishModel = new FinishUploadModel();
+            if (TaskManager != null)
+            {
+                finishModel.DatasetTitle = TaskManager.Bus[EasyUploadTaskManager.DATASET_TITLE].ToString();
+                finishModel.Filename = TaskManager.Bus[EasyUploadTaskManager.FILENAME].ToString();
+            }
+
+            Session["TaskManager"] = null;
+            try
+            {
+                string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "SubmitTaskInfo.xml");
+                XmlDocument xmlTaskInfo = new XmlDocument();
+                xmlTaskInfo.Load(path);
+
+
+                Session["TaskManager"] = EasyUploadTaskManager.Bind(xmlTaskInfo);
+            }
+            catch (Exception e)
+            {
+                ModelState.AddModelError(String.Empty, e.Message);
+            }
+
+
+            return ShowData((long)TaskManager.Bus[EasyUploadTaskManager.DATASET_ID]);
+        }
+
         #region UploadNavigation
 
         [HttpPost]
