@@ -395,7 +395,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 int counter = 0;
 
                 ExcelReader reader = new ExcelReader();
-                
+
                 dm.CheckOutDatasetIfNot(ds.Id, GetUsernameOrDefault()); // there are cases, the dataset does not get checked out!!
                 if (!dm.IsDatasetCheckedOutFor(ds.Id, GetUsernameOrDefault()))
                 {
