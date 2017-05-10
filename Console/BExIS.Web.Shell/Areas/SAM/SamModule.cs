@@ -9,7 +9,7 @@ namespace BExIS.Modules.Sam.UI
 {
     public class SamModule : ModuleBase
     {
-        public SamModule(): base("SAM")
+        public SamModule(): base("sam")
         {
         }
 
