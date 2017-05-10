@@ -66,7 +66,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             EasyUploadSummaryModel model = new EasyUploadSummaryModel();
             model.StepInfo = TaskManager.Current();
-            
+
             if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.FILENAME))
             {
                 model.DatasetTitle = Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.FILENAME]);
@@ -118,7 +118,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     model.NumberOfData = (areaDataValues[2]) - (areaDataValues[0]) + 1;
                 }
             }
-            
+
 
             return PartialView("EasyUploadSummary", model);
         }
@@ -178,7 +178,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         }
 
         //[MeasurePerformance]
-        //temporary solution: norman :FinishUpload2
+        //temporary solution: norman
         //For original solution, look into Aquadiva Code
         public List<Error> FinishUpload(EasyUploadTaskManager taskManager)
         {
@@ -194,7 +194,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             DataTypeManager dtm = new DataTypeManager();
             DataContainerManager dam = new DataContainerManager();
 
-            DataTuple[] rows;
+            List<DataTuple> rows;
 
             string timestamp = DateTime.Now.ToString("r");
             string title = Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.FILENAME]);
@@ -384,7 +384,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
 
             #region excel reader
-            
+
             if (TaskManager.Bus[EasyUploadTaskManager.EXTENTION].ToString().Equals(".xls") ||
                 TaskManager.Bus[EasyUploadTaskManager.EXTENTION].ToString().Equals(".xlsx"))
             {
@@ -394,7 +394,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                 int counter = 0;
 
-                ExcelReader reader = new ExcelReader();
+                EasyUploadExcelReader reader = new EasyUploadExcelReader();
 
                 dm.CheckOutDatasetIfNot(ds.Id, GetUsernameOrDefault()); // there are cases, the dataset does not get checked out!!
                 if (!dm.IsDatasetCheckedOutFor(ds.Id, GetUsernameOrDefault()))
@@ -403,7 +403,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 }
 
                 workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
-                
+
                 counter++;
                 TaskManager.Bus[EasyUploadTaskManager.CURRENTPACKAGE] = counter;
 
@@ -455,10 +455,11 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     vi.name = header.Item2;
                     mod.Add(vi);
                 }
-                reader.modifySubmitedVariableIdentifiers(mod);
+
+                reader.setSubmitedVariableIdentifiers(mod);
                 rows = reader.ReadFile(Stream, TaskManager.Bus[EasyUploadTaskManager.FILENAME].ToString(), fri, sds, (int)datasetId);
 
-                List<Error> ValidationErrors = ValidateRows(rows);
+                List<Error> ValidationErrors = ValidateRows(rows.ToArray());
                 if (ValidationErrors.Count == 0)
                 {
                     dm.EditDatasetVersion(workingCopy, rows, null, null);
@@ -470,14 +471,14 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                 Stream.Close();
             }
-            
+
             #endregion
 
 
             dm.CheckInDataset(ds.Id, "upload data from upload wizard", GetUsernameOrDefault());
 
             TaskManager.AddToBus(EasyUploadTaskManager.DATASET_ID, ds.Id);
-            
+
             return temp;
         }
 
@@ -516,7 +517,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         private List<Error> ValidateRows(DataTuple[] rows)
         {
             List<Error> ErrorList = new List<Error>();
-            List<Tuple<int, string, UnitInfo>> MappedHeaders = (List<Tuple<int, string, UnitInfo>>)TaskManager.Bus[TaskManager.VERIFICATION_MAPPEDHEADERUNITS];
+            List<Tuple<int, string, UnitInfo>> MappedHeaders = (List<Tuple<int, string, UnitInfo>>)TaskManager.Bus[EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS];
             Tuple<int, string, UnitInfo>[] MappedHeadersArray = MappedHeaders.ToArray();
             DataTypeManager dtm = new DataTypeManager();
 
