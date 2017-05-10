@@ -52,7 +52,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 {
                     row.Description = manifest.Description;
                     row.Version = manifest.Version;
-                    row.Loaded = ModuleManager.IsModuleLoaded(row.Id);
+                    row.Loaded = ModuleManager.IsLoaded(row.Id);
                 }
 
                 modules.Add(row);
@@ -125,7 +125,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
             }
             catch (Exception ex)
             {
-                this.ModelState.AddModelError("", ex.Message);
+                this.ModelState.AddModelError(string.Empty, ex.Message);
             }
             finally // in any case clean up the installing folder and whatever else...
             {
@@ -137,7 +137,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
             }
             // redirect back to the index action to show the form once again and the list of installed modules
             // it also carries model errors; they should be shown on top of the submit area.
-            return RedirectToAction("Index");
+            return View("Index");
         }
 
         public ActionResult Uninstall(string id)
