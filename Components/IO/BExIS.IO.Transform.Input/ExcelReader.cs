@@ -922,7 +922,7 @@ namespace BExIS.IO.Transform.Input
         /// <param name="startRow">start row</param>       
         /// <param name="endRow">end row</param> 
         /// <returns>List of variableIdentifier</returns>
-        private List<VariableIdentifier> GetSubmitedVariableIdentifier(WorksheetPart worksheetPart, int startRow, int endRow)
+        protected List<VariableIdentifier> GetSubmitedVariableIdentifier(WorksheetPart worksheetPart, int startRow, int endRow)
         {
             //NEW OPENXMLREADER
             if (this.SubmitedVariableIdentifiers == null || this.SubmitedVariableIdentifiers.Count == 0)
