@@ -15,16 +15,17 @@ namespace BExIS.Security.Entities.Subjects
 
         public virtual int AccessFailedCount { get; set; }
         public virtual string Email { get; set; }
-        public virtual bool EmailConfirmed { get; set; }
         public virtual ICollection<Group> Groups { get; set; }
+        public virtual bool IsAdministrator { get; set; }
+        public virtual bool IsEmailConfirmed { get; set; }
+        public virtual bool IsPhoneNumberConfirmed { get; set; }
+        public virtual bool IsTwoFactorEnabled { get; set; }
         public virtual bool LockoutEnabled { get; set; }
         public virtual DateTime? LockoutEndDate { get; set; }
         public virtual ICollection<Login> Logins { get; set; }
         public virtual string Password { get; set; }
         public virtual string PhoneNumber { get; set; }
-        public virtual bool PhoneNumberConfirmed { get; set; }
         public virtual string SecurityStamp { get; set; }
-        public virtual bool TwoFactorEnabled { get; set; }
 
         public virtual string UserName
         {
