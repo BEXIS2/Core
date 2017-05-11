@@ -2,7 +2,8 @@
   <union-subclass xmlns="urn:nhibernate-mapping-2.2" name="User" table="Users" extends="Subject" dynamic-update="true">
     <property name="AccessFailedCount" type="Int32" />
     <property name="Email" type="String" />
-    <property name="EmailConfirmed" type="yes_no" />
+    <property name="IsEmailConfirmed" type="yes_no" />
+    <property name="IsAdministrator" type="yes_no" />
     <set name="Groups" table="Users_Groups" cascade="all" lazy="true">
       <key column="UserRef" />
       <many-to-many column="GroupRef" class="BExIS.Security.Entities.Subjects.Group, BExIS.Security.Entities" />
@@ -15,8 +16,8 @@
     </set>
     <property name="Password" type="string" />
     <property name="PhoneNumber" type="String" />
-    <property name="PhoneNumberConfirmed" type="yes_no" />
+    <property name="IsPhoneNumberConfirmed" type="yes_no" />
     <property name="SecurityStamp" type="string" />
-    <property name="TwoFactorEnabled" type="yes_no" />
+    <property name="IsTwoFactorEnabled" type="yes_no" />
   </union-subclass>
 </hibernate-mapping>
