@@ -29,10 +29,10 @@ namespace BExIS.IO.Transform.Input
     /// <remarks></remarks>     
     public class ExcelReader:DataReader
     {
-        protected SharedStringItem[] _sharedStrings;
-        protected Stylesheet _stylesheet = new Stylesheet();
+        private SharedStringItem[] _sharedStrings;
+        private Stylesheet _stylesheet = new Stylesheet();
         SpreadsheetDocument spreadsheetDocument;
-        protected Worksheet worksheet;
+        private Worksheet worksheet;
         protected DefinedNameVal _areaOfData = new DefinedNameVal();
         protected DefinedNameVal _areaOfVariables = new DefinedNameVal();
 
