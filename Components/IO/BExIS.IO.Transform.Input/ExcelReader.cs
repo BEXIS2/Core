@@ -33,8 +33,8 @@ namespace BExIS.IO.Transform.Input
         private Stylesheet _stylesheet = new Stylesheet();
         SpreadsheetDocument spreadsheetDocument;
         private Worksheet worksheet;
-        protected DefinedNameVal _areaOfData = new DefinedNameVal();
-        protected DefinedNameVal _areaOfVariables = new DefinedNameVal();
+        private DefinedNameVal _areaOfData = new DefinedNameVal();
+        private DefinedNameVal _areaOfVariables = new DefinedNameVal();
 
         // read data 
         int startColumn = 0;

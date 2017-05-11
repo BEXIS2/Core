@@ -3,17 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using BExIS.IO.Transform.Input;
-using BExIS.IO;
 
 namespace BExIS.Web.Shell.Areas.DCM.Helpers
 {
     public class EasyUploadFileReaderInfo : FileReaderInfo
     {
-        public EasyUploadFileReaderInfo()
-        {
-            this.Decimal = DecimalCharacter.point;
-        }
-
         public int VariablesStartRow { get; set; }
 
         public int VariablesEndRow { get; set; }

@@ -447,7 +447,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 fri.Offset = areaDataValues[1];
                 fri.Orientation = orientation;
 
-                //Experimental
+                //Experimental - had to alter the Excel-Reader for that (additional optional parameter and added the function modifySubmitedVariableIdentifier)
                 List<VariableIdentifier> mod = new List<VariableIdentifier>();
                 foreach (Tuple<int, string, UnitInfo> header in MappedHeaders)
                 {
@@ -456,7 +456,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     mod.Add(vi);
                 }
 
-                reader.setSubmittedVariableIdentifiers(mod);
+                reader.setSubmitedVariableIdentifiers(mod);
                 rows = reader.ReadFile(Stream, TaskManager.Bus[EasyUploadTaskManager.FILENAME].ToString(), fri, sds, (int)datasetId);
 
                 List<Error> ValidationErrors = ValidateRows(rows.ToArray());
