@@ -45,12 +45,12 @@ namespace BExIS.Security.Services.Subjects
             }
         }
 
-        public Group FindByIdAsync(long groupId)
+        public Group FindById(long groupId)
         {
             return GroupRepository.Get(groupId);
         }
 
-        public Group FindByNameAsync(string groupName)
+        public Group FindByName(string groupName)
         {
             return GroupRepository.Query(m => m.Name.ToLowerInvariant() == groupName.ToLowerInvariant()).FirstOrDefault();
         }

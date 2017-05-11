@@ -42,6 +42,11 @@ namespace BExIS.Security.Services.Objects
             return FeatureRepository.Get(featureId);
         }
 
+        public Feature FindByName(string groupName)
+        {
+            return FeatureRepository.Query(m => m.Name.ToLowerInvariant() == groupName.ToLowerInvariant()).FirstOrDefault();
+        }
+
         public List<Feature> FindRoots()
         {
             return FeatureRepository.Query(f => f.Parent == null).ToList();

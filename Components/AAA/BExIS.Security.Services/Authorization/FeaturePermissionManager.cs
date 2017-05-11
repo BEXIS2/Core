@@ -1,4 +1,6 @@
 ﻿using BExIS.Security.Entities.Authorization;
+using BExIS.Security.Entities.Objects;
+using BExIS.Security.Entities.Subjects;
 using System.Linq;
 using Vaiona.Persistence.Api;
 
@@ -34,6 +36,11 @@ namespace BExIS.Security.Services.Authorization
                 featurePermissionRepository.Delete(featurePermission);
                 uow.Commit();
             }
+        }
+
+        public FeaturePermission Find(Feature feature, Subject subject)
+        {
+            return FeaturePermissionRepository.Query(f => f.Feature.Id == feature.Id && f.Subject.Id == subject.Id).FirstOrDefault();
         }
 
         public void Update(FeaturePermission featurePermission)

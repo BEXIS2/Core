@@ -117,7 +117,7 @@ namespace BExIS.Security.Services.Subjects
 
         public Task<bool> GetEmailConfirmedAsync(User user)
         {
-            return Task.FromResult(user.EmailConfirmed);
+            return Task.FromResult(user.IsEmailConfirmed);
         }
 
         public Task<bool> GetLockoutEnabledAsync(User user)
@@ -163,7 +163,7 @@ namespace BExIS.Security.Services.Subjects
 
         public Task<bool> GetTwoFactorEnabledAsync(User user)
         {
-            return Task.FromResult(user.TwoFactorEnabled);
+            return Task.FromResult(user.IsTwoFactorEnabled);
         }
 
         public Task<bool> HasPasswordAsync(User user)
@@ -224,7 +224,7 @@ namespace BExIS.Security.Services.Subjects
 
         public Task SetEmailConfirmedAsync(User user, bool confirmed)
         {
-            user.EmailConfirmed = confirmed;
+            user.IsEmailConfirmed = confirmed;
             return Task.FromResult(0);
         }
 
@@ -264,7 +264,7 @@ namespace BExIS.Security.Services.Subjects
 
         public Task SetTwoFactorEnabledAsync(User user, bool enabled)
         {
-            user.TwoFactorEnabled = enabled;
+            user.IsTwoFactorEnabled = enabled;
             return Task.FromResult(0);
         }
 
