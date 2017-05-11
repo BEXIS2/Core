@@ -14,6 +14,7 @@ namespace BExIS.Modules.Sam.UI.Models
                 {
                     Email = u.Email,
                     Id = u.Id,
+                    IsAdministrator = u.IsAdministrator,
                     UserName = u.UserName
                 };
 
@@ -23,16 +24,23 @@ namespace BExIS.Modules.Sam.UI.Models
 
     public class CreateUserModel
     {
+        public string Email { get; set; }
+        public bool IsAdministrator { get; set; }
+        public string UserName { get; set; }
     }
 
     public class DeleteUserModel
     {
+        public string Email { get; set; }
+        public bool IsAdministrator { get; set; }
+        public string UserName { get; set; }
     }
 
     public class UserGridRowModel
     {
         public string Email { get; set; }
         public long Id { get; set; }
+        public bool IsAdministrator { get; set; }
         public string UserName { get; set; }
 
         public static UserGridRowModel Convert(User user)
@@ -41,6 +49,7 @@ namespace BExIS.Modules.Sam.UI.Models
             {
                 Email = user.Email,
                 Id = user.Id,
+                IsAdministrator = user.IsAdministrator,
                 UserName = user.UserName
             };
         }

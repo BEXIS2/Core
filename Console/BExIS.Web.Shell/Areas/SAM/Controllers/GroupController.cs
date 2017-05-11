@@ -21,6 +21,10 @@ namespace BExIS.Modules.Sam.UI.Controllers
         {
             if (ModelState.IsValid)
             {
+                var groupManager = new GroupManager();
+
+                groupManager.Create(new Group() { Name = model.GroupName, Description = model.Description, GroupType = (GroupType)model.GroupType });
+
                 return RedirectToAction("Index");
             }
 
@@ -70,10 +74,10 @@ namespace BExIS.Modules.Sam.UI.Controllers
             var groupManager = new GroupManager();
             for (int i = 0; i < 100; i++)
             {
-                groupManager.Create(new Group() { Name = $"Group {i}", Description = $"Description of Group {i}" });
+                groupManager.Create(new Group() { Name = $"Group {i}", Description = $"Description of Group {i}", GroupType = GroupType.Private });
             }
 
-            return View(new GridModel<GroupGridRowModel>());
+            return View();
         }
     }
 }

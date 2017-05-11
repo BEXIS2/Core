@@ -52,9 +52,14 @@
       <HintPath>..\..\..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.3\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="NHibernate, Version=4.0.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Bin\NHibernate.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.Entity" />
     <Reference Include="System.Linq.Dynamic, Version=1.0.6132.35681, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\System.Linq.Dynamic.1.0.7\lib\net40\System.Linq.Dynamic.dll</HintPath>
       <Private>True</Private>
@@ -189,9 +194,6 @@
     <Content Include="Views\Tenants\Index.cshtml" />
     <Content Include="Views\Tenants\_Create.cshtml" />
     <Content Include="Views\Tenants\_Edit.cshtml" />
-    <Content Include="Web.config">
-      <SubType>Designer</SubType>
-    </Content>
     <Content Include="Views\EntityPermission\Index.cshtml" />
     <Content Include="Views\FeaturePermission\Index.cshtml" />
     <Content Include="Views\Group\Index.cshtml" />
@@ -204,6 +206,8 @@
     <Content Include="Views\EntityPermission\_Entities.cshtml" />
     <Content Include="Views\EntityPermission\_Subjects.cshtml" />
     <Content Include="Views\FeaturePermission\_Subjects.cshtml" />
+    <Content Include="Views\Group\Update.cshtml" />
+    <Content Include="Web.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

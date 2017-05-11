@@ -168,6 +168,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Npgsql.3.0.7\lib\net45\Npgsql.dll</HintPath>
     </Reference>
+    <Reference Include="Oakenshield.Providers.Ldap">
+      <HintPath>..\..\..\..\..\Oakenshield\Oakenshield\Providers\Oakenshield.Providers.Ldap\bin\Release\Oakenshield.Providers.Ldap.dll</HintPath>
+    </Reference>
     <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
       <Private>True</Private>

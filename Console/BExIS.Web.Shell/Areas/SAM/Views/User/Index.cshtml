@@ -2,8 +2,6 @@
 @using Telerik.Web.Mvc
 @using Telerik.Web.Mvc.UI
 
-@model GridModel<UserGridRowModel>
-
 @section Information
 {
     With this interface you are able to manage users. New users can be added with the "Create" button. Existing users can be edited (properties, memberships, delete) through the "Edit" button.
@@ -14,17 +12,18 @@
 
 @Html.ActionLink("Create User", "Create", "User", null, new { @class = "bx-button function" })
 
-@(Html.Telerik().Grid(Model.Data)
+@(Html.Telerik().Grid<UserGridRowModel>()
     .Name("gridUsers")
     .Columns(columns =>
     {
         columns.Bound(u => u.Id);
         columns.Bound(u => u.UserName);
         columns.Bound(u => u.Email);
+        columns.Bound(u => u.IsAdministrator);
         columns.Template(@<text>
-      <button type="button" class="bx bx-grid-function bx-edit" onclick="editUser(@item.Id)"></button>
-      <button type="button" class="bx bx-grid-function bx-trash" onclick="deleteUser(@item.Id)"></button>
-      </text>)
+        <button type="button" class="bx bx-grid-function bx-edit" onclick="editUser(@item.Id)"></button>
+        <button type="button" class="bx bx-grid-function bx-trash" onclick="deleteUser(@item.Id)"></button>
+        </text>)
           .ClientTemplate("<button type=\"button\" class=\"bx bx-grid-function bx-edit\" onclick=\"editUser(<#= Id #>);\" value=\"<#= Id #>\"></button>" +
                           "<button type=\"button\" class=\"bx bx-grid-function bx-trash\" onclick=\"deleteUser(<#= Id #>);\" value=\"<#= Id #>\"></button>")
           .Width(70);
