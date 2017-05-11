@@ -10,7 +10,6 @@ namespace BExIS.Modules.Sam.UI.Models
         public string Description { get; set; }
         public string FeatureName { get; set; }
         public long Id { get; set; }
-        public bool IsPublic { get; set; }
 
         public static FeatureTreeViewItemModel Convert(Feature feature)
         {
@@ -19,8 +18,6 @@ namespace BExIS.Modules.Sam.UI.Models
                 Id = feature.Id,
                 FeatureName = feature.Name,
                 Description = feature.Description,
-
-                IsPublic = feature.IsPublic,
 
                 Children = feature.Children.Select(Convert).ToList()
             };

@@ -2,8 +2,7 @@
 @using Telerik.Web.Mvc.UI
 @model IEnumerable<FeatureTreeViewItemModel>
 @(Html.Telerik().TreeView()
-        .Name("TreeView_Features")
-        .ShowCheckBox(true)
+        .Name("treeViewFeatures")
         .BindTo(Model, mappings =>
         {
             mappings.For<FeatureTreeViewItemModel>(binding => binding
@@ -12,15 +11,12 @@
                 {
                     item.Text = feature.FeatureName;
                     item.Value = feature.Id.ToString();
-                    item.Checked = feature.IsPublic;
                     item.LinkHtmlAttributes["title"] = "Select " + feature.FeatureName + " to manage the corresponding feature permissions on the right.";
                 })
                 .Children(feature => feature.Children));
         })
         .ClientEvents(events => events
             .OnSelect("OnSelect")
-            .OnChecked("OnChecked")
-
         )
 
         .ExpandAll(true)
@@ -28,68 +24,33 @@
 
 <script type="text/javascript">
 
-    $("#TreeView_Features").ready(function () {
-        //truncateTitle();
-        //$("#TreeView_Features").find("div").each(function() {
-
-        //})
-    });
-
-    $("#TreeView_Features li div").click(function (e) {
+    $("#treeViewFeatures li div").click(function (e) {
         $(e.target).find(".t-in").trigger("click");
     });
 
     function GetTreeView() {
-        return $('#TreeView_Features').data('tTreeView');
-    }
-
-    function OnChecked(e) {
-        var value = e.checked;
-
-        var featureId = GetTreeView().getItemValue(e.item);
-
-        $.post('@Url.Action("SetPublicity", "FeaturePermission")',
-            { FeatureId: featureId, Value: value },
-            function (e) {
-                GetTreeView().dataSource.read();
-            });
+        return $('#treeViewFeatures').data('tTreeView');
     }
 
     function OnSelect(e) {
         var featureId = GetTreeView().getItemValue(e.item);
-
-        console.log(e);
-
         var prevSelectedDiv = $(".bx-selected");
-
         if (prevSelectedDiv.length > 0) $(prevSelectedDiv).removeClass("bx-selected");
 
         var selectedDiv = $(e.item).find("div")[0];
         $(selectedDiv).addClass("bx-selected");
-        console.log(selectedDiv);
 
-        $('#Content_Subjects').empty();
+        $('#subjects').empty();
 
-        $.get('@Url.Action("Subjects", "FeaturePermissions")',
-            { Id: featureId },
+        $.get('@Url.Action("Subjects", "FeaturePermission")',
+            { FeatureId: featureId },
             function (contentData) {
 
-                $('#Content_Subjects').html(contentData);
+                $('#subjects').html(contentData);
 
                 truncateTitle();
             });
     }
-
-    // Feature Permission
-    function setFeaturePermission(value, subjectId, featureId) {
-        $.post('@Url.Action("SetFeaturePermission", "FeaturePermissions")',
-            { SubjectId: subjectId, FeatureId: featureId, Value: value },
-            function (e) {
-                $("#Grid_Subjects .t-refresh").trigger('click');
-            });
-    }
-
-    $(":checkbox").attr("title", "Checked \t -> \t public feature \nUnchecked \t -> \t NOT public feature");
 </script>
 
 <style type="text/css">
