@@ -10,28 +10,42 @@
                 @Html.AntiForgeryToken()
                 @Html.ValidationSummary(true)
 
-                <div class="form-group">
-                    @Html.LabelFor(m => m.GroupType, new { @class = "col-md-2 control-label" })
-                    <div class="col-md-10">
-                        @Html.RadioButtonFor(m => m.GroupType, 0, new { @class = "form-control" }) Private
-                        @Html.RadioButtonFor(m => m.GroupType, 1, new { @class = "form-control" }) Public
-                        @Html.ValidationMessageFor(m => m.GroupType)
+                <ul class="nav nav-tabs">
+                    <li class="active"><a data-toggle="tab" href="#information">Information</a></li>
+                    <li><a data-toggle="tab" href="#users">Users</a></li>
+                </ul>
+
+                <div class="tab-content">
+                    <div id="information" class="tab-pane fade in active">
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.GroupType, new { @class = "col-md-2 control-label" })
+                            <div class="col-md-10">
+                                @Html.RadioButtonFor(m => m.GroupType, 0, new { @class = "form-control" }) Private
+                                @Html.RadioButtonFor(m => m.GroupType, 1, new { @class = "form-control" }) Public
+                                @Html.ValidationMessageFor(m => m.GroupType)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.GroupName, new { @class = "col-md-2 control-label" })
+                            <div class="col-md-10">
+                                @Html.TextBoxFor(m => m.GroupName, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.GroupName)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.Description, new { @class = "col-md-2 control-label" })
+                            <div class="col-md-10">
+                                @Html.TextBoxFor(m => m.Description, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.Description)
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="groups" class="tab-pane fade">
+                        Hallo!
                     </div>
                 </div>
-                <div class="form-group">
-                    @Html.LabelFor(m => m.GroupName, new { @class = "col-md-2 control-label" })
-                    <div class="col-md-10">
-                        @Html.TextBoxFor(m => m.GroupName, new { @class = "form-control" })
-                        @Html.ValidationMessageFor(m => m.GroupName)
-                    </div>
-                </div>
-                <div class="form-group">
-                    @Html.LabelFor(m => m.Description, new { @class = "col-md-2 control-label" })
-                    <div class="col-md-10">
-                        @Html.TextBoxFor(m => m.Description, new { @class = "form-control" })
-                        @Html.ValidationMessageFor(m => m.Description)
-                    </div>
-                </div>
+
                 <div class="form-group">
                     <div class="col-md-offset-2 col-md-10">
                         <input type="submit" value="Save" class="btn btn-default" />
