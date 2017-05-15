@@ -11,7 +11,7 @@ namespace BExIS.Modules.Dim.UI
 {
     public class DimModule : ModuleBase
     {
-        public DimModule(): base("DIM")
+        public DimModule(): base("dim")
         {
         }
 
