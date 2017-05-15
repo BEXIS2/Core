@@ -248,7 +248,7 @@
                 if (element.name in this.submitted) {
                     this.element(element);
                 }
-                // or option elements, check parent select in that case
+                    // or option elements, check parent select in that case
                 else if (element.parentNode.name in this.submitted) {
                     this.element(element.parentNode);
                 }
@@ -356,7 +356,7 @@
 
             checkForm: function () {
                 this.prepareForm();
-                for (var i = 0, elements = (this.currentElements = this.elements()); elements[i]; i++) {
+                for (var i = 0, elements = (this.currentElements = this.elements()) ; elements[i]; i++) {
                     this.check(elements[i]);
                 }
                 return this.valid();
@@ -650,7 +650,7 @@
                     }
                 }
                 if (this.settings.unhighlight) {
-                    for (i = 0, elements = this.validElements(); elements[i]; i++) {
+                    for (i = 0, elements = this.validElements() ; elements[i]; i++) {
                         this.settings.unhighlight.call(this, elements[i], this.settings.errorClass, this.settings.validClass);
                     }
                 }

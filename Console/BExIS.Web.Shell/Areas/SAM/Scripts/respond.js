@@ -145,7 +145,7 @@ window.matchMedia = window.matchMedia || (function (doc, undefined) {
                     fullq = media;
                     rules.push(repUrls(styles));
                 }
-                //parse for styles
+                    //parse for styles
                 else {
                     fullq = qs[i].match(/@media *([^\{]+)\{([\S\s]+?)$/) && RegExp.$1;
                     rules.push(RegExp.$2 && repUrls(RegExp.$2));

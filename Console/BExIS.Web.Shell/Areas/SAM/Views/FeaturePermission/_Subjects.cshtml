@@ -13,10 +13,36 @@
               .Name("gridUsers")
               .Columns(columns =>
               {
+                  columns.Bound(s => s.EffectiveRight)
+    .ClientTemplate("<div class=' <#= EffectiveRight ? 'bx bx-check' : 'bx bx-close' #>' />")
+           .Title("Effective")
+           .Width(64)
+           .Filterable(false)
+           .HtmlAttributes(new { style = "text-align:center" });
+                  columns.Bound(u => u.eaturePermissionType)
+                      .ClientTemplate("<input type='radio' name='permissionType_<#= SubjectId #>' onclick='setFeaturePermission(1, <#= SubjectId #>, <#= FeatureId #>);' <#= FeaturePermissionType == 1 ? checked='checked' : '' #> />")
+                             .Title("Grant")
+                             .Width(50)
+                             .Filterable(false)
+                             .Sortable(false)
+                             .HtmlAttributes(new { style = "text-align:center;background-color:#DFF5E9" });
+                  columns.Bound(u => u.FeaturePermissionType)
+                      .ClientTemplate("<input type='radio' name='permissionType_<#= SubjectId #>' onclick='setFeaturePermission(2, <#= SubjectId #>, <#= FeatureId #>);' <#= FeaturePermissionType == 2 ? checked='checked' : '' #> />")
+                             .Title("None")
+                             .Width(50)
+                             .Filterable(false)
+                             .Sortable(false)
+                             .HtmlAttributes(new { style = "text-align:center" });
+                  columns.Bound(u => u.FeaturePermissionType)
+                      .ClientTemplate("<input type='radio' name='permissionType_<#= SubjectId #>' onclick='setFeaturePermission(0, <#= SubjectId #>, <#= FeatureId #>);' <#= FeaturePermissionType == 0 ? checked='checked' : '' #> />")
+                             .Title("Deny")
+                             .Width(50)
+                             .Filterable(false)
+                             .Sortable(false)
+                             .HtmlAttributes(new { style = "text-align:center;background-color:#F5DFDF" });
                   columns.Bound(u => u.Id);
                   columns.Bound(u => u.UserName);
                   columns.Bound(u => u.Email);
-                  columns.Bound(u => u.IsAdministrator);
               })
               .ClientEvents(events =>
               {
