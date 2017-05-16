@@ -166,7 +166,7 @@
     <Content Include="Scripts\ai.0.22.19-build00125.min.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
-    <None Include="Properties\PublishProfiles\SAM2 Publish.pubxml" />
+    <None Include="Properties\PublishProfiles\SAM Publish.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -239,6 +239,10 @@
     <ProjectReference Include="..\..\..\..\Components\EXT\BExIS.Ext.Services\BExIS.Ext.Services.csproj">
       <Project>{B906A66A-4A09-4207-B590-655EE111CCF1}</Project>
       <Name>BExIS.Ext.Services</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Components\Utils\BExIS.Utils\BExIS.Utils.csproj">
+      <Project>{782b71c1-707f-4ab1-80e9-90d2880635b4}</Project>
+      <Name>BExIS.Utils</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\Components\XML\BExIS.Xml.Helpers\BExIS.Xml.Helpers.csproj">
       <Project>{252F7872-A69C-43A6-84B4-4D2ABDBDD9AB}</Project>

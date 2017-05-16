@@ -1,7 +1,31 @@
 ﻿@using BExIS.Modules.Sam.UI.Models
 @using Telerik.Web.Mvc.UI
 
-<button type="button" class="bx-button function" onclick="moduleCreate_onClick()">Install Module</button>
+@* Check a switch to see weather module installation is enabled. If not show a message *@
+@{
+    bool canInstallModules = true;
+    if (canInstallModules)
+    {
+        using (Html.BeginForm("install", "modules", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <table border="0">
+                <tr style="border:none">
+                    <td width="10%">
+                        <input type="file" name="moduleZip" />
+                    </td>
+                    <td>
+                        <input type="submit" value="Install" class="bx-button function" />
+                    </td>
+                </tr>
+            </table>
+        }
+    }
+    else
+    {
+        <div>Module installation is disabled.</div>
+    }
+}
+@Html.ValidationSummary()
 
 @(Html.Telerik().Grid<ModuleGridRowModel>()
     .Name("gridModules")
