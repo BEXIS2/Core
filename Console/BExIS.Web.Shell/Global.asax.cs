@@ -13,6 +13,8 @@ using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Data;
 using Vaiona.Web.Mvc.Modularity;
+using Vaiona.Logging;
+using System.Linq;
 
 namespace BExIS.Web.Shell
 {
@@ -83,8 +85,18 @@ namespace BExIS.Web.Shell
             IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager(); // just to prepare data access environment
             pManager.Configure(AppConfiguration.DefaultApplicationConnection.ConnectionString, AppConfiguration.DatabaseDialect, "Default", AppConfiguration.ShowQueries);
             if (AppConfiguration.CreateDatabase)
+            {
                 pManager.ExportSchema();
+            }
             pManager.Start();
+            
+            // If there is any active module in catalong at the DB creation time, it would be automatically installed.
+            // Installation means, the modules' Install method is called, which usually generates the seed data
+            foreach (var module in ModuleManager.ModuleInfos.Where(p => ModuleManager.IsActive(p.Id)))
+            {
+                ModuleManager.GetModuleInfo(module.Id).Plugin.Install();
+            }
+
             // if there are pending modules, their schema (if exists) must be applied.
             if (ModuleManager.HasPendingInstallation())
             {
@@ -100,8 +112,15 @@ namespace BExIS.Web.Shell
                 {
                     // The install method of the plugin is called once and only once.
                     // It generates the seed data and other module specific initializations
-                    ModuleManager.GetModuleInfo(moduleId).Plugin.Install();
-                    ModuleManager.Disable(moduleId);
+                    try
+                    {
+                        ModuleManager.GetModuleInfo(moduleId).Plugin.Install();
+                        ModuleManager.Disable(moduleId);
+                    }
+                    catch(Exception ex)
+                    {
+                        LoggerFactory.LogCustom(string.Format("Error installing module {0}. {1}", moduleId, ex.Message));
+                    }
                 }
             }
         }

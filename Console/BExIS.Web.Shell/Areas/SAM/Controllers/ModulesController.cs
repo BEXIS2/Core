@@ -1,67 +1,19 @@
 ﻿using BExIS.Modules.Sam.UI.Models;
 using System.Collections.Generic;
-using System.Linq;
 using System.Web.Mvc;
 using Telerik.Web.Mvc;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Mvc.Modularity;
+using System.Linq;
+using System.Web;
+using System.IO;
+using System;
 
 namespace BExIS.Modules.Sam.UI.Controllers
 {
     public class ModulesController : Controller
     {
-        public ActionResult Activate(string id)
-        {
-            ModuleManager.Enable(id);
-            return View("Index");
-        }
-
-        public ActionResult Create()
-        {
-            return PartialView("_Create", null);
-        }
-
-        [HttpPost]
-        public ActionResult Create(object model)
-        {
-            return PartialView("_Create", model);
-        }
-
-        [HttpPost]
-        public void Delete(string id)
-        {
-        }
-
-        public ActionResult Details(string id)
-        {
-            return View();
-        }
-
-        public ActionResult Download(string id)
-        {
-            return View();
-        }
-
-        public ActionResult Edit(string id)
-        {
-            return PartialView("_Edit", null);
-        }
-
-        //    return false;
-        //}
-        [HttpPost]
-        public ActionResult Edit(object model)
-        {
-            return Json(new { success = true });
-        }
-
-        public ActionResult Inactivate(string id)
-        {
-            ModuleManager.Disable(id);
-            return View("Index");
-        }
-
         // GET: SAM/Tenants
         /// <summary>
         /// List all the registered tenants with thier status, etc.
@@ -77,52 +29,128 @@ namespace BExIS.Modules.Sam.UI.Controllers
         [GridAction]
         public ActionResult Modules_Select()
         {
-            // load
-            var modules = new List<ModuleGridRowModel>();
+            // load 
+            List<ModuleGridRowModel> modules = new List<ModuleGridRowModel>();
             var q = ModuleManager.Catalog.Elements("Module")
-                        .OrderBy(p => int.Parse(p.Attribute("order").Value));
-            foreach (var item in q)
+                        .OrderBy(p => int.Parse(p.Attribute("order").Value));                    
+            foreach (var catalogEntry in q)
             {
-                var row = new ModuleGridRowModel()
+                ModuleGridRowModel row = new ModuleGridRowModel()
                 {
-                    Id = item.Attribute("id").Value,
-                    Status = ModuleManager.IsActive(item),
+                    // attributes are fetched from the catalog as well as the module's manifest
+                    Id = catalogEntry.Attribute("id").Value,
+                    Status = catalogEntry.Attribute("status").Value,
+                    Order = int.Parse(catalogEntry.Attribute("order").Value),
+
+                    // defulat values for the other attibutes
+                    Description = "Not Loaded",
+                    Version = "Not Loaded",
+                    Loaded = false,
                 };
-                var moduleInfo = ModuleManager.GetModuleInfo(row.Id);
-                //pm.ModuleInfos
-                //.Where(p => p.Manifest.Name.Equals(row.Id, StringComparison.InvariantCultureIgnoreCase))
-                //.First();
-                row.Description = moduleInfo.Manifest.Description;
-                row.Version = moduleInfo.Manifest.Version;
-                row.Loaded = moduleInfo.Plugin != null;
-                row.Order = int.Parse(item.Attribute("order").Value);
+                ModuleManifest manifest = ModuleManager.GetModuleManifest(catalogEntry.Attribute("id").Value);
+                if (manifest != null)
+                {
+                    row.Description = manifest.Description;
+                    row.Version = manifest.Version;
+                    row.Loaded = ModuleManager.IsLoaded(row.Id);
+                }
+
                 modules.Add(row);
             }
 
             return View(new GridModel<ModuleGridRowModel> { Data = modules });
         }
 
-        //private bool IsDeletable(string id)
-        //{
-        //    ITenantResolver tenantResolver = IoCFactory.Container.Resolve<ITenantResolver>();
-        //    tenantResolver.Load(new BExISTenantPathProvider());
+        [HttpPost]
+        public void Delete(string id)
+        {
+        }
 
-        //    // Get tenant
-        //    Tenant tenant = tenantResolver.Manifest.Where(x => x.Id.Equals(id)).FirstOrDefault();
+        public ActionResult Edit(string id)
+        {
+            return PartialView("_Edit", null);
+        }
 
-        //    if (!tenant.IsDefault && tenant.Status == TenantStatus.Inactive)
-        //    {
-        //        // Get all tenants
-        //        List<Tenant> tenants = tenantResolver.Manifest;
+        [HttpPost]
+        public ActionResult Edit(object model)
+        {
+            return Json(new { success = true });
+        }
 
-        //        if (tenants.Select(x => x.IsDefault || x.Status == TenantStatus.Active && x.Id != id).Count() >= 1)
-        //        {
-        //            return true;
-        //        }
-        //    }
-        public ActionResult Unregister(string id)
+
+
+        public ActionResult Details(string id)
         {
             return View();
         }
+
+        public ActionResult Activate(string id)
+        {
+            ModuleManager.Enable(id);
+            return View("Index");
+        }
+
+        public ActionResult Inactivate(string id)
+        {
+            ModuleManager.Disable(id);
+            return View("Index");
+        }
+
+
+        //public ActionResult Install()
+        //{
+        //    return PartialView("_Create", null);
+        //}
+
+
+
+        /// <summary>
+        /// Installs a module from its zipped bundle.
+        /// </summary>
+        /// <param name="moduleZip">A zipped bundle containg the binaries, views, workspace, and manifest.</param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult Install(HttpPostedFileBase moduleZip)
+        {
+            try
+            {
+#if DEBUG
+                // this function writes into the Areas folder and may overwrite the module's resources!
+                // passing false, prevents it from copying the module's resources. Only the catalog is updated.
+                ModuleManager.Install(moduleZip, false);
+#else 
+                // Installs the bundle for production.
+                ModuleManager.Install(moduleZip, true);
+#endif
+            }
+            catch (Exception ex)
+            {
+                this.ModelState.AddModelError(string.Empty, ex.Message);
+            }
+            finally // in any case clean up the installing folder and whatever else...
+            {
+                /// Prepare and communicate messages to the user
+                if (this.ModelState.IsValid)
+                {
+                    // send a success message back. explain what should be done next.
+                }
+            }
+            // redirect back to the index action to show the form once again and the list of installed modules
+            // it also carries model errors; they should be shown on top of the submit area.
+            return View("Index");
+        }
+
+        public ActionResult Uninstall(string id)
+        {
+            return View();
+        }
+
+        // Move this to Viona.Utils
+
+        public ActionResult Download(string id)
+        {
+            return View();
+        }
+
     }
 }

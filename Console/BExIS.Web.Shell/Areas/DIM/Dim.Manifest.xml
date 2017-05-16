@@ -6,6 +6,10 @@
   </Description>
   <Assemblies>
     <Assembly fullName="BExIS.Dim.Entities" role="Entity"/>
+    <Assembly fullName="BExIS.Dim.Helpers" role="Helper"/>
+    <Assembly fullName="BExIS.Dim.Orm.NH" role="ORM"/>
+    <Assembly fullName="BExIS.Dim.Services" role="Services"/>
+    <!--<Assembly fullName="BExIS.Modules.Dim.UI" role="UI"/>-->
   </Assemblies>
   <Dependencies>
     <Dependency moduleId="dcm" version="*.*.*" />
