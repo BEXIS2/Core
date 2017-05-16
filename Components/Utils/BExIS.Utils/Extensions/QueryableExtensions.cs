@@ -2,27 +2,33 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic;
+using Telerik.Web.Mvc;
 
 namespace BExIS.Utils.Extensions
 {
     public static class QueryableExtensions
     {
-        public static IQueryable<TEntity> FilterBy<TEntity, TModel>(this IQueryable<TEntity> queryable, string filterProperties)
+        public static IQueryable<TEntity> FilterBy<TEntity, TModel>(this IQueryable<TEntity> queryable,
+            IList<IFilterDescriptor> filterDescriptors)
         {
             // Extraction of Model Properties
-            var filters = filterProperties.Split(',').Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => s.Trim()).ToArray();
             var expressions = new List<string>();
 
-            foreach (var modelProperty in typeof(TModel).GetProperties())
+            foreach (var filterDescriptor in filterDescriptors)
             {
-                var queryAttributes = modelProperty.GetCustomAttributes(typeof(QueryAttribute), true)
-                    .Where(ca => ((QueryAttribute)ca).EntityType == typeof(TEntity));
+                var filter = (FilterDescriptor)filterDescriptor;
 
-                foreach (var queryAttribute in queryAttributes)
+                // Query Attributes
+                var propertyInfo = typeof(TModel).GetProperty(filter.Member);
+                if (propertyInfo != null)
                 {
-                    foreach (var filter in filters)
+                    var queryAttributes = propertyInfo
+                        .GetCustomAttributes(typeof(QueryAttribute), true)
+                        .Where(ca => ((QueryAttribute)ca).EntityType == typeof(TEntity));
+
+                    // Query Attribute
+                    foreach (var queryAttribute in queryAttributes)
                     {
-                        expressions.Add($"{((QueryAttribute)queryAttribute).PropertyName}.Contains(\"{filter}\")");
                     }
                 }
             }

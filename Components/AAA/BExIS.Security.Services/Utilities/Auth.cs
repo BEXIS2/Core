@@ -2,7 +2,6 @@
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.DataProtection;
-using Oakenshield.Providers.Ldap;
 using Owin;
 
 namespace BExIS.Security.Services.Utilities
@@ -33,7 +32,7 @@ namespace BExIS.Security.Services.Utilities
             //   consumerKey: "",
             //   consumerSecret: "");
 
-            app.UseLdapAuthentication(new LdapAuthenticationOptions("", "", "", "", "", 0, ""));
+            //app.UseLdapAuthentication(new LdapAuthenticationOptions("", "", "", "", "", 0, ""));
 
             //app.UseFacebookAuthentication(
             //   appId: "",
