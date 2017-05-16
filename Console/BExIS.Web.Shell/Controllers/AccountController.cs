@@ -19,7 +19,7 @@ namespace BExIS.Web.Shell.Controllers
 
         public async Task<ActionResult> ConfirmEmail(long userId, string code)
         {
-            if (userId > 0 || code == null)
+            if (code == null)
             {
                 return View("Error");
             }
@@ -188,10 +188,6 @@ namespace BExIS.Web.Shell.Controllers
             var userManager = new UserManager(new UserStore());
             var signInManager = new SignInManager(userManager, AuthenticationManager);
             var userId = await signInManager.GetVerifiedUserIdAsync();
-            if (userId == null)
-            {
-                return View("Error");
-            }
             var userFactors = await userManager.GetValidTwoFactorProvidersAsync(userId);
             var factorOptions = userFactors.Select(purpose => new SelectListItem { Text = purpose, Value = purpose }).ToList();
             return View(new SendCodeModel { Providers = factorOptions, ReturnUrl = returnUrl, RememberMe = rememberMe });
