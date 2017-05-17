@@ -194,7 +194,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             DataTypeManager dtm = new DataTypeManager();
             DataContainerManager dam = new DataContainerManager();
 
-            List<DataTuple> rows;
+            DataTuple[] rows;
 
             string timestamp = DateTime.Now.ToString("r");
             string title = Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.FILENAME]);
@@ -231,6 +231,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             TaskManager.AddToBus(EasyUploadTaskManager.RESEARCHPLAN_ID, rp.Id);
             TaskManager.AddToBus(EasyUploadTaskManager.RESEARCHPLAN_TITLE, rp.Title);
 
+            //I don't see why this line is needed
             DatasetVersion workingCopy = new DatasetVersion();
 
             #region Progress Information
@@ -304,8 +305,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             ds = dm.CreateEmptyDataset(sds, rp, metadataStructure);
 
-            ExcelTemplateProvider etp = new ExcelTemplateProvider();
-            etp.CreateTemplate(sds);
+            //Don't think these lines are necessary
+            /*ExcelTemplateProvider etp = new ExcelTemplateProvider();
+            etp.CreateTemplate(sds);*/
 
             long datasetId = ds.Id;
             long sdsId = sds.Id;
@@ -456,13 +458,13 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     mod.Add(vi);
                 }
 
-                reader.setSubmitedVariableIdentifiers(mod);
+                reader.setSubmittedVariableIdentifiers(mod);
                 rows = reader.ReadFile(Stream, TaskManager.Bus[EasyUploadTaskManager.FILENAME].ToString(), fri, sds, (int)datasetId);
 
                 List<Error> ValidationErrors = ValidateRows(rows.ToArray());
                 if (ValidationErrors.Count == 0)
                 {
-                    dm.EditDatasetVersion(workingCopy, rows, null, null);
+                    dm.EditDatasetVersion(workingCopy, rows.ToList(), null, null);
                 }
                 else
                 {
