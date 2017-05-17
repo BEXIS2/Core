@@ -214,6 +214,13 @@
     <Content Include="Views\Users\_CreatePartial.cshtml" />
     <Content Include="Views\Users\_EditPartial.cshtml" />
     <Content Include="Views\Users\_Membership.cshtml" />
+    <Content Include="Web.config" />
+    <None Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <None Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\Shared\" />
