@@ -1,31 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.IO;
 using System.Linq;
 using System.Web.Mvc;
 using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.DataStructure;
 using BExIS.Ddm.Api;
-using BExIS.Ddm.Model;
-using BExIS.Ddm.Providers.LuceneProvider;
-using BExIS.Web.Shell.Areas.DDM.Helpers;
-using BExIS.Web.Shell.Areas.DDM.Models;
 using Telerik.Web.Mvc;
 using Vaiona.IoC;
-using Vaiona.Utils.Cfg;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Subjects;
-using BExIS.Security.Entities.Objects;
-using System.Xml;
 using BExIS.Xml.Services;
 using BExIS.Dlm.Services.MetadataStructure;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Extensions;
+using BExIS.Ddm.Model;
+using System.Data;
 
-namespace BExIS.Web.Shell.Areas.DDM.Controllers
+namespace BExIS.Modules.Ddm.UI.Controllers
 {
     public class HomeController : Controller
     {

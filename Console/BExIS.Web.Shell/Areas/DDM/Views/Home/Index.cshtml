@@ -1,6 +1,6 @@
 ﻿@model BExIS.Ddm.Api.ISearchProvider
 @using BExIS.Ddm.Model;
-@using FluentBootstrap;
+@using Microsoft.Web.Helpers;
 
 <header>
 	<link href="@Url.Content(Themes.GetResourcePath("Styles", "search.css"))" rel="stylesheet" type="text/css" />   
@@ -20,7 +20,7 @@
     <p>To tweak the result list, click on the facets in the green area on the left or specify a filter in the header of the list. Clicking on a name in the column header will sort the results.</p>
     <p>To view more details of a dataset, click the View Details button available in each row.</p>
     <p>
-        <a href="/DDM/Help/Index" class="bx-informationLink" title="go to help" target="_blank">More</a>
+        <a href="/ddm/Help/Index" class="bx-informationLink" title="go to help" target="_blank">More</a>
     </p>
 }
 

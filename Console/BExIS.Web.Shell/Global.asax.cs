@@ -40,7 +40,7 @@ namespace BExIS.Web.Shell
             routes.MapRoute(
                "Default", // Route name
                "{controller}/{action}/{id}", // URL with parameters
-               new { controller = "Home", action = "Index", id = UrlParameter.Optional } // Parameter defaults
+               new { controller = "home", action = "index", id = UrlParameter.Optional } // Parameter defaults
                , new[] { "BExIS.Web.Shell.Controllers" } // to prevent conflict between root controllers and area controllers that have same names
            );
 
@@ -91,16 +91,18 @@ namespace BExIS.Web.Shell
                 pManager.ExportSchema();
             }
             pManager.Start();
-            
+
             // If there is any active module in catalong at the DB creation time, it would be automatically installed.
             // Installation means, the modules' Install method is called, which usually generates the seed data
-            foreach (var module in ModuleManager.ModuleInfos.Where(p => ModuleManager.IsActive(p.Id)))
+            if (AppConfiguration.CreateDatabase)
             {
-                ModuleManager.GetModuleInfo(module.Id).Plugin.Install();
+                foreach (var module in ModuleManager.ModuleInfos.Where(p => ModuleManager.IsActive(p.Id)))
+                {
+                    ModuleManager.GetModuleInfo(module.Id).Plugin.Install();
+                }
             }
-
             // if there are pending modules, their schema (if exists) must be applied.
-            if (ModuleManager.HasPendingInstallation())
+            else if (ModuleManager.HasPendingInstallation())
             {
                 try
                 {
@@ -108,8 +110,8 @@ namespace BExIS.Web.Shell
                 }
                 catch(Exception ex)
                 { }
-                // For security reasons, pending modules go to the "inactive" status after schema export. 
-                // An administrator can endable them via the management console
+                // When the pending modules' schemas are ported, their potential seed data should be generated.
+                // This is done through calling Install method.
                 foreach (var moduleId in ModuleManager.PendingModules())
                 {
                     // The install method of the plugin is called once and only once.
@@ -117,6 +119,8 @@ namespace BExIS.Web.Shell
                     try
                     {
                         ModuleManager.GetModuleInfo(moduleId).Plugin.Install();
+                        // For security reasons, pending modules go to the "inactive" status after schema export. 
+                        // An administrator can endable them via the management console
                         ModuleManager.Disable(moduleId);
                     }
                     catch(Exception ex)

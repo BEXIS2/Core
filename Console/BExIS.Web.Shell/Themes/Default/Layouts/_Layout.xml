@@ -60,16 +60,6 @@
     </ContentProviders>
   </MapItem>
 
-  <MapItem ContentKey="HomePage">
-    <ContentProviders>
-      <!--refering to a module from any shell resource is not allowed! There should be a dynamic way to do this.-->
-      <ContentProvider Area="DDM" Controller="Home" Action="ShowMyDatasets" Type="Action" Enabled="true">
-        <Parameters>
-        </Parameters>
-      </ContentProvider>
-    </ContentProviders>
-  </MapItem>
-  
   <MapItem ContentKey="Footer">
     <ContentProviders>
       <ContentProvider View="_Footer" Type="View" Enabled="true">

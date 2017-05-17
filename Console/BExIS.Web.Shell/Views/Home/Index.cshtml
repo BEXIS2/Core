@@ -1,6 +1,7 @@
 ﻿@using System.Web.UI.WebControls
 @using Vaiona.Web.Mvc;
 @using BExIS.Utils.WebHelpers
+@using Vaiona.Web.Mvc.Modularity;
 
 @section Information
 {    
@@ -22,10 +23,10 @@
 
 @if (Request.IsAuthenticated)
 {
-    @Html.RenderAuto("HomePage")
+    @Html.Render("ddm", "home", "ShowMyDatasets");
 }
-else
-{
+    else
+    {
     <div style="text-align: center;">
         @Html.Logo(Html.GetTenant().GetResourcePath("BigLogo"))
     </div>

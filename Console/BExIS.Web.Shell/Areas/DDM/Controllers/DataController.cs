@@ -1,25 +1,18 @@
-﻿using BExIS.Dcm.CreateDatasetWizard;
-using BExIS.Dcm.Wizard;
-using BExIS.Dlm.Entities.Data;
+﻿using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
-using BExIS.IO;
-using BExIS.IO.Transform.Output;
+using BExIS.Modules.Ddm.UI.Models;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
-using BExIS.Web.Shell.Areas.DDM.Helpers;
-using BExIS.Web.Shell.Areas.DDM.Models;
-using BExIS.Web.Shell.Areas.RPM.Controllers;
-using BExIS.Web.Shell.Areas.RPM.Models;
+using BExIS.UI.Wizard;
 using BExIS.Xml.Helpers;
 using BExIS.Xml.Services;
-using Ionic.Zip;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -29,7 +22,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Mvc;
-using System.Web.Script.Serialization;
 using System.Xml;
 using System.Xml.Linq;
 using Telerik.Web.Mvc;
@@ -38,9 +30,13 @@ using Vaiona.Logging;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
+using BExIS.UI.Wizard;
+using BExIS.Modules.Ddm.UI.Helpers;
+using BExIS.IO.Transform.Output;
+using Ionic.Zip;
+using BExIS.IO;
 
-
-namespace BExIS.Web.Shell.Areas.DDM.Controllers
+namespace BExIS.Modules.Ddm.UI.Controllers
 {
     public class DataController : Controller
     {
@@ -138,38 +134,39 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
         private void setAdditionalFunctions()
         {
-            CreateTaskmanager TaskManager = new CreateTaskmanager();
+            // commented by Javad during porting.
+            //Dcm.CreateDatasetWizard.CreateTaskmanager TaskManager = new CreateTaskmanager();
 
-            Dictionary<string, ActionInfo> actions = new Dictionary<string, ActionInfo>();
+            //Dictionary<string, ActionInfo> actions = new Dictionary<string, ActionInfo>();
 
-            //set function actions of COPY, RESET,CANCEL,SUBMIT
-            ActionInfo copyAction = new ActionInfo();
-            copyAction.ActionName = "Copy";
-            copyAction.ControllerName = "CreateDataset";
-            copyAction.AreaName = "DCM";
+            ////set function actions of COPY, RESET,CANCEL,SUBMIT
+            //ActionInfo copyAction = new ActionInfo();
+            //copyAction.ActionName = "Copy";
+            //copyAction.ControllerName = "CreateDataset";
+            //copyAction.AreaName = "DCM";
 
-            ActionInfo resetAction = new ActionInfo();
-            resetAction.ActionName = "Reset";
-            resetAction.ControllerName = "Form";
-            resetAction.AreaName = "DCM";
+            //ActionInfo resetAction = new ActionInfo();
+            //resetAction.ActionName = "Reset";
+            //resetAction.ControllerName = "Form";
+            //resetAction.AreaName = "DCM";
 
-            ActionInfo cancelAction = new ActionInfo();
-            cancelAction.ActionName = "Cancel";
-            cancelAction.ControllerName = "Form";
-            cancelAction.AreaName = "DCM";
+            //ActionInfo cancelAction = new ActionInfo();
+            //cancelAction.ActionName = "Cancel";
+            //cancelAction.ControllerName = "Form";
+            //cancelAction.AreaName = "DCM";
 
-            ActionInfo submitAction = new ActionInfo();
-            submitAction.ActionName = "Submit";
-            submitAction.ControllerName = "CreateDataset";
-            submitAction.AreaName = "DCM";
+            //ActionInfo submitAction = new ActionInfo();
+            //submitAction.ActionName = "Submit";
+            //submitAction.ControllerName = "CreateDataset";
+            //submitAction.AreaName = "DCM";
 
 
-            TaskManager.Actions.Add(CreateTaskmanager.CANCEL_ACTION, cancelAction);
-            TaskManager.Actions.Add(CreateTaskmanager.COPY_ACTION, copyAction);
-            TaskManager.Actions.Add(CreateTaskmanager.RESET_ACTION, resetAction);
-            TaskManager.Actions.Add(CreateTaskmanager.SUBMIT_ACTION, submitAction);
+            //TaskManager.Actions.Add(CreateTaskmanager.CANCEL_ACTION, cancelAction);
+            //TaskManager.Actions.Add(CreateTaskmanager.COPY_ACTION, copyAction);
+            //TaskManager.Actions.Add(CreateTaskmanager.RESET_ACTION, resetAction);
+            //TaskManager.Actions.Add(CreateTaskmanager.SUBMIT_ACTION, submitAction);
 
-            Session["CreateDatasetTaskmanager"] = TaskManager;
+            //Session["CreateDatasetTaskmanager"] = TaskManager;
         }
 
         private BaseModelElement GetModelFromElement(XElement element)

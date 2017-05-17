@@ -5,7 +5,7 @@ using System.Web;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Subjects;
 
-namespace BExIS.Web.Shell.Areas.DDM.Models
+namespace BExIS.Modules.Ddm.UI.Models
 {
     public class DatasetPermissionGridRowModel
     {
