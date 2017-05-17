@@ -6,7 +6,7 @@ using Telerik.Web.Mvc;
 
 namespace BExIS.Modules.Sam.UI.Controllers
 {
-    public class EntityPermissionController : Controller
+    public class EntityPermissionsController : Controller
     {
         [GridAction]
         public ActionResult EntityPermissions_Select(GridActionAttribute filters)

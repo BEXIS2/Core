@@ -7,7 +7,7 @@ using Telerik.Web.Mvc.Extensions;
 
 namespace BExIS.Modules.Sam.UI.Controllers
 {
-    public class UserController : Controller
+    public class UsersController : Controller
     {
         public ActionResult Create()
         {

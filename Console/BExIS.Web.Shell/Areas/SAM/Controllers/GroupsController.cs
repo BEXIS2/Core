@@ -9,7 +9,7 @@ using Telerik.Web.Mvc.Extensions;
 
 namespace BExIS.Modules.Sam.UI.Controllers
 {
-    public class GroupController : Controller
+    public class GroupsController : Controller
     {
         public ActionResult Create()
         {

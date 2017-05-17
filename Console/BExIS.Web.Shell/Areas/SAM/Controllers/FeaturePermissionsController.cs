@@ -13,7 +13,7 @@ using Vaiona.Web.Mvc.Models;
 
 namespace BExIS.Modules.Sam.UI.Controllers
 {
-    public class FeaturePermissionController : Controller
+    public class FeaturePermissionsController : Controller
     {
         public ActionResult Features()
         {
