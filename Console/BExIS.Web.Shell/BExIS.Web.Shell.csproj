@@ -460,6 +460,7 @@
     <Compile Include="Areas\RPM\Models\Legacy\DataStructureTreeModel.cs" />
     <Compile Include="Areas\RPM\Models\Legacy\UnitDimenstionModel.cs" />
     <Compile Include="Areas\RPM\RPMAreaRegistration.cs" />
+    <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\FooterController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\TermsController.cs" />
@@ -470,6 +471,7 @@
     </Compile>
     <Compile Include="Helpers\BExISDataHelper.cs" />
     <Compile Include="Helpers\BexisModelManager.cs" />
+    <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\EntitySelectorModel.cs" />
     <Compile Include="Models\UiTestModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -987,6 +989,7 @@
     <Content Include="Views\Shared\Info.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\LockOut.cshtml" />
+    <Content Include="Views\Footer\Content.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
