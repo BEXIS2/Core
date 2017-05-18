@@ -1,7 +1,7 @@
-﻿@model List<SearchAttributeViewModel>
+﻿@using Telerik.Web.Mvc.UI;
+@using BExIS.Modules.Ddm.UI.Models;
 
-@using BExIS.Ddm.Model;
-@using BExIS.Web.Shell.Areas.DDM.Models;
+@model List<SearchAttributeViewModel>
 
 @{
     bool windowVisible = false;
@@ -43,7 +43,7 @@
     alter the Lucene configuration file on the server. For a detailed description of each parameter please
     refer to the Lucene User Manual provided with the installation package.
 <p>
-    <a href="/DDM/Help/Index/#_Toc451435017" class="bx-informationLink" title="go to help" target="_blank">More</a>
+    <a href="/ddm/Help/Index/#_Toc451435017" class="bx-informationLink" title="go to help" target="_blank">More</a>
 </p>
 
 }
@@ -167,7 +167,7 @@
     function EditSearchAttribute_onClose() {
         $('.t-state-selected[title*="Edit"]').removeClass('t-state-selected');
 
-            $.post('@Url.Action("CloseWindow", "Admin", new RouteValueDictionary { { "area", "DDM" } })', function (response) {
+            $.post('@Url.Action("CloseWindow", "Admin", new RouteValueDictionary { { "area", "ddm" } })', function (response) {
 
             })
 
@@ -175,7 +175,7 @@
 
         //Reloads the parent page please replace with proper solution
 
-        window.location.href = "/DDM/Admin/SearchDesigner";
+        window.location.href = "/ddm/Admin/SearchDesigner";
     }
     
     $("#includePrimaryDataCheckBox").change(function(e)
@@ -183,7 +183,7 @@
         //alert($("#includePrimaryDataCheckBox").is(':checked'));
         var includePrimaryData = $("#includePrimaryDataCheckBox").is(':checked');
            
-            $.post('@Url.Action("ChangeIncludePrimaryData", "Admin", new RouteValueDictionary { { "area", "DDM" } })', { includePrimaryData: includePrimaryData }, function (response) {
+            $.post('@Url.Action("ChangeIncludePrimaryData", "Admin", new RouteValueDictionary { { "area", "ddm" } })', { includePrimaryData: includePrimaryData }, function (response) {
         })
     })
 

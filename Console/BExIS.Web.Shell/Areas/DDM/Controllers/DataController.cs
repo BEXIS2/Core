@@ -1,25 +1,26 @@
-﻿using BExIS.Dcm.CreateDatasetWizard;
-using BExIS.Dcm.Wizard;
-using BExIS.Dlm.Entities.Data;
+﻿using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
-using BExIS.IO;
-using BExIS.IO.Transform.Output;
+using BExIS.Modules.Ddm.UI.Models;
+using BExIS.Security.Entities.Authorization;
+using BExIS.Security.Entities.Objects;
+using BExIS.Security.Entities.Subjects;
+using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
-using BExIS.Web.Shell.Areas.DDM.Helpers;
-using BExIS.Web.Shell.Areas.DDM.Models;
+using BExIS.UI.Wizard;
 using BExIS.Xml.Helpers;
 using BExIS.Xml.Services;
-using Ionic.Zip;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 using System.Xml;
 using System.Xml.Linq;
@@ -29,27 +30,23 @@ using Vaiona.Logging;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
+using BExIS.UI.Wizard;
+using BExIS.Modules.Ddm.UI.Helpers;
+using BExIS.IO.Transform.Output;
+using Ionic.Zip;
+using BExIS.IO;
 
-namespace BExIS.Web.Shell.Areas.DDM.Controllers
+namespace BExIS.Modules.Ddm.UI.Controllers
 {
     public class DataController : Controller
     {
-        public JsonResult IsDatasetCheckedIn(long id)
-        {
-            DatasetManager dm = new DatasetManager();
-
-            if (id != -1 && dm.IsDatasetCheckedIn(id))
-                return Json(true);
-            else
-                return Json(false);
-        }
 
         public ActionResult ShowData(long id)
         {
+
             DatasetManager dm = new DatasetManager();
 
-            // TODO: remove the following line
-            // PermissionManager permissionManager = new PermissionManager();
+            PermissionManager permissionManager = new PermissionManager();
             SubjectManager subjectManager = new SubjectManager();
             DatasetVersion dsv;
             ShowDataModel model = new ShowDataModel();
@@ -74,6 +71,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 metadata = dsv.Metadata;
 
                 ViewBag.Title = PresentationModel.GetViewTitleForTenant("Show Data : " + title, this.Session.GetTenant());
+
             }
             else
             {
@@ -87,19 +85,25 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 MetadataStructureId = metadataStructureId,
                 DataStructureId = dataStructureId,
                 ResearchPlanId = researchPlanId,
-                // TODO: Changed RightType.View to RightType.Read
-                ViewAccess = false,
-                // TODO: remove following line
-                // permissionManager.HasUserDataAccess(HttpContext.User.Identity.Name, 1, id, RightType.Read),
-                GrantAccess = false
-                // TODO: remove following line
-                // permissionManager.HasUserDataAccess(HttpContext.User.Identity.Name, 1, id, RightType.Grant)
+                // TODO: refactor
+                ViewAccess = false, // permissionManager.HasUserDataAccess(HttpContext.User.Identity.Name, 1, id, RightType.View),
+                GrantAccess = false, //                    permissionManager.HasUserDataAccess(HttpContext.User.Identity.Name, 1, id, RightType.Grant)
             };
 
             //set metadata in session
             Session["ShowDataMetadata"] = metadata;
 
             return View(model);
+        }
+
+        public JsonResult IsDatasetCheckedIn(long id)
+        {
+            DatasetManager dm = new DatasetManager();
+
+            if (id != -1 && dm.IsDatasetCheckedIn(id))
+                return Json(true);
+            else
+                return Json(false);
         }
 
         #region metadata
@@ -125,15 +129,54 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 researchplanId,
                 sessionKeyForMetadata
             });
+
+        }
+
+        private void setAdditionalFunctions()
+        {
+            // commented by Javad during porting.
+            //Dcm.CreateDatasetWizard.CreateTaskmanager TaskManager = new CreateTaskmanager();
+
+            //Dictionary<string, ActionInfo> actions = new Dictionary<string, ActionInfo>();
+
+            ////set function actions of COPY, RESET,CANCEL,SUBMIT
+            //ActionInfo copyAction = new ActionInfo();
+            //copyAction.ActionName = "Copy";
+            //copyAction.ControllerName = "CreateDataset";
+            //copyAction.AreaName = "DCM";
+
+            //ActionInfo resetAction = new ActionInfo();
+            //resetAction.ActionName = "Reset";
+            //resetAction.ControllerName = "Form";
+            //resetAction.AreaName = "DCM";
+
+            //ActionInfo cancelAction = new ActionInfo();
+            //cancelAction.ActionName = "Cancel";
+            //cancelAction.ControllerName = "Form";
+            //cancelAction.AreaName = "DCM";
+
+            //ActionInfo submitAction = new ActionInfo();
+            //submitAction.ActionName = "Submit";
+            //submitAction.ControllerName = "CreateDataset";
+            //submitAction.AreaName = "DCM";
+
+
+            //TaskManager.Actions.Add(CreateTaskmanager.CANCEL_ACTION, cancelAction);
+            //TaskManager.Actions.Add(CreateTaskmanager.COPY_ACTION, copyAction);
+            //TaskManager.Actions.Add(CreateTaskmanager.RESET_ACTION, resetAction);
+            //TaskManager.Actions.Add(CreateTaskmanager.SUBMIT_ACTION, submitAction);
+
+            //Session["CreateDatasetTaskmanager"] = TaskManager;
         }
 
         private BaseModelElement GetModelFromElement(XElement element)
         {
+
             string name = element.Attribute("name").Value;
             string displayName = "";
             BExIS.Xml.Helpers.XmlNodeType type;
 
-            // get Type
+            // get Type 
             type = BExIS.Xml.Helpers.XmlMetadataWriter.GetXmlNodeType(element.Attribute("type").Value);
 
             // get DisplayName
@@ -141,6 +184,8 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 displayName = element.Parent.Attribute("name").Value;
             else
                 displayName = element.Attribute("name").Value;
+
+
 
             if (XmlUtility.HasChildren(element))
             {
@@ -156,9 +201,11 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 }
 
                 return model;
+
             }
             else
             {
+
                 return new SimpleAttributeModel()
                 {
                     Name = name,
@@ -169,53 +216,9 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             }
         }
 
-        private void setAdditionalFunctions()
-        {
-            CreateTaskmanager TaskManager = new CreateTaskmanager();
-
-            Dictionary<string, ActionInfo> actions = new Dictionary<string, ActionInfo>();
-
-            //set function actions of COPY, RESET,CANCEL,SUBMIT
-            ActionInfo copyAction = new ActionInfo();
-            copyAction.ActionName = "Copy";
-            copyAction.ControllerName = "CreateDataset";
-            copyAction.AreaName = "DCM";
-
-            ActionInfo resetAction = new ActionInfo();
-            resetAction.ActionName = "Reset";
-            resetAction.ControllerName = "Form";
-            resetAction.AreaName = "DCM";
-
-            ActionInfo cancelAction = new ActionInfo();
-            cancelAction.ActionName = "Cancel";
-            cancelAction.ControllerName = "Form";
-            cancelAction.AreaName = "DCM";
-
-            ActionInfo submitAction = new ActionInfo();
-            submitAction.ActionName = "Submit";
-            submitAction.ControllerName = "CreateDataset";
-            submitAction.AreaName = "DCM";
-
-            TaskManager.Actions.Add(CreateTaskmanager.CANCEL_ACTION, cancelAction);
-            TaskManager.Actions.Add(CreateTaskmanager.COPY_ACTION, copyAction);
-            TaskManager.Actions.Add(CreateTaskmanager.RESET_ACTION, resetAction);
-            TaskManager.Actions.Add(CreateTaskmanager.SUBMIT_ACTION, submitAction);
-
-            Session["CreateDatasetTaskmanager"] = TaskManager;
-        }
-
-        #endregion metadata
+        #endregion
 
         #region primary data
-
-        public ActionResult SetGridCommand(string filters, string orders, string columns)
-        {
-            Session["Columns"] = columns.Replace("ID", "").Split(',');
-
-            Session["Filter"] = GridHelper.ConvertToGridCommand(filters, orders);
-
-            return null;
-        }
 
         //[MeasurePerformance]
         public ActionResult ShowPrimaryData(long datasetID)
@@ -232,24 +235,23 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 DatasetVersion dsv = dm.GetDatasetLatestVersion(datasetID);
                 DataStructureManager dsm = new DataStructureManager();
 
+
                 StructuredDataStructure sds = dsm.StructuredDataStructureRepo.Get(dsv.Dataset.DataStructure.Id);
                 DataStructure ds = dsm.AllTypesDataStructureRepo.Get(dsv.Dataset.DataStructure.Id);
 
                 //permission download
-
-                // TODO: remove following line
-                // PermissionManager permissionManager = new PermissionManager();
+                PermissionManager permissionManager = new PermissionManager();
                 SubjectManager subjectManager = new SubjectManager();
-
-                bool downloadAccess = false;
-                // TODO: remove following line
-                // permissionManager.HasUserDataAccess(HttpContext.User.Identity.Name, 1, datasetID, RightType.Download);
+                
+                // TODO: refactor
+                bool downloadAccess = false; // permissionManager.HasUserDataAccess(HttpContext.User.Identity.Name, 1, datasetID, RightType.Download);
 
                 //TITLE
                 string title = XmlDatasetHelper.GetInformation(dsv, NameAttributeValues.title);
 
                 if (ds.Self.GetType() == typeof(StructuredDataStructure))
                 {
+
                     List<AbstractTuple> dataTuples = dm.GetDatasetVersionEffectiveTuples(dsv, 0, 100);
                     //List<AbstractTuple> dataTuples = dm.GetDatasetVersionEffectiveTuples(dsv);
 
@@ -274,7 +276,9 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 ModelState.AddModelError(string.Empty, "Dataset is just in processing.");
             }
 
+
             return PartialView(null);
+
         }
 
         #region server side
@@ -309,10 +313,77 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
             return View(model);
         }
+        #endregion
 
-        #endregion server side
+        public ActionResult SetGridCommand(string filters, string orders, string columns)
+        {
+            Session["Columns"] = columns.Replace("ID", "").Split(',');
+
+            Session["Filter"] = GridHelper.ConvertToGridCommand(filters, orders);
+
+            return null;
+        }
 
         #region download
+
+        public ActionResult SetFullDatasetDownload(bool subset)
+        {
+            Session["DownloadFullDataset"] = subset;
+
+            return Content("changed");
+        }
+
+        public ActionResult DownloadAsExcelData(long id)
+        {
+            string ext = ".xlsm";
+
+            DatasetManager datasetManager = new DatasetManager();
+
+            try
+            {
+
+                DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
+                ExcelWriter writer = new ExcelWriter();
+
+                string title = getTitle(writer.GetTitle(id));
+
+                string path = "";
+
+                string message = string.Format("dataset {0} version {1} was downloaded as excel.", id,
+                                                        datasetVersion.Id);
+
+                // if filter selected
+                if (filterInUse())
+                {
+                    #region generate a subset of a dataset
+                    //ToDo filter datatuples
+
+                    OutputDataManager ioOutputDataManager = new OutputDataManager();
+                    path = ioOutputDataManager.GenerateExcelFile(id, title);
+                    LoggerFactory.LogCustom(message);
+
+                    return File(path, "application/xlsm", title + ext);
+
+                    #endregion
+                }
+
+                //filter not in use
+                else
+                {
+                    OutputDataManager outputDataManager = new OutputDataManager();
+                    path = outputDataManager.GenerateExcelFile(id, title);
+                    LoggerFactory.LogCustom(message);
+
+                    return File(Path.Combine(AppConfiguration.DataPath, path), "application/xlsm", title + ext);
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
+        }
 
         public ActionResult DownloadAsCsvData(long id)
         {
@@ -333,6 +404,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 {
                     #region generate a subset of a dataset
 
+
                     String[] visibleColumns = null;
 
                     if (Session["Columns"] != null)
@@ -343,8 +415,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                     LoggerFactory.LogCustom(message);
 
                     return File(path, "text/csv", title + ext);
-
-                    #endregion generate a subset of a dataset
+                    #endregion
                 }
                 else
                 {
@@ -354,61 +425,14 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
                     return File(path, "text/csv", title + ".csv");
                 }
+
             }
             catch (Exception ex)
             {
+
                 throw ex;
             }
-        }
 
-        public ActionResult DownloadAsExcelData(long id)
-        {
-            string ext = ".xlsm";
-
-            DatasetManager datasetManager = new DatasetManager();
-
-            try
-            {
-                DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
-                ExcelWriter writer = new ExcelWriter();
-
-                string title = getTitle(writer.GetTitle(id));
-
-                string path = "";
-
-                string message = string.Format("dataset {0} version {1} was downloaded as excel.", id,
-                                                        datasetVersion.Id);
-
-                // if filter selected
-                if (filterInUse())
-                {
-                    #region generate a subset of a dataset
-
-                    //ToDo filter datatuples
-
-                    OutputDataManager ioOutputDataManager = new OutputDataManager();
-                    path = ioOutputDataManager.GenerateExcelFile(id, title);
-                    LoggerFactory.LogCustom(message);
-
-                    return File(path, "application/xlsm", title + ext);
-
-                    #endregion generate a subset of a dataset
-                }
-
-                //filter not in use
-                else
-                {
-                    OutputDataManager outputDataManager = new OutputDataManager();
-                    path = outputDataManager.GenerateExcelFile(id, title);
-                    LoggerFactory.LogCustom(message);
-
-                    return File(Path.Combine(AppConfiguration.DataPath, path), "application/xlsm", title + ext);
-                }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
         }
 
         public ActionResult DownloadAsTxtData(long id)
@@ -417,6 +441,8 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
             try
             {
+
+
                 DatasetManager datasetManager = new DatasetManager();
                 DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
                 AsciiWriter writer = new AsciiWriter(TextSeperator.comma);
@@ -432,6 +458,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 {
                     #region generate a subset of a dataset
 
+
                     String[] visibleColumns = null;
 
                     if (Session["Columns"] != null)
@@ -443,55 +470,28 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
                     return File(path, "text/csv", title + ext);
 
-                    #endregion generate a subset of a dataset
+                    #endregion
                 }
                 else
                 {
                     path = ioOutputDataManager.GenerateAsciiFile(id, title, "text/plain");
 
+
                     LoggerFactory.LogCustom(message);
 
                     return File(path, "text/plain", title + ".txt");
                 }
+
             }
             catch (Exception ex)
             {
+
                 throw ex;
             }
-        }
 
-        public ActionResult SetFullDatasetDownload(bool subset)
-        {
-            Session["DownloadFullDataset"] = subset;
-
-            return Content("changed");
         }
 
         #region helper
-
-        public void SetCommand(string filters, string orders)
-        {
-            Session["Filter"] = GridHelper.ConvertToGridCommand(filters, orders);
-        }
-
-        private bool filterInUse()
-        {
-            if ((Session["Filter"] != null || Session["Columns"] != null) && !(bool)Session["DownloadFullDataset"])
-            {
-                GridCommand command = (GridCommand)Session["Filter"];
-                string[] columns = (string[])Session["Columns"];
-
-                if (columns != null)
-                {
-                    if (command.FilterDescriptors.Count > 0 || command.SortDescriptors.Count > 0 || columns.Count() > 0)
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        }
 
         private List<AbstractTuple> GetFilteredDataTuples(DatasetVersion datasetVersion)
         {
@@ -504,8 +504,10 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
                 List<AbstractTuple> dataTupleList = datatuples;
 
+
                 if (command.FilterDescriptors.Count > 0)
                 {
+
                     foreach (IFilterDescriptor filter in command.FilterDescriptors)
                     {
                         var test = filter;
@@ -527,7 +529,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                             dataTupleList = list.ToList();
                         }
                         else
-                        // more than one filter is set
+                        // more than one filter is set 
                         if (filter.GetType() == typeof(CompositeFilterDescriptor))
                         {
                             CompositeFilterDescriptor filterDescriptor = (CompositeFilterDescriptor)filter;
@@ -554,6 +556,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                             }
 
                             //dataTupleList = temp;
+
                         }
                     }
                 }
@@ -562,6 +565,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 {
                     foreach (SortDescriptor sort in command.SortDescriptors)
                     {
+
                         string direction = sort.SortDirection.ToString();
 
                         // get id as long from filtername
@@ -588,12 +592,14 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                             dataTupleList = list.ToList();
                         }
                     }
+
                 }
 
                 return dataTupleList;
             }
 
             return null;
+
         }
 
         private string getTitle(string title)
@@ -610,16 +616,51 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             return title;
         }
 
-        #endregion helper
+        private bool filterInUse()
+        {
+            if ((Session["Filter"] != null || Session["Columns"] != null) && !(bool)Session["DownloadFullDataset"])
+            {
+                GridCommand command = (GridCommand)Session["Filter"];
+                string[] columns = (string[])Session["Columns"];
 
-        #endregion download
+                if (columns != null)
+                {
+                    if (command.FilterDescriptors.Count > 0 || command.SortDescriptors.Count > 0 || columns.Count() > 0)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        public void SetCommand(string filters, string orders)
+        {
+            Session["Filter"] = GridHelper.ConvertToGridCommand(filters, orders);
+        }
+
+        #endregion
+
+        #endregion
 
         #region download FileStream
+
+        public ActionResult DownloadFile(string path, string mimeType)
+        {
+            string title = path.Split('\\').Last();
+            string message = string.Format("file was downloaded");
+            LoggerFactory.LogCustom(message);
+
+            return File(Path.Combine(AppConfiguration.DataPath, path), mimeType, title);
+        }
 
         public ActionResult DownloadAllFiles(long id)
         {
             try
             {
+
+
                 DatasetManager datasetManager = new DatasetManager();
                 DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(id);
 
@@ -631,6 +672,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 title = String.IsNullOrEmpty(title) ? "unknown" : title;
 
                 string zipPath = Path.Combine(AppConfiguration.DataPath, "Datasets", id.ToString(), title + ".zip");
+
 
                 if (FileHelper.FileExist(zipPath))
                 {
@@ -656,26 +698,19 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         datasetVersion.Id);
                 LoggerFactory.LogCustom(message);
 
+
                 return File(zipPath, "application/zip", title + ".zip");
             }
             catch (Exception ex)
             {
+
                 throw ex;
             }
+
         }
 
-        public ActionResult DownloadFile(string path, string mimeType)
-        {
-            string title = path.Split('\\').Last();
-            string message = string.Format("file was downloaded");
-            LoggerFactory.LogCustom(message);
-
-            return File(Path.Combine(AppConfiguration.DataPath, path), mimeType, title);
-        }
-
-        #endregion download FileStream
-
-        #endregion primary data
+        #endregion
+        #endregion
 
         #region datastructure
 
@@ -697,6 +732,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
                     return View(new GridModel(table));
                 }
+
             }
             else
             {
@@ -715,6 +751,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 DataStructureManager dsm = new DataStructureManager();
                 DataStructure dataStructure = dsm.AllTypesDataStructureRepo.Get(ds.Dataset.DataStructure.Id);
 
+
                 long id = (long)datasetID;
 
                 Tuple<DataStructure, long> m = new Tuple<DataStructure, long>(
@@ -726,11 +763,13 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             }
             catch (Exception ex)
             {
+
                 throw ex;
             }
+
         }
 
-        #endregion datastructure
+        #endregion
 
         #region helper
 
@@ -777,12 +816,33 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             return options;
         }
 
-        #endregion helper
+        #endregion
 
         #region Permissions
 
-        // TODO: remove all "data" permission related methods
+        public ActionResult Subjects(long dataId)
+        {
+            ViewData["DataId"] = dataId;
 
+            return PartialView("_SubjectsPartial");
+        }
+
+        [GridAction]
+        public ActionResult Subjects_Select(long dataId)
+        {
+            EntityManager entityManager = new EntityManager();
+            //PermissionManager permissionManager = new PermissionManager();
+            SubjectManager subjectManager = new SubjectManager();
+
+            List<DatasetPermissionGridRowModel> subjects = new List<DatasetPermissionGridRowModel>();
+
+            // TODO: refactor
+            //IQueryable<Subject> data = subjectManager.GetAllSubjects();
+            //data.ToList().ForEach(s => subjects.Add(DatasetPermissionGridRowModel.Convert(dataId, entityManager.GetEntityById(1), s, permissionManager.GetAllRights(s.Id, 1, dataId).ToList())));
+
+            return View(new GridModel<DatasetPermissionGridRowModel> { Data = subjects });
+        }
+        // TODO: refactor
         //public DataPermission CreateDataPermission(long subjectId, long entityId, long dataId, int rightType)
         //{
         //    PermissionManager permissionManager = new PermissionManager();
@@ -799,35 +859,9 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
         //    return true;
         //}
 
-        public ActionResult Subjects(long dataId)
-        {
-            ViewData["DataId"] = dataId;
-
-            return PartialView("_SubjectsPartial");
-        }
-
-        [GridAction]
-        public ActionResult Subjects_Select(long dataId)
-        {
-            EntityManager entityManager = new EntityManager();
-
-            // TODO: remove following line
-            // PermissionManager permissionManager = new PermissionManager();
-            SubjectManager subjectManager = new SubjectManager();
-
-            List<DatasetPermissionGridRowModel> subjects = new List<DatasetPermissionGridRowModel>();
-
-            // TODO: remove following lines
-            // IQueryable<Subject> data = subjectManager.GetAllSubjects();
-            // data.ToList().ForEach(s => subjects.Add(DatasetPermissionGridRowModel.Convert(dataId, entityManager.GetEntityById(1), s, permissionManager.GetAllRights(s.Id, 1, dataId).ToList())));
-
-            return View(new GridModel<DatasetPermissionGridRowModel> { Data = subjects });
-        }
-
-        #endregion Permissions
+        #endregion
 
         #region submission
-
         /// <summary>
         /// Commented by Javad due to modularity issues.
         /// Thes functions should call the APIs of the DIM module and get json objects back.
@@ -848,7 +882,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             model.Brokers = Brokers.Select(b => b.Name).ToList();
             model.DatasetId = datasetId;
 
-            //
+            // 
             PermissionManager permissionManager = new PermissionManager();
             SubjectManager subjectManager = new SubjectManager();
 
@@ -856,6 +890,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 datasetId, RightType.Download);
             model.EditRights = permissionManager.HasUserDataAccess(HttpContext.User.Identity.Name, 1,
                 datasetId, RightType.Download);
+
 
             List<long> versions = new List<long>();
             if (datasetVersionId == -1)
@@ -894,6 +929,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             //get broker
             PublicationManager publicationManager = new PublicationManager();
 
+
             // datasetversion
             DatasetManager dm = new DatasetManager();
             long version = dm.GetDatasetLatestVersion(datasetid).Id;
@@ -910,13 +946,16 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         .Where(p => p.Broker.Id.Equals(broker.Id) && p.DatasetVersion.Id.Equals(version))
                         .FirstOrDefault();
 
+
                 if (publication != null && !String.IsNullOrEmpty(publication.FilePath)
                     && FileHelper.FileExist(Path.Combine(AppConfiguration.DataPath, publication.FilePath)))
                 {
                     model.Exist = true;
+
                 }
                 else
                 {
+
                     //if convertion check ist needed
                     //get all export attr from metadata structure
                     List<string> exportNames =
@@ -924,9 +963,11 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                             TransmissionType.mappingFileExport, AttributeNames.name).ToList();
                     if (exportNames.Contains(broker.MetadataFormat)) model.IsMetadataConvertable = true;
 
+
                     // Validate
                     model.metadataValidMessage = OutputMetadataManager.IsValideAgainstSchema(datasetid,
                         TransmissionType.mappingFileExport, datarepo);
+
 
                     #region primary Data
 
@@ -938,8 +979,9 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         model.IsDataConvertable = true;
                     }
 
-                    #endregion primary Data
+                    #endregion
                 }
+
             }
 
             return PartialView("_dataRepositoryRequirementsView", model);
@@ -947,6 +989,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
         public JsonResult CheckExportPossibility(string datarepo, long datasetid)
         {
+
             bool isDataConvertable = false;
             bool isMetadataConvertable = false;
             string metadataValidMessage = "";
@@ -955,12 +998,14 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             //get broker
             PublicationManager publicationManager = new PublicationManager();
 
+
             // datasetversion
             DatasetManager dm = new DatasetManager();
             long version = dm.GetDatasetLatestVersion(datasetid).Id;
 
             if (publicationManager.BrokerRepo.Get().Any(d => d.Name.ToLower().Equals(datarepo.ToLower())))
             {
+
                 Broker broker =
                    publicationManager.BrokerRepo.Get().Where(d => d.Name.ToLower().Equals(datarepo.ToLower())).FirstOrDefault();
 
@@ -968,6 +1013,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                     publicationManager.PublicationRepo.Get()
                         .Where(p => p.Broker.Id.Equals(broker.Id) && p.DatasetVersion.Id.Equals(version))
                         .FirstOrDefault();
+
 
                 if (publication != null && !String.IsNullOrEmpty(publication.FilePath)
                     && FileHelper.FileExist(Path.Combine(AppConfiguration.DataPath, publication.FilePath)))
@@ -1001,9 +1047,10 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
                         metadataValidMessage = OutputMetadataManager.IsValideAgainstSchema(datasetid,
                             TransmissionType.mappingFileExport, datarepo);
+
                     }
 
-                    #endregion metadata
+                    #endregion
 
                     #region primary Data
 
@@ -1017,11 +1064,13 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         isDataConvertable = true;
                     }
 
-                    #endregion primary Data
+                    #endregion
                 }
+
 
                 //check if reporequirements are fit
                 //e.g. GFBIO
+
             }
 
             return Json(new { isMetadataConvertable = isMetadataConvertable, isDataConvertable = isDataConvertable, metadataValidMessage = metadataValidMessage, Exist = exist });
@@ -1045,6 +1094,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                     DatasetVersion dsv = datasetManager.GetDatasetVersion(datasetversionid);
                     long datasetid = dsv.Dataset.Id;
 
+
                     string zipName = publishingManager.GetZipFileName(datasetid, datasetversionid);
                     path = Path.Combine(AppConfiguration.DataPath, publication.FilePath);
 
@@ -1061,6 +1111,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
             PublicationManager publicationManager = new PublicationManager();
             SubmissionManager publishingManager = new SubmissionManager();
+
 
             Publication publication =
                 publicationManager.GetPublication()
@@ -1080,6 +1131,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
                 if (broker != null)
                 {
+
                     OutputMetadataManager.GetConvertedMetadata(datasetId, TransmissionType.mappingFileExport,
                         broker.MetadataFormat);
 
@@ -1111,9 +1163,10 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         }
                     }
 
+
+
                     // add datastructure
                     //ToDo put that functiom to the outputDatatructureManager
-
                     #region datatructure
 
                     DataStructureManager dataStructureManager = new DataStructureManager();
@@ -1124,7 +1177,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                     if (dataStructure != null)
                     {
                         // get datastructure as json
-                        //ToDo it is not allowed to call a action from a other controller, so we need to generate a function in the outputDatastructureManager of generating a structure
+                        //ToDo it is not allowed to call a action from a other controller, so we need to generate a function in the outputDatastructureManager of generating a structure 
                         // -> its not solve right now, because of sturtcure is using also entities under rpm/models
                         // we need to find a way to switch this functionality to the io libary an calling that from the api and here
                         BExIS.Web.Shell.Areas.RPM.Controllers.StructuresController dataStructureApi = new StructuresController();
@@ -1140,6 +1193,8 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                             string json = JsonConvert.SerializeObject(structure);
 
                             AsciiWriter.AllTextToFile(datastructureFilePath, json);
+
+
                         }
                         catch (Exception ex)
                         {
@@ -1147,7 +1202,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         }
                     }
 
-                    #endregion datatructure
+                    #endregion
 
                     ZipFile zip = new ZipFile();
 
@@ -1161,6 +1216,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                             zip.AddFile(path, "");
                         }
                     }
+
 
                     // add xsd of the metadata schema
                     string xsdDirectoryPath = OutputMetadataManager.GetSchemaDirectoryPath(datasetId);
@@ -1177,17 +1233,20 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
                         manifest.Save(fullFilePath);
                         zip.AddFile(fullFilePath, "");
+
                     }
 
                     string message = string.Format("dataset {0} version {1} was published for repository {2}", datasetId,
                         datasetVersion.Id, broker.Name);
                     LoggerFactory.LogCustom(message);
 
+
                     Session["ZipFilePath"] = dynamicFilePath;
 
                     zip.Save(zipFilePath);
                 }
             }
+
 
             return RedirectToAction("publishData", new { datasetId });
         }
@@ -1212,6 +1271,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
             if (publication == null)
             {
+
                 // check case for gfbio
                 if (datarepo.ToLower().Equals("gfbio"))
                 {
@@ -1223,6 +1283,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         publicationManager.GetBroker()
                             .Where(b => b.Name.ToLower().Equals(datarepo.ToLower()))
                             .FirstOrDefault();
+
 
                     if (broker != null)
                     {
@@ -1250,6 +1311,8 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                         //user exist and api user has access to the api´s
                         else
                         {
+
+
                             string projectName = "Bexis 2 Instance Project";
                             string projectDescription = "Bexis 2 Instance Project Description";
 
@@ -1259,10 +1322,12 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                                 projectDescription = "Project to find places that are awesome!!";
                             }
 
+
                             if (user.Name.ToLower().Equals("mcfly"))
                             {
                                 projectName = "Back to the Future";
                                 projectDescription = "Meet your parents in the past";
+
                             }
 
                             if (user.Name.ToLower().Equals("arthurdent"))
@@ -1292,13 +1357,17 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                             else
                             {
                                 gbfioProject = projects.Where(p => p.name.Equals(projectName)).FirstOrDefault();
+
                             }
+
+
 
                             string name = XmlDatasetHelper.GetInformation(datasetId, NameAttributeValues.title);
                             string description = XmlDatasetHelper.GetInformation(datasetId,
                                 NameAttributeValues.description);
 
-                            //TODO based on the data policy there must be a decision what should be in the extended data as a example of the dataset. at first metadata is added
+
+                            //TODO based on the data policy there must be a decision what should be in the extended data as a example of the dataset. at first metadata is added            
                             //create extended Data
                             XmlDocument metadataExportFormat = OutputMetadataManager.GetConvertedMetadata(datasetId,
                                 TransmissionType.mappingFileExport,
@@ -1340,6 +1409,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                                 publicationManager.CreatePublication(datasetVersion, broker, title,
                                     gfbioRoStatus.researchobjectid, zipfilepath, "",
                                     gfbioRoStatus.status);
+
                             }
                             else
                             {
@@ -1348,9 +1418,13 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                                 //if (!String.IsNullOrEmpty(gfbioException.exception))
                                 return Json(roJsonResult);
                             }
+
                         }
+
                     }
+
                 }
+
 
                 if (datarepo.ToLower().Equals("generic"))
                 {
@@ -1361,6 +1435,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                     string title = XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title);
                     publicationManager.CreatePublication(datasetVersion, broker, title, 0, zipfilepath, "",
                         "created");
+
                 }
             }
             else
@@ -1368,16 +1443,19 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 Json("Publication exist.");
             }
 
+
             return Json(true);
         }
         */
+        #endregion
 
-        #endregion submission
 
         #region helper
 
+
         private static string storeGeneratedFilePathToContentDiscriptor(long datasetId, DatasetVersion datasetVersion, string title, string ext)
         {
+
             string name = "";
             string mimeType = "";
 
@@ -1386,6 +1464,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 name = "datastructure";
                 mimeType = "text/comma-separated-values";
             }
+
 
             // create the generated FileStream and determine its location
             string dynamicPath = OutputDatasetManager.GetDynamicDatasetStorePath(datasetId, datasetVersion.Id, title, ext);
@@ -1401,7 +1480,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
             DatasetManager dm = new DatasetManager();
             if (datasetVersion.ContentDescriptors.Count(p => p.Name.Equals(name)) > 0)
-            {   // remove the one contentdesciptor
+            {   // remove the one contentdesciptor 
                 foreach (ContentDescriptor cd in datasetVersion.ContentDescriptors)
                 {
                     if (cd.Name == name)
@@ -1422,6 +1501,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             return dynamicPath;
         }
 
-        #endregion helper
+
+        #endregion
     }
 }

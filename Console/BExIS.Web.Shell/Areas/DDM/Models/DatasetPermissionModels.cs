@@ -2,7 +2,7 @@
 using BExIS.Security.Entities.Subjects;
 using System.Collections.Generic;
 
-namespace BExIS.Web.Shell.Areas.DDM.Models
+namespace BExIS.Modules.Ddm.UI.Models
 {
     public class DatasetPermissionGridRowModel
     {

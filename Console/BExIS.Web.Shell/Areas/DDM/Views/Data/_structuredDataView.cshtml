@@ -1,8 +1,8 @@
-﻿@model BExIS.Web.Shell.Areas.DDM.Models.ShowPrimaryDataModel
+﻿@model ShowPrimaryDataModel
 @using System.ComponentModel.DataAnnotations
 @using System.Data;
 @using BExIS.Dlm.Entities.DataStructure;
-@using BExIS.Web.Shell.Areas.DDM.Models
+@using BExIS.Modules.Ddm.UI.Models
 @using Telerik.Web.Mvc.UI;
 
 @{
@@ -32,8 +32,8 @@
 
 @section Scripts{
 	<link href="@Url.Content(Themes.GetResourcePath("Styles", "images.css"))" rel="stylesheet" type="text/css" />
-	<script type="text/javascript" src="/Areas/DDM/Scripts/ddm.js"></script>
-	@*<script type="text/javascript" src="/Areas/DDM/Views/Shared/ddm.js"></script>*@
+	<script type="text/javascript" src="/Areas/ddm/Scripts/ddm.js"></script>
+	@*<script type="text/javascript" src="/Areas/ddm/Views/Shared/ddm.js"></script>*@
 }
 
 @section information
@@ -55,11 +55,11 @@
           <button id="downloadCsvButton"   class="bx-button function" title="Csv download" onclick="downloadCsv(@Model.DatasetId)">Download Comma Separated</button>
           <button id="downloadTxtButton"   class="bx-button function" title="Text download" onclick="downloadText(@Model.DatasetId)">Download Tab Separated</button>
 
-		   @*@Html.ActionLink("Download Excel", "DownloadAsExcelData", "Data", new { id = @Model.DatasetId }, new { area = "DDM", @class = "bx-button function", title = "Xlsx download", onclick= "$('#preloaderContainer').preloader(20,'Download excel file' )" })
+		   @*@Html.ActionLink("Download Excel", "DownloadAsExcelData", "Data", new { id = @Model.DatasetId }, new { area = "ddm", @class = "bx-button function", title = "Xlsx download", onclick= "$('#preloaderContainer').preloader(20,'Download excel file' )" })
 
-		   @Html.ActionLink("Download Comma Separated", "DownloadAsCsvData", "Data", new { id = @Model.DatasetId }, new { area = "DDM", @class = "bx-button function", title = "Csv download", onclick = "$('#preloaderContainer').preloader(20,'Download csv file' )" })
+		   @Html.ActionLink("Download Comma Separated", "DownloadAsCsvData", "Data", new { id = @Model.DatasetId }, new { area = "ddm", @class = "bx-button function", title = "Csv download", onclick = "$('#preloaderContainer').preloader(20,'Download csv file' )" })
 
-		   @Html.ActionLink("Download Tab Separated", "DownloadAsTxtData", "Data", new { id = @Model.DatasetId }, new { area = "DDM", @class = "bx-button function", title = "Text download", onclick = "$('#preloaderContainer').preloader(20,'Download txt file' )" })*@
+		   @Html.ActionLink("Download Tab Separated", "DownloadAsTxtData", "Data", new { id = @Model.DatasetId }, new { area = "ddm", @class = "bx-button function", title = "Text download", onclick = "$('#preloaderContainer').preloader(20,'Download txt file' )" })*@
 
 		  @* @Html.CheckBox("DownLoadFullDataset", new { text = "Download full dataset", @id = "fullDatasetDownload" }) @Html.Label("Download full dataset")*@
     }
@@ -91,7 +91,7 @@
         .Name("PrimaryDataResultGrid")
             .DataBinding(dataBinding => dataBinding
                     .Ajax()
-                    .Select("_CustomPrimaryDataBinding", "Data", new RouteValueDictionary { { "area", "DDM" }, { "datasetID", id } })
+                    .Select("_CustomPrimaryDataBinding", "Data", new RouteValueDictionary { { "area", "ddm" }, { "datasetID", id } })
                     .OperationMode(GridOperationMode.Server)
                  )
 
@@ -170,7 +170,7 @@
 	$("#fullDatasetDownload").change(function () {
 			var subset = $('#fullDatasetDownload').is(":checked");
 
-			$.post('@Url.Action("SetFullDatasetDownload", "Data", new RouteValueDictionary { { "area", "DDM" } })', { subset: subset }, function (response) {
+			$.post('@Url.Action("SetFullDatasetDownload", "Data", new RouteValueDictionary { { "area", "ddm" } })', { subset: subset }, function (response) {
 
 		})
 	});
@@ -199,7 +199,7 @@
 		}
 	});
 
-	    @*$.post('@Url.Action("SetGridCommand", "Data", new RouteValueDictionary { { "area", "DDM" } })', { filters: currentFilter, orders: currentOrder, columns: visibleColumns }, function (response) {
+	    @*$.post('@Url.Action("SetGridCommand", "Data", new RouteValueDictionary { { "area", "ddm" } })', { filters: currentFilter, orders: currentOrder, columns: visibleColumns }, function (response) {
 	    //alert("set grid");
 	    OnDataBound();
 	})*@

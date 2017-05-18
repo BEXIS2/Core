@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Xml;
 
-namespace BExIS.Web.Shell.Areas.DDM.Models
+namespace BExIS.Modules.Ddm.UI.Models
 {
     public class ShowDataModel
     {
