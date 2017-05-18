@@ -984,7 +984,6 @@
     <Content Include="Views\Account\VerifyCode.cshtml" />
     <Content Include="Views\Account\_ExternalSignIns.cshtml" />
     <Content Include="Views\Account\_RemoveAccount.cshtml" />
-    <Content Include="Credentials.config" />
     <Content Include="Views\Shared\Info.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\LockOut.cshtml" />

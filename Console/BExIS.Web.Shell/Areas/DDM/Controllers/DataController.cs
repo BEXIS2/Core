@@ -85,9 +85,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 MetadataStructureId = metadataStructureId,
                 DataStructureId = dataStructureId,
                 ResearchPlanId = researchPlanId,
-                ViewAccess = permissionManager.HasUserDataAccess(HttpContext.User.Identity.Name, 1, id, RightType.View),
-                GrantAccess =
-                    permissionManager.HasUserDataAccess(HttpContext.User.Identity.Name, 1, id, RightType.Grant)
+                // TODO: refactor
+                ViewAccess = false, // permissionManager.HasUserDataAccess(HttpContext.User.Identity.Name, 1, id, RightType.View),
+                GrantAccess = false, //                    permissionManager.HasUserDataAccess(HttpContext.User.Identity.Name, 1, id, RightType.Grant)
             };
 
             //set metadata in session
@@ -242,9 +242,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 //permission download
                 PermissionManager permissionManager = new PermissionManager();
                 SubjectManager subjectManager = new SubjectManager();
-
-                bool downloadAccess = permissionManager.HasUserDataAccess(HttpContext.User.Identity.Name, 1,
-                    datasetID, RightType.Download);
+                
+                // TODO: refactor
+                bool downloadAccess = false; // permissionManager.HasUserDataAccess(HttpContext.User.Identity.Name, 1, datasetID, RightType.Download);
 
                 //TITLE
                 string title = XmlDatasetHelper.GetInformation(dsv, NameAttributeValues.title);
@@ -831,32 +831,33 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         public ActionResult Subjects_Select(long dataId)
         {
             EntityManager entityManager = new EntityManager();
-            PermissionManager permissionManager = new PermissionManager();
+            //PermissionManager permissionManager = new PermissionManager();
             SubjectManager subjectManager = new SubjectManager();
 
             List<DatasetPermissionGridRowModel> subjects = new List<DatasetPermissionGridRowModel>();
 
-            IQueryable<Subject> data = subjectManager.GetAllSubjects();
-            data.ToList().ForEach(s => subjects.Add(DatasetPermissionGridRowModel.Convert(dataId, entityManager.GetEntityById(1), s, permissionManager.GetAllRights(s.Id, 1, dataId).ToList())));
+            // TODO: refactor
+            //IQueryable<Subject> data = subjectManager.GetAllSubjects();
+            //data.ToList().ForEach(s => subjects.Add(DatasetPermissionGridRowModel.Convert(dataId, entityManager.GetEntityById(1), s, permissionManager.GetAllRights(s.Id, 1, dataId).ToList())));
 
             return View(new GridModel<DatasetPermissionGridRowModel> { Data = subjects });
         }
+        // TODO: refactor
+        //public DataPermission CreateDataPermission(long subjectId, long entityId, long dataId, int rightType)
+        //{
+        //    PermissionManager permissionManager = new PermissionManager();
 
-        public DataPermission CreateDataPermission(long subjectId, long entityId, long dataId, int rightType)
-        {
-            PermissionManager permissionManager = new PermissionManager();
+        //    return permissionManager.CreateDataPermission(subjectId, entityId, dataId, (RightType)rightType);
+        //}
 
-            return permissionManager.CreateDataPermission(subjectId, entityId, dataId, (RightType)rightType);
-        }
+        //public bool DeleteDataPermission(long subjectId, long entityId, long dataId, int rightType)
+        //{
+        //    PermissionManager permissionManager = new PermissionManager();
 
-        public bool DeleteDataPermission(long subjectId, long entityId, long dataId, int rightType)
-        {
-            PermissionManager permissionManager = new PermissionManager();
+        //    permissionManager.DeleteDataPermission(subjectId, entityId, dataId, (RightType)rightType);
 
-            permissionManager.DeleteDataPermission(subjectId, entityId, dataId, (RightType)rightType);
-
-            return true;
-        }
+        //    return true;
+        //}
 
         #endregion
 
