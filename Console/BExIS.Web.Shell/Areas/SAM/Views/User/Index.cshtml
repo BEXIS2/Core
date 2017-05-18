@@ -1,0 +1,67 @@
+﻿@using BExIS.Modules.Sam.UI.Models
+@using Telerik.Web.Mvc
+@using Telerik.Web.Mvc.UI
+
+@section Information
+{
+    With this interface you are able to manage users. New users can be added with the "Create" button. Existing users can be edited (properties, memberships, delete) through the "Edit" button.
+    <p>
+        <a href="/SAM/Help/Index/#_Toc451422044" class="bx-informationLink" title="go to help" target="_blank">More</a>
+    </p>
+}
+
+@Html.ActionLink("Create User", "Create", "User", null, new { @class = "bx-button function" })
+
+@(Html.Telerik().Grid<UserGridRowModel>()
+    .Name("gridUsers")
+    .Columns(columns =>
+    {
+        columns.Bound(u => u.Id);
+        columns.Bound(u => u.UserName);
+        columns.Bound(u => u.Email);
+        columns.Bound(u => u.IsAdministrator);
+        columns.Template(@<text>
+        <button type="button" class="bx bx-grid-function bx-edit" onclick="editUser(@item.Id)"></button>
+        <button type="button" class="bx bx-grid-function bx-trash" onclick="deleteUser(@item.Id)"></button>
+        </text>)
+          .ClientTemplate("<button type=\"button\" class=\"bx bx-grid-function bx-edit\" onclick=\"editUser(<#= Id #>);\" value=\"<#= Id #>\"></button>" +
+                          "<button type=\"button\" class=\"bx bx-grid-function bx-trash\" onclick=\"deleteUser(<#= Id #>);\" value=\"<#= Id #>\"></button>")
+          .Width(70);
+    })
+    .ClientEvents(events =>
+    {
+        events.OnDataBound("onDataBound");
+    })
+    .DataBinding(dataBinding => dataBinding
+        .Ajax()
+        .Select("Users_Select", "User")
+    )
+    .EnableCustomBinding(true)
+    .Filterable()
+    .Pageable(pageable =>
+    {
+        pageable.Total(Model.Total);
+        pageable.PageSize(10, new[] { 10, 20, 50, 100 });
+        pageable.Style(GridPagerStyles.NextPreviousAndNumeric | GridPagerStyles.PageSizeDropDown);
+        pageable.Position(GridPagerPosition.Both);
+    })
+      .Sortable())
+
+<script type="text/javascript">
+    function createUser() {
+
+    }
+
+    function editUser(id) {
+
+    }
+
+    function deleteUser(id) {
+
+    }
+
+    function onDataBound() {
+        addTooltips();
+        resetAllTelerikIconTitles();
+    }
+</script>
