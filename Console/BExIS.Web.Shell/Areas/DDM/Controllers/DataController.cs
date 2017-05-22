@@ -3,38 +3,31 @@ using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
+using BExIS.IO;
+using BExIS.IO.Transform.Output;
+using BExIS.Modules.Ddm.UI.Helpers;
 using BExIS.Modules.Ddm.UI.Models;
-using BExIS.Security.Entities.Authorization;
-using BExIS.Security.Entities.Objects;
-using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
-using BExIS.UI.Wizard;
 using BExIS.Xml.Helpers;
 using BExIS.Xml.Services;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Web.Mvc;
 using System.Xml;
 using System.Xml.Linq;
+using Ionic.Zip;
 using Telerik.Web.Mvc;
 using Telerik.Web.Mvc.UI;
 using Vaiona.Logging;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
-using BExIS.UI.Wizard;
-using BExIS.Modules.Ddm.UI.Helpers;
-using BExIS.IO.Transform.Output;
-using Ionic.Zip;
-using BExIS.IO;
 
 namespace BExIS.Modules.Ddm.UI.Controllers
 {
@@ -242,7 +235,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 //permission download
                 PermissionManager permissionManager = new PermissionManager();
                 SubjectManager subjectManager = new SubjectManager();
-                
+
                 // TODO: refactor
                 bool downloadAccess = false; // permissionManager.HasUserDataAccess(HttpContext.User.Identity.Name, 1, datasetID, RightType.Download);
 
