@@ -1,8 +1,9 @@
 ﻿@model BExIS.Ddm.Model.Property
 @using System.Data;   
 @using BExIS.Ddm.Model;   
-@using System.Globalization;    
-@using BExIS.Web.Shell.Helpers; 
+@using System.Globalization; 
+@using BExIS.UI.Helpers;
+   
 <div>
 <p class="PropertyHeader">@Model.DisplayName</p>
 @{
@@ -76,17 +77,17 @@ else
          var id = e.target.name;
 
 
-         $.post('@Url.Action("FilterBySlider", "Home", new RouteValueDictionary { { "area", "DDM" } })', { value: value, parent: id }, function (response) {
+         $.post('@Url.Action("FilterBySlider", "Home", new RouteValueDictionary { { "area", "ddm" } })', { value: value, parent: id }, function (response) {
              // alert(response);
              $(".searchBreadcrumbNavigation").html(response);
          });
 
-//         $.post('@Url.Action("UpdateContent", "Home", new RouteValueDictionary { { "area", "DDM" } })', {}, function (response) {
+//         $.post('@Url.Action("UpdateContent", "Home", new RouteValueDictionary { { "area", "ddm" } })', {}, function (response) {
 //             $("#resultContent").html(response);
 
 //         })
 
-         $.post('@Url.Action("UpdateFacets", "Home", new RouteValueDictionary { { "area", "DDM" } })', {}, function (response) {
+         $.post('@Url.Action("UpdateFacets", "Home", new RouteValueDictionary { { "area", "ddm" } })', {}, function (response) {
              $("#searchTreeView").html(response);
          })
         

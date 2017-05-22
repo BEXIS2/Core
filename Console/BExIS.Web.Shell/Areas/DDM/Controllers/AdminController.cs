@@ -8,20 +8,19 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using BExIS.Ddm.Api;
 using BExIS.Ddm.Model;
-using BExIS.Ddm.Providers.LuceneProvider;
-using BExIS.Web.Shell.Areas.DDM.Models;
 using Telerik.Web.Mvc;
-using Telerik.Web.Mvc.UI;
 using Vaiona.IoC;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Extensions;
+using BExIS.Modules.Ddm.UI.Models;
+using BExIS.Ddm.Providers.LuceneProvider;
 
-namespace BExIS.Web.Shell.Areas.DDM.Controllers
+namespace BExIS.Modules.Ddm.UI.Controllers
 {
     public class AdminController : Controller
     {
         //
-        // GET: /DDM/DataDiscoveryManager/
+        // GET: /ddm/DataDiscoveryManager/
 
         public ActionResult Index()
         {
@@ -31,7 +30,8 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
         #region SearchDesigner
 
-
+        // To David: please think about the naming, maybe the index, or configure. /ddm/admin/configure
+        //[ActionName("configure")]
         public ActionResult SearchDesigner()
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Manage Search", this.Session.GetTenant());
@@ -325,7 +325,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
             }
 
             if(success)
-                    return RedirectToAction("Index","Home",new RouteValueDictionary{{ "area", "DDM" }});
+                    return RedirectToAction("Index","Home",new RouteValueDictionary{{ "area", "ddm" }});
             else
                     return View("SearchDesigner", (List<SearchAttributeViewModel>)Session["searchAttributeList"]);
 
@@ -335,18 +335,18 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
         #region
 
-        private SearchDesigner GetSearchDesigner()
+        private ISearchDesigner GetSearchDesigner()
         { 
 
             if (Session["SearchDesigner"] != null)
             {
-                return (SearchDesigner)Session["SearchDesigner"];
+                return (ISearchDesigner)Session["SearchDesigner"];
             }
 
             return new SearchDesigner();
         }
 
-        private void SetSearchDesigner(SearchDesigner searchDesigner)
+        private void SetSearchDesigner(ISearchDesigner searchDesigner)
         {
             Session["SearchDesigner"] = searchDesigner;
         }

@@ -13,7 +13,7 @@
 }
 
 @{ 
-    var menuStructure = Html.ExportTree();
+    //var menuStructure = Html.ExportTree();
     //Use this variable to build the menu strcuture 
 }
 <div class="navbar navbar-default navbar-fixed-top" style="z-index: 1337">
@@ -47,6 +47,7 @@
                     @Html.RenderExtendedMenu(Html.GetTenant().ExtendedMenus.Element("ExtendedMenu"))
                 }
 
+                @* Move this to Html.LaunchBar. Urls should come from Shell not SAM. MyAccount can go to index. unify login/logoff/logout, etc. *@
                 @if (Request.IsAuthenticated)
                 {
                     <li class="dropdown">
