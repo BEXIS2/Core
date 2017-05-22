@@ -12,7 +12,7 @@
     </p>
 }
 
-@Html.ActionLink("Create Group", "Create", "Group", null, new { @class = "bx-button function" })
+@Html.ActionLink("Create Group", "Create", "Groups", null, new { @class = "bx-button function" })
 
 @(Html.Telerik().Grid<GroupGridRowModel>()
     .Name("gridGroups")
@@ -36,7 +36,7 @@
     })
     .DataBinding(dataBinding => dataBinding
         .Ajax()
-        .Select("Groups_Select", "Group")
+        .Select("Groups_Select", "Groups")
     )
     .EnableCustomBinding(true)
     .Filterable()
