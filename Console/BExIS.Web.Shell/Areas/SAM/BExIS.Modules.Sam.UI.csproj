@@ -144,6 +144,10 @@
     <Compile Include="Controllers\GroupsController.cs" />
     <Compile Include="Controllers\HelpController.cs" />
     <Compile Include="Controllers\ModulesController.cs" />
+    <Compile Include="Controllers\NotificationsController.cs" />
+    <Compile Include="Controllers\PermissionsController.cs" />
+    <Compile Include="Controllers\RequestsController.cs" />
+    <Compile Include="Controllers\SubjectsController.cs" />
     <Compile Include="Controllers\TenantsController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Helpers\Attributes.cs" />
@@ -212,7 +216,11 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Views\Notifications\" />
+    <Folder Include="Views\Permissions\" />
+    <Folder Include="Views\Requests\" />
     <Folder Include="Views\Shared\" />
+    <Folder Include="Views\Subjects\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
