@@ -139,6 +139,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\EntityController.cs" />
     <Compile Include="Controllers\EntityPermissionsController.cs" />
     <Compile Include="Controllers\FeaturePermissionsController.cs" />
     <Compile Include="Controllers\GroupsController.cs" />
@@ -216,6 +217,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Views\Entity\" />
     <Folder Include="Views\Notifications\" />
     <Folder Include="Views\Permissions\" />
     <Folder Include="Views\Requests\" />
