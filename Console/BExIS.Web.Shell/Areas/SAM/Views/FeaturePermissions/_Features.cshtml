@@ -42,7 +42,7 @@
 
         $('#subjects').empty();
 
-        $.get('@Url.Action("Subjects", "FeaturePermission")',
+        $.get('@Url.Action("Subjects", "FeaturePermissions")',
             { FeatureId: featureId },
             function (contentData) {
 
