@@ -77,7 +77,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
             var users = userManager.Users.ToUserGridRowModel();
 
             // Filtering
-            var filtered = users.Where(ExpressionBuilder.Expression<UserMembershipGridRowModel>(command.FilterDescriptors));
+            var filtered = users;
             var total = filtered.Count();
 
             // Sorting

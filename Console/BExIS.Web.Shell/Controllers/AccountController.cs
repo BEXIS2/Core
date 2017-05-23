@@ -33,7 +33,8 @@ namespace BExIS.Web.Shell.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult ExternalSignIn(string provider, string returnUrl)
         {
-            return new ChallengeResult(provider, Url.Action("ExternalSignInCallback", "Account", new { ReturnUrl = returnUrl }));
+            return new ChallengeResult(provider,
+                Url.Action("ExternalSignInCallback", "Account", new { ReturnUrl = returnUrl }));
         }
 
         public async Task<ActionResult> ExternalSignInCallback(string returnUrl)
@@ -63,13 +64,15 @@ namespace BExIS.Web.Shell.Controllers
                     // If the user does not have an account, then prompt the user to create an account
                     ViewBag.ReturnUrl = returnUrl;
                     ViewBag.LoginProvider = loginInfo.Login.LoginProvider;
-                    return View("ExternalSignInConfirmation", new ExternalSignInConfirmationModel { Email = loginInfo.Email });
+                    return View("ExternalSignInConfirmation",
+                        new ExternalSignInConfirmationModel { Email = loginInfo.Email });
             }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> ExternalSignInConfirmation(ExternalSignInConfirmationModel model, string returnUrl)
+        public async Task<ActionResult> ExternalSignInConfirmation(ExternalSignInConfirmationModel model,
+            string returnUrl)
         {
             // TODO: Refactor
             //if (User.Identity.IsAuthenticated)
@@ -126,9 +129,10 @@ namespace BExIS.Web.Shell.Controllers
                 }
 
                 var code = await userManager.GeneratePasswordResetTokenAsync(user.Id);
-                var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code },
+                    protocol: Request.Url.Scheme);
                 await userManager.SendEmailAsync(user.Id, "Reset Password",
-                   "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                    "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
                 TempData["ViewBagLink"] = callbackUrl;
                 return RedirectToAction("ForgotPasswordConfirmation", "Account");
             }
@@ -189,7 +193,8 @@ namespace BExIS.Web.Shell.Controllers
             var signInManager = new SignInManager(userManager, AuthenticationManager);
             var userId = await signInManager.GetVerifiedUserIdAsync();
             var userFactors = await userManager.GetValidTwoFactorProvidersAsync(userId);
-            var factorOptions = userFactors.Select(purpose => new SelectListItem { Text = purpose, Value = purpose }).ToList();
+            var factorOptions =
+                userFactors.Select(purpose => new SelectListItem { Text = purpose, Value = purpose }).ToList();
             return View(new SendCodeModel { Providers = factorOptions, ReturnUrl = returnUrl, RememberMe = rememberMe });
         }
 
@@ -244,7 +249,7 @@ namespace BExIS.Web.Shell.Controllers
                     // Uncomment to debug locally
                     ViewBag.Link = callbackUrl;
                     ViewBag.errorMessage = "You must have a confirmed email to log on. "
-                                         + "The confirmation token has been resent to your email account.";
+                                           + "The confirmation token has been resent to your email account.";
                     return View("Error");
                 }
             }
@@ -252,7 +257,10 @@ namespace BExIS.Web.Shell.Controllers
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, change to shouldLockout: true
             var signInManager = new SignInManager(userManager, AuthenticationManager);
-            var result = await signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, shouldLockout: false);
+            var result =
+                await
+                    signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe,
+                        shouldLockout: false);
             switch (result)
             {
                 case SignInStatus.Success:
@@ -332,7 +340,10 @@ namespace BExIS.Web.Shell.Controllers
             // will be locked out for a specified amount of time.
             // You can configure the account lockout settings in IdentityConfig
             var signInManager = new SignInManager(new UserManager(new UserStore()), AuthenticationManager);
-            var result = await signInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent: model.RememberMe, rememberBrowser: model.RememberBrowser);
+            var result =
+                await
+                    signInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent: model.RememberMe,
+                        rememberBrowser: model.RememberBrowser);
             switch (result)
             {
                 case SignInStatus.Success:
@@ -383,10 +394,18 @@ namespace BExIS.Web.Shell.Controllers
         {
             var userManager = new UserManager(new UserStore());
             var code = await userManager.GenerateEmailConfirmationTokenAsync(userId);
-            var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = userId, code = code }, protocol: Request.Url.Scheme);
-            await userManager.SendEmailAsync(userId, subject, "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+            var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = userId, code = code },
+                protocol: Request.Url.Scheme);
+            await
+                userManager.SendEmailAsync(userId, subject,
+                    "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
 
             return callbackUrl;
+        }
+
+        public ActionResult MyAccount()
+        {
+            return View();
         }
 
         #region Helpers
@@ -402,7 +421,7 @@ namespace BExIS.Web.Shell.Controllers
         internal class ChallengeResult : HttpUnauthorizedResult
         {
             public ChallengeResult(string provider, string redirectUri)
-               : this(provider, redirectUri, null)
+                : this(provider, redirectUri, null)
             {
             }
 
