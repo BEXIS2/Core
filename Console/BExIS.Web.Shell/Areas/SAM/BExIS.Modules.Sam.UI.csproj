@@ -153,6 +153,7 @@
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Helpers\Attributes.cs" />
     <Compile Include="Helpers\SAMSeedDataGenerator.cs" />
+    <Compile Include="Models\EntityModels.cs" />
     <Compile Include="Models\EntityPermissionModels.cs" />
     <Compile Include="Models\FeaturePermissionModels.cs" />
     <Compile Include="Models\GroupModels.cs" />
@@ -209,6 +210,8 @@
     <Content Include="Views\FeaturePermissions\_Subjects.cshtml" />
     <Content Include="Views\Groups\Update.cshtml" />
     <Content Include="Web.config" />
+    <Content Include="Views\Entity\Index.cshtml" />
+    <Content Include="Views\Entity\Create.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -217,7 +220,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Views\Entity\" />
     <Folder Include="Views\Notifications\" />
     <Folder Include="Views\Permissions\" />
     <Folder Include="Views\Requests\" />

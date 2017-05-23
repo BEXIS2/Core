@@ -33,6 +33,11 @@ namespace BExIS.Modules.Sam.UI.Models
     {
     }
 
+    public class ReadGroupModel
+    {
+
+    }
+
     public class GroupGridRowModel
     {
         public string Description { get; set; }

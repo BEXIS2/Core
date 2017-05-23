@@ -36,5 +36,16 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
             return View(new GridModel<GroupGridRowModel> { Data = paged.ToList(), Total = total });
         }
+
+        public ActionResult Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult Create(CreateEntityModel model)
+        {
+            return View();
+        }
     }
 }
