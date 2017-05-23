@@ -10,7 +10,7 @@
     </p>
 }
 
-@Html.ActionLink("Create User", "Create", "User", null, new { @class = "bx-button function" })
+@Html.ActionLink("Create User", "Create", "Users", null, new { @class = "bx-button function" })
 
 @(Html.Telerik().Grid<UserGridRowModel>()
     .Name("gridUsers")
@@ -34,7 +34,7 @@
     })
     .DataBinding(dataBinding => dataBinding
         .Ajax()
-        .Select("Users_Select", "User")
+        .Select("Users_Select", "Users")
     )
     .EnableCustomBinding(true)
     .Filterable()

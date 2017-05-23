@@ -12,7 +12,7 @@
     </p>
 }
 
-@Html.ActionLink("Create Group", "Create", "Group", null, new { @class = "bx-button function" })
+@Html.ActionLink("Create Group", "Create", "Groups", null, new { @class = "bx-button function" })
 
 @(Html.Telerik().Grid<GroupGridRowModel>()
     .Name("gridGroups")
@@ -20,7 +20,7 @@
     {
     columns.Bound(g => g.Id);
     columns.Bound(g => g.GroupName);
-    columns.Bound(g => g.GroupType).Template(g => g.GroupType.ToString("G")).ClientTemplate("abc('<#= GroupType #>')");
+    columns.Bound(g => g.GroupType);
     columns.Bound(g => g.Description);
     columns.Template(@<text>
         <button type="button" class="bx bx-grid-function bx-edit" onclick="editGroup(@item.Id)"></button>
@@ -36,7 +36,7 @@
     })
     .DataBinding(dataBinding => dataBinding
         .Ajax()
-        .Select("Groups_Select", "Group")
+        .Select("Groups_Select", "Groups")
     )
     .EnableCustomBinding(true)
     .Filterable()

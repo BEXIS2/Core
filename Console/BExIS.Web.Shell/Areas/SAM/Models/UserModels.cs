@@ -54,4 +54,24 @@ namespace BExIS.Modules.Sam.UI.Models
             };
         }
     }
+
+    public class UserMembershipGridRowModel
+    {
+        public string Email { get; set; }
+        public string FullName { get; set; }
+        public long Id { get; set; }
+        public bool IsUserInGroup { get; set; }
+        public string Username { get; set; }
+
+        public static UserMembershipGridRowModel Convert(User user, bool isUserInGroup)
+        {
+            return new UserMembershipGridRowModel()
+            {
+                Id = user.Id,
+                Username = user.Name,
+                Email = user.Email,
+                IsUserInGroup = isUserInGroup
+            };
+        }
+    }
 }

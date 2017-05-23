@@ -139,13 +139,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controllers\EntityPermissionController.cs" />
-    <Compile Include="Controllers\FeaturePermissionController.cs" />
-    <Compile Include="Controllers\GroupController.cs" />
+    <Compile Include="Controllers\EntityController.cs" />
+    <Compile Include="Controllers\EntityPermissionsController.cs" />
+    <Compile Include="Controllers\FeaturePermissionsController.cs" />
+    <Compile Include="Controllers\GroupsController.cs" />
     <Compile Include="Controllers\HelpController.cs" />
     <Compile Include="Controllers\ModulesController.cs" />
+    <Compile Include="Controllers\NotificationsController.cs" />
+    <Compile Include="Controllers\PermissionsController.cs" />
+    <Compile Include="Controllers\RequestsController.cs" />
+    <Compile Include="Controllers\SubjectsController.cs" />
     <Compile Include="Controllers\TenantsController.cs" />
-    <Compile Include="Controllers\UserController.cs" />
+    <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Helpers\Attributes.cs" />
     <Compile Include="Helpers\SAMSeedDataGenerator.cs" />
     <Compile Include="Models\EntityPermissionModels.cs" />
@@ -190,19 +195,19 @@
     <Content Include="Views\Tenants\Index.cshtml" />
     <Content Include="Views\Tenants\_Create.cshtml" />
     <Content Include="Views\Tenants\_Edit.cshtml" />
-    <Content Include="Views\EntityPermission\Index.cshtml" />
-    <Content Include="Views\FeaturePermission\Index.cshtml" />
-    <Content Include="Views\Group\Index.cshtml" />
-    <Content Include="Views\User\Index.cshtml" />
-    <Content Include="Views\FeaturePermission\_Features.cshtml" />
-    <Content Include="Views\Group\Create.cshtml" />
-    <Content Include="Views\User\Delete.cshtml" />
-    <Content Include="Views\Group\Delete.cshtml" />
-    <Content Include="Views\User\Create.cshtml" />
-    <Content Include="Views\EntityPermission\_Entities.cshtml" />
-    <Content Include="Views\EntityPermission\_Subjects.cshtml" />
-    <Content Include="Views\FeaturePermission\_Subjects.cshtml" />
-    <Content Include="Views\Group\Update.cshtml" />
+    <Content Include="Views\EntityPermissions\Index.cshtml" />
+    <Content Include="Views\FeaturePermissions\Index.cshtml" />
+    <Content Include="Views\Groups\Index.cshtml" />
+    <Content Include="Views\Users\Index.cshtml" />
+    <Content Include="Views\FeaturePermissions\_Features.cshtml" />
+    <Content Include="Views\Groups\Create.cshtml" />
+    <Content Include="Views\Users\Delete.cshtml" />
+    <Content Include="Views\Groups\Delete.cshtml" />
+    <Content Include="Views\Users\Create.cshtml" />
+    <Content Include="Views\EntityPermissions\_Entities.cshtml" />
+    <Content Include="Views\EntityPermissions\_Subjects.cshtml" />
+    <Content Include="Views\FeaturePermissions\_Subjects.cshtml" />
+    <Content Include="Views\Groups\Update.cshtml" />
     <Content Include="Web.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -212,7 +217,12 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Views\Entity\" />
+    <Folder Include="Views\Notifications\" />
+    <Folder Include="Views\Permissions\" />
+    <Folder Include="Views\Requests\" />
     <Folder Include="Views\Shared\" />
+    <Folder Include="Views\Subjects\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
