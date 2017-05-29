@@ -206,12 +206,12 @@
     <Content Include="Views\Groups\Delete.cshtml" />
     <Content Include="Views\Users\Create.cshtml" />
     <Content Include="Views\EntityPermissions\_Entities.cshtml" />
-    <Content Include="Views\EntityPermissions\_Subjects.cshtml" />
     <Content Include="Views\FeaturePermissions\_Subjects.cshtml" />
     <Content Include="Views\Groups\Update.cshtml" />
     <Content Include="Web.config" />
     <Content Include="Views\Entities\Index.cshtml" />
     <Content Include="Views\Entities\Create.cshtml" />
+    <Content Include="Views\EntityPermissions\_Permissions.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
