@@ -3,9 +3,6 @@
 @using Telerik.Web.Mvc.Resources;
 @using BExIS.Web.Shell.Areas.DCM.Models;
 
-<script src="@Url.Content("~/Scripts/handsontable/handsontable.full.js")"></script>
-<link rel="stylesheet" media="screen" href="@Url.Content("~/Scripts/handsontable/handsontable.full.css")">
-
 
 <style>
     .areaSelect {
@@ -27,15 +24,15 @@
     .dataMarking {
         background-color: rgba(22,2,40,0.5) !important;
     }
-</style>
 
+</style>
 
 <script>
     var hot = null;
     var currentButton = null;
-
-
+    
     $(document).ready(function () {
+        
 
         function resetRenderer(instance, td, row, col, prop, value, cellProperties) {
             Handsontable.renderers.TextRenderer.apply(this, arguments);
@@ -54,9 +51,9 @@
             return td;
         }
 
-
+        
         var container = document.getElementById('handsonExcelTable');
-        var hot = new Handsontable(container, {
+            hot = new Handsontable(container, {
             data: @Html.Raw(Model.JsonTableData),
             rowHeaders: true,
             colHeaders: true,
@@ -71,6 +68,7 @@
                 return cellProperties;
             }
         });
+
         hot.render();
 
         var selectedHeaderArea = $('#HeaderSelection').val();
@@ -179,7 +177,6 @@
             }
             hot.render();
         }
-
     });
 
     function reverseArea(selected) {

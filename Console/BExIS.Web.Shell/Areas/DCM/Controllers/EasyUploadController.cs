@@ -27,7 +27,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
     {
         List<string> ids = new List<string>();
         private EasyUploadTaskManager TaskManager;
-        private FileStream Stream;
 
         // GET: DCM/EasyUpload
         public ActionResult Index()
@@ -40,41 +39,34 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Upload Data", this.Session.GetTenant());
 
             Session["TaskManager"] = null;
-
-            if (TaskManager == null) TaskManager = (EasyUploadTaskManager)Session["TaskManager"];
-
-            if (TaskManager == null)
+            TaskManager = null;
+            
+            try
             {
-                try
-                {
-                    string path = "";
+                string path = "";
 
-                    path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "EasyUploadTaskInfo.xml");
+                path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "EasyUploadTaskInfo.xml");
 
-                    XmlDocument xmlTaskInfo = new XmlDocument();
-                    xmlTaskInfo.Load(path);
+                XmlDocument xmlTaskInfo = new XmlDocument();
+                xmlTaskInfo.Load(path);
 
-                    Session["TaskManager"] = EasyUploadTaskManager.Bind(xmlTaskInfo);
-
-                    TaskManager = (EasyUploadTaskManager)Session["TaskManager"];
-
-                    Session["TaskManager"] = TaskManager;
-                }
-                catch (Exception e)
-                {
-                    ModelState.AddModelError(String.Empty, e.Message);
-                }
-
-                Session["Filestream"] = Stream;
+                Session["TaskManager"] = EasyUploadTaskManager.Bind(xmlTaskInfo);
 
                 TaskManager = (EasyUploadTaskManager)Session["TaskManager"];
-
-                // get Lists of Dataset and Datastructure
-                Session["DatasetVersionViewList"] = new List<ListViewItem>();
-                Session["DataStructureViewList"] = LoadDataStructureViewList();
-                Session["ResearchPlanViewList"] = LoadResearchPlanViewList();
-
+                
             }
+            catch (Exception e)
+            {
+                ModelState.AddModelError(String.Empty, e.Message);
+            }
+
+            TaskManager = (EasyUploadTaskManager)Session["TaskManager"];
+
+            // get Lists of Dataset and Datastructure
+            Session["DatasetVersionViewList"] = new List<ListViewItem>();
+            Session["DataStructureViewList"] = LoadDataStructureViewList();
+            Session["ResearchPlanViewList"] = LoadResearchPlanViewList();
+
             return View((EasyUploadTaskManager)Session["TaskManager"]);
         }
 

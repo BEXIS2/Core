@@ -75,6 +75,7 @@
             dataType: 'html',
             url: '@Url.Action(@Model.Current().PostActionInfo.ActionName, @Model.Current().PostActionInfo.ControllerName, new RouteValueDictionary { { "area", @Model.Current().PostActionInfo.AreaName } })',
                 success: function(result) {
+
                     $('#StepView').html(result);
                     NavigationRefresh();
                     TaskListRefresh();

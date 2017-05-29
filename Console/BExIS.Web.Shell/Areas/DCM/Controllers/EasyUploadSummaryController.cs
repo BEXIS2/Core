@@ -264,6 +264,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             List<DataAttribute> allDataAttributes = dam.DataAttributeRepo.Get().ToList();
 
             List<Tuple<int, string, UnitInfo>> MappedHeaders = (List<Tuple<int, string, UnitInfo>>)TaskManager.Bus[EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS];
+            List<VariableIdentifier> identifiers = new List<VariableIdentifier>();
             foreach (Tuple<int, string, UnitInfo> Entry in MappedHeaders)
             {
                 int i = MappedHeaders.IndexOf(Entry);
@@ -288,6 +289,10 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 }
 
                 Variable newVariable = dsm.AddVariableUsage(sds, CurrentDataAttribute, true, Entry.Item2, "", "", "");
+                VariableIdentifier vi = new VariableIdentifier();
+                vi.name = newVariable.Label;
+                vi.id = newVariable.Id;
+                identifiers.Add(vi);
 
                 XmlElement newVariableXml = xmldoc.CreateElement("variable");
                 newVariableXml.InnerText = Convert.ToString(newVariable.Id);
@@ -448,17 +453,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                 fri.Offset = areaDataValues[1];
                 fri.Orientation = orientation;
+                
+                reader.setSubmittedVariableIdentifiers(identifiers);
 
-                //Experimental - had to alter the Excel-Reader for that (additional optional parameter and added the function modifySubmitedVariableIdentifier)
-                List<VariableIdentifier> mod = new List<VariableIdentifier>();
-                foreach (Tuple<int, string, UnitInfo> header in MappedHeaders)
-                {
-                    VariableIdentifier vi = new VariableIdentifier();
-                    vi.name = header.Item2;
-                    mod.Add(vi);
-                }
-
-                reader.setSubmittedVariableIdentifiers(mod);
                 rows = reader.ReadFile(Stream, TaskManager.Bus[EasyUploadTaskManager.FILENAME].ToString(), fri, sds, (int)datasetId);
 
                 List<Error> ValidationErrors = ValidateRows(rows.ToArray());

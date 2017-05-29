@@ -97,7 +97,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             }
 
             model.StepInfo = TaskManager.Current();
-
+            
             return PartialView(model);
 
         }

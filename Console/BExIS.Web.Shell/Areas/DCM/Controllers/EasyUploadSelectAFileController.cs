@@ -19,7 +19,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
     {
 
         private EasyUploadTaskManager TaskManager;
-        private FileStream Stream;
         private List<String> supportedExtensions = new List<string>() { ".xlsx" };
 
         //
