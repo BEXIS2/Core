@@ -7,7 +7,7 @@ using Telerik.Web.Mvc.Extensions;
 
 namespace BExIS.Modules.Sam.UI.Controllers
 {
-    public class EntityController : Controller
+    public class EntitiesController : Controller
     {
         // GET: Entity
         public ActionResult Index()

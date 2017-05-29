@@ -139,7 +139,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controllers\EntityController.cs" />
+    <Compile Include="Controllers\EntitiesController.cs" />
     <Compile Include="Controllers\EntityPermissionsController.cs" />
     <Compile Include="Controllers\FeaturePermissionsController.cs" />
     <Compile Include="Controllers\GroupsController.cs" />
@@ -210,8 +210,8 @@
     <Content Include="Views\FeaturePermissions\_Subjects.cshtml" />
     <Content Include="Views\Groups\Update.cshtml" />
     <Content Include="Web.config" />
-    <Content Include="Views\Entity\Index.cshtml" />
-    <Content Include="Views\Entity\Create.cshtml" />
+    <Content Include="Views\Entities\Index.cshtml" />
+    <Content Include="Views\Entities\Create.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
