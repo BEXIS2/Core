@@ -15,7 +15,21 @@ namespace BExIS.Modules.Sam.UI.Models
                     Email = u.Email,
                     Id = u.Id,
                     IsAdministrator = u.IsAdministrator,
-                    UserName = u.UserName
+                    UserName = u.Name
+                };
+
+            return source.Select(conversion);
+        }
+
+        public static IQueryable<UserMembershipGridRowModel> ToUserMembershipGridRowModel(this IQueryable<User> source)
+        {
+            Expression<Func<User, UserMembershipGridRowModel>> conversion = u =>
+                new UserMembershipGridRowModel()
+                {
+                    Email = u.Email,
+                    Id = u.Id,
+                    Username = u.Name,
+                    IsUserInGroup = false
                 };
 
             return source.Select(conversion);
@@ -50,7 +64,7 @@ namespace BExIS.Modules.Sam.UI.Models
                 Email = user.Email,
                 Id = user.Id,
                 IsAdministrator = user.IsAdministrator,
-                UserName = user.UserName
+                UserName = user.Name
             };
         }
     }
