@@ -26,12 +26,12 @@ namespace BExIS.Modules.Sam.UI.Controllers
         }
 
         [GridAction(EnableCustomBinding = true)]
-        public ActionResult GroupEntityPermissions_Select(GridCommand command)
+        public ActionResult GroupEntityPermissions_Select(long entityId, GridCommand command)
         {
             var entityPermissionManager = new EntityPermissionManager();
 
             // Source + Transformation - Data
-            var groupEntityPermissions = entityPermissionManager.EntityPermissions.Where(m => m.Subject is Group);
+            var groupEntityPermissions = entityPermissionManager.EntityPermissions.Where(m => m.Subject is Group && m.Entity.Id == entityId);
 
             // Filtering
             var total = groupEntityPermissions.Count();
@@ -62,13 +62,18 @@ namespace BExIS.Modules.Sam.UI.Controllers
             return View(entities.AsEnumerable());
         }
 
+        public ActionResult Permissions(long entityId)
+        {
+            return PartialView("_Permissions", entityId);
+        }
+
         [GridAction(EnableCustomBinding = true)]
-        public ActionResult UserEntityPermissions_Select(GridCommand command)
+        public ActionResult UserEntityPermissions_Select(long entityId, GridCommand command)
         {
             var entityPermissionManager = new EntityPermissionManager();
 
             // Source + Transformation - Data
-            var groupEntityPermissions = entityPermissionManager.EntityPermissions.Where(m => m.Subject is User);
+            var groupEntityPermissions = entityPermissionManager.EntityPermissions.Where(m => m.Subject is User && m.Entity.Id == entityId);
 
             // Filtering
             var total = groupEntityPermissions.Count();
