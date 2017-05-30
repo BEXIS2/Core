@@ -3,11 +3,13 @@ using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using Telerik.Web.Mvc;
 using Telerik.Web.Mvc.Extensions;
+using Vaiona.Persistence.Api;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
 
@@ -15,8 +17,15 @@ namespace BExIS.Modules.Sam.UI.Controllers
 {
     public class EntityPermissionsController : Controller
     {
-        public ActionResult Create()
+        public ActionResult Create(long entityId)
         {
+            var entityManager = new EntityManager();
+            var entityType = entityManager.FindById(entityId).GetType();
+
+            Type T = entityType;
+
+            var repository = this.GetUnitOfWork().GetReadOnlyRepository<>();
+
             return View();
         }
 
