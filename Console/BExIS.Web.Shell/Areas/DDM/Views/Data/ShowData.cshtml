@@ -1,4 +1,4 @@
-﻿@model BExIS.Web.Shell.Areas.DDM.Models.ShowDataModel
+﻿@model BExIS.Modules.Ddm.UI.Models.ShowDataModel
 
 @using Telerik.Web.Mvc.UI;
 
@@ -10,7 +10,7 @@
     You may also set
     permissions for this particular dataset
    <p>
-    <a href="/DDM/Help/Index/#_Toc451435014" class="bx-informationLink" title="go to help" target="_blank">More</a>
+    <a href="/ddm/Help/Index/#_Toc451435014" class="bx-informationLink" title="go to help" target="_blank">More</a>
 </p>
 
 }
@@ -46,34 +46,34 @@
 
                   tabs.Add()
                       .Text("Metadata")
-                      .LoadContentFrom("ShowMetadata", "Data", new {area = "DDM", entityId = @Model.Id, title = @Model.Title, metadatastructureId = @Model.MetadataStructureId, datastructureId = @Model.DataStructureId, researchplanId = @Model.ResearchPlanId, sessionKeyForMetadata = "ShowDataMetadata"})
+                      .LoadContentFrom("ShowMetadata", "Data", new {area = "ddm", entityId = @Model.Id, title = @Model.Title, metadatastructureId = @Model.MetadataStructureId, datastructureId = @Model.DataStructureId, researchplanId = @Model.ResearchPlanId, sessionKeyForMetadata = "ShowDataMetadata"})
                       .HtmlAttributes(new {id = "metadata"})
                       .Enabled(false);
 
                   tabs.Add()
                       .Text("Primary Data")
-                      .LoadContentFrom("ShowPrimaryData", "Data", new {area = "DDM", datasetID = @Model.Id})
+                      .LoadContentFrom("ShowPrimaryData", "Data", new {area = "ddm", datasetID = @Model.Id})
                       .Enabled(@Model.ViewAccess)
                       .HtmlAttributes(new {id = "primarydata"})
                       .Enabled(false);
 
                   tabs.Add()
                       .Text("Data Structure")
-                      .LoadContentFrom("ShowPreviewDataStructure", "Data", new {area = "DDM", datasetID = @Model.Id})
+                      .LoadContentFrom("ShowPreviewDataStructure", "Data", new {area = "ddm", datasetID = @Model.Id})
                       .HtmlAttributes(new {id = "datastructure"})
                       .Enabled(false);
 
 
                   tabs.Add()
                       .Text("Dataset Permissions")
-                      .LoadContentFrom("Subjects", "Data", new {area = "DDM", dataId = @Model.Id})
+                      .LoadContentFrom("Subjects", "Data", new {area = "ddm", dataId = @Model.Id})
                       .Enabled(false)
                       .HtmlAttributes(new {id = "datapermissions"});
 
 
                   tabs.Add()
                       .Text("Publish")
-                      .LoadContentFrom("publishData", "Data", new {area = "DDM", datasetId = @Model.Id})
+                      .LoadContentFrom("publishData", "Data", new {area = "ddm", datasetId = @Model.Id})
                       .Enabled(false)
                       .HtmlAttributes(new {id = "prepare"});
 

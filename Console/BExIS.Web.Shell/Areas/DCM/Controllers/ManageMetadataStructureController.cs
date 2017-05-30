@@ -1,27 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using System.Xml;
-using System.Xml.Linq;
-using BExIS.Ddm.Model;
+﻿using BExIS.Ddm.Model;
 using BExIS.Ddm.Providers.LuceneProvider;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.IO.Transform.Output;
-using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Objects;
 using BExIS.Web.Shell.Areas.DCM.Models;
-using BExIS.Web.Shell.Models;
 using BExIS.Xml.Helpers;
 using BExIS.Xml.Helpers.Mapping;
 using BExIS.Xml.Services;
 using Ionic.Zip;
-using NHibernate.Loader.Custom;
 using NHibernate.Util;
-using Telerik.Web.Mvc;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Web.Mvc;
+using System.Xml;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
@@ -34,7 +28,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         public ActionResult Index()
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Manage Metadata Structure", this.Session.GetTenant());
-
 
             return View(GetDefaultModel());
         }
@@ -108,14 +101,12 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                 metadataStructureModel.Active = XmlDatasetHelper.IsActive(metadataStructure.Id);
             }
-            catch(Exception exception)
+            catch (Exception exception)
             {
                 metadataStructureModel = new MetadataStructureModel();
                 metadataStructureModel.Id = metadataStructure.Id;
                 metadataStructureModel.Name = metadataStructure.Name;
             }
-
-
 
             return metadataStructureModel;
         }
@@ -123,7 +114,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         private MetadataStructure updateMetadataStructure(MetadataStructure metadataStructure,
             MetadataStructureModel metadataStructureModel)
         {
-
             if (metadataStructure.Id.Equals(metadataStructureModel.Id))
             {
                 metadataStructure.Name = metadataStructureModel.Name;
@@ -184,13 +174,10 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                             NameAttributeValues.active.ToString(),
                             metadataStructureModel.Active.ToString(), AttributeType.parameter.ToString(),
                             "extra/parameters/parameter");
-
                     }
 
                     metadataStructure.Extra = xmlDocument;
                 }
-
-
             }
             return metadataStructure;
         }
@@ -211,19 +198,19 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             EntityManager entityManager = new EntityManager();
 
             List<EntityModel> tmp = new List<EntityModel>();
-            entityManager.GetAllEntities().Where(e=>e.UseMetadata).ForEach(e=> tmp.Add(
-                    new EntityModel()
-                    {
-                        Name = e.Name,
-                        ClassPath = e.ClassPath
-                    }
-                )
+            entityManager.Entities.Where(e => e.UseMetadata).ForEach(e => tmp.Add(
+                      new EntityModel()
+                      {
+                          Name = e.Name,
+                          ClassPath = e.ClassPath
+                      }
+                  )
             );
 
             return tmp.ToList();
         }
 
-        #endregion
+        #endregion helper
 
         public ActionResult Save(MetadataStructureModel metadataStructureModel)
         {
@@ -235,11 +222,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(metadataStructureModel.Id);
                     metadataStructure = updateMetadataStructure(metadataStructure, metadataStructureModel);
                     metadataStructureManager.Update(metadataStructure);
-
                 }
                 catch (Exception ex)
                 {
-
                     return Json(ex.Message);
                 }
 
@@ -277,11 +262,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 return Json(ex.Message);
             }
 
-
-
             // delete links from search index
-
-
 
             if (metadataStructureManager.Repo.Get(id) == null) return Json(true);
 
@@ -304,10 +285,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             zip.Save(stream);
             stream.Position = 0;
             var result = new FileStreamResult(stream, "application/zip")
-            { FileDownloadName = name+".zip" };
+            { FileDownloadName = name + ".zip" };
 
             return result;
         }
-
     }
 }

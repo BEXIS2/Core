@@ -1,4 +1,6 @@
-﻿@model BExIS.Web.Shell.Areas.DDM.Models.ShowPublishDataModel
+﻿@using Telerik.Web.Mvc.UI;
+
+@model BExIS.Modules.Ddm.UI.Models.ShowPublishDataModel
 
 @{
     List<string> datarepolist = Model.Brokers;
@@ -16,7 +18,7 @@
             var datarepo = e.value;
             var id = '@Model.DatasetId';
 
-            $.post('@Url.Action("LoadDataRepoRequirementView", "Data", new RouteValueDictionary {{"area", "DDM"}})',
+            $.post('@Url.Action("LoadDataRepoRequirementView", "Data", new RouteValueDictionary {{"area", "ddm"}})',
                 { datarepo: e.value, datasetid: id },
                 function(response) {
                     //$("#requirementsContainer").html(response);
@@ -29,7 +31,7 @@
 
                     jQuery.ajax({
                         type: "POST",
-                        url: "@Url.Action("CheckExportPossibility", "Data", new RouteValueDictionary {{"area", "DDM"}})",
+                        url: "@Url.Action("CheckExportPossibility", "Data", new RouteValueDictionary {{"area", "ddm"}})",
                         contentType: "application/json; charset=utf-8",
                         dataType: "json",
                         data: JSON.stringify(jsonObject),
@@ -119,7 +121,7 @@
 
     function prepareData(id,input) {
 
-        $.post('@Url.Action("PrepareData", "Data", new RouteValueDictionary {{"area", "DDM"}})',
+        $.post('@Url.Action("PrepareData", "Data", new RouteValueDictionary {{"area", "ddm"}})',
                 { datasetid: id, datarepo: input },
                 function(response) {
                     //alert(response);
@@ -132,7 +134,7 @@
 
     function sendDataToDataRepo(id,input) {
 
-        $.post('@Url.Action("SendDataToDataRepo", "Data", new RouteValueDictionary {{"area", "DDM"}})',
+        $.post('@Url.Action("SendDataToDataRepo", "Data", new RouteValueDictionary {{"area", "ddm"}})',
             { datasetid: id, datarepo: input },
             function(response) {
 
@@ -151,7 +153,7 @@
                 }
 
                 //reload site
-                $.post('@Url.Action("publishData", "Data", new RouteValueDictionary {{"area", "DDM"}})',
+                $.post('@Url.Action("publishData", "Data", new RouteValueDictionary {{"area", "ddm"}})',
                     { datasetid: id },
                     function(site) {
                         $("#publishContentContainer").replaceWith(site);

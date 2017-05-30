@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Web.Mvc;
 using BExIS.Ddm.Model;
 
-namespace BExIS.Web.Shell.Areas.DDM.Models
+namespace BExIS.Modules.Ddm.UI.Models
 {
     public class SearchAttributeViewModel
     {

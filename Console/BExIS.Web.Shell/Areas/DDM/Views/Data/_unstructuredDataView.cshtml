@@ -1,20 +1,11 @@
-﻿@model BExIS.Web.Shell.Areas.DDM.Models.ShowPrimaryDataModel
+﻿@model ShowPrimaryDataModel
 
-@using System.Data;
-@using BExIS.Dlm.Entities.DataStructure;
-@using Telerik.Web.Mvc.UI;
-@using BExIS.Web.Shell.Areas.DDM.Models;
-@using FluentBootstrap;
+@using BExIS.Modules.Ddm.UI.Models;
 
-
-@{
-
-       
-}
 <div style="text-align:left; padding-bottom:5px;">
 @if (Model.DownloadAccess && Model.FileList.Count > 0)
 { 
-        @Html.ActionLink("Download all", "DownloadAllFiles", "Data", new { area = "DDM", id = @Model.DatasetId }, new { @class = "bx-button action " })
+        @Html.ActionLink("Download all", "DownloadAllFiles", "Data", new { area = "ddm", id = @Model.DatasetId }, new { @class = "bx-button action " })
 }
 else
 { 
@@ -64,7 +55,7 @@ else
                     <td style="width:30px;">
                         @if (Model.DownloadAccess)
                         {
-                            @Html.ActionLink(" ", "DownloadFile", "Data", new { area = "DDM", path = @cd.Uri, mimeType = cd.MimeType }, new { @class = "bx bx-grid-function bx-download" })
+                            @Html.ActionLink(" ", "DownloadFile", "Data", new { area = "ddm", path = @cd.Uri, mimeType = cd.MimeType }, new { @class = "bx bx-grid-function bx-download" })
                         }
                         else
                         {

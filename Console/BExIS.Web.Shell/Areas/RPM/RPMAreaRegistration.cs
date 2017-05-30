@@ -25,6 +25,9 @@ namespace BExIS.Web.Shell.Areas.RPM
             // WORKAROUND: The only solution right now is to comment the seed data creation. But it could causes other problems
             // after the init of BEXIS2 because other modules probably rely on RPM seed data.
             //if (AppConfiguration.CreateDatabase) RPM.Helpers.RPMSeedDataGenerator.GenerateSeedData();
+            // TODO: refactor
+            // BUG:
+            //if (AppConfiguration.CreateDatabase) RPM.Helpers.RPMSeedDataGenerator.GenerateSeedData();
 
             // manage Seed data
             string seedDataOption = System.Configuration.ConfigurationManager.AppSettings["UpdateSeedData"];
@@ -33,7 +36,5 @@ namespace BExIS.Web.Shell.Areas.RPM
                 RPM.Helpers.RPMSeedDataGenerator.GenerateSeedData();
             }
         }
-
     }
-
 }

@@ -2,6 +2,8 @@
 @using BExIS.Ddm.Model;
 @using System.Data;
 @using BExIS.Dlm.Entities.DataStructure;
+@using Telerik.Web.Mvc.UI;
+
 
 @section Information
 {
@@ -45,7 +47,7 @@
 
             .DataBinding(dataBinding => dataBinding
                 .Ajax()
-                .Select("_CustomMyDatasetBinding", "Home", new { area = "DDM" })
+                .Select("_CustomMyDatasetBinding", "Home", new { area = "ddm" })
             )
             .EnableCustomBinding(true)
             .HtmlAttributes(new { @class = "result-grid" })
@@ -103,8 +105,8 @@
                     "<div class='searchResultFunctionDiv'>" +
                         "<a  id='<#= " + @Model.Columns[Id.Name].ColumnName + "#>' class = 'bx bx-grid-function bx-show' title = 'View details' onclick='onclickDataset(this)'></a>" +
 
-                        //@Html.ActionLink(" ", "ShowData", "Data", new { area = "DDM", id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>" }, new { @class = "bx bx-grid-function bx-show", @id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>", title = "View details" }) +
-                        @Html.ActionLink(" ", "Index", "CreateDataset", new { area = "DCM", id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>", type = "DatasetId" }, new { @class = "bx bx-grid-function bx-copy", @id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>", title = "Copy dataset" }) +
+                        //@Html.ActionLink(" ", "ShowData", "Data", new { area = "ddm", id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>" }, new { @class = "bx bx-grid-function bx-show", @id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>", title = "View details" }) +
+                        @Html.ActionLink(" ", "Index", "CreateDataset", new { area = "dcm", id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>", type = "DatasetId" }, new { @class = "bx bx-grid-function bx-copy", @id = "<#= " + @Model.Columns[Id.Name].ColumnName + "#>", title = "Copy dataset" }) +
                      "</div>"
                     )
                     .Groupable(false)
@@ -180,7 +182,7 @@
         }
 
         $.ajax({
-            url: '/DDM/Data/IsDatasetCheckedIn',
+            url: '/ddm/Data/IsDatasetCheckedIn',
             type: 'POST',
             data: JSON.stringify(data),
             dataType: 'json',
@@ -191,7 +193,7 @@
             },
             success: function (result) {
                 if (result) {
-                    window.top.location = "/DDM/Data/ShowData/" + id;
+                    window.top.location = "/ddm/Data/ShowData/" + id;
                 } else {
 
                     alert("Dataset is locked. Please try again later.");
