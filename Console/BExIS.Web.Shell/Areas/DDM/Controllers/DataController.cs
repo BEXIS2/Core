@@ -1,37 +1,27 @@
-﻿using BExIS.Dcm.CreateDatasetWizard;
-using BExIS.Dcm.Wizard;
-using BExIS.Dlm.Entities.Data;
+﻿using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.IO;
 using BExIS.IO.Transform.Output;
-using BExIS.Security.Entities.Authorization;
-using BExIS.Security.Entities.Objects;
-using BExIS.Security.Entities.Subjects;
+using BExIS.Modules.Ddm.UI.Helpers;
+using BExIS.Modules.Ddm.UI.Models;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
-using BExIS.Web.Shell.Areas.DDM.Helpers;
-using BExIS.Web.Shell.Areas.DDM.Models;
-using BExIS.Web.Shell.Areas.RPM.Controllers;
-using BExIS.Web.Shell.Areas.RPM.Models;
 using BExIS.Xml.Helpers;
 using BExIS.Xml.Services;
-using Ionic.Zip;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Web.Mvc;
-using System.Web.Script.Serialization;
 using System.Xml;
 using System.Xml.Linq;
+using Ionic.Zip;
 using Telerik.Web.Mvc;
 using Telerik.Web.Mvc.UI;
 using Vaiona.Logging;
@@ -39,8 +29,7 @@ using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
 
-
-namespace BExIS.Web.Shell.Areas.DDM.Controllers
+namespace BExIS.Modules.Ddm.UI.Controllers
 {
     public class DataController : Controller
     {
@@ -89,9 +78,9 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 MetadataStructureId = metadataStructureId,
                 DataStructureId = dataStructureId,
                 ResearchPlanId = researchPlanId,
-                ViewAccess = permissionManager.HasUserDataAccess(HttpContext.User.Identity.Name, 1, id, RightType.View),
-                GrantAccess =
-                    permissionManager.HasUserDataAccess(HttpContext.User.Identity.Name, 1, id, RightType.Grant)
+                // TODO: refactor
+                ViewAccess = false, // permissionManager.HasUserDataAccess(HttpContext.User.Identity.Name, 1, id, RightType.View),
+                GrantAccess = false, //                    permissionManager.HasUserDataAccess(HttpContext.User.Identity.Name, 1, id, RightType.Grant)
             };
 
             //set metadata in session
@@ -138,38 +127,39 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
         private void setAdditionalFunctions()
         {
-            CreateTaskmanager TaskManager = new CreateTaskmanager();
+            // commented by Javad during porting.
+            //Dcm.CreateDatasetWizard.CreateTaskmanager TaskManager = new CreateTaskmanager();
 
-            Dictionary<string, ActionInfo> actions = new Dictionary<string, ActionInfo>();
+            //Dictionary<string, ActionInfo> actions = new Dictionary<string, ActionInfo>();
 
-            //set function actions of COPY, RESET,CANCEL,SUBMIT
-            ActionInfo copyAction = new ActionInfo();
-            copyAction.ActionName = "Copy";
-            copyAction.ControllerName = "CreateDataset";
-            copyAction.AreaName = "DCM";
+            ////set function actions of COPY, RESET,CANCEL,SUBMIT
+            //ActionInfo copyAction = new ActionInfo();
+            //copyAction.ActionName = "Copy";
+            //copyAction.ControllerName = "CreateDataset";
+            //copyAction.AreaName = "DCM";
 
-            ActionInfo resetAction = new ActionInfo();
-            resetAction.ActionName = "Reset";
-            resetAction.ControllerName = "Form";
-            resetAction.AreaName = "DCM";
+            //ActionInfo resetAction = new ActionInfo();
+            //resetAction.ActionName = "Reset";
+            //resetAction.ControllerName = "Form";
+            //resetAction.AreaName = "DCM";
 
-            ActionInfo cancelAction = new ActionInfo();
-            cancelAction.ActionName = "Cancel";
-            cancelAction.ControllerName = "Form";
-            cancelAction.AreaName = "DCM";
+            //ActionInfo cancelAction = new ActionInfo();
+            //cancelAction.ActionName = "Cancel";
+            //cancelAction.ControllerName = "Form";
+            //cancelAction.AreaName = "DCM";
 
-            ActionInfo submitAction = new ActionInfo();
-            submitAction.ActionName = "Submit";
-            submitAction.ControllerName = "CreateDataset";
-            submitAction.AreaName = "DCM";
+            //ActionInfo submitAction = new ActionInfo();
+            //submitAction.ActionName = "Submit";
+            //submitAction.ControllerName = "CreateDataset";
+            //submitAction.AreaName = "DCM";
 
 
-            TaskManager.Actions.Add(CreateTaskmanager.CANCEL_ACTION, cancelAction);
-            TaskManager.Actions.Add(CreateTaskmanager.COPY_ACTION, copyAction);
-            TaskManager.Actions.Add(CreateTaskmanager.RESET_ACTION, resetAction);
-            TaskManager.Actions.Add(CreateTaskmanager.SUBMIT_ACTION, submitAction);
+            //TaskManager.Actions.Add(CreateTaskmanager.CANCEL_ACTION, cancelAction);
+            //TaskManager.Actions.Add(CreateTaskmanager.COPY_ACTION, copyAction);
+            //TaskManager.Actions.Add(CreateTaskmanager.RESET_ACTION, resetAction);
+            //TaskManager.Actions.Add(CreateTaskmanager.SUBMIT_ACTION, submitAction);
 
-            Session["CreateDatasetTaskmanager"] = TaskManager;
+            //Session["CreateDatasetTaskmanager"] = TaskManager;
         }
 
         private BaseModelElement GetModelFromElement(XElement element)
@@ -246,8 +236,8 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
                 PermissionManager permissionManager = new PermissionManager();
                 SubjectManager subjectManager = new SubjectManager();
 
-                bool downloadAccess = permissionManager.HasUserDataAccess(HttpContext.User.Identity.Name, 1,
-                    datasetID, RightType.Download);
+                // TODO: refactor
+                bool downloadAccess = false; // permissionManager.HasUserDataAccess(HttpContext.User.Identity.Name, 1, datasetID, RightType.Download);
 
                 //TITLE
                 string title = XmlDatasetHelper.GetInformation(dsv, NameAttributeValues.title);
@@ -834,32 +824,33 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
         public ActionResult Subjects_Select(long dataId)
         {
             EntityManager entityManager = new EntityManager();
-            PermissionManager permissionManager = new PermissionManager();
+            //PermissionManager permissionManager = new PermissionManager();
             SubjectManager subjectManager = new SubjectManager();
 
             List<DatasetPermissionGridRowModel> subjects = new List<DatasetPermissionGridRowModel>();
 
-            IQueryable<Subject> data = subjectManager.GetAllSubjects();
-            data.ToList().ForEach(s => subjects.Add(DatasetPermissionGridRowModel.Convert(dataId, entityManager.GetEntityById(1), s, permissionManager.GetAllRights(s.Id, 1, dataId).ToList())));
+            // TODO: refactor
+            //IQueryable<Subject> data = subjectManager.GetAllSubjects();
+            //data.ToList().ForEach(s => subjects.Add(DatasetPermissionGridRowModel.Convert(dataId, entityManager.GetEntityById(1), s, permissionManager.GetAllRights(s.Id, 1, dataId).ToList())));
 
             return View(new GridModel<DatasetPermissionGridRowModel> { Data = subjects });
         }
+        // TODO: refactor
+        //public DataPermission CreateDataPermission(long subjectId, long entityId, long dataId, int rightType)
+        //{
+        //    PermissionManager permissionManager = new PermissionManager();
 
-        public DataPermission CreateDataPermission(long subjectId, long entityId, long dataId, int rightType)
-        {
-            PermissionManager permissionManager = new PermissionManager();
+        //    return permissionManager.CreateDataPermission(subjectId, entityId, dataId, (RightType)rightType);
+        //}
 
-            return permissionManager.CreateDataPermission(subjectId, entityId, dataId, (RightType)rightType);
-        }
+        //public bool DeleteDataPermission(long subjectId, long entityId, long dataId, int rightType)
+        //{
+        //    PermissionManager permissionManager = new PermissionManager();
 
-        public bool DeleteDataPermission(long subjectId, long entityId, long dataId, int rightType)
-        {
-            PermissionManager permissionManager = new PermissionManager();
+        //    permissionManager.DeleteDataPermission(subjectId, entityId, dataId, (RightType)rightType);
 
-            permissionManager.DeleteDataPermission(subjectId, entityId, dataId, (RightType)rightType);
-
-            return true;
-        }
+        //    return true;
+        //}
 
         #endregion
 

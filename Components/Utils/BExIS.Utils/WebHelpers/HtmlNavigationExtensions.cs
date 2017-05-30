@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Text;
 using System.Web.Mvc;
 using System.Xml.Linq;
 using Vaiona.Web.Mvc.Modularity;
@@ -15,47 +16,78 @@ namespace BExIS.Utils.WebHelpers
 
         public static MvcHtmlString MenuBar(this HtmlHelper htmlHelper)
         {
-            var menuBar = "";
+            StringBuilder sb = new StringBuilder();
             var menuBarRoot = ModuleManager.ExportTree.GetElement("menubarRoot");
 
             foreach (var menuBarItem in menuBarRoot.Elements())
             {
                 if (menuBarItem.HasElements)
                 {
-                    menuBar += $"<li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown' role='button' aria-haspopup='true' aria-expanded='false'>{menuBarItem.Attribute("title").Value}<span class='caret'></span></a><ul class='dropdown-menu'>";
+                    sb.Append($"<li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown' role='button' aria-haspopup='true' aria-expanded='false'>{menuBarItem.Attribute("title").Value}<span class='caret'></span></a><ul class='dropdown-menu'>");
 
                     foreach (var child in menuBarItem.Elements())
                     {
-                        menuBar += $"<li><a href='/{child.Attribute("area").Value}/{child.Attribute("controller").Value}/{child.Attribute("action").Value}'>{child.Attribute("title").Value}</a></li>";
+                        sb.Append($"<li><a href='");
+                        if (!string.IsNullOrWhiteSpace(child.Attribute("area").Value))
+                            sb.Append(@"/").Append(child.Attribute("area").Value);
+
+                        if (!string.IsNullOrWhiteSpace(child.Attribute("controller").Value))
+                            sb.Append(@"/").Append(child.Attribute("controller").Value);
+
+                        if (!string.IsNullOrWhiteSpace(child.Attribute("action").Value))
+                            sb.Append(@"/").Append(child.Attribute("action").Value);
+
+                        sb.Append("'>").Append(child.Attribute("title").Value).Append("</a></li>");
                     }
 
-                    menuBar += $"</ul></li>";
+                    sb.Append($"</ul></li>");
                 }
                 else
                 {
-                    menuBar += $"<li><a href='/{menuBarItem.Attribute("area").Value}/{menuBarItem.Attribute("controller").Value}/{menuBarItem.Attribute("action").Value}'>{menuBarItem.Attribute("title").Value}</a></li>";
+                    sb.Append($"<li><a href='");
+                    if (!string.IsNullOrWhiteSpace(menuBarItem.Attribute("area").Value))
+                        sb.Append(@"/").Append(menuBarItem.Attribute("area").Value);
+
+                    if (!string.IsNullOrWhiteSpace(menuBarItem.Attribute("controller").Value))
+                        sb.Append(@"/").Append(menuBarItem.Attribute("controller").Value);
+
+                    if (!string.IsNullOrWhiteSpace(menuBarItem.Attribute("action").Value))
+                        sb.Append(@"/").Append(menuBarItem.Attribute("action").Value);
+
+                    sb.Append("'>").Append(menuBarItem.Attribute("title").Value).Append("</a></li>");
                 }
             }
 
-            return new MvcHtmlString(menuBar);
+            return new MvcHtmlString(sb.ToString());
         }
 
-        public static MvcHtmlString LunchBar(this HtmlHelper htmlHelper)
+        public static MvcHtmlString LaunchBar(this HtmlHelper htmlHelper)
         {
             return new MvcHtmlString("");
         }
 
         public static MvcHtmlString Settings(this HtmlHelper htmlHelper)
         {
-            var settings = "";
+            StringBuilder sb = new StringBuilder();
             var settingsRoot = ModuleManager.ExportTree.GetElement("settingsRoot");
 
             foreach (var child in settingsRoot.Elements())
             {
-                settings += $"<li><a href='/{child.Attribute("area").Value}/{child.Attribute("controller").Value}/{child.Attribute("action").Value}'>{child.Attribute("title").Value}</a></li>";
+                sb.Append($"<li><a href='");
+                if (!string.IsNullOrWhiteSpace(child.Attribute("area").Value))
+                    sb.Append(@"/").Append(child.Attribute("area").Value);
+
+                if (!string.IsNullOrWhiteSpace(child.Attribute("controller").Value))
+                    sb.Append(@"/").Append(child.Attribute("controller").Value);
+
+                if (!string.IsNullOrWhiteSpace(child.Attribute("action").Value))
+                    sb.Append(@"/").Append(child.Attribute("action").Value);
+
+                sb.Append("'>").Append(child.Attribute("title").Value).Append("</a></li>");
+
             }
 
-            return new MvcHtmlString($"<li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown' role='button' aria-haspopup='true' aria-expanded='false'><i class='fa fa-cog'></i></a><ul class='dropdown-menu'>" + settings + $"</ul></li>");
+            return new MvcHtmlString($"<li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown' role='button' aria-haspopup='true' aria-expanded='false'><i class='fa fa-cog'></i></a><ul class='dropdown-menu'>" + sb.ToString() + $"</ul></li>");
         }
 
         public static XElement GetElement(this XElement menuTree, string id)

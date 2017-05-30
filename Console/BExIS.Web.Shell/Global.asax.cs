@@ -1,21 +1,20 @@
-﻿using System.IO;
+﻿using BExIS.Ext.Services;
+using System;
+using System.IO;
+using System.Linq;
+using System.Web;
+using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Vaiona.IoC;
+using Vaiona.Logging;
+using Vaiona.Model.MTnt;
+using Vaiona.MultiTenancy.Api;
 using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
-using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Data;
-using System.Web;
-using BExIS.Ext.Services;
-using Vaiona.MultiTenancy.Api;
-using Vaiona.Model.MTnt;
-using System.Web.Http;
-using System;
 using Vaiona.Web.Mvc.Modularity;
-using Vaiona.Logging;
-using System.Linq;
 
 namespace BExIS.Web.Shell
 {
@@ -40,7 +39,7 @@ namespace BExIS.Web.Shell
             routes.MapRoute(
                "Default", // Route name
                "{controller}/{action}/{id}", // URL with parameters
-               new { controller = "Home", action = "Index", id = UrlParameter.Optional } // Parameter defaults
+               new { controller = "home", action = "index", id = UrlParameter.Optional } // Parameter defaults
                , new[] { "BExIS.Web.Shell.Controllers" } // to prevent conflict between root controllers and area controllers that have same names
            );
 
@@ -48,13 +47,13 @@ namespace BExIS.Web.Shell
 
         protected void Application_Start()
         {
-			MvcHandler.DisableMvcResponseHeader = true;
+            MvcHandler.DisableMvcResponseHeader = true;
 
             initIoC();
             GlobalConfiguration.Configure(WebApiConfig.Register);
             AppDomain.CurrentDomain.AssemblyResolve += ModuleManager.ResolveCurrentDomainAssembly;
-            initModules();
             initPersistence();
+            initModules();
             RegisterGlobalFilters(GlobalFilters.Filters);
             RegisterRoutes(RouteTable.Routes);
             ModuleManager.BuildExportTree();
@@ -91,25 +90,27 @@ namespace BExIS.Web.Shell
                 pManager.ExportSchema();
             }
             pManager.Start();
-            
+
             // If there is any active module in catalong at the DB creation time, it would be automatically installed.
             // Installation means, the modules' Install method is called, which usually generates the seed data
-            foreach (var module in ModuleManager.ModuleInfos.Where(p => ModuleManager.IsActive(p.Id)))
+            if (AppConfiguration.CreateDatabase)
             {
-                ModuleManager.GetModuleInfo(module.Id).Plugin.Install();
+                foreach (var module in ModuleManager.ModuleInfos.Where(p => ModuleManager.IsActive(p.Id)))
+                {
+                    ModuleManager.GetModuleInfo(module.Id).Plugin.Install();
+                }
             }
-
             // if there are pending modules, their schema (if exists) must be applied.
-            if (ModuleManager.HasPendingInstallation())
+            else if (ModuleManager.HasPendingInstallation())
             {
                 try
                 {
                     pManager.UpdateSchema();
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 { }
-                // For security reasons, pending modules go to the "inactive" status after schema export. 
-                // An administrator can endable them via the management console
+                // When the pending modules' schemas are ported, their potential seed data should be generated.
+                // This is done through calling Install method.
                 foreach (var moduleId in ModuleManager.PendingModules())
                 {
                     // The install method of the plugin is called once and only once.
@@ -117,9 +118,11 @@ namespace BExIS.Web.Shell
                     try
                     {
                         ModuleManager.GetModuleInfo(moduleId).Plugin.Install();
+                        // For security reasons, pending modules go to the "inactive" status after schema export. 
+                        // An administrator can endable them via the management console
                         ModuleManager.Disable(moduleId);
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         LoggerFactory.LogCustom(string.Format("Error installing module {0}. {1}", moduleId, ex.Message));
                     }
@@ -130,7 +133,7 @@ namespace BExIS.Web.Shell
         protected void Application_End()
         {
             ModuleManager.ShutdownModules();
-            IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager();            
+            IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager();
             pManager.Shutdown(); // release all data access related resources!
             IoCFactory.ShutdownContainer();
         }
@@ -166,12 +169,12 @@ namespace BExIS.Web.Shell
         protected void Session_End()
         {
             IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager();
-            pManager.ShutdownConversation(); 
+            pManager.ShutdownConversation();
             IoCFactory.Container.ShutdownSessionLevelContainer();
         }
 
         protected virtual void Application_BeginRequest()
-        {            
+        {
         }
 
         /// <summary>
@@ -184,11 +187,11 @@ namespace BExIS.Web.Shell
             //IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager();
             //pManager.ShutdownConversation();
         }
-		
-		protected void Application_PreSendRequestHeaders()
+
+        protected void Application_PreSendRequestHeaders()
         {
             Response.Headers.Remove("Server");
-            Response.Headers.Remove("X-AspNet-Version"); 
+            Response.Headers.Remove("X-AspNet-Version");
             Response.Headers.Remove("X-AspNetMvc-Version");
             Response.Headers.Remove("X-Powered-By");
         }
