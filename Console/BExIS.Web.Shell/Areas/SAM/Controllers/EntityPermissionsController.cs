@@ -31,7 +31,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
             var entityPermissionManager = new EntityPermissionManager();
 
             // Source + Transformation - Data
-            var groupEntityPermissions = entityPermissionManager.EntityPermissions.Where(m => m.Subject is Group && m.Entity.Id == entityId);
+            var groupEntityPermissions = entityPermissionManager.EntityPermissions.Where(m => m.Subject is Group && m.Entity.Id == entityId).ToGroupEntityPermissionGridRowModel();
 
             // Filtering
             var total = groupEntityPermissions.Count();
@@ -73,7 +73,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
             var entityPermissionManager = new EntityPermissionManager();
 
             // Source + Transformation - Data
-            var groupEntityPermissions = entityPermissionManager.EntityPermissions.Where(m => m.Subject is User && m.Entity.Id == entityId);
+            var groupEntityPermissions = entityPermissionManager.EntityPermissions.Where(m => m.Subject is User && m.Entity.Id == entityId).ToUserEntityPermissionGridRowModel();
 
             // Filtering
             var total = groupEntityPermissions.Count();
