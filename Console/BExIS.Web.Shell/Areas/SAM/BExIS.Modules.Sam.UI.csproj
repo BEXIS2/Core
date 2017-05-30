@@ -155,6 +155,7 @@
     <Compile Include="Helpers\SAMSeedDataGenerator.cs" />
     <Compile Include="Models\EntityModels.cs" />
     <Compile Include="Models\EntityPermissionModels.cs" />
+    <Compile Include="Models\FeatureModels.cs" />
     <Compile Include="Models\FeaturePermissionModels.cs" />
     <Compile Include="Models\GroupModels.cs" />
     <Compile Include="Models\InfoModels.cs" />

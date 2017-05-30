@@ -15,6 +15,10 @@
 
     <property name="Name" type="String" />
     <property name="AssemblyPath" type="String" />
+    <set name="Children" inverse="true" cascade="save-update" lazy="true">
+      <key column="ParentRef" />
+      <one-to-many class="BExIS.Security.Entities.Objects.Entity, BExIS.Security.Entities" />
+    </set>
     <property name="ClassPath" type="String" />
     <property name="Securable" type="Boolean">
       <column name="Securable" default="false" />
@@ -22,6 +26,7 @@
     <property name="UseMetadata" type="Boolean">
       <column name="UseMetadata" default="false" />
     </property>
+    <many-to-one name="Parent" column="ParentRef" class="BExIS.Security.Entities.Objects.Entity, BExIS.Security.Entities" />
     <set name="Permissions" inverse="true" cascade="all-delete-orphan" lazy="true">
       <key column="EntityRef" />
       <one-to-many class="BExIS.Security.Entities.Authorization.EntityPermission, BExIS.Security.Entities" />

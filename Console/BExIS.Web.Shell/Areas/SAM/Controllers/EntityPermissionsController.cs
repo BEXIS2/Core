@@ -1,25 +1,86 @@
 ﻿using BExIS.Modules.Sam.UI.Models;
+using BExIS.Security.Entities.Objects;
+using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
+using BExIS.Security.Services.Objects;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using Telerik.Web.Mvc;
+using Telerik.Web.Mvc.Extensions;
+using Vaiona.Web.Extensions;
+using Vaiona.Web.Mvc.Models;
 
 namespace BExIS.Modules.Sam.UI.Controllers
 {
     public class EntityPermissionsController : Controller
     {
-        [GridAction]
-        public ActionResult EntityPermissions_Select(GridActionAttribute filters)
+        public ActionResult Create()
+        {
+            return View();
+        }
+
+        public ActionResult Create(CreateEntityPermissionModel model)
+        {
+            return View();
+        }
+
+        [GridAction(EnableCustomBinding = true)]
+        public ActionResult GroupEntityPermissions_Select(GridCommand command)
         {
             var entityPermissionManager = new EntityPermissionManager();
-            var entityPermissions = entityPermissionManager.EntityPermissions.Select(e => EntityPermissionGridRowModel.Convert(e)).ToList();
 
-            return View(new GridModel<EntityPermissionGridRowModel> { Data = entityPermissions });
+            // Source + Transformation - Data
+            var groupEntityPermissions = entityPermissionManager.EntityPermissions.Where(m => m.Subject is Group);
+
+            // Filtering
+            var total = groupEntityPermissions.Count();
+
+            // Sorting
+            var sorted = (IQueryable<GroupEntityPermissionGridRowModel>)groupEntityPermissions.Sort(command.SortDescriptors);
+
+            // Paging
+            var paged = sorted.Skip((command.Page - 1) * command.PageSize)
+                .Take(command.PageSize);
+
+            return View(new GridModel<GroupEntityPermissionGridRowModel> { Data = paged.ToList(), Total = total });
         }
 
         public ActionResult Index()
         {
-            return View();
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Manage Entity Permissions", Session.GetTenant());
+
+            var entities = new List<EntityTreeViewItemModel>();
+
+            var entityManager = new EntityManager();
+
+            entityManager.Create(new Entity() { Name = "BExIS" });
+
+            var roots = entityManager.FindRoots();
+            roots.ToList().ForEach(e => entities.Add(EntityTreeViewItemModel.Convert(e)));
+
+            return View(entities.AsEnumerable());
+        }
+
+        [GridAction(EnableCustomBinding = true)]
+        public ActionResult UserEntityPermissions_Select(GridCommand command)
+        {
+            var entityPermissionManager = new EntityPermissionManager();
+
+            // Source + Transformation - Data
+            var groupEntityPermissions = entityPermissionManager.EntityPermissions.Where(m => m.Subject is User);
+
+            // Filtering
+            var total = groupEntityPermissions.Count();
+
+            // Sorting
+            var sorted = (IQueryable<UserEntityPermissionGridRowModel>)groupEntityPermissions.Sort(command.SortDescriptors);
+
+            // Paging
+            var paged = sorted.Skip((command.Page - 1) * command.PageSize)
+                .Take(command.PageSize);
+
+            return View(new GridModel<UserEntityPermissionGridRowModel> { Data = paged.ToList(), Total = total });
         }
     }
 }
