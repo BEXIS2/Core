@@ -52,8 +52,8 @@ namespace BExIS.Web.Shell
             initIoC();
             GlobalConfiguration.Configure(WebApiConfig.Register);
             AppDomain.CurrentDomain.AssemblyResolve += ModuleManager.ResolveCurrentDomainAssembly;
-            initPersistence();
             initModules();
+            initPersistence();
             RegisterGlobalFilters(GlobalFilters.Filters);
             RegisterRoutes(RouteTable.Routes);
             ModuleManager.BuildExportTree();
