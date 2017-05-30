@@ -3,21 +3,10 @@
 
 @(Html.Telerik().PanelBar()
         .Name("panelBarEntities")
-        .BindTo(Model, mappings =>
-        {
-            mappings.For<FeatureTreeViewItemModel>(binding => binding
-
-                .ItemDataBound((item, feature) =>
-                {
-                    item.Text = feature.FeatureName;
-                    item.Value = feature.Id.ToString();
-                    item.LinkHtmlAttributes["title"] = "Select " + feature.FeatureName + " to manage the corresponding feature permissions on the right.";
-                })
-                .Children(feature => feature.Children));
-        })
-        .ClientEvents(events => events
-            .OnSelect("OnSelect")
-        )
-
-        .ExpandAll(true)
+    .Items(items =>
+    {
+        items.Add().Text("ABC");
+        items.Add().Text("DEF");
+        items.Add().Text("HIJ");
+    })
 )
