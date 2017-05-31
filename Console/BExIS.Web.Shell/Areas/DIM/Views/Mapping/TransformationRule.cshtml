@@ -1,0 +1,124 @@
+﻿@using System.Net.Configuration
+@using BExIS.Dim.Entities.Mapping
+@model BExIS.Modules.Dim.UI.Models.Mapping.SimpleMappingModel
+
+@{
+    string id = Model.Id + "_TransformationRule";
+
+    string sourceId = Model.Source.Type + "_" + Model.Source.ElementId + "_" + Model.Source.Position + "_" + Model.Source.Name + "_TransformationRuleItem";
+    string targetId = Model.Target.Type + "_" + Model.Target.ElementId + "_" + Model.Target.Position + "_" + Model.Target.Name + "_TransformationRuleItem";
+
+}
+
+
+<div id="@id" sourceId="@sourceId" targetId="@targetId" class="mapping-container-transformation-rule">
+    <b>Transformation Rule (@Model.Source.Name to @Model.Target.Name)</b>
+    <span class="bx bx-angle-double-down toogle-icon" onclick="iconTransformtionRuleClick(this)"></span>
+    <div class="mapping-container-transformation-rule-content">
+        <table>
+            <tr>
+                <td>
+                    Source
+                </td>
+                <td>
+                    Example
+                </td>
+                <td>
+                    RegEx
+                </td>
+                <td>
+                    Result
+                </td>
+                <td>
+                    Mask from Target (@Model.Target.Name)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Model.Source.Name
+                </td>
+                <td>
+                    @Html.TextArea("Example")
+                </td>
+                <td>
+                    @Html.TextArea("RegExPattern", @Model.TransformationRule.RegEx)
+                </td>
+                <td>
+                    <div id="result" class="col-md-5">
+
+                    </div>
+                </td>
+                <td>
+                    @Html.TextArea("Mask", @Model.Target.Mask)
+                </td>
+
+            </tr>
+        </table>
+       
+    </div>
+
+    <script type="text/javascript">
+
+        $("#" + '@id' + " #RegExPattern")
+            .change(function() {
+
+                var tmpString = $("#" + '@id' + " #Example").val();
+
+                var exp = $(this).val();
+
+                var result = tmpString.match(exp);
+
+
+                console.log("input: " + tmpString);
+                console.log("regex: " + exp);
+                console.log("result: " + result);
+                console.log(result);
+                //console.log(result[1]);
+
+                if (result != null) {
+
+                    console.log("-----");
+                    console.log(result);
+
+                    var resultString = "";
+
+                    for (var i = 0; i < result.length; i++) {
+                        resultString = resultString + "\n" + result[i];
+                    }
+
+                    $("#" + '@id' + " #result").html(resultString);
+                }
+        });
+
+        $("#" + '@id' + " #Example")
+            .change(function() {
+
+                var tmpString = $(this).val();
+
+                var exp = $("#" + '@id' + " #RegExPattern").val();
+
+                var result = tmpString.match(exp);
+
+                console.log("input: " + tmpString);
+                console.log("regex: " + exp);
+                console.log("result: " + result);
+                console.log(result);
+                //console.log(result[1]);
+
+                if (result != null) {
+
+                    console.log("-----");
+                    console.log(result);
+
+                    var resultString = "";
+
+                    for (var i = 0; i < result.length; i++) {
+                        resultString = resultString+"\n"+result[i];
+                    }
+
+                    $("#" + '@id' + " #result").html(resultString);
+                }
+            });
+    </script>
+</div>
+

@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using BExIS.Dlm.Entities.Common;
+﻿using BExIS.Dlm.Entities.Common;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace BExIS.Dcm.CreateDatasetWizard
 {
@@ -24,7 +22,7 @@ namespace BExIS.Dcm.CreateDatasetWizard
 
             return q.FirstOrDefault();
 
-       
+
         }
 
         public static BaseUsage GetMetadataCompoundAttributeUsageById(long Id)
@@ -41,7 +39,7 @@ namespace BExIS.Dcm.CreateDatasetWizard
             return x.FirstOrDefault();
 
         }
-        
+
 
 
         public static BaseUsage GetSimpleUsageById(BaseUsage parent, long Id)
@@ -92,9 +90,9 @@ namespace BExIS.Dcm.CreateDatasetWizard
                     MetadataCompoundAttribute mca = (MetadataCompoundAttribute)mau.MetadataAttribute.Self;
                     return mca.MetadataNestedAttributeUsages.Where(m => m.Id.Equals(Id)).FirstOrDefault();
                 }
-               
+
             }
-    
+
             return null;
         }
 
@@ -110,7 +108,7 @@ namespace BExIS.Dcm.CreateDatasetWizard
             MetadataStructureManager msm = new MetadataStructureManager();
 
             var q = from p in msm.PackageUsageRepo.Get()
-                    where p.Id ==  Id
+                    where p.Id == Id
                     select p;
 
             if (q != null && q.ToList().Count > 0)
@@ -184,7 +182,7 @@ namespace BExIS.Dcm.CreateDatasetWizard
 
                 foreach (BaseUsage childUsage in mpu.MetadataPackage.MetadataAttributeUsages)
                 {
-                    if(IsCompound(childUsage))
+                    if (IsCompound(childUsage))
                         temp.Add(childUsage);
                 }
             }
@@ -218,6 +216,50 @@ namespace BExIS.Dcm.CreateDatasetWizard
             return temp;
         }
 
+        public static List<BaseUsage> GetSimpleChildrens(BaseUsage usage)
+        {
+            List<BaseUsage> temp = new List<BaseUsage>();
+
+            if (usage is MetadataPackageUsage)
+            {
+                MetadataPackageUsage mpu = (MetadataPackageUsage)usage;
+
+                foreach (BaseUsage childUsage in mpu.MetadataPackage.MetadataAttributeUsages)
+                {
+                    if (IsSimple(childUsage))
+                        temp.Add(childUsage);
+                }
+            }
+
+            if (usage is MetadataAttributeUsage)
+            {
+                MetadataAttributeUsage mau = (MetadataAttributeUsage)usage;
+                if (mau.MetadataAttribute.Self is MetadataCompoundAttribute)
+                {
+                    foreach (BaseUsage childUsage in ((MetadataCompoundAttribute)mau.MetadataAttribute.Self).MetadataNestedAttributeUsages)
+                    {
+                        if (IsSimple(childUsage))
+                            temp.Add(childUsage);
+                    }
+                }
+            }
+
+            if (usage is MetadataNestedAttributeUsage)
+            {
+                MetadataNestedAttributeUsage mnau = (MetadataNestedAttributeUsage)usage;
+                if (mnau.Member.Self is MetadataCompoundAttribute)
+                {
+                    foreach (BaseUsage childUsage in ((MetadataCompoundAttribute)mnau.Member.Self).MetadataNestedAttributeUsages)
+                    {
+                        if (IsSimple(childUsage))
+                            temp.Add(childUsage);
+                    }
+                }
+            }
+
+            return temp;
+        }
+
         private static bool IsCompound(BaseUsage usage)
         {
             MetadataAttributeManager mam = new MetadataAttributeManager();
@@ -228,7 +270,7 @@ namespace BExIS.Dcm.CreateDatasetWizard
                 MetadataAttribute ma = mam.MetadataAttributeRepo.Get(mau.MetadataAttribute.Id);
 
                 if (ma.Self is MetadataCompoundAttribute) return true;
-                
+
             }
 
             if (usage is MetadataNestedAttributeUsage)
@@ -237,7 +279,7 @@ namespace BExIS.Dcm.CreateDatasetWizard
                 MetadataAttribute ma = mam.MetadataAttributeRepo.Get(mnau.Member.Id);
                 if (ma.Self is MetadataCompoundAttribute) return true;
             }
-            
+
             return false;
         }
 
@@ -259,8 +301,10 @@ namespace BExIS.Dcm.CreateDatasetWizard
             return false;
         }
 
+
+
         public static string GetNameOfType(BaseUsage usage)
-        { 
+        {
 
             if (usage is MetadataPackageUsage)
             {
@@ -315,7 +359,7 @@ namespace BExIS.Dcm.CreateDatasetWizard
 
                 foreach (BaseUsage childUsage in mpu.MetadataPackage.MetadataAttributeUsages)
                 {
-                    if(IsSimple(childUsage)) return true;
+                    if (IsSimple(childUsage)) return true;
                 }
             }
 
@@ -326,7 +370,7 @@ namespace BExIS.Dcm.CreateDatasetWizard
                 {
                     foreach (BaseUsage childUsage in ((MetadataCompoundAttribute)mau.MetadataAttribute.Self).MetadataNestedAttributeUsages)
                     {
-                       if(IsSimple(childUsage)) return true;
+                        if (IsSimple(childUsage)) return true;
                     }
                 }
             }
@@ -354,7 +398,7 @@ namespace BExIS.Dcm.CreateDatasetWizard
                 return false;
         }
 
-        public static bool HasRequiredSimpleTypes(BaseUsage usage) 
+        public static bool HasRequiredSimpleTypes(BaseUsage usage)
         {
             if (usage is MetadataPackageUsage)
             {
@@ -373,7 +417,7 @@ namespace BExIS.Dcm.CreateDatasetWizard
                 {
                     foreach (BaseUsage childUsage in ((MetadataCompoundAttribute)mau.MetadataAttribute.Self).MetadataNestedAttributeUsages)
                     {
-                        if (IsSimple(childUsage) && childUsage.MinCardinality > 0 ) return true;
+                        if (IsSimple(childUsage) && childUsage.MinCardinality > 0) return true;
                     }
                 }
             }
@@ -385,7 +429,7 @@ namespace BExIS.Dcm.CreateDatasetWizard
                 {
                     foreach (BaseUsage childUsage in ((MetadataCompoundAttribute)mnau.Member.Self).MetadataNestedAttributeUsages)
                     {
-                        if (IsSimple(childUsage) && childUsage.MinCardinality > 0 ) return true;
+                        if (IsSimple(childUsage) && childUsage.MinCardinality > 0) return true;
                     }
                 }
             }

@@ -1,13 +1,14 @@
 ﻿@using System.Web.UI.WebControls
 @using Vaiona.Web.Mvc;
 @using BExIS.Utils.WebHelpers
+@using Vaiona.Web.Mvc.Modularity;
 
 @section Information
-{    
+{
     @if (Request.IsAuthenticated)
     {
         <text>
-            This table contains all datasets created by you as a current logged on user.<br/>
+            This table contains all datasets created by you as a current logged on user.<br />
             By right clicking on the header, you can manage the visibility of
             columns. You can also use sorting and filtering to adjust the listing.
         </text>
@@ -22,15 +23,15 @@
 
 @if (Request.IsAuthenticated)
 {
-    @Html.RenderAuto("HomePage")
+    @Html.Render("ddm", "home", "ShowMyDatasets");
 }
-else
-{
+    else
+    {
     <div style="text-align: center;">
         @Html.Logo(Html.GetTenant().GetResourcePath("BigLogo"))
     </div>
     <div style="text-align: center; margin-top: 24pt">
-        <button class="t-button function" onclick="LogOn()">Log In</button>
-        <button class="t-button function" onclick="Register()">Register</button>
+        @Html.ActionLink("Sign In", "SignIn", "Account", null, new { @class = "t-button function" })
+        @Html.ActionLink("Sign Up", "SignUp", "Account", null, new { @class = "t-button function" })
     </div>
 }

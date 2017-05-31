@@ -1,6 +1,8 @@
 ﻿@model BExIS.Ddm.Model.SearchResult
 @using System.Data;
 @using BExIS.Ddm.Model;
+@using Telerik.Web.Mvc.UI;
+
 
 @{
     
@@ -119,7 +121,7 @@ function OnClickPreviewDS(e) {
         $(e).addClass('active')
         $('#showPreviewDS-resultList').css("top", newTop);
 
-        $.post('@Url.Action("ShowPreviewDataStructure", "Home", new RouteValueDictionary { { "area", "DDM" } })', { datasetID: datasetID }, function (response) {
+        $.post('@Url.Action("ShowPreviewDataStructure", "Home", new RouteValueDictionary { { "area", "ddm" } })', { datasetID: datasetID }, function (response) {
             $("#showPreviewDS-resultList").html(response);
         })
 

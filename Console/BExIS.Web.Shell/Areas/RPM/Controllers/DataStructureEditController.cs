@@ -323,7 +323,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                         Id = dt.Id
                     });
                 }
-                return PartialView("_dataTypeDropdown", DataTypes.OrderBy(dt => dt.Name).ToList());
+                return PartialView("_dropdown", DataTypes.OrderBy(dt => dt.Name).ToList());
             }
             else
             {
@@ -335,7 +335,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
                         Id = dt.Id
                     });
                 }
-                return PartialView("_dataTypeDropdown", DataTypes.OrderBy(dt => dt.Name).ToList());
+                return PartialView("_dropdown", DataTypes.OrderBy(dt => dt.Name).ToList());
             }
         }
 

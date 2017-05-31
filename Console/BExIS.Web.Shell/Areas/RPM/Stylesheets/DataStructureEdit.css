@@ -428,5 +428,30 @@ h2{
 }
 
 .bx-rpm-createAttributeContainer table.bx-rpm-info{
-    max-width:476px;
+    max-width:510px;
+}
+
+.bx-rpm-createAttributeContainer table.bx-rpm-info td.bx-rpm-function{
+    width:24px;
+}
+
+.bx-rpm-createUnitContainer table.bx-rpm-info{
+    width:100%;
+}
+
+.bx-rpm-createUnitContainer table.bx-rpm-info,
+.bx-rpm-createUnitContainer table.bx-rpm-info tr,
+.bx-rpm-createUnitContainer table.bx-rpm-info td{
+    border-right: none;
+    border-left:none;
+    padding-right:0px;
+}
+
+.bx-rpm-createUnitContainer table.bx-rpm-info .bx-input{
+    width:280px;
+}
+
+.bx-rpm-createUnitContainer table.bx-rpm-info .datatypes .datatypeitem{
+    width:calc(50% - 5px);
+    display:inline-block;
 }

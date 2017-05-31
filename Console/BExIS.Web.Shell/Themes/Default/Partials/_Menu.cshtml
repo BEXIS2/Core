@@ -13,7 +13,7 @@
 }
 
 @{ 
-    var menuStructure = Html.ExportTree();
+    //var menuStructure = Html.ExportTree();
     //Use this variable to build the menu strcuture 
 }
 <div class="navbar navbar-default navbar-fixed-top" style="z-index: 1337">
@@ -35,27 +35,9 @@
 
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div id="navbarCollapse" class="collapse navbar-collapse">
+            @*menubar*@
             <ul class="nav navbar-nav">
-                <li>@Html.ActionLink("Dashboard", "Index", "Home", new {area = ""}, null)</li>
-                <li>@Html.ActionLink("Search", "Index", "Home", new {area = "DDM"}, null)</li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Plan<span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        <li>@Html.ActionLink("Manage Data Structures", "DataStructureDesigner", "Home", new {area = "RPM"}, null)</li>
-                        <li>@Html.ActionLink("Manage Data Attributes", "AttributeManager", "DataAttribute", new {area = "RPM"}, null)</li>
-                        <li>@Html.ActionLink("Manage Units", "UnitManager", "Unit", new {area = "RPM"}, null)</li>
-                        <li>@Html.ActionLink("Manage Data Types", "DataTypeManager", "Home", new {area = "RPM"}, null)</li>
-
-                    </ul>
-                </li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Collect<span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        <li>@Html.ActionLink("Create Dataset", "Index", "CreateDataset", new {area = "DCM"}, null)</li>
-                        <li>@Html.ActionLink("Upload Data", "Index", "Submit", new {area = "DCM"}, null)</li>
-                        <li>@Html.ActionLink("Push Big File", "Index", "Push", new {area = "DCM"}, null)</li>
-                    </ul>
-                </li>
+                @Html.MenuBar()
             </ul>
 
             <ul class="nav navbar-nav navbar-right">
@@ -65,55 +47,23 @@
                     @Html.RenderExtendedMenu(Html.GetTenant().ExtendedMenus.Element("ExtendedMenu"))
                 }
 
+                @* Move this to Html.LaunchBar. Urls should come from Shell not SAM. MyAccount can go to index. unify login/logoff/logout, etc. *@
                 @if (Request.IsAuthenticated)
                 {
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">@User.Identity.Name<span class="caret"></span></a>
                         <ul class="dropdown-menu">
-                            <li>@Html.ActionLink("My Account", "MyAccount", "Account", new {area = "SAM"}, null)</li>
-                            <li>@Html.ActionLink("Log Out", "LogOff", "Account", new {area = "SAM"}, null)</li>
+                            <li>@Html.ActionLink("My Account", "MyAccount", "Account")</li>
+                            <li>@Html.ActionLink("Sign Out", "SignOut", "Account")</li>
                         </ul>
                     </li>
                 }
                 else
                 {
-                    <li><a href="#" onclick="LogOn()">Log In</a></li>
+                    <li>@Html.ActionLink("Sign In", "SignIn", "Account")</li>
                 }
-
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Help<span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="/DDM/Help/Index/#_Toc451435006">Search</a></li>
-                        <li><a href="/RPM/Help/Index/#_Toc434570748">Data Planning</a></li>
-                        <li><a href="/DCM/Help/Index/#_Toc452035183">Data Collection</a></li>
-                        <li><a href="/DIM/Help/Index">Data Dissemination</a></li>
-                        <li><a href="/SAM/Help/Index/#_Toc451422040">Administration</a></li>
-
-                        @*<li>@Html.ActionLink("Search", "Index", "Help", new { area = "DDM" }, null)</li>
-                    <li>@Html.ActionLink("Data Planning", "Index", "Help", new { area = "RPM" }, null)</li>
-                    <li>@Html.ActionLink("Data Collection", "Index", "Help", new { area = "DCM" }, null)</li>
-                    <li>@Html.ActionLink("Data Dissemination", "Index", "Help", new { area = "DIM" }, null)</li>
-                    <li>@Html.ActionLink("Administration", "Index", "Help", new { area = "SAM" }, null)</li>*@
-                    </ul>
-                </li>
-
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-cog"></i></a>
-                    <ul class="dropdown-menu">
-                        <li>@Html.ActionLink("Manage Users", "Users", "Users", new {area = "SAM"}, null)</li>
-                        <li>@Html.ActionLink("Manage Groups", "Groups", "Groups", new {area = "SAM"}, null)</li>
-                        <li>@Html.ActionLink("Manage Features", "Features", "FeaturePermissions", new {area = "SAM"}, null)</li>
-                        <li>@Html.ActionLink("Manage Data Permissions", "Data", "DataPermissions", new {area = "SAM"}, null)</li>
-                        <li role="separator" class="divider"></li>
-                        <li>@Html.ActionLink("Manage Search", "SearchDesigner", "Admin", new {area = "DDM"}, null)</li>
-                        <li role="separator" class="divider"></li>
-                        <li>@Html.ActionLink("Import Metadata Structure", "ImportMetadataStructureWizard", "ImportMetadataStructure", new {area = "DCM"}, null)</li>
-                        <li role="separator" class="divider"></li>
-                        <li>@Html.ActionLink("Export Metadata", "Index", "Admin", new {area = "DIM"}, null)</li>
-                        <li role="separator" class="divider"></li>
-                        <li>@Html.ActionLink("Maintain Datasets", "Index", "Datasets", new {area = "SAM"}, null)</li>
-                    </ul>
-                </li>
+                
+                @Html.Settings()
             </ul>
         </div>
     </div>
