@@ -257,3 +257,6 @@ paket-files/
 
 # SPECIFIC
 /Console/BExIS.Web.Shell/Credentials.config
+/Console/BExIS.Web.Shell/Areas/DCM/Content/Images/Help
+/Console/BExIS.Web.Shell/Areas/RPM/Content/Images/Help
+/Console/BExIS.Web.Shell/Areas/SAM/Content/Images/Help
