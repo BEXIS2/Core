@@ -2782,7 +2782,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     TaskManager.UpdateBus(CreateTaskmanager.METADATA_XML, metadata);
                 }
 
-                return RedirectToAction("ImportMetadata", "Form", new { area = "DCM", metadataStructureId = metadataStructureid, edit = false, created = true, locked = true });
+                return RedirectToAction("ImportMetadata", "Form", new { area = "Dcm", metadataStructureId = metadataStructureid, edit = false, created = true, locked = true });
             }
 
             return RedirectToAction("StartMetadataEditor", "Form");
@@ -2814,7 +2814,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     TaskManager.UpdateBus(CreateTaskmanager.METADATA_XML, metadata);
                 }
 
-                return RedirectToAction("ImportMetadata", "Form", new { area = "DCM", metadataStructureId = metadataStructureid, edit, created });
+                return RedirectToAction("ImportMetadata", "Form", new { area = "Dcm", metadataStructureId = metadataStructureid, edit, created });
             }
 
             return RedirectToAction("StartMetadataEditor", "Form");

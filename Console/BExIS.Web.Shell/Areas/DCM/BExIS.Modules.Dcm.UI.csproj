@@ -242,6 +242,7 @@
     <Content Include="Views\SubmitSummary\Summary.cshtml" />
     <Content Include="Views\SubmitUnstructuredData\UnstructuredData.cshtml" />
     <Content Include="Views\SubmitValidation\Validation.cshtml" />
+    <Content Include="Views\Shared\_EntitySelectorInWindowView.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

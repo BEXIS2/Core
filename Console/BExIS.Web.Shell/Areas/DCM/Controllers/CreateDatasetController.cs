@@ -548,7 +548,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     created = true;
                 }
 
-                return RedirectToAction("LoadMetadata", "Form", new { area = "DCM", entityId = datasetid, created = created, locked = true, fromEditMode = editmode, resetTaskManager = resetTaskManager, newMetadata = metadata });
+                return RedirectToAction("LoadMetadata", "Form", new { area = "Dcm", entityId = datasetid, created = created, locked = true, fromEditMode = editmode, resetTaskManager = resetTaskManager, newMetadata = metadata });
             }
 
             return RedirectToAction("StartMetadataEditor", "Form");
@@ -596,7 +596,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     created = true;
                 }
 
-                return RedirectToAction("LoadMetadata", "Form", new { area = "DCM", entityId = datasetid, locked = false, created = created, fromEditMode = editmode, resetTaskManager = resetTaskManager, newMetadata = metadata });
+                return RedirectToAction("LoadMetadata", "Form", new { area = "Dcm", entityId = datasetid, locked = false, created = created, fromEditMode = editmode, resetTaskManager = resetTaskManager, newMetadata = metadata });
             }
 
             return RedirectToAction("StartMetadataEditor", "Form");
@@ -614,7 +614,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         /// <summary>
         /// Load the UploadWizard with preselected parameters
-        /// and redirect to "UploadWizard", "Submit", area = "DCM"
+        /// and redirect to "UploadWizard", "Submit", area = "Dcm"
         /// </summary>
         /// <returns></returns>
         public ActionResult StartUploadWizard()
@@ -638,7 +638,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             Session["CreateDatasetTaskmanager"] = null;
             TaskManager = null;
 
-            return RedirectToAction("UploadWizard", "Submit", new { area = "DCM", type = type, datasetid = datasetid });
+            return RedirectToAction("UploadWizard", "Submit", new { area = "Dcm", type = type, datasetid = datasetid });
         }
 
         #endregion Options

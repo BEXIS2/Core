@@ -151,7 +151,7 @@
                               .OnSelect("SelectFileProcess_OnSelect")
                               .OnLoad("SelectFileUploader_OnLoad"))
                           .Async(async => async
-                              .Save("SelectFileProcess", "Form", new {area = "DCM"})
+                              .Save("SelectFileProcess", "Form", new {area = "Dcm"})
                               .AutoUpload(true))
                             
                           )
@@ -172,7 +172,7 @@
 
                 <td>You successfully created dataset: <br/><b>@Model.DatasetTitle</b></td>
                 <td>
-                    Please use the <b>@Html.ActionLink("Upload Data Wizard ", "StartUploadWizard", "CreateDataset", new {area = "DCM"}, new {title = "Link to upload wizard", @class = "bx-link"})</b><br/>
+                    Please use the <b>@Html.ActionLink("Upload Data Wizard ", "StartUploadWizard", "CreateDataset", new {area = "Dcm"}, new {title = "Link to upload wizard", @class = "bx-link"})</b><br/>
                     to add primary data to this dataset.
                 </td>
 

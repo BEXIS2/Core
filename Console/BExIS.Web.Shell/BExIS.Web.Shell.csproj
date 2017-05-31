@@ -882,7 +882,6 @@
     <Content Include="Themes\Default\Partials\_Breadcrumb.cshtml" />
     <Content Include="Themes\Default\Partials\_Information.cshtml" />
     <Content Include="Views\Test\Index.cshtml" />
-    <Content Include="Views\Shared\_EntitySelectorInWindowView.cshtml" />
     <Content Include="Views\Shared\_EntitySelectorView.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\DropDown.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\TreeViewItem.cshtml" />
