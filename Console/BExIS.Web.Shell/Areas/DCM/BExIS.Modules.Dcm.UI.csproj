@@ -328,18 +328,6 @@
       <Project>{d17cdd9d-b87b-441b-9248-5c54e92ffc81}</Project>
       <Name>BExIS.Dcm.Wizard</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Modules\DDM\BExIS.Ddm.Api\BExIS.Ddm.Api.csproj">
-      <Project>{8519EAC6-FBF8-48B3-813F-E0B9D3CC4A52}</Project>
-      <Name>BExIS.Ddm.Api</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Modules\DDM\BExIS.Ddm.Model\BExIS.Ddm.Model.csproj">
-      <Project>{AB46BEB8-C36D-412F-9B1A-646C86299A87}</Project>
-      <Name>BExIS.Ddm.Model</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Modules\DDM\BExIS.Ddm.Providers.LuceneProvider\BExIS.Ddm.Providers.LuceneProvider.csproj">
-      <Project>{FBE3101A-791A-4EAB-9B8F-F6E071F8DBDC}</Project>
-      <Name>BExIS.Ddm.Providers.LuceneProvider</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\BExIS.Web.Shell.csproj">
       <Project>{E5128814-4541-45C8-A9E6-6C91A7E3D1E2}</Project>
       <Name>BExIS.Web.Shell</Name>

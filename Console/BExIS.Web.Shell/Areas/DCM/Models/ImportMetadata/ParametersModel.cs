@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using BExIS.Ddm.Model;
 
 namespace BExIS.Modules.Dcm.UI.Models.ImportMetadata
 {
-    public class ParametersModel:AbstractStepModel
+    public class ParametersModel : AbstractStepModel
     {
 
         [Display(Name = "Title node")]

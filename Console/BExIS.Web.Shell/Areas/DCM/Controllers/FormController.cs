@@ -1,5 +1,5 @@
 ﻿using BExIS.Dcm.CreateDatasetWizard;
-using BExIS.Ddm.Api;
+using BExIS.Dcm.Wizard;
 using BExIS.Dlm.Entities.Common;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
@@ -23,7 +23,6 @@ using System.Web;
 using System.Web.Mvc;
 using System.Xml;
 using System.Xml.Linq;
-using BExIS.Dcm.Wizard;
 using Vaiona.IoC;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;

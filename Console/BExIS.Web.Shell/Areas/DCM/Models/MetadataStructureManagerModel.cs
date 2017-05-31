@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using BExIS.Ddm.Model;
 
 namespace BExIS.Modules.Dcm.UI.Models
 {
@@ -34,7 +33,7 @@ namespace BExIS.Modules.Dcm.UI.Models
      */
     public class MetadataStructureModel
     {
-        
+
         public long Id { get; set; }
         public string Name { get; set; }
 
