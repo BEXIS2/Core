@@ -56,6 +56,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         public ActionResult Summary(int index)
         {
             TaskManager = (EasyUploadTaskManager)Session["TaskManager"];
+
             //set current stepinfo based on index
             if (TaskManager != null)
             {

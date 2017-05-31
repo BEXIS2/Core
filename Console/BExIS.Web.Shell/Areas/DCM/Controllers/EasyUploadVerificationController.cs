@@ -32,6 +32,16 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         public ActionResult Verification(int index)
         {
             TaskManager = (EasyUploadTaskManager)Session["TaskManager"];
+
+            //set current stepinfo based on index
+            if (TaskManager != null)
+            {
+                TaskManager.SetCurrent(index);
+
+                // remove if existing
+                TaskManager.RemoveExecutedStep(TaskManager.Current());
+            }
+
             SelectVerificationModel model = new SelectVerificationModel();
 
             //Grab all necessary managers and lists
@@ -174,14 +184,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             TaskManager.AddToBus(EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS, model.AssignedHeaderUnits);
 
-            //set current stepinfo based on index
-            if (TaskManager != null)
-            {
-                TaskManager.SetCurrent(index);
-
-                // remove if existing
-                TaskManager.RemoveExecutedStep(TaskManager.Current());
-            }
+            
 
 
 
@@ -720,7 +723,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     {
                         datatype = dtm.Repo.Get(mappedHeader.Item3.SelectedDataTypeId);
                     }
-
 
                     string datatypeName = datatype.SystemType;
 

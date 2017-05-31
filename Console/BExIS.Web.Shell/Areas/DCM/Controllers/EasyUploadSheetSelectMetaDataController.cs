@@ -22,6 +22,15 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         {
             TaskManager = (EasyUploadTaskManager)Session["TaskManager"];
 
+            //set current stepinfo based on index
+            if (TaskManager != null)
+            {
+                TaskManager.SetCurrent(index);
+
+                // remove if existing
+                TaskManager.RemoveExecutedStep(TaskManager.Current());
+            }
+
             SelectMetaDataModel model = new SelectMetaDataModel();
 
             //Load available metadata structures

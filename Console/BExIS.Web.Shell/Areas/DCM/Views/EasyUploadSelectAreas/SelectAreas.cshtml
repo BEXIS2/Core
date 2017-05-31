@@ -216,12 +216,7 @@
             {
                 if (Model.ErrorList != null)
                 {
-                    if (Model.ErrorList.Count == 0)
-                    {
-
-
-                    }
-                    else
+                    if (Model.ErrorList.Count != 0)
                     {
                         <ul>
                             @foreach (BExIS.IO.Transform.Validation.Exceptions.Error s in @Model.ErrorList)

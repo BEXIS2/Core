@@ -20,11 +20,20 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         [HttpGet]
         public ActionResult SelectAreas(int index)
         {
+            TaskManager = (EasyUploadTaskManager)Session["TaskManager"];
+
+            //set current stepinfo based on index
+            if (TaskManager != null)
+            {
+                TaskManager.SetCurrent(index);
+
+                // remove if existing
+                TaskManager.RemoveExecutedStep(TaskManager.Current());
+            }
+
             /*
              * Use the given file and the given sheet format to create a json-table
              * */
-            TaskManager = (EasyUploadTaskManager)Session["TaskManager"];
-
             string filePath = TaskManager.Bus[EasyUploadTaskManager.FILEPATH].ToString();
             FileStream fis = null;
             string jsonTable = "{}";
@@ -74,14 +83,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     }
                 }
             }
-            //set current stepinfo based on index
-            if (TaskManager != null)
-            {
-                TaskManager.SetCurrent(index);
-
-                // remove if existing
-                TaskManager.RemoveExecutedStep(TaskManager.Current());
-            }
+            
 
 
 
@@ -126,6 +128,10 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     {
                         TaskManager.Current().SetValid(true);
                     }
+                    else
+                    {
+                        model.ErrorList.Add(new Error(ErrorType.Other, "Some Areas are not selected."));
+                    }
                 }
                 else //Else stay on the same page, display an error
                 {
@@ -145,6 +151,21 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     TaskManager.Current().SetStatus(StepStatus.error);
 
                     //reload model
+                    if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SHEET_DATA_AREA))
+                    {
+                        model.DataArea = TaskManager.Bus[EasyUploadTaskManager.SHEET_DATA_AREA].ToString();
+                    }
+
+                    if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SHEET_HEADER_AREA))
+                    {
+                        model.HeaderArea = TaskManager.Bus[EasyUploadTaskManager.SHEET_HEADER_AREA].ToString();
+                    }
+
+                    if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SHEET_JSON_DATA))
+                    {
+                        model.JsonTableData = TaskManager.Bus[EasyUploadTaskManager.SHEET_JSON_DATA].ToString();
+                    }
+
                     model.StepInfo = TaskManager.Current();
                 }
             }
