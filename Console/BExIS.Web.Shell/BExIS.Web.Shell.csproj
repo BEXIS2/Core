@@ -388,52 +388,6 @@
     <Compile Include="Areas\BAM\Models\PartyCustomAttributeValueModel.cs" />
     <Compile Include="Areas\BAM\Models\PartyModel.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Areas\DCM\Controllers\CreateDatasetController.cs" />
-    <Compile Include="Areas\DCM\Controllers\FormController.cs" />
-    <Compile Include="Areas\DCM\Controllers\HelpController.cs" />
-    <Compile Include="Areas\DCM\Controllers\ImportMetadataStructureController.cs" />
-    <Compile Include="Areas\DCM\Controllers\ImportMetadataStructureReadSourceController.cs" />
-    <Compile Include="Areas\DCM\Controllers\ImportMetadataStructureSelectAFileController.cs" />
-    <Compile Include="Areas\DCM\Controllers\ImportMetadataStructureSetParametersController.cs" />
-    <Compile Include="Areas\DCM\Controllers\ImportMetadataStructureSummaryController.cs" />
-    <Compile Include="Areas\DCM\Controllers\ManageMetadataStructureController.cs" />
-    <Compile Include="Areas\DCM\Controllers\PushController.cs" />
-    <Compile Include="Areas\DCM\Controllers\SubmitDefinePrimaryKeyController.cs" />
-    <Compile Include="Areas\DCM\Controllers\SubmitGetFileInformationController.cs" />
-    <Compile Include="Areas\DCM\Controllers\SubmitController.cs" />
-    <Compile Include="Areas\DCM\Controllers\SubmitSelectAFileController.cs" />
-    <Compile Include="Areas\DCM\Controllers\SubmitSpecifyDatasetController.cs" />
-    <Compile Include="Areas\DCM\Controllers\SubmitSummaryController.cs" />
-    <Compile Include="Areas\DCM\Controllers\SubmitValidationController.cs" />
-    <Compile Include="Areas\DCM\DCMAreaRegistration.cs" />
-    <Compile Include="Areas\DCM\Helpers\DCMSeedDataGenerator.cs" />
-    <Compile Include="Areas\DCM\Helpers\UploadUtility.cs" />
-    <Compile Include="Areas\DCM\Models\AbstractStepModel.cs" />
-    <Compile Include="Areas\DCM\Models\ChooseDatasetViewModel.cs" />
-    <Compile Include="Areas\DCM\Models\CreateDatasetViewModel.cs" />
-    <Compile Include="Areas\DCM\Models\CreateDataset\MetadataEditorModel.cs" />
-    <Compile Include="Areas\DCM\Models\CreateDataset\SetupModel.cs" />
-    <Compile Include="Areas\DCM\Models\CreateDataset\StepModelHelper.cs" />
-    <Compile Include="Areas\DCM\Models\FileInfoModel.cs" />
-    <Compile Include="Areas\DCM\Models\FinishUploadModel.cs" />
-    <Compile Include="Areas\DCM\Models\GetFileInformationModel.cs" />
-    <Compile Include="Areas\DCM\Models\ImportMetadata\ParametersModel.cs" />
-    <Compile Include="Areas\DCM\Models\ImportMetadata\ReadSourceModel.cs" />
-    <Compile Include="Areas\DCM\Models\ImportMetadata\SummaryModel.cs" />
-    <Compile Include="Areas\DCM\Models\ListViewItem.cs" />
-    <Compile Include="Areas\DCM\Models\Metadata\AbstractMetadataStepModel.cs" />
-    <Compile Include="Areas\DCM\Models\Metadata\MetadataAttributeModel.cs" />
-    <Compile Include="Areas\DCM\Models\Metadata\MetadataCompoundAttributeModel.cs" />
-    <Compile Include="Areas\DCM\Models\Metadata\MetadataInstanceModel.cs" />
-    <Compile Include="Areas\DCM\Models\Metadata\MetadataPackageModel.cs" />
-    <Compile Include="Areas\DCM\Models\MetadataStructureManagerModel.cs" />
-    <Compile Include="Areas\DCM\Models\PrimaryKeyViewModel.cs" />
-    <Compile Include="Areas\DCM\Models\Push\SendBigFilesToServerModel.cs" />
-    <Compile Include="Areas\DCM\Models\SelectFileViewModel.cs" />
-    <Compile Include="Areas\DCM\Models\SummaryModel.cs" />
-    <Compile Include="Areas\DCM\Models\TestModel.cs" />
-    <Compile Include="Areas\DCM\Models\UploadWizardParameters.cs" />
-    <Compile Include="Areas\DCM\Models\ValidationModel.cs" />
     <Compile Include="Areas\BAM\Controllers\PartyController.cs" />
     <Compile Include="Areas\RPM\Classes\DataStructureIO.cs" />
     <Compile Include="Areas\RPM\Controllers\DataStructureEditController.cs" />
@@ -485,36 +439,6 @@
     <DesignData Include="Db\Settings\PostgreSQL82Dialect.hibernate.cfg.xml">
       <SubType>Designer</SubType>
     </DesignData>
-    <Content Include="Areas\DCM\Images\help\help_img1.png" />
-    <Content Include="Areas\DCM\Images\help\help_img10.png" />
-    <Content Include="Areas\DCM\Images\help\help_img11.jpeg" />
-    <Content Include="Areas\DCM\Images\help\help_img12.jpeg" />
-    <Content Include="Areas\DCM\Images\help\help_img13.jpeg" />
-    <Content Include="Areas\DCM\Images\help\help_img14.jpeg" />
-    <Content Include="Areas\DCM\Images\help\help_img15.jpeg" />
-    <Content Include="Areas\DCM\Images\help\help_img16.jpeg" />
-    <Content Include="Areas\DCM\Images\help\help_img17.jpeg" />
-    <Content Include="Areas\DCM\Images\help\help_img18.png" />
-    <Content Include="Areas\DCM\Images\help\help_img19.jpeg" />
-    <Content Include="Areas\DCM\Images\help\help_img2.jpeg" />
-    <Content Include="Areas\DCM\Images\help\help_img20.jpeg" />
-    <Content Include="Areas\DCM\Images\help\help_img21.jpeg" />
-    <Content Include="Areas\DCM\Images\help\help_img22.png" />
-    <Content Include="Areas\DCM\Images\help\help_img23.png" />
-    <Content Include="Areas\DCM\Images\help\help_img24.png" />
-    <Content Include="Areas\DCM\Images\help\help_img25.jpeg" />
-    <Content Include="Areas\DCM\Images\help\help_img26.jpeg" />
-    <Content Include="Areas\DCM\Images\help\help_img27.png" />
-    <Content Include="Areas\DCM\Images\help\help_img28.jpeg" />
-    <Content Include="Areas\DCM\Images\help\help_img29.jpeg" />
-    <Content Include="Areas\DCM\Images\help\help_img3.png" />
-    <Content Include="Areas\DCM\Images\help\help_img4.png" />
-    <Content Include="Areas\DCM\Images\help\help_img5.png" />
-    <Content Include="Areas\DCM\Images\help\help_img6.png" />
-    <Content Include="Areas\DCM\Images\help\help_img7.png" />
-    <Content Include="Areas\DCM\Images\help\help_img8.png" />
-    <Content Include="Areas\DCM\Images\help\help_img9.png" />
-    <Content Include="Areas\DCM\Views\Help\Informations.xml" />
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img10.png" />
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img11.png" />
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img12.png" />
@@ -585,13 +509,6 @@
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Content\Images\Bildmarke_BEXIS_cmyk.ai" />
     <Content Include="Content\Images\Logo_BEXIS_cmyk.ai" />
-    <Content Include="Areas\DCM\Views\CreateDataset\Index.cshtml" />
-    <Content Include="Areas\DCM\Views\Form\MetadataEditor.cshtml" />
-    <Content Include="Areas\DCM\Views\Form\_metadataAttributeView.cshtml" />
-    <Content Include="Areas\DCM\Views\Form\_metadataCompoundAttributeView.cshtml" />
-    <Content Include="Areas\DCM\Views\Form\_metadataPackageUsageView.cshtml" />
-    <Content Include="Areas\DCM\Views\Form\_metadataPackageView.cshtml" />
-    <Content Include="Areas\DCM\Views\Form\_metadataCompoundAttributeUsageView.cshtml" />
     <Content Include="Areas\RPM\Views\DataStructureSearch\Index.cshtml" />
     <Content Include="Areas\RPM\Views\DataStructureSearch\_dataStructuredStructurePreview.cshtml" />
     <Content Include="Areas\RPM\Views\DataStructureSearch\_datatructureSearchResult.cshtml" />
@@ -601,7 +518,6 @@
     <Content Include="fonts\fontawesome-webfont.woff" />
     <Content Include="fonts\fontawesome-webfont.ttf" />
     <Content Include="fonts\fontawesome-webfont.eot" />
-    <Content Include="Areas\DCM\Views\ManageMetadataStructure\Index.cshtml" />
     <Content Include="Areas\RPM\Views\DataStructureEdit\_attributeFilter.cshtml" />
     <Content Include="Areas\RPM\Views\DataStructureEdit\_attributeSearchResult.cshtml" />
     <Content Include="Areas\RPM\Views\DataStructureEdit\_dataStructure.cshtml" />
@@ -612,7 +528,6 @@
     <Content Include="Areas\RPM\Views\DataStructureEdit\_editAttribute.cshtml" />
     <Content Include="Areas\RPM\Views\DataStructureEdit\_attributeElement.cshtml" />
     <Content Include="Areas\RPM\Views\DataStructureEdit\_dataTypeDropdown.cshtml" />
-    <Content Include="Areas\DCM\Views\ManageMetadataStructure\_editMetadataStructureView.cshtml" />
     <None Include="Properties\PublishProfiles\BEXIS 2.10.pubxml" />
     <None Include="Properties\PublishProfiles\bexis2 Release2.10.pubxml" />
     <None Include="Properties\PublishProfiles\BEXIS2.pubxml" />
@@ -994,8 +909,6 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Areas\BAM\Views\Shared\" />
-    <Folder Include="Areas\DCM\Views\DcmAdmin\" />
-    <Folder Include="Areas\DCM\Views\Home\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Home\About.cshtml" />
@@ -1065,24 +978,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Test\XmlEdit.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\DCM\Views\Submit\Index.cshtml" />
-    <Content Include="Areas\DCM\Views\SubmitSelectAFile\SelectAFile.cshtml" />
-    <Content Include="Areas\DCM\Views\SubmitSpecifyDataset\SpecifyDataset.cshtml" />
-    <Content Include="Areas\DCM\Views\SubmitValidation\Validation.cshtml" />
-    <Content Include="Areas\DCM\Views\SubmitSummary\Summary.cshtml" />
-    <Content Include="Areas\DCM\Views\Submit\UploadWizard.cshtml" />
-    <Content Include="Areas\DCM\Views\Submit\_defaultDatatypFomularView.cshtml" />
-    <Content Include="Areas\DCM\Views\Submit\_taskListView.cshtml" />
-    <Content Include="Areas\DCM\Views\SubmitGetFileInformation\_txtFormularView.cshtml" />
-    <Content Include="Areas\DCM\Views\Submit\_uploadWizardNav.cshtml" />
-    <Content Include="Areas\DCM\Views\Submit\_useTemplateView.cshtml" />
-    <Content Include="Areas\DCM\Views\SubmitGetFileInformation\_xlsFormularView.cshtml" />
-    <Content Include="Areas\DCM\Views\Web.config">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Areas\DCM\Views\_ViewStart.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\RPM\Views\Web.config">
@@ -1223,27 +1118,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\RPM\Views\Home\_editVariable.cshtml" />
-    <Content Include="Areas\DCM\Views\SubmitGetFileInformation\GetFileInformation.cshtml" />
-    <Content Include="Areas\DCM\Views\Submit\FinishUpload.cshtml" />
-    <Content Include="Areas\DCM\Views\Submit\Test.cshtml" />
-    <Content Include="Areas\DCM\Views\Shared\_errorMessages.cshtml" />
-    <Content Include="Areas\DCM\Views\Submit\_selectDataStructureId.cshtml" />
-    <Content Include="Areas\DCM\Views\SubmitSpecifyDataset\_selectADatasetId.cshtml" />
-    <Content Include="Areas\DCM\Views\Push\Index.cshtml" />
-    <Content Include="Areas\DCM\Views\Push\_fileListView.cshtml" />
     <Content Include="Areas\RPM\Views\Home\_showDatasets.cshtml" />
-    <Content Include="Areas\DCM\Views\ImportMetadataStructureReadSource\ReadSource.cshtml" />
-    <Content Include="Areas\DCM\Views\ImportMetadataStructureSelectAFile\SelectAFile.cshtml" />
-    <Content Include="Areas\DCM\Views\ImportMetadataStructureSummary\Summary.cshtml" />
-    <Content Include="Areas\DCM\Views\ImportMetadataStructure\ImportMetadataStructureWizard.cshtml" />
-    <Content Include="Areas\DCM\Views\ImportMetadataStructure\Index.cshtml" />
-    <Content Include="Areas\DCM\Views\ImportMetadataStructure\_taskListView.cshtml" />
-    <Content Include="Areas\DCM\Views\ImportMetadataStructure\_wizardNav.cshtml" />
-    <Content Include="Areas\DCM\Views\ImportMetadataStructureSetParameters\SetParameters.cshtml" />
-    <Content Include="Areas\DCM\Views\SubmitDefinePrimaryKey\DefinePrimaryKey.cshtml" />
     <Content Include="Areas\RPM\Views\Home\_dataStructureSaveAs.cshtml" />
-    <Content Include="Areas\DCM\Views\Shared\_summaryErrorMessages.cshtml" />
-    <Content Include="Areas\DCM\Views\Help\Index.cshtml" />
     <Content Include="Areas\RPM\Views\Help\Index.cshtml" />
     <Content Include="Areas\RPM\Views\DataAttribute\AttributeManager.cshtml" />
     <Content Include="Areas\RPM\Views\Shared\_domainConstraintView.cshtml" />

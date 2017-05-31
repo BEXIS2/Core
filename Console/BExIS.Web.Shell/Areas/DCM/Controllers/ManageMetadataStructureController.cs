@@ -1,26 +1,26 @@
-﻿using BExIS.Ddm.Model;
-using BExIS.Ddm.Providers.LuceneProvider;
-using BExIS.Dlm.Entities.MetadataStructure;
-using BExIS.Dlm.Services.MetadataStructure;
-using BExIS.IO.Transform.Output;
-using BExIS.Security.Services.Objects;
-using BExIS.Web.Shell.Areas.DCM.Models;
-using BExIS.Xml.Helpers;
-using BExIS.Xml.Helpers.Mapping;
-using BExIS.Xml.Services;
-using Ionic.Zip;
-using NHibernate.Util;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Web.Mvc;
 using System.Xml;
+using BExIS.Ddm.Model;
+using BExIS.Ddm.Providers.LuceneProvider;
+using BExIS.Dlm.Entities.MetadataStructure;
+using BExIS.Dlm.Services.MetadataStructure;
+using BExIS.IO.Transform.Output;
+using BExIS.Modules.Dcm.UI.Models;
+using BExIS.Security.Services.Objects;
+using BExIS.Xml.Helpers;
+using BExIS.Xml.Helpers.Mapping;
+using BExIS.Xml.Services;
+using Ionic.Zip;
+using NHibernate.Util;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
 
-namespace BExIS.Web.Shell.Areas.DCM.Controllers
+namespace BExIS.Modules.Dcm.UI.Controllers
 {
     public class ManageMetadataStructureController : Controller
     {

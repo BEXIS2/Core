@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
 using BExIS.Ddm.Model;
 
-namespace BExIS.Web.Shell.Areas.DCM.Models.ImportMetadata
+namespace BExIS.Modules.Dcm.UI.Models.ImportMetadata
 {
     public class ParametersModel:AbstractStepModel
     {

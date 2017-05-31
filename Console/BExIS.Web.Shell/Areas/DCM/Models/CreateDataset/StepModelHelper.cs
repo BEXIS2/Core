@@ -4,11 +4,10 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using BExIS.Dlm.Entities.Common;
-using BExIS.Web.Shell.Areas.DCM.Models.Metadata;
+using BExIS.Modules.Dcm.UI.Models.Metadata;
 using BExIS.Xml.Helpers;
 
-
-namespace BExIS.Web.Shell.Areas.DCM.Models.CreateDataset
+namespace BExIS.Modules.Dcm.UI.Models.CreateDataset
 {
     public class StepModelHelper
     {

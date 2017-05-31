@@ -1,5 +1,4 @@
 ﻿using BExIS.Dcm.CreateDatasetWizard;
-using BExIS.Dcm.Wizard;
 using BExIS.Ddm.Api;
 using BExIS.Dlm.Entities.Common;
 using BExIS.Dlm.Entities.Data;
@@ -11,13 +10,11 @@ using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Dlm.Services.TypeSystem;
 using BExIS.IO;
 using BExIS.IO.Transform.Validation.Exceptions;
-using BExIS.Web.Shell.Areas.DCM.Models;
-using BExIS.Web.Shell.Areas.DCM.Models.CreateDataset;
-using BExIS.Web.Shell.Areas.DCM.Models.Metadata;
+using BExIS.Modules.Dcm.UI.Models.CreateDataset;
+using BExIS.Modules.Dcm.UI.Models.Metadata;
 using BExIS.Xml.Helpers;
 using BExIS.Xml.Helpers.Mapping;
 using BExIS.Xml.Services;
-using NHibernate.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -26,12 +23,13 @@ using System.Web;
 using System.Web.Mvc;
 using System.Xml;
 using System.Xml.Linq;
+using BExIS.Dcm.Wizard;
 using Vaiona.IoC;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
 
-namespace BExIS.Web.Shell.Areas.DCM.Controllers
+namespace BExIS.Modules.Dcm.UI.Controllers
 {
     public class FormController : Controller
     {

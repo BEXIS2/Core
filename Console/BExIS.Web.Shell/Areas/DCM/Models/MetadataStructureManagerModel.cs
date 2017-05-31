@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
 using BExIS.Ddm.Model;
-using BExIS.Security.Entities.Objects;
 
-namespace BExIS.Web.Shell.Areas.DCM.Models
+namespace BExIS.Modules.Dcm.UI.Models
 {
     public class MetadataStructureManagerModel
     {

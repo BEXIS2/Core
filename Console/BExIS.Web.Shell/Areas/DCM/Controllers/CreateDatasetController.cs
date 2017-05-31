@@ -10,9 +10,9 @@ using BExIS.Dlm.Services.Administration;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
+using BExIS.Modules.Dcm.UI.Models;
+using BExIS.Modules.Dcm.UI.Models.CreateDataset;
 using BExIS.Security.Services.Subjects;
-using BExIS.Web.Shell.Areas.DCM.Models;
-using BExIS.Web.Shell.Areas.DCM.Models.CreateDataset;
 using BExIS.Web.Shell.Helpers;
 using BExIS.Web.Shell.Models;
 using BExIS.Xml.Helpers;
@@ -28,7 +28,7 @@ using Vaiona.Logging;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
 
-namespace BExIS.Web.Shell.Areas.DCM.Controllers
+namespace BExIS.Modules.Dcm.UI.Controllers
 {
     public class CreateDatasetController : Controller
     {
