@@ -492,11 +492,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     if (TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATA_XML))
                     {
                         XDocument xMetadata = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
-                        workingCopy.Metadata = XmlMetadataWriter.ToXmlDocument(xMetadata);
+                        workingCopy.Metadata = Xml.Helpers.XmlWriter.ToXmlDocument(xMetadata);
                     }
 
                     string title = XmlDatasetHelper.GetInformation(workingCopy, NameAttributeValues.title);
-                    if (String.IsNullOrEmpty(title)) title = "No Title available.";
+                    if (string.IsNullOrEmpty(title)) title = "No Title available.";
 
                     TaskManager.AddToBus(CreateTaskmanager.ENTITY_TITLE, title);//workingCopy.Metadata.SelectNodes("Metadata/Description/Description/Title/Title")[0].InnerText);
                     TaskManager.AddToBus(CreateTaskmanager.ENTITY_ID, datasetId);

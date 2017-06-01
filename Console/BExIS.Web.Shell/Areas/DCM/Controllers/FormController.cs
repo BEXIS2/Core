@@ -47,10 +47,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
 
-            XmlDocument newMetadata = (XmlDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
+            var newMetadata = (XmlDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
 
-            List<StepModelHelper> stepInfoModelHelpers = new List<StepModelHelper>();
-            MetadataEditorModel Model = new MetadataEditorModel();
+            var stepInfoModelHelpers = new List<StepModelHelper>();
+            var Model = new MetadataEditorModel();
 
             TaskManager.AddToBus(CreateTaskmanager.METADATA_XML, XmlUtility.ToXDocument(newMetadata));
 
@@ -58,7 +58,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             foreach (var stepInfo in TaskManager.StepInfos)
             {
-                StepModelHelper stepModelHelper = GetStepModelhelper(stepInfo.Id);
+                var stepModelHelper = GetStepModelhelper(stepInfo.Id);
 
                 if (stepModelHelper.Model == null)
                 {
@@ -91,7 +91,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             if (TaskManager.Bus.ContainsKey(CreateTaskmanager.ENTITY_ID))
             {
-                long entityId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.ENTITY_ID]);
+                var entityId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.ENTITY_ID]);
                 Model.EditRight = hasUserEditRights(entityId);
                 Model.EditAccessRight = hasUserEditAccessRights(entityId);
                 //Model.DatasetId = entityId;
@@ -110,7 +110,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         public ActionResult LoadMetadata(long entityId, bool locked = false, bool created = false, bool fromEditMode = false, bool resetTaskManager = false, XmlDocument newMetadata = null)
         {
-            bool loadFromExternal = resetTaskManager;
+            var loadFromExternal = resetTaskManager;
             long metadataStructureId = -1;
 
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Create Dataset", this.Session.GetTenant());
@@ -124,8 +124,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 loadFromExternal = true;
             }
 
-            List<StepModelHelper> stepInfoModelHelpers = new List<StepModelHelper>();
-            MetadataEditorModel Model = new MetadataEditorModel();
+            var stepInfoModelHelpers = new List<StepModelHelper>();
+            var Model = new MetadataEditorModel();
 
             stepInfoModelHelpers = (List<StepModelHelper>)TaskManager.Bus[CreateTaskmanager.METADATA_STEP_MODEL_HELPER];
 
@@ -163,11 +163,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         public ActionResult LoadMetadataFromExternal(long entityId, string title, long metadatastructureId, long datastructureId = -1, long researchplanId = -1, string sessionKeyForMetadata = "", bool resetTaskManager = false)
         {
-            bool loadFromExternal = true;
+            var loadFromExternal = true;
             long metadataStructureId = -1;
 
             //load metadata from session if exist
-            XmlDocument metadata = Session[sessionKeyForMetadata] != null
+            var metadata = Session[sessionKeyForMetadata] != null
                 ? (XmlDocument)Session[sessionKeyForMetadata]
                 : new XmlDocument();
 
@@ -181,12 +181,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 TaskManager = new CreateTaskmanager();
             }
 
-            List<StepModelHelper> stepInfoModelHelpers = new List<StepModelHelper>();
-            MetadataEditorModel Model = new MetadataEditorModel();
+            var stepInfoModelHelpers = new List<StepModelHelper>();
+            var Model = new MetadataEditorModel();
 
             if (loadFromExternal)
             {
-                string entityClassPath = "";
+                var entityClassPath = "";
                 //TaskManager = new CreateTaskmanager();
                 Session["CreateDatasetTaskmanager"] = TaskManager;
                 TaskManager.AddToBus(CreateTaskmanager.ENTITY_ID, entityId);
@@ -194,12 +194,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 if (TaskManager.Bus.ContainsKey(CreateTaskmanager.ENTITY_CLASS_PATH))
                     entityClassPath = TaskManager.Bus[CreateTaskmanager.ENTITY_CLASS_PATH].ToString();
 
-                bool ready = true;
+                var ready = true;
 
                 // todo i case of entity "BExIS.Dlm.Entities.Data.Dataset" we need to have a check if the dataset is checked in later all enitities should support such functions over webapis
                 if (entityClassPath.Equals("BExIS.Dlm.Entities.Data.Dataset"))
                 {
-                    DatasetManager dm = new DatasetManager();
+                    var dm = new DatasetManager();
                     //todo need a check if entity is in use
                     if (!dm.IsDatasetCheckedIn(entityId))
                     {
@@ -218,7 +218,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     TaskManager.AddToBus(CreateTaskmanager.ENTITY_TITLE, title);
 
-                    ResearchPlanManager rpm = new ResearchPlanManager();
+                    var rpm = new ResearchPlanManager();
                     TaskManager.AddToBus(CreateTaskmanager.RESEARCHPLAN_ID, rpm.Repo.Get().First().Id);
 
                     AdvanceTaskManagerBasedOnExistingMetadata(metadatastructureId);
@@ -226,7 +226,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     foreach (var stepInfo in TaskManager.StepInfos)
                     {
-                        StepModelHelper stepModelHelper = GetStepModelhelper(stepInfo.Id);
+                        var stepModelHelper = GetStepModelhelper(stepInfo.Id);
 
                         if (stepModelHelper.Model == null)
                         {
@@ -252,7 +252,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     if (TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATA_XML))
                     {
-                        XDocument xMetadata = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
+                        var xMetadata = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
 
                         if (String.IsNullOrEmpty(title)) title = "No Title available.";
 
@@ -303,11 +303,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Create Dataset", this.Session.GetTenant());
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
-            List<StepModelHelper> stepInfoModelHelpers = new List<StepModelHelper>();
+            var stepInfoModelHelpers = new List<StepModelHelper>();
 
             foreach (var stepInfo in TaskManager.StepInfos)
             {
-                StepModelHelper stepModelHelper = GetStepModelhelper(stepInfo.Id);
+                var stepModelHelper = GetStepModelhelper(stepInfo.Id);
 
                 if (stepModelHelper.Model == null)
                 {
@@ -323,7 +323,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 stepInfoModelHelpers.Add(stepModelHelper);
             }
 
-            MetadataEditorModel Model = new MetadataEditorModel();
+            var Model = new MetadataEditorModel();
             Model.StepModelHelpers = stepInfoModelHelpers;
 
             #region security permissions and authorisations check
@@ -374,7 +374,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Create Dataset", this.Session.GetTenant());
             ViewData["ShowOptional"] = false;
 
-            MetadataEditorModel Model = new MetadataEditorModel();
+            var Model = new MetadataEditorModel();
 
             if (TaskManager == null) TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
 
@@ -386,7 +386,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     CreateXml();
                 }
 
-                bool loaded = false;
+                var loaded = false;
                 //check if formsteps are loaded
                 if (TaskManager.Bus.ContainsKey(CreateTaskmanager.FORM_STEPS_LOADED))
                 {
@@ -396,18 +396,18 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 // load form steps
                 if (loaded == false && TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATASTRUCTURE_ID))
                 {
-                    long metadataStrutureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
+                    var metadataStrutureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
                     // generate all steps
                     // one step for each complex type  in the metadata structure
                     AdvanceTaskManager(metadataStrutureId);
                 }
 
-                List<StepModelHelper> stepInfoModelHelpers = new List<StepModelHelper>();
+                var stepInfoModelHelpers = new List<StepModelHelper>();
 
                 // foreach step and the childsteps... generate a stepModelhelper
                 foreach (var stepInfo in TaskManager.StepInfos)
                 {
-                    StepModelHelper stepModelHelper = GetStepModelhelper(stepInfo.Id);
+                    var stepModelHelper = GetStepModelhelper(stepInfo.Id);
 
                     if (stepModelHelper.Model == null)
                     {
@@ -428,7 +428,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 //set import
                 if (TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATASTRUCTURE_ID))
                 {
-                    long id = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
+                    var id = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
                     Model.Import = IsImportAvavilable(id);
                 }
 
@@ -446,7 +446,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         private Dictionary<string, ActionInfo> getAddtionalActions()
         {
-            CreateTaskmanager TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
+            var TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
             if (TaskManager.Actions.Any())
             {
                 return TaskManager.Actions;
@@ -461,7 +461,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         public ActionResult LoadExternalXml()
         {
-            string validationMessage = "";
+            var validationMessage = "";
 
             if (TaskManager == null) TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
 
@@ -470,37 +470,37 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATA_IMPORT_XML_FILEPATH))
             {
                 //xml metadata for import
-                string metadataForImportPath = (string)TaskManager.Bus[CreateTaskmanager.METADATA_IMPORT_XML_FILEPATH];
+                var metadataForImportPath = (string)TaskManager.Bus[CreateTaskmanager.METADATA_IMPORT_XML_FILEPATH];
 
                 if (FileHelper.FileExist(metadataForImportPath))
                 {
-                    XmlDocument metadataForImport = new XmlDocument();
+                    var metadataForImport = new XmlDocument();
                     metadataForImport.Load(metadataForImportPath);
 
                     // metadataStructure ID
-                    long metadataStructureId = (Int64)TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID];
-                    MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
-                    string metadataStructrueName = metadataStructureManager.Repo.Get(metadataStructureId).Name;
+                    var metadataStructureId = (Int64)TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID];
+                    var metadataStructureManager = new MetadataStructureManager();
+                    var metadataStructrueName = metadataStructureManager.Repo.Get(metadataStructureId).Name;
 
                     // loadMapping file
-                    string path_mappingFile = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), XmlMetadataImportHelper.GetMappingFileName(metadataStructureId, TransmissionType.mappingFileImport, metadataStructrueName));
+                    var path_mappingFile = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), XmlMetadataImportHelper.GetMappingFileName(metadataStructureId, TransmissionType.mappingFileImport, metadataStructrueName));
 
                     // XML mapper + mapping file
-                    XmlMapperManager xmlMapperManager = new XmlMapperManager(TransactionDirection.ExternToIntern);
+                    var xmlMapperManager = new XmlMapperManager(TransactionDirection.ExternToIntern);
                     xmlMapperManager.Load(path_mappingFile, "IDIV");
 
                     // generate intern metadata without internal attributes
-                    XmlDocument metadataResult = xmlMapperManager.Generate(metadataForImport, 1, true);
+                    var metadataResult = xmlMapperManager.Generate(metadataForImport, 1, true);
 
                     // generate intern template metadata xml with needed attribtes
-                    XmlMetadataWriter xmlMetadatWriter = new XmlMetadataWriter(BExIS.Xml.Helpers.XmlNodeMode.xPath);
-                    XDocument metadataXml = xmlMetadatWriter.CreateMetadataXml(metadataStructureId,
+                    var xmlMetadatWriter = new XmlMetadataWriter(BExIS.Xml.Helpers.XmlNodeMode.xPath);
+                    var metadataXml = xmlMetadatWriter.CreateMetadataXml(metadataStructureId,
                         XmlUtility.ToXDocument(metadataResult));
 
-                    XmlDocument metadataXmlTemplate = XmlMetadataWriter.ToXmlDocument(metadataXml);
+                    var metadataXmlTemplate = XmlMetadataWriter.ToXmlDocument(metadataXml);
 
                     // set attributes FROM metadataXmlTemplate TO metadataResult
-                    XmlDocument completeMetadata = XmlMetadataImportHelper.FillInXmlValues(metadataResult,
+                    var completeMetadata = XmlMetadataImportHelper.FillInXmlValues(metadataResult,
                         metadataXmlTemplate);
 
                     TaskManager.AddToBus(CreateTaskmanager.METADATA_XML, completeMetadata);
@@ -526,8 +526,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             if (SelectFileUploader != null)
             {
                 //data/datasets/1/1/
-                string dataPath = AppConfiguration.DataPath; //Path.Combine(AppConfiguration.WorkspaceRootPath, "Data");
-                string storepath = Path.Combine(dataPath, "Temp", GetUsernameOrDefault());
+                var dataPath = AppConfiguration.DataPath; //Path.Combine(AppConfiguration.WorkspaceRootPath, "Data");
+                var storepath = Path.Combine(dataPath, "Temp", GetUsernameOrDefault());
 
                 // if folder not exist
                 if (!Directory.Exists(storepath))
@@ -535,7 +535,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     Directory.CreateDirectory(storepath);
                 }
 
-                string path = Path.Combine(storepath, SelectFileUploader.FileName);
+                var path = Path.Combine(storepath, SelectFileUploader.FileName);
 
                 SelectFileUploader.SaveAs(path);
 
@@ -547,7 +547,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         public ActionResult ValidateExternalXml()
         {
-            string validationMessage = "";
+            var validationMessage = "";
 
             if (TaskManager == null) TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
 
@@ -556,23 +556,23 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATA_IMPORT_XML_FILEPATH))
             {
                 //xml metadata for import
-                string metadataForImportPath = (string)TaskManager.Bus[CreateTaskmanager.METADATA_IMPORT_XML_FILEPATH];
+                var metadataForImportPath = (string)TaskManager.Bus[CreateTaskmanager.METADATA_IMPORT_XML_FILEPATH];
 
                 if (FileHelper.FileExist(metadataForImportPath))
                 {
-                    XmlDocument metadataForImport = new XmlDocument();
+                    var metadataForImport = new XmlDocument();
                     metadataForImport.Load(metadataForImportPath);
 
                     // metadataStructure DI
-                    long metadataStructureId = (Int64)TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID];
-                    MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
-                    string metadataStructrueName = metadataStructureManager.Repo.Get(metadataStructureId).Name;
+                    var metadataStructureId = (Int64)TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID];
+                    var metadataStructureManager = new MetadataStructureManager();
+                    var metadataStructrueName = metadataStructureManager.Repo.Get(metadataStructureId).Name;
 
                     // loadMapping file
-                    string path_mappingFile = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), XmlMetadataImportHelper.GetMappingFileName(metadataStructureId, TransmissionType.mappingFileImport, metadataStructrueName));
+                    var path_mappingFile = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), XmlMetadataImportHelper.GetMappingFileName(metadataStructureId, TransmissionType.mappingFileImport, metadataStructrueName));
 
                     // XML mapper + mapping file
-                    XmlMapperManager xmlMapperManager = new XmlMapperManager(TransactionDirection.ExternToIntern);
+                    var xmlMapperManager = new XmlMapperManager(TransactionDirection.ExternToIntern);
                     xmlMapperManager.Load(path_mappingFile, "IDIV");
 
                     validationMessage = xmlMapperManager.Validate(metadataForImport);
@@ -592,17 +592,17 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             //TaskManager.SetCurrent(TaskManager.Get(parentStepId));
 
-            StepModelHelper stepModelHelper = GetStepModelhelper(id);
+            var stepModelHelper = GetStepModelhelper(id);
             //StepModelHelper parentStepModelHelper = GetStepModelhelper(parentStepId);
 
-            BaseUsage u = LoadUsage(stepModelHelper.Usage);
+            var u = LoadUsage(stepModelHelper.Usage);
 
-            bool active = stepModelHelper.Activated ? false : true;
+            var active = stepModelHelper.Activated ? false : true;
             stepModelHelper.Activated = active;
             //stepModelHelper.Parent.Activated = active;
             if (stepModelHelper.Parent != null)
             {
-                StepModelHelper pStepModelHelper = GetStepModelhelper(stepModelHelper.Parent.StepId);
+                var pStepModelHelper = GetStepModelhelper(stepModelHelper.Parent.StepId);
                 if (pStepModelHelper != null)
                     pStepModelHelper.Activated = active;
             }
@@ -635,12 +635,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             //TaskManager.SetCurrent(TaskManager.Get(parentStepId));
 
-            StepModelHelper stepModelHelper = GetStepModelhelper(id);
+            var stepModelHelper = GetStepModelhelper(id);
             //StepModelHelper parentStepModelHelper = GetStepModelhelper(parentStepId);
 
-            BaseUsage u = LoadUsage(stepModelHelper.Usage);
+            var u = LoadUsage(stepModelHelper.Usage);
 
-            bool active = stepModelHelper.Activated ? false : true;
+            var active = stepModelHelper.Activated ? false : true;
             stepModelHelper.Activated = active;
             stepModelHelper.Parent.Activated = active;
 
@@ -648,17 +648,17 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             if (firstOrDefault != null)
                 firstOrDefault.Activated = active;
 
-            StepModelHelper pStepModelHelper = GetStepModelhelper(stepModelHelper.Parent.StepId);
+            var pStepModelHelper = GetStepModelhelper(stepModelHelper.Parent.StepId);
             pStepModelHelper.Activated = active;
 
             // update stepmodel to dictionary
             //AddStepModelhelper(newStepModelhelper);
 
             //update stepModel to parentStepModel
-            for (int i = 0; i < pStepModelHelper.Childrens.Count; i++)
+            for (var i = 0; i < pStepModelHelper.Childrens.Count; i++)
             {
-                StepModelHelper child = pStepModelHelper.Childrens.ElementAt(i);
-                StepModelHelper childStepModelHelper = GetStepModelhelper(child.StepId);
+                var child = pStepModelHelper.Childrens.ElementAt(i);
+                var childStepModelHelper = GetStepModelhelper(child.StepId);
                 child.Activated = child.StepId.Equals(id);
                 childStepModelHelper.Activated = child.StepId.Equals(id);
 
@@ -686,14 +686,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             //TaskManager.SetCurrent(TaskManager.Get(parentStepId));
 
-            long metadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
-            int position = number + 1;
+            var metadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
+            var position = number + 1;
 
-            StepModelHelper parentStepModelHelper = GetStepModelhelper(parentStepId);
-            BaseUsage u = LoadUsage(parentStepModelHelper.Usage);
+            var parentStepModelHelper = GetStepModelhelper(parentStepId);
+            var u = LoadUsage(parentStepModelHelper.Usage);
 
             //Create new step
-            StepInfo newStep = new StepInfo(UsageHelper.GetNameOfType(u))
+            var newStep = new StepInfo(UsageHelper.GetNameOfType(u))
             {
                 Id = TaskManager.GenerateStepId(),
                 parentTitle = parentStepModelHelper.Model.StepInfo.title,
@@ -701,7 +701,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 IsInstanze = true,
             };
 
-            string xPath = parentStepModelHelper.XPath + "//" + UsageHelper.GetNameOfType(u) + "[" + position + "]";
+            var xPath = parentStepModelHelper.XPath + "//" + UsageHelper.GetNameOfType(u) + "[" + position + "]";
 
             // add to parent stepId
             parentStepModelHelper.Model.StepInfo.Children.Add(newStep);
@@ -734,7 +734,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
 
             // create StepModel for new step
-            StepModelHelper newStepModelhelper = new StepModelHelper
+            var newStepModelhelper = new StepModelHelper
             {
                 StepId = newStep.Id,
                 Usage = parentStepModelHelper.Usage,
@@ -756,17 +756,17 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             parentStepModelHelper.Childrens.Insert(newStepModelhelper.Number - 1, newStepModelhelper);
 
             //update childrens of the parent step based on number
-            for (int i = 0; i < parentStepModelHelper.Childrens.Count; i++)
+            for (var i = 0; i < parentStepModelHelper.Childrens.Count; i++)
             {
-                StepModelHelper smh = parentStepModelHelper.Childrens.ElementAt(i);
+                var smh = parentStepModelHelper.Childrens.ElementAt(i);
                 smh.Number = i + 1;
             }
 
             // add step to parent and update title of steps
             //parentStepModelHelper.Model.StepInfo.Children.Insert(newStepModelhelper.Number - 1, newStep);
-            for (int i = 0; i < parentStepModelHelper.Model.StepInfo.Children.Count; i++)
+            for (var i = 0; i < parentStepModelHelper.Model.StepInfo.Children.Count; i++)
             {
-                StepInfo si = parentStepModelHelper.Model.StepInfo.Children.ElementAt(i);
+                var si = parentStepModelHelper.Model.StepInfo.Children.ElementAt(i);
                 si.title = (i + 1).ToString();
             }
 
@@ -790,23 +790,23 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
 
-            long metadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
+            var metadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
 
-            List<StepModelHelper> list = (List<StepModelHelper>)TaskManager.Bus[CreateTaskmanager.METADATA_STEP_MODEL_HELPER];
+            var list = (List<StepModelHelper>)TaskManager.Bus[CreateTaskmanager.METADATA_STEP_MODEL_HELPER];
 
-            StepModelHelper stepModelHelperParent = list.Where(s => s.StepId.Equals(parentStepId)).FirstOrDefault();
+            var stepModelHelperParent = list.Where(s => s.StepId.Equals(parentStepId)).FirstOrDefault();
 
-            BaseUsage parentUsage = LoadUsage(stepModelHelperParent.Usage);
-            int pNumber = stepModelHelperParent.Number;
+            var parentUsage = LoadUsage(stepModelHelperParent.Usage);
+            var pNumber = stepModelHelperParent.Number;
 
-            BaseUsage metadataAttributeUsage = UsageHelper.GetChildren(parentUsage).Where(u => u.Id.Equals(id)).FirstOrDefault();
+            var metadataAttributeUsage = UsageHelper.GetChildren(parentUsage).Where(u => u.Id.Equals(id)).FirstOrDefault();
 
             //BaseUsage metadataAttributeUsage = UsageHelper.GetSimpleUsageById(parentUsage, id);
 
-            MetadataAttributeModel modelAttribute = MetadataAttributeModel.Convert(metadataAttributeUsage, parentUsage, metadataStructureId, parentModelNumber, stepModelHelperParent.StepId);
+            var modelAttribute = MetadataAttributeModel.Convert(metadataAttributeUsage, parentUsage, metadataStructureId, parentModelNumber, stepModelHelperParent.StepId);
             modelAttribute.Number = ++number;
 
-            AbstractMetadataStepModel model = stepModelHelperParent.Model;
+            var model = stepModelHelperParent.Model;
 
             Insert(modelAttribute, stepModelHelperParent, number);
             UpdateChildrens(stepModelHelperParent, modelAttribute.Source.Id);
@@ -834,18 +834,18 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         public ActionResult DownComplexUsage(int parentStepId, int number)
         {
-            int newIndex = number;
+            var newIndex = number;
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
 
             TaskManager.SetCurrent(TaskManager.Get(parentStepId));
 
-            StepModelHelper stepModelHelper = GetStepModelhelper(parentStepId);
-            BaseUsage u = LoadUsage(stepModelHelper.Usage);
+            var stepModelHelper = GetStepModelhelper(parentStepId);
+            var u = LoadUsage(stepModelHelper.Usage);
 
             if (newIndex <= stepModelHelper.Childrens.Count - 1)
             {
-                string xPathOfSelectedElement = stepModelHelper.XPath + "//" + UsageHelper.GetNameOfType(stepModelHelper.Usage).Replace(" ", string.Empty) + "[" + number + "]";
-                string destinationXPathElement = stepModelHelper.XPath + "//" + UsageHelper.GetNameOfType(stepModelHelper.Usage).Replace(" ", string.Empty) + "[" + (number + 1) + "]";
+                var xPathOfSelectedElement = stepModelHelper.XPath + "//" + UsageHelper.GetNameOfType(stepModelHelper.Usage).Replace(" ", string.Empty) + "[" + number + "]";
+                var destinationXPathElement = stepModelHelper.XPath + "//" + UsageHelper.GetNameOfType(stepModelHelper.Usage).Replace(" ", string.Empty) + "[" + (number + 1) + "]";
 
                 ChangeInXml(xPathOfSelectedElement, destinationXPathElement);
 
@@ -859,26 +859,26 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     stepModelHelper.Model = CreatePackageModel(TaskManager.Current().Id, true);
                 }
 
-                StepModelHelper selectedStepModelHelper = stepModelHelper.Childrens.ElementAt(number - 1);
+                var selectedStepModelHelper = stepModelHelper.Childrens.ElementAt(number - 1);
                 stepModelHelper.Childrens.Remove(selectedStepModelHelper);
 
                 stepModelHelper.Childrens.Insert(newIndex, selectedStepModelHelper);
 
                 //update childrens of the parent step based on number
-                for (int i = 0; i < stepModelHelper.Childrens.Count; i++)
+                for (var i = 0; i < stepModelHelper.Childrens.Count; i++)
                 {
-                    StepModelHelper smh = stepModelHelper.Childrens.ElementAt(i);
+                    var smh = stepModelHelper.Childrens.ElementAt(i);
                     smh.Number = i + 1;
                     smh.Model.Number = i + 1;
                 }
 
-                StepInfo selectedStepInfo = stepModelHelper.Model.StepInfo.Children.ElementAt(number - 1);
+                var selectedStepInfo = stepModelHelper.Model.StepInfo.Children.ElementAt(number - 1);
                 stepModelHelper.Model.StepInfo.Children.Remove(selectedStepInfo);
                 stepModelHelper.Model.StepInfo.Children.Insert(newIndex, selectedStepInfo);
 
-                for (int i = 0; i < stepModelHelper.Model.StepInfo.Children.Count; i++)
+                for (var i = 0; i < stepModelHelper.Model.StepInfo.Children.Count; i++)
                 {
-                    StepInfo si = stepModelHelper.Model.StepInfo.Children.ElementAt(i);
+                    var si = stepModelHelper.Model.StepInfo.Children.ElementAt(i);
                     si.title = (i + 1).ToString();
                 }
 
@@ -900,15 +900,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public ActionResult DownMetadataAttributeUsage(object value, int id, int parentid, int number, int parentModelNumber, int parentStepId)
         {
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
-            List<StepModelHelper> list = (List<StepModelHelper>)TaskManager.Bus[CreateTaskmanager.METADATA_STEP_MODEL_HELPER];
+            var list = (List<StepModelHelper>)TaskManager.Bus[CreateTaskmanager.METADATA_STEP_MODEL_HELPER];
 
-            StepModelHelper stepModelHelperParent = list.Where(s => s.StepId.Equals(parentStepId)).FirstOrDefault();
+            var stepModelHelperParent = list.Where(s => s.StepId.Equals(parentStepId)).FirstOrDefault();
 
             Down(stepModelHelperParent, id, number);
 
             UpdateChildrens(stepModelHelperParent, id);
 
-            AbstractMetadataStepModel model = stepModelHelperParent.Model;
+            var model = stepModelHelperParent.Model;
 
             if (model != null)
             {
@@ -932,10 +932,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             TaskManager.SetCurrent(TaskManager.Get(parentStepId));
 
-            StepModelHelper stepModelHelper = GetStepModelhelper(parentStepId);
+            var stepModelHelper = GetStepModelhelper(parentStepId);
             RemoveFromXml(stepModelHelper.XPath + "//" + UsageHelper.GetNameOfType(stepModelHelper.Usage).Replace(" ", string.Empty) + "[" + number + "]");
 
-            BaseUsage u = LoadUsage(stepModelHelper.Usage);
+            var u = LoadUsage(stepModelHelper.Usage);
 
             if (u is MetadataAttributeUsage || u is MetadataNestedAttributeUsage)
             {
@@ -950,7 +950,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             stepModelHelper.Childrens.RemoveAt(number - 1);
 
             //add stepModel to parentStepModel
-            for (int i = 0; i < stepModelHelper.Childrens.Count; i++)
+            for (var i = 0; i < stepModelHelper.Childrens.Count; i++)
             {
                 stepModelHelper.Childrens.ElementAt(i).Number = i + 1;
             }
@@ -972,21 +972,21 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public ActionResult RemoveMetadataAttributeUsage(object value, int id, int parentid, int number, int parentModelNumber, int parentStepId)
         {
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
-            List<StepModelHelper> list = (List<StepModelHelper>)TaskManager.Bus[CreateTaskmanager.METADATA_STEP_MODEL_HELPER];
+            var list = (List<StepModelHelper>)TaskManager.Bus[CreateTaskmanager.METADATA_STEP_MODEL_HELPER];
 
-            StepModelHelper stepModelHelperParent = list.Where(s => s.StepId.Equals(parentStepId)).FirstOrDefault();
+            var stepModelHelperParent = list.Where(s => s.StepId.Equals(parentStepId)).FirstOrDefault();
 
             //find the right element in the list
-            MetadataAttributeModel removeAttributeModel = stepModelHelperParent.Model.MetadataAttributeModels.Where(m => m.Source.Id.Equals(id) && m.Number.Equals(number)).First();
+            var removeAttributeModel = stepModelHelperParent.Model.MetadataAttributeModels.Where(m => m.Source.Id.Equals(id) && m.Number.Equals(number)).First();
             //remove attribute
             stepModelHelperParent.Model.MetadataAttributeModels.Remove(removeAttributeModel);
             //update childrenList
             UpdateChildrens(stepModelHelperParent, id);
 
-            AbstractMetadataStepModel model = stepModelHelperParent.Model;
+            var model = stepModelHelperParent.Model;
 
-            BaseUsage parentUsage = stepModelHelperParent.Usage;
-            BaseUsage attrUsage = UsageHelper.GetChildren(parentUsage).Where(u => u.Id.Equals(id)).FirstOrDefault();
+            var parentUsage = stepModelHelperParent.Usage;
+            var attrUsage = UsageHelper.GetChildren(parentUsage).Where(u => u.Id.Equals(id)).FirstOrDefault();
 
             //remove from xml
             RemoveAttributeToXml(stepModelHelperParent.Usage, stepModelHelperParent.Number, attrUsage, number, UsageHelper.GetNameOfType(attrUsage), stepModelHelperParent.XPath);
@@ -1009,18 +1009,18 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         public ActionResult UpComplexUsage(int parentStepId, int number)
         {
-            int newIndex = number - 2;
+            var newIndex = number - 2;
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
 
             TaskManager.SetCurrent(TaskManager.Get(parentStepId));
 
-            StepModelHelper stepModelHelper = GetStepModelhelper(parentStepId);
-            BaseUsage u = LoadUsage(stepModelHelper.Usage);
+            var stepModelHelper = GetStepModelhelper(parentStepId);
+            var u = LoadUsage(stepModelHelper.Usage);
 
             if (newIndex >= 0)
             {
-                string xPathOfSelectedElement = stepModelHelper.XPath + "//" + UsageHelper.GetNameOfType(stepModelHelper.Usage).Replace(" ", string.Empty) + "[" + number + "]";
-                string destinationXPathElement = stepModelHelper.XPath + "//" + UsageHelper.GetNameOfType(stepModelHelper.Usage).Replace(" ", string.Empty) + "[" + (number - 1) + "]";
+                var xPathOfSelectedElement = stepModelHelper.XPath + "//" + UsageHelper.GetNameOfType(stepModelHelper.Usage).Replace(" ", string.Empty) + "[" + number + "]";
+                var destinationXPathElement = stepModelHelper.XPath + "//" + UsageHelper.GetNameOfType(stepModelHelper.Usage).Replace(" ", string.Empty) + "[" + (number - 1) + "]";
 
                 ChangeInXml(xPathOfSelectedElement, destinationXPathElement);
 
@@ -1034,26 +1034,26 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     stepModelHelper.Model = CreatePackageModel(TaskManager.Current().Id, true);
                 }
 
-                StepModelHelper selectedStepModelHelper = stepModelHelper.Childrens.ElementAt(number - 1);
+                var selectedStepModelHelper = stepModelHelper.Childrens.ElementAt(number - 1);
                 stepModelHelper.Childrens.Remove(selectedStepModelHelper);
 
                 stepModelHelper.Childrens.Insert(newIndex, selectedStepModelHelper);
 
                 //update childrens of the parent step based on number
-                for (int i = 0; i < stepModelHelper.Childrens.Count; i++)
+                for (var i = 0; i < stepModelHelper.Childrens.Count; i++)
                 {
-                    StepModelHelper smh = stepModelHelper.Childrens.ElementAt(i);
+                    var smh = stepModelHelper.Childrens.ElementAt(i);
                     smh.Number = i + 1;
                     smh.Model.Number = i + 1;
                 }
 
-                StepInfo selectedStepInfo = stepModelHelper.Model.StepInfo.Children.ElementAt(number - 1);
+                var selectedStepInfo = stepModelHelper.Model.StepInfo.Children.ElementAt(number - 1);
                 stepModelHelper.Model.StepInfo.Children.Remove(selectedStepInfo);
                 stepModelHelper.Model.StepInfo.Children.Insert(newIndex, selectedStepInfo);
 
-                for (int i = 0; i < stepModelHelper.Model.StepInfo.Children.Count; i++)
+                for (var i = 0; i < stepModelHelper.Model.StepInfo.Children.Count; i++)
                 {
-                    StepInfo si = stepModelHelper.Model.StepInfo.Children.ElementAt(i);
+                    var si = stepModelHelper.Model.StepInfo.Children.ElementAt(i);
                     si.title = (i + 1).ToString();
                 }
 
@@ -1075,9 +1075,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public ActionResult UpMetadataAttributeUsage(object value, int id, int parentid, int number, int parentModelNumber, int parentStepId)
         {
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
-            List<StepModelHelper> list = (List<StepModelHelper>)TaskManager.Bus[CreateTaskmanager.METADATA_STEP_MODEL_HELPER];
+            var list = (List<StepModelHelper>)TaskManager.Bus[CreateTaskmanager.METADATA_STEP_MODEL_HELPER];
 
-            StepModelHelper stepModelHelperParent = list.Where(s => s.StepId.Equals(parentStepId)).FirstOrDefault();
+            var stepModelHelperParent = list.Where(s => s.StepId.Equals(parentStepId)).FirstOrDefault();
 
             // up in xml
             //ChangeInXml(stepModelHelperParent.Usage, parentModelNumber, id, number);
@@ -1087,7 +1087,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             UpdateChildrens(stepModelHelperParent, id);
 
-            AbstractMetadataStepModel model = stepModelHelperParent.Model;
+            var model = stepModelHelperParent.Model;
 
             if (model != null)
             {
@@ -1112,9 +1112,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private StepInfo AddStepsBasedOnUsage(BaseUsage usage, StepInfo current, string parentXpath, StepModelHelper parent)
         {
             // genertae action, controller base on usage
-            string actionName = "";
-            string childName = "";
-            int min = usage.MinCardinality;
+            var actionName = "";
+            var childName = "";
+            var min = usage.MinCardinality;
 
             if (usage is MetadataPackageUsage)
             {
@@ -1132,17 +1132,17 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     childName = ((MetadataAttributeUsage)usage).MetadataAttribute.Name;
             }
 
-            List<StepInfo> list = new List<StepInfo>();
-            List<StepModelHelper> stepHelperModelList = (List<StepModelHelper>)TaskManager.Bus[CreateTaskmanager.METADATA_STEP_MODEL_HELPER];
+            var list = new List<StepInfo>();
+            var stepHelperModelList = (List<StepModelHelper>)TaskManager.Bus[CreateTaskmanager.METADATA_STEP_MODEL_HELPER];
 
             if (TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATA_XML))
             {
-                XDocument xMetadata = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
+                var xMetadata = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
 
                 var x = new XElement("null");
-                List<XElement> elements = new List<XElement>();
+                var elements = new List<XElement>();
 
-                Dictionary<string, string> keyValueDic = new Dictionary<string, string>();
+                var keyValueDic = new Dictionary<string, string>();
                 keyValueDic.Add("id", usage.Id.ToString());
 
                 if (usage is MetadataPackageUsage)
@@ -1160,19 +1160,19 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 if (x != null && !x.Name.Equals("null"))
                 {
-                    IEnumerable<XElement> xelements = x.Elements();
+                    var xelements = x.Elements();
 
                     if (xelements.Count() > 0)
                     {
-                        int counter = 0;
+                        var counter = 0;
 
-                        foreach (XElement element in xelements)
+                        foreach (var element in xelements)
                         {
                             counter++;
-                            string title = counter.ToString(); //usage.Label+" (" + counter + ")";
-                            long id = Convert.ToInt64((element.Attribute("roleId")).Value.ToString());
+                            var title = counter.ToString(); //usage.Label+" (" + counter + ")";
+                            var id = Convert.ToInt64((element.Attribute("roleId")).Value.ToString());
 
-                            StepInfo s = new StepInfo(title)
+                            var s = new StepInfo(title)
                             {
                                 Id = TaskManager.GenerateStepId(),
                                 Parent = current,
@@ -1180,11 +1180,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 HasContent = UsageHelper.HasUsagesWithSimpleType(usage),
                             };
 
-                            string xPath = parentXpath + "//" + childName.Replace(" ", string.Empty) + "[" + counter + "]";
+                            var xPath = parentXpath + "//" + childName.Replace(" ", string.Empty) + "[" + counter + "]";
 
                             if (TaskManager.Root.Children.Where(z => z.title.Equals(title)).Count() == 0)
                             {
-                                StepModelHelper newStepModelHelper = new StepModelHelper(s.Id, counter, usage, xPath, parent);
+                                var newStepModelHelper = new StepModelHelper(s.Id, counter, usage, xPath, parent);
                                 stepHelperModelList.Add(newStepModelHelper);
 
                                 s.Children = GetChildrenSteps(usage, s, xPath, newStepModelHelper);
@@ -1202,20 +1202,20 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         private List<StepInfo> GetChildrenSteps(BaseUsage usage, StepInfo parent, string parentXpath, StepModelHelper parentStepModelHelper)
         {
-            List<StepInfo> childrenSteps = new List<StepInfo>();
-            List<BaseUsage> childrenUsages = UsageHelper.GetCompoundChildrens(usage);
-            List<StepModelHelper> stepHelperModelList = (List<StepModelHelper>)TaskManager.Bus[CreateTaskmanager.METADATA_STEP_MODEL_HELPER];
+            var childrenSteps = new List<StepInfo>();
+            var childrenUsages = UsageHelper.GetCompoundChildrens(usage);
+            var stepHelperModelList = (List<StepModelHelper>)TaskManager.Bus[CreateTaskmanager.METADATA_STEP_MODEL_HELPER];
 
             if (childrenUsages.Count > 0)
             {
-                foreach (BaseUsage u in childrenUsages)
+                foreach (var u in childrenUsages)
                 {
-                    string xPath = parentXpath + "//" + u.Label.Replace(" ", string.Empty) + "[1]";
+                    var xPath = parentXpath + "//" + u.Label.Replace(" ", string.Empty) + "[1]";
 
-                    bool complex = false;
+                    var complex = false;
 
-                    string actionName = "";
-                    string attrName = "";
+                    var actionName = "";
+                    var attrName = "";
 
                     if (u is MetadataPackageUsage)
                     {
@@ -1227,7 +1227,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                         if (u is MetadataAttributeUsage)
                         {
-                            MetadataAttributeUsage mau = (MetadataAttributeUsage)u;
+                            var mau = (MetadataAttributeUsage)u;
                             if (mau.MetadataAttribute.Self is MetadataCompoundAttribute)
                             {
                                 complex = true;
@@ -1237,7 +1237,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                         if (u is MetadataNestedAttributeUsage)
                         {
-                            MetadataNestedAttributeUsage mau = (MetadataNestedAttributeUsage)u;
+                            var mau = (MetadataNestedAttributeUsage)u;
                             if (mau.Member.Self is MetadataCompoundAttribute)
                             {
                                 complex = true;
@@ -1248,7 +1248,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     if (complex)
                     {
-                        StepInfo s = new StepInfo(u.Label)
+                        var s = new StepInfo(u.Label)
                         {
                             Id = TaskManager.GenerateStepId(),
                             parentTitle = attrName,
@@ -1271,7 +1271,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                         if (TaskManager.StepInfos.Where(z => z.Id.Equals(s.Id)).Count() == 0)
                         {
-                            StepModelHelper newStepModelHelper = new StepModelHelper(s.Id, 1, u, xPath,
+                            var newStepModelHelper = new StepModelHelper(s.Id, 1, u, xPath,
                                 parentStepModelHelper);
                             stepHelperModelList.Add(newStepModelHelper);
 
@@ -1287,21 +1287,21 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         private List<StepInfo> GetChildrenStepsFromMetadata(BaseUsage usage, StepInfo parent, string parentXpath, StepModelHelper parentStepModelHelper)
         {
-            List<StepInfo> childrenSteps = new List<StepInfo>();
-            List<BaseUsage> childrenUsages = UsageHelper.GetCompoundChildrens(usage);
-            List<StepModelHelper> stepHelperModelList = (List<StepModelHelper>)TaskManager.Bus[CreateTaskmanager.METADATA_STEP_MODEL_HELPER];
+            var childrenSteps = new List<StepInfo>();
+            var childrenUsages = UsageHelper.GetCompoundChildrens(usage);
+            var stepHelperModelList = (List<StepModelHelper>)TaskManager.Bus[CreateTaskmanager.METADATA_STEP_MODEL_HELPER];
 
             if (childrenUsages.Count > 0)
             {
-                foreach (BaseUsage u in childrenUsages)
+                foreach (var u in childrenUsages)
                 {
-                    int number = 1;//childrenUsages.IndexOf(u) + 1;
-                    string xPath = parentXpath + "//" + u.Label.Replace(" ", string.Empty) + "[" + number + "]";
+                    var number = 1;//childrenUsages.IndexOf(u) + 1;
+                    var xPath = parentXpath + "//" + u.Label.Replace(" ", string.Empty) + "[" + number + "]";
 
-                    bool complex = false;
+                    var complex = false;
 
-                    string actionName = "";
-                    string attrName = "";
+                    var actionName = "";
+                    var attrName = "";
 
                     if (u is MetadataPackageUsage)
                     {
@@ -1313,7 +1313,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                         if (u is MetadataAttributeUsage)
                         {
-                            MetadataAttributeUsage mau = (MetadataAttributeUsage)u;
+                            var mau = (MetadataAttributeUsage)u;
                             if (mau.MetadataAttribute.Self is MetadataCompoundAttribute)
                             {
                                 complex = true;
@@ -1323,7 +1323,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                         if (u is MetadataNestedAttributeUsage)
                         {
-                            MetadataNestedAttributeUsage mau = (MetadataNestedAttributeUsage)u;
+                            var mau = (MetadataNestedAttributeUsage)u;
                             if (mau.Member.Self is MetadataCompoundAttribute)
                             {
                                 complex = true;
@@ -1334,7 +1334,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     if (complex)
                     {
-                        StepInfo s = new StepInfo(u.Label)
+                        var s = new StepInfo(u.Label)
                         {
                             Id = TaskManager.GenerateStepId(),
                             parentTitle = attrName,
@@ -1359,7 +1359,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                         if (TaskManager.StepInfos.Where(z => z.Id.Equals(s.Id)).Count() == 0)
                         {
-                            StepModelHelper newStepModelHelper = new StepModelHelper(s.Id, 1, u, xPath,
+                            var newStepModelHelper = new StepModelHelper(s.Id, 1, u, xPath,
                                 parentStepModelHelper);
                             stepHelperModelList.Add(newStepModelHelper);
                             s = LoadStepsBasedOnUsage(u, s, xPath, newStepModelHelper);
@@ -1375,17 +1375,17 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         private List<StepInfo> GetChildrenStepsUpdated(BaseUsage usage, StepInfo parent, string parentXpath)
         {
-            List<StepInfo> childrenSteps = new List<StepInfo>();
-            List<BaseUsage> childrenUsages = UsageHelper.GetCompoundChildrens(usage);
-            List<StepModelHelper> stepHelperModelList = (List<StepModelHelper>)TaskManager.Bus[CreateTaskmanager.METADATA_STEP_MODEL_HELPER];
+            var childrenSteps = new List<StepInfo>();
+            var childrenUsages = UsageHelper.GetCompoundChildrens(usage);
+            var stepHelperModelList = (List<StepModelHelper>)TaskManager.Bus[CreateTaskmanager.METADATA_STEP_MODEL_HELPER];
 
-            foreach (BaseUsage u in childrenUsages)
+            foreach (var u in childrenUsages)
             {
-                string label = u.Label.Replace(" ", string.Empty);
-                string xPath = parentXpath + "//" + label + "[1]";
-                bool complex = false;
+                var label = u.Label.Replace(" ", string.Empty);
+                var xPath = parentXpath + "//" + label + "[1]";
+                var complex = false;
 
-                string actionName = "";
+                var actionName = "";
 
                 if (u is MetadataPackageUsage)
                 {
@@ -1397,14 +1397,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     if (u is MetadataAttributeUsage)
                     {
-                        MetadataAttributeUsage mau = (MetadataAttributeUsage)u;
+                        var mau = (MetadataAttributeUsage)u;
                         if (mau.MetadataAttribute.Self is MetadataCompoundAttribute)
                             complex = true;
                     }
 
                     if (u is MetadataNestedAttributeUsage)
                     {
-                        MetadataNestedAttributeUsage mau = (MetadataNestedAttributeUsage)u;
+                        var mau = (MetadataNestedAttributeUsage)u;
                         if (mau.Member.Self is MetadataCompoundAttribute)
                             complex = true;
                     }
@@ -1412,7 +1412,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 if (complex)
                 {
-                    StepInfo s = new StepInfo(u.Label)
+                    var s = new StepInfo(u.Label)
                     {
                         Id = TaskManager.GenerateStepId(),
                         Parent = parent,
@@ -1437,7 +1437,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     if (TaskManager.Root.Children.Where(z => z.title.Equals(s.title)).Count() == 0)
                     {
-                        StepModelHelper p = GetStepModelhelper(parent.Id);
+                        var p = GetStepModelhelper(parent.Id);
                         stepHelperModelList.Add(new StepModelHelper(s.Id, 1, u, xPath, p));
                     }
                 }
@@ -1449,9 +1449,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private StepInfo LoadStepsBasedOnUsage(BaseUsage usage, StepInfo current, string parentXpath, StepModelHelper parent)
         {
             // genertae action, controller base on usage
-            string actionName = "";
-            string childName = "";
-            int min = usage.MinCardinality;
+            var actionName = "";
+            var childName = "";
+            var min = usage.MinCardinality;
 
             if (usage is MetadataPackageUsage)
             {
@@ -1469,17 +1469,17 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     childName = ((MetadataAttributeUsage)usage).MetadataAttribute.Name;
             }
 
-            List<StepInfo> list = new List<StepInfo>();
-            List<StepModelHelper> stepHelperModelList = (List<StepModelHelper>)TaskManager.Bus[CreateTaskmanager.METADATA_STEP_MODEL_HELPER];
+            var list = new List<StepInfo>();
+            var stepHelperModelList = (List<StepModelHelper>)TaskManager.Bus[CreateTaskmanager.METADATA_STEP_MODEL_HELPER];
 
             if (TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATA_XML))
             {
-                XDocument xMetadata = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
+                var xMetadata = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
 
                 //var x = new XElement("null");
-                XElement parentXElement = new XElement("tmp");
+                var parentXElement = new XElement("tmp");
 
-                Dictionary<string, string> keyValueDic = new Dictionary<string, string>();
+                var keyValueDic = new Dictionary<string, string>();
                 keyValueDic.Add("id", usage.Id.ToString());
 
                 if (usage is MetadataPackageUsage)
@@ -1497,19 +1497,19 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 //foreach (var x in elements)
                 //{
-                XElement x = parentXElement;
+                var x = parentXElement;
 
                 if (x != null && !x.Name.Equals("null"))
                 {
-                    IEnumerable<XElement> xelements = x.Elements();
+                    var xelements = x.Elements();
 
                     if (xelements.Count() > 0)
                     {
-                        int counter = 0;
+                        var counter = 0;
 
                         XElement last = null;
 
-                        foreach (XElement element in xelements)
+                        foreach (var element in xelements)
                         {
                             // if the last has not the same name reset count
                             if (last != null && !last.Name.Equals(element.Name))
@@ -1519,10 +1519,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                             last = element;
                             counter++;
-                            string title = counter.ToString(); //usage.Label+" (" + counter + ")";
-                            long id = Convert.ToInt64((element.Attribute("roleId")).Value.ToString());
+                            var title = counter.ToString(); //usage.Label+" (" + counter + ")";
+                            var id = Convert.ToInt64((element.Attribute("roleId")).Value.ToString());
 
-                            StepInfo s = new StepInfo(title)
+                            var s = new StepInfo(title)
                             {
                                 Id = TaskManager.GenerateStepId(),
                                 Parent = current,
@@ -1544,11 +1544,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 //}
                             };
 
-                            string xPath = parentXpath + "//" + childName.Replace(" ", string.Empty) + "[" + counter + "]";
+                            var xPath = parentXpath + "//" + childName.Replace(" ", string.Empty) + "[" + counter + "]";
 
                             if (TaskManager.Root.Children.Where(z => z.title.Equals(title)).Count() == 0)
                             {
-                                StepModelHelper newStepModelHelper = new StepModelHelper(s.Id, counter, usage, xPath,
+                                var newStepModelHelper = new StepModelHelper(s.Id, counter, usage, xPath,
                                     parent);
                                 stepHelperModelList.Add(newStepModelHelper);
                                 s.Children = GetChildrenStepsFromMetadata(usage, s, xPath, newStepModelHelper);
@@ -1568,8 +1568,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private List<StepInfo> UpdateStepsBasedOnUsage(BaseUsage usage, StepInfo currentSelected, string parentXpath)
         {
             // genertae action, controller base on usage
-            string actionName = "";
-            string childName = "";
+            var actionName = "";
+            var childName = "";
             if (usage is MetadataPackageUsage)
             {
                 actionName = "SetMetadataPackageInstanze";
@@ -1586,33 +1586,33 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     childName = ((MetadataAttributeUsage)usage).MetadataAttribute.Name;
             }
 
-            List<StepInfo> list = new List<StepInfo>();
-            List<StepModelHelper> stepHelperModelList = (List<StepModelHelper>)TaskManager.Bus[CreateTaskmanager.METADATA_STEP_MODEL_HELPER];
+            var list = new List<StepInfo>();
+            var stepHelperModelList = (List<StepModelHelper>)TaskManager.Bus[CreateTaskmanager.METADATA_STEP_MODEL_HELPER];
 
             if (TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATA_XML))
             {
-                XDocument xMetadata = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
+                var xMetadata = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
 
                 var x = XmlUtility.GetXElementByXPath(parentXpath, xMetadata);
 
                 if (x != null && !x.Name.Equals("null"))
                 {
-                    StepInfo current = currentSelected;
-                    IEnumerable<XElement> xelements = x.Elements();
+                    var current = currentSelected;
+                    var xelements = x.Elements();
 
                     if (xelements.Count() > 0)
                     {
-                        int counter = 0;
-                        foreach (XElement element in xelements)
+                        var counter = 0;
+                        foreach (var element in xelements)
                         {
                             counter++;
-                            string title = counter.ToString();
+                            var title = counter.ToString();
 
                             if (current.Children.Where(s => s.title.Equals(title)).Count() == 0)
                             {
-                                long id = Convert.ToInt64((element.Attribute("roleId")).Value.ToString());
+                                var id = Convert.ToInt64((element.Attribute("roleId")).Value.ToString());
 
-                                StepInfo s = new StepInfo(title)
+                                var s = new StepInfo(title)
                                 {
                                     Id = TaskManager.GenerateStepId(),
                                     Parent = current,
@@ -1632,15 +1632,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                     //}
                                 };
 
-                                string xPath = parentXpath + "//" + childName.Replace(" ", string.Empty) + "[" + counter + "]";
+                                var xPath = parentXpath + "//" + childName.Replace(" ", string.Empty) + "[" + counter + "]";
 
                                 s.Children = GetChildrenStepsUpdated(usage, s, xPath);
                                 list.Add(s);
 
                                 if (TaskManager.Root.Children.Where(z => z.Id.Equals(s.Id)).Count() == 0)
                                 {
-                                    StepModelHelper parent = GetStepModelhelper(current.Id);
-                                    StepModelHelper newStepModelHelper = new StepModelHelper(s.Id, counter, usage, xPath, parent);
+                                    var parent = GetStepModelhelper(current.Id);
+                                    var newStepModelHelper = new StepModelHelper(s.Id, counter, usage, xPath, parent);
 
                                     stepHelperModelList.Add(newStepModelHelper);
                                 }
@@ -1660,7 +1660,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         // if true return usernamem otherwise "DEFAULT"
         public string GetUsernameOrDefault()
         {
-            string username = string.Empty;
+            var username = string.Empty;
             try
             {
                 username = HttpContext.User.Identity.Name;
@@ -1687,11 +1687,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
 
-            MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
+            var metadataStructureManager = new MetadataStructureManager();
 
-            List<MetadataPackageUsage> metadataPackageList = metadataStructureManager.GetEffectivePackages(MetadataStructureId).ToList();
+            var metadataPackageList = metadataStructureManager.GetEffectivePackages(MetadataStructureId).ToList();
 
-            List<StepModelHelper> stepModelHelperList = new List<StepModelHelper>();
+            var stepModelHelperList = new List<StepModelHelper>();
             if (TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATA_STEP_MODEL_HELPER))
             {
                 TaskManager.Bus[CreateTaskmanager.METADATA_STEP_MODEL_HELPER] = stepModelHelperList;
@@ -1703,10 +1703,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             TaskManager.StepInfos = new List<StepInfo>();
 
-            foreach (MetadataPackageUsage mpu in metadataPackageList)
+            foreach (var mpu in metadataPackageList)
             {
                 //only add none optional usages
-                StepInfo si = new StepInfo(mpu.Label)
+                var si = new StepInfo(mpu.Label)
                 {
                     Id = TaskManager.GenerateStepId(),
                     parentTitle = mpu.MetadataPackage.Name,
@@ -1715,7 +1715,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 };
 
                 TaskManager.StepInfos.Add(si);
-                StepModelHelper stepModelHelper = new StepModelHelper(si.Id, 1, mpu, "Metadata//" + mpu.Label.Replace(" ", string.Empty) + "[1]", null);
+                var stepModelHelper = new StepModelHelper(si.Id, 1, mpu, "Metadata//" + mpu.Label.Replace(" ", string.Empty) + "[1]", null);
 
                 stepModelHelperList.Add(stepModelHelper);
 
@@ -1736,11 +1736,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
 
-            MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
+            var metadataStructureManager = new MetadataStructureManager();
 
-            List<MetadataPackageUsage> metadataPackageList = metadataStructureManager.GetEffectivePackages(MetadataStructureId).ToList();
+            var metadataPackageList = metadataStructureManager.GetEffectivePackages(MetadataStructureId).ToList();
 
-            List<StepModelHelper> stepModelHelperList = new List<StepModelHelper>();
+            var stepModelHelperList = new List<StepModelHelper>();
             if (TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATA_STEP_MODEL_HELPER))
             {
                 TaskManager.Bus[CreateTaskmanager.METADATA_STEP_MODEL_HELPER] = stepModelHelperList;
@@ -1752,10 +1752,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             TaskManager.StepInfos = new List<StepInfo>();
 
-            foreach (MetadataPackageUsage mpu in metadataPackageList)
+            foreach (var mpu in metadataPackageList)
             {
                 //only add none optional usages
-                StepInfo si = new StepInfo(mpu.Label)
+                var si = new StepInfo(mpu.Label)
                 {
                     Id = TaskManager.GenerateStepId(),
                     parentTitle = mpu.MetadataPackage.Name,
@@ -1764,7 +1764,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 };
 
                 TaskManager.StepInfos.Add(si);
-                StepModelHelper stepModelHelper = new StepModelHelper(si.Id, 1, mpu, "Metadata//" + mpu.Label.Replace(" ", string.Empty) + "[1]", null);
+                var stepModelHelper = new StepModelHelper(si.Id, 1, mpu, "Metadata//" + mpu.Label.Replace(" ", string.Empty) + "[1]", null);
 
                 stepModelHelperList.Add(stepModelHelper);
 
@@ -1786,9 +1786,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             if (TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATASTRUCTURE_ID))
             {
-                XmlMetadataWriter xmlMetadatWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
+                var xmlMetadatWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
 
-                XDocument metadataXml = xmlMetadatWriter.CreateMetadataXml(Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]));
+                var metadataXml = xmlMetadatWriter.CreateMetadataXml(Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]));
 
                 //local path
                 //string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "metadataTemp.Xml");
@@ -1812,7 +1812,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 foreach (var childStep in stepModelHelper.Model.StepInfo.Children)
                 {
-                    StepModelHelper childStepModelHelper = GetStepModelhelper(childStep.Id);
+                    var childStepModelHelper = GetStepModelhelper(childStep.Id);
 
                     if (childStepModelHelper.Model == null)
                     {
@@ -1839,13 +1839,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         private List<BaseUsage> GetCompoundAttributeUsages(BaseUsage usage)
         {
-            List<BaseUsage> list = new List<BaseUsage>();
+            var list = new List<BaseUsage>();
 
             if (usage is MetadataPackageUsage)
             {
-                MetadataPackageUsage mpu = (MetadataPackageUsage)usage;
+                var mpu = (MetadataPackageUsage)usage;
 
-                foreach (MetadataAttributeUsage mau in mpu.MetadataPackage.MetadataAttributeUsages)
+                foreach (var mau in mpu.MetadataPackage.MetadataAttributeUsages)
                 {
                     list.AddRange(GetCompoundAttributeUsages(mau));
                 }
@@ -1853,15 +1853,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             if (usage is MetadataAttributeUsage)
             {
-                MetadataAttributeUsage mau = (MetadataAttributeUsage)usage;
+                var mau = (MetadataAttributeUsage)usage;
 
                 if (mau.MetadataAttribute.Self is MetadataCompoundAttribute)
                 {
                     list.Add(mau);
 
-                    MetadataCompoundAttribute mca = (MetadataCompoundAttribute)mau.MetadataAttribute.Self;
+                    var mca = (MetadataCompoundAttribute)mau.MetadataAttribute.Self;
 
-                    foreach (MetadataNestedAttributeUsage mnau in mca.MetadataNestedAttributeUsages)
+                    foreach (var mnau in mca.MetadataNestedAttributeUsages)
                     {
                         list.AddRange(GetCompoundAttributeUsages(mnau));
                     }
@@ -1870,15 +1870,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             if (usage is MetadataNestedAttributeUsage)
             {
-                MetadataNestedAttributeUsage mnau = (MetadataNestedAttributeUsage)usage;
+                var mnau = (MetadataNestedAttributeUsage)usage;
 
                 if (mnau.Member.Self is MetadataCompoundAttribute)
                 {
                     list.Add(mnau);
 
-                    MetadataCompoundAttribute mca = (MetadataCompoundAttribute)mnau.Member.Self;
+                    var mca = (MetadataCompoundAttribute)mnau.Member.Self;
 
-                    foreach (MetadataNestedAttributeUsage m in mca.MetadataNestedAttributeUsages)
+                    foreach (var m in mca.MetadataNestedAttributeUsages)
                     {
                         list.AddRange(GetCompoundAttributeUsages(m));
                     }
@@ -1908,13 +1908,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             if (usage is MetadataPackageUsage)
             {
-                MetadataStructureManager msm = new MetadataStructureManager();
+                var msm = new MetadataStructureManager();
                 return msm.PackageUsageRepo.Get(usage.Id);
             }
 
             if (usage is MetadataNestedAttributeUsage)
             {
-                MetadataAttributeManager mam = new MetadataAttributeManager();
+                var mam = new MetadataAttributeManager();
 
                 var x = from c in mam.MetadataCompoundAttributeRepo.Get()
                         from u in c.Self.MetadataNestedAttributeUsages
@@ -1926,7 +1926,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             if (usage is MetadataAttributeUsage)
             {
-                MetadataPackageManager mpm = new MetadataPackageManager();
+                var mpm = new MetadataPackageManager();
 
                 var q = from p in mpm.MetadataPackageRepo.Get()
                         from u in p.MetadataAttributeUsages
@@ -2051,10 +2051,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         private StepModelHelper Down(StepModelHelper stepModelHelperParent, long id, int number)
         {
-            List<MetadataAttributeModel> list = stepModelHelperParent.Model.MetadataAttributeModels;
+            var list = stepModelHelperParent.Model.MetadataAttributeModels;
 
-            MetadataAttributeModel temp = list.Where(m => m.Id.Equals(id) && m.Number.Equals(number)).FirstOrDefault();
-            int index = list.IndexOf(temp);
+            var temp = list.Where(m => m.Id.Equals(id) && m.Number.Equals(number)).FirstOrDefault();
+            var index = list.IndexOf(temp);
 
             list.RemoveAt(index);
             list.Insert(index + number, temp);
@@ -2064,7 +2064,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         private StepModelHelper DownComplexModel(StepModelHelper stepModelHelperParent, long id, int number)
         {
-            List<StepModelHelper> list = stepModelHelperParent.Childrens;
+            var list = stepModelHelperParent.Childrens;
 
             return stepModelHelperParent;
         }
@@ -2078,8 +2078,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// <returns></returns>
         private StepModelHelper Insert(MetadataAttributeModel childModel, StepModelHelper stepModelHelperParent, int number)
         {
-            MetadataAttributeModel childrensWithSameUsage = stepModelHelperParent.Model.MetadataAttributeModels.Where(m => m.Source.Id.Equals(childModel.Source.Id)).First();
-            int indexOfFirstUsage = stepModelHelperParent.Model.MetadataAttributeModels.IndexOf(childrensWithSameUsage);
+            var childrensWithSameUsage = stepModelHelperParent.Model.MetadataAttributeModels.Where(m => m.Source.Id.Equals(childModel.Source.Id)).First();
+            var indexOfFirstUsage = stepModelHelperParent.Model.MetadataAttributeModels.IndexOf(childrensWithSameUsage);
 
             stepModelHelperParent.Model.MetadataAttributeModels.Insert(indexOfFirstUsage + number - 1, childModel);
 
@@ -2088,10 +2088,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         private StepModelHelper Up(StepModelHelper stepModelHelperParent, long id, int number)
         {
-            List<MetadataAttributeModel> list = stepModelHelperParent.Model.MetadataAttributeModels;
+            var list = stepModelHelperParent.Model.MetadataAttributeModels;
 
-            MetadataAttributeModel temp = list.Where(m => m.Id.Equals(id) && m.Number.Equals(number)).FirstOrDefault();
-            int index = list.IndexOf(temp);
+            var temp = list.FirstOrDefault(m => m.Id.Equals(id) && m.Number.Equals(number));
+            var index = list.IndexOf(temp);
 
             list.RemoveAt(index);
             list.Insert(index - 1, temp);
@@ -2101,18 +2101,18 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         private StepModelHelper UpComplexModel(StepModelHelper stepModelHelperParent, long id, int number)
         {
-            List<StepModelHelper> list = stepModelHelperParent.Childrens;
+            var list = stepModelHelperParent.Childrens;
 
             return stepModelHelperParent;
         }
 
         private StepModelHelper UpdateChildrens(StepModelHelper stepModelHelper)
         {
-            int count = stepModelHelper.Model.MetadataAttributeModels.Count;
+            var count = stepModelHelper.Model.MetadataAttributeModels.Count;
 
-            for (int i = 0; i < count; i++)
+            for (var i = 0; i < count; i++)
             {
-                MetadataAttributeModel child = stepModelHelper.Model.MetadataAttributeModels.ElementAt(i);
+                var child = stepModelHelper.Model.MetadataAttributeModels.ElementAt(i);
                 child.NumberOfSourceInPackage = count;
                 child.Number = i + 1;
             }
@@ -2131,11 +2131,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// <returns></returns>
         private StepModelHelper UpdateChildrens(StepModelHelper stepModelHelper, long usageId)
         {
-            IEnumerable<MetadataAttributeModel> mams = stepModelHelper.Model.MetadataAttributeModels.Where(m => m.Source.Id.Equals(usageId));
+            var mams = stepModelHelper.Model.MetadataAttributeModels.Where(m => m.Source.Id.Equals(usageId));
 
-            for (int i = 0; i < mams.Count(); i++)
+            for (var i = 0; i < mams.Count(); i++)
             {
-                MetadataAttributeModel child = mams.ElementAt(i);
+                var child = mams.ElementAt(i);
                 child.NumberOfSourceInPackage = mams.Count();
                 child.Number = i + 1;
             }
@@ -2155,15 +2155,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
 
-            XDocument metadataXml = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
+            var metadataXml = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
 
-            XmlMetadataWriter xmlMetadataWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
+            var xmlMetadataWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
             metadataXml = xmlMetadataWriter.AddAttribute(metadataXml, attribute, number, UsageHelper.GetNameOfType(attribute), UsageHelper.GetIdOfType(attribute).ToString(), parentXPath);
 
             TaskManager.Bus[CreateTaskmanager.METADATA_XML] = metadataXml;
 
             // locat path
-            string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "metadataTemp.Xml");
+            var path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "metadataTemp.Xml");
             //metadataXml.Save
         }
 
@@ -2171,9 +2171,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
 
-            XDocument metadataXml = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
+            var metadataXml = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
 
-            XmlMetadataWriter xmlMetadataWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
+            var xmlMetadataWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
 
             metadataXml = xmlMetadataWriter.AddPackage(metadataXml, usage, number, UsageHelper.GetNameOfType(usage), UsageHelper.GetIdOfType(usage), UsageHelper.GetChildren(usage), BExIS.Xml.Helpers.XmlNodeType.MetadataAttribute, BExIS.Xml.Helpers.XmlNodeType.MetadataAttributeUsage, xpath);
 
@@ -2184,9 +2184,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
 
-            XDocument metadataXml = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
+            var metadataXml = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
 
-            XmlMetadataWriter xmlMetadataWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
+            var xmlMetadataWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
 
             metadataXml = xmlMetadataWriter.AddPackage(
                 metadataXml,
@@ -2205,22 +2205,22 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private void ChangeInXml(string selectedXPath, string destinationXPath)
         {
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
-            XDocument metadataXml = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
-            XmlMetadataWriter xmlMetadataWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
+            var metadataXml = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
+            var xmlMetadataWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
 
             metadataXml = xmlMetadataWriter.Change(metadataXml, selectedXPath, destinationXPath);
 
             TaskManager.Bus[CreateTaskmanager.METADATA_XML] = metadataXml;
             // locat path
-            string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "metadataTemp.Xml");
+            var path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "metadataTemp.Xml");
             metadataXml.Save(path);
         }
 
         private void RemoveAttributeToXml(BaseUsage parentUsage, int packageNumber, BaseUsage attribute, int number, string metadataAttributeName, string parentXPath)
         {
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
-            XDocument metadataXml = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
-            XmlMetadataWriter xmlMetadataWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
+            var metadataXml = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
+            var xmlMetadataWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
 
             metadataXml = xmlMetadataWriter.RemoveAttribute(metadataXml, attribute, number, metadataAttributeName, parentXPath);
 
@@ -2234,9 +2234,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
 
-            XDocument metadataXml = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
+            var metadataXml = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
 
-            XmlMetadataWriter xmlMetadataWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
+            var xmlMetadataWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
             metadataXml = xmlMetadataWriter.RemovePackage(metadataXml, usage, number, UsageHelper.GetNameOfType(usage));
 
             TaskManager.Bus[CreateTaskmanager.METADATA_XML] = metadataXml;
@@ -2246,9 +2246,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
 
-            XDocument metadataXml = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
+            var metadataXml = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
 
-            XmlMetadataWriter xmlMetadataWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
+            var xmlMetadataWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
             metadataXml = xmlMetadataWriter.Remove(metadataXml, xpath);
 
             TaskManager.Bus[CreateTaskmanager.METADATA_XML] = metadataXml;
@@ -2257,14 +2257,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private void UpdateAttribute(BaseUsage parentUsage, int packageNumber, BaseUsage attribute, int number, object value, string parentXpath)
         {
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
-            XDocument metadataXml = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
-            XmlMetadataWriter xmlMetadataWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
+            var metadataXml = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
+            var xmlMetadataWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
 
             metadataXml = xmlMetadataWriter.Update(metadataXml, attribute, number, value, UsageHelper.GetNameOfType(attribute), parentXpath);
 
             TaskManager.Bus[CreateTaskmanager.METADATA_XML] = metadataXml;
             // locat path
-            string path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "metadataTemp.Xml");
+            var path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DCM"), "metadataTemp.Xml");
             metadataXml.Save(path);
         }
 
@@ -2272,9 +2272,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
 
-            XDocument metadataXml = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
+            var metadataXml = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
 
-            XmlMetadataWriter xmlMetadataWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
+            var xmlMetadataWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
 
             metadataXml = xmlMetadataWriter.AddPackage(metadataXml, usage, number, UsageHelper.GetNameOfType(usage), UsageHelper.GetIdOfType(usage), UsageHelper.GetChildren(usage), BExIS.Xml.Helpers.XmlNodeType.MetadataAttribute, BExIS.Xml.Helpers.XmlNodeType.MetadataAttributeUsage, xpath);
 
@@ -2293,7 +2293,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             if (TaskManager != null && TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATA_STEP_MODEL_HELPER))
             {
-                List<StepModelHelper> stepInfoModelHelpers = (List<StepModelHelper>)TaskManager.Bus[CreateTaskmanager.METADATA_STEP_MODEL_HELPER];
+                var stepInfoModelHelpers = (List<StepModelHelper>)TaskManager.Bus[CreateTaskmanager.METADATA_STEP_MODEL_HELPER];
                 ValidateModels(stepInfoModelHelpers.Where(s => s.Activated && s.IsParentActive()).ToList());
             }
 
@@ -2308,26 +2308,26 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             value = value.Trim();
 
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
-            StepModelHelper stepModelHelper = GetStepModelhelper(parentStepId);
+            var stepModelHelper = GetStepModelhelper(parentStepId);
 
-            long ParentUsageId = stepModelHelper.Usage.Id;
-            BaseUsage parentUsage = LoadUsage(stepModelHelper.Usage);
-            int pNumber = stepModelHelper.Number;
+            var ParentUsageId = stepModelHelper.Usage.Id;
+            var parentUsage = LoadUsage(stepModelHelper.Usage);
+            var pNumber = stepModelHelper.Number;
 
-            BaseUsage metadataAttributeUsage = UsageHelper.GetChildren(parentUsage).Where(u => u.Id.Equals(id)).FirstOrDefault();
+            var metadataAttributeUsage = UsageHelper.GetChildren(parentUsage).Where(u => u.Id.Equals(id)).FirstOrDefault();
 
             //Path.Combine(AppConfiguration.GetModuleWorkspacePath("dcm"),"x","file.xml");
 
             //UpdateXml
-            long metadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
-            MetadataAttributeModel model = MetadataAttributeModel.Convert(metadataAttributeUsage, parentUsage, metadataStructureId, parentModelNumber, stepModelHelper.StepId);
+            var metadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
+            var model = MetadataAttributeModel.Convert(metadataAttributeUsage, parentUsage, metadataStructureId, parentModelNumber, stepModelHelper.StepId);
 
             //check if datatype is a datetime then check display pattern and manipulate the incoming string
             if (model.SystemType.Equals(typeof(DateTime).Name))
             {
                 if (!string.IsNullOrEmpty(model.DisplayPattern))
                 {
-                    DateTime dt = DateTime.Parse(value);
+                    var dt = DateTime.Parse(value);
                     value = dt.ToString(model.DisplayPattern);
                 }
             }
@@ -2339,7 +2339,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             if (stepModelHelper.Model.MetadataAttributeModels.Where(a => a.Id.Equals(id) && a.Number.Equals(number)).Count() > 0)
             {
-                MetadataAttributeModel selectedMetadatAttributeModel = stepModelHelper.Model.MetadataAttributeModels.Where(a => a.Id.Equals(id) && a.Number.Equals(number)).FirstOrDefault();
+                var selectedMetadatAttributeModel = stepModelHelper.Model.MetadataAttributeModels.Where(a => a.Id.Equals(id) && a.Number.Equals(number)).FirstOrDefault();
                 // select the attributeModel and change the value
                 selectedMetadatAttributeModel.Value = model.Value;
                 selectedMetadatAttributeModel.Errors = validateAttribute(selectedMetadatAttributeModel);
@@ -2356,7 +2356,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         private List<Error> validateAttribute(MetadataAttributeModel aModel)
         {
-            List<Error> errors = new List<Error>();
+            var errors = new List<Error>();
             //optional check
             if (aModel.MinCardinality > 0 && (aModel.Value == null || String.IsNullOrEmpty(aModel.Value.ToString())))
                 errors.Add(new Error(ErrorType.MetadataAttribute, "is not optional", new object[] { aModel.DisplayName, aModel.Value, aModel.Number, aModel.ParentModelNumber, aModel.Parent.Label }));
@@ -2373,11 +2373,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 }
                 else
                 {
-                    Type type = Type.GetType("System." + aModel.SystemType);
-                    object value = Convert.ChangeType(aModel.Value, type);
+                    var type = Type.GetType("System." + aModel.SystemType);
+                    var value = Convert.ChangeType(aModel.Value, type);
 
                     // check Constraints
-                    foreach (Constraint constraint in aModel.GetMetadataAttribute().Constraints)
+                    foreach (var constraint in aModel.GetMetadataAttribute().Constraints)
                     {
                         if (value != null && !constraint.IsSatisfied(value))
                         {
@@ -2401,7 +2401,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         private void ValidateModels(List<StepModelHelper> stepModelHelpers)
         {
-            foreach (StepModelHelper stepModeHelper in stepModelHelpers)
+            foreach (var stepModeHelper in stepModelHelpers)
             {
                 // if model exist then validate attributes
                 if (stepModeHelper.Model != null)
@@ -2445,13 +2445,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         private List<Error> validateStep(AbstractMetadataStepModel pModel)
         {
-            List<Error> errorList = new List<Error>();
+            var errorList = new List<Error>();
 
             if (pModel != null)
             {
-                foreach (MetadataAttributeModel m in pModel.MetadataAttributeModels)
+                foreach (var m in pModel.MetadataAttributeModels)
                 {
-                    List<Error> temp = validateAttribute(m);
+                    var temp = validateAttribute(m);
                     if (temp != null)
                         errorList.AddRange(temp);
                 }
@@ -2475,7 +2475,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         private BaseUsage GetPackageUsage(long Id)
         {
-            MetadataStructureManager mpm = new MetadataStructureManager();
+            var mpm = new MetadataStructureManager();
             return mpm.PackageUsageRepo.Get(Id);
         }
 
@@ -2483,7 +2483,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             if (TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATA_STEP_MODEL_HELPER))
             {
-                List<StepModelHelper> list = (List<StepModelHelper>)TaskManager.Bus[CreateTaskmanager.METADATA_STEP_MODEL_HELPER];
+                var list = (List<StepModelHelper>)TaskManager.Bus[CreateTaskmanager.METADATA_STEP_MODEL_HELPER];
                 return list.Where(s => s.StepId.Equals(stepId)).FirstOrDefault().Usage.Id;
             }
 
@@ -2492,7 +2492,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         private List<MetadataAttributeModel> UpdateFirstAndLast(List<MetadataAttributeModel> list)
         {
-            foreach (MetadataAttributeModel x in list)
+            foreach (var x in list)
             {
                 if (list.First().Equals(x)) x.first = true;
                 else x.first = false;
@@ -2510,13 +2510,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         private MetadataCompoundAttributeModel CreateCompoundModel(int stepId, bool validateIt)
         {
-            StepInfo stepInfo = TaskManager.Get(stepId);
-            StepModelHelper stepModelHelper = GetStepModelhelper(stepId);
+            var stepInfo = TaskManager.Get(stepId);
+            var stepModelHelper = GetStepModelhelper(stepId);
 
-            long metadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
-            long Id = stepModelHelper.Usage.Id;
+            var metadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
+            var Id = stepModelHelper.Usage.Id;
 
-            MetadataCompoundAttributeModel model = MetadataCompoundAttributeModel.ConvertToModel(stepModelHelper.Usage, stepModelHelper.Number);
+            var model = MetadataCompoundAttributeModel.ConvertToModel(stepModelHelper.Usage, stepModelHelper.Number);
 
             // get children
             model.ConvertMetadataAttributeModels(LoadUsage(stepModelHelper.Usage), metadataStructureId, stepInfo.Id);
@@ -2527,7 +2527,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 //get Instance
                 if (TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATA_XML))
                 {
-                    XDocument xMetadata = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
+                    var xMetadata = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
                     model.ConvertInstance(xMetadata, stepModelHelper.XPath);
                 }
             }
@@ -2561,16 +2561,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         private MetadataPackageModel CreatePackageModel(int stepId, bool validateIt)
         {
-            StepInfo stepInfo = TaskManager.Get(stepId);
-            StepModelHelper stepModelHelper = GetStepModelhelper(stepId);
+            var stepInfo = TaskManager.Get(stepId);
+            var stepModelHelper = GetStepModelhelper(stepId);
 
-            long metadataPackageId = stepModelHelper.Usage.Id;
-            long metadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
+            var metadataPackageId = stepModelHelper.Usage.Id;
+            var metadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
 
-            MetadataStructureManager mdsManager = new MetadataStructureManager();
-            MetadataPackageManager mdpManager = new MetadataPackageManager();
-            MetadataPackageUsage mpu = (MetadataPackageUsage)LoadUsage(stepModelHelper.Usage);
-            MetadataPackageModel model = new MetadataPackageModel();
+            var mdsManager = new MetadataStructureManager();
+            var mdpManager = new MetadataPackageManager();
+            var mpu = (MetadataPackageUsage)LoadUsage(stepModelHelper.Usage);
+            var model = new MetadataPackageModel();
 
             model = MetadataPackageModel.Convert(mpu, stepModelHelper.Number);
             model.ConvertMetadataAttributeModels(mpu, metadataStructureId, stepId);
@@ -2580,7 +2580,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 //get Instance
                 if (TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATA_XML))
                 {
-                    XDocument xMetadata = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
+                    var xMetadata = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
                     model.ConvertInstance(xMetadata, stepModelHelper.XPath);
                 }
             }
@@ -2615,28 +2615,28 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private AbstractMetadataStepModel LoadSimpleAttributesForModelFromXml(StepModelHelper stepModelHelper)
         {
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
-            XDocument metadata = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
+            var metadata = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
 
-            XElement complexElement = XmlUtility.GetXElementByXPath(stepModelHelper.XPath, metadata);
-            List<MetadataAttributeModel> additionalyMetadataAttributeModel = new List<MetadataAttributeModel>();
+            var complexElement = XmlUtility.GetXElementByXPath(stepModelHelper.XPath, metadata);
+            var additionalyMetadataAttributeModel = new List<MetadataAttributeModel>();
 
-            foreach (MetadataAttributeModel simpleMetadataAttributeModel in stepModelHelper.Model.MetadataAttributeModels)
+            foreach (var simpleMetadataAttributeModel in stepModelHelper.Model.MetadataAttributeModels)
             {
-                int numberOfSMM = 1;
+                var numberOfSMM = 1;
                 if (complexElement != null)
                 {
                     //Debug.WriteLine("XXXXXXXXXXXXXXXXXXXX");
                     //Debug.WriteLine(simpleMetadataAttributeModel.Source.Label);
-                    IEnumerable<XElement> childs = XmlUtility.GetChildren(complexElement).Where(e => e.Attribute("id").Value.Equals(simpleMetadataAttributeModel.Id.ToString()));
+                    var childs = XmlUtility.GetChildren(complexElement).Where(e => e.Attribute("id").Value.Equals(simpleMetadataAttributeModel.Id.ToString()));
 
                     if (childs.Any())
                         numberOfSMM = childs.First().Elements().Count();
                 }
 
-                for (int i = 1; i <= numberOfSMM; i++)
+                for (var i = 1; i <= numberOfSMM; i++)
                 {
-                    string xpath = stepModelHelper.GetXPathFromSimpleAttribute(simpleMetadataAttributeModel.Id, i);
-                    XElement simpleElement = XmlUtility.GetXElementByXPath(xpath, metadata);
+                    var xpath = stepModelHelper.GetXPathFromSimpleAttribute(simpleMetadataAttributeModel.Id, i);
+                    var simpleElement = XmlUtility.GetXElementByXPath(xpath, metadata);
 
                     if (i == 1)
                     {
@@ -2649,7 +2649,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     }
                     else
                     {
-                        MetadataAttributeModel newMetadataAttributeModel = simpleMetadataAttributeModel.Kopie(i, numberOfSMM);
+                        var newMetadataAttributeModel = simpleMetadataAttributeModel.Kopie(i, numberOfSMM);
                         newMetadataAttributeModel.Value = simpleElement.Value;
                         if (i == numberOfSMM) newMetadataAttributeModel.last = true;
                         additionalyMetadataAttributeModel.Add(newMetadataAttributeModel);
@@ -2659,9 +2659,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             foreach (var item in additionalyMetadataAttributeModel)
             {
-                List<MetadataAttributeModel> tempList = stepModelHelper.Model.MetadataAttributeModels;
+                var tempList = stepModelHelper.Model.MetadataAttributeModels;
 
-                int indexOfLastSameAttribute = tempList.IndexOf(tempList.Where(a => a.Id.Equals(item.Id)).Last());
+                var indexOfLastSameAttribute = tempList.IndexOf(tempList.Where(a => a.Id.Equals(item.Id)).Last());
                 tempList.Insert(indexOfLastSameAttribute + 1, item);
             }
 
@@ -2763,10 +2763,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
             if (TaskManager != null)
             {
-                DatasetManager dm = new DatasetManager();
+                var dm = new DatasetManager();
                 long datasetid = -1;
                 long metadataStructureid = -1;
-                bool resetTaskManager = true;
+                var resetTaskManager = true;
                 XmlDocument metadata = null;
 
                 if (TaskManager.Bus.ContainsKey(CreateTaskmanager.ENTITY_ID))
@@ -2776,7 +2776,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 if (datasetid > -1 && dm.IsDatasetCheckedIn(datasetid))
                 {
-                    Dataset dataset = dm.GetDataset(datasetid);
+                    var dataset = dm.GetDataset(datasetid);
                     metadataStructureid = dataset.MetadataStructure.Id;
                     metadata = dm.GetDatasetLatestMetadataVersion(datasetid);
                     TaskManager.UpdateBus(CreateTaskmanager.METADATA_XML, metadata);
@@ -2793,13 +2793,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
             if (TaskManager != null)
             {
-                DatasetManager dm = new DatasetManager();
+                var dm = new DatasetManager();
                 long datasetid = -1;
                 long metadataStructureid = -1;
-                bool resetTaskManager = true;
+                var resetTaskManager = true;
                 XmlDocument metadata = null;
-                bool edit = true;
-                bool created = false;
+                var edit = true;
+                var created = false;
 
                 if (TaskManager.Bus.ContainsKey(CreateTaskmanager.ENTITY_ID))
                 {
@@ -2808,7 +2808,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                 if (datasetid > -1 && dm.IsDatasetCheckedIn(datasetid))
                 {
-                    Dataset dataset = dm.GetDataset(datasetid);
+                    var dataset = dm.GetDataset(datasetid);
                     metadataStructureid = dataset.MetadataStructure.Id;
                     metadata = dm.GetDatasetLatestMetadataVersion(datasetid);
                     TaskManager.UpdateBus(CreateTaskmanager.METADATA_XML, metadata);
