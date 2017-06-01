@@ -59,18 +59,6 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AjaxMin, Version=4.84.4790.14405, Culture=neutral, PublicKeyToken=21ef50ce11b5d80f, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\AjaxMin.4.84.4790.14417\lib\net40\AjaxMin.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Cassette, Version=2.4.2.13844, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Cassette.2.4.2\lib\net40-client\Cassette.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Cassette.Views, Version=2.4.2.13844, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Cassette.Views.2.4.2\lib\net40\Cassette.Views.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="DataAnnotationsExtensions">
       <HintPath>..\..\packages\DataAnnotationsExtensions.1.1.0.0\lib\NETFramework40\DataAnnotationsExtensions.dll</HintPath>
     </Reference>
@@ -307,9 +295,6 @@
     <Reference Include="WebMatrix.WebData, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.WebPages.WebData.3.2.3\lib\net45\WebMatrix.WebData.dll</HintPath>
       <Private>True</Private>
-    </Reference>
-    <Reference Include="XmlSampleGenerator">
-      <HintPath>..\..\..\..\..\RDB\GIT\packages\Microsoft.Xml.XMLGen.1.0.0\lib\XmlSampleGenerator.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -882,7 +867,6 @@
     <Content Include="Themes\Default\Partials\_Breadcrumb.cshtml" />
     <Content Include="Themes\Default\Partials\_Information.cshtml" />
     <Content Include="Views\Test\Index.cshtml" />
-    <Content Include="Views\Shared\_EntitySelectorView.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\DropDown.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\TreeViewItem.cshtml" />
     <Content Include="Themes\Default\Partials\_Menu.cshtml" />
@@ -1073,22 +1057,6 @@
     <ProjectReference Include="..\..\Modules\BMM\BExISMigration\BExISMigration.csproj">
       <Project>{3a573810-b9f9-4bde-8504-01ef49de0c20}</Project>
       <Name>BExISMigration</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Modules\DCM\BExIS.Dcm.CreateDatasetWizard\BExIS.Dcm.CreateDatasetWizard.csproj">
-      <Project>{93eeeda5-6d79-41a1-947b-0a3fc9e46abc}</Project>
-      <Name>BExIS.Dcm.CreateDatasetWizard</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Modules\DCM\BExIS.Dcm.ImportMetadataStructure\BExIS.Dcm.ImportMetadataStructureWizard.csproj">
-      <Project>{99b0aa63-9ca5-4d42-9cf6-5e8896cd5d25}</Project>
-      <Name>BExIS.Dcm.ImportMetadataStructureWizard</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Modules\DCM\BExIS.Dcm.UploadWizard\BExIS.Dcm.UploadWizard.csproj">
-      <Project>{2c846721-a221-4ae5-a671-4b86de4d3805}</Project>
-      <Name>BExIS.Dcm.UploadWizard</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Modules\DCM\BExIS.Dcm.Wizard\BExIS.Dcm.Wizard.csproj">
-      <Project>{d17cdd9d-b87b-441b-9248-5c54e92ffc81}</Project>
-      <Name>BExIS.Dcm.Wizard</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Modules\RPM\BExIS.RPM.Model\BExIS.RPM.Model.csproj">
       <Project>{063b9e3f-e0dd-43fe-9910-5b1544b8b861}</Project>
