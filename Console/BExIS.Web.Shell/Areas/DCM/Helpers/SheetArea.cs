@@ -31,7 +31,7 @@ namespace BExIS.Dlm.Entities.DataStructure
         }
 
         /// <summary>
-        /// Initializes a new SheetArea by given start- and endvalues
+        /// Initializes a new SheetArea with given start- and endvalues
         /// </summary>
         /// <param name="StartColumn">First coulumn field</param>
         /// <param name="EndColumn">Last coulumn field</param>

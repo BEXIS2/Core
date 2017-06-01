@@ -149,19 +149,12 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 //Add a variable to the suggestions if the names are similar
                 model.Suggestions.Add(i, new List<Tuple<string, string, string, string, string>>());
 
-                //Old: Use the levenshtein distance directly
-                //IEnumerable<Variable> suggestions = allVariables.Where(var => (levenshtein(var.Label, model.HeaderFields[i]) <= 3));
-
                 //Calculate similarity metric
-                //Accept suggestion if the variables have equal names or the similarity is greater than some threshold
+                //Accept suggestion if the similarity is greater than some threshold
                 double threshold = 0.5;
                 IEnumerable<DataAttribute> suggestions = allDataAttributes.Where(att => similarity(att.Name, model.HeaderFields[i]) >= threshold);
-
-                //Order the suggestions according to the levenshtein metric
-                /*List<Variable> ordered = suggestions.ToList<Variable>();
-                ordered.Sort((x, y) => (levenshtein(x.Label, model.HeaderFields[i])).CompareTo(levenshtein(y.Label, model.HeaderFields[i])));*/
-
-                //Order the suggestions according to the similarity (can this differ from the levenshtein metric ordering?)
+                
+                //Order the suggestions according to the similarity
                 List<DataAttribute> ordered = suggestions.ToList<DataAttribute>();
                 ordered.Sort((x, y) => (similarity(y.Name, model.HeaderFields[i])).CompareTo(similarity(x.Name, model.HeaderFields[i])));
 
@@ -182,28 +175,19 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             TaskManager.AddToBus(EasyUploadTaskManager.VERIFICATION_ATTRIBUTESUGGESTIONS, model.Suggestions);
 
-            TaskManager.AddToBus(EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS, model.AssignedHeaderUnits);
-
-            
-
-
-
-            //model.JsonTableData = jsonTable;
+            TaskManager.AddToBus(EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS, model.AssignedHeaderUnits);            
 
             // when jumping back to this step
-            // check if dataset selected
             if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SHEET_JSON_DATA))
             {
                 if (!String.IsNullOrEmpty(Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.SHEET_JSON_DATA])))
                 {
-                    //model.JsonTableData = TaskManager.Bus[TaskManager.SHEET_JSON_DATA].ToString();
                 }
             }
 
             model.StepInfo = TaskManager.Current();
 
             return PartialView(model);
-
         }
 
         [HttpPost]
@@ -458,7 +442,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             }
 
             /*
-             * Copy the assignedHeaderUnits, change the entry where the suggestion was selected for
+             * Copy the assignedHeaderUnits, change the entry for which the suggestion was selected
              * */
             if (selectFieldId != null)
             {
@@ -659,9 +643,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             string JsonArray = TaskManager.Bus[EasyUploadTaskManager.SHEET_JSON_DATA].ToString();
 
-
-
-
             List<Error> ErrorList = ValidateRows(JsonArray);
             List<ErrorInfo> ErrorMessageList = new List<ErrorInfo>();
 
@@ -683,9 +664,11 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             return Json(new { errors = ErrorMessageList.ToArray(), errorCount = (ErrorList.Count) });
         }
 
-        /*
-         * Uses a DataTypeCheck to determin, wether the selected datatypes are suitable
-         * */
+        #region private methods
+        
+        /// <summary>
+        /// Determin whether the selected datatypes are suitable
+        /// </summary>
         private List<Error> ValidateRows(string JsonArray)
         {
             TaskManager = (EasyUploadTaskManager)Session["TaskManager"];
@@ -756,14 +739,11 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             return ErrorList;
         }
 
-
-        #region private methods
-
-        #region helpers
-
-        /*
-         * String-distance used for making suggestions for the variable names
-         * */
+        /// <summary>
+        /// Calcualtes the Levenshtein distance between two strings
+        /// </summary>
+        /// Source: https://en.wikibooks.org/wiki/Algorithm_Implementation/Strings/Levenshtein_distance#C.23
+        /// Explanation: https://en.wikipedia.org/wiki/Levenshtein_distance
         private Int32 levenshtein(String a, String b)
         {
 
@@ -818,9 +798,10 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         }
 
-        /* String-similarity computed with levenshtein-distance
-         * */
-        private double similarity(string a, string b)
+        /// <summary>
+        /// String-similarity computed with levenshtein-distance
+        /// </summary>
+        private double similarityLevenshtein(string a, string b)
         {
             if (a.Equals(b))
             {
@@ -838,7 +819,46 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             }
         }
 
-        #endregion
+        /// <summary>
+        /// String-similarity computed with Dice Coefficient
+        /// </summary>
+        /// Source: https://en.wikibooks.org/wiki/Algorithm_Implementation/Strings/Dice%27s_coefficient#C.23
+        /// Explanation: https://en.wikipedia.org/wiki/S%C3%B8rensen%E2%80%93Dice_coefficient
+        private double similarityDiceCoefficient(string a, string b)
+        {
+            HashSet<string> setA = new HashSet<string>();
+            HashSet<string> setB = new HashSet<string>();
+
+            for (int i = 0; i < a.Length - 1; ++i)
+                setA.Add(a.Substring(i, 2));
+
+            for (int i = 0; i < b.Length - 1; ++i)
+                setB.Add(b.Substring(i, 2));
+
+            HashSet<string> intersection = new HashSet<string>(setA);
+            intersection.IntersectWith(setB);
+
+            return (2.0 * intersection.Count) / (setA.Count + setB.Count);
+        }
+
+        /// <summary>
+        /// Combines multiple String-similarities with equal weight
+        /// </summary>
+        private double similarity(string a, string b)
+        {
+            List<double> similarities = new List<double>();
+            double output = 0.0;
+
+            similarities.Add(similarityLevenshtein(a, b));
+            similarities.Add(similarityDiceCoefficient(a, b));
+
+            foreach (double sim in similarities)
+            {
+                output += sim;
+            }
+
+            return output / similarities.Count;
+        }
 
         #endregion
     }
