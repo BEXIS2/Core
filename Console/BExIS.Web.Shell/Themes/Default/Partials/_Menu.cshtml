@@ -12,9 +12,9 @@
     </script>
 }
 
-@{ 
+@{
     //var menuStructure = Html.ExportTree();
-    //Use this variable to build the menu strcuture 
+    //Use this variable to build the menu strcuture
 }
 <div class="navbar navbar-default navbar-fixed-top" style="z-index: 1337">
     <div class="container-fluid" id="menubar" style="background-color: #eff7f6">
@@ -31,8 +31,6 @@
             </a>
         </div>
 
-        
-
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div id="navbarCollapse" class="collapse navbar-collapse">
             @*menubar*@
@@ -46,6 +44,8 @@
                 {
                     @Html.RenderExtendedMenu(Html.GetTenant().ExtendedMenus.Element("ExtendedMenu"))
                 }
+
+                @Html.LaunchBar()
 
                 @* Move this to Html.LaunchBar. Urls should come from Shell not SAM. MyAccount can go to index. unify login/logoff/logout, etc. *@
                 @if (Request.IsAuthenticated)
@@ -62,7 +62,7 @@
                 {
                     <li>@Html.ActionLink("Sign In", "SignIn", "Account")</li>
                 }
-                
+
                 @Html.Settings()
             </ul>
         </div>
