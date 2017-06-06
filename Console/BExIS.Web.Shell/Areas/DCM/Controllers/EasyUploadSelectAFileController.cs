@@ -20,10 +20,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         private EasyUploadTaskManager TaskManager;
         private List<String> supportedExtensions = new List<string>() { ".xlsx" };
-
-        //
-        // GET: /DCM/Step1/
-
+        
         [HttpGet]
         public ActionResult SelectAFile(int index)
         {
@@ -77,13 +74,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                             string filePath = TaskManager.Bus[EasyUploadTaskManager.FILEPATH].ToString();
 
                             TaskManager.AddToBus(EasyUploadTaskManager.IS_TEMPLATE, "false");
-
-                            //Only accept .xlsx-Files
-                            if (TaskManager.Bus[EasyUploadTaskManager.EXTENTION].ToString().Equals(".xlsx"))
-                            {
-                                TaskManager.Current().SetValid(true);
-                            }
-
+                            
+                            TaskManager.Current().SetValid(true);
+                            
                         }
                         catch
                         {

@@ -18,6 +18,7 @@ using BExIS.IO.Transform.Validation.ValueCheck;
 using BExIS.IO;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Web.Shell.Areas.DCM.Helpers;
+using System.Globalization;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
 {
@@ -709,29 +710,54 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                     string datatypeName = datatype.SystemType;
 
+                    
                     DataTypeCheck dtc;
-                    // TODO: make it nicer!
                     double DummyValue = 0;
-                    if (Double.TryParse(vv, out DummyValue))
+                    //Workaround for the missing/incorrect implementation of the DataTypeCheck for Double and Character
+                    //Should be removed as soon as this is fixed
+                    Boolean skipDataTypeCheck = false;
+                    if (datatypeName == "Double")
                     {
-                        if (vv.Contains("."))
+                        if (!Double.TryParse(vv, out DummyValue))
                         {
-                            dtc = new DataTypeCheck(mappedHeader.Item2, datatypeName, DecimalCharacter.point);
+                            ErrorList.Add(new Error(ErrorType.Value, "Can not convert to:", new object[] { mappedHeader.Item2, vv, y, datatypeName }));
+                            skipDataTypeCheck = true;
+                        }
+                    }
+
+                    if ( datatypeName == "Char")
+                    {
+                        skipDataTypeCheck = true;
+                        char dummy;
+                        if( !Char.TryParse(vv, out dummy))
+                        {
+                            ErrorList.Add(new Error(ErrorType.Value, "Can not convert to:", new object[] { mappedHeader.Item2, vv, y, datatypeName }));
+                        }
+                    }
+
+                    if (!skipDataTypeCheck)
+                    {
+                        if (Double.TryParse(vv, out DummyValue))
+                        {
+                            if (vv.Contains("."))
+                            {
+                                dtc = new DataTypeCheck(mappedHeader.Item2, datatypeName, DecimalCharacter.point);
+                            }
+                            else
+                            {
+                                dtc = new DataTypeCheck(mappedHeader.Item2, datatypeName, DecimalCharacter.comma);
+                            }
                         }
                         else
                         {
-                            dtc = new DataTypeCheck(mappedHeader.Item2, datatypeName, DecimalCharacter.comma);
+                            dtc = new DataTypeCheck(mappedHeader.Item2, datatypeName, DecimalCharacter.point);
                         }
-                    }
-                    else
-                    {
-                        dtc = new DataTypeCheck(mappedHeader.Item2, datatypeName, DecimalCharacter.point);
-                    }
 
-                    var ValidationResult = dtc.Execute(vv, y);
-                    if (ValidationResult is Error)
-                    {
-                        ErrorList.Add((Error)ValidationResult);
+                        var ValidationResult = dtc.Execute(vv, y);
+                        if (ValidationResult is Error)
+                        {
+                            ErrorList.Add((Error)ValidationResult);
+                        }
                     }
                 }
             }
@@ -826,6 +852,15 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         /// Explanation: https://en.wikipedia.org/wiki/S%C3%B8rensen%E2%80%93Dice_coefficient
         private double similarityDiceCoefficient(string a, string b)
         {
+            //Workaround for |a| == |b| == 1
+            if ( a.Length <= 1 && b.Length <= 1)
+            {
+                if (a.Equals(b))
+                    return 1.0;
+                else
+                    return 0.0;
+            }
+
             HashSet<string> setA = new HashSet<string>();
             HashSet<string> setB = new HashSet<string>();
 

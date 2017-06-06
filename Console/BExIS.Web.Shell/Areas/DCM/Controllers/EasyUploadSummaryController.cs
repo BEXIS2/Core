@@ -100,7 +100,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 {
                     model.NumberOfHeaders = (areaHeaderValues[2]) - (areaHeaderValues[0]) + 1;
                 }
-
             }
 
             if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SHEET_DATA_AREA))
@@ -120,7 +119,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 }
             }
 
-
             return PartialView("EasyUploadSummary", model);
         }
 
@@ -129,7 +127,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         {
 
             TaskManager = (EasyUploadTaskManager)Session["TaskManager"];
-            SummaryModel model = new SummaryModel();
+            EasyUploadSummaryModel model = new EasyUploadSummaryModel();
 
             model.StepInfo = TaskManager.Current();
             model.ErrorList = FinishUpload(TaskManager);
@@ -138,38 +136,59 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             if (model.ErrorList.Count > 0)
             {
                 #region Populate model with data from the TaskManager
-                if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.DATASET_ID))
+                if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.FILENAME))
                 {
-                    model.DatasetId = Convert.ToInt32(TaskManager.Bus[EasyUploadTaskManager.DATASET_ID]);
+                    model.DatasetTitle = Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.FILENAME]);
                 }
 
-                if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.DATASET_TITLE))
+                if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SCHEMA))
                 {
-                    model.DatasetTitle = TaskManager.Bus[EasyUploadTaskManager.DATASET_TITLE].ToString();
+                    MetadataStructureManager msm = new MetadataStructureManager();
+                    long id = Convert.ToInt64(TaskManager.Bus[EasyUploadTaskManager.SCHEMA]);
+                    model.MetadataSchemaTitle = msm.Repo.Get(m => m.Id == id).FirstOrDefault().Name;
                 }
 
-                if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.DATASTRUCTURE_ID))
+                if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SHEET_FORMAT))
                 {
-                    model.DataStructureId = Convert.ToInt32(TaskManager.Bus[EasyUploadTaskManager.DATASTRUCTURE_ID]);
+                    model.FileFormat = TaskManager.Bus[EasyUploadTaskManager.SHEET_FORMAT].ToString();
                 }
 
-                if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.DATASTRUCTURE_TITLE))
+                if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SHEET_HEADER_AREA))
                 {
-                    model.DataStructureTitle = TaskManager.Bus[EasyUploadTaskManager.DATASTRUCTURE_TITLE].ToString();
+                    JavaScriptSerializer serializer = new JavaScriptSerializer();
+                    string selectedHeaderAreaJsonArray = TaskManager.Bus[EasyUploadTaskManager.SHEET_HEADER_AREA].ToString();
+                    int[] areaHeaderValues = serializer.Deserialize<int[]>(selectedHeaderAreaJsonArray);
+
+                    if (model.FileFormat.ToLower() == "topdown")
+                    {
+                        model.NumberOfHeaders = (areaHeaderValues[3]) - (areaHeaderValues[1]) + 1;
+                    }
+
+                    if (model.FileFormat.ToLower() == "leftright")
+                    {
+                        model.NumberOfHeaders = (areaHeaderValues[2]) - (areaHeaderValues[0]) + 1;
+                    }
                 }
 
-                if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.RESEARCHPLAN_ID))
+                if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SHEET_DATA_AREA))
                 {
-                    model.ResearchPlanId = Convert.ToInt32(TaskManager.Bus[EasyUploadTaskManager.RESEARCHPLAN_ID].ToString());
-                }
+                    JavaScriptSerializer serializer = new JavaScriptSerializer();
+                    string selectedDataAreaJsonArray = TaskManager.Bus[EasyUploadTaskManager.SHEET_DATA_AREA].ToString();
+                    int[] areaDataValues = serializer.Deserialize<int[]>(selectedDataAreaJsonArray);
 
-                if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.RESEARCHPLAN_TITLE))
-                {
-                    model.ResearchPlanTitle = TaskManager.Bus[EasyUploadTaskManager.RESEARCHPLAN_TITLE].ToString();
+                    if (model.FileFormat.ToLower() == "leftright")
+                    {
+                        model.NumberOfData = (areaDataValues[3]) - (areaDataValues[1]) + 1;
+                    }
+
+                    if (model.FileFormat.ToLower() == "topdown")
+                    {
+                        model.NumberOfData = (areaDataValues[2]) - (areaDataValues[0]) + 1;
+                    }
                 }
 
                 #endregion
-                return PartialView(model);
+                return PartialView("EasyUploadSummary", model);
 
             }
             else
@@ -196,6 +215,15 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             DataContainerManager dam = new DataContainerManager();
 
             DataTuple[] rows;
+
+            //First, try to validate - if there are errors, return immediately
+            string JsonArray = TaskManager.Bus[EasyUploadTaskManager.SHEET_JSON_DATA].ToString();
+            List<Error> ValidationErrors = ValidateRows(JsonArray);
+            if (ValidationErrors.Count != 0)
+            {
+                temp.AddRange(ValidationErrors);
+                return temp;
+            }
 
             string timestamp = DateTime.Now.ToString("r");
             string title = Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.FILENAME]);
@@ -458,17 +486,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 reader.setSubmittedVariableIdentifiers(identifiers);
 
                 rows = reader.ReadFile(Stream, TaskManager.Bus[EasyUploadTaskManager.FILENAME].ToString(), fri, sds, (int)datasetId);
-
-                List<Error> ValidationErrors = ValidateRows(rows.ToArray());
-                if (ValidationErrors.Count == 0)
-                {
-                    dm.EditDatasetVersion(workingCopy, rows.ToList(), null, null);
-                }
-                else
-                {
-                    temp.AddRange(ValidationErrors);
-                }
-
+                
+                dm.EditDatasetVersion(workingCopy, rows.ToList(), null, null);
+                
                 Stream.Close();
             }
 
@@ -511,56 +531,101 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             return (str);
         }
 
-        /*
-         * Uses a DataTypeCheck to determin, wether the selected datatypes are suitable
-         * */
-        private List<Error> ValidateRows(DataTuple[] rows)
+        /// <summary>
+        /// Determin whether the selected datatypes are suitable
+        /// </summary>
+        private List<Error> ValidateRows(string JsonArray)
         {
+            TaskManager = (EasyUploadTaskManager)Session["TaskManager"];
+            var serializer = new JavaScriptSerializer();
+            string[][] DeserializedJsonArray = serializer.Deserialize<string[][]>(JsonArray);
+
             List<Error> ErrorList = new List<Error>();
             List<Tuple<int, string, UnitInfo>> MappedHeaders = (List<Tuple<int, string, UnitInfo>>)TaskManager.Bus[EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS];
             Tuple<int, string, UnitInfo>[] MappedHeadersArray = MappedHeaders.ToArray();
             DataTypeManager dtm = new DataTypeManager();
 
 
-            foreach (DataTuple dt in rows)
+            string DataArea = TaskManager.Bus[EasyUploadTaskManager.SHEET_DATA_AREA].ToString();
+            int[] IntDataArea = serializer.Deserialize<int[]>(DataArea);
+
+            string[,] SelectedDataArea = new string[(IntDataArea[2] - IntDataArea[0]), (IntDataArea[3] - IntDataArea[1])];
+
+            for (int y = IntDataArea[0]; y <= IntDataArea[2]; y++)
             {
-                long id = dt.Id;
-                VariableValue[] variableValues = dt.VariableValues.ToArray();
-                for (int i = 0; i < variableValues.Length; i++)
+                for (int x = IntDataArea[1]; x <= IntDataArea[3]; x++)
                 {
-                    VariableValue vv = variableValues[i];
-                    Tuple<int, string, UnitInfo> mappedHeader = MappedHeaders.Where(t => t.Item1 == i).FirstOrDefault();
+                    int SelectedY = y - (IntDataArea[0]);
+                    int SelectedX = x - (IntDataArea[1]);
+                    string vv = DeserializedJsonArray[y][x];
 
-                    DataType datatype = dtm.Repo.Get(mappedHeader.Item3.SelectedDataTypeId);
-                    string datatypeName = datatype.SystemType;
+                    Tuple<int, string, UnitInfo> mappedHeader = MappedHeaders.Where(t => t.Item1 == SelectedX).FirstOrDefault();
 
-                    DataTypeCheck dtc;
-                    // TODO: make it nicer!
-                    double DummyValue = 0;
-                    if (Double.TryParse(vv.Value.ToString(), out DummyValue))
+                    DataType datatype = null;
+
+                    if (mappedHeader.Item3.SelectedDataTypeId == -1)
                     {
-                        if (vv.Value.ToString().Contains("."))
-                        {
-                            dtc = new DataTypeCheck(vv.Value.ToString(), datatypeName, DecimalCharacter.point);
-                        }
-                        else
-                        {
-                            dtc = new DataTypeCheck(vv.Value.ToString(), datatypeName, DecimalCharacter.comma);
-                        }
+                        datatype = dtm.Repo.Get(mappedHeader.Item3.DataTypeInfos.FirstOrDefault().DataTypeId);
                     }
                     else
                     {
-                        dtc = new DataTypeCheck(vv.Value.ToString(), datatypeName, DecimalCharacter.point);
+                        datatype = dtm.Repo.Get(mappedHeader.Item3.SelectedDataTypeId);
                     }
 
-                    var ValidationResult = dtc.Execute(vv.Value.ToString(), i);
-                    if (ValidationResult is Error)
+                    string datatypeName = datatype.SystemType;
+
+
+                    DataTypeCheck dtc;
+                    double DummyValue = 0;
+                    //Workaround for the missing/incorrect implementation of the DataTypeCheck for Double and Character
+                    //Should be removed as soon as this is fixed
+                    Boolean skipDataTypeCheck = false;
+                    if (datatypeName == "Double")
                     {
-                        ErrorList.Add((Error)ValidationResult);
+                        if (!Double.TryParse(vv, out DummyValue))
+                        {
+                            ErrorList.Add(new Error(ErrorType.Value, "Can not convert to:", new object[] { mappedHeader.Item2, vv, y, datatypeName }));
+                            skipDataTypeCheck = true;
+                        }
+                    }
+
+                    if (datatypeName == "Char")
+                    {
+                        skipDataTypeCheck = true;
+                        char dummy;
+                        if (!Char.TryParse(vv, out dummy))
+                        {
+                            ErrorList.Add(new Error(ErrorType.Value, "Can not convert to:", new object[] { mappedHeader.Item2, vv, y, datatypeName }));
+                        }
+                    }
+
+                    if (!skipDataTypeCheck)
+                    {
+                        if (Double.TryParse(vv, out DummyValue))
+                        {
+                            if (vv.Contains("."))
+                            {
+                                dtc = new DataTypeCheck(mappedHeader.Item2, datatypeName, DecimalCharacter.point);
+                            }
+                            else
+                            {
+                                dtc = new DataTypeCheck(mappedHeader.Item2, datatypeName, DecimalCharacter.comma);
+                            }
+                        }
+                        else
+                        {
+                            dtc = new DataTypeCheck(mappedHeader.Item2, datatypeName, DecimalCharacter.point);
+                        }
+
+                        var ValidationResult = dtc.Execute(vv, y);
+                        if (ValidationResult is Error)
+                        {
+                            ErrorList.Add((Error)ValidationResult);
+                        }
                     }
                 }
-
             }
+
             return ErrorList;
         }
 

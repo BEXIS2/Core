@@ -62,11 +62,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             TaskManager = (EasyUploadTaskManager)Session["TaskManager"];
 
-            // get Lists of Dataset and Datastructure
-            Session["DatasetVersionViewList"] = new List<ListViewItem>();
-            Session["DataStructureViewList"] = LoadDataStructureViewList();
-            Session["ResearchPlanViewList"] = LoadResearchPlanViewList();
-
             return View((EasyUploadTaskManager)Session["TaskManager"]);
         }
 
@@ -139,56 +134,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         {
             return RedirectToAction("ShowData", "Data", new RouteValueDictionary { { "area", "DDM" }, { "id", id } });
         }
-
-        #endregion
-
-        #region helper functions
-        // chekc if user exist
-        // if true return usernamem otherwise "DEFAULT"
-        public string GetUsernameOrDefault()
-        {
-            string username = string.Empty;
-            try
-            {
-                username = HttpContext.User.Identity.Name;
-            }
-            catch { }
-
-            return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
-        }
-
-        //Same as in the SubmitController but without the parameter
-        public List<ListViewItem> LoadDataStructureViewList()
-        {
-            DataStructureManager dsm = new DataStructureManager();
-            List<ListViewItem> temp = new List<ListViewItem>();
-
-            foreach (DataStructure datasStructure in dsm.StructuredDataStructureRepo.Get())
-            {
-                string title = datasStructure.Name;
-
-                temp.Add(new ListViewItem(datasStructure.Id, title));
-            }
-
-            return temp.OrderBy(p => p.Title).ToList();
-        }
-
-        //Same as in the SubmitController
-        public List<ListViewItem> LoadResearchPlanViewList()
-        {
-            ResearchPlanManager rpm = new ResearchPlanManager();
-            List<ListViewItem> temp = new List<ListViewItem>();
-
-            foreach (ResearchPlan researchPlan in rpm.Repo.Get())
-            {
-                string title = researchPlan.Title;
-
-                temp.Add(new ListViewItem(researchPlan.Id, title));
-            }
-
-            return temp.OrderBy(p => p.Title).ToList();
-        }
-
 
         #endregion
     }
