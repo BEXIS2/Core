@@ -12,9 +12,9 @@
     </script>
 }
 
-@{ 
+@{
     //var menuStructure = Html.ExportTree();
-    //Use this variable to build the menu strcuture 
+    //Use this variable to build the menu strcuture
 }
 <div class="navbar navbar-default navbar-fixed-top" style="z-index: 1337">
     <div class="container-fluid" id="menubar" style="background-color: #eff7f6">
@@ -30,8 +30,6 @@
                 @Html.Brand(Html.GetTenant().LogoPath, Html.GetTenant().ShortName)
             </a>
         </div>
-
-        
 
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div id="navbarCollapse" class="collapse navbar-collapse">
@@ -53,89 +51,18 @@
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">@User.Identity.Name<span class="caret"></span></a>
                         <ul class="dropdown-menu">
-                            <li>@Html.ActionLink("My Account", "MyAccount", "Account")</li>
-                            <li>@Html.ActionLink("Sign Out", "SignOut", "Account")</li>
+                            <li>@Html.ActionLink("My Account", "MyAccount", "Account", new { area = "" }, null)</li>
+                            <li>@Html.ActionLink("Sign Out", "SignOut", "Account", new { area = "" }, null)</li>
                         </ul>
                     </li>
                 }
                 else
                 {
-                    <li>@Html.ActionLink("Sign In", "SignIn", "Account")</li>
+                    <li>@Html.ActionLink("Sign In", "SignIn", "Account", new { area = "" }, null)</li>
                 }
-                
+
                 @Html.Settings()
             </ul>
         </div>
     </div>
 </div>
-
-@(Html.Telerik().Window()
-    .Name("Window_Register")
-    .Title("Register")
-    .Draggable(true)
-    .Modal(true)
-    .Visible(false)
-    .Scrollable(true)
-    .HtmlAttributes(new { @class = "bx-window" })
-    .Content(@<text>
-                <div id="Content_Register"></div>
-            </text>)
-    .ClientEvents(clientEvents => clientEvents
-        .OnClose("Window_Register_OnClose")
-    )
-)
-
-@(Html.Telerik().Window()
-    .Name("Window_LogOn")
-    .Title("LogOn")
-    .Draggable(true)
-    .Modal(true)
-    .Visible(false)
-    .Scrollable(true)
-    .HtmlAttributes(new { @class= "bx-window" })
-    .Content(@<text>
-                <div id="Content_LogOn"></div>
-            </text>)
-    .ClientEvents(clientEvents => clientEvents
-        .OnClose("Window_LogOn_OnClose")
-    )
-)
-
-<script type="text/javascript">
-
-    function Register() {
-        $.get('@Url.Action("Register", "Account", new { area = "SAM" })', function (data) {
-
-            $('#Content_Register').html(data);
-
-            var window = $('#Window_Register').data('tWindow');
-            window.center().open();
-        });
-    }
-
-    function Window_Register_Cancel() {
-        $('#Window_Register').data('tWindow').close();
-    }
-
-    function Window_Register_OnClose() {
-        $('#Content_Register').empty();
-    }
-
-    function LogOn() {
-        $.get('@Url.Action("LogOn", "Account", new { area = "SAM" })', function (data) {
-
-            $('#Content_LogOn').html(data);
-
-            var window = $('#Window_LogOn').data('tWindow');
-            window.center().open();
-        });
-    }
-
-    function Window_LogOn_Cancel() {
-        $('#Window_LogOn').data('tWindow').close();
-    }
-
-    function Window_LogOn_OnClose() {
-        $('#Content_LogOn').empty();
-    }
-</script>
