@@ -29,7 +29,6 @@ namespace BExIS.Modules.Sam.UI.Models
                     Email = u.Email,
                     Id = u.Id,
                     Username = u.Name,
-                    IsUserInGroup = false
                 };
 
             return source.Select(conversion);
@@ -74,17 +73,15 @@ namespace BExIS.Modules.Sam.UI.Models
         public string Email { get; set; }
         public string FullName { get; set; }
         public long Id { get; set; }
-        public bool IsUserInGroup { get; set; }
         public string Username { get; set; }
 
-        public static UserMembershipGridRowModel Convert(User user, bool isUserInGroup)
+        public static UserMembershipGridRowModel Convert(User user)
         {
             return new UserMembershipGridRowModel()
             {
                 Id = user.Id,
                 Username = user.Name,
-                Email = user.Email,
-                IsUserInGroup = isUserInGroup
+                Email = user.Email
             };
         }
     }

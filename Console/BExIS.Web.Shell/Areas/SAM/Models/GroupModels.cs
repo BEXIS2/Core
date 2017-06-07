@@ -1,4 +1,5 @@
 ﻿using BExIS.Security.Entities.Subjects;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
@@ -20,6 +21,11 @@ namespace BExIS.Modules.Sam.UI.Models
 
     public class CreateGroupModel
     {
+        public CreateGroupModel()
+        {
+            UserIds = new List<long>();
+        }
+
         public string Description { get; set; }
 
         [Required]
@@ -27,6 +33,8 @@ namespace BExIS.Modules.Sam.UI.Models
 
         [Required]
         public int GroupType { get; set; }
+
+        public List<long> UserIds { get; set; }
     }
 
     public class DeleteGroupModel
