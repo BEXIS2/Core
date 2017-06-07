@@ -19,6 +19,7 @@ using BExIS.IO;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Web.Shell.Areas.DCM.Helpers;
 using System.Globalization;
+using BExIS.Utils.Models;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
 {

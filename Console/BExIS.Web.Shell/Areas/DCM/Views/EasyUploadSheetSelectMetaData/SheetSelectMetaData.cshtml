@@ -92,7 +92,7 @@
 
             // send to bus
             $.post('@Url.Action("SaveMetaDataSelection", "EasyUploadSheetSelectMetaData", new RouteValueDictionary { { "area", "DCM" } })', { metadataId: selectedMetaDataTypeId }, function (response) {
-                $("#Step3").html(response);
+                //$("#Step3").html(response);
             });
         });
 

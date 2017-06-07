@@ -117,7 +117,7 @@
 
                 // send to bus
                 $.post('@Url.Action("AddSelectedDatasetToBus", "EasyUploadSheetDataStructure", new RouteValueDictionary { { "area", "DCM" } })', { format: SelectedSheetFormat }, function (response) {
-                    $("#Step3").html(response);
+                    //$("#Step3").html(response);
                 })
             }
         })

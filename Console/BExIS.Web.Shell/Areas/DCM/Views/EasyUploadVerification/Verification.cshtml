@@ -166,7 +166,8 @@
 
     function validateData() {
 
-            $.post('@Url.Action("ValidateSelection", "EasyUploadVerification", new RouteValueDictionary { { "area", "DCM" } })', {}, function (response) {
+        $.post('@Url.Action("ValidateSelection", "EasyUploadVerification", new RouteValueDictionary { { "area", "DCM" } })', {}, function (response) {
+            console.log(response);
                 if (response.errors.length > 0) {
                     for (var i = 0; i < response.errors.length; i++) {
                         var error = response.errors[i];

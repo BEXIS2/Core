@@ -73,7 +73,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         {
                             string filePath = TaskManager.Bus[EasyUploadTaskManager.FILEPATH].ToString();
 
-                            TaskManager.AddToBus(EasyUploadTaskManager.IS_TEMPLATE, "false");
+                            //TaskManager.AddToBus(EasyUploadTaskManager.IS_TEMPLATE, "false");
                             
                             TaskManager.Current().SetValid(true);
                             

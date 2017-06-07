@@ -80,6 +80,10 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     {
                         TaskManager.Current().SetValid(true);
                     }
+                    else
+                    {
+                        model.ErrorList.Add(new Error(ErrorType.Other, "No valid Metadata schema is selected."));
+                    }
                 }
                 else
                 {
@@ -151,13 +155,11 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 }
 
                 //If a valid id was submitted, save its id as the currently selected model id
-                if (metadataId >= 0)
-                {
-                    model.SelectedMetaDataId = metadataId;
+                model.SelectedMetaDataId = metadataId;
 
-                    TaskManager.AddToBus(EasyUploadTaskManager.SCHEMA, model.SelectedMetaDataId);
-                    TaskManager.Current().SetValid(true);
-                }
+                TaskManager.AddToBus(EasyUploadTaskManager.SCHEMA, model.SelectedMetaDataId);
+                TaskManager.Current().SetValid(true);
+                
 
                 //Store all other information in the model
                 if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.DESCRIPTIONTITLE))

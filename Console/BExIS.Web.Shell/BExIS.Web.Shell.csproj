@@ -387,11 +387,6 @@
     <Compile Include="Areas\DCM\Controllers\SubmitValidationController.cs" />
     <Compile Include="Areas\DCM\DCMAreaRegistration.cs" />
     <Compile Include="Areas\DCM\Helpers\DCMSeedDataGenerator.cs" />
-    <Compile Include="Areas\DCM\Helpers\EasyUploadExcelReader.cs" />
-    <Compile Include="Areas\DCM\Helpers\JsonTableGenerator.cs" />
-    <Compile Include="Areas\DCM\Helpers\EasyUploadFileReaderInfo.cs" />
-    <Compile Include="Areas\DCM\Helpers\SheetArea.cs" />
-    <Compile Include="Areas\DCM\Helpers\SheetFormat.cs" />
     <Compile Include="Areas\DCM\Helpers\UploadUtility.cs" />
     <Compile Include="Areas\DCM\Models\AbstractStepModel.cs" />
     <Compile Include="Areas\DCM\Models\ChooseDatasetViewModel.cs" />

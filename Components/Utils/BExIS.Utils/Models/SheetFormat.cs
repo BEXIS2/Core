@@ -1,10 +1,7 @@
-﻿using System.Collections.Generic;
-using Vaiona.Entities.Common;
-
-/// <summary>
+﻿/// <summary>
 ///
 /// </summary>        
-namespace BExIS.Dlm.Entities.DataStructure
+namespace BExIS.Utils.Models
 {
     /// <summary>
     /// 

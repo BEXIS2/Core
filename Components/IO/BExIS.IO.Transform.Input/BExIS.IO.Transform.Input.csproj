@@ -75,6 +75,8 @@
     <Compile Include="AsciiFileReaderInfo.cs" />
     <Compile Include="AsciiReader.cs" />
     <Compile Include="DataReader.cs" />
+    <Compile Include="EasyUploadExcelReader.cs" />
+    <Compile Include="EasyUploadFileReaderInfo.cs" />
     <Compile Include="ExcelFileReaderInfo.cs" />
     <Compile Include="ExcelReader.cs" />
     <Compile Include="FileReaderInfo.cs" />

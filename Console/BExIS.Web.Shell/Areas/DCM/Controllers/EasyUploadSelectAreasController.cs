@@ -10,6 +10,8 @@ using Vaiona.Logging;
 using BExIS.IO.Transform.Input;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Web.Shell.Helpers;
+using BExIS.Utils.Models;
+using BExIS.Utils.Helpers;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
 {

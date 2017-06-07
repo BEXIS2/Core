@@ -11,7 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Web;
 
-namespace BExIS.Web.Shell.Areas.DCM.Helpers
+namespace BExIS.IO.Transform.Input
 {
     public class EasyUploadExcelReader : ExcelReader
     {

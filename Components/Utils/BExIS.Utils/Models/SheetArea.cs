@@ -4,7 +4,7 @@ using Vaiona.Entities.Common;
 /// <summary>
 ///
 /// </summary>        
-namespace BExIS.Dlm.Entities.DataStructure
+namespace BExIS.Utils.Models
 {
     public class SheetArea : BaseEntity
     {

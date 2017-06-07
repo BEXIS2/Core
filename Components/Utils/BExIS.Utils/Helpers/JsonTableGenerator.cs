@@ -8,8 +8,9 @@ using BExIS.Dlm.Entities.DataStructure;
 using OfficeOpenXml;
 using System.Web.UI.WebControls;
 using System.Web.Script.Serialization;
+using BExIS.Utils.Models;
 
-namespace BExIS.IO.Transform.Input
+namespace BExIS.Utils.Helpers
 {
 
     public class JsonTableGenerator

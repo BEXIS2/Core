@@ -39,14 +39,14 @@
 
             cellProperties.editor = false;
 
-            if(!jQuery.isEmptyObject(currentButton) && currentButton == "reset") {
+            /*if(!jQuery.isEmptyObject(currentButton) && currentButton == "reset") {
                 if($(td).hasClass("dataMarking")) {
                     cellProperties.className = "";
                 }
                 if($(td).hasClass("headerMarking")) {
                     cellProperties.className = "";
                 }
-            }
+            }*/
 
             return td;
         }
@@ -142,8 +142,20 @@
         $('#setSelectReset').click(function() {
             currentButton = "reset";
 
+            var num_rows = hot.countRows();
+            var num_cols = hot.countCols();
+            console.log(num_rows + "   " + num_cols);
+
             $('#HeaderSelection').val("");
             $('#DataSelection').val("");
+
+            //Reset all markings
+            for(var i = 0; i < num_rows; i++){
+                for(var j = 0; j < num_rows; j++){
+                    var cell = hot.getCellMeta(i,j, true);
+                    cell.className = '';
+                }
+            }
 
             $.post('@Url.Action("SelectedAreaToBus", "EasyUploadSelectAreas", new RouteValueDictionary { { "area", "DCM" } })', { dataArea: "", headerArea: "" }, function (response) {});
 
