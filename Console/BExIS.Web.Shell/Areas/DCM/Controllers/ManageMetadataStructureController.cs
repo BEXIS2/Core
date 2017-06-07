@@ -195,8 +195,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// <returns></returns>
         private List<SearchMetadataNode> GetAllXPath(long metadatastructureId)
         {
-            SearchDesigner searchDesigner = new SearchDesigner();
-            return searchDesigner.GetAllXPathsOfSimpleAttributes(metadatastructureId);
+            // BUG: invalid call to ddm method
+            // TODO: reimplement call to get all xpaths
+            //SearchDesigner searchDesigner = new SearchDesigner();
+            //return searchDesigner.GetAllXPathsOfSimpleAttributes(metadatastructureId);
+
+            // WORKAROUND: return an empty list
+            return new List<SearchMetadataNode>();
         }
 
         private List<EntityModel> GetEntityModelList()

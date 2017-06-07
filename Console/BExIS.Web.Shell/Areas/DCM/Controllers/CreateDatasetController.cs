@@ -22,7 +22,6 @@ using System.Linq;
 using System.Web.Mvc;
 using System.Xml;
 using System.Xml.Linq;
-using Vaiona.IoC;
 using Vaiona.Logging;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
@@ -506,8 +505,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     //add to index
                     // ToDo check which SearchProvider it is, default luceneprovider
-                    ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
-                    provider?.UpdateSingleDatasetIndex(datasetId, IndexingAction.CREATE);
+
+                    // BUG: invalid call to ddm method
+                    // TODO: find a way to call the reindex again
+                    // WORKAROUND: do not reindex
+                    //ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+                    //provider?.UpdateSingleDatasetIndex(datasetId, IndexingAction.CREATE);
 
                     LoggerFactory.LogData(datasetId.ToString(), typeof(Dataset).Name, Vaiona.Entities.Logging.CrudState.Created);
                 }

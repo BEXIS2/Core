@@ -1,8 +1,6 @@
 ﻿using BExIS.Dcm.CreateDatasetWizard;
 using BExIS.Dcm.Wizard;
 using BExIS.Dlm.Entities.Common;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.Administration;
 using BExIS.Dlm.Services.Data;
@@ -23,7 +21,6 @@ using System.Web;
 using System.Web.Mvc;
 using System.Xml;
 using System.Xml.Linq;
-using Vaiona.IoC;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
@@ -2044,9 +2041,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [HttpPost]
         public ActionResult _AutoCompleteAjaxLoading(string text, string id)
         {
-            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+            // BUG: invalid call to ddm method
+            // TODO: reimplement call to get auto-complete values
+            //ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+            //return new JsonResult { Data = new SelectList(provider.GetTextBoxSearchValues(text, "all", "new", 10).SearchComponent.TextBoxSearchValues, "Value", "Name") };
 
-            return new JsonResult { Data = new SelectList(provider.GetTextBoxSearchValues(text, "all", "new", 10).SearchComponent.TextBoxSearchValues, "Value", "Name") };
+            // WORKAROUND: return always an empty list
+            return new JsonResult { Data = new SelectList(new List<string>(), "Value", "Name") };
         }
 
         private StepModelHelper Down(StepModelHelper stepModelHelperParent, long id, int number)
