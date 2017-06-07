@@ -28,7 +28,7 @@
                     @for (int i = 0; i < Model.HeaderFields.Length; i++)
                     {
                         <tr>
-                            <td varName="@Html.Name(Model.HeaderFields[i])">
+                            <td varName="@Html.Name(Model.HeaderFields[i])" index=@i>
                                 <i class="fa fa-exclamation-triangle" aria-hidden="true" title=""></i>
                                 @*Html.Name(Model.HeaderFields[i])*@
 
@@ -171,23 +171,24 @@
                 if (response.errors.length > 0) {
                     for (var i = 0; i < response.errors.length; i++) {
                         var error = response.errors[i];
-                        var VariableName = error.VariableName;
-                        var TitleCell = $('td[varName="' + VariableName + '"] > i');
+                        //var VariableName = error.VariableName;
+                        //var TitleCell = $('td[varName="' + VariableName + '"] > i');
+                        var TitleCell = $('td[index="' + error.Item1 + '"] > i');
 
                         if (TitleCell.is(":visible")) {
                             var currentTitle = TitleCell.attr("title");
                             var currentErrorCount = currentTitle.split("\n").length;
 
                             if (currentErrorCount < 50) {
-                                TitleCell.attr("title", currentTitle + "\n" + error.Value + " is not valid as " + error.DataType);
+                                TitleCell.attr("title", currentTitle + "\n" + error.Item2.Value + " is not valid as " + error.Item2DataType);
                             }
                             if (currentErrorCount == 50) {
-                                TitleCell.attr("title", currentTitle + "\n" + error.Value + " is not valid as " + error.DataType);
+                                TitleCell.attr("title", currentTitle + "\n" + error.Item2.Value + " is not valid as " + error.Item2.DataType);
                                 TitleCell.attr("title", currentTitle + "\nand more...");
                             }
                         } else {
                             TitleCell.show();
-                            TitleCell.attr("title", error.Value + " is not valid as " + error.DataType);
+                            TitleCell.attr("title", error.Item2.Value + " is not valid as " + error.Item2.DataType);
                         }
                     }
                 } else {

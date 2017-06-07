@@ -645,21 +645,21 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             string JsonArray = TaskManager.Bus[EasyUploadTaskManager.SHEET_JSON_DATA].ToString();
 
-            List<Error> ErrorList = ValidateRows(JsonArray);
-            List<ErrorInfo> ErrorMessageList = new List<ErrorInfo>();
+            List< Tuple<int, Error> > ErrorList = ValidateRows(JsonArray);
+            List< Tuple<int, ErrorInfo> > ErrorMessageList = new List< Tuple<int, ErrorInfo> >();
 
             if (ErrorList.Count <= 50)
             {
-                foreach (Error error in ErrorList)
+                foreach (Tuple<int, Error> error in ErrorList)
                 {
-                    ErrorMessageList.Add(new ErrorInfo(error));
+                    ErrorMessageList.Add(new Tuple<int, ErrorInfo>(error.Item1, new ErrorInfo(error.Item2)));
                 }
             }
             else
             {
                 for (int i = 0; i <= 50; i++)
                 {
-                    ErrorMessageList.Add(new ErrorInfo(ErrorList[i]));
+                    ErrorMessageList.Add(new Tuple<int, ErrorInfo>(ErrorList[i].Item1, new ErrorInfo(ErrorList[i].Item2)));
                 }
             }
 
@@ -671,13 +671,13 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         /// <summary>
         /// Determin whether the selected datatypes are suitable
         /// </summary>
-        private List<Error> ValidateRows(string JsonArray)
+        private List<Tuple<int, Error>> ValidateRows(string JsonArray)
         {
             TaskManager = (EasyUploadTaskManager)Session["TaskManager"];
             var serializer = new JavaScriptSerializer();
             string[][] DeserializedJsonArray = serializer.Deserialize<string[][]>(JsonArray);
 
-            List<Error> ErrorList = new List<Error>();
+            List<Tuple<int, Error>> ErrorList = new List< Tuple<int, Error> >();
             List<Tuple<int, string, UnitInfo>> MappedHeaders = (List<Tuple<int, string, UnitInfo>>)TaskManager.Bus[EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS];
             Tuple<int, string, UnitInfo>[] MappedHeadersArray = MappedHeaders.ToArray();
             DataTypeManager dtm = new DataTypeManager();
@@ -721,7 +721,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     {
                         if (!Double.TryParse(vv, out DummyValue))
                         {
-                            ErrorList.Add(new Error(ErrorType.Value, "Can not convert to:", new object[] { mappedHeader.Item2, vv, y, datatypeName }));
+                            ErrorList.Add(new Tuple<int, Error>(SelectedX, new Error(ErrorType.Value, "Can not convert to:", new object[] { mappedHeader.Item2, vv, y, datatypeName })));
                             skipDataTypeCheck = true;
                         }
                     }
@@ -732,7 +732,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         char dummy;
                         if( !Char.TryParse(vv, out dummy))
                         {
-                            ErrorList.Add(new Error(ErrorType.Value, "Can not convert to:", new object[] { mappedHeader.Item2, vv, y, datatypeName }));
+                            ErrorList.Add(new Tuple<int, Error>(SelectedX, new Error(ErrorType.Value, "Can not convert to:", new object[] { mappedHeader.Item2, vv, y, datatypeName })));
                         }
                     }
 
@@ -757,7 +757,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         var ValidationResult = dtc.Execute(vv, y);
                         if (ValidationResult is Error)
                         {
-                            ErrorList.Add((Error)ValidationResult);
+                            ErrorList.Add(new Tuple<int, Error>(SelectedX, (Error)ValidationResult));
                         }
                     }
                 }
