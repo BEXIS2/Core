@@ -21,15 +21,15 @@ namespace BExIS.Utils.WebHelpers
         public static MvcHtmlString LaunchBar(this HtmlHelper htmlHelper)
         {
             StringBuilder sb = new StringBuilder();
-            var menuBarRoot = ModuleManager.ExportTree.GetElement("launchbarRoot");
+            var lunchBarRoot = ModuleManager.ExportTree.GetElement("lunchbarRoot");
 
-            foreach (var menuBarItem in menuBarRoot.Elements())
+            foreach (var launchBarItem in lunchBarRoot.Elements())
             {
-                if (menuBarItem.HasElements)
+                if (launchBarItem.HasElements)
                 {
-                    sb.Append($"<li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown' role='button' aria-haspopup='true' aria-expanded='false'>{menuBarItem.Attribute("title").Value}<span class='caret'></span></a><ul class='dropdown-menu'>");
+                    sb.Append($"<li class='dropdown'><a href='#' class='dropdown-toggle' data-toggle='dropdown' role='button' aria-haspopup='true' aria-expanded='false'>{launchBarItem.Attribute("title").Value}<span class='caret'></span></a><ul class='dropdown-menu'>");
 
-                    foreach (var child in menuBarItem.Elements())
+                    foreach (var child in launchBarItem.Elements())
                     {
                         sb.Append($"<li><a href='");
                         if (!string.IsNullOrWhiteSpace(child.Attribute("area").Value))
@@ -49,16 +49,16 @@ namespace BExIS.Utils.WebHelpers
                 else
                 {
                     sb.Append($"<li><a href='");
-                    if (!string.IsNullOrWhiteSpace(menuBarItem.Attribute("area").Value))
-                        sb.Append(@"/").Append(menuBarItem.Attribute("area").Value);
+                    if (!string.IsNullOrWhiteSpace(launchBarItem.Attribute("area").Value))
+                        sb.Append(@"/").Append(launchBarItem.Attribute("area").Value);
 
-                    if (!string.IsNullOrWhiteSpace(menuBarItem.Attribute("controller").Value))
-                        sb.Append(@"/").Append(menuBarItem.Attribute("controller").Value);
+                    if (!string.IsNullOrWhiteSpace(launchBarItem.Attribute("controller").Value))
+                        sb.Append(@"/").Append(launchBarItem.Attribute("controller").Value);
 
-                    if (!string.IsNullOrWhiteSpace(menuBarItem.Attribute("action").Value))
-                        sb.Append(@"/").Append(menuBarItem.Attribute("action").Value);
+                    if (!string.IsNullOrWhiteSpace(launchBarItem.Attribute("action").Value))
+                        sb.Append(@"/").Append(launchBarItem.Attribute("action").Value);
 
-                    sb.Append("'>").Append(menuBarItem.Attribute("title").Value).Append("</a></li>");
+                    sb.Append("'>").Append(launchBarItem.Attribute("title").Value).Append("</a></li>");
                 }
             }
 
