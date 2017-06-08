@@ -106,7 +106,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             }
 
             model.serverFileList = GetServerFileList();
-            model.SupportedFileExtentions = UploadWizardHelper.GetExtentionList(model.DataStructureType);
+            model.SupportedFileExtentions = supportedExtensions;
 
             return PartialView(model);
         }
