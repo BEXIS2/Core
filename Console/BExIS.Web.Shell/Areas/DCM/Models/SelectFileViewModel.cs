@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Web;
-using BExIS.IO.Transform.Validation.Exceptions;
-using BExIS.Dcm.Wizard;
 using BExIS.Dcm.UploadWizard;
+using BExIS.Dcm.Wizard;
+using BExIS.IO.Transform.Validation.Exceptions;
 
-namespace BExIS.Web.Shell.Areas.DCM.Models
+namespace BExIS.Modules.Dcm.UI.Models
 {
     public class SelectFileViewModel
     {

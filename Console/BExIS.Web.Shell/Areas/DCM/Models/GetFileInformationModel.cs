@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using BExIS.IO.Transform.Input;
-using BExIS.IO.Transform.Validation.Exceptions;
+﻿using System.Collections.Generic;
 using BExIS.Dcm.Wizard;
+using BExIS.IO.Transform.Validation.Exceptions;
 
-namespace BExIS.Web.Shell.Areas.DCM.Models
+namespace BExIS.Modules.Dcm.UI.Models
 {
     public class GetFileInformationModel
     {

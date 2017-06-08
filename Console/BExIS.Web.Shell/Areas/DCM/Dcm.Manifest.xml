@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Manifest moduleId="dcm" displayName="Data Collection Module" version="1.0.0" builtin="true">
+  <Description>
+    <!--add proper description-->
+    ddm provides a sophisticated search facility over registered data sets.
+  </Description>
+  <Assemblies>
+    <Assembly fullName="" role=""/>
+  </Assemblies>
+  <Dependencies>
+    <Dependency moduleId="dcm" version="*.*.*" />
+  </Dependencies>
+  <Exports>
+    <!--add proper menu items-->
+    <Export tag="settings" id="manageSearch" order="1"
+            title="Manage Search" description="Manage search attributes and configure search paremeters" icon=""
+            controller="admin" action="searchDesigner" argument=""
+            extends="./settingsRoot"
+            />
+    <Export tag="menubar" id="menuSearch" order="1"
+            title="Search" description="Search datasets" icon=""
+            controller="home" action="index"
+            extends="./menubarRoot" 
+            />
+    <Export tag="api" id="tntList"
+            title="No thing" description="Change me!" icon=""
+            controller="home" action="index"
+            extends="./apiRoot"
+            />
+  </Exports>
+</Manifest>
