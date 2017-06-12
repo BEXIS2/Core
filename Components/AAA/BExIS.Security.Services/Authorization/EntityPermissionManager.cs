@@ -45,7 +45,7 @@ namespace BExIS.Security.Services.Authorization
 
         public short GetRights(Subject subject, Entity entity, long key)
         {
-            var entityPermission = EntityPermissionRepository.Get(m => m.Subject.Id == subject.Id && m.Entity.Id == entity.Id && m.Key == key).FirstOrDefault();
+            var entityPermission = EntityPermissionRepository.Get(m => m.Subject.Id == subject.Id && m.Entity.Id == entity.Id).FirstOrDefault();
             return entityPermission?.Rights ?? 0;
         }
 

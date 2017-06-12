@@ -13,13 +13,13 @@
       <column name="Extra" not-null="false" sql-type="xml" />
     </property>
 
-    <property name="Name" type="String" />
-    <property name="AssemblyPath" type="String" />
+    <property name="EntityStoreType" type="string" />
+    <property name="EntityType" type="string" />
+
     <set name="Children" inverse="true" cascade="save-update" lazy="true">
       <key column="ParentRef" />
       <one-to-many class="BExIS.Security.Entities.Objects.Entity, BExIS.Security.Entities" />
     </set>
-    <property name="ClassPath" type="String" />
     <property name="Securable" type="Boolean">
       <column name="Securable" default="false" />
     </property>

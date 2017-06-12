@@ -326,7 +326,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         {
             EntityManager entityManager = new EntityManager();
 
-            IEnumerable<string> tmp = entityManager.Entities.Select(e => e.ClassPath);
+            IEnumerable<string> tmp = entityManager.Entities.Select(e => e.EntityType.FullName);
 
             return tmp.ToList();
         }

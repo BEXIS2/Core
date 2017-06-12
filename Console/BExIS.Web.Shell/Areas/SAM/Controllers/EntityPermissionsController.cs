@@ -1,8 +1,10 @@
-﻿using BExIS.Modules.Sam.UI.Models;
+﻿using BExIS.Dlm.Entities.Data;
+using BExIS.Modules.Sam.UI.Models;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
@@ -18,7 +20,9 @@ namespace BExIS.Modules.Sam.UI.Controllers
         public ActionResult Create(long entityId)
         {
             var entityManager = new EntityManager();
-            var entityType = entityManager.FindById(entityId).GetType();
+            var entityStore = (IEntityStore)Activator.CreateInstance(entityManager.FindById(entityId).EntityStoreType);
+
+            var ids = entityStore.GetAllIds();
 
             return View();
         }
@@ -57,7 +61,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
             var entityManager = new EntityManager();
 
-            entityManager.Create(new Entity() { Name = "BExIS" });
+            entityManager.Create(new Entity() { EntityType = typeof(Dataset) });
 
             var roots = entityManager.FindRoots();
             roots.ToList().ForEach(e => entities.Add(EntityTreeViewItemModel.Convert(e)));

@@ -37,19 +37,9 @@ namespace BExIS.Security.Services.Objects
             }
         }
 
-        public Entity FindByClassPath(string classPath)
-        {
-            return EntityRepository.Query(m => m.ClassPath.ToLowerInvariant() == classPath.ToLowerInvariant()).FirstOrDefault();
-        }
-
         public Entity FindById(long entityId)
         {
             return EntityRepository.Get(entityId);
-        }
-
-        public Entity FindByName(string entityName)
-        {
-            return EntityRepository.Query(m => m.Name.ToLowerInvariant() == entityName.ToLowerInvariant()).FirstOrDefault();
         }
 
         public List<Entity> FindRoots()
