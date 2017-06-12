@@ -14,14 +14,17 @@
             title="Manage Search" description="Manage search attributes and configure search paremeters" icon=""
             controller="admin" action="searchDesigner" argument=""
             extends="./settingsRoot" />
+
     <Export tag="menubar" id="menuSearch" order="1"
             title="Search" description="Search datasets" icon=""
             controller="home" action="index"
             extends="./menubarRoot" />
-    <Export tag="launchbar" id="sdf" order="1"
-            title="Search" description="Search datasets" icon=""
-            controller="home" action="index"
-            extends="./launchbarRoot/help" />
+
+    <Export tag="lunchbar" id="helpDdm" order="1"
+            title="Search" description="Search Help Manual" icon=""
+            controller="help" action="index"
+            extends="./lunchbarRoot/help" />
+    
     <Export tag="api" id="tntList"
             title="No thing" description="Change me!" icon=""
             controller="home" action="index"
