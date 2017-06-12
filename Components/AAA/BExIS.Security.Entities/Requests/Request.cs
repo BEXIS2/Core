@@ -1,4 +1,5 @@
-﻿using BExIS.Security.Entities.Subjects;
+﻿using BExIS.Security.Entities.Objects;
+using BExIS.Security.Entities.Subjects;
 using System;
 using System.Collections.Generic;
 using Vaiona.Entities.Common;
@@ -12,7 +13,7 @@ namespace BExIS.Security.Entities.Requests
         Rejected = 2
     }
 
-    public abstract class Request : BaseEntity
+    public class Request : BaseEntity
     {
         public Request()
         {
@@ -20,6 +21,8 @@ namespace BExIS.Security.Entities.Requests
         }
 
         public virtual ICollection<Decision> Decisions { get; set; }
+        public virtual Entity Entity { get; set; }
+        public virtual long Key { get; set; }
         public virtual DateTime RequestDate { get; set; }
         public virtual User Requester { get; set; }
         public virtual RequestStatus Status { get; set; }

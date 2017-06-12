@@ -17,6 +17,8 @@
       <key column="RequestRef" />
       <one-to-many class="BExIS.Security.Entities.Requests.Decision, BExIS.Security.Entities" />
     </set>
+    <many-to-one name="Entity" column="EntityRef" class="BExIS.Security.Entities.Objects.Entity, BExIS.Security.Entities" />
+    <property name="Key" type="Int64" />
     <property name="RequestDate" type="DateTime" />
     <many-to-one name="Requester" column="RequesterRef" class="BExIS.Security.Entities.Subjects.User, BExIS.Security.Entities" />
     <property name="Status" type="BExIS.Security.Entities.Requests.RequestStatus, BExIS.Security.Entities" />
