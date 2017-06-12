@@ -31,20 +31,16 @@
                 title="Manage Features Permissions" description="Manage Features Permissions" icon=""
                 controller="FeaturePermissions" action="index" argument="Features"
                 extends="./settingsRoot" />
-    <Export tag="settings" id="permissions" order="2"
+    <Export tag="settings" id="permissions" order="4"
                 title="Manage Data Permissions" description="Manage Data Permissions" icon=""
                 controller="permissions" action="index" argument="Permissions"
                 extends="./settingsRoot" />
 
-    <Export tag="menubar" id="dstList" order="1"
-            title="Administration" description="Administration" icon=""
+    <Export tag="lunchbar" id="helpSam" order="1"
+            title="Administration" description="Administration Help Manual" icon=""
             controller="help" action="index"
-            extends="./menubarRoot/help" />
+            extends="./lunchbarRoot/help" />
     
-    <Export tag="menubar" id="dstList" order="1"
-            title="List Datasets" description="List datasets and their status" icon=""
-            controller="datasets" action="index"
-            extends="./menubarRoot/collect" />
     <Export tag="api" id="tntList"
             title="List Tenants" description="List tenants and their status" icon=""
             controller="tenants" action="index"
