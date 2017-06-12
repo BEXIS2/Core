@@ -88,13 +88,13 @@
     <Compile Include="Authentication\SignInManager.cs" />
     <Compile Include="Authorization\EntityPermissionManager.cs" />
     <Compile Include="Authorization\FeaturePermissionManager.cs" />
-    <Compile Include="Authorization\PermissionManager.cs" />
     <Compile Include="Authorization\RoleStore.cs" />
     <Compile Include="Objects\EntityManager.cs" />
     <Compile Include="Objects\FeatureManager.cs" />
     <Compile Include="Objects\WorkflowManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Requests\DecisionManager.cs" />
+    <Compile Include="Requests\EntityRequestManager.cs" />
     <Compile Include="Requests\RequestManager.cs" />
     <Compile Include="Subjects\GroupManager.cs" />
     <Compile Include="Subjects\SubjectManager.cs" />

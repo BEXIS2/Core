@@ -141,14 +141,12 @@
   <ItemGroup>
     <Compile Include="Controllers\EntitiesController.cs" />
     <Compile Include="Controllers\EntityPermissionsController.cs" />
+    <Compile Include="Controllers\EntityRequestsController.cs" />
     <Compile Include="Controllers\FeaturePermissionsController.cs" />
     <Compile Include="Controllers\GroupsController.cs" />
     <Compile Include="Controllers\HelpController.cs" />
     <Compile Include="Controllers\ModulesController.cs" />
     <Compile Include="Controllers\NotificationsController.cs" />
-    <Compile Include="Controllers\PermissionsController.cs" />
-    <Compile Include="Controllers\RequestsController.cs" />
-    <Compile Include="Controllers\SubjectsController.cs" />
     <Compile Include="Controllers\TenantsController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Helpers\Attributes.cs" />
@@ -222,6 +220,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Views\EntityRequests\" />
     <Folder Include="Views\Notifications\" />
     <Folder Include="Views\Permissions\" />
     <Folder Include="Views\Requests\" />

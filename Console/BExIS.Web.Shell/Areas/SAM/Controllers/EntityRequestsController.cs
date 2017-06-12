@@ -6,9 +6,9 @@ using System.Web.Mvc;
 
 namespace BExIS.Modules.Sam.UI.Controllers
 {
-    public class SubjectsController : Controller
+    public class EntityRequestsController : Controller
     {
-        // GET: Subjects
+        // GET: EntityRequests
         public ActionResult Index()
         {
             return View();

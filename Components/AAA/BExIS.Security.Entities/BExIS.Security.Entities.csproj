@@ -68,6 +68,7 @@
     <Compile Include="Objects\Workflow.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Requests\Decision.cs" />
+    <Compile Include="Requests\EntityRequest.cs" />
     <Compile Include="Requests\Request.cs" />
     <Compile Include="Subjects\Group.cs" />
     <Compile Include="Subjects\Subject.cs" />
