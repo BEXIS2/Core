@@ -17,17 +17,13 @@ namespace BExIS.Modules.Sam.UI.Models
 
     public class EntityGridRowModel
     {
-        public string AssemblyPath { get; set; }
-        public string ClassPath { get; set; }
         public long Id { get; set; }
         public string Name { get; set; }
     }
 
     public class EntityTreeViewItemModel
     {
-        public string AssemblyPath { get; set; }
         public List<EntityTreeViewItemModel> Children { get; set; }
-        public string ClassPath { get; set; }
         public long Id { get; set; }
         public string Name { get; set; }
 
@@ -36,9 +32,7 @@ namespace BExIS.Modules.Sam.UI.Models
             return new EntityTreeViewItemModel()
             {
                 Id = entity.Id,
-                Name = entity.Name,
-                AssemblyPath = entity.AssemblyPath,
-                ClassPath = entity.ClassPath,
+                Name = entity.EntityType.FullName,
                 Children = entity.Children.Select(Convert).ToList()
             };
         }

@@ -1,7 +1,6 @@
 ﻿using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Requests;
 using BExIS.Security.Entities.Subjects;
-using System;
 using Vaiona.Persistence.Api;
 
 namespace BExIS.Security.Services.Requests
@@ -10,7 +9,7 @@ namespace BExIS.Security.Services.Requests
     {
         public RequestManager()
         {
-            IUnitOfWork uow = this.GetUnitOfWork();
+            var uow = this.GetUnitOfWork();
 
             EntityRepository = uow.GetReadOnlyRepository<Entity>();
             UserRepository = uow.GetReadOnlyRepository<User>();
@@ -42,11 +41,6 @@ namespace BExIS.Security.Services.Requests
                 entityRequestRepository.Delete(request);
                 uow.Commit();
             }
-        }
-
-        public bool DeleteRequest(long id)
-        {
-            throw new NotImplementedException();
         }
 
         public Request FindById(long id)

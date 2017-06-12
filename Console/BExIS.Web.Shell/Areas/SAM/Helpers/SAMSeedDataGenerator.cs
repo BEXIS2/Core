@@ -1,4 +1,5 @@
-﻿using BExIS.Security.Entities.Objects;
+﻿using BExIS.Dlm.Entities.Data;
+using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
@@ -26,7 +27,7 @@ namespace BExIS.Modules.Sam.UI.Helpers
 
             //// Entities
             var entityManager = new EntityManager();
-            entityManager.Create(new Entity() { Name = "Dataset", ClassPath = "BExIS.Dlm.Entities.Data.Dataset", AssemblyPath = "BExIS.Dlm.Entities", Securable = true, UseMetadata = true });
+            entityManager.Create(new Entity() { EntityType = typeof(Dataset), EntityStoreType = typeof(DatasetStore), Securable = true, UseMetadata = true });
 
             //// Groups
             var groupManager = new GroupManager();

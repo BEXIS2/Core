@@ -12,7 +12,7 @@ namespace BExIS.Modules.Sam.UI.Models
             Expression<Func<EntityPermission, GroupEntityPermissionGridRowModel>> conversion = p =>
                 new GroupEntityPermissionGridRowModel()
                 {
-                    EntityName = p.Entity.Name,
+                    EntityName = p.Entity.EntityType.FullName,
                     EntityId = p.Entity.Id,
                     Rights = p.Rights,
                     GroupName = p.Subject.Name,
@@ -27,7 +27,7 @@ namespace BExIS.Modules.Sam.UI.Models
             Expression<Func<EntityPermission, UserEntityPermissionGridRowModel>> conversion = p =>
                 new UserEntityPermissionGridRowModel()
                 {
-                    EntityName = p.Entity.Name,
+                    EntityName = p.Entity.EntityType.FullName,
                     EntityId = p.Entity.Id,
                     Rights = p.Rights,
                     UserName = p.Subject.Name,

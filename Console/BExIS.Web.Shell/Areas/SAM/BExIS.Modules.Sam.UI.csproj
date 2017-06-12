@@ -140,7 +140,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\EntitiesController.cs" />
-    <Compile Include="Controllers\EntityDecisionsController.cs" />
     <Compile Include="Controllers\EntityPermissionsController.cs" />
     <Compile Include="Controllers\EntityRequestsController.cs" />
     <Compile Include="Controllers\FeaturePermissionsController.cs" />
@@ -154,12 +153,12 @@
     <Compile Include="Helpers\SAMSeedDataGenerator.cs" />
     <Compile Include="Models\EntityModels.cs" />
     <Compile Include="Models\EntityPermissionModels.cs" />
-    <Compile Include="Models\EntityRequestModels.cs" />
     <Compile Include="Models\FeatureModels.cs" />
     <Compile Include="Models\FeaturePermissionModels.cs" />
     <Compile Include="Models\GroupModels.cs" />
     <Compile Include="Models\InfoModels.cs" />
     <Compile Include="Models\ModuleGridRowModel.cs" />
+    <Compile Include="Models\RequestModels.cs" />
     <Compile Include="Models\TenantModels.cs" />
     <Compile Include="Models\UserModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
