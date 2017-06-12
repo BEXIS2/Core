@@ -1,8 +1,7 @@
-﻿using System;
+﻿using BExIS.Dcm.Wizard;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
-using BExIS.Dcm.Wizard;
 
 /// <summary>
 ///
@@ -64,7 +63,7 @@ namespace BExIS.Dcm.UploadWizard
 
             TaskManager tm = new TaskManager();
             tm.StepInfos = new List<StepInfo>();
-   
+
             foreach (XmlNode xmlStepInfo in xmlStepInfos)
             {
 

@@ -26,7 +26,7 @@
     @Html.ValidationSummary(true)
 
     <p>Please provide the following information.</p>
-    @using (Html.BeginForm("StoreSelectedDatasetSetup", "CreateDataset", new { area = "DCM" }, FormMethod.Post))
+    @using (Html.BeginForm("StoreSelectedDatasetSetup", "CreateDataset", new { area = "Dcm" }, FormMethod.Post))
     {
         <table>
             <tr>
@@ -78,7 +78,7 @@
                 </td>
                 <td style="width: 60px;">
                     <div id="datastructuresContainer">
-                        @Ajax.ActionLink("Select", "ShowListOfDataStructures", "CreateDataset", new { area = "DCM"},
+                        @Ajax.ActionLink("Select", "ShowListOfDataStructures", "CreateDataset", new { area = "Dcm"},
                         new AjaxOptions
                         {
                             HttpMethod = "GET",
@@ -129,7 +129,7 @@
                         }
                         else
                         {
-                            @Ajax.ActionLink("Select", "ShowListOfMetadataStructures", "CreateDataset", new { area = "DCM"},
+                            @Ajax.ActionLink("Select", "ShowListOfMetadataStructures", "CreateDataset", new { area = "Dcm"},
                                 new AjaxOptions
                                 {
                                     HttpMethod = "GET",

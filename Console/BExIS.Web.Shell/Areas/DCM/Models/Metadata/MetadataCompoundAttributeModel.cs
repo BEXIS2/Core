@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Xml.Linq;
+﻿using System.Collections.Generic;
 using BExIS.Dcm.CreateDatasetWizard;
-using BExIS.Dcm.Wizard;
 using BExIS.Dlm.Entities.Common;
 using BExIS.Dlm.Entities.MetadataStructure;
-using BExIS.IO.Transform.Validation.Exceptions;
-using BExIS.Xml.Helpers;
 
-namespace BExIS.Web.Shell.Areas.DCM.Models.Metadata
+namespace BExIS.Modules.Dcm.UI.Models.Metadata
 {
     public class MetadataCompoundAttributeModel:AbstractMetadataStepModel
     {

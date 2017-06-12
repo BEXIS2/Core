@@ -1,30 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
-using System.Xml;
-using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Dcm.UploadWizard;
-using BExIS.Dcm.Wizard;
 using BExIS.Dlm.Entities.Administration;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.Administration;
 using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.Dlm.Services.MetadataStructure;
-using BExIS.Web.Shell.Areas.DCM.Models;
-using Vaiona.Utils.Cfg;
-using BExIS.Web.Shell.Areas.DCM.Models.Metadata;
-using System.Xml.Linq;
-using BExIS.Xml.Helpers;
+using BExIS.IO.Transform.Validation.Exceptions;
+using BExIS.Modules.Dcm.UI.Models;
 using BExIS.Xml.Services;
+using BExIS.Dcm.Wizard;
 
-namespace BExIS.Web.Shell.Areas.DCM.Controllers
+namespace BExIS.Modules.Dcm.UI.Controllers
 {
     public class SubmitSpecifyDatasetController : Controller
     {
