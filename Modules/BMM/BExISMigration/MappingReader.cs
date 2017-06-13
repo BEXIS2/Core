@@ -390,6 +390,7 @@ namespace BExISMigration
             mappedDataTypes.Columns.Add("Name", typeof(string));
             mappedDataTypes.Columns.Add("Description", typeof(string));
             mappedDataTypes.Columns.Add("SystemType", typeof(string));
+            mappedDataTypes.Columns.Add("DisplayPattern", typeof(string));
             mappedDataTypes.Columns.Add("DataTypesId", typeof(long));
 
             if (File.Exists(filePath + "\\datatypes.csv"))
@@ -410,6 +411,7 @@ namespace BExISMigration
                     newRow["Name"] = vars[0];
                     newRow["Description"] = vars[1];
                     newRow["SystemType"] = vars[2];
+                    newRow["DisplayPattern"] = vars[3];
                     mappedDataTypes.Rows.Add(newRow);
                 }
             }

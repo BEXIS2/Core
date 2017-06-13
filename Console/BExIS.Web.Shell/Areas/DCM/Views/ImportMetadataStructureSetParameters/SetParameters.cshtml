@@ -46,8 +46,9 @@
                         @(Html.Telerik().DropDownList()
                               .Placeholder("Select")
                               .Name("Entity")
+                              .HtmlAttributes(new {style="width:300px"})
                               .ClientEvents(events => events.OnChange("OnChangeDropDown"))
-                              .BindTo(new SelectList(Model.Entities, Model.EntityType, Model.EntityType)))
+                              .BindTo(new SelectList(Model.Entities, Model.EntityType)))
 
                     </td>
                     <td></td>
@@ -58,7 +59,7 @@
                     </td>
                     <td>
                         <div id="titleSelectionContainer">
-                            @Ajax.ActionLink("Select", "ShowListOfMetadataNodesTitle", "ImportMetadataStructureSetParameters", new {area = "DCM"},
+                            @Ajax.ActionLink("Select", "ShowListOfMetadataNodesTitle", "ImportMetadataStructureSetParameters", new {area = "Dcm"},
                                 new AjaxOptions
                                 {
                                     HttpMethod = "GET",
@@ -79,7 +80,7 @@
                     </td>
                     <td>
                         <div id="descriptionSelectionContainer">
-                            @Ajax.ActionLink("Select", "ShowListOfMetadataNodesDescription", "ImportMetadataStructureSetParameters", new {area = "DCM"},
+                            @Ajax.ActionLink("Select", "ShowListOfMetadataNodesDescription", "ImportMetadataStructureSetParameters", new {area = "Dcm"},
                                 new AjaxOptions
                                 {
                                     HttpMethod = "GET",

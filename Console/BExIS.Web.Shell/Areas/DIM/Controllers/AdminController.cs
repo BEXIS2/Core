@@ -6,25 +6,25 @@ using System.Web;
 using System.Web.Mvc;
 using System.Xml;
 using System.Xml.Linq;
-using BExIS.Web.Shell.Areas.DIM.Models;
+using BExIS.Modules.Dim.UI.Models;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
 using BExIS.Xml.Helpers;
 using BExIS.Xml.Helpers.Mapping;
-using Vaiona.Utils.Cfg;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Xml.Services;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Extensions;
+using Vaiona.Utils.Cfg;
 
-namespace BExIS.Web.Shell.Areas.DIM.Controllers
+namespace BExIS.Modules.Dim.UI.Controllers
 {
     public class AdminController : Controller
     {
 
         private List<long> datasetVersionIds = new List<long>();
-        private XmlMapperManager xmlMapperManager = new XmlMapperManager();
+        private XmlMapperManager xmlMapperManager = new XmlMapperManager(TransactionDirection.InternToExtern);
         
         //
         // GET: /DIM/Admin/
@@ -122,7 +122,7 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
             DatasetManager datasetManager = new DatasetManager();
             DatasetVersion datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
             MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
-            MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(datasetVersion.Dataset.Id);
+            MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(datasetVersion.Dataset.MetadataStructure.Id);
 
             string fileName = getMappingFileName(datasetVersion, TransmissionType.mappingFileExport, metadataStructure.Name);
             string path_mapping_file = "";
@@ -130,7 +130,7 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
             {
                     path_mapping_file = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), fileName);
 
-                    xmlMapperManager = new XmlMapperManager();
+                    xmlMapperManager = new XmlMapperManager(TransactionDirection.InternToExtern);
 
                     xmlMapperManager.Load(path_mapping_file, GetUsernameOrDefault());
 
@@ -138,7 +138,7 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
             }
             catch(Exception ex)
             {
-                return "";
+                return ex.Message;
             }
 
             return "";
@@ -169,18 +169,23 @@ namespace BExIS.Web.Shell.Areas.DIM.Controllers
             DatasetManager datasetManager = new DatasetManager();
 
             // gets all the dataset versions that their Id is in the datasetVersionIds and they are using a specific metadata structure as indicated by metadataStructure parameter
-            var q = datasetManager.DatasetVersionRepo.Get(p => datasetVersionIds.Contains(p.Id) && p.Dataset.MetadataStructure.Id.Equals(metadataStructure.Id)).Distinct();
+            var q = datasetManager.DatasetVersionRepo.Get(p => datasetVersionIds.Contains(p.Id) && 
+                                                          p.Dataset.MetadataStructure.Id.Equals(metadataStructure.Id)).Distinct();
+
 
             foreach (DatasetVersion datasetVersion in q)
             {
-                datasetVersions.Add(
-                    new DatasetVersionModel
-                    {
-                        DatasetVersionId = datasetVersion.Id,
-                        DatasetId = datasetVersion.Dataset.Id,
-                        Title = XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title),
-                        MetadataDownloadPath = ""
-                    });
+                if (datasetManager.IsDatasetCheckedIn(datasetVersion.Dataset.Id))
+                {
+                    datasetVersions.Add(
+                        new DatasetVersionModel
+                        {
+                            DatasetVersionId = datasetVersion.Id,
+                            DatasetId = datasetVersion.Dataset.Id,
+                            Title = XmlDatasetHelper.GetInformation(datasetVersion, NameAttributeValues.title),
+                            MetadataDownloadPath = ""
+                        });
+                }
             }
             return datasetVersions;
         }

@@ -5,6 +5,9 @@ using System.Text;
 using System.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Entities.DataStructure;
+using BExIS.IO.DataType.DisplayPattern;
+using BExIS.Dlm.Services.TypeSystem;
+using System.Xml;
 
 namespace BExISMigration
 {
@@ -179,12 +182,25 @@ namespace BExISMigration
             {
                 string dtName = mappedDataType["Name"].ToString();
                 string dtDescription = mappedDataType["Description"].ToString();
+                DataTypeDisplayPattern dtDisplayPettern =  new DataTypeDisplayPattern();
                 TypeCode dtSystemType = new TypeCode();
                 foreach (TypeCode type in Enum.GetValues(typeof(TypeCode)))
                 {
                     if (type.ToString().Equals(mappedDataType["SystemType"].ToString()))
                     {
                         dtSystemType = type;
+                    }
+                }
+
+                if (dtSystemType == TypeCode.DateTime)
+                {
+                    if (mappedDataType["DisplayPattern"] != null && mappedDataType["DisplayPattern"].ToString() != "")
+                    {
+                        dtDisplayPettern = DataTypeDisplayPattern.Pattern.Where(p => p.Systemtype.Equals(DataTypeCode.DateTime) && p.Name.Equals(mappedDataType["DisplayPattern"].ToString())).FirstOrDefault();
+                    }
+                    else
+                    {
+                        dtDisplayPettern = DataTypeDisplayPattern.Pattern.Where(p => p.Name.Equals("DateTimeIso")).FirstOrDefault();
                     }
                 }
 
@@ -198,6 +214,17 @@ namespace BExISMigration
                 if (existDT == null && dtSystemType != null)
                 {
                     dataType = dataTypeManager.Create(dtName, dtDescription, dtSystemType);
+
+                    XmlDocument xmlDoc = new XmlDocument();
+                    XmlNode xmlNode;
+                    xmlNode = xmlDoc.CreateNode(XmlNodeType.Element, "Extra", null);
+                    xmlDoc.AppendChild(xmlNode);
+                    xmlNode = xmlDoc.CreateNode(XmlNodeType.Element, "DisplayPattern", null);
+                    xmlNode.InnerXml = DataTypeDisplayPattern.Dematerialize(dtDisplayPettern).InnerXml;
+                    xmlDoc.DocumentElement.AppendChild(xmlNode);
+                    dataType.Extra = xmlDoc;
+
+                    dataTypeManager.Update(dataType);
                 }
                 else
                 {

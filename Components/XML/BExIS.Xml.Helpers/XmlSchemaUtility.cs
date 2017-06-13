@@ -45,7 +45,24 @@ namespace BExIS.Xml.Helpers
             return simpleTypes;
         }
 
-    
+        /// <summary>
+        /// Get all simple types from the schema.
+        /// </summary>
+        /// <param name="schema"></param>
+        /// <returns></returns>
+        public static List<XmlSchemaAttribute> GetAllAttributes(XmlSchema schema)
+        {
+            List<XmlSchemaAttribute> attributes = new List<XmlSchemaAttribute>();
+
+            foreach (XmlSchemaObject item in schema.Items)
+            {
+                if (item is XmlSchemaAttribute) attributes.Add((XmlSchemaAttribute)item);
+            }
+
+            return attributes;
+        }
+
+
         /// <summary>
         /// Get all elements from the schema.
         /// </summary>

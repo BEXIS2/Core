@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using BExIS.Dcm.Wizard;
+﻿using BExIS.Dcm.Wizard;
 
-namespace BExIS.Web.Shell.Areas.DCM.Models.ImportMetadata
+namespace BExIS.Modules.Dcm.UI.Models.ImportMetadata
 {
     public class SummaryModel:AbstractStepModel
     {

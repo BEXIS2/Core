@@ -26,7 +26,7 @@
     @Html.ValidationSummary(true)
 
     <p>Please provide the following information.</p>
-    @using (Html.BeginForm("StoreSelectedDatasetSetup", "CreateDataset", new { area = "DCM" }, FormMethod.Post))
+    @using (Html.BeginForm("StoreSelectedDatasetSetup", "CreateDataset", new { area = "Dcm" }, FormMethod.Post))
     {
         <table>
             <tr>
@@ -48,25 +48,23 @@
 
                     @*@Html.Partial("_EnititySelectorView", BexisModelManager.LoadEntitySelectorModel<ListViewItem>(Model.DatasetViewList,"Id","myTest"))*@
                 </td>
-                <td>
+                <td style="width: 400px;">
                     @if (Model.BlockDatasetId)
                     {
                         string title = Model.DatasetViewList.Where(ms => ms.Id.Equals(Model.SelectedDatasetId)).FirstOrDefault().Title;
                         @Html.HiddenFor(m => m.SelectedDatasetId)
                         @Html.Label(title)
-                        ;
+                        
                     }
                     else
                     {
                         @(Html.Telerik().DropDownList()
                               .Name("SelectedDatasetId")
                               .SelectedIndex(0)
-                              .HtmlAttributes(new {title = "Select a Dataset as Template"})
+                              .HtmlAttributes(new {title = "Select a Dataset as Template", @class= "bx-dropdown" })
                               .BindTo(new SelectList(DatasetsList, "Id", "Title", Model.SelectedDatasetId))
                               .ClientEvents(events => events.OnChange("datasetChange"))
                               )
-
-
                     }
                 </td>
                 <td>
@@ -80,7 +78,7 @@
                 </td>
                 <td style="width: 60px;">
                     <div id="datastructuresContainer">
-                        @Ajax.ActionLink("Select", "ShowListOfDataStructures", "CreateDataset", new { area = "DCM"},
+                        @Ajax.ActionLink("Select", "ShowListOfDataStructures", "CreateDataset", new { area = "Dcm"},
                         new AjaxOptions
                         {
                             HttpMethod = "GET",
@@ -104,7 +102,7 @@
                         @(Html.Telerik().DropDownList()
                               .Name("SelectedDataStructureId")
                               .Placeholder("Select")
-                              .HtmlAttributes(new {title = "Select a Data Structure"})
+                              .HtmlAttributes(new {title = "Select a Data Structure", @class = "bx-dropdown" })
                               .SelectedIndex(0)
                               .ClientEvents(events => events.OnChange("onChange"))
                               .BindTo(new SelectList(Model.DataStructureViewList, "Id", "Title", Model.SelectedDataStructureId))
@@ -131,7 +129,7 @@
                         }
                         else
                         {
-                            @Ajax.ActionLink("Select", "ShowListOfMetadataStructures", "CreateDataset", new { area = "DCM"},
+                            @Ajax.ActionLink("Select", "ShowListOfMetadataStructures", "CreateDataset", new { area = "Dcm"},
                                 new AjaxOptions
                                 {
                                     HttpMethod = "GET",
@@ -157,7 +155,7 @@
                         @(Html.Telerik().DropDownList()
                               .Name("SelectedMetadataStructureId")
                               .Placeholder("Select")
-                              .HtmlAttributes(new {title = "Select a Metadata Structure"})
+                              .HtmlAttributes(new {title = "Select a Metadata Structure", @class = "bx-dropdown" })
                               .SelectedIndex(0)
                               .BindTo(new SelectList(Model.MetadataStructureViewList, "Id", "Title", Model.SelectedMetadataStructureId))
                               .ClientEvents(e => e.OnChange("onChangeMetadataStructure"))
@@ -189,19 +187,20 @@
         if ($(this).val() == "")
             id = -1;
         else
-            id =  $(this).val();
+            id = $(this).val();
 
         //alert(id);
 
-        $.post('@Url.Action("StoreSelectedDataset","CreateDataset" , new RouteValueDictionary { { "area", "DCM" } })', { id: id }, function (response) {
-           $("#SetupContainer").replaceWith(response);
-           resetAllTelerikIconTitles();
-           truncateTitle();
-       })
+        $.post('@Url.Action("StoreSelectedDataset", "CreateDataset", new RouteValueDictionary {{"area", "DCM"}})',
+            { id: id },
+            function(response) {
+                $("#SetupContainer").replaceWith(response);
+                resetAllTelerikIconTitles();
+                truncateTitle();
+            })
     }
 
-    function onChangeMetadataStructure()
-    {
+    function onChangeMetadataStructure() {
         var id;
 
         if ($(this).val() == "")
@@ -209,9 +208,11 @@
         else
             id = $(this).val();
 
-        $.post('@Url.Action("StoreSelectedOption", "CreateDataset" , new RouteValueDictionary { { "area", "DCM" } })', { id: id, type:"ms" }, function (response) {
+        $.post('@Url.Action("StoreSelectedOption", "CreateDataset", new RouteValueDictionary {{"area", "DCM"}})',
+            { id: id, type: "ms" },
+            function(response) {
 
-        })
+            })
     }
 
 
@@ -224,9 +225,17 @@
         else
             id = $(this).val();
 
-        $.post('@Url.Action("StoreSelectedOption", "CreateDataset" , new RouteValueDictionary { { "area", "DCM" } })', { id: id, type: "ds" }, function (response) {
+        $.post('@Url.Action("StoreSelectedOption", "CreateDataset", new RouteValueDictionary {{"area", "DCM"}})',
+            { id: id, type: "ds" },
+            function(response) {
 
-        })
+            })
     }
 
 </script>
+
+<style type="text/css">
+    #SetupContainer .bx-dropdown {
+        width: 100%;
+    }
+</style>

@@ -1,19 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Web.Mvc;
 using System.Web.Routing;
 using BExIS.Dcm.ImportMetadataStructureWizard;
 using BExIS.Dcm.Wizard;
 using BExIS.Dlm.Services.MetadataStructure;
-using BExIS.IO.Transform.Validation.Exceptions;
-using BExIS.Web.Shell.Areas.DCM.Models.ImportMetadata;
+using BExIS.Modules.Dcm.UI.Models.ImportMetadata;
 using BExIS.Xml.Helpers.Mapping;
+using BExIS.IO.Transform.Validation.Exceptions;
 
-namespace BExIS.Web.Shell.Areas.DCM.Controllers
+namespace BExIS.Modules.Dcm.UI.Controllers
 {
     public class ImportMetadataStructureReadSourceController : Controller
     {

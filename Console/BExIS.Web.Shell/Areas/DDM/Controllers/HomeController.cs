@@ -1,31 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.IO;
 using System.Linq;
 using System.Web.Mvc;
 using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Services.DataStructure;
 using BExIS.Ddm.Api;
-using BExIS.Ddm.Model;
-using BExIS.Ddm.Providers.LuceneProvider;
-using BExIS.Web.Shell.Areas.DDM.Helpers;
-using BExIS.Web.Shell.Areas.DDM.Models;
 using Telerik.Web.Mvc;
 using Vaiona.IoC;
-using Vaiona.Utils.Cfg;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Subjects;
-using BExIS.Security.Entities.Objects;
-using System.Xml;
 using BExIS.Xml.Services;
 using BExIS.Dlm.Services.MetadataStructure;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Extensions;
+using BExIS.Ddm.Model;
+using System.Data;
 
-namespace BExIS.Web.Shell.Areas.DDM.Controllers
+namespace BExIS.Modules.Ddm.UI.Controllers
 {
     public class HomeController : Controller
     {
@@ -793,14 +784,19 @@ namespace BExIS.Web.Shell.Areas.DDM.Controllers
 
             model = CreateDataTable(headerItems);
 
+
             DatasetManager datasetManager = new DatasetManager();
             PermissionManager permissionManager = new PermissionManager();
             SubjectManager subjectManager = new SubjectManager();
 
-            foreach (long datasetId in datasetManager.GetDatasetLatestIds())
+            List<long> gridCommands = datasetManager.GetDatasetLatestIds();
+            gridCommands.Skip(Convert.ToInt16(ViewData["CurrentPage"])).Take(Convert.ToInt16(ViewData["PageSize"]));
+
+            foreach (long datasetId in gridCommands)
             {
                 //get permissions
-                List<int> rights = permissionManager.GetAllRights(subjectManager.GetUserByName(GetUsernameOrDefault()).Id, 1, datasetId).ToList();
+                // TODO: refactor
+                List<int> rights = new List<int>();//permissionManager.GetAllRights(subjectManager.GetUserByName(GetUsernameOrDefault()).Id, 1, datasetId).ToList();
 
                 if (rights.Count > 0)
                 {

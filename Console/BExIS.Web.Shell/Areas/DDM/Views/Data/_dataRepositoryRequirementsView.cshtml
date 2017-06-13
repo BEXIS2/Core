@@ -1,4 +1,4 @@
-﻿@model BExIS.Web.Shell.Areas.DDM.Models.DataRepoRequirentModel
+﻿@model BExIS.Modules.Ddm.UI.Models.DataRepoRequirentModel
 
 @{
     bool IsActive = (Model.IsMetadataConvertable && Model.IsDataConvertable);
@@ -7,7 +7,7 @@
 
 @if (Model.Exist)
 {
-    <span>Dataset with Id @Model.DatasetId and Version @Model.DatasetVersionId is prepared for @Model.DataRepository.Name.</span>
+    <span>Dataset with Id @Model.DatasetId and Version @Model.DatasetVersionId is prepared for ...</span>
 }
 else
 {
@@ -19,6 +19,11 @@ else
     if (!Model.IsDataConvertable)
     {
         <b>It is not possible to convert the primary data in the required format.</b>
+    }
+
+    if (Model.metadataValidMessage !="")
+    {
+        <b>@Model.metadataValidMessage</b>
     }
 
 }

@@ -1,18 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Map>
-  <MapItem ContentKey="SysTime">
-    <ContentProviders>
-      <ContentProvider Area="System" Controller="Utils" Action="ServerTime" Type="Action">
-        <Parameters>
-          <Parameter Name="format" Value="A"/>
-        </Parameters>
-      </ContentProvider>
-    </ContentProviders>
-  </MapItem>
-
   <MapItem ContentKey="Menu">
     <ContentProviders>
-      <ContentProvider Area="Site" Controller="Nav" Action="Menu" Type="Action" Enabled="true">
+      <ContentProvider View="_Menu" Type="View" Enabled="true">
+        <Parameters>
+        </Parameters>
+      </ContentProvider>
+      <!--to be deleted-->
+      <ContentProvider Area="" Controller="Nav" Action="Menu" Type="Action" Enabled="false">
         <Parameters>
           <Parameter Name="oreintation" Value="1"/>
         </Parameters>
@@ -65,15 +60,6 @@
     </ContentProviders>
   </MapItem>
 
-  <MapItem ContentKey="HomePage">
-    <ContentProviders>
-      <ContentProvider Area="DDM" Controller="Home" Action="ShowMyDatasets" Type="Action" Enabled="true">
-        <Parameters>
-        </Parameters>
-      </ContentProvider>
-    </ContentProviders>
-  </MapItem>
-  
   <MapItem ContentKey="Footer">
     <ContentProviders>
       <ContentProvider View="_Footer" Type="View" Enabled="true">

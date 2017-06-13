@@ -26,7 +26,7 @@
           columns.Bound(c => c.Entity.ClassPath).Hidden(true);
           columns.Bound(c => c.TitleNode);
           columns.Bound(c => c.DescriptionNode);
-          columns.Bound(c => c.Active).Width(85);
+          columns.Bound(c => c.Active).Width(90);
           columns.Template(@<text>
                                @{
                                    string className = item.HasSchema ? "" : "bx-disabled";
@@ -40,7 +40,7 @@
                   .ClientTemplate("<button type=\"button\" class=\"bx bx-grid-function bx-edit\" onclick=\"userEdit_onClick(\'<#= Username #>\', <#= Id #>);\" value=\"<#= Id #>\" title=\"Edit <#= Id #>\"></button>" +
                                   "<button type=\"button\" class=\"bx bx-grid-function bx-trash\" onclick=\"userDelete_onClick(\'<#= Username #>\', <#= Id #>);\" value=\"<#= Id #>\" title=\"Delete <#= Id #>\" ></button>" +
                                   "@Html.ActionLink(\"hallo\", \"DownloadSchema\", \"ManageMetadataStructure\", new { id = <#= Id #> }, new { @class = \"bx bx-grid-function bx-download\", title=\"Download xsd schema\" })")
-                  .Width(100);
+                  .Width(105);
 
       })
 
@@ -104,9 +104,11 @@
                 dataType: "json",
                 success: function (response) {
 
-                    window.location.href = '/DCM/ManageMetadataStructure';
-
-                    //alert(response);
+                    if (response) {
+                        window.location.href = '/DCM/ManageMetadataStructure';
+                    } else {
+                        alert("The metadata structure is not deleted!");
+                    }
                 }
             });
         }

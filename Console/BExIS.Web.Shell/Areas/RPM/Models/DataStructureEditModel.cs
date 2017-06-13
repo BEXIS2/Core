@@ -7,7 +7,7 @@ using BExIS.Web.Shell.Areas.RPM.Classes;
 
 namespace BExIS.Web.Shell.Areas.RPM.Models
 {
-    public struct UnitStruct
+    public struct ItemStruct
     {
         public long Id { get; set; }
         public string Name { get; set; }
@@ -22,7 +22,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
             this.Name = "";
             this.Appearance = new List<long>();
         }
-    } 
+    }
     public class AttributeFilterStruct
     {
         public Dictionary<string, FilterValueStruct> Values { get; set; }
@@ -35,7 +35,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
 
     public class AttributeFilterModel
     {
-        public Dictionary<string,AttributeFilterStruct> AttributeFilterDictionary { get; set; }
+        public Dictionary<string, AttributeFilterStruct> AttributeFilterDictionary { get; set; }
 
         public AttributeFilterModel()
         {
@@ -83,6 +83,10 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
                     this.AttributeFilterDictionary["Data Type"].Values.Add(key, value);
                 }
             }
+            foreach (KeyValuePair<string, AttributeFilterStruct> kv in this.AttributeFilterDictionary)
+            {
+                kv.Value.Values = kv.Value.Values.OrderBy(v => v.Value.Name).ToDictionary(v => v.Key, v => v.Value);
+            }
             return this;
         }
     }
@@ -92,9 +96,10 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
         public long Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public UnitStruct Unit;
+        public ItemStruct Unit;
         public string DataType { get; set; }
         public Dictionary<long, string> Constraints { get; set; }
+        public bool inUse { get; set; }
 
 
         public AttributePreviewStruct()
@@ -102,9 +107,10 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
             this.Id = 0;
             this.Name = "";
             this.Description = "";
-            this.Unit = new UnitStruct();
+            this.Unit = new ItemStruct();
             this.DataType = "";
             this.Constraints = new Dictionary<long, string>();
+            this.inUse = false;
         }
 
         public AttributePreviewStruct fill(long attributeId)
@@ -117,7 +123,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
             DataContainerManager dataAttributeManager = new DataContainerManager();
             DataAttribute DataAttribute = dataAttributeManager.DataAttributeRepo.Get(attributeId);
 
-            return this.fill(DataAttribute);
+            return this.fill(DataAttribute, getConstraints);
         }
 
         public AttributePreviewStruct fill(DataAttribute dataAttribute)
@@ -145,14 +151,20 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
                     }
                 }
             }
+
+            if (dataAttribute.UsagesAsVariable.Count > 0)
+                this.inUse = true;
+            else
+                this.inUse = false;
+
             return this;
         }
     }
     public class VariablePreviewStruct : AttributePreviewStruct
     {
         public bool isOptional { get; set; }
-        public List<UnitStruct> convertibleUnits;
-        public AttributePreviewStruct Attribute;
+        public List<ItemStruct> convertibleUnits { get; set; }
+        public AttributePreviewStruct Attribute { get; set; }
 
 
         public VariablePreviewStruct()
@@ -161,11 +173,12 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
             this.Name = "";
             this.Description = "";
             this.isOptional = true;
-            this.Unit = new UnitStruct();
-            this.convertibleUnits = new List<UnitStruct>();
+            this.Unit = new ItemStruct();
+            this.convertibleUnits = new List<ItemStruct>();
             this.DataType = "";
             this.Constraints = new Dictionary<long, string>();
             this.Attribute = new AttributePreviewStruct();
+            this.inUse = false;
         }
 
         public VariablePreviewStruct fill(long attributeId)
@@ -195,6 +208,11 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
 
         public VariablePreviewStruct fill(Variable variable, bool getConstraints)
         {
+            variable.Unit = variable.Unit ?? new Unit();
+            variable.Unit.Dimension = variable.Unit.Dimension ?? new Dimension();
+            variable.DataAttribute = variable.DataAttribute ?? new DataAttribute();
+            variable.DataAttribute.DataType = variable.DataAttribute.DataType ?? new DataType();
+
             this.Id = variable.Id;
             this.Name = variable.Label;
             this.Description = variable.Description;
@@ -221,12 +239,14 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
             return this;
         }
 
-        public List<UnitStruct> getUnitListByDimenstionAndDataType(long dimensionId, long dataTypeId)
+        public List<ItemStruct> getUnitListByDimenstionAndDataType(long dimensionId, long dataTypeId)
         {
-            List<UnitStruct> UnitStructs = new List<UnitStruct>();
+            List<ItemStruct> UnitStructs = new List<ItemStruct>();
             UnitManager unitmanager = new UnitManager();
-            List<Unit> units = unitmanager.DimensionRepo.Get(dimensionId).Units.ToList();
-            UnitStruct tempUnitStruct = new UnitStruct();
+            List<Unit> units = new List<Unit>();
+            if (unitmanager.DimensionRepo.Get(dimensionId) != null)
+                units = unitmanager.DimensionRepo.Get(dimensionId).Units.ToList();
+
             foreach (Unit u in units)
             {
                 if (u.Name.ToLower() != "none")
@@ -235,24 +255,60 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
                     {
                         if (dt.Id == dataTypeId)
                         {
-                            tempUnitStruct.Id = u.Id;
-                            tempUnitStruct.Name = u.Name;
-                            UnitStructs.Add(tempUnitStruct);
+                            UnitStructs.Add(new ItemStruct()
+                            {
+                                Name = u.Name,
+                                Id = u.Id
+                            });
                             break;
                         }
                     }
                 }
                 else
                 {
-                    tempUnitStruct.Id = u.Id;
-                    tempUnitStruct.Name = u.Name;
-                    UnitStructs.Add(tempUnitStruct);
+                    UnitStructs.Add(new ItemStruct()
+                    {
+                        Name = u.Name,
+                        Id = u.Id
+                    });
                 }
             }
 
             return UnitStructs;
         }
     }
+
+    public class AttributeEditStruct : AttributePreviewStruct
+    {
+        public ItemStruct DataType { get; set; }
+        public List<ItemStruct> Units { get; set; }
+        public List<ItemStruct> DataTypes { get; set; }
+
+        public AttributeEditStruct()
+        {
+            this.Id = 0;
+            this.Name = "";
+            this.Description = "";
+            this.Unit = new ItemStruct();
+            this.DataType = new ItemStruct();
+            this.Constraints = new Dictionary<long, string>();
+            this.inUse = false;
+            this.Units = new List<ItemStruct>();
+            this.DataTypes = new List<ItemStruct>();
+
+            foreach (Unit u in new UnitManager().Repo.Get())
+            {
+                this.Units.Add(new ItemStruct()
+                {
+                    Name = u.Name,
+                    Id = u.Id
+                });
+            }
+
+            this.Units = this.Units.OrderBy(u => u.Name).ToList();
+        }
+    }
+
 
     public class AttributePreviewModel
     {
@@ -274,7 +330,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
             DataContainerManager dataAttributeManager = new DataContainerManager();
 
             foreach (DataAttribute da in dataAttributeManager.DataAttributeRepo.Get().ToList())
-            {                
+            {
                 this.AttributePreviews.Add(new AttributePreviewStruct().fill(da, getConstraints));
             }
             return this;
@@ -317,7 +373,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
                     this.Name = dataStructure.Name;
                     this.Description = dataStructure.Description;
 
-                    if(dataStructure.Datasets.Count > 0)
+                    if (dataStructure.Datasets.Count > 0)
                     {
                         this.inUse = true;
                     }
@@ -337,7 +393,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
                     this.Description = dataStructure.Description;
                     this.VariablePreviews = null;
 
-                    if(dataStructure.Datasets.Count > 0)
+                    if (dataStructure.Datasets.Count > 0)
                     {
                         this.inUse = true;
                     }
@@ -370,5 +426,51 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
             this.isOptional = true;
         }
     }
+
+    public class EditUnitStruct
+    {
+        public long Id { get; set; }
+        public string Name { get; set; }
+        public string Abbreviation { get; set; }
+        public string Description { get; set; }
+        public long DimensionId { get; set; }
+        public string MeasurementSystem { get; set; }
+
+        public List<ItemStruct> DataTypeList;
+        public List<ItemStruct> DimensionList;
+
+        public EditUnitStruct()
+        {
+            this.Id = 0;
+            this.Name = "";
+            this.Abbreviation = "";
+            this.Description = "";
+            this.DimensionId = 0;
+            this.MeasurementSystem = "";
+
+            this.DataTypeList = new List<ItemStruct>();
+
+            foreach (DataType dt in new DataTypeManager().Repo.Get())
+            {
+                this.DataTypeList.Add(new ItemStruct()
+                {
+                    Name = dt.Name,
+                    Id = dt.Id
+                });
+            }
+
+            this.DimensionList = new List<ItemStruct>();
+
+            foreach (Dimension dim in new UnitManager().DimensionRepo.Get())
+            {
+                this.DimensionList.Add(new ItemStruct()
+                {
+                    Name = dim.Name,
+                    Id = dim.Id
+                });
+            }
+        }
+    }
+
 }
     

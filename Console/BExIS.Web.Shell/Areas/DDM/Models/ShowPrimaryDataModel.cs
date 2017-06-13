@@ -10,8 +10,7 @@ using System.IO;
 using BExIS.IO;
 using BExIS.IO.DataType.DisplayPattern;
 
-
-namespace BExIS.Web.Shell.Areas.DDM.Models
+namespace BExIS.Modules.Ddm.UI.Models
 {
     public class ShowPrimaryDataModel
     {
@@ -69,10 +68,17 @@ namespace BExIS.Web.Shell.Areas.DDM.Models
 
             foreach (ContentDescriptor cd in cds)
             {
-                
-                list.Add(
-                    new BasicFileInfo(cd.URI, cd.MimeType)
-                    );
+
+                string filePath = Path.Combine(AppConfiguration.DataPath, cd.URI);
+
+                if (cd.Name.Equals("unstructuredData") && FileHelper.FileExist(filePath))
+                {
+                    FileInfo fileInfo = new FileInfo(filePath);
+
+                    list.Add(
+                        new BasicFileInfo(fileInfo.Name, cd.URI, cd.MimeType, fileInfo.Extension, fileInfo.Length)
+                        );
+                }
             }
 
             return list;

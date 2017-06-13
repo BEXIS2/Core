@@ -1,0 +1,102 @@
+﻿@using BExIS.Modules.Sam.UI.Models
+@using Telerik.Web.Mvc.UI
+
+@model long
+<ul class="nav nav-tabs">
+    <li class="active"><a data-toggle="tab" href="#users">Users</a></li>
+    <li><a data-toggle="tab" href="#groups">Groups</a></li>
+</ul>
+
+<div class="tab-content">
+    <div id="users" class="tab-pane fade in active">
+        @(Html.Telerik().Grid<UserGridRowModel>()
+              .Name("gridUsers")
+              .Columns(columns =>
+              {
+                  columns.Bound(s => s.EffectiveRight)
+    .ClientTemplate("<div class=' <#= EffectiveRight ? 'bx bx-check' : 'bx bx-close' #>' />")
+           .Title("Effective")
+           .Width(64)
+           .Filterable(false)
+           .HtmlAttributes(new { style = "text-align:center" });
+                  columns.Bound(u => u.eaturePermissionType)
+                      .ClientTemplate("<input type='radio' name='permissionType_<#= SubjectId #>' onclick='setFeaturePermission(1, <#= SubjectId #>, <#= FeatureId #>);' <#= FeaturePermissionType == 1 ? checked='checked' : '' #> />")
+                             .Title("Grant")
+                             .Width(50)
+                             .Filterable(false)
+                             .Sortable(false)
+                             .HtmlAttributes(new { style = "text-align:center;background-color:#DFF5E9" });
+                  columns.Bound(u => u.FeaturePermissionType)
+                      .ClientTemplate("<input type='radio' name='permissionType_<#= SubjectId #>' onclick='setFeaturePermission(2, <#= SubjectId #>, <#= FeatureId #>);' <#= FeaturePermissionType == 2 ? checked='checked' : '' #> />")
+                             .Title("None")
+                             .Width(50)
+                             .Filterable(false)
+                             .Sortable(false)
+                             .HtmlAttributes(new { style = "text-align:center" });
+                  columns.Bound(u => u.FeaturePermissionType)
+                      .ClientTemplate("<input type='radio' name='permissionType_<#= SubjectId #>' onclick='setFeaturePermission(0, <#= SubjectId #>, <#= FeatureId #>);' <#= FeaturePermissionType == 0 ? checked='checked' : '' #> />")
+                             .Title("Deny")
+                             .Width(50)
+                             .Filterable(false)
+                             .Sortable(false)
+                             .HtmlAttributes(new { style = "text-align:center;background-color:#F5DFDF" });
+                  columns.Bound(u => u.Id);
+                  columns.Bound(u => u.UserName);
+                  columns.Bound(u => u.Email);
+              })
+              .ClientEvents(events =>
+              {
+                  events.OnDataBound("onDataBound");
+              })
+              .DataBinding(dataBinding => dataBinding
+                  .Ajax()
+                  .Select("Users_Select", "FeaturePermission", new { FeatureId = Model })
+              )
+              .EnableCustomBinding(true)
+              .Filterable()
+              .Pageable(pageable =>
+              {
+                  pageable.PageSize(10, new[] { 10, 20, 50, 100 });
+                  pageable.Style(GridPagerStyles.NextPreviousAndNumeric | GridPagerStyles.PageSizeDropDown);
+                  pageable.Position(GridPagerPosition.Both);
+              })
+              .Sortable())
+    </div>
+    <div id="groups" class="tab-pane fade">
+        @(Html.Telerik().Grid<GroupGridRowModel>()
+              .Name("gridGroups")
+              .Columns(columns =>
+              {
+                  columns.Bound(g => g.Id);
+                  columns.Bound(g => g.GroupName);
+                  columns.Bound(g => g.GroupType).Template(g => g.GroupType.ToString("G")).ClientTemplate("abc('<#= GroupType #>')");
+                  columns.Bound(g => g.Description);
+              })
+              .ClientEvents(events =>
+              {
+                  events.OnDataBound("onDataBound");
+              })
+              .DataBinding(dataBinding => dataBinding
+                  .Ajax()
+                  .Select("Groups_Select", "FeaturePermission", new { FeatureId = Model })
+              )
+              .EnableCustomBinding(true)
+              .Filterable()
+              .Pageable(pageable =>
+              {
+                  pageable.PageSize(10, new[] { 10, 20, 50, 100 });
+                  pageable.Style(GridPagerStyles.NextPreviousAndNumeric | GridPagerStyles.PageSizeDropDown);
+                  pageable.Position(GridPagerPosition.Both);
+              })
+              .Sortable(sortable => sortable.OrderBy(order => order.Add(c => c.Id).Descending()))
+        )
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    function onDataBound() {
+        addTooltips();
+        resetAllTelerikIconTitles();
+    }
+</script>

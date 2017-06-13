@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using BExIS.Dcm.ImportMetadataStructureWizard;
 using System.Web.Mvc;
-using BExIS.Dcm.ImportMetadataStructureWizard;
-using BExIS.Web.Shell.Areas.DCM.Models.ImportMetadata;
+using BExIS.Modules.Dcm.UI.Models.ImportMetadata;
 
-namespace BExIS.Web.Shell.Areas.DCM.Controllers
+namespace BExIS.Modules.Dcm.UI.Controllers
 {
     public class ImportMetadataStructureSummaryController : Controller
     {

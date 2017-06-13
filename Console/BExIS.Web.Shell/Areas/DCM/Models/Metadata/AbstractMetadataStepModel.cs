@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Xml.Linq;
 using BExIS.Dlm.Entities.Common;
 using BExIS.Xml.Helpers;
 
-namespace BExIS.Web.Shell.Areas.DCM.Models.Metadata
+namespace BExIS.Modules.Dcm.UI.Models.Metadata
 {
     public class AbstractMetadataStepModel:AbstractStepModel
     {

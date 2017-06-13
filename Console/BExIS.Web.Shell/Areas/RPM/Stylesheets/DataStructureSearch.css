@@ -80,21 +80,6 @@
     border-bottom:2px #000000;
 }
 
-.bx-rpm-searchBar {
-    text-align:center;
-    margin-bottom:15px;
-    height:30px;
-}
-
-#SearchButton{
- margin:0px;
- margin-left:-4px;
- border-top-left-radius:0px;
- border-bottom-left-radius:0px;
- padding-top:8.4px;
- padding-bottom:7.6px;
-}
-
 .bx-rpm-loading {
     width:100%;
     text-align:center; 
@@ -109,6 +94,17 @@
     margin: 0px 3px 0px 0px;
 }
 
+.bx-rpm-result.bx-rpm-structured{
+    text-align:center;
+    color: #565655;
+}
+
 .bx-rpm-dataStructure-buttons{
     float:left;
+    text-align:left;
+}
+
+.bx-rpm-searchBar,
+.bx-rpm-dataStructure-buttons {
+    margin: 0 0 10px 0;
 }

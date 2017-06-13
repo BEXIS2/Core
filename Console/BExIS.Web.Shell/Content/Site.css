@@ -263,15 +263,6 @@ table th, table td
 table tr{ border: none; line-height: 14pt; }
 table th a {text-decoration: none; font-weight: bold;margin-right: 5px; }
 
-/* Information Container
-----------------------------------------------------------*/
-.collapse, 
-.in,
-.collapsing
-{
-    /*margin-top:-30px;*/
-}
-
 
 /* MISC  
 ----------------------------------------------------------*/

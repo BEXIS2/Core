@@ -1,0 +1,62 @@
+﻿@using BExIS.Dim.Entities.Mapping
+@using BExIS.Modules.Dim.UI.Models.Mapping
+@model LinkElementModel
+@{
+    string selectorClass = "le-mapping-simple-selector-" + @Model.Position.ToString().ToLower();
+    string id = Model.Type + "_" + Model.ElementId + "_" + @Model.Position + "_" + @Model.Name;
+    string c = "le-simple-" + @Model.Position;
+}
+
+<div id="@id" class="le-mapping-complex">
+
+    <div class="le-mapping-complex-info" style="display: none">
+        <div id="Id">@Model.Id</div>
+        <div id="Name">@Model.Name</div>
+        <div id="ElementId">@Model.ElementId</div>
+        <div id="Type">@Model.Type</div>
+        <div id="Position">@Model.Position</div>
+        <div id="Complexity">@Model.Complexity</div>
+        <div id="XPath">@Model.XPath</div>
+        <div id="Mask">@Model.Mask</div>
+    </div>
+
+    <div class="le-mapping-container-header row">
+        <div class="le-mapping-container-header-label col-md-8">
+            @Model.Name
+        </div>
+        <div class="col-md-offset-2 col-md-1">
+            <span class="bx bx-delete small right" onclick="deleteComplexMappingElement(this)"></span>
+        </div>
+    </div>
+
+    <div class="mapping-container-childrens">
+
+        @if(Model.Complexity == LinkElementComplexity.Complex)
+        {
+        
+            foreach (var child in Model.Children)
+            {
+                if (child.Complexity.Equals(LinkElementComplexity.Simple))
+                {
+                    <div class="le-simple le-simple-selector @selectorClass" title="@child.Description">
+                        @Html.Partial("MappingSimpleLinkElement", child)
+                    </div>
+                }
+                else
+                {
+                    <div class="le-complex" title="@child.Description">
+                        <div class="le-complex-header">
+                            @child.Name
+                        </div>
+                    </div>
+                }
+            }
+        }
+        else
+        {
+            <div class="le-simple le-simple-selector @selectorClass" title="@Model.Description">
+                @Html.Partial("MappingSimpleLinkElement", Model)
+            </div>
+        }
+    </div>
+</div>

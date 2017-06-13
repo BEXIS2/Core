@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Xml;
@@ -10,10 +8,10 @@ using BExIS.Dcm.ImportMetadataStructureWizard;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
 using Vaiona.Utils.Cfg;
-using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Extensions;
+using Vaiona.Web.Mvc.Models;
 
-namespace BExIS.Web.Shell.Areas.DCM.Controllers
+namespace BExIS.Modules.Dcm.UI.Controllers
 {
     public class ImportMetadataStructureController : Controller
     {
