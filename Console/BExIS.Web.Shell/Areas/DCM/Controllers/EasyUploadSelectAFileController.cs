@@ -19,7 +19,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
     {
 
         private EasyUploadTaskManager TaskManager;
-        private List<String> supportedExtensions = new List<string>() { ".xlsx" };
+        private List<String> supportedExtensions = new List<string>() { ".xlsx", ".xlsm" };
         
         [HttpGet]
         public ActionResult SelectAFile(int index)

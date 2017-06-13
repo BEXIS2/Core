@@ -283,6 +283,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             #endregion
 
+            #region DataStructure
             Dataset ds = null;
             XmlDocument xmldoc = new XmlDocument();
             XmlElement extraElement = xmldoc.CreateElement("extra");
@@ -334,6 +335,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             sds.Extra = xmldoc;
             sds.Name = "generated import structure " + timestamp;
             sds.Description = "automatically generated structured data structure by user " + GetUsernameOrDefault() + " for file " + title + " on " + timestamp;
+
+            #endregion
 
             ds = dm.CreateEmptyDataset(sds, rp, metadataStructure);
 
@@ -418,77 +421,74 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
 
             #region excel reader
+            
+            int packageSize = 10000;
+            //HACK ?
+            TaskManager.Bus[EasyUploadTaskManager.CURRENTPACKAGESIZE] = packageSize;
 
-            if (TaskManager.Bus[EasyUploadTaskManager.EXTENTION].ToString().Equals(".xls") ||
-                TaskManager.Bus[EasyUploadTaskManager.EXTENTION].ToString().Equals(".xlsx"))
+            int counter = 0;
+
+            EasyUploadExcelReader reader = new EasyUploadExcelReader();
+
+            dm.CheckOutDatasetIfNot(ds.Id, GetUsernameOrDefault()); // there are cases, the dataset does not get checked out!!
+            if (!dm.IsDatasetCheckedOutFor(ds.Id, GetUsernameOrDefault()))
             {
-                int packageSize = 10000;
-                //HACK ?
-                TaskManager.Bus[EasyUploadTaskManager.CURRENTPACKAGESIZE] = packageSize;
-
-                int counter = 0;
-
-                EasyUploadExcelReader reader = new EasyUploadExcelReader();
-
-                dm.CheckOutDatasetIfNot(ds.Id, GetUsernameOrDefault()); // there are cases, the dataset does not get checked out!!
-                if (!dm.IsDatasetCheckedOutFor(ds.Id, GetUsernameOrDefault()))
-                {
-                    throw new Exception(string.Format("Not able to checkout dataset '{0}' for  user '{1}'!", ds.Id, GetUsernameOrDefault()));
-                }
-
-                workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
-
-                counter++;
-                TaskManager.Bus[EasyUploadTaskManager.CURRENTPACKAGE] = counter;
-
-                // open file
-                Stream = reader.Open(TaskManager.Bus[EasyUploadTaskManager.FILEPATH].ToString());
-                //rows = reader.ReadFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), oldSds, (int)id, packageSize).ToArray();
-
-                string selectedDataAreaJsonArray = TaskManager.Bus[EasyUploadTaskManager.SHEET_DATA_AREA].ToString();
-                string selectedHeaderAreaJsonArray = TaskManager.Bus[EasyUploadTaskManager.SHEET_HEADER_AREA].ToString();
-                JavaScriptSerializer serializer = new JavaScriptSerializer();
-                int[] areaDataValues = serializer.Deserialize<int[]>(selectedDataAreaJsonArray);
-                int[] areaHeaderValues = serializer.Deserialize<int[]>(selectedHeaderAreaJsonArray);
-
-                Orientation orientation = 0;
-
-                switch (TaskManager.Bus[EasyUploadTaskManager.SHEET_FORMAT].ToString())
-                {
-                    case "LeftRight":
-                        orientation = Orientation.rowwise;
-                        break;
-                    case "Matrix":
-                        //orientation = Orientation.matrix;
-                        break;
-                    default:
-                        orientation = Orientation.columnwise;
-                        break;
-                }
-
-
-                EasyUploadFileReaderInfo fri = new EasyUploadFileReaderInfo();
-                fri.DataStartRow = areaDataValues[0] + 1;
-                fri.DataStartColumn = areaDataValues[1] + 1;
-                fri.DataEndRow = areaDataValues[2] + 1;
-                fri.DataEndColumn = areaDataValues[3] + 1;
-
-                fri.VariablesStartRow = areaHeaderValues[0] + 1;
-                fri.VariablesStartColumn = areaHeaderValues[1] + 1;
-                fri.VariablesEndRow = areaHeaderValues[2] + 1;
-                fri.VariablesEndColumn = areaHeaderValues[3] + 1;
-
-                fri.Offset = areaDataValues[1];
-                fri.Orientation = orientation;
-                
-                reader.setSubmittedVariableIdentifiers(identifiers);
-
-                rows = reader.ReadFile(Stream, TaskManager.Bus[EasyUploadTaskManager.FILENAME].ToString(), fri, sds, (int)datasetId);
-                
-                dm.EditDatasetVersion(workingCopy, rows.ToList(), null, null);
-                
-                Stream.Close();
+                throw new Exception(string.Format("Not able to checkout dataset '{0}' for  user '{1}'!", ds.Id, GetUsernameOrDefault()));
             }
+
+            workingCopy = dm.GetDatasetWorkingCopy(ds.Id);
+
+            counter++;
+            TaskManager.Bus[EasyUploadTaskManager.CURRENTPACKAGE] = counter;
+
+            // open file
+            Stream = reader.Open(TaskManager.Bus[EasyUploadTaskManager.FILEPATH].ToString());
+            //rows = reader.ReadFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), oldSds, (int)id, packageSize).ToArray();
+
+            string selectedDataAreaJsonArray = TaskManager.Bus[EasyUploadTaskManager.SHEET_DATA_AREA].ToString();
+            string selectedHeaderAreaJsonArray = TaskManager.Bus[EasyUploadTaskManager.SHEET_HEADER_AREA].ToString();
+            JavaScriptSerializer serializer = new JavaScriptSerializer();
+            int[] areaDataValues = serializer.Deserialize<int[]>(selectedDataAreaJsonArray);
+            int[] areaHeaderValues = serializer.Deserialize<int[]>(selectedHeaderAreaJsonArray);
+
+            Orientation orientation = 0;
+
+            switch (TaskManager.Bus[EasyUploadTaskManager.SHEET_FORMAT].ToString())
+            {
+                case "LeftRight":
+                    orientation = Orientation.rowwise;
+                    break;
+                case "Matrix":
+                    //orientation = Orientation.matrix;
+                    break;
+                default:
+                    orientation = Orientation.columnwise;
+                    break;
+            }
+
+
+            EasyUploadFileReaderInfo fri = new EasyUploadFileReaderInfo();
+            fri.DataStartRow = areaDataValues[0] + 1;
+            fri.DataStartColumn = areaDataValues[1] + 1;
+            fri.DataEndRow = areaDataValues[2] + 1;
+            fri.DataEndColumn = areaDataValues[3] + 1;
+
+            fri.VariablesStartRow = areaHeaderValues[0] + 1;
+            fri.VariablesStartColumn = areaHeaderValues[1] + 1;
+            fri.VariablesEndRow = areaHeaderValues[2] + 1;
+            fri.VariablesEndColumn = areaHeaderValues[3] + 1;
+
+            fri.Offset = areaDataValues[1];
+            fri.Orientation = orientation;
+                
+            reader.setSubmittedVariableIdentifiers(identifiers);
+
+            rows = reader.ReadFile(Stream, TaskManager.Bus[EasyUploadTaskManager.FILENAME].ToString(), fri, sds, (int)datasetId);
+                
+            dm.EditDatasetVersion(workingCopy, rows.ToList(), null, null);
+                
+            Stream.Close();
+            
 
             #endregion
 
