@@ -1,5 +1,5 @@
 ﻿@using BExIS.Ddm.Model;
-@using net.sf.saxon.functions
+
 @model SearchModel
 
 @{
@@ -47,7 +47,7 @@
         title = System.StringExtensions.Titleize(@Session["ParentOfSelectAbleCategories"].ToString());
     }
  }
-@using (Html.BeginForm("AddFacetsToSearch", "Home", new { area = "DDM" }))
+@using (Html.BeginForm("AddFacetsToSearch", "Home", new { area = "ddm" }))
 {
     <div id="search_more" style="width: @row_width;">
         @*<div class="bx-title">@title</div>*@

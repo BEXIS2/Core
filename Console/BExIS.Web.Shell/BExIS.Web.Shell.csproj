@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props" Condition="Exists('..\..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -35,6 +36,8 @@
     <TargetFrameworkProfile />
     <UseGlobalApplicationHostFile />
     <DontImportPostSharp>True</DontImportPostSharp>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -56,18 +59,6 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AjaxMin, Version=4.84.4790.14405, Culture=neutral, PublicKeyToken=21ef50ce11b5d80f, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\AjaxMin.4.84.4790.14417\lib\net40\AjaxMin.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Cassette, Version=2.4.2.13844, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Cassette.2.4.2\lib\net40-client\Cassette.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Cassette.Views, Version=2.4.2.13844, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Cassette.Views.2.4.2\lib\net40\Cassette.Views.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="DataAnnotationsExtensions">
       <HintPath>..\..\packages\DataAnnotationsExtensions.1.1.0.0\lib\NETFramework40\DataAnnotationsExtensions.dll</HintPath>
     </Reference>
@@ -104,7 +95,35 @@
     <Reference Include="Ionic.Zip">
       <HintPath>..\..\Libraries\Ionic.Zip.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.Owin, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.Identity.Owin.2.2.1\lib\net45\Microsoft.AspNet.Identity.Owin.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Owin, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Owin.3.1.0\lib\net45\Microsoft.Owin.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Host.SystemWeb, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Owin.Host.SystemWeb.3.1.0\lib\net45\Microsoft.Owin.Host.SystemWeb.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Owin.Security.3.1.0\lib\net45\Microsoft.Owin.Security.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.Cookies, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Owin.Security.Cookies.3.1.0\lib\net45\Microsoft.Owin.Security.Cookies.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.OAuth, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Owin.Security.OAuth.3.1.0\lib\net45\Microsoft.Owin.Security.OAuth.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.Practices.Unity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=6d32ff45e0ccc69f, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Unity.4.0.1\lib\net45\Microsoft.Practices.Unity.dll</HintPath>
       <Private>True</Private>
@@ -129,13 +148,17 @@
       <HintPath>..\..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="NHibernate, Version=4.0.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\NHibernate.4.0.4.4000\lib\net40\NHibernate.dll</HintPath>
+    <Reference Include="NHibernate, Version=4.1.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\NHibernate.4.1.1.4000\lib\net40\NHibernate.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Npgsql, Version=3.1.1.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Npgsql.3.0.7\lib\net45\Npgsql.dll</HintPath>
+    </Reference>
+    <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="PostSharp, Version=4.3.19.0, Culture=neutral, PublicKeyToken=b13fd38b8f9c99d7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -147,8 +170,8 @@
     </Reference>
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data.Linq" />
-    <Reference Include="System.Linq.Dynamic, Version=1.0.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Linq.Dynamic.1.0.4\lib\net40\System.Linq.Dynamic.dll</HintPath>
+    <Reference Include="System.Linq.Dynamic, Version=1.0.6132.35681, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Linq.Dynamic.1.0.7\lib\net40\System.Linq.Dynamic.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Net.Http" />
@@ -273,9 +296,6 @@
       <HintPath>..\..\packages\Microsoft.AspNet.WebPages.WebData.3.2.3\lib\net45\WebMatrix.WebData.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="XmlSampleGenerator">
-      <HintPath>..\..\..\..\..\RDB\GIT\packages\Microsoft.Xml.XMLGen.1.0.0\lib\XmlSampleGenerator.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_GlobalResources\EditorLocalization.de-DE.designer.cs">
@@ -353,87 +373,7 @@
     <Compile Include="Areas\BAM\Models\PartyCustomAttributeValueModel.cs" />
     <Compile Include="Areas\BAM\Models\PartyModel.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Areas\DCM\Controllers\CreateDatasetController.cs" />
-    <Compile Include="Areas\DCM\Controllers\FormController.cs" />
-    <Compile Include="Areas\DCM\Controllers\HelpController.cs" />
-    <Compile Include="Areas\DCM\Controllers\ImportMetadataStructureController.cs" />
-    <Compile Include="Areas\DCM\Controllers\ImportMetadataStructureReadSourceController.cs" />
-    <Compile Include="Areas\DCM\Controllers\ImportMetadataStructureSelectAFileController.cs" />
-    <Compile Include="Areas\DCM\Controllers\ImportMetadataStructureSetParametersController.cs" />
-    <Compile Include="Areas\DCM\Controllers\ImportMetadataStructureSummaryController.cs" />
-    <Compile Include="Areas\DCM\Controllers\ManageMetadataStructureController.cs" />
-    <Compile Include="Areas\DCM\Controllers\PushController.cs" />
-    <Compile Include="Areas\DCM\Controllers\SubmitDefinePrimaryKeyController.cs" />
-    <Compile Include="Areas\DCM\Controllers\SubmitGetFileInformationController.cs" />
-    <Compile Include="Areas\DCM\Controllers\SubmitController.cs" />
-    <Compile Include="Areas\DCM\Controllers\SubmitSelectAFileController.cs" />
-    <Compile Include="Areas\DCM\Controllers\SubmitSpecifyDatasetController.cs" />
-    <Compile Include="Areas\DCM\Controllers\SubmitSummaryController.cs" />
-    <Compile Include="Areas\DCM\Controllers\SubmitValidationController.cs" />
-    <Compile Include="Areas\DCM\DCMAreaRegistration.cs" />
-    <Compile Include="Areas\DCM\Helpers\DCMSeedDataGenerator.cs" />
-    <Compile Include="Areas\DCM\Helpers\UploadUtility.cs" />
-    <Compile Include="Areas\DCM\Models\AbstractStepModel.cs" />
-    <Compile Include="Areas\DCM\Models\ChooseDatasetViewModel.cs" />
-    <Compile Include="Areas\DCM\Models\CreateDatasetViewModel.cs" />
-    <Compile Include="Areas\DCM\Models\CreateDataset\MetadataEditorModel.cs" />
-    <Compile Include="Areas\DCM\Models\CreateDataset\SetupModel.cs" />
-    <Compile Include="Areas\DCM\Models\CreateDataset\StepModelHelper.cs" />
-    <Compile Include="Areas\DCM\Models\FileInfoModel.cs" />
-    <Compile Include="Areas\DCM\Models\FinishUploadModel.cs" />
-    <Compile Include="Areas\DCM\Models\GetFileInformationModel.cs" />
-    <Compile Include="Areas\DCM\Models\ImportMetadata\ParametersModel.cs" />
-    <Compile Include="Areas\DCM\Models\ImportMetadata\ReadSourceModel.cs" />
-    <Compile Include="Areas\DCM\Models\ImportMetadata\SummaryModel.cs" />
-    <Compile Include="Areas\DCM\Models\ListViewItem.cs" />
-    <Compile Include="Areas\DCM\Models\Metadata\AbstractMetadataStepModel.cs" />
-    <Compile Include="Areas\DCM\Models\Metadata\MetadataAttributeModel.cs" />
-    <Compile Include="Areas\DCM\Models\Metadata\MetadataCompoundAttributeModel.cs" />
-    <Compile Include="Areas\DCM\Models\Metadata\MetadataInstanceModel.cs" />
-    <Compile Include="Areas\DCM\Models\Metadata\MetadataPackageModel.cs" />
-    <Compile Include="Areas\DCM\Models\MetadataStructureManagerModel.cs" />
-    <Compile Include="Areas\DCM\Models\PrimaryKeyViewModel.cs" />
-    <Compile Include="Areas\DCM\Models\Push\SendBigFilesToServerModel.cs" />
-    <Compile Include="Areas\DCM\Models\SelectFileViewModel.cs" />
-    <Compile Include="Areas\DCM\Models\ShowHelpModel.cs" />
-    <Compile Include="Areas\DCM\Models\SummaryModel.cs" />
-    <Compile Include="Areas\DCM\Models\TestModel.cs" />
-    <Compile Include="Areas\DCM\Models\UploadWizardParameters.cs" />
-    <Compile Include="Areas\DCM\Models\ValidationModel.cs" />
-    <Compile Include="Areas\DDM\Controllers\AdminController.cs" />
-    <Compile Include="Areas\DDM\Controllers\DataController.cs" />
-    <Compile Include="Areas\DDM\Controllers\HelpController.cs" />
     <Compile Include="Areas\BAM\Controllers\PartyController.cs" />
-    <Compile Include="Areas\DDM\Helpers\GridHelper.cs" />
-    <Compile Include="Areas\DDM\Helpers\helper.cs" />
-    <Compile Include="Areas\DDM\Helpers\HtmlPrefixScopeExtentions.cs" />
-    <Compile Include="Areas\DDM\Models\DatasetPermissionModels.cs" />
-    <Compile Include="Areas\DDM\Models\ShowDataModel.cs" />
-    <Compile Include="Areas\DDM\Models\ShowHelpModel.cs" />
-    <Compile Include="Areas\DDM\Models\ShowMetadataModel.cs" />
-    <Compile Include="Areas\DDM\Models\ShowPrimaryDataModel.cs" />
-    <Compile Include="Areas\DDM\Models\ShowPublishDataModel.cs" />
-    <Compile Include="Areas\DIM\Controllers\AdminController.cs" />
-    <Compile Include="Areas\DIM\Controllers\DataController.cs" />
-    <Compile Include="Areas\DIM\Controllers\ExportGFBIOController.cs" />
-    <Compile Include="Areas\DIM\Controllers\HelpController.cs" />
-    <Compile Include="Areas\DIM\Controllers\MappingController.cs" />
-    <Compile Include="Areas\DIM\Controllers\MetadataController.cs" />
-    <Compile Include="Areas\DIM\DIMAreaRegistration.cs" />
-    <Compile Include="Areas\DIM\Helper\MappingHelper.cs" />
-    <Compile Include="Areas\DIM\Models\AdminModel.cs" />
-    <Compile Include="Areas\DIM\Models\DatasetModel.cs" />
-    <Compile Include="Areas\DIM\Models\DatasetVersionModel.cs" />
-    <Compile Include="Areas\DIM\Models\DataTupleCsvFormatter.cs" />
-    <Compile Include="Areas\DIM\Models\Mapping\LinkElementModels.cs" />
-    <Compile Include="Areas\DIM\Models\Mapping\MappingModel.cs" />
-    <Compile Include="Areas\DIM\Models\MetadataStructureModel.cs" />
-    <Compile Include="Areas\DIM\Models\ShowHelpModel.cs" />
-    <Compile Include="Areas\MSM\Controllers\TestController.cs" />
-    <Compile Include="Areas\MSM\Models\AddTextFieldModel.cs" />
-    <Compile Include="Areas\MSM\Models\TreePartialModel.cs" />
-    <Compile Include="Areas\MSM\Models\TestModel.cs" />
-    <Compile Include="Areas\MSM\MSMAreaRegistration.cs" />
     <Compile Include="Areas\RPM\Classes\DataStructureIO.cs" />
     <Compile Include="Areas\RPM\Controllers\DataStructureEditController.cs" />
     <Compile Include="Areas\RPM\Controllers\DataStructureIOController.cs" />
@@ -445,6 +385,8 @@
     <Compile Include="Areas\RPM\Controllers\Legacy\UnitController.cs" />
     <Compile Include="Areas\RPM\Helpers\HtmlPrefixScopeExtentions.cs" />
     <Compile Include="Areas\RPM\Helpers\RPMSeedDataGenerator.cs" />
+    <Compile Include="Areas\RPM\Helpers\SeedData\AttributeCreator.cs" />
+    <Compile Include="Areas\RPM\Helpers\SeedData\MappingReader.cs" />
     <Compile Include="Areas\RPM\Models\MessageModel.cs" />
     <Compile Include="Areas\RPM\Models\StructureModel.cs" />
     <Compile Include="Areas\RPM\Models\DataStructureEditModel.cs" />
@@ -456,12 +398,8 @@
     <Compile Include="Areas\RPM\Models\Legacy\DataStructureDesignerModel.cs" />
     <Compile Include="Areas\RPM\Models\Legacy\DataStructureTreeModel.cs" />
     <Compile Include="Areas\RPM\Models\Legacy\UnitDimenstionModel.cs" />
-    <Compile Include="Areas\RPM\Models\ShowHelpModel.cs" />
     <Compile Include="Areas\RPM\RPMAreaRegistration.cs" />
-    <Compile Include="Areas\DDM\Controllers\HomeController.cs" />
-    <Compile Include="Areas\DDM\Helpers\SearchUIHelper.cs" />
-    <Compile Include="Areas\DDM\Models\SearchAttributeViewModel.cs" />
-    <Compile Include="Areas\DDM\SearchAreaRegistration.cs" />
+    <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\FooterController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\TermsController.cs" />
@@ -472,10 +410,11 @@
     </Compile>
     <Compile Include="Helpers\BExISDataHelper.cs" />
     <Compile Include="Helpers\BexisModelManager.cs" />
-    <Compile Include="Helpers\BexisUIHelper.cs" />
+    <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\EntitySelectorModel.cs" />
     <Compile Include="Models\UiTestModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
     <DesignData Include="Db\Settings\DB2Dialect.hibernate.cfg.xml">
@@ -485,62 +424,6 @@
     <DesignData Include="Db\Settings\PostgreSQL82Dialect.hibernate.cfg.xml">
       <SubType>Designer</SubType>
     </DesignData>
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img1.png" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img10.png" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img11.png" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img12.png" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img13.jpeg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img14.jpeg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img15.jpeg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img16.jpeg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img17.png" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img18.png" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img19.png" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img2.jpeg" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img20.png" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img21.png" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img22.png" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img23.png" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img24.png" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img25.png" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img26.png" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img27.png" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img28.png" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img29.png" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img3.png" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img4.png" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img5.png" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img6.png" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img7.png" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img8.png" />
-    <Content Include="Areas\DCM\Images\DCM_UserGuide_files_images\DCM_UserGuide_files_img9.png" />
-    <Content Include="Areas\DCM\Views\Help\Informations.xml" />
-    <Content Include="Areas\DDM\Images\DDM_UserGuide_files_images\DDM_UserGuide_files_img1.png" />
-    <Content Include="Areas\DDM\Images\DDM_UserGuide_files_images\DDM_UserGuide_files_img10.png" />
-    <Content Include="Areas\DDM\Images\DDM_UserGuide_files_images\DDM_UserGuide_files_img2.png" />
-    <Content Include="Areas\DDM\Images\DDM_UserGuide_files_images\DDM_UserGuide_files_img3.png" />
-    <Content Include="Areas\DDM\Images\DDM_UserGuide_files_images\DDM_UserGuide_files_img4.png" />
-    <Content Include="Areas\DDM\Images\DDM_UserGuide_files_images\DDM_UserGuide_files_img5.png" />
-    <Content Include="Areas\DDM\Images\DDM_UserGuide_files_images\DDM_UserGuide_files_img6.png" />
-    <Content Include="Areas\DDM\Images\DDM_UserGuide_files_images\DDM_UserGuide_files_img7.png" />
-    <Content Include="Areas\DDM\Images\DDM_UserGuide_files_images\DDM_UserGuide_files_img8.png" />
-    <Content Include="Areas\DDM\Images\DDM_UserGuide_files_images\DDM_UserGuide_files_img9.png" />
-    <Content Include="Areas\DDM\Scripts\ddm.js" />
-    <Content Include="Areas\DDM\Views\Help\Informations.xml" />
-    <Content Include="Areas\DIM\Images\DIM_UserGuide_files_images\DIM_UserGuide_files_img1.png" />
-    <Content Include="Areas\DIM\Views\Help\Informations.xml" />
-    <Content Include="Areas\MSM\Resources\Scripts\angular-dragdrop.min.js" />
-    <Content Include="Areas\MSM\Resources\Scripts\angular-route.min.js" />
-    <Content Include="Areas\MSM\Resources\Scripts\angular.js" />
-    <Content Include="Areas\MSM\Resources\Scripts\jquery-linedtextarea.js" />
-    <Content Include="Areas\MSM\Resources\Scripts\angular.min.js" />
-    <Content Include="Areas\MSM\Resources\Scripts\module.js" />
-    <Content Include="Areas\MSM\Resources\Scripts\snippet.js" />
-    <Content Include="Areas\MSM\Resources\Scripts\tree-repeat.js" />
-    <Content Include="Areas\MSM\Resources\Scripts\zippy-directive.js" />
-    <Content Include="Areas\MSM\Resources\Stylesheets\jquery-linedtextarea.css" />
-    <Content Include="Areas\MSM\Resources\Stylesheets\xsd2htmlTree.xslt" />
-    <Content Include="Areas\MSM\Resources\Stylesheets\xsd2jsonTree.xslt" />
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img10.png" />
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img11.png" />
     <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img12.png" />
@@ -611,32 +494,15 @@
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Content\Images\Bildmarke_BEXIS_cmyk.ai" />
     <Content Include="Content\Images\Logo_BEXIS_cmyk.ai" />
-    <Content Include="Areas\DCM\Views\CreateDataset\Index.cshtml" />
-    <Content Include="Areas\DCM\Views\Form\MetadataEditor.cshtml" />
-    <Content Include="Areas\DCM\Views\Form\_metadataAttributeView.cshtml" />
-    <Content Include="Areas\DCM\Views\Form\_metadataCompoundAttributeView.cshtml" />
-    <Content Include="Areas\DCM\Views\Form\_metadataPackageUsageView.cshtml" />
-    <Content Include="Areas\DCM\Views\Form\_metadataPackageView.cshtml" />
-    <Content Include="Areas\DCM\Views\Form\_metadataCompoundAttributeUsageView.cshtml" />
     <Content Include="Areas\RPM\Views\DataStructureSearch\Index.cshtml" />
     <Content Include="Areas\RPM\Views\DataStructureSearch\_dataStructuredStructurePreview.cshtml" />
     <Content Include="Areas\RPM\Views\DataStructureSearch\_datatructureSearchResult.cshtml" />
     <Content Include="Areas\RPM\Views\DataStructureEdit\Index.cshtml" />
-    <Content Include="Areas\DIM\Views\Import\Index.cshtml" />
-    <Content Include="Areas\MSM\Views\Web.config" />
-    <Content Include="Areas\MSM\Views\_ViewStart.cshtml" />
-    <Content Include="Areas\MSM\Views\Test\Index.cshtml" />
-    <Content Include="Areas\MSM\Views\Test\_TreePartial.cshtml" />
-    <Content Include="Areas\MSM\Views\Test\_AddTextField.cshtml" />
-    <Content Include="Areas\DDM\Views\Data\_SubjectsPartial.cshtml" />
     <Content Include="fonts\FontAwesome.otf" />
     <Content Include="fonts\fontawesome-webfont.woff2" />
     <Content Include="fonts\fontawesome-webfont.woff" />
     <Content Include="fonts\fontawesome-webfont.ttf" />
     <Content Include="fonts\fontawesome-webfont.eot" />
-    <Content Include="Areas\DCM\Views\ManageMetadataStructure\Index.cshtml" />
-    <Content Include="Areas\DDM\Views\Data\_showPublishDataView.cshtml" />
-    <Content Include="Areas\DDM\Views\Data\_dataRepositoryRequirementsView.cshtml" />
     <Content Include="Areas\RPM\Views\DataStructureEdit\_attributeFilter.cshtml" />
     <Content Include="Areas\RPM\Views\DataStructureEdit\_attributeSearchResult.cshtml" />
     <Content Include="Areas\RPM\Views\DataStructureEdit\_dataStructure.cshtml" />
@@ -647,25 +513,10 @@
     <Content Include="Areas\RPM\Views\DataStructureEdit\_editAttribute.cshtml" />
     <Content Include="Areas\RPM\Views\DataStructureEdit\_attributeElement.cshtml" />
     <Content Include="Areas\RPM\Views\DataStructureEdit\_dataTypeDropdown.cshtml" />
-    <Content Include="Areas\DCM\Views\ManageMetadataStructure\_editMetadataStructureView.cshtml" />
-    <Content Include="Areas\DDM\Views\Data\_fileSizeView.cshtml" />
-    <Content Include="Areas\SAM\Views\Dataset\Delete.cshtml" />
-    <Content Include="Areas\DIM\Views\Mapping\Index.cshtml" />
-    <Content Include="Areas\DIM\Views\Mapping\LinkElementContainer.cshtml" />
-    <Content Include="Areas\DIM\Views\Mapping\LinkElement.cshtml" />
-    <Content Include="Areas\DIM\Views\Mapping\LinkElemenRoot.cshtml" />
-    <Content Include="Areas\DIM\Views\Mapping\Mapping.cshtml" />
-    <Content Include="Areas\DIM\Views\Mapping\MappingLinkElement.cshtml" />
-    <Content Include="Areas\DIM\Views\Mapping\MappingSimpleLinkElement.cshtml" />
-    <Content Include="Areas\DIM\Views\Mapping\Mappings.cshtml" />
-    <Content Include="Areas\DIM\Views\Mapping\TransformationRule.cshtml" />
     <None Include="Properties\PublishProfiles\BEXIS 2.10.pubxml" />
     <None Include="Properties\PublishProfiles\bexis2 Release2.10.pubxml" />
     <None Include="Properties\PublishProfiles\BEXIS2.pubxml" />
     <None Include="Properties\PublishProfiles\bexisconf.pubxml" />
-    <Content Include="Areas\SAM\Views\Tenants\_Create.cshtml" />
-    <Content Include="Areas\SAM\Views\Tenants\_Edit.cshtml" />
-    <Content Include="Areas\Site\Views\Footer\Content.cshtml" />
     <Content Include="Areas\BAM\Views\Party\Create.cshtml" />
     <Content Include="Areas\BAM\Views\Party\DeleteConfirm.cshtml" />
     <Content Include="Areas\BAM\Views\Party\Edit.cshtml" />
@@ -1016,22 +867,31 @@
     <Content Include="Themes\Default\Partials\_Breadcrumb.cshtml" />
     <Content Include="Themes\Default\Partials\_Information.cshtml" />
     <Content Include="Views\Test\Index.cshtml" />
-    <Content Include="Views\Shared\_EntitySelectorInWindowView.cshtml" />
-    <Content Include="Views\Shared\_EntitySelectorView.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\DropDown.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\TreeViewItem.cshtml" />
     <Content Include="Themes\Default\Partials\_Menu.cshtml" />
     <Content Include="Views\Terms\Index.cshtml" />
+    <Content Include="Views\Account\EmailConfirmation.cshtml" />
+    <Content Include="Views\Account\ExternalSignInConfirmation.cshtml" />
+    <Content Include="Views\Account\ExternalSignInFailure.cshtml" />
+    <Content Include="Views\Account\ForgotPassword.cshtml" />
+    <Content Include="Views\Account\ForgotPasswordConfirmation.cshtml" />
+    <Content Include="Views\Account\ResetPassword.cshtml" />
+    <Content Include="Views\Account\ResetPasswordConfirmation.cshtml" />
+    <Content Include="Views\Account\SendCode.cshtml" />
+    <Content Include="Views\Account\SignIn.cshtml" />
+    <Content Include="Views\Account\SignUp.cshtml" />
+    <Content Include="Views\Account\VerifyCode.cshtml" />
+    <Content Include="Views\Account\_ExternalSignIns.cshtml" />
+    <Content Include="Views\Account\_RemoveAccount.cshtml" />
+    <Content Include="Views\Shared\Info.cshtml" />
+    <Content Include="Views\Shared\Error.cshtml" />
+    <Content Include="Views\Shared\LockOut.cshtml" />
+    <Content Include="Views\Footer\Content.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Areas\BAM\Views\Shared\" />
-    <Folder Include="Areas\DCM\Views\DcmAdmin\" />
-    <Folder Include="Areas\DCM\Views\Home\" />
-    <Folder Include="Areas\DDM\Views\Shared\" />
-    <Folder Include="Areas\DIM\Views\Api\" />
-    <Folder Include="Areas\DIM\Views\Shared\" />
-    <Folder Include="Areas\MSM\Views\Shared\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Home\About.cshtml" />
@@ -1088,32 +948,6 @@
     <Content Include="Themes\Default\Partials\_ThemeSelector.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\DDM\Views\_ViewStart.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\DDM\Views\Home\_dropBoxView.cshtml" />
-    <Content Include="Areas\DDM\Views\Home\_metaDataResultGridView.cshtml" />
-    <Content Include="Areas\DDM\Views\Home\_radioButtonsView.cshtml" />
-    <Content Include="Areas\DDM\Views\Home\_rangeSliderView.cshtml" />
-    <Content Include="Areas\DDM\Views\Home\_resultGridView.cshtml" />
-    <Content Include="Areas\DDM\Views\Home\_resultListElementView.cshtml" />
-    <Content Include="Areas\DDM\Views\Home\_resultListView.cshtml" />
-    <Content Include="Areas\DDM\Views\Home\_searchBreadcrumb.cshtml" />
-    <Content Include="Areas\DDM\Views\Home\_searchContent.cshtml" />
-    <Content Include="Areas\DDM\Views\Home\_searchFacets.cshtml" />
-    <Content Include="Areas\DDM\Views\Home\_searchHeader.cshtml" />
-    <Content Include="Areas\DDM\Views\Home\_searchProperties.cshtml" />
-    <Content Include="Areas\DDM\Views\Home\_sliderView.cshtml" />
-    <Content Include="Areas\DDM\Views\Home\_windowCheckBoxList.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\DDM\Views\Data\ShowMetaData.cshtml" />
-    <Content Include="Areas\DDM\Views\Data\ShowPrimaryData.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\DDM\Views\Home\Index.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Themes\Default\Partials\_Footer.cshtml" />
   </ItemGroup>
   <ItemGroup>
@@ -1127,22 +961,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Test\XmlEdit.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\DCM\Views\Submit\Index.cshtml" />
-    <Content Include="Areas\DCM\Views\SubmitSelectAFile\SelectAFile.cshtml" />
-    <Content Include="Areas\DCM\Views\SubmitSpecifyDataset\SpecifyDataset.cshtml" />
-    <Content Include="Areas\DCM\Views\SubmitValidation\Validation.cshtml" />
-    <Content Include="Areas\DCM\Views\SubmitSummary\Summary.cshtml" />
-    <Content Include="Areas\DCM\Views\Submit\UploadWizard.cshtml" />
-    <Content Include="Areas\DCM\Views\Submit\_defaultDatatypFomularView.cshtml" />
-    <Content Include="Areas\DCM\Views\Submit\_taskListView.cshtml" />
-    <Content Include="Areas\DCM\Views\SubmitGetFileInformation\_txtFormularView.cshtml" />
-    <Content Include="Areas\DCM\Views\Submit\_uploadWizardNav.cshtml" />
-    <Content Include="Areas\DCM\Views\Submit\_useTemplateView.cshtml" />
-    <Content Include="Areas\DCM\Views\SubmitGetFileInformation\_xlsFormularView.cshtml" />
-    <Content Include="Areas\DCM\Views\Web.config" />
-    <Content Include="Areas\DCM\Views\_ViewStart.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\RPM\Views\Web.config">
@@ -1240,50 +1058,6 @@
       <Project>{3a573810-b9f9-4bde-8504-01ef49de0c20}</Project>
       <Name>BExISMigration</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Modules\DCM\BExIS.Dcm.CreateDatasetWizard\BExIS.Dcm.CreateDatasetWizard.csproj">
-      <Project>{93eeeda5-6d79-41a1-947b-0a3fc9e46abc}</Project>
-      <Name>BExIS.Dcm.CreateDatasetWizard</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Modules\DCM\BExIS.Dcm.ImportMetadataStructure\BExIS.Dcm.ImportMetadataStructureWizard.csproj">
-      <Project>{99b0aa63-9ca5-4d42-9cf6-5e8896cd5d25}</Project>
-      <Name>BExIS.Dcm.ImportMetadataStructureWizard</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Modules\DCM\BExIS.Dcm.UploadWizard\BExIS.Dcm.UploadWizard.csproj">
-      <Project>{2c846721-a221-4ae5-a671-4b86de4d3805}</Project>
-      <Name>BExIS.Dcm.UploadWizard</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Modules\DCM\BExIS.Dcm.Wizard\BExIS.Dcm.Wizard.csproj">
-      <Project>{d17cdd9d-b87b-441b-9248-5c54e92ffc81}</Project>
-      <Name>BExIS.Dcm.Wizard</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Modules\DDM\BExIS.Ddm.Api\BExIS.Ddm.Api.csproj">
-      <Project>{8519eac6-fbf8-48b3-813f-e0b9d3cc4a52}</Project>
-      <Name>BExIS.Ddm.Api</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Modules\DDM\BExIS.Ddm.Model\BExIS.Ddm.Model.csproj">
-      <Project>{ab46beb8-c36d-412f-9b1a-646c86299a87}</Project>
-      <Name>BExIS.Ddm.Model</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Modules\DDM\BExIS.Ddm.Providers.DummyProvider\BExIS.Ddm.Providers.DummyProvider.csproj">
-      <Project>{d89e501a-4873-4883-8741-27f0acd03e0b}</Project>
-      <Name>BExIS.Ddm.Providers.DummyProvider</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Modules\DDM\BExIS.Ddm.Providers.LuceneProvider\BExIS.Ddm.Providers.LuceneProvider.csproj">
-      <Project>{fbe3101a-791a-4eab-9b8f-f6e071f8dbdc}</Project>
-      <Name>BExIS.Ddm.Providers.LuceneProvider</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Modules\DIM\BExIS.Dim.Entities\BExIS.Dim.Entities.csproj">
-      <Project>{34cad2a2-6928-458b-b8dc-af71d55f20cc}</Project>
-      <Name>BExIS.Dim.Entities</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Modules\DIM\BExIS.Dim.Helper\BExIS.Dim.Helpers.csproj">
-      <Project>{81ef18e8-dced-4980-96f9-e99124075b82}</Project>
-      <Name>BExIS.Dim.Helpers</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Modules\DIM\BExIS.Dim.Services\BExIS.Dim.Services.csproj">
-      <Project>{cac933a2-6849-4c61-82b4-cbf4052210cc}</Project>
-      <Name>BExIS.Dim.Services</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Modules\RPM\BExIS.RPM.Model\BExIS.RPM.Model.csproj">
       <Project>{063b9e3f-e0dd-43fe-9910-5b1544b8b861}</Project>
       <Name>BExIS.RPM.Model</Name>
@@ -1295,10 +1069,6 @@
     <ProjectReference Include="..\..\Modules\DDM\BExIS.Ddm.Model\BExIS.Ddm.Model.csproj">
       <Project>{ab46beb8-c36d-412f-9b1a-646c86299a87}</Project>
       <Name>BExIS.Ddm.Model</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Modules\DDM\BExIS.Ddm.Providers.DummyProvider\BExIS.Ddm.Providers.DummyProvider.csproj">
-      <Project>{d89e501a-4873-4883-8741-27f0acd03e0b}</Project>
-      <Name>BExIS.Ddm.Providers.DummyProvider</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Modules\DDM\BExIS.Ddm.Providers.LuceneProvider\BExIS.Ddm.Providers.LuceneProvider.csproj">
       <Project>{fbe3101a-791a-4eab-9b8f-f6e071f8dbdc}</Project>
@@ -1314,50 +1084,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\DDM\Views\Admin\SearchDesigner.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\DDM\Views\Admin\_editSearchAttribute.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Areas\RPM\Views\Home\_editVariable.cshtml" />
-    <Content Include="Areas\DCM\Views\SubmitGetFileInformation\GetFileInformation.cshtml" />
-    <Content Include="Areas\DDM\Views\Admin\ReIndexSearch.cshtml" />
-    <Content Include="Areas\DCM\Views\Submit\FinishUpload.cshtml" />
-    <Content Include="Areas\DCM\Views\Submit\Test.cshtml" />
-    <Content Include="Areas\DCM\Views\Shared\_errorMessages.cshtml" />
-    <Content Include="Areas\DCM\Views\Submit\_selectDataStructureId.cshtml" />
-    <Content Include="Areas\DCM\Views\SubmitSpecifyDataset\_selectADatasetId.cshtml" />
-    <Content Include="Areas\DDM\Views\Data\_previewDatastructure.cshtml" />
-    <Content Include="Areas\DDM\Views\Data\_unstructuredDataView.cshtml" />
-    <Content Include="Areas\DDM\Views\Data\_structuredDataView.cshtml" />
-    <Content Include="Areas\DCM\Views\Push\Index.cshtml" />
-    <Content Include="Areas\DCM\Views\Push\_fileListView.cshtml" />
-    <Content Include="Areas\DDM\Views\Data\ShowData.cshtml" />
     <Content Include="Areas\RPM\Views\Home\_showDatasets.cshtml" />
-    <Content Include="Areas\DDM\Views\Web.config" />
-    <Content Include="Areas\DIM\Views\Admin\Index.cshtml" />
-    <Content Include="Areas\DIM\Views\Web.config" />
-    <Content Include="Areas\DIM\Views\_ViewStart.cshtml" />
-    <Content Include="Areas\DDM\Views\Admin\_metadataNode.cshtml" />
-    <Content Include="Areas\DIM\Views\Admin\_metadataStructureView.cshtml" />
-    <Content Include="Areas\DCM\Views\ImportMetadataStructureReadSource\ReadSource.cshtml" />
-    <Content Include="Areas\DCM\Views\ImportMetadataStructureSelectAFile\SelectAFile.cshtml" />
-    <Content Include="Areas\DCM\Views\ImportMetadataStructureSummary\Summary.cshtml" />
-    <Content Include="Areas\DCM\Views\ImportMetadataStructure\ImportMetadataStructureWizard.cshtml" />
-    <Content Include="Areas\DCM\Views\ImportMetadataStructure\Index.cshtml" />
-    <Content Include="Areas\DCM\Views\ImportMetadataStructure\_taskListView.cshtml" />
-    <Content Include="Areas\DCM\Views\ImportMetadataStructure\_wizardNav.cshtml" />
-    <Content Include="Areas\DCM\Views\ImportMetadataStructureSetParameters\SetParameters.cshtml" />
-    <Content Include="Areas\DCM\Views\SubmitDefinePrimaryKey\DefinePrimaryKey.cshtml" />
     <Content Include="Areas\RPM\Views\Home\_dataStructureSaveAs.cshtml" />
-    <Content Include="Areas\DDM\Views\Home\_myDatasetGridView.cshtml" />
-    <Content Include="Areas\DDM\Views\Data\_showItem.cshtml" />
-    <Content Include="Areas\DCM\Views\Shared\_summaryErrorMessages.cshtml" />
-    <Content Include="Areas\DCM\Views\Help\Index.cshtml" />
     <Content Include="Areas\RPM\Views\Help\Index.cshtml" />
-    <Content Include="Areas\DDM\Views\Help\Index.cshtml" />
-    <Content Include="Areas\DIM\Views\Help\Index.cshtml" />
     <Content Include="Areas\RPM\Views\DataAttribute\AttributeManager.cshtml" />
     <Content Include="Areas\RPM\Views\Shared\_domainConstraintView.cshtml" />
     <Content Include="Areas\RPM\Views\DataAttribute\_domainItemView.cshtml" />
@@ -1510,5 +1240,11 @@ C:\Windows\System32\xcopy "$(SolutionDir)Libraries\Vaiona\Workspace\Components\V
   <Target Name="EnsurePostSharpImported" BeforeTargets="BeforeBuild" Condition="'$(PostSharp30Imported)' == ''">
     <Error Condition="!Exists('..\..\packages\PostSharp.4.3.19\tools\PostSharp.targets')" Text="This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://www.postsharp.net/links/nuget-restore." />
     <Error Condition="Exists('..\..\packages\PostSharp.4.3.19\tools\PostSharp.targets')" Text="The build restored NuGet packages. Build the project again to include these packages in the build. For more information, see http://www.postsharp.net/links/nuget-restore." />
+  </Target>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props'))" />
   </Target>
 </Project>

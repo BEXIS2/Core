@@ -1,13 +1,13 @@
 ﻿using BExIS.Dim.Entities.Mapping;
 using BExIS.Dim.Services;
-using BExIS.Web.Shell.Areas.DIM.Helper;
-using BExIS.Web.Shell.Areas.DIM.Models.Mapping;
+using BExIS.Modules.Dim.UI.Helper;
+using BExIS.Modules.Dim.UI.Models.Mapping;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 
-namespace BExIS.Web.Shell.Areas.DIM.Controllers
+namespace BExIS.Modules.Dim.UI.Controllers
 {
     public class MappingController : Controller
     {

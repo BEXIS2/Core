@@ -20,7 +20,9 @@ namespace BExIS.Web.Shell.Areas.BAM
                 "BAM/{controller}/{action}/{id}",
                 new { action = "Index", id = UrlParameter.Optional }
             );
-            if (AppConfiguration.CreateDatabase) BAM.Helpers.BAMSeedDataGenerator.GenerateSeedData();
+            // Javad 09.05.2017, this should be changed to the new modualirty mechanism
+            // also all other modules' seed data generation
+            //if (AppConfiguration.CreateDatabase) BAM.Helpers.BAMSeedDataGenerator.GenerateSeedData();
         }
     }
 }

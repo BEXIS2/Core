@@ -1,39 +1,27 @@
-﻿using System;
+﻿using BExIS.Security.Entities.Authorization;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using BExIS.Security.Entities.Authorization;
 using Vaiona.Entities.Common;
 
 namespace BExIS.Security.Entities.Objects
 {
     public class Entity : BaseEntity
     {
-        #region Attributes
-
-        public virtual string Name { get; set; }
+        public Entity()
+        {
+            Permissions = new List<EntityPermission>();
+        }
 
         public virtual string AssemblyPath { get; set; }
         public virtual string ClassPath { get; set; }
+        public virtual string Name { get; set; }
+        public virtual ICollection<EntityPermission> Permissions { get; set; }
 
+        // TODO: REMOVAL of obsolete properties
+        [Obsolete]
         public virtual bool Securable { get; set; }
+
+        [Obsolete]
         public virtual bool UseMetadata { get; set; }
-
-        #endregion
-
-        #region Associations
-
-        public virtual ICollection<DataPermission> DataPermissions { get; set; }
-
-        #endregion
-
-        #region Methods
-
-        public Entity()
-        {
-            DataPermissions = new List<DataPermission>();
-        }
-
-        #endregion
     }
 }

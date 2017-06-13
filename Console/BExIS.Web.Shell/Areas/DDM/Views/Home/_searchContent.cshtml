@@ -1,5 +1,7 @@
 ﻿@using BExIS.Ddm.Model;
 @using System.Data;
+@using Telerik.Web.Mvc.UI;
+
 @model SearchResult
 
 @{
@@ -93,7 +95,7 @@
             $('#resultList').show();
             $('#resultGrid').hide();
 
-            $.post('@Url.Action("SetResultViewVar", "Home", new RouteValueDictionary { { "area", "DDM" } })',
+            $.post('@Url.Action("SetResultViewVar", "Home", new RouteValueDictionary { { "area", "ddm" } })',
             { key: "resultView", value: 'list' }, function (data) {
                 //alert("Success " + data.success);
             });
@@ -105,7 +107,7 @@
             $("#showPreviewDS-resultList").empty();
             $('#resultGrid').show();
 
-            $.post('@Url.Action("SetResultViewVar", "Home", new RouteValueDictionary { { "area", "DDM" } })',
+            $.post('@Url.Action("SetResultViewVar", "Home", new RouteValueDictionary { { "area", "ddm" } })',
             { key: "resultView", value: 'grid' }, function (data) {
                 //alert("Success " + data.success);
             });

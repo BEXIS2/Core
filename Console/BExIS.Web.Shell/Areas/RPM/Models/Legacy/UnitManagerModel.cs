@@ -53,6 +53,7 @@ namespace BExIS.Web.Shell.Areas.RPM.Models
                 Unit.AssociatedDataTypes = tempUnit.AssociatedDataTypes;
             else
                 Unit.AssociatedDataTypes = new List<DataType>();
+
             Unit.Dimension = unitManager.DimensionRepo.Get(tempUnit.Dimension.Id);
             inUse = unitInUse(tempUnit);
         }

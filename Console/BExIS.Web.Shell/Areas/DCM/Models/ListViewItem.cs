@@ -1,5 +1,5 @@
 ﻿
-namespace BExIS.Web.Shell.Areas.DCM.Models
+namespace BExIS.Modules.Dcm.UI.Models
 {
     public class ListViewItem
     {

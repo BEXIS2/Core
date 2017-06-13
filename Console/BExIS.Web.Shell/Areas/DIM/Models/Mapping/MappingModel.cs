@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace BExIS.Web.Shell.Areas.DIM.Models.Mapping
+namespace BExIS.Modules.Dim.UI.Models.Mapping
 {
     public abstract class MappingModel
     {

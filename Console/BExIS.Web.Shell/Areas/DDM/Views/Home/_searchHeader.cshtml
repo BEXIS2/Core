@@ -1,8 +1,11 @@
 ﻿@using BExIS.Ddm.Model;
+@using Telerik.Web.Mvc.UI;
+
+
 @model SearchModel
 
 <div class="searchHeader">           
-@using (Html.BeginForm("Index", "Home", new {area="DDM"}))
+@using (Html.BeginForm("Index", "Home", new {area="ddm"}))
 { 
      
    <div id="search_Components"> 
@@ -67,12 +70,12 @@
          //alert(e.value);
          var data = e.value;
          var index = $(':selected').val();
-         $.post('@Url.Action("FilterByDropDownList", "Home", new RouteValueDictionary { { "area", "DDM" } })', { SelectedFilter: data }, function (response) { });
+         $.post('@Url.Action("FilterByDropDownList", "Home", new RouteValueDictionary { { "area", "ddm" } })', { SelectedFilter: data }, function (response) { });
 
      }
 
      function changeSearchType(e) {
-         $.post('@Url.Action("ChangeSearchValuesACBySearchType", "Home", new RouteValueDictionary { { "area", "DDM" } })', { value: e.value }, function (response) { });
+         $.post('@Url.Action("ChangeSearchValuesACBySearchType", "Home", new RouteValueDictionary { { "area", "ddm" } })', { value: e.value }, function (response) { });
      }
 
 

@@ -1,10 +1,4 @@
-﻿using BExIS.Dim.Entities;
-using BExIS.Dim.Entities.Mapping;
-using BExIS.Dim.Entities.Publication;
-using BExIS.Dim.Helpers;
-using BExIS.Dim.Helpers.GFBIO;
-using BExIS.Dim.Services;
-using BExIS.Dlm.Entities.Data;
+﻿using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
@@ -81,6 +75,43 @@ namespace BExIS.Web.Shell.Controllers
             return View("Index", model);
         }
 
+        /// <summary>
+        /// Commented by Javad due to modularity issues.
+        /// NOTE: module tests must go to the modules. At best to a Test project (or at least to a test controller)
+        /// Thes functions should call the APIs of the DIM module and get json objects back.
+        /// If Publication or any other entity is not part of the DLM, it is visible only to its own module.
+        /// Other mosules who consume the API results of a module, should only expect .NET types, DLM types, json, xml, CSV, or Html.
+        /// </summary>
+        /*
+        public ActionResult MappingTest()
+        {
+
+            //create Linkelements
+
+            MappingManager mappingManager = new MappingManager();
+
+            LinkElement source = mappingManager.CreateLinkElement(
+                1, LinkElementType.MetadataStructure, LinkElementComplexity.Complex, "myMDS", ""
+                , ""
+                );
+
+            LinkElement target = mappingManager.CreateLinkElement(
+                1, LinkElementType.System, LinkElementComplexity.Complex, "System"
+                , "", ""
+                );
+
+            Mapping m = mappingManager.CreateMapping(source, target, 1, null);
+
+            mappingManager.DeleteMapping(m);
+            mappingManager.DeleteLinkElement(source);
+            mappingManager.DeleteLinkElement(target);
+
+            UiTestModel model = new UiTestModel();
+            model = DynamicListToDataTable();
+
+
+            return View("Index", model);
+        }
         public async Task<ActionResult> Call()
         {
 
@@ -203,7 +234,6 @@ namespace BExIS.Web.Shell.Controllers
             }
         }
 
-
         public ActionResult publicationTest()
         {
             //get datasetversion 
@@ -240,7 +270,7 @@ namespace BExIS.Web.Shell.Controllers
             model = DynamicListToDataTable();
             return View("Index", model);
         }
-
+        */
 
         //event handler to manage the errors
         private void verifyErrors(object sender, ValidationEventArgs args)
@@ -356,34 +386,5 @@ namespace BExIS.Web.Shell.Controllers
         }
 
 
-        public ActionResult MappingTest()
-        {
-
-            //create Linkelements
-
-            MappingManager mappingManager = new MappingManager();
-
-            LinkElement source = mappingManager.CreateLinkElement(
-                1, LinkElementType.MetadataStructure, LinkElementComplexity.Complex, "myMDS", ""
-                , ""
-                );
-
-            LinkElement target = mappingManager.CreateLinkElement(
-                1, LinkElementType.System, LinkElementComplexity.Complex, "System"
-                , "", ""
-                );
-
-            Mapping m = mappingManager.CreateMapping(source, target, 1, null);
-
-            mappingManager.DeleteMapping(m);
-            mappingManager.DeleteLinkElement(source);
-            mappingManager.DeleteLinkElement(target);
-
-            UiTestModel model = new UiTestModel();
-            model = DynamicListToDataTable();
-
-
-            return View("Index", model);
-        }
     }
 }

@@ -1,18 +1,13 @@
 ﻿<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Security.Entities" namespace="BExIS.Security.Entities.Subjects">
-  <joined-subclass xmlns="urn:nhibernate-mapping-2.2" name="Group" table="Groups" extends="Subject" dynamic-update="true">
-
-    <!-- Mapping Subject Properties -->
-    <key column="Id"/>
-    <!--An index should be on this field. E.g., index="idx_Groups_id"-->
-
-    <!-- Role Entity Properties -->
-    <property name="Description" type="String" />   
-
-    <set name="Users" table="Groups_Users" cascade="save-update" lazy="true">
-      <key column="GroupRef"/>
-      <many-to-many column="UserRef" class="User"/>
+  <union-subclass xmlns="urn:nhibernate-mapping-2.2" name="Group" table="Groups" extends="Subject" dynamic-update="true">
+    <property name="Description" type="String" />
+    <property name="IsValid" type="yes_no" />
+    <property name="GroupType" type="BExIS.Security.Entities.Subjects.GroupType, BExIS.Security.Entities">
+      <column name="GroupType" not-null="true" sql-type="int" />
+    </property>
+    <set name="Users" table="Users_Groups" cascade="save-update" inverse="true" lazy="true">
+      <key column="GroupRef" />
+      <many-to-many column="UserRef" class="BExIS.Security.Entities.Subjects.User, BExIS.Security.Entities" />
     </set>
-
-  </joined-subclass>
-
+  </union-subclass>
 </hibernate-mapping>

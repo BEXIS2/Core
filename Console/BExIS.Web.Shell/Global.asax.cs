@@ -1,18 +1,19 @@
-﻿using System.IO;
+﻿using BExIS.Ext.Services;
+using System;
+using System.IO;
+using System.Linq;
+using System.Web;
+using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Vaiona.IoC;
+using Vaiona.Logging;
+using Vaiona.Model.MTnt;
+using Vaiona.MultiTenancy.Api;
 using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
-using Vaiona.Web.Mvc;
 using Vaiona.Web.Mvc.Data;
-using System.Web;
-using BExIS.Ext.Services;
-using Vaiona.MultiTenancy.Api;
-using Vaiona.Model.MTnt;
-using System.Web.Http;
-using System;
 using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Web.Shell
@@ -35,82 +36,104 @@ namespace BExIS.Web.Shell
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
-            //routes.MapRoute(
-            //    "DDM", //Landing page
-            //    "",
-            //    new { area = "DDM", controller = "Home", action = "Index" }
-            //    , new[] { "BExIS.Web.Shell.Areas.DDM.Controllers" }
-            //).DataTokens["UseNamespaceFallback"] = false;
-
-            //routes.MapRoute(
-            //   "Home",
-            //   "Home",
-            //   new { controller = "Home", action = "Index" }
-            //   , new[] { "BExIS.Web.Shell.Controllers" }
-            //);
-
             routes.MapRoute(
                "Default", // Route name
                "{controller}/{action}/{id}", // URL with parameters
-               new { controller = "Home", action = "Index", id = UrlParameter.Optional } // Parameter defaults
+               new { controller = "home", action = "index", id = UrlParameter.Optional } // Parameter defaults
                , new[] { "BExIS.Web.Shell.Controllers" } // to prevent conflict between root controllers and area controllers that have same names
            );
 
-          //  routes.MapRoute(
-          //    "RPM",
-          //    "RPM/{controller}/{action}/{id}",
-          //    new { controller = "Home", action = "Index" }
-          //    , new[] { "BExIS.Web.Shell.Areas.RPM.Controllers" }
-            //).DataTokens = new RouteValueDictionary(new { area = "RPM" });
         }
 
         protected void Application_Start()
         {
-			MvcHandler.DisableMvcResponseHeader = true;
-		
-            init();
-            ModuleManager.RegisterShell(Path.Combine(AppConfiguration.AppRoot, "Shell.Manifest.xml")); // this should be called before RegisterAllAreas
-            AreaRegistration.RegisterAllAreas(); // this is the starting point of geting modules registered
-            GlobalConfiguration.Configure(WebApiConfig.Register);
-            loadModules();
-            ModuleManager.BuildExportTree();
-            //GlobalFilters.Filters.Add(new SessionTimeoutFilterAttribute());
+            MvcHandler.DisableMvcResponseHeader = true;
 
+            initIoC();
+            GlobalConfiguration.Configure(WebApiConfig.Register);
+            AppDomain.CurrentDomain.AssemblyResolve += ModuleManager.ResolveCurrentDomainAssembly;
+            initModules();
+            initPersistence();
             RegisterGlobalFilters(GlobalFilters.Filters);
             RegisterRoutes(RouteTable.Routes);
+            ModuleManager.BuildExportTree();
+            initTenancy();
+            ModuleManager.StartModules();
+        }
 
+        private void initTenancy()
+        {
             ITenantResolver tenantResolver = IoCFactory.Container.Resolve<ITenantResolver>();
             ITenantPathProvider pathProvider = new BExISTenantPathProvider(); // should be instantiated by the IoC. client app should provide the Path Ptovider based on its file and tenant structure
             tenantResolver.Load(pathProvider);
-
-
         }
 
-        private void init()
+        private void initIoC()
         {
             IoCFactory.StartContainer(Path.Combine(AppConfiguration.AppRoot, "IoC.config"), "DefaultContainer"); // use AppConfig to access the app root folder
+        }
+
+        private void initModules()
+        {
+            ModuleManager.RegisterShell(Path.Combine(AppConfiguration.AppRoot, "Shell.Manifest.xml")); // this should be called before RegisterAllAreas
+            AreaRegistration.RegisterAllAreas(GlobalConfiguration.Configuration); // this is the starting point of geting modules registered
+            // at the time of this call, the PluginInitilizer has already loaded the plug-ins
+            //ModuleBootstrapper.Initialize();
+        }
+
+        private void initPersistence()
+        {
             IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager(); // just to prepare data access environment
             pManager.Configure(AppConfiguration.DefaultApplicationConnection.ConnectionString, AppConfiguration.DatabaseDialect, "Default", AppConfiguration.ShowQueries);
             if (AppConfiguration.CreateDatabase)
+            {
                 pManager.ExportSchema();
-            // enumerate modules and check if they need to export their schema. catalog/module/installed=true/false
-            // the init function may need to be executed after area registration
+            }
             pManager.Start();
-            ////pManager.UpdateSchema(true, true); // seems NH has dropped the support for schema update!
-        }
 
-        private void loadModules()
-        {
-            // at the time of this call, the PluginInitilizer has already loaded the plug-ins
-            ModuleBootstrapper.Initialize();
-            AppDomain.CurrentDomain.AssemblyResolve += ModuleBootstrapper.ResolveCurrentDomainAssembly;
-            ModuleBootstrapper.StartModules();
+            // If there is any active module in catalong at the DB creation time, it would be automatically installed.
+            // Installation means, the modules' Install method is called, which usually generates the seed data
+            if (AppConfiguration.CreateDatabase)
+            {
+                foreach (var module in ModuleManager.ModuleInfos.Where(p => ModuleManager.IsActive(p.Id)))
+                {
+                    ModuleManager.GetModuleInfo(module.Id).Plugin.Install();
+                }
+            }
+            // if there are pending modules, their schema (if exists) must be applied.
+            else if (ModuleManager.HasPendingInstallation())
+            {
+                try
+                {
+                    pManager.UpdateSchema();
+                }
+                catch (Exception ex)
+                { }
+                // When the pending modules' schemas are ported, their potential seed data should be generated.
+                // This is done through calling Install method.
+                foreach (var moduleId in ModuleManager.PendingModules())
+                {
+                    // The install method of the plugin is called once and only once.
+                    // It generates the seed data and other module specific initializations
+                    try
+                    {
+                        ModuleManager.GetModuleInfo(moduleId).Plugin.Install();
+                        // For security reasons, pending modules go to the "inactive" status after schema export. 
+                        // An administrator can endable them via the management console
+                        ModuleManager.Disable(moduleId);
+                    }
+                    catch (Exception ex)
+                    {
+                        LoggerFactory.LogCustom(string.Format("Error installing module {0}. {1}", moduleId, ex.Message));
+                    }
+                }
+            }
         }
 
         protected void Application_End()
         {
-            ModuleBootstrapper.ShutdownModules();
-            IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager();            
+            ModuleManager.ShutdownModules();
+            IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager();
             pManager.Shutdown(); // release all data access related resources!
             IoCFactory.ShutdownContainer();
         }
@@ -145,14 +168,13 @@ namespace BExIS.Web.Shell
 
         protected void Session_End()
         {
-            //IoCContainer container = Session["SessionLevelContainer"] as IoCContainer;
             IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager();
-            pManager.ShutdownConversation(); 
+            pManager.ShutdownConversation();
             IoCFactory.Container.ShutdownSessionLevelContainer();
         }
 
         protected virtual void Application_BeginRequest()
-        {            
+        {
         }
 
         /// <summary>
@@ -165,11 +187,11 @@ namespace BExIS.Web.Shell
             //IPersistenceManager pManager = PersistenceFactory.GetPersistenceManager();
             //pManager.ShutdownConversation();
         }
-		
-		protected void Application_PreSendRequestHeaders()
+
+        protected void Application_PreSendRequestHeaders()
         {
             Response.Headers.Remove("Server");
-            Response.Headers.Remove("X-AspNet-Version"); 
+            Response.Headers.Remove("X-AspNet-Version");
             Response.Headers.Remove("X-AspNetMvc-Version");
             Response.Headers.Remove("X-Powered-By");
         }

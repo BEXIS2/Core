@@ -6,19 +6,19 @@ using System.Web;
 using System.Web.Mvc;
 using System.Xml;
 using System.Xml.Linq;
-using BExIS.Web.Shell.Areas.DIM.Models;
+using BExIS.Modules.Dim.UI.Models;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
 using BExIS.Xml.Helpers;
 using BExIS.Xml.Helpers.Mapping;
-using Vaiona.Utils.Cfg;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Xml.Services;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Extensions;
+using Vaiona.Utils.Cfg;
 
-namespace BExIS.Web.Shell.Areas.DIM.Controllers
+namespace BExIS.Modules.Dim.UI.Controllers
 {
     public class AdminController : Controller
     {

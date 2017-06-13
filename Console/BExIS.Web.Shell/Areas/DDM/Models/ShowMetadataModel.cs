@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using BExIS.Web.Shell.Areas.DDM.Models;
 using BExIS.Xml.Helpers;
 
 /// <summary>
 /// 
 /// </summary>        
-namespace BExIS.Web.Shell.Areas.DDM.Models
+namespace BExIS.Modules.Ddm.UI.Models
 {
     /// <summary>
     /// model of showing Metadata
@@ -25,7 +22,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Models
         /// Show metadata model required
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref="BExIS.Web.Shell\Areas\DDM\Views\Data\ShowMetaData.cshtml"/>
+        /// <seealso cref="BExIS.Web.Shell\Areas\ddm\Views\Data\ShowMetaData.cshtml"/>
         /// <param>NA</param>       
         public ShowMetadataModel()
         {
