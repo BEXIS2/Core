@@ -141,7 +141,7 @@
   <ItemGroup>
     <Compile Include="Controllers\EntitiesController.cs" />
     <Compile Include="Controllers\EntityPermissionsController.cs" />
-    <Compile Include="Controllers\EntityRequestsController.cs" />
+    <Compile Include="Controllers\RequestsController.cs" />
     <Compile Include="Controllers\FeaturePermissionsController.cs" />
     <Compile Include="Controllers\GroupsController.cs" />
     <Compile Include="Controllers\HelpController.cs" />
@@ -213,9 +213,9 @@
     <Content Include="Views\Entities\Create.cshtml" />
     <Content Include="Views\EntityPermissions\_Permissions.cshtml" />
     <Content Include="Views\EntityPermissions\Create.cshtml" />
-    <Content Include="Views\EntityRequests\_Entities.cshtml" />
-    <Content Include="Views\EntityRequests\Index.cshtml" />
-    <Content Include="Views\EntityRequests\_Requests.cshtml" />
+    <Content Include="Views\Requests\_Entities.cshtml" />
+    <Content Include="Views\Requests\Index.cshtml" />
+    <Content Include="Views\Requests\_Requests.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -225,10 +225,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\Notifications\" />
-    <Folder Include="Views\Permissions\" />
-    <Folder Include="Views\Requests\" />
     <Folder Include="Views\Shared\" />
-    <Folder Include="Views\Subjects\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -246,6 +243,10 @@
     <ProjectReference Include="..\..\..\..\Components\DLM\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
       <Project>{B4E7B1BF-01B4-40AF-8D19-B8F362167261}</Project>
       <Name>BExIS.Dlm.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Components\DLM\BExIS.Dlm.Services\BExIS.Dlm.Services.csproj">
+      <Project>{c4ca0a99-0af3-4372-a9b7-b9073599bd8b}</Project>
+      <Name>BExIS.Dlm.Services</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\Components\EXT\BExIS.Ext.Services\BExIS.Ext.Services.csproj">
       <Project>{B906A66A-4A09-4207-B590-655EE111CCF1}</Project>

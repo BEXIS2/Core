@@ -1,4 +1,6 @@
-﻿using BExIS.Modules.Sam.UI.Models;
+﻿using BExIS.Dlm.Entities.Data;
+using BExIS.Modules.Sam.UI.Models;
+using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Objects;
 using System.Linq;
 using System.Web.Mvc;
@@ -9,8 +11,13 @@ namespace BExIS.Modules.Sam.UI.Controllers
 {
     public class EntitiesController : Controller
     {
-        // GET: Entity
-        public ActionResult Index()
+        public ActionResult Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult Create(CreateEntityModel model)
         {
             return View();
         }
@@ -37,14 +44,12 @@ namespace BExIS.Modules.Sam.UI.Controllers
             return View(new GridModel<GroupGridRowModel> { Data = paged.ToList(), Total = total });
         }
 
-        public ActionResult Create()
+        // GET: Entity
+        public ActionResult Index()
         {
-            return View();
-        }
+            var entityManager = new EntityManager();
+            entityManager.Create(new Entity() { EntityType = typeof(Dataset), EntityStoreType = typeof(DatasetStore), Securable = true, UseMetadata = true });
 
-        [HttpPost]
-        public ActionResult Create(CreateEntityModel model)
-        {
             return View();
         }
     }

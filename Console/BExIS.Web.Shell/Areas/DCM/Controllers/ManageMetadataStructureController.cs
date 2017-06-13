@@ -200,13 +200,13 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             return searchDesigner.GetAllXPathsOfSimpleAttributes(metadatastructureId);
         }
 
-        private List<EntityModel> GetEntityModelList()
+        private List<EntityMetadataModel> GetEntityModelList()
         {
             EntityManager entityManager = new EntityManager();
 
-            List<EntityModel> tmp = new List<EntityModel>();
+            List<EntityMetadataModel> tmp = new List<EntityMetadataModel>();
             entityManager.Entities.Where(e => e.UseMetadata).ForEach(e => tmp.Add(
-                      new EntityModel()
+                      new EntityMetadataModel()
                       {
                           Name = e.EntityType.FullName,
                           ClassPath = e.EntityType.AssemblyQualifiedName

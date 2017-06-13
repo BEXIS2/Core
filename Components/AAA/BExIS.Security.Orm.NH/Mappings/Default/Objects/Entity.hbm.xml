@@ -13,8 +13,8 @@
       <column name="Extra" not-null="false" sql-type="xml" />
     </property>
 
-    <property name="EntityStoreType" type="string" />
-    <property name="EntityType" type="string" />
+    <property name="EntityStoreType" type="System.Type, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+    <property name="EntityType" type="System.Type, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
 
     <set name="Children" inverse="true" cascade="save-update" lazy="true">
       <key column="ParentRef" />

@@ -9,19 +9,29 @@ using BExIS.Security.Entities.Objects;
 
 namespace BExIS.Web.Shell.Areas.DCM.Models
 {
+    public class EntityMetadataModel
+    {
+        public EntityMetadataModel()
+        {
+            Name = "";
+            ClassPath = "";
+        }
+
+        public string ClassPath { get; set; }
+
+        [Display(Name = "Entity Name")]
+        public string Name { get; set; }
+    }
+
     public class MetadataStructureManagerModel
     {
-
-        public List<MetadataStructureModel> MetadataStructureModels { get; set; }
-
-
         public MetadataStructureManagerModel()
         {
             MetadataStructureModels = new List<MetadataStructureModel>();
         }
+
+        public List<MetadataStructureModel> MetadataStructureModels { get; set; }
     }
-
-
 
     /*
      * grid columns:
@@ -30,52 +40,37 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
         - entity
         - mapping paths
         - description paths
-        - functions 
+        - functions
 
         functions needed:
         - delete
         - activate/deactivate
         - (change entity)
      */
+
     public class MetadataStructureModel
     {
-        
-        public long Id { get; set; }
-        public string Name { get; set; }
+        public MetadataStructureModel()
+        {
+            EntityClasses = new List<EntityMetadataModel>();
+            MetadataNodes = new List<SearchMetadataNode>();
+            Entity = new EntityMetadataModel();
+            HasSchema = false;
+        }
 
-        public EntityModel Entity { get; set; }
-
-        [Display(Name = "Title Reference")]
-        public string TitleNode { get; set; }
+        public bool Active { get; set; }
 
         [Display(Name = "Description Reference")]
         public string DescriptionNode { get; set; }
 
-        public bool Active { get; set; }
+        public EntityMetadataModel Entity { get; set; }
+        public List<EntityMetadataModel> EntityClasses { get; set; }
         public bool HasSchema { get; set; }
+        public long Id { get; set; }
         public List<SearchMetadataNode> MetadataNodes { get; set; }
-        public List<EntityModel> EntityClasses { get; set; }
-
-        public MetadataStructureModel()
-        {
-            EntityClasses = new List<EntityModel>();
-            MetadataNodes = new List<SearchMetadataNode>();
-            Entity = new EntityModel();
-            HasSchema = false;
-        }
-
-    }
-
-    public class EntityModel
-    {
-        [Display(Name = "Entity Name")]
         public string Name { get; set; }
-        public string ClassPath { get; set; }
 
-        public EntityModel()
-        {
-            Name = "";
-            ClassPath = "";
-        }
+        [Display(Name = "Title Reference")]
+        public string TitleNode { get; set; }
     }
 }

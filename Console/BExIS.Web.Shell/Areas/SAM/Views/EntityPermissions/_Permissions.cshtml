@@ -33,7 +33,7 @@
               })
               .DataBinding(dataBinding => dataBinding
                   .Ajax()
-                  .Select("UserEntityPermissions_Select", "EntityPermissions", new { FeatureId = Model })
+                  .Select("UserEntityPermissions_Select", "EntityPermissions", new { EntityId = Model })
               )
               .EnableCustomBinding(true)
               .Filterable()
@@ -69,7 +69,7 @@
               })
               .DataBinding(dataBinding => dataBinding
                   .Ajax()
-                  .Select("GroupEntityPermissions_Select", "EntityPermissions", new { FeatureId = Model })
+                  .Select("GroupEntityPermissions_Select", "EntityPermissions", new { EntityId = Model })
               )
               .EnableCustomBinding(true)
               .Filterable()

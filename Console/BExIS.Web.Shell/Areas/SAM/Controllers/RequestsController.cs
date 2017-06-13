@@ -1,6 +1,4 @@
 ﻿using BExIS.Modules.Sam.UI.Models;
-using BExIS.Security.Entities.Subjects;
-using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Requests;
 using System;
@@ -14,7 +12,7 @@ using Vaiona.Web.Mvc.Models;
 
 namespace BExIS.Modules.Sam.UI.Controllers
 {
-    public class EntityRequestsController : Controller
+    public class RequestsController : Controller
     {
         [GridAction(EnableCustomBinding = true)]
         public ActionResult EntityDecisions_Select(long entityId, GridCommand command)
@@ -34,6 +32,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
             // Sorting
             //var sorted = (IQueryable<UserEntityPermissionGridRowModel>)groupEntityPermissions.Sort(command.SortDescriptors);
+
             var sorted = from d in decisions
                          join c in entities on d.Request.Key equals c.Id
                          select new RequestGridRowModel() { Id = d.Id, EntityId = c.Id, Properties = c.Properties, };
@@ -48,22 +47,31 @@ namespace BExIS.Modules.Sam.UI.Controllers
         [GridAction(EnableCustomBinding = true)]
         public ActionResult EntityRequests_Select(long entityId, GridCommand command)
         {
-            var entityPermissionManager = new EntityPermissionManager();
+            var entityManager = new EntityManager();
+            var entityStore = (IEntityStore)Activator.CreateInstance(entityManager.FindById(entityId).EntityStoreType);
+
+            var entities = entityStore.GetAllEntities();
+
+            var decisionManager = new DecisionManager();
 
             // Source + Transformation - Data
-            var groupEntityPermissions = entityPermissionManager.EntityPermissions.Where(m => m.Subject is User && m.Entity.Id == entityId).ToUserEntityPermissionGridRowModel();
+            var decisions = decisionManager.Decisions.Where(d => d.Request.Entity.Id == entityId);
 
             // Filtering
-            var total = groupEntityPermissions.Count();
+            var total = decisions.Count();
 
             // Sorting
-            var sorted = (IQueryable<UserEntityPermissionGridRowModel>)groupEntityPermissions.Sort(command.SortDescriptors);
+            //var sorted = (IQueryable<UserEntityPermissionGridRowModel>)groupEntityPermissions.Sort(command.SortDescriptors);
+
+            var sorted = from d in decisions
+                         join c in entities on d.Request.Key equals c.Id
+                         select new RequestGridRowModel() { Id = d.Id, EntityId = c.Id, Properties = c.Properties, };
 
             // Paging
             var paged = sorted.Skip((command.Page - 1) * command.PageSize)
                 .Take(command.PageSize);
 
-            return View(new GridModel<UserEntityPermissionGridRowModel> { Data = paged.ToList(), Total = total });
+            return View(new GridModel<RequestGridRowModel> { Data = paged, Total = total });
         }
 
         public ActionResult Index()
@@ -78,6 +86,11 @@ namespace BExIS.Modules.Sam.UI.Controllers
             roots.ToList().ForEach(e => entities.Add(EntityTreeViewItemModel.Convert(e)));
 
             return View(entities.AsEnumerable());
+        }
+
+        public ActionResult Requests(long entityId)
+        {
+            return PartialView("_Requests", entityId);
         }
     }
 }

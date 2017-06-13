@@ -42,13 +42,13 @@
         var selectedDiv = $(e.item).find("div")[0];
         $(selectedDiv).addClass("bx-selected");
 
-        $('#permissions').empty();
+        $('#requests').empty();
 
-        $.get('@Url.Action("Permissions", "EntityPermissions")',
+        $.get('@Url.Action("Requests", "Requests")',
             { EntityId: entityId },
             function (contentData) {
 
-                $('#permissions').html(contentData);
+                $('#requests').html(contentData);
 
                 truncateTitle();
             });
