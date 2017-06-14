@@ -15,63 +15,32 @@ namespace BExIS.Modules.Sam.UI.Controllers
     public class RequestsController : Controller
     {
         [GridAction(EnableCustomBinding = true)]
-        public ActionResult EntityDecisions_Select(long entityId, GridCommand command)
+        public ActionResult Decisions_Select(long entityId, GridCommand command)
         {
             var entityManager = new EntityManager();
             var entityStore = (IEntityStore)Activator.CreateInstance(entityManager.FindById(entityId).EntityStoreType);
 
-            var entities = entityStore.GetAllEntities();
-
-            var decisionManager = new DecisionManager();
+            var requestManager = new RequestManager();
 
             // Source + Transformation - Data
-            var decisions = decisionManager.Decisions.Where(d => d.Request.Entity.Id == entityId);
+            var requests = requestManager.Requests.Where(d => d.Entity.Id == entityId);
 
             // Filtering
-            var total = decisions.Count();
+            var total = requests.Count();
 
             // Sorting
             //var sorted = (IQueryable<UserEntityPermissionGridRowModel>)groupEntityPermissions.Sort(command.SortDescriptors);
 
-            var sorted = from d in decisions
-                         join c in entities on d.Request.Key equals c.Id
-                         select new RequestGridRowModel() { Id = d.Id, EntityId = c.Id, Properties = c.Properties, };
-
             // Paging
-            var paged = sorted.Skip((command.Page - 1) * command.PageSize)
+            var paged = requests.Skip((command.Page - 1) * command.PageSize)
                 .Take(command.PageSize);
 
-            return View(new GridModel<RequestGridRowModel> { Data = paged, Total = total });
-        }
+            var results =
+                paged.Select(
+                        x => new RequestGridRowModel() { Applicant = x.Requester.Name, Id = x.Key, Status = x.Status, StatusName = x.Status.ToString() })
+                    .ToList();
 
-        [GridAction(EnableCustomBinding = true)]
-        public ActionResult EntityRequests_Select(long entityId, GridCommand command)
-        {
-            var entityManager = new EntityManager();
-            var entityStore = (IEntityStore)Activator.CreateInstance(entityManager.FindById(entityId).EntityStoreType);
-
-            var entities = entityStore.GetAllEntities();
-
-            var decisionManager = new DecisionManager();
-
-            // Source + Transformation - Data
-            var decisions = decisionManager.Decisions.Where(d => d.Request.Entity.Id == entityId);
-
-            // Filtering
-            var total = decisions.Count();
-
-            // Sorting
-            //var sorted = (IQueryable<UserEntityPermissionGridRowModel>)groupEntityPermissions.Sort(command.SortDescriptors);
-
-            var sorted = from d in decisions
-                         join c in entities on d.Request.Key equals c.Id
-                         select new RequestGridRowModel() { Id = d.Id, EntityId = c.Id, Properties = c.Properties, };
-
-            // Paging
-            var paged = sorted.Skip((command.Page - 1) * command.PageSize)
-                .Take(command.PageSize);
-
-            return View(new GridModel<RequestGridRowModel> { Data = paged, Total = total });
+            return View(new GridModel<RequestGridRowModel> { Data = results, Total = total });
         }
 
         public ActionResult Index()
@@ -91,6 +60,35 @@ namespace BExIS.Modules.Sam.UI.Controllers
         public ActionResult Requests(long entityId)
         {
             return PartialView("_Requests", entityId);
+        }
+
+        [GridAction(EnableCustomBinding = true)]
+        public ActionResult Requests_Select(long entityId, GridCommand command)
+        {
+            var entityManager = new EntityManager();
+            var entityStore = (IEntityStore)Activator.CreateInstance(entityManager.FindById(entityId).EntityStoreType);
+
+            var requestManager = new RequestManager();
+
+            // Source + Transformation - Data
+            var requests = requestManager.Requests.Where(d => d.Entity.Id == entityId);
+
+            // Filtering
+            var total = requests.Count();
+
+            // Sorting
+            //var sorted = (IQueryable<UserEntityPermissionGridRowModel>)groupEntityPermissions.Sort(command.SortDescriptors);
+
+            // Paging
+            var paged = requests.Skip((command.Page - 1) * command.PageSize)
+                .Take(command.PageSize);
+
+            var results =
+                paged.Select(
+                        x => new RequestGridRowModel() { Applicant = x.Requester.Name, Id = x.Key, Status = x.Status, StatusName = x.Status.ToString() })
+                    .ToList();
+
+            return View(new GridModel<RequestGridRowModel> { Data = results, Total = total });
         }
     }
 }

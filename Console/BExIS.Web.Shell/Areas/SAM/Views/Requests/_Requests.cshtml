@@ -1,25 +1,22 @@
 ﻿@using BExIS.Modules.Sam.UI.Models
+@using BExIS.Security.Entities.Requests
 @using Telerik.Web.Mvc.UI
 @model long
 
 <ul class="nav nav-tabs">
-    <li class="active"><a data-toggle="tab" href="#requests">Requests</a></li>
-    <li><a data-toggle="tab" href="#decisions">Decisions</a></li>
+    <li class="active"><a data-toggle="tab" href="#tabRequests">Requests</a></li>
+    <li><a data-toggle="tab" href="#tabDecisions">Decisions</a></li>
 </ul>
 <div class="tab-content">
-    <div id="requests" class="tab-pane fade in active">
-        @(Html.Telerik().Grid<RequestGridRowModel>()
+    <div id="tabRequests" class="tab-pane fade in active">
+        @(Html.Telerik().Grid<RequestGridRowModel>
+              ()
               .Name("gridRequests")
               .Columns(columns =>
               {
-                  columns.Bound(u => u.EntityId);
-                  columns.Template(@<text>
-            <button type="button" class="bx bx-grid-function bx-edit" onclick="editGroup(@item.Id)"></button>
-            <button type="button" class="bx bx-grid-function bx-trash" onclick="deleteGroup(@item.Id)"></button>
-                </text>)
-                      .ClientTemplate("<button type=\"button\" class=\"bx bx-grid-function bx-edit\" onclick=\"editGroup(<#= Id #>);\" value=\"<#= Id #>\"></button>" +
-                                      "<button type=\"button\" class=\"bx bx-grid-function bx-trash\" onclick=\"deleteGroup(<#= Id #>);\" value=\"<#= Id #>\"></button>")
-                      .Width(70);
+                  columns.Bound(g => g.Id);
+                  columns.Bound(g => g.Applicant);
+                  columns.Bound(g => g.Status);
               })
               .ClientEvents(events =>
               {
@@ -27,7 +24,8 @@
               })
               .DataBinding(dataBinding => dataBinding
                   .Ajax()
-                  .Select("EntityRequests_Select", "Requests", new { FeatureId = Model })
+                  .OperationMode(GridOperationMode.Server)
+                  .Select("Requests_Select", "Requests", new { EntityId = Model })
               )
               .EnableCustomBinding(true)
               .Filterable()
@@ -39,21 +37,14 @@
               })
               .Sortable())
     </div>
-    <div id="decisions" class="tab-pane fade">
-        @(Html.Telerik().Grid<RequestGridRowModel>()
+    <div id="tabDecisions" class="tab-pane fade">
+        @(Html.Telerik().Grid<DecisionGridRowModel>()
               .Name("gridDecisions")
               .Columns(columns =>
               {
-                  columns.Bound(g => g.EntityId);
                   columns.Bound(g => g.Id);
-                  columns.Bound(g => g.Properties);
-                  columns.Template(@<text>
-            <button type="button" class="bx bx-grid-function bx-edit" onclick="editGroup(@item.Id)"></button>
-            <button type="button" class="bx bx-grid-function bx-trash" onclick="deleteGroup(@item.Id)"></button>
-                </text>)
-                      .ClientTemplate("<button type=\"button\" class=\"bx bx-grid-function bx-edit\" onclick=\"editGroup(<#= Id #>);\" value=\"<#= Id #>\"></button>" +
-                                      "<button type=\"button\" class=\"bx bx-grid-function bx-trash\" onclick=\"deleteGroup(<#= Id #>);\" value=\"<#= Id #>\"></button>")
-                      .Width(70);
+                  columns.Bound(g => g.Applicant);
+                  columns.Bound(g => g.Status);
               })
               .ClientEvents(events =>
               {
@@ -61,7 +52,8 @@
               })
               .DataBinding(dataBinding => dataBinding
                   .Ajax()
-                  .Select("EntityRequests_Select", "Requests", new { FeatureId = Model })
+                  .OperationMode(GridOperationMode.Server)
+                  .Select("Decisions_Select", "Requests", new { EntityId = Model })
               )
               .EnableCustomBinding(true)
               .Filterable()
@@ -71,7 +63,7 @@
                   pageable.Style(GridPagerStyles.NextPreviousAndNumeric | GridPagerStyles.PageSizeDropDown);
                   pageable.Position(GridPagerPosition.Both);
               })
-              .Sortable(sortable => sortable.OrderBy(order => order.Add(c => c.EntityId).Descending())))
+              .Sortable(sortable => sortable.OrderBy(order => order.Add(c => c.Id).Descending())))
     </div>
 </div>
 

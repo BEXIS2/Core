@@ -21,6 +21,7 @@
     <property name="Key" type="Int64" />
     <property name="RequestDate" type="DateTime" />
     <many-to-one name="Requester" column="RequesterRef" class="BExIS.Security.Entities.Subjects.User, BExIS.Security.Entities" />
+    <property name="Rights" type="Int16" />
     <property name="Status" type="BExIS.Security.Entities.Requests.RequestStatus, BExIS.Security.Entities" />
   </class>
 </hibernate-mapping>

@@ -22,7 +22,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
             var entityManager = new EntityManager();
             var entityStore = (IEntityStore)Activator.CreateInstance(entityManager.FindById(entityId).EntityStoreType);
 
-            var entities = entityStore.GetAllEntities();
+            var entities = entityStore.GetEntities();
 
             return View();
         }

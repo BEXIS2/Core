@@ -32,7 +32,7 @@ namespace BExIS.Modules.Sam.UI.Models
             return new EntityTreeViewItemModel()
             {
                 Id = entity.Id,
-                Name = entity.EntityType.FullName,
+                Name = entity.EntityType.Name,
                 Children = entity.Children.Select(Convert).ToList()
             };
         }

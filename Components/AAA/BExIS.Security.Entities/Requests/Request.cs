@@ -25,6 +25,7 @@ namespace BExIS.Security.Entities.Requests
         public virtual long Key { get; set; }
         public virtual DateTime RequestDate { get; set; }
         public virtual User Requester { get; set; }
+        public virtual short Rights { get; set; }
         public virtual RequestStatus Status { get; set; }
     }
 }

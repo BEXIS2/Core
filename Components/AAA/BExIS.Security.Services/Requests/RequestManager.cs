@@ -1,6 +1,5 @@
-﻿using BExIS.Security.Entities.Objects;
-using BExIS.Security.Entities.Requests;
-using BExIS.Security.Entities.Subjects;
+﻿using BExIS.Security.Entities.Requests;
+using System.Linq;
 using Vaiona.Persistence.Api;
 
 namespace BExIS.Security.Services.Requests
@@ -11,17 +10,11 @@ namespace BExIS.Security.Services.Requests
         {
             var uow = this.GetUnitOfWork();
 
-            EntityRepository = uow.GetReadOnlyRepository<Entity>();
-            UserRepository = uow.GetReadOnlyRepository<User>();
+            RequestRepository = uow.GetReadOnlyRepository<Request>();
         }
 
-        #region Data Readers
-
-        public IReadOnlyRepository<Entity> EntityRepository { get; private set; }
-        public IReadOnlyRepository<Request> RequestRepository { get; private set; }
-        public IReadOnlyRepository<User> UserRepository { get; private set; }
-
-        #endregion Data Readers
+        public IReadOnlyRepository<Request> RequestRepository { get; }
+        public IQueryable<Request> Requests => RequestRepository.Query();
 
         public void Create(Request request)
         {
