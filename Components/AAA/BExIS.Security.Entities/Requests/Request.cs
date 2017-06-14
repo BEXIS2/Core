@@ -20,11 +20,12 @@ namespace BExIS.Security.Entities.Requests
             Decisions = new List<Decision>();
         }
 
+        public virtual User Applicant { get; set; }
         public virtual ICollection<Decision> Decisions { get; set; }
         public virtual Entity Entity { get; set; }
+        public virtual string Intention { get; set; }
         public virtual long Key { get; set; }
         public virtual DateTime RequestDate { get; set; }
-        public virtual User Requester { get; set; }
         public virtual short Rights { get; set; }
         public virtual RequestStatus Status { get; set; }
     }
