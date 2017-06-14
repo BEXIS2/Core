@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<Manifest moduleId="Template">
+<Manifest moduleId="Template" displayName="" version="1.0.0" builtin="false">
   <Description>
     <!--add proper description-->
   </Description>
