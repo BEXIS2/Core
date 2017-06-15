@@ -2,6 +2,8 @@
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.DataProtection;
+using Microsoft.Owin.Security.Google;
+using Oakenshield.Security.Providers.LDAP;
 using Owin;
 
 namespace BExIS.Security.Services.Utilities
@@ -21,28 +23,28 @@ namespace BExIS.Security.Services.Utilities
                 LoginPath = new PathString("/Account/SignIn")
             });
             // Use a cookie to temporarily store information about a user logging in with a third party login provider
-            app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
+            //app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
 
             // Uncomment the following lines to enable logging in with third party login providers
             //app.UseMicrosoftAccountAuthentication(
             //    clientId: "",
             //    clientSecret: "");
 
-            //app.UseTwitterAuthentication(
-            //   consumerKey: "",
-            //   consumerSecret: "");
+            app.UseTwitterAuthentication(
+               consumerKey: "",
+               consumerSecret: "");
 
-            //app.UseLdapAuthentication(new LdapAuthenticationOptions("", "", "", "", "", 0, ""));
+            app.UseLdapAuthentication(new LdapAuthenticationOptions("LDAP"));
 
-            //app.UseFacebookAuthentication(
-            //   appId: "",
-            //   appSecret: "");
+            app.UseFacebookAuthentication(
+               appId: "",
+               appSecret: "");
 
-            //app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
-            //{
-            //    ClientId = "587369244487-l9567jtupsnsc0j8pa7gatvsj9bfipic.apps.googleusercontent.com",
-            //    ClientSecret = "DtLaArW-ybAKCKv3aFVFGsac"
-            //});
+            app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
+            {
+                ClientId = "587369244487-l9567jtupsnsc0j8pa7gatvsj9bfipic.apps.googleusercontent.com",
+                ClientSecret = "DtLaArW-ybAKCKv3aFVFGsac"
+            });
         }
     }
 }
