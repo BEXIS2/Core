@@ -152,6 +152,11 @@ namespace BExIS.Web.Shell.Controllers
             return View();
         }
 
+        public ActionResult MyAccount()
+        {
+            return View();
+        }
+
         public ActionResult ResetPassword(string code)
         {
             return code == null ? View("Error") : View();
@@ -401,11 +406,6 @@ namespace BExIS.Web.Shell.Controllers
                     "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
 
             return callbackUrl;
-        }
-
-        public ActionResult MyAccount()
-        {
-            return View();
         }
 
         #region Helpers
