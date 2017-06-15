@@ -104,6 +104,10 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.IdentityModel, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.IdentityModel.6.1.7600.16394\lib\net35\Microsoft.IdentityModel.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.Owin, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.Owin.3.1.0\lib\net45\Microsoft.Owin.dll</HintPath>
       <Private>True</Private>
@@ -424,25 +428,6 @@
     <DesignData Include="Db\Settings\PostgreSQL82Dialect.hibernate.cfg.xml">
       <SubType>Designer</SubType>
     </DesignData>
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img10.png" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img11.png" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img12.png" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img13.png" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img14.png" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img15.png" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img16.png" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img17.png" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img18.png" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img19.png" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img2.png" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img20.png" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img3.png" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img4.png" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img5.png" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img6.png" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img7.png" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img8.png" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img9.png" />
     <Content Include="Areas\RPM\Scripts\draggabilly.pkgd.js" />
     <Content Include="Areas\RPM\Scripts\draggabilly.pkgd.min.js" />
     <Content Include="Areas\RPM\Scripts\isotope.pkgd.min.js" />
@@ -512,7 +497,6 @@
     <Content Include="Areas\RPM\Views\Shared\_messageWindow.cshtml" />
     <Content Include="Areas\RPM\Views\DataStructureEdit\_editAttribute.cshtml" />
     <Content Include="Areas\RPM\Views\DataStructureEdit\_attributeElement.cshtml" />
-    <Content Include="Areas\RPM\Views\DataStructureEdit\_dataTypeDropdown.cshtml" />
     <None Include="Properties\PublishProfiles\BEXIS 2.10.pubxml" />
     <None Include="Properties\PublishProfiles\bexis2 Release2.10.pubxml" />
     <None Include="Properties\PublishProfiles\BEXIS2.pubxml" />
@@ -525,6 +509,7 @@
     <Content Include="Areas\BAM\Views\Party\_customAttributesView.cshtml" />
     <Content Include="Areas\BAM\Views\web.config" />
     <Content Include="Areas\BAM\Views\_ViewStart.cshtml" />
+    <None Include="Properties\PublishProfiles\BPP 210.pubxml" />
     <None Include="Properties\PublishProfiles\BPP Publish.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\DCM\Form.js" />
@@ -892,6 +877,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Areas\BAM\Views\Shared\" />
+    <Folder Include="Areas\RPM\Images\RPM_UserGuide_files_images\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Home\About.cshtml" />
@@ -1058,21 +1044,13 @@
       <Project>{3a573810-b9f9-4bde-8504-01ef49de0c20}</Project>
       <Name>BExISMigration</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Modules\RPM\BExIS.RPM.Model\BExIS.RPM.Model.csproj">
-      <Project>{063b9e3f-e0dd-43fe-9910-5b1544b8b861}</Project>
-      <Name>BExIS.RPM.Model</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Modules\DDM\BExIS.Ddm.Api\BExIS.Ddm.Api.csproj">
-      <Project>{8519eac6-fbf8-48b3-813f-e0b9d3cc4a52}</Project>
-      <Name>BExIS.Ddm.Api</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Modules\DDM\BExIS.Ddm.Model\BExIS.Ddm.Model.csproj">
-      <Project>{ab46beb8-c36d-412f-9b1a-646c86299a87}</Project>
-      <Name>BExIS.Ddm.Model</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Modules\DDM\BExIS.Ddm.Providers.LuceneProvider\BExIS.Ddm.Providers.LuceneProvider.csproj">
       <Project>{fbe3101a-791a-4eab-9b8f-f6e071f8dbdc}</Project>
       <Name>BExIS.Ddm.Providers.LuceneProvider</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Modules\RPM\BExIS.RPM.Model\BExIS.RPM.Model.csproj">
+      <Project>{063b9e3f-e0dd-43fe-9910-5b1544b8b861}</Project>
+      <Name>BExIS.RPM.Model</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Modules\RPM\BExIS.RPM.Model\BExIS.RPM.Model.csproj">
       <Project>{063b9e3f-e0dd-43fe-9910-5b1544b8b861}</Project>
