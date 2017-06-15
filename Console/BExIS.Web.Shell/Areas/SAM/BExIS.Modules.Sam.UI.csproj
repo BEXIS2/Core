@@ -151,6 +151,7 @@
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Helpers\Attributes.cs" />
     <Compile Include="Helpers\SAMSeedDataGenerator.cs" />
+    <Compile Include="Models\DecisionModels.cs" />
     <Compile Include="Models\EntityModels.cs" />
     <Compile Include="Models\EntityPermissionModels.cs" />
     <Compile Include="Models\FeatureModels.cs" />

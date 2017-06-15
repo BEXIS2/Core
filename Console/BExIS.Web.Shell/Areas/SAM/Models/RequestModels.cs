@@ -1,20 +1,18 @@
 ﻿using BExIS.Security.Entities.Requests;
+using System.Collections.Generic;
 
 namespace BExIS.Modules.Sam.UI.Models
 {
-    public class DecisionGridRowModel
-    {
-        public string Applicant { get; set; }
-        public long Id { get; set; }
-        public DecisionStatus Status { get; set; }
-        public string StatusName { get; set; }
-    }
-
     public class RequestGridRowModel
     {
-        public string Applicant { get; set; }
+        public RequestGridRowModel()
+        {
+            DecisionStatuses = new List<DecisionStatus>();
+        }
+
+        public List<DecisionStatus> DecisionStatuses { get; set; }
         public long Id { get; set; }
-        public RequestStatus Status { get; set; }
-        public string StatusName { get; set; }
+        public RequestStatus RequestStatus { get; set; }
+        public short Rights { get; set; }
     }
 }

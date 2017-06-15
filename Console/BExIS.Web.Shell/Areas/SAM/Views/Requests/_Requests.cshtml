@@ -15,8 +15,8 @@
               .Columns(columns =>
               {
                   columns.Bound(g => g.Id);
-                  columns.Bound(g => g.Applicant);
-                  columns.Bound(g => g.Status);
+                  columns.Bound(g => g.Rights);
+                  columns.Bound(g => g.RequestStatus);
               })
               .ClientEvents(events =>
               {
@@ -44,6 +44,7 @@
               {
                   columns.Bound(g => g.Id);
                   columns.Bound(g => g.Applicant);
+                  columns.Bound(g => g.Rights);
                   columns.Bound(g => g.Status);
               })
               .ClientEvents(events =>
