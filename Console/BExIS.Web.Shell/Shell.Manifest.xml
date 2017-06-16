@@ -28,11 +28,11 @@
             extends="./menubarRoot"
             />
 
-    <Export tag="menubar" id="collect" order="2"
+    <!--<Export tag="menubar" id="collect" order="2"
             title="Collect" description="Quick access to Data Collection Area" icon=""
             controller="" action=""
             extends="./menubarRoot"
-            />
+            />-->
 
     <Export tag="lunchbar" id="lunchbarRoot" order="1"
             title="" description="" icon=""

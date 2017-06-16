@@ -377,27 +377,27 @@
     <Compile Include="Areas\RPM\Classes\DataStructureIO.cs" />
     <Compile Include="Areas\RPM\Controllers\DataStructureEditController.cs" />
     <Compile Include="Areas\RPM\Controllers\DataStructureIOController.cs" />
+    <Compile Include="Areas\RPM\Controllers\DataStructureSearchController.cs" />
     <Compile Include="Areas\RPM\Controllers\HelpController.cs" />
     <Compile Include="Areas\RPM\Controllers\Legacy\DataAttributeController.cs" />
     <Compile Include="Areas\RPM\Controllers\Legacy\HomeController.cs" />
-    <Compile Include="Areas\RPM\Controllers\DataStructureSearchController.cs" />
-    <Compile Include="Areas\RPM\Controllers\StructuresController.cs" />
     <Compile Include="Areas\RPM\Controllers\Legacy\UnitController.cs" />
+    <Compile Include="Areas\RPM\Controllers\StructuresController.cs" />
     <Compile Include="Areas\RPM\Helpers\HtmlPrefixScopeExtentions.cs" />
     <Compile Include="Areas\RPM\Helpers\RPMSeedDataGenerator.cs" />
     <Compile Include="Areas\RPM\Helpers\SeedData\AttributeCreator.cs" />
     <Compile Include="Areas\RPM\Helpers\SeedData\MappingReader.cs" />
-    <Compile Include="Areas\RPM\Models\MessageModel.cs" />
-    <Compile Include="Areas\RPM\Models\StructureModel.cs" />
+    <Compile Include="Areas\RPM\Models\ConstraintModels.cs" />
     <Compile Include="Areas\RPM\Models\DataStructureEditModel.cs" />
     <Compile Include="Areas\RPM\Models\DataStructureSearchModel.cs" />
-    <Compile Include="Areas\RPM\Models\ConstraintModels.cs" />
-    <Compile Include="Areas\RPM\Models\Legacy\DataTypeManagerModel.cs" />
-    <Compile Include="Areas\RPM\Models\Legacy\UnitManagerModel.cs" />
     <Compile Include="Areas\RPM\Models\Legacy\DataAttributeModel.cs" />
     <Compile Include="Areas\RPM\Models\Legacy\DataStructureDesignerModel.cs" />
     <Compile Include="Areas\RPM\Models\Legacy\DataStructureTreeModel.cs" />
+    <Compile Include="Areas\RPM\Models\Legacy\DataTypeManagerModel.cs" />
     <Compile Include="Areas\RPM\Models\Legacy\UnitDimenstionModel.cs" />
+    <Compile Include="Areas\RPM\Models\Legacy\UnitManagerModel.cs" />
+    <Compile Include="Areas\RPM\Models\MessageModel.cs" />
+    <Compile Include="Areas\RPM\Models\StructureModel.cs" />
     <Compile Include="Areas\RPM\RPMAreaRegistration.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\FooterController.cs" />
@@ -424,25 +424,24 @@
     <DesignData Include="Db\Settings\PostgreSQL82Dialect.hibernate.cfg.xml">
       <SubType>Designer</SubType>
     </DesignData>
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img10.png" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img11.png" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img12.png" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img13.png" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img14.png" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img15.png" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img16.png" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img17.png" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img18.png" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img19.png" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img2.png" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img20.png" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img3.png" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img4.png" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img5.png" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img6.png" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img7.png" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img8.png" />
-    <Content Include="Areas\RPM\Images\RPM_UserGuide_files_images\RPM_UserGuide_files_img9.png" />
+    <Content Include="Areas\RPM\Images\help\help_img1.jpeg" />
+    <Content Include="Areas\RPM\Images\help\help_img10.png" />
+    <Content Include="Areas\RPM\Images\help\help_img11.jpeg" />
+    <Content Include="Areas\RPM\Images\help\help_img12.png" />
+    <Content Include="Areas\RPM\Images\help\help_img13.png" />
+    <Content Include="Areas\RPM\Images\help\help_img14.png" />
+    <Content Include="Areas\RPM\Images\help\help_img15.jpeg" />
+    <Content Include="Areas\RPM\Images\help\help_img16.png" />
+    <Content Include="Areas\RPM\Images\help\help_img17.png" />
+    <Content Include="Areas\RPM\Images\help\help_img18.png" />
+    <Content Include="Areas\RPM\Images\help\help_img2.jpeg" />
+    <Content Include="Areas\RPM\Images\help\help_img3.jpeg" />
+    <Content Include="Areas\RPM\Images\help\help_img4.jpeg" />
+    <Content Include="Areas\RPM\Images\help\help_img5.jpeg" />
+    <Content Include="Areas\RPM\Images\help\help_img6.png" />
+    <Content Include="Areas\RPM\Images\help\help_img7.jpeg" />
+    <Content Include="Areas\RPM\Images\help\help_img8.png" />
+    <Content Include="Areas\RPM\Images\help\help_img9.png" />
     <Content Include="Areas\RPM\Scripts\draggabilly.pkgd.js" />
     <Content Include="Areas\RPM\Scripts\draggabilly.pkgd.min.js" />
     <Content Include="Areas\RPM\Scripts\isotope.pkgd.min.js" />
@@ -453,7 +452,46 @@
     <Content Include="Areas\RPM\Stylesheets\DataStructureEdit.css" />
     <Content Include="Areas\RPM\Stylesheets\DataStructureSearch.css" />
     <Content Include="Areas\RPM\Stylesheets\RPM.css" />
+    <Content Include="Areas\RPM\Views\DataAttribute\AttributeManager.cshtml" />
+    <Content Include="Areas\RPM\Views\DataAttribute\_domainItemView.cshtml" />
+    <Content Include="Areas\RPM\Views\DataAttribute\_editAttribute.cshtml" />
+    <Content Include="Areas\RPM\Views\DataStructureEdit\Index.cshtml" />
+    <Content Include="Areas\RPM\Views\DataStructureEdit\_attributeElement.cshtml" />
+    <Content Include="Areas\RPM\Views\DataStructureEdit\_attributeFilter.cshtml" />
+    <Content Include="Areas\RPM\Views\DataStructureEdit\_attributeSearchResult.cshtml" />
+    <Content Include="Areas\RPM\Views\DataStructureEdit\_dataStructure.cshtml" />
+    <Content Include="Areas\RPM\Views\DataStructureEdit\_dataTypeDropdown.cshtml" />
+    <Content Include="Areas\RPM\Views\DataStructureEdit\_editAttribute.cshtml" />
+    <Content Include="Areas\RPM\Views\DataStructureEdit\_variableElement.cshtml" />
+    <Content Include="Areas\RPM\Views\DataStructureSearch\Index.cshtml" />
+    <Content Include="Areas\RPM\Views\DataStructureSearch\_dataStructuredStructurePreview.cshtml" />
+    <Content Include="Areas\RPM\Views\DataStructureSearch\_datatructureSearchResult.cshtml" />
+    <Content Include="Areas\RPM\Views\Help\Index.cshtml" />
     <Content Include="Areas\RPM\Views\Help\Informations.xml" />
+    <Content Include="Areas\RPM\Views\Home\ClassificationManager.cshtml" />
+    <Content Include="Areas\RPM\Views\Home\DataStructureDesigner.cshtml" />
+    <Content Include="Areas\RPM\Views\Home\DatatypeManager.cshtml" />
+    <Content Include="Areas\RPM\Views\Home\Index.cshtml" />
+    <Content Include="Areas\RPM\Views\Home\_addVariable.cshtml" />
+    <Content Include="Areas\RPM\Views\Home\_dataStructureSaveAs.cshtml" />
+    <Content Include="Areas\RPM\Views\Home\_editClassifier.cshtml" />
+    <Content Include="Areas\RPM\Views\Home\_editDataType.cshtml" />
+    <Content Include="Areas\RPM\Views\Home\_editVariable.cshtml" />
+    <Content Include="Areas\RPM\Views\Home\_showDatasets.cshtml" />
+    <Content Include="Areas\RPM\Views\Home\_showDataStructure.cshtml" />
+    <Content Include="Areas\RPM\Views\Home\_showDataStructureInfo.cshtml" />
+    <Content Include="Areas\RPM\Views\Shared\_createDataStructure.cshtml" />
+    <Content Include="Areas\RPM\Views\Shared\_domainConstraintView.cshtml" />
+    <Content Include="Areas\RPM\Views\Shared\_message.cshtml" />
+    <Content Include="Areas\RPM\Views\Shared\_messageWindow.cshtml" />
+    <Content Include="Areas\RPM\Views\Shared\_patternConstraintView.cshtml" />
+    <Content Include="Areas\RPM\Views\Shared\_rangeConstraintView.cshtml" />
+    <Content Include="Areas\RPM\Views\Unit\UnitManager.cshtml" />
+    <Content Include="Areas\RPM\Views\Unit\_editUnit.cshtml" />
+    <Content Include="Areas\RPM\Views\Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Areas\RPM\Views\_ViewStart.cshtml" />
     <Content Include="Content\Images\dfg_logo.gif" />
     <Content Include="Content\bootstrap-combobox.css" />
     <Content Include="Content\bootstrap-theme.css" />
@@ -494,25 +532,14 @@
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Content\Images\Bildmarke_BEXIS_cmyk.ai" />
     <Content Include="Content\Images\Logo_BEXIS_cmyk.ai" />
-    <Content Include="Areas\RPM\Views\DataStructureSearch\Index.cshtml" />
-    <Content Include="Areas\RPM\Views\DataStructureSearch\_dataStructuredStructurePreview.cshtml" />
-    <Content Include="Areas\RPM\Views\DataStructureSearch\_datatructureSearchResult.cshtml" />
-    <Content Include="Areas\RPM\Views\DataStructureEdit\Index.cshtml" />
     <Content Include="fonts\FontAwesome.otf" />
     <Content Include="fonts\fontawesome-webfont.woff2" />
     <Content Include="fonts\fontawesome-webfont.woff" />
     <Content Include="fonts\fontawesome-webfont.ttf" />
     <Content Include="fonts\fontawesome-webfont.eot" />
-    <Content Include="Areas\RPM\Views\DataStructureEdit\_attributeFilter.cshtml" />
-    <Content Include="Areas\RPM\Views\DataStructureEdit\_attributeSearchResult.cshtml" />
-    <Content Include="Areas\RPM\Views\DataStructureEdit\_dataStructure.cshtml" />
-    <Content Include="Areas\RPM\Views\DataStructureEdit\_variableElement.cshtml" />
-    <Content Include="Areas\RPM\Views\Shared\_createDataStructure.cshtml" />
-    <Content Include="Areas\RPM\Views\Shared\_message.cshtml" />
-    <Content Include="Areas\RPM\Views\Shared\_messageWindow.cshtml" />
-    <Content Include="Areas\RPM\Views\DataStructureEdit\_editAttribute.cshtml" />
-    <Content Include="Areas\RPM\Views\DataStructureEdit\_attributeElement.cshtml" />
-    <Content Include="Areas\RPM\Views\DataStructureEdit\_dataTypeDropdown.cshtml" />
+    <Content Include="Areas\RPM\Views\DataStructureEdit\_dropdown.cshtml" />
+    <Content Include="Areas\RPM\Views\DataStructureEdit\_editUnit.cshtml" />
+    <None Include="Properties\PublishProfiles\BC2017.pubxml" />
     <None Include="Properties\PublishProfiles\BEXIS 2.10.pubxml" />
     <None Include="Properties\PublishProfiles\bexis2 Release2.10.pubxml" />
     <None Include="Properties\PublishProfiles\BEXIS2.pubxml" />
@@ -963,25 +990,6 @@
     <Content Include="Views\Test\XmlEdit.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\RPM\Views\Web.config">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Areas\RPM\Views\_ViewStart.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\RPM\Views\Home\ClassificationManager.cshtml" />
-    <Content Include="Areas\RPM\Views\Home\DataStructureDesigner.cshtml" />
-    <Content Include="Areas\RPM\Views\Home\DatatypeManager.cshtml" />
-    <Content Include="Areas\RPM\Views\Home\Index.cshtml" />
-    <Content Include="Areas\RPM\Views\Unit\UnitManager.cshtml" />
-    <Content Include="Areas\RPM\Views\Home\_addVariable.cshtml" />
-    <Content Include="Areas\RPM\Views\Home\_editClassifier.cshtml" />
-    <Content Include="Areas\RPM\Views\Home\_editDataType.cshtml" />
-    <Content Include="Areas\RPM\Views\Unit\_editUnit.cshtml" />
-    <Content Include="Areas\RPM\Views\Home\_showDataStructure.cshtml" />
-    <Content Include="Areas\RPM\Views\Home\_showDataStructureInfo.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\Components\AAA\BExIS.Security.Entities\BExIS.Security.Entities.csproj">
       <Project>{c230693b-d780-438b-b26c-82257642dd5c}</Project>
       <Name>BExIS.Security.Entities</Name>
@@ -1084,16 +1092,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\RPM\Views\Home\_editVariable.cshtml" />
-    <Content Include="Areas\RPM\Views\Home\_showDatasets.cshtml" />
-    <Content Include="Areas\RPM\Views\Home\_dataStructureSaveAs.cshtml" />
-    <Content Include="Areas\RPM\Views\Help\Index.cshtml" />
-    <Content Include="Areas\RPM\Views\DataAttribute\AttributeManager.cshtml" />
-    <Content Include="Areas\RPM\Views\Shared\_domainConstraintView.cshtml" />
-    <Content Include="Areas\RPM\Views\DataAttribute\_domainItemView.cshtml" />
-    <Content Include="Areas\RPM\Views\DataAttribute\_editAttribute.cshtml" />
-    <Content Include="Areas\RPM\Views\Shared\_patternConstraintView.cshtml" />
-    <Content Include="Areas\RPM\Views\Shared\_rangeConstraintView.cshtml" />
     <Content Include="Themes\Default\Styles\awesome\fonts\fontawesome-webfont.woff2" />
     <Content Include="Themes\Default\Styles\awesome\fonts\fontawesome-webfont.woff" />
     <Content Include="Themes\Default\Styles\awesome\fonts\fontawesome-webfont.ttf" />

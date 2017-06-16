@@ -18,6 +18,11 @@
             extends="./settingsRoot"
             />
 
+        <Export tag="menubar" id="collect" order="1"
+            title="Collect" description="Quick access to Data Collection Area" icon=""
+            controller="" action=""
+            extends="./menubarRoot"
+            />
     <Export tag="menubar" id="createDataset" order="1"
             title="Create Dataset" description="Create new Dataset" icon=""
             controller="CreateDataset" action="index"
