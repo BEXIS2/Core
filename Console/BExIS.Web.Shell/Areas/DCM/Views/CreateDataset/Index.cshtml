@@ -1,7 +1,7 @@
-﻿@model SetupModel
+﻿@model BExIS.Modules.Dcm.UI.Models.CreateDataset.SetupModel
+@using BExIS.Modules.Dcm.UI.Models
 @using Telerik.Web.Mvc.UI
-@using BExIS.Web.Shell.Areas.DCM.Models.CreateDataset;
-@using BExIS.Web.Shell.Areas.DCM.Models;
+
 
 @{
     List<ListViewItem> DatasetsList = new List<ListViewItem>();
@@ -11,7 +11,6 @@
     {
         DatasetsList.Add(item);
     }
-
 }
 
 <div id="SetupContainer">
