@@ -1,6 +1,6 @@
 ﻿@model MetadataEditorModel
-@using BExIS.Web.Shell.Areas.DCM.Models.CreateDataset
-@using BExIS.Web.Shell.Areas.DCM.Models.Metadata;
+@using BExIS.Modules.Dcm.UI.Models.CreateDataset;
+@using BExIS.Modules.Dcm.UI.Models.Metadata;
 @using System.Web.Configuration;
 @using BExIS.Dcm.CreateDatasetWizard
 @using BExIS.Dcm.Wizard
@@ -151,7 +151,7 @@
                               .OnSelect("SelectFileProcess_OnSelect")
                               .OnLoad("SelectFileUploader_OnLoad"))
                           .Async(async => async
-                              .Save("SelectFileProcess", "Form", new {area = "Dcm"})
+                              .Save("SelectFileProcess", "Form")
                               .AutoUpload(true))
                             
                           )
