@@ -34,16 +34,19 @@ namespace BExIS.Web.Shell.Areas.BAM.Models
             Errors = new List<Error>();
         }
     }
-    public class PartyRelationshipTypeModel : Dlm.Entities.Party.PartyRelationshipType
-    {
 
-        public int CurrentCardinality
-        {
-            get;
-        }
-        public PartyRelationshipTypeModel(int partyId)
-        {
+   
 
-        }
-    }
+    //public class PartyRelationshipTypeModel : Dlm.Entities.Party.PartyRelationshipType
+    //{
+
+    //    public int CurrentCardinality
+    //    {
+    //        get;
+    //    }
+    //    public PartyRelationshipTypeModel(int partyId)
+    //    {
+
+    //    }
+    //}
 }

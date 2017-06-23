@@ -1,38 +1,12 @@
 ﻿@model BExIS.Web.Shell.Areas.BAM.Models.PartyModel
 
-@{
-    bool addRelationship = Request.QueryString["addRelationship"] != null ? true : false;
-    bool hasErrors = false;
-    string errorMessage = "";
-    string errorClass = "";
-}
-@if (Model.Errors != null && Model.Errors.Count() > 0)
-{
-    hasErrors = true;
-}
-
-@if (hasErrors == true)
-{
-    errorClass = "bx-input-error";
-    foreach (var item in Model.Errors)
-    {
-        if (Model.Errors.First().Equals(item))
-        {
-            errorMessage = item.GetMessage();
-        }
-        else
-        {
-            errorMessage += ", " + item.GetMessage();
-        }
-    }
-}
 @using (Html.BeginForm("Edit", "Party", new { area = "BAM" }, FormMethod.Post))
 {
     @Html.HiddenFor(m => m.Party.Id)
     @Html.HiddenFor(m => m.Party.PartyType.Id)
     @(Html.Telerik().TabStrip()
             .Name("ShowDataTabStrip")
-            .SelectedIndex(addRelationship ? 2 : 0).ClientEvents(events => events.OnSelect("tabSelected"))
+            .ClientEvents(events => events.OnSelect("tabSelected"))
             .Items(tabs =>
             {
 
@@ -40,7 +14,7 @@
                     .Text("Party").Content(@<text>
                     <table>
                         <tr>
-                            <td style="width:40px;"><b title="Required" style="color: red">*</b></td>
+                            <td style="width:40px;"></td>
                             <td>
                                 @Html.LabelFor(m => m.Party.Name)
                             </td>
@@ -49,7 +23,7 @@
 </td>
                         </tr>
                         <tr>
-                            <td><b title="Required" style="color: red">*</b></td>
+                            <td></td>
                             <td style="width:300px;">
                                 @Html.LabelFor(m => m.Party.PartyType)
                             </td>
@@ -58,7 +32,7 @@
 </td>
                         </tr>
                         <tr>
-                            <td><b title="Required" style="color: red">*</b></td>
+                            <td></td>
                             <td>
                                 @Html.LabelFor(m => m.Party.StartDate)
                             </td>
@@ -67,7 +41,7 @@
 </td>
                         </tr>
                         <tr>
-                            <td><b title="Required" style="color: red">*</b></td>
+                            <td></td>
                             <td>
                                 @Html.LabelFor(m => m.Party.EndDate)
                             </td>
@@ -76,7 +50,7 @@
 </td>
                         </tr>
                         <tr>
-                            <td><b title="Required" style="color: red">*</b></td>
+                            <td></td>
                             <td>
                                 @Html.LabelFor(m => m.Party.Description)
                             </td>

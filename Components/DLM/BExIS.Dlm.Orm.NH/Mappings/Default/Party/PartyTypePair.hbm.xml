@@ -24,9 +24,13 @@
       <column name="Description"  />
     </property>
 
-    <many-to-one name="AlowedSource" class="BExIS.Dlm.Entities.Party.PartyType" not-null="true" column="AlowedSourceRef" lazy="false" />
+    <property name="PartyRelationShipTypeDefault" type="yes_no" >
+      <column name="PartyRelationShipTypeDefault"  />
+    </property>
 
-    <many-to-one name="AlowedTarget" class="BExIS.Dlm.Entities.Party.PartyType" not-null="true" column="AlowedTargetRef" lazy="false" />
+    <many-to-one name="AllowedSource" class="BExIS.Dlm.Entities.Party.PartyType" not-null="true" column="AlowedSourceRef" lazy="false" />
+
+    <many-to-one name="AllowedTarget" class="BExIS.Dlm.Entities.Party.PartyType" not-null="true" column="AlowedTargetRef" lazy="false" />
 
     <many-to-one name="PartyRelationshipType" class="BExIS.Dlm.Entities.Party.PartyRelationshipType" not-null="false" column="PartyRelationshipTypeRef"/>
 

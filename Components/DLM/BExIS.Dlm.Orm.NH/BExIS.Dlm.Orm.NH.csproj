@@ -190,6 +190,7 @@
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Mappings\Default\Party\PartyUser.hbm.xml" />
     <Content Include="Mappings\Default\Party\Party.hbm.xml" />
     <Content Include="Mappings\Default\Party\PartyCustomAttribute.hbm.xml" />
     <Content Include="Mappings\Default\Party\PartyCustomAttributeValue.hbm.xml" />

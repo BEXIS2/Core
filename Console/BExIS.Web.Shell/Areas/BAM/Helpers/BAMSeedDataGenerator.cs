@@ -17,13 +17,18 @@ namespace BExIS.Web.Shell.Areas.BAM.Helpers
 {
     public class Helper
     {
-        public static int CountRelations(long sourcePartyId, long targetPartyId, PartyRelationshipType partyRelationshipType)
+        public static int CountRelations(long sourcePartyId, PartyRelationshipType partyRelationshipType)
         {
             PartyManager partyManager = new PartyManager();
             var cnt = partyManager.RepoPartyRelationships.Query(item => (item.PartyRelationshipType != null && item.PartyRelationshipType.Id == partyRelationshipType.Id)
-                                      && (item.FirstParty != null && item.FirstParty.Id == sourcePartyId)
-                                       && (item.SecondParty != null && item.SecondParty.Id == targetPartyId)).Count();
+                                      && (item.FirstParty != null && (item.FirstParty.Id == sourcePartyId) || (item.SecondParty.Id == sourcePartyId))
+                                       && (item.EndDate >= DateTime.Now)).Count();
             return cnt;
+        }
+
+        public static string GetDisplayName(PartyRelationshipType partyRelatinshipType)
+        {
+            return (string.IsNullOrWhiteSpace(partyRelatinshipType.DisplayName) ? partyRelatinshipType.Title : partyRelatinshipType.DisplayName);
         }
     }
 
@@ -51,21 +56,25 @@ namespace BExIS.Web.Shell.Areas.BAM.Helpers
                 foreach (XmlNode partyTypeNode in partyTypesNodeList[0].ChildNodes)
                 {
                     var title = partyTypeNode.Attributes["Name"].Value;
+                    var displayName = partyTypeNode.Attributes["DisplayName"] == null ? "" : partyTypeNode.Attributes["DisplayName"].Value; 
                     var partyType = partyTypeManager.Repo.Get(item => item.Title == title).FirstOrDefault();
                     //If there is not such a party type
                     if (partyType == null)
                     {
-                        partyType = partyTypeManager.Create(title, "Imported from partyTypes.xml", null);
-                        partyTypeManager.AddStatusType(partyType, "Create", "", 0);
+                        var partyStatusTypes = new List<PartyStatusType>();
+                        partyStatusTypes.Add(new PartyStatusType() { Name = "Created", Description = "" });
+                        partyType = partyTypeManager.Create(title, "Imported from partyTypes.xml", displayName, partyStatusTypes);
+
                         foreach (XmlNode customAttrNode in partyTypeNode.ChildNodes)
                         {
                             var customAttrType = customAttrNode.Attributes["type"] == null ? "String" : customAttrNode.Attributes["type"].Value;
                             var description = customAttrNode.Attributes["description"] == null ? "" : customAttrNode.Attributes["description"].Value;
                             var validValues = customAttrNode.Attributes["validValues"] == null ? "" : customAttrNode.Attributes["validValues"].Value;
                             var isValueOptional = customAttrNode.Attributes["isValueOptional"] == null ? true : Convert.ToBoolean(customAttrNode.Attributes["isValueOptional"].Value);
-                            var partyCustomAttribute = partyTypeManager.CreatePartyCustomAttribute(partyType, customAttrType, customAttrNode.Attributes["Name"].Value, description, validValues, isValueOptional);
+                            var isUnique = customAttrNode.Attributes["isUnique"] == null ? false : Convert.ToBoolean(customAttrNode.Attributes["isUnique"].Value);
+                            var isMain = customAttrNode.Attributes["isMain"] == null ? false : Convert.ToBoolean(customAttrNode.Attributes["isMain"].Value);
+                            var partyCustomAttribute = partyTypeManager.CreatePartyCustomAttribute(partyType, customAttrType, customAttrNode.Attributes["Name"].Value, description, validValues, isValueOptional, isUnique, isMain);
                         }
-                        // xmlDoc.Save(filePath);
                     }
                     else
                     {
@@ -79,9 +88,10 @@ namespace BExIS.Web.Shell.Areas.BAM.Helpers
                                 var customAttrDescription = customAttrNode.Attributes["description"] == null ? "" : customAttrNode.Attributes["description"].Value;
                                 var customAttrValidValues = customAttrNode.Attributes["validValues"] == null ? "" : customAttrNode.Attributes["validValues"].Value;
                                 var customAttrIsValueOptional = customAttrNode.Attributes["isValueOptional"] == null ? true : Convert.ToBoolean(customAttrNode.Attributes["isValueOptional"].Value);
-                                var customAttribute = partyTypeManager.CreatePartyCustomAttribute(partyType, customAttrType, customAttrName, customAttrDescription, customAttrValidValues, customAttrIsValueOptional);
+                                var customAttrIsUnique = customAttrNode.Attributes["IsUnique"] == null ? false : Convert.ToBoolean(customAttrNode.Attributes["IsUnique"].Value);
+                                var customAttrIsMain = customAttrNode.Attributes["isMain"] == null ? false : Convert.ToBoolean(customAttrNode.Attributes["isMain"].Value);
+                                var customAttribute = partyTypeManager.CreatePartyCustomAttribute(partyType, customAttrType, customAttrName, customAttrDescription, customAttrValidValues, customAttrIsValueOptional, customAttrIsUnique, customAttrIsMain);
                             }
-                            // xmlDoc.Save(filePath);
                         }
                     }
 
@@ -93,37 +103,37 @@ namespace BExIS.Web.Shell.Areas.BAM.Helpers
                 {
                     var partyRelationshipTypeManager = new PartyRelationshipTypeManager();
                     var title = partyRelationshipTypesNode.Attributes["Name"].Value;
-                    var description = partyRelationshipTypesNode.Attributes["Description"].Value;
-
+                    var displayName = partyRelationshipTypesNode.Attributes["DisplayName"] == null ? "" : partyRelationshipTypesNode.Attributes["DisplayName"].Value;
+                    var description = partyRelationshipTypesNode.Attributes["Description"] == null ? "" : partyRelationshipTypesNode.Attributes["Description"].Value;
                     var indicatesHierarchy = partyRelationshipTypesNode.Attributes["IndicatesHierarchy"] == null ? false : Convert.ToBoolean(partyRelationshipTypesNode.Attributes["IndicatesHierarchy"].Value);
-
-                    var maxCardinality = partyRelationshipTypesNode.Attributes["MaxCardinality"] == null ? 0 : int.Parse(partyRelationshipTypesNode.Attributes["MaxCardinality"].Value);
-
+                    var maxCardinality = partyRelationshipTypesNode.Attributes["MaxCardinality"] == null ? -1 : int.Parse(partyRelationshipTypesNode.Attributes["MaxCardinality"].Value);
                     var minCardinality = partyRelationshipTypesNode.Attributes["MinCardinality"] == null ? 0 : int.Parse(partyRelationshipTypesNode.Attributes["MinCardinality"].Value);
 
                     //Import party type pairs
-                    var partyTypesPairNodeList = partyRelationshipTypesNode.SelectNodes("//PartyTypesPairs");
                     var partyTypePairs = new List<PartyTypePair>();
-                    foreach (XmlNode partyTypesPairNode in partyTypesPairNodeList[0].ChildNodes)
+                    foreach (XmlNode partyTypesPairNode in partyRelationshipTypesNode.ChildNodes[0].ChildNodes)
                     {
-                        var alowedSourceTitle = partyTypesPairNode.Attributes["AlowedSource"].Value;
-                        var alowedTargetTitle = partyTypesPairNode.Attributes["AlowedTarget"].Value;
-                        var alowedSource = partyTypeManager.Repo.Get(item => item.Title == alowedSourceTitle).FirstOrDefault();
-                        if (alowedSource == null)
-                            throw new Exception("Error in importing party relationship types ! \r\n " + alowedSourceTitle + " is not a party type!!");
-                        var alowedTarget = partyTypeManager.Repo.Get(item => item.Title == alowedTargetTitle).FirstOrDefault();
-                        if (alowedTarget == null)
-                            throw new Exception("Error in importing party relationship types ! \r\n " + alowedTargetTitle + " is not a party type!!");
+                        var allowedSourceTitle = partyTypesPairNode.Attributes["AllowedSource"].Value;
+                        var allowedTargetTitle = partyTypesPairNode.Attributes["AllowedTarget"].Value;
+                        var allowedSource = partyTypeManager.Repo.Get(item => item.Title == allowedSourceTitle).FirstOrDefault();
+                        if (allowedSource == null)
+                            throw new Exception("Error in importing party relationship types ! \r\n " + allowedSourceTitle + " is not a party type!!");
+                        var allowedTarget = partyTypeManager.Repo.Get(item => item.Title == allowedTargetTitle).FirstOrDefault();
+                        if (allowedTarget == null)
+                            throw new Exception("Error in importing party relationship types ! \r\n " + allowedTargetTitle + " is not a party type!!");
 
                         var typePairTitle = partyTypesPairNode.Attributes["Title"].Value;
+                        var typePairDescription = partyTypesPairNode.Attributes["Description"].Value;
+                        var typePairDefault = partyTypesPairNode.Attributes["Default"] == null ? false : Convert.ToBoolean(partyTypesPairNode.Attributes["Default"].Value);
 
-                        var typePairTDescription = partyTypesPairNode.Attributes["Description"].Value;
                         partyTypePairs.Add(new PartyTypePair()
                         {
-                            AlowedSource = alowedSource,
-                            AlowedTarget = alowedTarget,
-                            Description = typePairTDescription,
-                            Title = typePairTitle
+                            AllowedSource = allowedSource,
+                            AllowedTarget = allowedTarget,
+                            Description = typePairDescription,
+                            Title = typePairTitle,
+                            PartyRelationShipTypeDefault = typePairDefault
+
                         });
                     }
 
@@ -132,7 +142,7 @@ namespace BExIS.Web.Shell.Areas.BAM.Helpers
                     //It is mandatory to create at least one party type pair when we are creating a party type relation
                     //
                     if (partyRelationshipType == null)
-                        partyRelationshipType = partyRelationshipTypeManager.Create(title, description, indicatesHierarchy, maxCardinality, minCardinality, partyTypePairs.First().AlowedSource, partyTypePairs.First().AlowedTarget,
+                        partyRelationshipType = partyRelationshipTypeManager.Create(title, displayName, description, indicatesHierarchy, maxCardinality, minCardinality, partyTypePairs.First().PartyRelationShipTypeDefault, partyTypePairs.First().AllowedSource, partyTypePairs.First().AllowedTarget,
         partyTypePairs.First().Title, partyTypePairs.First().Description);
                     else
                     {
@@ -156,10 +166,10 @@ namespace BExIS.Web.Shell.Areas.BAM.Helpers
         {
             var entity = partyRelationshipTypeManager.RepoPartyTypePair.Get(item => item.Title == partyTypePair.Title && item.PartyRelationshipType.Id == partyRelationshipType.Id).FirstOrDefault();
             if (entity != null)
-                partyRelationshipTypeManager.UpdatePartyTypePair(entity.Id, partyTypePair.Title, partyTypePair.AlowedSource, partyTypePair.AlowedTarget, partyTypePair.Description, entity.PartyRelationshipType);
+                partyRelationshipTypeManager.UpdatePartyTypePair(entity.Id, partyTypePair.Title, partyTypePair.AllowedSource, partyTypePair.AllowedTarget, partyTypePair.Description, partyTypePair.PartyRelationShipTypeDefault, entity.PartyRelationshipType);
             else
-                partyRelationshipTypeManager.AddPartyTypePair(partyTypePair.Title, partyTypePair.AlowedSource, partyTypePair.AlowedTarget, partyTypePair.Description, partyRelationshipType);
+                partyRelationshipTypeManager.AddPartyTypePair(partyTypePair.Title, partyTypePair.AllowedSource, partyTypePair.AllowedTarget, partyTypePair.Description, partyTypePair.PartyRelationShipTypeDefault, partyRelationshipType);
         }
     }
     //Check duplicate and add edit 
-    }
+}

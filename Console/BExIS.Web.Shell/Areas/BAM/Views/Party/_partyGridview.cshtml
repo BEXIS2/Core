@@ -1,0 +1,24 @@
+﻿@model List<BExIS.Web.Shell.Areas.BAM.Models.PartyGridViewModel>
+@(Html.Telerik().Grid(Model)
+            .Name("partiesGrid").DataBinding(dataBinding => dataBinding
+        .Ajax().OperationMode(GridOperationMode.Client))
+            .Pageable(paging => paging.Enabled(true).PageSize(10).Position(GridPagerPosition.Both).PageTo(1))
+            .Sortable()
+            .Filterable()
+            .Columns(columns =>
+            {
+                columns.Bound(c => c.Id);
+                columns.Bound(c => c.StartDate);
+                columns.Bound(c => c.EndDate);
+                columns.Bound(c => c.Name);
+                columns.Bound(c => c.PartyTypeTitle);
+                columns.Template(
+                @<text>
+                    <div>
+                        @Html.ActionLink(" ", "View", "Party", new { id = item.Id }, new { @class = "bx bx-grid-function bx-show", title = "View Party \"" + item.Name + "\"" })
+                        @Html.ActionLink(" ", "CreateEdit", "Party", new { id = item.Id }, new { @class = "bx bx-grid-function bx-edit", title = "Edit Party \"" + item.Name + "\"" })
+                        @Html.ActionLink(" ", "DeleteConfirm", "Party", new { id = item.Id }, new { @class = "bx bx-grid-function bx-trash ", title = "Delete Party \"" + item.Name + "\"" })
+                    </div>
+                </text>
+                        );
+            }))

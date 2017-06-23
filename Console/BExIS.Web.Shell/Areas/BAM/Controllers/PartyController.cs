@@ -1,25 +1,45 @@
 ﻿using BExIS.Dlm.Entities.Party;
 using BExIS.Dlm.Services.Party;
+using BExIS.Security.Services.Subjects;
 using BExIS.Web.Shell.Areas.BAM.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Script.Serialization;
 using Vaiona.Persistence.Api;
 using Vaiona.Web.Mvc.Models;
-
+/// <summary>
+/// Author: Masoud Allahyari 
+/// Mail: Masoud.Allahyari@Gmail.com
+/// </summary>
 namespace BExIS.Web.Shell.Areas.BAM.Controllers
 {
     public class PartyController : Controller
     {
 
-
         public ActionResult Index()
         {
+            return View(new PartyRelationshipTypeManager().GetRootPartyTypes());
+        }
+
+        public ActionResult LoadParties(int id)
+        {
             PartyManager partyManager = new PartyManager();
-            var parties = partyManager.Repo.Get();
-            return View(parties.ToList());
+            //When telerik grid is client based, it's not able to load lazy list and circular dependencies errors
+            var partiesForGrid = new List<PartyGridViewModel>();
+            if (id > 0)
+            {
+                var childPartyTypes = new PartyRelationshipTypeManager().GetChildPartyTypes(id);
+                foreach (var party in partyManager.Repo.Get(c => childPartyTypes.Contains(c.PartyType)))
+                    partiesForGrid.Add(new PartyGridViewModel() { Id = party.Id, Name = party.Name, PartyTypeTitle = party.PartyType.Title, StartDate = party.StartDate, EndDate = party.EndDate });
+            }
+            else
+                foreach (var party in partyManager.Repo.Get())
+                    partiesForGrid.Add(new PartyGridViewModel() { Id = party.Id, Name = party.Name, PartyTypeTitle = party.PartyType.Title, StartDate = party.StartDate, EndDate = party.EndDate });
+            return PartialView("_partyGridview", partiesForGrid);
+
         }
 
         public ActionResult Create()
@@ -28,47 +48,49 @@ namespace BExIS.Web.Shell.Areas.BAM.Controllers
             ViewBag.Title = PresentationModel.GetViewTitle("Create Party");
             var model = new PartyModel();
             model.PartyTypeList = partyTypeManager.Repo.Get().ToList();
-            return View(model);
+            ViewBag.RelationTabAsDefault = false;
+            return View("CreateEdit", model);
         }
-
+        
         /// <summary>
-        /// 
+        /// Create party
         /// </summary>
-        /// <param name="partyModel"></param>
-        /// <param name="partyCustomAttributeValues">should be filled like partyCustomAttributeValues[Id]=value in view </param>
-        /// <param name="partyRelationshipsDic">should be filled like PartyRelationship[FiledName_@secondPartyId]=Value in view </param>
+        /// <param name="party"></param>
+        /// <param name="partyCustomAttributeValues"></param>
+        /// <param name="partyRelationships"></param>
+        /// <param name="userName">if there is, it will attach to the party</param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult Create(string submit,PartyModel partyModel, Dictionary<string, string> partyCustomAttributeValues, Dictionary<string, string> partyRelationshipsDic)
+        public ActionResult Create(Party party, Dictionary<string, string> partyCustomAttributeValues, List<PartyRelationship> partyRelationships, string userName)
         {
-            //
             PartyTypeManager partyTypeManager = new PartyTypeManager();
             PartyManager partyManager = new PartyManager();
-            validateAttribute(partyModel);
-            if (partyModel.Errors.Count > 0)
-                return View(partyModel);
-            //
-            var partyType = partyTypeManager.Repo.Get(partyModel.Party.PartyType.Id);
-            var partyStatusType = partyTypeManager.GetStatusType(partyType, "Create");
-
-            //Create party
-            var party = partyManager.Create(partyType, partyModel.Party.Name, "", "", partyModel.Party.StartDate, partyModel.Party.EndDate, partyStatusType);
-            //Add customAttriuteValue to party
-            partyManager.AddPartyCustomAttriuteValue(party, ConvertDictionaryToPartyCustomeAttrValuesDictionary(partyCustomAttributeValues));
-
-            List<PartyRelationship> partyRelationships = ConvertDictionaryToPartyRelationships(partyRelationshipsDic);
             var partyRelationshipManager = new PartyRelationshipTypeManager();
-            foreach (var partyRelationship in partyRelationships)
+            var partyType = partyTypeManager.Repo.Get(party.PartyType.Id);
+            var partyStatusType = partyTypeManager.GetStatusType(partyType, "Created");
+            //Create party
+            party = partyManager.Create(partyType, party.Alias, party.Description, party.StartDate, party.EndDate, partyStatusType);
+            //Add customAttriuteValue to party
+            var customAttributeValues = ConvertDictionaryToPartyCustomeAttrValuesDictionary(partyCustomAttributeValues);
+            partyManager.AddPartyCustomAttriuteValues(party, customAttributeValues);
+            if (partyRelationships != null)
+                foreach (var partyRelationship in partyRelationships)
+                {
+                    var secondParty = partyManager.Repo.Get(partyRelationship.SecondParty.Id);
+                    var partyRelationshipType = partyRelationshipManager.Repo.Get(partyRelationship.PartyRelationshipType.Id);
+                    partyManager.AddPartyRelationship(party, secondParty, partyRelationshipType, partyRelationship.Title, partyRelationship.Description, partyRelationship.StartDate, partyRelationship.EndDate, partyRelationship.Scope);
+                }
+            //add relation to account and party
+            if (!string.IsNullOrEmpty(userName))
             {
-                var secondParty = partyManager.Repo.Get(partyRelationship.SecondParty.Id);
-                var partyRelationshipType = partyRelationshipManager.Repo.Get(partyRelationship.PartyRelationshipType.Id);
-                partyManager.AddPartyRelationship(party, secondParty, partyRelationshipType, partyRelationship.Title, partyRelationship.Description, partyRelationship.StartDate, partyRelationship.EndDate, partyRelationship.Scope);
+                SubjectManager subjectManager = new SubjectManager();
+                var user = subjectManager.GetUserByName(HttpContext.User.Identity.Name);
+                partyManager.AddPartyUser(party, user.Id);
+                return RedirectToAction("Index", "Home", new { area = "" });
             }
-            if (submit == "AddPartyRelationships")
-                 return RedirectToAction("Edit", new {id=party.Id,addRelationship=true });
-            else
-               return RedirectToAction("Index");
+            return RedirectToAction("Index");
         }
+
 
         private List<PartyRelationship> ConvertDictionaryToPartyRelationships(Dictionary<string, string> partyRelationshipsDic)
         {
@@ -116,7 +138,7 @@ namespace BExIS.Web.Shell.Areas.BAM.Controllers
         }
 
 
-        public ActionResult Edit(int id,bool relationTabAsDefault=false)
+        public ActionResult CreateEdit(int id, bool relationTabAsDefault = false)
         {
             PartyManager partyManager = new PartyManager();
             PartyTypeManager partyTypeManager = new PartyTypeManager();
@@ -125,12 +147,13 @@ namespace BExIS.Web.Shell.Areas.BAM.Controllers
             model.PartyTypeList = partyTypeManager.Repo.Get().ToList();
             model.Party = partyManager.Repo.Get(id);
             ViewBag.RelationTabAsDefault = relationTabAsDefault;
-            return View(model);
+            return View("CreateEdit", model);
         }
 
         [HttpPost]
-        public ActionResult Edit(PartyModel partyModel, Dictionary<string, string> partyCustomAttributeValues)
+        public ActionResult CreateEdit(PartyModel partyModel, Dictionary<string, string> partyCustomAttributeValues)
         {
+            var redirectAction = RedirectToAction("Index");
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 PartyTypeManager partyTypeManager = new PartyTypeManager();
@@ -138,20 +161,36 @@ namespace BExIS.Web.Shell.Areas.BAM.Controllers
                 validateAttribute(partyModel);
                 if (partyModel.Errors.Count > 0)
                     return View(partyModel);
-                var party = partyManager.Repo.Reload(partyModel.Party);
-                //Update some fields
-                party.Description = partyModel.Party.Description;
-                party.StartDate = partyModel.Party.StartDate;
-                party.EndDate = partyModel.Party.EndDate;
-                party.Name = partyModel.Party.Name;
-                party = partyManager.Update(party);
-                foreach (var partyCustomAttributeValueString in partyCustomAttributeValues)
+                var newAddPartyCustomAttrValues = new Dictionary<PartyCustomAttribute, string>();
+                var party = new Party();
+                if (partyModel.Party.Id != 0)
                 {
-                    var partyCustomAttribute = partyTypeManager.RepoPartyCustomAttribute.Get(int.Parse(partyCustomAttributeValueString.Key));
-                    partyManager.UpdatePartyCustomAttriuteValue(partyCustomAttribute, partyModel.Party, partyCustomAttributeValueString.Value);
+                    party = partyManager.Repo.Reload(partyModel.Party);
+                    //Update some fields
+                    party.Description = partyModel.Party.Description;
+                    party.StartDate = partyModel.Party.StartDate;
+                    party.EndDate = partyModel.Party.EndDate;
+                    party = partyManager.Update(party);
+                    foreach (var partyCustomAttributeValueString in partyCustomAttributeValues)
+                    {
+                        var partyCustomAttribute = partyTypeManager.RepoPartyCustomAttribute.Get(int.Parse(partyCustomAttributeValueString.Key));
+                        string value = string.IsNullOrEmpty(partyCustomAttributeValueString.Value) ? "" : partyCustomAttributeValueString.Value;
+                        newAddPartyCustomAttrValues.Add(partyCustomAttribute, value);
+                    }
                 }
+                else
+                {
+                    var partyType = partyTypeManager.Repo.Get(partyModel.Party.PartyType.Id);
+                    var partyStatusType = partyTypeManager.GetStatusType(partyType, "Created");
+                    //Create party
+                    party = partyManager.Create(partyType, partyModel.Party.Alias, partyModel.Party.Description, partyModel.Party.StartDate, partyModel.Party.EndDate, partyStatusType);
+                    //Add customAttriuteValue to party
+                    newAddPartyCustomAttrValues = ConvertDictionaryToPartyCustomeAttrValuesDictionary(partyCustomAttributeValues);
+                    redirectAction = RedirectToAction("CreateEdit", new { id = party.Id, relationTabAsDefault = true });
+                }
+                partyManager.AddPartyCustomAttriuteValues(party, newAddPartyCustomAttrValues);
             }
-            return RedirectToAction("Index");
+            return redirectAction;
         }
 
         public ActionResult View(int id)
@@ -196,10 +235,12 @@ namespace BExIS.Web.Shell.Areas.BAM.Controllers
 
         private void validateAttribute(PartyModel partyModel)
         {
+            if (partyModel.Party.StartDate > partyModel.Party.EndDate)
+                partyModel.Errors.Add(new IO.Transform.Validation.Exceptions.Error(IO.Transform.Validation.Exceptions.ErrorType.Other, "Start date is greater than end date!"));
             if (partyModel.Party.PartyType.Id == 0)
                 partyModel.Errors.Add(new IO.Transform.Validation.Exceptions.Error(IO.Transform.Validation.Exceptions.ErrorType.Other, "Please select party type!"));
-            if (string.IsNullOrEmpty(partyModel.Party.Name))
-                partyModel.Errors.Add(new IO.Transform.Validation.Exceptions.Error(IO.Transform.Validation.Exceptions.ErrorType.Other, "Please enter a name for party!"));
+            //if (string.IsNullOrEmpty(partyModel.Party.Name))
+            //    partyModel.Errors.Add(new IO.Transform.Validation.Exceptions.Error(IO.Transform.Validation.Exceptions.ErrorType.Other, "Please enter a name for party!"));
             //Start and end date validation
         }
 
@@ -211,9 +252,14 @@ namespace BExIS.Web.Shell.Areas.BAM.Controllers
         private Dictionary<PartyCustomAttribute, string> ConvertDictionaryToPartyCustomeAttrValuesDictionary(Dictionary<string, string> partyCustomAttributes)
         {
             var result = new Dictionary<PartyCustomAttribute, string>();
+            var partyTypeManager = new PartyTypeManager();
             foreach (var partyCustomAttribute in partyCustomAttributes)
             {
-                result.Add(new PartyCustomAttribute() { Id = int.Parse(partyCustomAttribute.Key) }, partyCustomAttribute.Value);
+                //result.Add(new PartyCustomAttribute() { Id = int.Parse(partyCustomAttribute.Key) }, partyCustomAttribute.Value);
+                var customAttribiute = partyTypeManager.RepoPartyCustomAttribute.Get(int.Parse(partyCustomAttribute.Key));
+                if (customAttribiute == null || customAttribiute.Id == 0)
+                    throw new Exception("Error in custom attribute values.");
+                result.Add(customAttribiute, partyCustomAttribute.Value);
             }
             return result;
         }
@@ -226,23 +272,29 @@ namespace BExIS.Web.Shell.Areas.BAM.Controllers
         [HttpPost]
         public ActionResult CreatePartyRelationships(int partyId, Dictionary<string, string> partyRelationshipsDic)
         {
-            PartyTypeManager partyTypeManager = new PartyTypeManager();
             PartyManager partyManager = new PartyManager();
-
-
             var party = partyManager.Repo.Get(partyId);
-
             List<PartyRelationship> partyRelationships = ConvertDictionaryToPartyRelationships(partyRelationshipsDic);
             var partyRelationshipManager = new PartyRelationshipTypeManager();
             foreach (var partyRelationship in partyRelationships)
             {
                 var secondParty = partyManager.Repo.Get(partyRelationship.SecondParty.Id);
                 var partyRelationshipType = partyRelationshipManager.Repo.Get(partyRelationship.PartyRelationshipType.Id);
+                //Min date value is sent from telerik date time element, if it was empty
+                if (partyRelationship.EndDate == DateTime.MinValue)
+                    partyRelationship.EndDate = DateTime.MaxValue;
                 partyManager.AddPartyRelationship(party, secondParty, partyRelationshipType, partyRelationship.Title, partyRelationship.Description, partyRelationship.StartDate, partyRelationship.EndDate, partyRelationship.Scope);
             }
-            return RedirectToAction("Edit", "party", new { id = partyId , relationTabAsDefault = true});
+            return RedirectToAction("CreateEdit", "party", new { id = partyId, relationTabAsDefault = true });
         }
-
+        [HttpGet]
+        public Boolean CheckUniqeness(int partyTypeId, int partyId, string hash)
+        {
+            PartyManager partyManager = new PartyManager();
+            var partyType = new PartyTypeManager().Repo.Get(partyTypeId);
+            var party = partyManager.Repo.Get(partyId);
+            return partyManager.CheckUniqueness(partyManager.Repo, partyType, hash, party);
+        }
         [HttpPost]
         public string DeletePartyRelationship(int id)
         {
@@ -255,7 +307,7 @@ namespace BExIS.Web.Shell.Areas.BAM.Controllers
             catch (Exception ex)
             {
                 return ex.Message;
-            }           
+            }
         }
 
         /// <summary>
@@ -267,7 +319,7 @@ namespace BExIS.Web.Shell.Areas.BAM.Controllers
         {
             long partyId = 0;
             var partyIdStr = HttpContext.Request.Params["partyId"];
-            if (long.TryParse(partyIdStr, out partyId))
+            if (long.TryParse(partyIdStr, out partyId) && partyId != 0)
             {
                 PartyManager pm = new PartyManager();
                 ViewBag.customAttrValues = pm.Repo.Get(partyId).CustomAttributeValues.ToList();
@@ -289,7 +341,6 @@ namespace BExIS.Web.Shell.Areas.BAM.Controllers
             var partyManager = new PartyManager();
             var partyModel = new PartyModel();
             partyModel.Party = partyManager.Repo.Get(id);
-
             return PartialView("_partyRelationshipTypesView", partyModel);
         }
 
@@ -301,11 +352,9 @@ namespace BExIS.Web.Shell.Areas.BAM.Controllers
         public ActionResult LoadPartyRelationshipType(int id)
         {
             var partyRelManager = new PartyRelationshipTypeManager();
+
             ViewBag.sourcePartyId = Request.Params["partyId"] != null ? long.Parse(Request.Params["partyId"]) : 0;
-            var partyRelationTypes = partyRelManager.Repo.Get();
-            foreach (var partyRelationType in partyRelationTypes)
-                partyRelationType.AssociatedPairs = partyRelationType.AssociatedPairs.Where(item => item.AlowedSource.Id == id).ToList();
-            return PartialView("_partyRelationshipTypeView", partyRelationTypes);
+            return PartialView("_partyRelationshipTypeView", partyRelManager.GetPartyRelationshipTypeWithAllowedAssociated(id));
         }
         /// <summary>
         /// 
@@ -326,6 +375,6 @@ namespace BExIS.Web.Shell.Areas.BAM.Controllers
             var partyManager = new PartyManager();
             return partyManager.UpdatePartyRelationship(partyRelationship.Id, partyRelationship.Title, partyRelationship.Description, partyRelationship.StartDate, partyRelationship.EndDate, partyRelationship.Scope);
         }
-     
+
     }
 }

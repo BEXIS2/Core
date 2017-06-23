@@ -24,6 +24,10 @@
       <column name="Description"  />
     </property>
 
+    <property name="DisplayName" type="String" >
+      <column name="DisplayName"  />
+    </property>
+    
     <set name="Parties" table="Parties" lazy="false" >
       <key column="PartyTypeRef"/>
       <one-to-many class="Party"/>

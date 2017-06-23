@@ -19,7 +19,7 @@
 @(Html.Telerik().DropDownList()
                             .Placeholder("--- SELECT ---")                              
                                     .Name("Party.Id")
-                                    .BindTo(new SelectList(partyTypePair.AlowedTarget.Parties, "Id", "Title"))
+                                    .BindTo(new SelectList(partyTypePair.AllowedTarget.Parties, "Id", "Title"))
                                     .ClientEvents(events => events.OnChange("EnableAdd"))  )
             </td>
         </tr>
