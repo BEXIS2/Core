@@ -176,6 +176,8 @@
                     to add primary data to this dataset.
                 </td>
 
+                //ToDo Modularity
+                // Check if Modul DDM Exist, Is Active and Action Is Available
                 if (@Model.DatasetId > 0)
                 {
                     <td>Or see your dataset here <b>@Html.ActionLink(@Model.DatasetTitle, "ShowData", "CreateDataset", new {id = @Model.DatasetId}, new {title = "Link to your dataset.", @class = "bx-link"})</b><br/></td>
