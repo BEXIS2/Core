@@ -2,9 +2,9 @@
 
 namespace BExIS.Modules.Rpm.UI
 {
-    public class RPMModule : ModuleBase
+    public class RpmModule : ModuleBase
     {
-        public RPMModule(): base("RPM")
+        public RpmModule(): base("RPM")
         {
         }
 
