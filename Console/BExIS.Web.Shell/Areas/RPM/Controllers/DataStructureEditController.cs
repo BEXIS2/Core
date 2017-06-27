@@ -22,6 +22,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Data Structure Edit", this.Session.GetTenant());
             if (DataStructureId != 0 && new DataStructureManager().StructuredDataStructureRepo.Get(DataStructureId) != null)
                 return View(DataStructureId);
+            else if(DataStructureId == 0)
+                return View(DataStructureId);
             else
                 return RedirectToAction("Index", "DataStructureSearch");
         }

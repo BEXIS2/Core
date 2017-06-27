@@ -1,4 +1,5 @@
-﻿using Vaiona.Web.Mvc.Modularity;
+﻿using BExIS.Modules.Rpm.UI.Helpers;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Rpm.UI
 {
@@ -6,6 +7,12 @@ namespace BExIS.Modules.Rpm.UI
     {
         public RpmModule(): base("RPM")
         {
+        }
+
+        public override void Install()
+        {
+            base.Install();
+            RPMSeedDataGenerator.GenerateSeedData();
         }
 
         /// <summary>
