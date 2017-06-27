@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using BExIS.Utils.Models;
+using System.Collections.Generic;
 
 /// <summary>
 ///
@@ -75,7 +76,7 @@ namespace BExIS.Ddm.Model
         /// <param name="multiSelect"></param>
         /// <param name="range"></param>
         /// <param name="valueSearchOperation"></param>
-        public void UpdateSearchCriteria(string name, List<string> values,SearchComponentBaseType typeOf, bool multiSelect = false, bool range = false, string valueSearchOperation = "OR")
+        public void UpdateSearchCriteria(string name, List<string> values, SearchComponentBaseType typeOf, bool multiSelect = false, bool range = false, string valueSearchOperation = "OR")
         {
 
             this.CriteriaComponent.Update(this.SearchComponent.GetSearchComponent(name, typeOf), values, multiSelect, valueSearchOperation);

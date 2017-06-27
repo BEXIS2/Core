@@ -1,17 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using BExIS.Ddm.Api;
-using BExIS.Ddm.Model;
-using BExIS.Ddm.Providers.LuceneProvider.Helpers;
+﻿using BExIS.Ddm.Api;
 using BExIS.Ddm.Providers.LuceneProvider.Config;
+using BExIS.Ddm.Providers.LuceneProvider.Helpers;
 using BExIS.Ddm.Providers.LuceneProvider.Indexer;
 using BExIS.Ddm.Providers.LuceneProvider.Searcher;
+using BExIS.Utils.Models;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Index;
 using Lucene.Net.QueryParsers;
 using Lucene.Net.Search;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using SearchCriteria = BExIS.Ddm.Model.SearchCriteria;
+using SearchCriterion = BExIS.Ddm.Model.SearchCriterion;
+using SearchModel = BExIS.Ddm.Model.SearchModel;
 
 /// <summary>
 ///
@@ -50,7 +53,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider
         public SearchProvider()
         {
             load();
-            Providers.Add(this.GetHashCode() , new WeakReference(this));
+            Providers.Add(this.GetHashCode(), new WeakReference(this));
         }
 
         /// <summary>
@@ -80,7 +83,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider
         /// <seealso cref=""/>
         /// <param name="forceReset"></param>
         /// <return></return>
-        private void load(bool forceReset=false)
+        private void load(bool forceReset = false)
         {
             if (forceReset == true)
                 SearchConfig.Reset();
@@ -90,7 +93,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider
             this.WorkingSearchModel = initWorking(); //init(WorkingSearchModel); // its better to make a clone form DefualtSearchModel than calling the function twice
             //this.DefaultSearchModel = Get(this.WorkingSearchModel.CriteriaComponent);
             this.WorkingSearchModel = Get(this.WorkingSearchModel.CriteriaComponent);
-           
+
         }
 
 
@@ -229,7 +232,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider
             this.WorkingSearchModel = Get(searchCriteria);
             this.WorkingSearchModel = UpdateFacets(searchCriteria);
         }
-    
+
         /// <summary>
         /// 
         /// </summary>
@@ -253,7 +256,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider
             bexisIndexer.updateIndex(datasetsToIndex);
 
             Reload();
-    
+
         }
 
         public void UpdateSingleDatasetIndex(long datasetId, IndexingAction indAction)
@@ -289,7 +292,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider
                             QueryParser parser;
                             if (fieldName.ToLower().Equals("category_all"))
                             {
-                                
+
                                 List<string> temp2 = BexisIndexSearcher.getCategoryFields().ToList();
                                 temp2.AddRange(BexisIndexSearcher.getStoredFields().ToList());
                                 temp2.Add("ng_all");
@@ -344,12 +347,12 @@ namespace BExIS.Ddm.Providers.LuceneProvider
                                 DateTime dd = new DateTime(Int32.Parse(sco.Values[0]), 1, 1, 1, 1, 1);
                                 if (pp.Direction == Direction.increase)
                                 {
-                                    NumericRangeQuery<long> dateRangeQuery = NumericRangeQuery.NewLongRange(fieldName , dd.Ticks, long.MaxValue, true, true);
+                                    NumericRangeQuery<long> dateRangeQuery = NumericRangeQuery.NewLongRange(fieldName, dd.Ticks, long.MaxValue, true, true);
                                     ((BooleanQuery)bexisSearching).Add(dateRangeQuery, Occur.MUST);
                                 }
                                 else
                                 {
-                                    NumericRangeQuery<long> dateRangeQuery = NumericRangeQuery.NewLongRange(fieldName , long.MinValue, dd.Ticks, true, true);
+                                    NumericRangeQuery<long> dateRangeQuery = NumericRangeQuery.NewLongRange(fieldName, long.MinValue, dd.Ticks, true, true);
                                     ((BooleanQuery)bexisSearching).Add(dateRangeQuery, Occur.MUST);
                                 }
                             }
