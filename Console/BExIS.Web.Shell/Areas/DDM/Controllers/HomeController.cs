@@ -5,7 +5,7 @@ using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Subjects;
 using BExIS.Utils.Models;
-using BExIS.Xml.Services;
+using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Data;
