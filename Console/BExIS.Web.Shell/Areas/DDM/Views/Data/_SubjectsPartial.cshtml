@@ -1,8 +1,9 @@
-﻿@using System
-@using System.Linq
-@using BExIS.Security.Entities.Objects
-@using Telerik.Web.Mvc.UI
-@model List<BExIS.Web.Shell.Areas.DDM.Models.DatasetPermissionGridRowModel>
+﻿@using System;
+@using System.Linq;
+@using BExIS.Security.Entities.Objects;
+@using Telerik.Web.Mvc.UI;
+
+@model List<BExIS.Modules.Ddm.UI.Models.DatasetPermissionGridRowModel>
 @(Html.Telerik().Grid(Model)
     .Name("Grid_Subjects")
     .DataKeys(keys =>

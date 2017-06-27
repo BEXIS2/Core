@@ -1,22 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Reflection.Emit;
-using System.Runtime.Remoting;
-using System.Text;
-using System.Xml;
-using System.Xml.Schema;
-using BExIS.Dlm.Entities.DataStructure;
+﻿using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
-using BExIS.Dlm.Services.TypeSystem;
 using BExIS.IO;
 using BExIS.Xml.Models.Mapping;
-using NHibernate.Criterion;
+using BExIS.Xml.Services;
+using NHibernate.Util;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Xml;
+using System.Xml.Schema;
 using Vaiona.Utils.Cfg;
 
 namespace BExIS.Xml.Helpers.Mapping
@@ -24,7 +19,7 @@ namespace BExIS.Xml.Helpers.Mapping
     public class XmlSchemaManager
     {
         public string FileName { get; set; }
-        
+
         public List<XmlSchemaComplexType> ComplexTypes { get; set; }
         public List<XmlSchemaComplexType> ComplexTypesWithSimpleTypesAsChildrens { get; set; }
         public List<XmlSchemaElement> Elements { get; set; }
@@ -37,7 +32,7 @@ namespace BExIS.Xml.Helpers.Mapping
 
         //Contraits of system
         public List<MetadataAttribute> MetadataAttributes { get; set; }
-        public Dictionary<string,List<Constraint>> ConvertedSimpleTypes { get; set; }
+        public Dictionary<string, List<Constraint>> ConvertedSimpleTypes { get; set; }
 
         private List<string> additionalFiles { get; set; }
         private DataContainerManager dataContainerManager = new DataContainerManager();
@@ -47,8 +42,8 @@ namespace BExIS.Xml.Helpers.Mapping
         private UnitManager unitManager = new UnitManager();
 
 
-        
-        private string SchemaName = ""; 
+
+        private string SchemaName = "";
         private string xsdFilePath = "";
         private string xsdFileName = "";
         private string newXsdFilePath = "";
@@ -85,7 +80,7 @@ namespace BExIS.Xml.Helpers.Mapping
             createdCompoundsDic = new Dictionary<long, string>();
             createdPackagesDic = new Dictionary<long, string>();
         }
-        
+
         public static bool MoveFile(string tempFile, string destinationPath)
         {
             if (File.Exists(tempFile))
@@ -126,7 +121,7 @@ namespace BExIS.Xml.Helpers.Mapping
 
             countedSchemas = Schema.Includes.Count + 1;
 
-            XmlSchema selectedSchema; 
+            XmlSchema selectedSchema;
 
             XmlSchemaSet schemaSet = new XmlSchemaSet();
             schemaSet.ValidationEventHandler += new ValidationEventHandler(verifyErrors);
@@ -157,7 +152,7 @@ namespace BExIS.Xml.Helpers.Mapping
             xsd_file.Close();
         }
 
-        private XmlSchemaSet addToSchemaSet(XmlSchemaObject xmlSchemaObject, XmlSchemaSet xmlSchemaSet )
+        private XmlSchemaSet addToSchemaSet(XmlSchemaObject xmlSchemaObject, XmlSchemaSet xmlSchemaSet)
         {
             if (xmlSchemaObject is XmlSchemaInclude)
             {
@@ -169,7 +164,7 @@ namespace BExIS.Xml.Helpers.Mapping
                     settings.DtdProcessing = DtdProcessing.Ignore;
 
                     string dataPath = Path.Combine(AppConfiguration.DataPath, "Temp", userName, include.SchemaLocation.Split('/').Last());
-                    
+
                     XmlReader test = XmlReader.Create(dataPath, settings);
                     include.Schema = XmlSchema.Read(test, verifyErrors);
                 }
@@ -427,20 +422,20 @@ namespace BExIS.Xml.Helpers.Mapping
         /// <returns></returns>
         public List<XmlSchemaAttribute> GetAttributes(XmlNode node)
         {
-            List<XmlSchemaAttribute> listOfAttributes = new List<XmlSchemaAttribute>(); 
+            List<XmlSchemaAttribute> listOfAttributes = new List<XmlSchemaAttribute>();
 
             XmlSchemaElement element = Elements.Where(e => e.Name.Equals(node.LocalName)).FirstOrDefault();
             if (element != null)
             {
                 XmlSchemaComplexType type = element.ElementSchemaType as XmlSchemaComplexType;
                 if (type != null)
-                { 
+                {
                     // If the complex type has any attributes, get an enumerator 
                     // and write each attribute name to the Debug.
                     if (type.AttributeUses.Count > 0)
                     {
                         foreach (XmlSchemaObject obj in type.AttributeUses.Values)
-                        { 
+                        {
                             XmlSchemaAttribute attr = (XmlSchemaAttribute)obj;
                             listOfAttributes.Add(attr);
 
@@ -475,7 +470,7 @@ namespace BExIS.Xml.Helpers.Mapping
                 return 0;
             }
 
-                
+
             return -1;
         }
 
@@ -497,11 +492,11 @@ namespace BExIS.Xml.Helpers.Mapping
         {
             MetadataAttributeManager mam = new MetadataAttributeManager();
             //List<XmlSchemaElement> elementsWithSimpleType = this.GetAllElementsTypeIsSimpleType();
-           
+
 
             //foreach(XmlSchemaElement element in elementsWithSimpleType)
             //{
-                
+
             //    //ConvertedSimplesTypes.Add(type.Name, ConvertToConstraints(type));   
             //}
 
@@ -511,7 +506,7 @@ namespace BExIS.Xml.Helpers.Mapping
 
         #region metadata structure
 
-        public long GenerateMetadataStructure(string nameOfStartNode,string schemaName)
+        public long GenerateMetadataStructure(string nameOfStartNode, string schemaName)
         {
             if (!String.IsNullOrEmpty(schemaName))
                 SchemaName = schemaName;
@@ -523,13 +518,13 @@ namespace BExIS.Xml.Helpers.Mapping
             #region prepare mappingFiles
 
             #region intern to extern
-                // add schema to mappingfile
-                mappingFileInternalToExternal.Header.AddToSchemas(schemaName, "Metadata/" + schemaName + "/" + FileName);
+            // add schema to mappingfile
+            mappingFileInternalToExternal.Header.AddToSchemas(schemaName, "Metadata/" + schemaName + "/" + FileName);
             #endregion
 
             #region extern to intern
-                mappingFileExternalToInternal.Header.AddToDestination("Metadata");
-                mappingFileExternalToInternal.Header.AddToSchemas(schemaName, "Metadata/" + schemaName + "/" + FileName);
+            mappingFileExternalToInternal.Header.AddToDestination("Metadata");
+            mappingFileExternalToInternal.Header.AddToSchemas(schemaName, "Metadata/" + schemaName + "/" + FileName);
 
             // id and name of metadatastructure fehlt
 
@@ -546,17 +541,17 @@ namespace BExIS.Xml.Helpers.Mapping
             MetadataStructureManager mdsManager = new MetadataStructureManager();
             MetadataPackageManager mdpManager = new MetadataPackageManager();
 
-             // create default metadataStructure
+            // create default metadataStructure
             MetadataStructure test = null; //mdsManager.Repo.Get(p => p.Name == SchemaName).FirstOrDefault();
             if (test == null) test = mdsManager.Create(SchemaName, SchemaName, "", "", null);
 
-            
+
             XmlSchemaObject root = new XmlSchemaElement();
             string xpathFromRoot = "";
 
 
             int count = 0;
-            foreach(XmlSchemaObject obj in Schema.Items)
+            foreach (XmlSchemaObject obj in Schema.Items)
             {
                 if (obj is XmlSchemaElement)
                 {
@@ -568,7 +563,7 @@ namespace BExIS.Xml.Helpers.Mapping
                 }
             }
 
-            foreach(XmlSchemaObject obj in Schema.Items)
+            foreach (XmlSchemaObject obj in Schema.Items)
             {
                 if (obj is XmlSchemaElement)
                     root = (XmlSchemaElement)obj;
@@ -591,7 +586,7 @@ namespace BExIS.Xml.Helpers.Mapping
 
                 root = Elements.Where(e => e.Name.ToLower().Equals(nameOfStartNode.ToLower())).FirstOrDefault();
                 if (root == null)
-                { 
+                {
                     root = Groups.Where(g => g.Name.ToLower().Equals(nameOfStartNode.ToLower())).FirstOrDefault();
                 }
 
@@ -602,183 +597,141 @@ namespace BExIS.Xml.Helpers.Mapping
                 }
             }
 
-               
 
 
-                List<XmlSchemaElement> childrenOfRoot = XmlSchemaUtility.GetAllElements(root, false, Elements);
-                List<XmlSchemaElement> packages = new List<XmlSchemaElement>();
 
-                if (XmlSchemaUtility.IsAllSimpleType(childrenOfRoot))
+            List<XmlSchemaElement> childrenOfRoot = XmlSchemaUtility.GetAllElements(root, false, Elements);
+            List<XmlSchemaElement> packages = new List<XmlSchemaElement>();
+
+            if (XmlSchemaUtility.IsAllSimpleType(childrenOfRoot))
+            {
+                #region root with only simple type childrens
+
+                XmlSchemaGroup rootAsGroup = (XmlSchemaGroup)root;
+
+                MetadataPackage package = getExistingMetadataPackage(rootAsGroup.Name);
+
+                if (package == null)
                 {
-                    #region root with only simple type childrens
+                    package = mdpManager.Create(rootAsGroup.Name, GetDescription(rootAsGroup.Annotation), true);
+                    createdPackagesDic.Add(package.Id, package.Name);
+                }
 
-                    XmlSchemaGroup rootAsGroup = (XmlSchemaGroup)root;
+                if (test.MetadataPackageUsages.Where(p => p.MetadataPackage == package).Count() <= 0)
+                {
+                    string xpath = "Metadata/" + rootAsGroup.Name;
 
-                    MetadataPackage package = getExistingMetadataPackage(rootAsGroup.Name);
+                    foreach (XmlSchemaElement child in childrenOfRoot)
+                    {
+                        //Debug.Writeline("packageChild : " + child.Name);
+                        //Debug.Writeline("-->");
 
+                        if (XmlSchemaUtility.IsSimpleType(child))
+                        {
+                            addMetadataAttributeToMetadataPackageUsage(package, child, xpath, rootAsGroup.Name);
+                        }
+                        else
+                        {
+                            List<string> parents = new List<string>();
+                            parents.Add(rootAsGroup.Name);
+
+
+
+                            MetadataCompoundAttribute compoundAttribute = get(child, parents, xpath, rootAsGroup.Name);
+
+                            // add compound to package
+                            addUsageFromMetadataCompoundAttributeToPackage(package, compoundAttribute, child);
+
+                        }
+
+                    }
+
+
+                    mdsManager.AddMetadataPackageUsage(test, package, rootAsGroup.Name, GetDescription(rootAsGroup.Annotation), 1, 1);
+                }
+
+                #endregion
+            }
+            else
+            {
+                packages.AddRange(childrenOfRoot);
+
+                #region packages with complext types
+
+                #region create a basic package of SimpleAttributes from Root Node
+
+                // get all simpleTypes 
+                // for the main package
+                List<XmlSchemaElement> simpleElements = XmlSchemaUtility.GetAllSimpleElements(packages);
+                string rootNodePackageUsage = "Basic";
+                string rootNodePackage = "BasicType";
+
+                string rootNodePackageDescription = "Attributes from the root node";
+
+
+                if (simpleElements.Count > 0)
+                {
+                    MetadataPackage package = getExistingMetadataPackage(rootNodePackage);// = mdpManager.MetadataPackageRepo.Get(p => p.Name == rootNodePackage).FirstOrDefault();
                     if (package == null)
                     {
-                        package = mdpManager.Create(rootAsGroup.Name, GetDescription(rootAsGroup.Annotation), true);
+                        package = mdpManager.Create(rootNodePackage, rootNodePackageDescription, true);
                         createdPackagesDic.Add(package.Id, package.Name);
                     }
 
                     if (test.MetadataPackageUsages.Where(p => p.MetadataPackage == package).Count() <= 0)
                     {
-                        string xpath = "Metadata/" + rootAsGroup.Name;
 
-                        foreach (XmlSchemaElement child in childrenOfRoot)
+                        foreach (XmlSchemaElement child in simpleElements)
                         {
-                            //Debug.Writeline("packageChild : " + child.Name);
-                            //Debug.Writeline("-->");
-
                             if (XmlSchemaUtility.IsSimpleType(child))
                             {
-                                addMetadataAttributeToMetadataPackageUsage(package, child, xpath, rootAsGroup.Name);
+                                addMetadataAttributeToMetadataPackageUsage(package, child, "Metadata/Basic/BasicType", xpathFromRoot);
                             }
-                            else
-                            {
-                                List<string> parents = new List<string>();
-                                parents.Add(rootAsGroup.Name);
-
-
-
-                                MetadataCompoundAttribute compoundAttribute = get(child, parents, xpath, rootAsGroup.Name);
-
-                                // add compound to package
-                                addUsageFromMetadataCompoundAttributeToPackage(package, compoundAttribute, child);
-
-                            }
-
                         }
 
-
-                        mdsManager.AddMetadataPackageUsage(test, package, rootAsGroup.Name, GetDescription(rootAsGroup.Annotation), 1, 1);
+                        mdsManager.AddMetadataPackageUsage(test, package, rootNodePackageUsage, rootNodePackageDescription, 1, 1);
                     }
 
-                    #endregion
                 }
-                else
+
+                #endregion
+
+                #region create Packages
+                List<XmlSchemaElement> otherElements = XmlSchemaUtility.GetAllComplexElements(packages);
+
+                foreach (XmlSchemaElement element in otherElements)
                 {
-                    packages.AddRange(childrenOfRoot);
+                    //Debug.Writeline("package : " + element.Name);
+                    //Debug.Writeline("--------------------------");
 
-                    #region packages with complext types
+                    string typeName = GetTypeOfName(element.Name);
+                    string rootName = ((XmlSchemaElement)root).Name;
 
-                    #region create a basic package of SimpleAttributes from Root Node
+                    string xpathInternal = "Metadata/" + element.Name + "/" + typeName;
+                    string xpathExternal = xpathFromRoot + "/" + element.Name;
 
-                    // get all simpleTypes 
-                    // for the main package
-                    List<XmlSchemaElement> simpleElements = XmlSchemaUtility.GetAllSimpleElements(packages);
-                    string rootNodePackageUsage = "Basic";
-                    string rootNodePackage = "BasicType";
-                   
-                    string rootNodePackageDescription = "Attributes from the root node";
-
-
-                    if (simpleElements.Count > 0)
+                    if (!XmlSchemaUtility.IsSimpleType(element))
                     {
-                        MetadataPackage package = getExistingMetadataPackage(rootNodePackage);// = mdpManager.MetadataPackageRepo.Get(p => p.Name == rootNodePackage).FirstOrDefault();
+                        #region complexType
+                        MetadataPackage package = getExistingMetadataPackage(element.Name);// = mdpManager.MetadataPackageRepo.Get(p => p.Name == element.Name).FirstOrDefault();
                         if (package == null)
                         {
-                            package = mdpManager.Create(rootNodePackage, rootNodePackageDescription, true);
+                            package = mdpManager.Create(typeName, GetDescription(element.Annotation), true);
                             createdPackagesDic.Add(package.Id, package.Name);
                         }
-
-                        if (test.MetadataPackageUsages.Where(p => p.MetadataPackage == package).Count() <= 0)
+                        // add package to structure
+                        if (test.MetadataPackageUsages != null && test.MetadataPackageUsages.Where(p => p.Label.Equals(element.Name)).Count() > 0)
                         {
 
-                            foreach (XmlSchemaElement child in simpleElements)
-                            {
-                                if (XmlSchemaUtility.IsSimpleType(child))
-                                {
-                                    addMetadataAttributeToMetadataPackageUsage(package, child,"Metadata/Basic/BasicType", xpathFromRoot);
-                                }
-                            }
-
-                            mdsManager.AddMetadataPackageUsage(test, package, rootNodePackageUsage, rootNodePackageDescription, 1, 1);
-                        }
-
-                    }
-
-                    #endregion
-
-                    #region create Packages
-                    List<XmlSchemaElement> otherElements = XmlSchemaUtility.GetAllComplexElements(packages);
-
-                    foreach (XmlSchemaElement element in otherElements)
-                    {
-                       //Debug.Writeline("package : " + element.Name);
-                        //Debug.Writeline("--------------------------");
-
-                        string typeName = GetTypeOfName(element.Name);
-                        string rootName = ((XmlSchemaElement)root).Name;
-
-                        string xpathInternal = "Metadata/" + element.Name+"/"+typeName;
-                        string xpathExternal = xpathFromRoot+"/" + element.Name;
-
-                        if (!XmlSchemaUtility.IsSimpleType(element))
-                        {
-                            #region complexType
-                            MetadataPackage package = getExistingMetadataPackage(element.Name);// = mdpManager.MetadataPackageRepo.Get(p => p.Name == element.Name).FirstOrDefault();
-                            if (package == null)
-                            {
-                                package = mdpManager.Create(typeName, GetDescription(element.Annotation), true);
-                                createdPackagesDic.Add(package.Id, package.Name);
-                            }
-                            // add package to structure
-                            if (test.MetadataPackageUsages != null && test.MetadataPackageUsages.Where(p => p.Label.Equals(element.Name)).Count() > 0)
-                            {
-
-                                if (test.MetadataPackageUsages.Where(p => p.MetadataPackage == package).Count() <= 0)
-                                {
-                                    List<XmlSchemaElement> childrens = XmlSchemaUtility.GetAllElements(element, false, Elements);
-
-                                    foreach (XmlSchemaElement child in childrens)
-                                    {
-                                       //Debug.Writeline("packageChild : " + child.Name);
-                                        //Debug.Writeline("-->");
-
-                                        if (XmlSchemaUtility.IsSimpleType(child))
-                                        {
-                                            addMetadataAttributeToMetadataPackageUsage(package, child, xpathInternal, xpathExternal);
-                                        }
-                                        else
-                                        {
-                                            List<string> parents = new List<string>();
-                                            parents.Add(element.Name);
-
-
-
-                                            MetadataCompoundAttribute compoundAttribute = get(child, parents, xpathInternal, xpathExternal);
-
-                                            // add compound to package
-                                            addUsageFromMetadataCompoundAttributeToPackage(package, compoundAttribute, child);
-
-                                        }
-
-                                    }
-
-                                    int min = 0;
-
-                                    if (element.MinOccurs > int.MinValue)
-                                        min = Convert.ToInt32(element.MinOccurs);
-                                    else
-                                        min = int.MinValue;
-
-                                    int max = 0;
-                                    if (element.MaxOccurs < int.MaxValue)
-                                        max = Convert.ToInt32(element.MaxOccurs);
-                                    else
-                                        max = int.MaxValue;
-
-                                    mdsManager.AddMetadataPackageUsage(test, package, element.Name, GetDescription(element.Annotation), min, max);
-                                }
-                            }
-                            else
+                            if (test.MetadataPackageUsages.Where(p => p.MetadataPackage == package).Count() <= 0)
                             {
                                 List<XmlSchemaElement> childrens = XmlSchemaUtility.GetAllElements(element, false, Elements);
 
                                 foreach (XmlSchemaElement child in childrens)
                                 {
+                                    //Debug.Writeline("packageChild : " + child.Name);
+                                    //Debug.Writeline("-->");
+
                                     if (XmlSchemaUtility.IsSimpleType(child))
                                     {
                                         addMetadataAttributeToMetadataPackageUsage(package, child, xpathInternal, xpathExternal);
@@ -787,6 +740,8 @@ namespace BExIS.Xml.Helpers.Mapping
                                     {
                                         List<string> parents = new List<string>();
                                         parents.Add(element.Name);
+
+
 
                                         MetadataCompoundAttribute compoundAttribute = get(child, parents, xpathInternal, xpathExternal);
 
@@ -810,70 +765,110 @@ namespace BExIS.Xml.Helpers.Mapping
                                 else
                                     max = int.MaxValue;
 
-                                //check if element is a choice
-                                if (!XmlSchemaUtility.IsChoiceType(element))
+                                mdsManager.AddMetadataPackageUsage(test, package, element.Name, GetDescription(element.Annotation), min, max);
+                            }
+                        }
+                        else
+                        {
+                            List<XmlSchemaElement> childrens = XmlSchemaUtility.GetAllElements(element, false, Elements);
+
+                            foreach (XmlSchemaElement child in childrens)
+                            {
+                                if (XmlSchemaUtility.IsSimpleType(child))
                                 {
-                                    
-                                    MetadataPackageUsage mpu = mdsManager.AddMetadataPackageUsage(test, package,
-                                        element.Name, GetDescription(element.Annotation), min, max);
+                                    addMetadataAttributeToMetadataPackageUsage(package, child, xpathInternal, xpathExternal);
                                 }
                                 else
                                 {
-                                    // if mpu is a choice, add a info to extra
-                                    MetadataPackageUsage mpu = mdsManager.AddMetadataPackageUsage(test, package,
-                                           element.Name, GetDescription(element.Annotation), min, max,
-                                           XmlDatasetHelper.AddReferenceToXml(new XmlDocument(), "choice", "true", "elementType", @"extra/type"));
+                                    List<string> parents = new List<string>();
+                                    parents.Add(element.Name);
+
+                                    MetadataCompoundAttribute compoundAttribute = get(child, parents, xpathInternal, xpathExternal);
+
+                                    // add compound to package
+                                    addUsageFromMetadataCompoundAttributeToPackage(package, compoundAttribute, child);
+
                                 }
 
                             }
-                            #endregion
+
+                            int min = 0;
+
+                            if (element.MinOccurs > int.MinValue)
+                                min = Convert.ToInt32(element.MinOccurs);
+                            else
+                                min = int.MinValue;
+
+                            int max = 0;
+                            if (element.MaxOccurs < int.MaxValue)
+                                max = Convert.ToInt32(element.MaxOccurs);
+                            else
+                                max = int.MaxValue;
+
+                            //check if element is a choice
+                            if (!XmlSchemaUtility.IsChoiceType(element))
+                            {
+
+                                MetadataPackageUsage mpu = mdsManager.AddMetadataPackageUsage(test, package,
+                                    element.Name, GetDescription(element.Annotation), min, max);
+                            }
+                            else
+                            {
+                                // if mpu is a choice, add a info to extra
+                                MetadataPackageUsage mpu = mdsManager.AddMetadataPackageUsage(test, package,
+                                       element.Name, GetDescription(element.Annotation), min, max,
+                                       XmlDatasetHelper.AddReferenceToXml(new XmlDocument(), "choice", "true", "elementType", @"extra/type"));
+                            }
+
                         }
-
+                        #endregion
                     }
-                    #endregion
-
-                    #endregion
 
                 }
-
-                if (!File.Exists(newXsdFilePath))
-                {
-                    checkDirectory(newXsdFilePath);
-                    MoveFile(xsdFilePath, newXsdFilePath);
-                }
-
-                #region store additionaly xsds 
-
-                string tmpDestinationPath = Path.GetDirectoryName(newXsdFilePath);
-                string tmpSourcePath = Path.GetDirectoryName(xsdFilePath);
-
-                if (additionalFiles != null)
-                {
-                    foreach (var filename in additionalFiles.Distinct())
-                    {
-                        MoveFile(Path.Combine(tmpSourcePath, filename), Path.Combine(tmpDestinationPath, filename));
-                    }
-                }
+                #endregion
 
                 #endregion
+
+            }
+
+            if (!File.Exists(newXsdFilePath))
+            {
+                checkDirectory(newXsdFilePath);
+                MoveFile(xsdFilePath, newXsdFilePath);
+            }
+
+            #region store additionaly xsds 
+
+            string tmpDestinationPath = Path.GetDirectoryName(newXsdFilePath);
+            string tmpSourcePath = Path.GetDirectoryName(xsdFilePath);
+
+            if (additionalFiles != null)
+            {
+                foreach (var filename in additionalFiles.Distinct())
+                {
+                    MoveFile(Path.Combine(tmpSourcePath, filename), Path.Combine(tmpDestinationPath, filename));
+                }
+            }
+
+            #endregion
 
             #region Generate Mapping File
 
             string internalMetadataStructrueName = schemaName;
-                mappingFileExternalToInternal.Id = test.Id;
+            mappingFileExternalToInternal.Id = test.Id;
 
-                //generate mapping file Xml Document
-                generateXmlMappingFile(mappingFileInternalToExternal, internalMetadataStructrueName, FileName);
-                generateXmlMappingFile(mappingFileExternalToInternal, FileName, internalMetadataStructrueName, 1);
+            //generate mapping file Xml Document
+            generateXmlMappingFile(mappingFileInternalToExternal, internalMetadataStructrueName, FileName);
+            generateXmlMappingFile(mappingFileExternalToInternal, FileName, internalMetadataStructrueName, 1);
 
-                #endregion
+            #endregion
 
-                return test.Id;
+            return test.Id;
         }
 
-        private string findPathFromRoot(XmlSchemaElement element, string name,string path)
+        private string findPathFromRoot(XmlSchemaElement element, string name, string path)
         {
-            path = String.IsNullOrEmpty(path)? element.Name : path + "/" + element.Name;
+            path = String.IsNullOrEmpty(path) ? element.Name : path + "/" + element.Name;
 
             if (element.Name.ToLower().Equals(name.ToLower())) return path;
 
@@ -912,7 +907,7 @@ namespace BExIS.Xml.Helpers.Mapping
             string currentInternalXPath = internalXPath + "/" + element.Name + "/" + nameOfType;
             string currentExternalXPath = externalXPath + "/" + element.Name;
 
-            
+
             // create and map
             if (metadataCompountAttr == null)
             {
@@ -982,14 +977,14 @@ namespace BExIS.Xml.Helpers.Mapping
 
                 }
                 else
-                { 
+                {
                     metadataCompountAttr = metadataAttributeManager.Create(metadataCompountAttr);
                     createdCompoundsDic.Add(metadataCompountAttr.Id, metadataCompountAttr.Name);
                 }
             }
             //only map
             else
-            { 
+            {
                 // if its there need to map
                 List<XmlSchemaElement> childrens = XmlSchemaUtility.GetAllElements(element, false, Elements);
 
@@ -1027,7 +1022,7 @@ namespace BExIS.Xml.Helpers.Mapping
                     }
 
                 }
-                
+
             }
 
             return metadataCompountAttr;
@@ -1035,7 +1030,7 @@ namespace BExIS.Xml.Helpers.Mapping
 
         private void addMetadataAttributesToMetadataPackageUsage(MetadataPackage packageUsage, List<XmlSchemaElement> elements, string internalXPath, string externalXPath)
         {
-            for (int i = 0; i<elements.Count();i++)
+            for (int i = 0; i < elements.Count(); i++)
             {
                 addMetadataAttributeToMetadataPackageUsage(packageUsage, elements.ElementAt(i), internalXPath, externalXPath);
             }
@@ -1043,25 +1038,25 @@ namespace BExIS.Xml.Helpers.Mapping
 
         private void addMetadataAttributeToMetadataPackageUsage(MetadataPackage packageUsage, XmlSchemaElement element, string internalXPath, string externalXPath)
         {
-                MetadataAttribute attribute = createMetadataAttribute(element);
+            MetadataAttribute attribute = createMetadataAttribute(element);
 
-                if (attribute != null)
-                {
-                    int min = 0;
-                    
-                    if (element.MinOccurs > int.MinValue)
-                        min = Convert.ToInt32(element.MinOccurs);
-                    else
-                        min = int.MinValue;
+            if (attribute != null)
+            {
+                int min = 0;
 
-                    int max = 0;
-                    if (element.MaxOccurs < int.MaxValue)
-                        max = Convert.ToInt32(element.MaxOccurs);
-                    else
-                        max = int.MaxValue;
+                if (element.MinOccurs > int.MinValue)
+                    min = Convert.ToInt32(element.MinOccurs);
+                else
+                    min = int.MinValue;
 
-                    if (packageUsage.MetadataAttributeUsages.Where(p => p.MetadataAttribute == attribute).Count() <= 0)
-                        metadataPackageManager.AddMetadataAtributeUsage(packageUsage, attribute, element.Name, attribute.Description, min, max);
+                int max = 0;
+                if (element.MaxOccurs < int.MaxValue)
+                    max = Convert.ToInt32(element.MaxOccurs);
+                else
+                    max = int.MaxValue;
+
+                if (packageUsage.MetadataAttributeUsages.Where(p => p.MetadataAttribute == attribute).Count() <= 0)
+                    metadataPackageManager.AddMetadataAtributeUsage(packageUsage, attribute, element.Name, attribute.Description, min, max);
 
 
                 #region generate  MappingRoute
@@ -1100,7 +1095,7 @@ namespace BExIS.Xml.Helpers.Mapping
 
             if (parent.MetadataNestedAttributeUsages.Where(p => p.Label == element.Name).Count() <= 0)
             {
-                 //get max
+                //get max
                 int max = Int32.MaxValue;
                 if (element.MaxOccurs < Int32.MaxValue)
                 {
@@ -1121,13 +1116,13 @@ namespace BExIS.Xml.Helpers.Mapping
                 #region choice
                 //if element is a choise
                 XmlDocument extra = new XmlDocument();
-                    //check if element is a choice
-                    if (XmlSchemaUtility.IsChoiceType(element))
-                    {
-                        extra = XmlDatasetHelper.AddReferenceToXml(new XmlDocument(), "choice", "true", "elementType",@"extra/type");
-                    }
+                //check if element is a choice
+                if (XmlSchemaUtility.IsChoiceType(element))
+                {
+                    extra = XmlDatasetHelper.AddReferenceToXml(new XmlDocument(), "choice", "true", "elementType", @"extra/type");
+                }
 
-                    if (extra.DocumentElement != null) usage.Extra = extra;
+                if (extra.DocumentElement != null) usage.Extra = extra;
                 #endregion
 
                 parent.MetadataNestedAttributeUsages.Add(usage);
@@ -1149,39 +1144,39 @@ namespace BExIS.Xml.Helpers.Mapping
 
         private MetadataCompoundAttribute addMetadataAttributeToMetadataCompoundAttribute(MetadataCompoundAttribute compoundAttribute, XmlSchemaElement element, string internalXPath, string externalXPath)
         {
-                MetadataAttribute attribute;
+            MetadataAttribute attribute;
 
-                if (metadataAttributeManager.MetadataAttributeRepo != null &&
-                    getExistingMetadataAttribute(GetTypeOfName(element.Name)) != null)
+            if (metadataAttributeManager.MetadataAttributeRepo != null &&
+                getExistingMetadataAttribute(GetTypeOfName(element.Name)) != null)
+            {
+                attribute = metadataAttributeManager.MetadataAttributeRepo.Get().Where(m => m.Name.Equals(GetTypeOfName(element.Name))).First();
+            }
+            else
+            {
+                attribute = createMetadataAttribute(element);
+            }
+
+            if (attribute != null)
+            {
+                int min = 0;
+                if (element.MinOccurs > int.MinValue)
                 {
-                    attribute = metadataAttributeManager.MetadataAttributeRepo.Get().Where(m => m.Name.Equals(GetTypeOfName(element.Name))).First();
+                    min = Convert.ToInt32(element.MinOccurs);
                 }
+                int max = 0;
+                if (element.MaxOccurs < int.MaxValue)
+                    max = Convert.ToInt32(element.MaxOccurs);
                 else
-                {
-                    attribute = createMetadataAttribute(element);
-                }
-              
-                if (attribute != null)
-                {
-                    int min = 0;
-                    if (element.MinOccurs > int.MinValue)
-                    {
-                        min = Convert.ToInt32(element.MinOccurs);
-                    }
-                    int max = 0;
-                    if (element.MaxOccurs < int.MaxValue)
-                        max = Convert.ToInt32(element.MaxOccurs);
-                    else
-                        max = int.MaxValue;
+                    max = int.MaxValue;
 
-                    #region choice
-                    //if element is a choise
-                    XmlDocument extra = new XmlDocument();
-                    //check if element is a choice
-                    if (XmlSchemaUtility.IsChoiceType(element))
-                    {
-                        extra = XmlDatasetHelper.AddReferenceToXml(new XmlDocument(), "choice", "true", "elementType", @"extra/type");
-                    }
+                #region choice
+                //if element is a choise
+                XmlDocument extra = new XmlDocument();
+                //check if element is a choice
+                if (XmlSchemaUtility.IsChoiceType(element))
+                {
+                    extra = XmlDatasetHelper.AddReferenceToXml(new XmlDocument(), "choice", "true", "elementType", @"extra/type");
+                }
                 #endregion
 
                 MetadataNestedAttributeUsage u1 = new MetadataNestedAttributeUsage()
@@ -1195,7 +1190,7 @@ namespace BExIS.Xml.Helpers.Mapping
                 };
 
                 if (extra.DocumentElement != null) u1.Extra = extra;
-                    
+
                 #region generate  MappingRoute
 
                 addToExportMappingFile(mappingFileInternalToExternal, internalXPath, externalXPath, element.MaxOccurs, element.Name, attribute.Name);
@@ -1204,22 +1199,22 @@ namespace BExIS.Xml.Helpers.Mapping
 
                 #endregion
 
-                if (compoundAttribute.MetadataNestedAttributeUsages.Where(n => n.Label.Equals(attribute.Name)).Count()==0)
-                        compoundAttribute.MetadataNestedAttributeUsages.Add(u1);
-                }
+                if (compoundAttribute.MetadataNestedAttributeUsages.Where(n => n.Label.Equals(attribute.Name)).Count() == 0)
+                    compoundAttribute.MetadataNestedAttributeUsages.Add(u1);
+            }
 
 
 
             return compoundAttribute;
         }
 
-      
+
 
         private MetadataAttribute createMetadataAttribute(XmlSchemaElement element)
         {
-           //Debug.Writeline(element.Name);
+            //Debug.Writeline(element.Name);
 
-            MetadataAttribute temp=null;
+            MetadataAttribute temp = null;
 
             if (element.ElementSchemaType is XmlSchemaSimpleType)
             {
@@ -1238,10 +1233,23 @@ namespace BExIS.Xml.Helpers.Mapping
                 DataType dataType = GetDataType(datatype, typeCodename);
 
                 //unit
-                Unit noneunit = unitManager.Repo.Get().Where(u => u.Name.ToLower().Equals("none")).First();
+                Unit noneunit = unitManager.Repo.Get().Where(u => u.Name.ToLower().Equals("none")).FirstOrDefault();
                 if (noneunit == null)
-                    unitManager.Create("none", "none", "If no unit is used.", null, MeasurementSystem.Unknown); // the null dimension should be replaced bz a proper valid one. Javad 11.06
+                {
+                    Dimension dimension = null;
 
+                    if (!unitManager.DimensionRepo.Get().Any(d => d.Name.Equals("none")))
+                    {
+                        dimension = unitManager.Create("none", "none", "If no unit is used."); // the null dimension should be replaced bz a proper valid one. Javad 11.06
+                    }
+                    else
+                    {
+                        dimension = unitManager.DimensionRepo.Get().Where(d => d.Name.Equals("none")).FirstOrDefault();
+                    }
+
+                    unitManager.Create("none", "none", "If no unit is used.", dimension, MeasurementSystem.Unknown);
+                    // the null dimension should be replaced bz a proper valid one. Javad 11.06
+                }
                 temp = getExistingMetadataAttribute(name);// = metadataAttributeManager.MetadataAttributeRepo.Get().Where(m => m.Name.Equals(name)).FirstOrDefault();
 
                 if (temp == null)
@@ -1262,7 +1270,7 @@ namespace BExIS.Xml.Helpers.Mapping
                 //Debug.Writeline(temp.Name);
 
                 return temp;
-                
+
             }
 
             if (element.ElementSchemaType is XmlSchemaComplexType)
@@ -1324,7 +1332,7 @@ namespace BExIS.Xml.Helpers.Mapping
 
         private MetadataCompoundAttribute createMetadataCompoundAttribute(XmlSchemaComplexType complexType)
         {
-             // create a compoundAttribute
+            // create a compoundAttribute
             MetadataCompoundAttribute mca = getExistingMetadataCompoundAttribute(complexType.Name);// = metadataAttributeManager.MetadataCompoundAttributeRepo.Get(p => p.Name == complexType.Name).FirstOrDefault();
 
             DataType dt1 = dataTypeManager.Repo.Get(p => p.Name.ToLower().Equals("string")).FirstOrDefault();
@@ -1377,7 +1385,7 @@ namespace BExIS.Xml.Helpers.Mapping
 
         #region mapping file
 
-        private XmlDocument generateXmlMappingFile(XmlMapper mapperInfos,string sourceName, string DestinationName,  int direction = 0)
+        private XmlDocument generateXmlMappingFile(XmlMapper mapperInfos, string sourceName, string DestinationName, int direction = 0)
         {
             XmlDocument mappingFile = new XmlDocument();
 
@@ -1390,70 +1398,70 @@ namespace BExIS.Xml.Helpers.Mapping
 
             XmlNode header = XmlUtility.CreateNode("header", mappingFile);
             XmlMappingHeader xmlMapperheader = mapperInfos.Header;
-            
-                
-                // create destination
-                
-                XmlNode destination = XmlUtility.CreateNode("destination", mappingFile);
 
-                if (xmlMapperheader.Destination !=null)
+
+            // create destination
+
+            XmlNode destination = XmlUtility.CreateNode("destination", mappingFile);
+
+            if (xmlMapperheader.Destination != null)
+            {
+                destination = XmlUtility.AddAttribute(destination, "namespaceUri", xmlMapperheader.Destination.NamepsaceURI, mappingFile);
+                destination = XmlUtility.AddAttribute(destination, "prefix", xmlMapperheader.Destination.Prefix, mappingFile);
+                destination = XmlUtility.AddAttribute(destination, "sequence", xmlMapperheader.Destination.ParentSequence, mappingFile);
+                destination = XmlUtility.AddAttribute(destination, "xPath", xmlMapperheader.Destination.XPath, mappingFile);
+            }
+            header.AppendChild(destination);
+
+
+            // create attributes
+            XmlNode attributes = XmlUtility.CreateNode("attributes", mappingFile);
+
+            if (mapperInfos.Header.Attributes.Count > 0)
+            {
+                foreach (var attr in mapperInfos.Header.Attributes)
                 {
-                    destination = XmlUtility.AddAttribute(destination, "namespaceUri", xmlMapperheader.Destination.NamepsaceURI, mappingFile);
-                    destination = XmlUtility.AddAttribute(destination, "prefix", xmlMapperheader.Destination.Prefix, mappingFile);
-                    destination = XmlUtility.AddAttribute(destination, "sequence", xmlMapperheader.Destination.ParentSequence, mappingFile);
-                    destination = XmlUtility.AddAttribute(destination, "xPath", xmlMapperheader.Destination.XPath, mappingFile);
+                    XmlNode attribute = XmlUtility.CreateNode("attribute", mappingFile);
+                    attribute = XmlUtility.AddAttribute(attribute, "name", attr.Key, mappingFile);
+                    attribute = XmlUtility.AddAttribute(attribute, "value", attr.Value, mappingFile);
+
+                    attributes.AppendChild(attribute);
                 }
-                header.AppendChild(destination);
+            }
 
-                
-                // create attributes
-                XmlNode attributes = XmlUtility.CreateNode("attributes", mappingFile);
+            header.AppendChild(attributes);
 
-                if (mapperInfos.Header.Attributes.Count > 0)
+            // create packages
+            XmlNode packages = XmlUtility.CreateNode("packages", mappingFile);
+
+            if (mapperInfos.Header.Packages.Count > 0)
+            {
+                foreach (var pack in mapperInfos.Header.Packages)
                 {
-                    foreach (var attr in mapperInfos.Header.Attributes)
-                    {
-                        XmlNode attribute = XmlUtility.CreateNode("attribute", mappingFile);
-                        attribute = XmlUtility.AddAttribute(attribute, "name", attr.Key, mappingFile);
-                        attribute = XmlUtility.AddAttribute(attribute, "value", attr.Value, mappingFile);
+                    XmlNode package = XmlUtility.CreateNode("package", mappingFile);
+                    package = XmlUtility.AddAttribute(package, "abbreviation", pack.Key, mappingFile);
+                    package = XmlUtility.AddAttribute(package, "url", pack.Value, mappingFile);
 
-                        attributes.AppendChild(attribute);
-                    }
+                    packages.AppendChild(package);
                 }
+            }
+            header.AppendChild(packages);
 
-                header.AppendChild(attributes);
-                 
-                // create packages
-                XmlNode packages = XmlUtility.CreateNode("packages", mappingFile);
+            // create schema 
 
-                if (mapperInfos.Header.Packages.Count > 0)
+            if (mapperInfos.Header.Schemas.Count > 0)
+            {
+                foreach (var s in mapperInfos.Header.Schemas)
                 {
-                    foreach (var pack in mapperInfos.Header.Packages)
-                    {
-                        XmlNode package = XmlUtility.CreateNode("package", mappingFile);
-                        package = XmlUtility.AddAttribute(package, "abbreviation", pack.Key, mappingFile);
-                        package = XmlUtility.AddAttribute(package, "url", pack.Value, mappingFile);
+                    XmlNode schema = XmlUtility.CreateNode("schema", mappingFile);
+                    schema = XmlUtility.AddAttribute(schema, "abbreviation", s.Key, mappingFile);
+                    schema = XmlUtility.AddAttribute(schema, "url", s.Value, mappingFile);
 
-                        packages.AppendChild(package);
-                    }
+                    header.AppendChild(schema);
                 }
-                header.AppendChild(packages);
+            }
 
-                // create schema 
-
-                if (mapperInfos.Header.Schemas.Count > 0)
-                {
-                    foreach (var s in mapperInfos.Header.Schemas)
-                    {
-                        XmlNode schema = XmlUtility.CreateNode("schema", mappingFile);
-                        schema = XmlUtility.AddAttribute(schema, "abbreviation", s.Key, mappingFile);
-                        schema = XmlUtility.AddAttribute(schema, "url", s.Value, mappingFile);
-
-                        header.AppendChild(schema);
-                    }
-                }
-
-             root.AppendChild(header);
+            root.AppendChild(header);
 
             // create routes
 
@@ -1485,7 +1493,7 @@ namespace BExIS.Xml.Helpers.Mapping
 
             if (direction == 0)
             {
-                mappingFileNameExport = "MappingFile_intern_" + sourceName + "_to_extern_" + DestinationName +".xml";
+                mappingFileNameExport = "MappingFile_intern_" + sourceName + "_to_extern_" + DestinationName + ".xml";
                 mappingFile.Save(Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), mappingFileNameExport));
             }
             else
@@ -1494,7 +1502,7 @@ namespace BExIS.Xml.Helpers.Mapping
                 mappingFile.Save(Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), mappingFileNameImport));
             }
 
-            
+
 
             return mappingFile;
         }
@@ -1502,36 +1510,36 @@ namespace BExIS.Xml.Helpers.Mapping
         private void addMetadataAttributeToMappingFile(MetadataCompoundAttribute compoundAttribute, XmlSchemaElement element, string internalXPath, string externalXPath)
         {
 
-                MetadataAttribute attribute;
+            MetadataAttribute attribute;
 
-                if (metadataAttributeManager.MetadataAttributeRepo != null &&
-                        metadataAttributeManager.MetadataAttributeRepo.Get().Where(m => m.Name.Equals(GetTypeOfName(element.Name))).Count() > 0)
-                {
-                    attribute = metadataAttributeManager.MetadataAttributeRepo.Get().Where(m => m.Name.Equals(GetTypeOfName(element.Name))).First();
-                }
-                else
-                {
-                    attribute = createMetadataAttribute(element);
-                }
+            if (metadataAttributeManager.MetadataAttributeRepo != null &&
+                    metadataAttributeManager.MetadataAttributeRepo.Get().Where(m => m.Name.Equals(GetTypeOfName(element.Name))).Count() > 0)
+            {
+                attribute = metadataAttributeManager.MetadataAttributeRepo.Get().Where(m => m.Name.Equals(GetTypeOfName(element.Name))).First();
+            }
+            else
+            {
+                attribute = createMetadataAttribute(element);
+            }
 
-                #region generate  MappingRoute
+            #region generate  MappingRoute
 
-                addToExportMappingFile(mappingFileInternalToExternal, internalXPath, externalXPath, element.MaxOccurs, element.Name, attribute.Name);
-                addToImportMappingFile(mappingFileExternalToInternal, externalXPath, internalXPath, element.MaxOccurs, element.Name, attribute.Name);
+            addToExportMappingFile(mappingFileInternalToExternal, internalXPath, externalXPath, element.MaxOccurs, element.Name, attribute.Name);
+            addToImportMappingFile(mappingFileExternalToInternal, externalXPath, internalXPath, element.MaxOccurs, element.Name, attribute.Name);
 
-                #endregion
+            #endregion
 
-                //Debug.WriteLine("SimpleAttribute :");
-                //Debug.WriteLine("--- internal :" + childInternalXPath);
-                //Debug.WriteLine("--- external :" + childExternalXPath);
-                //Debug.WriteLine("--- sequence :" + element);
+            //Debug.WriteLine("SimpleAttribute :");
+            //Debug.WriteLine("--- internal :" + childInternalXPath);
+            //Debug.WriteLine("--- external :" + childExternalXPath);
+            //Debug.WriteLine("--- sequence :" + element);
         }
 
         private XmlMapper addToImportMappingFile(XmlMapper mapper, string sourceXPath, string destinationXPath, decimal max, string name, string nameType)
         {
             string parentExternalName = destinationXPath.Split('/').Last();
-            string childSourceXPath = sourceXPath + "/" + name; 
-            string childDestinationXPath = destinationXPath + "/" + name+ "/" + nameType;
+            string childSourceXPath = sourceXPath + "/" + name;
+            string childDestinationXPath = destinationXPath + "/" + name + "/" + nameType;
 
             XmlMappingRoute xmr = new XmlMappingRoute();
 
@@ -1644,14 +1652,14 @@ namespace BExIS.Xml.Helpers.Mapping
             }
             else
             {
-                return GetDataType("string","");
+                return GetDataType("string", "");
             }
         }
 
         //convert string to systemtype
         private TypeCode ConvertStringToSystemType(string dataType)
         {
-            foreach(TypeCode tc in Enum.GetValues(typeof(TypeCode)))
+            foreach (TypeCode tc in Enum.GetValues(typeof(TypeCode)))
             {
                 if (tc.ToString().Equals(dataType)) return tc;
             }
@@ -1686,7 +1694,7 @@ namespace BExIS.Xml.Helpers.Mapping
 
             return description;
         }
-  
+
         private void checkDirectory(string filePath)
         {
             string path = Path.GetDirectoryName(filePath);
@@ -1772,202 +1780,202 @@ namespace BExIS.Xml.Helpers.Mapping
 
             #region pattern constraints
 
-                //if (facet is XmlSchemaWhiteSpaceFacet)
-                //{
-                //    XmlSchemaWhiteSpaceFacet defFacet = (XmlSchemaWhiteSpaceFacet)facet;
+            //if (facet is XmlSchemaWhiteSpaceFacet)
+            //{
+            //    XmlSchemaWhiteSpaceFacet defFacet = (XmlSchemaWhiteSpaceFacet)facet;
 
-                //    return GetPatternConstraint(" ", GetDescription(defFacet.Annotation), true, attr);
-                //}
+            //    return GetPatternConstraint(" ", GetDescription(defFacet.Annotation), true, attr);
+            //}
 
-                if (facet is XmlSchemaPatternFacet)
-                {
-                    XmlSchemaPatternFacet defFacet = (XmlSchemaPatternFacet)facet;
-                    return GetPatternConstraint(defFacet.Value, GetDescription(defFacet.Annotation), false ,attr);
-                }
+            if (facet is XmlSchemaPatternFacet)
+            {
+                XmlSchemaPatternFacet defFacet = (XmlSchemaPatternFacet)facet;
+                return GetPatternConstraint(defFacet.Value, GetDescription(defFacet.Annotation), false, attr);
+            }
 
             #endregion
 
             #region range constraints
 
-                if (facet is XmlSchemaLengthFacet)
+            if (facet is XmlSchemaLengthFacet)
+            {
+                XmlSchemaLengthFacet defFacet = (XmlSchemaLengthFacet)facet;
+
+                if (!IsRangeExist(constraints))
                 {
-                    XmlSchemaLengthFacet defFacet = (XmlSchemaLengthFacet)facet;
 
-                    if (!IsRangeExist(constraints))
-                    {
-                        
-                        return GetRangeConstraint(Convert.ToDouble(defFacet.Value), Convert.ToDouble(defFacet.Value), GetDescription(defFacet.Annotation), false, true, true, attr);
-                    }
-                    else
-                    {
-                        double value = Convert.ToDouble(defFacet.Value);
-                        RangeConstraint rc = GetRangeConstraint(constraints);
-                        dataContainerManager.RemoveConstraint(rc);
-                        // if value is bigger then Lowerbound us value
-                        if (rc.Lowerbound < value) rc.Lowerbound = value;
-
-                        // if value is smaller then Upperbound  us value
-                        if (rc.Upperbound > value) rc.Upperbound = value;
-
-                        rc.LowerboundIncluded = true;
-                        rc.UpperboundIncluded = true;
-
-                        constraints.Remove(rc);
-
-                        return GetRangeConstraint(rc.Lowerbound, rc.Upperbound, GetDescription(defFacet.Annotation), false, rc.LowerboundIncluded, rc.UpperboundIncluded, attr);
-               
-                    }
+                    return GetRangeConstraint(Convert.ToDouble(defFacet.Value), Convert.ToDouble(defFacet.Value), GetDescription(defFacet.Annotation), false, true, true, attr);
                 }
-
-                if (facet is XmlSchemaMinLengthFacet)
+                else
                 {
-                    XmlSchemaMinLengthFacet defFacet = (XmlSchemaMinLengthFacet)facet;
+                    double value = Convert.ToDouble(defFacet.Value);
+                    RangeConstraint rc = GetRangeConstraint(constraints);
+                    dataContainerManager.RemoveConstraint(rc);
+                    // if value is bigger then Lowerbound us value
+                    if (rc.Lowerbound < value) rc.Lowerbound = value;
 
-                    if (!IsRangeExist(constraints))
-                    {
-                        return GetRangeConstraint(Convert.ToDouble(defFacet.Value), double.MaxValue, GetDescription(defFacet.Annotation), false, true, true, attr);
-                    }
-                    else
-                    {
-                        double value = Convert.ToDouble(defFacet.Value);
-                        RangeConstraint rc = GetRangeConstraint(constraints);
+                    // if value is smaller then Upperbound  us value
+                    if (rc.Upperbound > value) rc.Upperbound = value;
 
-                        dataContainerManager.RemoveConstraint(rc);
+                    rc.LowerboundIncluded = true;
+                    rc.UpperboundIncluded = true;
 
-                        // if value is bigger then Lowerbound us value
-                        if (rc.Lowerbound < value) rc.Lowerbound = value;
+                    constraints.Remove(rc);
 
-                        rc.LowerboundIncluded = true;
-
-                        constraints.Remove(rc);
-
-                        return GetRangeConstraint(rc.Lowerbound, rc.Upperbound, GetDescription(defFacet.Annotation), false, rc.LowerboundIncluded, rc.UpperboundIncluded, attr);
-                    }
+                    return GetRangeConstraint(rc.Lowerbound, rc.Upperbound, GetDescription(defFacet.Annotation), false, rc.LowerboundIncluded, rc.UpperboundIncluded, attr);
 
                 }
+            }
 
-                if (facet is XmlSchemaMaxLengthFacet)
+            if (facet is XmlSchemaMinLengthFacet)
+            {
+                XmlSchemaMinLengthFacet defFacet = (XmlSchemaMinLengthFacet)facet;
+
+                if (!IsRangeExist(constraints))
                 {
-                    XmlSchemaMaxLengthFacet defFacet = (XmlSchemaMaxLengthFacet)facet;
+                    return GetRangeConstraint(Convert.ToDouble(defFacet.Value), double.MaxValue, GetDescription(defFacet.Annotation), false, true, true, attr);
+                }
+                else
+                {
+                    double value = Convert.ToDouble(defFacet.Value);
+                    RangeConstraint rc = GetRangeConstraint(constraints);
 
-                    if (!IsRangeExist(constraints))
-                    {
-                        return GetRangeConstraint(double.MinValue, Convert.ToDouble(defFacet.Value), GetDescription(defFacet.Annotation), false, true, true, attr);
-                    }
-                    else
-                    {
-                        double value = Convert.ToDouble(defFacet.Value);
-                        RangeConstraint rc = GetRangeConstraint(constraints);
-                        dataContainerManager.RemoveConstraint(rc);
+                    dataContainerManager.RemoveConstraint(rc);
 
-                        // if value is smaller then Upperbound  us value
-                        if (rc.Upperbound > value) rc.Upperbound = value;
+                    // if value is bigger then Lowerbound us value
+                    if (rc.Lowerbound < value) rc.Lowerbound = value;
 
-                        rc.UpperboundIncluded = true;
+                    rc.LowerboundIncluded = true;
 
-                        constraints.Remove(rc);
+                    constraints.Remove(rc);
 
-                        return GetRangeConstraint(rc.Lowerbound, rc.Upperbound, GetDescription(defFacet.Annotation), false, rc.LowerboundIncluded, rc.UpperboundIncluded, attr);
-                    }
+                    return GetRangeConstraint(rc.Lowerbound, rc.Upperbound, GetDescription(defFacet.Annotation), false, rc.LowerboundIncluded, rc.UpperboundIncluded, attr);
                 }
 
-                if (facet is XmlSchemaMaxInclusiveFacet)
+            }
+
+            if (facet is XmlSchemaMaxLengthFacet)
+            {
+                XmlSchemaMaxLengthFacet defFacet = (XmlSchemaMaxLengthFacet)facet;
+
+                if (!IsRangeExist(constraints))
                 {
-                    XmlSchemaMaxInclusiveFacet defFacet = (XmlSchemaMaxInclusiveFacet)facet;
-
-                    if (!IsRangeExist(constraints))
-                    {
-                        return GetRangeConstraint(0, Convert.ToDouble(defFacet.Value), GetDescription(defFacet.Annotation), false, true, true, attr);
-                    }
-                    else
-                    {
-                        double value = Convert.ToDouble(defFacet.Value);
-                        RangeConstraint rc = GetRangeConstraint(constraints);
-                        dataContainerManager.RemoveConstraint(rc);
-  
-                        // if value is smaller then Upperbound  us value
-                        if (rc.Upperbound > value) rc.Upperbound = value;
-
-                        rc.UpperboundIncluded = true;
-
-                        constraints.Remove(rc);
-
-                        return GetRangeConstraint(rc.Lowerbound, rc.Upperbound, GetDescription(defFacet.Annotation), false, rc.LowerboundIncluded, rc.UpperboundIncluded, attr);
-                    }
+                    return GetRangeConstraint(double.MinValue, Convert.ToDouble(defFacet.Value), GetDescription(defFacet.Annotation), false, true, true, attr);
                 }
-
-                if (facet is XmlSchemaMinInclusiveFacet)
+                else
                 {
-                    XmlSchemaMinInclusiveFacet defFacet = (XmlSchemaMinInclusiveFacet)facet;
-                    if (!IsRangeExist(constraints))
-                    {
-                        return GetRangeConstraint(Convert.ToDouble(defFacet.Value), int.MaxValue, GetDescription(defFacet.Annotation), false, true, true, attr);
-                    }
-                    else
-                    {
-                        double value = Convert.ToDouble(defFacet.Value);
-                        RangeConstraint rc = GetRangeConstraint(constraints);
-                        dataContainerManager.RemoveConstraint(rc);
+                    double value = Convert.ToDouble(defFacet.Value);
+                    RangeConstraint rc = GetRangeConstraint(constraints);
+                    dataContainerManager.RemoveConstraint(rc);
 
-                        // if value is bigger then Lowerbound us value
-                        if (rc.Lowerbound < value) rc.Lowerbound = value;
+                    // if value is smaller then Upperbound  us value
+                    if (rc.Upperbound > value) rc.Upperbound = value;
 
-                        rc.LowerboundIncluded = true;
+                    rc.UpperboundIncluded = true;
 
-                        constraints.Remove(rc);
+                    constraints.Remove(rc);
 
-                        return GetRangeConstraint(rc.Lowerbound, rc.Upperbound, GetDescription(defFacet.Annotation), false, rc.LowerboundIncluded, rc.UpperboundIncluded, attr);
-                    }
+                    return GetRangeConstraint(rc.Lowerbound, rc.Upperbound, GetDescription(defFacet.Annotation), false, rc.LowerboundIncluded, rc.UpperboundIncluded, attr);
                 }
+            }
 
-                if (facet is XmlSchemaMaxExclusiveFacet)
+            if (facet is XmlSchemaMaxInclusiveFacet)
+            {
+                XmlSchemaMaxInclusiveFacet defFacet = (XmlSchemaMaxInclusiveFacet)facet;
+
+                if (!IsRangeExist(constraints))
                 {
-                    XmlSchemaMaxExclusiveFacet defFacet = (XmlSchemaMaxExclusiveFacet)facet;
-
-                    if (!IsRangeExist(constraints))
-                    {
-                        return GetRangeConstraint(0, Convert.ToDouble(defFacet.Value), GetDescription(defFacet.Annotation), false, true, false, attr);
-                    }
-                    else
-                    {
-                        double value = Convert.ToDouble(defFacet.Value);
-                        RangeConstraint rc = GetRangeConstraint(constraints);
-                        dataContainerManager.RemoveConstraint(rc);
-
-                        // if value is smaller then Upperbound  us value
-                        if (rc.Upperbound > value) rc.Upperbound = value;
-
-                        rc.UpperboundIncluded = false;
-
-                        constraints.Remove(rc);
-
-                        return GetRangeConstraint(rc.Lowerbound, rc.Upperbound, GetDescription(defFacet.Annotation), false, rc.LowerboundIncluded, rc.UpperboundIncluded, attr);
-                    }
+                    return GetRangeConstraint(0, Convert.ToDouble(defFacet.Value), GetDescription(defFacet.Annotation), false, true, true, attr);
                 }
-
-
-                if (facet is XmlSchemaMinExclusiveFacet)
+                else
                 {
-                    XmlSchemaMinExclusiveFacet defFacet = (XmlSchemaMinExclusiveFacet)facet;
-                    if (!IsRangeExist(constraints))
-                    {
-                        return GetRangeConstraint(Convert.ToDouble(defFacet.Value), int.MaxValue, GetDescription(defFacet.Annotation), false, false, true, attr);
-                    }
-                    else
-                    {
-                        double value = Convert.ToDouble(defFacet.Value);
-                        RangeConstraint rc = GetRangeConstraint(constraints);
-                        dataContainerManager.RemoveConstraint(rc);
-                        // if value is bigger then Lowerbound us value
-                        if (rc.Lowerbound < value) rc.Lowerbound = value;
+                    double value = Convert.ToDouble(defFacet.Value);
+                    RangeConstraint rc = GetRangeConstraint(constraints);
+                    dataContainerManager.RemoveConstraint(rc);
 
-                        rc.LowerboundIncluded = false;
+                    // if value is smaller then Upperbound  us value
+                    if (rc.Upperbound > value) rc.Upperbound = value;
 
-                        constraints.Remove(rc);
+                    rc.UpperboundIncluded = true;
 
-                        return GetRangeConstraint(rc.Lowerbound, rc.Upperbound, GetDescription(defFacet.Annotation), false, rc.LowerboundIncluded, rc.UpperboundIncluded, attr);
-                    }
+                    constraints.Remove(rc);
+
+                    return GetRangeConstraint(rc.Lowerbound, rc.Upperbound, GetDescription(defFacet.Annotation), false, rc.LowerboundIncluded, rc.UpperboundIncluded, attr);
                 }
+            }
+
+            if (facet is XmlSchemaMinInclusiveFacet)
+            {
+                XmlSchemaMinInclusiveFacet defFacet = (XmlSchemaMinInclusiveFacet)facet;
+                if (!IsRangeExist(constraints))
+                {
+                    return GetRangeConstraint(Convert.ToDouble(defFacet.Value), int.MaxValue, GetDescription(defFacet.Annotation), false, true, true, attr);
+                }
+                else
+                {
+                    double value = Convert.ToDouble(defFacet.Value);
+                    RangeConstraint rc = GetRangeConstraint(constraints);
+                    dataContainerManager.RemoveConstraint(rc);
+
+                    // if value is bigger then Lowerbound us value
+                    if (rc.Lowerbound < value) rc.Lowerbound = value;
+
+                    rc.LowerboundIncluded = true;
+
+                    constraints.Remove(rc);
+
+                    return GetRangeConstraint(rc.Lowerbound, rc.Upperbound, GetDescription(defFacet.Annotation), false, rc.LowerboundIncluded, rc.UpperboundIncluded, attr);
+                }
+            }
+
+            if (facet is XmlSchemaMaxExclusiveFacet)
+            {
+                XmlSchemaMaxExclusiveFacet defFacet = (XmlSchemaMaxExclusiveFacet)facet;
+
+                if (!IsRangeExist(constraints))
+                {
+                    return GetRangeConstraint(0, Convert.ToDouble(defFacet.Value), GetDescription(defFacet.Annotation), false, true, false, attr);
+                }
+                else
+                {
+                    double value = Convert.ToDouble(defFacet.Value);
+                    RangeConstraint rc = GetRangeConstraint(constraints);
+                    dataContainerManager.RemoveConstraint(rc);
+
+                    // if value is smaller then Upperbound  us value
+                    if (rc.Upperbound > value) rc.Upperbound = value;
+
+                    rc.UpperboundIncluded = false;
+
+                    constraints.Remove(rc);
+
+                    return GetRangeConstraint(rc.Lowerbound, rc.Upperbound, GetDescription(defFacet.Annotation), false, rc.LowerboundIncluded, rc.UpperboundIncluded, attr);
+                }
+            }
+
+
+            if (facet is XmlSchemaMinExclusiveFacet)
+            {
+                XmlSchemaMinExclusiveFacet defFacet = (XmlSchemaMinExclusiveFacet)facet;
+                if (!IsRangeExist(constraints))
+                {
+                    return GetRangeConstraint(Convert.ToDouble(defFacet.Value), int.MaxValue, GetDescription(defFacet.Annotation), false, false, true, attr);
+                }
+                else
+                {
+                    double value = Convert.ToDouble(defFacet.Value);
+                    RangeConstraint rc = GetRangeConstraint(constraints);
+                    dataContainerManager.RemoveConstraint(rc);
+                    // if value is bigger then Lowerbound us value
+                    if (rc.Lowerbound < value) rc.Lowerbound = value;
+
+                    rc.LowerboundIncluded = false;
+
+                    constraints.Remove(rc);
+
+                    return GetRangeConstraint(rc.Lowerbound, rc.Upperbound, GetDescription(defFacet.Annotation), false, rc.LowerboundIncluded, rc.UpperboundIncluded, attr);
+                }
+            }
 
             #endregion
 
@@ -2009,26 +2017,26 @@ namespace BExIS.Xml.Helpers.Mapping
             foreach (XmlSchemaEnumerationFacet facet in facets)
             {
                 if (facet != null)
-                    items.Add(new DomainItem(){Key = facet.Value, Value = facet.Value });
+                    items.Add(new DomainItem() { Key = facet.Value, Value = facet.Value });
             }
 
             DomainConstraint domainConstraint = new DomainConstraint(ConstraintProviderSource.Internal, "", "en-US", restrictionDescription, false, null, null, null, items);
 
             domainConstraint.Materialize();
-            dataContainerManager.AddConstraint(domainConstraint,attr);
+            dataContainerManager.AddConstraint(domainConstraint, attr);
 
             return domainConstraint;
         }
 
-        private RangeConstraint GetRangeConstraint(double min, double max,string description, bool negated, bool lowerBoundIncluded, bool upperBoundIncluded,  MetadataAttribute attr)
+        private RangeConstraint GetRangeConstraint(double min, double max, string description, bool negated, bool lowerBoundIncluded, bool upperBoundIncluded, MetadataAttribute attr)
         {
             RangeConstraint constraint = new RangeConstraint(ConstraintProviderSource.Internal, "", "en-US", description, negated, null, null, null, min, lowerBoundIncluded, max, upperBoundIncluded);
             dataContainerManager.AddConstraint(constraint, attr);
-     
+
             return constraint;
         }
 
-        private PatternConstraint GetPatternConstraint(string patternString, string description,bool negated, MetadataAttribute attr)
+        private PatternConstraint GetPatternConstraint(string patternString, string description, bool negated, MetadataAttribute attr)
         {
             PatternConstraint constraint = new PatternConstraint(ConstraintProviderSource.Internal, "", "en-US", description, negated, null, null, null, patternString, false);
             dataContainerManager.AddConstraint(constraint, attr);
@@ -2074,7 +2082,7 @@ namespace BExIS.Xml.Helpers.Mapping
             {
                 foreach (var file in mappingFilPaths)
                 {
-                    FileHelper.Delete(Path.Combine(mappingFileDirectory,file));
+                    FileHelper.Delete(Path.Combine(mappingFileDirectory, file));
                 }
             }
 
@@ -2093,7 +2101,7 @@ namespace BExIS.Xml.Helpers.Mapping
 
             // deleting all xsds
             if (Directory.Exists(directoryPath))
-                Directory.Delete(directoryPath,true);
+                Directory.Delete(directoryPath, true);
 
             if (!Directory.Exists(directoryPath)) return true;
 

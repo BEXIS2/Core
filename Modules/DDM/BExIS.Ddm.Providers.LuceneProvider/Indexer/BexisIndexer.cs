@@ -1,24 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Xml;
-using BExIS.Dlm.Services.Data;
-using BExIS.Ddm.Model;
+﻿using BExIS.Ddm.Api;
 using BExIS.Ddm.Providers.LuceneProvider.Helpers;
 using BExIS.Ddm.Providers.LuceneProvider.Searcher;
-using Lucene.Net.Analysis;
-using Lucene.Net.Documents;
-using Lucene.Net.Index;
-using Lucene.Net.Store;
-using System.Linq;
-using BExIS.Ddm.Api;
-using BExIS.Ddm.Providers.LuceneProvider.Config;
-using Lucene.Net.Search;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
+using BExIS.Utils.Models;
+using Lucene.Net.Analysis;
+using Lucene.Net.Documents;
+using Lucene.Net.Index;
+using Lucene.Net.Search;
+using Lucene.Net.Store;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Xml;
 
 /// <summary>
 ///
@@ -189,7 +187,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                 {
                     foreach (var vv in tuple.VariableValues)
                     {
-                        if (vv.VariableId >0)
+                        if (vv.VariableId > 0)
                         {
                             Variable varr = sds.Variables.Where(p => p.Id == vv.VariableId).SingleOrDefault();
                             switch (varr.DataAttribute.DataType.SystemType)
@@ -400,7 +398,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                         // a proper fetch (page) size can be obtained by calling dm.PreferedBatchSize
                         int fetchSize = dm.PreferedBatchSize;
                         long tupleSize = dm.GetDatasetVersionEffectiveTupleCount(dsv);
-                        long noOfFetchs = tupleSize/fetchSize + 1;
+                        long noOfFetchs = tupleSize / fetchSize + 1;
                         for (int round = 0; round < noOfFetchs; round++)
                         {
                             List<AbstractTuple> dsVersionTuples = dm.GetDatasetVersionEffectiveTuples(dsv, round,
@@ -409,7 +407,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                             if (primaryDataStringToindex != null)
                             {
                                 foreach (string pDataValue in primaryDataStringToindex)
-                                    // Loop through List with foreach
+                                // Loop through List with foreach
                                 {
                                     Field a = new Field("category_" + lucene_name, pDataValue,
                                         Lucene.Net.Documents.Field.Store.NO, toAnalyse);
@@ -541,7 +539,8 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                     TopDocs tds = BexisIndexSearcher.getIndexSearcher().Search(query, 1);
 
                     if (tds.TotalHits < 1) { writeBexisIndex(pair.Key, dm.GetDatasetLatestMetadataVersion(pair.Key)); }
-                    else {
+                    else
+                    {
                         indexWriter.DeleteDocuments(new Term("doc_id", pair.Key.ToString()));
                         autoCompleteIndexWriter.DeleteDocuments(new Term("id", pair.Key.ToString()));
                         writeBexisIndex(pair.Key, dm.GetDatasetLatestMetadataVersion(pair.Key));
@@ -569,7 +568,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
 
             BexisIndexSearcher.searcher = new IndexSearcher(indexWriter.GetReader());
             BexisIndexSearcher.autoCompleteSearcher = new IndexSearcher(autoCompleteIndexWriter.GetReader());
-            
+
         }
 
         public void updateSingleDatasetIndex(long datasetId, IndexingAction indAction)
@@ -585,7 +584,8 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
                 TopDocs tds = BexisIndexSearcher.getIndexSearcher().Search(query, 1);
 
                 if (tds.TotalHits < 1) { writeBexisIndex(datasetId, dm.GetDatasetLatestMetadataVersion(datasetId)); }
-                else {
+                else
+                {
                     indexWriter.DeleteDocuments(new Term("doc_id", datasetId.ToString()));
                     autoCompleteIndexWriter.DeleteDocuments(new Term("id", datasetId.ToString()));
                     writeBexisIndex(datasetId, dm.GetDatasetLatestMetadataVersion(datasetId));
@@ -639,8 +639,8 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
         /// <seealso cref=""/>        
         public void Dispose()
         {
-             indexWriter.Dispose();
-           autoCompleteIndexWriter.Dispose();
+            indexWriter.Dispose();
+            autoCompleteIndexWriter.Dispose();
         }
     }
 

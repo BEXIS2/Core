@@ -20,23 +20,23 @@
         Powered by
         <br/><br/>
         <a href="http://bexis2.uni-jena.de" target="_blank">
-            <img src="~/Content/Images/Logo_BEXIS_rgb_113x28.jpg" class="desaturate"/>
+            <img src="~/Content/Images/Logo_BEXIS_rgb_113x28.jpg" class="desaturate" title=@(System.Configuration.ConfigurationManager.AppSettings["ApplicationName"]+System.Configuration.ConfigurationManager.AppSettings["ApplicationVersion"])/>
         </a>
 
         <br/><br/>
         @if (!string.IsNullOrEmpty(Html.GetTenant().PolicyFileNamePath))
         {
-            @Html.ActionLink("Privacy Policy", "Policy", "Footer", new { area = "Site" }, null)
+            @Html.ActionLink("Privacy Policy", "policy", "footer", new { area = "" }, null)
         }
 
         @if (!string.IsNullOrEmpty(Html.GetTenant().ContactUsFileNamePath))
         {
-            @Html.ActionLink("Contact Us", "ContactUs", "Footer", new { area = "Site" }, null)
+            @Html.ActionLink("Contact Us", "contactus", "footer", new { area = "" }, null)
         }
 
         @if (!string.IsNullOrEmpty(Html.GetTenant().ImprintFileNamePath))
         {
-            @Html.ActionLink("Imprint", "Imprint", "Footer", new { area = "Site" }, null)
+            @Html.ActionLink("Imprint", "imprint", "footer", new { area = "" }, null)
         }
         <br />
     </footer>

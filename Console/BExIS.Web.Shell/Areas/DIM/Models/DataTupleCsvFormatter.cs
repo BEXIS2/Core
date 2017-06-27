@@ -1,16 +1,13 @@
-﻿using BExIS.Dlm.Entities.Data;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
-using System.Web;
 using System.IO;
-using System.Net.Http;
 using System.Text;
 using System.Data;
+using System.Net.Http;
 
-namespace BExIS.Web.Shell.Areas.DIM.Models.Formatters
+namespace BExIS.Modules.Dim.UI.Models.Formatters
 {
     // used: http://www.asp.net/web-api/overview/formats-and-model-binding/media-formatters
     // see: App_Start folder -> WebApiConfi.cs

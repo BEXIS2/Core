@@ -2,81 +2,9 @@
 
 @if(Request.IsAuthenticated) {
     <text>Welcome <strong>@User.Identity.Name</strong>!
-    [ @Html.ActionLink("Log Off", "LogOff", "Account", new { area = "SAM"}, null) ]</text>
+    [ @Html.ActionLink("Sign Out", "SignOut", "Account") ]</text>
 }
 else {
-    <text>[ <a href="#" onclick="LogOn()">LogOn</a> ]</text>
-    <text>[ <a href="#" onclick="Register()">Register</a> ]</text>
+    <text>[ @Html.ActionLink("Sign In", "SignIn", "Account") ]</text>
+    <text>[ @Html.ActionLink("Sign Up", "SignUp", "Account") ]</text>
 }
-
-
-@(Html.Telerik().Window()
-    .Name("Window_Register")
-    .Title("Register")
-    .Draggable(true)
-    .Modal(true)
-    .Visible(false)
-    .Scrollable(true)
-    .ContentHtmlAttributes(new { @style="overflow:auto; width:auto; height:auto; min-height:225px; min-width:400px"})
-    .Content(@<text>
-        <div id="Content_Register"></div>
-    </text>)
-    .ClientEvents(clientEvents => clientEvents
-        .OnClose("Window_Register_OnClose")
-    )
-)
-
-@(Html.Telerik().Window()
-    .Name("Window_LogOn")
-    .Title("LogOn")
-    .Draggable(true)
-    .Modal(true)
-    .Visible(false)
-    .Scrollable(true)
-    .ContentHtmlAttributes(new { @style="overflow:auto; width:auto; height:auto; min-height:225px; min-width:400px"})
-    .Content(@<text>
-        <div id="Content_LogOn"></div>
-    </text>)
-    .ClientEvents(clientEvents => clientEvents
-        .OnClose("Window_LogOn_OnClose")
-    )
-)
-
-<script type="text/javascript">
-
-    function Register() {
-        $.get('@Url.Action("Register", "Account", new { area = "SAM" })', function (data) {
-
-            $('#Content_Register').html(data);
-
-            var window = $('#Window_Register').data('tWindow');
-            window.center().open();
-        });
-    }
-
-    function Window_Register_Cancel() {
-        $('#Window_Register').data('tWindow').close();
-    }
-
-    function Window_Register_OnClose() {
-        $('#Content_Register').empty();
-    }
-
-    function LogOn() {
-        $.get('@Url.Action("LogOn", "Account", new { area = "SAM" })', function (data) {
-
-            $('#Content_LogOn').html(data);
-
-            var window = $('#Window_LogOn').data('tWindow');
-            window.center().open();
-        });
-    }
-
-    function Window_LogOn_Cancel() {
-        $('#Window_LogOn').data('tWindow').close();
-    }
-
-    function Window_LogOn_OnClose() {
-        $('#Content_LogOn').empty();
-    }
-</script>

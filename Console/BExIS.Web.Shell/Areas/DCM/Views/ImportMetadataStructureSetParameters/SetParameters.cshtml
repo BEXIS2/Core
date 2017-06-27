@@ -1,8 +1,8 @@
-﻿@model BExIS.Web.Shell.Areas.DCM.Models.ImportMetadata.ParametersModel
+﻿@model BExIS.Modules.Dcm.UI.Models.ImportMetadata.ParametersModel
 @using Telerik.Web.Mvc.UI;
 @using System;
 @using System.Web.Configuration;
-@using BExIS.Web.Shell.Areas.DCM.Models;
+@using BExIS.Modules.Dcm.UI.Models;
 
 @{
     int index = 0;
@@ -59,7 +59,7 @@
                     </td>
                     <td>
                         <div id="titleSelectionContainer">
-                            @Ajax.ActionLink("Select", "ShowListOfMetadataNodesTitle", "ImportMetadataStructureSetParameters", new {area = "DCM"},
+                            @Ajax.ActionLink("Select", "ShowListOfMetadataNodesTitle", "ImportMetadataStructureSetParameters", new {area = "Dcm"},
                                 new AjaxOptions
                                 {
                                     HttpMethod = "GET",
@@ -80,7 +80,7 @@
                     </td>
                     <td>
                         <div id="descriptionSelectionContainer">
-                            @Ajax.ActionLink("Select", "ShowListOfMetadataNodesDescription", "ImportMetadataStructureSetParameters", new {area = "DCM"},
+                            @Ajax.ActionLink("Select", "ShowListOfMetadataNodesDescription", "ImportMetadataStructureSetParameters", new {area = "Dcm"},
                                 new AjaxOptions
                                 {
                                     HttpMethod = "GET",

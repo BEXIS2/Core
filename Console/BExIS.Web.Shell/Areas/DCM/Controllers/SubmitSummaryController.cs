@@ -7,8 +7,7 @@ using BExIS.IO;
 using BExIS.IO.Transform.Input;
 using BExIS.IO.Transform.Output;
 using BExIS.IO.Transform.Validation.Exceptions;
-using BExIS.Web.Shell.Areas.DCM.Models;
-using NHibernate.Util;
+using BExIS.Modules.Dcm.UI.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -19,7 +18,7 @@ using System.Web.Mvc;
 using Vaiona.Logging;
 using Vaiona.Logging.Aspects;
 
-namespace BExIS.Web.Shell.Areas.DCM.Controllers
+namespace BExIS.Modules.Dcm.UI.Controllers
 {
     public class SubmitSummaryController : Controller
     {
@@ -158,7 +157,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             else
             {
                 //ToDo: remove all changed from dataset and version
-                return PartialView(model);
+                return null;
             }
         }
 

@@ -1,4 +1,4 @@
-﻿@using BExIS.Web.Shell.Areas.SAM.Models
+﻿@using BExIS.Modules.Sam.UI.Models
 @using Telerik.Web.Mvc.UI
 @model TenantEditModel
 @using (Ajax.BeginForm("Edit", "Tenants", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "contentEdit", OnSuccess = "tenantEdit_onSuccess" }))
@@ -43,7 +43,7 @@
             <td>
                 @if (Model.IsDefault)
                 {
-                    <input type="checkbox" value="" disabled="disabled" checked="checked" class="js-switch"/>
+                    <input type="checkbox" value="" disabled="disabled" checked="checked" class="js-switch" />
                     @Html.HiddenFor(m => m.IsDefault)
                 }
                 else

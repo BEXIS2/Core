@@ -14,7 +14,7 @@ using BExIS.Dlm.Services.DataStructure;
 using Vaiona.Utils.Cfg;
 using BExIS.Xml.Helpers;
 
-namespace BExIS.Web.Shell.Areas.DDM.Helpers
+namespace BExIS.Modules.Ddm.UI.Helpers
 {
     public class SearchUIHelper
     {
@@ -24,7 +24,7 @@ namespace BExIS.Web.Shell.Areas.DDM.Helpers
         {
             string url = "";
  
-            url = AppConfiguration.GetModuleWorkspacePath("DDM") + xslPath;
+            url = AppConfiguration.GetModuleWorkspacePath("ddm") + xslPath;
   
             if (m != null)
             {

@@ -5,17 +5,17 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Dynamic;
+//using System.Linq.Dynamic;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using BExIS.IO.Transform.Output;
 using System.Data;
-using BExIS.Web.Shell.Areas.DIM.Models;
-using BExIS.Web.Shell.Areas.DIM.Models.Formatters;
-using BExIS.Xml.Helpers;
+using BExIS.Modules.Dim.UI.Models;
+using BExIS.Modules.Dim.UI.Models.Formatters;
+using BExIS.Xml.Services;
 
-namespace BExIS.Web.Shell.Areas.DIM.Controllers
+namespace BExIS.Modules.Dim.UI.Controllers
 {
     /// <summary>
     /// This class is designed as a Web API to allow various client tools request datasets or a view on data sets and get the result in 

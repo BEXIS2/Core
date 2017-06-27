@@ -1,0 +1,158 @@
+﻿@using BExIS.Modules.Dim.UI.Models.Mapping
+@using Telerik.Web.Mvc.UI
+@model BExIS.Modules.Dim.UI.Models.Mapping.MappingMainModel
+
+<div id="DIM_MappingContainer">
+
+    @section Scripts{
+
+        <link href="@Url.Content(Themes.GetResourcePath("Styles/DIM","bexis-dim.css"))" rel="stylesheet" type="text/css" />
+        <script src="@Url.Content("~/Scripts/DIM/bexis.dim.mapping.js")"></script>
+        <script src="@Url.Content("~/Scripts/DIM/isotope.pkgd.min.js")"></script>
+        <script src="@Url.Content("~/Scripts/DIM/jsPlumb-2.2.8-min.js")"></script>
+    }
+
+    @section LeftPane
+    {
+        <span>
+            @(Html.Telerik().DropDownList()
+                                .Name("SelectSource")
+                                .Placeholder("Select")
+                                .HtmlAttributes(new { @class = "bx-dropdown", style = "width:100%;" })
+                                .ClientEvents(events => events.OnChange("onChangeSourceDropDown"))
+                                .BindTo(new SelectList(Model.SelectionList, "Id", "Name", Model.Source.ElementId + "_" + Model.Source.Type)))
+
+        </span>
+
+        @if (Model.Source != null)
+        {
+            @Html.Partial("LinkElemenRoot", Model.Source)
+        }
+    }
+
+
+    @Html.Partial("Mappings",Model.ParentMappings)
+
+
+    @section RightPane
+    {
+        <span>
+            @(Html.Telerik().DropDownList()
+                            .Name("SelectTarget")
+                            .Placeholder("Select")
+                            .HtmlAttributes(new { @class = "bx-dropdown", style="width:100%;" })
+                            .ClientEvents(events => events.OnChange("onChangeTargetDropDown"))
+                            .BindTo(new SelectList(Model.SelectionList,"Id","Name", Model.Target.ElementId+"_"+ Model.Target.Type)))
+
+        </span>
+
+        @if (Model.Target != null)
+        {
+            @Html.Partial("LinkElemenRoot", Model.Target)
+        }
+    }
+
+</div>
+
+<script type="text/javascript">
+
+    function onChangeTargetDropDown(e) {
+        var substr = e.value;
+        var id = substr.split("_")[0];
+        var type = substr.split("_")[1];
+        console.log(substr);
+        console.log(type);
+        console.log(id);
+
+        var source = $("#le-root-source");
+        console.log(source);
+        var sourceId = $(source).attr("id").split("_")[1];
+        var sourceInfo = $(source).find(".le-root-info")[0];
+        var sourceType = $(sourceInfo).find("#Type").text();
+
+
+        //long sourceId, long targetId = 0, LinkElementType type = LinkElementType.System
+        var sendData =
+        {
+            "sourceId": sourceId,
+            "targetId": id,
+            "sourceType": sourceType,
+            "targetType": type,
+            "position":"Target"
+        }
+
+        $("#le-root-target").preloader(12,"Loading Target");
+
+        $("#dim-mapping-middle").preloader(12,"Loading Mappings");
+
+        reloadSite("le-root-target", sendData);
+
+        reloadMapping("dim-mapping-middle", sendData);
+
+    }
+
+    function onChangeSourceDropDown(e) {
+
+        var substr = e.value;
+        var id = substr.split("_")[0];
+        var type = substr.split("_")[1];
+        console.log(substr);
+        console.log(type);
+        console.log(id);
+
+        var target = $("#le-root-target");
+        console.log(target);
+        var targetId = $(target).attr("id").split("_")[1];
+        var targetInfo = $(target).find(".le-root-info")[0];
+        var targetType = $(targetInfo).find("#Type").text();
+
+
+        //long sourceId, long targetId = 0, LinkElementType type = LinkElementType.System
+        var sendData =
+        {
+            "sourceId": id,
+            "targetId": targetId,
+            "sourceType": type,
+            "targetType": targetType,
+            "position": "Source"
+
+        }
+
+        $("#le-root-source").preloader(12, "Loading Source");
+
+        $("#dim-mapping-middle").preloader(12, "Loading Mappings");
+
+        reloadSite("le-root-source", sendData);
+
+        reloadMapping("dim-mapping-middle", sendData);
+
+    }
+
+    function reloadSite(id,senddata) {
+        $.ajax({
+            type: "POST",
+            url: "/DIM/Mapping/ReloadTarget",
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify(senddata),
+            success: function (data) {
+                $("#" + id).replaceWith(data);
+            },
+            error: function (data) { alert("error") }
+        });
+    }
+
+    function reloadMapping(id, senddata) {
+        $.ajax({
+            type: "POST",
+            url: "/DIM/Mapping/ReloadMapping",
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify(senddata),
+            success: function (data) {
+                $("#" + id).replaceWith(data);
+            },
+            error: function (data) { alert("error") }
+        });
+    }
+</script>

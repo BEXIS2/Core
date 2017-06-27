@@ -1,35 +1,58 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Web;
 using Vaiona.Model.MTnt;
 
-namespace BExIS.Web.Shell.Areas.SAM.Models
+namespace BExIS.Modules.Sam.UI.Models
 {
     public class TenantCreateModel
     {
-        public IEnumerable<HttpPostedFileBase> Files { get; set; }
-
         public TenantCreateModel()
         {
             Files = new List<HttpPostedFileBase>();
         }
+
+        public IEnumerable<HttpPostedFileBase> Files { get; set; }
     }
 
-    public class TenantViewModel
+    public class TenantEditModel
     {
-        
+        public string Description { get; set; }
+        public string Id { get; set; }
+
+        [Display(Name = "Is Default")]
+        public bool IsDefault { get; set; }
+
+        [Display(Name = "Short Name")]
+        public string ShortName { get; set; }
+
+        [Display(Name = "Is Active")]
+        public bool Status { get; set; }
+
+        public static TenantEditModel Convert(Tenant tenant)
+        {
+            return new TenantEditModel()
+            {
+                Id = tenant.Id,
+                ShortName = tenant.ShortName,
+                IsDefault = tenant.IsDefault,
+                Description = tenant.Description,
+                Status = tenant.Status == TenantStatus.Active
+            };
+        }
     }
 
     public class TenantGridRowModel
     {
-        public string Id { get; set; }
-        public string ShortName { get; set; }
         public string Description { get; set; }
+        public string Id { get; set; }
+
         [Display(Name = "Is Default")]
         public bool IsDefault { get; set; }
+
         public bool IsDeletable { get; set; }
+        public string ShortName { get; set; }
+
         [Display(Name = "Is Active")]
         public bool Status { get; set; }
 
@@ -47,31 +70,7 @@ namespace BExIS.Web.Shell.Areas.SAM.Models
         }
     }
 
-    public class TenantEditModel
+    public class TenantViewModel
     {
-        public string Id { get; set; }
-
-        [Display(Name = "Short Name")]
-        public string ShortName { get; set; }
-
-        public string Description { get; set; }
-
-        [Display(Name = "Is Default")]
-        public bool IsDefault { get; set; }
-
-        [Display(Name="Is Active")]
-        public bool Status { get; set; }
-
-        public static TenantEditModel Convert(Tenant tenant)
-        {
-            return new TenantEditModel()
-            {
-                Id = tenant.Id,
-                ShortName = tenant.ShortName,
-                IsDefault = tenant.IsDefault,
-                Description = tenant.Description,
-                Status = tenant.Status == TenantStatus.Active
-            };
-        }
     }
 }

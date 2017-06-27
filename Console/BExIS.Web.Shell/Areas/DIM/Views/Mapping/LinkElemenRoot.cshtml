@@ -1,0 +1,141 @@
+﻿@using BExIS.Modules.Dim.UI.Models.Mapping
+@using Telerik.Web.Mvc.UI
+@model BExIS.Modules.Dim.UI.Models.Mapping.LinkElementRootModel
+@{
+    string searchId = "le-root-search-filter-" + Model.Position;
+    string id = "le-root-" + Model.Position.ToString().ToLower();
+}
+
+<div id="@id" class="le-root @Model.Position dim-Container">
+
+    <div class="le-root-info" style="display: none">
+        <div id="Id">@Model.Id</div>
+        <div id="Name">@Model.Name</div>
+        <div id="ElementId">@Model.ElementId</div>
+        <div id="Type">@Model.Type</div>
+        <div id="Position">@Model.Position</div>
+    </div>
+
+    @*<div class="le-root-header">
+        <b> @Model.Type : @Model.Name</b>
+    </div>*@
+
+    <div class="le-root-search">
+
+        @Html.TextBox(searchId, "", new {@class = "bx-input le-search", style = "width:100%"})
+
+    </div>
+
+    <div class="le-root-content">
+
+        @foreach (var child in Model.LinkElementContainers)
+        {
+            @Html.Partial("LinkElementContainer", child)
+        }
+
+
+    </div>
+</div>
+<script type="text/javascript">
+
+
+    var position = '@Model.Position';
+    var identifer = ".le-container-content-" + position;
+    var identiferSimple = ".le-simple-" + position;
+
+    $(document)
+        .ready(function () {
+            initIsotope();
+        });
+
+    function initIsotope() {
+        // init Isotope
+        console.log("init isotope");
+
+
+        $(identifer).isotope({
+            itemSelector: identiferSimple,
+            layoutMode: 'vertical',
+            transitionDuration: '0.5s',
+            getSortData: {
+                name: '#Name',
+                category: '[data-category]'
+            }
+        });
+    }
+
+
+    function concatValues(obj) {
+        var value = '';
+        for (var prop in obj) {
+            if (prop == 0) {
+                value = '.' + obj[prop];
+            }
+            else {
+                value += ', .' + obj[prop];
+            }
+        }
+        return value;
+    }
+
+    $('.le-search').keyup(function () {
+        $('.le-search').trigger("change");
+    });
+
+    $('.le-search').change(function (e) {
+
+        var element = $("#" + e.target.id);
+        var targetid = e.target.id;
+        var tmpArray = targetid.split('-');
+
+        var position = tmpArray[tmpArray.length - 1];
+       
+        var identiferSimple = ".le-simple-" + position;
+        var currentidentifer = ".le-container-content-" + position;
+
+        searchFilter = [];
+        $('#'+targetid).val($('#'+targetid).val().trim());
+        var terms = $('#'+targetid).val().split(' ');
+        var elems = $(identiferSimple);
+
+        if (terms.length > 0 && terms[0] != '') {
+            for (var j = 0; j < terms.length; j++) {
+                terms[j] = terms[j].toLowerCase();
+                var temp = [];
+                for (var i = 0; i < elems.length; i++) {
+
+                    var text = $(elems[i]).find('.le-simple-header').text().trim();
+
+                    var id = $(elems[i]).attr("id");
+
+                    if (text.toLowerCase().indexOf(terms[j]) !== -1) {
+                        console.log(terms[j]);
+                        console.log(text.toLowerCase().indexOf(terms[j]));
+                        console.log(text);
+                        temp.push(id);
+                    }
+
+                }
+
+                if (searchFilter.length == 0) {
+                    searchFilter = temp.slice();
+                }
+
+                if (temp.length == 0) {
+                    searchFilter.push("0");
+                }
+            }
+        }
+        else {
+            searchFilter = [];
+        }
+
+        
+
+        //create the isotope id
+        
+        console.log(currentidentifer);
+        $(currentidentifer).isotope({ filter: concatValues(searchFilter) });
+    });
+
+</script>

@@ -1,0 +1,144 @@
+﻿@using BExIS.Modules.Sam.UI.Models
+@using Telerik.Web.Mvc.UI
+
+@* Check a switch to see weather module installation is enabled. If not show a message *@
+@{
+    bool canInstallModules = true;
+    if (canInstallModules)
+    {
+        using (Html.BeginForm("install", "modules", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <table border="0">
+                <tr style="border:none">
+                    <td width="10%">
+                        <input type="file" name="moduleZip" />
+                    </td>
+                    <td>
+                        <input type="submit" value="Install" class="bx-button function" />
+                    </td>
+                </tr>
+            </table>
+        }
+    }
+    else
+    {
+        <div>Module installation is disabled.</div>
+    }
+}
+@Html.ValidationSummary()
+
+@(Html.Telerik().Grid<ModuleGridRowModel>()
+    .Name("gridModules")
+    .DataKeys(keys =>
+    {
+        keys.Add(m => m.Id);
+    })
+    .Columns(columns =>
+    {
+        columns.Bound(s => s.Order).Width(100);
+        columns.Bound(s => s.Id).Width(100);
+        columns.Bound(s => s.Version).Width(100);
+        columns.Bound(m => m.Description);
+        columns.Bound(m => m.Status).Width(120);
+        columns.Bound(m => m.Loaded).Width(120);
+        columns.Template(@<text>
+            @if (true)
+            {
+                <button type="button" class="bx bx-grid-function bx-edit" onclick="moduleEdit_onClick('@item.Id', '@item.Id')"></button>
+                <button type="button" class="bx bx-grid-function bx-trash" onclick="moduleDelete_onClick('@item.Id', '@item.Id')"></button>
+            }
+            else
+            {
+                <button type="button" class="bx bx-grid-function bx-edit" onclick="moduleEdit_onClick('@item.Id', '@item.Id')"></button>
+                <button type="button" class="bx bx-grid-function bx-trash" disabled="disabled" onclick="moduleDelete_onClick('@item.Id', '@item.Id')"></button>
+            }
+            </text>)
+            .ClientTemplate("<button type=\"button\" class=\"bx bx-grid-function bx-edit\" onclick=\"moduleEdit_onClick(\'<#= Id #>\', \'<#= Id #>\');\" value=\"<#= Id #>\"></button>" +
+                            "<button type=\"button\" class=\"bx bx-grid-function bx-trash\" onclick=\"moduleDelete_onClick(\'<#= Id #>\', \'<#= Id #>\');\" value=\"<#= Id #>\" <#= true ? disabled='' : 'disabled' #> ></button>")
+            .Width(70);
+    })
+    .ClientEvents(clientEvents =>
+        {
+            clientEvents.OnDataBound("gridModules_onDataBound");
+        })
+        .DataBinding(dataBinding => dataBinding
+            .Ajax()
+            .OperationMode(GridOperationMode.Client)
+            .Select("Modules_Select", "Modules")
+        )
+    .Filterable()
+    .Pageable(pageable =>
+    {
+        pageable.PageSize(10, new[] { 10, 20, 50, 100 });
+        pageable.Style(GridPagerStyles.NextPreviousAndNumeric | GridPagerStyles.PageSizeDropDown);
+        pageable.Position(GridPagerPosition.Both);
+    })
+    .Sortable(sortable => sortable
+        .OrderBy(orderby => orderby
+            .Add(m => m.Order)
+            .Ascending()
+        )
+    )
+)
+
+<script type="text/javascript">
+
+    function gridModules_onDataBound() {
+        addTooltips();
+        resetAllTelerikIconTitles();
+        $(":disabled").addClass("bx-disabled");
+    }
+
+    function moduleEdit_onClick(shortName, id) {
+        $.ajax({
+            type: 'GET',
+            url: '@Url.Action("Edit", "Modules")',
+            data: { Id:id },
+            dataType: 'html',
+            success: function (htmlData) {
+                var windowElement = $.telerik.window.create({
+                    title: "Edit Module: " + shortName + " (Id: " + id + ")",
+                    html: "<div id='contentEdit' class='bx-window'>" + htmlData + "</div>",
+                    contentUrl: "",
+                    actions: ["Close"],
+                    modal: true,
+                    width: 500,
+                    height: 500,
+                    resizable: false,
+                    draggable: true,
+                    scrollable: false,
+                    onClose: function () {
+                        $("#windowEdit").data('tWindow').destroy();
+                        $("#gridModules .t-refresh").trigger('click');
+                    }
+                });
+
+                windowElement.attr('id', 'windowEdit');
+                var window = $(windowElement).data('tWindow');
+                window.center().open();
+
+                resetAllTelerikIconTitles();
+            }
+        });
+    }
+
+    function moduleEdit_onSuccess(data) {
+        if (data.success) {
+            $('#windowEdit').data('tWindow').close();
+        }
+    }
+
+    function windowEdit_onCancel() {
+        $('#windowEdit').data('tWindow').close();
+    }
+
+    function moduleDelete_onClick(shortName, id) {
+        var result = confirm('Are you sure you want to delete this module (Username:' + shortName + ', Id:' + id + ')?');
+
+        if (result) {
+            $.post('@Url.Action("Delete", "Modules")', { Id: id }, function (e) {
+                $("#gridModules .t-refresh").trigger('click');
+            });
+        }
+    }
+</script>

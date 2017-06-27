@@ -1,10 +1,9 @@
-﻿using System;
+﻿using BExIS.Dim.Entities;
+using BExIS.IO;
+using BExIS.Xml.Helpers;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
-using BExIS.Dim.Entities;
-using BExIS.IO;
-using BExIS.Xml.Helpers;
 using Vaiona.Utils.Cfg;
 
 namespace BExIS.Dim.Helpers
@@ -24,7 +23,7 @@ namespace BExIS.Dim.Helpers
 
         public void Load()
         {
-            string filepath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"),sourceFile);
+            string filepath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), sourceFile);
 
             if (FileHelper.FileExist(filepath))
             {
@@ -55,9 +54,14 @@ namespace BExIS.Dim.Helpers
 
         #region helper function
 
-        public string GetDirectoryPath(long datasetid, DataRepository dataRepository)
+        public string GetDirectoryPath(long datasetid, string dataRepositoryName)
         {
-            return Path.Combine(AppConfiguration.DataPath, "Datasets", datasetid.ToString(), "publish", dataRepository.Name);
+            return Path.Combine(AppConfiguration.DataPath, "Datasets", datasetid.ToString(), "publish", dataRepositoryName);
+        }
+
+        public string GetDynamicDirectoryPath(long datasetid, string dataRepositoryName)
+        {
+            return Path.Combine("Datasets", datasetid.ToString(), "publish", dataRepositoryName);
         }
 
         public string GetZipFileName(long datasetid, long datasetVersionid)
@@ -65,10 +69,10 @@ namespace BExIS.Dim.Helpers
             return datasetid + "_" + datasetVersionid + "_Dataset.zip";
         }
 
-        public bool Exist(long datasetid, long datasetVersionid, DataRepository dataRepository)
+        public bool Exist(long datasetid, long datasetVersionid, string dataRepositoryName)
         {
             // check directory
-            string d = GetDirectoryPath(datasetid, dataRepository);
+            string d = GetDirectoryPath(datasetid, dataRepositoryName);
             if (!Directory.Exists(d)) return false;
 
             //check file
@@ -79,7 +83,7 @@ namespace BExIS.Dim.Helpers
 
             return false;
         }
-        
+
         #endregion
 
 

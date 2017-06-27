@@ -1,12 +1,12 @@
-﻿using BExIS.Ddm.Model;
-using BExIS.Ddm.Providers.LuceneProvider;
-using BExIS.Dlm.Entities.MetadataStructure;
+﻿using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.IO.Transform.Output;
+using BExIS.Modules.Dcm.UI.Models;
 using BExIS.Security.Services.Objects;
-using BExIS.Web.Shell.Areas.DCM.Models;
+using BExIS.Utils.Models;
 using BExIS.Xml.Helpers;
 using BExIS.Xml.Helpers.Mapping;
+using BExIS.Xml.Services;
 using Ionic.Zip;
 using NHibernate.Util;
 using System;
@@ -19,17 +19,94 @@ using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
 
-namespace BExIS.Web.Shell.Areas.DCM.Controllers
+namespace BExIS.Modules.Dcm.UI.Controllers
 {
     public class ManageMetadataStructureController : Controller
     {
+        public ActionResult Delete(long id)
+        {
+            MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
+            MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(id);
+
+            try
+            {
+                // delete local files
+                if (XmlSchemaManager.Delete(metadataStructure))
+                {
+                    metadataStructureManager.Delete(metadataStructure);
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(ex.Message);
+            }
+
+            // delete links from search index
+
+            if (metadataStructureManager.Repo.Get(id) == null) return Json(true);
+
+            return Json(false);
+        }
+
+        public ActionResult DownloadSchema(long id)
+        {
+            MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
+            MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(id);
+            string name = metadataStructure.Name;
+
+            string path = OutputMetadataManager.GetSchemaDirectoryPathFromMetadataStructure(id);
+
+            ZipFile zip = new ZipFile();
+            if (Directory.Exists(path))
+                zip.AddDirectory(path);
+
+            MemoryStream stream = new MemoryStream();
+            zip.Save(stream);
+            stream.Position = 0;
+            var result = new FileStreamResult(stream, "application/zip")
+            { FileDownloadName = name + ".zip" };
+
+            return result;
+        }
+
+        public ActionResult Edit(long id)
+        {
+            MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
+            MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(id);
+
+            MetadataStructureModel model = convertToMetadataStructureModel(metadataStructure);
+
+            return PartialView("_editMetadataStructureView", model);
+        }
+
         // GET: DCM/ManageMetadataStructure
         public ActionResult Index()
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Manage Metadata Structure", this.Session.GetTenant());
 
-
             return View(GetDefaultModel());
+        }
+
+        public ActionResult Save(MetadataStructureModel metadataStructureModel)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
+                    MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(metadataStructureModel.Id);
+                    metadataStructure = updateMetadataStructure(metadataStructure, metadataStructureModel);
+                    metadataStructureManager.Update(metadataStructure);
+                }
+                catch (Exception ex)
+                {
+                    return Json(ex.Message);
+                }
+
+                return Json(true);
+            }
+
+            return Json(false);
         }
 
         private MetadataStructureManagerModel GetDefaultModel()
@@ -49,7 +126,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             {
                 tmp.MetadataStructureModels = tmp.MetadataStructureModels.OrderBy(m => m.Id).ToList();
             }
-
 
             return tmp;
         }
@@ -101,10 +177,6 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 metadataStructureModel.MetadataNodes = GetAllXPath(metadataStructureModel.Id);
 
                 metadataStructureModel.Active = XmlDatasetHelper.IsActive(metadataStructure.Id);
-
-                //load system nodes
-                metadataStructureModel.SystemNodes = GetSystemNodes(metadataStructureModel.Id, metadataStructureModel.MetadataNodes);
-
             }
             catch (Exception exception)
             {
@@ -113,15 +185,40 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 metadataStructureModel.Name = metadataStructure.Name;
             }
 
-
-
             return metadataStructureModel;
         }
 
-        private MetadataStructure updateMetadataStructure(MetadataStructure metadataStructure,
-            MetadataStructureModel metadataStructureModel)
+        /// <summary>
+        /// Get all simple attributes of a metadata Structure
+        /// </summary>
+        /// <param name="metadatastructureId"></param>
+        /// <returns></returns>
+        private List<SearchMetadataNode> GetAllXPath(long metadatastructureId)
         {
+            XmlMetadataHelper.GetAllXPathsOfSimpleAttributes(metadatastructureId);
+            return XmlMetadataHelper.GetAllXPathsOfSimpleAttributes(metadatastructureId);
+        }
 
+        private List<EntityModel> GetEntityModelList()
+        {
+            EntityManager entityManager = new EntityManager();
+
+            List<EntityModel> tmp = new List<EntityModel>();
+            entityManager.Entities.Where(e => e.UseMetadata).ForEach(e => tmp.Add(
+                      new EntityModel()
+                      {
+                          Name = e.Name,
+                          ClassPath = e.ClassPath
+                      }
+                  )
+            );
+
+            return tmp.ToList();
+        }
+
+        private MetadataStructure updateMetadataStructure(MetadataStructure metadataStructure,
+                            MetadataStructureModel metadataStructureModel)
+        {
             if (metadataStructure.Id.Equals(metadataStructureModel.Id))
             {
                 metadataStructure.Name = metadataStructureModel.Name;
@@ -182,183 +279,14 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                             NameAttributeValues.active.ToString(),
                             metadataStructureModel.Active.ToString(), AttributeType.parameter.ToString(),
                             "extra/parameters/parameter");
-
-                    }
-
-
-                    //set systemNodes
-                    if (metadataStructureModel.SystemNodes.Count > 0)
-                    {
-                        foreach (var systemNode in metadataStructureModel.SystemNodes)
-                        {
-                            string key = systemNode.Key;
-
-                            tmp = XmlUtility.GetXmlNodeByAttribute(xmlDocument.DocumentElement, nodeNames.systemRef.ToString(),
-                            AttributeNames.name.ToString(), key);
-
-                            string xpath = metadataStructureModel.MetadataNodes
-                                .Where(e => e.DisplayName.Equals(systemNode.Value))
-                                .FirstOrDefault()
-                                .XPath;
-
-                            if (tmp != null)
-                            {
-                                tmp.Attributes[AttributeNames.value.ToString()].Value = xpath;
-                            }
-                            else
-                            {
-
-                                SystemNameAttributeValues systemName = (SystemNameAttributeValues)Enum.Parse(typeof(SystemNameAttributeValues), systemNode.Key);
-
-                                xmlDocument = XmlDatasetHelper.AddSystemReferenceToXml(xmlDocument,
-                                    systemName, xpath);
-                            }
-
-                        }
-
-
-
-
                     }
 
                     metadataStructure.Extra = xmlDocument;
                 }
-
-
             }
             return metadataStructure;
         }
 
-        /// <summary>
-        /// Get all simple attributes of a metadata Structure
-        /// </summary>
-        /// <param name="metadatastructureId"></param>
-        /// <returns></returns>
-        private List<SearchMetadataNode> GetAllXPath(long metadatastructureId)
-        {
-            SearchDesigner searchDesigner = new SearchDesigner();
-            return searchDesigner.GetAllXPathsOfSimpleAttributes(metadatastructureId);
-        }
-
-        private List<EntityModel> GetEntityModelList()
-        {
-            EntityManager entityManager = new EntityManager();
-
-            List<EntityModel> tmp = new List<EntityModel>();
-            entityManager.GetAllEntities().Where(e => e.UseMetadata).ForEach(e => tmp.Add(
-                      new EntityModel()
-                      {
-                          Name = e.Name,
-                          ClassPath = e.ClassPath
-                      }
-                  )
-            );
-
-            return tmp.ToList();
-        }
-
-        private Dictionary<string, string> GetSystemNodes(long metadatastructureId, List<SearchMetadataNode> MetadataNodes)
-        {
-            Dictionary<string, string> tmp = new Dictionary<string, string>();
-
-            foreach (SystemNameAttributeValues value in Enum.GetValues(typeof(SystemNameAttributeValues)))
-            {
-                string xpath = XmlDatasetHelper.GetSystemInformationPath(metadatastructureId, value);
-
-                var searchMetadataNode = MetadataNodes.Where(e => e.XPath.Equals(xpath)).FirstOrDefault();
-                if (searchMetadataNode != null)
-                    tmp.Add(value.ToString(), searchMetadataNode.DisplayName);
-                else tmp.Add(value.ToString(), "");
-            }
-
-            return tmp;
-        }
-
-        #endregion
-
-        public ActionResult Save(MetadataStructureModel metadataStructureModel)
-        {
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
-                    MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(metadataStructureModel.Id);
-                    metadataStructure = updateMetadataStructure(metadataStructure, metadataStructureModel);
-                    metadataStructureManager.Update(metadataStructure);
-
-                }
-                catch (Exception ex)
-                {
-
-                    return Json(ex.Message);
-                }
-
-                return Json(true);
-            }
-
-            return Json(false);
-        }
-
-        public ActionResult Edit(long id)
-        {
-            MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
-            MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(id);
-
-            MetadataStructureModel model = convertToMetadataStructureModel(metadataStructure);
-
-            return PartialView("_editMetadataStructureView", model);
-        }
-
-        public ActionResult Delete(long id)
-        {
-            MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
-            MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(id);
-
-            try
-            {
-                // delete local files
-                if (XmlSchemaManager.Delete(metadataStructure))
-                {
-                    metadataStructureManager.Delete(metadataStructure);
-                }
-            }
-            catch (Exception ex)
-            {
-                return Json(ex.Message);
-            }
-
-
-
-            // delete links from search index
-
-
-
-            if (metadataStructureManager.Repo.Get(id) == null) return Json(true);
-
-            return Json(false);
-        }
-
-        public ActionResult DownloadSchema(long id)
-        {
-            MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
-            MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(id);
-            string name = metadataStructure.Name;
-
-            string path = OutputMetadataManager.GetSchemaDirectoryPathFromMetadataStructure(id);
-
-            ZipFile zip = new ZipFile();
-            if (Directory.Exists(path))
-                zip.AddDirectory(path);
-
-            MemoryStream stream = new MemoryStream();
-            zip.Save(stream);
-            stream.Position = 0;
-            var result = new FileStreamResult(stream, "application/zip")
-            { FileDownloadName = name + ".zip" };
-
-            return result;
-        }
-
+        #endregion helper
     }
 }

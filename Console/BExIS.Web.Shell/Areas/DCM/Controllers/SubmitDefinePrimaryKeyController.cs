@@ -1,19 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using System.Web.Routing;
-using BExIS.IO.Transform.Validation.Exceptions;
-using BExIS.Dcm.UploadWizard;
+﻿using BExIS.Dcm.UploadWizard;
 using BExIS.Dcm.Wizard;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.DataStructure;
-using BExIS.Web.Shell.Areas.DCM.Models;
-using BExIS.IO.Transform.Input;
-using Vaiona.Logging.Aspects;
+using BExIS.IO.Transform.Validation.Exceptions;
+using BExIS.Modules.Dcm.UI.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web.Mvc;
+using System.Web.Routing;
 
-namespace BExIS.Web.Shell.Areas.DCM.Controllers
+namespace BExIS.Modules.Dcm.UI.Controllers
 {
     public class SubmitDefinePrimaryKeyController : Controller
     {
@@ -23,7 +20,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         [HttpGet]
         public ActionResult DefinePrimaryKey(int index)
         {
-            TaskManager = (TaskManager)Session["TaskManager"];
+            TaskManager = (BExIS.Dcm.UploadWizard.TaskManager)Session["TaskManager"];
             //set current stepinfo based on index
             if (TaskManager != null)
             {
@@ -75,7 +72,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         [HttpPost]
         public ActionResult DefinePrimaryKey(object[] data)
         {
-            TaskManager = (TaskManager)Session["TaskManager"];
+            TaskManager = (BExIS.Dcm.UploadWizard.TaskManager)Session["TaskManager"];
             PrimaryKeyViewModel model = new PrimaryKeyViewModel();
             model.StepInfo = TaskManager.Current();
 
@@ -121,7 +118,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         //[MeasurePerformance]
         public ActionResult CheckPrimaryKeys(object[] data)
         {
-            TaskManager TaskManager = (TaskManager)Session["TaskManager"];
+            BExIS.Dcm.UploadWizard.TaskManager TaskManager = (BExIS.Dcm.UploadWizard.TaskManager)Session["TaskManager"];
 
             PrimaryKeyViewModel model = new PrimaryKeyViewModel();
             model.StepInfo = TaskManager.Current();
@@ -134,7 +131,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 if (data != null)
                 {
                     // check Identifier
-                    List<string> identifiersLables = data.ToList().ConvertAll<string>(delegate(object i) { return i.ToString(); });
+                    List<string> identifiersLables = data.ToList().ConvertAll<string>(delegate (object i) { return i.ToString(); });
                     List<long> identifiers = new List<long>();
                     List<ListViewItem> pks = new List<ListViewItem>();
 
@@ -155,11 +152,11 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     // temporary solution to make it a little bit faster
                     // direct link to xml is no t allow, need to call functions from dlm
                     bool IsUniqueInDb = UploadWizardHelper.IsUnique2(Convert.ToInt64(TaskManager.Bus[TaskManager.DATASET_ID].ToString()), identifiers);
-                    
+
                     bool IsUniqueInFile = UploadWizardHelper.IsUnique(TaskManager, Convert.ToInt64(TaskManager.Bus[TaskManager.DATASET_ID].ToString()), identifiers, TaskManager.Bus[TaskManager.EXTENTION].ToString(), TaskManager.Bus[TaskManager.FILENAME].ToString());
 
-                    if(IsUniqueInDb && IsUniqueInFile)
-                     {
+                    if (IsUniqueInDb && IsUniqueInFile)
+                    {
                         model.IsUnique = true;
 
                         if (TaskManager.Bus.ContainsKey(TaskManager.PRIMARY_KEYS_UNIQUE))
@@ -197,7 +194,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                         model.ErrorList.Add(new Error(ErrorType.Other, "Selection is not unique"));
 
                     }
-                   
+
 
                 }
                 else

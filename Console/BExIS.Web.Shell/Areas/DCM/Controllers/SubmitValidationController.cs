@@ -1,19 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
-using BExIS.IO.Transform.Input;
-using BExIS.IO.Transform.Validation.Exceptions;
-using BExIS.Dcm.UploadWizard;
-using BExIS.Dcm.Wizard;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.DataStructure;
-using BExIS.Web.Shell.Areas.DCM.Models;
+using BExIS.IO.Transform.Validation.Exceptions;
+using BExIS.Modules.Dcm.UI.Models;
+using BExIS.Dcm.Wizard;
+using BExIS.IO.Transform.Input;
+using BExIS.Dcm.UploadWizard;
 
-namespace BExIS.Web.Shell.Areas.DCM.Controllers
+namespace BExIS.Modules.Dcm.UI.Controllers
 {
     public class SubmitValidationController : Controller
     {
@@ -25,7 +23,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         [HttpGet]
         public ActionResult Validation(int index)
         {
-            TaskManager = (TaskManager)Session["TaskManager"];
+            TaskManager = (BExIS.Dcm.UploadWizard.TaskManager)Session["TaskManager"];
             //set current stepinfo based on index
             if (TaskManager != null)
             {
@@ -49,7 +47,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         [HttpPost]
         public ActionResult Validation(object[] data)
         {
-            TaskManager = (TaskManager)Session["TaskManager"];
+            TaskManager = (BExIS.Dcm.UploadWizard.TaskManager)Session["TaskManager"];
             ValidationModel model = new ValidationModel();
 
 
@@ -98,7 +96,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         [HttpPost]
         public ActionResult ValidateFile()
         {
-            TaskManager TaskManager = (TaskManager)Session["TaskManager"];
+            BExIS.Dcm.UploadWizard.TaskManager TaskManager = (BExIS.Dcm.UploadWizard.TaskManager)Session["TaskManager"];
             ValidationModel model = new ValidationModel();
             model.StepInfo = TaskManager.Current();
 

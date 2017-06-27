@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using System.Web.Routing;
+﻿using BExIS.Dcm.UploadWizard;
+using BExIS.Dcm.Wizard;
 using BExIS.IO.Transform.Input;
 using BExIS.IO.Transform.Validation.Exceptions;
-using BExIS.Dcm.UploadWizard;
-using BExIS.Dcm.Wizard;
-using BExIS.Web.Shell.Areas.DCM.Models;
+using BExIS.Modules.Dcm.UI.Models;
+using System;
+using System.Web.Mvc;
+using System.Web.Routing;
 
-namespace BExIS.Web.Shell.Areas.DCM.Controllers
+namespace BExIS.Modules.Dcm.UI.Controllers
 {
     public class SubmitGetFileInformationController : Controller
     {
