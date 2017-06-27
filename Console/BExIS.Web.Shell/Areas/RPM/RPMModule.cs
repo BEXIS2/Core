@@ -1,11 +1,18 @@
-﻿using Vaiona.Web.Mvc.Modularity;
+﻿using BExIS.Modules.Rpm.UI.Helpers;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Rpm.UI
 {
-    public class RPMModule : ModuleBase
+    public class RpmModule : ModuleBase
     {
-        public RPMModule(): base("RPM")
+        public RpmModule(): base("RPM")
         {
+        }
+
+        public override void Install()
+        {
+            base.Install();
+            RPMSeedDataGenerator.GenerateSeedData();
         }
 
         /// <summary>

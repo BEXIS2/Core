@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Manifest moduleId="RPM" displayName="Research Planning" version="1.0.0" builtin="false">
+  <Description>
+    <!--add proper description-->
+  </Description>
+  <Assemblies>
+    <Assembly fullName="" role=""/>
+  </Assemblies>
+  <Dependencies>
+    <!--<Dependency moduleId="dcm" version="*.*.*" />-->
+  </Dependencies>
+  <Exports>
+    <Export tag="menubar" id="Research Planning" order="1"
+            title="Manage Data Structures" description="Edit, Create or Delet Data Structures" icon=""
+            controller="DataStructureSearch" action="" argument=""
+            extends="./menubarRoot"/>
+  </Exports>
+</Manifest>

@@ -43,8 +43,18 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Web.Helpers">
+      <HintPath>..\..\..\..\Libraries\Microsoft.Web.Helpers.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Web.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\packages\Microsoft.AspNet.WebApi.Core.5.2.3\lib\net45\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Routing" />
@@ -78,8 +88,24 @@
       <Private>True</Private>
       <HintPath>..\..\..\..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
+    <Reference Include="Telerik.Web.Mvc, Version=2012.3.1018.340, Culture=neutral, PublicKeyToken=29ac1a93ec063d92, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\packages\TelerikMvcExtensions.2012.3.1018\lib\net40\Telerik.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="Vaiona.Entities">
+      <HintPath>..\..\..\..\Libraries\Vaiona\Vaiona.Entities.dll</HintPath>
+    </Reference>
+    <Reference Include="Vaiona.Logging">
+      <HintPath>..\..\..\..\Libraries\Vaiona\Vaiona.Logging.dll</HintPath>
+    </Reference>
     <Reference Include="Vaiona.Model">
       <HintPath>..\..\..\..\Libraries\Vaiona\Vaiona.Model.dll</HintPath>
+    </Reference>
+    <Reference Include="Vaiona.Persistence.Api">
+      <HintPath>..\..\..\..\Libraries\Vaiona\Vaiona.Persistence.Api.dll</HintPath>
+    </Reference>
+    <Reference Include="Vaiona.Utils">
+      <HintPath>..\..\..\..\Libraries\Vaiona\Vaiona.Utils.dll</HintPath>
     </Reference>
     <Reference Include="Vaiona.Web">
       <HintPath>..\..\..\..\Libraries\Vaiona\Vaiona.Web.dll</HintPath>
@@ -97,36 +123,93 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\DataStructureIO.cs" />
+    <Compile Include="Controllers\DataStructureEditController.cs" />
+    <Compile Include="Controllers\DataStructureIOController.cs" />
+    <Compile Include="Controllers\DataStructureSearchController.cs" />
+    <Compile Include="Controllers\HelpController.cs" />
+    <Compile Include="Controllers\Legacy\DataAttributeController.cs" />
+    <Compile Include="Controllers\Legacy\HomeController.cs" />
+    <Compile Include="Controllers\Legacy\UnitController.cs" />
+    <Compile Include="Controllers\StructuresController.cs" />
+    <Compile Include="Helpers\HtmlPrefixScopeExtentions.cs" />
+    <Compile Include="Helpers\RPMSeedDataGenerator.cs" />
+    <Compile Include="Helpers\SeedData\AttributeCreator.cs" />
+    <Compile Include="Helpers\SeedData\MappingReader.cs" />
+    <Compile Include="Models\ConstraintModels.cs" />
+    <Compile Include="Models\DataStructureEditModel.cs" />
+    <Compile Include="Models\DataStructureSearchModel.cs" />
+    <Compile Include="Models\Legacy\DataAttributeModel.cs" />
+    <Compile Include="Models\Legacy\DataStructureDesignerModel.cs" />
+    <Compile Include="Models\Legacy\DataStructureTreeModel.cs" />
+    <Compile Include="Models\Legacy\DataTypeManagerModel.cs" />
+    <Compile Include="Models\Legacy\UnitDimenstionModel.cs" />
+    <Compile Include="Models\Legacy\UnitManagerModel.cs" />
+    <Compile Include="Models\MessageModel.cs" />
+    <Compile Include="Models\StructureModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RPMModule.cs" />
+    <Compile Include="RpmModule.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\Site.css" />
-    <Content Include="RRPM.Manifest.xml" />
-    <Content Include="Scripts\ai.0.22.19-build00125.js" />
-    <Content Include="Scripts\ai.0.22.19-build00125.min.js" />
-    <Content Include="Scripts\bootstrap.js" />
-    <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Rpm.Manifest.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <None Include="Properties\PublishProfiles\BAS Publish.pubxml" />
-    <None Include="Scripts\jquery-1.10.2.intellisense.js" />
-    <Content Include="Scripts\jquery-1.10.2.js" />
-    <Content Include="Scripts\jquery-1.10.2.min.js" />
-    <None Include="Scripts\jquery.validate-vsdoc.js" />
-    <Content Include="Scripts\jquery.validate.js" />
-    <Content Include="Scripts\jquery.validate.min.js" />
-    <Content Include="Scripts\jquery.validate.unobtrusive.js" />
-    <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
-    <Content Include="Scripts\modernizr-2.6.2.js" />
-    <Content Include="Scripts\respond.js" />
-    <Content Include="Scripts\respond.min.js" />
-    <Content Include="Scripts\_references.js" />
+    <Content Include="Scripts\draggabilly.pkgd.js" />
+    <Content Include="Scripts\draggabilly.pkgd.min.js" />
+    <Content Include="Scripts\isotope.pkgd.min.js" />
+    <Content Include="Scripts\packery.pkgd.bexis.min.js" />
+    <Content Include="Scripts\packery.pkgd.js" />
+    <Content Include="Scripts\packery.pkgd.min.js" />
+    <Content Include="Stylesheets\DataStructure.css" />
+    <Content Include="Stylesheets\DataStructureEdit.css" />
+    <Content Include="Stylesheets\DataStructureSearch.css" />
+    <Content Include="Stylesheets\RPM.css" />
+    <Content Include="Views\Help\Informations.xml" />
     <Content Include="Views\Web.config">
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="web.config" />
+    <Content Include="Views\DataAttribute\AttributeManager.cshtml" />
+    <Content Include="Views\DataAttribute\_domainItemView.cshtml" />
+    <Content Include="Views\DataAttribute\_editAttribute.cshtml" />
+    <Content Include="Views\DataStructureEdit\Index.cshtml" />
+    <Content Include="Views\DataStructureEdit\_attributeElement.cshtml" />
+    <Content Include="Views\DataStructureEdit\_attributeFilter.cshtml" />
+    <Content Include="Views\DataStructureEdit\_attributeSearchResult.cshtml" />
+    <Content Include="Views\DataStructureEdit\_dataStructure.cshtml" />
+    <Content Include="Views\DataStructureEdit\_dropdown.cshtml" />
+    <Content Include="Views\DataStructureEdit\_editAttribute.cshtml" />
+    <Content Include="Views\DataStructureEdit\_editUnit.cshtml" />
+    <Content Include="Views\DataStructureEdit\_variableElement.cshtml" />
+    <Content Include="Views\DataStructureSearch\Index.cshtml" />
+    <Content Include="Views\DataStructureSearch\_dataStructuredStructurePreview.cshtml" />
+    <Content Include="Views\DataStructureSearch\_datatructureSearchResult.cshtml" />
+    <Content Include="Views\Help\Index.cshtml" />
+    <Content Include="Views\Home\ClassificationManager.cshtml" />
+    <Content Include="Views\Home\DataStructureDesigner.cshtml" />
+    <Content Include="Views\Home\DatatypeManager.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Home\_addVariable.cshtml" />
+    <Content Include="Views\Home\_dataStructureSaveAs.cshtml" />
+    <Content Include="Views\Home\_editClassifier.cshtml" />
+    <Content Include="Views\Home\_editDataType.cshtml" />
+    <Content Include="Views\Home\_editVariable.cshtml" />
+    <Content Include="Views\Home\_showDatasets.cshtml" />
+    <Content Include="Views\Home\_showDataStructure.cshtml" />
+    <Content Include="Views\Home\_showDataStructureInfo.cshtml" />
+    <Content Include="Views\Shared\_createDataStructure.cshtml" />
+    <Content Include="Views\Shared\_domainConstraintView.cshtml" />
+    <Content Include="Views\Shared\_message.cshtml" />
+    <Content Include="Views\Shared\_messageWindow.cshtml" />
+    <Content Include="Views\Shared\_patternConstraintView.cshtml" />
+    <Content Include="Views\Shared\_rangeConstraintView.cshtml" />
+    <Content Include="Views\Unit\UnitManager.cshtml" />
+    <Content Include="Views\Unit\_editUnit.cshtml" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
@@ -135,13 +218,29 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Controllers\" />
-    <Folder Include="Models\" />
-    <Folder Include="Views\Shared\" />
+    <ProjectReference Include="..\..\..\..\Components\DLM\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
+      <Project>{b4e7b1bf-01b4-40af-8d19-b8f362167261}</Project>
+      <Name>BExIS.Dlm.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Components\DLM\BExIS.Dlm.Services\BExIS.Dlm.Services.csproj">
+      <Project>{c4ca0a99-0af3-4372-a9b7-b9073599bd8b}</Project>
+      <Name>BExIS.Dlm.Services</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Components\IO\BExIS.IO.DataType.DisplayPattern\BExIS.IO.DataType.DisplayPattern.csproj">
+      <Project>{8b2ec2b0-6870-456b-be2d-b0fb4ea68d83}</Project>
+      <Name>BExIS.IO.DataType.DisplayPattern</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Components\XML\BExIS.Xml.Helpers\BExIS.Xml.Helpers.csproj">
+      <Project>{252f7872-a69c-43a6-84b4-4d2abdbdd9ab}</Project>
+      <Name>BExIS.Xml.Helpers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Modules\RPM\BExIS.RPM.Output\BExIS.RPM.Output.csproj">
+      <Project>{abc877e0-e3de-4472-a199-1728e88fa5a1}</Project>
+      <Name>BExIS.RPM.Output</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
