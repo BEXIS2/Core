@@ -1,6 +1,5 @@
-﻿using System.Collections.Generic;
-
-using BExIS.Ddm.Model;
+﻿using BExIS.Utils.Models;
+using System.Collections.Generic;
 
 /// <summary>
 ///
@@ -11,19 +10,20 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Config
     ///
     /// </summary>
     /// <remarks></remarks>        
-    class searchInitObjects 
+    class searchInitObjects
     {
-        public  List<Facet> AllFacets = new List<Facet>();
-        public  List<Property> AllProperties = new List<Property>();
-        public  List<Category> AllCategories = new List<Category>();
+        public List<Facet> AllFacets = new List<Facet>();
+        public List<Property> AllProperties = new List<Property>();
+        public List<Category> AllCategories = new List<Category>();
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
-        public searchInitObjects() { 
-        
+        public searchInitObjects()
+        {
+
         }
     }
 }

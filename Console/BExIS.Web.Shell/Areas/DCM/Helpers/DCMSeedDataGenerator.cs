@@ -181,7 +181,13 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
             #endregion
 
-            ImportSchema("Basic ABCD", "ABCD_2.06.XSD", "Dataset", "BExIS.Dlm.Entities.Data.Dataset");
+            #region Add Metadata 
+            MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
+
+            if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("Basic ABCD")))
+                ImportSchema("Basic ABCD", "ABCD_2.06.XSD", "Dataset", "BExIS.Dlm.Entities.Data.Dataset");
+
+            #endregion
         }
 
 

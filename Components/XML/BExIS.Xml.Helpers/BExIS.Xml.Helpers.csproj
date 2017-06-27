@@ -90,6 +90,7 @@
     <Compile Include="Mapping\XmlSchemaManager.cs" />
     <Compile Include="XExtentsions.cs" />
     <Compile Include="XmlDatasetHelper.cs" />
+    <Compile Include="XmlMetadataHelper.cs" />
     <Compile Include="XmlMetadataImportHelper.cs" />
     <Compile Include="XmlMetadataWriter.cs" />
     <Compile Include="XmlSchemaUtility.cs" />
@@ -110,6 +111,10 @@
     <ProjectReference Include="..\..\IO\BExIS.IO\BExIS.IO.csproj">
       <Project>{e4795f06-20c2-4c4c-a720-9a79896384df}</Project>
       <Name>BExIS.IO</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Utils\BExIS.Utils\BExIS.Utils.csproj">
+      <Project>{782b71c1-707f-4ab1-80e9-90d2880635b4}</Project>
+      <Name>BExIS.Utils</Name>
     </ProjectReference>
     <ProjectReference Include="..\BExIS.Xml.Models\BExIS.Xml.Models.csproj">
       <Project>{c0c9f0f2-9e65-448d-8000-d311db326460}</Project>
