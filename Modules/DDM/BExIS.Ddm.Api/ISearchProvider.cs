@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using BExIS.Ddm.Model;
+﻿using BExIS.Utils.Models;
+using System.Collections.Generic;
 
 /// <summary>
 ///
@@ -42,7 +42,7 @@ namespace BExIS.Ddm.Api
         /// <param name="numberOfResults"></param>
         /// <returns></returns>
         SearchModel GetTextBoxSearchValues(string value, string filter, string searchType, int numberOfResults);
-        
+
         /// <summary>
         /// 
         /// </summary>
@@ -55,7 +55,7 @@ namespace BExIS.Ddm.Api
         /// <param name="searchCriteria"></param>
         /// <returns></returns>
         SearchModel GetTextBoxSearchValues(string value, string filter, string searchType, int numberOfResults, SearchCriteria searchCriteria);
-        
+
         /// <summary>
         /// 
         /// </summary>
@@ -64,7 +64,7 @@ namespace BExIS.Ddm.Api
         /// <param name="searchCriteria"></param>
         /// <returns></returns>
         SearchModel UpdateFacets(SearchCriteria searchCriteria);
-        
+
         /// <summary>
         /// 
         /// </summary>
@@ -75,7 +75,7 @@ namespace BExIS.Ddm.Api
         /// <param name="currentPage"></param>
         /// <returns></returns>
         SearchModel Get(SearchCriteria searchCriteria, int pageSize = 10, int currentPage = 1);
-        
+
         /// <summary>
         /// 
         /// </summary>
@@ -86,7 +86,7 @@ namespace BExIS.Ddm.Api
         /// <param name="currentPage"></param>
         /// <returns></returns>
         SearchModel SearchAndUpdate(SearchCriteria searchCriteria, int pageSize = 10, int currentPage = 1);
-       
+
         /// <summary>
         /// 
         /// </summary>

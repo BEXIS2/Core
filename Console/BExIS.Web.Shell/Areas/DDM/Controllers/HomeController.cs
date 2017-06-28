@@ -15,8 +15,8 @@ using Telerik.Web.Mvc;
 using Vaiona.IoC;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
-using HeaderItem = BExIS.Ddm.Model.HeaderItem;
-using SearchCriteria = BExIS.Ddm.Model.SearchCriteria;
+using HeaderItem = BExIS.Utils.Models.HeaderItem;
+using SearchCriteria = BExIS.Utils.Models.SearchCriteria;
 
 namespace BExIS.Modules.Ddm.UI.Controllers
 {
