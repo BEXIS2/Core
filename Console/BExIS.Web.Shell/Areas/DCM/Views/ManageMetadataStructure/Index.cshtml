@@ -1,6 +1,6 @@
 ﻿@using BExIS.Modules.Dcm.UI.Models
 @using Telerik.Web.Mvc.UI
-@model BExIS.Modules.Dcm.UI.Models.MetadataStructureManagerModel
+@model MetadataStructureManagerModel
 
 @Html.ActionLink("Import", "ImportMetadataStructureWizard", "ImportMetadataStructure",new {area="DCM"}, new {@class= "bx-button function" })
 <br/>
@@ -34,17 +34,7 @@
                             }
 
                             </text>).Title("Info References");
-            columns.Template(@<text>
-                                @{
-                                    <table class="tableWithoutBorder t-grid">
-                                        @foreach (var systenNode in item.SystemNodes)
-                                        {
-                                            <tr><td><b>@systenNode.Key</b>:</td><td>@systenNode.Value</td> </tr>
-                                        }
-                                    </table>
-                                }
-
-                                </text>).Title("System References");
+                             
 
           columns.Bound(c => c.Active).Width(90);
           columns.Template(@<text>

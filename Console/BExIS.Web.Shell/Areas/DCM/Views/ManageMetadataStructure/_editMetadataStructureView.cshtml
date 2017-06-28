@@ -67,19 +67,6 @@
                 </td>
             </tr>
 
-            @foreach (var systemNode in Model.SystemNodes)
-            {
-                <tr>
-                    <td>
-                        @systemNode.Key
-                    </td>
-                    <td>
-                        @Html.DropDownList("system_"+systemNode.Key, new SelectList(Model.MetadataNodes, "DisplayName", "DisplayName", systemNode.Value), "Select" ,new { @class = "systemRef"})
-
-                    </td>
-                </tr>
-            }
-
         </table>
 
 
