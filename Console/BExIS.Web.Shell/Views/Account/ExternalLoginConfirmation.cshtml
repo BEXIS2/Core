@@ -1,11 +1,11 @@
-﻿@model BExIS.Web.Shell.Models.ExternalSignInConfirmationModel
+﻿@model BExIS.Web.Shell.Models.ExternalLoginConfirmationViewModel
 @{
     ViewBag.Title = "Registrieren";
 }
 <h2>@ViewBag.Title.</h2>
 <h3>@ViewBag.LoginProvider-Konto zuordnen.</h3>
 
-@using (Html.BeginForm("ExternalSignInConfirmation", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+@using (Html.BeginForm("ExternalLoginConfirmation", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
 {
     @Html.AntiForgeryToken()
 

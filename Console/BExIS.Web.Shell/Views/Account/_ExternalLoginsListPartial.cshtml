@@ -1,11 +1,12 @@
-﻿@model BExIS.Web.Shell.Models.ExternalSignInModel
+﻿@model BExIS.Web.Shell.Models.ExternalLoginListViewModel
 @using Microsoft.Owin.Security
 
 <h4>Einen anderen Dienst zum Anmelden verwenden.</h4>
 <hr />
 @{
     var loginProviders = Context.GetOwinContext().Authentication.GetExternalAuthenticationTypes();
-    if (loginProviders.Count() == 0) {
+    if (loginProviders.Count() == 0)
+    {
         <div>
             <p>
                 Es sind keine externen Authentifizierungsdienste konfiguriert. In <a href="http://go.microsoft.com/fwlink/?LinkId=403804">diesem Artikel</a>
@@ -13,12 +14,15 @@
             </p>
         </div>
     }
-    else {
-        using (Html.BeginForm("ExternalSignIn", "Account", new { ReturnUrl = Model.ReturnUrl })) {
+    else
+    {
+        using (Html.BeginForm("ExternalLogin", "Account", new { ReturnUrl = Model.ReturnUrl }))
+        {
             @Html.AntiForgeryToken()
             <div id="socialLoginList">
                 <p>
-                    @foreach (AuthenticationDescription p in loginProviders) {
+                    @foreach (AuthenticationDescription p in loginProviders)
+                    {
                         <button type="submit" class="btn btn-default" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Mit Ihrem @p.Caption-Konto anmelden">@p.AuthenticationType</button>
                     }
                 </p>
