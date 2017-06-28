@@ -42,7 +42,7 @@
     function loadResults() {
         $('.bx-rpm-searchBar #SearchBox').val($('.bx-rpm-searchBar #SearchBox').val().trim());
         var parameters = encodeURI('/?searchTerms=' + encodeURIComponent($('.bx-rpm-searchBar #SearchBox').val()));
-            $.get('@Url.Action("_dataStructureResultBinding", "DataStructureSearch", new { area = "RPM"} )' + parameters, function (data) {
+            $.get('@Url.Action("_dataStructureResultBinding", "DataStructureSearch", new { area = "RPM" })' + parameters, function (data) {
                 $('#SearchResults').html(data);
         });
 
