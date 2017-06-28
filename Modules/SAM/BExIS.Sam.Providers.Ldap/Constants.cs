@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BExIS.Sam.Providers.Ldap
+﻿namespace BExIS.Sam.Providers.Ldap
 {
-    class Constants
+    internal static class Constants
     {
+        internal const string DefaultAuthenticationType = "Ldap";
     }
 }

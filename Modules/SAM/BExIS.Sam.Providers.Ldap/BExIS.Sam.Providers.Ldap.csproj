@@ -58,11 +58,6 @@
     <Compile Include="LdapAuthenticationMiddleware.cs" />
     <Compile Include="LdapAuthenticationOptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Providers\ILdapAuthenticationProvider.cs" />
-    <Compile Include="Providers\LdapAuthenticatedContext.cs" />
-    <Compile Include="Providers\LdapAuthenticationProvider.cs" />
-    <Compile Include="Providers\LdapReturnEndpointContext.cs" />
-    <Compile Include="Providers\LdapUser.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
