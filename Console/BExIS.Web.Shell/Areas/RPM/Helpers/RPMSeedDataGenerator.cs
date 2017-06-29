@@ -1,19 +1,9 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Xml;
-using BExIS.Dlm.Entities.Administration;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Entities.MetadataStructure;
+﻿using BExIS.Dlm.Entities.Administration;
 using BExIS.Dlm.Services.Administration;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.Dlm.Services.MetadataStructure;
-using BExIS.Xml.Services;
-using Vaiona.Utils.Cfg;
-using System.Data;
-using BExIS.Xml.Helpers.Mapping;
 using BExIS.Modules.Rpm.UI.Helpers.SeedData;
-using BExIS.Modules.Rpm.UI.Helpers;
+using System.Data;
+using System.Linq;
+using Vaiona.Utils.Cfg;
 
 namespace BExIS.Modules.Rpm.UI.Helpers
 {
@@ -256,7 +246,7 @@ namespace BExIS.Modules.Rpm.UI.Helpers
 
         //        throw ex;
         //    }
-            
+
 
         //}
 

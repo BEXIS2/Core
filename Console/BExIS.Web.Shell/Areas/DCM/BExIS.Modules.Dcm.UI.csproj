@@ -63,8 +63,8 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Web.Routing" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Web.Services" />
@@ -316,7 +316,7 @@
       <Name>BExIS.Dcm.CreateDatasetWizard</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\Modules\DCM\BExIS.Dcm.ImportMetadataStructure\BExIS.Dcm.ImportMetadataStructureWizard.csproj">
-      <Project>{99B0AA63-9CA5-4D42-9CF6-5E8896CD5D25}</Project>
+      <Project>{99b0aa63-9ca5-4d42-9cf6-5e8896cd5d25}</Project>
       <Name>BExIS.Dcm.ImportMetadataStructureWizard</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\Modules\DCM\BExIS.Dcm.UploadWizard\BExIS.Dcm.UploadWizard.csproj">

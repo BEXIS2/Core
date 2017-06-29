@@ -5,7 +5,7 @@ using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Subjects;
 using BExIS.Utils.Models;
-using BExIS.Xml.Services;
+using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -15,8 +15,8 @@ using Telerik.Web.Mvc;
 using Vaiona.IoC;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
-using HeaderItem = BExIS.Ddm.Model.HeaderItem;
-using SearchCriteria = BExIS.Ddm.Model.SearchCriteria;
+using HeaderItem = BExIS.Utils.Models.HeaderItem;
+using SearchCriteria = BExIS.Utils.Models.SearchCriteria;
 
 namespace BExIS.Modules.Ddm.UI.Controllers
 {

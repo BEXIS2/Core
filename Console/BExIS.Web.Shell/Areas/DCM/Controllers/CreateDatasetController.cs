@@ -15,7 +15,6 @@ using BExIS.Security.Services.Subjects;
 using BExIS.Web.Shell.Helpers;
 using BExIS.Web.Shell.Models;
 using BExIS.Xml.Helpers;
-using BExIS.Xml.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -615,7 +614,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             //ToDo Modularity
             // 
-            return RedirectToAction("ShowData", "Data", new { area = "DDM", id = id });
+            //return RedirectToAction("ShowData", "Data", new { area = "DDM" = id });
+            return null;
         }
 
         /// <summary>
@@ -644,7 +644,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             Session["CreateDatasetTaskmanager"] = null;
             TaskManager = null;
 
-            return RedirectToAction("UploadWizard", "Submit", new { area = "Dcm", type = type, datasetid = datasetid });
+            return RedirectToAction("UploadWizard", "Submit", new { type = type, datasetid = datasetid });
         }
 
         #endregion Options

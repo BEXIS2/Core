@@ -12,9 +12,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
-using HeaderItem = BExIS.Ddm.Model.HeaderItem;
-using Row = BExIS.Ddm.Model.Row;
-using SearchResult = BExIS.Ddm.Model.SearchResult;
+using HeaderItem = BExIS.Utils.Models.HeaderItem;
+using Row = BExIS.Utils.Models.Row;
+using SearchResult = BExIS.Utils.Models.SearchResult;
 
 /// <summary>
 ///

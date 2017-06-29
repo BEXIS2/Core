@@ -1,15 +1,13 @@
-﻿using System;
+﻿using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Dlm.Services.Data;
+using BExIS.Dlm.Services.DataStructure;
+using BExIS.Xml.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Xml;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Services.DataStructure;
-using BExIS.Dlm.Services.Data;
-using BExIS.Dlm.Entities.MetadataStructure;
-using System.Xml.Linq;
-using BExIS.Xml.Services;
+using XmlNodeType = System.Xml.XmlNodeType;
 
 /// <summary>
 ///
@@ -42,7 +40,7 @@ namespace BExIS.Modules.Rpm.UI.Models
         /// <seealso cref=""/>
         /// <param name="Id"></param>
         /// <param name="Title"></param>
-        public DatasetListElement(long Id,string Title)
+        public DatasetListElement(long Id, string Title)
         {
             this.Id = Id;
             this.Title = Title;
@@ -113,7 +111,7 @@ namespace BExIS.Modules.Rpm.UI.Models
         /// <remarks></remarks>
         /// <seealso cref=""/>        
         public DataStructureTree dataStructureTree { get; set; }
-        
+
         /// <summary>
         /// 
         /// </summary>
@@ -123,7 +121,7 @@ namespace BExIS.Modules.Rpm.UI.Models
         {
             this.dataStructure = new StructuredDataStructure();
             this.dataStructureTable = new DataTable();
-            this.dataStructureTree = getDataStructureTree(); 
+            this.dataStructureTree = getDataStructureTree();
             structured = true;
             show = true;
             inUse = false;
@@ -141,9 +139,9 @@ namespace BExIS.Modules.Rpm.UI.Models
         /// <returns></returns>
         public DataStructureTree getDataStructureTree()
         {
-            
+
             DataStructureTree tree = new DataStructureTree();
-            
+
             return (tree);
         }
 
@@ -164,7 +162,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                 temp.rangeConstraints = new List<RangeConstraint>();
                 temp.domainConstraints = new List<DomainConstraint>();
                 temp.patternConstraints = new List<PatternConstraint>();
-                foreach(BExIS.Dlm.Entities.DataStructure.Constraint c in tempconstraints) 
+                foreach (BExIS.Dlm.Entities.DataStructure.Constraint c in tempconstraints)
                 {
                     if (c is DomainConstraint)
                     {
@@ -195,7 +193,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                 doc.AppendChild(root);
             }
             if (doc.GetElementsByTagName("order").Count == 0)
-                    {
+            {
 
                 if (structuredDataStructure.Variables.Count > 0)
                 {
@@ -218,18 +216,18 @@ namespace BExIS.Modules.Rpm.UI.Models
             order = doc.GetElementsByTagName("order")[0];
             List<Variable> orderedVariables = new List<Variable>();
             if (structuredDataStructure.Variables.Count != 0)
-                {
+            {
                 foreach (XmlNode x in order)
-                    {
+                {
                     foreach (Variable v in structuredDataStructure.Variables)
-                        {
-                            if (v.Id == Convert.ToInt64(x.InnerText))
+                    {
+                        if (v.Id == Convert.ToInt64(x.InnerText))
                             orderedVariables.Add(v);
 
-                        }
                     }
+                }
             }
-            return orderedVariables; 
+            return orderedVariables;
         }
 
         public StructuredDataStructure GetDataStructureByID(long ID)
@@ -301,7 +299,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                 DataStructureManager dsm = new DataStructureManager();
                 UnStructuredDataStructure unStructuredDataStructure = dsm.UnStructuredDataStructureRepo.Get(ID);
                 this.dataStructure = unStructuredDataStructure;
-               
+
                 if (this.dataStructure != null)
                 {
                     this.variableStructs = null;
@@ -345,149 +343,149 @@ namespace BExIS.Modules.Rpm.UI.Models
         public void BuildDataTable()
         {
             this.dataStructureTable = new DataTable();
-                List<string> row = new List<string>();
+            List<string> row = new List<string>();
 
-                for (int i = 0; i <= this.variableStructs.Count; i++)
+            for (int i = 0; i <= this.variableStructs.Count; i++)
+            {
+                this.dataStructureTable.Columns.Add(new DataColumn());
+            }
+
+            DataRow Row = this.dataStructureTable.NewRow();
+
+            List<string> Functions = new List<string>();
+            foreach (VariableStruct v in this.variableStructs)
+            {
+                Functions.Add(v.variable.Id.ToString() + "?DataStructureId=" + this.dataStructure.Id);
+            }
+
+            row = Functions;
+            row.Insert(0, "Functions");
+
+            Row = this.dataStructureTable.NewRow();
+            Row.ItemArray = row.ToArray();
+
+            this.dataStructureTable.Rows.Add(Row);
+
+            var Names = from p in this.variableStructs
+                        select p.variable.Label;
+            row = Names.ToList();
+            row.Insert(0, "Name");
+
+            Row = this.dataStructureTable.NewRow();
+            Row.ItemArray = row.ToArray();
+
+            this.dataStructureTable.Rows.Add(Row);
+
+            var IsValueOptionals = from p in this.variableStructs
+                                   select p.variable.IsValueOptional;
+            List<bool> tmpIOs = IsValueOptionals.ToList();
+            row = tmpIOs.ConvertAll<string>(p => p.ToString());
+            row.Insert(0, "Optional");
+
+            Row = this.dataStructureTable.NewRow();
+            Row.ItemArray = row.ToArray();
+
+            this.dataStructureTable.Rows.Add(Row);
+
+            var VariableIDs = from p in this.variableStructs
+                              select p.variable.Id;
+            List<long> tmpVIDs = VariableIDs.ToList();
+            row = tmpVIDs.ConvertAll<string>(p => p.ToString());
+            row.Insert(0, "Variable Id");
+
+            Row = this.dataStructureTable.NewRow();
+            Row.ItemArray = row.ToArray();
+
+            this.dataStructureTable.Rows.Add(Row);
+
+            var ShortNames = from p in this.variableStructs
+                             select p.variable.DataAttribute.ShortName;
+            row = ShortNames.ToList();
+            row.Insert(0, "Short Name");
+
+            Row = this.dataStructureTable.NewRow();
+            Row.ItemArray = row.ToArray();
+
+            this.dataStructureTable.Rows.Add(Row);
+
+            var Descriptions = from p in this.variableStructs
+                               select getDescription(p.variable);
+            row = Descriptions.ToList();
+            row.Insert(0, "Description");
+
+            Row = this.dataStructureTable.NewRow();
+            Row.ItemArray = row.ToArray();
+
+            this.dataStructureTable.Rows.Add(Row);
+
+            //var Classifications = from p in this.dataStructure.Variables
+            //                      select p.DataAttribute.Classification;
+
+            //row = new List<string>();
+
+            //foreach(Classifier p in Classifications)
+            //{
+            //    if (p == null)
+            //    {
+            //        row.Add("");
+            //    }
+            //    else
+            //    {
+            //        row.Add(p.Name);
+            //    }
+            //}
+            //row.Insert(0, "Classification");
+
+            //Row = this.DataStructureTable.NewRow();    
+            //Row.ItemArray = row.ToArray();
+
+            //this.DataStructureTable.Rows.Add(Row);
+
+            var Units = from p in this.variableStructs
+                        select p.variable.Unit;
+
+            row = new List<string>();
+
+            foreach (Unit p in Units)
+            {
+                if (p == null)
                 {
-                    this.dataStructureTable.Columns.Add(new DataColumn());
+                    row.Add("");
                 }
-
-                DataRow Row = this.dataStructureTable.NewRow();
-
-                List<string> Functions = new List<string>();
-                foreach (VariableStruct v in this.variableStructs)
+                else
                 {
-                    Functions.Add(v.variable.Id.ToString() + "?DataStructureId=" + this.dataStructure.Id);
+                    row.Add(p.Name);
                 }
-              
-                row = Functions;
-                row.Insert(0, "Functions");
+            }
+            row.Insert(0, "Unit");
 
-                Row = this.dataStructureTable.NewRow();
-                Row.ItemArray = row.ToArray();
+            Row = this.dataStructureTable.NewRow();
+            Row.ItemArray = row.ToArray();
 
-                this.dataStructureTable.Rows.Add(Row);
+            this.dataStructureTable.Rows.Add(Row);
 
-                var Names = from p in this.variableStructs
-                            select p.variable.Label;
-                row = Names.ToList();
-                row.Insert(0,"Name");
+            var DataTypes = from p in this.variableStructs
+                            select p.variable.DataAttribute.DataType;
 
-                Row = this.dataStructureTable.NewRow();
-                Row.ItemArray = row.ToArray();
+            row = new List<string>();
 
-                this.dataStructureTable.Rows.Add(Row);
-
-                var IsValueOptionals = from p in this.variableStructs
-                                       select p.variable.IsValueOptional;
-                List<bool> tmpIOs = IsValueOptionals.ToList();
-                row = tmpIOs.ConvertAll<string>(p => p.ToString());
-                row.Insert(0, "Optional");
-
-                Row = this.dataStructureTable.NewRow();
-                Row.ItemArray = row.ToArray();
-
-                this.dataStructureTable.Rows.Add(Row);
-
-                var VariableIDs = from p in this.variableStructs
-                                  select p.variable.Id;
-                List<long> tmpVIDs = VariableIDs.ToList();
-                row = tmpVIDs.ConvertAll<string>(p => p.ToString());
-                row.Insert(0, "Variable Id");
-
-                Row = this.dataStructureTable.NewRow();
-                Row.ItemArray = row.ToArray();
-
-                this.dataStructureTable.Rows.Add(Row);
-
-                var ShortNames = from p in this.variableStructs
-                                 select p.variable.DataAttribute.ShortName;
-                row = ShortNames.ToList();
-                row.Insert(0, "Short Name");
-
-                Row = this.dataStructureTable.NewRow();
-                Row.ItemArray = row.ToArray();
-
-                this.dataStructureTable.Rows.Add(Row);
-
-                var Descriptions = from p in this.variableStructs
-                                   select getDescription(p.variable);
-                row = Descriptions.ToList();
-                row.Insert(0, "Description");
-
-                Row = this.dataStructureTable.NewRow();
-                Row.ItemArray = row.ToArray();
-
-                this.dataStructureTable.Rows.Add(Row);
-
-                //var Classifications = from p in this.dataStructure.Variables
-                //                      select p.DataAttribute.Classification;
-
-                //row = new List<string>();
-
-                //foreach(Classifier p in Classifications)
-                //{
-                //    if (p == null)
-                //    {
-                //        row.Add("");
-                //    }
-                //    else
-                //    {
-                //        row.Add(p.Name);
-                //    }
-                //}
-                //row.Insert(0, "Classification");
-
-                //Row = this.DataStructureTable.NewRow();    
-                //Row.ItemArray = row.ToArray();
-
-                //this.DataStructureTable.Rows.Add(Row);
-
-                var Units = from p in this.variableStructs
-                            select p.variable.Unit;
-
-                row = new List<string>();
-                
-                foreach (Unit p in Units)
+            foreach (DataType p in DataTypes)
+            {
+                if (p == null)
                 {
-                    if (p == null)
-                    {
-                        row.Add("");
-                    }
-                    else
-                    {
-                        row.Add(p.Name);
-                    }
+                    row.Add("");
                 }
-                row.Insert(0, "Unit");
-
-                Row = this.dataStructureTable.NewRow();
-                Row.ItemArray = row.ToArray();
-
-                this.dataStructureTable.Rows.Add(Row);
-
-                var DataTypes = from p in this.variableStructs
-                               select p.variable.DataAttribute.DataType;
-                
-                row = new List<string>();
-                
-                foreach (DataType p in DataTypes)
+                else
                 {
-                    if (p == null)
-                    {
-                        row.Add("");
-                    }
-                    else
-                    {
-                        row.Add(p.Name);
-                    }
+                    row.Add(p.Name);
                 }
-                row.Insert(0, "Data Type");
+            }
+            row.Insert(0, "Data Type");
 
-                Row = this.dataStructureTable.NewRow();
-                Row.ItemArray = row.ToArray();
+            Row = this.dataStructureTable.NewRow();
+            Row.ItemArray = row.ToArray();
 
-                this.dataStructureTable.Rows.Add(Row);      
+            this.dataStructureTable.Rows.Add(Row);
         }
 
         /// <summary>
@@ -501,16 +499,16 @@ namespace BExIS.Modules.Rpm.UI.Models
             this.dataAttributeList = DataAttributeManager.DataAttributeRepo.Get().ToList();
         }
 
-    #region helper
+        #region helper
 
-    private string getDescription(Variable v)
-    {
-        if (v.Description != null && v.Description != "")
-            return v.Description;
-        else
-            return v.DataAttribute.Description;
-    }
+        private string getDescription(Variable v)
+        {
+            if (v.Description != null && v.Description != "")
+                return v.Description;
+            else
+                return v.DataAttribute.Description;
+        }
 
-    #endregion
+        #endregion
     }
 }

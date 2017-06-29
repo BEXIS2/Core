@@ -8,7 +8,7 @@ using BExIS.Dlm.Services.DataStructure;
 using BExIS.Modules.Dcm.UI.Models;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Subjects;
-using BExIS.Xml.Services;
+using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
 using System.IO;

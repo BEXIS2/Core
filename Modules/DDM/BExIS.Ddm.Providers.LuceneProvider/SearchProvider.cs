@@ -12,9 +12,9 @@ using Lucene.Net.Search;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using SearchCriteria = BExIS.Ddm.Model.SearchCriteria;
-using SearchCriterion = BExIS.Ddm.Model.SearchCriterion;
-using SearchModel = BExIS.Ddm.Model.SearchModel;
+using SearchCriteria = BExIS.Utils.Models.SearchCriteria;
+using SearchCriterion = BExIS.Utils.Models.SearchCriterion;
+using SearchModel = BExIS.Utils.Models.SearchModel;
 
 /// <summary>
 ///

@@ -190,7 +190,7 @@
 
         //alert(id);
 
-        $.post('@Url.Action("StoreSelectedDataset", "CreateDataset", new RouteValueDictionary {{"area", "DCM"}})',
+        $.post('@Url.Action("StoreSelectedDataset", "CreateDataset")',
             { id: id },
             function(response) {
                 $("#SetupContainer").replaceWith(response);
@@ -207,7 +207,7 @@
         else
             id = $(this).val();
 
-        $.post('@Url.Action("StoreSelectedOption", "CreateDataset", new RouteValueDictionary {{"area", "DCM"}})',
+        $.post('@Url.Action("StoreSelectedOption", "CreateDataset")',
             { id: id, type: "ms" },
             function(response) {
 
