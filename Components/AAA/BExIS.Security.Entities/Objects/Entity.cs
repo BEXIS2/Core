@@ -33,7 +33,6 @@ namespace BExIS.Security.Entities.Objects
         public virtual Entity Parent { get; set; }
         public virtual ICollection<EntityPermission> Permissions { get; set; }
 
-        // TODO: REMOVAL of obsolete properties
         [Obsolete]
         public virtual bool Securable { get; set; }
 
