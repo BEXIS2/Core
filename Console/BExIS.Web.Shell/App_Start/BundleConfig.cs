@@ -28,7 +28,7 @@ namespace BExIS.Web.Shell
                 "~/Scripts/respond.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/telerik").Include(
-                "~/Scripts/2013.2.611/telerik*"));
+                "~/Scripts/2013.2.611/telerik.all.min.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/bexis").Include(
                 "~/Scripts/bexis_default.js",
@@ -44,6 +44,11 @@ namespace BExIS.Web.Shell
                 "~/Scripts/switchery/switchery.js"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
+                //$"~/{Themes.GetResourcePath("Styles")}/bexis-jquery-ui.css",
+                //$"~/{Themes.GetResourcePath("Styles")}/bexis-font-awesome-extension.css",
+                //$"~/{Themes.GetResourcePath("Styles")}/bexis-elements.css",
+                //$"~/{Themes.GetResourcePath("Styles")}/bexis-telerik.css",
+                //$"~/{Themes.GetResourcePath("Styles")}/bexis-metadata.css",
                 "~/Scripts/jQueryUI/1.10.3/css/smoothness/jquery-ui-1.10.3.custom.min.css",
                 "~/Content/bootstrap.css",
                 "~/Scripts/switchery/switchery.css",

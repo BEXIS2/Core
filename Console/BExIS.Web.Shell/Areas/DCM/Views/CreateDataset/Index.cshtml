@@ -2,7 +2,6 @@
 @using BExIS.Modules.Dcm.UI.Models
 @using Telerik.Web.Mvc.UI
 
-
 @{
     List<ListViewItem> DatasetsList = new List<ListViewItem>();
     DatasetsList.Insert(0, new ListViewItem(-1, "New Dataset"));
@@ -62,7 +61,10 @@
                               .SelectedIndex(0)
                               .HtmlAttributes(new {title = "Select a Dataset as Template", @class= "bx-dropdown" })
                               .BindTo(new SelectList(DatasetsList, "Id", "Title", Model.SelectedDatasetId))
-                              .ClientEvents(events => events.OnChange("datasetChange"))
+                              .ClientEvents(events =>
+                              {
+                                  events.OnChange("datasetChange");
+                              })
                               )
                     }
                 </td>
@@ -103,12 +105,12 @@
                               .Placeholder("Select")
                               .HtmlAttributes(new {title = "Select a Data Structure", @class = "bx-dropdown" })
                               .SelectedIndex(0)
-                              .ClientEvents(events => events.OnChange("onChange"))
                               .BindTo(new SelectList(Model.DataStructureViewList, "Id", "Title", Model.SelectedDataStructureId))
-                              .ClientEvents(e => e.OnChange("onChangeDataStructure"))
+                              .ClientEvents(e =>
+                              {
+                                  e.OnChange("onChangeDataStructure");
+                              })
                               )
-
-
                     }
                 </td>
                 <td>
@@ -157,7 +159,10 @@
                               .HtmlAttributes(new {title = "Select a Metadata Structure", @class = "bx-dropdown" })
                               .SelectedIndex(0)
                               .BindTo(new SelectList(Model.MetadataStructureViewList, "Id", "Title", Model.SelectedMetadataStructureId))
-                              .ClientEvents(e => e.OnChange("onChangeMetadataStructure"))
+                              .ClientEvents(e =>
+                              {
+                                  e.OnChange("onChangeMetadataStructure");
+                              })
                               )
 
                     }
