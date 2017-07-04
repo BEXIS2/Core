@@ -41,6 +41,27 @@ namespace BExIS.Modules.Sam.UI.Models
     {
     }
 
+    public class GroupFeaturePermissionGridRowModel
+    {
+        public string Description { get; set; }
+        public string GroupName { get; set; }
+        public GroupType GroupType { get; set; }
+        public long Id { get; set; }
+        public bool HasFeaturePermission { get; set; }
+
+        public static GroupFeaturePermissionGridRowModel Convert(Group group)
+        {
+            return new GroupFeaturePermissionGridRowModel()
+            {
+                Description = group.Description,
+                GroupType = group.GroupType,
+                GroupName = group.Name,
+                Id = group.Id,
+
+            };
+        }
+    }
+
     public class GroupGridRowModel
     {
         public string Description { get; set; }

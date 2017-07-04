@@ -34,6 +34,10 @@ namespace BExIS.Modules.Sam.UI.Helpers
             groupManager.Create(new Group() { Name = "everyone", Description = "everyone group", IsValid = true, GroupType = GroupType.Public });
             groupManager.Create(new Group() { Name = "Admin", Description = "Admin" });
 
+            //// Features
+            
+
+
             //// Users - DO NOT CREATE A USER, BECAUSE OF MISSING INFORMATION, E.G. EMAIL
 
             //// Tasks

@@ -98,6 +98,7 @@
     <Compile Include="Objects\EntityManager.cs" />
     <Compile Include="Objects\FeatureManager.cs" />
     <Compile Include="Objects\IEntityStore.cs" />
+    <Compile Include="Objects\OperationManager.cs" />
     <Compile Include="Objects\WorkflowManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Requests\DecisionManager.cs" />
@@ -107,6 +108,7 @@
     <Compile Include="Subjects\UserManager.cs" />
     <Compile Include="Subjects\UserStore.cs" />
     <Compile Include="Utilities\Auth.cs" />
+    <Compile Include="Utilities\AuthorizationDelegationImplementor.cs" />
     <Compile Include="Utilities\EmailService.cs" />
     <Compile Include="Utilities\SmsService.cs" />
   </ItemGroup>
