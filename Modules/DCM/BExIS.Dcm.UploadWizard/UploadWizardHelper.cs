@@ -1,23 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using BExIS.IO.Transform.Input;
-using BExIS.Dlm.Entities.Data;
+﻿using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
-using System.Security.Cryptography;
-using BExIS.DCM.UploadWizard;
-using Vaiona.Logging;
+using BExIS.IO.Transform.Input;
+using System;
 using System.Collections;
-using System.Diagnostics;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Xml;
-using System.Xml.Linq;
-using BExIS.Xml.Helpers;
-using Vaiona.Logging.Aspects;
-using System.Threading.Tasks;
 
 /// <summary>
 ///
@@ -154,7 +145,7 @@ namespace BExIS.Dcm.UploadWizard
                                     editDtList.Add(keysValueNewDataTuple, Merge(incomingTuple, (DataTuple)existingTuple));
                                     // remove the current incoming item to shorten the list for the next round
                                     incomingDatatuples.RemoveAt(counter);
-                                }                                                              
+                                }
                                 // the decision is made, hence break the inner loop
                                 break;
                             }
@@ -186,9 +177,9 @@ namespace BExIS.Dcm.UploadWizard
         /// <returns></returns>
         private static bool IsEmpty(DataTuple dataTuple)
         {
-            foreach(VariableValue variableValue in dataTuple.VariableValues)
+            foreach (VariableValue variableValue in dataTuple.VariableValues)
             {
-                if (variableValue.Value!=null) return false;
+                if (variableValue.Value != null) return false;
             }
 
             return true;
@@ -221,7 +212,7 @@ namespace BExIS.Dcm.UploadWizard
         private static bool Equal(AbstractTuple newDatatuple, AbstractTuple sourceDatatuple)
         {
 
-            foreach(VariableValue newVariableValue in newDatatuple.VariableValues )
+            foreach (VariableValue newVariableValue in newDatatuple.VariableValues)
             {
                 long varID = newVariableValue.VariableId;
 
@@ -239,11 +230,11 @@ namespace BExIS.Dcm.UploadWizard
         private static bool Equal2(DataTuple newDatatuple, DataTuple sourceDatatuple)
         {
 
-            foreach(VariableValue newVariableValue in newDatatuple.VariableValues )
+            foreach (VariableValue newVariableValue in newDatatuple.VariableValues)
             {
-                foreach(VariableValue sourceVariableValue in sourceDatatuple.VariableValues )
+                foreach (VariableValue sourceVariableValue in sourceDatatuple.VariableValues)
                 {
-                    if(newVariableValue.VariableId.Equals(sourceVariableValue.VariableId))
+                    if (newVariableValue.VariableId.Equals(sourceVariableValue.VariableId))
                     {
                         if (!newVariableValue.Value.Equals(sourceVariableValue.Value))
                             return false;
@@ -256,7 +247,7 @@ namespace BExIS.Dcm.UploadWizard
             return true;
         }
 
-        
+
 
         /// <summary>
         /// 
@@ -268,7 +259,7 @@ namespace BExIS.Dcm.UploadWizard
         /// <returns></returns>
         private static Dictionary<long, string> getPrimaryKeyValues(DataTuple dt, List<long> pks)
         {
-            Dictionary<long, string> temp = new Dictionary<long,string>();
+            Dictionary<long, string> temp = new Dictionary<long, string>();
 
             foreach (long k in pks)
             {
@@ -330,422 +321,422 @@ namespace BExIS.Dcm.UploadWizard
 
         #region identifier
 
-            /// <summary>
-            /// test unique of primary keys in a FileStream
-            /// </summary>
-            /// <remarks></remarks>
-            /// <seealso cref=""/>
-            /// <param name="taskManager"></param>
-            /// <param name="datasetId"></param>
-            /// <param name="primaryKeys"></param>
-            /// <param name="ext"></param>
-            /// <param name="filename"></param>
-            /// <returns></returns>
-            public static bool IsUnique(TaskManager taskManager, long datasetId, List<long> primaryKeys, string ext, string filename)
+        /// <summary>
+        /// test unique of primary keys in a FileStream
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="taskManager"></param>
+        /// <param name="datasetId"></param>
+        /// <param name="primaryKeys"></param>
+        /// <param name="ext"></param>
+        /// <param name="filename"></param>
+        /// <returns></returns>
+        public static bool IsUnique(TaskManager taskManager, long datasetId, List<long> primaryKeys, string ext, string filename)
+        {
+
+            Hashtable hashtable = new Hashtable();
+            Hashtable test = new Hashtable();
+            List<string> testString = new List<string>();
+
+            List<string> primaryValuesAsOneString = new List<string>();
+
+            TaskManager TaskManager = taskManager;
+            int packageSize = 1000;
+            int position = 1;
+
+            if (ext.Equals(".txt") || ext.Equals(".csv"))
             {
-
-                Hashtable hashtable = new Hashtable();
-                Hashtable test = new Hashtable();
-                List<string> testString = new List<string>();
-
-                List<string> primaryValuesAsOneString = new List<string>();
-
-                TaskManager TaskManager = taskManager;
-                int packageSize = 1000;
-                int position = 1;
-
-                if (ext.Equals(".txt") || ext.Equals(".csv"))
+                #region csv
+                do
                 {
-                    #region csv
-                    do
+                    primaryValuesAsOneString = new List<string>();
+
+                    AsciiReader reader = new AsciiReader();
+                    reader.Position = position;
+                    Stream stream = reader.Open(TaskManager.Bus["FilePath"].ToString());
+
+                    AsciiFileReaderInfo afri = (AsciiFileReaderInfo)TaskManager.Bus["FileReaderInfo"];
+
+                    DataStructureManager datastructureManager = new DataStructureManager();
+                    StructuredDataStructure sds = datastructureManager.StructuredDataStructureRepo.Get(Convert.ToInt64(TaskManager.Bus["DataStructureId"].ToString()));
+                    // get a list of values for each row
+                    // e.g.
+                    // primarky keys id, name
+                    // 1 [1][David]
+                    // 2 [2][Javad]
+                    List<List<string>> tempList = reader.ReadValuesFromFile(stream, filename, afri, sds, datasetId, primaryKeys, packageSize);
+
+                    // convert List of Lists to list of strings
+                    // 1 [1][David] = 1David
+                    // 2 [2][Javad] = 2Javad
+                    foreach (List<string> l in tempList)
                     {
-                        primaryValuesAsOneString = new List<string>();
-
-                        AsciiReader reader = new AsciiReader();
-                        reader.Position = position;
-                        Stream stream = reader.Open(TaskManager.Bus["FilePath"].ToString());
-
-                        AsciiFileReaderInfo afri = (AsciiFileReaderInfo)TaskManager.Bus["FileReaderInfo"];
-
-                        DataStructureManager datastructureManager = new DataStructureManager();
-                        StructuredDataStructure sds = datastructureManager.StructuredDataStructureRepo.Get(Convert.ToInt64(TaskManager.Bus["DataStructureId"].ToString()));
-                        // get a list of values for each row
-                        // e.g.
-                        // primarky keys id, name
-                        // 1 [1][David]
-                        // 2 [2][Javad]
-                        List<List<string>> tempList = reader.ReadValuesFromFile(stream, filename, afri, sds, datasetId, primaryKeys, packageSize);
-
-                        // convert List of Lists to list of strings
-                        // 1 [1][David] = 1David
-                        // 2 [2][Javad] = 2Javad
-                        foreach (List<string> l in tempList)
+                        string tempString = "";
+                        foreach (string s in l)
                         {
-                            string tempString = "";
-                            foreach (string s in l)
-                            {
-                                tempString += s;
-                            }
-                            if (!String.IsNullOrEmpty(tempString)) primaryValuesAsOneString.Add(tempString);
+                            tempString += s;
                         }
-
-                        // add all primary keys pair into the hasttable
-                        foreach (string pKey in primaryValuesAsOneString)
-                        {
-                            if (pKey != "")
-                            {
-
-                                try
-                                {
-                                    hashtable.Add(Utility.ComputeKey(pKey), "pKey");
-                                }
-                                catch
-                                {
-                                    return false;
-                                }
-                            }
-
-                        }
-
-
-                        position = reader.Position + 1;
-                        stream.Close();
-
-                    } while (primaryValuesAsOneString.Count > 0);
-
-                    #endregion
-                }
-
-
-                if (ext.Equals(".xlsm") )
-                {
-                    #region excel template
-
-                    do
-                    {
-                        //reset
-                        primaryValuesAsOneString = new List<string>();
-
-                        ExcelReader reader = new ExcelReader();
-                        reader.Position = position;
-                        Stream stream = reader.Open(TaskManager.Bus["FilePath"].ToString());
-
-                        DataStructureManager datastructureManager = new DataStructureManager();
-                        StructuredDataStructure sds = datastructureManager.StructuredDataStructureRepo.Get(Convert.ToInt64(TaskManager.Bus["DataStructureId"].ToString()));
-                        // get a list of values for each row
-                        // e.g.
-                        // primarky keys id, name
-                        // 1 [1][David]
-                        // 2 [2][Javad]
-                        List<List<string>> tempList = reader.ReadValuesFromFile(stream, filename, sds, datasetId, primaryKeys, packageSize);
-
-                        // convert List of Lists to list of strings
-                        // 1 [1][David] = 1David
-                        // 2 [2][Javad] = 2Javad
-                        foreach (List<string> l in tempList)
-                        {
-                            string tempString = "";
-                            foreach (string s in l)
-                            {
-                                tempString += s;
-                            }
-                            if (!String.IsNullOrEmpty(tempString)) primaryValuesAsOneString.Add(tempString);
-                        }
-
-                        // add all primary keys pair into the hasttable
-                        foreach (string pKey in primaryValuesAsOneString)
-                        {
-                            if (pKey != "")
-                            {
-
-                                try
-                                {
-                                    hashtable.Add(Utility.ComputeKey(pKey), pKey);
-                                }
-                                catch
-                                {
-                                    stream.Close();
-                                    return false;
-                                }
-                            }
-
-                        }
-
-
-                        position = reader.Position + 1;
-                        stream.Close();
-
-                    } while (primaryValuesAsOneString.Count > 0);
-
-
-                    #endregion
-                }
-
-                return true;
-            }
-
-
-            /// <summary>
-            /// test unique of primary keys on a dataset
-            /// </summary>
-            /// <remarks></remarks>
-            /// <seealso cref=""/>
-            /// <param name="datasetId"></param>
-            /// <param name="primaryKeys"></param>
-            /// <returns></returns>
-            ////[MeasurePerformance]
-            public static Boolean IsUnique(long datasetId, List<long> primaryKeys)
-            {
-
-                Hashtable hashtable = new Hashtable();
-
-                 // load data
-                DatasetManager datasetManager = new DatasetManager();
-                Dataset dataset = datasetManager.GetDataset(datasetId);
-                DatasetVersion datasetVersion;
-                
-        
-                List<long> dataTupleIds = new List<long>();
-
-                if (datasetManager.IsDatasetCheckedIn(datasetId))
-                {
-                    datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
-
-                    #region load all datatuples first
-
-                    int size = 10000;
-                    int counter = 0;
-                    IEnumerable<AbstractTuple> dataTuples;
-
-
-                    do
-                    {
-                        dataTuples = datasetManager.GetDatasetVersionEffectiveTuples(datasetVersion,counter,size);
-
-                        //byte[] pKey;
-                        string pKey;
-                        foreach (DataTuple dt in dataTuples)
-                        {
-                            //pKey = getPrimaryKeysAsByteArray(dt, primaryKeys);
-                            pKey = getPrimaryKeysAsString(dt, primaryKeys);
-                            
-
-                            if (pKey.Count() > 0)
-                            {
-
-                                try
-                                {
-                                    //Debug.WriteLine(pKey +"   : " +Utility.ComputeKey(pKey));
-                                    hashtable.Add(pKey, "");
-                                    //hashtable.Add(pKey, 0);
-                                }
-                                catch
-                                {
-                                    return false;
-                                }
-                            }
-                        }
-
-                        counter++;
+                        if (!String.IsNullOrEmpty(tempString)) primaryValuesAsOneString.Add(tempString);
                     }
-                    while (dataTuples.Count() >= (size * counter));
-                        
 
-
-                        #endregion
-                    
-                }
-                else
-                {
-                    throw new Exception("Dataset is not checked in.");
-                }
-
-                return true;
-            }
-
-            /// <summary>
-            /// test unique of primary keys on a dataset
-            /// </summary>
-            /// <remarks></remarks>
-            /// <seealso cref=""/>
-            /// <param name="datasetId"></param>
-            /// <param name="primaryKeys"></param>
-            /// <returns></returns>
-            ////[MeasurePerformance]
-            public static Boolean IsUnique2(long datasetId, List<long> primaryKeys)
-            {
-
-                Hashtable hashtable = new Hashtable();
-
-                // load data
-                DatasetManager datasetManager = new DatasetManager();
-                Dataset dataset = datasetManager.GetDataset(datasetId);
-                DatasetVersion datasetVersion;
-
-                List<long> dataTupleIds = new List<long>();
-
-                if (datasetManager.IsDatasetCheckedIn(datasetId))
-                {
-                    datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
-
-                    #region load all datatuples first
-
-                    int size = 10000;
-                    int counter = 0;
-                    IEnumerable<long> dataTuplesIds;
-                    dataTuplesIds = datasetManager.GetDatasetVersionEffectiveTupleIds(datasetVersion);
-                    IEnumerable<long> currentIds;
-                    DataTuple dt;
-                    do
+                    // add all primary keys pair into the hasttable
+                    foreach (string pKey in primaryValuesAsOneString)
                     {
-                        currentIds = dataTupleIds.Skip(counter * size).Take(size);
-
-                        //byte[] pKey;
-                        string pKey;
-                        foreach (long dtId in currentIds)
+                        if (pKey != "")
                         {
-                            dt = datasetManager.DataTupleRepo.Query(d=>d.Id.Equals(dtId)).FirstOrDefault(); 
 
-                            //pKey = getPrimaryKeysAsByteArray(dt, primaryKeys);
-                            pKey = pKey = getPrimaryKeysAsStringFromXml(dt, primaryKeys);
-
-                            if (pKey.Count() > 0)
+                            try
                             {
-
-                                try
-                                {
-                                    //Debug.WriteLine(pKey +"   : " +Utility.ComputeKey(pKey));
-                                    hashtable.Add(pKey, "");
-                                    //hashtable.Add(pKey, 0);
-                                }
-                                catch
-                                {
-                                    return false;
-                                }
+                                hashtable.Add(Utility.ComputeKey(pKey), "pKey");
+                            }
+                            catch
+                            {
+                                return false;
                             }
                         }
 
-                        counter++;
                     }
-                    while (currentIds.Count() >= (size * counter));
 
 
+                    position = reader.Position + 1;
+                    stream.Close();
 
-                    #endregion
+                } while (primaryValuesAsOneString.Count > 0);
 
-                }
-                else
-                {
-                    throw new Exception("Dataset is not checked in.");
-                }
-
-                return true;
+                #endregion
             }
 
-            
-            /// <summary>
-            ///  convert primary keys to string
-            ///  returns null if a emtpy string is inside
-            /// </summary>
-            /// <remarks></remarks>
-            /// <seealso cref=""/>
-            /// <param name="datatuple"></param>
-            /// <param name="primaryKeys"></param>
-            /// <returns></returns>
 
-            private static string getPrimaryKeysAsString(DataTuple datatuple, List<long> primaryKeys)
+            if (ext.Equals(".xlsm"))
             {
-                string value = "";
+                #region excel template
 
-                foreach (long t in primaryKeys)
+                do
                 {
-                    // empty means not equals value
-                    // so if value is empty add timestamp millisec
-                    //datatuple.Materialize();
-                    object v = datatuple.VariableValues.Where(p => p.VariableId.Equals(t)).First().Value;
-                    if (v != null)
-                        //if (!String.IsNullOrEmpty(v.ToString()))
-                        if (!String.IsNullOrEmpty((string)v))
-                            value += ";"+v;
-                        else
-                            return "";
+                    //reset
+                    primaryValuesAsOneString = new List<string>();
+
+                    ExcelReader reader = new ExcelReader();
+                    reader.Position = position;
+                    Stream stream = reader.Open(TaskManager.Bus["FilePath"].ToString());
+
+                    DataStructureManager datastructureManager = new DataStructureManager();
+                    StructuredDataStructure sds = datastructureManager.StructuredDataStructureRepo.Get(Convert.ToInt64(TaskManager.Bus["DataStructureId"].ToString()));
+                    // get a list of values for each row
+                    // e.g.
+                    // primarky keys id, name
+                    // 1 [1][David]
+                    // 2 [2][Javad]
+                    List<List<string>> tempList = reader.ReadValuesFromFile(stream, filename, sds, datasetId, primaryKeys, packageSize);
+
+                    // convert List of Lists to list of strings
+                    // 1 [1][David] = 1David
+                    // 2 [2][Javad] = 2Javad
+                    foreach (List<string> l in tempList)
+                    {
+                        string tempString = "";
+                        foreach (string s in l)
+                        {
+                            tempString += s;
+                        }
+                        if (!String.IsNullOrEmpty(tempString)) primaryValuesAsOneString.Add(tempString);
+                    }
+
+                    // add all primary keys pair into the hasttable
+                    foreach (string pKey in primaryValuesAsOneString)
+                    {
+                        if (pKey != "")
+                        {
+
+                            try
+                            {
+                                hashtable.Add(Utility.ComputeKey(pKey), pKey);
+                            }
+                            catch
+                            {
+                                stream.Close();
+                                return false;
+                            }
+                        }
+
+                    }
+
+
+                    position = reader.Position + 1;
+                    stream.Close();
+
+                } while (primaryValuesAsOneString.Count > 0);
+
+
+                #endregion
+            }
+
+            return true;
+        }
+
+
+        /// <summary>
+        /// test unique of primary keys on a dataset
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="datasetId"></param>
+        /// <param name="primaryKeys"></param>
+        /// <returns></returns>
+        ////[MeasurePerformance]
+        public static Boolean IsUnique(long datasetId, List<long> primaryKeys)
+        {
+
+            Hashtable hashtable = new Hashtable();
+
+            // load data
+            DatasetManager datasetManager = new DatasetManager();
+            Dataset dataset = datasetManager.GetDataset(datasetId);
+            DatasetVersion datasetVersion;
+
+
+            List<long> dataTupleIds = new List<long>();
+
+            if (datasetManager.IsDatasetCheckedIn(datasetId))
+            {
+                datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
+
+                #region load all datatuples first
+
+                int size = 10000;
+                int counter = 0;
+                IEnumerable<AbstractTuple> dataTuples;
+
+
+                do
+                {
+                    dataTuples = datasetManager.GetDatasetVersionEffectiveTuples(datasetVersion, counter, size);
+
+                    //byte[] pKey;
+                    string pKey;
+                    foreach (DataTuple dt in dataTuples)
+                    {
+                        //pKey = getPrimaryKeysAsByteArray(dt, primaryKeys);
+                        pKey = getPrimaryKeysAsString(dt, primaryKeys);
+
+
+                        if (pKey.Count() > 0)
+                        {
+
+                            try
+                            {
+                                //Debug.WriteLine(pKey +"   : " +Utility.ComputeKey(pKey));
+                                hashtable.Add(pKey, "");
+                                //hashtable.Add(pKey, 0);
+                            }
+                            catch
+                            {
+                                return false;
+                            }
+                        }
+                    }
+
+                    counter++;
+                }
+                while (dataTuples.Count() >= (size * counter));
+
+
+
+                #endregion
+
+            }
+            else
+            {
+                throw new Exception("Dataset is not checked in.");
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// test unique of primary keys on a dataset
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="datasetId"></param>
+        /// <param name="primaryKeys"></param>
+        /// <returns></returns>
+        ////[MeasurePerformance]
+        public static Boolean IsUnique2(long datasetId, List<long> primaryKeys)
+        {
+
+            Hashtable hashtable = new Hashtable();
+
+            // load data
+            DatasetManager datasetManager = new DatasetManager();
+            Dataset dataset = datasetManager.GetDataset(datasetId);
+            DatasetVersion datasetVersion;
+
+            List<long> dataTupleIds = new List<long>();
+
+            if (datasetManager.IsDatasetCheckedIn(datasetId))
+            {
+                datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
+
+                #region load all datatuples first
+
+                int size = 10000;
+                int counter = 0;
+                IEnumerable<long> dataTuplesIds;
+                dataTuplesIds = datasetManager.GetDatasetVersionEffectiveTupleIds(datasetVersion);
+                IEnumerable<long> currentIds;
+                DataTuple dt;
+                do
+                {
+                    currentIds = dataTupleIds.Skip(counter * size).Take(size);
+
+                    //byte[] pKey;
+                    string pKey;
+                    foreach (long dtId in currentIds)
+                    {
+                        dt = datasetManager.DataTupleRepo.Query(d => d.Id.Equals(dtId)).FirstOrDefault();
+
+                        //pKey = getPrimaryKeysAsByteArray(dt, primaryKeys);
+                        pKey = pKey = getPrimaryKeysAsStringFromXml(dt, primaryKeys);
+
+                        if (pKey.Count() > 0)
+                        {
+
+                            try
+                            {
+                                //Debug.WriteLine(pKey +"   : " +Utility.ComputeKey(pKey));
+                                hashtable.Add(pKey, "");
+                                //hashtable.Add(pKey, 0);
+                            }
+                            catch
+                            {
+                                return false;
+                            }
+                        }
+                    }
+
+                    counter++;
+                }
+                while (currentIds.Count() >= (size * counter));
+
+
+
+                #endregion
+
+            }
+            else
+            {
+                throw new Exception("Dataset is not checked in.");
+            }
+
+            return true;
+        }
+
+
+        /// <summary>
+        ///  convert primary keys to string
+        ///  returns null if a emtpy string is inside
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="datatuple"></param>
+        /// <param name="primaryKeys"></param>
+        /// <returns></returns>
+
+        private static string getPrimaryKeysAsString(DataTuple datatuple, List<long> primaryKeys)
+        {
+            string value = "";
+
+            foreach (long t in primaryKeys)
+            {
+                // empty means not equals value
+                // so if value is empty add timestamp millisec
+                //datatuple.Materialize();
+                object v = datatuple.VariableValues.Where(p => p.VariableId.Equals(t)).First().Value;
+                if (v != null)
+                    //if (!String.IsNullOrEmpty(v.ToString()))
+                    if (!String.IsNullOrEmpty((string)v))
+                        value += ";" + v;
                     else
                         return "";
-                }
-                return value;
+                else
+                    return "";
             }
+            return value;
+        }
 
-            /// <summary>
-            ///  convert primary keys to string
-            ///  returns null if a emtpy string is inside
-            /// </summary>
-            /// <remarks></remarks>
-            /// <seealso cref=""/>
-            /// <param name="datatuple"></param>
-            /// <param name="primaryKeys"></param>
-            /// <returns></returns>
-    
-            private static string getPrimaryKeysAsStringFromXml(AbstractTuple datatuple, List<long> primaryKeys)
+        /// <summary>
+        ///  convert primary keys to string
+        ///  returns null if a emtpy string is inside
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="datatuple"></param>
+        /// <param name="primaryKeys"></param>
+        /// <returns></returns>
+
+        private static string getPrimaryKeysAsStringFromXml(AbstractTuple datatuple, List<long> primaryKeys)
+        {
+            string value = "";
+
+            foreach (long t in primaryKeys)
             {
-                string value = "";
-
-                foreach (long t in primaryKeys)
-                {
-                    // empty means not equals value
-                    // so if value is empty add timestamp millisec
-                    //datatuple.Materialize();
-                    object v = GetValueXmlDocument(datatuple.XmlVariableValues, t);
-                    if (v != null)
-                        //if (!String.IsNullOrEmpty(v.ToString()))
-                        if (!String.IsNullOrEmpty((string)v))
-                            value += ";" + v;
-                        else
-                            return "";
+                // empty means not equals value
+                // so if value is empty add timestamp millisec
+                //datatuple.Materialize();
+                object v = GetValueXmlDocument(datatuple.XmlVariableValues, t);
+                if (v != null)
+                    //if (!String.IsNullOrEmpty(v.ToString()))
+                    if (!String.IsNullOrEmpty((string)v))
+                        value += ";" + v;
                     else
                         return "";
-                }
-                return value;
+                else
+                    return "";
             }
+            return value;
+        }
 
-            private static object GetValueXmlDocument(XmlDocument xmlDoc, long variableId)
+        private static object GetValueXmlDocument(XmlDocument xmlDoc, long variableId)
+        {
+
+            string xpath = "/Content/Item/Property[@Name='VariableId' and @value='" + variableId.ToString() + "']";
+            string xpathValue = "Property[@Name='Value']";
+
+            XmlNode element = xmlDoc.SelectNodes(xpath).Item(0);
+            string v = "";
+            if (element != null)
             {
-
-                string xpath = "/Content/Item/Property[@Name='VariableId' and @value='" + variableId.ToString() + "']";
-                string xpathValue = "Property[@Name='Value']";
-
-                XmlNode element = xmlDoc.SelectNodes(xpath).Item(0);
-                string v = "";
-                if (element != null)
-                {
-                    XmlNode value = element.ParentNode.SelectSingleNode(xpathValue);
-                    v = value.Attributes["value"].Value;
-                }
-
-                return v;
+                XmlNode value = element.ParentNode.SelectSingleNode(xpathValue);
+                v = value.Attributes["value"].Value;
             }
 
-            /// <summary>
-            /// 
-            /// </summary>
-            /// <remarks></remarks>
-            /// <seealso cref=""/>
-            /// <param name="type"></param>
-            /// <returns></returns>
-            public static List<string> GetExtentionList(DataStructureType type)
-            { 
-                if(type.Equals(DataStructureType.Structured))
-                {
-                    return new List<string>()
+            return v;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public static List<string> GetExtentionList(DataStructureType type)
+        {
+            if (type.Equals(DataStructureType.Structured))
+            {
+                return new List<string>()
                     {
                         ".xlsm",
                         ".txt",
                         ".csv"
                     };
-                }
+            }
 
-                if (type.Equals(DataStructureType.Unstructured))
-                {
-                    return new List<string>()
+            if (type.Equals(DataStructureType.Unstructured))
+            {
+                return new List<string>()
                     {
                         ".avi",
                         ".bmp",
@@ -770,10 +761,10 @@ namespace BExIS.Dcm.UploadWizard
                         ".xsd",
                         ".zip"
                     };
-                }
-
-                return new List<string>();
             }
+
+            return new List<string>();
+        }
 
         #endregion
 

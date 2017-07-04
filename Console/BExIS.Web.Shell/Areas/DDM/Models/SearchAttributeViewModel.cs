@@ -1,8 +1,7 @@
-﻿using System;
+﻿using BExIS.Utils.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Web.Mvc;
-using BExIS.Ddm.Model;
 
 namespace BExIS.Modules.Ddm.UI.Models
 {

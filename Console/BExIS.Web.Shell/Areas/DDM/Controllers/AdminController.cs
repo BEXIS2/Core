@@ -1,7 +1,7 @@
 ﻿using BExIS.Ddm.Api;
-using BExIS.Ddm.Model;
 using BExIS.Ddm.Providers.LuceneProvider;
 using BExIS.Modules.Ddm.UI.Models;
+using BExIS.Utils.Models;
 using System;
 using System.Collections.Generic;
 using System.Globalization;

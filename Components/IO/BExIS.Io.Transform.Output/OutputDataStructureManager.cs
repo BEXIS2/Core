@@ -9,7 +9,6 @@ using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Xml.Helpers.Mapping;
-using BExIS.Xml.Services;
 using Vaiona.Utils.Cfg;
 
 namespace BExIS.IO.Transform.Output

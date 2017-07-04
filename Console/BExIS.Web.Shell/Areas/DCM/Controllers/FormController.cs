@@ -12,7 +12,6 @@ using BExIS.Modules.Dcm.UI.Models.CreateDataset;
 using BExIS.Modules.Dcm.UI.Models.Metadata;
 using BExIS.Xml.Helpers;
 using BExIS.Xml.Helpers.Mapping;
-using BExIS.Xml.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;

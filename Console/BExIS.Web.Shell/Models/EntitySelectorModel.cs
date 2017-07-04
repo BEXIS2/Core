@@ -1,9 +1,5 @@
-﻿using BExIS.Web.Shell.Helpers;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Web;
 
 namespace BExIS.Web.Shell.Models
 {
@@ -20,6 +16,8 @@ namespace BExIS.Web.Shell.Models
 
         public string IDKey { get; set; }
 
+        public Dictionary<string, string> Parameters { get; set; }
+
 
         public EntitySelectorModel()
         {
@@ -28,6 +26,7 @@ namespace BExIS.Web.Shell.Models
             DataSource = new EntitySelectorModelAction();
             Reciever = new EntitySelectorModelAction();
             IDKey = "";
+            Parameters = new Dictionary<string, string>();
         }
     }
 
@@ -44,7 +43,7 @@ namespace BExIS.Web.Shell.Models
             Area = "";
         }
 
-        public EntitySelectorModelAction(string action, string controller,string area)
+        public EntitySelectorModelAction(string action, string controller, string area)
         {
             Action = action;
             Controller = controller;

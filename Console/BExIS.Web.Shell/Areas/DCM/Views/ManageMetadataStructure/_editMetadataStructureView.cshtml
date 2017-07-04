@@ -1,16 +1,16 @@
-﻿@model BExIS.Web.Shell.Areas.DCM.Models.MetadataStructureModel
+﻿@model BExIS.Modules.Dcm.UI.Models.MetadataStructureModel
 
 
 
 
-@using (Ajax.BeginForm("Save", "ManageMetadataStructure", new AjaxOptions
+@*@using (Ajax.BeginForm("Save", "ManageMetadataStructure", new AjaxOptions
 {
     HttpMethod = "Post",
     UpdateTargetId = "metadataStructureForm",
     OnSuccess = "OnSuccess",
     OnFailure = "OnFailure"
 }))
-{
+{*@
     <div id="metadataStructureFrom" class="bx-content" style="overflow:auto">
         <table>
             <tr>
@@ -36,7 +36,7 @@
                     @(Html.LabelFor(m => m.Entity.ClassPath))<span class="bx bx-required" title="Required" />
                 </td>
                 <td>
-                    @Html.DropDownListFor(m => m.Entity.ClassPath, new SelectList(Model.EntityClasses.Select(e=>e.ClassPath), Model.Entity.ClassPath), "Select")
+                    @Html.DropDownListFor(m => m.Entity.ClassPath, new SelectList(Model.EntityClasses.Select(e=>e.ClassPath), Model.Entity.ClassPath), "Select", new {@id="classPathSelector"})
                     <label title="Select an associated entity.">?</label>
                 </td>
             </tr>
@@ -63,18 +63,19 @@
                     @(Html.LabelFor(m => m.Active))
                 </td>
                 <td>
-                    @Html.CheckBoxFor(m => m.Active, new { title = "Tick if the metadata structure item should be visible load." })
+                    @Html.CheckBoxFor(m => m.Active, new {title = "Tick if the metadata structure item should be visible load."})
                 </td>
             </tr>
+
         </table>
 
 
 </div>
 <div class="bx-footer right">
-    <button type="submit" value="Save" name="submit" class="bx-button action">Save</button>
+    <button value="Save" name="submit" class="bx-button action" onclick="sendForm()">Save</button>
     <button type="button" value="c" name="cancel" class="bx-button action" onclick="OnCancel()">Cancel</button>
 </div>
-}
+@*}*@
 
 <script type="text/javascript">
 
@@ -93,7 +94,54 @@
         //alert("oncancel");
 
         $("#windowEdit").data('tWindow').destroy();
-        $("#metadataStructuresGrid .t-refresh").trigger('click');
+        $("#metadataStructuresGrid .t-refresh").trigger("click");
+    }
+
+    function sendForm() {
+
+        var SystemNodes = {};
+
+
+        $('.systemRef')
+            .each(function() {
+                console.log(this);
+
+                SystemNodes[this.id.split("_")[1]] = $(this).val();
+
+            });
+
+
+        console.log(SystemNodes);
+
+        var metadataStructureModel = {
+            Id: $('#Id').val(),
+            Name: $('#Name').val(),
+            Entity: {
+                Name: '@Model.Entity.Name',
+                ClassPath: $('#classPathSelector').val()
+            },
+            TitleNode: $('#TitleNode').val(),
+            DescriptionNode: $('#DescriptionNode').val(),
+            Active: $('#Active').val(),
+            SystemNodes: SystemNodes
+        }
+
+        console.log(SystemNodes);
+        console.log(metadataStructureModel);
+        
+        metadataStructureModel = { metadataStructureModel: metadataStructureModel }
+
+        $.ajax({
+            type: "POST",
+            url: "/dcm/ManageMetadataStructure/Save",
+            data: JSON.stringify(metadataStructureModel),
+            dataType: "json",
+            contentType: "application/json;charset=utf8",
+            success: OnSuccess(),
+            error: function (){alert("failed")}
+
+        });
+
     }
 </script>
 

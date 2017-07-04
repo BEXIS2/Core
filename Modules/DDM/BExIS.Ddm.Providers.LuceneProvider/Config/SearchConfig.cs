@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Xml;
-using BExIS.Ddm.Model;
-using BExIS.Ddm.Providers.LuceneProvider.Helpers;
+﻿using BExIS.Ddm.Providers.LuceneProvider.Helpers;
 using BExIS.Ddm.Providers.LuceneProvider.Searcher;
+using BExIS.Utils.Models;
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Index;
 using Lucene.Net.QueryParsers;
 using Lucene.Net.Search;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Xml;
 
 /// <summary>
 ///
@@ -261,7 +261,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Config
         /// <param>NA</param>       
         /// <returns></returns>
         public static HashSet<string> getNumericProperties() { return numericProperties; }
-        
+
         /// <summary>
         ///
         /// </summary>

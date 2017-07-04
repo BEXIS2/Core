@@ -1,6 +1,6 @@
-﻿@using BExIS.Web.Shell.Areas.DCM.Models
+﻿@using BExIS.Modules.Dcm.UI.Models
 @using Telerik.Web.Mvc.UI
-@model BExIS.Web.Shell.Areas.DCM.Models.MetadataStructureManagerModel
+@model MetadataStructureManagerModel
 
 @Html.ActionLink("Import", "ImportMetadataStructureWizard", "ImportMetadataStructure",new {area="DCM"}, new {@class= "bx-button function" })
 <br/>
@@ -9,10 +9,11 @@
       ()
       .Name("metadataStructuresGrid")
       .BindTo((IEnumerable<MetadataStructureModel>
-          ) @Model.MetadataStructureModels)
+          )@Model.MetadataStructureModels)
       .Pageable()
       .Sortable()
-      .DataKeys(keys => { keys.Add(m => m.Id); })
+      .DataKeys(keys => { keys.Add(m => m.Id);
+      })
       .Editable(editing => editing.Mode(GridEditMode.PopUp))
       .DataBinding(dataBinding => dataBinding
           .Ajax()
@@ -20,12 +21,21 @@
       .ColumnContextMenu()
       .Columns(columns =>
       {
-          columns.Bound(c => c.Id).ReadOnly().Width(65);
+          columns.Bound(c => c.Id).ReadOnly().Width(55);
           columns.Bound(c => c.Name);
-          columns.Bound(c => c.Entity.Name);
+          columns.Bound(c => c.Entity.Name).Width(110);
           columns.Bound(c => c.Entity.ClassPath).Hidden(true);
-          columns.Bound(c => c.TitleNode);
-          columns.Bound(c => c.DescriptionNode);
+          columns.Template(@<text>
+                               @{
+                                <table class="tableWithoutBorder t-grid">
+                                    <tr><td><b>Title</b> :</td><td>@item.TitleNode</td></tr>
+                                    <tr><td><b>Description</b> :</td><td> @item.DescriptionNode</td></tr>
+                                </table>
+                            }
+
+                            </text>).Title("Info References");
+                             
+
           columns.Bound(c => c.Active).Width(90);
           columns.Template(@<text>
                                @{
@@ -97,12 +107,12 @@
     function metadataStructureDelete_onClick(name, id) {
         //alert(id);
         if (confirm('Are you sure you want delete the metadata structure?')) {
-                $.ajax({
-                    type: "POST",
-                    url: '@Url.Action("Delete", "ManageMetadataStructure")',
-                data: {id:id},
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("Delete", "ManageMetadataStructure")',
+                data: { id: id },
                 dataType: "json",
-                success: function (response) {
+                success: function(response) {
 
                     if (response) {
                         window.location.href = '/DCM/ManageMetadataStructure';
@@ -115,7 +125,6 @@
     }
 
 
-
     function OnSuccess() {
 
         $("#windowEdit").data('tWindow').destroy();
@@ -123,3 +132,9 @@
     }
 
 </script>
+<style>
+    .tableWithoutBorder,.tableWithoutBorder td,.tableWithoutBorder tr {
+        border: none;
+    }
+
+</style>
