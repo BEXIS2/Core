@@ -855,7 +855,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         #region submission
         /// <summary>
-        /// Commented by Javad due to modularity issues.
+        /// ToDo Refactor Commented by Javad due to modularity issues.
         /// Thes functions should call the APIs of the DIM module and get json objects back.
         /// If Publication or any other entity is not part of the DLM, it is visible only to its own module.
         /// Other mosules who consume the API results of a module, should only expect .NET types, DLM types, json, xml, CSV, or Html.
