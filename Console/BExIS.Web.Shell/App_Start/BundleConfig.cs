@@ -28,7 +28,7 @@ namespace BExIS.Web.Shell
                 "~/Scripts/respond.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/telerik").Include(
-                "~/Scripts/2013.2.611/telerik.all.min.js"));
+                "~/Scripts/2013.2.611/telerik*"));
 
             bundles.Add(new ScriptBundle("~/bundles/bexis").Include(
                 "~/Scripts/bexis_default.js",
