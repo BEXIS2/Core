@@ -441,6 +441,7 @@
     <Content Include="css\font-awesome.min.css" />
     <Content Include="fonts\fontawesome-webfont.svg" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Scripts\2013.2.611\telerik.all.min.js" />
     <Content Include="Scripts\2013.2.611\telerik.grid.backup.js" />
     <Content Include="Scripts\autosize\autosize.js" />
     <Content Include="Scripts\autosize\autosize.min.js" />
@@ -852,9 +853,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Home\Index.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Views\Shared\_Layout.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />
