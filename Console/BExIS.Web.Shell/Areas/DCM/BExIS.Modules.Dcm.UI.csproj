@@ -241,6 +241,7 @@
     <Content Include="Views\SubmitValidation\Validation.cshtml" />
     <Content Include="Views\Shared\_EntitySelectorInWindowView.cshtml" />
     <Content Include="Views\Shared\_EntitySelectorView.cshtml" />
+    <Content Include="Views\SubmitSelectAFile\SelectAFile.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -253,7 +254,6 @@
     <Folder Include="Scripts\" />
     <Folder Include="Views\DcmAdmin\" />
     <Folder Include="Views\Home\" />
-    <Folder Include="Views\SubmitSelectAFile\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
