@@ -1,6 +1,8 @@
 ﻿@using BExIS.Modules.Dim.UI.Models.Mapping
+@using Microsoft.Web.Helpers
 @using Telerik.Web.Mvc.UI
-@model BExIS.Modules.Dim.UI.Models.Mapping.MappingMainModel
+@model MappingMainModel
+
 
 <div id="DIM_MappingContainer">
 
@@ -12,15 +14,15 @@
         <script src="@Url.Content("~/Scripts/DIM/jsPlumb-2.2.8-min.js")"></script>
     }
 
-    @section LeftPane
-    {
+    @*@section LeftPane
+    {*@
         <span>
-            @(Html.Telerik().DropDownList()
+            @*@(Html.Telerik().DropDownList()
                                 .Name("SelectSource")
                                 .Placeholder("Select")
                                 .HtmlAttributes(new { @class = "bx-dropdown", style = "width:100%;" })
                                 .ClientEvents(events => events.OnChange("onChangeSourceDropDown"))
-                                .BindTo(new SelectList(Model.SelectionList, "Id", "Name", Model.Source.ElementId + "_" + Model.Source.Type)))
+                                .BindTo(new SelectList(Model.SelectionList, "Id", "Name", Model.Source.ElementId + "_" + Model.Source.Type)))*@
 
         </span>
 
@@ -28,21 +30,21 @@
         {
             @Html.Partial("LinkElemenRoot", Model.Source)
         }
-    }
+    @*  *@}
 
 
     @Html.Partial("Mappings",Model.ParentMappings)
 
 
-    @section RightPane
-    {
+    @*@section RightPane
+    {*@
         <span>
-            @(Html.Telerik().DropDownList()
+            @*@(Html.Telerik().DropDownList()
                             .Name("SelectTarget")
                             .Placeholder("Select")
                             .HtmlAttributes(new { @class = "bx-dropdown", style="width:100%;" })
                             .ClientEvents(events => events.OnChange("onChangeTargetDropDown"))
-                            .BindTo(new SelectList(Model.SelectionList,"Id","Name", Model.Target.ElementId+"_"+ Model.Target.Type)))
+                            .BindTo(new SelectList(Model.SelectionList,"Id","Name", Model.Target.ElementId+"_"+ Model.Target.Type)))*@
 
         </span>
 
@@ -50,7 +52,7 @@
         {
             @Html.Partial("LinkElemenRoot", Model.Target)
         }
-    }
+    @*}*@
 
 </div>
 

@@ -569,8 +569,8 @@ namespace BExIS.Modules.Dim.UI.Helper
             {
                 transformationRuleModel = new TransformationRuleModel();
             }
-            //ToDo Load Rules
 
+            //ToDo Load Rules
             return new SimpleMappingModel()
             {
                 Id = mapping.Id,

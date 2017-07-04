@@ -1,10 +1,10 @@
-﻿using BExIS.Modules.Dim.UI.Models.Formatters;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Formatting;
 using System.Web;
 using System.Web.Http;
+using BExIS.Modules.Dim.UI.Models;
 using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Dim.UI
