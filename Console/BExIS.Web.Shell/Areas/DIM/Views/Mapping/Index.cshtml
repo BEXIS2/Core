@@ -14,8 +14,8 @@
         <script src="@Url.Content("~/Scripts/DIM/jsPlumb-2.2.8-min.js")"></script>
     }
 
-    @*@section LeftPane
-    {*@
+    @section LeftPane
+    {
         <span>
             @*@(Html.Telerik().DropDownList()
                                 .Name("SelectSource")
@@ -30,14 +30,14 @@
         {
             @Html.Partial("LinkElemenRoot", Model.Source)
         }
-    @*  *@}
+    }
 
 
     @Html.Partial("Mappings",Model.ParentMappings)
 
 
-    @*@section RightPane
-    {*@
+    @section RightPane
+    {
         <span>
             @*@(Html.Telerik().DropDownList()
                             .Name("SelectTarget")
@@ -52,7 +52,7 @@
         {
             @Html.Partial("LinkElemenRoot", Model.Target)
         }
-    @*}*@
+    }
 
 </div>
 

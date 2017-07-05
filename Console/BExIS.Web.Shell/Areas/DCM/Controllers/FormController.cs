@@ -20,6 +20,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Xml;
 using System.Xml.Linq;
+using BExIS.Utils.Data.MetadataStructure;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
@@ -689,7 +690,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             var u = LoadUsage(parentStepModelHelper.Usage);
 
             //Create new step
-            var newStep = new StepInfo(UsageHelper.GetNameOfType(u))
+            var newStep = new StepInfo(MetadataStructureUsageHelper.GetNameOfType(u))
             {
                 Id = TaskManager.GenerateStepId(),
                 parentTitle = parentStepModelHelper.Model.StepInfo.title,
@@ -697,7 +698,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 IsInstanze = true,
             };
 
-            var xPath = parentStepModelHelper.XPath + "//" + UsageHelper.GetNameOfType(u) + "[" + position + "]";
+            var xPath = parentStepModelHelper.XPath + "//" + MetadataStructureUsageHelper.GetNameOfType(u) + "[" + position + "]";
 
             // add to parent stepId
             parentStepModelHelper.Model.StepInfo.Children.Add(newStep);
@@ -795,9 +796,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             var parentUsage = LoadUsage(stepModelHelperParent.Usage);
             var pNumber = stepModelHelperParent.Number;
 
-            var metadataAttributeUsage = UsageHelper.GetChildren(parentUsage).Where(u => u.Id.Equals(id)).FirstOrDefault();
+            var metadataAttributeUsage = MetadataStructureUsageHelper.GetChildren(parentUsage).Where(u => u.Id.Equals(id)).FirstOrDefault();
 
-            //BaseUsage metadataAttributeUsage = UsageHelper.GetSimpleUsageById(parentUsage, id);
+            //BaseUsage metadataAttributeUsage = MetadataStructureUsageHelper.GetSimpleUsageById(parentUsage, id);
 
             var modelAttribute = MetadataAttributeModel.Convert(metadataAttributeUsage, parentUsage, metadataStructureId, parentModelNumber, stepModelHelperParent.StepId);
             modelAttribute.Number = ++number;
@@ -840,8 +841,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             if (newIndex <= stepModelHelper.Childrens.Count - 1)
             {
-                var xPathOfSelectedElement = stepModelHelper.XPath + "//" + UsageHelper.GetNameOfType(stepModelHelper.Usage).Replace(" ", string.Empty) + "[" + number + "]";
-                var destinationXPathElement = stepModelHelper.XPath + "//" + UsageHelper.GetNameOfType(stepModelHelper.Usage).Replace(" ", string.Empty) + "[" + (number + 1) + "]";
+                var xPathOfSelectedElement = stepModelHelper.XPath + "//" + MetadataStructureUsageHelper.GetNameOfType(stepModelHelper.Usage).Replace(" ", string.Empty) + "[" + number + "]";
+                var destinationXPathElement = stepModelHelper.XPath + "//" + MetadataStructureUsageHelper.GetNameOfType(stepModelHelper.Usage).Replace(" ", string.Empty) + "[" + (number + 1) + "]";
 
                 ChangeInXml(xPathOfSelectedElement, destinationXPathElement);
 
@@ -929,7 +930,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             TaskManager.SetCurrent(TaskManager.Get(parentStepId));
 
             var stepModelHelper = GetStepModelhelper(parentStepId);
-            RemoveFromXml(stepModelHelper.XPath + "//" + UsageHelper.GetNameOfType(stepModelHelper.Usage).Replace(" ", string.Empty) + "[" + number + "]");
+            RemoveFromXml(stepModelHelper.XPath + "//" + MetadataStructureUsageHelper.GetNameOfType(stepModelHelper.Usage).Replace(" ", string.Empty) + "[" + number + "]");
 
             var u = LoadUsage(stepModelHelper.Usage);
 
@@ -982,10 +983,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             var model = stepModelHelperParent.Model;
 
             var parentUsage = stepModelHelperParent.Usage;
-            var attrUsage = UsageHelper.GetChildren(parentUsage).Where(u => u.Id.Equals(id)).FirstOrDefault();
+            var attrUsage = MetadataStructureUsageHelper.GetChildren(parentUsage).Where(u => u.Id.Equals(id)).FirstOrDefault();
 
             //remove from xml
-            RemoveAttributeToXml(stepModelHelperParent.Usage, stepModelHelperParent.Number, attrUsage, number, UsageHelper.GetNameOfType(attrUsage), stepModelHelperParent.XPath);
+            RemoveAttributeToXml(stepModelHelperParent.Usage, stepModelHelperParent.Number, attrUsage, number, MetadataStructureUsageHelper.GetNameOfType(attrUsage), stepModelHelperParent.XPath);
 
             if (model != null)
             {
@@ -1015,8 +1016,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             if (newIndex >= 0)
             {
-                var xPathOfSelectedElement = stepModelHelper.XPath + "//" + UsageHelper.GetNameOfType(stepModelHelper.Usage).Replace(" ", string.Empty) + "[" + number + "]";
-                var destinationXPathElement = stepModelHelper.XPath + "//" + UsageHelper.GetNameOfType(stepModelHelper.Usage).Replace(" ", string.Empty) + "[" + (number - 1) + "]";
+                var xPathOfSelectedElement = stepModelHelper.XPath + "//" + MetadataStructureUsageHelper.GetNameOfType(stepModelHelper.Usage).Replace(" ", string.Empty) + "[" + number + "]";
+                var destinationXPathElement = stepModelHelper.XPath + "//" + MetadataStructureUsageHelper.GetNameOfType(stepModelHelper.Usage).Replace(" ", string.Empty) + "[" + (number - 1) + "]";
 
                 ChangeInXml(xPathOfSelectedElement, destinationXPathElement);
 
@@ -1173,7 +1174,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 Id = TaskManager.GenerateStepId(),
                                 Parent = current,
                                 IsInstanze = true,
-                                HasContent = UsageHelper.HasUsagesWithSimpleType(usage),
+                                HasContent = MetadataStructureUsageHelper.HasUsagesWithSimpleType(usage),
                             };
 
                             var xPath = parentXpath + "//" + childName.Replace(" ", string.Empty) + "[" + counter + "]";
@@ -1199,7 +1200,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private List<StepInfo> GetChildrenSteps(BaseUsage usage, StepInfo parent, string parentXpath, StepModelHelper parentStepModelHelper)
         {
             var childrenSteps = new List<StepInfo>();
-            var childrenUsages = UsageHelper.GetCompoundChildrens(usage);
+            var childrenUsages = MetadataStructureUsageHelper.GetCompoundChildrens(usage);
             var stepHelperModelList = (List<StepModelHelper>)TaskManager.Bus[CreateTaskmanager.METADATA_STEP_MODEL_HELPER];
 
             if (childrenUsages.Count > 0)
@@ -1284,7 +1285,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private List<StepInfo> GetChildrenStepsFromMetadata(BaseUsage usage, StepInfo parent, string parentXpath, StepModelHelper parentStepModelHelper)
         {
             var childrenSteps = new List<StepInfo>();
-            var childrenUsages = UsageHelper.GetCompoundChildrens(usage);
+            var childrenUsages = MetadataStructureUsageHelper.GetCompoundChildrens(usage);
             var stepHelperModelList = (List<StepModelHelper>)TaskManager.Bus[CreateTaskmanager.METADATA_STEP_MODEL_HELPER];
 
             if (childrenUsages.Count > 0)
@@ -1372,7 +1373,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private List<StepInfo> GetChildrenStepsUpdated(BaseUsage usage, StepInfo parent, string parentXpath)
         {
             var childrenSteps = new List<StepInfo>();
-            var childrenUsages = UsageHelper.GetCompoundChildrens(usage);
+            var childrenUsages = MetadataStructureUsageHelper.GetCompoundChildrens(usage);
             var stepHelperModelList = (List<StepModelHelper>)TaskManager.Bus[CreateTaskmanager.METADATA_STEP_MODEL_HELPER];
 
             foreach (var u in childrenUsages)
@@ -1523,7 +1524,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                 Id = TaskManager.GenerateStepId(),
                                 Parent = current,
                                 IsInstanze = true,
-                                HasContent = UsageHelper.HasUsagesWithSimpleType(usage),
+                                HasContent = MetadataStructureUsageHelper.HasUsagesWithSimpleType(usage),
 
                                 //GetActionInfo = new ActionInfo
                                 //{
@@ -2158,7 +2159,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             var metadataXml = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
 
             var xmlMetadataWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
-            metadataXml = xmlMetadataWriter.AddAttribute(metadataXml, attribute, number, UsageHelper.GetNameOfType(attribute), UsageHelper.GetIdOfType(attribute).ToString(), parentXPath);
+            metadataXml = xmlMetadataWriter.AddAttribute(metadataXml, attribute, number, MetadataStructureUsageHelper.GetNameOfType(attribute), MetadataStructureUsageHelper.GetIdOfType(attribute).ToString(), parentXPath);
 
             TaskManager.Bus[CreateTaskmanager.METADATA_XML] = metadataXml;
 
@@ -2175,7 +2176,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             var xmlMetadataWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
 
-            metadataXml = xmlMetadataWriter.AddPackage(metadataXml, usage, number, UsageHelper.GetNameOfType(usage), UsageHelper.GetIdOfType(usage), UsageHelper.GetChildren(usage), BExIS.Xml.Helpers.XmlNodeType.MetadataAttribute, BExIS.Xml.Helpers.XmlNodeType.MetadataAttributeUsage, xpath);
+            metadataXml = xmlMetadataWriter.AddPackage(metadataXml, usage, number, MetadataStructureUsageHelper.GetNameOfType(usage), MetadataStructureUsageHelper.GetIdOfType(usage), MetadataStructureUsageHelper.GetChildren(usage), BExIS.Xml.Helpers.XmlNodeType.MetadataAttribute, BExIS.Xml.Helpers.XmlNodeType.MetadataAttributeUsage, xpath);
 
             TaskManager.Bus[CreateTaskmanager.METADATA_XML] = metadataXml;
         }
@@ -2192,9 +2193,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 metadataXml,
                 usage,
                 number,
-                UsageHelper.GetNameOfType(usage),
-                UsageHelper.GetIdOfType(usage),
-                UsageHelper.GetChildren(usage),
+                MetadataStructureUsageHelper.GetNameOfType(usage),
+                MetadataStructureUsageHelper.GetIdOfType(usage),
+                MetadataStructureUsageHelper.GetChildren(usage),
                 BExIS.Xml.Helpers.XmlNodeType.MetadataPackage,
                 BExIS.Xml.Helpers.XmlNodeType.MetadataPackageUsage,
                 xpath);
@@ -2237,7 +2238,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             var metadataXml = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
 
             var xmlMetadataWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
-            metadataXml = xmlMetadataWriter.RemovePackage(metadataXml, usage, number, UsageHelper.GetNameOfType(usage));
+            metadataXml = xmlMetadataWriter.RemovePackage(metadataXml, usage, number, MetadataStructureUsageHelper.GetNameOfType(usage));
 
             TaskManager.Bus[CreateTaskmanager.METADATA_XML] = metadataXml;
         }
@@ -2260,7 +2261,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             var metadataXml = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
             var xmlMetadataWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
 
-            metadataXml = xmlMetadataWriter.Update(metadataXml, attribute, number, value, UsageHelper.GetNameOfType(attribute), parentXpath);
+            metadataXml = xmlMetadataWriter.Update(metadataXml, attribute, number, value, MetadataStructureUsageHelper.GetNameOfType(attribute), parentXpath);
 
             TaskManager.Bus[CreateTaskmanager.METADATA_XML] = metadataXml;
             // locat path
@@ -2276,7 +2277,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             var xmlMetadataWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
 
-            metadataXml = xmlMetadataWriter.AddPackage(metadataXml, usage, number, UsageHelper.GetNameOfType(usage), UsageHelper.GetIdOfType(usage), UsageHelper.GetChildren(usage), BExIS.Xml.Helpers.XmlNodeType.MetadataAttribute, BExIS.Xml.Helpers.XmlNodeType.MetadataAttributeUsage, xpath);
+            metadataXml = xmlMetadataWriter.AddPackage(metadataXml, usage, number, MetadataStructureUsageHelper.GetNameOfType(usage), MetadataStructureUsageHelper.GetIdOfType(usage), MetadataStructureUsageHelper.GetChildren(usage), BExIS.Xml.Helpers.XmlNodeType.MetadataAttribute, BExIS.Xml.Helpers.XmlNodeType.MetadataAttributeUsage, xpath);
 
             TaskManager.Bus[CreateTaskmanager.METADATA_XML] = metadataXml;
         }
@@ -2314,7 +2315,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             var parentUsage = LoadUsage(stepModelHelper.Usage);
             var pNumber = stepModelHelper.Number;
 
-            var metadataAttributeUsage = UsageHelper.GetChildren(parentUsage).Where(u => u.Id.Equals(id)).FirstOrDefault();
+            var metadataAttributeUsage = MetadataStructureUsageHelper.GetChildren(parentUsage).Where(u => u.Id.Equals(id)).FirstOrDefault();
 
             //Path.Combine(AppConfiguration.GetModuleWorkspacePath("dcm"),"x","file.xml");
 
@@ -2417,7 +2418,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 else
                 {
                     stepModeHelper.Usage = LoadUsage(stepModeHelper.Usage);
-                    if (UsageHelper.HasUsagesWithSimpleType(stepModeHelper.Usage))
+                    if (MetadataStructureUsageHelper.HasUsagesWithSimpleType(stepModeHelper.Usage))
                     {
                         //foreach (var metadataAttrModel in stepModeHelper.Model.MetadataAttributeModels)
                         //{
@@ -2426,7 +2427,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         //        step.stepStatus = StepStatus.error;
                         //}
 
-                        //if(UsageHelper.HasRequiredSimpleTypes(stepModeHelper.Usage))
+                        //if(MetadataStructureUsageHelper.HasRequiredSimpleTypes(stepModeHelper.Usage))
                         //{
                         //    StepInfo step = TaskManager.Get(stepModeHelper.StepId);
                         //    if (step != null && step.IsInstanze)
@@ -2469,8 +2470,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         private BaseUsage GetMetadataCompoundAttributeUsage(long id)
         {
-            //return UsageHelper.GetChildrenUsageById(Id);
-            return UsageHelper.GetMetadataAttributeUsageById(id);
+            //return MetadataStructureUsageHelper.GetChildrenUsageById(Id);
+            return MetadataStructureUsageHelper.GetMetadataAttributeUsageById(id);
         }
 
         private BaseUsage GetPackageUsage(long Id)

@@ -54,6 +54,7 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Routing" />
@@ -151,7 +152,6 @@
     <Compile Include="Models\ShowDataModel.cs" />
     <Compile Include="Models\ShowMetadataModel.cs" />
     <Compile Include="Models\ShowPrimaryDataModel.cs" />
-    <Compile Include="Models\ShowPublishDataModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -181,11 +181,9 @@
     <Content Include="Views\Data\ShowData.cshtml" />
     <Content Include="Views\Data\ShowMetaData.cshtml" />
     <Content Include="Views\Data\ShowPrimaryData.cshtml" />
-    <Content Include="Views\Data\_dataRepositoryRequirementsView.cshtml" />
     <Content Include="Views\Data\_fileSizeView.cshtml" />
     <Content Include="Views\Data\_previewDatastructure.cshtml" />
     <Content Include="Views\Data\_showItem.cshtml" />
-    <Content Include="Views\Data\_showPublishDataView.cshtml" />
     <Content Include="Views\Data\_structuredDataView.cshtml" />
     <Content Include="Views\Data\_SubjectsPartial.cshtml" />
     <Content Include="Views\Data\_unstructuredDataView.cshtml" />
