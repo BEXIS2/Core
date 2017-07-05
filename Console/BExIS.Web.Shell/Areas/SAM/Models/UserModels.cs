@@ -85,4 +85,23 @@ namespace BExIS.Modules.Sam.UI.Models
             };
         }
     }
+
+    public class UserFeaturePermissionGridRowModel
+    {
+        public string Email { get; set; }
+        public string FullName { get; set; }
+        public long Id { get; set; }
+        public string Username { get; set; }
+        public bool HasFeature { get; set; } 
+
+        public static UserMembershipGridRowModel Convert(User user)
+        {
+            return new UserMembershipGridRowModel()
+            {
+                Id = user.Id,
+                Username = user.Name,
+                Email = user.Email
+            };
+        }
+    }
 }
