@@ -26,11 +26,13 @@ namespace BExIS.Security.Services.Objects
             }
         }
 
-        public Workflow Create()
+        public Workflow Create(string name, string description, Feature feature = null)
         {
             var workflow = new Workflow()
             {
-
+                Name = name,
+                Description = description,
+                Feature = feature
             };
 
             using (var uow = this.GetUnitOfWork())
