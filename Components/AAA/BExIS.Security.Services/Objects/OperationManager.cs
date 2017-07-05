@@ -25,7 +25,6 @@ namespace BExIS.Security.Services.Objects
                 Action = action,
                 Workflow = workflow,
                 Parent = parent
-
             };
 
             using (var uow = this.GetUnitOfWork())
