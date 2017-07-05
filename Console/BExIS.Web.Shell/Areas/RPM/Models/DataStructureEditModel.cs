@@ -3,9 +3,9 @@ using System.Linq;
 using System.Collections.Generic;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.DataStructure;
-using BExIS.Web.Shell.Areas.RPM.Classes;
+using BExIS.Modules.Rpm.UI.Classes;
 
-namespace BExIS.Web.Shell.Areas.RPM.Models
+namespace BExIS.Modules.Rpm.UI.Models
 {
     public struct ItemStruct
     {

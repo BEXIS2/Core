@@ -4,11 +4,12 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
-using BExIS.Web.Shell.Areas.RPM.Models;
+using BExIS.Modules.Rpm.UI.Models;
+using System.Web.Mvc;
 
-namespace BExIS.Web.Shell.Areas.RPM.Controllers
+namespace BExIS.Modules.Rpm.UI.Controllers
 {
-    public class StructuresController : ApiController
+    public class StructuresController : Controller
     {
         // GET: api/Structures
         public IEnumerable<string> Get()

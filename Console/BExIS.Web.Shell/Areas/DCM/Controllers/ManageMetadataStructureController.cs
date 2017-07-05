@@ -1,13 +1,11 @@
-﻿using BExIS.Ddm.Model;
-using BExIS.Ddm.Providers.LuceneProvider;
-using BExIS.Dlm.Entities.MetadataStructure;
+﻿using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.IO.Transform.Output;
+using BExIS.Modules.Dcm.UI.Models;
 using BExIS.Security.Services.Objects;
-using BExIS.Web.Shell.Areas.DCM.Models;
+using BExIS.Utils.Models;
 using BExIS.Xml.Helpers;
 using BExIS.Xml.Helpers.Mapping;
-using BExIS.Xml.Services;
 using Ionic.Zip;
 using NHibernate.Util;
 using System;
@@ -20,7 +18,7 @@ using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
 
-namespace BExIS.Web.Shell.Areas.DCM.Controllers
+namespace BExIS.Modules.Dcm.UI.Controllers
 {
     public class ManageMetadataStructureController : Controller
     {
@@ -196,20 +194,20 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         /// <returns></returns>
         private List<SearchMetadataNode> GetAllXPath(long metadatastructureId)
         {
-            SearchDesigner searchDesigner = new SearchDesigner();
-            return searchDesigner.GetAllXPathsOfSimpleAttributes(metadatastructureId);
+            XmlMetadataHelper.GetAllXPathsOfSimpleAttributes(metadatastructureId);
+            return XmlMetadataHelper.GetAllXPathsOfSimpleAttributes(metadatastructureId);
         }
 
-        private List<EntityMetadataModel> GetEntityModelList()
+        private List<EntityModel> GetEntityModelList()
         {
             EntityManager entityManager = new EntityManager();
 
-            List<EntityMetadataModel> tmp = new List<EntityMetadataModel>();
+            List<EntityModel> tmp = new List<EntityModel>();
             entityManager.Entities.Where(e => e.UseMetadata).ForEach(e => tmp.Add(
-                      new EntityMetadataModel()
+                      new EntityModel()
                       {
-                          Name = e.EntityType.FullName,
-                          ClassPath = e.EntityType.AssemblyQualifiedName
+                          Name = e.Name,
+                          ClassPath = e.ClassPath
                       }
                   )
             );

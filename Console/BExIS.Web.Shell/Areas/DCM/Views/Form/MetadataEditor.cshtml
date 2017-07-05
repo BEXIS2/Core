@@ -1,13 +1,11 @@
 ﻿@model MetadataEditorModel
-@using BExIS.Web.Shell.Areas.DCM.Models.CreateDataset
-@using BExIS.Web.Shell.Areas.DCM.Models.Metadata;
+@using BExIS.Modules.Dcm.UI.Models.CreateDataset;
+@using BExIS.Modules.Dcm.UI.Models.Metadata;
 @using System.Web.Configuration;
 @using BExIS.Dcm.CreateDatasetWizard
 @using BExIS.Dcm.Wizard
 
 @using Telerik.Web.Mvc.UI;
-
-
 
 @{
 
@@ -151,7 +149,7 @@
                               .OnSelect("SelectFileProcess_OnSelect")
                               .OnLoad("SelectFileUploader_OnLoad"))
                           .Async(async => async
-                              .Save("SelectFileProcess", "Form", new {area = "DCM"})
+                              .Save("SelectFileProcess", "Form")
                               .AutoUpload(true))
                             
                           )
@@ -172,10 +170,12 @@
 
                 <td>You successfully created dataset: <br/><b>@Model.DatasetTitle</b></td>
                 <td>
-                    Please use the <b>@Html.ActionLink("Upload Data Wizard ", "StartUploadWizard", "CreateDataset", new {area = "DCM"}, new {title = "Link to upload wizard", @class = "bx-link"})</b><br/>
+                    Please use the <b>@Html.ActionLink("Upload Data Wizard ", "StartUploadWizard", "CreateDataset", new {title = "Link to upload wizard", @class = "bx-link"})</b><br/>
                     to add primary data to this dataset.
                 </td>
 
+                //ToDo Modularity
+                // Check if Modul DDM Exist, Is Active and Action Is Available
                 if (@Model.DatasetId > 0)
                 {
                     <td>Or see your dataset here <b>@Html.ActionLink(@Model.DatasetTitle, "ShowData", "CreateDataset", new {id = @Model.DatasetId}, new {title = "Link to your dataset.", @class = "bx-link"})</b><br/></td>

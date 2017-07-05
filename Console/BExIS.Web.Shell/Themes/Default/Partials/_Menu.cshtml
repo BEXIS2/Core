@@ -4,14 +4,14 @@
 @using Telerik.Web.Mvc.UI
 @using Vaiona.Web.Mvc
 
-@if (!Request.IsAuthenticated)
+@*@if (!Request.IsAuthenticated)
 {
     <script type="text/javascript">
         $(document).ready(function () {
             $("#menubar").css("background-color", "transparent");
         });
     </script>
-}
+}*@
 
 @{
     //var menuStructure = Html.ExportTree();
@@ -45,6 +45,8 @@
                 {
                     @Html.RenderExtendedMenu(Html.GetTenant().ExtendedMenus.Element("ExtendedMenu"))
                 }
+
+                @Html.LaunchBar()
 
                 @* Move this to Html.LaunchBar. Urls should come from Shell not SAM. MyAccount can go to index. unify login/logoff/logout, etc. *@
                 @if (Request.IsAuthenticated)

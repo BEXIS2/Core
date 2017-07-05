@@ -4,14 +4,14 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-using BExIS.Web.Shell.Areas.RPM.Models;
+using BExIS.Modules.Rpm.UI.Models;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.DataStructure;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Extensions;
 
-namespace BExIS.Web.Shell.Areas.RPM.Controllers
+namespace BExIS.Modules.Rpm.UI.Controllers
 {
     public class UnitController : Controller
     {

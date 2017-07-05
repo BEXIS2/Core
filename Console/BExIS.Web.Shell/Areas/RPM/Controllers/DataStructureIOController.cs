@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Web.Mvc;
-using Telerik.Web.Mvc;
 
-using BExIS.Web.Shell.Areas.RPM.Models;
+using BExIS.Modules.Rpm.UI.Models;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.RPM.Output;
@@ -12,7 +11,7 @@ using System.IO;
 using Vaiona.Utils.Cfg;
 using System.Collections.Generic;
 
-namespace BExIS.Web.Shell.Areas.RPM.Controllers
+namespace BExIS.Modules.Rpm.UI.Controllers
 {
     public class DataStructureIOController : Controller
     {

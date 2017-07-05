@@ -1,10 +1,7 @@
-﻿using System;
+﻿using BExIS.Dcm.Wizard;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
-using BExIS.Dcm.Wizard;
 
 namespace BExIS.Dcm.ImportMetadataStructureWizard
 {
@@ -22,6 +19,7 @@ namespace BExIS.Dcm.ImportMetadataStructureWizard
         public static string TITLE_NODE = "TITLE_NODE";
         public static string DESCRIPTION_NODE = "DESCRIPTION_NODE";
         public static string ENTITY_TYPE_NODE = "ENTITY_TYPE_NODE";
+        public static string SYSTEM_NODES = "SYSTEM_NODES";
         public static string IS_GENERATE = "IS_GENERATE";
 
         public static string METADATASTRUCTURE_ID = "METADATASTRUCTURE_ID";

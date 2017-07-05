@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
-using BExIS.Ddm.Model;
-using BExIS.Security.Entities.Objects;
+using BExIS.Utils.Models;
 
-namespace BExIS.Web.Shell.Areas.DCM.Models
+namespace BExIS.Modules.Dcm.UI.Models
 {
-    public class EntityMetadataModel
+    public class EntityModel
     {
-        public EntityMetadataModel()
+        public EntityModel()
         {
             Name = "";
             ClassPath = "";
@@ -52,9 +47,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
     {
         public MetadataStructureModel()
         {
-            EntityClasses = new List<EntityMetadataModel>();
+            EntityClasses = new List<EntityModel>();
             MetadataNodes = new List<SearchMetadataNode>();
-            Entity = new EntityMetadataModel();
+            Entity = new EntityModel();
             HasSchema = false;
         }
 
@@ -63,8 +58,8 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
         [Display(Name = "Description Reference")]
         public string DescriptionNode { get; set; }
 
-        public EntityMetadataModel Entity { get; set; }
-        public List<EntityMetadataModel> EntityClasses { get; set; }
+        public EntityModel Entity { get; set; }
+        public List<EntityModel> EntityClasses { get; set; }
         public bool HasSchema { get; set; }
         public long Id { get; set; }
         public List<SearchMetadataNode> MetadataNodes { get; set; }

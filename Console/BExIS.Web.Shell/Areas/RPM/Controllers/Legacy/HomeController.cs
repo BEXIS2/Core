@@ -9,7 +9,6 @@ using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.TypeSystem;
 using BExIS.RPM.Output;
-using BExIS.Web.Shell.Areas.RPM.Models;
 using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
 using System.Windows.Forms;
@@ -17,8 +16,9 @@ using System.Text.RegularExpressions;
 using Vaiona.Web.Mvc.Models;
 using BExIS.IO.DataType.DisplayPattern;
 using Vaiona.Web.Extensions;
+using BExIS.Modules.Rpm.UI.Models;
 
-namespace BExIS.Web.Shell.Areas.RPM.Controllers
+namespace BExIS.Modules.Rpm.UI.Controllers
 {
     public class HomeController : Controller
     {

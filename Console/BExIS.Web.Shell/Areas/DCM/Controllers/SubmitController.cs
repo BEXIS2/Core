@@ -5,10 +5,10 @@ using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Administration;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
+using BExIS.Modules.Dcm.UI.Models;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Subjects;
-using BExIS.Web.Shell.Areas.DCM.Models;
-using BExIS.Xml.Services;
+using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,7 +20,7 @@ using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
 
-namespace BExIS.Web.Shell.Areas.DCM.Controllers
+namespace BExIS.Modules.Dcm.UI.Controllers
 {
     public class SubmitController : Controller
     {
@@ -33,7 +33,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         public ActionResult Index()
         {
-            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Upload Data", this.Session.GetTenant());
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Upload Data", Session.GetTenant());
             return View();
         }
 
@@ -41,7 +41,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         public ActionResult UploadWizard(DataStructureType type, long datasetid = 0)
         {
-            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Upload Data", this.Session.GetTenant());
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Upload Data", Session.GetTenant());
 
             Session["TaskManager"] = null;
 

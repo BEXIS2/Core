@@ -3,7 +3,6 @@ using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Xml.Helpers;
-using BExIS.Xml.Services;
 using System;
 using System.Collections.Generic;
 using System.Xml;

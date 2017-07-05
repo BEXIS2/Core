@@ -10,9 +10,9 @@ using System.Web;
 using System.Web.Mvc;
 using System.Xml;
 using Vaiona.Utils.Cfg;
-using BExIS.Web.Shell.Areas.RPM.Models;
+using BExIS.Modules.Rpm.UI.Models;
 
-namespace BExIS.Web.Shell.Areas.RPM.Classes
+namespace BExIS.Modules.Rpm.UI.Classes
 {
     public static class DataStructureIO
     {

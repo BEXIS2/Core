@@ -9,7 +9,7 @@ using System.IO;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Entities.DataStructure;
 
-namespace BExIS.Web.Shell.Areas.RPM.Helpers.SeedData
+namespace BExIS.Modules.Rpm.UI.Helpers.SeedData
 {
     public class MappingReader
     {

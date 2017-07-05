@@ -1,8 +1,5 @@
 ﻿using BExIS.Web.Shell.Models;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace BExIS.Web.Shell.Helpers
 {
@@ -28,7 +25,7 @@ namespace BExIS.Web.Shell.Helpers
             return tmp;
         }
 
-        public static EntitySelectorModel LoadEntitySelectorModel<T>(this IList<T> data, EntitySelectorModelAction reciever, string idKey="Id",string targetId="")
+        public static EntitySelectorModel LoadEntitySelectorModel<T>(this IList<T> data, EntitySelectorModelAction reciever, string idKey = "Id", string targetId = "")
         {
             EntitySelectorModel tmp = new EntitySelectorModel();
 
@@ -40,7 +37,7 @@ namespace BExIS.Web.Shell.Helpers
             return tmp;
         }
 
-        public static EntitySelectorModel LoadEntitySelectorModel<T>(this IList<T> data, List<string> columns, EntitySelectorModelAction reciever, string idKey = "Id", string targetId = "")
+        public static EntitySelectorModel LoadEntitySelectorModel<T>(this IList<T> data, List<string> columns, EntitySelectorModelAction reciever, string idKey = "Id", string targetId = "", Dictionary<string, string> parameters = null)
         {
             EntitySelectorModel tmp = new EntitySelectorModel();
 
@@ -48,7 +45,7 @@ namespace BExIS.Web.Shell.Helpers
             tmp.Reciever = reciever;
             tmp.IDKey = idKey;
             tmp.TargetId = targetId;
-
+            tmp.Parameters = parameters;
             return tmp;
         }
 
