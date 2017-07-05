@@ -17,6 +17,10 @@
         background: #380566 none repeat scroll 0 0 !important;
     }
 
+    #expandSelection{
+        background: #380566 none repeat scroll 0 0 !important;
+    }
+
     .headerMarking {
         background-color: rgba(40,3,2,0.5) !important;
     }
@@ -30,11 +34,13 @@
 <script>
     var hot = null;
     var currentButton = null;
+    var selectedDataArea = null;
     
     $(document).ready(function () {
         
 
         function resetRenderer(instance, td, row, col, prop, value, cellProperties) {
+
             Handsontable.renderers.TextRenderer.apply(this, arguments);
 
             cellProperties.editor = false;
@@ -53,7 +59,7 @@
 
         
         var container = document.getElementById('handsonExcelTable');
-            hot = new Handsontable(container, {
+        hot = new Handsontable(container, {
             data: @Html.Raw(Model.JsonTableData),
             rowHeaders: true,
             colHeaders: true,
@@ -87,6 +93,7 @@
                 if(selected[2] <= selected[0] && selected[3] <= selected[1]) {
                     selected = reverseArea(selected);
                 }
+                selectedDataArea = selected;
 
                 // set the css class for all selected cells
                 for(i = selected[0]; i <= selected[2]; i++) {
@@ -144,10 +151,11 @@
 
             var num_rows = hot.countRows();
             var num_cols = hot.countCols();
-            console.log(num_rows + "   " + num_cols);
 
             $('#HeaderSelection').val("");
             $('#DataSelection').val("");
+
+            selectedDataArea = null;
 
             //Reset all markings
             for(var i = 0; i < num_rows; i++){
@@ -162,6 +170,49 @@
             hot.render();
 
             currentButton = "null";
+        });
+
+        $('#expandSelection').click(function(){
+            var selected = null;
+
+            //If there is a marked data area we want to expand it
+            if(!jQuery.isEmptyObject(selectedDataArea)) {
+                selected = selectedDataArea;
+            } else{
+                //If there is no marked data area yet, we want to expand the current selection
+                selected = hot.getSelected();
+            }
+            
+            if(!jQuery.isEmptyObject(selected)) {
+                // check if selection is from right bottom to left top and reverse it
+                if(selected[2] <= selected[0] && selected[3] <= selected[1]) {
+                    selected = reverseArea(selected);
+                }
+
+                //Select the cells to the end of the table
+                hot.selectCell(selected[0], selected[1], hot.countRows() - 1, selected[3] );
+                //Get the new selection
+                selected = hot.getSelected();
+                selectedDataArea = selected;
+
+                // set the css class for all selected cells
+                for(i = selected[0]; i <= selected[2]; i++) {
+                    for(j = selected[1]; j <= selected[3]; j++) {
+                        var cell = hot.getCellMeta(i,j, true);
+                        cell.className = 'dataMarking';
+                    }
+                }
+
+                // render table again
+                hot.render();
+
+                // save selection area
+                $('#DataSelection').val(JSON.stringify(selected));
+                currentButton = null;
+
+                // push selection to the server
+                $.post('@Url.Action("SelectedAreaToBus", "EasyUploadSelectAreas", new RouteValueDictionary { { "area", "DCM" } })', { dataArea: JSON.stringify(selected) }, function (response) { });
+            }
         });
 
         if($('#HeaderSelection').val().length > 0) {
@@ -218,9 +269,12 @@
 
             <input type="button" class="t-button action areaSelect" id="setSelectDataArea" value="Data" />
             <input type="hidden" name="DataSelection" id="DataSelection" value="@Html.Raw(Model.DataArea)" />
+            <input type="button" class="t-button action areaSelect" id="expandSelection" value="Expand Selection" />
 
             <input type="button" class="t-button action areaSelect" id="setSelectReset" value="Reset" />
+            
             <div id="handsonExcelTable"></div>
+            
         </div>
 
         <div class="uploadWizardStep_Error stepper">
