@@ -1,6 +1,8 @@
 ﻿@using BExIS.Modules.Sam.UI.Models
 @using Telerik.Web.Mvc.UI
+
 @model IEnumerable<FeatureTreeViewItemModel>
+
 @(Html.Telerik().TreeView()
         .Name("treeViewFeatures")
         .BindTo(Model, mappings =>

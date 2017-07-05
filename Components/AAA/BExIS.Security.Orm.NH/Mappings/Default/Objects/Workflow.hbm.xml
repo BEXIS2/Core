@@ -15,6 +15,10 @@
 
     <property name="Description" type="String" />
     <property name="Name" type="String" />
+    <set name="Operations" inverse="true" cascade="save-update" lazy="true">
+      <key column="OperationRef" />
+      <one-to-many class="BExIS.Security.Entities.Objects.Operation, BExIS.Security.Entities" />
+    </set>
     <many-to-one name="Feature" column="FeatureRef" class="BExIS.Security.Entities.Objects.Feature, BExIS.Security.Entities" />
   </class>
 </hibernate-mapping>

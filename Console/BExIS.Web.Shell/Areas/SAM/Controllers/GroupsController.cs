@@ -74,7 +74,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
             var userManager = new UserManager(new UserStore());
 
             // Source + Transformation - Data
-            var users = userManager.Users.ToUserGridRowModel();
+            var users = userManager.Users.ToUserMembershipGridRowModel();
 
             // Filtering
             var filtered = users;

@@ -10,9 +10,25 @@
     <!--<Dependency moduleId="dcm" version="*.*.*" />-->
   </Dependencies>
   <Exports>
-    <Export tag="menubar" id="Research Planning" order="1"
+    <Export tag="menubar" id="ManageDataStructures" order="1"
             title="Manage Data Structures" description="Edit, Create or Delet Data Structures" icon=""
             controller="DataStructureSearch" action="" argument=""
-            extends="./menubarRoot"/>
+            extends="./menubarRoot/Planing"/>
+    <Export tag="menubar" id="ManageUnits" order="2"
+            title="Manage Units" description="Edit, Create or Delet Units" icon=""
+            controller="Unit" action="" argument=""
+            extends="./menubarRoot/Planing"/>
+    <Export tag="settings" id="ManageVariableTemplates" order="1"
+            title="Manage Variable Templates" description="Edit, Create or Delet Variable Templates" icon=""
+            controller="DataAttribute" action="AttributeManager" argument=""
+            extends="./settingsRoot" />
+    <Export tag="settings" id="ManageUnits" order="2"
+            title="Manage Units" description="Edit, Create or Delet Units" icon=""
+            controller="Unit" action="UnitManager" argument=""
+            extends="./settingsRoot" />
+    <Export tag="settings" id="ManageDataTypes" order="3"
+            title="Manage Data Types" description="Edit, Create or Delet Data Types" icon=""
+            controller="Home" action="DataTypeManager" argument=""
+            extends="./settingsRoot" />
   </Exports>
 </Manifest>

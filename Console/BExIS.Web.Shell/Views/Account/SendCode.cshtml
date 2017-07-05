@@ -1,4 +1,4 @@
-﻿@model BExIS.Web.Shell.Models.SendCodeModel
+﻿@model BExIS.Web.Shell.Models.SendCodeViewModel
 @{
     ViewBag.Title = "Senden";
 }
@@ -8,7 +8,7 @@
 @using (Html.BeginForm("SendCode", "Account", new { ReturnUrl = Model.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
 {
     @Html.AntiForgeryToken()
-    @Html.Hidden("RememberMe", @Model.RememberMe)
+    @Html.Hidden("rememberMe", @Model.RememberMe)
     <h4>Überprüfungscode senden</h4>
     <hr />
     <div class="row">

@@ -1,5 +1,4 @@
 ﻿using BExIS.Security.Entities.Authentication;
-using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Subjects;
 using Microsoft.AspNet.Identity;
 using System;
@@ -10,7 +9,7 @@ using Vaiona.Persistence.Api;
 
 namespace BExIS.Security.Services.Subjects
 {
-    public class UserStore : IUserEmailStore<User, long>, IUserPasswordStore<User, long>, IUserLoginStore<User, long>, IUserSecurityStampStore<User, long>, IUserLockoutStore<User, long>, IUserTwoFactorStore<User, long>, IUserRoleStore<User, long>, IQueryableUserStore<User, long>
+    public class UserStore : IUserEmailStore<User, long>, IUserPasswordStore<User, long>, IUserLoginStore<User, long>, IUserSecurityStampStore<User, long>, IUserLockoutStore<User, long>, IUserTwoFactorStore<User, long>, IQueryableUserStore<User, long>
     {
         public UserStore()
         {
@@ -18,13 +17,11 @@ namespace BExIS.Security.Services.Subjects
 
             GroupRepository = uow.GetReadOnlyRepository<Group>();
             LoginRepository = uow.GetReadOnlyRepository<Login>();
-            RoleRepository = uow.GetReadOnlyRepository<Role>();
             UserRepository = uow.GetReadOnlyRepository<User>();
         }
 
         public IReadOnlyRepository<Group> GroupRepository { get; }
         public IReadOnlyRepository<Login> LoginRepository { get; }
-        public IReadOnlyRepository<Role> RoleRepository { get; }
         public IReadOnlyRepository<User> UserRepository { get; }
         public IQueryable<User> Users => UserRepository.Query();
 
@@ -43,14 +40,6 @@ namespace BExIS.Security.Services.Subjects
         public Task AddToGroupAsync(User user, string groupName)
         {
             user.Groups.Add(GroupRepository.Query(m => m.Name.ToLowerInvariant() == groupName.ToLowerInvariant()).FirstOrDefault());
-            UpdateAsync(user);
-
-            return Task.FromResult(0);
-        }
-
-        public Task AddToRoleAsync(User user, string roleName)
-        {
-            user.Roles.Add(RoleRepository.Query(m => m.Name.ToLowerInvariant() == roleName.ToLowerInvariant()).FirstOrDefault());
             UpdateAsync(user);
 
             return Task.FromResult(0);
@@ -151,9 +140,9 @@ namespace BExIS.Security.Services.Subjects
             return Task.FromResult(user.Password);
         }
 
-        public Task<IList<string>> GetRolesAsync(User user)
+        public Task<IList<string>> GetGroupsAsync(User user)
         {
-            return Task.FromResult((IList<string>)user.Roles.Select(m => m.Name).ToList());
+            return Task.FromResult((IList<string>)user.Groups.Select(m => m.Name).ToList());
         }
 
         public Task<string> GetSecurityStampAsync(User user)
@@ -177,22 +166,14 @@ namespace BExIS.Security.Services.Subjects
             return Task.FromResult(user.AccessFailedCount);
         }
 
-        public Task<bool> IsInRoleAsync(User user, string roleName)
+        public Task<bool> IsInGroupAsync(User user, string groupName)
         {
-            return Task.FromResult(user.Roles.Any(m => m.Name.ToLowerInvariant() == roleName.ToLowerInvariant()));
+            return Task.FromResult(user.Groups.Any(m => m.Name.ToLowerInvariant() == groupName.ToLowerInvariant()));
         }
 
         public Task RemoveFromGroupAsync(User user, string groupName)
         {
             user.Groups.Remove(GroupRepository.Query(m => m.Name.ToLowerInvariant() == groupName.ToLowerInvariant()).FirstOrDefault());
-            UpdateAsync(user);
-
-            return Task.FromResult(0);
-        }
-
-        public Task RemoveFromRoleAsync(User user, string roleName)
-        {
-            user.Roles.Remove(RoleRepository.Query(m => m.Name.ToLowerInvariant() == roleName.ToLowerInvariant()).FirstOrDefault());
             UpdateAsync(user);
 
             return Task.FromResult(0);

@@ -57,6 +57,9 @@
     <Reference Include="Microsoft.Owin.Security.Cookies, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Microsoft.Owin.Security.Cookies.3.1.0\lib\net45\Microsoft.Owin.Security.Cookies.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Owin.Security.Facebook, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Microsoft.Owin.Security.Facebook.3.1.0\lib\net45\Microsoft.Owin.Security.Facebook.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Owin.Security.Google, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Microsoft.Owin.Security.Google.3.1.0\lib\net45\Microsoft.Owin.Security.Google.dll</HintPath>
     </Reference>
@@ -64,12 +67,12 @@
       <HintPath>..\..\..\packages\Microsoft.Owin.Security.OAuth.3.1.0\lib\net45\Microsoft.Owin.Security.OAuth.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.Owin.Security.Twitter, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Microsoft.Owin.Security.Twitter.3.1.0\lib\net45\Microsoft.Owin.Security.Twitter.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
-    </Reference>
-    <Reference Include="Oakenshield.Providers.Ldap">
-      <HintPath>..\..\..\..\..\..\Oakenshield\Oakenshield\Providers\Oakenshield.Providers.Ldap\bin\Release\Oakenshield.Providers.Ldap.dll</HintPath>
     </Reference>
     <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
@@ -77,6 +80,8 @@
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net.Http.WebRequest" />
     <Reference Include="Vaiona.Entities">
       <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Entities.dll</HintPath>
     </Reference>
@@ -89,23 +94,29 @@
     <Compile Include="Authorization\EntityPermissionManager.cs" />
     <Compile Include="Authorization\FeaturePermissionManager.cs" />
     <Compile Include="Authorization\PermissionManager.cs" />
-    <Compile Include="Authorization\RoleStore.cs" />
+    <Compile Include="Objects\DatasetStore.cs" />
     <Compile Include="Objects\EntityManager.cs" />
     <Compile Include="Objects\FeatureManager.cs" />
+    <Compile Include="Objects\IEntityStore.cs" />
+    <Compile Include="Objects\OperationManager.cs" />
     <Compile Include="Objects\WorkflowManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Requests\DecisionManager.cs" />
-    <Compile Include="Requests\EntityRequestManager.cs" />
     <Compile Include="Requests\RequestManager.cs" />
     <Compile Include="Subjects\GroupManager.cs" />
     <Compile Include="Subjects\SubjectManager.cs" />
     <Compile Include="Subjects\UserManager.cs" />
     <Compile Include="Subjects\UserStore.cs" />
     <Compile Include="Utilities\Auth.cs" />
+    <Compile Include="Utilities\AuthorizationDelegationImplementor.cs" />
     <Compile Include="Utilities\EmailService.cs" />
     <Compile Include="Utilities\SmsService.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\DLM\BExIS.Dlm.Services\BExIS.Dlm.Services.csproj">
+      <Project>{C4CA0A99-0AF3-4372-A9B7-B9073599BD8B}</Project>
+      <Name>BExIS.Dlm.Services</Name>
+    </ProjectReference>
     <ProjectReference Include="..\BExIS.Security.Entities\BExIS.Security.Entities.csproj">
       <Project>{C230693B-D780-438B-B26C-82257642DD5C}</Project>
       <Name>BExIS.Security.Entities</Name>

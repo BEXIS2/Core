@@ -1,0 +1,93 @@
+﻿@using BExIS.Modules.Sam.UI.Models
+@using Telerik.Web.Mvc.UI
+@model long
+
+@Html.ActionLink("Create Entity Permission", "Create", "EntityPermissions", null, new { @class = "bx-button function" })
+
+<ul class="nav nav-tabs">
+    <li class="active"><a data-toggle="tab" href="#users">Users</a></li>
+    <li><a data-toggle="tab" href="#groups">Groups</a></li>
+</ul>
+<div class="tab-content">
+    <div id="users" class="tab-pane fade in active">
+        @(Html.Telerik().Grid<UserEntityPermissionGridRowModel>()
+              .Name("gridUsers")
+              .Columns(columns =>
+              {
+                  columns.Bound(u => u.EntityId);
+                  columns.Bound(u => u.EntityName);
+                  columns.Bound(u => u.UserId);
+                  columns.Bound(u => u.UserName);
+                  columns.Bound(u => u.Rights);
+                  columns.Template(@<text>
+            <button type="button" class="bx bx-grid-function bx-edit" onclick="editGroup(@item.Id)"></button>
+            <button type="button" class="bx bx-grid-function bx-trash" onclick="deleteGroup(@item.Id)"></button>
+                </text>)
+                      .ClientTemplate("<button type=\"button\" class=\"bx bx-grid-function bx-edit\" onclick=\"editGroup(<#= Id #>);\" value=\"<#= Id #>\"></button>" +
+                                      "<button type=\"button\" class=\"bx bx-grid-function bx-trash\" onclick=\"deleteGroup(<#= Id #>);\" value=\"<#= Id #>\"></button>")
+                      .Width(70);
+              })
+              .ClientEvents(events =>
+              {
+                  events.OnDataBound("onDataBound");
+              })
+              .DataBinding(dataBinding => dataBinding
+                  .Ajax()
+                  .Select("UserEntityPermissions_Select", "EntityPermissions", new { EntityId = Model })
+              )
+              .EnableCustomBinding(true)
+              .Filterable()
+              .Pageable(pageable =>
+              {
+                  pageable.PageSize(10, new[] { 10, 20, 50, 100 });
+                  pageable.Style(GridPagerStyles.NextPreviousAndNumeric | GridPagerStyles.PageSizeDropDown);
+                  pageable.Position(GridPagerPosition.Both);
+              })
+              .Sortable())
+    </div>
+    <div id="groups" class="tab-pane fade">
+        @(Html.Telerik().Grid<GroupEntityPermissionGridRowModel>()
+              .Name("gridGroups")
+              .Columns(columns =>
+              {
+                  columns.Bound(g => g.EntityId);
+                  columns.Bound(g => g.EntityName);
+                  columns.Bound(g => g.GroupId);
+                  columns.Bound(g => g.GroupName);
+                  columns.Bound(g => g.Rights);
+                  columns.Template(@<text>
+            <button type="button" class="bx bx-grid-function bx-edit" onclick="editGroup(@item.Id)"></button>
+            <button type="button" class="bx bx-grid-function bx-trash" onclick="deleteGroup(@item.Id)"></button>
+                </text>)
+                      .ClientTemplate("<button type=\"button\" class=\"bx bx-grid-function bx-edit\" onclick=\"editGroup(<#= Id #>);\" value=\"<#= Id #>\"></button>" +
+                                      "<button type=\"button\" class=\"bx bx-grid-function bx-trash\" onclick=\"deleteGroup(<#= Id #>);\" value=\"<#= Id #>\"></button>")
+                      .Width(70);
+              })
+              .ClientEvents(events =>
+              {
+                  events.OnDataBound("onDataBound");
+              })
+              .DataBinding(dataBinding => dataBinding
+                  .Ajax()
+                  .Select("GroupEntityPermissions_Select", "EntityPermissions", new { EntityId = Model })
+              )
+              .EnableCustomBinding(true)
+              .Filterable()
+              .Pageable(pageable =>
+              {
+                  pageable.PageSize(10, new[] { 10, 20, 50, 100 });
+                  pageable.Style(GridPagerStyles.NextPreviousAndNumeric | GridPagerStyles.PageSizeDropDown);
+                  pageable.Position(GridPagerPosition.Both);
+              })
+              .Sortable(sortable => sortable.OrderBy(order => order.Add(c => c.EntityId).Descending()))
+        )
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    function onDataBound() {
+        addTooltips();
+        resetAllTelerikIconTitles();
+    }
+</script>

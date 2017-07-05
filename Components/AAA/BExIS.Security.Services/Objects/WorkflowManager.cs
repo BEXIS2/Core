@@ -26,6 +26,23 @@ namespace BExIS.Security.Services.Objects
             }
         }
 
+        public Workflow Create()
+        {
+            var workflow = new Workflow()
+            {
+
+            };
+
+            using (var uow = this.GetUnitOfWork())
+            {
+                var workflowRepository = uow.GetRepository<Workflow>();
+                workflowRepository.Put(workflow);
+                uow.Commit();
+            }
+
+            return workflow;
+        }
+
         public void Delete(Workflow workflow)
         {
             using (var uow = this.GetUnitOfWork())
