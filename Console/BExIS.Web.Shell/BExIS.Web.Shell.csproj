@@ -394,6 +394,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\FooterController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\TermsController.cs" />
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Controllers\UiTestController.cs" />
@@ -404,6 +405,7 @@
     <Compile Include="Helpers\BexisModelManager.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\EntitySelectorModel.cs" />
+    <Compile Include="Models\ManageModels.cs" />
     <Compile Include="Models\UiTestModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
@@ -826,23 +828,27 @@
     <Content Include="Views\Shared\EditorTemplates\TreeViewItem.cshtml" />
     <Content Include="Themes\Default\Partials\_Menu.cshtml" />
     <Content Include="Views\Terms\Index.cshtml" />
-    <Content Include="Views\Account\EmailConfirmation.cshtml" />
-    <Content Include="Views\Account\ExternalSignInConfirmation.cshtml" />
-    <Content Include="Views\Account\ExternalSignInFailure.cshtml" />
+    <Content Include="Views\Footer\Content.cshtml" />
+    <Content Include="Views\Shared\Error.cshtml" />
+    <Content Include="Views\Shared\Lockout.cshtml" />
+    <Content Include="Views\Account\ConfirmEmail.cshtml" />
+    <Content Include="Views\Account\ExternalLoginConfirmation.cshtml" />
+    <Content Include="Views\Account\ExternalLoginFailure.cshtml" />
     <Content Include="Views\Account\ForgotPassword.cshtml" />
     <Content Include="Views\Account\ForgotPasswordConfirmation.cshtml" />
+    <Content Include="Views\Account\Login.cshtml" />
+    <Content Include="Views\Account\Register.cshtml" />
     <Content Include="Views\Account\ResetPassword.cshtml" />
     <Content Include="Views\Account\ResetPasswordConfirmation.cshtml" />
     <Content Include="Views\Account\SendCode.cshtml" />
-    <Content Include="Views\Account\SignIn.cshtml" />
-    <Content Include="Views\Account\SignUp.cshtml" />
     <Content Include="Views\Account\VerifyCode.cshtml" />
-    <Content Include="Views\Account\_ExternalSignIns.cshtml" />
-    <Content Include="Views\Account\_RemoveAccount.cshtml" />
-    <Content Include="Views\Shared\Info.cshtml" />
-    <Content Include="Views\Shared\Error.cshtml" />
-    <Content Include="Views\Shared\LockOut.cshtml" />
-    <Content Include="Views\Footer\Content.cshtml" />
+    <Content Include="Views\Account\_ExternalLoginsListPartial.cshtml" />
+    <Content Include="Views\Manage\AddPhoneNumber.cshtml" />
+    <Content Include="Views\Manage\ChangePassword.cshtml" />
+    <Content Include="Views\Manage\Index.cshtml" />
+    <Content Include="Views\Manage\ManageLogins.cshtml" />
+    <Content Include="Views\Manage\SetPassword.cshtml" />
+    <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

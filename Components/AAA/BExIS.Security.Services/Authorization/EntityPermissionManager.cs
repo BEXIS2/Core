@@ -33,6 +33,24 @@ namespace BExIS.Security.Services.Authorization
             }
         }
 
+        public void Create(Subject subject, Entity entity, long key, short rights)
+        {
+            var entityPermission = new EntityPermission()
+            {
+                Subject = subject,
+                Entity = entity,
+                Key = key,
+                Rights = rights
+            };
+
+            using (var uow = this.GetUnitOfWork())
+            {
+                var entityPermissionRepository = uow.GetRepository<EntityPermission>();
+                entityPermissionRepository.Put(entityPermission);
+                uow.Commit();
+            }
+        }
+
         public void Delete(EntityPermission entityPermission)
         {
             using (var uow = this.GetUnitOfWork())
@@ -43,9 +61,24 @@ namespace BExIS.Security.Services.Authorization
             }
         }
 
+        public void Delete(long entityPermissionId)
+        {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var entityPermissionRepository = uow.GetRepository<EntityPermission>();
+                entityPermissionRepository.Delete(EntityPermissionRepository.Get(entityPermissionId));
+                uow.Commit();
+            }
+        }
+
+        public EntityPermission FindById(long entityPermissionId)
+        {
+            return EntityPermissionRepository.Get(entityPermissionId);
+        }
+
         public short GetRights(Subject subject, Entity entity, long key)
         {
-            var entityPermission = EntityPermissionRepository.Get(m => m.Subject.Id == subject.Id && m.Entity.Id == entity.Id && m.Key == key).FirstOrDefault();
+            var entityPermission = EntityPermissionRepository.Get(m => m.Subject.Id == subject.Id && m.Entity.Id == entity.Id).FirstOrDefault();
             return entityPermission?.Rights ?? 0;
         }
 

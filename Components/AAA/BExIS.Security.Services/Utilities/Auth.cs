@@ -2,6 +2,7 @@
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.DataProtection;
+using Microsoft.Owin.Security.Google;
 using Owin;
 
 namespace BExIS.Security.Services.Utilities
@@ -14,13 +15,12 @@ namespace BExIS.Security.Services.Utilities
         public static void Configure(IAppBuilder app)
         {
             DataProtectionProvider = app.GetDataProtectionProvider();
-            // Enable the application to use a cookie to store information for the signed in user
+
             app.UseCookieAuthentication(new CookieAuthenticationOptions
             {
                 AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
-                LoginPath = new PathString("/Account/SignIn")
+                LoginPath = new PathString("/Account/Login"),
             });
-            // Use a cookie to temporarily store information about a user logging in with a third party login provider
             app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
 
             // Uncomment the following lines to enable logging in with third party login providers
@@ -29,20 +29,20 @@ namespace BExIS.Security.Services.Utilities
             //    clientSecret: "");
 
             //app.UseTwitterAuthentication(
-            //   consumerKey: "",
-            //   consumerSecret: "");
+            //   consumerKey: "dfgdfgdfgd",
+            //   consumerSecret: "dfgdfffffffg");
 
-            //app.UseLdapAuthentication(new LdapAuthenticationOptions("", "", "", "", "", 0, ""));
+            //app.UseLdapAuthentication(new LdapAuthenticationOptions("/signin-ldap", "host"));
 
             //app.UseFacebookAuthentication(
-            //   appId: "",
-            //   appSecret: "");
+            //   appId: "sfg",
+            //   appSecret: "ffffffffffff");
 
-            //app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
-            //{
-            //    ClientId = "587369244487-l9567jtupsnsc0j8pa7gatvsj9bfipic.apps.googleusercontent.com",
-            //    ClientSecret = "DtLaArW-ybAKCKv3aFVFGsac"
-            //});
+            app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
+            {
+                ClientId = "587369244487-l9567jtupsnsc0j8pa7gatvsj9bfipic.apps.googleusercontent.com",
+                ClientSecret = "DtLaArW-ybAKCKv3aFVFGsac"
+            });
         }
     }
 }

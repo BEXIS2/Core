@@ -1,5 +1,4 @@
-﻿using BExIS.Security.Entities.Authorization;
-using BExIS.Security.Entities.Subjects;
+﻿using BExIS.Security.Entities.Subjects;
 using System.Linq;
 using Vaiona.Persistence.Api;
 
@@ -12,18 +11,10 @@ namespace BExIS.Security.Services.Subjects
             var uow = this.GetUnitOfWork();
 
             GroupRepository = uow.GetReadOnlyRepository<Group>();
-            RoleRepository = uow.GetReadOnlyRepository<Role>();
         }
 
         public IQueryable<Group> Groups => GroupRepository.Query();
         private IReadOnlyRepository<Group> GroupRepository { get; }
-        private IReadOnlyRepository<Role> RoleRepository { get; }
-
-        public void AddToRole(Group group, string roleName)
-        {
-            group.Roles.Add(RoleRepository.Query(m => m.Name.ToLowerInvariant() == roleName.ToLowerInvariant()).FirstOrDefault());
-            Update(group);
-        }
 
         public void Create(Group group)
         {
@@ -53,12 +44,6 @@ namespace BExIS.Security.Services.Subjects
         public Group FindByName(string groupName)
         {
             return GroupRepository.Query(m => m.Name.ToLowerInvariant() == groupName.ToLowerInvariant()).FirstOrDefault();
-        }
-
-        public void RemoveFromRole(Group group, string roleName)
-        {
-            group.Roles.Remove(RoleRepository.Query(m => m.Name.ToLowerInvariant() == roleName.ToLowerInvariant()).FirstOrDefault());
-            Update(group);
         }
 
         public void Update(Group group)
