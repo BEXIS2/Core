@@ -98,7 +98,7 @@ namespace BExIS.Security.Services.Authorization
             return EntityPermissionRepository.Get(entityPermissionId);
         }
 
-        public short GetRights(Subject subject, Entity entity, long key)
+        public int GetRights(Subject subject, Entity entity, long key)
         {
             var entityPermission = EntityPermissionRepository.Get(m => m.Subject.Id == subject.Id && m.Entity.Id == entity.Id).FirstOrDefault();
             return entityPermission?.Rights ?? 0;
@@ -117,7 +117,7 @@ namespace BExIS.Security.Services.Authorization
             var subject = SubjectRepository.Query(s => s.Name.ToUpperInvariant() == subjectName.ToUpperInvariant() && s.GetType() == subjectType).FirstOrDefault();
             var entity = EntityRepository.Query(e => e.Name.ToUpperInvariant() == entityName.ToUpperInvariant() && e.Name.GetType() == entityType).FirstOrDefault();
 
-            var keys = EntityPermissionRepository.Query(e => e.Subject.Id == subject.Id && e.Entity.Id == entity.Id && e.Rights >=)
+            //var keys = EntityPermissionRepository.Query(e => e.Subject.Id == subject.Id && e.Entity.Id == entity.Id && e.Rights >=)
 
             return new List<long>();
         }
