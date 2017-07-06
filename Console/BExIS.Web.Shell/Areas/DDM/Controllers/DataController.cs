@@ -834,7 +834,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             List<DatasetPermissionGridRowModel> subjects = new List<DatasetPermissionGridRowModel>();
 
-            // TODO: refactor
+            // TODO: refactor ( SVEN )
+            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
+
             //IQueryable<Subject> data = subjectManager.GetAllSubjects();
             //data.ToList().ForEach(s => subjects.Add(DatasetPermissionGridRowModel.Convert(dataId, entityManager.GetEntityById(1), s, permissionManager.GetAllRights(s.Id, 1, dataId).ToList())));
 
@@ -842,7 +844,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             return View(new GridModel<DatasetPermissionGridRowModel> { Data = subjects });
         }
 
-        // TODO: refactor
+        // TODO: refactor ( SVEN )
         //public DataPermission CreateDataPermission(long subjectId, long entityId, long dataId, int rightType)
         //{
         //    PermissionManager permissionManager = new PermissionManager();
