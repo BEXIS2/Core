@@ -1,7 +1,9 @@
 ﻿
+using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.Administration;
+using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Security.Entities.Objects;
@@ -77,8 +79,8 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
             Entity entity = new Entity();
             entity.Name = "Dataset";
-            entity.AssemblyPath = "BExIS.Dlm.Entities";
-            entity.ClassPath = "BExIS.Dlm.Entities.Data.Dataset";
+            entity.EntityType = typeof(Dataset);
+            entity.EntityStoreType = typeof(DatasetManager);
             entity.UseMetadata = true;
             entity.Securable = true;
 
@@ -88,96 +90,108 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             #endregion
 
             #region SECURITY
-            //TaskManager taskManager = new TaskManager();
-            //////generic form for metadata
-            //taskManager.CreateTask("DCM", "Form", "*");
-            //taskManager.CreateTask("DCM", "Help", "*");
+            //workflows = größere sachen, vielen operation
+            //operations = einzelne actions
 
-            //Feature f1 = new Feature()
-            //{
-            //    Name = "Data Collection",
-            //    Description = "Data Collection"
-            //};
-
-            //FeatureManager featureManager = new FeatureManager();
-            //featureManager.Create(f1);
-            //Feature f11 = featureManager.CreateFeature("Dataset Creation", "Dataset Creation", f1.Id);
-            //Feature f12 = featureManager.CreateFeature("Dataset Upload", "Dataset Upload", f10.Id);
-            //Feature f17 = featureManager.CreateFeature("Metadata Management", "Metadata Management", f10.Id);
+            //1.controller -> 1.Operation
 
 
-            //#region Create
-            //Task t9 = taskManager.CreateTask("DCM", "CreateDataset", "*");
-            //t9.Feature = f11;
-            //taskManager.UpdateTask(t9);
-            //Task t10 = taskManager.CreateTask("DCM", "CreateSelectDatasetSetup", "*");
-            //t10.Feature = f11;
-            //taskManager.UpdateTask(t10);
-            //Task t11 = taskManager.CreateTask("DCM", "CreateSetMetadataPackage", "*");
-            //t11.Feature = f11;
-            //taskManager.UpdateTask(t11);
-            //Task t12 = taskManager.CreateTask("DCM", "CreateSummary", "*");
-            //t12.Feature = f11;
-            //taskManager.UpdateTask(t12);
+            FeatureManager featureManager = new FeatureManager();
 
-            //#endregion
-
-            //#region Upload
-
-            //Task t15 = taskManager.CreateTask("DCM", "Push", "*");
-            //t15.Feature = f12;
-            //taskManager.UpdateTask(t15);
-            //Task t16 = taskManager.CreateTask("DCM", "Submit", "*");
-            //t16.Feature = f12;
-            //taskManager.UpdateTask(t16);
-            //Task t17 = taskManager.CreateTask("DCM", "SubmitDefinePrimaryKey", "*");
-            //t17.Feature = f12;
-            //taskManager.UpdateTask(t17);
-            //Task t18 = taskManager.CreateTask("DCM", "SubmitGetFileInformation", "*");
-            //t18.Feature = f12;
-            //taskManager.UpdateTask(t18);
-            //Task t19 = taskManager.CreateTask("DCM", "SubmitSelectAFile", "*");
-            //t19.Feature = f12;
-            //taskManager.UpdateTask(t19);
-            //Task t20 = taskManager.CreateTask("DCM", "SubmitSpecifyDataset", "*");
-            //t20.Feature = f12;
-            //taskManager.UpdateTask(t20);
-            //Task t21 = taskManager.CreateTask("DCM", "SubmitSummary", "*");
-            //t21.Feature = f12;
-            //taskManager.UpdateTask(t21);
-            //Task t22 = taskManager.CreateTask("DCM", "SubmitValidation", "*");
-            //t22.Feature = f12;
-            //taskManager.UpdateTask(t22);
-
-            //#endregion
-
-            //#region Metadata 
-
-            //Task t28 = taskManager.CreateTask("DCM", "ImportMetadataStructureReadSource", "*");
-            //t28.Feature = f17;
-            //taskManager.UpdateTask(t28);
-
-            //Task t29 = taskManager.CreateTask("DCM", "ImportMetadataStructureSelectAFile", "*");
-            //t29.Feature = f17;
-            //taskManager.UpdateTask(t29);
-
-            //Task t30 = taskManager.CreateTask("DCM", "ImportMetadataStructureSetParameters", "*");
-            //t30.Feature = f17;
-            //taskManager.UpdateTask(t30);
-
-            //Task t31 = taskManager.CreateTask("DCM", "ImportMetadataStructureSummary", "*");
-            //t31.Feature = f17;
-            //taskManager.UpdateTask(t31);
+            Feature DataCollectionFeature = featureManager.Create("Data Collection", "Data Collection");
 
 
-
-            //Task t38 = taskManager.CreateTask("DCM", "ManageMetadataStructure", "*");
-            //t38.Feature = f17;
-            //taskManager.UpdateTask(t38);
-
-            //#endregion
+            Feature DatasetCreationFeature = featureManager.Create("Dataset Creation", "Dataset Creation", DataCollectionFeature);
+            Feature DatasetUploadFeature = featureManager.Create("Dataset Upload", "Dataset Upload", DataCollectionFeature);
+            Feature MetadataManagementFeature = featureManager.Create("Metadata Management", "Metadata Management", DataCollectionFeature);
 
 
+            //worklfows -> create dataset ->
+            WorkflowManager workflowManager = new WorkflowManager();
+
+            var operation = new Operation();
+            Workflow workflow = new Workflow();
+            OperationManager operationManager = new OperationManager();
+
+            #region Help Workflow
+
+            workflow = new Workflow();
+            workflow.Name = "Data Collection Help";
+            workflowManager.Create(workflow);
+
+            operation = operationManager.Create("DCM", "Help", "*", null, workflow);
+            workflow.Operations.Add(operation);
+
+            DataCollectionFeature.Workflows.Add(workflow);
+
+            #endregion 
+
+            #region Create Dataset Workflow
+
+            workflow = new Workflow();
+            workflow.Name = "Create Dataset";
+            workflowManager.Create(workflow);
+
+            operation = operationManager.Create("DCM", "CreateDataset", "*", null, workflow);
+            workflow.Operations.Add(operation);
+            operation = operationManager.Create("DCM", "Form", "*", null, workflow);
+            workflow.Operations.Add(operation);
+
+            DatasetCreationFeature.Workflows.Add(workflow);
+
+            #endregion
+
+            #region Update Dataset Workflow
+
+            workflow = new Workflow();
+            workflow.Name = "Update Dataset";
+            workflowManager.Create(workflow);
+
+            operation = operationManager.Create("DCM", "Push", "*", null, workflow);
+            workflow.Operations.Add(operation);
+            operation = operationManager.Create("DCM", "Submit", "*", null, workflow);
+            workflow.Operations.Add(operation);
+            operation = operationManager.Create("DCM", "SubmitDefinePrimaryKey", "*", null, workflow);
+            workflow.Operations.Add(operation);
+            operation = operationManager.Create("DCM", "SubmitGetFileInformation", "*", null, workflow);
+            workflow.Operations.Add(operation);
+            operation = operationManager.Create("DCM", "SubmitSelectAFile", "*", null, workflow);
+            workflow.Operations.Add(operation);
+            operation = operationManager.Create("DCM", "SubmitSpecifyDataset", "*", null, workflow);
+            workflow.Operations.Add(operation);
+            operation = operationManager.Create("DCM", "SubmitSummary", "*", null, workflow);
+            workflow.Operations.Add(operation);
+            operation = operationManager.Create("DCM", "SubmitValidation", "*", null, workflow);
+            workflow.Operations.Add(operation);
+
+            DatasetUploadFeature.Workflows.Add(workflow);
+
+            #endregion
+
+            #region Metadata Managment Workflow
+
+            workflow = new Workflow();
+            workflow.Name = "Metadata Managment";
+            workflowManager.Create(workflow);
+
+            workflow.Operations.Add(operation);
+            operation = operationManager.Create("DCM", "ImportMetadataStructureReadSource", "*", null, workflow);
+            workflow.Operations.Add(operation);
+            operation = operationManager.Create("DCM", "ImportMetadataStructureSelectAFile", "*", null, workflow);
+            workflow.Operations.Add(operation);
+            operation = operationManager.Create("DCM", "ImportMetadataStructureSetParameters", "*", null, workflow);
+            workflow.Operations.Add(operation);
+            operation = operationManager.Create("DCM", "ImportMetadataStructureSummary", "*", null, workflow);
+            workflow.Operations.Add(operation);
+            operation = operationManager.Create("DCM", "ManageMetadataStructure", "*", null, workflow);
+            workflow.Operations.Add(operation);
+            operation = operationManager.Create("DCM", "SubmitSpecifyDataset", "*", null, workflow);
+            workflow.Operations.Add(operation);
+
+
+            MetadataManagementFeature.Workflows.Add(workflow);
+
+            #endregion
 
             #endregion
 
@@ -185,7 +199,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
 
             if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("Basic ABCD")))
-                ImportSchema("Basic ABCD", "ABCD_2.06.XSD", "Dataset", "BExIS.Dlm.Entities.Data.Dataset");
+                ImportSchema("Basic ABCD", "ABCD_2.06.XSD", entity.Name, entity.EntityType.FullName);
 
             #endregion
         }
