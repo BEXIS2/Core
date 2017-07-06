@@ -10,6 +10,9 @@ using BExIS.IO;
 using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Modules.Dcm.UI.Models.CreateDataset;
 using BExIS.Modules.Dcm.UI.Models.Metadata;
+using BExIS.Security.Entities.Authorization;
+using BExIS.Security.Entities.Subjects;
+using BExIS.Security.Services.Authorization;
 using BExIS.Utils.Data.MetadataStructure;
 using BExIS.Xml.Helpers;
 using BExIS.Xml.Helpers.Mapping;
@@ -2726,31 +2729,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             #region security permissions and authorisations check
 
-            // set edit rigths
-            // TODO: refactor
-            //PermissionManager permissionManager = new PermissionManager();
-            //SubjectManager subjectManager = new SubjectManager();
-            //Security.Services.Objects.TaskManager securityTaskManager = new Security.Services.Objects.TaskManager();
-
-            //bool hasAuthenticationRigths = false;
-
-            //User user = subjectManager.GetUserByName(GetUsernameOrDefault());
-            //long userid = -1;
-
-            //if (user != null)
-            //{
-            //    userid = subjectManager.GetUserByName(GetUsernameOrDefault()).Id;
-
-            //    hasAuthenticationRigths = permissionManager.HasUserDataAccess(userid, 1, entityId, RightType.Update);
-
-            //    return (hasAuthenticationRigths);
-            //}
-            //else
-            //{
-            //    return false;
-            //}
-
-            return false;
+            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
+            return entityPermissionManager.HasRight(GetUsernameOrDefault(), typeof(User), "Dataset", entityId, RightType.Write);
 
             #endregion security permissions and authorisations check
         }
