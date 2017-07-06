@@ -41,16 +41,10 @@ namespace BExIS.Modules.Rpm.UI.Models
 
         public Structure(long datasetId) : this()
         {
-            // Model objects MUST have no access to the services, or database!!
-            DatasetManager datasetManager = new DatasetManager();
-            // the dataset is retreived just for testing the NULL
-            if (datasetManager.DatasetRepo.Get(datasetId) != null)
+            DataStructureResultStruct dataStructureResultStruct = new DataStructureResultStruct(datasetId);
+            if (dataStructureResultStruct != null)
             {
-                // The dataset is retrieved for the 2nd time to get its structure id!!
-                this.DataStructureId = datasetManager.DatasetRepo.Get(datasetId).DataStructure.Id;
-                DataStructureResultStruct dataStructureResultStruct = new DataStructureResultStruct(DataStructureId);
-                // The dataset is retrieved to get its Id!!! the id was available in datasetId as well as in previous calls
-                this.Id = datasetManager.DatasetRepo.Get(datasetId).Id;
+                this.Id = dataStructureResultStruct.Id;
                 this.Title = dataStructureResultStruct.Title;
                 this.Description = dataStructureResultStruct.Description;
                 this.inUse = dataStructureResultStruct.inUse;
