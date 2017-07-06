@@ -52,14 +52,15 @@ namespace BExIS.Security.Services.Authorization
             }
         }
 
-        public EntityPermission Create(string subjectName, Type subjectType, string entityName, Type entityType, long key, short rights)
+        public EntityPermission Create(string subjectName, Type subjectType, string entityName, Type entityType, long key, List<RightType> rights)
         {
             var entityPermission = new EntityPermission()
             {
                 Subject = SubjectRepository.Query(s => s.Name.ToUpperInvariant() == subjectName.ToUpperInvariant() && s.GetType() == subjectType).FirstOrDefault(),
                 Entity = EntityRepository.Query(e => e.Name.ToUpperInvariant() == entityName.ToUpperInvariant() && e.Name.GetType() == entityType).FirstOrDefault(),
                 Key = key,
-                Rights = rights
+                // ToDo
+                Rights = 0
             };
 
             using (var uow = this.GetUnitOfWork())
@@ -113,6 +114,11 @@ namespace BExIS.Security.Services.Authorization
 
         public List<long> GetKeys(string subjectName, Type subjectType, string entityName, Type entityType, RightType rightType)
         {
+            var subject = SubjectRepository.Query(s => s.Name.ToUpperInvariant() == subjectName.ToUpperInvariant() && s.GetType() == subjectType).FirstOrDefault();
+            var entity = EntityRepository.Query(e => e.Name.ToUpperInvariant() == entityName.ToUpperInvariant() && e.Name.GetType() == entityType).FirstOrDefault();
+
+            var keys = EntityPermissionRepository.Query(e => e.Subject.Id == subject.Id && e.Entity.Id == entity.Id && e.Rights >=)
+
             return new List<long>();
         }
 
