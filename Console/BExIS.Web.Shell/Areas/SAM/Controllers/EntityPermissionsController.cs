@@ -1,8 +1,10 @@
 ﻿using BExIS.Dlm.Entities.Data;
 using BExIS.Modules.Sam.UI.Models;
+using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
+using BExIS.Utils.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,19 +39,25 @@ namespace BExIS.Modules.Sam.UI.Controllers
             var entityPermissionManager = new EntityPermissionManager();
 
             // Source + Transformation - Data
-            var groupEntityPermissions = entityPermissionManager.EntityPermissions.Where(m => m.Entity.Id == entityId);
+            var entityPermissions = entityPermissionManager.EntityPermissions.Where(m => m.Entity.Id == entityId);
+            var total = entityPermissions.Count();
 
             // Filtering
-            var total = groupEntityPermissions.Count();
+            entityPermissions = entityPermissions.FilterBy<EntityPermission, EntityPermissionGridRowModel>(command.FilterDescriptors as List<FilterDescriptor>);
+            var filtered = entityPermissions.Count();
+
 
             // Sorting
-            var sorted = (IQueryable<GroupEntityPermissionGridRowModel>)groupEntityPermissions.Sort(command.SortDescriptors);
+            var sorted = entityPermissions.Sort(command.SortDescriptors);
 
             // Paging
             var paged = sorted.Skip((command.Page - 1) * command.PageSize)
                 .Take(command.PageSize);
 
-            return View(new GridModel<GroupEntityPermissionGridRowModel> { Data = paged.ToList(), Total = total });
+            // Transformation - Table
+            var data = entityPermissions.Select(e => EntityPermissionGridRowModel.Convert(e));
+
+            return View(new GridModel<EntityPermissionGridRowModel> { Data = data, Total = total });
         }
 
         public ActionResult Index()
