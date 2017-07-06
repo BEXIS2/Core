@@ -44,10 +44,25 @@ namespace BExIS.Modules.Sam.UI.Models
 
     public class EntityPermissionGridRowModel
     {
+        public long Id { get; set; }
+        public long EntityId { get; set; }
+        public long Key { get; set; }
+        public long SubjectId { get; set; }
+        public string SubjectName { get; set; }
+        public string SubjectType { get; set; }
+        public short Rights { get; set; }
+
         public static EntityPermissionGridRowModel Convert(EntityPermission entityPermission)
         {
             return new EntityPermissionGridRowModel()
             {
+                Id = entityPermission.Id,
+                EntityId = entityPermission.Entity.Id,
+                Key = entityPermission.Key,
+                Rights = entityPermission.Rights,
+                SubjectType = entityPermission.Subject.GetType().ToString(),
+                SubjectName = entityPermission.Subject.Name,
+                SubjectId = entityPermission.Subject.Id
             };
         }
     }
