@@ -1,6 +1,7 @@
 ﻿
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Objects;
+using System.Linq;
 
 namespace BExIS.Modules.Ddm.UI.Helpers
 {
@@ -17,11 +18,17 @@ namespace BExIS.Modules.Ddm.UI.Helpers
 
             FeatureManager featureManager = new FeatureManager();
 
-            Feature DataDiscovery = featureManager.Create("Search", "Search");
+
+            Feature DataDiscovery = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Data Discovery"));
+            if (DataDiscovery == null) DataDiscovery = featureManager.Create("Data Discovery", "Data Discovery");
+
+            Feature SearchFeature = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Search") && f.Parent.Id.Equals(DataDiscovery.Id));
+            if (SearchFeature == null) SearchFeature = featureManager.Create("Search", "Search");
+
+            Feature SearchManagementFeature = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Search Management") && f.Parent.Id.Equals(DataDiscovery.Id));
+            if (SearchManagementFeature == null) SearchManagementFeature = featureManager.Create("Search Management", "Search Management");
 
 
-            Feature SearchFeature = featureManager.Create("Search", "Search", DataDiscovery);
-            Feature SearchManagementFeature = featureManager.Create("Search Management", "Search Management", DataDiscovery);
 
             //worklfows -> create dataset ->
             WorkflowManager workflowManager = new WorkflowManager();
@@ -33,41 +40,38 @@ namespace BExIS.Modules.Ddm.UI.Helpers
 
             #region Help Workflow
 
-            workflow = new Workflow();
-            workflow.Name = "Search Help";
-            workflowManager.Create(workflow);
+            workflow =
+                workflowManager.WorkflowRepository
+                    .Get()
+                    .FirstOrDefault(w => w.Name.Equals("Search Help") && w.Feature.Id.Equals(DataDiscovery.Id));
+            if (workflow == null) workflow = workflowManager.Create("Search Help", "", DataDiscovery);
 
-            operation = operationManager.Create("DDM", "Help", "*", null, workflow);
-            workflow.Operations.Add(operation);
-
-            DataDiscovery.Workflows.Add(workflow);
+            operationManager.Create("DDM", "Help", "*", null, workflow);
 
             #endregion
 
             #region Search Workflow
 
-            workflow = new Workflow();
-            workflow.Name = "Search";
-            workflowManager.Create(workflow);
+            workflow =
+                workflowManager.WorkflowRepository
+                    .Get()
+                    .FirstOrDefault(w => w.Name.Equals("Search") && w.Feature.Id.Equals(SearchFeature.Id));
+            if (workflow == null) workflow = workflowManager.Create("Search", "", SearchFeature);
 
-            operation = operationManager.Create("DDM", "Home", "*", null, workflow);
-            workflow.Operations.Add(operation);
-            operation = operationManager.Create("DDM", "Data", "*", null, workflow);
-            workflow.Operations.Add(operation);
-            SearchFeature.Workflows.Add(workflow);
+            operationManager.Create("DDM", "Home", "*", null, workflow);
+            operationManager.Create("DDM", "Data", "*", null, workflow);
 
             #endregion
 
             #region Search Admin Workflow
 
-            workflow = new Workflow();
-            workflow.Name = "Search Managment";
-            workflowManager.Create(workflow);
+            workflow =
+                workflowManager.WorkflowRepository
+                    .Get()
+                    .FirstOrDefault(w => w.Name.Equals("Search Managment") && w.Feature.Id.Equals(SearchManagementFeature.Id));
+            if (workflow == null) workflow = workflowManager.Create("Search", "", SearchManagementFeature);
 
-            operation = operationManager.Create("DDM", "Admin", "*", null, workflow);
-            workflow.Operations.Add(operation);
-
-            SearchManagementFeature.Workflows.Add(workflow);
+            operationManager.Create("DDM", "Admin", "*", null, workflow);
 
             #endregion
 
