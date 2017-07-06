@@ -56,12 +56,7 @@ namespace BExIS.Security.Services.Authorization
             }
         }
 
-        public bool HasAccess(string subjectName, Type subjectType, string featureName)
-        {
-            return false;
-        }
-
-        public bool HasAccess(string subjectName, Type subjectType, long featureId)
+        public bool HasAccess(string subjectName, Type subjectType, string module, string controller, string action)
         {
             return false;
         }
