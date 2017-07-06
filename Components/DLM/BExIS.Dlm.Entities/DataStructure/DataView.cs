@@ -11,7 +11,7 @@ namespace BExIS.Dlm.Entities.DataStructure
     ///
     /// </summary>
     /// <remarks></remarks>        
-    public class DataView: BaseEntity
+    public class DatasetView: BaseEntity
     {
         /// <summary>
         ///

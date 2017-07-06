@@ -18,5 +18,21 @@ namespace BExIS.Modules.Ddm.UI
             base.Install();
             DdmSeedDataGenerator.GenerateSeedData();
         }
+
+        public override void Start()
+        {
+            base.Start();
+        }
+
+        public override void Shutdown()
+        {
+            base.Shutdown();
+        }
+
+        public override void Uninstall()
+        {
+            base.Uninstall();
+        }
+
     }
 }
