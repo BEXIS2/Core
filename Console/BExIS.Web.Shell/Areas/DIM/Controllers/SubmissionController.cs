@@ -8,10 +8,13 @@ using BExIS.Dlm.Services.Data;
 using BExIS.IO;
 using BExIS.IO.Transform.Output;
 using BExIS.Modules.Dim.UI.Models;
+using BExIS.Security.Entities.Authorization;
+using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Subjects;
 using BExIS.Xml.Helpers;
 using Ionic.Zip;
+using Microsoft.AspNet.Identity;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -52,16 +55,12 @@ namespace BExIS.Modules.Dim.UI.Controllers
             model.Brokers = Brokers.Select(b => b.Name).ToList();
             model.DatasetId = datasetId;
 
-            // 
-            PermissionManager permissionManager = new PermissionManager();
-            SubjectManager subjectManager = new SubjectManager();
+            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
 
 
-            //Todo Refactor  -> security 
-            //model.DownloadRights = permissionManager.HasUserDataAccess(HttpContext.User.Identity.Name, 1,
-            //    datasetId, RightType.Download);
-            //model.EditRights = permissionManager.HasUserDataAccess(HttpContext.User.Identity.Name, 1,
-            //    datasetId, RightType.Download);
+            //Todo Download Rigths -> currently set read rigths for this case
+            model.DownloadRights = entityPermissionManager.HasRight(HttpContext.User.Identity.Name, typeof(User), "Dataset", typeof(Dataset), datasetId, RightType.Read);
+            model.EditRights = entityPermissionManager.HasRight(HttpContext.User.Identity.Name, typeof(User), "Dataset", typeof(Dataset), datasetId, RightType.Write);
 
 
             List<long> versions = new List<long>();
@@ -106,16 +105,12 @@ namespace BExIS.Modules.Dim.UI.Controllers
             model.Brokers = Brokers.Select(b => b.Name).ToList();
             model.DatasetId = datasetId;
 
-            // 
-            PermissionManager permissionManager = new PermissionManager();
-            SubjectManager subjectManager = new SubjectManager();
+            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
 
 
-            //Todo Refactor  -> security 
-            //model.DownloadRights = permissionManager.HasUserDataAccess(HttpContext.User.Identity.Name, 1,
-            //    datasetId, RightType.Download);
-            //model.EditRights = permissionManager.HasUserDataAccess(HttpContext.User.Identity.Name, 1,
-            //    datasetId, RightType.Download);
+            //Todo Download Rigths -> currently set read rigths for this case
+            model.DownloadRights = entityPermissionManager.HasRight(HttpContext.User.Identity.Name, typeof(User), "Dataset", typeof(Dataset), datasetId, RightType.Read);
+            model.EditRights = entityPermissionManager.HasRight(HttpContext.User.Identity.Name, typeof(User), "Dataset", typeof(Dataset), datasetId, RightType.Write);
 
 
             List<long> versions = new List<long>();
@@ -519,13 +514,13 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         GFBIOException gfbioException = null;
                         //get user from system
                         string username = HttpContext.User.Identity.Name;
-                        SubjectManager subjectManager = new SubjectManager();
+                        UserManager userManager = new UserManager(new UserStore());
 
                         //tOdo Refactor dim->security
-                        //User user = null;//subjectManager.GetUserByName(username);
+                        User user = userManager.FindByName(username);
 
                         //check if user exist and api user has access
-                        string jsonresult = await gfbioWebserviceManager.GetUserByEmail(null);//user.Email);
+                        string jsonresult = await gfbioWebserviceManager.GetUserByEmail(user.Email);
                         GFBIOUser gfbioUser = new JavaScriptSerializer().Deserialize<GFBIOUser>(jsonresult);
 
                         //if user not exist, api call was failed
@@ -534,8 +529,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             //get the exception
                             gfbioException = new JavaScriptSerializer().Deserialize<GFBIOException>(jsonresult);
 
-                            //if (!String.IsNullOrEmpty(gfbioException.exception))
-                            return Json(jsonresult);
+                            if (!String.IsNullOrEmpty(gfbioException.exception))
+                                return Json(jsonresult);
                         }
                         //user exist and api user has access to the api´s
                         else
@@ -545,25 +540,27 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             string projectName = "Bexis 2 Instance Project";
                             string projectDescription = "Bexis 2 Instance Project Description";
 
-                            //if (user.Name.ToLower().Equals("drwho"))
-                            //{
-                            //    projectName = "Time Traveler";
-                            //    projectDescription = "Project to find places that are awesome!!";
-                            //}
+
+                            // ToDo submission test users, set project and more parameters
+                            if (user.Name.ToLower().Equals("drwho"))
+                            {
+                                projectName = "Time Traveler";
+                                projectDescription = "Project to find places that are awesome!!";
+                            }
 
 
-                            //if (user.Name.ToLower().Equals("mcfly"))
-                            //{
-                            //    projectName = "Back to the Future";
-                            //    projectDescription = "Meet your parents in the past";
+                            if (user.Name.ToLower().Equals("mcfly"))
+                            {
+                                projectName = "Back to the Future";
+                                projectDescription = "Meet your parents in the past";
 
-                            //}
+                            }
 
-                            //if (user.Name.ToLower().Equals("arthurdent"))
-                            //{
-                            //    projectName = "Per Anhalter durch die Galaxie";
-                            //    projectDescription = "Find the answer of life and so.";
-                            //}
+                            if (user.Name.ToLower().Equals("arthurdent"))
+                            {
+                                projectName = "Per Anhalter durch die Galaxie";
+                                projectDescription = "Find the answer of life and so.";
+                            }
 
                             //create or get project
                             string projectJsonResult = await gfbioWebserviceManager.GetProjectsByUser(gfbioUser.userid);
