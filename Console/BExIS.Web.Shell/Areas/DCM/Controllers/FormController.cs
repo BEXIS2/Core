@@ -24,6 +24,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Xml;
 using System.Xml.Linq;
+using BExIS.Dlm.Entities.Data;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
@@ -2690,7 +2691,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             #region security permissions and authorisations check
 
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
-            return entityPermissionManager.HasRight(GetUsernameOrDefault(), typeof(User), "Dataset", entityId, RightType.Write);
+            return entityPermissionManager.HasRight(GetUsernameOrDefault(), typeof(User), "Dataset", typeof(Dataset), entityId, RightType.Write);
 
             #endregion security permissions and authorisations check
         }
