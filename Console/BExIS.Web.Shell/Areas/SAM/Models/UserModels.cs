@@ -92,9 +92,10 @@ namespace BExIS.Modules.Sam.UI.Models
         public string FullName { get; set; }
         public long Id { get; set; }
         public string Username { get; set; }
-        public bool HasFeature { get; set; } 
+        public bool EffectiveRight { get; set; }
+        public int FeaturePermissionType { get; set; }
 
-        public static UserMembershipGridRowModel Convert(User user)
+        public static UserMembershipGridRowModel Convert(User user, int featurePermissionType, bool effectiveRight)
         {
             return new UserMembershipGridRowModel()
             {
