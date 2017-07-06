@@ -238,11 +238,12 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 DataStructure ds = dsm.AllTypesDataStructureRepo.Get(dsv.Dataset.DataStructure.Id);
 
                 //permission download
-                PermissionManager permissionManager = new PermissionManager();
-                SubjectManager subjectManager = new SubjectManager();
+                EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
 
-                // TODO: refactor
-                bool downloadAccess = false; // permissionManager.HasUserDataAccess(HttpContext.User.Identity.Name, 1, datasetID, RightType.Download);
+
+                // TODO: refactor Download Right not existing, so i set it to read
+                bool downloadAccess = entityPermissionManager.HasRight(HttpContext.User.Identity.Name, typeof(User),
+                    "Dataset", typeof(Dataset), datasetID, RightType.Read);
 
                 //TITLE
                 string title = XmlDatasetHelper.GetInformation(dsv, NameAttributeValues.title);
