@@ -52,6 +52,26 @@ namespace BExIS.Security.Services.Authorization
             }
         }
 
+        public EntityPermission Create(string subjectName, Type subjectType, string entityName, Type entityType, long key, short rights)
+        {
+            var entityPermission = new EntityPermission()
+            {
+                Subject = SubjectRepository.Query(s => s.Name.ToUpperInvariant() == subjectName.ToUpperInvariant() && s.GetType() == subjectType).FirstOrDefault(),
+                Entity = EntityRepository.Query(e => e.Name.ToUpperInvariant() == entityName.ToUpperInvariant() && e.Name.GetType() == entityType).FirstOrDefault(),
+                Key = key,
+                Rights = rights
+            };
+
+            using (var uow = this.GetUnitOfWork())
+            {
+                var entityPermissionRepository = uow.GetRepository<EntityPermission>();
+                entityPermissionRepository.Put(entityPermission);
+                uow.Commit();
+            }
+
+            return entityPermission;
+        }
+
         public void Delete(EntityPermission entityPermission)
         {
             using (var uow = this.GetUnitOfWork())
