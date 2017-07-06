@@ -18,7 +18,6 @@ using BExIS.Security.Services.Subjects;
 using BExIS.Web.Shell.Helpers;
 using BExIS.Web.Shell.Models;
 using BExIS.Xml.Helpers;
-using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -466,15 +465,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     datasetId = ds.Id;
 
                     // add security
-                    // TODO: refactor
                     if (GetUsernameOrDefault() != "DEFAULT")
                     {
                         EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
-
-                        foreach (RightType rightType in Enum.GetValues(typeof(RightType)).Cast<RightType>())
-                        {
-                            entityPermissionManager.Create(GetUsernameOrDefault(),typeof(User),"Dataset", typeof(Dataset),ds.Id, rightType);
-                        }
+                        entityPermissionManager.Create(GetUsernameOrDefault(), typeof(User), "Dataset", typeof(Dataset), ds.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
                     }
                 }
                 else
@@ -670,31 +664,27 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         public List<ListViewItem> LoadDatasetViewList()
         {
-            // TODO: remove following line
-            // PermissionManager pm = new PermissionManager();
-            SubjectManager subjectManager = new SubjectManager();
             DatasetManager datasetManager = new DatasetManager();
             List<ListViewItem> temp = new List<ListViewItem>();
 
             //get all datasetsid where the current userer has access to
-            // TODO: refactor
-            //long userid = -1;
-            //if (subjectManager.ExistsUsername(GetUsernameOrDefault()))
-            //    userid = subjectManager.GetUserByName(GetUsernameOrDefault()).Id;
+            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
+            UserManager userManager = new UserManager(new UserStore());
 
-            //if (userid != -1)
-            //{
-            //    foreach (long id in pm.GetAllDataIds(userid, 1, RightType.Update))
-            //    {
-            //        if (datasetManager.IsDatasetCheckedIn(id))
-            //        {
-            //            string title = XmlDatasetHelper.GetInformation(id, NameAttributeValues.title);
-            //            string description = XmlDatasetHelper.GetInformation(id, NameAttributeValues.description);
+            List<long> datasetIds = entityPermissionManager.GetKeys(GetUsernameOrDefault(), typeof(User), "Dataset",
+                typeof(Dataset), RightType.Write);
 
-            //            temp.Add(new ListViewItem(id, title, description));
-            //        }
-            //    }
-            //}
+            foreach (long id in datasetIds)
+            {
+                if (datasetManager.IsDatasetCheckedIn(id))
+                {
+                    string title = XmlDatasetHelper.GetInformation(id, NameAttributeValues.title);
+                    string description = XmlDatasetHelper.GetInformation(id, NameAttributeValues.description);
+
+                    temp.Add(new ListViewItem(id, title, description));
+                }
+            }
+
 
             return temp.OrderBy(p => p.Title).ToList();
         }
