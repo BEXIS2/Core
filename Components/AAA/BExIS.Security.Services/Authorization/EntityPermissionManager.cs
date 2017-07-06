@@ -82,9 +82,11 @@ namespace BExIS.Security.Services.Authorization
             return entityPermission?.Rights ?? 0;
         }
 
-        [Obsolete]
-        public bool HasRight(Subject subject, Entity entity, long key, RightType rightType)
+        public bool HasRight(string subjectName, Type subjectType, string entityName, long key, RightType rightType)
         {
+            var subject = SubjectRepository.Query(s => s.Name.ToUpperInvariant() == subjectName.ToUpperInvariant() && s.GetType() == subjectType).FirstOrDefault();
+            var entity = EntityRepository.Query(e => e.Name.ToUpperInvariant() == entityName.ToUpperInvariant()).FirstOrDefault();
+
             var binary = Convert.ToString(GetRights(subject, entity, key), 2);
             return binary.ElementAt((binary.Length - 1) - (int)rightType) == '1';
         }
