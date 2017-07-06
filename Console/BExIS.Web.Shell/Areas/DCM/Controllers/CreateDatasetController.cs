@@ -11,10 +11,14 @@ using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Modules.Dcm.UI.Models;
 using BExIS.Modules.Dcm.UI.Models.CreateDataset;
+using BExIS.Security.Entities.Authorization;
+using BExIS.Security.Entities.Subjects;
+using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Subjects;
 using BExIS.Web.Shell.Helpers;
 using BExIS.Web.Shell.Models;
 using BExIS.Xml.Helpers;
+using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -463,18 +467,21 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                     // add security
                     // TODO: refactor
-                    //if (GetUsernameOrDefault() != "DEFAULT")
-                    //{
-                    //    PermissionManager pm = new PermissionManager();
-                    //    SubjectManager sm = new SubjectManager();
+                    if (GetUsernameOrDefault() != "DEFAULT")
+                    {
+                        EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
 
-                    //    BExIS.Security.Entities.Subjects.User user = sm.GetUserByName(GetUsernameOrDefault());
 
-                    //    foreach (RightType rightType in Enum.GetValues(typeof(RightType)).Cast<RightType>())
-                    //    {
-                    //        pm.CreateDataPermission(user.Id, 1, ds.Id, rightType);
-                    //    }
-                    //}
+                        PermissionManager pm = new PermissionManager();
+                        UserManager userManager = new UserManager(new UserStore());
+
+                        User user = userManager.FindByName(GetUsernameOrDefault());
+
+                        foreach (RightType rightType in Enum.GetValues(typeof(RightType)).Cast<RightType>())
+                        {
+                            entityPermissionManager.Create(user, typeof(Dataset),ds.Id, rightType);
+                        }
+                    }
                 }
                 else
                 {
