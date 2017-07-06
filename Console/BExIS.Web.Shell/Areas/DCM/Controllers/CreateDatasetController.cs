@@ -471,15 +471,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     {
                         EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
 
-
-                        PermissionManager pm = new PermissionManager();
-                        UserManager userManager = new UserManager(new UserStore());
-
-                        User user = userManager.FindByName(GetUsernameOrDefault());
-
                         foreach (RightType rightType in Enum.GetValues(typeof(RightType)).Cast<RightType>())
                         {
-                            entityPermissionManager.Create(user, typeof(Dataset),ds.Id, rightType);
+                            entityPermissionManager.Create(GetUsernameOrDefault(),typeof(User),"Dataset", typeof(Dataset),ds.Id, rightType);
                         }
                     }
                 }
