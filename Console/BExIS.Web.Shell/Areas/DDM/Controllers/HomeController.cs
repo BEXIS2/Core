@@ -3,7 +3,6 @@ using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Security.Services.Authorization;
-using BExIS.Security.Services.Subjects;
 using BExIS.Utils.Models;
 using BExIS.Xml.Helpers;
 using System;
@@ -788,8 +787,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
 
             DatasetManager datasetManager = new DatasetManager();
-            PermissionManager permissionManager = new PermissionManager();
-            SubjectManager subjectManager = new SubjectManager();
+            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
 
             List<long> gridCommands = datasetManager.GetDatasetLatestIds();
             gridCommands.Skip(Convert.ToInt16(ViewData["CurrentPage"])).Take(Convert.ToInt16(ViewData["PageSize"]));
@@ -798,7 +796,10 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             {
                 //get permissions
                 //TODO: refactor
-                List<int> rights = new List<int>();//permissionManager.GetAllRights(subjectManager.GetUserByName(GetUsernameOrDefault()).Id, 1, datasetId).ToList();
+
+                List<int> rights = entityPermissionManager.GetRights(subjectManager.GetUserByName(GetUsernameOrDefault()).Id, typeof(Dataset), datasetId);
+
+
 
                 if (rights.Count > 0)
                 {

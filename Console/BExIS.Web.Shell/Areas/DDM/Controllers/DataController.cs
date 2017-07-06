@@ -7,6 +7,8 @@ using BExIS.IO;
 using BExIS.IO.Transform.Output;
 using BExIS.Modules.Ddm.UI.Helpers;
 using BExIS.Modules.Ddm.UI.Models;
+using BExIS.Security.Entities.Authorization;
+using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
@@ -38,8 +40,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             DatasetManager dm = new DatasetManager();
 
-            PermissionManager permissionManager = new PermissionManager();
-            SubjectManager subjectManager = new SubjectManager();
+            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
             DatasetVersion dsv;
             ShowDataModel model = new ShowDataModel();
 
@@ -70,6 +71,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 ModelState.AddModelError(string.Empty, "Dataset is just in processing.");
             }
 
+
+
             model = new ShowDataModel()
             {
                 Id = id,
@@ -77,9 +80,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 MetadataStructureId = metadataStructureId,
                 DataStructureId = dataStructureId,
                 ResearchPlanId = researchPlanId,
-                // TODO: refactor
-                ViewAccess = false, // permissionManager.HasUserDataAccess(HttpContext.User.Identity.Name, 1, id, RightType.View),
-                GrantAccess = false, //                    permissionManager.HasUserDataAccess(HttpContext.User.Identity.Name, 1, id, RightType.Grant)
+                ViewAccess = entityPermissionManager.HasRight(HttpContext.User.Identity.Name, typeof(User), "Dataset", typeof(Dataset), id, RightType.Read),
+                GrantAccess = entityPermissionManager.HasRight(HttpContext.User.Identity.Name, typeof(User), "Dataset", typeof(Dataset), id, RightType.Grant)
             };
 
             //set metadata in session
