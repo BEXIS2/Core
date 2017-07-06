@@ -94,7 +94,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 var entityId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.ENTITY_ID]);
                 Model.EditRight = hasUserEditRights(entityId);
                 Model.EditAccessRight = hasUserEditAccessRights(entityId);
-                //Model.DatasetId = entityId;
+                Model.DatasetId = entityId;
             }
             else
             {
@@ -2678,7 +2678,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private bool hasUserEditAccessRights(long entityId)
         {
             FeaturePermissionManager featurePermissionManager = new FeaturePermissionManager();
-            return featurePermissionManager.HasAccess(GetUsernameOrDefault(), typeof(User), null);
+            return featurePermissionManager.HasAccess(GetUsernameOrDefault(), typeof(User), "DCM", "CreateDataset", "*");
         }
 
         /// <summary>
