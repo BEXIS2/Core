@@ -330,36 +330,31 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             // set edit rigths
             // TODO: refactor
-            //PermissionManager permissionManager = new PermissionManager();
-            //SubjectManager subjectManager = new SubjectManager();
-            //Security.Services.Objects.TaskManager securityTaskManager = new Security.Services.Objects.TaskManager();
 
-            //bool hasAuthorizationRights = false;
-            //bool hasAuthenticationRigths = false;
+            bool hasAuthorizationRights = false;
+            bool hasAuthenticationRigths = false;
 
-            //User user = subjectManager.GetUserByName(GetUsernameOrDefault());
-            //long userid = -1;
-            //long entityId = -1;
+            long entityId = -1;
 
-            //if (TaskManager.Bus.ContainsKey(CreateTaskmanager.ENTITY_ID))
-            //{
-            //    entityId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.ENTITY_ID]);
-            //    Model.EditRight = hasUserEditRights(entityId);
-            //    Model.EditAccessRight = hasUserEditAccessRights(entityId);
-            //}
-            //else
-            //{
-            //    Model.EditRight = false;
-            //    Model.EditAccessRight = false;
-            //}
+            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.ENTITY_ID))
+            {
+                entityId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.ENTITY_ID]);
+                Model.EditRight = hasUserEditRights(entityId);
+                Model.EditAccessRight = hasUserEditAccessRights(entityId);
+            }
+            else
+            {
+                Model.EditRight = false;
+                Model.EditAccessRight = false;
+            }
 
             //Model.FromEditMode = true;
 
-            //if (TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATASTRUCTURE_ID))
-            //{
-            //    long metadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
-            //    Model.Import = IsImportAvavilable(metadataStructureId);
-            //}
+            if (TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATASTRUCTURE_ID))
+            {
+                long metadataStructureId = Convert.ToInt64(TaskManager.Bus[CreateTaskmanager.METADATASTRUCTURE_ID]);
+                Model.Import = IsImportAvavilable(metadataStructureId);
+            }
 
             #endregion security permissions and authorisations check
 
