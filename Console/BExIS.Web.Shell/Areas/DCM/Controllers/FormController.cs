@@ -2677,43 +2677,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// <returns></returns>
         private bool hasUserEditAccessRights(long entityId)
         {
-            // TODO: refactor
-            //#region security permissions and authorisations check
-
-            //// set edit rigths
-            //PermissionManager permissionManager = new PermissionManager();
-            //SubjectManager subjectManager = new SubjectManager();
-            //Security.Services.Objects.TaskManager securityTaskManager = new Security.Services.Objects.TaskManager();
-
-            //bool hasAuthorizationRights = false;
-
-            //User user = subjectManager.GetUserByName(GetUsernameOrDefault());
-            //long userid = -1;
-
-            //if (user != null)
-            //{
-            //    userid = subjectManager.GetUserByName(GetUsernameOrDefault()).Id;
-
-            //    //User has Access to Features
-            //    //Area DCM
-            //    //Controller "Create Dataset"
-            //    //Action "*"
-            //    Task task = securityTaskManager.GetTask("DCM", "CreateDataset", "*");
-            //    if (task != null)
-            //    {
-            //        hasAuthorizationRights = permissionManager.HasSubjectFeatureAccess(userid, task.Feature.Id);
-            //    }
-
-            //    return (hasAuthorizationRights);
-            //}
-            //else
-            //{
-            //    return false;
-            //}
-
-            //#endregion security permissions and authorisations check
-
-            return false;
+            FeaturePermissionManager featurePermissionManager = new FeaturePermissionManager();
+            return featurePermissionManager.HasAccess(GetUsernameOrDefault(), typeof(User), null);
         }
 
         /// <summary>
