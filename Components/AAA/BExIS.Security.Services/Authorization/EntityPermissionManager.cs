@@ -2,6 +2,7 @@
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Subjects;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Vaiona.Persistence.Api;
 
@@ -82,10 +83,15 @@ namespace BExIS.Security.Services.Authorization
             return entityPermission?.Rights ?? 0;
         }
 
-        public bool HasRight(string subjectName, Type subjectType, string entityName, long key, RightType rightType)
+        public List<long> GetKeys(string subjectName, Type subjectType, string entityName, Type entityType, RightType rightType)
+        {
+            return new List<long>();
+        }
+
+        public bool HasRight(string subjectName, Type subjectType, string entityName, Type entityType, long key, RightType rightType)
         {
             var subject = SubjectRepository.Query(s => s.Name.ToUpperInvariant() == subjectName.ToUpperInvariant() && s.GetType() == subjectType).FirstOrDefault();
-            var entity = EntityRepository.Query(e => e.Name.ToUpperInvariant() == entityName.ToUpperInvariant()).FirstOrDefault();
+            var entity = EntityRepository.Query(e => e.Name.ToUpperInvariant() == entityName.ToUpperInvariant() && e.Name.GetType() == entityType).FirstOrDefault();
 
             var binary = Convert.ToString(GetRights(subject, entity, key), 2);
             return binary.ElementAt((binary.Length - 1) - (int)rightType) == '1';
