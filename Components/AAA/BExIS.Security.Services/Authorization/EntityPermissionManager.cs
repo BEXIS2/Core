@@ -117,7 +117,7 @@ namespace BExIS.Security.Services.Authorization
             var subject = SubjectRepository.Query(s => s.Name.ToUpperInvariant() == subjectName.ToUpperInvariant() && s.GetType() == subjectType).FirstOrDefault();
             var entity = EntityRepository.Query(e => e.Name.ToUpperInvariant() == entityName.ToUpperInvariant() && e.Name.GetType() == entityType).FirstOrDefault();
 
-            var keys = EntityPermissionRepository.Query(e => e.Subject.Id == subject.Id && e.Entity.Id == entity.Id && e.Rights >=)
+            //var keys = EntityPermissionRepository.Query(e => e.Subject.Id == subject.Id && e.Entity.Id == entity.Id && e.Rights >=)
 
             return new List<long>();
         }
