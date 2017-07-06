@@ -1,6 +1,7 @@
 ﻿using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Subjects;
+using System;
 using System.Linq;
 using Vaiona.Persistence.Api;
 
@@ -40,7 +41,9 @@ namespace BExIS.Security.Services.Authorization
 
         public FeaturePermission Find(Feature feature, Subject subject)
         {
-            return FeaturePermissionRepository.Query(f => f.Feature.Id == feature.Id && f.Subject.Id == subject.Id).FirstOrDefault();
+            return
+                FeaturePermissionRepository.Query(f => f.Feature.Id == feature.Id && f.Subject.Id == subject.Id)
+                    .FirstOrDefault();
         }
 
         public void Update(FeaturePermission featurePermission)
@@ -51,6 +54,16 @@ namespace BExIS.Security.Services.Authorization
                 featurePermissionRepository.Put(featurePermission);
                 uow.Commit();
             }
+        }
+
+        public bool HasAccess(string subjectName, Type subjectType, string featureName)
+        {
+            return false;
+        }
+
+        public bool HasAccess(string subjectName, Type subjectType, long featureId)
+        {
+            return false;
         }
     }
 }
