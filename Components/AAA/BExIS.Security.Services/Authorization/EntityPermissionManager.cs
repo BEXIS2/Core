@@ -87,19 +87,8 @@ namespace BExIS.Security.Services.Authorization
         {
             var subject = SubjectRepository.Query(s => s.Name.ToUpperInvariant() == subjectName.ToUpperInvariant() && s.GetType() == subjectType).FirstOrDefault();
             var entity = EntityRepository.Query(e => e.Name.ToUpperInvariant() == entityName.ToUpperInvariant() && e.Name.GetType() == entityType).FirstOrDefault();
-
             var binary = Convert.ToString(GetRights(subject, entity, key), 2);
-            var rights = new List<RightType>();
-            foreach (var right in Enum.GetValues(typeof(RightType)))
-            {
-                if (binary.ElementAt((binary.Length - 1) - (int)right) == '1')
-                {
-
-                }
-
-            }
-
-            return rights;
+            return Enum.GetValues(typeof(RightType)).Cast<int>().Where(right => binary.ElementAt((binary.Length - 1) - right) == '1').Cast<RightType>().ToList();
         }
 
         public List<long> GetKeys(string subjectName, Type subjectType, string entityName, Type entityType, RightType rightType)
