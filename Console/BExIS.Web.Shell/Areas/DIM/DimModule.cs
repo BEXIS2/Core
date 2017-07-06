@@ -1,18 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http.Formatting;
-using System.Web;
-using System.Web.Http;
+﻿using BExIS.Modules.Dim.UI.Helpers;
 using BExIS.Modules.Dim.UI.Models;
+using System.Net.Http.Formatting;
+using System.Web.Http;
 using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Dim.UI
 {
     public class DimModule : ModuleBase
     {
-        public DimModule(): base("dim")
+        public DimModule() : base("dim")
         {
+
+        }
+
+        public override void Install()
+        {
+            base.Install();
+            DimSeedDataGenerator.GenerateSeedData();
         }
 
         public override void Start()

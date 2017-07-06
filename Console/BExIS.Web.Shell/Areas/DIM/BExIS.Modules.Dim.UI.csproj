@@ -144,6 +144,7 @@
     <Compile Include="Controllers\MetadataController.cs" />
     <Compile Include="Controllers\SubmissionController.cs" />
     <Compile Include="DimModule.cs" />
+    <Compile Include="Helper\DimSeedDataGenerator.cs" />
     <Compile Include="Helper\MappingHelper.cs" />
     <Compile Include="Models\AdminModel.cs" />
     <Compile Include="Models\DatasetModel.cs" />
