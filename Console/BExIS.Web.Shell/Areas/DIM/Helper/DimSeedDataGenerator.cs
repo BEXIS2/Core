@@ -1,6 +1,7 @@
 ﻿
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Objects;
+using System.Linq;
 
 namespace BExIS.Modules.Dim.UI.Helpers
 {
@@ -17,9 +18,14 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
             FeatureManager featureManager = new FeatureManager();
 
-            Feature DataDissemination = featureManager.Create("Data Dissemination", "Data Dissemination");
-            Feature Mapping = featureManager.Create("Mapping", "Mapping");
-            Feature Submission = featureManager.Create("Submission", "Submission");
+            Feature DataDissemination = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Data Dissemination"));
+            if (DataDissemination == null) DataDissemination = featureManager.Create("Data Dissemination", "Data Dissemination");
+
+            Feature Mapping = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Mapping"));
+            if (Mapping == null) Mapping = featureManager.Create("Mapping", "Mapping");
+
+            Feature Submission = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Submission"));
+            if (Submission == null) Submission = featureManager.Create("Submission", "Submission");
 
 
             //worklfows -> create dataset ->
@@ -32,27 +38,27 @@ namespace BExIS.Modules.Dim.UI.Helpers
 
             #region Help Workflow
 
-            workflow = new Workflow();
-            workflow.Name = "Data Dissemination Help";
-            workflowManager.Create(workflow);
+            workflow =
+                workflowManager.WorkflowRepository
+                    .Get()
+                    .FirstOrDefault(w => w.Name.Equals("Data Dissemination Help") && w.Feature.Id.Equals(DataDissemination.Id));
+            if (workflow == null) workflow = workflowManager.Create("Data Dissemination Help", "", DataDissemination);
 
-            operation = operationManager.Create("DDM", "Help", "*", null, workflow);
-            workflow.Operations.Add(operation);
-
-            DataDissemination.Workflows.Add(workflow);
+            operationManager.Create("DIM", "Help", "*", null, workflow);
 
             #endregion
 
             #region Admin Workflow
 
-            workflow = new Workflow();
-            workflow.Name = "Data Dissemination Management";
-            workflowManager.Create(workflow);
+            workflow =
+               workflowManager.WorkflowRepository
+                   .Get()
+                   .FirstOrDefault(w => w.Name.Equals("Data Dissemination Management") && w.Feature.Id.Equals(DataDissemination.Id));
 
-            operation = operationManager.Create("Dim", "Admin", "*", null, workflow);
-            workflow.Operations.Add(operation);
+            if (workflow == null) workflow = workflowManager.Create("Data Dissemination Management", "", DataDissemination);
 
-            DataDissemination.Workflows.Add(workflow);
+            operationManager.Create("Dim", "Admin", "*", null, workflow);
+
 
             #endregion
 
