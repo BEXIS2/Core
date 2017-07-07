@@ -6,6 +6,7 @@ using BExIS.Dlm.Entities.Party;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Dlm.Services.Party;
 using BExIS.Modules.Dim.UI.Models.Mapping;
+using BExIS.Utils.Data.MetadataStructure;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -215,11 +216,8 @@ namespace BExIS.Modules.Dim.UI.Helper
 
             //Debug.WriteLine("1: " + LEModel.Name + " " + LEModel.Type);
 
-            //check childrens
-            // this line calls to the DCM module. JAVAD.
-            //List<BaseUsage> childrenUsages = UsageHelper.GetChildren(usage);
-            // please remove the following line, after you fixed the call to DCM
-            List<BaseUsage> childrenUsages = new List<BaseUsage>();
+            List<BaseUsage> childrenUsages = MetadataStructureUsageHelper.GetChildren(usage);
+
             if (childrenUsages.Count > 0)
             {
                 foreach (BaseUsage childUsage in childrenUsages)
@@ -569,8 +567,8 @@ namespace BExIS.Modules.Dim.UI.Helper
             {
                 transformationRuleModel = new TransformationRuleModel();
             }
-            //ToDo Load Rules
 
+            //ToDo Load Rules
             return new SimpleMappingModel()
             {
                 Id = mapping.Id,

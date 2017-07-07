@@ -6,8 +6,9 @@ using BExIS.Dlm.Services.Administration;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Modules.Dcm.UI.Models;
+using BExIS.Security.Entities.Authorization;
+using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
-using BExIS.Security.Services.Subjects;
 using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
@@ -189,12 +190,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public List<ListViewItem> LoadDatasetVersionViewList(DataStructureType dataStructureType)
         {
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
-            SubjectManager subjectManager = new SubjectManager();
 
-            // add security
-            // TODO: refactor
             ICollection<long> datasetIDs = new List<long>();
-            //permissionManager.GetAllDataIds(subjectManager.GetUserByName(GetUsernameOrDefault()).Id, 1, RightType.Update).ToList();
+            datasetIDs = entityPermissionManager.GetKeys(GetUsernameOrDefault(), typeof(User), "Dataset", typeof(Dataset),
+                RightType.Write).ToList();
 
             DataStructureManager dataStructureManager = new DataStructureManager();
             DatasetManager dm = new DatasetManager();
