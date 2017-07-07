@@ -104,16 +104,18 @@ namespace BExIS.Security.Services.Authorization
             return entityPermission?.Rights ?? 0;
         }
 
-        public List<RightType> GetRights(string subjectName, Type subjectType, string entityName, Type entityType, long key)
+        public List<RightType> GetRights<T>(string subjectName, string entityName, Type entityType, long key) where T : Subject
         {
-            var subject = SubjectRepository.Query(s => s.Name.ToUpperInvariant() == subjectName.ToUpperInvariant() && s.GetType() == subjectType).FirstOrDefault();
-            var entity = EntityRepository.Query(e => e.Name.ToUpperInvariant() == entityName.ToUpperInvariant() && e.Name.GetType() == entityType).FirstOrDefault();
+            var subject = SubjectRepository.Query(s => s.Name.ToUpperInvariant() == subjectName.ToUpperInvariant() && s is T).FirstOrDefault();
+            var entity = EntityRepository.Query(e => e.Name.ToUpperInvariant() == entityName.ToUpperInvariant() && e.EntityType == entityType).FirstOrDefault();
             return GetRights(subject, entity, key).ToRightTypes();
         }
 
-        public static List<RightType> YearsSince(int rights)
+        public List<RightType> GetRights(long subjectId, long entityId, long key)
         {
-            return rights.ToRightTypes();
+            var subject = SubjectRepository.Get(subjectId);
+            var entity = EntityRepository.Get(entityId);
+            return GetRights(subject, entity, key).ToRightTypes();
         }
 
         public List<long> GetKeys<T>(string subjectName, string entityName, Type entityType, RightType rightType) where T : Subject
@@ -125,13 +127,36 @@ namespace BExIS.Security.Services.Authorization
                 EntityPermissionRepository.Get().Where(
                     e =>
                         e.Subject.Id == subject.Id && e.Entity.Id == entity.Id &&
-                        YearsSince(e.Rights).Contains(rightType)).Select(e => e.Key).ToList();
+                        e.Rights.ToRightTypes().Contains(rightType)).Select(e => e.Key).ToList();
         }
 
-        public bool HasRight(string subjectName, Type subjectType, string entityName, Type entityType, long key, RightType rightType)
+        public List<long> GetKeys(long subjectId, long entityId, RightType rightType)
         {
-            var subject = SubjectRepository.Query(s => s.Name.ToUpperInvariant() == subjectName.ToUpperInvariant() && s.GetType() == subjectType).FirstOrDefault();
-            var entity = EntityRepository.Query(e => e.Name.ToUpperInvariant() == entityName.ToUpperInvariant() && e.Name.GetType() == entityType).FirstOrDefault();
+            var subject = SubjectRepository.Get(subjectId);
+            var entity = EntityRepository.Get(entityId);
+
+            return EntityPermissionRepository.Query(e =>
+                e.Subject.Id == subject.Id &&
+                e.Entity.Id == entity.Id &&
+                e.Rights.ToRightTypes().Contains(rightType)
+                )
+                .Select(e => e.Key)
+                .ToList();
+        }
+
+        public bool HasRight<T>(string subjectName, string entityName, Type entityType, long key, RightType rightType) where T : Subject
+        {
+            var subject = SubjectRepository.Query(s => s.Name.ToUpperInvariant() == subjectName.ToUpperInvariant() && s is T).FirstOrDefault();
+            var entity = EntityRepository.Query(e => e.Name.ToUpperInvariant() == entityName.ToUpperInvariant() && e.EntityType == entityType).FirstOrDefault();
+
+            var binary = Convert.ToString(GetRights(subject, entity, key), 2);
+            return binary.ElementAt((binary.Length - 1) - (int)rightType) == '1';
+        }
+
+        public bool HasRight(long subjectId, long entityId, long key, RightType rightType)
+        {
+            var subject = SubjectRepository.Get(subjectId);
+            var entity = EntityRepository.Get(entityId);
 
             var binary = Convert.ToString(GetRights(subject, entity, key), 2);
             return binary.ElementAt((binary.Length - 1) - (int)rightType) == '1';
