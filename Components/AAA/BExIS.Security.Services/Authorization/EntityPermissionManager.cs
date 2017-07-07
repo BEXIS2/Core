@@ -111,18 +111,21 @@ namespace BExIS.Security.Services.Authorization
             return GetRights(subject, entity, key).ToRightTypes();
         }
 
-        public List<long> GetKeys(string subjectName, Type subjectType, string entityName, Type entityType, RightType rightType)
+        public static List<RightType> YearsSince(int rights)
         {
-            var subject = SubjectRepository.Query(s => s.Name.ToUpperInvariant() == subjectName.ToUpperInvariant() && s.GetType() == subjectType).FirstOrDefault();
-            var entity = EntityRepository.Query(e => e.Name.ToUpperInvariant() == entityName.ToUpperInvariant() && e.Name.GetType() == entityType).FirstOrDefault();
+            return rights.ToRightTypes();
+        }
 
-            return EntityPermissionRepository.Query(e =>
-                e.Subject.Id == subject.Id &&
-                e.Entity.Id == entity.Id &&
-                e.Rights.ToRightTypes().Contains(rightType)
-                )
-                .Select(e => e.Key)
-                .ToList();
+        public List<long> GetKeys<T>(string subjectName, string entityName, Type entityType, RightType rightType) where T : Subject
+        {
+            var subject = SubjectRepository.Query(s => s.Name.ToUpperInvariant() == subjectName.ToUpperInvariant() && s is T).FirstOrDefault();
+            var entity = EntityRepository.Query(e => e.Name.ToUpperInvariant() == entityName.ToUpperInvariant() && e.EntityType == entityType).FirstOrDefault();
+
+            return
+                EntityPermissionRepository.Get().Where(
+                    e =>
+                        e.Subject.Id == subject.Id && e.Entity.Id == entity.Id &&
+                        YearsSince(e.Rights).Contains(rightType)).Select(e => e.Key).ToList();
         }
 
         public bool HasRight(string subjectName, Type subjectType, string entityName, Type entityType, long key, RightType rightType)

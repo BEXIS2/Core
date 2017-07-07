@@ -671,7 +671,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
             UserManager userManager = new UserManager(new UserStore());
 
-            List<long> datasetIds = entityPermissionManager.GetKeys(GetUsernameOrDefault(), typeof(User), "Dataset",
+            List<long> datasetIds = entityPermissionManager.GetKeys<User>(GetUsernameOrDefault(), "Dataset",
                 typeof(Dataset), RightType.Write);
 
             foreach (long id in datasetIds)

@@ -22,10 +22,10 @@ namespace BExIS.Modules.Dim.UI.Helpers
             if (DataDissemination == null) DataDissemination = featureManager.Create("Data Dissemination", "Data Dissemination");
 
             Feature Mapping = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Mapping"));
-            if (Mapping == null) Mapping = featureManager.Create("Mapping", "Mapping");
+            if (Mapping == null) Mapping = featureManager.Create("Mapping", "Mapping", DataDissemination);
 
             Feature Submission = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Submission"));
-            if (Submission == null) Submission = featureManager.Create("Submission", "Submission");
+            if (Submission == null) Submission = featureManager.Create("Submission", "Submission", DataDissemination);
 
 
             //worklfows -> create dataset ->
