@@ -96,6 +96,7 @@ namespace BExIS.Modules.Dim.UI.Models.Mapping
             Parent = null;
             Complexity = LinkElementComplexity.None;
             Mask = "";
+            Type = LinkElementType.SimpleMetadataAttribute;
         }
 
         public LinkElementModel(
