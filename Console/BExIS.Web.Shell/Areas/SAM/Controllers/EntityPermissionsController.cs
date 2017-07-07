@@ -1,7 +1,6 @@
 ﻿using BExIS.Dlm.Entities.Data;
 using BExIS.Modules.Sam.UI.Models;
 using BExIS.Security.Entities.Objects;
-using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using System;
@@ -33,12 +32,12 @@ namespace BExIS.Modules.Sam.UI.Controllers
         }
 
         [GridAction(EnableCustomBinding = true)]
-        public ActionResult GroupEntityPermissions_Select(long entityId, GridCommand command)
+        public ActionResult EntityPermissions_Select(long entityId, GridCommand command)
         {
             var entityPermissionManager = new EntityPermissionManager();
 
             // Source + Transformation - Data
-            var groupEntityPermissions = entityPermissionManager.EntityPermissions.Where(m => m.Subject is Group && m.Entity.Id == entityId).ToGroupEntityPermissionGridRowModel();
+            var groupEntityPermissions = entityPermissionManager.EntityPermissions.Where(m => m.Entity.Id == entityId);
 
             // Filtering
             var total = groupEntityPermissions.Count();
@@ -72,27 +71,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
         public ActionResult Permissions(long entityId)
         {
             return PartialView("_Permissions", entityId);
-        }
-
-        [GridAction(EnableCustomBinding = true)]
-        public ActionResult UserEntityPermissions_Select(long entityId, GridCommand command)
-        {
-            var entityPermissionManager = new EntityPermissionManager();
-
-            // Source + Transformation - Data
-            var groupEntityPermissions = entityPermissionManager.EntityPermissions.Where(m => m.Subject is User && m.Entity.Id == entityId).ToUserEntityPermissionGridRowModel();
-
-            // Filtering
-            var total = groupEntityPermissions.Count();
-
-            // Sorting
-            var sorted = (IQueryable<UserEntityPermissionGridRowModel>)groupEntityPermissions.Sort(command.SortDescriptors);
-
-            // Paging
-            var paged = sorted.Skip((command.Page - 1) * command.PageSize)
-                .Take(command.PageSize);
-
-            return View(new GridModel<UserEntityPermissionGridRowModel> { Data = paged.ToList(), Total = total });
         }
     }
 }

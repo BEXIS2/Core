@@ -3,7 +3,6 @@ using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.IO.Transform.Output;
 using BExIS.Modules.Dim.UI.Models;
-using BExIS.Modules.Dim.UI.Models.Formatters;
 using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;

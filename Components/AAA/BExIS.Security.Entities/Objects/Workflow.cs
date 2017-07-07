@@ -8,6 +8,11 @@ namespace BExIS.Security.Entities.Objects
         public virtual string Description { get; set; }
         public virtual Feature Feature { get; set; }
         public virtual string Name { get; set; }
-        public virtual List<Operation> Operations { get; set; }
+        public virtual ICollection<Operation> Operations { get; set; }
+
+        public Workflow()
+        {
+            Operations = new List<Operation>();
+        }
     }
 }
