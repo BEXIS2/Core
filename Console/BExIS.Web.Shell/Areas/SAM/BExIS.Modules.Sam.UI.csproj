@@ -234,6 +234,7 @@
     <Content Include="Views\Requests\Index.cshtml" />
     <Content Include="Views\Requests\_Requests.cshtml" />
     <Content Include="Views\FeaturePermissions\_Permissions.cshtml" />
+    <Content Include="Views\Requests\_Decisions.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
