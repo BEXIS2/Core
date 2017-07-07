@@ -59,8 +59,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
 
             //Todo Download Rigths -> currently set read rigths for this case
-            model.DownloadRights = entityPermissionManager.HasRight(HttpContext.User.Identity.Name, typeof(User), "Dataset", typeof(Dataset), datasetId, RightType.Read);
-            model.EditRights = entityPermissionManager.HasRight(HttpContext.User.Identity.Name, typeof(User), "Dataset", typeof(Dataset), datasetId, RightType.Write);
+            model.DownloadRights = entityPermissionManager.HasRight<User>(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), datasetId, RightType.Read);
+            model.EditRights = entityPermissionManager.HasRight<User>(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), datasetId, RightType.Write);
 
 
             List<long> versions = new List<long>();
@@ -109,8 +109,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
 
             //Todo Download Rigths -> currently set read rigths for this case
-            model.DownloadRights = entityPermissionManager.HasRight(HttpContext.User.Identity.Name, typeof(User), "Dataset", typeof(Dataset), datasetId, RightType.Read);
-            model.EditRights = entityPermissionManager.HasRight(HttpContext.User.Identity.Name, typeof(User), "Dataset", typeof(Dataset), datasetId, RightType.Write);
+            model.DownloadRights = entityPermissionManager.HasRight<User>(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), datasetId, RightType.Read);
+            model.EditRights = entityPermissionManager.HasRight<User>(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), datasetId, RightType.Write);
 
 
             List<long> versions = new List<long>();

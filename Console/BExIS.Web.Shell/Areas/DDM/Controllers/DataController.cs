@@ -80,8 +80,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 MetadataStructureId = metadataStructureId,
                 DataStructureId = dataStructureId,
                 ResearchPlanId = researchPlanId,
-                ViewAccess = entityPermissionManager.HasRight(HttpContext.User.Identity.Name, typeof(User), "Dataset", typeof(Dataset), id, RightType.Read),
-                GrantAccess = entityPermissionManager.HasRight(HttpContext.User.Identity.Name, typeof(User), "Dataset", typeof(Dataset), id, RightType.Grant)
+                ViewAccess = entityPermissionManager.HasRight<User>(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), id, RightType.Read),
+                GrantAccess = entityPermissionManager.HasRight<User>(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), id, RightType.Grant)
             };
 
             //set metadata in session
@@ -242,7 +242,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
 
                 // TODO: refactor Download Right not existing, so i set it to read
-                bool downloadAccess = entityPermissionManager.HasRight(HttpContext.User.Identity.Name, typeof(User),
+                bool downloadAccess = entityPermissionManager.HasRight<User>(HttpContext.User.Identity.Name,
                     "Dataset", typeof(Dataset), datasetID, RightType.Read);
 
                 //TITLE

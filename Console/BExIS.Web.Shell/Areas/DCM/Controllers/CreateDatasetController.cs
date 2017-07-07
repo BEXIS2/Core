@@ -468,7 +468,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     if (GetUsernameOrDefault() != "DEFAULT")
                     {
                         EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
-                        entityPermissionManager.Create(GetUsernameOrDefault(), typeof(User), "Dataset", typeof(Dataset), ds.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
+                        entityPermissionManager.Create<User>(GetUsernameOrDefault(), "Dataset", typeof(Dataset), ds.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
                     }
                 }
                 else
