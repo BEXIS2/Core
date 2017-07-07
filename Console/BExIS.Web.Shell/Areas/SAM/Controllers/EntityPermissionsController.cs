@@ -37,19 +37,19 @@ namespace BExIS.Modules.Sam.UI.Controllers
             var entityPermissionManager = new EntityPermissionManager();
 
             // Source + Transformation - Data
-            var groupEntityPermissions = entityPermissionManager.EntityPermissions.Where(m => m.Entity.Id == entityId);
+            var entityPermissions = entityPermissionManager.EntityPermissions.Where(m => m.Entity.Id == entityId);
 
             // Filtering
-            var total = groupEntityPermissions.Count();
+            var total = entityPermissions.Count();
 
             // Sorting
-            var sorted = (IQueryable<GroupEntityPermissionGridRowModel>)groupEntityPermissions.Sort(command.SortDescriptors);
+            var sorted = (IQueryable<EntityPermissionGridRowModel>)entityPermissions.Sort(command.SortDescriptors);
 
             // Paging
             var paged = sorted.Skip((command.Page - 1) * command.PageSize)
                 .Take(command.PageSize);
 
-            return View(new GridModel<GroupEntityPermissionGridRowModel> { Data = paged.ToList(), Total = total });
+            return View(new GridModel<EntityPermissionGridRowModel> { Data = paged.ToList(), Total = total });
         }
 
         public ActionResult Index()
