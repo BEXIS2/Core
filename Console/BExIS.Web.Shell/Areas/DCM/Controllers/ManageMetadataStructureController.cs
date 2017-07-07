@@ -207,7 +207,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                       new EntityModel()
                       {
                           Name = e.Name,
-                          ClassPath = e.ClassPath
+                          //ClassPath = e.ClassPath
                       }
                   )
             );

@@ -4,7 +4,7 @@
 
 @Html.ActionLink("Create Entity Permission", "Create", "EntityPermissions", null, new { @class = "bx-button function" })
 
-@(Html.Telerik().Grid<EntityPermissionGridRowModel>().Name("gridUsers")
+@(Html.Telerik().Grid<EntityPermissionGridRowModel>().Name("gridEntityPermissions")
     .Columns(columns =>
     {
         columns.Bound(u => u.Id);
@@ -12,7 +12,7 @@
         columns.Bound(u => u.Key);
         columns.Bound(u => u.SubjectId);
         columns.Bound(u => u.SubjectName);
-        columns.Bound(u => u.SubjectName);
+        columns.Bound(u => u.SubjectType);
         columns.Bound(u => u.Rights);
         columns.Template(@<text>
                              <button type="button" class="bx bx-grid-function bx-edit" onclick="editEntityPermission(@item.Id)"></button>
