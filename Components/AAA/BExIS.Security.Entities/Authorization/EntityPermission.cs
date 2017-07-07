@@ -28,6 +28,6 @@ namespace BExIS.Security.Entities.Authorization
     {
         public virtual Entity Entity { get; set; }
         public virtual long Key { get; set; }
-        public virtual short Rights { get; set; }
+        public virtual int Rights { get; set; }
     }
 }
