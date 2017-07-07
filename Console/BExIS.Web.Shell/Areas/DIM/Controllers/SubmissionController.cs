@@ -516,7 +516,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         string username = HttpContext.User.Identity.Name;
                         UserManager userManager = new UserManager(new UserStore());
 
-                        //todo Refactor dim->security
                         User user = userManager.FindByName(username);
 
                         //check if user exist and api user has access
