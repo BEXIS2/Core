@@ -23,9 +23,13 @@
     columns.Bound(g => g.GroupType);
     columns.Bound(g => g.Description);
     columns.Template(@<text>
-        @Html.ActionLink("Update", "Update", "Groups", null, new { @class = "bx bx-grid-function bx-edit" })
-                          </text>)
-          .Width(70);
+        <button type="button" class="bx bx-grid-function bx-edit" onclick="editGroup(@item.Id)"></button>
+        <button type="button" class="bx bx-grid-function bx-trash" onclick="deleteGroup(@item.Id)"></button>
+        </text>)
+        .ClientTemplate(
+            "<button type=\"button\" class=\"bx bx-grid-function bx-edit\" onclick=\"editGroup(<#= Id #>);\" value=\"<#= Id #>\"></button>" +
+            "<button type=\"button\" class=\"bx bx-grid-function bx-trash\" onclick=\"deleteGroup(<#= Id #>);\" value=\"<#= Id #>\"></button>")
+            .Width(70);
     })
     .ClientEvents(events =>
     {
@@ -45,22 +49,21 @@
     })
     .Sortable(sortable => sortable.OrderBy(order => order.Add(c => c.Id).Descending())))
 
-<script type="text/javascript">
-
-    function createGroup() {
-
-    }
-
-    function editGroup(id) {
-
-    }
-
-    function deleteGroup(id) {
-
-    }
-
-    function onDataBound() {
-        addTooltips();
-        resetAllTelerikIconTitles();
-    }
-</script>
+@section Scripts
+{
+    <script type="text/javascript">
+    
+        function editGroup(id) {
+    
+        }
+    
+        function deleteGroup(id) {
+    
+        }
+    
+        function onDataBound() {
+            addTooltips();
+            resetAllTelerikIconTitles();
+        }
+    </script>
+}
