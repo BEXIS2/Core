@@ -47,7 +47,7 @@ namespace BExIS.Security.Services.Authorization
         private IQueryable<EntityPermission> EntityPermissions => EntityPermissionRepository.Query();
 
         /// <summary>
-        /// method to persist a given entity permission
+        /// persist a given entity permission
         /// </summary>
         /// <param name="entityPermission">the entity permission to be persisted</param>
         public void Create(EntityPermission entityPermission)
@@ -61,7 +61,7 @@ namespace BExIS.Security.Services.Authorization
         }
 
         /// <summary>
-        /// method to create and persist an entity permission based on necessary input
+        /// create and persist an entity permission based on necessary input
         /// </summary>
         /// <param name="subject">to whom the entity permission belongs to</param>
         /// <param name="entity">to what type of data the entity permission belongs to</param>
@@ -86,7 +86,7 @@ namespace BExIS.Security.Services.Authorization
         }
 
         /// <summary>
-        /// method to create and persist an entity permission based on necessary input
+        /// create and persist an entity permission based on necessary input
         /// </summary>
         /// <typeparam name="T">the type of the subject (either user or group)</typeparam>
         /// <param name="subjectName">the name of the subject whom the entity permission should belong to</param>
@@ -115,6 +115,10 @@ namespace BExIS.Security.Services.Authorization
             return entityPermission;
         }
 
+        /// <summary>
+        /// delete a given entity permission
+        /// </summary>
+        /// <param name="entityPermission">the entity permission to be deleted</param>
         public void Delete(EntityPermission entityPermission)
         {
             using (var uow = this.GetUnitOfWork())
@@ -125,6 +129,10 @@ namespace BExIS.Security.Services.Authorization
             }
         }
 
+        /// <summary>
+        /// delete an entity permission based on the id
+        /// </summary>
+        /// <param name="entityPermissionId">the id of the entity permission that should be deleted</param>
         public void Delete(long entityPermissionId)
         {
             using (var uow = this.GetUnitOfWork())
@@ -135,11 +143,25 @@ namespace BExIS.Security.Services.Authorization
             }
         }
 
+        /// <summary>
+        /// try to get entity permission based on given id
+        /// </summary>
+        /// <param name="entityPermissionId">the id of the entity permission that should be deleted</param>
+        /// <returns>the entity permission with id = entityPermissionId or null (if the id doesn't exist)</returns>
         public EntityPermission FindById(long entityPermissionId)
         {
             return EntityPermissionRepository.Get(entityPermissionId);
         }
 
+        /// <summary>
+        /// get a list of entity ids which belong to a given subject and entity in respect to a certain right type
+        /// </summary>
+        /// <typeparam name="T">the type of the subject (either user or group)</typeparam>
+        /// <param name="subjectName">the name of the subject whom the entity permissions should belong to</param>
+        /// <param name="entityName">the name of the entity which the entity permissions should belong to</param>
+        /// <param name="entityType">the type of the entity which the entity permissions should belong to</param>
+        /// <param name="rightType">the right type which the entity permissions should satisfy</param>
+        /// <returns>a list of entity instance ids</returns>
         public List<long> GetKeys<T>(string subjectName, string entityName, Type entityType, RightType rightType) where T : Subject
         {
             var subject = SubjectRepository.Query(s => s.Name.ToUpperInvariant() == subjectName.ToUpperInvariant() && s is T).FirstOrDefault();
@@ -152,6 +174,13 @@ namespace BExIS.Security.Services.Authorization
                         e.Rights.ToRightTypes().Contains(rightType)).Select(e => e.Key).ToList();
         }
 
+        /// <summary>
+        /// get a list of entity ids which belong to a given subject and entity in respect to a certain right type
+        /// </summary>
+        /// <param name="subjectId">the id of the subject whom the entity permissions belongs to</param>
+        /// <param name="entityId">the id of the entity which the entity permissions should belong to</param>
+        /// <param name="rightType">the right type which the entity permissions should satisfy</param>
+        /// <returns>a list of entity instance ids</returns>
         public List<long> GetKeys(long subjectId, long entityId, RightType rightType)
         {
             var subject = SubjectRepository.Get(subjectId);
