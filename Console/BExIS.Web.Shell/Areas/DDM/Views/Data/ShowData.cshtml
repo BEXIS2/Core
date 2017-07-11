@@ -86,11 +86,11 @@
 
               tabs.Add()
                   .Text("Publish")
-                  .Content(@Html.Render("dim", "Submission", "getPublishDataPartialView", new RouteValueDictionary { { "datasetid",@Model.Id}}).ToHtmlString())
+                  .Content(@Html.Render("dim", "Submission", "getPublishDataPartialView", new RouteValueDictionary { { "datasetid", @Model.Id } }).ToHtmlString())
                     .Enabled(false)
                     .HtmlAttributes(new { id = "prepare" });
 
-    })
+              })
               .ClientEvents(e => e.OnSelect("OnSelectShowDataTabStrip")))
     }
     else
@@ -98,6 +98,7 @@
         @Html.ValidationSummary(true);
     }
 }
+
 
 <script type="text/javascript">
 

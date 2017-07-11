@@ -1,4 +1,5 @@
 ﻿
+using BExIS.Dim.Services;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Services.Objects;
 using System.Linq;
@@ -9,6 +10,11 @@ namespace BExIS.Modules.Dim.UI.Helpers
     {
         public static void GenerateSeedData()
         {
+
+            PublicationManager publicationManager = new PublicationManager();
+            if (!publicationManager.BrokerRepo.Get().Any(b => b.Name.ToLower().Equals("generic")))
+                publicationManager.CreateBroker("Generic", "", "", "", "", "text/csv");
+
             #region SECURITY
             //workflows = größere sachen, vielen operation
             //operations = einzelne actions

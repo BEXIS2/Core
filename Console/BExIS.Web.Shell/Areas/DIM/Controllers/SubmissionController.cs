@@ -182,7 +182,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     List<string> exportNames =
                         XmlDatasetHelper.GetAllTransmissionInformation(datasetid,
                             TransmissionType.mappingFileExport, AttributeNames.name).ToList();
-                    if (exportNames.Contains(broker.MetadataFormat)) model.IsMetadataConvertable = true;
+                    if (string.IsNullOrEmpty(broker.MetadataFormat) || exportNames.Contains(broker.MetadataFormat)) model.IsMetadataConvertable = true;
 
 
                     // Validate

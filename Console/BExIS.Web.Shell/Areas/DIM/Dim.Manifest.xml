@@ -25,5 +25,12 @@
             controller="Help" action="index"
             extends="./lunchbarRoot/help"
             />
+
+    <Export tag="x" id="xyz" order="1"
+                title="Data Dissemination" description="Data Dissemination Help Manual" icon=""
+                controller="Submission" action="getPublishDataPartialView"
+                extends=""
+            />
+    
   </Exports>
 </Manifest>
