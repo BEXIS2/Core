@@ -12,6 +12,8 @@ using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Web.Shell.Helpers;
 using BExIS.Utils.Models;
 using BExIS.Utils.Helpers;
+using System.Collections.Generic;
+using System.Web.Script.Serialization;
 
 namespace BExIS.Web.Shell.Areas.DCM.Controllers
 {
@@ -92,7 +94,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             // Check if the areas have already been selected, if yes, use them (Important when jumping back to this step)
             if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SHEET_DATA_AREA))
             {
-                model.DataArea = TaskManager.Bus[EasyUploadTaskManager.SHEET_DATA_AREA].ToString();
+                model.DataArea = (List<string>)TaskManager.Bus[EasyUploadTaskManager.SHEET_DATA_AREA];
             }
 
             if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SHEET_HEADER_AREA))
@@ -123,7 +125,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SHEET_HEADER_AREA))
                 {
                     bool isJsonDataEmpty = String.IsNullOrEmpty(Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.SHEET_JSON_DATA]));
-                    bool isDataAreaEmpty = String.IsNullOrEmpty(Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.SHEET_DATA_AREA]));
+                    bool isDataAreaEmpty = ((List<string>)TaskManager.Bus[EasyUploadTaskManager.SHEET_DATA_AREA]).Count == 0;
                     bool isHeadAreaEmpty = String.IsNullOrEmpty(Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.SHEET_HEADER_AREA]));
 
                     if (!isJsonDataEmpty && !isDataAreaEmpty && !isHeadAreaEmpty)
@@ -155,7 +157,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     //reload model
                     if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SHEET_DATA_AREA))
                     {
-                        model.DataArea = TaskManager.Bus[EasyUploadTaskManager.SHEET_DATA_AREA].ToString();
+                        model.DataArea = (List<string>)TaskManager.Bus[EasyUploadTaskManager.SHEET_DATA_AREA];
                     }
 
                     if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SHEET_HEADER_AREA))
@@ -202,8 +204,37 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
             if (dataArea != null)
             {
-                TaskManager.AddToBus(EasyUploadTaskManager.SHEET_DATA_AREA, dataArea);
-                model.DataArea = dataArea;
+                if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SHEET_DATA_AREA))
+                {
+                    model.DataArea = (List<string>)TaskManager.Bus[EasyUploadTaskManager.SHEET_DATA_AREA];
+                }
+
+                //dataArea == "" means the resetButton was clicked
+                if (model.DataArea == null || dataArea == "")
+                {
+                    model.DataArea = new List<string>();
+                }
+                if( dataArea != "")
+                {
+                    var serializer = new JavaScriptSerializer();
+                    int[] newArea = serializer.Deserialize<int[]>(dataArea);
+                    Boolean contains = false;
+                    foreach (string area in model.DataArea)
+                    {
+                        int[] oldArea = serializer.Deserialize<int[]>(area);
+                        //If one of the already selected areas contains the new one, don't add the new one to the selection (prevents duplicate selection)
+                        if( oldArea[0] <= newArea[0] && oldArea[2] >= newArea[2] &&
+                            oldArea[1] <= newArea[1] && oldArea[3] >= newArea[3] )
+                        {
+                            contains = true;
+                        }
+                    }
+                    if(!contains)
+                        model.DataArea.Add(dataArea);
+                }
+
+
+                TaskManager.AddToBus(EasyUploadTaskManager.SHEET_DATA_AREA, model.DataArea);
             }
 
             if (headerArea != null)
@@ -213,9 +244,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             }
 
             Session["TaskManager"] = TaskManager;
-
-
-            //create Model
+            
             model.StepInfo = TaskManager.Current();
 
             return PartialView("SelectAreas", model);

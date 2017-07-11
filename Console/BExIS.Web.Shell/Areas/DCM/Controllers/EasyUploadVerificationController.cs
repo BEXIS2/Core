@@ -683,86 +683,93 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             DataTypeManager dtm = new DataTypeManager();
 
 
-            string DataArea = TaskManager.Bus[EasyUploadTaskManager.SHEET_DATA_AREA].ToString();
-            int[] IntDataArea = serializer.Deserialize<int[]>(DataArea);
-
-            string[,] SelectedDataArea = new string[(IntDataArea[2] - IntDataArea[0]), (IntDataArea[3] - IntDataArea[1])];
-
-            for (int y = IntDataArea[0]; y <= IntDataArea[2]; y++)
+            List<string> DataArea = (List<string>)TaskManager.Bus[EasyUploadTaskManager.SHEET_DATA_AREA];
+            List<int[]> IntDataAreaList = new List<int[]>();
+            foreach(string area in DataArea)
             {
-                for (int x = IntDataArea[1]; x <= IntDataArea[3]; x++)
+                IntDataAreaList.Add(serializer.Deserialize<int[]>(area));
+            }
+
+            foreach(int[] IntDataArea in IntDataAreaList)
+            {
+                string[,] SelectedDataArea = new string[(IntDataArea[2] - IntDataArea[0]), (IntDataArea[3] - IntDataArea[1])];
+
+                for (int y = IntDataArea[0]; y <= IntDataArea[2]; y++)
                 {
-                    int SelectedY = y - (IntDataArea[0]);
-                    int SelectedX = x - (IntDataArea[1]);
-                    string vv = DeserializedJsonArray[y][x];
-
-                    Tuple<int, string, UnitInfo> mappedHeader = MappedHeaders.Where(t => t.Item1 == SelectedX).FirstOrDefault();
-
-                    DataType datatype = null;
-
-                    if (mappedHeader.Item3.SelectedDataTypeId == -1)
+                    for (int x = IntDataArea[1]; x <= IntDataArea[3]; x++)
                     {
-                        datatype = dtm.Repo.Get(mappedHeader.Item3.DataTypeInfos.FirstOrDefault().DataTypeId);
-                    }
-                    else
-                    {
-                        datatype = dtm.Repo.Get(mappedHeader.Item3.SelectedDataTypeId);
-                    }
+                        int SelectedY = y - (IntDataArea[0]);
+                        int SelectedX = x - (IntDataArea[1]);
+                        string vv = DeserializedJsonArray[y][x];
 
-                    string datatypeName = datatype.SystemType;
+                        Tuple<int, string, UnitInfo> mappedHeader = MappedHeaders.Where(t => t.Item1 == SelectedX).FirstOrDefault();
 
-                    
-                    DataTypeCheck dtc;
-                    double DummyValue = 0;
-                    //Workaround for the missing/incorrect implementation of the DataTypeCheck for Double and Character
-                    //Should be removed as soon as this is fixed
-                    Boolean skipDataTypeCheck = false;
-                    if (datatypeName == "Double")
-                    {
-                        if (!Double.TryParse(vv, out DummyValue))
+                        DataType datatype = null;
+
+                        if (mappedHeader.Item3.SelectedDataTypeId == -1)
                         {
-                            ErrorList.Add(new Tuple<int, Error>(SelectedX, new Error(ErrorType.Value, "Can not convert to:", new object[] { mappedHeader.Item2, vv, y, datatypeName })));
-                            skipDataTypeCheck = true;
-                        }
-                    }
-
-                    if ( datatypeName == "Char")
-                    {
-                        skipDataTypeCheck = true;
-                        char dummy;
-                        if( !Char.TryParse(vv, out dummy))
-                        {
-                            ErrorList.Add(new Tuple<int, Error>(SelectedX, new Error(ErrorType.Value, "Can not convert to:", new object[] { mappedHeader.Item2, vv, y, datatypeName })));
-                        }
-                    }
-
-                    if (!skipDataTypeCheck)
-                    {
-                        if (Double.TryParse(vv, out DummyValue))
-                        {
-                            if (vv.Contains("."))
-                            {
-                                dtc = new DataTypeCheck(mappedHeader.Item2, datatypeName, DecimalCharacter.point);
-                            }
-                            else
-                            {
-                                dtc = new DataTypeCheck(mappedHeader.Item2, datatypeName, DecimalCharacter.comma);
-                            }
+                            datatype = dtm.Repo.Get(mappedHeader.Item3.DataTypeInfos.FirstOrDefault().DataTypeId);
                         }
                         else
                         {
-                            dtc = new DataTypeCheck(mappedHeader.Item2, datatypeName, DecimalCharacter.point);
+                            datatype = dtm.Repo.Get(mappedHeader.Item3.SelectedDataTypeId);
                         }
 
-                        var ValidationResult = dtc.Execute(vv, y);
-                        if (ValidationResult is Error)
+                        string datatypeName = datatype.SystemType;
+
+
+                        DataTypeCheck dtc;
+                        double DummyValue = 0;
+                        //Workaround for the missing/incorrect implementation of the DataTypeCheck for Double and Character
+                        //Should be removed as soon as this is fixed
+                        Boolean skipDataTypeCheck = false;
+                        if (datatypeName == "Double")
                         {
-                            ErrorList.Add(new Tuple<int, Error>(SelectedX, (Error)ValidationResult));
+                            if (!Double.TryParse(vv, out DummyValue))
+                            {
+                                ErrorList.Add(new Tuple<int, Error>(SelectedX, new Error(ErrorType.Value, "Can not convert to:", new object[] { mappedHeader.Item2, vv, y, datatypeName })));
+                                skipDataTypeCheck = true;
+                            }
+                        }
+
+                        if (datatypeName == "Char")
+                        {
+                            skipDataTypeCheck = true;
+                            char dummy;
+                            if (!Char.TryParse(vv, out dummy))
+                            {
+                                ErrorList.Add(new Tuple<int, Error>(SelectedX, new Error(ErrorType.Value, "Can not convert to:", new object[] { mappedHeader.Item2, vv, y, datatypeName })));
+                            }
+                        }
+
+                        if (!skipDataTypeCheck)
+                        {
+                            if (Double.TryParse(vv, out DummyValue))
+                            {
+                                if (vv.Contains("."))
+                                {
+                                    dtc = new DataTypeCheck(mappedHeader.Item2, datatypeName, DecimalCharacter.point);
+                                }
+                                else
+                                {
+                                    dtc = new DataTypeCheck(mappedHeader.Item2, datatypeName, DecimalCharacter.comma);
+                                }
+                            }
+                            else
+                            {
+                                dtc = new DataTypeCheck(mappedHeader.Item2, datatypeName, DecimalCharacter.point);
+                            }
+
+                            var ValidationResult = dtc.Execute(vv, y);
+                            if (ValidationResult is Error)
+                            {
+                                ErrorList.Add(new Tuple<int, Error>(SelectedX, (Error)ValidationResult));
+                            }
                         }
                     }
                 }
             }
-
+           
             return ErrorList;
         }
 

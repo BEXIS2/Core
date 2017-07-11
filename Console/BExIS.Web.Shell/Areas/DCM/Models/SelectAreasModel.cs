@@ -9,7 +9,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
     {
         public StepInfo StepInfo { get; set; }
         public string JsonTableData { get; set; }
-        public string DataArea { get; set; }
+        public List<string> DataArea { get; set; }
         public string HeaderArea { get; set; }
 
         public List<Error> ErrorList { get; set; }

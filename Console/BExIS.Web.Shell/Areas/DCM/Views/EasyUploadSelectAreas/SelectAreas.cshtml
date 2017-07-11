@@ -35,9 +35,8 @@
     var hot = null;
     var currentButton = null;
     var selectedDataArea = null;
-    
+
     $(document).ready(function () {
-        
 
         function resetRenderer(instance, td, row, col, prop, value, cellProperties) {
 
@@ -57,7 +56,7 @@
             return td;
         }
 
-        
+
         var container = document.getElementById('handsonExcelTable');
         hot = new Handsontable(container, {
             data: @Html.Raw(Model.JsonTableData),
@@ -94,6 +93,11 @@
                     selected = reverseArea(selected);
                 }
                 selectedDataArea = selected;
+
+                //Check if selection is from bottom to top and reverse it
+                if(selected[0] > selected[2]){
+                    selected = reverseAreaVertically(selected);
+                }
 
                 // set the css class for all selected cells
                 for(i = selected[0]; i <= selected[2]; i++) {
@@ -182,7 +186,7 @@
                 //If there is no marked data area yet, we want to expand the current selection
                 selected = hot.getSelected();
             }
-            
+
             if(!jQuery.isEmptyObject(selected)) {
                 // check if selection is from right bottom to left top and reverse it
                 if(selected[2] <= selected[0] && selected[3] <= selected[1]) {
@@ -229,16 +233,21 @@
         }
 
         if($('#DataSelection').val().length > 0) {
-            var array =  $.parseJSON($('#DataSelection').val());
+            //If there was a previous selection, parse it and mark the cells
+            var nestedArray =  $.parseJSON($('#DataSelection').val());
+            if(array != null){
+                for(var pos = 0; pos < nestedArray.length; pos++){
+                    var array = $.parseJSON(nestedArray[pos]);
+                    for(i = array[0]; i <= array[2]; i++) {
+                        for(j = array[1]; j <= array[3]; j++) {
+                            var cell = hot.getCellMeta(i,j, true);
+                            cell.className = 'dataMarking';
 
-            for(i = array[0]; i <= array[2]; i++) {
-                for(j = array[1]; j <= array[3]; j++) {
-                    var cell = hot.getCellMeta(i,j, true);
-                    cell.className = 'dataMarking';
-
+                        }
+                    }
                 }
+                hot.render();
             }
-            hot.render();
         }
     });
 
@@ -247,6 +256,15 @@
         var startRow = selected[2];
         var endCol = selected[1];
         var endRow = selected[0]
+
+        return [startRow, startCol, endRow, endCol];
+    }
+
+    function reverseAreaVertically(selected){
+        var startCol = selected[1];
+        var startRow = selected[2];
+        var endCol = selected[3];
+        var endRow = selected[0];
 
         return [startRow, startCol, endRow, endCol];
     }
@@ -268,7 +286,7 @@
             <input type="hidden" name="HeaderSelection" id="HeaderSelection" value="@Html.Raw(Model.HeaderArea)" />
 
             <input type="button" class="t-button action areaSelect" id="setSelectDataArea" value="Data" />
-            <input type="hidden" name="DataSelection" id="DataSelection" value="@Html.Raw(Model.DataArea)" />
+            <input type="hidden" name="DataSelection" id="DataSelection" value=@Html.Raw(Json.Encode(Model.DataArea)) />
             <input type="button" class="t-button action areaSelect" id="expandSelection" value="Expand Selection" />
 
             <input type="button" class="t-button action areaSelect" id="setSelectReset" value="Reset" />

@@ -103,18 +103,26 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SHEET_DATA_AREA))
             {
                 JavaScriptSerializer serializer = new JavaScriptSerializer();
-                string selectedDataAreaJsonArray = TaskManager.Bus[EasyUploadTaskManager.SHEET_DATA_AREA].ToString();
-                int[] areaDataValues = serializer.Deserialize<int[]>(selectedDataAreaJsonArray);
-
-                if (model.FileFormat.ToLower() == "leftright")
+                List<string> selectedDataAreaJsonArray = (List<String>)TaskManager.Bus[EasyUploadTaskManager.SHEET_DATA_AREA];
+                List<int[]> areaDataValuesList = new List<int[]>();
+                model.NumberOfData = 0;
+                foreach (string jsonArray in selectedDataAreaJsonArray)
                 {
-                    model.NumberOfData = (areaDataValues[3]) - (areaDataValues[1]) + 1;
+                    areaDataValuesList.Add(serializer.Deserialize<int[]>(jsonArray));
                 }
-
-                if (model.FileFormat.ToLower() == "topdown")
+                foreach(int[] areaDataValues in areaDataValuesList)
                 {
-                    model.NumberOfData = (areaDataValues[2]) - (areaDataValues[0]) + 1;
+                    if (model.FileFormat.ToLower() == "leftright")
+                    {
+                        model.NumberOfData += (areaDataValues[3]) - (areaDataValues[1]) + 1;
+                    }
+
+                    if (model.FileFormat.ToLower() == "topdown")
+                    {
+                        model.NumberOfData += (areaDataValues[2]) - (areaDataValues[0]) + 1;
+                    }
                 }
+                
             }
 
             return PartialView("EasyUploadSummary", model);
@@ -171,18 +179,26 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 if (TaskManager.Bus.ContainsKey(EasyUploadTaskManager.SHEET_DATA_AREA))
                 {
                     JavaScriptSerializer serializer = new JavaScriptSerializer();
-                    string selectedDataAreaJsonArray = TaskManager.Bus[EasyUploadTaskManager.SHEET_DATA_AREA].ToString();
-                    int[] areaDataValues = serializer.Deserialize<int[]>(selectedDataAreaJsonArray);
-
-                    if (model.FileFormat.ToLower() == "leftright")
+                    List<string> selectedDataAreaJsonArray = (List<string>)TaskManager.Bus[EasyUploadTaskManager.SHEET_DATA_AREA];
+                    List<int[]> areaDataValuesList = new List<int[]>();
+                    foreach(string area in selectedDataAreaJsonArray)
                     {
-                        model.NumberOfData = (areaDataValues[3]) - (areaDataValues[1]) + 1;
+                        areaDataValuesList.Add(serializer.Deserialize<int[]>(area));
                     }
 
-                    if (model.FileFormat.ToLower() == "topdown")
+                    foreach(int[] areaDataValues in areaDataValuesList)
                     {
-                        model.NumberOfData = (areaDataValues[2]) - (areaDataValues[0]) + 1;
+                        if (model.FileFormat.ToLower() == "leftright")
+                        {
+                            model.NumberOfData = (areaDataValues[3]) - (areaDataValues[1]) + 1;
+                        }
+
+                        if (model.FileFormat.ToLower() == "topdown")
+                        {
+                            model.NumberOfData = (areaDataValues[2]) - (areaDataValues[0]) + 1;
+                        }
                     }
+                    
                 }
 
                 #endregion
@@ -212,7 +228,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             DataTypeManager dtm = new DataTypeManager();
             DataContainerManager dam = new DataContainerManager();
 
-            DataTuple[] rows;
+            DataTuple[] rows = null;
 
             //First, try to validate - if there are errors, return immediately
             string JsonArray = TaskManager.Bus[EasyUploadTaskManager.SHEET_JSON_DATA].ToString();
@@ -445,10 +461,14 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             Stream = reader.Open(TaskManager.Bus[EasyUploadTaskManager.FILEPATH].ToString());
             //rows = reader.ReadFile(Stream, TaskManager.Bus[TaskManager.FILENAME].ToString(), oldSds, (int)id, packageSize).ToArray();
 
-            string selectedDataAreaJsonArray = TaskManager.Bus[EasyUploadTaskManager.SHEET_DATA_AREA].ToString();
+            List<string> selectedDataAreaJsonArray = (List<string>)TaskManager.Bus[EasyUploadTaskManager.SHEET_DATA_AREA];
             string selectedHeaderAreaJsonArray = TaskManager.Bus[EasyUploadTaskManager.SHEET_HEADER_AREA].ToString();
             JavaScriptSerializer serializer = new JavaScriptSerializer();
-            int[] areaDataValues = serializer.Deserialize<int[]>(selectedDataAreaJsonArray);
+            List<int[]> areaDataValuesList = new List<int[]>();
+            foreach(string area in selectedDataAreaJsonArray)
+            {
+                areaDataValuesList.Add(serializer.Deserialize<int[]>(area));
+            }
             int[] areaHeaderValues = serializer.Deserialize<int[]>(selectedHeaderAreaJsonArray);
 
             Orientation orientation = 0;
@@ -466,27 +486,32 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     break;
             }
 
+            foreach(int[] areaDataValues in areaDataValuesList)
+            {
+                EasyUploadFileReaderInfo fri = new EasyUploadFileReaderInfo();
+                fri.DataStartRow = areaDataValues[0] + 1;
+                fri.DataStartColumn = areaDataValues[1] + 1;
+                fri.DataEndRow = areaDataValues[2] + 1;
+                fri.DataEndColumn = areaDataValues[3] + 1;
 
-            EasyUploadFileReaderInfo fri = new EasyUploadFileReaderInfo();
-            fri.DataStartRow = areaDataValues[0] + 1;
-            fri.DataStartColumn = areaDataValues[1] + 1;
-            fri.DataEndRow = areaDataValues[2] + 1;
-            fri.DataEndColumn = areaDataValues[3] + 1;
+                fri.VariablesStartRow = areaHeaderValues[0] + 1;
+                fri.VariablesStartColumn = areaHeaderValues[1] + 1;
+                fri.VariablesEndRow = areaHeaderValues[2] + 1;
+                fri.VariablesEndColumn = areaHeaderValues[3] + 1;
 
-            fri.VariablesStartRow = areaHeaderValues[0] + 1;
-            fri.VariablesStartColumn = areaHeaderValues[1] + 1;
-            fri.VariablesEndRow = areaHeaderValues[2] + 1;
-            fri.VariablesEndColumn = areaHeaderValues[3] + 1;
+                fri.Offset = areaDataValues[1];
+                fri.Orientation = orientation;
 
-            fri.Offset = areaDataValues[1];
-            fri.Orientation = orientation;
+                reader.setSubmittedVariableIdentifiers(identifiers);
+
+                rows = reader.ReadFile(Stream, TaskManager.Bus[EasyUploadTaskManager.FILENAME].ToString(), fri, sds, (int)datasetId);
                 
-            reader.setSubmittedVariableIdentifiers(identifiers);
+            }
 
-            rows = reader.ReadFile(Stream, TaskManager.Bus[EasyUploadTaskManager.FILENAME].ToString(), fri, sds, (int)datasetId);
-                
-            dm.EditDatasetVersion(workingCopy, rows.ToList(), null, null);
-                
+            //After reading all the rows, add them to the dataset
+            if(rows != null)
+                dm.EditDatasetVersion(workingCopy, rows.ToList(), null, null);
+
             Stream.Close();
             
 
@@ -544,86 +569,93 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             DataTypeManager dtm = new DataTypeManager();
 
 
-            string DataArea = TaskManager.Bus[EasyUploadTaskManager.SHEET_DATA_AREA].ToString();
-            int[] IntDataArea = serializer.Deserialize<int[]>(DataArea);
-
-            string[,] SelectedDataArea = new string[(IntDataArea[2] - IntDataArea[0]), (IntDataArea[3] - IntDataArea[1])];
-
-            for (int y = IntDataArea[0]; y <= IntDataArea[2]; y++)
+            List<string> DataArea = (List<string>)TaskManager.Bus[EasyUploadTaskManager.SHEET_DATA_AREA];
+            List<int[]> IntDataAreaList = new List<int[]>();
+            foreach(string area in DataArea)
             {
-                for (int x = IntDataArea[1]; x <= IntDataArea[3]; x++)
+                IntDataAreaList.Add(serializer.Deserialize<int[]>(area));
+            }
+            
+            foreach(int[] IntDataArea in IntDataAreaList)
+            {
+                string[,] SelectedDataArea = new string[(IntDataArea[2] - IntDataArea[0]), (IntDataArea[3] - IntDataArea[1])];
+
+                for (int y = IntDataArea[0]; y <= IntDataArea[2]; y++)
                 {
-                    int SelectedY = y - (IntDataArea[0]);
-                    int SelectedX = x - (IntDataArea[1]);
-                    string vv = DeserializedJsonArray[y][x];
-
-                    Tuple<int, string, UnitInfo> mappedHeader = MappedHeaders.Where(t => t.Item1 == SelectedX).FirstOrDefault();
-
-                    DataType datatype = null;
-
-                    if (mappedHeader.Item3.SelectedDataTypeId == -1)
+                    for (int x = IntDataArea[1]; x <= IntDataArea[3]; x++)
                     {
-                        datatype = dtm.Repo.Get(mappedHeader.Item3.DataTypeInfos.FirstOrDefault().DataTypeId);
-                    }
-                    else
-                    {
-                        datatype = dtm.Repo.Get(mappedHeader.Item3.SelectedDataTypeId);
-                    }
+                        int SelectedY = y - (IntDataArea[0]);
+                        int SelectedX = x - (IntDataArea[1]);
+                        string vv = DeserializedJsonArray[y][x];
 
-                    string datatypeName = datatype.SystemType;
+                        Tuple<int, string, UnitInfo> mappedHeader = MappedHeaders.Where(t => t.Item1 == SelectedX).FirstOrDefault();
 
+                        DataType datatype = null;
 
-                    DataTypeCheck dtc;
-                    double DummyValue = 0;
-                    //Workaround for the missing/incorrect implementation of the DataTypeCheck for Double and Character
-                    //Should be removed as soon as this is fixed
-                    Boolean skipDataTypeCheck = false;
-                    if (datatypeName == "Double")
-                    {
-                        if (!Double.TryParse(vv, out DummyValue))
+                        if (mappedHeader.Item3.SelectedDataTypeId == -1)
                         {
-                            ErrorList.Add(new Error(ErrorType.Value, "Can not convert to:", new object[] { mappedHeader.Item2, vv, y, datatypeName }));
-                            skipDataTypeCheck = true;
-                        }
-                    }
-
-                    if (datatypeName == "Char")
-                    {
-                        skipDataTypeCheck = true;
-                        char dummy;
-                        if (!Char.TryParse(vv, out dummy))
-                        {
-                            ErrorList.Add(new Error(ErrorType.Value, "Can not convert to:", new object[] { mappedHeader.Item2, vv, y, datatypeName }));
-                        }
-                    }
-
-                    if (!skipDataTypeCheck)
-                    {
-                        if (Double.TryParse(vv, out DummyValue))
-                        {
-                            if (vv.Contains("."))
-                            {
-                                dtc = new DataTypeCheck(mappedHeader.Item2, datatypeName, DecimalCharacter.point);
-                            }
-                            else
-                            {
-                                dtc = new DataTypeCheck(mappedHeader.Item2, datatypeName, DecimalCharacter.comma);
-                            }
+                            datatype = dtm.Repo.Get(mappedHeader.Item3.DataTypeInfos.FirstOrDefault().DataTypeId);
                         }
                         else
                         {
-                            dtc = new DataTypeCheck(mappedHeader.Item2, datatypeName, DecimalCharacter.point);
+                            datatype = dtm.Repo.Get(mappedHeader.Item3.SelectedDataTypeId);
                         }
 
-                        var ValidationResult = dtc.Execute(vv, y);
-                        if (ValidationResult is Error)
+                        string datatypeName = datatype.SystemType;
+
+
+                        DataTypeCheck dtc;
+                        double DummyValue = 0;
+                        //Workaround for the missing/incorrect implementation of the DataTypeCheck for Double and Character
+                        //Should be removed as soon as this is fixed
+                        Boolean skipDataTypeCheck = false;
+                        if (datatypeName == "Double")
                         {
-                            ErrorList.Add((Error)ValidationResult);
+                            if (!Double.TryParse(vv, out DummyValue))
+                            {
+                                ErrorList.Add(new Error(ErrorType.Value, "Can not convert to:", new object[] { mappedHeader.Item2, vv, y, datatypeName }));
+                                skipDataTypeCheck = true;
+                            }
+                        }
+
+                        if (datatypeName == "Char")
+                        {
+                            skipDataTypeCheck = true;
+                            char dummy;
+                            if (!Char.TryParse(vv, out dummy))
+                            {
+                                ErrorList.Add(new Error(ErrorType.Value, "Can not convert to:", new object[] { mappedHeader.Item2, vv, y, datatypeName }));
+                            }
+                        }
+
+                        if (!skipDataTypeCheck)
+                        {
+                            if (Double.TryParse(vv, out DummyValue))
+                            {
+                                if (vv.Contains("."))
+                                {
+                                    dtc = new DataTypeCheck(mappedHeader.Item2, datatypeName, DecimalCharacter.point);
+                                }
+                                else
+                                {
+                                    dtc = new DataTypeCheck(mappedHeader.Item2, datatypeName, DecimalCharacter.comma);
+                                }
+                            }
+                            else
+                            {
+                                dtc = new DataTypeCheck(mappedHeader.Item2, datatypeName, DecimalCharacter.point);
+                            }
+
+                            var ValidationResult = dtc.Execute(vv, y);
+                            if (ValidationResult is Error)
+                            {
+                                ErrorList.Add((Error)ValidationResult);
+                            }
                         }
                     }
                 }
             }
-
+           
             return ErrorList;
         }
 
