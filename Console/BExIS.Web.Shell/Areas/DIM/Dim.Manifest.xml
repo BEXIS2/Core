@@ -26,8 +26,8 @@
             extends="./lunchbarRoot/help"
             />
 
-    <Export tag="x" id="xyz" order="1"
-                title="Data Dissemination" description="Data Dissemination Help Manual" icon=""
+    <Export tag="inaternalAction" id="publishDataset" order="1"
+                title="Data Dissemination Publish Dataset" description="Publish a dataset." icon=""
                 controller="Submission" action="getPublishDataPartialView"
                 extends=""
             />

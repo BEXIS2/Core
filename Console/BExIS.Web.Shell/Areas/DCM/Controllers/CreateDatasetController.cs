@@ -607,7 +607,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public ActionResult ShowData(long id)
         {
 
-            //ToDo Modularity
+            //ToDo Modularity -> show Data DDM
             // 
             //return RedirectToAction("ShowData", "Data", new { area = "DDM" = id });
             return null;
