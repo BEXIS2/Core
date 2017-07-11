@@ -797,7 +797,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             foreach (long datasetId in gridCommands)
             {
                 //get permissions
-                List<RightType> rights = entityPermissionManager.GetRights(GetUsernameOrDefault(), typeof(User), "Dataset", typeof(Dataset), datasetId);
+                List<RightType> rights = entityPermissionManager.GetRights<User>(GetUsernameOrDefault(), "Dataset", typeof(Dataset), datasetId);
 
                 if (rights.Count > 0)
                 {

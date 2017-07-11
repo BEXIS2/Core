@@ -468,7 +468,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     if (GetUsernameOrDefault() != "DEFAULT")
                     {
                         EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
-                        entityPermissionManager.Create(GetUsernameOrDefault(), typeof(User), "Dataset", typeof(Dataset), ds.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
+                        entityPermissionManager.Create<User>(GetUsernameOrDefault(), "Dataset", typeof(Dataset), ds.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
                     }
                 }
                 else
@@ -607,7 +607,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public ActionResult ShowData(long id)
         {
 
-            //ToDo Modularity
+            //ToDo Modularity -> show Data DDM
             // 
             //return RedirectToAction("ShowData", "Data", new { area = "DDM" = id });
             return null;
@@ -671,7 +671,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
             UserManager userManager = new UserManager(new UserStore());
 
-            List<long> datasetIds = entityPermissionManager.GetKeys(GetUsernameOrDefault(), typeof(User), "Dataset",
+            List<long> datasetIds = entityPermissionManager.GetKeys<User>(GetUsernameOrDefault(), "Dataset",
                 typeof(Dataset), RightType.Write);
 
             foreach (long id in datasetIds)
