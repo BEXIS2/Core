@@ -31,5 +31,14 @@
             title="No thing" description="Change me!" icon=""
             controller="home" action="index"
             extends="./apiRoot" />
+    
+    
+    <!-- Function for reindexing Search-->
+    
+    <Export tag="api" id="SearchIndex"
+            title="Reindex Search" description="Reindex Search" icon=""
+            controller="SearchIndex" action="index"
+            extends="./apiRoot" />
+    
   </Exports>
 </Manifest>

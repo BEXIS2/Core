@@ -25,5 +25,12 @@
             controller="Help" action="index"
             extends="./lunchbarRoot/help"
             />
+
+    <Export tag="inaternalAction" id="publishDataset" order="1"
+                title="Data Dissemination Publish Dataset" description="Publish a dataset." icon=""
+                controller="Submission" action="getPublishDataPartialView"
+                extends=""
+            />
+    
   </Exports>
 </Manifest>
