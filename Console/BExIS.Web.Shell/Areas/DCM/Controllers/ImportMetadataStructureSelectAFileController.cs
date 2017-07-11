@@ -1,19 +1,19 @@
-﻿using System;
+﻿using BExIS.Dcm.ImportMetadataStructureWizard;
+using BExIS.Dcm.Wizard;
+using BExIS.IO;
+using BExIS.Modules.Dcm.UI.Models;
+using BExIS.Xml.Helpers.Mapping;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
-using BExIS.Dcm.ImportMetadataStructureWizard;
-using BExIS.Dcm.Wizard;
-using BExIS.IO;
 using BExIS.IO.Transform.Validation.Exceptions;
-using BExIS.Web.Shell.Areas.DCM.Models;
-using BExIS.Xml.Helpers.Mapping;
 using Vaiona.Utils.Cfg;
 
-namespace BExIS.Web.Shell.Areas.DCM.Controllers
+namespace BExIS.Modules.Dcm.UI.Controllers
 {
     public class ImportMetadataStructureSelectAFileController : Controller
     {
@@ -76,7 +76,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     {
                         try
                         {
-                           //check if file exist and add to taskmanager
+                            //check if file exist and add to taskmanager
                             string filePath = TaskManager.Bus[ImportMetadataStructureTaskManager.FILEPATH].ToString();
                             if (FileHelper.FileExist(filePath))
                             {
@@ -150,7 +150,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             //open schema
             XmlSchemaManager xmlSchemaManager = new XmlSchemaManager();
             xmlSchemaManager.Load(path, username);
-             
+
             if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.XML_SCHEMA_MANAGER))
                 TaskManager.Bus[ImportMetadataStructureTaskManager.XML_SCHEMA_MANAGER] = xmlSchemaManager;
             else

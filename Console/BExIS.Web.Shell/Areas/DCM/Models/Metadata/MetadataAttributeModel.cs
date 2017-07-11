@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.IO;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using BExIS.Dlm.Entities.Common;
 using BExIS.Dlm.Entities.DataStructure;
@@ -11,9 +8,8 @@ using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.IO.DataType.DisplayPattern;
 using BExIS.IO.Transform.Validation.Exceptions;
-using DocumentFormat.OpenXml.Office2010.Excel;
 
-namespace BExIS.Web.Shell.Areas.DCM.Models
+namespace BExIS.Modules.Dcm.UI.Models.Metadata
 {
     public class MetadataAttributeModel
     {

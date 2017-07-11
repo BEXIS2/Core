@@ -7,7 +7,7 @@ using System.Data;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
 
-namespace BExIS.Web.Shell.Areas.RPM.Models
+namespace BExIS.Modules.Rpm.UI.Models
 {
     public class Structure
     {

@@ -1,43 +1,45 @@
-﻿using System;
+﻿using BExIS.Utils.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+
 
 /// <summary>
 ///
 /// </summary>        
 namespace BExIS.Ddm.Model
-{  
+{
     /// <summary>
     ///
     /// </summary>
     /// <remarks></remarks>        
-    public class SearchCriteria 
+    public class SearchCriteria
     {
         /// <summary>
         /// 
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        public SearchCriteria() 
+        public SearchCriteria()
         {
             SearchCriteriaList = new List<SearchCriterion>();
         }
 
         public List<SearchCriterion> SearchCriteriaList { get; set; }
 
-       /// <summary>
-       /// Update a SearchCriterion with one value
-       /// </summary>
+        /// <summary>
+        /// Update a SearchCriterion with one value
+        /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
         /// <param name="name"></param>
-       /// <param name="value"></param>
-       /// <param name="multiSelect"></param>
-       /// <param name="range"></param>
-       /// <param name="dataType"></param>
+        /// <param name="value"></param>
+        /// <param name="multiSelect"></param>
+        /// <param name="range"></param>
+        /// <param name="dataType"></param>
         public void Update(SearchComponentBase scb, string value, bool multiSelect = false, string valueSearchOperation = "OR")
         {
-    
+
             //1. prüfe ob name in list vorhanden
             if (ContainsSearchCriterion(scb.Name, scb.Type))
             {
@@ -57,7 +59,7 @@ namespace BExIS.Ddm.Model
                     else
                     {
                         sco.Values.Add(value);
-                    } 
+                    }
                 }
                 else
                 {
@@ -100,7 +102,7 @@ namespace BExIS.Ddm.Model
                     SearchCriteriaList.Add(new SearchCriterion(value, multiSelect, valueSearchOperation, scb));
                 }
             }
-   
+
         }
 
         /// <summary>
@@ -114,7 +116,7 @@ namespace BExIS.Ddm.Model
         /// <param name="multiSelect"></param>
         /// <param name="range"></param>
         /// <param name="dataType"></param>
-        public void Update(SearchComponentBase scb,List<string> values, bool multiSelect=true, string valueSearchOperation = "OR")
+        public void Update(SearchComponentBase scb, List<string> values, bool multiSelect = true, string valueSearchOperation = "OR")
         {
             //1. prüfe ob name in list vorhanden
             if (ContainsSearchCriterion(scb.Name, scb.Type))
@@ -130,8 +132,8 @@ namespace BExIS.Ddm.Model
             else
             {
                 //wenn nicht vorhanden dann füge hinzu
-                if (values.Count>0)
-                SearchCriteriaList.Add(new SearchCriterion(values, multiSelect, valueSearchOperation,scb));
+                if (values.Count > 0)
+                    SearchCriteriaList.Add(new SearchCriterion(values, multiSelect, valueSearchOperation, scb));
             }
         }
 
@@ -200,10 +202,10 @@ namespace BExIS.Ddm.Model
         private SearchCriterion Get(string name, string value)
         {
             var searchcriterion = (from sco in SearchCriteriaList
-                                  from va in sco.Values
-                                  where (sco.SearchComponent.Name.Equals(name, StringComparison.InvariantCulture)
-                                  && (va.Equals(value, StringComparison.InvariantCulture)))
-                                  select sco).FirstOrDefault();
+                                   from va in sco.Values
+                                   where (sco.SearchComponent.Name.Equals(name, StringComparison.InvariantCulture)
+                                   && (va.Equals(value, StringComparison.InvariantCulture)))
+                                   select sco).FirstOrDefault();
 
             return searchcriterion as SearchCriterion;
         }
@@ -245,10 +247,10 @@ namespace BExIS.Ddm.Model
         public Property GetProperty(string Name)
         {
             var sc = (from sco in SearchCriteriaList
-                            from v in sco.Values
-                            where v.Equals(Name, StringComparison.InvariantCulture) ||
-                            sco.SearchComponent.Name.Equals(Name, StringComparison.InvariantCulture)
-                            select sco).FirstOrDefault();
+                      from v in sco.Values
+                      where v.Equals(Name, StringComparison.InvariantCulture) ||
+                      sco.SearchComponent.Name.Equals(Name, StringComparison.InvariantCulture)
+                      select sco).FirstOrDefault();
 
             if (sc != null) return sc.SearchComponent as Property;
 
@@ -256,7 +258,7 @@ namespace BExIS.Ddm.Model
         }
 
 
-       
+
         #region contains
 
         /// <summary>
@@ -266,7 +268,8 @@ namespace BExIS.Ddm.Model
         /// <seealso cref=""/>
         /// <param name="name"></param>
         /// <returns></returns>
-        private bool ContainsSearchCriterion(string name) {
+        private bool ContainsSearchCriterion(string name)
+        {
             return SearchCriteriaList.Where(p => p.SearchComponent.Name.Equals(name, StringComparison.InvariantCulture)).Count() > 0;
         }
 
@@ -282,10 +285,10 @@ namespace BExIS.Ddm.Model
         {
 
             var isIn = (from sco in SearchCriteriaList
-                                   from va in sco.Values
-                                   where (sco.SearchComponent.Name.Equals(name, StringComparison.InvariantCulture)
-                                   && (va.Equals(value, StringComparison.InvariantCulture)))
-                                   select value).Count()>0;
+                        from va in sco.Values
+                        where (sco.SearchComponent.Name.Equals(name, StringComparison.InvariantCulture)
+                        && (va.Equals(value, StringComparison.InvariantCulture)))
+                        select value).Count() > 0;
 
             return isIn;
         }
@@ -300,7 +303,7 @@ namespace BExIS.Ddm.Model
         /// <returns></returns>
         public bool ContainsSearchCriterion(string name, bool multiselect)
         {
-           return SearchCriteriaList.Where(p => p.SearchComponent.Name.Equals(name, StringComparison.InvariantCulture) && p.MultiSelect.Equals(multiselect)).Count()>0;
+            return SearchCriteriaList.Where(p => p.SearchComponent.Name.Equals(name, StringComparison.InvariantCulture) && p.MultiSelect.Equals(multiselect)).Count() > 0;
         }
 
         /// <summary>
@@ -313,7 +316,7 @@ namespace BExIS.Ddm.Model
         /// <returns></returns>
         private bool ContainsSearchCriterion(string name, SearchComponentBaseType type)
         {
-            return SearchCriteriaList.Where(p => p.SearchComponent.Name.Equals(name, StringComparison.InvariantCulture) && p.SearchComponent.Type.Equals(type)).Count()>0;
+            return SearchCriteriaList.Where(p => p.SearchComponent.Name.Equals(name, StringComparison.InvariantCulture) && p.SearchComponent.Type.Equals(type)).Count() > 0;
         }
 
         /// <summary>
@@ -337,8 +340,8 @@ namespace BExIS.Ddm.Model
             return isIn;
         }
 
-        
-       
+
+
         /// <summary>
         /// Check if facet in SerachCriteriaList
         /// This function is used to check whether an facet is present in the list.
@@ -347,7 +350,8 @@ namespace BExIS.Ddm.Model
         /// <seealso cref=""/>
         /// <param name="facet"></param>
         /// <returns></returns>
-        public bool ContainsFacet(Facet facet) {
+        public bool ContainsFacet(Facet facet)
+        {
 
             var isIn = (from sco in SearchCriteriaList
                         from v in sco.Values
@@ -400,7 +404,7 @@ namespace BExIS.Ddm.Model
     /// <remarks></remarks>        
     public class SearchCriterion
     {
-        public SearchCriterion(string value, bool multiSelect, string valueSearchOperation , SearchComponentBase searchComponent)
+        public SearchCriterion(string value, bool multiSelect, string valueSearchOperation, SearchComponentBase searchComponent)
         {
             if (Values == null) Values = new List<string>();
             //Name = name;
@@ -445,7 +449,7 @@ namespace BExIS.Ddm.Model
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
-        public List<string> Values{ get; set; }
+        public List<string> Values { get; set; }
 
         // AND/OR Between List<string> objects in sql statmant
 

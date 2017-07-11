@@ -1,21 +1,12 @@
-﻿using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.DataStructure;
-using BExIS.Dlm.Services.Data;
+﻿using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.IO;
 using BExIS.Web.Shell.Helpers;
 using BExIS.Web.Shell.Models;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Diagnostics;
-using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Threading.Tasks;
 using System.Web.Mvc;
-using System.Web.Script.Serialization;
 using System.Xml;
 using System.Xml.Schema;
 

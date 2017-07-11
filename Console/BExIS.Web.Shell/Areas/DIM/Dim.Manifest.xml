@@ -20,5 +20,10 @@
             controller="admin" action="index"
             extends="./settingsRoot"
             />
+    <Export tag="lunchbar" id="helpDim" order="1"
+            title="Data Dissemination" description="Data Dissemination Help Manual" icon=""
+            controller="Help" action="index"
+            extends="./lunchbarRoot/help"
+            />
   </Exports>
 </Manifest>

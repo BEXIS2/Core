@@ -1,14 +1,13 @@
 ﻿using BExIS.Dcm.ImportMetadataStructureWizard;
 using BExIS.Dcm.Wizard;
-using BExIS.Ddm.Model;
 using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
+using BExIS.Modules.Dcm.UI.Models.ImportMetadata;
 using BExIS.Security.Services.Objects;
-using BExIS.Web.Shell.Areas.DCM.Models.ImportMetadata;
+using BExIS.Utils.Models;
 using BExIS.Web.Shell.Helpers;
 using BExIS.Web.Shell.Models;
 using BExIS.Xml.Helpers;
-using BExIS.Xml.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +16,7 @@ using System.Web.Routing;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace BExIS.Web.Shell.Areas.DCM.Controllers
+namespace BExIS.Modules.Dcm.UI.Controllers
 {
     public class ImportMetadataStructureSetParametersController : Controller
     {
@@ -326,7 +325,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         {
             EntityManager entityManager = new EntityManager();
 
-            IEnumerable<string> tmp = entityManager.Entities.Select(e => e.ClassPath);
+            IEnumerable<string> tmp = entityManager.Entities.Select(e => e.EntityType.FullName);
 
             return tmp.ToList();
         }

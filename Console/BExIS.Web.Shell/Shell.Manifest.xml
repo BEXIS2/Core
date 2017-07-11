@@ -28,18 +28,18 @@
             extends="./menubarRoot"
             />
 
-    <Export tag="menubar" id="dummyMenu" order="2"
-            title="List Datasets" description="Delete me from the Shell" icon=""
-            controller="dummy" action="index"
-            extends="./menubarRoot/collect"
+    <Export tag="menubar" id="collect" order="2"
+            title="Collect" description="Quick access to Data Collection Area" icon=""
+            controller="" action=""
+            extends="./menubarRoot"
             />
 
-    <Export tag="lunchbar" id="lunchbarRoot" order="2"
+    <Export tag="lunchbar" id="lunchbarRoot" order="1"
             title="" description="" icon=""
             controller="" action=""
             extends="."
             />
-    <Export tag="lunchbar" id="help" order="1"
+    <Export tag="lunchbar" id="help" order="2"
             title="Help" description="Help" icon=""
             controller="" action=""
             extends="./lunchbarRoot" 

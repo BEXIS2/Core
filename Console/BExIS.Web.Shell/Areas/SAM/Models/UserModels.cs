@@ -15,7 +15,20 @@ namespace BExIS.Modules.Sam.UI.Models
                     Email = u.Email,
                     Id = u.Id,
                     IsAdministrator = u.IsAdministrator,
-                    UserName = u.UserName
+                    UserName = u.Name
+                };
+
+            return source.Select(conversion);
+        }
+
+        public static IQueryable<UserMembershipGridRowModel> ToUserMembershipGridRowModel(this IQueryable<User> source)
+        {
+            Expression<Func<User, UserMembershipGridRowModel>> conversion = u =>
+                new UserMembershipGridRowModel()
+                {
+                    Email = u.Email,
+                    Id = u.Id,
+                    Username = u.Name,
                 };
 
             return source.Select(conversion);
@@ -50,7 +63,7 @@ namespace BExIS.Modules.Sam.UI.Models
                 Email = user.Email,
                 Id = user.Id,
                 IsAdministrator = user.IsAdministrator,
-                UserName = user.UserName
+                UserName = user.Name
             };
         }
     }
@@ -60,17 +73,35 @@ namespace BExIS.Modules.Sam.UI.Models
         public string Email { get; set; }
         public string FullName { get; set; }
         public long Id { get; set; }
-        public bool IsUserInGroup { get; set; }
         public string Username { get; set; }
 
-        public static UserMembershipGridRowModel Convert(User user, bool isUserInGroup)
+        public static UserMembershipGridRowModel Convert(User user)
         {
             return new UserMembershipGridRowModel()
             {
                 Id = user.Id,
                 Username = user.Name,
-                Email = user.Email,
-                IsUserInGroup = isUserInGroup
+                Email = user.Email
+            };
+        }
+    }
+
+    public class UserFeaturePermissionGridRowModel
+    {
+        public string Email { get; set; }
+        public string FullName { get; set; }
+        public long Id { get; set; }
+        public string Username { get; set; }
+        public bool EffectiveRight { get; set; }
+        public int FeaturePermissionType { get; set; }
+
+        public static UserMembershipGridRowModel Convert(User user, int featurePermissionType, bool effectiveRight)
+        {
+            return new UserMembershipGridRowModel()
+            {
+                Id = user.Id,
+                Username = user.Name,
+                Email = user.Email
             };
         }
     }

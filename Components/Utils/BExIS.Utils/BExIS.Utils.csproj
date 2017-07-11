@@ -83,8 +83,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Builders\QueryBuilder.cs" />
+    <Compile Include="Extensions\ListExtensions.cs" />
     <Compile Include="Extensions\QueryableExtensions.cs" />
+    <Compile Include="Extensions\Int32Extensions.cs" />
     <Compile Include="Filters\QueryAttribute.cs" />
+    <Compile Include="Models\SearchAttribute.cs" />
+    <Compile Include="Models\SearchComponent.cs" />
+    <Compile Include="Models\SearchCriteria.cs" />
+    <Compile Include="Models\SearchElemets.cs" />
+    <Compile Include="Models\SearchMetadataNode.cs" />
+    <Compile Include="Models\SearchModel.cs" />
+    <Compile Include="Models\SearchResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WebHelpers\HtmlNavigationExtensions.cs" />
     <Compile Include="WebHelpers\HtmlPrefixScopeExtensions.cs" />
@@ -364,6 +373,12 @@
     <EmbeddedResource Include="App_GlobalResources\UploadLocalization.pt-PT.resx" />
     <EmbeddedResource Include="App_GlobalResources\UploadLocalization.ru-RU.resx" />
     <EmbeddedResource Include="App_GlobalResources\UploadLocalization.zh-CN.resx" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\AAA\BExIS.Security.Entities\BExIS.Security.Entities.csproj">
+      <Project>{C230693B-D780-438B-B26C-82257642DD5C}</Project>
+      <Name>BExIS.Security.Entities</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

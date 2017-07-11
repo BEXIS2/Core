@@ -5,17 +5,12 @@ using System.Collections.Generic;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.DataStructure;
 
-
-using Telerik.Web.Mvc;
-
-using BExIS.Web.Shell.Areas.RPM.Models;
 using BExIS.RPM.Output;
-using BExIS.Web.Shell.Areas.RPM.Classes;
 
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Extensions;
 
-namespace BExIS.Web.Shell.Areas.RPM.Models
+namespace BExIS.Modules.Rpm.UI.Models
 {
     public class MessageModel
     {

@@ -1,5 +1,31 @@
-﻿@{
-    ViewBag.Title = "Index";
+﻿@section LeftPane
+{
+    @Html.Partial("_Entities")
 }
+<div id="permissions"></div>
 
-<h2>Index</h2>
+@section Scripts
+{
+    <script type="text/javascript">
+
+        $(document).ready(function() {
+            function createUser() {
+
+            }
+
+            function editUser(id) {
+
+            }
+
+            function deleteUser(id) {
+
+            }
+
+            function onDataBound() {
+                addTooltips();
+                resetAllTelerikIconTitles();
+            }
+        });
+
+    </script>
+}

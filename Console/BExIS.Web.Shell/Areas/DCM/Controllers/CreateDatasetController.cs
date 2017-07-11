@@ -1,7 +1,6 @@
 ﻿using BExIS.Dcm.CreateDatasetWizard;
 using BExIS.Dcm.UploadWizard;
 using BExIS.Dcm.Wizard;
-using BExIS.Ddm.Api;
 using BExIS.Dlm.Entities.Administration;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
@@ -10,25 +9,26 @@ using BExIS.Dlm.Services.Administration;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
+using BExIS.Modules.Dcm.UI.Models;
+using BExIS.Modules.Dcm.UI.Models.CreateDataset;
+using BExIS.Security.Entities.Authorization;
+using BExIS.Security.Entities.Subjects;
+using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Subjects;
-using BExIS.Web.Shell.Areas.DCM.Models;
-using BExIS.Web.Shell.Areas.DCM.Models.CreateDataset;
 using BExIS.Web.Shell.Helpers;
 using BExIS.Web.Shell.Models;
 using BExIS.Xml.Helpers;
-using BExIS.Xml.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using System.Xml;
 using System.Xml.Linq;
-using Vaiona.IoC;
 using Vaiona.Logging;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
 
-namespace BExIS.Web.Shell.Areas.DCM.Controllers
+namespace BExIS.Modules.Dcm.UI.Controllers
 {
     public class CreateDatasetController : Controller
     {
@@ -465,19 +465,11 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     datasetId = ds.Id;
 
                     // add security
-                    // TODO: refactor
-                    //if (GetUsernameOrDefault() != "DEFAULT")
-                    //{
-                    //    PermissionManager pm = new PermissionManager();
-                    //    SubjectManager sm = new SubjectManager();
-
-                    //    BExIS.Security.Entities.Subjects.User user = sm.GetUserByName(GetUsernameOrDefault());
-
-                    //    foreach (RightType rightType in Enum.GetValues(typeof(RightType)).Cast<RightType>())
-                    //    {
-                    //        pm.CreateDataPermission(user.Id, 1, ds.Id, rightType);
-                    //    }
-                    //}
+                    if (GetUsernameOrDefault() != "DEFAULT")
+                    {
+                        EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
+                        entityPermissionManager.Create(GetUsernameOrDefault(), typeof(User), "Dataset", typeof(Dataset), ds.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
+                    }
                 }
                 else
                 {
@@ -493,11 +485,11 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     if (TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATA_XML))
                     {
                         XDocument xMetadata = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
-                        workingCopy.Metadata = XmlMetadataWriter.ToXmlDocument(xMetadata);
+                        workingCopy.Metadata = Xml.Helpers.XmlWriter.ToXmlDocument(xMetadata);
                     }
 
                     string title = XmlDatasetHelper.GetInformation(workingCopy, NameAttributeValues.title);
-                    if (String.IsNullOrEmpty(title)) title = "No Title available.";
+                    if (string.IsNullOrEmpty(title)) title = "No Title available.";
 
                     TaskManager.AddToBus(CreateTaskmanager.ENTITY_TITLE, title);//workingCopy.Metadata.SelectNodes("Metadata/Description/Description/Title/Title")[0].InnerText);
                     TaskManager.AddToBus(CreateTaskmanager.ENTITY_ID, datasetId);
@@ -507,8 +499,12 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                     //add to index
                     // ToDo check which SearchProvider it is, default luceneprovider
-                    ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
-                    provider?.UpdateSingleDatasetIndex(datasetId, IndexingAction.CREATE);
+
+                    // BUG: invalid call to ddm method
+                    // TODO: find a way to call the reindex again
+                    // WORKAROUND: do not reindex
+                    //ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+                    //provider?.UpdateSingleDatasetIndex(datasetId, IndexingAction.CREATE);
 
                     LoggerFactory.LogData(datasetId.ToString(), typeof(Dataset).Name, Vaiona.Entities.Logging.CrudState.Created);
                 }
@@ -549,7 +545,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     created = true;
                 }
 
-                return RedirectToAction("LoadMetadata", "Form", new { area = "DCM", entityId = datasetid, created = created, locked = true, fromEditMode = editmode, resetTaskManager = resetTaskManager, newMetadata = metadata });
+                return RedirectToAction("LoadMetadata", "Form", new { area = "Dcm", entityId = datasetid, created = created, locked = true, fromEditMode = editmode, resetTaskManager = resetTaskManager, newMetadata = metadata });
             }
 
             return RedirectToAction("StartMetadataEditor", "Form");
@@ -597,7 +593,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                     created = true;
                 }
 
-                return RedirectToAction("LoadMetadata", "Form", new { area = "DCM", entityId = datasetid, locked = false, created = created, fromEditMode = editmode, resetTaskManager = resetTaskManager, newMetadata = metadata });
+                return RedirectToAction("LoadMetadata", "Form", new { area = "Dcm", entityId = datasetid, locked = false, created = created, fromEditMode = editmode, resetTaskManager = resetTaskManager, newMetadata = metadata });
             }
 
             return RedirectToAction("StartMetadataEditor", "Form");
@@ -610,12 +606,16 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         /// <returns></returns>
         public ActionResult ShowData(long id)
         {
-            return RedirectToAction("ShowData", "Data", new { area = "DDM", id = id });
+
+            //ToDo Modularity
+            // 
+            //return RedirectToAction("ShowData", "Data", new { area = "DDM" = id });
+            return null;
         }
 
         /// <summary>
         /// Load the UploadWizard with preselected parameters
-        /// and redirect to "UploadWizard", "Submit", area = "DCM"
+        /// and redirect to "UploadWizard", "Submit", area = "Dcm"
         /// </summary>
         /// <returns></returns>
         public ActionResult StartUploadWizard()
@@ -639,7 +639,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             Session["CreateDatasetTaskmanager"] = null;
             TaskManager = null;
 
-            return RedirectToAction("UploadWizard", "Submit", new { area = "DCM", type = type, datasetid = datasetid });
+            return RedirectToAction("UploadWizard", "Submit", new { type = type, datasetid = datasetid });
         }
 
         #endregion Options
@@ -664,31 +664,27 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         public List<ListViewItem> LoadDatasetViewList()
         {
-            // TODO: remove following line
-            // PermissionManager pm = new PermissionManager();
-            SubjectManager subjectManager = new SubjectManager();
             DatasetManager datasetManager = new DatasetManager();
             List<ListViewItem> temp = new List<ListViewItem>();
 
             //get all datasetsid where the current userer has access to
-            // TODO: refactor
-            //long userid = -1;
-            //if (subjectManager.ExistsUsername(GetUsernameOrDefault()))
-            //    userid = subjectManager.GetUserByName(GetUsernameOrDefault()).Id;
+            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
+            UserManager userManager = new UserManager(new UserStore());
 
-            //if (userid != -1)
-            //{
-            //    foreach (long id in pm.GetAllDataIds(userid, 1, RightType.Update))
-            //    {
-            //        if (datasetManager.IsDatasetCheckedIn(id))
-            //        {
-            //            string title = XmlDatasetHelper.GetInformation(id, NameAttributeValues.title);
-            //            string description = XmlDatasetHelper.GetInformation(id, NameAttributeValues.description);
+            List<long> datasetIds = entityPermissionManager.GetKeys(GetUsernameOrDefault(), typeof(User), "Dataset",
+                typeof(Dataset), RightType.Write);
 
-            //            temp.Add(new ListViewItem(id, title, description));
-            //        }
-            //    }
-            //}
+            foreach (long id in datasetIds)
+            {
+                if (datasetManager.IsDatasetCheckedIn(id))
+                {
+                    string title = XmlDatasetHelper.GetInformation(id, NameAttributeValues.title);
+                    string description = XmlDatasetHelper.GetInformation(id, NameAttributeValues.description);
+
+                    temp.Add(new ListViewItem(id, title, description));
+                }
+            }
+
 
             return temp.OrderBy(p => p.Title).ToList();
         }

@@ -1,21 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Xml;
-using System.Linq;
-using BExIS.Ddm.Api;
-using BExIS.Ddm.Model;
+﻿using BExIS.Ddm.Api;
 using BExIS.Ddm.Providers.LuceneProvider.Helpers;
 using BExIS.Ddm.Providers.LuceneProvider.Indexer;
-using System.IO;
 using BExIS.Dlm.Services.MetadataStructure;
-using BExIS.Dlm.Entities.MetadataStructure;
-using Vaiona.Utils.Cfg;
+using BExIS.Utils.Models;
 using BExIS.Xml.Helpers;
-using System.Xml.Linq;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Xml;
 
 namespace BExIS.Ddm.Providers.LuceneProvider
 {
-    public class SearchDesigner:ISearchDesigner
+    public class SearchDesigner : ISearchDesigner
     {
         private XmlDocument _configXML;
         private List<SearchAttribute> _searchAttributeList = new List<SearchAttribute>();
@@ -123,48 +120,27 @@ namespace BExIS.Ddm.Providers.LuceneProvider
                 return _metadataNodes;
             else
             {
-      
+
                 MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
                 List<long> ids = new List<long>();
 
                 ids = metadataStructureManager.Repo.Query().Select(p => p.Id).ToList();
-                
+
                 foreach (long id in ids)
                 {
                     _metadataNodes.AddRange(GetAllXPathsOfSimpleAttributes(id));
-                    }
-
-                _metadataNodes = _metadataNodes.Distinct().ToList();
-                _metadataNodes.Sort((x,y)=>String.Compare(x.DisplayName,y.DisplayName));
-                return _metadataNodes;
-            }
-            
-        }
-
-        //ToDo set this function to a other place because of reading a metadata structure ad create a list of all simple attribute with xpath and displayname is also important for other places as search designer
-        public List<SearchMetadataNode> GetAllXPathsOfSimpleAttributes(long id)
-        {
-            List<SearchMetadataNode> list = new List<SearchMetadataNode>();
-
-
-            // load metadatastructure with all packages and attributes
-
-                MetadataStructureManager msd = new MetadataStructureManager();
-                string title = msd.Repo.Get(id).Name;
-
-                XmlMetadataWriter xmlMetadatWriter = new XmlMetadataWriter(XmlNodeMode.xPath);
-                XDocument metadataXml = xmlMetadatWriter.CreateMetadataXml(id);
-
-                List<XElement> elements = metadataXml.Root.Descendants().Where(e => e.HasElements.Equals(false)).ToList();
-
-                foreach (XElement element in elements)
-                {
-                    list.Add(
-                        new SearchMetadataNode(title, XExtentsions.GetAbsoluteXPath(element).Substring(1))
-                        );
                 }
 
-            return list;
+                _metadataNodes = _metadataNodes.Distinct().ToList();
+                _metadataNodes.Sort((x, y) => String.Compare(x.DisplayName, y.DisplayName));
+                return _metadataNodes;
+            }
+
+        }
+
+        public List<SearchMetadataNode> GetAllXPathsOfSimpleAttributes(long id)
+        {
+            return XmlMetadataHelper.GetAllXPathsOfSimpleAttributes(id);
         }
 
         public void Set(List<SearchAttribute> SearchAttributeList)
@@ -238,7 +214,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider
 
             }
 
-            
+
         }
 
         public void Reset()
@@ -259,13 +235,13 @@ namespace BExIS.Ddm.Providers.LuceneProvider
         }
 
         public void Dispose()
-        { 
+        {
             bexisIndexer.Dispose();
         }
 
         private XmlElement SetAttributesToNode(XmlElement xmlElement, SearchAttribute sa)
         {
-            
+
             // names
             XmlAttribute xa = this._configXML.CreateAttribute("display_name");
             xa.Value = sa.displayName;
@@ -304,7 +280,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider
             xa = this._configXML.CreateAttribute("norm");
             xa.Value = SearchAttribute.GetBooleanAsString(sa.norm);
             xmlElement.Attributes.Append(xa);
-            
+
 
             //boost
             xa = this._configXML.CreateAttribute("boost");
@@ -347,8 +323,8 @@ namespace BExIS.Ddm.Providers.LuceneProvider
         }
 
         private XmlElement SetPrimaryDataAttributeToNode(XmlElement xmlElement)
-        { 
-        
+        {
+
             // names
             XmlAttribute xa = this._configXML.CreateAttribute("display_name");
             xa.Value = "Primary Data";
@@ -379,7 +355,7 @@ namespace BExIS.Ddm.Providers.LuceneProvider
             xa = this._configXML.CreateAttribute("norm");
             xa.Value = "yes";
             xmlElement.Attributes.Append(xa);
-            
+
 
             //boost
             xa = this._configXML.CreateAttribute("boost");
@@ -389,6 +365,6 @@ namespace BExIS.Ddm.Providers.LuceneProvider
             return xmlElement;
         }
 
-        
+
     }
 }

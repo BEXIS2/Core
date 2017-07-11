@@ -1,4 +1,5 @@
 ﻿@model BExIS.Modules.Dim.UI.Models.AdminModel
+
 @using Telerik.Web.Mvc.UI;
 
 @section Information
@@ -27,7 +28,7 @@
 				{
 					tabs.Add()
 						.Text(metadataStructure.Value)
-						.LoadContentFrom("LoadMetadataStructureTab", "Admin", new { area = "dim", Id = metadataStructure.Key });
+						.LoadContentFrom("LoadMetadataStructureTab", "Admin", new {Id = metadataStructure.Key });
 				}
 
 			})

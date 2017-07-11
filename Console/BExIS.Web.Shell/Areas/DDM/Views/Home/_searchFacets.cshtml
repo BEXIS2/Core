@@ -1,6 +1,6 @@
-﻿@using BExIS.Ddm.Model;
-@using BExIS.Modules.Ddm.UI.Helpers;
+﻿@using BExIS.Utils.Models
 @using Telerik.Web.Mvc.UI;
+@using SearchModel = BExIS.Utils.Models.SearchModel
 
 
 @model Tuple<SearchModel,IEnumerable<Facet>>
@@ -69,7 +69,7 @@
                            }
 
                            //Get Count from Facets
-                           Facet tmp = Model.Item1.SearchComponent.Facets.Where(p => p.Name == facet.Name).FirstOrDefault();
+                           Facet tmp = Model.Item1.SearchComponent.Facets.Where(p => p.Name.Equals(facet.Name)).FirstOrDefault();
                            int count = tmp.Childrens.Where(c => c.Count > 0).Count();
 
                            if (item.Items.Count < count && count > 0)
@@ -145,7 +145,7 @@
             var detailWindow = $("#MoreWindow").data("tWindow");
 
 
-            $.post('@Url.Action("ShowMoreWindow", "Home", new RouteValueDictionary {{"area", "ddm"}})',
+            $.post('@Url.Action("ShowMoreWindow", "Home")',
                 { parent: parent },
                 function(response) {
                     $("#search_more").html(response);

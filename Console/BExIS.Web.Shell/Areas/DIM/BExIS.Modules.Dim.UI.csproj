@@ -44,11 +44,18 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Ionic.Zip">
+      <HintPath>..\..\..\..\Libraries\Ionic.Zip.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.3\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Web.Helpers">
+      <HintPath>..\..\..\..\packages\Microsoft.AspNet.WebHelpers.3.2.3\lib\net45\Microsoft.Web.Helpers.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
@@ -57,6 +64,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\packages\Microsoft.AspNet.WebApi.Core.5.2.3\lib\net45\System.Web.Http.dll</HintPath>
@@ -98,6 +106,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Libraries\Vaiona\Vaiona.Entities.dll</HintPath>
     </Reference>
+    <Reference Include="Vaiona.Logging, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Libraries\Vaiona\Vaiona.Logging.dll</HintPath>
+    </Reference>
     <Reference Include="Vaiona.Model">
       <HintPath>..\..\..\..\Libraries\Vaiona\Vaiona.Model.dll</HintPath>
     </Reference>
@@ -131,7 +143,9 @@
     <Compile Include="Controllers\HelpController.cs" />
     <Compile Include="Controllers\MappingController.cs" />
     <Compile Include="Controllers\MetadataController.cs" />
+    <Compile Include="Controllers\SubmissionController.cs" />
     <Compile Include="DimModule.cs" />
+    <Compile Include="Helper\DimSeedDataGenerator.cs" />
     <Compile Include="Helper\MappingHelper.cs" />
     <Compile Include="Models\AdminModel.cs" />
     <Compile Include="Models\DatasetModel.cs" />
@@ -140,6 +154,7 @@
     <Compile Include="Models\Mapping\LinkElementModels.cs" />
     <Compile Include="Models\Mapping\MappingModel.cs" />
     <Compile Include="Models\MetadataStructureModel.cs" />
+    <Compile Include="Models\ShowPublishDataModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -158,6 +173,7 @@
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <None Include="Properties\PublishProfiles\DIM Publish.pubxml" />
+    <None Include="Properties\PublishProfiles\DIM.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -187,6 +203,8 @@
     <Content Include="Views\Mapping\MappingSimpleLinkElement.cshtml" />
     <Content Include="Views\Mapping\TransformationRule.cshtml" />
     <Content Include="Web.config" />
+    <Content Include="Views\Submission\_dataRepositoryRequirementsView.cshtml" />
+    <Content Include="Views\Submission\_showPublishDataView.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -203,6 +221,14 @@
     <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Components\AAA\BExIS.Security.Entities\BExIS.Security.Entities.csproj">
+      <Project>{c230693b-d780-438b-b26c-82257642dd5c}</Project>
+      <Name>BExIS.Security.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Components\AAA\BExIS.Security.Services\BExIS.Security.Services.csproj">
+      <Project>{681c8bc4-55f0-4f43-a685-90e246a88cb1}</Project>
+      <Name>BExIS.Security.Services</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\Components\DLM\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
       <Project>{b4e7b1bf-01b4-40af-8d19-b8f362167261}</Project>
       <Name>BExIS.Dlm.Entities</Name>
@@ -219,6 +245,10 @@
       <Project>{e4795f06-20c2-4c4c-a720-9a79896384df}</Project>
       <Name>BExIS.IO</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Components\Utils\BExIS.Utils.Data\BExIS.Utils.Data.csproj">
+      <Project>{a7fbcc13-7e29-4710-82a1-bd6d6f811fda}</Project>
+      <Name>BExIS.Utils.Data</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\Components\XML\BExIS.Xml.Helpers\BExIS.Xml.Helpers.csproj">
       <Project>{252F7872-A69C-43A6-84B4-4D2ABDBDD9AB}</Project>
       <Name>BExIS.Xml.Helpers</Name>
@@ -230,6 +260,10 @@
     <ProjectReference Include="..\..\..\..\Modules\DIM\BExIS.Dim.Entities\BExIS.Dim.Entities.csproj">
       <Project>{34cad2a2-6928-458b-b8dc-af71d55f20cc}</Project>
       <Name>BExIS.Dim.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Modules\DIM\BExIS.Dim.Helper\BExIS.Dim.Helpers.csproj">
+      <Project>{81ef18e8-dced-4980-96f9-e99124075b82}</Project>
+      <Name>BExIS.Dim.Helpers</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\Modules\DIM\BExIS.Dim.Services\BExIS.Dim.Services.csproj">
       <Project>{cac933a2-6849-4c61-82b4-cbf4052210cc}</Project>

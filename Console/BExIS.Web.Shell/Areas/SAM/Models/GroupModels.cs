@@ -1,4 +1,5 @@
 ﻿using BExIS.Security.Entities.Subjects;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
@@ -20,6 +21,11 @@ namespace BExIS.Modules.Sam.UI.Models
 
     public class CreateGroupModel
     {
+        public CreateGroupModel()
+        {
+            UserIds = new List<long>();
+        }
+
         public string Description { get; set; }
 
         [Required]
@@ -27,10 +33,33 @@ namespace BExIS.Modules.Sam.UI.Models
 
         [Required]
         public int GroupType { get; set; }
+
+        public List<long> UserIds { get; set; }
     }
 
     public class DeleteGroupModel
     {
+    }
+
+    public class GroupFeaturePermissionGridRowModel
+    {
+        public string Description { get; set; }
+        public string GroupName { get; set; }
+        public GroupType GroupType { get; set; }
+        public long Id { get; set; }
+        public bool HasFeaturePermission { get; set; }
+
+        public static GroupFeaturePermissionGridRowModel Convert(Group group)
+        {
+            return new GroupFeaturePermissionGridRowModel()
+            {
+                Description = group.Description,
+                GroupType = group.GroupType,
+                GroupName = group.Name,
+                Id = group.Id,
+
+            };
+        }
     }
 
     public class GroupGridRowModel
@@ -50,6 +79,10 @@ namespace BExIS.Modules.Sam.UI.Models
                 Id = group.Id
             };
         }
+    }
+
+    public class ReadGroupModel
+    {
     }
 
     public class UpdateGroupModel

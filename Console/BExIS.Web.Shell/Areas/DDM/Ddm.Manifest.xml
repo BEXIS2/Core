@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Manifest moduleId="ddm" displayName="Data Discovery Module" version="1.0.0" builtin="true">
   <Description>
-    The data discovery module provides a sophisticated search facility over registered data sets.
+    ddm provides a sophisticated search facility over registered data sets.
   </Description>
   <Assemblies>
-    <Assembly fullName="" role=""/>
+    <Assembly fullName="" role="" />
   </Assemblies>
   <Dependencies>
     <Dependency moduleId="dcm" version="*.*.*" />
@@ -13,17 +13,23 @@
     <Export tag="settings" id="manageSearch" order="1"
             title="Manage Search" description="Manage search attributes and configure search paremeters" icon=""
             controller="admin" action="searchDesigner" argument=""
-            extends="./settingsRoot"
-            />
+            extends="./settingsRoot" />
+
     <Export tag="menubar" id="menuSearch" order="1"
             title="Search" description="Search datasets" icon=""
             controller="home" action="index"
-            extends="./menubarRoot" 
-            />
-    <Export tag="api" id="apiSearch"
-            title="Search for Datasets" description="Search for datasets through the API" icon=""
-            controller="search" action="index"
-            extends="./apiRoot"
-            />
+            extends="./menubarRoot" />
+
+    <Export tag="lunchbar" id="helpDdm" order="1"
+            title="Search" description="Search Help Manual" icon=""
+            controller="help" action="index"
+            extends="./lunchbarRoot/help" />
+    
+    
+    
+    <Export tag="api" id="tntList"
+            title="No thing" description="Change me!" icon=""
+            controller="home" action="index"
+            extends="./apiRoot" />
   </Exports>
 </Manifest>

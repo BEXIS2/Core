@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Web.Mvc;
-using Telerik.Web.Mvc;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.RPM.Output;
-
-using BExIS.Web.Shell.Areas.RPM.Models;
-using BExIS.Web.Shell.Areas.RPM.Classes;
+using BExIS.Modules.Rpm.UI.Models;
+using BExIS.Modules.Rpm.UI.Classes;
 using System.Diagnostics;
 using System.Linq;
 using System.Collections.Generic;
@@ -15,7 +13,7 @@ using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Logging;
 
-namespace BExIS.Web.Shell.Areas.RPM.Controllers
+namespace BExIS.Modules.Rpm.UI.Controllers
 {
     public class DataStructureEditController : Controller
     {
@@ -23,6 +21,8 @@ namespace BExIS.Web.Shell.Areas.RPM.Controllers
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Data Structure Edit", this.Session.GetTenant());
             if (DataStructureId != 0 && new DataStructureManager().StructuredDataStructureRepo.Get(DataStructureId) != null)
+                return View(DataStructureId);
+            else if(DataStructureId == 0)
                 return View(DataStructureId);
             else
                 return RedirectToAction("Index", "DataStructureSearch");
