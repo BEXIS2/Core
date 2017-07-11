@@ -16,7 +16,7 @@ namespace BExIS.Security.Services.Authorization
             FeaturePermissionRepository = uow.GetReadOnlyRepository<FeaturePermission>();
         }
 
-        public IReadOnlyRepository<FeaturePermission> FeaturePermissionRepository { get; private set; }
+        public IReadOnlyRepository<FeaturePermission> FeaturePermissionRepository { get; }
         public IQueryable<FeaturePermission> FeaturePermissions => FeaturePermissionRepository.Query();
 
         public void Create(FeaturePermission featurePermission)

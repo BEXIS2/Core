@@ -1,6 +1,7 @@
 ﻿using BExIS.Modules.Sam.UI.Models;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Subjects;
+using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
 using System.Collections.Generic;
@@ -15,33 +16,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
 {
     public class FeaturePermissionsController : Controller
     {
-        public ActionResult Features()
-        {
-            return PartialView("_Features");
-        }
-
-        [GridAction(EnableCustomBinding = true)]
-        public ActionResult Groups_Select(long featureId, GridCommand command)
-        {
-            var groupManager = new GroupManager();
-
-            // Source + Transformation - Data
-            var groups = groupManager.Groups.ToGroupGridRowModel();
-
-            // Filtering
-            var filtered = groups.Where(ExpressionBuilder.Expression<GroupGridRowModel>(command.FilterDescriptors));
-            var total = filtered.Count();
-
-            // Sorting
-            var sorted = (IQueryable<GroupGridRowModel>)filtered.Sort(command.SortDescriptors);
-
-            // Paging
-            var paged = sorted.Skip((command.Page - 1) * command.PageSize)
-                .Take(command.PageSize);
-
-            return View(new GridModel<GroupGridRowModel> { Data = paged.ToList(), Total = total });
-        }
-
         public ActionResult Index()
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Manage Features", Session.GetTenant());
@@ -60,18 +34,18 @@ namespace BExIS.Modules.Sam.UI.Controllers
             return View(features.AsEnumerable());
         }
 
-        public ActionResult Subjects(long featureId)
+        public ActionResult Permissions(long featureId)
         {
-            return PartialView("_Subjects", featureId);
+            return PartialView("_Permissions", featureId);
         }
 
         [GridAction(EnableCustomBinding = true)]
-        public ActionResult Users_Select(long featureId, GridCommand command)
+        public ActionResult Permissions_Select(long featureId, GridCommand command)
         {
-            var userManager = new UserManager(new UserStore());
+            var featurePermissionManager = new FeaturePermissionManager();
 
             // Source + Transformation - Data
-            var users = userManager.Users.ToUserGridRowModel();
+            var featurePermissions = featurePermissionManager.FeaturePermissions.To
 
             // Filtering
             var filtered = users.Where(ExpressionBuilder.Expression<UserGridRowModel>(command.FilterDescriptors));

@@ -18,7 +18,7 @@
     })
     .DataBinding(dataBinding => dataBinding
         .Ajax()
-        .Select("Users_Select", "FeaturePermissions", new { FeatureId = Model })
+        .Select("Permissions_Select", "FeaturePermissions", new { FeatureId = Model })
     )
     .EnableCustomBinding(true)
     .Filterable()

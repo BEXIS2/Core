@@ -1,7 +1,24 @@
 ﻿using BExIS.Security.Entities.Authorization;
+using System;
+using System.Linq;
+using System.Linq.Expressions;
 
 namespace BExIS.Modules.Sam.UI.Models
 {
+    public static IQueryable<FeaturePermissionGridRowModel> ToFeaturePermissionGridRowModel(this IQueryable<FeaturePermission> source)
+    {
+        Expression<Func<FeaturePermission, FeaturePermissionGridRowModel>> conversion = u =>
+            new UserGridRowModel()
+            {
+                Email = u.Email,
+                Id = u.Id,
+                IsAdministrator = u.IsAdministrator,
+                UserName = u.Name
+            };
+
+        return source.Select(conversion);
+    }
+
     public static class FeaturePermissionExtensions
     {
     }

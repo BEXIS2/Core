@@ -3,58 +3,6 @@
 
 @model IEnumerable<FeatureTreeViewItemModel>
 
-@(Html.Telerik().TreeView()
-        .Name("treeViewFeatures")
-        .BindTo(Model, mappings =>
-        {
-            mappings.For<FeatureTreeViewItemModel>(binding => binding
-
-                .ItemDataBound((item, feature) =>
-                {
-                    item.Text = feature.FeatureName;
-                    item.Value = feature.Id.ToString();
-                    item.LinkHtmlAttributes["title"] = "Select " + feature.FeatureName + " to manage the corresponding feature permissions on the right.";
-                })
-                .Children(feature => feature.Children));
-        })
-        .ClientEvents(events => events
-            .OnSelect("OnSelect")
-        )
-
-        .ExpandAll(true)
-)
-
-<script type="text/javascript">
-
-    $("#treeViewFeatures li div").click(function (e) {
-        $(e.target).find(".t-in").trigger("click");
-    });
-
-    function GetTreeView() {
-        return $('#treeViewFeatures').data('tTreeView');
-    }
-
-    function OnSelect(e) {
-        var featureId = GetTreeView().getItemValue(e.item);
-        var prevSelectedDiv = $(".bx-selected");
-        if (prevSelectedDiv.length > 0) $(prevSelectedDiv).removeClass("bx-selected");
-
-        var selectedDiv = $(e.item).find("div")[0];
-        $(selectedDiv).addClass("bx-selected");
-
-        $('#subjects').empty();
-
-        $.get('@Url.Action("Subjects", "FeaturePermissions")',
-            { FeatureId: featureId },
-            function (contentData) {
-
-                $('#subjects').html(contentData);
-
-                truncateTitle();
-            });
-    }
-</script>
-
 <style type="text/css">
     #TreeView_Features .t-minus {
         padding-top: 2px;
@@ -101,3 +49,24 @@
         overflow-x: hidden;
     }
 </style>
+
+@(Html.Telerik().TreeView()
+        .Name("treeViewFeatures")
+        .BindTo(Model, mappings =>
+        {
+            mappings.For<FeatureTreeViewItemModel>(binding => binding
+
+                .ItemDataBound((item, feature) =>
+                {
+                    item.Text = feature.FeatureName;
+                    item.Value = feature.Id.ToString();
+                    item.LinkHtmlAttributes["title"] = "Select " + feature.FeatureName + " to manage the corresponding feature permissions on the right.";
+                })
+                .Children(feature => feature.Children));
+        })
+        .ClientEvents(events => events
+            .OnSelect("OnSelect")
+        )
+
+        .ExpandAll(true)
+)

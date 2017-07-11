@@ -44,7 +44,7 @@ namespace BExIS.Security.Services.Authorization
         /// <summary>
         /// property to get all entity permissions as an IQueryable
         /// </summary>
-        private IQueryable<EntityPermission> EntityPermissions => EntityPermissionRepository.Query();
+        public IQueryable<EntityPermission> EntityPermissions => EntityPermissionRepository.Query();
 
         /// <summary>
         /// persist a given entity permission
