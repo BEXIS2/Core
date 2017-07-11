@@ -501,7 +501,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     // ToDo check which SearchProvider it is, default luceneprovider
 
                     // BUG: invalid call to ddm method
-                    // TODO: find a way to call the reindex again
+                    // TODO: mODULARITY ->Call DDM Reindex
+                    /*
+                     <Export tag="internalApi" id="SearchIndex"
+                    title="Reindex Search" description="Reindex Search" icon=""
+                    controller="SearchIndex" action="Get"
+                    extends="" />
+                     */
                     // WORKAROUND: do not reindex
                     //ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
                     //provider?.UpdateSingleDatasetIndex(datasetId, IndexingAction.CREATE);
@@ -608,7 +614,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
 
             //ToDo Modularity -> show Data DDM
-            // 
+
+            /*
+             * <Export tag="internalApi" id="showData"
+            title="Show Data" description="ShowData" icon=""
+            controller="Data" action="ShowData"
+            extends="" />
+             */
+
             //return RedirectToAction("ShowData", "Data", new { area = "DDM" = id });
             return null;
         }

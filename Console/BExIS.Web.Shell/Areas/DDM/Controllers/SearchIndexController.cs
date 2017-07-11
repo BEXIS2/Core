@@ -1,4 +1,5 @@
 ﻿using BExIS.Ddm.Api;
+using BExIS.Utils.Models;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Web.Http;
@@ -45,6 +46,18 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         }
 
 
+
+        /// <summary>
+        /// free text search over the index
+        /// </summary>
+        /// <param name="value">search value</param>
+        /// <returns></returns>
+        public SearchModel Get(string value)
+        {
+
+            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+            return provider?.GetTextBoxSearchValues(value, "", "new", 10);
+        }
     }
 
 }

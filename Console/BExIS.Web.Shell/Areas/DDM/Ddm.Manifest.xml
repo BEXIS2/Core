@@ -33,12 +33,23 @@
             extends="./apiRoot" />
     
     
-    <!-- Function for reindexing Search-->
+    <!-- INTERNAL-->
     
-    <Export tag="api" id="SearchIndex"
+    <Export tag="internalApi" id="SearchIndex"
             title="Reindex Search" description="Reindex Search" icon=""
-            controller="SearchIndex" action="index"
-            extends="./apiRoot" />
+            controller="SearchIndex" action="Get"
+            extends="" />
+
+    <Export tag="internalApi" id="showData"
+            title="Show Data" description="ShowData" icon=""
+            controller="Data" action="ShowData"
+            extends="" />
     
+    
+    <Export tag="internalApi" id="freeTextSearch"
+            title="Free Text Search" description="free Text Search" icon=""
+            controller="SearchIndex" action="Get"
+            extends="" />
+
   </Exports>
 </Manifest>

@@ -112,9 +112,22 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         public ActionResult ShowMetaData(long entityId, string title, long metadatastructureId, long datastructureId, long researchplanId, string sessionKeyForMetadata)
         {
             // ToDo Modularity DDM -> DCM Add open function to set the actions from a CreateTaskmanager and add this to the manifestfile
+            /*
+             <Export tag="internalApi" id="SetAdditionalFunctionsToCreateDatasetTaskmanager"
+                title="Set additional functions To Create Dataset Taskmanager" description="set functions to the buttons in the form" icon=""
+                controller="Form" action="SetAdditionalFunctions"
+                extends="" />
+
+                SetAdditionalFunctions(string actionName, string controllerName, string area, string type) for each function that should replaced
+             */
             setAdditionalFunctions();
 
             //ToDO Modularity from ddm -> dcm
+            /* < Export tag = "internalApi" id = "loadFromFromExternal"
+             title = "load Metadata Form" description = "load Metadata Form" icon = ""
+             controller = "Form" action = "LoadMetadataFromExternal"
+             extends = "" />*/
+
 
             return RedirectToAction("LoadMetadataFromExternal", "Form", new
             {
