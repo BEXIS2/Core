@@ -6,6 +6,8 @@ using BExIS.Xml.Helpers.Mapping;
 using Vaiona.Utils.Cfg;
 using System.Data;
 using Newtonsoft.Json;
+using System;
+using System.Linq;
 
 namespace BExIS.IO.Transform.Output
 {
