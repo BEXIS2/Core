@@ -22,11 +22,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using System.Web.Routing;
 using System.Xml;
 using System.Xml.Linq;
 using Vaiona.Logging;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
@@ -612,18 +614,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// <returns></returns>
         public ActionResult ShowData(long id)
         {
-
-            //ToDo Modularity -> show Data DDM
-
-            /*
-             * <Export tag="internalApi" id="showData"
-            title="Show Data" description="ShowData" icon=""
-            controller="Data" action="ShowData"
-            extends="" />
-             */
-
-            //return RedirectToAction("ShowData", "Data", new { area = "DDM" = id });
-            return null;
+            return this.Run("DDM", "Data", "ShowData", new RouteValueDictionary { { "id", id } });
         }
 
         /// <summary>

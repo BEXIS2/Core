@@ -324,8 +324,14 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         private List<string> GetEntityList()
         {
             EntityManager entityManager = new EntityManager();
+            List<string> tmp = new List<string>();
 
-            IEnumerable<string> tmp = entityManager.Entities.Select(e => e.EntityType.FullName);
+            foreach (var entity in entityManager.Entities)
+            {
+                tmp.Add(entity.EntityType.FullName);
+            }
+
+            //IEnumerable<string> tmp = entityManager.Entities.Select(e => e.EntityType.FullName);
 
             return tmp.ToList();
         }
