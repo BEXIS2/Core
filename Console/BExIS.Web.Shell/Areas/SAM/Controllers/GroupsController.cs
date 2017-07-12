@@ -90,6 +90,17 @@ namespace BExIS.Modules.Sam.UI.Controllers
             return View(new GridModel<UserMembershipGridRowModel> { Data = paged.ToList(), Total = total });
         }
 
+        public ActionResult Update()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult Update(UpdateGroupModel model)
+        {
+            return View();
+        }
+
         public ActionResult Index()
         {
             var groupManager = new GroupManager();

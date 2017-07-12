@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace BExIS.Modules.Ddm.UI.Models
+namespace BExIS.Modules.Dim.UI.Models
 {
     public class ShowPublishDataModel
     {

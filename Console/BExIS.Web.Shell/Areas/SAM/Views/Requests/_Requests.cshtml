@@ -1,15 +1,7 @@
 ﻿@using BExIS.Modules.Sam.UI.Models
-@using BExIS.Security.Entities.Requests
 @using Telerik.Web.Mvc.UI
-@model long
 
-<ul class="nav nav-tabs">
-    <li class="active"><a data-toggle="tab" href="#tabRequests">Requests</a></li>
-    <li><a data-toggle="tab" href="#tabDecisions">Decisions</a></li>
-</ul>
-<div class="tab-content">
-    <div id="tabRequests" class="tab-pane fade in active">
-        @(Html.Telerik().Grid<RequestGridRowModel>
+@(Html.Telerik().Grid<RequestGridRowModel>
               ()
               .Name("gridRequests")
               .Columns(columns =>
@@ -36,42 +28,3 @@
                   pageable.Position(GridPagerPosition.Both);
               })
               .Sortable())
-    </div>
-    <div id="tabDecisions" class="tab-pane fade">
-        @(Html.Telerik().Grid<DecisionGridRowModel>()
-              .Name("gridDecisions")
-              .Columns(columns =>
-              {
-                  columns.Bound(g => g.Id);
-                  columns.Bound(g => g.Applicant);
-                  columns.Bound(g => g.Rights);
-                  columns.Bound(g => g.Status);
-              })
-              .ClientEvents(events =>
-              {
-                  events.OnDataBound("onDataBound");
-              })
-              .DataBinding(dataBinding => dataBinding
-                  .Ajax()
-                  .OperationMode(GridOperationMode.Server)
-                  .Select("Decisions_Select", "Requests", new { EntityId = Model })
-              )
-              .EnableCustomBinding(true)
-              .Filterable()
-              .Pageable(pageable =>
-              {
-                  pageable.PageSize(10, new[] { 10, 20, 50, 100 });
-                  pageable.Style(GridPagerStyles.NextPreviousAndNumeric | GridPagerStyles.PageSizeDropDown);
-                  pageable.Position(GridPagerPosition.Both);
-              })
-              .Sortable(sortable => sortable.OrderBy(order => order.Add(c => c.Id).Descending())))
-    </div>
-</div>
-
-<script type="text/javascript">
-
-    function onDataBound() {
-        addTooltips();
-        resetAllTelerikIconTitles();
-    }
-</script>

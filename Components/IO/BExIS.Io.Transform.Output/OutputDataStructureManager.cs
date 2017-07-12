@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
-using BExIS.Dlm.Entities.Data;
+﻿using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
@@ -131,7 +125,7 @@ namespace BExIS.IO.Transform.Output
             return path;
         }
 
-     
+
         private static string storeGeneratedFilePathToContentDiscriptor(long datasetId, DatasetVersion datasetVersion, string title, string ext)
         {
 

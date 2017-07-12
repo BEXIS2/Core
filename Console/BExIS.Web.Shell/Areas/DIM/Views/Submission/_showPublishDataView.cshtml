@@ -1,6 +1,6 @@
 ﻿@using Telerik.Web.Mvc.UI;
 
-@model BExIS.Modules.Ddm.UI.Models.ShowPublishDataModel
+@model BExIS.Modules.Dim.UI.Models.ShowPublishDataModel
 
 @{
     List<string> datarepolist = Model.Brokers;
@@ -18,7 +18,7 @@
             var datarepo = e.value;
             var id = '@Model.DatasetId';
 
-            $.post('@Url.Action("LoadDataRepoRequirementView", "Data", new RouteValueDictionary {{"area", "ddm"}})',
+            $.post('@Url.Action("LoadDataRepoRequirementView", "Submission")',
                 { datarepo: e.value, datasetid: id },
                 function(response) {
                     //$("#requirementsContainer").html(response);
@@ -31,7 +31,7 @@
 
                     jQuery.ajax({
                         type: "POST",
-                        url: "@Url.Action("CheckExportPossibility", "Data", new RouteValueDictionary {{"area", "ddm"}})",
+                        url: "@Url.Action("CheckExportPossibility", "Submission")",
                         contentType: "application/json; charset=utf-8",
                         dataType: "json",
                         data: JSON.stringify(jsonObject),

@@ -1,8 +1,6 @@
 ﻿@using BExIS.Modules.Sam.UI.Models
 @using Telerik.Web.Mvc.UI
-
 @model IEnumerable<EntityTreeViewItemModel>
-
 @(Html.Telerik().TreeView()
         .Name("treeViewEntities")
         .BindTo(Model, mappings =>
@@ -23,7 +21,6 @@
 
         .ExpandAll(true)
 )
-
 <script type="text/javascript">
 
     $("#treeViewEntities li div").click(function (e) {
@@ -42,13 +39,13 @@
         var selectedDiv = $(e.item).find("div")[0];
         $(selectedDiv).addClass("bx-selected");
 
-        $('#requests').empty();
+        $('#permissions').empty();
 
-        $.get('@Url.Action("Requests", "Requests")',
+        $.get('@Url.Action("Permissions", "EntityPermissions")',
             { EntityId: entityId },
             function (contentData) {
 
-                $('#requests').html(contentData);
+                $('#permissions').html(contentData);
 
                 truncateTitle();
             });

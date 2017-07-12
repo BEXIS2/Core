@@ -2,8 +2,9 @@
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.MetadataStructure;
+using BExIS.Security.Entities.Authorization;
+using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
-using BExIS.Security.Services.Subjects;
 using BExIS.Utils.Models;
 using BExIS.Xml.Helpers;
 using System;
@@ -788,8 +789,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
 
             DatasetManager datasetManager = new DatasetManager();
-            PermissionManager permissionManager = new PermissionManager();
-            SubjectManager subjectManager = new SubjectManager();
+            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
 
             List<long> gridCommands = datasetManager.GetDatasetLatestIds();
             gridCommands.Skip(Convert.ToInt16(ViewData["CurrentPage"])).Take(Convert.ToInt16(ViewData["PageSize"]));
@@ -797,8 +797,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             foreach (long datasetId in gridCommands)
             {
                 //get permissions
-                // TODO: refactor
-                List<int> rights = new List<int>();//permissionManager.GetAllRights(subjectManager.GetUserByName(GetUsernameOrDefault()).Id, 1, datasetId).ToList();
+                List<RightType> rights = entityPermissionManager.GetRights<User>(GetUsernameOrDefault(), "Dataset", typeof(Dataset), datasetId);
 
                 if (rights.Count > 0)
                 {
@@ -826,7 +825,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         rowArray[2] = "Dataset is just in processing.";
                     }
 
-                    if (rights.Contains(1))
+                    if (rights.Contains(RightType.Read))
                     {
                         rowArray[3] = "✔";
                     }
@@ -834,7 +833,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     {
                         rowArray[3] = "✘";
                     }
-                    if (rights.Contains(2))
+                    if (rights.Contains(RightType.Write))
                     {
                         rowArray[4] = "✔";
                     }
@@ -842,7 +841,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     {
                         rowArray[4] = "✘";
                     }
-                    if (rights.Contains(3))
+                    if (rights.Contains(RightType.Delete))
                     {
                         rowArray[5] = "✔";
                     }
@@ -850,15 +849,16 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     {
                         rowArray[5] = "✘";
                     }
-                    if (rights.Contains(4))
+                    if (rights.Contains(RightType.Read))
                     {
+                        //ToDo RigthType Download not exist -> set RigthType Read
                         rowArray[6] = "✔";
                     }
                     else
                     {
                         rowArray[6] = "✘";
                     }
-                    if (rights.Contains(5))
+                    if (rights.Contains(RightType.Grant))
                     {
                         rowArray[7] = "✔";
                     }
