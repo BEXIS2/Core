@@ -2713,57 +2713,67 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// <param name="controllerName"></param>
         /// <param name="area"></param>
         /// <param name="type">submit,cancel,reset,copy</param>
-        public void SetAdditionalFunctions(string actionName, string controllerName, string area, string type)
+        public ActionResult SetAdditionalFunctions(string actionName, string controllerName, string area, string type)
         {
-            CreateTaskmanager TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"] ??
-                                            new CreateTaskmanager();
-
-            ActionInfo action = new ActionInfo();
-            action.ActionName = actionName;
-            action.ControllerName = controllerName;
-            action.AreaName = area;
-            int x = 5;
-
-            x = x >= 5 ? x++ : x--;
-
-            switch (type.ToLower())
+            try
             {
-                case "submit":
-                    {
-                        if (TaskManager.Actions.ContainsKey(CreateTaskmanager.SUBMIT_ACTION))
-                            TaskManager.Actions[CreateTaskmanager.SUBMIT_ACTION] = action;
-                        else
-                            TaskManager.Actions.Add(CreateTaskmanager.SUBMIT_ACTION, action);
+                CreateTaskmanager TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"] ??
+                                                new CreateTaskmanager();
+
+                ActionInfo action = new ActionInfo();
+                action.ActionName = actionName;
+                action.ControllerName = controllerName;
+                action.AreaName = area;
+                int x = 5;
+
+                x = x >= 5 ? x++ : x--;
+
+                switch (type.ToLower())
+                {
+                    case "submit":
+                        {
+                            if (TaskManager.Actions.ContainsKey(CreateTaskmanager.SUBMIT_ACTION))
+                                TaskManager.Actions[CreateTaskmanager.SUBMIT_ACTION] = action;
+                            else
+                                TaskManager.Actions.Add(CreateTaskmanager.SUBMIT_ACTION, action);
 
 
-                        //TaskManager.Actions.ContainsKey(CreateTaskmanager.SUBMIT_ACTION) ? TaskManager.Actions[CreateTaskmanager.SUBMIT_ACTION] = action : TaskManager.Actions.Add(CreateTaskmanager.SUBMIT_ACTION, action);
+                            //TaskManager.Actions.ContainsKey(CreateTaskmanager.SUBMIT_ACTION) ? TaskManager.Actions[CreateTaskmanager.SUBMIT_ACTION] = action : TaskManager.Actions.Add(CreateTaskmanager.SUBMIT_ACTION, action);
 
-                        break;
-                    }
-                case "reset":
-                    {
-                        if (TaskManager.Actions.ContainsKey(CreateTaskmanager.RESET_ACTION))
-                            TaskManager.Actions[CreateTaskmanager.RESET_ACTION] = action;
-                        else
-                            TaskManager.Actions.Add(CreateTaskmanager.RESET_ACTION, action);
-                        break;
-                    }
-                case "cancel":
-                    {
-                        if (TaskManager.Actions.ContainsKey(CreateTaskmanager.CANCEL_ACTION))
-                            TaskManager.Actions[CreateTaskmanager.CANCEL_ACTION] = action;
-                        else
-                            TaskManager.Actions.Add(CreateTaskmanager.CANCEL_ACTION, action);
-                        break;
-                    }
-                case "copy":
-                    {
-                        if (TaskManager.Actions.ContainsKey(CreateTaskmanager.COPY_ACTION))
-                            TaskManager.Actions[CreateTaskmanager.COPY_ACTION] = action;
-                        else
-                            TaskManager.Actions.Add(CreateTaskmanager.COPY_ACTION, action);
-                        break;
-                    }
+                            break;
+                        }
+                    case "reset":
+                        {
+                            if (TaskManager.Actions.ContainsKey(CreateTaskmanager.RESET_ACTION))
+                                TaskManager.Actions[CreateTaskmanager.RESET_ACTION] = action;
+                            else
+                                TaskManager.Actions.Add(CreateTaskmanager.RESET_ACTION, action);
+                            break;
+                        }
+                    case "cancel":
+                        {
+                            if (TaskManager.Actions.ContainsKey(CreateTaskmanager.CANCEL_ACTION))
+                                TaskManager.Actions[CreateTaskmanager.CANCEL_ACTION] = action;
+                            else
+                                TaskManager.Actions.Add(CreateTaskmanager.CANCEL_ACTION, action);
+                            break;
+                        }
+                    case "copy":
+                        {
+                            if (TaskManager.Actions.ContainsKey(CreateTaskmanager.COPY_ACTION))
+                                TaskManager.Actions[CreateTaskmanager.COPY_ACTION] = action;
+                            else
+                                TaskManager.Actions.Add(CreateTaskmanager.COPY_ACTION, action);
+                            break;
+                        }
+                }
+
+                return Json(true);
+            }
+            catch (Exception ex)
+            {
+
+                return Json(ex.Message);
             }
         }
 

@@ -21,6 +21,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web.Mvc;
+using System.Web.Routing;
 using System.Xml;
 using System.Xml.Linq;
 using Telerik.Web.Mvc;
@@ -29,6 +30,7 @@ using Vaiona.Logging;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Ddm.UI.Controllers
 {
@@ -120,25 +122,38 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                 SetAdditionalFunctions(string actionName, string controllerName, string area, string type) for each function that should replaced
              */
-            setAdditionalFunctions();
+            this.Run("DCM", "Form", "SetAdditionalFunctions", new RouteValueDictionary() { { "actionName", "Copy" }, { "controllerName", "CreateDataset" }, { "area", "DCM" }, { "type", "copy" } });
+            this.Run("DCM", "Form", "SetAdditionalFunctions", new RouteValueDictionary() { { "actionName", "Reset" }, { "controllerName", "CreateDataset" }, { "area", "Form" }, { "type", "reset" } });
+            this.Run("DCM", "Form", "SetAdditionalFunctions", new RouteValueDictionary() { { "actionName", "Cancel" }, { "controllerName", "CreateDataset" }, { "area", "DCM" }, { "type", "cancel" } });
+            this.Run("DCM", "Form", "SetAdditionalFunctions", new RouteValueDictionary() { { "actionName", "Submit" }, { "controllerName", "CreateDataset" }, { "area", "DCM" }, { "type", "submit" } });
+
+            //setAdditionalFunctions();
 
             //ToDO Modularity from ddm -> dcm
             /* < Export tag = "internalApi" id = "loadFromFromExternal"
              title = "load Metadata Form" description = "load Metadata Form" icon = ""
              controller = "Form" action = "LoadMetadataFromExternal"
              extends = "" />*/
-
-
-            return RedirectToAction("LoadMetadataFromExternal", "Form", new
+            return this.Run("DCM", "Form", "LoadMetadataFromExternal", new RouteValueDictionary()
             {
-                area = "DCM",
-                entityId,
-                title,
-                metadatastructureId,
-                datastructureId,
-                researchplanId,
-                sessionKeyForMetadata
+                { "entityId", entityId },
+                { "title", title },
+                { "metadatastructureId", metadatastructureId },
+                { "datastructureId", datastructureId },
+                { "researchplanId", researchplanId },
+                { "sessionKeyForMetadata", sessionKeyForMetadata }
             });
+
+            //return RedirectToAction("LoadMetadataFromExternal", "Form", new
+            //{
+            //    area = "DCM",
+            //    entityId,
+            //    title,
+            //    metadatastructureId,
+            //    datastructureId,
+            //    researchplanId,
+            //    sessionKeyForMetadata
+            //});
         }
 
         private void setAdditionalFunctions()
