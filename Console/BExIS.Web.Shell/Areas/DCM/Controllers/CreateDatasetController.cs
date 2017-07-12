@@ -614,7 +614,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// <returns></returns>
         public ActionResult ShowData(long id)
         {
-            return this.Run("DDM", "Data", "ShowData", new RouteValueDictionary { { "id", id } });
+            return this.Run2("DDM", "Data", "ShowData", new RouteValueDictionary { { "id", id } });
         }
 
         /// <summary>

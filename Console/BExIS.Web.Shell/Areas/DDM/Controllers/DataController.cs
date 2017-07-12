@@ -111,7 +111,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         /// <seealso cref=""/>
         /// <param name="datasetID"></param>
         /// <returns>model</returns>
-        public ActionResult ShowMetaData(long entityId, string title, long metadatastructureId, long datastructureId, long researchplanId, string sessionKeyForMetadata)
+        public ActionResult ShowMetaData() //long entityId, string title, long metadatastructureId, long datastructureId, long researchplanId, string sessionKeyForMetadata)
         {
             // ToDo Modularity DDM -> DCM Add open function to set the actions from a CreateTaskmanager and add this to the manifestfile
             /*
@@ -122,10 +122,11 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                 SetAdditionalFunctions(string actionName, string controllerName, string area, string type) for each function that should replaced
              */
-            this.Run("DCM", "Form", "SetAdditionalFunctions", new RouteValueDictionary() { { "actionName", "Copy" }, { "controllerName", "CreateDataset" }, { "area", "DCM" }, { "type", "copy" } });
-            this.Run("DCM", "Form", "SetAdditionalFunctions", new RouteValueDictionary() { { "actionName", "Reset" }, { "controllerName", "CreateDataset" }, { "area", "Form" }, { "type", "reset" } });
-            this.Run("DCM", "Form", "SetAdditionalFunctions", new RouteValueDictionary() { { "actionName", "Cancel" }, { "controllerName", "CreateDataset" }, { "area", "DCM" }, { "type", "cancel" } });
-            this.Run("DCM", "Form", "SetAdditionalFunctions", new RouteValueDictionary() { { "actionName", "Submit" }, { "controllerName", "CreateDataset" }, { "area", "DCM" }, { "type", "submit" } });
+
+            var result = this.Run2("DCM", "Form", "SetAdditionalFunctions", new RouteValueDictionary() { { "actionName", "Copy" }, { "controllerName", "CreateDataset" }, { "area", "DCM" }, { "type", "copy" } });
+            result = this.Run2("DCM", "Form", "SetAdditionalFunctions", new RouteValueDictionary() { { "actionName", "Reset" }, { "controllerName", "CreateDataset" }, { "area", "Form" }, { "type", "reset" } });
+            result = this.Run2("DCM", "Form", "SetAdditionalFunctions", new RouteValueDictionary() { { "actionName", "Cancel" }, { "controllerName", "CreateDataset" }, { "area", "DCM" }, { "type", "cancel" } });
+            result = this.Run2("DCM", "Form", "SetAdditionalFunctions", new RouteValueDictionary() { { "actionName", "Submit" }, { "controllerName", "CreateDataset" }, { "area", "DCM" }, { "type", "submit" } });
 
             //setAdditionalFunctions();
 
@@ -134,15 +135,16 @@ namespace BExIS.Modules.Ddm.UI.Controllers
              title = "load Metadata Form" description = "load Metadata Form" icon = ""
              controller = "Form" action = "LoadMetadataFromExternal"
              extends = "" />*/
-            return this.Run("DCM", "Form", "LoadMetadataFromExternal", new RouteValueDictionary()
-            {
-                { "entityId", entityId },
-                { "title", title },
-                { "metadatastructureId", metadatastructureId },
-                { "datastructureId", datastructureId },
-                { "researchplanId", researchplanId },
-                { "sessionKeyForMetadata", sessionKeyForMetadata }
-            });
+            return result;
+            //return this.Run2("DCM", "Form", "LoadMetadataFromExternal", new RouteValueDictionary()
+            //{
+            //    { "entityId", entityId },
+            //    { "title", title },
+            //    { "metadatastructureId", metadatastructureId },
+            //    { "datastructureId", datastructureId },
+            //    { "researchplanId", researchplanId },
+            //    { "sessionKeyForMetadata", sessionKeyForMetadata }
+            //});
 
             //return RedirectToAction("LoadMetadataFromExternal", "Form", new
             //{
