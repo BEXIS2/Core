@@ -1,0 +1,51 @@
+﻿@using Telerik.Web.Mvc.UI
+@using Vaiona.Web.Mvc.Modularity
+
+@model BExIS.Modules.Sam.UI.Models.CreateUserModel
+
+@using (Ajax.BeginForm("Create", "Users", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "contentCreate", OnSuccess = "onSuccess" }))
+{
+    @(Html.Telerik().TabStrip()
+        .Name("tabStripUser")
+        .SelectedIndex(0)
+        .Items(tabs =>
+        {
+            tabs.Add()
+                .Text("Details")
+                .Content(@<text>
+                    <table class="bx-table-form">
+                        <tr>
+                            <td>
+                                @Html.LabelFor(m => m.UserName)
+                            </td>
+                            <td>
+                                @Html.TextBoxFor(m => m.UserName, new { @class = "t-input bx-input" })
+                                @Html.ValidationMessageFor(m => m.UserName)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                @Html.LabelFor(m => m.Email)
+                            </td>
+                            <td>
+                                @Html.TextBoxFor(m => m.Email, new { @class = "t-input bx-input" })
+                                @Html.ValidationMessageFor(m => m.Email)
+                            </td>
+                        </tr>
+                    </table>
+                </text>);
+
+        tabs.Add()
+            .Text("Membership")
+            .Content(@<text>
+                @Html.Partial("_Membership")
+            </text>);
+
+        })
+    )
+
+    <div class="bx-footer right">
+        <button style="margin-right: 1px" type="submit" class="bx-button action">Save</button>
+        <button style="margin-left: 1px" type="button" class="bx-button action">Cancel</button>
+    </div>
+}

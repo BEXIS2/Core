@@ -1,31 +1,11 @@
 ﻿using BExIS.Security.Entities.Subjects;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 
 namespace BExIS.Modules.Sam.UI.Models
 {
-    public static class GroupExtensions
-    {
-        public static IQueryable<GroupGridRowModel> ToGroupGridRowModel(this IQueryable<Group> source)
-        {
-            return source.Select(g => new GroupGridRowModel()
-            {
-                Description = g.Description,
-                GroupName = g.Name,
-                GroupType = g.GroupType,
-                Id = g.Id
-            });
-        }
-    }
-
     public class CreateGroupModel
     {
-        public CreateGroupModel()
-        {
-            UserIds = new List<long>();
-        }
-
         public string Description { get; set; }
 
         [Required]
@@ -33,8 +13,6 @@ namespace BExIS.Modules.Sam.UI.Models
 
         [Required]
         public int GroupType { get; set; }
-
-        public List<long> UserIds { get; set; }
     }
 
     public class DeleteGroupModel
@@ -77,6 +55,27 @@ namespace BExIS.Modules.Sam.UI.Models
                 GroupName = group.Name,
                 GroupType = group.GroupType,
                 Id = group.Id
+            };
+        }
+    }
+
+    public class GroupMembershipGridRowModel
+    {
+        public string Description { get; set; }
+        public string GroupName { get; set; }
+        public GroupType GroupType { get; set; }
+        public long Id { get; set; }
+        public bool IsMember { get; set; }
+
+        public static GroupMembershipGridRowModel Convert(Group group, List<long> memberships)
+        {
+            return new GroupMembershipGridRowModel()
+            {
+                Description = group.Description,
+                GroupName = group.Name,
+                GroupType = group.GroupType,
+                Id = group.Id,
+                IsMember = memberships.Contains(group.Id)
             };
         }
     }

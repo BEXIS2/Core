@@ -23,12 +23,12 @@
     columns.Bound(g => g.GroupType);
     columns.Bound(g => g.Description);
     columns.Template(@<text>
-        <button type="button" class="bx bx-grid-function bx-edit" onclick="editGroup(@item.Id)"></button>
-        <button type="button" class="bx bx-grid-function bx-trash" onclick="deleteGroup(@item.Id)"></button>
+        <button type="button" class="bx bx-grid-function bx-edit"></button>
+        <button type="button" class="bx bx-grid-function bx-trash"></button>
         </text>)
         .ClientTemplate(
-            "<button type=\"button\" class=\"bx bx-grid-function bx-edit\" onclick=\"editGroup(<#= Id #>);\" value=\"<#= Id #>\"></button>" +
-            "<button type=\"button\" class=\"bx bx-grid-function bx-trash\" onclick=\"deleteGroup(<#= Id #>);\" value=\"<#= Id #>\"></button>")
+            "<button type=\"button\" class=\"bx bx-grid-function bx-edit\" value=\"<#= Id #>\"></button>" +
+            "<button type=\"button\" class=\"bx bx-grid-function bx-trash\" value=\"<#= Id #>\"></button>")
             .Width(70);
     })
     .ClientEvents(events =>
@@ -52,18 +52,26 @@
 @section Scripts
 {
     <script type="text/javascript">
-    
+
         function editGroup(id) {
-    
+
         }
-    
+
         function deleteGroup(id) {
-    
+
         }
-    
+
         function onDataBound() {
             addTooltips();
             resetAllTelerikIconTitles();
+
+            $('.bx-edit').click(function () {
+                alert($(this).attr("value"));
+            });
+
+            $('.bx-trash').click(function () {
+                alert($(this).attr("value"));
+            });
         }
     </script>
 }

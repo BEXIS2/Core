@@ -1,9 +1,11 @@
 ﻿using BExIS.Modules.Sam.UI.Models;
+using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
+using BExIS.Utils.Extensions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
@@ -16,6 +18,17 @@ namespace BExIS.Modules.Sam.UI.Controllers
 {
     public class FeaturePermissionsController : Controller
     {
+        public ActionResult Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult Create(CreateFeaturePermissionModel model)
+        {
+            return View();
+        }
+
         public ActionResult Index()
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Manage Features", Session.GetTenant());
@@ -45,20 +58,33 @@ namespace BExIS.Modules.Sam.UI.Controllers
             var featurePermissionManager = new FeaturePermissionManager();
 
             // Source + Transformation - Data
-            var featurePermissions = featurePermissionManager.FeaturePermissions.To
+            var featurePermissions = featurePermissionManager.FeaturePermissions;
+            var total = featurePermissions.Count();
 
             // Filtering
-            var filtered = users.Where(ExpressionBuilder.Expression<UserGridRowModel>(command.FilterDescriptors));
-            var total = filtered.Count();
+            var filters = command.FilterDescriptors as List<FilterDescriptor>;
+
+            if (filters != null)
+            {
+                featurePermissions =
+                    featurePermissions.FilterBy<FeaturePermission, FeaturePermissionGridRowModel>(filters);
+            }
 
             // Sorting
-            var sorted = (IQueryable<UserGridRowModel>)filtered.Sort(command.SortDescriptors);
+            featurePermissions.Sort(command.SortDescriptors);
 
             // Paging
-            var paged = sorted.Skip((command.Page - 1) * command.PageSize)
-                .Take(command.PageSize);
+            featurePermissions = featurePermissions.Skip((command.Page - 1) * command.PageSize).Take(command.PageSize);
 
-            return View(new GridModel<UserGridRowModel> { Data = paged.ToList(), Total = total });
+            // Data
+            var data = featurePermissions.ToList().Select(FeaturePermissionGridRowModel.Convert);
+
+            return
+                View(new GridModel
+                {
+                    Data = data,
+                    Total = total
+                });
         }
     }
 }

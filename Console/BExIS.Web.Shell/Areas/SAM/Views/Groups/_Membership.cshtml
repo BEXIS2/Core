@@ -1,0 +1,45 @@
+﻿@using BExIS.Modules.Sam.UI.Models
+@using Telerik.Web.Mvc.UI
+
+@(Html.Telerik().Grid<UserMembershipGridRowModel>()
+    .Name("gridUsers")
+    .Columns(columns =>
+    {
+        columns.Bound(g => g.IsMember)
+            .Template(@<text>
+            @if (item.IsMember)
+            {
+                <input type='checkbox' onchange='setMembership(this.checked, @item.Id);' name='selectedGroups' value='@item.Id' checked='checked' />
+            }
+            else
+            {
+                <input type='checkbox' onchange='setMembership(this.checked, @item.Id);' name='selectedGroups' value='@item.Id' />
+            }
+            </text>)
+            .ClientTemplate("<input type='checkbox' onchange='setMembership(this.checked, <#= Id #>);' name='selectedGroups' value='<#= Id #>' <#= IsMember ? checked='checked' : '' #> />")
+            .Title("Member")
+            .Width(64)
+            .Filterable(false)
+            .HtmlAttributes(new { style = "text-align:center" });
+        columns.Bound(g => g.Id);
+        columns.Bound(g => g.UserName);
+        columns.Bound(g => g.Email);
+        columns.Bound(g => g.IsAdministrator);
+    })
+    .ClientEvents(events =>
+    {
+        events.OnDataBound("onDataBound");
+    })
+    .DataBinding(dataBinding => dataBinding
+        .Ajax()
+        .Select("Groups_Select", "Users")
+    )
+    .EnableCustomBinding(true)
+    .Filterable()
+    .Pageable(pageable =>
+    {
+        pageable.PageSize(10, new[] { 10, 20, 50, 100 });
+        pageable.Style(GridPagerStyles.NextPreviousAndNumeric | GridPagerStyles.PageSizeDropDown);
+        pageable.Position(GridPagerPosition.Both);
+    })
+    .Sortable(sortable => sortable.OrderBy(order => order.Add(c => c.Id).Descending())))

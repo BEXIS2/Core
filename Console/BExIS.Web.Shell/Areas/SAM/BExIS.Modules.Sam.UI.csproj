@@ -659,12 +659,7 @@
     <Content Include="Views\Groups\Index.cshtml" />
     <Content Include="Views\Users\Index.cshtml" />
     <Content Include="Views\FeaturePermissions\_Features.cshtml" />
-    <Content Include="Views\Groups\Create.cshtml" />
-    <Content Include="Views\Users\Delete.cshtml" />
-    <Content Include="Views\Groups\Delete.cshtml" />
-    <Content Include="Views\Users\Create.cshtml" />
     <Content Include="Views\EntityPermissions\_Entities.cshtml" />
-    <Content Include="Views\Groups\Update.cshtml" />
     <Content Include="Web.config" />
     <Content Include="Views\Entities\Index.cshtml" />
     <Content Include="Views\Entities\Create.cshtml" />
@@ -675,6 +670,13 @@
     <Content Include="Views\Requests\_Requests.cshtml" />
     <Content Include="Views\FeaturePermissions\_Permissions.cshtml" />
     <Content Include="Views\Requests\_Decisions.cshtml" />
+    <Content Include="Views\FeaturePermissions\_Create.cshtml" />
+    <Content Include="Views\Groups\_Membership.cshtml" />
+    <Content Include="Views\Users\_Create.cshtml" />
+    <Content Include="Views\Users\_Update.cshtml" />
+    <Content Include="Views\Users\_Membership.cshtml" />
+    <Content Include="Views\Groups\_Update.cshtml" />
+    <Content Include="Views\Groups\_Create.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
