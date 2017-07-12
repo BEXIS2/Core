@@ -12,6 +12,7 @@ using MDS = BExIS.Dlm.Entities.MetadataStructure;
 using System.Linq.Expressions;
 using Vaiona.Logging.Aspects;
 using System.Threading.Tasks;
+using System.Data;
 
 namespace BExIS.Dlm.Services.Data
 {
@@ -472,6 +473,7 @@ namespace BExIS.Dlm.Services.Data
                 uow.Commit();
             }
             // if any problem was detected during the commit, an exception will be thrown!
+            dropMaterializedView(datasetId);
             return (true);
         }
 
@@ -636,6 +638,41 @@ namespace BExIS.Dlm.Services.Data
         public List<AbstractTuple> GetDatasetVersionEffectiveTuples(DatasetVersion datasetVersion)
         {
             return getDatasetVersionEffectiveTuples(datasetVersion);
+        }
+
+
+        /// <summary>
+        /// Experimental, uses a materialized view to retrive the latest version of a dataset
+        /// </summary>
+        /// <param name="datasetVersionId"></param>
+        /// <returns></returns>
+        public DataTable GetDatasetVersionEffectiveTuples(long datasetVersionId)
+        {
+            // perform all the required checks, like other get effective tuple functions
+            var dsVersion = DatasetVersionRepo.Get(datasetVersionId);
+            /// 1: build the MV name
+            long datasetId = dsVersion.Dataset.Id;
+            string mvName = buildViewName(datasetId);
+            /// 2: check if the MV exist, if not BUILD it. NOTE: MV creation can be done at checkin time
+            if(!existsMaterializedView(dsVersion.Dataset.Id))
+            {
+                //throw new Exception(string.Format("..."));
+                createMaterializedView(datasetId);
+                refreshMaterializedView(datasetId);
+            }
+            /// 3: retreive its data in a data table. NOTE: do not refresh, it is done with checkin
+            try
+            { 
+                DataTable table = queryMaterializedView(datasetId);
+                return table;
+            }
+            catch(Exception ex)
+            {
+                // fallback to the traditional method
+                List<AbstractTuple> tuples =  getDatasetVersionEffectiveTuples(dsVersion);
+                DataTable table = convertDataTuplesToDataTable(tuples);
+                return table;
+            }
         }
 
         /// <summary>
@@ -1800,6 +1837,12 @@ namespace BExIS.Dlm.Services.Data
             }
         }
 
+        private string buildViewName(long datasetId)
+        {
+            return "mvDataset" + datasetId;
+        }
+
+
         private void updateMaterializedView(long datasetId)
         {
             if (!existsMaterializedView(datasetId))
@@ -1809,6 +1852,7 @@ namespace BExIS.Dlm.Services.Data
 
         private void createMaterializedView(long datasetId)
         {
+            string viewName = buildViewName(datasetId);
             //Session session = (Session)em.getDelegate();
             //SessionFactoryImplementor sfi = (SessionFactoryImplementor)session.getSessionFactory();
             //ConnectionProvider cp = sfi.getConnectionProvider();
@@ -1821,18 +1865,22 @@ namespace BExIS.Dlm.Services.Data
 
         private void refreshMaterializedView(long datasetId)
         {
+            string viewName = buildViewName(datasetId);
+
             // refresh query is also native, goes to dialact specific query files, getNamedQuery, ...
             //String sql = "refresh materialized view mv_all_operations; refresh materialized view mv_all_members;";
             //createNativeQuery(sql).executeUpdate();
-            
+
             //// by calling addSynchronizedEntityClass method we inform hibernate that any Person  
             //// persistent object should be synchronized with database before invoking query  
             //session.createSQLQuery("{call DBMS_MVIEW.REFRESH('PERSON_AGGREGATE')}")
             //    .addSynchronizedEntityClass(Person.class).executeUpdate();
-    }
+        }
 
         private bool existsMaterializedView(long datasetId)
         {
+            string viewName = buildViewName(datasetId);
+
             // sql query to check whether the view exists...
             return false;
         }
@@ -1844,10 +1892,23 @@ namespace BExIS.Dlm.Services.Data
         /// <returns></returns>
         private bool dropMaterializedView(long datasetId)
         {
+            string viewName = buildViewName(datasetId);
+
             // sql query to check whether the view exists...
             return false;
         }
-        
+
+        private DataTable convertDataTuplesToDataTable(List<AbstractTuple> tuples)
+        {
+            return new DataTable();
+        }
+
+        private DataTable queryMaterializedView(long datasetId)
+        {
+            return new DataTable();
+        }
+
+
         // in some cases maybe another attribute of the user is used like its ID, email or the IP address
         private string getUserIdentifier(string username)
         {
@@ -1903,6 +1964,7 @@ namespace BExIS.Dlm.Services.Data
                         uow.Commit();
                     }
                 }
+                updateMaterializedView(datasetId);
             }
         }
 
@@ -2540,7 +2602,7 @@ namespace BExIS.Dlm.Services.Data
         /// </summary>
         /// <param name="dataset">The dataset the view is linked to</param>
         /// <param name="view">The data view to be associated to the <paramref name="dataset"/>.</param>
-        public void AddDataView(Dataset dataset, DataView view)
+        public void AddDatasetView(Dataset dataset, DatasetView view)
         {
             Contract.Requires(dataset != null);
             Contract.Requires(view != null && view.Id >= 0);
@@ -2564,7 +2626,7 @@ namespace BExIS.Dlm.Services.Data
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 // save the relation controller object which is the 1 side in 1:N relationships. in this case: View
-                IRepository<DataView> repo = uow.GetRepository<DataView>();
+                IRepository<DatasetView> repo = uow.GetRepository<DatasetView>();
                 repo.Put(view);
                 uow.Commit();
             }
@@ -2575,14 +2637,14 @@ namespace BExIS.Dlm.Services.Data
         /// </summary>
         /// <param name="entity"></param>
         /// <returns>True if successful, False otherwise.</returns>
-        public bool DeleteDataView(DataView entity)
+        public bool DeleteDatasetView(DatasetView entity)
         {
             Contract.Requires(entity != null);
             Contract.Requires(entity.Id >= 0);
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
-                IRepository<DataView> repo = uow.GetRepository<DataView>();
+                IRepository<DatasetView> repo = uow.GetRepository<DatasetView>();
 
                 entity = repo.Reload(entity);
                 repo.Delete(entity);
