@@ -361,7 +361,7 @@
     <Compile Include="Models\InfoModels.cs" />
     <Compile Include="Models\ModuleGridRowModel.cs" />
     <Compile Include="Models\RequestModels.cs" />
-    <Compile Include="Models\SubjectGridRowModel.cs" />
+    <Compile Include="Models\SubjectModels.cs" />
     <Compile Include="Models\TenantModels.cs" />
     <Compile Include="Models\UserModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -670,7 +670,7 @@
     <Content Include="Views\Requests\_Requests.cshtml" />
     <Content Include="Views\FeaturePermissions\_Permissions.cshtml" />
     <Content Include="Views\Requests\_Decisions.cshtml" />
-    <Content Include="Views\FeaturePermissions\_Create.cshtml" />
+    <Content Include="Views\FeaturePermissions\_Add.cshtml" />
     <Content Include="Views\Groups\_Membership.cshtml" />
     <Content Include="Views\Users\_Create.cshtml" />
     <Content Include="Views\Users\_Update.cshtml" />

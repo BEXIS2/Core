@@ -86,5 +86,40 @@ namespace BExIS.Modules.Sam.UI.Controllers
                     Total = total
                 });
         }
+
+        [GridAction(EnableCustomBinding = true)]
+        public ActionResult Subjects_Select(long featureId, GridCommand command)
+        {
+            var subjectManager = new SubjectManager();
+
+            // Source + Transformation - Data
+            var subjects = subjectManager.Subjects.Where(u => u.);
+            var total = featurePermissions.Count();
+
+            // Filtering
+            var filters = command.FilterDescriptors as List<FilterDescriptor>;
+
+            if (filters != null)
+            {
+                featurePermissions =
+                    featurePermissions.FilterBy<FeaturePermission, FeaturePermissionGridRowModel>(filters);
+            }
+
+            // Sorting
+            featurePermissions.Sort(command.SortDescriptors);
+
+            // Paging
+            featurePermissions = featurePermissions.Skip((command.Page - 1) * command.PageSize).Take(command.PageSize);
+
+            // Data
+            var data = featurePermissions.ToList().Select(FeaturePermissionGridRowModel.Convert);
+
+            return
+                View(new GridModel
+                {
+                    Data = data,
+                    Total = total
+                });
+        }
     }
 }

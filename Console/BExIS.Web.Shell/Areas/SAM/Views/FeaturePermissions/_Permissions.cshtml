@@ -3,7 +3,7 @@
 
 @model long
 
-@Html.ActionLink("Create Feature Permission", "Create", "FeaturePermissions", null, new { @class = "bx-button function" })
+<button id="button_createfeaturepermission" type="button" class="bx-button function">Add Subject(s)</button>
 
 @(Html.Telerik().Grid<FeaturePermissionGridRowModel>()
     .Name("gridFeaturePermissions")
@@ -28,7 +28,7 @@
     {
         pageable.PageSize(10, new[] { 10, 20, 50, 100 });
         pageable.Style(GridPagerStyles.NextPreviousAndNumeric | GridPagerStyles.PageSizeDropDown);
-        pageable.Position(GridPagerPosition.Both);
+        pageable.Position(GridPagerPosition.Bottom);
     })
     .Sortable()
 )

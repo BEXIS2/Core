@@ -1,30 +1,29 @@
 ﻿@using BExIS.Modules.Sam.UI.Models
 @using Telerik.Web.Mvc.UI
 
-@(Html.Telerik().Grid<UserMembershipGridRowModel>()
-    .Name("gridUsers")
+@(Html.Telerik().Grid<SelectableSubjectGridRowModel>()
+    .Name("gridGroups")
     .Columns(columns =>
     {
-        columns.Bound(g => g.IsMember)
+        columns.Bound(g => g.IsSelected)
             .Template(@<text>
-            @if (item.IsMember)
+            @if (item.IsSelected)
             {
-                <input type='checkbox' onchange='setMembership(this.checked, @item.Id);' name='selectedGroups' value='@item.Id' checked='checked' />
+                <input type='checkbox' onchange='setSelection(this.checked, @item.Id);' name='selectedSubjects' value='@item.Id' checked='checked' />
             }
             else
             {
-                <input type='checkbox' onchange='setMembership(this.checked, @item.Id);' name='selectedGroups' value='@item.Id' />
+                <input type='checkbox' onchange='setSelection(this.checked, @item.Id);' name='selectedSubjects' value='@item.Id' />
             }
             </text>)
-            .ClientTemplate("<input type='checkbox' onchange='setMembership(this.checked, <#= Id #>);' name='selectedGroups' value='<#= Id #>' <#= IsMember ? checked='checked' : '' #> />")
+            .ClientTemplate("<input type='checkbox' onchange='setSelection(this.checked, <#= Id #>);' name='selectedSubjects' value='<#= Id #>' <#= IsSelected ? checked='checked' : '' #> />")
             .Title("Member")
             .Width(64)
             .Filterable(false)
             .HtmlAttributes(new { style = "text-align:center" });
         columns.Bound(g => g.Id);
-        columns.Bound(g => g.UserName);
-        columns.Bound(g => g.Email);
-        columns.Bound(g => g.IsAdministrator);
+        columns.Bound(g => g.Name);
+        columns.Bound(g => g.Type);
     })
     .ClientEvents(events =>
     {
@@ -32,7 +31,7 @@
     })
     .DataBinding(dataBinding => dataBinding
         .Ajax()
-        .Select("Groups_Select", "Users")
+        .Select("Subjects_Select", "FeaturePermissions")
     )
     .EnableCustomBinding(true)
     .Filterable()

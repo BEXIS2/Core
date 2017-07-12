@@ -37,6 +37,38 @@
                 });
         }
 
+        $('#button_createfeaturepermission').click(function () {
+            $.ajax({
+                type: 'GET',
+                url: '@Url.Action("Create", "FeaturePermissions")',
+                dataType: 'html',
+                success: function (htmlData) {
+                    var windowElement = $.telerik.window.create({
+                        title: "Create Feature Permission(s)",
+                        html: "<div id='contentCreate' class='bx-window'>" + htmlData + "</div>",
+                        contentUrl: "",
+                        actions: ["Close"],
+                        modal: true,
+                        width: 500,
+                        height: 500,
+                        resizable: false,
+                        draggable: true,
+                        scrollable: false,
+                        onClose: function () {
+                            $("#windowCreate").data('tWindow').destroy();
+                            $("#gridFeaturePermissions .t-refresh").trigger('click');
+                        }
+                    });
+
+                    windowElement.attr('id', 'windowCreate');
+                    var window = $(windowElement).data('tWindow');
+                    window.center().open();
+
+                    resetAllTelerikIconTitles();
+                }
+            });
+        });
+
         function onDataBound() {
             addTooltips();
             resetAllTelerikIconTitles();

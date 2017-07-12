@@ -15,7 +15,7 @@
             {
                 <input type='checkbox' onchange='setMembership(this.checked, @item.Id);' name='selectedGroups' value='@item.Id' />
             }
-                    </text>)
+            </text>)
             .ClientTemplate("<input type='checkbox' onchange='setMembership(this.checked, <#= Id #>);' name='selectedGroups' value='<#= Id #>' <#= IsMember ? checked='checked' : '' #> />")
             .Title("Member")
             .Width(64)
