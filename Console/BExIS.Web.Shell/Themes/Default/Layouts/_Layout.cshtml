@@ -25,6 +25,8 @@
     </style>
   
     @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
     @(Html.Telerik().StyleSheetRegistrar().DefaultGroup(group => group
                 .DefaultPath(Themes.ThemeDirectory) //  "~/Themes/" 
 
@@ -40,7 +42,7 @@
         //.Add(Themes.GetResourcePath("Styles", "mycss.css"))
         // add RTL support when internationalization is enabled
         .Combined(true)
-          .Compress(true)))
+        .Compress(true)))
     
     @Scripts.Render("~/bundles/modernizr")
 

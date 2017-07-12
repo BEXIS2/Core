@@ -19,7 +19,7 @@ using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Web.Shell
 {
-    // Note: For instructions on enabling IIS6 or IIS7 classic mode, 
+    // Note: For instructions on enabling IIS6 or IIS7 classic mode,
     // visit http://go.microsoft.com/?LinkId=9394801
 
     public class MvcApplication : System.Web.HttpApplication
@@ -43,7 +43,6 @@ namespace BExIS.Web.Shell
                new { controller = "home", action = "index", id = UrlParameter.Optional } // Parameter defaults
                , new[] { "BExIS.Web.Shell.Controllers" } // to prevent conflict between root controllers and area controllers that have same names
            );
-
         }
 
         protected void Application_Start()
@@ -120,7 +119,7 @@ namespace BExIS.Web.Shell
                     try
                     {
                         ModuleManager.GetModuleInfo(moduleId).Plugin.Install();
-                        // For security reasons, pending modules go to the "inactive" status after schema export. 
+                        // For security reasons, pending modules go to the "inactive" status after schema export.
                         // An administrator can endable them via the management console
                         ModuleManager.Disable(moduleId);
                     }
@@ -180,8 +179,8 @@ namespace BExIS.Web.Shell
         }
 
         /// <summary>
-        /// the function is called on any http request, which include static resources too! 
-        /// conversation management is done using the global filter  PersistenceContextProviderAttribute.      
+        /// the function is called on any http request, which include static resources too!
+        /// conversation management is done using the global filter  PersistenceContextProviderAttribute.
         /// </summary>
         protected virtual void Application_EndRequest()
         {

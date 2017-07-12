@@ -143,25 +143,28 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controllers\EntityController.cs" />
+    <Compile Include="Controllers\EntitiesController.cs" />
     <Compile Include="Controllers\EntityPermissionsController.cs" />
+    <Compile Include="Controllers\RequestsController.cs" />
     <Compile Include="Controllers\FeaturePermissionsController.cs" />
     <Compile Include="Controllers\GroupsController.cs" />
     <Compile Include="Controllers\HelpController.cs" />
     <Compile Include="Controllers\ModulesController.cs" />
     <Compile Include="Controllers\NotificationsController.cs" />
-    <Compile Include="Controllers\PermissionsController.cs" />
-    <Compile Include="Controllers\RequestsController.cs" />
-    <Compile Include="Controllers\SubjectsController.cs" />
     <Compile Include="Controllers\TenantsController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Helpers\Attributes.cs" />
     <Compile Include="Helpers\SAMSeedDataGenerator.cs" />
+    <Compile Include="Models\DecisionModels.cs" />
+    <Compile Include="Models\EntityModels.cs" />
     <Compile Include="Models\EntityPermissionModels.cs" />
+    <Compile Include="Models\FeatureModels.cs" />
     <Compile Include="Models\FeaturePermissionModels.cs" />
     <Compile Include="Models\GroupModels.cs" />
     <Compile Include="Models\InfoModels.cs" />
     <Compile Include="Models\ModuleGridRowModel.cs" />
+    <Compile Include="Models\RequestModels.cs" />
+    <Compile Include="Models\SubjectGridRowModel.cs" />
     <Compile Include="Models\TenantModels.cs" />
     <Compile Include="Models\UserModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -221,10 +224,17 @@
     <Content Include="Views\Groups\Delete.cshtml" />
     <Content Include="Views\Users\Create.cshtml" />
     <Content Include="Views\EntityPermissions\_Entities.cshtml" />
-    <Content Include="Views\EntityPermissions\_Subjects.cshtml" />
-    <Content Include="Views\FeaturePermissions\_Subjects.cshtml" />
     <Content Include="Views\Groups\Update.cshtml" />
     <Content Include="Web.config" />
+    <Content Include="Views\Entities\Index.cshtml" />
+    <Content Include="Views\Entities\Create.cshtml" />
+    <Content Include="Views\EntityPermissions\_Permissions.cshtml" />
+    <Content Include="Views\EntityPermissions\Create.cshtml" />
+    <Content Include="Views\Requests\_Entities.cshtml" />
+    <Content Include="Views\Requests\Index.cshtml" />
+    <Content Include="Views\Requests\_Requests.cshtml" />
+    <Content Include="Views\FeaturePermissions\_Permissions.cshtml" />
+    <Content Include="Views\Requests\_Decisions.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -233,12 +243,8 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Views\Entity\" />
     <Folder Include="Views\Notifications\" />
-    <Folder Include="Views\Permissions\" />
-    <Folder Include="Views\Requests\" />
     <Folder Include="Views\Shared\" />
-    <Folder Include="Views\Subjects\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -252,6 +258,14 @@
     <ProjectReference Include="..\..\..\..\Components\AAA\BExIS.Security.Services\BExIS.Security.Services.csproj">
       <Project>{681C8BC4-55F0-4F43-A685-90E246A88CB1}</Project>
       <Name>BExIS.Security.Services</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Components\DLM\BExIS.Dlm.Entities\BExIS.Dlm.Entities.csproj">
+      <Project>{B4E7B1BF-01B4-40AF-8D19-B8F362167261}</Project>
+      <Name>BExIS.Dlm.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Components\DLM\BExIS.Dlm.Services\BExIS.Dlm.Services.csproj">
+      <Project>{c4ca0a99-0af3-4372-a9b7-b9073599bd8b}</Project>
+      <Name>BExIS.Dlm.Services</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\Components\EXT\BExIS.Ext.Services\BExIS.Ext.Services.csproj">
       <Project>{B906A66A-4A09-4207-B590-655EE111CCF1}</Project>

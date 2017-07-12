@@ -13,7 +13,6 @@ namespace BExIS.Modules.Rpm.UI.Models
     {
 
         public long Id { get; set; }
-        public long DataStructureId { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
         public bool inUse { get; set; }
@@ -41,9 +40,11 @@ namespace BExIS.Modules.Rpm.UI.Models
 
         public Structure(long datasetId) : this()
         {
-            DataStructureResultStruct dataStructureResultStruct = new DataStructureResultStruct(datasetId);
-            if (dataStructureResultStruct != null)
+            DatasetManager datasetManager = new DatasetManager();
+            var dataset = datasetManager.DatasetRepo.Get(datasetId);
+            if (dataset != null && dataset.DataStructure.Id != 0)
             {
+                DataStructureResultStruct dataStructureResultStruct = new DataStructureResultStruct(this.Id);
                 this.Id = dataStructureResultStruct.Id;
                 this.Title = dataStructureResultStruct.Title;
                 this.Description = dataStructureResultStruct.Description;
@@ -61,7 +62,7 @@ namespace BExIS.Modules.Rpm.UI.Models
 
                 if (this.Structured == true)
                 {
-                    StructuredDataStructurePreviewModel structuredDataStructurePreviewModel = new StructuredDataStructurePreviewModel(DataStructureId);
+                    StructuredDataStructurePreviewModel structuredDataStructurePreviewModel = new StructuredDataStructurePreviewModel(this.Id);
                     DataRow dataRow;
                     foreach (VariablePreview vs in structuredDataStructurePreviewModel.VariablePreviews)
                     {

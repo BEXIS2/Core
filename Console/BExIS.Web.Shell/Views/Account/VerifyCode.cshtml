@@ -1,4 +1,4 @@
-﻿@model BExIS.Web.Shell.Models.VerifyCodeModel
+﻿@model BExIS.Web.Shell.Models.VerifyCodeViewModel
 @{
     ViewBag.Title = "Überprüfen";
 }
@@ -8,8 +8,8 @@
 @using (Html.BeginForm("VerifyCode", "Account", new { ReturnUrl = Model.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
 {
     @Html.AntiForgeryToken()
-    @Html.Hidden("Provider", @Model.Provider)
-    @Html.Hidden("RememberMe", @Model.RememberMe)
+    @Html.Hidden("provider", @Model.Provider)
+    @Html.Hidden("rememberMe", @Model.RememberMe)
     <h4>Überprüfungscode eingeben</h4>
     <hr />
     @Html.ValidationSummary("", new { @class = "text-danger" })

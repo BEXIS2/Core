@@ -30,5 +30,10 @@
             title="Manage Data Types" description="Edit, Create or Delet Data Types" icon=""
             controller="Home" action="DataTypeManager" argument=""
             extends="./settingsRoot" />
+
+    <Export tag="api" id="structures"
+            title="get structure" description="get Datastructure of a Dataset" icon=""
+            controller="Structures" action="Get"
+            extends="./apiRoot" />
   </Exports>
 </Manifest>
