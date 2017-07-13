@@ -1005,10 +1005,6 @@
       <Project>{fbe3101a-791a-4eab-9b8f-f6e071f8dbdc}</Project>
       <Name>BExIS.Ddm.Providers.LuceneProvider</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Modules\RPM\BExIS.RPM.Output\BExIS.RPM.Output.csproj">
-      <Project>{abc877e0-e3de-4472-a199-1728e88fa5a1}</Project>
-      <Name>BExIS.RPM.Output</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Themes\Default\Styles\awesome\fonts\fontawesome-webfont.woff2" />
