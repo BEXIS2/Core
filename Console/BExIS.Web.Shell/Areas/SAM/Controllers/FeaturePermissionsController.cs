@@ -1,6 +1,5 @@
 ﻿using BExIS.Modules.Sam.UI.Models;
 using BExIS.Security.Entities.Authorization;
-using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
@@ -33,11 +32,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Manage Features", Session.GetTenant());
 
-            var groupManager = new GroupManager();
-            groupManager.Create(new Group() { Name = "Public", Description = "Test", GroupType = GroupType.Public });
-
             var featureManager = new FeatureManager();
-            featureManager.Create(new Feature() { Name = "BExIS", Description = "BExIS" });
 
             var features = new List<FeatureTreeViewItemModel>();
 
@@ -93,33 +88,29 @@ namespace BExIS.Modules.Sam.UI.Controllers
             var subjectManager = new SubjectManager();
 
             // Source + Transformation - Data
-            var subjects = subjectManager.Subjects.Where(u => u.);
-            var total = featurePermissions.Count();
+            var subjects = subjectManager.Subjects;
+            var total = subjects.Count();
 
             // Filtering
             var filters = command.FilterDescriptors as List<FilterDescriptor>;
 
             if (filters != null)
             {
-                featurePermissions =
-                    featurePermissions.FilterBy<FeaturePermission, FeaturePermissionGridRowModel>(filters);
+                subjects =
+                    subjects.FilterBy<Subject, SelectableSubjectGridRowModel>(filters);
             }
 
             // Sorting
-            featurePermissions.Sort(command.SortDescriptors);
+            var sorted = subjects.Sort(command.SortDescriptors) as IQueryable<Subject>;
 
             // Paging
-            featurePermissions = featurePermissions.Skip((command.Page - 1) * command.PageSize).Take(command.PageSize);
+            var paged = sorted.Skip((command.Page - 1) * command.PageSize).Take(command.PageSize).ToList();
 
-            // Data
-            var data = featurePermissions.ToList().Select(FeaturePermissionGridRowModel.Convert);
+            // Paging
+            var subjectIds = Session["SubjectIds"] as List<long>;
+            var data = paged.Select(x => SelectableSubjectGridRowModel.Convert(x, subjectIds));
 
-            return
-                View(new GridModel
-                {
-                    Data = data,
-                    Total = total
-                });
+            return View(new GridModel<SelectableSubjectGridRowModel> { Data = data, Total = total });
         }
     }
 }
