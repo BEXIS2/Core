@@ -202,7 +202,9 @@
     <Content Include="Views\Mapping\Mappings.cshtml" />
     <Content Include="Views\Mapping\MappingSimpleLinkElement.cshtml" />
     <Content Include="Views\Mapping\TransformationRule.cshtml" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Views\Submission\_dataRepositoryRequirementsView.cshtml" />
     <Content Include="Views\Submission\_showPublishDataView.cshtml" />
     <None Include="Web.Debug.config">
