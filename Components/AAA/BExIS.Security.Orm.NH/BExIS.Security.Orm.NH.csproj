@@ -53,7 +53,6 @@
     <Content Include="Mappings\Default\Authentication\Login.hbm.xml" />
     <Content Include="Mappings\Default\Authorization\EntityPermission.hbm.xml" />
     <Content Include="Mappings\Default\Authorization\FeaturePermission.hbm.xml" />
-    <Content Include="Mappings\Default\Authorization\Permission.hbm.xml" />
     <Content Include="Mappings\Default\Objects\Entity.hbm.xml" />
     <Content Include="Mappings\Default\Objects\Feature.hbm.xml" />
     <Content Include="Mappings\Default\Objects\Operation.hbm.xml" />
