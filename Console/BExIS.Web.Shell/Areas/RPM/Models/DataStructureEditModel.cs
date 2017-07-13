@@ -181,12 +181,12 @@ namespace BExIS.Modules.Rpm.UI.Models
             this.inUse = false;
         }
 
-        public VariablePreviewStruct fill(long attributeId)
+        public new VariablePreviewStruct fill(long attributeId)
         {
             return this.fill(attributeId, true);
         }
 
-        public VariablePreviewStruct fill(long attributeId, bool getConstraints)
+        public new VariablePreviewStruct fill(long attributeId, bool getConstraints)
         {
             DataContainerManager dataAttributeManager = new DataContainerManager();
             DataAttribute dataAttribute = dataAttributeManager.DataAttributeRepo.Get(attributeId);
@@ -280,7 +280,7 @@ namespace BExIS.Modules.Rpm.UI.Models
 
     public class AttributeEditStruct : AttributePreviewStruct
     {
-        public ItemStruct DataType { get; set; }
+        public new ItemStruct DataType { get; set; }
         public List<ItemStruct> Units { get; set; }
         public List<ItemStruct> DataTypes { get; set; }
 
