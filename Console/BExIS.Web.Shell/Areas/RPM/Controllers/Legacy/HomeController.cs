@@ -8,7 +8,6 @@ using System.Web.Mvc;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.TypeSystem;
-using BExIS.RPM.Output;
 using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
 using System.Windows.Forms;
@@ -17,6 +16,7 @@ using Vaiona.Web.Mvc.Models;
 using BExIS.IO.DataType.DisplayPattern;
 using Vaiona.Web.Extensions;
 using BExIS.Modules.Rpm.UI.Models;
+using BExIS.IO.Transform.Output;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
 {
