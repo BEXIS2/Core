@@ -15,7 +15,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
     {
         public ActionResult Create()
         {
-            Session["GroupIds"] = new List<long>();
+            Session["Groups"] = new List<long>();
             return PartialView("_Create", new CreateUserModel());
         }
 
@@ -70,7 +70,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
             var paged = sorted.Skip((command.Page - 1) * command.PageSize).Take(command.PageSize).ToList();
 
             // Paging
-            var groupIds = Session["GroupIds"] as List<long>;
+            var groupIds = Session["Groups"] as List<long>;
             var data = paged.Select(x => GroupMembershipGridRowModel.Convert(x, groupIds));
 
             return View(new GridModel<GroupMembershipGridRowModel> { Data = data, Total = total });
@@ -83,7 +83,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
         public void SetMembership(long groupId, bool value)
         {
-            var groupIds = Session["GroupIds"] as List<long>;
+            var groupIds = Session["Groups"] as List<long>;
 
             if (value)
             {
@@ -94,14 +94,14 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 groupIds.Remove(groupId);
             }
 
-            Session["GroupIds"] = groupIds;
+            Session["Groups"] = groupIds;
         }
 
         public ActionResult Update(long userId)
         {
             // get user
             var model = new UpdateUserModel();
-            Session["GroupIds"] = new List<long>();
+            Session["Groups"] = new List<long>();
 
             return PartialView("_Update", model);
         }

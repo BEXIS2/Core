@@ -17,15 +17,16 @@ namespace BExIS.Modules.Sam.UI.Controllers
 {
     public class FeaturePermissionsController : Controller
     {
-        public ActionResult Create()
+        public ActionResult Add()
         {
-            return View();
+            Session["Subjects"]
+            return PartialView("_Add");
         }
 
         [HttpPost]
         public ActionResult Create(CreateFeaturePermissionModel model)
         {
-            return View();
+            return PartialView("_Add");
         }
 
         public ActionResult Index()
