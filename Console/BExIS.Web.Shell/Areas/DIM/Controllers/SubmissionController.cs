@@ -469,7 +469,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             }
 
 
-            return RedirectToAction("publishData", new { datasetId });
+            return RedirectToAction("getPublishDataPartialView", new { datasetId });
         }
 
         public async Task<ActionResult> SendDataToDataRepo(long datasetId, string datarepo)

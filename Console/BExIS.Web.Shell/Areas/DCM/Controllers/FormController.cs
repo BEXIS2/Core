@@ -17,6 +17,7 @@ using BExIS.Security.Services.Authorization;
 using BExIS.Utils.Data.MetadataStructure;
 using BExIS.Xml.Helpers;
 using BExIS.Xml.Helpers.Mapping;
+using NHibernate.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -2040,7 +2041,13 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public ActionResult _AutoCompleteAjaxLoading(string text, string id)
         {
             // BUG: invalid call to ddm method
-            // TODO: reimplement call to get auto-complete values
+            // TODO: Modularity -> call internal api function
+            /*
+             <Export tag="internalApi" id="freeTextSearch"
+                title="Free Text Search" description="free Text Search" icon=""
+                controller="SearchIndex" action="Get"
+                extends="" />
+             */
             //ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
             //return new JsonResult { Data = new SelectList(provider.GetTextBoxSearchValues(text, "all", "new", 10).SearchComponent.TextBoxSearchValues, "Value", "Name") };
 
@@ -2698,6 +2705,80 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         #endregion Security
 
         #region overrideable Action
+
+        /// <summary>
+        /// Set a action in the Form
+        /// </summary>
+        /// <param name="actionName"></param>
+        /// <param name="controllerName"></param>
+        /// <param name="area"></param>
+        /// <param name="type">submit,cancel,reset,copy</param>
+        public ActionResult SetAdditionalFunctions(string actionName, string controllerName, string area, string type)
+        {
+            try
+            {
+                CreateTaskmanager TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"] ??
+                                                new CreateTaskmanager();
+
+                ActionInfo action = new ActionInfo();
+                action.ActionName = actionName;
+                action.ControllerName = controllerName;
+                action.AreaName = area;
+                int x = 5;
+
+                x = x >= 5 ? x++ : x--;
+
+                switch (type.ToLower())
+                {
+                    case "submit":
+                        {
+                            if (TaskManager.Actions.ContainsKey(CreateTaskmanager.SUBMIT_ACTION))
+                                TaskManager.Actions[CreateTaskmanager.SUBMIT_ACTION] = action;
+                            else
+                                TaskManager.Actions.Add(CreateTaskmanager.SUBMIT_ACTION, action);
+
+
+                            //TaskManager.Actions.ContainsKey(CreateTaskmanager.SUBMIT_ACTION) ? TaskManager.Actions[CreateTaskmanager.SUBMIT_ACTION] = action : TaskManager.Actions.Add(CreateTaskmanager.SUBMIT_ACTION, action);
+
+                            break;
+                        }
+                    case "reset":
+                        {
+                            if (TaskManager.Actions.ContainsKey(CreateTaskmanager.RESET_ACTION))
+                                TaskManager.Actions[CreateTaskmanager.RESET_ACTION] = action;
+                            else
+                                TaskManager.Actions.Add(CreateTaskmanager.RESET_ACTION, action);
+                            break;
+                        }
+                    case "cancel":
+                        {
+                            if (TaskManager.Actions.ContainsKey(CreateTaskmanager.CANCEL_ACTION))
+                                TaskManager.Actions[CreateTaskmanager.CANCEL_ACTION] = action;
+                            else
+                                TaskManager.Actions.Add(CreateTaskmanager.CANCEL_ACTION, action);
+                            break;
+                        }
+                    case "copy":
+                        {
+                            if (TaskManager.Actions.ContainsKey(CreateTaskmanager.COPY_ACTION))
+                                TaskManager.Actions[CreateTaskmanager.COPY_ACTION] = action;
+                            else
+                                TaskManager.Actions.Add(CreateTaskmanager.COPY_ACTION, action);
+                            break;
+                        }
+                }
+
+
+                Session["CreateDatasetTaskmanager"] = TaskManager;
+
+                return Json(true);
+            }
+            catch (Exception ex)
+            {
+
+                return Json(ex.Message);
+            }
+        }
 
         public ActionResult Cancel()
         {

@@ -2,21 +2,20 @@
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
-using Vaiona.Utils.Cfg;
-using System.Data;
-using Newtonsoft.Json;
-using System;
-using System.Linq;
-
-using System.Collections.Generic;
-using System.IO;
-using System.Xml;
+using BExIS.Dlm.Services.TypeSystem;
+using BExIS.IO.DataType.DisplayPattern;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
-using BExIS.IO.DataType.DisplayPattern;
-using BExIS.Dlm.Services.TypeSystem;
+using System.Xml;
+using Vaiona.Utils.Cfg;
 
 namespace BExIS.IO.Transform.Output
 {
@@ -57,12 +56,12 @@ namespace BExIS.IO.Transform.Output
                 DataStructureManager dataStructureManager = new DataStructureManager();
                 DataStructure dataStructure = dataStructureManager.AllTypesDataStructureRepo.Get(dataset.DataStructure.Id);
                 if (dataStructure != null)
-                { 
+                {
                     this.Id = dataStructure.Id;
                     this.Title = dataStructure.Name;
                     this.Description = dataStructure.Description;
 
-                    if(dataStructure.Datasets.Count > 0)
+                    if (dataStructure.Datasets.Count > 0)
                         this.inUse = true;
                     else
                         this.inUse = false;
