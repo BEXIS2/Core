@@ -95,7 +95,7 @@
 
     <set name="Views" inverse="true" lazy="true" cascade="all">
       <key column="DatasetRef" not-null="false" foreign-key="FK_Views_Datasets"/>      
-      <one-to-many class="BExIS.Dlm.Entities.DataStructure.DataView" />
+      <one-to-many class="BExIS.Dlm.Entities.DataStructure.DatasetView" />
     </set>
 
   </class>

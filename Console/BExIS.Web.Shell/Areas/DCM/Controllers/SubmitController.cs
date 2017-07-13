@@ -192,7 +192,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
 
             ICollection<long> datasetIDs = new List<long>();
-            datasetIDs = entityPermissionManager.GetKeys(GetUsernameOrDefault(), typeof(User), "Dataset", typeof(Dataset),
+            datasetIDs = entityPermissionManager.GetKeys<User>(GetUsernameOrDefault(), "Dataset", typeof(Dataset),
                 RightType.Write).ToList();
 
             DataStructureManager dataStructureManager = new DataStructureManager();

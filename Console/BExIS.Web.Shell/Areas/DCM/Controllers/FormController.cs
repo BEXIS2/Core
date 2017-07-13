@@ -2690,7 +2690,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             #region security permissions and authorisations check
 
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
-            return entityPermissionManager.HasRight(GetUsernameOrDefault(), typeof(User), "Dataset", typeof(Dataset), entityId, RightType.Write);
+            return entityPermissionManager.HasRight<User>(GetUsernameOrDefault(), "Dataset", typeof(Dataset), entityId, RightType.Write);
 
             #endregion security permissions and authorisations check
         }
