@@ -2768,6 +2768,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         }
                 }
 
+
+                Session["CreateDatasetTaskmanager"] = TaskManager;
+
                 return Json(true);
             }
             catch (Exception ex)

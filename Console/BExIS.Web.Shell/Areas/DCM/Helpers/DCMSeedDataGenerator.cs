@@ -267,6 +267,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
         {
             MetadataStructureManager mdsManager = new MetadataStructureManager();
             MetadataStructure metadataStructure = mdsManager.Repo.Get(id);
+            EntityManager entityManager = new EntityManager();
 
             XmlDocument xmlDoc = new XmlDocument();
 
@@ -280,7 +281,12 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             // add Description
             xmlDoc = AddReferenceToMetadatStructure("description", descriptionPath, AttributeType.xpath.ToString(), "extra/nodeReferences/nodeRef", xmlDoc);
 
-            xmlDoc = AddReferenceToMetadatStructure("entity", entity, AttributeType.entity.ToString(), "extra/entity", xmlDoc);
+            if (entityManager.EntityRepository.Get().Any(e => { return e.Name != null && e.Name.Equals(entity); }))
+            {
+                Entity e = entityManager.EntityRepository.Get().FirstOrDefault(x => x.Name != null && x.Name.Equals(entity));
+                if (e != null)
+                    xmlDoc = AddReferenceToMetadatStructure(e.Name, e.EntityType.FullName, AttributeType.entity.ToString(), "extra/entity", xmlDoc);
+            }
 
             // add mappingFilePath
             xmlDoc = AddReferenceToMetadatStructure(metadataStructure.Name, mappingFilePathImport, "mappingFileImport", "extra/convertReferences/convertRef", xmlDoc);
