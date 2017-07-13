@@ -86,9 +86,10 @@ namespace BExIS.Modules.Sam.UI.Controllers
         public ActionResult Subjects_Select(long featureId, GridCommand command)
         {
             var subjectManager = new SubjectManager();
+            var featurePermissionManager = new FeaturePermissionManager();
 
             // Source + Transformation - Data
-            var subjects = subjectManager.Subjects;
+            var subjects = subjectManager.Subjects.Except(featurePermissionManager.FeaturePermissions.Where(x => x.Feature.Id == featureId).Select(y => y.Subject));
             var total = subjects.Count();
 
             // Filtering
