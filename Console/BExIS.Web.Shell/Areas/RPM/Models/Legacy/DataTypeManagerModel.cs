@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using BExIS.IO.DataType.DisplayPattern;
 
-namespace BExIS.Web.Shell.Areas.RPM.Models
+namespace BExIS.Modules.Rpm.UI.Models
 {
     public class DataTypeModel
     {

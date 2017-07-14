@@ -1,11 +1,11 @@
 ﻿@model BExIS.Dcm.UploadWizard.TaskManager
 @using Telerik.Web.Mvc.UI;
-@using BExIS.Web.Shell.Areas.DCM.Models;
+@using BExIS.Modules.Dcm.UI.Models;
+@using Microsoft.Web.Helpers
 
-@section Scripts{
 
-     <link href="@Url.Content(Themes.GetResourcePath("Styles","wizard.css"))" rel="stylesheet" type="text/css" />
-}
+<link href="@Url.Content(Themes.GetResourcePath("Styles","wizard.css"))" rel="stylesheet" type="text/css" />
+
 
 @section LeftPane 
 {   @if (ViewData.ModelState.IsValid)

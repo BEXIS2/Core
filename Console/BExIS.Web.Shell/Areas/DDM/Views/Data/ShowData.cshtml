@@ -1,6 +1,7 @@
 ﻿@model BExIS.Modules.Ddm.UI.Models.ShowDataModel
 
 @using Telerik.Web.Mvc.UI;
+@using Vaiona.Web.Mvc.Modularity
 
 @section Information
 {
@@ -28,11 +29,12 @@
                 <h2>@Model.Title ( @Model.Id )</h2>
             </td>
             <td>
-                <div id="preloaderContainer" />
+                <div id="preloaderContainer"/>
             </td>
         </tr>
     </table>
 </div>
+
 @if(@Model != null)
 {
     if (ViewData.ModelState.IsValid)
@@ -40,42 +42,43 @@
 
         @(Html.Telerik().TabStrip()
               .Name("ShowDataTabStrip")
-              .SelectedIndex(0)     
+              .SelectedIndex(0)
               .Items(tabs =>
               {
 
-                  tabs.Add()
-                      .Text("Metadata")
-                      .LoadContentFrom("ShowMetadata", "Data", new {area = "ddm", entityId = @Model.Id, title = @Model.Title, metadatastructureId = @Model.MetadataStructureId, datastructureId = @Model.DataStructureId, researchplanId = @Model.ResearchPlanId, sessionKeyForMetadata = "ShowDataMetadata"})
-                      .HtmlAttributes(new {id = "metadata"})
-                      .Enabled(false);
+              //ToDo Recator Modularity -> load metadata from from dcm
 
-                  tabs.Add()
-                      .Text("Primary Data")
-                      .LoadContentFrom("ShowPrimaryData", "Data", new {area = "ddm", datasetID = @Model.Id})
-                      .Enabled(@Model.ViewAccess)
-                      .HtmlAttributes(new {id = "primarydata"})
-                      .Enabled(false);
+              tabs.Add()
+                  .Text("Metadata")
+                  .LoadContentFrom("ShowMetadata", "Data", new {area = "ddm", entityId = @Model.Id, title = @Model.Title, metadatastructureId = @Model.MetadataStructureId, datastructureId = @Model.DataStructureId, researchplanId = @Model.ResearchPlanId, sessionKeyForMetadata = "ShowDataMetadata"})
+                  .HtmlAttributes(new {id = "metadata"})
+                  .Enabled(false);
 
-                  tabs.Add()
-                      .Text("Data Structure")
-                      .LoadContentFrom("ShowPreviewDataStructure", "Data", new {area = "ddm", datasetID = @Model.Id})
-                      .HtmlAttributes(new {id = "datastructure"})
-                      .Enabled(false);
+              tabs.Add()
+                  .Text("Primary Data")
+                  .LoadContentFrom("ShowPrimaryData", "Data", new {area = "ddm", datasetID = @Model.Id})
+                  .Enabled(@Model.ViewAccess)
+                  .HtmlAttributes(new {id = "primarydata"})
+                  .Enabled(false);
 
-
-                  tabs.Add()
-                      .Text("Dataset Permissions")
-                      .LoadContentFrom("Subjects", "Data", new {area = "ddm", dataId = @Model.Id})
-                      .Enabled(false)
-                      .HtmlAttributes(new {id = "datapermissions"});
+              tabs.Add()
+                  .Text("Data Structure")
+                  .LoadContentFrom("ShowPreviewDataStructure", "Data", new {area = "ddm", datasetID = @Model.Id})
+                  .HtmlAttributes(new {id = "datastructure"})
+                  .Enabled(false);
 
 
-                  tabs.Add()
-                      .Text("Publish")
-                      .LoadContentFrom("publishData", "Data", new {area = "ddm", datasetId = @Model.Id})
-                      .Enabled(false)
-                      .HtmlAttributes(new {id = "prepare"});
+              tabs.Add()
+                  .Text("Dataset Permissions")
+                  .LoadContentFrom("Subjects", "Data", new {area = "ddm", dataId = @Model.Id})
+                  .Enabled(false)
+                  .HtmlAttributes(new {id = "datapermissions"});
+
+              tabs.Add()
+                  .Text("Publish")
+                  .Content(@Html.Run("dim", "Submission", "getPublishDataPartialView", new RouteValueDictionary { { "datasetid", @Model.Id } }).ToHtmlString())
+                    .Enabled(false)
+                    .HtmlAttributes(new { id = "prepare" });
 
               })
               .ClientEvents(e => e.OnSelect("OnSelectShowDataTabStrip")))
@@ -85,6 +88,7 @@
         @Html.ValidationSummary(true);
     }
 }
+
 
 <script type="text/javascript">
 

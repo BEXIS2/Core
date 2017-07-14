@@ -1,6 +1,5 @@
 ﻿using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
-using BExIS.Xml.Services;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

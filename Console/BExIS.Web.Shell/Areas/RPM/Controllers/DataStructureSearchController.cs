@@ -3,15 +3,15 @@ using System.Web.Mvc;
 using Telerik.Web.Mvc;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.DataStructure;
-using BExIS.Web.Shell.Areas.RPM.Models;
-using BExIS.RPM.Output;
-using BExIS.Web.Shell.Areas.RPM.Classes;
+using BExIS.Modules.Rpm.UI.Models;
+using BExIS.IO.Transform.Output;
+using BExIS.Modules.Rpm.UI.Classes;
 using System.Collections.Generic;
 using Vaiona.Web.Mvc.Models;
 using Vaiona.Web.Extensions;
 using Vaiona.Logging;
 
-namespace BExIS.Web.Shell.Areas.RPM.Controllers
+namespace BExIS.Modules.Rpm.UI.Controllers
 {
     public class DataStructureSearchController : Controller
     {

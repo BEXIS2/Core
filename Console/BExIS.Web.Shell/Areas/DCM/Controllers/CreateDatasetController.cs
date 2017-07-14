@@ -11,20 +11,24 @@ using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Modules.Dcm.UI.Models;
 using BExIS.Modules.Dcm.UI.Models.CreateDataset;
+using BExIS.Security.Entities.Authorization;
+using BExIS.Security.Entities.Subjects;
+using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Subjects;
 using BExIS.Web.Shell.Helpers;
 using BExIS.Web.Shell.Models;
 using BExIS.Xml.Helpers;
-using BExIS.Xml.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using System.Web.Routing;
 using System.Xml;
 using System.Xml.Linq;
 using Vaiona.Logging;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
@@ -463,19 +467,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     datasetId = ds.Id;
 
                     // add security
-                    // TODO: refactor
-                    //if (GetUsernameOrDefault() != "DEFAULT")
-                    //{
-                    //    PermissionManager pm = new PermissionManager();
-                    //    SubjectManager sm = new SubjectManager();
-
-                    //    BExIS.Security.Entities.Subjects.User user = sm.GetUserByName(GetUsernameOrDefault());
-
-                    //    foreach (RightType rightType in Enum.GetValues(typeof(RightType)).Cast<RightType>())
-                    //    {
-                    //        pm.CreateDataPermission(user.Id, 1, ds.Id, rightType);
-                    //    }
-                    //}
+                    if (GetUsernameOrDefault() != "DEFAULT")
+                    {
+                        EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
+                        entityPermissionManager.Create<User>(GetUsernameOrDefault(), "Dataset", typeof(Dataset), ds.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
+                    }
                 }
                 else
                 {
@@ -507,10 +503,19 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     // ToDo check which SearchProvider it is, default luceneprovider
 
                     // BUG: invalid call to ddm method
-                    // TODO: find a way to call the reindex again
+                    // TODO: mODULARITY ->Call DDM Reindex
+                    /*
+                     <Export tag="internalApi" id="SearchIndex"
+                    title="Reindex Search" description="Reindex Search" icon=""
+                    controller="SearchIndex" action="Get"
+                    extends="" />
+                     */
                     // WORKAROUND: do not reindex
                     //ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
                     //provider?.UpdateSingleDatasetIndex(datasetId, IndexingAction.CREATE);
+
+                    var x = this.Run("DDM", "SearchIndex", "ReIndex", new RouteValueDictionary() { { "id", datasetId } });
+
 
                     LoggerFactory.LogData(datasetId.ToString(), typeof(Dataset).Name, Vaiona.Entities.Logging.CrudState.Created);
                 }
@@ -612,7 +617,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// <returns></returns>
         public ActionResult ShowData(long id)
         {
-            return RedirectToAction("ShowData", "Data", new { area = "DDM", id = id });
+            return this.Run2("DDM", "Data", "ShowData", new RouteValueDictionary { { "id", id } });
         }
 
         /// <summary>
@@ -641,7 +646,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             Session["CreateDatasetTaskmanager"] = null;
             TaskManager = null;
 
-            return RedirectToAction("UploadWizard", "Submit", new { area = "Dcm", type = type, datasetid = datasetid });
+            return RedirectToAction("UploadWizard", "Submit", new { type = type, datasetid = datasetid });
         }
 
         #endregion Options
@@ -666,31 +671,27 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         public List<ListViewItem> LoadDatasetViewList()
         {
-            // TODO: remove following line
-            // PermissionManager pm = new PermissionManager();
-            SubjectManager subjectManager = new SubjectManager();
             DatasetManager datasetManager = new DatasetManager();
             List<ListViewItem> temp = new List<ListViewItem>();
 
             //get all datasetsid where the current userer has access to
-            // TODO: refactor
-            //long userid = -1;
-            //if (subjectManager.ExistsUsername(GetUsernameOrDefault()))
-            //    userid = subjectManager.GetUserByName(GetUsernameOrDefault()).Id;
+            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
+            UserManager userManager = new UserManager(new UserStore());
 
-            //if (userid != -1)
-            //{
-            //    foreach (long id in pm.GetAllDataIds(userid, 1, RightType.Update))
-            //    {
-            //        if (datasetManager.IsDatasetCheckedIn(id))
-            //        {
-            //            string title = XmlDatasetHelper.GetInformation(id, NameAttributeValues.title);
-            //            string description = XmlDatasetHelper.GetInformation(id, NameAttributeValues.description);
+            List<long> datasetIds = entityPermissionManager.GetKeys<User>(GetUsernameOrDefault(), "Dataset",
+                typeof(Dataset), RightType.Write);
 
-            //            temp.Add(new ListViewItem(id, title, description));
-            //        }
-            //    }
-            //}
+            foreach (long id in datasetIds)
+            {
+                if (datasetManager.IsDatasetCheckedIn(id))
+                {
+                    string title = XmlDatasetHelper.GetInformation(id, NameAttributeValues.title);
+                    string description = XmlDatasetHelper.GetInformation(id, NameAttributeValues.description);
+
+                    temp.Add(new ListViewItem(id, title, description));
+                }
+            }
+
 
             return temp.OrderBy(p => p.Title).ToList();
         }

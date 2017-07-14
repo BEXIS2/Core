@@ -1,13 +1,12 @@
 ﻿@model MetadataEditorModel
-@using BExIS.Web.Shell.Areas.DCM.Models.CreateDataset
-@using BExIS.Web.Shell.Areas.DCM.Models.Metadata;
+@using BExIS.Modules.Dcm.UI.Models.CreateDataset;
+@using BExIS.Modules.Dcm.UI.Models.Metadata;
 @using System.Web.Configuration;
 @using BExIS.Dcm.CreateDatasetWizard
 @using BExIS.Dcm.Wizard
 
 @using Telerik.Web.Mvc.UI;
-
-
+@using Vaiona.Web.Mvc.Modularity
 
 @{
 
@@ -151,7 +150,7 @@
                               .OnSelect("SelectFileProcess_OnSelect")
                               .OnLoad("SelectFileUploader_OnLoad"))
                           .Async(async => async
-                              .Save("SelectFileProcess", "Form", new {area = "Dcm"})
+                              .Save("SelectFileProcess", "Form")
                               .AutoUpload(true))
                             
                           )
@@ -172,13 +171,17 @@
 
                 <td>You successfully created dataset: <br/><b>@Model.DatasetTitle</b></td>
                 <td>
-                    Please use the <b>@Html.ActionLink("Upload Data Wizard ", "StartUploadWizard", "CreateDataset", new {area = "Dcm"}, new {title = "Link to upload wizard", @class = "bx-link"})</b><br/>
+                    Please use the <b>@Html.ActionLink("Upload Data Wizard ", "StartUploadWizard", "CreateDataset", null,new {title = "Link to upload wizard", @class = "bx-link"})</b><br/>
                     to add primary data to this dataset.
                 </td>
 
-                if (@Model.DatasetId > 0)
+                if (Html.IsAccessibale("DDM", "Data", "ShowData"))
                 {
-                    <td>Or see your dataset here <b>@Html.ActionLink(@Model.DatasetTitle, "ShowData", "CreateDataset", new {id = @Model.DatasetId}, new {title = "Link to your dataset.", @class = "bx-link"})</b><br/></td>
+                    if (@Model.DatasetId > 0)
+                    {
+                        <td>Or see your dataset here <b>@Html.ActionLink(@Model.DatasetTitle, "ShowData", "Data", new { area = "DDM", id = @Model.DatasetId }, new { title = "Link to your dataset.", @class = "bx-link" })</b><br /></td>
+
+                    }
                 }
             }
         </tr>
