@@ -51,10 +51,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     model.ParentMappings = MappingHelper.LoadMappings(
                         model.Source.ElementId, model.Source.Type, sourceListElementIds,
                         model.Target.ElementId, model.Target.Type, targetListElementIds);
-
                 }
-
-
             }
 
             return View(model);
