@@ -36,17 +36,16 @@
     
     
     <!-- INTERNAL-->
-    
-    <Export tag="api" id="SearchIndex"
-            title="Reindex Search" description="Reindex Search" icon=""
-            controller="SearchIndex" action="Get"
-            extends="" />
 
     <Export tag="internalApi" id="showData"
             title="Show Data" description="ShowData" icon=""
             controller="Data" action="ShowData"
             extends="" />
-    
+
+    <Export tag="internalApi" id="SearchIndex"
+        title="Reindex Search" description="Reindex Search" icon=""
+        controller="SearchIndex" action="ReIndex"
+        extends="" />
     
     <Export tag="internalApi" id="freeTextSearch"
             title="Free Text Search" description="free Text Search" icon=""

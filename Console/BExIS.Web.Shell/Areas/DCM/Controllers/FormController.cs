@@ -2041,7 +2041,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public ActionResult _AutoCompleteAjaxLoading(string text, string id)
         {
             // BUG: invalid call to ddm method
-            // TODO: Modularity -> call internal api function
+            // TODO: mODULARITY ->Call DDM Reindex
             /*
              <Export tag="internalApi" id="freeTextSearch"
                 title="Free Text Search" description="free Text Search" icon=""

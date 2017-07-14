@@ -514,7 +514,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     //ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
                     //provider?.UpdateSingleDatasetIndex(datasetId, IndexingAction.CREATE);
 
-                    var x = this.Run("DDM", "SearchIndex", "Get", new RouteValueDictionary() { { "id", datasetId } });
+                    var x = this.Run("DDM", "SearchIndex", "ReIndex", new RouteValueDictionary() { { "id", datasetId } });
 
 
                     LoggerFactory.LogData(datasetId.ToString(), typeof(Dataset).Name, Vaiona.Entities.Logging.CrudState.Created);
