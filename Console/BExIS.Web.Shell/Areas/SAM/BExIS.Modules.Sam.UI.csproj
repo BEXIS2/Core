@@ -167,7 +167,7 @@
     <Compile Include="Models\InfoModels.cs" />
     <Compile Include="Models\ModuleGridRowModel.cs" />
     <Compile Include="Models\RequestModels.cs" />
-    <Compile Include="Models\SubjectGridRowModel.cs" />
+    <Compile Include="Models\SubjectModels.cs" />
     <Compile Include="Models\TenantModels.cs" />
     <Compile Include="Models\UserModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -243,6 +243,13 @@
     <Content Include="Views\Datasets\Purge.cshtml" />
     <Content Include="Views\Datasets\Version.cshtml" />
     <Content Include="Views\Datasets\Versions.cshtml" />
+    <Content Include="Views\FeaturePermissions\_Add.cshtml" />
+    <Content Include="Views\Users\_Create.cshtml" />
+    <Content Include="Views\Users\_Membership.cshtml" />
+    <Content Include="Views\Users\_Update.cshtml" />
+    <Content Include="Views\Groups\_Create.cshtml" />
+    <Content Include="Views\Groups\_Membership.cshtml" />
+    <Content Include="Views\Groups\_Update.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
