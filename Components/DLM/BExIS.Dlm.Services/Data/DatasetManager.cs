@@ -13,6 +13,7 @@ using System.Linq.Expressions;
 using Vaiona.Logging.Aspects;
 using System.Threading.Tasks;
 using System.Data;
+using BExIS.Dlm.Orm.NH.Utils;
 
 namespace BExIS.Dlm.Services.Data
 {
@@ -215,6 +216,7 @@ namespace BExIS.Dlm.Services.Data
                 return true;
             return (checkOutDataset(datasetId, username, DateTime.UtcNow));
         }
+   
         /// <summary>
         /// This version of the checlout accpes a timestamp, which is likely a past time. The prpuse is to support dataset migarations by preserving their original sumission date.        
         /// </summary>
@@ -236,8 +238,7 @@ namespace BExIS.Dlm.Services.Data
         /// <param name="datasetId">The identifier of the dataset to be checked-in</param>
         /// <param name="comment">A free form text to describe what has changed with this check-in</param>
         /// <param name="username">The username that performs the check-in, which should be the same as the check-out username</param>
-        /// <remarks>Does not support simultaneous check-ins</remarks>
-        
+        /// <remarks>Does not support simultaneous check-ins</remarks>      
         //[Diagnose]
         public void CheckInDataset(Int64 datasetId, string comment, string username)
         {
@@ -473,7 +474,7 @@ namespace BExIS.Dlm.Services.Data
                 uow.Commit();
             }
             // if any problem was detected during the commit, an exception will be thrown!
-            dropMaterializedView(datasetId);
+            dropMaterializedView(buildViewName(datasetId));
             return (true);
         }
 
@@ -650,16 +651,18 @@ namespace BExIS.Dlm.Services.Data
         {
             // perform all the required checks, like other get effective tuple functions
             var dsVersion = DatasetVersionRepo.Get(datasetVersionId);
+            
             /// 1: build the MV name
             long datasetId = dsVersion.Dataset.Id;
             string mvName = buildViewName(datasetId);
+            
             /// 2: check if the MV exist, if not BUILD it. NOTE: MV creation can be done at checkin time
-            if(!existsMaterializedView(dsVersion.Dataset.Id))
+            if (!existsMaterializedView(mvName))
             {
-                //throw new Exception(string.Format("..."));
                 createMaterializedView(datasetId);
-                refreshMaterializedView(datasetId);
+                //refreshMaterializedView(mvName);
             }
+            
             /// 3: retreive its data in a data table. NOTE: do not refresh, it is done with checkin
             try
             { 
@@ -899,7 +902,6 @@ namespace BExIS.Dlm.Services.Data
 
             //return (qu.ToList());
         }
-
 
         /// <summary>
         /// Returns a list of the latest versions of all datasets associated to a data structure, including/ excluding the checked out versions.
@@ -1845,43 +1847,61 @@ namespace BExIS.Dlm.Services.Data
 
         private void updateMaterializedView(long datasetId)
         {
-            if (!existsMaterializedView(datasetId))
-                createMaterializedView(datasetId);
-            refreshMaterializedView(datasetId);
+            string viewName = buildViewName(datasetId);
+            if (!existsMaterializedView(viewName))
+                createMaterializedView(datasetId); // creating an MV refreshes the data, too. 
+            else
+                refreshMaterializedView(viewName);
         }
 
         private void createMaterializedView(long datasetId)
         {
-            string viewName = buildViewName(datasetId);
-            //Session session = (Session)em.getDelegate();
-            //SessionFactoryImplementor sfi = (SessionFactoryImplementor)session.getSessionFactory();
-            //ConnectionProvider cp = sfi.getConnectionProvider();
-            //Connection connection = cp.getConnection();
-            //Statement statement = connection.createStatement();
-            // get the sql from the DB dialcet, change the view name to "mv_dataset_<datasetId>"
-            //Query query = em.createNativeQuery(sql);
-            //query.executeUpdate();
+            Dataset ds = DatasetRepo.Get(datasetId);
+            if(ds.DataStructure != null && ds.DataStructure.Self is StructuredDataStructure )
+            {
+                StructuredDataStructure sds = (StructuredDataStructure)ds.DataStructure.Self;
+                if(sds.Variables != null && sds.Variables.Count() > 0)
+                {
+                    List<Tuple<string, string, int, long>> columnDefinitionList = new List<Tuple<string, string, int, long>>();
+                    columnDefinitionList = (from c in sds.Variables
+                                            select new Tuple<string, string, int, long>(c.Label, c.DataAttribute.DataType.SystemType, c.OrderNo, c.Id))
+                                           .ToList()
+                                           ;
+                    try
+                    {
+                        MaterializedViewHelper mvHelper = new MaterializedViewHelper(this.GetIsolatedUnitOfWork());
+                        mvHelper.Create(datasetId, columnDefinitionList);
+                    }
+                    catch (Exception ex)
+                    {
+                        // could not create and/or install the materialized view
+                    }
+
+                }
+            }
         }
 
-        private void refreshMaterializedView(long datasetId)
+        private void refreshMaterializedView(string viewName)
         {
-            string viewName = buildViewName(datasetId);
-
-            // refresh query is also native, goes to dialact specific query files, getNamedQuery, ...
-            //String sql = "refresh materialized view mv_all_operations; refresh materialized view mv_all_members;";
-            //createNativeQuery(sql).executeUpdate();
-
-            //// by calling addSynchronizedEntityClass method we inform hibernate that any Person  
-            //// persistent object should be synchronized with database before invoking query  
-            //session.createSQLQuery("{call DBMS_MVIEW.REFRESH('PERSON_AGGREGATE')}")
-            //    .addSynchronizedEntityClass(Person.class).executeUpdate();
+            // refresh query is also native, goes to dialact specific query files
+            string sql = string.Format("REFRESH MATERIALIZED VIEW {0}", viewName);
+            using (IUnitOfWork uow = this.GetIsolatedUnitOfWork())
+            {
+                uow.ExecuteDynamic<int>(sql);
+            }
         }
 
-        private bool existsMaterializedView(long datasetId)
+        private bool existsMaterializedView(string viewName)
         {
-            string viewName = buildViewName(datasetId);
-
             // sql query to check whether the view exists...
+            // This query is native, goes to dialact specific query files
+            //string sql = string.Format("... {0} ...", viewName);
+            //using (IUnitOfWork uow = this.GetIsolatedUnitOfWork())
+            //{
+            //    int result  = uow.ExecuteDynamic<int>(sql);
+            //    if (result > 0) // must be double checked
+            //        return true;
+            //}
             return false;
         }
 
@@ -1890,12 +1910,14 @@ namespace BExIS.Dlm.Services.Data
         /// </summary>
         /// <param name="datasetId"></param>
         /// <returns></returns>
-        private bool dropMaterializedView(long datasetId)
+        private void dropMaterializedView(string viewName)
         {
-            string viewName = buildViewName(datasetId);
-
-            // sql query to check whether the view exists...
-            return false;
+            // drop query is native, goes to dialact specific query files
+            string sql = string.Format("DROP MATERIALIZED VIEW {0}", viewName);
+            using (IUnitOfWork uow = this.GetIsolatedUnitOfWork())
+            {
+                uow.ExecuteDynamic<int>(sql);
+            }
         }
 
         private DataTable convertDataTuplesToDataTable(List<AbstractTuple> tuples)
