@@ -139,10 +139,11 @@ namespace BExIS.Security.Services.Authorization
                 return new List<long>();
 
             return
-                EntityPermissionRepository.Get().Where(
-                    e =>
-                        e.Subject.Id == subject.Id && e.Entity.Id == entity.Id &&
-                        e.Rights.ToRightTypes().Contains(rightType)).Select(e => e.Key).ToList();
+                EntityPermissionRepository
+                    .Query(e => e.Subject.Id == subject.Id && e.Entity.Id == entity.Id).AsEnumerable()
+                    .Where(e => e.Rights.ToRightTypes().Contains(rightType))
+                    .Select(e => e.Key)
+                    .ToList();
         }
 
         public List<long> GetKeys(long subjectId, long entityId, RightType rightType)
