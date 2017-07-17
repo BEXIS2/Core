@@ -997,10 +997,6 @@
       <Project>{c0c9f0f2-9e65-448d-8000-d311db326460}</Project>
       <Name>BExIS.Xml.Models</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Modules\BMM\BExISMigration\BExISMigration.csproj">
-      <Project>{3a573810-b9f9-4bde-8504-01ef49de0c20}</Project>
-      <Name>BExISMigration</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Modules\DDM\BExIS.Ddm.Api\BExIS.Ddm.Api.csproj">
       <Project>{8519eac6-fbf8-48b3-813f-e0b9d3cc4a52}</Project>
       <Name>BExIS.Ddm.Api</Name>

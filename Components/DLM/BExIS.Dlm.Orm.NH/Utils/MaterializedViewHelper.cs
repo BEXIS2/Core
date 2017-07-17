@@ -98,8 +98,10 @@ namespace BExIS.Dlm.Orm.NH.Utils
         /// <returns></returns>
         private string buildViewField(string variableName, string dataType, int order, long Id)
         {
-            string template = @"unnest(xpath('/Content/Item[{0}]/Property[@Name=""Value""]/@value', t.xmlvariablevalues)::varchar[])::{1} as {2}";
-            string def = string.Format(template, order, dbDataType(dataType), variableName);
+            // @"unnest(xpath('/Content/Item[{0}]/Property[@Name=""Value""]/@value', t.xmlvariablevalues)\\:\\:varchar[])\\:\\:{1} as {2}"
+            string template = @"cast(unnest(cast(xpath('/Content/Item[{0}]/Property[@Name=""Value""]/@value', t.xmlvariablevalues) AS varchar[])) AS {1}) AS {2}";
+
+            string def = string.Format(template, order, dbDataType(dataType), variableName.Replace(" ", "_"));
             return def;
         }
 
@@ -110,8 +112,22 @@ namespace BExIS.Dlm.Orm.NH.Utils
         /// <returns></returns>
         private string dbDataType(string variableDataType, int size = 0)
         {
-            Dictionary<string, string> typeTable = new Dictionary<string, string>{ {"int", "int" }, { "string", "character varying(255)" } };
-            if (typeTable.ContainsKey(variableDataType))
+            Dictionary<string, string> typeTable = new Dictionary<string, string>
+            {
+                { "bool", "bool" },
+                { "boolean", "bool" },
+                { "date", "date" },
+                { "datetime", "date" },
+                { "time", "time" },
+                { "decimal", "numeric" },
+                { "double", "float8" },
+                { "int", "int4" },
+                { "int32", "int4" },
+                { "integer", "int4" },
+                { "text", "text" },
+                { "string", "character varying(255)" }
+            };
+            if (typeTable.ContainsKey(variableDataType.ToLower()))
                 return typeTable[variableDataType]; // change this
             else
                 return "character varying(255)";
