@@ -1,7 +1,7 @@
 ﻿using BExIS.Ddm.Api;
+using BExIS.Utils.Models;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Web.Http;
 using Vaiona.IoC;
 
 namespace BExIS.Modules.Ddm.UI.Controllers
@@ -11,14 +11,14 @@ namespace BExIS.Modules.Ddm.UI.Controllers
     /// This Search Index API is only for internal comminication
     /// 
     /// </summary>
-    public class SearchIndexController : ApiController
+    public class SearchIndexController
     {
         // GET: api/SearchIndex
         /// <summary>
         /// Reindex full search
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<string> Get()
+        public IEnumerable<string> ReIndex()
         {
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
             provider?.Reload();
@@ -34,7 +34,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         /// <returns></returns>
         /// <remarks> 
         /// </remarks>
-        public HttpResponseMessage Get(int id)
+        public HttpResponseMessage Redinex(int id)
         {
 
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
@@ -45,6 +45,18 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         }
 
 
+
+        /// <summary>
+        /// free text search over the index
+        /// </summary>
+        /// <param name="value">search value</param>
+        /// <returns></returns>
+        public SearchModel Get(string value)
+        {
+
+            ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>() as ISearchProvider;
+            return provider?.GetTextBoxSearchValues(value, "", "new", 10);
+        }
     }
 
 }

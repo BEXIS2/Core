@@ -20,7 +20,7 @@ using BExIS.Dlm.Services.TypeSystem;
 using BExIS.Xml.Helpers;
 using DocumentFormat.OpenXml.Drawing;
 using Path = System.IO.Path;
-using BExIS.RPM.Output;
+using BExIS.IO.Transform.Output;
 
 /// <summary>
 ///

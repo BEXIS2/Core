@@ -996,13 +996,13 @@
       <Project>{3a573810-b9f9-4bde-8504-01ef49de0c20}</Project>
       <Name>BExISMigration</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Modules\DDM\BExIS.Ddm.Api\BExIS.Ddm.Api.csproj">
+      <Project>{8519eac6-fbf8-48b3-813f-e0b9d3cc4a52}</Project>
+      <Name>BExIS.Ddm.Api</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Modules\DDM\BExIS.Ddm.Providers.LuceneProvider\BExIS.Ddm.Providers.LuceneProvider.csproj">
       <Project>{fbe3101a-791a-4eab-9b8f-f6e071f8dbdc}</Project>
       <Name>BExIS.Ddm.Providers.LuceneProvider</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Modules\RPM\BExIS.RPM.Output\BExIS.RPM.Output.csproj">
-      <Project>{abc877e0-e3de-4472-a199-1728e88fa5a1}</Project>
-      <Name>BExIS.RPM.Output</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

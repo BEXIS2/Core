@@ -152,6 +152,7 @@
     <Compile Include="Controllers\HelpController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\SearchIndexController.cs" />
+    <Compile Include="Controllers\TestController.cs" />
     <Compile Include="DdmModule.cs" />
     <Compile Include="Helpers\DdmSeedDataGenerator.cs" />
     <Compile Include="Helpers\GridHelper.cs" />
@@ -214,6 +215,7 @@
     <Content Include="Views\Home\_sliderView.cshtml" />
     <Content Include="Views\Home\_windowCheckBoxList.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Test\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
