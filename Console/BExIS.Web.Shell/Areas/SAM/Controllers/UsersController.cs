@@ -47,7 +47,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
         }
 
         [GridAction(EnableCustomBinding = true)]
-        public ActionResult Groups_Select(GridCommand command)
+        public ActionResult Groups_Select(string category, GridCommand command)
         {
             var groupManager = new GroupManager();
 

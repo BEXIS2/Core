@@ -19,7 +19,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
     {
         public ActionResult Add()
         {
-            Session["Subjects"]
+            Session["Subjects"] = new Dictionary<long, int>();
             return PartialView("_Add");
         }
 
@@ -109,7 +109,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
             var paged = sorted.Skip((command.Page - 1) * command.PageSize).Take(command.PageSize).ToList();
 
             // Paging
-            var subjectIds = Session["SubjectIds"] as List<long>;
+            var subjectIds = Session["Subjects"] as List<long>;
             var data = paged.Select(x => SelectableSubjectGridRowModel.Convert(x, subjectIds));
 
             return View(new GridModel<SelectableSubjectGridRowModel> { Data = data, Total = total });

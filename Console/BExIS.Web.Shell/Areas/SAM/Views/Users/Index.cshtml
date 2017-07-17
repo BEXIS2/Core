@@ -107,46 +107,58 @@
 
         }
 
+        function onDataBinding(e) {
+            var categoryValue = "Beverages";
+
+            // pass additional values by setting the "data" field of the event argument
+            e.data = {
+                // the key ("category") specifies the variable name of the action method which will contain the specified value
+                category: categoryValue
+            };
+        }
+
         function onDataBound() {
             addTooltips();
             resetAllTelerikIconTitles();
 
-            $('.bx-edit').click(function () {
-                $.ajax({
-                    type: 'GET',
-                    url: '@Url.Action("Update", "Users")',
-                    data: { UserId: $(this).attr("value") },
-                    dataType: 'html',
-                    success: function (htmlData) {
-                        var windowElement = $.telerik.window.create({
-                            title: "Update User: " + username + " (Id: " + id + ")",
-                            html: "<div id='contentUpdate' class='bx-window'>" + htmlData + "</div>",
-                            contentUrl: "",
-                            actions: ["Close"],
-                            modal: true,
-                            width: 500,
-                            height: 500,
-                            resizable: false,
-                            draggable: true,
-                            scrollable: false,
-                            onClose: function () {
-                                $("#windowEdit").data('tWindow').destroy();
-                                $("#gridUsers .t-refresh").trigger('click');
-                            }
-                        });
+            $('.bx-edit')
+                .click(function () {
+                    $.ajax({
+                        type: 'GET',
+                        url: '@Url.Action("Update", "Users")',
+                        data: { UserId: $(this).attr("value") },
+                        dataType: 'html',
+                        success: function (htmlData) {
+                            var windowElement = $.telerik.window.create({
+                                title: "Update User: " + username + " (Id: " + id + ")",
+                                html: "<div id='contentUpdate' class='bx-window'>" + htmlData + "</div>",
+                                contentUrl: "",
+                                actions: ["Close"],
+                                modal: true,
+                                width: 500,
+                                height: 500,
+                                resizable: false,
+                                draggable: true,
+                                scrollable: false,
+                                onClose: function () {
+                                    $("#windowEdit").data('tWindow').destroy();
+                                    $("#gridUsers .t-refresh").trigger('click');
+                                }
+                            });
 
-                        windowElement.attr('id', 'windowUpdate');
-                        var window = $(windowElement).data('tWindow');
-                        window.center().open();
+                            windowElement.attr('id', 'windowUpdate');
+                            var window = $(windowElement).data('tWindow');
+                            window.center().open();
 
-                        resetAllTelerikIconTitles();
-                    }
+                            resetAllTelerikIconTitles();
+                        }
+                    });
                 });
-            });
 
-            $('.bx-trash').click(function () {
-                alert($(this).attr("value"));
-            });
+            $('.bx-trash')
+                .click(function () {
+                    alert($(this).attr("value"));
+                });
         }
     </script>
 }
