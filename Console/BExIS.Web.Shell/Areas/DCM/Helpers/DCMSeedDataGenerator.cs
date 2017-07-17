@@ -190,7 +190,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
 
             if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("Basic ABCD")))
-                ImportSchema("Basic ABCD", "ABCD_2.06.XSD", entity.Name, entity.EntityType.FullName);
+                ImportSchema("Basic ABCD", "ABCD_2.06.XSD", entity.Name, entity.Name, entity.EntityType.FullName);
 
             #endregion
         }
@@ -198,7 +198,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
         #region METADATA
 
-        private static void ImportSchema(string name, string filename, string root, string entity)
+        private static void ImportSchema(string name, string filename, string root, string entity, string entityFullName)
         {
             long metadataStructureid = 0;
             string schemaName = name;
@@ -241,6 +241,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     titleXPath,
                     descriptionXpath,
                     entity,
+                    entityFullName,
                     mappingFileImport,
                     mappingFileExport);
             }
@@ -263,10 +264,11 @@ namespace BExIS.Modules.Dcm.UI.Helpers
         /// <param name="descriptionPath"></param>
         /// <param name="mappingFilePath"></param>
         /// <param name="direction"></param>
-        private static void StoreParametersToMetadataStruture(long id, string titlePath, string descriptionPath, string entity, string mappingFilePathImport, string mappingFilePathExport)
+        private static void StoreParametersToMetadataStruture(long id, string titlePath, string descriptionPath, string entity, string entityFullName, string mappingFilePathImport, string mappingFilePathExport)
         {
             MetadataStructureManager mdsManager = new MetadataStructureManager();
             MetadataStructure metadataStructure = mdsManager.Repo.Get(id);
+            EntityManager entityManager = new EntityManager();
 
             XmlDocument xmlDoc = new XmlDocument();
 
@@ -280,7 +282,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             // add Description
             xmlDoc = AddReferenceToMetadatStructure("description", descriptionPath, AttributeType.xpath.ToString(), "extra/nodeReferences/nodeRef", xmlDoc);
 
-            xmlDoc = AddReferenceToMetadatStructure("entity", entity, AttributeType.entity.ToString(), "extra/entity", xmlDoc);
+            xmlDoc = AddReferenceToMetadatStructure(entity, entityFullName, AttributeType.entity.ToString(), "extra/entity", xmlDoc);
 
             // add mappingFilePath
             xmlDoc = AddReferenceToMetadatStructure(metadataStructure.Name, mappingFilePathImport, "mappingFileImport", "extra/convertReferences/convertRef", xmlDoc);

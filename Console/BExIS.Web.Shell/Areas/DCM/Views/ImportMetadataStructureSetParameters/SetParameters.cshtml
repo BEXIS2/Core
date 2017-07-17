@@ -95,7 +95,7 @@
                         @Model.DescriptionNode
                     </td>
                 </tr>
-                @foreach (KeyValuePair<string,string> systemNode in @Model.SystemNodes)
+                @*@foreach (KeyValuePair<string,string> systemNode in @Model.SystemNodes)
                 {
                     var selectionContainer = @systemNode.Key + "SelectionContainer";
                     var selectionContainerWindow = @systemNode.Key + "SelectionContainerWindow";
@@ -121,7 +121,7 @@
                            @systemNode.Value
                         </td>
                     </tr>
-                }
+                }*@
             </table>
             @*<br />
                 <button type="submit" value="Save" name="submit"  class="t-button " >save</button>*@

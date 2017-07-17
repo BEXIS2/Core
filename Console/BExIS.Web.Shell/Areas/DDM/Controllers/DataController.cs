@@ -21,6 +21,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web.Mvc;
+using System.Web.Routing;
 using System.Xml;
 using System.Xml.Linq;
 using Telerik.Web.Mvc;
@@ -29,6 +30,7 @@ using Vaiona.Logging;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Ddm.UI.Controllers
 {
@@ -111,61 +113,26 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         /// <returns>model</returns>
         public ActionResult ShowMetaData(long entityId, string title, long metadatastructureId, long datastructureId, long researchplanId, string sessionKeyForMetadata)
         {
-            // ToDo Modularity DDM -> DCM Add open function to set the actions from a CreateTaskmanager and add this to the manifestfile
-            setAdditionalFunctions();
 
-            //ToDO Modularity from ddm -> dcm
+            var result = this.Run2("DCM", "Form", "SetAdditionalFunctions", new RouteValueDictionary() { { "actionName", "Copy" }, { "controllerName", "CreateDataset" }, { "area", "DCM" }, { "type", "copy" } });
+            result = this.Run2("DCM", "Form", "SetAdditionalFunctions", new RouteValueDictionary() { { "actionName", "Reset" }, { "controllerName", "CreateDataset" }, { "area", "Form" }, { "type", "reset" } });
+            result = this.Run2("DCM", "Form", "SetAdditionalFunctions", new RouteValueDictionary() { { "actionName", "Cancel" }, { "controllerName", "CreateDataset" }, { "area", "DCM" }, { "type", "cancel" } });
+            result = this.Run2("DCM", "Form", "SetAdditionalFunctions", new RouteValueDictionary() { { "actionName", "Submit" }, { "controllerName", "CreateDataset" }, { "area", "DCM" }, { "type", "submit" } });
 
-            return RedirectToAction("LoadMetadataFromExternal", "Form", new
+            var view = this.Run("DCM", "Form", "LoadMetadataFromExternal", new RouteValueDictionary()
             {
-                area = "DCM",
-                entityId,
-                title,
-                metadatastructureId,
-                datastructureId,
-                researchplanId,
-                sessionKeyForMetadata
+                { "entityId", entityId },
+                { "title", title },
+                { "metadatastructureId", metadatastructureId },
+                { "datastructureId", datastructureId },
+                { "researchplanId", researchplanId },
+                { "sessionKeyForMetadata", sessionKeyForMetadata },
+                { "resetTaskManager", false }
             });
+
+            return Content(view.ToHtmlString(), "text/html");
         }
 
-        private void setAdditionalFunctions()
-        {
-            // ToDO Modularity DDM -> DCM
-            // ToDo Modularity DDM -> DCM Add open function to set the actions from a CreateTaskmanager and add this to the manifestfile
-            // commented by Javad during porting.
-            // Dcm.CreateDatasetWizard.CreateTaskmanager TaskManager = new CreateTaskmanager();
-
-            //Dictionary<string, ActionInfo> actions = new Dictionary<string, ActionInfo>();
-
-            ////set function actions of COPY, RESET,CANCEL,SUBMIT
-            //ActionInfo copyAction = new ActionInfo();
-            //copyAction.ActionName = "Copy";
-            //copyAction.ControllerName = "CreateDataset";
-            //copyAction.AreaName = "DCM";
-
-            //ActionInfo resetAction = new ActionInfo();
-            //resetAction.ActionName = "Reset";
-            //resetAction.ControllerName = "Form";
-            //resetAction.AreaName = "DCM";
-
-            //ActionInfo cancelAction = new ActionInfo();
-            //cancelAction.ActionName = "Cancel";
-            //cancelAction.ControllerName = "Form";
-            //cancelAction.AreaName = "DCM";
-
-            //ActionInfo submitAction = new ActionInfo();
-            //submitAction.ActionName = "Submit";
-            //submitAction.ControllerName = "CreateDataset";
-            //submitAction.AreaName = "DCM";
-
-
-            //TaskManager.Actions.Add(CreateTaskmanager.CANCEL_ACTION, cancelAction);
-            //TaskManager.Actions.Add(CreateTaskmanager.COPY_ACTION, copyAction);
-            //TaskManager.Actions.Add(CreateTaskmanager.RESET_ACTION, resetAction);
-            //TaskManager.Actions.Add(CreateTaskmanager.SUBMIT_ACTION, submitAction);
-
-            //Session["CreateDatasetTaskmanager"] = TaskManager;
-        }
 
         private BaseModelElement GetModelFromElement(XElement element)
         {
@@ -863,9 +830,6 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         //}
 
         #endregion
-
-
-
 
 
         #region helper
