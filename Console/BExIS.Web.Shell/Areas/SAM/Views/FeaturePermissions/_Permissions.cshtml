@@ -2,8 +2,8 @@
 @using Telerik.Web.Mvc.UI
 
 @model long
-
-<button id="button_createfeaturepermission" type="button" class="bx-button function">Add Subject(s)</button>
+    
+<button id="target" type="button" class="bx-button function">Add Subject(s)</button>
 
 @(Html.Telerik().Grid<FeaturePermissionGridRowModel>()
     .Name("gridFeaturePermissions")
@@ -31,4 +31,13 @@
         pageable.Position(GridPagerPosition.Bottom);
     })
     .Sortable()
-)
+      )
+
+
+<script type="text/javascript">
+
+    $("#target").click(function () {
+        alert("Handler for .click() called.");
+    });
+
+</script>
