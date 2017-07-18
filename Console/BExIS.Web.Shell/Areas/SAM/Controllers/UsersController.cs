@@ -56,12 +56,8 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 selectedCheckboxes = new long[] { };
 
             // Selected Groups
-            HashSet<long> selectedGroups;
-            if (ViewData["SelectedGroups"] == null)
-            {
-                selectedGroups = new HashSet<long>();
-            }
-            else
+            HashSet<long> selectedGroups = new HashSet<long>();
+            if (ViewData["SelectedGroups"] != null)
             {
                 selectedGroups = ViewData["SelectedGroups"] as HashSet<long>;
             }
