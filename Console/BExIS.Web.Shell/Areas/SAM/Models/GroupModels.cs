@@ -24,8 +24,8 @@ namespace BExIS.Modules.Sam.UI.Models
         public string Description { get; set; }
         public string GroupName { get; set; }
         public GroupType GroupType { get; set; }
-        public long Id { get; set; }
         public bool HasFeaturePermission { get; set; }
+        public long Id { get; set; }
 
         public static GroupFeaturePermissionGridRowModel Convert(Group group)
         {
@@ -35,7 +35,6 @@ namespace BExIS.Modules.Sam.UI.Models
                 GroupType = group.GroupType,
                 GroupName = group.Name,
                 Id = group.Id,
-
             };
         }
     }
@@ -67,7 +66,7 @@ namespace BExIS.Modules.Sam.UI.Models
         public long Id { get; set; }
         public bool IsMember { get; set; }
 
-        public static GroupMembershipGridRowModel Convert(Group group, List<long> memberships)
+        public static GroupMembershipGridRowModel Convert(Group group, HashSet<long> memberships)
         {
             return new GroupMembershipGridRowModel()
             {

@@ -81,6 +81,12 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
         public ActionResult Index()
         {
+            var gm = new GroupManager();
+
+            for (int i = 0; i < 1000; i++)
+            {
+                gm.Create(new Group() { Description = $"Desc of group {i}", Name = $"Group{i}" });
+            }
             return View(new GridModel<GroupGridRowModel>());
         }
 

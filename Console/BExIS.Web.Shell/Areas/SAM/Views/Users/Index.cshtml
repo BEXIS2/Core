@@ -62,59 +62,65 @@
 
     <script type="text/javascript">
 
-        $('#button_createuser')
-            .click(function () {
-                $.ajax({
-                    type: 'GET',
-                    url: '@Url.Action("Create", "Users")',
-                    dataType: 'html',
-                    success: function (htmlData) {
-                        var windowElement = $.telerik.window.create({
-                            title: "Create User",
-                            html: "<div id='contentCreate' class='bx-window'>" + htmlData + "</div>",
-                            contentUrl: "",
-                            actions: ["Close"],
-                            modal: true,
-                            width: 500,
-                            height: 500,
-                            resizable: false,
-                            draggable: true,
-                            scrollable: false,
-                            onClose: function () {
-                                $("#windowCreate").data('tWindow').destroy();
-                                $("#gridUsers .t-refresh").trigger('click');
-                            }
-                        });
+    $('#button_createuser')
+        .click(function() {
+            $.ajax({
+                type: 'GET',
+                url: '@Url.Action("Create", "Users")',
+                dataType: 'html',
+                success: function(htmlData) {
+                    var windowElement = $.telerik.window.create({
+                        title: "Create User",
+                        html: "<div id='contentCreate' class='bx-window'>" + htmlData + "</div>",
+                        contentUrl: "",
+                        actions: ["Close"],
+                        modal: true,
+                        width: 500,
+                        height: 500,
+                        resizable: false,
+                        draggable: true,
+                        scrollable: false,
+                        onClose: function() {
+                            $("#windowCreate").data('tWindow').destroy();
+                            $("#gridUsers .t-refresh").trigger('click');
+                        }
+                    });
 
-                        windowElement.attr('id', 'windowCreate');
-                        var window = $(windowElement).data('tWindow');
-                        window.center().open();
+                    windowElement.attr('id', 'windowCreate');
+                    var window = $(windowElement).data('tWindow');
+                    window.center().open();
 
-                        resetAllTelerikIconTitles();
-                    }
-                });
+                    resetAllTelerikIconTitles();
+                }
             });
+        });
 
-        function setMembership(value, id) {
-            $.post('@Url.Action("SetMembership", "Users")', { GroupId: id, Value: value });
-        }
+    function editUser(id) {
 
-        function editUser(id) {
+    }
 
-        }
+    function deleteUser(id) {
 
-        function deleteUser(id) {
-
-        }
+    }
 
         function onDataBinding(e) {
-            var categoryValue = "Beverages";
 
-            // pass additional values by setting the "data" field of the event argument
-            e.data = {
-                // the key ("category") specifies the variable name of the action method which will contain the specified value
-                category: categoryValue
-            };
+            var checkboxes = {};
+            $("input[name='selectedGroups']").each(function(){
+                checkboxes.push($(this).val());
+            });
+
+            var selectedCheckboxes = {};
+            $("input[name='selectedGroups']:checked").each(function () {
+                selectedCheckboxes.push($(this).val());
+            });
+
+        // pass additional values by setting the "data" field of the event argument
+        e.data = {
+            // the key ("category") specifies the variable name of the action method which will contain the specified value
+            checkboxes: checkboxes,
+            selectedCheckboxes: selectedCheckboxes
+        };
         }
 
         function onDataBound() {

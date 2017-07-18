@@ -47,8 +47,30 @@ namespace BExIS.Modules.Sam.UI.Controllers
         }
 
         [GridAction(EnableCustomBinding = true)]
-        public ActionResult Groups_Select(string category, GridCommand command)
+        public ActionResult Groups_Select(long[] checkboxes, long[] selectedCheckboxes, GridCommand command)
         {
+            if (checkboxes == null)
+                checkboxes = new long[] { };
+
+            if (selectedCheckboxes == null)
+                selectedCheckboxes = new long[] { };
+
+            // Selected Groups
+            HashSet<long> selectedGroups;
+            if (ViewData["SelectedGroups"] == null)
+            {
+                selectedGroups = new HashSet<long>();
+            }
+            else
+            {
+                selectedGroups = ViewData["SelectedGroups"] as HashSet<long>;
+            }
+
+            selectedGroups = selectedGroups.Except(checkboxes) as HashSet<long>;
+            selectedGroups.AddRange(selectedCheckboxes);
+
+            ViewData["SelectedGroups"] = selectedGroups;
+
             var groupManager = new GroupManager();
 
             // Source + Transformation - Data
@@ -70,8 +92,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
             var paged = sorted.Skip((command.Page - 1) * command.PageSize).Take(command.PageSize).ToList();
 
             // Paging
-            var groupIds = Session["Groups"] as List<long>;
-            var data = paged.Select(x => GroupMembershipGridRowModel.Convert(x, groupIds));
+            var data = paged.Select(x => GroupMembershipGridRowModel.Convert(x, selectedGroups));
 
             return View(new GridModel<GroupMembershipGridRowModel> { Data = data, Total = total });
         }
@@ -79,22 +100,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
         public ActionResult Index()
         {
             return View(new GridModel<UserGridRowModel>());
-        }
-
-        public void SetMembership(long groupId, bool value)
-        {
-            var groupIds = Session["Groups"] as List<long>;
-
-            if (value)
-            {
-                groupIds.Add(groupId);
-            }
-            else
-            {
-                groupIds.Remove(groupId);
-            }
-
-            Session["Groups"] = groupIds;
         }
 
         public ActionResult Update(long userId)
@@ -134,7 +139,8 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
             // Paging
             var paged = sorted.Skip((command.Page - 1) * command.PageSize)
-                .Take(command.PageSize).ToList();
+                .Take(command.PageSize)
+                .ToList();
 
             // Data
             var data = paged.Select(UserGridRowModel.Convert);

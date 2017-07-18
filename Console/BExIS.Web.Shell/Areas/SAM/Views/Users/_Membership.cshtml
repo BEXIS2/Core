@@ -9,14 +9,14 @@
             .Template(@<text>
             @if (item.IsMember)
             {
-                <input type='checkbox' onchange='setMembership(this.checked, @item.Id);' name='selectedGroups' value='@item.Id' checked='checked' />
+                <input type='checkbox' name='selectedGroups' value='@item.Id' checked='checked' />
             }
             else
             {
-                <input type='checkbox' onchange='setMembership(this.checked, @item.Id);' name='selectedGroups' value='@item.Id' />
+                <input type='checkbox' name='selectedGroups' value='@item.Id' />
             }
             </text>)
-            .ClientTemplate("<input type='checkbox' onchange='setMembership(this.checked, <#= Id #>);' name='selectedGroups' value='<#= Id #>' <#= IsMember ? checked='checked' : '' #> />")
+            .ClientTemplate("<input type='checkbox' name='selectedGroups' value='<#= Id #>' <#= IsMember ? checked='checked' : '' #> />")
             .Title("Member")
             .Width(64)
             .Filterable(false)
