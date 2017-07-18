@@ -74,6 +74,7 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Web" />
@@ -190,6 +191,7 @@
     <Content Include="Views\Party\_partiesPartial.cshtml" />
     <Content Include="Views\Party\_partyRelationshipsPartial.cshtml" />
     <Content Include="Views\Party\_relationshipEditViewPartial.cshtml" />
+    <Content Include="Views\Party\_userRegisterationPartial.cshtml" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>

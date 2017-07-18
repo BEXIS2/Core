@@ -23,6 +23,22 @@
     <many-to-one name="CustomAttribute" class="BExIS.Dlm.Entities.Party.PartyCustomAttribute" not-null="true" column="CustomAttributeRef"/>
 
     <many-to-one name="Party" class="BExIS.Dlm.Entities.Party.Party" cascade="all" column="PartyRef" />
-    
+
+    <!--<sql-insert check="none">
+      UPDATE public.parties
+      SET name= (SELECT string_agg(value , ' ') AS mainValues
+      FROM public.partycustomattributevalues
+      inner join public.partycustomattributes on partycustomattributes.id=partycustomattributevalues.customattributeref
+      where partycustomattributes.ismain='Y' and partyref=NEW.partyref)
+      WHERE id=NEW.partyref;
+    </sql-insert>
+    <sql-update check="none">
+      UPDATE public.parties
+      SET name= (SELECT string_agg(value , ' ') AS mainValues
+      FROM public.partycustomattributevalues
+      inner join public.partycustomattributes on partycustomattributes.id=partycustomattributevalues.customattributeref
+      where partycustomattributes.ismain='Y' and partyref=NEW.partyref)
+      WHERE id=NEW.partyref;
+    </sql-update>-->
   </class>
 </hibernate-mapping>

@@ -280,7 +280,7 @@ namespace BExIS.Dlm.Services.Party
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             parameters.Add("metadataStructureId", rootPartyTypeId);
-            List<MetadataPackageUsage> usages = PackageUsageRepo.Get("GetEffectivePackageUsages", parameters).ToList();
+            //List<MetadataPackageUsage> usages = PackageUsageRepo.Get("GetEffectivePackageUsages", parameters).ToList();
 
         }
         public Dictionary<String, List<String>> GetRootPartyTypesAndChildren()

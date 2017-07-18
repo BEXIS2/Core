@@ -16,6 +16,13 @@
             title="Party Manager" description="xx" icon=""
             controller="Party" action="index"
             extends="./menubarRoot/BAM" />
+
+    <!-- INTERNAL-->
+
+    <Export tag="internalApi" id="loadFromPartyUserRegisterationForm"
+            title="Load From Party User Registeration Form" description="Load FromParty User Registeration Form" icon=""
+            controller="Party" action="UserRegisteration"
+            extends="" />
 	<!-- Settings Example-->
     <!--<Export tag="settings" id="manageMetadata" order="1"
             title="Manage Metadata Structure" description="Edit or Importa new Metadata Structure" icon=""

@@ -4,6 +4,7 @@ using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Modules.Bam.UI.Models;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -17,7 +18,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
 
         public ActionResult Index()
         {
-            return View(new PartyRelationshipTypeManager().GetRootPartyTypes());
+            return View(new PartyRelationshipTypeManager().GetRootPartyTypesAndChildren());
         }
 
         public ActionResult LoadParties(string party_types = "")
@@ -58,7 +59,7 @@ namespace BExIS.Modules.Bam.UI.Controllers
         /// <param name="userName">if there is, it will attach to the party</param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult Create(Party party, Dictionary<string, string> partyCustomAttributeValues, List<PartyRelationship> partyRelationships, string userName)
+        public ActionResult Create(Party party, Dictionary<string, string> partyCustomAttributeValues, List<PartyRelationship> partyRelationships, string callBackUrl)
         {
             PartyTypeManager partyTypeManager = new PartyTypeManager();
             PartyManager partyManager = new PartyManager();
@@ -77,63 +78,13 @@ namespace BExIS.Modules.Bam.UI.Controllers
                     var partyRelationshipType = partyRelationshipManager.Repo.Get(partyRelationship.PartyRelationshipType.Id);
                     partyManager.AddPartyRelationship(party, secondParty, partyRelationshipType, partyRelationship.Title, partyRelationship.Description, partyRelationship.StartDate, partyRelationship.EndDate, partyRelationship.Scope);
                 }
-            //add relation to account and party
-            if (!string.IsNullOrEmpty(userName))
-            {
-                //TODO SubjectManager subjectManager = new SubjectManager();
-                //var user = subjectManager.GetUserByName(HttpContext.User.Identity.Name);
-                //partyManager.AddPartyUser(party, user.Id);
-                return RedirectToAction("Index", "Party", new { area = "" });
-            }
-            return RedirectToAction("Index");
+            
+            if (!string.IsNullOrEmpty(callBackUrl))
+                //TODO: Sven impementing the callback 
+                return RedirectToAction(callBackUrl + "&PID=" + party.Id);
+            else
+                return RedirectToAction("Index");
         }
-
-
-        private List<PartyRelationship> ConvertDictionaryToPartyRelationships(Dictionary<string, string> partyRelationshipsDic)
-        {
-            var partyRelationships = new List<PartyRelationship>();
-            foreach (var partyRelationshipDic in partyRelationshipsDic)
-            {
-
-                var key = partyRelationshipDic.Key.Split('_');
-                if (key.Length != 3)
-                    continue;
-                int id = int.Parse(key[1]);
-                int partyTypePairId = int.Parse(key[2]);
-                string fieldName = key[0];
-                var partyRelationship = partyRelationships.FirstOrDefault(item => item.SecondParty.Id == id);
-                if (partyRelationship == null)
-                {
-                    partyRelationship = new PartyRelationship();
-                    partyRelationship.SecondParty.Id = id;
-                    partyRelationships.Add(partyRelationship);
-                }
-                if (!string.IsNullOrEmpty(partyRelationshipDic.Value))
-                    switch (fieldName.ToLower())
-                    {
-                        case "title":
-                            partyRelationship.Title = partyRelationshipDic.Value;
-                            break;
-                        case "description":
-                            partyRelationship.Description = partyRelationshipDic.Value;
-                            break;
-                        case "startdate":
-                            partyRelationship.StartDate = Convert.ToDateTime(partyRelationshipDic.Value);
-                            break;
-                        case "enddate":
-                            partyRelationship.EndDate = Convert.ToDateTime(partyRelationshipDic.Value);
-                            break;
-                        case "scope":
-                            partyRelationship.Scope = partyRelationshipDic.Value;
-                            break;
-                        case "partyrelationshiptypeid":
-                            partyRelationship.PartyRelationshipType.Id = int.Parse(partyRelationshipDic.Value);
-                            break;
-                    }
-            }
-            return partyRelationships;
-        }
-
 
         public ActionResult CreateEdit(int id, bool relationTabAsDefault = false)
         {
@@ -237,6 +188,54 @@ namespace BExIS.Modules.Bam.UI.Controllers
             partyManager.Delete(party);
             return RedirectToAction("Index");
         }
+
+        public ActionResult UserRegisteration(string callbackUrl)
+        {
+
+            //Select all the parties which are defined in web.config
+            //Defined AccountPartyTypes vallue in web config format is like PartyType1:PartyTypePairTitle1-PartyTypePairTitle2,PartyType2
+            var accountPartyTypes = new List<string>();
+            var partyTypeAccountModel = new List<PartyTypeAccountModel>();
+            var pm = new PartyTypeManager();
+            var pr = new PartyRelationshipTypeManager();
+            //Split them by "," and split each one by ":"
+            foreach (string partyTypeAndRelationsStr in ConfigurationManager.AppSettings["AccountPartyTypes"].Split(','))
+            {
+                var partyTypeAndRelations = partyTypeAndRelationsStr.Split(':');
+                var partyType = pm.Repo.Get(item => item.Title == partyTypeAndRelations[0]).FirstOrDefault();
+                if (partyType == null)
+                    throw new Exception("accountPartyType format in app setting is not correct or this 'partyType' doesn't exist.");
+                var allowedPartyTypePairs = new Dictionary<string, PartyTypePair>();
+                if (partyTypeAndRelations.Length > 1)
+                {
+                    var partyRelationshipsTypeStr = partyTypeAndRelations[1].Split('-');
+                    var partyRelationshipsType = pr.Repo.Get(item => partyRelationshipsTypeStr.Contains(item.Title));
+
+                    foreach (var partyRelationshipType in partyRelationshipsType)
+                    {
+                        //filter AssociatedPairs to allowed pairs
+                        partyRelationshipType.AssociatedPairs = partyRelationshipType.AssociatedPairs.Where(item => partyType.Id == item.AllowedSource.Id && item.AllowedTarget.Parties.Any()).ToList();
+
+                        //try to find first type pair witch has PartyRelationShipTypeDefault otherwise the first one 
+                        var defaultPartyTypePair = partyRelationshipType.AssociatedPairs.FirstOrDefault(item => item.PartyRelationShipTypeDefault);
+                        if (defaultPartyTypePair == null)
+                            defaultPartyTypePair = partyRelationshipType.AssociatedPairs.FirstOrDefault();
+                        if (defaultPartyTypePair != null)
+                            allowedPartyTypePairs.Add(partyRelationshipType.DisplayName, defaultPartyTypePair);
+                    }
+                }
+                partyTypeAccountModel.Add(new PartyTypeAccountModel()
+                {
+                    PartyType = partyType,
+                    PartyRelationshipTypes = allowedPartyTypePairs
+                });
+
+            }
+            ViewBag.CallBackUrl = callbackUrl;
+            return View("_userRegisterationPartial", partyTypeAccountModel);
+            // return PartialView("_userRegisterationPartial", partyTypeAccountModel);
+        }
+
 
         private void validateAttribute(PartyModel partyModel)
         {
@@ -380,5 +379,53 @@ namespace BExIS.Modules.Bam.UI.Controllers
             var partyManager = new PartyManager();
             return partyManager.UpdatePartyRelationship(partyRelationship.Id, partyRelationship.Title, partyRelationship.Description, partyRelationship.StartDate, partyRelationship.EndDate, partyRelationship.Scope);
         }
+
+        private List<PartyRelationship> ConvertDictionaryToPartyRelationships(Dictionary<string, string> partyRelationshipsDic)
+        {
+            var partyRelationships = new List<PartyRelationship>();
+            foreach (var partyRelationshipDic in partyRelationshipsDic)
+            {
+
+                var key = partyRelationshipDic.Key.Split('_');
+                if (key.Length != 3)
+                    continue;
+                int id = int.Parse(key[1]);
+                int partyTypePairId = int.Parse(key[2]);
+                string fieldName = key[0];
+                var partyRelationship = partyRelationships.FirstOrDefault(item => item.SecondParty.Id == id);
+                if (partyRelationship == null)
+                {
+                    partyRelationship = new PartyRelationship();
+                    partyRelationship.SecondParty.Id = id;
+                    partyRelationships.Add(partyRelationship);
+                }
+                if (!string.IsNullOrEmpty(partyRelationshipDic.Value))
+                    switch (fieldName.ToLower())
+                    {
+                        case "title":
+                            partyRelationship.Title = partyRelationshipDic.Value;
+                            break;
+                        case "description":
+                            partyRelationship.Description = partyRelationshipDic.Value;
+                            break;
+                        case "startdate":
+                            partyRelationship.StartDate = Convert.ToDateTime(partyRelationshipDic.Value);
+                            break;
+                        case "enddate":
+                            partyRelationship.EndDate = Convert.ToDateTime(partyRelationshipDic.Value);
+                            break;
+                        case "scope":
+                            partyRelationship.Scope = partyRelationshipDic.Value;
+                            break;
+                        case "partyrelationshiptypeid":
+                            partyRelationship.PartyRelationshipType.Id = int.Parse(partyRelationshipDic.Value);
+                            break;
+                    }
+            }
+            return partyRelationships;
+        }
+
+
+
     }
 }

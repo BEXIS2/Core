@@ -159,18 +159,19 @@ namespace BExIS.Dlm.Services.Party
         // party name comes from the custom attribute valies which are the main fields (isMain == true)
         private void UpdatePartyName(PartyX party)
         {
-            using (IUnitOfWork uow = this.GetIsolatedUnitOfWork())
-            {
-                IRepository<PartyX> repo = uow.GetRepository<PartyX>();
-                party = repo.Reload(party);
-                var mainValues = party.CustomAttributeValues.Where(item => item.CustomAttribute.IsMain).Select(item => item.Value).ToArray();
-                string name = "";
-                if (mainValues.Length > 0)
-                    name = string.Join(" ", mainValues);
-                party.Name = name;
-                repo.Put(party);
-                uow.Commit();
-            }
+            //TODO: change it to a trigger
+            //using (IUnitOfWork uow = this.GetBulkUnitOfWork())
+            //{
+            //    IRepository<PartyX> repo = uow.GetRepository<PartyX>();
+            //    party = repo.Reload(party);
+            //    var mainValues = party.CustomAttributeValues.Where(item => item.CustomAttribute.IsMain).Select(item => item.Value).ToArray();
+            //    string name = "";
+            //    if (mainValues.Length > 0)
+            //        name = string.Join(" ", mainValues);
+            //    party.Name = name;
+            //    repo.Put(party);
+            //    uow.Commit();
+            //}
 
         }
         #endregion
