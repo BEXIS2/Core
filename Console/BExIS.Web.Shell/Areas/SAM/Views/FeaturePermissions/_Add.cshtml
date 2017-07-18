@@ -1,32 +1,38 @@
 ﻿@using BExIS.Modules.Sam.UI.Models
 @using Telerik.Web.Mvc.UI
 
-@(Html.Telerik().Grid<SelectableSubjectGridRowModel>()
+@(Html.Telerik().Grid<CreateFeaturePermissionGridRowModel>()
     .Name("gridGroups")
     .Columns(columns =>
     {
-        columns.Bound(g => g.IsSelected)
-            .Template(@<text>
-            @if (item.IsSelected)
-            {
-                <input type='checkbox' onchange='setSelection(this.checked, @item.Id);' name='selectedSubjects' value='@item.Id' checked='checked' />
-            }
-            else
-            {
-                <input type='checkbox' onchange='setSelection(this.checked, @item.Id);' name='selectedSubjects' value='@item.Id' />
-            }
-            </text>)
-            .ClientTemplate("<input type='checkbox' onchange='setSelection(this.checked, <#= Id #>);' name='selectedSubjects' value='<#= Id #>' <#= IsSelected ? checked='checked' : '' #> />")
-            .Title("Member")
-            .Width(64)
-            .Filterable(false)
-            .HtmlAttributes(new { style = "text-align:center" });
+        columns.Bound(m => m.PermissionType)
+            .ClientTemplate("<input type='radio' name='grants' value='<#= Id #>' <#= PermissionType == 1 ? checked='checked' : '' #> />")
+                   .Title("Grant")
+                   .Width(50)
+                   .Filterable(false)
+                   .Sortable(false)
+                   .HtmlAttributes(new { style = "text-align:center;background-color:#DFF5E9" });
+        columns.Bound(m => m.PermissionType)
+            .ClientTemplate("<input type='radio' name='neutrals' value='<#= Id #>' <#= PermissionType == 2 ? checked='checked' : '' #> />")
+                   .Title("None")
+                   .Width(50)
+                   .Filterable(false)
+                   .Sortable(false)
+                   .HtmlAttributes(new { style = "text-align:center" });
+        columns.Bound(m => m.PermissionType)
+            .ClientTemplate("<input type='radio' name='denies' value='<#= Id #>' <#= PermissionType == 0 ? checked='checked' : '' #> />")
+                   .Title("Deny")
+                   .Width(50)
+                   .Filterable(false)
+                   .Sortable(false)
+                   .HtmlAttributes(new { style = "text-align:center;background-color:#F5DFDF" });
         columns.Bound(g => g.Id);
         columns.Bound(g => g.Name);
         columns.Bound(g => g.Type);
     })
     .ClientEvents(events =>
     {
+        events.OnDataBinding("onDataBinding");
         events.OnDataBound("onDataBound");
     })
     .DataBinding(dataBinding => dataBinding

@@ -84,8 +84,43 @@ namespace BExIS.Modules.Sam.UI.Controllers
         }
 
         [GridAction(EnableCustomBinding = true)]
-        public ActionResult Subjects_Select(long featureId, GridCommand command)
+        public ActionResult Subjects_Select(long[] grants, long[] denies, long[] all, long featureId, GridCommand command)
         {
+            if (grants == null)
+                grants = new long[] { };
+
+            if (denies == null)
+                denies = new long[] { };
+
+            if (all == null)
+                all = new long[] { };
+
+            // Selected Groups
+            Dictionary<long, int> selectedSubjects = new Dictionary<long, int>();
+            if (Session["SelectedSubjects"] != null)
+            {
+                selectedSubjects = Session["SelectedSubjects"] as Dictionary<long, int>;
+            }
+
+            foreach (var item in all)
+            {
+                selectedSubjects.Remove(item);
+            }
+
+            foreach (var item in grants)
+            {
+                selectedSubjects.Add(item, 1);
+            }
+
+            foreach (var item in denies)
+            {
+                selectedSubjects.Add(item, 0);
+            }
+
+            Session["Selectedsubjects"] = selectedSubjects;
+
+            var groupManager = new GroupManager();
+
             var subjectManager = new SubjectManager();
             var featurePermissionManager = new FeaturePermissionManager();
 
@@ -99,7 +134,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
             if (filters != null)
             {
                 subjects =
-                    subjects.FilterBy<Subject, SelectableSubjectGridRowModel>(filters);
+                    subjects.FilterBy<Subject, CreateFeaturePermissionGridRowModel>(filters);
             }
 
             // Sorting
@@ -109,10 +144,9 @@ namespace BExIS.Modules.Sam.UI.Controllers
             var paged = sorted.Skip((command.Page - 1) * command.PageSize).Take(command.PageSize).ToList();
 
             // Paging
-            var subjectIds = Session["Subjects"] as List<long>;
-            var data = paged.Select(x => SelectableSubjectGridRowModel.Convert(x, subjectIds));
+            var data = paged.Select(x => CreateFeaturePermissionGridRowModel.Convert(x, selectedSubjects));
 
-            return View(new GridModel<SelectableSubjectGridRowModel> { Data = data, Total = total });
+            return View(new GridModel<CreateFeaturePermissionGridRowModel> { Data = data, Total = total });
         }
     }
 }

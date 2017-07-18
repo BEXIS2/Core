@@ -73,5 +73,31 @@
             addTooltips();
             resetAllTelerikIconTitles();
         }
+
+        function onDataBinding(e) {
+
+            var grants = [];
+            $("input[name='grants']:checked").each(function () {
+                grants.push($(this).val());
+            });
+
+            var denies = [];
+            $("input[name='denies']:checked").each(function () {
+                denies.push($(this).val());
+            });
+
+            var all = [];
+            $("input[name='neutrals']").each(function () {
+                all.push($(this).val());
+            });
+
+            // pass additional values by setting the "data" field of the event argument
+            e.data = {
+                // the key ("category") specifies the variable name of the action method which will contain the specified value
+                grants: grants,
+                denies: denies,
+                all: all
+            };
+        }
     </script>
 }
