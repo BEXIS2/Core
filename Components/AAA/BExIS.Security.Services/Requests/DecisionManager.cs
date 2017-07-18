@@ -36,7 +36,7 @@ namespace BExIS.Security.Services.Requests
             }
         }
 
-        public Decision FindByIdAsync(long decisionId)
+        public Decision FindById(long decisionId)
         {
             return DecisionRepository.Get(decisionId);
         }

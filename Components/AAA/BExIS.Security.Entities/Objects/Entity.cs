@@ -10,14 +10,30 @@ namespace BExIS.Security.Entities.Objects
         public Entity()
         {
             Permissions = new List<EntityPermission>();
+            Children = new List<Entity>();
         }
 
-        public virtual string AssemblyPath { get; set; }
-        public virtual string ClassPath { get; set; }
+        public virtual ICollection<Entity> Ancestors
+        {
+            get
+            {
+                var ancestors = new List<Entity>();
+
+                if (Parent == null) return ancestors;
+
+                ancestors.Add(Parent);
+                ancestors.AddRange(Parent.Ancestors);
+                return ancestors;
+            }
+        }
+
         public virtual string Name { get; set; }
+        public virtual ICollection<Entity> Children { get; set; }
+        public virtual Type EntityStoreType { get; set; }
+        public virtual Type EntityType { get; set; }
+        public virtual Entity Parent { get; set; }
         public virtual ICollection<EntityPermission> Permissions { get; set; }
 
-        // TODO: REMOVAL of obsolete properties
         [Obsolete]
         public virtual bool Securable { get; set; }
 

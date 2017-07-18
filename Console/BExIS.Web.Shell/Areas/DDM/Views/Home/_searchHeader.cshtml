@@ -1,11 +1,8 @@
-﻿@using BExIS.Ddm.Model;
-@using Telerik.Web.Mvc.UI;
-
-
-@model SearchModel
+﻿@using Telerik.Web.Mvc.UI;
+@model BExIS.Utils.Models.SearchModel
 
 <div class="searchHeader">           
-@using (Html.BeginForm("Index", "Home", new {area="ddm"}))
+@using (Html.BeginForm("Index", "Home"))
 { 
      
    <div id="search_Components"> 

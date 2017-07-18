@@ -17,7 +17,7 @@ using BExIS.Dlm.Services.DataStructure;
 using BExIS.IO.Transform.Validation.DSValidation;
 using System.Globalization;
 
-using BExIS.RPM.Output;
+using BExIS.IO.Transform.Output;
 using System.Diagnostics;
 using BExIS.Xml.Helpers;
 using System.Xml;

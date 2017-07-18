@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
-using BExIS.Dcm.CreateDatasetWizard;
-using BExIS.Dlm.Entities.Common;
+﻿using BExIS.Dlm.Entities.Common;
 using BExIS.Dlm.Entities.MetadataStructure;
+using BExIS.Utils.Data.MetadataStructure;
+using System.Collections.Generic;
 
 namespace BExIS.Modules.Dcm.UI.Models.Metadata
 {
-    public class MetadataCompoundAttributeModel:AbstractMetadataStepModel
+    public class MetadataCompoundAttributeModel : AbstractMetadataStepModel
     {
 
         public int NumberOfSourceInPackage { get; set; }
@@ -20,7 +20,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
 
         public static MetadataCompoundAttributeModel ConvertToModel(BaseUsage metadataAttributeUsage, int number)
         {
-            
+
             return new MetadataCompoundAttributeModel
             {
 
@@ -43,7 +43,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
             };
         }
 
-        public void ConvertMetadataAttributeModels( BaseUsage source, long metadataStructureId, long stepId)
+        public void ConvertMetadataAttributeModels(BaseUsage source, long metadataStructureId, long stepId)
         {
             Source = source;
 
@@ -60,7 +60,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
                     {
                         foreach (MetadataNestedAttributeUsage usage in mca.MetadataNestedAttributeUsages)
                         {
-                            if (UsageHelper.IsSimple(usage))
+                            if (MetadataStructureUsageHelper.IsSimple(usage))
                             {
                                 MetadataAttributeModels.Add(MetadataAttributeModel.Convert(usage, mau, metadataStructureId, Number, stepId));
                             }
@@ -80,7 +80,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
                     {
                         foreach (MetadataNestedAttributeUsage usage in mca.MetadataNestedAttributeUsages)
                         {
-                            if (UsageHelper.IsSimple(usage))
+                            if (MetadataStructureUsageHelper.IsSimple(usage))
                             {
                                 MetadataAttributeModels.Add(MetadataAttributeModel.Convert(usage, mnau, metadataStructureId, Number, stepId));
                             }

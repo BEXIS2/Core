@@ -1,9 +1,0 @@
-﻿<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="BExIS.Security.Entities" namespace="BExIS.Security.Entities.Requests">
-  <joined-subclass xmlns="urn:nhibernate-mapping-2.2" name="EntityRequest" table="EntityRequests" extends="Request" dynamic-update="true">
-
-    <key column="Id" />
-
-    <many-to-one name="Entity" column="EntityRef" class="BExIS.Security.Entities.Objects.Entity, BExIS.Security.Entities" />
-    <property name="Key" type="Int64" />
-  </joined-subclass>
-</hibernate-mapping>

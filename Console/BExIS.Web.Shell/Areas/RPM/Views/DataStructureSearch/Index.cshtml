@@ -1,0 +1,163 @@
+﻿@using Telerik.Web.Mvc.UI
+@using Telerik.Web.Mvc.Extensions
+@using BExIS.Modules.Rpm.UI.Models
+
+<script src="@Url.Content("~/Areas/RPM/Scripts/2013.2.611/telerik.common.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Areas/RPM/Scripts/2013.2.611/telerik.draganddrop.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Areas/RPM/Scripts/2013.2.611/telerik.window.min.js")" type="text/javascript"></script>
+
+<link href="@Url.Content("~/Areas/RPM/Stylesheets/DataStructure.css")" rel="stylesheet" type="text/css" />
+<link href="@Url.Content("~/Areas/RPM/Stylesheets/DataStructureSearch.css")" rel="stylesheet" type="text/css" />
+
+@section Information
+{
+    The Data Structure Manager is a tool to create, modify and delete Data Structures. Data Structures contain Variables, which are specific instances of Data Attributes.
+    It is possible to create Data Structures for structured data (Excel tables, CSV-Files ...) and for unstructured data (images, videos ...).
+    <p>
+        <a href="/RPM/Help/Index/#_Toc434570753" class="bx-informationLink" title="go to help" target="_blank">More</a>
+    </p>
+}
+
+<div class="bx-rpm-dataStructure-buttons">
+    <a id="createButton" class="bx-button function" href="javascript:openCreateWindow(0, '', '', false, false, false)">Create Data Structure</a>
+</div>
+<div class="bx-rpm-searchBar">
+    @Html.TextBox("SearchBox", "", new { @class = "bx-input" })
+    <div class="bx bx-button function bx-search" onclick="javascript:loadResults()"></div>
+    <div class="bx-rpm-resetSearch"><a onclick="javascript:resetSearch()">reset Search</a></div>
+</div>
+
+<div id="SearchResults">
+    @Html.Partial("_datatructureSearchResult", "")
+</div>
+
+<script type="text/javascript">
+
+        $('.bx-rpm-searchBar #SearchBox').keypress(function (e) {
+            if (e.keyCode == 13) {
+                loadResults();
+            }
+        });
+
+        function resetSearch() {
+            $('.bx-rpm-searchBar #SearchBox').val('');
+            loadResults();
+        }
+
+        function loadResults() {
+            $('.bx-rpm-searchBar #SearchBox').val($('.bx-rpm-searchBar #SearchBox').val().trim());
+            var parameters = encodeURI('/?searchTerms=' + encodeURIComponent($('.bx-rpm-searchBar #SearchBox').val()));
+            $.get('@Url.Action("_dataStructureResultBinding", "DataStructureSearch", new { area = "RPM" })' + parameters, function (data) {
+                $('#SearchResults').html(data);
+            });
+
+        }
+
+        function createMessageWindow(data, title, type, id) {
+            title = decodeURIComponent(title);
+            var windowElement = $.telerik.window.create({
+                title: title,
+                html: data,
+                contentUrl: "",
+                actions: ["Close"],
+                modal: true,
+                resizable: false,
+                draggable: true,
+                scrollable: false,
+                onClose: function () {
+                    $("#messageWindow").data('tWindow').destroy();
+                    if ($("#bx-rpm-dataStructureResultGrid").lenth > 0) {
+                        $("#bx-rpm-dataStructureResultGrid .t-refresh").trigger('click');
+                    }
+                    if ($("#windowCreate").length > 0) {
+                        $("#windowCreate").toggle('fast');
+                    }
+                }
+            });
+
+            windowElement.attr('id', 'messageWindow');
+            windowElement.attr('type', type);
+            windowElement.attr('value', id);
+            var window = $(windowElement).data('tWindow');
+            window.center().open();
+
+            resetAllTelerikIconTitles();
+        }
+
+        function messageWindowCancel(id) {
+            if ($("#messageWindow").length > 0) {
+                $("#messageWindow").data('tWindow').close();
+            }
+            if ($("#windowCreate").length > 0) {
+                if (id == "" || id == 0) {
+                    $("#windowCreate").data('tWindow').destroy();
+                }
+            }
+            if ($("#bx-rpm-dataStructureResultGrid").length > 0) {
+                $("#bx-rpm-dataStructureResultGrid .t-refresh").trigger('click');
+            }
+        }
+
+        function messageWindowYes(id) {
+            var parameters = encodeURI('/?Id=' + id);
+            $.get('@Url.Action("deleteDataStructure", "DataStructureEdit")' + parameters, function (data) {
+                if ($(data).hasClass('bx-rpm-message') && $(data).attr('value').toLowerCase() == 'true') {
+                    $(data).replaceWith('.bx-rpm-message #' + id);
+                }
+                else if ($(data).hasClass('bx-rpm-message') && $(data).attr('id') == 'deleted') {
+                    if ($("#messageWindow").length > 0) {
+                        $("#messageWindow").data('tWindow').destroy();
+                    }
+                    if ($("#windowCreate").length > 0) {
+                        $("#windowCreate").data('tWindow').destroy();
+                    }
+                    if ($("#bx-rpm-dataStructureResultGrid").length > 0) {
+                        $("#bx-rpm-dataStructureResultGrid .t-refresh").trigger('click');
+                    }
+                }
+            });
+
+        }
+
+        function openCreateWindow(id, name, description, isSructured, inUse, copy) {
+            name = unescape(name);
+            description = unescape(description);
+            var title = "Create Data Structure";
+            if (id > 0) {
+                if (copy == true) {
+                    title = "Copy Data Structure " + name + ' (' + id + ')';
+                }
+                else {
+                    title = "Edit Data Structure " + name + ' (' + id + ')';
+                }
+            }
+            var parameters = encodeURI('/?Id=' + id + '&Name=' + encodeURIComponent(name) + '&Description=' + encodeURIComponent(description) + '&isSructured=' + isSructured + '&inUse=' + inUse + '&copy=' + copy);
+            $.ajax({
+                type: 'GET',
+                url: '@Url.Action("_createDataStructureBinding", "DataStructureSearch")' + parameters,
+                dataType: 'html',
+                success: function (data) {
+                    var windowElement = $.telerik.window.create({
+                        title: title,
+                        html: data,
+                        contentUrl: "",
+                        actions: ["Close"],
+                        modal: true,
+                        resizable: false,
+                        draggable: true,
+                        scrollable: false,
+                        onClose: function () {
+                            $("#windowCreate").data('tWindow').destroy();
+                            $("#bx-rpm-dataStructureResultGrid .t-refresh").trigger('click');
+                        }
+                    });
+
+                    windowElement.attr('id', 'windowCreate');
+                    var window = $(windowElement).data('tWindow');
+                    window.center().open();
+
+                    resetAllTelerikIconTitles();
+                }
+            });
+        }
+</script>

@@ -1,4 +1,10 @@
-﻿namespace BExIS.Modules.Sam.UI.Helpers
+﻿using BExIS.Dlm.Entities.Data;
+using BExIS.Security.Entities.Objects;
+using BExIS.Security.Entities.Subjects;
+using BExIS.Security.Services.Objects;
+using BExIS.Security.Services.Subjects;
+
+namespace BExIS.Modules.Sam.UI.Helpers
 {
     public class SamSeedDataGenerator
     {
@@ -19,42 +25,20 @@
 
             //#region Security
 
-            //// Authenticators
-            //AuthenticatorManager authenticatorManager = new AuthenticatorManager();
-
-            //Authenticator a1 = authenticatorManager.CreateAuthenticator("local", "BExIS.Security.Services.Authentication.BuiltInAuthenticationManager", "BExIS.Security.Services", "", AuthenticatorType.Internal);
-            //Authenticator a2 = authenticatorManager.CreateAuthenticator("ldap test server", "BExIS.Security.Services.Authentication.LdapAuthenticationManager", "BExIS.Security.Services", "ldapHost:ldap.forumsys.com;ldapPort:389;ldapBaseDn:dc=example,dc=com;ldapSecure:false;ldapAuthUid:uid;ldapProtocolVersion:3", AuthenticatorType.External);
-
-            //// Security Questions
-            //SecurityQuestionManager securityQuestionManager = new SecurityQuestionManager();
-
-            //SecurityQuestion sq1 = securityQuestionManager.CreateSecurityQuestion("What is the first name of the person you first kissed?");
-            //SecurityQuestion sq2 = securityQuestionManager.CreateSecurityQuestion("What was your favorite place to visit as a child?");
-            //SecurityQuestion sq3 = securityQuestionManager.CreateSecurityQuestion("What is the name of the place your wedding reception was held?");
-            //SecurityQuestion sq4 = securityQuestionManager.CreateSecurityQuestion("In what city or town did you meet your spouse/partner?");
-            //SecurityQuestion sq5 = securityQuestionManager.CreateSecurityQuestion("What was the make and model of your first car?");
-            //SecurityQuestion sq6 = securityQuestionManager.CreateSecurityQuestion("What was the name of your first teacher?");
-            //SecurityQuestion sq7 = securityQuestionManager.CreateSecurityQuestion("What is the name of your best friend from childhood?");
-            //SecurityQuestion sq8 = securityQuestionManager.CreateSecurityQuestion("What color was your first bycicle?");
-            //SecurityQuestion sq9 = securityQuestionManager.CreateSecurityQuestion("What was the first name of your manager at your first job?");
-            //SecurityQuestion sq10 = securityQuestionManager.CreateSecurityQuestion("What was the name of your first pet?");
-            //SecurityQuestion sq11 = securityQuestionManager.CreateSecurityQuestion("What was the name of your elementary/primary school?");
-
             //// Entities
-            //EntityManager entityManager = new EntityManager();
+            var entityManager = new EntityManager();
+            entityManager.Create(new Entity() { EntityType = typeof(Dataset), EntityStoreType = typeof(DatasetStore), Securable = true, UseMetadata = true });
 
-            //entityManager.CreateEntity("Dataset", "BExIS.Dlm.Entities.Data.Dataset", "BExIS.Dlm.Entities",true,true);
+            //// Groups
+            var groupManager = new GroupManager();
+            groupManager.Create(new Group() { Name = "everyone", Description = "everyone group", IsValid = true, GroupType = GroupType.Public });
+            groupManager.Create(new Group() { Name = "Admin", Description = "Admin" });
 
-            //// Subjects
-            //SubjectManager subjectManager = new SubjectManager();
+            //// Features
+            
 
-            //Group everyone = subjectManager.CreateGroup("everyone", "everyone group", true);
 
-            //Group g1 = subjectManager.CreateGroup("Admin", "Admin");
-
-            //User u1 = subjectManager.CreateUser("Administrator", "gWg2xG", "Admin", "admin@bexis.de", sq1.Id, "Nothing", a1.Id);
-
-            //subjectManager.AddUserToGroup(u1.Id, g1.Id);
+            //// Users - DO NOT CREATE A USER, BECAUSE OF MISSING INFORMATION, E.G. EMAIL
 
             //// Tasks
             //TaskManager taskManager = new TaskManager();
@@ -74,7 +58,14 @@
             //taskManager.CreateTask("DCM", "Form", "*");
 
             //// Features
-            //FeatureManager featureManager = new FeatureManager();
+            var featureManager = new FeatureManager();
+
+            var f1 = new Feature() { Name = "BExIS", Description = "BExIS" };
+            featureManager.Create(f1);
+
+            var f2 = new Feature() { Name = "Search", Description = "Search", Parent = f1 };
+            featureManager.Create(f2);
+
             //Feature f1 = featureManager.CreateFeature("BExIS", "BExIS");
             //Feature f9 = featureManager.CreateFeature("Search", "Search", f1.Id);
 

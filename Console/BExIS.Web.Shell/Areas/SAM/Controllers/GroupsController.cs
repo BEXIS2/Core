@@ -74,7 +74,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
             var userManager = new UserManager(new UserStore());
 
             // Source + Transformation - Data
-            var users = userManager.Users.ToUserGridRowModel();
+            var users = userManager.Users.ToUserMembershipGridRowModel();
 
             // Filtering
             var filtered = users;
@@ -88,6 +88,17 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 .Take(command.PageSize);
 
             return View(new GridModel<UserMembershipGridRowModel> { Data = paged.ToList(), Total = total });
+        }
+
+        public ActionResult Update()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult Update(UpdateGroupModel model)
+        {
+            return View();
         }
 
         public ActionResult Index()

@@ -1,0 +1,66 @@
+﻿@using System.Linq.Expressions
+@using BExIS.Modules.Sam.UI.Models
+@using Telerik.Web.Mvc
+@using Telerik.Web.Mvc.Extensions
+@using Telerik.Web.Mvc.UI
+
+@section Information
+{
+    With this interface you are able to manage groups. New groups can be added with the "Create" button. Existing groups can be edited (properties, members, delete) using the "Edit" button.
+    <p>
+        <a href="/SAM/Help/Index/#_Toc451422047" class="bx-informationLink" title="go to help" target="_blank">More</a>
+    </p>
+}
+
+@Html.ActionLink("Create Group", "Create", "Groups", null, new { @class = "bx-button function" })
+
+@(Html.Telerik().Grid<GroupGridRowModel>()
+    .Name("gridGroups")
+    .Columns(columns =>
+    {
+    columns.Bound(g => g.Id);
+    columns.Bound(g => g.GroupName);
+    columns.Bound(g => g.GroupType);
+    columns.Bound(g => g.Description);
+    columns.Template(@<text>
+        @Html.ActionLink("Update", "Update", "Groups", null, new { @class = "bx bx-grid-function bx-edit" })
+                          </text>)
+          .Width(70);
+    })
+    .ClientEvents(events =>
+    {
+        events.OnDataBound("onDataBound");
+    })
+    .DataBinding(dataBinding => dataBinding
+        .Ajax()
+        .Select("Groups_Select", "Groups")
+    )
+    .EnableCustomBinding(true)
+    .Filterable()
+    .Pageable(pageable =>
+    {
+        pageable.PageSize(10, new[] { 10, 20, 50, 100 });
+        pageable.Style(GridPagerStyles.NextPreviousAndNumeric | GridPagerStyles.PageSizeDropDown);
+        pageable.Position(GridPagerPosition.Both);
+    })
+    .Sortable(sortable => sortable.OrderBy(order => order.Add(c => c.Id).Descending())))
+
+<script type="text/javascript">
+
+    function createGroup() {
+
+    }
+
+    function editGroup(id) {
+
+    }
+
+    function deleteGroup(id) {
+
+    }
+
+    function onDataBound() {
+        addTooltips();
+        resetAllTelerikIconTitles();
+    }
+</script>
