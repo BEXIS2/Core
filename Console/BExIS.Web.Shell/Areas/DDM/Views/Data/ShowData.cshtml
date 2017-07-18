@@ -1,42 +1,173 @@
-﻿@model BExIS.Web.Shell.Areas.DDM.Models.ShowDataModel
+﻿@model BExIS.Modules.Ddm.UI.Models.ShowDataModel
 
 @using Telerik.Web.Mvc.UI;
 
 @section Information
 {
-    Show Data contains a detailed view on the metadata, the data structure
-    and the primary data of a dataset. Depending on dataset permissions you
-    may also edit the metadata or download the primary data from here.
-    <p>
-        More information 
-        @Html.ActionLink("here", "Index", "Help", new { id = 0 }, new { @class = "bx-informationLink", title="go to help", target="_blank"})
-    </p>
+    This is a detailed view on all parts of a dataset. Depending on your
+    permissions your are able to view, edit, or download either the
+    metadata, the primary data or the data structure.<br/>
+    You may also set
+    permissions for this particular dataset
+   <p>
+    <a href="/ddm/Help/Index/#_Toc451435014" class="bx-informationLink" title="go to help" target="_blank">More</a>
+</p>
 
 }
 
+@{
+    <script src="@Url.Content("~/Scripts/DCM/Form.js")" type="text/javascript"></script>
+}
 
-<h2>@Model.Title ( @Model.Id )</h2>
 
+
+<div>
+    <table>
+        <tr>
+            <td>
+                <h2>@Model.Title ( @Model.Id )</h2>
+            </td>
+            <td>
+                <div id="preloaderContainer" />
+            </td>
+        </tr>
+    </table>
+</div>
 @if(@Model != null)
 {
-    @(Html.Telerik().TabStrip()
-            .Name("ShowDataTabStrip")
-            .SelectedIndex(0)
-            .Items(tabs =>
-            {
+    if (ViewData.ModelState.IsValid)
+    {
 
-                tabs.Add()
-                    .Text("Metadata")
-                    .LoadContentFrom("LoadMetadata", "CreateDataset", new { area = "DDM", datasetId = @Model.Id, locked = true, created= false, fromEditMode = false, resetTaskManager = true });
-                
-                tabs.Add()
-                    .Text("Data Structure")
-                    .LoadContentFrom("ShowPreviewDataStructure", "Data", new { area = "DDM", datasetID = @Model.Id });
+        @(Html.Telerik().TabStrip()
+              .Name("ShowDataTabStrip")
+              .SelectedIndex(0)     
+              .Items(tabs =>
+              {
 
-                tabs.Add()
-                    .Text("Primary Data")
-                    .LoadContentFrom("ShowPrimaryData", "Data", new { area = "DDM", datasetID = @Model.Id })
-                    .Enabled(@Model.ViewAccess);
-            })
-    )
+                  tabs.Add()
+                      .Text("Metadata")
+                      .LoadContentFrom("ShowMetadata", "Data", new {area = "ddm", entityId = @Model.Id, title = @Model.Title, metadatastructureId = @Model.MetadataStructureId, datastructureId = @Model.DataStructureId, researchplanId = @Model.ResearchPlanId, sessionKeyForMetadata = "ShowDataMetadata"})
+                      .HtmlAttributes(new {id = "metadata"})
+                      .Enabled(false);
+
+                  tabs.Add()
+                      .Text("Primary Data")
+                      .LoadContentFrom("ShowPrimaryData", "Data", new {area = "ddm", datasetID = @Model.Id})
+                      .Enabled(@Model.ViewAccess)
+                      .HtmlAttributes(new {id = "primarydata"})
+                      .Enabled(false);
+
+                  tabs.Add()
+                      .Text("Data Structure")
+                      .LoadContentFrom("ShowPreviewDataStructure", "Data", new {area = "ddm", datasetID = @Model.Id})
+                      .HtmlAttributes(new {id = "datastructure"})
+                      .Enabled(false);
+
+
+                  tabs.Add()
+                      .Text("Dataset Permissions")
+                      .LoadContentFrom("Subjects", "Data", new {area = "ddm", dataId = @Model.Id})
+                      .Enabled(false)
+                      .HtmlAttributes(new {id = "datapermissions"});
+
+
+                  tabs.Add()
+                      .Text("Publish")
+                      .LoadContentFrom("publishData", "Data", new {area = "ddm", datasetId = @Model.Id})
+                      .Enabled(false)
+                      .HtmlAttributes(new {id = "prepare"});
+
+              })
+              .ClientEvents(e => e.OnSelect("OnSelectShowDataTabStrip")))
+    }
+    else
+    {
+        @Html.ValidationSummary(true);
+    }
 }
+
+<script type="text/javascript">
+
+
+
+
+$("#MetadataEditor").ready(function() {
+            
+
+});
+
+$(document).ready(function () {
+
+    $("#preloaderContainer").preloader(20, "Loading...");
+    resetAllTelerikIconTitles();
+
+    $(document).bind("MetadataFormIsReady", function () {
+        //alert("m is ready");
+        var viewAccess = '@Model.ViewAccess';
+        var grantAccess = '@Model.GrantAccess';
+
+        var tabStrip = $(".t-tabstrip");
+        //console.log(tabStrip);
+        //console.log(viewAccess);
+        //console.log(grantAccess);
+
+
+        $("li#datastructure").removeClass("t-state-disabled");
+        //console.log($(tabStrip).find("li #datastructure"));
+
+        if (viewAccess === "True") {
+            $("li#primarydata").removeClass("t-state-disabled");
+            $("li#prepare").removeClass("t-state-disabled");
+        }
+
+        if (grantAccess === "True") {
+            $(tabStrip).find("li#datapermissions").removeClass("t-state-disabled");
+        }
+
+        //console.log($("li", tabStrip.element));
+        var items = $("li", tabStrip.element);
+        //console.log(items);
+        //tabStrip.enable(items);
+
+        $("#preloaderContainer").removePreloader();
+    });
+
+});
+
+
+function existsRightType(rights, rightType) {
+    if (jQuery.inArray(rightType, rights) != -1) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+function setDataPermission(value, rightType, subjectId, dataId, entityId) {
+    if (value) {
+        $.post('@Url.Action("CreateDataPermission", "Data")', { DataId: dataId, EntityId: entityId, SubjectId: subjectId, RightType: rightType }, function (e) {
+            $("#Grid_Subjects .t-refresh").trigger('click');
+        });
+    } else {
+        $.post('@Url.Action("DeleteDataPermission", "Data")',
+            { DataId: dataId, EntityId: entityId, SubjectId: subjectId, RightType: rightType },
+            function(e) {
+                $("#Grid_Subjects .t-refresh").trigger('click');
+            });
+    }
+}
+
+function OnSelectShowDataTabStrip(e) {
+        if (e.item.id == "metadata") {
+            setTimeout(function () {
+                bindMinimap(true);
+            },120);
+        } 
+        else {
+            $(".miniregion").remove();
+            $(".minimap").remove();
+        }
+    }
+
+</script>

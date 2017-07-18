@@ -1,20 +1,16 @@
 ﻿using BExIS.Dlm.Entities.Party;
 using BExIS.Dlm.Services.Party;
-using BExIS.Security.Services.Subjects;
-using BExIS.Web.Shell.Areas.BAM.Models;
+using BExIS.IO.Transform.Validation.Exceptions;
+using BExIS.Modules.Bam.UI.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using System.Web.Script.Serialization;
 using Vaiona.Persistence.Api;
 using Vaiona.Web.Mvc.Models;
-/// <summary>
-/// Author: Masoud Allahyari 
-/// Mail: Masoud.Allahyari@Gmail.com
-/// </summary>
-namespace BExIS.Web.Shell.Areas.BAM.Controllers
+
+namespace BExIS.Modules.Bam.UI.Controllers
 {
     public class PartyController : Controller
     {
@@ -24,34 +20,35 @@ namespace BExIS.Web.Shell.Areas.BAM.Controllers
             return View(new PartyRelationshipTypeManager().GetRootPartyTypes());
         }
 
-        public ActionResult LoadParties(int id)
+        public ActionResult LoadParties(string party_types = "")
         {
+            var partyTypes = party_types.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
             PartyManager partyManager = new PartyManager();
             //When telerik grid is client based, it's not able to load lazy list and circular dependencies errors
-            var partiesForGrid = new List<PartyGridViewModel>();
-            if (id > 0)
+            var partiesForGrid = new List<partyGridModel>();
+            if (partyTypes.Any())
             {
-                var childPartyTypes = new PartyRelationshipTypeManager().GetChildPartyTypes(id);
-                foreach (var party in partyManager.Repo.Get(c => childPartyTypes.Contains(c.PartyType)))
-                    partiesForGrid.Add(new PartyGridViewModel() { Id = party.Id, Name = party.Name, PartyTypeTitle = party.PartyType.Title, StartDate = party.StartDate, EndDate = party.EndDate });
+                // var childPartyTypes = new PartyRelationshipTypeManager().GetChildPartyTypes(id);
+                foreach (var party in partyManager.Repo.Get(cc => partyTypes.Contains(cc.PartyType.Title)))//childPartyTypes.Contains(c.PartyType)))
+                    partiesForGrid.Add(new partyGridModel() { Id = party.Id, Name = party.Name, PartyTypeTitle = party.PartyType.Title, StartDate = party.StartDate, EndDate = party.EndDate });
             }
             else
                 foreach (var party in partyManager.Repo.Get())
-                    partiesForGrid.Add(new PartyGridViewModel() { Id = party.Id, Name = party.Name, PartyTypeTitle = party.PartyType.Title, StartDate = party.StartDate, EndDate = party.EndDate });
-            return PartialView("_partyGridview", partiesForGrid);
+                    partiesForGrid.Add(new partyGridModel() { Id = party.Id, Name = party.Name, PartyTypeTitle = party.PartyType.Title, StartDate = party.StartDate, EndDate = party.EndDate });
+            return PartialView("_partiesPartial", partiesForGrid);
 
         }
 
         public ActionResult Create()
         {
             PartyTypeManager partyTypeManager = new PartyTypeManager();
-            ViewBag.Title = PresentationModel.GetViewTitle("Create Party");
+            ViewBag.Title = PresentationModel.GetGenericViewTitle("Create Party");
             var model = new PartyModel();
             model.PartyTypeList = partyTypeManager.Repo.Get().ToList();
             ViewBag.RelationTabAsDefault = false;
             return View("CreateEdit", model);
         }
-        
+
         /// <summary>
         /// Create party
         /// </summary>
@@ -83,10 +80,10 @@ namespace BExIS.Web.Shell.Areas.BAM.Controllers
             //add relation to account and party
             if (!string.IsNullOrEmpty(userName))
             {
-                SubjectManager subjectManager = new SubjectManager();
-                var user = subjectManager.GetUserByName(HttpContext.User.Identity.Name);
-                partyManager.AddPartyUser(party, user.Id);
-                return RedirectToAction("Index", "Home", new { area = "" });
+                //TODO SubjectManager subjectManager = new SubjectManager();
+                //var user = subjectManager.GetUserByName(HttpContext.User.Identity.Name);
+                //partyManager.AddPartyUser(party, user.Id);
+                return RedirectToAction("Index", "Party", new { area = "" });
             }
             return RedirectToAction("Index");
         }
@@ -142,11 +139,19 @@ namespace BExIS.Web.Shell.Areas.BAM.Controllers
         {
             PartyManager partyManager = new PartyManager();
             PartyTypeManager partyTypeManager = new PartyTypeManager();
-            ViewBag.Title = PresentationModel.GetViewTitle("Edit Party");
+            ViewBag.Title = PresentationModel.GetGenericViewTitle("Edit Party");
             var model = new PartyModel();
             model.PartyTypeList = partyTypeManager.Repo.Get().ToList();
             model.Party = partyManager.Repo.Get(id);
             ViewBag.RelationTabAsDefault = relationTabAsDefault;
+            var requiredPartyRelationTypes = new PartyRelationshipTypeManager().GetPartyRelationshipTypeWithAllowedAssociated(id).Where(cc => cc.MinCardinality > 0);
+            var partyRelations = partyManager.RepoPartyRelationships.Get(cc => cc.FirstParty.Id == model.Party.Id && cc.SecondParty.Id == model.Party.Id);
+            //foreach (var requiredPartyRelationType in requiredPartyRelationTypes)
+            //{
+            //    if (partyRelations.Where(cc => cc.PartyRelationshipType.Id == requiredPartyRelationType.Id).Count() < requiredPartyRelationType.MinCardinality)
+            //        model.Errors.Add(new IO.Transform.Validation.Exceptions.Error(ErrorType.Other, "At lease on relationship type '" + requiredPartyRelationType.DisplayName + "' for this party is required."));
+
+            //}
             return View("CreateEdit", model);
         }
 
@@ -197,7 +202,7 @@ namespace BExIS.Web.Shell.Areas.BAM.Controllers
         {
             PartyManager partyManager = new PartyManager();
             PartyTypeManager partyTypeManager = new PartyTypeManager();
-            ViewBag.Title = PresentationModel.GetViewTitle("View Party");
+            ViewBag.Title = PresentationModel.GetGenericViewTitle("View Party");
             var model = new PartyModel();
             model.PartyTypeList = partyTypeManager.Repo.Get().ToList();
             model.Party = partyManager.Repo.Get(id);
@@ -209,7 +214,7 @@ namespace BExIS.Web.Shell.Areas.BAM.Controllers
         {
             PartyManager partyManager = new PartyManager();
             PartyTypeManager partyTypeManager = new PartyTypeManager();
-            ViewBag.Title = PresentationModel.GetViewTitle("View Party");
+            ViewBag.Title = PresentationModel.GetGenericViewTitle("View Party");
             var model = new PartyModel();
             model.PartyTypeList = partyTypeManager.Repo.Get().ToList();
             model.Party = partyManager.Repo.Get(id);
@@ -219,7 +224,7 @@ namespace BExIS.Web.Shell.Areas.BAM.Controllers
 
         public ActionResult DeleteConfirm(int id)
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Delete Party");
+            ViewBag.Title = PresentationModel.GetGenericViewTitle("Delete Party");
             ViewBag.partyId = id;
             return View();
         }
@@ -329,7 +334,7 @@ namespace BExIS.Web.Shell.Areas.BAM.Controllers
             var partyType = partyTypeManager.Repo.Get(item => item.Id == id);
             if (partyType != null)
                 customAttrList = partyType.First().CustomAttributes.ToList();
-            return PartialView("_customAttributesView", customAttrList);
+            return PartialView("_customAttributesPartial", customAttrList);
         }
         /// <summary>
         /// 
@@ -341,7 +346,7 @@ namespace BExIS.Web.Shell.Areas.BAM.Controllers
             var partyManager = new PartyManager();
             var partyModel = new PartyModel();
             partyModel.Party = partyManager.Repo.Get(id);
-            return PartialView("_partyRelationshipTypesView", partyModel);
+            return PartialView("_partyRelationshipsPartial", partyModel);
         }
 
         /// <summary>
@@ -354,7 +359,7 @@ namespace BExIS.Web.Shell.Areas.BAM.Controllers
             var partyRelManager = new PartyRelationshipTypeManager();
 
             ViewBag.sourcePartyId = Request.Params["partyId"] != null ? long.Parse(Request.Params["partyId"]) : 0;
-            return PartialView("_partyRelationshipTypeView", partyRelManager.GetPartyRelationshipTypeWithAllowedAssociated(id));
+            return PartialView("_addPartyRelationshipPartial", partyRelManager.GetPartyRelationshipTypeWithAllowedAssociated(id));
         }
         /// <summary>
         /// 
@@ -366,7 +371,7 @@ namespace BExIS.Web.Shell.Areas.BAM.Controllers
             var partyManager = new PartyManager();
             var partyRelation = partyManager.RepoPartyRelationships.Get(id);
             ViewBag.viewMode = Request.Params["viewMode"] != null ? Convert.ToBoolean(Request.Params["viewMode"]) : false;
-            return PartialView("_partyRelationshipEditView", partyRelation);
+            return PartialView("_relationshipEditViewPartial", partyRelation);
         }
 
         [HttpPost]
@@ -375,6 +380,5 @@ namespace BExIS.Web.Shell.Areas.BAM.Controllers
             var partyManager = new PartyManager();
             return partyManager.UpdatePartyRelationship(partyRelationship.Id, partyRelationship.Title, partyRelationship.Description, partyRelationship.StartDate, partyRelationship.EndDate, partyRelationship.Scope);
         }
-
     }
 }

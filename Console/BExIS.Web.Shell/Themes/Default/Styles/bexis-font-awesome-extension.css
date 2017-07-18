@@ -6,8 +6,8 @@
  * -------------------------- */
 @font-face {
   font-family: 'FontAwesome';
-  src: url('./awesome/fonts/fontawesome-webfont.eot?v=4.3.0');
-  src: url('./awesome/fonts/fontawesome-webfont.eot?#iefix&v=4.3.0') format('embedded-opentype'), url('./awesome/fonts/fontawesome-webfont.woff2?v=4.3.0') format('woff2'), url('./awesome/fonts/fontawesome-webfont.woff?v=4.3.0') format('woff'), url('./awesome/fonts/fontawesome-webfont.ttf?v=4.3.0') format('truetype'), url('./awesome/fonts/fontawesome-webfont.svg?v=4.3.0#fontawesomeregular') format('svg');
+  src: url('./awesome/fonts/fontawesome-webfont.eot?v=4.6.1');
+  src: url('./awesome/fonts/fontawesome-webfont.eot?#iefix&v=4.6.1') format('embedded-opentype'), url('./awesome/fonts/fontawesome-webfont.woff2?v=4.3.0') format('woff2'), url('./awesome/fonts/fontawesome-webfont.woff?v=4.3.0') format('woff'), url('./awesome/fonts/fontawesome-webfont.ttf?v=4.3.0') format('truetype'), url('./awesome/fonts/fontawesome-webfont.svg?v=4.3.0#fontawesomeregular') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -504,7 +504,8 @@
 .fa-share-square-o:before {
   content: "\f045";
 }
-.fa-check-square-o:before
+.fa-check-square-o:before,
+.bx-check-square-o:before
  {
   content: "\f046";
 }
@@ -556,7 +557,8 @@
 .fa-times-circle:before {
   content: "\f057";
 }
-.fa-check-circle:before {
+.fa-check-circle:before,
+.bx-check-circle:before {
   content: "\f058";
 }
 .fa-question-circle:before {
@@ -747,7 +749,8 @@
 .fa-phone:before {
   content: "\f095";
 }
-.fa-square-o:before {
+.fa-square-o:before,
+.bx-square-o:before {
   content: "\f096";
 }
 .fa-bookmark-o:before {
@@ -848,7 +851,8 @@
   content: "\f0c4";
 }
 .fa-copy:before,
-.fa-files-o:before {
+.fa-files-o:before,
+.bx-copy:before {
   content: "\f0c5";
 }
 .fa-paperclip:before {
@@ -858,7 +862,8 @@
 .fa-floppy-o:before {
   content: "\f0c7";
 }
-.fa-square:before {
+.fa-square:before,
+.bx-square:before {
   content: "\f0c8";
 }
 .fa-navicon:before,
@@ -1076,7 +1081,8 @@
 .fa-mobile:before {
   content: "\f10b";
 }
-.fa-circle-o:before {
+.fa-circle-o:before,
+.bx-circle-o:before {
   content: "\f10c";
 }
 .fa-quote-left:before {
@@ -1466,7 +1472,8 @@
 .fa-caret-square-o-left:before {
   content: "\f191";
 }
-.fa-dot-circle-o:before {
+.fa-dot-circle-o:before,
+.bx-dot-circle-o:before {
   content: "\f192";
 }
 .fa-wheelchair:before {
@@ -1811,10 +1818,12 @@
 .fa-lastfm-square:before {
   content: "\f203";
 }
-.fa-toggle-off:before {
+.fa-toggle-off:before,
+.bx-toggle-off:before {
   content: "\f204";
 }
-.fa-toggle-on:before {
+.fa-toggle-on:before,
+.bx-toggle-on:before {
   content: "\f205";
 }
 .fa-bicycle:before {

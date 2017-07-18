@@ -1,8 +1,11 @@
 ﻿@using BExIS.Ddm.Model;
+@using Telerik.Web.Mvc.UI;
+
+
 @model SearchModel
 
 <div class="searchHeader">           
-@using (Html.BeginForm("Index", "Home", new {area="DDM"}))
+@using (Html.BeginForm("Index", "Home", new {area="ddm"}))
 { 
      
    <div id="search_Components"> 
@@ -15,7 +18,6 @@
            </tr>
            <tr>
                 <td>
-
                     @(Html.Telerik().DropDownList()
                          .Name("FilterList")
                          .SelectedIndex((int)Session["SelectedIndexFilterAC"])
@@ -26,14 +28,12 @@
                         .BindTo(new SelectList(Model.SearchComponent.Categories, "Value", "DisplayName"))
 
                     )
-
                 </td>
                 <td>
- 
                         @(Html.Telerik().AutoComplete()
                                 .Name("autoComplete")
                                 .Encode(false)
-
+                                .HtmlAttributes(new {title= "Search requests that include only special character, are not supported." })
                                 .DataBinding(dataBinding => dataBinding
                                     .Ajax().Select("_AutoCompleteAjaxLoading", "Home")
                                     .Cache(false))
@@ -45,7 +45,6 @@
 
                                 })
                        )
-
                 </td>
                <td>
 
@@ -71,12 +70,12 @@
          //alert(e.value);
          var data = e.value;
          var index = $(':selected').val();
-         $.post('@Url.Action("FilterByDropDownList", "Home", new RouteValueDictionary { { "area", "DDM" } })', { SelectedFilter: data }, function (response) { });
+         $.post('@Url.Action("FilterByDropDownList", "Home", new RouteValueDictionary { { "area", "ddm" } })', { SelectedFilter: data }, function (response) { });
 
      }
 
      function changeSearchType(e) {
-         $.post('@Url.Action("ChangeSearchValuesACBySearchType", "Home", new RouteValueDictionary { { "area", "DDM" } })', { value: e.value }, function (response) { });
+         $.post('@Url.Action("ChangeSearchValuesACBySearchType", "Home", new RouteValueDictionary { { "area", "ddm" } })', { value: e.value }, function (response) { });
      }
 
 

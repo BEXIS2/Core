@@ -3,7 +3,9 @@ $(document).ready(function ()
 {
 	resetAllTelerikIconTitles();
 	truncateTitle();
-
+    //console.log("on document ready");
+    //Bootstrat tooltip
+	$('[data-toggle="tooltip"]').tooltip();
 });
 
 function resetAllTelerikIconTitles()
@@ -29,21 +31,28 @@ function resetAllTelerikIconTitles()
 /*Truncate Title*/
 function truncateTitle()
 {
-	
 	$('.bx-trunc-child').each(function ()
 	{
 
 		//$(this).trunk8();
-
 		//if (!$(this).attr("title") == true) { 
-		var n = $(".bx-trunc-parent").width()-90;
+		var n = $(".bx-trunc-parent").width()-60;
 		var text = $(this).text();
 
+		
+
 		//Link Breiter als/ oder gleich breit Container
-		if ($(this).width() >= n)
-		{
+		if ($(this).width() >= n) {
+		    
+		    //console.log("start truncate xxx");
+		    //console.log(this);
+		    //console.log("text:" + text);
+		    //console.log("n :" + n);
+		    //console.log("$(this).width() :" + $(this).width());
 
 			$(this).width(n);
+
+			//console.log("new .width() :" + $(this).width());
 
 			//get text from title or text
 			if ($(this).attr("title") != null)
@@ -52,15 +61,20 @@ function truncateTitle()
 				t = $(this).text();
 
 			var nt = t.split(" ");
+
+			//console.log("nt :" + nt);
 			var ntLast = nt.pop();
-			$(this).trunk8(
-			{
-				fill: "..." + ntLast
-			});
+			//console.log("ntLast :" + ntLast);
+		    $(this).trunk8(
+		    {
+		        fill: "..." + ntLast
+		    });
+
+		    //console.log("new text:" + $(this).text());
 
 
 		}
-			//Link kürzer als Container
+	    //Link kürzer als Container
 		else if (text.indexOf(".") != -1 || text == '' || text == null)
 		{
 
@@ -118,6 +132,135 @@ function addTooltips() {
     });
 }
 
+/**
+ * TELERIK EXTENTIONS
+ */
+
+
+$(".t-grid").load(function () {
+
+    $(".t-grid th").each(function () {
+        var element = $(this);
+        var div;
+        if (element.find(".bx-header-title").length > 0) {
+            div = element.find(".bx-header-title");
+        }
+        else {
+            div = $(document.createElement("div"));
+            div.addClass("bx-header-title");
+            div.css({ "overflow": "hidden", "text-overflow": "ellipsis", "float": "left" });
+            div.append(element.find("a"));
+            element.prepend(div);
+        }
+
+        var filter = element.find(".t-grid-filter");
+        filter.css("float", "right");
+        filter.css("margin-top", "2px");
+        div.width((element.innerWidth() - filter.outerWidth() - 5));
+    });
+});
+
+$(".t-grid th").click(function (e) {
+
+    //var element = e.currentTarget;
+
+    //var arrow = $(element).find("span")[0];
+    //console.log(arrow);
+
+    //var hasDownClass = $(arrow).hasClass("t-arrow-down");
+    //var hasUpClass = $(arrow).hasClass("t-arrow-up");
+    //var display = $(arrow).css("display");
+
+    //console.log(hasDownClass);
+    //console.log(display);
+
+    //if ((hasDownClass && display.length == 0) ||
+    //    (hasDownClass && display == "inline-block")
+    //    ||
+    //    (!hasDownClass && display == "none")
+    //    ||
+    //    (!hasDownClass && display.length == 0)) {
+
+    //    $(arrow).removeClass();
+    //    $(arrow).addClass("t-icon");
+    //    $(arrow).addClass("t-arrow-up");
+    //    $(arrow).attr("display", "inline-block");
+    //    console.log("1");
+
+    //} else 
+    //if ((hasDownClass && display.length == 0) ||
+    //    (hasDownClass && display == "none")) {
+
+    //    $(arrow).removeClass();
+    //    $(arrow).addClass("t-icon");
+    //    $(arrow).addClass("t-arrow-down");
+    //    $(arrow).attr("display", "inline-block");
+    //    console.log("2");
+
+    //}
+    //else
+    //if (hasUpClass) {
+
+    //    $(arrow).removeClass();
+    //    $(arrow).addClass("t-icon");
+    //    $(arrow).addClass("t-arrow-down");
+    //    $(arrow).attr("display", "none");
+    //    console.log("3");
+
+    //}
+
+    //console.log(arrow);
+
+
+    //if (orderBy.indexOf("desc")>0) {
+
+    //    $(arrow).removeClass();
+    //    $(arrow).addClass("t-icon");
+    //    $(arrow).addClass("t-icon t-arrow-up");
+    //    console.log("desc");
+    //}
+    //else
+    //    if (orderBy.indexOf("asc") > 0) {
+
+    //    $(arrow).removeClass();
+    //    $(arrow).addClass("t-icon");
+    //    $(arrow).addClass("t-icon t-arrow-up");
+    //    console.log("asc");
+    //}
+    //else
+    //{
+    //    $(arrow).removeClass();
+    //    $(arrow).addClass("t-icon");
+    //    $(arrow).addClass("t-icon t-arrow-down");
+    //    console.log("---");
+    //}
+})
+
+$(".t-grid").change(function () {
+
+    $(".t-grid th").each(function () {
+
+        var element = $(this);
+        var div = $(document.createElement("div"));
+        div.addClass("bx-header-title");
+        div.css({ "overflow": "hidden", "text-overflow": "ellipsis", "float": "left" });
+
+        var filter = element.find(".t-grid-filter");
+        filter.css("float", "right");
+
+        div.width((element.innerWidth() - filter.outerWidth()-5));
+
+        var a = element.find("a");
+        //var arrow = element.find("span");
+        //console.log(arrow);
+        //a.append(arrow);
+        div.append(a);
+
+        element.prepend(div);
+
+
+    });
+});
 
 /*List*/
 
@@ -148,6 +291,80 @@ $(".bx-list-multi >li").click(function ()
 });
   
 
+/**************************
+ * *******PRELOADER********/
+
+$.fn.extend({
+    preloader: function(fontsize, text, height) {
+
+        //console.log(text);
+        //console.log(height);
+        //console.log(fontsize);
+
+        if (typeof text === "undefined") {
+            text = "Loading...";
+        }
+
+        if (typeof height === "undefined" || height === 0) {
+            height = "auto";
+        }
+
+        if (typeof fontsize === "undefined") {
+            fontsize = 10;
+        }
+
+        //console.log(text);
+        //console.log(height);
+        //console.log(fontsize);
+
+        var loader = document.createElement('span');
+        console.log(loader);
+
+        $(loader).css("font-size", fontsize);
+        $(loader).css("padding", 5);
+        $(loader).addClass("fa fa-spinner fa-pulse");
+
+        //    '<span style="font-size:'+fontsize+'px;" ' +
+        //'class="preloader fa fa-spinner fa-pulse"></span> '+text+
+
+        var div = document.createElement('div');
+
+        $(div).append(loader);
+        $(div).append(text);
+
+        $(div).addClass("preloader");
+
+        $(div).css("font-size", fontsize);
+        $(div).css("height", height);
+        $(div).css("padding", 2);
+
+        console.log(div);
+
+        $(this).children().hide();
+
+        $(this).append(div);
+
+        return this;
+    },
+
+    removePreloader: function () {
+
+        $(".preloader").remove();
+        $(this).children().show();
+        return this;
+    }
+});
 
 
-
+/* jQuery Validation Extension - CheckBox */
+if (jQuery.validator) {
+    // Checkbox Validation
+    jQuery.validator.addMethod("checkrequired", function (value, element, params) {
+        var checked = false;
+        checked = $(element).is(':checked');
+        return checked;
+    }, '');
+    if (jQuery.validator.unobtrusive) {
+        jQuery.validator.unobtrusive.adapters.addBool("checkrequired");
+    }
+}

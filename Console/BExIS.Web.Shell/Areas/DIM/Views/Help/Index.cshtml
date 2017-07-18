@@ -1,21 +1,55 @@
-﻿@model BExIS.Web.Shell.Areas.DIM.Models.ShowHelpModel
-@using BExIS.Web.Shell.Areas.DIM.Models;
-
-@{
-    ViewBag.Title = "Data Dissemination Manual";
-    HtmlString index = new HtmlString(Model.Title);
-    HtmlString content = new HtmlString(Model.Description);
-}
-
+@using Vaiona.Web.Mvc;<br />
 @section Information
 {
-    This guide will walk you through the basics of using data dissemination.
+This guide will walk you through the basics of using data dissemination.
 }
-
-@content
-
-@section LeftPane 
-{             
-    @index
+@section leftPane{
+ <div class="toc">
+ <h2> Data Dissemination ToC </h2>
+ <br />
+<p></p> <a href="#_Toc468454461">Overview</a>
+<p></p> <a href="#_Toc468454462">Publish a Dataset Version</a>
+<p></p> <a href="#_Toc468454463">&#xa0;&#xa0;&#xa0;&#xa0;Configurate</a>
+<p></p> <a href="#_Toc468454464">&#xa0;&#xa0;&#xa0;&#xa0;Publish</a>
+<p></p> <a href="#_Toc468454465">&#xa0;&#xa0;&#xa0;&#xa0;Zip</a>
+ </div>
 }
+<style>
+.toc { position: fixed; top:100px; }
+.scrollable { overflow: auto; height: 750px; }
+:target:before { content: ""; display: block; height: 100px; }
+</style>
 
+<h1><a id="_Toc468454461"><span>Overview</span></a></h1>
+<p><span>&#xa0;</span></p>
+<p><span>The Data Di ssemination Module , available via Setup ( Cog button ) and Export Metadata , provides a tool to export metadata to a standard compliant XML file . For every metadata structure in the system there is one tab in the tab strip.</span></p>
+<p><span>The data grid in one tab show s all datasets belong ing to the selected metadata structure.</span></p>
+<p><span>S elect a checkbox to mark the datasets you w ould like to export.</span></p>
+<p><span>Please click the E xport button and wait until the metadata XML file has been created successful ly and a download link is available in-line .</span></p>
+<p><span>&#xa0;</span></p>
+<p><img src="~/Areas/DIM/Content/Images/Help/Help_img1.png" width="604" height="204" alt="img1" /><span>&#xa0;</span></p>
+<h1><a id="_Toc468454462"><span>Publish a Dataset Version</span></a></h1>
+<h2><a id="_Toc468454463"><span>Configurate</span></a></h2>
+<p><span>&#xa0;</span></p>
+<p><span>In the workspace a submisionConfig.xml is placed under "...\Workspace\Modules\DIM".</span><br/><span>The data centers can be registered in this file . Here you can define requirements such as, for example, to export the primary data to csv . </span></p>
+<p><img src="~/Areas/DIM/Content/Images/Help/Help_img2.png" width="605" height="144" alt="img2" /><span>&#xa0;</span></p>
+<p><span>&#xa0;</span></p>
+<br/><p><span>&#xa0;</span></p>
+<h2><a id="_Toc468454464"><span>Publish</span></a></h2>
+<p><span>&#xa0;</span></p>
+<p><span>The use r can publish a dataset version if you go to the dataset and find the publish tab.</span><br/><span>The dropdown is showing all available data center. Select on and the system try to convert the data and the metadata as defined in the submissionConfig.xml. If something fails a message will displayed.</span><br/><span>There are two types of fails.</span></p>
+<p><span>1) &#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; The system is not able to convert the data. The administrator should check the config and the convert option.</span></p>
+<p><span>2) &#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; Metadata is not valid. This is a warning. You can go on but the metadata.xml in the zip ist not valid against the exported xsd schema</span></p>
+<p><img src="~/Areas/DIM/Content/Images/Help/Help_img3.png" width="605" height="162" alt="img3" /><span>&#xa0;</span></p>
+<p><span>&#xa0;</span></p>
+<h2><a id="_Toc468454465"><span>Zip</span></a></h2>
+<p><span>&#xa0;</span></p>
+<p><span>The following files can be found in the zip file .</span></p>
+<p><img src="~/Areas/DIM/Content/Images/Help/Help_img4.png" width="634" height="189" alt="img4" /><span>&#xa0;</span></p>
+<p><span>1. &#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; Schema   -   XSD Schema for the metadata</span></p>
+<p><span>2. &#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; Data.***   -   Primary Data</span></p>
+<p><span>3. &#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; Data structure   -   Structure of the primary data</span></p>
+<p><span>4. &#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; Manifest File   -   General information's about the Dataset</span></p>
+<p><span>5. &#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; Metadata   -   Metadata information's about the dataset</span></p>
+<p><span>&#xa0;</span></p>
+<p><span>&#xa0;</span></p>

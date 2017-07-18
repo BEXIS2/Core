@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Dcm.Wizard;
+using BExIS.IO.Transform.Validation.Exceptions;
 
-namespace BExIS.Web.Shell.Areas.DCM.Models
+namespace BExIS.Modules.Dcm.UI.Models
 {
     public class SummaryModel
     {

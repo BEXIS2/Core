@@ -5,7 +5,13 @@
 @using BExIS.Web.Shell.Areas.DCM.Models;
 
 @{
-    
+    int index = 0;
+
+
+    if (!String.IsNullOrEmpty(Model.EntityType))
+    {
+        index = Model.Entities.IndexOf(Model.EntityType);
+    }
 
 }
 
@@ -20,37 +26,78 @@
 
 <div id="ImportMetadataStructureSetParameters" class="wizardStep">
 
-     <div class="wizardStep_Main">
+    <div class="wizardStep_Main">
         <div class="wizardStep_Header stepper">
 
             <h3>@Model.StepInfo.title</h3>
         </div>
 
         <div class="wizardStep_Description stepper">
-         <p>In order for the system to show datasets described with the given metadata structure, please select a titel node and a description node of the imported schema and press Save before heading on to the next step.</p>   
+            <p>In order for the system to show datasets described with the given metadata structure, please select a titel node and a description node of the imported schema and press Save before heading on to the next step.</p>
         </div>
-        
+
         <div class="wizardStep_Content stepper">
             <table>
                 <tr>
+                    <td class="labelColumn">
+                        @Html.LabelFor(m => m.EntityType)
+                    </td>
                     <td>
+                        @(Html.Telerik().DropDownList()
+                              .Placeholder("Select")
+                              .Name("Entity")
+                              .HtmlAttributes(new {style="width:300px"})
+                              .ClientEvents(events => events.OnChange("OnChangeDropDown"))
+                              .BindTo(new SelectList(Model.Entities, Model.EntityType)))
+
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="labelColumn">
                         @Html.LabelFor(m => m.TitleNode)
                     </td>
                     <td>
-                        @Html.DropDownListFor(m => m.TitleNode, new SelectList(Model.MetadataNodes, "XPath", "XPath"))
+                        <div id="titleSelectionContainer">
+                            @Ajax.ActionLink("Select", "ShowListOfMetadataNodesTitle", "ImportMetadataStructureSetParameters", new {area = "Dcm"},
+                                new AjaxOptions
+                                {
+                                    HttpMethod = "GET",
+                                    InsertionMode = InsertionMode.Replace,
+                                    UpdateTargetId = "titleSelectionContainerWindow"
+                                },
+                                new {@class = "bx-button function"})
+                        </div>
+                        <div id="titleSelectionContainerWindow"></div>
+                    </td>
+                    <td>
+                        @Model.TitleNode
                     </td>
                 </tr>
-                 <tr>
-                    <td>
+                <tr>
+                    <td class="labelColumn">
                         @Html.LabelFor(m => m.DescriptionNode)
                     </td>
-                     <td>
-                         @Html.DropDownListFor(m => m.DescriptionNode, new SelectList(Model.MetadataNodes, "XPath", "XPath"))
+                    <td>
+                        <div id="descriptionSelectionContainer">
+                            @Ajax.ActionLink("Select", "ShowListOfMetadataNodesDescription", "ImportMetadataStructureSetParameters", new {area = "Dcm"},
+                                new AjaxOptions
+                                {
+                                    HttpMethod = "GET",
+                                    InsertionMode = InsertionMode.Replace,
+                                    UpdateTargetId = "descriptionSelectionContainerWindow"
+                                },
+                                new {@class = "bx-button function"})
+                        </div>
+                        <div id="descriptionSelectionContainerWindow"></div>
+                    </td>
+                    <td>
+                        @Model.DescriptionNode
                     </td>
                 </tr>
             </table>
-            <br />
-            <button type="submit" value="Save" name="submit"  class="t-button " >save</button>
+            @*<br />
+                <button type="submit" value="Save" name="submit"  class="t-button " >save</button>*@
         </div>
     </div>
 
@@ -101,7 +148,26 @@
 
 }
 
+<style type="text/css">
+    .labelColumn {
+        width: 100px;
+    }
+</style>
+
 <script type="text/javascript">
+
+    $(document)
+        .ready(function () {
+            resetAllTelerikIconTitles();
+        });
+
+    function OnChangeDropDown(e) {
+
+        $.post('@Url.Action("SetEntityName", "ImportMetadataStructureSetParameters", new RouteValueDictionary { { "area", "DCM" } })',
+                { name: e.value },
+                function(response) {
+       });
+    }
 
     function OnSuccess() {
      

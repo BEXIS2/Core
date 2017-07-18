@@ -1,19 +1,33 @@
-﻿@model Tuple<DataStructure, long>
-@using BExIS.Ddm.Model;
+﻿@using Telerik.Web.Mvc.UI;
 @using System.Data;
 @using BExIS.Dlm.Entities.DataStructure;
-@using BExIS.Web.Shell.Areas.DDM.Helpers;
+@using BExIS.Modules.Ddm.UI.Helpers;
+
+@model Tuple<DataStructure, long>
 
 @{
-    
-    //Model.item1 = SearchResultPreview
-    //Model.item2 = DatasetId
-
     GridPagerStyles pagerStyles = GridPagerStyles.PageSizeDropDown;
     pagerStyles |= GridPagerStyles.NextPreviousAndNumeric;
     pagerStyles |= GridPagerStyles.Numeric;
 
 }
+
+
+<script type="text/javascript">
+    function dataStructureGrid_onDataBound()
+    {
+
+        resetAllTelerikIconTitles();
+
+        for (var i = 0; i < $(".bx-ddm-checkbox").length; i++)
+        {
+            if ($(".bx-ddm-checkbox")[i].getAttribute('value') == "True")
+            {
+                $(".bx-ddm-checkbox")[i].setAttribute('checked','checked')
+            }
+        }
+    }
+</script>
 
 
 @if (@Model.Item1 != null)
@@ -69,7 +83,9 @@
                     }
                     })
                     .ClientEvents(events => events
-                            .OnDataBound("onDataBound")
+                            .OnDataBound("" +
+                                         "dataStructureGrid_onDataBound" +
+                                         "")
                         )
 
                     .Pageable(paging =>
@@ -84,19 +100,4 @@
     }
 }
 
-<br />
 
-<script type="text/javascript">
-    function onDataBound()
-    {
-        resetAllTelerikIconTitles();
-
-        for (var i = 0; i < $(".bx-ddm-checkbox").length; i++)
-        {
-            if ($(".bx-ddm-checkbox")[i].getAttribute('value') == "True")
-            {
-                $(".bx-ddm-checkbox")[i].setAttribute('checked','checked')
-            }
-        }
-    }
-</script>

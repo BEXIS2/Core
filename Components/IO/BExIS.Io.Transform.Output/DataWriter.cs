@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using BExIS.IO.Transform.Validation.DSValidation;
 using BExIS.IO.Transform.Validation.Exceptions;
+using BExIS.IO.DataType.DisplayPattern;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.DataStructure;
 using Vaiona.Utils.Cfg;
@@ -14,8 +16,12 @@ using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.MetadataStructure;
 using System.Xml.Linq;
+using BExIS.Dlm.Services.TypeSystem;
 using BExIS.Xml.Helpers;
 using BExIS.Xml.Services;
+using DocumentFormat.OpenXml.Drawing;
+using Path = System.IO.Path;
+using BExIS.RPM.Output;
 
 /// <summary>
 ///
@@ -70,6 +76,7 @@ namespace BExIS.IO.Transform.Output
             /// <seealso cref=""/>        
             protected List<List<string>> VariableIdentifierRows = new List<List<string>>();
 
+            protected StructuredDataStructure dataStructure = null;
         #endregion
 
         //managers
@@ -116,6 +123,59 @@ namespace BExIS.IO.Transform.Output
             }
             else
                 return null;
+        }
+
+      
+        public string CreateFile(string filepath)
+        {
+            string dicrectoryPath = Path.GetDirectoryName(filepath);
+            createDicrectoriesIfNotExist(dicrectoryPath);
+
+            try
+            {
+                if (!File.Exists(filepath))
+                {
+                    File.Create(filepath).Close();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                string message = ex.Message.ToString();
+            }
+
+            return filepath;
+        }
+
+        public string CreateFile(string path, string filename)
+        {
+            createDicrectoriesIfNotExist(path);
+
+            string dataPath = Path.Combine(path, filename);
+
+            try
+            {
+                if (!File.Exists(dataPath))
+                {
+                    File.Create(dataPath).Close();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                string message = ex.Message.ToString();
+            }
+
+            return dataPath;
+        }
+
+        protected void createDicrectoriesIfNotExist(string path)
+        { 
+            // if folder not exist
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
         }
 
         /// <summary>
@@ -196,9 +256,7 @@ namespace BExIS.IO.Transform.Output
         /// <returns></returns>
         public string GetDynamicStorePath(long datasetId, long datasetVersionOrderNr, string title, string extention)
         {
-            string storePath = Path.Combine("Datasets", datasetId.ToString(), "DatasetVersions");
-
-            return Path.Combine(storePath, datasetId.ToString() + "_" + datasetVersionOrderNr.ToString() + "_" + title + extention);
+            return IOHelper.GetDynamicStorePath(datasetId, datasetVersionOrderNr, "data", extention);
         }
 
         /// <summary>
@@ -261,6 +319,7 @@ namespace BExIS.IO.Transform.Output
             string dataStructureTitle = dataStructure.Name;
             // load datastructure from db an get the filepath from this object
 
+            ExcelTemplateProvider provider = new ExcelTemplateProvider("BExISppTemplate_Clean.xlsm");
             string path = "";
 
             if (dataStructure.TemplatePaths != null)
@@ -272,14 +331,20 @@ namespace BExIS.IO.Transform.Output
                 foreach (XmlNode x in resource)
                 {
                     if (x.Attributes.GetNamedItem("Type").Value == "Excel")
-                        path = x.Attributes.GetNamedItem("Path").Value;
+                        if (File.Exists(x.Attributes.GetNamedItem("Path").Value))
+                        {
+                            path = x.Attributes.GetNamedItem("Path").Value;
+                        }
+                        else
+                        {
+                            path = provider.CreateTemplate(dataStructure);
+                        }
                 }
-
-
                 //string dataPath = AppConfiguration.DataPath; //Path.Combine(AppConfiguration.WorkspaceRootPath, "Data");
                 return Path.Combine(AppConfiguration.DataPath, path);
-            }
-            return "";
+            }          
+            path = provider.CreateTemplate(dataStructure);
+            return Path.Combine(AppConfiguration.DataPath, path);
         }
 
         /// <summary>
@@ -291,8 +356,18 @@ namespace BExIS.IO.Transform.Output
         /// <returns></returns>
         protected StructuredDataStructure GetDataStructure(long id)
         {
-            DataStructureManager dataStructureManager = new DataStructureManager();
-            return dataStructureManager.StructuredDataStructureRepo.Get(id);
+            if (dataStructure == null)
+            {
+                DataStructureManager dataStructureManager = new DataStructureManager();
+                dataStructure =  dataStructureManager.StructuredDataStructureRepo.Get(id);
+            }
+
+            return dataStructure;
+        }
+
+        protected StructuredDataStructure GetDataStructure()
+        {
+            return dataStructure;
         }
 
         /// <summary>
@@ -303,22 +378,24 @@ namespace BExIS.IO.Transform.Output
         /// <param name="id"></param>
         /// <returns></returns>
         public String GetTitle(long id)
-        { 
-            DatasetVersion datasetVersion = DatasetManager.GetDatasetLatestVersion(id);
+        {
+            if (DatasetManager.IsDatasetCheckedIn(id))
+            {
 
-            // get MetadataStructure 
-            MetadataStructure metadataStructure = datasetVersion.Dataset.MetadataStructure;
-            XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)datasetVersion.Dataset.MetadataStructure.Extra);
-            XElement temp = XmlUtility.GetXElementByAttribute("nodeRef", "name", "title", xDoc);
+                DatasetVersion datasetVersion = DatasetManager.GetDatasetLatestVersion(id);
 
-            string xpath = temp.Attribute("value").Value.ToString();
-            string title = datasetVersion.Metadata.SelectSingleNode(xpath).InnerText;
+                // get MetadataStructure 
+                MetadataStructure metadataStructure = datasetVersion.Dataset.MetadataStructure;
+                XDocument xDoc = XmlUtility.ToXDocument((XmlDocument) datasetVersion.Dataset.MetadataStructure.Extra);
+                XElement temp = XmlUtility.GetXElementByAttribute("nodeRef", "name", "title", xDoc);
 
-            return title;
+                string xpath = temp.Attribute("value").Value.ToString();
+                string title = datasetVersion.Metadata.SelectSingleNode(xpath).InnerText;
 
-            DatasetManager datasetManager = new DatasetManager();
+                return title;
+            }
 
-            return XmlDatasetHelper.GetInformation(datasetManager.GetDatasetLatestVersion(id), AttributeNames.title);
+            return "NoTitleAvailable";
         }
 
         /// <summary>
@@ -349,5 +426,79 @@ namespace BExIS.IO.Transform.Output
             return source.Where(p => selected.Contains(p.Variable.Id.ToString())).ToList();
         }
 
+        protected string GetStringFormat(Dlm.Entities.DataStructure.DataType datatype)
+        {
+            DataTypeDisplayPattern ddp = DataTypeDisplayPattern.Materialize(datatype.Extra);
+            if (ddp != null)
+                return ddp.StringPattern;
+
+            return "";
+        }
+
+        protected string GetFormatedValue( object value, Dlm.Entities.DataStructure.DataType datatype, string format)
+        {
+            string tmp = value.ToString();
+
+            if (DataTypeUtility.IsTypeOf(value, datatype.SystemType))
+            {
+                //Type type = Type.GetType("System." + datatype.SystemType);
+
+                switch (DataTypeUtility.GetTypeCode(datatype.SystemType))
+                {
+                    case DataTypeCode.Int16:
+                    case DataTypeCode.Int32:
+                    case DataTypeCode.Int64:
+                    {
+                        Int64 newValue = Convert.ToInt64(tmp);
+                        return newValue.ToString(format);
+                    }
+
+                    case DataTypeCode.UInt16:
+                    case DataTypeCode.UInt32:
+                    case DataTypeCode.UInt64:
+                    {
+                        UInt64 newValue = Convert.ToUInt64(tmp);
+                        return newValue.ToString(format);
+                    }
+
+                    case DataTypeCode.Decimal:
+                    case DataTypeCode.Double:
+                    {
+                        Double newValue = Convert.ToDouble(tmp);
+                        return newValue.ToString(format);
+                    }
+
+                    case DataTypeCode.DateTime:
+                    {
+                            DateTime dateTime;
+
+                            if (DateTime.TryParse(tmp, out dateTime))
+                            {
+                                return dateTime.ToString(format);
+                            }
+
+                            if (DateTime.TryParse(tmp, new CultureInfo("de-DE", false), DateTimeStyles.None, out dateTime))
+                            {
+                                return dateTime.ToString(format);
+                            }
+
+                            if (DateTime.TryParse(tmp, new CultureInfo("en-US", false), DateTimeStyles.None, out dateTime))
+                            {
+                                return dateTime.ToString(format);
+                            }
+
+                            if (DateTime.TryParse(tmp, CultureInfo.InvariantCulture, DateTimeStyles.None, out dateTime))
+                            {
+                                return dateTime.ToString(format);
+                            }
+
+                            return tmp;
+ ;                   }
+                    default: return tmp;
+                }
+            }
+
+            return "";
+        }
     }
 }

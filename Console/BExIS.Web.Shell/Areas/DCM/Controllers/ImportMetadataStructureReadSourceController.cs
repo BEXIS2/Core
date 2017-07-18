@@ -1,18 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using BExIS.Dcm.ImportMetadataStructureWizard;
 using BExIS.Dcm.Wizard;
 using BExIS.Dlm.Services.MetadataStructure;
-using BExIS.IO.Transform.Validation.Exceptions;
-using BExIS.Web.Shell.Areas.DCM.Models.ImportMetadata;
+using BExIS.Modules.Dcm.UI.Models.ImportMetadata;
 using BExIS.Xml.Helpers.Mapping;
+using BExIS.IO.Transform.Validation.Exceptions;
 
-namespace BExIS.Web.Shell.Areas.DCM.Controllers
+namespace BExIS.Modules.Dcm.UI.Controllers
 {
     public class ImportMetadataStructureReadSourceController : Controller
     {
@@ -34,6 +31,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             }
 
             ReadSourceModel model = new ReadSourceModel(TaskManager.Current());
+
+            if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.IS_GENERATE))
+                model.IsGenerated = (bool)TaskManager.Bus[ImportMetadataStructureTaskManager.IS_GENERATE];
 
             if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.ROOT_NODE))
                 model.RootNode = TaskManager.Bus[ImportMetadataStructureTaskManager.ROOT_NODE].ToString();
@@ -57,7 +57,10 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 TaskManager.Current().SetStatus(StepStatus.success);
             }
             else
+            {
                 ModelState.AddModelError("", "Please click generate button.");
+            }
+            
 
             if (TaskManager.Current().IsValid())
             {
@@ -115,85 +118,97 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         public ActionResult GenerateMS()
         {
-          
+                //open schema
+                XmlSchemaManager xmlSchemaManager = new XmlSchemaManager();
 
-            string root = "";
-            string schemaName = "";
-            long metadataStructureid = 0;
+                string root = "";
+                string schemaName = "";
+                long metadataStructureid = 0;
 
-            TaskManager = (ImportMetadataStructureTaskManager)Session["TaskManager"];
+                TaskManager = (ImportMetadataStructureTaskManager) Session["TaskManager"];
 
-            if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.ROOT_NODE))
-                root = TaskManager.Bus[ImportMetadataStructureTaskManager.ROOT_NODE].ToString();
+                if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.ROOT_NODE))
+                    root = TaskManager.Bus[ImportMetadataStructureTaskManager.ROOT_NODE].ToString();
 
-            if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.SCHEMA_NAME))
-                schemaName = TaskManager.Bus[ImportMetadataStructureTaskManager.SCHEMA_NAME].ToString();
+                if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.SCHEMA_NAME))
+                    schemaName = TaskManager.Bus[ImportMetadataStructureTaskManager.SCHEMA_NAME].ToString();
 
+                string path = TaskManager.Bus[ImportMetadataStructureTaskManager.FILEPATH].ToString();
+                //path = @"https://code.ecoinformatics.org/code/eml/tags/RELEASE_EML_2_1_1/eml.xsd";
 
-           
+                ReadSourceModel model = new ReadSourceModel(TaskManager.Current());
+                model.SchemaName = schemaName;
+                model.RootNode = root;
 
-            TaskManager = (ImportMetadataStructureTaskManager)Session["TaskManager"];
-
-            string path = TaskManager.Bus[ImportMetadataStructureTaskManager.FILEPATH].ToString();
-            //path = @"https://code.ecoinformatics.org/code/eml/tags/RELEASE_EML_2_1_1/eml.xsd";
-
-            ReadSourceModel model = new ReadSourceModel(TaskManager.Current());
-            model.SchemaName = schemaName;
-            model.RootNode = root;
-
-            //
-
-            if (SchemaNameExist(schemaName))
-            {
-               model.ErrorList.Add(new Error(ErrorType.Other, "A Metadata structure with this name already exist. Please choose a other name."));
-            }
-
-            if (String.IsNullOrEmpty(schemaName))
-            {
-                model.ErrorList.Add(new Error(ErrorType.Other, "A Metadata structure must have a name."));
-            }
-
-
-            //open schema
-            XmlSchemaManager xmlSchemaManager = new XmlSchemaManager();
-            xmlSchemaManager.Load(path, GetUserNameOrDefault());
-
-            if (model.ErrorList.Count == 0)
-            {
                 try
                 {
-                    metadataStructureid = xmlSchemaManager.GenerateMetadataStructure(root, schemaName);
+                    //file.WriteLine("check schema exist");
+                    if (SchemaNameExist(schemaName))
+                    {
+                        model.ErrorList.Add(new Error(ErrorType.Other,
+                            "A Metadata structure with this name already exist. Please choose a other name."));
+                    }
+                    else
+                    if (String.IsNullOrEmpty(schemaName))
+                    {
+                        model.ErrorList.Add(new Error(ErrorType.Other, "A Metadata structure must have a name."));
+                    }
+                    else
+                        xmlSchemaManager.Load(path, GetUserNameOrDefault());
+
+                    if (!String.IsNullOrEmpty(model.RootNode) && !xmlSchemaManager.Elements.Any(e => e.Name.Equals(model.RootNode)))
+                    {
+                        model.ErrorList.Add(new Error(ErrorType.Other, "Root node not exist"));
+                    }
+
                 }
                 catch (Exception ex)
                 {
-                    xmlSchemaManager.Delete(schemaName);
                     ModelState.AddModelError("", ex.Message);
                     model.ErrorList.Add(new Error(ErrorType.Other, "Can not create metadatastructure."));
+                    throw ex;
                 }
-            }
+
+                if (model.ErrorList.Count == 0)
+                {
+                    try
+                    {
+                        metadataStructureid = xmlSchemaManager.GenerateMetadataStructure(root, schemaName);
+                    }
+                    catch (Exception ex)
+                    {
+                        xmlSchemaManager.Delete(schemaName);
+                        ModelState.AddModelError("", ex.Message);
+                        model.ErrorList.Add(new Error(ErrorType.Other, "Can not create metadatastructure."));
+                    }
+                }
+
+                TaskManager.AddToBus(ImportMetadataStructureTaskManager.MAPPING_FILE_NAME_IMPORT,
+                    xmlSchemaManager.mappingFileNameImport);
+                TaskManager.AddToBus(ImportMetadataStructureTaskManager.MAPPING_FILE_NAME_EXPORT,
+                    xmlSchemaManager.mappingFileNameExport);
 
 
-            TaskManager.AddToBus(ImportMetadataStructureTaskManager.MAPPING_FILE_NAME_IMPORT, xmlSchemaManager.mappingFileNameImport);
-            TaskManager.AddToBus(ImportMetadataStructureTaskManager.MAPPING_FILE_NAME_EXPORT, xmlSchemaManager.mappingFileNameExport);
+                model.StepInfo.notExecuted = false;
 
+                if (model.ErrorList.Count == 0)
+                {
+                    model.IsGenerated = true;
 
-            model.StepInfo.notExecuted = false;
+                    if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.IS_GENERATE))
+                        TaskManager.Bus[ImportMetadataStructureTaskManager.IS_GENERATE] = true;
+                    else
+                        TaskManager.Bus.Add(ImportMetadataStructureTaskManager.IS_GENERATE, true);
 
-            if (model.ErrorList.Count == 0)
-            {
-                if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.IS_GENERATE))
-                    TaskManager.Bus[ImportMetadataStructureTaskManager.IS_GENERATE] = true;
-                else
-                    TaskManager.Bus.Add(ImportMetadataStructureTaskManager.IS_GENERATE, true);
+                    if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.METADATASTRUCTURE_ID))
+                        TaskManager.Bus[ImportMetadataStructureTaskManager.METADATASTRUCTURE_ID] = metadataStructureid;
+                    else
+                        TaskManager.Bus.Add(ImportMetadataStructureTaskManager.METADATASTRUCTURE_ID, metadataStructureid);
+                }
 
-                if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.METADATASTRUCTURE_ID))
-                    TaskManager.Bus[ImportMetadataStructureTaskManager.METADATASTRUCTURE_ID] = metadataStructureid;
-                else
-                    TaskManager.Bus.Add(ImportMetadataStructureTaskManager.METADATASTRUCTURE_ID, metadataStructureid);
-            }    
-
-
+          
             return PartialView("ReadSource",model);
+            
         }
 
         // chekc if user exist

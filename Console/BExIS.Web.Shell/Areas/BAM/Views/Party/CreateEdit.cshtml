@@ -1,4 +1,4 @@
-﻿@model BExIS.Web.Shell.Areas.BAM.Models.PartyModel
+﻿@model BExIS.Modules.Bam.UI.Models.PartyModel
 @{
     bool createMode = (Model.Party.PartyType.Id == 0);
     bool addRelationship = true;
@@ -37,6 +37,8 @@
         }
     }
 }
+
+ <span style="color:red">@errorMessage</span>
 @using (Html.BeginForm("CreateEdit", "Party", new { area = "BAM" }, FormMethod.Post, new { id = "frmParty" }))
 {
     @Html.HiddenFor(m => m.Party.Id)
@@ -64,7 +66,7 @@
                                     @Html.Telerik().DropDownList().Placeholder("--- SELECT ---").Name("Party.PartyType.Id").HtmlAttributes(new { style = "width:372px; padding-left: 2px;", @class = "t-input bx-input" }).DropDownHtmlAttributes(new { style = "width:auto;", @class = "t-input bx-input" }).BindTo(new SelectList(Model.PartyTypeList, "Id", "DisplayName")).ClientEvents(events => events.OnChange("OnChangePartyType"))
 
                                     @Html.ValidationMessageFor(m => m.Party.PartyType.Id, "Select party type")
-                                    <label title="Party type">?</label>
+                                    <img src="~/Content/Images/info.png" data-toggle="tooltip" title="Party type" />
                                     <img src="@Url.Content(Themes.GetResourcePath("Styles/Default", "loading.gif"))" style="display:none" id="imgPartyCustomeAttrLoading" />
                                 }
 
@@ -79,7 +81,7 @@
                                 @(Html.Telerik().DatePickerFor(m => m.Party.StartDate)
                                     .HtmlAttributes(new { @Style = "border:none;display: inline-block;", @class = "t-input bx-input" })
                                 )
-                                <label title="Start date">?</label>
+                                <img src="~/Content/Images/info.png" data-toggle="tooltip" title="Start date" />
                             </td>
                         </tr>
                         <tr>
@@ -89,7 +91,7 @@
                             </td>
                             <td>
                                 @(Html.Telerik().DatePickerFor(m => m.Party.EndDate).HtmlAttributes(new { @Style = "border:none;display: inline-block;", @class = "t-input bx-input" }))
-                                <label title="End date">?</label>
+                                <img src="~/Content/Images/info.png" data-toggle="tooltip" title="End date" />
                             </td>
                         </tr>
                         <tr>
@@ -100,7 +102,7 @@
                             <td>
                                 @Html.TextBoxFor(m => m.Party.Description, new { Title = @errorMessage, @class = "t-input bx-input " + @errorClass })
                                 @Html.ValidationMessageFor(m => m.Party.Description)
-                                <label title="Description">?</label>
+                                <img src="~/Content/Images/info.png" data-toggle="tooltip" title="Description" />
                             </td>
                         </tr>
                     </table>
@@ -109,7 +111,7 @@
                             <div id="divPartyCustomAttr"></div>
                 </text>);
                 tabs.Add().Text("Relationships").Enabled((createMode ? false : true)).Content(@<text>
-                    @Html.Partial("_partyRelationshipTypesView", Model)
+                    @Html.Partial("_partyRelationshipsPartial", Model)
                 </text>);
             })
     )

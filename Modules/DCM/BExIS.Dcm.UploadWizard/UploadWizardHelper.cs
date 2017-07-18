@@ -43,7 +43,7 @@ namespace BExIS.Dcm.UploadWizard
         /// <param name="workingCopy"></param>
         /// <returns></returns>
         /// //original version
-        public static Dictionary<string, List<DataTuple>> GetSplitDatatuples2(DataTuple[] newDatatuples, List<long> primaryKeys, DatasetVersion workingCopy, ref List<AbstractTuple> datatuplesFromDatabase)
+        public static Dictionary<string, List<DataTuple>> GetSplitDatatuples2(List<DataTuple> newDatatuples, List<long> primaryKeys, DatasetVersion workingCopy, ref List<AbstractTuple> datatuplesFromDatabase)
         {
 
             Dictionary<string, List<DataTuple>> data = new Dictionary<string, List<DataTuple>>();
@@ -61,7 +61,7 @@ namespace BExIS.Dcm.UploadWizard
 
             for (int j = 0; j < newDatatuples.Count(); j++)
             {
-                DataTuple newDt = newDatatuples[j];
+                DataTuple newDt = newDatatuples.ElementAt(j);
 
                 if (!IsEmpty(newDt))
                 {
@@ -110,74 +110,71 @@ namespace BExIS.Dcm.UploadWizard
         }
 
         //temporary solution: norman :GetSplitDatatuples2
-        public static Dictionary<string, List<DataTuple>> GetSplitDatatuples(DataTuple[] newDatatuples, List<long> primaryKeys, DatasetVersion workingCopy, ref List<long> datatuplesFromDatabaseIds)
+        public static Dictionary<string, List<DataTuple>> GetSplitDatatuples(List<DataTuple> incomingDatatuples, List<long> primaryKeys, DatasetVersion workingCopy, ref List<long> datatuplesFromDatabaseIds)
         {
-
             Dictionary<string, List<DataTuple>> data = new Dictionary<string, List<DataTuple>>();
-            List<DataTuple> newDtList = new List<DataTuple>();
-            List<DataTuple> editDtList = new List<DataTuple>();
+            Dictionary<string, DataTuple> newDtList = new Dictionary<string, DataTuple>();
+            Dictionary<string, DataTuple> editDtList = new Dictionary<string, DataTuple>();
             List<DataTuple> deleteDtList = new List<DataTuple>();
 
             DatasetManager datasetManager = new DatasetManager();
 
-            DataTuple sourceDt;
-            Dictionary<long, string> PkValues;
-
-            // load datatuples from db
-            // later packagesize
-
-
-            for (int j = 0; j < newDatatuples.Count(); j++)
+            DataTupleIterator tupleIterator = new DataTupleIterator(datatuplesFromDatabaseIds, datasetManager, false);
+            // Keep the DB loop outer to reduce the number of DB queries
+            foreach (var existingTuple in tupleIterator)
             {
-                DataTuple newDt = newDatatuples[j];
-
-                if (!IsEmpty(newDt))
+                if (existingTuple == null || existingTuple.Id < 0) // it is unlikely to happen, but just to reinforce it.
+                    continue;
+                // iterating over the in-memory newDataTuples is faster
+                for (int counter = 0; counter < incomingDatatuples.Count(); counter++)
+                //foreach (var incomingTuple in newDatatuples)
                 {
-                    string keysValueNewDataTuple = getPrimaryKeysAsString(newDt, primaryKeys);
-
-                    bool exist = false;
-
-                    for (int i = 0; i < datatuplesFromDatabaseIds.Count; i++)
+                    DataTuple incomingTuple = incomingDatatuples[counter];
+                    if (!IsEmpty(incomingTuple))
                     {
-
-                        sourceDt = datasetManager.DataTupleRepo.Get(datatuplesFromDatabaseIds.ElementAt(i));
-
-                        string keysValueSourceDatatuple = getPrimaryKeysAsStringFromXml(sourceDt, primaryKeys);
-
-                        if (sourceDt != null && keysValueNewDataTuple.Equals(keysValueSourceDatatuple))
+                        // we first assume that any incoming tuple is new, and then try to check if it is not.
+                        // this reduces the iterations of the inner loop.
+                        // because the search takes the DB tuple and lloks for it in the coming tuples, it is posssible for an incoming tuple to be added more than once.
+                        // So they are added to a dictionary to avoid duplicates
+                        string keysValueNewDataTuple = getPrimaryKeysAsString(incomingTuple, primaryKeys);
+                        if (!newDtList.ContainsKey(keysValueNewDataTuple))
                         {
-                            // check for edit
-                            exist = true;
-                            if (!Equal(newDt, sourceDt))
-                            {
-                                //sourceDt.Materialize();
-                                editDtList.Add(Merge(newDt, sourceDt));
-
-                            }
-
-                            if (datatuplesFromDatabaseIds.Count > 0)
-                            {
-                                datatuplesFromDatabaseIds.RemoveAt(i);
-                            }
-
-                            break;
+                            newDtList.Add(keysValueNewDataTuple, incomingTuple); // by default, assume that the incoming tuple is new (not in the DB)
                         }
-
+                        string keysValueSourceDatatuple = getPrimaryKeysAsStringFromXml(existingTuple, primaryKeys);
+                        if (keysValueNewDataTuple.Equals(keysValueSourceDatatuple)) // the incoming tuple exists in the DB
+                        {
+                            if (!Equal(incomingTuple, existingTuple)) // the incoming tuple is a changed version of an existing one
+                            {
+                                // the incoming tuple is found in the DB and brings some changes, therefore not NEW!
+                                newDtList.Remove(keysValueNewDataTuple);
+                                if (!editDtList.ContainsKey(keysValueNewDataTuple))
+                                {
+                                    // apply the changes to the exisiting one and register is an edited tuple
+                                    editDtList.Add(keysValueNewDataTuple, Merge(incomingTuple, (DataTuple)existingTuple));
+                                    // remove the current incoming item to shorten the list for the next round
+                                    incomingDatatuples.RemoveAt(counter);
+                                }                                                              
+                                // the decision is made, hence break the inner loop
+                                break;
+                            }
+                            else // the incoming tuple is found in the BD, but introduces no change., hence no action is needed.
+                            {
+                                // remove the incoming tuple from the list and from the new ones.
+                                newDtList.Remove(keysValueNewDataTuple);
+                                incomingDatatuples.RemoveAt(counter);
+                            }
+                        }
+                        else // the incoming tuple does not match the PK, so it should be a new tuple, which is already added to the list.
+                        { // DO NOTHING
+                        }
                     }
-
-                    if (!exist)
-                        newDtList.Add(newDt);
-
                 }
             }
-            //}
 
-            data.Add("new", newDtList);
-            data.Add("edit", editDtList);
-
-
+            data.Add("new", newDtList.Values.ToList());
+            data.Add("edit", editDtList.Values.ToList());
             return data;
-
         }
 
         /// <summary>
@@ -221,7 +218,7 @@ namespace BExIS.Dcm.UploadWizard
         /// <param name="sourceDatatuple"></param>
         /// <returns></returns>
         //temporary solution: norman :Equal2
-        private static bool Equal(DataTuple newDatatuple, DataTuple sourceDatatuple)
+        private static bool Equal(AbstractTuple newDatatuple, AbstractTuple sourceDatatuple)
         {
 
             foreach(VariableValue newVariableValue in newDatatuple.VariableValues )
@@ -585,8 +582,6 @@ namespace BExIS.Dcm.UploadWizard
                 Dataset dataset = datasetManager.GetDataset(datasetId);
                 DatasetVersion datasetVersion;
 
-
-
                 List<long> dataTupleIds = new List<long>();
 
                 if (datasetManager.IsDatasetCheckedIn(datasetId))
@@ -609,7 +604,7 @@ namespace BExIS.Dcm.UploadWizard
                         string pKey;
                         foreach (long dtId in currentIds)
                         {
-                            dt = datasetManager.DataTupleRepo.Get(dtId); 
+                            dt = datasetManager.DataTupleRepo.Query(d=>d.Id.Equals(dtId)).FirstOrDefault(); 
 
                             //pKey = getPrimaryKeysAsByteArray(dt, primaryKeys);
                             pKey = pKey = getPrimaryKeysAsStringFromXml(dt, primaryKeys);
@@ -690,7 +685,7 @@ namespace BExIS.Dcm.UploadWizard
             /// <param name="primaryKeys"></param>
             /// <returns></returns>
     
-            private static string getPrimaryKeysAsStringFromXml(DataTuple datatuple, List<long> primaryKeys)
+            private static string getPrimaryKeysAsStringFromXml(AbstractTuple datatuple, List<long> primaryKeys)
             {
                 string value = "";
 
@@ -755,19 +750,23 @@ namespace BExIS.Dcm.UploadWizard
                         ".avi",
                         ".bmp",
                         ".csv",
+                        ".dbf",
                         ".doc",
                         ".docx",
                         ".gif",
                         ".jpg",
+                        ".jpeg",
                         ".mp3",
                         ".mp4",
                         ".pdf",
                         ".png",
                         ".shp",
+                        ".shx",
                         ".tif",
                         ".txt",
                         ".xls",
                         ".xlsm",
+                        ".xlsx",
                         ".xsd",
                         ".zip"
                     };

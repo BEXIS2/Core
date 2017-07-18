@@ -1,29 +1,22 @@
-﻿using System;
+﻿using BExIS.Dcm.UploadWizard;
+using BExIS.IO;
+using BExIS.Modules.Dcm.UI.Models.Push;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Mail;
-using System.Threading;
 using System.Web;
 using System.Web.Mvc;
-using BExIS.Dcm.UploadWizard;
-using BExIS.IO;
-using BExIS.Web.Shell.Areas.DCM.Models.Push;
 using Vaiona.Utils.Cfg;
+using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
 
-namespace BExIS.Web.Shell.Areas.DCM.Controllers
+namespace BExIS.Modules.Dcm.UI.Controllers
 {
     public class PushController : Controller
     {
-        //
-        // GET: /DCM/Push/
-
         public ActionResult Index()
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Push Big File ");
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Push Big File", this.Session.GetTenant());
 
             Session["Files"] = null;
             return View(LoadDefaultModel());
@@ -31,9 +24,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         public ActionResult Delete(string path)
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Push Big File");
-
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Push Big File", this.Session.GetTenant());
             FileHelper.Delete(path);
+
             return View("Index", LoadDefaultModel());
         }
 
@@ -53,6 +46,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         [HttpPost]
         public ActionResult ProcessSubmit(IEnumerable<HttpPostedFileBase> attachments)
         {
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Push Big File", this.Session.GetTenant());
             // The Name of the Upload component is "attachments"                            
             if (attachments != null)
             {
@@ -69,9 +63,9 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         /// <returns>return a list with all names from FileStream in the folder</returns>
         private List<BasicFileInfo> GetServerFileList()
         {
-            List<BasicFileInfo> fileList = new List<BasicFileInfo>();
-  
-            string userDataPath = Path.Combine(AppConfiguration.DataPath, "Temp", GetUserNameOrDefault());
+            var fileList = new List<BasicFileInfo>();
+
+            var userDataPath = Path.Combine(AppConfiguration.DataPath, "Temp", GetUsernameOrDefault());
 
             // if folder not exist
             if (!Directory.Exists(userDataPath))
@@ -80,12 +74,12 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             }
 
 
-            DirectoryInfo dirInfo = new DirectoryInfo(userDataPath);
+            var dirInfo = new DirectoryInfo(userDataPath);
 
 
-            foreach(FileInfo info in  dirInfo.GetFiles())
+            foreach (var info in dirInfo.GetFiles())
             {
-                fileList.Add(new BasicFileInfo(info.FullName, ""));
+                fileList.Add(new BasicFileInfo(info.Name, info.FullName, "", info.Extension, info.Length));
             }
 
             return fileList;
@@ -93,50 +87,52 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         }
 
         #region helper
-            // chekc if user exist
-            // if true return usernamem otherwise "DEFAULT"
-            private string GetUserNameOrDefault()
+        // chekc if user exist
+        // if true return usernamem otherwise "DEFAULT"
+        private string GetUsernameOrDefault()
+        {
+            var username = string.Empty;
+            try
             {
-                string userName = string.Empty;
-                try
-                {
-                    userName = HttpContext.User.Identity.Name;
-                }
-                catch { }
+                username = HttpContext.User.Identity.Name;
+            }
+            catch { }
 
-                return !string.IsNullOrWhiteSpace(userName) ? userName : "DEFAULT";
+            return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
+        }
+
+        public void uploadFiles(IEnumerable<HttpPostedFileBase> attachments)
+        {
+            var filemNames = "";
+
+            Debug.WriteLine("save starts");
+
+            foreach (var file in attachments)
+            {
+                var fileName = Path.GetFileName(file.FileName);
+                filemNames += fileName.ToString() + ",";
+
+                var dataPath = AppConfiguration.DataPath;
+                var destinationPath = Path.Combine(dataPath, "Temp", GetUsernameOrDefault(), fileName);
+
+                Debug.WriteLine("contentlength :" + file.ContentLength);
+
+                file.SaveAs(destinationPath);
             }
 
-            public void uploadFiles(IEnumerable<HttpPostedFileBase> attachments)
+        }
+
+        private SendBigFilesToServerModel LoadDefaultModel()
+        {
+            var model = new SendBigFilesToServerModel
             {
-                string filemNames = "";
+                ServerFileList = GetServerFileList(),
+                SupportedFileExtentions = UploadWizardHelper.GetExtentionList(DataStructureType.Unstructured)
+            };
 
-                Debug.WriteLine("save starts");
-
-                foreach (var file in attachments)
-                {
-                    var fileName = Path.GetFileName(file.FileName);
-                    filemNames += fileName.ToString()+",";
-
-                    string dataPath = AppConfiguration.DataPath;
-                    var destinationPath = Path.Combine(dataPath, "Temp", GetUserNameOrDefault(), fileName);
-
-                    Debug.WriteLine("contentlength :" + file.ContentLength);
-
-                    file.SaveAs(destinationPath);
-                }
-
-            }
-
-            private SendBigFilesToServerModel LoadDefaultModel()
-            {
-                SendBigFilesToServerModel model = new SendBigFilesToServerModel();
-                model.ServerFileList = GetServerFileList();
-                model.SupportedFileExtentions = UploadWizardHelper.GetExtentionList(DataStructureType.Unstructured);
-
-                return model;
-            }
+            return model;
+        }
         #endregion
-        
+
     }
 }

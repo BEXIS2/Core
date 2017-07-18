@@ -1,151 +1,140 @@
 ﻿@model BExIS.Ddm.Api.ISearchProvider
 @using BExIS.Ddm.Model;
-@using FluentBootstrap;
+@using Microsoft.Web.Helpers;
 
 <header>
-	<link href="@Url.Content(Themes.GetResourcePath("Styles", "search.css"))" rel="stylesheet" type="text/css" />   
-	<script type="text/javascript" src="/Scripts/trunk8.js"></script>
-	<script type="text/javascript" src="/Scripts/Search/search.js"></script>
-	<script type="text/javascript" src="/Scripts/jquery.ba-resize.min.js"></script>
-</header> 
+    <link href="@Url.Content(Themes.GetResourcePath("Styles", "search.css"))" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="/Scripts/trunk8.js"></script>
+    <script type="text/javascript" src="/Scripts/Search/search.js"></script>
+    <script type="text/javascript" src="/Scripts/jquery.ba-resize.min.js"></script>
+</header>
 
 @section Information
 {
-    <p>It's just like any other search engine, enter a phrase or keyword with at least 3 characters and press "Search". You may select a category from the dropdown list in front of the search field to restrict your search (e.g Contact Person).</p>
-    <p>The search result contains all datasets where your term has been found in either the metadata or primary data.</p>
-    <p>To tweak the result list, click on the facets in the green area on the left or the specify a filter in the header of the list. Clicking on a name in the column header will sort the results.</p>
-    <p>To view more details of a dataset, click the "View Details" button available in each row.</p>
+    <p>Enter a phrase or keyword with at least 3 characters and press <b>Search</b>. You may select a category from the dropdown list in front of the searchfield to restrict your search (e.g Title).</p>
     <p>
-        More information 
-        @Html.ActionLink("here", "Index", "Help", new { id = 0 }, new { @class = "bx-informationLink", title="go to help", target="_blank"})
+        The search result contains all datasets where your term was found in the metadata.
+        If configured by your system administrator the result list may
+        also inlcude datasets where your search term was found in primary data
+        (e.g. variable names, string values).
+    </p>
+
+    <p>To tweak the result list, click on the facets in the green area on the left or specify a filter in the header of the list. Clicking on a name in the column header will sort the results.</p>
+    <p>To view more details of a dataset, click the View Details button available in each row.</p>
+    <p>
+        <a href="/ddm/Help/Index" class="bx-informationLink" title="go to help" target="_blank">More</a>
     </p>
 }
 
-@section LeftPane 
-{  
+@section LeftPane
+{
     <div id="facetsClosed">
-	    <div class="facetsClosedHeader" onclick="onClickFacetOverlay()">
-		   @* <div id="facetsClosedHeaderIcon" class="fa fa-angle-double-right"></div>     *@
-		    <p id="facetsClosedHeaderName" class="rotate css-vertical-text">Facets</p>
-	    </div>
-   
+        <div class="facetsClosedHeader" onclick="onClickFacetOverlay()">
+            @* <div id="facetsClosedHeaderIcon" class="fa fa-angle-double-right"></div>     *@
+            <p id="facetsClosedHeaderName" class="rotate css-vertical-text">Facets</p>
+        </div>
     </div>
 
     <div id="facetsOverlay" class="overlay">
-	    <div class="overlayHeader" onclick="onClickFacetOverlay()">
-		    @*<i class="fa fa-angle-double-left"></i>*@
-		    <span>Facets</span>
-	    </div>
-	    <div class="overlayContent">
-		    @if (ViewData.ModelState.IsValid)
-            {   
-			    @Html.Partial("_searchFacets", Tuple.Create(Model.WorkingSearchModel, Model.DefaultSearchModel.SearchComponent.Facets))
-			    @Html.Partial("_searchProperties", Model.WorkingSearchModel.SearchComponent.Properties)
+        <div class="overlayHeader" onclick="onClickFacetOverlay()">
+            @*<i class="fa fa-angle-double-left"></i>*@
+            <span>Facets</span>
+        </div>
+        <div class="overlayContent">
+            @if (ViewData.ModelState.IsValid)
+            {
+                @Html.Partial("_searchFacets", Tuple.Create(Model.WorkingSearchModel, Model.DefaultSearchModel.SearchComponent.Facets))
+                @Html.Partial("_searchProperties", Model.WorkingSearchModel.SearchComponent.Properties)
             }
-	    </div>   
+        </div>
     </div>
 }
 
-<div >
-@Html.Partial("_searchHeader", Model.WorkingSearchModel)
+<div>
+    @Html.Partial("_searchHeader", Model.WorkingSearchModel)
 
-<div class="searchBreadcrumbNavigation">
-	@Html.Partial("_searchBreadcrumb", Model.WorkingSearchModel)
-</div>     
-<div class="searchContent">
-	@Html.Partial("_searchContent", Model.WorkingSearchModel.ResultComponent)
+    <div class="searchBreadcrumbNavigation">
+        @Html.Partial("_searchBreadcrumb", Model.WorkingSearchModel)
+    </div>
+    <div class="searchContent">
+        @Html.Partial("_searchContent", Model.WorkingSearchModel.ResultComponent)
+    </div>
 </div>
-</div>
-
 
 <script type="text/javascript">
 
-	function onClickFacetOverlay()
-	{
-		//$('#facetsOverlay').toggle();
-		//$('#facetsClosed').toggle();
-	}
-
+    function onClickFacetOverlay() {
+        //$('#facetsOverlay').toggle();
+        //$('#facetsClosed').toggle();
+    }
 </script>
 <style type="text/css">
-
-	#facetsClosed
-	{
-        display:none;
+    #facetsClosed {
+        display: none;
         /*position:fixed;
         overflow:visible;*/
-		background-color:#bee1da;
-		width:36px;
-		height:136px;
-		margin-left:-15px;
-		padding: 12px 25px 12px 25px;
-		font-size:20px;
-        z-index:1000;
-
-		text-align:left;
-		vertical-align:central;
-
-		-webkit-border-top-right-radius: 20px;
-		-webkit-border-bottom-right-radius: 20px;
-		-moz-border-radius-topright: 20px;
-		-moz-border-radius-bottomright: 20px;
-		border-top-right-radius: 20px;
-		border-bottom-right-radius: 20px;
-	}
-
-	.facetsClosedHeader
-	{
-		color:#72b1a0;
-		font-size:16px;
-		padding-bottom:12px;
-	}
-
-	p.css-vertical-text {
-
-	    writing-mode:tb-rl;
-	    -webkit-transform:rotate(270deg);
-	    -moz-transform:rotate(270deg);
-	    -o-transform: rotate(270deg);
-	    white-space:nowrap;
-	    display:block;
-	    bottom:0;
-	    width:20px;
-	    height:20px;
+        background-color: #bee1da;
+        width: 36px;
+        height: 136px;
+        margin-left: -15px;
+        padding: 12px 25px 12px 25px;
+        font-size: 20px;
+        z-index: 1000;
+        text-align: left;
+        vertical-align: central;
+        -webkit-border-top-right-radius: 20px;
+        -webkit-border-bottom-right-radius: 20px;
+        -moz-border-radius-topright: 20px;
+        -moz-border-radius-bottomright: 20px;
+        border-top-right-radius: 20px;
+        border-bottom-right-radius: 20px;
     }
 
-	#facetsClosedHeaderIcon,
-	#facetsClosedHeaderIcon:hover
-	{
+    .facetsClosedHeader {
+        color: #72b1a0;
+        font-size: 16px;
+        padding-bottom: 12px;
+    }
+
+    p.css-vertical-text {
+        writing-mode: tb-rl;
+        -webkit-transform: rotate(270deg);
+        -moz-transform: rotate(270deg);
+        -o-transform: rotate(270deg);
+        white-space: nowrap;
+        display: block;
+        bottom: 0;
+        width: 20px;
+        height: 20px;
+    }
+
+    #facetsClosedHeaderIcon,
+    #facetsClosedHeaderIcon:hover {
         margin-left: -5px;
-		font-size: 18px;
-	}
-	#facetsClosedHeaderIcon:hover
-	{
-		color:white;
-        cursor:pointer;
-	}
-	#facetsClosedHeaderName
-	{
-		font-size: 18px;
-		margin-bottom: 0;
-		margin-left: -13px;
-		margin-top: 50px;
-	}
+        font-size: 18px;
+    }
+
+        #facetsClosedHeaderIcon:hover {
+            color: white;
+            cursor: pointer;
+        }
+
+    #facetsClosedHeaderName {
+        font-size: 18px;
+        margin-bottom: 0;
+        margin-left: -13px;
+        margin-top: 50px;
+    }
 
     #facetsOverlay li,
-    #facetsOverlay .t-dropdown
-    {
-        width:100%;
-        border-color:#72b1a0;
+    #facetsOverlay .t-dropdown {
+        width: 100%;
+        border-color: #72b1a0;
     }
 
-    #facetsOverlay .PropertyHeader,
-    #facetsOverlay .t-dropdown .t-select
-    {
-        text-transform:uppercase;
-        color:#72b1a0;
-    }
-
-
-
+        #facetsOverlay .PropertyHeader,
+        #facetsOverlay .t-dropdown .t-select {
+            text-transform: uppercase;
+            color: #72b1a0;
+        }
 </style>

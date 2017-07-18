@@ -1,16 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Xml;
 using BExIS.Dcm.ImportMetadataStructureWizard;
+using BExIS.Dlm.Entities.MetadataStructure;
+using BExIS.Dlm.Services.MetadataStructure;
 using Vaiona.Utils.Cfg;
+using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
 
-namespace BExIS.Web.Shell.Areas.DCM.Controllers
+namespace BExIS.Modules.Dcm.UI.Controllers
 {
     public class ImportMetadataStructureController : Controller
     {
@@ -26,9 +27,10 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
         public ActionResult ImportMetadataStructureWizard()
         {
-            ViewBag.Title = PresentationModel.GetViewTitle("Import Metadata Structure ");
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Import Metadata Structure", this.Session.GetTenant()); 
 
             Session["TaskManager"] = null;
+            TaskManager = null;
             if (TaskManager == null) TaskManager = (ImportMetadataStructureTaskManager)Session["TaskManager"];
 
             if (TaskManager == null)
@@ -79,14 +81,35 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
         {
             TaskManager = (ImportMetadataStructureTaskManager)Session["Taskmanager"];
 
+            // delete created metadatastructure
+            #region delete mds
 
+            if (TaskManager.Bus.ContainsKey(ImportMetadataStructureTaskManager.SCHEMA_NAME))
+            {
+                string schemaName = TaskManager.Bus[ImportMetadataStructureTaskManager.SCHEMA_NAME].ToString();
+                MetadataStructureManager msm = new MetadataStructureManager();
+
+                if (msm.Repo.Query(m => m.Name.Equals(schemaName)).Any())
+                {
+                    MetadataStructure ms = msm.Repo.Query(m => m.Name.Equals(schemaName)).FirstOrDefault();
+                    msm.Delete(ms);
+                }
+            }
+
+            #endregion
             Session["Taskmanager"] = null;
             TaskManager = null;
+
+
 
             return RedirectToAction("ImportMetadataStructureWizard", "ImportMetadataStructure", new RouteValueDictionary { { "area", "DCM" } });
         }
 
         #endregion
 
+        public ActionResult FinishUpload()
+        {
+            return RedirectToAction("ShowMyDatasetsInFullPage", "Home", new {area = "DDM" });
+        }
     }
 }

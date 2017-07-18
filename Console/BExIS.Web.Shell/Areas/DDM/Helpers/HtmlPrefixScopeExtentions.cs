@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace BExIS.Web.Shell.Areas.DDM.Helpers
+namespace BExIS.Modules.Ddm.UI.Helpers
 {
     public static class HtmlPrefixScopeExtentions
     {

@@ -1,15 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
-using System.Linq;
-using System.Web;
-using System.Web.UI.WebControls;
 using BExIS.Dlm.Entities.Data;
-using BExIS.Dlm.Entities.DataStructure;
 using Telerik.Web.Mvc;
 
-namespace BExIS.Web.Shell.Areas.DDM.Helpers
+namespace BExIS.Modules.Ddm.UI.Helpers
 {
     public static class GridHelper
     {

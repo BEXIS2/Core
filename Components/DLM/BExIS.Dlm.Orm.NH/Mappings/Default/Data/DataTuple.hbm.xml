@@ -3,7 +3,7 @@
     <!-- Mapping BaseEntity properties -->
     
     <id name="Id" type="Int64">
-      <column name="Id" />
+      <column name="Id" index="idx_DataTuples_id"/>
       <generator class="native" />
     </id>
 
@@ -25,8 +25,8 @@
       <column name="TupleAction" />
     </property>
 
-    <property name="Timestamp" type="DateTime">
-      <column name="Timestamp" />
+    <property name="Timestamp" type="Timestamp">
+      <column name="Timestamp"  index="idx_DataTuples_timestamp"/>
     </property>
 
     <property name="XmlVariableValues" type="System.Xml.XmlDocument, System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
@@ -40,12 +40,12 @@
     <many-to-one class="DatasetVersion" name="DatasetVersion" column="DatasetVersionRef">      
     </many-to-one>
 
-    <set cascade="save-update" name="History" inverse="true" lazy="true" order-by="OriginalTupleRef">
+    <!--<set cascade="save-update" name="History" inverse="true" lazy="true" order-by="OriginalTupleRef">
       <key>
         <column name="OriginalTupleRef" />
       </key>
       <one-to-many class="DataTupleVersion" />
-    </set>
+    </set>-->
 
   </class>
 

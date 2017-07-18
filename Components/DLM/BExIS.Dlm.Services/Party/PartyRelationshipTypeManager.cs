@@ -35,7 +35,7 @@ namespace BExIS.Dlm.Services.Party
         /// <param name="partyTypePairTitle"></param>
         /// <param name="partyTypePairDescription"></param>
         /// <returns></returns>
-        public PartyRelationshipType Create(string title,string displayName, string description, bool indicatesHierarchy, int maxCardinality,
+        public PartyRelationshipType Create(string title, string displayName, string description, bool indicatesHierarchy, int maxCardinality,
             int minCardinality, bool partyRelationShipTypeDefault, PartyType partyTypePairAlowedSource, PartyType partyTypePairAlowedTarget,
             string partyTypePairTitle, string partyTypePairDescription)
         {
@@ -53,7 +53,7 @@ namespace BExIS.Dlm.Services.Party
                 MaxCardinality = maxCardinality,
                 MinCardinality = minCardinality,
                 Title = title,
-                DisplayName=displayName
+                DisplayName = displayName
             };
             var partyTypeEntity = new PartyTypePair()
             {
@@ -62,7 +62,7 @@ namespace BExIS.Dlm.Services.Party
                 Description = partyTypePairDescription,
                 PartyRelationshipType = entity,
                 Title = partyTypePairTitle,
-                PartyRelationShipTypeDefault= partyRelationShipTypeDefault
+                PartyRelationShipTypeDefault = partyRelationShipTypeDefault
             };
 
             using (IUnitOfWork uow = this.GetUnitOfWork())
@@ -165,7 +165,7 @@ namespace BExIS.Dlm.Services.Party
 
         #endregion
         #region PartyTypePair
-        public PartyTypePair AddPartyTypePair(string title, PartyType allowedSource, PartyType allowedTarget, string description,bool partyRelationShipTypeDefault,
+        public PartyTypePair AddPartyTypePair(string title, PartyType allowedSource, PartyType allowedTarget, string description, bool partyRelationShipTypeDefault,
             PartyRelationshipType partyRelationshipType)
         {
             Contract.Requires(!string.IsNullOrEmpty(title));
@@ -180,7 +180,7 @@ namespace BExIS.Dlm.Services.Party
                 Description = description,
                 PartyRelationshipType = partyRelationshipType,
                 Title = title,
-                PartyRelationShipTypeDefault= partyRelationShipTypeDefault
+                PartyRelationShipTypeDefault = partyRelationShipTypeDefault
             };
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
@@ -190,7 +190,7 @@ namespace BExIS.Dlm.Services.Party
             }
             return (entity);
         }
-        public PartyTypePair UpdatePartyTypePair(long id, string title, PartyType allowedSource, PartyType alowedTarget, string description,bool partyRelationShipTypeDefault,
+        public PartyTypePair UpdatePartyTypePair(long id, string title, PartyType allowedSource, PartyType alowedTarget, string description, bool partyRelationShipTypeDefault,
             PartyRelationshipType partyRelationshipType)
         {
             Contract.Requires(id > 0);
@@ -266,12 +266,65 @@ namespace BExIS.Dlm.Services.Party
         public IEnumerable<PartyType> GetRootPartyTypes()
         {
             var partyTypes = new List<PartyType>();
+            var rootPartiesDic = new Dictionary<String, List<String>>();
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
                 IRepository<PartyTypePair> repoPartyTypePair = uow.GetRepository<PartyTypePair>();
-                partyTypes.AddRange(repoPartyTypePair.Get(item => item.PartyRelationshipType.IndicatesHierarchy).Select(item => item.AllowedTarget).Distinct());
+                var inheritencePartyTypepairs = repoPartyTypePair.Get(item => item.PartyRelationshipType.IndicatesHierarchy).ToList();
+                var inheritenceTargetParties = inheritencePartyTypepairs.Select(cc => cc.AllowedTarget).ToList();
+                return inheritencePartyTypepairs.Where(cc => !inheritenceTargetParties.Contains(cc.AllowedSource)).Select(cc=>cc.AllowedSource);
             }
-            return partyTypes;
+
+        }
+        public void GetChildrenPartyTypes(int rootPartyTypeId)
+        {
+            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            parameters.Add("metadataStructureId", rootPartyTypeId);
+            List<MetadataPackageUsage> usages = PackageUsageRepo.Get("GetEffectivePackageUsages", parameters).ToList();
+
+        }
+        public Dictionary<String, List<String>> GetRootPartyTypesAndChildren()
+        {
+            var partyTypes = new List<PartyType>();
+            var rootPartiesDic = new Dictionary<String, List<String>>();
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                IRepository<PartyTypePair> repoPartyTypePair = uow.GetRepository<PartyTypePair>();
+                var inheritencePartyTypepairs = repoPartyTypePair.Get(item => item.PartyRelationshipType.IndicatesHierarchy).ToList();
+                var inheritenceTargetParties = inheritencePartyTypepairs.Select(cc => cc.AllowedTarget).ToList();
+                var parentPartyTypePairs = inheritencePartyTypepairs.Where(cc => !inheritenceTargetParties.Contains(cc.AllowedSource));
+
+                foreach (PartyTypePair partyTypePair in parentPartyTypePairs)
+                {
+                    List<string> res = new List<string>();
+                    res.Add(partyTypePair.AllowedTarget.Title);
+                    res.AddRange(getAllchildrens(partyTypePair.AllowedTarget, inheritencePartyTypepairs));
+                    if (rootPartiesDic.ContainsKey(partyTypePair.AllowedSource.Title))
+                    {
+                        var combinedChild = rootPartiesDic[partyTypePair.AllowedSource.Title];
+                        combinedChild.AddRange(res);
+                        rootPartiesDic[partyTypePair.AllowedSource.Title] = combinedChild.Distinct().ToList();
+                    }
+                    else
+                        rootPartiesDic.Add(partyTypePair.AllowedSource.Title, res.Distinct().ToList());
+                }
+
+            }
+            return rootPartiesDic;
+        }
+
+        private string[] getAllchildrens(PartyType partyType, List<PartyTypePair> partyTypePairs)
+        {
+            List<string> res = new List<string>();
+            foreach (var ptp in partyTypePairs)
+            {
+                if (ptp.AllowedSource == partyType)
+                {
+                    res.Add(ptp.AllowedTarget.Title);
+                    res.AddRange(getAllchildrens(ptp.AllowedTarget, partyTypePairs));
+                }
+            }
+            return res.ToArray();
         }
 
         /// <summary>

@@ -11,7 +11,7 @@
 <div id="xyz">
 <h2>Test</h2>
 
-  @using (Ajax.BeginForm("XYZ", "SubmitSpecifyDataset", new { area = "DCM" },
+  @using (Ajax.BeginForm("XYZ", "SubmitSpecifyDataset", new { area = "Dcm" },
                     new AjaxOptions
                     {
                         HttpMethod = "POST",
@@ -24,7 +24,7 @@
 
     
            <b> username </b>
-         @Html.TextBoxFor(m => m.UserName)
+         @Html.TextBoxFor(m => m.Username)
 
 
    }

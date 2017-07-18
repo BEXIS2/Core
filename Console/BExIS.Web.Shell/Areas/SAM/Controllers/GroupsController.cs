@@ -1,176 +1,104 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Web.Mvc;
+﻿using BExIS.Modules.Sam.UI.Models;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
-using BExIS.Web.Shell.Areas.SAM.Models;
+using System.Linq;
+using System.Web.Mvc;
 using Telerik.Web.Mvc;
-using Vaiona.Web.Mvc.Models;
+using Telerik.Web.Mvc.Extensions;
 
-namespace BExIS.Web.Shell.Areas.SAM.Controllers
+namespace BExIS.Modules.Sam.UI.Controllers
 {
     public class GroupsController : Controller
     {
-        public ActionResult Index()
-        {
-            return View();
-        }
-
-        // --------------------------------------------------
-        // GROUPS
-        // --------------------------------------------------
-
-        #region Groups
-
-        public ActionResult Groups()
-        {
-            ViewBag.Title = PresentationModel.GetViewTitle("Groups");
-            return View();
-        }
-
-        [GridAction]
-        public ActionResult Groups_Select()
-        {
-            SubjectManager subjectManager = new SubjectManager();
-            List<GroupGridRowModel> groups = subjectManager.GetAllGroups().Select(g => GroupGridRowModel.Convert(g)).ToList();
-
-            return View(new GridModel<GroupGridRowModel> { Data = groups });
-        }
-
-        #endregion Groups
-
-        [HttpPost]
-        public void Delete(long id)
-        {
-            SubjectManager subjectManager = new SubjectManager();
-            subjectManager.DeleteGroupById(id);
-        }
-
-        public ActionResult Edit(long id)
-        {
-            SubjectManager subjectManager = new SubjectManager();
-
-            Group group = subjectManager.GetGroupById(id);
-
-            return PartialView("_EditPartial", GroupEditModel.Convert(group));
-        }
-
-        [HttpPost]
-        public ActionResult Edit(GroupEditModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                SubjectManager subjectManager = new SubjectManager();
-
-                Group group = subjectManager.GetGroupById(model.GroupId);
-
-                group.Name = model.GroupName;
-                group.Description = model.Description;
-
-                long[] users = group.Users.Select(g => g.Id).ToArray();
-
-                foreach (long userId in users)
-                {
-                    subjectManager.RemoveUserFromGroup(userId, @group.Id);
-                }
-
-                if (Session["Users"] != null)
-                {
-                    foreach (GroupMembershipGridRowModel user in (GroupMembershipGridRowModel[]) Session["Users"])
-                    {
-                        subjectManager.AddUserToGroup(user.Id, group.Id);
-                    }
-                }
-
-                subjectManager.UpdateGroup(group);
-
-                return Json(new { success = true });
-            }
-            else
-            {
-                return PartialView("_EditPartial", model);
-            }
-        }
-
-        [GridAction]
-        public ActionResult Membership_Select(long id, long[] selectedUsers)
-        {
-            SubjectManager subjectManager = new SubjectManager();
-
-            List<GroupMembershipGridRowModel> users = new List<GroupMembershipGridRowModel>();
-
-            if (selectedUsers != null)
-            {
-                users = subjectManager.GetAllUsers().Select(u => GroupMembershipGridRowModel.Convert(u, selectedUsers.Contains(u.Id))).ToList();
-            }
-            else
-            {
-                Group group = subjectManager.GetGroupById(id);
-
-                users = subjectManager.GetAllUsers().Select(u => GroupMembershipGridRowModel.Convert(u, u.Groups.Any(g => g.Id == id))).ToList();
-            }
-
-            return View(new GridModel<GroupMembershipGridRowModel> { Data = users });
-        }
-
-        public void SetMembership(GroupMembershipGridRowModel[] users)
-        {
-            Session["Users"] = users;
-        }
-
-        #region Grid View
-
-        // C
         public ActionResult Create()
         {
-            return PartialView("_CreatePartial");
+            return View();
         }
 
         [HttpPost]
-        public ActionResult Create(GroupCreateModel model)
+        public ActionResult Create(CreateGroupModel model)
         {
             if (ModelState.IsValid)
             {
-                SubjectManager subjectManager = new SubjectManager();
-                subjectManager.CreateGroup(model.GroupName, model.Description);
+                var groupManager = new GroupManager();
 
-                return Json(new { success = true });
+                groupManager.Create(new Group() { Name = model.GroupName, Description = model.Description, GroupType = (GroupType)model.GroupType });
+
+                return RedirectToAction("Index");
             }
 
-            return PartialView("_CreatePartial", model);
+            return View();
         }
 
-        #endregion Grid View
-
-        #region Validation
-
-        public JsonResult ValidateGroupName(string groupName, long groupId = 0)
+        public ActionResult Delete(long id)
         {
-            SubjectManager subjectManager = new SubjectManager();
-
-            Group group = subjectManager.GetGroupByName(groupName);
-
-            if (group == null)
-            {
-                return Json(true, JsonRequestBehavior.AllowGet);
-            }
-            else
-            {
-                if (group.Id == groupId)
-                {
-                    return Json(true, JsonRequestBehavior.AllowGet);
-                }
-                else
-                {
-                    string error = String.Format(CultureInfo.InvariantCulture, "The group name already exists.", groupName);
-
-                    return Json(error, JsonRequestBehavior.AllowGet);
-                }
-            }
+            return RedirectToAction("Index");
         }
 
-        #endregion Validation
+        [HttpPost]
+        public ActionResult Delete(DeleteGroupModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                return RedirectToAction("Index");
+            }
+
+            return View();
+        }
+
+        [GridAction(EnableCustomBinding = true)]
+        public ActionResult Groups_Select(GridCommand command)
+        {
+            var groupManager = new GroupManager();
+
+            // Source + Transformation - Data
+            var groups = groupManager.Groups.ToGroupGridRowModel();
+
+            // Filtering
+            var filtered = groups.Where(ExpressionBuilder.Expression<GroupGridRowModel>(command.FilterDescriptors));
+            var total = filtered.Count();
+
+            // Sorting
+            var sorted = (IQueryable<GroupGridRowModel>)filtered.Sort(command.SortDescriptors);
+
+            // Paging
+            var paged = sorted.Skip((command.Page - 1) * command.PageSize)
+                .Take(command.PageSize);
+
+            return View(new GridModel<GroupGridRowModel> { Data = paged.ToList(), Total = total });
+        }
+
+        [GridAction(EnableCustomBinding = true)]
+        public ActionResult Memberships_Select(GridCommand command)
+        {
+            var userManager = new UserManager(new UserStore());
+
+            // Source + Transformation - Data
+            var users = userManager.Users.ToUserGridRowModel();
+
+            // Filtering
+            var filtered = users;
+            var total = filtered.Count();
+
+            // Sorting
+            var sorted = (IQueryable<UserMembershipGridRowModel>)filtered.Sort(command.SortDescriptors);
+
+            // Paging
+            var paged = sorted.Skip((command.Page - 1) * command.PageSize)
+                .Take(command.PageSize);
+
+            return View(new GridModel<UserMembershipGridRowModel> { Data = paged.ToList(), Total = total });
+        }
+
+        public ActionResult Index()
+        {
+            var groupManager = new GroupManager();
+            for (int i = 0; i < 100; i++)
+            {
+                groupManager.Create(new Group() { Name = $"Group {i}", Description = $"Description of Group {i}", GroupType = GroupType.Private });
+            }
+
+            return View();
+        }
     }
 }

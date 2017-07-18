@@ -24,6 +24,7 @@ bld/
 [Bb]in/
 [Oo]bj/
 [Ll]og/
+Workspace/
 
 # Visual Studio 2015 cache/options directory
 .vs/
@@ -253,3 +254,9 @@ paket-files/
 # JetBrains Rider
 .idea/
 *.sln.iml
+
+# SPECIFIC
+/Console/BExIS.Web.Shell/Credentials.config
+/Console/BExIS.Web.Shell/Areas/DCM/Content/Images/Help
+/Console/BExIS.Web.Shell/Areas/RPM/Content/Images/Help
+/Console/BExIS.Web.Shell/Areas/SAM/Content/Images/Help

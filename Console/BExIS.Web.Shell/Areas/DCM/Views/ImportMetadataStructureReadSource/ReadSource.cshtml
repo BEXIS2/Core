@@ -27,23 +27,47 @@
             <table>
                 <tr>
                     <td>@Html.LabelFor(m => m.SchemaName)</td>
-                    <td>@Html.TextBoxFor(m => m.SchemaName)</td>
+                    @if (!Model.IsGenerated)
+                    {
+                        <td>@Html.TextBoxFor(m => m.SchemaName)</td>
+                    }
+                    else
+                    {
+                        <td>@Model.SchemaName </td>
+                    }
                 </tr>
                 <tr>
                     <td>@Html.LabelFor(m => m.RootNode)</td>
-                    <td>@Html.TextBoxFor(m => m.RootNode)</td>
+                    @if (!Model.IsGenerated)
+                    {
+                        <td>@Html.TextBoxFor(m => m.RootNode)</td>
+                    }
+                    else
+                    {
+                        <td>@Model.RootNode </td>
+                    }
                 </tr>
 
                 <tr>
                     <td>
-                        @Ajax.ActionLink("Generate", "GenerateMS",@Model.StepInfo.GetActionInfo.ControllerName,new RouteValueDictionary { { "area", "DCM" } },
-                                         new AjaxOptions { HttpMethod = "GET", 
-                                         InsertionMode = InsertionMode.Replace, 
-                                         UpdateTargetId = @id,
-                                         OnBegin="generateOnBegin",
-                                         OnSuccess="generateOnSuccess"
-                                         },
-                                         new { @class = "bx-button function" })
+                        @if (Model.IsGenerated)
+                        {
+                            <button class = "bx-button function bx-disabled" disabled="disabled">Generate</button>
+                        }
+                        else
+                        {
+
+                            @Ajax.ActionLink("Generate", "GenerateMS", @Model.StepInfo.GetActionInfo.ControllerName, new {area = "Dcm"},
+                                new AjaxOptions
+                                {
+                                    HttpMethod = "GET",
+                                    InsertionMode = InsertionMode.Replace,
+                                    UpdateTargetId = @id,
+                                    OnBegin = "generateOnBegin",
+                                    OnSuccess = "generateOnSuccess"
+                                },
+                                new {@class = "bx-button function"})
+                        }
 
                     </td>
                     <td></td>
@@ -57,11 +81,11 @@
      <div class="wizardStep_Success stepper">
        @if (Model != null)
        {
-           if (Model.ErrorList != null)
+           if (Model.ErrorList != null && ViewData.ModelState.IsValid)
            {
                if (Model.ErrorList.Count == 0)
                {
-                   if (!Model.StepInfo.notExecuted)
+                   if (!Model.StepInfo.notExecuted )
                    { 
                       <b>The metadata structure @Model.SchemaName was created successfully</b>
                    }
@@ -70,7 +94,7 @@
        }
      </div>
 
-     <div class="wizardStep_Error stepper">
+     <div class="wizardStep_Error stepper" style="top:120px">
 
         @Html.ValidationSummary(true)
 

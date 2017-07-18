@@ -53,5 +53,24 @@ namespace BExIS.Dcm.Wizard
             ActionName = "";
             Parameters = new Dictionary<String, object>();
         }
+
+        /// <summary>
+        /// Get true back if all needed parameter are set
+        /// </summary>
+        /// <returns></returns>
+        public bool IsComplete()
+        {
+            if (String.IsNullOrEmpty(ActionName))
+                return false;
+
+            if (String.IsNullOrEmpty(ActionName))
+                return false;
+
+            if (String.IsNullOrEmpty(ActionName))
+                return false;
+
+            return true;
+        }
+
     }
 }

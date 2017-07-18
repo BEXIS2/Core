@@ -1,19 +1,20 @@
-﻿@model IEnumerable<BExIS.Dlm.Entities.Party.PartyType>
+﻿@model Dictionary<String, List<String>>
 <div class="bx-rpm-buttons">
     @Html.ActionLink("Create Party", "Create", "Party", new { }, new { @class = "bx-button function" })
 </div>
 <div id="tabs" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
     <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all" style="background-color:none !important;">
-        <li id="-1" class="ui-state-default ui-corner-top ui-state-active">
+        <li id="" class="ui-state-default ui-corner-top ui-state-active">
             <a class="ui-tabs-anchor">
                 <span>All</span>
             </a>
         </li>
         @foreach (var rootPartyType in Model)
         {
-            <li id="@rootPartyType.Id" class="ui-state-default ui-corner-top">
+            var partyTypes=string.Join(",", rootPartyType.Value);
+            <li partyTypes="@partyTypes" class="ui-state-default ui-corner-top">
                 <a class="ui-tabs-anchor">
-                    <span>@rootPartyType.Title</span>
+                    <span>@rootPartyType.Key</span>
                 </a>
             </li>
         }
@@ -32,14 +33,16 @@
     $("#tabs li").on("click", function () {
         $("#tabs li").removeClass("ui-state-active");
         $(this).addClass("ui-state-active");
-        loadParties(parseInt($(this).attr("id")));
+        loadParties($(this).attr("partyTypes"));
     });
 
-    function loadParties(id)
+    function loadParties(partyTypes)
     {
+        if (!partyTypes)
+            partyTypes = '';
         $('#imgPartiesLoading').show();
         $('#divPartiesGrid').html("");
-        $('#divPartiesGrid').load('/BAM/Party/LoadParties/' + id, function (response, status, xhr) {
+        $('#divPartiesGrid').load('/BAM/Party/LoadParties/?party_types=' + partyTypes, function (response, status, xhr) {
             if (status == "error") {
                 $('#divPartiesGrid').html("")
                 alert(response);
@@ -48,5 +51,5 @@
         });
     }
 
-    loadParties(-1);
+    loadParties('');
 </script>

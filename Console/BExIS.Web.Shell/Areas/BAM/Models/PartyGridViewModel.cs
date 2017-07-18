@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace BExIS.Web.Shell.Areas.BAM.Models
+namespace BExIS.Modules.Bam.UI.Models
 {
-    public class PartyGridViewModel
+    public class partyGridModel
     {
         public long Id { get; set; }
         public DateTime StartDate { get; set; }
