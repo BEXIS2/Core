@@ -1,0 +1,346 @@
+﻿@model BExIS.Modules.Dcm.UI.Models.Metadata.MetadataAttributeModel
+@using BExIS.Modules.Dcm.UI.Models
+@using Telerik.Web.Mvc.UI
+@{
+    string id = Model.Id + "_" + Model.Parent.Id + "_" + Model.Number + "_" + Model.ParentModelNumber + "_" + Model.NumberOfSourceInPackage + "_" + Model.ParentStepId;
+    string idInput = id + "_Input";
+    string idAdd = id + "_Add";
+    string idRemove = id + "_Remove";
+    string idUp = id + "_Up";
+    string idDown = id + "_Down";
+
+    bool hasErrors = false;
+    string errorMessage = "";
+    string errorClass = "";
+    string lockedClass = "";
+    bool locked = false;
+    bool showOptional = false;
+
+    string displayName = "";
+    char tmp = ' ';
+
+    foreach (char letter in Model.DisplayName)
+    {
+        if (Model.DisplayName.First() == letter)
+        {
+            tmp = letter;
+            displayName += letter;
+        }
+        else
+        {
+            if (Char.IsUpper(letter) && Char.IsLower(tmp))
+            {
+                displayName += " " + letter;
+            }
+            else
+            {
+                displayName += letter;
+            }
+
+            tmp = letter;
+        }
+    }
+
+}
+
+@if (Model.Number > 1)
+{
+    displayName += " " + Model.Number;
+}
+
+@if (ViewData.Keys.Contains("Locked"))
+{
+    locked = (bool)ViewData["Locked"];
+    lockedClass = "bx-disabled";
+}
+
+@if (ViewData.Keys.Contains("ShowOptional"))
+{
+    showOptional = (bool)ViewData["ShowOptional"];
+}
+
+
+@if (Model.Errors != null && Model.Errors.Count() > 0)
+{
+    hasErrors = true;
+}
+
+@if (hasErrors == true)
+{
+    errorClass = "bx-input-error";
+    foreach (var item in Model.Errors)
+    {
+        if (Model.Errors.First().Equals(item))
+        {
+            errorMessage = item.GetMessage();
+        }
+        else
+        {
+            errorMessage += ", " + item.GetMessage();
+        }
+    }
+}
+
+<div id="@id" class="metadataAttributeContent" onload="metadataAttributeOnLoad(this, @hasErrors)">
+
+    @if (@Model != null && !(!showOptional && Model.IsEmpty && (Model.MinCardinality == 0) && locked))
+    {
+        <table>
+            <tr>
+                <td class="metadataAttributeLabel">
+                    @if (Model.MinCardinality > 0)
+                    {
+                        <b title="This field is required" style="color:red">*</b>
+                    }
+
+                    <b title="@Model.Discription">@displayName</b>
+
+                    @*Empty = @Model.IsEmpty.ToString();*@
+                </td>
+                <td class="metadataAttributeInput">
+                    @if (Model.SystemType.Equals(TypeCode.String.ToString()))
+                    {
+
+                        if (Model.DataType.ToLower().Equals("text") ||
+                            (Model.DataType.ToLower().Equals("string") &&
+                            Model.Value!= null && Model.Value.ToString().Length>=60))
+                        {
+                            if (!locked)
+                            {
+                                if (Model.DomainList.Count == 0)
+                                {
+                                    @Html.TextAreaFor(m => m.Value,
+                                        new { OnChange = "OnChange(this)",
+                                            Name = @displayName,
+                                            Id = @idInput,
+                                            PackageId = @Model.Parent.Id,
+                                            Title = @errorMessage,
+                                            @class = "bx-input bx-metadataFormTextInput " + @errorClass,
+                                            onkeyup = "OnKeyUpTextArea(this)",
+                                            OnLoad = "OnKeyUpTextInput(this)"
+                                        })
+                                }
+                                else
+                                {
+                                    @(Html.Telerik().DropDownList()
+                                        .Placeholder("Select, please")
+                                        .Name(@idInput)
+                                        .HtmlAttributes(new { PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-dropdown" + @errorClass })
+                                        .ClientEvents(events => events.OnChange("OnChangeDropDown"))
+                                        .BindTo(new SelectList(Model.DomainList, Model.Value)))
+                                }
+                            }
+                            else
+                            {
+
+                                @Html.TextAreaFor(m => m.Value, new { disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input bx-metadataFormTextInput " + @errorClass + " " + lockedClass })
+
+                            }
+
+                        
+
+                        }
+
+                        if (Model.DataType.ToLower().Equals("string") &&
+                            ((Model.Value != null && Model.Value.ToString().Length < 80) ||
+                            Model.Value==null))
+                        {
+                            if (!locked)
+                            {
+
+                                if (Model.DomainList.Count == 0)
+                                {
+                                    string value = "";
+                                    if (@Model.Value != null)
+                                    {
+                                        value = @Model.Value.ToString();
+                                    }
+
+                                    @*@Html.TextBoxFor(m => m.Value, new { OnChange = "OnChange(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input " + @errorClass })*@
+                                    
+                                    @(Html.Telerik().AutoComplete()
+                                            .Name(@idInput)
+                                            .Encode(false)
+                                            .Value(value)
+                                            .HtmlAttributes(new {@class= "bx-metadataFormTextInput "+@errorClass, title= @errorMessage, onKeyUp= "OnKeyUpTextInput(this)" })
+                                            .ClientEvents(events => events
+                                                .OnChange("OnChangeTextInput"))
+                                            .DataBinding(dataBinding => dataBinding
+                                                .Ajax().Select("_AutoCompleteAjaxLoading", "Form")
+                                                .Cache(false))
+
+                                            .Filterable(filtering =>
+                                            {
+                                                filtering.FilterMode(AutoCompleteFilterMode.Contains);
+                                                filtering.MinimumChars(2);
+
+                                            })
+                                    )
+
+                                }
+                                else
+                                {
+                                    @(Html.Telerik().DropDownList()
+                                            .Name(@idInput)
+                                            .Placeholder("Select, please")
+                                            .HtmlAttributes(new { PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-dropdown " + @errorClass })
+                                            .ClientEvents(events => events.OnChange("OnChangeDropDown"))
+                                            .BindTo(new SelectList(Model.DomainList, Model.Value)))
+                                }
+                            }
+                            else
+                            {
+                                @*<div class="bx-input bx-metadataFormTextInput" style="vertical-align: middle" >
+                                    @if (Model.Value != null)
+                                    {
+                                        @Model.Value.ToString()
+                                    }
+                                </div>*@
+                                @Html.TextBoxFor(m => m.Value, new { disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input bx-metadataFormTextInput " + @errorClass + " " + lockedClass })
+
+                            }
+                        }
+
+                    }
+
+                    @if (Model.SystemType.Equals(TypeCode.Boolean.ToString()))
+                    {
+
+                        bool value = false;//(bool?)Model.Value ?? false;
+                        try
+                        {
+                            value = Convert.ToBoolean(Model.Value);
+                        }
+                        catch
+                        {
+                            value = false;
+                        }
+
+                        if (!locked)
+                        {
+                            @Html.CheckBox(Model.DisplayName, value, new { OnClick = "OnChangeCheckBox(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage })
+                        }
+                        else
+                        {
+                            @Html.CheckBox(Model.DisplayName, value, new { OnClick = "OnChangeCheckBox(this)", disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage })
+                        }
+
+                    }
+
+                    @if (Model.SystemType.Equals(TypeCode.Int32.ToString()) ||
+                        Model.SystemType.Equals(TypeCode.Int64.ToString())
+                    )
+                    {
+                        if (!locked)
+                        {
+
+                            int value = 0;
+                            value = Convert.ToInt32(Model.Value);
+
+                            @(Html.Telerik().IntegerTextBox()
+                                                    .Name(idInput)
+                                                    .MinValue(0)
+                                                    .MaxValue(Int32.MaxValue)
+                                                    .Value(value)
+                                                    .ClientEvents(events => events
+                                                    .OnChange("OnChangeNumbers"))
+                                                    .InputHtmlAttributes(new { PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input bx-metadataFormTextInput " + @errorClass })
+                            )
+                        }
+                        else
+                        {
+
+                            @Html.TextBoxFor(m => m.Value, new { disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input bx-metadataFormTextInput " + @errorClass + " " + lockedClass })
+                        }
+                    }
+
+                    @if (Model.SystemType.Equals(TypeCode.Decimal.ToString()) ||
+                    Model.SystemType.Equals(TypeCode.Double.ToString()))
+                    {
+                        if (!locked)
+                        {
+                            @Html.TextBoxFor(m => m.Value, new { OnChange = "OnChange(this)", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input bx-metadataFormTextInput " + @errorClass })
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.Value, new { OnChange = "OnChange(this)", disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input bx-metadataFormTextInput " + @errorClass })
+                        }
+                    }
+
+
+                    @if (Model.SystemType.Equals(TypeCode.DateTime.ToString()))
+                    {
+                        if (!locked)
+                        {
+                            string value = "";
+                            if (Model.Value != null)
+                            {
+                                value = Model.Value.ToString();
+                            }
+                            else
+                            {
+                                value = "";//@defaultDate.ToString();
+                            }
+                            string format = Model.DisplayPattern;
+
+                            if (string.IsNullOrEmpty(format))
+                            {
+                                format = "yyy-MM-dd";
+                            }
+
+                            @(Html.Telerik().DatePicker()
+                                .Name(@idInput)
+                                .ShowButton(true)
+                                .TodayButton("d")
+                                .OpenOnFocus(true)
+                                .Format(format)
+                                .Value(value)
+                                .ClientEvents(events => events
+                                    .OnChange("OnChangeDatePicker"))
+                            )
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(m => m.Value, new { disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input bx-metadataFormTextInput " + @errorClass + " " + lockedClass })
+                        }
+                    }
+                </td>
+                <td class="metadataAttributeOption">
+                    @Html.ValidationMessageFor(m => m.Value)
+                    @if (Model.MaxCardinality > 1 && !locked)
+                    {
+                        <table id="attributeOptionTable">
+                            <tr>
+                                <td><button id="@idAdd" type="button" value="Add" name="Add" class="bx-function bx-add" onclick="OnClickAdd(this, @Model.MaxCardinality)"></button></td>
+                                <td><button id="@idRemove" type="button" value="Remove" name="Remove" class="bx-function bx-delete" onclick="OnClickRemove(this)"></button></td>
+                                <td>
+                                    @if (!Model.last)
+                                    {
+                                        <button id="@idDown" type="button" value="Down" name="Down" class="bx-function bx-down" onclick="OnClickDown(this)"></button>
+                                    }
+                                    else
+                                    {
+                                        <button id="@idDown" type="button" value="Down" name="Down" class="bx-function bx-down bx-disabled" disabled></button>
+                                    }
+
+                                </td>
+                                <td>
+                                    @if (!Model.first)
+                                    {
+                                        <button id="@idUp" type="button" value="Up" name="Up" class="bx-function bx-up" onclick="OnClickUp(this)"></button>
+                                    }
+                                    else
+                                    {
+                                        <button id="@idUp" type="button" value="Up" name="Up" class="bx-function bx-up bx-disabled" disabled></button>
+                                    }
+
+                                </td>
+                            </tr>
+                        </table>
+                    }
+                </td>
+            </tr>
+        </table>
+    }
+
+</div>

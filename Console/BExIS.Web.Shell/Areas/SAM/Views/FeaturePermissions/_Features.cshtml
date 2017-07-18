@@ -1,0 +1,103 @@
+﻿@using BExIS.Modules.Sam.UI.Models
+@using Telerik.Web.Mvc.UI
+
+@model IEnumerable<FeatureTreeViewItemModel>
+
+@(Html.Telerik().TreeView()
+        .Name("treeViewFeatures")
+        .BindTo(Model, mappings =>
+        {
+            mappings.For<FeatureTreeViewItemModel>(binding => binding
+
+                .ItemDataBound((item, feature) =>
+                {
+                    item.Text = feature.FeatureName;
+                    item.Value = feature.Id.ToString();
+                    item.LinkHtmlAttributes["title"] = "Select " + feature.FeatureName + " to manage the corresponding feature permissions on the right.";
+                })
+                .Children(feature => feature.Children));
+        })
+        .ClientEvents(events => events
+            .OnSelect("OnSelect")
+        )
+
+        .ExpandAll(true)
+)
+
+<script type="text/javascript">
+
+    $("#treeViewFeatures li div").click(function (e) {
+        $(e.target).find(".t-in").trigger("click");
+    });
+
+    function GetTreeView() {
+        return $('#treeViewFeatures').data('tTreeView');
+    }
+
+    function OnSelect(e) {
+        var featureId = GetTreeView().getItemValue(e.item);
+        var prevSelectedDiv = $(".bx-selected");
+        if (prevSelectedDiv.length > 0) $(prevSelectedDiv).removeClass("bx-selected");
+
+        var selectedDiv = $(e.item).find("div")[0];
+        $(selectedDiv).addClass("bx-selected");
+
+        $('#subjects').empty();
+
+        $.get('@Url.Action("Subjects", "FeaturePermissions")',
+            { FeatureId: featureId },
+            function (contentData) {
+
+                $('#subjects').html(contentData);
+
+                truncateTitle();
+            });
+    }
+</script>
+
+<style type="text/css">
+    #TreeView_Features .t-minus {
+        padding-top: 2px;
+    }
+
+    #TreeView_Features .t-item {
+        padding-right: 0;
+    }
+
+    #TreeView_Features span:hover {
+        font-weight: normal;
+    }
+
+    #TreeView_Features div {
+        padding-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+    }
+
+        #TreeView_Features div span {
+            max-width: 180px;
+            padding-right: 0;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+        }
+
+        #TreeView_Features div:hover,
+        #TreeView_Features .bx-selected,
+        #TreeView_Features span.t-state-selected {
+            background-color: #d2e8e3;
+            font-weight: normal;
+        }
+
+    #TreeView_Features .t-item li {
+        padding-top: 0;
+        padding-bottom: 0;
+        padding-left: 15px;
+    }
+
+    #TreeView_Features li {
+        padding-left: 25px;
+        padding-right: 0;
+        overflow-x: hidden;
+    }
+</style>

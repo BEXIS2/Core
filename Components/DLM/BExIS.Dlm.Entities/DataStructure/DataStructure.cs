@@ -90,7 +90,7 @@ namespace BExIS.Dlm.Entities.DataStructure
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>        
-        public virtual ICollection<DataView> Views { get; set; }
+        public virtual ICollection<DatasetView> Views { get; set; }
 
         /// <summary>
         ///

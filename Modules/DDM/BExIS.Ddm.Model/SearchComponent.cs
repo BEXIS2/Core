@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BExIS.Utils.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -25,7 +26,7 @@ namespace BExIS.Ddm.Model
             this.Properties = new List<Property>();
             this.Facets = new List<Facet>();
             this.TextBoxSearchValues = new List<TextValue>();
-        
+
         }
 
         /// <summary>
@@ -73,7 +74,7 @@ namespace BExIS.Ddm.Model
             if (this.ContainsProperty(name)) return true;
             if (this.ContainsCategory(name)) return true;
             return false;
-        }     
+        }
 
         #region Facets
         /// <summary>
@@ -94,15 +95,15 @@ namespace BExIS.Ddm.Model
         /// <returns></returns>
         public Facet GetFacet(string facetName)
         {
-            if(Facets.Where(p => p.Name.Equals(facetName, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault() != null)
+            if (Facets.Where(p => p.Name.Equals(facetName, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault() != null)
                 return Facets.Where(p => p.Name.Equals(facetName, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
             else
             {
-                foreach(Facet facet in Facets )
+                foreach (Facet facet in Facets)
                 {
-                    if(facet.Childrens.Where(p => p.Name.Equals(facetName, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault() != null)
+                    if (facet.Childrens.Where(p => p.Name.Equals(facetName, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault() != null)
                         return facet.Childrens.Where(p => p.Name.Equals(facetName, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
-                    
+
                 }
             }
 
@@ -131,7 +132,7 @@ namespace BExIS.Ddm.Model
         /// <returns></returns>
         public bool ContainsFacet(string facetName)
         {
-            return  Facets.Where(p => p.Name.Equals(facetName, StringComparison.InvariantCultureIgnoreCase)).Count() > 0;
+            return Facets.Where(p => p.Name.Equals(facetName, StringComparison.InvariantCultureIgnoreCase)).Count() > 0;
         }
         #endregion
 
@@ -190,7 +191,7 @@ namespace BExIS.Ddm.Model
         /// <remarks></remarks>
         /// <seealso cref=""/>        
         public IEnumerable<TextValue> TextBoxSearchValues { get; set; }
-     
+
         #endregion
 
         #region Properties

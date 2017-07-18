@@ -1,0 +1,107 @@
+@using Vaiona.Web.Mvc;</br>
+@section Information
+{
+This guide will walk you through the basics of using data planning including how to manage data types, units, data attributes and also structured and unstructured data structures.
+}
+@section leftPane{
+  <div class="toc">
+  <p style = "font-weight:bold" > Data Planning ToC </p>
+  <br />
+<p></p>    <a href="#_TocTop">1 Overview</a>
+<p></p>    <a href="#_Toc468355703">2 Data Structure Manager</a>
+<p></p>    <a href="#_Toc468355704">&nbsp;&nbsp; 2.1 Create a Data Structure</a>
+<p></p>    <a href="#_Toc468355705">&nbsp;&nbsp; 2.2 Add Variables</a>
+<p></p>    <a href="#_Toc468355706">&nbsp;&nbsp; 2.3 Create a copy of a data structure</a>
+<p></p>    <a href="#_Toc468355707">&nbsp;&nbsp; 2.4 Download an Excel template</a>
+<p></p>    <a href="#_Toc468355708">3 Data Type Manager</a>
+<p></p>    <a href="#_Toc468355709">4 Unit Manager</a>
+<p></p>    <a href="#_Toc468355710">5 Variable Template Manager</a>
+  </div>
+}
+<style>
+.toc { position: fixed; top:100px; }
+.scrollable { overflow: auto; height: 750px; }
+:target:before { content: ""; display: block; height: 100px; }
+</style>
+
+<p><span>&#xa0;</span></p>
+<p><span>&#xa0;</span></p>
+<p><span>&nbsp;</span></p>
+<p><span>&#xa0;</span></p>
+<p><span>&#xa0;</span></p>
+<br/><p class="Heading-1"><a id="_TocTop"><span>1 Overview</span><a id="_GoBack" /></a></p>
+<p><span>&#xa0;</span></p>
+<p><span>In </span><span>BE</span><span>X</span><span>IS</span><span>&nbsp;2</span><span>&nbsp;</span><span>data is </span><span>stored and managed </span><span>as part of a dataset. A dataset may be anything from a single record up to a collection of millions of records and multiple variables. Each dataset may have an individual structure given by the number of variables and their properties. It is up to the user or the data manager of a project to define such Data Structures. This is what the Data Planning Module is for. </span></p>
+<p><span>The module is called "Data Planning" since it is good practice to specify the Data Structure before collecting your data in the field or the laboratory. Your data can only be uploaded to the system (using the Data Collection Module) if there is a corresponding Data Structure already existing.  </span></p>
+<p><span>A Data Structure contains one or more </span><span>Variables</span><span>. Each </span><span>Variable</span><span>&nbsp;is defined by its Data Type, a Unit, and a unique name. So defining Data Types and Units would be the first step, if they are not available yet.</span><span>&nbsp;</span></p>
+<p><span>&#xa0;</span></p>
+<p><img src="~/Areas/RPM/Images/help\help_img1.jpeg" width="602" height="123" alt="Main_Menu_1" /><span>&#xa0;</span></p>
+<p><span>&#xa0;</span></p>
+<p><img src="~/Areas/RPM/Images/help\help_img2.jpeg" width="598" height="155" alt="Main_Menu_2" /><span>&#xa0;</span></p>
+<p><span>&#xa0;</span></p>
+<p><span>The system encourages reuse of </span><span>Variables</span><span>, as well as Data Types and Units. For example, there s</span><span>hould be only one Variable (i.e. Variable Template)</span><span>&nbsp;for temperat</span><span>ure values with a Data type of "float"</span><span>&nbsp;and measured in degree Celsius (i.e. unit). All datasets containing such temperature measurements should use this </span><span>Variable Template</span><span>&nbsp;in their data structure. The advantage of such reuse is not only to avoid redundancy (e.g. different names for same thing), but is foremost to enable integration of identical variables across different datasets for large synthesis tasks later on.</span></p>
+<p><span>&#xa0;</span></p>
+<p class="Heading-1"><a id="_Toc468355703"><span>2 Data Structure Manager</span></a></p>
+<p><span>The Data Structure Manager is a tool to create, modify and delete Data Structures. Data Structures contain Variables, which are specific instances of Variable Templates. For example, only one Variable Template "Count" is needed to build a Data Structure of multiple similar variables where only the name (e.g. species name) is different. Each Variable uses the same Variable Template (e.g. instances of Count). </span></p>
+<p><span>It is possible to create Data Structures for structured data (Excel tables, CSV-Files ...) and for unstructured data (images, videos ...). </span></p>
+<p><span>&#xa0;</span></p>
+<p class="Heading-2"><a id="_Toc468355704"><span>Create a Data Structure</span></a></p>
+<p><span>To create a data structure, in the Plan Data Structure Manager, select the Tabular or File radio button. Fill the fields and click on the Save button. </span><span>A name for a data structure is </span><span>required.</span></p>
+<p><img src="~/Areas/RPM/Images/help\help_img3.jpeg" width="597" height="192" alt="Create-Datastructure" /><span>&#xa0;</span></p>
+<p><span>By clicking on the name of a Data Structure in the list, if it is not already in use by a dataset, you can edit it. In case of Tabular, you can edit also variables. </span></p>
+<p><span>In Edit mode, you can</span></p>
+<p class="List-Paragraph"><span>&#183;</span><span>&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;</span><span>see datasets that are using that data structure</span></p>
+<p class="List-Paragraph"><span>&#183;</span><span>&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;</span><span>download an Excel template (in case of structured)</span></p>
+<p class="List-Paragraph"><span>&#183;</span><span>&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;</span><span>delete a data structure</span></p>
+<p class="List-Paragraph"><span>&#183;</span><span>&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;</span><span>create a copy by clicking on the "Save As" button</span></p>
+<p><span>&#xa0;</span></p>
+<p class="Heading-2"><a id="_Toc468355705"><span>Add Variables</span></a></p>
+<p><span>In case of Tabular, a data structure usually contains variables. Variables are defined before as Variable Templates. If a data structure is in use, you are not able to add or remove variables.</span></p>
+<p><img src="~/Areas/RPM/Images/help\help_img4.jpeg" width="602" height="414" alt="Datastructure-Edit" /><span>&#xa0;</span></p>
+<p><span>&#xa0;</span></p>
+<p><span>After adding variables, you can rearrange the order of the variables by dragging and dropping them. Please note, that the order cannot be changed anymore once a dataset is using this data structure. You may also delete variable from the list.</span></p>
+<p><span>You can define requirement for each variable. In the Optional row, if the checkbox is ticked, means that during upload data to a dataset, this variable could be empty.</span></p>
+<p><span>&#xa0;</span></p>
+<p class="Heading-2"><a id="_Toc468355706"><span>Create a copy of a data structure</span></a></p>
+<p><span>You can create a copy of a data structure, either it is Tabular or File (formerly structured vs. unstructured), by clicking on the Save as button. In that window, the Name is filled with the original one and you need to fill it with a new one. </span></p>
+<p><img src="~/Areas/RPM/Images/help\help_img5.jpeg" width="600" height="413" alt="Datastructure-copy" /><span>&#xa0;</span></p>
+<p><span>&#xa0;</span></p>
+<p class="Heading-2"><a id="_Toc468355707"><span>Download an Excel template</span></a></p>
+<p><span>By clicking on the Download button system create an Excel template from current data structure, which is used when you want to upload data to a dataset (refer to data collection user guide for more details). Save this template in your computer and open it to fill by your data.</span></p>
+<p><span>As you open this template, you have to enable macros for it. </span><span>Macros automate frequently-used tasks</span><span>. Depending on what Microsoft version you use, enable or disable macros is a bit different. But, Macro security settings are generally located in the Trust Center. </span></p>
+<p><span>Normally, when you open a template file, you have a security warning, that says macros have been disabled. You can click on the Options button and enable this content. </span></p>
+<p><img src="~/Areas/RPM/Images/help\help_img6.png" width="601" height="376" alt="enableMacro" /><span>&#xa0;</span></p>
+<p class="Heading-1"><span>&#xa0;</span></p>
+<p class="Heading-1"><a id="_Toc468355708"><span>Data Type Manager</span></a></p>
+<p><span>&#xa0;</span></p>
+<p><span>With the Data Type Manager you are able to create, modify and delete Data Types. They are required to specify </span><span>Variable Templates</span><span>.</span></p>
+<p><img src="~/Areas/RPM/Images/help\help_img7.jpeg" width="599" height="282" alt="Manage_Data_Type" /><span>&#xa0;</span></p>
+<p><span>To create a Data Type, click on the </span><span>Create</span><span>&nbsp;Data Type button</span><span>. Fill the fields, select a system type and click on the Save button. </span><span>The Data Type</span><span>&nbsp;is stored if all information are correct and it is not a duplicate.</span></p>
+<p><span>Use </span><img src="~/Areas/RPM/Images/help\help_img8.png" width="24" height="24" alt="img8" /><span>&nbsp;</span><span>for edit and </span><img src="~/Areas/RPM/Images/help\help_img9.png" width="24" height="24" alt="img9" /><span>&nbsp;for delete a data type.</span></p>
+<p><span>In a typical project scenario, the responsible data(base) manager would have created the most common Data Types and Units.</span></p>
+<p><img src="~/Areas/RPM/Images/help\help_img10.png" width="516" height="317" alt="Create Data Type" /><span>&#xa0;</span></p>
+<p><span>&#xa0;</span></p>
+<p class="Heading-1"><a id="_Toc468355709"><span>Unit Manager</span></a></p>
+<p><span>With the Unit Manager you are able to create, modify and delete Units. Units may be required to define </span><span>Variable Template</span><span>s.</span></p>
+<p><img src="~/Areas/RPM/Images/help\help_img11.jpeg" width="600" height="303" alt="Manage_Units" /><span>&#xa0;</span></p>
+<p><span>&#xa0;</span></p>
+<p><span>To create a </span><span>Unit</span><span>, click on the </span><span>Create Unit</span><span>&nbsp;button</span><span>. Fill the fields, select a </span><span>Measurement System and create or select a Dimension. To create a Dimension enter a Name in the Dimension Name field and edit the Dimension Specification in this pattern </span><span>"L(0,0)M(0,0)T(0,0)I(0,0)Θ(0,0)N(0,0)J(0,0)"</span><span>, for more information click </span><a href="https://translate.google.de/translate?sl=de&amp;tl=en&amp;js=y&amp;prev=_t&amp;hl=de&amp;ie=UTF-8&amp;u=https%3A%2F%2Fde.wikipedia.org%2Fwiki%2FDimension_%28Gr%25C3%25B6%25C3%259Fensystem%29&amp;edit-text="><span class="Hyperlink">here</span></a><span>. For example, a Unit of meter per second (m/s) would represented as </span><span>"L(</span><span>1</span><span>,0)M(0,0)T(0,</span><span>1</span><span>)I(0,0)Θ(0,0)N(0,0)J(0,0)"</span><span>.</span></p>
+<p><span>For a Unit, you could define one or more data types associated with it. By clicking </span><span>on the Save button, </span><span>the Unit</span><span>&nbsp;is stored if all information is correct and it is not a duplicate.</span></p>
+<p><span>Use </span><img src="~/Areas/RPM/Images/help\help_img12.png" width="24" height="24" alt="img12" /><span>&nbsp;</span><span>for edit and </span><img src="~/Areas/RPM/Images/help\help_img13.png" width="24" height="24" alt="img13" /><span>&nbsp;for delete a Unit.</span></p>
+<p><span>&#xa0;</span></p>
+<p><img src="~/Areas/RPM/Images/help\help_img14.png" width="601" height="278" alt="Create Unit" /><span>&#xa0;</span></p>
+<p><span>&#xa0;</span></p>
+<p class="Heading-1"><a id="_Toc468355710"><span>Variable Template </span><span>Manager</span></a></p>
+<p><span>With the </span><span>Variable Template</span><span>&nbsp;Manager you are able to create, modify and delete </span><span>Variable Templates (called </span><span>Data Attributes</span><span>&nbsp;in older BEXIS 2 versions)</span><span>. </span><span>V</span><span>ariables are required to create Data Structures. </span></p>
+<p><img src="~/Areas/RPM/Images/help\help_img15.jpeg" width="600" height="289" alt="Manage_Data_Attributes" /><span>&#xa0;</span></p>
+<p><span>To create a </span><span>Variable Template</span><span>, click on the </span><span>Create </span><span>Variable Template</span><span>&nbsp;button</span><span>. Fill the fields. Select an associated Unit and Data Type and</span><span>&nbsp;click </span><span>on the Save button. T</span><span>he </span><span>Variable Template</span><span>&nbsp;is stored if all information are correct and it is not a duplicate.</span></p>
+<p><span>Use </span><img src="~/Areas/RPM/Images/help\help_img16.png" width="24" height="24" alt="img16" /><span>&nbsp;</span><span>for edit and </span><img src="~/Areas/RPM/Images/help\help_img17.png" width="24" height="24" alt="img17" /><span>&nbsp;for delete a </span><span>Variable Template</span><span>.</span></p>
+<p><img src="~/Areas/RPM/Images/help\help_img18.png" width="601" height="349" alt="plan_dataAttribute" /><span>&#xa0;</span></p>
+<p><span>It is possible to put constraints on </span><span>Variable Template</span><span>s, to add constraints click on the link Constrains. You can add a Range, a Pattern and a Domain Constraint to each </span><span>Variable Template</span><span>. </span></p>
+<p class="List-Paragraph"><span>&#183;</span><span>&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;</span><span>Range:</span><span>&nbsp;If the input data is of numeric type, this constraint checks whether the input value falls in the specified range. If the input data is of type string, the range check behaves like a length check, which means the length of the input string should fall in the range. The range has a lower bound and an upper bound, plus two indicators to show whether the boundary values are included in the range. Negate function checks if the value is out of the range!</span></p>
+<p class="List-Paragraph"><span>&#183;</span><span>&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;</span><span>Pattern:</span><span>&nbsp;takes the value as input and matches it against a pattern to see whether the pattern is found in the input. If so, it returns true; otherwise false. Pattern constraints apply to text values only, </span><span>for more information on the format click </span><a href="https://en.wikipedia.org/wiki/Regular_expression"><span class="Hyperlink">here</span></a><span>.</span></p>
+<p class="List-Paragraph"><span>&#183;</span><span>&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;</span><span>Domain:</span><span>&nbsp;takes the value as input and matches it against each and every domain item in the list. If the value matches one, it stops matching and returns true, which means the value satisfies the constraint. If no match is found it returns false. No duplicate domain item is allowed, although it does not affect the matching procedure described. Domain items can be characters, strings, Booleans or numbers. Their data type is enforced by the associated </span><span>Variable Template</span><span>. Using the domain constraint as a tool to model acronyms and similar topics provided that some extra information such as description of each item is available, is supported.</span></p>
+<p class="List-Paragraph"><span>&#183;</span><span>&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;</span><span>Negation:</span><span>&nbsp;The inversion</span><span>&nbsp;of the chosen constraint will apply. </span><span>In fact</span><span>&nbsp;the result of the constraint is XORed with the negation field.</span><span>&nbsp;For example, a </span><span>negated Range Constraint of Min=1 and Max=</span><span>100 will allow all values outside of this range.</span></p>
+<p class="List-Paragraph"><span>&#xa0;</span></p>
+
+<p class="Footer"><span>&#xa0;</span></p>

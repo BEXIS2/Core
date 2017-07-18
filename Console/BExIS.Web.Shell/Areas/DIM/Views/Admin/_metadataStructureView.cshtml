@@ -65,7 +65,7 @@
                         <div class="download-button" style="padding: 0;">
                             @if (item.MetadataDownloadPath != "")
                                             {
-                                @Html.ActionLink(" ", "Download", "Admin", new { path = @item.MetadataDownloadPath }, new { area = "DIM", @class = "bx bx-grid-function bx-download", style="margin:0;" })
+                                @Html.ActionLink(" ", "Download", "Admin", new { path = @item.MetadataDownloadPath }, new { @class = "bx bx-grid-function bx-download", style="margin:0;" })
                             }
                         </div>
 

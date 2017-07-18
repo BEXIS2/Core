@@ -8,8 +8,8 @@
     <ProjectGuid>{224E53EC-9B13-4627-8CA9-EDEABC7987D6}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BExIS.Dim.NH.ORM</RootNamespace>
-    <AssemblyName>BExIS.Dim.NH.ORM</AssemblyName>
+    <RootNamespace>BExIS.Dim.Orm.NH</RootNamespace>
+    <AssemblyName>BExIS.Dim.Orm.NH</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>
