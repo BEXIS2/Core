@@ -19,12 +19,11 @@ namespace BExIS.Modules.Sam.UI.Controllers
     {
         public ActionResult Add()
         {
-            Session["Subjects"] = new Dictionary<long, int>();
-            return PartialView("_Add");
+            return PartialView("_Add", new CreateFeaturePermissionGridRowModel());
         }
 
         [HttpPost]
-        public ActionResult Create(CreateFeaturePermissionModel model)
+        public ActionResult Create(CreateFeaturePermissionGridRowModel model)
         {
             return PartialView("_Add");
         }

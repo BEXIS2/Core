@@ -40,7 +40,7 @@
         $('#button_createfeaturepermission').click(function () {
             $.ajax({
                 type: 'GET',
-                url: '@Url.Action("Create", "FeaturePermissions")',
+                url: '@Url.Action("Add", "FeaturePermissions")',
                 dataType: 'html',
                 success: function (htmlData) {
                     var windowElement = $.telerik.window.create({
