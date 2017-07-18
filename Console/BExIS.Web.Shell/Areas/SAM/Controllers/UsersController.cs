@@ -15,7 +15,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
     {
         public ActionResult Create()
         {
-            Session["Groups"] = new List<long>();
             return PartialView("_Create", new CreateUserModel());
         }
 
@@ -57,15 +56,18 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
             // Selected Groups
             HashSet<long> selectedGroups = new HashSet<long>();
-            if (ViewData["SelectedGroups"] != null)
+            if (Session["SelectedGroups"] != null)
             {
-                selectedGroups = ViewData["SelectedGroups"] as HashSet<long>;
+                selectedGroups = Session["SelectedGroups"] as HashSet<long>;
             }
 
-            selectedGroups = selectedGroups.Except(checkboxes) as HashSet<long>;
+            foreach (var checkbox in checkboxes)
+            {
+                selectedGroups.Remove(checkbox);
+            }
             selectedGroups.AddRange(selectedCheckboxes);
 
-            ViewData["SelectedGroups"] = selectedGroups;
+            Session["SelectedGroups"] = selectedGroups;
 
             var groupManager = new GroupManager();
 
@@ -102,7 +104,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
         {
             // get user
             var model = new UpdateUserModel();
-            Session["Groups"] = new List<long>();
 
             return PartialView("_Update", model);
         }

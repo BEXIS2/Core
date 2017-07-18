@@ -105,12 +105,12 @@
 
         function onDataBinding(e) {
 
-            var checkboxes = {};
+            var checkboxes = [];
             $("input[name='selectedGroups']").each(function(){
                 checkboxes.push($(this).val());
             });
 
-            var selectedCheckboxes = {};
+            var selectedCheckboxes = [];
             $("input[name='selectedGroups']:checked").each(function () {
                 selectedCheckboxes.push($(this).val());
             });
