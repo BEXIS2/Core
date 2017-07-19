@@ -166,7 +166,7 @@
                                             .ClientEvents(events => events
                                                 .OnChange("OnChangeTextInput"))
                                             .DataBinding(dataBinding => dataBinding
-                                                .Ajax().Select("_AutoCompleteAjaxLoading", "Form")
+                                                .Ajax().Select("_AutoCompleteAjaxLoading", "Form", new{id = Model.Id})
                                                 .Cache(false))
 
                                             .Filterable(filtering =>

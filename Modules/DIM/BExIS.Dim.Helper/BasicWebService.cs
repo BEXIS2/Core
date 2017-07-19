@@ -65,6 +65,8 @@ namespace BExIS.Dim.Helpers
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
+                    //ToDO set data as json to body
+                    //
 
 
                     //test@testerer.de:WSTest

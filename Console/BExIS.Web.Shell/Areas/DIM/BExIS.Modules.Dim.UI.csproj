@@ -333,6 +333,7 @@
     <Compile Include="Controllers\MappingController.cs" />
     <Compile Include="Controllers\MetadataController.cs" />
     <Compile Include="Controllers\SubmissionController.cs" />
+    <Compile Include="Controllers\TestController.cs" />
     <Compile Include="DimModule.cs" />
     <Compile Include="Helper\DimSeedDataGenerator.cs" />
     <Compile Include="Helper\MappingHelper.cs" />
@@ -626,6 +627,7 @@
     </Content>
     <Content Include="Views\Submission\_dataRepositoryRequirementsView.cshtml" />
     <Content Include="Views\Submission\_showPublishDataView.cshtml" />
+    <Content Include="Views\Test\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

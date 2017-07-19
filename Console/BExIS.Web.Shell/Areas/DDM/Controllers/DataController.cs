@@ -82,8 +82,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 MetadataStructureId = metadataStructureId,
                 DataStructureId = dataStructureId,
                 ResearchPlanId = researchPlanId,
-                ViewAccess = entityPermissionManager.HasRight<User>(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), id, RightType.Read),
-                GrantAccess = entityPermissionManager.HasRight<User>(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), id, RightType.Grant)
+                //ToDo Add Security
+                ViewAccess = true,//entityPermissionManager.HasRight<User>(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), id, RightType.Read),
+                GrantAccess = true //entityPermissionManager.HasRight<User>(HttpContext.User.Identity.Name, "Dataset", typeof(Dataset), id, RightType.Grant)
             };
 
             //set metadata in session
@@ -221,6 +222,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     List<AbstractTuple> dataTuples = dm.GetDatasetVersionEffectiveTuples(dsv, 0, 100);
                     //List<AbstractTuple> dataTuples = dm.GetDatasetVersionEffectiveTuples(dsv);
 
+                    //ToDo Refactor -> Call of this function must came from the outputdatamanager
                     DataTable table = SearchUIHelper.ConvertPrimaryDataToDatatable(dsv, dataTuples);
 
                     Session["gridTotal"] = dm.GetDatasetVersionEffectiveTupleCount(dsv);
