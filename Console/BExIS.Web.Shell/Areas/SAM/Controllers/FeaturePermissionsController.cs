@@ -17,7 +17,8 @@ namespace BExIS.Modules.Sam.UI.Controllers
 {
     public class FeaturePermissionsController : Controller
     {
-        public ActionResult Add(long featureId)
+        [HttpGet]
+        public ActionResult AddSubjects(long featureId)
         {
             var featurePermissionManager = new FeaturePermissionManager();
             var subjects = featurePermissionManager.FeaturePermissions.Where(x => x.Feature.Id == featureId)
@@ -28,12 +29,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
             Session["SelectedSubjects"] = subjects.ToDictionary(x => x.Key, x => x.Value);
 
             return PartialView("_Add", featureId);
-        }
-
-        [HttpPost]
-        public ActionResult Create(CreateFeaturePermissionGridRowModel model)
-        {
-            return PartialView("_Add");
         }
 
         public ActionResult Index()
@@ -74,13 +69,13 @@ namespace BExIS.Modules.Sam.UI.Controllers
             }
 
             // Sorting
-            featurePermissions.Sort(command.SortDescriptors);
+            var sorted = featurePermissions.Sort(command.SortDescriptors) as IQueryable<FeaturePermission>;
 
             // Paging
-            featurePermissions = featurePermissions.Skip((command.Page - 1) * command.PageSize).Take(command.PageSize);
+            var paged = sorted.Skip((command.Page - 1) * command.PageSize).Take(command.PageSize);
 
             // Data
-            var data = featurePermissions.ToList().Select(FeaturePermissionGridRowModel.Convert);
+            var data = paged.Select(FeaturePermissionGridRowModel.Convert).ToList();
 
             return View(new GridModel<FeaturePermissionGridRowModel>
             {
@@ -104,9 +99,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
             // Selected Groups
             Dictionary<long, int> selectedSubjects = new Dictionary<long, int>();
             if (Session["SelectedSubjects"] != null)
-            {
                 selectedSubjects = Session["SelectedSubjects"] as Dictionary<long, int>;
-            }
 
             foreach (var item in all)
             {
@@ -154,6 +147,32 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 Data = data,
                 Total = total
             });
+        }
+
+        [HttpPost]
+        public ActionResult SubmitSubjects(long featureId)
+        {
+            var selectedSubjects = new Dictionary<long, int>();
+
+            if (Session["SelectedSubjects"] != null)
+                selectedSubjects = Session["SelectedSubjects"] as Dictionary<long, int>;
+
+            var featureManager = new FeatureManager();
+            var featurePermissionManager = new FeaturePermissionManager();
+
+            var feature = featureManager.FindById(featureId);
+
+            feature.Permissions = new List<FeaturePermission>();
+            featureManager.Update(feature);
+
+            foreach (var subject in selectedSubjects)
+            {
+                featurePermissionManager.Create(subject.Key, featureId, (PermissionType)subject.Value);
+            }
+
+            Session["SelectedSubjects"] = null;
+
+            return Json(new { success = true });
         }
     }
 }

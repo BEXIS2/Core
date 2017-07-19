@@ -13,6 +13,8 @@
         columns.Bound(u => u.SubjectId);
         columns.Bound(u => u.SubjectName);
         columns.Bound(u => u.SubjectType);
+        columns.Bound(u => u.PermissionType);
+
     })
     .ClientEvents(events =>
     {
@@ -38,7 +40,7 @@
     $("#button_addsubjects").click(function () {
         $.ajax({
             type: 'GET',
-            url: '@Url.Action("Add", "FeaturePermissions")',
+            url: '@Url.Action("AddSubjects", "FeaturePermissions")',
             data: { FeatureId: @Model },
             dataType: 'html',
             success: function(htmlData) {
@@ -55,7 +57,7 @@
                     scrollable: false,
                     onClose: function() {
                         $("#windowCreate").data('tWindow').destroy();
-                        $("#gridUsers .t-refresh").trigger('click');
+                        $("#gridFeaturePermissions .t-refresh").trigger('click');
                     }
                 });
 

@@ -14,13 +14,34 @@ namespace BExIS.Security.Services.Authorization
             var uow = this.GetUnitOfWork();
 
             FeaturePermissionRepository = uow.GetReadOnlyRepository<FeaturePermission>();
+            FeatureRepository = uow.GetReadOnlyRepository<Feature>();
+            SubjectRepository = uow.GetReadOnlyRepository<Subject>();
         }
 
         public IReadOnlyRepository<FeaturePermission> FeaturePermissionRepository { get; }
         public IQueryable<FeaturePermission> FeaturePermissions => FeaturePermissionRepository.Query();
+        public IReadOnlyRepository<Feature> FeatureRepository { get; }
+        public IReadOnlyRepository<Subject> SubjectRepository { get; }
 
         public void Create(FeaturePermission featurePermission)
         {
+            using (var uow = this.GetUnitOfWork())
+            {
+                var featurePermissionRepository = uow.GetRepository<FeaturePermission>();
+                featurePermissionRepository.Put(featurePermission);
+                uow.Commit();
+            }
+        }
+
+        public void Create(long subjectId, long featureId, PermissionType permissionType = PermissionType.Grant)
+        {
+            var featurePermission = new FeaturePermission()
+            {
+                Subject = SubjectRepository.Get(subjectId),
+                Feature = FeatureRepository.Get(featureId),
+                PermissionType = permissionType
+            };
+
             using (var uow = this.GetUnitOfWork())
             {
                 var featurePermissionRepository = uow.GetRepository<FeaturePermission>();
@@ -46,6 +67,11 @@ namespace BExIS.Security.Services.Authorization
                     .FirstOrDefault();
         }
 
+        public bool HasAccess(string subjectName, Type subjecType, string module, string controller, string action)
+        {
+            return false;
+        }
+
         public void Update(FeaturePermission featurePermission)
         {
             using (var uow = this.GetUnitOfWork())
@@ -54,11 +80,6 @@ namespace BExIS.Security.Services.Authorization
                 featurePermissionRepository.Put(featurePermission);
                 uow.Commit();
             }
-        }
-
-        public bool HasAccess(string subjectName, Type subjectType, string module, string controller, string action)
-        {
-            return false;
         }
     }
 }
