@@ -133,7 +133,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
             }
 
 
-            model.Suggestions = new Dictionary<int, List<Tuple<string, string, string, string, string>>>();
+            model.Suggestions = new Dictionary<int, List<EasyUploadSuggestion>>();
 
             for (int i = 0; i < model.HeaderFields.Length; i++)
             {
@@ -149,7 +149,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
 
                 #region suggestions
                 //Add a variable to the suggestions if the names are similar
-                model.Suggestions.Add(i, new List<Tuple<string, string, string, string, string>>());
+                model.Suggestions.Add(i, new List<EasyUploadSuggestion>());
 
                 //Calculate similarity metric
                 //Accept suggestion if the similarity is greater than some threshold
@@ -163,14 +163,14 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 //Add the ordered suggestions to the model
                 foreach (DataAttribute att in ordered)
                 {
-                    model.Suggestions[i].Add(new Tuple<String, String, String, String, String>(att.Name, att.Unit.Id.ToString(), att.DataType.Id.ToString(), att.Unit.Name, att.DataType.Name));
+                    model.Suggestions[i].Add(new EasyUploadSuggestion(att.Name, att.Unit.Id, att.DataType.Id, att.Unit.Name, att.DataType.Name, false));
                 }
 
                 //Use the following to order suggestions alphabetically instead of ordering according to the metric
                 //model.Suggestions[i] = model.Suggestions[i].Distinct().OrderBy(s => s.Item1).ToList<Tuple<String, String, String, String, String>>();
 
                 //Each Name-Unit-Datatype-Tuple should be unique
-                model.Suggestions[i] = model.Suggestions[i].Distinct().ToList<Tuple<String, String, String, String, String>>();
+                model.Suggestions[i] = model.Suggestions[i].Distinct().ToList<EasyUploadSuggestion>();
                 #endregion
             }
 
@@ -309,7 +309,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 model.AvailableUnits = (List<UnitInfo>)TaskManager.Bus[EasyUploadTaskManager.VERIFICATION_AVAILABLEUNITS];
             }
 
-            model.Suggestions = (Dictionary<int, List<Tuple<String, String, String, String, String>>>)TaskManager.Bus[EasyUploadTaskManager.VERIFICATION_ATTRIBUTESUGGESTIONS];
+            model.Suggestions = (Dictionary<int, List<EasyUploadSuggestion>>)TaskManager.Bus[EasyUploadTaskManager.VERIFICATION_ATTRIBUTESUGGESTIONS];
 
 
             Session["TaskManager"] = TaskManager;
@@ -383,7 +383,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 model.AvailableUnits = (List<UnitInfo>)TaskManager.Bus[EasyUploadTaskManager.VERIFICATION_AVAILABLEUNITS];
             }
 
-            model.Suggestions = (Dictionary<int, List<Tuple<String, String, String, String, String>>>)TaskManager.Bus[EasyUploadTaskManager.VERIFICATION_ATTRIBUTESUGGESTIONS];
+            model.Suggestions = (Dictionary<int, List<EasyUploadSuggestion>>)TaskManager.Bus[EasyUploadTaskManager.VERIFICATION_ATTRIBUTESUGGESTIONS];
 
             Session["TaskManager"] = TaskManager;
 
@@ -485,7 +485,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Controllers
                 model.AvailableUnits = (List<UnitInfo>)TaskManager.Bus[EasyUploadTaskManager.VERIFICATION_AVAILABLEUNITS];
             }
 
-            model.Suggestions = (Dictionary<int, List<Tuple<String, String, String, String, String>>>)TaskManager.Bus[EasyUploadTaskManager.VERIFICATION_ATTRIBUTESUGGESTIONS];
+            model.Suggestions = (Dictionary<int, List<EasyUploadSuggestion>>)TaskManager.Bus[EasyUploadTaskManager.VERIFICATION_ATTRIBUTESUGGESTIONS];
 
             Session["TaskManager"] = TaskManager;
 

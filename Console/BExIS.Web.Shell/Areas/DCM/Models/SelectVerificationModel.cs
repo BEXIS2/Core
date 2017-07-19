@@ -3,6 +3,7 @@ using BExIS.IO.Transform.Validation.Exceptions;
 using BExIS.Dcm.Wizard;
 using System;
 using BExIS.Dlm.Entities.DataStructure;
+using BExIS.Web.Shell.Areas.DCM.Helpers;
 
 namespace BExIS.Web.Shell.Areas.DCM.Models
 {
@@ -10,7 +11,7 @@ namespace BExIS.Web.Shell.Areas.DCM.Models
     {
         public StepInfo StepInfo { get; set; }
         public String[] HeaderFields { get; set; }
-        public Dictionary<int, List<Tuple<String, String, String, String, String>>> Suggestions { get; set; } //Item1 = Attribute Name, Item2 = UnitID, Item3 = DataTypeID, Item4 = Unit Name, Item5 = DataType
+        public Dictionary<int, List<EasyUploadSuggestion>> Suggestions { get; set; } //Item1 = Attribute Name, Item2 = UnitID, Item3 = DataTypeID, Item4 = Unit Name, Item5 = DataType
         public List<UnitInfo> AvailableUnits { get; set; }
         public List<Tuple<int, string, UnitInfo>> AssignedHeaderUnits { get; set; }
 

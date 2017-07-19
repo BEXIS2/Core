@@ -387,6 +387,7 @@
     <Compile Include="Areas\DCM\Controllers\SubmitValidationController.cs" />
     <Compile Include="Areas\DCM\DCMAreaRegistration.cs" />
     <Compile Include="Areas\DCM\Helpers\DCMSeedDataGenerator.cs" />
+    <Compile Include="Areas\DCM\Helpers\EasyUploadSuggestion.cs" />
     <Compile Include="Areas\DCM\Helpers\UploadUtility.cs" />
     <Compile Include="Areas\DCM\Models\AbstractStepModel.cs" />
     <Compile Include="Areas\DCM\Models\ChooseDatasetViewModel.cs" />

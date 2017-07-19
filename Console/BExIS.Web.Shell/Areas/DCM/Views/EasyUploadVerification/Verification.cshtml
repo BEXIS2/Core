@@ -3,6 +3,8 @@
 @using Telerik.Web.Mvc.Resources;
 @using BExIS.Web.Shell.Areas.DCM.Models;
 @using BExIS.Dlm.Entities.DataStructure;
+@using BExIS.Web.Shell.Areas.DCM.Helpers;
+
 
 
 <div id="Step3" class="uploadWizardStep">
@@ -40,21 +42,21 @@
 
                                     <!--Create an option for each variable in the respective suggestions
                                         make sure that the one that is registered as selected is actually shown as selected in the list-->
-                                    @foreach (Tuple<String, String, String, String, String> sug in Model.Suggestions[i])
+                                    @foreach (EasyUploadSuggestion sug in Model.Suggestions[i])
                                     {
                                         string selected = "";
 
                                         if (Model.AssignedHeaderUnits.Count > 0)
                                         {
-                                            Tuple<int, String, UnitInfo> tuple = Model.AssignedHeaderUnits.Where(t => (t.Item1 == i) && (t.Item2 == sug.Item1) && (t.Item3.UnitId == int.Parse(sug.Item2)) && (t.Item3.SelectedDataTypeId == int.Parse(sug.Item3))).FirstOrDefault();
+                                            Tuple<int, String, UnitInfo> tuple = Model.AssignedHeaderUnits.Where(t => (t.Item1 == i) && (t.Item2 == sug.attributeName) && (t.Item3.UnitId == sug.unitID) && (t.Item3.SelectedDataTypeId == sug.dataTypeID)).FirstOrDefault();
                                             if (tuple != null)
                                             {
                                                 selected = "selected";
                                             }
                                         }
-
-                                        string display = sug.Item1 + " - " + sug.Item4 + " - " + sug.Item5;
-                                        <option @Html.Raw(selected) data-unit="@sug.Item2" data-datatype="@sug.Item3" value="@sug.Item1">@display</option>
+                                        
+                                        string display = sug.attributeName + " - " + sug.unitName + " - " + sug.datatypeName;
+                                        <option @Html.Raw(selected) data-unit="@sug.unitID" data-datatype="@sug.dataTypeID" value="@sug.attributeName">@display</option>
                                     }
                                 </select>
                             </td>
@@ -240,7 +242,6 @@
     function suggestionSelected(suggestionSelectObject, i) {
         //Find the selected option object
         var selectedOption = suggestionSelectObject.options[suggestionSelectObject.selectedIndex];
-
 
         var selectedVariableName = selectedOption.value;
         //Now grab the unitID and datatype from the html attributes of the selected option element
