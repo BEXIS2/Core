@@ -14,7 +14,7 @@
       <key column="SubjectRef" />
       <one-to-many class="BExIS.Security.Entities.Authorization.EntityPermission, BExIS.Security.Entities" />
     </set>
-    <set name="FeaturePermissions" cascade="all-delete-orphan" lazy="true">
+    <set name="FeaturePermissions" inverse="true" lazy="true">
       <key column="SubjectRef" />
       <one-to-many class="BExIS.Security.Entities.Authorization.FeaturePermission, BExIS.Security.Entities" />
     </set>

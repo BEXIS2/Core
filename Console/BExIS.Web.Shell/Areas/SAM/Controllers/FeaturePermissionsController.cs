@@ -56,7 +56,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
             var featurePermissionManager = new FeaturePermissionManager();
 
             // Source + Transformation - Data
-            var featurePermissions = featurePermissionManager.FeaturePermissions;
+            var featurePermissions = featurePermissionManager.FeaturePermissions.Where(f => f.Feature.Id == featureId);
             var total = featurePermissions.Count();
 
             // Filtering
@@ -84,8 +84,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
             });
         }
 
-        [GridAction(EnableCustomBinding = true)]
-        public ActionResult Subjects_Select(Dictionary<long, int> selection, long featureId, GridCommand command)
+        public void updateSelection(Dictionary<long, int> selection)
         {
             if (selection == null)
                 selection = new Dictionary<long, int>();
@@ -104,6 +103,12 @@ namespace BExIS.Modules.Sam.UI.Controllers
             }
 
             Session["SelectedSubjects"] = selectedSubjects;
+        }
+
+        [GridAction(EnableCustomBinding = true)]
+        public ActionResult Subjects_Select(Dictionary<long, int> selection, long featureId, GridCommand command)
+        {
+            updateSelection(selection);
 
             var subjectManager = new SubjectManager();
 
@@ -127,7 +132,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
             var paged = sorted.Skip((command.Page - 1) * command.PageSize).Take(command.PageSize).ToList();
 
             // Data
-            var data = paged.Select(x => CreateFeaturePermissionGridRowModel.Convert(x, selectedSubjects));
+            var data = paged.Select(x => CreateFeaturePermissionGridRowModel.Convert(x, Session["SelectedSubjects"] as Dictionary<long, int>));
 
             return View(new GridModel<CreateFeaturePermissionGridRowModel>
             {
@@ -139,22 +144,20 @@ namespace BExIS.Modules.Sam.UI.Controllers
         [HttpPost]
         public ActionResult SubmitSubjects(Dictionary<long, int> selection, long featureId)
         {
-            var selectedSubjects = new Dictionary<long, int>();
-
-            if (Session["SelectedSubjects"] != null)
-                selectedSubjects = Session["SelectedSubjects"] as Dictionary<long, int>;
+            updateSelection(selection);
 
             var featureManager = new FeatureManager();
             var featurePermissionManager = new FeaturePermissionManager();
 
             var feature = featureManager.FindById(featureId);
 
-            foreach (var featurePermission in feature.Permissions)
+            var featurePermissions = feature.Permissions.Select(p => p.Id).ToArray();
+            foreach (var id in featurePermissions)
             {
-                featurePermissionManager.Delete(featurePermission);
+                featurePermissionManager.Delete(featurePermissionManager.FindById(id));
             }
 
-            foreach (var subject in selectedSubjects)
+            foreach (var subject in Session["SelectedSubjects"] as Dictionary<long, int>)
             {
                 featurePermissionManager.Create(subject.Key, featureId, (PermissionType)subject.Value);
             }

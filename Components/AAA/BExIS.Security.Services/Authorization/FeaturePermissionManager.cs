@@ -67,6 +67,11 @@ namespace BExIS.Security.Services.Authorization
                     .FirstOrDefault();
         }
 
+        public FeaturePermission FindById(long id)
+        {
+            return FeaturePermissionRepository.Get(id);
+        }
+
         public bool HasAccess(string subjectName, Type subjecType, string module, string controller, string action)
         {
             return false;
