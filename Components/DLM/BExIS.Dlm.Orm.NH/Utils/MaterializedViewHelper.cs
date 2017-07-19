@@ -5,14 +5,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Vaiona.Persistence.Api;
+using Vaiona.Utils.Cfg;
 
 namespace BExIS.Dlm.Orm.NH.Utils
 {
     public class MaterializedViewHelper
     {
+        // use this to access proper templates. All the templates are in one XML file under nativeObjects
+        // they can be in default, or specific dialect folder
+        string dbDialect = AppConfiguration.DatabaseDialect;
         public MaterializedViewHelper()
         {
         }
+
+        //public MaterializedViewHelper(string dbDialect)
+        //{
+        //    this.dbDialect = dbDialect;
+        //}
 
         public DataTable Retrieve(long datasetId)
         {
@@ -67,11 +76,10 @@ namespace BExIS.Dlm.Orm.NH.Utils
             // build MV's SELECT statement
             StringBuilder selectBuilder = new StringBuilder("SELECT").AppendLine(); // all the strings come form the tamplates
             selectBuilder
-                .AppendLine(string.Format("{0},", "t.id"))
-                .AppendLine(string.Format("{0},", "t.versionno"))
-                .AppendLine(string.Format("{0},", "t.orderno"))
-                .AppendLine(string.Format("{0},", "t.timestamp"))
-                .AppendLine(string.Format("{0},", "t.datasetversionref"))
+                .AppendLine(string.Format("{0},", "t.id AS Id"))
+                .AppendLine(string.Format("{0},", "t.orderno AS OrderNo"))
+                .AppendLine(string.Format("{0},", "t.timestamp AS Timestamp"))
+                .AppendLine(string.Format("{0},", "t.datasetversionref AS VersionId"))
                 ;
             int counter = 0;
             foreach (var columnDefinition in columnDefinitionList.OrderBy(p=>p.Item3)) // item3 is the variable order in its data structure

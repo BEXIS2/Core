@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using System.Data;
 using BExIS.Dlm.Orm.NH.Utils;
 using BExIS.Dlm.Services.Helpers;
+using Vaiona.Utils.Cfg;
 
 namespace BExIS.Dlm.Services.Data
 {
